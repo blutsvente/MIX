@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.16 $                                             |
+# | Revision:   $Revision: 1.17 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/06/04 15:52:43 $                                   |
+# | Date:       $Date: 2003/07/09 07:52:44 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.16 2003/06/04 15:52:43 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.17 2003/07/09 07:52:44 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,11 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.17  2003/07/09 07:52:44  wig
+# | Adding first version of Verilog support.
+# | Fixing lots of tiny issues (see TODO).
+# | Adding first release of documentation.
+# |
 # | Revision 1.16  2003/06/04 15:52:43  wig
 # | intermediate release, before releasing alpha IOParser
 # |
@@ -114,6 +119,8 @@ require Exporter;
 	mix_utils_print
 	mix_utils_printf
 	mix_utils_close
+	mix_list_econf
+	is_absolute_path
 	replace_mac
 	init_ole
 	close_open_workbooks
@@ -121,6 +128,7 @@ require Exporter;
 	db2array
 	write_excel
 	write_delta_excel
+	write_sum
         );
 # @Micronas::MixUtils::EXPORT_OK=qw(
 @EXPORT_OK = qw(
@@ -152,7 +160,7 @@ use Log::Agent::Priorities qw(:LEVELS);
 use Storable;
 # use Data::Dumper; # Will be evaled if -adump option is on
 # use Text::Diff;  # Will be eval'ed down there if -delta option is given!
-#  use Win32::OLE; # etc.# Will be eval'd down there if excel comes into play
+# use Win32::OLE; # etc.# Will be eval'd down there if excel comes into play
 
 #
 # Prototypes
@@ -160,8 +168,10 @@ use Storable;
 sub write_delta_excel ($$$);
 sub select_variant ($);
 sub mix_list_conf ();
-sub _mix_list_conf ($$);
+sub mix_list_econf ($);
+sub _mix_list_conf ($$;$);
 sub _mix_apply_conf ($$$);
+sub mix_store ($$;$);
 sub mix_utils_open($;$);
 sub mix_utils_print($@);
 sub mix_utils_printf($@);
@@ -170,6 +180,8 @@ sub close_open_workbooks ();
 sub replace_mac ($$);
 sub one2two ($);
 sub two2one ($);
+sub is_absolute_path ($);
+sub mix_utils_mask_excel ($);
 
 ##############################################################
 # Global variables
@@ -186,11 +198,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.16 2003/06/04 15:52:43 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.17 2003/07/09 07:52:44 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.16 $';
+my $thisrevision   =      '$Revision: 1.17 $';
 
-# | Revision:   $Revision: 1.16 $   
+# | Revision:   $Revision: 1.17 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -235,6 +247,24 @@ sub mix_getopt_header(@) {
         $EH{'DEBUG'} = $EH{'debug'}; # printing debug notes.
         eval 'package main; use diagnostics;'; # enable perl diagnostics
     }
+
+    #
+    # Change output pathes for internal, intermediate and backend data
+    # Create it if needed.
+    #
+    if ( defined $OPTVAL{'dir'} ) {
+	unless( -d $OPTVAL{'dir'} ) {
+	    unless( mkdir( $OPTVAL{'dir'} ) ) {
+		logwarn( "ERROR: Cannot create output directory " . $OPTVAL{'dir'} . "!" );
+		exit 1;
+	    }
+	    logwarn( "INFO: Created output directory " . $OPTVAL{'dir'} . "!" );
+	}
+	$EH{'output'}{'path'} = $OPTVAL{'dir'};
+	$EH{'intermediate'}{'path'} = $OPTVAL{'dir'};
+	$EH{'internal'}{'path'} = $OPTVAL{'dir'};
+    }
+    
     # if (defined $MACVAL{'M_IGNORE_ERRORS'}) {
     #     $EH{'ERROR'} = $EH{'error_no_exit'}; # hidden emergency switch
     # }
@@ -245,13 +275,14 @@ sub mix_getopt_header(@) {
 	# Name will become name of last input file foo-mixed.ext
 	$EH{'out'} = $ARGV[$#ARGV] ;
 	$EH{'out'} =~ s,(\.[^.]+)$,-$EH{'output'}{'ext'}{'intermediate'}$1,;
-	if ( $EH{'output'}{'path'} eq "." ) {
+	# if ( $EH{'output'}{'path'} eq "." ) {
 	    $EH{'out'} = basename( $EH{'out'} ); # Strip off pathname
-	}
+	# }
     } else {
 	$EH{'out'} = "";
     }
 
+    # Internal and intermediate data are written to:
     if (defined $OPTVAL{'int'}) {
 	$EH{'dump'} = $OPTVAL{'int'};
     } elsif ( exists( $ARGV[$#ARGV] ) )  {
@@ -260,11 +291,11 @@ sub mix_getopt_header(@) {
 	$EH{'dump'} = $ARGV[$#ARGV];
 	$EH{'dump'} =~ s,\.([^.]+)$,,; # Strip away extension
 	$EH{'dump'} .= "." . $EH{'output'}{'ext'}{'internal'};
-	if ( $EH{'output'}{'path'} eq "." ) {
-	    $EH{'dump'} = basename( $EH{'dump'} ); # Strip off pathname
-	}
+	# if ( $EH{'internal'}{'path'} eq "." ) {
+	$EH{'dump'} = basename( $EH{'dump'} ); # Strip off pathname
+	# }
     } else {
-	$EH{'dump'} = "mix" . "." . $EH{'output'}{'ext'}{'intermediate'};
+	$EH{'dump'} = "mix" . "." . $EH{'output'}{'ext'}{'internal'};
     }
 	# Is there a *-mixed file in the current directory ?
 	#TODO:
@@ -297,9 +328,9 @@ sub mix_getopt_header(@) {
 	$EH{'outenty'} = $ARGV[$#ARGV];
 	$EH{'outenty'} =~ s,(\.[^.]+)$,,; # Remove extension
 	$EH{'outenty'} .= $EH{'postfix'}{'POSTFILE_ENTY'} . "." . $EH{'output'}{'ext'}{'vhdl'};
-	if ( $EH{'output'}{'path'} eq "." ) {
-	    $EH{'outenty'} = basename( $EH{'outenty'} ); # Strip off pathname
-	}
+	# if ( $EH{'output'}{'path'} eq "." ) {
+	$EH{'outenty'} = basename( $EH{'outenty'} ); # Strip off pathname
+	# }
     } else {
 	$EH{'outenty'} = "mix" . $EH{'postfix'}{'POSTFILE_ENTY'} . "." . $EH{'output'}{'ext'}{'vhdl'};
     }
@@ -315,9 +346,9 @@ sub mix_getopt_header(@) {
 	$EH{'outarch'} = $ARGV[$#ARGV] ;
 	$EH{'outarch'} =~ s,(\.[^.]+)$,,;
 	$EH{'outarch'} .= $EH{'postfix'}{'POSTFILE_ARCH'} . "." . $EH{'output'}{'ext'}{'vhdl'};
-	if ( $EH{'output'}{'path'} eq "." ) {
-	    $EH{'outarch'} = basename( $EH{'outarch'} ); # Strip off pathname
-	}
+	# if ( $EH{'output'}{'path'} eq "." ) {
+	$EH{'outarch'} = basename( $EH{'outarch'} ); # Strip off pathname
+	# }
     } else {
 	$EH{'outarch'} = "mix" . $EH{'postfix'}{'POSTFILE_ARCH'} . "." . $EH{'output'}{'ext'}{'vhdl'};
     }
@@ -333,9 +364,9 @@ sub mix_getopt_header(@) {
 	$EH{'outconf'} = $ARGV[$#ARGV] ;
 	$EH{'outconf'} =~ s,(\.[^.]+)$,,;
 	$EH{'outconf'} .= $EH{'postfix'}{'POSTFILE_CONF'} . "." . $EH{'output'}{'ext'}{'vhdl'};
-	if ( $EH{'output'}{'path'} eq "." ) {
-	    $EH{'outconf'} = basename( $EH{'outconf'} ); # Strip off pathname
-	}
+	# if ( $EH{'output'}{'path'} eq "." ) {
+	$EH{'outconf'} = basename( $EH{'outconf'} ); # Strip off pathname
+	# }
     } else {
 	$EH{'outconf'} = "mix" . $EH{'postfix'}{'POSTFILE_CONF'} . "." . $EH{'output'}{'ext'}{'vhdl'};
     }
@@ -705,6 +736,7 @@ $ex = undef; # Container for OLE server
 				'intermediate' => '#',
 				'internal' => '#',
 				'delta' => '#',
+				'default' => '#',
 	},
 	# 'warnings' => 'load,drivers',	# Warn about missing loads/drivers
 	'warnings' => '',
@@ -749,6 +781,7 @@ $ex = undef; # Container for OLE server
 		    # possilbe values are: inst,conn
 	'signal' => 'load,driver,check',  # reads: checks if all signals have appr. loads
 						    # and drivers
+	'inst' => 'nomulti',	# check and mark multiple instantiations
     },
     'postfix' => {
 	    qw(
@@ -756,14 +789,13 @@ $ex = undef; # Container for OLE server
 		    POSTFIX_PORT_IN	_i
 		    POSTFIX_PORT_IO	_io
 		    PREFIX_PORT_GEN	p_mix_
+		    POSTFIX_PORT_GEN	%EMPTY%
 		    PREFIX_PAD_GEN	pad_
 		    POSTFIX_PAD_GEN	%EMPTY%
 		    PREFIX_SIG_INT	s_int_
-		    POSTFIX_GENERIC	_g
 		    POSTFIX_SIGNAL	_s
-		    POSTFIX_CONSTANT	_c
-		    POSTFIX_PARAMETER	_p
 		    PREFIX_INSTANCE	i_
+		    POSTFIX_INSTANCE	%EMPTY%
 		    POSTFIX_ARCH	%EMPTY%
 		    POSTFILE_ARCH	-a
 		    POSTFIX_ENTY	%EMPTY%
@@ -772,14 +804,16 @@ $ex = undef; # Container for OLE server
 		    POSTFILE_CONF	-c
 		    PREFIX_CONST	mix_const_
 		    PREFIX_GENERIC	mix_generic_
+		    POSTFIX_GENERIC	_g
 		    PREFIX_PARAMETER	mix_parameter_
 		    PREFIX_KEYWORD	mix_key_
-	    )
-	    # POSTFIX_ARCH _struct-a
-	    # POSTFIX_ENTY _struct-e
-	    # POSTFIX_CONF _struct-c
+		    POSTFIX_CONSTANT	_c
+		    POSTFIX_PARAMETER	_p
+		)
     },
     'pad' => {
+	'name' => '%::name%',  # generate pad names like
+		    # '%PREFIX_PAD_GEN%_%::pad%'
 	qw(
 	    PAD_DEFAULT_DO	0
 	    PAD_ACTIVE_EN	 	1
@@ -1095,36 +1129,61 @@ Lines starting with MIXCFG indicate possible configuration parameters.
 
 sub mix_list_conf () {
 
-	# use Data::Dumper;
-	# Data::Dumper
-	# print( Dumper( \%EH ) );
+    my @configs = ();
+    # (Recursively) retrieve the configuration settings:
     foreach my $i ( sort ( keys( %EH ) )  ) {
-	_mix_list_conf( "$i", $EH{$i} );
+	push( @configs, _mix_list_conf( "$i", $EH{$i} ));
     }
-    # Stop here
+    # Now print the current configuration
+    foreach my $i ( @configs ) {
+	print( join( " ", @$i ) . "\n" );
+    }
+
+    print( "\nCAVEAT: The list seen here might be different from the final configuration!!\n" );
+    print( "CAVEAT: Because it is dumped before CONF sheet evaluation!!\n" );
+    print( "CAVEAT: Run MIX and check the CONF sheet of the intermediate workbook.\n" );
+    
     exit 0;
+}
+
+#
+# Prepare configuration data to be dumped to excel format
+#
+sub mix_list_econf ($) {
+    my $format = shift || "xls";
+
+    my @configs = ();
+    
+    foreach my $i ( sort( keys( %EH ) ) ) {
+	push( @configs , _mix_list_conf( "$i", $EH{$i}, $format ) );
+    }
+
+    return \@configs;
 }
 
 #
 # (recursive) print of configuration options values
 #
-sub _mix_list_conf ($$) {
+sub _mix_list_conf ($$;$) {
     my $name = shift;
     my $ref = shift;
+    my $out = shift || "STDOUT";
 
+    my @conf = ();
     if ( ref( $ref ) eq "HASH" ) {
 	foreach my $i ( sort( keys %$ref )  ) {
-	    _mix_list_conf( "$name.$i", $ref->{$i} );
+	    push( @conf, _mix_list_conf( "$name.$i", $ref->{$i}, $out ) );
 	}
     } elsif ( ref( $ref ) eq "ARRAY" ) {
-	print( "MIXNOCFG $name ARRAY\n" );
+	return ( [ "MIXNOCFG", $name, "ARRAY" ] );
     } elsif ( ref( $ref ) )  {
-	print( "MIXNOCFG $name REF\n" );
+	return ( [ "MIXNOCFG", $name, "REF" ] );
     } else {
 	$ref =~ s,\n,\\n,go;
 	$ref =~ s,\t,\\t,go;
-	print( "MIXCFG $name $ref\n" );
+	return ( [ "MIXCFG", $name, $ref ] );
     }
+    return @conf;
 }
     
 ##############################################################################
@@ -1169,11 +1228,14 @@ sub mix_overload_conf ($) {
 	}
 	my $loga ='logtrc( "INFO", "Adding configuration ' . $i . '");';
 	my $logo ='logtrc( "INFO", "Overloading configuration ' . $i . '");';
-	$k =~ s/\./}{/og;
-	$k = '{' . $k . '}';
+	$k =~ s/\./'}{'/og;
+	$k = '{\'' . $k . '\'}';
+
+	# Mask % and other wildcards:
 
 	#TODO: Prevent overloading of non-scalar values!!
-	$e = "if ( exists( \$EH$k ) ) { \$EH$k = '$v'; $logo } else { \$EH$k = '$v'; $loga }";
+	$e = "if ( exists( \$EH" . $k . " ) ) { \$EH" . $k . " = '" . $v . "'; " . $logo .
+	    "} else { \$EH" . $k . " = '" . $v . "'; " . $loga . " }";
 	unless ( eval $e ) {
                 logwarn("Evaluation of configuration $k=$v failed: $@") if ( $@ );
                 next;
@@ -1199,12 +1261,13 @@ sub mix_excel_conf ($$) {
     my $s = shift; # Source
 
     ROW: for my $i ( @$rconf ) {
-	for my $ii ( 0..($#{ @$i }-2) ) {
+	for my $ii ( 0..(scalar ( @$i ) - 3 ) ) {
 	    next unless ( $i->[$ii] ); # Skip empty cells in this row
 	    if ( $i->[$ii] eq "MIXCFG" ) { #Try to read $ii+1 and $ii+2
-		my $key = $i->[$ii+1];
-		my $val = $i->[$ii+2];
+		my $key = $i->[$ii+1] || '__E_ERROR.EXCEL_CONF.KEY';
+		my $val = $i->[$ii+2] || '__E_ERROR.EXCEL_CONF.VALUE';
 		_mix_apply_conf( $key, $val, "EXCEL:$s" ); #Apply key/value
+		next ROW;
 	    } else { # If row does not have MIXCFG in first cell, skip it.
 		next ROW;
 	    }
@@ -1226,8 +1289,8 @@ sub _mix_apply_conf ($$$) {
     }
     my $loga ='logtrc( "INFO", "Adding ' . $s . ' configuration ' . $k . "=" . $v . '");';
     my $logo ='logtrc( "INFO", "Overloading ' . $s . 'configuration ' . $k . "=" . $v . '");';
-    $k =~ s/\./}{/og;
-    $k = '{' . $k . '}';
+    $k =~ s/\./'}{'/og;
+    $k = '{\'' . $k . '\'}';
 
     #TODO: Prevent overloading of non-scalar values!!
     my $e = "if ( exists( \$EH$k ) ) { \$EH$k = '$v'; $logo } else { \$EH$k = '$v'; $loga }";
@@ -1432,7 +1495,18 @@ sub mix_utils_open ($;$){
     my $file= shift;
     my $flags = shift || ""; # Could be "COMB" for combined mode
 
+    #
+    # if output.path is set, write to this path (unless file name is absolute path)
+    #wig20030703
+    #
+    if ( $EH{'output'}{'path'} ne "." ) {
+	unless( is_absolute_path( $file ) ) {
+	    $file = $EH{'output'}{'path'} . "/" . $file;
+	}
+    }
+    
     my $ofile = $file;
+    
     if ( $EH{'output'}{'generate'}{'delta'} ) { # Delta mode!
 	my $ext;
 	my $c = "__NOCOMMENT";
@@ -1473,7 +1547,7 @@ sub mix_utils_open ($;$){
 
     # Append or create a new file?
     # Append will be used if we get a "COMB" flag (combine mode)
-    my $mode = O_CREAT|O_WRONLY;
+    my $mode = O_CREAT|O_WRONLY|O_TRUNC;
     if ( $flags =~ m,^COMB, ) {
 	$mode = O_CREAT|O_WRONLY|O_APPEND;
     }
@@ -1491,6 +1565,32 @@ sub mix_utils_open ($;$){
     }
     
     return $fh;
+}
+
+#
+# is_absolute_path
+#  returns true/1 if the given path is a absolute one
+#  /path/bla
+# A:/bla
+# A:\bla\ ...
+#
+sub is_absolute_path ($) {
+    my $path = shift;
+    
+    if ( $^O=~/Win32/ ) {
+	if ( $path =~ m,^[/\\], or $path =~ m,^[a-zA-Z]:[/\\], ) {
+	    return 1;
+	} else {
+	    return 0;
+	}
+    } else {
+	if ( $path =~ m,^/, ) {
+	    return 1;
+	} else {
+	    return 0;
+	}
+    }
+
 }
 
 #
@@ -1530,9 +1630,25 @@ sub mix_utils_close ($$) {
     my $file = shift;
 
     my $close_flag = 1;
+
+    # Prepend PATH
+    if ( $EH{'output'}{'path'} ne "." and not is_absolute_path( $file ) ) {
+	$file = $EH{'output'}{'path'} . "/" . $file;
+    }
+
+    my $ext;
+    my $c = "__NOCOMMENT";
+    ( $ext = $file ) =~ s/.*\.//;
+    for my $k ( keys ( %{$EH{'output'}{'ext'}} )) {
+	if ( $EH{'output'}{'ext'}{$k} eq $ext ) {
+	    $c = $EH{'output'}{'comment'}{$k} || "__NOCOMMENT";
+	    last;
+	}
+    }    
+
     if ( $this_delta{"$fh"} ) {
     # Sort/map new content and compare .... print out to $fh
-	map( { s/--.*//o; } @ncont ) if ( $EH{'output'}{'delta'} !~ m,comment,io );
+	map( { s/\Q$c\E.*//o; } @ncont ) if ( $EH{'output'}{'delta'} !~ m,comment,io );
 	if ( $EH{'output'}{'delta'} !~ m,space,io ) {
 	    map( { s/\s+/ /og; s/^\s+//o; s/\s+$//o; } @ncont );
 	    @ncont = grep( !/^$/,  @ncont );
@@ -1542,15 +1658,15 @@ sub mix_utils_close ($$) {
 	# Print header to $fh ... (usual things like options, ....)
 	# TODO: Add that header to header definitions
 my $head =
-"-- ------------- delta mode for file $file ------------- --
---
--- Generated
---  by:  %USER%
---  on:  %DATE%
---  cmd: %ARGV%
---  delta mode (comment/space/sort/remove): $EH{'output'}{'delta'}
---
--- ------------- CHANGES START HERE ------------- --
+"$c ------------- delta mode for file $file ------------- --
+$c
+$c Generated
+$c  by:  %USER%
+$c  on:  %DATE%
+$c  cmd: %ARGV%
+$c  delta mode (comment/space/sort/remove): $EH{'output'}{'delta'}
+$c
+$c ------------- CHANGES START HERE ------------- --
 ";
 	print( $fh replace_mac( $head, $EH{'macro'} ));
 
@@ -1591,6 +1707,7 @@ my $head =
     }
     return;    
 }
+
 }
 
 #
@@ -2063,41 +2180,54 @@ sub path_excel ($) {
 ####################################################################
 ## mix_store
 ## dump data (hash) on disk
+##
+## use $EH{'internal'}{'path'} to define a directry != cwd()
 ####################################################################
 
 =head2
 
-mix_store ($%) {
+mix_store ($$;$) {
 
-Dump input data into a disk file
+Dump input data into a disk file.
+Set $EH{'internal'}{'path'} to change output directory.
 
 =cut
-sub mix_store ($%){
+sub mix_store ($$;$){
     my $file = shift;
     my $r_data = shift;
+    my $flag = shift || "internal";
 
-    if ( -r $file ) {
-	logwarn("file $file already exists! Will be overwritten!");
+    #
+    # attach $EH{$flag}{'path'} ...
+    #
+    my $predir = "";
+    if( $EH{$flag}{'path'} ne "." and not is_absolute_path( $file ) ) {
+	$predir = $EH{$flag}{'path'} . "/";
+    }
+    if ( -r ( $predir . $file ) ) {
+	logwarn("file $predir$file already exists! Will be overwritten!");
     }
 
     #TODO: would we want to use nstore instead ?
-    unless( store( $r_data, $file ) ) {
-	logdie("Cannot store date into $file: $!!\n");
+    unless( store( $r_data, $predir . $file ) ) {
+	logdie("Cannot store date into $predir$file: $!!\n");
 	exit 1;
     }
 
     #
     # Use Data::Dumper while debugging ...
     #    output is man-readable ....
+    #
+
     if ( $OPTVAL{'adump'} ) {
 	use Data::Dumper;
 	$file .= "a";
-	unless( open( DUMP, ">$file" ) ) {
-	    logdie("Cannot open file $file for dumping: $!\n");
+	unless( open( DUMP, ">$predir$file" ) ) {
+	    logdie("Cannot open file $predir$file for dumping: $!\n");
 	}
 	print( DUMP Dumper( $r_data ) );
 	unless( close( DUMP ) ) {
-	    logdie("Cannot close file $file: $!\n");
+	    logdie("Cannot close file $predir$file: $!\n");
 	}
     }
     
@@ -2322,9 +2452,16 @@ sub write_delta_excel ($$$) {
     my $sheet = shift;
     my $r_a = shift;
    
-    # Print out diff, only
-    
-    my @prev = open_excel( $file, $sheet, "mandatory,write" );
+    # Fix path
+    my $predir = "";
+    if ( $EH{'intermediate'}{'path'} ne "." and not is_absolute_path( $file ) ) {
+	# Prepend a directory name ...
+	$predir = $EH{'intermediate'}{'path'} . "/" ;
+	$predir =~ s,[/\\]+$,/,; # Strip of extra trailing slashes / and \ ...
+    }
+
+    # Read in intermediate from previous runs ...    
+    my @prev = open_excel( $predir . $file, $sheet, "mandatory,write" );
     my @prevd = two2one( $prev[0] );
     my @currd = two2one( $r_a );
 
@@ -2503,6 +2640,11 @@ sub write_excel ($$$) {
 	$file .= ".xls";
     }
 
+    # Write to other directory ...
+    if ( $EH{'intermediate'}{'path'} ne "." and not is_absolute_path( $file ) ) {
+	$file = $EH{'intermediate'}{'path'} . "/" . $file;
+    }
+    
     my $efile = path_excel( $file );
     my $basename = $file;
     $basename =~ s,.*[/\\],,; #TODO: check if Name is basename of filename, always??
@@ -2616,6 +2758,8 @@ sub write_excel ($$$) {
     $sheetr->Activate();
     $sheetr->Unprotect;
 
+    mix_utils_mask_excel( $r_a );
+    
     my $x=$#{$r_a->[0]}+1;
     my $y=$#{$r_a}+1;
     my $c1=$sheetr->Cells(1,1)->Address;
@@ -2638,6 +2782,63 @@ sub write_excel ($$$) {
     return;
 }
 
+#
+# Mask pure digits (esp. with . and/or , inside) from ExCEL!
+# Otherwise these will get converted to dates :-(
+#
+sub mix_utils_mask_excel ($) {
+    my $r_a = shift;
+
+    for my $i ( @$r_a ) {    
+	for my $ii ( @$i ) {
+	    if ( $ii =~ m/^[\d.,]+$/ ) {
+		# Put a ' in front of pure digits ...
+		$ii = "'" . $ii;
+	    }
+	}
+    }
+}
+
+####################################################################
+## write_sum
+## write out summary informations
+####################################################################
+
+=head2
+
+write_sum ()
+
+write out various summary information like number of changed files, generated wires
+
+=cut
+
+sub write_sum () {
+
+    #TODO: use different log**** call !!
+    #TODO: Shift function to other module ... ??
+
+    # Parsed input sheets:
+    logwarn( "============= SUMMARY =================" );
+    logwarn( "SUM: Summary of checks and created items:" );
+    for my $i ( sort( keys( %{$EH{'sum'}} ) ) ) {
+        logwarn( "SUM: $i $EH{'sum'}{$i}" );
+    }
+    logwarn( "SUM: Number of parsed input tables:" );
+    for my $i ( qw( conf hier conn io vi2c ) ) {
+        logwarn( "SUM: $i $EH{$i}{'parsed'}" );
+    }
+
+    # Delta mode: return status equals number of changes
+    if ( $EH{'output'}{'generate'}{'delta'} ) {
+        #TODO: Do not use logwarn channel!
+        logwarn( "SUM: Number of changes in intermediate: $EH{'DELTA_INT_NR'}");
+        logwarn( "SUM: Number of changed files: $EH{'DELTA_NR'}");
+        return $EH{'DELTA_NR'} + $EH{'DELTA_INT_NR'};
+    }
+    
+    return 0;    
+
+}
 # This module returns 1, as any good module does.
 1;
 

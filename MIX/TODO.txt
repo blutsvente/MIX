@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.11 2003/06/05 14:48:00 wig Exp $
+# $Id: TODO.txt,v 1.12 2003/07/09 07:52:43 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -19,6 +19,50 @@ Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
 
+
+-. 20030702c/Req: compare leaf blocks generated with entity definitions
+    Req: mpit
+    Prio: medium
+
+- 20030702b/Req: helper tool: read in entity description and create ExCEL sheet skelton
+    Columns:
+            ::name, ::type, ::mode, ::in, ::out, ::descr
+    or:
+    -- VHDL/Verilog entities einlesen und in MIX Format konvertieren:
+    Signalname, Type, Mode, ::in, ::out, ::descr, ... als Grundlageninfrastruktur zur Verfügung stellen.
+	allgemein: -create    create all needed sheets in Excel. If arguments are *.v or *.vhd, convert these
+	into suitable excel sheets (either one per entity or a common one).
+
+    Req: mpallas
+    Prio: medium
+
+
+- 20030630c/Bug: Complain if someone uses VHDL keywords as signal names, e.g.
+    "signal". The built-in list seems to be ignored.
+
+    Todo: make sure list ist getting evaluated and corrected accordingly.
+    Add "check_reservedwords" function to MixChecker.pm and
+    insert into add_inst and add_hier ....
+
+    See also _check_keywords function in MixParser.pm!
+    
+    Req: wig
+    Prio: medium
+    
+- 20030630b/Req: Compare MIX against
+    -- Ganove
+    -- HDL Designer / Mentor Grafics
+    -- Spinner / Duolog (see Claus Schneider, 2003-06-06)
+
+- 20030630a/Bug: IO mode not handeled properly
+    See example from VGCA
+
+    Comment: Need improved connection bus handling!! Improved driver/load handling!
+    Use vector{i|o} = A:[ciobt] ... c:= inout (common), i := in, o := out, b:= buffer, t := tristate
+    
+    Req: mpit
+    Prio: high
+
 - 20030604b/Req: Allow other keywords to match in generator/macros, not only ::inst
   names.
 
@@ -31,12 +75,7 @@ TODOs:
     Req: pallas
     Prio: medium
 
-- 20030604a/Bug: Do not generate configuration for Verilog instances in common
-   config file
-   
-    Req: wig
-    Prio: low
-    
+
 - 20030516a/Bug: bus-port which has only single bit inputs gets connected incorrect
 
     Testcase: bug20030516
@@ -83,6 +122,7 @@ is defined.
 
     Req: wig
     Prio: low
+    Solution: started, but never tested ...
 
 - 20030404d/CR: -inplace option
     Take previous results and keep user changed contents (marked properly)
@@ -149,10 +189,7 @@ is defined.
     Req: Claus
     Prio: Low
 
-- 20030228c/Feature: write arch, conf and entity into one file
-  per entitiy (command line switch)
-    Req: wig
-    Prio: low
+ 
 
 
 - 20030228a/Feature: Write out evaluated contents of mix.cfg (and timestamp) and
@@ -166,11 +203,6 @@ is defined.
     Requested: wig
     Prio: medium
     
-
-- 20030227b: 
-    Write out ENTY-e.vhd.N if a entity gets instantiated several times
-    Requested: wig
-    Prio: low
 
 
  
@@ -190,13 +222,9 @@ is defined.
 - 20030220j: Use Bugzilla for issues 
 
 
-- Accept %::COL% in :name and ::inst columns
-  early expansion required!
-  wig20030124
 
 - OPEN wires to external
   wig20030124a
-
 
 - Check if the a object (Workbook) is opened from different path, but with
   same name?
@@ -242,6 +270,49 @@ is defined.
         non-leaf cells multiple instantiation, how-to: global signal names localization
 
 DONE: ++++++++++++++++++++++++
+
+- 2003070a/Bug: output.path is not implemented!
+    Cannot write datato dir other than cwd()
+    
+    Req: mpit
+    Prio: medium
+    Impl: 20030703wig  ( -dir DIRECTORY ) + documentation
+    Tested: wig20030705
+    Status: Solved
+
+- 20030604a/Bug: Do not generate configuration for Verilog instances in common
+   config file
+   
+    Req: wig
+    Prio: low
+    Solved: wig
+    
+- 20030228c/Feature: write arch, conf and entity into one file
+  per entitiy (command line switch)
+    Req: wig
+    Prio: low
+    Solution: set -combine option (or set outarch=COMB, outenty=COMB, outconf=COMB)
+   
+- 20030227b: 
+    Write out ENTY-e.vhd.N if a entity gets instantiated several times
+    Requested: wig
+    Prio: low
+    Solved: think so ...
+
+- Accept %::COL% in :name and ::inst columns
+  early expansion required!
+  wig20030124
+
+- 20030702a/Req: User defined macro input
+    -conf macro.%MY_MACRO%=MY_MACRO_VALUE
+
+    Req: wig
+    Prio: medium
+    Workaround: add
+    MIXCFG macro.'%MY_MACRO%' MY_MACRO_VALUE
+    to mix.cfg configuration file.
+    Solved: wig20030708
+    
 - Open files, delay close until EOF processing
   Done: wig
 

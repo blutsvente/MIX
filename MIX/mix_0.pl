@@ -21,12 +21,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id              : $Id: mix_0.pl,v 1.12 2003/06/04 15:52:42 wig Exp $
+# | Id              : $Id: mix_0.pl,v 1.13 2003/07/09 07:52:43 wig Exp $
 # | Name         : $Name:  $
 # | Description  :$Description:$
 # | Parameters  : -
-# | Version       : $Revision: 1.12 $
-# | Mod.Date    : $Date: 2003/06/04 15:52:42 $
+# | Version       : $Revision: 1.13 $
+# | Mod.Date    : $Date: 2003/07/09 07:52:43 $
 # | Author        : $Author: wig $
 # | Phone         : $Phone: +49 89 54845 7275$
 # | Fax             : $Fax: $
@@ -41,6 +41,11 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |
 # | Changes:
 # | $Log: mix_0.pl,v $
+# | Revision 1.13  2003/07/09 07:52:43  wig
+# | Adding first version of Verilog support.
+# | Fixing lots of tiny issues (see TODO).
+# | Adding first release of documentation.
+# |
 # | Revision 1.12  2003/06/04 15:52:42  wig
 # | intermediate release, before releasing alpha IOParser
 # |
@@ -155,7 +160,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.12 $'; # RCS Id
+$::VERSION = '$Revision: 1.13 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # %EH comes from Mic::MixUtils ; All the configuration E-nvironment will be there
@@ -187,6 +192,7 @@ mix_init();               # Presets ....
 
 #
 #TODO: Add that to application note
+# -dir DIRECTORY              write output data to DIRECTORY (default: cwd())
 # -out OUTPUTFILE.ext       defines intermediate output filename and type
 # -outenty OUT-e.vhd        filename for entity. If argument is ENTY[NAME], each entity
 #                                   will be written into a file calles entityname-e.vhd
@@ -204,6 +210,7 @@ mix_init();               # Presets ....
 
 # Add your options here ....
 mix_getopt_header(qw(
+    dir=s
     out=s
     outenty=s
     outarch=s
@@ -328,7 +335,9 @@ mix_store_db( "dump",
                     'entities'  => \%Micronas::MixWriter::entities,
                 },
     );
-
+#
+# Write intermediate data ...
+#
 mix_store_db( "out", "auto", {} );
 
 #

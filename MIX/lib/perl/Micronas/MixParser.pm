@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.18 $                                             |
+# | Revision:   $Revision: 1.19 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/06/05 14:48:01 $                                   |
+# | Date:       $Date: 2003/07/09 07:52:44 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.18 2003/06/05 14:48:01 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.19 2003/07/09 07:52:44 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,11 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.19  2003/07/09 07:52:44  wig
+# | Adding first version of Verilog support.
+# | Fixing lots of tiny issues (see TODO).
+# | Adding first release of documentation.
+# |
 # | Revision 1.18  2003/06/05 14:48:01  wig
 # | Releasing alpha IO-Parser
 # |
@@ -152,7 +157,7 @@ use Log::Agent::Priorities qw(:LEVELS);
 use Tree::DAG_Node; # tree base class
 
 use Micronas::MixUtils qw( mix_store db2array write_excel write_delta_excel
-                           close_open_workbooks %EH );
+                           close_open_workbooks mix_list_econf %EH );
 use Micronas::MixChecker;
 
 # Prototypes:
@@ -177,11 +182,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.18 2003/06/05 14:48:01 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.19 2003/07/09 07:52:44 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.18 $';
+my $thisrevision   =      '$Revision: 1.19 $';
 
-# | Revision:   $Revision: 1.18 $   
+# | Revision:   $Revision: 1.19 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1062,8 +1067,9 @@ sub _create_conn ($$%) {
                 $co{'rvalue'} = $const; # Save raw value!!
                 my $t = $2;
                 if ( $inout =~ m,in, ) {
-                    logerror("Error: illegal constant value for ::in signal " . $data{'::name'} . "!");
+                    logerr("ERROR: illegal constant value for ::in signal " . $data{'::name'} . "!");
                     $data{'::comment'} .= "__E_BAD_CONSTANT_DEFINED";
+                    $EH{'sum'}{'errors'}++;
                 }
                 if ( defined( $t ) ) {
                     $co{'inst'} = "%" . $t . "%";
@@ -1397,21 +1403,27 @@ sub mix_store_db ($$$) {
     }
       
     if ( $type eq "xls" ) {
+        my $aro = mix_list_econf( "xls" ); # Convert %EH to two-dim array
         my $arc = db2array( \%conndb , "conn", "" );
         my $arh = db2array( \%hierdb, "hier", "^(%\\w+%|W_NO_PARENT)\$" );
         if ( $EH{'output'}{'generate'}{'delta'} ) {
+            my $conf_diffs = write_excel( $dumpfile, "CONF", $aro ); # Do not generate deltas, just output
             my $conn_diffs = write_delta_excel( $dumpfile, "CONN", $arc );
             my $hier_diffs = write_delta_excel( $dumpfile, "HIER", $arh );
             $EH{'DELTA_INT_NR'} = $conn_diffs + $hier_diffs;
-        } else {    
+        } else {
+            write_excel( $dumpfile, "CONF", $aro ); #wig20030708: store CONF options ...
             write_excel( $dumpfile, "CONN", $arc );
             write_excel( $dumpfile, "HIER", $arh );    
         }
         close_open_workbooks(); # Close everything we opened
     } else {
+        if ( $type ne "internal" ) {
+            $type="intermediate";
+        }    
         mix_store( $dumpfile, { 'conn' => \%conndb , 'hier' => \%hierdb,
                                     %$varh
-                            }   );
+                            }, $type);
     }
 }
 
@@ -1885,12 +1897,14 @@ sub add_portsig () {
                 }
         }
         
-       #
+        #
         # If signal mode is I |O | IO (not S), make sure it's connected to the
         # top level
         #
         if ( $EH{'output'}{'generate'}{'inout'} =~ m,mode,io ) {
-            if ( $mode =~ m,[IO],io ) { #TODO: are IO the onls-one's?? Add B, too
+            if ( $mode =~ m,[IO],io or $mode =~ m,IO,io ) {
+            #wig20030625: adding IO switch ...
+            #TODO: what about buffers and tristate?
             # Add IO-port if not connected already ....
                 my @tops = get_top_cell();
                 my @addtop = ();
@@ -2696,8 +2710,8 @@ sub _add_port ($$$$$$$$) {
                 expand_a_vec( $uw, $lb, $ub );
                 check_b_vec( $dw, $lb, $ub ); # Are these the right size?
                 check_b_vec( $uw, $lb, $ub );
-                strip_b_vec( $dw , "io", $lb, $ub );
-                strip_b_vec( $uw, "io", $lb, $ub );
+                strip_b_vec( $dw , "ioc", $lb, $ub );
+                strip_b_vec( $uw, "ioc", $lb, $ub );
 
                 #
                 # Create ports
