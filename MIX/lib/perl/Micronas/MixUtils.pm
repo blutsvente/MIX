@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.46 $                                         |
+# | Revision:   $Revision: 1.47 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/04/14 11:08:33 $                              |
+# | Date:       $Date: 2004/04/15 11:59:40 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.46 2004/04/14 11:08:33 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.47 2004/04/15 11:59:40 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.47  2004/04/15 11:59:40  wig
+# | added ignorecase for delta mode
+# |
 # | Revision 1.46  2004/04/14 11:08:33  wig
 # | minor code clearing
 # |
@@ -268,11 +271,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.46 2004/04/14 11:08:33 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.47 2004/04/15 11:59:40 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.46 $';
+my $thisrevision        =      '$Revision: 1.47 $';
 
-# Revision:   $Revision: 1.46 $   
+# Revision:   $Revision: 1.47 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -878,7 +881,7 @@ sub mix_init () {
               'xinout'  => '',       # list of comma seperated signals to exclude from automatic wiring to %TOP%
               '_re_xinout' => '',   # keeps converted content of xinout (internal use, only)
 	      # 'port' => 'markgenerated',	# attach a _gIO to generated ports ...
-	      'delta' => 0,	    	# allows to use mix.cfg to preset delta mode
+	      'delta' => 0,	    	# allows to use mix.cfg to preset delta mode -> 0 is off, 1 is on
 	      'bak' => 0,		# Create backup of output HDL files
 	      'combine' => 0,	# Combine enty,arch and conf into one file, -combine switch
 	      'portdescr' => '%::descr%',	# Definitions for port map descriptions:
@@ -927,6 +930,7 @@ sub mix_init () {
 				    # sort:   sort lines
 				    # comment: not remove all comments before compare
 				    # remove: remove empyt diff files
+                                    # ignorecase|ic: -> ignore case if set
     },
     'input' => {
 	'ext' =>	{
@@ -1773,13 +1777,14 @@ sub mix_utils_open_diff ($;$) {
 	@ocont = <$ofh>; #Slurp in file to compare against
 	chomp( @ocont );
 	# remove comments: -- for VHDL, // for Verilog
-	#TODO: make that dependant on the file extension
-	map( { s/\Q$c\E.*//; } @ocont ) if ( $EH{'output'}{'delta'} !~ m,comment,io );
-	if ( $EH{'output'}{'delta'} !~ m,space,io ) {
+	map( { s/\Q$c\E.*//; } @ocont ) if ( $EH{'output'}{'delta'} !~ m/\bcomment\b/io );
+	if ( $EH{'output'}{'delta'} !~ m,\bspace\b,io ) {
 	    map( { s/\s+/ /og; s/^\s*//og; s/\s*$//og; } @ocont );
 	    @ocont = grep( !/^$/,  @ocont );
 	}
-	( @ocont = sort( @ocont ) ) if ( $EH{'output'}{'delta'} =~ m,sort,io );
+
+        map( { lc(); } @ocont ) if ( $EH{'output'}{'delta'} =~ m,\b(ic|ignorecase)\b,io );
+	( @ocont = sort( @ocont ) ) if ( $EH{'output'}{'delta'} =~ m,\bsort\b,io );
 
 	close( $ofh ) or logwarn( "ERROR: Cannot close org $file in delta mode: $!" )
 	    and $EH{'sum'}{'errors'}++;
@@ -2210,23 +2215,31 @@ sub mix_utils_diff ($$$$) {
     my $oc = shift;
     my $c  = shift;
     my $file = shift;
-    
-    map( { s/\Q$c\E.*//; } @$nc ) if ( $EH{'output'}{'delta'} !~ m,comment,io );
-    if ( $EH{'output'}{'delta'} !~ m,space,io ) {
+
+    # strip off comments    
+    map( { s/\Q$c\E.*//; } @$nc ) if ( $EH{'output'}{'delta'} !~ m,\bcomment\b,io );
+
+    # condense whitespace, remove empty lines ...
+    if ( $EH{'output'}{'delta'} !~ m,\bspace\b,io ) {
 	map( { s/\s+/ /og; s/^\s+//o; s/\s+$//o; } @$nc );
 	    @$nc = grep( !/^$/,  @$nc );
-	}
-	@$nc = sort( @$nc ) if ( $EH{'output'}{'delta'} =~ m,sort,io );
+    }
 
-	# Diff it ...
-	my $diff = diff( $nc, $oc,
+    # ignore case -> make everything lowercase ....
+    map( { lc } @$nc ) if ( $EH{'output'}{'delta'} =~ m,\b(ic|ignorecase)\b,io );
+
+    # sort lines before compare
+    @$nc = sort( @$nc ) if ( $EH{'output'}{'delta'} =~ m,\bsort\b,io );
+
+    # Diff it ...
+    my $diff = diff( $nc, $oc,
 	    { STYLE => "Table",
 	    # STYLE => "Context",
 	    FILENAME_A => 'NEW', #TODO: get new file name in here!
 	    FILENAME_B => "OLD $file",
 	    CONTEXT => 0,
 	    }
-	);
+    );
 
     return $diff;
 }
