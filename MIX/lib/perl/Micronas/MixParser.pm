@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.7 $                                             |
+# | Revision:   $Revision: 1.8 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/19 16:28:00 $                                   |
+# | Date:       $Date: 2003/02/20 15:07:13 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.7 2003/02/19 16:28:00 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.8 2003/02/20 15:07:13 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,11 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.8  2003/02/20 15:07:13  wig
+# | Fixed: port signal assignment direction bus
+# | Capitalization (folding is still missing)
+# | Added ::arch column and created output
+# |
 # | Revision 1.7  2003/02/19 16:28:00  wig
 # | Added generics.
 # | Renamed generated objects
@@ -911,7 +916,10 @@ sub _create_conn ($$%) {
         logwarn("Called _create_conn without data for $inout");
         return \@co; #Return dummy array, just in case
     }
+    
+    $instr =~ s/\n/,/go;
     for my $d ( split( /,/, $instr ) ) {
+        next if ( $d =~ /^\s*$/o );
             #
             # Recognized signal descriptions:
             #
@@ -987,7 +995,7 @@ sub _create_conn ($$%) {
                 $d =~ s,(\w+),$1/%::name%,;
             }
 
-            if ( $d =~ m,(\w+)/(\S+)\((\d+):(\d+)\)\s*=\s*\((\d+):(\d+), ) {
+            if ( $d =~ m,([\w%:]+)/(\S+)\((\d+):(\d+)\)\s*=\s*\((\d+):(\d+), ) {
                 # INST/PORTS(pf:pt)=(sf:st)
                 $co{'inst'} = $1;
                 $co{'port'} = $2;
@@ -995,7 +1003,7 @@ sub _create_conn ($$%) {
                 $co{'port_t'} = $4;
                 $co{'sig_f'} = $5;
                 $co{'sig_t'} = $6;
-            } elsif ( $d =~ m,(\w+)/(\S+)=\((\d+):(\d+)\)\s*, ) {
+            } elsif ( $d =~ m,([\w%:]+)/(\S+)=\((\d+):(\d+)\)\s*, ) {
                 # INST/PORTS=(f:t) Port-Bit to Bus-Bit f = t; expand to pseudo bus?
                 #TODO: Implement better solution (e.g. if Port is bus slice, not bit?
                 #wig20030207: handle single bit port connections ....
@@ -1018,7 +1026,7 @@ sub _create_conn ($$%) {
                     $co{'sig_f'} = $3;
                     $co{'sig_t'} = $4;
                 }   
-            } elsif ( $d =~ m,(\w+)/(\S+)\((\d+):(\d+)\)\s*, ) {
+            } elsif ( $d =~ m,([\w%:]+)/(\S+)\((\d+):(\d+)\)\s*, ) {
                 # INST/PORTS(f:t)
                 $co{'inst'} = $1;
                 $co{'port'} = $2;
@@ -1026,7 +1034,7 @@ sub _create_conn ($$%) {
                 $co{'port_t'} = $4;
                 $co{'sig_f'} = $3 - $4;
                 $co{'sig_t'} = 0;
-            } elsif ( $d =~ m,(\w+)/(\S+)\s*, ) {
+            } elsif ( $d =~ m,([\w%:]+)/(\S+)\s*, ) {
                 # INST/PORTS
                 $co{'inst'} = $1;
                 $co{'port'} = $2;
@@ -1057,7 +1065,7 @@ sub check_conn_prop ($) {
     my $ref = shift;
 
     if ( $ref->{'inst'} !~ m,^[:%\w]+$,o ) {
-        logwarn( "Unusual character in instance name: $ref->{'inst'}/$ref->{'port'}!" );
+        logwarn( "Unusual character in signal name: $ref->{'inst'}/$ref->{'port'}!" );
     }
     if ( $ref->{'port'} !~ m,^[:%\w]+$,o ) {
         logwarn( "Unusual character in port name: $ref->{'inst'}/$ref->{'port'}!" );
@@ -1724,8 +1732,8 @@ sub add_port (@) {
         while( $m =~ m,:(in|out):(\d+),og ) {
             my $mi = $2;
             my $mo = "::" . $1;
-            my $dir = uc( substr( $mode, 0 ,1 ) );
-            if ( $dir eq "_" ) { $dir = 'E'; };
+            my $dir = lc( substr( $mode, 0 ,1 ) ); # Make lowercase ...
+            if ( $dir eq "_" ) { $dir = 'E'; }; # Keep capital E to mark errors!
             #
             # Get template for that signal
             #
@@ -1744,7 +1752,7 @@ sub add_port (@) {
             }
             # $templ{'mode'}
             # Generate PORT name: MIX_$signal_G[IO].
-            $templ{'port'} = "P_MIX_" . $s . $sf . $st . "_G" . $dir;
+            $templ{'port'} = $EH{'postfix'}{'PREFIX_PORT_GEN'} . $s . $sf . $st . "_g" . $dir;
             # Put new connection into appropriate ::in or ::out
             # mode equals out -> out, otherwise to in
             if ( $mode eq "out" ) {

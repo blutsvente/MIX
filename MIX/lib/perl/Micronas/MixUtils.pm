@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.6 $                                             |
+# | Revision:   $Revision: 1.7 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/19 16:28:00 $                                   |
+# | Date:       $Date: 2003/02/20 15:07:13 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.6 2003/02/19 16:28:00 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.7 2003/02/20 15:07:13 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,11 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.7  2003/02/20 15:07:13  wig
+# | Fixed: port signal assignment direction bus
+# | Capitalization (folding is still missing)
+# | Added ::arch column and created output
+# |
 # | Revision 1.6  2003/02/19 16:28:00  wig
 # | Added generics.
 # | Renamed generated objects
@@ -507,17 +512,21 @@ $ex = undef; # Container for OLE server
 		    POSTFIX_PORT_OUT	_o
 		    POSTFIX_PORT_IN	_i
 		    POSTFIX_PORT_IO	_io
+		    PREFIX_PORT_GEN	p_mix_
 		    POSTFIX_GENERIC	_g
 		    POSTFIX_SIGNAL	_s
 		    POSTFIX_CONSTANT	_c
 		    POSTFIX_PARAMETER	_p
 		    PREFIX_INSTANCE	i_
-		    POSTFIX_ARCH	-a
-		    POSTFIX_ENTY	-e
-		    POSTFIX_CONF	_conf-c
-		    PREFIX_CONST	MIX_CONST_
-		    PREFIX_GENERIC	MIX_GENERIC_
-		    PREFIX_PARAMETER	MIX_PARAMETER_
+		    POSTFIX_ARCH	%EMPTY%
+		    POSTFILE_ARCH	-a
+		    POSTFIX_ENTY	%EMPTY%
+		    POSTFILE_ENTY	-e
+		    POSTFIX_CONF	%EMPTY%
+		    POSTFILE_CONF	-c
+		    PREFIX_CONST	mix_const_
+		    PREFIX_GENERIC	mix_generic_
+		    PREFIX_PARAMETER	mix_parameter_
 	    )
 	    # POSTFIX_ARCH _struct-a
 	    # POSTFIX_ENTY _struct-e
@@ -578,14 +587,15 @@ $ex = undef; # Container for OLE server
 	    '::inst'		=> [ qw(	0	0	1	W_NO_INST	5 )],
 	    '::lang'		=> [ qw(	1	0	0	VHDL	7 )],
 	    '::entity'		=> [ qw(	1	0	1	W_NO_ENTITY	8 )],
-	    "::config"	=> [ qw(	1	0	1	W_NO_CONFIG	9 )],
-	    "::comment"	=> [ qw(	1	0	2	%EMPTY%	10 )],
+	    '::arch'		=> [ qw(	1	0	0	RTL			9 )],
+	    "::config"	=> [ qw(	1	0	1	W_NO_CONFIG	10 )],
+	    "::comment"	=> [ qw(	1	0	2	%EMPTY%	11 )],
 	    "::shortname"	=> [ qw(	0	0	0	%EMPTY%	6 )],
 	    "::default"	=> [ qw(	1	1	0	%NULL%	0 )],
 	    "::hierachy"	=> [ qw(	1	0	0	%NULL%	0 )],
 	    "::debug"	=> [ qw(	1	0	0	%NULL%	0 )],
 	    '::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
-	    'nr'		=> 11,  # Number of next field to print
+	    'nr'		=> 12,  # Number of next field to print
 	},
     },
 
@@ -625,6 +635,7 @@ $ex = undef; # Container for OLE server
 	    "%EMPTY%"	=> "",
 	    "%NULL%"	=> "0",
 	    "%TAB%"	=> "\t",
+	    "%IOCR%"	=> "\n",
 	    "%SIGNAL%"	=> "std_ulogic",
 	    "%BUS_TYPE"	=> "std_ulogic_vector",
 	    "%DEFAULT_MODE%" => "S",
@@ -635,10 +646,10 @@ $ex = undef; # Container for OLE server
 	    "%UNDEF_3%"	=> "ERROR_UNDEF_3",	#should be 'undef',  #For debugging??
 	    "%UNDEF_4%"	=> "ERROR_UNDEF_4",	#should be 'undef',  #For debugging??
 	    "%TBD%"	=> "W_TO_BE_DEFINED",
-	    "%HIGH%"	=> "MIX__LOGIC1",  # VHDL does not like leading/trailing __
-	    "%LOW%"	=> "MIX__LOGIC0",  # dito.
-	    "%HIGH_BUS%"	=> "MIX__LOGIC1_BUS", # dito.
-	    "%LOW_BUS%"	=> "MIX__LOGIC0_BUS", # dito.
+	    "%HIGH%"	=> lc("MIX_LOGIC1"),  # VHDL does not like leading/trailing __
+	    "%LOW%"	=> lc("MIX_LOGIC0"),  # dito.
+	    "%HIGH_BUS%"	=> lc("MIX_LOGIC1_BUS"), # dito.
+	    "%LOW_BUS%"	=> lc("MIX_LOGIC0_BUS"), # dito.
 	    "%CONST%"		=> "__CONST__", # Meta instance, used to apply constant values
 	    "%TOP%"		=> "__TOP__", # Meta instance, TOP cell
 	    "%PARAMETER%"	=> "__PARAMETER__",	# Meta instance: stores paramter
@@ -1307,18 +1318,20 @@ sub inout2array ($) {
 
 	if ( $i->{'inst'} =~
 	    m,^\s*(__CONST__|%CONST%),o ) {
-	    $s .= $i->{'port'} . ", ";
+	    $s .= $i->{'port'} . ", %IOCR%";
 	} elsif ( defined $i->{'sig_t'} ) {
 	# inst/port($port_f:$port_t) = ($sig_f:$sig_t)
 	    $s .= $i->{'inst'} . "/" . $i->{'port'} . "(" .
 		    $i->{'port_f'} . ":" . $i->{'port_t'} . ") = (" .
-		    $i->{'sig_f'} . ":" . $i->{'sig_t'} . "), "
+		    $i->{'sig_f'} . ":" . $i->{'sig_t'} . "), %IOCR%"
 	} else {
-	    $s .= $i->{'inst'} . "/" . $i->{'port'} . ", ";
+	    $s .= $i->{'inst'} . "/" . $i->{'port'} . ", %IOCR%";
 	}
     }
 
-    $s =~ s/,\s*$//o;
+    $s =~ s/,\s*%IOCR%\s*$//o;
+    # parse_mac already done !!!
+    $s =~ s,%IOCR%,$EH{'macro'}{'%IOCR%'},g;
     
     return $s;
 }
