@@ -1,0 +1,61 @@
+TODOs:
+- Accept %::COL% in :name and ::inst columns
+  early expansion required!
+  wig20030124
+
+- OPEN wires to external
+  wig20030124
+
+- Open files, delay close until EOF processing
+
+- Check if the a object (Workbook) is opened from different path, but with
+  same name?
+  wig20030100
+  
+- Use / as file name seperator, convert to other format ( \ ) on demand (wig20021219)
+
+- Add generator comment line to all output:
+    -- timestamp
+    -- hostname
+    -- timestamp and location of all input data
+    -- arguments
+
+
+- Fold/Condense multiple entries (e.g. comments, ::in, ::out)
+
+- Concatenate busses (e.g. if bits are defined).
+
+- Implement extended range definitions for generator like:
+    $i (1,7,13..15 )
+  requested by sb20030117
+
+- Implement second run parameter $j for generator like:
+    $j (1..17), $i (1,3,5,20), /blablubber/
+    requested by sb20030117
+
+- Defaults for connections:
+    bit -> std_ulogic (done)
+    bus/vector -> std_ulogic_vector (if type empty and low and high defined)
+    generic -> integer
+
+    req. sb20030117
+
+- ::variants: Default eq. "", if -variant VAR select Default + VAR.
+  ::variants := VAR1,VAR2,Default
+  ::variants := ""
+
+- iN_foo N := 1.. number of instances of entity foo.
+
+- separate interconnect sheets for each intermediate hierachy (in addition to flat interconnect sheet) 
+
+
+DONE:
+
+    - Make sure "0" is not going to become "<spc>" (wig20021219)
+    fixed in MixUtils, 20030110
+
+     - Keep already open files open after end
+     impl. 20030113
+
+    - Add signal width for busses before outputing ... (if width is defined for bus and in/out has >none<)
+    fixed in MixParser, wig20030113 
