@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.56 $                                         |
+# | Revision:   $Revision: 1.57 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/08/09 15:48:15 $                              |
+# | Date:       $Date: 2004/08/18 10:45:44 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.56 2004/08/09 15:48:15 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.57 2004/08/18 10:45:44 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.57  2004/08/18 10:45:44  wig
+# | constant handling improved
+# |
 # | Revision 1.56  2004/08/09 15:48:15  wig
 # | another variant of typecasting: ignore std_(u)logic!
 # |
@@ -283,11 +286,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.56 2004/08/09 15:48:15 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.57 2004/08/18 10:45:44 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.56 $';
+my $thisrevision        =      '$Revision: 1.57 $';
 
-# Revision:   $Revision: 1.56 $   
+# Revision:   $Revision: 1.57 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -3015,8 +3018,21 @@ sub inout2array ($;$) {
 	#TODO: make sure sig_t/sig_f and port_t/port_f are defined in pairs!!
 	if ( $i->{'inst'} =~
 	    m,^\s*(__CONST__|%CONST%),o ) {
-            #!wig20040330: TODO: print out "rvalue" instead of "port"?? 
-	    push( @s,  $i->{'port'} . $cast . ", %IOCR%" );
+            #!wig20040330: TODO: print out "rvalue" instead of "port"??
+            #!wig20040817: write back partial asisgnment's, too.
+            if ( defined $i->{'sig_t'} and defined $i->{'sig_f'} ) {
+                my $pf = $i->{'port_f'} || "";
+                my $pt = $i->{'port_t'} || "";
+                my $p = "";
+                if ( $pf ) {
+                    $pt = $pt || 0; # Set to zero!
+                    $p = "(" . $pf . ":" . $pt . ")";
+                }
+                my $s = "=(" . $i->{'sig_f'} . ":" . $i->{'sig_t'} . ")";
+                push( @s,  $i->{'port'} . $cast . $p . $s . ", %IOCR%" );
+            } else {
+                push( @s,  $i->{'port'} . $cast . ", %IOCR%" );
+            }
 	} elsif ( defined $i->{'sig_t'} and $i->{'sig_t'} ne '' ) {
 	# inst/port($port_f:$port_t) = ($sig_f:$sig_t)
 	    if ( defined $i->{'port_t'} and $i->{'port_t'} ne '' ) {

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.45 $                                         |
+# | Revision:   $Revision: 1.46 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/08/09 15:48:14 $                              |
+# | Date:       $Date: 2004/08/18 10:45:45 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.45 2004/08/09 15:48:14 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.46 2004/08/18 10:45:45 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.46  2004/08/18 10:45:45  wig
+# | constant handling improved
+# |
 # | Revision 1.45  2004/08/09 15:48:14  wig
 # | another variant of typecasting: ignore std_(u)logic!
 # |
@@ -241,9 +244,9 @@ sub sig_typecast($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.45 2004/08/09 15:48:14 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.46 2004/08/18 10:45:45 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.45 $';
+my $thisrevision   =      '$Revision: 1.46 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1779,7 +1782,7 @@ sub gen_instmap ($;$$) {
         # Read $hierdb{$inst}{'::typecast'}  -> SIGNAME, TYPECAST, INTNAME
         my ( $orgsig, $tcf, $intsig ) = @{$hierdb{$inst}{'::typecast'}}; 
 	$map = $EH{'macro'}{'%S%'} x 2 . $orgsig . " <= " . $tcf . "( " . $intsig . " ) "
-            . $tcom . "; __I_TYPECAST\n";
+            . "; " . $tcom . " __I_TYPECAST\n";
     } else {
         # Sort map ...
         $map = join( "\n", sort( split ( /\n/, $map ) ) ) . "\n";
@@ -3685,12 +3688,17 @@ sub mix_wr_getconstname ($$) {
     my $cn = $sn . ( $n ? ( "_" . $n . "c" ) : "_c" );
 
     my $nt = $n || "0";
-    
-    if ( exists( $sref->{'::in'}[$nt]{'inst'} ) and
-        $sref->{'::in'}[$nt]{'inst'} =~ m/(__|%)BUS(__|%)/io ) {
+
+    #Caveat: will only work is the constant has only >one< %BUS% reference!!
+    #    and this reference has to be first!
+    if ( exists( $sref->{'::in'}[0]{'inst'} ) and
+         exists( $sref->{'::out'}[$nt] ) and
+        $sref->{'::out'}[$nt]{'inst'} =~ m/(__|%)CONST(__|%)/io and
+        $sref->{'::in'}[0]{'inst'} =~ m/(__|%)BUS(__|%)/io ) {
             $busref = 1;
-            $cn = $sn;
-            $sn = $sref->{'::in'}[$nt]{'port'} || "__W_UNKNOWN_CONST_BUS";
+            $cn = $sn . ( $n ? ( "_" . $n . "c" ) : "" ); # Signalname taken from ::in
+                # constant name as defined or attached a _Nc if N > 0 
+            $sn = $sref->{'::in'}[0]{'port'} || "__W_UNKNOWN_CONST_BUS";
             if ( $cn eq $sn ) { $cn = $sn . ( $n ? ( "_" . $n . "c" ) : "_c" ); }
     }        
 
