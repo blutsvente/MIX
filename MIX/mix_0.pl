@@ -16,12 +16,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.31 2004/06/16 08:17:14 wig Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.32 2004/06/16 08:36:45 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.31 $                                      |
-# | Mod.Date     : $Date: 2004/06/16 08:17:14 $                           |
+# | Version      : $Revision: 1.32 $                                      |
+# | Mod.Date     : $Date: 2004/06/16 08:36:45 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -36,8 +36,8 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
-# | Revision 1.31  2004/06/16 08:17:14  wig
-# | Added new perl starter
+# | Revision 1.32  2004/06/16 08:36:45  wig
+# | Removed comments.
 # |
 # | Revision 1.30  2004/04/14 11:08:55  wig
 # | minor code clearing
@@ -161,36 +161,7 @@ use Pod::Text;
 # use diagnostics; # -> will be set by -debug option
 # use English;       # -> not need this, just consumes performance
 
-=head 4 old 
-
-use vars qw($pgm $base $pgmpath $dir);
-
-$dir = "";
-($^O=~/Win32/) ? ($dir=getcwd())=~s,/,\\,g : ($dir=getcwd());
-
-# Set library search path to:
-#   \PATH\PA\prg
-#    use lib \PATH\PA\lib\perl
-#    use lib \PATH\lib\perl
-#    use lib `cwd`\lib\perl
-#    use lib `cwd`..\lib\perl
-# ...
-BEGIN{
-    ($^O =~ /Win32/io ) ? ($dir=getcwd())=~s,/,\\,g : ($dir=getcwd());    
-
-    ($pgm=$0) =~s;^.*(/|\\);;g;
-    if ( $0 =~ m,[/\\],o ) { #$0 has path ...
-        ($base=$0) =~s;^(.*)[/\\]\w+[/\\][\w\.]+$;$1;g;
-        ($pgmpath=$0) =~ s;^(.*)[/\\][\w\.]+$;$1;g;
-    } else {
-        ( $base = $dir ) =~ s,^(.*)[/\\][\w\.]+$,$1,g;
-        $pgmpath = $dir;
-    }
-}
-
-=cut
-
-use Findbin;
+use FindBin;
 
 use lib "$FindBin::Bin/..";
 use lib "$FindBin::Bin/../lib/perl";
@@ -198,13 +169,6 @@ use lib "$FindBin::Bin";
 use lib "$FindBin::Bin/lib/perl";
 use lib getcwd() . "/lib/perl";
 use lib getcwd() . "/../lib/perl";
-# use lib "$base/";
-# use lib "$base/lib/perl";
-# use lib "$pgmpath/";
-# use lib "$pgmpath/lib/perl";
-# use lib "$dir/lib/perl";
-# use lib "$dir/../lib/perl";
-#TODO: Which "use lib path" if $0 was found in PATH?
 
 use Log::Agent;
 use Log::Agent::Priorities qw(:LEVELS);
@@ -227,7 +191,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.31 $'; # RCS Id
+$::VERSION = '$Revision: 1.32 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 logconfig(
