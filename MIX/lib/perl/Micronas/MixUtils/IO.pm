@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.16 $                                          |
+# | Revision:   $Revision: 1.17 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/06/29 09:13:37 $                              |
+# | Date:       $Date: 2004/08/02 07:16:02 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.17  2004/08/02 07:16:02  wig
+# | Handle empty sheets ...
+# |
 # | Revision 1.16  2004/06/29 09:13:37  wig
 # | minor fiexes /test mode
 # |
@@ -149,11 +152,11 @@ sub useOoolib ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.16 2004/06/29 09:13:37 wig Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.17 2004/08/02 07:16:02 wig Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.16 $';
+my $thisrevision    =      '$Revision: 1.17 $';
 
-# Revision:   $Revision: 1.16 $
+# Revision:   $Revision: 1.17 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -696,10 +699,18 @@ sub open_xls($$$){
 	    @line = ();
         }
 	#!wig20031218: take away trainling empty lines ...
-	while( not join( "", @{$sheet[-1]} ) ) {
-	    pop( @sheet );
+	if ( scalar( @sheet ) > 0 ) {
+	    while( not join( "", @{$sheet[-1]} ) ) {
+		pop( @sheet );
+	    }
 	}
-	push(@all, [@sheet]);
+	if ( scalar( @sheet ) > 0 ) {
+	    push(@all, [@sheet]);
+	} else {
+	    logwarn( "Sheet $isheet->{Name} holds no content (__FILE__/__LINE__)" );
+	    $EH{'sum'}{'warnings'}++;
+	}
+
 	@sheet = ();
     }
 
