@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.49 $                                         |
+# | Revision:   $Revision: 1.50 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/04/22 14:32:50 $                              |
+# | Date:       $Date: 2004/06/14 06:38:57 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.49 2004/04/22 14:32:50 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.50 2004/06/14 06:38:57 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.50  2004/06/14 06:38:57  wig
+# | Minor beautification in reg-exp
+# |
 # | Revision 1.49  2004/04/22 14:32:50  wig
 # | fixed minor problems with verify mode
 # |
@@ -265,11 +268,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.49 2004/04/22 14:32:50 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.50 2004/06/14 06:38:57 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.49 $';
+my $thisrevision        =      '$Revision: 1.50 $';
 
-# Revision:   $Revision: 1.49 $   
+# Revision:   $Revision: 1.50 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2107,7 +2110,7 @@ $c ------------- CHANGES START HERE ------------- --
 	} else {
 	    logtrc( "INFO:4", "Info: file $fn in sync with template" );
             $EH{'sum'}{'verify_ok'}++; # Count matches ..
-	    if ( $EH{'output'}{'delta'} =~ m,remove,io ) {
+	    if ( $EH{'output'}{'delta'} =~ m,\bremove\b,io ) {
 		# Remove empty diff files, close before remove ...
 		# if ( $close_flag ) {
                     unless ( $fht->close ) {
