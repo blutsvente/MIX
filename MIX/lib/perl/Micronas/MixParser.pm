@@ -1,4 +1,4 @@
-# -*- perl -*---------------------------------------------------------------
+# -*- perl -*--------------------------------------------------------------
 #
 # +-----------------------------------------------------------------------+
 # |                                                                       |
@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.47 $                                         |
-# | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/01/26 14:01:43 $                              |
+# | Revision:   $Revision: 1.48 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2005/03/22 10:00:16 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.47 2005/01/26 14:01:43 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.48 2005/03/22 10:00:16 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -30,16 +30,19 @@
 #
 
 # +-----------------------------------------------------------------------+
-# |
-# | Changes:
+# |                                                                       |
+# | Changes:                                                              |
 # | $Log: MixParser.pm,v $
-# | Revision 1.47  2005/01/26 14:01:43  wig
-# | changed %OPEN% and -autoquote for cvs output
-# |
-# | Revision 1.46  2004/11/10 14:59:10  wig
-# | usage of text a port width ...
-# |
-# | Revision 1.44  2004/08/09 15:48:16  wig
+# | Revision 1.48  2005/03/22 10:00:16  wig
+# | beta version i2c
+# |                                                |
+# | Revision 1.47  2005/01/26 14:01:43  wig                               |
+# | changed %OPEN% and -autoquote for cvs output                          |
+# |                                                                       |
+# | Revision 1.46  2004/11/10 14:59:10  wig                               |
+# | usage of text a port width ...                                        |
+# |                                                                       |
+# | Revision 1.44  2004/08/09 15:48:16  wig                               |
 # | another variant of typecasting: ignore std_(u)logic!
 # |
 # | Revision 1.42  2004/08/05 15:21:32  wig
@@ -206,8 +209,9 @@ require Exporter;
   @EXPORT_OK = qw(
       %hierdb
       %conndb
-    );         # symbols to export on request
-  # %EXPORT_TAGS = tag => [...];
+    ); # symbols to export on request
+
+# %EXPORT_TAGS = tag => [...];
 
 # @Micronas::MixParser::ISA=qw(Exporter);
 # @Micronas::MixParser::EXPORT=qw(
@@ -229,8 +233,6 @@ use lib "$main::pgmpath/";
 use lib "$main::pgmpath/lib/perl";
 use lib "$main::dir/lib/perl";
 use lib "$main::dir/../lib/perl";
-
-# use lib 'h:\work\x2v\lib\perl'; #TODO Rewrite that !!!!
 
 =cut
 
@@ -273,16 +275,14 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.47 2005/01/26 14:01:43 wig Exp $';
-my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.47 $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.48 2005/03/22 10:00:16 wig Exp $';
+my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
+my $thisrevision =	'$Revision: 1.48 $';
 
-# | Revision:   $Revision: 1.47 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
-( $VERSION = $thisrevision ) =~ s,.*Revision:\s*,,; #TODO: Is that a good idea?
-
+( $VERSION = $thisrevision ) =~ s,.*Revision:\s*,,;
 
 ####################################################################
 ## parse_conn_macros

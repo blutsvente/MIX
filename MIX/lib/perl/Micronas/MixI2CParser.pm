@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / I2CParser                                |
 # | Modules:    $RCSfile: MixI2CParser.pm,v $                             |
-# | Revision:   $Revision: 1.10 $                                          |
-# | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/01/26 14:01:41 $                              |
+# | Revision:   $Revision: 1.11 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2005/03/22 10:00:16 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/Attic/MixI2CParser.pm,v 1.10 2005/01/26 14:01:41 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/Attic/MixI2CParser.pm,v 1.11 2005/03/22 10:00:16 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
@@ -60,11 +60,12 @@ use lib "$main::dir/../lib/perl";
 use Log::Agent;
 use Log::Agent::Priorities qw( :LEVELS);
 
-use Micronas::MixUtils qw( %EH);
-use Micronas::MixParser qw( %hierdb %conndb add_inst add_conn);
+use Micronas::MixUtils qw( %EH );
+use Micronas::MixParser qw( %hierdb %conndb add_inst add_conn );
 use Micronas::MixChecker;
 
-####################################################################
+#################################::b
+###################################
 ## Prototypes:
 ####################################################################
 
@@ -78,9 +79,9 @@ sub parse_i2c_init($);
 # RCS Id, to be put into output templates
 #
 
-my $thisid		= 	'$Id: MixI2CParser.pm,v 1.10 2005/01/26 14:01:41 wig Exp $';
+my $thisid		= 	'$Id: MixI2CParser.pm,v 1.11 2005/03/22 10:00:16 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixI2CParser.pm,v $';
-my $thisrevision        =       '$Revision: 1.10 $';
+my $thisrevision        =       '$Revision: 1.11 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -97,7 +98,7 @@ $thisrevision =~ s,^\$,,go;
 
     parse_i2c_init ($)
 
-    Go through data provided by IO sheet and generate instances and connections
+    Go through data provided by I2C sheet and generate instances and connections
     as defined there. Please see the MIX documentation for a description of the
     format. Several columns are required.
 
@@ -115,17 +116,17 @@ sub parse_i2c_init($) {
 
         next if ( $i->{'::ign'} =~ m,^\s*(#|\\),); # Skip comments, just in case they sneak in
 
+		# Fill up input field
         for my $j ( keys %$ehr) {
-	    next unless ( $j =~ m/^::/ );
-	    if ( not defined( $i->{$j} )) {
-		next if( $ehr->{$j}[2] eq 0);
-		$i->{$j} = $ehr->{$j}[3];
-	    }
-	    elsif( $ehr->{$i}[2] && $i->{$j} eq "") {
-		$i->{$j} = $ehr->{$i}[3]; # Set to DEFAULT Value
-	    }
-	}
-	add_interface($i);
+	    	next unless ( $j =~ m/^::/ );
+	    	if ( not defined( $i->{$j} )) {
+				next if( $ehr->{$j}[2] eq 0);
+				$i->{$j} = $ehr->{$j}[3];
+	    	} elsif( $ehr->{$i}[2] && $i->{$j} eq "") {
+				$i->{$j} = $ehr->{$i}[3]; # Set to DEFAULT Value
+	    	}
+		}
+		add_interface($i);
     }
     return 0;
 }
@@ -151,10 +152,13 @@ sub add_interface(%) {
     my $type;
     my $transceiver;
 
-    # create a new instance in hierdb, create Interface first
+    # create a new instance in hierdb, create Interface first -> parent
     my $parent = $in->{'::interface'};
-    $in->{'::inst'} = $parent;
-    $in->{'::entity'} = $EH{'macro'}{'%IIC_IF%'} . $parent;
+    my $interface = $parent;
+    #ORG: $in->{'::inst'} = $parent;
+    $in->{'::inst'} = $EH{'i2c_cell'}{'name'}; # Defines name for instance!
+    #ORG: $in->{'::entity'} = $EH{'macro'}{'%IIC_IF%'} . $parent;
+	$in->{'::entity'} = '%PREFIX_IIC_GEN%' . $in->{'::interface'}; #TODO: make more flexible
     $parent = add_inst( %$in);
 
     # only digits in ::sub? ->create new Register-block
@@ -162,40 +166,36 @@ sub add_interface(%) {
         logwarn( "WARNING: i2c sheet got bad ::sub entry $in->{'::sub'}, only digits allowed!" );
         $EH{'sum'}{'warnings'}++;
         return 1;
-    }
-    else {
-	if( $in->{'::dir'}=~ m/rw/i) {
-            $name = $EH{'macro'}{'%RWREG%'};
+    } else {
+	  if( $in->{'::dir'}=~ m/rw/i) {
+        $name = $EH{'macro'}{'%RWREG%'};
 	    $type = "rdwr";
-	}
-	elsif( $in->{'::dir'}=~ m/w/i ) {
-            $name = $EH{'macro'}{'%WREG%'};
+	  } elsif( $in->{'::dir'}=~ m/w/i ) {
+        $name = $EH{'macro'}{'%WREG%'};
 	    $type = "wr";
-	}
-	elsif( $in->{'::dir'}=~ m/r/i) {
-            $name = $EH{'macro'}{'%RREG%'};
+	  } elsif( $in->{'::dir'}=~ m/r/i) {
+        $name = $EH{'macro'}{'%RREG%'};
 	    $type = "rd";
-	}
-	else {
+	  } else {
 	    logwarn("WARNING: i2c sheet got bad ::dir entry <$in->{'::dir'}>, incorrect direction!");
 	    $EH{'sum'}{'warnings'}++;
 	    return 1;
-	}
-	$name = $name . sprintf( "%lx", $in->{'::sub'});
+	  }
+	  $name = $name . sprintf( "%lx", $in->{'::sub'}); # Print HEX extension ...
 
-	$in->{'::inst'} = $name;
-	$in->{'::entity'} = "iic_" . $EH{'i2c_cell'}{'type'} . "_reg_" . $type;
-	$in->{'::parent'} = $parent;
-	$name = add_inst(%$in);
+	  $in->{'::inst'} = $name;
+	  $in->{'::entity'} = "iic_" . $EH{'i2c_cell'}{'type'} . "_reg_" . $type; #TODO: flex
+	  $in->{'::parent'} = $parent;
+	  $name = add_inst(%$in);
 
-	connect_subreg($in, $name, $parent);
+	  connect_subreg($in, $name, $parent);
     }
 
     # create transceiver unit
-    $transceiver = create_transceiver($in, $parent);
+    $transceiver = create_transceiver($in, $parent); # Change call
 
     # create sync unit
-    create_sync_block($in, $name, $parent);
+    create_sync_block($in, $name, $parent); # Change interface -> parent!
 
     # create and connect "or"-block
     create_or_block($in, $name, $parent, $transceiver);
@@ -230,69 +230,68 @@ sub create_sync_block($$) {
     if( $in->{'::spec'}!~ m/nto/i) {
 
       # Transfer-mode specified, creating new sync block
-        my $instance = $EH{'macro'}{'%IIC_SYNC%'} . $parent . "_" . $in->{'::spec'};
-	$in->{'::inst'} = $instance;
-	$in->{'::entity'} = $EH{'i2c_cell'}{'%IIC_SYNC%'};
-	$in->{'::parent'} = $parent;
-        $instance = add_inst(%$in);
+      my $instance = $EH{'macro'}{'%IIC_SYNC%'} . $parent . "_" . $in->{'::spec'};
+	  $in->{'::inst'} = $instance;
+	  $in->{'::entity'} = $EH{'i2c_cell'}{'%IIC_SYNC%'};
+	  $in->{'::parent'} = $parent;
+      $instance = add_inst(%$in);
 
 
 #==> Connections
 
-	    # connect to clock domain
-	    %conns = ( '::name' => $in->{'::clock'},
-		       '::in' => "$instance/clk, $parent/" . $in->{'::clock'}, );
- 	    add_conn(%conns);
+	  # connect to clock domain
+	  %conns = ( '::name' => $in->{'::clock'},
+		         '::in' => "$instance/clk, $parent/" . $in->{'::clock'}, );
+ 	  add_conn(%conns);
 
-	    # connect asres/sync => ?
-	    %conns = ( '::name' => $in->{'::reset'},
-		       '::in' => "$instance/asres, $parent/" . $in->{'::reset'}, );
-            add_conn(%conns);
+	  # connect asres/sync => ?
+	  %conns = ( '::name' => $in->{'::reset'},
+		         '::in' => "$instance/asres, $parent/" . $in->{'::reset'}, );
+      add_conn(%conns);
 
-	    # set_fast_active_i/sync => tf_en_wrFE
-	    %conns = ( '::name' => "tf_en_wrFE",
-	               '::in' => $instance . "/set_fast_active_i",
-                       '::out' => $parent . "/tf_en_wr_FE_o", );
-            add_conn(%conns);
+	  # set_fast_active_i/sync => tf_en_wrFE
+	  %conns = ( '::name' => "tf_en_wrFE",
+	             '::in' => $instance . "/set_fast_active_i",
+                 '::out' => $parent . "/tf_en_wr_FE_o", );
+      add_conn(%conns);
 
-	    # set_active_i/sync => tf_en_wrFF
-	    %conns = ( '::name' => "tf_en_wrFF",
-  	               '::in' => $instance . "/set_active_i",
-	               '::out' => $parent . "/tf_en_wr_FF_o", );
-	    add_conn(%conns);
+	  # set_active_i/sync => tf_en_wrFF
+	  %conns = ( '::name' => "tf_en_wrFF",
+  	             '::in' => $instance . "/set_active_i",
+	             '::out' => $parent . "/tf_en_wr_FF_o", );
+	  add_conn(%conns);
 
-	    # select_fast_i/sync => logic_1
-	    %conns = ( '::name' => "%HIGH%", 
-		       '::in' => $instance . "/select_fast_i", );
-	    add_conn(%conns);
+	  # select_fast_i/sync => logic_1
+	  %conns = ( '::name' => "%HIGH%", 
+		         '::in' => $instance . "/select_fast_i", );
+	  add_conn(%conns);
 
-	    # connect vsync_i/sync => <::spec>_i
-	    %conns = ( '::name' => $in->{'::spec'} . "_i",
-		       '::in' => "$instance/vsync_i, $parent/" . $in->{'::spec'} . "_i", );
-	    add_conn(%conns);
+	  # connect vsync_i/sync => <::spec>_i
+	  %conns = ( '::name' => $in->{'::spec'} . "_i",
+		         '::in' => "$instance/vsync_i, $parent/" . $in->{'::spec'} . "_i", );
+	  add_conn(%conns);
 
-	    # select_i/sync => logic_1
-	    %conns = ( '::name' => "%HIGH%",
-		       '::in' => $instance . "/select_i", );
-	    add_conn(%conns);
+	  # select_i/sync => logic_1
+	  %conns = ( '::name' => "%HIGH%",
+		         '::in' => $instance . "/select_i", );
+	  add_conn(%conns);
 
-	    # load_shadow_o/sync -> takeover -> load_shadow_i/reg
-	    %conns = ( '::name' => "sync_" . $in->{'::spec'},
-		       '::in' => $block . "/load_shadow_i",
-		       '::out' => $instance . "/load_shadow_o", );
-	    add_conn(%conns);
+	  # load_shadow_o/sync -> takeover -> load_shadow_i/reg
+	  %conns = ( '::name' => "sync_" . $in->{'::spec'},
+		         '::in' => $block . "/load_shadow_i",
+		         '::out' => $instance . "/load_shadow_o", );
+	  add_conn(%conns);
 
-	    # connect vxstat_o
-	    %conns = ( '::name' => "stat_" . $in->{'::spec'} . "_" . $parent . "_iic_o",
-		       '::out' => "$instance/vxstat_o, $parent/stat_"
-		       . $in->{'::spec'} . "_" . $parent . "_iic_o" , );
-	    add_conn(%conns);
-    }
-    else {
-          # no Transfer-mode specified, sync block omitted
+	  # connect vxstat_o
+	  %conns = ( '::name' => "stat_" . $in->{'::spec'} . "_" . $parent . "%POSTFIX_IIC_OUT%" , # "_iic_o"
+		         '::out' => "$instance/vxstat_o, $parent/stat_"
+		        . $in->{'::spec'} . "_" . $parent . "%POSTFIX_IIC_OUT%" ); # -> _iic_o
+	  add_conn(%conns);
+    } else {
+        # no Transfer-mode specified, sync block omitted
 	    # load_shadow_i/reg -> logic_1;
 	    %conns = ( '::name' => "%HIGH%", 
-		       '::in' => $block . "/load_shadow_i", );
+		    '::in' => $block . "/load_shadow_i", );
 	    add_conn(%conns);
     }
 
@@ -329,44 +328,44 @@ sub create_transceiver($$) {
 
 #==> Generics
 
-        # transceiver/sr_g => 0 (generic value)
-        %conns = ( '::name' => $instance . "_sr_g",
+    # transceiver/sr_g => 0 (generic value)
+    %conns = ( '::name' => $instance . "_sr_g",
 		   '::in' => $instance . "/sr_g",
 		   '::out' => "%PARAMETER%/0",
 		   '::mode' => "P",
 		   '::type' => "integer", );
-        add_conn(%conns);
+    add_conn(%conns);
 
 #==> Connections
 
 	# transceiver/clk => clk_iic
 	%conns = ( '::name' => "clk_iic",
-		   '::in' => $instance . "/clk", );
+	     	   '::in' => $instance . "/clk", );
 	add_conn(%conns);
 
 	# transceiver/reset => asres_iic
 	%conns = ( '::name' => "asres_iic",
-		   '::in' => $instance . "/reset", );
+		       '::in' => $instance . "/reset", );
 	add_conn(%conns);
 
 	# transceiver/asres => asres_iic
 	%conns = ( '::name' => "asres_iic",
-		   '::in' => $instance . "/asres", );
+		       '::in' => $instance . "/asres", );
 	add_conn(%conns);
 
 	# transceiver/iic_adr_data_i => iic_adr_data_i
 	%conns = ( '::name' => "iic_adr_data_i",
-		   '::in' => "$parent/iic_adr_data_i, $instance/iic_adr_data_i", );
+		       '::in' => "$parent/iic_adr_data_i, $instance/iic_adr_data_i", );
 	add_conn(%conns);
 
 	# transceiver/iic_en_i => iic_en_i
 	%conns = ( '::name' => "iic_en_i",
-		   '::in' => "$parent/iic_en_i, $instance/iic_en_i", );
+		       '::in' => "$parent/iic_en_i, $instance/iic_en_i", );
 	add_conn(%conns);
 
 	# transceiver/test_disbus_i => logic_0
 	%conns = ( '::name' => "%LOW%",
-		   '::in' => $instance . "/test_disbus_i", );
+		       '::in' => $instance . "/test_disbus_i", );
 	add_conn(%conns);
 
 	# transceiver/i2c_ignore_lsd_i => ignore_lsb_i
@@ -381,9 +380,9 @@ sub create_transceiver($$) {
 
 	# transceiver/adr_or_data_o => adr_or_data
 	%conns = ( '::name' => "adr_or_data",
-		   '::out' => $instance . "/adr_or_data_o(15:0)", # std_ulogic_vector(0-15) 
-		   '::low' => "0",
-		   '::high' => "15", );
+		   '::out' => $instance . "/adr_or_data_o", # std_ulogic_vector(0-15) 
+		   '::low' => 0,
+		   '::high' => $EH{'i2c_cell'}{'regwidth'} - 1, );
 	add_conn(%conns);
 
 	# transceiver/check_adr_o => check_adr
@@ -435,7 +434,7 @@ sub connect_subreg($$$) {
     my $instance = shift;
     my $parent = shift;
 
-    my %conns;
+    my %conns = ();
     my $subreg = sprintf("%lx", $in->{'::sub'});
     my $number;
     my $range = 0;
@@ -443,37 +442,37 @@ sub connect_subreg($$$) {
 
 #==> Generics
 
-        # ra_g - Subaddress
-        %conns = ( '::name' => "p_" . $instance . "_ra_g",
-		   '::in' => $instance . "/ra_g",
-		   '::out' => "%PARAMETER%/" . $in->{'::sub'},
-		   '::mode' => "P",
-		   '::type' => "integer", );
-        add_conn(%conns);
+    # ra_g - Subaddress
+    %conns = ( '::name' => "p_" . $instance . "_ra_g",
+	   '::in' => $instance . "/ra_g",
+	   '::out' => "%PARAMETER%/" . $in->{'::sub'},
+	   '::mode' => "P",
+	   '::type' => "integer", );
+    add_conn(%conns);
 
    	# sr_g
 	%conns = ( '::name' => $instance . "",
-		   '::in' => $instance . "/sr_g",
-		   '::out' => "%PARAMETER%/0",
-		   '::mode' => "P",
-		   '::type' => "integer", );
-        add_conn(%conns);
+	   '::in' => $instance . "/sr_g",
+	   '::out' => "%PARAMETER%/0",
+	   '::mode' => "P",
+	   '::type' => "integer", );
+    add_conn(%conns);
 
 	# ais_g
 	%conns = ( '::name' => $instance . "",
-		   '::in' => $instance . "/ais_g",
-		   '::out' => "%PARAMETER%/0",
-		   '::mode' => "P",
-		   '::type' => "integer", );
-        add_conn(%conns);
+	   '::in' => $instance . "/ais_g",
+	   '::out' => "%PARAMETER%/0",
+	   '::mode' => "P",
+	   '::type' => "integer", );
+    add_conn(%conns);
 
-        # hs_g
+    # hs_g
 	%conns = ( '::name' => $instance . "",
-		   '::in' => $instance . "/hs_g",
-		   '::out' => "%PARAMETER%/0",
-		   '::mode' => "P",
-		   '::type' => "integer", );
-        add_conn(%conns);
+	   '::in' => $instance . "/hs_g",
+	   '::out' => "%PARAMETER%/0",
+	   '::mode' => "P",
+	   '::type' => "integer", );
+    add_conn(%conns);
 
 	# sh_g
 	%conns = ( '::name' => $instance . "_sh_g",
@@ -496,7 +495,7 @@ sub connect_subreg($$$) {
 
 	# subreg/clk => clk_iic
 	%conns = ( '::name' => "clk_iic",
-		   '::in' => $instance . "/clk", );
+	    '::in' => $instance . "/clk", );
 	add_conn(%conns);
 
 	# subreg/reset => asres_iic
@@ -525,7 +524,7 @@ sub connect_subreg($$$) {
 	add_conn(%conns);
 
 	# subreg/ais_o => open
-	%conns = ( '::name' => "%OPEN" . $EH{'OPEN_NR'}++ . %",
+	%conns = ( '::name' => "%OPEN_" . $EH{'OPEN_NR'}++ . "%",
 		   '::out' => "$parent/ais_" . $in->{'::interface'} . "_o , $instance/ais_o", );
 	add_conn(%conns);
 
@@ -544,139 +543,176 @@ sub connect_subreg($$$) {
 
 	# subreg/data_to_iic_o => data_reg<hex_subadr>_to_iic
 	%conns = ( '::name' => "data_reg" . $subreg . "_to_iic",
-		   '::in' => "or_$parent"."_block/data_reg$subreg" . "_to_iic_i(15:0)",
-		   '::out' => $instance . "/data_to_iic_o(15:0)",
-		   '::low' => "0",
-		   '::high' => "15", );
+		   '::in' => "or_$parent"."_block/data_reg$subreg" . "_to_iic_i", #!wig: remove (15:0) -> automatic
+		   '::out' => $instance . "/data_to_iic_o", #!wig: remove (15:0) -> automatic
+		   '::low' => 0,
+		   '::high' => $EH{'i2c_cell'}{'regwidth'} - 1, );
 	add_conn(%conns);
 
 #==> userdefined and directions specific connections
 
-    if( $in->{'::dir'}=~ m/r/i) {
-    # add r-specific generics
-
-    # add r-specific connections
-	# subreg/tf_ready_rd_i => open
-	%conns = ( '::name' => "%OPEN" . $EH{'OPEN_NR'}++ . "%",
-		   '::in' => $instance . "/tf_ready_rd_i", );
-	add_conn(%conns);
-
-	# subreg/tf_en_rd_o => open
-	%conns = ( '::name' => "%OPEN" . $EH{'OPEN_NR'}++ . %",
-		   '::out' => $instance . "/tf_en_rd_o", );
-	add_conn(%conns);
-
-	# subreg/data_from_ext_i => 
-	%conns = ( '::name' => "data_$subreg" . "_from_ext",
-		   '::in' => $instance . "/data_from_ext_i(15:0)",
-		   '::low' => "0",
-		   '::high' => "15", );
-	add_conn(%conns);
-
-	# subreg/adr_or_data_i => adr_or_data
-	%conns = ( '::name' => "adr_or_data",
-		   '::in' => $instance . "/adr_or_data_i(8:0)", );
-	add_conn(%conns);
-
-    # connect as read-register
-	my $prefix = $in->{'::block'} . "_" . $in->{'::sub'} . "_iic_i";
-	my $pin;
-        for my $i (sort(keys %$in)) {
-	    if($i=~ m/^::b(:\d+)?$/ && $in->{$i}!~ m/^$/) {
-		$range++;
-	        if($i=~ m/^::b$/) {
-		    $number = 0;
-		}
-		else {
-		    $number= $i;
-		    $number=~ s/^::b://;
-	        }
-		$pin = $in->{$i};
-		$pin =~ s/^.*\(//;
-		$pin =~ s/\)$//;
-		%conns = ( '::name' => "reg_data_in_$subreg",
-			   '::in' => "$parent/$prefix($number)=($number)",
-			   '::out' => $in->{$i} . "=($pin)", );
-		add_conn(%conns);
-	    }
-	}
-    }
-
-    elsif( $in->{'::dir'}=~ m/w/i) {
-    # add w-specific generics
+    if( $in->{'::dir'}=~ m/w/i) { #wig: !!matches "RW", too!!!
+    	# add w-specific generics
         # dor_g - Subaddress
         %conns = ( '::name' => $instance . "_dor_g",
 		   '::in' => $instance . "/dor_g",
 		   '::out' => "%PARAMETER%/0",
 		   '::mode' => "P",
 		   '::type' => "integer", );
-	add_conn(%conns);
+		add_conn(%conns);
 
-    # add w-specific connections
-	# subreg/tf_ready_wr_i => logic_1
-	%conns = ( '::name' => "%HIGH%",
+    	# add w-specific connections
+		# subreg/tf_ready_wr_i => logic_1
+		%conns = ( '::name' => "%HIGH%",
 		   '::in' => $instance . "/tf_ready_wr_i", );
-	add_conn(%conns);
-	# subreg/tf_en_wr_o => open
-	%conns = ( '::name' => "%OPEN" . $EH{'OPEN_NR'}++ . %",
+		add_conn(%conns);
+		# subreg/tf_en_wr_o => open
+		%conns = ( '::name' => "%OPEN_" . $EH{'OPEN_NR'}++ . "%",
 		   '::out' => $instance . "/tf_en_wr_o", );
-	add_conn(%conns);
+		add_conn(%conns);
         # subreg/en_load_data_wr_i => en_load_data_wr
         %conns = ( '::name' => "en_load_data_wr",
 		   '::in' => $instance . "/en_load_data_wr_i", );
-	add_conn(%conns);
-
-	# subreg/reg_data_out_o => reg_data_out_<hex_subadr>
-	%conns = ( '::name' => "reg_data_out_" . $subreg,
-		   '::type' => "std_ulogic_vector",
-		   '::out' => $instance . "/reg_data_out_o(15:0)",
-		   '::low' => "0",
-		   '::high' => "15", );
-	add_conn(%conns);
-
-	# subreg/adr_or_data_i => adr_or_data
-	%conns = ( '::name' => "adr_or_data",
-		   '::in' => $instance . "/adr_or_data_i(15:0)", );
-	add_conn(%conns);
-
-    # connect as write-register
-	my $prefix = $in->{'::block'} . "_" . $in->{'::sub'} . "_iic_o";
-	my $pin;
-        for my $i (sort(keys %$in)) {
-	    if($i=~ m/^::b(:\d+)?$/ && defined $in->{$i} && $in->{$i}!~ m/^$/) {
-		$range++;
-	        if($i=~ m/^::b$/) {
-		    $number = 0;
-		}
-		else {
-		    $number= $i;
-		    $number=~ s/^::b://;
-	        }
-		$pin = $in->{$i};
-		$pin =~ s/^.*\(//;
-		$pin =~ s/\)$//;
-		%conns = ( '::name' => "reg_data_out_$subreg",
-			   '::in' => $in->{$i} . "=($pin)",
-			   '::out' => "$parent/$prefix($number)=($number)",
-			   '::comment' => "in:". $in->{$i} ."=($pin); out: $parent/$prefix($number); ",);
 		add_conn(%conns);
-	    }
-	}
-    }
-    elsif( $in->{'::dir'}=~ m/rw/i) {
 
-	%conns = ( '::name' => "reg_data_in_$subreg",
+		# subreg/reg_data_out_o => reg_data_out_<hex_subadr>
+		%conns = ( '::name' => "reg_data_out_" . $subreg,
+		   '::type' => "std_ulogic_vector",
+		   '::out' => $instance . "/reg_data_out_o", #!wig: remove (15:0)
+		   '::low' => 0,
+		   '::high' => $EH{'i2c_cell'}{'regwidth'} - 1, );
+		add_conn(%conns);
+
+		# subreg/adr_or_data_i => adr_or_data
+		%conns = ( '::name' => "adr_or_data",
+		   '::in' => $instance . "/adr_or_data_i", #!wig: remove??? (15:0)
+		   '::high' => $EH{'i2c_cell'}{'regwidth'} - 1,
+		   '::low'  => 0,
+		   );
+		add_conn(%conns);
+
+    	# connect as write-register
+		# my $prefix = $in->{'::block'} . "_" . $in->{'::sub'} . "%POSTFIX_IIC_OUT%"; # _iic_o;
+		my $prefix = "reg_data_out_o"; #TODO_ flex
+		my $pin;
+		my $blocksig;
+    	for my $i (sort(keys %$in)) {
+			if($i=~ m/^::b(:\d+)?$/ && defined $in->{$i} && $in->{$i}!~ m/^$/) {
+				$range++;
+	        	if($i=~ m/^::b(:(\d+))?$/) {
+		    		$number = $2 || 0;
+				}
+
+	        	# Accept   SIGNAL(N) or SIGNAL.N
+	        	if ( $in->{$i} =~ m/(.+)\((.+)\)/ or $in->{$i} =~ m/(.+)\.(.+)/ ) {
+	        		$pin = "($2)=";
+	        		$blocksig = $1;
+	        	} else {
+	        		$blocksig = $in->{$i};
+	        		$pin = "=";
+	        	}
+	        	if ( $EH{'i2c_cell'}{'mode'} =~ m/\blcport\b/io ) {
+	        		$blocksig = lc( $blocksig );
+	        	}
+	        	$blocksig =~ s/^\s+//;
+	        	$blocksig =~ s/\s+$//;
+	        	#TODO: ERROR CHECKING (typos, illegal chars, ...)
+				#OLD: $pin = $in->{$i};
+				#OLD: $pin =~ s/^.*\(//;
+				#OLD: $pin =~ s/\)$//;
+				# Create register to block wire:
+				my $linkn = $EH{'i2c_cell'}{'regwidth'} - $number - 1;
+				%conns = ( '::name' => "reg_data_out_$subreg",
+			   		'::out' => $parent . "/" . $blocksig . $pin . "(" . $linkn . ")," .
+			              $instance . "/$prefix($linkn)=($linkn)",
+			   		'::comment' => "in:" . $in->{$i} ."$pin; in: $parent/$prefix($number); ",
+			  	);
+				add_conn(%conns);
+	  		}
+    	}
+	} elsif( $in->{'::dir'}=~ m/r/i) {
+    	# add r-specific generics
+
+    	# add r-specific connections
+		# subreg/tf_ready_rd_i => open
+		%conns = ( '::name' => "%OPEN_" . $EH{'OPEN_NR'}++ . "%",
+		       '::in' => $instance . "/tf_ready_rd_i", );
+		add_conn(%conns);
+
+		# subreg/tf_en_rd_o => open
+		%conns = ( '::name' => "%OPEN_" . $EH{'OPEN_NR'}++ . "%",
+		       '::out' => $instance . "/tf_en_rd_o", );
+		add_conn(%conns);
+
+		# subreg/data_from_ext_i => 
+		%conns = ( '::name' => "data_$subreg" . "_from_ext",
+		   '::in' => $instance . "/data_from_ext_i", #!wig: remove (15:0) -> automatic
+		   '::low' => 0,
+		   '::high' => $EH{'i2c_cell'}{'regwidth'} - 1, );
+		add_conn(%conns);
+
+		# subreg/adr_or_data_i => adr_or_data
+		%conns = ( '::name' => "adr_or_data",
+		   '::in' => $instance . "/adr_or_data_i",
+		   '::low' => 0,
+		   '::high' => $EH{'i2c_cell'}{'regwidth'} - 1, #!wig: addrwidth!!!
+		  );
+		add_conn(%conns);
+
+    	# connect as read-register
+		#ORG: my $prefix = $in->{'::block'} . "_" . $in->{'::sub'} . "%POSTFIX_IIC_IN%"; # _iic_i
+		my $prefix = "data_from_ext_i"; #TODO: flex
+		my $pin;
+		my $blocksig;
+    	for my $i (sort(keys %$in)) {
+        	#TODO: check this vs. the _max_multi_ number of columns
+	    	if ($i=~ m/^::b(:(\d+))?$/ && $in->{$i}!~ m/^$/) {
+				$range++;
+				# MIX ::b column number:
+	        	if($i=~ m/^::b(:(\d+))?$/) {
+		    		$number = $2 || "0" ;
+				}
+
+	        	# Accept   SIGNAL(N) or SIGNAL.N
+	        	if ( $in->{$i} =~ m/(.+)\((.+)\)/ or $in->{$i} =~ m/(.+)\.(.+)/ ) {
+	        		$pin = "($2)=";
+	        		$blocksig = $1;
+	        	} else {
+	        		$blocksig = $in->{$i};
+	        		$pin = "=";
+	        	}
+	        	if ( $EH{'i2c_cell'}{'mode'} =~ m/\blcport\b/io ) {
+	        		$blocksig = lc( $blocksig );
+	        	}
+	        	$blocksig =~ s/^\s+//;
+	        	$blocksig =~ s/\s+$//;
+	        	#TODO: ERROR CHECKING (typos, illegal chars, ...)
+	        	#OLD: $pin = $in->{$i};
+				#OLD: $pin =~ s/^.*\(//;
+				#OLD: $pin =~ s/\)$//;
+				# Create register to block wire:
+				my $linkn = $EH{'i2c_cell'}{'regwidth'} - $number - 1;
+				%conns = ( '::name' => "reg_data_in_$subreg",
+			           '::in' => "$instance/$prefix($linkn)=($linkn)," .
+			   		   $parent . "/" . $blocksig . $pin . "(" . $linkn . ")",
+				);
+				add_conn(%conns);
+	    	}
+		}
+    } elsif ( $in->{'::dir'}=~ m/rw/i) {
+		#TODO: 
+		%conns = ( '::name' => "reg_data_in_$subreg",
 		   '::in' => "$instance/reg_data_in_$subreg", );
-	add_conn(%conns);
+		add_conn(%conns);
 
-	%conns = ( '::name' => "reg_data_out_$subreg",
+		%conns = ( '::name' => "reg_data_out_$subreg",
 		   '::out' => "$instance/reg_data_out_$subreg", );
-	add_conn(%conns);
+		add_conn(%conns);
 
-    # connect as read-write-register
-	logwarn("WARNING: I2C RW-Registers not implemented yet!");
+    	# connect as read-write-register
+		logwarn("WARNING: I2C RW-Registers not implemented yet!");
 =head1
-	my $prefix = $in->{'::block'} . "_" . $in->{'::sub'} . "_iic_io";
+		my $prefix = $in->{'::block'} . "_" . $in->{'::sub'} . "_iic_io";
         for my $i (keys %$in) {
 	    if($i=~ m/^::b(:\d+)?$/ && defined $in->{$i} && $in->{$i}!~ m/^$/) {
 		$range++;
@@ -696,22 +732,23 @@ sub connect_subreg($$$) {
 	    }
 	}
 =cut
-    }
-    else {
+    } else {
         logwarn("WARNING: i2c sheet got bad ::dir entry <$in->{'::dir'}>, incorrect direction!");
-	$EH{'sum'}{'warnings'}++;
-	return 1;
+		$EH{'sum'}{'warnings'}++;
+		return 1;
     }
 
     # remember connected register-pins
     if(exists $hierdb{$instance}{'::crange'}) {
-	$hierdb{$instance}{'::crange'} = $hierdb{$instance}{'::crange'} + $range;
-	$range = $hierdb{$instance}{'::crange'};
-    }
-    else {
-	$hierdb{$instance}{'::crange'} = $range;
+		$hierdb{$instance}{'::crange'} = $hierdb{$instance}{'::crange'} + $range;
+		$range = $hierdb{$instance}{'::crange'};
+    } else {
+		$hierdb{$instance}{'::crange'} = $range;
     }
 
+	# init value create:
+
+	# Redo this instance:
     delete $conndb{$instance . "_ur_g"};
 
     # ur_g - Registers width(?)

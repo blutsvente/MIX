@@ -1,4 +1,4 @@
-# -*- perl -*---------------------------------------------------------------
+# -*- perl -*--------------------------------------------------------------
 #
 # +-----------------------------------------------------------------------+
 # |                                                                       |
@@ -15,37 +15,40 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.60 $                                         |
-# | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/01/31 12:40:13 $                              |
+# | Revision:   $Revision: 1.61 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2005/03/22 10:00:16 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.60 2005/01/31 12:40:13 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.61 2005/03/22 10:00:16 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
 #
 # +-----------------------------------------------------------------------+
-# |
-# | Changes:
+# |                                                                       |
+# | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
-# | Revision 1.60  2005/01/31 12:40:13  wig
-# |
-# |  	MixUtils.pm : added manglestd as check.hdlout.delta option
-# |
-# | Revision 1.59  2005/01/26 14:01:44  wig
-# | changed %OPEN% and -autoquote for cvs output
-# |
-# | Revision 1.57  2004/08/18 10:45:44  wig
-# | constant handling improved
-# |
-# | Revision 1.56  2004/08/09 15:48:15  wig
-# | another variant of typecasting: ignore std_(u)logic!
-# |
-# | Revision 1.54  2004/08/04 13:28:46  wig
-# | Updates for TYPECAST
-# |
+# | Revision 1.61  2005/03/22 10:00:16  wig
+# | beta version i2c
+# |                                                 |
+# | Revision 1.60  2005/01/31 12:40:13  wig                               |
+# |                                                                       |
+# |  	MixUtils.pm : added manglestd as check.hdlout.delta option        |
+# |                                                                       |
+# | Revision 1.59  2005/01/26 14:01:44  wig                               |
+# | changed %OPEN% and -autoquote for cvs output                          |
+# |                                                                       |
+# | Revision 1.57  2004/08/18 10:45:44  wig                               |
+# | constant handling improved                                            |
+# |                                                                       |
+# | Revision 1.56  2004/08/09 15:48:15  wig                               |
+# | another variant of typecasting: ignore std_(u)logic!                  |
+# |                                                                       |
+# | Revision 1.54  2004/08/04 13:28:46  wig                               |
+# | Updates for TYPECAST                                                  |
+# |                                                                       |
 # | Revision 1.53  2004/08/04 12:16:48  abauer
 # | - added multiple header count
 # |
@@ -205,11 +208,11 @@ require Exporter;
 
 # @Micronas::MixUtils::EXPORT=qw(
 @EXPORT  = qw(
-        mix_getopt_header
-        mix_usage
-        mix_getops
-        mix_banner
-        mix_help
+    mix_getopt_header
+    mix_usage
+    mix_getops
+    mix_banner
+    mix_help
 	mix_init
 	mix_store
 	mix_load
@@ -226,12 +229,12 @@ require Exporter;
 	select_variant
 	two2one
 	one2two
-        );
+    );
 # @Micronas::MixUtils::EXPORT_OK=qw(
 @EXPORT_OK = qw(
-		%OPTVAL
-                %EH
-	     );
+	%OPTVAL
+    %EH
+	);
 
 our $VERSION = '0.01';
 
@@ -293,11 +296,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.60 2005/01/31 12:40:13 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.61 2005/03/22 10:00:16 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.60 $';
+my $thisrevision        =      '$Revision: 1.61 $';
 
-# Revision:   $Revision: 1.60 $   
+# Revision:   $Revision: 1.61 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -668,9 +671,9 @@ sub mix_usage(@)
     $ENV{PATH} = dirname(dirname(dirname($^X))) . "/bin:$ENV{PATH}";
     #TODO: MSWin32 -> we do not have nroff here :-(
     if ( $^O =~ m,mswin,io ) {
-	open(PIPE, "pod2text --lax $0 |") || die "can't open pipe: $!";
+	    open(PIPE, "pod2text --lax $0 |") || die "can't open pipe: $!";
     } else {
-	open(PIPE, "pod2man --lax $0 | nroff -man |") || die "can't open pipe: $!";
+	    open(PIPE, "pod2man --lax $0 | nroff -man |") || die "can't open pipe: $!";
     }
     while (<PIPE>) {
         # Process backspaces
@@ -1050,69 +1053,71 @@ sub mix_init () {
     'postfix' => {
 	    qw(
 		    POSTFIX_PORT_OUT	_o
-		    POSTFIX_PORT_IN	_i
-		    POSTFIX_PORT_IO	_io
-		    PREFIX_PORT_GEN	p_mix_
+		    POSTFIX_PORT_IN		_i
+		    POSTFIX_PORT_IO		_io
+		    PREFIX_PORT_GEN		p_mix_
 		    POSTFIX_PORT_GEN	_g%IO%
-		    PREFIX_PAD_GEN	pad_
-		    POSTFIX_PAD_GEN	%EMPTY%
-		    PREFIX_IOC_GEN	ioc_
-		    POSTFIX_IOC_GEN	%EMPTY%
-		    PREFIX_SIG_INT	s_int_
-                    PREFIX_TC_INT       s_mix_tc_
-		    POSTFIX_SIGNAL	_s
-		    PREFIX_INSTANCE	i_
+		    PREFIX_PAD_GEN		pad_
+		    POSTFIX_PAD_GEN		%EMPTY%
+		    PREFIX_IOC_GEN		ioc_
+		    POSTFIX_IOC_GEN		%EMPTY%
+		    PREFIX_SIG_INT		s_int_
+            PREFIX_TC_INT       s_mix_tc_
+		    POSTFIX_SIGNAL		_s
+		    PREFIX_INSTANCE		i_
 		    POSTFIX_INSTANCE	%EMPTY%
-		    POSTFIX_ARCH	%EMPTY%
-		    POSTFILE_ARCH	-a
-		    POSTFIX_ENTY	%EMPTY%
-		    POSTFILE_ENTY	-e
-		    POSTFIX_CONF	%EMPTY%
-		    POSTFILE_CONF	-c
-		    PREFIX_CONST	mix_const_
-		    PREFIX_GENERIC	mix_generic_
-		    POSTFIX_GENERIC	_g
+		    POSTFIX_ARCH		%EMPTY%
+		    POSTFILE_ARCH		-a
+		    POSTFIX_ENTY		%EMPTY%
+		    POSTFILE_ENTY		-e
+		    POSTFIX_CONF		%EMPTY%
+		    POSTFILE_CONF		-c
+		    PREFIX_CONST		mix_const_
+		    PREFIX_GENERIC		mix_generic_
+		    POSTFIX_GENERIC		_g
 		    PREFIX_PARAMETER	mix_parameter_
-		    PREFIX_KEYWORD	mix_key_
+		    PREFIX_KEYWORD		mix_key_
 		    POSTFIX_CONSTANT	_c
 		    POSTFIX_PARAMETER	_p
-	            POSTFIX_IIC_OUT     _iic_o
-	            POSTFIX_IIC_IN      _iic_i
+		    PREFIX_IIC_GEN		iic_if_
+		    POSTFIX_IIC_GEN		_i
+	        POSTFIX_IIC_OUT     _iic_o
+	        POSTFIX_IIC_IN      _iic_i
 		)
     },
     'pad' => {
-	'name' => '%PREFIX_PAD_GEN%%::pad%',  # generated pad with prefix and ::pad
+		'name' => '%PREFIX_PAD_GEN%%::pad%',  # generated pad with prefix and ::pad
 		    # '%PREFIX_PAD_GEN%%::name%',  # generated pad with prefix and ::name
 		    # '%PREFIX_PAD_GEN%_%::pad%'
-	qw(
-	    PAD_DEFAULT_DO	0
-	    PAD_ACTIVE_EN	 	1
-	    PAD_ACTIVE_PU	 	1
-	    PAD_ACTIVE_PD	 	1
-	)
+			qw(
+	    	PAD_DEFAULT_DO	0
+	    	PAD_ACTIVE_EN	 	1
+	    	PAD_ACTIVE_PU	 	1
+	    	PAD_ACTIVE_PD	 	1
+			)
     },
     'port' => {
-	'generate' => {   # Options related to generated port names. Please see also inout value
-	    'name' => 'postfix', # Take the postfix definitions: p_mix_SIGNAL_g[io], see descr. there
+		'generate' => {   # Options related to generated port names. Please see also inout value
+	    	'name' => 'postfix', # Take the postfix definitions: p_mix_SIGNAL_g[io], see descr. there
 				  # signal := take the signal name, not post/prefix!
-	    'width' => 'auto',    # auto := find out number of required connections and generate that
+	    	'width' => 'auto',    # auto := find out number of required connections and generate that
 				  # full := always generate a port for the full signal width
-	},
+		},
     },
     'iocell' => {
         'embedded' => '',       # If set to 'pad', allows to create iocells with embedded pads aka.
-                                    # MIX will not try to create a pad.
-	'name' => '%::iocell%_%::pad%',  # generated pad name with prefix and ::pad
+                                # MIX will not try to create a pad.
+		'name' => '%::iocell%_%::pad%',  # generated pad name with prefix and ::pad
 		    # '%PREFIX_IOC_GEN%%::name%',  # generated pad name with prefix and ::name
 		    # '%PREFIX_IOC_GEN%_%::pad%'
-	'auto' => 'bus', 	# Generate busses if required autimatically ...
-	'bus' => '_vector', # auto -> extend signals by _vector if required ....
-	'defaultdir'	=> 'in', 	# Default signal direction to iocell (seen towards chip core!!)
-	'in'	=> 'do,en,pu,pd,xout',	# List of inwards signals (towards chip core!!)
-	'inout' => '__NOINOUT__',	# List of inout ports ...
-	'out'	=> 'di,xin',		# List of outwards ports (towards chip core!!)
+		'auto' => 'bus', 	# Generate busses if required autimatically ...
+		'bus' => '_vector', # auto -> extend signals by _vector if required ....
+		'defaultdir'	=> 'in', 	# Default signal direction to iocell (seen towards chip core!!)
+		'in'	=> 'do,en,pu,pd,xout',	# List of inwards signals (towards chip core!!)
+		'inout' => '__NOINOUT__',	# List of inout ports ...
+		'out'	=> 'di,xin',		# List of outwards ports (towards chip core!!)
 					# di is a chip input, driven by the iocell towards the core.
-	'select' => 'onehot,auto', # Define select lines: onehot vs. bus vs. given
+		'select' => 'onehot,auto', # Define select lines: onehot vs. bus vs. given
 					# 
 					# bus -> use signal in ::muxopt:0 column (first)
 					# given  -> use signals as defined by the %SEL% lines,
@@ -1129,52 +1134,60 @@ sub mix_init () {
 	    '%IIC_SER_REG%'    => 'iic_ser_reg_', # prefix for serial subregister entity
 	    '%IIC_PAR_REG%'    => 'iic_par_reg_', # prefix for parallel subregister entity
 	    '%IIC_SYNC%'       => 'sync_iic',  # prefix for sync block
+		'name' => '%PREFIX_IIC_GEN%%::interface%%POSTFIX_IIC_GEN%', # Name for iic_interface instance 
+	    #'inst' => {
+	    #	'prefix' => "iic_if_",
+	    #	'postfix' => "_i",
+	    #}
+		'regwidth'	=> 16, # Default register width!
+		'addrwidth' => 8,  # Default address bus width!
+		'mode' => 'lcport', # lcport -> map created port names to lowercase
     },
     #
     # Possibly read configuration details from the CONF sheet, see -conf option
     #
     'conf' => {
-	'xls' => 'CONF',
-	'req' => 'optional',
-	'parsed' => 0,
-	'field' => {},
+		'xls' => 'CONF',
+		'req' => 'optional',
+		'parsed' => 0,
+		'field' => {},
     },
 
     #
     # Definitions regarding the CONN sheets:
     #
     'conn' => {
-	'xls' => 'CONN',
-	'req' => 'mandatory',
-	'parsed' => 0,
-	'key' => '::name', # Primary key to %conndb
-	'field' => {
+		'xls' => 'CONN',
+		'req' => 'mandatory',
+		'parsed' => 0,
+		'key' => '::name', # Primary key to %conndb
+		'field' => {
 	    #Name   	=>		Inherits
 	    #						Multiple
 	    #							Required: 0 = no, 1=yes, 2= init to ""
 	    #								Defaultvalue
 	    #									PresetOrder
 	    #                                   0       1       2	3               4
-	    '::ign' 		=> [ qw(	0	0	1	%EMPTY% 	1 ) ],
-	    '::gen'		=> [ qw(	0	0	1	%EMPTY% 	2 ) ],
-	    '::bundle'	        => [ qw(	1	0	1	WARNING_NOT_SET	3 ) ],
-	    '::class'		=> [ qw(	1	0	1	WARNING_NOT_SET	4 ) ],
-	    '::clock'		=> [ qw(	1	0	1	WARNING_NOT_SET	5 ) ],
-	    '::type'		=> [ qw(	1	0	1	%SIGNAL%	6 ) ],
-	    '::high'		=> [ qw(	1	0	0	%EMPTY% 	7 ) ],
-	    '::low'		=> [ qw(	1	0	0	%EMPTY% 	8 )],
-	    '::mode'		=> [ qw(	1	0	1	%DEFAULT_MODE%	9 )],
-	    '::name'		=> [ qw(	0	0	1	ERROR_NO_NAME	10 )],
+	    '::ign' 	=> 	[ qw(	0	0	1	%EMPTY% 	1 ) ],
+	    '::gen'		=>	[ qw(	0	0	1	%EMPTY% 	2 ) ],
+	    '::bundle'	=>	[ qw(	1	0	1	WARNING_NOT_SET	3 ) ],
+	    '::class'	=>	[ qw(	1	0	1	WARNING_NOT_SET	4 ) ],
+	    '::clock'	=> 	[ qw(	1	0	1	WARNING_NOT_SET	5 ) ],
+	    '::type'	=> 	[ qw(	1	0	1	%SIGNAL%	6 ) ],
+	    '::high'	=> 	[ qw(	1	0	0	%EMPTY% 	7 ) ],
+	    '::low'		=> 	[ qw(	1	0	0	%EMPTY% 	8 )],
+	    '::mode'	=> 	[ qw(	1	0	1	%DEFAULT_MODE%	9 )],
+	    '::name'	=> 	[ qw(	0	0	1	ERROR_NO_NAME	10 )],
 	    '::shortname'	=> [ qw(	0	0	0	%EMPTY% 	11 )],
-	    '::out'		=> [ qw(	1	0	0	%SPACE% 	12 )],
-	    '::in'		=> [ qw(	1	0	0	%SPACE% 	13 )],
-	    '::descr'		=> [ qw(	1	0	0	%EMPTY% 	14 )],
-	    '::comment'	        => [ qw(	1	1	2	%EMPTY% 	15 )],
-	    '::default'	        => [ qw(	1	1	0	%EMPTY% 	0 )],
-	    "::debug"	        => [ qw(	1	0	0	%NULL%	        0 )],
-	    '::skip'		=> [ qw(	0	1	0	%NULL% 	        0 )],
-	    'nr'		=> 16, # Number of next field to print
-	},
+	    '::out'		=> 	[ qw(	1	0	0	%SPACE% 	12 )],
+	    '::in'		=> 	[ qw(	1	0	0	%SPACE% 	13 )],
+	    '::descr'	=> 	[ qw(	1	0	0	%EMPTY% 	14 )],
+	    '::comment'	=>	[ qw(	1	1	2	%EMPTY% 	15 )],
+	    '::default'	=>	[ qw(	1	1	0	%EMPTY% 	0 )],
+	    "::debug"	=>	[ qw(	1	0	0	%NULL%	        0 )],
+	    '::skip'	=>	[ qw(	0	1	0	%NULL% 	        0 )],
+	    'nr'		=>	16, # Number of next field to print
+		},
     },
 
     #
@@ -1257,34 +1270,34 @@ sub mix_init () {
 	'parsed' => 0,
 	'cols' => 0,
 	'field' => {
-	    #Name   	=>	  	    Inherits
-	    #					    Multiple
-	    #						    Required
-	    #							  Defaultvalue
-	    #								    PrintOrder
-	    #                                   0       1       2	3       4
-	    '::ign' 		=> [ qw(	0	0	1	%EMPTY%     1)],
-	    '::variants'	=> [ qw(	1	0	0	Default	     2)],
-	   # '::inst'            => [ qw(        0       0       0       W_NO_INST   2)],
-	   # '::width'		=> [ qw(	0	0	0	16           3)],
-	    '::dev'             => [ qw(        0       0       1       %EMPTY%     3)],
-	    '::sub'             => [ qw(        0       0       1       %EMPTY%     4)],
-	    '::interface'       => [ qw(        0       0       1       %EMPTY%     5)],
-	   # '::block'           => [ qw(        0       0       1       %EMPTY%    7)],
-	    '::dir'             => [ qw(        0       0       1       RW           6)],
-	    '::spec'            => [ qw(        0       0       0       NTO          7)],
-	    '::clock'           => [ qw(        0       0       1       %OPEN%      8)],
-	    '::reset'           => [ qw(        0       0       1       %OPEN%      9)],
-	    '::busy'            => [ qw(        0       0       0       %EMPTY%     10)],
-	   # '::readDone'        => [ qw(        0       0       0       %EMPTY%    13)],
-	    '::b'		=> [ qw(	0	1	1	%OPEN%      11)],
-	    '::init'            => [ qw(        0       0       0       0            12)],
-	    '::rec'             => [ qw(        0       0       0       0            13)],
+	    #Name   	=>	  	        Inherits
+	    #					            Multiple
+	    #						            Required
+	    #							            Defaultvalue
+	    #								                    PrintOrder
+	    #                           0   1   2	3           4
+	    '::ign' 		=> [ qw(	0	0	1	%EMPTY%     1  )],
+	    '::variants'	=> [ qw(	1	0	0	Default	    2  )],
+	   # '::inst'       => [ qw(    0   0   0   W_NO_INST   2  )],
+	    '::width'		=> [ qw(	0	0	0	16          15 )],
+	    '::dev'         => [ qw(    0   0   1   %EMPTY%     3  )],
+	    '::sub'         => [ qw(    0   0   1   %EMPTY%     4  )],
+	    '::interface'   => [ qw(    0   0   1   %EMPTY%     5  )],
+	   # '::block'      => [ qw(    0   0   1   %EMPTY%      7  )],
+	    '::dir'         => [ qw(    0   0   1   RW          6  )],
+	    '::spec'        => [ qw(    0   0   0   NTO         7  )],
+	    '::clock'       => [ qw(    0   0   1   %OPEN%      8  )],
+	    '::reset'       => [ qw(    0   0   1   %OPEN%      9  )],
+	    '::busy'        => [ qw(    0   0   0   %EMPTY%     10 )],
+	   # '::readDone'    => [ qw(    0   0  0    %EMPTY%    13 )],
+	    '::b'		    => [ qw(	0	1	1	%OPEN%      11 )],
+	    '::init'        => [ qw(    0   0   0   0           12 )],
+	    '::rec'         => [ qw(    0   0   0   0           13 )],
 	   # '::range'	         => [ qw(	1	0	0	%EMPTY%     17)],
-	   # '::name'		 => [ qw(	0	1	0	%EMPTY%     18)],
-	    '::comment'	        => [ qw(	1	1	2	%EMPTY%     14)],
-	    '::default'	        => [ qw(	1	1	0	%EMPTY%     0)],
-	    'nr'		=> 15,  # Number of next field to print
+	   # '::name'		 => [ qw(	0	1	0	%EMPTY%     18 )],
+	    '::comment'	     => [ qw(	1	1	2	%EMPTY%     14 )],
+	    '::default'	     => [ qw(	1	1	0	%EMPTY%     0  )],
+	    'nr'		=> 16,  # Number of next field to print
 	},
     },
     # VI2C Definitions:
@@ -1383,16 +1396,19 @@ sub mix_init () {
 	    "%IMPORT_CLK%"	=> "__IMPORT_CLK__", # import mode, default clk
 	    "%IMPORT_BUNDLE%"   => "__IMPORT_BUNDLE__", #
 	    "%BUFFER%"		=> "buffer",
-            "%TRISTATE%"        => "tristate",
+        "%TRISTATE%"        => "tristate",
 	    '%H%'		=> '$',		# 'RCS keyword saver ...
 	    '%IIC_IF%'         => 'iic_if_', # prefix for i2c interface
 	    '%RREG%'            => 'read_reg_', # prefix for i2c read registers
 	    '%WREG%'            => 'write_reg_', # prefix for i2c write registers
 	    '%RWREG%'           => 'read_write_reg_', # prefix for i2c read-write registers
-	    '%IIC_TRANS%'     => 'transceiver_iic_if_', # prefix for i2c transceiver
-	    '%IIC_SYNC%'       => 'sync_if_', # prefix for i2c sync block
-            '%TPYECAST_ENT%' => '__TYPECAST_ENT__', # dummy typecast support entity
-            '%TYPECAST_CONF%' => '__TYPECAST_CONF__', # dummy for typecast ...
+	    '%IIC_TRANS%'     => 'transceiver_', # prefix for i2c transceiver
+	    '%IIC_SYNC%'       => 'sync_', # prefix for i2c sync block
+		'%PREFIX_IIC_GEN%' => 'iic_if_', # DUPLICATE to postfix!!!
+		'%POSTFIX_IIC_OUT%'  =>  '_iic_o', # DUPLICATE!!
+	    '%POSTFIX_IIC_IN%'   =>  '_iic_i', # DUPLICATE!!
+        '%TPYECAST_ENT%' => '__TYPECAST_ENT__', # dummy typecast support entity
+        '%TYPECAST_CONF%' => '__TYPECAST_CONF__', # dummy for typecast ...
     },
     # Counters and generic messages
     'ERROR' => '__ERROR__',
@@ -2552,6 +2568,7 @@ sub convert_in ($$) {
 
     unless ( defined $kind and defined $r_data ) {
 	    logwarn("WARNING: skipping convert_in, called with bad arguments!");
+	    $EH{'sum'}{'warnings'}++;
 	    return ();
     }
 
@@ -2665,8 +2682,8 @@ sub parse_header($$@){
 		}
 	    }
 	    if ( defined( $rowh{$i} ) and $#{$rowh{$i}} >= 1 and $$templ->{'field'}{$i}[1] <= 0 ) {
-		logwarn("WARNING: Multiple input header not allowed for $i!");
-		$EH{'sum'}{'warnings'}++;
+			logwarn("WARNING: Multiple input header not allowed for $i!");
+			$EH{'sum'}{'warnings'}++;
 	    }
     }
 
@@ -2689,23 +2706,26 @@ sub parse_header($$@){
     #
     my %or = (); # "flattened" ordering
     for my $i ( keys( %rowh ) ) {
-	next if ( $i =~ m/^::skip/ ); #Ignore bad fields
-	if ( $#{$rowh{$i}} > 0 ) {
-	    $or{$i} = $rowh{$i}[0]; # Save first field, rest will be seperated by name ...
-	     for my $ii ( 1..$#{$rowh{$i}} ) {
-		    unless( defined( $$templ->{'field'}{$i . ":" . $ii} ) ) {
-			logtrc(INFO, "Split multiple column header $i to $i:$ii");
-			$$templ->{'field'}{$i. ":". $ii} = $$templ->{'field'}{$i}; #Check: do a real copy ...
-			#Remember print order no longer is unique
-		    }
-		    $or{$i. ":". $ii} = $rowh{$i}[$ii];
-		    if($ii > $EH{$kind}{'cols'}) {
-			$EH{$kind}{'cols'} = $ii;
-		    }
-	     }
-	} else {
-		$or{$i} = $rowh{$i}[0];
-	}
+		next if ( $i =~ m/^::skip/ ); #Ignore bad fields
+		if ( $#{$rowh{$i}} > 0 ) {
+	    	$or{$i} = $rowh{$i}[0]; # Save first field, rest will be seperated by name ...
+	     	for my $ii ( 1..$#{$rowh{$i}} ) {
+		    	unless( defined( $$templ->{'field'}{$i . ":" . $ii} ) ) {
+				logtrc(INFO, "Split multiple column header $i to $i:$ii");
+				$$templ->{'field'}{$i. ":". $ii} = $$templ->{'field'}{$i}; #Check: do a real copy ...
+				#Remember print order no longer is unique
+		    	}
+		    	$or{$i. ":". $ii} = $rowh{$i}[$ii];
+		    	if($ii > $EH{$kind}{'cols'}) {
+					$EH{$kind}{'cols'} = $ii; #TODO: remove this!
+		   		}
+		    	if($ii > $EH{$kind}{'_mult_max_'}{$i} ) {
+					$EH{$kind}{'_mult_max_'}{$i} = $ii;
+		    	}
+	     	}
+		} else {
+			$or{$i} = $rowh{$i}[0];
+		}
     }
 
     $EH{$kind}{'ext'} = scalar(keys(%or));
@@ -3321,15 +3341,16 @@ sub mix_utils_init_file($) {
     # Sort remaining file arguments
     #
     for my $i ( @ARGV ) {
-	if ( $i =~ m,\.($outext)$, ) { # HDL file ...
-	    push( @hdlimport, $i );
-	    next;
-	} elsif ( $i =~ m,\.($inext)$, ) { # HDL file ...
-	    push( @descr, $i );
-	    next;
-	} else {
-	    logwarn( "INFO: Found file $i not matching my extension set. Skipped!" );
-	}
+		if ( $i =~ m,\.($outext)$, ) { # HDL file ...
+	    	push( @hdlimport, $i );
+	    	next;
+		} elsif ( $i =~ m,\.($inext)$, ) { # HDL file ...
+	    	push( @descr, $i );
+	    	next;
+		} else {
+	    	logwarn( "INFO: Found file $i not matching my extension set. Skipped!" );
+			$EH{'sum'}{'warnings'}++;
+		}
     }
 
     if ( scalar( @descr ) > 1 ) {
@@ -3369,22 +3390,27 @@ sub mix_utils_init_file($) {
     # In -init mode we will die if the output file already exists ...
 
     if ( $mode eq "init" ) {
-	if ( -r $output ) {
-	    logwarn( "FATAL: Output file $output already existing!" );
-	    exit 1;
-	}
-	( $input = $FindBin::Bin ."/template/mix." . $ext ) =~ s,\\,/,g;
-	if ( ! -r $input ) {
-	    logwarn( "FATAL: Cannot init mix from $input" );
-	    exit 1;
-	}
-	# Get mix.cfg template inplace:
-	if ( -r ( dirname( $output ) . "/mix.cfg" ) ) {
-	    logwarn( "WARNING: Existing config file mix.cfg will not be changed!" );
-	} else {
-	    copy( dirname( $input ) . "/mix.cfg" , dirname( $output ) . "/mix.cfg" )
-		or logwarn( "WARNING: Copying mix.cfg failed: " . $! . "!" );
-	}
+		if ( -r $output ) {
+	    	logwarn( "FATAL: Output file $output already existing!" );
+	    	exit 1;
+		}
+		( $input = $FindBin::Bin ."/template/mix." . $ext ) =~ s,\\,/,g;
+		if ( ! -r $input ) { # Try again for UNIX:
+			( $input = $FindBin::Bin ."/../template/mix." . $ext ) =~ s,\\,/,g;
+			if ( ! -r $input ) {
+	    		logwarn( "FATAL: Cannot init mix from $input" );
+	    		exit 1;
+			}
+		}
+		# Get mix.cfg template inplace:
+		if ( -r ( dirname( $output ) . "/mix.cfg" ) ) {
+	    	logwarn( "WARNING: Existing config file mix.cfg will not be changed!" );
+	    	$EH{'sum'}{'warnings'}++;
+		} else {
+	    	copy( dirname( $input ) . "/mix.cfg" , dirname( $output ) . "/mix.cfg" )
+				or logwarn( "WARNING: Copying mix.cfg failed: " . $! . "!" )
+				and $EH{'sum'}{'warnings'}++;
+		}
 
 	# Get template in place ...
 	copy( $input, $output ) or
@@ -3398,7 +3424,7 @@ sub mix_utils_init_file($) {
         Micronas::MixUtils::IO::mix_utils_open_input( $output );
         #Gets format from file to import too.
 
-	Micronas::MixParser::mix_parser_importhdl( $output, \@hdlimport ); # Found in MixParser ...
+		Micronas::MixParser::mix_parser_importhdl( $output, \@hdlimport ); # Found in MixParser ...
     }
 
     # Done ...
