@@ -1,4 +1,3 @@
-m4trace:aclocal.m4:43: -1- m4_pattern_allow([^AM_[A-Z]+FLAGS$])
 m4trace:configure.ac:1: -1- AC_INIT([mui], [0.0.1], [alexander.bauer@micronas.com])
 m4trace:configure.ac:1: -1- m4_pattern_forbid([^_?A[CHUM]_])
 m4trace:configure.ac:1: -1- m4_pattern_forbid([_AC_])
@@ -53,7 +52,8 @@ m4trace:configure.ac:1: -1- AC_SUBST([ECHO_N])
 m4trace:configure.ac:1: -1- AC_SUBST([ECHO_T])
 m4trace:configure.ac:1: -1- AC_SUBST([LIBS])
 m4trace:configure.ac:2: -1- AM_INIT_AUTOMAKE([mui], [0.0.1])
-m4trace:configure.ac:2: -1- AM_AUTOMAKE_VERSION([1.7.9])
+m4trace:configure.ac:2: -1- m4_pattern_allow([^AM_[A-Z]+FLAGS$])
+m4trace:configure.ac:2: -1- AM_AUTOMAKE_VERSION([1.8.3])
 m4trace:configure.ac:2: -1- AC_PROG_INSTALL
 m4trace:configure.ac:2: -1- AC_SUBST([INSTALL_PROGRAM])
 m4trace:configure.ac:2: -1- AC_SUBST([INSTALL_SCRIPT])
@@ -77,6 +77,7 @@ m4trace:configure.ac:2: -1- AC_SUBST([install_sh])
 m4trace:configure.ac:2: -1- AC_SUBST([STRIP])
 m4trace:configure.ac:2: -1- AC_SUBST([ac_ct_STRIP])
 m4trace:configure.ac:2: -1- AC_SUBST([INSTALL_STRIP_PROGRAM])
+m4trace:configure.ac:2: -1- AC_SUBST([mkdir_p])
 m4trace:configure.ac:2: -1- AC_PROG_AWK
 m4trace:configure.ac:2: -1- AC_SUBST([AWK])
 m4trace:configure.ac:2: -1- AC_PROG_MAKE_SET
