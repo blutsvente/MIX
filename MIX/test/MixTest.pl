@@ -323,6 +323,12 @@ my @tests = (
 	  'path' => "bugver/ramd",
 	  'options' => "",
 	},
+	{ # Bug with constant busses ...
+	  'name' => "bugver",
+	  'path' => "bugver/constbug",
+	  'options' => "",
+	},
+
 );
 
 my $numberOfTests = scalar @tests;

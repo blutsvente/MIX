@@ -1,0 +1,561 @@
+04/08/17 10:38:31 1824: Reading worksheet CONN_CB of H:/work/mix_new/MIX/test/xls_input/bugver/constbug/../../bugver.xls
+04/08/17 10:38:44 1824: Reading worksheet HIER_CB of H:/work/mix_new/MIX/test/xls_input/bugver/constbug/../../bugver.xls
+04/08/17 10:39:12 1824: WARNING: INFO: Creating name mix_const_0 for constant!
+04/08/17 10:39:12 1824: WARNING: INFO: Creating name mix_const_1 for constant!
+04/08/17 10:39:12 1824: WARNING: INFO: Creating name mix_const_2 for constant!
+04/08/17 10:39:12 1824: WARNING: INFO: Creating name mix_const_3 for constant!
+04/08/17 10:39:12 1824: WARNING: INFO: Creating name mix_const_4 for constant!
+04/08/17 10:39:12 1824: autoreducing port type for signal eic_int_src to std_ulogic
+04/08/17 10:39:12 1824: autoreducing port type for signal eic_int_src_alt to std_ulogic
+04/08/17 10:39:12 1824: autoreducing port type for signal eic_int_src to std_ulogic
+04/08/17 10:39:22 1824: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+04/08/17 10:39:30 1824: WARNING: Rotating 3 old sheets of CONF!
+04/08/17 10:39:38 1824: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/bugver/constbug/bugver-mixed.xls
+04/08/17 10:39:38 1824: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/17 10:39:45 1824: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/constbug/bugver-mixed.xls
+04/08/17 10:39:45 1824: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/17 10:39:47 1824: Info: unchanged file vgca-e.vhd
+04/08/17 10:39:47 1824: Port fmdstatusm_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port fmdstatuss_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port lbdstatusm_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port lbdstatuss_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port line_stable_m_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port line_stable_s_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port pixel_stable_m_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port pixel_stable_s_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port vaqm_vsync_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port vaqs_vsync_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port cadc_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port crt_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port ddc_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port gpio_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port gpt1_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port gpt2_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port gpt3_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port gpt4_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port i2c_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port i2s_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port irri_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port nvmc_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port rtc_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port ssi1_rx_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port ssi1_tx_irq_alt_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port ssi1_tx_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port ssi2_rx_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port ssi2_tx_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port uart1_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port uart2_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Port wdt_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 10:39:48 1824: Info: unchanged file vgca_top-e.vhd
+04/08/17 10:39:49 1824: Info: unchanged file vgca_top_tb-e.vhd
+04/08/17 10:39:49 1824: Info: unchanged file vgca_top-struct-a.vhd
+04/08/17 10:39:49 1824: Warning: Signal mix_const_3 does not have a driver in instance i_vgca!
+04/08/17 10:39:49 1824: Warning: Signal mix_const_0 does not have a driver in instance i_vgca!
+04/08/17 10:39:49 1824: Warning: Signal mix_const_4 does not have a driver in instance i_vgca!
+04/08/17 10:39:50 1824: Warning: Signal mix_const_2 does not have a driver in instance i_vgca!
+04/08/17 10:39:50 1824: Warning: Signal mix_const_1 does not have a driver in instance i_vgca!
+04/08/17 10:39:50 1824: Warning: Signal eic_int_src_c does not have a driver in instance i_vgca!
+04/08/17 10:39:50 1824: Info: unchanged file vgca-struct-a.vhd
+04/08/17 10:39:50 1824: Info: unchanged file vgca_top_tb-rtl-a.vhd
+04/08/17 10:39:51 1824: Info: unchanged file vgca_top-struct-conf-c.vhd
+04/08/17 10:39:51 1824: Info: unchanged file vgca-struct-conf-c.vhd
+04/08/17 10:39:51 1824: Info: unchanged file vgca_top_tb-rtl-conf-c.vhd
+04/08/17 10:39:51 1824: WARNING: ============= SUMMARY =================
+04/08/17 10:39:51 1824: WARNING: SUM: Summary of checks and created items:
+04/08/17 10:39:51 1824: WARNING: SUM: checkforce 0
+04/08/17 10:39:51 1824: WARNING: SUM: checkunique 0
+04/08/17 10:39:51 1824: WARNING: SUM: checkwarn 0
+04/08/17 10:39:51 1824: WARNING: SUM: cmacros 0
+04/08/17 10:39:51 1824: WARNING: SUM: conn 8
+04/08/17 10:39:51 1824: WARNING: SUM: errors 0
+04/08/17 10:39:51 1824: WARNING: SUM: genport 0
+04/08/17 10:39:51 1824: WARNING: SUM: hdlfiles 9
+04/08/17 10:39:51 1824: WARNING: SUM: inst 23
+04/08/17 10:39:51 1824: WARNING: SUM: multdriver 1
+04/08/17 10:39:51 1824: WARNING: SUM: nodriver 6
+04/08/17 10:39:51 1824: WARNING: SUM: noload 0
+04/08/17 10:39:51 1824: WARNING: SUM: openports 0
+04/08/17 10:39:51 1824: WARNING: SUM: warnings 0
+04/08/17 10:39:51 1824: WARNING: SUM: === Number of parsed input tables: ===
+04/08/17 10:39:51 1824: WARNING: SUM: conf 0
+04/08/17 10:39:51 1824: WARNING: SUM: hier 1
+04/08/17 10:39:51 1824: WARNING: SUM: conn 1
+04/08/17 10:39:51 1824: WARNING: SUM: io 0
+04/08/17 10:39:51 1824: WARNING: SUM: i2c 0
+04/08/17 10:39:51 1824: WARNING: SUM: Number of changes in intermediate: 0
+04/08/17 10:39:51 1824: WARNING: SUM: Number of changed files: 0
+04/08/17 11:10:42 2584: Reading worksheet CONN_CB of H:/work/mix_new/MIX/test/xls_input/bugver/constbug/../../bugver.xls
+04/08/17 11:10:48 2584: Reading worksheet HIER_CB of H:/work/mix_new/MIX/test/xls_input/bugver/constbug/../../bugver.xls
+04/08/17 11:11:01 2584: WARNING: INFO: Creating name mix_const_0 for constant!
+04/08/17 11:11:01 2584: WARNING: INFO: Creating name mix_const_1 for constant!
+04/08/17 11:11:01 2584: WARNING: INFO: Creating name mix_const_2 for constant!
+04/08/17 11:11:01 2584: WARNING: INFO: Creating name mix_const_3 for constant!
+04/08/17 11:11:01 2584: WARNING: INFO: Creating name mix_const_4 for constant!
+04/08/17 11:11:01 2584: autoreducing port type for signal eic_int_src to std_ulogic
+04/08/17 11:11:01 2584: autoreducing port type for signal eic_int_src_alt to std_ulogic
+04/08/17 11:11:01 2584: autoreducing port type for signal eic_int_src to std_ulogic
+04/08/17 11:11:03 2584: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+04/08/17 11:11:05 2584: WARNING: Rotating 3 old sheets of CONF!
+04/08/17 11:11:10 2584: WARNING: Rotating 3 old sheets of CONN!
+04/08/17 11:11:11 2584: WARNING: Rotating 3 old sheets of HIER!
+04/08/17 11:11:12 2584: WARNING: Removing old and and diff sheets in file: bugver-mixed.xls
+04/08/17 11:11:12 2584: Port fmdstatusm_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port fmdstatuss_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port lbdstatusm_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port lbdstatuss_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port line_stable_m_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port line_stable_s_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port pixel_stable_m_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port pixel_stable_s_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port vaqm_vsync_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port vaqs_vsync_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port cadc_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port crt_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port ddc_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port gpio_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port gpt1_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port gpt2_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port gpt3_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port gpt4_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port i2c_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port i2s_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port irri_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port nvmc_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port rtc_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port ssi1_rx_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port ssi1_tx_irq_alt_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port ssi1_tx_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port ssi2_rx_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port ssi2_tx_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port uart1_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port uart2_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:12 2584: Port wdt_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 11:11:13 2584: Warning: Signal mix_const_3 does not have a driver in instance i_vgca!
+04/08/17 11:11:13 2584: Warning: Signal mix_const_0 does not have a driver in instance i_vgca!
+04/08/17 11:11:13 2584: Warning: Signal mix_const_4 does not have a driver in instance i_vgca!
+04/08/17 11:11:13 2584: Warning: Signal mix_const_2 does not have a driver in instance i_vgca!
+04/08/17 11:11:13 2584: Warning: Signal mix_const_1 does not have a driver in instance i_vgca!
+04/08/17 11:11:13 2584: Warning: Signal eic_int_src_c does not have a driver in instance i_vgca!
+04/08/17 11:11:13 2584: WARNING: ============= SUMMARY =================
+04/08/17 11:11:13 2584: WARNING: SUM: Summary of checks and created items:
+04/08/17 11:11:13 2584: WARNING: SUM: checkforce 0
+04/08/17 11:11:13 2584: WARNING: SUM: checkunique 0
+04/08/17 11:11:13 2584: WARNING: SUM: checkwarn 0
+04/08/17 11:11:14 2584: WARNING: SUM: cmacros 0
+04/08/17 11:11:14 2584: WARNING: SUM: conn 8
+04/08/17 11:11:14 2584: WARNING: SUM: errors 0
+04/08/17 11:11:14 2584: WARNING: SUM: genport 0
+04/08/17 11:11:14 2584: WARNING: SUM: hdlfiles 9
+04/08/17 11:11:14 2584: WARNING: SUM: inst 23
+04/08/17 11:11:14 2584: WARNING: SUM: multdriver 1
+04/08/17 11:11:14 2584: WARNING: SUM: nodriver 6
+04/08/17 11:11:14 2584: WARNING: SUM: noload 0
+04/08/17 11:11:14 2584: WARNING: SUM: openports 0
+04/08/17 11:11:14 2584: WARNING: SUM: warnings 0
+04/08/17 11:11:14 2584: WARNING: SUM: === Number of parsed input tables: ===
+04/08/17 11:11:14 2584: WARNING: SUM: conf 0
+04/08/17 11:11:14 2584: WARNING: SUM: hier 1
+04/08/17 11:11:14 2584: WARNING: SUM: conn 1
+04/08/17 11:11:14 2584: WARNING: SUM: io 0
+04/08/17 11:11:15 2584: WARNING: SUM: i2c 0
+04/08/17 14:34:07 796: Reading worksheet CONN_CB of H:/work/mix_new/MIX/test/xls_input/bugver/constbug/../../bugver.xls
+04/08/17 14:34:13 796: Reading worksheet HIER_CB of H:/work/mix_new/MIX/test/xls_input/bugver/constbug/../../bugver.xls
+04/08/17 14:34:24 796: WARNING: INFO: Creating name mix_const_0 for constant!
+04/08/17 14:34:24 796: WARNING: INFO: Creating name mix_const_1 for constant!
+04/08/17 14:34:24 796: WARNING: INFO: Creating name mix_const_2 for constant!
+04/08/17 14:34:24 796: WARNING: INFO: Creating name mix_const_3 for constant!
+04/08/17 14:34:24 796: WARNING: INFO: Creating name mix_const_4 for constant!
+04/08/17 14:34:24 796: autoreducing port type for signal eic_int_src to std_ulogic
+04/08/17 14:34:24 796: autoreducing port type for signal eic_int_src_alt to std_ulogic
+04/08/17 14:34:24 796: autoreducing port type for signal eic_int_src to std_ulogic
+04/08/17 14:34:25 796: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+04/08/17 14:34:26 796: WARNING: Rotating 3 old sheets of CONF!
+04/08/17 14:34:28 796: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/bugver/constbug/bugver-mixed.xls
+04/08/17 14:34:28 796: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/17 14:34:30 796: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/constbug/bugver-mixed.xls
+04/08/17 14:34:31 796: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/17 14:34:32 796: Info: unchanged file vgca-e.vhd
+04/08/17 14:34:32 796: Port fmdstatusm_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port fmdstatuss_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port lbdstatusm_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port lbdstatuss_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port line_stable_m_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port line_stable_s_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port pixel_stable_m_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port pixel_stable_s_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port vaqm_vsync_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port vaqs_vsync_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port cadc_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port crt_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port ddc_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port gpio_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port gpt1_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port gpt2_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port gpt3_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port gpt4_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port i2c_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port i2s_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port irri_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port nvmc_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port rtc_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port ssi1_rx_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port ssi1_tx_irq_alt_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port ssi1_tx_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port ssi2_rx_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port ssi2_tx_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port uart1_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port uart2_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Port wdt_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 14:34:32 796: Info: unchanged file vgca_top-e.vhd
+04/08/17 14:34:32 796: Info: unchanged file vgca_top_tb-e.vhd
+04/08/17 14:34:32 796: Info: unchanged file vgca_top-struct-a.vhd
+04/08/17 14:34:33 796: Warning: Signal mix_const_3 does not have a driver in instance i_vgca!
+04/08/17 14:34:33 796: Warning: Signal mix_const_0 does not have a driver in instance i_vgca!
+04/08/17 14:34:33 796: Warning: Signal mix_const_4 does not have a driver in instance i_vgca!
+04/08/17 14:34:33 796: Warning: Signal mix_const_2 does not have a driver in instance i_vgca!
+04/08/17 14:34:33 796: Warning: Signal mix_const_1 does not have a driver in instance i_vgca!
+04/08/17 14:34:33 796: Warning: Signal eic_int_src_c does not have a driver in instance i_vgca!
+04/08/17 14:34:33 796: Info: unchanged file vgca-struct-a.vhd
+04/08/17 14:34:33 796: Info: unchanged file vgca_top_tb-rtl-a.vhd
+04/08/17 14:34:33 796: Info: unchanged file vgca_top-struct-conf-c.vhd
+04/08/17 14:34:33 796: Info: unchanged file vgca-struct-conf-c.vhd
+04/08/17 14:34:33 796: Info: unchanged file vgca_top_tb-rtl-conf-c.vhd
+04/08/17 14:34:33 796: WARNING: ============= SUMMARY =================
+04/08/17 14:34:33 796: WARNING: SUM: Summary of checks and created items:
+04/08/17 14:34:34 796: WARNING: SUM: checkforce 0
+04/08/17 14:34:34 796: WARNING: SUM: checkunique 0
+04/08/17 14:34:34 796: WARNING: SUM: checkwarn 0
+04/08/17 14:34:34 796: WARNING: SUM: cmacros 0
+04/08/17 14:34:34 796: WARNING: SUM: conn 8
+04/08/17 14:34:34 796: WARNING: SUM: errors 0
+04/08/17 14:34:34 796: WARNING: SUM: genport 0
+04/08/17 14:34:34 796: WARNING: SUM: hdlfiles 9
+04/08/17 14:34:34 796: WARNING: SUM: inst 23
+04/08/17 14:34:34 796: WARNING: SUM: multdriver 1
+04/08/17 14:34:34 796: WARNING: SUM: nodriver 6
+04/08/17 14:34:34 796: WARNING: SUM: noload 0
+04/08/17 14:34:34 796: WARNING: SUM: openports 0
+04/08/17 14:34:35 796: WARNING: SUM: warnings 0
+04/08/17 14:34:35 796: WARNING: SUM: === Number of parsed input tables: ===
+04/08/17 14:34:35 796: WARNING: SUM: conf 0
+04/08/17 14:34:35 796: WARNING: SUM: hier 1
+04/08/17 14:34:35 796: WARNING: SUM: conn 1
+04/08/17 14:34:35 796: WARNING: SUM: io 0
+04/08/17 14:34:35 796: WARNING: SUM: i2c 0
+04/08/17 14:34:35 796: WARNING: SUM: Number of changes in intermediate: 0
+04/08/17 14:34:35 796: WARNING: SUM: Number of changed files: 0
+04/08/17 15:34:11 2712: Reading worksheet CONN_CB of H:/work/mix_new/MIX/test/xls_input/bugver/constbug/../../bugver.xls
+04/08/17 15:34:16 2712: Reading worksheet HIER_CB of H:/work/mix_new/MIX/test/xls_input/bugver/constbug/../../bugver.xls
+04/08/17 15:34:28 2712: WARNING: INFO: Creating name mix_const_0 for constant!
+04/08/17 15:34:28 2712: WARNING: INFO: Creating name mix_const_1 for constant!
+04/08/17 15:34:28 2712: WARNING: INFO: Creating name mix_const_2 for constant!
+04/08/17 15:34:28 2712: WARNING: INFO: Creating name mix_const_3 for constant!
+04/08/17 15:34:28 2712: WARNING: INFO: Creating name mix_const_4 for constant!
+04/08/17 15:34:28 2712: autoreducing port type for signal eic_int_src to std_ulogic
+04/08/17 15:34:28 2712: autoreducing port type for signal eic_int_src_alt to std_ulogic
+04/08/17 15:34:28 2712: autoreducing port type for signal eic_int_src to std_ulogic
+04/08/17 15:34:29 2712: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+04/08/17 15:34:30 2712: WARNING: Rotating 3 old sheets of CONF!
+04/08/17 15:34:33 2712: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/bugver/constbug/bugver-mixed.xls
+04/08/17 15:34:34 2712: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/17 15:34:36 2712: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/constbug/bugver-mixed.xls
+04/08/17 15:34:36 2712: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/17 15:34:38 2712: Info: unchanged file vgca-e.vhd
+04/08/17 15:34:38 2712: Port fmdstatusm_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port fmdstatuss_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port lbdstatusm_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port lbdstatuss_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port line_stable_m_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port line_stable_s_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port pixel_stable_m_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port pixel_stable_s_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port vaqm_vsync_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port vaqs_vsync_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port cadc_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port crt_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port ddc_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port gpio_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port gpt1_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port gpt2_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port gpt3_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port gpt4_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port i2c_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port i2s_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port irri_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port nvmc_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port rtc_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port ssi1_rx_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port ssi1_tx_irq_alt_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port ssi1_tx_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port ssi2_rx_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port ssi2_tx_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port uart1_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port uart2_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Port wdt_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:34:38 2712: Info: unchanged file vgca_top-e.vhd
+04/08/17 15:34:38 2712: Info: unchanged file vgca_top_tb-e.vhd
+04/08/17 15:34:38 2712: Info: unchanged file vgca_top-struct-a.vhd
+04/08/17 15:34:39 2712: Warning: Signal mix_const_3 does not have a driver in instance i_vgca!
+04/08/17 15:34:39 2712: Warning: Signal mix_const_0 does not have a driver in instance i_vgca!
+04/08/17 15:34:39 2712: Warning: Signal mix_const_4 does not have a driver in instance i_vgca!
+04/08/17 15:34:39 2712: Warning: Signal mix_const_2 does not have a driver in instance i_vgca!
+04/08/17 15:34:39 2712: Warning: Signal mix_const_1 does not have a driver in instance i_vgca!
+04/08/17 15:34:39 2712: Warning: Signal eic_int_src_c does not have a driver in instance i_vgca!
+04/08/17 15:34:39 2712: WARNING: Info: file vgca-struct-a.vhd has changes!
+04/08/17 15:34:39 2712: Info: unchanged file vgca_top_tb-rtl-a.vhd
+04/08/17 15:34:39 2712: Info: unchanged file vgca_top-struct-conf-c.vhd
+04/08/17 15:34:39 2712: Info: unchanged file vgca-struct-conf-c.vhd
+04/08/17 15:34:40 2712: Info: unchanged file vgca_top_tb-rtl-conf-c.vhd
+04/08/17 15:34:40 2712: WARNING: ============= SUMMARY =================
+04/08/17 15:34:40 2712: WARNING: SUM: Summary of checks and created items:
+04/08/17 15:34:40 2712: WARNING: SUM: checkforce 0
+04/08/17 15:34:40 2712: WARNING: SUM: checkunique 0
+04/08/17 15:34:40 2712: WARNING: SUM: checkwarn 0
+04/08/17 15:34:40 2712: WARNING: SUM: cmacros 0
+04/08/17 15:34:40 2712: WARNING: SUM: conn 8
+04/08/17 15:34:40 2712: WARNING: SUM: errors 0
+04/08/17 15:34:40 2712: WARNING: SUM: genport 0
+04/08/17 15:34:40 2712: WARNING: SUM: hdlfiles 9
+04/08/17 15:34:40 2712: WARNING: SUM: inst 23
+04/08/17 15:34:40 2712: WARNING: SUM: multdriver 1
+04/08/17 15:34:40 2712: WARNING: SUM: nodriver 6
+04/08/17 15:34:40 2712: WARNING: SUM: noload 0
+04/08/17 15:34:40 2712: WARNING: SUM: openports 0
+04/08/17 15:34:40 2712: WARNING: SUM: warnings 0
+04/08/17 15:34:40 2712: WARNING: SUM: === Number of parsed input tables: ===
+04/08/17 15:34:40 2712: WARNING: SUM: conf 0
+04/08/17 15:34:40 2712: WARNING: SUM: hier 1
+04/08/17 15:34:40 2712: WARNING: SUM: conn 1
+04/08/17 15:34:40 2712: WARNING: SUM: io 0
+04/08/17 15:34:40 2712: WARNING: SUM: i2c 0
+04/08/17 15:34:40 2712: WARNING: SUM: Number of changes in intermediate: 0
+04/08/17 15:34:40 2712: WARNING: SUM: Number of changed files: 1
+04/08/17 15:38:23 2708: Reading worksheet CONN_CB of H:/work/mix_new/MIX/test/xls_input/bugver/constbug/../../bugver.xls
+04/08/17 15:38:29 2708: Reading worksheet HIER_CB of H:/work/mix_new/MIX/test/xls_input/bugver/constbug/../../bugver.xls
+04/08/17 15:38:40 2708: WARNING: INFO: Creating name mix_const_0 for constant!
+04/08/17 15:38:40 2708: WARNING: INFO: Creating name mix_const_1 for constant!
+04/08/17 15:38:40 2708: WARNING: INFO: Creating name mix_const_2 for constant!
+04/08/17 15:38:40 2708: WARNING: INFO: Creating name mix_const_3 for constant!
+04/08/17 15:38:40 2708: WARNING: INFO: Creating name mix_const_4 for constant!
+04/08/17 15:38:40 2708: autoreducing port type for signal eic_int_src to std_ulogic
+04/08/17 15:38:40 2708: autoreducing port type for signal eic_int_src_alt to std_ulogic
+04/08/17 15:38:40 2708: autoreducing port type for signal eic_int_src to std_ulogic
+04/08/17 15:38:42 2708: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+04/08/17 15:38:42 2708: WARNING: Rotating 3 old sheets of CONF!
+04/08/17 15:38:44 2708: WARNING: Rotating 3 old sheets of CONN!
+04/08/17 15:38:45 2708: WARNING: Rotating 3 old sheets of HIER!
+04/08/17 15:38:45 2708: WARNING: Removing old and and diff sheets in file: bugver-mixed.xls
+04/08/17 15:38:46 2708: Port fmdstatusm_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port fmdstatuss_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port lbdstatusm_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port lbdstatuss_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port line_stable_m_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port line_stable_s_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port pixel_stable_m_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port pixel_stable_s_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port vaqm_vsync_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port vaqs_vsync_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port cadc_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port crt_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port ddc_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port gpio_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port gpt1_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port gpt2_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port gpt3_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port gpt4_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port i2c_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port i2s_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port irri_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port nvmc_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port rtc_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port ssi1_rx_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port ssi1_tx_irq_alt_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port ssi1_tx_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port ssi2_rx_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port ssi2_tx_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port uart1_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port uart2_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Port wdt_irq_o of entity vgca_peri one bit wide, reduce to signal
+
+04/08/17 15:38:46 2708: Warning: Signal mix_const_3 does not have a driver in instance i_vgca!
+04/08/17 15:38:46 2708: Warning: Signal mix_const_0 does not have a driver in instance i_vgca!
+04/08/17 15:38:46 2708: Warning: Signal mix_const_4 does not have a driver in instance i_vgca!
+04/08/17 15:38:46 2708: Warning: Signal mix_const_2 does not have a driver in instance i_vgca!
+04/08/17 15:38:46 2708: Warning: Signal mix_const_1 does not have a driver in instance i_vgca!
+04/08/17 15:38:46 2708: Warning: Signal eic_int_src_c does not have a driver in instance i_vgca!
+04/08/17 15:38:47 2708: WARNING: ============= SUMMARY =================
+04/08/17 15:38:47 2708: WARNING: SUM: Summary of checks and created items:
+04/08/17 15:38:47 2708: WARNING: SUM: checkforce 0
+04/08/17 15:38:47 2708: WARNING: SUM: checkunique 0
+04/08/17 15:38:47 2708: WARNING: SUM: checkwarn 0
+04/08/17 15:38:47 2708: WARNING: SUM: cmacros 0
+04/08/17 15:38:47 2708: WARNING: SUM: conn 8
+04/08/17 15:38:47 2708: WARNING: SUM: errors 0
+04/08/17 15:38:47 2708: WARNING: SUM: genport 0
+04/08/17 15:38:47 2708: WARNING: SUM: hdlfiles 9
+04/08/17 15:38:47 2708: WARNING: SUM: inst 23
+04/08/17 15:38:47 2708: WARNING: SUM: multdriver 1
+04/08/17 15:38:47 2708: WARNING: SUM: nodriver 6
+04/08/17 15:38:47 2708: WARNING: SUM: noload 0
+04/08/17 15:38:47 2708: WARNING: SUM: openports 0
+04/08/17 15:38:47 2708: WARNING: SUM: warnings 0
+04/08/17 15:38:47 2708: WARNING: SUM: === Number of parsed input tables: ===
+04/08/17 15:38:47 2708: WARNING: SUM: conf 0
+04/08/17 15:38:47 2708: WARNING: SUM: hier 1
+04/08/17 15:38:47 2708: WARNING: SUM: conn 1
+04/08/17 15:38:47 2708: WARNING: SUM: io 0
+04/08/17 15:38:47 2708: WARNING: SUM: i2c 0
