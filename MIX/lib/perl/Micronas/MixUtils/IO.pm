@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                              |
-# | Revision:   $Revision: 1.1 $                                              |
+# | Revision:   $Revision: 1.2 $                                              |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/11/27 09:20:21 $                              |
+# | Date:       $Date: 2003/11/27 10:46:56 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.2  2003/11/27 10:46:56  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.1  2003/11/27 09:20:21  abauer
 # | *** empty log message ***
 # |                                   |
@@ -97,11 +100,11 @@ sub mix_utils_mask_excel ($);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.1 2003/11/27 09:20:21 abauer Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.2 2003/11/27 10:46:56 abauer Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.1 $';
+my $thisrevision    =      '$Revision: 1.2 $';
 
-# Revision:   $Revision: 1.1 $
+# Revision:   $Revision: 1.2 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
