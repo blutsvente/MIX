@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.5 $                                          |
+# | Revision:   $Revision: 1.6 $                                          |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/12/03 14:14:47 $                              |
+# | Date:       $Date: 2003/12/04 14:56:37 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.6  2003/12/04 14:56:37  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.5  2003/12/03 14:14:47  abauer
 # | *** empty log message ***
 # |
@@ -67,9 +70,8 @@ require Exporter;
 	clean_temp_sheets
         );
 
-@EXPORT_OK = qw(
-		$ex
-	     );
+@EXPORT_OK = qw();
+
 
 our $VERSION = '1.0';
 
@@ -109,18 +111,20 @@ sub mix_utils_mask_excel ($);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.5 2003/12/03 14:14:47 abauer Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.6 2003/12/04 14:56:37 abauer Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.5 $';
+my $thisrevision    =      '$Revision: 1.6 $';
 
-# Revision:   $Revision: 1.5 $
+# Revision:   $Revision: 1.6 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
 ( $VERSION = $thisrevision ) =~ s,.*Revision:\s*,,; #TODO: Is that a good idea?
 
 
-=head2
+my $ex;
+
+
 ###### extra block
 {   # keep this stuff localy
 
@@ -136,19 +140,16 @@ $thisrevision =~ s,^\$,,go;
 
 Remember all Excel or Star(\Open)-Office workbooks we opened
 
+=cut
 
-
-#    sub init_open_workbooks() {
-#      if(defined $ex) {
-#	foreach my $bk ( in $ex->{Workbooks} ) {
-#	    $workbooks{$bk->{'Name'}} = $bk; # Remember that
-#	}
-#      }
-#	foreach my $bk ( in $dt->{Workbooks} ) {
-# TODO	    $workbooks{$bk->{'Name'}} = $bk; # Remember that
-#	}
-	return;
+sub init_open_workbooks() {
+    if(defined $ex) {
+	foreach my $bk ( in $ex->{Workbooks} ) {
+	    $workbooks{$bk->{'Name'}} = $bk; # Remember that
+	}
     }
+    return;
+}
 
 
 ####################################################################
@@ -165,8 +166,12 @@ test if parameter $workbook is a open workbook
 
 =back
 
+=cut
 
-   sub is_open_workbook($) {
+sub is_open_workbook($) {
+
+    if(defined $ex) {
+
 	my $workbook = shift;
 
 	for my $i ( keys( %workbooks ) ) {
@@ -182,6 +187,7 @@ test if parameter $workbook is a open workbook
 	}
 	return undef;
     }
+}
 
 
 ####################################################################
@@ -199,24 +205,29 @@ Remember all workbooks we made
 
 =back
 
+=cut
 
-    sub new_workbook($$) {
-	my $workbook = shift;
+sub new_workbook($$) {
+
+    if(defined $ex) {
+        my $workbook = shift;
 	my $book = shift;
 
 	$newbooks{$workbook} = $book;
     }
+}
 
 
 ####################################################################
 ## close_open_workbooks
 ## Finally, close all workbooks we opened while running along here
 ####################################################################
+
 =head2 close_open_workbooks()
 
 Finally, close all workbooks we opened while running along here
 
-
+=cut
 
     sub close_open_workbooks() {
 	if(defined $ex) {
@@ -229,13 +240,44 @@ Finally, close all workbooks we opened while running along here
 
 }   # end block (local workbooks)
 ###### extra block end
-=cut
 
 
 ##############################################################################
-# mix_sheet_conf
-#
-# take CONF sheet  contents and transfer that into %EH (overloading values there)
+## init_ole
+## take CONF sheet  contents and transfer that into %EH (overloading values there)
+##############################################################################
+
+=head2 init_ole()
+
+Start OLE server (to read ExCEL spread sheets in our case)
+Returns a OLE handle or undef if that fails.
+
+=cut
+
+sub init_ole() {
+
+    import Win32::OLE qw(in valof with);
+    import Win32::OLE::Const 'Microsoft Excel';
+
+    $Win32::OLE::Warn = 3;
+
+    # use existing instance if Excel is already running
+    eval {$ex = Win32::OLE->GetActiveObject('Excel.Application')};
+    logwarn "Excel not installed" if $@;
+    unless (defined $ex) {
+        $ex = Win32::OLE->new('Excel.Application', sub {$_[0]->Quit;})
+	    or logwarn "Oops, cannot start Excel";
+    }
+
+    if(defined $ex) {
+        init_open_workbooks();  # Get list of already open files
+    }
+}
+
+
+##############################################################################
+## mix_sheet_conf
+## take CONF sheet  contents and transfer that into %EH (overloading values there)
 ##############################################################################
 
 =head2 mix_sheet_conf( $rconf, $source)
@@ -386,6 +428,7 @@ Returns two (three) arrays with hashes ...
 =item @in input
 
 =back
+
 =cut
 
 sub mix_utils_open_input(@) {
@@ -476,6 +519,7 @@ maps a call to correct open function
 =item $flag flags
 
 =back
+
 =cut
 
 sub open_infile($$$){
@@ -484,13 +528,13 @@ sub open_infile($$$){
     my $sheetname = shift;
     my $flags = shift;
 
-    if($file=~ m/.xls/) { # read excel file
+    if($file=~ m/\.xls/) { # read excel file
         return open_xls($file, $sheetname, $flags);
     }
-    elsif($file=~ m/.sxc/) { # read soffice file
+    elsif($file=~ m/\.sxc/) { # read soffice file
         return open_sxc($file, $sheetname, $flags);
     }
-    elsif($file=~ m/.csv/) { # read comma seperated values
+    elsif($file=~ m/\.csv/) { # read comma seperated values
         return open_csv($file, $sheetname, $flags);
     }
     else {
@@ -514,6 +558,7 @@ Open a excel file, select the appropriate worksheets and return
 =item $flag flags
 
 =back
+
 =cut
 
 sub open_xls($$$){
@@ -609,6 +654,7 @@ worksheets and return
 =item $flag flags
 
 =back
+
 =cut
 
 sub open_sxc($$$) {
@@ -796,6 +842,7 @@ Open a csv file, select the appropriate worksheets and return
 =item $flag flags
 
 =back
+
 =cut
 
 sub open_csv($$$) {
@@ -838,7 +885,7 @@ sub open_csv($$$) {
 	if( $input[$i] =~ m/^$sheetsep$sheetname/) {
 
 	    $i++;
-	    # print "SHEET: $sheetname\n";
+	     print "SHEET: $sheetname\n";
 
             while( defined $input[$i] && not $input[$i]=~ m/^$sheetsep/) {
 
@@ -886,7 +933,7 @@ sub open_csv($$$) {
 		push(@line, $entry);
 		$entry = "";
 		push(@sheet, [@line]);
-		# print join(' ; ', @line) . "\n";
+		 print join(' ; ', @line) . "\n";
 		@line = ();
 		$i++;    # next line
 	    }
@@ -922,6 +969,7 @@ Replace all / (I prefer to use) by  \ (ExCEL needs)
 =item $file path of file
 
 =back
+
 =cut
 
 sub windows_path($) {
@@ -961,6 +1009,7 @@ read in previous intermediate data, diff and print out only differences.
 =item $ref_a reference to array with data
 
 =back
+
 =cut
 
 sub write_delta_sheet($$$) {
@@ -1097,7 +1146,7 @@ sub write_delta_sheet($$$) {
 	}
 	#TODO: Do not use logwarn here ...
 	return $difflines;
-    } 
+    }
     else {
 	return -1;
     }
@@ -1115,13 +1164,13 @@ sub write_outfile($$$;$) {
     my $r_a = shift;
     my $r_c = shift || undef;
 
-    if( $file=~ m/.xls/ ||  $EH{'output'}{'format'}=~ m/^xls$/) {
+    if( $EH{'format'}{'out'}=~ m/^xls$/ || ($file=~ m/\.xls/ && $^O=~ m/MSWin/)) {
 	write_xls($file, $sheet, $r_a, $r_c);
     }
-    elsif($file=~ m/.sxc/ ||  $EH{'output'}{'format'}=~ m/^sxc$/) {
+    elsif( $EH{'format'}{'out'}=~ m/^sxc$/ || $file=~ m/\.sxc/) {
 	write_sxc($file, $sheet, $r_a, $r_c);
     }
-    elsif($file=~ m/.csv/ ||  $EH{'output'}{'format'}=~ m/^csv$/) {
+    elsif( $EH{'format'}{'out'}=~ m/^csv$/ || $file=~ m/\.csv/ || ($file=~ m/\.xls/ && $^O!~ m/MSWin/)) {
 	write_csv($file, $sheet, $r_a, $r_c);
     }
     else {
@@ -1152,208 +1201,201 @@ defined by $EH{'intermediate'}{'keep'}
 =item $ref_c mark the cells listed in this array
 
 =back
+
 =cut
 
 sub write_xls($$$;$) {
 
     my $file = shift;
-
-    $file=~ tr/\.xls$/\.csv$/;
-
-    return write_csv($file, shift, shift);
-
-    # Todo: write excel output
-
-=head1
-
     my $sheet = shift;
     my $r_a = shift;
     my $r_c = shift || undef;
 
-    my $book;
-    my $newflag = 0;
-    my $openflag = 0;
-    my $sheetr = undef;
+    if( $^O=~ m/MSWin/ || $EH{'format'}{'out'}) {
 
-    unless ( $file =~ m/\.xls$/ ) {
-	$file .= ".xls";
-    }
+	my $book;
+	my $newflag = 0;
+	my $openflag = 0;
+	my $sheetr = undef;
 
-    # Write to other directory ...
-    if ( $EH{'intermediate'}{'path'} ne "." and not is_absolute_path( $file ) ) {
-	$file = $EH{'intermediate'}{'path'} . "/" . $file;
-    }
-
-    my $basename = basename( $file ); # TODO: check if Name is basename of filename, always??
-    if($^O=~ m/Win32/) {
-        my $file = windows_path( $file );
-    }
-
-    if ( -r $file ) {
-
-        logwarn("File $file already exists! Contents will be changed");
-
-	my $ebook = Spreadsheet::ParseExcel::Workbook->Parse($file);
-	my $max = $EH{'intermediate'}{'keep'};
-
-	my %sh = ();
-	my $s_previous = undef;
-
-	foreach my $worksheet (@{$ebook->{Worksheet}}) {
-	    if(not $worksheet->{Name}=~ m/"O_" . $max."_" . $sheet/) {
-	        $sh{$worksheet->{'Name'}} = $worksheet; # Keep links
-	    }ulimit -c unlimited
+	unless ( $file =~ m/\.xls$/ ) {
+	    $file .= ".xls";
 	}
 
-	#
-    	# rotate old versions of $sheet to O_$n_$sheet_O ...
-	#
+	# Write to other directory ...
+	if ( $EH{'intermediate'}{'path'} ne "." and not is_absolute_path( $file ) ) {
+	    $file = $EH{'intermediate'}{'path'} . "/" . $file;
+	}
 
-#	foreach my $sh ( in $book->{Worksheets} ) {
-#	    $sh{$sh->{'Name'}} = $sh; # Keep links
-#	}
+	my $efile = path_excel( $file );
+	# my $basename = $file;
+	my $basename = basename( $file ); # ~ s,.*[/\\],,; #TODO: check if Name is basename of filename, always??
 
-	if ( $EH{'intermediate'}{'keep'} ) {
+	# $ex->{DisplayAlerts}=0;
+	$ex->{DisplayAlerts}=0 if ( $EH{'script'}{'excel'}{'alerts'} =~ m,off,io );
 
-	    # Rotate sheets ...
-	    # Delete eldest one:
-	    my $max = $EH{'intermediate'}{'keep'};
-	    logwarn("Rotating $max old sheets of $sheet!");
-	    if ( exists( $sh{ "O_" . $max . "_" . $sheet } ) ) {
-#		$sh{"O_" . $max . "_" . $sheet}->Delete;
+	if ( -r $file ) {
+	    # If it exists, it could be open, too?
+	    unless( $book = is_open_workbook( $basename ) ) {
+		# No, not opened so far ....
+		logwarn("File $file already exists! Contents will be changed");
+		$book = $ex->Workbooks->Open($efile);
+		new_workbook( $basename, $book );
+	    } else {
+		# Is the open thing at the right place?
+		my $wbpath = dirname( $file ) || $EH{'cwd'};
+		if ( $wbpath eq "." ) {
+		    $wbpath = $EH{'cwd'};
+		} elsif ( not is_absolute_path( $wbpath ) ) {
+		    $wbpath = $EH{'cwd'} . "/" . $wbpath;
+		}
+
+		$wbpath =~ s,/,\\,g; # Replace / -> \
+		#Does our book have the right path?
+		if ( $book->Path ne $wbpath ) {
+		    logwarn("ERROR: workbook $basename with different path (" . $book->Path .
+			    ") already opened!");
+		    $EH{'sum'}{'errors'}++;
+		}
 	    }
-	    if ( $max >= 2 ) {
-		for my $n ( reverse( 2..$max ) ) {
-		    if ( exists( $sh{ "O_" . ( $n - 1 ) . "_" . $sheet } ) ) {
-#			$sh{"O_" . ( $n - 1 ) . "_" . $sheet}->{'Name'} =
-#			    "O_" . $n . "_" . $sheet;
+	    $book->Activate;
+
+	    #
+	    # rotate old versions of $sheet to O$n_$sheet_O ...
+	    #
+	    my %sh = ();
+	    my $s_previous = undef;
+
+	    foreach my $sh ( in $book->{Worksheets} ) {
+		$sh{$sh->{'Name'}} = $sh; # Keep links
+	    }
+
+	    if ( $EH{'intermediate'}{'keep'} ) {
+
+		# Rotate sheets ...
+		# Delete eldest one:
+		my $max = $EH{'intermediate'}{'keep'};
+		logwarn("Rotating $max old sheets of $sheet!");
+		if ( exists( $sh{ "O_" . $max . "_" . $sheet } ) ) {
+		    $sh{"O_" . $max . "_" . $sheet}->Delete;
+		}
+		if ( $max >= 2 ) {
+		    for my $n ( reverse( 2..$max ) ) {
+			if ( exists( $sh{ "O_" . ( $n - 1 ) . "_" . $sheet } ) ) {
+			    $sh{"O_" . ( $n - 1 ) . "_" . $sheet}->{'Name'} =
+				"O_" . $n . "_" . $sheet;
+			}
+		    }
+		}
+		# Finally: Rename the latest/greatest ...
+		if ( exists( $sh{ $sheet } ) ) {
+		    $s_previous = $sh{$sheet};
+		    $sh{$sheet}->{'Name'} = "O_1_" . $sheet;
+		}
+		# Copy previous format ....
+		if ( $EH{'intermediate'}{'format'} =~ m,prev,o and
+		     defined( $s_previous ) ) {
+		    unless( $s_previous->Copy($s_previous) ) { # Add in new sheet before
+			logwarn("Cannot copy previous sheet! Create new one.");
+		    } else {
+			$sheetr = $book->ActiveSheet();
+			$sheetr->Unprotect;
+			$sheetr->UsedRange->{'Value'} = (); #Will that delete contents?
+			$sheetr->{'Name'} = $sheet;
+		    }
+		}
+	    } else { # Delete contents or all of sheet ?
+		if ( exists( $sh{ $sheet } ) ) {
+		    #Keep format if EH.intermediate.format says so
+		    if ( $EH{'intermediate'}{'format'} =~ m,prev,o ) {
+			$sheetr = $sh{$sheet};
+			$sheetr->Unprotect;
+			$sheetr->UsedRange->{'Value'} = (); # Overwrite all used cells ...
+		    } else {
+			$sh{$sheet}->Delete;
 		    }
 		}
 	    }
-	    # Finally: Rename the latest/greatest ...
-	    if ( exists( $sh{ $sheet } ) ) {
-		$s_previous = $sh{$sheet};ulimit -c unlimited
-	        $sh{$sheet}->{'Name'} =
-			"O_1_" . $sheet;
-	    }
+	} else {
+	    # Create new workbook
+	    $book = $ex->Workbooks->Add();
+	    $book->SaveAs($efile);
+	    # new_workbook( $basename, $book );
+	    $newflag=1;
+	}
 
-	    # Copy previous format ....
-	    if ( $EH{'intermediate'}{'format'} =~ m,prev,o and
-		defined( $s_previous ) ) {
-		unless( $s_previous->Copy($s_previous) ) { # Add in new sheet before
-		    logwarn("Cannot copy previous sheet! Create new one.");
-		} else {
-		    $sheetr = $book->ActiveSheet();
-		    $sheetr->Unprotect;
-		    $sheetr->UsedRange->{'Value'} = (); #Will that delete contents?
-		    $sheetr->{'Name'} = $sheet;
-		}
-	    }
-	} else { # Delete contents or all of sheet ?
-	    if ( exists( $sh{ $sheet } ) ) {
-		#Keep format if EH.intermediate.format says so
-		if ( $EH{'intermediate'}{'format'} =~ m,prev,o ) {
-		    $sheetr = $sh{$sheet};
-	#	    $sheetr->Unprotect;
-	#	    $sheetr->UsedRange->{'Value'} = (); # Overwrite all used cells ...
-		} else {
-#		    $sh{$sheet}->Delete;
+	unless( defined( $sheetr ) ) {
+	    # Create output worksheet:
+	    $sheetr = $book->Worksheets->Add() || logwarn( "Cannot create worksheet $sheet in $file:$!");
+	    $sheetr->{'Name'} = $sheet;
+	}
+
+	$sheetr->Activate();
+	$sheetr->Unprotect;
+
+	mix_utils_mask_excel( $r_a );
+
+	my $x=$#{$r_a->[0]}+1;
+	my $y=$#{$r_a}+1;
+	my $c1=$sheetr->Cells(1,1)->Address;
+	my $c2=$sheetr->Cells($y,$x)->Address;
+	my $rng=$sheetr->Range($c1.":".$c2);
+	$rng->{Value}=$r_a;
+
+	# Mark cells in that list in background color ..
+	# Format: row/col
+	if ( defined( $r_c ) ) {
+	    $rng->Interior->{Color} = mix_utils_rgb( 255, 255, 255 ); # Set back color to white
+	    # Deselect ...
+	    for my $cell ( @$r_c ) {
+		my $x; my $y;
+		( $y , $x ) = split( '/', $cell );
+		if ( $x =~ m,^\d+$, and $y =~ m,^\d+$, ) {
+		    # my $ca=$sheetr->Cells($y,$x)->Address;
+		    my $cn = chr( $x + 64 ) . ( $y - 1 ); #Hope that helps ...
+		    my $co = chr( $x + 64 ) . $y;
+		    my ( $ncol, $ocol );
+		    if ( $x == 1 ) {
+			$ncol = $ocol = mix_utils_rgb( 0, 0, 255 );
+		    } else {
+			$ocol = mix_utils_rgb( 0, 255, 0 );
+			$ncol = mix_utils_rgb( 255, 0, 0 );
+		    }
+		    $rng= $sheetr->Range($cn);
+		    $rng->Interior->{Color} = $ncol;
+		    $rng =$sheetr->Range($co);
+		    $rng->Interior->{Color} = $ocol;
+
+		    # White background with a solid border
+		    #
+		    # $Chart->PlotArea->Border->{LineStyle} = xlContinuous;
+		    # $Chart->PlotArea->Border->{Color} = RGB(0,0,0);
+		    # $Chart->PlotArea->Interior->{Color} = RGB(255,255,255);
+		    # $rng->{BackColor}=0;
+		    # example: $workSheet->Range("A1:A6")->Interior->{ColorIndex} =XX;
 		}
 	    }
 	}
-    } else {
-	# Create new workbook
- #       my $workbook = Spreadsheet::WriteExcel->new($file);
-#	$worksheet = $workbook->add_worksheet();
-#	$book->SaveAs($efile);
-	new_workbook( $basename, $book );
-	$newflag=1;
+
+	if ( $EH{'intermediate'}{'format'} =~ m,auto, ) {
+	    $rng->Columns->AutoFit;
+	}
+
+	#TODO: pretty formating
+	# $book->Save;
+
+	$book->SaveAs($efile);
+
+	# $book->Close unless ( $openflag ); #TODO: only close if not open before ....
+
+	$ex->{DisplayAlerts}=1;
+
+	return;
     }
-
-    unless( defined( $sheetr ) ) {
-    # Create output worksheet:
-#	$sheetr = $book->Worksheets->Add() || logwarn( "Cannot create worksheet $sheet in $file:$!");
-#	$sheetr->{'Name'} = $sheet;
+    else {
+	$file=~ s/\.xls$/\.csv/;
+    	return write_csv($file, $sheet, $r_a);
     }
-
-  #  $sheetr->Activate();
- #   $sheetr->Unprotect;
-
-    mix_utils_mask_excel( $r_a );
-
-    my $x=$#{$r_a->[0]}+1;
-    my $y=$#{$r_a}+1;
-#    my $c1=$sheetr->Cells(1,1)->Address;
-#    my $c2=$sheetr->Cells($y,$x)->Address;
-#    my $rng=$sheetr->Range($c1.":".$c2);
-#    $rng->{Value}=$r_a;
-
-    # Mark cells in that list in background color ..
-    # Format: row/col
-#    if ( defined( $r_c ) ) {
-#	$rng->Interior->{Color} = mix_utils_rgb( 255, 255, 255 ); # Set back color to white
-	# Deselect ...
-#	for my $cell ( @$r_c ) {	} else {
-	    # Is the open thing at the right place?
-	#    my $wbpath = dirname( $file ) || $EH{'cwd'};
-	 #   if ( $wbpath eq "." ) {
-	#      $wbpath = $EH{'cwd'};
-#	    } elsif ( not is_absolute_path( $wbpath ) ) {
-#		$wbpath = $EH{'cwd'} . "/" . $wbpath;
-#	    }
-
-#	    $wbpath =~ s,/,\\,g; # Replace / -> \
-	    #Does our book have the right path?
-#	    if ( $book->Path ne $wbpath ) {
-#		logwarn("ERROR: workbook $basename with different path (" . $book->Path . ") already opened!");
-#		$EH{'sum'}{'errors'}++;
-#	    }
-#	}
-
-#	    my $x;
-#	    my $y;
-#	    ( $y , $x ) = split( '/', $cell );
-
-#	    if ( $x =~ m,^\d+$, and $y =~ m,^\d+$, ) {
-
-#		my $cn = chr( $x + 64 ) . ( $y - 1 ); #Hope that helps ...
-#		my $co = chr( $x + 64 ) . $y;
-#		my ( $ncol, $ocol );
-#		if ( $x == 1 ) {
-#		    $ncol = $ocol = mix_utils_rgb( 0, 0, 255 );
-#		} else {
-#		    $ocol = mix_utils_rgb( 0, 255, 0 );
-#		    $ncol = mix_utils_rgb( 255, 0, 0 );
-#		}
-#		$rng= $sheetr->Range($cn);
-#		$rng->Interior->{Color} = $ncol;
-#		$rng =$sheetr->Range($co);
-#		$rng->Interior->{Color} = $ocol;
-
-# White background with a solid border
-#
-# $Chart->PlotArea->Border->{LineStyle} = xlContinuous;
-# $Chart->PlotArea->Border->{Color} = RGB(0,0,0);
-# $Chart->PlotArea->Interior->{Color} = RGB(255,255,255);
-		# $rng->{BackColor}=0;
-		# example: $workSheet->Range("A1:A6")->Interior->{ColorIndex} =XX;
-#	    }
-#	}
-#    }
-
-    if ( $EH{'intermediate'}{'format'} =~ m,auto, ) {
-#	$rng->Columns->AutoFit;
-    }
-
-    #TODO: pretty formating
-    # $book->Save;
-
- #   $book->close();
-
-    # $book->Close unless ( $openflag ); #TODO: only close if not open before ....
-
-    return;
-=cut
 }
 
 
@@ -1361,6 +1403,7 @@ sub write_xls($$$;$) {
 ## write_sxc
 ## write intermediate data to Star(/Open) Office sheet
 ####################################################################
+
 =head2 write_sxc($$$;$)
 
 this subroutine is self explanatory. The only important thing is,
@@ -1377,6 +1420,7 @@ defined by $EH{'intermediate'}{'keep'}
 =item $ref_c mark the cells listed in this array
 
 =back
+
 =cut
 
 sub write_sxc($$$;$) {
@@ -1737,6 +1781,7 @@ defined by $EH{'intermediate'}{'keep'}
 =item $ref_a reference to array with data
 
 =back
+
 =cut
 
 sub write_csv($$$) {
@@ -1776,7 +1821,6 @@ sub write_csv($$$) {
         open(FILE, "<$file");
 	@data = <FILE>;
 	close(FILE);
-	unlink($file);
 
 	for(my $i=0; $i<scalar(@data); $i++) {
 	    if($osheet==0 && $data[$i]=~ m/$sheetm$sheet/) {
@@ -1847,15 +1891,14 @@ sub write_csv($$$) {
 
 =head2 clean_temp_sheets($)
 
-clean_temp_sheets () {
-
 subroutine removes old and diff sheets from excel files
 
 =over 4
 
-= item $file filename
+=item $file filename
 
 =back
+
 =cut
 
 sub clean_temp_sheets($) {
@@ -1886,10 +1929,12 @@ subroutine removes old and diff sheets from excel files
 
 =over 4
 
-= item $file filename
+=item $file filename
 
 =back
+
 =cut
+
 sub clean_xls_sheets($) {
 
     my $file = shift;
@@ -1905,7 +1950,7 @@ sub clean_xls_sheets($) {
 	unless( $book = is_open_workbook( $basename ) ) {
 	      # No, not opened so far...
               if($file =~ m/.xls$/) {
-		#  $book = $ex->Workbooks->Open(cwd()."\\".$file);   TODO !!!
+		  $book = $ex->Workbooks->Open(cwd()."\\".$file);  # TODO !!!
 	      }
 	}
 	else {
@@ -1916,15 +1961,15 @@ sub clean_xls_sheets($) {
 	    }
 	    $wbpath =~ s,/,\\,g; # Replace / -> \
 	    #Does our book have the right path?
-#	    if ( defined $ex && $book->Path ne $wbpath) {
-#	        logwarn("ERROR: workbook with different path already opened!");
-#		$EH{'sum'}{'errors'}++;
-#	    }
+	    if ( defined $ex && $book->Path ne $wbpath) {
+	        logwarn("ERROR: workbook with different path already opened!");
+		$EH{'sum'}{'errors'}++;
+	    }
   	}
 
 	my %sh = ();
 
-#	$ex->{DisplayAlerts}=0 if ( $EH{'script'}{'excel'}{'alerts'} =~ m,off,io );
+	$ex->{DisplayAlerts}=0 if ( $EH{'script'}{'excel'}{'alerts'} =~ m,off,io );
 	$book->Activate;
 
 	# search for old sheets end remove them
@@ -1934,7 +1979,7 @@ sub clean_xls_sheets($) {
 	    }
         }
 	$book->Save;
-#	$ex->{DisplayAlerts}=1;
+	$ex->{DisplayAlerts}=1;
 
 	return;
     }
@@ -1956,10 +2001,12 @@ subroutine removes old and diff sheets from soffice files
 
 =over 4
 
-= item $file filename
+=item $file filename
 
 =back
+
 =cut
+
 sub clean_sxc_sheets($) {
 
     my $file = shift;
@@ -2032,10 +2079,12 @@ subroutine removes old and diff sheets from csv files
 
 =over 4
 
-= item $file filename
+=item $file filename
 
 =back
+
 =cut
+
 sub clean_csv_sheets($) {
 
     my $file = shift;
@@ -2102,7 +2151,9 @@ Convert RGB value to internal representation
 =item green
 
 =back
+
 =cut
+
 sub mix_utils_rgb($$$) {
     return ( $_[0] | ($_[1] << 8) | ($_[2] << 16) );
 }
@@ -2114,16 +2165,12 @@ sub mix_utils_rgb($$$) {
 ## Otherwise these will get converted to dates :-(
 ## wig20030716: add a ' before a trailing ' ...
 ####################################################################
+
 =head2 mix_utils_mask_excel($)
 
 Mask pure digits (esp. with . and/or , inside) for ExCEL!
 Otherwise these will get converted to dates :-(
 
-=over 4
-
-=item $r_a input
-
-=back
 =cut
 
 sub mix_utils_mask_excel($) {
@@ -2148,4 +2195,6 @@ sub mix_utils_mask_excel($) {
 
 # return 1
 1;
-__END__
+
+#__END__
+
