@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.24 $                                             |
+# | Revision:   $Revision: 1.25 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/08/11 07:16:24 $                                   |
+# | Date:       $Date: 2003/08/12 15:09:45 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.24 2003/08/11 07:16:24 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.25 2003/08/12 15:09:45 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,10 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.25  2003/08/12 15:09:45  wig
+# | Fixed Verilog Port Maps
+# | Added ::high/::low arb. string border
+# |
 # | Revision 1.24  2003/08/11 07:16:24  wig
 # | Added typecast
 # | Fixed Verilog issues
@@ -212,11 +216,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.24 2003/08/11 07:16:24 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.25 2003/08/12 15:09:45 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.24 $';
+my $thisrevision   =      '$Revision: 1.25 $';
 
-# | Revision:   $Revision: 1.24 $   
+# | Revision:   $Revision: 1.25 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2469,14 +2473,38 @@ sub db2array ($$$) {
     
     # Now comes THE data    
     for my $i ( sort( @keys ) ) {
+	my $split_flag = 0; # If split_flag 
 	for my $ii ( 1..$#o ) { # 0 contains fields to skip
 	    if ( $o[$ii] =~ m/^::(in|out)\s*$/o ) {
 		$a[$n][$ii-1] = inout2array( $ref->{$i}{$o[$ii]}, $i );
+		if ( length( $a[$n][$ii-1] ) > 1024 ) {
+		    # Line too long! Split it!
+		    $split_flag=1;
+		    logwarn( "WARNING: Intermediate may be bogus, cell too large!" );
+		    $EH{'sum'}{'warnings'}++;
+		    #TODO: split this cell into N chunks of appr. 512 chars.
+		    # Get pieces up to 1024 characters, seperated by ", %IOCR%"
+		    # my $rest = $a[$n][$ii-1];
+		    #while( length( $rest ) > 512 ) {
+			#my $tmp = substr( $rest, 0, 512 );
+			#my $fromsep = "";
+			#$fromsep = $tmp
+		    #my $parts = int( length( $a[$n][$ii-1] ) / 1024 );
+		    #for my $iii ( 0..$parts ) {
+			
+		}
+		#if ( $split_flag ) {
+		#    $a[$n+1][$ii-1] = $a[$n][$ii-1];
+		#}		    
 	    } else {
 		$a[$n][$ii-1] = defined( $ref->{$i}{$o[$ii]} ) ? $ref->{$i}{$o[$ii]} : "%UNDEF_1%";
+		#if ( $split_flag ) {
+		#    $a[$n+1][$ii-1] = $a[$n][$ii-1];
+		#}
 		#TODO: do that in debugging mode, only
 	    }
 	}
+	#$n++ if ( $split_flag ); # Jump two lines if split_flag set ...
 	$n++;
     }
     #TODO: check if we have printed all potential fields
@@ -2568,7 +2596,7 @@ sub inout2array ($;$) {
 	logwarn( "WARNING: inout2array bad branch (: ! File bug report!" );
     }
 	
-    $s =~ s/,\s*%IOCR%\s*$//o;
+    $s =~ s/,\s*%IOCR%\s*$//o; #Remove trailing CR
     # convert macros (parse_mac already done )!!!
     $s =~ s,%IOCR%,$EH{'macro'}{'%IOCR%'},g;
     

@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.17 2003/08/11 07:16:11 wig Exp $
+# $Id: TODO.txt,v 1.18 2003/08/12 15:09:33 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -20,6 +20,32 @@ Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 TODOs:
 
  Probleme:
+
+- 20030811c/Bug: missing assing before Verilog constants:
+
+    Beispiel MDE-Toplevel (%HIGH% und %LOW%):
+
+    assign mix_logic1 = 1'b1;
+    assign mix_logic0 = 1'b0;
+
+    Req: mpallas
+    Prio: high
+    Solution: fixed in MixWriter.pm (appended assign in front of signal assignment )
+    
+- 20030811b/Req: port/signal mangeled:
+    dbo_i -> see vgca_20030811!!
+
+    Port gets signal assigned from external, while internal signal has the same name!!
+
+    Req: mpit
+    Prio: medium
+
+- 20030811a/Bug: Excel limits number of characters in cell to appr. 1823 ???
+    hits when wrting intermediate file!!
+
+    Req: wig
+    Prio: medium
+    Solution:
 
 - 20030806a/Req: use variables/text for ::high:
 
