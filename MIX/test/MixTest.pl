@@ -724,7 +724,7 @@ init();
 
 # run tests
 foreach my $i (@inType) {
-    logtrc "INFO" "testing: $i-input";
+    logtrc( "INFO", "testing: $i-input" );
     chdir $i."_input" || die "Cannot change to " . $i . "_input";
     runMix( $i);
     chdir $FindBin::Bin;
