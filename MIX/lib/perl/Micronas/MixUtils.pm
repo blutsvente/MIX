@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.39 $                                         |
-# | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/12/16 14:43:54 $                              |
+# | Revision:   $Revision: 1.40 $                                         |
+# | Author:     $Author: wig $                                         |
+# | Date:       $Date: 2003/12/18 16:49:15 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.39 2003/12/16 14:43:54 abauer Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.40 2003/12/18 16:49:15 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,11 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
-# | Revision 1.39  2003/12/16 14:43:54  abauer
-# | changed i2c header definition
-# |
-# | Revision 1.38  2003/12/16 14:29:47  abauer
-# | added i2c header descriptor
+# | Revision 1.40  2003/12/18 16:49:15  wig
+# | added OLE, again
+# | fixed misc. minor issues regarding delta mode
 # |
 # | Revision 1.37  2003/12/10 14:37:17  abauer
 # | *** empty log message ***
@@ -245,11 +243,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.39 2003/12/16 14:43:54 abauer Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.40 2003/12/18 16:49:15 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.39 $';
+my $thisrevision        =      '$Revision: 1.40 $';
 
-# Revision:   $Revision: 1.39 $   
+# Revision:   $Revision: 1.40 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -501,6 +499,8 @@ sub mix_getopt_header(@) {
 	}
     }
 
+=head DEL
+
     #
     # Create a starting point ...
     #
@@ -513,6 +513,8 @@ sub mix_getopt_header(@) {
     if ( $OPTVAL{import} ) {
 	mix_utils_init_file("import");
     }
+
+=cut
 
     # Print banner
     if ($OPTVAL{help}) {
@@ -788,10 +790,11 @@ sub mix_help()
 # Perform the action
 
 ##############################################################################
-# Initialize environement, variables, configurations ...
+# Initialize environment, variables, configurations ...
 #
 ##############################################################################
-
+#!wig20031217: if intermediate is xls and we are on Win32, change %IOCR% to \n (is " " by default)
+#
 =head2 mix_init()
 
 Initialize the %EH variable with all the configuration we have/need
@@ -1117,9 +1120,10 @@ sub mix_init () {
 	    '::iocell'		=> [ qw(	1	0	1	DEFAULT_IO	7 )],
 	    '::port'		=> [ qw(	1	0	1	%EMPTY%	        8 )],
 	    '::name'		=> [ qw(	0	0	1	PAD_NAME	9 )],
-	    '::muxopt'	        => [ qw(	1	1	1	%EMPTY%	        10 )],
-	    "::comment"	        => [ qw(	1	0	2	%EMPTY%	        11 )],
-	    '::debug'	        => [ qw(	1	0	0	%NULL%	        0 )],
+	    '::muxopt'	=> [ qw(	1	1	1	%EMPTY%	        10 )],
+	    "::comment"	=> [ qw(	1	0	2	%EMPTY%	        11 )],
+            "::default"	=> [ qw(	1	1	0	%EMPTY%	0 )],	    
+	    '::debug'	=> [ qw(	1	0	0	%NULL%	        0 )],
 	    '::skip'		=> [ qw(	0	1	0	%NULL% 	        0 )],
 	    'nr'		=> 12,  # Number of next field to print
 	},
@@ -1138,10 +1142,9 @@ sub mix_init () {
 	    #							  Defaultvalue
 	    #								    PrintOrder
 	    #                                   0       1       2	3       4
-	    '::ign' 		=> [ qw(	0	0	1	%EMPTY%     1)],
-	    '::variants'	=> [ qw(	1	0	0	Default	    2)],
-	   # '::inst'            => [ qw(        0       0       0       W_NO_INST   2)],
-	    '::width'		=> [ qw(	0	0	1	16          3)],
+	    '::ign' 		=> [ qw(	0	0	1	%EMPTY%     1 )],
+	    '::variants'	=> [ qw(	1	0	0	Default	   2 )],
+	    '::width'		=> [ qw(	0	0	1	16         3 )],
 	    '::dev'             => [ qw(        0       0       1       %EMPTY%     4)],
 	    '::sub'             => [ qw(        0       0       1       %EMPTY%     5)],
 	    '::interface'       => [ qw(        0       0       1       %EMPTY%     6)],	  
@@ -1151,14 +1154,16 @@ sub mix_init () {
 	    '::clock'           => [ qw(        0       0       1       %EMPTY%     10)],
 	    '::reset'           => [ qw(        0       0       0       %EMPTY%     11)],
 	    '::busy'            => [ qw(        0       0       0       %EMPTY%     12)],
-	   # '::readDone'        => [ qw(        0       0       0       %EMPTY%    13)],
-	    '::b'		=> [ qw(	0	1	1	%EMPTY%	    13)],
+	    # '::readDone'        => [ qw(        0       0       0       %EMPTY%     13)],
+	    '::b'		=> [ qw(	0	1	1	%EMPTY%	    13 )],
 	    '::init'            => [ qw(        0       0       0       0           14)],
 	    '::rec'             => [ qw(        0       0       0       0           15)],
-	   # '::range'	         => [ qw(	1	0	0	%EMPTY%	    17)],
-	   # '::name'		 => [ qw(	0	1	0	%EMPTY%	    18)],
-	    '::comment'	        => [ qw(	1	1	2	%EMPTY%	    16)],
-	    '::default'	        => [ qw(	1	1	0	%EMPTY%     0)],
+	    # '::range'	         => [ qw(	1	0	0	%EMPTY%	   17 )],
+	    # '::name'		 => [ qw(	0	1	0	%EMPTY%	   18 )],
+	    '::comment'	        => [ qw(	1	0	2	%EMPTY%	   16 )],
+            "::default"	=> [ qw(	1	1	0	%EMPTY%	0 )],	    
+	    '::debug'	=> [ qw(	1	0	0	%NULL%	        0 )],
+	    '::skip'		=> [ qw(	0	1	0	%NULL% 	        0 )],            
 	    'nr'		=> 17,  # Number of next field to print
 	},
     },
@@ -1191,6 +1196,7 @@ sub mix_init () {
 	    "::default"	        => [ qw(	1	1	0	%NULL%	0 )],
 	    "::hierachy"	=> [ qw(	1	0	0	%NULL%	0 )],
 	    "::debug"	        => [ qw(	1	0	0	%NULL%	0 )],
+            "::default"	=> [ qw(	1	1	0	%EMPTY%	0 )],	    
 	    '::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
 	    'nr'		=> 12,  # Number of next field to print
 	},
@@ -1201,7 +1207,7 @@ sub mix_init () {
 	    "%NULL%"	=> "0",
 	    "%TAB%"	=> "\t",
 	    "%S%"	=> "\t", # Output field ident ....
-	    "%IOCR%"	=> " ",
+	    "%IOCR%"	=> " ", # Will be set to \n if we are writting ExCEL on MSWin32 ...
 	    "%SIGNAL%"	=> "std_ulogic",
 	    "%BUS_TYPE%"	=> "std_ulogic_vector",
 	    "%PAD_TYPE%"	=> "__E_DEFAULT_PAD__",	# Default pad entity
@@ -1348,6 +1354,13 @@ sub mix_init () {
 	$EH{'macro'}{'%PROJECT%'} = "NO_PROJECT_SET";
     }
 
+    #
+    # Set %IOCR% to \n if intermediate is xls and we are on Win32
+    if ( $^O=~ m/MSWin/ && $EH{'macro'}{'%ARGV%'}=~ m/\.xls$/ ) {
+        $EH{'macro'}{'%IOCR%'} = "\n";
+    }
+
+#}
 #
 # If there is a file called mix.cfg, try to read that ....
 # Configuraation parameters have to be written like
@@ -2129,16 +2142,16 @@ sub parse_header($$@){
 	next if ( $i =~ m/^::skip/ ); #Ignore bad fields
 	if ( $#{$rowh{$i}} > 0 ) {
 	    $or{$i} = $rowh{$i}[0]; # Save first field, rest will be seperated by name ...
-	    for my $ii ( 1..$#{$rowh{$i}} ) {
-		unless( defined( $$templ->{'field'}{$i . ":" . $ii} ) ) {
-		    logtrc(INFO, "Split multiple column header $i to $i:$ii");
-		    $$templ->{'field'}{$i. ":". $ii} = $$templ->{'field'}{$i}; #Check: do a real copy ...
-		    #Remember print order no longer is unique
-		}
-		$or{$i. ":". $ii} = $rowh{$i}[$ii];
-	    }
+	     for my $ii ( 1..$#{$rowh{$i}} ) {
+		    unless( defined( $$templ->{'field'}{$i . ":" . $ii} ) ) {
+			logtrc(INFO, "Split multiple column header $i to $i:$ii");
+			$$templ->{'field'}{$i. ":". $ii} = $$templ->{'field'}{$i}; #Check: do a real copy ...
+			#Remember print order no longer is unique
+		    }
+		    $or{$i. ":". $ii} = $rowh{$i}[$ii];
+	     }
 	} else {
-	    $or{$i} = $rowh{$i}[0];
+		$or{$i} = $rowh{$i}[0];
 	}
     }
 
@@ -2325,7 +2338,7 @@ sub db2array ($$$) {
 	    } else {
 		$a[$n][$ii-1] = defined( $ref->{$i}{$o[$ii]} ) ? $ref->{$i}{$o[$ii]} : "%UNDEF_1%";
 	    }
-	    if ( length( $a[$n][$ii-1] ) > 1024 ) {
+	    if ( length( $a[$n][$ii-1] ) > 1023 ) {
 		# Line too long! Split it!
 		# Assumes that the cell to be split are accumulated when reused later on.
 		# Will not check if that is not true!
@@ -2349,9 +2362,13 @@ sub db2array ($$$) {
 	    # Set primary key in cells, add comments
 	    for my $sn ( 1..( $split_flag - 1 ) ) {
 		$a[$n + $sn][$primkeynr-1] = $a[$n][$primkeynr-1];
-		if ( $commentnr ne "" ) {
+		if ( $commentnr ne "" ) { # Add split comment
 		    $a[$n + $sn][$commentnr-1] .= "# __I_SPLIT_CONT_$sn";
 		}
+                # Make sure all cells are defined
+                for my $ssn ( 0..(scalar( @{$a[$n]} ) - 1) ) {
+                    $a[$n + $sn][$ssn] = "" unless defined( $a[$n + $sn][$ssn] );
+                }                    
 	    }
 	    $n += $split_flag; # Goto next free line ...
 	} else {
@@ -2372,23 +2389,24 @@ sub db2array ($$$) {
 ##
 ## Caveat: if cell does not contain %IOCR% markers, will split somewhere in the middle!
 ## Might lead to troubles if read back.
+##!wig20031216: use 1023 as limit
 ####################################################################
 sub mix_utils_split_cell ($) {
 
     my $data = shift;
     my $flaga = 0;
 
-    # Get pieces up to 1024 characters, seperated by ", %IOCR%"
+    # Get pieces up to 1023 characters, seperated by ", %IOCR%"
     my $iocr = $EH{'macro'}{'%IOCR%'};
     my @chunks = ();
 
-    while( length( $data ) > 1024 ) {
-	my $tmp = substr( $data, 0, 1024 ); # Take 1024 chars
+    while( length( $data ) > 1023 ) {
+	my $tmp = substr( $data, 0, 1023 ); # Take 1023 chars
 	# Stuff back up to last %IOCR% ...
 	my $ri = rindex( $tmp, $iocr ); # Read back until next <CR>
 	if ( $ri <= 0 ) { # No $iocr in string -> split at arbitrary location ??
 	    push( @chunks, $tmp );
-	    substr( $data, 0, 1024 ) = "";
+	    substr( $data, 0, 1023 ) = "";
 	    logtrc( "INFO:4",  "INFO: Split cell at arbitrary location: " . substr( $tmp, 0, 32 ) )
 		unless $flaga;
 	    $flaga = 1;
