@@ -10,6 +10,7 @@ Requirements:
 -------------
 
   - MIX (Micronas Interconnect Spec. Expander)
+  - Perl 5
   - Gtk+-2.0
 
 
