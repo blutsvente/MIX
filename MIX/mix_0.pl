@@ -1,7 +1,5 @@
 #!/usr/bin/perl -w
 
-#!/usr/bin/perl -w
-
 #!/bin/sh -- # -*- perl -*- -w
 # TODO: Get better startup (look in FAQ ...)
 
@@ -14,37 +12,40 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #
 # +-----------------------------------------------------------------------+
 # |                                                                       |
-# |   Copyright Micronas GmbH, Inc. 2002.                        |
-# |     All Rights Reserved.                     |
+# |   Copyright Micronas GmbH, Inc. 2002.                                 |
+# |     All Rights Reserved.                                              |
 # |                                                                       |
 # |                                                                       |
-# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH |
+# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH          |
 # | The copyright notice above does not evidence any actual or intended   |
 # | publication of such source code.                                      |
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id              : $Id: mix_0.pl,v 1.19 2003/11/27 10:24:29 abauer Exp $
-# | Name         : $Name:  $
-# | Description  :$Description:$
-# | Parameters  : -
-# | Version       : $Revision: 1.19 $
-# | Mod.Date    : $Date: 2003/11/27 10:24:29 $
-# | Author        : $Author: abauer $
-# | Phone         : $Phone: +49 89 54845 7275$
-# | Fax             : $Fax: $
-# | Email         : $Email: wilfried.gaensheimer@micronas.com$
-# |
-# | Copyright (c)2002 Micronas GmbH. All Rights Reserved.
-# | MIX proprietary and confidential information.
-# |
+# | Id           : $Id: mix_0.pl,v 1.20 2003/11/27 13:18:33 abauer Exp $  |
+# | Name         : $Name:  $                                              |
+# | Description  : $Description:$                                         |
+# | Parameters   : -                                                      | 
+# | Version      : $Revision: 1.20 $                                      |
+# | Mod.Date     : $Date: 2003/11/27 13:18:33 $                           |
+# | Author       : $Author: abauer $                                      |
+# | Phone        : $Phone: +49 89 54845 7275$                             |
+# | Fax          : $Fax: $                                                |
+# | Email        : $Email: wilfried.gaensheimer@micronas.com$             |
+# |                                                                       |
+# | Copyright (c)2002 Micronas GmbH. All Rights Reserved.                 |
+# | MIX proprietary and confidential information.                         |
+# |                                                                       |
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# |
+# |                                                                       |
 # | Changes:
 # | $Log: mix_0.pl,v $
+# | Revision 1.20  2003/11/27 13:18:33  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.19  2003/11/27 10:24:29  abauer
 # | added i2c a_clk spreadsheet
 # |
@@ -80,45 +81,45 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |
 # | Revision 1.11  2003/04/29 08:27:02  wig
 # | Minor issue: Revision ID in mix_0.pl
-# |
+# |                                                                       |
 # | Revision 1.10  2003/04/29 07:22:35  wig
 # | Fixed %OPEN% bit/bus problem.
-# |
+# |                                                                       |
 # | Revision 1.9  2003/04/01 14:27:58  wig
 # | Added IN/OUT Top Port Generation
-# |
+# |                                                                       |
 # | Revision 1.8  2003/03/21 17:00:08  wig
 # | Preliminary working version for bus splices
-# |
+# |                                                                       |
 # | Revision 1.7  2003/03/14 14:51:58  wig
 # | Added -delta mode for backend.
-# |
+# |                                                                       |
 # | Revision 1.6  2003/03/13 14:05:04  wig
 # | Releasing major reworked version
 # | Now handles bus splices much better
-# |
-# | Revision 1.5  2003/02/28 15:04:14  wig
-# | Intermediate version with lots of fixes.
-# | Signal issue still open.
-# | Saved because of pending holiday.
-# |
-# | Revision 1.4  2003/02/21 16:05:27  wig
-# | Added options:
-# | -conf
-# | -sheet
-# | -listconf
-# | see TODO.txt, 20030220/21
-# |
-# | Revision 1.3  2003/02/20 15:05:42  wig
-# | Extended TODO list
-# |
-# | Revision 1.2  2003/02/04 07:28:44  wig
-# | Fixed header of modules
-# |
-# | Revision 1.1.1.1  2003/02/03 12:56:44  wig
-# | Importing pilot release of MIX tools
-# |
-# |
+# |                                                                       |
+# | Revision 1.5  2003/02/28 15:04:14  wig                                |
+# | Intermediate version with lots of fixes.                              |
+# | Signal issue still open.                                              |
+# | Saved because of pending holiday.                                     |
+# |                                                                       |
+# | Revision 1.4  2003/02/21 16:05:27  wig                                |
+# | Added options:                                                        |
+# | -conf                                                                 |
+# | -sheet                                                                |
+# | -listconf                                                             |
+# | see TODO.txt, 20030220/21                                             |
+# |                                                                       |
+# | Revision 1.3  2003/02/20 15:05:42  wig                                |
+# | Extended TODO list                                                    |
+# |                                                                       |
+# | Revision 1.2  2003/02/04 07:28:44  wig                                |
+# | Fixed header of modules                                               |
+# |                                                                       |
+# | Revision 1.1.1.1  2003/02/03 12:56:44  wig                            |
+# | Importing pilot release of MIX tools                                  |
+# |                                                                       |
+# |                                                                       |
 # +-----------------------------------------------------------------------+
 
 # --------------------------------------------------------------------------
@@ -190,7 +191,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.19 $'; # RCS Id
+$::VERSION = '$Revision: 1.20 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # %EH comes from Mic::MixUtils ; All the configuration E-nvironment will be there
@@ -244,7 +245,7 @@ mix_init();               # Presets ....
 #
 
 # Add your options here ....
-mix_getopt_header(qw(
+mix_getopt_header( qw(
     dir=s
     out=s
     outenty=s
@@ -303,7 +304,7 @@ parse_conn_init( $r_connin );
 parse_io_init( $r_ioin );
 
 # Parse I2C
-# parse_i2c_init() $r_i2cin;
+# parse_i2c_init( $r_i2cin );
 
 apply_conn_macros( $r_connin, $r_connmacros );
 

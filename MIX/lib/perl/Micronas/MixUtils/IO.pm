@@ -14,10 +14,10 @@
 #
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
-# | Modules:    $RCSfile: IO.pm,v $                              |
-# | Revision:   $Revision: 1.2 $                                              |
+# | Modules:    $RCSfile: IO.pm,v $                                       |
+# | Revision:   $Revision: 1.3 $                                          |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/11/27 10:46:56 $                              |
+# | Date:       $Date: 2003/11/27 13:18:47 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,12 +28,15 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.3  2003/11/27 13:18:47  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.2  2003/11/27 10:46:56  abauer
 # | *** empty log message ***
 # |
-# | Revision 1.1  2003/11/27 09:20:21  abauer
-# | *** empty log message ***
-# |                                   |
+# | Revision 1.1  2003/11/27 09:20:21  abauer                             |
+# | *** empty log message ***                                             |
+# |                                                                       |
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 package  Micronas::MixUtils::IO;
@@ -100,11 +103,11 @@ sub mix_utils_mask_excel ($);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.2 2003/11/27 10:46:56 abauer Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.3 2003/11/27 13:18:47 abauer Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.2 $';
+my $thisrevision    =      '$Revision: 1.3 $';
 
-# Revision:   $Revision: 1.2 $
+# Revision:   $Revision: 1.3 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -385,7 +388,7 @@ sub mix_utils_open_input(@) {
     my $aconn = [];
     my $ahier = [];
     my $aio = [];
-    my $avi2c = [];
+    my $ai2c = [];
 
     for my $i ( @in ) {
 	unless ( -r $i ) {
@@ -397,7 +400,7 @@ sub mix_utils_open_input(@) {
 	my @conn;
 	my @hier;
 	my @io;
-	my @vi2c;
+	my @i2c;
 
 	# maybe there is a CONF page?
 	# Change CONF accordingly (will not be visible at upper world)
@@ -409,9 +412,9 @@ sub mix_utils_open_input(@) {
 	# Open IO sheet (if available, not needed!)
 	@io = open_infile( $i, $EH{'io'}{'xls'}, $EH{'conf'}{'req'} );
 	# Open I2C sheet (if available, not needed!)
-	@vi2c = open_infile( $i, $EH{'vi2c'}{'xls'}, $EH{'conf'}{'req'} );
+	@i2c = open_infile( $i, $EH{'i2c'}{'xls'}, $EH{'conf'}{'req'} );
 
-	if(!@conn && !@conf && !@hier && !@io && !@vi2c) {
+	if(!@conn && !@conf && !@hier && !@io && !@i2c) {
 	    logwarn "ERROR: no input found!\n";
 	    return undef;
 	}
@@ -443,13 +446,13 @@ sub mix_utils_open_input(@) {
 	    push( @$aio,   @norm_io );   # Append
 	}
 
-	for my $c ( @vi2c ) {
-	    $EH{'vi2c'}{'parsed'}++;
-	    my @norm_vi2c = convert_in( "vi2c", $c);
-	    push(@$avi2c, @norm_vi2c);
+	for my $c ( @i2c ) {
+	    $EH{'i2c'}{'parsed'}++;
+	    my @norm_i2c = convert_in( "i2c", $c);
+	    push(@$ai2c, @norm_i2c);
 	}
     }
-    return( $aconn, $ahier, $aio, $avi2c);
+    return( $aconn, $ahier, $aio, $ai2c);
 }
 
 

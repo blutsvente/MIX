@@ -2,26 +2,26 @@
 #
 # +-----------------------------------------------------------------------+
 # |                                                                       |
-# |   Copyright Micronas GmbH, Inc. 2002.                        |
-# |     All Rights Reserved.                     |
+# |   Copyright Micronas GmbH, Inc. 2002.                                 |
+# |     All Rights Reserved.                                              |
 # |                                                                       |
 # |                                                                       |
-# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH |
+# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH          |
 # | The copyright notice above does not evidence any actual or intended   |
 # | publication of such source code.                                      |
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
-# | Project:    Micronas - MIX / Parser                                    |
-# | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.29 $                                             |
-# | Author:     $Author: abauer $                                  |
-# | Date:       $Date: 2003/11/27 09:08:56 $                                   |
+# | Project:    Micronas - MIX / Parser                                   |
+# | Modules:    $RCSfile: MixParser.pm,v $                                |
+# | Revision:   $Revision: 1.30 $                                         |
+# | Author:     $Author: abauer $                                         |
+# | Date:       $Date: 2003/11/27 13:18:40 $                              |
 # |                                                                       |
-# | Copyright Micronas GmbH, 2002                                |
+# | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.29 2003/11/27 09:08:56 abauer Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.30 2003/11/27 13:18:40 abauer Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.30  2003/11/27 13:18:40  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.29  2003/11/27 09:08:56  abauer
 # | *** empty log message ***
 # |
@@ -157,7 +160,7 @@ require Exporter;
       %hierdb
       %conndb
     );         # symbols to export on request
-  # %EXPORT_TAGS = tag => [...];  
+  # %EXPORT_TAGS = tag => [...];
 
 # @Micronas::MixParser::ISA=qw(Exporter);
 # @Micronas::MixParser::EXPORT=qw(
@@ -184,8 +187,7 @@ use Log::Agent::Priorities qw(:LEVELS);
 use Tree::DAG_Node; # tree base class
 use Regexp::Common; # Needed for import/init functions: parse VHDL ...
 
-use Micronas::MixUtils qw( mix_store db2array
-			   mix_list_econf %EH replace_mac );
+use Micronas::MixUtils qw( mix_store db2array mix_list_econf %EH replace_mac );
 use Micronas::MixUtils::IO;
 
 use Micronas::MixChecker;
@@ -218,11 +220,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.29 2003/11/27 09:08:56 abauer Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.30 2003/11/27 13:18:40 abauer Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.29 $';
+my $thisrevision   =      '$Revision: 1.30 $';
 
-# | Revision:   $Revision: 1.29 $   
+# | Revision:   $Revision: 1.30 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -268,7 +270,7 @@ sub parse_conn_macros ($) {
         if ( $mflag and $rin->[$i]{'::gen'} =~ m/^\s*MD/io ) {
             # another MD, while being in "read macro definition mode"
             push( @{$m[$n]{'md'}}, $rin->[$i] );
-            $rin->[$i]{'::comment'} = "#macro definition parsed /" . $rin->[$i]{'::comment'};            
+            $rin->[$i]{'::comment'} = "#macro definition parsed /" . $rin->[$i]{'::comment'};
             next;
         }
         # if ( $mflag ) {
@@ -338,7 +340,7 @@ sub convert_conn_macros ($) {
                 @{$vars{$ii}} = ( $f{$ii} =~ m{\$(\w)}xg ); # Give me all variables ....
                 ( my $tmp = $f{$ii} ) =~ s,\$\w,(.+),g; # Replace variables by a (.+)
                 $mm .= $tmp;
-                
+
                 for my $iii ( 0..$#{$vars{$ii}} ) {
                     $n++;
                     $me .= "\$mex{'" . $vars{$ii}[$iii] . "'} = \$" . $n . "; ";
@@ -578,7 +580,7 @@ sub parse_hier_init ($) {
     #
     # Add all instances left in the input data
     #
-    for my $i ( 0..$#{$r_hier} ) {    
+    for my $i ( 0..$#{$r_hier} ) {
         next unless ( $r_hier->[$i] ); # Skip if input field is empty
         next if ( $r_hier->[$i]{'::ign'} =~ m,^(#|//),o );
         next if ( $r_hier->[$i]{'::gen'} !~ m,^\s*$,o );
@@ -1052,7 +1054,7 @@ sub create_conn ($%) {
         $conndb{$name}{$i} = $data{$i};
     }
 
-    # Give each signal a unique number: starting from 0 ... 
+    # Give each signal a unique number: starting from 0 ...
     $conndb{$name}{'::connnr'} = $EH{'sum'}{'conn'}++;
 }
 
@@ -1192,7 +1194,7 @@ sub _create_conn ($$%) {
                 if ( defined( $t ) ) {
                     $co{'inst'} = "%" . $t . "%";
                 } elsif ( defined( $data{'::mode'} ) ) {
-                # Derive instance/type from mode field ....    
+                # Derive instance/type from mode field ....
                     if ( $data{'::mode'} =~ m,^\s*G,io ) {
                         $co{'inst'} = '%GENERIC%';
                     } elsif ( $data{'::mode'} =~ m,^\s*P,io ) {
@@ -1203,7 +1205,7 @@ sub _create_conn ($$%) {
                 } else {
                         $co{'inst'} = '%CONST%';
                 }
-                
+
                 # Convert input data ...hex, binary and decimal to decimal ....
                 if ( $d =~ m,^0x,io ) {
                     $const = hex( $const ); # Handles hex and octal
@@ -1216,7 +1218,7 @@ sub _create_conn ($$%) {
                     $const = oct( $const );
                 }
                 $const =~ tr/'/"/; # Convert ' to " (otherwise ExCEL will eat it).
-                    
+
                 $co{'port'} = $const; # Decimal base or literal
                 # Inherit bus width from signal definition ....
                 $co{'port_f'} = $h;
@@ -1224,7 +1226,7 @@ sub _create_conn ($$%) {
                 $co{'sig_f'} = $h;
                 $co{'sig_t'} = $l;
                 $co{'value'} = $const;
-                
+
                 push( @co, { %co } );
                 #TODO: $mode = 'C'; # Autochange ::mode to constant
                 next;
@@ -1237,7 +1239,7 @@ sub _create_conn ($$%) {
             # %   marker for macros
             # :    part of macro like %::name%
             #
-            
+
             #
             # Normal inst/ports ....
             #
@@ -1276,7 +1278,7 @@ sub _create_conn ($$%) {
                     $co{'inst'} = $1;
                     $co{'port'} = $2;
                     $co{'sig_f'} = $3;
-                    $co{'sig_t'} = $4;                    
+                    $co{'sig_t'} = $4;
                     if ( $4 ne "0" ) {
                         # Wire port of width
                         logwarn("Automatically wiring signal bits $3 to $4 of $1/$2 to bits " . ( $3 - $4 ) . " to 0");
@@ -1294,7 +1296,7 @@ sub _create_conn ($$%) {
                         $co{'port_f'} = $3; # - $4 ;
                         $co{'port_t'} = 0;
                     }
-                }   
+                }
             } elsif ( $d =~ m,([\w%#]+)/(\S+)\(([\w%#]+):([\w%#]+)\)\s*, ) {
                 # INST/PORTS(f:t)
                 $co{'inst'} = $1;
@@ -1304,7 +1306,7 @@ sub _create_conn ($$%) {
                 if ( $4 ne "0" ) {
                     my $f = $3;
                     my $t = $4;
-                    if ( $t =~ m,^(\d+)$,o and $f =~ m,^(\d+)$,o ) { 
+                    if ( $t =~ m,^(\d+)$,o and $f =~ m,^(\d+)$,o ) {
                         $co{'sig_f'} = $f - $t;
                         $co{'sig_t'} = 0;
                     } else {
@@ -1329,7 +1331,7 @@ sub _create_conn ($$%) {
                 $co{'port_f'} = $h;
                 $co{'port_t'} = $l;
                 $co{'sig_f'} = $h;
-                $co{'sig_t'} = $l;                
+                $co{'sig_t'} = $l;
             }else {
                 # INST
                 $co{'inst'} = $d;
@@ -1339,9 +1341,9 @@ sub _create_conn ($$%) {
                 $co{'sig_f'} = $h;
                 $co{'sig_t'} = $l;
             }
-            
+
             check_conn_prop( \%co );
-            
+
             push( @co, { %co } );
     }
     return ( \@co );
@@ -1357,7 +1359,7 @@ sub check_conn_prop ($) {
     foreach my $i ( qw( inst port port_f port_t sig_f sig_t ) ) {
         if ( $ref->{$i} ) { $ref->{$i} =~ y/#/:/; }
     }
-    
+
     if ( $ref->{'inst'} !~ m,^[:%\w]+$,o ) {
         logwarn( "Unusual character in signal name: $ref->{'inst'}/$ref->{'port'}!" );
     }
@@ -1377,7 +1379,7 @@ sub mix_p_retcprop ($$) {
     my $props = shift;
 
     my %data = ();
-    
+
     if ( exists( $conndb{$name} ) ) {
         for my $i ( split( /[\s,]+/, $props ) ) {
             if ( exists( $conndb{$name}{$i} ) ) {
@@ -1613,16 +1615,16 @@ sub mix_store_db ($$$) {
         } else {
             write_outfile( $dumpfile, "CONF", $aro ); #wig20030708: store CONF options ...
             write_outfile( $dumpfile, "CONN", $arc );
-            write_outfile( $dumpfile, "HIER", $arh );    
+            write_outfile( $dumpfile, "HIER", $arh );
         }
        if($EH{'intermediate'}{'strip'}) {
            clean_temp_sheets($EH{'out'});
-       }       
+       }
 #        close_open_workbooks(); # Close everything we opened
     } else {
         if ( $type ne "internal" ) {
             $type="intermediate";
-        }    
+        }
         mix_store( $dumpfile, { 'conn' => \%conndb , 'hier' => \%hierdb,
                                     %$varh
                             }, $type);
@@ -1650,7 +1652,7 @@ Arguments:
 
 sub mix_load_db ($$$) {
     my $dumpfile = shift;
-    my $type = shift || "internal";   
+    my $type = shift || "internal";
     my $varh = shift || {} ;
 
     if ( $dumpfile eq "in" ) {
@@ -1661,7 +1663,7 @@ sub mix_load_db ($$$) {
         log_error( "Cannot read dump file $dumpfile!\n" );
         exit 1;
     }
-    
+
     if ( $type eq "auto" ) {
         # Derive output format from output name extension
         if ( $dumpfile =~ m,\.(xls|csv|pli)$, ) {
@@ -1671,7 +1673,7 @@ sub mix_load_db ($$$) {
                 $type="internal";
         }
     }
-      
+
     #TODO: if ( $type eq "xls" ) {
     #    my $arc = db2array( \%conndb , "conn" );
     #    my $arh = db2array( \%hierdb, "hier" );
@@ -1791,7 +1793,7 @@ sub apply_conn_gen ($) {
     #TODO: We could remove the iterators from the generator data, now
 
     apply_x_gen( $r_cg, $f );
-    
+
 }
 
 ####################################################################
@@ -1833,9 +1835,9 @@ sub apply_hier_gen ($) {
     }
     #TODO: We could remove the iterators from the generator data, now
 
-    # Do the rest ...    
+    # Do the rest ...
     apply_x_gen( $r_hg, $f );
-    
+
 }
 
 ####################################################################
@@ -1869,10 +1871,10 @@ Intermediate data is kept in:
 sub apply_x_gen ($$) {
     my $r_hg = shift;       # connection gen data
     my $func = shift;   # which function to call ...
-    
+
     # for my $i ( keys( %hierdb) ) { #See if the ::gen matches one of the instances already known
     #    next if $hierdb{$i}{'::ign'} =~ m,^\s*(#|//),o;
-    
+
     for my $cg ( keys( %$r_hg ) ) { # Iterate through all known generators ...
 
         # Iterate over CONN or HIER, defined by ...{'ns'} namespace ...
@@ -1958,7 +1960,7 @@ sub apply_x_gen ($$) {
                         $EH{'sum'}{'errors'}++;
                     }
                     $matcher =~ s/\$$rv/(\\d+)/g;   # Replace $rv by (\d+)
-                    
+
                     if ( $text =~ m/^$matcher$/ ) { # $1 has value for $rv ... only one variable
                         if ( defined( $1 ) ){
                             $mres{$rv} = $1;
@@ -1996,7 +1998,7 @@ sub apply_x_gen ($$) {
                                 #!wig20030516: first convert {} to (), then replace variables
                                 $f =~s/{/" . (/g;
                                 $f =~s/}/) . "/g;       #TODO: make sure {} do match!!
-                            
+
                                 $f =~ s/\$(\d+)/$mres{$1}/g; # replace $N by $mres{'N'}
                                 $f =~ s/\$$rv/$mres{$rv}/g;    # Replace the run variable by it's value
                                 # $f =~ tr/{}/()/;                     # Replace {} by (), which will be evaluated
@@ -2081,7 +2083,7 @@ sub mix_p_prep_match ($$$$) {
             $content = undef;
             $pre = "__E_NONMATCHINGRE__";
             return ( $content, $pre );
-        }  
+        }
     }
 
     # Some trailing stuff left? Add default column contents ....
@@ -2089,7 +2091,7 @@ sub mix_p_prep_match ($$$$) {
         $content .= "#" . $r_d->{$defcol};
         $pre .= "#" . $1;
     }
-    
+
     return( $content, $pre );
 }
 
@@ -2109,7 +2111,7 @@ sub mix_p_prep_match ($$$$) {
 
 sub get_top_cell () {
 
-    my @tops = ();    
+    my @tops = ();
     if ( $EH{'top'} =~ m,testbench,io ) {
     # Find testbench in hierdb, take daughters
         for my $i ( keys( %hierdb ) ) {
@@ -2166,7 +2168,7 @@ Will remember the top cell for each signal in $conndb{$signal}{'::topinst'}
 =cut
 
 sub add_portsig () {
-    
+
     for my $signal ( keys( %conndb ) ) {
         my %connected = (); # List of connected instance nodes
         my %modes = ();
@@ -2176,7 +2178,7 @@ sub add_portsig () {
             logdie( "FATAL: Detecting signal without name in add_portsig! Check CONN sheet!");
             next;
         }
-        
+
         # Skip HIGH/LOW/OPEN
         if ( $signal =~ m/^\s*%(HIGH|LOW|OPEN)/o ) { next; }
         #
@@ -2184,7 +2186,7 @@ sub add_portsig () {
         # Constant and Generics will not extend port map!
         #
         my $mode = $conndb{$signal}{'::mode'};
-        
+
         if ( $mode and ( $mode =~ m,^\s*[CGP],o ) ) {
             next;
         }
@@ -2268,7 +2270,7 @@ sub add_portsig () {
 
         # Keep name of top instance for later reuse ....
         $conndb{$signal}{'::topinst'} = $commonpar->{'name'};
-        
+
         #
         # now we know the tree top for that signal. The top may not have the
         # signal in his port list ..
@@ -2336,7 +2338,7 @@ sub _mix_p_getconnected ($$$$;$) {
     my $r_con = shift || undef;
 
     my $n = 0;
-    if ( exists( $conndb{$signal}{$dir} ) ) {    
+    if ( exists( $conndb{$signal}{$dir} ) ) {
         for my $i ( 0..$#{$conndb{$signal}{$dir}} ) {
             my $inst = $conndb{$signal}{$dir}[$i]{'inst'};
             my $md = ( $mode !~ m,^[IOS]$,io ) ? ( "/" . $mode ) : ""; #!wig20030729: bug
@@ -3603,7 +3605,7 @@ sub purge_relicts () {
                 $conndb{$i}{'::low'} = "0";
             }
         }
-        
+
 
         # Does a _vector type have bounds defined?
         if ( ( $conndb{$i}{'::high'} eq "" or $conndb{$i}{'::low'} eq "" ) and
@@ -3611,7 +3613,7 @@ sub purge_relicts () {
                 logwarn( "WARNING: Found signal of type $1 with undefined bounds!" );
                 $EH{'sum'}{'warnings'}++;
         }
-            
+
         #!wig20030516: auto reducing single width busses to signals ...
         if ( $conndb{$i}{'::high'} eq "0" and $conndb{$i}{'::low'} eq "0" ) {
             if ( $conndb{$i}{'::type'} =~ m,std_u?logic\s*$,io ) {
@@ -3720,7 +3722,7 @@ sub _scan_inout ($) {
         no warnings; # switch of warnings here, values might be undefined ...
         my %seen = ();
         my @left = ();
- 
+
         for my $iii ( 0..$#{$rsa} ) {
                 unless( exists( $rsa->[$iii]{'rvalue'} ) ) {
                     if ( exists( $rsa->[$iii]{'inst'} ) ) {
@@ -3751,7 +3753,7 @@ add_sign2hier ()
 
 look through %conndb and add $hierdb{INSTANCE}{::conn}{::out|::in}{CONN}{PORT}
 as index to the signals.
-    
+
 =cut
 sub add_sign2hier () {
 

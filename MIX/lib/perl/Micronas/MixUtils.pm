@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.34 $                                             |
+# | Revision:   $Revision: 1.35 $                                             |
 # | Author:     $Author: abauer $                                  |
-# | Date:       $Date: 2003/11/27 09:08:56 $                                   |
+# | Date:       $Date: 2003/11/27 13:18:40 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.34 2003/11/27 09:08:56 abauer Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.35 2003/11/27 13:18:40 abauer Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.35  2003/11/27 13:18:40  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.34  2003/11/27 09:08:56  abauer
 # | *** empty log message ***
 # |
@@ -231,11 +234,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.34 2003/11/27 09:08:56 abauer Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.35 2003/11/27 13:18:40 abauer Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.34 $';
+my $thisrevision   =      '$Revision: 1.35 $';
 
-# Revision:   $Revision: 1.34 $   
+# Revision:   $Revision: 1.35 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -578,7 +581,7 @@ sub mix_getopt(@)
 
 =head2 mix_usage()
 
-Print the SYNOPSIS section of the script's POD documentation.
+Print the SYNOPSIS section of the script's POD documentation. #'
 
 =cut
 
@@ -723,7 +726,7 @@ sub mix_help()
 	$cmd = "pod2man --center '$head' --release '$foot' --lax $0 | nroff -man";
     }
     my $help = `$cmd`;
-   
+
     logtrc($EH{'ERROR'}, "'$cmd' failed.") if $?;
 
     # Save one head and foot line
@@ -877,6 +880,7 @@ sub mix_init () {
 	'format' => 'prev', # One of: prev(ious), auto or n(o|ew)
 	# If set, previous uses old sheet format, auto applies auto-format and the others do nothing.
 	'strip' => '0',   # remove old and diff sheets
+	'ext' => '', # default intermediate-output extension
     },
     'check' => { # Checks enable/disable: Usually the keywords to use are
 		    # na (or empty), check (check and warn),
@@ -1003,10 +1007,10 @@ sub mix_init () {
 	'field' => {},
     },
 
-    #    
-    # Definitions regarding the CONN sheets:    
     #
-    'conn' => { 
+    # Definitions regarding the CONN sheets:
+    #
+    'conn' => {
 	'xls' => 'CONN',
 	'req' => 'mandatory',
 	'parsed' => 0,
@@ -1020,7 +1024,7 @@ sub mix_init () {
 	    #                                  0      1      2	3       4
 	    '::ign' 		=> [ qw(	0	0	1	%EMPTY% 	1 ) ],
 	    '::gen'		=> [ qw(	0	0	1	%EMPTY% 	2 ) ],
-	    '::bundle'	=> [ qw(	1	0	1	WARNING_NOT_SET	3 ) ],
+	    '::bundle'	        => [ qw(	1	0	1	WARNING_NOT_SET	3 ) ],
 	    '::class'		=> [ qw(	1	0	1	WARNING_NOT_SET	4 )],
 	    '::clock'		=> [ qw(	1	0	1	WARNING_NOT_SET	5 )],
 	    '::type'		=> [ qw(	1	0	1	%SIGNAL%	6 )],
@@ -1032,10 +1036,10 @@ sub mix_init () {
 	    '::out'		=> [ qw(	1	0	0	%SPACE% 	12 )],
 	    '::in'		=> [ qw(	1	0	0	%SPACE% 	13 )],
 	    '::descr'		=> [ qw(	1	0	0	%EMPTY% 	14 )],
-	    '::comment'	=> [ qw(	1	1	2	%EMPTY% 	15 )],
-	    '::default'	=> [ qw(	1	1	0	%EMPTY% 	0 )],
-	    "::debug"	=> [ qw(	1	0	0	%NULL%	0 )],
-	    '::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
+	    '::comment'	        => [ qw(	1	1	2	%EMPTY% 	15 )],
+	    '::default'	        => [ qw(	1	1	0	%EMPTY% 	0 )],
+	    "::debug"	        => [ qw(	1	0	0	%NULL%	        0 )],
+	    '::skip'		=> [ qw(	0	1	0	%NULL% 	        0 )],
 	    'nr'		=> 16, # Number of next field to print
 	},
     },
@@ -1055,28 +1059,28 @@ sub mix_init () {
 	    #								Defaultvalue
 	    #									PrintOrder
 	    #                                  0      1       2	3       4
-	    '::ign' 		=> [ qw(	0	0	1	%EMPTY% 	1 ) ],
-	    '::gen'		=> [ qw(	0	0	1	%EMPTY% 	2 ) ],		
-	    '::variants'	=> [ qw(	1	0	0	Default	3 )],
-	    '::parent'	=> [ qw(	1	0	1	W_NO_PARENT	4 )],
+	    '::ign' 		=> [ qw(	0	0	1	%EMPTY% 	1 )],
+	    '::gen'		=> [ qw(	0	0	1	%EMPTY% 	2 )],
+	    '::variants'	=> [ qw(	1	0	0	Default	        3 )],
+	    '::parent'	        => [ qw(	1	0	1	W_NO_PARENT	4 )],
 	    '::inst'		=> [ qw(	0	0	1	W_NO_INST	5 )],
 	    '::lang'		=> [ qw(	1	0	0	%LANGUAGE%	7 )],
 	    '::entity'		=> [ qw(	1	0	1	W_NO_ENTITY	8 )],
-	    '::arch'		=> [ qw(	1	0	0	rtl			9 )],
-	    "::config"	=> [ qw(	1	0	1	%DEFAULT_CONFIG%	11 )],
-	    '::use'		=> [ qw(	1	0	0	%EMPTY%		10  )],
-	    "::comment"	=> [ qw(	1	0	2	%EMPTY%	12 )],
-	    "::descr"	=> [ qw(	1	0	0	%EMPTY%	13 )],
-	    "::shortname"	=> [ qw(	0	0	0	%EMPTY%	6 )],
-	    "::default"	=> [ qw(	1	1	0	%EMPTY%	0 )],
-	    "::hierachy"	=> [ qw(	1	0	0	%EMPTY%	0 )],
-	    "::debug"	=> [ qw(	1	0	0	%NULL%	0 )],
-	    '::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
+	    '::arch'		=> [ qw(	1	0	0	rtl		9 )],
+	    "::config"	        => [ qw(	1	0	1	%DEFAULT_CONFIG% 11 )],
+	    '::use'		=> [ qw(	1	0	0	%EMPTY%		10 )],
+	    "::comment"	        => [ qw(	1	0	2	%EMPTY%	        12 )],
+	    "::descr"	        => [ qw(	1	0	0	%EMPTY%	        13 )],
+	    "::shortname"	=> [ qw(	0	0	0	%EMPTY%	        6 )],
+	    "::default"	        => [ qw(	1	1	0	%EMPTY%	        0 )],
+	    "::hierachy"	=> [ qw(	1	0	0	%EMPTY%	        0 )],
+	    "::debug"	        => [ qw(	1	0	0	%NULL%	        0 )],
+	    '::skip'		=> [ qw(	0	1	0	%NULL% 	        0 )],
 	    'nr'		=> 14,  # Number of next field to print
 	},
     },
     'variant' => 'Default', # Select default as default variant :-)
-    
+
     #
     # IO sheet basic definitions
     # PAD is he primary key (but pad names might be added on demand)
@@ -1087,29 +1091,56 @@ sub mix_init () {
 	'req' => 'optional',
 	'parsed' => 0,
 	'field' => {
-	    #Name   	=>		Inherits
-	    #						Multiple
-	    #							Required
-	    #								Defaultvalue
-	    #									PrintOrder
-	    #                                  0      1       2	3       4
-	    '::ign' 		=> [ qw(	0	0	1	%EMPTY% 	1 ) ],
+	    #Name   	=>		    Inherits
+	    #					    Multiple
+	    #						    Required
+	    #							   Defaultvalue
+	    #								    PrintOrder
+	    #                                   0       1       2	3       4
+	    '::ign' 		=> [ qw(	0	0	1	%EMPTY% 	1 )],
 	    '::class'		=> [ qw(	1	0	1	WARNING_NOT_SET	2 )],
-	    '::ispin'		=> [ qw(	0	0	1	%EMPTY%	3 ) ],
-	    '::pin'		=> [ qw(	0	0	1	WARNING_PIN_NR	4  )],
-	    '::pad'		=> [ qw(	0	0	1	WARNING_PAD_NR	5  )],
-	    '::type'		=> [ qw(	1	0	1	DEFAULT_PIN	6  )],
-	    '::iocell'		=> [ qw(	1	0	1	DEFAULT_IO	7  )],
-	    '::port'		=> [ qw(	1	0	1	%EMPTY%	8  )],
-	    '::name'		=> [ qw(	0	0	1	PAD_NAME	9  )],
-	    '::muxopt'	=> [ qw(	1	1	1	%EMPTY%	10  )],
-	    "::comment"	=> [ qw(	1	0	2	%EMPTY%	11 )],
-	    '::debug'	=> [ qw(	1	0	0	%NULL%	0 )],
-	    '::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
+	    '::ispin'		=> [ qw(	0	0	1	%EMPTY%	        3 )],
+	    '::pin'		=> [ qw(	0	0	1	WARNING_PIN_NR	4 )],
+	    '::pad'		=> [ qw(	0	0	1	WARNING_PAD_NR	5 )],
+	    '::type'		=> [ qw(	1	0	1	DEFAULT_PIN	6 )],
+	    '::iocell'		=> [ qw(	1	0	1	DEFAULT_IO	7 )],
+	    '::port'		=> [ qw(	1	0	1	%EMPTY%	        8 )],
+	    '::name'		=> [ qw(	0	0	1	PAD_NAME	9 )],
+	    '::muxopt'	        => [ qw(	1	1	1	%EMPTY%	        10 )],
+	    "::comment"	        => [ qw(	1	0	2	%EMPTY%	        11 )],
+	    '::debug'	        => [ qw(	1	0	0	%NULL%	        0 )],
+	    '::skip'		=> [ qw(	0	1	0	%NULL% 	        0 )],
 	    'nr'		=> 12,  # Number of next field to print
 	},
     },
-
+    #
+    # I2C sheet basic definitions
+    #
+    'i2c' => {
+        'xls' => 'I2C',
+	'req' => 'optional',
+	'parsed' => 0,
+	'field' => {
+	    #Name   	=>	  	    Inherits
+	    #					    Multiple
+	    #						    Required
+	    #							  Defaultvalue
+	    #								    PrintOrder
+	    #                                   0       1       2	3       4
+	    '::ign' 		=> [ qw(	0	0	1	%EMPTY%     1 )],
+	    '::variants'	=> [ qw(	1	0	0	Default	   2 )],
+	    '::width'		=> [ qw(	0	0	1	16         3 )],
+	    '::dev'             => [ qw(        0       0       1       %EMPTY%     4)],
+	    '::sub'             => [ qw(        0       0       1       %EMPTY%     5)],
+	    '::interface'       => [ qw(        0       0       1       %EMPTY%     6)],
+	    '::block'           => [ qw(        0       0       1       %EMPTY%     7)],
+	    '::b'		=> [ qw(	0	1	1	%EMPTY%	   5 )],
+	    '::range'	        => [ qw(	1	0	0	%EMPTY%	   8 )],
+	    '::name'		=> [ qw(	0	1	0	%EMPTY%	   9 )],
+	    '::comment'	        => [ qw(	1	0	2	%EMPTY%	   10 )],
+	    'nr'		=> 12,  # Number of next field to print
+	},
+    },
     # VI2C Definitions:
     # ::ign	::type	::width	::dev	::sub	::addr
     # ::interface	::block	::inst	::dir	::auto	::sync
@@ -1211,14 +1242,14 @@ sub mix_init () {
     'sum' => { # Counters for summary
 	'warnings' => 0,
 	'errors' => 0,
-	
+
 	## Inventory
-	'inst' => 0,		# number of instances	
+	'inst' => 0,		# number of instances
 	'conn' => 0,	# number of connections
 	'genport' => 0, 	# number of generated ports
 
 	'cmacros' => 0,	# Number of matched connection macro's
-	
+
 	'noload' => 0,   	# signals with missing loads ...
 	'nodriver' => 0,	# signals without driver
 	'multdriver' => 0,	# signals with multiple drivers
@@ -1496,7 +1527,7 @@ sub _mix_apply_conf ($$$) {
 =head2 mix_overload_sheet($OPTVAL{'sheet'})
 
 Started if option -sheet SHEET=match_op is given on command line. SHEET can be one of
-<I hier>, <I conn>, <I vi2c> or <I conf>
+<I hier>, <I conn>, <I vi2c>, <I conf> or <I i2c>
 
 =over 4
 
@@ -2549,7 +2580,7 @@ sub write_sum () {
         logwarn( "SUM: $i $EH{'sum'}{$i}" );
     }
     logwarn( "SUM: Number of parsed input tables:" );
-    for my $i ( qw( conf hier conn io vi2c ) ) {
+    for my $i ( qw( conf hier conn io i2c ) ) {
         logwarn( "SUM: $i $EH{$i}{'parsed'}" );
     }
 
@@ -2631,9 +2662,13 @@ sub mix_utils_init_file($) {
 	}
 
 	# Extension: MS-Win -> xls, else csv
-	if ( $^O =~ m,^mswin,io ) {
+	if ( $^O =~ m,^mswin,io || $EH{'intermediate'}{'ext'}=~ m/^xls$/) {
 	    $output .= ".xls";
-	}else {
+	}
+	elsif( $EH{'intermediate'}{'ext'}=~ m/^sxc$/) {
+	    $output .= ".sxc";
+	}
+	else {
 	    $output .= ".csv";
 	}
 	logwarn( "WARNING: Setting project name to $output" );
@@ -2678,9 +2713,6 @@ sub mix_utils_init_file($) {
     # If user provided HDL files, we try to scan these and add to the template ...
     if ( scalar( @hdlimport ) ) {
 
-	if ( $output =~ m,\.xls$, ) {
-	    my $ole = init_ole();
-	}
         #OFF: only Utils knows about that ... my $ole = init_ole(); # Start OLE Object ... for windows, only
         Micronas::MixUtils::IO::mix_utils_open_input( $output );
         #Gets format from file to import too.
@@ -2700,3 +2732,4 @@ sub mix_utils_init_file($) {
 1;
 
 #!End
+
