@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.30 2003/12/22 09:18:01 wig Exp $
+# $Id: TODO.txt,v 1.31 2004/03/25 11:21:10 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -19,39 +19,50 @@ Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
 
-Probleme:
+-20040324a/Req: Define %AUTO% signal name
+    wires according to rules e.g.:
+        ::name := PRE_MODULEFROM[_MODULETO]_PORT
+    combined with -import -> create wires automatically
+
+    Req: wig20040324
+
+- 20040217/Req: Add a "compare entities" facility.
+
+  -verify PATH[:PATH]
+  -> reads in all filenames in PATH and if this name matches a entity to create, do a
+  diff instead.
+
+
+- 20040128a/Req: plugin-interface
+  allow definition of arbitryry plugins
+    define sheets to parse
+    define set of standard functions to be provided by plugin
+    define call location
+
+    Req: wig
+    
+- 20040127a/Req: Sort entity and signals by
+   - order given from input-sheet
+   - order by bundle
+   - order by plugin function
+   - order by number (e.g. ::sortval)
+   - order by string (default)
+   make sure generated signals are written en-bloc at end/beginning or sorted, too
+
+    Req: mpit
+
+- 20040127b/Req: Leaf cell compare
+   take input argument: -leaf-path (or -conf ...leaf.path) to be colon seperated path list
+   and compare all generated entities against the files to be found in that path
+   (reuse delta mode capabilites).
+   Define -conf check.leaf ( -> path)
+
+   Req: mpit
 
 - WinCVS weigert sich aufobskure Art und Weise Dateien einzuchecken ...
 
 
-- 20031218a/Req: IO should not wire inout ports to TOP (which is the default now)
-    solution: introduce a new keyword (instead of S, maybe SIO ...)
-    solution2: mark in ::in and/or ::out coloum:
-    solution3: add a configuration variable "do not wire to TOP" ... contains RE with matching
-	signals -> should be excluded ...
-	output.generate.xinout signal_a,signal_b,.... allow reg-ex)
 
-    Globally one can use the configuration (remove the default "mode" keyword)
-	output.generate.inout ""
-    Maybe mode can be extended to
-	io_mode, i_mode, o_mode, ... (the leading part would match the signal ::mode)
-	all_mode (io, i, o)
-
-    There exists already the
-	B buffer
-	S signal
-	IO inout (with top level connection)
-	I   in (wire to top level)
-	O  out (wire to top level)
-	G generic
-	P parameter
-	C constant
-
-    Req: mpit
-    Prio: medium
-    Workaround: use global configuration and wire required other signals manually to top
-    Solved: 20031220, wig (output.generate.xinout )
-    
 - 20031215c/Req: Do not generate a mux-port if no mux cells are defined for
    an entity (only one cell filled in)
 
@@ -60,44 +71,6 @@ Probleme:
     Workaround: specify "%NOSEL%"
 
 
-- 20031215b/Bug: VGCA rule make MIX die
-
-....
-03/12/15 10:44:21 6128: WARNING: EXCEL_DIFF with different headers useless!
-03/12/15 10:44:21 6128: Rotating 3 old sheets of DIFF_CONN!
-03/12/15 10:44:22 6128: WARNING: Limit length of cell to save 1200 characters: G
- # i = 48 #$i(33..232),/iom_(.*
-03/12/15 10:44:22 6128: WARNING: Limit length of cell to save 1200 characters:
-# i = 132 #$i(33..232),/iom_(.*
-03/12/15 10:44:22 6128: WARNING: Limit length of cell to save 1200 characters: i
- = 91 #$i(33..232),/iom_(.*)::p
-03/12/15 10:44:22 6128: WARNING: Limit length of cell to save 1200 characters: =
-$i/G # i = 170 #$i(33..232),/io
-03/12/15 10:44:22 6128: WARNING: Limit length of cell to save 1200 characters: /
-G # i = 96 #$i(33..232),/iom_(.
-Win32::OLE(0.1502) error 0x80020009: "Ausnahmefehler aufgetreten"
-    in PROPERTYPUT "Value" at H:\work\mix/lib/perl/Micronas/MixUtils.pm line 3227
-
-Triggered by rule in CONN_IO / line 107
-	$i(33..232),/iom_(.*)::pin=$i/		Data	async	std_ulogic				scan_en_i		iom_$1/scan_en_i
-
-    Reason: Might get triggered by a leading = in a cell (excel sees bad formula??)
-	Could not be reproduced after several hours of debugging.
-
-    Req: mpit
-    Prio: high
-    Solution: 
-
-- 20031215a/Bug: addind ::iodir column fails
-    Error message:
-
-Can't use an undefined value as an ARRAY reference at H:\work\mix/lib/perl/Micro
-nas/MixUtils.pm line 2196.
-
-    Req: mpit
-    Example: vgca_20031215/VGCA_IO.xls
-    Prio: high
-    Testcase: 
 
 - 2003113a/Req:
     Fix warning messages:
@@ -119,14 +92,6 @@ nas/MixUtils.pm line 2196.
 
     Req: wig
     
-- 20031112a/Bug: ExCEL returns
-   Win32::OLE::Variant=SCALAR if a cell has a formula with errors. Please detect and consider
-  that when opening a sheet.
-
-    Req: mpallas
-    Prio: low
-    Workaround: Fix EXCEL spreadsheet!
-    Solution: parse input at open time and fix/ignore that!
 
 - 20031110a/Bug: Leave in dummy wires for open output port splices
     Description: in verilog we need to have wires for open ports ....
@@ -222,19 +187,6 @@ z.B. IN EINER ENTITY
     Prio: medium
     Issue: There is no direct link between a entity/port names and a signal! Comments will be set in port map
         
-- 20030725a/Bug: config file names are not according standard ...
-    Might be bad setup, though.
-    
-WEITERS WUERDE ICH EMPFEHLEN DIE CONFIGURATION-DATEI ENTSPRECHEND DEN CODING GUIDLINES ZU BENENNEN
-
-<ENTITY-NAME>-<ARCHITECTURE-NAME>-<CONFIGURATION-NAME>-C,VHD
-
-    Req: Kropfitsch
-    Prio: Medium
-    Testcase: k:\projects\mix\examples\di_tnr
-    Fixed: wig20030728 (bug in filename creation ...)
-    Testcase: vgca_20030723 (hand test)
-    
 
 - 20030715b/Req: IOP: "get_next IOcell" (for given name/number ::pad)
     will allow to set up NAND-Trees easily
@@ -380,8 +332,150 @@ is defined.
 ##########################################################
 DONE: +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ##########################################################
+- 20040210/Req: Use configuration instead of module names within Verilog modules referencing VHDL
 
+Update:
+    Am Anfang des Files würde folgendes definiert:
 
+`ifdef MAGMA
+  `define cgu_inst_name cgu
+`else
+  `define cgu_inst_name cgu_rtl_c0
+`endif
+
+Die Instanziierung sähe folgendermaßen aus:
+
+`cgu_inst_name cgu_i1(	// Clock Generation Unit (CGU)
+
+Wäre das mit MIX machbar ?
+
+> > ist es möglich bei der Instanziierung von VHDL-Komponenten in einem
+> > Verilog-Toplevel statt des Modulnamens den Konfigurationsnamen zu 
+> > verwenden ?
+> > 
+> > Beispiel (Modulinstanziierung der CGU im MDE-D Toplevel):
+> > bisher:
+> > ...
+> > cgu cgu_i1 (...)
+> > ...
+> > 
+> > was wir möchten:
+> > ...
+> > cgu_rtl_c0 cgu_i1 (...)
+> > ...
+> > 
+> > Der Konfig-Name ist normalerweise aus dem Hierarchie-Sheet 
+> ableitbar.
+> > 
+
+Proposal:
+    Need to change generation of %INSTANCES% in verilog mode if module to be used is
+    VHDL and config parameter generate.output.verilog =~ m,useconfname,
+Unfortunately this needs to be made tool sensitive (aka. 'defines).
+
+Done 20040322, wig
+
+Solution:
+    1. set "output.generate.verilog" to  "usemodulename" -> ::config value will be used as
+        module name for all VHDL modules.
+    2. Otherwise append a %USEASMODULENAME% (%UAMN%) tag in the ::config column of the
+        of the module you want to use the VHDL configuration name as module name.
+    This only applies to the usage of such modules in parent modules.
+    This naming does not work with certain tools, e.g. for Magma. Therefore the
+    'output.generate.verilog.workaround.magma' is set to "useasmodulename_define". This
+    will add appropriate Verilog define statements.
+
+- 20031218a/Req: IO should not wire inout ports to TOP (which is the default now)
+    solution: introduce a new keyword (instead of S, maybe SIO ...)
+    solution2: mark in ::in and/or ::out coloum:
+    solution3: add a configuration variable "do not wire to TOP" ... contains RE with matching
+	signals -> should be excluded ...
+	output.generate.xinout signal_a,signal_b,.... allow reg-ex)
+
+    Globally one can use the configuration (remove the default "mode" keyword)
+	output.generate.inout ""
+    Maybe mode can be extended to
+	io_mode, i_mode, o_mode, ... (the leading part would match the signal ::mode)
+	all_mode (io, i, o)
+
+    There exists already the
+	B buffer
+	S signal
+	IO inout (with top level connection)
+	I   in (wire to top level)
+	O  out (wire to top level)
+	G generic
+	P parameter
+	C constant
+
+    Req: mpit
+    Prio: medium
+    Workaround: use global configuration and wire required other signals manually to top
+    Solved: 20031220, wig (output.generate.xinout )
+    
+- 20031215b/Bug: VGCA rule make MIX die
+
+....
+03/12/15 10:44:21 6128: WARNING: EXCEL_DIFF with different headers useless!
+03/12/15 10:44:21 6128: Rotating 3 old sheets of DIFF_CONN!
+03/12/15 10:44:22 6128: WARNING: Limit length of cell to save 1200 characters: G
+ # i = 48 #$i(33..232),/iom_(.*
+03/12/15 10:44:22 6128: WARNING: Limit length of cell to save 1200 characters:
+# i = 132 #$i(33..232),/iom_(.*
+03/12/15 10:44:22 6128: WARNING: Limit length of cell to save 1200 characters: i
+ = 91 #$i(33..232),/iom_(.*)::p
+03/12/15 10:44:22 6128: WARNING: Limit length of cell to save 1200 characters: =
+$i/G # i = 170 #$i(33..232),/io
+03/12/15 10:44:22 6128: WARNING: Limit length of cell to save 1200 characters: /
+G # i = 96 #$i(33..232),/iom_(.
+Win32::OLE(0.1502) error 0x80020009: "Ausnahmefehler aufgetreten"
+    in PROPERTYPUT "Value" at H:\work\mix/lib/perl/Micronas/MixUtils.pm line 3227
+
+Triggered by rule in CONN_IO / line 107
+	$i(33..232),/iom_(.*)::pin=$i/		Data	async	std_ulogic				scan_en_i		iom_$1/scan_en_i
+
+    Reason: Might get triggered by a leading = in a cell (excel sees bad formula??)
+	Could not be reproduced after several hours of debugging.
+
+    Req: mpit
+    Prio: high
+    Solution: solved or disappeared (by limiting the cell length?) (20040322)
+
+- 20031215a/Bug: addind ::iodir column fails
+    Error message:
+
+Can't use an undefined value as an ARRAY reference at H:\work\mix/lib/perl/Micro
+nas/MixUtils.pm line 2196.
+
+    Req: mpit
+    Example: vgca_20031215/VGCA_IO.xls
+    Prio: high
+    Testcase:
+
+    Solved: 20040100, was a bad initialization.
+
+- 20031112a/Bug: ExCEL returns
+   Win32::OLE::Variant=SCALAR if a cell has a formula with errors. Please detect and consider
+  that when opening a sheet.
+
+    Req: mpallas
+    Prio: low
+    Workaround: Fix EXCEL spreadsheet!
+    Solution: parse input at open time and fix/ignore that!
+
+- 20030725a/Bug: config file names are not according standard ...
+    Might be bad setup, though.
+    
+WEITERS WUERDE ICH EMPFEHLEN DIE CONFIGURATION-DATEI ENTSPRECHEND DEN CODING GUIDLINES ZU BENENNEN
+
+<ENTITY-NAME>-<ARCHITECTURE-NAME>-<CONFIGURATION-NAME>-C,VHD
+
+    Req: Kropfitsch
+    Prio: Medium
+    Testcase: k:\projects\mix\examples\di_tnr
+    Fixed: wig20030728 (bug in filename creation ...)
+    Testcase: vgca_20030723 (hand test)
+    
 - 20031107a/Req: Create dummy signals for open bus port splices in Verilog.
     Elaborate stage fails when it sees 1'bz as input to output port :-(
     

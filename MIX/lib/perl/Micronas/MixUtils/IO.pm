@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.12 $                                          |
-# | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2004/02/16 15:36:09 $                              |
+# | Revision:   $Revision: 1.13 $                                          |
+# | Author:     $Author: wig $                                         |
+# | Date:       $Date: 2004/03/25 11:21:57 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.13  2004/03/25 11:21:57  wig
+# | Added -verifyentity option
+# |
 # | Revision 1.12  2004/02/16 15:36:09  abauer
 # | *** empty log message ***
 # |
@@ -127,16 +130,16 @@ sub _mix_apply_conf ($$$);
 sub mix_utils_open_input(@);
 sub close_open_workbooks ();
 sub mix_utils_mask_excel ($);
-sub windows_path ($);
+sub absolute_path ($);
 
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.12 2004/02/16 15:36:09 abauer Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.13 2004/03/25 11:21:57 wig Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.12 $';
+my $thisrevision    =      '$Revision: 1.13 $';
 
-# Revision:   $Revision: 1.12 $
+# Revision:   $Revision: 1.13 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -480,7 +483,8 @@ sub mix_utils_open_input(@) {
 
     for my $i ( @in ) {
 	unless ( -r $i ) {
-	    logwarn("File $i does not exist!\n");
+	    logwarn("WARNING: File $i does not exist!");
+	    $EH{'sum'}{'warnings'}++;
 	    next;
 	}
 
@@ -492,6 +496,7 @@ sub mix_utils_open_input(@) {
 
 	# maybe there is a CONF page?
 	# Change CONF accordingly (will not be visible at upper world)
+	#TODO: add plugin interface to read in whatever is needed ...
 	@conf = open_infile( $i, $EH{'conf'}{'xls'}, $EH{'conf'}{'req'} );
 	# Open connectivity sheet(s)
 	@conn = open_infile( $i, $EH{'conn'}{'xls'}, $EH{'conf'}{'req'} );
@@ -503,8 +508,9 @@ sub mix_utils_open_input(@) {
 	@i2c = open_infile( $i, $EH{'i2c'}{'xls'}, $EH{'conf'}{'req'} );
 
 	if(!@conn && !@conf && !@hier && !@io && !@i2c) {
-	    logwarn "ERROR: no input found!\n";
-	    return undef;
+	    logwarn("ERROR: no input found in file $i!\n");
+	    $EH{'sum'}{'errors'}++;
+	    next; # -> skip to next
 	}
 
 	for my $c ( @conf ) {
@@ -616,11 +622,12 @@ sub open_xls($$$){
 
     unless( -r $file ) {
       logwarn( "cannot read <$file> in open_xls!" );
+      $EH{'sum'}{'warnings'}++;
       return undef;
     }
-    $file = windows_path( $file );
+    $file = absolute_path( $file );
 
-    my $basename = basename( $file ); # s,.*[/\\],,; #Strip off / and \
+    my $basename = basename( $file );
     my $ro = 1;
     if ( $warn_flag =~ m,write,io or $OPTVAL{'import'} or $OPTVAL{'init'} ) {
 	$ro = 0;
@@ -1008,10 +1015,10 @@ sub open_csv($$$) {
 
 
 ####################################################################
-## windows_path
+## absolute_path
 ## convert "normal" filename to absolute path, usable for OLE server
 ####################################################################
-=head2 windows_path($)
+=head2 absolute_path($)
 
 Take input file name with/out path name and convert it to absolute path
 Replace all / (I prefer to use) by  \ (ExCEL needs)
@@ -1023,23 +1030,29 @@ Replace all / (I prefer to use) by  \ (ExCEL needs)
 
 =cut
 
-sub windows_path($) {
+sub absolute_path($) {
 
     my $file = shift;
 
     # Make filename a absolute one (we are on MS ground)
     # Has to start like N:\bla\blubber or N:/path/....
-    if ( $file =~ m,^[\\/], ) {
-    # Missing the letter for a drive
-        $file = $EH{'drive'} . $file;
-    } 
-    elsif ( $file !~ m,^\w:, ) {
+
+    if ( $^O =~ m,win32,io ) {
+	if ( $file =~ m,^[\\/], ) {
+	    # Missing the letter for a drive
+	    $file = $EH{'drive'} . $file;
+	} elsif ( $file !~ m,^\w:, ) {
+	    $file = $EH{'cwd'} . "/" . $file;
+	}
+	# $file =~ s,/,\\,go; #
+    } elsif ( $file !~ m,^/, ) { # Does not start with /
 	$file = $EH{'cwd'} . "/" . $file;
     }
 
+    # Now done in different place ...
     # Convert / to \ :-(, otherwise OLE will get confused
     # As we will open Excel on MSWin only, there is no need to rethink that.
-    $file =~ s,/,\\,go;
+    #But: cygwin is different ...
 
     return $file
 }
@@ -1082,12 +1095,21 @@ sub write_delta_sheet($$$) {
 
     if(!@prev) {
         logwarn "ERROR: reading input for delta mode!";
+	$EH{'sum'}{'errors'}++;
 	return;
     }
     #TODO: Put back a single ' for excel ... ???
     my @prevd = two2one( $prev[0] );
     my @currd = two2one( $r_a );
-
+    if ( not $EH{'iswin'} and $file =~ m,.xls$, ) {
+	# read in previously generated -mixed.xls file
+	# -> map away \n and other whitespace ...
+	#TAG: maybe we need to generalize that ... should be done if we are sure to
+	#   not write xls output
+	map( { s/,\s+/,/g } @prevd );
+	map( { s/,\s+/,/g } @currd );
+    }
+    
     my @colnhead = @{$r_a->[0]};
 
     # Print header to ... (usual things like options, ....)
@@ -1219,7 +1241,7 @@ sub write_outfile($$$;$) {
     my $r_a = shift;
     my $r_c = shift || undef;
 
-    if( $EH{'format'}{'out'}=~ m/^xls$/ || ($file=~ m/\.xls/ && $^O=~ m/MSWin/)) {
+    if( $EH{'format'}{'out'}=~ m/^xls$/ || ($file=~ m/\.xls/ && $EH{'iswin'})) {
 	write_xls($file, $sheet, $r_a, $r_c);
     }
     elsif( $EH{'format'}{'out'}=~ m/^sxc$/ || $file=~ m/\.sxc/) {
@@ -1267,7 +1289,7 @@ sub write_xls($$$;$) {
     my $r_a = shift;
     my $r_c = shift || undef;
 
-    if( $^O=~ m/MSWin/ || $EH{'format'}{'out'}) {
+    if( $EH{'iswin'} || $EH{'format'}{'out'}) {
 
 	my $book;
 	my $newflag = 0;
@@ -1296,10 +1318,9 @@ sub write_xls($$$;$) {
 	    $file = $EH{'intermediate'}{'path'} . "/" . $file;
 	}
 
-	my $efile = windows_path( $file );
-	# my $basename = $file;
-	my $basename = basename( $file ); 
-	# ~ s,.*[/\\],,; #TODO: check if Name is basename of filename, always??
+	my $efile = absolute_path( $file );
+	my $basename = basename( $file );
+	( my $wfile = $efile ) =~ s,/,\\,g; # Windows32 ....
 
 	# $ex->{DisplayAlerts}=0;
 	$ex->{DisplayAlerts}=0 if ( $EH{'script'}{'excel'}{'alerts'} =~ m,off,io );
@@ -1309,7 +1330,7 @@ sub write_xls($$$;$) {
 	    unless( $book = is_open_workbook( $basename ) ) {
 		# No, not opened so far ....
 		logwarn("File $file already exists! Contents will be changed");
-		$book = $ex->Workbooks->Open($efile);
+		$book = $ex->Workbooks->Open($wfile); #Needs correct PATH ... / or \ ...
 		new_workbook( $basename, $book );
 	    } else {
 		# Is the open thing at the right place?
@@ -1389,7 +1410,7 @@ sub write_xls($$$;$) {
 	} else {
 	    # Create new workbook
 	    $book = $ex->Workbooks->Add();
-	    $book->SaveAs($efile);
+	    $book->SaveAs($wfile);
 	    # new_workbook( $basename, $book );
 	    $newflag=1;
 	}
@@ -1454,7 +1475,7 @@ sub write_xls($$$;$) {
 	#TODO: pretty formating
 	# $book->Save;
 
-	$book->SaveAs($efile);
+	$book->SaveAs($wfile);
 
 	# $book->Close unless ( $openflag ); #TODO: only close if not open before ....
 

@@ -23,13 +23,13 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.27 2004/02/16 15:35:35 abauer Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.28 2004/03/25 11:21:11 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.27 $                                      |
-# | Mod.Date     : $Date: 2004/02/16 15:35:35 $                           |
-# | Author       : $Author: abauer $                                      |
+# | Version      : $Revision: 1.28 $                                      |
+# | Mod.Date     : $Date: 2004/03/25 11:21:11 $                           |
+# | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
 # | Email        : $Email: wilfried.gaensheimer@micronas.com$             |
@@ -43,8 +43,8 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
-# | Revision 1.27  2004/02/16 15:35:35  abauer
-# | *** empty log message ***
+# | Revision 1.28  2004/03/25 11:21:11  wig
+# | Added -verifyentity option
 # |
 # | Revision 1.26  2003/12/22 08:22:44  wig
 # | Added output.generate.xinout feature
@@ -173,7 +173,7 @@ $dir = "";
 #    use lib `cwd`..\lib\perl
 # ...
 BEGIN{
-    ($^O=~/Win32/) ? ($dir=getcwd())=~s,/,\\,g : ($dir=getcwd());    
+    ($^O =~ /Win32/io ) ? ($dir=getcwd())=~s,/,\\,g : ($dir=getcwd());    
 
     ($pgm=$0) =~s;^.*(/|\\);;g;
     if ( $0 =~ m,[/\\],o ) { #$0 has path ...
@@ -214,7 +214,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.27 $'; # RCS Id
+$::VERSION = '$Revision: 1.28 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # %EH comes from Mic::MixUtils ; All the configuration E-nvironment will be there
@@ -250,7 +250,11 @@ mix_init();               # Presets ....
 # -dir DIRECTORY              write output data to DIRECTORY (default: cwd())
 # -out OUTPUTFILE.ext       defines intermediate output filename and type
 # -outenty OUT-e.vhd        filename for entity. If argument is ENTY[NAME], each entity
-#                                   will be written into a file called entityname-e.vhd
+#                                   will be written into a file calles entityname-e.vhd
+# -verifyentity PATH[:PATH]       compare entities against entities found in PATH
+# alias: checkentity | ve
+# -verifyentitymode MODE  define the mode: entity|module|arch[itecture]|conf[iguration]|all,
+#                                       all|inpath,ignorecase
 # -combine                      combine entitiy, architecture and configuration into one file
 # -top TOPCELL                 use TOPCELL as top. Default is TESTBENCH or daughter of TESTBENCH
 # -adump                        dump internal data in ASCII format, too (debugging, use with small data set).
@@ -276,6 +280,8 @@ mix_getopt_header( qw(
     outenty=s
     outarch=s
     outconf=s
+    verifyentity|checkentity|ve=s@
+    verifyentitymode|checkentitymode|vem=s
     combine!
     top=s
     variant=s
@@ -414,7 +420,7 @@ write_architecture();
 
 write_configuration();
 
-my $status = write_sum();
+my $status = ( write_sum() ) ? 1 : 0; # If write_sum returns > 0 -> exit status 1
 
 exit $status;
 

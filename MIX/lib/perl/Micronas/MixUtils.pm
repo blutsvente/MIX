@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.42 $                                         |
-# | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/12/23 13:25:21 $                              |
+# | Revision:   $Revision: 1.43 $                                         |
+# | Author:     $Author: wig $                                         |
+# | Date:       $Date: 2004/03/25 11:21:44 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.42 2003/12/23 13:25:21 abauer Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.43 2004/03/25 11:21:44 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.43  2004/03/25 11:21:44  wig
+# | Added -verifyentity option
+# |
 # | Revision 1.42  2003/12/23 13:25:21  abauer
 # | added i2c parser
 # |
@@ -201,6 +204,7 @@ use lib "$main::dir/../lib/perl";
 
 use File::Basename;
 use File::Copy;
+use DirHandle;
 use IO::File;
 use Getopt::Long qw(GetOptions);
 
@@ -233,6 +237,11 @@ sub one2two ($);
 sub two2one ($);
 sub is_absolute_path ($);
 sub mix_utils_split_cell ($);
+sub mix_utils_loc_templ ($$);
+sub _mix_utils_loc_templ ($$);
+sub mix_utils_loc_sum ();
+sub mix_utils_open_diff ($;$);
+sub mix_utils_diff ($$$$);
 
 ##############################################################
 # Global variables
@@ -249,11 +258,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.42 2003/12/23 13:25:21 abauer Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.43 2004/03/25 11:21:44 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.42 $';
+my $thisrevision        =      '$Revision: 1.43 $';
 
-# Revision:   $Revision: 1.42 $   
+# Revision:   $Revision: 1.43 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -304,6 +313,7 @@ sub mix_getopt_header(@) {
     # Create it if needed.
     #
     if ( defined $OPTVAL{'dir'} ) {
+        $OPTVAL{'dir'} =~ s,\\,/,g if ( $EH{'iswin'} );
 	unless( -d $OPTVAL{'dir'} ) {
 	    unless( mkdir( $OPTVAL{'dir'} ) ) {
 		logwarn( "ERROR: Cannot create output directory " . $OPTVAL{'dir'} . "!" );
@@ -320,6 +330,7 @@ sub mix_getopt_header(@) {
     #     $EH{'ERROR'} = $EH{'error_no_exit'}; # hidden emergency switch
     # }
     if (defined $OPTVAL{'out'}) {
+        $OPTVAL{'out'} =~ s,\\,/,g if ( $EH{'iswin'} );
 	$EH{'out'} = $OPTVAL{'out'};
     } elsif ( exists( $ARGV[$#ARGV] ) )  {
 	# Output file will be written to current directory.
@@ -335,6 +346,7 @@ sub mix_getopt_header(@) {
 
     # Internal and intermediate data are written to:
     if (defined $OPTVAL{'int'}) {
+        $OPTVAL{'int'} =~ s,\\,/,g if ($EH{'iswin'} );
 	$EH{'dump'} = $OPTVAL{'int'};
     } elsif ( exists( $ARGV[$#ARGV] ) )  {
 	# Output file will be written to current directory.
@@ -374,6 +386,7 @@ sub mix_getopt_header(@) {
     } 
 
     # Write entities into file
+    #TODO: Do we have to fix path for windows?
     if (defined $OPTVAL{'outenty'} ) {
 	$EH{'outenty'} = $OPTVAL{'outenty'};
     } elsif ( defined( $EH{'outenty'} ) ) {
@@ -427,6 +440,30 @@ sub mix_getopt_header(@) {
 	$EH{'outconf'} = "mix" . $EH{'postfix'}{'POSTFILE_CONF'} . "." . $EH{'output'}{'ext'}{'vhdl'};
     }
 
+    # Compare entities in this PATH[es]...
+    #!wig20040217
+    if ( defined $OPTVAL{'verifyentity'} ) {
+        $EH{'check'}{'hdlout'}{'path'} = join( ":", @{$OPTVAL{'verifyentity'}} );
+    }
+    if ( $EH{'check'}{'hdlout'}{'path'} ) {
+        # check if PATH[:PATH] is readable, get all *.vhd[l] files
+        for my $p ( split( ":", $EH{'check'}{'hdlout'}{'path'} ) ) {
+            # If on mswin: change \ to /
+            ( $p =~ s,\\,/,g ) if ( $EH{'iswin'} );
+            unless ( -d $p ) {
+                logwarn( "Warning: Cannot search through entity verify path $p, skipped!" );
+                $EH{'sum'}{'warnings'}++;
+            } else {
+                $EH{'check'}{'hdlout'}{'__path__'}{$p} = ""; # Will get a list of matching file names later on ...
+            }
+        }
+    }
+    # mode: which objects are verified? which strategy?
+    # map to EH key
+    if ( defined $OPTVAL{'verifyentitymode'} ) {
+        $EH{'check'}{'hdlout'}{'mode'} = $OPTVAL{'verifyentitymode'};
+    }
+
     #
     # -combine option -> overwrite outarch/outenty/outconf ...
     #
@@ -461,29 +498,26 @@ sub mix_getopt_header(@) {
     #
     if ( exists( $OPTVAL{delta} ) ) { # -delta |-nodelta
 	if ( $OPTVAL{delta} ) {
-	# Eval use Text::Diff
-	    if ( eval "use Text::Diff;" ) {
-		logwarn( "ERROR: Cannot load Text::Diff module for -delta mode: $@" );
-		exit(1);
-	    }
 	    $EH{'output'}{'generate'}{'delta'} = 1;
 	} else { # Switch off delta mode
 	    $EH{'output'}{'generate'}{'delta'} = 0;
 	}
     } else {
 	if ( $EH{'output'}{'generate'}{'delta'} ) { # Delta on by -conf or FILE.cfg
-	# Eval use Text::Diff
-	    if ( eval "use Text::Diff;" ) {
-		logwarn( "ERROR: Cannot load Text::Diff module for -conf *delta* mode: $@" );
-		exit(1);
-	    }
 	    $EH{'output'}{'generate'}{'delta'} = 1;
 	    $OPTVAL{delta} = 1;
 	} else {
 	    $EH{'output'}{'generate'}{'delta'} = 0;
 	}
     }
-
+    if ( $EH{'output'}{'generate'}{'delta'} or $EH{'check'}{'hdlout'}{'path'} ) {
+	# Eval use Text::Diff
+	    if ( eval "use Text::Diff;" ) {
+		logwarn( "FATAL: Cannot load Text::Diff module for -conf *delta* mode: $@" );
+		exit(1);
+	    }
+    }
+    
     #
     # -bak
     # Shift previously generated files to FILE.V.bak
@@ -504,23 +538,6 @@ sub mix_getopt_header(@) {
 	    $EH{'output'}{'generate'}{'bak'} = 0;
 	}
     }
-
-=head DEL
-
-    #
-    # Create a starting point ...
-    #
-    if ( $OPTVAL{init} ) {
-	mix_utils_init_file("init");
-    }
-    #
-    # Import some HDL files
-    #
-    if ( $OPTVAL{import} ) {
-	mix_utils_init_file("import");
-    }
-
-=cut
 
     # Print banner
     if ($OPTVAL{help}) {
@@ -701,6 +718,9 @@ sub mix_banner(;$)
 	if ( defined( $Micronas::MixChecker::VERSION ) );
     $MOD_VERSION .= ( "\n#####   MixIOParser " . $Micronas::MixIOParser::VERSION )
 	if ( defined( $Micronas::MixIOParser::VERSION ) );
+    $MOD_VERSION .= ( "\n#####   MixI2CParser " . $Micronas::MixI2CParser::VERSION )
+	if ( defined( $Micronas::MixI2CParser::VERSION ) );
+    #TODO: add plugin interface, plugin should register it's version here ...
 
     select(STDOUT);
     $| = 1;                     # unbuffer STDOUT
@@ -846,7 +866,7 @@ sub mix_init () {
 					# controlled by ::mode I|O
 					# noxfix: do not attach pre/postfix to signal names at %TOP%
               'xinout'  => '',       # list of comma seperated signals to exclude from automatic wiring to %TOP%
-              '_re_xinout' => '',   # keeps converted content of xinout ...
+              '_re_xinout' => '',   # keeps converted content of xinout (internal use, only)
 	      # 'port' => 'markgenerated',	# attach a _gIO to generated ports ...
 	      'delta' => 0,	    	# allows to use mix.cfg to preset delta mode
 	      'bak' => 0,		# Create backup of output HDL files
@@ -858,15 +878,30 @@ sub mix_init () {
 	      'fold' => 'signal',	# If set to [signal|hier], tries to collect ::comments, ::descr and ::gen
 					# like TEXT_FOO_BAR (X10), if TEXT_FOO_BAR appears several times
 					#TODO: Implement for hier
+              'verilog' => '', # switches for Verilog generation, off by default, but see %UAMN% tag
+                                          #  useconfname := use VHDL config name as verilog module name; works for e.g. NcSim
 	      'workaround' => {
-		  'verilog' => 'dummyopen', # dummyopen := create a dummy signal for open port splices 
-		},
-	  },
+                    'verilog' => 'dummyopen', # dummyopen := create a dummy signal for open port splices 
+                    ,
+                    'magma' => 'useasmodulename_define', # If the %UAMN% tag is used, use defines!
+                    '_magma_def_' =>
+'
+`ifdef MAGMA
+    `define %::entity%_inst_name %::entity%
+`else
+    `define %::entity%_inst_name %::config%
+`endif
+',   # This gets used by if the magma workaround is set ...
+                    '_magma_mod_'   => '`%::entity%_inst_name', # module name
+                    '_magma_uamn_' => '',   # Internal use, storage for generated defines
+	      }
+        },
 	'ext' =>      {   'vhdl' => 'vhd',
 			  'verilog' => 'v' ,
 			  'intermediate' => 'mixed', # not a real extension!
 			  'internal' => 'pld',
-			  'delta' => '.diff',	# delta mode
+			  'delta' => '.diff',	  # delta mode
+                          'verify' => '.ediff', # verify against template ...
 	},
 	'comment' => {	'vhdl' => '--',
 			'verilog' => '//',
@@ -927,11 +962,32 @@ sub mix_init () {
 	'defs' => '',  # 'inst,conn',    # make sure elements are only defined once:
 		    # possilbe values are: inst,conn
 	'signal' => 'load,driver,check,top_open',
-						# reads: checks if all signals have appr. loads
+						# reads: checks i f all signals have appr. loads
 						# and drivers.
 						# If "top_open" is in this list, will wire unused
 						# signals to open.
 	'inst' => 'nomulti',	# check and mark multiple instantiations
+        'hdlout' => { # act. should be named "hdlout"
+            'mode' => "entity,leaf,generated,ignorecase", # check only LEAF cells -> LEAF
+                                                      #  ignore case of filename -> ignorecase
+                        # which objects: entity|module|arch[itecture]|conf[iguration]|all
+                        # strategy: generated := compare generated object, only
+                        #               inpath := report if there are extra modules found inpath
+                        #               leaf := only for leaf cells
+                        #               ignorecase|ic := ignore file name capitalization
+            'path' => "", # if set a PATH[:PATH], will check generated entities against entities found there
+            # the path will be available in ...'__path__'{PATH}
+            'filter' => { #TODO: allow to remove less important lines from the diff of template vs. created
+                'entity' => '',
+                'arch' => '',
+                'conf' => '',
+            },
+            'extmask' => { #TODO: mask HDL files seen by the verify parser ... t.b.d.
+                'entity' => '',
+                'arch' => '',
+                'conf' => '',
+            },
+        }, 
     },
     # Autmatically try conversion to TYPE from TYPE by using function ...
     'typecast' => { # add typecast functions ...
@@ -1021,6 +1077,7 @@ sub mix_init () {
 					# const := use %SEL% defined width
 
     },
+    #TODO: add a "register configuration for plugin" interface
     'i2c_cell' => {    # default prefixes for i2c interface units
 	    'type'               => 'ser', # default Register type
 	    '%IIC_SER_REG%'    => 'iic_ser_reg_', # prefix for serial subregister entity
@@ -1251,6 +1308,8 @@ sub mix_init () {
 	    "%VERILOG_TIMESCALE%"	=>	"`timescale 1ns / 1ps",
 	    "%VERILOG_USE_ARCH%"	=>	'%EMPTY%',
 	    "%VERILOG_DEFINES%"	=>	'	// No `defines in this module', # Used internally
+            "%USEASMODULENAME%"  =>    '',  # If set in ::config column and obj. is Verilog -> module name
+            "%UAMN%"     => '',                     # dito. but shorter to write !! Internal use only !!
 	    "%OPEN%"	=> "open",			#open signal
 	    "%UNDEF%"	=> "ERROR_UNDEF",	#should be 'undef',  #For debugging??  
 	    "%UNDEF_1%"	=> "ERROR_UNDEF_1",	#should be 'undef',  #For debugging??
@@ -1272,6 +1331,7 @@ sub mix_init () {
 	    "%IMPORT_CLK%"	=> "__IMPORT_CLK__", # import mode, default clk
 	    "%IMPORT_BUNDLE%"   => "__IMPORT_BUNDLE__", #
 	    "%BUFFER%"		=> "buffer",
+            "%TRISTATE%"        => "tristate",
 	    '%H%'		=> '$',		# 'RCS keyword saver ...
 	    '%IIC_IF%'         => 'iic_if_', # prefix for i2c interface
 	    '%RREG%'            => 'read_reg_', # prefix for i2c read registers
@@ -1287,6 +1347,7 @@ sub mix_init () {
     'GENERIC_NR' => 0,
     'DELTA_NR' => 0,
     'DELTA_INT_NR' => 0,
+    'DELTA_VER_NR' => 0, 
     'sum' => { # Counters for summary
 	'warnings' => 0,
 	'errors' => 0,
@@ -1298,6 +1359,7 @@ sub mix_init () {
 
 	'cmacros' => 0,	# Number of matched connection macro's
 
+        'hdlfiles' => 0,      # Number of output files
 	'noload' => 0,   	# signals with missing loads ...
 	'nodriver' => 0,	# signals without driver
 	'multdriver' => 0,	# signals with multiple drivers
@@ -1306,6 +1368,8 @@ sub mix_init () {
 	'checkwarn' => 0,
 	'checkforce' => 0,
 	'checkunique' => 0,
+
+        # Others values (e.g. verify_entity ...) will be created as needed.
 
     },
     'script' => { # Set for pre and post execution script execution
@@ -1328,8 +1392,11 @@ sub mix_init () {
 #
 # Generate some data dynamically
 #
+
+    $EH{'iswin'} = $^O =~ m,^mswin,io;
+
     $EH{'cwd'} = cwd() || "ERROR_CANNOT_GET_CWD";
-    if ( $^O =~ m/^MSWin/io ) {
+    if ( $EH{'iswin'} ) {
         ( $EH{'drive'} = $EH{'cwd'} ) =~ s,(^\w:).*,$1/,;
     } else {
         $EH{'drive'} = "";
@@ -1339,9 +1406,10 @@ sub mix_init () {
 
     $EH{'macro'}{'%VERSION%'} = $::VERSION;
     $EH{'macro'}{'%0%'} = $::pgm;
+    $EH{'macro'}{'%OS%'} = $^O;
     $EH{'macro'}{'%DATE%'} = "" . localtime();
     $EH{'macro'}{'%USER%'} = "W_UNKNOWN_USERNAME";
-    if ( $^O =~ m,^mswin,io ) {
+    if ( $EH{'iswin'} ) {
 	if ( defined( $ENV{'USERNAME'} ) ) {
 	        $EH{'macro'}{'%USER%'} = $ENV{'USERNAME'};
 	}
@@ -1352,7 +1420,7 @@ sub mix_init () {
     #
     # Define HOME:
     #
-    if ( $^O =~ m,^mswin,io ) {
+    if ( $EH{'iswin'} ) {
 	if ( defined( $ENV{'HOMEDRIVE'} ) and defined( $ENV{'HOMEPATH'} ) ) {
 	    $EH{'macro'}{'%HOME%'} = $ENV{'HOMEDRIVE'} . $ENV{'HOMEPATH'};
 	}elsif ( defined( $ENV{'USERPROFILE'} ) ) {
@@ -1377,7 +1445,7 @@ sub mix_init () {
 
     #
     # Set %IOCR% to \n if intermediate is xls and we are on Win32
-    if ( $^O=~ m/MSWin/ && $EH{'macro'}{'%ARGV%'}=~ m/\.xls$/ ) {
+    if ( $EH{'iswin'} && $EH{'macro'}{'%ARGV%'}=~ m/\.xls$/ ) {
         $EH{'macro'}{'%IOCR%'} = "\n";
     }
 
@@ -1639,6 +1707,69 @@ sub mix_overload_sheet ($) {
     }
 }
 
+
+####
+# extra block starts here
+{
+# Block around the mix_utils_functions .... to keep ocont, ncont and this_delta intact ...
+
+my @ocont = (); # Keep (filtered) contents of original file
+my @ncont = (); # Keep (filtered) contents of new file to feed into diff
+my @ccont = (); # Keep (filtered) contents of template entity for check
+
+my %fhstore = ();   # Store all possiblefilehandles/ names
+                            # -> file / delta / check / tmpl / back; prim. key is filename!
+my $loc_flag = 0;
+my %loc_files = ();
+
+#
+# Open a file and read in the contents for comparison ...
+# e.g. in delta mode or for verify purposes ...
+#
+sub mix_utils_open_diff ($;$) {
+    my $file = shift;
+    my $flag = shift ||"";
+
+    my @ocont = ();
+
+    my $ext;
+    my $c = "__NOCOMMENT";
+    ( $ext = $file ) =~ s/.*\.//;
+    for my $k ( keys ( %{$EH{'output'}{'ext'}} )) {
+	if ( $EH{'output'}{'ext'}{$k} eq $ext ) {
+		$c = $EH{'output'}{'comment'}{$k} || "__NOCOMMENT";
+		last;
+	}
+    }    
+    if ( -r $file ) {
+    # read in file
+	my $ofh = new IO::File;
+	unless( $ofh->open($file) ) {
+	    logwarn( "ERROR: Cannot open org $file in delta mode: $!" );
+	    return undef, undef;
+	}
+	@ocont = <$ofh>; #Slurp in file to compare against
+	chomp( @ocont );
+	# remove comments: -- for VHDL, // for Verilog
+	#TODO: make that dependant on the file extension
+	map( { s/\Q$c\E.*//o; } @ocont ) if ( $EH{'output'}{'delta'} !~ m,comment,io );
+	if ( $EH{'output'}{'delta'} !~ m,space,io ) {
+	    map( { s/\s+/ /og; s/^\s*//og; s/\s*$//og; } @ocont );
+	    @ocont = grep( !/^$/,  @ocont );
+	}
+	( @ocont = sort( @ocont ) ) if ( $EH{'output'}{'delta'} =~ m,sort,io );
+
+	close( $ofh ) or logwarn( "ERROR: Cannot close org $file in delta mode: $!" )
+	    and $EH{'sum'}{'errors'}++;
+
+    } else {
+	logwarn( "Error: Cannot read $file" );
+        $EH{'sum'}{'errors'}++;
+	# $this_delta{"$file"} = 0;
+    }
+    return \@ocont;
+}
+
 ####################################################################
 ## mix_utils_open
 ## Our interface for file output
@@ -1649,7 +1780,7 @@ sub mix_overload_sheet ($) {
 
 mix_utils_open ($;$) {
 
-Open file for writing. If the "delta" mode is active, then a diff will be generated
+Open file for writing/reading/.... If the "delta" mode is active, then a diff will be generated
 instead of a full file!
 
 The first argument is the file to open, the second contains flags like:
@@ -1657,25 +1788,15 @@ The first argument is the file to open, the second contains flags like:
 
 =cut
 
-####
-# extra block starts here
-{
-# Block around the mix_utils_functions .... to keep ocont, ncont and this_delta intact ...
-
-my @ocont = (); # Keep (filtered) contents of original file
-my @ncont = (); # Keep (filtered) contents of new file to feed into diff
-my %this_delta = (); # Remember for which files we could delta ....
-my %bfh = ();		# Keep backup file handle ....
-
-
 sub mix_utils_open ($;$){
     my $file= shift;
-    my $flags = shift || ""; # Could be "COMB" for combined mode
+    my $flags = shift || ""; # Could be "COMB" for combined mode or ..._CHK_(ENT|LEAF)
 
     #
     # if output.path is set, write to this path (unless file name is absolute path)
     # wig20030703
     #
+
     if ( $EH{'output'}{'path'} ne "." ) {
 	unless( is_absolute_path( $file ) ) {
 	    $file = $EH{'output'}{'path'} . "/" . $file;
@@ -1684,91 +1805,131 @@ sub mix_utils_open ($;$){
 
     my $ofile = $file;
 
-    # Print out diff's
-    if ( $EH{'output'}{'generate'}{'delta'} ) { # Delta mode!
-	my $ext;
-	my $c = "__NOCOMMENT";
-	( $ext = $file ) =~ s/.*\.//;
-	for my $k ( keys ( %{$EH{'output'}{'ext'}} )) {
-	    if ( $EH{'output'}{'ext'}{$k} eq $ext ) {
-		$c = $EH{'output'}{'comment'}{$k} || "__NOCOMMENT";
-		last;
-	    }
-	}
-	if ( -r $file ) {
-	# read in file
-	    my $ofh = new IO::File;
-	    unless( $ofh->open($file) ) {
-		logwarn( "ERROR: Cannot open org $file in delta mode: $!" );
-		return undef, undef;
-	    }
-	    @ocont = <$ofh>; #Slurp in file to compare against
-	    chomp( @ocont );
-	    # remove comments: -- for VHDL, // for Verilog
-	    #TODO: make that dependant on the file extension
-	    map( { s/\Q$c\E.*//o; } @ocont ) if ( $EH{'output'}{'delta'} !~ m,comment,io );
-	    if ( $EH{'output'}{'delta'} !~ m,space,io ) {
-		map( { s/\s+/ /og; s/^\s*//og; s/\s*$//og; } @ocont );
-		@ocont = grep( !/^$/,  @ocont );
-	    }
-	    ( @ocont = sort( @ocont ) ) if ( $EH{'output'}{'delta'} =~ m,sort,io );
-
-	    close( $ofh ) or logwarn( "ERROR: Cannot close org $file in delta mode: $!" )
-		and $EH{'sum'}{'errors'}++;
-	    $ofile .= $EH{'output'}{'ext'}{'delta'}; # Attach a .diff to file name
-
-	    @ncont = (); # Reset new contents
-	} else {
-	    logwarn( "Info: Cannot run delta mode vs. $file. Will create like normal" );
-	    $this_delta{"$file"} = 0;
-	}
+    #
+    # Did we open that file already?
+    #
+    unless ( exists( $fhstore{$file} ) ) {
+        $EH{'sum'}{'hdlfiles'}++;
     }
 
-    # Save one backup
+    # Search a file with this name in EH{check}{hdlout} ...
+    # TODO: better algo: preparse check.hdlout.path and keep a list of all entities around ... 
+    my $mode = O_CREAT|O_WRONLY|O_TRUNC;
+    if ( $flags =~ m,COMB, ) {
+        $mode = O_CREAT|O_WRONLY|O_APPEND;
+    }
+    if ( $flags =~ m/_CHK_(\w+)/io ) {
+        my $leaf_flag = $1; #
+        my $templ = mix_utils_loc_templ( "ent", $file );
+        if ( $templ ) { # Got a template file ...
+            @ccont = @{mix_utils_open_diff( $templ )}; # Get template contents, filtered  ...
+
+            $fhstore{"$file"}{'tmpl'} = $templ;
+            $fhstore{"$file"}{'tmplmode'} = $leaf_flag;
+        
+
+            # $fh -> keep main file handle
+            my $fh = new IO::File;
+            $fhstore{"$file"}{'tmplname'} = $file . $EH{'output'}{'ext'}{'verify'};
+            unless( $fh->open( $fhstore{"$file"}{'tmplname'}, $mode) ) {
+                logwarn( "ERROR: Cannot open " . $fhstore{$file}{'tmplname'} . ": $!" );
+                $EH{'sum'}{'errors'}++;
+            } else {
+                $fhstore{"$file"}{'tmplout'} = $fh;
+            }
+        } else {
+            # No template/verification example found ....create a .ediff file ...
+            $fhstore{"$file"}{'tmpl'} = "__E_CANNOT_LOCATE";
+            my $fh = new IO::File;
+            $fhstore{"$file"}{'tmplname'} = $file . $EH{'output'}{'ext'}{'verify'};
+            unless( $fh->open( $fhstore{"$file"}{'tmplname'}, $mode) ) {
+                logwarn( "ERROR: Cannot open " . $fhstore{$file}{'tmplname'} . ": $!" );
+                $EH{'sum'}{'errors'}++;
+            } else {
+                $fh->print( "WARNING: cannot locate $file in template directories\n" );
+                $fh->print( "Template path: " . $EH{'check'}{'hdlout'}{'path'} . "\n" );
+                $fh->close() or
+                    logwarn( "ERROR: Cannot close " . $fhstore{$file}{'tmplname'} . ": $!" );
+            }
+        }
+    }
+
+    if ( $flags =~ m/^0/ ) {
+        # no further file to write ...
+        return $ofile; # return file name...
+    }
+
+    #
+    # Prepare for printing out diff's
+    #
+    if ( $EH{'output'}{'generate'}{'delta'} ) { # Delta mode!
+        if ( -r $file ) {
+            @ocont = @{mix_utils_open_diff( $file )};
+            $ofile .= $EH{'output'}{'ext'}{'delta'}; # Attach a .diff to file name
+	    @ncont = (); # Reset new contents
+        } else {
+	    logwarn( "Info: Cannot run delta mode vs. $file. Will create like normal" );
+	    $fhstore{"$file"}{'delta'} = 0; # Key is the "file name" ....
+	}
+        
+    }
+
+    #
+    # Prepare for one backup
+    #
     if ( $EH{'output'}{'generate'}{'bak'} ) {
 	# Shift previous version to file.bak ....
+        # Simply overwrite preexisting bak-files ....
 	if ( -r $file ) {
 	    rename( $file, $file . ".bak" ) or
 		logwarn( "ERROR: Cannot rename $file to $file.bak" ) and $EH{'sum'}{'errors'}++;
 	}
     }
 
+    #
     # Append or create a new file?
     # Append will be used if we get a "COMB" flag (combine mode)
-    my $mode = O_CREAT|O_WRONLY|O_TRUNC;
-    if ( $flags =~ m,^COMB, ) {
+    #    
+    $mode = O_CREAT|O_WRONLY|O_TRUNC;
+    if ( $flags =~ m,COMB, ) {
 	$mode = O_CREAT|O_WRONLY|O_APPEND;
     }
-    # $fh -> keep main file handle
     my $fh = new IO::File;
-    unless( $fh->open( $ofile, $mode) ) {
+    unless( $fh->open( $ofile, $mode) ) { # Write output to this file, either HDL or HDL.diff
 	logwarn( "ERROR: Cannot open $ofile: $!" );
-	return undef;
+	return $file;
     }
 
+    #
     # Remember if delta mode is active for this file ...
+    #
     if ( $ofile ne $file ) {
-	$this_delta{"$fh"} = $file;
+        $fhstore{"$file"}{'delta'} = $fh;
+        $fhstore{"$file"}{'deltaname'} = $ofile;
+        $fhstore{"$file"}{'out'} = 0;
     } else {
-	$this_delta{"$fh"} = 0;
+        $fhstore{"$file"}{'delta'} = 0;
+        $fhstore{"$file"}{'out'} = $fh; # Remember file name and IO handle ...
     }
-
+ 
+    #
     # If -delta and -bak -> create a new original file ...
+    #
     if ( $EH{'output'}{'generate'}{'bak'} and $EH{'output'}{'generate'}{'delta'} ) {
 	# Append or create a new file?
-	# $bfh -> backup file handle (will get new data!)
+	# $bfh -> backup file handle (will get new data! Named like the real file, the old one got renamed!
 	my $bfh = new IO::File;
 	unless( $bfh->open( $file, $mode) ) {
 	    logwarn( "ERROR: Cannot open $file: $!" );
 		$EH{'sum'}{'errors'}++;
-		    $bfh{"$fh"} = undef;
+                    $fhstore{"$file"}{'back'} = undef; # Not possilbe
 	} else {
-	    $bfh{"$fh"} = $bfh;
+            $fhstore{"$file"}{'back'} = $bfh;
 	}
     } else {
-	$bfh{"$fh"} = 0;
+        $fhstore{"$file"}{'back'} = 0; # Not selected ...
     }
-    return $fh;
+    return $file;
 }
 
 #
@@ -1794,40 +1955,54 @@ sub is_absolute_path ($) {
 	    return 0;
 	}
     }
-
 }
 
 #
-# print into file handle or save for later diff
+# print into file handle and/or save for later diff
 #
 sub mix_utils_print ($@) {
-    my $fh = shift;
+    my $fn = shift;
     my @args = @_;
 
-    if ( $this_delta{"$fh"} ) {
+    # $fn either is a real file handle (if this_delta is set) or a file name
+    # in this_check ....
+    if ( $fhstore{"$fn"}{'delta'} ) {
 	push( @ncont, split( /\n/, sprintf( "%s", @args ) ) );
     } else {
-	print( $fh @args );
+        $fhstore{"$fn"}{'out'}->print( join( "\n", @args)  );
+        # Is check_entitiy active? ($fh is either a filehandle or a file
+        # name
+        if ( $fhstore{"$fn"}{'tmpl'} ) {
+            push( @ncont, split( /\n/, sprintf( "%s", @args ) ) );
+        }
     }
-    if ( $bfh{"$fh"} ) {
-	print( {$bfh{"$fh"}} @args );
+
+    # Print to file if backup requested ....
+    if ( $fhstore{"$fn"}{'back'} ) {
+	$fhstore{"$fn"}{'back'}->print( join( "\n", @args ) );
     }
 }
 
 #
 # printf into file handle or save for later diff
+#first argument has to be format string
 #
 sub mix_utils_printf ($@) {
-    my $fh = shift;
+    my $fn = shift;
     my @args = @_;
 
-    if ( $this_delta{"$fh"} ) {
+    # if ( $this_delta{"$fh"} ) {
+    if ( $fhstore{"$fn"}{'delta'} ) {
 	push( @ncont, split( /\n/, sprintf( @args ) ) );
     } else {
-	printf( $fh @args );
+	$fhstore{"$fn"}{'out'}->print( join( "\n", @args ) );
+        # Is check_entitiy active?
+        if ( $fhstore{"$fn"}{'tmpl'} ) {
+            push( @ncont, split( /\n/, sprintf( @args ) ) );
+        }
     }
-    if ( $bfh{"$fh"} ) {
-	printf( {$bfh{"$fh"}} @args );
+    if ( $fhstore{"$fn"}{'back'} ) {
+	$fhstore{"$fn"}{'back'}->print( join( "\n", @args ) );
     }
 }
 
@@ -1836,7 +2011,7 @@ sub mix_utils_printf ($@) {
 # If in delta mode, run the diff and print before closing!
 #
 sub mix_utils_close ($$) {
-    my $fh = shift;
+    my $fn = shift;
     my $file = shift;
 
     my $close_flag = 1;
@@ -1846,6 +2021,7 @@ sub mix_utils_close ($$) {
 	$file = $EH{'output'}{'path'} . "/" . $file;
     }
 
+    # Find the actual comment marker ( // vs. -- vs. # )
     my $ext;
     my $c = "__NOCOMMENT";
     ( $ext = $file ) =~ s/.*\.//;
@@ -1856,17 +2032,70 @@ sub mix_utils_close ($$) {
 	}
     }
 
-    if ( $this_delta{"$fh"} ) {
-    # Sort/map new content and compare .... print out to $fh
-	map( { s/\Q$c\E.*//o; } @ncont ) if ( $EH{'output'}{'delta'} !~ m,comment,io );
-	if ( $EH{'output'}{'delta'} !~ m,space,io ) {
-	    map( { s/\s+/ /og; s/^\s+//o; s/\s+$//o; } @ncont );
-	    @ncont = grep( !/^$/,  @ncont );
-	}
-	@ncont = sort( @ncont ) if ( $EH{'output'}{'delta'} =~ m,sort,io );
+    #
+    # verify mode on
+    # Check against existing entity selected ...
+    #
+    if ( $fhstore{"$fn"}{'tmplout'}  ) {
+        my $diff = mix_utils_diff( \@ncont, \@ccont, $c, $file ); # Compare new content and template
 
-	# Print header to $fh ... (usual things like options, ....)
-	# TODO: Add that header to header definitions
+        my $head =
+"$c ------------- verify mode for file $file ------------- --
+$c
+$c Generated
+$c  by:  %USER%
+$c  on:  %DATE%
+$c  cmd: %ARGV%
+$c  verify mode (comment/space/sort/remove): $EH{'output'}{'delta'}
+$c
+$c  compare file: $fn
+$c  template file: $fhstore{$fn}{'tmpl'}
+$c ------------- CHANGES START HERE ------------- --
+";
+
+        my $fht = $fhstore{"$fn"}{'tmplout'};
+	print( $fht &replace_mac( $head, $EH{'macro'} ));
+
+        #
+	# Was there a difference? If yes, report and sum up.
+        #
+	if ( $diff ) {
+	    $fht->print( $diff );
+	    logwarn("WARNING: VEC_Mismatch file $fn vs. template!");
+            $EH{'sum'}{'verify_mismatch'}++; # Count mismatches ..
+            $EH{'DELTA_VER_NR'}++;
+	} else {
+	    logtrc( "INFO:4", "Info: file $fn in sync with template" );
+            $EH{'sum'}{'verify_ok'}++; # Count matches ..
+	    if ( $EH{'output'}{'delta'} =~ m,remove,io ) {
+		# Remove empty diff files, close before remove ...
+		# if ( $close_flag ) {
+                    unless ( $fht->close ) {
+                        logwarn( "ERROR: Cannot close file " . $fhstore{"$fn"}{'tmplname'} . ": $!" );
+                        $EH{'sum'}{'errors'}++;
+                    }
+                    $fhstore{"$fn"}{'tmplout'} = 0;
+		# }
+		# $close_flag = 0;
+		unlink( $fhstore{"$fn"}{'tmplname'} ) or
+		    logwarn( "WARNING: Cannot remove empty template verify file " .
+                             $fhstore{"$fn"}{'tmplname'} . ": " . $! ) and
+			    $EH{'sum'}{'warnings'}++;
+	    }
+	}
+    }
+
+    #
+    # Delta mode on
+    #
+    if ( $fhstore{"$fn"}{'delta'} ) {
+    # Sort/map new content and compare .... print out to $fh
+
+        my $diff = mix_utils_diff( \@ncont, \@ocont, $c, $file ); # Compare new content and previous
+        my $fh = $fhstore{"$fn"}{'delta'};
+
+        # Print header to $fh ... (usual things like options, ....)
+        # TODO: Add that header to header definitions
 my $head =
 "$c ------------- delta mode for file $file ------------- --
 $c
@@ -1878,56 +2107,215 @@ $c  delta mode (comment/space/sort/remove): $EH{'output'}{'delta'}
 $c
 $c ------------- CHANGES START HERE ------------- --
 ";
-	print( $fh replace_mac( $head, $EH{'macro'} ));
 
-	# Diff it ...
-	my $diff = diff( \@ncont, \@ocont,
-	    { STYLE => "Table",
-	    # STYLE => "Context",
-	    FILENAME_A => 'NEW', #TODO: get new file name in here!
-	    FILENAME_B => "OLD $file",
-	    CONTEXT => 0,
-	    # OUTPUT     => $fh,
-	    }
-	);
+	$fh->print( replace_mac( $head, $EH{'macro'} ));
 
 	# Was there a difference? If yes, report and sum up.
+
 	if ( $diff ) {
-	    print $fh $diff;
+	    $fh->print( $diff );
 	    logwarn("Info: file $file has changes!");
 	    $EH{'DELTA_NR'}++;
 	} else {
 	    logtrc( "INFO:4", "Info: unchanged file $file" );
 	    if ( $EH{'output'}{'delta'} =~ m,remove,io ) {
 		# Remove empty diff files (removal before closing ????)
-		if ( $close_flag and not $fh->close ) {
-		    logwarn( "ERROR: Cannot close file $file: $!" );
-		    $EH{'sum'}{'errors'}++;
-		}
-		$close_flag = 0;
-		unlink( "$file" . $EH{'output'}{'ext'}{'delta'} ) or
-		    logwarn( "WARNING: Cannot remove empty diff file $file" .
-			     $EH{'output'}{'ext'}{'delta'} . "!" ) and
+		# if ( $close_flag ) {
+                    unless( $fhstore{"$fn"}{'delta'}->close ) {
+                        logwarn( "ERROR: Cannot close delta file $fn: $!" );
+                        $EH{'sum'}{'errors'}++;
+                    }
+                    $fhstore{"$fn"}{'delta'} = 0;
+		# }
+		# $close_flag = 0; #TODO: Why
+		unlink( $fhstore{"$fn"}{'deltaname'} ) or
+		    logwarn( "WARNING: Cannot remove empty diff file " .
+                                 $fhstore{"$fn"}{'deltaname'} . ": " . $! ) and
 			    $EH{'sum'}{'warnings'}++;
 	    }
 	}
     }
 
-    if ( $close_flag and not $fh->close ) {
-	logwarn( "ERROR: Cannot close file $file: $!" );
-	$EH{'sum'}{'errors'}++;
-	return undef;
+    #
+    # Do we need to close the output file?
+    #
+    # if ( $close_flag and $fhstore{"$fn"}{'out'} ) {
+    if ( $fhstore{"$fn"}{'out'} ) {
+        unless ( $fhstore{"$fn"}{'out'}->close ) {
+            logwarn( "ERROR: Cannot close file $fn: $!" );
+            $EH{'sum'}{'errors'}++;
+            $fhstore{"$fn"}{'out'} = 0;
+            # return undef;
+        }
+        $fhstore{"$fn"}{'out'} = 0;
     }
 
+    #
+    # Do we need to close the diff file?
+    ##TODO: Close in the delta-if branch above ...
+    if ( $fhstore{"$fn"}{'delta'} ) {
+        unless ( $fhstore{"$fn"}{'delta'}->close ) {
+            logwarn( "ERROR: Cannot close file $fhstore{$fn}{'deltaname'}: $!" );
+            $EH{'sum'}{'errors'}++;
+            $fhstore{"$fn"}{'delta'} = 0;
+            # return undef;
+        }
+        $fhstore{"$fn"}{'delta'} = 0;
+    }
+    #
     # Close new file if in -bak mode and close_flag is set ...
-    if ( $close_flag and $bfh{"$fh"} ) {
-	my $bfh = $bfh{"$fh"};
-	$bfh->close or logwarn( "ERROR: Cannot close file $file: $!" )
+    #
+    if ( $fhstore{"$fn"}{'back'} ) {
+	my $bfh = $fhstore{"$fn"}{'back'};
+        $fhstore{"$fn"}{'back'} = 0;
+	$bfh->close or logwarn( "ERROR: Cannot close file $fn bak: $!" )
 	    and $EH{'sum'}{'errors'}++
 	    and return undef;
     }
 
     return;
+}
+
+#
+# Compare two array refs
+# !! $oc needs to be preformatted !!
+# Arguments:
+#   ref to array with new contents
+#   ref to array with old contents
+#   current comment delimiter
+#   current file name
+# Returns:
+#   array ref with diffs
+#
+sub mix_utils_diff ($$$$) {
+    my $nc = shift;
+    my $oc = shift;
+    my $c  = shift;
+    my $file = shift;
+    
+    map( { s/\Q$c\E.*//o; } @$nc ) if ( $EH{'output'}{'delta'} !~ m,comment,io );
+    if ( $EH{'output'}{'delta'} !~ m,space,io ) {
+	map( { s/\s+/ /og; s/^\s+//o; s/\s+$//o; } @$nc );
+	    @$nc = grep( !/^$/,  @$nc );
+	}
+	@$nc = sort( @$nc ) if ( $EH{'output'}{'delta'} =~ m,sort,io );
+
+	# Diff it ...
+	my $diff = diff( $nc, $oc,
+	    { STYLE => "Table",
+	    # STYLE => "Context",
+	    FILENAME_A => 'NEW', #TODO: get new file name in here!
+	    FILENAME_B => "OLD $file",
+	    CONTEXT => 0,
+	    }
+	);
+
+    return $diff;
+}
+        
+#
+# Locate a matching *.vhd file in the check.hdlout path
+#
+#!wig20040217
+
+#    $d = new DirHandle ".";
+#    if (defined $d) {
+#        while (defined($_ = $d->read)) { something($_); }
+#        $d->rewind;
+#        while (defined($_ = $d->read)) { something_else($_); }
+#        undef $d;
+#    }
+
+sub mix_utils_loc_templ ($$) {
+    my $flag = shift;
+    my $file = shift;
+
+    $file = basename( $file );
+    my $ic = ( $EH{'check'}{'hdlout'}{'mode'} =~ m/\b(ignorecase|ic)\b/ ) ? 1 : 0;
+    my $dh;
+
+    $file = lc( $file ) if $ic;
+
+    # Strategy: if "inpath" is set, take all files found in hdlout.path
+    if ( $EH{'check'}{'hdlout'}{'mode'} =~ m/\binpath\b/o ) {
+        _mix_utils_loc_templ("__ALL__", $ic) unless $loc_flag; # Scan once
+        $loc_flag = 1;
+        if ( $loc_files{$file} ) {
+            my $tmpl = $loc_files{$file};
+            delete $loc_files{$file}; # Unset ... we no longer need it
+            return $tmpl;
+        } else {
+            # no match found :-(    
+            logwarn( "WARNING: could not find matching entity file $file!" );
+            $EH{'sum'}{'verify_missing'}++;
+            $EH{'DELTA_VER_NR'}++;
+            $EH{'sum'}{'warnings'}++;
+            return "";
+        }
+    } else {
+        #find the first match
+        return( _mix_utils_loc_templ($file, $ic) );
+    }
+}
+#
+# scan check.hdlout.path and store/return matching files
+#if __ALL__ is given, scan all path components and store results ...
+#
+sub _mix_utils_loc_templ ($$) {
+    my $file = shift;
+    my $ic = shift;
+
+    my $dh;
+    
+    my $pref = $EH{'check'}{'hdlout'}{'__path__'};
+    for my $p ( keys( %$pref )  ) {
+        if ( $dh = new DirHandle( $p ) ){
+            while( defined( $_ = $dh->read ) ) {
+                if ( $file eq "__ALL__" ) {
+                    next if ( -d $p . "/" . $_ ); # Skip all directories
+                    # next unless ( -f $_ ); # Skip all non files ..
+                    my $f = ( $ic ) ? lc( $_ ) : $_;
+                    if ( defined( $loc_files{$f} ) ) {
+                        logwarn( "WARNING: duplicate tmpl. file: $_ in $p!" );
+                        $EH{'sum'}{'warnings'}++;
+                    } else {
+                        $loc_files{$f} = $p . "/" . $_;
+                    }
+                } elsif ( $_ eq $file or ( $ic and lc( $_ ) eq $file ) ) {
+                    #Return here, first come, first reported ....
+                    $dh->close();
+                    return( $p . "/" . $_ ); # Return real file name
+                } 
+            }
+            $dh->close();
+        } else {
+            logwarn( "Warning: cannot open $p for reading: $!" );
+            $EH{'sum'}{'warnings'}++;
+        }
+    }
+    if ( $file eq "__ALL__" ) {
+        return "";
+    }
+
+    # We are still here -> no match found :-(    
+    logwarn( "WARNING: could not find matching entity file $file!" );
+    $EH{'sum'}{'verify_missing'}++;
+    $EH{'DELTA_VER_NR'}++;
+    $EH{'sum'}{'warnings'}++;
+    return "";
+}
+
+#
+# Summarize left-over hdl files in verify path (only for "inpath" mode
+#
+sub mix_utils_loc_sum () {
+    for my $h ( sort( keys( %loc_files )) ) {
+        #TODO: Apply filter ... (or better upfront ...)
+        logwarn( "WARNING: unmatched hdl file in verify path: $h!" );
+        $EH{'sum'}{'verify_leftover'}++;
+        $EH{'DELTA_VER_NR'}++;
+        $EH{'sum'}{'warnings'}++;
+    }
 }
 
 } # End of mix_util_FILE block ....
@@ -1995,7 +2383,7 @@ sub select_variant ($) {
 
 ####################################################################
 ## convert_in
-## read in a excel spreadsheet array and convert into a array of hashes
+## read in a (excel) spreadsheet array and convert into a array of hashes
 ## do basic checks and conversion 
 ####################################################################
 
@@ -2046,8 +2434,8 @@ sub convert_in ($$) {
 	# my @r = @{$r_data->[$i]};
 	$i = [ map { defined( $_ ) ? $_ : "" } @$i ];		#Fill up undefined fields??
 	my $all = join( '', @$i );
-	next if ( $all =~ m/^\s*$/o ); 			#If a line is complete empty, skip it
-	next if ( $all =~ m,^\s*(#|//), );			#If line starts with comment, skip it
+	next if ( $all =~ m/^\s*$/o ); 			# If a line is totally empty, skip it
+	next if ( $all =~ m,^\s*(#|//), );			# If line starts with comment, skip it
 
 	unless ( $hflag ) { # We are still looking for our ::MARKER header line
 	    next unless ( $all =~ m/^::/ );			#Still no header ...
@@ -2359,6 +2747,24 @@ sub db2array ($$$) {
 	@keys = keys( %$ref );
     }
 
+    #WORKAROUND
+    #wig20040322: adding ugly ::workaround back to originating column,
+    # if the workaround field is set, push value back into defining column
+    # see below for undo ...
+    my $wa_flag = 0;
+    for my $i ( sort( @keys ) ) {
+        if( $ref->{$i}{'::workaround'} ) {
+            $wa_flag = 1;
+            for my $wa ( split( /,/, $ref->{$i}{'::workaround'} ) ) {
+                my ( $n, $col, $val ) = split( /::/, $wa, 3 ); #  ::col::val,::colb::valb
+                    if ( $val =~ m,__(\w+)__,o ) { # Convert back __KEY__ -> %KEY%
+                        $val = "%" . $1 . "%";
+                    }
+                    $ref->{$i}{"::" . $col} .= $val;
+            }
+        }
+    }
+
     # Now comes THE data
     for my $i ( sort( @keys ) ) {
 	my $split_flag = 0; # If split_flag 
@@ -2407,6 +2813,23 @@ sub db2array ($$$) {
 	}
     }
 
+    #WORKAROUND:
+    # undo the change above ....
+    #wig20040322:
+    if ( $wa_flag ) {
+        for my $i ( sort( @keys ) ) {
+            if( $ref->{$i}{'::workaround'} ) {
+                for my $wa ( split( /,/, $ref->{$i}{'::workaround'} ) ) {
+                    my ( $n, $col, $val ) = split( /::/, $wa, 3 ); #  ::col::val,::colb::valb
+                        if ( $val =~ m,__(\w+)__,o ) { # Convert back __KEY__ -> %KEY%
+                            $val = "%" . $1 . "%";
+                        }
+                        $ref->{$i}{"::" . $col} =~ s,$val,,; #Remove it ...
+                }
+            }
+        }
+    }
+    
     return \@a;
 
 }
@@ -2552,6 +2975,8 @@ sub inout2array ($;$) {
 ## by concatenation the cells with \tX\t
 ####################################################################
 #wig20030716: use first line as header descriptions, field seperator!!
+#wig20040324: if we read in FOO-mixed.xls and are not writing xls (e.g. not on mswin)
+#   -> remove \n in in/out ...
 sub two2one ($) {
     my $ref = shift;
 
@@ -2655,6 +3080,11 @@ sub write_sum () {
     #TODO: use different log**** call !!
     #TODO: Shift function to other module ... ??
 
+    # If we had 'inpath' verify mode, summarize left-over "golden" hdl files.
+    if ( $EH{'check'}{'hdlout'}{'path'} and $EH{'check'}{'hdlout'}{'mode'} =~ m,\binpath\b,io ) {
+        mix_utils_loc_sum();
+    }
+
     # Parsed input sheets:
     logwarn( "============= SUMMARY =================" );
     logwarn( "SUM: Summary of checks and created items:" );
@@ -2666,13 +3096,17 @@ sub write_sum () {
         logwarn( "SUM: $i $EH{$i}{'parsed'}" );
     }
 
+    # Summarize number of mismatches and not matchable hdl files
+    logwarn( "SUM: Number of verify issues: $EH{'DELTA_VER_NR'}")
+        if ( $EH{'check'}{'hdlout'}{'path'} );
+    
     # Delta mode: return status equals number of changes
     if ( $EH{'output'}{'generate'}{'delta'} ) {
-        #TODO: Do not use logwarn channel!
         logwarn( "SUM: Number of changes in intermediate: $EH{'DELTA_INT_NR'}");
         logwarn( "SUM: Number of changed files: $EH{'DELTA_NR'}");
-        return $EH{'DELTA_NR'} + $EH{'DELTA_INT_NR'};
     }
+
+    return $EH{'DELTA_NR'} + $EH{'DELTA_INT_NR'} + $EH{'DELTA_VER_NR'};
 
     return 0;
 
@@ -2744,7 +3178,7 @@ sub mix_utils_init_file($) {
 	}
 
 	# Extension: MS-Win -> xls, else csv
-	if ( $^O =~ m,^mswin,io || $EH{'intermediate'}{'ext'}=~ m/^xls$/) {
+	if ( $EH{'iswin'} || $EH{'intermediate'}{'ext'}=~ m/^xls$/) {
 	    $output .= ".xls";
 	}
 	elsif( $EH{'intermediate'}{'ext'}=~ m/^sxc$/) {
@@ -2795,7 +3229,6 @@ sub mix_utils_init_file($) {
     # If user provided HDL files, we try to scan these and add to the template ...
     if ( scalar( @hdlimport ) ) {
 
-        #OFF: only Utils knows about that ... my $ole = init_ole(); # Start OLE Object ... for windows, only
         Micronas::MixUtils::IO::mix_utils_open_input( $output );
         #Gets format from file to import too.
 

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.37 $                                         |
-# | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/12/23 13:25:21 $                              |
+# | Revision:   $Revision: 1.38 $                                         |
+# | Author:     $Author: wig $                                         |
+# | Date:       $Date: 2004/03/25 11:21:34 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.37 2003/12/23 13:25:21 abauer Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.38 2004/03/25 11:21:34 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.38  2004/03/25 11:21:34  wig
+# | Added -verifyentity option
+# |
 # | Revision 1.37  2003/12/23 13:25:21  abauer
 # | added i2c parser
 # |
@@ -206,15 +209,16 @@ sub _mix_wr_get_ivhdl ($$$);
 sub _mix_wr_get_iveri ($$$);
 sub mix_wr_port_check ($$);
 sub mix_wr_unsplice_port ($$$);
+sub mix_wr_hier2mac ($);
 
 # Internal variable
 
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.37 2003/12/23 13:25:21 abauer Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.38 2004/03/25 11:21:34 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.37 $';
+my $thisrevision   =      '$Revision: 1.38 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -856,6 +860,7 @@ sub _create_entity ($$) {
 	    if ( $m ) { # not empty
 		if ( $m =~ m,IO,io ) { $mode = "inout"; } 		# inout mode!
 		elsif ( $m =~ m,B,io ) { $mode = "%BUFFER%"; }	# buffer
+                elsif ( $m =~ m,T,io ) { $mode = "%TRISTATE%"; }	# tristate bus ...
 		elsif ( $m =~ m,C,io ) { $mode = $m; }		# Constant
 		elsif ( $m =~ m,[GP],io ) {                             # Generic, parameter
                     # Read "value" from ...:out
@@ -1127,24 +1132,38 @@ sub _write_entities ($$$) {
     # Do not create an output file if entitiy is leaf and "noleaf" set
     #
     my $write_flag = 1;
-    my $fh = undef;
+    my $fh = undef; # Keep rel/abs. file name (without PATH?)
  
     #
     # will write a output file anyway if we are in __COMMON__ mode
     # or if we want to write leaf cells and it's a leaf cell
     # or if it's VHDL
+    # or if the "check.entities.path" flag is set ...
     #
     if ( $ehname ne "__COMMON__" and
             ( $EH{'output'}{'generate'}{'enty'} =~ m,noleaf,io and
             $entities{$ehname}{'__LEAF__'} == 0 or
             mix_wr_getlang( $ehname, $ae->{$ehname}{'__LANG__'}) ne "vhdl" )
         ) {
-	$write_flag = 0; # Do NOT write ...
+	$write_flag = "0"; # Do NOT write ...
+    }
+    # Are we in verify mode?
+    if ( $EH{'check'}{'hdlout'}{'path'} and
+         $EH{'check'}{'hdlout'}{'mode'} =~ m,\b(enti|all),io ) { # Selected ...
+        # Append check flag ...
+        if ( $EH{'check'}{'hdlout'}{'mode'} =~ m,\bleaf,io ) {
+            # __LEAF__ is 1 if this is not a LEAF!
+            $write_flag .= ( $entities{$ehname}{'__LEAF__'} == 0 ) ? "_CHK_ENT_LEAF" : "";
+        } else {
+            $write_flag .= ( $entities{$ehname}{'__LEAF__'} == 0 ) ? "_CHK_ENT_LEAF" : "_CHK_ENT";
+        }
     }
 
+    #wig20040218: pot. two files could get opened ....
     if ( $write_flag ) {
-        unless ( $fh = mix_utils_open( $file ) ) {
-            logwarn( "Cannot open file $file to write entity declarations: $!" );
+        unless ( $fh = mix_utils_open( $file, $write_flag ) ) {
+            logwarn( "Warning: Cannot open file $file to write entity declarations: $!" );
+            $EH{'sum'}{'warnings'}++;
             return;
         }
     }
@@ -1236,7 +1255,7 @@ sub _write_entities ($$$) {
 
     # All data collected, now print and close ...
     if ( $write_flag ) {
-        mix_utils_print( $fh, $et );
+        mix_utils_print( $fh, $et);
         mix_utils_close( $fh, $file );
     }
 }
@@ -1652,6 +1671,24 @@ sub write_architecture () {
 
 }
 
+#
+# Convert hierdb names to macros ala %::tag%
+# Omitt all non-scalar values
+# see replace_mac and parse_mac for similiar things
+#
+sub mix_wr_hier2mac ($) {
+    my $rhdb = shift;
+
+    my %mac = ();
+    for my $i ( keys( %$rhdb ) ) {
+        if ( ref( $rhdb->{$i} ) eq "" ) {
+            $mac{'%' . $i . '%' } = $rhdb->{$i};
+        }
+    }
+
+    return \%mac;
+}
+    
 ####################################################################
 ## gen_instmap
 ## generate an instance map 
@@ -1672,7 +1709,7 @@ Input:
 
 sub gen_instmap ($;$$) {
     my $inst = shift;
-    my $lang = shift || lc( $EH{'macro'}{'%LANGUAGE%'} );
+    my $lang = shift || lc( $EH{'macro'}{'%LANGUAGE%'} ); # Language of interface to generate ...
     my $tcom = shift || $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'default'};
 
     my $map = "";
@@ -1737,9 +1774,33 @@ sub gen_instmap ($;$$) {
                 @$dummies
             )) . "\n";
         }
+
+        if  ( $hierdb{$inst}{'::lang'} =~ m,vhdl,io ) {
+              # Special case: daughter is VHDL-> use config name instead of entity name ...
+            # see 20040209/a req
+            # The "useconfname" option applies globally, while setting %UAMN% in the
+            #  ::config column works for each module individually
+
+            if ( $EH{'output'}{'generate'}{'verilog'} =~ m,useconfname,io or
+                 defined( $hierdb{$inst}{'::workaround'} ) and
+                 $hierdb{$inst}{'::workaround'} =~ m,(uamn|useasmodulename),io ) {  
+                $enty = $hierdb{$inst}{'::config'} || $enty;
+                # As this can create problems with certain tools (Magma), use 'define
+                if ( $EH{'output'}{'generate'}{'workaround'}{'magma'} =~ m,useasmodulename_define,io ) {
+                    my $tm = mix_wr_hier2mac( $hierdb{$inst} );
+                    # Keep the `define in this global variable. This is ugly, but today
+                    #  the easiest way.
+                    $EH{'output'}{'generate'}{'workaround'}{'_magma_uamn_'} .=
+                        replace_mac( $EH{'output'}{'generate'}{'workaround'}{'_magma_def_'},
+                            $tm  );
+                    $enty = replace_mac( $EH{'output'}{'generate'}{'workaround'}{'_magma_mod_'}, $tm );
+                }
+            }
+        }
+            
         $map =  $EH{'macro'}{'%S%'} x 2 . $tcom . " Generated Instance Port Map for $inst\n" .
                 $dum .
-                $EH{'macro'}{'%S%'} x 2 ."$enty $inst(" .
+                $EH{'macro'}{'%S%'} x 2 . $enty . " " . $inst . "(" .
                 (  $hierdb{$inst}{'::descr'} ? ( $EH{'macro'}{'%S%'} . "// "
                         . $hierdb{$inst}{'::descr'} ) : "" ) .
                 "\n" .
@@ -2933,6 +2994,7 @@ sub _write_architecture ($$$$) {
 	    #
 	    # Instances: generate an instance port map for each of our children
 	    # and returns a list of in/out signals
+	    #
 	    my( $imap, $r_in, $r_out );
 	    ( $imap, $r_in, $r_out ) = gen_instmap( $d_name, $lang, $tcom );
 	    if ( exists( $hierdb{$d_name}{'::nanbounds'} ) ) {
@@ -3239,7 +3301,13 @@ sub _write_architecture ($$$$) {
 	# End is near for write_architecture ...
 	$signaltext .= $EH{'macro'}{'%S%'} x 2 . $tcom . "\n\t\t" . $tcom . " End of Generated Signal List\n\t\t" . $tcom . "\n";
 	$macros{'%SIGNALS%'} = $signaltext;
+
+       #Workaround:  magma and configuration as module names: wig20040322
+        $veridefs .= $EH{'output'}{'generate'}{'workaround'}{'_magma_uamn_'};
         $macros{'%VERILOG_DEFINES%'} = $veridefs if ( $veridefs );
+
+        $EH{'output'}{'generate'}{'workaround'}{'_magma_uamn_'} = ""; # Reset the define storage
+        
         if ( keys( %i_macros ) > 0 ) {
             $macros{'%INSTANCES%'} = replace_mac( $macros{'%INSTANCES%'}, \%i_macros );
         }
@@ -3258,8 +3326,21 @@ sub _write_architecture ($$$$) {
     #
     # Write here
     #
+    my $write_flag = $EH{'outarch'};
+    # Are we in verify mode?
+    # Not possible in __COMMON__ mode
+    if ( $instance ne "__COMMON__" and $EH{'check'}{'hdlout'}{'path'} and
+        $EH{'check'}{'hdlout'}{'mode'} =~ m,\b(arch|all),io ) { # Selected ...
+            # Append check flag ...
+        if ( $EH{'check'}{'hdlout'}{'mode'} =~ m,\bleaf,io ) {
+                # __LEAF__ is 1 if this is not a LEAF!
+                $write_flag .= ( $entities{$entity}{'__LEAF__'} == 0 ) ? "_CHK_ARCH_LEAF" : "";
+        } else {
+                $write_flag .= ( $entities{$entity}{'__LEAF__'} == 0 ) ? "_CHK_ARCH_LEAF" : "_CHK_ARCH";
+        }
+    }
     my $fh = undef;
-    unless( $fh = mix_utils_open( "$filename", $EH{'outarch'} ) ) {
+    unless( $fh = mix_utils_open( "$filename", $write_flag ) ) {
         logwarn( "Cannot open file $filename to write architecture declarations: $!" );
         return;
     }
@@ -3926,8 +4007,22 @@ sub _write_configuration ($$$$) {
     if ( -r $filename and $EH{'outconf'} ne "COMB" ) {
 	logtrc(INFO, "Configuration definition file $filename will be overwritten!" );
     }
+    my $write_flag = $EH{'outconf'};
+    # Are we in verify mode?
+    # Not possible if in __COMMON__ mode!
+    if ( $instance ne "__COMMON__" and $EH{'check'}{'hdlout'}{'path'} and
+        $EH{'check'}{'hdlout'}{'mode'} =~ m,\b(conf|all),io ) { # Selected ...
+        # Append check flag ...
+        if ( $EH{'check'}{'hdlout'}{'mode'} =~ m,\bleaf,io ) {
+                # __LEAF__ is 1 if this is not a LEAF!
+                $write_flag .= ( $entities{$entity}{'__LEAF__'} == 0 ) ? "_CHK_CONF_LEAF" : "";
+        } else {
+                $write_flag .= ( $entities{$entity}{'__LEAF__'} == 0 ) ? "_CHK_CONF_LEAF" : "_CHK_CONF";
+        }
+    }
+
     my $fh = undef;
-    unless( $fh = mix_utils_open( $filename, $EH{'outconf'} ) ) {
+    unless( $fh = mix_utils_open( $filename, $write_flag ) ) {
         logwarn( "Cannot open file $filename to write configuration definitions: $!" );
         return;
     }

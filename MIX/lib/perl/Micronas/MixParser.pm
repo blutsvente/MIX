@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.37 $                                         |
-# | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/12/23 13:25:20 $                              |
+# | Revision:   $Revision: 1.38 $                                         |
+# | Author:     $Author: wig $                                         |
+# | Date:       $Date: 2004/03/25 11:21:47 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.37 2003/12/23 13:25:20 abauer Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.38 2004/03/25 11:21:47 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.38  2004/03/25 11:21:47  wig
+# | Added -verifyentity option
+# |
 # | Revision 1.37  2003/12/23 13:25:20  abauer
 # | added i2c parser
 # |
@@ -243,11 +246,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.37 2003/12/23 13:25:20 abauer Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.38 2004/03/25 11:21:47 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.37 $';
+my $thisrevision   =      '$Revision: 1.38 $';
 
-# | Revision:   $Revision: 1.37 $
+# | Revision:   $Revision: 1.38 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1066,13 +1069,18 @@ sub create_conn ($%) {
             $conndb{$name}{$i} = $ehr->{$i}[3]; # Set to DEFAULT Value
             #TODO: Initialize fields to empty / Marker, set DEFAULT if still empty at end 
         }
-        #TODO: Remove this ....
         #wig20030801
         $conndb{$name}{$i} =~ s/%NULL%/$EH{'macro'}{'%NULL%'}/g; # Just to make sure fields are initialized
         $conndb{$name}{$i} =~ s/%EMPTY%/$EH{'macro'}{'%EMPTY%'}/g; # Just to make sure fields are initialized
+        #!wig: shifted down (bug20040319): delete( $data{$i} );
+    }
+    #
+    # Now remove keys read in by previous loop
+    #
+    for my $i ( keys %$ehr ) {
         delete( $data{$i} );
     }
-
+    
     #
     # Add the rest, too
     #
@@ -1094,6 +1102,7 @@ sub create_conn ($%) {
 _create_conn ($$%)
 
 Create/add/modify a bus/signal/connection; convert input into simple array of hashes.
+The third argument should contain current data for ::high, ::low and ::mode
 
 Recognize constant values like:
 
@@ -1129,8 +1138,6 @@ sub _create_conn ($$%) {
 
     #TODO: check bus definitions better!
     if ( defined( $data{'::low'} ) and defined ( $data{'::high'} ) ) {
-        #    if ( $data{::low} <= $data{::high} ) {
-        #        # This ia a bus ...
         $data{'::low'} =~ s,^\s+,,; # Remove leading white-space
         $data{'::high'} =~ s,^\s+,,; # Remove leading white-space
 
@@ -1454,8 +1461,7 @@ sub merge_conn($%) {
 
     #
     # Overwrite conndb if fields are zero or space ....
-    #
-    #TODO: Check if order matters here ..
+    #    
     for my $i ( keys( %data ) ) {
         #TODO: Trigger merge mode for special cases where we want to add
         # up data instead of overwrite
@@ -1637,7 +1643,11 @@ sub mix_store_db ($$$) {
             my $conf_diffs = write_outfile( $dumpfile, "CONF", $aro ); # Do not generate deltas, just output
             my $conn_diffs = write_delta_sheet( $dumpfile, "CONN", $arc );
             my $hier_diffs = write_delta_sheet( $dumpfile, "HIER", $arh );
-            $EH{'DELTA_INT_NR'} = $conn_diffs + $hier_diffs;
+            if ( defined( $conn_diffs ) and defined( $hier_diffs ) ) {
+                $EH{'DELTA_INT_NR'} = $conn_diffs + $hier_diffs;
+            } else {
+                $EH{'DELTA_INT_NR'} = -1; # This only happens if no CONN or HIER sheet was available
+            }
         } else {
             write_outfile( $dumpfile, "CONF", $aro ); #wig20030708: store CONF options ...
             write_outfile( $dumpfile, "CONN", $arc );
@@ -2722,6 +2732,7 @@ sub add_port ($$) {
             }
             if( not exists( $d_mode{$d} ) ) {
                 logwarn( "ERROR: signal mode not defined internally ($d). File bug report!" );
+                $EH{'sum'}{'errors'}++;
             } else {
                 for my $dd ( keys( %{$d_mode{$d}} ) ) {
                     my $ddr = $dd;
@@ -3587,6 +3598,10 @@ sub purge_relicts () {
             logwarn("WARNING: Removing empty instance! Check input sheets!");
             $EH{'sum'}{'warnings'}++;
             delete( $hierdb{$i} );
+        }
+        #wig20040322: detect and remove %UAMN% keyword -> set ::workaround
+        if ( $hierdb{$i}{'::config'} =~ s,%(UAMN|USEASMODULENAME)%,,io ) {
+            $hierdb{$i}{'::workaround'} = "::config::__" . $1 . "__"; #Workaround: %UAMN% -> __UAMN__
         }
     }
 
