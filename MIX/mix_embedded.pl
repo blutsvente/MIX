@@ -13,12 +13,12 @@
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_embedded.pl,v 1.5 2004/07/22 11:31:39 abauer Exp $     |
+# | Id           : $Id: mix_embedded.pl,v 1.6 2004/08/04 12:16:02 abauer Exp $     |
 # | Name         : $Name:  $                                   |
 # | Description  : $Description: simple wrapper script for embedding MIX $|
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.5 $                                       |
-# | Mod.Date     : $Date: 2004/07/22 11:31:39 $                           |
+# | Version      : $Revision: 1.6 $                                       |
+# | Mod.Date     : $Date: 2004/08/04 12:16:02 $                           |
 # | Author       : $Author: abauer $                                      |
 # | Email        : $Email: Alexander.Bauer@micronas.com$                  |
 # |                                                                       |
@@ -87,7 +87,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.5 $'; # RCS Id
+$::VERSION = '$Revision: 1.6 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 mix_init(); # load Presets ....
@@ -122,15 +122,9 @@ sub readSpreadsheet(@) {
     my $input = shift;
     my $ref;
 
-     #Fetches HIER, CONN, IO and I2C sheet(s)
+     # fetch HIER, CONN, IO and I2C sheet(s)
     ( $r_connin, $r_hierin, $r_ioin, $r_i2cin) = mix_utils_open_input( $input);
-    $n_ioin_ext = 0;
-    $n_i2cin_ext = 0;
-
-    print("iopad ext: " . $EH{'io'}{'ext'} . "\ni2c ext: " . $EH{'i2c'}{'ext'}  . "\n");
 }
-
-#readSpreadsheet("/home/abauer/src/MIX/test/sxc_input/a_clk_i2c.sxc");
 
 sub getIntFromEH($) {
 
@@ -361,13 +355,15 @@ sub getConnRow($) {
     return(@row);
 }
 
+sub getNumIOPadHeaders{
+    return ($EH{'io'}{'cols'} + 1);
+}
 
 sub getNumIOPadRows() {
     return (scalar $#{$r_ioin});
 }
 
-
-sub getIOPadRow($) {
+sub get_sta_IOPadRow($) {
 
     my $row = shift;
 
@@ -427,12 +423,6 @@ sub getIOPadRow($) {
     else {
       push(@row,"");
     }
-    if(exists($r_ioin->[$row]{'::muxopt'})) {
-      push(@row, $r_ioin->[$row]{'::muxopt'}); # TODO: get all n-th muxopt
-    }
-    else {
-      push(@row,"");
-    }
     if(exists($r_ioin->[$row]{'::comment'})) {
       push(@row, $r_ioin->[$row]{'::comment'});
     }
@@ -461,106 +451,145 @@ sub getIOPadRow($) {
     return(@row);
 }
 
+sub get_dyn_IOPadRow($) {
+
+    my $row = shift;
+    my $num_dyn_cols = $EH{'io'}{'cols'} + 1;
+    my @row = ();
+
+    for(my $i=$num_dyn_cols; $i >= 0; $i--) {
+
+	if($i == 0 && exists($r_ioin->[$row]{'::muxopt'})) {
+	    push(@row, $r_ioin->[$row]{'::muxopt'});
+	}
+	elsif($i > 0 && exists($r_ioin->[$row]{'::muxopt:' . $i})) {
+	    push(@row, $r_ioin->[$row]{'::muxopt:' . $i});
+	}
+	else {
+	    push(@row, "");
+	}
+    }
+
+    return(@row);
+}
+
+sub getNumI2CHeaders{
+    return ($EH{'i2c'}{'cols'} + 1);
+}
 
 sub getNumI2CRows() {
     return (scalar $#{$r_i2cin});
 }
 
-
-sub getI2CRow($) {
+sub get_sta_I2CRow($) {
 
     my $row = shift;
 
     my @row = ();
 
-    if(exists($r_ioin->[$row]{'::ign'})) {
+    if(exists($r_i2cin->[$row]{'::ign'})) {
       push(@row, $r_i2cin->[$row]{'::ign'});
     }
     else {
       push(@row,"");
     }
-    if(exists($r_ioin->[$row]{'::comment'})) {
+    if(exists($r_i2cin->[$row]{'::comment'})) {
       push(@row, $r_i2cin->[$row]{'::comment'});
     }
     else {
       push(@row,"");
     }
-    if(exists($r_ioin->[$row]{'::variants'})) {
+    if(exists($r_i2cin->[$row]{'::variants'})) {
       push(@row, $r_i2cin->[$row]{'::variants'});
     }
     else {
       push(@row,"");
     }
-    if(exists($r_ioin->[$row]{'::dev'})) {
+    if(exists($r_i2cin->[$row]{'::dev'})) {
       push(@row, $r_i2cin->[$row]{'::dev'});
     }
     else {
       push(@row,"");
     }
-    if(exists($r_ioin->[$row]{'::sub'})) {
+    if(exists($r_i2cin->[$row]{'::sub'})) {
       push(@row, $r_i2cin->[$row]{'::sub'});
     }
     else {
       push(@row,"");
     }
-    if(exists($r_ioin->[$row]{'::interface'})) {
+    if(exists($r_i2cin->[$row]{'::interface'})) {
       push(@row, $r_i2cin->[$row]{'::interface'});    }
     else {
       push(@row,"");
     }
-    if(exists($r_ioin->[$row]{'::block'})) {
+    if(exists($r_i2cin->[$row]{'::block'})) {
       push(@row, $r_i2cin->[$row]{'::block'});
     }
     else {
       push(@row,"");
     }
-    if(exists($r_ioin->[$row]{'::dir'})) {
+    if(exists($r_i2cin->[$row]{'::dir'})) {
       push(@row, $r_i2cin->[$row]{'::dir'});
     }
     else {
       push(@row,"");
     }
-    if(exists($r_ioin->[$row]{'::spec'})) {
+    if(exists($r_i2cin->[$row]{'::spec'})) {
       push(@row, $r_i2cin->[$row]{'::spec'});
     }
     else {
       push(@row,"");
     }
-    if(exists($r_ioin->[$row]{'::clock'})) {
+    if(exists($r_i2cin->[$row]{'::clock'})) {
       push(@row, $r_i2cin->[$row]{'::clock'});
     }
     else {
       push(@row,"");
     }
-    if(exists($r_ioin->[$row]{'::reset'})) {
+    if(exists($r_i2cin->[$row]{'::reset'})) {
       push(@row, $r_i2cin->[$row]{'::reset'});
     }
     else {
       push(@row,"");
     }
-    if(exists($r_ioin->[$row]{'::busy'})) {
+    if(exists($r_i2cin->[$row]{'::busy'})) {
       push(@row, $r_i2cin->[$row]{'::busy'});
     }
     else {
       push(@row,"");
     }
-    if(exists($r_ioin->[$row]{'::init'})) {
+    if(exists($r_i2cin->[$row]{'::init'})) {
       push(@row, $r_i2cin->[$row]{'::init'});
     }
     else {
       push(@row,"");
     }
-    if(exists($r_ioin->[$row]{'::rec'})) {
+    if(exists($r_i2cin->[$row]{'::rec'})) {
       push(@row, $r_i2cin->[$row]{'::rec'});
     }
     else {
       push(@row,"");
     }
-    if(exists($r_ioin->[$row]{'::b'})) {
-      push(@row, $r_i2cin->[$row]{'::b'}); # TODO: get all n-th b
-    }
-    else {
-      push(@row,"");
+
+    return(@row);
+}
+
+sub get_dyn_I2CRow($) {
+
+    my $row = shift;
+    my $num_dyn_cols = $EH{'i2c'}{'cols'} + 1;
+    my @row = ();
+
+    for(my $i=$num_dyn_cols; $i >= 0; $i--) {
+	if($i == 0 && exists($r_i2cin->[$row]{'::b'})) {
+	    push(@row, $r_i2cin->[$row]{'::b'});
+	}
+	elsif($i > 0 && exists($r_i2cin->[$row]{'::b:' . $i})) {
+	    push(@row, $r_i2cin->[$row]{'::b:' . $i});
+	}
+	else {
+	    push(@row, "");
+	}
     }
 
     return(@row);
