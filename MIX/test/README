@@ -1,0 +1,13 @@
+##  - MixTest -  ##
+
+notes: mix_0.pl has to be in your path
+
+usage: MixTest.pl <options>
+
+options: <none>    ->   run Tests with all kind of input (with diff)
+	 -csv      ->   run only csv-input Tests (with diff)
+	 -sxc      ->   run only sxc-input Tests (with diff)
+	 -xls      ->   run only xls-input Tests (with diff)
+	 -release  ->   <not implemented yet>
+	 -purge    ->   remove *.diff and mix_0.pl.out files
+	 -update   ->   don't expect diff-sheets, generate new ones
