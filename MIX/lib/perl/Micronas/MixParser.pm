@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.5 $                                             |
+# | Revision:   $Revision: 1.6 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/12 15:40:47 $                                   |
+# | Date:       $Date: 2003/02/14 14:06:43 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.5 2003/02/12 15:40:47 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.6 2003/02/14 14:06:43 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,10 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.6  2003/02/14 14:06:43  wig
+# | Improved add port handling, consider in/out/... cases
+# | Entitiy port/signals redeclaration prevented
+# |
 # | Revision 1.5  2003/02/12 15:40:47  wig
 # | Improved handling of bus splicing (but still a way to go)
 # | Added seom meta instances.
@@ -331,18 +335,26 @@ sub check_conn_macros ($) {
 
 parse_conn_gen ($) {
 
-Retrieve connection generator definitions from the input data. There are two
+Retrieve connection and hierachy generator definitions from the input data. There are two
 allowed forms:
 
 =over 4
 
-=item
+=item $i (n..m),/PERL_RE/
 
-    $i (n..m),/PERL_RE
+This will be applied to all input lines. If /PERL_RE/ matches a given
+instance or connection name, the generator line will be executed. This is just a special case
+of the simple /PERL_RE/.
 
-=item
+=item /PERL_RE/
 
-    /PERL_RE/
+The generator line will be matched against each input instance or connection
+name. If it matchesm the generator line will be executed.
+
+=item $i (n..m)
+
+This is the second case. It will generate instances/connections, no matching lines required.
+Make sure to use $i in the instance or signal name to generate the objects as requested.
 
 =back
 
@@ -354,6 +366,7 @@ Right now this function can be used for both CONN and HIER matrix.
 sub parse_conn_gen ($) {
     my $rin = shift;
 
+    my $gi = 0;
     unless( defined $rin ) {
         logdie "FATAL: parse_conn_gen called with bad argument\n";
         exit 1;
@@ -387,6 +400,15 @@ sub parse_conn_gen ($) {
             $g{$1}{'ub'}  = undef;
             # $g{$pre}{'pre'} = $4;
             $g{$1}{'field'} = $rin->[$i];
+            $rin->[$i]{'::comment'} = "# Generator parsed /" . $rin->[$i]{'::comment'};
+        }
+        # parameter generator: $i (1..10)
+        elsif ( $rin->[$i]{'::gen'} =~ m!^\s*\$(\w)\s*\((\d+)\.\.(\d+)\)!o ) {
+            my $gname = "__MIX_ITERATOR_" . $gi++;
+            $g{$gname}{'var'} = $1;
+            $g{$gname}{'lb'} = $2;
+            $g{$gname}{'ub'} = $3;
+            $g{$gname}{'field'} = $rin->[$i];
             $rin->[$i]{'::comment'} = "# Generator parsed /" . $rin->[$i]{'::comment'};
         }
     }
@@ -428,24 +450,38 @@ sub parse_hier_init ($) {
     # Add all instances left in the input data
     #
     for my $i ( 0..$#{$r_hier} ) {    
-        #TODO: next if ( $r_hier->[$i]{'::comment'} =~ m,^\s*(#|//),o ); #TODO: is it true? use ::ign instead?
-        next unless ( $r_hier->[$i] ); # Skip if input filed is empty
+        next unless ( $r_hier->[$i] ); # Skip if input field is empty
         next if ( $r_hier->[$i]{'::ign'} =~ m,^(#|//),o );
         next if ( $r_hier->[$i]{'::gen'} !~ m,^\s*$,o );
         # Add more "go away" here if needed
 
+        #
+        # Early name expansion required for primary key ::inst
+        #
+        if ( $r_hier->[$i]{'::inst'} =~ m/^\s*%(::\w+?)%/o ) {
+            my $name = $r_hier->[$i]{'::inst'};
+            if ( defined( $r_hier->[$i]{$1} ) ) {
+                $name =~ s/%(::\w+?)%/$r_hier->[$i]{$1}/g; # replace %::key% ...
+                #
+                #TODO: multiple replacements could lead to troubles!
+                #    and it will not work recursive !!
+                $r_hier->[$i]{'::inst'} = $name;
+            } else {
+                logwarn( "Cannot replace ::inst for $name!" );
+            }
+        }
         add_inst( %{$r_hier->[$i]} );
 
     }
 
     #
     # Add some meta instances: %TOP%, %CONST%, %OPEN%
-    # These are needed for proper program flow .
+    # These are needed for proper program flow.
     #
     add_inst( '::inst' => "%CONST%", );
     add_inst( '::inst' => "%TOP%", );
     add_inst( '::inst' => "%OPEN%", );
-    
+
 }
 
 ####################################################################
@@ -646,13 +682,14 @@ sub parse_conn_init ($) {
         next if ( $r_conn->[$i]{'::ign'} =~ m,^\s*(#|//),o );
         # Skip generator lines
         next if ( $r_conn->[$i]{'::gen'} !~ m,^\s*$,o ); #Is that really true
-        
-        unless ( defined( $r_conn->[$i]{'::name'} ) ) {
-            # Is it a constant?
-            if ( $r_conn->[$i]{'::mode'} =~ m/^\s*c/io ) {
-                $r_conn->[$i]{'::name'} = "CONST_" . $const++;
-            }
-        }
+
+        #wig20030213: now in add_conn ...
+        # unless ( defined( $r_conn->[$i]{'::name'} ) ) {
+        #    # Is it a constant?
+        #    if ( $r_conn->[$i]{'::mode'} =~ m/^\s*c/io ) {
+        #        $r_conn->[$i]{'::name'} = "CONST_" . $const++;
+        #    }
+        # }
         add_conn( %{$r_conn->[$i]} );
     }
 }
@@ -1064,8 +1101,8 @@ sub merge_conn($%) {
                 }
             }
         } elsif ( $i =~ /^\s*::(high|low)/o ) {
-            if ( $conndb{$name}{$i} ) {
-                if ( $data{$i }and $conndb{$name}{$i} ne $data{$i} ) {
+            if ( defined($conndb{$name}{$i}) and $conndb{$name}{$i} ne '' ) {
+                if ( $data{$i} ne '' and $conndb{$name}{$i} ne $data{$i} ) {
                     # LOW and HIGH "signals" are special.
                     if ( $name =~ m,^\s*%(LOW|HIGH)_BUS%, ) { # Accept larger value for upper bound
                         if ( $i =~ m,^\s*::high,o ) {
@@ -1283,9 +1320,32 @@ sub apply_conn_gen ($) {
 
     my $f = \&add_conn;
 
+    # Expand iterators ...
+    # TODO: shift that into the apply_x_gen subroutine?
+    foreach my $g ( keys( %$r_cg ) ) {
+        if ( $g =~ m,^__MIX_ITERATOR_,io ) {
+            my $var = $r_cg->{$g}{'var'};
+            foreach my $i ( $r_cg->{$g}{'lb'} .. $r_cg->{$g}{'ub'} ) {
+                my %in = %{$r_cg->{$g}{'field'}};
+                my %g = ();
+                # my $e = '$' . $var . " = $i; ";
+                foreach my $k ( keys( %in ) ) {
+                    if ( $k eq '::gen' ) {
+                        $g{$k} = "GIC # \$$var = $i # " . $in{$k};
+                    } else {
+                        ( $g{$k} = $in{$k} ) =~ s,\$$var,$i,g;
+                    }
+                }
+                # eval ....
+                add_conn( %g );
+            }
+        }
+    }
+    #TODO: We could remove the iterators from the generator data, now
+
     apply_x_gen( $r_cg, $f );
     
-}    
+}
 
 ####################################################################
 ## apply_hier_gen
@@ -1304,6 +1364,29 @@ sub apply_hier_gen ($) {
 
     my $f = \&add_inst;
 
+    # Expand iterators ...
+    foreach my $g ( keys( %$r_hg ) ) {
+        if ( $g =~ m,^__MIX_ITERATOR_,io ) {
+            my $var = $r_hg->{$g}{'var'};
+            foreach my $i ( $r_hg->{$g}{'lb'} .. $r_hg->{$g}{'ub'} ) {
+                my %in = %{$r_hg->{$g}{'field'}};
+                my %g = ();
+                # my $e = '$' . $var . " = $i; ";
+                foreach my $k ( keys( %in ) ) {
+                    if ( $k eq '::gen' ) {
+                        $g{$k} = "GIH # \$$var = $i # " . $in{$k};
+                    } else {
+                        ( $g{$k} = $in{$k} ) =~ s,\$$var,$i,g;
+                    }
+                }
+                # eval ....
+                add_inst( %g );
+            }
+        }
+    }
+    #TODO: We could remove the iterators from the generator data, now
+
+    # Do the rest ...    
     apply_x_gen( $r_hg, $f );
     
 }
@@ -1487,7 +1570,7 @@ sub add_portsig () {
         if ( $signal =~ m/^\s*%(HIGH|LOW)/o ) { next; }
         #
         # Skip if signal mode equals Constant or Generic
-        # Constant and Generics should not extend port map!
+        # Constant and Generics will not extend port map!
         #
         my $mode = $conndb{$signal}{'::mode'};
         
@@ -1565,9 +1648,43 @@ sub add_portsig () {
 # Will be called for each signal
 #
 # add bit number to avoid collision in case of busses
+#
 sub add_port (@) {
     my @adds = @_;
 
+    # Get mode:
+    # If adds has only in -> need in-port
+    # If adds has only out -> need out-port (there has to be only one!)
+    # If adds has in and out -> !!need out-port (print out warning!)!!
+    #
+    #TODO: Currrently there is no support for inout ports!! That would require to
+    # check to parent connections, too.
+    #
+    my %mc = ();
+    my $mode = "__E_MODE_DEFAULT";
+    for my $r ( @adds ) {
+        my $m = $r->[3];
+        while( $m =~ m,:(inout|buffer|in|out):(\d+),og ) {
+            $mc{$1}++;
+        }
+    }
+    if ( keys( %mc ) < 1 ) {
+        if ( $#adds >= 0 ) {
+            logwarn("WARNING: Called add_port with unknown in/out modes for signal $adds[0][0]");
+        }
+        return;
+    } elsif ( keys( %mc ) > 1 ) {
+        if ( exists( $mc{'in'} ) and exists( $mc{'out'} ) ) {
+            logtrc( "INFO:4", "Assuming OUT mode for signal $adds[0][0] in port_add" );
+            $mode = "out";
+        } else {
+            logwarn("ERROR: Cannot figure out in/out mode for signal $adds[0][0]");
+            $mode ="__E_MODE_EXTEND";
+        }
+    } else {
+        $mode = (keys( %mc ))[0]; # buffer|inout|in|out| ....
+    }
+    
     for my $r ( @adds ) {
         #
         #TODO: go through that data and check for consistency!!
@@ -1578,7 +1695,8 @@ sub add_port (@) {
         while( $m =~ m,:(in|out):(\d+),og ) {
             my $mi = $2;
             my $mo = "::" . $1;
-            my $dir = uc( substr( $1, 0 ,1 ) );
+            my $dir = uc( substr( $mode, 0 ,1 ) );
+            if ( $dir eq "_" ) { $dir = 'E'; };
             #
             # Get template for that signal
             #
@@ -1595,8 +1713,17 @@ sub add_port (@) {
             if ( defined ( $templ{'sig_t'} ) ) { 
                 $st = "_" . $templ{'sig_t'};
             }
+            # $templ{'mode'}
             # Generate PORT name: MIX_$signal_G[IO].
-            $templ{'port'} = "P_MIX_" . $s . $sf . $st . "_G" . $dir; 
+            $templ{'port'} = "P_MIX_" . $s . $sf . $st . "_G" . $dir;
+            # Put new connection into appropriate ::in or ::out
+            # mode equals out -> out, otherwise to in
+            if ( $mode eq "out" ) {
+                $cell = $conndb{$s}{"::out"};
+            } else {
+                $cell = $conndb{$s}{"::in"};
+            }
+            #TODO: Shouldn't we prevent multiple pushes? 
             push( @$cell, { %templ } );
         }
     }
