@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.9 $                                             |
+# | Revision:   $Revision: 1.10 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/21 16:05:14 $                                   |
+# | Date:       $Date: 2003/02/28 15:03:44 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.9 2003/02/21 16:05:14 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.10 2003/02/28 15:03:44 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,10 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.10  2003/02/28 15:03:44  wig
+# | Intermediate version with lots of fixes.
+# | Signal issue still open.
+# |
 # | Revision 1.9  2003/02/21 16:05:14  wig
 # | Added options:
 # | -conf
@@ -890,6 +894,7 @@ sub _create_conn ($$%) {
     #A bus with ::low and ::high    
     my $h = undef;
     my $l = undef;
+    my $hldigitflag = 0; # Assume ::high and ::low are no digits!
     
     #TODO: check bus definitions better!
     if ( defined( $data{'::low'} ) and defined ( $data{'::high'} ) ) {
@@ -897,19 +902,23 @@ sub _create_conn ($$%) {
         #        # This ia a bus ...
         if ( $data{'::high'} ne "" ) {
             unless ( $data{'::high'} =~ /^\d+$/ ) {
-                logwarn( "Bus $data{'::name'} upper bound $data{'::high'} not a number!" );
+                logtrc( "INFO", "Bus $data{'::name'} upper bound $data{'::high'} not a number!" );
+                $hldigitflag = 0;
             } else {
-                $h = $data{'::high'};
+                $hldigitflag++;
             }
+            $h = $data{'::high'}; # ::high can be string, too ...
         }
         if ( $data{'::low'} ne "" ) {
             unless ( $data{'::low'} =~ /^\d+$/ ) {
-                logwarn( "Bus $data{'::name'} lower bound $data{'::low'} not a number!" );
+                logtrc( "INFO", "Bus $data{'::name'} lower bound $data{'::low'} not a number!" );
+                $hldigitflag = 0;
             } else {
-                $l = $data{'::low'};
+                $hldigitflag++;
             }
+            $l = $data{'::low'};
         }
-        if ( defined( $h ) and defined( $l ) and $h <= $l ) {
+        if ( defined( $h ) and defined( $l ) and $hldigitflag == 2 and $h <= $l ) {
             logwarn( "Ununsual bus ordering $h downto $l" );
         }
     }
@@ -939,15 +948,19 @@ sub _create_conn ($$%) {
             #   MOD/SIG                 take SF:ST and PF,PT from ::high and ::low
             #   
 
+            $d =~ s,^\s+,,o; # Remove leading whitespace
+            $d =~ s,\s+$,,o; # Remove trailing whitespace
+            $d =~ s,%::,%##,og; # Mask %:: ... vs. N:N
+        
             #
             # Recognize 0xHEX, 0OCT, 0bBIN and DECIMAL values in ::out
             # Recognize 'CONST' and "CONST"
             # Mark with %CONST% instance name .... the port name will hold the value
             #
             $d =~ s,__(CONST|GENERIC|PARAMTER)__,%$1%,g; # Convert back __CONST__ to %CONST%
-            if ( $d =~ m,^\s*(%(CONST|GENERIC|PARAMETER)%/)?(0x[0-9a-f]+|0b[01xzhl]+|0[0-7]+|[0-9]+),io or
-                 $d =~ m,^\s*(%(CONST|GENERIC|PARAMETER)%/)?('\w+'),io or
-                 $d =~ m,^\s*(%(CONST|GENERIC|PARAMETER)%/)?("\w+"),io ) { # Constant value ...
+            if ( $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(0x[0-9a-f]+|0b[01xzhl]+|0[0-7]+|[0-9]+),io or
+                 $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?('\w+'),io or
+                 $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?("\w+"),io ) { # Constant value ...
                 my $const = $3;
                 my $t = $2;
                 if ( $inout =~ m,in, ) {
@@ -970,11 +983,11 @@ sub _create_conn ($$%) {
                 }
                 
                 # Convert input data ...hex, binary and decimal to decimal ....
-                if ( $d =~ m,^\s*0x,io ) {
+                if ( $d =~ m,^0x,io ) {
                     $const = hex( $const ); # Handles hex and octal
-                } elsif ( $d =~ m,^\s*0[0-7]+,io ) {
+                } elsif ( $d =~ m,^0[0-7]+,io ) {
                     $const = oct( $const ); # Handles oct and binary ....
-                } elsif ( $d =~ m,^\s*(0b[01xzhl]+),io ) {
+                } elsif ( $d =~ m,^(0b[01xzhl]+),io ) {
                     # Convert hl to 10.
                     #TODO: What about x and z??
                     $const =~tr/HhLl/1100/;
@@ -988,21 +1001,30 @@ sub _create_conn ($$%) {
                 $co{'port_t'} = $l;
                 $co{'sig_f'} = $h;
                 $co{'sig_t'} = $l;
-
+                $co{'value'} = $const;
+                
                 push( @co, { %co } );
                 #TODO: $mode = 'C'; # Autochange ::mode to constant
                 next;
+
             }
 
+            #
+            # Port and signal names and bounds may be composed of
+            # \w   alphanumeric and _
+            # %   marker for macros
+            # :    part of macro like %::name%
+            #
+            
             #
             # Normal inst/ports ....
             #
-            $d =~ s/\((\d+)\)/($1:$1)/g; # Extend (N) to (N:N)
-            if ( $d !~ m,/,o ) {
-                $d =~ s,(\w+),$1/%::name%,;
+            $d =~ s/\(([\w%#]+)\)/($1:$1)/g; # Extend (N) to (N:N)
+            if ( $d !~ m,/,o ) { # Add signal name as port name by default
+                $d =~ s,([\w%:#]+),$1/%::name%,;
             }
 
-            if ( $d =~ m,([\w%:]+)/(\S+)\((\d+):(\d+)\)\s*=\s*\((\d+):(\d+), ) {
+            if ( $d =~ m,([\w%#]+)/(\S+)\(([\w%#]+):([\w%#]+)\)\s*=\s*\(([\w%#]+):([\w%#]+), ) {
                 # INST/PORTS(pf:pt)=(sf:st)
                 $co{'inst'} = $1;
                 $co{'port'} = $2;
@@ -1010,38 +1032,61 @@ sub _create_conn ($$%) {
                 $co{'port_t'} = $4;
                 $co{'sig_f'} = $5;
                 $co{'sig_t'} = $6;
-            } elsif ( $d =~ m,([\w%:]+)/(\S+)=\((\d+):(\d+)\)\s*, ) {
+            } elsif ( $d =~ m,([\w%#]+)/(\S+)=\(([\w%#]+):([\w%#]+)\)\s*, ) {
                 # INST/PORTS=(f:t) Port-Bit to Bus-Bit f = t; expand to pseudo bus?
                 #TODO: Implement better solution (e.g. if Port is bus slice, not bit?
                 #wig20030207: handle single bit port connections ....
-                if ( $3 == $4 ) {
+                if ( $3 eq $4 ) {
                     $co{'inst'} = $1;
                     $co{'port'} = $2;
                     $co{'port_f'} = 0; #Port is bit, not bus
                     $co{'port_t'} = 0; #Port is bit, not bus
                     $co{'sig_f'} = $3;
                     $co{'sig_t'} = $4;
-                } else { # Assume we connect to ($f - $t) - 0 !
-                    if ( $4 != 0 ) {
-                        # Wire port of width
-                        logwarn("Automatically wiring signal bits $3 to $4 of $1/$2 to bits " . ( $3 - $4 ) . " to 0");
-                    }
+                } else { # Assume we connect to ($f - $t) downto 0 !
                     $co{'inst'} = $1;
                     $co{'port'} = $2;
-                    $co{'port_f'} = $3 - $4;
-                    $co{'port_t'} = 0;
                     $co{'sig_f'} = $3;
-                    $co{'sig_t'} = $4;
+                    $co{'sig_t'} = $4;                    
+                    if ( $4 ne "0" ) {
+                        # Wire port of width
+                        logwarn("Automatically wiring signal bits $3 to $4 of $1/$2 to bits " . ( $3 - $4 ) . " to 0");
+                        my $f = $3;
+                        my $t = $4;
+                        if ( $f =~ m,^(\d+)$,o and $t =~ m,^(\d+)$,o ) {
+                            $co{'port_f'} = $f - $t;
+                            $co{'port_t'} = 0;
+                        } else {
+                            #TODO: Needs to be checked ... autowiring does not work here!
+                            $co{'port_f'} = "$f - $t";
+                            $co{'port_t'} = 0;
+                        }
+                    } else {
+                        $co{'port_f'} = $3; # - $4 ;
+                        $co{'port_t'} = 0;
+                    }
                 }   
-            } elsif ( $d =~ m,([\w%:]+)/(\S+)\((\d+):(\d+)\)\s*, ) {
+            } elsif ( $d =~ m,([\w%#]+)/(\S+)\(([\w%#]+):([\w%#]+)\)\s*, ) {
                 # INST/PORTS(f:t)
                 $co{'inst'} = $1;
                 $co{'port'} = $2;
                 $co{'port_f'} = $3;
                 $co{'port_t'} = $4;
-                $co{'sig_f'} = $3 - $4;
-                $co{'sig_t'} = 0;
-            } elsif ( $d =~ m,([\w%:]+)/(\S+)\s*, ) {
+                if ( $4 ne "0" ) {
+                    my $f = $3;
+                    my $t = $4;
+                    if ( $t =~ m,^(\d+)$,o and $f =~ m,^(\d+)$,o ) { 
+                        $co{'sig_f'} = $f - $t;
+                        $co{'sig_t'} = 0;
+                    } else {
+                        $co{'sig_f'} = "$f - $t"; #TODO: Is that a good idea?
+                        $co{'sig_t'} = 0;
+                    }
+                } else {
+                    $co{'sig_f'} = $3;
+                    $co{'sig_t'} = 0;
+                }
+            } elsif ( $d =~ m,([\w%#]+)/(\S+)\s*, ) {
                 # INST/PORTS
                 $co{'inst'} = $1;
                 $co{'port'} = $2;
@@ -1049,7 +1094,14 @@ sub _create_conn ($$%) {
                 $co{'port_t'} = $l;
                 $co{'sig_f'} = $h;
                 $co{'sig_t'} = $l;
-            } else {
+            } elsif ( $d =~ m,([\w%#]+), ) {
+                $co{'inst'} = $d;
+                $co{'port'} = $data{'::name'}; #Port name equals signal name
+                $co{'port_f'} = $h;
+                $co{'port_t'} = $l;
+                $co{'sig_f'} = $h;
+                $co{'sig_t'} = $l;                
+            }else {
                 # INST
                 $co{'inst'} = $d;
                 $co{'port'} = $data{'::name'}; #Port name equals signal name
@@ -1058,6 +1110,7 @@ sub _create_conn ($$%) {
                 $co{'sig_f'} = $h;
                 $co{'sig_t'} = $l;
             }
+            
             check_conn_prop( \%co );
             
             push( @co, { %co } );
@@ -1066,11 +1119,15 @@ sub _create_conn ($$%) {
 }
 
 #
-# Check connection properties
+# Check connection propertie, resubstitute # -> :
 #
 sub check_conn_prop ($) {
     my $ref = shift;
 
+    foreach my $i ( qw( inst port port_f port_t sig_f sig_t ) ) {
+        if ( $ref->{$i} ) { $ref->{$i} =~ y/#/:/; }
+    }
+    
     if ( $ref->{'inst'} !~ m,^[:%\w]+$,o ) {
         logwarn( "Unusual character in signal name: $ref->{'inst'}/$ref->{'port'}!" );
     }
@@ -1206,6 +1263,10 @@ sub mix_store_db ($$$) {
     if ( $dumpfile eq "out" ) {
         $dumpfile = $EH{'out'};
     }
+
+    if ( $dumpfile eq "dump" ) {
+        $dumpfile = $EH{'dump'};
+    }
     
     if ( $type eq "auto" ) {
         # Derive output format from output name extension
@@ -1218,8 +1279,8 @@ sub mix_store_db ($$$) {
     }
       
     if ( $type eq "xls" ) {
-        my $arc = db2array( \%conndb , "conn" );
-        my $arh = db2array( \%hierdb, "hier" );
+        my $arc = db2array( \%conndb , "conn", "" );
+        my $arh = db2array( \%hierdb, "hier", "^(%\\w+%|W_NO_PARENT)\$" );
         write_excel( $dumpfile, "CONN", $arc );
         write_excel( $dumpfile, "HIER", $arh );
     } else {
@@ -1899,7 +1960,7 @@ sub __parse_inout ($$) {
     my $rb = shift;
 
     for my $i ( keys( %$ra ) ) {
-        next if $i eq "inst"; # Do that later on ....
+        #!wig20030223:off: next if $i eq "inst"; # Do that later on ....
         if ( $ra->{$i} ) {
             __parse_mac( \$ra->{$i}, $rb );
         }
@@ -1945,7 +2006,7 @@ sub __parse_mac ($$) {
 
 purge_relicts ()
 
-Look through heirachy and connection database and fix up things like:
+Look through hierachy and connection database and fix up things like:
     instances without name (parentless ...??)
     
 =cut
@@ -1953,6 +2014,7 @@ sub purge_relicts () {
 
     #
     # remove empty entities (e.g. created for entities without parents ...)
+    # Should not happen anyway.
     #
     for my $i ( keys( %hierdb ) ) {
         unless ( $i ) {
@@ -2027,13 +2089,15 @@ sub _add_sign2hier ($$$) {
     for my $iii ( 0..$#{$rsa} ) {
         my $inst = $rsa->[$iii]{'inst'};
         next unless ( defined( $inst ) ); # Skip undefined instance names ....
+        $inst =~ s,^__(\w+)__$,%$1%,; # Get back %NAME% from __NAME__
         unless ( exists ( $hierdb{$inst} ) )  {
-                unless ( $conndb{$conn}{'::mode'} =~ m,^\s*(C), ) {
+                unless ( $conndb{$conn}{'::mode'} =~ m,^\s*[CPG],o ) {
+                    # Complain if signal does connect to unknown instance
                     logwarn("Skipping connection $conn to undefined instance $inst!");
                 }
                 next; #TODO: Should we try to add that instance?
         }
-       next if ( defined( $inst ) and $inst =~ m,(__CONST__|%CONST%),io );
+        next if ( $inst eq "%CONST%" );
         # Skip meta instance %CONST%
         my $port = $rsa->[$iii]{'port'};
         unless ( defined( $port ) ) {
@@ -2048,7 +2112,7 @@ sub _add_sign2hier ($$$) {
                 # Store $hierdb{$inst}{'::conn'}{'generic'}{NAME} = val
                 my $parameter = "";
                 for my $v ( 0 .. $#{$conndb{$conn}{'::out'}} ) {
-                    if ( $conndb{$conn}{'::out'}[$v]{'inst'} eq "%PARAMETER%" ) {
+                    if ( $conndb{$conn}{'::out'}[$v]{'inst'} =~ m,(%|__)PARAMETER(%|__),io ) {
                         $parameter = $conndb{$conn}{'::out'}[$v]{'port'};
                         last;
                     }

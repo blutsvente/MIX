@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.8 $                                             |
+# | Revision:   $Revision: 1.9 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/21 16:05:14 $                                   |
+# | Date:       $Date: 2003/02/28 15:03:44 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.8 2003/02/21 16:05:14 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.9 2003/02/28 15:03:44 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,10 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.9  2003/02/28 15:03:44  wig
+# | Intermediate version with lots of fixes.
+# | Signal issue still open.
+# |
 # | Revision 1.8  2003/02/21 16:05:14  wig
 # | Added options:
 # | -conf
@@ -163,18 +167,32 @@ sub mix_getopt_header(@)
 	# Output file will be written to current directory.
 	# Name will become name of last input file foo-mixed.ext
 	$EH{'out'} = $ARGV[$#ARGV] ;
-	$EH{'out'} =~ s,(\.[^.]+)$,-mixed$1,;
+	$EH{'out'} =~ s,(\.[^.]+)$,-$EH{'output'}{'ext'}{'intermediate'}$1,;
+	if ( $EH{'output'}{'path'} eq "." ) {
+	    $EH{'out'} = basename( $EH{'out'} ); # Strip off pathname
+	}
     } else {
 	$EH{'out'} = "";
     }
 
     if (defined $OPTVAL{'int'}) {
 	$EH{'dump'} = $OPTVAL{'int'};
+    } elsif ( exists( $ARGV[$#ARGV] ) )  {
+	# Output file will be written to current directory.
+	# Name will become name of last input file foo-mixed.ext
+	$EH{'dump'} = $ARGV[$#ARGV];
+	$EH{'dump'} =~ s,\.([^.]+)$,,; # Strip away extension
+	$EH{'dump'} .= "." . $EH{'output'}{'ext'}{'internal'};
+	if ( $EH{'output'}{'path'} eq "." ) {
+	    $EH{'dump'} = basename( $EH{'dump'} ); # Strip off pathname
+	}
     } else {
+	$EH{'dump'} = "mix" . "." . $EH{'output'}{'ext'}{'intermediate'};
+    }
 	# Is there a *-mixed file in the current directory ?
 	#TODO:
-	$EH{'dump'} = "NO_DUMP_FILE_DEFINED";
-    }
+	# $EH{'dump'} = "NO_DUMP_FILE_DEFINED";
+        # }
 
     # Specify top cell on command line or use TESTBENCH as default
     if (defined $OPTVAL{'top'} ) {
@@ -198,9 +216,13 @@ sub mix_getopt_header(@)
 	# Output file will be written to current directory.
 	# Name will become name of last input file foo-mixed.ext
 	$EH{'outenty'} = $ARGV[$#ARGV] ;
-	$EH{'outenty'} =~ s,(\.[^.]+)$,-e.vhd,;
+	$EH{'outenty'} =~ s,(\.[^.]+)$,,; # Remove extension
+	$EH{'outenty'} .= $EH{'postfix'}{'POSTFILE_ENTY'} . "." . $EH{'output'}{'ext'}{'vhdl'};
+	if ( $EH{'output'}{'path'} eq "." ) {
+	    $EH{'outenty'} = basename( $EH{'outenty'} ); # Strip off pathname
+	}
     } else {
-	$EH{'outenty'} = "mix-e.vhd";
+	$EH{'outenty'} = "mix" . $EH{'postfix'}{'POSTFILE_ENTY'} . "." . $EH{'output'}{'ext'}{'vhdl'};
     }
 
     # Write architecture into file
@@ -210,9 +232,13 @@ sub mix_getopt_header(@)
 	# Output file will be written to current directory.
 	# Name will become name of last input file foo-mixed.ext
 	$EH{'outarch'} = $ARGV[$#ARGV] ;
-	$EH{'outarch'} =~ s,(\.[^.]+)$,-a.vhd,;
+	$EH{'outarch'} =~ s,(\.[^.]+)$,,;
+	$EH{'outarch'} .= $EH{'postfix'}{'POSTFILE_ARCH'} . "." . $EH{'output'}{'ext'}{'vhdl'};
+	if ( $EH{'output'}{'path'} eq "." ) {
+	    $EH{'outarch'} = basename( $EH{'outarch'} ); # Strip off pathname
+	}
     } else {
-	$EH{'outarch'} = "mix-a.vhd";
+	$EH{'outarch'} = "mix" . $EH{'postfix'}{'POSTFILE_ARCH'} . "." . $EH{'output'}{'ext'}{'vhdl'};
     }
 
    # Write configuration into file
@@ -222,16 +248,20 @@ sub mix_getopt_header(@)
 	# Output file will be written to current directory.
 	# Name will become name of last input file foo-mixed.ext
 	$EH{'outconf'} = $ARGV[$#ARGV] ;
-	$EH{'outconf'} =~ s,(\.[^.]+)$,-c.vhd,;
+	$EH{'outconf'} =~ s,(\.[^.]+)$,,;
+	$EH{'outconf'} .= $EH{'postfix'}{'POSTFILE_CONF'} . "." . $EH{'output'}{'ext'}{'vhdl'};
+	if ( $EH{'output'}{'path'} eq "." ) {
+	    $EH{'outconf'} = basename( $EH{'outconf'} ); # Strip off pathname
+	}
     } else {
-	$EH{'outconf'} = "mix-c.vhd";
+	$EH{'outconf'} = "mix" . $EH{'postfix'}{'POSTFILE_CONF'} . "." . $EH{'output'}{'ext'}{'vhdl'};
     }
 
     #
     # SHEET selector -> overload built-in configuration
     #
     if ($OPTVAL{'sheet'}) {
-	mix_overload_sheet( $OPTVAL{'conf'} );
+	mix_overload_sheet( $OPTVAL{'sheet'} );
     }
 
     #
@@ -525,19 +555,36 @@ $ex = undef; # Container for OLE server
 	},
     },
     'output' => {
-	'path' => ".",		# Path to store backend data
+	'path' => ".",		# Path to store backend data. Other values are a path, CWD or INPUT
 	'order' => 'input',		# Field order := as in input or predefined
 	'format' => 'ext',		# Output format derived from filename extension ???
+	'filename' => 'useminus', # Convert _ to - in filenames
 	'generate' =>
 	    { 'arch' => 'noleaf',
-	      'enty' => 'noleaf', # no leaf cells
-	      'conf' => 'noleaf', # no leaf cells
+	      'enty' => 'noleaf', # no leaf cells: [no]leaf,alt,
+	      'conf' => 'noleaf', # one of: [leaf|noleaf],verilog no leaf cells, defaults
+				      # is "noleaf". The verilog keyword will add configuration
+				      #   records for verilog subblocks (who wants that?)
+	      'use' => 'enty',     # apply ::use libraries to entity files, if not specified otherwise
+				      # values: <enty|conf|arch|all>
 	    },	
+	'ext' => 	{   'vhdl' => 'vhd',
+			    'verilog' => 'v' ,
+			    'intermediate' => 'mixed', # not a real extension!
+			    'internal' => 'pld',
+	    },
+    },
+    'internal' => {
+	'path' => ".",
+	'order' => 'input',		# Field order := as in input or predefined
+	'format' => "perl", 	# Internal intermediate format := perl|xls|csv|xml ...
     },
     'intermediate' => {
 	'path' => ".",
-	'order' => 'input',		# Field order := as in input or predefined
-	'format' => "perl", # Intermediate format := perl|xls|csv|xml ...
+	'order' => 'input',
+	'keep' => '4',	# Number of old sheets to keep
+	'format' => 'prev', # One of: prev(ious), auto or n(o|ew)
+	# If set, previous uses old sheet format, auto applies auto-format and the others do nothing.
     },
     'postfix' => {
 	    qw(
@@ -545,6 +592,7 @@ $ex = undef; # Container for OLE server
 		    POSTFIX_PORT_IN	_i
 		    POSTFIX_PORT_IO	_io
 		    PREFIX_PORT_GEN	p_mix_
+		    PREFIX_SIG_INT	s_int_
 		    POSTFIX_GENERIC	_g
 		    POSTFIX_SIGNAL	_s
 		    POSTFIX_CONSTANT	_c
@@ -559,6 +607,7 @@ $ex = undef; # Container for OLE server
 		    PREFIX_CONST	mix_const_
 		    PREFIX_GENERIC	mix_generic_
 		    PREFIX_PARAMETER	mix_parameter_
+		    
 	    )
 	    # POSTFIX_ARCH _struct-a
 	    # POSTFIX_ENTY _struct-e
@@ -625,14 +674,15 @@ $ex = undef; # Container for OLE server
 	    '::lang'		=> [ qw(	1	0	0	VHDL	7 )],
 	    '::entity'		=> [ qw(	1	0	1	W_NO_ENTITY	8 )],
 	    '::arch'		=> [ qw(	1	0	0	rtl			9 )],
-	    "::config"	=> [ qw(	1	0	1	W_NO_CONFIG	10 )],
-	    "::comment"	=> [ qw(	1	0	2	%EMPTY%	11 )],
+	    "::config"	=> [ qw(	1	0	1	W_NO_CONFIG	11 )],
+	    '::use'		=> [ qw(	1	0	0	%EMPTY%		10  )],
+	    "::comment"	=> [ qw(	1	0	2	%EMPTY%	12 )],
 	    "::shortname"	=> [ qw(	0	0	0	%EMPTY%	6 )],
 	    "::default"	=> [ qw(	1	1	0	%NULL%	0 )],
 	    "::hierachy"	=> [ qw(	1	0	0	%NULL%	0 )],
 	    "::debug"	=> [ qw(	1	0	0	%NULL%	0 )],
 	    '::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
-	    'nr'		=> 12,  # Number of next field to print
+	    'nr'		=> 13,  # Number of next field to print
 	},
     },
 
@@ -676,6 +726,14 @@ $ex = undef; # Container for OLE server
 	    "%SIGNAL%"	=> "std_ulogic",
 	    "%BUS_TYPE"	=> "std_ulogic_vector",
 	    "%DEFAULT_MODE%" => "S",
+	    "%VHDL_USE_DEFAULT%"	=>
+		"library IEEE;\nuse IEEE.std_logic_1164.all;\n",
+		# "Library IEEE;\nUse IEEE.std_logic_1164.all;\nUse IEEE.std_logic_arith.all;",
+	    "%VHDL_USE%"	=> "-- No project specific VHDL libraries", #Used internally
+	    "%VHDL_NOPROJ%"	=> "-- No project specific VHDL libraries", # Overwrite this ...
+	    "%VHDL_USE_ENTY%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
+	    "%VHDL_USE_ARCH%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
+	    "%VHDL_USE_CONF%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
 	    "%OPEN%"	=> "__OPEN__",			#open signal
 	    "%UNDEF%"	=> "ERROR_UNDEF",	#should be 'undef',  #For debugging??  
 	    "%UNDEF_1%"	=> "ERROR_UNDEF_1",	#should be 'undef',  #For debugging??
@@ -957,7 +1015,7 @@ sub mix_overload_sheet ($) {
 
 	if ( exists( $EH{$k}{'xls'} ) ) {
 	    logtrc( "INFO", "Overloading sheet match $i");
-	    $EH{$k} = $v;
+	    $EH{$k}{'xls'} = $v;
 	} else {
 	    logwarn( "Illegal sheet selector $k found in $i\n" );
 	}
@@ -1264,7 +1322,7 @@ sub parse_header($$@){
 	my $head = $row[$i];	
 	unless ( defined( $$templ->{'field'}{$head} ) ) {
 	    logtrc(INFO, "Added new column header $head");
-	    $$templ->{'field'}{$head} = $$templ->{'field'}{'::default'}; #Check: does this really copy everything
+	    @{$$templ->{'field'}{$head}} = @{$$templ->{'field'}{'::default'}}; #Check: does this really copy everything
 	    $$templ->{'field'}{$head}[4] = $$templ->{'field'}{'nr'};
 	    $$templ->{'field'}{'nr'}++;
 	}
@@ -1364,8 +1422,7 @@ sub open_excel($$$){
 #				 );
 #  my $sheet =$book->Worksheets($sheetnumber);
 
-    #TODO: use regular expression to match sheet names (would allow several
-    # to be opened, but that creates another load of problems (columns might not be matching!)
+    # Take all sheets matching the possible reg ex in $sheetname
     my @sheets = ();
     foreach my $sh ( in $book->{Worksheets} ) {
 	if ( $sh->{'Name'} =~ m/^$sheetname$/ ) {
@@ -1384,7 +1441,7 @@ sub open_excel($$$){
 	$ex->ActiveWorkbook->Sheets($s)->Activate;
 	my $sheet =$book->ActiveSheet;
 	my $row=$sheet->UsedRange->{Value};
-	push( @all, $row );
+	push( @all, $row ); # Return array of arrays
     }
 
     unless( $openflag ) {
@@ -1515,21 +1572,24 @@ sub mix_load ($%){
 
 =head2
 
-db2array ($$) {
+db2array ($$$) {
 
 convert the datastructure to a flat array
 
 Arguments: $ref    := hash reference
 		$type  := (hier|conn)
+		$filter := Perl_RE,if it matches a key of ref, do not print that out
+			    if $filter is an sub ref, will be used in grep
 
 =cut
-sub db2array ($$) {
+sub db2array ($$$) {
     my $ref = shift;
     my $type = shift;
+    my $filter = shift;
     
     unless( $ref ) { logwarn("called db2array without db argument!"); return }
     unless ( $type =~ m/^(hier|conn)/o ) {
-	logwarn("bad db type $type, ne hier or conn!");
+	logwarn("bad db type $type, ne HIER or CONN!");
 	return;
     }
     $type = $1;
@@ -1559,8 +1619,19 @@ sub db2array ($$) {
 	$a[$n++][0] = "# $c: " . $EH{'macro'}{$comment{$c}};
     }
 
+    my @keys = ();
+    if ( $filter ) { # Filter the keys ....
+	if ( ref( $filter ) eq "CODE" ) {
+	    @keys = grep( &$filter, keys( %$ref ) );
+	} else {
+	    @keys = grep( !/$filter/, keys( %$ref ) );
+	}
+    } else {
+	@keys = keys( %$ref );
+    }
+    
     # Now comes THE data    
-    for my $i ( sort( keys( %$ref ) ) ) {
+    for my $i ( sort( @keys ) ) {
 	for my $ii ( 1..$#o ) { # 0 contains fields to skip
 	    if ( $o[$ii] =~ m/^::(in|out)\s*$/o ) {
 		$a[$n][$ii-1] = inout2array( $ref->{$i}{$o[$ii]} );
@@ -1650,7 +1721,11 @@ sub inout2array ($) {
 
 write_excel ($$$) {
 
-self explanatory
+this subroutine is self explanatory. The only important thing is, that it will
+try to rotate older versions of the generated sheets.
+E.g. sheet CONN will become O0_CONN while O0_CONN was shifted
+to O1_CONN. The maximum number of all versions to keep is defined by
+$EH{
 
 Arguments: $file   := filename
 		$type  := sheetname (CONN|HIER)
@@ -1665,7 +1740,8 @@ sub write_excel ($$$) {
     my $book;
     my $newflag = 0;
     my $openflag = 0;
-    
+    my $sheetr = undef;    
+
     unless ( $file =~ m/\.xls$/ ) {
 	$file .= ".xls";
     }
@@ -1698,24 +1774,78 @@ sub write_excel ($$$) {
 	# }
 	
 	#
-    	# rename $sheet to $sheet_O, $sheet_O will get deleted
+    	# rotate old versions of $sheet to O$n_$sheet_O ...
 	#
+	my %sh = ();
+	my $s_previous = undef;
+
 	foreach my $sh ( in $book->{Worksheets} ) {
-	    if ( $sh->{'Name'} eq ( $sheet . "_O" ) ) {
-		logwarn("Removing backup copies of sheet $sheet (_O)!");
-		$sh->Delete;
-		last;
+	    $sh{$sh->{'Name'}} = $sh; # Keep links
+	}
+	if ( $EH{'intermediate'}{'keep'} ) {
+
+	# Rotate sheets ...
+	    # Delete eldest one:
+	    my $max = $EH{'intermediate'}{'keep'};
+	    logwarn("Rotating $max old sheets of $sheet!");
+	    if ( exists( $sh{ "O_" . $max . "_" . $sheet } ) ) {
+		$sh{"O_" . $max . "_" . $sheet}->Delete;
 	    }
-	}	
-	foreach my $sh ( in $book->{Worksheets} ) {
-	    if ( $sh->{'Name'} eq $sheet ) {
-		logwarn("Replacing sheet $sheet contents by new!");
-		# $book->Worksheet->Delete($sheet);
-		# XXXX $book->Worksheet->Delete($sheet . "_O");
-		$sh->{'Name'} = $sheet . "_O";
-		last;
+	    if ( $max >= 2 ) {
+		for my $n ( reverse( 2..$max ) ) {
+		    if ( exists( $sh{ "O_" . ( $n - 1 ) . "_" . $sheet } ) ) {
+			$sh{"O_" . ( $n - 1 ) . "_" . $sheet}->{'Name'} =
+			    "O_" . $n . "_" . $sheet;
+		    }
+		}
+	    }
+	    # Finally: Rename the latest/greatest ...
+	    if ( exists( $sh{ $sheet } ) ) {
+		    $s_previous = $sh{$sheet};
+		    $sh{$sheet}->{'Name'} =
+			"O_1_" . $sheet;
+	    }
+	    # Copy previous format ....
+	    if ( $EH{'intermediate'}{'format'} =~ m,prev,o and
+		 defined( $s_previous ) ) {
+		unless( $s_previous->Copy($s_previous) ) { # Add in new sheet before
+		    logwarn("Cannot copy previous sheet! Create new one.");
+		} else {
+		    $sheetr = $book->ActiveSheet();
+		    $sheetr->Unprotect;
+		    $sheetr->UsedRange->{'Value'} = (); #Will that delete contents?
+		    $sheetr->{'Name'} = $sheet;
+		}
+	    }
+	} else { # Delete contents or all of sheet ?
+	    if ( exists( $sh{ $sheet } ) ) {
+		#Keep format if EH.intermediate.format says so
+		if ( $EH{'intermediate'}{'format'} =~ m,prev,o ) {
+		    $sheetr = $sh{$sheet};
+		    $sheetr->Unprotect;
+		    $sheetr->UsedRange->{'Value'} = (); # Overwrite all used cells ...
+		} else {
+		    $sh{$sheet}->Delete;
+		}
 	    }
 	}
+	#foreach my $sh ( in $book->{Worksheets} ) {
+	#    if ( $sh->{'Name'} eq ( $sheet . "_O" ) ) {
+	#	logwarn("Removing backup copies of sheet $sheet (_O)!");
+	#	$sh->Delete;
+	#	last;
+	#    }
+	#}
+	#TODO: delete this
+	#foreach my $sh ( in $book->{Worksheets} ) {
+	#    if ( $sh->{'Name'} eq $sheet ) {
+	#	logwarn("Replacing sheet $sheet contents by new!");
+	#	# $book->Worksheet->Delete($sheet);
+	#	# XXXX $book->Worksheet->Delete($sheet . "_O");
+	#	$sh->{'Name'} = $sheet . "_O";
+	#	last;
+	#    }
+	#}
     } else {
 	# Create new workbook
 	$book = $ex->Workbooks->Add();
@@ -1738,12 +1868,13 @@ sub write_excel ($$$) {
 #my $Sheet = $Book->Worksheets("Sheet1");
 #       $Sheet->Activate();       
 #       $Sheet->{Name} = "DidItInPerl";
-    my $sheetr = undef;
 
+    unless( defined( $sheetr ) ) {
     # Create output worksheet:
-    $sheetr = $book->Worksheets->Add() || logwarn( "Cannot create worksheet $sheet in $file:$!");
-    $sheetr->{'Name'} = $sheet;
-    #old $sheetr = $book->Worksheets("$sheet");
+	$sheetr = $book->Worksheets->Add() || logwarn( "Cannot create worksheet $sheet in $file:$!");
+	$sheetr->{'Name'} = $sheet;
+    }
+    
     $sheetr->Activate();
 # oder so:
 #   $ex->ActiveWorkbook->Sheets($sheet)->Activate;
@@ -1764,7 +1895,11 @@ sub write_excel ($$$) {
     my $c2=$sheetr->Cells($y,$x)->Address;
     my $rng=$sheetr->Range($c1.":".$c2);
     $rng->{Value}=$r_a;
-    #!wig: $rng->Columns->AutoFit;
+
+    if ( $EH{'intermediate'}{'format'} =~ m,auto, ) {
+	$rng->Columns->AutoFit;
+    }
+
     #!wig: $sheetr->Protect;
     #TODO: pretty formating
     #TODO: Print nice header (on a sheet ..)
