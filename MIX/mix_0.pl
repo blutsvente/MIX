@@ -23,13 +23,13 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.26 2003/12/22 08:22:44 wig Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.27 2004/02/16 15:35:35 abauer Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.26 $                                      |
-# | Mod.Date     : $Date: 2003/12/22 08:22:44 $                           |
-# | Author       : $Author: wig $                                      |
+# | Version      : $Revision: 1.27 $                                      |
+# | Mod.Date     : $Date: 2004/02/16 15:35:35 $                           |
+# | Author       : $Author: abauer $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
 # | Email        : $Email: wilfried.gaensheimer@micronas.com$             |
@@ -43,6 +43,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.27  2004/02/16 15:35:35  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.26  2003/12/22 08:22:44  wig
 # | Added output.generate.xinout feature
 # |
@@ -211,7 +214,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.26 $'; # RCS Id
+$::VERSION = '$Revision: 1.27 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # %EH comes from Mic::MixUtils ; All the configuration E-nvironment will be there
@@ -247,7 +250,7 @@ mix_init();               # Presets ....
 # -dir DIRECTORY              write output data to DIRECTORY (default: cwd())
 # -out OUTPUTFILE.ext       defines intermediate output filename and type
 # -outenty OUT-e.vhd        filename for entity. If argument is ENTY[NAME], each entity
-#                                   will be written into a file calles entityname-e.vhd
+#                                   will be written into a file called entityname-e.vhd
 # -combine                      combine entitiy, architecture and configuration into one file
 # -top TOPCELL                 use TOPCELL as top. Default is TESTBENCH or daughter of TESTBENCH
 # -adump                        dump internal data in ASCII format, too (debugging, use with small data set).

@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.11 $                                          |
-# | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2003/12/22 08:33:30 $                              |
+# | Revision:   $Revision: 1.12 $                                          |
+# | Author:     $Author: abauer $                                         |
+# | Date:       $Date: 2004/02/16 15:36:09 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.12  2004/02/16 15:36:09  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.11  2003/12/22 08:33:30  wig
 # | Added output.generate.xinout feature
 # |
@@ -129,11 +132,11 @@ sub windows_path ($);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.11 2003/12/22 08:33:30 wig Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.12 2004/02/16 15:36:09 abauer Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.11 $';
+my $thisrevision    =      '$Revision: 1.12 $';
 
-# Revision:   $Revision: 1.11 $
+# Revision:   $Revision: 1.12 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -457,7 +460,7 @@ sub mix_overload_sheet($) {
 =head2 mix_utils_open_input(@)
 
 Open all input files and read in their CONN, HIER and IO sheets
-Returns two (three) arrays with hashes ...
+Returns two (three/four) arrays with hashes ...
 
 =over 4
 
@@ -624,6 +627,10 @@ sub open_xls($$$){
     }
 
     $oBook = Spreadsheet::ParseExcel::Workbook->Parse($file);
+
+    if(!defined $oBook) {
+      logwarn("ERROR: opening File $file");
+    }
 
     # Take all sheets matching the possible reg ex in $sheetname
     for(my $i=0; $i < $oBook->{SheetCount} ; $i++) {
@@ -926,7 +933,7 @@ sub open_csv($$$) {
 	if( $input[$i] =~ m/^$sheetsep$sheetname/) {
 
 	    $i++;
-	     print "SHEET: $sheetname\n";
+#	     print "SHEET: $sheetname\n";
 
             while( defined $input[$i] && not $input[$i]=~ m/^$sheetsep/) {
 
@@ -977,7 +984,7 @@ sub open_csv($$$) {
 		push(@line, $entry);
 		$entry = "";
 		push(@sheet, [@line]);
-		 print join(' ; ', @line) . "\n";
+	#	 print join(' ; ', @line) . "\n";
 		@line = ();
 		$i++;    # next line
 	    }
