@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.36 2004/06/29 09:13:14 wig Exp $
+# $Id: TODO.txt,v 1.37 2004/08/04 12:48:31 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -19,6 +19,31 @@ Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
 
+- 20040802/Req: Extended support for bus joining
+    Two signals should get connected togehter, but no duplicate port map
+    should be created
+
+    Req: mpit
+    Prio: medium
+    Solved:
+    Testcase:
+
+- 20040728a/Req: Improve handling of constants
+
+    Allow to assign parts of a bus to high/low.
+    Currently that leads to extra port maps assigned.
+
+    Req: mpit
+    Prio: medium
+    Solved: wig20040802
+        Use %BUS% keyword!
+
+- 20040712a/Req: Add (__FILE__/__LINE__) to all logwarn/logtrc/logdie ....
+   Print out FILE/LINE in error messages to ease debugging.
+
+    Req: wig
+    Prio: low
+
 - 20040628a/Bug: fix diff mode: sort ::in and ::out columns
    else the diff yields false
 
@@ -28,6 +53,8 @@ TODOs:
 
 - 20040621a/Req: Remove error messages and warnings if port bounds are strings (instead
     of numbers)
+    Make using generics for port bounds easier. Do simple checks if possible ...
+     
     Also: add some documentation about it (HOWTO).
 
     Req: mpit
