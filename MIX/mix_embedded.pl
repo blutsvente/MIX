@@ -13,12 +13,12 @@
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_embedded.pl,v 1.8 2004/08/05 13:55:37 abauer Exp $     |
-# | Name         : $Name:  $                                   |
+# | Id           : $Id: mix_embedded.pl,v 1.9 2004/08/05 14:04:47 abauer Exp $     |
+# | Name         : $Name:  $                                    |
 # | Description  : $Description: simple wrapper script for embedding MIX $|
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.8 $                                       |
-# | Mod.Date     : $Date: 2004/08/05 13:55:37 $                           |
+# | Version      : $Revision: 1.9 $                                       |
+# | Mod.Date     : $Date: 2004/08/05 14:04:47 $                           |
 # | Author       : $Author: abauer $                                      |
 # | Email        : $Email: Alexander.Bauer@micronas.com$                  |
 # |                                                                       |
@@ -87,29 +87,29 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.8 $'; # RCS Id
+$::VERSION = '$Revision: 1.9 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 mix_init(); # load Presets ....
 
 mix_getopt_header( qw(
-    dir=s
-    out=s
-    outenty=s
-    outarch=s
-    outconf=s
-    combine!
-    top=s
-    variant=s
-    adump!
-    conf=s@
-    sheet=s@
-    listconf
-    delta!
-    strip!
-    bak!
-    init
-    import=s@
+		      dir=s
+		      out=s
+		      outenty=s
+		      outarch=s
+		      outconf=s
+		      combine!
+		      top=s
+		      variant=s
+		      adump!
+		      conf=s@
+		      sheet=s@
+		      listconf
+		      delta!
+		      strip!
+		      bak!
+		      init
+		      import=s@
 		      ));
 
 
@@ -140,22 +140,10 @@ sub writeSpreadsheet($) {
 
 sub hash2array() {
 
+    # - generate header
+    # - append rows
+
 #    return ;
-}
-
-
-sub getIntFromEH($) {
-
-    my @keys = shift;
-
-}
-
-
-sub getStringFromEH($) {
-
-    my @keys = shift;
-
-    return ;
 }
 
 
@@ -165,6 +153,9 @@ sub getStringFromEH($) {
 
     my $location;    # reference to location in Hash;
     my $stepInto;    # step down or don't
+
+    # TODO: parse hierarchical tree and build a 'real' tree
+    #       or optional implement a other way of passing it to the GUI
 
 
     # set location to TOPLEVEL
