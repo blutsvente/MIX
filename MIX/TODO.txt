@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.25 2003/11/10 09:28:38 wig Exp $
+# $Id: TODO.txt,v 1.26 2003/11/25 12:40:36 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -21,6 +21,43 @@ TODOs:
 
 Probleme:
 
+- 2003113a/Req:
+    Fix warning messages:
+
+> meinst Du Meldungen ala:
+> 
+> Entity port type mismatch for entity iocell (video_o12_ioc), 
+> port core_rl_o: std_ulogic was std_ulogic_vector
+> 
+> Ja, das ist "nur" eine Warnung. Kommt daher dass MIX denkt da 
+> soll ein Bus angeschlossen werden (rl_boot_sel),
+> tatsaechlich aber nur ein Bit davon an den Port kommt.
+
+    Req: wig
+    Prio: low
+
+-20031112b/Req: Add table row counter to internal data and print that out if applicable
+    Will ease debugging (e.g. ::inputrow ...)
+
+    Req: wig
+    
+- 20031112a/Bug: ExCEL returns
+   Win32::OLE::Variant=SCALAR if a cell has a formula with errors. Please detect and consider
+  that when opening a sheet.
+
+    Req: mpallas
+    Prio: low
+    Workaround: Fix EXCEL spreadsheet!
+    Solution: parse input at open time and fix/ignore that!
+
+- 20031110a/Bug: Leave in dummy wires for open output port splices
+    Description: in verilog we need to have wires for open ports ....
+
+    //  __I_OUT_OPEN wire		dummy_pad100_1	;  // __W_BAD_BRANCH
+    Req: wig
+    Testcase: mde_d-tlgold
+    Prio: Low
+    
 - 20031106a/Req: Compare generated entities against existing one
 
     e.g. take all leave entities and try to find appropriate source files in the

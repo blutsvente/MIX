@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.32 $                                             |
+# | Revision:   $Revision: 1.33 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/11/10 09:30:58 $                                   |
+# | Date:       $Date: 2003/11/25 12:40:26 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.32 2003/11/10 09:30:58 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.33 2003/11/25 12:40:26 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.33  2003/11/25 12:40:26  wig
+# | Fixed VHDL trailing , issue (%EMPTY% removal)
+# |
 # | Revision 1.32  2003/11/10 09:30:58  wig
 # | Adding testcase for verilog: create dummy open wires
 # |
@@ -197,9 +200,9 @@ sub mix_wr_unsplice_port ($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.32 2003/11/10 09:30:58 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.33 2003/11/25 12:40:26 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.32 $';
+my $thisrevision   =      '$Revision: 1.33 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1691,8 +1694,9 @@ sub gen_instmap ($;$$) {
         ($map, $dummies) = mix_wr_unsplice_port( $map, $lang, $tcom );
     }
 
-
-    # Remove trailing "," and such (VHDL)
+    # Quick hack: Get rid of possible %EMPTY%, which prevents end-of-map detection ...
+    $map =~ s/%EMPTY%/$EH{'macro'}{'%EMPTY%'}/g; # Get rid of %EMPTY% ....
+    # Remove trailing "," and such (VHDL) and also for Verilog ...    
     $map =~ s/,(\s*$tcom.*)\n?$/$1\n/o;
     $map =~ s/,\s*\n?$/\n/o; 
     $gmap =~ s/,(\s*$tcom.*)\n?$/$1\n/o;
