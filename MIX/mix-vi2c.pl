@@ -20,13 +20,13 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id              : $Id: mix-vi2c.pl,v 1.1 2003/02/03 12:56:44 wig Exp $
+# | Id              : $Id: mix-vi2c.pl,v 1.2 2003/12/04 14:39:10 abauer Exp $
 # | Name         : $Name:  $
 # | Description  :$Descripton$
 # | Parameters  : -
 # | Version       : $Version$
-# | Mod.Date    : $Date: 2003/02/03 12:56:44 $
-# | Author        : $Author: wig $
+# | Mod.Date    : $Date: 2003/12/04 14:39:10 $
+# | Author        : $Author: abauer $
 # | Phone         : $Phone$
 # | Fax             : $Fax$
 # | Email         : $Email$
@@ -40,8 +40,11 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |
 # | Changes:
 # | $Log: mix-vi2c.pl,v $
-# | Revision 1.1  2003/02/03 12:56:44  wig
-# | Initial revision
+# | Revision 1.2  2003/12/04 14:39:10  abauer
+# | *** empty log message ***
+# |
+# | Revision 1.1.1.1  2003/02/03 12:56:44  wig
+# | Importing pilot release of MIX tools
 # |
 # |
 # +-----------------------------------------------------------------------+
