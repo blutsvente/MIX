@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.44 $                                         |
+# | Revision:   $Revision: 1.45 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/03/30 11:05:57 $                              |
+# | Date:       $Date: 2004/04/07 15:12:24 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.44 2004/03/30 11:05:57 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.45 2004/04/07 15:12:24 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,10 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.45  2004/04/07 15:12:24  wig
+# | Modified Files:
+# | 	MixUtils.pm (Solaris port)
+# |
 # | Revision 1.44  2004/03/30 11:05:57  wig
 # | fixed: IOparser handling of bit ports vs. bus signals
 # |
@@ -258,11 +262,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.44 2004/03/30 11:05:57 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.45 2004/04/07 15:12:24 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.44 $';
+my $thisrevision        =      '$Revision: 1.45 $';
 
-# Revision:   $Revision: 1.44 $   
+# Revision:   $Revision: 1.45 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1762,7 +1766,7 @@ sub mix_utils_open_diff ($;$) {
 	chomp( @ocont );
 	# remove comments: -- for VHDL, // for Verilog
 	#TODO: make that dependant on the file extension
-	map( { s/\Q$c\E.*//o; } @ocont ) if ( $EH{'output'}{'delta'} !~ m,comment,io );
+	map( { s/\Q$c\E.*//; } @ocont ) if ( $EH{'output'}{'delta'} !~ m,comment,io );
 	if ( $EH{'output'}{'delta'} !~ m,space,io ) {
 	    map( { s/\s+/ /og; s/^\s*//og; s/\s*$//og; } @ocont );
 	    @ocont = grep( !/^$/,  @ocont );
@@ -2199,7 +2203,7 @@ sub mix_utils_diff ($$$$) {
     my $c  = shift;
     my $file = shift;
     
-    map( { s/\Q$c\E.*//o; } @$nc ) if ( $EH{'output'}{'delta'} !~ m,comment,io );
+    map( { s/\Q$c\E.*//; } @$nc ) if ( $EH{'output'}{'delta'} !~ m,comment,io );
     if ( $EH{'output'}{'delta'} !~ m,space,io ) {
 	map( { s/\s+/ /og; s/^\s+//o; s/\s+$//o; } @$nc );
 	    @$nc = grep( !/^$/,  @$nc );
