@@ -162,17 +162,20 @@ int show_preferences()
 
     if(gtk_dialog_run(GTK_DIALOG(preferences)) == GTK_RESPONSE_OK) {
 
-	printf("ok\n");
 	char *buffer = (char*) gtk_entry_get_text((GtkEntry*)mix_path_entry);
+	int size;
 	if(settings.mix_path != NULL) free(settings.mix_path);
-	if(buffer == NULL && strcmp(buffer, "<none>") != 0 && strlen(buffer) > 0) {
-	    settings.mix_path = (char*) malloc(strlen(buffer)+1);
+	if(buffer != NULL && strcmp(buffer, "<none>") != 0 && strlen(buffer) > 0) {
+	    size = strlen(buffer);
+	    while(buffer[size-1] == DIRECTORY_DELIMIT) {
+		buffer[size-1] = 0;
+		size--;
+	    }
+	    settings.mix_path = (char*) malloc(size + 1);
 	    strcpy( settings.mix_path, buffer);
 	}
 	else
 	    settings.mix_path = NULL;
-
-	    printf("%s\n", buffer);
 
 	buffer = (char*) gtk_entry_get_text((GtkEntry*)editor_path_entry);
 	if(settings.editor_path != NULL) free(settings.editor_path);
@@ -183,7 +186,6 @@ int show_preferences()
 	else
 	    settings.editor_path = NULL;
 
-	    printf("%s\n", buffer);
 	write_settings();
 	ret = 1;
     }

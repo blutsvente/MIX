@@ -38,11 +38,12 @@ int main(int argc, char *argv[])
     if(read_settings()!=0)
 	    show_preferences();
 
-    //    while(!get_mix_path())
-	//    	if(!show_preferences()) return 0;
+    while(!get_mix_path())
+	if(!show_preferences()) return 0;
 
     // initialize MIX
-    mix_init(get_mix_path());
+    while(mix_init(get_mix_path()))
+	if(!show_preferences()) return 0;
 
     gtk_main();
     return 0;

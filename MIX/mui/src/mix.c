@@ -29,7 +29,6 @@
 
 PerlInterpreter *my_perl = NULL;    // undef. reference if declared static
 bool modified = false;              // project modified
-//bool generated = false;             // code generated
 
 int mix_stage = MIX_NO_INIT;        // starting in stage "not initialized"
 
@@ -37,50 +36,35 @@ int mix_stage = MIX_NO_INIT;        // starting in stage "not initialized"
 int mix_init(const char* mix_path)
 {
 
-    if(mix_path == NULL) 
-    {
-	fprintf(stderr, "%s: mix_path is NULL\n", __FILE__);
-	return ERROR;
-    }
+    if(mix_path == NULL) return ERROR;
 
     // allocate perl
-    if((my_perl = perl_alloc())==NULL)
-    {
-    	fprintf(stderr, "ERROR: no memory!\n");
-    	return ERROR;
+    if((my_perl = perl_alloc())==NULL) {
+	create_info_dialog("Error", "\n  Could not allocate Perl!  \n");
+    	exit(1);
     }
 
     int exitstatus = 0;
     char mix_shell[CMD_LENGTH];
 
-    // Todo: get skriptname from config file; for now use "mix_embedded.pl"
-
+    // skriptname is "mix_embedded.pl"
     sprintf(mix_shell, "%s%c%s", mix_path, DIRECTORY_DELIMIT, "mix_embedded.pl");
     char *embedding[] = { "", (char*)mix_shell};
 
     perl_construct(my_perl);
 
-    if((exitstatus = perl_parse(my_perl, xs_init, 2, embedding, NULL))!=0)
-    {
-	fprintf(stderr, "ERROR: parsing \"%s\"!\n", mix_shell);
+    if((exitstatus = perl_parse(my_perl, xs_init, 2, embedding, NULL))!=0) {
+	create_info_dialog("Error", "\n            Could not parse MIX!  \n  Maybe you specified the wrong Path?  \n");
 	return ERROR;
-    }
-    else
-    {
-	fprintf(stderr, "script \"%s\" has been parsed\n", mix_shell);
     }
 
     PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
 
     // run the perl script
-    if((exitstatus = perl_run(my_perl))!=0)
-    {
-	fprintf(stderr, "ERROR: running Perl!\n");
-	return ERROR;
-    }
-    else
-    {
-	fprintf(stderr, "script has been started\n");
+    if((exitstatus = perl_run(my_perl))!=0) {
+	create_info_dialog("Error", "\n  Error running MIX!  \n");
+	mix_destroy();
+	exit(1);
     }
 
     modified = false;
