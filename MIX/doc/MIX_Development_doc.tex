@@ -42,7 +42,7 @@
 \newpage
 
 \section{Introduction}
-This Document will give Developers a short introduction into Micronas Interconnect Specification Expander. It will \underline{not} give any help about MIX usage, if you need information about this, please refer the MIX-Userreference. The following Sections will explain the basic concepts of MIX and what you will need to install it(specially cvs).
+This Document will give Developers a short introduction into Micronas Interconnect Specification Expander Libraries. It will \underline{not} give any help about MIX usage, if you need information about this, please refer the MIX-Userreference. The following Sections will give some functional overview and coding examples.
 
 \section{Installation and Setup}
 \subsection{Requirements}
@@ -85,11 +85,105 @@ The MIX main program, called "\begin{tt}mix\_0.pl\end{tt}", is containing calls 
 \item{Write output (entities, architecture, configuration and status) and exit}
 \end{enumerate}
 
+\subsection{Using the Mix-Library}
+The first example will show the usage of  \begin{tt}MixUtils::IO\end{tt} which is used for Spreadsheet read and write Operations.This code converts a Excel Spreadsheet to the Star-Office Spreadsheet format. See MixUtils Section for other supported file-formats).
+\begin{verbatim}
+
+#!/usr/bin/perl -w
+
+use strict;
+use Cwd;
+use File::Basename;
+use Getopt::Long qw(GetOptions);
+use Pod::Text;
+
+use vars qw($pgm $base $pgmpath $dir);
+
+$dir = "";
+($^O=~/Win32/) ? ($dir=getcwd())=~s,/,\\,g : ($dir=getcwd());
+
+BEGIN{     # 
+    ($^O=~/Win32/) ? ($dir=getcwd())=~s,/,\\,g : ($dir=getcwd());    
+
+    ($pgm=$0) =~s;^.*(/|\\);;g;
+    if ( $0 =~ m,[/\\],o ) { #$0 has path ...
+        ($base=$0) =~s;^(.*)[/\\]\w+[/\\][\w\.]+$;$1;g;
+        ($pgmpath=$0) =~ s;^(.*)[/\\][\w\.]+$;$1;g;
+    } else {
+        ( $base = $dir ) =~ s,^(.*)[/\\][\w\.]+$,$1,g;
+        $pgmpath = $dir;
+    }
+}
+
+# $pgmpath contains the programs path (this skripts path)
+
+use lib "$pgmpath/MIX/lib/perl";     # search Libraries in Subdir MIX/lib/perl
+
+use Log::Agent;
+use Log::Agent::Priorities qw(:LEVELS);
+use Log::Agent::Driver::File;
+
+use Micronas::MixUtils;       # contains the EH Variable and other every-day stuff
+use Micronas::MixUtils::IO;   # here you find input and 
+                              # ouput Spreadsheet-File Handling
+
+#******************************************************************************
+# Global Variables
+#******************************************************************************
+
+if(scalar(@ARGV)!=1) {
+    logwarn "usage: xls2sxc.pl <excel-file>";
+    die;
+}
+
+mix_init();
+
+my $file = $ARGV[0];
+
+if(not $file=~ m/.xls/) {
+    $file = $file . ".xls";
+}
+
+if($ARGV[0]=~ m/.xls$/) {
+    $ARGV[0]=~ s/.xls$/.sxc/;
+} 
+elsif(not $ARGV[0]=~ m/.sxc$/) { 
+    $ARGV[0] .= ".sxc";
+}
+
+my $oBook = Spreadsheet::ParseExcel::Workbook->Parse($file);   # Excel Parser Module
+
+if(!$oBook || !defined $oBook) {
+    logwarn("ERROR: File <$file> not found");
+    die;
+}
+
+my $sheet;
+my $sname = "";
+my @data = ();
+
+my $ref;
+
+
+for(my $i=0; $i<$oBook->{SheetCount}; $i++) {  # for all sheets in the file
+
+    $sheet = $oBook->{Worksheet}[$i];    # get Sheet, number $i from Object
+    $sname = $sheet->{Name};             # get the Sheets name
+
+    @data = open_xls($file, $sname, 0);  # open $file, read Sheet $sname; no flags
+    $ref = pop(@data);       # get the first sheet of the name $sname which was found
+    write_sxc($ARGV[0], $sname, $ref);# write to file,
+                                      # createsheet with name containing data of $ref 
+}
+
+\end{verbatim}
+The number of Sheets, with the same name to keep, as many other things is conatined in the EH Variable. This Variable is initialized by the call of mix\_init(), optional you may setup your comlete own EH Variable but you will have to look into MixUtils%backslash%IO.pm for requirements.
+
 \section{The Package: Micronas}
 Here can be found some additional information about the MIX Libraries which are inseperately part of MIX. Most of work is done here.
 
-\subsection{Library: MixUtils.pm}
-This package includes some utilities which are used in most of the other packages. Because of there are a lot of functions here, only the most importend are mentioned here.
+\subsection{Library: MixUtils}
+This package includes some utilities which are used in most of the other packages. Because of there are a lot of functions here, only the most importend are mentioned. MixUtils is divided into the two Packages MixUtils and MixUtils::IO. The IO Package only contains Functions for Input-and Output Spreadsheet Operations. Supportet formats are Excel, Star-Office and CSV. Because of the Excel-Sheetwriter Function uses OLE it's only available for Windows. All other Spreadsheet Operations can be done without any external Program or Library.
 
 \subsubsection{mix\_getopt\_header, mix\_getops, mix\_banner, mix\_usage and mix\_help}
 These functions help us solving user interactions.\newline
