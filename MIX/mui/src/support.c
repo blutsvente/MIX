@@ -64,6 +64,25 @@ void create_first_view(int index)
     set_view_child(view, index);
 }
 
+void destroy_all_views()
+{
+    GtkWidget *view = (GtkWidget*) get_view_child(0);
+    if(view != NULL)
+	gtk_widget_destroy(view);
+
+    view = (GtkWidget*) get_view_child(1);
+    if(view != NULL)
+	gtk_widget_destroy(view);
+
+    view = (GtkWidget*) get_view_child(2);
+    if(view != NULL)
+	gtk_widget_destroy(view);
+
+    view = (GtkWidget*) get_view_child(3);
+    if(view != NULL)
+	gtk_widget_destroy(view);
+}
+
 GtkWidget* lookup_widget(GtkWidget *widget, const gchar *widget_name)
 {
     GtkWidget *parent, *found_widget;

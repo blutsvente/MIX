@@ -926,7 +926,7 @@ GtkWidget* create_MainWindow(void)
 
 GtkWidget* get_view_frame(int index)
 {
-    if(index < 4)
+    if(index >= 0 && index < 4)
 	return mainview[index];
     return NULL;
 }
@@ -940,7 +940,7 @@ void set_view_child(GtkWidget *child, int index)
 
 GtkWidget* get_view_child(int index)
 {
-    if(index < 4)
+    if(index >= 0 && index < 4)
 	return childview[index];
     return NULL;
 }

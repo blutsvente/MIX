@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 
     // only the first view has to created manualy, all others
     // get triggert when they are selected
-    create_first_view(HIERVIEW);
+    //    create_first_view(HIERVIEW);
 
     gtk_main();
     return 0;
