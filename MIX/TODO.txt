@@ -2,36 +2,86 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.3 2003/02/21 16:05:27 wig Exp $
+# $Id: TODO.txt,v 1.4 2003/02/28 15:04:14 wig Exp $
 #
-TODOs:
+Major: IO sheet processing!!
 
+Doku:
+    App Note:
+        Describe macro usage
+        Describe generator usage
+        Describe use
+        Describe command line switches
+        Describe mix.cfg
+        Describe CONF sheet
+
+Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
+
+TODOs:
+- 20030228d/Feature: generate hierachical sheets
+    Req: Claus
+    Prio: Low
+
+- 20030228c/Feature: write arch, conf and entity into one file
+  per entitiy (command line switch)
+    Req: wig
+    Prio: low
+
+- 20030228b/Feature:
+    Delta mode: Generate Delta to previous output (diff)
+        - intermediate
+        - backend
+    Minimum: Indicate if previous output was the same
+
+    Use: Algorithm::Diff, Text::Diff
+    Req: wig
+    Prio: low
+
+
+- 20030228a/Feature: Write out evaluated contents of mix.cfg (and timestamp) and
+   command line switches and %EH to CONF sheet!
+   Reason: can be reevaluated on backend side, catch differences
+   
+   Req: wig
+   Prio: medium
+   
+- 20030227b: Check if signal ends in an intermediate hierachy
+    Requested: wig
+    Prio: medium
+    
+- 20030227a: File name generation:
+      ENTY-e.vhd
+      ENTY-ARCH-a.vhd
+      ENTY-ARCH-CONF-c.vhd
+          (whole name equals ::conf column, but _ -> -)
+      
+    Requested: wig
+    Prio: medium
+
+- 20030227b: 
+    Write out ENTY-e.vhd.N if a entity gets instantiated several times
+    Requested: wig
+    Prio: low
+
+- 20030226d: wiring still does not work as expected:
+      port maps and entitiy may have name only once.
+      combination has to be done in signal assignment
+
+
+- bug/20030226b: check nreset signal
+
+  
+- 20030224a: Accept strings in (F:T) of ::in and ::out descriptions
+  (string should be generic or constant)
+
+  - 20030221d: Accept strings as high/low bus bounds.
+  wig
+ 
 - 20030221c: Add command args line to all output files ...
    1. intermediate: ::comment ??
      Done wig20030221
    2. output: add to header.
      Done wig20030221
-
-- 20030221a:
-    Read configuration options from "CONF" sheet
-    | MIXCFG | key | value |
-    keys are
-       generate.output.arch leaf|noleaf
-       generate.output.conf leaf|noleaf
-       generate.output.enty leaf|noleaf
-       .... (only existing keys in EH may be overridden) ....
-   Read file in current dir "mix.cfg"
-   
-  option: -conf KEY=VAL
-  option: -listconf  -> print out list of configuration keys
-
-  Order: builtin < mix.cfg < CONF < command line
-
-Done wig20030221
-
-- 20030221b: add option: -sheet CONN="CONN_PERLRE", -sheet HIER="HIER_PERLRE" ...
-
-  Done wig20030221
 
 
 - 20030220i: Rewrite writers:
@@ -41,7 +91,8 @@ Done wig20030221
 - 20030220j: Use Bugzilla for issues 
 
 - 20030220k: Format ExCEL intermediate (column layout, page breaks ...), color, ....
-
+  Priority: low (see 20030226c)
+  
 - Accept %::COL% in :name and ::inst columns
   early expansion required!
   wig20030124
@@ -89,11 +140,7 @@ Done wig20030221
 
 - iN_foo N := 1.. number of instances of entity foo.
 
-- separate interconnect sheets for each intermediate hierachy (in addition to flat interconnect sheet) 
-
-- 20030220a: Add ::architecture column, which defines the architecture name
-  Default: RTL
-  Requested by St. Bartels
+- output separate interconnect sheets for each intermediate hierachy (in addition to flat interconnect sheet) 
 
 - 20030220b: Check: RTL architecture must be unique
   Requested by ST. Bartels
@@ -120,6 +167,7 @@ Done wig20030221
    done/wig20030220, rel. 1.7 MixUtils
    Issue: late insertion not really handeled by regular "parse_macro"
 
+
 - 20030220h: Bug section:
     			p_mix_cp_lcmd_6_6_gi	: in	std_ulogic_vector(6); -- __W_SINGLEBITBUS
     should read as:
@@ -127,6 +175,66 @@ Done wig20030221
 
 
 DONE:
+
+- 20030221a:
+    Read configuration options from "CONF" sheet
+    | MIXCFG | key | value |
+    keys are
+       generate.output.arch leaf|noleaf
+       generate.output.conf leaf|noleaf
+       generate.output.enty leaf|noleaf
+       .... (only existing keys in EH may be overridden) ....
+   Read file in current dir "mix.cfg"
+   
+  option: -conf KEY=VAL
+  option: -listconf  -> print out list of configuration keys
+
+  Order: builtin < mix.cfg < CONF < command line
+
+Done wig20030221
+
+- 20030221b: add option: -sheet CONN="CONN_PERLRE", -sheet HIER="HIER_PERLRE" ...
+
+  Done wig20030221
+
+
+- 20030220a: Add ::architecture column, which defines the architecture name
+  Default: RTL
+  Requested by St. Bartels
+  Done: wig
+  Testcase: any
+
+
+- 20030226a: Do not add configuration for verilog instances
+  by: Michael Pallas
+  done: wig 20030227
+  testcase: sigport.xls/HIER_VERI
+
+
+- 20030226e: add column for library use:
+    e.g.: ::use
+    will be added to entity definition and possibly to arch and conf
+    syntax:
+        ALL:NAME.component,ENTY:NAMEB.component,ARCH:NAMEC,
+        CONF:NAMED,NAMEE
+
+    the ALL|ENTY|ARCH|CONF keyword selects into which files the use
+    statement gets generated. Default is "ENTY".
+    Capitalization does not matter.
+    ->
+
+    library NAME;
+    use NAME.component.ALL;
+
+    req: Michael Pallas   
+    done: wig20030227
+    test case: sigport.xls/HIER_USE
+    
+
+- 20030226c: Keep ExCEL output format in -mixed.xls if possible.
+  wig
+  done 20030226
+  
 
     - Make sure "0" is not going to become "<spc>" (wig20021219)
     fixed in MixUtils, 20030110

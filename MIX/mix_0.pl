@@ -1,5 +1,6 @@
 #!/bin/sh -- # -*- perl -*- -w
 # TODO: Get better startup (look in FAQ ...)
+
 eval 'exec $M_PERL -S $0 ${1+"$@"}'
 if 0; # dynamic perl startup; suppress preceding line in perl
 
@@ -20,12 +21,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id              : $Id: mix_0.pl,v 1.4 2003/02/21 16:05:27 wig Exp $
+# | Id              : $Id: mix_0.pl,v 1.5 2003/02/28 15:04:14 wig Exp $
 # | Name         : $Name:  $
 # | Description  :$Description:$
 # | Parameters  : -
 # | Version       : $Version: $
-# | Mod.Date    : $Date: 2003/02/21 16:05:27 $
+# | Mod.Date    : $Date: 2003/02/28 15:04:14 $
 # | Author        : $Author: wig $
 # | Phone         : $Phone: $
 # | Fax             : $Fax: $
@@ -40,6 +41,11 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |
 # | Changes:
 # | $Log: mix_0.pl,v $
+# | Revision 1.5  2003/02/28 15:04:14  wig
+# | Intermediate version with lots of fixes.
+# | Signal issue still open.
+# | Saved because of pending holiday.
+# |
 # | Revision 1.4  2003/02/21 16:05:27  wig
 # | Added options:
 # | -conf
@@ -264,6 +270,12 @@ add_portsig();
 add_sign2hier();
 
 #
+# Get rid of some "artefacts", again (add_portsig and add_sign2hier might have
+# added something ....
+#
+purge_relicts();
+
+#
 # Checks go here ...
 #
 # 1. Get everything lowercased (depends on configuration!)
@@ -278,11 +290,10 @@ generate_entities();
 ##############################################################################
 #
 # Step LAST: Dump intermediate data
-# mix_store knows which data to dump
+# mix_store_db knows which data to dump
 #
-
-mix_store_db( "c:/temp/x2v.pld",
-                "internal",
+mix_store_db( "dump",
+                    "internal",
                 {   'conn_macros' => $r_connmacros,
                     'conn_gen' => $r_conngen,
                     'hier_gen' => $r_hiergen,

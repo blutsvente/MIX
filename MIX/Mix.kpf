@@ -1,4 +1,4 @@
-<project name="Mix.kpf">
+<project name="Mix-2.kpf">
 <files>
  <file url="mix_0.pl">
  </file>
@@ -19,6 +19,8 @@
  <file url="TODO.txt">
  </file>
  <file url="lib/perl/Micronas/MixWriter.pm">
+ </file>
+ <file url="lib/perl/Micronas/MixChecker.pm">
  </file>
 </files>
 </project>
