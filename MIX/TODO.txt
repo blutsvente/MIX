@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.22 2003/10/14 10:18:41 wig Exp $
+# $Id: TODO.txt,v 1.23 2003/10/23 12:15:36 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -20,6 +20,160 @@ Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 TODOs:
 
 Probleme:
+
+- 20031015a/Doc: document macro processing
+
+Simple text macros
+
+Text marked with with a % on both sides is subject to be replaced, if a macro or a postfix
+of that name is defined. See the table of predefined macros. Additionally the contents of
+the input table can be referenced like %::column_head%. If no suitable text macro is
+found, the text will be left as is.
+The text macro replacement does not operate recursively in general.
+
+Please consider that some text macros are used internally and some have a special meaning, too. E.g.
+the pseudo signals %OPEN% and %LOW_BUS%.
+
+xxx tabelle mit gebräuchlichen macros xxx
+
+Connection macros
+
+To simplify the wiring of standard interfaces, MIX provides the connection macro facility.
+The connection macros are entered just like any other connection, but are marked by
+MH, MD and MX in the ::gen column. MH is the macro header line, which has to be followed
+by one to many MD macro definition row. The first non-comment line without a MD tag stops
+the macro definition.
+
+The tag MX marks lines subject to be macro expanded. The macro expansion takes place after the
+initial tables were parsed.
+
+You can define simple, one-letter variabes in the macro cells. Any text in ::ign, ::gen,
+::comment and ::descr cells of a MH and MX row will not be subject to matching and evaluation,
+but be ignored. Apart from that the column names have no special meaning.
+
+A simple example will illustrate the connection macro usage.
+::ign  ::gen ::cola ::colb  ....
+	MH	$n	                $1	        $h      alarm_time_$4_$5				
+	MD	Uddrv_gen_$n	$1	        $h      alarm_time_$4_$5		d_$4_$5/alarm_time(3:0)	Display storage buffer $n $4_$5	
+	MD	Uddrv_gen_$n	$1	        $h      current_time_$4_$5		d_$4_$5/current_time(3:0)	Display storage buffer $n $4_$5	
+	MD	Uddrv_gen_$n	$1	        $h      key_buffer_$n		d_$4_$5/key_buffer(3:0)	Display storage buffer $n $4_$5	
+	MD	Uddrv_gen_$n	$1	        6       display_$4_$5	d_$4_$5/display(6:0)		Display storage buffer $n $4_$5	
+	MD	Uddrv_gen_$n	$1	        $h	alarm	d_$4_$5/sound_alarm=($n)	u_and_f/y($n)=($n)	Display storage buffer $n $4_$5	
+	MX	0	                Display	3	alarm_time_ls_min				
+	MX	1	                Display	3	alarm_time_ms_min				
+
+Here the macro header MH defines the variables $n, $1, $h, $4 and $5. The MIX parser extracts the
+MH row and accompanying MD rows (five lines here) from the table. In a second run each MX row
+will trigger a match operation against all MH definitions. MX and MH are a match, if each
+cell defined in the MH row has a matching counterpart in the MX row.
+Variables in the MH cells are considered to match any string ( .+ in perl regular expression syntax).
+
+Thus the first MX line matches the MH lines here. The variables defined in the MH cells are assigned
+the matching values from the MX line. E.g. $n will be 0 for the first MX, 1 for the second. The variable $4
+is assignd ls, $5 is min.
+
+If MX and MH match, the accompanying MD lines are executed. Variables are replaced by the value
+they are assigned too, currently. Here the first MX will result in the following table to be generated:
+    
+	G_MX	Uddrv_gen_0	Display	        3      alarm_time_ls_min		d_ls_min/alarm_time(3:0)	Display storage buffer 0 ls_min	
+	G_MX	Uddrv_gen_0	Display	        3      current_time_ls_min		d_ls_min/current_time(3:0)	Display storage buffer 0 ls_min	
+	G_MX	Uddrv_gen_0	Display	        3      key_buffer_0		    d_ls_min/key_buffer(3:0)	        Display storage buffer 0 ls_min	
+	G_MX	Uddrv_gen_0	Display	        6   	display_ls_min	            d_ls_min/display(6:0)		Display storage buffer 0 ls_min	
+	G_MX	Uddrv_gen_0	Display	        3	alarm	d_ls_min/sound_alarm=(0)	u_and_f/y(0)=(0)                Display storage buffer 0 ls_min	
+
+The ::gen column is set to G_MX after evaluation. Empty cells in MD lines are filled with the value given
+by MX, if any.
+
+Please see the contrib directory for commonly available connection macros (t.b.d.).
+
+### conn and hier genn ###
+::COL::::COLB::
+
+title: hierachy generator operators
+
+Another powerfull feature of MIX are the generator statements. The generators are applied after initial
+tool setup and connection macro evaluation, first the hierachy generators, then the connection generators.
+
+Generators are defined in the ::gen column. Basically three types are available:
+
++ Constructor generators: $i(N..M)
+
++ Match generator: /match_expression/
+
++ Bounded match generator: $i(N..M),/match_expression/
+
+match_expression is like perl(1) regular expressions, but with some extensions and specials.
+
+
+++ Constructor generator statement
+
+MIX takes the variable and the range definied in ::gen and evaluates the rest of the row for each
+value in the range. Currently only one variable is allowed and the range has to be of form (N..M).
+
+A simple example illustrates the usage:
+
+::gen		::variants	::parent	::inst		::lang	::entity	::config
+$i(1..10)			inst_a	inst_$i	VHDL		inst_$i_e	inst_$i_e_rtl_conf
+
+will give ten instances from inst_1 to inst_10, each being a submodule of inst_a with each having a
+entity inst_1_e to inst_10_e, dito. for the configuration. Simple arithmetic can be applied to derive values
+from the run time parameter $i.
+Constructor's will yield new instances. An instance name has to be given in the ::inst column.
+
+++ Match generator:
+
+For each instance defined up to now, match_expression is evaluated. If this yields true, the line
+is executed. Parts of the expression in parantheses are used to set the variables $1, $2, ... accordingly.
+See the perl regular expression man page perlre(1) for more details. This variables can be used in the
+other cells. Simple arithmetic is possible, e.g. {$i + 1} or {$1 * 2}.
+
+A match generator will yield new instances only if the name in the ::inst column is set to a value
+different from the matching instance.
+
+Example:
+
+XXX t.b.d.
+
+++ Bounded match generator
+
+By adding a run variable and a range $i(N..M), match generators can be restricted to only apply if the
+variable $i is within the range. $i has to be defined in match_expression and will match any number. 
+
+In opposite to the constructor generator, MIX will not evaluate all possible values for $i, but only
+make sure $i stays within the bounds of the range.
+
+Example:
+
+XXX t.b.d.
+
+++ Advanced features of the match generators
+The match expression can contain references to all fields of the to match object with the
+::NAME_OF_COL=string(match):: reference.
+
+E.g. the connection generator
+
+::gen						::type		::iname	::out			::in
+$i(270..302),/iom_(.*)::pin=$i/	std_ulogic		i_$i_{$i+1}	iom_$1/serial_o
+$i(271..303),/iom_(.*)::pin=$i/	std_ulogic		i_{$i-1}_$i				iom_$1/serial_i
+
+will wire all instances iom_.* having a property ::pin in the given range with a newly defined signal
+i_N_{N+1}. iom_foo with ::pin = 270 port serial_o will drive the signal i_270_271, the instance
+iom_bar with ::pin = 271 is connected to the signal i_270_271 to it's port serial_i by the next line.
+for instance iom_foo only the first line matches, thus that module will net get a connection to serial_i by
+these generator lines.
+
+A trainling :: can be omitted. If two propertied are to be matched, this will look like
+/::prop1=(.*)::::prop2=string(match?)/
+
+
+++ Match generators work the same way on the CONN sheets. By default the match expression
+will match against all defined instances, not connections.
+To make a match expression iterate over all connection, prefix the whole expression by the CONN:
+keyword.
+
+
+Please have a look into the distributed howto.xls and the macro.xls in the text case directory t
+to see more examples.
 
 - 20031008g/Bug: -import leaves created file open
 
@@ -139,7 +293,6 @@ WEITERS WUERDE ICH EMPFEHLEN DIE CONFIGURATION-DATEI ENTSPRECHEND DEN CODING GUI
     Req: mpit
     Prio: medium
 
-
 - 20030630c/Bug: Complain if someone uses VHDL keywords as signal names, e.g.
     "signal". The built-in list seems to be ignored.
 
@@ -156,9 +309,6 @@ WEITERS WUERDE ICH EMPFEHLEN DIE CONFIGURATION-DATEI ENTSPRECHEND DEN CODING GUI
     -- Ganove
     -- HDL Designer / Mentor Grafics
     -- Spinner / Duolog (see Claus Schneider, 2003-06-06)
-
-
-
 
 - 20030404g/CR: add open signals to %TOP%, e.g. if no ::in or ::out
 is defined.
@@ -188,14 +338,6 @@ is defined.
     split all tests in frontend/backend
     Req: wig
     Prio: medium
-
-- 20030404a/CR: add -dan option : delta and new
-    rename old files (*.vhd)
-    create new files (*.vhd)
-    create diff files (*.vhd)
-    will update FOO-mixed.xls accordingly
-    Req: wig
-    Prio: low
 
 - 20030404d/CR: -inplace option
     Take previous results and keep user changed contents (marked properly)
@@ -269,6 +411,15 @@ is defined.
 DONE: +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ##########################################################
 
+- 20030404a/CR: add -dan option : delta and new
+    rename old files (*.vhd)
+    create new files (*.vhd)
+    create diff files (*.vhd)
+    will update FOO-mixed.xls accordingly
+    Req: wig
+    Prio: low
+    Solution: -bak and -delta options ... only applicable to HDL files
+    Solved: wig20031014
 
 - 20030516a/Bug: bus-port which has only single bit inputs gets connected incorrect
 
