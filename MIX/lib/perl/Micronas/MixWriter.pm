@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.27 $                                             |
+# | Revision:   $Revision: 1.28 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/09/08 15:14:24 $                                   |
+# | Date:       $Date: 2003/10/13 09:03:11 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.27 2003/09/08 15:14:24 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.28 2003/10/13 09:03:11 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,13 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.28  2003/10/13 09:03:11  wig
+# | Fixed misc. requests and bugs:
+# | - do not wire open signals
+# | - do not recreate ports alredy partially connected
+# | - ExCEL cells kept unter 1024 characters, will be split if needed
+# | ...
+# |
 # | Revision 1.27  2003/09/08 15:14:24  wig
 # | Fixed Verilog, extended path checking
 # |
@@ -191,9 +198,9 @@ sub mix_wr_unsplice_port ($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.27 2003/09/08 15:14:24 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.28 2003/10/13 09:03:11 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.27 $';
+my $thisrevision   =      '$Revision: 1.28 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -937,10 +944,9 @@ sub _create_entity ($$) {
                 #TODO: Why here again? See above
 		if ( defined( $h ) and defined ( $l ) and ( $h != $l ) and $type =~ m,(std_u?logic)\s*$, ) {
                     if ( ( $type . "_vector" ) ne $res{$port}{'type'} ) {
-                        logwarn( "INFO: Autoexpand port $port from $type to vector type!");
+                        logtrc( "INFO:4", "Autoexpand port $port from $type to vector type!");
                         $type = $1 . "_vector";
                     }
-                    # $res{$port}{'type'} = $type;
 		}
 		
 		if ( $type ne $res{$port}{'type'} ) {
@@ -1527,11 +1533,14 @@ sub _mix_wr_get_iveri ($$$) {
                     $mode = "not_valid";
                 }		
                 $intf .= $EH{'macro'}{'%S%'} x 2 . $valid . $p . ",\n";
-                $port{$mode} .= $EH{'macro'}{'%S%'} x 2 . $valid . $ioky{$mode} . "\t\t" . $p . ";\n";
-                $port{'wire'} .= $EH{'macro'}{'%S%'} x 2 . $valid . "wire\t\t" . $p . ";\n";
+                $port{$mode} .= $EH{'macro'}{'%S%'} x 2 . $valid . $ioky{$mode} .
+                    $EH{'macro'}{'%S%'} x 2 . $p . ";\n";
+                $port{'wire'} .= $EH{'macro'}{'%S%'} x 2 . $valid . "wire" .
+                    $EH{'macro'}{'%S%'} x 2 . $p . ";\n";
 	    }
     }
     # Finalize intf: add all inputs, outputs and inouts ....
+    $intf =~ s/,(\s*)$/$1/io; # Remove trailing , in port map ...
     $intf .= $EH{'macro'}{'%S%'} x 2 . ");\n";
     # Print out inputs, outputs, inouts and wires ...
     for my $i ( @portorder ) {
@@ -2169,8 +2178,9 @@ sub store_conn_matrix ($$$$$$$) {
     } else {
         # Compare / add the previously connected bits with the new one's
         if ( $prev->{$port} =~ m,^A::, ) {
-            logwarn( "WARNING: Reconnecting port $port at instance $instance: $usage A::!" );
+            logwarn( "WARNING: Reconnecting port $port at instance $instance: now: $usage, was: A::!" );
             $EH{'sum'}{'warnings'}++;
+            push( @{$hierdb{$instance}{'::reconnections'}{$port}}, $signal ); # Only partial info available!
             return;
         } else {
             my ( $conflict, $result ) = mix_wr_port_check($usage, $prev->{$port});
@@ -2666,6 +2676,7 @@ sub _write_architecture ($$$$) {
     my %macros = %{$EH{'macro'}}; # Take predefined macro replacement set
     my $lang = lc($macros{'%LANGUAGE%'}); # Set default language
     my $p_lang = "";
+    my $daughter_is_top = 0;
     
     $macros{'%ENTYNAME%'} = $entity;
     if ( $instance ne "__COMMON__" and exists ( $hierdb{$instance}{'::arch'}  ) ) {
@@ -2699,7 +2710,7 @@ sub _write_architecture ($$$$) {
     #
     my @keys = ( $instance eq "__COMMON__" ) ? keys( %$ae ) : ( $instance );
     for my $i ( sort( @keys ) ) {
-	
+	# $i is the actual instance name ...
 	if ( $i eq "W_NO_ENTITY" ) { next; }; # Should read __W_NO_INSTANCE !
 
         #
@@ -2729,15 +2740,16 @@ sub _write_architecture ($$$$) {
         
 	$macros{'%ENTYNAME%'} = $aent;
 	$macros{'%ARCHNAME%'} = $arch . $EH{'postfix'}{'POSTFIX_ARCH'};
-        $macros{'%VERILOG_INTF%'} = "\t" . $tcom . "\n\t" . $tcom . " Generated module "
-                . $i . "\n\t" . $tcom . "\n"; 
-	$macros{'%CONCURS%'} = "\t" . $tcom . " Generated Signal Assignments\n";
-	$macros{'%CONSTANTS%'} = "\t" . $tcom . " Generated Constant Declarations\n";
+        $macros{'%VERILOG_INTF%'} = $EH{'macro'}{'%S%'} . $tcom . "\n" .
+            $EH{'macro'}{'%S%'} . $tcom . " Generated module "
+            . $i . "\n" . $EH{'macro'}{'%S%'} . $tcom . "\n"; 
+	$macros{'%CONCURS%'} = $EH{'macro'}{'%S%'} . $tcom . " Generated Signal Assignments\n";
+	$macros{'%CONSTANTS%'} = $EH{'macro'}{'%S%'} . $tcom . " Generated Constant Declarations\n";
 	#
 	# Collect components by looking through all our daughters
 	#
-	$macros{'%COMPONENTS%'} = "\t" . $tcom . " Generated Components\n";
-	$macros{'%INSTANCES%'} = "\t" . $tcom . " Generated Instances and Port Mappings\n";
+	$macros{'%COMPONENTS%'} = $EH{'macro'}{'%S%'} . $tcom . " Generated Components\n";
+	$macros{'%INSTANCES%'} = $EH{'macro'}{'%S%'} . $tcom . " Generated Instances and Port Mappings\n";
 
 	my %seen = ();
         my %i_macros = ();
@@ -2759,13 +2771,15 @@ sub _write_architecture ($$$$) {
             my $intf = "";
             my $generics = "";
             ( $intf, $generics ) = mix_wr_get_interface( $entities{$aent}, $aent, $ilang, $tcom );
-            $intf = $intf . "\t\t" . $tcom . " End of generated module header\n";
+            $intf = $intf . $EH{'macro'}{'%S%'} x 2 . $tcom .
+                " End of generated module header\n";
             $macros{'%VERILOG_INTF%'} .= $generics . $intf;
         }
 
 	my $node = $ae->{$i}{'::treeobj'};
 	for my $daughter ( sort( { $a->name cmp $b->name } $node->daughters ) ) {
 	    my $d_name = $daughter->name;
+            # need full access to hierdb here (makes $ae somehow useless)
 	    my $d_enty = $hierdb{$d_name}{'::entity'};
 
 	    #
@@ -2781,7 +2795,6 @@ sub _write_architecture ($$$$) {
                     ( $d_port, $gt ) = mix_wr_get_interface( $entities{$d_enty}, $d_enty, $ilang, $tcom );
                     if ( is_comment( $d_port, $ilang ) ) {
                         $entities{$d_enty}{'__PORTTEXT__'}{$ilang} = $d_port;
-                        # $gt = "\t\t" . $tcom . " No Generated Port for Entity $d_enty\n$gt";
                     } else {
                         $d_port = "\t\t" . $tcom . " Generated Port for Entity $d_enty\n" . $d_port;
                         $d_port =~ s/;(\s*$tcom.*\n)$/$1/io; #TODO ...
@@ -2791,14 +2804,13 @@ sub _write_architecture ($$$$) {
                     }
                     if ( is_comment( $gt, $ilang ) ) {
                         $gt = "\t\t" . $tcom . " Generated Generics for Entity $d_enty\n" . $gt;            
-                        $gt =~ s/;(\s*$tcom.*\n)$/$1/io;
+                        $gt =~ s/;(\s*$tcom.*\n)$/$1/io; # Remove trailing ; for VHDL
                         $gt =~ s/;\n$/\n/io;
                         $gt .= "\t\t" . $tcom . " End of Generated Generics for Entity $d_enty\n";
                         # Store ports and generics for later reusal
                         $entities{$d_enty}{'__GENERICTEXT__'}{$ilang} = $gt;
                     } else {
                         $entities{$d_enty}{'__GENERICTEXT__'}{$ilang} = $gt;
-                        # $gt = "\t\t" . $tcom . " No Generated Generics for Entity $e\n$gent";
                     }
                 }
                 # %COMPONENTS% are VHDL entities ..
@@ -2924,6 +2936,24 @@ sub _write_architecture ($$$$) {
                 }
 	    }
 
+            # If signal $ii  has no load here and it's top level module (::topinst) is
+            # one of our daughter's, leave it open...
+            # if ( $dname eq $conndb{$i}{'::topinst'} ) { $daughter_is_top++; }
+            #wig20031010
+            my $port_open="";
+            if ( $aeport{$ii}{'load'} == 0 and $EH{'check'}{'signal'} =~ m,top_open,io ) {
+                    if ( $node == $hierdb{$conndb{$ii}{'::topinst'}}{'::treeobj'}->mother ) {
+                        logtrc("INFO:4", "Leave unloaded port open $ii, instance $i");
+                        $EH{'sum'}{'openports'}++;
+                        # Will map to open ...
+                        $port_open = $tcom . "  __I_OUT_OPEN ";
+                        if ( exists( $sp_conflict{$ii} ) ) {
+                            logwarn("ERROR: BAD_BRANCH for $ii, no load on port! File bug report!");
+                        }
+                        $sp_conflict{$ii} = "__open__"; # Map that signal to open ...
+                    }
+            }
+
 	    if ( defined( $high ) and defined( $low ) ) {
                 if ( $ilang =~ m,^veri,io ) {
                     if ( $high =~ m/^\d+$/o and $low =~ m/^\d+$/o ) {
@@ -2974,22 +3004,50 @@ sub _write_architecture ($$$$) {
 	    }
 
     	    # Now deal with the ports, that are read internally, too:
+            # Or output ports, that are left open here ... (if value is open)
 	    # Generate intermediate signal
             my $usesig = $ii;
 	    if ( exists( $sp_conflict{$ii} ) ) {
-                #VHDL, only ...
                 $usesig = $sp_conflict{$ii};
                 # Redo all generated maps of my subblocks to use the internal signal name ....
                 for my $insts ( @{$sig2inst{$ii}} ) {
                     #TODO: is that the final idea? Maybe splitting gen_map
                     # in two parts makes it better
                     # Port name might be not equal signal name here (generated port!)
-                    $i_macros{'%INST_' . $insts . '%'} =~
-                        s!(\w*)(\s+=>\s+)$ii(\(|,|\n)!$1$2$sp_conflict{$ii}$3!g;
-                        #bug20030424a: s!(\w*$ii\w*)(\s+=>\s+)$ii(\(|,|\n)!$1$2$sp_conflict{$ii}$3!g;
+                    my $pm = $i_macros{'%INST_' . $insts . '%'};
+                    if ( $ilang =~ m,^veri,io ) {
+                        # Strip away the signal $ii
+                        if ( $usesig eq "__open__" ) {
+                            $pm =~ s!(\.\w+?)\(\s*$ii\s*(\[.+?\])?\s*\)!$1()!g;
+                            if ( exists( $hierdb{$insts}{'::reconnections'} ) ) {
+                                # Maybe name will be changed here ... comment out port => open
+                                for my $pstr ( keys( %{$hierdb{$insts}{'::reconnections'}} ) ) {
+                                    $pm =~ s!(\.$pstr\s*\(\))!$tcom __I_RECONN $1!g;
+                                }
+                            }
+                        } else {
+                            $pm =~ s!(\.\w+?)\(\s*$ii(\s*\[.+?\])?\s*\)!$1($usesig$2)!g;
+                        }
+                    } else {
+                        $pm =~ s!(\w*)(\s+=>\s+)$ii(\(|,|\n)!$1$2$usesig$3!g;
+                        if ( $usesig eq "__open__" ) {
+                            $pm =~ s!(\s+=>\s+)__open__    # Has __open__ in it
+                                (\s*$RE{balanced}{-parens=>'()'})?
+                                (.*)                                        # Rest of line
+                                !${1}open$3 $tcom __I_OUT_OPEN!gx;
+                            # Strip out ( N downto M )
+                            # $pm =~ s!__open__!open!g;
+                            if ( exists( $hierdb{$insts}{'::reconnections'} ) ) {
+                                # Maybe name will be changed here ... comment out port => open
+                                for my $pstr ( keys( %{$hierdb{$insts}{'::reconnections'}} ) ) {
+                                    $pm =~ s!($pstr\s+=>\s+open)!$tcom __I_RECONN $1!g;
+                                }
+                            }
+                        }
+                    }
+                    $i_macros{'%INST_' . $insts . '%'} = $pm;
                 }
 	    }
-
 
             #TODO: is that the final idea? Maybe splitting gen_map
             # in two parts makes it better
@@ -3038,28 +3096,31 @@ sub _write_architecture ($$$$) {
 	    }
 
 	    # Add signal definition if required:
+            my $tmp_sig = "";
             if ( $usesig ne $ii ) {
+                $usesig = $ii if ( $usesig eq "__open__" );
                 # Use internally generated signalname ....
-                $signaltext .= ( $ilang =~ m,^veri,io ) ?
-                ( "\t\t\t" . $pre . "wire\t$dt\t$usesig\t; $post $tcom __W_BAD_BRANCH\n" ) :
-                ( "\t\t\t" . $pre . "signal\t" . $usesig . "\t: " . $type . $dt . "; " . $post . "\n" );
+                $tmp_sig .= ( $ilang =~ m,^veri,io ) ?
+                ( $pre . "wire\t$dt\t$usesig\t; $post $tcom __W_BAD_BRANCH\n" ) :
+                ( $pre . "signal\t" . $usesig . "\t: " . $type . $dt . "; " . $post . "\n" );
             } elsif ( exists( $iconn->{'out'}{$ii} ) or
                                 exists( $iconn->{'in'}{$ii} ) ) {
                 unless( exists( $entities{$aent}{$ii} ) ) {
-                    $signaltext .= ( $ilang =~ m,^veri,io ) ?
-                        ( "\t\t\t" . $pre . "wire " . $dt . " " . $usesig . "; " . $post . "\n" ) :
-                        ( "\t\t\t" . $pre . "signal\t" . $usesig . "\t: " . $type . $dt . "; " . $post . "\n" );
+                    $tmp_sig .= ( $ilang =~ m,^veri,io ) ?
+                        ( $pre . "wire " . $dt . " " . $usesig . "; " . $post . "\n" ) :
+                        ( $pre . "signal\t" . $usesig . "\t: " . $type . $dt . "; " . $post . "\n" );
                 }
             } else {
-                # Not connected to upside world
+                # Not connected to upside world (needs wire/signal definition ...
                 if ( $ilang =~ m,^veri,io ) {
-                    $signaltext .= "\t\t\t" . $pre . "wire\t" . $dt . "\t" . $usesig . "; " . $post . "\n";
+                    $tmp_sig .= $pre . "wire\t" . $dt . "\t" . $usesig . "; " . $post . "\n";
                 } else {
-                    $signaltext .= "\t\t\t" . $pre . "signal\t" . $usesig . "\t: " . $type. $dt . "; " . $post . "\n";
+                    $tmp_sig .=$pre . "signal\t" . $usesig . "\t: " . $type. $dt . "; " . $post . "\n";
                 }
             }
+            $signaltext .= $EH{'macro'}{'%S%'} x 3 . $port_open . $tmp_sig if ( $tmp_sig );
 
-	}
+	} # End for $ii / signal
 
 	#
 	# Adding constant definitions for nan bounds signals ...
@@ -3091,7 +3152,7 @@ sub _write_architecture ($$$$) {
         }
         
 	# End is near for write_architecture ...
-	$signaltext .= "\t\t" . $tcom . "\n\t\t" . $tcom . " End of Generated Signal List\n\t\t" . $tcom . "\n";
+	$signaltext .= $EH{'macro'}{'%S%'} x 2 . $tcom . "\n\t\t" . $tcom . " End of Generated Signal List\n\t\t" . $tcom . "\n";
 	$macros{'%SIGNALS%'} = $signaltext;
         $macros{'%VERILOG_DEFINES%'} = $veridefs if ( $veridefs );
         if ( keys( %i_macros ) > 0 ) {
@@ -3577,22 +3638,24 @@ sub count_load_driver ($$$$) {
     if ( $entities{$enty}{"__LEAF__"} != 0 ) {
         for my $s ( keys( %$rinsig )  ) {
             unless( exists( $rinsig->{$s}{'load'} ) ) {
-                
-                if ( $EH{'check'}{'signal'} =~ m,open, ) {
-                    # Add connect it to "open" here ....
-                    add_conn( 
-                        ( "::in" => "$inst/$s", "::name" => "%OPEN%" )
-                    );
-                    logtrc( "INFO:4", "Wiring signal $s to open, had no load in instance $inst!" );
-                } else {
+
+                #wig20031009: remove useless code here (to late to wire to open)
+                # if ( $EH{'check'}{'signal'} =~ m,open, ) {
+                #    # Add connect it to "open" here ....
+                #    add_conn( 
+                #        ( "::in" => "$inst/$s", "::name" => "%OPEN%" )
+                #    );
+                #    logtrc( "INFO:4", "Wiring signal $s to open, had no load in instance $inst!" );
+                #} else {
                     if ( $EH{'output'}{'warnings'} =~ m/load/io ) {
                         logwarn( "Warning: Signal $s does not have a load in instance $inst!" );
                     } else {
                         logtrc( "INFO:4", "Signal $s does not have a load in instance $inst!" );
                     }
-                }
+                # }
                 $rinsig->{$s}{'load'} = 0;
                 $conndb{$s}{'::comment'} .= "__W_MISSING_LOAD/$inst,";
+                $EH{'sum'}{'noload'}++;
             }
             unless( exists( $rinsig->{$s}{'driver'} ) ) {
                 if ( $EH{'output'}{'warnings'} =~ m/driver/io ) {
@@ -3602,6 +3665,7 @@ sub count_load_driver ($$$$) {
                     logtrc( "INFO:4", "Warning: Signal $s does not have a driver in instance $inst!" ) unless
                         ( $s =~ m/%(HIGH|LOW)(_BUS)?%/o );
                 }
+                $EH{'sum'}{'nodriver'}++;
                 $conndb{$s}{'::comment'} .= "__W_MISSING_DRIVER/$inst,";            
                 $rinsig->{$s}{'driver'} = 0;
             } elsif ( $rinsig->{$s}{'driver'} > 1 ) {
@@ -3612,6 +3676,7 @@ sub count_load_driver ($$$$) {
                 }
                 $conndb{$s}{'::comment'} .= "__E_MULTIPLE_DRIVER/$inst,";
                 $error_flag++;
+                $EH{'sum'}{'multdriver'}++;
             }
         }   
     }

@@ -21,12 +21,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id              : $Id: mix_0.pl,v 1.14 2003/07/29 15:48:03 wig Exp $
+# | Id              : $Id: mix_0.pl,v 1.15 2003/10/13 09:05:09 wig Exp $
 # | Name         : $Name:  $
 # | Description  :$Description:$
 # | Parameters  : -
-# | Version       : $Revision: 1.14 $
-# | Mod.Date    : $Date: 2003/07/29 15:48:03 $
+# | Version       : $Revision: 1.15 $
+# | Mod.Date    : $Date: 2003/10/13 09:05:09 $
 # | Author        : $Author: wig $
 # | Phone         : $Phone: +49 89 54845 7275$
 # | Fax             : $Fax: $
@@ -41,6 +41,13 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |
 # | Changes:
 # | $Log: mix_0.pl,v $
+# | Revision 1.15  2003/10/13 09:05:09  wig
+# | Fixed misc. requests and bugs:
+# | - do not wire open signals
+# | - do not recreate ports alredy partially connected
+# | - ExCEL cells kept unter 1024 characters, will be split if needed
+# | ...
+# |
 # | Revision 1.14  2003/07/29 15:48:03  wig
 # | Lots of tiny issued fixed:
 # | - Verilog constants
@@ -166,22 +173,23 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.14 $'; # RCS Id
+$::VERSION = '$Revision: 1.15 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # %EH comes from Mic::MixUtils ; All the configuration E-nvironment will be there
-logconfig(-driver =>
-    Log::Agent::Driver::File->make(
-         # -prefix      => $0,
-         -showpid       => 1,
-         -duperr        => 1,   #Send errors to OUTPUT and ERROR channel ...
-         -channels    => {
-             # 'error'  => "$0.err",
-             'output' => "$pgm.out",
-             'debug'  => "$pgm.dbg",
-         },
-                                   )
+logconfig(
+        -driver => Log::Agent::Driver::File->make(
+        # -prefix      => $0,
+        -showpid       => 1,
+        -duperr        => 1,   #Send errors to OUTPUT and ERROR channel ...
+        -channels    => {
+        # 'error'  => "$0.err",
+            'output' => "$pgm.out",
+            'debug'  => "$pgm.dbg",
+            },
+        )
 );
+
 #
 # Step 0: Init $0
 #

@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.20 2003/09/08 15:14:22 wig Exp $
+# $Id: TODO.txt,v 1.21 2003/10/13 09:05:08 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -19,7 +19,46 @@ Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
 
- Probleme:
+Probleme:
+
+- 20031008g/Bug: -import leaves created file open
+
+    Req: wig
+    Prio: low
+
+
+- 20031008d/Req: Maybe one could import architecture/port map's, too?
+
+    Req: wig
+    Prio: low
+
+- 20031008c/Req: Import Verilog modules (similiar to VHDL modules).
+
+    Req: wig
+    Prio: low
+
+- 20031008b/Req: Add ::descr to signals, too
+    Define places to go:
+        - entity
+        - port map
+        - signal
+        - ....
+
+    Req: wig
+    Prio: low
+
+- 20031008a/Bug: COMB and -delta mode produce rubbish ...
+    
+    Testcase: t/conf.xls
+    Req: wig
+    Prio: low
+    
+- 20031007b/Req: condense Warnings
+    e.g. only print first 5 of the same warning to screen, rest to logfile, only.
+    Summarize number then.
+
+    Req: mpallas
+    Prio: low
 
 - 20030908b/Req: coding guide
 
@@ -32,88 +71,6 @@ TODOs:
     Req: m kropfitsch
     Prio: low
     
-- 20030908a/Req: Sort signals in output as described in input sheets
-
-    Req: m. kropfitsch
-    Prio: low
-    Solution: add a counter and sort output by counter
-
-- 20030905c/Bug: Verilog input port, bad assignment
-
-noch ein MIX-Verilog-Problem:
-Signale, die über eine generierte MIX-Hierarchie verdrahtet werden sind nicht korrekt 
-beschaltet. Dies liegt daran, dass MIX in der generierten Hierarchieebene 'assign' 
-Statements auf alle IOs einbaut, im Falle eines Input Ports sollte eigentlich das interne 
-Signal den Wert des Ports zugewiesen bekommen, das ist in MIX aber genau 
-andersrum implementiert. Damit wird einem Input-Port der (nicht initialisierte) 
-Signalwert eines internen Signals zugewiesen und schon geht nichts mehr...
-
-Die Lösung ist, für Input Ports die beiden Seiten des assigns zu vertauschen.
-
-    Req: mpallas
-    Prio: high
-    Done: wig20030908
-    Testcase: e.g. bitsplice/verilog ....
-
-- 20030904a/Bug: MIX refuses to process open worksheet ..
-    new bug, sneaked in when adding path checking
-
-    Req: mpallas
-    Prio: high
-    Fixed: wig20030905 (really, automatic testcases missing)
-
-- 20030811b/Req: port/signal mangeled:
-    dbo_i -> see vgca_20030811!!
-
-    Port gets signal assigned from external, while internal signal has the same name!!
-
-    Req: mpit
-    Prio: medium
-
-- 20030811a/Bug: Excel limits number of characters in cell to appr. 1823 ???
-    hits when wrting intermediate file!!
-
-    Req: wig
-    Prio: medium
-    Solution:
-
-- 20030806a/Req: use variables/text for ::high:
-
-Ich habe folgendes Problem  
-Codefragment:
-
-constant width8      : integer := 8;
-...
-signal y_clkif       : std_ulogic_vector(width8-1 downto 0)
-
-..
-y_p_o        => y_clkif,
-...
-
-andere komponente
-
-..
- y_p_i     => y_clkif,
-
-
-bzw.
-
-component upcon
-  generic (
-    width : integer := 8
-    );
-  ...
-    y_p_i        : in  std_ulogic_vector(width-1 downto 0);    -> in der Component Dekleration
-   .....
-
-
-Wie programmiert man dies im Mix (Excel Sheet) ?
-
-    Req: kropfisch
-    Prio: low
-    Solution: partially implemented (strings can be used now)
-        Missing: cannot have different strings as ::high/::low and how should we
-            define s.th. for a port different from the connected signal?
 
 - 20030801a/Bug: Detect spaces in ::high and ::low and remove them!
 
@@ -134,26 +91,7 @@ Wie programmiert man dies im Mix (Excel Sheet) ?
             get function mix_ident( N ) N being 0...N (e.g. 10) and or +/-N stepping in/out
 
 
-- 20030730b/Bug: %LOW_BUS% without ::high ::low definition fails ...
-    Automatically create ::high and ::low matching the bits ...
-    
-    Req: wig
-    Prio: low
-    Solved: wig20030731, no testcase (really?)
 
-
-
-- 20030728c/Bug: 3)nicht angeschlossene Eingänge ramd ?
-
-    Req: mpit
-    Prio: high
-    
-
-- 20030728d/Bug: 4)Bus-slicing
-
-    Req: mpit
-    Prio: high
-    
 
 - 20030725b/Req: Add comments to signal names ....
 
@@ -196,43 +134,7 @@ WEITERS WUERDE ICH EMPFEHLEN DIE CONFIGURATION-DATEI ENTSPRECHEND DEN CODING GUI
     Req: mpit
     Prio: high
     
--20030724a/Req: Wire unused signals to "open".
-    If a connection was made (e.g. by a generator rule) and is not used furthermore,
-    wire this port to open!
-    
-    Req: mpit
-    Prio: low
 
-- 20030723a/Req: Handle DI different in IO sheet (e.g. if there is only one
-        applicalbe ::muxopt, do not create bus but single bit signal.
-
-    Req: mpit
-    Prio: medium
-
-- 20030717a/Bug: Fix some verilog stuff:
-
-einiges zur Verilog-Ausgabe:
-- Verilog Anweisungen wie `define oder `timescale sollten mit
-  einem "back-tick" beginnen
-  
-- `defines dürfen nicht mitten im module stehen, sondern sollten 
-  vor dem Header "module bla (...)" stehen
-
-- "open" gibt es in Verilog nicht, der entsprechende Pin wird
-  einfach nicht beschaltet. zB: .pinname(), ...
-
-Nach dem Patchen scheint nun zumindest Debussy zu kompilieren !
-
-    Req: mpallas
-    Prio: high
-    Fixed: wig20030726
-    Testcase: misc.
-
-- 20030715c/Req: IOP: consider actual ::muxopt columns used
-    e.g. if less signals are to be connected, leave rest empty
-
-    Req: mpit
-    Prio: medium
 
 - 20030715b/Req: IOP: "get_next IOcell" (for given name/number ::pad)
     will allow to set up NAND-Trees easily
@@ -247,10 +149,6 @@ Nach dem Patchen scheint nun zumindest Debussy zu kompilieren !
 
         eval( $hierdb{::inst[::pad + 1]}
 
-- 20030715a/Req: IOP: choose one-hot or bus for select lines
-
-    Req: mpallas
-    Prio: medium
 
 
 - 20030712c/Req: only generate pad, no IO cell
@@ -260,26 +158,8 @@ Nach dem Patchen scheint nun zumindest Debussy zu kompilieren !
     Prio: medium
     Workaround: Instantiate and connect in HIER and CONN sheets manually
 
-- 20030711c/Bug: signal.0 in IO cell matrix gets problems!
-
-    Req: mpit
-    Prio: high
-    
-
 - 20030702c/Req: compare leaf blocks generated with entity definitions
     Req: mpit
-    Prio: medium
-
-- 20030702b/Req: helper tool: read in entity description and create ExCEL sheet skelton
-    Columns:
-            ::name, ::type, ::mode, ::in, ::out, ::descr
-    or:
-    -- VHDL/Verilog entities einlesen und in MIX Format konvertieren:
-    Signalname, Type, Mode, ::in, ::out, ::descr, ... als Grundlageninfrastruktur zur Verfügung stellen.
-	allgemein: -create    create all needed sheets in Excel. If arguments are *.v or *.vhd, convert these
-	into suitable excel sheets (either one per entity or a common one).
-
-    Req: mpallas
     Prio: medium
 
 
@@ -300,14 +180,6 @@ Nach dem Patchen scheint nun zumindest Debussy zu kompilieren !
     -- HDL Designer / Mentor Grafics
     -- Spinner / Duolog (see Claus Schneider, 2003-06-06)
 
-- 20030630a/Bug: IO mode not handeled properly
-    See example from VGCA
-
-    Comment: Need improved connection bus handling!! Improved driver/load handling!
-    Use vector{i|o} = A:[ciobt] ... c:= inout (common), i := in, o := out, b:= buffer, t := tristate
-    
-    Req: mpit
-    Prio: high
 
 - 20030604b/Req: Allow other keywords to match in generator/macros, not only ::inst
   names.
@@ -322,24 +194,7 @@ Nach dem Patchen scheint nun zumindest Debussy zu kompilieren !
     Req: wig
     Prio: High
 
-- 20030424a/Bug:
 
-das Signal 'nreset' wird auf den Port 'nreset' korrekt verdrahtet (Erzeugung eines
-internen Signals 'int_s_reset', das an den Port und die meisten Module verdrahtet wird).
-Allerdings wird auf alle internen Module bei denen der Eingangspin nicht 'nreset' heißt, 
-der Port 'nreset' angeschlossen, was zu Compilerfehlern führt.
-
-    Testcase:
-    Req: Pallas
-    Prio: medium
-    Testcase: nreset2.xls
-
-- 20030407a/CR: %OPEN% net to allow wiring of ports (out) not in use.
-Invent s.th. simliar for input ports (set to default H or L ???)
-Resolve the conflict with wig20030124a
-
-    Req: Pallas
-    Prio: medium
 
 - 20030404g/CR: add open signals to %TOP%, e.g. if no ::in or ::out
 is defined.
@@ -364,21 +219,12 @@ is defined.
     Prio: low
     Solution: started, but never tested ...
 
-- 20030404d/CR: -inplace option
-    Take previous results and keep user changed contents (marked properly)
-    if possible.
-    aka. read in existing blocks and just rewrite mix generated data.
-    Requires: appropriate framing
 
-    Req: wig
-    Prio: low
-    
 - 20030404c/Int: Improve tests
     split all tests in frontend/backend
     Req: wig
     Prio: medium
-    
-      
+
 - 20030404a/CR: add -dan option : delta and new
     rename old files (*.vhd)
     create new files (*.vhd)
@@ -387,6 +233,15 @@ is defined.
     Req: wig
     Prio: low
 
+- 20030404d/CR: -inplace option
+    Take previous results and keep user changed contents (marked properly)
+    if possible.
+    aka. read in existing blocks and just rewrite mix generated data.
+    Requires: appropriate framing
+
+    Req: wig
+    Prio: low
+    Solution: use alvailable sheets as default
 
 - 20030313g/Bug: Improve Load/Driver evaluation
    If port width ne signal width, count "bit"wise. Save instead of integers
@@ -396,17 +251,6 @@ is defined.
     Req: wig
     Prio: medium
 
-- 20030313b/Bug: Cannot rename new spreadsheet to BLA-mixed.xls, if BLA-mixed
-  already open in other directory. Check that and report usefull error message.
-    Req: wig
-    Prio: low
-    
-
-- 20030312a/Check: Find "open" input ports and report
-    Req: wig
-    Prio: medium
-
-
 - 20030228d/Feature: generate hierachical sheets
     Req: Claus
     Prio: Low
@@ -415,12 +259,6 @@ is defined.
     Requested: wig
     Prio: medium
  
-- 20030224a: Accept strings in (F:T) of ::in and ::out descriptions
-  (string should be generic or constant)
-
-- 20030221d: Accept strings as high/low bus bounds.
-  wig
-  See 2030224a!!
 
 - 20030220i: Rewrite writers:
     -- Output into hash %outfiles{FILENAME}
@@ -430,12 +268,6 @@ is defined.
 
 - OPEN wires to external
   wig20030124a
-
-- Check if the a object (Workbook) is opened from different path, but with
-  same name?
-  wig20030100
-  
-- Use / as file name seperator, convert to other format ( \ ) on demand (wig20021219)
 
 - Implement extended range definitions for generator like:
     $i (1,7,13..15 )
@@ -472,6 +304,269 @@ is defined.
 ##########################################################
 DONE: +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ##########################################################
+
+- 20030730b/Bug: %LOW_BUS% without ::high ::low definition fails ...
+    Automatically create ::high and ::low matching the bits ...
+    
+    Req: wig
+    Prio: low
+    Solved: wig20030731, no testcase (really?)
+
+- 20030728c/Bug: 3)nicht angeschlossene Eingänge ramd ?
+
+    Req: mpit
+    Prio: high
+    
+
+- 20030728d/Bug: 4)Bus-slicing
+
+    Req: mpit
+    Prio: high
+    
+-20030724a/Req: Wire unused signals to "open".
+    If a connection was made (e.g. by a generator rule) and is not used furthermore,
+    wire this port to open!
+    
+    Req: mpit
+    Prio: low
+    Solved: wig
+
+- 20030723a/Req: Handle DI different in IO sheet (e.g. if there is only one
+        applicalbe ::muxopt, do not create bus but single bit signal.
+
+    Req: mpit
+    Prio: medium
+    Solved: wig (really?)
+
+- 20030717a/Bug: Fix some verilog stuff:
+
+einiges zur Verilog-Ausgabe:
+- Verilog Anweisungen wie `define oder `timescale sollten mit
+  einem "back-tick" beginnen
+  
+- `defines dürfen nicht mitten im module stehen, sondern sollten 
+  vor dem Header "module bla (...)" stehen
+
+- "open" gibt es in Verilog nicht, der entsprechende Pin wird
+  einfach nicht beschaltet. zB: .pinname(), ...
+
+Nach dem Patchen scheint nun zumindest Debussy zu kompilieren !
+
+    Req: mpallas
+    Prio: high
+    Fixed: wig20030726
+    Testcase: misc.
+
+
+- 20030407a/CR: %OPEN% net to allow wiring of ports (out) not in use.
+Invent s.th. simliar for input ports (set to default H or L ???)
+Resolve the conflict with wig20030124a
+
+    Req: Pallas
+    Prio: medium
+    Solved: wig
+    Solution: use %OPEN% or open (pseudo signal)
+
+
+- 20030715c/Req: IOP: consider actual ::muxopt columns used
+    e.g. if less signals are to be connected, leave rest empty
+
+    Req: mpit
+    Prio: medium
+    Solved: wig
+       see also 20030715a
+       
+- 20030715a/Req: IOP: choose one-hot or bus for select lines
+
+    Req: mpallas
+    Prio: medium
+    Solution: configuration option: iocell.select bus|onehot|given
+
+- 20030711c/Bug: signal.0 in IO cell matrix gets problems!
+
+    Req: mpit
+    Prio: high
+    Solved: wig (really??)
+    
+- 20030630a/Bug: IO mode not handeled properly
+    See example from VGCA
+
+    Comment: Need improved connection bus handling!! Improved driver/load handling!
+    Use vector{i|o} = A:[ciobt] ... c:= inout (common), i := in, o := out, b:= buffer, t := tristate
+    
+    Req: mpit
+    Prio: high
+    Solved: wig
+
+- 20030424a/Bug:
+
+das Signal 'nreset' wird auf den Port 'nreset' korrekt verdrahtet (Erzeugung eines
+internen Signals 'int_s_reset', das an den Port und die meisten Module verdrahtet wird).
+Allerdings wird auf alle internen Module bei denen der Eingangspin nicht 'nreset' heißt, 
+der Port 'nreset' angeschlossen, was zu Compilerfehlern führt.
+
+    Testcase:
+    Req: Pallas
+    Prio: medium
+    Testcase: nreset2.xls
+
+- 20030313b/Bug: Cannot rename new spreadsheet to BLA-mixed.xls, if BLA-mixed
+  already open in other directory. Check that and report usefull error message.
+    Req: wig
+    Prio: low
+    
+
+- 20030312a/Check: Find "open" input ports and report
+    Req: wig
+    Prio: medium
+
+- 20030224a: Accept strings in (F:T) of ::in and ::out descriptions
+  (string should be generic or constant)
+
+- 20030221d: Accept strings as high/low bus bounds.
+  wig
+  See 2030224a!!
+
+- Check if the a object (Workbook) is opened from different path, but with
+  same name?
+  wig20030100
+  
+- Use / as file name seperator, convert to other format ( \ ) on demand (wig20021219)
+    Done.
+
+- 20030908a/Req: Sort signals in output as described in input sheets
+
+    Req: m. kropfitsch
+    Prio: low
+    Solution: add a counter and sort output by counter
+
+
+- 20030811b/Req: port/signal mangeled:
+    dbo_i -> see vgca_20030811!!
+
+    Port gets signal assigned from external, while internal signal has the same name!!
+
+    Req: mpit
+    Prio: medium
+    Solved: wig
+    Testcase: autoopen, padio2
+
+- 20030811a/Bug: Excel limits number of characters in cell to appr. 1823 ???
+    hits when wrting intermediate file!!
+
+    Req: wig
+    Prio: medium
+    Solution: split cells (primary key)
+    Solved: wig20031001
+
+- 20030806a/Req: use variables/text for ::high:
+
+Ich habe folgendes Problem  
+Codefragment:
+
+constant width8      : integer := 8;
+...
+signal y_clkif       : std_ulogic_vector(width8-1 downto 0)
+
+..
+y_p_o        => y_clkif,
+...
+
+andere komponente
+
+..
+ y_p_i     => y_clkif,
+
+
+bzw.
+
+component upcon
+  generic (
+    width : integer := 8
+    );
+  ...
+    y_p_i        : in  std_ulogic_vector(width-1 downto 0);    -> in der Component Dekleration
+   .....
+
+
+Wie programmiert man dies im Mix (Excel Sheet) ?
+
+    Req: kropfisch
+    Prio: low
+    Solution: partially implemented (strings can be used now)
+        Missing: cannot have different strings as ::high/::low and how should we
+            define s.th. for a port different from the connected signal?
+    Solved: wig20031000
+
+- 20031008f/Req: Attach signal only if used above, else attach open
+    E.g. a signal is wired to a port, but not used outside of that module.
+    Testcase: padio2.xls
+
+    Req: mpit
+    Prio: medium
+    Solved: wig20031013
+    Testcase: autoopen, padio2
+    
+- 20031008e/Bug: Intermediate path name mismatch if subdirectory (-out)
+  is used to write.
+
+    Req: mpit
+    Prio: medium
+    Solved: wig20031010
+
+- 20030702b/Req: helper tool: read in entity description and create ExCEL sheet skelton
+    Columns:
+            ::name, ::type, ::mode, ::in, ::out, ::descr
+    or:
+    -- VHDL/Verilog entities einlesen und in MIX Format konvertieren:
+    Signalname, Type, Mode, ::in, ::out, ::descr, ... als Grundlageninfrastruktur zur Verfügung stellen.
+	allgemein: -create    create all needed sheets in Excel. If arguments are *.v or *.vhd, convert these
+	into suitable excel sheets (either one per entity or a common one).
+
+    Req: mpallas
+    Prio: medium
+    Solved: wig (-import/-init switch )
+
+
+- 20031007a/Bug: signals with lower bound "0" forgets this bound
+testcase mde-d/signal alp, green, blue, ....
+Reason: error in generator parser ("0" is not tested ...)
+
+    Req: mpallas
+    Prio: medium
+    Solved: wig20031007
+
+- 20030928a/Req: remove trailing ; from Verilog port maps, too
+
+    Req: mpallas
+    Prio: medium
+    Solved: wig20031006
+
+
+- 20030905c/Bug: Verilog input port, bad assignment
+
+noch ein MIX-Verilog-Problem:
+Signale, die über eine generierte MIX-Hierarchie verdrahtet werden sind nicht korrekt 
+beschaltet. Dies liegt daran, dass MIX in der generierten Hierarchieebene 'assign' 
+Statements auf alle IOs einbaut, im Falle eines Input Ports sollte eigentlich das interne 
+Signal den Wert des Ports zugewiesen bekommen, das ist in MIX aber genau 
+andersrum implementiert. Damit wird einem Input-Port der (nicht initialisierte) 
+Signalwert eines internen Signals zugewiesen und schon geht nichts mehr...
+
+Die Lösung ist, für Input Ports die beiden Seiten des assigns zu vertauschen.
+
+    Req: mpallas
+    Prio: high
+    Done: wig20030908
+    Testcase: e.g. bitsplice/verilog ....
+
+- 20030904a/Bug: MIX refuses to process open worksheet ..
+    new bug, sneaked in when adding path checking
+
+    Req: mpallas
+    Prio: high
+    Fixed: wig20030905 (really, automatic testcases missing)
+
 
 - 20030905a/Req: Parameters in/for Verilog
 

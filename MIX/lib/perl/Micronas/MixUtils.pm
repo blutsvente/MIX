@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.27 $                                             |
+# | Revision:   $Revision: 1.28 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/09/08 15:14:23 $                                   |
+# | Date:       $Date: 2003/10/13 09:03:11 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.27 2003/09/08 15:14:23 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.28 2003/10/13 09:03:11 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,13 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.28  2003/10/13 09:03:11  wig
+# | Fixed misc. requests and bugs:
+# | - do not wire open signals
+# | - do not recreate ports alredy partially connected
+# | - ExCEL cells kept unter 1024 characters, will be split if needed
+# | ...
+# |
 # | Revision 1.27  2003/09/08 15:14:23  wig
 # | Fixed Verilog, extended path checking
 # |
@@ -199,6 +206,7 @@ sub one2two ($);
 sub two2one ($);
 sub is_absolute_path ($);
 sub mix_utils_mask_excel ($);
+sub mix_utils_split_cell ($);
 
 ##############################################################
 # Global variables
@@ -215,11 +223,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.27 2003/09/08 15:14:23 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.28 2003/10/13 09:03:11 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.27 $';
+my $thisrevision   =      '$Revision: 1.28 $';
 
-# | Revision:   $Revision: 1.27 $   
+# | Revision:   $Revision: 1.28 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -827,7 +835,8 @@ $ex = undef; # Container for OLE server
 		    # na (or empty), check (check and warn),
 		    # force (check and force compliance),
 		    # Available (built-in) rules are:
-		    # lc (lower case everything), postfix, prefix, 
+		    # lc (lower case everything), postfix, prefix,
+		    # t.b.d.: uniq (make sure name apears only once!
 		    #
 	'name' => {
 	    #TODO: 'all' => '',	# Sets all others .... ->
@@ -844,8 +853,10 @@ $ex = undef; # Container for OLE server
 	},
 	'defs' => '',  # 'inst,conn',    # make sure elements are only defined once:
 		    # possilbe values are: inst,conn
-	'signal' => 'load,driver,check',  # reads: checks if all signals have appr. loads
-						# and drivers. If "open" is in this list, will wire unused
+	'signal' => 'load,driver,check,top_open',
+						# reads: checks if all signals have appr. loads
+						# and drivers.
+						# If "top_open" is in this list, will wire unused
 						# signals to open.
 	'inst' => 'nomulti',	# check and mark multiple instantiations
     },
@@ -916,11 +927,13 @@ $ex = undef; # Container for OLE server
 	'inout' => '__NOINOUT__',	# List of inout ports ...
 	'out'	=> 'di,xin',		# List of outwards ports (towards chip core!!)
 					# di is a chip input, driven by the iocell towards the core.
-	'select' => 'onehot,auto', # Define select lines: onehot vs. bus vs. bus2n
+	'select' => 'onehot,auto', # Define select lines: onehot vs. bus vs. given
+					# 
 					# bus -> use signal in ::muxopt:0 column (first)
 					# given  -> use signals as defined by the %SEL% lines,
 					#     but calculate width 2^N ... -> 3 signals give a mux width of
 					#  8 ... (alternativ take width argument from signal name
+					# minimum -> wire bits only if used (minimal bus) t.b.d.
 					# auto := choose width accordingly to wired io busses
 					# const := use %SEL% defined width
 
@@ -1143,11 +1156,21 @@ $ex = undef; # Container for OLE server
     'sum' => { # Counters for summary
 	'warnings' => 0,
 	'errors' => 0,
-	'inst' => 0,
-	'conn' => 0,
+	
+	## Inventory
+	'inst' => 0,		# number of instances	
+	'conn' => 0,	# number of connections
+	'genport' => 0, 	# number of generated ports
+	
+	'noload' => 0,   	# signals with missing loads ...
+	'nodriver' => 0,	# signals without driver
+	'multdriver' => 0,	# signals with multiple drivers
+	'openports' => 0,
+
 	'checkwarn' => 0,
 	'checkforce' => 0,
 	'checkunique' => 0,
+
     },
     'script' => { # Set for pre and post execution script execution
 	'pre' => '',
@@ -2187,6 +2210,7 @@ Open a excel file, select the appropriate worksheets and return
 Arguments: $filename, $sheet, $flag
 
 =cut
+
 sub open_excel($$$){
     my ($file, $sheetname, $warn_flag)=@_;
 
@@ -2284,18 +2308,33 @@ sub open_excel($$$){
 		push( @sheets, $sh->{'Name'} );
         }
     }
-    if ( $#sheets < 0 ) {
+    if ( scalar( @sheets ) < 1 ) {
 	if ( $warn_flag =~ m,mandatory,io ) {
 	    logwarn("Cannot locate a worksheet $sheetname in $file");
+	    $EH{'sum'}{'warnings'}++;
 	}
 	return ();
     }
 
     my @all = ();
-    foreach my $s ( @sheets ) {    
+    foreach my $s ( @sheets ) {
+	logtrc( "INFO:4", "Reading worksheet $s of $file" );
 	$ex->ActiveWorkbook->Sheets($s)->Activate;
 	my $sheet =$book->ActiveSheet;
 	my $row=$sheet->UsedRange->{Value};
+
+	# Remove empty lines with all undefined values ... (ExCEL return all undef
+	#  values tagged to the end of the array ..
+	my $line = "";
+	PURGE:
+	while( $line = $row->[scalar( @$row ) - 1] ) {
+	    # See if last line is all empty/undef'd:
+	    for my $elem ( @$line ) {
+		# Found a defined element -> stop purging
+		last PURGE if ( defined( $elem ) );
+	    }
+	    pop( @$row ); # Take off undefined last line ....
+	}
 	push( @all, $row ); # Return array of arrays
     }
 
@@ -2454,18 +2493,25 @@ sub db2array ($$$) {
     my $filter = shift;
     
     unless( $ref ) { logwarn("called db2array without db argument!"); return }
-    unless ( $type =~ m/^(hier|conn)/o ) {
+    unless ( $type =~ m/^(hier|conn)/io ) {
 	logwarn("bad db type $type, ne HIER or CONN!");
 	return;
     }
-    $type = $1;
+    $type = lc($1);
 
     my @o = ();
+    my $primkeynr = 0; # Primary key identifier
+    my $commentnr = "";
     # Get order for printing fields ...
     #TODO: check if fields do overlap!
     for my $ii ( keys( %{$EH{$type}{'field'}} ) ) {
 	next unless ( $ii =~ m/^::/o );
 	$o[$EH{$type}{'field'}{$ii}[4]] = $ii;
+	if ( $EH{$type}{'key'} eq $ii ) {
+	    $primkeynr = $EH{$type}{'field'}{$ii}[4];
+	} elsif ( $ii eq "::comment" ) {
+	    $commentnr = $EH{$type}{'field'}{$ii}[4];
+	}
     }
 
     my @a = ();
@@ -2505,39 +2551,70 @@ sub db2array ($$$) {
 		if ( length( $a[$n][$ii-1] ) > 1024 ) {
 		    # Line too long! Split it!
 		    $split_flag=1;
-		    logwarn( "WARNING: Intermediate may be bogus, cell (" .
-			     length( $a[$n][$ii-1] ) . ") chopped!" );
-		    $EH{'sum'}{'warnings'}++;
-		    $a[$n][$ii-1] = substr( $a[$n][$ii-1], 0, 1024 ) . " __E_CHOPPED_LARGE_CELL";
-		    #TODO: split this cell into N chunks of appr. 512 chars.
-		    # Get pieces up to 1024 characters, seperated by ", %IOCR%"
-		    # my $rest = $a[$n][$ii-1];
-		    #while( length( $rest ) > 512 ) {
-			#my $tmp = substr( $rest, 0, 512 );
-			#my $fromsep = "";
-			#$fromsep = $tmp
-		    #my $parts = int( length( $a[$n][$ii-1] ) / 1024 );
-		    #for my $iii ( 0..$parts ) {
+		    my @splits = mix_utils_split_cell( $a[$n][$ii-1] );
+
+		    # Prefill the split data .... key will be added later
+		    #Caveat: order should not matter!!
+		    for my $splitn ( 0..(scalar( @splits ) - 1 )  ) {
+			    $a[$n + $splitn][$ii-1] = $splits[$splitn];
+		    }
+		    $split_flag = scalar( @splits ) if ( $split_flag < scalar( @splits ) );
+		    
+		    # logwarn( "INFO: Splitting large cell for storing to ExCEL" )
 			
 		}
-		#if ( $split_flag ) {
-		#    $a[$n+1][$ii-1] = $a[$n][$ii-1];
-		#}		    
 	    } else {
 		$a[$n][$ii-1] = defined( $ref->{$i}{$o[$ii]} ) ? $ref->{$i}{$o[$ii]} : "%UNDEF_1%";
-		#if ( $split_flag ) {
-		#    $a[$n+1][$ii-1] = $a[$n][$ii-1];
-		#}
-		#TODO: do that in debugging mode, only
 	    }
 	}
-	#$n++ if ( $split_flag ); # Jump two lines if split_flag set ...
-	$n++;
+	#This was a split cell?
+	if ( $split_flag > 1 ) {
+	    # Set primary key in cells, add comments
+	    for my $sn ( 1..( $split_flag - 1 ) ) {
+		$a[$n + $sn][$primkeynr-1] = $a[$n][$primkeynr-1];
+		if ( $commentnr ne "" ) {
+		    $a[$n + $sn][$commentnr-1] .= "# __I_SPLIT_CONT_$sn";
+		}
+	    }
+	    $n += $split_flag; # Goto next free line ...
+	} else {
+	    $n++;
+	}
     }
-    #TODO: check if we have printed all potential fields
-    
+
     return \@a;
 
+}
+
+#
+# Split cells longer than 1024 characters into chunks suitable for excel
+# to swallow
+#
+# Input: cell content
+# Return value: @chunks
+#
+sub mix_utils_split_cell ($) {
+    my $data = shift;
+
+    # Get pieces up to 1024 characters, seperated by ", %IOCR%"
+    my $iocr = $EH{'macro'}{'%IOCR%'};
+    my @chunks = ();
+    while( length( $data ) > 1024 ) {
+	my $tmp = substr( $data, 0, 1024 ); # Take 1024 chars
+	# Stuff back up to last %IOCR% ...
+	my $ri = rindex( $tmp, $iocr ); # Read back until next <CR>
+	if ( $ri < 1 ) {
+	    logwarn( "WARNING: Cannot split cell!" );
+	    push( @chunks, $data );
+	    return @chunks;
+	}
+	substr( $data, 0, $ri ) = ""; # Take away leading chars
+	# .= substr( $tmp, $ri ); # Put back to data ....
+	push ( @chunks,  substr( $tmp, 0, $ri ) ); # Chunk found ...
+    }
+    push( @chunks, $data );
+    return @chunks;
+    
 }
 
 ####################################################################
@@ -2803,8 +2880,7 @@ sub two2one ($) {
 # create a two-dim. array from a one-dim. one
 # suitable to be fed to ExCEL
 # possibly undo Text::Diff table format -> ExCEL
-# Output excel will have four fields:
-#Caveat: This function 
+#
 sub one2two ($) {
     my $ref = shift;
 
@@ -2850,17 +2926,16 @@ sub one2two ($) {
 		# Initialize difflines, but only count lines not starting with a # or a //
 		if ( $difflines == -1 ) { $difflines = 0; };
 		if ( $nval !~ m,^\s*(#|//), or $oval !~ m,^\s*(#|//), ) {
-		    unless( $n1 =~ m,^\s*$, and $n2 =~ m,^\s*$, and $nval =~  m,^\s*NEW\s*$, ) {
+		    unless( $n1 =~ m,^\s*$, and $n2 =~ m,^\s*$,
+			    and $nval =~  m,^\s*NEW\s*$, ) {
 			$difflines++;
 		    }
 		}
 	    } else {
 		$out[$n][0] = $ref->[$n];
-		# $out[$n][1] = $out[$n][2] = $out[$n][3] = '--';
 	    }
 	} else {
 	    $out[$n][0] = $ref->[$n];
-	    # $out[$n][1] = $out[$n][2] = $out[$n][3] = '--';
 	}
     }
     return $difflines, @out;
@@ -2927,11 +3002,15 @@ sub write_excel ($$$;$) {
 	    my $wbpath = dirname( $file ) || $EH{'cwd'};
 	    if ( $wbpath eq "." ) {
 		$wbpath = $EH{'cwd'};
+	    } elsif ( not is_absolute_path( $wbpath ) ) {
+		$wbpath = $EH{'cwd'} . "/" . $wbpath;
 	    }
+
 	    $wbpath =~ s,/,\\,g; # Replace / -> \
 	    #Does our book have the right path?
 	    if ( $book->Path ne $wbpath ) {
-		logwarn("ERROR: workbook $basename with different path ($book->Path) already opened!");
+		logwarn("ERROR: workbook $basename with different path (" . $book->Path .
+			") already opened!");
 		$EH{'sum'}{'errors'}++;
 	    }
 	}   
@@ -3001,13 +3080,6 @@ sub write_excel ($$$;$) {
 	new_workbook( $basename, $book );
 	$newflag=1;
     }
-
-# my $Sheet = $Book->Worksheets(1);
-# my $Range = $Sheet->Range("A2:C7");
-# my $Chart = $Excel->Charts->Add;
-# my $Sheet = $Book->Worksheets("Sheet1");
-#       $Sheet->Activate();       
-#       $Sheet->{Name} = "DidItInPerl";
 
     unless( defined( $sheetr ) ) {
     # Create output worksheet:

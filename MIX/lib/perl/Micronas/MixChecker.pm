@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Checker
 # | Modules:    $RCSfile: MixChecker.pm,v $
-# | Revision:   $Revision: 1.3 $
+# | Revision:   $Revision: 1.4 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2003/04/28 06:40:37 $
+# | Date:       $Date: 2003/10/13 09:03:10 $
 # |
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.3 2003/04/28 06:40:37 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.4 2003/10/13 09:03:10 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the checking capabilites for the MIX project.
@@ -33,6 +33,13 @@
 # |
 # | Changes:
 # | $Log: MixChecker.pm,v $
+# | Revision 1.4  2003/10/13 09:03:10  wig
+# | Fixed misc. requests and bugs:
+# | - do not wire open signals
+# | - do not recreate ports alredy partially connected
+# | - ExCEL cells kept unter 1024 characters, will be split if needed
+# | ...
+# |
 # | Revision 1.3  2003/04/28 06:40:37  wig
 # | Added %OPEN% (to allow ports without connection, use VHDL open keyword)
 # | Started parseIO (not operational, would be a branch instead)
@@ -75,7 +82,7 @@ use Log::Agent;
 use Log::Agent::Priorities qw(:LEVELS);
 use Tree::DAG_Node; # tree base class
 
-use Micronas::MixUtils qw( mix_store db2array write_excel %EH );
+use Micronas::MixUtils qw( mix_store db2array write_excel %EH replace_mac);
 use Micronas::MixParser qw( %hierdb %conndb );
 
 
@@ -90,9 +97,9 @@ my %mix_check_list = ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixChecker.pm,v 1.3 2003/04/28 06:40:37 wig Exp $';
+my $thisid		=	'$Id: MixChecker.pm,v 1.4 2003/10/13 09:03:10 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixChecker.pm,v $';
-my $thisrevision   =      '$Revision: 1.3 $';
+my $thisrevision   =      '$Revision: 1.4 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -157,9 +164,17 @@ sub mix_check_case ($$) {
 
     # mix internals ....
     #TODO: these have to be all uppercase!!
-    if ( $name =~ m,^\s*(__|%).*(__|%)$,o ) {
+    if ( $name =~ m,^\s*(__|%)(.*)(__|%)$,o ) {
+        if ( uc( $1 ) ne $1 ) {
+            logtrc( "INFO:4", "Info: mix_check_name internal macro $1 not all upper case!" );
+        }
         return $name;
     }
+    #!wig20031008: adding macro replacement ...
+    if ( $name =~ m,%, ) { # Has a %, maybe can be macro parsed ...
+        $name = replace_mac( $name, $EH{'macro'} )
+    }
+        
     if ( $type eq "inst" and $name =~ m,^\s*W_NO_(PARENT|ENTITY|CONF),o ) {
         return $name;
     }
@@ -190,7 +205,7 @@ sub mix_check_case ($$) {
                 }
                 # else "have seen the same before, no issue"
             } else {
-                if( $name ne lc( $name ) ) {
+                if( $name ne lc( $name ) ) { 
                     if ( $check =~ m,force,o ) {
                         logwarn( "INFO: Forcing new $type element $name to lower case " . lc($name) . "!" );
                        $EH{'sum'}{'checkforce'}++;

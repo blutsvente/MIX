@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.25 $                                             |
+# | Revision:   $Revision: 1.26 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/08/11 07:16:24 $                                   |
+# | Date:       $Date: 2003/10/13 09:03:10 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.25 2003/08/11 07:16:24 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.26 2003/10/13 09:03:10 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,13 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.26  2003/10/13 09:03:10  wig
+# | Fixed misc. requests and bugs:
+# | - do not wire open signals
+# | - do not recreate ports alredy partially connected
+# | - ExCEL cells kept unter 1024 characters, will be split if needed
+# | ...
+# |
 # | Revision 1.25  2003/08/11 07:16:24  wig
 # | Added typecast
 # | Fixed Verilog issues
@@ -208,11 +215,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.25 2003/08/11 07:16:24 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.26 2003/10/13 09:03:10 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.25 $';
+my $thisrevision   =      '$Revision: 1.26 $';
 
-# | Revision:   $Revision: 1.25 $   
+# | Revision:   $Revision: 1.26 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1854,12 +1861,14 @@ sub apply_x_gen ($$) {
                     my %in = ();
                     # Apply all fields defined in generator:
                     for my $ii ( keys %{$r_hg->{$cg}{'field'}} ) {
-                        if ( $r_hg->{$cg}{'field'}{$ii} ) {
+                        #!wig20031007: emtpy is not equal 0!!
+                        if ( defined( $r_hg->{$cg}{'field'}{$ii} ) and
+                            $r_hg->{$cg}{'field'}{$ii} ne "" ) {
                             # my $f = mix_p_genexp( $r_hg->{$cg}{'field'}{$ii}, $ky->{$i} );
                             my $f = $r_hg->{$cg}{'field'}{$ii};
                             my $e = "\$in{'$ii'} = \"" . $f . "\"";
                             if ( $ii eq "::gen" ) { # Mask \ 
-                                    $e =~ s/\\/\\\\/g;
+                                $e =~ s/\\/\\\\/g;
                             }
                             unless( eval $e ) {
                                 $in{$ii} = "E_BAD_EVAL" if $@;
@@ -2120,7 +2129,9 @@ Algorithm: Start with all leaf instances:
 Alternative implementation:
     Iterate through all signals and find topmost instance connected. Add ports
     if signal does not appear at an intermediate instance.
-    
+
+Will remember the top cell for each signal in $conndb{$signal}{'::topinst'}
+
 =cut
 
 sub add_portsig () {
@@ -2157,7 +2168,7 @@ sub add_portsig () {
         if ( $EH{'output'}{'generate'}{'inout'} =~ m,mode,io ) {
             if ( $mode =~ m,[IO],io or $mode =~ m,IO,io ) {
             #wig20030625: adding IO switch ...
-            #TODO: what about buffers and tristate?
+            #TODO: what about buffers and tristate? So far noone requested this ...
             # Add IO-port if not connected already ....
                 my @tops = get_top_cell();
                 my @addtop = ();
@@ -2202,37 +2213,30 @@ sub add_portsig () {
                         }
                     }
                 }
-                # Add TOP level ports
+                # Add TOP level port if not already connected ...
+                # Theoretically there could be several top nodes ...
                 if ( scalar( @addtopn ) > 0 ) {
                     add_top_port( \@addtopn, \%connected );
                     # Will extend %connected as modes happen
                     %modes = (); # Redo modes data
                     _mix_p_getconnected( $signal, "::in", $mode, \%modes );
                     _mix_p_getconnected( $signal, "::out", $mode, \%modes );
-                    # for my $i ( 0..$#{$conndb{$signal}{'::in'}} ) {
-                    #    my $inst = $conndb{$signal}{'::in'}[$i]{'inst'};
-                    #    if ( defined ( $hierdb{$inst} ) ) {
-                    #        $modes{$inst} .= ":in:$i"; # Remember in/out columns; Possibly several
-                    #    }
-                    #}
-                    # for my $i ( 0..$#{$conndb{$signal}{'::out'}} ) {
-                    #    my $inst = $conndb{$signal}{'::out'}[$i]{'inst'};
-                    #    next unless ( defined( $inst ) );
-                    #    if ( exists ( $hierdb{$inst} )) {
-                    #        $modes{$inst} .= ":out:$i";
-                    #    }
-                    # }
                 }
             }
         }
 
+        # Top cell is the common parent of all connected components ...
         my $commonpar = my_common( values( %connected ) );
 
         unless ( defined( $commonpar ) ) {
-            logwarn( "ERROR: Signal $signal spawns several seperate trees!\n" );
+            logwarn( "ERROR: Signal $signal spawns several seperate trees! Will be dropped\n" );
+            $EH{'sum'}{'errors'}++;
             next;
             #TODO: How should such a case be handled? Should we add the top node here?
         }
+
+        # Keep name of top instance for later reuse ....
+        $conndb{$signal}{'::topinst'} = $commonpar->{'name'};
         
         #
         # now we know the tree top for that signal. The top may not have the
@@ -2269,6 +2273,7 @@ sub add_portsig () {
                 $n = $n->mother;
                 unless( defined( $n ) ) {
                     logwarn( "ERROR: climb up tree failed for signal $signal!" );
+                    $EH{'sum'}{'errors'}++;
                     last;
                 }
             }
@@ -2276,9 +2281,7 @@ sub add_portsig () {
         # Add ports to instances as required ...
         if ( scalar( @addup ) ) { add_port( \@addup, \%connected ) };
     }
-
-    #TODO: Print out summary of generated ports ...    
-
+    
     return;    
 }
 
@@ -2558,20 +2561,19 @@ sub add_port ($$) {
         }
         unless( defined ( $d_mode{$r} ) ) {
             logwarn( "ERROR: missing sigbits/mode definition for signal $signal, instance $r in add_port");
+            $EH{'sum'}{'errors'}++;
         }
     }
 
     #
     # Sort by depth first (aka longest address first)
     #
-    #TODO ...
     my %length = ();
     for my $r ( 0 .. scalar(@adds)-1 ) {
         my $l = length( $hierdb{$adds[$r][1]}{'::treeobj'}->address );
         push( @{$length{$l}}, $r ); 
         # $adds[$r][5] = length( $hierdb{$adds[$r][1]}{'::treeobj'}->address );
     }
-    # my @order = sort( { $adds[$b][5] <=> $adds[$a][5] } @adds );
     my @order = ();
     for my $l ( reverse( sort( keys( %length ) ) ) ) {
         push( @order, @{$length{$l}} );
@@ -2593,11 +2595,7 @@ sub add_port ($$) {
 
         # Are daughters connected? Or do they need to be connected?
         my @daughters = $hierdb{$inst}{'::treeobj'}->daughters;
-        # for my $d ( @daughters ) {
-            # unless ( $r_connected->{$d->name} ) { # It's not connected so far
-                #COMPLAIN!
-            # }
-        # }
+        
         #
         # Collect mode and width for this signal provided by daughters!
         # That means daughters have to be evaluated first. Bottom up.
@@ -2656,6 +2654,7 @@ sub add_port ($$) {
         for my $d ( keys( %non_desc ) ) {
             # Is this one of our ancestors? If yes, we reverse the direction settings
             #  i -> o, o -> i
+            #TODO: Check the up-inverse routine!!
             my $up_flag = 0;
             if ( $non_desc{$d} == 2 ) {
                 $up_flag = 1;
@@ -2705,8 +2704,6 @@ sub add_port ($$) {
                 join_vec( \%d_mode, $inst, $this_width );
                 # $d_wid{$inst} = $this_width;
                 $r_connected->{$inst} = $hierdb{$inst}{'::treeobj'}; #TODO
-
-                # OLD push( @new_sb , $this_width . ":" . $thm ); #TODO Overlay!!
             }
         } else {
             # This module has no mode (not connected up to now).
@@ -2717,10 +2714,6 @@ sub add_port ($$) {
             join_vec( \%d_mode, $inst, $this_width );
             # $d_mode{$inst} = $this_width;
             $r_connected->{$inst} = $hierdb{$inst}{'::treeobj'}; #TODO
-
-            #OLD for my $m ( keys( %$this_width ) )  {
-            #    $new_sb[0] = $this_width->{$m} . ":" . $m;
-            #}
         }
 
         # Extend this instance/entitiy ....
@@ -2778,6 +2771,7 @@ sub add_top_port ($$) {
         }
         unless( defined ( $d_mode{$r} ) ) {
            logwarn( "ERROR: missing sigbits/mode definition for instance $r in add_top_port");
+           $EH{'sum'}{'errors'}++;
         }
     }
     for my $r ( @adds ) {
@@ -2960,7 +2954,14 @@ sub _add_port ($$$$$$$$) {
         if ( $tm ) {
             # Delete the corresponding bits
             #TODO: Catch further cases ....
-            if ( $tm eq $do ) { # Maybe this is a stupid try to reconnect ....
+            #!wig20031008: Another case: $tw equals $dw (only one mode!!) ... ignore $do then ....
+            if ( join( "", keys( %$dw ) ) eq $tm ) {
+                if ( $dw->{$tm} eq $tw ) {
+                    logtrc("INFO:4",  "Already connected daughters of $inst properly for signal $signal, ignore uppers");
+                    return( {$tm => $tw}, $tm );
+                }
+            }
+            elsif ( $tm eq $do ) { # Maybe this is a stupid try to reconnect ....
                 if ( $tw =~ m,^A::, ) { # Already connected fully .... hmm, simply return ..
                     logwarn("Info: trying to reconnect $signal to $inst.");
                     return( { $tm => $tw} , $tm );
@@ -3204,7 +3205,9 @@ sub generate_port ($$$$$$) {
     if ( $f eq $t ) {
         $t{'port_t'} = $t{'port_f'} = undef; # Port is only one bit wide ...
     }
+
     logtrc( "INFO:4", "add_port: signal $signal adds port $t{'port'} to instance $t{'inst'}" );
+    $EH{'sum'}{'genport'}++;
 
     # Push onto Connection Database ....
     if ( $m eq "o" ) {
@@ -3395,7 +3398,6 @@ sub __parse_inout ($$) {
     my $rb = shift;
 
     for my $i ( keys( %$ra ) ) {
-        #!wig20030223:off: next if $i eq "inst"; # Do that later on ....
         if ( $ra->{$i} ) {
             __parse_mac( \$ra->{$i}, $rb );
         }
@@ -3409,7 +3411,7 @@ sub __parse_mac ($$) {
     my $ehmacs = \%{$EH{'macro'}};
 
     unless( defined $$ra ) {
-        logwarn("Warning: trying to match against undef value");
+        logwarn("WARNING: __parse_mac: trying to match against undef value");
         $rb->{'::comment'} .= "#WARNING: undef value somewhere";
         return;
     }
@@ -3471,13 +3473,14 @@ sub purge_relicts () {
     # If ::high and ::low is defined, extend ::in and ::out definitions
     #
     for my $i ( keys( %conndb ) ) {
-        next if ( $i eq '%OPEN%' ); # Ignore the %OPEN% pseudo-signal
-
+ 
         unless( defined( $conndb{$i}{'::high'} ) ) { $conndb{$i}{'::high'} = ''; }
         unless( defined( $conndb{$i}{'::low'} ) ) { $conndb{$i}{'::low'} = ''; }       
 
         $conndb{$i}{'::high'} = '' if ( $conndb{$i}{'::high'} =~ m,^\s+,o );
         $conndb{$i}{'::low'} = '' if ( $conndb{$i}{'::low'} =~ m,^\s+,o );
+
+        next if ( $i eq '%OPEN%' ); # Ignore the %OPEN% pseudo-signal
         
         if ( $conndb{$i}{'::high'} ne '' or $conndb{$i}{'::low'} ne '' ) {
             my $h = $conndb{$i}{'::high'};
@@ -3996,6 +3999,7 @@ sub _mix_parser_parsehdl ($) {
     } elsif ( $file =~ m,\.v$, ) {
 	# Verilog ...
 	logwarn( "INFO: Master Wilfried has not taught me to read in Verilog :-(" );
+        
     } else {
 	# What's that ?
 	logwarn( "ERROR: Cannot import file $file, unknown type!" );
