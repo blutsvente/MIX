@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / IOParser
 # | Modules:    $RCSfile: MixIOParser.pm,v $ 
-# | Revision:   $Revision: 1.3 $
+# | Revision:   $Revision: 1.4 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2003/06/04 15:52:43 $
+# | Date:       $Date: 2003/06/05 14:48:01 $
 # | 
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.3 2003/06/04 15:52:43 wig Exp $
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.4 2003/06/05 14:48:01 wig Exp $
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -36,6 +36,9 @@
 # |
 # | Changes:
 # | $Log: MixIOParser.pm,v $
+# | Revision 1.4  2003/06/05 14:48:01  wig
+# | Releasing alpha IO-Parser
+# |
 # | Revision 1.3  2003/06/04 15:52:43  wig
 # | intermediate release, before releasing alpha IOParser
 # |
@@ -100,9 +103,9 @@ sub get_select_sigs ($);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixIOParser.pm,v 1.3 2003/06/04 15:52:43 wig Exp $';
+my $thisid		=	'$Id: MixIOParser.pm,v 1.4 2003/06/05 14:48:01 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixIOParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.3 $';
+my $thisrevision   =      '$Revision: 1.4 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -434,7 +437,7 @@ sub get_select_sigs ($) {
     if ( $n == 0 ) {
         logwarn("WARNING: no muxopt column filled with select signals detected!");
     } elsif ( $n == 1 ) {
-        logwarn("WARNING: only one select line found!");
+        logwarn("WARNING: only one muxopt column found!");
     }
     return \%s;
 }

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.17 $                                             |
+# | Revision:   $Revision: 1.18 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/06/04 15:52:43 $                                   |
+# | Date:       $Date: 2003/06/05 14:48:01 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.17 2003/06/04 15:52:43 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.18 2003/06/05 14:48:01 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.18  2003/06/05 14:48:01  wig
+# | Releasing alpha IO-Parser
+# |
 # | Revision 1.17  2003/06/04 15:52:43  wig
 # | intermediate release, before releasing alpha IOParser
 # |
@@ -152,9 +155,9 @@ sub gen_concur_port($$$$$$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.17 2003/06/04 15:52:43 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.18 2003/06/05 14:48:01 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.17 $';
+my $thisrevision   =      '$Revision: 1.18 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -693,26 +696,57 @@ sub _create_entity ($$) {
 
 	    #TODO: Catch all bad cases before in seperate check stage!
 	    
-	    my $h = -100000; # Absurd value .... jsut to avoid undef
+	    my $h = -100000; # Absurd value .... just to avoid undef
 	    my $l = -100000;  # Absurd value ....
 
 	    # but may differ for this port ....
 	    for my $ii ( split( ',', $$sport{$port} ) ) {
 		my $thissig = $conndb{$i}{'::' . $io}[$ii]; # Get this signal ...
-		# Find max port bounds ....
+		# Find max/min port bounds ....
 		#TODO: What if there are holes? Sanity checks need to be done before ...
-		if ( defined $thissig->{'port_f'} ) { # This should be a bus ...
-		    if ( $h < $thissig->{'port_f'} ) { $h = $thissig->{'port_f'}; }
-		} # else {
+		if ( defined $thissig->{'port_f'} and $thissig->{'port_f'} ne '' ) { # This is a bus ...
+                    if ( $h =~ m,^-?\d+$,o ) {
+                        if ( $thissig->{'port_f'} =~ m,^\d+$,o ) {
+                            if ( $h < $thissig->{'port_f'} ) {
+                                    $h = $thissig->{'port_f'};
+                            }
+                        } else { # port_f is non numeric ...
+                            logwarn("WARNING: Non-numeric upper port bound for $thissig->{'inst'}/$thissig->{'port'}!")
+                                unless ( $h == -100000 );
+                            $h = $thissig->{'port_f'};
+                        }
+                    } else {
+                        if ( $h ne $thissig->{'port_f'} ) {
+                            logwarn("WARNING: Non-matching non-numeric upper port bound $thissig->{'inst'}/$thissig->{'port'}!");
+                            $h = "__E_NONMATCH_NONNUM_UB";
+                        }
+                    }
+		}
 		    
-		if ( defined $thissig->{'port_t'} ) { # This should be a bus ...
-		    if ( $l == -100000 or $l > $thissig->{'port_t'} ) { $l = $thissig->{'port_t'}; }
+		if ( defined $thissig->{'port_t'} and $thissig->{'port_t'} ne '' ) { # This is be a bus ...
+                    if ( $l =~ m,^-?\d+$,o ) {
+                       if ( $thissig->{'port_t'} =~ m,^\d+$,o ) {
+                            if ( $l == -100000 or $l > $thissig->{'port_t'} ) {
+                                    $l = $thissig->{'port_t'};
+                            }
+                        } else { # port_t is non numeric ...
+                            logwarn("WARNING: Non-numeric lower port bound for $thissig->{'inst'}/$thissig->{'port'}!")
+                                unless ( $l == -100000 );
+                            $l = $thissig->{'port_t'};
+                        }
+                    } else {
+                        if ( $l ne $thissig->{'port_t'} ) {
+                            logwarn("WARNING: Non-matching non-numeric lower port bound $thissig->{'inst'}/$thissig->{'port'}!");
+                            $h = "__E_NONMATCH_NONNUM_LB";
+                        }
+                    }
+		    # if ( $l == -100000 or $l > $thissig->{'port_t'} ) { $l = $thissig->{'port_t'}; }
 		}
 	    }
-	    if ( $l == -100000 ) {
+	    if ( $l eq "-100000" ) {
 		$l = undef;
 	    }
-	    if ( $h == -100000 ) {
+	    if ( $h eq "-100000" ) {
 		$h = undef;
 	    }
 

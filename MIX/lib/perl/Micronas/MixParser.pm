@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.17 $                                             |
+# | Revision:   $Revision: 1.18 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/06/04 15:52:43 $                                   |
+# | Date:       $Date: 2003/06/05 14:48:01 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.17 2003/06/04 15:52:43 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.18 2003/06/05 14:48:01 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.18  2003/06/05 14:48:01  wig
+# | Releasing alpha IO-Parser
+# |
 # | Revision 1.17  2003/06/04 15:52:43  wig
 # | intermediate release, before releasing alpha IOParser
 # |
@@ -174,11 +177,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.17 2003/06/04 15:52:43 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.18 2003/06/05 14:48:01 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.17 $';
+my $thisrevision   =      '$Revision: 1.18 $';
 
-# | Revision:   $Revision: 1.17 $   
+# | Revision:   $Revision: 1.18 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1673,6 +1676,9 @@ sub apply_x_gen ($$) {
                         }
                     }
                     # We add another instance based on the ::gen field matching some other table
+                    if ( exists( $in{'::gen'} ) ) {
+                        $in{'::gen'} = "G1 #" . $in{'::gen'};
+                    }
                     &$func( %in );
                 }
             } else {
@@ -1707,14 +1713,26 @@ sub apply_x_gen ($$) {
                     ( $matcher = $r_hg->{$cg}{'pre'} ) =~ s,[()],,g; # Remove all parens
 
                     if ( $matcher =~ s/{.+?}/\\d+/g ) {
-                        logwarn( "Illegal arithemtic expression in $matcher. Will be ignored!" );     # postpone that ....
+                        logwarn( "ERROR: Illegal arithmetic expression in $matcher. Will be ignored!" );     # postpone that ....
+                        $EH{'sum'}{'errors'}++;
                     }
                     $matcher =~ s/\$$rv/(\\d+)/g;   # Replace $rv by (\d+)
                     
                     if ( $i =~ m/^$matcher$/ ) { # $1 has value for $rv ...
-                        $mres{$rv} = $1;
+                        if ( defined( $1 ) ){
+                            $mres{$rv} = $1;
+                        } else {
+                            $mres{$rv} = "__UNDEF__"; # No run variable in matcher! This is an error!
+                            unless( exists( $r_hg->{$cg}{'error'} ) ) {
+                                logwarn("ERROR: Generator " . $r_hg->{$cg}{'field'}{'::gen'} .
+                                        " does not define run parameter \$$rv!");
+                                $EH{'sum'}{'errors'}++;
+                            }
+                            $r_hg->{$cg}{'error'}++;
+                            last; # Leave loop here .... TODO: should we alert user?
+                        }
                     } else { #Error, this has to match!
-                        logdie( "matching failed for $cg" );
+                        logdie( "FATAL: Matching failed for $cg! File bug report!" );
                     }
                     # Check bounds:
                     if ( $r_hg->{$cg}{'lb'} <= $mres{$rv} and $r_hg->{$cg}{'ub'} >= $mres{$rv} ) {
@@ -1728,10 +1746,10 @@ sub apply_x_gen ($$) {
                         for my $iii ( keys( %{$r_hg->{$cg}{'field'}} ) ) {
                             my $f = $r_hg->{$cg}{'field'}{$iii};
                             if ( $iii =~ m/::gen/ ) { # Treat ::gen specially
+                                $f =~ s/\\/\\\\/g; #  Mask \
                                 $f =~ s/\$$rv/\\\$$rv/g; # Replace $V by \$V ....
                                 $f = "G # $rv = $mres{$rv} #" . $f;
-                                $f =~ s/\\/\\\\/g; # Mask \
-                            } else {
+                             } else {
                                 #!wig20030516: first convert {} to (), then replace variables
                                 $f =~s/{/" . (/g;
                                 $f =~s/}/) . "/g;       #TODO: make sure {} do match!!
@@ -2027,10 +2045,10 @@ sub bits_at_inst ($$$) {
         my $io = $1;
         my $n = $2;
         my $cell = $conndb{$signal}{'::' . $io}[$n];
-        my $sig_f = $cell->{'sig_f'};
-        my $sig_t = $cell->{'sig_t'};
-        unless( defined( $sig_f ) ) { $sig_f = "0"; };
-        unless( defined( $sig_t ) ) { $sig_t = "0"; };
+        my $sig_f = $cell->{'sig_f'} || 0; # Changed wig20030605
+        my $sig_t = $cell->{'sig_t'} || 0; # Changed wig20030605
+        # unless( defined( $sig_f ) ) { $sig_f = "0"; };
+        # unless( defined( $sig_t ) ) { $sig_t = "0"; };
 
         $d = lc( substr( $io, 0, 1 ) ); #TODO: extend for buffer and inout pins
         unless( defined( $sigw_flag{$d} ) ) { $sigw_flag{$d} = 1; } # First time

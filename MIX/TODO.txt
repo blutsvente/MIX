@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.10 2003/06/04 15:52:42 wig Exp $
+# $Id: TODO.txt,v 1.11 2003/06/05 14:48:00 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -19,8 +19,21 @@ Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
 
+- 20030604b/Req: Allow other keywords to match in generator/macros, not only ::inst
+  names.
+
+    Req: wig
+    Prio: medium
+
+- 20030604c/Req: Make nameing schema for IOcells and Pads more flexible.
+    e.g. use ::name as name root (not ::type ..)
+
+    Req: pallas
+    Prio: medium
+
 - 20030604a/Bug: Do not generate configuration for Verilog instances in common
    config file
+   
     Req: wig
     Prio: low
     
