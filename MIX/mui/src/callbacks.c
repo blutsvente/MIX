@@ -19,6 +19,8 @@
 #endif
 
 #include "mainwindow.h"
+//#include "iopadview.h"
+//#include "i2cview.h"
 #include "settings.h"
 #include "support.h"
 #include "callbacks.h"
@@ -148,33 +150,49 @@ void on_preferences_btn(GtkButton *button, gpointer user_data)
 
 void on_notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, gpointer user_data)
 {
-    int acview = get_current_page();
+    // int acview = get_current_page();
+    GtkWidget *view;
     //    if(view_modified(acview))
-    // TODO: run MIX if actual page is modified
+    // TODO: rerun MIX stage-1 if actual page is modified
 
-    // TODO: clear actual page
-    // gtk_widget_destroy();
+    // clear actual pag
+    view = get_view_child(get_current_page());
+    if(view != NULL)
+	gtk_widget_destroy(view);
 
     // recreate new selected view on every selection and cleanup old one
     switch(page_num) {
         case 0: // selected hierarchical page
-	    // page = create_hier_view();
+	    view = (GtkWidget*) create_hier_view();
+	    gtk_widget_show_all(view);
+	    gtk_container_add(GTK_CONTAINER(get_view_frame(0)), view);
+	    set_view_child(view, page_num);
 	    break;
         case 1: // selected connection page
-	    // page = create_conn_view();
+	    view = NULL;//(GtkWidget*) create_conn_view();
+	    //	    gtk_widget_show_all(view);
+	    //	    gtk_container_add(GTK_CONTAINER(get_view_frame(1)), view);
+	    set_view_child(view, page_num);
 	    break;
         case 2: // selected IO-Pad page
-	    // page = create_iopad_view();
+	    view = (GtkWidget*) create_iopad_view();
+	    gtk_widget_show_all(view);
+	    gtk_container_add(GTK_CONTAINER(get_view_frame(2)), view);
+	    set_view_child(view, page_num);
 	    break;
         case 3: // selected I2C page
-	    // page = create_i2c_view();
+	    view = (GtkWidget*) create_i2c_view();
+	    gtk_widget_show_all(view);
+	    gtk_container_add(GTK_CONTAINER(get_view_frame(3)), view);
+	    set_view_child(view, page_num);
 	    break;
         case 4: // selected configuration page
-	    // page = create_conf_view();
+	    // page is static, so dont realloc it
 	    break;
         default: // unknown page requested
-	    fprintf(stderr, "MUI: internal error, unknown notebook page requested\n");
+	    create_info_dialog("internal Error", "\n  an Error while switching to to Page!  \n");
     }
+    set_current_page(page_num);
 }
 
 void on_strip_toggled(GtkToggleButton *togglebutton, gpointer user_data)
@@ -215,7 +233,7 @@ void on_title_label_box_size_allocate(GtkWidget *widget, GdkRectangle *allocatio
 void on_mixpath_btn_clicked(GtkButton *button, gpointer user_data)
 {
     const char* path;
-    if((path = create_directory_dialog())!=NULL) {
+    if((path = create_directory_dialog()) != NULL) {
 	GtkWidget *textentry;
 	textentry = lookup_widget((GtkWidget*) button, ("entry2"));
 	gtk_entry_set_text((GtkEntry*)textentry, (const gchar*)path);

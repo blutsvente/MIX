@@ -5,7 +5,7 @@ mui_SOURCES = \
 	main.c \
 	mix.c mix.h \
 	mainwindow.c mainwindow.h \
-	hiertree.c hiertree.h \
+	hierview.c hierview.h \
 	iopadview.c iopadview.h \
 	i2cview.c i2cview.h \
 	callbacks.c callbacks.h \

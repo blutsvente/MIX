@@ -28,14 +28,16 @@
 #define false         0
 
 PerlInterpreter *my_perl = NULL;    // undef. reference if declared static
-bool modified = false;             // project modified
-bool generated = false;            // code generated
+bool modified = false;              // project modified
+//bool generated = false;             // code generated
+
+int mix_stage = MIX_NO_INIT;        // starting in stage "not initialized"
 
 
 int mix_init(const char* mix_path)
 {
 
-    if(mix_path==NULL) 
+    if(mix_path == NULL) 
     {
 	fprintf(stderr, "%s: mix_path is NULL\n", __FILE__);
 	return ERROR;
@@ -82,7 +84,7 @@ int mix_init(const char* mix_path)
     }
 
     modified = false;
-    generated = false;
+    mix_stage = MIX_INIT;
     return SUCCESS;
 }
 
@@ -93,6 +95,13 @@ void mix_destroy()
     PL_perl_destruct_level = 0;
     perl_destruct(my_perl);
     perl_free(my_perl);
+    mix_stage = MIX_NO_INIT;
+}
+
+
+int mix_get_stage()
+{
+    return mix_stage;
 }
 
 
@@ -101,12 +110,12 @@ void mix_readSpreadsheet(const char* spreadsheet)
     char *args[] = { (char*)spreadsheet, NULL};
     // Todo: Fix passed argument
     call_argv("readSpreadsheet", G_DISCARD, args);
+    mix_stage = MIX_READ_IN;
 }
 
 
 int mix_writeSpreadsheet(const char* spreadsheet)
 {
-
     char *args[] = { (char*)spreadsheet, NULL};
     call_argv("writeSpreadsheet", G_DISCARD, args);
 
@@ -116,7 +125,6 @@ int mix_writeSpreadsheet(const char* spreadsheet)
 
 void mix_writeIntermediate(const char* file, const char* type)
 {
-
     if(file==NULL) {
 	file = "out";
     }
@@ -130,46 +138,45 @@ void mix_writeIntermediate(const char* file, const char* type)
 
 void mix_generateEntities()
 {
-
     char *args[] = { NULL};
+
     call_argv("generate_entities", G_DISCARD | G_NOARGS, args);
-    generated = true;
+    mix_stage = MIX_GENERATED;
 }
 
 
 void mix_writeEntities()
 {
-
-    if(!generated) mix_generateEntities();
-
     char *args[] = { NULL};
+
+    if(mix_stage < MIX_GENERATED) mix_generateEntities();
+
     call_argv("write_entities", G_DISCARD | G_NOARGS, args);
 }
 
 
 void mix_writeArchitecture()
 {
-
-    if(!generated) mix_generateEntities();
-
     char *args[] = { NULL};
+
+    if(mix_stage < MIX_GENERATED) mix_generateEntities();
+
     call_argv("write_architecture", G_DISCARD | G_NOARGS, args);
 }
 
 
 void mix_writeConfiguration()
 {
-
-    if(!generated) mix_generateEntities();
-
     char *args[] = { NULL};
+
+    if(mix_stage < MIX_GENERATED) mix_generateEntities();
+
     call_argv("write_configuration", G_DISCARD | G_NOARGS, args);
 }
 
 
 MixSummary mix_getSummaries()
 {
-
     MixSummary summaries;
 
     return summaries;
@@ -178,20 +185,21 @@ MixSummary mix_getSummaries()
 
 int mix_getIntFromEH(const char* keys[])
 {
-
     return 0;
 }
 
 
 const char* mix_getStringFromEH(const char* keys[])
 {
-
     return NULL;
 }
 
 
 bool mix_initTreeWalk()
 {
+    if(mix_stage < MIX_READ_IN) return false;
+
+
     dSP;                            /* initialize stack pointer      */
     ENTER;                          /* everything created after here */
     SAVETMPS;                       /* ...is a temporary variable.   */

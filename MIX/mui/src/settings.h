@@ -38,7 +38,7 @@ int write_settings();
 char *get_mix_path();
 char *get_editor_path();
 
-void show_preferences();
+int show_preferences();
 
 /**
  * MIX settings

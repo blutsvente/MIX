@@ -17,6 +17,14 @@
  */
 GtkWidget* create_MainWindow(void);
 /**
+ * get a specific frame from notebook
+ */
+GtkWidget* get_view_frame(int index);
+/**
+ * get a specific child frame from notebook
+ */
+GtkWidget* get_view_child(int index);
+/**
  * get reference og hierTreeview widget
  */
 GtkWidget* get_hierTreeview();

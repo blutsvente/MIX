@@ -117,7 +117,7 @@ mui_SOURCES = \
 	main.c \
 	mix.c mix.h \
 	mainwindow.c mainwindow.h \
-	hiertree.c hiertree.h \
+	hierview.c hierview.h \
 	iopadview.c iopadview.h \
 	i2cview.c i2cview.h \
 	callbacks.c callbacks.h \
@@ -138,7 +138,7 @@ bin_PROGRAMS = mui$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
 am_mui_OBJECTS = mui-main.$(OBJEXT) mui-mix.$(OBJEXT) \
-	mui-mainwindow.$(OBJEXT) mui-hiertree.$(OBJEXT) \
+	mui-mainwindow.$(OBJEXT) mui-hierview.$(OBJEXT) \
 	mui-iopadview.$(OBJEXT) mui-i2cview.$(OBJEXT) \
 	mui-callbacks.$(OBJEXT) mui-support.$(OBJEXT) \
 	mui-settings.$(OBJEXT)
@@ -150,7 +150,7 @@ DEFAULT_INCLUDES =  -I. -I$(srcdir) -I.
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/mui-callbacks.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/mui-hiertree.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/mui-hierview.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/mui-i2cview.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/mui-iopadview.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/mui-main.Po \
@@ -227,7 +227,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-callbacks.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-hiertree.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-hierview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-i2cview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-iopadview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-main.Po@am__quote@
@@ -324,27 +324,27 @@ mui-mainwindow.obj: mainwindow.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mui-mainwindow.obj `if test -f 'mainwindow.c'; then $(CYGPATH_W) 'mainwindow.c'; else $(CYGPATH_W) '$(srcdir)/mainwindow.c'; fi`
 
-mui-hiertree.o: hiertree.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mui-hiertree.o -MD -MP -MF "$(DEPDIR)/mui-hiertree.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o mui-hiertree.o `test -f 'hiertree.c' || echo '$(srcdir)/'`hiertree.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/mui-hiertree.Tpo" "$(DEPDIR)/mui-hiertree.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/mui-hiertree.Tpo"; exit 1; \
+mui-hierview.o: hierview.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mui-hierview.o -MD -MP -MF "$(DEPDIR)/mui-hierview.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o mui-hierview.o `test -f 'hierview.c' || echo '$(srcdir)/'`hierview.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/mui-hierview.Tpo" "$(DEPDIR)/mui-hierview.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/mui-hierview.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hiertree.c' object='mui-hiertree.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/mui-hiertree.Po' tmpdepfile='$(DEPDIR)/mui-hiertree.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hierview.c' object='mui-hierview.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/mui-hierview.Po' tmpdepfile='$(DEPDIR)/mui-hierview.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mui-hiertree.o `test -f 'hiertree.c' || echo '$(srcdir)/'`hiertree.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mui-hierview.o `test -f 'hierview.c' || echo '$(srcdir)/'`hierview.c
 
-mui-hiertree.obj: hiertree.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mui-hiertree.obj -MD -MP -MF "$(DEPDIR)/mui-hiertree.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o mui-hiertree.obj `if test -f 'hiertree.c'; then $(CYGPATH_W) 'hiertree.c'; else $(CYGPATH_W) '$(srcdir)/hiertree.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/mui-hiertree.Tpo" "$(DEPDIR)/mui-hiertree.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/mui-hiertree.Tpo"; exit 1; \
+mui-hierview.obj: hierview.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mui-hierview.obj -MD -MP -MF "$(DEPDIR)/mui-hierview.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o mui-hierview.obj `if test -f 'hierview.c'; then $(CYGPATH_W) 'hierview.c'; else $(CYGPATH_W) '$(srcdir)/hierview.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/mui-hierview.Tpo" "$(DEPDIR)/mui-hierview.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/mui-hierview.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hiertree.c' object='mui-hiertree.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/mui-hiertree.Po' tmpdepfile='$(DEPDIR)/mui-hiertree.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hierview.c' object='mui-hierview.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/mui-hierview.Po' tmpdepfile='$(DEPDIR)/mui-hierview.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mui-hiertree.obj `if test -f 'hiertree.c'; then $(CYGPATH_W) 'hiertree.c'; else $(CYGPATH_W) '$(srcdir)/hiertree.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mui-hierview.obj `if test -f 'hierview.c'; then $(CYGPATH_W) 'hierview.c'; else $(CYGPATH_W) '$(srcdir)/hierview.c'; fi`
 
 mui-iopadview.o: iopadview.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mui-iopadview.o -MD -MP -MF "$(DEPDIR)/mui-iopadview.Tpo" \

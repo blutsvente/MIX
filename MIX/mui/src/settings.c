@@ -137,8 +137,9 @@ char* get_editor_path()
     return settings.editor_path;
 }
 
-void show_preferences()
+int show_preferences()
 {
+    int ret = 0;
     GtkWidget *preferences, *mix_path_entry, *editor_path_entry;
 
     preferences = (GtkWidget*) create_Preferences();
@@ -161,6 +162,7 @@ void show_preferences()
 
     if(gtk_dialog_run(GTK_DIALOG(preferences)) == GTK_RESPONSE_OK) {
 
+	printf("ok\n");
 	char *buffer = (char*) gtk_entry_get_text((GtkEntry*)mix_path_entry);
 	if(settings.mix_path != NULL) free(settings.mix_path);
 	if(buffer == NULL && strcmp(buffer, "<none>") != 0 && strlen(buffer) > 0) {
@@ -169,6 +171,8 @@ void show_preferences()
 	}
 	else
 	    settings.mix_path = NULL;
+
+	    printf("%s\n", buffer);
 
 	buffer = (char*) gtk_entry_get_text((GtkEntry*)editor_path_entry);
 	if(settings.editor_path != NULL) free(settings.editor_path);
@@ -179,8 +183,13 @@ void show_preferences()
 	else
 	    settings.editor_path = NULL;
 
+	    printf("%s\n", buffer);
 	write_settings();
+	ret = 1;
     }
+    else
+	ret = 0;
     gtk_widget_destroy(preferences);
+    return ret;
 }
 

@@ -33,19 +33,24 @@
 #include <perl.h>
 
 
-#ifndef G_OS_WIN32                // character seperating directory levels
-#define DIRECTORY_DELIMIT '/'
+#ifndef G_OS_WIN32                   // character seperating directory levels
+#define DIRECTORY_DELIMIT       '/'
 #else
-#define DIRECTORY_DELIMIT '\\'
+#define DIRECTORY_DELIMIT       '\\'
 #endif
 
-#define INSTANCE_NAME_LENGTH 1024
+#define INSTANCE_NAME_LENGTH    1024
 
-#define SUCCESS 0
-#define ERROR -1
+#define SUCCESS                 0
+#define ERROR                   -1
 
-#define TOPLEVEL 0
-#define TESTBENCH 0
+#define MIX_NO_INIT             -1  // not initialized
+#define MIX_INIT                0   // mix is initialized
+#define MIX_READ_IN             1   // spreadsheet has been read
+#define MIX_GENERATED           2   // code has been generated
+
+#define TOPLEVEL                0
+#define TESTBENCH               0
 
 
 /**

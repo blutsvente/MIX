@@ -29,20 +29,20 @@ int main(int argc, char *argv[])
     gtk_set_locale();
     gtk_init(&argc, &argv);
 
-    //    add_pixmap_directory (PACKAGE_DATA_DIR "/" PACKAGE "/pixmaps");
-
-    // read config file
-    if(read_settings()!=0) {
-	show_preferences();
-    }
-
-    // initialize MIX
-    //    mix_init(get_mix_path());
-
     // create and show main window
     mainWindow = (GtkWidget*) create_MainWindow();
     init_settings(mainWindow);
     gtk_widget_show(mainWindow);
+
+    // read config file
+    if(read_settings()!=0)
+	    show_preferences();
+
+    //    while(!get_mix_path())
+	//    	if(!show_preferences()) return 0;
+
+    // initialize MIX
+    mix_init(get_mix_path());
 
     gtk_main();
     return 0;
