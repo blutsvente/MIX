@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.29 $                                             |
-# | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/10/14 10:18:42 $                                   |
+# | Revision:   $Revision: 1.30 $                                             |
+# | Author:     $Author: abauer $                                  |
+# | Date:       $Date: 2003/10/23 11:27:28 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.29 2003/10/14 10:18:42 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.30 2003/10/23 11:27:28 abauer Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.30  2003/10/23 11:27:28  abauer
+# | added strip
+# |
 # | Revision 1.29  2003/10/14 10:18:42  wig
 # | Added -bak command line option
 # | Added ::descr to port maps (just a try)
@@ -147,6 +150,7 @@ require Exporter;
 	write_excel
 	write_delta_excel
 	write_sum
+	clean_temp_sheets
         );
 # @Micronas::MixUtils::EXPORT_OK=qw(
 @EXPORT_OK = qw(
@@ -220,11 +224,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.29 2003/10/14 10:18:42 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.30 2003/10/23 11:27:28 abauer Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.29 $';
+my $thisrevision   =      '$Revision: 1.30 $';
 
-# | Revision:   $Revision: 1.29 $   
+# | Revision:   $Revision: 1.30 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -338,6 +342,11 @@ sub mix_getopt_header(@) {
     } # else {
 	# $EH{'variant'} = 'Default';
     # }
+
+    # remove old and diff sheets when set
+    if (defined $OPTVAL{'strip'}) {
+        $EH{'intermediate'}{'strip'} = $OPTVAL{'strip'};
+    } 
 
     # Write entities into file
     if (defined $OPTVAL{'outenty'} ) {
@@ -852,6 +861,7 @@ $ex = undef; # Container for OLE server
 	'keep' => '3',	# Number of old sheets to keep
 	'format' => 'prev', # One of: prev(ious), auto or n(o|ew)
 	# If set, previous uses old sheet format, auto applies auto-format and the others do nothing.
+	'strip' => '0',   # remove old and diff sheets
     },
     'check' => { # Checks enable/disable: Usually the keywords to use are
 		    # na (or empty), check (check and warn),
@@ -1164,9 +1174,9 @@ $ex = undef; # Container for OLE server
 	    "%IMPORT_I%"	=> "I", # Meta instance for import mode
 	    "%IMPORT_O%"	=> "O", # Meta instance for import mode
 	    "%IMPORT_CLK%"	=> "__IMPORT_CLK__", # import mode, default clk
-	    "%IMPORT_BUNDLE%" => "__IMPORT_BUNDLE__",
+	    "%IMPORT_BUNDLE%" => "__IMPORT_BUNDLE__", #
 	    "%BUFFER%"		=> "buffer",
-	    '%H%'		=> '$',			# RCS keyword saver ...
+	    '%H%'		=> '$',		# 'RCS keyword saver ...
     },
     # Counters and generic messages
     'ERROR' => '__ERROR__',
@@ -1602,7 +1612,7 @@ sub mix_utils_open_input (@) {
 	unless ( -r $i ) {
 	    logwarn("Cannot read input file $i");
 	    next;
-	}
+	} 
 	#
 	# maybe there is a CONF page?
 	# Change CONF accordingly (will not be visible at upper world)
@@ -1617,7 +1627,7 @@ sub mix_utils_open_input (@) {
 	my @sheet = open_excel( $i, $EH{'conn'}{'xls'},  $EH{'conn'}{'req'});
 	for my $c ( @sheet ) {
 	    $EH{'conn'}{'parsed'}++;
-	    my @conn = convert_in( "conn", $c ); # Normalize and read in
+ 	    my @conn = convert_in( "conn", $c ); # Normalize and read in
 	    push( @$aconn, @conn ); # Append
 	}
 
@@ -1627,7 +1637,7 @@ sub mix_utils_open_input (@) {
 	    $EH{'hier'}{'parsed'}++;
 	    my @hier = convert_in( "hier", $c );
 	    #
-	    # Remove all lines not selected by our variant
+ 	    # Remove all lines not selected by our variant
 	    #TODO: Should we allow variants in the CONN sheet, too??
 	    select_variant( \@hier );
 	    push( @$ahier,   @hier );	# Append
@@ -2389,7 +2399,7 @@ sub open_excel($$$){
     foreach my $s ( @sheets ) {
 	logtrc( "INFO:4", "Reading worksheet $s of $file" );
 	$ex->ActiveWorkbook->Sheets($s)->Activate;
-	my $sheet =$book->ActiveSheet;
+	my $sheet = $book->ActiveSheet;
 	my $row=$sheet->UsedRange->{Value};
 
 	# Remove empty lines with all undefined values ... (ExCEL return all undef
@@ -3218,6 +3228,86 @@ sub write_excel ($$$;$) {
     return;
 }
 
+####################################################################
+## clean_temp_excel
+## remove temporary sheets of excel sheet
+####################################################################
+
+=head2
+
+clean_temp_sheets () {
+
+subroutine removes old and diff sheets from excel files
+
+     Arguments: $file   := filename
+
+=cut
+sub clean_temp_sheets ($) {
+
+    my $file = shift;
+    my $book;
+
+    logwarn("cleaning up file: $file");
+
+    if( -r $file ) {
+
+          # use existing instance if Excel is already running
+          eval {$ex = Win32::OLE->GetActiveObject('Excel.Application')};
+          die "Excel not installed" if $@;
+          unless (defined $ex) {
+              $ex = Win32::OLE->new('Excel.Application', sub {$_[0]->Quit;})
+                    or die "running Excel";
+          }
+
+          # append
+          unless ( $file =~ m/\.xls$/ ) {
+    	      $file .= ".xls";
+          }
+
+	  # If it exists, it could be open, too?
+	  unless( defined $book) {
+	      # No, not opened so far...
+	      logwarn("Removing old and and diff sheets");
+	      $book = $ex->Workbooks->Open(cwd()."\\".$file);
+	  }
+          else {
+	      # Is the open thing at the right place?
+	      my $wbpath = dirname( $file ) || $EH{'cwd'};
+	      if ( $wbpath eq "." ) {
+		  $wbpath = $EH{'cwd'};
+	      }
+	      $wbpath =~ s,/,\\,g; # Replace / -> \
+	      #Does our book have the right path?
+	      if ( $book->Path ne $wbpath ) {
+		  logwarn("ERROR: workbook with different path already opened!");
+		  $EH{'sum'}{'errors'}++;
+	      }
+  	  }
+
+          $ex->{DisplayAlerts}=0 if ( $EH{'script'}{'excel'}{'alerts'} =~ m,off,io );
+
+          $book->Activate;
+
+          my %sh = ();
+
+          # search for old sheets end remove them
+          foreach my $sh (in $book->{Worksheets} ) {
+              if( $sh->{'Name'} =~ /^O_/ || $sh->{'Name'} =~ /DIFF_/) {
+                  $book->{Worksheets}->{$sh->{'Name'}}->Delete;
+          }
+      }
+
+      $book->Save;
+
+      $ex->{DisplayAlerts}=1;
+      return;
+
+    }
+
+    logwarn("File $file not found!");
+    return;
+}
+
 #
 # Convert RGB value to internal representation
 #
@@ -3244,8 +3334,8 @@ sub mix_utils_mask_excel ($) {
 	    if ( $ii =~ m/^[\d.,]+$/ ) {
 		# Put a double ' ' in front of pure digits ...
 		$ii = "'" . $ii;
-	    } elsif ( $ii =~ m/^'/ ) {
-		$ii = "'" . $ii;
+	    } elsif ( $ii =~ m/^'/ ) { #'
+		      $ii = "'" . $ii;
 	    }
 	}
     }
