@@ -15,27 +15,26 @@
 
 
 enum {
-  COL_IGN = 0,
-  COL_GEN,
-  COL_BUNDLE,
-  COL_CLASS,
-  COL_CLOCK,
-  COL_TYPE,
-  COL_HIGH,
-  COL_LOW,
-  COL_MODE,
-  COL_NAME,
-  COL_SHORTNAME,
-  COL_OUT,
-  COL_IN,
-  COL_DESC,
-  COL_COM,
-  COL_DEFAULT,
-  COL_DEBUG,
-  COL_SKIP,
-  NUM_COLS
+  CONN_IGN = 0,
+  CONN_GEN,
+  CONN_BUNDLE,
+  CONN_CLASS,
+  CONN_CLOCK,
+  CONN_TYPE,
+  CONN_HIGH,
+  CONN_LOW,
+  CONN_MODE,
+  CONN_NAME,
+  CONN_SHORTNAME,
+  CONN_OUT,
+  CONN_IN,
+  CONN_DESC,
+  CONN_COM,
+  CONN_DEFAULT,
+  CONN_DEBUG,
+  CONN_SKIP,
+  CONN_NUM_COLS
 };
-
 
 static struct {
     char *title;
@@ -62,7 +61,9 @@ static struct {
     {"::skip", "text", TRUE},
 };
 
-GtkTreeModel *model;
+
+GtkTreeModel *conn_model;
+
 
 static GtkTreeModel* create_conn_model(void);
 
@@ -76,7 +77,7 @@ GtkWidget* create_conn_view(void)
 
     view = gtk_tree_view_new();
     // --- Column #X ---
-    while(i < NUM_COLS) {
+    while(i < CONN_NUM_COLS) {
 
 	col = gtk_tree_view_column_new();
 
@@ -100,11 +101,11 @@ GtkWidget* create_conn_view(void)
 	i++;
     }
 
-    model = (GtkTreeModel*) create_conn_model();
+    conn_model = (GtkTreeModel*) create_conn_model();
 
-    gtk_tree_view_set_model(GTK_TREE_VIEW(view), model);
+    gtk_tree_view_set_model(GTK_TREE_VIEW(view), conn_model);
 
-    g_object_unref(model); // destroy model automatically with view
+    g_object_unref(conn_model); // destroy model automatically with view
 
     gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(view), TRUE);
     gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(view), TRUE);
@@ -124,7 +125,7 @@ GtkTreeModel* create_conn_model(void)
     GtkTreeStore  *treestore;
     GtkTreeIter    toplevel;
 
-    treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
+    treestore = gtk_tree_store_new(CONN_NUM_COLS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
 				             G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
 				             G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
 				             G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
@@ -134,10 +135,10 @@ GtkTreeModel* create_conn_model(void)
 
 	// Append a top level row and leave it empty
 	gtk_tree_store_append(treestore, &toplevel, NULL);
-	gtk_tree_store_set(treestore, &toplevel, COL_IGN, ign, COL_GEN, gen, COL_BUNDLE, bun,
-			   COL_CLASS, cls, COL_CLOCK, clk, COL_TYPE, type, COL_HIGH, hig, COL_LOW, low,
-			   COL_MODE, mode, COL_NAME, name, COL_SHORTNAME, sname, COL_OUT, out, COL_IN, in, COL_DESC, des,
-			   COL_COM, com, COL_DEFAULT, def, COL_DEBUG, deb, COL_SKIP, skip, -1);
+	gtk_tree_store_set(treestore, &toplevel, CONN_IGN, ign, CONN_GEN, gen, CONN_BUNDLE, bun,
+			   CONN_CLASS, cls, CONN_CLOCK, clk, CONN_TYPE, type, CONN_HIGH, hig, CONN_LOW, low,
+			   CONN_MODE, mode, CONN_NAME, name, CONN_SHORTNAME, sname, CONN_OUT, out, CONN_IN, in, CONN_DESC, des,
+			   CONN_COM, com, CONN_DEFAULT, def, CONN_DEBUG, deb, CONN_SKIP, skip, -1);
 
 	i++;
     }
@@ -145,7 +146,11 @@ GtkTreeModel* create_conn_model(void)
     return GTK_TREE_MODEL(treestore);
 }
 
-GtkTreeModel* get_conn_model()
+
+void conn_col_index_to_name(char *name, int column)
 {
-    return model;
+    if(column > 0 && column <= CONN_SKIP)
+	strcpy(name, header[column].title);
+    else
+	strcpy(name, "unknown");
 }

@@ -197,6 +197,10 @@ int mix_number_of_conn_rows();
  * get a row from conn sheet
  */
 void mix_get_conn_row(int index, char *row[]);
+/**
+ * set conn-sheet value
+ */
+void mix_set_conn_value(char *column, int row, char *data);
 
 /**
  * get the number of header fields
@@ -214,6 +218,10 @@ void mix_get_iopad_sta_row(int index, char *row[]);
  * get a row from iopad sheet
  */
 void mix_get_iopad_dyn_row(int index, char *row[]);
+/**
+ * set a io-sheet value
+ */
+void mix_set_iopad_value(char *column, int row, char *data);
 
 /**
  * get the number of header fields
@@ -227,6 +235,9 @@ int mix_number_of_i2c_rows();
  * get a row from i2c sheet
  */
 void mix_get_i2c_row(int index, char *row[]);
-
+/**
+ * set a conn sheet value
+ */
+void mix_set_i2c_value(char *column, int row, char *data);
 
 #endif // __MIX_H_

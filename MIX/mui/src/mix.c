@@ -137,6 +137,7 @@ int mix_writeSpreadsheet(const char* spreadsheet)
     // TODO: do some check, return false if file could not saved
     call_argv("writeSpreadsheet", G_DISCARD, args);
 
+    modified = FALSE;
     return SUCCESS;
 }
 
@@ -300,7 +301,6 @@ int mix_number_of_conn_rows()
     PUTBACK;
     FREETMPS;
     LEAVE;
-#include <glib/gconvert.h>
     return count;
 }
 
@@ -337,6 +337,23 @@ void mix_get_conn_row(int index, char *row[])
     FREETMPS;
     LEAVE;    
 } 
+
+void mix_set_conn_value(char *column, int row, char *data)
+{
+    dSP;
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+    XPUSHs(sv_2mortal(newSVpv(data, 0)));
+    XPUSHs(sv_2mortal(newSViv(row)));
+    XPUSHs(sv_2mortal(newSVpv(column, 0)));
+    PUTBACK;
+    // TODO: do some check, return false if value could not be stored
+    call_pv("setConnValue", G_DISCARD);
+    FREETMPS;
+    LEAVE;
+    modified = TRUE;
+}
 
 
 int mix_number_of_iopad_headers()
@@ -397,6 +414,7 @@ void mix_get_iopad_sta_row(int index, char *row[])
     LEAVE;
 }
 
+
 void mix_get_iopad_dyn_row(int index, char *row[])
 {
     int i = 0;
@@ -416,6 +434,25 @@ void mix_get_iopad_dyn_row(int index, char *row[])
     FREETMPS;
     LEAVE;
 }
+
+
+void mix_set_iopad_value(char *column, int row, char *data)
+{
+    dSP;
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+    XPUSHs(sv_2mortal(newSVpv(data, 0)));
+    XPUSHs(sv_2mortal(newSViv(row)));
+    XPUSHs(sv_2mortal(newSVpv(column, 0)));
+    PUTBACK;
+    // TODO: do some check, return false if value could not be stored
+    call_pv("setIOPadValue", G_DISCARD);
+    FREETMPS;
+    LEAVE;
+    modified = TRUE;
+}
+
 
 int mix_number_of_i2c_headers()
 {
@@ -475,6 +512,7 @@ void mix_get_i2c_sta_row(int index, char *row[])
     LEAVE;
 }
 
+
 void mix_get_i2c_dyn_row(int index, char *row[])
 {
     int i = 0;
@@ -493,4 +531,22 @@ void mix_get_i2c_dyn_row(int index, char *row[])
     PUTBACK;
     FREETMPS;
     LEAVE;
+}
+
+
+void mix_set_i2c_value(char *column, int row, char *data)
+{
+    dSP;
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+    XPUSHs(sv_2mortal(newSVpv(data, 0)));
+    XPUSHs(sv_2mortal(newSViv(row)));
+    XPUSHs(sv_2mortal(newSVpv(column, 0)));
+    PUTBACK;
+    // TODO: do some check, return false if value could not be stored
+    call_pv("setI2CValue", G_DISCARD);
+    FREETMPS;
+    LEAVE;
+    modified = TRUE;
 }

@@ -11,6 +11,7 @@
 #endif
 
 #include <stdio.h>
+#include <string.h>
 
 #ifdef LINUX
 #  include <linux/limits.h>
@@ -27,9 +28,15 @@
 #include "support.h"
 #include "callbacks.h"
 
+extern GtkTreeModel *conn_model;
+extern GtkTreeModel *iopad_model;
+extern GtkTreeModel *i2c_model;
+
 
 void on_mainwin_destroy(GtkObject *object, gpointer user_data)
 {
+    int stage = mix_get_stage();
+
     // save project if needed
     if(mix_get_modified()) {
 	if(create_quest_dialog("Warning", "\n  File has been modified!  \n  Save modifications?  \n") == TRUE)
@@ -37,7 +44,6 @@ void on_mainwin_destroy(GtkObject *object, gpointer user_data)
 		create_info_dialog("Error", "\n  Could not save File!  \n");
     }
 
-    int stage = mix_get_stage();
     if(stage > MIX_NO_INIT) {
 	mix_destroy();
 	if(stage > MIX_INIT)
@@ -95,6 +101,8 @@ void on_save_file_as_item(GtkMenuItem *menuitem, gpointer user_data)
 
 void on_app_quit_item(GtkMenuItem *menuitem, gpointer user_data)
 {
+    int stage = mix_get_stage();
+
     // save project if needed
     if(mix_get_modified()) {
 	if(create_quest_dialog("Warning", "\n  File has been modified!  \n  Save modifications?  \n") == TRUE)
@@ -102,7 +110,6 @@ void on_app_quit_item(GtkMenuItem *menuitem, gpointer user_data)
 		create_info_dialog("Error", "\n  Could not save File!  \n");
     }
 
-    int stage = mix_get_stage();
     if(stage > MIX_NO_INIT) {
 	mix_destroy();
 	if(stage > MIX_INIT)
@@ -370,54 +377,53 @@ void on_langComboEntry_changed(GtkEntry *entry, gpointer user_data)
 
 void conn_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)
 {
+    char col_name[32];
     guint column = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(cell), "column_index"));
+    guint row = atoi(path_string);
     GtkTreePath *path = gtk_tree_path_new_from_string (path_string);
     GtkTreeIter iter;
-    GtkTreeModel *model = get_conn_model();
-    gchar *content;
 
-    if(gtk_tree_model_get_iter(model, &iter, path)) {
-	gtk_tree_model_get(model, &iter, column, &content, -1);
-	// TODO: put content to MIX
-	gtk_tree_store_set(GTK_TREE_STORE(model), &iter, column, content, -1);
-	g_free(content);
+    // if path exists, update cell content
+    if(gtk_tree_model_get_iter(conn_model, &iter, path)) {
+	conn_col_index_to_name(col_name, column);
+	// put content to MIX
+	mix_set_conn_value(col_name, row, new_text);
+	gtk_tree_store_set(GTK_TREE_STORE(conn_model), &iter, column, new_text, -1);
     }
-    else
-	printf("error: getting iter from string for conn\n");
 
     gtk_tree_path_free(path);
 }
 
 void iopad_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)
 {
+    char col_name[32];
     guint column = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(cell), "column_index"));
+    guint row = atoi(path_string);
     GtkTreePath *path = gtk_tree_path_new_from_string (path_string);
     GtkTreeIter iter;
-    GtkTreeModel *model = get_iopad_model();
-    gchar *content;
 
-    if(gtk_tree_model_get_iter(model, &iter, path)) {
-	gtk_tree_model_get(model, &iter, column, content, -1);
-	// TODO: put content to MIX
-	gtk_tree_store_set(GTK_TREE_STORE(model), &iter, column, content, -1);
-	g_free(content);
+    if(gtk_tree_model_get_iter(iopad_model, &iter, path)) {
+	iopad_col_index_to_name(col_name, column);
+	// put content to MIX
+	mix_set_iopad_value(col_name, row, new_text);
+	gtk_tree_store_set(GTK_TREE_STORE(iopad_model), &iter, column, new_text, -1);
     }
     gtk_tree_path_free(path);
 }
 
 void i2c_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)
 {
+    char col_name[32];
     guint column = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(cell), "column_index"));
+    guint row = atoi(path_string);
     GtkTreePath *path = gtk_tree_path_new_from_string (path_string);
     GtkTreeIter iter;
-    GtkTreeModel *model = get_i2c_model();
-    gchar *content;
 
-    if(gtk_tree_model_get_iter(model, &iter, path)) {
-	gtk_tree_model_get(model, &iter, column, &content, -1);
-	// TODO: put content to MIX
-	gtk_tree_store_set(GTK_TREE_STORE(model), &iter, column, content, -1);
-	g_free(content);
+    if(gtk_tree_model_get_iter(i2c_model, &iter, path)) {
+	i2c_col_index_to_name(col_name, column);
+	// put content to MIX
+	mix_set_i2c_value(col_name, row, new_text);
+	gtk_tree_store_set(GTK_TREE_STORE(i2c_model), &iter, column, new_text, -1);
     }
     gtk_tree_path_free(path);
 }

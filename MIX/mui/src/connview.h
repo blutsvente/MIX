@@ -14,7 +14,7 @@
 
 GtkWidget* create_conn_view();
 
-GtkTreeModel* get_conn_model();
+void conn_col_index_to_name(char *name, int column);
 
 
 #endif // __IOPADVIEW_H_

@@ -14,7 +14,7 @@
 
 GtkWidget* create_iopad_view();
 
-GtkTreeModel* get_iopad_model();
+void iopad_col_index_to_name(char *name, int column);
 
 
 #endif // __IOPADVIEW_H_

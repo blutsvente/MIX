@@ -29,6 +29,8 @@
  */
 static void about_destroy(GtkWidget *w, gpointer d);
 
+extern GtkWidget *mainWindow;
+
 gboolean about_dialog_open = 0;
 GtkWidget *file_dialog, *about_dialog;
 GtkWidget *mainview[4];
@@ -1277,7 +1279,7 @@ void create_info_dialog(char *title, char *message)
 {
     GtkWidget *info_dialog, *label;
     info_dialog = gtk_dialog_new();
-    info_dialog = gtk_dialog_new_with_buttons( title, GTK_WINDOW(get_mainwindow()),
+    info_dialog = gtk_dialog_new_with_buttons( title, GTK_WINDOW(mainWindow),
                                          GTK_DIALOG_DESTROY_WITH_PARENT,
                                          GTK_STOCK_OK,
                                          GTK_RESPONSE_ACCEPT,
@@ -1288,6 +1290,7 @@ void create_info_dialog(char *title, char *message)
     gtk_widget_show(label);
 
     gtk_widget_show(info_dialog);
+    //    gtk_window_set_transient_for((GtkWindow*) mainWindow, (GtkWindow*) info_dialog);
 
     gtk_dialog_run(GTK_DIALOG(info_dialog));
     gtk_widget_destroy(info_dialog);
@@ -1299,7 +1302,7 @@ gboolean create_quest_dialog(char *title, char *message)
     int rc;
     GtkWidget *quest_dialog, *label;
     quest_dialog = gtk_dialog_new();
-    quest_dialog = gtk_dialog_new_with_buttons(title, GTK_WINDOW(get_mainwindow()),
+    quest_dialog = gtk_dialog_new_with_buttons(title, GTK_WINDOW(mainWindow),
 					       GTK_DIALOG_DESTROY_WITH_PARENT,
 					       GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
 					       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -1309,6 +1312,7 @@ gboolean create_quest_dialog(char *title, char *message)
     gtk_widget_show(label);
 
     gtk_widget_show(quest_dialog);
+    //    gtk_window_set_transient_for((GtkWindow*) mainWindow, (GtkWindow*) quest_dialog);
 
     rc = gtk_dialog_run(GTK_DIALOG(quest_dialog));
     gtk_widget_destroy(quest_dialog);

@@ -17,9 +17,11 @@
 #include "settings.h"
 
 
+GtkWidget *mainWindow = NULL;
+
+
 int main(int argc, char *argv[])
 {
-    GtkWidget *mainWindow;
 
 #ifdef ENABLE_NLS
     bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
@@ -32,7 +34,6 @@ int main(int argc, char *argv[])
 
     // create and show main window
     mainWindow = (GtkWidget*) create_MainWindow();
-    init_settings(mainWindow);
     gtk_widget_show(mainWindow);
 
     // read config file

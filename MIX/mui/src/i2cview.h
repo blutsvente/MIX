@@ -14,7 +14,7 @@
 
 GtkWidget* create_i2c_view();
 
-GtkTreeModel* get_i2c_model();
+void i2c_col_index_to_name(char *name, int column);
 
 
 #endif // __I2CVIEW_H_

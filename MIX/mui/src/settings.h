@@ -18,14 +18,6 @@
 // #define DIRECTORY_DELIMIT '\\'
 //#endif
 
-
-/**
- * initialize settings
- */
-int init_settings(GtkWidget *window);
-
-GtkWidget* get_mainwindow();
-
 /**
  * read settings from file
  */

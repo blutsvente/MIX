@@ -24,19 +24,8 @@
 
 
 Settings settings = {NULL, NULL};
-GtkWidget *mainwindow = NULL;
 
-
-int init_settings(GtkWidget *window)
-{
-    mainwindow = window;
-}
-
-
-GtkWidget* get_mainwindow()
-{
-    return mainwindow;
-}
+extern GtkWidget *mainWindow;
 
 
 int read_settings()
@@ -158,7 +147,7 @@ int show_preferences()
     else
 	gtk_entry_set_text((GtkEntry*)editor_path_entry, "<none>");
 
-    gtk_window_set_transient_for((GtkWindow*)preferences,(GtkWindow*) mainwindow);
+    gtk_window_set_transient_for((GtkWindow*)preferences,(GtkWindow*) mainWindow);
 
     if(gtk_dialog_run(GTK_DIALOG(preferences)) == GTK_RESPONSE_OK) {
 

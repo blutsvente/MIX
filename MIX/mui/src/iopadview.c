@@ -15,23 +15,22 @@
 
 
 enum {
-  COL_IGN = 0,
-  COL_CLASS,
-  COL_ISPIN,
-  COL_PIN,
-  COL_PAD,
-  COL_TYPE,
-  COL_IOCELL,
-  COL_PORT,
-  COL_NAME,
-  COL_COM,
-  COL_DEFAULT,
-  COL_DEBUG,
-  COL_SKIP,
-  COL_MUXOPT,
-  NUM_COLS
+  IOPAD_IGN = 0,
+  IOPAD_CLASS,
+  IOPAD_ISPIN,
+  IOPAD_PIN,
+  IOPAD_PAD,
+  IOPAD_TYPE,
+  IOPAD_IOCELL,
+  IOPAD_PORT,
+  IOPAD_NAME,
+  IOPAD_COM,
+  IOPAD_DEFAULT,
+  IOPAD_DEBUG,
+  IOPAD_SKIP,
+  IOPAD_MUXOPT,
+  IOPAD_NUM_COLS
 };
-
 
 static struct {
     char *title;
@@ -54,7 +53,8 @@ static struct {
     {"::muxopt", "text", TRUE},
 };
 
-GtkTreeModel *model;
+
+GtkTreeModel *iopad_model;
 
 static GtkTreeModel* create_iopad_model(void);
 
@@ -63,7 +63,7 @@ GtkWidget* create_iopad_view(void)
 {
     int i = 0;
     int loc_i;
-    int num_cols = NUM_COLS + mix_number_of_iopad_headers() - 1;
+    int num_cols = IOPAD_NUM_COLS + mix_number_of_iopad_headers() - 1;
     GtkTreeViewColumn   *col;
     GtkCellRenderer     *renderer;
     GtkWidget           *view;
@@ -74,7 +74,7 @@ GtkWidget* create_iopad_view(void)
 
 	col = gtk_tree_view_column_new();
 
-	loc_i = i > COL_MUXOPT ? COL_MUXOPT : i;
+	loc_i = i > IOPAD_MUXOPT ? IOPAD_MUXOPT : i;
 	gtk_tree_view_column_set_spacing(col, 1);
 	gtk_tree_view_column_set_title(col, header[loc_i].title);
 
@@ -95,11 +95,11 @@ GtkWidget* create_iopad_view(void)
 	i++;
     }
 
-    model = (GtkTreeModel*) create_iopad_model();
+    iopad_model = (GtkTreeModel*) create_iopad_model();
 
-    gtk_tree_view_set_model(GTK_TREE_VIEW(view), model);
+    gtk_tree_view_set_model(GTK_TREE_VIEW(view), iopad_model);
 
-    g_object_unref(model); // destroy model automatically with view
+    g_object_unref(iopad_model); // destroy model automatically with view
 
     gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(view), TRUE);
     gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(view), TRUE);
@@ -115,7 +115,7 @@ GtkTreeModel* create_iopad_model(void)
     int j = 0;
     int numOfPads = mix_number_of_iopad_rows();
     int numOfMux = mix_number_of_iopad_headers();
-    int numOfHeaders = NUM_COLS + numOfMux - 1;
+    int numOfHeaders = IOPAD_NUM_COLS + numOfMux - 1;
     char ign[1024], cls[1024], isp[1024], pin[1024], pad[1024], typ[1024], ioc[1024];
     char prt[1024], nam[1024], com[1024] , def[1024], deb[1024], skip[1024];
     char **mux;
@@ -147,13 +147,13 @@ GtkTreeModel* create_iopad_model(void)
 
 	// Append a top level row and leave it empty
 	gtk_tree_store_append(treestore, &toplevel, NULL);
-	gtk_tree_store_set(treestore, &toplevel, COL_IGN, ign, COL_CLASS, cls, COL_ISPIN, isp, COL_PIN,
-			   pin, COL_PAD, pad, COL_TYPE, typ, COL_IOCELL, ioc, COL_PORT, prt, COL_NAME,
-			   nam, COL_COM, com, COL_DEFAULT, def, COL_DEBUG, deb, COL_SKIP, skip, - 1);
+	gtk_tree_store_set(treestore, &toplevel, IOPAD_IGN, ign, IOPAD_CLASS, cls, IOPAD_ISPIN, isp, IOPAD_PIN,
+			   pin, IOPAD_PAD, pad, IOPAD_TYPE, typ, IOPAD_IOCELL, ioc, IOPAD_PORT, prt, IOPAD_NAME,
+			   nam, IOPAD_COM, com, IOPAD_DEFAULT, def, IOPAD_DEBUG, deb, IOPAD_SKIP, skip, - 1);
 	// TODO: maybe find a nicer way to store this list
-	j = COL_MUXOPT;
+	j = IOPAD_MUXOPT;
 	while(j < numOfHeaders) {
-	    gtk_tree_store_set(treestore, &toplevel, j, mux[j - COL_MUXOPT], -1);
+	    gtk_tree_store_set(treestore, &toplevel, j, mux[j - IOPAD_MUXOPT], -1);
 	    j++;
 	}
 	i++;
@@ -168,7 +168,13 @@ GtkTreeModel* create_iopad_model(void)
     return GTK_TREE_MODEL(treestore);
 }
 
-GtkTreeModel* get_iopad_model()
+
+void iopad_col_index_to_name(char *name, int column)
 {
-    return model;
+    if(column > 0 && column <= IOPAD_MUXOPT)
+	strcpy(name, header[column].title);
+    else if(column > IOPAD_MUXOPT)
+	sprintf(name, "%s:%d", header[IOPAD_MUXOPT].title, column - IOPAD_MUXOPT);
+    else
+	strcpy(name, "unknown");
 }
