@@ -1,0 +1,39 @@
+MIX HOWTO and FAQ
+
+>>title: Avoid that IO/inout signals get wired to the toplevel
+
+By default MIX wires all I, O and IO signals to the top-level.
+Use I and O only for signals, that should be wired to the top-level
+anyway. Otherwise use S or leave the ::mode empty, MIX will detect the
+right mode automatically by consulting the ::in and ::out columns.
+
+The situation is different for inout signals. To tell MIX a signal should
+be of mode inout, you need to pit IO in the ::mode column. However, that
+automatically will wire that signal as inout port at the toplevel module.
+
+To avoid that, list the signal name in the configuration key
+output.generate.xinout (comma seperated list, perl regular expression allowed).
+
+To switch off the automatic wiring to the top-level globally, set the
+output.generate.inout variable to the empty string (defaults to "mode").
+
+#!wig20050216
+
+>>title: Known signal mode keys
+
+Allowed values for the  ::mode column are:
+ 
+	B     buffer (implemented only partially)
+	S     signal (default; might be omitted)
+	IO    inout (with top level connection)
+	I     in (wire to top level)
+	O     out (wire to top level)
+	G     generic (defining a generic and assign a default)
+	P     parameter (set the actual value for a generic)
+	C     constant (might be omitted, MIX detects all kind of constants in the
+          ::out column and automtically set C then).
+
+See the test case files "constant.xls" and "generics.xls" for examples for generics
+and constants.
+
+#!wig20050216
