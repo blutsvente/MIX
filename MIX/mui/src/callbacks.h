@@ -68,3 +68,27 @@ void on_editorpath_btn_clicked(GtkButton *btn, gpointer user_data);
 void on_mixLog_cancel_btn_clicked(GtkButton *btn, gpointer user_data);
 
 void on_mixLog_ok_btn_clicked(GtkButton *btn, gpointer user_data);
+
+void on_hierTreeview_selection_received(GtkWidget *widget, GtkSelectionData *data, guint time, gpointer user_data);
+
+void on_variEntry_changed(GtkEditable *editable, gpointer user_data);
+
+void on_instEntry_changed(GtkEditable *editable, gpointer user_data);
+
+void on_entityEntry_changed(GtkEditable *editable, gpointer user_data);
+
+void on_configEntry_changed(GtkEditable *editable, gpointer user_data);
+
+void on_commentEntry_changed(GtkEditable *editable, gpointer user_data);
+
+void on_mdeParentEntry_changed(GtkEditable *editable, gpointer user_data);
+
+void on_mdeInstEntry_changed(GtkEditable *editable, gpointer user_data);
+
+void on_mdeEntityEntry_changed(GtkEditable *editable, gpointer user_data);
+
+void on_genEntry_changed(GtkEditable *editable, gpointer user_data);
+
+void on_ignoreCheckbutton_toggled(GtkToggleButton *togglebutton, gpointer user_data);
+
+void on_langComboEntry_changed(GtkEntry *entry, gpointer user_data);

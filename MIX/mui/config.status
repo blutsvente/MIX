@@ -489,13 +489,13 @@ s,@INSTALL_DATA@,${INSTALL} -m 644,;t t
 s,@CYGPATH_W@,echo,;t t
 s,@PACKAGE@,mui,;t t
 s,@VERSION@,0.0.1,;t t
-s,@ACLOCAL@,${SHELL} /home/abauer/src/MIX/mui/missing --run aclocal-1.7,;t t
-s,@AUTOCONF@,${SHELL} /home/abauer/src/MIX/mui/missing --run autoconf,;t t
-s,@AUTOMAKE@,${SHELL} /home/abauer/src/MIX/mui/missing --run automake-1.7,;t t
-s,@AUTOHEADER@,${SHELL} /home/abauer/src/MIX/mui/missing --run autoheader,;t t
-s,@MAKEINFO@,${SHELL} /home/abauer/src/MIX/mui/missing --run makeinfo,;t t
-s,@AMTAR@,${SHELL} /home/abauer/src/MIX/mui/missing --run tar,;t t
-s,@install_sh@,/home/abauer/src/MIX/mui/install-sh,;t t
+s,@ACLOCAL@,${SHELL} /home/abauer/src/temp/MIX/mui/missing --run aclocal-1.7,;t t
+s,@AUTOCONF@,${SHELL} /home/abauer/src/temp/MIX/mui/missing --run autoconf,;t t
+s,@AUTOMAKE@,${SHELL} /home/abauer/src/temp/MIX/mui/missing --run automake-1.7,;t t
+s,@AUTOHEADER@,${SHELL} /home/abauer/src/temp/MIX/mui/missing --run autoheader,;t t
+s,@MAKEINFO@,${SHELL} /home/abauer/src/temp/MIX/mui/missing --run makeinfo,;t t
+s,@AMTAR@,${SHELL} /home/abauer/src/temp/MIX/mui/missing --run tar,;t t
+s,@install_sh@,/home/abauer/src/temp/MIX/mui/install-sh,;t t
 s,@STRIP@,,;t t
 s,@ac_ct_STRIP@,,;t t
 s,@INSTALL_STRIP_PROGRAM@,${SHELL} $(install_sh) -c -s,;t t

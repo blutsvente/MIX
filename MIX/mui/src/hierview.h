@@ -1,6 +1,6 @@
 /**
  *
- *  File:    hiertree.h
+ *  File:    hierview.h
  *  Project: Mui - MIX Userinterface
  *  Author:  Alexander Bauer <Alexander.Bauer@Micronas.com>
  *

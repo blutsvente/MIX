@@ -47,6 +47,7 @@ void on_new_file_item(GtkMenuItem *menuitem, gpointer user_data)
 {
     if(create_file_dialog("New Project") != NULL) {
 	// TODO: create new project
+	// new_project();
     }
 }
 
@@ -261,4 +262,68 @@ void on_mixLog_cancel_button_clicked(GtkButton *button, gpointer user_data)
 void on_mixLog_ok_button_clicked(GtkButton *button, gpointer user_data)
 {
 
+}
+
+void on_hierTreeview_selection_received(GtkWidget *widget, GtkSelectionData *data, guint time, gpointer user_data)
+{
+
+}
+
+void on_variEntry_changed(GtkEditable *editable, gpointer user_data)
+{
+    const gchar *text = gtk_entry_get_text(GTK_ENTRY(editable));
+}
+
+void on_instEntry_changed(GtkEditable *editable, gpointer user_data)
+{
+    const gchar *text = gtk_entry_get_text(GTK_ENTRY(editable));
+}
+
+void on_entityEntry_changed(GtkEditable *editable, gpointer user_data)
+{
+    const gchar *text = gtk_entry_get_text(GTK_ENTRY(editable));
+}
+
+void on_configEntry_changed(GtkEditable *editable, gpointer user_data)
+{
+    const gchar *text = gtk_entry_get_text(GTK_ENTRY(editable));
+}
+
+void on_commentEntry_changed(GtkEditable *editable, gpointer user_data)
+{
+    const gchar *text = gtk_entry_get_text(GTK_ENTRY(editable));
+}
+
+void on_mdeParentEntry_changed(GtkEditable *editable, gpointer user_data)
+{
+    const gchar *text = gtk_entry_get_text(GTK_ENTRY(editable));
+}
+
+void on_mdeInstEntry_changed(GtkEditable *editable, gpointer user_data)
+{
+    const gchar *text = gtk_entry_get_text(GTK_ENTRY(editable));
+}
+
+void on_mdeEntityEntry_changed(GtkEditable *editable, gpointer user_data)
+{
+    // TODO
+    const gchar *text = gtk_entry_get_text(GTK_ENTRY(editable));
+}
+
+void on_genEntry_changed(GtkEditable *editable, gpointer user_data)
+{
+    // TODO
+    const gchar *text = gtk_entry_get_text(GTK_ENTRY(editable));
+}
+
+void on_ignoreCheckbutton_toggled(GtkToggleButton *togglebutton, gpointer user_data)
+{
+    // TODO: set ignore value
+    gboolean value = gtk_toggle_button_get_active(togglebutton);
+}
+
+void on_langComboEntry_changed(GtkEntry *entry, gpointer user_data)
+{
+    // TODO: set language
+    const gchar *text = gtk_entry_get_text(entry);
 }
