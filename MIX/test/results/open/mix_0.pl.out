@@ -1,0 +1,2268 @@
+04/08/04 13:17:53 2476: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/08/04 13:17:53 2476: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/08/04 13:17:53 2476: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/04 13:17:53 2476: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/04 13:17:53 2476: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/04 13:17:53 2476: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/04 13:17:53 2476: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/04 13:17:53 2476: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/04 13:17:54 2476: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/08/04 13:17:55 2476: WARNING: Rotating 3 old sheets of CONF!
+04/08/04 13:17:59 2476: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/08/04 13:17:59 2476: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/04 13:18:02 2476: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/08/04 13:18:03 2476: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/04 13:18:04 2476: Info: unchanged file inst_a_e-e.vhd
+04/08/04 13:18:05 2476: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/04 13:18:05 2476: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/04 13:18:05 2476: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/04 13:18:05 2476: Info: unchanged file inst_b_e-e.vhd
+04/08/04 13:18:05 2476: Info: unchanged file inst_t_e-e.vhd
+04/08/04 13:18:05 2476: Info: unchanged file inst_a_e-rtl-a.vhd
+04/08/04 13:18:05 2476: Info: unchanged file inst_b_e-rtl-a.vhd
+04/08/04 13:18:06 2476: Info: unchanged file inst_t_e-rtl-a.vhd
+04/08/04 13:18:06 2476: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+04/08/04 13:18:06 2476: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+04/08/04 13:18:06 2476: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+04/08/04 13:18:06 2476: WARNING: ============= SUMMARY =================
+04/08/04 13:18:07 2476: WARNING: SUM: Summary of checks and created items:
+04/08/04 13:18:07 2476: WARNING: SUM: checkforce 0
+04/08/04 13:18:07 2476: WARNING: SUM: checkunique 0
+04/08/04 13:18:07 2476: WARNING: SUM: checkwarn 0
+04/08/04 13:18:07 2476: WARNING: SUM: cmacros 0
+04/08/04 13:18:07 2476: WARNING: SUM: conn 4
+04/08/04 13:18:07 2476: WARNING: SUM: errors 0
+04/08/04 13:18:07 2476: WARNING: SUM: genport 0
+04/08/04 13:18:07 2476: WARNING: SUM: hdlfiles 9
+04/08/04 13:18:07 2476: WARNING: SUM: inst 9
+04/08/04 13:18:07 2476: WARNING: SUM: multdriver 1
+04/08/04 13:18:07 2476: WARNING: SUM: nodriver 0
+04/08/04 13:18:07 2476: WARNING: SUM: noload 0
+04/08/04 13:18:07 2476: WARNING: SUM: openports 0
+04/08/04 13:18:07 2476: WARNING: SUM: warnings 2
+04/08/04 13:18:08 2476: WARNING: SUM: === Number of parsed input tables: ===
+04/08/04 13:18:08 2476: WARNING: SUM: conf 0
+04/08/04 13:18:08 2476: WARNING: SUM: hier 1
+04/08/04 13:18:08 2476: WARNING: SUM: conn 1
+04/08/04 13:18:09 2476: WARNING: SUM: io 0
+04/08/04 13:18:09 2476: WARNING: SUM: i2c 0
+04/08/04 13:18:09 2476: WARNING: SUM: Number of changes in intermediate: 0
+04/08/04 13:18:09 2476: WARNING: SUM: Number of changed files: 0
+04/08/04 15:08:46 1704: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/08/04 15:08:46 1704: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/08/04 15:08:47 1704: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/04 15:08:47 1704: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/04 15:08:47 1704: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/04 15:08:47 1704: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/04 15:08:47 1704: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/04 15:08:47 1704: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/04 15:08:48 1704: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/08/04 15:08:48 1704: WARNING: Rotating 3 old sheets of CONF!
+04/08/04 15:08:53 1704: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/08/04 15:08:53 1704: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/04 15:08:56 1704: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/08/04 15:08:56 1704: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/04 15:08:58 1704: Info: unchanged file inst_a_e-e.vhd
+04/08/04 15:08:58 1704: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/04 15:08:58 1704: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/04 15:08:58 1704: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/04 15:08:58 1704: Info: unchanged file inst_b_e-e.vhd
+04/08/04 15:08:58 1704: Info: unchanged file inst_t_e-e.vhd
+04/08/04 15:08:58 1704: Info: unchanged file inst_a_e-rtl-a.vhd
+04/08/04 15:08:58 1704: Info: unchanged file inst_b_e-rtl-a.vhd
+04/08/04 15:08:59 1704: Info: unchanged file inst_t_e-rtl-a.vhd
+04/08/04 15:08:59 1704: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+04/08/04 15:08:59 1704: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+04/08/04 15:08:59 1704: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+04/08/04 15:08:59 1704: WARNING: ============= SUMMARY =================
+04/08/04 15:08:59 1704: WARNING: SUM: Summary of checks and created items:
+04/08/04 15:08:59 1704: WARNING: SUM: checkforce 0
+04/08/04 15:08:59 1704: WARNING: SUM: checkunique 0
+04/08/04 15:08:59 1704: WARNING: SUM: checkwarn 0
+04/08/04 15:08:59 1704: WARNING: SUM: cmacros 0
+04/08/04 15:09:00 1704: WARNING: SUM: conn 4
+04/08/04 15:09:00 1704: WARNING: SUM: errors 0
+04/08/04 15:09:00 1704: WARNING: SUM: genport 0
+04/08/04 15:09:00 1704: WARNING: SUM: hdlfiles 9
+04/08/04 15:09:00 1704: WARNING: SUM: inst 9
+04/08/04 15:09:00 1704: WARNING: SUM: multdriver 1
+04/08/04 15:09:00 1704: WARNING: SUM: nodriver 0
+04/08/04 15:09:00 1704: WARNING: SUM: noload 0
+04/08/04 15:09:00 1704: WARNING: SUM: openports 0
+04/08/04 15:09:00 1704: WARNING: SUM: warnings 2
+04/08/04 15:09:00 1704: WARNING: SUM: === Number of parsed input tables: ===
+04/08/04 15:09:00 1704: WARNING: SUM: conf 0
+04/08/04 15:09:01 1704: WARNING: SUM: hier 1
+04/08/04 15:09:01 1704: WARNING: SUM: conn 1
+04/08/04 15:09:01 1704: WARNING: SUM: io 0
+04/08/04 15:09:01 1704: WARNING: SUM: i2c 0
+04/08/04 15:09:01 1704: WARNING: SUM: Number of changes in intermediate: 0
+04/08/04 15:09:01 1704: WARNING: SUM: Number of changed files: 0
+04/08/04 16:06:13 508: Reading worksheet CONN of /cygdrive/h/work/mix_new/mix/test/xls_input/open/../open.xls
+04/08/04 16:06:13 508: Reading worksheet HIER of /cygdrive/h/work/mix_new/mix/test/xls_input/open/../open.xls
+04/08/04 16:06:13 508: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/04 16:06:14 508: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/04 16:06:14 508: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/04 16:06:14 508: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/04 16:06:14 508: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/04 16:06:14 508: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/04 16:06:15 508: Reading worksheet CONN of /cygdrive/h/work/mix_new/mix/test/xls_input/open/open-mixed.xls
+04/08/04 16:06:17 508: Reading worksheet HIER of /cygdrive/h/work/mix_new/mix/test/xls_input/open/open-mixed.xls
+04/08/04 16:06:18 508: Info: unchanged file inst_a_e-e.vhd
+04/08/04 16:06:18 508: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/04 16:06:18 508: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/04 16:06:18 508: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/04 16:06:18 508: Info: unchanged file inst_b_e-e.vhd
+04/08/04 16:06:18 508: Info: unchanged file inst_t_e-e.vhd
+04/08/04 16:06:18 508: Info: unchanged file inst_a_e-rtl-a.vhd
+04/08/04 16:06:19 508: Info: unchanged file inst_b_e-rtl-a.vhd
+04/08/04 16:06:19 508: Info: unchanged file inst_t_e-rtl-a.vhd
+04/08/04 16:06:19 508: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+04/08/04 16:06:19 508: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+04/08/04 16:06:19 508: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+04/08/04 16:06:19 508: WARNING: ============= SUMMARY =================
+04/08/04 16:06:19 508: WARNING: SUM: Summary of checks and created items:
+04/08/04 16:06:19 508: WARNING: SUM: checkforce 0
+04/08/04 16:06:19 508: WARNING: SUM: checkunique 0
+04/08/04 16:06:19 508: WARNING: SUM: checkwarn 0
+04/08/04 16:06:20 508: WARNING: SUM: cmacros 0
+04/08/04 16:06:20 508: WARNING: SUM: conn 4
+04/08/04 16:06:20 508: WARNING: SUM: errors 0
+04/08/04 16:06:20 508: WARNING: SUM: genport 0
+04/08/04 16:06:20 508: WARNING: SUM: hdlfiles 9
+04/08/04 16:06:20 508: WARNING: SUM: inst 9
+04/08/04 16:06:20 508: WARNING: SUM: multdriver 1
+04/08/04 16:06:20 508: WARNING: SUM: nodriver 0
+04/08/04 16:06:20 508: WARNING: SUM: noload 0
+04/08/04 16:06:20 508: WARNING: SUM: openports 0
+04/08/04 16:06:20 508: WARNING: SUM: warnings 2
+04/08/04 16:06:20 508: WARNING: SUM: === Number of parsed input tables: ===
+04/08/04 16:06:20 508: WARNING: SUM: conf 0
+04/08/04 16:06:21 508: WARNING: SUM: hier 1
+04/08/04 16:06:21 508: WARNING: SUM: conn 1
+04/08/04 16:06:21 508: WARNING: SUM: io 0
+04/08/04 16:06:21 508: WARNING: SUM: i2c 0
+04/08/04 16:06:21 508: WARNING: SUM: Number of changes in intermediate: 0
+04/08/04 16:06:21 508: WARNING: SUM: Number of changed files: 0
+04/08/05 19:14:00 720: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/08/05 19:14:01 720: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/08/05 19:14:01 720: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/05 19:14:01 720: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/05 19:14:01 720: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/05 19:14:01 720: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/05 19:14:01 720: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/05 19:14:01 720: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/05 19:14:03 720: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/08/05 19:14:04 720: WARNING: Rotating 3 old sheets of CONF!
+04/08/05 19:14:08 720: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/08/05 19:14:08 720: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/05 19:14:12 720: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/08/05 19:14:12 720: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/05 19:14:14 720: Info: unchanged file inst_a_e-e.vhd
+04/08/05 19:14:14 720: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/05 19:14:14 720: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/05 19:14:14 720: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/05 19:14:14 720: Info: unchanged file inst_b_e-e.vhd
+04/08/05 19:14:14 720: Info: unchanged file inst_t_e-e.vhd
+04/08/05 19:14:14 720: Info: unchanged file inst_a_e-rtl-a.vhd
+04/08/05 19:14:15 720: Info: unchanged file inst_b_e-rtl-a.vhd
+04/08/05 19:14:15 720: Info: unchanged file inst_t_e-rtl-a.vhd
+04/08/05 19:14:15 720: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+04/08/05 19:14:15 720: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+04/08/05 19:14:15 720: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+04/08/05 19:14:16 720: WARNING: ============= SUMMARY =================
+04/08/05 19:14:16 720: WARNING: SUM: Summary of checks and created items:
+04/08/05 19:14:16 720: WARNING: SUM: checkforce 0
+04/08/05 19:14:16 720: WARNING: SUM: checkunique 0
+04/08/05 19:14:16 720: WARNING: SUM: checkwarn 0
+04/08/05 19:14:16 720: WARNING: SUM: cmacros 0
+04/08/05 19:14:16 720: WARNING: SUM: conn 4
+04/08/05 19:14:16 720: WARNING: SUM: errors 0
+04/08/05 19:14:16 720: WARNING: SUM: genport 0
+04/08/05 19:14:16 720: WARNING: SUM: hdlfiles 9
+04/08/05 19:14:16 720: WARNING: SUM: inst 9
+04/08/05 19:14:16 720: WARNING: SUM: multdriver 1
+04/08/05 19:14:16 720: WARNING: SUM: nodriver 0
+04/08/05 19:14:16 720: WARNING: SUM: noload 0
+04/08/05 19:14:16 720: WARNING: SUM: openports 0
+04/08/05 19:14:16 720: WARNING: SUM: warnings 2
+04/08/05 19:14:16 720: WARNING: SUM: === Number of parsed input tables: ===
+04/08/05 19:14:16 720: WARNING: SUM: conf 0
+04/08/05 19:14:16 720: WARNING: SUM: hier 1
+04/08/05 19:14:16 720: WARNING: SUM: conn 1
+04/08/05 19:14:16 720: WARNING: SUM: io 0
+04/08/05 19:14:16 720: WARNING: SUM: i2c 0
+04/08/05 19:14:16 720: WARNING: SUM: Number of changes in intermediate: 0
+04/08/05 19:14:16 720: WARNING: SUM: Number of changed files: 0
+04/08/09 11:01:19 2180: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/08/09 11:01:19 2180: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/08/09 11:01:20 2180: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/09 11:01:20 2180: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/09 11:01:20 2180: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/09 11:01:20 2180: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/09 11:01:20 2180: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/09 11:01:20 2180: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/09 11:01:21 2180: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/08/09 11:01:21 2180: WARNING: Rotating 3 old sheets of CONF!
+04/08/09 11:01:26 2180: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/08/09 11:01:26 2180: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/09 11:01:30 2180: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/08/09 11:01:30 2180: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/09 11:01:32 2180: Info: unchanged file inst_a_e-e.vhd
+04/08/09 11:01:32 2180: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/09 11:01:32 2180: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/09 11:01:32 2180: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/09 11:01:32 2180: Info: unchanged file inst_b_e-e.vhd
+04/08/09 11:01:32 2180: Info: unchanged file inst_t_e-e.vhd
+04/08/09 11:01:32 2180: Info: unchanged file inst_a_e-rtl-a.vhd
+04/08/09 11:01:32 2180: Info: unchanged file inst_b_e-rtl-a.vhd
+04/08/09 11:01:33 2180: Info: unchanged file inst_t_e-rtl-a.vhd
+04/08/09 11:01:33 2180: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+04/08/09 11:01:33 2180: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+04/08/09 11:01:33 2180: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+04/08/09 11:01:33 2180: WARNING: ============= SUMMARY =================
+04/08/09 11:01:33 2180: WARNING: SUM: Summary of checks and created items:
+04/08/09 11:01:33 2180: WARNING: SUM: checkforce 0
+04/08/09 11:01:33 2180: WARNING: SUM: checkunique 0
+04/08/09 11:01:33 2180: WARNING: SUM: checkwarn 0
+04/08/09 11:01:33 2180: WARNING: SUM: cmacros 0
+04/08/09 11:01:34 2180: WARNING: SUM: conn 4
+04/08/09 11:01:34 2180: WARNING: SUM: errors 0
+04/08/09 11:01:34 2180: WARNING: SUM: genport 0
+04/08/09 11:01:34 2180: WARNING: SUM: hdlfiles 9
+04/08/09 11:01:34 2180: WARNING: SUM: inst 9
+04/08/09 11:01:34 2180: WARNING: SUM: multdriver 1
+04/08/09 11:01:34 2180: WARNING: SUM: nodriver 0
+04/08/09 11:01:34 2180: WARNING: SUM: noload 0
+04/08/09 11:01:34 2180: WARNING: SUM: openports 0
+04/08/09 11:01:34 2180: WARNING: SUM: warnings 2
+04/08/09 11:01:34 2180: WARNING: SUM: === Number of parsed input tables: ===
+04/08/09 11:01:34 2180: WARNING: SUM: conf 0
+04/08/09 11:01:34 2180: WARNING: SUM: hier 1
+04/08/09 11:01:35 2180: WARNING: SUM: conn 1
+04/08/09 11:01:35 2180: WARNING: SUM: io 0
+04/08/09 11:01:35 2180: WARNING: SUM: i2c 0
+04/08/09 11:01:35 2180: WARNING: SUM: Number of changes in intermediate: 0
+04/08/09 11:01:35 2180: WARNING: SUM: Number of changed files: 0
+04/08/09 14:33:35 720: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/08/09 14:33:35 720: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/08/09 14:33:35 720: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/09 14:33:36 720: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/09 14:33:36 720: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/09 14:33:36 720: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/09 14:33:36 720: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/09 14:33:36 720: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/09 14:33:36 720: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/08/09 14:33:37 720: WARNING: Rotating 3 old sheets of CONF!
+04/08/09 14:33:41 720: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/08/09 14:33:41 720: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/09 14:33:45 720: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/08/09 14:33:45 720: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/09 14:33:46 720: Info: unchanged file inst_a_e-e.vhd
+04/08/09 14:33:47 720: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/09 14:33:47 720: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/09 14:33:47 720: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/09 14:33:47 720: Info: unchanged file inst_b_e-e.vhd
+04/08/09 14:33:47 720: Info: unchanged file inst_t_e-e.vhd
+04/08/09 14:33:47 720: Info: unchanged file inst_a_e-rtl-a.vhd
+04/08/09 14:33:47 720: Info: unchanged file inst_b_e-rtl-a.vhd
+04/08/09 14:33:47 720: Info: unchanged file inst_t_e-rtl-a.vhd
+04/08/09 14:33:47 720: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+04/08/09 14:33:47 720: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+04/08/09 14:33:48 720: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+04/08/09 14:33:48 720: WARNING: ============= SUMMARY =================
+04/08/09 14:33:48 720: WARNING: SUM: Summary of checks and created items:
+04/08/09 14:33:48 720: WARNING: SUM: checkforce 0
+04/08/09 14:33:48 720: WARNING: SUM: checkunique 0
+04/08/09 14:33:48 720: WARNING: SUM: checkwarn 0
+04/08/09 14:33:48 720: WARNING: SUM: cmacros 0
+04/08/09 14:33:48 720: WARNING: SUM: conn 4
+04/08/09 14:33:48 720: WARNING: SUM: errors 0
+04/08/09 14:33:48 720: WARNING: SUM: genport 0
+04/08/09 14:33:48 720: WARNING: SUM: hdlfiles 9
+04/08/09 14:33:48 720: WARNING: SUM: inst 9
+04/08/09 14:33:48 720: WARNING: SUM: multdriver 1
+04/08/09 14:33:48 720: WARNING: SUM: nodriver 0
+04/08/09 14:33:49 720: WARNING: SUM: noload 0
+04/08/09 14:33:49 720: WARNING: SUM: openports 0
+04/08/09 14:33:49 720: WARNING: SUM: warnings 2
+04/08/09 14:33:49 720: WARNING: SUM: === Number of parsed input tables: ===
+04/08/09 14:33:49 720: WARNING: SUM: conf 0
+04/08/09 14:33:49 720: WARNING: SUM: hier 1
+04/08/09 14:33:49 720: WARNING: SUM: conn 1
+04/08/09 14:33:49 720: WARNING: SUM: io 0
+04/08/09 14:33:49 720: WARNING: SUM: i2c 0
+04/08/09 14:33:49 720: WARNING: SUM: Number of changes in intermediate: 0
+04/08/09 14:33:49 720: WARNING: SUM: Number of changed files: 0
+04/08/09 17:01:45 2312: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/08/09 17:01:46 2312: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/08/09 17:01:46 2312: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/09 17:01:46 2312: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/09 17:01:46 2312: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/09 17:01:46 2312: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/09 17:01:46 2312: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/09 17:01:46 2312: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/09 17:01:48 2312: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/08/09 17:01:48 2312: WARNING: Rotating 3 old sheets of CONF!
+04/08/09 17:01:53 2312: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/08/09 17:01:53 2312: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/09 17:01:57 2312: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/08/09 17:01:57 2312: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/09 17:01:59 2312: Info: unchanged file inst_a_e-e.vhd
+04/08/09 17:01:59 2312: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/09 17:01:59 2312: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/09 17:01:59 2312: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/09 17:01:59 2312: Info: unchanged file inst_b_e-e.vhd
+04/08/09 17:01:59 2312: Info: unchanged file inst_t_e-e.vhd
+04/08/09 17:02:00 2312: Info: unchanged file inst_a_e-rtl-a.vhd
+04/08/09 17:02:00 2312: Info: unchanged file inst_b_e-rtl-a.vhd
+04/08/09 17:02:00 2312: Info: unchanged file inst_t_e-rtl-a.vhd
+04/08/09 17:02:00 2312: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+04/08/09 17:02:00 2312: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+04/08/09 17:02:00 2312: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+04/08/09 17:02:00 2312: WARNING: ============= SUMMARY =================
+04/08/09 17:02:00 2312: WARNING: SUM: Summary of checks and created items:
+04/08/09 17:02:01 2312: WARNING: SUM: checkforce 0
+04/08/09 17:02:01 2312: WARNING: SUM: checkunique 0
+04/08/09 17:02:01 2312: WARNING: SUM: checkwarn 0
+04/08/09 17:02:01 2312: WARNING: SUM: cmacros 0
+04/08/09 17:02:01 2312: WARNING: SUM: conn 4
+04/08/09 17:02:01 2312: WARNING: SUM: errors 0
+04/08/09 17:02:01 2312: WARNING: SUM: genport 0
+04/08/09 17:02:01 2312: WARNING: SUM: hdlfiles 9
+04/08/09 17:02:01 2312: WARNING: SUM: inst 9
+04/08/09 17:02:01 2312: WARNING: SUM: multdriver 1
+04/08/09 17:02:01 2312: WARNING: SUM: nodriver 0
+04/08/09 17:02:01 2312: WARNING: SUM: noload 0
+04/08/09 17:02:02 2312: WARNING: SUM: openports 0
+04/08/09 17:02:02 2312: WARNING: SUM: warnings 2
+04/08/09 17:02:02 2312: WARNING: SUM: === Number of parsed input tables: ===
+04/08/09 17:02:02 2312: WARNING: SUM: conf 0
+04/08/09 17:02:02 2312: WARNING: SUM: hier 1
+04/08/09 17:02:02 2312: WARNING: SUM: conn 1
+04/08/09 17:02:02 2312: WARNING: SUM: io 0
+04/08/09 17:02:02 2312: WARNING: SUM: i2c 0
+04/08/09 17:02:02 2312: WARNING: SUM: Number of changes in intermediate: 0
+04/08/09 17:02:02 2312: WARNING: SUM: Number of changed files: 0
+04/08/17 14:21:40 2104: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/08/17 14:21:40 2104: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/08/17 14:21:40 2104: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/17 14:21:41 2104: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/17 14:21:41 2104: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/17 14:21:41 2104: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/17 14:21:41 2104: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/17 14:21:41 2104: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/17 14:21:41 2104: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/08/17 14:21:42 2104: WARNING: Rotating 3 old sheets of CONF!
+04/08/17 14:21:46 2104: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/08/17 14:21:46 2104: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/17 14:21:50 2104: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/08/17 14:21:50 2104: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/17 14:21:51 2104: Info: unchanged file inst_a_e-e.vhd
+04/08/17 14:21:52 2104: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/17 14:21:52 2104: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/17 14:21:52 2104: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/17 14:21:52 2104: Info: unchanged file inst_b_e-e.vhd
+04/08/17 14:21:52 2104: Info: unchanged file inst_t_e-e.vhd
+04/08/17 14:21:52 2104: Info: unchanged file inst_a_e-rtl-a.vhd
+04/08/17 14:21:52 2104: Info: unchanged file inst_b_e-rtl-a.vhd
+04/08/17 14:21:53 2104: Info: unchanged file inst_t_e-rtl-a.vhd
+04/08/17 14:21:53 2104: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+04/08/17 14:21:53 2104: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+04/08/17 14:21:53 2104: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+04/08/17 14:21:53 2104: WARNING: ============= SUMMARY =================
+04/08/17 14:21:54 2104: WARNING: SUM: Summary of checks and created items:
+04/08/17 14:21:54 2104: WARNING: SUM: checkforce 0
+04/08/17 14:21:54 2104: WARNING: SUM: checkunique 0
+04/08/17 14:21:54 2104: WARNING: SUM: checkwarn 0
+04/08/17 14:21:54 2104: WARNING: SUM: cmacros 0
+04/08/17 14:21:54 2104: WARNING: SUM: conn 4
+04/08/17 14:21:54 2104: WARNING: SUM: errors 0
+04/08/17 14:21:54 2104: WARNING: SUM: genport 0
+04/08/17 14:21:55 2104: WARNING: SUM: hdlfiles 9
+04/08/17 14:21:55 2104: WARNING: SUM: inst 9
+04/08/17 14:21:55 2104: WARNING: SUM: multdriver 1
+04/08/17 14:21:55 2104: WARNING: SUM: nodriver 0
+04/08/17 14:21:55 2104: WARNING: SUM: noload 0
+04/08/17 14:21:55 2104: WARNING: SUM: openports 0
+04/08/17 14:21:55 2104: WARNING: SUM: warnings 2
+04/08/17 14:21:55 2104: WARNING: SUM: === Number of parsed input tables: ===
+04/08/17 14:21:55 2104: WARNING: SUM: conf 0
+04/08/17 14:21:55 2104: WARNING: SUM: hier 1
+04/08/17 14:21:55 2104: WARNING: SUM: conn 1
+04/08/17 14:21:56 2104: WARNING: SUM: io 0
+04/08/17 14:21:56 2104: WARNING: SUM: i2c 0
+04/08/17 14:21:56 2104: WARNING: SUM: Number of changes in intermediate: 0
+04/08/17 14:21:56 2104: WARNING: SUM: Number of changed files: 0
+04/08/17 17:59:56 1824: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/08/17 17:59:56 1824: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/08/17 17:59:57 1824: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/17 17:59:57 1824: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/17 17:59:57 1824: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/17 17:59:57 1824: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/17 17:59:57 1824: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/17 17:59:57 1824: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/17 18:00:00 1824: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/08/17 18:00:01 1824: WARNING: Rotating 3 old sheets of CONF!
+04/08/17 18:00:06 1824: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/08/17 18:00:06 1824: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/17 18:00:10 1824: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/08/17 18:00:10 1824: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/17 18:00:12 1824: Info: unchanged file inst_a_e-e.vhd
+04/08/17 18:00:12 1824: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/17 18:00:12 1824: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/17 18:00:12 1824: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/17 18:00:12 1824: Info: unchanged file inst_b_e-e.vhd
+04/08/17 18:00:12 1824: Info: unchanged file inst_t_e-e.vhd
+04/08/17 18:00:12 1824: Info: unchanged file inst_a_e-rtl-a.vhd
+04/08/17 18:00:12 1824: Info: unchanged file inst_b_e-rtl-a.vhd
+04/08/17 18:00:13 1824: Info: unchanged file inst_t_e-rtl-a.vhd
+04/08/17 18:00:13 1824: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+04/08/17 18:00:13 1824: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+04/08/17 18:00:13 1824: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+04/08/17 18:00:13 1824: WARNING: ============= SUMMARY =================
+04/08/17 18:00:13 1824: WARNING: SUM: Summary of checks and created items:
+04/08/17 18:00:13 1824: WARNING: SUM: checkforce 0
+04/08/17 18:00:13 1824: WARNING: SUM: checkunique 0
+04/08/17 18:00:13 1824: WARNING: SUM: checkwarn 0
+04/08/17 18:00:13 1824: WARNING: SUM: cmacros 0
+04/08/17 18:00:13 1824: WARNING: SUM: conn 4
+04/08/17 18:00:13 1824: WARNING: SUM: errors 0
+04/08/17 18:00:13 1824: WARNING: SUM: genport 0
+04/08/17 18:00:13 1824: WARNING: SUM: hdlfiles 9
+04/08/17 18:00:13 1824: WARNING: SUM: inst 9
+04/08/17 18:00:13 1824: WARNING: SUM: multdriver 1
+04/08/17 18:00:13 1824: WARNING: SUM: nodriver 0
+04/08/17 18:00:13 1824: WARNING: SUM: noload 0
+04/08/17 18:00:13 1824: WARNING: SUM: openports 0
+04/08/17 18:00:13 1824: WARNING: SUM: warnings 2
+04/08/17 18:00:13 1824: WARNING: SUM: === Number of parsed input tables: ===
+04/08/17 18:00:13 1824: WARNING: SUM: conf 0
+04/08/17 18:00:13 1824: WARNING: SUM: hier 1
+04/08/17 18:00:13 1824: WARNING: SUM: conn 1
+04/08/17 18:00:13 1824: WARNING: SUM: io 0
+04/08/17 18:00:13 1824: WARNING: SUM: i2c 0
+04/08/17 18:00:13 1824: WARNING: SUM: Number of changes in intermediate: 0
+04/08/17 18:00:13 1824: WARNING: SUM: Number of changed files: 0
+04/08/18 11:09:46 2164: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/08/18 11:09:46 2164: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/08/18 11:09:46 2164: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/18 11:09:46 2164: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/18 11:09:46 2164: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/18 11:09:46 2164: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/18 11:09:46 2164: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/18 11:09:46 2164: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/18 11:09:47 2164: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/08/18 11:09:48 2164: WARNING: Rotating 3 old sheets of CONF!
+04/08/18 11:09:52 2164: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/08/18 11:09:52 2164: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/18 11:09:56 2164: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/08/18 11:09:56 2164: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/18 11:09:58 2164: Info: unchanged file inst_a_e-e.vhd
+04/08/18 11:09:58 2164: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/18 11:09:58 2164: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/18 11:09:58 2164: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/18 11:09:58 2164: Info: unchanged file inst_b_e-e.vhd
+04/08/18 11:09:58 2164: Info: unchanged file inst_t_e-e.vhd
+04/08/18 11:09:58 2164: Info: unchanged file inst_a_e-rtl-a.vhd
+04/08/18 11:09:58 2164: Info: unchanged file inst_b_e-rtl-a.vhd
+04/08/18 11:09:59 2164: Info: unchanged file inst_t_e-rtl-a.vhd
+04/08/18 11:09:59 2164: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+04/08/18 11:09:59 2164: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+04/08/18 11:09:59 2164: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+04/08/18 11:09:59 2164: WARNING: ============= SUMMARY =================
+04/08/18 11:09:59 2164: WARNING: SUM: Summary of checks and created items:
+04/08/18 11:09:59 2164: WARNING: SUM: checkforce 0
+04/08/18 11:09:59 2164: WARNING: SUM: checkunique 0
+04/08/18 11:09:59 2164: WARNING: SUM: checkwarn 0
+04/08/18 11:09:59 2164: WARNING: SUM: cmacros 0
+04/08/18 11:10:00 2164: WARNING: SUM: conn 4
+04/08/18 11:10:00 2164: WARNING: SUM: errors 0
+04/08/18 11:10:00 2164: WARNING: SUM: genport 0
+04/08/18 11:10:00 2164: WARNING: SUM: hdlfiles 9
+04/08/18 11:10:00 2164: WARNING: SUM: inst 9
+04/08/18 11:10:00 2164: WARNING: SUM: multdriver 1
+04/08/18 11:10:00 2164: WARNING: SUM: nodriver 0
+04/08/18 11:10:00 2164: WARNING: SUM: noload 0
+04/08/18 11:10:00 2164: WARNING: SUM: openports 0
+04/08/18 11:10:01 2164: WARNING: SUM: warnings 2
+04/08/18 11:10:01 2164: WARNING: SUM: === Number of parsed input tables: ===
+04/08/18 11:10:01 2164: WARNING: SUM: conf 0
+04/08/18 11:10:01 2164: WARNING: SUM: hier 1
+04/08/18 11:10:01 2164: WARNING: SUM: conn 1
+04/08/18 11:10:01 2164: WARNING: SUM: io 0
+04/08/18 11:10:01 2164: WARNING: SUM: i2c 0
+04/08/18 11:10:01 2164: WARNING: SUM: Number of changes in intermediate: 0
+04/08/18 11:10:01 2164: WARNING: SUM: Number of changed files: 0
+04/08/18 12:58:32 2260: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/08/18 12:58:32 2260: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/08/18 12:58:32 2260: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/18 12:58:32 2260: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/18 12:58:32 2260: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/18 12:58:32 2260: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/18 12:58:32 2260: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/18 12:58:32 2260: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/18 12:58:33 2260: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/08/18 12:58:34 2260: WARNING: Rotating 3 old sheets of CONF!
+04/08/18 12:58:39 2260: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/08/18 12:58:39 2260: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/18 12:58:43 2260: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/08/18 12:58:43 2260: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/18 12:58:44 2260: Info: unchanged file inst_a_e-e.vhd
+04/08/18 12:58:44 2260: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/18 12:58:44 2260: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/18 12:58:44 2260: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/18 12:58:44 2260: Info: unchanged file inst_b_e-e.vhd
+04/08/18 12:58:44 2260: Info: unchanged file inst_t_e-e.vhd
+04/08/18 12:58:45 2260: Info: unchanged file inst_a_e-rtl-a.vhd
+04/08/18 12:58:45 2260: Info: unchanged file inst_b_e-rtl-a.vhd
+04/08/18 12:58:45 2260: Info: unchanged file inst_t_e-rtl-a.vhd
+04/08/18 12:58:45 2260: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+04/08/18 12:58:45 2260: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+04/08/18 12:58:45 2260: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+04/08/18 12:58:46 2260: WARNING: ============= SUMMARY =================
+04/08/18 12:58:46 2260: WARNING: SUM: Summary of checks and created items:
+04/08/18 12:58:46 2260: WARNING: SUM: checkforce 0
+04/08/18 12:58:46 2260: WARNING: SUM: checkunique 0
+04/08/18 12:58:46 2260: WARNING: SUM: checkwarn 0
+04/08/18 12:58:46 2260: WARNING: SUM: cmacros 0
+04/08/18 12:58:46 2260: WARNING: SUM: conn 4
+04/08/18 12:58:46 2260: WARNING: SUM: errors 0
+04/08/18 12:58:46 2260: WARNING: SUM: genport 0
+04/08/18 12:58:46 2260: WARNING: SUM: hdlfiles 9
+04/08/18 12:58:46 2260: WARNING: SUM: inst 9
+04/08/18 12:58:46 2260: WARNING: SUM: multdriver 1
+04/08/18 12:58:46 2260: WARNING: SUM: nodriver 0
+04/08/18 12:58:47 2260: WARNING: SUM: noload 0
+04/08/18 12:58:47 2260: WARNING: SUM: openports 0
+04/08/18 12:58:47 2260: WARNING: SUM: warnings 2
+04/08/18 12:58:47 2260: WARNING: SUM: === Number of parsed input tables: ===
+04/08/18 12:58:47 2260: WARNING: SUM: conf 0
+04/08/18 12:58:47 2260: WARNING: SUM: hier 1
+04/08/18 12:58:47 2260: WARNING: SUM: conn 1
+04/08/18 12:58:47 2260: WARNING: SUM: io 0
+04/08/18 12:58:47 2260: WARNING: SUM: i2c 0
+04/08/18 12:58:47 2260: WARNING: SUM: Number of changes in intermediate: 0
+04/08/18 12:58:47 2260: WARNING: SUM: Number of changed files: 0
+04/11/10 09:17:49 2516: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/11/10 09:17:49 2516: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/11/10 09:17:50 2516: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/11/10 09:17:50 2516: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/11/10 09:17:50 2516: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/11/10 09:17:50 2516: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/11/10 09:17:50 2516: autoreducing port type for signal %OPEN% to std_ulogic
+04/11/10 09:17:50 2516: autoconnecting single signal %OPEN% to bus port open_part13
+04/11/10 09:17:51 2516: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/11/10 09:17:51 2516: WARNING: Rotating 3 old sheets of CONF!
+04/11/10 09:17:57 2516: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/11/10 09:17:57 2516: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/11/10 09:18:01 2516: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/11/10 09:18:02 2516: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/11/10 09:18:04 2516: Info: unchanged file inst_a_e-e.vhd
+04/11/10 09:18:04 2516: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 09:18:04 2516: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 09:18:04 2516: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 09:18:04 2516: Info: unchanged file inst_b_e-e.vhd
+04/11/10 09:18:04 2516: Info: unchanged file inst_t_e-e.vhd
+04/11/10 09:18:04 2516: Info: unchanged file inst_a_e-rtl-a.vhd
+04/11/10 09:18:04 2516: Info: unchanged file inst_b_e-rtl-a.vhd
+04/11/10 09:18:05 2516: Info: unchanged file inst_t_e-rtl-a.vhd
+04/11/10 09:18:05 2516: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+04/11/10 09:18:05 2516: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+04/11/10 09:18:05 2516: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+04/11/10 09:18:05 2516: WARNING: ============= SUMMARY =================
+04/11/10 09:18:05 2516: WARNING: SUM: Summary of checks and created items:
+04/11/10 09:18:05 2516: WARNING: SUM: checkforce 0
+04/11/10 09:18:05 2516: WARNING: SUM: checkunique 0
+04/11/10 09:18:06 2516: WARNING: SUM: checkwarn 0
+04/11/10 09:18:06 2516: WARNING: SUM: cmacros 0
+04/11/10 09:18:06 2516: WARNING: SUM: conn 4
+04/11/10 09:18:06 2516: WARNING: SUM: errors 0
+04/11/10 09:18:06 2516: WARNING: SUM: genport 0
+04/11/10 09:18:06 2516: WARNING: SUM: hdlfiles 9
+04/11/10 09:18:06 2516: WARNING: SUM: inst 9
+04/11/10 09:18:06 2516: WARNING: SUM: multdriver 1
+04/11/10 09:18:06 2516: WARNING: SUM: nodriver 0
+04/11/10 09:18:06 2516: WARNING: SUM: noload 0
+04/11/10 09:18:06 2516: WARNING: SUM: openports 0
+04/11/10 09:18:06 2516: WARNING: SUM: warnings 2
+04/11/10 09:18:07 2516: WARNING: SUM: === Number of parsed input tables: ===
+04/11/10 09:18:07 2516: WARNING: SUM: conf 0
+04/11/10 09:18:07 2516: WARNING: SUM: hier 1
+04/11/10 09:18:07 2516: WARNING: SUM: conn 1
+04/11/10 09:18:07 2516: WARNING: SUM: io 0
+04/11/10 09:18:07 2516: WARNING: SUM: i2c 0
+04/11/10 09:18:07 2516: WARNING: SUM: Number of changes in intermediate: 0
+04/11/10 09:18:07 2516: WARNING: SUM: Number of changed files: 0
+04/11/10 09:56:30 2196: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/11/10 09:56:31 2196: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/11/10 09:56:31 2196: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/11/10 09:56:31 2196: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/11/10 09:56:31 2196: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/11/10 09:56:31 2196: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/11/10 09:56:31 2196: autoreducing port type for signal %OPEN% to std_ulogic
+04/11/10 09:56:31 2196: autoconnecting single signal %OPEN% to bus port open_part13
+04/11/10 09:56:32 2196: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/11/10 09:56:32 2196: WARNING: Rotating 3 old sheets of CONF!
+04/11/10 09:56:36 2196: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/11/10 09:56:37 2196: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/11/10 09:56:40 2196: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/11/10 09:56:40 2196: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/11/10 09:56:42 2196: Info: unchanged file inst_a_e-e.vhd
+04/11/10 09:56:42 2196: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 09:56:42 2196: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 09:56:42 2196: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 09:56:42 2196: Info: unchanged file inst_b_e-e.vhd
+04/11/10 09:56:42 2196: Info: unchanged file inst_t_e-e.vhd
+04/11/10 09:56:42 2196: Info: unchanged file inst_a_e-rtl-a.vhd
+04/11/10 09:56:43 2196: Info: unchanged file inst_b_e-rtl-a.vhd
+04/11/10 09:56:43 2196: Info: unchanged file inst_t_e-rtl-a.vhd
+04/11/10 09:56:43 2196: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+04/11/10 09:56:43 2196: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+04/11/10 09:56:43 2196: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+04/11/10 09:56:43 2196: WARNING: ============= SUMMARY =================
+04/11/10 09:56:43 2196: WARNING: SUM: Summary of checks and created items:
+04/11/10 09:56:44 2196: WARNING: SUM: checkforce 0
+04/11/10 09:56:44 2196: WARNING: SUM: checkunique 0
+04/11/10 09:56:44 2196: WARNING: SUM: checkwarn 0
+04/11/10 09:56:44 2196: WARNING: SUM: cmacros 0
+04/11/10 09:56:44 2196: WARNING: SUM: conn 4
+04/11/10 09:56:44 2196: WARNING: SUM: errors 0
+04/11/10 09:56:44 2196: WARNING: SUM: genport 0
+04/11/10 09:56:44 2196: WARNING: SUM: hdlfiles 9
+04/11/10 09:56:44 2196: WARNING: SUM: inst 9
+04/11/10 09:56:44 2196: WARNING: SUM: multdriver 1
+04/11/10 09:56:44 2196: WARNING: SUM: nodriver 0
+04/11/10 09:56:44 2196: WARNING: SUM: noload 0
+04/11/10 09:56:44 2196: WARNING: SUM: openports 0
+04/11/10 09:56:44 2196: WARNING: SUM: warnings 2
+04/11/10 09:56:45 2196: WARNING: SUM: === Number of parsed input tables: ===
+04/11/10 09:56:45 2196: WARNING: SUM: conf 0
+04/11/10 09:56:45 2196: WARNING: SUM: hier 1
+04/11/10 09:56:45 2196: WARNING: SUM: conn 1
+04/11/10 09:56:45 2196: WARNING: SUM: io 0
+04/11/10 09:56:45 2196: WARNING: SUM: i2c 0
+04/11/10 09:56:45 2196: WARNING: SUM: Number of changes in intermediate: 0
+04/11/10 09:56:45 2196: WARNING: SUM: Number of changed files: 0
+04/11/10 14:43:52 2548: Reading worksheet CONN of /cygdrive/h/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/11/10 14:43:52 2548: Reading worksheet HIER of /cygdrive/h/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/11/10 14:43:52 2548: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/11/10 14:43:52 2548: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/11/10 14:43:52 2548: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/11/10 14:43:52 2548: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/11/10 14:43:52 2548: autoreducing port type for signal %OPEN% to std_ulogic
+04/11/10 14:43:52 2548: autoconnecting single signal %OPEN% to bus port open_part13
+04/11/10 14:43:55 2548: Reading worksheet CONN of /cygdrive/h/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/11/10 14:43:57 2548: Reading worksheet HIER of /cygdrive/h/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/11/10 14:43:58 2548: Info: unchanged file inst_a_e-e.vhd
+04/11/10 14:43:58 2548: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 14:43:58 2548: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 14:43:58 2548: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 14:43:58 2548: Info: unchanged file inst_b_e-e.vhd
+04/11/10 14:43:58 2548: Info: unchanged file inst_t_e-e.vhd
+04/11/10 14:43:58 2548: Info: unchanged file inst_a_e-rtl-a.vhd
+04/11/10 14:43:59 2548: Info: unchanged file inst_b_e-rtl-a.vhd
+04/11/10 14:43:59 2548: Info: unchanged file inst_t_e-rtl-a.vhd
+04/11/10 14:43:59 2548: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+04/11/10 14:43:59 2548: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+04/11/10 14:44:00 2548: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+04/11/10 14:44:00 2548: WARNING: ============= SUMMARY =================
+04/11/10 14:44:00 2548: WARNING: SUM: Summary of checks and created items:
+04/11/10 14:44:00 2548: WARNING: SUM: checkforce 0
+04/11/10 14:44:00 2548: WARNING: SUM: checkunique 0
+04/11/10 14:44:00 2548: WARNING: SUM: checkwarn 0
+04/11/10 14:44:00 2548: WARNING: SUM: cmacros 0
+04/11/10 14:44:00 2548: WARNING: SUM: conn 4
+04/11/10 14:44:00 2548: WARNING: SUM: errors 0
+04/11/10 14:44:00 2548: WARNING: SUM: genport 0
+04/11/10 14:44:00 2548: WARNING: SUM: hdlfiles 9
+04/11/10 14:44:00 2548: WARNING: SUM: inst 9
+04/11/10 14:44:00 2548: WARNING: SUM: multdriver 1
+04/11/10 14:44:00 2548: WARNING: SUM: nodriver 0
+04/11/10 14:44:00 2548: WARNING: SUM: noload 0
+04/11/10 14:44:00 2548: WARNING: SUM: openports 0
+04/11/10 14:44:00 2548: WARNING: SUM: warnings 2
+04/11/10 14:44:00 2548: WARNING: SUM: === Number of parsed input tables: ===
+04/11/10 14:44:00 2548: WARNING: SUM: conf 0
+04/11/10 14:44:01 2548: WARNING: SUM: hier 1
+04/11/10 14:44:01 2548: WARNING: SUM: conn 1
+04/11/10 14:44:01 2548: WARNING: SUM: io 0
+04/11/10 14:44:01 2548: WARNING: SUM: i2c 0
+04/11/10 14:44:01 2548: WARNING: SUM: Number of changes in intermediate: 0
+04/11/10 14:44:01 2548: WARNING: SUM: Number of changed files: 0
+04/11/10 17:13:30 2796: Reading worksheet CONN of /cygdrive/h/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/11/10 17:13:30 2796: Reading worksheet HIER of /cygdrive/h/work/mix_new/MIX/test/xls_input/open/../open.xls
+04/11/10 17:13:30 2796: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/11/10 17:13:31 2796: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/11/10 17:13:31 2796: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/11/10 17:13:31 2796: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/11/10 17:13:31 2796: autoreducing port type for signal %OPEN% to std_ulogic
+04/11/10 17:13:31 2796: autoconnecting single signal %OPEN% to bus port open_part13
+04/11/10 17:13:33 2796: Reading worksheet CONN of /cygdrive/h/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/11/10 17:13:35 2796: Reading worksheet HIER of /cygdrive/h/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+04/11/10 17:13:35 2796: Info: unchanged file inst_a_e-e.vhd
+04/11/10 17:13:35 2796: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 17:13:36 2796: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 17:13:36 2796: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 17:13:36 2796: Info: unchanged file inst_b_e-e.vhd
+04/11/10 17:13:36 2796: Info: unchanged file inst_t_e-e.vhd
+04/11/10 17:13:36 2796: Info: unchanged file inst_a_e-rtl-a.vhd
+04/11/10 17:13:36 2796: Info: unchanged file inst_b_e-rtl-a.vhd
+04/11/10 17:13:36 2796: Info: unchanged file inst_t_e-rtl-a.vhd
+04/11/10 17:13:36 2796: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+04/11/10 17:13:37 2796: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+04/11/10 17:13:37 2796: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+04/11/10 17:13:37 2796: WARNING: ============= SUMMARY =================
+04/11/10 17:13:37 2796: WARNING: SUM: Summary of checks and created items:
+04/11/10 17:13:37 2796: WARNING: SUM: checkforce 0
+04/11/10 17:13:37 2796: WARNING: SUM: checkunique 0
+04/11/10 17:13:37 2796: WARNING: SUM: checkwarn 0
+04/11/10 17:13:37 2796: WARNING: SUM: cmacros 0
+04/11/10 17:13:37 2796: WARNING: SUM: conn 4
+04/11/10 17:13:37 2796: WARNING: SUM: errors 0
+04/11/10 17:13:37 2796: WARNING: SUM: genport 0
+04/11/10 17:13:37 2796: WARNING: SUM: hdlfiles 9
+04/11/10 17:13:37 2796: WARNING: SUM: inst 9
+04/11/10 17:13:37 2796: WARNING: SUM: multdriver 1
+04/11/10 17:13:37 2796: WARNING: SUM: nodriver 0
+04/11/10 17:13:37 2796: WARNING: SUM: noload 0
+04/11/10 17:13:38 2796: WARNING: SUM: openports 0
+04/11/10 17:13:38 2796: WARNING: SUM: warnings 2
+04/11/10 17:13:38 2796: WARNING: SUM: === Number of parsed input tables: ===
+04/11/10 17:13:38 2796: WARNING: SUM: conf 0
+04/11/10 17:13:38 2796: WARNING: SUM: hier 1
+04/11/10 17:13:38 2796: WARNING: SUM: conn 1
+04/11/10 17:13:38 2796: WARNING: SUM: io 0
+04/11/10 17:13:38 2796: WARNING: SUM: i2c 0
+04/11/10 17:13:38 2796: WARNING: SUM: Number of changes in intermediate: 0
+04/11/10 17:13:38 2796: WARNING: SUM: Number of changed files: 0
+05/01/11 18:38:31 2872: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/11 18:38:33 2872: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/11 18:39:00 2872: WARNING: WARNING: Detected keyword %OPEN_3% in port got replaced!
+05/01/11 18:39:07 2872: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/11 18:39:21 2872: autoreducing port type for signal %OPEN_6% to std_ulogic
+05/01/11 18:39:21 2872: autoreducing port type for signal %OPEN_5% to std_ulogic
+05/01/11 18:39:33 2872: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/11 18:39:35 2872: WARNING: Rotating 3 old sheets of CONF!
+05/01/11 18:39:43 2872: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/11 18:39:44 2872: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/11 18:39:51 2872: WARNING: INFO: Detected 14 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/11 18:39:57 2872: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/11 18:39:57 2872: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/11 18:40:10 2872: Info: unchanged file inst_a_e-e.vhd
+05/01/11 18:40:11 2872: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/11 18:40:11 2872: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/11 18:40:11 2872: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/11 18:40:11 2872: Info: unchanged file inst_b_e-e.vhd
+05/01/11 18:40:11 2872: Info: unchanged file inst_t_e-e.vhd
+05/01/11 18:44:13 2480: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/11 18:44:14 2480: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/11 18:44:16 2480: WARNING: WARNING: Detected keyword %OPEN_3% in port got replaced!
+05/01/11 18:44:16 2480: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/11 18:44:16 2480: autoreducing port type for signal %OPEN_6% to std_ulogic
+05/01/11 18:44:16 2480: autoreducing port type for signal %OPEN_5% to std_ulogic
+05/01/11 18:44:20 2480: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/11 18:44:21 2480: WARNING: Rotating 3 old sheets of CONF!
+05/01/11 18:44:25 2480: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/11 18:44:26 2480: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/11 18:44:33 2480: WARNING: INFO: Detected 14 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/11 18:44:35 2480: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/11 18:44:35 2480: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/11 18:44:38 2480: Info: unchanged file inst_a_e-e.vhd
+05/01/11 18:44:39 2480: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/11 18:44:39 2480: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/11 18:44:39 2480: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/11 18:44:39 2480: Info: unchanged file inst_b_e-e.vhd
+05/01/11 18:44:39 2480: Info: unchanged file inst_t_e-e.vhd
+05/01/11 18:44:40 2480: Info: unchanged file inst_a_e-rtl-a.vhd
+05/01/11 18:44:41 2480: Info: unchanged file inst_b_e-rtl-a.vhd
+05/01/11 18:44:41 2480: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/11 18:44:41 2480: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/11 18:44:41 2480: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/11 18:44:41 2480: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/11 18:44:41 2480: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/11 18:44:41 2480: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/11 18:44:41 2480: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/11 18:44:41 2480: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/11 18:44:41 2480: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/11 18:44:41 2480: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/11 18:44:41 2480: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/11 18:44:41 2480: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/11 18:44:41 2480: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/11 18:44:41 2480: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/11 18:44:42 2480: WARNING: Info: file inst_t_e-rtl-a.vhd has changes!
+05/01/11 18:44:42 2480: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+05/01/11 18:44:43 2480: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+05/01/11 18:44:44 2480: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+05/01/11 18:44:44 2480: WARNING: ============= SUMMARY =================
+05/01/11 18:44:44 2480: WARNING: SUM: Summary of checks and created items:
+05/01/11 18:44:44 2480: WARNING: SUM: checkforce 0
+05/01/11 18:44:44 2480: WARNING: SUM: checkunique 0
+05/01/11 18:44:44 2480: WARNING: SUM: checkwarn 0
+05/01/11 18:44:44 2480: WARNING: SUM: cmacros 0
+05/01/11 18:44:44 2480: WARNING: SUM: conn 17
+05/01/11 18:44:44 2480: WARNING: SUM: errors 0
+05/01/11 18:44:44 2480: WARNING: SUM: genport 0
+05/01/11 18:44:44 2480: WARNING: SUM: hdlfiles 9
+05/01/11 18:44:44 2480: WARNING: SUM: inst 9
+05/01/11 18:44:44 2480: WARNING: SUM: multdriver 0
+05/01/11 18:44:44 2480: WARNING: SUM: nodriver 2
+05/01/11 18:44:44 2480: WARNING: SUM: noload 12
+05/01/11 18:44:44 2480: WARNING: SUM: openports 0
+05/01/11 18:44:44 2480: WARNING: SUM: warnings 2
+05/01/11 18:44:44 2480: WARNING: SUM: === Number of parsed input tables: ===
+05/01/11 18:44:44 2480: WARNING: SUM: conf 0
+05/01/11 18:44:44 2480: WARNING: SUM: hier 1
+05/01/11 18:44:44 2480: WARNING: SUM: conn 1
+05/01/11 18:44:44 2480: WARNING: SUM: io 0
+05/01/11 18:44:44 2480: WARNING: SUM: i2c 0
+05/01/11 18:44:44 2480: WARNING: SUM: Number of changes in intermediate: 14
+05/01/11 18:44:44 2480: WARNING: SUM: Number of changed files: 1
+05/01/11 19:02:20 2472: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/11 19:02:21 2472: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/11 19:02:22 2472: WARNING: WARNING: Detected keyword %OPEN_3% in port got replaced!
+05/01/11 19:02:22 2472: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/11 19:02:22 2472: autoreducing port type for signal %OPEN_6% to std_ulogic
+05/01/11 19:02:22 2472: autoreducing port type for signal %OPEN_5% to std_ulogic
+05/01/11 19:02:26 2472: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/11 19:02:28 2472: WARNING: Rotating 3 old sheets of CONF!
+05/01/11 19:02:32 2472: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/11 19:02:33 2472: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/11 19:02:39 2472: WARNING: INFO: Detected 14 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/11 19:02:42 2472: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/11 19:02:42 2472: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/11 19:02:45 2472: Info: unchanged file inst_a_e-e.vhd
+05/01/11 19:02:45 2472: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/11 19:02:45 2472: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/11 19:02:45 2472: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/11 19:02:45 2472: Info: unchanged file inst_b_e-e.vhd
+05/01/11 19:02:46 2472: Info: unchanged file inst_t_e-e.vhd
+05/01/11 19:02:46 2472: Info: unchanged file inst_a_e-rtl-a.vhd
+05/01/11 19:02:47 2472: Info: unchanged file inst_b_e-rtl-a.vhd
+05/01/11 19:02:47 2472: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/11 19:02:47 2472: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/11 19:02:47 2472: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/11 19:02:47 2472: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/11 19:02:47 2472: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/11 19:02:47 2472: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/11 19:02:47 2472: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/11 19:02:47 2472: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/11 19:02:47 2472: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/11 19:02:47 2472: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/11 19:02:47 2472: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/11 19:02:47 2472: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/11 19:02:47 2472: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/11 19:02:47 2472: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/11 19:02:47 2472: WARNING: Info: file inst_t_e-rtl-a.vhd has changes!
+05/01/11 19:02:48 2472: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+05/01/11 19:02:48 2472: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+05/01/11 19:02:49 2472: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+05/01/11 19:02:49 2472: WARNING: ============= SUMMARY =================
+05/01/11 19:02:49 2472: WARNING: SUM: Summary of checks and created items:
+05/01/11 19:02:49 2472: WARNING: SUM: checkforce 0
+05/01/11 19:02:49 2472: WARNING: SUM: checkunique 0
+05/01/11 19:02:49 2472: WARNING: SUM: checkwarn 0
+05/01/11 19:02:49 2472: WARNING: SUM: cmacros 0
+05/01/11 19:02:49 2472: WARNING: SUM: conn 17
+05/01/11 19:02:49 2472: WARNING: SUM: errors 0
+05/01/11 19:02:49 2472: WARNING: SUM: genport 0
+05/01/11 19:02:49 2472: WARNING: SUM: hdlfiles 9
+05/01/11 19:02:49 2472: WARNING: SUM: inst 9
+05/01/11 19:02:49 2472: WARNING: SUM: multdriver 0
+05/01/11 19:02:49 2472: WARNING: SUM: nodriver 2
+05/01/11 19:02:49 2472: WARNING: SUM: noload 12
+05/01/11 19:02:49 2472: WARNING: SUM: openports 0
+05/01/11 19:02:49 2472: WARNING: SUM: warnings 2
+05/01/11 19:02:49 2472: WARNING: SUM: === Number of parsed input tables: ===
+05/01/11 19:02:49 2472: WARNING: SUM: conf 0
+05/01/11 19:02:49 2472: WARNING: SUM: hier 1
+05/01/11 19:02:49 2472: WARNING: SUM: conn 1
+05/01/11 19:02:49 2472: WARNING: SUM: io 0
+05/01/11 19:02:49 2472: WARNING: SUM: i2c 0
+05/01/11 19:02:49 2472: WARNING: SUM: Number of changes in intermediate: 14
+05/01/11 19:02:49 2472: WARNING: SUM: Number of changed files: 1
+05/01/11 19:06:04 2492: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/11 19:06:06 2492: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/11 19:06:09 2492: WARNING: WARNING: Detected keyword %OPEN_3% in port got replaced!
+05/01/11 19:10:53 2492: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/11 19:10:53 2492: autoreducing port type for signal %OPEN_6% to std_ulogic
+05/01/11 19:10:53 2492: autoreducing port type for signal %OPEN_5% to std_ulogic
+05/01/11 19:10:57 2492: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/11 19:10:59 2492: WARNING: Rotating 3 old sheets of CONF!
+05/01/11 19:11:07 2492: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/11 19:11:48 2492: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/11 19:11:54 2492: WARNING: INFO: Detected 14 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/11 19:12:00 2492: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/12 07:06:19 2492: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/12 07:09:26 2280: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/12 07:09:27 2280: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/12 07:09:30 2280: WARNING: WARNING: Detected keyword %OPEN_3% in port got replaced!
+05/01/12 07:09:31 2280: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/12 07:09:31 2280: autoreducing port type for signal %OPEN_6% to std_ulogic
+05/01/12 07:09:31 2280: autoreducing port type for signal %OPEN_5% to std_ulogic
+05/01/12 07:09:34 2280: WARNING: Rotating 3 old sheets of CONF!
+05/01/12 07:09:42 2280: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/12 07:09:43 2280: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/12 07:09:49 2280: WARNING: INFO: Detected 14 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/12 07:09:54 2280: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/12 07:09:55 2280: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/12 07:09:58 2280: Info: unchanged file inst_a_e-e.vhd
+05/01/12 07:09:58 2280: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 07:09:58 2280: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 07:09:58 2280: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 07:09:58 2280: Info: unchanged file inst_b_e-e.vhd
+05/01/12 07:09:59 2280: Info: unchanged file inst_t_e-e.vhd
+05/01/12 07:11:54 2280: Info: unchanged file inst_a_e-rtl-a.vhd
+05/01/12 07:13:03 2280: Info: unchanged file inst_b_e-rtl-a.vhd
+05/01/12 07:23:12 2280: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/12 07:23:12 2280: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/12 07:23:12 2280: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/12 07:23:12 2280: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/12 07:23:12 2280: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/12 07:23:12 2280: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/12 07:23:12 2280: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/12 07:23:12 2280: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/12 07:23:12 2280: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/12 07:23:12 2280: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/12 07:23:12 2280: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/12 07:23:12 2280: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/12 07:23:12 2280: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/12 07:23:12 2280: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/12 07:29:44 2888: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/12 07:29:45 2888: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/12 07:29:48 2888: WARNING: WARNING: Detected keyword %OPEN_3% in port got replaced!
+05/01/12 07:29:49 2888: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/12 07:29:49 2888: autoreducing port type for signal %OPEN_6% to std_ulogic
+05/01/12 07:29:49 2888: autoreducing port type for signal %OPEN_5% to std_ulogic
+05/01/12 07:29:52 2888: WARNING: Rotating 3 old sheets of CONF!
+05/01/12 07:29:59 2888: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/12 07:30:00 2888: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/12 07:30:07 2888: WARNING: INFO: Detected 14 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/12 07:30:12 2888: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/12 07:30:12 2888: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/12 07:30:15 2888: Info: unchanged file inst_a_e-e.vhd
+05/01/12 07:30:15 2888: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 07:30:15 2888: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 07:30:15 2888: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 07:30:15 2888: Info: unchanged file inst_b_e-e.vhd
+05/01/12 07:30:16 2888: Info: unchanged file inst_t_e-e.vhd
+05/01/12 07:30:48 2888: Info: unchanged file inst_a_e-rtl-a.vhd
+05/01/12 07:30:55 2888: Info: unchanged file inst_b_e-rtl-a.vhd
+05/01/12 07:34:05 2888: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/12 07:34:05 2888: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/12 07:34:05 2888: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/12 07:34:05 2888: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/12 07:34:05 2888: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/12 07:34:05 2888: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/12 07:34:05 2888: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/12 07:34:05 2888: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/12 07:34:05 2888: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/12 07:34:05 2888: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/12 07:34:05 2888: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/12 07:34:05 2888: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/12 07:34:05 2888: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/12 07:34:05 2888: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/12 07:35:11 2888: WARNING: Info: file inst_t_e-rtl-a.vhd has changes!
+05/01/12 07:35:11 2888: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+05/01/12 07:35:12 2888: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+05/01/12 07:35:12 2888: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+05/01/12 07:35:12 2888: WARNING: ============= SUMMARY =================
+05/01/12 07:35:12 2888: WARNING: SUM: Summary of checks and created items:
+05/01/12 07:35:12 2888: WARNING: SUM: checkforce 0
+05/01/12 07:35:12 2888: WARNING: SUM: checkunique 0
+05/01/12 07:35:12 2888: WARNING: SUM: checkwarn 0
+05/01/12 07:35:12 2888: WARNING: SUM: cmacros 0
+05/01/12 07:35:12 2888: WARNING: SUM: conn 17
+05/01/12 07:35:12 2888: WARNING: SUM: errors 0
+05/01/12 07:35:12 2888: WARNING: SUM: genport 0
+05/01/12 07:35:12 2888: WARNING: SUM: hdlfiles 9
+05/01/12 07:35:12 2888: WARNING: SUM: inst 9
+05/01/12 07:35:12 2888: WARNING: SUM: multdriver 0
+05/01/12 07:35:12 2888: WARNING: SUM: nodriver 2
+05/01/12 07:35:12 2888: WARNING: SUM: noload 12
+05/01/12 07:35:12 2888: WARNING: SUM: openports 0
+05/01/12 07:35:12 2888: WARNING: SUM: warnings 2
+05/01/12 07:35:12 2888: WARNING: SUM: === Number of parsed input tables: ===
+05/01/12 07:35:12 2888: WARNING: SUM: conf 0
+05/01/12 07:35:12 2888: WARNING: SUM: hier 1
+05/01/12 07:35:12 2888: WARNING: SUM: conn 1
+05/01/12 07:35:12 2888: WARNING: SUM: io 0
+05/01/12 07:35:12 2888: WARNING: SUM: i2c 0
+05/01/12 07:35:12 2888: WARNING: SUM: Number of changes in intermediate: 14
+05/01/12 07:35:12 2888: WARNING: SUM: Number of changed files: 1
+05/01/12 07:38:02 2848: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/12 07:38:03 2848: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/12 07:38:06 2848: WARNING: WARNING: Detected keyword %OPEN_3% in port got replaced!
+05/01/12 07:38:07 2848: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/12 07:38:07 2848: autoreducing port type for signal %OPEN_6% to std_ulogic
+05/01/12 07:38:07 2848: autoreducing port type for signal %OPEN_5% to std_ulogic
+05/01/12 07:38:10 2848: WARNING: Rotating 3 old sheets of CONF!
+05/01/12 07:38:19 2848: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/12 07:38:20 2848: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/12 07:38:27 2848: WARNING: INFO: Detected 14 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/12 07:38:34 2848: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/12 07:38:34 2848: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/12 07:38:37 2848: Info: unchanged file inst_a_e-e.vhd
+05/01/12 07:38:38 2848: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 07:38:38 2848: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 07:38:38 2848: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 07:38:38 2848: Info: unchanged file inst_b_e-e.vhd
+05/01/12 07:38:38 2848: Info: unchanged file inst_t_e-e.vhd
+05/01/12 07:38:51 2848: Info: unchanged file inst_a_e-rtl-a.vhd
+05/01/12 07:38:51 2848: Info: unchanged file inst_b_e-rtl-a.vhd
+05/01/12 07:38:51 2848: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/12 07:38:51 2848: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/12 07:38:51 2848: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/12 07:38:51 2848: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/12 07:38:51 2848: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/12 07:38:51 2848: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/12 07:38:51 2848: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/12 07:38:51 2848: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/12 07:38:51 2848: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/12 07:38:51 2848: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/12 07:38:51 2848: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/12 07:38:51 2848: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/12 07:38:51 2848: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/12 07:38:51 2848: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/12 07:38:51 2848: WARNING: Info: file inst_t_e-rtl-a.vhd has changes!
+05/01/12 07:38:52 2848: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+05/01/12 07:38:52 2848: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+05/01/12 07:38:53 2848: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+05/01/12 07:38:53 2848: WARNING: ============= SUMMARY =================
+05/01/12 07:38:53 2848: WARNING: SUM: Summary of checks and created items:
+05/01/12 07:38:53 2848: WARNING: SUM: checkforce 0
+05/01/12 07:38:53 2848: WARNING: SUM: checkunique 0
+05/01/12 07:38:53 2848: WARNING: SUM: checkwarn 0
+05/01/12 07:38:53 2848: WARNING: SUM: cmacros 0
+05/01/12 07:38:53 2848: WARNING: SUM: conn 17
+05/01/12 07:38:53 2848: WARNING: SUM: errors 0
+05/01/12 07:38:53 2848: WARNING: SUM: genport 0
+05/01/12 07:38:53 2848: WARNING: SUM: hdlfiles 9
+05/01/12 07:38:53 2848: WARNING: SUM: inst 9
+05/01/12 07:38:53 2848: WARNING: SUM: multdriver 0
+05/01/12 07:38:53 2848: WARNING: SUM: nodriver 2
+05/01/12 07:38:53 2848: WARNING: SUM: noload 12
+05/01/12 07:38:53 2848: WARNING: SUM: openports 0
+05/01/12 07:38:53 2848: WARNING: SUM: warnings 2
+05/01/12 07:38:53 2848: WARNING: SUM: === Number of parsed input tables: ===
+05/01/12 07:38:53 2848: WARNING: SUM: conf 0
+05/01/12 07:38:53 2848: WARNING: SUM: hier 1
+05/01/12 07:38:53 2848: WARNING: SUM: conn 1
+05/01/12 07:38:53 2848: WARNING: SUM: io 0
+05/01/12 07:38:53 2848: WARNING: SUM: i2c 0
+05/01/12 07:38:53 2848: WARNING: SUM: Number of changes in intermediate: 14
+05/01/12 07:38:53 2848: WARNING: SUM: Number of changed files: 1
+05/01/12 07:41:51 2804: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/12 07:41:53 2804: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/12 07:41:55 2804: WARNING: WARNING: Detected keyword %OPEN_3% in port got replaced!
+05/01/12 07:41:56 2804: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/12 07:41:56 2804: autoreducing port type for signal %OPEN_6% to std_ulogic
+05/01/12 07:41:56 2804: autoreducing port type for signal %OPEN_5% to std_ulogic
+05/01/12 07:41:59 2804: WARNING: Rotating 3 old sheets of CONF!
+05/01/12 07:42:06 2804: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/12 07:42:07 2804: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/12 07:42:13 2804: WARNING: INFO: Detected 14 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/12 07:42:18 2804: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/12 07:42:18 2804: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/12 07:42:21 2804: Info: unchanged file inst_a_e-e.vhd
+05/01/12 07:42:22 2804: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 07:42:22 2804: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 07:42:22 2804: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 07:42:22 2804: Info: unchanged file inst_b_e-e.vhd
+05/01/12 07:42:22 2804: Info: unchanged file inst_t_e-e.vhd
+05/01/12 07:43:02 2804: Info: unchanged file inst_a_e-rtl-a.vhd
+05/01/12 07:43:02 2804: Info: unchanged file inst_b_e-rtl-a.vhd
+05/01/12 07:43:02 2804: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/12 07:43:02 2804: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/12 07:43:02 2804: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/12 07:43:02 2804: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/12 07:43:02 2804: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/12 07:43:02 2804: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/12 07:43:02 2804: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/12 07:43:02 2804: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/12 07:43:02 2804: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/12 07:43:02 2804: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/12 07:43:02 2804: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/12 07:43:02 2804: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/12 07:43:02 2804: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/12 07:43:02 2804: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/12 07:43:02 2804: WARNING: Info: file inst_t_e-rtl-a.vhd has changes!
+05/01/12 07:43:03 2804: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+05/01/12 07:43:03 2804: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+05/01/12 07:43:04 2804: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+05/01/12 07:43:04 2804: WARNING: ============= SUMMARY =================
+05/01/12 07:43:04 2804: WARNING: SUM: Summary of checks and created items:
+05/01/12 07:43:04 2804: WARNING: SUM: checkforce 0
+05/01/12 07:43:04 2804: WARNING: SUM: checkunique 0
+05/01/12 07:43:04 2804: WARNING: SUM: checkwarn 0
+05/01/12 07:43:04 2804: WARNING: SUM: cmacros 0
+05/01/12 07:43:04 2804: WARNING: SUM: conn 17
+05/01/12 07:43:04 2804: WARNING: SUM: errors 0
+05/01/12 07:43:04 2804: WARNING: SUM: genport 0
+05/01/12 07:43:04 2804: WARNING: SUM: hdlfiles 9
+05/01/12 07:43:04 2804: WARNING: SUM: inst 9
+05/01/12 07:43:04 2804: WARNING: SUM: multdriver 0
+05/01/12 07:43:04 2804: WARNING: SUM: nodriver 2
+05/01/12 07:43:04 2804: WARNING: SUM: noload 12
+05/01/12 07:43:04 2804: WARNING: SUM: openports 0
+05/01/12 07:43:04 2804: WARNING: SUM: warnings 2
+05/01/12 07:43:04 2804: WARNING: SUM: === Number of parsed input tables: ===
+05/01/12 07:43:04 2804: WARNING: SUM: conf 0
+05/01/12 07:43:04 2804: WARNING: SUM: hier 1
+05/01/12 07:43:04 2804: WARNING: SUM: conn 1
+05/01/12 07:43:04 2804: WARNING: SUM: io 0
+05/01/12 07:43:04 2804: WARNING: SUM: i2c 0
+05/01/12 07:43:04 2804: WARNING: SUM: Number of changes in intermediate: 14
+05/01/12 07:43:04 2804: WARNING: SUM: Number of changed files: 1
+05/01/12 07:44:57 1880: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/12 07:44:58 1880: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/12 07:45:01 1880: WARNING: WARNING: Detected keyword %OPEN_3% in port got replaced!
+05/01/12 07:45:02 1880: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/12 07:45:02 1880: autoreducing port type for signal %OPEN_6% to std_ulogic
+05/01/12 07:45:02 1880: autoreducing port type for signal %OPEN_5% to std_ulogic
+05/01/12 07:45:05 1880: WARNING: Rotating 3 old sheets of CONF!
+05/01/12 07:45:13 1880: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/12 07:45:14 1880: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/12 07:45:20 1880: WARNING: INFO: Detected 14 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/12 07:45:25 1880: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/12 07:45:25 1880: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/12 07:45:28 1880: Info: unchanged file inst_a_e-e.vhd
+05/01/12 07:45:29 1880: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 07:45:29 1880: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 07:45:29 1880: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 07:45:29 1880: Info: unchanged file inst_b_e-e.vhd
+05/01/12 07:45:29 1880: Info: unchanged file inst_t_e-e.vhd
+05/01/12 07:46:24 1880: Info: unchanged file inst_a_e-rtl-a.vhd
+05/01/12 07:46:24 1880: Info: unchanged file inst_b_e-rtl-a.vhd
+05/01/12 08:10:30 2804: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/12 08:10:32 2804: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/12 08:10:34 2804: WARNING: WARNING: Detected keyword %OPEN_3% in port got replaced!
+05/01/12 08:10:35 2804: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/12 08:10:35 2804: autoreducing port type for signal %OPEN_6% to std_ulogic
+05/01/12 08:10:35 2804: autoreducing port type for signal %OPEN_5% to std_ulogic
+05/01/12 08:10:38 2804: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/12 08:10:39 2804: WARNING: Rotating 3 old sheets of CONF!
+05/01/12 08:10:46 2804: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/12 08:10:47 2804: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/12 08:10:54 2804: WARNING: INFO: Detected 14 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/12 08:10:59 2804: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/12 08:10:59 2804: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/12 08:11:02 2804: Info: unchanged file inst_a_e-e.vhd
+05/01/12 08:11:03 2804: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 08:11:03 2804: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 08:11:03 2804: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 08:11:03 2804: Info: unchanged file inst_b_e-e.vhd
+05/01/12 08:11:03 2804: Info: unchanged file inst_t_e-e.vhd
+05/01/12 08:11:36 2804: Info: unchanged file inst_a_e-rtl-a.vhd
+05/01/12 08:11:36 2804: Info: unchanged file inst_b_e-rtl-a.vhd
+05/01/12 08:43:38 2908: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/12 08:43:40 2908: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/12 08:43:45 2908: WARNING: WARNING: Detected keyword %OPEN_3% in port got replaced!
+05/01/12 08:43:47 2908: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/12 08:43:47 2908: autoreducing port type for signal %OPEN_6% to std_ulogic
+05/01/12 08:43:47 2908: autoreducing port type for signal %OPEN_5% to std_ulogic
+05/01/12 08:46:21 2908: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/12 08:46:44 2908: WARNING: Rotating 3 old sheets of CONF!
+05/01/12 08:47:06 2908: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/12 08:47:10 2908: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/12 08:47:32 2908: WARNING: INFO: Detected 14 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/12 08:47:39 2908: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/12 08:47:39 2908: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/12 08:47:53 2908: Info: unchanged file inst_a_e-e.vhd
+05/01/12 08:47:57 2908: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 08:47:57 2908: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 08:47:57 2908: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 08:47:57 2908: Info: unchanged file inst_b_e-e.vhd
+05/01/12 08:48:01 2908: Info: unchanged file inst_t_e-e.vhd
+05/01/12 16:44:47 2908: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/12 16:44:48 2908: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/12 16:44:50 2908: WARNING: WARNING: Detected keyword %OPEN_3% in port got replaced!
+05/01/12 16:44:51 2908: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/12 16:44:51 2908: autoreducing port type for signal %OPEN_6% to std_ulogic
+05/01/12 16:44:51 2908: autoreducing port type for signal %OPEN_5% to std_ulogic
+05/01/12 16:45:04 2908: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/12 16:45:07 2908: WARNING: Rotating 3 old sheets of CONF!
+05/01/12 16:45:16 2908: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/12 16:45:17 2908: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/12 16:45:24 2908: WARNING: INFO: Detected 14 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/12 16:45:30 2908: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/12 16:45:30 2908: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/12 16:45:33 2908: Info: unchanged file inst_a_e-e.vhd
+05/01/12 16:45:33 2908: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 16:45:33 2908: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 16:45:33 2908: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/12 16:45:34 2908: Info: unchanged file inst_b_e-e.vhd
+05/01/12 16:45:34 2908: Info: unchanged file inst_t_e-e.vhd
+05/01/12 16:45:34 2908: Info: unchanged file inst_a_e-rtl-a.vhd
+05/01/12 16:45:35 2908: Info: unchanged file inst_b_e-rtl-a.vhd
+05/01/12 16:54:11 2548: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/12 16:54:12 2548: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/12 17:00:25 2796: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/12 17:00:26 2796: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/13 07:06:13 2796: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/13 07:06:14 2796: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/13 07:08:18 2796: WARNING: WARNING: reducing signal %OPEN_5% from mode  to std_ulogic!
+05/01/13 07:08:18 2796: WARNING: WARNING: reducing signal %OPEN_6% from mode  to std_ulogic!
+05/01/13 07:17:00 2796: WARNING: WARNING: Detected keyword %OPEN_3% in port got replaced!
+05/01/13 07:19:01 2956: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/13 07:19:02 2956: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/13 07:20:35 2956: WARNING: WARNING: reducing signal %OPEN_5% from mode  to std_ulogic!
+05/01/13 07:20:36 2956: WARNING: WARNING: reducing signal %OPEN_6% from mode  to std_ulogic!
+05/01/13 07:24:03 2956: WARNING: WARNING: Detected keyword %OPEN_3% in port got replaced!
+05/01/13 07:24:03 2956: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/13 07:24:05 2956: autoconnecting single signal %OPEN_9% to bus port open_in_bit_11
+05/01/13 07:24:05 2956: autoconnecting single signal %OPEN_0% to bus port open_bit
+05/01/13 07:24:05 2956: autoconnecting single signal %OPEN_3% to bus port mix_key_open
+05/01/13 07:24:07 2956: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/13 07:24:09 2956: WARNING: Rotating 3 old sheets of CONF!
+05/01/13 07:24:16 2956: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/13 07:24:17 2956: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/13 07:24:24 2956: WARNING: INFO: Detected 15 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/13 07:24:29 2956: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/13 07:24:29 2956: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/13 07:24:32 2956: WARNING: Info: file inst_a_e-e.vhd has changes!
+05/01/13 07:24:32 2956: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 07:24:32 2956: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 07:24:32 2956: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 07:24:32 2956: WARNING: Info: file inst_b_e-e.vhd has changes!
+05/01/13 07:24:33 2956: Info: unchanged file inst_t_e-e.vhd
+05/01/13 07:24:33 2956: Info: unchanged file inst_a_e-rtl-a.vhd
+05/01/13 07:24:33 2956: Info: unchanged file inst_b_e-rtl-a.vhd
+05/01/13 07:24:34 2956: WARNING: Warning: unexpected branch in print_conn_matrix, signal %OPEN_10%, port open_part12
+05/01/13 07:24:34 2956: WARNING: Warning: unexpected branch in print_conn_matrix, signal %OPEN_14%, port openport14
+05/01/13 07:24:34 2956: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/13 07:24:34 2956: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/13 07:24:34 2956: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/13 07:24:34 2956: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/13 07:24:34 2956: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/13 07:24:34 2956: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/13 07:24:34 2956: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/13 07:24:34 2956: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/13 07:24:34 2956: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/13 07:24:34 2956: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/13 07:24:34 2956: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/13 07:24:34 2956: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/13 07:24:34 2956: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/13 07:24:34 2956: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/13 07:24:34 2956: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/13 07:24:34 2956: WARNING: Info: file inst_t_e-rtl-a.vhd has changes!
+05/01/13 07:24:34 2956: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+05/01/13 07:24:35 2956: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+05/01/13 07:24:36 2956: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+05/01/13 07:24:36 2956: WARNING: ============= SUMMARY =================
+05/01/13 07:24:36 2956: WARNING: SUM: Summary of checks and created items:
+05/01/13 07:24:36 2956: WARNING: SUM: checkforce 0
+05/01/13 07:24:36 2956: WARNING: SUM: checkunique 0
+05/01/13 07:24:36 2956: WARNING: SUM: checkwarn 0
+05/01/13 07:24:36 2956: WARNING: SUM: cmacros 0
+05/01/13 07:24:36 2956: WARNING: SUM: conn 18
+05/01/13 07:24:36 2956: WARNING: SUM: errors 0
+05/01/13 07:24:36 2956: WARNING: SUM: genport 0
+05/01/13 07:24:36 2956: WARNING: SUM: hdlfiles 9
+05/01/13 07:24:36 2956: WARNING: SUM: inst 9
+05/01/13 07:24:36 2956: WARNING: SUM: multdriver 0
+05/01/13 07:24:36 2956: WARNING: SUM: nodriver 2
+05/01/13 07:24:36 2956: WARNING: SUM: noload 13
+05/01/13 07:24:36 2956: WARNING: SUM: openports 0
+05/01/13 07:24:36 2956: WARNING: SUM: warnings 4
+05/01/13 07:24:36 2956: WARNING: SUM: === Number of parsed input tables: ===
+05/01/13 07:24:36 2956: WARNING: SUM: conf 0
+05/01/13 07:24:36 2956: WARNING: SUM: hier 1
+05/01/13 07:24:36 2956: WARNING: SUM: conn 1
+05/01/13 07:24:36 2956: WARNING: SUM: io 0
+05/01/13 07:24:36 2956: WARNING: SUM: i2c 0
+05/01/13 07:24:36 2956: WARNING: SUM: Number of changes in intermediate: 15
+05/01/13 07:24:36 2956: WARNING: SUM: Number of changed files: 3
+05/01/13 07:29:33 2252: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/13 07:29:33 2252: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/13 07:29:49 2252: WARNING: WARNING: reducing signal %OPEN_5% from mode  to std_ulogic!
+05/01/13 07:29:49 2252: WARNING: WARNING: reducing signal %OPEN_6% from mode  to std_ulogic!
+05/01/13 07:30:30 2252: WARNING: WARNING: Detected keyword %OPEN_3% in port got replaced!
+05/01/13 07:30:33 2252: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/13 07:30:52 2252: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/13 07:30:54 2252: WARNING: Rotating 3 old sheets of CONF!
+05/01/13 07:31:01 2252: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/13 07:31:02 2252: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/13 07:31:08 2252: WARNING: INFO: Detected 15 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/13 07:31:14 2252: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/13 07:31:14 2252: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/13 07:31:31 2252: WARNING: Info: file inst_a_e-e.vhd has changes!
+05/01/13 07:31:32 2252: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 07:31:32 2252: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 07:31:32 2252: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 07:31:32 2252: Info: unchanged file inst_b_e-e.vhd
+05/01/13 07:31:32 2252: Info: unchanged file inst_t_e-e.vhd
+05/01/13 07:31:33 2252: Info: unchanged file inst_a_e-rtl-a.vhd
+05/01/13 07:31:33 2252: Info: unchanged file inst_b_e-rtl-a.vhd
+05/01/13 07:31:33 2252: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/13 07:31:33 2252: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/13 07:31:33 2252: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/13 07:31:33 2252: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/13 07:31:33 2252: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/13 07:31:33 2252: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/13 07:31:33 2252: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/13 07:31:33 2252: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/13 07:31:33 2252: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/13 07:31:33 2252: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/13 07:31:33 2252: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/13 07:31:33 2252: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/13 07:31:33 2252: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/13 07:31:33 2252: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/13 07:31:33 2252: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/13 07:31:33 2252: WARNING: Info: file inst_t_e-rtl-a.vhd has changes!
+05/01/13 07:31:37 2252: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+05/01/13 07:31:41 2252: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+05/01/13 07:31:46 2252: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+05/01/13 07:31:47 2252: WARNING: ============= SUMMARY =================
+05/01/13 07:31:47 2252: WARNING: SUM: Summary of checks and created items:
+05/01/13 07:31:47 2252: WARNING: SUM: checkforce 0
+05/01/13 07:31:47 2252: WARNING: SUM: checkunique 0
+05/01/13 07:31:47 2252: WARNING: SUM: checkwarn 0
+05/01/13 07:31:47 2252: WARNING: SUM: cmacros 0
+05/01/13 07:31:47 2252: WARNING: SUM: conn 18
+05/01/13 07:31:47 2252: WARNING: SUM: errors 0
+05/01/13 07:31:47 2252: WARNING: SUM: genport 0
+05/01/13 07:31:47 2252: WARNING: SUM: hdlfiles 9
+05/01/13 07:31:47 2252: WARNING: SUM: inst 9
+05/01/13 07:31:47 2252: WARNING: SUM: multdriver 0
+05/01/13 07:31:47 2252: WARNING: SUM: nodriver 2
+05/01/13 07:31:47 2252: WARNING: SUM: noload 13
+05/01/13 07:31:47 2252: WARNING: SUM: openports 0
+05/01/13 07:31:47 2252: WARNING: SUM: warnings 2
+05/01/13 07:31:47 2252: WARNING: SUM: === Number of parsed input tables: ===
+05/01/13 07:31:47 2252: WARNING: SUM: conf 0
+05/01/13 07:31:47 2252: WARNING: SUM: hier 1
+05/01/13 07:31:47 2252: WARNING: SUM: conn 1
+05/01/13 07:31:47 2252: WARNING: SUM: io 0
+05/01/13 07:31:47 2252: WARNING: SUM: i2c 0
+05/01/13 07:31:47 2252: WARNING: SUM: Number of changes in intermediate: 15
+05/01/13 07:31:47 2252: WARNING: SUM: Number of changed files: 2
+05/01/13 07:42:14 2472: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/13 07:42:14 2472: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/13 07:42:15 2472: WARNING: WARNING: reducing signal %OPEN_5% from mode  to std_ulogic!
+05/01/13 07:42:16 2472: WARNING: WARNING: reducing signal %OPEN_6% from mode  to std_ulogic!
+05/01/13 07:42:16 2472: WARNING: WARNING: Detected keyword %OPEN_3% in port got replaced!
+05/01/13 07:42:16 2472: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/13 07:42:16 2472: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/13 07:42:19 2472: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/13 07:42:20 2472: WARNING: Rotating 3 old sheets of CONF!
+05/01/13 07:42:28 2472: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/13 07:42:29 2472: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/13 07:42:35 2472: WARNING: INFO: Detected 15 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/13 07:42:41 2472: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/13 07:42:41 2472: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/13 07:42:44 2472: WARNING: Info: file inst_a_e-e.vhd has changes!
+05/01/13 07:42:44 2472: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 07:42:44 2472: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 07:42:44 2472: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 07:42:44 2472: Info: unchanged file inst_b_e-e.vhd
+05/01/13 07:42:45 2472: Info: unchanged file inst_t_e-e.vhd
+05/01/13 07:42:45 2472: Info: unchanged file inst_a_e-rtl-a.vhd
+05/01/13 07:42:46 2472: Info: unchanged file inst_b_e-rtl-a.vhd
+05/01/13 07:42:46 2472: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/13 07:42:46 2472: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/13 07:42:46 2472: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/13 07:42:46 2472: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/13 07:42:46 2472: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/13 07:42:46 2472: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/13 07:42:46 2472: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/13 07:42:46 2472: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/13 07:42:46 2472: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/13 07:42:46 2472: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/13 07:42:46 2472: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/13 07:42:46 2472: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/13 07:42:46 2472: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/13 07:42:46 2472: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/13 07:42:46 2472: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/13 07:42:46 2472: WARNING: Info: file inst_t_e-rtl-a.vhd has changes!
+05/01/13 07:42:46 2472: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+05/01/13 07:42:47 2472: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+05/01/13 07:42:47 2472: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+05/01/13 07:42:48 2472: WARNING: ============= SUMMARY =================
+05/01/13 07:42:48 2472: WARNING: SUM: Summary of checks and created items:
+05/01/13 07:42:48 2472: WARNING: SUM: checkforce 0
+05/01/13 07:42:48 2472: WARNING: SUM: checkunique 0
+05/01/13 07:42:48 2472: WARNING: SUM: checkwarn 0
+05/01/13 07:42:48 2472: WARNING: SUM: cmacros 0
+05/01/13 07:42:48 2472: WARNING: SUM: conn 18
+05/01/13 07:42:48 2472: WARNING: SUM: errors 0
+05/01/13 07:42:48 2472: WARNING: SUM: genport 0
+05/01/13 07:42:48 2472: WARNING: SUM: hdlfiles 9
+05/01/13 07:42:48 2472: WARNING: SUM: inst 9
+05/01/13 07:42:48 2472: WARNING: SUM: multdriver 0
+05/01/13 07:42:48 2472: WARNING: SUM: nodriver 2
+05/01/13 07:42:48 2472: WARNING: SUM: noload 13
+05/01/13 07:42:48 2472: WARNING: SUM: openports 0
+05/01/13 07:42:48 2472: WARNING: SUM: warnings 2
+05/01/13 07:42:48 2472: WARNING: SUM: === Number of parsed input tables: ===
+05/01/13 07:42:48 2472: WARNING: SUM: conf 0
+05/01/13 07:42:48 2472: WARNING: SUM: hier 1
+05/01/13 07:42:48 2472: WARNING: SUM: conn 1
+05/01/13 07:42:48 2472: WARNING: SUM: io 0
+05/01/13 07:42:48 2472: WARNING: SUM: i2c 0
+05/01/13 07:42:48 2472: WARNING: SUM: Number of changes in intermediate: 15
+05/01/13 07:42:48 2472: WARNING: SUM: Number of changed files: 2
+05/01/13 07:52:27 2824: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/13 07:52:27 2824: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/13 07:52:28 2824: WARNING: WARNING: reducing signal %OPEN_5% from mode std_ulogic_vector to std_ulogic!
+05/01/13 07:52:29 2824: WARNING: WARNING: reducing signal %OPEN_6% from mode std_ulogic_vector to std_ulogic!
+05/01/13 07:52:29 2824: WARNING: WARNING: Detected keyword %OPEN_3% in port got extended!
+05/01/13 07:52:29 2824: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/13 07:52:29 2824: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/13 07:52:32 2824: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/13 07:52:33 2824: WARNING: Rotating 3 old sheets of CONF!
+05/01/13 07:52:41 2824: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/13 07:52:42 2824: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/13 07:52:48 2824: WARNING: INFO: Detected 15 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/13 07:52:54 2824: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/13 07:52:54 2824: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/13 07:52:56 2824: WARNING: Info: file inst_a_e-e.vhd has changes!
+05/01/13 07:52:57 2824: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 07:52:57 2824: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 07:52:57 2824: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 07:52:57 2824: Info: unchanged file inst_b_e-e.vhd
+05/01/13 07:52:57 2824: Info: unchanged file inst_t_e-e.vhd
+05/01/13 07:52:57 2824: Info: unchanged file inst_a_e-rtl-a.vhd
+05/01/13 07:52:58 2824: Info: unchanged file inst_b_e-rtl-a.vhd
+05/01/13 07:52:58 2824: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/13 07:52:58 2824: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/13 07:52:58 2824: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/13 07:52:58 2824: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/13 07:52:58 2824: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/13 07:52:58 2824: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/13 07:52:58 2824: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/13 07:52:58 2824: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/13 07:52:58 2824: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/13 07:52:58 2824: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/13 07:52:58 2824: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/13 07:52:58 2824: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/13 07:52:58 2824: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/13 07:52:58 2824: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/13 07:52:58 2824: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/13 07:52:58 2824: WARNING: Info: file inst_t_e-rtl-a.vhd has changes!
+05/01/13 07:52:58 2824: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+05/01/13 07:52:59 2824: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+05/01/13 07:52:59 2824: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+05/01/13 07:53:00 2824: WARNING: ============= SUMMARY =================
+05/01/13 07:53:00 2824: WARNING: SUM: Summary of checks and created items:
+05/01/13 07:53:00 2824: WARNING: SUM: checkforce 0
+05/01/13 07:53:00 2824: WARNING: SUM: checkunique 0
+05/01/13 07:53:00 2824: WARNING: SUM: checkwarn 0
+05/01/13 07:53:00 2824: WARNING: SUM: cmacros 0
+05/01/13 07:53:00 2824: WARNING: SUM: conn 18
+05/01/13 07:53:00 2824: WARNING: SUM: errors 0
+05/01/13 07:53:00 2824: WARNING: SUM: genport 0
+05/01/13 07:53:00 2824: WARNING: SUM: hdlfiles 9
+05/01/13 07:53:00 2824: WARNING: SUM: inst 9
+05/01/13 07:53:00 2824: WARNING: SUM: multdriver 0
+05/01/13 07:53:00 2824: WARNING: SUM: nodriver 2
+05/01/13 07:53:00 2824: WARNING: SUM: noload 13
+05/01/13 07:53:00 2824: WARNING: SUM: openports 0
+05/01/13 07:53:00 2824: WARNING: SUM: warnings 4
+05/01/13 07:53:00 2824: WARNING: SUM: === Number of parsed input tables: ===
+05/01/13 07:53:00 2824: WARNING: SUM: conf 0
+05/01/13 07:53:00 2824: WARNING: SUM: hier 1
+05/01/13 07:53:00 2824: WARNING: SUM: conn 1
+05/01/13 07:53:00 2824: WARNING: SUM: io 0
+05/01/13 07:53:00 2824: WARNING: SUM: i2c 0
+05/01/13 07:53:00 2824: WARNING: SUM: Number of changes in intermediate: 15
+05/01/13 07:53:00 2824: WARNING: SUM: Number of changed files: 2
+05/01/13 07:54:04 2956: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/13 07:54:05 2956: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/13 07:54:05 2956: WARNING: WARNING: reducing signal %OPEN_5% from mode std_ulogic_vector to std_ulogic!
+05/01/13 07:54:06 2956: WARNING: WARNING: reducing signal %OPEN_6% from mode std_ulogic_vector to std_ulogic!
+05/01/13 07:54:06 2956: WARNING: WARNING: Detected keyword %OPEN_3% in port got extended!
+05/01/13 07:54:06 2956: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/13 07:54:06 2956: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/13 07:54:09 2956: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/13 07:54:11 2956: WARNING: Rotating 3 old sheets of CONF!
+05/01/13 07:54:13 2956: WARNING: Rotating 3 old sheets of CONN!
+05/01/13 07:54:14 2956: WARNING: Rotating 3 old sheets of HIER!
+05/01/13 07:54:16 2956: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 07:54:16 2956: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 07:54:16 2956: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 07:54:16 2956: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/13 07:54:16 2956: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/13 07:54:16 2956: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/13 07:54:16 2956: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/13 07:54:16 2956: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/13 07:54:16 2956: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/13 07:54:16 2956: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/13 07:54:16 2956: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/13 07:54:16 2956: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/13 07:54:16 2956: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/13 07:54:16 2956: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/13 07:54:16 2956: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/13 07:54:16 2956: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/13 07:54:16 2956: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/13 07:54:16 2956: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/13 07:54:17 2956: WARNING: ============= SUMMARY =================
+05/01/13 07:54:17 2956: WARNING: SUM: Summary of checks and created items:
+05/01/13 07:54:17 2956: WARNING: SUM: checkforce 0
+05/01/13 07:54:17 2956: WARNING: SUM: checkunique 0
+05/01/13 07:54:17 2956: WARNING: SUM: checkwarn 0
+05/01/13 07:54:17 2956: WARNING: SUM: cmacros 0
+05/01/13 07:54:17 2956: WARNING: SUM: conn 18
+05/01/13 07:54:17 2956: WARNING: SUM: errors 0
+05/01/13 07:54:17 2956: WARNING: SUM: genport 0
+05/01/13 07:54:17 2956: WARNING: SUM: hdlfiles 9
+05/01/13 07:54:17 2956: WARNING: SUM: inst 9
+05/01/13 07:54:17 2956: WARNING: SUM: multdriver 0
+05/01/13 07:54:17 2956: WARNING: SUM: nodriver 2
+05/01/13 07:54:17 2956: WARNING: SUM: noload 13
+05/01/13 07:54:17 2956: WARNING: SUM: openports 0
+05/01/13 07:54:17 2956: WARNING: SUM: warnings 4
+05/01/13 07:54:17 2956: WARNING: SUM: === Number of parsed input tables: ===
+05/01/13 07:54:17 2956: WARNING: SUM: conf 0
+05/01/13 07:54:17 2956: WARNING: SUM: hier 1
+05/01/13 07:54:17 2956: WARNING: SUM: conn 1
+05/01/13 07:54:17 2956: WARNING: SUM: io 0
+05/01/13 07:54:17 2956: WARNING: SUM: i2c 0
+05/01/13 10:14:52 2168: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/13 10:14:52 2168: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/../open.xls
+05/01/13 10:14:53 2168: WARNING: WARNING: reducing signal %OPEN_5% from mode std_ulogic_vector to std_ulogic!
+05/01/13 10:14:53 2168: WARNING: WARNING: reducing signal %OPEN_6% from mode std_ulogic_vector to std_ulogic!
+05/01/13 10:14:53 2168: WARNING: WARNING: Detected keyword %OPEN_3% in port got extended!
+05/01/13 10:14:53 2168: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/13 10:14:53 2168: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/13 10:14:54 2168: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/13 10:14:55 2168: WARNING: Rotating 3 old sheets of CONF!
+05/01/13 10:14:59 2168: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/13 10:14:59 2168: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/13 10:15:01 2168: WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/13 10:15:04 2168: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/open-mixed.xls
+05/01/13 10:15:04 2168: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/13 10:15:06 2168: Info: unchanged file inst_a_e-e.vhd
+05/01/13 10:15:06 2168: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 10:15:06 2168: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 10:15:06 2168: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 10:15:06 2168: Info: unchanged file inst_b_e-e.vhd
+05/01/13 10:15:06 2168: Info: unchanged file inst_t_e-e.vhd
+05/01/13 10:15:06 2168: Info: unchanged file inst_a_e-rtl-a.vhd
+05/01/13 10:15:06 2168: Info: unchanged file inst_b_e-rtl-a.vhd
+05/01/13 10:15:06 2168: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/13 10:15:06 2168: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/13 10:15:06 2168: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/13 10:15:06 2168: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/13 10:15:06 2168: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/13 10:15:06 2168: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/13 10:15:06 2168: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/13 10:15:06 2168: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/13 10:15:06 2168: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/13 10:15:06 2168: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/13 10:15:06 2168: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/13 10:15:06 2168: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/13 10:15:07 2168: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/13 10:15:07 2168: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/13 10:15:07 2168: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/13 10:15:07 2168: Info: unchanged file inst_t_e-rtl-a.vhd
+05/01/13 10:15:07 2168: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+05/01/13 10:15:07 2168: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+05/01/13 10:15:07 2168: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+05/01/13 10:15:07 2168: WARNING: ============= SUMMARY =================
+05/01/13 10:15:07 2168: WARNING: SUM: Summary of checks and created items:
+05/01/13 10:15:07 2168: WARNING: SUM: checkforce 0
+05/01/13 10:15:07 2168: WARNING: SUM: checkunique 0
+05/01/13 10:15:08 2168: WARNING: SUM: checkwarn 0
+05/01/13 10:15:08 2168: WARNING: SUM: cmacros 0
+05/01/13 10:15:08 2168: WARNING: SUM: conn 18
+05/01/13 10:15:08 2168: WARNING: SUM: errors 0
+05/01/13 10:15:08 2168: WARNING: SUM: genport 0
+05/01/13 10:15:08 2168: WARNING: SUM: hdlfiles 9
+05/01/13 10:15:08 2168: WARNING: SUM: inst 9
+05/01/13 10:15:08 2168: WARNING: SUM: multdriver 0
+05/01/13 10:15:08 2168: WARNING: SUM: nodriver 2
+05/01/13 10:15:09 2168: WARNING: SUM: noload 13
+05/01/13 10:15:09 2168: WARNING: SUM: openports 0
+05/01/13 10:15:09 2168: WARNING: SUM: warnings 4
+05/01/13 10:15:09 2168: WARNING: SUM: === Number of parsed input tables: ===
+05/01/13 10:15:09 2168: WARNING: SUM: conf 0
+05/01/13 10:15:09 2168: WARNING: SUM: hier 1
+05/01/13 10:15:09 2168: WARNING: SUM: conn 1
+05/01/13 10:15:09 2168: WARNING: SUM: io 0
+05/01/13 10:15:09 2168: WARNING: SUM: i2c 0
+05/01/13 10:15:09 2168: WARNING: SUM: Number of changes in intermediate: 1
+05/01/13 10:15:10 2168: WARNING: SUM: Number of changed files: 0
+05/01/21 08:11:47 1656: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/../open.xls
+05/01/21 08:11:47 1656: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/../open.xls
+05/01/21 08:11:48 1656: WARNING: WARNING: reducing signal %OPEN_5% from mode std_ulogic_vector to std_ulogic!
+05/01/21 08:11:48 1656: WARNING: WARNING: reducing signal %OPEN_6% from mode std_ulogic_vector to std_ulogic!
+05/01/21 08:11:48 1656: WARNING: WARNING: Detected keyword %OPEN_3% in port got extended!
+05/01/21 08:11:48 1656: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/21 08:11:48 1656: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/21 08:11:52 1656: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/21 08:11:53 1656: WARNING: Rotating 3 old sheets of CONF!
+05/01/21 08:11:58 1656: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/open-mixed.xls
+05/01/21 08:11:59 1656: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open) already opened!
+05/01/21 08:11:59 1656: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/21 08:12:01 1656: WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/21 08:12:03 1656: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/open-mixed.xls
+05/01/21 08:12:03 1656: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open) already opened!
+05/01/21 08:12:03 1656: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/21 08:12:06 1656: Info: unchanged file inst_a_e-e.vhd
+05/01/21 08:12:06 1656: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/21 08:12:06 1656: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/21 08:12:06 1656: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/21 08:12:06 1656: Info: unchanged file inst_b_e-e.vhd
+05/01/21 08:12:07 1656: Info: unchanged file inst_t_e-e.vhd
+05/01/21 08:12:07 1656: Info: unchanged file inst_a_e-rtl-a.vhd
+05/01/21 08:12:08 1656: Info: unchanged file inst_b_e-rtl-a.vhd
+05/01/21 08:12:08 1656: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/21 08:12:08 1656: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/21 08:12:08 1656: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/21 08:12:08 1656: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/21 08:12:08 1656: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/21 08:12:08 1656: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/21 08:12:08 1656: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/21 08:12:08 1656: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/21 08:12:08 1656: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/21 08:12:08 1656: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/21 08:12:08 1656: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/21 08:12:08 1656: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/21 08:12:08 1656: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/21 08:12:08 1656: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/21 08:12:08 1656: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/21 08:12:08 1656: Info: unchanged file inst_t_e-rtl-a.vhd
+05/01/21 08:12:09 1656: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+05/01/21 08:12:10 1656: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+05/01/21 08:12:10 1656: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+05/01/21 08:12:10 1656: WARNING: ============= SUMMARY =================
+05/01/21 08:12:10 1656: WARNING: SUM: Summary of checks and created items:
+05/01/21 08:12:10 1656: WARNING: SUM: checkforce 0
+05/01/21 08:12:10 1656: WARNING: SUM: checkunique 0
+05/01/21 08:12:10 1656: WARNING: SUM: checkwarn 0
+05/01/21 08:12:10 1656: WARNING: SUM: cmacros 0
+05/01/21 08:12:10 1656: WARNING: SUM: conn 18
+05/01/21 08:12:10 1656: WARNING: SUM: errors 2
+05/01/21 08:12:10 1656: WARNING: SUM: genport 0
+05/01/21 08:12:10 1656: WARNING: SUM: hdlfiles 9
+05/01/21 08:12:10 1656: WARNING: SUM: inst 9
+05/01/21 08:12:10 1656: WARNING: SUM: multdriver 0
+05/01/21 08:12:10 1656: WARNING: SUM: nodriver 2
+05/01/21 08:12:10 1656: WARNING: SUM: noload 13
+05/01/21 08:12:10 1656: WARNING: SUM: openports 0
+05/01/21 08:12:10 1656: WARNING: SUM: warnings 4
+05/01/21 08:12:10 1656: WARNING: SUM: === Number of parsed input tables: ===
+05/01/21 08:12:10 1656: WARNING: SUM: conf 0
+05/01/21 08:12:10 1656: WARNING: SUM: hier 1
+05/01/21 08:12:10 1656: WARNING: SUM: conn 1
+05/01/21 08:12:10 1656: WARNING: SUM: io 0
+05/01/21 08:12:10 1656: WARNING: SUM: i2c 0
+05/01/21 08:12:10 1656: WARNING: SUM: Number of changes in intermediate: 1
+05/01/21 08:12:10 1656: WARNING: SUM: Number of changed files: 0
+05/01/21 08:59:55 2144: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/../open.xls
+05/01/21 08:59:55 2144: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/../open.xls
+05/01/21 08:59:56 2144: WARNING: WARNING: reducing signal %OPEN_5% from mode std_ulogic_vector to std_ulogic!
+05/01/21 08:59:57 2144: WARNING: WARNING: reducing signal %OPEN_6% from mode std_ulogic_vector to std_ulogic!
+05/01/21 08:59:57 2144: WARNING: WARNING: Detected keyword %OPEN_3% in port got extended!
+05/01/21 08:59:57 2144: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/21 08:59:57 2144: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/21 09:00:12 2144: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/21 09:00:13 2144: WARNING: Rotating 3 old sheets of CONF!
+05/01/21 09:00:17 2144: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/open-mixed.xls
+05/01/21 09:00:17 2144: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open) already opened!
+05/01/21 09:00:17 2144: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/21 09:00:18 2144: WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/21 09:00:21 2144: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/open-mixed.xls
+05/01/21 09:00:21 2144: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open) already opened!
+05/01/21 09:00:21 2144: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/21 09:00:22 2144: Info: unchanged file inst_a_e-e.vhd
+05/01/21 09:00:23 2144: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/21 09:00:23 2144: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/21 09:00:23 2144: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/21 09:00:23 2144: Info: unchanged file inst_b_e-e.vhd
+05/01/21 09:00:23 2144: Info: unchanged file inst_t_e-e.vhd
+05/01/21 09:00:23 2144: Info: unchanged file inst_a_e-rtl-a.vhd
+05/01/21 09:00:24 2144: Info: unchanged file inst_b_e-rtl-a.vhd
+05/01/21 09:00:24 2144: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/21 09:00:24 2144: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/21 09:00:24 2144: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/21 09:00:24 2144: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/21 09:00:24 2144: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/21 09:00:24 2144: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/21 09:00:24 2144: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/21 09:00:24 2144: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/21 09:00:24 2144: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/21 09:00:24 2144: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/21 09:00:24 2144: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/21 09:00:24 2144: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/21 09:00:24 2144: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/21 09:00:24 2144: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/21 09:00:24 2144: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/21 09:00:24 2144: Info: unchanged file inst_t_e-rtl-a.vhd
+05/01/21 09:00:24 2144: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+05/01/21 09:00:24 2144: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+05/01/21 09:00:25 2144: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+05/01/21 09:00:25 2144: WARNING: ============= SUMMARY =================
+05/01/21 09:00:25 2144: WARNING: SUM: Summary of checks and created items:
+05/01/21 09:00:25 2144: WARNING: SUM: checkforce 0
+05/01/21 09:00:25 2144: WARNING: SUM: checkunique 0
+05/01/21 09:00:25 2144: WARNING: SUM: checkwarn 0
+05/01/21 09:00:25 2144: WARNING: SUM: cmacros 0
+05/01/21 09:00:25 2144: WARNING: SUM: conn 18
+05/01/21 09:00:25 2144: WARNING: SUM: errors 2
+05/01/21 09:00:25 2144: WARNING: SUM: genport 0
+05/01/21 09:00:25 2144: WARNING: SUM: hdlfiles 9
+05/01/21 09:00:25 2144: WARNING: SUM: inst 9
+05/01/21 09:00:25 2144: WARNING: SUM: multdriver 0
+05/01/21 09:00:25 2144: WARNING: SUM: nodriver 2
+05/01/21 09:00:25 2144: WARNING: SUM: noload 13
+05/01/21 09:00:25 2144: WARNING: SUM: openports 0
+05/01/21 09:00:25 2144: WARNING: SUM: warnings 4
+05/01/21 09:00:25 2144: WARNING: SUM: === Number of parsed input tables: ===
+05/01/21 09:00:25 2144: WARNING: SUM: conf 0
+05/01/21 09:00:25 2144: WARNING: SUM: hier 1
+05/01/21 09:00:25 2144: WARNING: SUM: conn 1
+05/01/21 09:00:25 2144: WARNING: SUM: io 0
+05/01/21 09:00:25 2144: WARNING: SUM: i2c 0
+05/01/21 09:00:25 2144: WARNING: SUM: Number of changes in intermediate: 1
+05/01/21 09:00:25 2144: WARNING: SUM: Number of changed files: 0
+05/01/22 12:44:00 1568: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/../open.xls
+05/01/22 12:44:01 1568: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/../open.xls
+05/01/22 12:44:02 1568: WARNING: WARNING: reducing signal %OPEN_5% from type std_ulogic_vector to std_ulogic!
+05/01/22 12:44:02 1568: WARNING: WARNING: reducing signal %OPEN_6% from type std_ulogic_vector to std_ulogic!
+05/01/22 12:44:02 1568: WARNING: WARNING: Detected keyword %OPEN_3% in port got extended!
+05/01/22 12:44:02 1568: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/22 12:44:02 1568: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/22 12:44:21 1568: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/22 12:44:23 1568: WARNING: Rotating 3 old sheets of CONF!
+05/01/22 12:44:27 1568: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/open-mixed.xls
+05/01/22 12:44:28 1568: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open) already opened!
+05/01/22 12:44:28 1568: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/22 12:44:29 1568: WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/22 12:44:31 1568: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/open-mixed.xls
+05/01/22 12:44:31 1568: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open) already opened!
+05/01/22 12:44:32 1568: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/22 12:44:33 1568: Info: unchanged file inst_a_e-e.vhd
+05/01/22 12:44:34 1568: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/22 12:44:34 1568: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/22 12:44:34 1568: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/22 12:44:34 1568: Info: unchanged file inst_b_e-e.vhd
+05/01/22 12:44:34 1568: Info: unchanged file inst_t_e-e.vhd
+05/01/22 12:44:34 1568: Info: unchanged file inst_a_e-rtl-a.vhd
+05/01/22 12:44:34 1568: Info: unchanged file inst_b_e-rtl-a.vhd
+05/01/22 12:44:34 1568: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/22 12:44:34 1568: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/22 12:44:34 1568: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/22 12:44:34 1568: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/22 12:44:34 1568: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/22 12:44:34 1568: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/22 12:44:34 1568: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/22 12:44:34 1568: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/22 12:44:34 1568: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/22 12:44:34 1568: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/22 12:44:34 1568: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/22 12:44:34 1568: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/22 12:44:34 1568: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/22 12:44:34 1568: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/22 12:44:34 1568: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/22 12:44:35 1568: Info: unchanged file inst_t_e-rtl-a.vhd
+05/01/22 12:44:35 1568: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+05/01/22 12:44:35 1568: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+05/01/22 12:44:35 1568: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+05/01/22 12:44:35 1568: WARNING: ============= SUMMARY =================
+05/01/22 12:44:35 1568: WARNING: SUM: Summary of checks and created items:
+05/01/22 12:44:35 1568: WARNING: SUM: checkforce 0
+05/01/22 12:44:35 1568: WARNING: SUM: checkunique 0
+05/01/22 12:44:35 1568: WARNING: SUM: checkwarn 0
+05/01/22 12:44:35 1568: WARNING: SUM: cmacros 0
+05/01/22 12:44:35 1568: WARNING: SUM: conn 18
+05/01/22 12:44:35 1568: WARNING: SUM: errors 2
+05/01/22 12:44:35 1568: WARNING: SUM: genport 0
+05/01/22 12:44:35 1568: WARNING: SUM: hdlfiles 9
+05/01/22 12:44:35 1568: WARNING: SUM: inst 9
+05/01/22 12:44:35 1568: WARNING: SUM: multdriver 0
+05/01/22 12:44:35 1568: WARNING: SUM: nodriver 2
+05/01/22 12:44:35 1568: WARNING: SUM: noload 13
+05/01/22 12:44:35 1568: WARNING: SUM: openports 0
+05/01/22 12:44:35 1568: WARNING: SUM: warnings 4
+05/01/22 12:44:35 1568: WARNING: SUM: === Number of parsed input tables: ===
+05/01/22 12:44:35 1568: WARNING: SUM: conf 0
+05/01/22 12:44:35 1568: WARNING: SUM: hier 1
+05/01/22 12:44:35 1568: WARNING: SUM: conn 1
+05/01/22 12:44:35 1568: WARNING: SUM: io 0
+05/01/22 12:44:35 1568: WARNING: SUM: i2c 0
+05/01/22 12:44:35 1568: WARNING: SUM: Number of changes in intermediate: 1
+05/01/22 12:44:35 1568: WARNING: SUM: Number of changed files: 0
+05/01/22 12:50:00 2576: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/../open.xls
+05/01/22 12:50:00 2576: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/../open.xls
+05/01/22 12:50:01 2576: WARNING: WARNING: reducing signal %OPEN_5% from type std_ulogic_vector to std_ulogic!
+05/01/22 12:50:02 2576: WARNING: WARNING: reducing signal %OPEN_6% from type std_ulogic_vector to std_ulogic!
+05/01/22 12:50:02 2576: WARNING: WARNING: Detected keyword %OPEN_3% in port got extended!
+05/01/22 12:50:02 2576: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/22 12:50:02 2576: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/22 12:50:16 2576: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/22 12:50:19 2576: WARNING: Rotating 3 old sheets of CONF!
+05/01/22 12:50:21 2576: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open) already opened!
+05/01/22 12:50:21 2576: WARNING: Rotating 3 old sheets of CONN!
+05/01/22 12:50:22 2576: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open) already opened!
+05/01/22 12:50:22 2576: WARNING: Rotating 3 old sheets of HIER!
+05/01/22 12:50:24 2576: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/22 12:50:24 2576: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/22 12:50:24 2576: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/22 12:50:25 2576: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/22 12:50:25 2576: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/22 12:50:25 2576: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/22 12:50:25 2576: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/22 12:50:25 2576: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/22 12:50:25 2576: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/22 12:50:25 2576: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/22 12:50:25 2576: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/22 12:50:25 2576: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/22 12:50:25 2576: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/22 12:50:25 2576: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/22 12:50:25 2576: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/22 12:50:25 2576: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/22 12:50:25 2576: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/22 12:50:25 2576: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/22 12:50:26 2576: WARNING: ============= SUMMARY =================
+05/01/22 12:50:26 2576: WARNING: SUM: Summary of checks and created items:
+05/01/22 12:50:26 2576: WARNING: SUM: checkforce 0
+05/01/22 12:50:26 2576: WARNING: SUM: checkunique 0
+05/01/22 12:50:26 2576: WARNING: SUM: checkwarn 0
+05/01/22 12:50:26 2576: WARNING: SUM: cmacros 0
+05/01/22 12:50:26 2576: WARNING: SUM: conn 18
+05/01/22 12:50:26 2576: WARNING: SUM: errors 2
+05/01/22 12:50:26 2576: WARNING: SUM: genport 0
+05/01/22 12:50:26 2576: WARNING: SUM: hdlfiles 9
+05/01/22 12:50:26 2576: WARNING: SUM: inst 9
+05/01/22 12:50:26 2576: WARNING: SUM: multdriver 0
+05/01/22 12:50:26 2576: WARNING: SUM: nodriver 2
+05/01/22 12:50:26 2576: WARNING: SUM: noload 13
+05/01/22 12:50:26 2576: WARNING: SUM: openports 0
+05/01/22 12:50:26 2576: WARNING: SUM: warnings 4
+05/01/22 12:50:26 2576: WARNING: SUM: === Number of parsed input tables: ===
+05/01/22 12:50:26 2576: WARNING: SUM: conf 0
+05/01/22 12:50:26 2576: WARNING: SUM: hier 1
+05/01/22 12:50:26 2576: WARNING: SUM: conn 1
+05/01/22 12:50:26 2576: WARNING: SUM: io 0
+05/01/22 12:50:26 2576: WARNING: SUM: i2c 0
+05/01/24 18:19:34 2396: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/../open.xls
+05/01/24 18:19:35 2396: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/../open.xls
+05/01/24 18:19:38 2396: WARNING: WARNING: reducing signal %OPEN_5% from type std_ulogic_vector to std_ulogic!
+05/01/24 18:19:39 2396: WARNING: WARNING: reducing signal %OPEN_6% from type std_ulogic_vector to std_ulogic!
+05/01/24 18:19:39 2396: WARNING: WARNING: Detected keyword %OPEN_3% in port got extended!
+05/01/24 18:19:39 2396: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/24 18:19:39 2396: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/24 18:20:02 2396: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/24 18:20:08 2396: WARNING: Rotating 3 old sheets of CONF!
+05/01/24 18:20:17 2396: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/open-mixed.xls
+05/01/24 18:20:18 2396: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open) already opened!
+05/01/24 18:20:18 2396: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/24 18:20:24 2396: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/open-mixed.xls
+05/01/24 18:20:24 2396: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open) already opened!
+05/01/24 18:20:24 2396: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/24 18:20:27 2396: Info: unchanged file inst_a_e-e.vhd
+05/01/24 18:20:27 2396: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/24 18:20:27 2396: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/24 18:20:27 2396: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/24 18:20:27 2396: Info: unchanged file inst_b_e-e.vhd
+05/01/24 18:20:28 2396: Info: unchanged file inst_t_e-e.vhd
+05/01/24 18:20:28 2396: Info: unchanged file inst_a_e-rtl-a.vhd
+05/01/24 18:20:29 2396: Info: unchanged file inst_b_e-rtl-a.vhd
+05/01/24 18:20:29 2396: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/24 18:20:29 2396: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/24 18:20:29 2396: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/24 18:20:29 2396: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/24 18:20:29 2396: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/24 18:20:29 2396: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/24 18:20:29 2396: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/24 18:20:29 2396: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/24 18:20:29 2396: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/24 18:20:29 2396: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/24 18:20:29 2396: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/24 18:20:29 2396: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/24 18:20:29 2396: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/24 18:20:29 2396: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/24 18:20:29 2396: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/24 18:20:29 2396: Info: unchanged file inst_t_e-rtl-a.vhd
+05/01/24 18:20:30 2396: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+05/01/24 18:20:30 2396: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+05/01/24 18:20:31 2396: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+05/01/24 18:20:31 2396: WARNING: ============= SUMMARY =================
+05/01/24 18:20:31 2396: WARNING: SUM: Summary of checks and created items:
+05/01/24 18:20:31 2396: WARNING: SUM: checkforce 0
+05/01/24 18:20:31 2396: WARNING: SUM: checkunique 0
+05/01/24 18:20:31 2396: WARNING: SUM: checkwarn 0
+05/01/24 18:20:31 2396: WARNING: SUM: cmacros 0
+05/01/24 18:20:31 2396: WARNING: SUM: conn 18
+05/01/24 18:20:31 2396: WARNING: SUM: errors 2
+05/01/24 18:20:31 2396: WARNING: SUM: genport 0
+05/01/24 18:20:31 2396: WARNING: SUM: hdlfiles 9
+05/01/24 18:20:31 2396: WARNING: SUM: inst 9
+05/01/24 18:20:31 2396: WARNING: SUM: multdriver 0
+05/01/24 18:20:31 2396: WARNING: SUM: nodriver 2
+05/01/24 18:20:31 2396: WARNING: SUM: noload 13
+05/01/24 18:20:31 2396: WARNING: SUM: openports 0
+05/01/24 18:20:31 2396: WARNING: SUM: warnings 4
+05/01/24 18:20:31 2396: WARNING: SUM: === Number of parsed input tables: ===
+05/01/24 18:20:31 2396: WARNING: SUM: conf 0
+05/01/24 18:20:31 2396: WARNING: SUM: hier 1
+05/01/24 18:20:31 2396: WARNING: SUM: conn 1
+05/01/24 18:20:31 2396: WARNING: SUM: io 0
+05/01/24 18:20:31 2396: WARNING: SUM: i2c 0
+05/01/24 18:20:31 2396: WARNING: SUM: Number of changes in intermediate: 0
+05/01/24 18:20:31 2396: WARNING: SUM: Number of changed files: 0
+05/01/27 08:13:25 2256: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/../open.xls
+05/01/27 08:13:26 2256: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/../open.xls
+05/01/27 08:13:27 2256: WARNING: WARNING: reducing signal %OPEN_5% from type std_ulogic_vector to std_ulogic!
+05/01/27 08:13:27 2256: WARNING: WARNING: reducing signal %OPEN_6% from type std_ulogic_vector to std_ulogic!
+05/01/27 08:13:27 2256: WARNING: WARNING: Detected keyword %OPEN_3% in port got extended!
+05/01/27 08:13:27 2256: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/27 08:13:27 2256: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/27 08:13:28 2256: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/27 08:13:29 2256: WARNING: Rotating 3 old sheets of CONF!
+05/01/27 08:13:32 2256: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/open-mixed.xls
+05/01/27 08:13:32 2256: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open) already opened!
+05/01/27 08:13:32 2256: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/27 08:13:36 2256: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/open-mixed.xls
+05/01/27 08:13:36 2256: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open) already opened!
+05/01/27 08:13:37 2256: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/27 08:13:38 2256: Info: unchanged file inst_a_e-e.vhd
+05/01/27 08:13:38 2256: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:13:38 2256: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:13:38 2256: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:13:38 2256: Info: unchanged file inst_b_e-e.vhd
+05/01/27 08:13:39 2256: Info: unchanged file inst_t_e-e.vhd
+05/01/27 08:13:39 2256: Info: unchanged file inst_a_e-rtl-a.vhd
+05/01/27 08:13:39 2256: Info: unchanged file inst_b_e-rtl-a.vhd
+05/01/27 08:13:39 2256: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/27 08:13:39 2256: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/27 08:13:39 2256: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/27 08:13:39 2256: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/27 08:13:39 2256: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/27 08:13:39 2256: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/27 08:13:39 2256: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/27 08:13:39 2256: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/27 08:13:39 2256: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/27 08:13:39 2256: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/27 08:13:39 2256: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/27 08:13:39 2256: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/27 08:13:39 2256: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/27 08:13:39 2256: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/27 08:13:39 2256: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/27 08:13:39 2256: Info: unchanged file inst_t_e-rtl-a.vhd
+05/01/27 08:13:39 2256: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+05/01/27 08:13:40 2256: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+05/01/27 08:13:40 2256: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+05/01/27 08:13:40 2256: WARNING: ============= SUMMARY =================
+05/01/27 08:13:40 2256: WARNING: SUM: Summary of checks and created items:
+05/01/27 08:13:40 2256: WARNING: SUM: checkforce 0
+05/01/27 08:13:40 2256: WARNING: SUM: checkunique 0
+05/01/27 08:13:40 2256: WARNING: SUM: checkwarn 0
+05/01/27 08:13:40 2256: WARNING: SUM: cmacros 0
+05/01/27 08:13:40 2256: WARNING: SUM: conn 18
+05/01/27 08:13:40 2256: WARNING: SUM: errors 2
+05/01/27 08:13:40 2256: WARNING: SUM: genport 0
+05/01/27 08:13:40 2256: WARNING: SUM: hdlfiles 9
+05/01/27 08:13:40 2256: WARNING: SUM: inst 9
+05/01/27 08:13:41 2256: WARNING: SUM: multdriver 0
+05/01/27 08:13:41 2256: WARNING: SUM: nodriver 2
+05/01/27 08:13:41 2256: WARNING: SUM: noload 13
+05/01/27 08:13:41 2256: WARNING: SUM: openports 0
+05/01/27 08:13:41 2256: WARNING: SUM: warnings 4
+05/01/27 08:13:41 2256: WARNING: SUM: === Number of parsed input tables: ===
+05/01/27 08:13:41 2256: WARNING: SUM: conf 0
+05/01/27 08:13:41 2256: WARNING: SUM: hier 1
+05/01/27 08:13:41 2256: WARNING: SUM: conn 1
+05/01/27 08:13:41 2256: WARNING: SUM: io 0
+05/01/27 08:13:41 2256: WARNING: SUM: i2c 0
+05/01/27 08:13:41 2256: WARNING: SUM: Number of changes in intermediate: 0
+05/01/27 08:13:41 2256: WARNING: SUM: Number of changed files: 0
+05/01/27 08:15:32 636: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/../open.xls
+05/01/27 08:15:32 636: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/../open.xls
+05/01/27 08:15:34 636: WARNING: WARNING: reducing signal %OPEN_5% from type std_ulogic_vector to std_ulogic!
+05/01/27 08:15:34 636: WARNING: WARNING: reducing signal %OPEN_6% from type std_ulogic_vector to std_ulogic!
+05/01/27 08:15:34 636: WARNING: WARNING: Detected keyword %OPEN_3% in port got extended!
+05/01/27 08:15:34 636: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/27 08:15:34 636: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/27 08:15:35 636: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/27 08:15:36 636: WARNING: Rotating 3 old sheets of CONF!
+05/01/27 08:15:39 636: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/open-mixed.xls
+05/01/27 08:15:39 636: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open) already opened!
+05/01/27 08:15:40 636: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/27 08:15:44 636: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/open-mixed.xls
+05/01/27 08:15:45 636: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open) already opened!
+05/01/27 08:15:45 636: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/27 08:15:46 636: Info: unchanged file inst_a_e-e.vhd
+05/01/27 08:15:46 636: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:15:46 636: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:15:46 636: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:15:46 636: Info: unchanged file inst_b_e-e.vhd
+05/01/27 08:15:47 636: Info: unchanged file inst_t_e-e.vhd
+05/01/27 08:15:47 636: Info: unchanged file inst_a_e-rtl-a.vhd
+05/01/27 08:15:47 636: Info: unchanged file inst_b_e-rtl-a.vhd
+05/01/27 08:15:47 636: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/27 08:15:47 636: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/27 08:15:47 636: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/27 08:15:47 636: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/27 08:15:47 636: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/27 08:15:47 636: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/27 08:15:47 636: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/27 08:15:47 636: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/27 08:15:47 636: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/27 08:15:47 636: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/27 08:15:47 636: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/27 08:15:47 636: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/27 08:15:47 636: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/27 08:15:47 636: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/27 08:15:47 636: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/27 08:15:48 636: Info: unchanged file inst_t_e-rtl-a.vhd
+05/01/27 08:15:48 636: Info: unchanged file inst_a_e-rtl-conf-c.vhd
+05/01/27 08:15:48 636: Info: unchanged file inst_b_e-rtl-conf-c.vhd
+05/01/27 08:15:48 636: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+05/01/27 08:15:48 636: WARNING: ============= SUMMARY =================
+05/01/27 08:15:48 636: WARNING: SUM: Summary of checks and created items:
+05/01/27 08:15:48 636: WARNING: SUM: checkforce 0
+05/01/27 08:15:48 636: WARNING: SUM: checkunique 0
+05/01/27 08:15:48 636: WARNING: SUM: checkwarn 0
+05/01/27 08:15:48 636: WARNING: SUM: cmacros 0
+05/01/27 08:15:48 636: WARNING: SUM: conn 18
+05/01/27 08:15:49 636: WARNING: SUM: errors 2
+05/01/27 08:15:49 636: WARNING: SUM: genport 0
+05/01/27 08:15:49 636: WARNING: SUM: hdlfiles 9
+05/01/27 08:15:49 636: WARNING: SUM: inst 9
+05/01/27 08:15:49 636: WARNING: SUM: multdriver 0
+05/01/27 08:15:49 636: WARNING: SUM: nodriver 2
+05/01/27 08:15:49 636: WARNING: SUM: noload 13
+05/01/27 08:15:49 636: WARNING: SUM: openports 0
+05/01/27 08:15:49 636: WARNING: SUM: warnings 4
+05/01/27 08:15:49 636: WARNING: SUM: === Number of parsed input tables: ===
+05/01/27 08:15:49 636: WARNING: SUM: conf 0
+05/01/27 08:15:49 636: WARNING: SUM: hier 1
+05/01/27 08:15:49 636: WARNING: SUM: conn 1
+05/01/27 08:15:49 636: WARNING: SUM: io 0
+05/01/27 08:15:50 636: WARNING: SUM: i2c 0
+05/01/27 08:15:50 636: WARNING: SUM: Number of changes in intermediate: 0
+05/01/27 08:15:50 636: WARNING: SUM: Number of changed files: 0
+05/01/27 08:17:59 620: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/../open.xls
+05/01/27 08:17:59 620: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/../open.xls
+05/01/27 08:18:01 620: WARNING: WARNING: reducing signal %OPEN_5% from type std_ulogic_vector to std_ulogic!
+05/01/27 08:18:01 620: WARNING: WARNING: reducing signal %OPEN_6% from type std_ulogic_vector to std_ulogic!
+05/01/27 08:18:01 620: WARNING: WARNING: Detected keyword %OPEN_3% in port got extended!
+05/01/27 08:18:01 620: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/27 08:18:01 620: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/27 08:18:35 620: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/27 08:18:37 620: WARNING: Rotating 3 old sheets of CONF!
+05/01/27 08:18:40 620: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open) already opened!
+05/01/27 08:18:40 620: WARNING: Rotating 3 old sheets of CONN!
+05/01/27 08:18:42 620: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open) already opened!
+05/01/27 08:18:43 620: WARNING: Rotating 3 old sheets of HIER!
+05/01/27 08:18:45 620: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:18:45 620: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:18:45 620: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:18:46 620: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/27 08:18:46 620: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/27 08:18:46 620: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/27 08:18:46 620: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/27 08:18:46 620: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/27 08:18:46 620: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/27 08:18:46 620: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/27 08:18:46 620: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/27 08:18:46 620: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/27 08:18:46 620: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/27 08:18:46 620: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/27 08:18:46 620: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/27 08:18:46 620: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/27 08:18:46 620: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/27 08:18:46 620: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/27 08:18:48 620: WARNING: ============= SUMMARY =================
+05/01/27 08:18:48 620: WARNING: SUM: Summary of checks and created items:
+05/01/27 08:18:48 620: WARNING: SUM: checkforce 0
+05/01/27 08:18:48 620: WARNING: SUM: checkunique 0
+05/01/27 08:18:49 620: WARNING: SUM: checkwarn 0
+05/01/27 08:18:49 620: WARNING: SUM: cmacros 0
+05/01/27 08:18:49 620: WARNING: SUM: conn 18
+05/01/27 08:18:49 620: WARNING: SUM: errors 2
+05/01/27 08:18:49 620: WARNING: SUM: genport 0
+05/01/27 08:18:49 620: WARNING: SUM: hdlfiles 9
+05/01/27 08:18:50 620: WARNING: SUM: inst 9
+05/01/27 08:18:50 620: WARNING: SUM: multdriver 0
+05/01/27 08:18:50 620: WARNING: SUM: nodriver 2
+05/01/27 08:18:50 620: WARNING: SUM: noload 13
+05/01/27 08:18:51 620: WARNING: SUM: openports 0
+05/01/27 08:18:51 620: WARNING: SUM: warnings 4
+05/01/27 08:18:52 620: WARNING: SUM: === Number of parsed input tables: ===
+05/01/27 08:18:52 620: WARNING: SUM: conf 0
+05/01/27 08:18:52 620: WARNING: SUM: hier 1
+05/01/27 08:18:52 620: WARNING: SUM: conn 1
+05/01/27 08:18:53 620: WARNING: SUM: io 0
+05/01/27 08:18:53 620: WARNING: SUM: i2c 0
+05/01/27 08:21:06 2136: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/../open.xls
+05/01/27 08:21:07 2136: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/../open.xls
+05/01/27 08:21:09 2136: WARNING: WARNING: reducing signal %OPEN_5% from type std_ulogic_vector to std_ulogic!
+05/01/27 08:21:09 2136: WARNING: WARNING: reducing signal %OPEN_6% from type std_ulogic_vector to std_ulogic!
+05/01/27 08:21:09 2136: WARNING: WARNING: Detected keyword %OPEN_3% in port got extended!
+05/01/27 08:21:09 2136: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/27 08:21:09 2136: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/27 08:21:19 2136: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/27 08:21:20 2136: WARNING: Rotating 3 old sheets of CONF!
+05/01/27 08:21:23 2136: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open) already opened!
+05/01/27 08:21:23 2136: WARNING: Rotating 3 old sheets of CONN!
+05/01/27 08:21:24 2136: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open) already opened!
+05/01/27 08:21:25 2136: WARNING: Rotating 3 old sheets of HIER!
+05/01/27 08:21:26 2136: WARNING: Removing old and and diff sheets in file: open-mixed.xls
+05/01/27 08:21:26 2136: WARNING: ERROR: workbook with different path already opened!
+05/01/27 08:21:29 2136: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:21:30 2136: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:21:30 2136: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:21:31 2136: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/27 08:21:31 2136: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/27 08:21:31 2136: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/27 08:21:31 2136: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/27 08:21:31 2136: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/27 08:21:31 2136: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/27 08:21:31 2136: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/27 08:21:31 2136: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/27 08:21:31 2136: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/27 08:21:32 2136: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/27 08:21:32 2136: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/27 08:21:32 2136: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/27 08:21:32 2136: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/27 08:21:32 2136: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/27 08:21:32 2136: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/27 08:21:32 2136: WARNING: ============= SUMMARY =================
+05/01/27 08:21:33 2136: WARNING: SUM: Summary of checks and created items:
+05/01/27 08:21:33 2136: WARNING: SUM: checkforce 0
+05/01/27 08:21:33 2136: WARNING: SUM: checkunique 0
+05/01/27 08:21:33 2136: WARNING: SUM: checkwarn 0
+05/01/27 08:21:34 2136: WARNING: SUM: cmacros 0
+05/01/27 08:21:34 2136: WARNING: SUM: conn 18
+05/01/27 08:21:34 2136: WARNING: SUM: errors 3
+05/01/27 08:21:34 2136: WARNING: SUM: genport 0
+05/01/27 08:21:34 2136: WARNING: SUM: hdlfiles 9
+05/01/27 08:21:34 2136: WARNING: SUM: inst 9
+05/01/27 08:21:34 2136: WARNING: SUM: multdriver 0
+05/01/27 08:21:35 2136: WARNING: SUM: nodriver 2
+05/01/27 08:21:35 2136: WARNING: SUM: noload 13
+05/01/27 08:21:35 2136: WARNING: SUM: openports 0
+05/01/27 08:21:35 2136: WARNING: SUM: warnings 4
+05/01/27 08:21:35 2136: WARNING: SUM: === Number of parsed input tables: ===
+05/01/27 08:21:35 2136: WARNING: SUM: conf 0
+05/01/27 08:21:35 2136: WARNING: SUM: hier 1
+05/01/27 08:21:35 2136: WARNING: SUM: conn 1
+05/01/27 08:21:36 2136: WARNING: SUM: io 0
+05/01/27 08:21:36 2136: WARNING: SUM: i2c 0

@@ -1,0 +1,1105 @@
+04/08/04 13:18:35 2476: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/04 13:18:35 2476: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/04 13:18:36 2476: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/04 13:18:36 2476: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/04 13:18:36 2476: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/04 13:18:36 2476: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/04 13:18:36 2476: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/04 13:18:36 2476: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/04 13:18:37 2476: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/08/04 13:18:37 2476: WARNING: Rotating 3 old sheets of CONF!
+04/08/04 13:18:42 2476: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/04 13:18:42 2476: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/04 13:18:46 2476: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/04 13:18:46 2476: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/04 13:18:48 2476: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/04 13:18:48 2476: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/04 13:18:48 2476: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/04 13:18:48 2476: Info: unchanged file inst_t_e.v
+04/08/04 13:18:48 2476: WARNING: ============= SUMMARY =================
+04/08/04 13:18:48 2476: WARNING: SUM: Summary of checks and created items:
+04/08/04 13:18:49 2476: WARNING: SUM: checkforce 0
+04/08/04 13:18:49 2476: WARNING: SUM: checkunique 0
+04/08/04 13:18:49 2476: WARNING: SUM: checkwarn 0
+04/08/04 13:18:49 2476: WARNING: SUM: cmacros 0
+04/08/04 13:18:49 2476: WARNING: SUM: conn 4
+04/08/04 13:18:49 2476: WARNING: SUM: errors 0
+04/08/04 13:18:49 2476: WARNING: SUM: genport 0
+04/08/04 13:18:49 2476: WARNING: SUM: hdlfiles 1
+04/08/04 13:18:49 2476: WARNING: SUM: inst 9
+04/08/04 13:18:49 2476: WARNING: SUM: multdriver 1
+04/08/04 13:18:49 2476: WARNING: SUM: nodriver 0
+04/08/04 13:18:49 2476: WARNING: SUM: noload 0
+04/08/04 13:18:49 2476: WARNING: SUM: openports 0
+04/08/04 13:18:49 2476: WARNING: SUM: warnings 2
+04/08/04 13:18:50 2476: WARNING: SUM: === Number of parsed input tables: ===
+04/08/04 13:18:50 2476: WARNING: SUM: conf 0
+04/08/04 13:18:50 2476: WARNING: SUM: hier 1
+04/08/04 13:18:50 2476: WARNING: SUM: conn 1
+04/08/04 13:18:50 2476: WARNING: SUM: io 0
+04/08/04 13:18:50 2476: WARNING: SUM: i2c 0
+04/08/04 13:18:50 2476: WARNING: SUM: Number of changes in intermediate: 0
+04/08/04 13:18:50 2476: WARNING: SUM: Number of changed files: 0
+04/08/04 15:09:24 1704: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/04 15:09:25 1704: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/04 15:09:25 1704: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/04 15:09:25 1704: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/04 15:09:25 1704: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/04 15:09:25 1704: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/04 15:09:25 1704: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/04 15:09:25 1704: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/04 15:09:26 1704: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/08/04 15:09:27 1704: WARNING: Rotating 3 old sheets of CONF!
+04/08/04 15:09:31 1704: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/04 15:09:31 1704: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/04 15:09:34 1704: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/04 15:09:34 1704: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/04 15:09:35 1704: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/04 15:09:35 1704: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/04 15:09:35 1704: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/04 15:09:35 1704: Info: unchanged file inst_t_e.v
+04/08/04 15:09:35 1704: WARNING: ============= SUMMARY =================
+04/08/04 15:09:36 1704: WARNING: SUM: Summary of checks and created items:
+04/08/04 15:09:36 1704: WARNING: SUM: checkforce 0
+04/08/04 15:09:36 1704: WARNING: SUM: checkunique 0
+04/08/04 15:09:36 1704: WARNING: SUM: checkwarn 0
+04/08/04 15:09:36 1704: WARNING: SUM: cmacros 0
+04/08/04 15:09:36 1704: WARNING: SUM: conn 4
+04/08/04 15:09:36 1704: WARNING: SUM: errors 0
+04/08/04 15:09:36 1704: WARNING: SUM: genport 0
+04/08/04 15:09:36 1704: WARNING: SUM: hdlfiles 1
+04/08/04 15:09:36 1704: WARNING: SUM: inst 9
+04/08/04 15:09:36 1704: WARNING: SUM: multdriver 1
+04/08/04 15:09:36 1704: WARNING: SUM: nodriver 0
+04/08/04 15:09:37 1704: WARNING: SUM: noload 0
+04/08/04 15:09:37 1704: WARNING: SUM: openports 0
+04/08/04 15:09:37 1704: WARNING: SUM: warnings 2
+04/08/04 15:09:37 1704: WARNING: SUM: === Number of parsed input tables: ===
+04/08/04 15:09:37 1704: WARNING: SUM: conf 0
+04/08/04 15:09:37 1704: WARNING: SUM: hier 1
+04/08/04 15:09:37 1704: WARNING: SUM: conn 1
+04/08/04 15:09:37 1704: WARNING: SUM: io 0
+04/08/04 15:09:37 1704: WARNING: SUM: i2c 0
+04/08/04 15:09:37 1704: WARNING: SUM: Number of changes in intermediate: 0
+04/08/04 15:09:37 1704: WARNING: SUM: Number of changed files: 0
+04/08/04 16:06:43 2204: Reading worksheet CONN of /cygdrive/h/work/mix_new/mix/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/04 16:06:43 2204: Reading worksheet HIER of /cygdrive/h/work/mix_new/mix/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/04 16:06:43 2204: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/04 16:06:43 2204: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/04 16:06:43 2204: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/04 16:06:43 2204: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/04 16:06:44 2204: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/04 16:06:44 2204: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/04 16:06:45 2204: Reading worksheet CONN of /cygdrive/h/work/mix_new/mix/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/04 16:06:47 2204: Reading worksheet HIER of /cygdrive/h/work/mix_new/mix/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/04 16:06:47 2204: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/04 16:06:47 2204: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/04 16:06:47 2204: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/04 16:06:48 2204: Info: unchanged file inst_t_e.v
+04/08/04 16:06:48 2204: WARNING: ============= SUMMARY =================
+04/08/04 16:06:48 2204: WARNING: SUM: Summary of checks and created items:
+04/08/04 16:06:48 2204: WARNING: SUM: checkforce 0
+04/08/04 16:06:48 2204: WARNING: SUM: checkunique 0
+04/08/04 16:06:48 2204: WARNING: SUM: checkwarn 0
+04/08/04 16:06:48 2204: WARNING: SUM: cmacros 0
+04/08/04 16:06:48 2204: WARNING: SUM: conn 4
+04/08/04 16:06:48 2204: WARNING: SUM: errors 0
+04/08/04 16:06:48 2204: WARNING: SUM: genport 0
+04/08/04 16:06:48 2204: WARNING: SUM: hdlfiles 1
+04/08/04 16:06:48 2204: WARNING: SUM: inst 9
+04/08/04 16:06:48 2204: WARNING: SUM: multdriver 1
+04/08/04 16:06:48 2204: WARNING: SUM: nodriver 0
+04/08/04 16:06:48 2204: WARNING: SUM: noload 0
+04/08/04 16:06:49 2204: WARNING: SUM: openports 0
+04/08/04 16:06:49 2204: WARNING: SUM: warnings 2
+04/08/04 16:06:49 2204: WARNING: SUM: === Number of parsed input tables: ===
+04/08/04 16:06:49 2204: WARNING: SUM: conf 0
+04/08/04 16:06:49 2204: WARNING: SUM: hier 1
+04/08/04 16:06:49 2204: WARNING: SUM: conn 1
+04/08/04 16:06:49 2204: WARNING: SUM: io 0
+04/08/04 16:06:49 2204: WARNING: SUM: i2c 0
+04/08/04 16:06:49 2204: WARNING: SUM: Number of changes in intermediate: 0
+04/08/04 16:06:49 2204: WARNING: SUM: Number of changed files: 0
+04/08/05 19:14:56 720: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/05 19:14:56 720: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/05 19:14:56 720: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/05 19:14:57 720: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/05 19:14:57 720: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/05 19:14:57 720: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/05 19:14:57 720: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/05 19:14:57 720: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/05 19:14:58 720: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/08/05 19:14:59 720: WARNING: Rotating 3 old sheets of CONF!
+04/08/05 19:15:03 720: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/05 19:15:03 720: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/05 19:15:09 720: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/05 19:15:09 720: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/05 19:15:10 720: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/05 19:15:10 720: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/05 19:15:10 720: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/05 19:15:11 720: Info: unchanged file inst_t_e.v
+04/08/05 19:15:11 720: WARNING: ============= SUMMARY =================
+04/08/05 19:15:11 720: WARNING: SUM: Summary of checks and created items:
+04/08/05 19:15:11 720: WARNING: SUM: checkforce 0
+04/08/05 19:15:11 720: WARNING: SUM: checkunique 0
+04/08/05 19:15:11 720: WARNING: SUM: checkwarn 0
+04/08/05 19:15:11 720: WARNING: SUM: cmacros 0
+04/08/05 19:15:11 720: WARNING: SUM: conn 4
+04/08/05 19:15:11 720: WARNING: SUM: errors 0
+04/08/05 19:15:11 720: WARNING: SUM: genport 0
+04/08/05 19:15:11 720: WARNING: SUM: hdlfiles 1
+04/08/05 19:15:11 720: WARNING: SUM: inst 9
+04/08/05 19:15:11 720: WARNING: SUM: multdriver 1
+04/08/05 19:15:11 720: WARNING: SUM: nodriver 0
+04/08/05 19:15:11 720: WARNING: SUM: noload 0
+04/08/05 19:15:11 720: WARNING: SUM: openports 0
+04/08/05 19:15:11 720: WARNING: SUM: warnings 2
+04/08/05 19:15:11 720: WARNING: SUM: === Number of parsed input tables: ===
+04/08/05 19:15:11 720: WARNING: SUM: conf 0
+04/08/05 19:15:11 720: WARNING: SUM: hier 1
+04/08/05 19:15:11 720: WARNING: SUM: conn 1
+04/08/05 19:15:11 720: WARNING: SUM: io 0
+04/08/05 19:15:11 720: WARNING: SUM: i2c 0
+04/08/05 19:15:11 720: WARNING: SUM: Number of changes in intermediate: 0
+04/08/05 19:15:11 720: WARNING: SUM: Number of changed files: 0
+04/08/09 11:01:59 2180: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/09 11:01:59 2180: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/09 11:01:59 2180: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/09 11:02:00 2180: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/09 11:02:00 2180: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/09 11:02:00 2180: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/09 11:02:00 2180: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/09 11:02:00 2180: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/09 11:02:00 2180: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/08/09 11:02:01 2180: WARNING: Rotating 3 old sheets of CONF!
+04/08/09 11:02:05 2180: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/09 11:02:05 2180: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/09 11:02:09 2180: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/09 11:02:09 2180: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/09 11:02:10 2180: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/09 11:02:10 2180: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/09 11:02:10 2180: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/09 11:02:10 2180: Info: unchanged file inst_t_e.v
+04/08/09 11:02:10 2180: WARNING: ============= SUMMARY =================
+04/08/09 11:02:11 2180: WARNING: SUM: Summary of checks and created items:
+04/08/09 11:02:11 2180: WARNING: SUM: checkforce 0
+04/08/09 11:02:11 2180: WARNING: SUM: checkunique 0
+04/08/09 11:02:11 2180: WARNING: SUM: checkwarn 0
+04/08/09 11:02:11 2180: WARNING: SUM: cmacros 0
+04/08/09 11:02:11 2180: WARNING: SUM: conn 4
+04/08/09 11:02:11 2180: WARNING: SUM: errors 0
+04/08/09 11:02:12 2180: WARNING: SUM: genport 0
+04/08/09 11:02:12 2180: WARNING: SUM: hdlfiles 1
+04/08/09 11:02:12 2180: WARNING: SUM: inst 9
+04/08/09 11:02:12 2180: WARNING: SUM: multdriver 1
+04/08/09 11:02:12 2180: WARNING: SUM: nodriver 0
+04/08/09 11:02:12 2180: WARNING: SUM: noload 0
+04/08/09 11:02:12 2180: WARNING: SUM: openports 0
+04/08/09 11:02:12 2180: WARNING: SUM: warnings 2
+04/08/09 11:02:12 2180: WARNING: SUM: === Number of parsed input tables: ===
+04/08/09 11:02:12 2180: WARNING: SUM: conf 0
+04/08/09 11:02:12 2180: WARNING: SUM: hier 1
+04/08/09 11:02:12 2180: WARNING: SUM: conn 1
+04/08/09 11:02:13 2180: WARNING: SUM: io 0
+04/08/09 11:02:13 2180: WARNING: SUM: i2c 0
+04/08/09 11:02:13 2180: WARNING: SUM: Number of changes in intermediate: 0
+04/08/09 11:02:13 2180: WARNING: SUM: Number of changed files: 0
+04/08/09 14:34:12 720: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/09 14:34:13 720: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/09 14:34:13 720: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/09 14:34:13 720: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/09 14:34:13 720: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/09 14:34:13 720: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/09 14:34:13 720: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/09 14:34:13 720: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/09 14:34:14 720: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/08/09 14:34:15 720: WARNING: Rotating 3 old sheets of CONF!
+04/08/09 14:34:18 720: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/09 14:34:18 720: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/09 14:34:22 720: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/09 14:34:22 720: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/09 14:34:24 720: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/09 14:34:24 720: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/09 14:34:24 720: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/09 14:34:24 720: Info: unchanged file inst_t_e.v
+04/08/09 14:34:24 720: WARNING: ============= SUMMARY =================
+04/08/09 14:34:24 720: WARNING: SUM: Summary of checks and created items:
+04/08/09 14:34:24 720: WARNING: SUM: checkforce 0
+04/08/09 14:34:24 720: WARNING: SUM: checkunique 0
+04/08/09 14:34:24 720: WARNING: SUM: checkwarn 0
+04/08/09 14:34:24 720: WARNING: SUM: cmacros 0
+04/08/09 14:34:24 720: WARNING: SUM: conn 4
+04/08/09 14:34:24 720: WARNING: SUM: errors 0
+04/08/09 14:34:24 720: WARNING: SUM: genport 0
+04/08/09 14:34:25 720: WARNING: SUM: hdlfiles 1
+04/08/09 14:34:25 720: WARNING: SUM: inst 9
+04/08/09 14:34:25 720: WARNING: SUM: multdriver 1
+04/08/09 14:34:25 720: WARNING: SUM: nodriver 0
+04/08/09 14:34:25 720: WARNING: SUM: noload 0
+04/08/09 14:34:25 720: WARNING: SUM: openports 0
+04/08/09 14:34:25 720: WARNING: SUM: warnings 2
+04/08/09 14:34:25 720: WARNING: SUM: === Number of parsed input tables: ===
+04/08/09 14:34:25 720: WARNING: SUM: conf 0
+04/08/09 14:34:25 720: WARNING: SUM: hier 1
+04/08/09 14:34:25 720: WARNING: SUM: conn 1
+04/08/09 14:34:25 720: WARNING: SUM: io 0
+04/08/09 14:34:25 720: WARNING: SUM: i2c 0
+04/08/09 14:34:25 720: WARNING: SUM: Number of changes in intermediate: 0
+04/08/09 14:34:25 720: WARNING: SUM: Number of changed files: 0
+04/08/09 17:02:28 2312: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/09 17:02:29 2312: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/09 17:02:29 2312: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/09 17:02:29 2312: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/09 17:02:29 2312: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/09 17:02:29 2312: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/09 17:02:29 2312: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/09 17:02:29 2312: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/09 17:02:30 2312: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/08/09 17:02:31 2312: WARNING: Rotating 3 old sheets of CONF!
+04/08/09 17:02:35 2312: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/09 17:02:35 2312: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/09 17:02:39 2312: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/09 17:02:40 2312: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/09 17:02:41 2312: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/09 17:02:41 2312: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/09 17:02:41 2312: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/09 17:02:42 2312: Info: unchanged file inst_t_e.v
+04/08/09 17:02:42 2312: WARNING: ============= SUMMARY =================
+04/08/09 17:02:42 2312: WARNING: SUM: Summary of checks and created items:
+04/08/09 17:02:42 2312: WARNING: SUM: checkforce 0
+04/08/09 17:02:42 2312: WARNING: SUM: checkunique 0
+04/08/09 17:02:42 2312: WARNING: SUM: checkwarn 0
+04/08/09 17:02:42 2312: WARNING: SUM: cmacros 0
+04/08/09 17:02:42 2312: WARNING: SUM: conn 4
+04/08/09 17:02:42 2312: WARNING: SUM: errors 0
+04/08/09 17:02:42 2312: WARNING: SUM: genport 0
+04/08/09 17:02:42 2312: WARNING: SUM: hdlfiles 1
+04/08/09 17:02:42 2312: WARNING: SUM: inst 9
+04/08/09 17:02:43 2312: WARNING: SUM: multdriver 1
+04/08/09 17:02:43 2312: WARNING: SUM: nodriver 0
+04/08/09 17:02:43 2312: WARNING: SUM: noload 0
+04/08/09 17:02:43 2312: WARNING: SUM: openports 0
+04/08/09 17:02:43 2312: WARNING: SUM: warnings 2
+04/08/09 17:02:43 2312: WARNING: SUM: === Number of parsed input tables: ===
+04/08/09 17:02:43 2312: WARNING: SUM: conf 0
+04/08/09 17:02:43 2312: WARNING: SUM: hier 1
+04/08/09 17:02:43 2312: WARNING: SUM: conn 1
+04/08/09 17:02:43 2312: WARNING: SUM: io 0
+04/08/09 17:02:43 2312: WARNING: SUM: i2c 0
+04/08/09 17:02:43 2312: WARNING: SUM: Number of changes in intermediate: 0
+04/08/09 17:02:43 2312: WARNING: SUM: Number of changed files: 0
+04/08/17 14:22:22 2104: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/17 14:22:23 2104: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/17 14:22:23 2104: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/17 14:22:23 2104: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/17 14:22:23 2104: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/17 14:22:23 2104: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/17 14:22:23 2104: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/17 14:22:23 2104: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/17 14:22:24 2104: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/08/17 14:22:25 2104: WARNING: Rotating 3 old sheets of CONF!
+04/08/17 14:22:29 2104: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/17 14:22:29 2104: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/17 14:22:33 2104: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/17 14:22:33 2104: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/17 14:22:34 2104: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/17 14:22:34 2104: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/17 14:22:34 2104: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/17 14:22:34 2104: Info: unchanged file inst_t_e.v
+04/08/17 14:22:35 2104: WARNING: ============= SUMMARY =================
+04/08/17 14:22:35 2104: WARNING: SUM: Summary of checks and created items:
+04/08/17 14:22:35 2104: WARNING: SUM: checkforce 0
+04/08/17 14:22:35 2104: WARNING: SUM: checkunique 0
+04/08/17 14:22:35 2104: WARNING: SUM: checkwarn 0
+04/08/17 14:22:35 2104: WARNING: SUM: cmacros 0
+04/08/17 14:22:35 2104: WARNING: SUM: conn 4
+04/08/17 14:22:35 2104: WARNING: SUM: errors 0
+04/08/17 14:22:35 2104: WARNING: SUM: genport 0
+04/08/17 14:22:35 2104: WARNING: SUM: hdlfiles 1
+04/08/17 14:22:35 2104: WARNING: SUM: inst 9
+04/08/17 14:22:35 2104: WARNING: SUM: multdriver 1
+04/08/17 14:22:35 2104: WARNING: SUM: nodriver 0
+04/08/17 14:22:36 2104: WARNING: SUM: noload 0
+04/08/17 14:22:36 2104: WARNING: SUM: openports 0
+04/08/17 14:22:36 2104: WARNING: SUM: warnings 2
+04/08/17 14:22:36 2104: WARNING: SUM: === Number of parsed input tables: ===
+04/08/17 14:22:36 2104: WARNING: SUM: conf 0
+04/08/17 14:22:36 2104: WARNING: SUM: hier 1
+04/08/17 14:22:36 2104: WARNING: SUM: conn 1
+04/08/17 14:22:36 2104: WARNING: SUM: io 0
+04/08/17 14:22:36 2104: WARNING: SUM: i2c 0
+04/08/17 14:22:36 2104: WARNING: SUM: Number of changes in intermediate: 0
+04/08/17 14:22:36 2104: WARNING: SUM: Number of changed files: 0
+04/08/17 18:01:04 2576: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/17 18:01:04 2576: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/17 18:01:05 2576: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/17 18:01:05 2576: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/17 18:01:05 2576: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/17 18:01:05 2576: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/17 18:01:05 2576: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/17 18:01:05 2576: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/17 18:01:08 2576: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/08/17 18:01:09 2576: WARNING: Rotating 3 old sheets of CONF!
+04/08/17 18:01:13 2576: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/17 18:01:14 2576: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/17 18:01:18 2576: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/17 18:01:18 2576: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/17 18:01:20 2576: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/17 18:01:20 2576: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/17 18:01:20 2576: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/17 18:01:20 2576: Info: unchanged file inst_t_e.v
+04/08/17 18:01:20 2576: WARNING: ============= SUMMARY =================
+04/08/17 18:01:20 2576: WARNING: SUM: Summary of checks and created items:
+04/08/17 18:01:20 2576: WARNING: SUM: checkforce 0
+04/08/17 18:01:20 2576: WARNING: SUM: checkunique 0
+04/08/17 18:01:20 2576: WARNING: SUM: checkwarn 0
+04/08/17 18:01:20 2576: WARNING: SUM: cmacros 0
+04/08/17 18:01:20 2576: WARNING: SUM: conn 4
+04/08/17 18:01:20 2576: WARNING: SUM: errors 0
+04/08/17 18:01:20 2576: WARNING: SUM: genport 0
+04/08/17 18:01:20 2576: WARNING: SUM: hdlfiles 1
+04/08/17 18:01:20 2576: WARNING: SUM: inst 9
+04/08/17 18:01:20 2576: WARNING: SUM: multdriver 1
+04/08/17 18:01:20 2576: WARNING: SUM: nodriver 0
+04/08/17 18:01:20 2576: WARNING: SUM: noload 0
+04/08/17 18:01:20 2576: WARNING: SUM: openports 0
+04/08/17 18:01:20 2576: WARNING: SUM: warnings 2
+04/08/17 18:01:20 2576: WARNING: SUM: === Number of parsed input tables: ===
+04/08/17 18:01:20 2576: WARNING: SUM: conf 0
+04/08/17 18:01:20 2576: WARNING: SUM: hier 1
+04/08/17 18:01:20 2576: WARNING: SUM: conn 1
+04/08/17 18:01:20 2576: WARNING: SUM: io 0
+04/08/17 18:01:20 2576: WARNING: SUM: i2c 0
+04/08/17 18:01:20 2576: WARNING: SUM: Number of changes in intermediate: 0
+04/08/17 18:01:20 2576: WARNING: SUM: Number of changed files: 0
+04/08/18 11:10:25 2096: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/18 11:10:25 2096: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/18 11:10:26 2096: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/18 11:10:26 2096: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/18 11:10:26 2096: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/18 11:10:26 2096: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/18 11:10:26 2096: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/18 11:10:26 2096: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/18 11:10:27 2096: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/08/18 11:10:27 2096: WARNING: Rotating 3 old sheets of CONF!
+04/08/18 11:10:31 2096: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/18 11:10:31 2096: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/18 11:10:35 2096: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/18 11:10:35 2096: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/18 11:10:37 2096: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/18 11:10:37 2096: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/18 11:10:37 2096: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/18 11:10:37 2096: Info: unchanged file inst_t_e.v
+04/08/18 11:10:37 2096: WARNING: ============= SUMMARY =================
+04/08/18 11:10:37 2096: WARNING: SUM: Summary of checks and created items:
+04/08/18 11:10:37 2096: WARNING: SUM: checkforce 0
+04/08/18 11:10:37 2096: WARNING: SUM: checkunique 0
+04/08/18 11:10:37 2096: WARNING: SUM: checkwarn 0
+04/08/18 11:10:37 2096: WARNING: SUM: cmacros 0
+04/08/18 11:10:37 2096: WARNING: SUM: conn 4
+04/08/18 11:10:38 2096: WARNING: SUM: errors 0
+04/08/18 11:10:38 2096: WARNING: SUM: genport 0
+04/08/18 11:10:38 2096: WARNING: SUM: hdlfiles 1
+04/08/18 11:10:38 2096: WARNING: SUM: inst 9
+04/08/18 11:10:38 2096: WARNING: SUM: multdriver 1
+04/08/18 11:10:38 2096: WARNING: SUM: nodriver 0
+04/08/18 11:10:38 2096: WARNING: SUM: noload 0
+04/08/18 11:10:38 2096: WARNING: SUM: openports 0
+04/08/18 11:10:38 2096: WARNING: SUM: warnings 2
+04/08/18 11:10:38 2096: WARNING: SUM: === Number of parsed input tables: ===
+04/08/18 11:10:38 2096: WARNING: SUM: conf 0
+04/08/18 11:10:38 2096: WARNING: SUM: hier 1
+04/08/18 11:10:39 2096: WARNING: SUM: conn 1
+04/08/18 11:10:39 2096: WARNING: SUM: io 0
+04/08/18 11:10:39 2096: WARNING: SUM: i2c 0
+04/08/18 11:10:39 2096: WARNING: SUM: Number of changes in intermediate: 0
+04/08/18 11:10:39 2096: WARNING: SUM: Number of changed files: 0
+04/08/18 12:59:11 2260: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/18 12:59:11 2260: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/08/18 12:59:11 2260: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/08/18 12:59:11 2260: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/08/18 12:59:11 2260: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/08/18 12:59:11 2260: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/08/18 12:59:11 2260: autoreducing port type for signal %OPEN% to std_ulogic
+04/08/18 12:59:11 2260: autoconnecting single signal %OPEN% to bus port open_part13
+04/08/18 12:59:12 2260: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/08/18 12:59:13 2260: WARNING: Rotating 3 old sheets of CONF!
+04/08/18 12:59:17 2260: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/18 12:59:17 2260: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/18 12:59:20 2260: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/08/18 12:59:21 2260: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/18 12:59:22 2260: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/18 12:59:22 2260: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/18 12:59:22 2260: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/08/18 12:59:23 2260: Info: unchanged file inst_t_e.v
+04/08/18 12:59:23 2260: WARNING: ============= SUMMARY =================
+04/08/18 12:59:23 2260: WARNING: SUM: Summary of checks and created items:
+04/08/18 12:59:23 2260: WARNING: SUM: checkforce 0
+04/08/18 12:59:23 2260: WARNING: SUM: checkunique 0
+04/08/18 12:59:23 2260: WARNING: SUM: checkwarn 0
+04/08/18 12:59:23 2260: WARNING: SUM: cmacros 0
+04/08/18 12:59:23 2260: WARNING: SUM: conn 4
+04/08/18 12:59:23 2260: WARNING: SUM: errors 0
+04/08/18 12:59:23 2260: WARNING: SUM: genport 0
+04/08/18 12:59:23 2260: WARNING: SUM: hdlfiles 1
+04/08/18 12:59:23 2260: WARNING: SUM: inst 9
+04/08/18 12:59:23 2260: WARNING: SUM: multdriver 1
+04/08/18 12:59:24 2260: WARNING: SUM: nodriver 0
+04/08/18 12:59:24 2260: WARNING: SUM: noload 0
+04/08/18 12:59:24 2260: WARNING: SUM: openports 0
+04/08/18 12:59:24 2260: WARNING: SUM: warnings 2
+04/08/18 12:59:24 2260: WARNING: SUM: === Number of parsed input tables: ===
+04/08/18 12:59:24 2260: WARNING: SUM: conf 0
+04/08/18 12:59:24 2260: WARNING: SUM: hier 1
+04/08/18 12:59:24 2260: WARNING: SUM: conn 1
+04/08/18 12:59:24 2260: WARNING: SUM: io 0
+04/08/18 12:59:24 2260: WARNING: SUM: i2c 0
+04/08/18 12:59:24 2260: WARNING: SUM: Number of changes in intermediate: 0
+04/08/18 12:59:24 2260: WARNING: SUM: Number of changed files: 0
+04/11/10 09:18:34 2452: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/11/10 09:18:34 2452: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/11/10 09:18:35 2452: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/11/10 09:18:35 2452: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/11/10 09:18:35 2452: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/11/10 09:18:35 2452: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/11/10 09:18:35 2452: autoreducing port type for signal %OPEN% to std_ulogic
+04/11/10 09:18:35 2452: autoconnecting single signal %OPEN% to bus port open_part13
+04/11/10 09:18:36 2452: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/11/10 09:18:36 2452: WARNING: Rotating 3 old sheets of CONF!
+04/11/10 09:18:40 2452: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/11/10 09:18:41 2452: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/11/10 09:18:44 2452: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/11/10 09:18:44 2452: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/11/10 09:18:46 2452: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 09:18:46 2452: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 09:18:46 2452: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 09:18:46 2452: WARNING: Info: file inst_t_e.v has changes!
+04/11/10 09:18:46 2452: WARNING: ============= SUMMARY =================
+04/11/10 09:18:46 2452: WARNING: SUM: Summary of checks and created items:
+04/11/10 09:18:46 2452: WARNING: SUM: checkforce 0
+04/11/10 09:18:46 2452: WARNING: SUM: checkunique 0
+04/11/10 09:18:46 2452: WARNING: SUM: checkwarn 0
+04/11/10 09:18:47 2452: WARNING: SUM: cmacros 0
+04/11/10 09:18:47 2452: WARNING: SUM: conn 4
+04/11/10 09:18:47 2452: WARNING: SUM: errors 0
+04/11/10 09:18:47 2452: WARNING: SUM: genport 0
+04/11/10 09:18:47 2452: WARNING: SUM: hdlfiles 1
+04/11/10 09:18:47 2452: WARNING: SUM: inst 9
+04/11/10 09:18:47 2452: WARNING: SUM: multdriver 1
+04/11/10 09:18:47 2452: WARNING: SUM: nodriver 0
+04/11/10 09:18:47 2452: WARNING: SUM: noload 0
+04/11/10 09:18:47 2452: WARNING: SUM: openports 0
+04/11/10 09:18:47 2452: WARNING: SUM: warnings 2
+04/11/10 09:18:47 2452: WARNING: SUM: === Number of parsed input tables: ===
+04/11/10 09:18:47 2452: WARNING: SUM: conf 0
+04/11/10 09:18:47 2452: WARNING: SUM: hier 1
+04/11/10 09:18:47 2452: WARNING: SUM: conn 1
+04/11/10 09:18:47 2452: WARNING: SUM: io 0
+04/11/10 09:18:47 2452: WARNING: SUM: i2c 0
+04/11/10 09:18:48 2452: WARNING: SUM: Number of changes in intermediate: 0
+04/11/10 09:18:48 2452: WARNING: SUM: Number of changed files: 1
+04/11/10 09:57:09 1452: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/11/10 09:57:09 1452: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/11/10 09:57:10 1452: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/11/10 09:57:10 1452: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/11/10 09:57:10 1452: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/11/10 09:57:10 1452: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/11/10 09:57:10 1452: autoreducing port type for signal %OPEN% to std_ulogic
+04/11/10 09:57:10 1452: autoconnecting single signal %OPEN% to bus port open_part13
+04/11/10 09:57:11 1452: WARNING: File open-mixed.xls already exists! Contents will be changed
+04/11/10 09:57:11 1452: WARNING: Rotating 3 old sheets of CONF!
+04/11/10 09:57:15 1452: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/11/10 09:57:15 1452: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/11/10 09:57:18 1452: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/11/10 09:57:19 1452: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/11/10 09:57:20 1452: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 09:57:20 1452: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 09:57:20 1452: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 09:57:20 1452: Info: unchanged file inst_t_e.v
+04/11/10 09:57:20 1452: WARNING: ============= SUMMARY =================
+04/11/10 09:57:20 1452: WARNING: SUM: Summary of checks and created items:
+04/11/10 09:57:20 1452: WARNING: SUM: checkforce 0
+04/11/10 09:57:21 1452: WARNING: SUM: checkunique 0
+04/11/10 09:57:21 1452: WARNING: SUM: checkwarn 0
+04/11/10 09:57:21 1452: WARNING: SUM: cmacros 0
+04/11/10 09:57:21 1452: WARNING: SUM: conn 4
+04/11/10 09:57:21 1452: WARNING: SUM: errors 0
+04/11/10 09:57:21 1452: WARNING: SUM: genport 0
+04/11/10 09:57:21 1452: WARNING: SUM: hdlfiles 1
+04/11/10 09:57:21 1452: WARNING: SUM: inst 9
+04/11/10 09:57:21 1452: WARNING: SUM: multdriver 1
+04/11/10 09:57:21 1452: WARNING: SUM: nodriver 0
+04/11/10 09:57:21 1452: WARNING: SUM: noload 0
+04/11/10 09:57:21 1452: WARNING: SUM: openports 0
+04/11/10 09:57:22 1452: WARNING: SUM: warnings 2
+04/11/10 09:57:22 1452: WARNING: SUM: === Number of parsed input tables: ===
+04/11/10 09:57:22 1452: WARNING: SUM: conf 0
+04/11/10 09:57:22 1452: WARNING: SUM: hier 1
+04/11/10 09:57:22 1452: WARNING: SUM: conn 1
+04/11/10 09:57:22 1452: WARNING: SUM: io 0
+04/11/10 09:57:22 1452: WARNING: SUM: i2c 0
+04/11/10 09:57:22 1452: WARNING: SUM: Number of changes in intermediate: 0
+04/11/10 09:57:22 1452: WARNING: SUM: Number of changed files: 0
+04/11/10 14:44:27 2340: Reading worksheet CONN of /cygdrive/h/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/11/10 14:44:28 2340: Reading worksheet HIER of /cygdrive/h/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/11/10 14:44:28 2340: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/11/10 14:44:28 2340: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/11/10 14:44:28 2340: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/11/10 14:44:28 2340: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/11/10 14:44:28 2340: autoreducing port type for signal %OPEN% to std_ulogic
+04/11/10 14:44:28 2340: autoconnecting single signal %OPEN% to bus port open_part13
+04/11/10 14:44:30 2340: Reading worksheet CONN of /cygdrive/h/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/11/10 14:44:32 2340: Reading worksheet HIER of /cygdrive/h/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/11/10 14:44:32 2340: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 14:44:32 2340: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 14:44:32 2340: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 14:44:33 2340: Info: unchanged file inst_t_e.v
+04/11/10 14:44:33 2340: WARNING: ============= SUMMARY =================
+04/11/10 14:44:33 2340: WARNING: SUM: Summary of checks and created items:
+04/11/10 14:44:33 2340: WARNING: SUM: checkforce 0
+04/11/10 14:44:33 2340: WARNING: SUM: checkunique 0
+04/11/10 14:44:33 2340: WARNING: SUM: checkwarn 0
+04/11/10 14:44:33 2340: WARNING: SUM: cmacros 0
+04/11/10 14:44:33 2340: WARNING: SUM: conn 4
+04/11/10 14:44:33 2340: WARNING: SUM: errors 0
+04/11/10 14:44:33 2340: WARNING: SUM: genport 0
+04/11/10 14:44:33 2340: WARNING: SUM: hdlfiles 1
+04/11/10 14:44:33 2340: WARNING: SUM: inst 9
+04/11/10 14:44:33 2340: WARNING: SUM: multdriver 1
+04/11/10 14:44:33 2340: WARNING: SUM: nodriver 0
+04/11/10 14:44:34 2340: WARNING: SUM: noload 0
+04/11/10 14:44:34 2340: WARNING: SUM: openports 0
+04/11/10 14:44:34 2340: WARNING: SUM: warnings 2
+04/11/10 14:44:34 2340: WARNING: SUM: === Number of parsed input tables: ===
+04/11/10 14:44:34 2340: WARNING: SUM: conf 0
+04/11/10 14:44:34 2340: WARNING: SUM: hier 1
+04/11/10 14:44:34 2340: WARNING: SUM: conn 1
+04/11/10 14:44:34 2340: WARNING: SUM: io 0
+04/11/10 14:44:34 2340: WARNING: SUM: i2c 0
+04/11/10 14:44:35 2340: WARNING: SUM: Number of changes in intermediate: 0
+04/11/10 14:44:35 2340: WARNING: SUM: Number of changed files: 0
+04/11/10 17:14:04 1620: Reading worksheet CONN of /cygdrive/h/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/11/10 17:14:04 1620: Reading worksheet HIER of /cygdrive/h/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+04/11/10 17:14:05 1620: WARNING: WARNING: Detected keyword %OPEN% in port got replaced!
+04/11/10 17:14:05 1620: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+04/11/10 17:14:05 1620: autoconnecting single signal %OPEN% to bus port open_in_bus_10
+04/11/10 17:14:05 1620: autoconnecting single signal %OPEN% to bus port open_bus_9
+04/11/10 17:14:05 1620: autoreducing port type for signal %OPEN% to std_ulogic
+04/11/10 17:14:05 1620: autoconnecting single signal %OPEN% to bus port open_part13
+04/11/10 17:14:07 1620: Reading worksheet CONN of /cygdrive/h/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/11/10 17:14:09 1620: Reading worksheet HIER of /cygdrive/h/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+04/11/10 17:14:09 1620: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 17:14:09 1620: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 17:14:09 1620: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+04/11/10 17:14:09 1620: Info: unchanged file inst_t_e.v
+04/11/10 17:14:09 1620: WARNING: ============= SUMMARY =================
+04/11/10 17:14:09 1620: WARNING: SUM: Summary of checks and created items:
+04/11/10 17:14:09 1620: WARNING: SUM: checkforce 0
+04/11/10 17:14:09 1620: WARNING: SUM: checkunique 0
+04/11/10 17:14:09 1620: WARNING: SUM: checkwarn 0
+04/11/10 17:14:09 1620: WARNING: SUM: cmacros 0
+04/11/10 17:14:10 1620: WARNING: SUM: conn 4
+04/11/10 17:14:10 1620: WARNING: SUM: errors 0
+04/11/10 17:14:10 1620: WARNING: SUM: genport 0
+04/11/10 17:14:10 1620: WARNING: SUM: hdlfiles 1
+04/11/10 17:14:10 1620: WARNING: SUM: inst 9
+04/11/10 17:14:10 1620: WARNING: SUM: multdriver 1
+04/11/10 17:14:10 1620: WARNING: SUM: nodriver 0
+04/11/10 17:14:11 1620: WARNING: SUM: noload 0
+04/11/10 17:14:11 1620: WARNING: SUM: openports 0
+04/11/10 17:14:11 1620: WARNING: SUM: warnings 2
+04/11/10 17:14:11 1620: WARNING: SUM: === Number of parsed input tables: ===
+04/11/10 17:14:11 1620: WARNING: SUM: conf 0
+04/11/10 17:14:11 1620: WARNING: SUM: hier 1
+04/11/10 17:14:11 1620: WARNING: SUM: conn 1
+04/11/10 17:14:11 1620: WARNING: SUM: io 0
+04/11/10 17:14:11 1620: WARNING: SUM: i2c 0
+04/11/10 17:14:12 1620: WARNING: SUM: Number of changes in intermediate: 0
+04/11/10 17:14:12 1620: WARNING: SUM: Number of changed files: 0
+05/01/13 10:15:39 2948: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+05/01/13 10:15:39 2948: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/../../open.xls
+05/01/13 10:15:40 2948: WARNING: WARNING: reducing signal %OPEN_5% from mode std_ulogic_vector to std_ulogic!
+05/01/13 10:15:41 2948: WARNING: WARNING: reducing signal %OPEN_6% from mode std_ulogic_vector to std_ulogic!
+05/01/13 10:15:41 2948: WARNING: WARNING: Detected keyword %OPEN_3% in port got extended!
+05/01/13 10:15:41 2948: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/13 10:15:41 2948: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/13 10:15:41 2948: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/13 10:15:42 2948: WARNING: Rotating 3 old sheets of CONF!
+05/01/13 10:15:47 2948: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+05/01/13 10:15:47 2948: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/13 10:15:52 2948: WARNING: INFO: Detected 15 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/13 10:15:54 2948: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/open/verilog_ndmy/open-mixed.xls
+05/01/13 10:15:54 2948: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/13 10:15:55 2948: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 10:15:55 2948: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 10:15:55 2948: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/13 10:15:56 2948: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/13 10:15:56 2948: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/13 10:15:56 2948: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/13 10:15:56 2948: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/13 10:15:56 2948: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/13 10:15:56 2948: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/13 10:15:56 2948: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/13 10:15:56 2948: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/13 10:15:56 2948: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/13 10:15:56 2948: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/13 10:15:56 2948: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/13 10:15:56 2948: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/13 10:15:56 2948: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/13 10:15:56 2948: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/13 10:15:56 2948: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/13 10:15:56 2948: WARNING: Info: file inst_t_e.v has changes!
+05/01/13 10:15:56 2948: WARNING: ============= SUMMARY =================
+05/01/13 10:15:56 2948: WARNING: SUM: Summary of checks and created items:
+05/01/13 10:15:56 2948: WARNING: SUM: checkforce 0
+05/01/13 10:15:56 2948: WARNING: SUM: checkunique 0
+05/01/13 10:15:56 2948: WARNING: SUM: checkwarn 0
+05/01/13 10:15:56 2948: WARNING: SUM: cmacros 0
+05/01/13 10:15:56 2948: WARNING: SUM: conn 18
+05/01/13 10:15:56 2948: WARNING: SUM: errors 0
+05/01/13 10:15:56 2948: WARNING: SUM: genport 0
+05/01/13 10:15:57 2948: WARNING: SUM: hdlfiles 1
+05/01/13 10:15:57 2948: WARNING: SUM: inst 9
+05/01/13 10:15:57 2948: WARNING: SUM: multdriver 0
+05/01/13 10:15:57 2948: WARNING: SUM: nodriver 2
+05/01/13 10:15:57 2948: WARNING: SUM: noload 13
+05/01/13 10:15:57 2948: WARNING: SUM: openports 0
+05/01/13 10:15:57 2948: WARNING: SUM: warnings 4
+05/01/13 10:15:57 2948: WARNING: SUM: === Number of parsed input tables: ===
+05/01/13 10:15:57 2948: WARNING: SUM: conf 0
+05/01/13 10:15:57 2948: WARNING: SUM: hier 1
+05/01/13 10:15:57 2948: WARNING: SUM: conn 1
+05/01/13 10:15:57 2948: WARNING: SUM: io 0
+05/01/13 10:15:57 2948: WARNING: SUM: i2c 0
+05/01/13 10:15:57 2948: WARNING: SUM: Number of changes in intermediate: 15
+05/01/13 10:15:57 2948: WARNING: SUM: Number of changed files: 1
+05/01/21 09:01:26 2144: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/../../open.xls
+05/01/21 09:01:26 2144: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/../../open.xls
+05/01/21 09:01:27 2144: WARNING: WARNING: reducing signal %OPEN_5% from mode std_ulogic_vector to std_ulogic!
+05/01/21 09:01:27 2144: WARNING: WARNING: reducing signal %OPEN_6% from mode std_ulogic_vector to std_ulogic!
+05/01/21 09:01:27 2144: WARNING: WARNING: Detected keyword %OPEN_3% in port got extended!
+05/01/21 09:01:27 2144: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/21 09:01:27 2144: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/21 09:01:34 2144: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/21 09:01:35 2144: WARNING: Rotating 3 old sheets of CONF!
+05/01/21 09:01:39 2144: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/open-mixed.xls
+05/01/21 09:01:39 2144: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open\verilog_ndmy) already opened!
+05/01/21 09:01:39 2144: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/21 09:01:43 2144: WARNING: INFO: Detected 15 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/21 09:01:45 2144: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/open-mixed.xls
+05/01/21 09:01:45 2144: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open\verilog_ndmy) already opened!
+05/01/21 09:01:45 2144: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/21 09:01:47 2144: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/21 09:01:47 2144: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/21 09:01:47 2144: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/21 09:01:47 2144: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/21 09:01:47 2144: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/21 09:01:47 2144: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/21 09:01:47 2144: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/21 09:01:47 2144: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/21 09:01:47 2144: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/21 09:01:47 2144: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/21 09:01:47 2144: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/21 09:01:47 2144: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/21 09:01:47 2144: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/21 09:01:47 2144: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/21 09:01:47 2144: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/21 09:01:47 2144: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/21 09:01:47 2144: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/21 09:01:47 2144: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/21 09:01:47 2144: WARNING: Info: file inst_t_e.v has changes!
+05/01/21 09:01:47 2144: WARNING: ============= SUMMARY =================
+05/01/21 09:01:47 2144: WARNING: SUM: Summary of checks and created items:
+05/01/21 09:01:47 2144: WARNING: SUM: checkforce 0
+05/01/21 09:01:47 2144: WARNING: SUM: checkunique 0
+05/01/21 09:01:47 2144: WARNING: SUM: checkwarn 0
+05/01/21 09:01:47 2144: WARNING: SUM: cmacros 0
+05/01/21 09:01:47 2144: WARNING: SUM: conn 18
+05/01/21 09:01:47 2144: WARNING: SUM: errors 2
+05/01/21 09:01:47 2144: WARNING: SUM: genport 0
+05/01/21 09:01:47 2144: WARNING: SUM: hdlfiles 1
+05/01/21 09:01:47 2144: WARNING: SUM: inst 9
+05/01/21 09:01:47 2144: WARNING: SUM: multdriver 0
+05/01/21 09:01:47 2144: WARNING: SUM: nodriver 2
+05/01/21 09:01:47 2144: WARNING: SUM: noload 13
+05/01/21 09:01:47 2144: WARNING: SUM: openports 0
+05/01/21 09:01:47 2144: WARNING: SUM: warnings 4
+05/01/21 09:01:47 2144: WARNING: SUM: === Number of parsed input tables: ===
+05/01/21 09:01:47 2144: WARNING: SUM: conf 0
+05/01/21 09:01:47 2144: WARNING: SUM: hier 1
+05/01/21 09:01:47 2144: WARNING: SUM: conn 1
+05/01/21 09:01:47 2144: WARNING: SUM: io 0
+05/01/21 09:01:47 2144: WARNING: SUM: i2c 0
+05/01/21 09:01:47 2144: WARNING: SUM: Number of changes in intermediate: 15
+05/01/21 09:01:47 2144: WARNING: SUM: Number of changed files: 1
+05/01/22 12:35:34 2536: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/../../open.xls
+05/01/22 12:35:35 2536: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/../../open.xls
+05/01/22 12:35:37 2536: WARNING: WARNING: reducing signal %OPEN_5% from type std_ulogic_vector to std_ulogic!
+05/01/22 12:35:37 2536: WARNING: WARNING: reducing signal %OPEN_6% from type std_ulogic_vector to std_ulogic!
+05/01/22 12:35:37 2536: WARNING: WARNING: Detected keyword %OPEN_3% in port got extended!
+05/01/22 12:35:37 2536: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/22 12:35:37 2536: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/22 12:35:45 2536: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/22 12:36:05 2536: WARNING: Rotating 3 old sheets of CONF!
+05/01/22 12:36:23 2536: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/open-mixed.xls
+05/01/22 12:36:30 2536: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open\verilog_ndmy) already opened!
+05/01/22 12:36:30 2536: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/22 12:36:41 2536: WARNING: INFO: Detected 15 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/22 12:36:48 2536: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/open-mixed.xls
+05/01/22 12:36:48 2536: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open\verilog_ndmy) already opened!
+05/01/22 12:36:48 2536: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/22 12:36:55 2536: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/22 12:36:55 2536: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/22 12:36:55 2536: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/22 12:36:57 2536: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/22 12:36:57 2536: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/22 12:36:57 2536: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/22 12:36:57 2536: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/22 12:36:57 2536: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/22 12:36:57 2536: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/22 12:36:57 2536: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/22 12:36:57 2536: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/22 12:36:57 2536: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/22 12:36:57 2536: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/22 12:36:57 2536: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/22 12:36:57 2536: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/22 12:36:57 2536: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/22 12:36:57 2536: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/22 12:36:57 2536: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/22 12:36:57 2536: WARNING: Info: file inst_t_e.v has changes!
+05/01/22 12:36:58 2536: WARNING: ============= SUMMARY =================
+05/01/22 12:36:58 2536: WARNING: SUM: Summary of checks and created items:
+05/01/22 12:36:58 2536: WARNING: SUM: checkforce 0
+05/01/22 12:36:58 2536: WARNING: SUM: checkunique 0
+05/01/22 12:36:58 2536: WARNING: SUM: checkwarn 0
+05/01/22 12:36:58 2536: WARNING: SUM: cmacros 0
+05/01/22 12:36:58 2536: WARNING: SUM: conn 18
+05/01/22 12:36:58 2536: WARNING: SUM: errors 2
+05/01/22 12:36:58 2536: WARNING: SUM: genport 0
+05/01/22 12:36:58 2536: WARNING: SUM: hdlfiles 1
+05/01/22 12:36:58 2536: WARNING: SUM: inst 9
+05/01/22 12:36:58 2536: WARNING: SUM: multdriver 0
+05/01/22 12:36:58 2536: WARNING: SUM: nodriver 2
+05/01/22 12:36:58 2536: WARNING: SUM: noload 13
+05/01/22 12:36:58 2536: WARNING: SUM: openports 0
+05/01/22 12:36:58 2536: WARNING: SUM: warnings 4
+05/01/22 12:36:58 2536: WARNING: SUM: === Number of parsed input tables: ===
+05/01/22 12:36:58 2536: WARNING: SUM: conf 0
+05/01/22 12:36:58 2536: WARNING: SUM: hier 1
+05/01/22 12:36:58 2536: WARNING: SUM: conn 1
+05/01/22 12:36:58 2536: WARNING: SUM: io 0
+05/01/22 12:36:58 2536: WARNING: SUM: i2c 0
+05/01/22 12:36:58 2536: WARNING: SUM: Number of changes in intermediate: 15
+05/01/22 12:36:58 2536: WARNING: SUM: Number of changed files: 1
+05/01/24 18:22:18 2560: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/../../open.xls
+05/01/24 18:22:19 2560: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/../../open.xls
+05/01/24 18:22:20 2560: WARNING: WARNING: reducing signal %OPEN_5% from type std_ulogic_vector to std_ulogic!
+05/01/24 18:22:21 2560: WARNING: WARNING: reducing signal %OPEN_6% from type std_ulogic_vector to std_ulogic!
+05/01/24 18:22:21 2560: WARNING: WARNING: Detected keyword %OPEN_3% in port got extended!
+05/01/24 18:22:21 2560: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/24 18:22:21 2560: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/24 18:22:26 2560: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/24 18:22:27 2560: WARNING: Rotating 3 old sheets of CONF!
+05/01/24 18:22:32 2560: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/open-mixed.xls
+05/01/24 18:22:33 2560: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open\verilog_ndmy) already opened!
+05/01/24 18:22:33 2560: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/24 18:22:39 2560: WARNING: INFO: Detected 15 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/24 18:22:41 2560: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/open-mixed.xls
+05/01/24 18:22:41 2560: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open\verilog_ndmy) already opened!
+05/01/24 18:22:41 2560: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/24 18:22:43 2560: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/24 18:22:43 2560: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/24 18:22:44 2560: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/24 18:22:44 2560: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/24 18:22:44 2560: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/24 18:22:44 2560: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/24 18:22:44 2560: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/24 18:22:44 2560: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/24 18:22:44 2560: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/24 18:22:44 2560: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/24 18:22:44 2560: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/24 18:22:44 2560: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/24 18:22:44 2560: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/24 18:22:44 2560: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/24 18:22:44 2560: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/24 18:22:44 2560: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/24 18:22:44 2560: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/24 18:22:44 2560: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/24 18:22:44 2560: WARNING: Info: file inst_t_e.v has changes!
+05/01/24 18:22:44 2560: WARNING: ============= SUMMARY =================
+05/01/24 18:22:44 2560: WARNING: SUM: Summary of checks and created items:
+05/01/24 18:22:44 2560: WARNING: SUM: checkforce 0
+05/01/24 18:22:44 2560: WARNING: SUM: checkunique 0
+05/01/24 18:22:44 2560: WARNING: SUM: checkwarn 0
+05/01/24 18:22:44 2560: WARNING: SUM: cmacros 0
+05/01/24 18:22:44 2560: WARNING: SUM: conn 18
+05/01/24 18:22:44 2560: WARNING: SUM: errors 2
+05/01/24 18:22:44 2560: WARNING: SUM: genport 0
+05/01/24 18:22:44 2560: WARNING: SUM: hdlfiles 1
+05/01/24 18:22:44 2560: WARNING: SUM: inst 9
+05/01/24 18:22:44 2560: WARNING: SUM: multdriver 0
+05/01/24 18:22:44 2560: WARNING: SUM: nodriver 2
+05/01/24 18:22:44 2560: WARNING: SUM: noload 13
+05/01/24 18:22:44 2560: WARNING: SUM: openports 0
+05/01/24 18:22:44 2560: WARNING: SUM: warnings 4
+05/01/24 18:22:44 2560: WARNING: SUM: === Number of parsed input tables: ===
+05/01/24 18:22:44 2560: WARNING: SUM: conf 0
+05/01/24 18:22:44 2560: WARNING: SUM: hier 1
+05/01/24 18:22:44 2560: WARNING: SUM: conn 1
+05/01/24 18:22:44 2560: WARNING: SUM: io 0
+05/01/24 18:22:44 2560: WARNING: SUM: i2c 0
+05/01/24 18:22:44 2560: WARNING: SUM: Number of changes in intermediate: 15
+05/01/24 18:22:44 2560: WARNING: SUM: Number of changed files: 1
+05/01/27 08:14:11 1836: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/../../open.xls
+05/01/27 08:14:12 1836: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/../../open.xls
+05/01/27 08:14:13 1836: WARNING: WARNING: reducing signal %OPEN_5% from type std_ulogic_vector to std_ulogic!
+05/01/27 08:14:13 1836: WARNING: WARNING: reducing signal %OPEN_6% from type std_ulogic_vector to std_ulogic!
+05/01/27 08:14:13 1836: WARNING: WARNING: Detected keyword %OPEN_3% in port got extended!
+05/01/27 08:14:13 1836: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/27 08:14:13 1836: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/27 08:14:14 1836: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/27 08:14:15 1836: WARNING: Rotating 3 old sheets of CONF!
+05/01/27 08:14:18 1836: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/open-mixed.xls
+05/01/27 08:14:18 1836: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open\verilog_ndmy) already opened!
+05/01/27 08:14:18 1836: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/27 08:14:22 1836: WARNING: INFO: Detected 15 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/27 08:14:25 1836: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/open-mixed.xls
+05/01/27 08:14:25 1836: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open\verilog_ndmy) already opened!
+05/01/27 08:14:25 1836: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/27 08:14:27 1836: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:14:27 1836: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:14:27 1836: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:14:27 1836: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/27 08:14:27 1836: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/27 08:14:27 1836: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/27 08:14:27 1836: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/27 08:14:27 1836: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/27 08:14:28 1836: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/27 08:14:28 1836: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/27 08:14:28 1836: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/27 08:14:28 1836: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/27 08:14:28 1836: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/27 08:14:28 1836: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/27 08:14:28 1836: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/27 08:14:28 1836: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/27 08:14:28 1836: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/27 08:14:28 1836: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/27 08:14:28 1836: WARNING: Info: file inst_t_e.v has changes!
+05/01/27 08:14:28 1836: WARNING: ============= SUMMARY =================
+05/01/27 08:14:28 1836: WARNING: SUM: Summary of checks and created items:
+05/01/27 08:14:28 1836: WARNING: SUM: checkforce 0
+05/01/27 08:14:28 1836: WARNING: SUM: checkunique 0
+05/01/27 08:14:28 1836: WARNING: SUM: checkwarn 0
+05/01/27 08:14:28 1836: WARNING: SUM: cmacros 0
+05/01/27 08:14:29 1836: WARNING: SUM: conn 18
+05/01/27 08:14:29 1836: WARNING: SUM: errors 2
+05/01/27 08:14:29 1836: WARNING: SUM: genport 0
+05/01/27 08:14:29 1836: WARNING: SUM: hdlfiles 1
+05/01/27 08:14:29 1836: WARNING: SUM: inst 9
+05/01/27 08:14:29 1836: WARNING: SUM: multdriver 0
+05/01/27 08:14:29 1836: WARNING: SUM: nodriver 2
+05/01/27 08:14:29 1836: WARNING: SUM: noload 13
+05/01/27 08:14:29 1836: WARNING: SUM: openports 0
+05/01/27 08:14:29 1836: WARNING: SUM: warnings 4
+05/01/27 08:14:29 1836: WARNING: SUM: === Number of parsed input tables: ===
+05/01/27 08:14:29 1836: WARNING: SUM: conf 0
+05/01/27 08:14:29 1836: WARNING: SUM: hier 1
+05/01/27 08:14:30 1836: WARNING: SUM: conn 1
+05/01/27 08:14:30 1836: WARNING: SUM: io 0
+05/01/27 08:14:30 1836: WARNING: SUM: i2c 0
+05/01/27 08:14:30 1836: WARNING: SUM: Number of changes in intermediate: 15
+05/01/27 08:14:30 1836: WARNING: SUM: Number of changed files: 1
+05/01/27 08:16:27 620: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/../../open.xls
+05/01/27 08:16:28 620: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/../../open.xls
+05/01/27 08:16:29 620: WARNING: WARNING: reducing signal %OPEN_5% from type std_ulogic_vector to std_ulogic!
+05/01/27 08:16:29 620: WARNING: WARNING: reducing signal %OPEN_6% from type std_ulogic_vector to std_ulogic!
+05/01/27 08:16:29 620: WARNING: WARNING: Detected keyword %OPEN_3% in port got extended!
+05/01/27 08:16:29 620: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/27 08:16:29 620: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/27 08:16:30 620: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/27 08:16:30 620: WARNING: Rotating 3 old sheets of CONF!
+05/01/27 08:16:37 620: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/open-mixed.xls
+05/01/27 08:16:37 620: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open\verilog_ndmy) already opened!
+05/01/27 08:16:37 620: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/27 08:17:06 620: WARNING: INFO: Detected 15 changes in intermediate sheet CONN, in file open-mixed.xls
+05/01/27 08:17:09 620: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/open-mixed.xls
+05/01/27 08:17:10 620: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open\verilog_ndmy) already opened!
+05/01/27 08:17:10 620: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/27 08:17:19 620: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:17:20 620: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:19:58 620: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/../../open.xls
+05/01/27 08:19:59 620: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/../../open.xls
+05/01/27 08:20:00 620: WARNING: WARNING: reducing signal %OPEN_5% from type std_ulogic_vector to std_ulogic!
+05/01/27 08:20:00 620: WARNING: WARNING: reducing signal %OPEN_6% from type std_ulogic_vector to std_ulogic!
+05/01/27 08:20:00 620: WARNING: WARNING: Detected keyword %OPEN_3% in port got extended!
+05/01/27 08:20:00 620: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/27 08:20:00 620: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/27 08:20:05 620: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/27 08:20:06 620: WARNING: Rotating 3 old sheets of CONF!
+05/01/27 08:20:09 620: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open\verilog_ndmy) already opened!
+05/01/27 08:20:09 620: WARNING: Rotating 3 old sheets of CONN!
+05/01/27 08:20:12 620: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open\verilog_ndmy) already opened!
+05/01/27 08:20:12 620: WARNING: Rotating 3 old sheets of HIER!
+05/01/27 08:20:14 620: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:20:14 620: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:20:14 620: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:20:14 620: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/27 08:20:14 620: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/27 08:20:15 620: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/27 08:20:15 620: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/27 08:20:15 620: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/27 08:20:15 620: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/27 08:20:15 620: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/27 08:20:16 620: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/27 08:20:16 620: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/27 08:20:16 620: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/27 08:20:16 620: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/27 08:20:16 620: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/27 08:20:16 620: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/27 08:20:17 620: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/27 08:20:17 620: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/27 08:20:18 620: WARNING: ============= SUMMARY =================
+05/01/27 08:20:18 620: WARNING: SUM: Summary of checks and created items:
+05/01/27 08:20:18 620: WARNING: SUM: checkforce 0
+05/01/27 08:20:18 620: WARNING: SUM: checkunique 0
+05/01/27 08:20:19 620: WARNING: SUM: checkwarn 0
+05/01/27 08:20:19 620: WARNING: SUM: cmacros 0
+05/01/27 08:20:19 620: WARNING: SUM: conn 18
+05/01/27 08:20:20 620: WARNING: SUM: errors 2
+05/01/27 08:20:20 620: WARNING: SUM: genport 0
+05/01/27 08:20:21 620: WARNING: SUM: hdlfiles 1
+05/01/27 08:20:21 620: WARNING: SUM: inst 9
+05/01/27 08:20:21 620: WARNING: SUM: multdriver 0
+05/01/27 08:20:21 620: WARNING: SUM: nodriver 2
+05/01/27 08:20:21 620: WARNING: SUM: noload 13
+05/01/27 08:20:21 620: WARNING: SUM: openports 0
+05/01/27 08:20:22 620: WARNING: SUM: warnings 4
+05/01/27 08:20:22 620: WARNING: SUM: === Number of parsed input tables: ===
+05/01/27 08:20:22 620: WARNING: SUM: conf 0
+05/01/27 08:20:22 620: WARNING: SUM: hier 1
+05/01/27 08:20:22 620: WARNING: SUM: conn 1
+05/01/27 08:20:23 620: WARNING: SUM: io 0
+05/01/27 08:20:23 620: WARNING: SUM: i2c 0
+05/01/27 08:23:32 2176: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/../../open.xls
+05/01/27 08:23:33 2176: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/open/verilog_ndmy/../../open.xls
+05/01/27 08:23:34 2176: WARNING: WARNING: reducing signal %OPEN_5% from type std_ulogic_vector to std_ulogic!
+05/01/27 08:23:34 2176: WARNING: WARNING: reducing signal %OPEN_6% from type std_ulogic_vector to std_ulogic!
+05/01/27 08:23:34 2176: WARNING: WARNING: Detected keyword %OPEN_3% in port got extended!
+05/01/27 08:23:34 2176: WARNING: WARNING: Signal wire_open has mixed links into instance inst_a!
+05/01/27 08:23:34 2176: Autoexpand port open_part13 from std_ulogic to vector type!
+05/01/27 08:23:37 2176: WARNING: File open-mixed.xls already exists! Contents will be changed
+05/01/27 08:23:38 2176: WARNING: Rotating 3 old sheets of CONF!
+05/01/27 08:23:42 2176: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open\verilog_ndmy) already opened!
+05/01/27 08:23:42 2176: WARNING: Rotating 3 old sheets of CONN!
+05/01/27 08:23:44 2176: WARNING: ERROR: workbook open-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\open\verilog_ndmy) already opened!
+05/01/27 08:23:44 2176: WARNING: Rotating 3 old sheets of HIER!
+05/01/27 08:23:46 2176: WARNING: Removing old and and diff sheets in file: open-mixed.xls
+05/01/27 08:23:46 2176: WARNING: ERROR: workbook with different path already opened!
+05/01/27 08:23:47 2176: INFO: Port open_bit_2 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:23:47 2176: INFO: Port open_bit_3 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:23:47 2176: INFO: Port open_bit_4 of entity inst_b_e one bit wide, reduce to signal
+
+05/01/27 08:23:49 2176: Signal %OPEN_13% does not have a load in instance inst_t!
+05/01/27 08:23:49 2176: Signal %OPEN_11% does not have a load in instance inst_t!
+05/01/27 08:23:49 2176: Signal %OPEN_7% does not have a load in instance inst_t!
+05/01/27 08:23:49 2176: Signal %OPEN_4% does not have a load in instance inst_t!
+05/01/27 08:23:49 2176: Signal %OPEN_3% does not have a load in instance inst_t!
+05/01/27 08:23:49 2176: Signal %OPEN_10% does not have a load in instance inst_t!
+05/01/27 08:23:49 2176: Signal %OPEN_0% does not have a load in instance inst_t!
+05/01/27 08:23:49 2176: Warning: Signal %OPEN_9% does not have a driver in instance inst_t!
+05/01/27 08:23:49 2176: Warning: Signal %OPEN_8% does not have a driver in instance inst_t!
+05/01/27 08:23:49 2176: Signal %OPEN_5% does not have a load in instance inst_t!
+05/01/27 08:23:49 2176: Signal %OPEN_6% does not have a load in instance inst_t!
+05/01/27 08:23:49 2176: Signal %OPEN_2% does not have a load in instance inst_t!
+05/01/27 08:23:49 2176: Signal %OPEN_1% does not have a load in instance inst_t!
+05/01/27 08:23:49 2176: Signal %OPEN_12% does not have a load in instance inst_t!
+05/01/27 08:23:49 2176: Signal %OPEN_14% does not have a load in instance inst_t!
+05/01/27 08:23:50 2176: WARNING: ============= SUMMARY =================
+05/01/27 08:23:50 2176: WARNING: SUM: Summary of checks and created items:
+05/01/27 08:23:50 2176: WARNING: SUM: checkforce 0
+05/01/27 08:23:50 2176: WARNING: SUM: checkunique 0
+05/01/27 08:23:50 2176: WARNING: SUM: checkwarn 0
+05/01/27 08:23:50 2176: WARNING: SUM: cmacros 0
+05/01/27 08:23:50 2176: WARNING: SUM: conn 18
+05/01/27 08:23:50 2176: WARNING: SUM: errors 3
+05/01/27 08:23:51 2176: WARNING: SUM: genport 0
+05/01/27 08:23:51 2176: WARNING: SUM: hdlfiles 1
+05/01/27 08:23:51 2176: WARNING: SUM: inst 9
+05/01/27 08:23:51 2176: WARNING: SUM: multdriver 0
+05/01/27 08:23:51 2176: WARNING: SUM: nodriver 2
+05/01/27 08:23:51 2176: WARNING: SUM: noload 13
+05/01/27 08:23:51 2176: WARNING: SUM: openports 0
+05/01/27 08:23:52 2176: WARNING: SUM: warnings 4
+05/01/27 08:23:52 2176: WARNING: SUM: === Number of parsed input tables: ===
+05/01/27 08:23:52 2176: WARNING: SUM: conf 0
+05/01/27 08:23:52 2176: WARNING: SUM: hier 1
+05/01/27 08:23:52 2176: WARNING: SUM: conn 1
+05/01/27 08:23:52 2176: WARNING: SUM: io 0
+05/01/27 08:23:53 2176: WARNING: SUM: i2c 0
