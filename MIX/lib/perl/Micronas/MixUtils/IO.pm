@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.9 $                                          |
-# | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/12/16 12:36:46 $                              |
+# | Revision:   $Revision: 1.10 $                                          |
+# | Author:     $Author: wig $                                         |
+# | Date:       $Date: 2003/12/18 16:49:45 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.10  2003/12/18 16:49:45  wig
+# | added OLE support
+# |
 # | Revision 1.9  2003/12/16 12:36:46  abauer
 # | fixed csv: backslash before quota in cell
 # |
@@ -86,6 +89,7 @@ require Exporter;
 our $VERSION = '1.0';
 
 use strict;
+# use vars qw( $ex ); # Gets OLE object
 
 # Caveat: relies on proper setting of base, pgmpath and dir in main program!
 use lib "$main::base/";
@@ -104,6 +108,7 @@ use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
 use Micronas::MixUtils qw(:DEFAULT %OPTVAL %EH replace_mac convert_in
 			  select_variant two2one one2two);
 
+#TODO: Load these only if required ...
 use ooolib;
 use Spreadsheet::ParseExcel;
 #use Spreadsheet::WriteExcel;
@@ -111,29 +116,28 @@ use Spreadsheet::ParseExcel;
 
 # Prototypes
 sub close_open_workbooks();
-sub write_delta_excel ($$$);
+sub write_delta_sheet ($$$);
 sub _mix_apply_conf ($$$);
 sub mix_utils_open_input(@);
 sub close_open_workbooks ();
 sub mix_utils_mask_excel ($);
-
+sub windows_path ($);
 
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.9 2003/12/16 12:36:46 abauer Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.10 2003/12/18 16:49:45 wig Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.9 $';
+my $thisrevision    =      '$Revision: 1.10 $';
 
-# Revision:   $Revision: 1.9 $
+# Revision:   $Revision: 1.10 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
 ( $VERSION = $thisrevision ) =~ s,.*Revision:\s*,,; #TODO: Is that a good idea?
 
 
-my $ex;
-
+my $ex = undef;
 
 ###### extra block
 {   # keep this stuff localy
@@ -153,10 +157,17 @@ Remember all Excel or Star(\Open)-Office workbooks we opened
 =cut
 
 sub init_open_workbooks() {
+
+    # unless( defined $ex ) {
+    #	$ex = init_ole();
+    # }
     if(defined $ex) {
-	foreach my $bk ( in $ex->{Workbooks} ) {
+	foreach my $bk ( in( $ex->{'Workbooks'}) ) {
 	    $workbooks{$bk->{'Name'}} = $bk; # Remember that
 	}
+    } else {
+	logwarn( "ERROR: Uninitialized OLE! Cannot read/write XLS files" );
+	    $EH{'sum'}{'errors'}++;
     }
     return;
 }
@@ -265,43 +276,37 @@ Returns a OLE handle or undef if that fails.
 =cut
 
 sub init_ole () {
+    # Start Excel/OLE Server, do it in eval ....
+    unless ( eval 'use Win32::OLE;' ) {
+        # only done on Win32 and if needed ....
+        eval 'use Win32::OLE::Const;
+    	use Win32::OLE qw(in valof with);
+        use Win32::OLE::Const \'Microsoft Excel\';
+        use Win32::OLE::NLS qw(:DEFAULT :LANG :SUBLANG);
+        my $lgid = MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT);
+        $Win32::OLE::LCID = MAKELCID($lgid);
+        $Win32::OLE::Warn = 3;';
+	if ( $@ ) {
+	    logdie "FATAL: eval use Win32 failed: $@";
+        }
 
-# Start Excel/OLE Server, do it in eval ....
-  unless ( eval "use Win32::OLE;" ) {
-#      eval "use Win32::OLE";
-      eval "use Win32::OLE::Const";
-#	eval {
-#	  require "Win32::OLE";
-#	  import Win32:OLE; # qw(in valof with);
-#          require "Win32::OLE::Const";
-#	  import Win32::OLE::Const; # 'Microsoft Excel';
-#          use Win32::OLE::NLS qw(:DEFAULT :LANG :SUBLANG);
-#          my $lgid = MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT);
-#          $Win32::OLE::LCID = MAKELCID($lgid);
-#          $Win32::OLE::Warn = 3;
+	# no strict; # Switch off strict here ...
 
-# 527d535
-# usefull statements from the OLE tutorial ..
-# < # 	  my $Excel = Win32::OLE->GetActiveObject('Excel.Application')
-# < #       || Win32::OLE->new('Excel.Application', 'Quit');
-# < 
-#$Excel->{DisplayAlerts}=0; #Turn off popups ...
- 
-          unless( $ex=Win32::OLE->GetActiveObject('Excel.Application') ) {
-	    # Try to start a new OLE server:
-		unless ( $ex=Win32::OLE->new('Excel.Application', sub {$_[0]->Quit;}) ) {
-		    return undef; # Did not work :-(
-		}
-#          }
-          init_open_workbooks(); # Get list of already open files
-          return $ex;  # Return OLE ExCEL object ....
+	$ex = undef;
+        unless( $ex=Win32::OLE->GetActiveObject('Excel.Application') ) {
+	# Try to start a new OLE server:
+	    unless ( $ex=Win32::OLE->new('Excel.Application', 'Quit' ) ) {
+		logdie "FATAL: Cannot get excel aplication: $!\n";
+		return undef; # Did not work ...
+	    }
 	}
+	# init_open_workbooks();
+	return $ex;
     } else {
-    logdie "FATAL: Cannot fire up OLE server: $!\n";
-    return undef;
-  }
+	logdie "FATAL: Cannot fire up OLE server, use Win32::OLE: $@\n";
+	return undef;
+    }
 }
-
 
 ##############################################################################
 ## mix_sheet_conf
@@ -568,6 +573,7 @@ sub open_infile($$$){
     }
     else {
         logwarn "ERROR: Unknown file extension!\n";
+	$EH{'sum'}{'errors'}++;
 	return undef;
     }
 }
@@ -606,8 +612,7 @@ sub open_xls($$$){
       logwarn( "cannot read <$file> in open_xls!" );
       return undef;
     }
-
-#    $file = path_excel( $file );
+    $file = windows_path( $file );
 
     my $basename = basename( $file ); # s,.*[/\\],,; #Strip off / and \
     my $ro = 1;
@@ -659,6 +664,10 @@ sub open_xls($$$){
 	    # print join(' ; ', @line) ."\n";
 	    @line = ();
         }
+	#!wig20031218: take away trainling empty lines ...
+	while( not join( "", @{$sheet[-1]} ) ) {
+	    pop( @sheet );
+	}
 	push(@all, [@sheet]);
 	@sheet = ();
     }
@@ -989,10 +998,10 @@ sub open_csv($$$) {
 
 
 ####################################################################
-## path_excel
+## windows_path
 ## convert "normal" filename to absolute path, usable for OLE server
 ####################################################################
-=head2 path_excel($)
+=head2 windows_path($)
 
 Take input file name with/out path name and convert it to absolute path
 Replace all / (I prefer to use) by  \ (ExCEL needs)
@@ -1066,7 +1075,6 @@ sub write_delta_sheet($$$) {
 	return;
     }
     #TODO: Put back a single ' for excel ... ???
-
     my @prevd = two2one( $prev[0] );
     my @currd = two2one( $r_a );
 
@@ -1089,6 +1097,11 @@ sub write_delta_sheet($$$) {
 ";
     $head = replace_mac( $head, $EH{'macro'} );
 
+    #!wig20031217: ParseExcel does not deliver the \n (?), so we map those to nothing
+    #  shouldn't matter to much ...
+    # TODO: make that configurable ...
+    # @currd = map( { s,\n,,g},  @currd );
+     
     # Diff it ...
     my $diff = diff( \@currd, \@prevd,
                 { STYLE => "Table",
@@ -1251,8 +1264,21 @@ sub write_xls($$$;$) {
 	my $openflag = 0;
 	my $sheetr = undef;
 
+	# Add extension
 	unless ( $file =~ m/\.xls$/ ) {
 	    $file .= ".xls";
+	}
+
+	# Was OLE already started?
+	unless( $ex ) {
+	# if( ( $^O=~ m/MSWin/ && join( " ", @ARGV)=~ m/\.xls/) || $EH{'format'}{'out'}=~ m/^xls$/ ) {
+	    $ex = init_ole();
+	    unless( $ex ) {
+		logwarn( "ERROR: Cannot initialize OLE, intermediate file $file will written as CSV" );
+		$file=~ s/\.xls$/\.csv/;
+		return write_csv($file, $sheet, $r_a);
+	    }
+	    init_open_workbooks();
 	}
 
 	# Write to other directory ...
@@ -1260,7 +1286,7 @@ sub write_xls($$$;$) {
 	    $file = $EH{'intermediate'}{'path'} . "/" . $file;
 	}
 
-	my $efile = path_excel( $file );
+	my $efile = windows_path( $file );
 	# my $basename = $file;
 	my $basename = basename( $file ); 
 	# ~ s,.*[/\\],,; #TODO: check if Name is basename of filename, always??
@@ -1300,7 +1326,7 @@ sub write_xls($$$;$) {
 	    my %sh = ();
 	    my $s_previous = undef;
 
-	    foreach my $sh ( in $book->{Worksheets} ) {
+	    foreach my $sh ( in( $book->{'Worksheets'} ) ) {
 		$sh{$sh->{'Name'}} = $sh; # Keep links
 	    }
 
@@ -2215,13 +2241,14 @@ sub mix_utils_mask_excel($) {
 	    unless( defined( $ii ) ) {
 		$ii = "";
 		next;
+	    } elsif ( length( $ii ) > 1200 ) { #!wig20031215: 1200 will be accepted by Excel
+		logwarn( "WARNING: Limit length of cell to save 1200 characters: " .
+			substr( $ii, 0, 32 ) );
+		$EH{'sum'}{'warnings'}++;
+		$ii = substr( $ii, 0, 1200 );
+		substr( $ii, 1191, 9 ) = "__ERROR__"; # Attach __ERROR__ to string!
 	    }
-	    if ( $ii =~ m/^[\d.,]+$/ ) {
-		# Put a double ' ' in front of pure digits ...
-		$ii = "'" . $ii;
-	    } elsif ( $ii =~ m/^'/ ) { #'
-		      $ii = "'" . $ii;
-	    }
+	    $ii = "'" . $ii if ( $ii =~ m!^\s*[.,='"\d]! ); # Put a 'tick' in front of ExCEL special character  ....
 	}
     }
 }
