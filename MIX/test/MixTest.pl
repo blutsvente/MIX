@@ -1,7 +1,8 @@
-#!/bin/sh --
+#!/bin/sh -- #! -*- perl -*- -w
 #! -*- perl -*- -w
 eval 'exec ${PERL:-`[ ! -d $HOME/bin/perl -a -x $HOME/bin/perl ] && echo $HOME/bin/perl || { [ -x /usr/bin/perl ] && echo /usr/bin/perl || echo /usr/local/bin/perl ; } `} -x -S $0 ${1+"$@"} ;'
 if 0; # dynamic perl startup; suppress preceding line in perl
+#line 6
 
 #######################################################################
 #                MixTest - Test script for Mix                        #
@@ -183,14 +184,19 @@ my @tests = (
 	  'path' => "io/verilog",
 	  'options' => "",
 	},
-	{
+	{ # VHDL Generics/Parameters
 	  'name' => "generic",
 	  'path' => "generic",
 	  'options' => "",
 	},
-	{
+	{ # Verilog Parameters
 	  'name' => "generic",
 	  'path' => "generic/verilog",
+	  'options' => "",
+	},
+	{ # Verilog over VHD with Parameters
+	  'name' => "generic",
+	  'path' => "generic/veriovhd",
 	  'options' => "",
 	},
 	{
