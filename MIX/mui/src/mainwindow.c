@@ -1202,8 +1202,6 @@ const char* create_file_dialog(const char *title) {
 	struct stat statvar;
 	os_filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(file_dialog));
 
-	// Todo: check if file exists	if(stat(os_filename, &statvar)!=0) return NULL;
-
 	return os_filename;
     }
     return NULL;
@@ -1278,9 +1276,7 @@ void about_destroy(GtkWidget *w, gpointer d)
 void create_info_dialog(char *title, char *message)
 {
     GtkWidget *info_dialog, *label;
-
     info_dialog = gtk_dialog_new();
-
     info_dialog = gtk_dialog_new_with_buttons( title, GTK_WINDOW(get_mainwindow()),
                                          GTK_DIALOG_DESTROY_WITH_PARENT,
                                          GTK_STOCK_OK,
@@ -1295,4 +1291,29 @@ void create_info_dialog(char *title, char *message)
 
     gtk_dialog_run(GTK_DIALOG(info_dialog));
     gtk_widget_destroy(info_dialog);
+}
+
+
+gboolean create_quest_dialog(char *title, char *message)
+{
+    int rc;
+    GtkWidget *quest_dialog, *label;
+    quest_dialog = gtk_dialog_new();
+    quest_dialog = gtk_dialog_new_with_buttons(title, GTK_WINDOW(get_mainwindow()),
+					       GTK_DIALOG_DESTROY_WITH_PARENT,
+					       GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
+					       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					       NULL);
+    label = gtk_label_new(message);
+    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(quest_dialog)->vbox), label, TRUE, TRUE, 0);
+    gtk_widget_show(label);
+
+    gtk_widget_show(quest_dialog);
+
+    rc = gtk_dialog_run(GTK_DIALOG(quest_dialog));
+    gtk_widget_destroy(quest_dialog);
+    if(rc == GTK_RESPONSE_ACCEPT)
+	return TRUE;
+    else
+	return FALSE;
 }

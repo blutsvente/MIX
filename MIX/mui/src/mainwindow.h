@@ -67,5 +67,10 @@ void create_about_dialog(void);
  */
 void create_info_dialog(char *title, char *message);
 
+/**
+ * create a question dialog box
+ */
+gboolean create_quest_dialog(char *title, char *message);
+
 
 #endif

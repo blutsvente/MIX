@@ -30,53 +30,93 @@
 
 void on_mainwin_destroy(GtkObject *object, gpointer user_data)
 {
-    // TODO: save project if needed
-    /*if(modified) {
-      show_quest_save_dialog();
-      }*/
+    // save project if needed
+    if(mix_get_modified()) {
+	if(create_quest_dialog("Warning", "\n  File has been modified!  \n  Save modifications?  \n") == TRUE)
+	    if(!mix_writeSpreadsheet((const char*) mix_get_filename()))
+		create_info_dialog("Error", "\n  Could not save File!  \n");
+    }
 
+    int stage = mix_get_stage();
+    if(stage > MIX_NO_INIT) {
+	mix_destroy();
+	if(stage > MIX_INIT)
+	    mix_free_filename();
+    }
     gtk_main_quit();
 }
 
 gboolean on_mainwin_delete_event(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
-  return FALSE;
+    return FALSE;
 }
 
 void on_new_file_item(GtkMenuItem *menuitem, gpointer user_data)
 {
+    if(mix_get_stage() >= MIX_READ_IN) {
+	mix_free_filename();
+    }
+
     if(create_file_dialog("New Project") != NULL) {
-	// TODO: create new project
-	// new_project();
+	// create new project
+	new_project();
     }
 }
 
 void on_open_file_item(GtkMenuItem *menuitem, gpointer user_data)
 {
-    if(create_file_dialog("Open File") != NULL) {
-	// TODO: open file
+    const gchar *filename = create_file_dialog("Open Project");
+    if(filename != NULL) {
+	if(mix_readSpreadsheet(filename) != SUCCESS) {
+	    create_info_dialog("Error", "\n  Could not read Spreadsheeet  \n");
+	}
+	else {
+	    // TODO: recreate actual view
+	    return;
+	}
     }
 }
 
 void on_save_file_item(GtkMenuItem *menuitem, gpointer user_data)
 {
-    // TODO: save file
+    if(mix_get_stage() < MIX_READ_IN) return;
+    if(!mix_get_modified()) return;
+
+    // save project to spreadsheet
+    mix_writeSpreadsheet((const char*) mix_get_filename());
 }
 
 void on_save_file_as_item(GtkMenuItem *menuitem, gpointer user_data)
 {
-    if(create_file_dialog("Save File As") != NULL) {
-	// TODO: save file under name 
+    if(mix_get_stage() < MIX_READ_IN) return;
+
+    gboolean rc;
+    const gchar *name = create_file_dialog("Save File As");
+
+    if(name != NULL) {
+	// save file under name 
+	rc = mix_writeSpreadsheet(name);
+	if(rc == FALSE) {
+	    create_info_dialog("Error", "\n  Could not save File!  \n");
+	}
     }
 }
 
 void on_app_quit_item(GtkMenuItem *menuitem, gpointer user_data)
 {
-    // TODO: save project if needed
-    /*if(modified) {
-      show_quest_save_dialog();
-      }*/
+    // save project if needed
+    if(mix_get_modified()) {
+	if(create_quest_dialog("Warning", "\n  File has been modified!  \n  Save modifications?  \n") == TRUE)
+	    if(!mix_writeSpreadsheet((const char*) mix_get_filename()))
+		create_info_dialog("Error", "\n  Could not save File!  \n");
+    }
 
+    int stage = mix_get_stage();
+    if(stage > MIX_NO_INIT) {
+	mix_destroy();
+	if(stage > MIX_INIT)
+	    mix_free_filename();
+    }
     gtk_main_quit();
 }
 
@@ -92,7 +132,7 @@ void on_about_item(GtkMenuItem *menuitem, gpointer user_data)
 
 void on_usage1_activate(GtkMenuItem *menuitem, gpointer user_data)
 {
-
+    create_info_dialog("Sorry", "\n  No Help available yet!  \n");
 }
 
 void on_new_file_btn(GtkButton *button, gpointer user_data)
@@ -104,20 +144,40 @@ void on_new_file_btn(GtkButton *button, gpointer user_data)
 
 void on_open_file_btn(GtkButton *button, gpointer user_data)
 {
-    if(create_file_dialog("Open Project") != NULL) {
-	// TODO: open a project
+    const gchar *filename = create_file_dialog("Open Project");
+    if(filename != NULL) {
+	if(mix_readSpreadsheet(filename) != SUCCESS) {
+	    create_info_dialog("Error", "\n  Could not read Spreadsheeet  \n");
+	}
+	else {
+	    // recreate actual view
+	    return;
+	}
     }
 }
 
 void on_save_file_btn(GtkButton *button, gpointer user_data)
 {
-    // TODO: save file
+    if(mix_get_stage() < MIX_READ_IN) return;
+    if(!mix_get_modified()) return;
+
+    // save project to spreadsheet
+    mix_writeSpreadsheet((const char*) mix_get_filename());
 }
 
 void on_save_file_as_btn(GtkButton *button, gpointer user_data)
 {
-    if(create_file_dialog("Save File As") != NULL) {
-	// TODO: save file under name 
+    if(mix_get_stage() < MIX_READ_IN) return;
+
+    gboolean rc;
+    const gchar *name = create_file_dialog("Save Project As");
+
+    if(name != NULL) {
+	// save file under name 
+	rc = mix_writeSpreadsheet(name);
+	if(rc == FALSE) {
+	    create_info_dialog("Error", "\n  Could not save File!  \n");
+	}
     }
 }
 
@@ -245,7 +305,6 @@ void on_mixpath_btn_clicked(GtkButton *button, gpointer user_data)
 
 void on_editorpath_btn_clicked(GtkButton *button, gpointer user_data)
 {
-
     const char* path;
     if((path = create_file_dialog("select Program"))!=NULL) {
 	GtkWidget *textentry;

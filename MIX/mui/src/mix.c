@@ -28,9 +28,38 @@
 #define false         0
 
 PerlInterpreter *my_perl = NULL;    // undef. reference if declared static
-bool modified = false;              // project modified
 
 int mix_stage = MIX_NO_INIT;        // starting in stage "not initialized"
+
+bool modified = false;              // project modified
+char *filename = NULL;              // filename / name of spreadheed
+
+
+bool mix_get_modified()
+{
+    return modified;
+}
+
+
+int mix_get_stage()
+{
+    return mix_stage;
+}
+
+
+char* mix_get_filename()
+{
+    return filename;
+}
+
+
+void mix_free_filename()
+{
+    if(filename != NULL) {
+	free(filename);
+	filename = NULL;
+    }
+}
 
 
 int mix_init(const char* mix_path)
@@ -83,24 +112,24 @@ void mix_destroy()
 }
 
 
-int mix_get_stage()
-{
-    return mix_stage;
-}
-
-
-void mix_readSpreadsheet(const char* spreadsheet)
+int mix_readSpreadsheet(const char* spreadsheet)
 {
     char *args[] = { (char*)spreadsheet, NULL};
     // Todo: Fix passed argument
     call_argv("readSpreadsheet", G_DISCARD, args);
     mix_stage = MIX_READ_IN;
+
+    filename = malloc(strlen(spreadsheet) + 1);
+    strcpy(filename, spreadsheet);
+
+    return SUCCESS;
 }
 
 
 int mix_writeSpreadsheet(const char* spreadsheet)
 {
     char *args[] = { (char*)spreadsheet, NULL};
+    // TODO: do some check, return false if file could not saved
     call_argv("writeSpreadsheet", G_DISCARD, args);
 
     return SUCCESS;

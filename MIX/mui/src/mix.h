@@ -88,6 +88,16 @@ typedef struct MixSummary {
 
 
 /**
+ * get MIX session modified flag 
+ */
+bool mix_get_modified();
+
+/**
+ * get MIX run stage
+ */
+int mix_get_stage();
+
+/**
  * allocate and trigger a MIX Object
  * @param mix_path Absolute PATH of MIXs Toplevel Directory
  */
@@ -104,7 +114,8 @@ void mix_destroy();
  * @param spreadsheet Spreadsheetname
  * @return Error code
  */
-void mix_readSpreadsheet(const char* spreadsheet);
+int mix_readSpreadsheet(const char* spreadsheet);
+
 
 /**
  * Write Project into Spreadsheet. This will write all changes made to the open Project.

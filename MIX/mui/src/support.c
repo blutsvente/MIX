@@ -24,6 +24,12 @@
 int current_page = 0;
 
 
+void new_project()
+{
+    // run MIX using empty template
+}
+
+
 int get_current_page()
 {
     return current_page;
