@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.32 2004/04/14 11:08:50 wig Exp $
+# $Id: TODO.txt,v 1.33 2004/04/15 11:58:41 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -19,6 +19,12 @@ Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
 
+- 20040415a/Req: add "ignorecase" for delta mode
+  Usefull for verify entity. Split options for delta mode and verify mode.
+
+  Req: mpit
+  Prio: medium
+
 - 20040407a/Req: Improve coding:
     header:
 
@@ -30,9 +36,6 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 
 # eval '(exit $?0)' && eval 'exec perl -S $0 ${1+"$@"}' || eval 'exec perl -S $0 $argv'
 # if 0; # dynamic perl startup
-
-should be        
-
 
 and
 
