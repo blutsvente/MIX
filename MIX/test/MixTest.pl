@@ -30,29 +30,7 @@ use Getopt::Long qw(GetOptions);
 $::VERSION = '$Revision: 0.1 ';
 $::VERSION =~ s,\$,,go;
 
-=head 4 old
-
-use vars qw($pgm $base $pgmpath $cwd);
-
-BEGIN{
-    ($^O=~/Win32/) ? ($cwd=getcwd())=~s,/,\\,g : ($cwd=getcwd());
-
-    ($pgm=$0) =~s;^.*(/|\\);;g;
-    if ( $0 =~ m,[/\\],o ) { #$0 has path ...
-        ($base=$0) =~s;^(.*)[/\\]\w+[/\\][\w\.]+$;$1;g;
-        ($pgmpath=$0) =~ s;^(.*)[/\\][\w\.]+$;$1;g;
-    } else {
-        ($base=$cwd) =~ s,^(.*)[/\\][\w\.]+$,$1,g;
-        $pgmpath=$cwd;
-    }
-}
-
-use lib "$pgmpath/../lib/perl";
-use lib "$pgmpath/lib";
-
-=cut
-
-use Findbin;
+use FindBin;
 
 use lib "$FindBin::Bin/..";
 use lib "$FindBin::Bin/../lib/perl";
@@ -62,7 +40,6 @@ use lib "$FindBin::Bin/lib/perl";
 use lib "$FindBin::Bin/lib";
 use lib getcwd() . "/lib/perl";
 use lib getcwd() . "/../lib/perl";
-
 
 use Test::More tests => qw(no_plan);
 use Test::Differences;
@@ -524,13 +501,13 @@ sub runMix($) {
     		next;
     	} else {
     		# "export", "update" and non-opt mode will create new output data:
-			my $status;
-			if ( $opts{'debug'} ) {
-     			$status = system( "$command" );
+	    my $status;
+	    if ( $opts{'debug'} ) {
+     		    $status = system( "$command" );
 			} else {
-     			$status = system( "$command >$testname-t.out 2>&1" );
-			}
-    		if ( $status / 256 != 0 ) {
+		$status = system( "$command >$testname-t.out 2>&1" );
+	    }
+    	if ( $status / 256 != 0 ) {
     	    my $cf = 0;
     		my $ci = 0;
     		# 03/07/15 17:02:49 140: WARNING: SUM: Number of changes in intermediate: 1
@@ -554,7 +531,7 @@ sub runMix($) {
     		$failsum++;
     	    }
     	    ok( $status/256 == 0, "$testname.$type in directory $tests[$i]->{'path'}");
-    	    chdir( $wdir);
+    	    chdir( $wdir );
     	}
 	}
     $failstat{$type} = $failsum;

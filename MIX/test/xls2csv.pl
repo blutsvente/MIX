@@ -36,7 +36,7 @@ BEGIN{
 
 =cut
 
-use Findbin;
+use FindBin;
 
 # use lib "$FindBin::Bin/..";
 use lib "$FindBin::Bin/../lib/perl";
@@ -61,7 +61,7 @@ use Micronas::MixUtils::IO;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.1 $'; # RCS Id
+$::VERSION = '$Revision: 1.2 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 if(scalar(@ARGV) < 1 ) {
@@ -89,7 +89,12 @@ for my $file ( @ARGV ) {
 	    $cfile = $file . ".csv";
 	    $sfile = $file . ".sxc";
 	}
-	
+
+	unless( -r $file ) {
+	    print("ERROR: Cannot read input file $file!");
+	    next;
+	}
+
 	my $oBook = Spreadsheet::ParseExcel::Workbook->Parse($file);
 	
 	if(!$oBook) {
