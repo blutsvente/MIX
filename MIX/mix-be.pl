@@ -20,12 +20,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id              : $Id: mix-be.pl,v 1.2 2003/12/04 14:39:09 abauer Exp $
+# | Id              : $Id: mix-be.pl,v 1.3 2003/12/04 14:39:20 abauer Exp $
 # | Name         : $Name:  $
 # | Description  :$Descripton$
 # | Parameters  : -
 # | Version       : $Version$
-# | Mod.Date    : $Date: 2003/12/04 14:39:09 $
+# | Mod.Date    : $Date: 2003/12/04 14:39:20 $
 # | Author        : $Author: abauer $
 # | Phone         : $Phone$
 # | Fax             : $Fax$
@@ -40,6 +40,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |
 # | Changes:
 # | $Log: mix-be.pl,v $
+# | Revision 1.3  2003/12/04 14:39:20  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.2  2003/12/04 14:39:09  abauer
 # | *** empty log message ***
 # |

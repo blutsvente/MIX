@@ -23,12 +23,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.21 2003/12/04 14:39:10 abauer Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.22 2003/12/04 14:39:20 abauer Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.21 $                                      |
-# | Mod.Date     : $Date: 2003/12/04 14:39:10 $                           |
+# | Version      : $Revision: 1.22 $                                      |
+# | Mod.Date     : $Date: 2003/12/04 14:39:20 $                           |
 # | Author       : $Author: abauer $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -43,6 +43,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.22  2003/12/04 14:39:20  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.21  2003/12/04 14:39:10  abauer
 # | *** empty log message ***
 # |                                                    |
@@ -195,7 +198,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.21 $'; # RCS Id
+$::VERSION = '$Revision: 1.22 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # %EH comes from Mic::MixUtils ; All the configuration E-nvironment will be there
