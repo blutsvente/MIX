@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / I2CParser                                |
 # | Modules:    $RCSfile: MixI2CParser.pm,v $                             |
-# | Revision:   $Revision: 1.4 $                                          |
+# | Revision:   $Revision: 1.5 $                                          |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/12/23 13:25:20 $                              |
+# | Date:       $Date: 2004/01/15 13:31:35 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/Attic/MixI2CParser.pm,v 1.4 2003/12/23 13:25:20 abauer Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/Attic/MixI2CParser.pm,v 1.5 2004/01/15 13:31:35 abauer Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
@@ -74,9 +74,9 @@ sub parse_i2c_init($);
 # RCS Id, to be put into output templates
 #
 
-my $thisid		= 	'$Id: MixI2CParser.pm,v 1.4 2003/12/23 13:25:20 abauer Exp $';
+my $thisid		= 	'$Id: MixI2CParser.pm,v 1.5 2004/01/15 13:31:35 abauer Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixI2CParser.pm,v $';
-my $thisrevision        =       '$Revision: 1.4 $';
+my $thisrevision        =       '$Revision: 1.5 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -145,6 +145,7 @@ sub add_interface(%) {
 
     my $name;
     my $type;
+    my $transceiver;
 
     # create a new instance in hierdb, create Interface first
     my $parent = $in->{'::interface'};
@@ -187,13 +188,13 @@ sub add_interface(%) {
     }
 
     # create transceiver unit
-    create_transceiver($in, $parent);
+    $transceiver = create_transceiver($in, $parent);
 
     # create sync unit
     create_sync_block($in, $name, $parent);
 
     # create and connect "or"-block
-    create_or_block($in, $name, $parent);
+    create_or_block($in, $name, $parent, $transceiver);
 
     return 0;
 }
@@ -351,17 +352,12 @@ sub create_transceiver($$) {
 
 	# transceiver/iic_adr_data_i => iic_adr_data_i
 	%conns = ( '::name' => "iic_adr_data_i",
-		   '::in' => $instance . "/iic_adr_data_i", );
+		   '::in' => "$parent/iic_adr_data_i, $instance/iic_adr_data_i", );
 	add_conn(%conns);
 
 	# transceiver/iic_en_i => iic_en_i
 	%conns = ( '::name' => "iic_en_i",
-		   '::in' => $instance . "/iic_en_i", );
-	add_conn(%conns);
-
-	# transceiver/adr_r_wn_ok_i => adr_r_wn_ok
-	%conns = ( '::name' => "adr_r_wn_ok",
-		   '::in' => $instance . "/adr_r_wn_ok_i", );
+		   '::in' => "$parent/iic_en_i, $instance/iic_en_i", );
 	add_conn(%conns);
 
 	# transceiver/test_disbus_i => logic_0
@@ -369,29 +365,21 @@ sub create_transceiver($$) {
 		   '::in' => $instance . "/test_disbus_i", );
 	add_conn(%conns);
 
-	# transceiver/data_to_iic_i => data_reg_to_iic | std_ulogic_vector(0-15)
-	%conns = ( '::name' => "data_reg_to_iic",
-		   '::in' => $instance . "/data_to_iic_i(15:0)" );
-	add_conn(%conns);
-
 	# transceiver/i2c_ignore_lsd_i => ignore_lsb_i
 	%conns = ( '::name' => "ignore_lsb_i",
-		   '::in' => $instance . "/i2c_ignore_lsb_i", );
-	add_conn(%conns);
-
-	# transceiver/load_data_rd_i => load_data_rd
-	%conns = ( '::name' => "load_data_rd",
-		   '::in' => $instance . "/load_data_rd_i", );
+		   '::in' => "$parent/ignore_lsb_i, $instance/i2c_ignore_lsb_i", );
 	add_conn(%conns);
 
 	# transceiver/iic_data_o => iic_if_$parent_data_o
 	%conns = ( '::name' => "iic_if_" . $parent . "_data_o",
-		   '::out' => $instance . "/iic_data_o", );
+		   '::out' => "$parent/iic_if_".$parent."_data_o, $instance/iic_data_o", );
 	add_conn(%conns);
 
 	# transceiver/adr_or_data_o => adr_or_data
 	%conns = ( '::name' => "adr_or_data",
-		   '::out' => $instance . "/adr_or_data_o(15:0)", ); # std_ulogic_vector(0-15)
+		   '::out' => $instance . "/adr_or_data_o(15:0)", # std_ulogic_vector(0-15) 
+		   '::low' => "0",
+		   '::high' => "15", );
 	add_conn(%conns);
 
 	# transceiver/check_adr_o => check_adr
@@ -412,9 +400,14 @@ sub create_transceiver($$) {
 	# transceiver/iic_ignore_lsb_o => ignore_lsd
 	%conns = ( '::name' => "ignore_lsb",
 		   '::out' => $instance . "/iic_ignore_lsb_o", );
-	add_conn(%conns);
+        add_conn(%conns);
 
-    return 0;
+        # selected_o port
+        %conns = ( '::name' => "selected",
+		  '::out' => $instance . "/selected_o", );
+        add_conn(%conns);
+
+    return $instance;
 }
 
 
@@ -512,11 +505,6 @@ sub connect_subreg($$$) {
 		   '::in' => $instance . "/asres", );
 	add_conn(%conns);
 
-	# subreg/adr_or_data_i => adr_or_data
-	%conns = ( '::name' => "adr_or_data",
-		   '::in' => $instance . "/adr_or_data_i(15:0)", );
-	add_conn(%conns);
-
 	# subreg/check_adr_i => check_adr
 	%conns = ( '::name' => "check_adr",
 		   '::in' => $instance . "/check_adr_i", );
@@ -529,27 +517,33 @@ sub connect_subreg($$$) {
 
 	# subreg/ignore_lsb_i => ignore_lsb
 	%conns = ( '::name' => "ignore_lsb",
-		   '::in' => $instance . "/ignore_lsb_i", );
+		   '::in' => "$instance/ignore_lsb_i", );
 	add_conn(%conns);
 
 	# subreg/ais_o => open
 	%conns = ( '::name' => "%OPEN%",
-		   '::out' => $instance . "/ais_o", );
+		   '::out' => "$parent/ais_" . $in->{'::interface'} . "_o , $instance/ais_o", );
 	add_conn(%conns);
 
-	# subreg/data_to_iic_o => data_reg<hex_subadr>_to_iic
-	%conns = ( '::name' => "data_reg" . $subreg . "_to_iic",
-		   '::out' => $instance . "/data_to_iic_o(15:0)", );
-	add_conn(%conns);
 
 	# subreg/load_data_rd_o => load_data_rd_reg<hex_subadr>
 	%conns = ( '::name' => "load_data_rd_reg" . $subreg,
+		   '::in' => "or_$parent" . "_block/load_data_rd_reg$subreg" . "_i",
 		   '::out' => $instance . "/load_data_rd_o", );
 	add_conn(%conns);
 
 	# subreg/adr_r_wn_ok_o => adr_r_wn_ok_reg<hex_subadr>
 	%conns = ( '::name' => "adr_r_wn_ok_reg" . $subreg,
+		   '::in' => "or_$parent" . "_block/adr_r_wn_ok_reg$subreg" . "_i",
 		   '::out' => $instance . "/adr_r_wn_ok_o", );
+	add_conn(%conns);
+
+	# subreg/data_to_iic_o => data_reg<hex_subadr>_to_iic
+	%conns = ( '::name' => "data_reg" . $subreg . "_to_iic",
+		   '::in' => "or_$parent"."_block/data_reg$subreg" . "_to_iic_i(15:0)",
+		   '::out' => $instance . "/data_to_iic_o(15:0)",
+		   '::low' => "0",
+		   '::high' => "15", );
 	add_conn(%conns);
 
 #==> userdefined and directions specific connections
@@ -558,29 +552,42 @@ sub connect_subreg($$$) {
     # add r-specific generics
 
     # add r-specific connections
+	# subreg/tf_ready_rd_i => open
+	%conns = ( '::name' => "%OPEN%",
+		   '::in' => $instance . "/tf_ready_rd_i", );
+	add_conn(%conns);
+
 	# subreg/tf_en_rd_o => open
 	%conns = ( '::name' => "%OPEN%",
-		   '::out' => $instance . "/tf_ready_rd_i", );
+		   '::out' => $instance . "/tf_en_rd_o", );
 	add_conn(%conns);
+
 	# subreg/data_from_ext_i => 
-	%conns = ( '::name' => "data_from_ext",
-		   '::in' => $instance . "/data_from_ext_i(15:0)", );
+	%conns = ( '::name' => "data_$subreg" . "_from_ext",
+		   '::in' => $instance . "/data_from_ext_i(15:0)",
+		   '::low' => "0",
+		   '::high' => "15", );
+	add_conn(%conns);
+
+	# subreg/adr_or_data_i => adr_or_data
+	%conns = ( '::name' => "adr_or_data",
+		   '::in' => $instance . "/adr_or_data_i(8:0)", );
 	add_conn(%conns);
 
     # connect as read-register
+	my $prefix = $in->{'::block'} . "_" . $in->{'::sub'} . "_iic_i";
         for my $i (keys %$in) {
 	    if($i=~ m/^::b(:\d+)?$/ && $in->{$i}!~ m/^$/) {
 		$range++;
 	        if($i=~ m/^::b$/) {
-		    $number = 1;
+		    $number = 0;
 		}
 		else {
 		    $number= $i;
 		    $number=~ s/^::b://;
-		    $number++;
 	        }
-		%conns = ( '::name' => "reg_data_out_$subreg",
-			   '::in' => $instance . "/data_from_ext_i($number)",
+		%conns = ( '::name' => "reg_data_in_$subreg",
+			   '::in' => "$parent/$prefix($number)",
 			   '::out' => $in->{$i}, );
 		add_conn(%conns);
 	    }
@@ -613,48 +620,68 @@ sub connect_subreg($$$) {
 
 	# subreg/reg_data_out_o => reg_data_out_<hex_subadr>
 	%conns = ( '::name' => "reg_data_out_" . $subreg,
-#		   '::type' => "std_ulogic_vector",
-		   '::out' => $instance . "/reg_data_out_o(15:0)", );
+		   '::out' => $instance . "/reg_data_out_o(15:0)",
+		   '::low' => "0",
+		   '::high' => "15", );
+	add_conn(%conns);
+
+	# subreg/adr_or_data_i => adr_or_data
+	%conns = ( '::name' => "adr_or_data",
+		   '::in' => $instance . "/adr_or_data_i(15:0)", );
 	add_conn(%conns);
 
     # connect as write-register
+	my $prefix = $in->{'::block'} . "_" . $in->{'::sub'} . "_iic_o";
         for my $i (keys %$in) {
 	    if($i=~ m/^::b(:\d+)?$/ && defined $in->{$i} && $in->{$i}!~ m/^$/) {
 		$range++;
 	        if($i=~ m/^::b$/) {
-		    $number = 1;
+		    $number = 0;
 		}
 		else {
 		    $number= $i;
 		    $number=~ s/^::b://;
-		    $number++;
 	        }
 		%conns = ( '::name' => "reg_data_out_$subreg",
 			   '::in' => $in->{$i},
-			   '::out' => $instance . "/reg_data_out_$subreg($number)", );
+			   '::out' => "$parent/$prefix($number)",);
 		add_conn(%conns);
 	    }
 	}
     }
     elsif( $in->{'::dir'}=~ m/rw/i) {
+
+	%conns = ( '::name' => "reg_data_in_$subreg",
+		   '::in' => "$instance/reg_data_in_$subreg", );
+	add_conn(%conns);
+
+	%conns = ( '::name' => "reg_data_out_$subreg",
+		   '::out' => "$instance/reg_data_out_$subreg", );
+	add_conn(%conns);
+
     # connect as read-write-register
+	logwarn("WARNING: I2C RW-Registers not implemented yet!");
+=head1
+	my $prefix = $in->{'::block'} . "_" . $in->{'::sub'} . "_iic_io";
         for my $i (keys %$in) {
 	    if($i=~ m/^::b(:\d+)?$/ && defined $in->{$i} && $in->{$i}!~ m/^$/) {
 		$range++;
 	        if($i=~ m/^::b$/) {
-		    $number = 1;
+		    $number = 0;
 		}
 		else {
 		    $number= $i;
 		    $number=~ s/^::b:$//;
-		    $number++;
 	        }
-		%conns = ( '::name' => "reg_data_out_$subreg",
+		%conns = ( '::name' => "reg_data_io_$subreg",
 			   '::in' => $in->{$i},
-			   '::out' => $instance . "/reg_data_out_$subreg($number)", );
+			   '::out' => "$parent/$prefix($number), $instance/$prefix($number)",
+	                   '::low' => "0",
+	                   '::high' => "15",);
 		add_conn(%conns);
 	    }
 	}
+=cut
     }
     else {
         logwarn("WARNING: i2c sheet got bad ::dir entry <$in->{'::dir'}>, incorrect direction!");
@@ -699,11 +726,12 @@ sub connect_subreg($$$) {
 
 =cut
 
-sub create_or_block($$$) {
+sub create_or_block($$$$@) {
 
     my $in = shift;
     my $subreg = shift;
     my $parent = shift;
+    my $transceiver = shift;
 
     my $subadr = sprintf("%lx", $in->{'::sub'});
 
@@ -714,17 +742,24 @@ sub create_or_block($$$) {
     my $instance = add_inst(%orblock);
 
     # connect adr_r_wn_ok
-    %orblock = ( '::name' => "adr_r_wn_ok_reg" . $subadr,
-		 '::in' => $instance . "/", );
-#    add_conn(%orblock);
+    %orblock = ( '::name' => "adr_r_wn_ok",
+		 '::in' => "$transceiver/adr_r_wn_ok_i",
+		 '::out' => "$instance/adr_r_wn_ok_o", );
+    add_conn(%orblock);
+
     # connect load_data_rd
-    %orblock = ( '::namse' => "load_data_rd_reg" . $subadr,
-		 '::in' => $instance . "/", );
-#    add_conn(%orblock);
+    %orblock = ( '::name' => "load_data_rd",
+		 '::in' => "$transceiver/load_data_rd_i",
+		 '::out' => "$instance/load_data_rd_o", );
+    add_conn(%orblock);
+
     # connect data_reg_to_iic
-    %orblock = ( '::name' => "data_reg" . $subadr . "_to_iic",
-		 '::in' => $instance . "/", );
-#    add_conn(%orblock);
+    %orblock = ( '::name' => "data_reg_to_iic",
+		 '::in' => "$transceiver/data_to_iic_i(15:0)",
+		 '::out' => "$instance/data_reg_to_iic_o(15:0)",
+		 '::low' => "0",
+		 '::high' => "15", );
+    add_conn(%orblock);
 
     return 0;
 }
