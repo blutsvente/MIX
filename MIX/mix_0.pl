@@ -20,16 +20,16 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id              : $Id: mix_0.pl,v 1.1 2003/02/03 12:56:44 wig Exp $
+# | Id              : $Id: mix_0.pl,v 1.2 2003/02/04 07:28:44 wig Exp $
 # | Name         : $Name:  $
-# | Description  :$Descripton$
+# | Description  :$Description:$
 # | Parameters  : -
-# | Version       : $Version$
-# | Mod.Date    : $Date: 2003/02/03 12:56:44 $
+# | Version       : $Version: $
+# | Mod.Date    : $Date: 2003/02/04 07:28:44 $
 # | Author        : $Author: wig $
-# | Phone         : $Phone$
-# | Fax             : $Fax$
-# | Email         : $Email$
+# | Phone         : $Phone: $
+# | Fax             : $Fax: $
+# | Email         : $Email: $
 # |
 # | Copyright (c)2002 Micronas GmbH. All Rights Reserved.
 # | MIX proprietary and confidential information.
@@ -40,8 +40,11 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |
 # | Changes:
 # | $Log: mix_0.pl,v $
-# | Revision 1.1  2003/02/03 12:56:44  wig
-# | Initial revision
+# | Revision 1.2  2003/02/04 07:28:44  wig
+# | Fixed header of modules
+# |
+# | Revision 1.1.1.1  2003/02/03 12:56:44  wig
+# | Importing pilot release of MIX tools
 # |
 # |
 # +-----------------------------------------------------------------------+
