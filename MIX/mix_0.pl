@@ -1,14 +1,8 @@
-#!/usr/bin/perl -w
-
 #!/bin/sh -- # -*- perl -*- -w
-# TODO: Get better startup (look in FAQ ...)
-
-eval 'exec $M_PERL -S $0 ${1+"$@"}'
+eval 'exec ${PERL:-`[ -x $HOME/bin/perl ] && echo $HOME/bin/perl || { [ -x /usr/bin/perl ] && echo /usr/bin/perl || echo /usr/local/bin/perl ; } `} -S $0 ${1+"$@"}'
 if 0; # dynamic perl startup; suppress preceding line in perl
 
-# eval '(exit $?0)' && eval 'exec perl -S $0 ${1+"$@"}' || eval 'exec perl -S $0 $argv'
-# if 0; # dynamic perl startup
-
+#!/usr/bin/perl -w
 #
 # +-----------------------------------------------------------------------+
 # |                                                                       |
@@ -23,12 +17,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.28 2004/03/25 11:21:11 wig Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.29 2004/04/07 15:11:40 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.28 $                                      |
-# | Mod.Date     : $Date: 2004/03/25 11:21:11 $                           |
+# | Version      : $Revision: 1.29 $                                      |
+# | Mod.Date     : $Date: 2004/04/07 15:11:40 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -43,6 +37,10 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.29  2004/04/07 15:11:40  wig
+# | Modified Files:
+# | 	mix_0.pl
+# |
 # | Revision 1.28  2004/03/25 11:21:11  wig
 # | Added -verifyentity option
 # |
@@ -214,7 +212,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.28 $'; # RCS Id
+$::VERSION = '$Revision: 1.29 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # %EH comes from Mic::MixUtils ; All the configuration E-nvironment will be there
