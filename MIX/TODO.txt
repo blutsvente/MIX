@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.37 2004/08/04 12:48:31 wig Exp $
+# $Id: TODO.txt,v 1.38 2004/08/18 08:57:13 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -19,7 +19,53 @@ Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
 
-- 20040802/Req: Extended support for bus joining
+- 20040816a/Bug: Assigning constants to busses does not work in all cases.
+    Strip out testcase from vgca.xls (eic_int_src) and create testcase
+    bugver/constbug
+
+    Req: mpit
+    Prio: high
+    Fixed: wig20040817
+
+- 20040810a/Req: add some pseudo entities to do direct assignemts and basic logic functions
+
+    Entities:
+    %AND%, %OR%, %NAND%, %NOR%, %XOR%, %INV%, %BUF%, %MUX% ...
+    Check if these are leaf cells!! Warn if not.
+    Provide a standard interface.
+
+    signal_a1   inst_a   and_a/a1
+    signal_a2   inst_b   and_a/a2
+    signal_y1   and_a/y  inst_c
+
+    signal_y1 <= signal_a1 AND signal_a2;
+    (bit and).
+    
+    Instances:
+    %CONNECT%  (direct connect!)
+    signal_a    %CONNECT%/signal_b    %CONNECT%/signal_c
+
+    ->
+
+    signal signal_a;
+    signal_a <= signal_b;
+    signalc <= signal_a;
+
+    Internally this will be handled via pseudo instances!
+    Drawbacks: lot's of places for user added errors!
+
+    Req: wig
+    Prio: medium
+        
+- 20040809a/Req: do ignore typecast's for std_(u)logic
+  Synopsys tools do not accept typecsting of signals.
+
+    Req: mpit
+    Prio: medium
+    Solved: wig20040809
+    Testcase: typecast/intbus; new default: MIXCFG output.generate.workaround.std_log_typecast ignore
+    
+- 20040802a/Req: Extended support for bus joining
     Two signals should get connected togehter, but no duplicate port map
     should be created
 
@@ -37,7 +83,11 @@ TODOs:
     Prio: medium
     Solved: wig20040802
         Use %BUS% keyword!
+        ::signal   ::out  ::in
+        sig_a      inst_a/port_a inst_b/port_b
+        ____      0=(10), 1=(15:12)     %BUS%/sig_a
 
+ 
 - 20040712a/Req: Add (__FILE__/__LINE__) to all logwarn/logtrc/logdie ....
    Print out FILE/LINE in error messages to ease debugging.
 
