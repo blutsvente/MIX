@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.40 $                                         |
+# | Revision:   $Revision: 1.41 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/08/02 07:13:41 $                              |
+# | Date:       $Date: 2004/08/04 12:49:38 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.40 2004/08/02 07:13:41 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.41 2004/08/04 12:49:38 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.41  2004/08/04 12:49:38  wig
+# | Added typecast and partial constant assignments
+# |
 # | Revision 1.40  2004/08/02 07:13:41  wig
 # | Improve constant support
 # |
@@ -240,6 +243,7 @@ sub _mix_p_getconnected ($$$$;$);
 sub mix_parser_importhdl ($$);
 sub _mix_parser_parsehdl ($);
 sub overlay_bits($$);
+sub mix_p_co2str ($$);
 
 ####################################################################
 #
@@ -257,11 +261,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.40 2004/08/02 07:13:41 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.41 2004/08/04 12:49:38 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.40 $';
+my $thisrevision   =      '$Revision: 1.41 $';
 
-# | Revision:   $Revision: 1.40 $
+# | Revision:   $Revision: 1.41 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -654,6 +658,7 @@ sub parse_hier_init ($) {
 
     add_inst( '::inst' => "%TOP%", );
     add_inst( '::inst' => "%OPEN%", );
+    add_inst( '::inst' => "%BUS%", );  # Meta instance for %BUS% connections ...
 
 }
 
@@ -711,7 +716,8 @@ sub mix_expand_name ($$) {
     #
     while ( $n =~ m/%((::)?\w+?)%/g ) {
         my $key = $1;
-        next if  $key =~ m,^(TOP|PARAMETER|OPEN|GENERIC|CONST|LOW|HIGH|LOW_BUS|HIGH_BUS)$,o;
+        next if $key =~ m,^(TOP|PARAMETER|OPEN|GENERIC|CONST|LOW|HIGH|LOW_BUS|HIGH_BUS|BUS)$,o;
+        next if $key =~ m,^(TYPECAST_),;
         if ( defined( $rdata->{$key} ) ) {
                 $n =~ s/%$key%/$rdata->{$key}/g; # replace %::key% ...
                 #
@@ -1142,6 +1148,8 @@ sub _create_conn ($$%) {
     my $instr = shift;
     my %data = @_;
 
+    my $tcmethod = ( $EH{'output'}{'generate'}{'workaround'}{'typecast'} =~m/\bintsig\b/ );
+    
     #A bus with ::low and ::high
     my $h = undef;
     my $l = undef;
@@ -1214,7 +1222,7 @@ sub _create_conn ($$%) {
             # Mark with %CONST% instance name .... the port name will hold the value
             # Force anything following %CONST%/ to be a constant value
             #Additionally allow partial assignments by a  =(N:M) ...
-            $d =~ s,__(CONST|GENERIC|PARAMETER)__,%$1%,g; # Convert back __CONST__ to %CONST%
+            $d =~ s,__(CONST|GENERIC|PARAMETER|BUS)__,%$1%,g; # Convert back __CONST__ to %CONST%
             # A constant could hold a partial assignment, too:
             my ( $cd, $cpart ) = split( /=/, $d, 2 );
             if (
@@ -1317,9 +1325,21 @@ sub _create_conn ($$%) {
             # Normal inst/ports ....
             #
             #wig20030801: typecast port'cast_func ...
+            #wig20040803: adding advanced typecast function: convert typecast request
+            #  into internal instance (%TC_xxxxx%) mapper
+            my $tcdo = "";
             if ( $d =~ m,(/?'(\w+)), ) { # Get typecast   inst/port'cast or inst/'cast
-                $co{'cast'} = $2;
-                $d =~ s,$1,,;
+                if ( $tcmethod ) {
+                    # Create a mapper instance and attach the signal the following way
+                    $tcdo = $2;
+                    $co{'cast'} = $2;
+                    # add_inst( '::inst' => ( '%TYPECAST_' . $EH{'TYPECAST_NR'}++ . '%' ));
+                    $d =~ s,$1,,;
+                            
+                } else { # tyepcasting in portmap ... (will not work for synopsys tools)
+                    $co{'cast'} = $2;
+                    $d =~ s,$1,,;
+                }
             }
 
             $d =~ s/\(([\w%#]+)\)/($1:$1)/g; # Extend (N) to (N:N)
@@ -1417,9 +1437,76 @@ sub _create_conn ($$%) {
 
             check_conn_prop( \%co );
 
+            # We have a full description of this port, now add typecast_wrapper
+            #wig20040803, typecast wrapper
+            if ( $tcdo ) {
+                my $tcwr = '%TYPECAST_' . $EH{'TYPECAST_NR'}++ . '%' ;
+                my $tcsig = $EH{'postfix'}{'PREFIX_TC_INT'} . $EH{'TYPECAST_NR'} . "_" .
+                        $data{'::name'};
+                add_inst( '::inst' => $tcwr,
+                              '::parent' => $hierdb{$co{'inst'}}{'::parent'},
+                              '::entity' => '%TYPECAST_ENT%', # Just dummies
+                              '::config' => '%TYPECAST_CONF%', # Just dummies
+                              '::lang' => 'vhdl',                         # typecast in for VHDL
+                              '::typecast' => [ $data{'::name'}, $data{'::type'}, $tcsig  ], # remember what to typecast
+                            );
+                #TODO: Language -> vhdl ....
+
+                my $oe = ( $inout =~ m/in/  ) ? "::out" : "::in"; # opposite end
+                my $portdef = "";
+
+               #EARLY: Early expansion of port name required here
+                if ( $co{'port'} eq "%::name%" ) {
+                    $co{'port'} = $data{'::name'};
+                }
+
+                # generate port description ::in <-> ::out  for intermediate signal
+                my $oecon = $tcwr . "/" . $co{'port'} . mix_p_co2str( $co{'port_f'}, $co{'port_t'} ) .
+                        "=" . mix_p_co2str( $co{'sig_f'}, $co{'sig_t'} );
+ 
+                #TODO: will we need more expansion? Maybe the intermediate signal should inherite
+                #   all features from the originating signal ...
+                my $oeicon = $co{'inst'} . "/" . $co{'port'} . mix_p_co2str( $co{'port_f'}, $co{'port_t'} ) .
+                        "=" . mix_p_co2str( $co{'sig_f'}, $co{'sig_t'} );
+                $oecon =~ s/=$//;
+                $oeicon =~ s/=$//;
+                add_conn(   '::type' => $tcdo,
+                                '::name' => $tcsig,
+                                '::high' => $h,   #TODO: Maybe that is to much? And we could
+                                '::low' => $l,     # use the port border's, ... obviously noone should typecast
+                                                      # just parts of ports
+                                '::mode' => 'S',
+                                '::comment' => "__I_TYPECAST_INT",
+                                ('::' . $inout ) => $oeicon,
+                                $oe => $oecon,
+                        );
+                # Overload connection instance (shift typecast wrapper inplace ...)
+                $co{'inst'} = $tcwr;
+                
+            }
             push( @co, { %co } );
     }
     return ( \@co );
+}
+
+#
+# convert given boundaries to (F:T) description
+#
+sub mix_p_co2str ($$) {
+    my $f = shift;
+    my $t = shift;
+
+    my $portdef = "";  
+    if ( defined $t and defined $f ) {
+        $portdef = "(" . $f . ":" . $t . ")";
+    } elsif ( defined $f ) {
+        $portdef = "(" . $f . ")";
+    } elsif ( defined $t ) {
+        $portdef = "(:" . $t . ")";
+        logwarn( "WARNING: bad port description in co2str input def: <UNDEF>/$t" );
+        $EH{'sum'}{'warnings'}++;
+    }
+    return $portdef;
 }
 
 #
@@ -3552,6 +3639,7 @@ sub _parse_mac ($) {
             # Skip internal data structures
             next if ( $f eq '::treeobj' );
             next if ( $f eq '::conn' );
+            next if ( $f eq '::typecast' );
 
             my $rf = \$rh->{$h}{$f};
 
@@ -3596,6 +3684,10 @@ sub __parse_mac ($$) {
 
     while ( $$ra =~ m/(%[\w:]+?%)/g ) {
         my $mac = $1;
+        # O.K., ignore TYPECAST generated modules ...
+        if ( $mac =~ m/^%TYPECAST_/ ) {
+            return;
+        }
         if ( $mac =~ m/^%(::\w+)%/ ) {
             if ( exists( $rb->{$1} ) ) {
                 my $r = $rb->{$1};
@@ -3716,9 +3808,26 @@ sub purge_relicts () {
     #
     # Check for VHDL/Verilog/... keywords in instance and port names ...
     #
-    for my $i ( keys( %conndb ) ) {
+    for my $i ( keys( %conndb ) ) {   
             _check_keywords( $i, $conndb{$i}{'::in'} );
             _check_keywords( $i, $conndb{$i}{'::out'} );
+    }
+
+    # Last iteration:
+    for my $i ( keys( %conndb ) ) {   
+        # fix borders for constant definitions with %BUS% references ...
+        if ( exists( $conndb{$i}{'::in'}[0]{'inst'} ) and
+             $conndb{$i}{'::in'}[0]{'inst'} =~ m/^(%|__)BUS(%|__)$/io ) {
+            my $b = $conndb{$i}{'::in'}[0]{'port'};
+            if ( exists ( $conndb{$b} ) ) {
+                $conndb{$i}{'::low'} = $conndb{$b}{'::low'};
+                $conndb{$i}{'::high'} = $conndb{$b}{'::high'};
+                $conndb{$i}{'::type'} = $conndb{$b}{'::type'};
+            } else {
+                logwarn( "WARNING: unknown bus $b referenced in constant $i" );
+                $EH{'sum'}{'warnings'}++;
+            }
+        }
     }
 }
 
