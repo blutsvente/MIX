@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.15 $                                             |
+# | Revision:   $Revision: 1.16 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/04/28 06:40:37 $                                   |
+# | Date:       $Date: 2003/04/29 07:22:36 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.15 2003/04/28 06:40:37 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.16 2003/04/29 07:22:36 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.16  2003/04/29 07:22:36  wig
+# | Fixed %OPEN% bit/bus problem.
+# |
 # | Revision 1.15  2003/04/28 06:40:37  wig
 # | Added %OPEN% (to allow ports without connection, use VHDL open keyword)
 # | Started parseIO (not operational, would be a branch instead)
@@ -166,11 +169,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.15 2003/04/28 06:40:37 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.16 2003/04/29 07:22:36 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.15 $';
+my $thisrevision   =      '$Revision: 1.16 $';
 
-# | Revision:   $Revision: 1.15 $   
+# | Revision:   $Revision: 1.16 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1289,13 +1292,13 @@ sub merge_conn($%) {
                 # There was already s.th. defined for this bus
                 if ( $data{$i} ne '' and $conndb{$name}{$i} ne $data{$i} ) {
                     # LOW and HIGH "signals" are special.
-                    if ( $name =~ m,^\s*%(LOW|HIGH)_BUS%, ) { # Accept larger value for upper bound
+                    if ( $name =~ m,^\s*%(LOW|HIGH)_BUS%,o ) { # Accept larger value for upper bound
                         if ( $i =~ m,^\s*::high,o ) {
                             $conndb{$name}{$i} = $data{$i} if ( $data{$i} > $conndb{$name}{$i} );
                         } elsif ( $i =~ m,^\s*::low,o ) {
                             $conndb{$name}{$i} = $data{$i} if ( $data{$i} < $conndb{$name}{$i} );
                         }
-                    } elsif ( $name =~ m,^\s*%OPEN%, ) {
+                    } elsif ( $name =~ m,^\s*%OPEN%,o ) {
                         if ( not defined( $conndb{$name}{$i} ) or $conndb{$name}{$i} eq ""
                              or $conndb{$name}{$i} eq "%NULL%" ) {
                             $conndb{$name}{$i} = $data{$i};
@@ -3182,17 +3185,65 @@ sub purge_relicts () {
     # If ::high and ::low is defined, extend ::in and ::out definitions
     #
     for my $i ( keys( %conndb ) ) {
-        next if ( $i eq '%OPEN %' );
+        next if ( $i eq '%OPEN%' ); # Ignore the %OPEN% pseudo-signal
+
         unless( defined( $conndb{$i}{'::high'} ) ) { $conndb{$i}{'::high'} = ''; }
         unless( defined( $conndb{$i}{'::low'} ) ) { $conndb{$i}{'::low'} = ''; }        
         if ( $conndb{$i}{'::high'} ne '' or $conndb{$i}{'::low'} ne '' ) {
             my $h = $conndb{$i}{'::high'};
             my $l = $conndb{$i}{'::low'};
-            _extend_inout( $h, $l, $conndb{$i}{'::in'} );
-            _extend_inout( $h, $l, $conndb{$i}{'::out'} );
+                _extend_inout( $h, $l, $conndb{$i}{'::in'} );
+                _extend_inout( $h, $l, $conndb{$i}{'::out'} );
+            # }
+        }
+    }
+    #
+    # Check for VHDL/Verilog/... keywords in instance and port names ...
+    #
+    for my $i ( keys( %conndb ) ) {
+            _check_keywords( $i, $conndb{$i}{'::in'} );
+            _check_keywords( $i, $conndb{$i}{'::out'} );
+    }
+}
+
+#
+# Look through ::in and ::out arrays and check/change VHDL/VErilog keywords ..
+# e.g. open ....
+# Set configuration value postfix.PREFIX_KEYWORD to %NULL% to suppress changes
+#
+# TODO: Shift that routine to MixChecker
+sub _check_keywords ($$) {
+    my $name = shift;
+    my $ior = shift;
+
+    #TODO: Run that again in the backend, after everything got evaled
+    #TODO: There is no way to figure out %::cols% conflicts finally :-(
+    # at this stage.
+    # We will do our best to find open/%::name% (as this is likely to happen)
+    #
+    for my $l ( keys( %{$EH{'check'}{'keywords'}} ) ) {    
+        for my $i ( @$ior ) {
+            for my $ii ( qw( inst port ) ) {
+                if ( $i->{$ii} =~ m,^$EH{'check'}{'keywords'}{$l}$, ) {
+                    $i->{$ii} = $EH{'postfix'}{'PREFIX_KEYWORD'} . $1;
+                    logwarn( "WARNING: Detected keyword $1 in $ii got replaced!" );
+                    $EH{'sum'}{'warnings'}++;
+                } elsif ( $name eq '%OPEN%' and $i->{$ii} eq '%::name%' ) {
+                    $i->{$ii} = $EH{'postfix'}{'PREFIX_KEYWORD'} . $i->{$ii};
+                    logwarn( "WARNING: Detected keyword $name in $ii got replaced!" );
+                    $EH{'sum'}{'warnings'}++;
+                }
+            }
         }
     }
 }
+
+# sub _extend_open ($$$) {
+#    my $h = shift;
+#    my $l = shift;
+#    my $ref = shift;
+#
+# }
 
 # If ::high and/or ::low is defined,
 # check if there are port definitions to be extended

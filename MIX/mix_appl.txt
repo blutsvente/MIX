@@ -83,6 +83,20 @@ mix_getopt_header(qw(
     %HIGH_BUS%
     %LOW_BUS%
     %TOP%
+    %OPEN%   pseudo signal, used to allow open output ports. "open" will be mapped to %OPEN%.
+
+- How to leave some pins of module bar port a open?
+
+MIX has no knowledge about ports. Everything is defined in terms of signals and instances.
+Use the "open" pseudo signal to define the extra pins.
+
+E.g.: wire foo/a port to bar/a port. bar/a has extra pins.
+
+signal_a,   ::high 7, ::low 0, ::out foo/a ::in bar/a
+%OPEN%, ::high 1, ::low 0, ::out -, ::out bar/a(9:8)
+
+You could also force the ::in pins to high or low, instead, e.g. use %HIGH%, %HIGH_BUS%, %LOW
+    or %LOW_BUS%. Or a constant.
 
 - Format of intermediate xls sheet will be kept as is.
 

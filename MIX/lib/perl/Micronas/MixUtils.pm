@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.14 $                                             |
+# | Revision:   $Revision: 1.15 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/04/28 06:40:37 $                                   |
+# | Date:       $Date: 2003/04/29 07:22:36 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.14 2003/04/28 06:40:37 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.15 2003/04/29 07:22:36 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.15  2003/04/29 07:22:36  wig
+# | Fixed %OPEN% bit/bus problem.
+# |
 # | Revision 1.14  2003/04/28 06:40:37  wig
 # | Added %OPEN% (to allow ports without connection, use VHDL open keyword)
 # | Started parseIO (not operational, would be a branch instead)
@@ -180,11 +183,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.14 2003/04/28 06:40:37 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.15 2003/04/29 07:22:36 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.14 $';
+my $thisrevision   =      '$Revision: 1.15 $';
 
-# | Revision:   $Revision: 1.14 $   
+# | Revision:   $Revision: 1.15 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -713,7 +716,11 @@ $ex = undef; # Container for OLE server
 	    'enty' => 'check,lc',
 	    'inst' => 'check,lc',   # check instance names ...
 	    'port' => 'check,lc',
-	    'conf' => 'check.lc',
+	    'conf' => 'check,lc',
+	},
+	'keywords' => { #These keywords will trigger warnings and get replaced
+	    'vhdl'	=> '(open|instance|entity|signal)', #TODO: Give me more keywords
+	    'verilog' 	=> '(register|net)', #TODO: give me more
 	},
 	'defs' => '',  # 'inst,conn',    # make sure elements are only defined once:
 		    # possilbe values are: inst,conn
@@ -743,7 +750,7 @@ $ex = undef; # Container for OLE server
 		    PREFIX_CONST	mix_const_
 		    PREFIX_GENERIC	mix_generic_
 		    PREFIX_PARAMETER	mix_parameter_
-		    
+		    PREFIX_KEYWORD	mix_key_
 	    )
 	    # POSTFIX_ARCH _struct-a
 	    # POSTFIX_ENTY _struct-e
@@ -2152,7 +2159,7 @@ sub db2array ($$$) {
     for my $i ( sort( @keys ) ) {
 	for my $ii ( 1..$#o ) { # 0 contains fields to skip
 	    if ( $o[$ii] =~ m/^::(in|out)\s*$/o ) {
-		$a[$n][$ii-1] = inout2array( $ref->{$i}{$o[$ii]} );
+		$a[$n][$ii-1] = inout2array( $ref->{$i}{$o[$ii]}, $i );
 	    } else {
 		$a[$n][$ii-1] = defined( $ref->{$i}{$o[$ii]} ) ? $ref->{$i}{$o[$ii]} : "%UNDEF_1%";
 		#TODO: do that in debugging mode, only
@@ -2181,11 +2188,12 @@ Arguments: $ref    := hash reference
 		$type  := (hier|conn)
 
 =cut
-sub inout2array ($) {
+sub inout2array ($;$) {
     my $f = shift;
+    my $o = shift || "";
 
     unless( defined( $f ) ) { return "%UNDEF_2%"; };
-    
+     
     my $s = "";
 
 #       '::out' => [
@@ -2202,13 +2210,10 @@ sub inout2array ($) {
     for my $i ( @$f ) {
 
 	unless( defined( $i->{'inst'} ) ) {
-	    # TODO: Print only if that indicates an real error ????
-	    # logwarn( "Converting empty array slice, Skip!" );
 	    next;
 	}
 	# Constants are working a different way:
 	#: m,^\s*(__CONST__|%CONST%|__GENERIC__|__PARAMETER__|%GENERIC%|%PARAMETER%),o ) {
-
 	#TODO: make sure sig_t/sig_f and port_t/port_f are defined in pairs!!
 	if ( $i->{'inst'} =~
 	    m,^\s*(__CONST__|%CONST%),o ) {
@@ -2232,13 +2237,18 @@ sub inout2array ($) {
 			"), %IOCR%";
 		
 	    } else {
-		$s .= $i->{'inst'} . "/" . $i->{'port'} . ", %IOCR%";
+		# If this is %OPEN% and neither port nor signal defined -> set to (0)
+		if ( $o eq '%OPEN%' ) {
+		    $s .= $i->{'inst'} . "/" . $i->{'port'} . "(0:0)=(0:0)" . ", %IOCR%";
+		} else {
+		    $s .= $i->{'inst'} . "/" . $i->{'port'} . ", %IOCR%";
+		}
 	    }
 	}
     }
 
     $s =~ s/,\s*%IOCR%\s*$//o;
-    # parse_mac already done !!!
+    # convert macros (parse_mac already done )!!!
     $s =~ s,%IOCR%,$EH{'macro'}{'%IOCR%'},g;
     
     return $s;
