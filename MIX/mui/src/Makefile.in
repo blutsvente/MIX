@@ -118,7 +118,8 @@ mui_SOURCES = \
 	mix.c mix.h \
 	mainwindow.c mainwindow.h \
 	hiertree.c hiertree.h \
-	tableview.c tableview.h \
+	iopadview.c iopadview.h \
+	i2cview.c i2cview.h \
 	callbacks.c callbacks.h \
         support.c support.h \
 	settings.c settings.h \
@@ -138,8 +139,9 @@ PROGRAMS = $(bin_PROGRAMS)
 
 am_mui_OBJECTS = mui-main.$(OBJEXT) mui-mix.$(OBJEXT) \
 	mui-mainwindow.$(OBJEXT) mui-hiertree.$(OBJEXT) \
-	mui-tableview.$(OBJEXT) mui-callbacks.$(OBJEXT) \
-	mui-support.$(OBJEXT) mui-settings.$(OBJEXT)
+	mui-iopadview.$(OBJEXT) mui-i2cview.$(OBJEXT) \
+	mui-callbacks.$(OBJEXT) mui-support.$(OBJEXT) \
+	mui-settings.$(OBJEXT)
 mui_OBJECTS = $(am_mui_OBJECTS)
 mui_DEPENDENCIES =
 mui_LDFLAGS =
@@ -148,11 +150,13 @@ DEFAULT_INCLUDES =  -I. -I$(srcdir) -I.
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/mui-callbacks.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/mui-hiertree.Po ./$(DEPDIR)/mui-main.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/mui-hiertree.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/mui-i2cview.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/mui-iopadview.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/mui-main.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/mui-mainwindow.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/mui-mix.Po ./$(DEPDIR)/mui-settings.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/mui-support.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/mui-tableview.Po
+@AMDEP_TRUE@	./$(DEPDIR)/mui-support.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -224,12 +228,13 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-callbacks.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-hiertree.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-i2cview.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-iopadview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-mainwindow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-mix.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-settings.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-support.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-tableview.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
@@ -341,27 +346,49 @@ mui-hiertree.obj: hiertree.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mui-hiertree.obj `if test -f 'hiertree.c'; then $(CYGPATH_W) 'hiertree.c'; else $(CYGPATH_W) '$(srcdir)/hiertree.c'; fi`
 
-mui-tableview.o: tableview.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mui-tableview.o -MD -MP -MF "$(DEPDIR)/mui-tableview.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o mui-tableview.o `test -f 'tableview.c' || echo '$(srcdir)/'`tableview.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/mui-tableview.Tpo" "$(DEPDIR)/mui-tableview.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/mui-tableview.Tpo"; exit 1; \
+mui-iopadview.o: iopadview.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mui-iopadview.o -MD -MP -MF "$(DEPDIR)/mui-iopadview.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o mui-iopadview.o `test -f 'iopadview.c' || echo '$(srcdir)/'`iopadview.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/mui-iopadview.Tpo" "$(DEPDIR)/mui-iopadview.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/mui-iopadview.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tableview.c' object='mui-tableview.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/mui-tableview.Po' tmpdepfile='$(DEPDIR)/mui-tableview.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='iopadview.c' object='mui-iopadview.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/mui-iopadview.Po' tmpdepfile='$(DEPDIR)/mui-iopadview.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mui-tableview.o `test -f 'tableview.c' || echo '$(srcdir)/'`tableview.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mui-iopadview.o `test -f 'iopadview.c' || echo '$(srcdir)/'`iopadview.c
 
-mui-tableview.obj: tableview.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mui-tableview.obj -MD -MP -MF "$(DEPDIR)/mui-tableview.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o mui-tableview.obj `if test -f 'tableview.c'; then $(CYGPATH_W) 'tableview.c'; else $(CYGPATH_W) '$(srcdir)/tableview.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/mui-tableview.Tpo" "$(DEPDIR)/mui-tableview.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/mui-tableview.Tpo"; exit 1; \
+mui-iopadview.obj: iopadview.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mui-iopadview.obj -MD -MP -MF "$(DEPDIR)/mui-iopadview.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o mui-iopadview.obj `if test -f 'iopadview.c'; then $(CYGPATH_W) 'iopadview.c'; else $(CYGPATH_W) '$(srcdir)/iopadview.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/mui-iopadview.Tpo" "$(DEPDIR)/mui-iopadview.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/mui-iopadview.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tableview.c' object='mui-tableview.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/mui-tableview.Po' tmpdepfile='$(DEPDIR)/mui-tableview.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='iopadview.c' object='mui-iopadview.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/mui-iopadview.Po' tmpdepfile='$(DEPDIR)/mui-iopadview.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mui-tableview.obj `if test -f 'tableview.c'; then $(CYGPATH_W) 'tableview.c'; else $(CYGPATH_W) '$(srcdir)/tableview.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mui-iopadview.obj `if test -f 'iopadview.c'; then $(CYGPATH_W) 'iopadview.c'; else $(CYGPATH_W) '$(srcdir)/iopadview.c'; fi`
+
+mui-i2cview.o: i2cview.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mui-i2cview.o -MD -MP -MF "$(DEPDIR)/mui-i2cview.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o mui-i2cview.o `test -f 'i2cview.c' || echo '$(srcdir)/'`i2cview.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/mui-i2cview.Tpo" "$(DEPDIR)/mui-i2cview.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/mui-i2cview.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='i2cview.c' object='mui-i2cview.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/mui-i2cview.Po' tmpdepfile='$(DEPDIR)/mui-i2cview.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mui-i2cview.o `test -f 'i2cview.c' || echo '$(srcdir)/'`i2cview.c
+
+mui-i2cview.obj: i2cview.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mui-i2cview.obj -MD -MP -MF "$(DEPDIR)/mui-i2cview.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o mui-i2cview.obj `if test -f 'i2cview.c'; then $(CYGPATH_W) 'i2cview.c'; else $(CYGPATH_W) '$(srcdir)/i2cview.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/mui-i2cview.Tpo" "$(DEPDIR)/mui-i2cview.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/mui-i2cview.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='i2cview.c' object='mui-i2cview.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/mui-i2cview.Po' tmpdepfile='$(DEPDIR)/mui-i2cview.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mui-i2cview.obj `if test -f 'i2cview.c'; then $(CYGPATH_W) 'i2cview.c'; else $(CYGPATH_W) '$(srcdir)/i2cview.c'; fi`
 
 mui-callbacks.o: callbacks.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mui-callbacks.o -MD -MP -MF "$(DEPDIR)/mui-callbacks.Tpo" \

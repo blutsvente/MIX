@@ -6,6 +6,10 @@
  *
  */
 
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
+
 #include <stdio.h>
 #include <gtk/gtk.h>
 
@@ -64,20 +68,20 @@ int read_settings()
     // read config paths
     if(fscanf(config_file, "MIX_PATH=%s\n", buffer)==1) {
 	settings.mix_path = (char*) malloc(strlen(buffer)+1);
-	if(strcmp(settings.mix_path, "<none>") != 0)
-	    strcpy(settings.mix_path, buffer);
-	else
+	if(!strcmp(buffer, "<none>"))
 	    settings.mix_path = NULL;
+	else
+	    strcpy(settings.mix_path, buffer);
     }
     else
 	settings.mix_path = NULL;
 
     if(fscanf(config_file, "EDITOR_PATH=%s", buffer)==1) {
 	settings.editor_path = (char*) malloc(strlen(buffer)+1);
-	if(strcmp(settings.editor_path, "<none>") != 0)
-	    strcpy(settings.editor_path, buffer);
-	else
+	if(!strcmp(buffer, "<none>"))
 	    settings.editor_path = NULL;
+	else
+	    strcpy(settings.editor_path, buffer);
     }
     else
 	settings.editor_path = NULL;

@@ -9,6 +9,8 @@
 #ifndef __IOPADVIEW_H_
 #define __IOPADVIEW_H_
 
+#include <gtk/gtk.h>
+
 
 GtkWidget* create_iopad_view();
 
