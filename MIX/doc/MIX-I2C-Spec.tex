@@ -90,7 +90,7 @@ The following table describes MIX I2C's header-keywords:
   \begin{bf}::comment\end{bf} & All entries in these cells are threaten as comments. MIX will keep comments to put them later into VHDL/Verilog output.\\
 \end{tabular}
 \section{I2C-Sheet input and VHDL output examples}
-The following screen-shots are showing a small part of  FRCA's I2C sheet. This section describes the \begin{tt}cc0\end{tt} Registrable which consists of 8 Sub-blocks. Each Sub-blocks Register-connections can be split into multiple rows. This allows you to specify different settings for pins of the same Registrable.\newline
+The following screen-shots are showing a small part of  FRCA's I2C sheet. This section describes the \begin{tt}cc0\end{tt} Registers which consist of 8 Sub-blocks (expandable up to 255 Registers). Each Sub-block Register-connections can be split into multiple rows.\newline
 \newline
 \includegraphics[scale=0.5]{images/FRCA_iic_part0.jpg}\newline
 \newline
@@ -98,7 +98,7 @@ The following screen-shots are showing a small part of  FRCA's I2C sheet. This s
 \newline
 \includegraphics[scale=0.5]{images/FRCA_iic_part2.jpg}\newline
 \newline
-\includegraphics[scale=0.6]{images/FRCA_iic_block.jpg}\newline
+\includegraphics[scale=0.4]{images/serial_iic_reg.jpg}\newline
 \newpage
 VHDL Architecture:\newline
 \includegraphics[scale=0.9]{images/FRCA_part_entity.jpg}\newline
@@ -107,7 +107,6 @@ VHDL Entity (incomplete):\newline
 \includegraphics[scale=0.9]{images/FRCA_part0_arch.jpg}\newline
 \newline
 \includegraphics[scale=0.9]{images/FRCA_part1_arch.jpg}\newline
-This part of the "\begin{tt}cc0\end{tt}" Architecture only shows the Sub-Address 200 (Hex: \begin{tt}c8\end{tt}). As you can see the Interface-name (or Domain-name) will become the Architecture-name while the Sub-address is used to identify the Sub-Register-block. The Port-map describes connections as told in the I2C Sheet. In the Generic Map you can find some I2C specific definitions as "\begin{tt}ra\_g\end{tt}" which hold the Registers Address as "\begin{tt}ur\_g\end{tt}" defines the Port-Range.
-
+This part of the "\begin{tt}cc0\end{tt}" Architecture only shows the Sub-Address 200 (Hex: \begin{tt}c8\end{tt}). As you can see the Interface-name (or Domain-name) will become the Architecture-name while the Sub-address is used to identify the Sub-Register-block. The Port-map describes connections as defined in the I2C Sheet. In the Generic Map you can find some I2C specific definitions, as "\begin{tt}ra\_g\end{tt}" which hold the Registers Address, as "\begin{tt}ur\_g\end{tt}" defines the Port-Range.
 
 \end{document}
