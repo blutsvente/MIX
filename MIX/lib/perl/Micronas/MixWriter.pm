@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.40 $                                         |
+# | Revision:   $Revision: 1.41 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/04/14 11:08:34 $                              |
+# | Date:       $Date: 2004/06/29 14:53:42 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.40 2004/04/14 11:08:34 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.41 2004/06/29 14:53:42 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.41  2004/06/29 14:53:42  wig
+# | fixed remove-the-comma-bug (too many /o)
+# |
 # | Revision 1.40  2004/04/14 11:08:34  wig
 # | minor code clearing
 # |
@@ -226,9 +229,9 @@ sub mix_wr_hier2mac ($);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.40 2004/04/14 11:08:34 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.41 2004/06/29 14:53:42 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.40 $';
+my $thisrevision   =      '$Revision: 1.41 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1759,9 +1762,9 @@ sub gen_instmap ($;$$) {
     # Quick hack: Get rid of possible %EMPTY%, which prevents end-of-map detection ...
     $map =~ s/%EMPTY%/$EH{'macro'}{'%EMPTY%'}/g; # Get rid of %EMPTY% ....
     # Remove trailing "," and such (VHDL) and also for Verilog ...    
-    $map =~ s/,(\s*$tcom.*)\n?$/$1\n/o;
+    $map =~ s/,(\s*$tcom.*)\n?$/$1\n/;
     $map =~ s/,\s*\n?$/\n/o; 
-    $gmap =~ s/,(\s*$tcom.*)\n?$/$1\n/o;
+    $gmap =~ s/,(\s*$tcom.*)\n?$/$1\n/;
     $gmap =~ s/,\s*\n?$/\n/o;
 
     unless( is_vhdl_comment( $gmap ) or $lang =~ m,^veri,io ) {
@@ -2881,7 +2884,7 @@ sub _write_architecture ($$$$) {
 	my $arch = $ae->{$i}{'::arch'};	
 
         #TODO: what to do if ilang != lang???
-        #TODO: that will happen only case one file is written for everything ..
+        #TODO: that will happen only in case one file is written for everything ..
         my $ilang = lc( $hierdb{$i}{'::lang'} ||$EH{'macro'}{'%LANUAGE%'} );
         if ( $p_lang and $p_lang ne $ilang ) {
             logwarn( "ERROR: Language mix: $p_lang used, now $ilang" );
