@@ -1,8 +1,7 @@
-#!/bin/sh -- # -*- perl -*- -w
-eval 'exec ${PERL:-`[ -x $HOME/bin/perl ] && echo $HOME/bin/perl || { [ -x /usr/bin/perl ] && echo /usr/bin/perl || echo /usr/local/bin/perl ; } `} -S $0 ${1+"$@"}'
+#!/bin/sh
+#! -*- perl -*- -w
+eval 'exec ${PERL:-`[ ! -d $HOME/bin/perl -a -x $HOME/bin/perl ] && echo $HOME/bin/perl || { [ -x /usr/bin/perl ] && echo /usr/bin/perl || echo /usr/local/bin/perl ; } `} -x -S $0 ${1+"$@"} ;'
 if 0; # dynamic perl startup; suppress preceding line in perl
-
-#!/usr/bin/perl
 
 #######################################################################
 #                MixTest - Test script for Mix                        #
@@ -20,6 +19,7 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #######################################################################
 
 use strict;
+use warnings;
 use Cwd;
 use DirHandle;
 use File::Basename;

@@ -1,9 +1,8 @@
-#!/bin/sh -- # -*- perl -*- -w
-eval 'exec ${PERL:-`[ -x $HOME/bin/perl ] && echo $HOME/bin/perl || { [ -x /usr/bin/perl ] && echo /usr/bin/perl || echo /usr/local/bin/perl ; } `} -S $0 ${1+"$@"}'
+#!/bin/sh
+#! -*- perl -*- -w
+eval 'exec ${PERL:-`[ ! -d $HOME/bin/perl -a -x $HOME/bin/perl ] && echo $HOME/bin/perl || { [ -x /usr/bin/perl ] && echo /usr/bin/perl || echo /usr/local/bin/perl ; } `} -x -S $0 ${1+"$@"} ;'
 if 0; # dynamic perl startup; suppress preceding line in perl
 
-#!/usr/bin/perl -w
-#
 # +-----------------------------------------------------------------------+
 # |                                                                       |
 # |   Copyright Micronas GmbH, Inc. 2002.                                 |
@@ -17,12 +16,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.30 2004/04/14 11:08:55 wig Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.31 2004/06/16 08:17:14 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.30 $                                      |
-# | Mod.Date     : $Date: 2004/04/14 11:08:55 $                           |
+# | Version      : $Revision: 1.31 $                                      |
+# | Mod.Date     : $Date: 2004/06/16 08:17:14 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -37,6 +36,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.31  2004/06/16 08:17:14  wig
+# | Added new perl starter
+# |
 # | Revision 1.30  2004/04/14 11:08:55  wig
 # | minor code clearing
 # |
@@ -151,12 +153,13 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #******************************************************************************
 
 use strict;
+use warnings;
 use Cwd;
 use File::Basename;
 use Getopt::Long qw(GetOptions);
 use Pod::Text;
 # use diagnostics; # -> will be set by -debug option
-# use English;       # -> will not need this, just consumes performance
+# use English;       # -> not need this, just consumes performance
 
 =head 4 old 
 
@@ -224,7 +227,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.30 $'; # RCS Id
+$::VERSION = '$Revision: 1.31 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 logconfig(
