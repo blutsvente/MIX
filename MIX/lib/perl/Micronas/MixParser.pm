@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.24 $                                             |
+# | Revision:   $Revision: 1.25 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/07/29 15:48:04 $                                   |
+# | Date:       $Date: 2003/08/11 07:16:24 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.24 2003/07/29 15:48:04 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.25 2003/08/11 07:16:24 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,10 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.25  2003/08/11 07:16:24  wig
+# | Added typecast
+# | Fixed Verilog issues
+# |
 # | Revision 1.24  2003/07/29 15:48:04  wig
 # | Lots of tiny issued fixed:
 # | - Verilog constants
@@ -204,11 +208,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.24 2003/07/29 15:48:04 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.25 2003/08/11 07:16:24 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.24 $';
+my $thisrevision   =      '$Revision: 1.25 $';
 
-# | Revision:   $Revision: 1.24 $   
+# | Revision:   $Revision: 1.25 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1020,7 +1024,9 @@ sub create_conn ($%) {
             #TODO: Initialize fields to empty / Marker, set DEFAULT if still empty at end 
         }
         #TODO: Remove this ....
+        #wig20030801
         $conndb{$name}{$i} =~ s/%NULL%/$EH{'macro'}{'%NULL%'}/g; # Just to make sure fields are initialized
+        $conndb{$name}{$i} =~ s/%EMPTY%/$EH{'macro'}{'%EMPTY%'}/g; # Just to make sure fields are initialized
         delete( $data{$i} );
     }
 
@@ -1080,6 +1086,9 @@ sub _create_conn ($$%) {
     if ( defined( $data{'::low'} ) and defined ( $data{'::high'} ) ) {
         #    if ( $data{::low} <= $data{::high} ) {
         #        # This ia a bus ...
+        $data{'::low'} =~ s,^\s+,,; # Remove leading white-space
+        $data{'::high'} =~ s,^\s+,,; # Remove leading white-space
+        
         if ( $data{'::high'} ne "" ) {
             unless ( $data{'::high'} =~ /^\d+$/ ) {
                 logtrc( "INFO", "Bus $data{'::name'} upper bound $data{'::high'} not a number!" );
@@ -1215,7 +1224,14 @@ sub _create_conn ($$%) {
             #
             # Normal inst/ports ....
             #
+            #wig20030801: typecast port'cast_func ...
+            if ( $d =~ m,(/?'(\w+)), ) { # Get typecast   inst/port'cast or inst/'cast
+                $co{'cast'} = $2;
+                $d =~ s,$1,,;
+            }
+
             $d =~ s/\(([\w%#]+)\)/($1:$1)/g; # Extend (N) to (N:N)
+
             if ( $d !~ m,/,o ) { # Add signal name as port name by default
                 $d =~ s,([\w%:#]+),$1/%::name%,;
             }
@@ -2018,7 +2034,7 @@ sub mix_p_prep_match ($$$$) {
     # Parse ::col=RE:: ....
     while ( $re =~ s,^(::\w+?)=(.*?)(::|$),, ) { #
         if ( defined( $r_d->{$1} ) and not ref( $r_d->{$1} ) ) {
-            $content .= "#" . $r_d->{$1}; # Apply a # as filed seperator ...
+            $content .= "#" . $r_d->{$1}; # Apply a # as field seperator ...
             $pre .= "#" . $2; # Save regular expression ....
         } else {
             # Found something, but that is not defined here -> will never match
@@ -3144,7 +3160,7 @@ sub generate_port ($$$$$$) {
     my $post = $EH{'postfix'}{'POSTFIX_PORT_GEN'};
     my $ftp = "";
 
-    # Get postfix for generated ports:
+    # Get postfix for generated ports (special macro!):
     if ( $post =~ m,%IO%,o ) {
         $post =~ s/%IO%/$m/;
     }
@@ -3154,12 +3170,12 @@ sub generate_port ($$$$$$) {
     if ( $post =~ m,%FT%,o or
             $f ne $conndb{$signal}{'::high'} or
             $t ne $conndb{$signal}{'::low'} ) {
-        $ftp = ( $f ne "" ) ? ( "_" . $f ) : "";
-        $ftp .= ( $t ne "" ) ? ( "_" . $t ) : "";
+        $ftp = ( $f !~ m,^\s*$,o ) ? ( "_" . $f ) : "";
+        $ftp .= ( $t !~ m,^\s*$,o ) ? ( "_" . $t ) : "";
         $post =~ s,%FT%,,;
     }
     
-    # Top level will get no postfix!    
+    # Top level will get no postfix!
     if ( $top_flag =~ m,top,io and $EH{'output'}{'generate'}{'inout'} =~ m,noxfix,io ) {
         $t{'port'} = $signal;
         #TODO: Check if port name is unique?
@@ -3171,14 +3187,14 @@ sub generate_port ($$$$$$) {
     }
     $t{'inst'} = $inst;
 
-    if ( $t eq "" ) {
+    if ( $t =~ m,^\s*$, ) {
         $t{'port_t'} = $t{'sig_t'} = undef;
     } else {
         $t{'sig_t'} = $t;
         $t{'port_t'} = 0;
     }
 
-    if ( $f eq "" ) {
+    if ( $f =~ m,^\s*$,o ) {
         $t{'port_f'} = $t{'sig_f'} = undef;
     } else {
         $t{'sig_f'} = $f;
@@ -3186,7 +3202,7 @@ sub generate_port ($$$$$$) {
     }
 
     if ( $f eq $t ) {
-        $t{'port_t'} = $t{'port_f'} = undef;
+        $t{'port_t'} = $t{'port_f'} = undef; # Port is only one bit wide ...
     }
     logtrc( "INFO:4", "add_port: signal $signal adds port $t{'port'} to instance $t{'inst'}" );
 
@@ -3458,7 +3474,11 @@ sub purge_relicts () {
         next if ( $i eq '%OPEN%' ); # Ignore the %OPEN% pseudo-signal
 
         unless( defined( $conndb{$i}{'::high'} ) ) { $conndb{$i}{'::high'} = ''; }
-        unless( defined( $conndb{$i}{'::low'} ) ) { $conndb{$i}{'::low'} = ''; }        
+        unless( defined( $conndb{$i}{'::low'} ) ) { $conndb{$i}{'::low'} = ''; }       
+
+        $conndb{$i}{'::high'} = '' if ( $conndb{$i}{'::high'} =~ m,^\s+,o );
+        $conndb{$i}{'::low'} = '' if ( $conndb{$i}{'::low'} =~ m,^\s+,o );
+        
         if ( $conndb{$i}{'::high'} ne '' or $conndb{$i}{'::low'} ne '' ) {
             my $h = $conndb{$i}{'::high'};
             my $l = $conndb{$i}{'::low'};
@@ -3466,6 +3486,30 @@ sub purge_relicts () {
                 _extend_inout( $h, $l, $conndb{$i}{'::out'} );
             # }
         }
+
+        #!wig20030731: make sure high/low_bus has width!    
+        if ( $i =~ m,^%(LOW|HIGH)_BUS%$,o ) {
+            # If high or low bus does not have ::high or ::low defined, set it ...
+            if ( $conndb{$i}{'::high'} eq '' or $conndb{$i}{'::low'} eq '' ) {
+                my $max = 1; # Minimal assign a 1 to the high/low bus width
+                for my $ii ( @{$conndb{$i}{'::in'}} ) {
+                    if ( $ii->{'port_f'} and $ii->{'port_f'} < $max ) {
+                        $max = $ii->{'port_f'};
+                    }
+                }
+                $conndb{$i}{'::high'} = $max;
+                $conndb{$i}{'::low'} = "0";
+            }
+        }
+        
+
+        # Does a _vector type have bounds defined?
+        if ( ( $conndb{$i}{'::high'} eq "" or $conndb{$i}{'::low'} eq "" ) and
+            $conndb{$i}{'::type'} =~ m,(.*_vector$), ) {
+                logwarn( "WARNING: Found signal of type $1 with undefined bounds!" );
+                $EH{'sum'}{'warnings'}++;
+        }
+            
         #!wig20030516: auto reducing single width busses to signals ...
         if ( $conndb{$i}{'::high'} eq "0" and $conndb{$i}{'::low'} eq "0" ) {
             if ( $conndb{$i}{'::type'} =~ m,std_u?logic\s*$,io ) {

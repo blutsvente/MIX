@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.16 2003/07/29 15:48:03 wig Exp $
+# $Id: TODO.txt,v 1.17 2003/08/11 07:16:11 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -20,6 +20,127 @@ Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 TODOs:
 
  Probleme:
+
+- 20030806a/Req: use variables/text for ::high:
+
+Ich habe folgendes Problem  
+Codefragment:
+
+constant width8      : integer := 8;
+...
+signal y_clkif       : std_ulogic_vector(width8-1 downto 0)
+
+..
+y_p_o        => y_clkif,
+...
+
+andere komponente
+
+..
+ y_p_i     => y_clkif,
+
+
+bzw.
+
+component upcon
+  generic (
+    width : integer := 8
+    );
+  ...
+    y_p_i        : in  std_ulogic_vector(width-1 downto 0);    -> in der Component Dekleration
+   .....
+
+
+Wie programmiert man dies im Mix (Excel Sheet) ?
+
+    Req: kropfisch
+    Prio: low
+
+
+- 20030801a/Bug: Detect spaces in ::high and ::low and remove them!
+
+    Req: wig
+    Prio: high (causes MIX to break and produce bad results and warnings ...)
+
+- 20030730f/Bug:
+
+1) hinter der `timescale 1ns/1ps; Anweisung steht noch ein Semikolon am Ende,
+    das da nichts zu suchen hat.
+
+    Req: mpallas
+    Prio: High
+    Solution: wig20030730, changed in MixWriter
+
+- 20030730e/Bug:
+
+2) im `define <bla> 16´b1111000011110000 muss zwischen der Bitbreite und
+    dem Bitvektor (und nur dort !) ein 'Tick' und kein 'Backtick' stehen.
+
+    Req: mpallas
+    Prio: High
+    Solution: wig20030731, changed in MixWriter, maybe further processing is needed
+
+- 20030730d/Bug:
+
+3) zusammengesetzte Signale in der Instanziieruzng:
+
+sowas geht in Verilog nicht:
+
+...
+   .svm_o[7:0](vs_a_p_i), // __W_PORT
+   .svm_o[9:8](svm_vs_b_p), // __W_PORT
+...
+
+es muss vielmehr (wie in VHDL) erst zusammengesetzt und dann zugewiesen werden:
+
+...
+   .svm_o(svm_vs_b_p & vs_a_p_i),
+...
+
+    Req: mpallas
+    Prio: high
+    Solution: reprogramm "port_map" ....
+
+- 20030730c/Req: Ident made more flexible:
+
+    Allow to configure identation and use \t or " " or whatever.
+    E.g. use a macro.S and then a counter like fi=0 fi=+1 ...
+    Make per function or output group ident possible.
+
+    
+    Req: mpallas
+    Prio: low    
+    Solution: implement $EH{'macro'}{'%S%'} = ... and put in instead of fixed indents.
+            get function mix_ident( N ) N being 0...N (e.g. 10) and or +/-N stepping in/out
+
+
+- 20030730b/Bug: %LOW_BUS% without ::high ::low definition fails ...
+    Automatically create ::high and ::low matching the bits ...
+    
+    Req: wig
+    Prio: low
+    Solved: wig20030731, no testcase (really?)
+
+- 20030730a/Req: typecast request ...
+
+Wie kann ein Typecast duchgefuehrt werden?
+
+lm_y0_p6 _o: out std_ulogic_vector (3 downto 0);
+lm_y_o: out std_logic_vector(3 downto 0);
+lm_y0_p6 _o <= std_ulogic_vector (lm_y_o)
+
+    Req: michaelkropfitsch
+    Prio: low
+
+    Idea: While you find "type_mismatch", consider an matrix of allowed conversion to
+    put in place if defined.
+    Add attribute %::typecast% and/or to port description:
+        signal_a   typea inst_a/port_a#typeb  -> signal typea signal_a;
+                                                    signal_a <= typea( port_a );
+                                                    entity inst_a ... port
+                                                        port_a inout type_b ..
+
+
 - 20030729a/Bug: Konstanten Verilog
 
     die Konstantendefinition in der Verilog Ausgabe von MIX ist

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / IOParser
 # | Modules:    $RCSfile: MixIOParser.pm,v $ 
-# | Revision:   $Revision: 1.9 $
+# | Revision:   $Revision: 1.10 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2003/07/29 15:48:04 $
+# | Date:       $Date: 2003/08/11 07:16:23 $
 # | 
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.9 2003/07/29 15:48:04 wig Exp $
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.10 2003/08/11 07:16:23 wig Exp $
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -36,6 +36,10 @@
 # |
 # | Changes:
 # | $Log: MixIOParser.pm,v $
+# | Revision 1.10  2003/08/11 07:16:23  wig
+# | Added typecast
+# | Fixed Verilog issues
+# |
 # | Revision 1.9  2003/07/29 15:48:04  wig
 # | Lots of tiny issued fixed:
 # | - Verilog constants
@@ -116,9 +120,9 @@ sub _mix_iop_init();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixIOParser.pm,v 1.9 2003/07/29 15:48:04 wig Exp $';
+my $thisid		=	'$Id: MixIOParser.pm,v 1.10 2003/08/11 07:16:23 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixIOParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.9 $';
+my $thisrevision   =      '$Revision: 1.10 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -236,7 +240,7 @@ sub mix_iop_iocell ($$) {
         my $port = $t_sel->{'__PORT__'} || '%IOCELL_SELECT_PORT%'; # Default port name to select.
 
         if ( $EH{'iocell'}{'select'} =~ m,bus,io ) {
-            # Attach a select bus of appropriate widthcoding the select
+            # Attach a select bus of appropriate width coding the select
             # bits into a binary presentation. Requires internal
             # decoding of the select signal.
             my %s = ();
@@ -264,6 +268,7 @@ sub mix_iop_iocell ($$) {
             #Will we need more information??
             add_conn( %s );
 
+        # } elsif ( $EH{'iocell'}{'select'} =~ m,given,io ) { # Take as many signals as found   
         } else {
             for my $s ( keys( %$t_sel ) ) {
                 next if ( $s =~ m,^__, );
@@ -320,7 +325,7 @@ sub mix_iop_connioc ($$$) {
     my @pins = split( /[,\s]+/, $r_h->{'::port'} );
     my $clock = "%IOCELL_CLK%";
 
-    my %tsel = %$r_sel;
+    my %tsel = %$r_sel; # Keep muxopt options, possibly reduce by missing
     
     # Check pin names ....
     foreach my $p ( @pins ) {
@@ -331,8 +336,13 @@ sub mix_iop_connioc ($$$) {
         }
     }
 
+    my $r_cols = $r_sel;
+    if ( $EH{'iocell'}{'select'} =~ m,given,io ) { # Don't worry about mismatch of
+        # select signal and muxopt width ....
+        $r_cols = $r_h;
+    }
     # Iterate through all ::muxopt:N ...
-    foreach my $s ( keys( %$r_sel ) ) {
+    foreach my $s ( keys( %$r_cols ) ) {
         next if ( $s =~ m,^__, );
 
         # Remove select line if no data defined in this matrix cell

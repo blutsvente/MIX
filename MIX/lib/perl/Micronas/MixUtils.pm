@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.23 $                                             |
+# | Revision:   $Revision: 1.24 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/07/29 15:48:05 $                                   |
+# | Date:       $Date: 2003/08/11 07:16:24 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.23 2003/07/29 15:48:05 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.24 2003/08/11 07:16:24 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,10 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.24  2003/08/11 07:16:24  wig
+# | Added typecast
+# | Fixed Verilog issues
+# |
 # | Revision 1.23  2003/07/29 15:48:05  wig
 # | Lots of tiny issued fixed:
 # | - Verilog constants
@@ -208,11 +212,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.23 2003/07/29 15:48:05 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.24 2003/08/11 07:16:24 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.23 $';
+my $thisrevision   =      '$Revision: 1.24 $';
 
-# | Revision:   $Revision: 1.23 $   
+# | Revision:   $Revision: 1.24 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -773,6 +777,7 @@ $ex = undef; # Container for OLE server
 	      'inout' => 'mode,noxfix',	# Generate IO ports for TOP cell (or daughter of testbench
 					# controlled by ::mode I|O
 					# noxfix: do not attach pre/postfix to signal names
+	      # 'port' => 'markgenerated',	# attach a _gIO to generated ports ...
 	      'delta' => 0,	    	# allows to use mix.cfg to preset delta mode
 	      'combine' => 0,	# Combine enty,arch and conf into one file, -combine switch
 	    },	
@@ -841,6 +846,21 @@ $ex = undef; # Container for OLE server
 						# signals to open.
 	'inst' => 'nomulti',	# check and mark multiple instantiations
     },
+    # Autmatically try conversion to TYPE from TYPE by using function ...
+    'typecast' => { # add typecast functions ...
+	'std_ulogic_vector' => {
+	    'std_logic_vector' => "std_ulogic_vector( %signal% );" ,
+	},
+	'std_logic_vector' => {
+	    'std_ulogic_vector' => "std_logic_vector( %signal% );" ,
+	},
+	'std_ulogic' => {
+	    'std_logic' => 'std_ulogic( %signal% );',
+	},
+	'std_logic' => {
+	    'std_ulogic' => 'std_logic( %signal% );',
+	},
+    },
     'postfix' => {
 	    qw(
 		    POSTFIX_PORT_OUT	_o
@@ -893,7 +913,11 @@ $ex = undef; # Container for OLE server
 	'inout' => '__NOINOUT__',	# List of inout ports ...
 	'out'	=> 'di,xin',		# List of outwards ports (towards chip core!!)
 					# di is a chip input, driven by the iocell towards the core.
-	'select' => 'onehot,auto', # Define select lines: onehot vs. bus
+	'select' => 'onehot,auto', # Define select lines: onehot vs. bus vs. bus2n
+					# bus -> use signal in ::muxopt:0 column (first)
+					# given  -> use signals as defined by the %SEL% lines,
+					#     but calculate width 2^N ... -> 3 signals give a mux width of
+					#  8 ... (alternativ take width argument from signal name
 					# auto := choose width accordingly to wired io busses
 					# const := use %SEL% defined width
 
@@ -971,12 +995,13 @@ $ex = undef; # Container for OLE server
 	    "::config"	=> [ qw(	1	0	1	%DEFAULT_CONFIG%	11 )],
 	    '::use'		=> [ qw(	1	0	0	%EMPTY%		10  )],
 	    "::comment"	=> [ qw(	1	0	2	%EMPTY%	12 )],
+	    "::descr"	=> [ qw(	1	0	0	%EMPTY%	13 )],
 	    "::shortname"	=> [ qw(	0	0	0	%EMPTY%	6 )],
 	    "::default"	=> [ qw(	1	1	0	%EMPTY%	0 )],
 	    "::hierachy"	=> [ qw(	1	0	0	%EMPTY%	0 )],
 	    "::debug"	=> [ qw(	1	0	0	%NULL%	0 )],
 	    '::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
-	    'nr'		=> 13,  # Number of next field to print
+	    'nr'		=> 14,  # Number of next field to print
 	},
     },
     'variant' => 'Default', # Select default as default variant :-)
@@ -1051,6 +1076,7 @@ $ex = undef; # Container for OLE server
 	    "%EMPTY%"	=> "",
 	    "%NULL%"	=> "0",
 	    "%TAB%"	=> "\t",
+	    "%S%"		=> "\t", # Output field ident ....
 	    "%IOCR%"	=> "\n",
 	    "%SIGNAL%"	=> "std_ulogic",
 	    "%BUS_TYPE%"	=> "std_ulogic_vector",
@@ -1077,7 +1103,7 @@ $ex = undef; # Container for OLE server
 	    "%VHDL_USE_ENTY%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
 	    "%VHDL_USE_ARCH%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
 	    "%VHDL_USE_CONF%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
-	    "%VERILOG_TIMESCALE%"	=>	"`timescale 1ns / 1ps;",
+	    "%VERILOG_TIMESCALE%"	=>	"`timescale 1ns / 1ps",
 	    "%VERILOG_USE_ARCH%"	=>	'%EMPTY%',
 	    "%VERILOG_DEFINES%"	=>	'	// No `defines in this module', # Used internally
 	    "%OPEN%"	=> "open",			#open signal
@@ -2490,34 +2516,39 @@ sub inout2array ($;$) {
 #                     'inst' => 'u_ddrv4',
 #	               'port_t' => undef,
 #                     'port_f' => undef
+#		    	'cast' => cast_func ....
 #                   }
 #                 ],    
 
     for my $i ( @$f ) {
 
+	my $cast = "";
 	unless( defined( $i->{'inst'} ) ) {
 	    next;
+	}
+	if ( exists( $i->{'cast'} ) ) {
+	    $cast = "'" . $i->{'cast'};
 	}
 	# Constants are working a different way:
 	#: m,^\s*(__CONST__|%CONST%|__GENERIC__|__PARAMETER__|%GENERIC%|%PARAMETER%),o ) {
 	#TODO: make sure sig_t/sig_f and port_t/port_f are defined in pairs!!
 	if ( $i->{'inst'} =~
 	    m,^\s*(__CONST__|%CONST%),o ) {
-	    $s .= $i->{'port'} . ", %IOCR%";
+	    $s .= $i->{'port'} . $cast . ", %IOCR%";
 	} elsif ( defined $i->{'sig_t'} and $i->{'sig_t'} ne '' ) {
 	# inst/port($port_f:$port_t) = ($sig_f:$sig_t)
 	    if ( defined $i->{'port_t'} and $i->{'port_t'} ne '' ) {
-		$s .= $i->{'inst'} . "/" . $i->{'port'} . "(" .
+		$s .= $i->{'inst'} . "/" . $i->{'port'} . $cast . "(" .
 			$i->{'port_f'} . ":" . $i->{'port_t'} . ")=(" .
 			$i->{'sig_f'} . ":" . $i->{'sig_t'} . "), %IOCR%";
 	    } else {
 		# TODO inst/port = (sf:st)  vs. inst/port(0:0) = (sf:st)
-		$s .= $i->{'inst'} . "/" . $i->{'port'} . "=(" .
+		$s .= $i->{'inst'} . "/" . $i->{'port'} . $cast . "=(" .
 			$i->{'sig_f'} . ":" . $i->{'sig_t'} . "), %IOCR%";
 	    }
 	} else {
 	    if ( defined $i->{'port_t'} and $i->{'port_t'} ne '' ) {
-		$s .= $i->{'inst'} . "/" . $i->{'port'} . "(" .
+		$s .= $i->{'inst'} . "/" . $i->{'port'} . $cast . "(" .
 			$i->{'port_f'} . ":" . $i->{'port_t'} . # ")=(" .
 			# $i->{'sig_f'} . ":" . $i->{'sig_t'} .
 			"), %IOCR%";
@@ -2525,9 +2556,9 @@ sub inout2array ($;$) {
 	    } else {
 		# If this is %OPEN% and neither port nor signal defined -> set to (0)
 		if ( $o eq '%OPEN%' ) {
-		    $s .= $i->{'inst'} . "/" . $i->{'port'} . "(0:0)=(0:0)" . ", %IOCR%";
+		    $s .= $i->{'inst'} . "/" . $i->{'port'} . $cast . "(0:0)=(0:0)" . ", %IOCR%";
 		} else {
-		    $s .= $i->{'inst'} . "/" . $i->{'port'} . ", %IOCR%";
+		    $s .= $i->{'inst'} . "/" . $i->{'port'} . $cast . ", %IOCR%";
 		}
 	    }
 	}
@@ -2536,7 +2567,7 @@ sub inout2array ($;$) {
     if ( ( $s =~ m,\(:,o ) or ( $s =~ m,\(:,o ) ) {
 	logwarn( "WARNING: inout2array bad branch (: ! File bug report!" );
     }
- 
+	
     $s =~ s/,\s*%IOCR%\s*$//o;
     # convert macros (parse_mac already done )!!!
     $s =~ s,%IOCR%,$EH{'macro'}{'%IOCR%'},g;
