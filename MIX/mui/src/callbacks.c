@@ -65,39 +65,7 @@ void on_new_file_item(GtkMenuItem *menuitem, gpointer user_data)
 
 void on_open_file_item(GtkMenuItem *menuitem, gpointer user_data)
 {
-    const gchar *filename = create_file_dialog("Open Project");
-    GtkWidget *view;
-
-    if(filename != NULL) {
-	if(mix_readSpreadsheet(filename) != SUCCESS) {
-	    create_info_dialog("Error", "\n  Could not read Spreadsheeet  \n");
-	}
-	else {
-	    destroy_all_views();
-
-	    // create new views
-	    view = (GtkWidget*) create_hier_view();
-	    gtk_widget_show_all(view);
-	    gtk_container_add(GTK_CONTAINER(get_view_frame(0)), view);
-	    set_view_child(view, 0);
-
-	    view = (GtkWidget*) create_conn_view();
-	    gtk_widget_show_all(view);
-	    gtk_container_add(GTK_CONTAINER(get_view_frame(1)), view);
-	    set_view_child(view, 1);
-
-	    view = (GtkWidget*) create_iopad_view();
-	    gtk_widget_show_all(view);
-	    gtk_container_add(GTK_CONTAINER(get_view_frame(2)), view);
-	    set_view_child(view, 2);
-
-	    view = (GtkWidget*) create_i2c_view();
-	    gtk_widget_show_all(view);
-	    gtk_container_add(GTK_CONTAINER(get_view_frame(3)), view);
-	    set_view_child(view, 3);
-	    return;
-	}
-    }
+    open_project(create_file_dialog("Open Project"));
 }
 
 void on_save_file_item(GtkMenuItem *menuitem, gpointer user_data)
@@ -167,39 +135,7 @@ void on_new_file_btn(GtkButton *button, gpointer user_data)
 
 void on_open_file_btn(GtkButton *button, gpointer user_data)
 {
-    const gchar *filename = create_file_dialog("Open Project");
-    GtkWidget *view;
-
-    if(filename != NULL) {
-	if(mix_readSpreadsheet(filename) != SUCCESS) {
-	    create_info_dialog("Error", "\n  Could not read Spreadsheeet  \n");
-	}
-	else {
-	    destroy_all_views();
-
-	    // create new views
-	    view = (GtkWidget*) create_hier_view();
-	    gtk_widget_show_all(view);
-	    gtk_container_add(GTK_CONTAINER(get_view_frame(0)), view);
-	    set_view_child(view, 0);
-
-	    view = (GtkWidget*) create_conn_view();
-	    gtk_widget_show_all(view);
-	    gtk_container_add(GTK_CONTAINER(get_view_frame(1)), view);
-	    set_view_child(view, 1);
-
-	    view = (GtkWidget*) create_iopad_view();
-	    gtk_widget_show_all(view);
-	    gtk_container_add(GTK_CONTAINER(get_view_frame(2)), view);
-	    set_view_child(view, 2);
-
-	    //	    view = (GtkWidget*) create_i2c_view();
-	    //	    gtk_widget_show_all(view);
-	    //	    gtk_container_add(GTK_CONTAINER(get_view_frame(3)), view);
-	    //	    set_view_child(view, 3);
-	    return;
-	}
-    }
+    open_project(create_file_dialog("Open Project"));
 }
 
 void on_save_file_btn(GtkButton *button, gpointer user_data)

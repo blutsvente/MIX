@@ -50,6 +50,10 @@
   g_object_set_data (G_OBJECT (component), name, widget)
 
 
+void new_project();
+
+void open_project(const char *filename);
+
 /**
  * get index number of current page selected
  */
@@ -62,6 +66,8 @@ void set_current_page(int index);
  * create the intial view
  */
 void create_first_view(int index);
+
+void destroy_all_views();
 
 /**
  * This function returns a widget in a component created by Glade.

@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 
+#include "mix.h"
 #include "support.h"
 
 
@@ -29,6 +30,40 @@ void new_project()
     // run MIX using empty template
 }
 
+void open_project(const char *filename)
+{
+    GtkWidget *view;
+
+    if(filename != NULL) {
+	if(mix_readSpreadsheet(filename) != SUCCESS) {
+	    create_info_dialog("Error", "\n  Could not read Spreadsheeet  \n");
+	}
+	else {
+	    destroy_all_views();
+
+	    // create new views
+	    view = (GtkWidget*) create_hier_view();
+	    gtk_widget_show_all(view);
+	    gtk_container_add(GTK_CONTAINER(get_view_frame(0)), view);
+	    set_view_child(view, 0);
+
+	    view = (GtkWidget*) create_conn_view();
+	    gtk_widget_show_all(view);
+	    gtk_container_add(GTK_CONTAINER(get_view_frame(1)), view);
+	    set_view_child(view, 1);
+
+	    view = (GtkWidget*) create_iopad_view();
+	    gtk_widget_show_all(view);
+	    gtk_container_add(GTK_CONTAINER(get_view_frame(2)), view);
+	    set_view_child(view, 2);
+
+	    //	    view = (GtkWidget*) create_i2c_view();
+	    //	    gtk_widget_show_all(view);
+	    //	    gtk_container_add(GTK_CONTAINER(get_view_frame(3)), view);
+	    //	    set_view_child(view, 3);
+	}
+    }
+}
 
 int get_current_page()
 {

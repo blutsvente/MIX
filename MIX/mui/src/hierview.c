@@ -305,7 +305,6 @@ GtkWidget* create_hier_view(void)
 
 GtkWidget* init_hiertree()
 {
-    GtkTreeViewColumn   *col;
     GtkTreeModel        *model;
     GtkCellRenderer     *renderer;
     GtkWidget           *view;
@@ -323,7 +322,8 @@ GtkWidget* init_hiertree()
 
     g_object_unref(model); // destroy model automatically with view
 
-    create_hiertree();
+    // create_hiertree();
+    gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(view), TRUE);
 
     return view;
 }

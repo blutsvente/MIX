@@ -37,22 +37,23 @@ enum {
 static struct {
     char *title;
     char *type;
+    gboolean editable;
 } header[] = {
-    {"::ign", "text"},
-    {"::comment", "text"},
-    {"::variants", "text"},
-    {"::dev", "text"},
-    {"::sub", "text"},
-    {"::interface", "text"},
-    {"::block", "text"},
-    {"::dir", "text"},
-    {"::spec", "text"},
-    {"::clock", "text"},
-    {"::reset", "text"},
-    {"::busy", "text"},
-    {"::init", "text"},
-    {"::rec", "text"},
-    {"::b", "text"},
+    {"::ign", "text", TRUE},
+    {"::comment", "text", TRUE},
+    {"::variants", "text", TRUE},
+    {"::dev", "text", TRUE},
+    {"::sub", "text", TRUE},
+    {"::interface", "text", TRUE},
+    {"::block", "text", TRUE},
+    {"::dir", "text", TRUE},
+    {"::spec", "text", TRUE},
+    {"::clock", "text", TRUE},
+    {"::reset", "text", TRUE},
+    {"::busy", "text", TRUE},
+    {"::init", "text", TRUE},
+    {"::rec", "text", TRUE},
+    {"::b", "text", TRUE},
 };
 
 
@@ -74,12 +75,14 @@ GtkWidget* create_i2c_view()
 
 	col = gtk_tree_view_column_new();
 
+	gtk_tree_view_column_set_spacing(col, 1);
 	gtk_tree_view_column_set_title(col, header[i].title);
 
 	// pack tree view column into tree view
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 
 	renderer = gtk_cell_renderer_text_new();
+	g_object_set(renderer, "editable", header[i].editable, NULL);
 
 	// pack cell renderer into tree view column
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);
@@ -96,7 +99,8 @@ GtkWidget* create_i2c_view()
 
     g_object_unref(model); // destroy model automatically with view
 
-    gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(view)), GTK_SELECTION_NONE);
+    gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(view), TRUE);
+    gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(view)), GTK_SELECTION_MULTIPLE);
 
     return view;
 }

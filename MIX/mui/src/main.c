@@ -46,9 +46,10 @@ int main(int argc, char *argv[])
     while(mix_init(get_mix_path()))
 	if(!show_preferences()) return 0;
 
-    // only the first view has to created manualy, all others
-    // get triggert when they are selected
-    //    create_first_view(HIERVIEW);
+    // open cmd arg passed sheet
+    if(argc > 1) {
+	open_project((const char*) argv[1]);
+    }
 
     gtk_main();
     return 0;
