@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.4 $                                          |
+# | Revision:   $Revision: 1.5 $                                          |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/12/03 14:10:06 $                              |
+# | Date:       $Date: 2003/12/03 14:14:47 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.5  2003/12/03 14:14:47  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.4  2003/12/03 14:10:06  abauer
 # | fixed overwrite of old csv-sheets
 # |
@@ -106,11 +109,11 @@ sub mix_utils_mask_excel ($);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.4 2003/12/03 14:10:06 abauer Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.5 2003/12/03 14:14:47 abauer Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.4 $';
+my $thisrevision    =      '$Revision: 1.5 $';
 
-# Revision:   $Revision: 1.4 $
+# Revision:   $Revision: 1.5 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1799,10 +1802,6 @@ sub write_csv($$$) {
     }
 
     open(FILE,">$file");
-
-    print "Sheet: $sheet\n";
-    print "start: $start\n";
-    print "stop: $stop\n";
 
     for(my $i=0; $i<$start; $i++) {
         if(defined $data[$i]) {
