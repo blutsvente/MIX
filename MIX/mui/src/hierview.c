@@ -12,10 +12,61 @@
 #include "support.h"
 #include "hierview.h"
 
+enum {
+    HIER_IGN = 0,
+    HIER_GEN,
+    HIER_VAR,
+    HIER_PAR,
+    HIER_INST,
+    HIER_LANG,
+    HIER_ENT,
+    HIER_ARC,
+    HIER_CONF,
+    HIER_USE,
+    HIER_COM,
+    HIER_DES,
+    HIER_SNAME,
+    HIER_DEF,
+    HIER_HIER,
+    HIER_DEB,
+    HIER_SKIP,
+    HIER_NUM_COLS
+};
+
+static struct {
+    char *title;
+    char *type;
+    gboolean editable;
+} header[] = {
+    {"::ign", "text", TRUE},
+    {"::gen", "text", TRUE},
+    {"::variants", "text", TRUE},
+    {"::parent", "text", TRUE},
+    {"::inst", "text", TRUE},
+    {"::lang", "text", TRUE},
+    {"::entity", "text", TRUE},
+    {"::arch", "text", TRUE},
+    {"::config", "text", TRUE},
+    {"::use", "text", TRUE},
+    {"::comment", "text", TRUE},
+    {"::descr", "text", TRUE},
+    {"::shortname", "text", TRUE},
+    {"::default", "text", TRUE},
+    {"::hierarchy", "text", TRUE},
+    {"::debug", "text", TRUE},
+    {"::skip", "text", TRUE},
+};
+
+GtkTreeModel *hier_model;
+
+static GtkTreeModel* create_hier_model(void);
+
+
+// the following stuff is needed for the hierachy treeview
 
 enum {
-    COL_NAME = 0,
-    NUM_COLS
+    HTREE_INST = 0,
+    HTREE_NUM_COLS
 };
 
 /**
@@ -51,7 +102,7 @@ GtkWidget *genEntry;
 GtkWidget *ignoreCheckbutton;
 
 
-GtkWidget* create_hier_view(void)
+GtkWidget* create_hiertree_view(void)
 {
     GtkWidget *detailsHbox;
     GtkWidget *scrolledwindow1;
@@ -313,9 +364,9 @@ GtkWidget* init_hiertree()
 
     // --- Column #1 ---
     renderer = gtk_cell_renderer_text_new ();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW (view), -1, "Name", renderer, "text", COL_NAME, NULL);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW (view), -1, "Name", renderer, "text", HTREE_INST, NULL);
 
-    store = gtk_tree_store_new(NUM_COLS, G_TYPE_STRING, G_TYPE_UINT);
+    store = gtk_tree_store_new(HTREE_NUM_COLS, G_TYPE_STRING, G_TYPE_UINT);
     model = GTK_TREE_MODEL(store);
 
     gtk_tree_view_set_model(GTK_TREE_VIEW (view), model);
@@ -343,7 +394,7 @@ void create_hiertree()
     {
 	//Fill the TreeView's model
 	gtk_tree_store_append(store, &iter, NULL);
-	gtk_tree_store_set(store, &iter, COL_NAME, name, -1);
+	gtk_tree_store_set(store, &iter, HTREE_INST, name, -1);
 
 	if(mix_hasChilds())
 	{
@@ -366,7 +417,7 @@ void create_childs(GtkTreeIter *parent)
     {
 	// create a new node
 	gtk_tree_store_append(store, &iter, parent);
-	gtk_tree_store_set(store, &iter, COL_NAME, name, -1);
+	gtk_tree_store_set(store, &iter, HTREE_INST, name, -1);
 
 	if(mix_hasChilds())    
 	{   // create a tree node with children
@@ -374,4 +425,81 @@ void create_childs(GtkTreeIter *parent)
 	}
 	mix_getNextName(name);
     }
+}
+
+
+GtkWidget* create_hier_view()
+{
+    int i = 0;
+    GtkTreeViewColumn *col;
+    GtkCellRenderer *renderer;
+    GtkWidget * view;
+
+    view = gtk_tree_view_new();
+    // --- Column #x ---
+    while(i < HIER_NUM_COLS) {
+
+	col = gtk_tree_view_column_new();
+
+	gtk_tree_view_column_set_spacing(col, 1);
+	gtk_tree_view_column_set_title(col, header[i].title);
+
+	// pack tree view column into tree view
+	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+
+	renderer = gtk_cell_renderer_text_new();
+	g_object_set(renderer, "editable", header[i].editable, NULL);
+	g_object_set_data(G_OBJECT(renderer), "column_index", GUINT_TO_POINTER(i));
+	g_signal_connect(renderer, "edited", (GCallback) hier_edited_callback, NULL);
+
+	// pack cell renderer into tree view column
+	gtk_tree_view_column_pack_start(col, renderer, TRUE);
+
+	// connect 'text' property of the cell renderer to
+	// model column that contains the first name
+	gtk_tree_view_column_add_attribute(col, renderer, header[i].type, i);
+	i++;
+    }
+    hier_model = (GtkTreeModel*) create_hier_model();
+
+    gtk_tree_view_set_model(GTK_TREE_VIEW(view), hier_model);
+    g_object_unref(hier_model);
+
+    gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(view), TRUE);
+    gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(view), TRUE);
+    gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(view)), GTK_SELECTION_MULTIPLE);
+
+    return view;
+}
+
+
+GtkTreeModel* create_hier_model(void)
+{
+    int i = 0;
+    int numOfRows = mix_number_of_hier_rows();
+    char ign[1024], gen[1024], var[1024], par[1024], inst[1024], lang[1024], ent[1024], arc[1024];
+    char conf[1024], use[1024], com[1024], des[1024], sname[1024], def[1024], hier[1024], deb[1024], skip[1024];
+    char *row[] = { ign, gen, var, par, inst, lang, ent, arc, conf, use, com, des, sname, def, hier, deb, skip};
+    GtkTreeStore *treestore;
+    GtkTreeIter toplevel;
+
+    treestore = gtk_tree_store_new(HIER_NUM_COLS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
+				   G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
+				   G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
+				   G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+
+    while(i < numOfRows) {
+	mix_get_hier_row(i, row);
+
+	// Append a top level row and leave it empty
+	gtk_tree_store_append(treestore, &toplevel, NULL);
+	gtk_tree_store_set(treestore, &toplevel, HIER_IGN, ign, HIER_GEN, gen, HIER_VAR, var, HIER_PAR, par,
+			   HIER_INST, inst, HIER_LANG, lang, HIER_ENT, ent, HIER_ARC, arc, HIER_CONF, conf,
+			   HIER_USE, use, HIER_COM, com, HIER_DES, des, HIER_SNAME, sname, HIER_DEF, def,
+			   HIER_HIER, hier, HIER_DEB, deb, HIER_SKIP, skip, -1);
+
+	i++;
+    }
+
+    return GTK_TREE_MODEL(treestore);
 }

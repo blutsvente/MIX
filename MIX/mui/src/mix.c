@@ -287,6 +287,74 @@ const char* mix_getNextName(char *name)
 }
 
 
+int mix_number_of_hier_rows()
+{
+    dSP;
+    int count;
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+    PUTBACK;
+    call_pv("getNumHierRows", G_SCALAR);
+    SPAGAIN ;
+    count = POPi;
+    PUTBACK;
+    FREETMPS;
+    LEAVE;
+    return count;
+}
+
+
+void mix_get_hier_row(int index, char *row[])
+{
+    dSP;
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+    XPUSHs(sv_2mortal(newSViv(index)));
+    PUTBACK;
+    call_pv("getHierRow", G_ARRAY);
+    SPAGAIN ;
+    strcpy(row[16], POPp);
+    strcpy(row[15], POPp);
+    strcpy(row[14], POPp);
+    strcpy(row[13], POPp);
+    strcpy(row[12], POPp);
+    strcpy(row[11], POPp);
+    strcpy(row[10], POPp);
+    strcpy(row[9], POPp);
+    strcpy(row[8], POPp);
+    strcpy(row[7], POPp);
+    strcpy(row[6], POPp);
+    strcpy(row[5], POPp);
+    strcpy(row[4], POPp);
+    strcpy(row[3], POPp);
+    strcpy(row[2], POPp);
+    strcpy(row[1], POPp);
+    strcpy(row[0], POPp);
+    PUTBACK;
+    FREETMPS;
+    LEAVE;    
+} 
+
+void mix_set_hier_value(char *column, int row, char *data)
+{
+    dSP;
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+    XPUSHs(sv_2mortal(newSVpv(data, 0)));
+    XPUSHs(sv_2mortal(newSViv(row)));
+    XPUSHs(sv_2mortal(newSVpv(column, 0)));
+    PUTBACK;
+    // TODO: do some check, return false if value could not be stored
+    call_pv("setHierValue", G_DISCARD);
+    FREETMPS;
+    LEAVE;
+    modified = TRUE;
+}
+
+
 int mix_number_of_conn_rows()
 {
     dSP;

@@ -28,6 +28,7 @@
 #include "support.h"
 #include "callbacks.h"
 
+extern GtkTreeModel *hier_model;
 extern GtkTreeModel *conn_model;
 extern GtkTreeModel *iopad_model;
 extern GtkTreeModel *i2c_model;
@@ -373,6 +374,25 @@ void on_langComboEntry_changed(GtkEntry *entry, gpointer user_data)
 {
     // TODO: set language
     const gchar *text = gtk_entry_get_text(entry);
+}
+
+void hier_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)
+{
+    char col_name[32];
+    guint column = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(cell), "column_index"));
+    guint row = atoi(path_string);
+    GtkTreePath *path = gtk_tree_path_new_from_string (path_string);
+    GtkTreeIter iter;
+
+    // if path exists, update cell content
+    if(gtk_tree_model_get_iter(hier_model, &iter, path)) {
+	conn_col_index_to_name(col_name, column);
+	// put content to MIX
+	mix_set_hier_value(col_name, row, new_text);
+	gtk_tree_store_set(GTK_TREE_STORE(hier_model), &iter, column, new_text, -1);
+    }
+
+    gtk_tree_path_free(path);
 }
 
 void conn_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)

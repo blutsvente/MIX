@@ -131,7 +131,7 @@ GtkTreeModel* create_conn_model(void)
 				             G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 
     while(i < numOfRows) {
-	mix_get_conn_row(i,row);
+	mix_get_conn_row(i, row);
 
 	// Append a top level row and leave it empty
 	gtk_tree_store_append(treestore, &toplevel, NULL);

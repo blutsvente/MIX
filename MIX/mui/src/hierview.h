@@ -15,6 +15,8 @@
 
 
 
+GtkWidget* create_hiertree_view();
+
 GtkWidget* create_hier_view();
 
 

@@ -89,6 +89,7 @@ GtkWidget* create_MainWindow(void)
     GtkWidget *add_hier_button;
     GtkWidget *del_hier_button;
     GtkWidget *hpaned3;
+    GtkWidget *scrolledwindow5;
     GtkWidget *label29;
     GtkWidget *vbox3;
     GtkWidget *conn_toolbar;
@@ -396,8 +397,14 @@ GtkWidget* create_MainWindow(void)
     gtk_box_pack_start( GTK_BOX(vbox4), hpaned3, TRUE, TRUE, 0);
     gtk_paned_set_position( GTK_PANED(hpaned3), 320);
 
+    scrolledwindow5 = gtk_scrolled_window_new(NULL, NULL);
+    gtk_widget_set_name(scrolledwindow5, "scrolledwindow5");
+    gtk_widget_show(scrolledwindow5);
+    gtk_paned_pack2( GTK_PANED(hpaned3), scrolledwindow5, TRUE, TRUE);
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow5), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
     // store reference to drawing hier area
-    mainview[0] =  GTK_WIDGET(hpaned3);
+    mainview[0] = GTK_WIDGET(scrolledwindow5);
     childview[0] = NULL;
 
     label29 = gtk_label_new("Hierarchy");
@@ -861,6 +868,7 @@ GtkWidget* create_MainWindow(void)
     GLADE_HOOKUP_OBJECT(mui, add_hier_button, "add_hier_button");
     GLADE_HOOKUP_OBJECT(mui, del_hier_button, "del_hier_button");
     GLADE_HOOKUP_OBJECT(mui, hpaned3, "hpaned3");
+    GLADE_HOOKUP_OBJECT(mui, scrolledwindow5, "scrolledwindow5");
     GLADE_HOOKUP_OBJECT(mui, label29, "label29");
     GLADE_HOOKUP_OBJECT(mui, vbox3, "vbox3");
     GLADE_HOOKUP_OBJECT(mui, conn_toolbar, "conn_toolbar");
