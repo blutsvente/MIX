@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.31 $                                             |
-# | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/10/23 12:10:54 $                                   |
+# | Revision:   $Revision: 1.32 $                                             |
+# | Author:     $Author: abauer $                                  |
+# | Date:       $Date: 2003/10/29 13:34:49 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.31 2003/10/23 12:10:54 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.32 2003/10/29 13:34:49 abauer Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.32  2003/10/29 13:34:49  abauer
+# | .
+# |
 # | Revision 1.31  2003/10/23 12:10:54  wig
 # | added counter for macro evaluation cmacros
 # |
@@ -227,11 +230,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.31 2003/10/23 12:10:54 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.32 2003/10/29 13:34:49 abauer Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.31 $';
+my $thisrevision   =      '$Revision: 1.32 $';
 
-# Revision:   $Revision: 1.31 $   
+# Revision:   $Revision: 1.32 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2099,7 +2102,6 @@ sub convert_in ($$) {
 ## parse_header
 ## check the ::TYPE input line
 ####################################################################
-
 =head2
 
 parse_header ($$@) {
@@ -2113,6 +2115,7 @@ Arguments: $kind, \$eh{$kind}, @header_row
 
 Returns: %order (keys are the ::head items)
 =cut
+
 sub parse_header($$@){
     my $kind = shift;
     my $templ = shift;
@@ -2251,7 +2254,7 @@ sub is_open_workbook ($) {
 	if ( $i =~ m,^$workbook$,i ) {
 	    return $newbooks{$i};
 	}
-    }	
+    }
     return undef;
 
 }
@@ -2802,7 +2805,7 @@ write_delta_excel ($$$) {
 
 read in previous intermediate data, diff and print out only differences.
 
-Arguments: $file   := filename
+Arguments:      $file  := filename
 		$type  := sheetname (CONN|HIER)
 		$ref_a := reference to array with data
 
@@ -3056,7 +3059,7 @@ sub write_excel ($$$;$) {
     my $book;
     my $newflag = 0;
     my $openflag = 0;
-    my $sheetr = undef;    
+    my $sheetr = undef;
 
     unless ( $file =~ m/\.xls$/ ) {
 	$file .= ".xls";
@@ -3066,7 +3069,7 @@ sub write_excel ($$$;$) {
     if ( $EH{'intermediate'}{'path'} ne "." and not is_absolute_path( $file ) ) {
 	$file = $EH{'intermediate'}{'path'} . "/" . $file;
     }
-    
+
     my $efile = path_excel( $file );
     # my $basename = $file;
     my $basename = basename( $file ); # ~ s,.*[/\\],,; #TODO: check if Name is basename of filename, always??
@@ -3097,9 +3100,9 @@ sub write_excel ($$$;$) {
 			") already opened!");
 		$EH{'sum'}{'errors'}++;
 	    }
-	}   
+	}
 	$book->Activate;
-	
+
 	#
     	# rotate old versions of $sheet to O$n_$sheet_O ...
 	#
@@ -3170,12 +3173,12 @@ sub write_excel ($$$;$) {
 	$sheetr = $book->Worksheets->Add() || logwarn( "Cannot create worksheet $sheet in $file:$!");
 	$sheetr->{'Name'} = $sheet;
     }
-    
+
     $sheetr->Activate();
     $sheetr->Unprotect;
 
     mix_utils_mask_excel( $r_a );
-    
+
     my $x=$#{$r_a->[0]}+1;
     my $y=$#{$r_a}+1;
     my $c1=$sheetr->Cells(1,1)->Address;
@@ -3186,7 +3189,7 @@ sub write_excel ($$$;$) {
     # Mark cells in that list in background color ..
     # Format: row/col
     if ( defined( $r_c ) ) {
-	$rng->Interior->{Color} = mix_utils_rgb( 255, 255, 255 ); # Set back color to white 
+	$rng->Interior->{Color} = mix_utils_rgb( 255, 255, 255 ); # Set back color to white
 	# Deselect ...
 	for my $cell ( @$r_c ) {
 	    my $x; my $y;
@@ -3206,7 +3209,7 @@ sub write_excel ($$$;$) {
 		$rng->Interior->{Color} = $ncol;
 		$rng =$sheetr->Range($co);
 		$rng->Interior->{Color} = $ocol;
-		
+
 # White background with a solid border
 #
 # $Chart->PlotArea->Border->{LineStyle} = xlContinuous;
@@ -3217,7 +3220,7 @@ sub write_excel ($$$;$) {
 	    }
 	}
     }
-	
+
     if ( $EH{'intermediate'}{'format'} =~ m,auto, ) {
 	$rng->Columns->AutoFit;
     }
@@ -3330,7 +3333,7 @@ sub mix_utils_rgb ($$$) {
 sub mix_utils_mask_excel ($) {
     my $r_a = shift;
 
-    for my $i ( @$r_a ) {    
+    for my $i ( @$r_a ) {
 	for my $ii ( @$i ) {
 	    unless( defined( $ii ) ) {
 		$ii = "";
@@ -3382,8 +3385,8 @@ sub write_sum () {
         logwarn( "SUM: Number of changed files: $EH{'DELTA_NR'}");
         return $EH{'DELTA_NR'} + $EH{'DELTA_INT_NR'};
     }
-    
-    return 0;    
+
+    return 0;
 
 }
 
@@ -3394,7 +3397,7 @@ sub write_sum () {
 =head2 mix_utils_init_file($)
 
 In init mode:
-    
+
 Take the provided templates and create a MIX startup file.
 
 This will give
@@ -3451,7 +3454,7 @@ sub mix_utils_init_file($) {
 	} else {
 	    $output = $EH{'cwd'} . "/" . basename( $EH{'cwd'} );
 	}
-	
+
 	# Extension: MS-Win -> xls, else csv
 	if ( $^O =~ m,^mswin,io ) {
 	    $output .= ".xls";
@@ -3469,7 +3472,7 @@ sub mix_utils_init_file($) {
 	logwarn( "FATAL: Cannot detect appropriate extension for output from $output" );
 	exit 1;
     }
-    
+
     # Get template and mix.cfg in place if "init"
     # In -init mode we will die if the output file already exists ...
 
@@ -3491,7 +3494,7 @@ sub mix_utils_init_file($) {
 		or logwarn( "WARNING: Copying mix.cfg failed: " . $! . "!" );
 	}
 
-	# Get template in place ...    
+	# Get template in place ...
 	copy( $input, $output ) or
 	    logwarn( "FATAL: Copying $input to $output failed: " . $! . "!" )
 	    and exit 1;
@@ -3505,14 +3508,14 @@ sub mix_utils_init_file($) {
 	}
         #OFF: only Utils knows about that ... my $ole = init_ole(); # Start OLE Object ... for windows, only
         mix_utils_open_input( $output );
-        #Gets format from file to import too.	
+        #Gets format from file to import too.
 
 	Micronas::MixParser::mix_parser_importhdl( $output, \@hdlimport ); # Found in MixParser ...
     }
 
     # Done ...
     exit 0;
-    
+
 }
 
 
@@ -3521,4 +3524,4 @@ sub mix_utils_init_file($) {
 #
 1;
 
-#!End		    
+#!End
