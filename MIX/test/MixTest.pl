@@ -566,7 +566,7 @@ sub mkdirRec ($) {
     ( my $npath = $path ) =~ s,^\Q$uppath\E,,;
     $npath =~ s,^/+,,;
     for my $p ( split( /\//, $npath ) ) {
-	unless( mkdir( $uppath . $pp . $p ) ) {
+	unless( mkdir( $uppath . $pp . $p, 0777 ) ) {
 	    print( "ERROR: Cannot create " . $uppath . $pp . $p . ": " . $! . "\n" );
 	    return undef;
 	}
