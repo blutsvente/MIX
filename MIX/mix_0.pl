@@ -21,16 +21,16 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id              : $Id: mix_0.pl,v 1.8 2003/03/21 17:00:08 wig Exp $
+# | Id              : $Id: mix_0.pl,v 1.9 2003/04/01 14:27:58 wig Exp $
 # | Name         : $Name:  $
 # | Description  :$Description:$
 # | Parameters  : -
-# | Version       : $Version: $
-# | Mod.Date    : $Date: 2003/03/21 17:00:08 $
+# | Version       : $Revision: 1.9 $
+# | Mod.Date    : $Date: 2003/04/01 14:27:58 $
 # | Author        : $Author: wig $
-# | Phone         : $Phone: $
+# | Phone         : $Phone: +49 89 54845 7275$
 # | Fax             : $Fax: $
-# | Email         : $Email: $
+# | Email         : $Email: wilfried.gaensheimer@micronas.com$
 # |
 # | Copyright (c)2002 Micronas GmbH. All Rights Reserved.
 # | MIX proprietary and confidential information.
@@ -41,6 +41,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |
 # | Changes:
 # | $Log: mix_0.pl,v $
+# | Revision 1.9  2003/04/01 14:27:58  wig
+# | Added IN/OUT Top Port Generation
+# |
 # | Revision 1.8  2003/03/21 17:00:08  wig
 # | Preliminary working version for bus splices
 # |
@@ -131,6 +134,7 @@ use Log::Agent::Driver::File;
 
 use Micronas::MixUtils;
 use Micronas::MixParser;
+use Micronas::MixIOParser;
 use Micronas::MixWriter;
 
 ##############################################################################
@@ -214,8 +218,8 @@ if ( $#ARGV < 0 ) { # Need  at least one sheet!!
 #
 
 my $ole = init_ole(); # Start OLE Object ...
-my( $r_connin, $r_hierin);
-( $r_connin, $r_hierin ) = open_input( @ARGV );
+my( $r_connin, $r_hierin, $r_ioin);
+( $r_connin, $r_hierin, $r_ioin ) = mix_utils_open_input( @ARGV ); #Fetches HIER and CONN sheet(s)
 
 ##############################################################################
 #
@@ -242,7 +246,7 @@ parse_conn_init( $r_connin );
 #
 # Parse IO
 # 
-# parse_conn( "io"m $i_io, ...)
+parse_io_init( $r_ioin );
 
 #
 # Parse I2C ....

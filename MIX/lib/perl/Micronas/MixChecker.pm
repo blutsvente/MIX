@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Checker
 # | Modules:    $RCSfile: MixChecker.pm,v $
-# | Revision:   $Revision: 1.1 $
+# | Revision:   $Revision: 1.2 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2003/02/25 08:06:52 $
+# | Date:       $Date: 2003/04/01 14:27:59 $
 # |
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.1 2003/02/25 08:06:52 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.2 2003/04/01 14:27:59 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the checking capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixChecker.pm,v $
+# | Revision 1.2  2003/04/01 14:27:59  wig
+# | Added IN/OUT Top Port Generation
+# |
 # | Revision 1.1  2003/02/25 08:06:52  wig
 # | Checks are located here.
 # |
@@ -79,11 +82,14 @@ use Micronas::MixParser qw( %hierdb %conndb );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixChecker.pm,v 1.1 2003/02/25 08:06:52 wig Exp $';
+my $thisid		=	'$Id: MixChecker.pm,v 1.2 2003/04/01 14:27:59 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixChecker.pm,v $';
+my $thisrevision   =      '$Revision: 1.2 $';
 
-$thisid =~ s,\$,,go;
+$thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
+$thisrevision =~ s,^\$,,go;
+( $VERSION = $thisrevision ) =~ s,.*Revision:\s*,,; #TODO: Is that a good idea?
 
 #
 # Start checks

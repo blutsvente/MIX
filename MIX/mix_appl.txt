@@ -1,5 +1,14 @@
 Application Note / TOC
 
+- Getting started
+  -- Write tabluar description, take examples from distribution to get started.
+      you will need at least a sheet CONN and a sheet HIER.
+  -- Run "mix_0.pl FOO.xls" to get output data.
+  See section "example usage" for more details.
+
+- Tool installation:
+    Not needed, run directely from K:\PROJECTS\MIX\PROG
+
 - Basic wiring:
 
 - Macro definitions and evaluation:

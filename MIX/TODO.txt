@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.7 2003/03/21 17:00:08 wig Exp $
+# $Id: TODO.txt,v 1.8 2003/04/01 14:27:58 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -18,39 +18,51 @@ Doku:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+- 20030331a/bug: ::variant and generator
+    generated instances are added, even if ::variant does deselect that statement
 
-- 20030317a/Bug: Missing Port in component
-    sbist_fail_ fehlt an ifu_top (kommt aus ga, Pin8, 9)
-    Req: pallas
-    Prio: high
+    Req: wig
+    Prio: medium
+
+- 20030325b/bug: Constant definition
+
+in MIX wird folgendes definiert:
+std_ulogic_vector   15   0   C               0x58B0   cgu_logic_i1/signature_val
+
+danach wird folgendes VHDL generiert (cgu-rtl-a.vhd):					
+...
+signal	mix_const_0	: std_ulogic_vector(15 downto 0); 
+...
+mix_const_0 <= "22704";
+...
+
+besser wäre im VHDL:
+constant mix_const_0	: std_ulogic_vector(15 downto 0) := 16#58B0#;
+
+
+Req: pallas
+Prio: medium
+
+- 20030325a/bug:
+    constant signal assignments happens also inside of instance (not just in
+    architecture of parent instance)
+    Req: wig
+    Prio: medium
 
 - 20030313g/Bug: Improve Load/Driver evaluation
    If port width ne signal width, count "bit"wise. Save instead of integers
    into the AEPORT data structure. Add MIN,MAX,ALL fields.
+   (Stick to bits functions like B::00iioo, F::foo:T::bar or A::)
+
     Req: wig
     Prio: medium
 
-- 20030313f/Feature: ExCEL chart diff (might be duplicate)
-    Create "DELTA" chart, stringfy input and run through "Text::diff"
-    Nameing: D_CONN, D_CONF, D_HIER, ...
-    
-    Req: wig
-    Prio: medium
 
 - 20030313e/Bug: Allow "constant" assignments on bus splices
     Req: wig
     Prio: medium
     
-- 20030313d/Bug: Do bus/bit/port handling in signal assigments, not in port maps!
-    Req: pallas
-    Prio: High
-    Comment: Actually this seems not to be necessary.
 
-- 20030313c/Feature: Detect generated port in a row and combine (might be
-    done best on the intermediate data?)
-    Req: wig
-    Prio. Medium
-    
 - 20030313b/Bug: Cannot rename new spreadsheet to BLA-mixed.xls, if BLA-mixed
   already open in other directory. Check that and report usefull error message.
     Req: wig
@@ -58,11 +70,6 @@ TODOs:
     
 
 - 20030312a/Check: Find "open" input ports and report
-    Req: wig
-    Prio: medium
-
-- 20030311e/Bug: Reenable ExCEL warnings after MIX run (otherwise you will never
-    see warnings again and might loose work).
     Req: wig
     Prio: medium
 
@@ -107,25 +114,14 @@ TODOs:
     Requested: wig
     Prio: low
 
-- 20030226d: wiring still does not work as expected:
-      port maps and entitiy may have name only once.
-      combination has to be done in signal assignment
 
-
-- bug/20030226b: check nreset signal
-
-  
+ 
 - 20030224a: Accept strings in (F:T) of ::in and ::out descriptions
   (string should be generic or constant)
 
   - 20030221d: Accept strings as high/low bus bounds.
   wig
  
-- 20030221c: Add command args line to all output files ...
-   1. intermediate: ::comment ??
-     Done wig20030221
-   2. output: add to header.
-     Done wig20030221
 
 
 - 20030220i: Rewrite writers:
@@ -150,11 +146,6 @@ TODOs:
   
 - Use / as file name seperator, convert to other format ( \ ) on demand (wig20021219)
 
-
-- Fold/Condense multiple entries (e.g. comments, ::in, ::out)
-
-- Concatenate busses (e.g. if bits are defined).
-
 - Implement extended range definitions for generator like:
     $i (1,7,13..15 )
   requested by sb20030117
@@ -163,12 +154,6 @@ TODOs:
     $j (1..17), $i (1,3,5,20), /blablubber/
     requested by sb20030117
 
-- Defaults for connections:
-    bit -> std_ulogic (done)
-    bus/vector -> std_ulogic_vector (if type empty and low and high defined)
-    generic -> integer
-
-    req. sb20030117
 
 - ::variants: Default eq. "", if -variant VAR select Default + VAR.
   ::variants := VAR1,VAR2,Default
@@ -191,19 +176,75 @@ TODOs:
 
 - 20030220d: Change EOL for -a, -e, -c files (MS-Win vs. UNIX)
   Workaround: Use script (recode)
+  Prio: low
   Requested by M. Pallas
 
 - 20030220e: Documentation + Application Note
   Application note:
         non-leaf cells multiple instantiation, how-to: global signal names localization
-        
-- 20030220f: Port<->Signal assignment depends on IN vs. OUT
+
+DONE: ++++++++++++++++++++++++
+
+- 20030313d/Bug: Do bus/bit/port handling in signal assigments, not in port maps!
+    Req: pallas
+    Prio: High
+    Comment: Actually this seems not to be necessary.
+
+    
+- 20030313f/Feature: ExCEL chart diff (might be duplicate)
+    Create "DELTA" chart, stringfy input and run through "Text::diff"
+    Nameing: D_CONN, D_CONF, D_HIER, ...
+    
+    Req: wig
+    Prio: medium
+    Done: wig20030324, enabled by -delta switch
+
+- 20030313c/Feature: Detect generated port in a row and combine (might be
+    done best on the intermediate data?)
+    Req: wig
+    Prio. Medium
+    Done: wig20030324, handled by bits functions
+
+- bug/20030226b: check nreset signal
+    Done: wig20030324
+    Testcase: mde_tests.xls
+
+- 20030311e/Bug: Reenable ExCEL warnings after MIX run (otherwise you will never
+    see warnings again and might loose work).
+    Req: wig
+    Prio: medium
+    Done: wig20030324
+
+- 20030226d: wiring still does not work as expected:
+      port maps and entitiy may have name only once.
+      combination has to be done in signal assignment
+    Done: 20030324wig
+    Testcase: all of mde_tests.xls
+
+- 20030221c: Add command args line to all output files ...
+   1. intermediate: ::comment ??
+     Done wig20030221
+   2. output: add to header.
+     Done wig20030221
+    
+- Fold/Condense multiple entries (e.g. comments, ::in, ::out)
+    Done: wig20030324
+    
+- Concatenate busses (e.g. if bits are defined).
+    Done: wig20030324
+
+- Defaults for connections:
+    bit -> std_ulogic (done)
+    bus/vector -> std_ulogic_vector (if type empty and low and high defined)
+    generic -> integer
+
+    req. sb20030117
+    Done: 2ig20030324
 
 - 20030220g: Add <CR> into ::in and ::out cells, recognize in inout
    done/wig20030220, rel. 1.7 MixUtils
    Issue: late insertion not really handeled by regular "parse_macro"
-
-
+    
 - 20030220h: Bug section:
     			p_mix_cp_lcmd_6_6_gi	: in	std_ulogic_vector(6); -- __W_SINGLEBITBUS
     should read as:
@@ -212,9 +253,18 @@ TODOs:
     Req: mpallas
     Prio: medium (workaround: manual edit)
     Testcase: bitsplice / CONN / TestMDE_1 (wig20030312)
-    
+    Done: wig    
 
-DONE:
+- 20030220f: Port<->Signal assignment depends on IN vs. OUT
+    Done: wig
+
+    
+- 20030317a/Bug: Missing Port in component
+    sbist_fail_ fehlt an ifu_top (kommt aus ga, Pin8, 9)
+    Req: pallas
+    Prio: high
+    Done: 20030324wig
+    Testcase: mde_tests
 
 - 20030227a: File name generation:
       ENTY-e.vhd

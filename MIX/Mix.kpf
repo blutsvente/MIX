@@ -24,5 +24,7 @@
  </file>
  <file url="mix_appl.txt">
  </file>
+ <file url="lib/perl/Micronas/MixIOParser.pm">
+ </file>
 </files>
 </project>

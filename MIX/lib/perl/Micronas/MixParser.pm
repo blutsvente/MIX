@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.13 $                                             |
+# | Revision:   $Revision: 1.14 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/03/24 13:04:45 $                                   |
+# | Date:       $Date: 2003/04/01 14:27:59 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.13 2003/03/24 13:04:45 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.14 2003/04/01 14:27:59 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.14  2003/04/01 14:27:59  wig
+# | Added IN/OUT Top Port Generation
+# |
 # | Revision 1.13  2003/03/24 13:04:45  wig
 # | Extensively tested version, fixed lot's of issues (still with busses and bus splices).
 # |
@@ -139,6 +142,7 @@ use Micronas::MixUtils qw( mix_store db2array write_excel write_delta_excel
 sub _scan_inout ($);
 sub my_common (@);
 sub add_port ($$);
+sub _add_port ($$$$$$$$);
 
 ####################################################################
 #
@@ -152,6 +156,20 @@ sub add_port ($$);
 #
 # Our local variables
 my $const   = 0; # Counter for constants name generation
+
+#
+# RCS Id, to be put into output templates
+#
+my $thisid		=	'$Id: MixParser.pm,v 1.14 2003/04/01 14:27:59 wig Exp $';
+my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
+my $thisrevision   =      '$Revision: 1.14 $';
+
+# | Revision:   $Revision: 1.14 $   
+$thisid =~ s,\$,,go; # Strip away the $
+$thisrcsfile =~ s,\$,,go;
+$thisrevision =~ s,^\$,,go;
+( $VERSION = $thisrevision ) =~ s,.*Revision:\s*,,; #TODO: Is that a good idea?
+
 
 ####################################################################
 ## parse_conn_macros
@@ -550,6 +568,11 @@ sub create_inst ($%) {
     my $name = shift;
     my %data = @_;
 
+    #wig20030331: do not add if ignore field is set:
+    if ( exists( $data{'::ign'} ) and $data{'::ign'} =~ m,^\s*(#|//),o ) {
+        return;
+    }
+
     my $ehr = $EH{'hier'}{'field'};
     for my $i ( keys %$ehr ) {
         next unless ( $i =~ m/^::/ );
@@ -571,6 +594,8 @@ sub create_inst ($%) {
     }
 
     add_tree_node( $name, $hierdb{$name} );
+
+    return;
 }
 
 #
@@ -634,6 +659,11 @@ sub merge_inst ($%) {
     my $name = shift;
     my %data = @_;
 
+    #wig20030331: do not add if ignore field is set:
+    if ( exists( $data{'::ign'} ) and $data{'::ign'} =~ m,^\s*(#|//),o ) {
+        return;
+    }
+
     #
     # Tree check: Does this instance get a new parent?
     #
@@ -684,6 +714,7 @@ sub merge_inst ($%) {
             }
         }
     }    
+    return;
 }
 
 ####################################################################
@@ -744,20 +775,11 @@ sub add_conn (%) {
         #
         if ( $name eq "" ) {
             # Handle CONSTANTS ..either set in input or derived by detecting constants in ::out
-            # if ( $in{'::mode'} =~ m/C/ ) {
-                # Generate a name
+            # Generate a name
                 $nameflag = 1;
                 $name = $EH{'postfix'}{'PREFIX_CONST'} . $EH{'CONST_NR'}++;
                 $in{'::name'} = $name;
                 logwarn( "INFO: Creating name $name for constant!" );
-            # } else {
-                # Mark signal .... but add it anyway (user should be able to fix it)
-            #    logwarn( "Missing signal name. Will be ignored!" );
-            #    $in{'::ign'} = "#ERROR_MISSING_SIGNAL_NAME";
-            #    $in{'::comment'} = "#ERROR_MISSING_SIGNAL_NAME $name" . $in{'::comment'};
-            #    $name = "ERROR_MISSING_SIGNAL_NAME";
-            #    $in{'::name'} = $name;
-            #}
         }
         #
         # check name: only [a-z_A-Z0-9%:] allowed ..
@@ -964,14 +986,26 @@ sub _create_conn ($$%) {
         
             #
             # Recognize 0xHEX, 0OCT, 0bBIN and DECIMAL values in ::out
+            # Also: 10.2, 1_000_000, 16#hex#, 2#binary_binary#, 2.2e-6 10ns 2.27[mnfpu]s
             # Recognize 'CONST' and "CONST"
             # Mark with %CONST% instance name .... the port name will hold the value
-            #
+            # Force anything following %CONST%/ to be a constant value
             $d =~ s,__(CONST|GENERIC|PARAMTER)__,%$1%,g; # Convert back __CONST__ to %CONST%
-            if ( $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(0x[0-9a-f]+|0b[01xzhl]+|0[0-7]+|[0-9]+),io or
-                 $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?('\w+'),io or
-                 $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?("\w+"),io ) { # Constant value ...
+            if (
+                # Get VHDL constants : B#VAL#
+                $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(\d+#[_a-f\d]+#)\s*$,io or
+                # or 0xHEX or 0b01xzhl or 0777 or 1000 (integers)
+                $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(0x[_\da-f]+|0b[_01xzhl]+|0[_0-7]+|[\d][._\d]*)\s*$,io or
+                # or reals or time definitions: ... 1 ns, 1.3 ps ...
+                $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?([+-]*[_\d]+\.*[_\d]*(e[+-]\d+)?\s*([munpf]s)?)\s*$,io or
+                # or anything in ' text ' or " text "
+                $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?((['"]).+\4)\s*$,io or
+                # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(".+")\s*$,io or
+                # or anything following a %CONST%/ or GENERIC or PARAMETER keyword
+                $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)(.+)\s*,io
+                ) { # Constant value ...
                 my $const = $3;
+                $co{'rvalue'} = $const; # Save raw value!!
                 my $t = $2;
                 if ( $inout =~ m,in, ) {
                     logerror("Error: illegal constant value for ::in signal " . $data{'::name'} . "!");
@@ -1131,6 +1165,7 @@ sub _create_conn ($$%) {
 #
 # Check connection propertie, resubstitute # -> :
 #
+#TODO: If value is set, make sure we have mode set to C or G or P
 sub check_conn_prop ($) {
     my $ref = shift;
 
@@ -1145,7 +1180,8 @@ sub check_conn_prop ($) {
         logwarn( "Unusual character in port name: $ref->{'inst'}/$ref->{'port'}!" );
     }
 
-}    
+}
+
 sub merge_conn($%) {
     my $name = shift;
     my %data = @_;
@@ -1646,6 +1682,46 @@ sub apply_x_gen ($$) {
 }
 
 ####################################################################
+## get_opt_cell
+## Return list of top cell(s).
+## If not specified otherwise, these are the daughter(s) of the testbench cell
+####################################################################
+
+=head2
+
+#
+# Return list of top cell(s)
+#
+
+=cut
+
+sub get_top_cell () {
+
+    my @tops = ();    
+    if ( $EH{'top'} =~ m,testbench,io ) {
+    # Find testbench in hierdb, take daughters
+        for my $i ( keys( %hierdb ) ) {
+            if ( $i =~ m,testbench,io ) {
+                @tops = $hierdb{$i}{'::treeobj'}->daughters;
+                last;
+            }
+        }
+    } else {
+        for my $i ( keys( %hierdb ) ) {
+            if ( $i =~ m,$EH{'top'},io ) { #TODO: What about case sensitive?
+                @tops = ( $hierdb{$EH{$i}}{'::treeobj'} );
+                last;
+            }
+        }
+    }
+    if ( scalar( @tops ) < 1 ) { # Did not find testbench ???
+        logwarn( "WARNING: Could not identify toplevel aka. $EH{'top'}" );
+    }
+
+    return @tops;
+}
+
+####################################################################
 ## add_portsig
 ## 
 ####################################################################
@@ -1701,6 +1777,7 @@ sub add_portsig () {
             next;
         }
 
+
         for my $i ( 0..$#{$conndb{$signal}{'::in'}} ) {
                 my $inst = $conndb{$signal}{'::in'}[$i]{'inst'};
                 if ( defined ( $hierdb{$inst} ) ) {
@@ -1717,7 +1794,81 @@ sub add_portsig () {
                 }
         }
         
+       #
+        # If signal mode is I |O | IO (not S), make sure it's connected to the
+        # top level
+        #
+        if ( $EH{'output'}{'generate'}{'inout'} =~ m,mode,io ) {
+            if ( $mode =~ m,[IO],io ) { #TODO: are IO the onls-one's?? Add B, too
+            # Add IO-port if not connected already ....
+                my @tops = get_top_cell();
+                my @addtop = ();
+                my @addtopn = ();
+                my $atp_flag = 0;
+                my $dir = ( $mode =~ m,io,io ) ? "inout" :
+                    ( ( $mode =~ m,i,io, ) ? "in" :
+                    ( ( $mode =~ m,o,io, ) ? "out" :
+                    ( ( $mode =~ m,b,io, ) ? "buffer" :"error" )));
+                for my $t ( @tops ) {
+                    # Is this signal already connected here?
+                    if ( exists( $connected{$t->name} ) ) {
+                        my $bits = bits_at_inst($signal, $t->name, $modes{$t->name} );
+                        if ( join( "__", @$bits ) !~ m,A:::$dir, ) { # $bits = ARRAY( 'A:::o' ...
+                            $atp_flag = 1;
+                        }
+                    } else {
+                        # Is that signal connected to one of our daughters?
+                        $atp_flag = 1;
+                    }
+                    if ( $atp_flag ) {
+                        my $flag = 0;
+                        my $one_leaf = "";
+                        CONN: for my $tw ( values( %connected ) ) {
+                            for my $ancestor ( $tw->ancestors ) {
+                            #TODO: Strip off up-level nodes
+                                if ( $ancestor == $t ) {
+                                    $one_leaf = $tw->name;
+                                    $flag = 1;
+                                    last CONN;
+                                }
+                            }
+                        }
+                        if ( $flag ) { # Need to create I/O port here
+                            # Always make a full connection!
+                            # Force mode to ::mode -> :out:0 or :inout:0 or :in:0 or :buffer:0
+                            #!wig push( @addtopn, [ $signal, $t->name, $one_leaf, $modes{$one_leaf}, 'A::' ] );
+                            push( @addtopn, [ $signal, $t->name, $one_leaf, ':' . $dir . ':0' , 'A::' ] );
+                            # set ierdb{inst}{'::sigbits'} ...
+                            my $bits = bits_at_inst( $signal, $one_leaf, $modes{$one_leaf} );
+                            push( @addtop, $t->name );
+                        }
+                    }
+                }
+                # Add TOP level ports
+                if ( scalar( @addtopn ) > 0 ) {
+                    add_top_port( \@addtopn, \%connected );
+                    # Will extend %connected as modes happen
+                    %modes = (); # Redo modes data
+                    for my $i ( 0..$#{$conndb{$signal}{'::in'}} ) {
+                        my $inst = $conndb{$signal}{'::in'}[$i]{'inst'};
+                        if ( defined ( $hierdb{$inst} ) ) {
+                            $modes{$inst} .= ":in:$i"; # Remember in/out columns; Possibly several
+                        }
+                    }
+                    for my $i ( 0..$#{$conndb{$signal}{'::out'}} ) {
+                        my $inst = $conndb{$signal}{'::out'}[$i]{'inst'};
+                        next unless ( defined( $inst ) );
+                        if ( exists ( $hierdb{$inst} )) {
+                            $modes{$inst} .= ":out:$i";
+                        }
+                    }
+                }
+            }
+        }
+
         my $commonpar = my_common( values( %connected ) );
+
+  
         unless ( defined( $commonpar ) ) {
             logwarn( "ERROR: Signal $signal spawns several seperate trees!\n" );
             next;
@@ -1725,9 +1876,8 @@ sub add_portsig () {
         }
         
         #
-        # now we know the tree top for that signal. The top must not have the
+        # now we know the tree top for that signal. The top may not have the
         # signal in his port list ..
-        #TODO: check that ..
         #
         # Get all chains from the commonpar node to each of the list and
         # see if they are in the list ... if not: add port!
@@ -1776,7 +1926,7 @@ sub add_portsig () {
 #
 # Which bits are connected to that signal
 #
-# Returns: array for in or out or buffer ...
+# Returns: array for in or out or buffer ... with description of connectivity:
 #   Bitvector:
 #   A:::d
 #   B:::000ddd0dddd00
@@ -1972,9 +2122,7 @@ sub add_port ($$) {
     # If adds has only out -> need out-port (there has to be only one!)
     # If adds has in and out -> !!need out-port (print out warning!)!!
     #
-    #TODO: Currrently there is no support for inout ports!! That would require to
-    # check to parent connections, too.
-    #
+
     my $signal = $r_adds->[0][0];
     my %mc = ();
     my %d_mode = ();
@@ -2132,7 +2280,7 @@ sub add_port ($$) {
                 $this_mode = $d_mode{$inst}{$tm}; # Reference!
                 # $this_width = $d_mode{$inst}{$tm};
                 my $thm = $tm;
-                ( $this_width, $thm ) = _add_port( $r, $tm, $this_mode, \%dw, \%dm, \%ndw, \%ndm );
+                ( $this_width, $thm ) = _add_port( $r, $tm, $this_mode, \%dw, \%dm, \%ndw, \%ndm, 0 );
 
                 # $d_mode{$inst}{$thm} = $this_width;
                 join_vec( \%d_mode, $inst, $this_width );
@@ -2143,7 +2291,7 @@ sub add_port ($$) {
             }
         } else {
             # This module has no mode (not connected up to now).
-            ( $this_width , $this_mode ) = _add_port( $r, $this_width, $this_mode, \%dw, \%dm, \%ndw, \%ndm );
+            ( $this_width , $this_mode ) = _add_port( $r, $this_width, $this_mode, \%dw, \%dm, \%ndw, \%ndm, 0 );
 
             # $d_mode{$inst}{$this_mode} = $this_width;
             #old: $d_wid{$inst} = $this_width;
@@ -2164,6 +2312,94 @@ sub add_port ($$) {
         # Replace the signal/port/hierachy data structure
         @{$hierdb{$inst}{'::sigbits'}{$signal}} = @nb;
     }
+}
+
+#
+# add_top_port: add IO ports if defined by ::mode to top cells
+# This has to be done in advance to give the add_port function a chance
+# to add intermediate ports automatically.
+#
+# Input: array of:
+#  [0] = ( $signal, $name, $leave, $mode )
+#   $signal := signal name
+#   $name := instance name
+#   $leave := leaf cell name (where does the signal come from)
+#   $mode := ":in:NR:out:NR:in:NR2 ..."  index into instance port map
+#       $mode should be :in:N or :inout:N or :out:N or :buffer:N
+#
+# $leave might be omitted ($mode is sufficient to address the instance/port/bus data)
+# Will be called for each signal
+#
+#
+sub add_top_port ($$) {
+    my $r_adds = shift;
+    my $r_connected = shift;
+    my @adds = @$r_adds;
+
+    # Get mode:
+    # If adds has only in -> need in-port
+    # If adds has only out -> need out-port (there has to be only one!)
+    # If adds has in and out -> !!need out-port (print out warning!)!!
+    #
+
+    my $signal = $r_adds->[0][0];
+    my %mc = ();
+    my %d_mode = ();
+    my %d_wid = ();
+    my $mode = "__E_MODE_DEFAULT";
+    
+    for my $r ( keys( %$r_connected ) ) {
+       # my $m = $r->[3]; #Mode
+        next unless( exists $hierdb{$r}{'::sigbits'}{$signal} );
+        # Retrieve modes and width from sigbits data structure
+        for my $sb ( @{$hierdb{$r}{'::sigbits'}{$signal}} ) {
+               if ( $sb =~ m,(.*):(.)$, ) {
+                   $d_mode{$r}{$2} = $1; # o = A:: ....
+                }            
+        }
+        unless( defined ( $d_mode{$r} ) ) {
+           logwarn( "ERROR: missing sigbits/mode definition for instance $r in add_top_port");
+        }
+    }
+    for my $r ( @adds ) {
+        my $m = $r->[3]; # Target mode, forced!!
+        $m =~ s,.*:(in|out|inout|buffer):.*,$1,;
+        my $mi = ( $m eq "in" ) ? "i" :
+            ( ($m eq "out" ) ? "o" :
+                ( ( $m eq "inout" ) ? "c" :
+                    ( ( $m eq "buffer" ) ? "b" : "e" )
+                )
+            );
+        #TODO: Remove reverse logic for ndw in _add_port!!!
+        my $mr = ( $mi eq "i" ) ? "o" :
+            ( ( $mi eq "o" ) ? "i" : $mi);
+
+        my %dw = ();
+        my %ndw = ();
+        my %dm = ();
+        my %ndm = ();
+        
+        $dw{$mi} = "A::";
+        $ndw{$mr} = "A::";
+        $dm{$mi} = 1;
+        $ndm{$mr} = 1;
+        
+        my $this_mode = "";
+        my $this_width = "";    
+        ( $this_width , $this_mode ) = _add_port( $r, $this_width, $this_mode, \%dw, \%dm, \%ndw, \%ndm, "top" );
+
+        join_vec( \%d_mode, $r->[1], $this_width );
+
+        $r_connected->{$r->[1]} = $hierdb{$r->[1]}{'::treeobj'}; #TODO
+
+        my @nb = ();
+        for my $m ( keys( %{$d_mode{$r->[1]}} ) ) {
+            push( @nb , $d_mode{$r->[1]}{$m} . ":" . $m );
+        }
+        # Replace the signal/port/hierachy data structure
+        @{$hierdb{$r->[1]}{'::sigbits'}{$signal}} = @nb;
+    }
+
 }
 
 #
@@ -2195,7 +2431,7 @@ sub join_vec($$$) {
 }
 
  
-sub _add_port ($$$$$$$) {
+sub _add_port ($$$$$$$$) {
     my $r = shift; # Array ref, has signal name, instance, daughter, mode, ...
     my $tw = shift; # width of already connected pins ...
     my $tm = shift; # mode of current port
@@ -2203,6 +2439,7 @@ sub _add_port ($$$$$$$) {
     my $dm = shift; # reference to mode(s) requested by daughters
     my $uw = shift; # width required by upper hierachy
     my $um = shift; # mode reference required by upper hierachy
+    my $top_flag = shift; # Set to generate special port names for top level cells
 
     # Generate port:
     # Consider bits needed, mode needed and some VHDL specialities:
@@ -2265,10 +2502,17 @@ sub _add_port ($$$$$$$) {
         my $st = $conndb{$signal}{'::low'};
         unless ( defined $sf ) { $sf = ""; };
         unless ( defined $st ) { $st = ""; };
-        $t{'port'} = $EH{'postfix'}{'PREFIX_PORT_GEN'} . $signal .
+        if ( $top_flag =~ m,top,io and $EH{'output'}{'generate'}{'inout'} =~ m,noxfix,io ) {
+            # Do not add postfix and signal width ....
+            # Caveat: User has to make sure that no conflicts are added like so
+            # $t{'port'} = $signal . "_g" . $do;
+            $t{'port'} = $signal;
+        } else {
+            $t{'port'} = $EH{'postfix'}{'PREFIX_PORT_GEN'} . $signal .
                 ( ( $sf ne "" ) ? ( "_" . $sf ) : "" ) .
                 ( ( $st ne "" ) ? ( "_" . $st ) : "" ) .
                 "_g" . $do;
+        }
         $t{'inst'} = $inst;
         if ( $sf eq "" ) {
             $t{'port_f'} = $t{'sig_f'} = undef;
@@ -2416,7 +2660,7 @@ sub _add_port ($$$$$$$) {
                 for my $b ( reverse( 0..($ub-$lb) ) ) {
                     if ( substr( $p[$b], 0, 1 ) ne $m ) { # Change
                         if ( $m ) {
-                            generate_port( $signal, $inst, $m, $start + $lb , $b + 1 + $lb );
+                            generate_port( $signal, $inst, $m, $start + $lb , $b + 1 + $lb, $top_flag );
                             }
                         $m = substr( $p[$b], 0, 1 );
                         $start = $b;
@@ -2433,7 +2677,7 @@ sub _add_port ($$$$$$$) {
                     }
                 }
                 if ( $m ) {
-                    generate_port( $signal, $inst, $m, $start + $lb , $lb );
+                    generate_port( $signal, $inst, $m, $start + $lb , $lb, $top_flag );
                 }
                 
                 #TODO: Create tw for i and o, return hash
@@ -2464,19 +2708,25 @@ sub _add_port ($$$$$$$) {
 #
 # Generate an port for intermediate hierachy
 #
-sub generate_port ($$$$$) {
+sub generate_port ($$$$$$) {
     my $signal = shift;
     my $inst = shift;
     my $m = shift;
     my $f = shift;
     my $t = shift;
+    my $top_flag = shift;
 
     my %t = ();
 
-    $t{'port'} = $EH{'postfix'}{'PREFIX_PORT_GEN'} . $signal .
+    if ( $top_flag =~ m,top,io ) {
+           $t{'port'} = $signal .
+                "_g" . $m;
+    } else {
+        $t{'port'} = $EH{'postfix'}{'PREFIX_PORT_GEN'} . $signal .
                 ( ( $f ne "" ) ? ( "_" . $f ) : "" ) .
                 ( ( $t ne "" ) ? ( "_" . $t ) : "" ) .
                 "_g" . $m;
+    }
     $t{'inst'} = $inst;
     
     if ( $f eq "" ) {
@@ -3020,6 +3270,9 @@ sub _add_sign2hier ($$$) {
                 }
             }
         } else {
+            #
+            #TODO: Make sure we attach each port only once ...
+            #
             if ( exists( $hierdb{$inst}{'::conn'}{$io}{$conn}{$port} ) ) {
                 $hierdb{$inst}{'::conn'}{$io}{$conn}{$port} .= "," . $iii;
             } else {

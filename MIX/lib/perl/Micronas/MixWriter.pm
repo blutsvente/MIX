@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.14 $                                             |
+# | Revision:   $Revision: 1.15 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/03/24 13:04:45 $                                   |
+# | Date:       $Date: 2003/04/01 14:28:00 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.14 2003/03/24 13:04:45 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.15 2003/04/01 14:28:00 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.15  2003/04/01 14:28:00  wig
+# | Added IN/OUT Top Port Generation
+# |
 # | Revision 1.14  2003/03/24 13:04:45  wig
 # | Extensively tested version, fixed lot's of issues (still with busses and bus splices).
 # |
@@ -141,11 +144,15 @@ sub gen_concur_port($$$$$$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.14 2003/03/24 13:04:45 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.15 2003/04/01 14:28:00 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
+my $thisrevision   =      '$Revision: 1.15 $';
 
-$thisid =~ s,\$,,go;
+$thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
+$thisrevision =~ s,^\$,,go;
+( $VERSION = $thisrevision ) =~ s,.*Revision:\s*,,; #TODO: Is that a good idea?
+
 
 #
 # Templates ...
@@ -508,6 +515,10 @@ sub compare_merge_entities ($$$) {
         # If 'value' is defined, add it ...
         if ( exists( $rnew->{$p}{'value'} ) ) {
             $rent->{$p}{'value'} = $rnew->{$p}{'value'};
+        }
+        # If 'rvalue' is defined, add it ...
+        if ( exists( $rnew->{$p}{'rvalue'} ) ) {
+            $rent->{$p}{'rvalue'} = $rnew->{$p}{'rvalue'};
         }
         delete( $rnew->{$p} ); # Done
     }
@@ -1149,6 +1160,7 @@ sub generic_map ($$$$) {
 
 #
 # create port map, handels bus slices ...
+# store port usage and print alert if a port gets attached twice!
 #
 # Input:
 #  $io  = 'in' or 'out'
@@ -1205,11 +1217,16 @@ sub port_map ($$$$$) {
 	    }
 
 	    push( @map , print_conn_matrix( $p, $pf, $pt, $s, $sf, $st, \@cm ));
+	    # Remember if a port is got used ....
+	    if ( store_conn_matrix( \%{$hierdb{$inst}{'::portbits'}}, $inst, $p, $pf, $pt, $s, \@cm ) ) {
+                #TODO: Do something against duplicate connections ...
+	    }
 	}
 	push( @$rio, $s );
     }
     return join( "", sort( @map ) ); # Return sorted by port name (comes first)
 }
+
 
 #
 # Set up an array for each pin of a port, indexing a given signal!
@@ -1275,6 +1292,80 @@ sub add_conn_matrix ($$$$) {
 	return 1;
     } else {
 	return 0;
+    }
+}
+
+#
+# Remember that this port got already connected
+# Sets $hierdb{inst}{'::portbits'}{'port'} = 'A::' or 'E::' or 'F::foo:T::bar' or
+#    'B::01io000'
+#
+sub store_conn_matrix ($$$$$$$) {
+    my $prev = shift;
+    my $instance = shift;
+    my $port = shift;
+    my $pf = shift;
+    my $pt = shift;
+    my $signal = shift; # Ignore
+    my $rcm = shift;
+
+    # If prev does not exist -> create it
+    unless ( defined( $prev ) and defined( $prev->{$port} )  ) {
+        $prev->{$port} = '';
+    }
+
+    #
+    # Simple case: everything is in sync and o.k. ( matrix index equals signal pin number)
+    #
+    my $usage = "E::";
+
+    if ( $pf eq $pt and $pf eq "__UNDEF__" ) {
+        if ( defined( $rcm->[0] ) ) {
+            $usage = "A::";
+        } else {
+            logwarn( "Warning: bad branch taken $instance, $signal. File bug report!" );
+        }
+    } elsif ( not ( $pf =~ m,^\d+$, and $pt =~ m,^\s*\d+\s*$, ) ) {
+        $usage = "F::" . $pf . ":T::" . $pt;
+    } else {
+        # Run through cm and see if everything is filled and ordered
+        my $ub = ( $pf > $pt ) ? $pf : $pt;
+        my $lb = ( $pf > $pt ) ? $pt : $pf;
+        my $bv = "";
+        my $miss = 0;
+        for my $i ( $lb..$ub ) {
+            # End of slice reached?
+            unless ( defined( $rcm->[$i] ) ) {
+                $miss = 1;
+                $bv = "0" . $bv;
+            } else {
+                $bv = "1" . $bv;
+            } 
+        }
+        unless( $miss ) {
+            $usage = "A::";
+        } else {
+            # B runs from $pt to $pf (or other if $pt > $pf),
+            # B:: will not have bits for the numbers < $pt
+            $usage = "B::" . $bv;
+        }
+    }
+    
+    #
+    # If this port did not appear previously, set it and return
+    #
+    unless ( $prev->{$port} ) {
+        $prev->{$port} = $usage;
+        return;
+    } else {
+        # Compare / add the previously connected bits with the new one's
+        if ( $prev->{$port} eq "A::" ) {
+            logwarn( "WARNING: Reconnecting port $port at instance $instance: $usage, A::!\n" );
+            return;
+        } else {
+            logwarn( "WARNING: Pot. conflict with reconnection of port $port at instance $instance: $usage, $prev->{$port}\n" );
+        # TODO: Check that better ...
+        }
     }
 }
 
@@ -1534,6 +1625,12 @@ sub _write_architecture ($$$$) {
 	my $signaltext = "\t\t--\n\t\t-- Generated Signals\n\t\t--\n";
 	for my $ii ( sort( keys( %aeport ) ) ) {
 	    # $ii is signal name
+
+            #
+            # If there is no in or out, do nothing here ....
+            #
+            next unless ( exists( $aeport{$ii}{'in'} ) or exists( $aeport{$ii}{'out'} ) );
+
 	    my $s = $conndb{$ii};
 	    my $type = $s->{'::type'};
 	    my $high = $s->{'::high'};
@@ -1543,6 +1640,7 @@ sub _write_architecture ($$$$) {
 
             # Using %HIGH%, %LOW%, %HIGH_BUS%, %LOW_BUS%
             #TODO: Carve out into subroutine.
+            #TODO: Maybe that would be better done with constants?
             if ( $ii =~ m,^\s*(%HIGH|%LOW)_BUS,o ) {
 		my $logicv = ( $1 eq '%HIGH' ) ? '1' : '0';
 		$macros{'%CONCURS%'} .= "\t\t\t$EH{'macro'}{$ii} <= ( others => '$logicv' );\n";
@@ -1570,7 +1668,17 @@ sub _write_architecture ($$$$) {
 	    }
 	    # Add constant definitions here to concurrent signals ....
             #TODO: Carving out to subroutine
-	    if ( $s->{'::mode'} =~ m,\s*C,io ) {
+	    if ( $s->{'::mode'} =~ m,C,io ) {
+                my ( $s, $a ) = _write_constant( $s, $type, $dt );
+                $signaltext .= $s; # add to signal declaration ...
+                $macros{'%CONCURS%'} .= $a;  # add to signal assignment
+                next;
+	    }
+
+=head 4
+
+OLD
+
 		#unless( exists ( $s->{'::out'}[0]{'inst'} ) ) {
 		#    $s->{'::out'}[0]{'inst'} = "__E_MISSING_VALUE";
 		#}
@@ -1582,7 +1690,7 @@ sub _write_architecture ($$$$) {
 		    my $value = $s->{'::out'}[0]{'port'};
 		    unless ( $value =~ s,["'],",go ) { # Take literally, replace ' by "
                         #TODO: Add conversion functions ... make sure to use " and ' appr.
-			if ( $value eq "0" or $value eq "1" and $type =~ m,_vector, ) {
+			if ( ( $value eq "0" or $value eq "1" ) and $type =~ m,_vector, ) {
 			    $value = "( others => '$value' )";
 			} else {
 			    # $value = "'" . $value . "'"; # Add leading and trailing '
@@ -1596,7 +1704,10 @@ sub _write_architecture ($$$$) {
 			"\t\t\t$s->{'::name'} <= $value;\n";
 		}
 		# next;
+                    
 	    }
+
+=cut
 
 	    # Generics and parameters: Not needed here
 	    if ( $s->{'::mode'} =~ m,\s*[GP],io ) {
@@ -1619,22 +1730,9 @@ sub _write_architecture ($$$$) {
                 }
 	    }
 
-# OLD, remove ....
-#                $signaltext .= "\t\t\t$pre" . "signal\t" . $sp_conflict{$ii} .
-#                    "\t: $type$dt; $post\n";
-#                $macros{'%CONCURS%'} .=
-#                    "\t\t\t" . $ii . " <= " . $sp_conflict{$ii} . "; -- __I_INTSIG_MAP\n";
-#                # Redo all generated maps ....
-#                for my $insts ( @{$sig2inst{$ii}} ) {
+
                     #TODO: is that the final idea? Maybe splitting gen_map
                     # in two parts makes it better
-#                    $i_macros{'%INST_' . $insts . '%'} =~
-#                        s,$ii(\s+=>\s+)$ii,$ii$1$sp_conflict{$ii},g;
-#                }
-#	    } else {
-#               $signaltext .= "\t\t\t$pre" . "signal\t$ii\t: $type$dt; $post\n";
-#	    }
-	    
 
 	    # Add signal just if this signal is not routed up (outside) ..
 	    # Inside the loop we look if the signal name equals the entity definition ..
@@ -1729,6 +1827,118 @@ sub _write_architecture ($$$$) {
     mix_utils_close( $fh, $filename );
 
 }
+
+#
+# Print out constant definitions:
+#
+#  constant NAME : $TYPE := VALUE;
+# Currently we pass through the value nearly literally!
+#
+# Special cases
+#
+sub _write_constant ($$$) {
+    my $s = shift; # ref to this signals definition ...
+    my $type = shift; # type of this constant
+    my $dt = shift; # has predefined (F downto T)
+
+    my $t = ""; # Signal definitions
+    my $sat = ""; # Signal assignments
+    my $comm = ""; # Comments
+
+    unless( exists( $s->{'::out'}[0]{'rvalue'} ) ) {
+            logwarn( "WARNING: Missung value definition for constant $s->{'::name'}" );
+	    $t = "\t\t\t-- $s->{'::name'} <= __E_MISSING_CONST_VALUE;\n";
+    } else {
+	my $value = $s->{'::out'}[0]{'rvalue'};
+
+        #
+        #TODO: 
+	#
+        # Caveat: Keep the RE here in sync with MixParser::_create_conn
+        #
+                # Get VHDL constants : B#VAL#
+                # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(\d+#[_a-f\d]+#)\s*$,io or
+                # or 0xHEX or 0b01xzhl or 0777 or 1000 (integers)
+                # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(0x[_\da-f]+|0b[_01xzhl]+|0[_0-7]+|[\d][._\d]*)\s*$,io or
+                # or reals or time definitions: ... 1 ns, 1.3 ps ...
+                # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?([+-]*[_\d]+\.*[_\d]*(e[+-]\d+)?\s*([munpf]s)?)\s*$,io or
+                # or anything in ' text ' or " text "
+                # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?((['"]).+\4)\s*$,io or
+                # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(".+")\s*$,io or
+                # or anything following a %CONST%/ or GENERIC or PARAMETER keyword
+                # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)(.+)\s*,io
+        #TODO: Add conversion functions ... make sure to use " and ' appr.
+        if ( $value =~ m,([+-]*[_\d]+\.*[_\d]*(e[+-]\d+)?)(\s*)([munpf]s),io ) {
+            # It's a time constant
+            # Add a space before "s"
+            if ( $3 eq "" ) {
+                $value = $1 . " " . $4;
+            }
+            #TODO: Check it type is time ...
+        } elsif ( $value eq "0" or $value eq "1" ) {
+            # Bind a vector to 0 or 1
+            if ( $s->{'::type'} =~ m,_vector,io ) {
+                $value = "( others => '$value' )";
+            } else {
+                $value = "'$value'"; # Put ' around bit vectors, VHDL
+            }
+        } elsif (  ( $value =~ m,^\s*0,io or
+                    $value =~ m,^\s*[_\d+]+\s*$,io or
+                    $value =~ m,^\s*\d+#[_a-f\d]+#,io ) and
+                    $type =~m,std_.*_vector,io
+                  ) {
+                #
+                # If value !~ 010101 and type equal std_ulogic_vector ->
+                #  convert value to binary!
+                $comm = " -- __I_ConvConstant: $value";
+                my $w = $s->{'::high'} - $s->{'::low'} + 1; #Will complain if high/low not
+                                # defined or not digits!
+                if ( $value =~ m,^\s*(\d+)#([_a-f\d]+)#,io ) {
+                    if ( $1 == 16 ) {
+                        $value = "0x" . $2;
+                        $value = hex( $value );
+                    } elsif ( $1 == 8 ) {
+                        $value = "0" . $2;
+                        $value = oct( $value );
+                    } elsif ( $1 == 2 ) {
+                        $value = oct( "0b" . $2 );
+                    } else {
+                        logwarn( "WARNING: Cannot cope with base $1 for constant $value!" );
+                        $w = "";
+                    }
+                }
+
+                if ( $value =~ m,^\s*0, ) {
+                    $value = oct( $value );
+                }
+                if ( $w ) {
+                    $value = sprintf( "\"%0" . $w . "b\"", $value );
+                    if ( length( $value ) > $w +2 ) {
+                        logwarn( "WARNING: Constant value $comm to large for signal $s->{'::name'} of $w bits!" );
+                        $comm = " -- __E_VECTOR_WIDTH " . $comm;
+                    }
+                }
+            
+        } elsif ( $value =~ m,^\s*0x([0-9a-f]),io ) {
+            # Convert 0xHEXV to 16#HEXV#
+            $comm = " -- __I_ConvConstant2:" . $value;
+            $value =~ s,^\s*0x,16#,;
+            $value =~ s,\s*$,#,;
+	} elsif ( $type =~ m,_vector,io ) {
+            # Replace ' -> "
+            $comm = " -- __I_VectorConv";
+            $value =~ s,',",go;
+	} else {
+            $comm = " -- __I_ConstNoconv";
+	}
+
+        $t = "\t\t\tconstant $s->{'::name'} : $type$dt := $value;$comm\n";
+    
+    }
+    return $t, $sat;
+}    
+# next;
+
 
 #
 # gen_concur_port: generate an concurrent assignment to map signals to
@@ -2052,7 +2262,7 @@ sub signal_port_resolve ($$) {
         # Port name: is that an out port and exists in and out internally?
         # We will not attempt to resolve the multiple driver issue
         if ( exists( $rinsig->{$p} )
-            # and ( exists( $rinsig->{$p}{'out'} )
+            and exists( $rinsig->{$p}{'out'} )  #wig20030325: is that a good idea?
             and exists( $rinsig->{$p}{'in'} ) ) {
                 # if ( $entities{$enty}{$p}{'mode'} eq "out" ) { # Rename the internal signal
                     $map{$p} = $EH{'postfix'}{'PREFIX_SIG_INT'} . $p;
@@ -2337,13 +2547,24 @@ write out various summary information like number of changed files, generated wi
 
 sub write_sum () {
 
+    #TODO: use different log**** call !!
+    #TODO: Shift function to other module ... ??
+
+    # Parsed input sheets:
+    logwarn( "============= SUMMARY =================" );
+    logwarn( "SUM: Number of parsed input tables:" );
+    for my $i ( qw( conf hier conn io vi2c ) ) {
+        logwarn( "SUM: $i $EH{$i}{'parsed'}" );
+    }
+
+    # Delta mode: return status equals number of changes
     if ( $EH{'output'}{'generate'}{'delta'} ) {
         #TODO: Do not use logwarn channel!
         logwarn( "SUM: Number of changes in intermediate: $EH{'DELTA_INT_NR'}");
         logwarn( "SUM: Number of changed files: $EH{'DELTA_NR'}");
         return $EH{'DELTA_NR'} + $EH{'DELTA_INT_NR'};
     }
-
+    
     return 0;    
 
 }

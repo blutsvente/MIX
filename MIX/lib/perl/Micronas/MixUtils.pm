@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.12 $                                             |
+# | Revision:   $Revision: 1.13 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/03/21 16:59:19 $                                   |
+# | Date:       $Date: 2003/04/01 14:27:59 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.12 2003/03/21 16:59:19 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.13 2003/04/01 14:27:59 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.13  2003/04/01 14:27:59  wig
+# | Added IN/OUT Top Port Generation
+# |
 # | Revision 1.12  2003/03/21 16:59:19  wig
 # | Preliminary working version for bus splices
 # |
@@ -103,7 +106,7 @@ require Exporter;
 	replace_mac
 	init_ole
 	close_open_workbooks
-	open_input
+	mix_utils_open_input
 	db2array
 	write_excel
 	write_delta_excel
@@ -164,6 +167,33 @@ sub two2one ($);
 use vars qw(
     %OPTVAL %EH %MACVAL $ex
 );
+
+####################################################################
+#
+# Our local variables
+
+#
+# RCS Id, to be put into output templates
+#
+my $thisid		=	'$Id: MixUtils.pm,v 1.13 2003/04/01 14:27:59 wig Exp $';
+my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
+my $thisrevision   =      '$Revision: 1.13 $';
+
+# | Revision:   $Revision: 1.13 $   
+$thisid =~ s,\$,,go; # Strip away the $
+$thisrcsfile =~ s,\$,,go;
+$thisrevision =~ s,^\$,,go;
+( $VERSION = $thisrevision ) =~ s,.*Revision:\s*,,; #TODO: Is that a good idea?
+
+##############################################################
+# Basic functions used in MIX ....
+##############################################################
+
+#
+# mix_getopt_header
+#
+# Option processing (command line switches)
+#
 
 sub mix_getopt_header(@) {
     my $no_exit  = @_ && ($_[0] eq '-NO_EXIT') && shift;
@@ -634,6 +664,9 @@ $ex = undef; # Container for OLE server
 				      #   records for verilog subblocks (who wants that?)
 	      'use' => 'enty',     # apply ::use libraries to entity files, if not specified otherwise
 					# values: <enty|conf|arch|all>
+	      'inout' => 'mode,noxfix',	# Generate IO ports for TOP cell (or daughter of testbench
+					# controlled by ::mode I|O
+					# noxfix: do not attach pre/postfix to signal names
 	      'delta' => 0,	    	# allows to use mix.cfg to preset delta mode
 	    },	
 	'ext' => 	{   'vhdl' => 'vhd',
@@ -661,6 +694,23 @@ $ex = undef; # Container for OLE server
 	'keep' => '3',	# Number of old sheets to keep
 	'format' => 'prev', # One of: prev(ious), auto or n(o|ew)
 	# If set, previous uses old sheet format, auto applies auto-format and the others do nothing.
+    },
+    'check' => { # Checks enable/disable: Usually the keywords to use are
+		    # na (or empty), check (check and warn),
+		    # force (check and force compliance),
+		    # Available (built-in) rules are:
+		    # lc (lower case everything), postfix, prefix, 
+		    #
+	'name' => {
+	    'pad' => '',
+	    'signal' => '',
+	    'entity' => '',
+	    'instance' => '',
+	    'port' => '',
+	    'conf' => '',
+	},
+	'signal' => 'load,driver,check',  # reads: checks if all signals have appr. loads
+						    # and drivers
     },
     'postfix' => {
 	    qw(
@@ -697,14 +747,23 @@ $ex = undef; # Container for OLE server
 	    PAD_ACTIVE_PD	 	1
 	)
     },
+    #
     # Possibly read configuration details from the CONF sheet, see -conf option
+    #
     'conf' => {
 	'xls' => 'CONF',
+	'req' => 'optional',
+	'parsed' => 0,
 	'field' => {},
     },
+
+    #    
     # Definitions regarding the CONN sheets:    
+    #
     'conn' => { 
 	'xls' => 'CONN',
+	'req' => 'mandatory',
+	'parsed' => 0,
 	'field' => {
 	    #Name   	=>		Inherits
 	    #						Multiple
@@ -733,8 +792,14 @@ $ex = undef; # Container for OLE server
 	    'nr'		=> 16, # Number of next field to print
 	},
     },
+
+    #
+    #	 hierachy sheet basic definition
+    #
     'hier' => {
         'xls' => 'HIER',
+	'req' => 'mandatory',
+	'parsed' => 0,
 	'field' => {
 	    #Name   	=>		Inherits
 	    #						Multiple
@@ -762,6 +827,38 @@ $ex = undef; # Container for OLE server
 	},
     },
 
+    #
+    # IO sheet basic definitions
+    # PAD is he primary key (but pad names might be added on demand)
+    #
+    #
+    'io' => {
+        'xls' => 'IO',
+	'req' => 'optional',
+	'parsed' => 0,
+	'field' => {
+	    #Name   	=>		Inherits
+	    #						Multiple
+	    #							Required
+	    #								Defaultvalue
+	    #									PrintOrder
+	    #                                  0      1       2	3       4
+	    '::ign' 		=> [ qw(	0	0	1	%NULL% 	1 ) ],
+	    '::class'		=> [ qw(	1	0	1	WARNING_NOT_SET	2 )],
+	    '::ispin'		=> [ qw(	0	0	1	%EMPTY%	3 ) ],
+	    '::pin'		=> [ qw(	0	0	1	WARNING_PIN_NR	4  )],
+	    '::pad'		=> [ qw(	0	0	1	WARNING_PAD_NR	5  )],
+	    '::type'		=> [ qw(	1	0	1	DEFAULT_PIN	6  )],
+	    '::iocell'		=> [ qw(	1	0	1	DEFAULT_IO	7  )],
+	    '::port'		=> [ qw(	1	0	1	%EMPTY%	8  )],
+	    '::name'		=> [ qw(	0	0	1	PAD_NAME	9  )],
+	    '::muxopt'	=> [ qw(	1	1	1	%EMPTY%	10  )],
+	    '::debug'	=> [ qw(	1	0	0	%NULL%	0 )],
+	    '::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
+	    'nr'		=> 11,  # Number of next field to print
+	},
+    },
+
     # VI2C Definitions:
     # ::ign	::type	::width	::dev	::sub	::addr
     # ::interface	::block	::inst	::dir	::auto	::sync
@@ -772,6 +869,8 @@ $ex = undef; # Container for OLE server
     #TODO: Define default fields:
     'vi2c' => {
         'xls' => 'VI2C',
+	'req' => 'optional',
+	'parsed' => 0,
 	'field' => {
 	    #Name   	=>		Inherits
 	    #						Multiple
@@ -835,6 +934,14 @@ $ex = undef; # Container for OLE server
     'GENERIC_NR' => 0,
     'DELTA_NR' => 0,
     'DELTA_INT_NR' => 0,
+    'sum' => { # Counters for summary
+	'warnings' => 0,
+	'errors' => 0,
+    },
+    'script' => { # Set for pre and post execution script execution
+	'pre' => '',
+	'post' => '',
+    },
 );
 
 #
@@ -1031,7 +1138,7 @@ sub mix_overload_conf ($) {
 
 =head2 mix_excel_conf($conf,$source)
 
-Take array provided by the open_input function (excel), search for the
+Take array provided by the mix_utils_open_input function (excel), search for the
 MIXCFG tag. If found, convert that into %EH.
 
 =cut
@@ -1180,25 +1287,26 @@ sub init_ole () {
 }
 
 ####################################################################
-## init_open
+## mix_utils_open_input
 ## open all input files and read in the worksheets needed
 ## do basic checks and conversion 
 ####################################################################
 
 =head2
 
-open_input (@) {
+mix_utils_open_input (@) {
 
-Open all input files and read in their CONN and HIER sheets
-Returns two arrays with hashes ...
+Open all input files and read in their CONN, HIER and IO sheets
+Returns two (three) arrays with hashes ...
 
 =cut
 
-sub open_input (@) {
+sub mix_utils_open_input (@) {
     my @in = @_;
 
     my $aconn = [];
     my $ahier = [];
+    my $aio = [];
     
     for my $i ( @in ) {
 	unless ( -r $i ) {
@@ -1207,22 +1315,26 @@ sub open_input (@) {
 	}
 	#
 	# maybe there is a CONF page?
+	# Change CONF accordingly (will not be visible at upper world)
 	#
-	my @conf = open_excel( $i, $EH{'conf'}{'xls'}, "optional" );
+	my @conf = open_excel( $i, $EH{'conf'}{'xls'}, $EH{'conf'}{'req'} );
 	for my $c ( @conf ) {
+	    $EH{'conf'}{'parsed'}++;
 	    # Apply it immediately
 	    mix_excel_conf( $c, $EH{'conf'}{'xls'} );
 	}
 	# Open connectivity sheet(s)
-	my @sheet = open_excel( $i, $EH{'conn'}{'xls'}, "mandatory" );
+	my @sheet = open_excel( $i, $EH{'conn'}{'xls'},  $EH{'conn'}{'req'});
 	for my $c ( @sheet ) {
+	    $EH{'conn'}{'parsed'}++;
 	    my @conn = convert_in( "conn", $c ); # Normalize and read in
 	    push( @$aconn, @conn ); # Append
 	}
 
 	# Open hierachy sheets
-	@sheet = open_excel( $i, $EH{'hier'}{'xls'}, "mandatory" );
+	@sheet = open_excel( $i, $EH{'hier'}{'xls'}, $EH{'hier'}{'req'} );
 	for my $c ( @sheet ) {
+	    $EH{'hier'}{'parsed'}++;
 	    my @hier = convert_in( "hier", $c );
 	    #
 	    # Remove all lines not selected by our variant
@@ -1230,8 +1342,17 @@ sub open_input (@) {
 	    select_variant( \@hier );
 	    push( @$ahier,   @hier );	# Append
 	}
+
+	# Open IO sheet (if available, not needed!)
+	@sheet = open_excel( $i, $EH{'io'}{'xls'}, $EH{'io'}{'req'} );
+	for my $c ( @sheet ) {
+	    $EH{'io'}{'parsed'}++;
+	    my @io = convert_in( "io", $c );
+	    #
+	    push( @$aio,   @io );   # Append
+	}	
     }
-    return( $aconn, $ahier );
+    return( $aconn, $ahier, $aio );
 }
 
 ####################################################################
@@ -1494,7 +1615,8 @@ sub convert_in ($$) {
     my $r_data = shift;
 
     unless ( defined $kind and defined $r_data ) {
-	    logdie("convert_in called with bad arguments!");
+	    logwarn("WARNING: skipping convert_in, called with bad arguments!");
+	    return ();
     }
 
     # my $reh = \$EH{$kind}; # field definitions ...
@@ -1515,11 +1637,6 @@ sub convert_in ($$) {
 	unless ( $hflag ) { # We are still looking for our ::MARKER header line
 	    next unless ( $all =~ m/^::/ );			#Still no header ...
 	    %order = parse_header( $kind, \$EH{$kind}, @r );		#Check header, return field number to name
-	    # foreach my $ii ( 0..$#order ) {
-	    # $d[0]{$order[$ii]} = $order[$ii];
-	    # $order{$order[$ii]} = $ii;
-	    # $reh->{'input'}{$order[$ii]} = $ii; 	# Remember all input fields, needed??? 
-	    # }
 	    $hflag = 1;
 	    next;
 	}
@@ -2315,7 +2432,8 @@ sub write_excel ($$$) {
     my $basename = $file;
     $basename =~ s,.*[/\\],,; #TODO: check if Name is basename of filename, always??
 
-    $ex->{DisplayAlerts}=0;   
+    $ex->{DisplayAlerts}=0;
+
     if ( -r $file ) {
 	logwarn("File $file already exists! Contents will be changed");
 
