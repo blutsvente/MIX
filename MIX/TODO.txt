@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.40 2005/01/26 14:01:04 wig Exp $
+# $Id: TODO.txt,v 1.41 2005/01/27 08:19:47 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -119,7 +119,7 @@ iocell #(
 
     Req: mpallas
     Prio: medium
-
+    Solved: wig20050127 (testcase generic/veriovhd)
         
 20041112a/Req: Log run time in output summary!
 
