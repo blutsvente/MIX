@@ -13,12 +13,12 @@
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_embedded.pl,v 1.6 2004/08/04 12:16:02 abauer Exp $     |
+# | Id           : $Id: mix_embedded.pl,v 1.7 2004/08/05 11:53:04 abauer Exp $     |
 # | Name         : $Name:  $                                   |
 # | Description  : $Description: simple wrapper script for embedding MIX $|
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.6 $                                       |
-# | Mod.Date     : $Date: 2004/08/04 12:16:02 $                           |
+# | Version      : $Revision: 1.7 $                                       |
+# | Mod.Date     : $Date: 2004/08/05 11:53:04 $                           |
 # | Author       : $Author: abauer $                                      |
 # | Email        : $Email: Alexander.Bauer@micronas.com$                  |
 # |                                                                       |
@@ -75,8 +75,8 @@ use Log::Agent;
 use Log::Agent::Priorities qw(:LEVELS);
 use Log::Agent::Driver::File;
 
-use Micronas::MixUtils qw( mix_init %EH mix_getopt_header);
-use Micronas::MixUtils::IO qw(init_ole mix_utils_open_input write_sum);
+use Micronas::MixUtils qw( mix_init %EH mix_getopt_header db2array);
+use Micronas::MixUtils::IO qw(init_ole mix_utils_open_input write_sum write_outfile);
 use Micronas::MixParser qw( %hierdb %conndb parse_conn_macros parse_conn_gen parse_hier_init parse_conn_init apply_conn_gen apply_hier_gen apply_conn_macros purge_relicts parse_mac add_portsig add_sign2hier);
 use Micronas::MixIOParser;
 use Micronas::MixI2CParser;
@@ -87,7 +87,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.6 $'; # RCS Id
+$::VERSION = '$Revision: 1.7 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 mix_init(); # load Presets ....
@@ -120,11 +120,23 @@ my ($n_ioin_ext, $n_i2cin_ext);
 sub readSpreadsheet(@) {
 
     my $input = shift;
-    my $ref;
 
      # fetch HIER, CONN, IO and I2C sheet(s)
     ( $r_connin, $r_hierin, $r_ioin, $r_i2cin) = mix_utils_open_input( $input);
 }
+
+
+sub writeSpreadsheet($) {
+
+    my $filename = shift;
+
+    # TODO: build arrays from input hashes
+#    write_outfile($filename, "HIER", db2array($r_hierin, "HIER", undef));
+#    write_outfile($filename, "CONN", db2array($r_connin, "CONN", undef));
+#    write_outfile($filename, "IO", db2array($r_ioin, "IO", undef));
+#    write_outfile($filename, "CONF", db2array($r_i2cin, "CONF", undef));
+}
+
 
 sub getIntFromEH($) {
 
@@ -355,6 +367,24 @@ sub getConnRow($) {
     return(@row);
 }
 
+sub setConnValue($$$) {
+
+    my $data = shift;
+    my $row = shift;
+    my $column = shift;
+
+    if(!defined($column)) {
+      $column = "";
+    }
+    if(!defined($data)) {
+      $data = "";
+    }
+
+    if(exists($r_connin->[$row]{$column})) {
+      $r_connin->[$row]{$column} = $data;
+    }
+}
+
 sub getNumIOPadHeaders{
     return ($EH{'io'}{'cols'} + 1);
 }
@@ -471,6 +501,25 @@ sub get_dyn_IOPadRow($) {
     }
 
     return(@row);
+}
+
+sub setIOPadValue($$$) {
+
+    my $data = shift;
+    my $row = shift;
+    my $column = shift;
+
+
+    if(!defined($column)) {
+      $column = "";
+    }
+    if(!defined($data)) {
+      $data = "";
+    }
+
+    if(exists($r_ioin->[$row]{$column})) {
+      $r_ioin->[$row]{$column} = $data;
+    }
 }
 
 sub getNumI2CHeaders{
@@ -595,6 +644,26 @@ sub get_dyn_I2CRow($) {
     return(@row);
 }
 
+sub setI2CValue($$$) {
+
+    my $data = shift;
+    my $row = shift;
+    my $column = shift;
+
+    if(!defined($column)) {
+      $column = "";
+    }
+    if(!defined($data)) {
+      $data = "";
+    }
+
+    if(exists($r_i2cin->[$row]{$column})) {
+      $r_i2cin->[$row]{$column} = $data;
+    }
+    else {
+      print "mui error: attemp to set column: $column in row: $row, which does not exist!\n";
+    }
+}
 
 1;
 
