@@ -324,6 +324,10 @@ void mix_get_conn_row(int index, char *row[])
     strcpy(row[11], POPp);
     strcpy(row[12], POPp);
     strcpy(row[13], POPp);
+    strcpy(row[14], POPp);
+    strcpy(row[15], POPp);
+    strcpy(row[16], POPp);
+    strcpy(row[17], POPp);
     PUTBACK;
     FREETMPS;
     LEAVE;    
@@ -370,6 +374,9 @@ void mix_get_iopad_row(int index, char *row[])
     strcpy(row[8], POPp);
     strcpy(row[9], POPp);
     strcpy(row[10], POPp);
+    strcpy(row[11], POPp);
+    strcpy(row[12], POPp);
+    strcpy(row[13], POPp);
     PUTBACK;
     FREETMPS;
     LEAVE;

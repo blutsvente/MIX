@@ -15,7 +15,6 @@
 
 enum {
   COL_IGN = 0,
-  COL_COM,
   COL_CLASS,
   COL_ISPIN,
   COL_PIN,
@@ -25,6 +24,10 @@ enum {
   COL_PORT,
   COL_NAME,
   COL_MUXOPT,
+  COL_COM,
+  COL_DEFAULT,
+  COL_DEBUG,
+  COL_SKIP,
   NUM_COLS
 };
 
@@ -35,7 +38,6 @@ static struct {
     gboolean editable;
 } header[] = {
     {"::ign", "text", TRUE},
-    {"::comment", "text", TRUE},
     {"::class", "text", TRUE},
     {"::ispin", "text", TRUE},
     {"::pin", "text", TRUE},
@@ -45,6 +47,10 @@ static struct {
     {"::port", "text", TRUE},
     {"::name", "text", TRUE},
     {"::muxopt", "text", TRUE},
+    {"::comment", "text", TRUE},
+    {"::default", "text", TRUE},
+    {"::debug", "text", TRUE},
+    {"::skip", "text", TRUE},
 };
 
 
@@ -101,13 +107,15 @@ GtkTreeModel* create_iopad_model(void)
 {
     int i = 0;
     int numOfPads = mix_number_of_iopad_rows();
-    char ign[1024], com[1024], cls[1024], isp[1024], pin[1024], pad[1024], typ[1024], ioc[1024], prt[1024], nam[1024], mux[1024];
-    char *row[] = { ign, com, cls, isp, pin, pad, typ, ioc, prt, nam, mux};
+    char ign[1024], cls[1024], isp[1024], pin[1024], pad[1024], typ[1024], ioc[1024], prt[1024], nam[1024], mux[1024];
+    char com[1024] , def[1024], deb[1024], skip[1024];
+    char *row[] = { ign, cls, isp, pin, pad, typ, ioc, prt, nam, mux, com, def, deb, skip};
     GtkTreeStore  *treestore;
     GtkTreeIter    toplevel;
 
     treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
-				   G_TYPE_STRING ,G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+				             G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
+				             G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 
     while(i < numOfPads) {
 
@@ -115,8 +123,8 @@ GtkTreeModel* create_iopad_model(void)
 
 	// Append a top level row and leave it empty
 	gtk_tree_store_append(treestore, &toplevel, NULL);
-	gtk_tree_store_set(treestore, &toplevel, COL_IGN, ign, COL_COM, com, COL_CLASS, cls, COL_ISPIN, isp, 
-			   COL_PIN, pin, COL_PAD, pad, COL_TYPE, typ, COL_IOCELL, ioc, COL_PORT, prt, COL_NAME, nam, COL_MUXOPT, mux, -1);
+	gtk_tree_store_set(treestore, &toplevel, COL_IGN, ign, COL_CLASS, cls, COL_ISPIN, isp, 
+			   COL_PIN, pin, COL_PAD, pad, COL_TYPE, typ, COL_IOCELL, ioc, COL_PORT, prt, COL_NAME, nam, COL_MUXOPT, mux, COL_COM, com, COL_DEFAULT, def, COL_DEBUG, deb, COL_SKIP, skip,-1);
 
 	i++;
     }
