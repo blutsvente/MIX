@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.6 $                                          |
+# | Revision:   $Revision: 1.7 $                                          |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/12/04 14:56:37 $                              |
+# | Date:       $Date: 2003/12/10 10:17:33 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.7  2003/12/10 10:17:33  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.6  2003/12/04 14:56:37  abauer
 # | *** empty log message ***
 # |
@@ -55,6 +58,7 @@ require Exporter;
 @ISA=qw(Exporter);
 
 @EXPORT  = qw(
+	init_ole
 	close_open_workbooks
 	mix_utils_open_input
         open_infile
@@ -111,11 +115,11 @@ sub mix_utils_mask_excel ($);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.6 2003/12/04 14:56:37 abauer Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.7 2003/12/10 10:17:33 abauer Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.6 $';
+my $thisrevision    =      '$Revision: 1.7 $';
 
-# Revision:   $Revision: 1.6 $
+# Revision:   $Revision: 1.7 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -254,24 +258,40 @@ Returns a OLE handle or undef if that fails.
 
 =cut
 
-sub init_ole() {
+sub init_ole () {
 
-    import Win32::OLE qw(in valof with);
-    import Win32::OLE::Const 'Microsoft Excel';
+# Start Excel/OLE Server, do it in eval ....
+  unless ( eval "use Win32::OLE;" ) {  
+	eval {
+	  require "Win32::OLE";
+#	  import Win32:OLE; # qw(in valof with);
+          require "Win32::OLE::Const";
+#	  import Win32::OLE::Const; # 'Microsoft Excel';
+#          use Win32::OLE::NLS qw(:DEFAULT :LANG :SUBLANG);
+#          my $lgid = MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT);
+#          $Win32::OLE::LCID = MAKELCID($lgid);
+#          $Win32::OLE::Warn = 3;
 
-    $Win32::OLE::Warn = 3;
-
-    # use existing instance if Excel is already running
-    eval {$ex = Win32::OLE->GetActiveObject('Excel.Application')};
-    logwarn "Excel not installed" if $@;
-    unless (defined $ex) {
-        $ex = Win32::OLE->new('Excel.Application', sub {$_[0]->Quit;})
-	    or logwarn "Oops, cannot start Excel";
-    }
-
-    if(defined $ex) {
-        init_open_workbooks();  # Get list of already open files
-    }
+# 527d535
+# usefull statements from the OLE tutorial ..
+# < # 	  my $Excel = Win32::OLE->GetActiveObject('Excel.Application')
+# < #       || Win32::OLE->new('Excel.Application', 'Quit');
+# < 
+#$Excel->{DisplayAlerts}=0; #Turn off popups ...
+ 
+          unless( $ex=Win32::OLE->GetActiveObject('Excel.Application') ) {
+	    # Try to start a new OLE server:
+		unless ( $ex=Win32::OLE->new('Excel.Application', sub {$_[0]->Quit;}) ) {
+		    return undef; # Did not work :-(
+		}
+          }
+          init_open_workbooks(); # Get list of already open files
+          return $ex;  # Return OLE ExCEL object ....
+	}
+    } else {
+    logdie "FATAL: Cannot fire up OLE server: $!\n";
+    return undef;
+  }
 }
 
 
@@ -1229,7 +1249,8 @@ sub write_xls($$$;$) {
 
 	my $efile = path_excel( $file );
 	# my $basename = $file;
-	my $basename = basename( $file ); # ~ s,.*[/\\],,; #TODO: check if Name is basename of filename, always??
+	my $basename = basename( $file ); 
+	# ~ s,.*[/\\],,; #TODO: check if Name is basename of filename, always??
 
 	# $ex->{DisplayAlerts}=0;
 	$ex->{DisplayAlerts}=0 if ( $EH{'script'}{'excel'}{'alerts'} =~ m,off,io );

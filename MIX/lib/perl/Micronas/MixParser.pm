@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.33 $                                         |
+# | Revision:   $Revision: 1.34 $                                         |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/12/05 14:59:29 $                              |
+# | Date:       $Date: 2003/12/10 10:17:33 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.33 2003/12/05 14:59:29 abauer Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.34 2003/12/10 10:17:33 abauer Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.34  2003/12/10 10:17:33  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.33  2003/12/05 14:59:29  abauer
 # | *** empty log message ***
 # |
@@ -230,11 +233,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.33 2003/12/05 14:59:29 abauer Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.34 2003/12/10 10:17:33 abauer Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.33 $';
+my $thisrevision   =      '$Revision: 1.34 $';
 
-# | Revision:   $Revision: 1.33 $
+# | Revision:   $Revision: 1.34 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -705,6 +708,7 @@ sub mix_expand_name ($$) {
 }
 
 sub create_inst ($%) {
+
     my $name = shift;
     my %data = @_;
 

@@ -23,12 +23,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.22 2003/12/04 14:39:20 abauer Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.23 2003/12/10 10:17:32 abauer Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.22 $                                      |
-# | Mod.Date     : $Date: 2003/12/04 14:39:20 $                           |
+# | Version      : $Revision: 1.23 $                                      |
+# | Mod.Date     : $Date: 2003/12/10 10:17:32 $                           |
 # | Author       : $Author: abauer $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -43,6 +43,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.23  2003/12/10 10:17:32  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.22  2003/12/04 14:39:20  abauer
 # | *** empty log message ***
 # |
@@ -183,7 +186,7 @@ use Log::Agent::Priorities qw(:LEVELS);
 use Log::Agent::Driver::File;
 
 use Micronas::MixUtils qw( mix_init %EH mix_getopt_header);
-use Micronas::MixUtils::IO;
+use Micronas::MixUtils::IO qw(init_ole mix_utils_open_input write_sum);
 use Micronas::MixParser;
 use Micronas::MixIOParser;
 use Micronas::MixI2CParser;
@@ -198,7 +201,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.22 $'; # RCS Id
+$::VERSION = '$Revision: 1.23 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # %EH comes from Mic::MixUtils ; All the configuration E-nvironment will be there
@@ -282,7 +285,7 @@ if ( $#ARGV < 0 ) { # Need  at least one sheet!!
 # Do a first simple conversion from Excel arrays into array of hashes
 #
 
-if( $^O=~ m/MSWin/ || $EH{'format'}{'out'}=~ m/^xls$/ ) {
+if( ( $^O=~ m/MSWin/ && join( " ", @ARGV)=~ m/\.xls/) || $EH{'format'}{'out'}=~ m/^xls$/ ) {
     init_ole();
 }
 
@@ -373,14 +376,14 @@ generate_entities();
 # Step LAST: Dump intermediate data
 # mix_store_db knows which data to dump
 #
-mix_store_db( "dump",
-                    "internal",
-                {   'conn_macros' => $r_connmacros,
-                    'conn_gen' => $r_conngen,
-                    'hier_gen' => $r_hiergen,
-                    'entities'  => \%Micronas::MixWriter::entities,
-                },
-    );
+#mix_store_db( "dump",
+#                    "internal",
+#                {   'conn_macros' => $r_connmacros,
+#                    'conn_gen' => $r_conngen,
+#                    'hier_gen' => $r_hiergen,
+#                    'entities'  => \%Micronas::MixWriter::entities,
+#                },
+#    );
 #
 # Write intermediate data ...
 #

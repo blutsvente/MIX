@@ -1,5 +1,5 @@
 %
-%   MIX  - Developer Documentation
+%   MIX - Userreference
 %
 
 \documentclass[a4paper,12pt]{article}
@@ -9,8 +9,6 @@
 \setlength{\oddsidemargin}{-5mm}
 \setlength{\topmargin}{-18mm}
 
-\usepackage{times}
-\usepackage[T1]{fontenc}
 
 \usepackage[OT2,T1]{fontenc}
 \usepackage[latin1]{inputenc}
@@ -40,9 +38,6 @@
 %\end{tabular}
 %\end{titlepage}gin{titlepage}
 
-
-\family{ptm}
-\selectfont
 
 \maketitle
 \newpage
@@ -114,14 +109,17 @@ will create the file \begin{tt}bar.xls\end{tt}, which has the following three wo
 \newline\hspace*{11mm} *.v files are given as command line arguments).\newline
 You will also get a \begin{tt}mix.cfg\end{tt} file. If \begin{tt}bar.xls\end{tt} or \begin{tt}mix.cfg\end{tt} already exists, the command will exit without changes. The import of \begin{tt}*.vhd\end{tt} and \begin{tt}*.v\end{tt} files is experimental and meant to give a way of getting a start description of your design. In case of VHDL files, only entity descriptions are imported. Take care of getting signal names and instance names properly.
 
-\subsection{Common excel worksheet properties}
-All excel worksheets parsed by MIX share some common properties.
+\subsection{Common worksheet properties}
+All worksheets parsed by MIX share some common properties.
 There needs to be a header line consisting only of keywords with leading double colon. All data before the header line is ignored. Only the first header line will be evaluated. Data in columns with no header or malformed headers will be ignored.\newline
 Commonly understood table headings are \begin{tt}::ign\end{tt} and \begin{tt}::comment\end{tt}. The \begin{tt}::ign\end{tt} column is special, because it needs to be the first column of a sheet. If a cell in the \begin{tt}::ign\end{tt} column starts with a \begin{tt}\#\end{tt} or a \begin{tt}//\end{tt}, the complete row is ignored.The \begin{tt}::comment\end{tt} column can contain user or program generated comments for a given row. It's data will be appended to it's contents as it appears.\newline
-MIX reads the excel cell values. This is what you see, not the real contents of the cells. Thus all excel formulas can be used to define the cell values.\newline
+MIX reads the cell values. This is, for Excel and Star(/Open)-Office, what you see , not the real contents of the cells. Thus all formulas can be used to define the cell values (note: csv is not able to do that).\newline
 A lot of predefined text macros are understood and converted by MIX. A text macro is made up by a name surrounded by \begin{tt}\%\end{tt} signs. Retrieve a complete list of macros with the -listconf command line switch and grep all lines starting with "\begin{tt}MIXCFG macro\end{tt}". The table \begin{tt}\%macro\%\end{tt} gives a list of predefined macros, their default settings and wether this macro can be used by the user. You can use text macros inside of any cell.\\
 \includegraphics[scale=0.6]{images/mix_table0.jpg}\\
 A second type of macros are available to reference other columns of a like through \begin{tt}\%::NAME\%\end{tt}. This will be replaced by the contents of the \begin{tt}::NAME\end{tt} column of this row. \begin{tt}::NAME\end{tt} has to be defined for the current worksheet, obviously. In the above example \begin{tt}\%::inst\%\_e\end{tt} will evaluate to \begin{tt}chip\_e\end{tt}, \begin{tt}a\_e\end{tt} and \begin{tt}b\_e\end{tt} accordingly. \begin{tt}\%LANGUAGE\%\end{tt} becomes vhdl. Macro expansion happens just before the intermediate design data is written out, after evaluation of all input data. Recursive macro expansion is not implemented. Macros in primary keys like signal and instance names are evaluated at signal or instance creation time.
+
+\subsection{Special Spreadsheet-format properties}
+MIX is able to read three different table formats: csv(Comma-Seperated-Values), sxc(Star-Office-Spreadsheet) and xls(Excel-Spreadsheet). While Excel and StarOffice Spreadsheets are full featured, the csv Format does not understand formulas. This is because the real content and it's values are same in csv. The only colored output can(at this moment) be achieved by writing Excel-Spreadsheets(for this an already installed Excel is needed). While writing Excel-sheets implies Windows, reading input can be done on every Platform(if it got a Perl port). Trying to read a Excel-Sheet on non-Windows grounds will cause MIX to produce csv per default. The output format can be forced by setting \begin{tt}format.out\end{tt} to \begin{tt}csv\end{tt}, \begin{tt}sxc\end{tt} or \begin{tt}xls\end{tt}. In this case MIX will read the given input file and produce the forced output format.
 
 \subsection{HIER sheet properties}
 The hierarchy of a design is defined in the HIER sheet. By default the HIER sheet is named HIER, but you can set the configuration value \begin{bf}hier.xls\end{bf} to a Perl regular expression. MIX will then consider all worksheets which names match the perl regular expression, to be HIER definitions. In that case you are free to use different header definitions on different sheets.\newline
