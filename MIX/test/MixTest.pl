@@ -353,15 +353,16 @@ sub gotScript($$) {
 sub runMix($) {
 
     my $type = shift;
-    my $command = "";
-    my $options;
-    my $path = "";
-    my $find = "";
 
     my $failsum = 0;
     my $wdir = getcwd();
 
     for(my $i=0; $i<$numberOfTests; $i++) {
+
+    	my $command = "";
+    	my $options;
+    	my $path = "";
+    	my $find = "";
 
 		$options = $tests[$i]->{'options'};
         my $testpath = $tests[$i]->{'path'};
