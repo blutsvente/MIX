@@ -1,3 +1,10 @@
+#
+# Issue List
+#
+# $RCSfil$
+# $Id: TODO.txt,v 1.2 2003/02/20 15:05:42 wig Exp $
+#
+
 TODOs:
 - Accept %::COL% in :name and ::inst columns
   early expansion required!
@@ -48,6 +55,34 @@ TODOs:
 
 - separate interconnect sheets for each intermediate hierachy (in addition to flat interconnect sheet) 
 
+- 20030220a: Add ::architecture column, which defines the architecture name
+  Default: RTL
+  Requested by St. Bartels
+
+- 20030220b: Check: RTL architecture must be unique
+  Requested by ST. Bartels
+  
+- 20030220c: lower case everything!
+  Possibly inform if a name is not unique
+  Requested by M. Pallas
+
+- 20030220d: Change EOL for -a, -e, -c files (MS-Win vs. UNIX)
+  Workaround: Use script (recode)
+  Requested by M. Pallas
+
+- 20030220e: Documentation + Application Note
+  Application note:
+        non-leaf cells multiple instantiation, how-to: global signal names localization
+        
+- 20030220f: Port<->Signal assignment depends on IN vs. OUT
+
+- Add <CR> into ::in and ::out cells, recognize in inout
+   done/wig20030220, rel. 1.7 MixUtils
+
+- Bug section:
+    			p_mix_cp_lcmd_6_6_gi	: in	std_ulogic_vector(6); -- __W_SINGLEBITBUS
+    should read as:
+                    p_mix_cp_lcmd_6_6_gi : in std_ulogic; -- __I_SINGLEBITREDUCED
 
 DONE:
 

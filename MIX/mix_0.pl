@@ -20,12 +20,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id              : $Id: mix_0.pl,v 1.2 2003/02/04 07:28:44 wig Exp $
+# | Id              : $Id: mix_0.pl,v 1.3 2003/02/20 15:05:42 wig Exp $
 # | Name         : $Name:  $
 # | Description  :$Description:$
 # | Parameters  : -
 # | Version       : $Version: $
-# | Mod.Date    : $Date: 2003/02/04 07:28:44 $
+# | Mod.Date    : $Date: 2003/02/20 15:05:42 $
 # | Author        : $Author: wig $
 # | Phone         : $Phone: $
 # | Fax             : $Fax: $
@@ -40,6 +40,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |
 # | Changes:
 # | $Log: mix_0.pl,v $
+# | Revision 1.3  2003/02/20 15:05:42  wig
+# | Extended TODO list
+# |
 # | Revision 1.2  2003/02/04 07:28:44  wig
 # | Fixed header of modules
 # |
@@ -223,6 +226,11 @@ apply_conn_gen( $r_conngen );
 purge_relicts();
 
 #
+# Replace %MAC% before output
+#
+parse_mac();
+
+#
 # Add conections and ports if needed (hierachy traversal)
 # Add connections to TOPLEVEL for connections without ::in or ::out
 # Replace OPEN and %OPEN% 
@@ -232,7 +240,7 @@ add_portsig();
 #
 # Replace %MAC% before output
 #
-parse_mac();
+#!do before signal expansion ..... parse_mac();
 
 #
 # Add a list of all signals for each instance
