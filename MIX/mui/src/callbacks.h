@@ -45,6 +45,8 @@ void on_spreadsheet_btn(GtkButton *btn, gpointer user_data);
 
 void on_preferences_btn(GtkButton *btn, gpointer user_data);
 
+void on_notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, gpointer user_data);
+
 void on_strip_toggled(GtkToggleButton *btn, gpointer user_data);
 
 void on_bak_toggled(GtkToggleButton *btn, gpointer user_data);

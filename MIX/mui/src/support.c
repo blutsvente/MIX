@@ -21,6 +21,19 @@
 #include "support.h"
 
 
+int current_page = 0; // startup on hiersheet
+
+
+int get_current_page()
+{
+    return current_page;
+}
+
+void set_current_page(int index)
+{
+    current_page = index;
+}
+
 GtkWidget* lookup_widget(GtkWidget *widget, const gchar *widget_name)
 {
     GtkWidget *parent, *found_widget;

@@ -31,6 +31,7 @@ static void about_destroy(GtkWidget *w, gpointer d);
 
 gboolean about_dialog_open = 0;
 GtkWidget *file_dialog, *about_dialog;
+GtkWidget *mainview[4];
 
 static char *about_title = "About MIX User Interface";
 static char *about_text1 = "\n          Graphical MIX User Interface written by:  \n"
@@ -86,7 +87,6 @@ GtkWidget* create_MainWindow(void)
     GtkWidget *del_hier_button;
     GtkWidget *hpaned3;
     GtkWidget *scrolledwindow5;
-    GtkWidget *hierTreeview;
     GtkWidget *label29;
     GtkWidget *vbox3;
     GtkWidget *conn_toolbar;
@@ -101,13 +101,13 @@ GtkWidget* create_MainWindow(void)
     GtkWidget *toolbar8;
     GtkWidget *add_iopad_button;
     GtkWidget *del_iopad_button;
-    GtkWidget *label59;
+    GtkWidget *scrolledwindow3;
     GtkWidget *label31;
     GtkWidget *vbox5;
     GtkWidget *toolbar7;
     GtkWidget *add_i2c_regblock_button;
     GtkWidget *del_i2c_regblock_button;
-    GtkWidget *label60;
+    GtkWidget *scrolledwindow2;
     GtkWidget *label32;
     GtkWidget *fixed12;
     GtkWidget *frame13;
@@ -351,6 +351,7 @@ GtkWidget* create_MainWindow(void)
     gtk_widget_show(notebook1);
     gtk_box_pack_start( GTK_BOX(vbox2), notebook1, TRUE, TRUE, 0);
 
+    /* HIERVIEW */
     vbox4 = gtk_vbox_new(FALSE, 0);
     gtk_widget_set_name(vbox4, "vbox4");
     gtk_widget_show(vbox4);
@@ -397,17 +398,19 @@ GtkWidget* create_MainWindow(void)
     gtk_widget_set_name(scrolledwindow5, "scrolledwindow5");
     gtk_widget_show(scrolledwindow5);
     gtk_paned_pack1( GTK_PANED(hpaned3), scrolledwindow5, FALSE, TRUE);
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow5), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
-    hierTreeview = gtk_tree_view_new();
-    gtk_widget_set_name(hierTreeview, "hierTreeview");
-    gtk_widget_show(hierTreeview);
-    gtk_container_add( GTK_CONTAINER(scrolledwindow5), hierTreeview);
+    mainview[0] = gtk_tree_view_new();
+    gtk_widget_set_name(mainview[0], "hierTreeview");
+    gtk_widget_show(mainview[0]);
+    gtk_container_add( GTK_CONTAINER(scrolledwindow5), mainview[0]);
 
     label29 = gtk_label_new(_("Hierarchy"));
     gtk_widget_set_name(label29, "label29");
     gtk_widget_show(label29);
     gtk_notebook_set_tab_label( GTK_NOTEBOOK(notebook1), gtk_notebook_get_nth_page( GTK_NOTEBOOK(notebook1), 0), label29);
 
+    /* CONNVIEW */
     vbox3 = gtk_vbox_new(FALSE, 0);
     gtk_widget_set_name(vbox3, "vbox3");
     gtk_widget_show(vbox3);
@@ -459,6 +462,7 @@ GtkWidget* create_MainWindow(void)
     gtk_widget_set_name(scrolledwindow4, "scrolledwindow4");
     gtk_widget_show(scrolledwindow4);
     gtk_paned_pack2( GTK_PANED(hpaned2), scrolledwindow4, TRUE, TRUE);
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow4), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
     viewport2 = gtk_viewport_new(NULL, NULL);
     gtk_widget_set_name(viewport2, "viewport2");
@@ -470,6 +474,7 @@ GtkWidget* create_MainWindow(void)
     gtk_widget_show(label30);
     gtk_notebook_set_tab_label( GTK_NOTEBOOK(notebook1), gtk_notebook_get_nth_page( GTK_NOTEBOOK(notebook1), 1), label30);
 
+    /* IOPADVIEW */
     vbox6 = gtk_vbox_new(FALSE, 0);
     gtk_widget_set_name(vbox6, "vbox6");
     gtk_widget_show(vbox6);
@@ -506,16 +511,23 @@ GtkWidget* create_MainWindow(void)
     gtk_widget_show(del_iopad_button);
     gtk_widget_set_size_request(del_iopad_button, 24, 24);
 
-    label59 = gtk_label_new(_("<not Implemented yet>"));
-    gtk_widget_set_name(label59, "label59");
-    gtk_widget_show(label59);
-    gtk_box_pack_start( GTK_BOX(vbox6), label59, TRUE, FALSE, 0);
+    scrolledwindow3 = gtk_scrolled_window_new (NULL, NULL);
+    gtk_widget_set_name (scrolledwindow3, "scrolledwindow3");
+    gtk_widget_show (scrolledwindow3);
+    gtk_box_pack_start (GTK_BOX (vbox6), scrolledwindow3, TRUE, TRUE, 0);
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow3), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+    mainview[2] = gtk_tree_view_new();
+    gtk_widget_set_name(mainview[2], "iopadTreeview");
+    gtk_widget_show(mainview[2]);
+    gtk_container_add(GTK_CONTAINER(scrolledwindow3), mainview[2]);
 
     label31 = gtk_label_new(_("IO-Pads"));
     gtk_widget_set_name(label31, "label31");
     gtk_widget_show(label31);
     gtk_notebook_set_tab_label( GTK_NOTEBOOK(notebook1), gtk_notebook_get_nth_page( GTK_NOTEBOOK(notebook1), 2), label31);
 
+    /* I2CVIEW */
     vbox5 = gtk_vbox_new(FALSE, 0);
     gtk_widget_set_name(vbox5, "vbox5");
     gtk_widget_show(vbox5);
@@ -552,10 +564,16 @@ GtkWidget* create_MainWindow(void)
     gtk_widget_show(del_i2c_regblock_button);
     gtk_widget_set_size_request(del_i2c_regblock_button, 24, 24);
 
-    label60 = gtk_label_new(_("<not Implemented yet>"));
-    gtk_widget_set_name(label60, "label60");
-    gtk_widget_show(label60);
-    gtk_box_pack_start( GTK_BOX(vbox5), label60, TRUE, FALSE, 0);
+    scrolledwindow2 = gtk_scrolled_window_new (NULL, NULL);
+    gtk_widget_set_name(scrolledwindow2, "scrolledwindow2");
+    gtk_widget_show(scrolledwindow2);
+    gtk_box_pack_start(GTK_BOX(vbox5), scrolledwindow2, TRUE, TRUE, 0);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwindow2), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+    mainview[3] = gtk_tree_view_new();
+    gtk_widget_set_name(mainview[3], "i2cTreeview");
+    gtk_widget_show(mainview[3]);
+    gtk_container_add(GTK_CONTAINER(scrolledwindow2), mainview[3]); 
 
     label32 = gtk_label_new(_("I2C"));
     gtk_widget_set_name(label32, "label32");
@@ -563,6 +581,7 @@ GtkWidget* create_MainWindow(void)
     gtk_notebook_set_tab_label( GTK_NOTEBOOK(notebook1), gtk_notebook_get_nth_page( GTK_NOTEBOOK(notebook1), 3), label32);
     gtk_label_set_justify( GTK_LABEL(label32), GTK_JUSTIFY_FILL);
 
+    /* CONFVIEW */
     fixed12 = gtk_fixed_new();
     gtk_widget_set_name(fixed12, "fixed12");
     gtk_widget_show(fixed12);
@@ -802,6 +821,7 @@ GtkWidget* create_MainWindow(void)
     g_signal_connect((gpointer) run_button, "clicked", G_CALLBACK(on_run_btn), NULL);
     g_signal_connect((gpointer) editor_button, "clicked", G_CALLBACK(on_editor_btn), NULL);
     g_signal_connect((gpointer) preferences, "clicked", G_CALLBACK(on_preferences_btn), NULL);
+    g_signal_connect((gpointer) notebook1, "switch-page", G_CALLBACK(on_notebook_switch_page), NULL);    
     g_signal_connect((gpointer) checkbutton7, "toggled", G_CALLBACK(on_strip_toggled), NULL);
     g_signal_connect((gpointer) checkbutton8, "toggled", G_CALLBACK(on_bak_toggled), NULL);
     g_signal_connect((gpointer) checkbutton9, "toggled", G_CALLBACK(on_dump_toggled), NULL);
@@ -853,12 +873,13 @@ GtkWidget* create_MainWindow(void)
     GLADE_HOOKUP_OBJECT(mui, del_hier_button, "del_hier_button");
     GLADE_HOOKUP_OBJECT(mui, hpaned3, "hpaned3");
     GLADE_HOOKUP_OBJECT(mui, scrolledwindow5, "scrolledwindow5");
-    GLADE_HOOKUP_OBJECT(mui, hierTreeview, "hierTreeview");
+    GLADE_HOOKUP_OBJECT(mui, mainview[0], "hierTreeview");
     GLADE_HOOKUP_OBJECT(mui, label29, "label29");
     GLADE_HOOKUP_OBJECT(mui, vbox3, "vbox3");
     GLADE_HOOKUP_OBJECT(mui, conn_toolbar, "conn_toolbar");
     GLADE_HOOKUP_OBJECT(mui, add_hier_button, "add_hier_button");
     GLADE_HOOKUP_OBJECT(mui, del_conn_button, "del_conn_button");
+    // GALDE_HOOKUP_OBJECT(mui, mainview[1], "connMatrixview");
     GLADE_HOOKUP_OBJECT(mui, hpaned2, "hpaned2");
     GLADE_HOOKUP_OBJECT(mui, fixed22, "fixed22");
     GLADE_HOOKUP_OBJECT(mui, scrolledwindow4, "scrolledwindow4");
@@ -868,13 +889,13 @@ GtkWidget* create_MainWindow(void)
     GLADE_HOOKUP_OBJECT(mui, toolbar8, "toolbar8");
     GLADE_HOOKUP_OBJECT(mui, add_iopad_button, "add_iopad_button");
     GLADE_HOOKUP_OBJECT(mui, del_iopad_button, "del_iopad_button");
-    GLADE_HOOKUP_OBJECT(mui, label59, "label59");
+    GLADE_HOOKUP_OBJECT(mui, mainview[2], "iopadTableview");
     GLADE_HOOKUP_OBJECT(mui, label31, "label31");
     GLADE_HOOKUP_OBJECT(mui, vbox5, "vbox5");
     GLADE_HOOKUP_OBJECT(mui, toolbar7, "toolbar7");
     GLADE_HOOKUP_OBJECT(mui, add_i2c_regblock_button, "add_i2c_regblock_button");
     GLADE_HOOKUP_OBJECT(mui, del_i2c_regblock_button, "del_i2c_regblock_button");
-    GLADE_HOOKUP_OBJECT(mui, label60, "label60");
+    GLADE_HOOKUP_OBJECT(mui, mainview[3], "i2cTableview");
     GLADE_HOOKUP_OBJECT(mui, label32, "label32");
     GLADE_HOOKUP_OBJECT(mui, fixed12, "fixed12");
     GLADE_HOOKUP_OBJECT(mui, frame13, "frame13");
@@ -917,6 +938,12 @@ GtkWidget* create_MainWindow(void)
     gtk_window_add_accel_group( GTK_WINDOW(mui), accel_group);
 
     return mui;
+}
+
+
+GtkWidget* get_mainView(int index)
+{
+    return mainview[index];
 }
 
 
@@ -1255,7 +1282,7 @@ void create_info_dialog(char *title, char *message)
 
     info_dialog = gtk_dialog_new();
 
-    info_dialog = gtk_dialog_new_with_buttons( title, get_mainwindow(),
+    info_dialog = gtk_dialog_new_with_buttons( title, GTK_WINDOW(get_mainwindow()),
                                          GTK_DIALOG_DESTROY_WITH_PARENT,
                                          GTK_STOCK_OK,
                                          GTK_RESPONSE_ACCEPT,

@@ -146,6 +146,37 @@ void on_preferences_btn(GtkButton *button, gpointer user_data)
     show_preferences();
 }
 
+void on_notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, gpointer user_data)
+{
+    int acview = get_current_page();
+    //    if(view_modified(acview))
+    // TODO: run MIX if actual page is modified
+
+    // TODO: clear actual page
+    // gtk_widget_destroy();
+
+    // recreate new selected view on every selection and cleanup old one
+    switch(page_num) {
+        case 0: // selected hierarchical page
+	    // page = create_hier_view();
+	    break;
+        case 1: // selected connection page
+	    // page = create_conn_view();
+	    break;
+        case 2: // selected IO-Pad page
+	    // page = create_iopad_view();
+	    break;
+        case 3: // selected I2C page
+	    // page = create_i2c_view();
+	    break;
+        case 4: // selected configuration page
+	    // page = create_conf_view();
+	    break;
+        default: // unknown page requested
+	    fprintf(stderr, "MUI: internal error, unknown notebook page requested\n");
+    }
+}
+
 void on_strip_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 {
 

@@ -64,14 +64,20 @@ int read_settings()
     // read config paths
     if(fscanf(config_file, "MIX_PATH=%s\n", buffer)==1) {
 	settings.mix_path = (char*) malloc(strlen(buffer)+1);
-	strcpy(settings.mix_path, buffer);
+	if(strcmp(settings.mix_path, "<none>") != 0)
+	    strcpy(settings.mix_path, buffer);
+	else
+	    settings.mix_path = NULL;
     }
     else
 	settings.mix_path = NULL;
 
     if(fscanf(config_file, "EDITOR_PATH=%s", buffer)==1) {
 	settings.editor_path = (char*) malloc(strlen(buffer)+1);
-	strcpy(settings.editor_path, buffer);
+	if(strcmp(settings.editor_path, "<none>") != 0)
+	    strcpy(settings.editor_path, buffer);
+	else
+	    settings.editor_path = NULL;
     }
     else
 	settings.editor_path = NULL;
@@ -103,10 +109,15 @@ int write_settings()
     }
 
     // write configuration paths
-    if(settings.mix_path!=NULL)
+    if(settings.mix_path != NULL && strlen(settings.mix_path) > 0)
 	fprintf(config_file, "MIX_PATH=%s\n", settings.mix_path);
-    if(settings.editor_path!=NULL)
+    else
+	fprintf(config_file, "MIX_PATH=<none>\n");
+
+    if(settings.editor_path != NULL && strlen(settings.editor_path) > 0)
 	fprintf(config_file, "EDITOR_PATH=%s\n", settings.editor_path);
+    else
+	fprintf(config_file, "EDITOR_PATH=<none>\n");
 
     fclose(config_file);
     return 0;
@@ -147,18 +158,23 @@ void show_preferences()
     if(gtk_dialog_run(GTK_DIALOG(preferences)) == GTK_RESPONSE_OK) {
 
 	char *buffer = (char*) gtk_entry_get_text((GtkEntry*)mix_path_entry);
-	if(buffer != NULL && strcmp(buffer, "<none>") != 0) {
-	    if(settings.mix_path != NULL) free(settings.mix_path);
+	if(settings.mix_path != NULL) free(settings.mix_path);
+	if(buffer == NULL && strcmp(buffer, "<none>") != 0 && strlen(buffer) > 0) {
 	    settings.mix_path = (char*) malloc(strlen(buffer)+1);
 	    strcpy( settings.mix_path, buffer);
 	}
+	else
+	    settings.mix_path = NULL;
 
 	buffer = (char*) gtk_entry_get_text((GtkEntry*)editor_path_entry);
-	if(buffer != NULL && strcmp(buffer, "<none>") != 0) {
-	    if(settings.editor_path != NULL)free(settings.editor_path);
+	if(settings.editor_path != NULL) free(settings.editor_path);
+	if(buffer != NULL && strcmp(buffer, "<none>") != 0 && strlen(buffer) > 0) {
 	    settings.editor_path = (char*) malloc(strlen(buffer)+1);
 	    strcpy( settings.editor_path, buffer);
 	}
+	else
+	    settings.editor_path = NULL;
+
 	write_settings();
     }
     gtk_widget_destroy(preferences);
