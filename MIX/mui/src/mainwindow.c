@@ -157,7 +157,7 @@ GtkWidget* create_MainWindow(void)
     mui = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_widget_set_name(mui, "mui");
     gtk_widget_set_size_request(mui, 178, 0);
-    gtk_window_set_title( GTK_WINDOW(mui), _("MIX - GUI"));
+    gtk_window_set_title( GTK_WINDOW(mui), "MIX - GUI");
     gtk_window_set_default_size( GTK_WINDOW(mui), 592, 468);
     gtk_window_set_destroy_with_parent( GTK_WINDOW(mui), TRUE);
 
@@ -171,7 +171,7 @@ GtkWidget* create_MainWindow(void)
     gtk_widget_show(menubar1);
     gtk_box_pack_start( GTK_BOX(vbox2), menubar1, FALSE, FALSE, 0);
 
-    file_menu = gtk_menu_item_new_with_mnemonic(_("_File"));
+    file_menu = gtk_menu_item_new_with_mnemonic("_File");
     gtk_widget_set_name(file_menu, "file_menu");
     gtk_widget_show(file_menu);
     gtk_container_add( GTK_CONTAINER(menubar1), file_menu);
@@ -180,7 +180,7 @@ GtkWidget* create_MainWindow(void)
     gtk_widget_set_name(file_menu_menu, "file_menu_menu");
     gtk_menu_item_set_submenu( GTK_MENU_ITEM(file_menu), file_menu_menu);
 
-    new_file = gtk_image_menu_item_new_with_mnemonic(_("_New"));
+    new_file = gtk_image_menu_item_new_with_mnemonic("_New");
     gtk_widget_set_name(new_file, "new_file");
     gtk_widget_show(new_file);
     gtk_container_add( GTK_CONTAINER(file_menu_menu), new_file);
@@ -191,7 +191,7 @@ GtkWidget* create_MainWindow(void)
     gtk_widget_show(image224);
     gtk_image_menu_item_set_image( GTK_IMAGE_MENU_ITEM(new_file), image224);
 
-    open_file = gtk_image_menu_item_new_with_mnemonic(_("_Open"));
+    open_file = gtk_image_menu_item_new_with_mnemonic("_Open");
     gtk_widget_set_name(open_file, "open_file");
     gtk_widget_show(open_file);
     gtk_container_add( GTK_CONTAINER(file_menu_menu), open_file);
@@ -202,7 +202,7 @@ GtkWidget* create_MainWindow(void)
     gtk_widget_show(image225);
     gtk_image_menu_item_set_image( GTK_IMAGE_MENU_ITEM(open_file), image225);
 
-    save_file = gtk_image_menu_item_new_with_mnemonic(_("_Save"));
+    save_file = gtk_image_menu_item_new_with_mnemonic("_Save");
     gtk_widget_set_name(save_file, "save_file");
     gtk_widget_show(save_file);
     gtk_container_add( GTK_CONTAINER(file_menu_menu), save_file);
@@ -213,7 +213,7 @@ GtkWidget* create_MainWindow(void)
     gtk_widget_show(image226);
     gtk_image_menu_item_set_image( GTK_IMAGE_MENU_ITEM(save_file), image226);
 
-    save_file_as = gtk_image_menu_item_new_with_mnemonic(_("Save-as"));
+    save_file_as = gtk_image_menu_item_new_with_mnemonic("Save-as");
     gtk_widget_set_name(save_file_as, "save_file_as");
     gtk_widget_show(save_file_as);
     gtk_container_add( GTK_CONTAINER(file_menu_menu), save_file_as);
@@ -235,7 +235,7 @@ GtkWidget* create_MainWindow(void)
     gtk_container_add( GTK_CONTAINER(file_menu_menu), after_history_item);
     gtk_widget_set_sensitive(after_history_item, FALSE);
 
-    quit1 = gtk_image_menu_item_new_with_mnemonic(_("_Quit"));
+    quit1 = gtk_image_menu_item_new_with_mnemonic("_Quit");
     gtk_widget_set_name(quit1, "quit1");
     gtk_widget_show(quit1);
     gtk_container_add( GTK_CONTAINER(file_menu_menu), quit1);
@@ -246,7 +246,7 @@ GtkWidget* create_MainWindow(void)
     gtk_widget_show(image228);
     gtk_image_menu_item_set_image( GTK_IMAGE_MENU_ITEM(quit1), image228);
 
-    options1 = gtk_menu_item_new_with_mnemonic(_("_Options"));
+    options1 = gtk_menu_item_new_with_mnemonic("_Options");
     gtk_widget_set_name(options1, "options1");
     gtk_widget_show(options1);
     gtk_container_add( GTK_CONTAINER(menubar1), options1);
@@ -255,7 +255,7 @@ GtkWidget* create_MainWindow(void)
     gtk_widget_set_name(options1_menu, "options1_menu");
     gtk_menu_item_set_submenu( GTK_MENU_ITEM(options1), options1_menu);
 
-    preferences1 = gtk_image_menu_item_new_with_mnemonic(_("_Preferences"));
+    preferences1 = gtk_image_menu_item_new_with_mnemonic("_Preferences");
     gtk_widget_set_name(preferences1, "preferences1");
     gtk_widget_show(preferences1);
     gtk_container_add( GTK_CONTAINER(options1_menu), preferences1);
@@ -266,7 +266,7 @@ GtkWidget* create_MainWindow(void)
     gtk_widget_show(image229);
     gtk_image_menu_item_set_image( GTK_IMAGE_MENU_ITEM(preferences1), image229);
 
-    help1 = gtk_menu_item_new_with_mnemonic(_("_Help"));
+    help1 = gtk_menu_item_new_with_mnemonic("_Help");
     gtk_widget_set_name(help1, "help1");
     gtk_widget_show(help1);
     gtk_container_add( GTK_CONTAINER(menubar1), help1);
@@ -275,7 +275,7 @@ GtkWidget* create_MainWindow(void)
     gtk_widget_set_name(help1_menu, "help1_menu");
     gtk_menu_item_set_submenu( GTK_MENU_ITEM(help1), help1_menu);
 
-    about1 = gtk_image_menu_item_new_with_mnemonic(_("About"));
+    about1 = gtk_image_menu_item_new_with_mnemonic("About");
     gtk_widget_set_name(about1, "about1");
     gtk_widget_show(about1);
     gtk_container_add( GTK_CONTAINER(help1_menu), about1);
@@ -286,7 +286,7 @@ GtkWidget* create_MainWindow(void)
     gtk_widget_show(image230);
     gtk_image_menu_item_set_image( GTK_IMAGE_MENU_ITEM(about1), image230);
 
-    usage1 = gtk_image_menu_item_new_with_mnemonic(_("_Usage"));
+    usage1 = gtk_image_menu_item_new_with_mnemonic("_Usage");
     gtk_widget_set_name(usage1, "usage1");
     gtk_widget_show(usage1);
     gtk_container_add( GTK_CONTAINER(help1_menu), usage1);
@@ -294,7 +294,6 @@ GtkWidget* create_MainWindow(void)
 
     file_dialog = gtk_file_selection_new(N_(""));
     gtk_file_selection_show_fileop_buttons(GTK_FILE_SELECTION(file_dialog));
-
     gtk_window_set_transient_for(GTK_WINDOW(file_dialog), GTK_WINDOW(mui));
     gtk_window_set_destroy_with_parent(GTK_WINDOW(file_dialog), TRUE);
 
@@ -310,39 +309,39 @@ GtkWidget* create_MainWindow(void)
     gtk_container_set_border_width( GTK_CONTAINER(toolbar1), 1);
     gtk_toolbar_set_style( GTK_TOOLBAR(toolbar1), GTK_TOOLBAR_ICONS);
 
-    new_file_button = gtk_toolbar_insert_stock( GTK_TOOLBAR(toolbar1), "gtk-new", _("New"), NULL, NULL, NULL, -1);
+    new_file_button = gtk_toolbar_insert_stock( GTK_TOOLBAR(toolbar1), "gtk-new", "New", NULL, NULL, NULL, -1);
     gtk_widget_set_name(new_file_button, "new_file_button") ;
     gtk_widget_show(new_file_button);
 
-    open_file_button = gtk_toolbar_insert_stock( GTK_TOOLBAR(toolbar1), "gtk-open", _("Open"), NULL, NULL, NULL, -1);
+    open_file_button = gtk_toolbar_insert_stock( GTK_TOOLBAR(toolbar1), "gtk-open", "Open", NULL, NULL, NULL, -1);
     gtk_widget_set_name(open_file_button, "open_file_button");
     gtk_widget_show(open_file_button);
 
-    save_button = gtk_toolbar_insert_stock( GTK_TOOLBAR(toolbar1), "gtk-save", _("Save"), NULL, NULL, NULL, -1);
+    save_button = gtk_toolbar_insert_stock( GTK_TOOLBAR(toolbar1), "gtk-save", "Save", NULL, NULL, NULL, -1);
     gtk_widget_set_name(save_button, "save_button");
     gtk_widget_show(save_button);
 
-    save_as_button = gtk_toolbar_insert_stock( GTK_TOOLBAR(toolbar1), "gtk-save-as", _("Save as"),NULL, NULL, NULL, -1);
+    save_as_button = gtk_toolbar_insert_stock( GTK_TOOLBAR(toolbar1), "gtk-save-as", "Save as",NULL, NULL, NULL, -1);
     gtk_widget_set_name(save_as_button, "save_as_button");
     gtk_widget_show(save_as_button);
 
     gtk_toolbar_append_space( GTK_TOOLBAR(toolbar1));
 
-    run_button = gtk_toolbar_insert_stock( GTK_TOOLBAR(toolbar1), "gtk-execute", _("Run Mix"), NULL, NULL, NULL, -1);
+    run_button = gtk_toolbar_insert_stock( GTK_TOOLBAR(toolbar1), "gtk-execute", "Run Mix", NULL, NULL, NULL, -1);
     gtk_widget_set_name(run_button, "run_button");
     gtk_widget_show(run_button);
 
     gtk_toolbar_append_space( GTK_TOOLBAR(toolbar1));
 
     tmp_toolbar_icon = gtk_image_new_from_stock("gtk-justify-left", gtk_toolbar_get_icon_size( GTK_TOOLBAR(toolbar1)));
-    editor_button = gtk_toolbar_append_element( GTK_TOOLBAR(toolbar1), GTK_TOOLBAR_CHILD_BUTTON, NULL, _("Editor"), _("run Editor"), NULL, tmp_toolbar_icon, NULL, NULL);
+    editor_button = gtk_toolbar_append_element( GTK_TOOLBAR(toolbar1), GTK_TOOLBAR_CHILD_BUTTON, NULL, "Editor", "run Editor", NULL, tmp_toolbar_icon, NULL, NULL);
     gtk_label_set_use_underline( GTK_LABEL(((GtkToolbarChild*)(g_list_last( GTK_TOOLBAR(toolbar1)->children)->data))->label), TRUE);
     gtk_widget_set_name(editor_button, "editor_button");
     gtk_widget_show(editor_button);
     
     gtk_toolbar_append_space( GTK_TOOLBAR(toolbar1));
 
-    preferences = gtk_toolbar_insert_stock( GTK_TOOLBAR(toolbar1), "gtk-properties", _("open preferences"), NULL, NULL, NULL, -1);
+    preferences = gtk_toolbar_insert_stock( GTK_TOOLBAR(toolbar1), "gtk-properties", "open preferences", NULL, NULL, NULL, -1);
     gtk_widget_set_name(preferences, "preferences");
     gtk_widget_show(preferences);
 
@@ -371,7 +370,7 @@ GtkWidget* create_MainWindow(void)
 						  GTK_TOOLBAR_CHILD_BUTTON,
 						  NULL,
 						  "",
-						  _("add a new hierarchical element"), NULL,
+						  "add a new hierarchical element", NULL,
 						  tmp_toolbar_icon, NULL, NULL);
     gtk_label_set_use_underline( GTK_LABEL(((GtkToolbarChild*)(g_list_last( GTK_TOOLBAR(hier_toolbar)->children)->data))->label), TRUE);
     gtk_widget_set_name(add_hier_button, "add_hier_button");
@@ -383,7 +382,7 @@ GtkWidget* create_MainWindow(void)
 						  GTK_TOOLBAR_CHILD_BUTTON,
 						  NULL,
 						  "",
-						  _("remove a hierarchical element"), NULL,
+						  "remove a hierarchical element", NULL,
 						  tmp_toolbar_icon, NULL, NULL);
     gtk_label_set_use_underline( GTK_LABEL(((GtkToolbarChild*)(g_list_last( GTK_TOOLBAR(hier_toolbar)->children)->data))->label), TRUE);
     gtk_widget_set_name(del_hier_button, "del_hier_button");
@@ -406,7 +405,7 @@ GtkWidget* create_MainWindow(void)
     mainview[0] =  GTK_WIDGET(scrolledwindow5);
     childview[0] = NULL;
 
-    label29 = gtk_label_new(_("Hierarchy"));
+    label29 = gtk_label_new("Hierarchy");
     gtk_widget_set_name(label29, "label29");
     gtk_widget_show(label29);
     gtk_notebook_set_tab_label( GTK_NOTEBOOK(notebook1), gtk_notebook_get_nth_page( GTK_NOTEBOOK(notebook1), 0), label29);
@@ -429,7 +428,7 @@ GtkWidget* create_MainWindow(void)
 						  GTK_TOOLBAR_CHILD_BUTTON,
 						  NULL,
 						  "",
-						  _("add a new connection"), NULL,
+						  "add a new connection", NULL,
 						  tmp_toolbar_icon, NULL, NULL);
     gtk_label_set_use_underline( GTK_LABEL(((GtkToolbarChild*)(g_list_last( GTK_TOOLBAR(conn_toolbar)->children)->data))->label), TRUE);
     gtk_widget_set_name(add_hier_button, "add_hier_button");
@@ -441,7 +440,7 @@ GtkWidget* create_MainWindow(void)
 						  GTK_TOOLBAR_CHILD_BUTTON,
 						  NULL,
 						  "",
-						  _("remove a connection"), NULL,
+						  "remove a connection", NULL,
 						  tmp_toolbar_icon, NULL, NULL);
     gtk_label_set_use_underline( GTK_LABEL(((GtkToolbarChild*)(g_list_last( GTK_TOOLBAR(conn_toolbar)->children)->data))->label), TRUE);
     gtk_widget_set_name(del_conn_button, "del_conn_button");
@@ -468,7 +467,7 @@ GtkWidget* create_MainWindow(void)
     mainview[1] = GTK_WIDGET(scrolledwindow4);
     childview[1] = NULL;
 
-    label30 = gtk_label_new(_("Connections"));
+    label30 = gtk_label_new("Connections");
     gtk_widget_set_name(label30, "label30");
     gtk_widget_show(label30);
     gtk_notebook_set_tab_label( GTK_NOTEBOOK(notebook1), gtk_notebook_get_nth_page( GTK_NOTEBOOK(notebook1), 1), label30);
@@ -490,8 +489,8 @@ GtkWidget* create_MainWindow(void)
     add_iopad_button = gtk_toolbar_append_element( GTK_TOOLBAR(toolbar8),
 						   GTK_TOOLBAR_CHILD_BUTTON,
 						   NULL,
-						   _("add IO Pad"),
-						   _("add new IO Pad"), NULL,
+						   "add IO Pad",
+						   "add new IO Pad", NULL,
 						   tmp_toolbar_icon, NULL, NULL);
     gtk_label_set_use_underline( GTK_LABEL(((GtkToolbarChild*)(g_list_last( GTK_TOOLBAR(toolbar8)->children)->data))->label), TRUE);
     gtk_widget_set_name(add_iopad_button, "add_iopad_button");
@@ -502,8 +501,8 @@ GtkWidget* create_MainWindow(void)
     del_iopad_button = gtk_toolbar_append_element( GTK_TOOLBAR(toolbar8),
 						   GTK_TOOLBAR_CHILD_BUTTON,
 						   NULL,
-						   _("remove IO Pad"),
-						   _("remove IO Pad"), NULL,
+						   "remove IO Pad",
+						   "remove IO Pad", NULL,
                                 tmp_toolbar_icon, NULL, NULL);
     gtk_label_set_use_underline( GTK_LABEL(((GtkToolbarChild*)(g_list_last( GTK_TOOLBAR(toolbar8)->children)->data))->label), TRUE);
     gtk_widget_set_name(del_iopad_button, "del_iopad_button");
@@ -519,7 +518,7 @@ GtkWidget* create_MainWindow(void)
     mainview[2] = GTK_WIDGET(scrolledwindow3);
     childview[2] = NULL;
 
-    label31 = gtk_label_new(_("IO-Pads"));
+    label31 = gtk_label_new("IO-Pads");
     gtk_widget_set_name(label31, "label31");
     gtk_widget_show(label31);
     gtk_notebook_set_tab_label( GTK_NOTEBOOK(notebook1), gtk_notebook_get_nth_page( GTK_NOTEBOOK(notebook1), 2), label31);
@@ -541,8 +540,8 @@ GtkWidget* create_MainWindow(void)
     add_i2c_regblock_button = gtk_toolbar_append_element( GTK_TOOLBAR(toolbar7),
 							  GTK_TOOLBAR_CHILD_BUTTON,
 							  NULL,
-							  _("add I2C Registerblock"),
-							  _("add a new I2C Registerblock"), NULL,
+							  "add I2C Registerblock",
+							  "add a new I2C Registerblock", NULL,
 							  tmp_toolbar_icon, NULL, NULL);
     gtk_label_set_use_underline( GTK_LABEL(((GtkToolbarChild*)(g_list_last( GTK_TOOLBAR(toolbar7)->children)->data))->label), TRUE);
     gtk_widget_set_name(add_i2c_regblock_button, "add_i2c_regblock_button");
@@ -553,8 +552,8 @@ GtkWidget* create_MainWindow(void)
     del_i2c_regblock_button = gtk_toolbar_append_element( GTK_TOOLBAR(toolbar7),
 							  GTK_TOOLBAR_CHILD_BUTTON,
 							  NULL,
-							  _("Remove I2C Registerblock"),
-							  _("remove a I2C Registerblock"), NULL,
+							  "Remove I2C Registerblock",
+							  "remove a I2C Registerblock", NULL,
 							  tmp_toolbar_icon, NULL, NULL);
     gtk_label_set_use_underline( GTK_LABEL(((GtkToolbarChild*)(g_list_last( GTK_TOOLBAR(toolbar7)->children)->data))->label), TRUE);
     gtk_widget_set_name(del_i2c_regblock_button, "del_i2c_regblock_button");
@@ -570,7 +569,7 @@ GtkWidget* create_MainWindow(void)
     mainview[3] = GTK_WIDGET(scrolledwindow2);
     childview[3] = NULL;
 
-    label32 = gtk_label_new(_("I2C"));
+    label32 = gtk_label_new("I2C");
     gtk_widget_set_name(label32, "label32");
     gtk_widget_show(label32);
     gtk_notebook_set_tab_label( GTK_NOTEBOOK(notebook1), gtk_notebook_get_nth_page( GTK_NOTEBOOK(notebook1), 3), label32);
@@ -593,41 +592,41 @@ GtkWidget* create_MainWindow(void)
     gtk_widget_show(fixed13);
     gtk_container_add( GTK_CONTAINER(frame13), fixed13);
 
-    checkbutton7 = gtk_check_button_new_with_mnemonic(_("drop old sheets"));
+    checkbutton7 = gtk_check_button_new_with_mnemonic("drop old sheets");
     gtk_widget_set_name(checkbutton7, "checkbutton7");
     gtk_widget_show(checkbutton7);
     gtk_fixed_put( GTK_FIXED(fixed13), checkbutton7, 8, 56);
     gtk_widget_set_size_request(checkbutton7, 128, 20);
-    gtk_tooltips_set_tip(tooltips, checkbutton7, _("remove intermediate output"), NULL);
+    gtk_tooltips_set_tip(tooltips, checkbutton7, "remove intermediate output", NULL);
 
-    checkbutton8 = gtk_check_button_new_with_mnemonic(_("keep old output"));
+    checkbutton8 = gtk_check_button_new_with_mnemonic("keep old output");
     gtk_widget_set_name(checkbutton8, "checkbutton8");
     gtk_widget_show(checkbutton8);
     gtk_fixed_put( GTK_FIXED(fixed13), checkbutton8, 8, 32);
     gtk_widget_set_size_request(checkbutton8, 128, 20);
-    gtk_tooltips_set_tip(tooltips, checkbutton8, _("keep previous generated HDL output"), NULL);
+    gtk_tooltips_set_tip(tooltips, checkbutton8, "keep previous generated HDL output", NULL);
 
-    checkbutton9 = gtk_check_button_new_with_mnemonic(_("dump"));
+    checkbutton9 = gtk_check_button_new_with_mnemonic("dump");
     gtk_widget_set_name(checkbutton9, "checkbutton9");
     gtk_widget_show(checkbutton9);
     gtk_fixed_put( GTK_FIXED(fixed13), checkbutton9, 8, 80);
     gtk_widget_set_size_request(checkbutton9, 64, 20);
-    gtk_tooltips_set_tip(tooltips, checkbutton9, _("dump internal data(debugging only)"), NULL);
+    gtk_tooltips_set_tip(tooltips, checkbutton9, "dump internal data(debugging only)", NULL);
 
-    checkbutton10 = gtk_check_button_new_with_mnemonic(_("verbose"));
+    checkbutton10 = gtk_check_button_new_with_mnemonic("verbose");
     gtk_widget_set_name(checkbutton10, "checkbutton10");
     gtk_widget_show(checkbutton10);
     gtk_fixed_put( GTK_FIXED(fixed13), checkbutton10, 8, 104);
     gtk_widget_set_size_request(checkbutton10, 80, 20);
 
-    checkbutton11 = gtk_check_button_new_with_mnemonic(_("delta mode"));
+    checkbutton11 = gtk_check_button_new_with_mnemonic("delta mode");
     gtk_widget_set_name(checkbutton11, "checkbutton11");
     gtk_widget_show(checkbutton11);
     gtk_fixed_put( GTK_FIXED(fixed13), checkbutton11, 8, 8);
     gtk_widget_set_size_request(checkbutton11, 101, 20);
-    gtk_tooltips_set_tip(tooltips, checkbutton11, _("enable delta mode"), NULL);
+    gtk_tooltips_set_tip(tooltips, checkbutton11, "enable delta mode", NULL);
 
-    label43 = gtk_label_new(_("Debug level:"));
+    label43 = gtk_label_new("Debug level:");
     gtk_widget_set_name(label43, "label43");
     gtk_widget_show(label43);
     gtk_fixed_put( GTK_FIXED(fixed13), label43, 8, 144);
@@ -639,17 +638,17 @@ GtkWidget* create_MainWindow(void)
     gtk_widget_show(spinbutton2);
     gtk_fixed_put( GTK_FIXED(fixed13), spinbutton2, 96, 144);
     gtk_widget_set_size_request(spinbutton2, 39, 24);
-    gtk_tooltips_set_tip(tooltips, spinbutton2, _("set Debug level"), NULL);
+    gtk_tooltips_set_tip(tooltips, spinbutton2, "set Debug level", NULL);
     gtk_spin_button_set_numeric( GTK_SPIN_BUTTON(spinbutton2), TRUE);
 
-    button43 = gtk_button_new_with_mnemonic(_("list config"));
+    button43 = gtk_button_new_with_mnemonic("list config");
     gtk_widget_set_name(button43, "button43");
     gtk_widget_show(button43);
     gtk_fixed_put( GTK_FIXED(fixed13), button43, 40, 208);
     gtk_widget_set_size_request(button43, 76, 27);
-    gtk_tooltips_set_tip(tooltips, button43, _("print all predefined configuration options"), NULL);
+    gtk_tooltips_set_tip(tooltips, button43, "print all predefined configuration options", NULL);
 
-    label44 = gtk_label_new(_("Debugging"));
+    label44 = gtk_label_new("Debugging");
     gtk_widget_set_name(label44, "label44");
     gtk_widget_show(label44);
     gtk_frame_set_label_widget( GTK_FRAME(frame13), label44);
@@ -670,7 +669,7 @@ GtkWidget* create_MainWindow(void)
     gtk_widget_show(entry15);
     gtk_fixed_put( GTK_FIXED(fixed14), entry15, 128, 64);
     gtk_widget_set_size_request(entry15, 202, 24);
-    gtk_tooltips_set_tip(tooltips, entry15, _("select target Directory"), NULL);
+    gtk_tooltips_set_tip(tooltips, entry15, "select target Directory", NULL);
 
     combo2 = gtk_combo_new();
     g_object_set_data(G_OBJECT( GTK_COMBO(combo2)->popwin), "GladeParentKey", combo2);
@@ -682,7 +681,7 @@ GtkWidget* create_MainWindow(void)
     entry16 = GTK_COMBO(combo2)->entry;
     gtk_widget_set_name(entry16, "entry16");
     gtk_widget_show(entry16);
-    gtk_tooltips_set_tip(tooltips, entry16, _("select build Variant"), NULL);
+    gtk_tooltips_set_tip(tooltips, entry16, "select build Variant", NULL);
     gtk_entry_set_activates_default( GTK_ENTRY(entry16), TRUE);
 
     entry17 = gtk_entry_new();
@@ -691,51 +690,51 @@ GtkWidget* create_MainWindow(void)
     gtk_fixed_put( GTK_FIXED(fixed14), entry17, 128, 112);
     gtk_widget_set_size_request(entry17, 202, 24);
 
-    label46 = gtk_label_new(_("leafcell Directory:"));
+    label46 = gtk_label_new("leafcell Directory:");
     gtk_widget_set_name(label46, "label46");
     gtk_widget_show(label46);
     gtk_fixed_put( GTK_FIXED(fixed14), label46, 16, 116);
     gtk_widget_set_size_request(label46, 104, 16);
 
-    checkbutton12 = gtk_check_button_new_with_mnemonic(_("combine"));
+    checkbutton12 = gtk_check_button_new_with_mnemonic("combine");
     gtk_widget_set_name(checkbutton12, "checkbutton12");
     gtk_widget_show(checkbutton12);
     gtk_fixed_put( GTK_FIXED(fixed14), checkbutton12, 152, 152);
     gtk_widget_set_size_request(checkbutton12, 83, 20);
-    gtk_tooltips_set_tip(tooltips, checkbutton12, _("combine entity, architecture and configuration into one file"), NULL);
+    gtk_tooltips_set_tip(tooltips, checkbutton12, "combine entity, architecture and configuration into one file", NULL);
 
-    label47 = gtk_label_new(_("Variant:"));
+    label47 = gtk_label_new("Variant:");
     gtk_widget_set_name(label47, "label47");
     gtk_widget_show(label47);
     gtk_fixed_put( GTK_FIXED(fixed14), label47, 56, 21);
     gtk_widget_set_size_request(label47, 54, 16);
 
-    label45 = gtk_label_new(_("target Directory:"));
+    label45 = gtk_label_new("target Directory:");
     gtk_widget_set_name(label45, "label45");
     gtk_widget_show(label45);
     gtk_fixed_put( GTK_FIXED(fixed14), label45, 16, 69);
     gtk_widget_set_size_request(label45, 104, 16);
 
-    button45 = gtk_button_new_with_mnemonic(_("select..."));
+    button45 = gtk_button_new_with_mnemonic("select...");
     gtk_widget_set_name(button45, "button45");
     gtk_widget_show(button45);
     gtk_fixed_put( GTK_FIXED(fixed14), button45, 328, 112);
     gtk_widget_set_size_request(button45, 60, 24);
-    gtk_tooltips_set_tip(tooltips, button45, _("select directory where leafcells are located"), NULL);
+    gtk_tooltips_set_tip(tooltips, button45, "select directory where leafcells are located", NULL);
 
-    button44 = gtk_button_new_with_mnemonic(_("select..."));
+    button44 = gtk_button_new_with_mnemonic("select...");
     gtk_widget_set_name(button44, "button44");
     gtk_widget_show(button44);
     gtk_fixed_put( GTK_FIXED(fixed14), button44, 328, 64);
     gtk_widget_set_size_request(button44, 60, 24);
-    gtk_tooltips_set_tip(tooltips, button44, _("select target Directory"), NULL);
+    gtk_tooltips_set_tip(tooltips, button44, "select target Directory", NULL);
 
-    label48 = gtk_label_new(_("Custom"));
+    label48 = gtk_label_new("Custom");
     gtk_widget_set_name(label48, "label48");
     gtk_widget_show(label48);
     gtk_frame_set_label_widget( GTK_FRAME(frame14), label48);
   
-    label33 = gtk_label_new(_("Config"));
+    label33 = gtk_label_new("Config");
     gtk_widget_set_name(label33, "label33");
     gtk_widget_show(label33);
     gtk_notebook_set_tab_label( GTK_NOTEBOOK(notebook1), gtk_notebook_get_nth_page( GTK_NOTEBOOK(notebook1), 4), label33);
@@ -755,9 +754,9 @@ GtkWidget* create_MainWindow(void)
     gtk_widget_set_name(eventbox3, "eventbox3");
     gtk_widget_show(eventbox3);
     gtk_container_add( GTK_CONTAINER(frame3), eventbox3);
-    gtk_tooltips_set_tip(tooltips, eventbox3, _("File modified"), NULL);
+    gtk_tooltips_set_tip(tooltips, eventbox3, "File modified", NULL);
 
-    modified_label = gtk_label_new(_("*"));
+    modified_label = gtk_label_new("*");
     gtk_widget_set_name(modified_label, "modified_label");
     gtk_widget_show(modified_label);
     gtk_container_add( GTK_CONTAINER(eventbox3), modified_label);
@@ -780,7 +779,7 @@ GtkWidget* create_MainWindow(void)
     gtk_container_add( GTK_CONTAINER(title_event_box), title_hbox);
     gtk_container_set_border_width( GTK_CONTAINER(title_hbox), 2);
 
-    title_ellipses = gtk_label_new(_("<"));
+    title_ellipses = gtk_label_new("<");
     gtk_widget_set_name(title_ellipses, "title_ellipses");
     gtk_widget_show(title_ellipses);
     gtk_box_pack_start( GTK_BOX(title_hbox), title_ellipses, FALSE, FALSE, 0);
@@ -793,7 +792,7 @@ GtkWidget* create_MainWindow(void)
     GTK_ADJUSTMENT( GTK_LAYOUT(title_label_box)->hadjustment)->step_increment = 0;
     GTK_ADJUSTMENT( GTK_LAYOUT(title_label_box)->vadjustment)->step_increment = 0;
 
-    title_label = gtk_label_new(_("(Untitled)"));
+    title_label = gtk_label_new("(Untitled)");
     gtk_widget_set_name(title_label, "title_label");
     gtk_widget_show(title_label);
     gtk_layout_put( GTK_LAYOUT(title_label_box), title_label, 0, 0);
@@ -986,7 +985,7 @@ GtkWidget* create_Preferences(void)
     preferences = gtk_dialog_new();
     gtk_widget_set_name(preferences, "preferences");
     gtk_widget_set_size_request(preferences, 360, 200);
-    gtk_window_set_title( GTK_WINDOW(preferences), _("Preferences"));
+    gtk_window_set_title( GTK_WINDOW(preferences), "Preferences");
     gtk_window_set_resizable( GTK_WINDOW(preferences), FALSE);
     gtk_window_set_destroy_with_parent( GTK_WINDOW(preferences), TRUE);
 
@@ -1004,7 +1003,7 @@ GtkWidget* create_Preferences(void)
     gtk_widget_show(entry2);
     gtk_fixed_put( GTK_FIXED(fixed6), entry2, 96, 32);
     gtk_widget_set_size_request(entry2, 158, 24);
-    gtk_tooltips_set_tip(tooltips, entry2, _("path to MIX directory"), NULL);
+    gtk_tooltips_set_tip(tooltips, entry2, "path to MIX directory", NULL);
 
     entry6 = gtk_entry_new();
     gtk_widget_set_name(entry6, "entry6");
@@ -1012,25 +1011,25 @@ GtkWidget* create_Preferences(void)
     gtk_fixed_put( GTK_FIXED(fixed6), entry6, 96, 64);
     gtk_widget_set_size_request(entry6, 158, 24);
 
-    label26 = gtk_label_new(_("Editor:"));
+    label26 = gtk_label_new("Editor:");
     gtk_widget_set_name(label26, "label26");
     gtk_widget_show(label26);
     gtk_fixed_put( GTK_FIXED(fixed6), label26, 24, 68);
     gtk_widget_set_size_request(label26, 54, 16);
 
-    label25 = gtk_label_new(_("Mix Path:"));
+    label25 = gtk_label_new("Mix Path:");
     gtk_widget_set_name(label25, "label25");
     gtk_widget_show(label25);
     gtk_fixed_put( GTK_FIXED(fixed6), label25, 16, 40);
     gtk_widget_set_size_request(label25, 66, 16);
 
-    select_mixpath_button = gtk_button_new_with_mnemonic(_("select..."));
+    select_mixpath_button = gtk_button_new_with_mnemonic("select...");
     gtk_widget_set_name(select_mixpath_button, "select_mixpath_button");
     gtk_widget_show(select_mixpath_button);
     gtk_fixed_put( GTK_FIXED(fixed6), select_mixpath_button, 256, 32);
     gtk_widget_set_size_request(select_mixpath_button, 60, 24);
 
-    select_editor_button = gtk_button_new_with_mnemonic(_("select..."));
+    select_editor_button = gtk_button_new_with_mnemonic("select...");
     gtk_widget_set_name(select_editor_button, "select_editor_button");
     gtk_widget_show(select_editor_button);
     gtk_fixed_put( GTK_FIXED(fixed6), select_editor_button, 256, 64);
@@ -1062,7 +1061,7 @@ GtkWidget* create_Preferences(void)
     gtk_widget_show(image69);
     gtk_box_pack_start( GTK_BOX(hbox10), image69, FALSE, FALSE, 0);
 
-    label15 = gtk_label_new_with_mnemonic(_("_Cancel"));
+    label15 = gtk_label_new_with_mnemonic("_Cancel");
     gtk_widget_set_name(label15, "label15");
     gtk_widget_show(label15);
     gtk_box_pack_start( GTK_BOX(hbox10), label15, FALSE, FALSE, 0);
@@ -1088,7 +1087,7 @@ GtkWidget* create_Preferences(void)
     gtk_widget_show(image71);
     gtk_box_pack_start( GTK_BOX(hbox12), image71, FALSE, FALSE, 0);
 
-    label17 = gtk_label_new_with_mnemonic(_("_OK"));
+    label17 = gtk_label_new_with_mnemonic("_OK");
     gtk_widget_set_name(label17, "label17");
     gtk_widget_show(label17);
     gtk_box_pack_start( GTK_BOX(hbox12), label17, FALSE, FALSE, 0);
@@ -1135,7 +1134,7 @@ GtkWidget* create_MixMonitor(void)
 
     mixLog = gtk_dialog_new();
     gtk_widget_set_name(mixLog, "mixLog");
-    gtk_window_set_title( GTK_WINDOW(mixLog), _("Mix status"));
+    gtk_window_set_title( GTK_WINDOW(mixLog), "Mix status");
     gtk_window_set_default_size( GTK_WINDOW(mixLog), 460, 240);
     gtk_window_set_destroy_with_parent( GTK_WINDOW(mixLog), TRUE);
     gtk_dialog_set_has_separator( GTK_DIALOG(mixLog), FALSE);
@@ -1191,7 +1190,7 @@ gint create_dialog(const char *title)
 {
     gint response;
 
-    gtk_window_set_title(GTK_WINDOW(file_dialog), _(title));
+    gtk_window_set_title(GTK_WINDOW(file_dialog), title);
     response = gtk_dialog_run(GTK_DIALOG(file_dialog));
     gtk_widget_hide(file_dialog);
 

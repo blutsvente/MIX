@@ -21,7 +21,7 @@
 #include "support.h"
 
 
-int current_page = 0; // startup on hiersheet
+int current_page = 0;
 
 
 int get_current_page()
@@ -32,6 +32,30 @@ int get_current_page()
 void set_current_page(int index)
 {
     current_page = index;
+}
+
+void create_first_view(int index)
+{
+    GtkWidget *view;
+    switch(index) {
+	case HIERVIEW:
+	    view = (GtkWidget*) create_hier_view();
+	    break;
+        case CONNVIEW: 
+	    view = (GtkWidget*) create_conn_view();
+	    break;
+        case IOPADVIEW:
+	    view = (GtkWidget*) create_iopad_view();
+	    break;
+        case I2CVIEW:
+	    view = (GtkWidget*) create_i2c_view();
+	    break;
+        default:
+	    return;
+    }
+    gtk_widget_show_all(view);
+    gtk_container_add(GTK_CONTAINER(get_view_frame(index)), view);
+    set_view_child(view, index);
 }
 
 GtkWidget* lookup_widget(GtkWidget *widget, const gchar *widget_name)
@@ -90,7 +114,7 @@ GtkWidget* create_pixmap(GtkWidget *widget, const gchar *filename)
     pathname = find_pixmap_file(filename);
 
     if(!pathname) {
-	g_warning(_("Couldn't find pixmap file: %s"), filename);
+	g_warning("Couldn't find pixmap file: %s", filename);
 	return gtk_image_new();
     }
 
@@ -111,7 +135,7 @@ GdkPixbuf* create_pixbuf(const gchar *filename)
     pathname = find_pixmap_file(filename);
 
     if(!pathname) {
-	g_warning(_("Couldn't find pixmap file: %s"), filename);
+	g_warning("Couldn't find pixmap file: %s", filename);
 	return NULL;
     }
 

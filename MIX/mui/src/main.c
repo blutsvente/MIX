@@ -13,6 +13,7 @@
 #include <stdio.h>
 
 #include "mainwindow.h"
+#include "support.h"
 #include "settings.h"
 
 
@@ -44,6 +45,10 @@ int main(int argc, char *argv[])
     // initialize MIX
     while(mix_init(get_mix_path()))
 	if(!show_preferences()) return 0;
+
+    // only the first view has to created manualy, all others
+    // get triggert when they are selected
+    create_first_view(HIERVIEW);
 
     gtk_main();
     return 0;

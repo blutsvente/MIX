@@ -12,6 +12,13 @@
 
 #include <gtk/gtk.h>
 
+
+#define HIERVIEW     0
+#define CONNVIEW     1
+#define IOPADVIEW    2
+#define I2CVIEW      3
+
+
 /**
  * Standard gettext macros.
  */
@@ -30,7 +37,7 @@
 #  define dgettext(Domain,Message) (Message)
 #  define dcgettext(Domain,Message,Type) (Message)
 #  define bindtextdomain(Domain,Directory) (Domain)
-#  define _(String) (String)
+//#  define _(String) (String)
 #  define N_(String) (String)
 #endif
 
@@ -51,6 +58,10 @@ int get_current_page();
  * set index number of current page 
  */
 void set_current_page(int index);
+/**
+ * create the intial view
+ */
+void create_first_view(int index);
 
 /**
  * This function returns a widget in a component created by Glade.
