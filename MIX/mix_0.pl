@@ -21,12 +21,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id              : $Id: mix_0.pl,v 1.17 2003/10/23 11:59:37 abauer Exp $
+# | Id              : $Id: mix_0.pl,v 1.18 2003/11/27 09:08:25 abauer Exp $
 # | Name         : $Name:  $
 # | Description  :$Description:$
 # | Parameters  : -
-# | Version       : $Revision: 1.17 $
-# | Mod.Date    : $Date: 2003/10/23 11:59:37 $
+# | Version       : $Revision: 1.18 $
+# | Mod.Date    : $Date: 2003/11/27 09:08:25 $
 # | Author        : $Author: abauer $
 # | Phone         : $Phone: +49 89 54845 7275$
 # | Fax             : $Fax: $
@@ -41,6 +41,15 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |
 # | Changes:
 # | $Log: mix_0.pl,v $
+# | Revision 1.18  2003/11/27 09:08:25  abauer
+# | moved sheet handling into extra package
+# | added StarOffice Spreadsheet reader/writer
+# | added comma seperated value reader/writer
+# | removed OLE sheet handling
+# | added native perl Excel-sheet reader
+# | converted test cases
+# | moved documentation mix_doc -> doc
+# |
 # | Revision 1.17  2003/10/23 11:59:37  abauer
 # | .
 # |
@@ -160,6 +169,7 @@ use Log::Agent::Priorities qw(:LEVELS);
 use Log::Agent::Driver::File;
 
 use Micronas::MixUtils;
+use Micronas::MixUtils::IO;
 use Micronas::MixParser;
 use Micronas::MixIOParser;
 use Micronas::MixWriter;
@@ -173,7 +183,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.17 $'; # RCS Id
+$::VERSION = '$Revision: 1.18 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # %EH comes from Mic::MixUtils ; All the configuration E-nvironment will be there
@@ -257,9 +267,8 @@ if ( $#ARGV < 0 ) { # Need  at least one sheet!!
 # Do a first simple conversion from Excel arrays into array of hashes
 #
 
-my $ole = init_ole(); # Start OLE Object ...
-my( $r_connin, $r_hierin, $r_ioin);
-( $r_connin, $r_hierin, $r_ioin ) = mix_utils_open_input( @ARGV ); #Fetches HIER and CONN sheet(s)
+my( $r_connin, $r_hierin, $r_ioin, $r_i2cin);
+( $r_connin, $r_hierin, $r_ioin, $r_i2cin ) = mix_utils_open_input( @ARGV ); #Fetches HIER and CONN sheet(s)
 
 ##############################################################################
 #
@@ -283,15 +292,11 @@ parse_hier_init( $r_hierin ); #, $r_connmacros, $r_conngen, $r_hiergen );
 #
 parse_conn_init( $r_connin );
 
-#
 # Parse IO
-# 
 parse_io_init( $r_ioin );
 
-#
-# Parse I2C ....
-#
-# parse_i2c ....
+# Parse I2C
+# parse_i2c_init() $r_i2cin;
 
 apply_conn_macros( $r_connin, $r_connmacros );
 
