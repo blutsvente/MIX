@@ -46,7 +46,7 @@
 \raggedright
 
    \section{General}
-The I2C sheet is one more category of input specification. It's content describes I2C Register-blocks and Register connections to Signals of the design core. Signal-names can be used directly because MIX internal uses global signals. By default a new defined Register-block is bound to {\tt TOPLEVEL} (default Language: {\tt VHDL}), this could be changed by adding the Register-blocks Instance manual into the {\tt HIER}-Sheet. If no Instance is defined in {\tt HIER}-Sheet, {\tt MIX} adds this definition internal (Name: {\tt iic\_if\_$<$interface$>$}).
+The I2C sheet is one more category of input specification. It's content describes I2C Register-blocks and Register connections to Signals of the design core. By default a new defined Register-block is bound to {\tt TOPLEVEL} (default Language: {\tt VHDL}), this could be changed by adding the Register-blocks Instance manual into the {\tt HIER}-Sheet. If no Instance is defined in {\tt HIER}-Sheet, {\tt MIX} adds this definition internal (Name: {\tt iic\_if\_$<$interface$>$}).
 
 \section{I2C-Sheet details}
 The following table describes MIX I2C's header-keywords:
@@ -55,7 +55,7 @@ The following table describes MIX I2C's header-keywords:
 \begin{bf}Column name\end{bf} & \begin{bf}Descriptionend\end{bf} & \begin{bf}Default value\end{bf} & \begin{bf}Req.\end{bf} & \begin{bf}Example\end{bf}\\\hline
 ::ign & Ignore line & $<$empty$>$ & man. & \# comm. \\\hline
 ::variants & Variant selector & Default & opt. & Var1 \\\hline
-::width& Register width & 16 & man. & 16 \\\hline
+::type & Register type & serial & man. & serial \\\hline
 ::dev & Device name & n/a & man. & FRCA0 \\\hline
 ::sub & Sub address & VHDL & opt. & 27 \\\hline
 ::interface & Domain name & W\_NO\_CONFIG & man. & cc0 \\\hline
@@ -75,9 +75,11 @@ The following table describes MIX I2C's header-keywords:
 \begin{tabular}{lp{14cm}}
   \begin{bf}::ign\end{bf} & Every columns row, containing \# or // is ignored by MIX\\
   \begin{bf}::variants\end{bf} & Select a line depending on the -variant command line switch. If -variant VAR is set, only lines whose \begin{tt}::variant\end{tt} cell contains the keyword VAR, Default or empty, are selected and  read in. Several variants may be given in one cell, separated by ",". Without specifying the -variant switch, the "Default" and empty \begin{tt}::variant\end{tt} cells are read in and evaluated.\\
-  \begin{bf}::width\end{bf} & Define Register width.\\
-  \begin{bf}::dev\end{bf} & Specify the Device address\\
-  \begin{bf}::sub\end{bf} & Define Register-block-sub-address\\
+  \begin{bf}::ign\end{bf} & ignore this Row if # is detected.\\
+  \begin{bf}::variants\end{bf} & select a variant.\\
+  \begin{bf}::type\end{bf} & Register type; only serial Registers implemented yet.\\
+  \begin{bf}::dev\end{bf} & Specify the Device name\\
+  \begin{bf}::sub\end{bf} & define Registerblock subaddress\\
   \begin{bf}::interface\end{bf} & Domain name\\
   \begin{bf}::block\end{bf} & Register-block Name. The Register-block name and its sub-address are building the Instance-name.\\
   \begin{bf}::dir\end{bf} & Defines a Registers input/output direction, possible values are: \begin{tt}R\end{tt}, \begin{tt}W\end{tt} or \begin{tt}RW\end{tt}\\
@@ -91,7 +93,7 @@ The following table describes MIX I2C's header-keywords:
   \begin{bf}::comment\end{bf} & All entries in these cells are threaten as comments. MIX will keep comments to put them later into VHDL/Verilog output.\\
 \end{tabular}
 \section{I2C-Sheet input and VHDL output examples}
-The following screen-shots are showing a small part of  FRCA's I2C sheet. This section describes the \begin{tt}cc0\end{tt} Registers which consist of 8 Sub-blocks (expandable up to 255 Registers). Each Sub-block Register-connections can be split into multiple rows.\newline
+The following screen-shots are showing a small part of  FRCA's \begin{math}I^2C\end{math} sheet. This section describes the \begin{tt}cc0\end{tt} Registers which consists of 8 Sub-blocks (expandable up to 255 Registers). Each Sub-block Register-connections can be split into multiple rows.\newline
 \newline
 \includegraphics[scale=0.43]{images/FRCA_iic_part0.png}\newline
 \newline

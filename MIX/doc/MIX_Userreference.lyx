@@ -1,0 +1,4585 @@
+# The reLyX bundled with LyX 1.3 created this file.
+# For more info see http://www.lyx.org/
+\lyxformat 2.15
+\textclass article
+\papersize a4paper
+\paperfontsize 12
+\inputencoding latin1
+\fontscheme times
+\use_natbib 0
+\use_numerical_citations 0
+\begin_preamble
+\setlength{\textwidth}{170mm}
+\setlength{\textheight}{255mm}
+\setlength{\oddsidemargin}{-5mm}
+\setlength{\topmargin}{-18mm}
+
+\usepackage{supertabular}
+\usepackage{graphicx}
+\usepackage{xr}
+
+%\fontencoding{T1}
+%\fontfamily{ptm}
+%\fontseries{cmr}
+%\fontshape{it}
+%\fontsize{12}{15}
+%\selectfont
+\usefont{T1}{phv}{m}{n}
+\selectfont
+
+%\usepackage{aaai}
+%\usepackage{times}
+
+\title{MIX - Micronas Interconnect Specification Expander}
+\author{Userreference}
+\date{6.10.2003}
+
+\end_preamble
+
+\layout Standard
+
+
+\latex latex 
+
+\backslash newpage
+\latex default 
+
+\layout Section
+
+MIX - Micronas Interconnect Spec expander
+\layout Section
+
+Introduction
+\layout Section
+
+Management Summary
+\layout Standard
+
+
+\begin_inset LatexCommand \tableofcontents
+
+\end_inset 
+
+
+\layout Section
+
+Installation
+\layout Standard
+
+The MIX toolset uses the Perl scripting language.
+ Please install a recent version of Perl on your workstation, e.g.
+ the freely available ActiveState Perl from K:
+\begin_inset Formula \( \backslash\)
+\end_inset 
+
+PROJECTS
+\begin_inset Formula \( \backslash\)
+\end_inset 
+
+MIX
+\begin_inset Formula \( \backslash\)
+\end_inset 
+
+PROG
+\begin_inset Formula \( \backslash\)
+\end_inset 
+
+ActivePerl-5.6.1.633-MSWin32-x86.msi.
+ Apart from that no installation is required.
+\newline 
+Start MIX from the network drive like described in the examples below.
+ That will also make sure, that you are using the most recent release automatica
+lly.
+ After the Perl installation, you can run MIX.
+ immediately.
+ Open a command shell on your desktop workstation:
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+
+\begin_inset Formula \begin{math}  Start \longrightarrow Run \longrightarrow cmd\end{math}
+\end_inset 
+
+
+\newline 
+and type:
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+K:
+\begin_inset Formula \( \backslash\)
+\end_inset 
+
+Projects
+\begin_inset Formula \( \backslash\)
+\end_inset 
+
+MIX
+\begin_inset Formula \( \backslash\)
+\end_inset 
+
+PROG
+\begin_inset Formula \( \backslash\)
+\end_inset 
+
+mix_0.pl foo.xls
+\newline 
+Caveat: Currently MIX is available on MS-Windows, only!
+\newline 
+
+\layout Section
+
+Getting Started
+\layout Standard
+
+To receive useful results, MIX reads in various input spreadsheet data.
+ At least you will need to prepare a description of your design hierarchy
+ (
+\latex latex 
+
+\backslash begin{bf}HIER
+\backslash end{bf}
+\latex default 
+) and the connectivity sheet (
+\latex latex 
+
+\backslash begin{bf}CONN
+\backslash end{bf}
+\latex default 
+).
+ Optionally MIX will convert a input/output sheet IO, listing input/output
+ pads and iocells and how these are linked to the core logic into appropriate
+ hierarchy and connection lists.
+\layout Subsection
+
+A simple example
+\layout Standard
+
+To understand the usage of the various tables and options, a very simple
+ example is shown and extended step by step.
+ The simple example just has two components 
+\latex latex 
+
+\backslash begin{it}a
+\backslash end{it}
+\latex default 
+ and 
+\latex latex 
+
+\backslash begin{it}b
+\backslash end{it}
+\latex default 
+, which are connected by the signal 
+\latex latex 
+
+\backslash begin{it}sigfoo
+\backslash end{it}
+\latex default 
+.
+ The two instances have a common parent 
+\latex latex 
+
+\backslash begin{it}chip
+\backslash end{it}
+\latex default 
+.
+\newline 
+
+\latex latex 
+ 
+\backslash includegraphics[scale=0.9]{images/mix_simple_0.jpg}
+\latex default 
+
+\newline 
+ Image 1: mix_simple.xls
+\newline 
+
+\newline 
+The equivalent description of this simple design in MIX is made up from
+ a worksheet 
+\latex latex 
+
+\backslash begin{bf}HIER
+\backslash end{bf}
+\latex default 
+.
+\newline 
+
+\latex latex 
+ 
+\backslash includegraphics[scale=0.8]{images/mix_simple_1.jpg}
+\latex default 
+
+\newline 
+ The first row defines the table headers names.
+ The names have to be in the form "::NAME".
+ Several of the columns are required, some are optional and you can define
+ additional columns on your own.
+ For HIER sheets the "::inst" column is the primary key.
+ One design element will be generated for each new name of an ::inst row.
+ If a name is defined several times, these lines will be overloaded or summarize
+d,
+ depending on built-in rules of the MIX converter.
+\newline 
+The "::ign" column has to come first.
+ If it starts with a #, the rest of this row will be ignored.
+ All other columns can be added in arbitrary order.
+\newline 
+
+\newline 
+The second required worksheet is 
+\latex latex 
+
+\backslash begin{bf}CONN
+\backslash end{bf}
+\latex default 
+:
+\newline 
+
+\latex latex 
+ 
+\backslash includegraphics[scale=0.8]{images/mix_simple_2.jpg}
+\latex default 
+
+\newline 
+ As you see, this worksheet also starts with the table header definition
+ line.
+ The primary field is the "::name" column.
+ The "::in" and "::out" columns are used to define the drivers and loads
+ for the signals.
+\layout Subsection
+
+Mix it!
+\layout Standard
+
+Run the MIX converter tool in the directory the excel spread sheet is stored
+ in:
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}
+\backslash hspace*{15mm}
+\backslash $ cd 
+\backslash (
+\backslash backslash
+\backslash )work
+\backslash (
+\backslash backslash
+\backslash )MIX
+\backslash (
+\backslash backslash
+\backslash )doc
+\backslash (
+\backslash backslash
+\backslash )parts
+\backslash (
+\backslash backslash
+\backslash )simple
+\backslash newline
+\newline 
+
+\backslash hspace*{15mm}
+\backslash $ K:
+\backslash (
+\backslash backslash
+\backslash )Projects
+\backslash (
+\backslash backslash
+\backslash )MIX
+\backslash (
+\backslash backslash
+\backslash )PROG
+\backslash (
+\backslash backslash
+\backslash )mix
+\backslash _0.pl mix
+\backslash _simple.xls
+\backslash end{tt}
+\latex default 
+
+\newline 
+This reads in the design description and evaluates the various sheets.
+ It creates output files with an intermediate excel design description (
+\latex latex 
+
+\backslash begin{tt}mix
+\backslash _simple-mixed.xls
+\backslash end{tt}
+\latex default 
+) and the same data in a internal format (
+\latex latex 
+
+\backslash begin{tt}mix
+\backslash _simple.pld
+\backslash end{tt}
+\latex default 
+).
+ A log file (
+\latex latex 
+
+\backslash begin{tt}mix
+\backslash _0.pl.log
+\backslash end{tt}
+\latex default 
+) and the HDL output files are written in the same run.
+ Image 2 shows a screenshot of the 
+\latex latex 
+
+\backslash begin{tt}mix
+\backslash _simpe.xls
+\backslash end{tt}
+\latex default 
+ conversion.
+ Only the most important errors and warnings are written to the screen,
+ while a lot of information will be written to the log file.
+ Search for the keywords "ERROR" and "WARNING" to verify proper conversion.
+\newline 
+
+\newline 
+
+\latex latex 
+ 
+\backslash includegraphics[scale=0.6]{images/mix_simple_cmd.jpg}
+\latex default 
+
+\newline 
+ Image 2: mix_simple conversion
+\newline 
+All output files are stored in the current working directory.
+ Old versions of the output files are overwritten.
+ Except the log file that is appended by each converter run.
+ The intermediate excel description file keeps a history of previous HIER
+ and CONN sheets by rotating _N extended worksheet names.
+\newline 
+
+\newline 
+
+\latex latex 
+ 
+\backslash includegraphics[scale=0.6]{images/mix_files.jpg}
+\latex default 
+
+\newline 
+
+\layout Subsubsection
+
+You get what you typed
+\layout Standard
+
+MIX generates various HDL files defined by the input data.
+ If you select VHDL (also the default language) as output description for
+ a hierarchy element, each element results in an appropriate entity, architectur
+e
+ and configuration description.
+ By default MIX writes one file for all entities, one for all architecture
+ and one for all configuration descriptions.
+ Those file names are derived from the last excel input file name by stripping
+ of the .xls extension and attaching a -e.vhd, -a.vhd and -c.vhd.
+\newline 
+Here the working directory of the simple example contains a file mix.cfg,
+ which is the convenient storage for MIX run-time configuration options.
+ The lines "MIXCFG outarch ARCH", "MIXCFG outenty ENTY", and "MIXCFG outconf
+ CONF" switch MIX outputs to separate files for each entity, architecture
+ and configuration.
+ In this case the file names are defined by the element name: 
+\begin_float tab 
+
+\layout Standard
+
+
+
+\LyXTable
+multicol5
+4 4 0 0 0 0 0 0
+1 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+8 1 1 "3cm" ""
+8 0 1 "4cm" ""
+8 0 1 "3cm" ""
+8 0 1 "5cm" ""
+0 8 1 1 0 0 0 "" ""
+0 8 1 1 0 0 0 "" ""
+0 8 1 1 0 0 0 "" ""
+0 8 1 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+
+
+\latex latex 
+
+\backslash begin{bf}Type
+\backslash end{bf}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash begin{bf}Basename
+\backslash end{bf}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash begin{bf}Extension
+\backslash end{bf}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash begin{bf}Example
+\backslash end{bf}
+\latex default 
+
+\newline 
+Entity 
+\newline 
+ ::entity-column 
+\newline 
+ -e.vhd 
+\newline 
+ chip_e-e.vhd 
+\newline 
+Architecture 
+\newline 
+ ::entity-column 
+\newline 
+ -rtl-a.vhd 
+\newline 
+ chip_e-rtl-a.vhd 
+\newline 
+Configuration 
+\newline 
+ ::entity-column 
+\newline 
+ -c.vhd 
+\newline 
+ chip_e-rtl-conf-c.vhd
+ 
+
+
+\layout Caption
+
+
+\begin_inset Quotes eld
+\end_inset 
+
+_
+\begin_inset Quotes erd
+\end_inset 
+
+ in the filenames extension are converted to 
+\begin_inset Quotes eld
+\end_inset 
+
+-
+\begin_inset Quotes erd
+\end_inset 
+
+
+\end_float 
+
+
+\layout Standard
+
+
+\newline 
+By default MIX does not write output data for leaf blocks (instances which
+ are not parent for other instances).
+ Adding a line like "MIXCFG generate.output.arch leaf" into the mix.cfg
+ file changes that.
+\newline 
+The generated output files contain head, body and footer sections.
+ See the screenshots of the file a-e-e.vhd and chip-e-rtl-a.vhd for examples
+ of an entity and an architecture definition.
+\newline 
+
+\latex latex 
+ 
+\backslash includegraphics[scale=0.55]{images/mix_a-e-e.jpg}
+\latex default 
+
+\newline 
+
+\latex latex 
+ 
+\backslash includegraphics[scale=0.6]{images/mix_chip-e-rtl-a.jpg}
+\latex default 
+
+\newline 
+
+\layout Section
+
+Details
+\layout Subsection
+
+Initialization with -init
+\layout Standard
+
+You can use the -init command line option to create the needed files:
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}
+\backslash $ mix
+\backslash _0.pl -init foo.vhd bar.xls
+\backslash end{tt}
+\latex default 
+
+\newline 
+will create the file 
+\latex latex 
+
+\backslash begin{tt}bar.xls
+\backslash end{tt}
+\latex default 
+, which has the following three worksheet categories:
+\newline 
+
+\latex latex 
+
+\backslash hspace*{10mm}
+\latex default 
+- empty HIER, CONN and IO sheets
+\newline 
+
+\latex latex 
+
+\backslash hspace*{10mm}
+\latex default 
+- template sheets with numerous examples TMPL_(HIER|CONN|IO)
+\newline 
+
+\latex latex 
+
+\backslash hspace*{10mm}
+\latex default 
+- import sheets IMP_HIER and IMP_CONN (only of more *.vhd or 
+\newline 
+
+\latex latex 
+
+\backslash hspace*{11mm}
+\latex default 
+ *.v files are given as command line arguments).
+\newline 
+You will also get a 
+\latex latex 
+
+\backslash begin{tt}mix.cfg
+\backslash end{tt}
+\latex default 
+ file.
+ If 
+\latex latex 
+
+\backslash begin{tt}bar.xls
+\backslash end{tt}
+\latex default 
+ or 
+\latex latex 
+
+\backslash begin{tt}mix.cfg
+\backslash end{tt}
+\latex default 
+ already exists, the command will exit without changes.
+ The import of 
+\latex latex 
+
+\backslash begin{tt}*.vhd
+\backslash end{tt}
+\latex default 
+ and 
+\latex latex 
+
+\backslash begin{tt}*.v
+\backslash end{tt}
+\latex default 
+ files is experimental and meant to give a way of getting a start description
+ of your design.
+ In case of VHDL files, only entity descriptions are imported.
+ Take care of getting signal names and instance names properly.
+\layout Subsection
+
+Common worksheet properties
+\layout Standard
+
+All worksheets parsed by MIX share some common properties.
+ There needs to be a header line consisting only of keywords with leading
+ double colon.
+ All data before the header line is ignored.
+ Only the first header line will be evaluated.
+ Data in columns with no header or malformed headers will be ignored.
+\newline 
+Commonly understood table headings are 
+\latex latex 
+
+\backslash begin{tt}::ign
+\backslash end{tt}
+\latex default 
+ and 
+\latex latex 
+
+\backslash begin{tt}::comment
+\backslash end{tt}
+\latex default 
+.
+ The 
+\latex latex 
+
+\backslash begin{tt}::ign
+\backslash end{tt}
+\latex default 
+ column is special, because it needs to be the first column of a sheet.
+ If a cell in the 
+\latex latex 
+
+\backslash begin{tt}::ign
+\backslash end{tt}
+\latex default 
+ column starts with a 
+\latex latex 
+
+\backslash begin{tt}
+\backslash #
+\backslash end{tt}
+\latex default 
+ or a 
+\latex latex 
+
+\backslash begin{tt}//
+\backslash end{tt}
+\latex default 
+, the complete row is ignored.The 
+\latex latex 
+
+\backslash begin{tt}::comment
+\backslash end{tt}
+\latex default 
+ column can contain user or program generated comments for a given row.
+ It's data will be appended to it's contents as it appears.
+\newline 
+MIX reads the cell values.
+ This is, for Excel and Star(/Open)-Office, what you see , not the real
+ contents of the cells.
+ Thus all formulas can be used to define the cell values (note: csv is not
+ able to do that).
+\newline 
+A lot of predefined text macros are understood and converted by MIX.
+ A text macro is made up by a name surrounded by 
+\latex latex 
+
+\backslash begin{tt}
+\backslash %
+\backslash end{tt}
+\latex default 
+ signs.
+ Retrieve a complete list of macros with the -listconf command line switch
+ and grep all lines starting with "
+\latex latex 
+
+\backslash begin{tt}MIXCFG macro
+\backslash end{tt}
+\latex default 
+".
+ The table 
+\latex latex 
+
+\backslash begin{tt}
+\backslash %macro
+\backslash %
+\backslash end{tt}
+\latex default 
+ gives a list of predefined macros, their default settings and wether this
+ macro can be used by the user.
+ You can use text macros inside of any cell.
+\newline 
+
+\latex latex 
+ 
+\backslash includegraphics[scale=0.6]{images/mix_table0.jpg}
+\latex default 
+
+\newline 
+ A second type of macros are available to reference other columns of a like
+ through 
+\latex latex 
+
+\backslash begin{tt}
+\backslash %::NAME
+\backslash %
+\backslash end{tt}
+\latex default 
+.
+ This will be replaced by the contents of the 
+\latex latex 
+
+\backslash begin{tt}::NAME
+\backslash end{tt}
+\latex default 
+ column of this row. 
+\latex latex 
+
+\backslash begin{tt}::NAME
+\backslash end{tt}
+\latex default 
+ has to be defined for the current worksheet, obviously.
+ In the above example 
+\latex latex 
+
+\backslash begin{tt}
+\backslash %::inst
+\backslash %
+\backslash _e
+\backslash end{tt}
+\latex default 
+ will evaluate to 
+\latex latex 
+
+\backslash begin{tt}chip
+\backslash _e
+\backslash end{tt}
+\latex default 
+, 
+\latex latex 
+
+\backslash begin{tt}a
+\backslash _e
+\backslash end{tt}
+\latex default 
+ and 
+\latex latex 
+
+\backslash begin{tt}b
+\backslash _e
+\backslash end{tt}
+\latex default 
+ accordingly. 
+\latex latex 
+
+\backslash begin{tt}
+\backslash %LANGUAGE
+\backslash %
+\backslash end{tt}
+\latex default 
+ becomes vhdl.
+ Macro expansion happens just before the intermediate design data is written
+ out, after evaluation of all input data.
+ Recursive macro expansion is not implemented.
+ Macros in primary keys like signal and instance names are evaluated at
+ signal or instance creation time.
+\layout Subsection
+
+Special Spreadsheet-format properties
+\layout Standard
+
+MIX is able to read three different table formats: csv(Comma-Seperated-Values),
+ sxc(Star-Office-Spreadsheet) and xls(Excel-Spreadsheet).
+ While Excel and StarOffice Spreadsheets are full featured, the csv Format
+ does not understand formulas.
+ This is because the real content and it's values are same in csv.
+ The only colored output can(at this moment) be achieved by writing Excel-Spread
+sheets(for
+ this an already installed Excel is needed).
+ While writing Excel-sheets implies Windows, reading input can be done on
+ every Platform(if it got a Perl port).
+ Trying to read a Excel-Sheet on non-Windows grounds will cause MIX to produce
+ csv per default.
+ The output format can be forced by setting 
+\latex latex 
+
+\backslash begin{tt}format.out
+\backslash end{tt}
+\latex default 
+ to 
+\latex latex 
+
+\backslash begin{tt}csv
+\backslash end{tt}
+\latex default 
+, 
+\latex latex 
+
+\backslash begin{tt}sxc
+\backslash end{tt}
+\latex default 
+ or 
+\latex latex 
+
+\backslash begin{tt}xls
+\backslash end{tt}
+\latex default 
+.
+ In this case MIX will read the given input file and produce the forced
+ output format.
+\layout Subsection
+
+HIER sheet properties
+\layout Standard
+
+The hierarchy of a design is defined in the HIER sheet.
+ By default the HIER sheet is named HIER, but you can set the configuration
+ value 
+\latex latex 
+
+\backslash begin{bf}hier.xls
+\backslash end{bf}
+\latex default 
+ to a Perl regular expression.
+ MIX will then consider all worksheets which names match the perl regular
+ expression, to be HIER definitions.
+ In that case you are free to use different header definitions on different
+ sheets.
+\newline 
+The HIER sheets require at least the columns marked man.
+ (mandatory) in the following table.
+\layout Standard
+
+
+\begin_float tab 
+
+\layout Standard
+
+
+
+\LyXTable
+multicol5
+12 5 0 0 0 0 0 0
+1 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+2 1 1 "" ""
+8 0 1 "4cm" ""
+8 0 1 "4cm" ""
+8 0 1 "15mm" ""
+8 0 1 "2cm" ""
+0 2 1 1 0 0 0 "" ""
+0 8 1 1 0 0 0 "" ""
+0 8 1 1 0 0 0 "" ""
+0 8 1 1 0 0 0 "" ""
+0 8 1 1 0 0 0 "" ""
+0 2 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 2 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 2 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 2 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 2 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 2 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 2 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 2 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 2 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 2 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 2 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+
+
+\latex latex 
+
+\backslash begin{bf}Column name
+\backslash end{bf}
+\latex default 
+
+\newline 
+
+\latex latex 
+ 
+\backslash begin{bf}Descriptionend
+\backslash end{bf}
+\latex default 
+
+\newline 
+
+\latex latex 
+ 
+\backslash begin{bf}Default value
+\backslash end{bf}
+\latex default 
+
+\newline 
+
+\latex latex 
+ 
+\backslash begin{bf}Req.
+\backslash end{bf}
+\latex default 
+
+\newline 
+
+\latex latex 
+ 
+\backslash begin{bf}Example
+\backslash end{bf}
+\latex default 
+
+\newline 
+::ign 
+\newline 
+ Ignore line 
+\newline 
+ 
+\begin_inset Formula \( <\)
+\end_inset 
+
+empty
+\begin_inset Formula \( >\)
+\end_inset 
+
+
+\newline 
+ man. 
+\newline 
+ # comm. 
+\newline 
+::gen 
+\newline 
+ Generator and match 
+\newline 
+ 
+\begin_inset Formula \( <\)
+\end_inset 
+
+empty
+\begin_inset Formula \( >\)
+\end_inset 
+
+
+\newline 
+ man. 
+\newline 
+ see below 
+\newline 
+::variants 
+\newline 
+ Variant selector 
+\newline 
+ Default 
+\newline 
+ opt. 
+\newline 
+ Var1
+\newline 
+::parent 
+\newline 
+ Instance name of this instances parent cell 
+\newline 
+ W_NO_PARENT 
+\newline 
+ man. 
+\newline 
+ chip 
+\newline 
+::inst 
+\newline 
+ Instance name, primary key! 
+\newline 
+ n/a 
+\newline 
+ man. 
+\newline 
+ a_i1
+\newline 
+::lang 
+\newline 
+ Language definition 
+\newline 
+ VHDL 
+\newline 
+ opt. 
+\newline 
+ vhdl 
+\newline 
+::entity 
+\newline 
+ Entity name 
+\newline 
+ W_NO_ENTITY 
+\newline 
+ man. 
+\newline 
+ a 
+\newline 
+::config 
+\newline 
+ Configuration name 
+\newline 
+ W_NO_CONFIG 
+\newline 
+ man. 
+\newline 
+ a_rtl_conf 
+\newline 
+::shortname 
+\newline 
+ Short name 
+\newline 
+ 
+\begin_inset Formula \( <\)
+\end_inset 
+
+empty
+\begin_inset Formula \( >\)
+\end_inset 
+
+
+\newline 
+ opt. 
+\newline 
+ text 
+\newline 
+::use 
+\newline 
+ Additional, project specific libraries 
+\newline 
+ 
+\begin_inset Formula \( <\)
+\end_inset 
+
+empty
+\begin_inset Formula \( >\)
+\end_inset 
+
+
+\newline 
+ opt. 
+\newline 
+ padlib.foo 
+\newline 
+::comment 
+\newline 
+ Comment field 
+\newline 
+ 
+\begin_inset Formula \( <\)
+\end_inset 
+
+empty
+\begin_inset Formula \( >\)
+\end_inset 
+
+
+\newline 
+ opt. 
+\newline 
+ text 
+ 
+
+
+\end_float 
+
+
+\layout Standard
+
+Internally the kewords 
+\latex latex 
+
+\backslash begin{tt}::debug
+\backslash end{tt}
+\latex default 
+, 
+\latex latex 
+
+\backslash begin{tt}::hierarchy
+\backslash end{tt}
+\latex default 
+, 
+\latex latex 
+
+\backslash begin{tt}::skip
+\backslash end{tt}
+\latex default 
+ and 
+\latex latex 
+
+\backslash begin{tt}::default
+\backslash end{tt}
+\latex default 
+ are used.
+ Please do not use them.
+ Apart from that you are free to add columns of your own.
+ User defined columns are usable in 
+\latex latex 
+
+\backslash begin{tt}
+\backslash %::NAME
+\backslash %
+\backslash end{tt}
+\latex default 
+ macro expansion and are listed in the intermediate design data output.
+\newline 
+Only the 
+\latex latex 
+
+\backslash begin{tt}::inst
+\backslash end{tt}
+\latex default 
+ column has to contain a value in each row (which could be a 
+\latex latex 
+
+\backslash begin{tt}
+\backslash %::NAME
+\backslash %
+\backslash end{tt}
+\latex default 
+ macro, though).
+ All other columns will receive more or less reasonable default values in
+ case they are left empty.
+\layout Subsection
+
+HIER columns details
+\layout Standard
+
+
+\latex latex 
+
+\backslash begin{bf}::gen
+\backslash end{bf}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{12mm}
+\latex default 
+If a cell here is not empty, the line will be considered as
+\newline 
+
+\latex latex 
+
+\backslash hspace*{18mm}
+\latex default 
+ generator.
+ See description of generator statements below.
+\newline 
+
+\latex latex 
+
+\backslash begin{bf}::variants
+\backslash end{bf}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{6mm}
+\latex default 
+Select a line depending on the -variant command line switch.
+ If 
+\newline 
+
+\latex latex 
+
+\backslash hspace*{18mm}
+\latex default 
+-variant VAR is set, only lines whose 
+\latex latex 
+
+\backslash begin{tt}::variant
+\backslash end{tt}
+\latex default 
+ cell contains the keyword 
+\newline 
+
+\latex latex 
+
+\backslash hspace*{18mm}
+\latex default 
+VAR, Default or empty, are selected and read in.
+ Several variants may be 
+\newline 
+
+\latex latex 
+
+\backslash hspace*{18mm}
+\latex default 
+given in one cell, separated by ",".
+ Without specifying the 
+\latex latex 
+
+\backslash begin{tt}-variant
+\backslash end{tt}
+\latex default 
+ switch, 
+\newline 
+
+\latex latex 
+
+\backslash hspace*{18mm}
+\latex default 
+the "Default" and empty 
+\latex latex 
+
+\backslash begin{tt}::variant
+\backslash end{tt}
+\latex default 
+ cells are read in and evaluated.
+\newline 
+
+\latex latex 
+
+\backslash begin{bf}::inst
+\backslash end{bf}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{10mm}
+\latex default 
+Defines the instance name.
+ If the same name appears in several rows, the 
+\newline 
+
+\latex latex 
+
+\backslash hspace*{18mm}
+\latex default 
+resulting row will be overloaded from all input rows.
+ The exact behaviour 
+\newline 
+
+\latex latex 
+
+\backslash hspace*{18mm}
+\latex default 
+depends on the column name.
+ Some are concatenated, some are replaced.
+\newline 
+
+\latex latex 
+
+\backslash begin{bf}::lang
+\backslash end{bf}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{9mm}
+\latex default 
+HDL language selection, case insensitive.
+ If this column is omitted or empty, 
+\newline 
+
+\latex latex 
+
+\backslash hspace*{18mm}
+\latex default 
+VHDL output is generated.
+ The default value can be changed by means 
+\newline 
+
+\latex latex 
+
+\backslash hspace*{18mm}
+\latex default 
+of the macro.%LANGUAGE% macro.
+ Currently only VHDL and
+\newline 
+
+\latex latex 
+
+\backslash hspace*{18mm}
+\latex default 
+Verilog are supported (XXX: Verilog output still t.b.d.).
+\newline 
+
+\latex latex 
+
+\backslash begin{bf}::config
+\backslash end{bf}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{6mm}
+\latex default 
+Define the configuration name.
+ It defaults to %DEFAULT_CONFIG%, which 
+\newline 
+
+\latex latex 
+
+\backslash hspace*{18mm}
+\latex default 
+evaluates to %::entity%_%::arch%_conf.
+ If the language of this entity is set 
+\newline 
+
+\latex latex 
+
+\backslash hspace*{18mm}
+\latex default 
+to Verilog, no configuration will be printed nor will it be added to parent
+ cell 
+\newline 
+
+\latex latex 
+
+\backslash hspace*{18mm}
+\latex default 
+configurations.
+ The keyword %NO_CONFIG% will also suppress output of 
+\newline 
+
+\latex latex 
+
+\backslash hspace*{18mm}
+\latex default 
+configuration for this entity.
+\newline 
+Additional columns:
+\newline 
+
+\latex latex 
+
+\backslash begin{bf}::arch
+\backslash end{bf}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{9mm}
+\latex default 
+If no ::arch column is given, architecture will default to "rtl".
+ This is defined 
+\newline 
+
+\latex latex 
+
+\backslash hspace*{18mm}
+\latex default 
+by the configuration hier.field.::arch.[3] = rtl; and cannot be changed
+ globally.
+\newline 
+
+\latex latex 
+
+\backslash begin{bf}::use
+\backslash end{bf}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{11mm}
+\latex default 
+Add project specific libraries and work packages to the HDL description
+ files. 
+\newline 
+
+\latex latex 
+
+\backslash hspace*{18mm}
+\latex default 
+See the ::use details below.
+\layout Subsubsection
+
+::use Add Project Specific Libraries
+\layout Standard
+
+The optional "
+\latex latex 
+
+\backslash begin{tt}::use
+\backslash end{tt}
+\latex default 
+" column allows to add libraries and work packages for a entity.
+ Several libraries can be added, separated by comma or white space.
+ In case of VHDL output, the use statement is added to the entity declaration,
+ only.
+ You can override that by adding a leading 
+\latex latex 
+
+\backslash begin{tt}ALL:
+\backslash end{tt}
+\latex default 
+, 
+\latex latex 
+
+\backslash begin{tt}ARCH:
+\backslash end{tt}
+\latex default 
+ or 
+\latex latex 
+
+\backslash begin{tt}CONF:
+\backslash end{tt}
+\latex default 
+ keyword for this instance/entity.
+ To change that globally, modify the configuration variable output.generate.use.
+\newline 
+For each given library an appropriate text sequence is added:
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}foo.lib
+\backslash end{tt}
+\latex default 
+, 
+\latex latex 
+
+\backslash begin{tt}bar.lib.something
+\backslash end{tt}
+\latex default 
+
+\newline 
+will be printed as
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}library foo;
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}use foo.lib.all;
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}library bar;
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}use bar.lib.something.all;
+\backslash end{tt}
+\latex default 
+
+\newline 
+If different instantiations of a entity have different ::use
+\newline 
+definitions, MIX adds up all these.
+\newline 
+To change the global default value of
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}library IEEE;
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}use IEEE.std
+\backslash _logic
+\backslash _1164.all;
+\backslash end{tt}
+\latex default 
+
+\newline 
+modify macro 
+\latex latex 
+
+\backslash begin{tt}
+\backslash %VHDL
+\backslash _USE
+\backslash _DEFAULT
+\backslash %
+\backslash end{tt}
+\latex default 
+.
+\newline 
+To add a library globally, add the appropriate text to the macro.
+\latex latex 
+
+\backslash begin{tt}
+\backslash %VHDL
+\backslash _NOPROJ
+\backslash %
+\backslash end{tt}
+\latex default 
+ configuration, which will be used if no library is defined in the 
+\latex latex 
+
+\backslash begin{tt}::use
+\backslash end{tt}
+\latex default 
+ column.
+\newline 
+A second usage is to suppress the component declaration output by the 
+\latex latex 
+
+\backslash begin{tt}
+\backslash %NDC
+\backslash %
+\backslash end{tt}
+\latex default 
+ or 
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}
+\backslash %NO
+\backslash _COMPONENT
+\backslash _DECLARATION
+\backslash %
+\backslash end{tt}
+\latex default 
+ keyword.
+ This is useful for instances, whose entities are taken from libraries.
+\newline 
+
+\newline 
+Examples: see 
+\latex latex 
+
+\backslash begin{tt}t/sigport.xls
+\backslash end{tt}
+\latex default 
+ and 
+\latex latex 
+
+\backslash begin{tt}t/sigport/use/*.vhd
+\backslash end{tt}
+\latex default 
+ for more examples.
+\newline 
+Configuration: 
+\latex latex 
+
+\backslash begin{tt}output.generate.use = enty
+\backslash end{tt}
+\latex default 
+
+\layout Subsection
+
+Special HIER sheet properties
+\layout Standard
+
+
+\latex latex 
+
+\backslash begin{tt}
+\backslash %TOP
+\backslash %
+\backslash end{tt}
+\latex default 
+ is a pseudo instance and used for internal purposes, only.
+\layout Subsection
+
+CONN sheet details
+\layout Standard
+
+The design connections are defined in the CONN sheet.
+ The primary key of this sheet is the signalname as given in "
+\latex latex 
+
+\backslash begin{tt}::name
+\backslash end{tt}
+\latex default 
+".
+ Signalnames are globally known for the design.
+ All appearances of a name are connected, creating intermediate ports as
+ needed.
+\layout Subsection
+
+typecast
+\layout Standard
+
+The type of a signal can be typecasted by appending a function name with
+ a 
+\latex latex 
+
+\backslash begin{tt}'
+\backslash end{tt}
+\latex default 
+ to the 
+\latex latex 
+
+\backslash begin{tt}::in
+\backslash end{tt}
+\latex default 
+ and 
+\latex latex 
+
+\backslash begin{tt}::out
+\backslash end{tt}
+\latex default 
+ definitions.
+\newline 
+Example:
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}::name
+\backslash end{tt}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}signal
+\backslash _a
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}::type
+\backslash end{tt}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}type
+\backslash _a
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}::in
+\backslash end{tt}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{24mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}inst
+\backslash _a/port
+\backslash _a'typefunc
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}::out
+\backslash end{tt}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{22mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}inst
+\backslash _b/port
+\backslash _b'typefunc
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\newline 
+The signal 
+\latex latex 
+
+\backslash begin{tt}signal
+\backslash _a
+\backslash end{tt}
+\latex default 
+ will be of type 
+\latex latex 
+
+\backslash begin{tt}type
+\backslash _a
+\backslash end{tt}
+\latex default 
+, while the connecting ports of 
+\latex latex 
+
+\backslash begin{tt}inst
+\backslash _a
+\backslash end{tt}
+\latex default 
+ and 
+\latex latex 
+
+\backslash begin{tt}inst
+\backslash _b
+\backslash end{tt}
+\latex default 
+ are converted by applying the typecast function 
+\latex latex 
+
+\backslash begin{tt}typefunc
+\backslash end{tt}
+\latex default 
+.
+\newline 
+Caveat: typecast support is experimental.
+\newline 
+
+\layout Subsection
+
+Automatic Generation of Toplevel Ports
+\layout Standard
+
+If the signal mode as defined in the 
+\latex latex 
+
+\backslash begin{tt}::mode
+\backslash end{tt}
+\latex default 
+ column matches one of I, O or IO, MIX will create top level ports.
+ This feature can be disabled by the configuration variable 
+\latex latex 
+
+\backslash begin{tt}output.generate.inout
+\backslash end{tt}
+\latex default 
+.
+ Possible values are 
+\latex latex 
+
+\backslash begin{tt}mode
+\backslash end{tt}
+\latex default 
+(enable top level port generation) and 
+\latex latex 
+
+\backslash begin{tt}noxfix
+\backslash end{tt}
+\latex default 
+(do not prefix and postfix generated port names for top level ports), which
+ are set by default.
+ To exclude some signals from automatic top-level port generation, use 
+\latex latex 
+
+\backslash begin{tt}output.generate.xinout sig
+\backslash _foo,sig
+\backslash _bar
+\backslash end{tt}
+\latex default 
+.
+ This feature is usefull if you need to use internal inout signals, but
+ do not want to have them wired to the top-level.
+\layout Subsection
+
+CONN columns details
+\layout Subsection
+
+Special CONN sheet signals
+\layout Standard
+
+Special signal names:
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}
+\backslash %LOW
+\backslash %
+\backslash end{tt}
+\latex default 
+, 
+\latex latex 
+
+\backslash begin{tt}
+\backslash %HIGH
+\backslash %
+\backslash end{tt}
+\latex default 
+, 
+\latex latex 
+
+\backslash begin{tt}
+\backslash %LOW
+\backslash _BUS
+\backslash %
+\backslash end{tt}
+\latex default 
+, 
+\latex latex 
+
+\backslash begin{tt}
+\backslash %HIGH
+\backslash _BUS
+\backslash %
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\layout Subsubsection
+
+%OPEN% aka.
+ open
+\layout Standard
+
+Used the 
+\latex latex 
+
+\backslash begin{tt}
+\backslash %OPEN
+\backslash %
+\backslash end{tt}
+\latex default 
+ signal to leave some pins of module bar port a open MIX has no knowledge
+ about ports.
+ Everything is defined in terms of signals and instances.
+ Use the "
+\latex latex 
+
+\backslash begin{tt}open
+\backslash end{tt}
+\latex default 
+" pseudo signal to define the extra pins.
+\newline 
+
+\newline 
+E.g.: wire 
+\latex latex 
+
+\backslash begin{tt}foo/a
+\backslash end{tt}
+\latex default 
+ port to 
+\latex latex 
+
+\backslash begin{tt}bar/a
+\backslash end{tt}
+\latex default 
+ port. 
+\latex latex 
+
+\backslash begin{tt}bar/a
+\backslash end{tt}
+\latex default 
+ has extra pins.
+\newline 
+
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}signal
+\backslash _a
+\backslash , ::high 7, ::low 0, ::out foo/a ::in bar/asn
+\backslash newline
+\newline 
+
+\backslash %OPEN
+\backslash %, ::high 1, ::low 0, ::out -, ::out bar/a(9:8)
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\newline 
+XXX write this in spreadsheet XXX
+\newline 
+You could also force the 
+\latex latex 
+
+\backslash begin{tt}::in
+\backslash end{tt}
+\latex default 
+ pins to high or low, instead, e.g.
+ use: 
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}
+\backslash %HIGH
+\backslash %
+\backslash end{tt}
+\latex default 
+, 
+\latex latex 
+
+\backslash begin{tt}
+\backslash %HIGH
+\backslash _BUS
+\backslash %
+\backslash end{tt}
+\latex default 
+, 
+\latex latex 
+
+\backslash begin{tt}
+\backslash %LOW
+\backslash end{tt}
+\latex default 
+ or 
+\latex latex 
+
+\backslash begin{tt}
+\backslash %LOW
+\backslash _BUS
+\backslash %
+\backslash end{tt}
+\latex default 
+.
+ Or a constant.
+\layout Subsubsection
+
+Constants
+\layout Standard
+
+Constant values can be defined and used in several ways in the CONN worksheet.
+ Constants can be marked with a C in the 
+\latex latex 
+
+\backslash begin{tt}::mode
+\backslash end{tt}
+\latex default 
+ column.
+ Basically anything resembling a number written in the 
+\latex latex 
+
+\backslash begin{tt}::out
+\backslash end{tt}
+\latex default 
+ column will be considered to be a constant value.
+ String and bit vector constants are enclosed in single or double quotes.
+ Remember to type two single quotes in excel to start a single quote string.
+ Excel takes the first quote character to prevent the following string to
+ be interpolated by excel.
+\newline 
+If you do not name a constant (leave the 
+\latex latex 
+
+\backslash begin{tt}::name
+\backslash end{tt}
+\latex default 
+ field empty), MIX will generate a name like 
+\latex latex 
+
+\backslash begin{tt}mix
+\backslash _const
+\backslash _N
+\backslash end{tt}
+\latex default 
+.
+ N starts by one and increments for each new constant value.
+\newline 
+Constant values can be assigned to instance ports in the 
+\latex latex 
+
+\backslash begin{tt}::in
+\backslash end{tt}
+\latex default 
+ column of that constant. 
+\newline 
+Depending on the form of a constant and the output language, MIX tries to
+ convert the constant value into something suitable.
+ See the constant.xls example (XXXLINK).
+\newline 
+
+\latex latex 
+ 
+\backslash includegraphics[scale=0.43]{images/mix_table1.jpg}
+\latex default 
+
+\newline 
+
+\newline 
+If the target language is VHDL, XXXXX
+\newline 
+MIX looks like in the following screenshot:
+\newline 
+
+\latex latex 
+
+\backslash includegraphics[scale=0.4]{images/mix_simple_inst.jpg}
+\latex default 
+
+\newline 
+ Search for lines with 
+\latex latex 
+
+\backslash begin{tt}
+\backslash _
+\backslash _E
+\backslash end{tt}
+\latex default 
+ in the comments to detect constants MIX was not able to translate properly.
+ Verilog constant output is not very mature as of today.
+\newline 
+
+\layout Subsubsection
+
+Generics and Parameters
+\layout Standard
+
+Generics for entities are defined by a 
+\latex latex 
+
+\backslash begin{bf}G
+\backslash end{bf}
+\latex default 
+ in the 
+\latex latex 
+
+\backslash begin{tt}::mode
+\backslash end{tt}
+\latex default 
+ column.
+ The 
+\latex latex 
+
+\backslash begin{tt}::name
+\backslash end{tt}
+\latex default 
+ column defines the generics name.
+ If the 
+\latex latex 
+
+\backslash begin{tt}::out
+\backslash end{tt}
+\latex default 
+ column contains a string or a number, the value will be the default of
+ this generic.
+\newline 
+A 
+\latex latex 
+
+\backslash begin{bf}P
+\backslash end{bf}
+\latex default 
+ in the 
+\latex latex 
+
+\backslash begin{tt}::mode
+\backslash end{tt}
+\latex default 
+ column marks parameters.
+ The value given in the 
+\latex latex 
+
+\backslash begin{tt}::out
+\backslash end{tt}
+\latex default 
+ column will be applied to the instances in the 
+\latex latex 
+
+\backslash begin{tt}::in
+\backslash end{tt}
+\latex default 
+ column.
+\newline 
+If the 
+\latex latex 
+
+\backslash begin{tt}::name
+\backslash end{tt}
+\latex default 
+ column is empty, MIX will assign a generated name.
+ The HDL generic name is either the "port" name given in the 
+\latex latex 
+
+\backslash begin{tt}::in
+\backslash end{tt}
+\latex default 
+ column or the 
+\latex latex 
+
+\backslash begin{tt}::name
+\backslash end{tt}
+\latex default 
+.
+\newline 
+A example description taken from a CONN sheet will create the following
+ output in VHDL:
+\newline 
+
+\begin_float tab 
+
+\layout Standard
+
+
+
+\LyXTable
+multicol5
+5 5 0 0 0 0 0 0
+1 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+8 1 1 "3cm" ""
+8 0 1 "2cm" ""
+8 0 1 "3cm" ""
+8 0 1 "2cm" ""
+8 0 1 "3cm" ""
+0 8 1 1 0 0 0 "" ""
+0 8 1 1 0 0 0 "" ""
+0 8 1 1 0 0 0 "" ""
+0 8 1 1 0 0 0 "" ""
+0 8 1 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+
+
+\latex latex 
+
+\backslash begin{bf}::type
+\backslash end{bf}
+\latex default 
+
+\newline 
+
+\latex latex 
+ 
+\backslash begin{bf}::mode
+\backslash end{bf}
+\latex default 
+
+\newline 
+
+\latex latex 
+ 
+\backslash begin{bf}::name
+\backslash end{bf}
+\latex default 
+
+\newline 
+
+\latex latex 
+ 
+\backslash begin{bf}::out
+\backslash end{bf}
+\latex default 
+
+\newline 
+
+\latex latex 
+ 
+\backslash begin{bf}::in
+\backslash end{bf}
+\latex default 
+
+\newline 
+integer 
+\newline 
+ G 
+\newline 
+ generic_a 
+\newline 
+ 7 
+\newline 
+ g/generic_a 
+\newline 
+integer 
+\newline 
+ P 
+\newline 
+ parameter_a 
+\newline 
+ 16 
+\newline 
+ g/generic_a 
+\newline 
+string 
+\newline 
+ G 
+\newline 
+ generic_b 
+\newline 
+ "text" 
+\newline 
+ g/generic_b 
+\newline 
+string 
+\newline 
+ P 
+\newline 
+ parameter_b 
+\newline 
+ "text" 
+\newline 
+ g/generic_b 
+ 
+
+
+\end_float 
+
+
+\layout Standard
+
+
+\newline 
+
+\latex latex 
+ 
+\backslash includegraphics[scale=0.8]{images/mix_generic_chip.jpg}
+\latex default 
+
+\newline 
+
+\layout Subsection
+
+Simple text macros
+\layout Standard
+
+Text marked with with a % on both sides is subject to be replaced, if a macro or a postfix of that
+ name is defined.
+ See the table of predefined macros.
+ Additionally the contents of the input table can be referenced like %::column_head%.
+ If no suitable text macro is found, the text will be left as is.
+\newline 
+The text macro replacement does not operate recursively in general.
+\newline 
+
+\newline 
+Please consider that some text macros are used internally and some have
+ a special meaning, too.
+ E.g.
+ the pseudo signals %OPEN% and %LOW_BUS%.
+\layout Subsection
+
+Predefined and user macros
+\layout Standard
+
+The following table contains a list of predefined macros.
+ Some of them are defined at run time (e.g.
+ the current date), some are for internal purposes only.
+ macros marked with a yes in the "User" column can be set freely by the
+ user on the command line or in the 
+\latex latex 
+
+\backslash begin{tt}mix.cfg
+\backslash end{tt}
+\latex default 
+ configuration file.
+\newline 
+
+\layout Standard
+
+
+\newline 
+
+\newline 
+The default values can be changed by using
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}-conf macro.
+\backslash %THIS
+\backslash _MACRO
+\backslash %=my
+\backslash _value
+\backslash end{tt}
+\latex default 
+
+\newline 
+command line switch.
+ New macros can be defined the same way.
+\newline 
+Alternatively a line like
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}MIXCFG macro.
+\backslash %THIS
+\backslash _MACRO
+\backslash % my
+\backslash _value
+\backslash end{tt}
+\latex default 
+
+\newline 
+to the mix.cfg configuration file will achieve the same result.
+\newline 
+
+\layout Section
+
+CONN sheet macros
+\layout Standard
+
+To simplify the wiring of standard interfaces, MIX provides the connection
+ macro facility.
+ The connection macros are entered just like any other connection, but are
+ marked by MH, MD and MX in the ::gen column.
+ MH is the macro header line, which has to be followed by one to many MD
+ macro definition row.
+ The first non-comment line without a MD tag stops the macro definition.
+\newline 
+The tag MX marks lines subject to be macro expanded.
+ The macro expansion takes place after the initial tables were parsed.
+\newline 
+You can define simple, one-letter variabes in the macro cells.
+ Any text in ::ign, ::gen, ::comment and ::descr cells of a MH and MX row
+ will not be subject to matching and evaluation, but be ignored.
+ Apart from that the column names have no special meaning.
+\newline 
+
+\newline 
+A simple example will illustrate the connection macro usage.
+\newline 
+
+\latex latex 
+
+\backslash includegraphics[scale=0.54]{images/macro.jpg}
+\latex default 
+
+\newline 
+ Here the macro header MH defines the variables $n, $1, $h, $4 and $5.
+ The MIX parser extracts the MH row and accompanying MD rows (five lines
+ here) from the table.
+ In a second run each MX row will trigger a match operation against all
+ MH definitions.
+ MX and MH are a match, if each cell defined in the MH row has a matching
+ counterpart in the MX row.
+ Variables in the MH cells are considered to match any string ( .+ in perl
+ regular expression syntax).
+ Thus the first MX line matches the MH lines here.
+ The variables defined in the MH cells are assigned the matching values
+ from the MX line.
+ E.g. $n will be 0 for the first MX, 1 for the second.
+ The variable $4 is assignd ls, $5 is min.
+\newline 
+
+\newline 
+If MX and MH match, the accompanying MD lines are executed.
+ Variables are replaced by the value they are assigned too, currently.
+ Here the first MX will result in the following table to be generated:
+\newline 
+
+\latex latex 
+
+\backslash includegraphics[scale=0.66]{images/macro_out.jpg}
+\latex default 
+
+\newline 
+ The ::gen column is set to G_MX after evaluation.
+ Empty cells in MD lines are filled with the value given by MX, if any.
+\newline 
+
+\newline 
+Please see the contrib directory for commonly available connection macros
+ (t.b.d.).
+\layout Section
+
+Generator statements
+\layout Subsection
+
+Hierachy Generator Operators
+\layout Standard
+
+Another powerfull feature of MIX are the generator statements.
+ The generators are applied after initial tool setup and connection macro
+ evaluation, first the hierachy generators, then the connection generators.
+\newline 
+
+\newline 
+Generators are defined in the ::gen column.
+ Basically three types are available:
+\newline 
+
+\layout Itemize
+
+Constructor generators: $i(N..M)
+\layout Itemize
+
+Match generator: /match_expression/
+\layout Itemize
+
+Bounded match generator: $i(N..M),/match_expression/
+\layout Standard
+
+match_expression is like perl(1) regular expressions, but with some extensions
+ and specials.
+\newline 
+
+\layout Subsubsection
+
+Constructor Generator statement
+\layout Standard
+
+MIX takes the variable and the range definied in ::gen and evaluates the
+ rest of the row for each value in the range.
+ Currently only one variable is allowed and the range has to be of form
+ (N..M).
+\newline 
+
+\newline 
+A simple example illustrates the usage:
+\newline 
+
+\latex latex 
+ 
+\backslash includegraphics[scale=0.8]{images/gen_it.jpg}
+\latex default 
+
+\newline 
+ will give ten instances from inst_1 to inst_10, each being a submodule of inst_a with each having a entity inst_1_e to inst_10_e, dito.
+ for the configuration.
+ Simple arithmetic can be applied to derive values from the run time parameter
+ $i.
+\newline 
+Constructor's will yield new instances.
+ An instance name has to be given in the ::inst column.
+\newline 
+
+\layout Subsubsection
+
+Match generator
+\layout Standard
+
+For each instance defined up to now, match_expression is evaluated.
+ If this yields true, the line is executed.
+ Parts of the expression in parantheses are used to set the variables $1, $2, ...
+ accordingly.
+ See the perl regular expression man page perlre(1) for more details.
+ This variables can be used in the other cells.
+ Simple arithmetic is possible, e.g. $i + 1 or $1 * 2.
+\newline 
+A match generator will yield new instances only if the name in the ::inst
+ column is set to a value different from the matching instance.
+\newline 
+
+\newline 
+Example:
+\newline 
+
+\newline 
+XXX t.b.d.
+\newline 
+
+\layout Subsubsection
+
+Bounded match generator
+\layout Standard
+
+By adding a run variable and a range $i(N..M), match generators can be restricted to only apply if the variable
+ $i is within the range. $i has to be defined in match_expression and will match any number.
+\newline 
+
+\newline 
+In opposite to the constructor generator, MIX will not evaluate all possible
+ values for $i, but only make sure $i stays within the bounds of the range.
+\newline 
+
+\newline 
+Example:
+\newline 
+
+\newline 
+XXX t.b.d.
+\newline 
+
+\layout Subsubsection
+
+Advanced features of the match generators
+\layout Standard
+
+The match expression can contain references to all fields of the to match
+ object with the
+\newline 
+::NAME_OF_COL=string(match):: reference.
+\newline 
+
+\newline 
+E.g.
+ the connection generator
+\newline 
+
+\latex latex 
+
+\backslash includegraphics[scale=0.80]{images/gen_2.jpg}
+\latex default 
+
+\newline 
+ will wire all instances iom_.* having a property ::pin in the given range with a newly defined signal
+ i_N_N+1.
+ iom_foo with ::pin = 270 port serial_o will drive the signal i_270_271, the instance iom_bar with ::pin = 271 is connected to the signal i_270_271 to it's port serial_i by the next line.
+ for instance iom_foo only the first line matches, thus that module will net get a connection
+ to serial_i by these generator lines.
+\newline 
+
+\newline 
+A trainling :: can be omitted.
+ If two propertied are to be matched, this will look like
+\newline 
+
+\latex latex 
+
+\backslash hspace*{10mm}
+\latex default 
+/::prop1=(.*)::::prop2=string(match?)/
+\layout Subsubsection
+
+Additional Information
+\layout Standard
+
+Match generators work the same way on the CONN sheets.
+ By default the match expression will match against all defined instances,
+ not connections.
+\newline 
+To make a match expression iterate over all connection, prefix the whole
+ expression by the CONN: keyword.
+\newline 
+
+\newline 
+Please have a look into the distributed howto.xls and the macro.xls in the
+ test case directory t to see more examples.
+\layout Section
+
+IO sheet
+\layout Standard
+
+A third category of input specification is the IO sheet.
+ The contents of the IO sheet is parsed and translated into instances of
+ io cell blocks and pad cells and connections of the io logic with the design
+ core logic.
+\newline 
+
+\latex latex 
+ 
+\backslash includegraphics[scale=0.7]{images/mix_iocell.jpg}
+\latex default 
+
+\newline 
+ Image 3: IO Cell and Pad Layout
+\newline 
+The IO sheet is a simple way to specify the connections of the IO cell to
+ the design core logic.
+ MIX will derive the connections of the DI(0..n), DO(0..n), PU(0..n), PD(0..n),
+ EN(0..n) and the accompanying select lines.
+ MIX will not add special purpose connections and the IO cell to Pad cell
+ connections.
+ This should be done by using the macro and generator statements in the
+ CONN sheets.
+\newline 
+A simple example illustrates the various input fields and their usage.
+\newline 
+
+\latex latex 
+ 
+\backslash includegraphics[scale=0.4]{images/mix_io_sheet.jpg}
+\latex default 
+
+\newline 
+
+\layout Subsection
+
+IO sheet column header
+\layout Standard
+
+The IO sheet starts with the usual header line, defining mandatory and optional
+ columns:
+\newline 
+
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+-
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}::ign
+\backslash end{tt}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{9mm}
+\latex default 
+A 
+\latex latex 
+
+\backslash begin{tt}
+\backslash #
+\backslash end{tt}
+\latex default 
+ marks a comment line.
+ Has to be first column.
+ Optional.
+\newline 
+
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+-
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}::class
+\backslash end{tt}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+The class name is forwarded to the 
+\latex latex 
+
+\backslash begin{tt}::class
+\backslash end{tt}
+\latex default 
+ field of the CONN sheet.
+ (opt.)
+\newline 
+
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+-
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}::ispin
+\backslash end{tt}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+Set to one it this pad is actually bonded (ignored by MIX).
+\newline 
+
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+-
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}::pin
+\backslash end{tt}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{8mm}
+\latex default 
+Number or name of the pin.
+ (ignored by MIX)
+\newline 
+
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+-
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}::pad
+\backslash end{tt}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{8mm}
+\latex default 
+The primary key of the IO sheet.
+ Has to an integer value.
+ The pad
+\newline 
+
+\latex latex 
+
+\backslash hspace*{32mm}
+\latex default 
+numbers do not have to be consecutive.
+ Mandatory column.
+\newline 
+
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+-
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}::type
+\backslash end{tt}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{7mm}
+\latex default 
+Defines the entity of the generated pad cell.
+\newline 
+
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+-
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}::iocell
+\backslash end{tt}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{3mm}
+\latex default 
+Defines name and entitiy of the generated io cell
+\newline 
+
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+-
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}::port
+\backslash end{tt}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{7mm}
+\latex default 
+Define the io cell port name towards to the core logic.
+ Port
+\newline 
+
+\latex latex 
+
+\backslash hspace*{32mm}
+\latex default 
+ names are separated by , and/or <Alt><CR>.
+\newline 
+
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+-
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}::name
+\backslash end{tt}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{8mm}
+\latex default 
+pad name
+\newline 
+
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+-
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}::muxopt
+\backslash end{tt}
+\latex default 
+
+\latex latex 
+
+\backslash hspace*{4mm}
+\latex default 
+Connection matrix of io cell ports to core logic.
+ Signals are separated
+\newline 
+
+\latex latex 
+
+\backslash hspace*{33mm}
+\latex default 
+by , and/or <Alt>-<CR>.
+ Signals may be single bits or a one bit bus
+\newline 
+
+\latex latex 
+
+\backslash hspace*{33mm}
+\latex default 
+slice.
+ Type 
+\latex latex 
+
+\backslash begin{tt}core
+\backslash _sig.N
+\backslash end{tt}
+\latex default 
+ or 
+\latex latex 
+
+\backslash begin{tt}core
+\backslash _sig(N)
+\backslash end{tt}
+\latex default 
+ for bit N of the core signale
+\newline 
+
+\latex latex 
+
+\backslash hspace*{33mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}core
+\backslash _sig
+\backslash end{tt}
+\latex default 
+.
+\latex latex 
+
+\backslash begin{tt}::muxopt
+\backslash end{tt}
+\latex default 
+ is allowed to appear several times.
+ The number of
+\newline 
+
+\latex latex 
+
+\backslash hspace*{33mm}
+\latex default 
+signals and the order matches the port names in the ::port field.
+\newline 
+
+\layout Subsection
+
+IO sheet %SEL% rows
+\layout Standard
+
+The rows with the key 
+\latex latex 
+
+\backslash begin{tt}
+\backslash %SEL
+\backslash %
+\backslash end{tt}
+\latex default 
+ in the 
+\latex latex 
+
+\backslash begin{tt}::class
+\backslash end{tt}
+\latex default 
+ field define the wiring of the IO cells multiplexer select lines.
+ The name in the 
+\latex latex 
+
+\backslash begin{tt}::port
+\backslash end{tt}
+\latex default 
+ field defined the io cell port to connect to.
+ The 
+\latex latex 
+
+\backslash begin{tt}::name
+\backslash end{tt}
+\latex default 
+ field is ignored.
+ The signal names listed in the 
+\latex latex 
+
+\backslash begin{tt}::muxopt
+\backslash end{tt}
+\latex default 
+ columns are connected from the designs core with the appropriate slice
+ of the io cell multiplexer select lines (one hot select lines).
+ The leftmost 
+\latex latex 
+
+\backslash begin{tt}::muxopt
+\backslash end{tt}
+\latex default 
+ connects to bit 0, the next to bit 1 and so forth. 
+\latex latex 
+
+\backslash begin{tt}core
+\backslash _sel.N
+\backslash end{tt}
+\latex default 
+ or 
+\latex latex 
+
+\backslash begin{tt}core
+\backslash _cel(N)
+\backslash end{tt}
+\latex default 
+.
+ can be used to wire select buses.
+ The number of non-empty consecutive 
+\latex latex 
+
+\backslash begin{tt}::muxopt
+\backslash end{tt}
+\latex default 
+ fields also define the width of the multiplexer.
+ The actual multiplexer width is stored in the 
+\latex latex 
+
+\backslash begin{tt}
+\backslash %::
+\backslash _muxwidth
+\backslash _
+\backslash %
+\backslash end{tt}
+\latex default 
+ field.
+\newline 
+The given values for the select lines are valid until the last row or another
+ 
+\latex latex 
+
+\backslash begin{tt}
+\backslash %SEL
+\backslash %
+\backslash end{tt}
+\latex default 
+ line is found.
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}
+\backslash %NOSEL
+\backslash %
+\backslash end{tt}
+\latex default 
+ will stop usage of in/out multiplexer and select lines.
+\newline 
+Setting the configuration switch "
+\latex latex 
+
+\backslash begin{tt}iocell.select
+\backslash end{tt}
+\latex default 
+" to "
+\latex latex 
+
+\backslash begin{tt}bus
+\backslash end{tt}
+\latex default 
+" changes from a one-hot architecture to a select bus architecture.
+ The select bus name is take in the leftmost 
+\latex latex 
+
+\backslash begin{tt}::muxopt
+\backslash end{tt}
+\latex default 
+ column, an appropriate width is calculated by the number of defined 
+\latex latex 
+
+\backslash begin{tt}::muxopt
+\backslash end{tt}
+\latex default 
+ columns.
+\newline 
+
+\layout Subsection
+
+IO sheet pad rows
+\layout Standard
+
+All other rows make up the connection matrix.
+ For each row an io cell is instantiated.
+ By default this io cell's name is composed by the type listed in the 
+\latex latex 
+
+\backslash begin{tt}::type
+\backslash end{tt}
+\latex default 
+ field with the 
+\latex latex 
+
+\backslash begin{tt}::pad
+\backslash end{tt}
+\latex default 
+ number attached, separated by a 
+\latex latex 
+
+\backslash begin{tt}
+\backslash _
+\backslash end{tt}
+\latex default 
+.
+\newline 
+Secondly a pad cell is instantiated.
+ By default this pad cell's name is composed from the prefix 
+\latex latex 
+
+\backslash begin{tt}pad
+\backslash _
+\backslash end{tt}
+\latex default 
+ and the pad number as given in the 
+\latex latex 
+
+\backslash begin{tt}::pad
+\backslash end{tt}
+\latex default 
+ field.
+ The default naming for both io cell and pad is given by the configuration
+ variables
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}pad.name = 
+\backslash %PREFIX
+\backslash _PAD
+\backslash _GEN
+\backslash %
+\backslash %::pad
+\backslash %
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}iocell.name = 
+\backslash %::iocell
+\backslash %
+\backslash _
+\backslash %::pad
+\backslash %
+\backslash end{tt}
+\latex default 
+
+\newline 
+You can leave unused 
+\latex latex 
+
+\backslash begin{tt}::muxopt
+\backslash end{tt}
+\latex default 
+ columns empty.
+ Then MIX will reduce the number of select lines accordingly.
+\layout Subsection
+
+IO cell and Pad connections
+\layout Standard
+
+MIX IO sheet parser connects the IO cell internal interface towards the
+ design core logic, only.
+ Connections between pad and io cell need to be defined explicitely, usually
+ be means of 
+\latex latex 
+
+\backslash begin{tt}::gen
+\backslash end{tt}
+\latex default 
+ match operators.
+\newline 
+Additonal wires for NAND tree or boundary scan are specified the same way.Signal
+ busses need to be defined properly, esp.
+ the width and type.
+ MIX will derive these properties from the definition.
+\newline 
+The generated pad and iocells need to be linked into the design hierarchy
+ properly, e.g.
+ by adding 
+\latex latex 
+
+\backslash begin{tt}::gen
+\backslash end{tt}
+\latex default 
+ match operators in the 
+\latex latex 
+
+\backslash begin{tt}HIER
+\backslash end{tt}
+\latex default 
+ sheet.
+\newline 
+
+\latex latex 
+ 
+\backslash includegraphics[scale=0.40]{images/mix_hier_sheet.jpg}
+\latex default 
+
+\newline 
+
+\latex latex 
+ 
+\backslash includegraphics[scale=0.45]{images/mix_conn_sheet.jpg}
+\latex default 
+
+\layout Subsection
+
+IO Parser global configuration
+\layout Standard
+
+Some global configuration are available to tailor the IO sheet parser behaviour:
+\newline 
+
+\layout Standard
+
+
+
+\LyXTable
+multicol5
+8 2 0 0 0 0 0 0
+1 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+8 1 1 "4cm" ""
+8 0 1 "9cm" ""
+0 8 1 1 0 0 0 "" ""
+0 8 1 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+0 8 0 1 0 0 0 "" ""
+
+
+\latex latex 
+
+\backslash begin{tt}iocell.name
+\backslash end{tt}
+\latex default 
+
+\newline 
+ Rule determines naming of the io cell instances.
+ Default "
+\latex latex 
+
+\backslash begin{tt}
+\backslash %::iocell
+\backslash _
+\backslash %::pad
+\backslash %
+\backslash end{tt}
+\latex default 
+" 
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}iocell.auto
+\backslash end{tt}
+\latex default 
+
+\newline 
+ If set to "
+\latex latex 
+
+\backslash begin{tt}bus
+\backslash end{tt}
+\latex default 
+", create busses as needed.
+ Otherwise MIX relies on appropriate definition of busses by the CONN sheets.
+ 
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}iocell.bus
+\backslash end{tt}
+\latex default 
+
+\newline 
+ If 
+\latex latex 
+
+\backslash begin{tt}iocell.auto
+\backslash end{tt}
+\latex default 
+ is set to bus, MIX will attach the keyword listed here (
+\latex latex 
+
+\backslash begin{tt}
+\backslash _vector
+\backslash end{tt}
+\latex default 
+) to signal type definitions. 
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}iocell.defaultdir
+\backslash end{tt}
+\latex default 
+
+\newline 
+ Defines default iocell port direction.
+ Default: 
+\latex latex 
+
+\backslash begin{tt}in
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}iocell.in
+\backslash end{tt}
+\latex default 
+
+\newline 
+ comma and/or white-space separated list of in ports Default: 
+\latex latex 
+
+\backslash begin{tt}do, en, pu, pd, xout
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}iocell.out
+\backslash end{tt}
+\latex default 
+
+\newline 
+ list of io-cells out ports Default: 
+\latex latex 
+
+\backslash begin{tt}di, xin
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}iocell.select
+\backslash end{tt}
+\latex default 
+
+\newline 
+ List of keywords defining the select multiplexer connections: 
+\latex latex 
+
+\backslash begin{tt}onehot
+\backslash end{tt}
+\latex default 
+ -
+\begin_inset Formula \( >\)
+\end_inset 
+
+ use one hot architecture for select lines, 
+\latex latex 
+
+\backslash begin{tt}bus
+\backslash end{tt}
+\latex default 
+ -
+\begin_inset Formula \( >\)
+\end_inset 
+
+ use select line bus, 
+\latex latex 
+
+\backslash begin{tt}auto
+\backslash end{tt}
+\latex default 
+ -
+\begin_inset Formula \( >\)
+\end_inset 
+
+ calculate width of select bus or one-hot based on 
+\latex latex 
+
+\backslash begin{tt}
+\backslash %SEL
+\backslash %
+\backslash end{tt}
+\latex default 
+ width; Default: 
+\latex latex 
+
+\backslash begin{tt}onehot,auto
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}pad.name
+\backslash end{tt}
+\latex default 
+
+\newline 
+ Rule determines the naming of the pad instances.
+ Default: "
+\latex latex 
+
+\backslash begin{tt}
+\backslash %PREFIX
+\backslash _PAD
+\backslash _GEN
+\backslash %
+\backslash %::pad
+\backslash %
+\backslash end{tt}
+\latex default 
+" 
+ 
+
+
+\layout Section
+
+I2C sheet
+\layout Standard
+
+The I2C sheet is one more category of input specification.
+ It's content describes I2C Register's
+\layout Section
+
+VI2C sheet
+\layout Section
+
+Alarm clock example
+\layout Section
+
+Alarm clock example
+\layout Section
+
+MIX converter man page
+\layout Subsection
+
+Synopsis
+\layout Subsection
+
+Command line switches
+\layout Standard
+
+
+\latex latex 
+
+\backslash begin{tt}-out OUTPUTFILE.ext
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+defines output filename and type
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}-outenty OUT-e.vhd|ENTY|COMB
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+Write all entities into OUT-e.vhd.
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+If argument is ENTY, each entity will be written
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+into a file called entityname-e.vhd..
+ (The exact
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+naming depends on changeable rules).
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+If argument is COMB, entity, architecture and configuration
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+will all be written into one file called entityname.vhd
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}-outarch OUT-rtl-a.vhd|ARCH|COMB
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+See description of outenty option.
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}-outconf OUT-c.vhd|CONF|COMB
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+See description of outenty option.
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}-combine
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+write entity, architecture and configuration into one file for 
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+each entity.
+ Shortcut for setting -out[enty|arch|conf] to COMB
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+individually.
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}-dir DIRECTORY
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+write intermediate, internal and backend data into the given
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+DIRECTORY.
+ By default MIX writes to the current working directory
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}-top TOPCELL
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+use TOPCELL as top.
+ Default is TESTBENCH or daughter of TESTBENCH.
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}-adump
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+dump internal data in ASCII format, too
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+(debugging, use with small data set).
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}-variant VAR1
+\backslash end{tt}
+\latex default 
+
+\latex latex 
+ 
+\backslash hspace*{15mm}
+\latex default 
+Select VAR1 from the HIER worksheet.
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}-conf key.key.key=value
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+Overload $EHkeykeykey with value or add a
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+new configuration variable.
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}-listconf
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+Print out all available/predefined configurations options
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}-delta
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+Output will be compared against previous runs.
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}-sheet SHEET=MATCH
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+SHEET can be one of "hier", "conn", "vi2c".
+ MATCH is
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+a perl regular expression.
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}-strip
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+Remove old and diff sheets.
+ These sheets are named with "O_" or "DIFF".
+\newline 
+
+\newline 
+# Add your options here ....
+\newline 
+
+\newline 
+
+\newline 
+"Standard" options:
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}my @stdopts = qw(help|h! verbose|v! quiet|q! nobanner!  debug:i
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}makeopts=s@ gmakeopts=s@);
+\backslash end{tt}
+\latex default 
+
+\newline 
+Caveat: the -h option will not work on MS-Windows
+\layout Subsection
+
+Runtime options and configuration
+\layout Standard
+
+Runtime configuration is controlled by (increasing precedence): 
+\layout Itemize
+
+built-in default values 
+\layout Itemize
+
+
+\latex latex 
+
+\backslash begin{tt}mix.cfg
+\backslash end{tt}
+\latex default 
+ files, if found 
+\latex latex 
+
+\backslash begin{tt}
+\backslash $HOME
+\backslash end{tt}
+\latex default 
+, 
+\latex latex 
+
+\backslash begin{tt}
+\backslash $PROJECT
+\backslash end{tt}
+\latex default 
+ and/or in current directory.
+ Format is: 
+\latex latex 
+
+\backslash begin{tt}MIXCFG name.of.conf
+\backslash end{tt}
+\latex default 
+
+\latex latex 
+ 
+\backslash begin{it}value
+\backslash end{it}
+\latex default 
+
+\layout Itemize
+
+CONF sheet found in input xls files 
+\layout Itemize
+
+command line switch: 
+\latex latex 
+
+\backslash begin{tt}-conf foo.bar=
+\backslash end{tt}
+\latex default 
+
+\latex latex 
+
+\backslash begin{it}value
+\backslash end{it}
+\latex default 
+
+\layout Itemize
+
+dedicated command line options 
+\layout Standard
+
+MIX reads in 
+\latex latex 
+
+\backslash begin{tt}mix.cfg
+\backslash end{tt}
+\latex default 
+ configuration files in the following locations: 
+\layout Enumerate
+
+
+\latex latex 
+
+\backslash begin{tt}
+\backslash $ENV
+\backslash {HOME
+\backslash end{tt}
+\latex default 
+}
+\newline 
+"
+\latex latex 
+
+\backslash begin{tt}HOMEDRIVE
+\backslash end{tt}
+\latex default 
+", "
+\latex latex 
+
+\backslash begin{tt}HOMEPATH
+\backslash end{tt}
+\latex default 
+", "
+\latex latex 
+
+\backslash begin{tt}USERPROFILE
+\backslash end{tt}
+\latex default 
+" or "
+\latex latex 
+
+\backslash begin{tt}C:
+\backslash (
+\backslash backslash
+\backslash )
+\backslash end{tt}
+\latex default 
+"
+\newline 
+(only from the first matching location)
+\newline 
+
+\layout Enumerate
+
+
+\latex latex 
+
+\backslash begin{tt}
+\backslash $ENV
+\backslash {PROJECT
+\backslash }
+\backslash end{tt}
+\latex default 
+
+\layout Enumerate
+
+"
+\latex latex 
+
+\backslash begin{tt}.
+\backslash end{tt}
+\latex default 
+" (cwd)
+\layout Standard
+
+Order: 
+\latex latex 
+
+\backslash begin{tt}HOME
+\backslash end{tt}
+\latex default 
+ / 
+\latex latex 
+
+\backslash begin{tt}HOME
+\backslash end{tt}
+\latex default 
+ / 
+\latex latex 
+
+\backslash begin{tt}cwd()
+\backslash end{tt}
+\latex default 
+ / 
+\latex latex 
+
+\backslash begin{tt}-conf
+\backslash end{tt}
+\latex default 
+ (last wins)
+\layout Subsection
+
+Misc features
+\layout Subsubsection
+
+-delta mode
+\layout Standard
+
+Do not change output files, but report number of changes.
+ Adds extra sheets 
+\latex latex 
+
+\backslash begin{tt}DIFF
+\backslash _CONN
+\backslash end{tt}
+\latex default 
+ and 
+\latex latex 
+
+\backslash begin{tt}DIFF
+\backslash _HIER
+\backslash end{tt}
+\latex default 
+ (and old versions of them) to the intermediate output.
+ The 
+\latex latex 
+
+\backslash begin{tt}FOO.pld
+\backslash end{tt}
+\latex default 
+ internal output gets overwritten, though.
+ All messages are appended to 
+\latex latex 
+
+\backslash begin{tt}mix
+\backslash _0.pl
+\backslash end{tt}
+\latex default 
+
+\newline 
+If a new HDL-file needs to be created by the changes, the -delta mode is
+ not be applied for that file, but it is generated as new.
+ If you never have written a 
+\latex latex 
+
+\backslash begin{tt}FOO-mixed.xls
+\backslash end{tt}
+\latex default 
+ intermediate output, there is no 
+\latex latex 
+
+\backslash begin{tt}HIER
+\backslash end{tt}
+\latex default 
+ or 
+\latex latex 
+
+\backslash begin{tt}CONN
+\backslash end{tt}
+\latex default 
+ sheet generated.
+\newline 
+By adding the following two lines to your configuration (e.g. 
+\latex latex 
+
+\backslash begin{tt}./mix.cfg
+\backslash end{tt}
+\latex default 
+), delta mode will be the default:
+\newline 
+
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}MIXCFG output.generate.delta 1
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash begin{tt}MIXCFG output.delta sort,remove
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\newline 
+See the configuration option description for more details.
+\newline 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{10mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}-nodelta
+\backslash end{tt}
+\latex default 
+ switches delta mode off, then.
+\newline 
+
+\layout Subsubsection
+
+Imtermediate Excel Sheet
+\layout Standard
+
+Format of intermediate xls sheet will be kept as is as long as the number
+ and order of columns is unchanged.
+\newline 
+MIX saves three old versions of the generated 
+\latex latex 
+
+\backslash begin{tt}HIER
+\backslash end{tt}
+\latex default 
+ and 
+\latex latex 
+
+\backslash begin{tt}CONN
+\backslash end{tt}
+\latex default 
+ sheets.
+ The worksheets names are rotated by a trailing 
+\latex latex 
+
+\backslash begin{tt}
+\backslash _
+\backslash end{tt}
+\latex default 
+ and number.
+\layout Subsubsection
+
+Output Redirection
+\layout Standard
+
+MIX writes all output into the current working directory.
+ By using the
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}-dir DIRECTORY
+\backslash end{tt}
+\latex default 
+
+\newline 
+option, you can set the output directory for all intermediate, internal
+ and HDL files to 
+\latex latex 
+
+\backslash begin{tt}DIRECTORY
+\backslash end{tt}
+\latex default 
+.
+ Absolute path names defined by other options (e.g.
+ -out) are not changed, though.
+ If 
+\latex latex 
+
+\backslash begin{tt}DIRECTORY
+\backslash end{tt}
+\latex default 
+ does not exist it will be created.
+ To have separate output directories, use the 
+\latex latex 
+
+\backslash begin{tt}mix.cfg
+\backslash end{tt}
+\latex default 
+ file:
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}MIXCFG output.path HDLDIRS
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}MIXCFG internal.path MIXINTERNAL
+\backslash end{tt}
+\latex default 
+
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}MIXCFG intermediate MIXINTERMEDIATE
+\backslash end{tt}
+\latex default 
+
+\newline 
+writes internal, intermediate and HDL files to the given pathes.
+ All directories have to exist and will not be created.
+\layout Section
+
+Alarm clock example
+\layout Subsection
+
+Core logic
+\layout Subsection
+
+IO logic
+\layout Section
+
+Other examples
+\layout Section
+
+Known Bugs and limitations
+\layout Standard
+
+MS-Win/UNIX end-of-line issue: Some EDA tools are not able to cope with
+ the
+\newline 
+different end-of-line (CR vs LF/CR) of UNIX and MS-Windows.
+ Use:
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}
+\backslash $ module load freeware; recode "pc..lat1" *.vhd
+\backslash end{tt}
+\latex default 
+
+\newline 
+or (in MIX's Base directory):
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}
+\backslash $ dos2unix.pl <filename>
+\backslash end{tt}
+\latex default 
+
+\newline 
+for Dos to Unix convertion and:
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+
+\latex latex 
+
+\backslash begin{tt}
+\backslash $ unix2dos.pl <filename>
+\backslash end{tt}
+\latex default 
+
+\newline 
+for Unix to Dos convertion.
+\layout Section
+
+Issue tracking: CADNET - Issue tracking - CAD Software - MIX
+\layout Standard
+
+If you find unexpected or buggy behavior, please issue a trouble ticket.
+ Don't forget to add a short description.
+ The test case should contain all source files and also log files, the exact
+ command line switches and configuration files applied.
+\newline 
+
+\latex latex 
+
+\backslash begin{it}Please provide a comprehensive description of issues found including all required input data and command line switch to allow fast debugging and fixing.
+\backslash end{it}
+\latex default 
+
+\layout Section
+
+Links
+\layout Subsection
+
+MIX paper and documentation
+\layout Standard
+
+EDP_2003_final_030331.pdf
+\newline 
+MIX_Specification.xls (see 
+\begin_inset Formula \( \backslash\[\backslash\(Galaxy\)\backslash\(Development\)\backslash\(PROJECTS\)\backslash\(MIX)\newline
+MIX\_Intro.ppt (see \)\backslash\]\backslash\)
+\end_inset 
+
+Galaxy
+\begin_inset Formula \( \backslash\)
+\end_inset 
+
+Development
+\begin_inset Formula \( \backslash\)
+\end_inset 
+
+PROJECTS
+\begin_inset Formula \( \backslash\)
+\end_inset 
+
+MIX
+\newline 
+
+\layout Subsection
+
+Micronas internal
+\layout Standard
+
+Micronas HDL coding guidelines.pdf
+\layout Subsection
+
+Others
+\layout Subsection
+
+Resources
+\layout Standard
+
+
+\latex latex 
+
+\backslash hspace*{10mm}
+\latex default 
+Downloads for:
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+- IO Examples
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+- Standard bus examples
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+- NAND Tree
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+- BS example
+\newline 
+
+\latex latex 
+
+\backslash hspace*{20mm}
+\latex default 
+- miscellaneous useful macros
+\newline 
+
+\layout Subsection
+
+Used Software
+\layout Standard
+
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+- Perl
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+- Komodo
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+- Vim
+\newline 
+
+\latex latex 
+
+\backslash hspace*{15mm}
+\latex default 
+- WinCVS
+\newline 
+
+\layout Subsection
+
+Release Notes
+\layout Subsubsection
+
+20030716
+\layout Standard
+
+
+\latex latex 
+
+\backslash hspace*{10mm}
+\latex default 
+see doc
+\begin_inset Formula \( \backslash\)
+\end_inset 
+
+release_20030716.txt
+\layout Subsubsection
+
+20030709
+\layout Standard
+
+
+\latex latex 
+
+\backslash hspace*{10mm}
+\latex default 
+see doc
+\begin_inset Formula \( \backslash\)
+\end_inset 
+
+release_20030709.txt
+\layout Subsubsection
+
+20030605
+\layout Standard
+
+
+\latex latex 
+
+\backslash hspace*{10mm}
+\latex default 
+See doc
+\begin_inset Formula \( \backslash\)
+\end_inset 
+
+release_20030605.txt
+\the_end
