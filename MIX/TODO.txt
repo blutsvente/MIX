@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.15 2003/07/23 13:34:29 wig Exp $
+# $Id: TODO.txt,v 1.16 2003/07/29 15:48:03 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -18,6 +18,94 @@ Doku:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+
+ Probleme:
+- 20030729a/Bug: Konstanten Verilog
+
+    die Konstantendefinition in der Verilog Ausgabe von MIX ist
+    noch immer falsch:
+		`define mix_const_0_c 16`"0101100010110000"
+    sollte
+    `define mix_const_0_c 16`b0101100010110000
+    sein.
+
+    Req: mpallas
+    Prio: medium
+    
+- 20030728a/Bug:  1)pad_osc: xo port is in  
+
+    Req: mpit
+    Prio: high
+    Solution: any pad connection not known to MIX defaults to in. Please use
+
+- 20030728b/HOWTO: 2)pad werden als components deklariert und in die Configuration eingetragen
+
+    Req: mpit
+    Prio: high
+    
+
+Add:
+    %NCD% to ::use column
+
+- 20030728c/Bug: 3)nicht angeschlossene Eingänge ramd ?
+
+    Req: mpit
+    Prio: high
+    
+
+- 20030728d/Bug: 4)Bus-slicing
+
+    Req: mpit
+    Prio: high
+    
+
+- 20030725b/Req: Add comments to signal names ....
+
+Ich danke dir fuer die bisherige Hilfe, habe aber noch ein Problem
+Wie ist es moeglich ein Kommentare im VHDL-File anzuzeigen.
+Es waere sehr hilfreich Beschreibungen wie folgt darzustellen:
+
+z.B. IN EINER ENTITY
+
+  field_p0_i      :  IN STD_ULOGIC                  --field signal ('0' if A-field)   WIE KOMMT MAN ZUM KOMMENTAR
+
+    Req: Kropfitsch
+    Prio: medium
+
+    
+- 20030725a/Bug: config file names are not according standard ...
+    Might be bad setup, though.
+    
+WEITERS WUERDE ICH EMPFEHLEN DIE CONFIGURATION-DATEI ENTSPRECHEND DEN CODING GUIDLINES ZU BENENNEN
+
+<ENTITY-NAME>-<ARCHITECTURE-NAME>-<CONFIGURATION-NAME>-C,VHD
+
+    Req: Kropfitsch
+    Prio: Medium
+    Testcase: k:\projects\mix\examples\di_tnr
+    Fixed: wig20030728 (bug in filename creation ...)
+    Testcase: vgca_20030723 (hand test)
+    
+- 20030724b/Bug: dbo_o: generates busses with std_ulogic_vector with undefined width!
+
+			signal	dbo_15_do	: std_ulogic; 
+			signal	dbo_15_en	: std_ulogic
+			signal	dbo_o	: std_ulogic_vector; 
+			signal	dgo_10_di	: std_ulogic; 
+			signal	dgo_10_do	: std_ulogic; 
+			signal	dgo_10_en	: std_ulogic;
+
+    Possible solution: connect unused ports to "open"!
+    
+    Req: mpit
+    Prio: high
+    
+-20030724a/Req: Wire unused signals to "open".
+    If a connection was made (e.g. by a generator rule) and is not used furthermore,
+    wire this port to open!
+    
+    Req: mpit
+    Prio: low
 
 - 20030723a/Req: Handle DI different in IO sheet (e.g. if there is only one
         applicalbe ::muxopt, do not create bus but single bit signal.
@@ -41,6 +129,8 @@ Nach dem Patchen scheint nun zumindest Debussy zu kompilieren !
 
     Req: mpallas
     Prio: high
+    Fixed: wig20030726
+    Testcase: misc.
 
 - 20030715c/Req: IOP: consider actual ::muxopt columns used
     e.g. if less signals are to be connected, leave rest empty

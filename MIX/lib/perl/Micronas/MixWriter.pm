@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.22 $                                             |
+# | Revision:   $Revision: 1.23 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/07/23 13:34:40 $                                   |
+# | Date:       $Date: 2003/07/29 15:48:05 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.22 2003/07/23 13:34:40 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.23 2003/07/29 15:48:05 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,12 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.23  2003/07/29 15:48:05  wig
+# | Lots of tiny issued fixed:
+# | - Verilog constants
+# | - IO port
+# | - reconnect
+# |
 # | Revision 1.22  2003/07/23 13:34:40  wig
 # | Fixed minor bugs:
 # | - open(N) removed
@@ -149,7 +155,7 @@ use Micronas::MixUtils
             mix_utils_open mix_utils_print mix_utils_printf mix_utils_close
             replace_mac
             %EH );
-use Micronas::MixParser qw( %hierdb %conndb );
+use Micronas::MixParser qw( %hierdb %conndb add_conn );
 
 #
 # Prototypes
@@ -171,15 +177,16 @@ sub gen_concur_port($$$$$$$$;$$);
 sub mix_wr_get_interface ($$$$);
 sub _mix_wr_get_ivhdl ($$$);
 sub _mix_wr_get_iveri ($$$);
+sub mix_w_port_check ($$);
 
 # Internal variable
 
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.22 2003/07/23 13:34:40 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.23 2003/07/29 15:48:05 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.22 $';
+my $thisrevision   =      '$Revision: 1.23 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -600,13 +607,15 @@ sub compare_merge_entities ($$$$) {
 
         # type has to match
         if ( $rent->{$p}{'type'} ne $rnew->{$p}{'type'} ) {
-            logwarn( "WARNING: Entity port type mismatch for entity $ent ($inst), port $p!" );
+            logwarn( "WARNING: Entity port type mismatch for entity $ent ($inst), port $p: ".
+                     $rnew->{$p}{'type'} . " was " . $rent->{$p}{'type'} . "!" );
             $EH{'sum'}{'warnings'}++;
             $eflag = 0;
             next; #TODO: How should we handle that properly?
         # mode has to match
         } elsif ( $rent->{$p}{'mode'} ne $rnew->{$p}{'mode'} ) {
-            logwarn( "WARNING: Entity port mode mismatch for enitity $ent ($inst), port $p!" );
+            logwarn( "WARNING: Entity port mode mismatch for enitity $ent ($inst), port $p: " .
+                     $rnew->{$p}{'mode'} . " was " . $rent->{$p}{'mode'} . "!" );
             $EH{'sum'}{'warnings'}++;
             $eflag = 0;
             next;
@@ -708,7 +717,8 @@ sub _create_entity ($$) {
         my $sport = $ri->{$i};
 	
         unless( defined( $conndb{$i} ) ) {
-            logwarn("Illegal signal name $i referenced!");
+            logwarn("ERROR: Illegal signal name $i referenced!");
+            $EH{'sum'}{'errors'}++;
             next;
         }
 	
@@ -779,7 +789,8 @@ sub _create_entity ($$) {
 	    my $type = $conndb{$i}{'::type'};
 
 	    # If connecting single signals to a bus-port, make type match!
-	    # TODO SPECIAL trick ???? Check if that is really so clever ....
+	    #TODO SPECIAL trick ???? Check if that is really so clever ....
+	    #TODO Should be done by just any type ...
 	    if ( ( $type eq "std_logic" or
 		 $type eq "std_ulogic" ) and
 		 defined( $h ) and defined( $l ) and
@@ -790,10 +801,9 @@ sub _create_entity ($$) {
 
             # If we connect a single bit to to a bus, we strip of the _vector from
             # the type of the signal to get correct port type
-            if(
-                  not defined( $h ) and not defined( $l ) and
-                  $type =~ m,(std_.*)_vector,
-                ) {
+            #TODO: Expand to work for any type ...
+            if ( not defined( $h ) and not defined( $l ) and
+                  $type =~ m,(std_.*)_vector, ) {
 		$type = $1;
 		logtrc( "INFO", "autoreducing port type for signal $i to $type" );
             };
@@ -898,7 +908,7 @@ sub _create_entity ($$) {
 
                 #
                 # Expand port to std_ulogic_type if required ...
-                #
+                #TODO: Why here again? See above
 		if ( defined( $h ) and defined ( $l ) and ( $h != $l ) and $type =~ m,(std_u?logic)\s*$, ) {
                     if ( ( $type . "_vector" ) ne $res{$port}{'type'} ) {
                         logwarn( "INFO: Autoexpand port $port from $type to vector type!");
@@ -1236,7 +1246,7 @@ sub _mix_wr_get_ivhdl ($$$) {
 
     for my $p ( sort ( keys( %{$r_ent} ) ) ) {
 	    next if ( $p =~ m,^__,o ); # Skip internal data ...
-            next if ( $p =~ m,^-- NO, );
+            next if ( $p =~ m,^-- NO, ); # Skip internal data ...
 	    
 	    my $pdd = $r_ent->{$p};
 
@@ -1693,7 +1703,7 @@ sub port_map ($$$$$$) {
 	    }
 
 	    push( @map , print_conn_matrix( $p, $pf, $pt, $s, $sf, $st, $lang, \@cm ));
-	    # Remember if a port is got used ....
+	    # Remember if a port got used ....
 	    if ( store_conn_matrix( \%{$hierdb{$inst}{'::portbits'}}, $inst, $p, $pf, $pt, $s, \@cm ) ) {
                 #TODO: Do something against duplicate connections ...
 	    }
@@ -1776,6 +1786,7 @@ sub add_conn_matrix ($$$$) {
 # Remember that this port got already connected
 # Sets $hierdb{inst}{'::portbits'}{'port'} = 'A::' or 'E::' or 'F::foo:T::bar' or
 #    'B::01io000'
+#TODO: replace 1 by i,o,c,b,t,....
 #
 sub store_conn_matrix ($$$$$$$) {
     my $prev = shift;
@@ -1800,8 +1811,8 @@ sub store_conn_matrix ($$$$$$$) {
         if ( defined( $rcm->[0] ) ) {
             $usage = "A::";
         } else {
-            logwarn( "Warning: bad branch taken $instance, $signal. File bug report!" );
-            $EH{'sum'}{'warnings'}++;
+            logwarn( "ERROR: bad branch taken $instance, $signal. File bug report!" );
+            $EH{'sum'}{'errors'}++;
         }
     } elsif ( not ( $pf =~ m,^\d+$, and $pt =~ m,^\s*\d+\s*$, ) ) {
         $usage = "F::" . $pf . ":T::" . $pt;
@@ -1837,14 +1848,204 @@ sub store_conn_matrix ($$$$$$$) {
         return;
     } else {
         # Compare / add the previously connected bits with the new one's
-        if ( $prev->{$port} eq "A::" ) {
-            logwarn( "WARNING: Reconnecting port $port at instance $instance: $usage, A::!\n" );
+        if ( $prev->{$port} =~ m,^A::, ) {
+            logwarn( "WARNING: Reconnecting port $port at instance $instance: $usage A::!" );
             $EH{'sum'}{'warnings'}++;
             return;
         } else {
-            logwarn( "WARNING: Pot. conflict with reconnection of port $port at instance $instance: $usage, $prev->{$port}\n" );
+            my ( $conflict, $result ) = mix_w_port_check($usage, $prev->{$port});
+            if ( $conflict == "1" ) {
+                logwarn( "WARNING: Pot. conflict with reconnection of port $port at instance $instance: $usage was $prev->{$port}!" );
+                $prev->{$port} = $result;
+                $EH{'sum'}{'warnings'}++;
+            } elsif ( $conflict == "-1" ) {
+                logwarn( "ERROR: Mode conflict with reconnection of port $port at instance $instance: $usage was $prev->{$port}!" );
+                $prev->{$port} = $result;
+                $EH{'sum'}{'errors'}++;
+            } else {
+                # O.K., got s.th. overlapping ...
+                $prev->{$port} = $result;
+            }
         # TODO: Check that better ...
         }
+    }
+}
+
+#
+# Check if input vector can be overlayed without duplicates ..
+# Returns:
+#  flag -> 0 o.k. (no overlay)
+#           -1  error (bad overlay mode)
+#           1 collision, but matching mode
+#
+sub mix_w_port_check ($$) {
+    my $np = shift;
+    my $op = shift;
+
+    my $m = "1"; # Default: unknown mode, just a one for "got connection"
+    my $w = 0;
+    my $mo = "1";
+    my $wo = 0;
+    my $mn = "1";
+    my $wn = "0";
+
+    if ( $np eq $op ) { # The same -> easy, isn't it
+        return( "1", $np );
+    }
+
+    if ( $np =~ m,^A::(\w*), ) {
+        # collision! But there is still a chance to get a match
+        $mn = ( $1 ) ? $1 : "1";
+        $wn = "ALL";
+    }
+
+    if ( $op =~ m,^A::(\w*), ) {
+        # collision! But there is still a chance to get a match
+        $mo = (  $1 ) ? $1 : "1"; 
+        $wo = "ALL";
+    }
+
+    # Both have a A::, but mode differs ...
+    if ( $wo eq "ALL" and $wn eq "ALL" ) {
+        # modes differ!!
+        return( "-1", "A::e" );
+    }
+
+    if ( $np =~ m,^F::, or $op =~ m,^F::, ) {
+        logwarn( "WARNING: Please check overlay of port $np, was $op!" );
+        $EH{'sum'}{'warnings'}++;
+        return( "1", $np . $op );
+    }
+
+    my $bitn = "";
+    if ( $np =~ m,^B::(\w+), ) {
+        $wn = length( $1 );
+        $bitn = $1;
+    }
+    my $bito = "";
+    if ( $op =~ m,^B::(\w+), ) {
+        $wo = length( $1 );
+        $bito = $1;
+    }
+
+    # We had a A:: before?
+    if ( $wo eq "ALL" and $wn > 0 ) {
+        # old was A::, new is bit vector ...
+        my %mod = ();
+        for my $l ( split( '', $bitn ) ) {
+            $mod{$l} = 1 if $l;
+        }
+        # delete( $mod{'0'} ); # Get rid of '0'
+        $mn = join( '', keys( %mod ) );
+        if ( length( $mn ) > 1 ) {
+            logwarn( "ERROR: mixed modes in port!!" );
+            $EH{'sum'}{'warnings'}++;
+            $mn = "1";
+        } elsif ( $mn ne $mo ) {
+            logwarn( "ERROR: mode mismatch in port join!" );
+            $EH{'sum'}{'warnings'}++;
+            $mn = "1";
+        } else {
+            return( "1", "A::" . $mn );
+        }
+        return( "-1", "A::" . $mn );
+    }
+
+   # We get a A:: now?
+    if ( $wn eq "ALL" and $wo > 0 ) {
+        # old was A::, new is bit vector ...
+        my %mod = ();
+        for my $l ( split( '', $bito ) ) {
+            $mod{$l} = 1 if $l;
+        }
+        # delete( $mod{'0'} ); # Get rid of '0'
+        $mo = join( '', keys( %mod ) );
+        if ( length( $mo ) > 1 ) {
+            logwarn( "ERROR: mixed modes in port!!" );
+            $EH{'sum'}{'warnings'}++;
+            $mo = "1";
+        } elsif ( $mn ne $mo ) {
+            logwarn( "ERROR: mode mismatch in port join!" );
+            $EH{'sum'}{'warnings'}++;
+            $mo = "1";
+        } else {
+            return( "1", "A::" . $mo );
+        }
+        return( "-1", "A::" . $mo );
+    }
+
+    # O.k., now remains B::.... vs B::....
+    $w = $wo;
+    if ( $wn ne $wo ) {
+        logwarn( "ERROR: port width mismatch $wn was $wo" );
+        $EH{'sum'}{'errors'}++;
+        # Attach some 0 in front
+        if ( $wn > $wo ) {
+            $w = $wn;
+            $bito = "0" x ( $wn - $wo ) . $bito;
+        } else {
+            $w = $wo;
+            $bitn = "0" x ( $wo - $wn ) . $bitn;
+        }
+    }
+
+    my @bo = split( '', $bito );
+    my @bn = split( '', $bitn );
+
+    # Compare bit by bit:
+    #  O   N
+    #  0   0   ->  0
+    #  0   X  ->  X
+    #  X   0   -> X
+    #  X  X    -> X, collision!
+    #  X  Y   -> X, bad collision!
+    # and make sure that only one mode appears ...
+    # result goes into $bit
+    my $res = "B::";
+    my $col = 0;
+    my $badcol = 0;
+    my $tm = 0;
+    my $hasgap = 0;
+    for my $n ( 0..($w - 1) ) {
+        if ( $bo[$n] eq "0" ) {
+            $res .= $bn[$n]; # Covers case 1 and 2
+            if ( $bn[$n] and $tm and $bn[$n] ne $tm ) {
+                logwarn( "ERROR: port internal mode change: $bn[$n] was $tm" );
+                $EH{'sum'}{'errors'}++;
+            }
+            $hasgap = 1 unless ( $bn[$n] );
+            $tm = $bn[$n] if ( $bn[$n] );
+        } elsif ( $bn[$n] eq "0" ) {
+            $res .= $bo[$n]; # Covers case 3
+            if ( $bo[$n] and $tm and $bo[$n] ne $tm ) {
+                logwarn( "ERROR: port internal mode change: $bo[$n] was $tm" );
+                $EH{'sum'}{'errors'}++;
+            }
+            $hasgap = 1 unless ( $bo[$n] );
+            $tm = $bo[$n] if ( $bo[$n] );
+        } elsif ( $bn[$n] eq $bo[$n] ) {
+            if ( $tm and $tm ne $bo[$n] ) {
+                logwarn( "ERROR: port internal mode change: $bo[$n] was $tm" );
+                $EH{'sum'}{'errors'}++;
+            }
+            $res .= $bn[$n]; # case 4: matching mode
+            $col = 1;
+            $tm = $bn[$n];
+        } else {
+            $res .= $bo[$n];
+            $badcol = 1;
+        }
+    }
+    
+    # Final check: if B::xxxxxx does not have a 0 in it -> replace by A::x
+    unless( $hasgap ) {
+        $res = "A::" . $tm;
+    }
+    
+    if ( $badcol ) {
+        return( "-1", $res );
+    } else {
+        return ( $col, $res );
     }
 }
 
@@ -2516,17 +2717,25 @@ sub _write_constant ($$$;$) {
             if ( $3 eq "" ) {
                 $value = $1 . " " . $4;
             }
+            if ( $lang =~ m,^veri,io ) {
+                logwarn( "WARNING: Cannot handle time constant $value in verilog mode!" );
+                $EH{'sum'}{'warnings'}++;
+            }
             #TODO: Check it type is time ...
         } elsif ( $value eq "0" or $value eq "1" ) {
             # Bind a vector to 0 or 1
             if ( $s->{'::type'} =~ m,_vector,io ) {
                 if ( $lang =~ m,^veri,io ) {
-                    $value = "'" . $value . "'";
+                    $value =  "1`b" . $value; # Gives 1`b0 or 1`b1 ...
                 } else {
                     $value = "( others => '$value' )"; ##VHDL, only
                 }
             } else {
-                $value = "'" . $value . "'"; # Put ' around bit vectors, VHDL
+                if ( $lang =~ m,^veri,io ) {
+                    $value =  "1`b" . $value; # Gives 1`b0 or 1`b1 ...
+                } else {               
+                    $value = "'" . $value . "'"; # Put ' around bit vectors, VHDL
+                }
             }
         } elsif (  ( $value =~ m,^\s*0,io or
                     $value =~ m,^\s*[_\d+]+\s*$,io or
@@ -2540,43 +2749,55 @@ sub _write_constant ($$$;$) {
                 $comm = " " . $tcom . " __I_ConvConstant: " . $value;
                 my $w = $s->{'::high'} - $s->{'::low'} + 1; #Will complain if high/low not
                                 # defined or not digits!
-                if ( $value =~ m,^\s*(\d+)#([_a-f\d]+)#,io ) {
-                    if ( $1 == 16 ) {
-                        $value = "0x" . $2;
-                        $value = hex( $value );
-                    } elsif ( $1 == 8 ) {
-                        $value = "0" . $2;
-                        $value = oct( $value );
-                    } elsif ( $1 == 2 ) {
-                        $value = oct( "0b" . $2 );
-                    } else {
-                        logwarn( "WARNING: Cannot cope with base $1 for constant $value!" );
-                        $w = "";
+                    if ( $value =~ m,^\s*(\d+)#([_a-f\d]+)#,io ) {
+                        if ( $1 == 16 ) {
+                            $value = "0x" . $2;
+                            $value = hex( $value );
+                        } elsif ( $1 == 8 ) {
+                            $value = "0" . $2;
+                            $value = oct( $value );
+                        } elsif ( $1 == 2 ) {
+                            $value = oct( "0b" . $2 );
+                        } else {
+                            logwarn( "WARNING: Cannot cope with base $1 for constant $value!" );
+                            $w = "";
+                        }
                     }
-                }
 
                 if ( $value =~ m,^\s*0, ) {
                     $value = oct( $value );
                 }
                 if ( $w ) {
-                    $value = sprintf( "\"%0" . $w . "b\"", $value );
+                    $value = sprintf( "%0" . $w . "b", $value );
                     if ( length( $value ) > $w +2 ) {
                         logwarn( "WARNING: Constant value $comm to large for signal $s->{'::name'} of $w bits!" );
                         $comm = " " . $tcom . " __E_VECTOR_WIDTH " . $comm;
                     }
                     $width = $w; # Save width ....
-                    $value = $w . "`" . $value if ( $lang =~ m,^veri,io ); ##TODO: Streamline that !!
+                    if ( $lang =~ m,^veri,io ) {
+                        $value = $w . "`b" . $value; ##TODO: Streamline that !!
+                    } else {
+                        $value = '"' . $value . '"';
+                    }
                 }
             
         } elsif ( $value =~ m,^\s*0x([0-9a-f]),io ) {
             # Convert 0xHEXV to 16#HEXV#
             $comm = " " . $tcom . " __I_ConvConstant2:" . $value;
-            $value =~ s,^\s*0x,16#,;
-            $value =~ s,\s*$,#,;
+                if ( $lang =~ m,^veri,io ) {
+                    $value =~ s,^\s*0x,`h,;
+                } else {
+                    $value =~ s,^\s*0x,16#,;
+                    $value =~ s,\s*$,#,;
+                }
 	} elsif ( $type =~ m,_vector,io ) {
             # Replace ' -> "
             $comm = " " . $tcom . " __I_VectorConv";
             $value =~ s,',",go;
+            if ( $lang =~ m,^veri,io) {
+                $value =~ s,['"],,go;
+                $value = "`d" . $value;
+            }
 	} else {
             $comm = " " . $tcom . " __I_ConstNoconv";
 	}
@@ -2584,6 +2805,7 @@ sub _write_constant ($$$;$) {
         #!wig20030403: Use intermediate signal ...
         #!org: $t = "\t\t\tconstant $s->{'::name'} : $type$dt := $value;$comm\n";
         if ( $lang =~ m,^veri,io ) {
+            $value =~ s,['"],,g; # Quick hack ....
             $def = "\t\t`define " . $s->{'::name'} . "_c " . $value . " " . $comm . "\n";
             $t .= "\t\t\twire\t" . $dt . "\t" . $s->{'::name'} . ";\n";
             $sat = "\t\t\tassign " . $s->{'::name'} . " = `" . $s->{'::name'} . "_c;\n";
@@ -2889,10 +3111,19 @@ sub count_load_driver ($$$$) {
     if ( $entities{$enty}{"__LEAF__"} != 0 ) {
         for my $s ( keys( %$rinsig )  ) {
             unless( exists( $rinsig->{$s}{'load'} ) ) {
-                if ( $EH{'output'}{'warnings'} =~ m/load/io ) {
-                    logwarn( "Warning: Signal $s does not have a load in instance $inst!" );
+                
+                if ( $EH{'check'}{'signal'} =~ m,open, ) {
+                    # Add connect it to "open" here ....
+                    add_conn( 
+                        ( "::in" => "$inst/$s", "::name" => "%OPEN%" )
+                    );
+                    logtrc( "INFO:4", "Wiring signal $s to open, had no load in instance $inst!" );
                 } else {
-                    logtrc( "INFO:4", "Signal $s does not have a load in instance $inst!" );
+                    if ( $EH{'output'}{'warnings'} =~ m/load/io ) {
+                        logwarn( "Warning: Signal $s does not have a load in instance $inst!" );
+                    } else {
+                        logtrc( "INFO:4", "Signal $s does not have a load in instance $inst!" );
+                    }
                 }
                 $rinsig->{$s}{'load'} = 0;
                 $conndb{$s}{'::comment'} .= "__W_MISSING_LOAD/$inst,";
@@ -3026,9 +3257,10 @@ sub write_configuration () {
                         $e_fn =~ s,_,-,og;
                     } elsif ( $EH{'output'}{'filename'} =~ m,useminus,i ) {
                         # Only trailing part gets changed ...
+                        # Stip of entity name, replace _ by - and attach ...
                         if ( $ce =~ s,^\Q$e_fn\E,, ) { # entity name in configurartion
                             $ce =~ s,_,-,og; # Replace _ with - ... Micronas Design Guideline
-                            $ce .= $e_fn . $ce;  
+                            $ce = $e_fn . $ce;  
                         } else {
                             $ce =~ s,_,-,og; # Replace _ with - ... Micronas Design Guideline
                         }
@@ -3217,7 +3449,7 @@ sub use_lib ($$) {
             foreach my $u ( @u ) {
                 # libs may be seperated by , and/or \s
                 # $u := SEL:library.component ...
-                next if ( $u =~ m,(%NDC%|%NO_COMPONENT_DECLARATION|NO_COMP|__NOCOMPDEC__),o ); 
+                next if ( $u =~ m,(%NCD%|%NO_COMPONENT_DECLARATION|NO_COMP|__NOCOMPDEC__),o ); 
                 my $sel = lc( $EH{'output'}{'generate'}{'use'} );
                 my $pack = '';
                 my $lib = '';

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.22 $                                             |
+# | Revision:   $Revision: 1.23 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/07/23 13:34:39 $                                   |
+# | Date:       $Date: 2003/07/29 15:48:05 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.22 2003/07/23 13:34:39 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.23 2003/07/29 15:48:05 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,10 +31,11 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
-# | Revision 1.22  2003/07/23 13:34:39  wig
-# | Fixed minor bugs:
-# | - open(N) removed
-# | - overlay bitvector fixed
+# | Revision 1.23  2003/07/29 15:48:05  wig
+# | Lots of tiny issued fixed:
+# | - Verilog constants
+# | - IO port
+# | - reconnect
 # |
 # | Revision 1.21  2003/07/17 12:10:43  wig
 # | fixed minor bugs:
@@ -156,6 +157,7 @@ use lib "$main::dir/../lib/perl";
 #TODO: Which "use lib path" if $0 was found in PATH?
 
 use File::Basename;
+use File::Copy;
 use IO::File;
 use Getopt::Long qw(GetOptions);
 
@@ -164,6 +166,8 @@ use Log::Agent;
 use Log::Agent::Priorities qw(:LEVELS);
 
 use Storable;
+# use Micronas::MixParser qw( mix_parser_importhdl );
+
 # use Data::Dumper; # Will be evaled if -adump option is on
 # use Text::Diff;  # Will be eval'ed down there if -delta option is given!
 # use Win32::OLE; # etc.# Will be eval'd down there if excel comes into play
@@ -204,11 +208,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.22 2003/07/23 13:34:39 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.23 2003/07/29 15:48:05 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.22 $';
+my $thisrevision   =      '$Revision: 1.23 $';
 
-# | Revision:   $Revision: 1.22 $   
+# | Revision:   $Revision: 1.23 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -397,7 +401,7 @@ sub mix_getopt_header(@) {
 
     #
     # -listconf
-    # Dump %EH ...
+    # Dump %EH ... and stop
     #
     if ( $OPTVAL{'listconf'} ) {
 	mix_list_conf();
@@ -434,6 +438,19 @@ sub mix_getopt_header(@) {
 	}
     }
 
+    #
+    # Create a starting point ...
+    #
+    if ( $OPTVAL{init} ) {
+	mix_utils_init_file("init");
+    }
+    #
+    # Import some HDL files
+    #
+    if ( $OPTVAL{import} ) {
+	mix_utils_init_file("import");
+    }
+
     # Print banner
     if ($OPTVAL{help}) {
         if (defined($OPTVAL{verbose})) {
@@ -446,6 +463,20 @@ sub mix_getopt_header(@) {
     } elsif (! defined($OPTVAL{quiet}) and ! defined($OPTVAL{nobanner})) {
         mix_banner();
     }
+
+    #
+    # Create a starting point ...
+    #
+    if ( $OPTVAL{init} ) {
+	mix_utils_init_file("init");
+    }
+    #
+    # Import some HDL files
+    #
+    if ( $OPTVAL{import} ) {
+	mix_utils_init_file("import");
+    }
+
 }
 
 ##############################################################################
@@ -584,14 +615,28 @@ sub mix_banner(;$)
     $FLOW_VERSION = "Release $FLOW_VERSION" if $FLOW_VERSION;
     $FLOW_VERSION = "Release $FLOW_VERSION" if $FLOW_VERSION;
 
+    #!wig20030724: add versions of included modules:
+    # NON portable !!!
+    my $MOD_VERSION = "";
+    $MOD_VERSION .= ( "\n#####   MixUtils    " . $Micronas::MixUtils::VERSION )
+	if ( defined( $Micronas::MixUtils::VERSION ) );
+    $MOD_VERSION .= ( "\n#####   MixParser   " . $Micronas::MixParser::VERSION )
+	if ( defined( $Micronas::MixParser::VERSION ) );
+    $MOD_VERSION .= ( "\n#####   MixWriter   " . $Micronas::MixWriter::VERSION )
+	if ( defined( $Micronas::MixWriter::VERSION ) );
+    $MOD_VERSION .= ( "\n#####   MixChecker  " . $Micronas::MixChecker::VERSION )
+	if ( defined( $Micronas::MixChecker::VERSION ) );
+    $MOD_VERSION .= ( "\n#####   MixIOParser " . $Micronas::MixIOParser::VERSION )
+	if ( defined( $Micronas::MixIOParser::VERSION ) );
+
     select(STDOUT);
     $| = 1;                     # unbuffer STDOUT
 
     print <<"EOF";
 #######################################################################
-##### $NAME (Revision $VERSION)
+##### $NAME ($VERSION)
 #####
-##### $FLOW $FLOW_VERSION
+##### $FLOW $FLOW_VERSION $MOD_VERSION
 #######################################################################
 EOF
 ##### Copyright(c) Micronas GmbH 2002 ALL RIGHTS RESERVED
@@ -752,6 +797,12 @@ $ex = undef; # Container for OLE server
 				    # comment: not remove all comments before compare
 				    # remove: remove empyt diff files
     },
+    'input' => {
+	'ext' =>	{
+	    'excel' =>	"xls",
+	    'csv'   =>	"csv",
+	},
+    },
     'internal' => {
 	'path' => ".",
 	'order' => 'input',		# Field order := as in input or predefined
@@ -786,7 +837,8 @@ $ex = undef; # Container for OLE server
 	'defs' => '',  # 'inst,conn',    # make sure elements are only defined once:
 		    # possilbe values are: inst,conn
 	'signal' => 'load,driver,check',  # reads: checks if all signals have appr. loads
-						    # and drivers
+						# and drivers. If "open" is in this list, will wire unused
+						# signals to open.
 	'inst' => 'nomulti',	# check and mark multiple instantiations
     },
     'postfix' => {
@@ -837,7 +889,8 @@ $ex = undef; # Container for OLE server
 	'auto' => 'bus', 	# Generate busses if required autimatically ...
 	'bus' => '_vector', # auto -> extend signals by _vector if required ....
 	'defaultdir'	=> 'in', 	# Default signal direction to iocell (seen towards chip core!!)
-	'in'	=> 'do,en,pu,pd,xout',	# List of inwards signals (towards chip core!!)	
+	'in'	=> 'do,en,pu,pd,xout',	# List of inwards signals (towards chip core!!)
+	'inout' => '__NOINOUT__',	# List of inout ports ...
 	'out'	=> 'di,xin',		# List of outwards ports (towards chip core!!)
 					# di is a chip input, driven by the iocell towards the core.
 	'select' => 'onehot,auto', # Define select lines: onehot vs. bus
@@ -870,8 +923,8 @@ $ex = undef; # Container for OLE server
 	    #								Defaultvalue
 	    #									PresetOrder
 	    #                                  0      1      2	3       4
-	    '::ign' 		=> [ qw(	0	0	1	%NULL% 	1 ) ],
-	    '::gen'		=> [ qw(	0	0	1	%NULL% 	2 ) ],
+	    '::ign' 		=> [ qw(	0	0	1	%EMPTY% 	1 ) ],
+	    '::gen'		=> [ qw(	0	0	1	%EMPTY% 	2 ) ],
 	    '::bundle'	=> [ qw(	1	0	1	WARNING_NOT_SET	3 ) ],
 	    '::class'		=> [ qw(	1	0	1	WARNING_NOT_SET	4 )],
 	    '::clock'		=> [ qw(	1	0	1	WARNING_NOT_SET	5 )],
@@ -882,10 +935,10 @@ $ex = undef; # Container for OLE server
 	    '::name'		=> [ qw(	0	0	1	ERROR_NO_NAME	10 )],
 	    '::shortname'	=> [ qw(	0	0	0	%EMPTY% 	11 )],
 	    '::out'		=> [ qw(	1	0	0	%SPACE% 	12 )],
-	    '::in'		=> [ qw(	1	0	0	%NULL% 	13 )],
-	    '::descr'		=> [ qw(	1	0	0	%NULL% 	14 )],
+	    '::in'		=> [ qw(	1	0	0	%SPACE% 	13 )],
+	    '::descr'		=> [ qw(	1	0	0	%EMPTY% 	14 )],
 	    '::comment'	=> [ qw(	1	1	2	%EMPTY% 	15 )],
-	    '::default'	=> [ qw(	1	1	0	%NULL% 	0 )],
+	    '::default'	=> [ qw(	1	1	0	%EMPTY% 	0 )],
 	    "::debug"	=> [ qw(	1	0	0	%NULL%	0 )],
 	    '::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
 	    'nr'		=> 16, # Number of next field to print
@@ -907,8 +960,8 @@ $ex = undef; # Container for OLE server
 	    #								Defaultvalue
 	    #									PrintOrder
 	    #                                  0      1       2	3       4
-	    '::ign' 		=> [ qw(	0	0	1	%NULL% 	1 ) ],
-	    '::gen'		=> [ qw(	0	0	1	%NULL% 	2 ) ],		
+	    '::ign' 		=> [ qw(	0	0	1	%EMPTY% 	1 ) ],
+	    '::gen'		=> [ qw(	0	0	1	%EMPTY% 	2 ) ],		
 	    '::variants'	=> [ qw(	1	0	0	Default	3 )],
 	    '::parent'	=> [ qw(	1	0	1	W_NO_PARENT	4 )],
 	    '::inst'		=> [ qw(	0	0	1	W_NO_INST	5 )],
@@ -919,8 +972,8 @@ $ex = undef; # Container for OLE server
 	    '::use'		=> [ qw(	1	0	0	%EMPTY%		10  )],
 	    "::comment"	=> [ qw(	1	0	2	%EMPTY%	12 )],
 	    "::shortname"	=> [ qw(	0	0	0	%EMPTY%	6 )],
-	    "::default"	=> [ qw(	1	1	0	%NULL%	0 )],
-	    "::hierachy"	=> [ qw(	1	0	0	%NULL%	0 )],
+	    "::default"	=> [ qw(	1	1	0	%EMPTY%	0 )],
+	    "::hierachy"	=> [ qw(	1	0	0	%EMPTY%	0 )],
 	    "::debug"	=> [ qw(	1	0	0	%NULL%	0 )],
 	    '::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
 	    'nr'		=> 13,  # Number of next field to print
@@ -944,7 +997,7 @@ $ex = undef; # Container for OLE server
 	    #								Defaultvalue
 	    #									PrintOrder
 	    #                                  0      1       2	3       4
-	    '::ign' 		=> [ qw(	0	0	1	%NULL% 	1 ) ],
+	    '::ign' 		=> [ qw(	0	0	1	%EMPTY% 	1 ) ],
 	    '::class'		=> [ qw(	1	0	1	WARNING_NOT_SET	2 )],
 	    '::ispin'		=> [ qw(	0	0	1	%EMPTY%	3 ) ],
 	    '::pin'		=> [ qw(	0	0	1	WARNING_PIN_NR	4  )],
@@ -1015,6 +1068,7 @@ $ex = undef; # Container for OLE server
 									    # get configurations for this instance
 	    "%NO_COMPONENT_DECLARATION%"	=>	"__NOCOMPDEC__",
 	    "%NO_COMP%"	=>	"__NOCOMPDEC__", # If this keyword is found in ::use -> no component decl ..
+	    "%NCD%"		=>	"__NOCOMPDEC__", # dito.
 	    "%VHDL_USE_DEFAULT%"	=>
 		"library IEEE;\nuse IEEE.std_logic_1164.all;\n",
 		# "Library IEEE;\nUse IEEE.std_logic_1164.all;\nUse IEEE.std_logic_arith.all;",
@@ -1041,6 +1095,11 @@ $ex = undef; # Container for OLE server
 	    "%TOP%"		=> "__TOP__", # Meta instance, TOP cell
 	    "%PARAMETER%"	=> "__PARAMETER__",	# Meta instance: stores paramter
 	    "%GENERIC%"		=> "__GENERIC__", # Meta instance, stores generic default
+	    "%IMPORT%"		=> "__IMPORT__", # Meta instance for import mode
+	    "%IMPORT_I%"	=> "I", # Meta instance for import mode
+	    "%IMPORT_O%"	=> "O", # Meta instance for import mode
+	    "%IMPORT_CLK%"	=> "__IMPORT_CLK__", # import mode, default clk
+	    "%IMPORT_BUNDLE%" => "__IMPORT_BUNDLE__",
 	    "%BUFFER%"		=> "buffer",
 	    '%H%'		=> '$',			# RCS keyword saver ...
     },
@@ -1434,7 +1493,7 @@ sub init_ole () {
           return $ex;  # Return OLE ExCEL object ....
 	}
     } else {
-    logdie "Error: Cannot fire up OLE server: $!\n";
+    logdie "FATAL: Cannot fire up OLE server: $!\n";
     return undef;
   }
 }
@@ -1789,7 +1848,8 @@ sub select_variant ($) {
     my $r_data = shift;
 
     unless ( defined $r_data ) {
-	    logdie("select_variant called with bad argument!");
+	    logwarn("FATAL: select_variant called with bad argument!");
+	    exit 1;
     }
 
     for my $i ( 0..$#$r_data ) {
@@ -1857,27 +1917,27 @@ sub convert_in ($$) {
     my $hflag = 0;
     my $required = $EH{$kind}{'field'}; # Shortcut into EH->fields
 
-    for my $i ( 0..$#{$r_data} ) { # Read each row
-	my @r = @{$r_data->[$i]};
-	@r = map { defined( $_ ) ? $_ : "" } @r ;		#Fill up undefined fields??
-	my $all = join( '', @r );
+    for my $i ( @$r_data ) { # Read each row
+	# my @r = @{$r_data->[$i]};
+	$i = [ map { defined( $_ ) ? $_ : "" } @$i ];		#Fill up undefined fields??
+	my $all = join( '', @$i );
 	next if ( $all =~ m/^\s*$/o ); 			#If a line is complete empty, skip it
 	next if ( $all =~ m,^\s*(#|//), );			#If line starts with comment, skip it
 
 	unless ( $hflag ) { # We are still looking for our ::MARKER header line
 	    next unless ( $all =~ m/^::/ );			#Still no header ...
-	    %order = parse_header( $kind, \$EH{$kind}, @r );		#Check header, return field number to name
+	    %order = parse_header( $kind, \$EH{$kind}, @$i );		#Check header, return field number to name
 	    $hflag = 1;
 	    next;
 	}
 	# Skip ::ign marked with # or // comments, again ...
-	next if ( defined( $order{'::ign'}) and $r[$order{'::ign'}] =~ m,^(#|//), );
+	next if ( defined( $order{'::ign'}) and $i->[$order{'::ign'}] =~ m,^(#|//), );
 
 	# Copy rest to an 'another' array ....
 	my $n = $#d + 1;
 	foreach my $ii ( keys( %order ) ) {
-	    if ( defined( $r[$order{$ii}] ) ) {
-		$d[$n]{$ii} = $r[$order{$ii}];
+	    if ( defined( $i->[$order{$ii}] ) ) {
+		$d[$n]{$ii} = $i->[$order{$ii}];
 	    } else {
 		# Could be "semi-required" field
 		if ( $required->{$ii}[2] > 1 ) {
@@ -1919,13 +1979,14 @@ sub parse_header($$@){
     my @row = @_;
 
     unless( defined $kind and defined $templ and $#row >= 0 ) {
-	logdie "ERROR: parse header started with missing arguments!\n";
+	logwarn( "ERROR: parse header started with missing arguments!\n" );
+	exit 1;
     }
     my %rowh = ();
-    for my $i ( 0..$#row ) {
+    for my $i ( 0 .. ( scalar( @row ) - 1 ) ) {
 	unless ( $row[$i] )  {
-	    logwarn("WARNING: Empty header in column $i, type $kind, skipping!");
-	    $EH{'sum'}{'warnings'}++;
+	    logtrc("INFO:4" , "WARNING: Empty header in column $i, sheet-type $kind, skipping!");
+	    # $EH{'sum'}{'warnings'}++;
 	    push( @{$rowh{"::skip"}}, $i);
 	    $row[$i] = "::skip";
 	    next;
@@ -1958,8 +2019,8 @@ sub parse_header($$@){
 		}
 	    }
 	    if ( defined( $rowh{$i} ) and $#{$rowh{$i}} >= 1 and $$templ->{'field'}{$i}[1] <= 0 ) {
-		    logwarn("multiple input header not allowed for $i!");
-		    # exit;
+		logwarn("WARNING: Multiple input header not allowed for $i!");
+		$EH{'sum'}{'warnings'}++;
 	    }
     }
 
@@ -2115,7 +2176,7 @@ sub open_excel($$$){
 
     my $book;    
     my $ro = 1;
-    if ( $warn_flag =~ m,write,io ) {
+    if ( $warn_flag =~ m,write,io or $OPTVAL{'import'} or $OPTVAL{'init'} ) {
 	$ro = 0;
     }
     # If it exists, it could be open, too?
@@ -2257,7 +2318,7 @@ sub mix_store ($$;$){
 
     #TODO: would we want to use nstore instead ?
     unless( store( $r_data, $predir . $file ) ) {
-	logdie("Cannot store date into $predir$file: $!!\n");
+	logwarn("FATAL: Cannot store date into $predir$file: " . $! . "!\n");
 	exit 1;
     }
 
@@ -2270,11 +2331,13 @@ sub mix_store ($$;$){
 	use Data::Dumper;
 	$file .= "a";
 	unless( open( DUMP, ">$predir$file" ) ) {
-	    logdie("Cannot open file $predir$file for dumping: $!\n");
+	    logwarn("FATAL: Cannot open file $predir$file for dumping: $!\n");
+	    exit 1;
 	}
 	print( DUMP Dumper( $r_data ) );
 	unless( close( DUMP ) ) {
-	    logdie("Cannot close file $predir$file: $!\n");
+	    logwarn("FATAL: Cannot close file $predir$file: $!\n");
+	    exit 1;
 	}
     }
     
@@ -2945,6 +3008,10 @@ sub mix_utils_mask_excel ($) {
 
     for my $i ( @$r_a ) {    
 	for my $ii ( @$i ) {
+	    unless( defined( $ii ) ) {
+		$ii = "";
+		next;
+	    }
 	    if ( $ii =~ m/^[\d.,]+$/ ) {
 		# Put a double ' ' in front of pure digits ...
 		$ii = "'" . $ii;
@@ -2995,7 +3062,139 @@ sub write_sum () {
     return 0;    
 
 }
+
+##############################################################################
+# mix_utils_init_file($)
+##############################################################################
+
+=head2 mix_utils_init_file($)
+
+In init mode:
+    
+Take the provided templates and create a MIX startup file.
+
+This will give
+    - appropriate XLS and/or CVS files you can put your
+      design description into.
+    - mix.cfg template
+
+If available some data will be put into already (If you provide HD
+input files).
+
+In import mode:
+
+Extend the already existing files by data retrieved from the provided HDL
+files arguments.
+
+=cut
+
+sub mix_utils_init_file($) {
+    my $mode = shift || "init";
+
+    my @hdlimport = ();
+    my @descr = ();
+    if ( exists( $OPTVAL{'import'} ) ) {
+	push ( @hdlimport,  @{$OPTVAL{'import'}} );
+    }
+
+    my $inext = join( "|", values( %{$EH{'input'}{'ext'}} ) );
+    my $outext = join( "|", values( %{$EH{'output'}{'ext'}} ) );
+    my $output = "";
+    my $input = "";
+
+    #
+    # Sort remaining file arguments
+    #
+    for my $i ( @ARGV ) {
+	if ( $i =~ m,\.($outext)$, ) { # HDL file ...
+	    push( @hdlimport, $i );
+	    next;
+	} elsif ( $i =~ m,\.($inext)$, ) { # HDL file ...
+	    push( @descr, $i );
+	    next;
+	} else {
+	    logwarn( "INFO: Found file $i not matching my extension set. Skipped!" );
+	}
+    }
+
+    if ( scalar( @descr ) > 1 ) {
+	logwarn( "WARNING: Ignoring all but last mix input files!" );
+	$output = pop( @descr );
+    } elsif ( scalar( @descr ) < 1 ) {
+	# User has not given an output file name -> take directory name
+	if ( defined $OPTVAL{'dir'} and $OPTVAL{'dir'} ne "." ) {
+	    $output = $OPTVAL{'dir'} . "/" . basename( $OPTVAL{'dir'} );
+	} else {
+	    $output = $EH{'cwd'} . "/" . basename( $EH{'cwd'} );
+	}
+	
+	# Extension: MS-Win -> xls, else csv
+	if ( $^O =~ m,^mswin,io ) {
+	    $output .= ".xls";
+	}else {
+	    $output .= ".csv";
+	}
+	logwarn( "WARNING: Setting project name to $output" );
+	$EH{'sum'}{'warnings'}++;
+    } else {
+	$output = pop( @descr );
+    }
+
+    ( my $ext = $output ) =~ s,.*\.,,;
+    unless( $ext ) {
+	logwarn( "FATAL: Cannot detect appropriate extension for output from $output" );
+	exit 1;
+    }
+    
+    # Get template and mix.cfg in place if "init"
+    # In -init mode we will die if the output file already exists ...
+
+    if ( $mode eq "init" ) {
+	if ( -r $output ) {
+	    logwarn( "FATAL: Output file $output already existing!" );
+	    exit 1;
+	}
+	( $input = $main::pgmpath ."/template/mix." . $ext ) =~ s,\\,/,g;
+	if ( ! -r $input ) {
+	    logwarn( "FATAL: Cannot init mix from $input" );
+	    exit 1;
+	}
+	# Get mix.cfg template inplace:
+	if ( -r ( dirname( $output ) . "/mix.cfg" ) ) {
+	    logwarn( "WARNING: Existing config file mix.cfg will not be changed!" );
+	} else {
+	    copy( dirname( $input ) . "/mix.cfg" , dirname( $output ) . "/mix.cfg" )
+		or logwarn( "WARNING: Copying mix.cfg failed: " . $! . "!" );
+	}
+
+	# Get template in place ...    
+	copy( $input, $output ) or
+	    logwarn( "FATAL: Copying $input to $output failed: " . $! . "!" )
+	    and exit 1;
+    }
+
+    # If user provided HDL files, we try to scan these and add to the template ...
+    if ( scalar( @hdlimport ) ) {
+
+	if ( $output =~ m,\.xls$, ) {
+	    my $ole = init_ole();
+	}
+        #OFF: only Utils knows about that ... my $ole = init_ole(); # Start OLE Object ... for windows, only
+        mix_utils_open_input( $output );
+        #Gets format from file to import too.	
+
+	Micronas::MixParser::mix_parser_importhdl( $output, \@hdlimport ); # Found in MixParser ...
+    }
+
+    # Done ...
+    exit 0;
+    
+}
+
+
+#
 # This module returns 1, as any good module does.
+#
 1;
 
 #!End		    

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / IOParser
 # | Modules:    $RCSfile: MixIOParser.pm,v $ 
-# | Revision:   $Revision: 1.8 $
+# | Revision:   $Revision: 1.9 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2003/07/17 12:10:42 $
+# | Date:       $Date: 2003/07/29 15:48:04 $
 # | 
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.8 2003/07/17 12:10:42 wig Exp $
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.9 2003/07/29 15:48:04 wig Exp $
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -36,6 +36,12 @@
 # |
 # | Changes:
 # | $Log: MixIOParser.pm,v $
+# | Revision 1.9  2003/07/29 15:48:04  wig
+# | Lots of tiny issued fixed:
+# | - Verilog constants
+# | - IO port
+# | - reconnect
+# |
 # | Revision 1.8  2003/07/17 12:10:42  wig
 # | fixed minor bugs:
 # | - Verilog `define before module
@@ -110,9 +116,9 @@ sub _mix_iop_init();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixIOParser.pm,v 1.8 2003/07/17 12:10:42 wig Exp $';
+my $thisid		=	'$Id: MixIOParser.pm,v 1.9 2003/07/29 15:48:04 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixIOParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.8 $';
+my $thisrevision   =      '$Revision: 1.9 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -222,7 +228,7 @@ sub mix_iop_iocell ($$) {
 
     #
     # Do the SEL signals
-    # Models a 1-hot architecture, besides it "bus" flag is set
+    # Models a 1-hot architecture, besides if "bus" flag is set
     #
     if ( $t_sel->{'__NR__'} > 1 ) {
         # We actually have > 1 ::muxopt column ...
@@ -230,7 +236,9 @@ sub mix_iop_iocell ($$) {
         my $port = $t_sel->{'__PORT__'} || '%IOCELL_SELECT_PORT%'; # Default port name to select.
 
         if ( $EH{'iocell'}{'select'} =~ m,bus,io ) {
-            # Attach a select bus of appropriate width
+            # Attach a select bus of appropriate widthcoding the select
+            # bits into a binary presentation. Requires internal
+            # decoding of the select signal.
             my %s = ();
             if ( $EH{'iocell'}{'select'} =~ m,auto,io ) {
                 # Get min. required width of select bus:
@@ -253,7 +261,7 @@ sub mix_iop_iocell ($$) {
             $s{'::gen'} = "";
             $s{'::comment'} = "__IO_MuxSelBus ";
 
-            #TODO: Will we need more information??
+            #Will we need more information??
             add_conn( %s );
 
         } else {
@@ -347,13 +355,14 @@ sub mix_iop_connioc ($$$) {
             }
         }
 
-        my $n = 0; # Get number of select line ...
+        my $n = 0; # Get number of select lines ...
         if ( $s eq "::muxopt" ) {
             $n = 0;
         } elsif ( $s =~ m,:(\d+), ) {
             $n = $1;
         }
-        
+
+        # ::muxopt cell contents ... seperated by ,
         my @c = split( /,/, $r_h->{$s} );
         map( { s,\s+,,g }  @c ); # Get rid of all kind of whitespace
 
@@ -363,15 +372,26 @@ sub mix_iop_connioc ($$$) {
             $EH{'sum'}{'warnings'}++;
         } elsif ( scalar( @c ) < scalar( @pins ) ) {
             logtrc( "INFO:4", "INFO: muxopt $s not completely defined for pad $r_h->{'::pad'}!" );
-            
         }
 
         # Connect pin with signal ....
-        foreach my $c ( 0..(scalar( @c ) -1 ) ) {
+        foreach my $c ( 0..(scalar( @c ) - 1 ) ) {
             my %d = ();
             my $tclk = $clock; # Default clock signal
             my $name = "__E_MISSINGPADNAME"; #TODO: Use internal names
             my $num = "__E_MISSINGPADNUM"; #TODO:
+
+            #TODO: If signal name satys unique for all cells, fold muxed output
+            # to single bit!
+            #TODO: Consider empty connections as "no connect", depending on
+            #   input/di -> fold to single bit       wire to open??
+            #  output/do -> don't connect ...?? wire to high/low ??
+            # Also addextra input mux if signal comes from several iocells!!
+            unless ( $c[$c] ) { # Empty cell
+                logwarn( "WARNING: Empty ::muxopt cell line not implemented!" );
+                $EH{'sum'}{'warnings'}++;
+                next;
+            }
 
             # Strip off %COMB ...
             if ( $c[$c] =~ s,%comb\s*$,,io ) {
@@ -403,6 +423,8 @@ sub mix_iop_connioc ($$$) {
                 $name = $c[$c];
                 $num = undef;
             } else {
+                logwarn( "WARNING: Empty ::muxopt cell contents " . $c[$c] . " not matching MIX rules!" );
+                $EH{'sum'}{'warnings'}++;
                 next;  # Empty input line
             }
                 
@@ -505,7 +527,7 @@ my %io_iore = (
 
 sub _mix_iop_init() {
 
-    for my $i ( qw( in out ) ) {
+    for my $i ( qw( in inout out ) ) {
         if ( $EH{'iocell'}{$i} ) {
             $io_iore{$i} = '(' . join( '|', split( /[,\s]+/, $EH{'iocell'}{$i} ) ) . ')';
         }
@@ -522,7 +544,7 @@ sub mix_iop_getdir ($$) {
     my $inst = shift;
     my $name  = shift;
 
-    for my $i ( qw( out in ) ) {
+    for my $i ( qw( out inout in ) ) {
         if ( $name =~ m,^$io_iore{$i}$, ) {
             return ( $i );
         }

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.23 $                                             |
+# | Revision:   $Revision: 1.24 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/07/23 13:34:39 $                                   |
+# | Date:       $Date: 2003/07/29 15:48:04 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.23 2003/07/23 13:34:39 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.24 2003/07/29 15:48:04 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,10 +33,11 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
-# | Revision 1.23  2003/07/23 13:34:39  wig
-# | Fixed minor bugs:
-# | - open(N) removed
-# | - overlay bitvector fixed
+# | Revision 1.24  2003/07/29 15:48:04  wig
+# | Lots of tiny issued fixed:
+# | - Verilog constants
+# | - IO port
+# | - reconnect
 # |
 # | Revision 1.22  2003/07/17 12:10:42  wig
 # | fixed minor bugs:
@@ -137,6 +138,7 @@ require Exporter;
       add_sign2hier
       parse_mac
       purge_relicts
+      mix_parser_importhdl
       );            # symbols to export by default
   @EXPORT_OK = qw(
       %hierdb
@@ -167,9 +169,11 @@ use lib "$main::dir/../lib/perl";
 use Log::Agent;
 use Log::Agent::Priorities qw(:LEVELS);
 use Tree::DAG_Node; # tree base class
+use Regexp::Common; # Needed for import/init functions: parse VHDL ...
 
 use Micronas::MixUtils qw( mix_store db2array write_excel write_delta_excel
                            close_open_workbooks mix_list_econf %EH );
+
 use Micronas::MixChecker;
 
 # Prototypes:
@@ -179,6 +183,10 @@ sub add_port ($$);
 sub _add_port ($$$$$$$$);
 sub mix_p_retcprop ($$);
 sub mix_p_updateconn($$);
+sub _mix_p_getconnected ($$$$;$);
+sub mix_parser_importhdl ($$);
+sub _mix_parser_parsehdl ($);
+sub overlay_bits($$);
 
 ####################################################################
 #
@@ -196,11 +204,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.23 2003/07/23 13:34:39 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.24 2003/07/29 15:48:04 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.23 $';
+my $thisrevision   =      '$Revision: 1.24 $';
 
-# | Revision:   $Revision: 1.23 $   
+# | Revision:   $Revision: 1.24 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2123,27 +2131,9 @@ sub add_portsig () {
             next;
         }
 
+        _mix_p_getconnected( $signal, "::in", $mode, \%modes, \%connected );
+        _mix_p_getconnected( $signal, "::out", $mode, \%modes, \%connected );
 
-        for my $i ( 0..$#{$conndb{$signal}{'::in'}} ) {
-                my $inst = $conndb{$signal}{'::in'}[$i]{'inst'};
-                my $md = ( $mode !~ m,^[IS]$,io ) ? ( "/" . $mode ) : "";
-                $md = ""; #TODO: MakeActive
-                if ( defined ( $hierdb{$inst} ) ) {
-                    $connected{$inst} = $hierdb{$inst}{'::treeobj'}; # Tree::DAG_Node objects
-                    $modes{$inst} .= ":in" . $md . ":" . $i; # Remember in/out columns; Possibly several
-                }
-        }
-        for my $i ( 0..$#{$conndb{$signal}{'::out'}} ) {
-                my $inst = $conndb{$signal}{'::out'}[$i]{'inst'};
-                my $md = ( $mode !~ m,^[OS]$,io ) ? ( "/" . $mode ) : "";
-                $md = ""; #TODO: MakeActive
-                next unless ( defined( $inst ) );
-                if ( exists ( $hierdb{$inst} )) {
-                    $connected{$inst} = $hierdb{$inst}{'::treeobj'}; # Tree::DAG_Node objects
-                    $modes{$inst} .= ":out" . $md . ":" . $i;
-                }
-        }
-        
         #
         # If signal mode is I |O | IO (not S), make sure it's connected to the
         # top level
@@ -2201,26 +2191,27 @@ sub add_portsig () {
                     add_top_port( \@addtopn, \%connected );
                     # Will extend %connected as modes happen
                     %modes = (); # Redo modes data
-                    for my $i ( 0..$#{$conndb{$signal}{'::in'}} ) {
-                        my $inst = $conndb{$signal}{'::in'}[$i]{'inst'};
-                        if ( defined ( $hierdb{$inst} ) ) {
-                            $modes{$inst} .= ":in:$i"; # Remember in/out columns; Possibly several
-                        }
-                    }
-                    for my $i ( 0..$#{$conndb{$signal}{'::out'}} ) {
-                        my $inst = $conndb{$signal}{'::out'}[$i]{'inst'};
-                        next unless ( defined( $inst ) );
-                        if ( exists ( $hierdb{$inst} )) {
-                            $modes{$inst} .= ":out:$i";
-                        }
-                    }
+                    _mix_p_getconnected( $signal, "::in", $mode, \%modes );
+                    _mix_p_getconnected( $signal, "::out", $mode, \%modes );
+                    # for my $i ( 0..$#{$conndb{$signal}{'::in'}} ) {
+                    #    my $inst = $conndb{$signal}{'::in'}[$i]{'inst'};
+                    #    if ( defined ( $hierdb{$inst} ) ) {
+                    #        $modes{$inst} .= ":in:$i"; # Remember in/out columns; Possibly several
+                    #    }
+                    #}
+                    # for my $i ( 0..$#{$conndb{$signal}{'::out'}} ) {
+                    #    my $inst = $conndb{$signal}{'::out'}[$i]{'inst'};
+                    #    next unless ( defined( $inst ) );
+                    #    if ( exists ( $hierdb{$inst} )) {
+                    #        $modes{$inst} .= ":out:$i";
+                    #    }
+                    # }
                 }
             }
         }
 
         my $commonpar = my_common( values( %connected ) );
 
-  
         unless ( defined( $commonpar ) ) {
             logwarn( "ERROR: Signal $signal spawns several seperate trees!\n" );
             next;
@@ -2276,6 +2267,46 @@ sub add_portsig () {
 }
 
 #
+# scan through conndb for a given signal and give back the
+# connected instances and the modes for them ...
+#
+# Input:
+#       $signal   signalname
+#       $dir      ::in or ::out (corresponding the CONN sheet columns
+#       $mode   mode of signal (I, O, IO, B, T, ...)
+#
+#   \%modes         ref to instance indexed mode list
+#   \%connected     ref to instance indexed list of connected instances
+#
+sub _mix_p_getconnected ($$$$;$) {
+    my $signal = shift;
+    my $dir = shift;  # ::in or ::out ....
+    my $mode = shift || 'S'; # signal mode defaults to S #wig20030729:bug
+    my $r_mod = shift;
+    my $r_con = shift || undef;
+
+    my $n = 0;
+    if ( exists( $conndb{$signal}{$dir} ) ) {    
+        for my $i ( 0..$#{$conndb{$signal}{$dir}} ) {
+            my $inst = $conndb{$signal}{$dir}[$i]{'inst'};
+            my $md = ( $mode !~ m,^[IOS]$,io ) ? ( "/" . $mode ) : ""; #!wig20030729: bug
+            #Active IO: $md = ""; #TODO: MakeActive
+            next unless ( defined( $inst ) );
+                if ( exists ( $hierdb{$inst} )) {
+                    if ( $r_con ) { $r_con->{$inst} = $hierdb{$inst}{'::treeobj'}; } # Tree::DAG_Node objects
+                    $r_mod->{$inst} .= $dir . $md . ":" . $i;
+                }
+                $n++;
+        }
+        return( $n );
+    } else {
+        logwarn( "WARNING: Bad branch in _mix_p_getconnected! File bug report!");
+        $EH{'sum'}{'warnings'}++;
+    }
+    return -1; # Indicate error condition ...
+} # end of _mix_p_get_connected
+
+#
 # Which bits are connected to that signal
 #
 # Returns: array for in or out or buffer ... with description of connectivity:
@@ -2302,7 +2333,8 @@ sub bits_at_inst ($$$) {
     my %width = (); # F[ull], B[it],
     my %bits = ();
     my %sigw_flag = ();
-    while ( $modes =~ m#:(in|out)(/(\w+))?:(\d+)#g ) {
+    # Scan through modes: ::DIR[/MODE]:N
+    while ( $modes =~ m#::(in|out)(/(\w+))?:(\d+)#g ) {
         my $io = $1;
         my $sigm = $3;
         my $n = $4;
@@ -2313,9 +2345,17 @@ sub bits_at_inst ($$$) {
         # unless( defined( $sig_f ) ) { $sig_f = "0"; };
         # unless( defined( $sig_t ) ) { $sig_t = "0"; };
 
+        $sigm = "" if ( lc( $sigm ) eq "s" );            
         if ( $sigm ) {
-            $d = ( $sigm =~ m,io,io ) ? "c" : "e"; #TODO20030723 ..
+            if ( $sigm =~ m,^io,io ) {
+                $d = "c";
+            } elsif ( $sigm =~ m,^([btio]),io ) {
+                $d = lc( $1 );
+            } else {
+                $d = "e"; #TODO20030723 ..
+            }
         } else {
+            # Derive -> i/o from in/out
             $d = lc( substr( $io, 0, 1 ) ); #TODO: extend for buffer and inout pins
         }
         unless( defined( $sigw_flag{$d} ) ) { $sigw_flag{$d} = 1; } # First time
@@ -2392,7 +2432,7 @@ sub bits_at_inst ($$$) {
 #   B::0XXX00xx
 #   F::CHAR:T::CHAR
 #  Try to overlap this ...
-#
+#  mode already got stripped away ...
 sub overlay_bits($$) {
     my $bv1 = shift;
     my $bv2 = shift;
@@ -2468,7 +2508,7 @@ sub overlay_bits($$) {
 #   $signal := signal name
 #   $name := instance name
 #   $leave := leaf cell name (where does the signal come from)
-#   $mode := ":in:NR:out:NR:in:NR2 ..."  index into instance port map
+#   $mode := "::in[/MODE]:NR::out:NR::in:NR2 ..."  index into instance port map
 #
 # $leave might be omitted ($mode is sufficient to address the instance/port/bus data
 # Will be called for each signal
@@ -2492,7 +2532,6 @@ sub add_port ($$) {
     my %d_wid = ();
     my $mode = "__E_MODE_DEFAULT";
     for my $r ( keys( %$r_connected ) ) {
-        # my $m = $r->[3]; #Mode
 
         # Retrieve modes and width from sigbits data structure
         for my $sb ( @{$hierdb{$r}{'::sigbits'}{$signal}} ) {
@@ -2502,7 +2541,7 @@ sub add_port ($$) {
             }            
         }
         unless( defined ( $d_mode{$r} ) ) {
-            logwarn( "ERROR: missing sigbits/mode definition for instance $r in add_port");
+            logwarn( "ERROR: missing sigbits/mode definition for signal $signal, instance $r in add_port");
         }
     }
 
@@ -2813,20 +2852,27 @@ sub _add_port ($$$$$$$$) {
     my $uk = join( "", sort ( keys ( %$um ) ) ); # bceimo
     if ( $uk =~ m,e, ) { # Error
             logwarn( "ERROR: error mode detected for signal $signal generating port at instance $inst" );
-            #TODO: Add error port
+            $EH{'sum'}{'errors'}++;
     }
     my $do = 'e';
     my $dir = "::err";
 
     # Try to define a base direction to head for ...
     my $simple = 0;
+    if ( length( $uk ) > 1 and $uk ne "io" ) { #
+        logwarn( "ERROR: Mixed mode $uk connection for instance $inst cannot be resolved for signal $signal!");
+        $EH{'sum'}{'errors'}++;
+        return; #TODO: Set to mode io and continue with that?
+    }
+    
     if ( $uk =~ m,(io),o ) { # Upper level has in's and out's -> We have to be ::in
         $do = 'i';
         $dir = "::in";
         if ( $uw->{'i'} eq 'A::' and $uw->{'o'} eq 'A::' ) {
-            if ( exists $dw->{'i'} and exists $dw->{'o'} ) { # Possible Conflict!!
+            if ( scalar( keys( %$dw ) ) > 1 ) { # Possible Conflict!!
                 $simple = 2;
                 logwarn( "WARNING: Possible io mode conflict for $signal at $inst" );
+                $EH{'sum'}{'warnings'}++;
             } else {
                 if ( ( exists $dw->{'i'} ) and ( $dw->{'i'} eq 'A::' ) ) {
                     $simple = 1;
@@ -2835,13 +2881,13 @@ sub _add_port ($$$$$$$$) {
                 }
             }
         }
-    } elsif ( $uk =~ m,i,o ) { # Upper inst. have in's, only ->
+    } elsif ( $uk =~ m,^i$,o ) { # Upper inst. have in's, only ->
         $do = 'o';
         $dir = "::out";
         if ( $uw->{'i'} eq 'A::' ) {
             if ( exists( $dw->{'o'} ) and $dw->{'o'} eq 'A::' ) { $simple = 1; }
         } #All others cases are handled in other branch
-    } elsif ( $uk =~ m,o,o ) { # Upper inst. have out's, only ->
+    } elsif ( $uk =~ m,^o$,o ) { # Upper inst. have out's, only ->
         #Maybe there are multiple driver's
         $do = 'i';
         $dir = "::in";
@@ -2851,15 +2897,20 @@ sub _add_port ($$$$$$$$) {
                     $simple = 1;
             }
         }
-    } elsif ( $uk =~ m,c,o ) { # Upper levels are inout/c, only ...
-        $do = 'c';
-        $dir = "::in"; #TODO: ::inout ...
+    } elsif ( $uk =~ m,^c$,o ) { # Upper levels are inout/c, only ...
+        $do = 'c'; # inout should be the mode ...
+        $dir = "::in"; #Put that into ::out column ..
+        #TODO: define $dir by daughter's ::in or ::out?
         if ( $uw->{'c'} eq 'A::' ) {
-            if (  exists( $dw->{'i'} ) and $dw->{'c'} eq 'A::' and
+            if (  exists( $dw->{'c'} ) and $dw->{'c'} eq 'A::' and
                 not exists( $dw->{'o'} ) and not exists( $dw->{'i'} ) ) {
                     $simple = 1;
             }
         }
+    } else {
+    # Other cases are mixes or new ...
+        logwarn( "WARNING: Cannot resolve connection request $uk for $inst, signal $signal" );
+        $EH{'sum'}{'warnings'}++;
     }
     
     # 
@@ -2869,46 +2920,15 @@ sub _add_port ($$$$$$$$) {
     my %t = ();
     if ( not $tw and $simple  ) {
         # I guess this is the most likely case
-        # Full signal connect (either bus or single bit)
-        # Actually we do NOT care of there is a chance to get 
+        # Full signal connect needed (either bus or single bit)
+        # 
         my $sf = $conndb{$signal}{'::high'};
         my $st = $conndb{$signal}{'::low'};
         unless ( defined $sf ) { $sf = ""; };
         unless ( defined $st ) { $st = ""; };
 
         generate_port( $signal, $inst, $do, $sf, $st, $top_flag );
-
-=head OLD
-
-        # if ( $top_flag =~ m,top,io and $EH{'output'}{'generate'}{'inout'} =~ m,noxfix,io ) {
-            # Do not add postfix and signal width ....
-            # Caveat: User has to make sure that no conflicts are added like so
-            # $t{'port'} = $signal . "_g" . $do;
-            $t{'port'} = $signal;
-        } else {
-            $t{'port'} = $EH{'postfix'}{'PREFIX_PORT_GEN'} . $signal .
-                ( ( $sf ne "" ) ? ( "_" . $sf ) : "" ) .
-                ( ( $st ne "" ) ? ( "_" . $st ) : "" ) .
-                "_g" . $do;
-        }
-        $t{'inst'} = $inst;
-        if ( $sf eq "" ) {
-            $t{'port_f'} = $t{'sig_f'} = undef;
-        } else {
-            $t{'port_f'} = $t{'sig_f'} = $sf;
-        }
-        if ( $st eq "" ) {
-            $t{'port_t'} = $t{'sig_t'} = undef;
-        } else {
-            $t{'port_t'} = $t{'sig_t'} = $st;
-        }
-        logtrc( "INFO:4", "add_port: signal $signal adds port $t{'port'} to instance $t{'inst'}" );
-
-        push( @{$conndb{$signal}{$dir}},  { %t } ); # Push on conndb array ...
-
-=cut
-
-        
+ 
         $tw = { $do => "A::" };
         $tm = $do;
 
@@ -2923,9 +2943,19 @@ sub _add_port ($$$$$$$$) {
         # Case one: There is already a (partial) connection to this_instance ...
         if ( $tm ) {
             # Delete the corresponding bits
-            # XXXXXXX
-            logwarn( "ERROR: instance $inst partially connected to $signal. File bug report!" );
-            $EH{'sum'}{'errors'}++;
+            #TODO: Catch further cases ....
+            if ( $tm eq $do ) { # Maybe this is a stupid try to reconnect ....
+                if ( $tw =~ m,^A::, ) { # Already connected fully .... hmm, simply return ..
+                    logwarn("Info: trying to reconnect $signal to $inst.");
+                    return( { $tm => $tw} , $tm );
+                } elsif ( defined( $dw->{$do} ) and $dw->{$do} eq $tw )  {
+                    logwarn("Info: trying to reconnect $signal to $inst partially.");
+                    return( { $tm => $tw} , $tm );
+                } else {
+                    logwarn( "WARNING: instance $inst partially connected to $signal. File bug report!" );
+                    $EH{'sum'}{'warnings'}++;
+                }
+            }
         }
         #
         # Case two:
@@ -2942,6 +2972,7 @@ sub _add_port ($$$$$$$$) {
                 $mode = $nm;
             } elsif ( $mode ne $nm ) { # Upps, conflict
                 logwarn( "ERROR: Cannot resolve mode requests $signal at $inst!" );
+                $EH{'sum'}{'errors'}++;
                 $mode = "E";
             }
         }
@@ -2957,6 +2988,7 @@ sub _add_port ($$$$$$$$) {
             } elsif ( $mode ne $nm ) { # Upps, conflict
                 logwarn( "ERROR: Cannot resolve conflicting mode requests $signal at $inst!" );
                 $mode = "E";
+                $EH{'sum'}{'errors'}++;
             }
         }
         unless( $mode ) { #Cannot be true, we have all A's, maybe related to $tm
@@ -2964,6 +2996,7 @@ sub _add_port ($$$$$$$$) {
         }
         if ( $mode eq "E" ) {
             logwarn ( "ERROR: Cannot resolve mode request for $signal at $inst finally!" );
+            $EH{'sum'}{'errors'}++;
         } elsif ( $mode eq "B" ) {
             my $sf = $conndb{$signal}{'::high'};
             my $st = $conndb{$signal}{'::low'};
@@ -3054,7 +3087,7 @@ sub _add_port ($$$$$$$$) {
                     } elsif ( $m eq "i" ) {
                         $bv{i} .= $m;
                         $bv{o} .= "0";
-                        $bv{c} .= "c";
+                        $bv{c} .= "0";
                     } elsif ( $m eq "c" ) {
                         $bv{i} .= "0";
                         $bv{o} .= "0";
@@ -3643,6 +3676,289 @@ sub _add_sign2hier ($$$) {
             }
         }
     }
+}
+
+##############################################################################
+# mix_parser_importhdl($$)
+##############################################################################
+
+=head2 mix_parser_importhdl($$)
+
+Read in HDL files and add appropriate data to the output
+files.
+
+=cut
+
+sub mix_parser_importhdl ($$) {
+    my $file = shift;    # Output goes to ...
+    my $r_hdl = shift;  #Input comes from this array ref
+
+    # scan input files
+    # create HIER and CONN data
+    for my $f ( @$r_hdl ) {
+	if ( -r $f ) {
+	    logwarn( "INFO: Importing $f now!" );
+	    _mix_parser_parsehdl( $f ); # Will create a dummy hier and conn file
+	} else {
+	    logwarn( "WARNING: Cannot read HDL $f for import" );
+	    $EH{'sum'}{'warnings'}++;
+	}
+    }
+
+    # prepare to dump the data now ..
+    parse_mac();
+    my $arc = db2array( \%conndb , "conn", "" );
+    my $arh = db2array( \%hierdb, "hier", "^(%\\w+%|W_NO_PARENT)\$" );
+
+    # write_excel( $dumpfile, "CONF", $aro ); #wig20030708: store CONF options ...
+    write_excel( $file, "IMP_CONN", $arc );
+    write_excel( $file, "IMP_HIER", $arh );    
+    
+}
+
+=head2 Example for entity to parse
+
+Scan HDL file and prepare the IMP_CONN and IMP_HIER sheet.
+
+entity ddrv4 is
+        -- Generics:
+		-- No Generated Generics for Entity ddrv4
+		generic(
+		-- Generated Generics for Entity inst_1_e
+			FOO	: integer -- __W_NODEFAULT
+		-- End of Generated Generics for Entity inst_1_e
+		);
+ 
+    	-- Generated Port Declaration:
+		port(
+		-- Generated Port for Entity ddrv4
+			alarm_time_ls_hr	: in	std_ulogic_vector(3 downto 0);
+			alarm_time_ls_min	: in	std_ulogic_vector(3 downto 0);
+			alarm_time_ms_hr	: in	std_ulogic_vector(3 downto 0);
+			alarm_time_ms_min	: in	std_ulogic_vector(3 downto 0);
+			clk	: in	std_ulogic;
+			current_time_ls_hr	: in	std_ulogic_vector(3 downto 0);
+			current_time_ls_min	: in	std_ulogic_vector(3 downto 0);
+			current_time_ms_hr	: in	std_ulogic_vector(3 downto 0);
+			current_time_ms_min	: in	std_ulogic_vector(3 downto 0);
+			display_ls_hr	: out	std_ulogic_vector(6 downto 0);
+			display_ls_min	: out	std_ulogic_vector(6 downto 0);
+
+	    ) 
+end inst_1_e;
+
+=cut
+
+sub _mix_parser_parsehdl ($) {
+    my $file = shift;
+    # my $r_h = shift;
+    # my $r_c = shift;
+
+    # Open ... 
+    my $fh = new IO::File;
+    unless( $fh->open($file) ) {
+	logwarn( "ERROR: Cannot open import file $file: $!" );
+	$EH{'sum'}{'warnings'}++;
+	return undef;
+    }
+
+    # Read in all of file into one string:
+    my $hdl  = do { local $/; <$fh> };
+
+    # Look for entities in case of vhdl ...
+    if ( $file =~ m,\.vhd(l)?$,io ) {
+	# Look for all entities ....
+	while( $hdl =~ m,entity\s+(\w+)\s+is\s+(.*?)end\s+\1,imsg ) {
+	    # Has entity body ...
+	    my $enty = $1; # Will use entity name as instance??
+	    my $inst = add_inst(
+		'::inst' => "%PREFIX_INSTANCE%" . $enty . "%POSTFIX_INSTANCE%",
+		'::entity' => $enty,
+		'::parent' => "%IMPORT%"
+		);
+	    my $body = $2;
+
+	    my $paren_in_comment_flag = 0;
+
+	    if ( $body =~ m,--.*[\(\)], ) { # $generic has a -- ( .. ) in it ...
+		# Mask these parens ...
+		while ( $body =~ m/(--.*?)\(/ ) {
+		    $body =~ s,(--.*?)\(,$1___LEFTPAR___,;  # Will that work properly?
+		}
+		while ( $body =~ m/(--.*?)\)/ ) {
+		    $body =~ s,(--.*?)\),$1___RIGHTPAR___,; # Will that work properly?
+		}
+		$paren_in_comment_flag = 1;
+	    }
+            
+	    if ( $body =~  m,^\s*generic\s*($RE{balanced}{-parens=>'()'});,im ) {
+                # Got generic 
+		my $generic = $1;
+
+                # NO_DEFAULT	: string; -- __W_NODEFAULT
+                # NO_NAME	: string; -- __W_NODEFAULT
+                # WIDTH	: integer	:= 7
+                while( $generic =~ s/^\s*(\w+)\s*:\s*(\w+)\s*
+                                       (:=\s*([-\.,\w\d]+?))?
+				       ;
+				       ([ \t]*--.*)?//xm
+		       ) {
+		   # $1 = genericname
+		   # $2 = generic type
+		   # $4 = default value (if set)
+		   # $5 = comments ...
+		   # push( @generics, [ $1, $2, $4, $5 ] );
+		    my %d = ( '::name' => $1,
+				    '::mode' => 'G',
+				    '::type' => $2,
+				    '::in' =>	$inst . "/" . $1,
+                                    '::high' => "",
+                                    '::low' => "",
+                                    '::bundle'  => "%IMPORT_BUNDLE%" . uc($inst) ,
+                                    '::class' => "%IMPORT%" . uc($inst),
+                                    '::clock' => "%IMPORT_CLK%" . uc($inst),
+			    );
+		    $d{'::out'} = ( "'" . $4 ) if ( defined( $4 ) );
+		    $d{'::comment'} = $5 if ( defined( $5 ));
+                    add_conn( %d );
+                }
+		if ( $generic =~ s/^\s*(\w+)\s*:\s*(\w+)\s*
+                                       (:=\s*([-\.,\w\d]+?))?
+				       ([ \t]*--.*)?//xm
+		   ) {
+		    		    my %d = ( '::name' => $1,
+				    '::mode' => 'G',
+				    '::type' => $2,
+				    '::in' =>	$inst . "/" . $1,
+                                    '::high' => "",
+                                    '::low' => "",
+                                    '::bundle'  => "%IMPORT_BUNDLE%" . uc($inst) ,
+                                    '::class' => "%IMPORT%" . uc($inst),
+                                    '::clock' => "%IMPORT_CLK%" .uc($inst),
+			    );
+		    $d{'::out'} = ( "'" . $4 ) if ( defined( $4 ) );
+		    $d{'::comment'} = $5 if ( defined( $5 ));
+		    # printf ( "#### Found generic in instance $inst:\n" );
+		    # printf ( "\t%s %s\n" x scalar( keys( %d ) ), %d );
+                    add_conn( %d );
+		}
+	    }
+	    # line begins with \s*port( .... ) ..
+	    if ( $body =~ m,^\s*port\s*($RE{balanced}{-parens=>'()'});,im ) {
+                my $ports = $1;
+
+                #OLD: if ( $body =~ m,port\s*\((.+?)\);,ims ) {
+                # alarm_time_ms_min	: in	std_ulogic_vector(3 downto 0);
+                # clk	: in	std_ulogic;
+                while( $ports =~ s/^\s*(\w+)\s*:\s*(\w+)\s*(\w+)\s*
+                               (\(\s*(\d+)(\s+(down)?to\s+(\d+))?\s*\))?   # Optional (N downto M)
+                               ;                                                   # ; or end of line
+                               ([ \t]*--.*)?//xm ) {                                  
+                    # Will catch e.th. but the last line ...
+                    # $1 = portname
+                    # $2 = port mode
+                    # $3 = port type
+                    # $4 contains ( N [down]to M )
+                    # $5 = N
+                    # $6 = downto M
+                    # $7 = down | <empty>
+                    # $8 = M
+                    # $9 = comment
+                    #TODO: check if M <= N for 
+                    # push( @ports, [ $1, $2, $3, $5, $8, $9 ] );
+		    my $mode = $2;
+                    my $col = "::in";
+		    my %d = ( '::name' => $1,
+				    # '::mode' => $2,
+				    '::type' => $3,
+                                    '::high' => "",
+                                    '::low' => "",
+                                    '::class' => "%IMPORT%" . uc($inst),
+                                    '::clock' => "%IMPORT_CLK%" . uc($inst),
+                                    '::bundle'  => "%IMPORT_BUNDLE%" . uc($inst) ,
+			    );
+		    if ( lc( $mode ) eq "in" ) {
+			$d{'::mode'} = "%IMPORT_I%"; #TODO
+		    } elsif ( lc( $mode ) eq "out" ) {
+			$col = "::out"; $d{'::mode'} = "%IMPORT_O%";
+		    } elsif ( lc( $mode ) eq "inout" ) {
+			$d{'::mode'} = "IO";
+		    } elsif ( lc( $mode ) eq "buffer" ) {
+			$d{'::mode'} = "B";
+		    } else {
+			logwarn( "WARNING: unknown mode $mode in import" );
+			$d{'::mode'} = "S";
+		    }
+		    $d{$col} = $inst . "/" . $1;
+		    $d{'::high'} = $5 if ( defined( $5 ) );
+		    $d{'::low'} = $8 if ( defined( $8 ) );
+		    $d{'::comment'} = $9 if ( defined( $9 ));
+		    add_conn( %d );
+		    # printf ( "#### Found port in instance $inst:\n" );
+		    # printf ( "\t%s %s\n" x scalar( keys( %d ) ), %d ); 
+                }
+                # catch last signal
+                if( $ports =~ m/\n\s*(\w+)\s*:\s*(\w+)\s*(\w+)
+                               (\(\s*(\d+)(\s+(down)?to\s+(\d+))?[ \t]*\))?   # Optional (N downto M)
+				([ \t]*--.*)?/xm ) {                                  
+		    # Will catch e.th. but the last line ...
+		   # $1 = portname
+		   # $2 = port mode
+		   # $3 = port type
+		   # $4 contains ( N [down]to M )
+		   # $5 = N
+		   # $6 = downto M
+		   # $7 = down | <empty>
+		   # $8 = M
+		   # $9 = comment
+		   #TODO: check if M <= N for 
+		   # push( @ports, [ $1, $2, $3, $5, $8, $9 ] );
+		    my $mode = $2;
+                    my $col = "::in";
+		    my %d = ( '::name' => $1,
+				    # '::mode' => $2,
+				    '::type' => $3,
+                                   '::ign' => "",
+                                    '::gen' => "",
+                                    '::high' => "",
+                                    '::low' => "",
+                                    '::class' => "%IMPORT%" . uc( $inst ),
+                                    '::clock' => "%IMPORT_CLK%" . uc( $inst ),
+                                    '::bundle'  => "%IMPORT_BUNDLE%" . uc($inst) ,
+			    );
+		    if ( lc( $mode ) eq "in" ) {
+			$d{'::mode'} = "%IMPORT_I%"; #TODO
+		    } elsif ( lc( $mode ) eq "out" ) {
+			$col = "::out"; $d{'::mode'} = "%IMPORT_O%";
+		    } elsif ( lc( $mode ) eq "inout" ) {
+			$d{'::mode'} = "IO";
+		    } elsif ( lc( $mode ) eq "buffer" ) {
+			$d{'::mode'} = "B";
+		    } else {
+			logwarn( "WARNING: unknown mode $mode in import" );
+			$d{'::mode'} = "S";
+		    }
+		    $d{$col} = $inst . "/" . $1;
+		    $d{'::high'} = $5 if ( defined( $5 ) );
+		    $d{'::low'} = $8 if ( defined( $8 ) );
+		    $d{'::comment'} = $9 if ( defined( $9 ));
+		    # add_conn( %d );
+		    printf ( "#### Found port in instance $inst:\n" );
+		    printf ( "\t%s %s\n" x scalar( keys( %d ) ), %d );
+                    add_conn( %d );
+                }
+	    }
+	}
+    } elsif ( $file =~ m,\.v$, ) {
+	# Verilog ...
+	logwarn( "INFO: Master Wilfried has not taught me to read in Verilog :-(" );
+    } else {
+	# What's that ?
+	logwarn( "ERROR: Cannot import file $file, unknown type!" );
+    }
+ 
+    return;
+
 }
 
 1;
