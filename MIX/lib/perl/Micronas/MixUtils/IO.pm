@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.3 $                                          |
+# | Revision:   $Revision: 1.4 $                                          |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/11/27 13:18:47 $                              |
+# | Date:       $Date: 2003/12/03 14:10:06 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.4  2003/12/03 14:10:06  abauer
+# | fixed overwrite of old csv-sheets
+# |
 # | Revision 1.3  2003/11/27 13:18:47  abauer
 # | *** empty log message ***
 # |
@@ -103,11 +106,11 @@ sub mix_utils_mask_excel ($);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.3 2003/11/27 13:18:47 abauer Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.4 2003/12/03 14:10:06 abauer Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.3 $';
+my $thisrevision    =      '$Revision: 1.4 $';
 
-# Revision:   $Revision: 1.3 $
+# Revision:   $Revision: 1.4 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -832,7 +835,7 @@ sub open_csv($$$) {
 	if( $input[$i] =~ m/^$sheetsep$sheetname/) {
 
 	    $i++;
-	   # print "SHEET: $sheetname\n";
+	    # print "SHEET: $sheetname\n";
 
             while( defined $input[$i] && not $input[$i]=~ m/^$sheetsep/) {
 
@@ -1196,7 +1199,7 @@ sub write_xls($$$;$) {
 	foreach my $worksheet (@{$ebook->{Worksheet}}) {
 	    if(not $worksheet->{Name}=~ m/"O_" . $max."_" . $sheet/) {
 	        $sh{$worksheet->{'Name'}} = $worksheet; # Keep links
-	    }
+	    }ulimit -c unlimited
 	}
 
 	#
@@ -1226,7 +1229,7 @@ sub write_xls($$$;$) {
 	    }
 	    # Finally: Rename the latest/greatest ...
 	    if ( exists( $sh{ $sheet } ) ) {
-		$s_previous = $sh{$sheet};
+		$s_previous = $sh{$sheet};ulimit -c unlimited
 	        $sh{$sheet}->{'Name'} =
 			"O_1_" . $sheet;
 	    }
@@ -1761,7 +1764,7 @@ sub write_csv($$$) {
     if ( -r $file ) {
 
         my $max = $EH{'intermediate'}{'keep'};
-	my $sheetm = $EH{'format'}{'csv'}{'sheetsep'} . "O_";
+	my $sheetm = $EH{'format'}{'csv'}{'sheetsep'};
 
 	my $temp;
 	my $osheet = 0;
@@ -1770,38 +1773,36 @@ sub write_csv($$$) {
         open(FILE, "<$file");
 	@data = <FILE>;
 	close(FILE);
+	unlink($file);
 
 	for(my $i=0; $i<scalar(@data); $i++) {
-	    if($data[$i]=~ m/^$sheetm[1-$max]_$sheet$/) {
-	        $temp = $data[$i];
-		$temp=~ s/^$sheetm//;
-		$temp=~ s/_$sheet$//;
-		$temp++;
-		if( $temp>$max) {
-		    $osheet = 1;
-		    $start = $i;
-		    delete $data[$i];
-		    next;
-		}
-		elsif( $osheet==1) {
+	    if($osheet==0 && $data[$i]=~ m/$sheetm$sheet/) {
+		$osheet = 1;
+		$start = $i;
+		delete $data[$i];
+	    }
+	    elsif( $osheet==1) {
+		if($data[$i]=~ m/$sheetm/) {
 		    $osheet = 0;
 		    $stop = $i;
 		}
-		$data[$i] = $sheetm. $temp . "_$sheet";
-	    }
-	    elsif( $osheet==1) {
-	        delete $data[$i];
+		else {
+		    delete $data[$i];
+		}
 	    }
 	}
 
-	if($start==0) {
+	if($stop==0) {
 	    $start = scalar @data;
 	    $stop = $start;
         }
     }
 
-    unlink($file);
     open(FILE,">$file");
+
+    print "Sheet: $sheet\n";
+    print "start: $start\n";
+    print "stop: $stop\n";
 
     for(my $i=0; $i<$start; $i++) {
         if(defined $data[$i]) {
@@ -1844,6 +1845,7 @@ sub write_csv($$$) {
 ## clean_temp_sheets
 ## remove temporary and old sheets from workbook
 ####################################################################
+
 =head2 clean_temp_sheets($)
 
 clean_temp_sheets () {
@@ -1856,6 +1858,7 @@ subroutine removes old and diff sheets from excel files
 
 =back
 =cut
+
 sub clean_temp_sheets($) {
 
     my $file = shift;
