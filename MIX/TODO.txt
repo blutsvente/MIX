@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.19 2003/08/13 09:09:19 wig Exp $
+# $Id: TODO.txt,v 1.20 2003/09/08 15:14:22 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -21,6 +21,46 @@ TODOs:
 
  Probleme:
 
+- 20030908b/Req: coding guide
+
+    Gibt es eine Möglichkeit, die intern erzeugten Signale den Coding Guidelines anzupassen?
+
+    <instname>2<instname>_<name>   from inst to inst
+    top_<name>			     from top
+    <instname>2top_<name>
+
+    Req: m kropfitsch
+    Prio: low
+    
+- 20030908a/Req: Sort signals in output as described in input sheets
+
+    Req: m. kropfitsch
+    Prio: low
+    Solution: add a counter and sort output by counter
+
+- 20030905c/Bug: Verilog input port, bad assignment
+
+noch ein MIX-Verilog-Problem:
+Signale, die über eine generierte MIX-Hierarchie verdrahtet werden sind nicht korrekt 
+beschaltet. Dies liegt daran, dass MIX in der generierten Hierarchieebene 'assign' 
+Statements auf alle IOs einbaut, im Falle eines Input Ports sollte eigentlich das interne 
+Signal den Wert des Ports zugewiesen bekommen, das ist in MIX aber genau 
+andersrum implementiert. Damit wird einem Input-Port der (nicht initialisierte) 
+Signalwert eines internen Signals zugewiesen und schon geht nichts mehr...
+
+Die Lösung ist, für Input Ports die beiden Seiten des assigns zu vertauschen.
+
+    Req: mpallas
+    Prio: high
+    Done: wig20030908
+    Testcase: e.g. bitsplice/verilog ....
+
+- 20030904a/Bug: MIX refuses to process open worksheet ..
+    new bug, sneaked in when adding path checking
+
+    Req: mpallas
+    Prio: high
+    Fixed: wig20030905 (really, automatic testcases missing)
 
 - 20030811b/Req: port/signal mangeled:
     dbo_i -> see vgca_20030811!!
@@ -432,6 +472,75 @@ is defined.
 ##########################################################
 DONE: +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ##########################################################
+
+- 20030905a/Req: Parameters in/for Verilog
+
+    Moduldefinition:
+
+module i2c(
+    clk,
+    reset_n ,
+    // ------------------ C_BUS Interface --------------//
+    cpu_wr,
+    cpu_rd,
+    cpu_rd_commit,
+    c_add,
+    c_bus_in,
+    c_iic_obus,
+    c_iic_rdy,
+    iic_int,
+    // ------------------ I2C BUS Interface -------------//
+    i2ccl_o,
+    i2cda_o,
+    i2ccl_i,
+    i2cda_i  //  i2c bus port
+);
+
+parameter          iic_cbus_base_addr  = 13'h0000;            // cbus base address
+...
+endmodule
+
+
+Modulinstanziierung mit Parameteruebergabe:
+
+...
+
+i2c # (13'h08C0) i2c_i1(	// I2C interface #1 (I2C1)
+ .c_add(cbus_addr),
+ .c_bus_in(cbus_in),
+ .c_iic_obus(c_iic1_obus),
+ .c_iic_rdy(c_iic1_rdy),
+ .clk(clk108),
+ .cpu_rd(cbus_rd),
+ .cpu_rd_commit(cbus_rd_commit),
+ .cpu_wr(cbus_wr),
+ .i2ccl_i(i2ccl_in_io),
+ .i2ccl_o(i2ccl_out_io),
+ .i2cda_i(i2cda_in_io),
+ .i2cda_o(i2cda_out_io),
+ .iic_int(iic1_int),
+ .reset_n(resetn)
+);// End of Generated Instance Port Map for i2c_i1
+
+...
+
+
+Wie es mit mehreren Parametern ist weiss ich nicht, wir benoetigen das derzeit auch 
+nicht. Vielleicht kannst Du mal einen Verilog-Experten (Jonathan Bradford ?) zu Rate 
+ziehen. Insbesondere konnte mir im MDE-Team niemand sagen, ob mehrere Parameter 
+in einer definierten Reihenfolge zu uebergeben sind oder nicht.
+
+
+    Req: mpallas
+    Prio: high
+
+    Done: wig 20030908
+    Testcase: generic/verilog
+- 20030905b/Bug: Fixes for strings as bounds
+
+    see M. Kropfitsch Mail from 29th Aug.
+
+    done: wig (only a "hack"???)
 
 - 20030729a/Bug: Konstanten Verilog
 

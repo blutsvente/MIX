@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.26 $                                             |
+# | Revision:   $Revision: 1.27 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/08/13 09:09:21 $                                   |
+# | Date:       $Date: 2003/09/08 15:14:23 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.26 2003/08/13 09:09:21 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.27 2003/09/08 15:14:23 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,9 +31,8 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
-# | Revision 1.26  2003/08/13 09:09:21  wig
-# | Minor bug fixes
-# | Added -given mode for iocell.select (MDE-D)
+# | Revision 1.27  2003/09/08 15:14:23  wig
+# | Fixed Verilog, extended path checking
 # |
 # | Revision 1.24  2003/08/11 07:16:24  wig
 # | Added typecast
@@ -216,11 +215,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.26 2003/08/13 09:09:21 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.27 2003/09/08 15:14:23 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.26 $';
+my $thisrevision   =      '$Revision: 1.27 $';
 
-# | Revision:   $Revision: 1.26 $   
+# | Revision:   $Revision: 1.27 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1153,6 +1152,9 @@ $ex = undef; # Container for OLE server
     'script' => { # Set for pre and post execution script execution
 	'pre' => '',
 	'post' => '',
+	'excel' => {
+	    'alerts' => 'off', # Switch off ExCEL display alerts; could be on, to...
+	},
     },
 );
 
@@ -2191,7 +2193,7 @@ sub open_excel($$$){
     my $openflag = 0;
     
     #old: logdie "Cannot use Excel OLE interface!" unless($use_csv);
-    $ex->{DisplayAlerts}=0;
+    $ex->{DisplayAlerts}=0 if ( $EH{'script'}{'excel'}{'alerts'} =~ m,off,io );
 
     unless( $file =~ m/\.xls$/ ) {
 	$file .= ".xls";
@@ -2202,8 +2204,8 @@ sub open_excel($$$){
     }
 
     $file = path_excel( $file );
-    my $basename = $file;
-    $basename =~ s,.*[/\\],,; #Strip off / and \ 
+    # my $basename = $file;
+    my $basename = basename( $file ); # s,.*[/\\],,; #Strip off / and \ 
 
     my $book;    
     my $ro = 1;
@@ -2214,6 +2216,33 @@ sub open_excel($$$){
     unless ( $book = is_open_workbook( $basename ) ) {
 	$book = $ex->Workbooks->Open({FileName=>$file, ReadOnly=>$ro});
 	new_workbook( $basename, $book );
+    } else {
+	# Is the open thing at the right place?
+	my $wbpath = dirname( $file ) || $EH{'cwd'};
+	# wbpath needs some fix-up -> remove NAME\.., also \.
+	if ( $wbpath eq "." ) {
+	    $wbpath = $EH{'cwd'};
+	}
+	# If this is not an absolute path -> prepend cwd ....
+	if ( $wbpath !~ m,^(\w:)?[/\\], ) {
+	    $wbpath = $EH{'cwd'} . "\\" . $wbpath;
+	}
+	#TODO: Do not remove ... (three dots in a row ....)
+	#TODO: Use File::Spec for that matter (but that does not work today?).
+	while ( 1 ) {
+	    last unless ( $wbpath =~ s,\\?[^\\]+\\\.\.,,g ) # Remove DIR\..
+	    # last unless ( $wbpath =~ m,\\\.\., );
+	}
+	$wbpath =~ s,\\\.\\,\\,g;	      # Remove \.
+	
+	$wbpath =~ s,/,\\,g; # Replace potential / -> \
+	$wbpath =~ s,\\\\,\\,g; # Remove duplicate \
+
+	#Does our book have the right path?
+	if ( $book->Path ne $wbpath ) {
+	    logwarn("ERROR: workbook $basename with different path (" . $book->Path . ") already opened!");
+	    $EH{'sum'}{'errors'}++;
+	}
     }
 
     $book->Activate;
@@ -2269,11 +2298,6 @@ sub open_excel($$$){
 	my $row=$sheet->UsedRange->{Value};
 	push( @all, $row ); # Return array of arrays
     }
-
-    #unless( $openflag ) {
-	#$book->Close or logdie "Cannot close $file spreadsheet";
-    #}
-    #TODO: Keep open until all opes are done (avoid reopening ...)
 
     $ex->{DisplayAlerts}=1; # Switch back on alerts ...
     return(@all);
@@ -2481,8 +2505,10 @@ sub db2array ($$$) {
 		if ( length( $a[$n][$ii-1] ) > 1024 ) {
 		    # Line too long! Split it!
 		    $split_flag=1;
-		    logwarn( "WARNING: Intermediate may be bogus, cell too large!" );
+		    logwarn( "WARNING: Intermediate may be bogus, cell (" .
+			     length( $a[$n][$ii-1] ) . ") chopped!" );
 		    $EH{'sum'}{'warnings'}++;
+		    $a[$n][$ii-1] = substr( $a[$n][$ii-1], 0, 1024 ) . " __E_CHOPPED_LARGE_CELL";
 		    #TODO: split this cell into N chunks of appr. 512 chars.
 		    # Get pieces up to 1024 characters, seperated by ", %IOCR%"
 		    # my $rest = $a[$n][$ii-1];
@@ -2796,7 +2822,12 @@ sub one2two ($) {
 	}
 	my @w = map( { length( $_ ) }@fields );
 	for my $i ( @w ) {
-	    $match .= '[*|](.{' . $i . '})';
+	    if ( $i > 1024 * 10 ) { # reg expression seems to be limited to 32766 chars ..
+		logwarn( "WARNING: Cannot split field with $i chars in delta mode!\n" );
+		$match .= '[*|]([^*|]+)';
+	    } else {
+		$match .= '[*|](.{' . $i . '})';
+	    }
 	}
     }
     for my $n ( 0..$#{$ref} ) {
@@ -2878,36 +2909,33 @@ sub write_excel ($$$;$) {
     }
     
     my $efile = path_excel( $file );
-    my $basename = $file;
-    $basename =~ s,.*[/\\],,; #TODO: check if Name is basename of filename, always??
+    # my $basename = $file;
+    my $basename = basename( $file ); # ~ s,.*[/\\],,; #TODO: check if Name is basename of filename, always??
 
-    $ex->{DisplayAlerts}=0;
+    # $ex->{DisplayAlerts}=0;
+    $ex->{DisplayAlerts}=0 if ( $EH{'script'}{'excel'}{'alerts'} =~ m,off,io );
 
     if ( -r $file ) {
-	logwarn("File $file already exists! Contents will be changed");
-
 	# If it exists, it could be open, too?
 	unless( $book = is_open_workbook( $basename ) ) {
+	    # No, not opened so far ....
+	    logwarn("File $file already exists! Contents will be changed");
 	    $book = $ex->Workbooks->Open($efile);
 	    new_workbook( $basename, $book );
-	}
-
+	} else {
+	    # Is the open thing at the right place?
+	    my $wbpath = dirname( $file ) || $EH{'cwd'};
+	    if ( $wbpath eq "." ) {
+		$wbpath = $EH{'cwd'};
+	    }
+	    $wbpath =~ s,/,\\,g; # Replace / -> \
+	    #Does our book have the right path?
+	    if ( $book->Path ne $wbpath ) {
+		logwarn("ERROR: workbook $basename with different path ($book->Path) already opened!");
+		$EH{'sum'}{'errors'}++;
+	    }
+	}   
 	$book->Activate;
-	
-#	foreach my $bk ( in $ex->{Workbooks} ) {
-#	    if ( $bk->{'Name'} =~ m/^$basename$/i ) {
-#		#20030313: Do not consider file name case!
-#		$openflag = 1;
-#		$bk->Activate;
-#		$book = $bk;
-#		last;
-#		# Already open ...
-#		# Warning: Path might be different!
-#	    }
-#	}
-#	unless ( $openflag ) {
-#	    $book = $ex->Workbooks->Open($efile);
-#	}
 	
 	#
     	# rotate old versions of $sheet to O$n_$sheet_O ...
@@ -2977,7 +3005,7 @@ sub write_excel ($$$;$) {
 # my $Sheet = $Book->Worksheets(1);
 # my $Range = $Sheet->Range("A2:C7");
 # my $Chart = $Excel->Charts->Add;
-#my $Sheet = $Book->Worksheets("Sheet1");
+# my $Sheet = $Book->Worksheets("Sheet1");
 #       $Sheet->Activate();       
 #       $Sheet->{Name} = "DidItInPerl";
 

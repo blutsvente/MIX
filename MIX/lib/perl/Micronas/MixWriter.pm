@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.26 $                                             |
+# | Revision:   $Revision: 1.27 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/08/13 09:09:21 $                                   |
+# | Date:       $Date: 2003/09/08 15:14:24 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.26 2003/08/13 09:09:21 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.27 2003/09/08 15:14:24 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.27  2003/09/08 15:14:24  wig
+# | Fixed Verilog, extended path checking
+# |
 # | Revision 1.26  2003/08/13 09:09:21  wig
 # | Minor bug fixes
 # | Added -given mode for iocell.select (MDE-D)
@@ -169,7 +172,7 @@ sub _write_constant ($$$;$);
 sub write_architecture ();
 sub strip_empty ($);
 sub port_map ($$$$$$);
-sub generic_map ($$$$);
+sub generic_map ($$$$;$);
 sub print_conn_matrix ($$$$$$$$;$);
 sub signal_port_resolve($$);
 sub use_lib($$);
@@ -188,9 +191,9 @@ sub mix_wr_unsplice_port ($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.26 2003/08/13 09:09:21 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.27 2003/09/08 15:14:24 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.26 $';
+my $thisrevision   =      '$Revision: 1.27 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -300,6 +303,9 @@ $EH{'template'}{'vhdl'}{'arch'}{'body'} = <<'EOD';
 -- Start of Generated Architecture %ARCHNAME% of %ENTYNAME%
 --
 architecture %ARCHNAME% of %ENTYNAME% is 
+
+%CONSTANTS%
+
 	--
 	-- Components
 	--
@@ -311,8 +317,6 @@ architecture %ARCHNAME% of %ENTYNAME% is
 	--
 
 %SIGNALS%
-
-%CONSTANTS%
 
 begin
 
@@ -1377,6 +1381,7 @@ sub _mix_wr_get_iveri ($$$) {
         'io' => "inout",
         'inout' => "inout", 
         'not_valid' => "__W_INVALID_PORT",
+        'parameter' => "parameter",
     );
     
     my $gent = "";
@@ -1388,7 +1393,9 @@ sub _mix_wr_get_iveri ($$$) {
         'inout' => "",
         'not_valid' => "",
         'wire'  => "",
+        'parameter' => "",
     );
+    my @portorder = qw( parameter in io inout out wire not_valid );
     my %portheader = (
         'out'   => "\t\t$tcom Generated Module Outputs:\n",
         'in'    => "\t\t$tcom Generated Module Inputs:\n",
@@ -1396,6 +1403,7 @@ sub _mix_wr_get_iveri ($$$) {
         'inout'    => "\t\t$tcom Generated Module In/Outputs:\n",
         'not_valid' => "\t\t$tcom __W_NOT_VALID Module In/Outputs:\n",
         'wire'  => "\t\t$tcom Generated Wires:\n",
+        'parameter' => "\t\t$tcom Module parameters:\n",
     );
 
     for my $p ( sort ( keys( %{$r_ent} ) ) ) {
@@ -1407,11 +1415,11 @@ sub _mix_wr_get_iveri ($$$) {
 	    if ( $pdd->{'mode'} =~ m,^\s*(generic|G|P),io ) {
 		if ( exists( $pdd->{'value'} ) ) {
                 #Generic, with default value from conndb ...
-                    $gent .= $EH{'macro'}{'%S%'} x 2 . $tcom . " __W_VERI_GENERIC: " . $p .
-                                " " . $pdd->{'type'} . " := " . $pdd->{'value'} . ";\n";
+                    $port{'parameter'} .= $EH{'macro'}{'%S%'} x 2 . $ioky{'parameter'} . " " . $p .
+                        " = " . $pdd->{'value'} . ";\n";
 		} else {
-                    $gent .= $EH{'macro'}{'%S%'} x 2 . $tcom . " __W_VERI_GENERIC: " . $p .
-                                " " . $pdd->{'type'} . "; " . $tcom . " := __W_NODEFAULT;\n";
+                    $port{'parameter'} .= $EH{'macro'}{'%S%'} x 2 . $ioky{'parameter'} . " " . $p .
+                        "; " . $tcom . " = __W_NODEFAULT;\n";
 		}
             } elsif (	defined( $pdd->{'high'} ) and
 			defined( $pdd->{'low'} ) and
@@ -1526,7 +1534,7 @@ sub _mix_wr_get_iveri ($$$) {
     # Finalize intf: add all inputs, outputs and inouts ....
     $intf .= $EH{'macro'}{'%S%'} x 2 . ");\n";
     # Print out inputs, outputs, inouts and wires ...
-    for my $i ( sort keys %port ) {
+    for my $i ( @portorder ) {
         if ( $port{$i} ) {
             $intf .= $portheader{$i};
             $intf .= $port{$i};
@@ -1659,7 +1667,7 @@ sub gen_instmap ($;$$) {
     $map .= port_map( 'in', $inst, $enty, $lang, $rinstc->{'in'}, \@in );
 
     if ( exists( $rinstc->{'generic'} ) ) {
-        $gmap .= generic_map( 'in', $inst, $enty, $rinstc->{'generic'} );
+        $gmap .= generic_map( 'in', $inst, $enty, $rinstc->{'generic'}, $lang );
     }
  
     $map .= port_map( 'out', $inst, $enty, $lang, $rinstc->{'out'}, \@out );
@@ -1700,9 +1708,10 @@ sub gen_instmap ($;$$) {
                 (  $hierdb{$inst}{'::descr'} ? ( $EH{'macro'}{'%S%'} . "// "
                         . $hierdb{$inst}{'::descr'} ) : "" ) .
                 "\n" .
-                $gmap .
                 $map .
-                $EH{'macro'}{'%S%'} x 2 . ");". $tcom . " End of Generated Instance Port Map for $inst\n";
+                $EH{'macro'}{'%S%'} x 2 . ");\n" .
+                $gmap .
+                $EH{'macro'}{'%S%'} x 2 . $tcom . " End of Generated Instance Port Map for $inst\n";
     } else {
         $map =  $EH{'macro'}{'%S%'} x 2 . "-- Generated Instance Port Map for $inst\n" .
                 $EH{'macro'}{'%S%'} x 2 . $inst . ": " . $enty .
@@ -1874,17 +1883,28 @@ sub mix_wr_unsplice_port ($$$) {
 #  $inst = instancename
 #  $enty = entityname
 #  $ref = reference to $hierdb{$i}{::conn}{$io}
+#  $lang = language ....
 #
-sub generic_map ($$$$) {
+sub generic_map ($$$$;$) {
     my $io = shift;
     my $inst = shift;
     my $enty = shift;
     my $ref = shift;
+    my $lang = shift || $EH{'macro'}{'%LANGUAGE%'};
 
     my $map = "";
 
-    for my $g ( sort( keys( %$ref ) ) ) {
+    if ( $lang =~ m,^veri,io ) {
+        for my $g ( sort( keys( %$ref ) ) ) {
+                  $map .=  "\t\t\t" . $inst . "." . $g . " = " .
+                  $ref->{$g} . ",\n";
+        }
+        $map =~ s#,\n$#;\n#;
+        $map =~ s,^\t\t\t,\t\tdefparam ,;
+    } else {
+        for my $g ( sort( keys( %$ref ) ) ) {
                   $map .= "\t\t\t$g => $ref->{$g},\n";
+        }
     }
     return $map;
 }
@@ -1942,7 +1962,12 @@ sub port_map ($$$$$$) {
 		#  $conn->{port_f}, $conn->{port_t},
 		#  $conn->{sig_f}, $conn->{sig_t}		
 		my $conn = $conndb{$s}{'::' . $io}[$n];
-		add_conn_matrix( $p, $s, \@cm, $conn );
+		my $ret = add_conn_matrix( $p, $s, \@cm, $conn );
+                #!wig20030908: very special trick to get constants for nan bounds:
+                if ( $ret and $ret eq 2 ) { # nan bounds, matching .... store for later
+                    $hierdb{$inst}{'::nanbounds'}{$s} = \@cm;
+                    #TODO: check if that happeded already ...
+                }
 	    }
 
             my $cast = "";
@@ -1966,6 +1991,14 @@ sub port_map ($$$$$$) {
 # Set up an array for each pin of a port, indexing a given signal!
 #
 # Handle duplicate connection of one signal to several pins ...
+# Returns:
+#   - modified connection matrix in $matrix
+#  - return value:
+#     undef = s.th. went wrong
+#     0 = everything fine, signal and port slice are equal
+#    1 = non-matching signal/port slice ...
+#    2 = detected nan bounds, matching
+#    3 = detected nan bounds, non-matching
 #
 sub add_conn_matrix ($$$$) {
     my $port = shift;
@@ -2001,12 +2034,13 @@ sub add_conn_matrix ($$$$) {
             $matrix->[0] = "__NAN__";
             $matrix->[1] = $csf;
             $matrix->[2] = $cst;
+            return 2;
         } else {
             logwarn( "WARNING: cannot resolve signal/port $signal $port: non numeric and non matching bounds!" );
             $EH{'sum'}{'warnings'}++;
         }
         
-        return 1;
+        return 3;
         #TODO: other cases ...
     }
     
@@ -2658,6 +2692,7 @@ sub _write_architecture ($$$$) {
     my $et = replace_mac( $EH{'template'}{$lang}{'arch'}{'head'}, \%macros);    
 
     my %seenthis = ();
+
     my $contflag = 0;
     #
     # Go through all instances and generate a architecture for each !entity!
@@ -2709,6 +2744,7 @@ sub _write_architecture ($$$$) {
         my %sig2inst = ();
 	my @in= ();
 	my @out = ();
+        my %nanbounds = ();
 	#
 	# Inform user about rewrite of architecture for this entity ...
 	#
@@ -2809,6 +2845,9 @@ sub _write_architecture ($$$$) {
 	    # and returns a list of in/out signals
 	    my( $imap, $r_in, $r_out );
 	    ( $imap, $r_in, $r_out ) = gen_instmap( $d_name, $lang, $tcom );
+	    if ( exists( $hierdb{$d_name}{'::nanbounds'} ) ) {
+                $nanbounds{$d_name} = $hierdb{$d_name}{'::nanbounds'};
+	    }
 	    $macros{'%INSTANCES%'} .= "%INST_" . $d_name . "%\n";
             $i_macros{'%INST_' . $d_name . '%'} = $imap;
 
@@ -2922,8 +2961,8 @@ sub _write_architecture ($$$$) {
 	    }
 	    # Add constant definitions here to concurrent signals ....
 	    if ( $s->{'::mode'} =~ m,C,io ) {
-                my ( $s, $a, $d ) = _write_constant( $s, $type, $dt, $ilang );
-                $signaltext .= $s; # add to signal declaration ...
+                my ( $si, $a, $d ) = _write_constant( $s, $type, $dt, $ilang );
+                $signaltext .= $si; # add to signal declaration ...
                 $veridefs .= $d;
                 $macros{'%CONCURS%'} .= $a;  # add to signal assignment
                 next;
@@ -3022,6 +3061,35 @@ sub _write_architecture ($$$$) {
 
 	}
 
+	#
+	# Adding constant definitions for nan bounds signals ...
+        #
+        my %parms = ();
+        for my $ii ( keys( %nanbounds ) ) {
+            for my $iii ( values( %{$nanbounds{$ii}} ) ) {
+                my $high = $iii->[1];
+                my $low = $iii->[2];
+                while( $high =~ m,(\w+),g ) { # Get all words in the high/low definition
+                    next if ( exists( $parms{$1} ) );
+                    if ( exists( $conndb{$1} )  and $conndb{$1}{'::mode'} eq "P" ) {
+                        $macros{'%CONSTANTS%'} .= "\t\tconstant " . $1 . " : " .
+                            $conndb{$1}{'::type'} . " := " . $conndb{$1}{'::out'}[0]{'value'} .
+                            "; -- __I_PARAMETER\n";
+                        $parms{$1} = 1;
+                    }
+                }
+                while( $low =~ m,(\w+),g ) { # Get all words in the high/low definition
+                    next if ( exists( $parms{$1} ) );
+                    if ( exists( $conndb{$1} )  and $conndb{$1}{'::mode'} eq "P" ) {
+                        $macros{'%CONSTANTS%'} .= "\t\tconstant " . $1 . " : " .
+                            $conndb{$1}{'::type'} . " := " . $conndb{$1}{'::out'}[0]{'value'} .
+                            "; -- __I_PARAMETER\n";
+                        $parms{$1} = 1;
+                    }
+                }
+            }
+        }
+        
 	# End is near for write_architecture ...
 	$signaltext .= "\t\t" . $tcom . "\n\t\t" . $tcom . " End of Generated Signal List\n\t\t" . $tcom . "\n";
 	$macros{'%SIGNALS%'} = $signaltext;
@@ -3357,7 +3425,11 @@ sub gen_concur_port($$$$$$$$;$$) {
             # in:               SIGNAL <= PORT;
             # out (et al.)   PORT <= SIGNAL;
             if ( $lang =~ m,^veri,io ) {
-                $concur .= "\t\t\t" . "assign\t" . $port . $pslice . " = " . $signal_n . $sslice . "; " . $type . "\n";
+                if ( $mode eq "in" ) {
+                    $concur .= "\t\t\t" . "assign\t" . $signal_n . $sslice . " = " . $port . $pslice . "; " . $type . "\n";
+                } else {
+                    $concur .= "\t\t\t" . "assign\t" . $port . $pslice . " = " . $signal_n . $sslice . "; " . $type . "\n";
+                }
             } else {
                 if ( $mode eq "in" ) {
                     $concur .=    "\t\t\t" . $signal_n . $sslice . " <= " . $port . $pslice . "; " . $type . "\n";
