@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.16 $                                             |
+# | Revision:   $Revision: 1.17 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/04/29 07:22:36 $                                   |
+# | Date:       $Date: 2003/06/04 15:52:43 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.16 2003/04/29 07:22:36 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.17 2003/06/04 15:52:43 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.17  2003/06/04 15:52:43  wig
+# | intermediate release, before releasing alpha IOParser
+# |
 # | Revision 1.16  2003/04/29 07:22:36  wig
 # | Fixed %OPEN% bit/bus problem.
 # |
@@ -108,6 +111,8 @@ require Exporter;
       apply_conn_macros
       apply_hier_gen
       apply_conn_gen
+      add_inst
+      add_conn
       add_portsig
       add_sign2hier
       parse_mac
@@ -169,11 +174,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.16 2003/04/29 07:22:36 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.17 2003/06/04 15:52:43 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.16 $';
+my $thisrevision   =      '$Revision: 1.17 $';
 
-# | Revision:   $Revision: 1.16 $   
+# | Revision:   $Revision: 1.17 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -442,6 +447,10 @@ sub parse_conn_gen ($) {
                 logwarn("bad bounds $2 .. $3 in generator definition!");
                 next;
             }
+            if ( exists( $g{$pre} ) ) { # Redefinition of this macro ...
+                $g{$pre}{'rep'}++;
+                $pre .= "__DUPL__" . $gi++;
+            }
             $g{$pre}{'pre'} = $4;
             $g{$pre}{'var'} = $1;
             $g{$pre}{'lb'}   = $2;
@@ -451,11 +460,16 @@ sub parse_conn_gen ($) {
         }
         # plain generator: /PERL_RE/
         elsif ( $rin->[$i]{'::gen'} =~ m!^\s*/(.*)/! ) {
-            $g{$1}{'var'} = undef;
-            $g{$1}{'lb'}   = undef;
-            $g{$1}{'ub'}  = undef;
-            $g{$1}{'pre'} = $1;
-            $g{$1}{'field'} = $rin->[$i];
+            my $tag = $1;
+            if ( exists( $g{$tag} ) ) { # Redefinition of this macro ...
+                $g{$tag}{'rep'}++;
+                $tag .= "__DUPL__" . $gi++;
+            }
+            $g{$tag}{'var'} = undef;
+            $g{$tag}{'lb'}   = undef;
+            $g{$tag}{'ub'}  = undef;
+            $g{$tag}{'pre'} = $1;
+            $g{$tag}{'field'} = $rin->[$i];
             $rin->[$i]{'::comment'} = "# Generator parsed /" . $rin->[$i]{'::comment'};
         }
         # parameter generator: $i (1..10)
@@ -1290,7 +1304,7 @@ sub merge_conn($%) {
         } elsif ( $i =~ /^\s*::(high|low)/o ) {
             if ( defined($conndb{$name}{$i}) and $conndb{$name}{$i} ne '' ) {
                 # There was already s.th. defined for this bus
-                if ( $data{$i} ne '' and $conndb{$name}{$i} ne $data{$i} ) {
+                if ( defined( $data{$i} ) and $data{$i} ne '' and $conndb{$name}{$i} ne $data{$i} ) {
                     # LOW and HIGH "signals" are special.
                     if ( $name =~ m,^\s*%(LOW|HIGH)_BUS%,o ) { # Accept larger value for upper bound
                         if ( $i =~ m,^\s*::high,o ) {
@@ -1639,7 +1653,7 @@ sub apply_x_gen ($$) {
     
     for my $i ( keys( %hierdb) ) { #See if the ::gen matches one of the instances already known
         next if $hierdb{$i}{'::ign'} =~ m,^\s*(#|//),o;
-        for my $cg ( keys( %$r_hg ) ) {
+        for my $cg ( keys( %$r_hg ) ) { # Iterate through all known generators ...
             unless( $r_hg->{$cg}{'var'} ) {
             # Plain match, no run parameter
                 if ( $i =~ m/^$r_hg->{$cg}{'pre'}$/ ) {
@@ -1647,6 +1661,9 @@ sub apply_x_gen ($$) {
                     for my $ii ( keys %{$r_hg->{$cg}{'field'}} ) {
                         if ( $r_hg->{$cg}{'field'}{$ii} ) {
                             my $e = "\$in{'$ii'} = \"" . $r_hg->{$cg}{'field'}{$ii} . "\"";
+                            if ( $ii eq "::gen" ) { # Mask \ 
+                                    $e =~ s/\\/\\\\/g;
+                            }
                             unless( eval $e ) {
                                 $in{$ii} = "E_BAD_EVAL" if $@;
                                 logwarn("bad hierachy match for $i, match $cg: $@") if $@;
@@ -1671,8 +1688,9 @@ sub apply_x_gen ($$) {
                 $matcher =~ s/\$$rv/\\d+/g; #Replace $i by \\d+
                 if ( $i =~ m/^$matcher$/ ) {
                     # Save $1..$N for later reusal into %mres
-                    for my $ii ( 1..20 ) { #No more then $20 !!
-                        my $e = "\$mres{\$$ii} = \$$ii if defined( \$$ii );";
+                    for my $ii ( 1..20 ) { #No more then $20, but loop will be left if undef found.
+                        #!wig20030516:bug:  my $e = "\$mres{\$$ii} = \$$ii if defined( \$$ii );";
+                        my $e = "\$mres{$ii} = \$$ii if defined( \$$ii );"; # Keep $1 ...
                         unless ( eval $e ) {
                             if ( $@ ) {
                                 logwarn( "bad eval $mres{\$$ii}: $@" );
@@ -1712,12 +1730,15 @@ sub apply_x_gen ($$) {
                             if ( $iii =~ m/::gen/ ) { # Treat ::gen specially
                                 $f =~ s/\$$rv/\\\$$rv/g; # Replace $V by \$V ....
                                 $f = "G # $rv = $mres{$rv} #" . $f;
+                                $f =~ s/\\/\\\\/g; # Mask \
                             } else {
-                                $f =~ s/\$(\d+)/\$mres{$1}/g; # replace $N by $mres{'N'}
-                                $f =~ s/\$$rv/$mres{$rv}/g;    # Replace the run variable by it's value
-                                # $f =~ tr/{}/()/;                     # Replace {} by (), which will be evaluated
+                                #!wig20030516: first convert {} to (), then replace variables
                                 $f =~s/{/" . (/g;
                                 $f =~s/}/) . "/g;       #TODO: make sure {} do match!!
+                            
+                                $f =~ s/\$(\d+)/$mres{$1}/g; # replace $N by $mres{'N'}
+                                $f =~ s/\$$rv/$mres{$rv}/g;    # Replace the run variable by it's value
+                                # $f =~ tr/{}/()/;                     # Replace {} by (), which will be evaluated
                             }
                             my $e = '$in{\'' . $iii . '\'} = "' . $f .'"';
                             unless ( eval $e ) {
@@ -3195,6 +3216,21 @@ sub purge_relicts () {
                 _extend_inout( $h, $l, $conndb{$i}{'::in'} );
                 _extend_inout( $h, $l, $conndb{$i}{'::out'} );
             # }
+        }
+        #!wig20030516: auto reducing single width busses to signals ...
+        if ( $conndb{$i}{'::high'} eq "0" and $conndb{$i}{'::low'} eq "0" ) {
+            if ( $conndb{$i}{'::type'} =~ m,std_u?logic\s*$,io ) {
+                $conndb{$i}{'::high'} = '';
+                $conndb{$i}{'::low'} = '';
+            } elsif ( $conndb{$i}{'::type'} =~ m,(std_u?logic)_vector\s*$,io ) {
+                logwarn("WARNING: reducing signal $i from mode $conndb{$i}{'::mode'} to $1!");
+                $conndb{$i}{'::high'} = '';
+                $conndb{$i}{'::low'} = '';
+                $conndb{$i}{'::type'} = $1;
+            } elsif ( $conndb{$i}{'::type'} eq $EH{'conn'}{'field'}{'::type'}[3] ) {
+                $conndb{$i}{'::high'} = '';
+                $conndb{$i}{'::low'} = '';
+            }
         }
     }
     #

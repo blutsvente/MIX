@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.15 $                                             |
+# | Revision:   $Revision: 1.16 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/04/29 07:22:36 $                                   |
+# | Date:       $Date: 2003/06/04 15:52:43 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.15 2003/04/29 07:22:36 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.16 2003/06/04 15:52:43 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.16  2003/06/04 15:52:43  wig
+# | intermediate release, before releasing alpha IOParser
+# |
 # | Revision 1.15  2003/04/29 07:22:36  wig
 # | Fixed %OPEN% bit/bus problem.
 # |
@@ -159,7 +162,7 @@ sub select_variant ($);
 sub mix_list_conf ();
 sub _mix_list_conf ($$);
 sub _mix_apply_conf ($$$);
-sub mix_utils_open($);
+sub mix_utils_open($;$);
 sub mix_utils_print($@);
 sub mix_utils_printf($@);
 sub mix_utils_close($$);
@@ -183,11 +186,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.15 2003/04/29 07:22:36 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.16 2003/06/04 15:52:43 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.15 $';
+my $thisrevision   =      '$Revision: 1.16 $';
 
-# | Revision:   $Revision: 1.15 $   
+# | Revision:   $Revision: 1.16 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -290,7 +293,7 @@ sub mix_getopt_header(@) {
 	# outenty defined by -conf or config file, do not change
     } elsif ( exists( $ARGV[$#ARGV] ) )  {
 	# Output file will be written to current directory.
-	# Name will become name of last input file foo-mixed.ext
+	# Name will become name of last input file foo-e.vhd
 	$EH{'outenty'} = $ARGV[$#ARGV];
 	$EH{'outenty'} =~ s,(\.[^.]+)$,,; # Remove extension
 	$EH{'outenty'} .= $EH{'postfix'}{'POSTFILE_ENTY'} . "." . $EH{'output'}{'ext'}{'vhdl'};
@@ -308,7 +311,7 @@ sub mix_getopt_header(@) {
 	# outarch defined by -conf or config file, do not change
     } elsif ( exists( $ARGV[$#ARGV] ) )  {
 	# Output file will be written to current directory.
-	# Name will become name of last input file foo-mixed.ext
+	# Name will become name of last input file foo-a.vhd
 	$EH{'outarch'} = $ARGV[$#ARGV] ;
 	$EH{'outarch'} =~ s,(\.[^.]+)$,,;
 	$EH{'outarch'} .= $EH{'postfix'}{'POSTFILE_ARCH'} . "." . $EH{'output'}{'ext'}{'vhdl'};
@@ -326,7 +329,7 @@ sub mix_getopt_header(@) {
 	# outconf defined by -conf or config file, do not change
     } elsif ( exists( $ARGV[$#ARGV] ) )  {
 	# Output file will be written to current directory.
-	# Name will become name of last input file foo-mixed.ext
+	# Name will become name of last input file foo-c.vhd
 	$EH{'outconf'} = $ARGV[$#ARGV] ;
 	$EH{'outconf'} =~ s,(\.[^.]+)$,,;
 	$EH{'outconf'} .= $EH{'postfix'}{'POSTFILE_CONF'} . "." . $EH{'output'}{'ext'}{'vhdl'};
@@ -335,6 +338,16 @@ sub mix_getopt_header(@) {
 	}
     } else {
 	$EH{'outconf'} = "mix" . $EH{'postfix'}{'POSTFILE_CONF'} . "." . $EH{'output'}{'ext'}{'vhdl'};
+    }
+
+    #
+    # -combine option -> overwrite outarch/outenty/outconf ...
+    #
+    if ( defined $OPTVAL{'combine'} ) {
+	$EH{'output'}{'generate'}{'combine'} = $OPTVAL{'combine'};
+    }
+    if ( $EH{'output'}{'generate'}{'combine'} ) { # Overload outxxx if combine is active
+	$EH{'outenty'} = $EH{'outarch'} = $EH{'outconf'} = 'COMB';
     }
 
     #
@@ -655,8 +668,11 @@ $ex = undef; # Container for OLE server
 	    'enty' => { 'head' => "## VHDL Entity Template String t.b.d.", },
 	},
 	'verilog' =>{
-	    'wrap' => "Verilog Wrapper Template String",
-	    'file' => "Verilog File Template String",
+	    'conf' => { 'head' => "## Verilog Configuration Template String t.b.d.", },
+	    'arch' => { 'head' => "## Verilog Architecture Template String t.b.d.", },
+	    'enty' => { 'head' => "## Verilog Entity Template String t.b.d.", },
+	    'wrap' => "## Verilog Wrapper Template String t.b.d.",
+	    'file' => "##Verilog File Template String t.b.d.",
 	},
     },
     'output' => {
@@ -676,13 +692,20 @@ $ex = undef; # Container for OLE server
 					# controlled by ::mode I|O
 					# noxfix: do not attach pre/postfix to signal names
 	      'delta' => 0,	    	# allows to use mix.cfg to preset delta mode
+	      'combine' => 0,	# Combine enty,arch and conf into one file, -combine switch
 	    },	
-	'ext' => 	{   'vhdl' => 'vhd',
+	'ext' =>	{   'vhdl' => 'vhd',
 			    'verilog' => 'v' ,
 			    'intermediate' => 'mixed', # not a real extension!
 			    'internal' => 'pld',
 			    'delta' => '.diff',	# delta mode
-	    },
+	},
+	'comment' => {	'vhdl' => '--',
+				'verilog' => '//',
+				'intermediate' => '#',
+				'internal' => '#',
+				'delta' => '#',
+	},
 	# 'warnings' => 'load,drivers',	# Warn about missing loads/drivers
 	'warnings' => '',
 	'delta' => 'sort', # Controlling delta output mode:
@@ -720,7 +743,7 @@ $ex = undef; # Container for OLE server
 	},
 	'keywords' => { #These keywords will trigger warnings and get replaced
 	    'vhdl'	=> '(open|instance|entity|signal)', #TODO: Give me more keywords
-	    'verilog' 	=> '(register|net)', #TODO: give me more
+	    'verilog' 	=> '(register|net|wire|in|out|inout)', #TODO: give me more
 	},
 	'defs' => '',  # 'inst,conn',    # make sure elements are only defined once:
 		    # possilbe values are: inst,conn
@@ -794,8 +817,8 @@ $ex = undef; # Container for OLE server
 	    '::class'		=> [ qw(	1	0	1	WARNING_NOT_SET	4 )],
 	    '::clock'		=> [ qw(	1	0	1	WARNING_NOT_SET	5 )],
 	    '::type'		=> [ qw(	1	0	1	%SIGNAL%	6 )],
-	    '::high'		=> [ qw(	1	0	0	%NULL% 	7 )],
-	    '::low'		=> [ qw(	1	0	0	%NULL% 	8 )],
+	    '::high'		=> [ qw(	1	0	0	%EMPTY% 	7 )],
+	    '::low'		=> [ qw(	1	0	0	%EMPTY% 	8 )],
 	    '::mode'		=> [ qw(	1	0	1	%DEFAULT_MODE%	9 )],
 	    '::name'		=> [ qw(	0	0	1	ERROR_NO_NAME	10 )],
 	    '::shortname'	=> [ qw(	0	0	0	%EMPTY% 	11 )],
@@ -829,7 +852,7 @@ $ex = undef; # Container for OLE server
 	    '::variants'	=> [ qw(	1	0	0	Default	3 )],
 	    '::parent'	=> [ qw(	1	0	1	W_NO_PARENT	4 )],
 	    '::inst'		=> [ qw(	0	0	1	W_NO_INST	5 )],
-	    '::lang'		=> [ qw(	1	0	0	VHDL	7 )],
+	    '::lang'		=> [ qw(	1	0	0	%LANGUAGE%	7 )],
 	    '::entity'		=> [ qw(	1	0	1	W_NO_ENTITY	8 )],
 	    '::arch'		=> [ qw(	1	0	0	rtl			9 )],
 	    "::config"	=> [ qw(	1	0	1	W_NO_CONFIG	11 )],
@@ -922,6 +945,7 @@ $ex = undef; # Container for OLE server
 	    "%IOCELL_TYPE%"	=> "__E_DEFAULT_IOCELL__", # Default iocell entity
 	    "%IOCELL_SELECT_PORT%"	=> "select", 		# Default iocell port
 	    "%DEFAULT_MODE%"	=> "S",
+	    "%LANGUAGE%"	=> lc("VHDL"), # Default language, could be verilog
 	    "%VHDL_USE_DEFAULT%"	=>
 		"library IEEE;\nuse IEEE.std_logic_1164.all;\n",
 		# "Library IEEE;\nUse IEEE.std_logic_1164.all;\nUse IEEE.std_logic_arith.all;",
@@ -930,6 +954,7 @@ $ex = undef; # Container for OLE server
 	    "%VHDL_USE_ENTY%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
 	    "%VHDL_USE_ARCH%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
 	    "%VHDL_USE_CONF%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
+	    "%VERILOG_TIMESCALE%"	=>	"'timescale 1ns / 1ns;",
 	    "%OPEN%"	=> "open",			#open signal
 	    "%UNDEF%"	=> "ERROR_UNDEF",	#should be 'undef',  #For debugging??  
 	    "%UNDEF_1%"	=> "ERROR_UNDEF_1",	#should be 'undef',  #For debugging??
@@ -1389,10 +1414,13 @@ sub mix_utils_open_input (@) {
 
 =head2
 
-mix_utils_open ($$) {
+mix_utils_open ($;$) {
     
 Open file for writing. If the "delta" mode is active, then a diff will be generated
-instead of a full file! 
+instead of a full file!
+
+The first argument is the file to open, the second contains flags like:
+    COMB (combine mode)
 
 =cut
 { # Block around the mix_utils_functions .... to keep ocont, ncont and this_delta intact ...
@@ -1400,11 +1428,21 @@ my @ocont = (); # Keep (filtered) contents of original file
 my @ncont = (); # Keep (filtered) contents of new file to feed into diff
 my %this_delta = (); # Remember for which files we could delta ....
 
-sub mix_utils_open ($){
+sub mix_utils_open ($;$){
     my $file= shift;
+    my $flags = shift || ""; # Could be "COMB" for combined mode
 
     my $ofile = $file;
     if ( $EH{'output'}{'generate'}{'delta'} ) { # Delta mode!
+	my $ext;
+	my $c = "__NOCOMMENT";
+	( $ext = $file ) =~ s/.*\.//;
+	for my $k ( keys ( %{$EH{'output'}{'ext'}} )) {
+	    if ( $EH{'output'}{'ext'}{$k} eq $ext ) {
+		$c = $EH{'output'}{'comment'}{$k} || "__NOCOMMENT";
+		last;
+	    }
+	}
 	if ( -r $file ) {
 	# read in file
 	    my $ofh = new IO::File;
@@ -1412,9 +1450,11 @@ sub mix_utils_open ($){
 		logwarn( "ERROR: Cannot open org $file in delta mode: $!" );
 		return undef;
 	    }
-	    @ocont = <$ofh>; #Slurp in file
+	    @ocont = <$ofh>; #Slurp in file to compare against
 	    chomp( @ocont );
-	    map( { s/--.*//o; } @ocont ) if ( $EH{'output'}{'delta'} !~ m,comment,io );
+	    # remove comments: -- for VHDL, // for Verilog
+	    #TODO: make that dependant on the file extension
+	    map( { s/\Q$c\E.*//o; } @ocont ) if ( $EH{'output'}{'delta'} !~ m,comment,io );
 	    if ( $EH{'output'}{'delta'} !~ m,space,io ) {
 		map( { s/\s+/ /og; s/^\s*//og; s/\s*$//og; } @ocont );
 		@ocont = grep( !/^$/,  @ocont );
@@ -1431,8 +1471,14 @@ sub mix_utils_open ($){
 	}
     }
 
+    # Append or create a new file?
+    # Append will be used if we get a "COMB" flag (combine mode)
+    my $mode = O_CREAT|O_WRONLY;
+    if ( $flags =~ m,^COMB, ) {
+	$mode = O_CREAT|O_WRONLY|O_APPEND;
+    }
     my $fh = new IO::File;
-    unless( $fh->open( "> $ofile") ) {
+    unless( $fh->open( $ofile, $mode) ) {
 	logwarn( "ERROR: Cannot open $ofile: $!" );
 	return undef;
     }

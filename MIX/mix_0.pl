@@ -21,12 +21,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id              : $Id: mix_0.pl,v 1.11 2003/04/29 08:27:02 wig Exp $
+# | Id              : $Id: mix_0.pl,v 1.12 2003/06/04 15:52:42 wig Exp $
 # | Name         : $Name:  $
 # | Description  :$Description:$
 # | Parameters  : -
-# | Version       : $Revision: 1.11 $
-# | Mod.Date    : $Date: 2003/04/29 08:27:02 $
+# | Version       : $Revision: 1.12 $
+# | Mod.Date    : $Date: 2003/06/04 15:52:42 $
 # | Author        : $Author: wig $
 # | Phone         : $Phone: +49 89 54845 7275$
 # | Fax             : $Fax: $
@@ -41,6 +41,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |
 # | Changes:
 # | $Log: mix_0.pl,v $
+# | Revision 1.12  2003/06/04 15:52:42  wig
+# | intermediate release, before releasing alpha IOParser
+# |
 # | Revision 1.11  2003/04/29 08:27:02  wig
 # | Minor issue: Revision ID in mix_0.pl
 # |
@@ -152,7 +155,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.11 $'; # RCS Id
+$::VERSION = '$Revision: 1.12 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # %EH comes from Mic::MixUtils ; All the configuration E-nvironment will be there
@@ -184,9 +187,10 @@ mix_init();               # Presets ....
 
 #
 #TODO: Add that to application note
-# -out OUTPUTFILE.ext       defines output filename and type
+# -out OUTPUTFILE.ext       defines intermediate output filename and type
 # -outenty OUT-e.vhd        filename for entity. If argument is ENTY[NAME], each entity
 #                                   will be written into a file calles entityname-e.vhd
+# -combine                      combine entitiy, architecture and configuration into one file
 # -top TOPCELL                 use TOPCELL as top. Default is TESTBENCH or daughter of TESTBENCH
 # -adump                        dump internal data in ASCII format, too (debugging, use with small data set).
 # -variant
@@ -204,6 +208,7 @@ mix_getopt_header(qw(
     outenty=s
     outarch=s
     outconf=s
+    combine!
     top=s
     variant=s
     adump!

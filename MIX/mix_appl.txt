@@ -1,13 +1,69 @@
 Application Note / TOC
 
+- TOC:
+
+Overview:
+
+ XXX from Claus Schneider
+
+Installation
+- Tool installation:
+    Not needed, run directely from K:\PROJECTS\MIX\PROG (\\Galaxy\Development\).
+
+Getting Started
+    Write Hierachy
+
+    Write Connections
+    Convert
+
+A simple example: Alarm clock    
+
+Extended Usage
+    Generator statements
+
+    Macro statements
+
+    Additional columns
+    
+    Configuration files
+
+    IO Sheet
+    I2C Sheet
+    VI2C Sheet
+
+Extended Example
+
+More Extended Usage
+
+    %LOW_BUS%, %HIGH_BUS%, %LOW%, %HIGH%, %OPEN%
+
+    Constants
+
+    Generics
+    
+Templates
+
+Known Bugs and Limitations
+
+Internals, extensions
+
+Links
+CVS Repository: micmnfs:/home/wig/CVSROOT
+
+Bugtracking: bugzilla.micronas.com
+    If you find unexpected or buggy behaviour, please issue a ticket.
+    Don't forget to add a short description and a test case.
+    A good test case not only are the source files, but also
+    log files and the exact command line switches and configuration
+    files applied.
+
 - Getting started
   -- Write tabluar description, take examples from distribution to get started.
       you will need at least a sheet CONN and a sheet HIER.
   -- Run "mix_0.pl FOO.xls" to get output data.
   See section "example usage" for more details.
 
-- Tool installation:
-    Not needed, run directely from K:\PROJECTS\MIX\PROG
+
 
    t.d.: pack into installer (zip file).
    tag all relevant files in the CVS repository with an appropriate tag.
@@ -28,8 +84,12 @@ Application Note / TOC
 #
 #TODO: Add that to application note
 # -out OUTPUTFILE.ext       defines output filename and type
-# -outenty OUT-e.vhd        filename for entity. If argument is ENTY[NAME], each entity
+# -outenty OUT-e.vhd        filename for entity. If argument is ENTY, each entity
 #                                   will be written into a file calles entityname-e.vhd
+# -outarch OUT-rtl-a.vhd
+# -outconf OUT-c.vhd
+# -combine                      write entity, architecture and configuration into one file for each
+#                                   entity
 # -top TOPCELL                 use TOPCELL as top. Default is TESTBENCH or daughter of TESTBENCH
 # -adump                        dump internal data in ASCII format, too (debugging, use with small data set).
 # -variant

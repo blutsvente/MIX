@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.9 2003/04/28 06:40:36 wig Exp $
+# $Id: TODO.txt,v 1.10 2003/06/04 15:52:42 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -18,6 +18,17 @@ Doku:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+
+- 20030604a/Bug: Do not generate configuration for Verilog instances in common
+   config file
+    Req: wig
+    Prio: low
+    
+- 20030516a/Bug: bus-port which has only single bit inputs gets connected incorrect
+
+    Testcase: bug20030516
+    Req: wig
+    Prio: High
 
 - 20030424a/Bug:
 

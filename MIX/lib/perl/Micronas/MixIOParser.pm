@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / IOParser
 # | Modules:    $RCSfile: MixIOParser.pm,v $ 
-# | Revision:   $Revision: 1.2 $
+# | Revision:   $Revision: 1.3 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2003/04/28 06:40:37 $
+# | Date:       $Date: 2003/06/04 15:52:43 $
 # | 
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.2 2003/04/28 06:40:37 wig Exp $
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.3 2003/06/04 15:52:43 wig Exp $
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -36,6 +36,9 @@
 # |
 # | Changes:
 # | $Log: MixIOParser.pm,v $
+# | Revision 1.3  2003/06/04 15:52:43  wig
+# | intermediate release, before releasing alpha IOParser
+# |
 # | Revision 1.2  2003/04/28 06:40:37  wig
 # | Added %OPEN% (to allow ports without connection, use VHDL open keyword)
 # | Started parseIO (not operational, would be a branch instead)
@@ -78,9 +81,11 @@ use Log::Agent::Priorities qw(:LEVELS);
 # use Tree::DAG_Node; # tree base class
 
 use Micronas::MixUtils qw( %EH );
+use Micronas::MixParser;
 
 # Prototypes:
 sub parse_io_init ($);
+sub get_select_sigs ($);
 
 ####################################################################
 #
@@ -95,9 +100,9 @@ sub parse_io_init ($);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixIOParser.pm,v 1.2 2003/04/28 06:40:37 wig Exp $';
+my $thisid		=	'$Id: MixIOParser.pm,v 1.3 2003/06/04 15:52:43 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixIOParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.2 $';
+my $thisrevision   =      '$Revision: 1.3 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -202,8 +207,29 @@ sub mix_iop_iocell ($$) {
         } elsif ( $s =~ m,:(\d+), ) {
             $n = $1;
         }
-        $s{'::name'} = $r_sel->{$s};
-        $s{'::in'} .= "(" . $n . ")";
+        my $signal;
+        my $nr;
+        # select signal is SIGNAL(N) ... or SIGNAL.N
+        if ( $r_sel->{$s} =~ m,(.+)\.(\d+), or
+            $r_sel->{$s} =~ m,(.+)\((\d+)\), ) {
+            $signal = $1;
+            $nr = "=(". $2 . ")";
+        } else {
+            $signal = $r_sel->{$s};
+            $nr = "";
+        }
+        $s{'::name'} = $signal;
+        $s{'::in'} .= "(" . $n . ")" . $nr;
+
+        $s{'::low'} = ""; # Don't care
+        $s{'::high'} = ""; # Don't care
+        $s{'::mode'} = ""; # Don't care (automatically generated later on or inherited)
+        $s{'::class'} = "";
+        $s{'::clock'} = "";
+        $s{'::ign'} = "";
+        $s{'::gen'} = "";
+        $s{'::comment'} = "IO Generated ";
+        
         #TODO: Will we need more information??
         add_conn( %s );
     }
@@ -211,15 +237,19 @@ sub mix_iop_iocell ($$) {
     #
     # Now go through the ::port / ::muxopt matrix for this pad/iocell ...
     #
-    mix_iop_connioc( $r_h, $r_sel );
+    mix_iop_connioc( $d{'::inst'}, $r_h, $r_sel );
 
 }
 
-sub mix_iop_connioc ($$) {
+#
+# Connect iocells
+#
+sub mix_iop_connioc ($$$) {
+    my $inst = shift;
     my $r_h = shift;
     my $r_sel = shift;
 
-    my @pins = split( /[,\s]*/, $r_h->{'::port'} );
+    my @pins = split( /[,\s]+/, $r_h->{'::port'} );
 
     # Check pin names ....
     foreach my $p ( @pins ) {
@@ -239,6 +269,13 @@ sub mix_iop_connioc ($$) {
             next;
         }
 
+        my $n = 0; # Get number of select line ...
+        if ( $s eq "::muxopt" ) {
+            $n = 0;
+        } elsif ( $s =~ m,:(\d+), ) {
+            $n = $1;
+        }
+        
         my @c = split( /,/, $r_h->{$s} );
         map( { s,\s+,,g }  @c ); # Get rid of all kind of whitespace
 
@@ -259,19 +296,57 @@ sub mix_iop_connioc ($$) {
             if ( $c[$c] =~ m,(.+)\.(\d+)$, or $c[$c] =~ m,(.+)\((\d)\)$, ) {
                 $name = $1;
                 $num = $2;
-            } else {
+            } elsif ( $c[$c] ) {
                 $name = $c[$c];
                 $num = undef;
+            } else {
+                next;  # Empty input line
             }
                 
             $d{'::name'} = $name;
-            $d{'::class'} = $r_h->{'::class'};
-            # In/out ???
-            #XXXX if ( $p
-            #XXXXX$d{'::in'} = $inst . "/" . $c[$c] . " = (" . $num . ")";
+            $d{'::class'} = $r_h->{'::class'} || "";
+            my $io = mix_iop_getdir( $inst, $name );
+            # In/out
+            if ( $num ) {
+                if ( $io =~ m,^in,io ) {
+                    $d{'::in'} = $inst . "/" . $pins[$c] . "(" . $n . ")" . "=(" . $num . ")";
+                } else {
+                    $d{'::out'} = $inst . "/" . $pins[$c] . "(" . $n . ")" . "=(" . $num . ")"; 
+                }
+            } else {
+                if ( $io =~ m,^in,io ) {
+                    $d{'::in'} = $inst . "/" . $pins[$c] . "(" . $n . ")";
+                } else {
+                    $d{'::in'} = $inst . "/" . $pins[$c] . "(" . $n . ")";
+                }
+            }
+            # width??
+            $d{'::low'} = ""; # Don't care
+            $d{'::high'} = ""; # Don't care
+            $d{'::mode'} = ""; # Don't care (automatically generated later on or inherited)
+            $d{'::clock'} = "";
+            $d{'::ign'} = "";
+            $d{'::gen'} = "";
+            $d{'::comment'} = "IO Generated ";
+        
+            add_conn( %d );
         }
     }
 }
+
+#
+# mix_iop_getdir
+# Return in or out, depending on assumed direction of the pin for this
+# instance
+#
+sub mix_iop_getdir ($$) {
+    my $inst = shift;
+    my $name  = shift;
+
+    #TODO: Define s.th more appropriate ... XXXX
+    return( "in" );
+
+}    
 
 #
 # Retrieve and convert pad data from input line, create instance ...
@@ -312,7 +387,20 @@ sub mix_iop_padioc ($) {
     # hierachy sheet.
     add_inst( %d );
 }
-            
+
+#
+# Retrieve and convert pad data from input line, create instance ...
+# Connections are created by appropriate macros
+# Keywords: ::pad, ::type, ::class, ::iocell, ::ispin, ::pin
+#
+sub mix_iop_pad ($) {
+    my $r_h = shift;
+
+    logwarn("ERROR: mix_iop_pad not implemented!");
+    return;
+
+}
+
 #
 # retrieve list of select signals from muxopt columns and
 # name of select port ...
@@ -326,7 +414,12 @@ sub get_select_sigs ($) {
     foreach my $k ( keys( %$r ) ) {
         if ( $k =~ m,^::muxopt, ) {
             if ( defined( $r->{$k} ) and $r->{$k} ) {
-                $s{$k} = $r->{$k};
+                if ( $r->{$k} =~  m,(\w+)\.(\d+), ) {
+                    #  signal.N -> signal(N)
+                    $s{$k} = $1 . "(" . $2 . ")";
+                } else {
+                    $s{$k} = $r->{$k};
+                }
                 $n++;
             }
         } elsif ( $k =~ m,^::port, ) {
@@ -338,6 +431,11 @@ sub get_select_sigs ($) {
 
     $s{'__NR__'} = $n;
 
+    if ( $n == 0 ) {
+        logwarn("WARNING: no muxopt column filled with select signals detected!");
+    } elsif ( $n == 1 ) {
+        logwarn("WARNING: only one select line found!");
+    }
     return \%s;
 }
  
