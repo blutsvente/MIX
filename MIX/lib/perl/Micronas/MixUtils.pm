@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.52 $                                         |
+# | Revision:   $Revision: 1.53 $                                         |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2004/07/22 11:32:18 $                              |
+# | Date:       $Date: 2004/08/04 12:16:48 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.52 2004/07/22 11:32:18 abauer Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.53 2004/08/04 12:16:48 abauer Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.53  2004/08/04 12:16:48  abauer
+# | - added multiple header count
+# |
 # | Revision 1.52  2004/07/22 11:32:18  abauer
 # | - added multiple header counter into EH
 # |
@@ -274,11 +277,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.52 2004/07/22 11:32:18 abauer Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.53 2004/08/04 12:16:48 abauer Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.52 $';
+my $thisrevision        =      '$Revision: 1.53 $';
 
-# Revision:   $Revision: 1.52 $   
+# Revision:   $Revision: 1.53 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1198,7 +1201,7 @@ sub mix_init () {
         'xls' => 'IO',
 	'req' => 'optional',
 	'parsed' => 0,
-	'ext' => 14,
+	'cols' => 0,
 	'field' => {
 	    #Name   	=>		    Inherits
 	    #					    Multiple
@@ -1230,7 +1233,7 @@ sub mix_init () {
         'xls' => 'I2C',
 	'req' => 'optional',
 	'parsed' => 0,
-	'ext' => 15,
+	'cols' => 0,
 	'field' => {
 	    #Name   	=>	  	    Inherits
 	    #					    Multiple
@@ -2627,6 +2630,9 @@ sub parse_header($$@){
 			#Remember print order no longer is unique
 		    }
 		    $or{$i. ":". $ii} = $rowh{$i}[$ii];
+		    if($ii > $EH{$kind}{'cols'}) {
+			$EH{$kind}{'cols'} = $ii;
+		    }
 	     }
 	} else {
 		$or{$i} = $rowh{$i}[0];
