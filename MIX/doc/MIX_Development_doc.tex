@@ -184,19 +184,19 @@ for(my $i=0; $i<$oBook->{SheetCount}; $i++) {  # for all sheets in the file
 }
 
 \end{verbatim}
-The number of Sheets, with the same name to keep, as many other things is conatined in the EH Variable. This Variable is initialized by the call of mix\_init(), optional you may setup your completly own EH Variable, but you will have to look into MixUtils%backslash%IO.pm for the requirements. The \begin{tt}pop(@data)\end{tt} is needed because Mix's read Functions returns a list of every Sheet of the given name.
+The number of Sheets, with the same name to keep, as many other things is conatined in the EH Variable. This Variable is initialized by the call of {\tt mix\_init()}, optional you may setup your completly own EH Variable, but you will have to look into MixUtils%backslash%IO.pm for the requirements. The {\tt pop(\@data)} is needed because Mix's read Functions returns a list of every Sheet of the given name.
 
 
 \subsection{Mix parsing Extensions}
-Writing a Mix parsing Extension is even easy as Spreadsheet operations. Mix does it's work by mapping input Information (taken from a Spreadsheet) on instances and connections. These are keept inside of two Perl-Hash Databases \begin{tt}%hierdb\end{tt} and \begin{tt}%conndb\end{tt}. Elements can be added by using \begin{tt}add_inst(%instance_def)\end{tt} and \begin{tt}add_conn(%connection_def)\end{tt}.\newline
-  Adding a Instance \begin{tt}FooBar\end{tt} to \begin{tt}TOPLEVEL\end{tt} is done by:\newline
+Writing a Mix parsing Extension is even easy as Spreadsheet operations. Mix does it's work by mapping input Information (taken from a Spreadsheet) on instances and connections. These are keept inside of two Perl-Hashes {\tt %hierdb} and {\tt %conndb}. Elements can be added by using {\tt add\_inst(%instance_def)} and {\tt add_conn(%connection_def)}.\newline
+  Adding a Instance \begin{tt}FooBar\end{tt} to {\tt TOPLEVEL} is done by:\newline
 \begin{verbatim}
     my %my_instance = ( '::inst' => "FooBar",
                         '::entity' => "foobar",
                         '::parent' => "TOPLEVEL", );
 
     add_inst(%my_instance);
-\end{verbatim}
+\end{verbatim}\rm
 For other settings see \begin{tt}MIX\_Userreference\end{tt}. The definition of those (called the Headers) is done in the Mix-Module \begin{tt}MixUtils.pm\end{tt} (located in the \begin{tt}mix\_init()\end{tt} Function, inside the \begin{tt}EH\end{tt} structure). The following Listing shows the I$^2$C Header definiton:\newline
 \begin{verbatim}
     'i2c' => {
@@ -241,7 +241,7 @@ In the first column you can find the names of the Headers, as you can see these 
 \begin{tt}PrintOrder\end{tt} internal numeration of Headers\newline
 \begin{tt}nr\end{tt} simply lists the number of Headers defined\newline
 \newline
-To tell Mix to read in some more tabular, open \begin{tt}MixUtils/IO.pm\end{tt} and search for the \begin{tt}mix\_utils\_open_input(@)\end{tt} Function. Here you can find one Array and some calls for every Tabular. In the following example only I$^2$C operation is listed (normaly this function return 4 array-references, i.e.):
+To tell Mix to read in some more tabular, open \begin{tt}MixUtils/IO.pm\end{tt} and search for the \begin{tt}mix\_utils\_open\_input(@)\end{tt} Function. Here you can find one Array and some calls for every Tabular. In the following example only I$^2$C operation is listed (normaly this function return 4 array-references, i.e.):
 \begin{verbatim}
 sub mix_utils_open_input(@) {
     my @in = @_;
@@ -257,14 +257,14 @@ sub mix_utils_open_input(@) {
 	for my $c ( $i2c) {
 	    $EH{'i2c'}{'parsed'}++;
 	    my $norm_i2c = convert_in("i2c", $c);
-	    select_variant( \backslash@norm_i2c);
+	    select_variant( \@norm_i2c);
 	    push(@$ai2c, @norm_i2c);
 	}
     }
     return( $ai2c);
 }
 \end{verbatim}
-For every Spreadsheet-File \begin{tt}\$i\end{tt}, a Table named like the value of \begin{tt}\$EH{'i2c'}{'xls'}\end{tt} is extracted. The last Argument of \begin{tt}mix_open_infile\end{tt}, the value of\begin{tt}\$EH{'conf'}{'req'}\end{tt}, specifies if this Table is need or not. The Function \begin{tt}open_infile\end{tt} return a Array of I$^2$C-Tables found (\$i2c[0] is the first Table found in the File \begin{tt}\$i\end{tt}). Next every I$^2$C-Tables Header-Row is matched, emtpy Cells are stiped of and the relevant Variant is selected. Header-Matching is done by \begin{tt}convert_in\end{tt}, while \begin{tt}select_variant\end{tt} selects the Variant. All Arrays \begin{tt}\@norm_i2c\end{tt} are pushed onto \begin{tt}\@\$ai2c\end{tt}. The Array returned consists a Two-Dimensional Array. If there was more than one all of them are pushed together.\newline
+For every Spreadsheet-File \begin{tt}\$i\end{tt}, a Table named like the value of \begin{tt}\$EH{'i2c'}{'xls'}\end{tt} is extracted. The last Argument of \begin{tt}mix\_open\_infile\end{tt}, the value of\begin{tt}\$EH{'conf'}{'req'}\end{tt}, specifies if this Table is need or not. The Function \begin{tt}open\_infile\end{tt} return a Array of I$^2$C-Tables found (\$i2c[0] is the first Table found in the File \begin{tt}\$i\end{tt}). Next every I$^2$C-Tables Header-Row is matched, emtpy Cells are stiped of and the relevant Variant is selected. Header-Matching is done by \begin{tt}convert\_in\end{tt}, while \begin{tt}select\_variant\end{tt} selects the Variant. All Arrays \begin{tt}\@norm\_i2c\end{tt} are pushed onto \begin{tt}\@\$ai2c\end{tt}. The Array returned consists a Two-Dimensional Array. If there was more than one all of them are pushed together.\newline
 Next you would have to write a Parser. The Parser will take Input-Information and create hierrarchical Units and Connections of it. The following example shows some part MIX's I$^2$C-Parser (for some more practical examples see \begin{tt}MixIOParser.pm\end{tt}, \begin{tt}MixI2CParser.pm\end{tt} or \begin{tt}MixParser.pm\end{tt}):
 \begin{verbatim}
 sub parse_i2c_init($) {
@@ -293,7 +293,7 @@ sub parse_i2c_init($) {
 }
 \end{verbatim}
 Ass you can see the parser checks if the cells of the passed Tables are defined, if not it sets a default Value. All fields marked as ignore are dropped.\newline
-MIX uses two internal Databases, \begin{tt}\$hierdb\end{tt} and \begin{tt}\$conndb\end{tt}, for Maintaining and Processing HDL-Structures. Adding hierarchical Elements as well as Connections is done by the Functions \begin{tt}add_hier\end{tt} and \begin{tt}add_conn\end{tt}. The single Argument passed is a Hash-reference containing new Elements definition. The call to \begin{tt}add_interface\end{tt} adds a new I$^2$C-Registerblock, defined in \begin{tt}\$i\end{tt}, to \begin{tt}\$hierdb\end{tt} and \begin{tt}\$conndb\end{tt}. The Code below is only for demonstrating further work, it's not the Real "\begin{tt}MIXI2CPareser.pm\end{tt}" Code:\newline
+MIX uses two internal Databases, \begin{tt}\$hierdb\end{tt} and \begin{tt}\$conndb\end{tt}, for Maintaining and Processing HDL-Structures. Adding hierarchical Elements as well as Connections is done by the Functions \begin{tt}add\_hier\end{tt} and \begin{tt}add\_conn\end{tt}. The single Argument passed is a Hash-reference containing new Elements definition. The call to \begin{tt}add\_interface\end{tt} adds a new I$^2$C-Registerblock, defined in \begin{tt}\$i\end{tt}, to \begin{tt}\$hierdb\end{tt} and \begin{tt}\$conndb\end{tt}. The Code below is only for demonstrating further work, it's not the Real "\begin{tt}MIXI2CPareser.pm\end{tt}" Code:\newline
 \begin{verbatim}
 sub add_interface(%) {
 
@@ -319,7 +319,7 @@ sub add_interface(%) {
     add_conn(%conn);
 }
 \end{verbatim}
-This Code simply adds a new Instance named like the content of a "\begin{tt}::interface\end{tt}" cell. Next the connection of a Signal "\begin{tt}some_reset\end{tt}" is made from the out-pin specified in the cell called "\begin{tt}::reset\end{tt}" to the in-pin of the new create instance.
+This Code simply adds a new Instance named like the content of a "\begin{tt}::interface\end{tt}" cell. Next the connection of a Signal "\begin{tt}some\_reset\end{tt}" is made from the out-pin specified in the cell called "\begin{tt}::reset\end{tt}" to the in-pin of the new create instance.
 
 
 

@@ -468,8 +468,68 @@ Some global configuration are available to tailor the IO sheet parser behaviour:
 \begin{tt}pad.name\end{tt} & Rule determines the naming of the pad instances. Default: "\begin{tt}\%PREFIX\_PAD\_GEN\%\%::pad\%\end{tt}" \\\hline
 \end{tabular}
 
-\section{I2C sheet}
-The I2C sheet is one more category of input specification. It's content describes I2C Register's 
+\section{I$^2$C sheet}
+The I$^2$C sheet is one more category of input specification. It's content describes connections from other modules to I$^2$C registerblocks. The hierarchical position of a registerblock can be defined in the {\tt HIER}-sheet.
+
+\subsection{I$^2$C regsiterblock}
+The I$^2$C module is split into two seperate untis called I$^2$C-kernel and I$^2$C-registerblock. Settings made in a MIX-I$^2$C-sheet only describe registerblock specific Informations. Here you can see a serial I$^2$C-registerblock.\newline
+\includegraphics[scale=0.37]{images/serial_iic_reg.png}\newline
+A I$^2$C-registerblock consists of a transceiver, one or more synchronisation blocks and some registers (max. 255). The registers direction, synchronisation, in-/out-connections... can be specified in the I$^2$C sheet. The {\tt or\_block} is a simple script generated block which connects incoming signals to a {\tt or} and outgoing ones to the transceiver. This work has to be done by a MIX external script, because MIX is not thought for generating logics.
+
+\subsection{I$^2$C sheet column header}
+The following section describes the meanings of identifiers used in a MIX I$^2$C sheet. Default settings and mendatory/optional specification can be found in the table bellow.\newline
+\begin{tabular}{lp{14cm}}
+  \begin{bf}::ign\end{bf} & every columns row, containing \# or // is ignored by MIX\\
+  \begin{bf}::variants\end{bf} & select a line depending on the -variant command line switch. If -variant VAR is set, only lines whose \begin{tt}::variant\end{tt} cell contains the keyword VAR, default or empty, are selected and  read in. several variants may be given in one cell, separated by ",". Without specifying the -variant switch, the "default" and empty \begin{tt}::variant\end{tt} cells are read in and evaluated.\\
+  \begin{bf}::ign\end{bf} & ignore this row if \# is detected.\\
+  \begin{bf}::variants\end{bf} & select a variant.\\
+  \begin{bf}::type\end{bf} & register type; only serial registers implemented yet.\\
+  \begin{bf}::dev\end{bf} & specify the device name\\
+  \begin{bf}::sub\end{bf} & define registerblock subaddress\\
+  \begin{bf}::interface\end{bf} & domain name\\
+  \begin{bf}::block\end{bf} & registerblock Name. The registerblock name and its sub-address are building the instance-name.\\
+  \begin{bf}::dir\end{bf} & defines a registers input/output direction, possible values are: \begin{tt}R\end{tt}, \begin{tt}W\end{tt} or \begin{tt}RW\end{tt}\\
+  \begin{bf}::spec\end{bf} & update signal\\
+  \begin{bf}::clock\end{bf} & set a clock domain. Every I$^2$C register may receive it's own clock.\\
+  \begin{bf}::reset\end{bf} & specify a Reset signal. This signal resets the I$^2$C registers.\\
+  \begin{bf}::busy\end{bf} & busy signal\\
+  \begin{bf}::b\end{bf} & specifies a signal which is connected to a registers pin. This is a multiple column which can be used to set different signals to the same register\\
+  \begin{bf}::init\end{bf} & Set initializing value of register connection(s).\\
+  \begin{bf}::rec\end{bf} & Set recommended value of a register connection(s).\\
+  \begin{bf}::comment\end{bf} & all entries in these cells are threaten as comments. MIX will keep comments to put them later into VHDL/Verilog output.\\
+\end{tabular}
+\begin{table}[htb]\begin{tabular}{|l|p{4cm}|p{4cm}|p{15mm}|p{25mm}|}\hline
+\begin{bf}Column name\end{bf} & \begin{bf}Descriptionend\end{bf} & \begin{bf}Default value\end{bf} & \begin{bf}Req.\end{bf} & \begin{bf}Example\end{bf}\\\hline
+::ign & Ignore line & $<$empty$>$ & man. & \# comm. \\\hline
+::variants & Variant selector & Default & opt. & Var1 \\\hline
+::type & Register type & serial & man. & serial \\\hline
+::dev & Device name & n/a & man. & FRCA0 \\\hline
+::sub & Sub address & VHDL & opt. & 27 \\\hline
+::interface & Domain name & W\_NO\_CONFIG & man. & cc0 \\\hline
+::block & Block Name & $<$empty$>$ & opt. & mc \\\hline
+::dir & Direction & $<$empty$>$ & opt. & RW \\\hline
+::spec & Update Signal & NTO & opt. & takeover\_b72 \\\hline
+::clock & Clock Domain & $<$empty$>$ & opt. & clkcc81 \\\hline
+::reset & Reset Signal & $<$empty$>$ & opt. & asresc\_n \\\hline
+::busy & Busy Signal & $<$empty$>$ & opt. & b81 \\\hline
+::b & Bit n & $<$empty$>$ & man. & FMSYN.2 \\\hline
+::init & Reset Value & $<$empty$>$ & opt. & 0 \\\hline
+::rec & Recommended Value & $<$empty$>$ & opt. & 0 \\\hline
+::comment & Comment field & $<$empty$>$ & opt. & This is a comment \\\hline
+\end{tabular}\end{table}
+
+\subsection{I$^2$C Parser global configuration}
+Also here some global configuration are available to tailor the I$^2$C sheet parser behaviour:\newline
+\begin{tabular}{|p{4cm}|p{9cm}|}\hline
+\begin{tt}i2c\_cell.type\end{tt} & specifies the default register type (default: {\tt ser}) \\\hline
+\begin{tt}i2c\_cell.\%IIC\_SER\_REG\%\end{tt} & set prefix for serial subregister entity (default: {\tt iic\_ser\_reg\_})\\\hline
+\begin{tt}i2c\_cell.\%IIC\_PAR\_REG\%\end{tt} & set prefix for parallel subregister entity (default: {\tt iic\_par\_reg\_}) \\\hline
+\begin{tt}i2c\_cell.\%IIC\_SYNC\%\end{tt} & set prefix for sync-block (default: {\tt sync\_iic}) \\\hline
+\end{tabular}
+
+\subsection{I$^2$C Sheet example}
+In this section a example will demostrate I$^2$C sheet usage, by connecting the {\tt a\_clk} example to a registerblock.
+$<$t.b.d$>$
 
 \section{VI2C sheet}
 
