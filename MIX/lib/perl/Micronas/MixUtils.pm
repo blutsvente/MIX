@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.9 $                                             |
+# | Revision:   $Revision: 1.10 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/28 15:03:44 $                                   |
+# | Date:       $Date: 2003/03/13 14:05:19 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.9 2003/02/28 15:03:44 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.10 2003/03/13 14:05:19 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,10 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.10  2003/03/13 14:05:19  wig
+# | Releasing major reworked version
+# | Now handles bus splices much better
+# |
 # | Revision 1.9  2003/02/28 15:03:44  wig
 # | Intermediate version with lots of fixes.
 # | Signal issue still open.
@@ -573,6 +577,8 @@ $ex = undef; # Container for OLE server
 			    'intermediate' => 'mixed', # not a real extension!
 			    'internal' => 'pld',
 	    },
+	# 'warnings' => 'load,drivers',	# Warn about missing loads/drivers
+	'warnings' => ''
     },
     'internal' => {
 	'path' => ".",

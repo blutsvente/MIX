@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.10 $                                             |
+# | Revision:   $Revision: 1.11 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/28 15:03:44 $                                   |
+# | Date:       $Date: 2003/03/13 14:05:19 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.10 2003/02/28 15:03:44 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.11 2003/03/13 14:05:19 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,10 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.11  2003/03/13 14:05:19  wig
+# | Releasing major reworked version
+# | Now handles bus splices much better
+# |
 # | Revision 1.10  2003/02/28 15:03:44  wig
 # | Intermediate version with lots of fixes.
 # | Signal issue still open.
@@ -1196,7 +1200,7 @@ sub merge_conn($%) {
                         }
                     }
                 } # else leave conndb as is
-           } else {
+            } else {
                 # ::mode was not set so far, therefore we overwrite if the input data has type defined
                 if ( $data{$i} ) {
                     $conndb{$name}{$i} = $data{$i};
@@ -1204,6 +1208,7 @@ sub merge_conn($%) {
             }
         } elsif ( $i =~ /^\s*::(high|low)/o ) {
             if ( defined($conndb{$name}{$i}) and $conndb{$name}{$i} ne '' ) {
+                # There was already s.th. defined for this bus
                 if ( $data{$i} ne '' and $conndb{$name}{$i} ne $data{$i} ) {
                     # LOW and HIGH "signals" are special.
                     if ( $name =~ m,^\s*%(LOW|HIGH)_BUS%, ) { # Accept larger value for upper bound
@@ -1823,10 +1828,18 @@ sub add_port (@) {
             $templ{'port'} = $EH{'postfix'}{'PREFIX_PORT_GEN'} . $s . $sf . $st . "_g" . $dir;
             # Put new connection into appropriate ::in or ::out
             # mode equals out -> out, otherwise to in
+            # Caveat: if user specifies bad IN or OUT mode, you get error ...
             if ( $mode eq "out" ) {
                 $cell = $conndb{$s}{"::out"};
             } else {
                 $cell = $conndb{$s}{"::in"};
+            }
+            # Special: if  port width is one, reduce to single bit port!
+            # This can be achieved easily by setting port_f and port_t  to 0 :-)
+            if ( $sf eq $st ) {
+                logtrc("INFO:4", "AUTO: Createing single bit port for signal $s!");
+                $templ{'port_f'} = 0;
+                $templ{'port_t'} = 0;
             }
             #TODO: Shouldn't we prevent multiple pushes? 
             push( @$cell, { %templ } );
@@ -2031,10 +2044,52 @@ sub purge_relicts () {
             _scan_inout( $rsa->{'::out'} );
             _scan_inout( $rsa->{'::in'} );
     }
+    #
+    # If ::high and ::low is defined, extend ::in and ::out definitions
+    #
+    for my $i ( keys( %conndb ) ) {
+        if ( $conndb{$i}{'::high'} ne '' or $conndb{$i}{'::low'} ne '' ) {
+            my $h = $conndb{$i}{'::high'};
+            my $l = $conndb{$i}{'::low'};
+            _extend_inout( $h, $l, $conndb{$i}{'::in'} );
+            _extend_inout( $h, $l, $conndb{$i}{'::out'} );
+        }
+    }
+}
+
+# If ::high nad/or ::low is defined,
+# check if there are port definitions to be extended
+#
+
+sub _extend_inout ($$$) {
+    my $h = shift;
+    my $l = shift;
+    my $ref = shift;
+
+    for my $i ( @{$ref} ) {
+        if( not defined( $i->{'sig_f'} ) and
+            not defined( $i->{'port_f'} ) ) {
+                $i->{'sig_f'} = $h;
+                $i->{'port_f'} = $h;
+        } elsif ( not defined( $i->{'sig_f'} ) or
+                not defined( $i->{'port_f'} ) ) {
+            logwarn( "Warning: Unusual upper bound definitions for $i->{'inst'} / $i->{'port'}" );
+        }
+        if ( not defined( $i->{'sig_t'} ) and
+            not defined( $i->{'port_t'} ) ) {
+                $i->{'sig_t'} = $l;
+                $i->{'port_t'} = $l;
+        } elsif ( not defined( $i->{'sig_t'} ) or
+                not defined( $i->{'port_t'} ) ) {
+            logwarn( "Warning: Unusual lower bound definitions for $i->{'inst'} / $i->{'port'}" );
+        }
+    }
+#TODO: What if only one of is defined???
 }
 
 #
-# strip awy duplicate entries in ::in and ::out
+# strip away duplicate entries in ::in and ::out
+# strip away empty entries
 #TODO: combine entries (opposite of split busses)
 #
 sub _scan_inout ($) {
@@ -2045,7 +2100,7 @@ sub _scan_inout ($) {
         my @left = ();
         for my $iii ( 0..$#{$rsa} ) {
                 my $this = join( ',', values( %{$rsa->[$iii]} ) );
-                unless( defined( $seen{$this} ) ) {
+                if( $this and not defined( $seen{$this} ) ) {
                     push( @left, $rsa->[$iii] );
                     $seen{$this} = 1;
                 }

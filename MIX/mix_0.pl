@@ -21,12 +21,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id              : $Id: mix_0.pl,v 1.5 2003/02/28 15:04:14 wig Exp $
+# | Id              : $Id: mix_0.pl,v 1.6 2003/03/13 14:05:04 wig Exp $
 # | Name         : $Name:  $
 # | Description  :$Description:$
 # | Parameters  : -
 # | Version       : $Version: $
-# | Mod.Date    : $Date: 2003/02/28 15:04:14 $
+# | Mod.Date    : $Date: 2003/03/13 14:05:04 $
 # | Author        : $Author: wig $
 # | Phone         : $Phone: $
 # | Fax             : $Fax: $
@@ -41,6 +41,10 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |
 # | Changes:
 # | $Log: mix_0.pl,v $
+# | Revision 1.6  2003/03/13 14:05:04  wig
+# | Releasing major reworked version
+# | Now handles bus splices much better
+# |
 # | Revision 1.5  2003/02/28 15:04:14  wig
 # | Intermediate version with lots of fixes.
 # | Signal issue still open.
@@ -265,15 +269,15 @@ add_portsig();
 #!do before signal expansion ..... parse_mac();
 
 #
-# Add a list of all signals for each instance
-#
-add_sign2hier();
-
-#
 # Get rid of some "artefacts", again (add_portsig and add_sign2hier might have
 # added something ....
 #
 purge_relicts();
+
+#
+# Add a list of all signals for each instance
+#
+add_sign2hier();
 
 #
 # Checks go here ...

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.10 $                                             |
+# | Revision:   $Revision: 1.11 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/28 15:03:44 $                                   |
+# | Date:       $Date: 2003/03/13 14:05:19 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.10 2003/02/28 15:03:44 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.11 2003/03/13 14:05:19 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,10 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.11  2003/03/13 14:05:19  wig
+# | Releasing major reworked version
+# | Now handles bus splices much better
+# |
 # | Revision 1.10  2003/02/28 15:03:44  wig
 # | Intermediate version with lots of fixes.
 # | Signal issue still open.
@@ -121,13 +125,14 @@ sub signal_port_resolve($$);
 sub use_lib($$);
 sub is_vhdl_comment($); # Should got to MixUtils ...
 sub count_load_driver ($$$$);
+sub gen_concur_port($$$$$$$$);
 
 # Internal variable
 
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.10 2003/02/28 15:03:44 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.11 2003/03/13 14:05:19 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
 
 $thisid =~ s,\$,,go;
@@ -851,9 +856,9 @@ sub _write_entities ($$$) {
 	    if ( $pdd->{'mode'} =~ m,^\s*(generic|G|P),io ) {
 		if ( exists( $pdd->{'value'} ) ) {
                 # Generic, get default value from conndb ...
-                    $gent .= "\t\t\t" . $p . "\t: " . $pdd->{'type'} . "\t:= " . $pdd->{'value'} . "\n";
+                    $gent .= "\t\t\t" . $p . "\t: " . $pdd->{'type'} . "\t:= " . $pdd->{'value'} . ";\n";
 		} else {
-                    $gent .= "\t\t\t" . $p . "\t: " . $pdd->{'type'} . " -- __W_NODEFAULT\n";
+                    $gent .= "\t\t\t" . $p . "\t: " . $pdd->{'type'} . "; -- __W_NODEFAULT\n";
 		}
 	    } elsif (	defined( $pdd->{'high'} ) and
 			defined( $pdd->{'low'} ) and
@@ -876,7 +881,7 @@ sub _write_entities ($$$) {
 			$port .= "\t\t\t" . $p . "\t: " . $mode . "\t" . $pdd->{'type'} .
 			    "; -- __W_AUTO_REDUCED_BUS2SIGNAL\n";
 		    } else {
-			logwarn( "Port $p of entity $e one bit wide, missing lower bits\n" );
+			logwarn( "Warning: Port $p of entity $e one bit wide, missing lower bits\n" );
 			$port .= "\t\t\t" . $p . "\t: " . $mode . "\t" . $pdd->{'type'} .
 			    "(" . $pdd->{'high'} . "); -- __W_SINGLEBITBUS\n";
 		    }
@@ -916,7 +921,7 @@ sub _write_entities ($$$) {
         }
         # The same for generics
         unless ( is_vhdl_comment( $gent ) ) {
-            $gent = "\t\t-- Generated Generics for Entity $e\n";            
+            $gent = "\t\t-- Generated Generics for Entity $e\n" . $gent;            
             $gent =~ s/;(\s*--.*\n)$/$1/io;
             $gent =~ s/;\n$/\n/io;
             $gent .= "\t\t-- End of Generated Generics for Entity $e\n";
@@ -1086,7 +1091,10 @@ sub gen_instmap ($) {
     }
  
     $map .= port_map( 'out', $inst, $enty, $rinstc->{'out'}, \@out );
- 
+
+    # Sort map:
+    $map = join( "\n", sort( split ( /\n/, $map ) ) );
+    
     # Remove trailing ,    
     $map =~ s/,(\s*--.*)\n?$/$1\n/o;
     $map =~ s/,\s*\n?$/\n/o;
@@ -1155,7 +1163,7 @@ sub port_map ($$$$$) {
 
     # Check if port width equals signal width.
     # Use simple assigment if yes, else slice bus
-    my $map = "";
+    my @map = ();
     for my $s ( sort( keys( %$ref ) ) ) {
 	# constants work the same way as the rest here ...
 	# if ( $conndb{$s}{'::mode'} =~ m,^\s*(C),io ) {
@@ -1193,11 +1201,11 @@ sub port_map ($$$$$) {
 		add_conn_matrix( $p, $s, \@cm, $conn );
 	    }
 
-	    $map .= print_conn_matrix( $p, $pf, $pt, $s, $sf, $st, \@cm );
+	    push( @map , print_conn_matrix( $p, $pf, $pt, $s, $sf, $st, \@cm ));
 	}
 	push( @$rio, $s );
     }
-    return $map;
+    return join( "", sort( @map ) ); # Return sorted by port name (comes first)
 }
 
 #
@@ -1333,8 +1341,15 @@ sub print_conn_matrix ($$$$$$$) {
 	    }
 	} elsif ( $sf eq "__UNDEF__" and $st eq "__UNDEF__" ) {
 	    $t .= "\t\t\t$port(" . $rcm->[$ub] . ") => $signal,\n"; #Needs more checking ..
+	# } elsif ( $rcm->[$ub] eq $sf and $rcm->[$lb] eq $st ) { # Should == be used here instead?
+	#    $t .= "\t\t\t$port => $signal,\n";
 	} elsif ( $rcm->[$ub] eq $sf and $rcm->[$lb] eq $st ) { # Should == be used here instead?
-	    $t .= "\t\t\t$port => $signal,\n";
+            # Full signal used
+            if ( $ub - $lb eq $pf - $pt ) { # Port width eq signal width
+                $t .= "\t\t\t$port => $signal,\n";
+            } else {
+                $t .= "\t\t\t$port($ub downto $lb)  => $signal, -- __W_PORT\n";
+            }
 	} elsif ( $rcm->[$ub] < $sf or $rcm->[$lb] > $st ) { #TODO: There could be more cases ???
 	    if ( $ub == $lb ) {
 		$t .= "\t\t\t$port($ub) => $signal($rcm->[$ub]),\n";
@@ -1483,8 +1498,8 @@ sub _write_architecture ($$$$) {
                     "\t\t-- __I_MIX: component declaration $d_enty for instance $i already added!\n";
 	    }
 	    #
-	    # Instances: generate an instance map for each of our children
-	    #
+	    # Instances: generate an instance port map for each of our children
+	    # and returns a list of in/out signals
 	    my( $imap, $r_in, $r_out );
 	    ( $imap, $r_in, $r_out ) = gen_instmap( $d_name );
 	    $macros{'%INSTANCES%'} .= "%INST_" . $d_name . "%\n";
@@ -1513,7 +1528,7 @@ sub _write_architecture ($$$$) {
         count_load_driver( $i, $aent, $hierdb{$i}{'::conn'}, \%aeport );
         my %sp_conflict = signal_port_resolve( $aent, \%aeport );
         
-	my $signaltext = "\t\t\t--\n\t\t\t-- Generated Signals\n\t\t\t--\n";
+	my $signaltext = "\t\t--\n\t\t-- Generated Signals\n\t\t--\n";
 	for my $ii ( sort( keys( %aeport ) ) ) {
 	    # $ii is signal name
 	    my $s = $conndb{$ii};
@@ -1523,6 +1538,8 @@ sub _write_architecture ($$$$) {
 	    # The signal definition should be consistent here!
 	    my $dt = "";
 
+            # Using %HIGH%, %LOW%, %HIGH_BUS%, %LOW_BUS%
+            #TODO: Carve out into subroutine.
             if ( $ii =~ m,^\s*(%HIGH|%LOW)_BUS,o ) {
 		my $logicv = ( $1 eq '%HIGH' ) ? '1' : '0';
 		$macros{'%CONCURS%'} .= "\t\t\t$EH{'macro'}{$ii} <= ( others => '$logicv' );\n";
@@ -1548,8 +1565,8 @@ sub _write_architecture ($$$$) {
                     }
                 }
 	    }
-	    
 	    # Add constant definitions here to concurrent signals ....
+            #TODO: Carving out to subroutine
 	    if ( $s->{'::mode'} =~ m,\s*C,io ) {
 		#unless( exists ( $s->{'::out'}[0]{'inst'} ) ) {
 		#    $s->{'::out'}[0]{'inst'} = "__E_MISSING_VALUE";
@@ -1560,23 +1577,60 @@ sub _write_architecture ($$$$) {
 		    $macros{'%CONCURS%'} .= "\t\t\t$s->{'::name'} <= __E_MISSING_CONST_VALUE;\n";
 		} else {
 		    my $value = $s->{'::out'}[0]{'port'};
-		    unless ( $value =~ s,["'],',go ) { # Take literally, replace " by '
+		    unless ( $value =~ s,["'],",go ) { # Take literally, replace ' by "
+                        #TODO: Add conversion functions ... make sure to use " and ' appr.
 			if ( $value eq "0" or $value eq "1" and $type =~ m,_vector, ) {
 			    $value = "( others => '$value' )";
 			} else {
-			    $value = "'" . $value . "'"; # Add leading and trailing '
+			    # $value = "'" . $value . "'"; # Add leading and trailing '
+                            $value = '"' . $value . '"';
 			}
 		    }
+                    if ( $value =~ m/^"(0|1)"$/o ) { # Replace "0" by '0', dito. 1
+                        $value = "'$1'";
+                    }
 		    $macros{'%CONCURS%'} .=
 			"\t\t\t$s->{'::name'} <= $value;\n";
 		}
 		# next;
 	    }
 
-	    # Generics. Not needed here ??TODO??
+	    # Generics and parameters: Not needed here
 	    if ( $s->{'::mode'} =~ m,\s*[GP],io ) {
                 next;
 	    }
+
+    	    # Now deal with the ports, that are read internally, too:
+	    # Generate intermediate signal
+            my $usesig = $ii;
+	    if ( exists( $sp_conflict{$ii} ) ) {
+                $usesig = $sp_conflict{$ii};
+                # $post =
+                # Redo all generated maps of my subblocks to use the internal signal name ....
+                for my $insts ( @{$sig2inst{$ii}} ) {
+                    #TODO: is that the final idea? Maybe splitting gen_map
+                    # in two parts makes it better
+                    $i_macros{'%INST_' . $insts . '%'} =~
+                        s,$ii(\s+=>\s+)$ii,$ii$1$sp_conflict{$ii},g;
+                }
+	    }
+
+# OLD, remove ....
+#                $signaltext .= "\t\t\t$pre" . "signal\t" . $sp_conflict{$ii} .
+#                    "\t: $type$dt; $post\n";
+#                $macros{'%CONCURS%'} .=
+#                    "\t\t\t" . $ii . " <= " . $sp_conflict{$ii} . "; -- __I_INTSIG_MAP\n";
+#                # Redo all generated maps ....
+#                for my $insts ( @{$sig2inst{$ii}} ) {
+                    #TODO: is that the final idea? Maybe splitting gen_map
+                    # in two parts makes it better
+#                    $i_macros{'%INST_' . $insts . '%'} =~
+#                        s,$ii(\s+=>\s+)$ii,$ii$1$sp_conflict{$ii},g;
+#                }
+#	    } else {
+#               $signaltext .= "\t\t\t$pre" . "signal\t$ii\t: $type$dt; $post\n";
+#	    }
+	    
 
 	    # Add signal just if this signal is not routed up (outside) ..
 	    # Inside the loop we look if the signal name equals the entity definition ..
@@ -1585,53 +1639,61 @@ sub _write_architecture ($$$$) {
 	    my $post = "";
 	    my $iconn = $hierdb{$i}{'::conn'};
 
-            # Port connected here ...
-            # aeport has >signal< names
-	    if ( exists( $aeport{$ii}{'in'} ) ) { # IN
+            # Iterate through all signals connected here ...
+            # Generate an assignment if
+            #   -- signal not used internally
+            #   -- signal name ne port name (if exists)
+            # Add signal to this architecture signal list, if there is no
+            #   port hooked to that signal
+            #
+            # Iterate through all ports connected to this signal
+            # if ( exists( $iconn->{'in'}{$ii} ) ) { # Bingo, signal is connected to port
+            # In has precedence:
+            #TODO: What if both in and out exists?
+            #   What if signal is connected to multiple ports:
+	    # if ( exists( $aeport{$ii}{'in'} ) ) { # IN
+            unless( $ii =~ m/%(HIGH|LOW)(_BUS)?%/o ) {
 		if ( exists( $iconn->{'in'}{$ii} ) ) {
-		    $pre = "-- __I_I_ENTITY_SIGNAL__ "; #TODO: Remove that later on ...
-		    # Do we need a assignment as connection?
-		    #TODO: Mapping of signals to port in the same instance has to be unique
-		    if ( $ii ne (keys( %{$iconn->{'in'}{$ii}} ))[0] ) {
-			$pre = "";
-			$post = "-- __W_PORT_SIGNAL_MAP_REQ";
-			$macros{'%CONCURS%'} .=
-                            "\t\t\t" . $ii . " <= " . (keys( %{$iconn->{'in'}{$ii}} ))[0] ."; -- __WI_PORT\n";
-			    # "\t\t\t" . (keys( %{$iconn->{'in'}{$ii}} ))[0] . " => " . $ii . "; -- __WI_PORT\n";
-		    }
+		    foreach my $port ( keys( %{$iconn->{'in'}{$ii}} ) ) {
+			if ( $usesig ne $port ) {
+			    $pre = "";
+			    $post = "-- __W_PORT_SIGNAL_MAP_REQ";
+                            my $concurs = gen_concur_port( 'in', $i, $aent, $ii, $usesig, $port, $iconn, $aeport{$ii} );
+			    $macros{'%CONCURS%'} .= $concurs;
+			}
+    		    }
 		}
-	    } else { # OUT
 		if ( exists( $iconn->{'out'}{$ii} ) ) {
-		    $pre = "-- __I_O_ENTITY_SIGNAL__ "; #TODO: Remove that later on ...
-		    # Do we need an assignment as connection?
-		    #TODO: Mapping of signal to port has to be uniq!!!
-		    if ( $ii ne (keys( %{$iconn->{'out'}{$ii}} ))[0] ) {
-			$pre = "";
-			$post = "-- __W_PORT_SIGNAL_MAP_REQ";
-			$macros{'%CONCURS%'} .=
-                            "\t\t\t" . (keys( %{$iconn->{'out'}{$ii}} ))[0] . " <= " . $ii . "; -- __WO_PORT\n";
-			    # "\t\t\t" . $ii . " <= " . (keys( %{$iconn->{'out'}{$ii}} ))[0] . "; -- __WO_PORT\n";
+		# } else { # OUT
+		# if ( exists( $iconn->{'out'}{$ii} ) ) {
+		    foreach my $port ( keys( %{$iconn->{'out'}{$ii}} ) ) {
+			if ( $usesig ne $port ) {		    
+			    $pre = "";
+			    $post = "-- __W_PORT_SIGNAL_MAP_REQ";
+                            my $concurs = gen_concur_port( 'out', $i, $aent, $ii, $usesig, $port, $iconn, $aeport{$ii} );
+			    $macros{'%CONCURS%'} .= $concurs;
+			}
 		    }
 		}
 	    }
-	    # Now deal with the ports, that are read internally, too
-	    if ( exists( $sp_conflict{$ii} ) ) {
-                $signaltext .= "\t\t\t$pre" . "signal\t" . $sp_conflict{$ii} .
-                    "\t: $type$dt; $post\n";
-                $macros{'%CONCURS%'} .=
-                    "\t\t\t" . $ii . " <= " . $sp_conflict{$ii} . "; -- __I_INTSIG_MAP\n";
-                # Redo all generated maps ....
-                for my $insts ( @{$sig2inst{$ii}} ) {
-                    #TODO: is that the final idea? Maybe splitting gen_map
-                    # in two parts makes it better
-                    $i_macros{'%INST_' . $insts . '%'} =~
-                        s,$ii(\s+=>\s+)$ii,$ii$1$sp_conflict{$ii},g;
+	    
+	    # Add signal definition if required:
+            if ( $usesig ne $ii ) {
+                # Use internally generated signalname ....
+                $signaltext .= "\t\t\t$pre" . "signal\t$usesig\t: $type$dt; $post\n";
+            } elsif ( exists( $iconn->{'out'}{$ii} ) or
+                                exists( $iconn->{'in'}{$ii} ) ) {
+                unless( exists( $entities{$aent}{$ii} ) ) {
+                    $signaltext .= "\t\t\t$pre" . "signal\t$usesig\t: $type$dt; $post\n";
                 }
-	    } else {
-                $signaltext .= "\t\t\t$pre" . "signal\t$ii\t: $type$dt; $post\n";
-	    }
+            } else {
+                # Not connected to upside world
+                $signaltext .= "\t\t\t$pre" . "signal\t$usesig\t: $type$dt; $post\n";
+            }
+
 	}
 
+	# End it now
 	$signaltext .= "\t\t\t--\n\t\t\t-- End of Generated Signals\n\t\t\t--\n";
 	$macros{'%SIGNALS%'} = $signaltext;
         if ( keys( %i_macros ) > 0 ) {
@@ -1662,6 +1724,144 @@ sub _write_architecture ($$$$) {
 
     close( ARCH ) or
 	logwarn( "Cannot close file $filename: $!" );
+}
+
+#
+# gen_concur_port: generate an concurrent assignment to map signals to
+# a given port of a given instance
+# Basic assumption: port maps may contain multiple assignments to single
+# bit splices of a port!
+#
+# interface:             my $concurs = gen_concur_port( $i, $ii, $port, $iconn, $aeport{$ii} );
+
+sub gen_concur_port($$$$$$$$) {
+    my $mode = shift;
+    my $inst = shift;
+    my $enty = shift;
+    my $signal = shift;
+    my $signal_n = shift;
+    my $port = shift;
+    my $rconn = shift;
+    my $aeportii = shift;
+
+    my $concur = "";
+    # Is this a splice?
+    # Get bus width for signal and port
+    my $sh = $conndb{$signal}{'::high'}; 
+    my $sl = $conndb{$signal}{'::low'};
+    my $ph = $entities{$enty}{$port}{'high'};
+    my $pl = $entities{$enty}{$port}{'low'};
+    unless( defined( $sh ) ) { $sh = ""; };
+    unless( defined( $sl ) ) { $sl = ""; };
+    unless( defined( $ph ) ) { $ph = ""; };
+    unless( defined( $pl ) ) { $pl = ""; };
+
+    # Get width for the connection in this instance:
+    PS: for my $ps ( @{$conndb{$signal}{'::' . $mode}} ) {
+        #DEBUG
+        next PS if ( scalar( %$ps ) eq "0" ); #Should not happen, empty hash??
+        unless( defined( $inst ) and defined( $port ) and
+                defined( $ps->{'port'} ) and defined( $ps->{'inst'} ) ) {
+                    logwarn("Error/Mix: missing definition $inst/$port, Contact maintainer!");
+        }
+        if ( $ps->{'port'} eq $port and
+            $ps->{'inst'} eq $inst ) {
+            my $tsh = $ps->{'sig_f'}; 
+            my $tsl = $ps->{'sig_t'};
+            my $tph = $ps->{'port_f'};
+            my $tpl = $ps->{'port_t'};
+            unless( defined( $tsh ) ) { $tsh = ""; };
+            unless( defined( $tsl ) ) { $tsl = ""; };
+            unless( defined( $tph ) ) { $tph = ""; };
+            unless( defined( $tpl ) ) { $tpl = ""; };
+            # Single bit assignment:
+            my $type = "";
+            my $sslice = '';
+            my $pslice = '';
+            my $tswidth = -1;
+            my $tpwidth = -1;
+            if ( $tsh eq $sh and $tsh eq '' and
+                 $tph eq $ph and $tph eq '' and
+                 $tsl eq $sl and $tsl eq '' and
+                 $tpl eq $pl and $tpl eq '' ) {
+                $type = " -- __I_" . uc( substr( $mode, 0, 1 ) ) . "_BIT_PORT";
+                # $concur =    "\t\t\t" . $signal_n . " <= " . $port . "; -- __I_" .
+                # uc( substr( $mode, 0, 1 ) ) . "_BIT_PORT\n";
+            } elsif ( $tsh eq $sh and $tph eq $ph
+                      and $tsl eq $sl and $tpl eq $pl
+                      and $tsh eq $tph and $tsl eq $tpl
+                      ) {
+                # Complete bus/port
+                $type = " -- __I_" . uc( substr( $mode, 0, 1 ) ) . "_BUS_PORT";
+                # $concur =    "\t\t\t" . $signal_n . " <= " . $port . "; -- __I_" .
+                # uc( substr( $mode, 0, 1 ) ) . "_BUS_PORT\n";
+            } else {
+                # Is this a signal slice?       
+                $type = " -- __I_" . uc( substr( $mode, 0, 1 ) ) . "_SLICE_PORT";
+
+                #TODO: do not add (n downto m) if $tsh eq $sh and $tsl eq $sl
+                if ( $tsh ne $tsl ) {
+                    if ( $tsh =~ m/^\d+$/o and $tsl =~ m/^\d+$/o ) {
+                        $tswidth = $tsh - $tsl + 1;
+                        if ( $tsh > $tsl ) {# Numeric values
+                            $sslice = "(" . $tsh . " downto " . $tsl . ")";
+                        } else {
+                            $sslice = "(" . $tsh . " to " . $tsl . ")";
+                        }
+                    } else { #Strings or any other nonsense, order is up to user!
+                        $sslice = "(" . $tsh . " downto " . $tsl . ")";
+                    }
+                } elsif ( $tsh ne '' ) {
+                    $tswidth = 1;
+                    $sslice = "(" . $tsh . ")";
+                }
+                # Port slice?
+                if ( $tph ne $tpl ) {
+                    if ( $tph =~ m/^\d+$/o and $tpl =~ m/^\d+$/o ) {
+                        $tpwidth = $tph - $tpl + 1;
+                        if ( $tph > $tpl ) {# Numeric values
+                            $pslice = "(" . $tph . " downto " . $tpl . ")";
+                        } else {
+                            $pslice = "(" . $tph . " to " . $tpl . ")";
+                        }
+                    } else { #Strings or any other nonsense, order is up to user!
+                         $sslice = "(" . $tph . " downto " . $tpl . ")";
+                    }
+                } elsif ( $tph ne '' ) {
+                    $tpwidth = 1;
+                    if ( $ph eq '' and $pl eq '' and $tph eq '0' ) {
+                    # Another exception: single bit port ... (0) -> 
+                    # Autoreduce bus to bit port
+                        $pslice = "";
+                    } else {
+                        $pslice = "(" . $tph . ")";
+                    }
+                }
+
+            }
+
+            #TODO: check this_port vs. this_signal width (if possible)
+            if ( $tswidth >= 0 and $tpwidth >= 0 and $tpwidth != $tswidth ) {
+                logwarn( "Connection width mismatch for instance $inst, signal $signal, port $port: $tswidth vs. $tpwidth!");
+            }
+            
+            # in:               SIGNAL <= PORT;
+            # out (et al.)   PORT <= SIGNAL;
+            if ( $mode eq "in" ) {
+                $concur .=    "\t\t\t" . $signal_n . $sslice . " <= " . $port . $pslice . "; " . $type . "\n";
+            } else {
+                $concur .=    "\t\t\t" . $port . $pslice . " <= " . $signal_n . $sslice . "; " . $type . "\n";
+            }
+        }
+    }
+
+    unless( $concur ) {
+        logwarn( "Missing port/signal connection for instance $inst, signal $signal, port $port!" );
+    }
+    
+    #TODO: Remove duplicates!
+
+    return $concur;
 }
 
 #
@@ -1721,7 +1921,7 @@ Arguments:
     $rinsig := pointer to $aeport{$sig}{in|out} array
 
 This subroutine does not care about bit/bus headaches.
-This subroutine will break as soon as someone comes along with buffers ans
+This subroutine will break as soon as someone comes along with buffers and
 inouts.
 
 =cut
@@ -1768,20 +1968,39 @@ sub count_load_driver ($$$$) {
     # driver = 0 -> missing driver
     # driver > 1 -> multiple driver
     #TODO: Complain if a signal enters/leaves a block through several ports
+    # This check produces false results for busses, which are connected by different
+    # signals to different slices (because we just count the overall signals connected
+    # to the busses).
+    #TODO: Make real check (consider bit slices). That will require to count links
+    # to individual bits ... (but will that be costly)
     my $error_flag = 0;
     if ( $entities{$enty}{"__LEAF__"} != 0 ) {
         for my $s ( keys( %$rinsig )  ) {
             unless( exists( $rinsig->{$s}{'load'} ) ) {
-                logwarn( "Signal $s does not have a load in instance $inst!" );
+                if ( $EH{'output'}{'warnings'} =~ m/load/io ) {
+                    logwarn( "Warning: Signal $s does not have a load in instance $inst!" );
+                } else {
+                    logtrc( "INFO:4", "Signal $s does not have a load in instance $inst!" );
+                }
                 $rinsig->{$s}{'load'} = 0;
                 $conndb{$s}{'::comment'} .= "__W_MISSING_LOAD/$inst,";
             }
             unless( exists( $rinsig->{$s}{'driver'} ) ) {
-                logwarn( "Signal $s does not have a driver in instance $inst!" );
+                if ( $EH{'output'}{'warnings'} =~ m/driver/io ) {
+                    logwarn( "Warning: Signal $s does not have a driver in instance $inst!" ) unless
+                        ( $s =~ m/%(HIGH|LOW)(_BUS)?%/o );
+                } else {
+                    logtrc( "INFO:4", "Warning: Signal $s does not have a driver in instance $inst!" ) unless
+                        ( $s =~ m/%(HIGH|LOW)(_BUS)?%/o );
+                }
                 $conndb{$s}{'::comment'} .= "__W_MISSING_DRIVER/$inst,";            
                 $rinsig->{$s}{'driver'} = 0;
             } elsif ( $rinsig->{$s}{'driver'} > 1 ) {
-                logwarn( "Signal $s  has multiple drivers in instance $inst!" );
+                if ( $EH{'output'}{'warnings'} =~ m/driver/io ) {
+                    logwarn( "Warning: Signal $s  has multiple drivers in instance $inst!" );
+                } else {
+                    logtrc( "INFO_4", "Warning: Signal $s  has multiple drivers in instance $inst!" );
+                }
                 $conndb{$s}{'::comment'} .= "__E_MULTIPLE_DRIVER/$inst,";
                 $error_flag++;
             }
@@ -1794,7 +2013,7 @@ sub count_load_driver ($$$$) {
 ####################################################################
 ## signal_port_resolve
 ## find if signals used internally and having the same name as the port it's connected to.
-## Provide mapping 
+## Provide mapping of signal to port name inside of this entitiy
 ####################################################################
 
 =head2

@@ -2,7 +2,13 @@ Application Note / TOC
 
 - Basic wiring:
 
-- Macro definitions and evaluation
+- Macro definitions and evaluation:
+  MH: Macro header: needs to match against the MX line ($X defines variables)
+  MD: Body of macro. Will be inserted after variable replacement.
+  MX: Triggers macro expansion. Will be matched against all MH lines known.
+  Defines variable values.
+
+- Generator statements, extended match operators:
 
 - Command line switches:
 (from mix_0.pl):
@@ -66,4 +72,26 @@ mix_getopt_header(qw(
 
 - Format of intermediate xls sheet will be kept as is.
 
+- Output files will be generated in current directory if not stated otherwise.
+
+- Runtime configuration is influenced by (increasing precedence):
+    built-in default values
+    mix.cfg file (if found in current directory). Format is:
+        MIXCFG name.of.conf value
+    CONF sheet found in input xls files
+    command line switch -conf name.of.conf=value
+
+- If no ::arch column is given, architecture will default to "rtl"
+    (configuration hier.field.::arch.[3] = rtl; cannot be changed globally)
+
+- UNIX/MS-Win Issues:
+
+-- Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
+    (module load freeware)
+
+Example:
+
+See also: command line switches, -listconf
+
+-- Examples usage
 
