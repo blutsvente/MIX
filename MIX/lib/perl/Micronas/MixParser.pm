@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.6 $                                             |
+# | Revision:   $Revision: 1.7 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/14 14:06:43 $                                   |
+# | Date:       $Date: 2003/02/19 16:28:00 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.6 2003/02/14 14:06:43 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.7 2003/02/19 16:28:00 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,10 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.7  2003/02/19 16:28:00  wig
+# | Added generics.
+# | Renamed generated objects
+# |
 # | Revision 1.6  2003/02/14 14:06:43  wig
 # | Improved add port handling, consider in/out/... cases
 # | Entitiy port/signals redeclaration prevented
@@ -381,15 +385,15 @@ sub parse_conn_gen ($) {
 
         # iterator based generator: $i(1..10), /PERL_RE/
         if ( $rin->[$i]{'::gen'} =~ m!^\s*\$(\w)\s*\((\d+)\.\.(\d+)\)\s*,\s*/(.*)/! ) {
-            my $pre = $4;
+            my $pre = $4 . "_$2_$3";
             if ( $2 > $3 ) {
                 logwarn("bad bounds $2 .. $3 in generator definition!");
                 next;
             }
+            $g{$pre}{'pre'} = $4;
             $g{$pre}{'var'} = $1;
             $g{$pre}{'lb'}   = $2;
             $g{$pre}{'ub'}  = $3;
-            # $g{$pre}{'pre'} = $4;
             $g{$pre}{'field'} = $rin->[$i];
             $rin->[$i]{'::comment'} = "# Generator parsed /" . $rin->[$i]{'::comment'};
         }
@@ -398,7 +402,7 @@ sub parse_conn_gen ($) {
             $g{$1}{'var'} = undef;
             $g{$1}{'lb'}   = undef;
             $g{$1}{'ub'}  = undef;
-            # $g{$pre}{'pre'} = $4;
+            $g{$1}{'pre'} = $1;
             $g{$1}{'field'} = $rin->[$i];
             $rin->[$i]{'::comment'} = "# Generator parsed /" . $rin->[$i]{'::comment'};
         }
@@ -409,6 +413,7 @@ sub parse_conn_gen ($) {
             $g{$gname}{'lb'} = $2;
             $g{$gname}{'ub'} = $3;
             $g{$gname}{'field'} = $rin->[$i];
+            $g{$gname}{'pre'} = $gname;
             $rin->[$i]{'::comment'} = "# Generator parsed /" . $rin->[$i]{'::comment'};
         }
     }
@@ -479,6 +484,9 @@ sub parse_hier_init ($) {
     # These are needed for proper program flow.
     #
     add_inst( '::inst' => "%CONST%", );
+    add_inst( '::inst' => "%GENERIC%", );
+    add_inst( '::inst' => "%PARAMETER%", );
+
     add_inst( '::inst' => "%TOP%", );
     add_inst( '::inst' => "%OPEN%", );
 
@@ -762,8 +770,9 @@ sub add_conn (%) {
 
 
         # If name was not given, complain ...
-        if ( $nameflag and $conndb{$name}{'::mode'} !~ m/^\s*C/o ) {
+        if ( $nameflag and $conndb{$name}{'::mode'} !~ m/^\s*[CPG]/o ) {
             # Check if this signals ::out has a %CONST% in it:
+            # If yes, mark it as C
             unless( $conndb{$name}{'::out'}[0]{'inst'} eq "%CONST%" ) {
                 # Mark signal .... but add it anyway (user should be able to fix it)
                 #TODO: fix up that code, should not deal with conndb here ....
@@ -774,16 +783,20 @@ sub add_conn (%) {
             } else {
                 $conndb{$name}{'::mode'} = 'C';
             }
+        # Is it linked to %CONST% instance ...
         } elsif ( defined( $conndb{$name}{'::out'}[0]{'inst'} ) and
             $conndb{$name}{'::out'}[0]{'inst'} eq "%CONST%" ) {
                 # If we found a constant, change the ::mode bit to be constant ...
-                if ( $conndb{$name}{'::mode'} and $conndb{$name}{'::mode'} !~ m,^\s*C,io ) {
-                    logwarn("Signal $name mode expected to be C, but is " .
+                if ( $conndb{$name}{'::mode'} and $conndb{$name}{'::mode'} !~ m,^\s*[CPG],io ) {
+                    logwarn("Signal $name mode expected to be C, G or P but is " .
                             $conndb{$name}{'::mode'} ."!" );
                     $conndb{$name}{'::mode'} = "C";
                     $conndb{$name}{'::comment'} .= "__E_MODE_MISMATCH";
-                } else {
+                } elsif ( not $conndb{$name}{'::mode'} ) {
+                    # If this signal mode is not defined, assume C
+                    logtrc( "INFO", "Setting mode to C for signal $name\n" );
                     $conndb{$name}{'::mode'} = "C";
+                    $conndb{$name}{'::comment'} .= "__I_SET_MODE_C";
                 }
         }   
 }
@@ -835,7 +848,7 @@ _create_conn ($$%)
 
 Create/add/modify a bus/signal/connection; convert input into simple array of hashes.
 
-REcognize constant values like:
+Recognize constant values like:
 
 =over 4
 
@@ -916,16 +929,30 @@ sub _create_conn ($$%) {
             # Recognize 'CONST' and "CONST"
             # Mark with %CONST% instance name .... the port name will hold the value
             #
-            $d =~ s,__CONST__,%CONST%,og; # Convert back __CONST__ to %CONST% 
-            if ( $d =~ m,^\s*(%CONST%/)?(0x[0-9a-f]+|0b[01xzhl]+|0[0-7]+|[0-9]+),io or
-                 $d =~ m,^\s*(%CONST%/)?('\w+'),io or
-                 $d =~ m,^\s*(%CONST%/)?("\w+"),io ) { # Constant value ...
-                my $const = $2;
+            $d =~ s,__(CONST|GENERIC|PARAMTER)__,%$1%,g; # Convert back __CONST__ to %CONST%
+            if ( $d =~ m,^\s*(%(CONST|GENERIC|PARAMETER)%/)?(0x[0-9a-f]+|0b[01xzhl]+|0[0-7]+|[0-9]+),io or
+                 $d =~ m,^\s*(%(CONST|GENERIC|PARAMETER)%/)?('\w+'),io or
+                 $d =~ m,^\s*(%(CONST|GENERIC|PARAMETER)%/)?("\w+"),io ) { # Constant value ...
+                my $const = $3;
+                my $t = $2;
                 if ( $inout =~ m,in, ) {
                     logerror("Error: use constant value for signal " . $data{'::name'} . " in ::out column, only!");
                     $data{'::comment'} .= "__E_BAD_CONSTANT_DEFINED";
                 }
-                $co{'inst'} = "%CONST%";
+                if ( defined( $t ) ) {
+                    $co{'inst'} = $t;
+                } elsif ( defined( $data{'::mode'} ) ) {
+                # Derive instance/type from mode field ....    
+                    if ( $data{'::mode'} =~ m,^\s*G,io ) {
+                        $co{'inst'} = '%GENERIC%';
+                    } elsif ( $data{'::mode'} =~ m,^\s*P,io ) {
+                        $co{'inst'} = '%PARAMETER%';
+                    } else {
+                        $co{'inst'} = '%CONST%';
+                    } 
+                } else {
+                        $co{'inst'} = '%CONST%';
+                }
                 
                 # Convert input data ...hex, binary and decimal to decimal ....
                 if ( $d =~ m,^\s*0x,io ) {
@@ -1087,6 +1114,9 @@ sub merge_conn($%) {
                     unless ( $data{$i} eq $t_cdb ) {
                         if ( $t_cdb eq 'S' and $data{$i} =~ m/^(I|O|IO)/o ) {
                             $conndb{$name}{$i} = $data{$i};
+                        }elsif ( $t_cdb =~ m,^\s*[GCP],io and $data{$i} =~ m,^\s*[GCP],io ) {
+                            # Do nothing here ...
+                            ;
                         } elsif ( not ( $data{$i} eq 'S' and $t_cdb =~ m/^(I|O|IO)/o ) ) {
                             logwarn( "ERROR: mode mismatch for signal $name: $t_cdb ne $data{$i}!" );
                             $conndb{$name}{$i} = "__E_MODE_MISMATCH";
@@ -1428,11 +1458,10 @@ sub apply_x_gen ($$) {
         for my $cg ( keys( %$r_hg ) ) {
             unless( $r_hg->{$cg}{'var'} ) {
             # Plain match, no run parameter
-                if ( $i =~ m/^$cg$/ ) {
+                if ( $i =~ m/^$r_hg->{$cg}{'pre'}$/ ) {
                     my %in = ();
                     for my $ii ( keys %{$r_hg->{$cg}{'field'}} ) {
                         if ( $r_hg->{$cg}{'field'}{$ii} ) {
-                            # my $e = '$r_hg->{$cg}{\'field\'}{$ii}';
                             my $e = "\$in{'$ii'} = \"" . $r_hg->{$cg}{'field'}{$ii} . "\"";
                             unless( eval $e ) {
                                 $in{$ii} = "E_BAD_EVAL" if $@;
@@ -1448,7 +1477,7 @@ sub apply_x_gen ($$) {
             } else {
             # There is an additional run parameter involved: $r_hg{$cg}{'var'}
             # Match first; if it applies, we see if the variable is within range
-                my $matcher = $cg;
+                my $matcher = $r_hg->{$cg}{'pre'};
                 my $rv = $r_hg->{$cg}{'var'};
                 my %mres = ();
                 #
@@ -1473,7 +1502,7 @@ sub apply_x_gen ($$) {
                     #
                     # We found all $N; now let's deal with {EXPR} and $V
                     #
-                    ( $matcher = $cg ) =~ s,[()],,g; # Remove all parens
+                    ( $matcher = $r_hg->{$cg}{'pre'} ) =~ s,[()],,g; # Remove all parens
 
                     if ( $matcher =~ s/{.+?}/\\d+/g ) {
                         logwarn( "Illegal arithemtic expression in $matcher. Will be ignored!" );     # postpone that ....
@@ -1574,7 +1603,7 @@ sub add_portsig () {
         #
         my $mode = $conndb{$signal}{'::mode'};
         
-        if ( $mode and ( $mode eq 'C' or $mode eq 'G' ) ) {
+        if ( $mode and ( $mode =~ m,^\s*[CGP],o ) ) {
             next;
         }
 
@@ -1968,6 +1997,7 @@ sub add_sign2hier () {
         my $rsa = $conndb{$i};
         _add_sign2hier( "out", $i, $rsa->{'::out'} );
         _add_sign2hier( "in", $i, $rsa->{'::in'} );
+        _add_sign2hier( "generic", $i, $rsa->{'::in'} );
     }
 }
 
@@ -1995,10 +2025,33 @@ sub _add_sign2hier ($$$) {
                 logwarn("Undefined port for connection $conn, instance $inst!");
                 $port = "__E_UNDEF_PORT";
         }
-        if ( exists( $hierdb{$inst}{'::conn'}{$io}{$conn}{$port} ) ) {
-            $hierdb{$inst}{'::conn'}{$io}{$conn}{$port} .= "," . $iii;
+        #
+        # Collect generic definitions ....
+        #
+        if ( $io eq "generic" ) {
+            if ( $conndb{$conn}{'::mode'} =~ m,^\s*[GP],io ) {
+                # Store $hierdb{$inst}{'::conn'}{'generic'}{NAME} = val
+                my $parameter = "";
+                for my $v ( 0 .. $#{$conndb{$conn}{'::out'}} ) {
+                    if ( $conndb{$conn}{'::out'}[$v]{'inst'} eq "%PARAMETER%" ) {
+                        $parameter = $conndb{$conn}{'::out'}[$v]{'port'};
+                        last;
+                    }
+                }
+                if ( $parameter ne "" ) { #Found s.th. appropriate ...
+                    if ( exists( $hierdb{$inst}{'::conn'}{$io}{$port} ) ) {
+                        $hierdb{$inst}{'::conn'}{$io}{$port} .= "," . $parameter;
+                    } else {
+                        $hierdb{$inst}{'::conn'}{$io}{$port} = $parameter;
+                    }
+                }
+            }
         } else {
-            $hierdb{$inst}{'::conn'}{$io}{$conn}{$port} = $iii;
+            if ( exists( $hierdb{$inst}{'::conn'}{$io}{$conn}{$port} ) ) {
+                $hierdb{$inst}{'::conn'}{$io}{$conn}{$port} .= "," . $iii;
+            } else {
+                $hierdb{$inst}{'::conn'}{$io}{$conn}{$port} = $iii;
+            }
         }
     }
 }

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.6 $                                             |
+# | Revision:   $Revision: 1.7 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/14 14:06:42 $                                   |
+# | Date:       $Date: 2003/02/19 16:27:59 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.6 2003/02/14 14:06:42 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.7 2003/02/19 16:27:59 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,10 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.7  2003/02/19 16:27:59  wig
+# | Added generics.
+# | Renamed generated objects
+# |
 # | Revision 1.6  2003/02/14 14:06:42  wig
 # | Improved add port handling, consider in/out/... cases
 # | Entitiy port/signals redeclaration prevented
@@ -88,24 +92,26 @@ use Tree::DAG_Node; # tree base class
 use Micronas::MixUtils qw( mix_store db2array write_excel %EH );
 use Micronas::MixParser qw( %hierdb %conndb );
 
-
+#
 # Prototypes
+#
 sub _write_entities ($$$);
 sub replace_mac ($$);
 sub write_architecture ();
 sub strip_empty ($);
 sub port_map ($$$$$);
+sub generic_map ($$$$);
 
 # Internal variable
 
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.6 2003/02/14 14:06:42 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.7 2003/02/19 16:27:59 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
 
-$thisid =~ s,$,,go;
-$thisrcsfile =~ s,$,,go;
+$thisid =~ s,\$,,go;
+$thisrcsfile =~ s,\$,,go;
 
 #
 # Templates ...
@@ -151,12 +157,12 @@ $EH{'template'}{'vhdl'}{'enty'}{'body'} = <<'EOD';
 entity %ENTYNAME% is
         -- Generics:
 	generic(
-            %GENERIC%
+%GENERIC%
 	);
 	
 	-- Generated Port Declaration:
 	port(
-                %PORT%
+%PORT%
         );
 end %ENTYNAME%;
 --
@@ -213,7 +219,7 @@ $EH{'template'}{'vhdl'}{'arch'}{'body'} = <<'EOD';
 --
 -- Start of Generated Architecture %ARCHNAME%
 --
-architecture %ARCHNAME% of %ENTYNAME% is 
+architecture RTL of %ENTYNAME% is 
 	--
 	-- Components
 	--
@@ -245,6 +251,7 @@ begin
 end %ARCHNAME%;
 
 EOD
+# Replaced %ARCHNAME% by RTL, requested by Michael P.
 
 $EH{'template'}{'vhdl'}{'arch'}{'foot'} = <<'EOD';
 --
@@ -299,7 +306,7 @@ $EH{'template'}{'vhdl'}{'conf'}{'body'} = <<'EOD';
 -- Start of Generated Configuration %CONFNAME% / %ENTYNAME%
 --
 configuration %CONFNAME% of %ENTYNAME% is
-        FOR %ARCHNAME%
+        FOR RTL
 
 	    %CONFIGURATION%
 
@@ -310,6 +317,7 @@ end %CONFNAME%;
 --
 
 EOD
+# Replaced %ARCHNAME% by RTL, requested by Michael P. 
 
 $EH{'template'}{'vhdl'}{'conf'}{'foot'} = <<'EOD';
 --
@@ -415,6 +423,7 @@ sub compare_merge_entities ($$$) {
     #       'mode' => '',
     #       'high' => '',
     #       'low' => '',
+    #       'value' => ''  (stores default value for generics)
 
     my $eflag = 1; # Is equal
 
@@ -423,7 +432,8 @@ sub compare_merge_entities ($$$) {
         # Skip that if it does not exist in the new port map
 	next if ( $p eq "__LEAF__" );
         unless( exists( $rnew->{$p} ) ) {
-	    if ( $p ne "-- NO OUT PORTs" and $p ne "-- NO IN PORTs" ) {
+	    if ( ( $p ne "-- NO OUT PORTs" and $p ne "-- NO IN PORTs" ) and
+                 $ent ne "W_NO_ENTITY" ) {
 		logwarn( "Missing port $p in entity $ent redeclaration, ignoreing!" );
 		$eflag  = 0;
 	    }
@@ -462,13 +472,18 @@ sub compare_merge_entities ($$$) {
                 $rent->{$p}{'low'} = $val;
             }
         }
+        # If 'value' is defined, add it ...
+        if ( exists( $rnew->{$p}{'value'} ) ) {
+            $rent->{$p}{'value'} = $rnew->{$p}{'value'};
+        }
         delete( $rnew->{$p} ); # Done
     }
 
     # Now we add up the rest of $rnew ...
     for my $p ( keys( %$rnew ) ) {
         #
-	if ( $p ne "-- NO OUT PORTs" and $p ne "-- NO IN PORTs" ) {
+	if ( $p ne "-- NO OUT PORTs" and $p ne "-- NO IN PORTs"
+            and $ent ne "W_NO_ENTITY" ) {
 	    logwarn( "Declaration for entity $ent extended by $p!" );
 	    $eflag = 0;
     	}
@@ -575,8 +590,11 @@ sub _create_entity ($$) {
 	    if ( $m ) { # not empty
 		if ( $m =~ m,IO,io ) { $mode = "inout"; } 		# inout mode!
 		elsif ( $m =~ m,B,io ) { $mode = "%BUFFER%"; }	# buffer
-		elsif ( $m =~ m,C,io ) { $mode = $m; }		# generic and constant
-		elsif ( $m =~ m,G,io ) { $mode = $m; }
+		elsif ( $m =~ m,C,io ) { $mode = $m; }		# Constant
+		elsif ( $m =~ m,[GP],io ) {                             # Generic, parameter
+                    # Read "value" from ...:out
+                    $mode = $m;
+                }
 		elsif ( $m =~ m,S,io ) { $mode = $io; }			# signal -> derive from i/o
 		elsif ( $m =~ m,I,io ) {						# warn if mode mismatches
 		    #TODO: Need to look at all connections ....
@@ -613,9 +631,14 @@ sub _create_entity ($$) {
 	    # Mark mismatches ....
 	    #
 		if ( $mode ne $res{$port}{'mode'} ) {
-		    logwarn("Warning: port $port redefinition mode mismatch: $mode " .
+                    if ( $mode =~ m,^\s*[GP],io and $res{$port}{'mode'} =~ m,\s*[GP],io ) {
+                        $mode = 'P';
+                        $res{$port}{'mode'} = "P";
+                    } elsif ( $res{$port}{'mode'} !~ m,^\s*[GP],io ) {
+                        logwarn("Warning: port $port redefinition mode mismatch: $mode " .
 			    $res{$port}{'mode'} );
 			    $res{$port}{'mode'} = "__W_PORTMODE_MISMATCH"; #TODO ???
+                    }
 		}
 
 		# High bound:
@@ -683,7 +706,18 @@ sub _create_entity ($$) {
 		    'high' => $h,  # set default to '' string
 		    'low'  => $l,   # set default to '' string
 		);
+                
 	    }
+            if ( $mode =~ m,^\s*[GP], ) {
+                # Set 'default' value from '::out' field (if defined)
+                my @vals = @{$conndb{$i}{'::out'}};
+                for my $v ( 0..$#vals ) {
+                    if ( exists( $vals[$v]{'inst'} ) and $vals[$v]{'inst'} eq '%GENERIC%' ) {
+                        $res{$port}{'value'} = $vals[$v]{'port'};
+                        last;
+                    }
+                }
+            }
         }
 	# $res{'__SIGNAL__'}{$i}=; # Remember signals connected
     }
@@ -719,7 +753,7 @@ sub write_entities () {
 		    $entities{$i}{'__LEAF__'} == 0 ) {
 		    next;
 		}
-		my $filename = $i . $EH{'postfix'}{'POSTFIX_ENTY'} . "-e.vhd";
+		my $filename = $i . $EH{'postfix'}{'POSTFIX_ENTY'} . ".vhd";
 	    	_write_entities( $i, $filename, \%entities )
 	}
     } else {
@@ -783,8 +817,8 @@ sub _write_entities ($$$) {
 	if ( $e eq "W_NO_ENTITY" ) { next; };
 	
 	$macros{'%ENTYNAME%'} = $e;
-	my $gent = "\t\t\t-- generated\n";
-	my $port = "\t\t\t-- generated\n";
+	my $gent = "\t\t\t-- Generated Generics for Entity $e\n";
+	my $port = "\t\t\t-- Generated Port for Entity $e\n";
 	my $pd = $ae->{$e};
 	for my $p ( sort ( keys( %{$pd} ) ) ) {
 	    next if ( $p eq "__LEAF__" );
@@ -794,10 +828,14 @@ sub _write_entities ($$$) {
 	    # if ( $pdd->{'mode'} =~ m,^\s*(const|C),io ) {
 		# $gent .= "\t\t\t -- " . $p . "\t: " . $pdd->{'type'} . "\t:= " . $pdd->{'value'} . "\n";
 		# next;
-	    # } els
-	    if ( $pdd->{'mode'} =~ m,^\s*(generic|G),io ) {
-		# Generic
-		$gent .= "\t\t\t" . $p . "\t: " . $pdd->{'type'} . "\t:= " . $pdd->{'value'} . "\n";
+	    # } else
+	    if ( $pdd->{'mode'} =~ m,^\s*(generic|G|P),io ) {
+		if ( exists( $pdd->{'value'} ) ) {
+                # Generic, get default value from conndb ...
+                    $gent .= "\t\t\t" . $p . "\t: " . $pdd->{'type'} . "\t:= " . $pdd->{'value'} . "\n";
+		} else {
+                    $gent .= "\t\t\t" . $p . "\t: " . $pdd->{'type'} . " -- __W_NODEFAULT\n";
+		}
 	    } elsif (	defined( $pdd->{'high'} ) and
 			defined( $pdd->{'low'} ) and
 			$pdd->{'high'} =~ m/^\d+$/o and $pdd->{'low'} =~ m/^\d+$/ ) {
@@ -841,8 +879,8 @@ sub _write_entities ($$$) {
 	    }
 	}
 	#Get rid of trailing ;, replace %MACs%
-	$port =~ s/;\n$/\n\t\t\t-- end of generated port/;
-	$gent =~ s/;\n$/\n\t\t\t-- end of generated generic/;
+	$port =~ s/;\n$/\n\t\t\t-- End of Generated Port for Entity $e/;
+	$gent =~ s/;\n$/\n\t\t\t-- End of Generated Generics for Entity $e/;
 
 	# Store ports and generics
 	$entities{$e}{'__PORTTEXT__'} = $port . "\n";
@@ -931,7 +969,7 @@ sub write_architecture () {
 		}
 		unless ( exists( $seen{$e} ) ) {
 		    $seen{$e} = 1;  #TODO ?????
-		    my $filename = $e . $EH{'postfix'}{'POSTFIX_ARCH'} . "-a.vhd";
+		    my $filename = $e . $EH{'postfix'}{'POSTFIX_ARCH'} . ".vhd";
 		    _write_architecture( $i, $e, $filename, \%hierdb );
 		}
 	}
@@ -958,17 +996,13 @@ Return an port map for the instance and a list of in and out signals
 
 sub gen_instmap ($) {
     my $inst = shift;
-
-    #
-    #TODO: Generic map!
-    #
-
-    my $map = "\t\t\t-- Generated Instance Port Map for $inst\n";
+    
+    my $map = "";
+    my $gmap = "\t\tgeneric map (\n";
+    
     my @in = ();
     my @out = ();
     my $enty = $hierdb{$inst}{'::entity'};
-
-    $map .= "\t\t\t$inst: $enty PORT MAP(\n";
 
     #
     # Iterate through all signals attached to that instance:
@@ -977,26 +1011,52 @@ sub gen_instmap ($) {
     #
     my $rinstc = $hierdb{$inst}{'::conn'}; #TODO Better use entitiy??!!
     $map .= port_map( 'in', $inst, $enty, $rinstc->{'in'}, \@in );
-    # for my $s ( sort( keys( %{$rinstc->{'in'}}) )  ) {
-	#for my $p ( sort( keys( %{$rinstc->{'in'}{$s}} ) ) ) {
-	#$map .= "\t\t\t\t$p => $s,\n";
-	#push( @in, $s );
-	#}
-    #}
-    $map .= port_map( 'out', $inst, $enty, $rinstc->{'out'}, \@out );
-    
-    #for my $s ( sort( keys( %{$rinstc->{'out'}} ) ) ) {
-	#for my $p ( sort( keys( %{$rinstc->{'out'}{$s}} ) ) ) {
-	#    $map .= "\t\t\t\t$p => $s,\n";
-	#    push( @out, $s );
-	#}
-    #}
 
+    if ( exists( $rinstc->{'generic'} ) ) {
+        $gmap .= generic_map( 'in', $inst, $enty, $rinstc->{'generic'} );
+    }
+ 
+    $map .= port_map( 'out', $inst, $enty, $rinstc->{'out'}, \@out );
+ 
     # Remove trailing ,    
     $map =~ s/,\s*\n$/\n/o;
-    $map .= "\t\t\t);\n\t\t\t-- End of Generated Instance Port Map for $inst\n";
+    $gmap =~ s/,\s+$/\n/mo;
+    $gmap .= "\t\t)\n";
+
+    $gmap =~s,\s*generic\s+map\s*\(\s+\)\s*$,,iom; # Remove empty definitons
     
-    return( $map, \@in, \@out);
+    $map .= "\t\t);\n\t\t-- End of Generated Instance Port Map for $inst\n";
+
+    $map =  "\t\t-- Generated Instance Port Map for $inst\n" .
+                "\t\t$inst: $enty\n" .
+                $gmap .
+                "\t\tport map (\n" .
+                $map;
+
+        return( $map, \@in, \@out);
+}
+
+#
+# create generic map, ...
+#
+# Input:
+#  $io  = 'in' or 'out'
+#  $inst = instancename
+#  $enty = entityname
+#  $ref = reference to $hierdb{$i}{::conn}{$io}
+#
+sub generic_map ($$$$) {
+    my $io = shift;
+    my $inst = shift;
+    my $enty = shift;
+    my $ref = shift;
+
+    my $map = "";
+
+    for my $g ( sort( keys( %$ref ) ) ) {
+                  $map .= "\t\t\t$g => $ref->{$g},\n";
+    }
+    return $map;
 }
 
 #
@@ -1025,6 +1085,10 @@ sub port_map ($$$$$) {
 	#    push( @$rio, $s );
 	#    next;
 	# } # Skip constants
+        if ( $conndb{$s}{'::mode'} =~ m,^\s*[GP],io ) {
+            # Parameter for generics ... skip in port map ...
+            next;
+        }
 	
 	my $sf = $conndb{$s}{'::high'}; # Set signal high bound
 	unless( defined( $sf ) and $sf ne '' ) { $sf = '__UNDEF__'; }
@@ -1291,41 +1355,6 @@ sub _write_architecture ($$$$) {
 	$macros{'%ARCHNAME%'} = $aent . $EH{'postfix'}{'POSTFIX_ARCH'};
 	$macros{'%CONCURS%'} = "\t-- Generated Signal Assignments\n";
 	$macros{'%CONSTANTS%'} = "\t--Generated Constant Declarations\n";
-
-=head 2
-#### constants are working differently now ####
-	# Search for constants in our connection hash....
-	for my $ii ( sort( keys( %{$hierdb{$i}{'::conn'}{'in'}} ) ) ) {
-	    my $s = $conndb{$ii};
-	    my $mode = $s->{'::mode'};
-	    if ( $mode =~ m,^\s*C,io ) {
-		my $type = $s->{'::type'};
-		my $high = $s->{'::high'};
-		my $low = $s->{'::low'};
-		# The signal definition should be consistent here!
-		my $dt = "";
-
-		if ( defined( $high ) and $high =~ m/^\d+$/o and
-		     defined( $low ) and $low =~ m/^\d+$/o ) {
-			if ( $low < $high ) {
-			    $dt = "($high downto $low)";
-			} elsif ( $low > $high ) {
-			    $dt = "($high to $low)";
-			} else {
-			    $dt = " -- __W_SINGLE_BIT_CONSTANT";
-			}
-		}
-	    
-		unless( exists ( $s->{'::out'}[0]{'inst'} ) ) {
-		    $s->{'::out'}[0]{'inst'} = "__E_MISSING_VALUE";
-		}
-		$macros{'%CONSTANTS%'} .= "\t\t\tconstant " . $s->{'::name'} . " : " .
-		    $s->{'::type'} . $dt . " := " . $s->{'::out'}[0]{'inst'} . ";\n";
-		next;
-	    }
-	}
-=cut
-
 	#
 	# Collect components by looking through all our daughters
 	#
@@ -1449,8 +1478,8 @@ sub _write_architecture ($$$$) {
 	    }
 
 	    # Generics ?
-	    if ( $s->{'::mode'} =~ m,\s*(g),io ) {
-		next;
+	    if ( $s->{'::mode'} =~ m,\s*[GP],io ) {
+                next;
 	    }
 
 	    # Add signal just if this signal is not routed up (outside) ..
@@ -1459,17 +1488,8 @@ sub _write_architecture ($$$$) {
 	    my $pre = "";
 	    my $post = "";
 	    my $iconn = $hierdb{$i}{'::conn'};
-	    # Which ports are connected to that signal?
-	    # if ( exists( $hierdb{$i}{'::conn'}
-	    # if ( exists( $entities{$aent}{$ii} ) ) { #TODO: is that correct? port vs. signalname
-	    # if ( exists( $aeport{$ii}{'in'} ) and exists( $aeport{$ii}{'out'} ) ) { # IN and OUT
-		#if ( exists( $iconn->{'in'}{$ii} )  or
-		#    exists( $iconn->{'out'}{$ii} ) ) { # Used as IN, OUT and going up 
-		#    # This signal is used as input and as output ...
-		#    #TODO: Need to generate an intermediate signal!!
-		#    $post = "-- __W_IO_ENTITIY_SIGNAL__ "; #TODO: Remove that later on ...
-		# }
-	    # }
+
+            # Port connected here ...
 	    if ( exists( $aeport{$ii}{'in'} ) ) { # IN
 		if ( exists( $iconn->{'in'}{$ii} ) ) {
 		    $pre = "-- __I_ENTITIY_SIGNAL__ "; #TODO: Remove that later on ...
@@ -1534,14 +1554,12 @@ sub strip_empty ($) {
     #
     # Remove empty "generic" statments
     #
-    #        -- Generics:
-    #			generic (
-    #		-- generated
-    #
-    #
-    #		);
-    $text =~ s,\s*--\s*Generics:\s+generic\s*\(\s+--\s+generated\s+\);,,sog;
-    $text =~ s,generic\s*\(\s+--\s+generated\s+\);,,sog;
+    #   component keyscan
+    #		generic (
+    #		-- Generated Generics for Entity keyscan
+    #           );
+    $text =~ s,\s*--\s*Generics:\s+generic\s*\(\s+--\s+Generated\s+Generics\s+for\s+Entity\s+\w+\s+\);,,siog;
+    $text =~ s,generic\s*\(\s+--\s+Generated\s+Generics\s+for\s+Entity\s+\w+\s+\);,,siog;
 
     return $text;
 }
@@ -1582,7 +1600,7 @@ sub write_configuration () {
 		unless ( exists( $seen{$e} ) ) {
 		    # my %a; $a{$e} = %{$hierdb{$i}}; # Take one slice from the hierdb ...
 		    $seen{$e} = 1;  #TODO ?????
-		    my $filename = $e . $EH{'postfix'}{'POSTFIX_CONF'} . "-c.vhd";
+		    my $filename = $e . $EH{'postfix'}{'POSTFIX_CONF'} . ".vhd";
 		    _write_configuration( $i, $e, $filename, \%hierdb );
 		}
 	}

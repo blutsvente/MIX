@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.5 $                                             |
+# | Revision:   $Revision: 1.6 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/12 15:40:47 $                                   |
+# | Date:       $Date: 2003/02/19 16:28:00 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.5 2003/02/12 15:40:47 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.6 2003/02/19 16:28:00 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,10 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.6  2003/02/19 16:28:00  wig
+# | Added generics.
+# | Renamed generated objects
+# |
 # | Revision 1.5  2003/02/12 15:40:47  wig
 # | Improved handling of bus splicing (but still a way to go)
 # | Added seom meta instances.
@@ -506,13 +510,18 @@ $ex = undef; # Container for OLE server
 		    POSTFIX_GENERIC	_g
 		    POSTFIX_SIGNAL	_s
 		    POSTFIX_CONSTANT	_c
+		    POSTFIX_PARAMETER	_p
 		    PREFIX_INSTANCE	i_
-		    POSTFIX_ARCH	_struct
-		    POSTFIX_ENTY	_struct
-		    POSTFIX_CONF	_struct_conf
+		    POSTFIX_ARCH	-a
+		    POSTFIX_ENTY	-e
+		    POSTFIX_CONF	_conf-c
 		    PREFIX_CONST	MIX_CONST_
 		    PREFIX_GENERIC	MIX_GENERIC_
+		    PREFIX_PARAMETER	MIX_PARAMETER_
 	    )
+	    # POSTFIX_ARCH _struct-a
+	    # POSTFIX_ENTY _struct-e
+	    # POSTFIX_CONF _struct-c
     },
     'pad' => {
 	qw(
@@ -626,12 +635,14 @@ $ex = undef; # Container for OLE server
 	    "%UNDEF_3%"	=> "ERROR_UNDEF_3",	#should be 'undef',  #For debugging??
 	    "%UNDEF_4%"	=> "ERROR_UNDEF_4",	#should be 'undef',  #For debugging??
 	    "%TBD%"	=> "W_TO_BE_DEFINED",
-	    "%HIGH%"	=> "MIX__LOGIC1__",  # ???
-	    "%LOW%"	=> "MIX__LOGIC0__",  # ???
-	    "%HIGH_BUS%"	=> "MIX__LOGIC1_BUS__",
-	    "%LOW_BUS%"	=> "MIX__LOGIC0_BUS__",
+	    "%HIGH%"	=> "MIX__LOGIC1",  # VHDL does not like leading/trailing __
+	    "%LOW%"	=> "MIX__LOGIC0",  # dito.
+	    "%HIGH_BUS%"	=> "MIX__LOGIC1_BUS", # dito.
+	    "%LOW_BUS%"	=> "MIX__LOGIC0_BUS", # dito.
 	    "%CONST%"		=> "__CONST__", # Meta instance, used to apply constant values
-	    "%TOP%"		=> "__TOP__", # Meta instances, TOP cell
+	    "%TOP%"		=> "__TOP__", # Meta instance, TOP cell
+	    "%PARAMETER%"	=> "__PARAMETER__",	# Meta instance: stores paramter
+	    "%GENERIC%"		=> "__GENERIC__", # Meta instance, stores generic default
 	    "%BUFFER%"		=> "buffer",
 	    '%H%'		=> '$',			# RCS keyword saver ...
     },
@@ -1292,7 +1303,10 @@ sub inout2array ($) {
 	    next;
 	}
 	# Constants are working a different way:
-	if ( $i->{'inst'} =~ m,^\s*(__CONST__|%CONST%),o ) {
+	#: m,^\s*(__CONST__|%CONST%|__GENERIC__|__PARAMETER__|%GENERIC%|%PARAMETER%),o ) {
+
+	if ( $i->{'inst'} =~
+	    m,^\s*(__CONST__|%CONST%),o ) {
 	    $s .= $i->{'port'} . ", ";
 	} elsif ( defined $i->{'sig_t'} ) {
 	# inst/port($port_f:$port_t) = ($sig_f:$sig_t)
