@@ -1,0 +1,14 @@
+-- ------------- delta mode for file inst-a-e-rtl-a.vhd ------------- --
+--
+-- Generated
+--  by:  wig
+--  on:  Fri Apr 25 13:50:37 2003
+--  cmd: H:\work\mix\mix_0.pl ..\bitsplice.xls
+--  delta mode (comment/space/sort/remove): sort,remove
+--
+-- ------------- CHANGES START HERE ------------- --
++-+-----+---+------------------------+
+| |NEW  |   |OLD inst-a-e-rtl-a.vhd  |
++-+-----+---+------------------------+
+| |     * 74|port_o02(2) => test1,   *
++-+-----+---+------------------------+
