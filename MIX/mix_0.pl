@@ -21,12 +21,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id              : $Id: mix_0.pl,v 1.10 2003/04/29 07:22:35 wig Exp $
+# | Id              : $Id: mix_0.pl,v 1.11 2003/04/29 08:27:02 wig Exp $
 # | Name         : $Name:  $
 # | Description  :$Description:$
 # | Parameters  : -
-# | Version       : $Revision: 1.10 $
-# | Mod.Date    : $Date: 2003/04/29 07:22:35 $
+# | Version       : $Revision: 1.11 $
+# | Mod.Date    : $Date: 2003/04/29 08:27:02 $
 # | Author        : $Author: wig $
 # | Phone         : $Phone: +49 89 54845 7275$
 # | Fax             : $Fax: $
@@ -41,6 +41,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |
 # | Changes:
 # | $Log: mix_0.pl,v $
+# | Revision 1.11  2003/04/29 08:27:02  wig
+# | Minor issue: Revision ID in mix_0.pl
+# |
 # | Revision 1.10  2003/04/29 07:22:35  wig
 # | Fixed %OPEN% bit/bus problem.
 # |
@@ -149,7 +152,8 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION='$Revision: 1.10 $'; # RCS Id
+$::VERSION = '$Revision: 1.11 $'; # RCS Id
+$::VERSION =~ s,\$,,go;
 
 # %EH comes from Mic::MixUtils ; All the configuration E-nvironment will be there
 logconfig(-driver =>
