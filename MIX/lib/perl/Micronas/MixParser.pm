@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.2 $                                             |
+# | Revision:   $Revision: 1.3 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/04 07:19:31 $                                   |
+# | Date:       $Date: 2003/02/06 15:48:31 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.2 2003/02/04 07:19:31 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.3 2003/02/06 15:48:31 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,10 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.3  2003/02/06 15:48:31  wig
+# | added constant handling
+# | rewrote bit splice handling
+# |
 # | Revision 1.2  2003/02/04 07:19:31  wig
 # | Fixed header of modules
 # |
@@ -1726,7 +1730,9 @@ sub _add_sign2hier ($$$) {
     for my $iii ( 0..$#{$rsa} ) {
         my $inst = $rsa->[$iii]{'inst'};
         unless ( exists( $hierdb{$inst} ) )  {
-                logwarn("Skipping connection $conn to undefined instance $inst!");
+                unless ( $conndb{$conn}{'::mode'} =~ m,^\s*(C), ) {
+                    logwarn("Skipping connection $conn to undefined instance $inst!");
+                }
                 next; #TODO: Should we try to add that instance?
         }
         my $port = $rsa->[$iii]{'port'};

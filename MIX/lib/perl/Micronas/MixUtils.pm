@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.2 $                                             |
+# | Revision:   $Revision: 1.3 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/04 07:19:24 $                                   |
+# | Date:       $Date: 2003/02/06 15:48:30 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.2 2003/02/04 07:19:24 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.3 2003/02/06 15:48:30 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,10 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.3  2003/02/06 15:48:30  wig
+# | added constant handling
+# | rewrote bit splice handling
+# |
 # | Revision 1.2  2003/02/04 07:19:24  wig
 # | Fixed header of modules
 # |
@@ -606,6 +610,7 @@ $ex = undef; # Container for OLE server
 	    "%NULL%"	=> "0",
 	    "%TAB%"	=> "\t",
 	    "%SIGNAL%"	=> "std_ulogic",
+	    "%BUS_TYPE"	=> "std_ulogic_vector",
 	    "%DEFAULT_MODE%" => "S",
 	    "%OPEN%"	=> "OPEN",			#open signal
 	    "%UNDEF%"	=> "ERROR_UNDEF",	#should be 'undef',  #For debugging??  
@@ -618,6 +623,8 @@ $ex = undef; # Container for OLE server
 	    "%LOW%"	=> "__LOGIC0__",  # ???
 	    "%HIGH_BUS%"	=> "__LOGIC1_BUS__",
 	    "%LOW_BUS%"	=> "__LOGIC0_BUS__",
+	    "%BUFFER%"		=> "buffer",
+	    '%H%'		=> '$',			# RCS keyword saver ...
     },
     "ERROR" => "__ERROR__",
     "WARN" => "__WARNING__",
