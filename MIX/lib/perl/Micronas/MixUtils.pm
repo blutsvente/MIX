@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.59 $                                         |
+# | Revision:   $Revision: 1.60 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/01/26 14:01:44 $                              |
+# | Date:       $Date: 2005/01/31 12:40:13 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.59 2005/01/26 14:01:44 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.60 2005/01/31 12:40:13 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,10 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.60  2005/01/31 12:40:13  wig
+# |
+# |  	MixUtils.pm : added manglestd as check.hdlout.delta option
+# |
 # | Revision 1.59  2005/01/26 14:01:44  wig
 # | changed %OPEN% and -autoquote for cvs output
 # |
@@ -271,7 +275,7 @@ sub mix_utils_loc_templ ($$);
 sub _mix_utils_loc_templ ($$);
 sub mix_utils_loc_sum ();
 sub mix_utils_open_diff ($;$);
-sub mix_utils_diff ($$$$);
+sub mix_utils_diff ($$$$;$);
 sub mix_utils_clean_data ($$;$);
 
 ##############################################################
@@ -289,11 +293,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.59 2005/01/26 14:01:44 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.60 2005/01/31 12:40:13 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.59 $';
+my $thisrevision        =      '$Revision: 1.60 $';
 
-# Revision:   $Revision: 1.59 $   
+# Revision:   $Revision: 1.60 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -934,7 +938,7 @@ sub mix_init () {
 			  'intermediate' => 'mixed', # not a real extension!
 			  'internal' => 'pld',
 			  'delta' => '.diff',	  # delta mode
-                          'verify' => '.ediff', # verify against template ...
+              'verify' => '.ediff',   # verify against template ...
 	},
 	'comment' => {	'vhdl' => '--',
 			'verilog' => '//',
@@ -950,7 +954,8 @@ sub mix_init () {
 				    # sort:   sort lines
 				    # comment: not remove all comments before compare
 				    # remove: remove empyt diff files
-                                    # ignorecase|ic: -> ignore case if set
+                    # ignorecase|ic: -> ignore case if set
+                    # mapstd[logic]: -> ignore std_logic s. std_ulogic diffs!
     },
     'input' => {
 	'ext' =>	{
@@ -1001,7 +1006,7 @@ sub mix_init () {
 						# If "top_open" is in this list, will wire unused
 						# signals to open.
 	'inst' => 'nomulti',	# check and mark multiple instantiations
-        'hdlout' => { # act. should be named "hdlout"
+    'hdlout' => { # act. should be named "hdlout"
             'mode' => "entity,leaf,generated,ignorecase", # check only LEAF cells -> LEAF
                                                       #  ignore case of filename -> ignorecase
                         # which objects: entity|module|arch[itecture]|conf[iguration]|all
@@ -1013,6 +1018,8 @@ sub mix_init () {
                         #               ignorecase|ic := ignore file name capitalization
             'path' => "", # if set a PATH[:PATH], will check generated entities against entities found there
             # the path will be available in ...'__path__'{PATH}
+			'delta' => '', # define how the diffs are made, see output.delta for allowed keys
+							# if it's empty, take output.delta contents
             'filter' => { #TODO: allow to remove less important lines from the diff of template vs. created
                 'entity' => '',
                 'arch' => '',
@@ -1512,7 +1519,6 @@ sub mix_init () {
         $EH{'macro'}{'%IOCR%'} = "\n";
     }
 
-#}
 #
 # If there is a file called mix.cfg, try to read that ....
 # Configuraation parameters have to be written like
@@ -1813,6 +1819,11 @@ sub mix_utils_clean_data ($$;$) {
 
     # ignore case -> make everything lowercase ....
     $d = [ map( { lc( $_ ); } @$d ) ] if ( $conf =~ m,\b(ic|ignorecase)\b,io );
+
+	# mangle std_ulogic to std_logic (but not _vector!)
+    if ( $conf =~ m,\bmanglestd\b,io ) {
+		map( { s/\bstd_ulogic\b/std_logic/iog; } @$d );
+    }
     # sort lines before compare
     ( $d = [ sort( @$d ) ] ) if ( $conf =~ m,\bsort\b,io );
 
@@ -1823,10 +1834,12 @@ sub mix_utils_clean_data ($$;$) {
 #
 # Open a file and read in the contents for comparison ...
 # e.g. in delta mode or for verify purposes ...
+# flag: if set to verify, this will be a verify run;
+#   else we are in real delta-mode
 #
 sub mix_utils_open_diff ($;$) {
     my $file = shift;
-    my $flag = shift ||"";
+    my $flag = shift || "delta";
 
     my @ocont = ();
     my $ocontr = "";
@@ -1835,23 +1848,28 @@ sub mix_utils_open_diff ($;$) {
     my $c = "__NOCOMMENT";
     ( $ext = $file ) =~ s/.*\.//;
     for my $k ( keys ( %{$EH{'output'}{'ext'}} )) {
-	if ( $EH{'output'}{'ext'}{$k} eq $ext ) {
-		$c = $EH{'output'}{'comment'}{$k} || "__NOCOMMENT";
-		last;
-	}
+	    if ( $EH{'output'}{'ext'}{$k} eq $ext ) {
+		    $c = $EH{'output'}{'comment'}{$k} || "__NOCOMMENT";
+		    last;
+	    }
     }    
     if ( -r $file ) {
     # read in file
 	my $ofh = new IO::File;
 	unless( $ofh->open($file) ) {
-	    logwarn( "ERROR: Cannot open org $file in delta mode: $!" );
+	    logwarn( "ERROR: Cannot open org $file in $flag mode: $!" );
+		#done upwards: $EH{'sum'}{'warnings'}++;
 	    return undef, undef;
 	}
 	@ocont = <$ofh>; #Slurp in file to compare against
 	chomp( @ocont );
 
-        # Get data in clean format ....
-        $ocontr = mix_utils_clean_data( \@ocont, $c );
+	my $switches = ( $flag eq "verify" ) ? $EH{'check'}{'hdlout'}{'delta'} :
+		$EH{'output'}{'delta'};
+	$switches = $EH{'output'}{'delta'} unless $switches;
+    
+    # Get data in clean format ....
+    $ocontr = mix_utils_clean_data( \@ocont, $c, $switches );
 
 	close( $ofh ) or logwarn( "ERROR: Cannot close org $file in delta mode: $!" )
 	    and $EH{'sum'}{'errors'}++;
@@ -1859,7 +1877,6 @@ sub mix_utils_open_diff ($;$) {
     } else {
 	logwarn( "Error: Cannot read $file" );
         $EH{'sum'}{'errors'}++;
-	# $this_delta{"$file"} = 0;
     }
     return $ocontr;
 }
@@ -1916,7 +1933,7 @@ sub mix_utils_open ($;$){
         my $leaf_flag = $1; #
         my $templ = mix_utils_loc_templ( "ent", $file );
         if ( $templ ) { # Got a template file ...
-            @ccont = @{mix_utils_open_diff( $templ )}; # Get template contents, filtered  ...
+            @ccont = @{mix_utils_open_diff( $templ, "verify" )}; # Get template contents, filtered  ...
 	    @ncont = (); # Reset new contents ...
             #TODO: combine mode??
 
@@ -2129,7 +2146,13 @@ sub mix_utils_close ($$) {
     # Check against existing entity selected ...
     #
     if ( $fhstore{"$fn"}{'tmplout'}  ) {
-        my $diff = mix_utils_diff( \@ncont, \@ccont, $c, $file ); # Compare new content and template
+		# if check.hdlout.delta contents differs from output.delta,
+		# we need to parse @ncont with differentely ...
+		my $switches = ( $EH{'check'}{'hdlout'}{'delta'} ) ?
+			$EH{'check'}{'hdlout'}{'delta'} : $EH{'output'}{'delta'};
+		my @vncont = @ncont; # Copy output data ...
+        my $diff = mix_utils_diff( \@vncont, \@ccont, $c, $file, $switches );
+		# Compare new content and template
 
         my $head =
 "$c ------------- verify mode for file $file ------------- --
@@ -2138,19 +2161,19 @@ $c Generated
 $c  by:  %USER%
 $c  on:  %DATE%
 $c  cmd: %ARGV%
-$c  verify mode (comment/space/sort/remove): $EH{'output'}{'delta'}
+$c  verify mode (comment/space/sort/remove/manglestd): $switches
 $c
-$c  compare file: $fn
-$c  template file: $fhstore{$fn}{'tmpl'}
+$c  compare  file (NEW): $fn
+$c  template file (OLD): $fhstore{$fn}{'tmpl'}
 $c ------------- CHANGES START HERE ------------- --
 ";
 
-        my $fht = $fhstore{"$fn"}{'tmplout'};
+    my $fht = $fhstore{"$fn"}{'tmplout'};
 	print( $fht &replace_mac( $head, $EH{'macro'} ));
 
-        #
+    #
 	# Was there a difference? If yes, report and sum up.
-        #
+    #
 	if ( $diff ) {
 	    $fht->print( $diff );
 	    logwarn("WARNING: VEC_Mismatch file $fn vs. template!");
@@ -2197,6 +2220,8 @@ $c  on:  %DATE%
 $c  cmd: %ARGV%
 $c  delta mode (comment/space/sort/remove): $EH{'output'}{'delta'}
 $c
+$c  to create file (NEW)
+$c  existing  file (OLD): $file
 $c ------------- CHANGES START HERE ------------- --
 ";
 
@@ -2288,17 +2313,19 @@ $c ------------- CHANGES START HERE ------------- --
 #   ref to array with old contents
 #   current comment delimiter
 #   current file name
+#   string with swtiches to apply ..
 # Returns:
 #   array ref with diffs
 #
-sub mix_utils_diff ($$$$) {
+sub mix_utils_diff ($$$$;$) {
     my $nc = shift;
     my $oc = shift;
     my $c  = shift;
     my $file = shift;
+	my $switches = shift || "";
 
     # strip off comments and such (from generated data)
-    $nc = mix_utils_clean_data( $nc, $c );
+    $nc = mix_utils_clean_data( $nc, $c, $switches );
 
     # Diff it ...
     my $diff = diff( $nc, $oc,
@@ -2317,7 +2344,8 @@ sub mix_utils_diff ($$$$) {
 # Locate a matching *.vhd file in the check.hdlout path
 #
 #!wig20040217
-
+#!wig20050128: what if we get a verilog file?
+#
 #    $d = new DirHandle ".";
 #    if (defined $d) {
 #        while (defined($_ = $d->read)) { something($_); }
