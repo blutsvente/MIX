@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.14 2003/07/17 12:10:28 wig Exp $
+# $Id: TODO.txt,v 1.15 2003/07/23 13:34:29 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -18,6 +18,13 @@ Doku:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+
+- 20030723a/Req: Handle DI different in IO sheet (e.g. if there is only one
+        applicalbe ::muxopt, do not create bus but single bit signal.
+
+    Req: mpit
+    Prio: medium
+
 - 20030717a/Bug: Fix some verilog stuff:
 
 einiges zur Verilog-Ausgabe:

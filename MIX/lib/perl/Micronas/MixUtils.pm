@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.21 $                                             |
+# | Revision:   $Revision: 1.22 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/07/17 12:10:43 $                                   |
+# | Date:       $Date: 2003/07/23 13:34:39 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.21 2003/07/17 12:10:43 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.22 2003/07/23 13:34:39 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,11 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.22  2003/07/23 13:34:39  wig
+# | Fixed minor bugs:
+# | - open(N) removed
+# | - overlay bitvector fixed
+# |
 # | Revision 1.21  2003/07/17 12:10:43  wig
 # | fixed minor bugs:
 # | - Verilog `define before module
@@ -199,11 +204,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.21 2003/07/17 12:10:43 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.22 2003/07/23 13:34:39 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.21 $';
+my $thisrevision   =      '$Revision: 1.22 $';
 
-# | Revision:   $Revision: 1.21 $   
+# | Revision:   $Revision: 1.22 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -790,7 +795,7 @@ $ex = undef; # Container for OLE server
 		    POSTFIX_PORT_IN	_i
 		    POSTFIX_PORT_IO	_io
 		    PREFIX_PORT_GEN	p_mix_
-		    POSTFIX_PORT_GEN	%EMPTY%
+		    POSTFIX_PORT_GEN	_g%IO%
 		    PREFIX_PAD_GEN	pad_
 		    POSTFIX_PAD_GEN	%EMPTY%
 		    PREFIX_IOC_GEN	ioc_
@@ -1018,7 +1023,7 @@ $ex = undef; # Container for OLE server
 	    "%VHDL_USE_ENTY%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
 	    "%VHDL_USE_ARCH%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
 	    "%VHDL_USE_CONF%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
-	    "%VERILOG_TIMESCALE%"	=>	"`timescale 1ns / 1ns;",
+	    "%VERILOG_TIMESCALE%"	=>	"`timescale 1ns / 1ps;",
 	    "%VERILOG_USE_ARCH%"	=>	'%EMPTY%',
 	    "%VERILOG_DEFINES%"	=>	'	// No `defines in this module', # Used internally
 	    "%OPEN%"	=> "open",			#open signal
@@ -1846,8 +1851,6 @@ sub convert_in ($$) {
 	    return ();
     }
 
-    # my $reh = \$EH{$kind}; # field definitions ...
-    
     my @d = ();
     my @order = ();  # Field number to name
     my %order = ();  # Field name to number
@@ -1885,6 +1888,10 @@ sub convert_in ($$) {
 	    }#TODO: Set to default ? If field is undefined, set to ""
 	}
     }
+    unless( $hflag ) {
+	logwarn("WARNING: Failed to detect header in worksheet of type $kind");
+	$EH{'sum'}{'warnings'}++;
+    }
     return @d;
 }
 
@@ -1917,13 +1924,15 @@ sub parse_header($$@){
     my %rowh = ();
     for my $i ( 0..$#row ) {
 	unless ( $row[$i] )  {
-	    logwarn("empty header in column $i, skip");
+	    logwarn("WARNING: Empty header in column $i, type $kind, skipping!");
+	    $EH{'sum'}{'warnings'}++;
 	    push( @{$rowh{"::skip"}}, $i);
 	    $row[$i] = "::skip";
 	    next;
 	}
 	if ( $row[$i] and $row[$i] !~ m/^::/o ) { #Header not starting with ::
-	    logwarn("bad name in header row: $row[$i] $i");
+	    logwarn("WARNING: Bad name in header row: $row[$i] $i, type $kind, skipping!");
+	    $EH{'sum'}{'warnings'}++;
 	    push( @{$rowh{"::skip"}}, $i);
 	    next;
 	}

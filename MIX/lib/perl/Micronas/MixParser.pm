@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.22 $                                             |
+# | Revision:   $Revision: 1.23 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/07/17 12:10:42 $                                   |
+# | Date:       $Date: 2003/07/23 13:34:39 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.22 2003/07/17 12:10:42 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.23 2003/07/23 13:34:39 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,11 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.23  2003/07/23 13:34:39  wig
+# | Fixed minor bugs:
+# | - open(N) removed
+# | - overlay bitvector fixed
+# |
 # | Revision 1.22  2003/07/17 12:10:42  wig
 # | fixed minor bugs:
 # | - Verilog `define before module
@@ -191,11 +196,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.22 2003/07/17 12:10:42 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.23 2003/07/23 13:34:39 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.22 $';
+my $thisrevision   =      '$Revision: 1.23 $';
 
-# | Revision:   $Revision: 1.22 $   
+# | Revision:   $Revision: 1.23 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2121,17 +2126,21 @@ sub add_portsig () {
 
         for my $i ( 0..$#{$conndb{$signal}{'::in'}} ) {
                 my $inst = $conndb{$signal}{'::in'}[$i]{'inst'};
+                my $md = ( $mode !~ m,^[IS]$,io ) ? ( "/" . $mode ) : "";
+                $md = ""; #TODO: MakeActive
                 if ( defined ( $hierdb{$inst} ) ) {
                     $connected{$inst} = $hierdb{$inst}{'::treeobj'}; # Tree::DAG_Node objects
-                    $modes{$inst} .= ":in:$i"; # Remember in/out columns; Possibly several
+                    $modes{$inst} .= ":in" . $md . ":" . $i; # Remember in/out columns; Possibly several
                 }
         }
         for my $i ( 0..$#{$conndb{$signal}{'::out'}} ) {
                 my $inst = $conndb{$signal}{'::out'}[$i]{'inst'};
+                my $md = ( $mode !~ m,^[OS]$,io ) ? ( "/" . $mode ) : "";
+                $md = ""; #TODO: MakeActive
                 next unless ( defined( $inst ) );
                 if ( exists ( $hierdb{$inst} )) {
                     $connected{$inst} = $hierdb{$inst}{'::treeobj'}; # Tree::DAG_Node objects
-                    $modes{$inst} .= ":out:$i";
+                    $modes{$inst} .= ":out" . $md . ":" . $i;
                 }
         }
         
@@ -2293,16 +2302,22 @@ sub bits_at_inst ($$$) {
     my %width = (); # F[ull], B[it],
     my %bits = ();
     my %sigw_flag = ();
-    while ( $modes =~ m/:(in|out):(\d+)/g ) {
+    while ( $modes =~ m#:(in|out)(/(\w+))?:(\d+)#g ) {
         my $io = $1;
-        my $n = $2;
+        my $sigm = $3;
+        my $n = $4;
+
         my $cell = $conndb{$signal}{'::' . $io}[$n];
         my $sig_f = $cell->{'sig_f'} || 0; # Changed wig20030605
         my $sig_t = $cell->{'sig_t'} || 0; # Changed wig20030605
         # unless( defined( $sig_f ) ) { $sig_f = "0"; };
         # unless( defined( $sig_t ) ) { $sig_t = "0"; };
 
-        $d = lc( substr( $io, 0, 1 ) ); #TODO: extend for buffer and inout pins
+        if ( $sigm ) {
+            $d = ( $sigm =~ m,io,io ) ? "c" : "e"; #TODO20030723 ..
+        } else {
+            $d = lc( substr( $io, 0, 1 ) ); #TODO: extend for buffer and inout pins
+        }
         unless( defined( $sigw_flag{$d} ) ) { $sigw_flag{$d} = 1; } # First time
 
         # } # else {
@@ -2323,6 +2338,7 @@ sub bits_at_inst ($$$) {
                 }
             } else {
                 logwarn( "WARNING: signal $signal width unknown at instance $inst!" );
+                $EH{'sum'}{'warnings'}++;
                 $sigw_flag{$d} = 0;
             }
         }               
@@ -2330,9 +2346,8 @@ sub bits_at_inst ($$$) {
 
     if ( scalar( keys( %width ) ) > 1 ) {
         logwarn( "WARNING: Signal $signal has mixed links into instance $inst!" );
+        $EH{'sum'}{'warnings'}++;
     }
-
-    # TODO: Load previously found values ....
 
     # Combine the output:
     my @ret = (); # Preset to Error
@@ -2395,11 +2410,15 @@ sub overlay_bits($$) {
         return 'A::';
     }
 
+    if ( $bv1 eq $bv2 ) {
+        return $bv1;
+    }
+
     my $bits1 = "";    
     if ( $bv1 =~ m,^B::(.+), ) {
         $bits1 = $1;
     }
-    if ( $bits1 and $bv2 =~ m,^B::(.+), ) {
+    if ( $bits1 ne "" and $bv2 =~ m,^B::(.+), ) {
         my $bits2 = $1;
         if ( length( $bits1 ) != length( $bits2 ) ) {
             logwarn( "WARNING: bitvector length mismatch: $bits1 vs. $bits2" );
@@ -2624,7 +2643,8 @@ sub add_port ($$) {
                 $this_mode = $d_mode{$inst}{$tm}; # Reference!
                 # $this_width = $d_mode{$inst}{$tm};
                 my $thm = $tm;
-                ( $this_width, $thm ) = _add_port( $r, $tm, $this_mode, \%dw, \%dm, \%ndw, \%ndm, 0 );
+                #TODO: $this_mode here is actually this_width!!
+                ( $this_width, $thm ) = _add_port( $r, $this_mode, $tm, \%dw, \%dm, \%ndw, \%ndm, 0 );
 
                 # $d_mode{$inst}{$thm} = $this_width;
                 join_vec( \%d_mode, $inst, $this_width );
@@ -2831,6 +2851,15 @@ sub _add_port ($$$$$$$$) {
                     $simple = 1;
             }
         }
+    } elsif ( $uk =~ m,c,o ) { # Upper levels are inout/c, only ...
+        $do = 'c';
+        $dir = "::in"; #TODO: ::inout ...
+        if ( $uw->{'c'} eq 'A::' ) {
+            if (  exists( $dw->{'i'} ) and $dw->{'c'} eq 'A::' and
+                not exists( $dw->{'o'} ) and not exists( $dw->{'i'} ) ) {
+                    $simple = 1;
+            }
+        }
     }
     
     # 
@@ -2846,7 +2875,12 @@ sub _add_port ($$$$$$$$) {
         my $st = $conndb{$signal}{'::low'};
         unless ( defined $sf ) { $sf = ""; };
         unless ( defined $st ) { $st = ""; };
-        if ( $top_flag =~ m,top,io and $EH{'output'}{'generate'}{'inout'} =~ m,noxfix,io ) {
+
+        generate_port( $signal, $inst, $do, $sf, $st, $top_flag );
+
+=head OLD
+
+        # if ( $top_flag =~ m,top,io and $EH{'output'}{'generate'}{'inout'} =~ m,noxfix,io ) {
             # Do not add postfix and signal width ....
             # Caveat: User has to make sure that no conflicts are added like so
             # $t{'port'} = $signal . "_g" . $do;
@@ -2871,6 +2905,9 @@ sub _add_port ($$$$$$$$) {
         logtrc( "INFO:4", "add_port: signal $signal adds port $t{'port'} to instance $t{'inst'}" );
 
         push( @{$conndb{$signal}{$dir}},  { %t } ); # Push on conndb array ...
+
+=cut
+
         
         $tw = { $do => "A::" };
         $tm = $do;
@@ -2888,6 +2925,7 @@ sub _add_port ($$$$$$$$) {
             # Delete the corresponding bits
             # XXXXXXX
             logwarn( "ERROR: instance $inst partially connected to $signal. File bug report!" );
+            $EH{'sum'}{'errors'}++;
         }
         #
         # Case two:
@@ -3000,7 +3038,7 @@ sub _add_port ($$$$$$$$) {
                 # Now generate
                 $start = $ub-$lb;
                 my $m = "0";
-                my %bv = ( 'i' => "B::", 'o' => "B::", );
+                my %bv = ( 'i' => "B::", 'o' => "B::", 'c' => "B::" );
                 for my $b ( reverse( 0..($ub-$lb) ) ) {
                     if ( substr( $p[$b], 0, 1 ) ne $m ) { # Change
                         if ( $m ) {
@@ -3012,12 +3050,19 @@ sub _add_port ($$$$$$$$) {
                     if ( $m eq "o" ) {
                         $bv{o} .= $m;
                         $bv{i} .= "0";
+                        $bv{c} .= "0";
                     } elsif ( $m eq "i" ) {
                         $bv{i} .= $m;
                         $bv{o} .= "0";
+                        $bv{c} .= "c";
+                    } elsif ( $m eq "c" ) {
+                        $bv{i} .= "0";
+                        $bv{o} .= "0";
+                        $bv{c} .= "c";
                     } else {
                         $bv{i} .= "0";
                         $bv{o} .= "0";
+                        $bv{c} .= "0";
                     }
                 }
                 if ( $m ) {
@@ -3039,11 +3084,13 @@ sub _add_port ($$$$$$$$) {
                 $tw = \%bv;
             } else {
                 logwarn( "ERROR: Cannot read t/f for signal $signal, inst $inst!" );
+                $EH{'sum'}{'errors'}++;
                 $tw = {};
                 $tm = 'e';
             }
         } else { # F::STR...T::STR
             logwarn( "ERROR: Need programming for F::foo:T::bar, signal $signal, inst $inst!" );
+            $EH{'sum'}{'errors'}++;
         }
     }
     return( $tw, $tm );
@@ -3061,31 +3108,51 @@ sub generate_port ($$$$$$) {
     my $top_flag = shift;
 
     my %t = ();
+    my $post = $EH{'postfix'}{'POSTFIX_PORT_GEN'};
+    my $ftp = "";
 
-    if ( $top_flag =~ m,top,io ) {
-           $t{'port'} = $signal .
-                "_g" . $m;
+    # Get postfix for generated ports:
+    if ( $post =~ m,%IO%,o ) {
+        $post =~ s/%IO%/$m/;
+    }
+
+
+    # Unless high and low match $t and $f, we need to add a _F_T 
+    if ( $post =~ m,%FT%,o or
+            $f ne $conndb{$signal}{'::high'} or
+            $t ne $conndb{$signal}{'::low'} ) {
+        $ftp = ( $f ne "" ) ? ( "_" . $f ) : "";
+        $ftp .= ( $t ne "" ) ? ( "_" . $t ) : "";
+        $post =~ s,%FT%,,;
+    }
+    
+    # Top level will get no postfix!    
+    if ( $top_flag =~ m,top,io and $EH{'output'}{'generate'}{'inout'} =~ m,noxfix,io ) {
+        $t{'port'} = $signal;
+        #TODO: Check if port name is unique?
+    } elsif ( $top_flag =~ m,top,io ) {
+        $t{'port'} = $signal . $ftp . $post;
     } else {
         $t{'port'} = $EH{'postfix'}{'PREFIX_PORT_GEN'} . $signal .
-                ( ( $f ne "" ) ? ( "_" . $f ) : "" ) .
-                ( ( $t ne "" ) ? ( "_" . $t ) : "" ) .
-                "_g" . $m;
+                $ftp . $post;
     }
     $t{'inst'} = $inst;
-    
-    if ( $f eq "" ) {
-        $t{'port_f'} = $t{'sig_f'} = undef;
-    } else {
-        $t{'sig_f'} = $f;
-        $t{'port_f'} = $f - $t;
-    }
+
     if ( $t eq "" ) {
         $t{'port_t'} = $t{'sig_t'} = undef;
     } else {
         $t{'sig_t'} = $t;
         $t{'port_t'} = 0;
     }
-    if ( $f == $t ) {
+
+    if ( $f eq "" ) {
+        $t{'port_f'} = $t{'sig_f'} = undef;
+    } else {
+        $t{'sig_f'} = $f;
+        $t{'port_f'} = $f - (( $t =~ m,^\d+$, ) ? $t : 0);
+    }
+
+    if ( $f eq $t ) {
         $t{'port_t'} = $t{'port_f'} = undef;
     }
     logtrc( "INFO:4", "add_port: signal $signal adds port $t{'port'} to instance $t{'inst'}" );
@@ -3152,129 +3219,6 @@ sub check_b_vec ($$$) {
         }
     }
 }
-
-=head 4
-
-OLD
-        my $nudw = ();
-        if ( $dw =~ m,A::,o ) {
-            $nudw = "";
-        }elsif ( $dw =~ m,B::(.*),o ) {
-            for my $b ( split( '', $1 ) ) {
-                $nudw .= ( $b ) ? "0" : "1";
-            }
-            $nudw = "B::" . $nudw;
-        } else {
-            logwarn ( "ERROR: Cannot determine bits used by my daughters!" );
-            $nudw = "";
-            #TODO: Assume
-        }
-        logwarn ( "ERROR: ERROR ERROR NEED more programming!" );
-    }    
-
-    return( $tw, $tm ); # Return width and mode now
-
-}
-
-=cut
-
-=head 4
-
-
-OLD
-        if ( keys( %dm ) < 1 ) {
-            logwarn("ERROR: Called add_port with unknown in/out modes for signal $adds[0][0]");
-            return;
-        } elsif ( keys( %dm ) > 1 ) {
-            # Here it depends on 
-            if ( exists( $dm{'in'} ) and exists( $dm{'out'} ) ) {
-                logtrc( "INFO:4", "Assuming OUT mode for signal $adds[0][0] in port_add" );
-                $mode = "out";
-            } else {
-                logwarn("ERROR: Cannot figure out in/out mode for signal $adds[0][0]");
-                $mode ="__E_MODE_EXTEND";
-            }
-        } else {
-            $mode = (keys( %dm ))[0]; # buffer|inout|in|out| ....
-        }
-
-        # Now we know mode ...    
-
-=head 4
-        OLD, DELETE
-        if ( keys( %mc ) < 1 ) {
-        if ( $#adds >= 0 ) {
-            logwarn("WARNING: Called add_port with unknown in/out modes for signal $adds[0][0]");
-        }
-        return;
-    } elsif ( keys( %mc ) > 1 ) {
-        if ( exists( $mc{'in'} ) and exists( $mc{'out'} ) ) {
-            logtrc( "INFO:4", "Assuming OUT mode for signal $adds[0][0] in port_add" );
-            $mode = "out";
-        } else {
-            logwarn("ERROR: Cannot figure out in/out mode for signal $adds[0][0]");
-            $mode ="__E_MODE_EXTEND";
-        }
-    } else {
-        $mode = (keys( %mc ))[0]; # buffer|inout|in|out| ....
-    }
-
-=cut
-
-=head OLD
-
-    for my $r ( @adds ) {
-        #
-        #TODO: go through that data and check for consistency!!
-        # So far we did not consider if the signal definitions match and
-        # how that fits together.
-        #
-        my ( $s, $n, $l, $m ) = @$r;
-        while( $m =~ m,:(in|out):(\d+),og ) {
-            my $mi = $2;
-            my $mo = "::" . $1;
-            my $dir = lc( substr( $mode, 0 ,1 ) ); # Make lowercase ...
-            if ( $dir eq "_" ) { $dir = 'E'; }; # Keep capital E to mark errors!
-            #
-            # Get template for that signal
-            #
-            my $cell = $conndb{$s}{$mo};   # Reference to ::in|::out
-            my %templ = %{$cell->[$mi]};
-            # Replace child instance name by hierachical instance
-            $templ{'inst'} = $n;
-            my $sf = "";
-            # Make ports different if signal assignment differs ....
-            if ( defined ( $templ{'sig_f'} ) ) { 
-                $sf = "_" . $templ{'sig_f'};
-            }
-            my $st = "";
-            if ( defined ( $templ{'sig_t'} ) ) { 
-                $st = "_" . $templ{'sig_t'};
-            }
-            # $templ{'mode'}
-            # Generate PORT name: MIX_$signal_G[IO].
-            $templ{'port'} = $EH{'postfix'}{'PREFIX_PORT_GEN'} . $s . $sf . $st . "_g" . $dir;
-            # Put new connection into appropriate ::in or ::out
-            # mode equals out -> out, otherwise to in
-            # Caveat: if user specifies bad IN or OUT mode, you get error ...
-            if ( $mode eq "out" ) {
-                $cell = $conndb{$s}{"::out"};
-            } else {
-                $cell = $conndb{$s}{"::in"};
-            }
-            # Special: if  port width is one, reduce to single bit port!
-            # This can be achieved easily by setting port_f and port_t  to 0 :-)
-            if ( $sf eq $st ) {
-                logtrc("INFO:4", "AUTO: Createing single bit port for signal $s!");
-                $templ{'port_f'} = 0;
-                $templ{'port_t'} = 0;
-            }
-            #TODO: Shouldn't we prevent multiple pushes? 
-            push( @$cell, { %templ } );
-        }
-    }
-}
-=cut
 
 #
 # Tree::DAG_Node::common is buggy -> use my_common instead

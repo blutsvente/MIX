@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.21 $                                             |
+# | Revision:   $Revision: 1.22 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/07/17 12:10:43 $                                   |
+# | Date:       $Date: 2003/07/23 13:34:40 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.21 2003/07/17 12:10:43 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.22 2003/07/23 13:34:40 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,11 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.22  2003/07/23 13:34:40  wig
+# | Fixed minor bugs:
+# | - open(N) removed
+# | - overlay bitvector fixed
+# |
 # | Revision 1.21  2003/07/17 12:10:43  wig
 # | fixed minor bugs:
 # | - Verilog `define before module
@@ -150,6 +155,7 @@ use Micronas::MixParser qw( %hierdb %conndb );
 # Prototypes
 #
 sub _write_entities ($$$);
+sub compare_merge_entities ($$$$);
 sub _write_constant ($$$;$);
 sub write_architecture ();
 sub strip_empty ($);
@@ -171,9 +177,9 @@ sub _mix_wr_get_iveri ($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.21 2003/07/17 12:10:43 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.22 2003/07/23 13:34:40 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.21 $';
+my $thisrevision   =      '$Revision: 1.22 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -544,7 +550,7 @@ sub merge_entity ($$) {
     # $eq will be 1 if acceptable differences exist, else 0!
     # compare_merge_entities will sum up acceptable differences in %entities and
     # complain verbosely otherwise
-    my $eq = compare_merge_entities( $ent, $entities{$ent}, \%ient );
+    my $eq = compare_merge_entities( $ent, $inst->{'::inst'}, $entities{$ent}, \%ient );
     #TODO: use result for further decision making
 
     #TODO: __LEAF__, another name??
@@ -561,8 +567,9 @@ sub merge_entity ($$) {
 } # create_entity
 
 
-sub compare_merge_entities ($$$) {
+sub compare_merge_entities ($$$$) {
     my $ent = shift;
+    my $inst = shift || "__E_INST__";
     my $rent = shift;
     my $rnew = shift;
 
@@ -583,8 +590,9 @@ sub compare_merge_entities ($$$) {
         unless( exists( $rnew->{$p} ) ) {
 	    if ( ( $p ne "-- NO OUT PORTs" and $p ne "-- NO IN PORTs" ) and
                  $ent ne "W_NO_ENTITY" ) {
-		logwarn( "Missing port $p in entity $ent redeclaration, ignoreing!" );
+		logwarn( "WARNING: Missing port $p in entity $ent ($inst) redeclaration, ignoreing!" );
 		$eflag  = 0;
+                $EH{'sum'}{'warnings'}++;
 	    }
             next;
         }
@@ -592,12 +600,14 @@ sub compare_merge_entities ($$$) {
 
         # type has to match
         if ( $rent->{$p}{'type'} ne $rnew->{$p}{'type'} ) {
-            logwarn( "Entity type mismatch for entity $ent!" );
+            logwarn( "WARNING: Entity port type mismatch for entity $ent ($inst), port $p!" );
+            $EH{'sum'}{'warnings'}++;
             $eflag = 0;
             next; #TODO: How should we handle that properly?
         # mode has to match
         } elsif ( $rent->{$p}{'mode'} ne $rnew->{$p}{'mode'} ) {
-            logwarn( "Entity mode mismatch for enitity $ent!" );
+            logwarn( "WARNING: Entity port mode mismatch for enitity $ent ($inst), port $p!" );
+            $EH{'sum'}{'warnings'}++;
             $eflag = 0;
             next;
         }
@@ -637,7 +647,8 @@ sub compare_merge_entities ($$$) {
         #
 	if ( $p ne "-- NO OUT PORTs" and $p ne "-- NO IN PORTs"
             and $ent ne "W_NO_ENTITY" ) {
-	    logwarn( "Declaration for entity $ent extended by $p!" );
+	    logwarn( "WARNING: Declaration for entity $ent ($inst) extended by $p!" );
+            $EH{'sum'}{'warnings'}++;
 	    $eflag = 0;
     	}
         $rent->{$p} = $rnew->{$p}; # Copy
@@ -1980,9 +1991,9 @@ sub print_conn_matrix ($$$$$$$$) {
 	}
         if ( $signal eq "%OPEN%" ) {
             if ( $lang =~ m,^veri,io ) {
-                $t =~ s,%OPEN%(\s*\[[:\w]+?\])?,,; # Remove %OPEN% aka. open[a:b]
+                $t =~ s,%OPEN%(\s*\[[:\w]+?\])?,,g; # Remove %OPEN% aka. open[a:b]
             } else {
-                $t =~ s,%OPEN%\s*\(.*?\),%OPEN%,; # Remove ( ... ) definitons ...
+                $t =~ s,(?<=%OPEN%)\s*\([\s\w]+?\),,g; # Remove ( ... ) definitons ...
             }
         }
 	return $t;
@@ -2013,9 +2024,9 @@ sub print_conn_matrix ($$$$$$$$) {
     if ( $signal eq "%OPEN%" ) {
         #TODO: Verilog???
         if ( $lang =~ m,^veri,io ) {
-            $t =~ s,%OPEN%(\s*\[[:\w]+?\])?,,; # Remove %OPEN%
+            $t =~ s,%OPEN%(\s*\[[:\w]+?\])?,,g; # Remove %OPEN%
         } else {
-            $t =~ s,%OPEN%\s*\(.*?\),%OPEN%,;
+            $t =~ s,(?<=%OPEN%)\s*\([\s\w]+?\),,g; # Remove signal bus splices
         }
     }
 
