@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.31 $                                         |
+# | Revision:   $Revision: 1.32 $                                         |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/12/04 14:56:31 $                              |
+# | Date:       $Date: 2003/12/05 11:49:43 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.31 2003/12/04 14:56:31 abauer Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.32 2003/12/05 11:49:43 abauer Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,10 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.32  2003/12/05 11:49:43  abauer
+# | added MixI2CParser.pm (basics)
+# | added i2c sheet description (internal & doc)
+# |
 # | Revision 1.31  2003/12/04 14:56:31  abauer
 # | corrected cvs problems
 # |
@@ -223,11 +227,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.31 2003/12/04 14:56:31 abauer Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.32 2003/12/05 11:49:43 abauer Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.31 $';
+my $thisrevision   =      '$Revision: 1.32 $';
 
-# | Revision:   $Revision: 1.31 $
+# | Revision:   $Revision: 1.32 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -263,7 +267,7 @@ sub parse_conn_macros ($) {
     my @m = ();
     my $n = -1;
     for my $i ( 0..$#{$rin} ) {
-            if ( $rin->[$i]{'::gen'} =~ m/^\s*MH/io ) {
+        if ( $rin->[$i]{'::gen'} =~ m/^\s*MH/io ) {
             # New MH line, go to "read macro definition mode"
             $m[++$n]{'mh'} = $rin->[$i]; # Copy MH line
             $rin->[$i]{'::comment'} = "#macro header parsed /" . $rin->[$i]{'::comment'};
@@ -605,7 +609,7 @@ sub parse_hier_init ($) {
                 $EH{'sum'}{'errors'}++;
             }
         }
-        add_inst( %{$r_hier->[$i]} );
+        Add_inst( %{$r_hier->[$i]} );
 
     }
 
@@ -987,7 +991,6 @@ sub add_conn (%) {
             create_conn( $name, %in);
             #now in create_conn: $EH{'sum'}{'conn'}++;
         }
-
 
         # If name was not given, complain ...
         if ( $nameflag and $conndb{$name}{'::mode'} !~ m/^\s*[CPG]/o ) {
@@ -2670,7 +2673,7 @@ sub add_port ($$) {
         my @desc = $hierdb{$inst}{'::treeobj'}->descendants;
         my @anc = $hierdb{$inst}{'::treeobj'}->ancestors;
         my %non_desc = ();
- 
+
         map( { $non_desc{$_} = 1; } keys( %$r_connected ) ); #All instances connected 
         for my $d ( @desc ) {
             # Delete all our descendants from the list
@@ -3549,7 +3552,7 @@ purge_relicts ()
 
 Look through hierachy and connection database and fix up things like:
     instances without name (parentless ...??)
-    
+
 =cut
 sub purge_relicts () {
 
@@ -3895,7 +3898,7 @@ entity ddrv4 is
 			display_ls_hr	: out	std_ulogic_vector(6 downto 0);
 			display_ls_min	: out	std_ulogic_vector(6 downto 0);
 
-	    ) 
+	    )
 end inst_1_e;
 
 =cut
