@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.3 $                                             |
+# | Revision:   $Revision: 1.4 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/06 15:47:46 $                                   |
+# | Date:       $Date: 2003/02/07 13:18:44 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.3 2003/02/06 15:47:46 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.4 2003/02/07 13:18:44 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.4  2003/02/07 13:18:44  wig
+# | no changes
+# |
 # | Revision 1.3  2003/02/06 15:47:46  wig
 # | added constant handling
 # | rewrote bit splice handling
@@ -108,7 +111,7 @@ $EH{'template'}{'vhdl'}{'enty'}{'head'} = <<'EOD';
 -- %H%Log%H%
 --
 -- Based on Mix Entity Template built into $RCSfile: MixWriter.pm,v $
--- $Id: MixWriter.pm,v 1.3 2003/02/06 15:47:46 wig Exp $
+-- $Id: MixWriter.pm,v 1.4 2003/02/07 13:18:44 wig Exp $
 --
 -- Generator: %0% Version: %VERSION%, wilfried.gaensheimer@micronas.com
 -- (C) 2003 Micronas GmbH
@@ -170,7 +173,7 @@ $EH{'template'}{'vhdl'}{'arch'}{'head'} = <<'EOD';
 -- %H%Log%H%
 --
 -- Based on Mix Architecture Template built into $RCSfile: MixWriter.pm,v $
--- $Id: MixWriter.pm,v 1.3 2003/02/06 15:47:46 wig Exp $
+-- $Id: MixWriter.pm,v 1.4 2003/02/07 13:18:44 wig Exp $
 --
 -- Generator: %0% %VERSION%, wilfried.gaensheimer@micronas.com
 -- (C) 2003 Micronas GmbH
@@ -549,8 +552,9 @@ sub _create_entity ($$) {
 		elsif ( $m =~ m,(G|C),io ) { $mode = $m; }		# generic and constant
 		elsif ( $m =~ m,S,io ) { $mode = $io; }			# signal -> derive from i/o
 		elsif ( $m =~ m,I,io ) {						# warn if mode mismatches
+		    #TODO: Need to look at all connections ....
 		    if ( $io eq "out" ) {
-			logwarn( "mode mismatch for signal $i, port $port: $m ne $io" );
+			#!wig20030207:off: logwarn( "mode mismatch for signal $i, port $port: $m ne $io" );
 			$conndb{$i}{'::comment'} .= ",__W_MODE_MISMATCH"; #TODO:  __E??
 			$mode = $io;
 		    } else {
@@ -558,7 +562,7 @@ sub _create_entity ($$) {
 		    }
 		} elsif ( $m =~ m,O,io ) {					# xls says O!
 		    if ( $io eq "in" ) {
-			logwarn( "mode mismatch for signal $i, port $port: $m ne $io" );
+			#!wig20030207:off: logwarn( "mode mismatch for signal $i, port $port: $m ne $io" );
 			$conndb{$i}{'::comment'} .= ",__W_MODE_MISMATCH"; #TODO: __E??
 			$mode = $io;
 		    } else {
@@ -700,7 +704,21 @@ sub _write_entities ($$$) {
 			$pdd->{'high'} =~ m/^\d+$/o and $pdd->{'low'} =~ m/^\d+$/ ) {
 		# Signal ...from high to low. Ignore everything not matching
 		# this pattern (e.g. only one bound set ....)
-		if ( $pdd->{'high'} > $pdd->{'low'} ) {
+		if ( $pdd->{'high'} == $pdd->{'low'} ) {
+		    if ( $pdd->{'high'} == 0 ) {
+			# Special case: single pin "bus" -> reduce to it ....
+			logtrc( "INFO:4", "Port $p of entity $e one bit wide, reduce to signal\n" );
+			$pdd->{'type'} =~ s,_vector,,; # Try to strip away trailing vector!
+			$pdd->{'low'} = undef;
+			$pdd->{'high'} = undef;
+			$port .= "\t\t\t" . $p . "\t: " . $pdd->{'mode'} . "\t" . $pdd->{'type'} .
+			    "; -- __W_AUTO_REDUCED_BUS2SIGNAL\n";
+		    } else {
+			logwarn( "Port $p of entity $e one bit wide, missing lower bits\n" );
+			$port .= "\t\t\t" . $p . "\t: " . $pdd->{'mode'} . "\t" . $pdd->{'type'} .
+			    "(" . $pdd->{'high'} . "); -- __W_SINGLEBITBUS\n";
+		    }
+		} elsif ( $pdd->{'high'} > $pdd->{'low'} ) {
 		    $port .= "\t\t\t" . $p . "\t: " . $pdd->{'mode'} . "\t" . $pdd->{'type'} .
 			"(" . $pdd->{'high'} . " downto " . $pdd->{'low'} . ");\n";
 		} else {
@@ -951,24 +969,24 @@ sub add_conn_matrix ($$$$) {
 
     my $csf = $conn->{sig_f} || '0';  # undef -> 0
     my $cst = $conn->{sig_t} || '0';  # undef -> 0
-    my $smax = $cpf;
-    my $smin = $cpt;
+    my $smax = $csf;
+    my $smin = $cst;
     my $sdirf = 1;
     
     if ( $cst > $smax ) { $smax = $cst; $smin = $csf; $sdirf = -1; };
 
     if ( $smax - $smin != $max - $min ) {
-	logwarn("__E_SLICE_WIDTH_MISMATCH for signal $signal connected to port $port!");
+	logwarn("__E_SLICE_WIDTH_MISMATCH:signal $signal ($smax downto $smin) to port $port ($max downto $min)!");
 	return undef;
 	# return( "\t\t-- __E_SLICE_WIDTH_MISMATCH for signal $signal connected to port $port!" );
     }
 
     #TODO: Extended testing ....
-    if ( $dirf = $sdirf ) {
+    if ( $dirf == $sdirf ) {
 	for my $i ( $min .. $max ) {
 	    if ( defined( $matrix->[$i] ) ) { # Seen before ...
 		if ( $matrix->[$i] ne $smin - $min + $i ) {
-		    logwarn("__E_PORT_SIGNAL_CONFLICT: $port($i) connecting signal" . ( $smin + $i ) .
+		    logwarn("__E_PORT_SIGNAL_CONFLICT: $port($i) connecting signal $signal" . ( $smin + $i ) .
 			    " or " . $matrix->[$i] . "!" );
 		}
 	    } else {
@@ -979,7 +997,7 @@ sub add_conn_matrix ($$$$) {
 	for my $i ( $min .. $max ) {
 	    if ( defined( $matrix->[$i] ) ) { # Seen before ...
 		if ( $matrix->[$i] ne $smax - $max - $i ) {
-		    logwarn("__E_PORT_SIGNAL_CONFLICT: $port($i) connecting signal" . ( $smin + $i ) .
+		    logwarn("__E_PORT_SIGNAL_CONFLICT: $port($i) connecting signal $signal" . ( $smin + $i ) .
 			    " or " . $matrix->[$i] . "!" );
 		}
 	    } else {	    
@@ -1030,7 +1048,7 @@ sub print_conn_matrix ($$$$$$$) {
     for my $i ( 0..$ub ) {
 	if ( not defined( $lb ) ) {
 	    if ( defined( $rcm->[$i] ) ) {
-		$lb = $i; # Find start point
+		$lb = $i; # Find start point, offset ....
 	    } else {
 		next;
 	    }
@@ -1039,13 +1057,21 @@ sub print_conn_matrix ($$$$$$$) {
 	    $fflag = $i - 1;
 	    last;
 	}
-	if ( $rcm->[$i] ne $i ) {
+	if ( $rcm->[$i] ne $i + $rcm->[$lb] ) {
 	    $cflag = 0;
 	}
     }
 	
     if ( $cflag and $fflag == $ub ) { # Full port <-> signal
-	if ( $ub == $sf ) {
+	if ( $pf eq $pt and defined( $lb ) and $lb  == $ub ) {
+	    # Single bit port .... connected to bus slice
+	    # TODO: do more checking ...
+	    if ( $pf eq "__UNDEF__" ) {
+		$t .= "\t\t\t$port => $signal(" . $rcm->[$ub] . "),\n";
+	    } else {
+		$t .= "\t\t\t$port($pf) => $signal(" . $rcm->[$ub] . "),\n";
+	    }
+	} elsif ( $ub eq $sf ) { # Should == be used here instead?
 	    $t .= "\t\t\t$port => $signal,\n";
 	} elsif ( $ub < $sf ) {
 	    $t .= "\t\t\t$port => $signal($ub downto 0),\n";
@@ -1055,7 +1081,6 @@ sub print_conn_matrix ($$$$$$$) {
     #
     #TODO: catch the most important cases here
     #
-
     } else { # Output each single bit!!
 	for my $i ( 0..$ub ) {
 	    if ( defined( $rcm->[$i] ) ) {
@@ -1068,6 +1093,9 @@ sub print_conn_matrix ($$$$$$$) {
 }
 
 =head2
+
+OLD STUFF, REMOVE ....
+
 	    # Various old possibilities ....
 	    # Found hole ....
 	    # Output port found up to now
@@ -1188,7 +1216,6 @@ sub _write_architecture ($$$$) {
 	logtrc(INFO, "Architecture declaration file $filename will be overwritten!" );
     }
     
-
     # Add header
     my $tpg = $EH{'template'}{'vhdl'}{'arch'}{'body'};
     my $et = replace_mac( $EH{'template'}{'vhdl'}{'arch'}{'head'}, \%macros);    

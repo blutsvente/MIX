@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.3 $                                             |
+# | Revision:   $Revision: 1.4 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/06 15:48:30 $                                   |
+# | Date:       $Date: 2003/02/07 13:18:44 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.3 2003/02/06 15:48:30 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.4 2003/02/07 13:18:44 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.4  2003/02/07 13:18:44  wig
+# | no changes
+# |
 # | Revision 1.3  2003/02/06 15:48:30  wig
 # | added constant handling
 # | rewrote bit splice handling
@@ -619,10 +622,10 @@ $ex = undef; # Container for OLE server
 	    "%UNDEF_3%"	=> "ERROR_UNDEF_3",	#should be 'undef',  #For debugging??
 	    "%UNDEF_4%"	=> "ERROR_UNDEF_4",	#should be 'undef',  #For debugging??
 	    "%TBD%"	=> "W_TO_BE_DEFINED",
-	    "%HIGH%"	=> "__LOGIC1__",  # ???
-	    "%LOW%"	=> "__LOGIC0__",  # ???
-	    "%HIGH_BUS%"	=> "__LOGIC1_BUS__",
-	    "%LOW_BUS%"	=> "__LOGIC0_BUS__",
+	    "%HIGH%"	=> "MIX__LOGIC1__",  # ???
+	    "%LOW%"	=> "MIX__LOGIC0__",  # ???
+	    "%HIGH_BUS%"	=> "MIX__LOGIC1_BUS__",
+	    "%LOW_BUS%"	=> "MIX__LOGIC0_BUS__",
 	    "%BUFFER%"		=> "buffer",
 	    '%H%'		=> '$',			# RCS keyword saver ...
     },

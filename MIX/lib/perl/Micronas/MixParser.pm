@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.3 $                                             |
+# | Revision:   $Revision: 1.4 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/06 15:48:31 $                                   |
+# | Date:       $Date: 2003/02/07 13:18:45 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.3 2003/02/06 15:48:31 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.4 2003/02/07 13:18:45 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.4  2003/02/07 13:18:45  wig
+# | no changes
+# |
 # | Revision 1.3  2003/02/06 15:48:31  wig
 # | added constant handling
 # | rewrote bit splice handling
@@ -823,24 +826,26 @@ sub _create_conn ($$%) {
             } elsif ( $d =~ m,(\w+)/(\S+)=\((\d+):(\d+)\)\s*, ) {
                 # INST/PORTS=(f:t) Port-Bit to Bus-Bit f = t; expand to pseudo bus?
                 #TODO: Implement better solution (e.g. if Port is bus slice, not bit?
-                # if ( $3 == $4 ) {
-                #    $co{'inst'} = $1;
-                #    $co{'port'} = $2;
-                #    $co{'port_f'} = undef; #Port is bit, not bus
-                #    $co{'port_t'} = undef; #Port is bit, not bus
-                #    $co{'sig_f'} = $3;
-                #    $co{'sig_t'} = $4;
-                # } else { # Assume we connect to ($f - $t) - 0 !
-                    # if ( $4 != 0 ) {
-                    #    logwarn("Autmatically wiring signal for module $1/$2 to bits " . $3 - $4 . " to 0");
-                    # }
+                #wig20030207: handle single bit port connections ....
+                if ( $3 == $4 ) {
+                    $co{'inst'} = $1;
+                    $co{'port'} = $2;
+                    $co{'port_f'} = 0; #Port is bit, not bus
+                    $co{'port_t'} = 0; #Port is bit, not bus
+                    $co{'sig_f'} = $3;
+                    $co{'sig_t'} = $4;
+                } else { # Assume we connect to ($f - $t) - 0 !
+                    if ( $4 != 0 ) {
+                        # Wire port of width
+                        logwarn("Automatically wiring signal bits $3 to $4 of $1/$2 to bits " . ( $3 - $4 ) . " to 0");
+                    }
                     $co{'inst'} = $1;
                     $co{'port'} = $2;
                     $co{'port_f'} = $3 - $4;
                     $co{'port_t'} = 0;
                     $co{'sig_f'} = $3;
                     $co{'sig_t'} = $4;
-                # }   
+                }   
             } elsif ( $d =~ m,(\w+)/(\S+)\((\d+):(\d+)\)\s*, ) {
                 # INST/PORTS(f:t)
                 $co{'inst'} = $1;
@@ -1450,6 +1455,7 @@ sub add_portsig () {
 # $leave might be omitted ($mode is sufficient to address the instance/port/bus data
 # Will be called for each signal
 #
+# add bit number to avoid collision in case of busses
 sub add_port (@) {
     my @adds = @_;
 
@@ -1471,8 +1477,17 @@ sub add_port (@) {
             my %templ = %{$cell->[$mi]};
             # Replace child instance name by hierachical instance
             $templ{'inst'} = $n;
+            my $sf = "";
+            # Make ports different if signal assignment differs ....
+            if ( defined ( $templ{'sig_f'} ) ) { 
+                $sf = "_" . $templ{'sig_f'};
+            }
+            my $st = "";
+            if ( defined ( $templ{'sig_t'} ) ) { 
+                $st = "_" . $templ{'sig_t'};
+            }
             # Generate PORT name: MIX_$signal_G[IO].
-            $templ{'port'} = "P_MIX_" . $s . "_G" . $dir; 
+            $templ{'port'} = "P_MIX_" . $s . $sf . $st . "_G" . $dir; 
             push( @$cell, { %templ } );
         }
     }
