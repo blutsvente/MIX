@@ -15,23 +15,23 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.43 $                                         |
+# | Revision:   $Revision: 1.44 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/03/25 11:21:44 $                              |
+# | Date:       $Date: 2004/03/30 11:05:57 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.43 2004/03/25 11:21:44 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.44 2004/03/30 11:05:57 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
-# + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
+# + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
 #
 # +-----------------------------------------------------------------------+
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
-# | Revision 1.43  2004/03/25 11:21:44  wig
-# | Added -verifyentity option
+# | Revision 1.44  2004/03/30 11:05:57  wig
+# | fixed: IOparser handling of bit ports vs. bus signals
 # |
 # | Revision 1.42  2003/12/23 13:25:21  abauer
 # | added i2c parser
@@ -258,11 +258,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.43 2004/03/25 11:21:44 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.44 2004/03/30 11:05:57 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.43 $';
+my $thisrevision        =      '$Revision: 1.44 $';
 
-# Revision:   $Revision: 1.43 $   
+# Revision:   $Revision: 1.44 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -974,6 +974,8 @@ sub mix_init () {
                         # strategy: generated := compare generated object, only
                         #               inpath := report if there are extra modules found inpath
                         #               leaf := only for leaf cells
+                        #               nonleaf := only non-leaf cells
+                        #               dcleaf := dont care if leaf (all modules)
                         #               ignorecase|ic := ignore file name capitalization
             'path' => "", # if set a PATH[:PATH], will check generated entities against entities found there
             # the path will be available in ...'__path__'{PATH}
@@ -1056,6 +1058,8 @@ sub mix_init () {
 	},
     },
     'iocell' => {
+        'embedded' => '',       # If set to 'pad', allows to create iocells with embedded pads aka.
+                                    # MIX will not try to create a pad.
 	'name' => '%::iocell%_%::pad%',  # generated pad name with prefix and ::pad
 		    # '%PREFIX_IOC_GEN%%::name%',  # generated pad name with prefix and ::name
 		    # '%PREFIX_IOC_GEN%_%::pad%'
@@ -1370,6 +1374,12 @@ sub mix_init () {
 	'checkunique' => 0,
 
         # Others values (e.g. verify_entity ...) will be created as needed.
+
+        # Number of generated IO cells:
+        # see init function in MixIOParser
+        # 'io_cellandpad' => 0,
+        # 'io_cell_single' => 0,
+        # 'io_pad_singe' => 0,
 
     },
     'script' => { # Set for pre and post execution script execution
@@ -1966,15 +1976,12 @@ sub mix_utils_print ($@) {
 
     # $fn either is a real file handle (if this_delta is set) or a file name
     # in this_check ....
-    if ( $fhstore{"$fn"}{'delta'} ) {
+    if ( $fhstore{"$fn"}{'delta'} or $fhstore{"$fn"}{'tmpl'} ) {
 	push( @ncont, split( /\n/, sprintf( "%s", @args ) ) );
-    } else {
+    }
+
+    if ( $fhstore{"$fn"}{'out'} ) {
         $fhstore{"$fn"}{'out'}->print( join( "\n", @args)  );
-        # Is check_entitiy active? ($fh is either a filehandle or a file
-        # name
-        if ( $fhstore{"$fn"}{'tmpl'} ) {
-            push( @ncont, split( /\n/, sprintf( "%s", @args ) ) );
-        }
     }
 
     # Print to file if backup requested ....
@@ -1992,15 +1999,14 @@ sub mix_utils_printf ($@) {
     my @args = @_;
 
     # if ( $this_delta{"$fh"} ) {
-    if ( $fhstore{"$fn"}{'delta'} ) {
+    if ( $fhstore{"$fn"}{'delta'} or $fhstore{"$fn"}{'tmpl'} ) {
 	push( @ncont, split( /\n/, sprintf( @args ) ) );
-    } else {
-	$fhstore{"$fn"}{'out'}->print( join( "\n", @args ) );
-        # Is check_entitiy active?
-        if ( $fhstore{"$fn"}{'tmpl'} ) {
-            push( @ncont, split( /\n/, sprintf( @args ) ) );
-        }
     }
+
+    if ( $fhstore{"$fn"}{'out'} ) {    
+	$fhstore{"$fn"}{'out'}->print( join( "\n", @args ) );
+    }
+
     if ( $fhstore{"$fn"}{'back'} ) {
 	$fhstore{"$fn"}{'back'}->print( join( "\n", @args ) );
     }
@@ -2929,6 +2935,7 @@ sub inout2array ($;$) {
 	#TODO: make sure sig_t/sig_f and port_t/port_f are defined in pairs!!
 	if ( $i->{'inst'} =~
 	    m,^\s*(__CONST__|%CONST%),o ) {
+            #!wig20040330: TODO: print out "rvalue" instead of "port"?? 
 	    $s .= $i->{'port'} . $cast . ", %IOCR%";
 	} elsif ( defined $i->{'sig_t'} and $i->{'sig_t'} ne '' ) {
 	# inst/port($port_f:$port_t) = ($sig_f:$sig_t)
@@ -3085,13 +3092,16 @@ sub write_sum () {
         mix_utils_loc_sum();
     }
 
+    # If we scanned an IO sheet -> leave number of generated IO's in ..
+
     # Parsed input sheets:
     logwarn( "============= SUMMARY =================" );
     logwarn( "SUM: Summary of checks and created items:" );
     for my $i ( sort( keys( %{$EH{'sum'}} ) ) ) {
         logwarn( "SUM: $i $EH{'sum'}{$i}" );
     }
-    logwarn( "SUM: Number of parsed input tables:" );
+
+    logwarn( "SUM: === Number of parsed input tables: ===" );
     for my $i ( qw( conf hier conn io i2c ) ) {
         logwarn( "SUM: $i $EH{$i}{'parsed'}" );
     }

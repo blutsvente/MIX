@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.38 $                                         |
+# | Revision:   $Revision: 1.39 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/03/25 11:21:34 $                              |
+# | Date:       $Date: 2004/03/30 11:05:58 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.38 2004/03/25 11:21:34 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.39 2004/03/30 11:05:58 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.39  2004/03/30 11:05:58  wig
+# | fixed: IOparser handling of bit ports vs. bus signals
+# |
 # | Revision 1.38  2004/03/25 11:21:34  wig
 # | Added -verifyentity option
 # |
@@ -216,9 +219,9 @@ sub mix_wr_hier2mac ($);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.38 2004/03/25 11:21:34 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.39 2004/03/30 11:05:58 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.38 $';
+my $thisrevision   =      '$Revision: 1.39 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -742,6 +745,7 @@ sub create_entity ($$) {
 #
 # Take ::in and ::out defined data and generate a port description ...
 #
+#!wig20040330: if port width = 0 (undef or 0:0): remove _vector from type!
 sub _create_entity ($$) {
     my $io = shift;
     my $ri = shift;
@@ -849,7 +853,9 @@ sub _create_entity ($$) {
             # If we connect a single bit to to a bus, we strip of the _vector from
             # the type of the signal to get correct port type
             #TODO: Expand to work for any type ...
-            if ( not defined( $h ) and not defined( $l ) and
+            #!wig20040330: if port spans from 0:0 remove the _vector, too (?)
+            if ( ( ( not defined( $h ) and not defined( $l )) or
+                   ( $h eq "0" and $l eq "0" ) ) and
                   $type =~ m,(.+)_vector, ) {
 		$type = $1;
 		logtrc( "INFO:4", "autoreducing port type for signal $i to $type" );
@@ -3469,12 +3475,27 @@ sub _write_constant ($$$;$) {
                 }
             
         } elsif ( $value =~ m,^\s*0x([0-9a-f]),io ) {
-            # Convert 0xHEXV to 16#HEXV#
+            # Convert 0xHEXV to 16#HEXV# (VHDL) or 'hHEXV (Verilog)
             $comm = " " . $tcom . " __I_ConvConstant2:" . $value;
                 if ( $lang =~ m,^veri,io ) {
+                    #!wig20040329: Add width of constant:
                     $value =~ s,^\s*0x,'h,;
+                    ( my $l = $value ) =~ s,_,,g;
+                    $value = ( length( $l ) - 2 ) . $value;
                 } else {
                     $value =~ s,^\s*0x,16#,;
+                    $value =~ s,\s*$,#,;
+                }
+
+	} elsif ( $value =~ m,^\s*0b([01_]),io ) {
+            # Convert 0bBINV to 2#BINV# (VHDL) or 'bBINV (Verilog)
+                $comm = " " . $tcom . " __I_ConvConstant3:" . $value;
+                if ( $lang =~ m,^veri,io ) {
+                    $value =~ s,^\s*0b,'b,;
+                    ( my $l = $value ) =~ s,_,,g;
+                    $value = ( length( $l ) - 2 ) . $value;
+                } else {
+                    $value =~ s,^\s*0b,2#,;
                     $value =~ s,\s*$,#,;
                 }
 	} elsif ( $type =~ m,_vector,io ) {
