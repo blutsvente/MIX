@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / IOParser
 # | Modules:    $RCSfile: MixIOParser.pm,v $ 
-# | Revision:   $Revision: 1.6 $
+# | Revision:   $Revision: 1.7 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2003/07/09 13:01:01 $
+# | Date:       $Date: 2003/07/16 08:46:15 $
 # | 
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.6 2003/07/09 13:01:01 wig Exp $
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.7 2003/07/16 08:46:15 wig Exp $
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -36,9 +36,13 @@
 # |
 # | Changes:
 # | $Log: MixIOParser.pm,v $
-# | Revision 1.6  2003/07/09 13:01:01  wig
-# | Fixed mix_ioparse functions to get free programmanble pad cell naming,
-# | dito. for iocells
+# | Revision 1.7  2003/07/16 08:46:15  wig
+# | Improved IO Parser:
+# | - select encoded bus vs. one-hot
+# | - constants
+# |
+# | ::use %NCD%: not write component declaration
+# | ::config %NO_CONFIG%: not write configuration for this instance
 # |
 # | Revision 1.4  2003/06/05 14:48:01  wig
 # | Releasing alpha IO-Parser
@@ -93,6 +97,7 @@ use Micronas::MixParser;
 # Prototypes:
 sub parse_io_init ($);
 sub get_select_sigs ($);
+sub _mix_iop_init();
 
 ####################################################################
 #
@@ -107,9 +112,9 @@ sub get_select_sigs ($);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixIOParser.pm,v 1.6 2003/07/09 13:01:01 wig Exp $';
+my $thisid		=	'$Id: MixIOParser.pm,v 1.7 2003/07/16 08:46:15 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixIOParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.6 $';
+my $thisrevision   =      '$Revision: 1.7 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -136,6 +141,8 @@ sub parse_io_init ($) {
 
     my $sel = 0;
     my $selsignals = undef;
+
+    _mix_iop_init(); # initialize some configuration variables ...
     
     foreach my $i ( @$ref ) {
         next if ( $i->{'::ign'} =~ m,^\s*(#|\\), ); # Skip comments, just in case they sneak in
@@ -143,7 +150,14 @@ sub parse_io_init ($) {
         if ( $i->{'::class'} =~ m,%SEL%,o ) { # Got a selector definition line ...
             # Retrieve selector signal names from the ::muxopt columns
             $selsignals = get_select_sigs( $i );
-        } elsif ( $selsignals ) {
+        } elsif ( $i->{'::class'} =~ m,%NOSEL%,o ) {
+            # %NOSEL% is equivalent to a %SEL% with a count of one!
+            $selsignals = {
+                '::muxopt' => '%NOSEL%',
+                '__NR__' => 1,
+                '__PORT__' => '%NOSELPORT%',
+            };
+        }elsif ( $selsignals ) {
             # if this has got ::pad and ::iocell -> create pad and iocell
             if ( $i->{'::pad'} and $i->{'::iocell'} ) {
                 mix_iop_padioc( $i );
@@ -159,11 +173,12 @@ sub parse_io_init ($) {
             logwarn( "WARNING: Missing SEL line in input for parse_io_init!" );
         }
     }
-    
+
     return 0;
 
 }
 
+    
 #
 # Read in a line from the input and create an appropriate IOCELL
 # Input: hash_ref with input description, hashref with muxopt's
@@ -190,66 +205,106 @@ sub mix_iop_iocell ($$) {
     }
 
     $d{'::class'} = $r_h->{'::class'} || '%PAD_CLASS%';
+    $d{'::_muxwidth_'} = $r_sel->{'__NR__'} || 0; # Set the current multiplexer width ...
 
     # $d{'::comment'} = $r_h->{'::comment'} || "";
 
     # Parent and all other attributes have to come from macros!!
-    $d{'::inst'} = add_inst( %d ); # instance might be changed
+    $d{'::inst'} = add_inst( %d ); # instance name might be changed
 
+    #
     # Now to the connections ...
     #
-    # Start with the SEL signals
-    # Models a 1-hot architecture.
+
     #
-    my $port = $r_sel->{'__PORT__'} || '%IOCELL_SELECT_PORT%'; # Default port name to select.
-    for my $s ( keys( %$r_sel ) ) {
-        next if ( $s =~ m,^__, );
-        my %s = ();
-        $s{'::in'} = $d{'::inst'} . "/" . $port;
+    # Go through the ::port / ::muxopt matrix for this pad/iocell ...
+    # The select line might be changed by %SEL(....)
+    #
+    my $t_sel = mix_iop_connioc( $d{'::inst'}, $r_h, $r_sel );
 
-        # Get the number from muxopt:N ...
-        my $n = 0;
-        if ( $s eq "::muxopt" ) {
-            $n = 0;
-        } elsif ( $s =~ m,:(\d+), ) {
-            $n = $1;
-        }
-        my $signal;
-        my $nr;
-        # select signal is SIGNAL(N) ... or SIGNAL.N
-        if ( $r_sel->{$s} =~ m,(.+)\.(\d+), or
-            $r_sel->{$s} =~ m,(.+)\((\d+)\), ) {
-            $signal = $1;
-            $nr = "=(". $2 . ")";
-        } else {
-            $signal = $r_sel->{$s};
-            $nr = "";
-        }
-        $s{'::name'} = $signal;
-        $s{'::in'} .= "(" . $n . ")" . $nr;
-
-        $s{'::low'} = ""; # Don't care
-        $s{'::high'} = ""; # Don't care
-        $s{'::mode'} = ""; # Don't care (automatically generated later on or inherited)
-        $s{'::class'} = "";
-        $s{'::clock'} = "";
-        $s{'::ign'} = "";
-        $s{'::gen'} = "";
-        $s{'::comment'} = "IO Generated ";
+    #
+    # Do the SEL signals
+    # Models a 1-hot architecture, besides it "bus" flag is set
+    #
+    if ( $t_sel->{'__NR__'} > 1 ) {
+        # We actually have > 1 ::muxopt column ...
         
-        #TODO: Will we need more information??
-        add_conn( %s );
+        my $port = $t_sel->{'__PORT__'} || '%IOCELL_SELECT_PORT%'; # Default port name to select.
+
+        if ( $EH{'iocell'}{'select'} =~ m,bus,io ) {
+            # Attach a select bus of appropriate width
+            my %s = ();
+            if ( $EH{'iocell'}{'select'} =~ m,auto,io ) {
+                # Get min. required width of select bus:
+                # will work up to 2048 ... at least
+                $s{'::high'} = int( log( $t_sel->{'__NR__'} ) / log( 2 ) + 0.9999 ); 
+            } else {
+                $s{'::high'} = int( log( $r_sel->{'__NR__'} ) / log( 2 ) + 0.9999 );
+            }
+            $s{'::low'} = 0;
+
+            # Take signal name of ::muxopt (0 column) to be select bus name
+            ( $s{'::name'} = $t_sel->{'::muxopt'} ) =~ s,(\.\d+|\(\d+\))$,,;
+            $s{'::in'} = $d{'::inst'} . "/" . $port;
+ 
+            $s{'::type'} = "%BUS_TYPE%"; ##How do we define the type?
+            $s{'::mode'} = ""; # Don't care (automatically generated later on or inherited)
+            $s{'::class'} = "";
+            $s{'::clock'} = "";
+            $s{'::ign'} = "";
+            $s{'::gen'} = "";
+            $s{'::comment'} = "__IO_MuxSelBus ";
+
+            #TODO: Will we need more information??
+            add_conn( %s );
+
+        } else {
+            for my $s ( keys( %$t_sel ) ) {
+                next if ( $s =~ m,^__, );
+                my %s = ();
+                $s{'::in'} = $d{'::inst'} . "/" . $port;
+    
+                # Get the number from muxopt:N ...
+                my $n = 0;
+                if ( $s eq "::muxopt" ) {
+                    $n = 0;
+                } elsif ( $s =~ m,:(\d+), ) {
+                    $n = $1;
+                }
+                my $signal;
+                my $nr;
+                # select signal is SIGNAL(N) ... or SIGNAL.N
+                if ( $t_sel->{$s} =~ m,(.+)\.(\d+), or
+                    $t_sel->{$s} =~ m,(.+)\((\d+)\), ) {
+                    $signal = $1;
+                    $nr = "=(". $2 . ")";
+                } else {
+                    $signal = $t_sel->{$s};
+                    $nr = "";
+                }
+                $s{'::name'} = $signal;
+                $s{'::in'} .= "(" . $n . ")" . $nr;
+        
+                $s{'::low'} = ""; # Don't care
+                $s{'::high'} = ""; # Don't care
+                # $s{'::type'} = ""; ##How do we define the type? --> Take default for signal
+                $s{'::mode'} = ""; # Don't care (automatically generated later on or inherited)
+                $s{'::class'} = "";
+                $s{'::clock'} = "";
+                $s{'::ign'} = "";
+                $s{'::gen'} = "";
+                $s{'::comment'} = "__IO_MuxSel ";
+                
+                #TODO: Will we need more information??
+                add_conn( %s );
+            }
+        }
     }
-
-    #
-    # Now go through the ::port / ::muxopt matrix for this pad/iocell ...
-    #
-    mix_iop_connioc( $d{'::inst'}, $r_h, $r_sel );
-
 }
 
 #
-# Connect iocells
+# Connect iocells: wire iocell <-> core (defined by ::muxopt matrix)
+# Returns: changed select line
 #
 sub mix_iop_connioc ($$$) {
     my $inst = shift;
@@ -257,12 +312,16 @@ sub mix_iop_connioc ($$$) {
     my $r_sel = shift;
 
     my @pins = split( /[,\s]+/, $r_h->{'::port'} );
+    my $clock = "%IOCELL_CLK%";
 
+    my %tsel = %$r_sel;
+    
     # Check pin names ....
     foreach my $p ( @pins ) {
-        if ( $p =~ m,%reg\(\w+\),io ) {
-            logwarn( "WARNING: clocked pad port not handeled now." );
-            $p =~ s,%reg\(\w+\),,io;
+        if ( $p =~ s,%reg\(\s*(\w+)\s*\),,io ) {
+            # logwarn( "WARNING: registered pad port not handeled now." );
+            $clock = $1; #Setting default clock ....
+            # $p =~ s,%reg\(\w+\),,io;
         }
     }
 
@@ -270,10 +329,24 @@ sub mix_iop_connioc ($$$) {
     foreach my $s ( keys( %$r_sel ) ) {
         next if ( $s =~ m,^__, );
 
+        # Remove select line if no data defined in this matrix cell
         unless( exists( $r_h->{$s} ) and defined( $r_h->{$s} ) ) {
-            logwarn( "ERROR: Missing muxopt definition for $s, pad nr. $r_h->{'::pad'}!" );
-            $EH{'sum'}{'errors'}++;
-            next;
+            if ( $EH{'iocell'}{'select'} =~ m,auto,io ) {
+                delete( $tsel{$s} );
+                $tsel{'__NR__'}--;
+                next;
+            } else {
+                logwarn( "ERROR: Missing muxopt definition for $s, pad nr. $r_h->{'::pad'}!" );
+                $EH{'sum'}{'errors'}++;
+                next;
+            }
+        }
+        if ( $r_h->{$s} =~ m,^\s*$, ) {
+            if ( $EH{'iocell'}{'select'} =~ m,auto,io ) {
+                delete( $tsel{$s} );
+                $tsel{'__NR__'}--;
+                next;
+            }
         }
 
         my $n = 0; # Get number of select line ...
@@ -298,12 +371,37 @@ sub mix_iop_connioc ($$$) {
         # Connect pin with signal ....
         foreach my $c ( 0..(scalar( @c ) -1 ) ) {
             my %d = ();
-            my $name = "__E_MISSINGPADNAME";
-            my $num = "__E_MISSINGPADNUM";
-            if ( $c[$c] =~ m,(.+)\.(\d+)$, or $c[$c] =~ m,(.+)\((\d)\)$, ) {
+            my $tclk = $clock; # Default clock signal
+            my $name = "__E_MISSINGPADNAME"; #TODO: Use internal names
+            my $num = "__E_MISSINGPADNUM"; #TODO:
+
+            # Strip off %COMB ...
+            if ( $c[$c] =~ s,%comb\s*$,,io ) {
+                logwarn( "WARNING: %comb not implemented now by MIX!\n");
+                $EH{'sum'}{'warnings'}++;
+            }
+
+            # Get clk for this signal
+            if ( $c[$c] =~ s,%reg\(\s*(\w+)\s*\),,io ) {
+                $tclk = $1;
+            }
+
+            # Locally override select signal ...
+            if ( $c[$c] =~ s,%sel\(\s*(\w+)\s*\),,io ) {
+                $tsel{$s} = $1;    
+                logwarn( "Info: local %SEL% override by %sel($1)!" );
+            }
+
+            # Accept ´0´, ´1´  ..
+            if ( $c[$c] =~ m,^\s*'?([01])'?, ) {
+                $name = ( $1 eq '1' ) ? '%HIGH%' : '%LOW%';
+                $num = undef;
+            } elsif ( $c[$c] =~ m,(.+)\.(\d+)$, or $c[$c] =~ m,(.+)\((\d)\)$, ) {
+                # signal.N or signal(N)
                 $name = $1;
                 $num = $2;
             } elsif ( $c[$c] ) {
+                # signal
                 $name = $c[$c];
                 $num = undef;
             } else {
@@ -312,53 +410,141 @@ sub mix_iop_connioc ($$$) {
                 
             $d{'::name'} = $name;
             $d{'::class'} = $r_h->{'::class'} || "";
-            my $io = mix_iop_getdir( $inst, $name );
+            $d{'::low'} = ""; # Don't care
+            $d{'::high'} = ""; # Don't care
+            # Determine direction this connection is driving; defaults to ::in
+            my $io = mix_iop_getdir( $inst, $pins[$c] );
+
             # In/out
-            if ( $num ) {
+
+            #
+            # Extend busses automatically ...
+            #
+            if ( defined( $num ) ) {
+                # Is such a signal already defined?
+                my $aprop = mix_p_retcprop ($name, "::high,::low,::type" );
+
+                #
+                #TODO: Ugly trick to get connection to internal, not predefined busses right:
+                # If we see a connection to a signal with bit N and the bus does not have a bit N
+                # so far, expand HIGH (and even set LOW to 0 if not set already, redefine
+                # std_ulogic to std_ulogic_vector and alert user ....
+                #
+                if ( defined( $aprop ) ) { # Signal exists already ...
+                    my %change_to = ();
+                    # Is the type o.k.?
+                    my $t = defined( $aprop->{'::type'} ) ? $aprop->{'::type'} : "";
+                    unless ( $t and $t =~ m,_vector$, ) {
+                        # ::type should become vector!
+                        if ( $EH{'iocell'}{'auto'} =~ m,bus, ) {
+                            $change_to{'::type'} = $t . $EH{'iocell'}{'bus'};
+                        }
+                    }
+                    my $h = defined( $aprop->{'::high'} ) ? $aprop->{'::high'}  : "";
+                    if ( $h ne "" and $h =~ m,^(\d+)$, ) {
+                        if ( $h < $num ) {
+                            $change_to{'::high'} = $num;
+                        }
+                    } elsif ( $h eq "" ) {
+                        $change_to{'::high'} = $num;
+                    } else {
+                        $change_to{'::high'} = $h;
+                    }
+                    my $l = defined( $aprop->{'::low'} ) ? $aprop->{'::low'}  : "";
+                    if ( $l ne "" and $l =~ m,^(\d+)$, ) {
+                        if ( $l > $num ) {
+                            $change_to{'::low'} = $num;
+                        }
+                    } elsif ( $l eq "" ) {
+                        $change_to{'::low'} = $num;
+                    } else {
+                        $change_to{'::low'} = $l;
+                    }
+                   
+                    mix_p_updateconn( $name, \%change_to );
+
+                } else {
+                    #New signal, set properties
+                    $d{'::type'} = $EH{'macro'}{'%BUS_TYPE%'};#TODO: set to %BUS_TYPE% ??
+                    $d{'::high'} = $num;
+                    $d{'::low'} = $num;
+                }
+ 
                 if ( $io =~ m,^in,io ) {
                     $d{'::in'} = $inst . "/" . $pins[$c] . "(" . $n . ")" . "=(" . $num . ")";
                 } else {
-                    $d{'::out'} = $inst . "/" . $pins[$c] . "(" . $n . ")" . "=(" . $num . ")"; 
+                    $d{'::out'} = $inst . "/" . $pins[$c] . "(" . $n . ")" . "=(" . $num . ")";
                 }
             } else {
                 if ( $io =~ m,^in,io ) {
                     $d{'::in'} = $inst . "/" . $pins[$c] . "(" . $n . ")";
                 } else {
-                    $d{'::in'} = $inst . "/" . $pins[$c] . "(" . $n . ")";
+                    $d{'::out'} = $inst . "/" . $pins[$c] . "(" . $n . ")";
                 }
             }
-            # width??
-            $d{'::low'} = ""; # Don't care
-            $d{'::high'} = ""; # Don't care
+
             $d{'::mode'} = ""; # Don't care (automatically generated later on or inherited)
-            $d{'::clock'} = "";
+            $d{'::clock'} = $tclk;
             $d{'::ign'} = "";
             $d{'::gen'} = "";
-            $d{'::comment'} = "IO Generated ";
+            $d{'::comment'} = "__IO_MuxedPort ";
         
             add_conn( %d );
         }
     }
+    return \%tsel;
 }
 
+
+{ # io direction logic -> see $EH{'iocell'}{'in'} and ....{'out'}
+#
+# Only the ::out's have to be defined, all other signals default to ::in
+#
+my %io_iore = (
+        'in'    => '(.*)',
+        'out' => '(di)',
+              );
+
+sub _mix_iop_init() {
+
+    for my $i ( qw( in out ) ) {
+        if ( $EH{'iocell'}{$i} ) {
+            $io_iore{$i} = '(' . join( '|', split( /[,\s]+/, $EH{'iocell'}{$i} ) ) . ')';
+        }
+    }
+}
+    
 #
 # mix_iop_getdir
 # Return in or out, depending on assumed direction of the pin for this
 # instance
 #
+
 sub mix_iop_getdir ($$) {
     my $inst = shift;
     my $name  = shift;
 
-    #TODO: Define s.th more appropriate ... XXXX
-    return( "in" );
+    for my $i ( qw( out in ) ) {
+        if ( $name =~ m,^$io_iore{$i}$, ) {
+            return ( $i );
+        }
+    }
+
+    # Still here ?
+    logtrc( "INFO:4", "WARNING: port $name in iocell $inst has undefined direction, applied default!" );
+    
+    return( $EH{'iocell'}{'defaultdir'} || 'in' );
 
 }    
 
+} # end of io direction logic
+    
 #
 # Retrieve and convert pad data from input line, create instance ...
 # Connections are created by appropriate macros
 # Keywords: ::pad, ::type, ::class, ::iocell, ::ispin, ::pin
+#
+# Returns: name of generated pad
 #
 sub mix_iop_padioc ($) {
     my $r_h = shift;
@@ -395,7 +581,7 @@ sub mix_iop_padioc ($) {
     # Finally: add this pad ...
     #Caveat: parent and other information has to come from macros defined in the
     # hierachy sheet.
-    add_inst( %d );
+    return ( add_inst( %d ) );
 }
 
 #
@@ -406,7 +592,18 @@ sub mix_iop_padioc ($) {
 sub mix_iop_pad ($) {
     my $r_h = shift;
 
-    logwarn("ERROR: mix_iop_pad not implemented!");
+    # Make a pad cell ...
+    my $name = mix_iop_padioc( $r_h );
+
+    my $nosel = {
+        '::muxopt' => '%NOSEL%',
+        '__NR__' => 1,
+        '__PORT__' => '%NOSELPORT%',
+    };
+
+    # Connect PAD with core ... no IO cell involved here .
+    mix_iop_connioc( $name , $r_h, $nosel );
+    
     return;
 
 }
@@ -443,8 +640,9 @@ sub get_select_sigs ($) {
 
     if ( $n == 0 ) {
         logwarn("WARNING: no muxopt column filled with select signals detected!");
+        $EH{'sum'}{'warnings'}++;
     } elsif ( $n == 1 ) {
-        logwarn("WARNING: only one muxopt column found!");
+        logtrc("INFO,4", "INFO: only one muxopt column found!");
     }
     return \%s;
 }

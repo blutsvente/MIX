@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.19 $                                             |
+# | Revision:   $Revision: 1.20 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/07/09 07:52:44 $                                   |
+# | Date:       $Date: 2003/07/16 08:46:16 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.19 2003/07/09 07:52:44 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.20 2003/07/16 08:46:16 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,14 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.20  2003/07/16 08:46:16  wig
+# | Improved IO Parser:
+# | - select encoded bus vs. one-hot
+# | - constants
+# |
+# | ::use %NCD%: not write component declaration
+# | ::config %NO_CONFIG%: not write configuration for this instance
+# |
 # | Revision 1.19  2003/07/09 07:52:44  wig
 # | Adding first version of Verilog support.
 # | Fixing lots of tiny issues (see TODO).
@@ -144,6 +152,7 @@ use Micronas::MixParser qw( %hierdb %conndb );
 # Prototypes
 #
 sub _write_entities ($$$);
+sub _write_constant ($$$;$);
 sub write_architecture ();
 sub strip_empty ($);
 sub port_map ($$$$$$);
@@ -164,9 +173,9 @@ sub _mix_wr_get_iveri ($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.19 2003/07/09 07:52:44 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.20 2003/07/16 08:46:16 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.19 $';
+my $thisrevision   =      '$Revision: 1.20 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -355,6 +364,7 @@ $EH{'template'}{'verilog'}{'arch'}{'head'} = <<'EOD';
 // --------------------------------------------------------------
 %VERILOG_USE_ARCH%
 
+%VERILOG_TIMESCALE%
 //
 EOD
 
@@ -878,7 +888,7 @@ sub _create_entity ($$) {
                 #
 		if ( defined( $h ) and defined ( $l ) and ( $h != $l ) and $type =~ m,(std_u?logic)\s*$, ) {
                     if ( ( $type . "_vector" ) ne $res{$port}{'type'} ) {
-                        logwarn( "INFO: Autoexpad port $port from $type to vector type!");
+                        logwarn( "INFO: Autoexpand port $port from $type to vector type!");
                         $type = $1 . "_vector";
                     }
                     # $res{$port}{'type'} = $type;
@@ -963,7 +973,8 @@ sub write_entities () {
                 next if ( $i eq "W_NO_ENTITY" );
                 
                 my $i_fn = $i;
-                $i_fn =~ s,_,-,og if ( $EH{'output'}{'filename'} =~ m,useminus, );
+                #Changed 20030714a/Bug:
+                $i_fn =~ s,_,-,og if ( $EH{'output'}{'filename'} =~ m,allminus, );
                 # replace _ by - in entity names.
 
                 # In combine mode, choose entity.vhd as filename.
@@ -1471,7 +1482,8 @@ sub write_architecture () {
                 # Generate an output filename
                 my $filename;
                 my $e_fn = $e;
-                $e_fn =~ s,_,-,go if ( $EH{'output'}{'filename'} =~ m,useminus, );
+                #Changed 20030714a/Bug: replace - by _ ...
+                $e_fn =~ s,_,-,go if ( $EH{'output'}{'filename'} =~ m,allminus, );
                 # replace _ by - in entity names.
                 # In combine mode, choose entity.vhd as filename.
                 # Filename extension defaults to VHDL
@@ -2148,7 +2160,13 @@ sub _write_architecture ($$$$) {
                     }
                 }
                 # %COMPONENTS% are VHDL entities ..
-		$macros{'%COMPONENTS%'} .= "\tcomponent $d_enty\n" .
+                #wig20030711: do not print component if user sets %NO_COMP% flag in ::use
+                if ( defined( $hierdb{$d_name}{'::use'}) and
+                    $hierdb{$d_name}{'::use'} =~ m,(NO_COMP|__NOCOMPDEC__),o ) {
+                        $macros{'%COMPONENTS%'} .= "\t\t" . $tcom . "__I_COMPONENT_NOCOMPDEC__ " .
+                        $d_name . "\n\n";
+                } else {
+                    $macros{'%COMPONENTS%'} .= "\tcomponent $d_enty\n" .
 			( ( not is_vhdl_comment( $entities{$d_enty}{'__GENERICTEXT__'}{$ilang} ) ) ?
                             ( "\t\tgeneric (\n" . $entities{$d_enty}{'__GENERICTEXT__'}{$ilang} .
                                 "\t\t);\n"
@@ -2166,12 +2184,14 @@ sub _write_architecture ($$$$) {
                             )
                         ) .
 			"\tend component;\n\t" . $tcom . " ---------\n\n";
-		$seen{$d_enty} = 1;
+                }
+                $seen{$d_enty} = 1;
 	    } else {
                 unless ( $EH{'check'}{'inst'} =~ m,nomulti,io ) {
                     $macros{'%COMPONENTS%'} .=
-                       "\t\t" . $tcom . "__I_MIX: multiple instantiations of component $i, declaration for entity $d_enty already added!\n";
-                    logwarn( "INFO: multiple instantiations of entity $d_enty");
+                       "\t\t" . $tcom . "__I_COMPONENT_REUSE: multiple instantiations of component " .
+                        $i . ", declaration for entity " . $d_enty . " already added!\n";
+                    logtrc( "INFO,4", "INFO: multiple instantiations of entity $d_enty");
                 }
 	    }
 	    #
@@ -2287,7 +2307,7 @@ sub _write_architecture ($$$$) {
 	    }
 	    # Add constant definitions here to concurrent signals ....
 	    if ( $s->{'::mode'} =~ m,C,io ) {
-                my ( $s, $a ) = _write_constant( $s, $type, $dt ); # TODO_VERI
+                my ( $s, $a ) = _write_constant( $s, $type, $dt, $ilang ); # TODO_VERI
                 $signaltext .= $s; # add to signal declaration ...
                 $macros{'%CONCURS%'} .= $a;  # add to signal assignment
                 next;
@@ -2426,19 +2446,24 @@ sub _write_architecture ($$$$) {
 # Currently we pass through the value nearly literally!
 #
 # Special cases
+#20030710: adding Verilog support ...
 #
-sub _write_constant ($$$) {
+sub _write_constant ($$$;$) {
     my $s = shift; # ref to this signals definition ...
     my $type = shift; # type of this constant
     my $dt = shift; # has predefined (F downto T)
+    my $lang = shift || $EH{'macro'}{'%LANGUAGE%'} || "vhdl";
 
+    my $tcom = $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'default'} || "##";
+    
     my $t = ""; # Signal definitions
     my $sat = ""; # Signal assignments
     my $comm = ""; # Comments
+    my $width = "__E_WIDTH_CONST";
 
     unless( exists( $s->{'::out'}[0]{'rvalue'} ) ) {
             logwarn( "WARNING: Missung value definition for constant $s->{'::name'}" );
-	    $t = "\t\t\t-- $s->{'::name'} <= __E_MISSING_CONST_VALUE;\n";
+	    $t = "\t\t\t" . $tcom .  $s->{'::name'} . " <= __E_MISSING_CONST_VALUE;\n";
     } else {
 	my $value = $s->{'::out'}[0]{'rvalue'};
 
@@ -2447,18 +2472,19 @@ sub _write_constant ($$$) {
 	#
         # Caveat: Keep the RE here in sync with MixParser::_create_conn
         #
-                # Get VHDL constants : B#VAL#
-                # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(\d+#[_a-f\d]+#)\s*$,io or
-                # or 0xHEX or 0b01xzhl or 0777 or 1000 (integers)
-                # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(0x[_\da-f]+|0b[_01xzhl]+|0[_0-7]+|[\d][._\d]*)\s*$,io or
-                # or reals or time definitions: ... 1 ns, 1.3 ps ...
-                # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?([+-]*[_\d]+\.*[_\d]*(e[+-]\d+)?\s*([munpf]s)?)\s*$,io or
-                # or anything in ' text ' or " text "
-                # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?((['"]).+\4)\s*$,io or
-                # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(".+")\s*$,io or
-                # or anything following a %CONST%/ or GENERIC or PARAMETER keyword
-                # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)(.+)\s*,io
+        # Get VHDL constants : B#VAL#
+        # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(\d+#[_a-f\d]+#)\s*$,io o
+        # or 0xHEX or 0b01xzhl or 0777 or 1000 (integers)
+        # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(0x[_\da-f]+|0b[_01xzhl]+|0[_0-7]+|[\d][._\d]*)\s*$,io or
+        # or reals or time definitions: ... 1 ns, 1.3 ps ...
+        # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?([+-]*[_\d]+\.*[_\d]*(e[+-]\d+)?\s*([munpf]s)?)\s*$,io or
+        # or anything in ' text ' or " text "
+        # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?((['"]).+\4)\s*$,io or
+        # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(".+")\s*$,io or
+        # or anything following a %CONST%/ or GENERIC or PARAMETER keyword
+        # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)(.+)\s*,io
         #TODO: Add conversion functions ... make sure to use " and ' appr.
+        
         if ( $value =~ m,([+-]*[_\d]+\.*[_\d]*(e[+-]\d+)?)(\s*)([munpf]s),io ) {
             # It's a time constant
             # Add a space before "s"
@@ -2469,9 +2495,13 @@ sub _write_constant ($$$) {
         } elsif ( $value eq "0" or $value eq "1" ) {
             # Bind a vector to 0 or 1
             if ( $s->{'::type'} =~ m,_vector,io ) {
-                $value = "( others => '$value' )";
+                if ( $lang =~ m,^veri,io ) {
+                    $value = "'" . $value . "'";
+                } else {
+                    $value = "( others => '$value' )"; ##VHDL, only
+                }
             } else {
-                $value = "'$value'"; # Put ' around bit vectors, VHDL
+                $value = "'" . $value . "'"; # Put ' around bit vectors, VHDL
             }
         } elsif (  ( $value =~ m,^\s*0,io or
                     $value =~ m,^\s*[_\d+]+\s*$,io or
@@ -2481,7 +2511,8 @@ sub _write_constant ($$$) {
                 #
                 # If value !~ 010101 and type equal std_ulogic_vector ->
                 #  convert value to binary!
-                $comm = " -- __I_ConvConstant: $value";
+                # Not necessary for Verilog!
+                $comm = " " . $tcom . " __I_ConvConstant: " . $value;
                 my $w = $s->{'::high'} - $s->{'::low'} + 1; #Will complain if high/low not
                                 # defined or not digits!
                 if ( $value =~ m,^\s*(\d+)#([_a-f\d]+)#,io ) {
@@ -2506,34 +2537,40 @@ sub _write_constant ($$$) {
                     $value = sprintf( "\"%0" . $w . "b\"", $value );
                     if ( length( $value ) > $w +2 ) {
                         logwarn( "WARNING: Constant value $comm to large for signal $s->{'::name'} of $w bits!" );
-                        $comm = " -- __E_VECTOR_WIDTH " . $comm;
+                        $comm = " " . $tcom . " __E_VECTOR_WIDTH " . $comm;
                     }
+                    $width = $w; # Save width ....
+                    $value = $w . "`" . $value if ( $lang =~ m,^veri,io ); ##TODO: Streamline that !!
                 }
             
         } elsif ( $value =~ m,^\s*0x([0-9a-f]),io ) {
             # Convert 0xHEXV to 16#HEXV#
-            $comm = " -- __I_ConvConstant2:" . $value;
+            $comm = " " . $tcom . " __I_ConvConstant2:" . $value;
             $value =~ s,^\s*0x,16#,;
             $value =~ s,\s*$,#,;
 	} elsif ( $type =~ m,_vector,io ) {
             # Replace ' -> "
-            $comm = " -- __I_VectorConv";
+            $comm = " " . $tcom . " __I_VectorConv";
             $value =~ s,',",go;
 	} else {
-            $comm = " -- __I_ConstNoconv";
+            $comm = " " . $tcom . " __I_ConstNoconv";
 	}
 
         #!wig20030403: Use intermediate signal ...
         #!org: $t = "\t\t\tconstant $s->{'::name'} : $type$dt := $value;$comm\n";
-        $t = "\t\t\tconstant $s->{'::name'}_c : $type$dt := $value;$comm\n";
-        $t .= "\t\t\tsignal $s->{'::name'} : $type$dt;\n";
-
-        $sat =  "\t\t\t$s->{'::name'} <= $s->{'::name'}_c;\n";
-        
+        if ( $lang =~ m,^veri,io ) {
+            $t = "\t\t\t`define " . $s->{'::name'} . "_c " . $value . " " . $comm . "\n";
+            $t .= "\t\t\twire\t" . $dt . "\t" . $s->{'::name'} . ";\n";
+            $sat = "\t\t\tassign " . $s->{'::name'} . " = `" . $s->{'::name'} . "_c;\n";
+        } else {
+            $t = "\t\t\tconstant $s->{'::name'}_c : $type$dt := $value;$comm\n";
+            $t .= "\t\t\tsignal $s->{'::name'} : $type$dt;\n";        
+            $sat =  "\t\t\t$s->{'::name'} <= $s->{'::name'}_c;\n";
+        }        
     }
+
     return $t, $sat;
 }    
-# next;
 
 
 #
@@ -2958,11 +2995,20 @@ sub write_configuration () {
                     my $filename;
                     my $e_fn = $e;
                     my $ce = $hierdb{$i}{'::config'};
-                    if ( $EH{'output'}{'filename'} =~ m,useminus,i ) {
-                        $ce =~ s,_,-,og; # Replace _ with - ... Micronas Design Guideline
+                    #Changed 20030714a/Bug: change only trailing _ to - !!
+                    if ( $EH{'output'}{'filename'} =~ m,allminus,o ) {
+                        $ce =~ s,_,-,og;
                         $e_fn =~ s,_,-,og;
+                    } elsif ( $EH{'output'}{'filename'} =~ m,useminus,i ) {
+                        # Only trailing part gets changed ...
+                        if ( $ce =~ s,^\Q$e_fn\E,, ) { # entity name in configurartion
+                            $ce =~ s,_,-,og; # Replace _ with - ... Micronas Design Guideline
+                            $ce .= $e_fn . $ce;  
+                        } else {
+                            $ce =~ s,_,-,og; # Replace _ with - ... Micronas Design Guideline
+                        }
                     }
-
+                        
                     # Language? vhdl, verilog or what else?
                     my $lang = lc( $hierdb{$i}{'::lang'} ) || $EH{'macro'}{'%LANGUAGE%'};
                     unless ( exists ( $EH{'template'}{$lang} ) ) {
@@ -3060,7 +3106,10 @@ sub _write_configuration ($$$$) {
 	} else {
 	    $seenthis{$aent} = 1;
 	}
-	
+
+	my $lang = lc ( $hierdb{$i}{'::lang'} || $EH{'macro'}{'%LANGUAGE%'} || 'vhdl' ) ;
+        my $tcom = $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'default'} || "##";
+        
 	my $node = $ae->{$i}{'::treeobj'};
 	for my $daughter ( sort( { $a->name cmp $b->name } $node->daughters ) ) {
 	    my $d_name = $daughter->name;
@@ -3069,12 +3118,17 @@ sub _write_configuration ($$$$) {
 
             #
             # Comment out Verilog daughter's, subblocks
+            #wig20030711: also if the configuration is W_NO_CONFIG and or %NO_CONFIGURATION%
             #
             my $pre = "";
             if ( $EH{'output'}{'generate'}{'conf'} !~ m,veri,io ) {
                 if ( $ae->{$d_name}{'::lang'} =~ m,veri,io ) {
-                    $pre = "-- verilog -- ";
+                    $pre = $tcom . " __I_NO_CONFIG_VERILOG " . $tcom;
                 }
+            }
+            # If this daughter has a NO_CONFIG in it's configuration -> comment it out:
+            if ( $ae->{$d_name}{'::config'} =~ m,(W_NO_CONFIG|NO_CONFIG),o ) {
+                $pre = $tcom . " __I_NO_CONFIG " . $pre;
             }
 	    #
 	    # Component configuration:
@@ -3138,6 +3192,7 @@ sub use_lib ($$) {
             foreach my $u ( @u ) {
                 # libs may be seperated by , and/or \s
                 # $u := SEL:library.component ...
+                next if ( $u =~ m,(NO_COMP|__NOCOMPDEC__),o ); 
                 my $sel = lc( $EH{'output'}{'generate'}{'use'} );
                 my $pack = '';
                 my $lib = '';

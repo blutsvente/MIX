@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.12 2003/07/09 07:52:43 wig Exp $
+# $Id: TODO.txt,v 1.13 2003/07/16 08:46:09 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -18,9 +18,45 @@ Doku:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+- 20030715c/Req: IOP: consider actual ::muxopt columns used
+    e.g. if less signals are to be connected, leave rest empty
+
+    Req: mpit
+    Prio: medium
+
+- 20030715b/Req: IOP: "get_next IOcell" (for given name/number ::pad)
+    will allow to set up NAND-Trees easily
+
+    Req: mpallas
+    Prio: medium
+
+    Idea: define some commonly usable functions working on the
+      %hierdb and ::conndb
+      next_iop
+      next_ioc(::pad
+
+        eval( $hierdb{::inst[::pad + 1]}
+
+- 20030715a/Req: IOP: choose one-hot or bus for select lines
+
+    Req: mpallas
+    Prio: medium
 
 
--. 20030702c/Req: compare leaf blocks generated with entity definitions
+- 20030712c/Req: only generate pad, no IO cell
+    But how to connect that?
+
+    Req: mpit
+    Prio: medium
+    Workaround: Instantiate and connect in HIER and CONN sheets manually
+
+- 20030711c/Bug: signal.0 in IO cell matrix gets problems!
+
+    Req: mpit
+    Prio: high
+    
+
+- 20030702c/Req: compare leaf blocks generated with entity definitions
     Req: mpit
     Prio: medium
 
@@ -67,12 +103,6 @@ TODOs:
   names.
 
     Req: wig
-    Prio: medium
-
-- 20030604c/Req: Make nameing schema for IOcells and Pads more flexible.
-    e.g. use ::name as name root (not ::type ..)
-
-    Req: pallas
     Prio: medium
 
 
@@ -271,6 +301,46 @@ is defined.
 
 DONE: ++++++++++++++++++++++++
 
+- 20030714a/Bug: do not change _ to - in entity names!
+
+    Req: mpit
+    Prio: medium
+    Effort: low
+
+    Solved: 20030714wig
+    Testcase: no dedicated
+        Side effect: most test cases no longer work :-(
+
+- 20030711b/Req: Suppress output of component declaration if component is alredy defined
+    in library
+    Proposal: add a %NO_COMPONENT_DECLARATION% aka %NDC% to ::use field!
+
+    Req: mpit
+    Prio: medium
+    Effort: low
+    Solved: wig20030711
+    Testcases: configuration
+    
+- 20030711a/Req: Suppress output of configuration if component is taken from library
+    Proposal: if W_NO_CONFIG -> will not be added!
+    also: %NO_CONFIGURATION%
+
+    Req: mpit
+    Prio: medium
+    Effort: low
+    Solved: wig20030711
+    Testcases: configuration
+    
+- 20030604c/Req: Make nameing schema for IOcells and Pads more flexible.
+    e.g. use ::name as name root (not ::type ..)
+
+    Req: pallas
+    Prio: medium
+    Solved: 20030709wig
+    Solution: see pad.name and iocell.name
+	Sideeffect: add_inst and add_conn now evaluate all %XXX% keys in the primary key fields.
+	Allowed fields are ::COL (other input columns), text macros and postfix macros.
+    
 - 2003070a/Bug: output.path is not implemented!
     Cannot write datato dir other than cwd()
     

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.20 $                                             |
+# | Revision:   $Revision: 1.21 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/07/09 13:01:01 $                                   |
+# | Date:       $Date: 2003/07/16 08:46:15 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.20 2003/07/09 13:01:01 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.21 2003/07/16 08:46:15 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,14 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.21  2003/07/16 08:46:15  wig
+# | Improved IO Parser:
+# | - select encoded bus vs. one-hot
+# | - constants
+# |
+# | ::use %NCD%: not write component declaration
+# | ::config %NO_CONFIG%: not write configuration for this instance
+# |
 # | Revision 1.20  2003/07/09 13:01:01  wig
 # | Fixed mix_ioparse functions to get free programmanble pad cell naming,
 # | dito. for iocells
@@ -120,6 +128,8 @@ require Exporter;
       apply_conn_gen
       add_inst
       add_conn
+      mix_p_updateconn
+      mix_p_retcprop
       add_portsig
       add_sign2hier
       parse_mac
@@ -164,6 +174,8 @@ sub _scan_inout ($);
 sub my_common (@);
 sub add_port ($$);
 sub _add_port ($$$$$$$$);
+sub mix_p_retcprop ($$);
+sub mix_p_updateconn($$);
 
 ####################################################################
 #
@@ -181,11 +193,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.20 2003/07/09 13:01:01 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.21 2003/07/16 08:46:15 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.20 $';
+my $thisrevision   =      '$Revision: 1.21 $';
 
-# | Revision:   $Revision: 1.20 $   
+# | Revision:   $Revision: 1.21 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -417,12 +429,17 @@ of the simple /PERL_RE/.
 =item /PERL_RE/
 
 The generator line will be matched against each input instance or connection
-name. If it matchesm the generator line will be executed.
+name. If it matches the generator line will be executed.
 
 =item $i (n..m)
 
 This is the second case. It will generate instances/connections, no matching lines required.
 Make sure to use $i in the instance or signal name to generate the objects as requested.
+
+=item HIER vs. CONN
+
+A leading CONN means iteration about the conndb data, while by default the instances
+in hierdb are iterated through.
 
 =back
 
@@ -447,14 +464,22 @@ sub parse_conn_gen ($) {
         next if ( $rin->[$i]{'::comment'} =~ m,\s*(#|//),o );   # Commented out
         next if ( $rin->[$i]{'::gen'} =~ m,^\s*$, );                # Empty
 
+        # CONN vs. HIER: Strip and remember leading CONN .
+        #wig20030715
+        my $namesp = "hier";
+        if ( $rin->[$i]{'::gen'} =~ s!^\s*(HIER|CONN)[\s,]*!!io ) {
+            $namesp = lc( $1 );
+        }
+
         # iterator based generator: $i(1..10), /PERL_RE/
         if ( $rin->[$i]{'::gen'} =~ m!^\s*\$(\w)\s*\((\d+)\.\.(\d+)\)\s*,\s*/(.*)/! ) {
             my $pre = $4 . "_$2_$3";
             if ( $2 > $3 ) {
-                logwarn("bad bounds $2 .. $3 in generator definition!");
+                logwarn("WARNING: __E_BAD_BOUNDS $2 .. $3 in generator definition!");
+                $EH{'sum'}{'errors'}++;
                 next;
             }
-            if ( exists( $g{$pre} ) ) { # Redefinition of this macro ...
+            if ( exists( $g{$pre} ) ) { # Redefinition of this macro ...make name unique
                 $g{$pre}{'rep'}++;
                 $pre .= "__DUPL__" . $gi++;
             }
@@ -463,12 +488,13 @@ sub parse_conn_gen ($) {
             $g{$pre}{'lb'}   = $2;
             $g{$pre}{'ub'}  = $3;
             $g{$pre}{'field'} = $rin->[$i];
+            $g{$pre}{'ns'} = $namesp;
             $rin->[$i]{'::comment'} = "# Generator parsed /" . $rin->[$i]{'::comment'};
         }
         # plain generator: /PERL_RE/
         elsif ( $rin->[$i]{'::gen'} =~ m!^\s*/(.*)/! ) {
             my $tag = $1;
-            if ( exists( $g{$tag} ) ) { # Redefinition of this macro ...
+            if ( exists( $g{$tag} ) ) { # Redefinition of this macro ... make name unique
                 $g{$tag}{'rep'}++;
                 $tag .= "__DUPL__" . $gi++;
             }
@@ -477,9 +503,11 @@ sub parse_conn_gen ($) {
             $g{$tag}{'ub'}  = undef;
             $g{$tag}{'pre'} = $1;
             $g{$tag}{'field'} = $rin->[$i];
+            $g{$tag}{'ns'} = $namesp;
             $rin->[$i]{'::comment'} = "# Generator parsed /" . $rin->[$i]{'::comment'};
         }
         # parameter generator: $i (1..10)
+        # no /match/ .....
         elsif ( $rin->[$i]{'::gen'} =~ m!^\s*\$(\w)\s*\((\d+)\.\.(\d+)\)!o ) {
             my $gname = "__MIX_ITERATOR_" . $gi++;
             $g{$gname}{'var'} = $1;
@@ -487,6 +515,7 @@ sub parse_conn_gen ($) {
             $g{$gname}{'ub'} = $3;
             $g{$gname}{'field'} = $rin->[$i];
             $g{$gname}{'pre'} = $gname;
+            $g{$gname}{'ns'} = $namesp;
             $rin->[$i]{'::comment'} = "# Generator parsed /" . $rin->[$i]{'::comment'};
         }
     }
@@ -749,11 +778,17 @@ sub merge_inst ($%) {
     }
 
     #
-    # Tree check: Does this instance get a new parent?
+    # Get my parent name
     #
-    my $parent = mix_check_case( 'inst', $data{'::parent'} );
-    $data{'::parent'} = $parent; # Rewrite input data ...
+    my $parent = ""; # Start with empty parent name
+    if ( defined( $data{'::parent'} ) ) {
+        $parent = mix_check_case( 'inst', $data{'::parent'} );
+        $data{'::parent'} = $parent; # Rewrite input data ...
+    }
 
+    #
+    # Tree check: Check it parent changed ...
+    #
     if ( defined( $parent ) and $parent
         and defined( $hierdb{$name}{'::parent'} and $hierdb{$name}{'::parent'} ) ) {
         if (
@@ -1052,8 +1087,10 @@ sub _create_conn ($$%) {
             }
             $l = $data{'::low'};
         }
-        if ( defined( $h ) and defined( $l ) and $hldigitflag == 2 and $h <= $l ) {
-            logwarn( "Ununsual bus ordering $h downto $l" );
+        if ( defined( $h ) and defined( $l ) and $hldigitflag == 2 and $h < $l ) {
+            logwarn( "WARNING: _create_conn for " . $data{'::name'} .
+                     ": unusual bus ordering $h downto $l" );
+            $EH{'sum'}{'warnings'}++;
         }
     }
     #    else {
@@ -1286,6 +1323,59 @@ sub check_conn_prop ($) {
 
 }
 
+#
+# Retrieve conncetion properties
+# Input:    $name = connection name
+#              $props = comma seperated list of properties
+#
+sub mix_p_retcprop ($$) {
+    my $name = shift;
+    my $props = shift;
+
+    my %data = ();
+    
+    if ( exists( $conndb{$name} ) ) {
+        for my $i ( split( /[\s,]+/, $props ) ) {
+            if ( exists( $conndb{$name}{$i} ) ) {
+                $data{$i} = $conndb{$name}{$i};
+            }
+        }
+    } else {
+        return undef;
+    }
+
+    return \%data;
+
+}
+
+#
+# Retrieve conncetion properties
+# Input:    $name = connection name
+#              $props = comma seperated list of properties to update ...
+#
+# Caveat: there will be NO extensive error checking done here ...
+#
+sub mix_p_updateconn ($$) {
+    my $name = shift;
+    my $props = shift;
+
+    my %data = ();
+
+    unless( exists( $conndb{$name} ) ) {
+        logwarn( "ERROR: Cannot update connection $name!" );
+        $EH{'sum'}{'errors'} ++;
+    } else {
+        for my $i ( keys( %$props ) ) {
+            $conndb{$name}{$i} = $props->{$i};
+        }
+    }
+
+    return;
+}
+
+#
+# merge more data into an already existing connection
+#
 sub merge_conn($%) {
     my $name = shift;
     my %data = @_;
@@ -1308,16 +1398,17 @@ sub merge_conn($%) {
             # Complain if ::type does not match
             #
             if ( $conndb{$name}{$i} and
-                 $conndb{$name}{$i} ne "%SIGNAL%" and
+                 $conndb{$name}{$i} !~ m,%(SIGNAL|BUS_TYPE)%,o and
                  $conndb{$name}{'::name'} ne "%OPEN%" ) {
                 # conndb{$name}{::type} is defined and ne the default
-                 if ( $data{$i} and $data{$i} ne "%SIGNAL%" ) {
+                 if ( $data{$i} and $data{$i} !~ m,%(SIGNAL|BUS_TYPE)%,o ) {
                     my $t_cdb = $conndb{$name}{$i};
                     if ( $data{$i} ne $t_cdb ) { #TODO: and $name !~ m/%(HIGH|LOW)/o ) {
                         # %HIGH% and %LOW% signal will get type assigned
                         logwarn( "ERROR: type mismatch for signal $name: $t_cdb ne $data{$i}!" );
                         $conndb{$name}{$i} = "__E_TYPE_MISMATCH";
                         $conndb{$name}{'::comment'} .= "#__E_TYPE: $t_cdb ne $data{$i} ";
+                        $EH{'sum'}{'errors'}++;
                     }
                 } # else leave conndb as is
             } else {
@@ -1343,6 +1434,7 @@ sub merge_conn($%) {
                             ;
                         } elsif ( not ( $data{$i} eq 'S' and $t_cdb =~ m/^(I|O|IO)/o ) ) {
                             logwarn( "ERROR: mode mismatch for signal $name: $t_cdb ne $data{$i}!" );
+                            $EH{'sum'}{'errors'}++;
                             $conndb{$name}{$i} = "__E_MODE_MISMATCH";
                             $conndb{$name}{'::comment'} .= "#__E_MODE: $t_cdb ne $data{$i} ";
                         }
@@ -1382,6 +1474,7 @@ sub merge_conn($%) {
                         }
                     } else {
                         logwarn( "ERROR: bound mismatch for signal $name: $conndb{$name}{$i} ne $data{$i}!");
+                        $EH{'sum'}{'errors'}++;
                         $conndb{$name}{$i} = "__E_BOUND_MISMATCH";
                     }
                 }
@@ -1564,7 +1657,8 @@ sub apply_conn_macros ($$) {
                     
                     my %mex = ();
                     # Gets matched variables
-                    unless ( eval $r_cm->[$ii]{'me'} ) {
+                    eval $r_cm->[$ii]{'me'};
+                    if ( $@ ) {
                         logwarn("Evaluation of macro $ii for macro expansion in line $i failed: $@");
                         next;
                     }
@@ -1710,13 +1804,27 @@ sub apply_x_gen ($$) {
     my $r_hg = shift;       # connection gen data
     my $func = shift;   # which function to call ...
     
-    for my $i ( keys( %hierdb) ) { #See if the ::gen matches one of the instances already known
-        next if $hierdb{$i}{'::ign'} =~ m,^\s*(#|//),o;
-        for my $cg ( keys( %$r_hg ) ) { # Iterate through all known generators ...
+    # for my $i ( keys( %hierdb) ) { #See if the ::gen matches one of the instances already known
+    #    next if $hierdb{$i}{'::ign'} =~ m,^\s*(#|//),o;
+    
+    for my $cg ( keys( %$r_hg ) ) { # Iterate through all known generators ...
+
+        # Iterate over CONN or HIER, defined by ...{'ns'} namespace ...
+        my $ky = ( $r_hg->{$cg}{'ns'} eq 'conn' ) ? \%conndb : \%hierdb ;
+
+        for my $i ( keys( %$ky ) ) { #See if the ::gen matches one of the instances already known
+            next if $ky->{$i}{'::ign'} =~ m,^\s*(#|//),o;
+
             unless( $r_hg->{$cg}{'var'} ) {
             # Plain match, no run parameter
-                if ( $i =~ m/^$r_hg->{$cg}{'pre'}$/ ) {
+                my( $text, $re );
+                ( $text, $re ) = mix_p_prep_match( $i, $r_hg->{$cg}{'ns'},
+                                                 $ky->{$i}, $r_hg->{$cg}{'pre'} );
+                next unless defined( $text );
+                if ( $text =~ m,^$re$, ) { # $text matches $re ... possibly setting $1 ...
+                # if ( $i =~ m/^$r_hg->{$cg}{'pre'}$/ ) {
                     my %in = ();
+                    # Apply all fields defined in generator:
                     for my $ii ( keys %{$r_hg->{$cg}{'field'}} ) {
                         if ( $r_hg->{$cg}{'field'}{$ii} ) {
                             my $e = "\$in{'$ii'} = \"" . $r_hg->{$cg}{'field'}{$ii} . "\"";
@@ -1725,10 +1833,11 @@ sub apply_x_gen ($$) {
                             }
                             unless( eval $e ) {
                                 $in{$ii} = "E_BAD_EVAL" if $@;
-                                logwarn("bad hierachy match for $i, match $cg: $@") if $@;
+                                logwarn("ERROR: BAD_EVAL match for $i, match $cg: $@") if $@;
+                                $EH{'sum'}{'errors'}++ if $@;
                             }
                         } else {
-                            $in{$ii} = $hierdb{$i}{$ii};
+                            $in{$ii} = $ky->{$i}{$ii}; # Apply defaults from input line ...
                         }
                     }
                     # We add another instance based on the ::gen field matching some other table
@@ -1740,7 +1849,12 @@ sub apply_x_gen ($$) {
             } else {
             # There is an additional run parameter involved: $r_hg{$cg}{'var'}
             # Match first; if it applies, we see if the variable is within range
-                my $matcher = $r_hg->{$cg}{'pre'};
+                my( $text, $re );
+                ( $text, $re ) = mix_p_prep_match( $i, $r_hg->{$cg}{'ns'},
+                                        $ky->{$i}, $r_hg->{$cg}{'pre'} );
+                next unless defined( $text );
+
+                my $matcher = $re;
                 my $rv = $r_hg->{$cg}{'var'};
                 my %mres = ();
                 #
@@ -1748,14 +1862,15 @@ sub apply_x_gen ($$) {
                 #
                 $matcher =~ s/{.+?}/\\d+/g; #Replace {$i + N} by \\d+
                 $matcher =~ s/\$$rv/\\d+/g; #Replace $i by \\d+
-                if ( $i =~ m/^$matcher$/ ) {
+                if ( $text =~ m/^$matcher$/ ) {
                     # Save $1..$N for later reusal into %mres
                     for my $ii ( 1..20 ) { #No more then $20, but loop will be left if undef found.
                         #!wig20030516:bug:  my $e = "\$mres{\$$ii} = \$$ii if defined( \$$ii );";
                         my $e = "\$mres{$ii} = \$$ii if defined( \$$ii );"; # Keep $1 ...
                         unless ( eval $e ) {
                             if ( $@ ) {
-                                logwarn( "bad eval $mres{\$$ii}: $@" );
+                                logwarn( "WARNING: BAD_EVAL $mres{\$$ii}: $@" );
+                                $EH{'sum'}{'warnings'}++;
                                 last;
                             }
                         }
@@ -1766,7 +1881,7 @@ sub apply_x_gen ($$) {
                     #
                     # We found all $N; now let's deal with {EXPR} and $V
                     #
-                    ( $matcher = $r_hg->{$cg}{'pre'} ) =~ s,[()],,g; # Remove all parens
+                    ( $matcher = $re ) =~ s,[()],,g; # Remove all parens
 
                     if ( $matcher =~ s/{.+?}/\\d+/g ) {
                         logwarn( "ERROR: Illegal arithmetic expression in $matcher. Will be ignored!" );     # postpone that ....
@@ -1774,7 +1889,7 @@ sub apply_x_gen ($$) {
                     }
                     $matcher =~ s/\$$rv/(\\d+)/g;   # Replace $rv by (\d+)
                     
-                    if ( $i =~ m/^$matcher$/ ) { # $1 has value for $rv ...
+                    if ( $text =~ m/^$matcher$/ ) { # $1 has value for $rv ... only one variable
                         if ( defined( $1 ) ){
                             $mres{$rv} = $1;
                         } else {
@@ -1791,7 +1906,8 @@ sub apply_x_gen ($$) {
                         logdie( "FATAL: Matching failed for $cg! File bug report!" );
                     }
                     # Check bounds:
-                    if ( $r_hg->{$cg}{'lb'} <= $mres{$rv} and $r_hg->{$cg}{'ub'} >= $mres{$rv} ) {
+                    if ( $r_hg->{$cg}{'lb'} <= $mres{$rv} and
+                            $r_hg->{$cg}{'ub'} >= $mres{$rv} ) {
                         # bingo ... this instance matches
                         #
                         # TODO: Handle arith. {$V + N} {$N +N} ...
@@ -1828,6 +1944,64 @@ sub apply_x_gen ($$) {
             }
         }
     }
+}
+
+####################################################################
+## mix_p_prep_match
+##
+## Do the match for generators
+## if the match operator contains ::name=/RE/, use the value of ::name to
+## match against.
+## ::name defaults to $EH{$type}{'key'} ...
+##
+## Returns: $content, $re
+##
+####################################################################
+
+sub mix_p_prep_match ($$$$) {
+    my $key = shift;
+    my $type = shift || "hier";
+    my $r_d = shift;
+    my $re = shift;
+
+    my $defcol = $EH{$type}{'key'} || '::inst';
+    my $pre = undef;
+
+    my $content = "";
+
+    # Leading text? Save it, start building $contents and strip off
+    if ( $re =~ s,^(.*?)(?=::\w+),, ) {
+        if ( $1 ) {
+            $content = $r_d->{$defcol};
+            $pre = $1;
+        }
+    } else {
+        # No ::COL= inside ... return default and full regular expression
+        $content = $r_d->{$defcol};
+        $pre = $re;
+        return( $content, $pre );
+    }
+
+    # Parse ::col=RE:: ....
+    while ( $re =~ s,^(::\w+?)=(.*?)(::|$),, ) { #
+        if ( defined( $r_d->{$1} ) and not ref( $r_d->{$1} ) ) {
+            $content .= "#" . $r_d->{$1}; # Apply a # as filed seperator ...
+            $pre .= "#" . $2; # Save regular expression ....
+        } else {
+            # Found something, but that is not defined here -> will never match
+            $content = undef;
+            $pre = "__E_NONMATCHINGRE__";
+            return ( $content, $pre );
+        }  
+    }
+
+    # Some trailing stuff left? Add default column contents ....
+    if ( $re =~ m,(.+)$, ) {
+        $content .= "#" . $r_d->{$defcol};
+        $pre .= "#" . $1;
+    }
+    
+    return( $content, $pre );
 }
 
 ####################################################################
@@ -2209,6 +2383,7 @@ sub overlay_bits($$) {
         my $bits2 = $1;
         if ( length( $bits1 ) != length( $bits2 ) ) {
             logwarn( "WARNING: bitvector length mismatch: $bits1 vs. $bits2" );
+            $EH{'sum'}{'warnings'}++;
         }
         my $ub = length( $bits1 ) - 1;
         my $out = "";
@@ -3265,7 +3440,8 @@ sub purge_relicts () {
     #
     for my $i ( keys( %hierdb ) ) {
         unless ( $i ) {
-            logwarn("Removing empty instance!");
+            logwarn("WARNING: Removing empty instance! Check input sheets!");
+            $EH{'sum'}{'warnings'}++;
             delete( $hierdb{$i} );
         }
     }

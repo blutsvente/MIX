@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.19 $                                             |
+# | Revision:   $Revision: 1.20 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/07/09 13:16:37 $                                   |
+# | Date:       $Date: 2003/07/16 08:46:15 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.19 2003/07/09 13:16:37 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.20 2003/07/16 08:46:15 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,8 +31,13 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
-# | Revision 1.19  2003/07/09 13:16:37  wig
-# | Changed default pad and iocell name style
+# | Revision 1.20  2003/07/16 08:46:15  wig
+# | Improved IO Parser:
+# | - select encoded bus vs. one-hot
+# | - constants
+# |
+# | ::use %NCD%: not write component declaration
+# | ::config %NO_CONFIG%: not write configuration for this instance
 # |
 # | Revision 1.16  2003/06/04 15:52:43  wig
 # | intermediate release, before releasing alpha IOParser
@@ -196,11 +201,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.19 2003/07/09 13:16:37 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.20 2003/07/16 08:46:15 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.19 $';
+my $thisrevision   =      '$Revision: 1.20 $';
 
-# | Revision:   $Revision: 1.19 $   
+# | Revision:   $Revision: 1.20 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -311,9 +316,9 @@ sub mix_getopt_header(@) {
     # Default or empty cell will be selected always.
     if (defined $OPTVAL{'variant'} ) {
 	$EH{'variant'} = $OPTVAL{'variant'};
-    } else {
-	$EH{'variant'} = 'Default';
-    }
+    } # else {
+	# $EH{'variant'} = 'Default';
+    # }
 
     # Write entities into file
     if (defined $OPTVAL{'outenty'} ) {
@@ -812,7 +817,8 @@ $ex = undef; # Container for OLE server
 		)
     },
     'pad' => {
-	'name' => '%PREFIX_PAD_GEN%%::name%',  # generated pad with prefix and ::name
+	'name' => '%PREFIX_PAD_GEN%%::pad%',  # generated pad with prefix and ::pad
+		    # '%PREFIX_PAD_GEN%%::name%',  # generated pad with prefix and ::name
 		    # '%PREFIX_PAD_GEN%_%::pad%'
 	qw(
 	    PAD_DEFAULT_DO	0
@@ -822,8 +828,19 @@ $ex = undef; # Container for OLE server
 	)
     },
     'iocell' => {
-	'name' => '%PREFIX_IOC_GEN%%::name%',  # generated pad name with prefix and ::name
+	'name' => '%::iocell%_%::pad%',  # generated pad name with prefix and ::pad
+		    # '%PREFIX_IOC_GEN%%::name%',  # generated pad name with prefix and ::name
 		    # '%PREFIX_IOC_GEN%_%::pad%'
+	'auto' => 'bus', 	# Generate busses if required autimatically ...
+	'bus' => '_vector', # auto -> extend signals by _vector if required ....
+	'defaultdir'	=> 'in', 	# Default signal direction to iocell (seen towards chip core!!)
+	'in'	=> 'do,en,pu,pd,xout',	# List of inwards signals (towards chip core!!)	
+	'out'	=> 'di,xin',		# List of outwards ports (towards chip core!!)
+					# di is a chip input, driven by the iocell towards the core.
+	'select' => 'onehot,auto', # Define select lines: onehot vs. bus
+					# auto := choose width accordingly to wired io busses
+					# const := use %SEL% defined width
+
     },
     #
     # Possibly read configuration details from the CONF sheet, see -conf option
@@ -842,6 +859,7 @@ $ex = undef; # Container for OLE server
 	'xls' => 'CONN',
 	'req' => 'mandatory',
 	'parsed' => 0,
+	'key' => '::name', # Primary key to %conndb
 	'field' => {
 	    #Name   	=>		Inherits
 	    #						Multiple
@@ -878,6 +896,7 @@ $ex = undef; # Container for OLE server
         'xls' => 'HIER',
 	'req' => 'mandatory',
 	'parsed' => 0,
+	'key' => '::inst', # Primary key to %hierdb
 	'field' => {
 	    #Name   	=>		Inherits
 	    #						Multiple
@@ -893,7 +912,7 @@ $ex = undef; # Container for OLE server
 	    '::lang'		=> [ qw(	1	0	0	%LANGUAGE%	7 )],
 	    '::entity'		=> [ qw(	1	0	1	W_NO_ENTITY	8 )],
 	    '::arch'		=> [ qw(	1	0	0	rtl			9 )],
-	    "::config"	=> [ qw(	1	0	1	W_NO_CONFIG	11 )],
+	    "::config"	=> [ qw(	1	0	1	%DEFAULT_CONFIG%	11 )],
 	    '::use'		=> [ qw(	1	0	0	%EMPTY%		10  )],
 	    "::comment"	=> [ qw(	1	0	2	%EMPTY%	12 )],
 	    "::shortname"	=> [ qw(	0	0	0	%EMPTY%	6 )],
@@ -904,7 +923,8 @@ $ex = undef; # Container for OLE server
 	    'nr'		=> 13,  # Number of next field to print
 	},
     },
-
+    'variant' => 'Default', # Select default as default variant :-)
+    
     #
     # IO sheet basic definitions
     # PAD is he primary key (but pad names might be added on demand)
@@ -981,9 +1001,17 @@ $ex = undef; # Container for OLE server
 	    "%PAD_TYPE%"	=> "__E_DEFAULT_PAD__",	# Default pad entity
 	    "%PAD_CLASS%"	=> "PAD",	# Default pad class
 	    "%IOCELL_TYPE%"	=> "__E_DEFAULT_IOCELL__", # Default iocell entity
-	    "%IOCELL_SELECT_PORT%"	=> "select", 		# Default iocell port
+	    "%IOCELL_SELECT_PORT%"	=> "__I_default_select", 		# Default iocell port
+	    "%NOSEL%"		=>  "__I_NOSEL__", #internal: no mux select
+	    "%NOSELPORT%"	=>  "__I_NOSELPORT__", #internal: name of not used sel port
+	    "%IOCELL_CLK%"	=>  "CLK", # Default clk for iocells, may be changed by %REG(clkb)
 	    "%DEFAULT_MODE%"	=> "S",
 	    "%LANGUAGE%"	=> lc("VHDL"), # Default language, could be verilog
+	    "%DEFAULT_CONFIG%"	=>	"%::entity%_%::arch%_conf",
+	    "%NO_CONFIG%"	=>	"NO_CONFIG", # Set this in ::conf if you want to not
+									    # get configurations for this instance
+	    "%NO_COMPONENT_DECLARATION%"	=>	"__NOCOMPDEC__",
+	    "%NO_COMP%"	=>	"__NOCOMPDEC__", # If this keyword is found in ::use -> no component decl ..
 	    "%VHDL_USE_DEFAULT%"	=>
 		"library IEEE;\nuse IEEE.std_logic_1164.all;\n",
 		# "Library IEEE;\nUse IEEE.std_logic_1164.all;\nUse IEEE.std_logic_arith.all;",
@@ -993,6 +1021,7 @@ $ex = undef; # Container for OLE server
 	    "%VHDL_USE_ARCH%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
 	    "%VHDL_USE_CONF%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
 	    "%VERILOG_TIMESCALE%"	=>	"'timescale 1ns / 1ns;",
+	    "%VERILOG_USE_ARCH%"	=>	'%EMPTY%',
 	    "%OPEN%"	=> "open",			#open signal
 	    "%UNDEF%"	=> "ERROR_UNDEF",	#should be 'undef',  #For debugging??  
 	    "%UNDEF_1%"	=> "ERROR_UNDEF_1",	#should be 'undef',  #For debugging??
@@ -1232,6 +1261,7 @@ sub mix_overload_conf ($) {
 	}
 	my $loga ='logtrc( "INFO", "Adding configuration ' . $i . '");';
 	my $logo ='logtrc( "INFO", "Overloading configuration ' . $i . '");';
+	$k =~ s,[^%.\w],,og; # Remove anything unreasonable from the key ...
 	$k =~ s/\./'}{'/og;
 	$k = '{\'' . $k . '\'}';
 
@@ -1293,6 +1323,7 @@ sub _mix_apply_conf ($$$) {
     }
     my $loga ='logtrc( "INFO", "Adding ' . $s . ' configuration ' . $k . "=" . $v . '");';
     my $logo ='logtrc( "INFO", "Overloading ' . $s . 'configuration ' . $k . "=" . $v . '");';
+    $k =~ s,[^.%\w],,g; # Remove all characters not being ., % and \w ...
     $k =~ s/\./'}{'/og;
     $k = '{\'' . $k . '\'}';
 
@@ -1744,6 +1775,9 @@ sub replace_mac ($$) {
 select_variant ($) {
 
 Remove all lines not matching the selected variant. Variant defaults to <S default>.
+if ::variants is not defined, this row is always selected. If a row is marked as default,
+is will be selected only if no variant is choosen.
+Matching is done case insensitive!
 
 =cut
 
@@ -1757,10 +1791,11 @@ sub select_variant ($) {
     for my $i ( 0..$#$r_data ) {
 	if ( exists( $r_data->[$i]{'::variants'} ) ) {
 	    my $var = $r_data->[$i]{'::variants'};	    
-	    if ( defined( $var ) and $var !~ m/^\s*$/o and $var !~ m/^default/io ) {
-		$var =~ s/[ \t]+/|/g;
+	    # if ( defined( $var ) and $var !~ m/^\s*$/o and $var !~ m/^default/io ) {
+	    if ( defined( $var ) and $var !~ m/^\s*$/o ) {
+		$var =~ s/[ \t,]+/|/g; # Convert into Perl RE (Var1|Var2|Var3)
 		$var = "(" . $var . ")";
-		if ( $EH{'variant'} !~ m/$var/ ) {
+		if ( $EH{'variant'} !~ m/^$var$/i ) {
 		    $r_data->[$i]{'::ign'} = "# Variant not selected!"; # Mark for deletion ...
 		    # delete( $r_data->[$i] ); ### XXXXX remove from array
 		}
@@ -2398,9 +2433,9 @@ sub inout2array ($;$) {
 	if ( $i->{'inst'} =~
 	    m,^\s*(__CONST__|%CONST%),o ) {
 	    $s .= $i->{'port'} . ", %IOCR%";
-	} elsif ( defined $i->{'sig_t'} ) {
+	} elsif ( defined $i->{'sig_t'} and $i->{'sig_t'} ne '' ) {
 	# inst/port($port_f:$port_t) = ($sig_f:$sig_t)
-	    if ( defined $i->{'port_t'} ) {
+	    if ( defined $i->{'port_t'} and $i->{'port_t'} ne '' ) {
 		$s .= $i->{'inst'} . "/" . $i->{'port'} . "(" .
 			$i->{'port_f'} . ":" . $i->{'port_t'} . ")=(" .
 			$i->{'sig_f'} . ":" . $i->{'sig_t'} . "), %IOCR%";
@@ -2410,7 +2445,7 @@ sub inout2array ($;$) {
 			$i->{'sig_f'} . ":" . $i->{'sig_t'} . "), %IOCR%";
 	    }
 	} else {
-	    if ( defined $i->{'port_t'} ) {
+	    if ( defined $i->{'port_t'} and $i->{'port_t'} ne '' ) {
 		$s .= $i->{'inst'} . "/" . $i->{'port'} . "(" .
 			$i->{'port_f'} . ":" . $i->{'port_t'} . # ")=(" .
 			# $i->{'sig_f'} . ":" . $i->{'sig_t'} .
@@ -2427,6 +2462,10 @@ sub inout2array ($;$) {
 	}
     }
 
+    if ( ( $s =~ m,\(:,o ) or ( $s =~ m,\(:,o ) ) {
+	logwarn( "WARNING: inout2array bad branch (: ! File bug report!" );
+    }
+ 
     $s =~ s/,\s*%IOCR%\s*$//o;
     # convert macros (parse_mac already done )!!!
     $s =~ s,%IOCR%,$EH{'macro'}{'%IOCR%'},g;
