@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.30 $                                         |
+# | Revision:   $Revision: 1.31 $                                         |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/11/27 13:18:40 $                              |
+# | Date:       $Date: 2003/12/04 14:56:31 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.30 2003/11/27 13:18:40 abauer Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.31 2003/12/04 14:56:31 abauer Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.31  2003/12/04 14:56:31  abauer
+# | corrected cvs problems
+# |
 # | Revision 1.30  2003/11/27 13:18:40  abauer
 # | *** empty log message ***
 # |
@@ -220,11 +223,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.30 2003/11/27 13:18:40 abauer Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.31 2003/12/04 14:56:31 abauer Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.30 $';
+my $thisrevision   =      '$Revision: 1.31 $';
 
-# | Revision:   $Revision: 1.30 $
+# | Revision:   $Revision: 1.31 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1617,10 +1620,10 @@ sub mix_store_db ($$$) {
             write_outfile( $dumpfile, "CONN", $arc );
             write_outfile( $dumpfile, "HIER", $arh );
         }
-       if($EH{'intermediate'}{'strip'}) {
-           clean_temp_sheets($EH{'out'});
-       }
-#        close_open_workbooks(); # Close everything we opened
+        if($EH{'intermediate'}{'strip'}) {
+	    clean_temp_sheets($EH{'out'});
+	}
+	close_open_workbooks(); # Close everything we opened
     } else {
         if ( $type ne "internal" ) {
             $type="intermediate";

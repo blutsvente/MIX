@@ -2,26 +2,26 @@
 #
 # +-----------------------------------------------------------------------+
 # |                                                                       |
-# |   Copyright Micronas GmbH, Inc. 2002.                        |
-# |     All Rights Reserved.                     |
+# |   Copyright Micronas GmbH, Inc. 2002.                                 |
+# |     All Rights Reserved.                                              |
 # |                                                                       |
 # |                                                                       |
-# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH |
+# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH          |
 # | The copyright notice above does not evidence any actual or intended   |
 # | publication of such source code.                                      |
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
-# | Project:    Micronas - MIX / Writer                                    |
-# | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.34 $                                             |
-# | Author:     $Author: abauer $                                  |
-# | Date:       $Date: 2003/11/27 09:08:56 $                                   |
+# | Project:    Micronas - MIX / Writer                                   |
+# | Modules:    $RCSfile: MixWriter.pm,v $                                |
+# | Revision:   $Revision: 1.35 $                                         |
+# | Author:     $Author: abauer $                                         |
+# | Date:       $Date: 2003/12/04 14:56:32 $                              |
 # |                                                                       |
-# | Copyright Micronas GmbH, 2003                                |
+# | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.34 2003/11/27 09:08:56 abauer Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.35 2003/12/04 14:56:32 abauer Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.35  2003/12/04 14:56:32  abauer
+# | corrected cvs problems
+# |
 # | Revision 1.34  2003/11/27 09:08:56  abauer
 # | *** empty log message ***
 # |
@@ -203,9 +206,9 @@ sub mix_wr_unsplice_port ($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.34 2003/11/27 09:08:56 abauer Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.35 2003/12/04 14:56:32 abauer Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.34 $';
+my $thisrevision   =      '$Revision: 1.35 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

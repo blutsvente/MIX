@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / IOParser
 # | Modules:    $RCSfile: MixIOParser.pm,v $ 
-# | Revision:   $Revision: 1.11 $
-# | Author:     $Author: wig $
-# | Date:       $Date: 2003/08/13 09:09:20 $
+# | Revision:   $Revision: 1.12 $
+# | Author:     $Author: abauer $
+# | Date:       $Date: 2003/12/04 14:56:31 $
 # | 
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.11 2003/08/13 09:09:20 wig Exp $
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.12 2003/12/04 14:56:31 abauer Exp $
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -36,6 +36,9 @@
 # |
 # | Changes:
 # | $Log: MixIOParser.pm,v $
+# | Revision 1.12  2003/12/04 14:56:31  abauer
+# | corrected cvs problems
+# |
 # | Revision 1.11  2003/08/13 09:09:20  wig
 # | Minor bug fixes
 # | Added -given mode for iocell.select (MDE-D)
@@ -73,19 +76,16 @@
 # |
 # +-----------------------------------------------------------------------+
 
-package  Micronas::MixIOParser;
+package Micronas::MixIOParser;
 
 require Exporter;
 
   @ISA = qw(Exporter);
-  @EXPORT = qw(
-      parse_io_init
-      );            # symbols to export by default
-  @EXPORT_OK = qw(
-    );         # symbols to export on request
+  @EXPORT = qw( parse_io_init);            # symbols to export by default
+  @EXPORT_OK = qw();         # symbols to export on request
   # %EXPORT_TAGS = tag => [...];  
 
-our $VERSION = '0.01'; #TODO: fill that from RCS ...
+our $VERSION = '0.1'; #TODO: fill that from RCS ...
 
 use strict;
 # use vars qw();
@@ -124,9 +124,9 @@ sub _mix_iop_init();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixIOParser.pm,v 1.11 2003/08/13 09:09:20 wig Exp $';
+my $thisid		=	'$Id: MixIOParser.pm,v 1.12 2003/12/04 14:56:31 abauer Exp $';
 my $thisrcsfile	=	'$RCSfile: MixIOParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.11 $';
+my $thisrevision   =      '$Revision: 1.12 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -311,6 +311,7 @@ sub mix_iop_iocell ($$) {
                 $s{'::comment'} = "__IO_MuxSel ";
                 
                 #TODO: Will we need more information??
+
                 add_conn( %s );
             }
         }

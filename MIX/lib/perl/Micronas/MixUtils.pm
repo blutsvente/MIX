@@ -2,35 +2,37 @@
 #
 # +-----------------------------------------------------------------------+
 # |                                                                       |
-# |   Copyright Micronas GmbH, Inc. 2002.                        |
-# |     All Rights Reserved.                     |
+# |   Copyright Micronas GmbH, Inc. 2002.                                 |
+# |     All Rights Reserved.                                              |
 # |                                                                       |
 # |                                                                       |
-# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH |
+# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH          |
 # | The copyright notice above does not evidence any actual or intended   |
 # | publication of such source code.                                      |
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
-# | Project:    Micronas - MIX                                    |
-# | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.35 $                                             |
-# | Author:     $Author: abauer $                                  |
-# | Date:       $Date: 2003/11/27 13:18:40 $                                   |
+# | Project:    Micronas - MIX                                            |
+# | Modules:    $RCSfile: MixUtils.pm,v $                                 |
+# | Revision:   $Revision: 1.36 $                                         |
+# | Author:     $Author: abauer $                                         |
+# | Date:       $Date: 2003/12/04 14:56:32 $                              |
 # |                                                                       |
-# | Copyright Micronas GmbH, 2002                                |
+# | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.35 2003/11/27 13:18:40 abauer Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.36 2003/12/04 14:56:32 abauer Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
 #
-
 # +-----------------------------------------------------------------------+
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.36  2003/12/04 14:56:32  abauer
+# | corrected cvs problems
+# |
 # | Revision 1.35  2003/11/27 13:18:40  abauer
 # | *** empty log message ***
 # |
@@ -234,11 +236,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.35 2003/11/27 13:18:40 abauer Exp $';
-my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.35 $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.36 2003/12/04 14:56:32 abauer Exp $';
+my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
+my $thisrevision        =      '$Revision: 1.36 $';
 
-# Revision:   $Revision: 1.35 $   
+# Revision:   $Revision: 1.36 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -837,21 +839,21 @@ sub mix_init () {
 					# like TEXT_FOO_BAR (X10), if TEXT_FOO_BAR appears several times
 					#TODO: Implement for hier
 	      'workaround' => {
-		    'verilog' => 'dummyopen', # dummyopen := create a dummy signal for open port splices 
-	      },
-	    },
-	'ext' =>	{   'vhdl' => 'vhd',
-			    'verilog' => 'v' ,
-			    'intermediate' => 'mixed', # not a real extension!
-			    'internal' => 'pld',
-			    'delta' => '.diff',	# delta mode
+		  'verilog' => 'dummyopen', # dummyopen := create a dummy signal for open port splices 
+		},
+	  },
+	'ext' =>      {   'vhdl' => 'vhd',
+			  'verilog' => 'v' ,
+			  'intermediate' => 'mixed', # not a real extension!
+			  'internal' => 'pld',
+			  'delta' => '.diff',	# delta mode
 	},
 	'comment' => {	'vhdl' => '--',
-				'verilog' => '//',
-				'intermediate' => '#',
-				'internal' => '#',
-				'delta' => '#',
-				'default' => '#',
+			'verilog' => '//',
+			'intermediate' => '#',
+			'internal' => '#',
+			'delta' => '#',
+			'default' => '#',
 	},
 	# 'warnings' => 'load,drivers',	# Warn about missing loads/drivers
 	'warnings' => '',
@@ -1025,10 +1027,10 @@ sub mix_init () {
 	    '::ign' 		=> [ qw(	0	0	1	%EMPTY% 	1 ) ],
 	    '::gen'		=> [ qw(	0	0	1	%EMPTY% 	2 ) ],
 	    '::bundle'	        => [ qw(	1	0	1	WARNING_NOT_SET	3 ) ],
-	    '::class'		=> [ qw(	1	0	1	WARNING_NOT_SET	4 )],
-	    '::clock'		=> [ qw(	1	0	1	WARNING_NOT_SET	5 )],
-	    '::type'		=> [ qw(	1	0	1	%SIGNAL%	6 )],
-	    '::high'		=> [ qw(	1	0	0	%EMPTY% 	7 )],
+	    '::class'		=> [ qw(	1	0	1	WARNING_NOT_SET	4 ) ],
+	    '::clock'		=> [ qw(	1	0	1	WARNING_NOT_SET	5 ) ],
+	    '::type'		=> [ qw(	1	0	1	%SIGNAL%	6 ) ],
+	    '::high'		=> [ qw(	1	0	0	%EMPTY% 	7 ) ],
 	    '::low'		=> [ qw(	1	0	0	%EMPTY% 	8 )],
 	    '::mode'		=> [ qw(	1	0	1	%DEFAULT_MODE%	9 )],
 	    '::name'		=> [ qw(	0	0	1	ERROR_NO_NAME	10 )],
@@ -1132,12 +1134,20 @@ sub mix_init () {
 	    '::width'		=> [ qw(	0	0	1	16         3 )],
 	    '::dev'             => [ qw(        0       0       1       %EMPTY%     4)],
 	    '::sub'             => [ qw(        0       0       1       %EMPTY%     5)],
-	    '::interface'       => [ qw(        0       0       1       %EMPTY%     6)],
+	    '::interface'       => [ qw(        0       0       1       %EMPTY%     6)],	  
 	    '::block'           => [ qw(        0       0       1       %EMPTY%     7)],
-	    '::b'		=> [ qw(	0	1	1	%EMPTY%	   5 )],
-	    '::range'	        => [ qw(	1	0	0	%EMPTY%	   8 )],
-	    '::name'		=> [ qw(	0	1	0	%EMPTY%	   9 )],
-	    '::comment'	        => [ qw(	1	0	2	%EMPTY%	   10 )],
+	    '::dir'             => [ qw(        0       0       1       RW          8)],
+	    '::spec'            => [ qw(        0       0       0       NTO         9)],
+	    '::clock'           => [ qw(        0       0       1       %EMPTY%     10)],
+	    '::reset'           => [ qw(        0       0       0       %EMPTY%     11)],
+	    '::busy'            => [ qw(        0       0       0       %EMPTY%     12)],
+	   # '::readDone'        => [ qw(        0       0       0       %EMPTY%     13)],
+	    '::b'		=> [ qw(	0	1	1	%EMPTY%	    14 )],
+	    '::init'            => [ qw(        0       0       0       0           15)],
+	    '::rec'             => [ qw(        0       0       0       0           16)],
+	   # '::range'	         => [ qw(	1	0	0	%EMPTY%	   17 )],
+	   # '::name'		 => [ qw(	0	1	0	%EMPTY%	   18 )],
+	    '::comment'	        => [ qw(	1	0	2	%EMPTY%	   17 )],
 	    'nr'		=> 12,  # Number of next field to print
 	},
     },
@@ -1179,7 +1189,7 @@ sub mix_init () {
 	    "%EMPTY%"	=> "",
 	    "%NULL%"	=> "0",
 	    "%TAB%"	=> "\t",
-	    "%S%"		=> "\t", # Output field ident ....
+	    "%S%"	=> "\t", # Output field ident ....
 	    "%IOCR%"	=> " ",
 	    "%SIGNAL%"	=> "std_ulogic",
 	    "%BUS_TYPE%"	=> "std_ulogic_vector",
@@ -1273,6 +1283,7 @@ sub mix_init () {
            'sheetsep' => ':=:=:=>', # sheet seperator
            'quoting' => '"', # quoting character
        },
+       'out' => '',
     },
 );
 
@@ -1398,6 +1409,7 @@ sub mix_list_conf () {
 # Prepare configuration data to be dumped to excel format
 #
 sub mix_list_econf ($) {
+
     my $format = shift || "xls";
 
     my @configs = ();
@@ -1413,6 +1425,7 @@ sub mix_list_econf ($) {
 # (recursive) print of configuration options values
 #
 sub _mix_list_conf ($$;$) {
+
     my $name = shift;
     my $ref = shift;
     my $out = shift || "STDOUT";
@@ -1462,6 +1475,7 @@ Order is built-in, mix.cfg, CONF sheet and command line has highest priority.
 =cut
 
 sub mix_overload_conf ($) {
+
     my $confs = shift;
 
     my $e = "";
@@ -1493,6 +1507,7 @@ sub mix_overload_conf ($) {
 
 # Similiar to _mix_overload_conf!!
 sub _mix_apply_conf ($$$) {
+
     my $k = shift; # Key
     my $v = shift; # Value
     my $s = shift; # Source
@@ -1541,6 +1556,7 @@ regular expression.match_op shoud match the sheet names of the design descriptio
 =cut
 
 sub mix_overload_sheet ($) {
+
     my $sheets = shift;
 
     my $e = "";
@@ -1585,12 +1601,17 @@ The first argument is the file to open, the second contains flags like:
     COMB (combine mode)
 
 =cut
+
+####
+# extra block starts here
 {
 # Block around the mix_utils_functions .... to keep ocont, ncont and this_delta intact ...
+
 my @ocont = (); # Keep (filtered) contents of original file
 my @ncont = (); # Keep (filtered) contents of new file to feed into diff
 my %this_delta = (); # Remember for which files we could delta ....
 my %bfh = ();		# Keep backup file handle ....
+
 
 sub mix_utils_open ($;$){
     my $file= shift;
@@ -1598,7 +1619,7 @@ sub mix_utils_open ($;$){
 
     #
     # if output.path is set, write to this path (unless file name is absolute path)
-    #wig20030703
+    # wig20030703
     #
     if ( $EH{'output'}{'path'} ne "." ) {
 	unless( is_absolute_path( $file ) ) {
@@ -1855,6 +1876,7 @@ $c ------------- CHANGES START HERE ------------- --
 }
 
 } # End of mix_util_FILE block ....
+####
 
 #
 # Do some text replacements
