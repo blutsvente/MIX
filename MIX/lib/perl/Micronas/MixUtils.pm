@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.57 $                                         |
+# | Revision:   $Revision: 1.58 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/08/18 10:45:44 $                              |
+# | Date:       $Date: 2004/11/10 09:47:00 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.57 2004/08/18 10:45:44 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.58 2004/11/10 09:47:00 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.58  2004/11/10 09:47:00  wig
+# | added verilog includes
+# |
 # | Revision 1.57  2004/08/18 10:45:44  wig
 # | constant handling improved
 # |
@@ -286,11 +289,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.57 2004/08/18 10:45:44 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.58 2004/11/10 09:47:00 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.57 $';
+my $thisrevision        =      '$Revision: 1.58 $';
 
-# Revision:   $Revision: 1.57 $   
+# Revision:   $Revision: 1.58 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1345,7 +1348,10 @@ sub mix_init () {
 	    "%VHDL_USE_CONF%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
 	    "%VERILOG_TIMESCALE%"	=>	"`timescale 1ns / 1ps",
 	    "%VERILOG_USE_ARCH%"	=>	'%EMPTY%',
-	    "%VERILOG_DEFINES%"	=>	'	// No `defines in this module', # Used internally
+	    "%VERILOG_DEFINES%"	=>	'	// No `defines in this module',  # Want to define s.th. globally?
+            "%INT_VERILOG_DEFINES%"     =>    '', # Used internally
+            "%INCLUDE%"     =>  '`include',   # Used internally for verilog include files in ::use!
+            "%DEFINE%"      =>  '`define',     # Used internally for verilog defines in ::use!
             "%USEASMODULENAME%"  =>    '',  # If set in ::config column and obj. is Verilog -> module name
             "%UAMN%"     => '',                     # dito. but shorter to write !! Internal use only !!
 	    "%OPEN%"	=> "open",			#open signal

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.46 $                                         |
+# | Revision:   $Revision: 1.47 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/08/18 10:45:45 $                              |
+# | Date:       $Date: 2004/11/10 09:46:58 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.46 2004/08/18 10:45:45 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.47 2004/11/10 09:46:58 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.47  2004/11/10 09:46:58  wig
+# | added verilog includes
+# |
 # | Revision 1.46  2004/08/18 10:45:45  wig
 # | constant handling improved
 # |
@@ -244,9 +247,9 @@ sub sig_typecast($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.46 2004/08/18 10:45:45 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.47 2004/11/10 09:46:58 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.46 $';
+my $thisrevision   =      '$Revision: 1.47 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -450,6 +453,7 @@ $EH{'template'}{'verilog'}{'arch'}{'body'} = <<'EOD';
 //
 
 %VERILOG_DEFINES%
+%INT_VERILOG_DEFINES%
 
 module %ENTYNAME%
 %VERILOG_INTF%
@@ -2892,8 +2896,9 @@ sub _write_architecture ($$$$) {
     my $tpg = $EH{'template'}{$lang}{'arch'}{'body'};
 
     $macros{'%VHDL_USE%'} = use_lib( "arch", $instance );
-    #TODO_VERI: $macros{'%VERI_USE%'} = use_lib( "arch", $instance );
-
+    #!wig20041110: add includes and defines from ::use column
+    $macros{'%INT_VERILOG_DEFINES%'} = use_lib( "veri", $instance );
+    
     my $et = replace_mac( $EH{'template'}{$lang}{'arch'}{'head'}, \%macros);    
 
     my %seenthis = ();
@@ -3351,7 +3356,7 @@ sub _write_architecture ($$$$) {
 
        #Workaround:  magma and configuration as module names: wig20040322
         $veridefs .= $EH{'output'}{'generate'}{'workaround'}{'_magma_uamn_'};
-        $macros{'%VERILOG_DEFINES%'} = $veridefs if ( $veridefs );
+        $macros{'%INT_VERILOG_DEFINES%'} .= $veridefs if ( $veridefs );
 
         $EH{'output'}{'generate'}{'workaround'}{'_magma_uamn_'} = ""; # Reset the define storage
         
@@ -4375,7 +4380,8 @@ sub _write_configuration ($$$$) {
 
 use_lib ($$)
 
-provide project specific use commands
+provide project specific use commands for VHDL
+provide module specific defines and includes for verilog
 
 =cut
 
@@ -4398,30 +4404,42 @@ sub use_lib ($$) {
     # Now read all ::use fields and combine ...
     my $all = "";
     my %libs = ();
+    my @veri = ();
     foreach my $k ( @keys ) {
         next if ( $k =~ m,%\w+%, );
         next if ( $k eq "W_NO_ENTITY" );
         next if ( $k eq "W_NO_PARENT");
 
         if ( exists( $hierdb{$k}{'::use'} ) and $hierdb{$k}{'::use'} ) {
-            my @u = split( /[,\s]+/, $hierdb{$k}{'::use'} );
-            foreach my $u ( @u ) {
-                # libs may be seperated by , and/or \s
-                # $u := SEL:library.component ...
-                next if ( $u =~ m,(%NCD%|%NO_COMPONENT_DECLARATION|NO_COMP|__NOCOMPDEC__),o ); 
-                my $sel = lc( $EH{'output'}{'generate'}{'use'} );
-                my $pack = '';
-                my $lib = '';
-                if ( $u =~ m,(\S+):(\S+),o ) {
-                    $sel = lc($1);
-                    ( $pack = $2 ) =~s,\s+,,og;
-                } else {
-                    ( $pack = $u ) =~ s,\s+,,og;
-                }
-                ( $lib = $pack ) =~ s/\..*//;
-                if ( $sel eq 'all' or $sel eq $type ) {
-                    if ( $lib ) {
-                        $libs{$lib}{$pack}  = 1;
+            # Is this verilog?
+            my @u = ();
+            if ( $type eq "veri" ) {
+                # Split by newline's and , and take literally
+                push( @veri, split( /[,\n]/, $hierdb{$k}{'::use'} ) );
+                
+            } else {
+                # VHDL:
+                @u = split( /[,\s]+/, $hierdb{$k}{'::use'} ); # Split by space and ,
+
+                foreach my $u ( @u ) {
+                    # libs may be seperated by , and/or \s
+                    # $u := SEL:library.component ...
+                    next if ( $u =~ m,(%NCD%|%NO_COMPONENT_DECLARATION|NO_COMP|__NOCOMPDEC__),o );
+                    # next if ( $u =~ m,(%DEFINE%|%INCLUDE%),o );
+                    my $sel = lc( $EH{'output'}{'generate'}{'use'} );
+                    my $pack = '';
+                    my $lib = '';
+                    if ( $u =~ m,(\S+):(\S+),o ) {
+                        $sel = lc($1);
+                        ( $pack = $2 ) =~s,\s+,,og;
+                    } else {
+                        ( $pack = $u ) =~ s,\s+,,og;
+                    }
+                    ( $lib = $pack ) =~ s/\..*//;
+                    if ( $sel eq 'all' or $sel eq $type ) {
+                        if ( $lib ) {
+                            $libs{$lib}{$pack}  = 1;
+                        }
                     }
                 }
             }
@@ -4430,7 +4448,7 @@ sub use_lib ($$) {
     #
     # Create:   library foo;
     #               use foo.bar.all;
-    #
+    # VHDL only (libs hash gets values only in VHDL)
     for my $l ( sort( keys( %libs ) ) ) {
         $all .= "library $l;\n";
         for my $p ( sort( keys( %{$libs{$l}} ) ) ) {
@@ -4440,10 +4458,17 @@ sub use_lib ($$) {
 
     if ( $all ) {
         $all = "-- Generated use statements\n" . $all;
-    } else {
+    } elsif ( $type ne "veri" ) {
         $all = $EH{'macro'}{'%VHDL_NOPROJ%'} . "/" . $type . "\n";
     }
 
+    # Verilog: do a simple concatenate!
+    #TODO: replace comment by generic format
+    if ( scalar( @veri ) ) {
+        $all = "// Generated include statements\n" .
+            join( "\n", @veri ) . "\n";
+    }
+    
     return $all;
 
 }

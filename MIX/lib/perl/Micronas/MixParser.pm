@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.44 $                                         |
+# | Revision:   $Revision: 1.45 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/08/09 15:48:16 $                              |
+# | Date:       $Date: 2004/11/10 09:47:01 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.44 2004/08/09 15:48:16 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.45 2004/11/10 09:47:01 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.45  2004/11/10 09:47:01  wig
+# | added verilog includes
+# |
 # | Revision 1.44  2004/08/09 15:48:16  wig
 # | another variant of typecasting: ignore std_(u)logic!
 # |
@@ -267,11 +270,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.44 2004/08/09 15:48:16 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.45 2004/11/10 09:47:01 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.44 $';
+my $thisrevision   =      '$Revision: 1.45 $';
 
-# | Revision:   $Revision: 1.44 $
+# | Revision:   $Revision: 1.45 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -3924,6 +3927,7 @@ sub _extend_inout ($$$) {
 # strip away duplicate entries in ::in and ::out
 # strip away empty entries
 # force lowercasing if configured
+#wig20040818: remove empty port maps
 #TODO: combine entries (opposite of split busses)
 #
 sub _scan_inout ($) {
@@ -3934,6 +3938,8 @@ sub _scan_inout ($) {
         my @left = ();
 
         for my $iii ( 0..$#{$rsa} ) {
+            # Remove empty ::in/::out ...
+            if ( scalar( keys %{$rsa->[$iii]} ) > 0 ) { 
                 unless( exists( $rsa->[$iii]{'rvalue'} ) ) {
                     if ( exists( $rsa->[$iii]{'inst'} ) ) {
                         $rsa->[$iii]{'inst'} = mix_check_case( 'inst', $rsa->[$iii]{'inst'} );
@@ -3947,6 +3953,7 @@ sub _scan_inout ($) {
                     push( @left, $rsa->[$iii] );
                     $seen{$this} = 1;
                 }
+            }
         }
         @$rsa = @left;
 }
