@@ -21,12 +21,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id              : $Id: mix_0.pl,v 1.6 2003/03/13 14:05:04 wig Exp $
+# | Id              : $Id: mix_0.pl,v 1.7 2003/03/14 14:51:58 wig Exp $
 # | Name         : $Name:  $
 # | Description  :$Description:$
 # | Parameters  : -
 # | Version       : $Version: $
-# | Mod.Date    : $Date: 2003/03/13 14:05:04 $
+# | Mod.Date    : $Date: 2003/03/14 14:51:58 $
 # | Author        : $Author: wig $
 # | Phone         : $Phone: $
 # | Fax             : $Fax: $
@@ -41,6 +41,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |
 # | Changes:
 # | $Log: mix_0.pl,v $
+# | Revision 1.7  2003/03/14 14:51:58  wig
+# | Added -delta mode for backend.
+# |
 # | Revision 1.6  2003/03/13 14:05:04  wig
 # | Releasing major reworked version
 # | Now handles bus splices much better
@@ -177,6 +180,8 @@ mix_init();               # Presets ....
 # -conf key.key.key=value Overwrite $EH{key}{key}{key} with value
 # -listconf                       Print out all available/predefined configurations options
 # -sheet SHEET=MATCH     SHEET can be one of "hier", "conn", "vi2c"
+# -delta                          Enable delta mode: Print diffs instead of full files.
+#                                   Maybe we can set a return value of 1 if no changes occured!
 #
 
 
@@ -192,6 +197,7 @@ mix_getopt_header(qw(
     conf=s@
     sheet=s@
     listconf
+    delta!
     ));
 
 if ( $#ARGV < 0 ) { # Need  at least one sheet!!

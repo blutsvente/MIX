@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.11 $                                             |
+# | Revision:   $Revision: 1.12 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/03/13 14:05:19 $                                   |
+# | Date:       $Date: 2003/03/14 14:52:11 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.11 2003/03/13 14:05:19 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.12 2003/03/14 14:52:11 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.12  2003/03/14 14:52:11  wig
+# | Added -delta mode for backend.
+# |
 # | Revision 1.11  2003/03/13 14:05:19  wig
 # | Releasing major reworked version
 # | Now handles bus splices much better
@@ -104,19 +107,21 @@ use lib "$main::pgmpath/lib/perl";
 use lib "$main::dir/lib/perl";
 use lib "$main::dir/../lib/perl";
 
-# use lib 'h:\work\x2v\lib\perl'; #TODO Rewrite that !!!!
 use Log::Agent;
 use Log::Agent::Priorities qw(:LEVELS);
 use Tree::DAG_Node; # tree base class
 
-use Micronas::MixUtils qw( mix_store db2array write_excel %EH );
+use Micronas::MixUtils
+    qw(   mix_store db2array write_excel
+            mix_utils_open mix_utils_print mix_utils_printf mix_utils_close
+            replace_mac
+            %EH );
 use Micronas::MixParser qw( %hierdb %conndb );
 
 #
 # Prototypes
 #
 sub _write_entities ($$$);
-sub replace_mac ($$);
 sub write_architecture ();
 sub strip_empty ($);
 sub port_map ($$$$$);
@@ -132,7 +137,7 @@ sub gen_concur_port($$$$$$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.11 2003/03/13 14:05:19 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.12 2003/03/14 14:52:11 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
 
 $thisid =~ s,\$,,go;
@@ -811,13 +816,14 @@ sub _write_entities ($$$) {
     # Do not create an output file if entitiy is leaf and "noleaf" set
     #
     my $write_flag = 1;
+    my $fh = undef;
     if ( $ehname ne "__COMMON__" and
             $EH{'output'}{'generate'}{'enty'} =~ m,noleaf,io and
             $entities{$ehname}{'__LEAF__'} == 0 ) {
             $write_flag = 0;
     }
     if ( $write_flag ) {
-        unless ( open( ENTY, "> $file" ) ) {
+        unless ( $fh = mix_utils_open( $file ) ) {
             logwarn( "Cannot open file $file to write entity declarations: $!" );
             return;
         }
@@ -948,30 +954,13 @@ sub _write_entities ($$$) {
 
     $et = strip_empty( $et );
     
-    print( ENTY $et ) if ( $write_flag );
+    mix_utils_print( $fh, $et ) if ( $write_flag );
 
     if ( $write_flag ) {
-        close( ENTY ) or
-	logwarn( "Cannot close file $file: $!" );
+        mix_utils_close( $fh, $file );
     }
 }
 
-sub replace_mac ($$) {
-    my $text = shift;
-    my $rmac = shift;
-
-    if ( keys( %$rmac ) > 0 ) { # Do nothing if there are no keys defined ...
-        my $mkeys = "(" . join( '|', keys( %$rmac ) ) . ")";
-    
-        $text =~ s/$mkeys/$rmac->{$1}/mg;
-    } else {
-        # Strange, why would one call a replace functions without replacement
-        # keys ?
-        logtrc( "INFO", "Called replace mac without macros for string " .
-                substr( $text, 0, 15 ) . " ..." );
-    }
-    return $text;
-}
 
 #                         NAME => PORT => type,mode,high,low(,generic-value)
 #         'entities' => {
@@ -1714,16 +1703,16 @@ sub _write_architecture ($$$$) {
     #
     # Write here
     #
-    unless( open( ARCH, "> $filename" ) ) {
+    my $fh = undef;
+    unless( $fh = mix_utils_open( "$filename" ) ) {
         logwarn( "Cannot open file $filename to write architecture declarations: $!" );
         return;
     }
 
-    
-    print( ARCH $et );
+    mix_utils_print( $fh, $et );
 
-    close( ARCH ) or
-	logwarn( "Cannot close file $filename: $!" );
+    mix_utils_close( $fh, $filename );
+
 }
 
 #
@@ -2142,8 +2131,8 @@ sub _write_configuration ($$$$) {
     if ( -r $filename ) {
 	logtrc(INFO, "Configuration definition file $filename will be overwritten!" );
     }
-    
-    unless( open( CONF, "> $filename" ) ) {
+    my $fh = undef;
+    unless( $fh = mix_utils_open( $filename ) ) {
         logwarn( "Cannot open file $filename to write configuration definitions: $!" );
         return;
     }
@@ -2226,10 +2215,9 @@ sub _write_configuration ($$$$) {
     $et .=  $EH{'template'}{'vhdl'}{'conf'}{'foot'};
     $et = replace_mac( $et, \%macros );
     
-    print( CONF $et );
+    mix_utils_print( $fh, $et );
 
-    close( CONF ) or
-	logwarn( "Cannot close file $filename: $!" );
+    mix_utils_close( $fh, $filename );
 }
 
 ####################################################################

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.10 $                                             |
+# | Revision:   $Revision: 1.11 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/03/13 14:05:19 $                                   |
+# | Date:       $Date: 2003/03/14 14:52:11 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.10 2003/03/13 14:05:19 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.11 2003/03/14 14:52:11 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.11  2003/03/14 14:52:11  wig
+# | Added -delta mode for backend.
+# |
 # | Revision 1.10  2003/03/13 14:05:19  wig
 # | Releasing major reworked version
 # | Now handles bus splices much better
@@ -90,6 +93,11 @@ require Exporter;
 	mix_init
 	mix_store
 	mix_load
+	mix_utils_open
+	mix_utils_print
+	mix_utils_printf
+	mix_utils_close
+	replace_mac
 	init_ole
 	open_input
 	db2array
@@ -104,8 +112,6 @@ require Exporter;
 our $VERSION = '0.01';
 
 use strict;
-use File::Basename;
-use Getopt::Long qw(GetOptions);
 
 # Caveat: relies on proper setting of base, pgmpath and dir in main program!
 use lib "$main::base/";
@@ -115,13 +121,18 @@ use lib "$main::pgmpath/lib/perl";
 use lib "$main::dir/lib/perl";
 use lib "$main::dir/../lib/perl";
 #TODO: Which "use lib path" if $0 was found in PATH?
-# use lib 'h:\work\x2v\lib\perl'; ##TODO: Rewrite that to a generic place ....
+
+use File::Basename;
+use IO::File;
+use Getopt::Long qw(GetOptions);
 
 use Cwd;
 use Log::Agent;
 use Log::Agent::Priorities qw(:LEVELS);
 
 use Storable;
+# use Text::Diff;  # Will be eval'ed down there if -delta option is given!
+#  use Win32::OLE; # etc.# Will be eval'd down there if excel comes into play
 
 #
 # Prototypes
@@ -130,6 +141,11 @@ sub select_variant ($);
 sub mix_list_conf ();
 sub _mix_list_conf ($$);
 sub _mix_apply_conf ($$$);
+sub mix_utils_open($);
+sub mix_utils_print($@);
+sub mix_utils_printf($@);
+sub mix_utils_close($$);
+sub replace_mac ($$);
 
 ##############################################################
 # Global variables
@@ -139,8 +155,7 @@ use vars qw(
     %OPTVAL %EH %MACVAL $ex
 );
 
-sub mix_getopt_header(@)
-{
+sub mix_getopt_header(@) {
     my $no_exit  = @_ && ($_[0] eq '-NO_EXIT') && shift;
     my @appopts  = @_;          # Application options
 
@@ -281,6 +296,20 @@ sub mix_getopt_header(@)
     #
     if ( $OPTVAL{'listconf'} ) {
 	mix_list_conf();
+    }
+
+    #
+    # -delta
+    # Enable delta mode (generate a diff instead of a full version
+    #
+    if ( exists( $OPTVAL{delta} ) and $OPTVAL{delta} ) {
+	# Eval use Text::Diff
+	if ( eval "use Text::Diff;" ) {
+	    logwarn( "ERROR: Cannot load Text::Diff module for -delta mode: $@" );
+	    exit(1);
+	}
+    } else {
+	$OPTVAL{delta} = 0;
     }
 
     # Print banner
@@ -576,9 +605,15 @@ $ex = undef; # Container for OLE server
 			    'verilog' => 'v' ,
 			    'intermediate' => 'mixed', # not a real extension!
 			    'internal' => 'pld',
+			    'delta' => '.diff',	# delta mode
 	    },
 	# 'warnings' => 'load,drivers',	# Warn about missing loads/drivers
-	'warnings' => ''
+	'warnings' => '',
+	'delta' => 'sort', # Controlling delta mode:
+				    # space: not consider whitespace
+				    # sort:   sort lines
+				    # comment: not remove all comments before compare
+				    # remove: remove empyt diff files
     },
     'internal' => {
 	'path' => ".",
@@ -761,9 +796,9 @@ $ex = undef; # Container for OLE server
     # Counters and generic messages
     "ERROR" => "__ERROR__",
     "WARN" => "__WARNING__",
-    "CONST_NR" => 0,
+    "CONST_NR" => 0,   # Some global counters
     "GENERIC_NR" => 0,
-
+    "DELTA_NR" => 0,
 );
 
 #
@@ -1131,6 +1166,192 @@ sub open_input (@) {
 }
 
 ####################################################################
+## mix_utils_open
+## Our interface for file output
+## Will return a file handle object
+####################################################################
+
+=head2
+
+mix_utils_open ($$) {
+    
+Open file for writing. If the "delta" mode is active, then a diff will be generated
+instead of a full file! 
+
+=cut
+{ # Block around the mix_utils_functions .... to keep ocont, ncont and this_delta intact ...
+my @ocont = (); # Keep (filtered) contents of original file
+my @ncont = (); # Keep (filtered) contents of new file to feed into diff
+my %this_delta = (); # Remember for which files we could delta ....
+
+sub mix_utils_open ($){
+    my $file= shift;
+
+    my $ofile = $file;
+    if ( $OPTVAL{'delta'} ) { # Delta mode!
+	if ( -r $file ) {
+	# read in file
+	    my $ofh = new IO::File;
+	    unless( $ofh->open($file) ) {
+		logwarn( "ERROR: Cannot open org $file in delta mode: $!" );
+		return undef;
+	    }
+	    @ocont = <$ofh>; #Slurp in file
+	    chomp( @ocont );
+	    map( { s/--.*//o; } @ocont ) if ( $EH{'output'}{'delta'} !~ m,comment,io );
+	    if ( $EH{'output'}{'delta'} !~ m,space,io ) {
+		map( { s/\s+/ /og; s/^\s*//og; } @ocont );
+		@ocont = grep( !/^$/,  @ocont );
+	    }
+	    ( @ocont = sort( @ocont ) ) if ( $EH{'output'}{'delta'} =~ m,sort,io );
+
+	    close( $ofh ) or logwarn( "ERROR: Cannot close org $file in delta mode: $!" );
+	    $ofile .= $EH{'output'}{'ext'}{'delta'}; # Attach a .diff to file name
+
+	    @ncont = (); # Reset new contents
+	} else {
+	    logwarn( "Info: Cannot run delta mode vs. $file. Will create like normal" );
+	    $this_delta{"$file"} = 0;
+	}
+    }
+
+    my $fh = new IO::File;
+    unless( $fh->open( "> $ofile") ) {
+	logwarn( "ERROR: Cannot open $ofile: $!" );
+	return undef;
+    }
+
+    # Remember if delta mode is active for this file ...
+    if ( $ofile ne $file ) {
+	$this_delta{"$fh"} = $file;
+    } else {
+	$this_delta{"$fh"} = 0;
+    }
+    
+    return $fh;
+}
+
+#
+# print into file handle or save for later diff
+#
+sub mix_utils_print ($@) {
+    my $fh = shift;
+    my @args = @_;
+
+    if ( $this_delta{$fh} ) {
+	push( @ncont, split( /\n/, sprintf( "%s", @args ) ) );
+    } else {
+	print( $fh @args );
+    }
+}
+
+#
+# printf into file handle or save for later diff
+#
+sub mix_utils_printf ($@) {
+    my $fh = shift;
+    my @args = @_;
+
+    if ( $this_delta{"$fh"} ) {
+	push( @ncont, split( /\n/, sprintf( @args ) ) );
+    } else {
+	printf( $fh @args );
+    }
+}
+
+#
+# Close that file-handle
+# If in delta mode, run the diff and print before closing!
+#
+sub mix_utils_close ($$) {
+    my $fh = shift;
+    my $file = shift;
+
+    my $close_flag = 1;
+    if ( $this_delta{"$fh"} ) {
+    # Sort/map new content and compare .... print out to $fh
+	map( { s/--.*//o; } @ncont ) if ( $EH{'output'}{'delta'} !~ m,comment,io );
+	if ( $EH{'output'}{'delta'} !~ m,space,io ) {
+	    map( { s/\s+/ /og; s/^\s*//og; } @ncont );
+	    @ncont = grep( !/^$/,  @ncont );
+	}
+	@ncont = sort( @ncont ) if ( $EH{'output'}{'delta'} =~ m,sort,io );
+
+	# Print header to $fh ... (usual things like options, ....)
+	# TODO: Add that header to header definitions
+my $head =
+"-- ------------- delta mode for file $file ------------- --
+--
+-- Generated
+--  by:  %USER%
+--  on:  %DATE%
+--  cmd: %ARGV%
+--  delta mode (comment/space/sort/remove): $EH{'output'}{'delta'}
+--
+-- ------------- CHANGES START HERE ------------- --
+";
+	print( $fh replace_mac( $head, $EH{'macro'} ));
+
+	# Diff it ...
+	my $diff = diff( \@ncont, \@ocont,
+	    { STYLE => "Table",
+	    # STYLE => "Context",
+	    FILENAME_A => 'NEW', #TODO: get new file name in here!
+	    FILENAME_B => "OLD $file",
+	    CONTEXT => 0,
+	    # OUTPUT     => $fh,
+	    }
+	);
+
+	# Was there a difference? If yes, report and sum up.
+	if ( $diff ) {
+	    print $fh $diff;
+	    logwarn("Info: file $file has changes!");
+	    $EH{'DELTA_NR'}++;
+	} else {
+	    logtrc( "INFO:4", "Info: unchanged file $file" );
+	    if ( $EH{'output'}{'delta'} =~ m,remove,io ) {
+		# Remove empty diff files (removal before closing ????)
+		if ( $close_flag and not $fh->close ) {
+		    logwarn( "Cannot close file $file: $!" );
+		}
+		$close_flag = 0;
+		unlink( "$file" . $EH{'output'}{'ext'}{'delta'} ) or
+		    logwarn( "WARNING: Cannot remove empty diff file $file" .
+			     $EH{'output'}{'ext'}{'delta'} . "!" );
+	    }
+	}
+    }
+
+    if ( $close_flag and not $fh->close ) {
+	logwarn( "Cannot close file $file: $!" );
+	return undef;
+    }
+    return;    
+}
+}
+
+#
+# Do some text replacements
+#
+sub replace_mac ($$) {
+    my $text = shift;
+    my $rmac = shift;
+
+    if ( keys( %$rmac ) > 0 ) { # Do nothing if there are no keys defined ...
+        my $mkeys = "(" . join( '|', keys( %$rmac ) ) . ")";
+    
+        $text =~ s/$mkeys/$rmac->{$1}/mg;
+    } else {
+        # Strange, why would one call a replace functions without replacement
+        # keys ?
+        logtrc( "INFO", "Called replace mac without macros for string " .
+                substr( $text, 0, 15 ) . " ..." );
+    }
+    return $text;
+}
+
+####################################################################
 ## select_variant
 ## remove all lines that have ::variant not matching the selected variant
 ####################################################################
@@ -1455,6 +1676,7 @@ sub open_excel($$$){
     }
     #TODO: Keep open until all opes are done (avoid reopening ...)
 
+    $ex->{DisplayAlerts}=1; # Back again ...
     return(@all);
 
 }
@@ -1755,13 +1977,15 @@ sub write_excel ($$$) {
     my $efile = path_excel( $file );
     my $basename = $file;
     $basename =~ s,.*[/\\],,; #TODO: check if Name is basename of filename, always??
-    
+
+    $ex->{DisplayAlerts}=0;   
     if ( -r $file ) {
 	logwarn("File $file already exists! Contents will be changed");
 
 	# If it exists, it could be open, too?
 	foreach my $bk ( in $ex->{Workbooks} ) {
-	    if ( $bk->{'Name'} eq $basename ) {
+	    if ( $bk->{'Name'} =~ m/^$basename$/i ) {
+		#20030313: Do not consider file name case!
 		$openflag = 1;
 		$bk->Activate;
 		$book = $bk;
@@ -1770,14 +1994,9 @@ sub write_excel ($$$) {
 		# Warning: Path might be different!
 	    }
 	}
-	
-	#my $Sheet = $Book->Worksheets("Sheet1");
-	#       $Sheet->Activate();       
 	unless ( $openflag ) {
 	    $book = $ex->Workbooks->Open($efile);
-	} # else {
-	#    $book = $ex->Workbook->Activate($efile);
-	# }
+	}
 	
 	#
     	# rotate old versions of $sheet to O$n_$sheet_O ...
@@ -1790,7 +2009,7 @@ sub write_excel ($$$) {
 	}
 	if ( $EH{'intermediate'}{'keep'} ) {
 
-	# Rotate sheets ...
+	    # Rotate sheets ...
 	    # Delete eldest one:
 	    my $max = $EH{'intermediate'}{'keep'};
 	    logwarn("Rotating $max old sheets of $sheet!");
@@ -1807,13 +2026,13 @@ sub write_excel ($$$) {
 	    }
 	    # Finally: Rename the latest/greatest ...
 	    if ( exists( $sh{ $sheet } ) ) {
-		    $s_previous = $sh{$sheet};
-		    $sh{$sheet}->{'Name'} =
+		$s_previous = $sh{$sheet};
+	        $sh{$sheet}->{'Name'} =
 			"O_1_" . $sheet;
 	    }
 	    # Copy previous format ....
 	    if ( $EH{'intermediate'}{'format'} =~ m,prev,o and
-		 defined( $s_previous ) ) {
+		defined( $s_previous ) ) {
 		unless( $s_previous->Copy($s_previous) ) { # Add in new sheet before
 		    logwarn("Cannot copy previous sheet! Create new one.");
 		} else {
@@ -1835,38 +2054,12 @@ sub write_excel ($$$) {
 		}
 	    }
 	}
-	#foreach my $sh ( in $book->{Worksheets} ) {
-	#    if ( $sh->{'Name'} eq ( $sheet . "_O" ) ) {
-	#	logwarn("Removing backup copies of sheet $sheet (_O)!");
-	#	$sh->Delete;
-	#	last;
-	#    }
-	#}
-	#TODO: delete this
-	#foreach my $sh ( in $book->{Worksheets} ) {
-	#    if ( $sh->{'Name'} eq $sheet ) {
-	#	logwarn("Replacing sheet $sheet contents by new!");
-	#	# $book->Worksheet->Delete($sheet);
-	#	# XXXX $book->Worksheet->Delete($sheet . "_O");
-	#	$sh->{'Name'} = $sheet . "_O";
-	#	last;
-	#    }
-	#}
     } else {
 	# Create new workbook
 	$book = $ex->Workbooks->Add();
 	$book->SaveAs($efile);
 	$newflag=1;
     }
-
-    #TODOs: Do not close file if it was already open!
-    #Print out available sheets:
-    #    foreach my $Sheet(in $Book->{Worksheets}){
-    #  print "\t" .$Sheet->{Name} ."\n";
-    #}
-    # my $Book = $Excel->Workbooks->Add();
-    #    $Book->SaveAs($excelfile); #Good habit when working with OLE, save often.
-    
 
 # my $Sheet = $Book->Worksheets(1);
 # my $Range = $Sheet->Range("A2:C7");
@@ -1882,18 +2075,7 @@ sub write_excel ($$$) {
     }
     
     $sheetr->Activate();
-# oder so:
-#   $ex->ActiveWorkbook->Sheets($sheet)->Activate;
-# oder so:
-#    $sheetr = $book->ActiveSheet;
-#
-#	$sheetr =$book->ActiveSheet;
     $sheetr->Unprotect;
-#        $sheetr->UsedRange->Delete;
-#    } else {
-#	    #TODO Add sheets ...
-#    }
-
 
     my $x=$#{$r_a->[0]}+1;
     my $y=$#{$r_a}+1;
@@ -1912,6 +2094,8 @@ sub write_excel ($$$) {
     $book->Save;
     $book->Close unless ( $openflag ); #TODO: only close if not open before ....
 
+    $ex->{DisplayAlerts}=1;
+    return;
 }
 
 # This module returns 1, as any good module does.

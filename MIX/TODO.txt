@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.5 2003/03/13 14:05:03 wig Exp $
+# $Id: TODO.txt,v 1.6 2003/03/14 14:51:58 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -18,6 +18,32 @@ Doku:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+- 20030313g/Bug: Improve Load/Driver evaluation
+   If port width ne signal width, count "bit"wise. Save instead of integers
+   into the AEPORT data structure. Add MIN,MAX,ALL fields.
+    Req: wig
+    Prio: medium
+
+- 20030313f/Feature: ExCEL chart diff (might be duplicate)
+    Create "DELTA" chart, stringfy input and run through "Text::diff"
+    Nameing: D_CONN, D_CONF, D_HIER, ...
+    
+    Req: wig
+    Prio: medium
+
+- 20030313e/Bug: Allow "constant" assignments on bus splices
+    Req: wig
+    Prio: medium
+    
+- 20030313d/Bug: Do bus/bit/port handling in signal assigments, not in port maps!
+    Req: pallas
+    Prio: High
+
+- 20030313c/Feature: Detect generated port in a row and combine (might be
+    done best on the intermediate data?)
+    Req: wig
+    Prio. Medium
+    
 - 20030313b/Bug: Cannot rename new spreadsheet to BLA-mixed.xls, if BLA-mixed
   already open in other directory. Check that and report usefull error message.
     Req: wig
