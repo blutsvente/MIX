@@ -14,20 +14,31 @@
 #
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
-# | Modules:    $RCSfile:  Mic::MixParser.pm                                     |
-# | Revision:   $Revision:                                             |
-# | Author:     $Author:                                  |
-# | Date:       $Date:                                   |
+# | Modules:    $RCSfile: MixParser.pm,v $                                     |
+# | Revision:   $Revision: 1.2 $                                             |
+# | Author:     $Author: wig $                                  |
+# | Date:       $Date: 2003/02/04 07:19:31 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.1 2003/02/03 12:56:44 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.2 2003/02/04 07:19:31 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
 # Take a matrix of information in some well-known format and convert it into
 # intermediate format and/or source code files
 #
+
+# +-----------------------------------------------------------------------+
+# |
+# | Changes:
+# | $Log: MixParser.pm,v $
+# | Revision 1.2  2003/02/04 07:19:31  wig
+# | Fixed header of modules
+# |
+# |
+# |
+# +-----------------------------------------------------------------------+
 
 package  Micronas::MixParser;
 

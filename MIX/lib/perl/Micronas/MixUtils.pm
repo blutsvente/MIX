@@ -14,19 +14,29 @@
 #
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
-# | Modules:    $RCSfile:  Mic::Mix.pm                                     |
-# | Revision:   $Revision:                                             |
-# | Author:     $Author:                                  |
-# | Date:       $Date:                                   |
+# | Modules:    $RCSfile: MixUtils.pm,v $                                     |
+# | Revision:   $Revision: 1.2 $                                             |
+# | Author:     $Author: wig $                                  |
+# | Date:       $Date: 2003/02/04 07:19:24 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.1 2003/02/03 12:56:44 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.2 2003/02/04 07:19:24 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
 #
 
+# +-----------------------------------------------------------------------+
+# |
+# | Changes:
+# | $Log: MixUtils.pm,v $
+# | Revision 1.2  2003/02/04 07:19:24  wig
+# | Fixed header of modules
+# |
+# |
+# |
+# +-----------------------------------------------------------------------+
 package  Micronas::MixUtils;
 require Exporter;
 
