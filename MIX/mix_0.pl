@@ -21,12 +21,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id              : $Id: mix_0.pl,v 1.7 2003/03/14 14:51:58 wig Exp $
+# | Id              : $Id: mix_0.pl,v 1.8 2003/03/21 17:00:08 wig Exp $
 # | Name         : $Name:  $
 # | Description  :$Description:$
 # | Parameters  : -
 # | Version       : $Version: $
-# | Mod.Date    : $Date: 2003/03/14 14:51:58 $
+# | Mod.Date    : $Date: 2003/03/21 17:00:08 $
 # | Author        : $Author: wig $
 # | Phone         : $Phone: $
 # | Fax             : $Fax: $
@@ -41,6 +41,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |
 # | Changes:
 # | $Log: mix_0.pl,v $
+# | Revision 1.8  2003/03/21 17:00:08  wig
+# | Preliminary working version for bus splices
+# |
 # | Revision 1.7  2003/03/14 14:51:58  wig
 # | Added -delta mode for backend.
 # |
@@ -321,5 +324,9 @@ write_entities();
 write_architecture();
 
 write_configuration();
+
+my $status = write_sum();
+
+exit $status;
 
 #!End

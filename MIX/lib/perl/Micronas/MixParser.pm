@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.11 $                                             |
+# | Revision:   $Revision: 1.12 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/03/13 14:05:19 $                                   |
+# | Date:       $Date: 2003/03/21 16:59:19 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.11 2003/03/13 14:05:19 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.12 2003/03/21 16:59:19 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.12  2003/03/21 16:59:19  wig
+# | Preliminary working version for bus splices
+# |
 # | Revision 1.11  2003/03/13 14:05:19  wig
 # | Releasing major reworked version
 # | Now handles bus splices much better
@@ -129,11 +132,13 @@ use Log::Agent;
 use Log::Agent::Priorities qw(:LEVELS);
 use Tree::DAG_Node; # tree base class
 
-use Micronas::MixUtils qw( mix_store db2array write_excel %EH );
+use Micronas::MixUtils qw( mix_store db2array write_excel write_delta_excel
+                           close_open_workbooks %EH );
 
 # Prototypes:
 sub _scan_inout ($);
 sub my_common (@);
+sub add_port ($$);
 
 ####################################################################
 #
@@ -936,9 +941,10 @@ sub _create_conn ($$%) {
         logwarn("Called _create_conn without data for $inout");
         return \@co; #Return dummy array, just in case
     }
-    
+
+    # Allow , and ; in in/out columns    
     $instr =~ s/\n/,/go;
-    for my $d ( split( /,/, $instr ) ) {
+    for my $d ( split( /[,;]/, $instr ) ) {
         next if ( $d =~ /^\s*$/o );
             #
             # Recognized signal descriptions:
@@ -1286,8 +1292,15 @@ sub mix_store_db ($$$) {
     if ( $type eq "xls" ) {
         my $arc = db2array( \%conndb , "conn", "" );
         my $arh = db2array( \%hierdb, "hier", "^(%\\w+%|W_NO_PARENT)\$" );
-        write_excel( $dumpfile, "CONN", $arc );
-        write_excel( $dumpfile, "HIER", $arh );
+        if ( $EH{'output'}{'generate'}{'delta'} ) {
+            my $conn_diffs = write_delta_excel( $dumpfile, "CONN", $arc );
+            my $hier_diffs = write_delta_excel( $dumpfile, "HIER", $arh );
+            $EH{'DELTA_INT_NR'} = $conn_diffs + $hier_diffs;
+        } else {    
+            write_excel( $dumpfile, "CONN", $arc );
+            write_excel( $dumpfile, "HIER", $arh );    
+        }
+        close_open_workbooks(); # Close everything we opened
     } else {
         mix_store( $dumpfile, { 'conn' => \%conndb , 'hier' => \%hierdb,
                                     %$varh
@@ -1667,12 +1680,12 @@ sub add_portsig () {
     # my %seen = (); # Remember instances already visited.
     
     for my $signal ( keys( %conndb ) ) {
-        my %connected = (); # List of connected instanc nodes
+        my %connected = (); # List of connected instance nodes
         my %modes = ();
         my @addup = ();
 
         if ( $signal eq "" ) { #Fatal error!
-            logdie( "Detecting signal without name in add_portsig! Check CONN sheet!");
+            logdie( "FATAL: Detecting signal without name in add_portsig! Check CONN sheet!");
             next;
         }
         
@@ -1692,7 +1705,7 @@ sub add_portsig () {
                 my $inst = $conndb{$signal}{'::in'}[$i]{'inst'};
                 if ( defined ( $hierdb{$inst} ) ) {
                     $connected{$inst} = $hierdb{$inst}{'::treeobj'}; # Tree::DAG_Node objects
-                    $modes{$inst} .= ":in:$i"; # Remember in/out columns
+                    $modes{$inst} .= ":in:$i"; # Remember in/out columns; Possibly several
                 }
         }
         for my $i ( 0..$#{$conndb{$signal}{'::out'}} ) {
@@ -1710,6 +1723,7 @@ sub add_portsig () {
             next;
             #TODO: How should such a case be handled? Should we add the top node here?
         }
+        
         #
         # now we know the tree top for that signal. The top must not have the
         # signal in his port list ..
@@ -1719,7 +1733,9 @@ sub add_portsig () {
         # see if they are in the list ... if not: add port!
         #
         for my $leaves ( keys( %connected ) ) {
+            # @addup = ();
             my $l = $leaves;
+            my $bits = bits_at_inst( $signal, $l, $modes{$l} ); # Tells me how to connect
             next if ( $connected{$leaves} eq $commonpar ); # $leaves is the commonpar!
             my $n = $connected{$leaves}->mother;
             while( $n ne $commonpar ) { # Climb up tree
@@ -1727,8 +1743,20 @@ sub add_portsig () {
                 unless( exists( $connected{$name} ) ) {
                     ## ADD port to that module:
                     logtrc( "notice:4" , "Adding port to hierachy module $name for signal $signal!" );
-                    push( @addup, [ $signal, $name, $l, $modes{$l} ] );
-                }
+                    push( @addup, [ $signal, $name, $l, $modes{$l}, $bits ] );
+                } else {
+                    # Connected, but not all bits? Or in/out mode differs?
+                    my $tbits = bits_at_inst( $signal, $name, $modes{$name} );
+                    for my $t ( @$tbits ) {
+                        for my $lb ( @$bits ) {
+                            if ( substr( $t, -1, 1 ) eq substr( $lb, -1, 1 ) ) { #Same i/o
+                                if ( $lb !~ m,A::, and $t ne $lb ) {
+                                    push( @addup, [ $signal, $name, $l, $modes{$l}, $t ] );#TODO: XXXX
+                                }
+                            }
+                        }
+                    }
+                }    
                 $n = $n->mother;
                 unless( defined( $n ) ) {
                     logwarn( "ERROR: climb up tree failed for signal $signal!" );
@@ -1736,14 +1764,189 @@ sub add_portsig () {
                 }
             }
         }
-        add_port( @addup ); # Add ports to instances as required ...
+        # Add ports to instances as required ...
+        if ( scalar( @addup ) ) { add_port( \@addup, \%connected ) };
     }
 
     #TODO: Print out summary of generated ports ...    
-    return;
-    
+
+    return;    
 }
 
+#
+# Which bits are connected to that signal
+#
+# Returns: array for in or out or buffer ...
+#   Bitvector:
+#   A:::d
+#   B:::000ddd0dddd00
+#   F::TEXT:T::TEXT
+#   E:: Error
+# d :=   i(n) | o(ut) | b(uffer) | c(inout) | m(isc) | e(rror)
+# Currently i,o and e are used.
+#
+#TODO: what if in/out mode conflicts? Do not want to think about that ...
+# Need to extend conndb{}{::sigbits} then.
+sub bits_at_inst ($$$) {
+    my $signal = shift;
+    my $inst = shift;
+    my $modes = shift;
+
+    # my $name = $node->name;
+    my $h = $conndb{$signal}{'::high'} || 0;
+    my $l = $conndb{$signal}{'::low'} || 0;
+
+    my $d = "";
+    my %width = (); # F[ull], B[it],
+    my %bits = ();
+    my %sigw_flag = ();
+    while ( $modes =~ m/:(in|out):(\d+)/g ) {
+        my $io = $1;
+        my $n = $2;
+        my $cell = $conndb{$signal}{'::' . $io}[$n];
+        my $sig_f = $cell->{'sig_f'};
+        my $sig_t = $cell->{'sig_t'};
+        unless( defined( $sig_f ) ) { $sig_f = "0"; };
+        unless( defined( $sig_t ) ) { $sig_t = "0"; };
+
+        $d = lc( substr( $io, 0, 1 ) ); #TODO: extend for buffer and inout pins
+        unless( defined( $sigw_flag{$d} ) ) { $sigw_flag{$d} = 1; } # First time
+
+        # } # else {
+        #    if ( $d ne lc( substr( $io, 0, 1 ) ) and $d ne "e" ) {
+        #        logwarn( "ERROR: Signal direction mismatch for $signal, $name" );
+        #        # $d = "e";
+        #    }
+        #}
+        if ( $h eq $sig_f and $l eq $sig_t ) { # Full match
+            push( @{$width{$d}}, "A::" );
+        } else {
+            push( @{$width{$d}}, "F::$sig_f:T::$sig_t" );
+            if ( "$sig_f --- $sig_t" =~ m,(\d+) --- (\d+),o ) {
+                if ( $1 >= $2 ) {
+                    for my $b ( $2..$1 ) { $bits{$d}[$b] = $d; };
+                } else {
+                    for my $b ( $1..$2 ) { $bits{$d}[$b] = $d; };
+                }
+            } else {
+                logwarn( "WARNING: signal $signal width unknown at instance $inst!" );
+                $sigw_flag{$d} = 0;
+            }
+        }               
+    }
+
+    if ( scalar( keys( %width ) ) > 1 ) {
+        logwarn( "WARNING: Signal $signal has mixed links into instance $inst!" );
+    }
+
+    # TODO: Load previously found values ....
+
+    # Combine the output:
+    my @ret = (); # Preset to Error
+    for my $i ( keys( %width ) ) {
+        #
+        #TODO: Iterate through $width!!!!
+        if ( scalar( @{$width{$i}} ) == 1 and $width{$i}[0] eq "A::" ) {
+            # only one link, that's easy and clear
+            push( @ret , $width{$i}[0] . ":$i" );
+        } else {
+            my $max = $width{$i}[0];
+            if ( $max =~ m,A::, ) {
+                push( @ret, $max . ":$d" ); # One link was ALL
+            } elsif ( not $sigw_flag{$i} ) {
+                push( @ret, "A:::e" ); # Missing direction!
+                # If we do not know, we take full signal
+            } elsif ( $h =~ m,^\s*\d+\s*$,o and $l =~ m,^\s*(\d+)\s*$, ) {
+                my $miss = 0;
+                my $bits = "";
+                #TODO: What if signal does not start at zero?
+                for my $b ( $l..$h ) {
+                    unless( $bits{$i}[$b] ) { $miss = 1; }
+                    $bits = ( ( $bits{$i}[$b] ) ? $bits{$i}[$b] : "0" ) . $bits;
+                }
+                unless ( $miss ) { push( @ret, "A:::$i" ); }
+                else { push ( @ret, "B::$bits" . ":$i" )};
+            } else {
+                push( @ret, "A:::$i" );
+            }
+        }
+    }
+    # Save to %hierdb for later reusal
+    #Attention: add additonal data for different ports!!
+    #TODO: delete sigbits entry first?
+    push( @{$hierdb{$inst}{'::sigbits'}{$signal}}, @ret );
+    return \@ret;
+}
+
+#
+# Take input like:
+#   A::
+#   B::0XXX00xx
+#   F::CHAR:T::CHAR
+#  Try to overlap this ...
+#
+sub overlay_bits($$) {
+    my $bv1 = shift;
+    my $bv2 = shift;
+
+    unless( $bv1 ) {
+        logwarn("WARNING: Feed empty bitvector 1 to overlay_bits");
+        return $bv2;
+    }
+    unless ( $bv2 ) {
+        logwarn("WARNING: Feed empty bitvector 2 to overlay_bits");
+        return $bv1;
+    }
+
+    if ( $bv1 eq 'A::' or $bv2 eq 'A::' ) {
+        return 'A::';
+    }
+
+    my $bits1 = "";    
+    if ( $bv1 =~ m,^B::(.+), ) {
+        $bits1 = $1;
+    }
+    if ( $bits1 and $bv2 =~ m,^B::(.+), ) {
+        my $bits2 = $1;
+        if ( length( $bits1 ) != length( $bits2 ) ) {
+            logwarn( "WARNING: bitvector length mismatch: $bits1 vs. $bits2" );
+        }
+        my $ub = length( $bits1 ) - 1;
+        my $out = "";
+        my $miss = 0;
+        if ( length( $bits1 ) < length( $bits2 ) ) { $ub = length( $bits2 ) - 1; }
+
+        for my $i ( 0..$ub ) {
+            my $c1 = substr( $bits1, $i, 1 ) || "0";
+            my $c2 = substr( $bits2, $i, 1 ) || "0";
+            if ( $c1 and $c2 ) {
+                if ( $c1 ne $c2 ) {
+                        logwarn( "WARNING: mixing wrong mode: $bits1 vs. $bits2" );
+                        substr( $out, $i, 1 ) = 'e';
+                        $miss = 1;
+                } else {
+                        substr( $out, $i, 1 ) = $c1;
+                }
+            } elsif ( $c1 ) { substr( $out, $i, 1 ) = $c1;
+            } elsif ( $c2 ) { substr( $out, $i, 1 ) = $c2;
+            } else { substr( $out, $i, 1 ) = '0'; $miss = 1; }
+        }
+        if ( $miss ) {
+            return( 'B::' . $out );
+        } else {
+            return( 'A::' );
+        }
+    }
+    
+    if ( $bv1 =~ m,F::.*T::, and $bv2 eq $bv1 ) {
+        return $bv1;
+    }
+
+    logwarn( "ERROR: Cannot overlay bitvectors $bv1 vs. $bv2" );
+
+    return( 'E::' );
+}
+    
 #
 # add_port: add ports to intermediate instances
 #
@@ -1759,8 +1962,10 @@ sub add_portsig () {
 #
 # add bit number to avoid collision in case of busses
 #
-sub add_port (@) {
-    my @adds = @_;
+sub add_port ($$) {
+    my $r_adds = shift;
+    my $r_connected = shift;
+    my @adds = @$r_adds;
 
     # Get mode:
     # If adds has only in -> need in-port
@@ -1770,15 +1975,664 @@ sub add_port (@) {
     #TODO: Currrently there is no support for inout ports!! That would require to
     # check to parent connections, too.
     #
+    my $signal = $r_adds->[0][0];
     my %mc = ();
+    my %d_mode = ();
+    my %d_wid = ();
     my $mode = "__E_MODE_DEFAULT";
-    for my $r ( @adds ) {
-        my $m = $r->[3];
-        while( $m =~ m,:(inout|buffer|in|out):(\d+),og ) {
-            $mc{$1}++;
+    for my $r ( keys( %$r_connected ) ) {
+        # my $m = $r->[3]; #Mode
+
+        # Retrieve modes and width from sigbits data structure
+        for my $sb ( @{$hierdb{$r}{'::sigbits'}{$signal}} ) {
+            if ( $sb =~ m,(.*):(.)$, ) {
+                # $d_wid{$r} = $1;
+                $d_mode{$r}{$2} = $1; # o = A:: ....
+            }            
+        }
+        unless( defined ( $d_mode{$r} ) ) {
+            logwarn( "ERROR: missing sigbits/mode definition for instance $r in add_port");
         }
     }
-    if ( keys( %mc ) < 1 ) {
+
+    #
+    # Sort by depth first (aka longest address first)
+    #
+    #TODO ...
+    my %length = ();
+    for my $r ( 0 .. scalar(@adds)-1 ) {
+        my $l = length( $hierdb{$adds[$r][1]}{'::treeobj'}->address );
+        push( @{$length{$l}}, $r ); 
+        # $adds[$r][5] = length( $hierdb{$adds[$r][1]}{'::treeobj'}->address );
+    }
+    # my @order = sort( { $adds[$b][5] <=> $adds[$a][5] } @adds );
+    my @order = ();
+    for my $l ( reverse( sort( keys( %length ) ) ) ) {
+        push( @order, @{$length{$l}} );
+    }
+    
+    #
+    # iterate through list
+    #
+    my %seen = ();
+    for my $o ( @order ) {
+        my $r = $adds[$o];
+        # Do it only once.
+        my $inst = $r->[1];
+        if ( $seen{$inst} ) {
+            next;
+        } else {
+            $seen{$inst} = 1;
+        }
+
+        # Are daughters connected? Or do they need to be connected?
+        my @daughters = $hierdb{$inst}{'::treeobj'}->daughters;
+        # for my $d ( @daughters ) {
+            # unless ( $r_connected->{$d->name} ) { # It's not connected so far
+                #COMPLAIN!
+            # }
+        # }
+        #
+        # Collect mode and width for this signal provided by daughters!
+        # That means daughters have to be evaluated first. Bottom up.
+        #
+        my %dm = ();
+        my %dw = ();
+        for my $d ( @daughters ) {
+            my $name = $d->name;
+            next unless( exists( $r_connected->{$name} ) ); # This daughter has no link.
+            unless( exists( $d_mode{$name} ) ) {
+                logwarn( "ERROR: signal mode not defined internally ($name). File bug report!" );
+            }
+            # if ( $d_mode{$name} =~ m,:(in|out|inout|buffer), ) {
+            for my $dd ( keys( %{$d_mode{$name}} ) ) {
+                if ( $dd =~ m,(i|o|e|b|m|c), ) {
+                    $dm{$dd}++;
+                } else {
+                    $dm{'e'}++;
+                }
+                if( not defined( $dw{$dd} ) ) {
+                    $dw{$dd} = $d_mode{$name}{$dd};
+                } elsif ( $dw{$dd} ne 'A::' ) {
+                    if ( $d_mode{$name}{$dd} ne 'A::' ) {
+                        $dw{$dd} = overlay_bits( $d_mode{$name}{$dd}, $dw{$dd} );
+                    } else {
+                       $dw{$dd} = 'A::';
+                    }
+                }
+            }
+        }
+
+        #
+        # What do all the others require (parents and other branches)?
+        # mode and width
+        #
+        my @desc = $hierdb{$inst}{'::treeobj'}->descendants;
+        my %non_desc = ();
+        my %ndm = ();
+        my %ndw = ();
+        map( { $non_desc{$_} = 1; } keys( %$r_connected ) ); 
+        for my $d ( @desc ) {
+            delete( $non_desc{$d->name} );
+        }
+        delete( $non_desc{$inst} ); # Just in case
+        
+        for my $d ( keys( %non_desc ) ) {
+            if( not exists( $d_mode{$d} ) ) {
+                logwarn( "ERROR: signal mode not defined internally ($d). File bug report!" );
+            } else {
+                for my $dd ( keys( %{$d_mode{$d}} ) ) {
+                    if ( $dd =~ m,(i|o|e|b|m|c), ) {
+                        $ndm{$1}++;
+                    } else {
+                        $ndm{'e'}++;
+                    }
+                    if( not defined( $ndw{$dd} ) ) {
+                        $ndw{$dd} = $d_mode{$d}{$dd};
+                    } elsif ( $ndw{$dd} ne 'A::' ) {
+                        if ( $d_mode{$d}{$dd} ne 'A::' ) {
+                            $ndw{$dd} = overlay_bits( $d_mode{$d}{$dd}, $ndw{$dd} );
+                        } else {
+                            $ndw{$dd} = 'A::';
+                        }
+                    }
+                }
+            }
+            # If d_wid equals A::, keep it. Else sum up ..
+            # TODO: correct that !! mode dependant bit vector width
+            # unless( $ndw eq 'A::' ) {
+            #    if ( $d_wid{$d}  eq 'A::' ) { $ndw = 'A::'; }
+            #    else { $ndw .= $d_wid{$d}; }
+            # }
+        }
+
+        # We have already some link?
+        # Do this for each mode found so far ....
+        my $this_mode = "";
+        my $this_width = "";
+        my @new_sb = ();
+        if ( $r_connected->{$inst} ) {
+            for my $tm ( keys %{$d_mode{$inst}} ) {
+                # Repeat for all modes ....i,o,....
+                $this_mode = $d_mode{$inst}{$tm}; # Reference!
+                # $this_width = $d_mode{$inst}{$tm};
+                my $thm = $tm;
+                ( $this_width, $thm ) = _add_port( $r, $tm, $this_mode, \%dw, \%dm, \%ndw, \%ndm );
+
+                # $d_mode{$inst}{$thm} = $this_width;
+                join_vec( \%d_mode, $inst, $this_width );
+                # $d_wid{$inst} = $this_width;
+                $r_connected->{$inst} = $hierdb{$inst}{'::treeobj'}; #TODO
+
+                # OLD push( @new_sb , $this_width . ":" . $thm ); #TODO Overlay!!
+            }
+        } else {
+            # This module has no mode (not connected up to now).
+            ( $this_width , $this_mode ) = _add_port( $r, $this_width, $this_mode, \%dw, \%dm, \%ndw, \%ndm );
+
+            # $d_mode{$inst}{$this_mode} = $this_width;
+            #old: $d_wid{$inst} = $this_width;
+            join_vec( \%d_mode, $inst, $this_width );
+            # $d_mode{$inst} = $this_width;
+            $r_connected->{$inst} = $hierdb{$inst}{'::treeobj'}; #TODO
+
+            #OLD for my $m ( keys( %$this_width ) )  {
+            #    $new_sb[0] = $this_width->{$m} . ":" . $m;
+            #}
+        }
+
+        # Extend this instance/entitiy ....
+        # ( $this_width, $this_mode ) = _add_port( $r, $this_width, $this_mode, $dw, \%dm, $ndw, \%ndm );
+
+        # Set our datastrucutures
+        # $d_mode{$inst} = $this_mode;
+        # $d_wid{$inst} = $this_width;
+        # $r_connected->{$inst} = $hierdb{$inst}{'::treeobj'}; #TODO
+        my @nb = ();
+        for my $m ( keys( %{$d_mode{$inst}} ) ) {
+            push( @nb , $d_mode{$inst}{$m} . ":" . $m );
+        }
+        # Replace the description
+        @{$hierdb{$inst}{'::sigbits'}{$signal}} = @nb;
+            
+=head 4
+
+OLD
+        # unless ( exists ( $hierdb{$inst}{'::sigbits'}{$r->[0]} ) ) {
+        #    $hierdb{$inst}{'::sigbits'}{$r->[0]} = [];
+        # }
+        # my $rsb = $hierdb{$inst}{'::sigbits'}{$r->[0]};
+        if ( scalar( @$rsb ) == 0 ) {
+            push( @$rsb, @new_sb );
+        } else {
+            my $flag = 1;
+            for my $sb ( 0..scalar( @$rsb ) - 1  ) {
+                for my $nb ( 0..scalar( @new_sb ) ) {
+                    if ( substr( $rsb->[$sb], -1, 1 ) eq substr( $new_sb[$nb], -1 , 1 ) ) {
+                        $rsb->[$sb] = $new_sb[$nb];
+                        $flag = 0;
+                    }
+                }
+            }
+            if ( $flag ) {
+                logwarn( "ERROR: Illegal branch taken for adding port" );
+                push( @$rsb, @new_sb );
+            }
+        }
+        # $hierdb{$inst}{'::sigbits'}{$r->[0]} = $this_width; # Remember this bits ...
+
+=cut
+
+    }
+}
+
+#
+# Take added port description and join
+#
+sub join_vec($$$) {
+    my $r = shift;
+    my $inst = shift;
+    my $nv = shift;
+
+    my %keys = ();
+    my $ov;
+    map( { $keys{$_} = 1; } keys( %$nv ) );
+    if ( exists( $r->{$inst} ) ) {
+        $ov = $r->{$inst};
+        map( { $keys{$_} = 1; } keys( %$ov ) );
+    } else {
+        $ov = {};
+    }
+    for my $k ( keys( %keys ) ) {
+        if ( exists( $nv->{$k} ) and exists( $ov->{$k} ) ) {
+            $r->{$inst}{$k} = overlay_bits( $ov->{$k}, $nv->{$k} );
+        } elsif( exists( $nv->{$k} ) )  {
+            $r->{$inst}{$k} = $nv->{$k};
+        } else {
+            $r->{$inst}{$k} = $ov->{$k};
+        }
+    }
+}
+
+ 
+sub _add_port ($$$$$$$) {
+    my $r = shift; # Array ref, has signal name, instance, daughter, mode, ...
+    my $tw = shift; # width of already connected pins ...
+    my $tm = shift; # mode of current port
+    my $dw = shift; # width of port requested by daughters
+    my $dm = shift; # reference to mode(s) requested by daughters
+    my $uw = shift; # width required by upper hierachy
+    my $um = shift; # mode reference required by upper hierachy
+
+    # Generate port:
+    # Consider bits needed, mode needed and some VHDL specialities:
+    my $signal = $r->[0];
+    my $inst = $r->[1];
+    
+    my $uk = join( "", sort ( keys ( %$um ) ) ); # bceimo
+    if ( $uk =~ m,e, ) { # Error
+            logwarn( "ERROR: error mode detected for signal $signal generating port at instance $inst" );
+            #TODO: Add error port
+    }
+    my $do = 'e';
+    my $dir = "::err";
+
+    # Try to define a base direction to head for ...
+    my $simple = 0;
+    if ( $uk =~ m,(io),o ) { # Upper level has in's and out's -> We have to be ::in
+        $do = 'i';
+        $dir = "::in";
+        if ( $uw->{'i'} eq 'A::' and $uw->{'o'} eq 'A::' ) {
+            if ( exists $dw->{'i'} and exists $dw->{'o'} ) { # Possible Conflict!!
+                $simple = 2;
+                logwarn( "WARNING: Possible io mode conflict for $signal at $inst" );
+            } else {
+                if ( ( exists $dw->{'i'} ) and ( $dw->{'i'} eq 'A::' ) ) {
+                    $simple = 1;
+                } else {
+                    $simple = 0;
+                }
+            }
+        }
+    } elsif ( $uk =~ m,i,o ) { # Upper inst. have in's, only ->
+        $do = 'o';
+        $dir = "::out";
+        if ( $uw->{'i'} eq 'A::' ) {
+            if ( exists( $dw->{'o'} ) and $dw->{'o'} eq 'A::' ) { $simple = 1; }
+        }
+    } elsif ( $uk =~ m,o,o ) { # Upper inst. have out's, only ->
+        #Maybe there are multiple driver's
+        $do = 'i';
+        $dir = ":in";
+        if ( $uw->{'o'} eq 'A::' ) {
+            if (  exists( $dw->{'i'} ) and $dw->{'i'} eq 'A::' and
+                not exists( $dw->{'o'} ) ) {
+                    $simple = 1;
+            }
+        }
+    }
+    
+    #TODO: Check if that matches what we get provided from our daugthers:
+    #TODO
+    #TODO -> MixChecker
+    # And also use the ::mode value!!
+    
+    # How many bits need a connection:
+    # Calculate the diff of
+    #   requested by upper inst. - not used by daughters - already connected
+    my %t = ();
+    if ( not $tw and $simple  ) {
+        # I guess this is the most likely case
+        # Full signal connect (either bus or single bit)
+        # Actually we do NOT care of there is a chance to get 
+        my $sf = $conndb{$signal}{'::high'};
+        my $st = $conndb{$signal}{'::low'};
+        unless ( defined $sf ) { $sf = ""; };
+        unless ( defined $st ) { $st = ""; };
+        $t{'port'} = $EH{'postfix'}{'PREFIX_PORT_GEN'} . $signal .
+                ( ( $sf ne "" ) ? ( "_" . $sf ) : "" ) .
+                ( ( $st ne "" ) ? ( "_" . $st ) : "" ) .
+                "_g" . $do;
+        $t{'inst'} = $inst;
+        if ( $sf eq "" ) {
+            $t{'port_f'} = $t{'sig_f'} = undef;
+        } else {
+            $t{'port_f'} = $t{'sig_f'} = $sf;
+        }
+        if ( $st eq "" ) {
+            $t{'port_t'} = $t{'sig_t'} = undef;
+        } else {
+            $t{'port_t'} = $t{'sig_t'} = $st;
+        }
+        logtrc( "INFO:4", "add_port: signal $signal adds port $t{'port'} to instance $t{'inst'}" );
+
+        push( @{$conndb{$signal}{$dir}},  { %t } ); # Push on conndb array ...
+        
+        $tw = { $do => "A::" };
+        $tm = $do;
+
+    } else {
+    #
+    # Here begins the bit/bus/splice trouble
+    # only busses here ...
+    # If I just could put myself in here and make sure MIX doesn't produce "suboptimal"
+    # results ..
+    #
+
+        # Case one: There is already a (partial) connection to this_instance ...
+        if ( $tm ) {
+            # Delete the corresponding bits
+            # XXXXXXX
+            logwarn( "ERROR: instance $inst partially connected to $signal. File bug report!" );
+        }
+        #
+        # Case two:
+        # All bit vectors are of same format .... or expandable
+        #
+        my $mode = ""; # mode = "b" or "f"
+        for my $m ( keys( %$dw ) )  {
+            my $nm = substr( $dw->{$m}, 0, 1 );
+            next if ( $nm eq "A" ); # "A" can be used anyway
+            if ( $nm eq "E" ) { # Some error coming from previous processing
+                $mode = "E";
+                last;
+            } elsif ( not $mode ) { # Mode not set up to now
+                $mode = $nm;
+            } elsif ( $mode ne $nm ) { # Upps, conflict
+                logwarn( "ERROR: Cannot resolve mode requests $signal at $inst!" );
+                $mode = "E";
+            }
+        }
+        # unless ( $mode ) { $dmode = "A"; }
+        for my $m ( keys( %$uw ) )  {
+            my $nm = substr( $uw->{$m}, 0, 1 );
+            next if ( $nm eq "A" ); # "A" can be used anyway
+            if ( $nm eq "E" ) { # Some error coming from previous processing
+                $mode = "E";
+                last;
+            } elsif ( not $mode ) { # Mode not set up to now
+                $mode = $nm;
+            } elsif ( $mode ne $nm ) { # Upps, conflict
+                logwarn( "ERROR: Cannot resolve conflicting mode requests $signal at $inst!" );
+                $mode = "E";
+            }
+        }
+        unless( $mode ) { #Cannot be true, we have all A's, maybe related to $tm
+            $mode = "B";
+        }
+        if ( $mode eq "E" ) {
+            logwarn ( "ERROR: Cannot resolve mode request for $signal at $inst finally!" );
+        } elsif ( $mode eq "B" ) {
+            my $sf = $conndb{$signal}{'::high'};
+            my $st = $conndb{$signal}{'::low'};
+            my $ub;
+            my $lb;
+            unless ( defined $sf ) { $sf = ""; };
+            unless ( defined $st ) { $st = ""; };
+            if ( $sf eq "" and $st eq "" ) { #Might be single bit signal, but with i/o issue:
+                $sf = 0; # hmmm, hope that will do the trick
+                $st = 0;
+            }
+            if ( $sf =~ m,^\d+$, and $st =~ m,^\d+$, ) {
+                if ( $sf > $st ) { # Run from $st to $sf ....
+                    $ub = $sf;
+                    $lb = $st;
+                } else {
+                    $ub = $st;
+                    $lb = $sf;
+                }
+                expand_a_vec( $dw, $lb, $ub ); # Get rid of A::
+                expand_a_vec( $uw, $lb, $ub );
+                check_b_vec( $dw, $lb, $ub ); # Are these the right size?
+                check_b_vec( $uw, $lb, $ub );
+                strip_b_vec( $dw , "io", $lb, $ub );
+                strip_b_vec( $uw, "io", $lb, $ub );
+
+                #
+                # Create ports
+                # Iterate through bitslices and create port slices
+                # if there is no link internally -> not link
+                # if there   int: i,   ext: (i)o   -> create in port
+                #             int: o, ext: i      -> create out port
+                #             int: io, ext: i      -> create out port
+                #             int: io, ext: -     -> no port
+                #             int: io, ext: (i)o    -> kind of error, create an out port 
+                #                                       is an error anyway?
+                my $start = "";
+                my @p = ();
+                # Iterate through all bit slices .. (left to right)
+                for my $bc ( 0..($ub-$lb) ) {
+                    $b = $ub - $lb - $bc;
+                    if ( substr( $dw->{'i'}, $b, 1 ) and substr( $dw->{'o'}, $b, 1 ) ) {
+                        if ( substr( $uw->{'i'}, $b, 1 ) and substr( $uw->{'o'}, $b, 1 ) ) {
+                            $p[$bc] = "oed"; # Driver conflicts, Better: e??
+                        } elsif( substr( $uw->{'o'}, $b, 1 ) )  {
+                            $p[$bc] = "oed"; # Driver conflicts
+                        } elsif( substr( $uw->{'i'}, $b, 1 ) ) {
+                            $p[$bc] = "o";
+                        } else {
+                            $p[$bc] = "0"; # Not connected
+                        }
+                    } elsif ( substr( $dw->{'i'}, $b, 1 ) ) {
+                        if ( substr( $uw->{'o'}, $b, 1 ) ) {
+                            $p[$bc] = "i"; # In port
+                        } elsif ( substr( $uw->{'i'}, $b, 1 ) ) {
+                            $p[$bc] = "iwd"; # Warning, missing driver! Possibly check ::mode  
+                        } else {
+                            $p[$bc] = "0"; # Not connected
+                        }
+                    } elsif ( substr( $dw->{'o'}, $b, 1 ) ) {
+                        if ( substr( $uw->{'o'}, $b, 1 ) ) {
+                            $p[$bc] = "oed"; # To much drivers
+                        } elsif ( substr( $uw->{'i'}, $b, 1 ) ) {
+                            $p[$bc] = "o";
+                        } else {
+                            $p[$bc] = "0";
+                        }
+                    } else { # No internal conection -> Don't care
+                        $p[$bc] = "0";
+                    }
+                }
+                # Now generate
+                $start = $ub-$lb;
+                my $m = "0";
+                my %bv = ( 'i' => "B::", 'o' => "B::", );
+                for my $b ( reverse( 0..($ub-$lb) ) ) {
+                    if ( substr( $p[$b], 0, 1 ) ne $m ) { # Change
+                        if ( $m ) {
+                            generate_port( $signal, $inst, $m, $start + $lb , $b + 1 + $lb );
+                            }
+                        $m = substr( $p[$b], 0, 1 );
+                        $start = $b;
+                    }
+                    if ( $m eq "o" ) {
+                        $bv{o} .= $m;
+                        $bv{i} .= "0";
+                    } elsif ( $m eq "i" ) {
+                        $bv{i} .= $m;
+                        $bv{o} .= "0";
+                    } else {
+                        $bv{i} .= "0";
+                        $bv{o} .= "0";
+                    }
+                }
+                if ( $m ) {
+                    generate_port( $signal, $inst, $m, $start + $lb , $lb );
+                }
+                
+                #TODO: Create tw for i and o, return hash
+                $tm = "";
+                for my $t ( sort( keys( %bv ) ) ) {
+                    if ( $bv{$t} =~ m,^B::0+$, ) {
+                        delete( $bv{$t} );
+                    } elsif( $bv{$t} =~ m,^B::$t+$, ) {
+                        $bv{$t} = 'A::';
+                        $tm .= $t;
+                    } else {
+                        $tm .= $t;
+                    }
+                }
+                $tw = \%bv;
+            } else {
+                logwarn( "ERROR: Cannot read t/f for signal $signal, inst $inst!" );
+                $tw = {};
+                $tm = 'e';
+            }
+        } else { # F::STR...T::STR
+            logwarn( "ERROR: Need programming for F::foo:T::bar, signal $signal, inst $inst!" );
+        }
+    }
+    return( $tw, $tm );
+}
+
+#
+# Generate an port for intermediate hierachy
+#
+sub generate_port ($$$$$) {
+    my $signal = shift;
+    my $inst = shift;
+    my $m = shift;
+    my $f = shift;
+    my $t = shift;
+
+    my %t = ();
+
+    $t{'port'} = $EH{'postfix'}{'PREFIX_PORT_GEN'} . $signal .
+                ( ( $f ne "" ) ? ( "_" . $f ) : "" ) .
+                ( ( $t ne "" ) ? ( "_" . $t ) : "" ) .
+                "_g" . $m;
+    $t{'inst'} = $inst;
+    
+    if ( $f eq "" ) {
+        $t{'port_f'} = $t{'sig_f'} = undef;
+    } else {
+        $t{'sig_f'} = $f;
+        $t{'port_f'} = $f - $t;
+    }
+    if ( $t eq "" ) {
+        $t{'port_t'} = $t{'sig_t'} = undef;
+    } else {
+        $t{'sig_t'} = $t;
+        $t{'port_t'} = 0;
+    }
+    if ( $f == $t ) {
+        $t{'port_t'} = $t{'port_f'} = undef;
+    }
+    logtrc( "INFO:4", "add_port: signal $signal adds port $t{'port'} to instance $t{'inst'}" );
+
+    # Push onto Connection Database ....
+    if ( $m eq "o" ) {
+        $m = '::out';
+    } else {
+        $m = '::in';
+    }
+    push( @{$conndb{$signal}{$m}},  { %t } ); # Push on conndb array ...
+
+    return;
+}
+
+#
+# Strip B:: and add 0 vectors
+#
+sub strip_b_vec ($$$$) {
+    my $r = shift;
+    my $modes = shift;
+    my $lb = shift;
+    my $ub = shift;
+
+    for my $i ( split( '', $modes ) ) {
+        unless( exists ( $r->{$i} ) ) {
+            $r->{$i} = "0" x ( $ub - $lb + 1 );
+        } elsif ( not $r->{$i} =~ s,^B::,, ) {
+            $r->{$i} = "0" x ( $ub - $lb + 1 );
+        }
+    }
+}
+
+#
+# convert A:: to B::0dddd0dd0
+#
+sub expand_a_vec ($$$) {
+    my $r = shift;
+    my $min = shift;
+    my $max = shift;
+
+    for my $i ( keys( %$r ) ) {
+        if ( $r->{$i} =~ m,A::, ) {
+            $r->{$i} = "B::" . $i x ( $max - $min + 1);
+        }
+    }
+}
+
+#
+# Check if B:: vector is formed as expected
+# Extend missing branches ...
+#
+sub check_b_vec ($$$) {
+    my $r = shift;
+    my $min = shift;
+    my $max = shift;
+
+    for my $i ( keys( %$r ) ) {
+        if ( $r->{$i} !~ m,B::, ) {
+            logwarn( "WARNING: Bad value in bit vector $i: $r->{$i}" );
+        } elsif ( length( $r->{$i} ) - 3 != $max - $min + 1 ) {
+            logwarn( "WARNING: Bad length of bit vector $i: $r->{$i}" );
+            substr( $r->{$i} , 3, 0 ) = "0" x ( $max - $min + 1 - length( $r->{$i} ) + 3 ) 
+        }
+    }
+}
+
+=head 4
+
+OLD
+        my $nudw = ();
+        if ( $dw =~ m,A::,o ) {
+            $nudw = "";
+        }elsif ( $dw =~ m,B::(.*),o ) {
+            for my $b ( split( '', $1 ) ) {
+                $nudw .= ( $b ) ? "0" : "1";
+            }
+            $nudw = "B::" . $nudw;
+        } else {
+            logwarn ( "ERROR: Cannot determine bits used by my daughters!" );
+            $nudw = "";
+            #TODO: Assume
+        }
+        logwarn ( "ERROR: ERROR ERROR NEED more programming!" );
+    }    
+
+    return( $tw, $tm ); # Return width and mode now
+
+}
+
+=cut
+
+=head 4
+
+
+OLD
+        if ( keys( %dm ) < 1 ) {
+            logwarn("ERROR: Called add_port with unknown in/out modes for signal $adds[0][0]");
+            return;
+        } elsif ( keys( %dm ) > 1 ) {
+            # Here it depends on 
+            if ( exists( $dm{'in'} ) and exists( $dm{'out'} ) ) {
+                logtrc( "INFO:4", "Assuming OUT mode for signal $adds[0][0] in port_add" );
+                $mode = "out";
+            } else {
+                logwarn("ERROR: Cannot figure out in/out mode for signal $adds[0][0]");
+                $mode ="__E_MODE_EXTEND";
+            }
+        } else {
+            $mode = (keys( %dm ))[0]; # buffer|inout|in|out| ....
+        }
+
+        # Now we know mode ...    
+
+=head 4
+        OLD, DELETE
+        if ( keys( %mc ) < 1 ) {
         if ( $#adds >= 0 ) {
             logwarn("WARNING: Called add_port with unknown in/out modes for signal $adds[0][0]");
         }
@@ -1794,7 +2648,11 @@ sub add_port (@) {
     } else {
         $mode = (keys( %mc ))[0]; # buffer|inout|in|out| ....
     }
-    
+
+=cut
+
+=head OLD
+
     for my $r ( @adds ) {
         #
         #TODO: go through that data and check for consistency!!
@@ -1846,6 +2704,7 @@ sub add_port (@) {
         }
     }
 }
+=cut
 
 #
 # Tree::DAG_Node::common is buggy -> use my_common instead
@@ -2048,6 +2907,8 @@ sub purge_relicts () {
     # If ::high and ::low is defined, extend ::in and ::out definitions
     #
     for my $i ( keys( %conndb ) ) {
+        unless( defined( $conndb{$i}{'::high'} ) ) { $conndb{$i}{'::high'} = ''; }
+        unless( defined( $conndb{$i}{'::low'} ) ) { $conndb{$i}{'::low'} = ''; }        
         if ( $conndb{$i}{'::high'} ne '' or $conndb{$i}{'::low'} ne '' ) {
             my $h = $conndb{$i}{'::high'};
             my $l = $conndb{$i}{'::low'};
@@ -2057,7 +2918,7 @@ sub purge_relicts () {
     }
 }
 
-# If ::high nad/or ::low is defined,
+# If ::high and/or ::low is defined,
 # check if there are port definitions to be extended
 #
 
@@ -2071,16 +2932,18 @@ sub _extend_inout ($$$) {
             not defined( $i->{'port_f'} ) ) {
                 $i->{'sig_f'} = $h;
                 $i->{'port_f'} = $h;
-        } elsif ( not defined( $i->{'sig_f'} ) or
-                not defined( $i->{'port_f'} ) ) {
+        } elsif ( not defined( $i->{'sig_f'} ) # or
+                # not defined( $i->{'port_f'} )
+                ) {
             logwarn( "Warning: Unusual upper bound definitions for $i->{'inst'} / $i->{'port'}" );
         }
         if ( not defined( $i->{'sig_t'} ) and
             not defined( $i->{'port_t'} ) ) {
                 $i->{'sig_t'} = $l;
                 $i->{'port_t'} = $l;
-        } elsif ( not defined( $i->{'sig_t'} ) or
-                not defined( $i->{'port_t'} ) ) {
+        } elsif ( not defined( $i->{'sig_t'} ) # or
+                # not defined( $i->{'port_t'} )
+                  ) {
             logwarn( "Warning: Unusual lower bound definitions for $i->{'inst'} / $i->{'port'}" );
         }
     }

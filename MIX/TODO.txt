@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.6 2003/03/14 14:51:58 wig Exp $
+# $Id: TODO.txt,v 1.7 2003/03/21 17:00:08 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -18,6 +18,12 @@ Doku:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+
+- 20030317a/Bug: Missing Port in component
+    sbist_fail_ fehlt an ifu_top (kommt aus ga, Pin8, 9)
+    Req: pallas
+    Prio: high
+
 - 20030313g/Bug: Improve Load/Driver evaluation
    If port width ne signal width, count "bit"wise. Save instead of integers
    into the AEPORT data structure. Add MIN,MAX,ALL fields.
@@ -38,6 +44,7 @@ TODOs:
 - 20030313d/Bug: Do bus/bit/port handling in signal assigments, not in port maps!
     Req: pallas
     Prio: High
+    Comment: Actually this seems not to be necessary.
 
 - 20030313c/Feature: Detect generated port in a row and combine (might be
     done best on the intermediate data?)
@@ -49,13 +56,6 @@ TODOs:
     Req: wig
     Prio: low
     
-- 20030313a/Bug: MDE-B_TL.xls gets closed after pasing. Should stay open!
-    Req: wig
-    Prio: low
-
-- 20030312b/Feature: Add user specific configuration file (use home directory)
-    Req: wig
-    Prio: low
 
 - 20030312a/Check: Find "open" input ports and report
     Req: wig
@@ -89,16 +89,6 @@ TODOs:
     Req: wig
     Prio: low
 
-- 20030228b/Feature:
-    Delta mode: Generate Delta to previous output (diff)
-        - intermediate
-        - backend
-    Minimum: Indicate if previous output was the same
-
-    Use: Algorithm::Diff, Text::Diff
-    Req: wig
-    Prio: low
-
 
 - 20030228a/Feature: Write out evaluated contents of mix.cfg (and timestamp) and
    command line switches and %EH to CONF sheet!
@@ -111,14 +101,6 @@ TODOs:
     Requested: wig
     Prio: medium
     
-- 20030227a: File name generation:
-      ENTY-e.vhd
-      ENTY-ARCH-a.vhd
-      ENTY-ARCH-CONF-c.vhd
-          (whole name equals ::conf column, but _ -> -)
-      
-    Requested: wig
-    Prio: medium
 
 - 20030227b: 
     Write out ENTY-e.vhd.N if a entity gets instantiated several times
@@ -152,9 +134,7 @@ TODOs:
 
 - 20030220j: Use Bugzilla for issues 
 
-- 20030220k: Format ExCEL intermediate (column layout, page breaks ...), color, ....
-  Priority: low (see 20030226c)
-  
+
 - Accept %::COL% in :name and ::inst columns
   early expansion required!
   wig20030124
@@ -169,12 +149,6 @@ TODOs:
   wig20030100
   
 - Use / as file name seperator, convert to other format ( \ ) on demand (wig20021219)
-
-- Add generator comment line to all output:
-    -- timestamp
-    -- hostname
-    -- timestamp and location of all input data
-    -- arguments
 
 
 - Fold/Condense multiple entries (e.g. comments, ::in, ::out)
@@ -242,6 +216,48 @@ TODOs:
 
 DONE:
 
+- 20030227a: File name generation:
+      ENTY-e.vhd
+      ENTY-ARCH-a.vhd
+      ENTY-ARCH-CONF-c.vhd
+          (whole name equals ::conf column, but _ -> -)
+      
+    Requested: wig
+    Prio: medium
+    Done: 20030317
+
+- Add generator comment line to all output:
+    -- timestamp
+    -- hostname
+    -- timestamp and location of all input data
+    -- arguments
+
+
+- 20030228b/Feature:
+    Delta mode: Generate Delta to previous output (diff)
+        - intermediate
+        - backend
+    Minimum: Indicate if previous output was the same
+
+    Use: Algorithm::Diff, Text::Diff
+    Req: wig
+    Prio: low
+    Done: 20030317, wig
+
+- 20030313a/Bug: MDE-B_TL.xls gets closed after parsing. Should stay open!
+    Req: wig
+    Prio: low
+    Done: wig (reason: case of filename, use lowercase now)
+
+- 20030312b/Feature: Add user specific configuration file (use home directory)
+    Req: wig
+    Prio: low
+    Done: 20030317wig
+        Look for mix.cfg in the following locations:
+        ENV{HOME} aka 'HOMEDRIVE' . 'HOMEPATH' or 'USERPROFILE' or 'C:\'
+        ENV{PROJECT}
+        Order: HOME / HOME / cwd() / -conf (last wins)
+
 - 20030221a:
     Read configuration options from "CONF" sheet
     | MIXCFG | key | value |
@@ -251,6 +267,7 @@ DONE:
        generate.output.enty leaf|noleaf
        .... (only existing keys in EH may be overridden) ....
    Read file in current dir "mix.cfg"
+   See also: 20030312b
    
   option: -conf KEY=VAL
   option: -listconf  -> print out list of configuration keys
@@ -258,6 +275,10 @@ DONE:
   Order: builtin < mix.cfg < CONF < command line
 
 Done wig20030221
+
+- 20030220k: Format ExCEL intermediate (column layout, page breaks ...), color, ....
+  Priority: low (see 20030226c)
+  Comment: ExCEL intermediate keeps format from previous runs, now.
 
 - 20030221b: add option: -sheet CONN="CONN_PERLRE", -sheet HIER="HIER_PERLRE" ...
 

@@ -23,6 +23,7 @@ Application Note / TOC
 # -variant
 # -conf key.key.key=value Overwrite $EH{key}{key}{key} with value
 # -listconf                       Print out all available/predefined configurations options
+# -delta                           Output will be compared against previous runs
 # -sheet SHEET=MATCH     SHEET can be one of "hier", "conn", "vi2c"
 #
 
@@ -38,6 +39,7 @@ mix_getopt_header(qw(
     adump!
     conf=s@
     sheet=s@
+    delta!
     listconf
     ));
 
@@ -76,10 +78,17 @@ mix_getopt_header(qw(
 
 - Runtime configuration is influenced by (increasing precedence):
     built-in default values
-    mix.cfg file (if found in current directory). Format is:
+    mix.cfg files (if found $HOME, $PROJECT and/or in current directory). Format is:
         MIXCFG name.of.conf value
     CONF sheet found in input xls files
     command line switch -conf name.of.conf=value
+
+        Look for mix.cfg in the following locations:
+        1. ENV{HOME} aka 'HOMEDRIVE' . 'HOMEPATH' or 'USERPROFILE' or 'C:\'
+        2. ENV{PROJECT}
+        3. 
+        Order: HOME / HOME / cwd() / -conf (last wins)
+
 
 - If no ::arch column is given, architecture will default to "rtl"
     (configuration hier.field.::arch.[3] = rtl; cannot be changed globally)

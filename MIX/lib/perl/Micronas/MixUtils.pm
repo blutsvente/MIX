@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.11 $                                             |
+# | Revision:   $Revision: 1.12 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/03/14 14:52:11 $                                   |
+# | Date:       $Date: 2003/03/21 16:59:19 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.11 2003/03/14 14:52:11 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.12 2003/03/21 16:59:19 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.12  2003/03/21 16:59:19  wig
+# | Preliminary working version for bus splices
+# |
 # | Revision 1.11  2003/03/14 14:52:11  wig
 # | Added -delta mode for backend.
 # |
@@ -99,9 +102,11 @@ require Exporter;
 	mix_utils_close
 	replace_mac
 	init_ole
+	close_open_workbooks
 	open_input
 	db2array
 	write_excel
+	write_delta_excel
         );
 # @Micronas::MixUtils::EXPORT_OK=qw(
 @EXPORT_OK = qw(
@@ -131,12 +136,14 @@ use Log::Agent;
 use Log::Agent::Priorities qw(:LEVELS);
 
 use Storable;
+# use Data::Dumper; # Will be evaled if -adump option is on
 # use Text::Diff;  # Will be eval'ed down there if -delta option is given!
 #  use Win32::OLE; # etc.# Will be eval'd down there if excel comes into play
 
 #
 # Prototypes
 #
+sub write_delta_excel ($$$);
 sub select_variant ($);
 sub mix_list_conf ();
 sub _mix_list_conf ($$);
@@ -145,7 +152,10 @@ sub mix_utils_open($);
 sub mix_utils_print($@);
 sub mix_utils_printf($@);
 sub mix_utils_close($$);
+sub close_open_workbooks ();
 sub replace_mac ($$);
+sub one2two ($);
+sub two2one ($);
 
 ##############################################################
 # Global variables
@@ -163,6 +173,13 @@ sub mix_getopt_header(@) {
     unless (mix_getopt(@appopts)) {
         mix_usage();
         exit 1;
+    }
+
+    #
+    # CONF options set -> overload built-in configuration (needs to be first!!!!)
+    #
+    if ($OPTVAL{'conf'}) {
+	mix_overload_conf( $OPTVAL{'conf'} );
     }
 
     # Evaluate options
@@ -217,7 +234,7 @@ sub mix_getopt_header(@) {
     if (defined $OPTVAL{'top'} ) {
 	$EH{'top'} = $OPTVAL{'top'};
     } else {
-	$EH{'top'} = 'TESTBENCH';
+	$EH{'top'} = 'TESTBENCH'; #TODO: put into %EH
     }
 
     # Specify variant to be selected in hierachy sheet(s)
@@ -231,10 +248,12 @@ sub mix_getopt_header(@) {
     # Write entities into file
     if (defined $OPTVAL{'outenty'} ) {
 	$EH{'outenty'} = $OPTVAL{'outenty'};
+    } elsif ( defined( $EH{'outenty'} ) ) {
+	# outenty defined by -conf or config file, do not change
     } elsif ( exists( $ARGV[$#ARGV] ) )  {
 	# Output file will be written to current directory.
 	# Name will become name of last input file foo-mixed.ext
-	$EH{'outenty'} = $ARGV[$#ARGV] ;
+	$EH{'outenty'} = $ARGV[$#ARGV];
 	$EH{'outenty'} =~ s,(\.[^.]+)$,,; # Remove extension
 	$EH{'outenty'} .= $EH{'postfix'}{'POSTFILE_ENTY'} . "." . $EH{'output'}{'ext'}{'vhdl'};
 	if ( $EH{'output'}{'path'} eq "." ) {
@@ -247,6 +266,8 @@ sub mix_getopt_header(@) {
     # Write architecture into file
     if (defined $OPTVAL{'outarch'} ) {
 	$EH{'outarch'} = $OPTVAL{'outarch'};
+    } elsif ( defined( $EH{'outarch'} ) ) {
+	# outarch defined by -conf or config file, do not change
     } elsif ( exists( $ARGV[$#ARGV] ) )  {
 	# Output file will be written to current directory.
 	# Name will become name of last input file foo-mixed.ext
@@ -263,6 +284,8 @@ sub mix_getopt_header(@) {
    # Write configuration into file
     if (defined $OPTVAL{'outconf'} ) {
 	$EH{'outconf'} = $OPTVAL{'outconf'};
+    } elsif ( defined( $EH{'outconf'} ) ) {
+	# outconf defined by -conf or config file, do not change
     } elsif ( exists( $ARGV[$#ARGV] ) )  {
 	# Output file will be written to current directory.
 	# Name will become name of last input file foo-mixed.ext
@@ -283,12 +306,6 @@ sub mix_getopt_header(@) {
 	mix_overload_sheet( $OPTVAL{'sheet'} );
     }
 
-    #
-    # CONF options set -> overload built-in configuration
-    #
-    if ($OPTVAL{'conf'}) {
-	mix_overload_conf( $OPTVAL{'conf'} );
-    }
 
     #
     # -listconf
@@ -300,16 +317,33 @@ sub mix_getopt_header(@) {
 
     #
     # -delta
-    # Enable delta mode (generate a diff instead of a full version
+    # Enable delta mode (generate a diff instead of a full version)
+    # Delta mode can be enabled by -delta switch of by configuration variable
+    # like -conf output.generate.delta=1 or enabled in mix.cfg file
     #
-    if ( exists( $OPTVAL{delta} ) and $OPTVAL{delta} ) {
+    if ( exists( $OPTVAL{delta} ) ) { # -delta |-nodelta
+	if ( $OPTVAL{delta} ) {
 	# Eval use Text::Diff
-	if ( eval "use Text::Diff;" ) {
-	    logwarn( "ERROR: Cannot load Text::Diff module for -delta mode: $@" );
-	    exit(1);
+	    if ( eval "use Text::Diff;" ) {
+		logwarn( "ERROR: Cannot load Text::Diff module for -delta mode: $@" );
+		exit(1);
+	    }
+	    $EH{'output'}{'generate'}{'delta'} = 1;
+	} else { # Switch off delta mode
+	    $EH{'output'}{'generate'}{'delta'} = 0;
 	}
     } else {
-	$OPTVAL{delta} = 0;
+	if ( $EH{'output'}{'generate'}{'delta'} ) { # Delta on by -conf or FILE.cfg
+	# Eval use Text::Diff
+	    if ( eval "use Text::Diff;" ) {
+		logwarn( "ERROR: Cannot load Text::Diff module for -conf *delta* mode: $@" );
+		exit(1);
+	    }
+	    $EH{'output'}{'generate'}{'delta'} = 1;
+	    $OPTVAL{delta} = 1;
+	} else {
+	    $EH{'output'}{'generate'}{'delta'} = 0;
+	}
     }
 
     # Print banner
@@ -599,7 +633,8 @@ $ex = undef; # Container for OLE server
 				      # is "noleaf". The verilog keyword will add configuration
 				      #   records for verilog subblocks (who wants that?)
 	      'use' => 'enty',     # apply ::use libraries to entity files, if not specified otherwise
-				      # values: <enty|conf|arch|all>
+					# values: <enty|conf|arch|all>
+	      'delta' => 0,	    	# allows to use mix.cfg to preset delta mode
 	    },	
 	'ext' => 	{   'vhdl' => 'vhd',
 			    'verilog' => 'v' ,
@@ -609,7 +644,7 @@ $ex = undef; # Container for OLE server
 	    },
 	# 'warnings' => 'load,drivers',	# Warn about missing loads/drivers
 	'warnings' => '',
-	'delta' => 'sort', # Controlling delta mode:
+	'delta' => 'sort', # Controlling delta output mode:
 				    # space: not consider whitespace
 				    # sort:   sort lines
 				    # comment: not remove all comments before compare
@@ -623,7 +658,7 @@ $ex = undef; # Container for OLE server
     'intermediate' => {
 	'path' => ".",
 	'order' => 'input',
-	'keep' => '4',	# Number of old sheets to keep
+	'keep' => '3',	# Number of old sheets to keep
 	'format' => 'prev', # One of: prev(ious), auto or n(o|ew)
 	# If set, previous uses old sheet format, auto applies auto-format and the others do nothing.
     },
@@ -794,11 +829,12 @@ $ex = undef; # Container for OLE server
 	    '%H%'		=> '$',			# RCS keyword saver ...
     },
     # Counters and generic messages
-    "ERROR" => "__ERROR__",
-    "WARN" => "__WARNING__",
-    "CONST_NR" => 0,   # Some global counters
-    "GENERIC_NR" => 0,
-    "DELTA_NR" => 0,
+    'ERROR' => '__ERROR__',
+    'WARN' => '__WARNING__',
+    'CONST_NR' => 0,   # Some global counters
+    'GENERIC_NR' => 0,
+    'DELTA_NR' => 0,
+    'DELTA_INT_NR' => 0,
 );
 
 #
@@ -824,30 +860,61 @@ $ex = undef; # Container for OLE server
     } elsif ( defined( $ENV{'LOGNAME'} ) ) {
 		$EH{'macro'}{'%USER%'} = $ENV{'LOGNAME'};
     }
-    
+
+    #
+    # Define HOME:
+    #
+    if ( $^O =~ m,^mswin,io ) {
+	if ( defined( $ENV{'HOMEDRIVE'} ) and defined( $ENV{'HOMEPATH'} ) ) {
+	    $EH{'macro'}{'%HOME%'} = $ENV{'HOMEDRIVE'} . $ENV{'HOMEPATH'};
+	}elsif ( defined( $ENV{'USERPROFILE'} ) ) {
+            $EH{'macro'}{'%HOME%'} = $ENV{'USERPROFILE'};
+	} else {
+	    $EH{'macro'}{'%HOME%'} = "C:\\"; #TODO: is that a good idea?
+	} 
+    } elsif ( defined( $ENV{'HOME'} ) ) {
+		$EH{'macro'}{'%HOME%'} = $ENV{HOME};
+    } else {
+	$EH{'macro'}{'%HOME%'} = "/home/" . $ENV{'LOGNAME'};
+    }
+
+    #
+    # Define PROJECT path
+    #
+    if ( $ENV{'PROJECT'} ) {
+	$EH{'macro'}{'%PROJECT%'} = $ENV{'PROJECT'};
+    } else {
+	$EH{'macro'}{'%PROJECT%'} = "NO_PROJECT_SET";
+    }
+
 #
 # If there is a file called mix.cfg, try to read that ....
 # Configuraation parameters have to be written like
 #	MIXCFG key value
 #	key can be key.key.key ... (see %EH structure or use -listconf to dump current values)
 # !!Caveat: there will be no checks whatsoever on the values or keys !!
+# Locations to be checked are:
+# $HOME, $PROJECT, cwd()
 #
-if ( -r "mix.cfg" ) {
-    logtrc( "INFO", "Reading extra configurations from mix.cfg\n" );
+foreach my $conf (
+    $EH{'macro'}{'%HOME%'}, $EH{'macro'}{'%PROJECT%'}, "."
+    ) {
+    if ( -r $conf . "/" . "mix.cfg" ) {
+	logtrc( "INFO", "Reading extra configurations from $conf/mix.cfg\n" );
 
-    unless( open( CFG, "< mix.cfg" ) ) {
-	logwarn("Cannot open mix.cfg for reading: $!\n");
-    } else {
-	while( <CFG> ) {
-	    chomp;
-	    next if ( m,^\s*#,o );
-	    if ( m,^\s*MIXCFG\s+(\S+)\s*(.*), ) { # MIXCFG key.key.key value
-		_mix_apply_conf( $1, $2, "file:mix.cfg" );
+	unless( open( CFG, "< $conf/mix.cfg" ) ) {
+	    logwarn("Cannot open $conf/mix.cfg for reading: $!\n");
+	} else {
+	    while( <CFG> ) {
+		chomp;
+		next if ( m,^\s*#,o );
+		if ( m,^\s*MIXCFG\s+(\S+)\s*(.*), ) { # MIXCFG key.key.key value
+		    _mix_apply_conf( $1, $2, "file:mix.cfg" );
+		}
 	    }
+	    close( CFG );
 	}
-	close( CFG );
     }
-
 }
 
 } # End of mix_init
@@ -1103,6 +1170,7 @@ sub init_ole () {
 		    return undef; # Did not work :-(
 		}
           }
+          init_open_workbooks(); # Get list of already open files
           return $ex;  # Return OLE ExCEL object ....
 	}
     } else {
@@ -1145,19 +1213,20 @@ sub open_input (@) {
 	    # Apply it immediately
 	    mix_excel_conf( $c, $EH{'conf'}{'xls'} );
 	}
-	# For ExCEL we need to provide absolute pathes!!
+	# Open connectivity sheet(s)
 	my @sheet = open_excel( $i, $EH{'conn'}{'xls'}, "mandatory" );
 	for my $c ( @sheet ) {
 	    my @conn = convert_in( "conn", $c ); # Normalize and read in
 	    push( @$aconn, @conn ); # Append
 	}
 
+	# Open hierachy sheets
 	@sheet = open_excel( $i, $EH{'hier'}{'xls'}, "mandatory" );
 	for my $c ( @sheet ) {
 	    my @hier = convert_in( "hier", $c );
 	    #
 	    # Remove all lines not selected by our variant
-	    #
+	    #TODO: Should we allow variants in the CONN sheet, too??
 	    select_variant( \@hier );
 	    push( @$ahier,   @hier );	# Append
 	}
@@ -1188,7 +1257,7 @@ sub mix_utils_open ($){
     my $file= shift;
 
     my $ofile = $file;
-    if ( $OPTVAL{'delta'} ) { # Delta mode!
+    if ( $EH{'output'}{'generate'}{'delta'} ) { # Delta mode!
 	if ( -r $file ) {
 	# read in file
 	    my $ofh = new IO::File;
@@ -1200,7 +1269,7 @@ sub mix_utils_open ($){
 	    chomp( @ocont );
 	    map( { s/--.*//o; } @ocont ) if ( $EH{'output'}{'delta'} !~ m,comment,io );
 	    if ( $EH{'output'}{'delta'} !~ m,space,io ) {
-		map( { s/\s+/ /og; s/^\s*//og; } @ocont );
+		map( { s/\s+/ /og; s/^\s*//og; s/\s*$//og; } @ocont );
 		@ocont = grep( !/^$/,  @ocont );
 	    }
 	    ( @ocont = sort( @ocont ) ) if ( $EH{'output'}{'delta'} =~ m,sort,io );
@@ -1238,7 +1307,7 @@ sub mix_utils_print ($@) {
     my $fh = shift;
     my @args = @_;
 
-    if ( $this_delta{$fh} ) {
+    if ( $this_delta{"$fh"} ) {
 	push( @ncont, split( /\n/, sprintf( "%s", @args ) ) );
     } else {
 	print( $fh @args );
@@ -1272,7 +1341,7 @@ sub mix_utils_close ($$) {
     # Sort/map new content and compare .... print out to $fh
 	map( { s/--.*//o; } @ncont ) if ( $EH{'output'}{'delta'} !~ m,comment,io );
 	if ( $EH{'output'}{'delta'} !~ m,space,io ) {
-	    map( { s/\s+/ /og; s/^\s*//og; } @ncont );
+	    map( { s/\s+/ /og; s/^\s+//o; s/\s+$//o; } @ncont );
 	    @ncont = grep( !/^$/,  @ncont );
 	}
 	@ncont = sort( @ncont ) if ( $EH{'output'}{'delta'} =~ m,sort,io );
@@ -1581,7 +1650,82 @@ sub parse_header($$@){
     #
     return %or;
 }
-		
+
+#
+# Get a list of all open workbooks
+#
+
+
+{
+my %workbooks = ();
+my %newbooks = ();
+
+sub init_open_workbooks () {
+
+    foreach my $bk ( in $ex->{Workbooks} ) {
+	$workbooks{$bk->{'Name'}} = $bk; # Remember that
+    }
+    return;
+}
+
+#	if ( $bk->{'Name'} =~ m,^$basename$,i ) {
+#	    $openflag = 1;
+#	    $bk->Activate;
+#	    $book = $bk;
+#	    last;
+#	    # Already open ...
+#	    #TODO: Warning: Path might be different!
+#	}
+#    }
+#
+# Check name against list of already opened files
+#
+
+#
+# is_open_workbook
+#
+sub is_open_workbook ($) {
+    my $workbook = shift;
+
+    for my $i ( keys( %workbooks ) ) {
+	if ( $i =~ m,^$workbook$,i ) {
+	    return $workbooks{$i};
+	}
+    }
+
+    for my $i ( keys( %newbooks ) ) {
+	if ( $i =~ m,^$workbook$,i ) {
+	    return $newbooks{$i};
+	}
+    }	
+    return undef;
+
+}
+
+#
+# Remember all workbooks we made
+#
+sub new_workbook ($$) {
+    my $workbook = shift;
+    my $book = shift;
+    
+    $newbooks{$workbook} = $book;
+
+}
+
+#
+# Finally, close all workbooks we opened while running along here ...
+#
+sub close_open_workbooks () {
+
+    for my $i ( keys( %newbooks ) ) {
+	$newbooks{$i}->Close or logwarn "ERROR: Cannot close $i workbook";
+    }
+
+}
+
+}
+
 ####################################################################
 ## open_excel
 ## open excel file and get contents
@@ -1617,22 +1761,32 @@ sub open_excel($$$){
     $basename =~ s,.*[/\\],,; #Strip off / and \ 
 
     my $book;    
-    #TODO: unless( $ex->Workbook-> ...) if already open ....
+    my $ro = 1;
+    if ( $warn_flag =~ m,write,io ) {
+	$ro = 0;
+    }
     # If it exists, it could be open, too?
-    foreach my $bk ( in $ex->{Workbooks} ) {
-	if ( $bk->{'Name'} eq $basename ) {
-	    $openflag = 1;
-	    $bk->Activate;
-	    $book = $bk;
-	    last;
-	    # Already open ...
-	    # Warning: Path might be different!
-	}
+    unless ( $book = is_open_workbook( $basename ) ) {
+	$book = $ex->Workbooks->Open({FileName=>$file, ReadOnly=>$ro});
+	new_workbook( $basename, $book );
     }
 
-    unless ( $openflag ) {
-        $book = $ex->Workbooks->Open({FileName=>$file, ReadOnly=>1});
-    } 
+    $book->Activate;
+    
+    #foreach my $bk ( in $ex->{Workbooks} ) {
+	#if ( $bk->{'Name'} =~ m,^$basename$,i ) {
+	#    $openflag = 1;
+	#    $bk->Activate;
+	#    $book = $bk;
+	#    last;
+	#    # Already open ...
+	#    #TODO: Warning: Path might be different!
+	#}
+    #}
+
+    #unless ( $openflag ) {
+    #    $book = $ex->Workbooks->Open({FileName=>$file, ReadOnly=>1});
+    #} 
 
 #  my $book  =$ex->Workbooks->Open(
 #				  $file.".xls",   # filename
@@ -1657,7 +1811,7 @@ sub open_excel($$$){
         }
     }
     if ( $#sheets < 0 ) {
-	if ( $warn_flag eq "mandatory" ) {
+	if ( $warn_flag =~ m,mandatory,io ) {
 	    logwarn("Cannot locate a worksheet $sheetname in $file");
 	}
 	return ();
@@ -1671,12 +1825,12 @@ sub open_excel($$$){
 	push( @all, $row ); # Return array of arrays
     }
 
-    unless( $openflag ) {
-	$book->Close or logdie "Cannot close $file spreadsheet";
-    }
+    #unless( $openflag ) {
+	#$book->Close or logdie "Cannot close $file spreadsheet";
+    #}
     #TODO: Keep open until all opes are done (avoid reopening ...)
 
-    $ex->{DisplayAlerts}=1; # Back again ...
+    $ex->{DisplayAlerts}=1; # Switch back on alerts ...
     return(@all);
 
 }
@@ -1919,16 +2073,31 @@ sub inout2array ($) {
 	# Constants are working a different way:
 	#: m,^\s*(__CONST__|%CONST%|__GENERIC__|__PARAMETER__|%GENERIC%|%PARAMETER%),o ) {
 
+	#TODO: make sure sig_t/sig_f and port_t/port_f are defined in pairs!!
 	if ( $i->{'inst'} =~
 	    m,^\s*(__CONST__|%CONST%),o ) {
 	    $s .= $i->{'port'} . ", %IOCR%";
 	} elsif ( defined $i->{'sig_t'} ) {
 	# inst/port($port_f:$port_t) = ($sig_f:$sig_t)
-	    $s .= $i->{'inst'} . "/" . $i->{'port'} . "(" .
-		    $i->{'port_f'} . ":" . $i->{'port_t'} . ")=(" .
-		    $i->{'sig_f'} . ":" . $i->{'sig_t'} . "), %IOCR%"
+	    if ( defined $i->{'port_t'} ) {
+		$s .= $i->{'inst'} . "/" . $i->{'port'} . "(" .
+			$i->{'port_f'} . ":" . $i->{'port_t'} . ")=(" .
+			$i->{'sig_f'} . ":" . $i->{'sig_t'} . "), %IOCR%";
+	    } else {
+		# TODO inst/port = (sf:st)  vs. inst/port(0:0) = (sf:st)
+		$s .= $i->{'inst'} . "/" . $i->{'port'} . "=(" .
+			$i->{'sig_f'} . ":" . $i->{'sig_t'} . "), %IOCR%";
+	    }
 	} else {
-	    $s .= $i->{'inst'} . "/" . $i->{'port'} . ", %IOCR%";
+	    if ( defined $i->{'port_t'} ) {
+		$s .= $i->{'inst'} . "/" . $i->{'port'} . "(" .
+			$i->{'port_f'} . ":" . $i->{'port_t'} . # ")=(" .
+			# $i->{'sig_f'} . ":" . $i->{'sig_t'} .
+			"), %IOCR%";
+		
+	    } else {
+		$s .= $i->{'inst'} . "/" . $i->{'port'} . ", %IOCR%";
+	    }
 	}
     }
 
@@ -1937,6 +2106,174 @@ sub inout2array ($) {
     $s =~ s,%IOCR%,$EH{'macro'}{'%IOCR%'},g;
     
     return $s;
+}
+
+####################################################################
+## write_delta_excel
+## write delta intermediate data to excel sheet
+####################################################################
+
+=head2
+
+write_delta_excel ($$$) {
+
+read in previous intermediate data, diff and print out only differences.
+
+Arguments: $file   := filename
+		$type  := sheetname (CONN|HIER)
+		$ref_a := reference to array with data
+
+=cut
+
+sub write_delta_excel ($$$) {
+    my $file = shift;
+    my $sheet = shift;
+    my $r_a = shift;
+   
+    # Print out diff, only
+    
+    my @prev = open_excel( $file, $sheet, "mandatory,write" );
+    my @prevd = two2one( $prev[0] );
+    my @currd = two2one( $r_a );
+
+    # Print header to ... (usual things like options, ....)
+    # TODO: Add that header to header definitions
+    my $head =
+"-------------------------------------------------------
+-- ------------- delta mode for file $file ------------- --
+--
+-- Generated
+--  by:  %USER%
+--  on:  %DATE%
+--  cmd: %ARGV%
+--  delta mode (comment/space/sort/remove): $EH{'output'}{'delta'}
+--
+-- ------------------------------------------------- --
+-- ------------- CHANGES START HERE ------------- --
+";
+    $head = replace_mac( $head, $EH{'macro'} );
+
+    # Diff it ...
+    my $diff = diff( \@currd, \@prevd,
+                { STYLE => "Table",
+                # STYLE => "Context",
+                FILENAME_A => 'NEW', #TODO: get new file name in here!
+                FILENAME_B => "OLD $file",
+                CONTEXT => 0,
+                # OUTPUT     => $fh,
+                }
+    );
+
+    # Was there a difference? If yes, report and sum up.
+    if ( $diff ) {
+
+        my @h = split( /\n/, $head );
+	@h = one2two( \@h );
+	shift @h;
+	$h[0][1] = $h[0][2] = $h[0][3] = "-- delta --";
+	my @out = ();
+	@out = split( /\n/, $diff );
+	@out = one2two( \@out );
+	my $difflines = shift( @out );
+	push( @h, [ "--NR--", "--CONT--", "--NR--", "--CONT--" ] );
+	push( @h, ( @out ) );
+        write_excel( $file, "DIFF_" . $sheet, \@h );
+
+	# One line has to differ (date)
+	if ( $difflines > 0 ) {
+	    logwarn( "INFO: Detected $difflines changes in intermediate ExCEL sheet $sheet, $file");
+	} elsif ( $difflines == -1 ) {
+	    logwarn( "WARNING: Missing changed date in intermediate ExCEL sheet $sheet, $file");
+	}
+	#TODO: Do not use logwarn here ...
+	return $difflines;
+    } else {
+	return -1;
+    }
+}
+
+#
+# convert two dim. input arry into a one-dim. array.
+# by concatenation the cells with \tX\t
+#
+sub two2one ($) {
+    my $ref = shift;
+
+    my @out = ();
+    no warnings; # switch of warnings here, values might be undefined ...
+    # Convert two dim. input array into one-dimensional
+    for my $n ( @$ref ) {
+	my $l = join( "\t", @$n );
+	$l =~ s/\t+/\t/g;
+	$l =~ s/\t$//;
+	push( @out, $l );
+    }
+    if ( $EH{'output'}{'delta'} !~ m/space/ ) {
+	@out = grep( !/^\s*$/ , @out ); # Get rid of space only
+    }
+    return @out;
+}
+
+#
+# create a two-dim. array from a one-dim. one
+# suitable to be fed to ExCEL
+# possibly undo Text::Diff table format -> ExCEL
+# Output excel will have four fields:
+#Caveat: This function 
+sub one2two ($) {
+    my $ref = shift;
+
+    my @out = ();
+    my @fields = ();
+    my $tline = '';
+    my $match = '';
+    my $difflines = -1;
+    if ( @fields = split( /\+/, $ref->[0] ) ) {
+	$tline = $ref->[0];
+	# @fileds has lengthes, now ....
+	unless( $fields[0] ) { shift @fields; }; #Take away the first if empty
+	if ( scalar( @fields ) < 1 or scalar( @fields ) > 4 ) {
+	    logwarn( "WARNING: Bad number of fields found in write_delta_excel!" );
+	}
+	my @w = map( { length( $_ ) }@fields );
+	for my $i ( @w ) {
+	    $match .= '[*|](.{' . $i . '})';
+	}
+    }
+    for my $n ( 0..$#{$ref} ) {
+	if ( $tline ) {
+	    if ( $ref->[$n] =~ m/\Q$tline/ ) {
+		$out[$n][0] = '--------------------------';
+	    } elsif ( $ref->[$n] =~ m/$match/ ) {
+		my $n1 = $1 || " ";
+		my $n2 = $3 || " ";
+		my $nval = $2 || " ";
+		my $oval = $4 || " ";
+		# Only three fields -> Table does not have second line number column
+		if ( scalar( @fields ) == 3 ) {
+		    $oval = $n2;
+		    $n2 = "";
+		}
+		$nval =~ s/\s+/ /og;
+		$oval =~ s/\s+/ /og;
+		@{$out[$n]} = ( $n1, $nval, $n2, $oval );
+		# Initialize difflines, but only count lines not starting with a # or a //
+		if ( $difflines == -1 ) { $difflines = 0; };
+		if ( $nval !~ m,^\s*(#|//), or $oval !~ m,^\s*(#|//), ) {
+		    unless( $n1 =~ m,^\s*$, and $n2 =~ m,^\s*$, and $nval =~  m,^\s*NEW\s*$, ) {
+			$difflines++;
+		    }
+		}
+	    } else {
+		$out[$n][0] = $ref->[$n];
+		# $out[$n][1] = $out[$n][2] = $out[$n][3] = '--';
+	    }
+	} else {
+	    $out[$n][0] = $ref->[$n];
+	    # $out[$n][1] = $out[$n][2] = $out[$n][3] = '--';
+	}
+    }
+    return $difflines, @out;
 }
 
 
@@ -1953,7 +2290,7 @@ this subroutine is self explanatory. The only important thing is, that it will
 try to rotate older versions of the generated sheets.
 E.g. sheet CONN will become O0_CONN while O0_CONN was shifted
 to O1_CONN. The maximum number of all versions to keep is defined by
-$EH{
+$EH{'intermediate'}{'keep'}
 
 Arguments: $file   := filename
 		$type  := sheetname (CONN|HIER)
@@ -1983,20 +2320,27 @@ sub write_excel ($$$) {
 	logwarn("File $file already exists! Contents will be changed");
 
 	# If it exists, it could be open, too?
-	foreach my $bk ( in $ex->{Workbooks} ) {
-	    if ( $bk->{'Name'} =~ m/^$basename$/i ) {
-		#20030313: Do not consider file name case!
-		$openflag = 1;
-		$bk->Activate;
-		$book = $bk;
-		last;
-		# Already open ...
-		# Warning: Path might be different!
-	    }
-	}
-	unless ( $openflag ) {
+	unless( $book = is_open_workbook( $basename ) ) {
 	    $book = $ex->Workbooks->Open($efile);
+	    new_workbook( $basename, $book );
 	}
+
+	$book->Activate;
+	
+#	foreach my $bk ( in $ex->{Workbooks} ) {
+#	    if ( $bk->{'Name'} =~ m/^$basename$/i ) {
+#		#20030313: Do not consider file name case!
+#		$openflag = 1;
+#		$bk->Activate;
+#		$book = $bk;
+#		last;
+#		# Already open ...
+#		# Warning: Path might be different!
+#	    }
+#	}
+#	unless ( $openflag ) {
+#	    $book = $ex->Workbooks->Open($efile);
+#	}
 	
 	#
     	# rotate old versions of $sheet to O$n_$sheet_O ...
@@ -2007,6 +2351,7 @@ sub write_excel ($$$) {
 	foreach my $sh ( in $book->{Worksheets} ) {
 	    $sh{$sh->{'Name'}} = $sh; # Keep links
 	}
+
 	if ( $EH{'intermediate'}{'keep'} ) {
 
 	    # Rotate sheets ...
@@ -2058,6 +2403,7 @@ sub write_excel ($$$) {
 	# Create new workbook
 	$book = $ex->Workbooks->Add();
 	$book->SaveAs($efile);
+	new_workbook( $basename, $book );
 	$newflag=1;
     }
 
@@ -2088,11 +2434,12 @@ sub write_excel ($$$) {
 	$rng->Columns->AutoFit;
     }
 
-    #!wig: $sheetr->Protect;
     #TODO: pretty formating
-    #TODO: Print nice header (on a sheet ..)
-    $book->Save;
-    $book->Close unless ( $openflag ); #TODO: only close if not open before ....
+    # $book->Save;
+
+    $book->SaveAs($efile);
+
+    # $book->Close unless ( $openflag ); #TODO: only close if not open before ....
 
     $ex->{DisplayAlerts}=1;
     return;

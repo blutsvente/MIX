@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.12 $                                             |
+# | Revision:   $Revision: 1.13 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/03/14 14:52:11 $                                   |
+# | Date:       $Date: 2003/03/21 16:59:05 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.12 2003/03/14 14:52:11 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.13 2003/03/21 16:59:05 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.13  2003/03/21 16:59:05  wig
+# | Preliminary working version for bus splices
+# |
 # | Revision 1.12  2003/03/14 14:52:11  wig
 # | Added -delta mode for backend.
 # |
@@ -90,6 +93,7 @@ require Exporter;
     write_entities
     write_architecture
     write_configuration
+    write_sum
     );            # symbols to export by default
   @EXPORT_OK = qw(
     );
@@ -137,7 +141,7 @@ sub gen_concur_port($$$$$$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.12 2003/03/14 14:52:11 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.13 2003/03/21 16:59:05 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
 
 $thisid =~ s,\$,,go;
@@ -2298,6 +2302,32 @@ sub use_lib ($$) {
     }
     
     return $all;
+
+}
+
+####################################################################
+## write_sum
+## write out summary informations
+####################################################################
+
+=head2
+
+write_sum ()
+
+write out various summary information like number of changed files, generated wires
+
+=cut
+
+sub write_sum () {
+
+    if ( $EH{'output'}{'generate'}{'delta'} ) {
+        #TODO: Do not use logwarn channel!
+        logwarn( "SUM: Number of changes in intermediate: $EH{'DELTA_INT_NR'}");
+        logwarn( "SUM: Number of changed files: $EH{'DELTA_NR'}");
+        return $EH{'DELTA_NR'} + $EH{'DELTA_INT_NR'};
+    }
+
+    return 0;    
 
 }
 
