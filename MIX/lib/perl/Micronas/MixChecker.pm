@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Checker
 # | Modules:    $RCSfile: MixChecker.pm,v $
-# | Revision:   $Revision: 1.2 $
+# | Revision:   $Revision: 1.3 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2003/04/01 14:27:59 $
+# | Date:       $Date: 2003/04/28 06:40:37 $
 # |
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.2 2003/04/01 14:27:59 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.3 2003/04/28 06:40:37 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the checking capabilites for the MIX project.
@@ -33,6 +33,11 @@
 # |
 # | Changes:
 # | $Log: MixChecker.pm,v $
+# | Revision 1.3  2003/04/28 06:40:37  wig
+# | Added %OPEN% (to allow ports without connection, use VHDL open keyword)
+# | Started parseIO (not operational, would be a branch instead)
+# | Fixed nreset2 issue (20030424a bug)
+# |
 # | Revision 1.2  2003/04/01 14:27:59  wig
 # | Added IN/OUT Top Port Generation
 # |
@@ -47,6 +52,7 @@ require Exporter;
 
   @ISA = qw(Exporter);
   @EXPORT = qw(
+    mix_check_case
 
     );            # symbols to export by default
   @EXPORT_OK = qw(
@@ -69,22 +75,24 @@ use Log::Agent;
 use Log::Agent::Priorities qw(:LEVELS);
 use Tree::DAG_Node; # tree base class
 
-# use Micronas::MixUtils qw( mix_store db2array write_excel %EH );
+use Micronas::MixUtils qw( mix_store db2array write_excel %EH );
 use Micronas::MixParser qw( %hierdb %conndb );
+
 
 #
 # Prototypes
 #
-
+sub mix_check_case($$);
 
 # Internal variable
+my %mix_check_list = ();
 
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixChecker.pm,v 1.2 2003/04/01 14:27:59 wig Exp $';
+my $thisid		=	'$Id: MixChecker.pm,v 1.3 2003/04/28 06:40:37 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixChecker.pm,v $';
-my $thisrevision   =      '$Revision: 1.2 $';
+my $thisrevision   =      '$Revision: 1.3 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -96,17 +104,17 @@ $thisrevision =~ s,^\$,,go;
 #
 
 ####################################################################
-## mix_check_cases
+## mix_check_case
 ## if configuration says so, make everything lower or upper case!
 ## Or just inform about possible conflicts.
 ####################################################################
 
 =head2
 
-mix_check_cases () {
+mix_check_case () {
 
 Check if cases match. Depending on the value of the configuration value
-<I check.case> do the following:
+<I check.name.$type> do the following:
 
 =over 4
 
@@ -114,39 +122,93 @@ Check if cases match. Depending on the value of the configuration value
 
 Do nothing. Keep case as is.
 
-=item check2lc
+=item lc,check
 
 Just check if everything is written in lower case. Report possible conflicts.
 Write at INFO level for objects with bad cases, but without conflicts.
 Write at WARNING level if a real case conflict is detected.
 
-=item force2lc
+=item lc,force
 
 Change all objects to lower case. Possible conflicts will get reported.
 Conflicts will be resolved by brute force.
 
-=item check2uc
-
-Upper case checks.
-
-=item force2uc
-
-Lower case checks.
 
 =back
 
 You can add a "f" before uc or lc to imply that the first character will be in a
-different case.
-
-Caveat: Most of the possibilities here are not implemented today.
+different case (t.b.d).
 
 =cut
 
-mix_check_cases () {
+sub mix_check_case ($$) {
+    my $type = shift;
+    my $name = shift;
 
-    return;
+    unless( defined( $type ) ) {
+        logwarn( "WARNING: mix_check_name called without appropriate type definition!" );
+        return '';
+    }
+
+    unless( defined( $name ) ) {
+        logwarn( "WARNING: mix_check_name called without appropriate name definition!" );
+        return $name;
+    }
+
+    # mix internals ....
+    #TODO: these have to be all uppercase!!
+    if ( $name =~ m,^\s*(__|%).*(__|%)$,o ) {
+        return $name;
+    }
+    if ( $type eq "inst" and $name =~ m,^\s*W_NO_(PARENT|ENTITY|CONF),o ) {
+        return $name;
+    }
+    
+    my $check = $EH{'check'}{'name'}{$type};
+    unless( exists( $mix_check_list{$type} ) ) {
+        $mix_check_list{$type} = {};
+    }
+    my $list = $mix_check_list{$type}; # Reference to this type's list of names
+
+    #
+    # TODO: save all variants of spelling in mix_check_list?
+    #
+    
+    if( $check ) {
+        if ( $check =~ m,lc,o ) { # Get everything in lowercase ...
+            if ( exists( $list->{ lc( $name ) } ) ) {
+                if ( $list->{ lc( $name ) } ne $name ) { # Potential problem found ...
+                    if ( $check =~ m,check,o ) {
+                        logwarn( "WARNING: Got new element $name conflicting with $list->{lc($name)}!" );
+                        $EH{'sum'}{'checkwarn'}++;
+                    } elsif( $check =~ m,force,o ) {
+                        logwarn( "WARNING: Forcing new element $name to lower case " . lc($name) . "!" );
+                        $name = lc( $name );
+                        $EH{'sum'}{'checkforce'}++;
+                    }
+                    # else ignore silentely ....
+                }
+                # else "have seen the same before, no issue"
+            } else {
+                if( $name ne lc( $name ) ) {
+                    if ( $check =~ m,force,o ) {
+                        logwarn( "INFO: Forcing new $type element $name to lower case " . lc($name) . "!" );
+                       $EH{'sum'}{'checkforce'}++;
+                        $name = lc( $name );
+                    } elsif ( $check =~ m,check,o ) {
+                        logwarn( "INFO: Not all lowercase in new $type element $name!" );
+                    }
+                } # else { #no 'force to lc' or name is lc already.
+                # }
+                $list->{ lc( $name ) } = $name;
+            }
+        }
+    }
+
+    return $name;
 
 }
+
 1;
 
 #!End

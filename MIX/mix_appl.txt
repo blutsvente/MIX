@@ -9,6 +9,9 @@ Application Note / TOC
 - Tool installation:
     Not needed, run directely from K:\PROJECTS\MIX\PROG
 
+   t.d.: pack into installer (zip file).
+   tag all relevant files in the CVS repository with an appropriate tag.
+   
 - Basic wiring:
 
 - Macro definitions and evaluation:
@@ -102,6 +105,23 @@ mix_getopt_header(qw(
 - If no ::arch column is given, architecture will default to "rtl"
     (configuration hier.field.::arch.[3] = rtl; cannot be changed globally)
 
+- -delta switch: Do not change output files, but report number of deltas.
+Will add extra sheets DIFF_CONN and DIFF_HIER (and old versions of them).
+Will overwrite FOO.pld internal output.
+Will add to mix_0.pl
+If a new *.vhd file needs to be created, -delta will not be applied for that file,
+but it will be generated as new. If you never have made a FOO-mixed.xls intermediate
+output, there will be no HIER or CONN sheet generated.
+
+By adding the following two lines to your configuration (e.g. ./mix.cfg), delta mode will
+be the default:
+
+MIXCFG output.generate.delta 1
+MIXCFG output.delta sort,remove
+
+See the configuration option description for more details.
+
+-nodelta switches of the delta mode.
 - UNIX/MS-Win Issues:
 
 -- Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter

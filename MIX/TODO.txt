@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.8 2003/04/01 14:27:58 wig Exp $
+# $Id: TODO.txt,v 1.9 2003/04/28 06:40:36 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -18,36 +18,79 @@ Doku:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
-- 20030331a/bug: ::variant and generator
-    generated instances are added, even if ::variant does deselect that statement
+
+- 20030424a/Bug:
+
+das Signal 'nreset' wird auf den Port 'nreset' korrekt verdrahtet (Erzeugung eines
+internen Signals 'int_s_reset', das an den Port und die meisten Module verdrahtet wird).
+Allerdings wird auf alle internen Module bei denen der Eingangspin nicht 'nreset' heißt, 
+der Port 'nreset' angeschlossen, was zu Compilerfehlern führt.
+
+    Testcase:
+    Req: Pallas
+    Prio: medium
+    Testcase: nreset2.xls
+
+- 20030407a/CR: %OPEN% net to allow wiring of ports (out) not in use.
+Invent s.th. simliar for input ports (set to default H or L ???)
+Resolve the conflict with wig20030124a
+
+    Req: Pallas
+    Prio: medium
+
+- 20030404g/CR: add open signals to %TOP%, e.g. if no ::in or ::out
+is defined.
 
     Req: wig
     Prio: medium
 
-- 20030325b/bug: Constant definition
+- 20030404f/CR: if %TOP% is used in ::out or ::in, figure out top level
+  and wire to that. Another way to specify wiring to top level is to
+  use I and O as mode definitions for signals.
 
-in MIX wird folgendes definiert:
-std_ulogic_vector   15   0   C               0x58B0   cgu_logic_i1/signature_val
-
-danach wird folgendes VHDL generiert (cgu-rtl-a.vhd):					
-...
-signal	mix_const_0	: std_ulogic_vector(15 downto 0); 
-...
-mix_const_0 <= "22704";
-...
-
-besser wäre im VHDL:
-constant mix_const_0	: std_ulogic_vector(15 downto 0) := 16#58B0#;
-
-
-Req: pallas
-Prio: medium
-
-- 20030325a/bug:
-    constant signal assignments happens also inside of instance (not just in
-    architecture of parent instance)
     Req: wig
     Prio: medium
+    
+- 20030404e/CR: add -conf script.post SCRIPT and -conf script.pre SCRIPT
+  configuration. pre will be executed before anything else is done.
+  post jsut before MIX ends. If pre script returns an exit code different from 0,
+  MIX will exit with this error code. post script return code will be taken as MIX
+  return code.
+
+    Req: wig
+    Prio: low
+
+- 20030404d/CR: -inplace option
+    Take previous results and keep user changed contents (marked properly)
+    if possible.
+    aka. read in existing blocks and just rewrite mix generated data.
+    Requires: appropriate framing
+
+    Req: wig
+    Prio: low
+    
+- 20030404c/Int: Improve tests
+    split all tests in frontend/backend
+    Req: wig
+    Prio: medium
+    
+- 20030404b/CR: Improve delta/ExCEL mode:
+    add ::header tags to stringify
+    split deltas into different columns
+    
+- 20030404a/CR: add -dan option : delta and new
+    rename old files (*.vhd)
+    create new files (*.vhd)
+    create diff files (*.vhd)
+    will update FOO-mixed.xls accordingly
+    Req: wig
+    Prio: low
+
+- 20030403a/CR: add signal between constant and port map
+    Req: pallas
+    Prio: medium
+    Done: wig20030404
+    Testcase: constant (updated output)
 
 - 20030313g/Bug: Improve Load/Driver evaluation
    If port width ne signal width, count "bit"wise. Save instead of integers
@@ -56,12 +99,6 @@ Prio: medium
 
     Req: wig
     Prio: medium
-
-
-- 20030313e/Bug: Allow "constant" assignments on bus splices
-    Req: wig
-    Prio: medium
-    
 
 - 20030313b/Bug: Cannot rename new spreadsheet to BLA-mixed.xls, if BLA-mixed
   already open in other directory. Check that and report usefull error message.
@@ -76,9 +113,6 @@ Prio: medium
 - 20030311d/Check: Complain about unrestricted busses ( ..._vector missing High/Low).
     Req: wig
     Prio: medium
-
-- 20030311c/Feature: How to handle I/O ? What to do with signals not connected to
-  leaf blocks? Missing drivers? Missing loads?
 
 
 - 20030311b/Bug?: Check mde-b_real / cgs_ramclk / cgs_ramclk_s (i58_core)
@@ -119,7 +153,7 @@ Prio: medium
 - 20030224a: Accept strings in (F:T) of ::in and ::out descriptions
   (string should be generic or constant)
 
-  - 20030221d: Accept strings as high/low bus bounds.
+- 20030221d: Accept strings as high/low bus bounds.
   wig
  
 
@@ -127,6 +161,7 @@ Prio: medium
 - 20030220i: Rewrite writers:
     -- Output into hash %outfiles{FILENAME}
     -- Fix DOS/UNIX CR issue
+
 
 - 20030220j: Use Bugzilla for issues 
 
@@ -136,9 +171,8 @@ Prio: medium
   wig20030124
 
 - OPEN wires to external
-  wig20030124
+  wig20030124a
 
-- Open files, delay close until EOF processing
 
 - Check if the a object (Workbook) is opened from different path, but with
   same name?
@@ -184,6 +218,62 @@ Prio: medium
         non-leaf cells multiple instantiation, how-to: global signal names localization
 
 DONE: ++++++++++++++++++++++++
+- Open files, delay close until EOF processing
+  Done: wig
+
+- 20030311c/Feature: How to handle I/O ? What to do with signals not connected to
+  leaf blocks? Missing drivers? Missing loads?
+
+    wig: I/O ports are now brought up to their TOP cell.
+    TOP is defined to be the daughter(s) of testbench (if not specified by the -top
+    switch.
+    Done: release_20030401
+
+- 20030331a/bug: ::variant and generator
+    generated instances are added, even if ::variant does deselect that statement
+
+    Req: wig
+    Prio: medium
+    Fixed: 20030331
+    
+- 20030325b/bug: Constant definition
+
+in MIX wird folgendes definiert:
+std_ulogic_vector   15   0   C               0x58B0   cgu_logic_i1/signature_val
+
+danach wird folgendes VHDL generiert (cgu-rtl-a.vhd):					
+...
+signal	mix_const_0	: std_ulogic_vector(15 downto 0); 
+...
+mix_const_0 <= "22704";
+...
+
+besser wäre im VHDL:
+constant mix_const_0	: std_ulogic_vector(15 downto 0) := 16#58B0#;
+
+wig: conversion to "101010" required for std_[u]logic_vector
+
+Req: pallas
+Prio: medium
+Fixed: release_20030401
+Testcase: constants.xls
+
+
+- 20030325a/bug:
+    constant signal assignments happens also inside of instance (not just in
+    architecture of parent instance)
+    Req: wig
+    Prio: medium
+    Fixed: wig (aeport data structure had entries with only load's and driver's)
+
+
+- 20030313e/Bug: Allow "constant" assignments on bus splices
+    This works today! leave the ::name field empty or give the constant a name
+    different from the signal/port you want to assign to.
+    Req: wig
+    Prio: medium
+    Fixed: n/a
+    
 
 - 20030313d/Bug: Do bus/bit/port handling in signal assigments, not in port maps!
     Req: pallas

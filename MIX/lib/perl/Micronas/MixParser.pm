@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.14 $                                             |
+# | Revision:   $Revision: 1.15 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/04/01 14:27:59 $                                   |
+# | Date:       $Date: 2003/04/28 06:40:37 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.14 2003/04/01 14:27:59 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.15 2003/04/28 06:40:37 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,11 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.15  2003/04/28 06:40:37  wig
+# | Added %OPEN% (to allow ports without connection, use VHDL open keyword)
+# | Started parseIO (not operational, would be a branch instead)
+# | Fixed nreset2 issue (20030424a bug)
+# |
 # | Revision 1.14  2003/04/01 14:27:59  wig
 # | Added IN/OUT Top Port Generation
 # |
@@ -137,6 +142,7 @@ use Tree::DAG_Node; # tree base class
 
 use Micronas::MixUtils qw( mix_store db2array write_excel write_delta_excel
                            close_open_workbooks %EH );
+use Micronas::MixChecker;
 
 # Prototypes:
 sub _scan_inout ($);
@@ -160,11 +166,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.14 2003/04/01 14:27:59 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.15 2003/04/28 06:40:37 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.14 $';
+my $thisrevision   =      '$Revision: 1.15 $';
 
-# | Revision:   $Revision: 1.14 $   
+# | Revision:   $Revision: 1.15 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -551,16 +557,23 @@ Build instance from input data. Do lots of checks.
 sub add_inst (%) {
     my %in = @_;
 
-    unless ( defined( $in{'::inst'} ) ) {
-        logwarn( "try to create instance without name!" );
+    unless ( exists( $in{'::inst'} ) and defined( $in{'::inst'} ) ) {
+        logwarn( "WARNING: try to create instance without name!" );
         return;
     }
 
-    my $name = $in{'::inst'};
+    my $name = mix_check_case( 'inst', $in{'::inst'} ); # Get appropriate name
+    
     if ( defined( $hierdb{$name} ) ) {
+        # Alert user if this connection already got defined somewhere ....
+        if ( $EH{'check'}{'defs'} =~ m,inst, ) {# Warning, another line adding to this inst.
+            logwarn( "WARNING: redefinition of instance $name!" );
+            $EH{'sum'}{'uniq'}++;
+        }
         merge_inst( $name, %in );
     } else {
         create_inst( $name, %in );
+        $EH{'sum'}{'inst'}++;
     }
 }
 
@@ -573,6 +586,11 @@ sub create_inst ($%) {
         return;
     }
 
+    #wig20030404: special handling: check case of parent name ...
+    if( exists( $data{'::parent'} ) ) {
+        $data{'::parent'} = mix_check_case( 'inst', $data{'::parent'} );
+    }
+    
     my $ehr = $EH{'hier'}{'field'};
     for my $i ( keys %$ehr ) {
         next unless ( $i =~ m/^::/ );
@@ -636,6 +654,9 @@ sub add_tree_node ($$) {
         $parent = $r_h->{'::parent'};
     }     
 
+    #!wig20030404: Caseing ...
+    $parent = mix_check_case( "inst", $parent );
+    
     if ( defined( $hierdb{$parent} ) and $hierdb{$parent} ) {
             $hierdb{$parent}{'::treeobj'}->add_daughter( $node );
     } else {
@@ -667,22 +688,23 @@ sub merge_inst ($%) {
     #
     # Tree check: Does this instance get a new parent?
     #
-    if ( defined( $data{'::parent'} ) and $data{'::parent' }
+    my $parent = mix_check_case( 'inst', $data{'::parent'} );
+    $data{'::parent'} = $parent; # Rewrite input data ...
+
+    if ( defined( $parent ) and $parent
         and defined( $hierdb{$name}{'::parent'} and $hierdb{$name}{'::parent'} ) ) {
         if (
-            $data{'::parent'} ne $EH{'hier'}{'field'}{'::parent'}[3] and
-            $data{'::parent'} ne $hierdb{$name}{'::parent'} ) {
-                #BAD: my $par = $hierdb{$name}{'::parent'} || "W_NO_PARENT";
-                # my $par = $data{'::parent'} || "W_NO_PARENT";
-                logwarn( "Debug: Change parent for cell $name to $data{'::parent'} from $hierdb{$name}{'::parent'}" )
+            $parent ne $EH{'hier'}{'field'}{'::parent'}[3] and
+            $parent ne $hierdb{$name}{'::parent'} ) {
+                logwarn( "Debug: Change parent for cell $name to $parent from $hierdb{$name}{'::parent'}" )
                     unless( $hierdb{$name}{'::parent'} eq $EH{'hier'}{'field'}{'::parent'}[3] );
                 my $node = $hierdb{$name}{'::treeobj'};
                 # If parent is already defined -> change it ...
                 unless ( exists( $hierdb{$data{'::parent'}} ) ) {
-                    logwarn( "Autocreate parent for $name: $data{'::parent'}" );
-                    create_inst( $data{'::parent'}, \{} );
+                    logwarn( "Autocreate parent for $name: $parent" );
+                    create_inst( $parent, () );
                 }
-                my $pnode = $hierdb{$data{'::parent'}}{'::treeobj'};
+                my $pnode = $hierdb{$parent}{'::treeobj'};
                 $pnode->add_daughter( $node );
         }
     }
@@ -747,13 +769,6 @@ sub parse_conn_init ($) {
         # Skip generator lines
         next if ( $r_conn->[$i]{'::gen'} !~ m,^\s*$,o ); #Is that really true
 
-        #wig20030213: now in add_conn ...
-        # unless ( defined( $r_conn->[$i]{'::name'} ) ) {
-        #    # Is it a constant?
-        #    if ( $r_conn->[$i]{'::mode'} =~ m/^\s*c/io ) {
-        #        $r_conn->[$i]{'::name'} = "CONST_" . $const++;
-        #    }
-        # }
         add_conn( %{$r_conn->[$i]} );
     }
 }
@@ -763,11 +778,19 @@ sub add_conn (%) {
 
         my $name = $in{'::name'};
         my $nameflag = 0;
+
         #
         # strip of leading and trailing whitespace
         #
         $name =~ s/^\s+//o;
         $name =~ s/\s+$//o;
+
+        #
+        # Special handling: open -> %OPEN%
+        if ( $name =~ m,^open$,i ) {
+            $name = "%OPEN%";
+        }
+
         $in{'::name'} = $name;
         #
         # name must be defined:
@@ -781,6 +804,11 @@ sub add_conn (%) {
                 $in{'::name'} = $name;
                 logwarn( "INFO: Creating name $name for constant!" );
         }
+        #
+        # Check case ...
+        #
+        $name = mix_check_case( 'conn', $name );
+
         #
         # check name: only [a-z_A-Z0-9%:] allowed ..
         # strip of leading and trailing whitespace
@@ -810,9 +838,15 @@ sub add_conn (%) {
         }
             
         if ( defined( $conndb{$name}  ) ) {
+            # Alert user if this connection already got defined somewhere ....
+            if ( $EH{'check'}{'defs'} =~ m,conn, ) {
+                logwarn( "WARNING: redefinition of conection $name!" );
+                $EH{'sum'}{'uniq'}++; # Not uniq warning!!
+            }
             merge_conn( $name, %in );
         } else {
             create_conn( $name, %in);
+            $EH{'sum'}{'conn'}++;
         }
 
 
@@ -1203,7 +1237,9 @@ sub merge_conn($%) {
             # ::type requires special handling
             # Complain if ::type does not match
             #
-            if ( $conndb{$name}{$i} and $conndb{$name}{$i} ne "%SIGNAL%" ) {
+            if ( $conndb{$name}{$i} and
+                 $conndb{$name}{$i} ne "%SIGNAL%" and
+                 $conndb{$name}{'::name'} ne "%OPEN%" ) {
                 # conndb{$name}{::type} is defined and ne the default
                  if ( $data{$i} and $data{$i} ne "%SIGNAL%" ) {
                     my $t_cdb = $conndb{$name}{$i};
@@ -1258,6 +1294,21 @@ sub merge_conn($%) {
                             $conndb{$name}{$i} = $data{$i} if ( $data{$i} > $conndb{$name}{$i} );
                         } elsif ( $i =~ m,^\s*::low,o ) {
                             $conndb{$name}{$i} = $data{$i} if ( $data{$i} < $conndb{$name}{$i} );
+                        }
+                    } elsif ( $name =~ m,^\s*%OPEN%, ) {
+                        if ( not defined( $conndb{$name}{$i} ) or $conndb{$name}{$i} eq ""
+                             or $conndb{$name}{$i} eq "%NULL%" ) {
+                            $conndb{$name}{$i} = $data{$i};
+                        } else {
+                            if ( $data{$i} =~ m,^\d+$,o and $conndb{$name}{$i} =~ m,^\d+$,o ) {
+                                if ( $i =~ m,^\s*::high,o ) {
+                                    $conndb{$name}{$i} = $data{$i} if ( $data{$i} > $conndb{$name}{$i} );
+                                } elsif ( $i =~ m,^\s*::low,o ) {
+                                    $conndb{$name}{$i} = $data{$i} if ( $data{$i} < $conndb{$name}{$i} );
+                                }
+                            } else {
+                                $conndb{$name}{$i} .= "," . $data{$i}; #Bad, just need to concatenate ...
+                            }
                         }
                     } else {
                         logwarn( "ERROR: bound mismatch for signal $name: $conndb{$name}{$i} ne $data{$i}!");
@@ -1752,8 +1803,6 @@ Alternative implementation:
 =cut
 
 sub add_portsig () {
-
-    # my %seen = (); # Remember instances already visited.
     
     for my $signal ( keys( %conndb ) ) {
         my %connected = (); # List of connected instance nodes
@@ -1765,8 +1814,8 @@ sub add_portsig () {
             next;
         }
         
-        # Skip HIGH/LOW
-        if ( $signal =~ m/^\s*%(HIGH|LOW)/o ) { next; }
+        # Skip HIGH/LOW/OPEN
+        if ( $signal =~ m/^\s*%(HIGH|LOW|OPEN)/o ) { next; }
         #
         # Skip if signal mode equals Constant or Generic
         # Constant and Generics will not extend port map!
@@ -3133,6 +3182,7 @@ sub purge_relicts () {
     # If ::high and ::low is defined, extend ::in and ::out definitions
     #
     for my $i ( keys( %conndb ) ) {
+        next if ( $i eq '%OPEN %' );
         unless( defined( $conndb{$i}{'::high'} ) ) { $conndb{$i}{'::high'} = ''; }
         unless( defined( $conndb{$i}{'::low'} ) ) { $conndb{$i}{'::low'} = ''; }        
         if ( $conndb{$i}{'::high'} ne '' or $conndb{$i}{'::low'} ne '' ) {
@@ -3179,6 +3229,7 @@ sub _extend_inout ($$$) {
 #
 # strip away duplicate entries in ::in and ::out
 # strip away empty entries
+# force lowercasing if configured
 #TODO: combine entries (opposite of split busses)
 #
 sub _scan_inout ($) {
@@ -3187,7 +3238,16 @@ sub _scan_inout ($) {
         no warnings; # switch of warnings here, values might be undefined ...
         my %seen = ();
         my @left = ();
+ 
         for my $iii ( 0..$#{$rsa} ) {
+                unless( exists( $rsa->[$iii]{'rvalue'} ) ) {
+                    if ( exists( $rsa->[$iii]{'inst'} ) ) {
+                        $rsa->[$iii]{'inst'} = mix_check_case( 'inst', $rsa->[$iii]{'inst'} );
+                    }
+                    if ( exists( $rsa->[$iii]{'port'} ) ) {
+                        $rsa->[$iii]{'port'} = mix_check_case( 'port', $rsa->[$iii]{'port'} );
+                    }
+                }
                 my $this = join( ',', values( %{$rsa->[$iii]} ) );
                 if( $this and not defined( $seen{$this} ) ) {
                     push( @left, $rsa->[$iii] );

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.13 $                                             |
+# | Revision:   $Revision: 1.14 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/04/01 14:27:59 $                                   |
+# | Date:       $Date: 2003/04/28 06:40:37 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.13 2003/04/01 14:27:59 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.14 2003/04/28 06:40:37 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,11 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.14  2003/04/28 06:40:37  wig
+# | Added %OPEN% (to allow ports without connection, use VHDL open keyword)
+# | Started parseIO (not operational, would be a branch instead)
+# | Fixed nreset2 issue (20030424a bug)
+# |
 # | Revision 1.13  2003/04/01 14:27:59  wig
 # | Added IN/OUT Top Port Generation
 # |
@@ -175,11 +180,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.13 2003/04/01 14:27:59 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.14 2003/04/28 06:40:37 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.13 $';
+my $thisrevision   =      '$Revision: 1.14 $';
 
-# | Revision:   $Revision: 1.13 $   
+# | Revision:   $Revision: 1.14 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -702,13 +707,16 @@ $ex = undef; # Container for OLE server
 		    # lc (lower case everything), postfix, prefix, 
 		    #
 	'name' => {
-	    'pad' => '',
-	    'signal' => '',
-	    'entity' => '',
-	    'instance' => '',
-	    'port' => '',
-	    'conf' => '',
+	    #TODO: 'all' => '',	# Sets all others .... ->
+	    'pad' => 'check,lc',
+	    'conn' => 'check,lc', # check signal names ...
+	    'enty' => 'check,lc',
+	    'inst' => 'check,lc',   # check instance names ...
+	    'port' => 'check,lc',
+	    'conf' => 'check.lc',
 	},
+	'defs' => '',  # 'inst,conn',    # make sure elements are only defined once:
+		    # possilbe values are: inst,conn
 	'signal' => 'load,driver,check',  # reads: checks if all signals have appr. loads
 						    # and drivers
     },
@@ -718,6 +726,8 @@ $ex = undef; # Container for OLE server
 		    POSTFIX_PORT_IN	_i
 		    POSTFIX_PORT_IO	_io
 		    PREFIX_PORT_GEN	p_mix_
+		    PREFIX_PAD_GEN	pad_
+		    POSTFIX_PAD_GEN	%EMPTY%
 		    PREFIX_SIG_INT	s_int_
 		    POSTFIX_GENERIC	_g
 		    POSTFIX_SIGNAL	_s
@@ -899,8 +909,12 @@ $ex = undef; # Container for OLE server
 	    "%TAB%"	=> "\t",
 	    "%IOCR%"	=> "\n",
 	    "%SIGNAL%"	=> "std_ulogic",
-	    "%BUS_TYPE"	=> "std_ulogic_vector",
-	    "%DEFAULT_MODE%" => "S",
+	    "%BUS_TYPE%"	=> "std_ulogic_vector",
+	    "%PAD_TYPE%"	=> "__E_DEFAULT_PAD__",	# Default pad entity
+	    "%PAD_CLASS%"	=> "PAD",	# Default pad class
+	    "%IOCELL_TYPE%"	=> "__E_DEFAULT_IOCELL__", # Default iocell entity
+	    "%IOCELL_SELECT_PORT%"	=> "select", 		# Default iocell port
+	    "%DEFAULT_MODE%"	=> "S",
 	    "%VHDL_USE_DEFAULT%"	=>
 		"library IEEE;\nuse IEEE.std_logic_1164.all;\n",
 		# "Library IEEE;\nUse IEEE.std_logic_1164.all;\nUse IEEE.std_logic_arith.all;",
@@ -909,13 +923,13 @@ $ex = undef; # Container for OLE server
 	    "%VHDL_USE_ENTY%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
 	    "%VHDL_USE_ARCH%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
 	    "%VHDL_USE_CONF%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
-	    "%OPEN%"	=> "__OPEN__",			#open signal
+	    "%OPEN%"	=> "open",			#open signal
 	    "%UNDEF%"	=> "ERROR_UNDEF",	#should be 'undef',  #For debugging??  
 	    "%UNDEF_1%"	=> "ERROR_UNDEF_1",	#should be 'undef',  #For debugging??
 	    "%UNDEF_2%"	=> "ERROR_UNDEF_2",	#should be 'undef',  #For debugging??
 	    "%UNDEF_3%"	=> "ERROR_UNDEF_3",	#should be 'undef',  #For debugging??
 	    "%UNDEF_4%"	=> "ERROR_UNDEF_4",	#should be 'undef',  #For debugging??
-	    "%TBD%"	=> "W_TO_BE_DEFINED",
+	    "%TBD%"	=> "__W_TO_BE_DEFINED",
 	    "%HIGH%"	=> lc("MIX_LOGIC1"),  # VHDL does not like leading/trailing __
 	    "%LOW%"	=> lc("MIX_LOGIC0"),  # dito.
 	    "%HIGH_BUS%"	=> lc("MIX_LOGIC1_BUS"), # dito.
@@ -937,6 +951,11 @@ $ex = undef; # Container for OLE server
     'sum' => { # Counters for summary
 	'warnings' => 0,
 	'errors' => 0,
+	'inst' => 0,
+	'conn' => 0,
+	'checkwarn' => 0,
+	'checkforce' => 0,
+	'checkunique' => 0,
     },
     'script' => { # Set for pre and post execution script execution
 	'pre' => '',
