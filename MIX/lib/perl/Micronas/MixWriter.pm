@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.29 $                                             |
+# | Revision:   $Revision: 1.30 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/10/14 10:18:43 $                                   |
+# | Date:       $Date: 2003/10/14 12:11:29 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.29 2003/10/14 10:18:43 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.30 2003/10/14 12:11:29 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,9 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
-# | Revision 1.29  2003/10/14 10:18:43  wig
-# | Added -bak command line option
-# | Added ::descr to port maps (just a try)
+# | Revision 1.30  2003/10/14 12:11:29  wig
+# | Added howto
+# | Fixed minor issue from last change (%LOW_BUS% conflicts with __open__)
 # |
 # | Revision 1.27  2003/09/08 15:14:24  wig
 # | Fixed Verilog, extended path checking
@@ -195,9 +195,9 @@ sub mix_wr_unsplice_port ($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.29 2003/10/14 10:18:43 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.30 2003/10/14 12:11:29 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.29 $';
+my $thisrevision   =      '$Revision: 1.30 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2964,8 +2964,9 @@ sub _write_architecture ($$$$) {
             #wig20031010
             my $port_open="";
             if ( $aeport{$ii}{'load'} == 0 and $EH{'check'}{'signal'} =~ m,top_open,io ) {
+                unless ( $ii =~ m,^\s*%(HIGH|OPEN|LOW), ) { #Meta signals %HIGH... %LOW, ... %OPEN
                     if ( $node == $hierdb{$conndb{$ii}{'::topinst'}}{'::treeobj'}->mother ) {
-                        logtrc("INFO:4", "Leave unloaded port open $ii, instance $i");
+                        logtrc("INFO:4", "Leave unloaded port $ii open at instance $i");
                         $EH{'sum'}{'openports'}++;
                         # Will map to open ...
                         $port_open = $tcom . "  __I_OUT_OPEN ";
@@ -2974,6 +2975,7 @@ sub _write_architecture ($$$$) {
                         }
                         $sp_conflict{$ii} = "__open__"; # Map that signal to open ...
                     }
+                }
             }
 
 	    if ( defined( $high ) and defined( $low ) ) {
