@@ -1,0 +1,32 @@
+Von: Gänsheimer Wilfried
+Gesendet: Mittwoch, 16. Juli 2003 11:08
+An: Gänsheimer Wilfried; Schneider Claus; Pallas Michael; Schneider
+Thomas; Pitscheider Manfred
+Cc: Bell Oliver; Herberg Christian; Bartels Stefan; Schu Markus; Kröner
+Philipp
+Betreff: Neue Version MIX verfuegbar auf K:\PROJECTS\MIX\PROG
+
+Neuer Version 20030716 released:
+
+- IO Parser Erweiterungen (bis auf DI Mux ist jetzt alles implementiert)
+
+zusätzliche Features: Instanznamesschema für IO-Zellen und Pad-Zellen sind wählbar
+			    select für Multiplexer als one-hot oder encoded bus wählbar
+
+- siehe doc\userref-v1.0.pdf bzgl. einer Beschreibung des IO-Parsers
+
+- Keyword für ::use %NCD%
+Benutzte %NCD% um fuer diese Instanz keine component declaration
+zu erzeugen (z.B. falls Komponente aus Library stammt)
+
+- Keyword für ::config %NO_CONFIG%
+Unterdrückt das Schreiben einer Konfiguration für diese Instanz/Entity.
+
+- Erweitertes matching für ::gen regular expression:
+
+   /::pad=(RE)::/ führt den Vergleich gegen den Inhalt von ::pad durch.
+
+- Filenamen: _ innerhalb der Objekt-Namen werden jetzt beibehalten.
+  Nur die _ in den Extensions (z.B. _rtl_conf.vhd) werden in - umgewandelt.
+ 
+- Viele kleine Fixes ...  

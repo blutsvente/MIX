@@ -1,0 +1,28 @@
+Von: Gänsheimer Wilfried
+Gesendet: Mittwoch, 9. Juli 2003 10:17
+An: Schneider Claus; Pallas Michael; Schneider Thomas
+Cc: Bell Oliver; Herberg Christian; Pitscheider Manfred; Bartels Stefan;
+Schu Markus; Kröner Philipp; Gänsheimer Wilfried
+Betreff: Neue Version MIX verfuegbar auf K:\PROJECTS\MIX\PROG
+
+Hallo,
+
+grad eben habe ich eine neue Release von MIX auf den Pool kopiert.
+
+Wesentliche Neuerungen:
+
+- Verilog Support (beta Status, benoetigt noch ein paar Erweiterungen)
+- IO Sheets werden ausgewertet (beta Status, benoetigt weiteres Testen und Erweiterungen)
+- mix_userref.doc bzw mix_userref-v1.0.pdf: Benutzerdokumentation
+- Jede Menge kleinere Bugs sind beseitigt und 
+
+Eine neue Option gibt es auch:
+
+-dir DIR
+  speichert alle Ausgabedateien ins Directory DIR (ausser das Logfile mix_0.pl.out).
+
+Bis Ende der Woche wird es eine weitere Release geben (Verbesserungen IO und Verilog
+Support).
+
+Bye
+Wilfried 
