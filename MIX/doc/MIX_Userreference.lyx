@@ -56,9 +56,9 @@ MIX - Micronas Interconnect Spec expander
 
 Author: Wilfried Gänsheimer
 \newline 
-$Date: 2004/11/10 12:31:36 $
+$Date: 2005/01/13 15:06:16 $
 \newline 
-Version: $Id: MIX_Userreference.lyx,v 1.4 2004/11/10 12:31:36 wig Exp $
+Version: $Id: MIX_Userreference.lyx,v 1.5 2005/01/13 15:06:16 wig Exp $
 \layout Standard
 
 
@@ -107,20 +107,16 @@ Installation
 The MIX toolset uses the Perl scripting language.
  Please install a recent version of Perl on your MS-Windows workstation,
  e.g.
- the freely available ActiveState Perl from 
+ the freely available ActiveState Perl from
 \family typewriter 
-K:
+ S:
 \backslash 
-PROJECTS
+Perl
 \backslash 
-MIX
-\backslash 
-PROG
-\backslash 
-ActivePerl-5.6.1.633-MSWin32-x86.msi
+ActivePerl-5.8.4.*.msi
 \family default 
 .
- For UNIX and Solaris no installation is needed.
+ For UNIX (Solaris/Linux) no installation is needed.
 \newline 
 Start MIX from the network drive like described in the examples below.
  That will also make sure, that you are using the most recent release automatica
@@ -139,7 +135,7 @@ cmd
 \family default 
 
 \newline 
-Now change to your working directory and start the generator lije
+Now change to your working directory and start the generator like
 \newline 
 
 \family typewriter 
@@ -152,10 +148,6 @@ MIX
 PROG
 \backslash 
 mix_0.pl foo.xls
-\family default 
-
-\newline 
-Caveat: Currently MIX is available on MS-Windows, only!
 \layout Standard
 
 
@@ -433,9 +425,20 @@ e and configuration description.
 \newline 
 Here the working directory of the simple example contains a file mix.cfg,
  which is the convenient storage for MIX run-time configuration options.
- The lines "MIXCFG outarch ARCH", "MIXCFG outenty ENTY", and "MIXCFG outconf
- CONF" switch MIX outputs to separate files for each entity, architecture
- and configuration.
+ The lines "
+\family typewriter 
+MIXCFG outarch ARCH
+\family default 
+", "
+\family typewriter 
+MIXCFG outenty ENTY
+\family default 
+", and "
+\family typewriter 
+MIXCFG outconf CONF
+\family default 
+" switch MIX outputs to separate files for each entity, architecture and
+ configuration.
  In this case the file names are defined by the element name: 
 \begin_inset Float table
 wide false
@@ -458,18 +461,8 @@ collapsed false
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{bf}Type
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+Type
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
@@ -478,18 +471,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{bf}Basename
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+Basename
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
@@ -498,18 +481,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{bf}Extension
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+Extension
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
@@ -518,18 +491,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{bf}Example
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+Example
 \end_inset 
 </cell>
 </row>
@@ -666,8 +629,11 @@ _
 
 By default MIX does not write output data for leaf blocks (instances which
  are not parent for other instances).
- Adding a line like "MIXCFG generate.output.arch leaf" into the mix.cfg file
- changes that.
+ Adding a line like "
+\family typewriter 
+MIXCFG generate.output.arch leaf
+\family default 
+" into the mix.cfg file changes that.
 \newline 
 The generated output files contain head, body and footer sections.
  See the screenshots of the file a-e-e.vhd and chip-e-rtl-a.vhd for examples
@@ -704,7 +670,11 @@ Details
 Initialization with -init
 \layout Standard
 
-You can use the -init command line option to create the needed files:
+You can use the 
+\family typewriter 
+-init
+\family default 
+ command line option to create the needed files:
 \newline 
 
 \begin_inset ERT
@@ -782,7 +752,7 @@ status Collapsed
 hspace*{10mm}
 \end_inset 
 
-- import sheets IMP_HIER and IMP_CONN (only of more *.vhd or 
+- import sheets IMP_HIER and IMP_CONN (only if *.vhd or 
 \newline 
 
 \begin_inset ERT
@@ -876,7 +846,7 @@ All worksheets parsed by MIX share some common properties.
 \newline 
 Commonly understood table headings are 
 \begin_inset ERT
-status Open
+status Collapsed
 
 \layout Standard
 
@@ -1278,18 +1248,8 @@ collapsed false
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{bf}Column name
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+Column name
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
@@ -1298,18 +1258,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Open
-
-\layout Standard
- 
-\backslash 
-begin{bf}Description
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+Description
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
@@ -1318,18 +1268,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}Default value
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+Default
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
@@ -1338,18 +1278,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}Req.
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+Req.
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
@@ -1358,18 +1288,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}Example
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+Example
 \end_inset 
 </cell>
 </row>
@@ -1387,7 +1307,7 @@ end{bf}
 
 \layout Standard
 
- Ignore line 
+ Ignore line, usually the first column.
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -4251,8 +4171,14 @@ end{tt}
 
 \newline 
 to the mix.cfg configuration file will achieve the same result.
-\newline 
+\layout Standard
 
+Examples:
+\layout Standard
+
+
+\family typewriter 
+MIXCFG macro.%VERILOG_DEFINES% `include bar.vh
 \layout Section
 
 CONN sheet macros
@@ -4261,17 +4187,71 @@ CONN sheet macros
 To simplify the wiring of standard interfaces, MIX provides the connection
  macro facility.
  The connection macros are entered just like any other connection, but are
- marked by MH, MD and MX in the ::gen column.
- MH is the macro header line, which has to be followed by one to many MD
+ marked by 
+\series bold 
+MH
+\series default 
+, 
+\series bold 
+MD
+\series default 
+ and 
+\series bold 
+MX
+\series default 
+ in the 
+\family typewriter 
+::gen
+\family default 
+ column.
+ 
+\series bold 
+MH
+\series default 
+ is the macro header line, which has to be followed by one to many 
+\series bold 
+MD
+\series default 
  macro definition row.
- The first non-comment line without a MD tag stops the macro definition.
+ The first non-comment line without a 
+\series bold 
+MD
+\series default 
+ tag stops the macro definition.
 \newline 
-The tag MX marks lines subject to be macro expanded.
+The tag 
+\series bold 
+MX
+\series default 
+ marks lines subject to be macro expanded.
  The macro expansion takes place after the initial tables were parsed.
 \newline 
 You can define simple, one-letter variabes in the macro cells.
- Any text in ::ign, ::gen, ::comment and ::descr cells of a MH and MX row
- will not be subject to matching and evaluation, but be ignored.
+ Any text in 
+\family typewriter 
+::ign
+\family default 
+, 
+\family typewriter 
+::gen
+\family default 
+, 
+\family typewriter 
+::comment
+\family default 
+ and 
+\family typewriter 
+::descr
+\family default 
+ cells of a 
+\series bold 
+MH
+\series default 
+ and 
+\series bold 
+MX
+\series default 
+ row will not be subject to matching and evaluation, but be ignored.
  Apart from that the column names have no special meaning.
 \newline 
 
@@ -4289,27 +4269,119 @@ A simple example will illustrate the connection macro usage.
 
 
 \newline 
- Here the macro header MH defines the variables $n, $1, $h, $4 and $5.
- The MIX parser extracts the MH row and accompanying MD rows (five lines
- here) from the table.
- In a second run each MX row will trigger a match operation against all
- MH definitions.
- MX and MH are a match, if each cell defined in the MH row has a matching
- counterpart in the MX row.
- Variables in the MH cells are considered to match any string ( .+ in perl
- regular expression syntax).
- Thus the first MX line matches the MH lines here.
- The variables defined in the MH cells are assigned the matching values
- from the MX line.
+ Here the macro header 
+\series bold 
+MH
+\series default 
+ defines the variables $n, $1, $h, $4 and $5.
+ The MIX parser extracts the 
+\series bold 
+MH
+\series default 
+ row and accompanying 
+\series bold 
+MD
+\series default 
+ rows (five lines here) from the table.
+ In a second parser run each 
+\series bold 
+MX
+\series default 
+ row will trigger a match operation against 
+\emph on 
+all
+\emph default 
+ 
+\series bold 
+MH
+\series default 
+ definitions.
+ 
+\series bold 
+MX
+\series default 
+ and 
+\series bold 
+MH
+\series default 
+ are a match, if each cell defined in the 
+\series bold 
+MH
+\series default 
+ row has a matching counterpart in the 
+\series bold 
+MX
+\series default 
+ row.
+ Variables in the 
+\series bold 
+MH
+\series default 
+ cells are considered to match any string ( .+ in perl regular expression
+ syntax).
+ Thus the first 
+\series bold 
+MX
+\series default 
+ line matches the 
+\series bold 
+MH
+\series default 
+ lines here.
+ The variables defined in the 
+\series bold 
+MH
+\series default 
+ cells are assigned the matching values from the 
+\series bold 
+MX
+\series default 
+ line.
  E.g.
- $n will be 0 for the first MX, 1 for the second.
- The variable $4 is assignd ls, $5 is min.
+ $n will be 
+\emph on 
+0
+\emph default 
+ for the first 
+\series bold 
+MX
+\series default 
+, 
+\emph on 
+1
+\emph default 
+ for the second.
+ The variable $4 is assignd 
+\emph on 
+ls
+\emph default 
+, $5 becomes 
+\emph on 
+min
+\emph default 
+.
 \newline 
 
 \newline 
-If MX and MH match, the accompanying MD lines are executed.
- Variables are replaced by the value they are assigned too, currently.
- Here the first MX will result in the following table to be generated:
+If 
+\series bold 
+MX
+\series default 
+ and 
+\series bold 
+MH
+\series default 
+ match, the accompanying 
+\series bold 
+MD
+\series default 
+ lines are executed.
+ Variables are replaced by their currently assigned value.
+ Here the first 
+\series bold 
+MX
+\series default 
+ will result in the following table to be generated:
 \newline 
 
 \begin_inset Graphics
@@ -4321,8 +4393,24 @@ If MX and MH match, the accompanying MD lines are executed.
 
 
 \newline 
- The ::gen column is set to G_MX after evaluation.
- Empty cells in MD lines are filled with the value given by MX, if any.
+ The 
+\family typewriter 
+::gen
+\family default 
+ column is set to 
+\series bold 
+G_MX
+\series default 
+ after evaluation.
+ Empty cells in 
+\series bold 
+MD
+\series default 
+ lines are filled with the value given by 
+\series bold 
+MX
+\series default 
+, if any.
 \newline 
 
 \newline 
@@ -6141,7 +6229,7 @@ I
 \begin_inset Formula $^{2}$
 \end_inset 
 
-C regsiterblock
+C Registerblock
 \layout Standard
 
 The I
@@ -8566,194 +8654,70 @@ built-in default values
 \layout Itemize
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}mix.cfg
-\backslash 
-end{tt}
-\end_inset 
-
- files, if found 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}
-\backslash 
-$HOME
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+mix.cfg
+\family default 
+ files, if found in
+\family typewriter 
+ $HOME
+\family default 
 , 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}
-\backslash 
+\family typewriter 
 $PROJECT
-\backslash 
-end{tt}
-\end_inset 
-
- and/or in current directory.
+\family default 
+ and/or in the current directory.
  Format is: 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}MIXCFG name.of.conf
-\backslash 
-end{tt}
-\end_inset 
-
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
+\family typewriter 
+MIXCFG 
+\emph on 
+name.of.conf
+\emph default 
  
-\backslash 
-begin{it}value
-\backslash 
-end{it}
-\end_inset 
-
-
+\emph on 
+value
 \layout Itemize
 
 CONF sheet found in input xls files 
 \layout Itemize
 
 command line switch: 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}-conf foo.bar=
-\backslash 
-end{tt}
-\end_inset 
-
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{it}value
-\backslash 
-end{it}
-\end_inset 
-
-
+\family typewriter 
+-conf name.of.conf=value
 \layout Itemize
 
 dedicated command line options 
 \layout Standard
 
-MIX reads in 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}mix.cfg
-\backslash 
-end{tt}
-\end_inset 
-
+MIX reads in
+\family typewriter 
+ mix.cfg
+\family default 
  configuration files in the following locations: 
 \layout Enumerate
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
+\family typewriter 
+$ENV{HOME}
+\family default 
+, 
+\family typewriter 
+$ENV{HOMEDRIVE}
+\family default 
+, 
+\family typewriter 
+$ENV{HOMEPATH}
+\family default 
+, 
+\family typewriter 
+$ENV{USERPROFILE}
+\family default 
+ or 
+\family typewriter 
+C:
 \backslash 
-begin{tt}
-\backslash 
-$ENV
-\backslash 
-{HOME
-\backslash 
-end{tt}
-\end_inset 
 
-}
-\newline 
-"
-\begin_inset ERT
-status Collapsed
+\family default 
 
-\layout Standard
-
-\backslash 
-begin{tt}HOMEDRIVE
-\backslash 
-end{tt}
-\end_inset 
-
-", "
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}HOMEPATH
-\backslash 
-end{tt}
-\end_inset 
-
-", "
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}USERPROFILE
-\backslash 
-end{tt}
-\end_inset 
-
-" or "
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}C:
-\backslash 
-(
-\backslash 
-backslash
-\backslash 
-)
-\backslash 
-end{tt}
-\end_inset 
-
-"
 \newline 
 (only from the first matching location)
 \newline 
@@ -8761,90 +8725,23 @@ end{tt}
 \layout Enumerate
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}
-\backslash 
-$ENV
-\backslash 
-{PROJECT
-\backslash 
-}
-\backslash 
-end{tt}
-\end_inset 
-
-
+\family typewriter 
+$ENV{$PROJECT}
 \layout Enumerate
 
 "
-\begin_inset ERT
-status Collapsed
+\family typewriter 
+.
+\family default 
 
-\layout Standard
-
-\backslash 
-begin{tt}.
-\backslash 
-end{tt}
+\begin_inset Quotes erd
 \end_inset 
 
-" (cwd)
-\layout Standard
-
-Order: 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}HOME
-\backslash 
-end{tt}
-\end_inset 
-
- / 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}HOME
-\backslash 
-end{tt}
-\end_inset 
-
- / 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}cwd()
-\backslash 
-end{tt}
-\end_inset 
-
- / 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}-conf
-\backslash 
-end{tt}
-\end_inset 
-
- (last wins)
+ (
+\family typewriter 
+cwd()
+\family default 
+)
 \layout Subsection
 
 Misc features
@@ -9217,12 +9114,14 @@ IO logic
 Other examples
 \layout Section
 
-Known Bugs and limitations
+Helper Tools
+\layout Subsection
+
+Converting between MS-Win and UNIX
 \layout Standard
 
-MS-Win/UNIX end-of-line issue: Some EDA tools are not able to cope with
- the different end-of-line (CR vs LF/CR) of UNIX and MS-Windows.
- Use:
+Some EDA tools react stange, if they detect MS-Win style end-of-line.
+ To convert to UNIX end-of-lines use:
 \layout Standard
 
 
@@ -9247,7 +9146,7 @@ $ dos2unix.pl <filename>
 \family default 
 
 \newline 
-for Dos to Unix convertion and
+for Dos to Unix conversion and
 \newline 
 
 \family typewriter 
@@ -9255,7 +9154,106 @@ $ unix2dos.pl <filename>
 \family default 
 
 \newline 
-for Unix to Dos convertion.
+for Unix to Dos conversion.
+\layout Subsection
+
+Convert ExCEL to SXC and CVS
+\layout Standard
+\noindent 
+MIX comes with a command line Excel to CSV converter tool:
+\layout Standard
+\noindent 
+Usage for UNIX is like:
+\layout Standard
+\noindent 
+
+\family typewriter 
+$ module load perl mix
+\layout Standard
+\noindent 
+
+\family typewriter 
+$ xls2csv -csv foo[.xls] bar[.xls] [bar2.xls ...]
+\layout Standard
+\noindent 
+This will convert all sheets in foo.xls to foo.csv, bar.xls to bar.csv and so
+ on.
+ As cvs only has one sheet, the different input sheets will be seperated
+ by ":=:=:=>" followed by the ExCEL sheet name.
+ Even the first sheet will be marked by such a line.
+\layout Standard
+\noindent 
+xls2csv.pl options:
+\layout List
+\labelwidthstring 00.00.0000
+\noindent 
+
+\family typewriter 
+-csv
+\family default 
+ create csv formatted output
+\layout List
+\labelwidthstring 00.00.0000
+\noindent 
+
+\family typewriter 
+-sxc
+\family default 
+ create OpenOffice (sxc) formatted output.
+ By default both formate will be created.
+\layout List
+\labelwidthstring 00.00.0000
+\noindent 
+
+\family typewriter 
+-sep\SpecialChar ~
+X
+\family default 
+ take 
+\family typewriter 
+X
+\family default 
+ as field delimiter.
+ Default is 
+\begin_inset Quotes eld
+\end_inset 
+
+
+\family typewriter 
+;
+\family default 
+
+\begin_inset Quotes erd
+\end_inset 
+
+.
+\layout Standard
+\noindent 
+Please remove the created files before updating.
+\layout Standard
+\noindent 
+For MS-Win workstations, use
+\layout Standard
+\noindent 
+
+\family typewriter 
+K:
+\backslash 
+PROJECTS
+\backslash 
+MIX
+\backslash 
+PROG
+\backslash 
+xls2csv.pl
+\family default 
+ ....
+\layout Standard
+\noindent 
+Options and syntax are the same.
+\layout Section
+
+Known Bugs and limitations
 \layout Section
 
 Issue tracking: CADNET - Issue tracking - CAD Software - MIX
