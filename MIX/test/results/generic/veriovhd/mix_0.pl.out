@@ -1,0 +1,773 @@
+05/01/26 15:55:35 2200: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 15:55:35 2200: Reading worksheet HIER_VERIOVHD of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 15:55:36 2200: WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
+05/01/26 15:55:36 2200: WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
+05/01/26 15:55:36 2200: WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
+05/01/26 15:55:36 2200: WARNING: INFO: Creating name mix_const_0 for constant!
+05/01/26 15:55:36 2200: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
+05/01/26 15:55:36 2200: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
+05/01/26 15:55:37 2200: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_6!
+05/01/26 15:55:37 2200: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
+05/01/26 15:55:37 2200: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
+05/01/26 15:55:37 2200: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
+05/01/26 15:55:37 2200: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
+05/01/26 15:55:37 2200: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
+05/01/26 15:55:37 2200: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_5!
+05/01/26 15:55:37 2200: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
+05/01/26 15:55:37 2200: WARNING: INFO: Not all lowercase in new port element FOO!
+05/01/26 15:55:37 2200: WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
+05/01/26 15:55:37 2200: WARNING: INFO: Not all lowercase in new port element NO_NAME!
+05/01/26 15:55:37 2200: WARNING: INFO: Not all lowercase in new port element WIDTH!
+05/01/26 15:55:50 2200: WARNING: File generic-mixed.xls already exists! Contents will be changed
+05/01/26 15:55:50 2200: WARNING: Rotating 3 old sheets of CONN!
+05/01/26 15:55:51 2200: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 15:55:51 2200: WARNING: Rotating 3 old sheets of HIER!
+05/01/26 15:55:54 2200: WARNING: ============= SUMMARY =================
+05/01/26 15:55:54 2200: WARNING: SUM: Summary of checks and created items:
+05/01/26 15:55:54 2200: WARNING: SUM: checkforce 0
+05/01/26 15:55:54 2200: WARNING: SUM: checkunique 0
+05/01/26 15:55:54 2200: WARNING: SUM: checkwarn 0
+05/01/26 15:55:54 2200: WARNING: SUM: cmacros 0
+05/01/26 15:55:54 2200: WARNING: SUM: conn 15
+05/01/26 15:55:54 2200: WARNING: SUM: errors 1
+05/01/26 15:55:54 2200: WARNING: SUM: genport 0
+05/01/26 15:55:54 2200: WARNING: SUM: hdlfiles 19
+05/01/26 15:55:54 2200: WARNING: SUM: inst 25
+05/01/26 15:55:54 2200: WARNING: SUM: multdriver 0
+05/01/26 15:55:54 2200: WARNING: SUM: nodriver 0
+05/01/26 15:55:54 2200: WARNING: SUM: noload 0
+05/01/26 15:55:55 2200: WARNING: SUM: openports 0
+05/01/26 15:55:55 2200: WARNING: SUM: warnings 0
+05/01/26 15:55:55 2200: WARNING: SUM: === Number of parsed input tables: ===
+05/01/26 15:55:55 2200: WARNING: SUM: conf 0
+05/01/26 15:55:55 2200: WARNING: SUM: hier 1
+05/01/26 15:55:55 2200: WARNING: SUM: conn 1
+05/01/26 15:55:55 2200: WARNING: SUM: io 0
+05/01/26 15:55:55 2200: WARNING: SUM: i2c 0
+05/01/26 16:11:56 2220: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 16:11:56 2220: Reading worksheet HIER_VERIOVHD of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 16:11:58 2220: WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
+05/01/26 16:11:58 2220: WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
+05/01/26 16:11:58 2220: WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
+05/01/26 16:11:58 2220: WARNING: INFO: Creating name mix_const_0 for constant!
+05/01/26 16:11:58 2220: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
+05/01/26 16:11:58 2220: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
+05/01/26 16:11:58 2220: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_6!
+05/01/26 16:11:58 2220: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
+05/01/26 16:11:58 2220: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
+05/01/26 16:11:58 2220: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
+05/01/26 16:11:58 2220: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
+05/01/26 16:11:58 2220: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
+05/01/26 16:11:58 2220: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_5!
+05/01/26 16:11:58 2220: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
+05/01/26 16:11:58 2220: WARNING: INFO: Not all lowercase in new port element FOO!
+05/01/26 16:11:58 2220: WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
+05/01/26 16:11:58 2220: WARNING: INFO: Not all lowercase in new port element NO_NAME!
+05/01/26 16:11:58 2220: WARNING: INFO: Not all lowercase in new port element WIDTH!
+05/01/26 16:11:59 2220: WARNING: File generic-mixed.xls already exists! Contents will be changed
+05/01/26 16:12:00 2220: WARNING: Rotating 3 old sheets of CONF!
+05/01/26 16:12:02 2220: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/generic-mixed.xls
+05/01/26 16:12:02 2220: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 16:12:03 2220: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/26 16:12:06 2220: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/generic-mixed.xls
+05/01/26 16:12:06 2220: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 16:12:06 2220: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/26 16:12:08 2220: Info: unchanged file inst_1_e-rtl-a.vhd
+05/01/26 16:12:08 2220: Info: unchanged file inst_10_e-rtl-a.vhd
+05/01/26 16:12:08 2220: Info: unchanged file inst_2_e-rtl-a.vhd
+05/01/26 16:12:09 2220: Info: unchanged file inst_3_e-rtl-a.vhd
+05/01/26 16:12:09 2220: Info: unchanged file inst_4_e-rtl-a.vhd
+05/01/26 16:12:09 2220: Info: unchanged file inst_5_e-rtl-a.vhd
+05/01/26 16:12:09 2220: Info: unchanged file inst_6_e-rtl-a.vhd
+05/01/26 16:12:10 2220: Info: unchanged file inst_7_e-rtl-a.vhd
+05/01/26 16:12:10 2220: Info: unchanged file inst_8_e-rtl-a.vhd
+05/01/26 16:12:10 2220: Info: unchanged file inst_9_e-rtl-a.vhd
+05/01/26 16:37:41 1948: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 16:37:42 1948: Reading worksheet HIER_VERIOVHD of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 16:37:43 1948: WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
+05/01/26 16:37:43 1948: WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
+05/01/26 16:37:43 1948: WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
+05/01/26 16:37:43 1948: WARNING: INFO: Creating name mix_const_0 for constant!
+05/01/26 16:37:43 1948: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
+05/01/26 16:37:43 1948: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
+05/01/26 16:37:43 1948: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_6!
+05/01/26 16:37:43 1948: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
+05/01/26 16:37:43 1948: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
+05/01/26 16:37:43 1948: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
+05/01/26 16:37:43 1948: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
+05/01/26 16:37:43 1948: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
+05/01/26 16:37:44 1948: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_5!
+05/01/26 16:37:44 1948: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
+05/01/26 16:37:44 1948: WARNING: INFO: Not all lowercase in new port element FOO!
+05/01/26 16:37:44 1948: WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
+05/01/26 16:37:44 1948: WARNING: INFO: Not all lowercase in new port element NO_NAME!
+05/01/26 16:37:44 1948: WARNING: INFO: Not all lowercase in new port element WIDTH!
+05/01/26 16:37:45 1948: WARNING: File generic-mixed.xls already exists! Contents will be changed
+05/01/26 16:37:45 1948: WARNING: Rotating 3 old sheets of CONF!
+05/01/26 16:37:49 1948: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/generic-mixed.xls
+05/01/26 16:37:49 1948: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 16:37:49 1948: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/26 16:37:54 1948: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/generic-mixed.xls
+05/01/26 16:37:54 1948: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 16:37:54 1948: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/26 16:37:56 1948: Info: unchanged file inst_1_e-rtl-a.vhd
+05/01/26 16:37:57 1948: Info: unchanged file inst_10_e-rtl-a.vhd
+05/01/26 16:37:57 1948: Info: unchanged file inst_2_e-rtl-a.vhd
+05/01/26 16:37:57 1948: Info: unchanged file inst_3_e-rtl-a.vhd
+05/01/26 16:37:57 1948: Info: unchanged file inst_4_e-rtl-a.vhd
+05/01/26 16:37:57 1948: Info: unchanged file inst_5_e-rtl-a.vhd
+05/01/26 16:37:57 1948: Info: unchanged file inst_6_e-rtl-a.vhd
+05/01/26 16:37:58 1948: Info: unchanged file inst_7_e-rtl-a.vhd
+05/01/26 16:37:58 1948: Info: unchanged file inst_8_e-rtl-a.vhd
+05/01/26 16:37:58 1948: Info: unchanged file inst_9_e-rtl-a.vhd
+05/01/26 16:41:49 1880: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 16:41:49 1880: Reading worksheet HIER_VERIOVHD of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 16:41:51 1880: WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
+05/01/26 16:41:51 1880: WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
+05/01/26 16:41:51 1880: WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
+05/01/26 16:41:51 1880: WARNING: INFO: Creating name mix_const_0 for constant!
+05/01/26 16:41:51 1880: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
+05/01/26 16:41:51 1880: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
+05/01/26 16:41:51 1880: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_6!
+05/01/26 16:41:51 1880: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
+05/01/26 16:41:51 1880: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
+05/01/26 16:41:51 1880: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
+05/01/26 16:41:51 1880: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
+05/01/26 16:41:51 1880: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
+05/01/26 16:41:51 1880: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_5!
+05/01/26 16:41:52 1880: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
+05/01/26 16:41:52 1880: WARNING: INFO: Not all lowercase in new port element FOO!
+05/01/26 16:41:52 1880: WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
+05/01/26 16:41:52 1880: WARNING: INFO: Not all lowercase in new port element NO_NAME!
+05/01/26 16:41:52 1880: WARNING: INFO: Not all lowercase in new port element WIDTH!
+05/01/26 16:41:52 1880: WARNING: File generic-mixed.xls already exists! Contents will be changed
+05/01/26 16:41:53 1880: WARNING: Rotating 3 old sheets of CONF!
+05/01/26 16:41:58 1880: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/generic-mixed.xls
+05/01/26 16:41:58 1880: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 16:41:58 1880: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/26 16:42:04 1880: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/generic-mixed.xls
+05/01/26 16:42:04 1880: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 16:42:04 1880: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/26 16:42:06 1880: Info: unchanged file inst_1_e-rtl-a.vhd
+05/01/26 16:42:06 1880: Info: unchanged file inst_10_e-rtl-a.vhd
+05/01/26 16:42:06 1880: Info: unchanged file inst_2_e-rtl-a.vhd
+05/01/26 16:42:06 1880: Info: unchanged file inst_3_e-rtl-a.vhd
+05/01/26 16:42:06 1880: Info: unchanged file inst_4_e-rtl-a.vhd
+05/01/26 16:42:07 1880: Info: unchanged file inst_5_e-rtl-a.vhd
+05/01/26 16:42:07 1880: Info: unchanged file inst_6_e-rtl-a.vhd
+05/01/26 16:42:07 1880: Info: unchanged file inst_7_e-rtl-a.vhd
+05/01/26 16:42:07 1880: Info: unchanged file inst_8_e-rtl-a.vhd
+05/01/26 16:42:07 1880: Info: unchanged file inst_9_e-rtl-a.vhd
+05/01/26 16:58:07 508: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 16:58:08 508: Reading worksheet HIER_VERIOVHD of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 16:58:10 508: WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
+05/01/26 16:58:10 508: WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
+05/01/26 16:58:10 508: WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
+05/01/26 16:58:10 508: WARNING: INFO: Creating name mix_const_0 for constant!
+05/01/26 16:58:10 508: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
+05/01/26 16:58:10 508: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
+05/01/26 16:58:10 508: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_6!
+05/01/26 16:58:10 508: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
+05/01/26 16:58:10 508: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
+05/01/26 16:58:10 508: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
+05/01/26 16:58:10 508: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
+05/01/26 16:58:10 508: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
+05/01/26 16:58:10 508: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_5!
+05/01/26 16:58:10 508: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
+05/01/26 16:58:10 508: WARNING: INFO: Not all lowercase in new port element FOO!
+05/01/26 16:58:10 508: WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
+05/01/26 16:58:10 508: WARNING: INFO: Not all lowercase in new port element NO_NAME!
+05/01/26 16:58:10 508: WARNING: INFO: Not all lowercase in new port element WIDTH!
+05/01/26 16:58:11 508: WARNING: File generic-mixed.xls already exists! Contents will be changed
+05/01/26 16:58:11 508: WARNING: Rotating 3 old sheets of CONF!
+05/01/26 16:58:18 508: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/generic-mixed.xls
+05/01/26 16:58:19 508: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 16:58:19 508: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/26 16:58:26 508: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/generic-mixed.xls
+05/01/26 16:58:26 508: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 16:58:26 508: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/26 16:58:28 508: Info: unchanged file inst_1_e-rtl-a.vhd
+05/01/26 16:58:29 508: Info: unchanged file inst_10_e-rtl-a.vhd
+05/01/26 16:58:29 508: Info: unchanged file inst_2_e-rtl-a.vhd
+05/01/26 16:58:29 508: Info: unchanged file inst_3_e-rtl-a.vhd
+05/01/26 16:58:29 508: Info: unchanged file inst_4_e-rtl-a.vhd
+05/01/26 16:58:30 508: Info: unchanged file inst_5_e-rtl-a.vhd
+05/01/26 16:58:30 508: Info: unchanged file inst_6_e-rtl-a.vhd
+05/01/26 16:58:30 508: Info: unchanged file inst_7_e-rtl-a.vhd
+05/01/26 16:58:30 508: Info: unchanged file inst_8_e-rtl-a.vhd
+05/01/26 16:58:30 508: Info: unchanged file inst_9_e-rtl-a.vhd
+05/01/26 17:00:25 508: WARNING: Info: file inst_a_e.v has changes!
+05/01/26 17:00:25 508: Info: unchanged file inst_aa_e-rtl-a.vhd
+05/01/26 17:00:25 508: Info: unchanged file inst_ab_e-rtl-a.vhd
+05/01/26 17:00:26 508: Info: unchanged file inst_ac_e-rtl-a.vhd
+05/01/26 17:00:26 508: Info: unchanged file inst_ad_e-rtl-a.vhd
+05/01/26 17:00:26 508: Info: unchanged file inst_ae_e-rtl-a.vhd
+05/01/26 17:00:26 508: Info: unchanged file inst_e_e.v
+05/01/26 17:00:26 508: Info: unchanged file inst_ea_e.v
+05/01/26 17:00:26 508: Info: unchanged file inst_t_e.v
+05/01/26 17:00:27 508: WARNING: ============= SUMMARY =================
+05/01/26 17:00:27 508: WARNING: SUM: Summary of checks and created items:
+05/01/26 17:00:27 508: WARNING: SUM: checkforce 0
+05/01/26 17:00:27 508: WARNING: SUM: checkunique 0
+05/01/26 17:00:27 508: WARNING: SUM: checkwarn 0
+05/01/26 17:00:27 508: WARNING: SUM: cmacros 0
+05/01/26 17:00:27 508: WARNING: SUM: conn 15
+05/01/26 17:00:27 508: WARNING: SUM: errors 2
+05/01/26 17:00:27 508: WARNING: SUM: genport 0
+05/01/26 17:00:27 508: WARNING: SUM: hdlfiles 19
+05/01/26 17:00:27 508: WARNING: SUM: inst 25
+05/01/26 17:00:27 508: WARNING: SUM: multdriver 0
+05/01/26 17:00:27 508: WARNING: SUM: nodriver 0
+05/01/26 17:00:27 508: WARNING: SUM: noload 0
+05/01/26 17:00:27 508: WARNING: SUM: openports 0
+05/01/26 17:00:27 508: WARNING: SUM: warnings 0
+05/01/26 17:00:27 508: WARNING: SUM: === Number of parsed input tables: ===
+05/01/26 17:00:27 508: WARNING: SUM: conf 0
+05/01/26 17:00:27 508: WARNING: SUM: hier 1
+05/01/26 17:00:27 508: WARNING: SUM: conn 1
+05/01/26 17:00:27 508: WARNING: SUM: io 0
+05/01/26 17:00:27 508: WARNING: SUM: i2c 0
+05/01/26 17:00:27 508: WARNING: SUM: Number of changes in intermediate: 0
+05/01/26 17:00:27 508: WARNING: SUM: Number of changed files: 1
+05/01/26 17:01:18 2000: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 17:01:18 2000: Reading worksheet HIER_VERIOVHD of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 17:01:19 2000: WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
+05/01/26 17:01:19 2000: WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
+05/01/26 17:01:19 2000: WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
+05/01/26 17:01:19 2000: WARNING: INFO: Creating name mix_const_0 for constant!
+05/01/26 17:01:19 2000: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
+05/01/26 17:01:19 2000: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
+05/01/26 17:01:19 2000: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_6!
+05/01/26 17:01:20 2000: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
+05/01/26 17:01:20 2000: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
+05/01/26 17:01:20 2000: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
+05/01/26 17:01:20 2000: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
+05/01/26 17:01:20 2000: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
+05/01/26 17:01:20 2000: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_5!
+05/01/26 17:01:20 2000: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
+05/01/26 17:01:20 2000: WARNING: INFO: Not all lowercase in new port element FOO!
+05/01/26 17:01:20 2000: WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
+05/01/26 17:01:20 2000: WARNING: INFO: Not all lowercase in new port element NO_NAME!
+05/01/26 17:01:20 2000: WARNING: INFO: Not all lowercase in new port element WIDTH!
+05/01/26 17:01:21 2000: WARNING: File generic-mixed.xls already exists! Contents will be changed
+05/01/26 17:01:23 2000: WARNING: Rotating 3 old sheets of CONF!
+05/01/26 17:01:24 2000: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 17:01:24 2000: WARNING: Rotating 3 old sheets of CONN!
+05/01/26 17:01:25 2000: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 17:01:25 2000: WARNING: Rotating 3 old sheets of HIER!
+05/01/26 17:01:27 2000: WARNING: ============= SUMMARY =================
+05/01/26 17:01:28 2000: WARNING: SUM: Summary of checks and created items:
+05/01/26 17:01:28 2000: WARNING: SUM: checkforce 0
+05/01/26 17:01:28 2000: WARNING: SUM: checkunique 0
+05/01/26 17:01:28 2000: WARNING: SUM: checkwarn 0
+05/01/26 17:01:28 2000: WARNING: SUM: cmacros 0
+05/01/26 17:01:28 2000: WARNING: SUM: conn 15
+05/01/26 17:01:28 2000: WARNING: SUM: errors 2
+05/01/26 17:01:28 2000: WARNING: SUM: genport 0
+05/01/26 17:01:28 2000: WARNING: SUM: hdlfiles 19
+05/01/26 17:01:28 2000: WARNING: SUM: inst 25
+05/01/26 17:01:28 2000: WARNING: SUM: multdriver 0
+05/01/26 17:01:28 2000: WARNING: SUM: nodriver 0
+05/01/26 17:01:28 2000: WARNING: SUM: noload 0
+05/01/26 17:01:29 2000: WARNING: SUM: openports 0
+05/01/26 17:01:29 2000: WARNING: SUM: warnings 0
+05/01/26 17:01:29 2000: WARNING: SUM: === Number of parsed input tables: ===
+05/01/26 17:01:29 2000: WARNING: SUM: conf 0
+05/01/26 17:01:29 2000: WARNING: SUM: hier 1
+05/01/26 17:01:29 2000: WARNING: SUM: conn 1
+05/01/26 17:01:29 2000: WARNING: SUM: io 0
+05/01/26 17:01:29 2000: WARNING: SUM: i2c 0
+05/01/26 17:07:16 2168: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 17:07:17 2168: Reading worksheet HIER_VERIOVHD of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 17:07:18 2168: WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
+05/01/26 17:07:18 2168: WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
+05/01/26 17:07:18 2168: WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
+05/01/26 17:07:18 2168: WARNING: INFO: Creating name mix_const_0 for constant!
+05/01/26 17:07:18 2168: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
+05/01/26 17:07:18 2168: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
+05/01/26 17:07:18 2168: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_6!
+05/01/26 17:07:18 2168: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
+05/01/26 17:07:18 2168: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
+05/01/26 17:07:18 2168: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
+05/01/26 17:07:18 2168: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
+05/01/26 17:07:19 2168: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
+05/01/26 17:07:19 2168: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_5!
+05/01/26 17:07:19 2168: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
+05/01/26 17:07:19 2168: WARNING: INFO: Not all lowercase in new port element FOO!
+05/01/26 17:07:19 2168: WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
+05/01/26 17:07:19 2168: WARNING: INFO: Not all lowercase in new port element NO_NAME!
+05/01/26 17:07:19 2168: WARNING: INFO: Not all lowercase in new port element WIDTH!
+05/01/26 17:07:21 2168: WARNING: File generic-mixed.xls already exists! Contents will be changed
+05/01/26 17:07:21 2168: WARNING: Rotating 3 old sheets of CONF!
+05/01/26 17:07:22 2168: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 17:07:22 2168: WARNING: Rotating 3 old sheets of CONN!
+05/01/26 17:07:23 2168: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 17:07:23 2168: WARNING: Rotating 3 old sheets of HIER!
+05/01/26 17:07:26 2168: WARNING: ============= SUMMARY =================
+05/01/26 17:07:27 2168: WARNING: SUM: Summary of checks and created items:
+05/01/26 17:07:27 2168: WARNING: SUM: checkforce 0
+05/01/26 17:07:27 2168: WARNING: SUM: checkunique 0
+05/01/26 17:07:27 2168: WARNING: SUM: checkwarn 0
+05/01/26 17:07:27 2168: WARNING: SUM: cmacros 0
+05/01/26 17:07:27 2168: WARNING: SUM: conn 15
+05/01/26 17:07:27 2168: WARNING: SUM: errors 2
+05/01/26 17:07:27 2168: WARNING: SUM: genport 0
+05/01/26 17:07:27 2168: WARNING: SUM: hdlfiles 19
+05/01/26 17:07:27 2168: WARNING: SUM: inst 25
+05/01/26 17:07:27 2168: WARNING: SUM: multdriver 0
+05/01/26 17:07:28 2168: WARNING: SUM: nodriver 0
+05/01/26 17:07:28 2168: WARNING: SUM: noload 0
+05/01/26 17:07:28 2168: WARNING: SUM: openports 0
+05/01/26 17:07:28 2168: WARNING: SUM: warnings 0
+05/01/26 17:07:28 2168: WARNING: SUM: === Number of parsed input tables: ===
+05/01/26 17:07:28 2168: WARNING: SUM: conf 0
+05/01/26 17:07:28 2168: WARNING: SUM: hier 1
+05/01/26 17:07:28 2168: WARNING: SUM: conn 1
+05/01/26 17:07:28 2168: WARNING: SUM: io 0
+05/01/26 17:07:28 2168: WARNING: SUM: i2c 0
+05/01/26 17:09:36 2144: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 17:09:37 2144: Reading worksheet HIER_VERIOVHD of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 17:09:39 2144: WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
+05/01/26 17:09:39 2144: WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
+05/01/26 17:09:39 2144: WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
+05/01/26 17:09:39 2144: WARNING: INFO: Creating name mix_const_0 for constant!
+05/01/26 17:09:39 2144: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
+05/01/26 17:09:39 2144: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
+05/01/26 17:09:39 2144: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_6!
+05/01/26 17:09:39 2144: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
+05/01/26 17:09:39 2144: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
+05/01/26 17:09:39 2144: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
+05/01/26 17:09:39 2144: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
+05/01/26 17:09:39 2144: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
+05/01/26 17:09:39 2144: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_5!
+05/01/26 17:09:39 2144: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
+05/01/26 17:09:39 2144: WARNING: INFO: Not all lowercase in new port element FOO!
+05/01/26 17:09:39 2144: WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
+05/01/26 17:09:39 2144: WARNING: INFO: Not all lowercase in new port element NO_NAME!
+05/01/26 17:09:39 2144: WARNING: INFO: Not all lowercase in new port element WIDTH!
+05/01/26 17:09:40 2144: WARNING: File generic-mixed.xls already exists! Contents will be changed
+05/01/26 17:09:41 2144: WARNING: Rotating 3 old sheets of CONF!
+05/01/26 17:09:47 2144: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/generic-mixed.xls
+05/01/26 17:09:47 2144: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 17:09:47 2144: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/26 17:09:54 2144: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/generic-mixed.xls
+05/01/26 17:09:54 2144: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 17:09:54 2144: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/26 17:09:55 2144: Info: unchanged file inst_1_e-rtl-a.vhd
+05/01/26 17:09:56 2144: Info: unchanged file inst_10_e-rtl-a.vhd
+05/01/26 17:09:56 2144: Info: unchanged file inst_2_e-rtl-a.vhd
+05/01/26 17:09:56 2144: Info: unchanged file inst_3_e-rtl-a.vhd
+05/01/26 17:09:56 2144: Info: unchanged file inst_4_e-rtl-a.vhd
+05/01/26 17:09:56 2144: Info: unchanged file inst_5_e-rtl-a.vhd
+05/01/26 17:09:56 2144: Info: unchanged file inst_6_e-rtl-a.vhd
+05/01/26 17:09:57 2144: Info: unchanged file inst_7_e-rtl-a.vhd
+05/01/26 17:09:57 2144: Info: unchanged file inst_8_e-rtl-a.vhd
+05/01/26 17:09:57 2144: Info: unchanged file inst_9_e-rtl-a.vhd
+05/01/26 17:13:27 1300: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 17:13:28 1300: Reading worksheet HIER_VERIOVHD of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 17:13:30 1300: WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
+05/01/26 17:13:30 1300: WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
+05/01/26 17:13:30 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
+05/01/26 17:13:30 1300: WARNING: INFO: Creating name mix_const_0 for constant!
+05/01/26 17:13:30 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
+05/01/26 17:13:30 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
+05/01/26 17:13:30 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_6!
+05/01/26 17:13:30 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
+05/01/26 17:13:30 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
+05/01/26 17:13:30 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
+05/01/26 17:13:30 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
+05/01/26 17:13:30 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
+05/01/26 17:13:30 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_5!
+05/01/26 17:13:30 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
+05/01/26 17:13:30 1300: WARNING: INFO: Not all lowercase in new port element FOO!
+05/01/26 17:13:30 1300: WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
+05/01/26 17:13:30 1300: WARNING: INFO: Not all lowercase in new port element NO_NAME!
+05/01/26 17:13:30 1300: WARNING: INFO: Not all lowercase in new port element WIDTH!
+05/01/26 17:13:31 1300: WARNING: File generic-mixed.xls already exists! Contents will be changed
+05/01/26 17:13:32 1300: WARNING: Rotating 3 old sheets of CONF!
+05/01/26 17:13:38 1300: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/generic-mixed.xls
+05/01/26 17:13:38 1300: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 17:13:38 1300: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/26 17:13:44 1300: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/generic-mixed.xls
+05/01/26 17:13:44 1300: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 17:13:45 1300: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/26 17:13:47 1300: Info: unchanged file inst_1_e-rtl-a.vhd
+05/01/26 17:13:47 1300: Info: unchanged file inst_10_e-rtl-a.vhd
+05/01/26 17:13:47 1300: Info: unchanged file inst_2_e-rtl-a.vhd
+05/01/26 17:13:47 1300: Info: unchanged file inst_3_e-rtl-a.vhd
+05/01/26 17:13:47 1300: Info: unchanged file inst_4_e-rtl-a.vhd
+05/01/26 17:13:47 1300: Info: unchanged file inst_5_e-rtl-a.vhd
+05/01/26 17:13:48 1300: Info: unchanged file inst_6_e-rtl-a.vhd
+05/01/26 17:13:48 1300: Info: unchanged file inst_7_e-rtl-a.vhd
+05/01/26 17:13:48 1300: Info: unchanged file inst_8_e-rtl-a.vhd
+05/01/26 17:13:48 1300: Info: unchanged file inst_9_e-rtl-a.vhd
+05/01/26 17:29:12 1300: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 17:29:12 1300: Reading worksheet HIER_VERIOVHD of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 17:29:14 1300: WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
+05/01/26 17:29:14 1300: WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
+05/01/26 17:29:14 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
+05/01/26 17:29:14 1300: WARNING: INFO: Creating name mix_const_0 for constant!
+05/01/26 17:29:14 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
+05/01/26 17:29:14 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
+05/01/26 17:29:14 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_6!
+05/01/26 17:29:14 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
+05/01/26 17:29:14 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
+05/01/26 17:29:14 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
+05/01/26 17:29:14 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
+05/01/26 17:29:14 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
+05/01/26 17:29:14 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_5!
+05/01/26 17:29:14 1300: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
+05/01/26 17:29:14 1300: WARNING: INFO: Not all lowercase in new port element FOO!
+05/01/26 17:29:14 1300: WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
+05/01/26 17:29:14 1300: WARNING: INFO: Not all lowercase in new port element NO_NAME!
+05/01/26 17:29:14 1300: WARNING: INFO: Not all lowercase in new port element WIDTH!
+05/01/26 17:29:15 1300: WARNING: File generic-mixed.xls already exists! Contents will be changed
+05/01/26 17:29:16 1300: WARNING: Rotating 3 old sheets of CONF!
+05/01/26 17:29:23 1300: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/generic-mixed.xls
+05/01/26 17:29:23 1300: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 17:29:23 1300: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/26 17:29:31 1300: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/generic-mixed.xls
+05/01/26 17:29:31 1300: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 17:29:31 1300: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/26 17:29:33 1300: Info: unchanged file inst_1_e-rtl-a.vhd
+05/01/26 17:29:33 1300: Info: unchanged file inst_10_e-rtl-a.vhd
+05/01/26 17:29:33 1300: Info: unchanged file inst_2_e-rtl-a.vhd
+05/01/26 17:29:33 1300: Info: unchanged file inst_3_e-rtl-a.vhd
+05/01/26 17:29:33 1300: Info: unchanged file inst_4_e-rtl-a.vhd
+05/01/26 17:29:33 1300: Info: unchanged file inst_5_e-rtl-a.vhd
+05/01/26 17:29:34 1300: Info: unchanged file inst_6_e-rtl-a.vhd
+05/01/26 17:29:34 1300: Info: unchanged file inst_7_e-rtl-a.vhd
+05/01/26 17:29:34 1300: Info: unchanged file inst_8_e-rtl-a.vhd
+05/01/26 17:29:34 1300: Info: unchanged file inst_9_e-rtl-a.vhd
+05/01/26 17:35:40 1836: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 17:35:41 1836: Reading worksheet HIER_VERIOVHD of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 17:35:43 1836: WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
+05/01/26 17:35:43 1836: WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
+05/01/26 17:35:43 1836: WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
+05/01/26 17:35:43 1836: WARNING: INFO: Creating name mix_const_0 for constant!
+05/01/26 17:35:43 1836: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
+05/01/26 17:35:43 1836: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
+05/01/26 17:35:43 1836: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_6!
+05/01/26 17:35:43 1836: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
+05/01/26 17:35:43 1836: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
+05/01/26 17:35:43 1836: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
+05/01/26 17:35:43 1836: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
+05/01/26 17:35:43 1836: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
+05/01/26 17:35:43 1836: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_5!
+05/01/26 17:35:43 1836: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
+05/01/26 17:35:43 1836: WARNING: INFO: Not all lowercase in new port element FOO!
+05/01/26 17:35:43 1836: WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
+05/01/26 17:35:43 1836: WARNING: INFO: Not all lowercase in new port element NO_NAME!
+05/01/26 17:35:43 1836: WARNING: INFO: Not all lowercase in new port element WIDTH!
+05/01/26 17:35:44 1836: WARNING: File generic-mixed.xls already exists! Contents will be changed
+05/01/26 17:35:44 1836: WARNING: Rotating 3 old sheets of CONF!
+05/01/26 17:35:51 1836: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/generic-mixed.xls
+05/01/26 17:35:51 1836: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 17:35:52 1836: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/26 17:35:59 1836: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/generic-mixed.xls
+05/01/26 17:35:59 1836: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 17:35:59 1836: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/26 17:36:01 1836: Info: unchanged file inst_1_e-rtl-a.vhd
+05/01/26 17:36:01 1836: Info: unchanged file inst_10_e-rtl-a.vhd
+05/01/26 17:36:02 1836: Info: unchanged file inst_2_e-rtl-a.vhd
+05/01/26 17:36:02 1836: Info: unchanged file inst_3_e-rtl-a.vhd
+05/01/26 17:36:02 1836: Info: unchanged file inst_4_e-rtl-a.vhd
+05/01/26 17:36:02 1836: Info: unchanged file inst_5_e-rtl-a.vhd
+05/01/26 17:36:02 1836: Info: unchanged file inst_6_e-rtl-a.vhd
+05/01/26 17:36:02 1836: Info: unchanged file inst_7_e-rtl-a.vhd
+05/01/26 17:36:03 1836: Info: unchanged file inst_8_e-rtl-a.vhd
+05/01/26 17:36:03 1836: Info: unchanged file inst_9_e-rtl-a.vhd
+05/01/26 17:42:25 2228: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 17:42:26 2228: Reading worksheet HIER_VERIOVHD of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 17:42:28 2228: WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
+05/01/26 17:42:28 2228: WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
+05/01/26 17:42:28 2228: WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
+05/01/26 17:42:28 2228: WARNING: INFO: Creating name mix_const_0 for constant!
+05/01/26 17:42:28 2228: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
+05/01/26 17:42:28 2228: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
+05/01/26 17:42:28 2228: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_6!
+05/01/26 17:42:28 2228: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
+05/01/26 17:42:28 2228: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
+05/01/26 17:42:28 2228: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
+05/01/26 17:42:28 2228: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
+05/01/26 17:42:28 2228: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
+05/01/26 17:42:28 2228: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_5!
+05/01/26 17:42:28 2228: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
+05/01/26 17:42:28 2228: WARNING: INFO: Not all lowercase in new port element FOO!
+05/01/26 17:42:28 2228: WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
+05/01/26 17:42:28 2228: WARNING: INFO: Not all lowercase in new port element NO_NAME!
+05/01/26 17:42:28 2228: WARNING: INFO: Not all lowercase in new port element WIDTH!
+05/01/26 17:42:29 2228: WARNING: File generic-mixed.xls already exists! Contents will be changed
+05/01/26 17:42:30 2228: WARNING: Rotating 3 old sheets of CONF!
+05/01/26 17:42:36 2228: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/generic-mixed.xls
+05/01/26 17:42:36 2228: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 17:42:37 2228: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/26 17:42:44 2228: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/generic-mixed.xls
+05/01/26 17:42:44 2228: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 17:42:44 2228: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/26 17:42:46 2228: Info: unchanged file inst_1_e-rtl-a.vhd
+05/01/26 17:42:46 2228: Info: unchanged file inst_10_e-rtl-a.vhd
+05/01/26 17:42:46 2228: Info: unchanged file inst_2_e-rtl-a.vhd
+05/01/26 17:42:46 2228: Info: unchanged file inst_3_e-rtl-a.vhd
+05/01/26 17:42:47 2228: Info: unchanged file inst_4_e-rtl-a.vhd
+05/01/26 17:42:47 2228: Info: unchanged file inst_5_e-rtl-a.vhd
+05/01/26 17:42:47 2228: Info: unchanged file inst_6_e-rtl-a.vhd
+05/01/26 17:42:47 2228: Info: unchanged file inst_7_e-rtl-a.vhd
+05/01/26 17:42:47 2228: Info: unchanged file inst_8_e-rtl-a.vhd
+05/01/26 17:42:47 2228: Info: unchanged file inst_9_e-rtl-a.vhd
+05/01/26 17:43:26 2228: WARNING: Info: file inst_a_e.v has changes!
+05/01/26 17:43:26 2228: Info: unchanged file inst_aa_e-rtl-a.vhd
+05/01/26 17:43:26 2228: Info: unchanged file inst_ab_e-rtl-a.vhd
+05/01/26 17:43:26 2228: Info: unchanged file inst_ac_e-rtl-a.vhd
+05/01/26 17:43:26 2228: Info: unchanged file inst_ad_e-rtl-a.vhd
+05/01/26 17:43:27 2228: Info: unchanged file inst_ae_e-rtl-a.vhd
+05/01/26 17:43:27 2228: Info: unchanged file inst_e_e.v
+05/01/26 17:43:27 2228: Info: unchanged file inst_ea_e.v
+05/01/26 17:43:27 2228: Info: unchanged file inst_t_e.v
+05/01/26 17:43:27 2228: WARNING: ============= SUMMARY =================
+05/01/26 17:43:27 2228: WARNING: SUM: Summary of checks and created items:
+05/01/26 17:43:27 2228: WARNING: SUM: checkforce 0
+05/01/26 17:43:27 2228: WARNING: SUM: checkunique 0
+05/01/26 17:43:27 2228: WARNING: SUM: checkwarn 0
+05/01/26 17:43:27 2228: WARNING: SUM: cmacros 0
+05/01/26 17:43:27 2228: WARNING: SUM: conn 15
+05/01/26 17:43:27 2228: WARNING: SUM: errors 2
+05/01/26 17:43:27 2228: WARNING: SUM: genport 0
+05/01/26 17:43:27 2228: WARNING: SUM: hdlfiles 19
+05/01/26 17:43:27 2228: WARNING: SUM: inst 25
+05/01/26 17:43:27 2228: WARNING: SUM: multdriver 0
+05/01/26 17:43:27 2228: WARNING: SUM: nodriver 0
+05/01/26 17:43:27 2228: WARNING: SUM: noload 0
+05/01/26 17:43:27 2228: WARNING: SUM: openports 0
+05/01/26 17:43:27 2228: WARNING: SUM: warnings 0
+05/01/26 17:43:27 2228: WARNING: SUM: === Number of parsed input tables: ===
+05/01/26 17:43:27 2228: WARNING: SUM: conf 0
+05/01/26 17:43:27 2228: WARNING: SUM: hier 1
+05/01/26 17:43:27 2228: WARNING: SUM: conn 1
+05/01/26 17:43:27 2228: WARNING: SUM: io 0
+05/01/26 17:43:27 2228: WARNING: SUM: i2c 0
+05/01/26 17:43:27 2228: WARNING: SUM: Number of changes in intermediate: 0
+05/01/26 17:43:27 2228: WARNING: SUM: Number of changed files: 1
+05/01/26 17:43:50 2244: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 17:43:50 2244: Reading worksheet HIER_VERIOVHD of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/26 17:43:51 2244: WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
+05/01/26 17:43:51 2244: WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
+05/01/26 17:43:51 2244: WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
+05/01/26 17:43:51 2244: WARNING: INFO: Creating name mix_const_0 for constant!
+05/01/26 17:43:51 2244: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
+05/01/26 17:43:51 2244: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
+05/01/26 17:43:51 2244: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_6!
+05/01/26 17:43:51 2244: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
+05/01/26 17:43:51 2244: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
+05/01/26 17:43:51 2244: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
+05/01/26 17:43:51 2244: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
+05/01/26 17:43:51 2244: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
+05/01/26 17:43:51 2244: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_5!
+05/01/26 17:43:52 2244: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
+05/01/26 17:43:52 2244: WARNING: INFO: Not all lowercase in new port element FOO!
+05/01/26 17:43:52 2244: WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
+05/01/26 17:43:52 2244: WARNING: INFO: Not all lowercase in new port element NO_NAME!
+05/01/26 17:43:52 2244: WARNING: INFO: Not all lowercase in new port element WIDTH!
+05/01/26 17:43:53 2244: WARNING: File generic-mixed.xls already exists! Contents will be changed
+05/01/26 17:43:54 2244: WARNING: Rotating 3 old sheets of CONF!
+05/01/26 17:43:55 2244: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 17:43:55 2244: WARNING: Rotating 3 old sheets of CONN!
+05/01/26 17:43:56 2244: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/26 17:43:56 2244: WARNING: Rotating 3 old sheets of HIER!
+05/01/26 17:43:59 2244: WARNING: ============= SUMMARY =================
+05/01/26 17:43:59 2244: WARNING: SUM: Summary of checks and created items:
+05/01/26 17:43:59 2244: WARNING: SUM: checkforce 0
+05/01/26 17:43:59 2244: WARNING: SUM: checkunique 0
+05/01/26 17:43:59 2244: WARNING: SUM: checkwarn 0
+05/01/26 17:43:59 2244: WARNING: SUM: cmacros 0
+05/01/26 17:43:59 2244: WARNING: SUM: conn 15
+05/01/26 17:43:59 2244: WARNING: SUM: errors 2
+05/01/26 17:43:59 2244: WARNING: SUM: genport 0
+05/01/26 17:44:00 2244: WARNING: SUM: hdlfiles 19
+05/01/26 17:44:00 2244: WARNING: SUM: inst 25
+05/01/26 17:44:00 2244: WARNING: SUM: multdriver 0
+05/01/26 17:44:00 2244: WARNING: SUM: nodriver 0
+05/01/26 17:44:00 2244: WARNING: SUM: noload 0
+05/01/26 17:44:00 2244: WARNING: SUM: openports 0
+05/01/26 17:44:00 2244: WARNING: SUM: warnings 0
+05/01/26 17:44:00 2244: WARNING: SUM: === Number of parsed input tables: ===
+05/01/26 17:44:00 2244: WARNING: SUM: conf 0
+05/01/26 17:44:00 2244: WARNING: SUM: hier 1
+05/01/26 17:44:00 2244: WARNING: SUM: conn 1
+05/01/26 17:44:00 2244: WARNING: SUM: io 0
+05/01/26 17:44:00 2244: WARNING: SUM: i2c 0
+05/01/27 07:51:44 2068: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/27 07:51:45 2068: Reading worksheet HIER_VERIOVHD of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/27 07:51:47 2068: WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
+05/01/27 07:51:47 2068: WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
+05/01/27 07:51:47 2068: WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
+05/01/27 07:51:47 2068: WARNING: INFO: Creating name mix_const_0 for constant!
+05/01/27 07:51:47 2068: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
+05/01/27 07:51:47 2068: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
+05/01/27 07:51:47 2068: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_6!
+05/01/27 07:51:47 2068: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
+05/01/27 07:51:47 2068: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
+05/01/27 07:51:47 2068: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
+05/01/27 07:51:47 2068: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
+05/01/27 07:51:47 2068: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
+05/01/27 07:51:47 2068: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_5!
+05/01/27 07:51:47 2068: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
+05/01/27 07:51:47 2068: WARNING: INFO: Not all lowercase in new port element FOO!
+05/01/27 07:51:47 2068: WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
+05/01/27 07:51:47 2068: WARNING: INFO: Not all lowercase in new port element NO_NAME!
+05/01/27 07:51:47 2068: WARNING: INFO: Not all lowercase in new port element WIDTH!
+05/01/27 07:51:51 2068: WARNING: File generic-mixed.xls already exists! Contents will be changed
+05/01/27 07:51:52 2068: WARNING: Rotating 3 old sheets of CONF!
+05/01/27 07:52:00 2068: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/generic-mixed.xls
+05/01/27 07:52:00 2068: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/27 07:52:00 2068: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/27 07:52:09 2068: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/generic-mixed.xls
+05/01/27 07:52:09 2068: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/27 07:52:09 2068: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/27 07:52:11 2068: Info: unchanged file inst_1_e-rtl-a.vhd
+05/01/27 07:52:11 2068: Info: unchanged file inst_10_e-rtl-a.vhd
+05/01/27 07:52:12 2068: Info: unchanged file inst_2_e-rtl-a.vhd
+05/01/27 07:52:12 2068: Info: unchanged file inst_3_e-rtl-a.vhd
+05/01/27 07:52:12 2068: Info: unchanged file inst_4_e-rtl-a.vhd
+05/01/27 07:52:12 2068: Info: unchanged file inst_5_e-rtl-a.vhd
+05/01/27 07:52:13 2068: Info: unchanged file inst_6_e-rtl-a.vhd
+05/01/27 07:52:13 2068: Info: unchanged file inst_7_e-rtl-a.vhd
+05/01/27 07:52:13 2068: Info: unchanged file inst_8_e-rtl-a.vhd
+05/01/27 07:52:13 2068: Info: unchanged file inst_9_e-rtl-a.vhd
+05/01/27 07:55:50 2068: WARNING: WARNING: applied non-integer parameter "nodefault" for generic NO_DEFAULT in instance inst_aa!
+05/01/27 07:56:29 2068: WARNING: WARNING: applied non-integer parameter "noname" for generic NO_NAME in instance inst_aa!
+05/01/27 07:57:02 2068: Info: unchanged file inst_a_e.v
+05/01/27 07:57:02 2068: Info: unchanged file inst_aa_e-rtl-a.vhd
+05/01/27 07:57:03 2068: Info: unchanged file inst_ab_e-rtl-a.vhd
+05/01/27 07:57:03 2068: Info: unchanged file inst_ac_e-rtl-a.vhd
+05/01/27 07:57:03 2068: Info: unchanged file inst_ad_e-rtl-a.vhd
+05/01/27 07:57:04 2068: Info: unchanged file inst_ae_e-rtl-a.vhd
+05/01/27 07:57:04 2068: Info: unchanged file inst_e_e.v
+05/01/27 07:57:05 2068: Info: unchanged file inst_ea_e.v
+05/01/27 07:57:05 2068: Info: unchanged file inst_t_e.v
+05/01/27 07:57:05 2068: WARNING: ============= SUMMARY =================
+05/01/27 07:57:05 2068: WARNING: SUM: Summary of checks and created items:
+05/01/27 07:57:05 2068: WARNING: SUM: checkforce 0
+05/01/27 07:57:05 2068: WARNING: SUM: checkunique 0
+05/01/27 07:57:05 2068: WARNING: SUM: checkwarn 0
+05/01/27 07:57:05 2068: WARNING: SUM: cmacros 0
+05/01/27 07:57:05 2068: WARNING: SUM: conn 15
+05/01/27 07:57:05 2068: WARNING: SUM: errors 2
+05/01/27 07:57:05 2068: WARNING: SUM: genport 0
+05/01/27 07:57:05 2068: WARNING: SUM: hdlfiles 19
+05/01/27 07:57:05 2068: WARNING: SUM: inst 25
+05/01/27 07:57:05 2068: WARNING: SUM: multdriver 0
+05/01/27 07:57:05 2068: WARNING: SUM: nodriver 0
+05/01/27 07:57:05 2068: WARNING: SUM: noload 0
+05/01/27 07:57:05 2068: WARNING: SUM: openports 0
+05/01/27 07:57:05 2068: WARNING: SUM: warnings 2
+05/01/27 07:57:05 2068: WARNING: SUM: === Number of parsed input tables: ===
+05/01/27 07:57:05 2068: WARNING: SUM: conf 0
+05/01/27 07:57:05 2068: WARNING: SUM: hier 1
+05/01/27 07:57:05 2068: WARNING: SUM: conn 1
+05/01/27 07:57:05 2068: WARNING: SUM: io 0
+05/01/27 07:57:05 2068: WARNING: SUM: i2c 0
+05/01/27 07:57:05 2068: WARNING: SUM: Number of changes in intermediate: 0
+05/01/27 07:57:05 2068: WARNING: SUM: Number of changed files: 0
+05/01/27 07:57:35 636: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/27 07:57:35 636: Reading worksheet HIER_VERIOVHD of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/27 07:57:36 636: WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
+05/01/27 07:57:36 636: WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
+05/01/27 07:57:36 636: WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
+05/01/27 07:57:36 636: WARNING: INFO: Creating name mix_const_0 for constant!
+05/01/27 07:57:36 636: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
+05/01/27 07:57:36 636: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
+05/01/27 07:57:36 636: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_6!
+05/01/27 07:57:36 636: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
+05/01/27 07:57:36 636: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
+05/01/27 07:57:36 636: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
+05/01/27 07:57:36 636: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
+05/01/27 07:57:36 636: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
+05/01/27 07:57:36 636: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_5!
+05/01/27 07:57:36 636: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
+05/01/27 07:57:36 636: WARNING: INFO: Not all lowercase in new port element FOO!
+05/01/27 07:57:36 636: WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
+05/01/27 07:57:37 636: WARNING: INFO: Not all lowercase in new port element NO_NAME!
+05/01/27 07:57:37 636: WARNING: INFO: Not all lowercase in new port element WIDTH!
+05/01/27 07:57:38 636: WARNING: File generic-mixed.xls already exists! Contents will be changed
+05/01/27 07:57:38 636: WARNING: Rotating 3 old sheets of CONF!
+05/01/27 07:57:40 636: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/27 07:57:40 636: WARNING: Rotating 3 old sheets of CONN!
+05/01/27 07:57:41 636: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/27 07:57:41 636: WARNING: Rotating 3 old sheets of HIER!
+05/01/27 07:57:43 636: WARNING: WARNING: applied non-integer parameter "nodefault" for generic NO_DEFAULT in instance inst_aa!
+05/01/27 07:57:43 636: WARNING: WARNING: applied non-integer parameter "noname" for generic NO_NAME in instance inst_aa!
+05/01/27 07:57:44 636: WARNING: ============= SUMMARY =================
+05/01/27 07:57:44 636: WARNING: SUM: Summary of checks and created items:
+05/01/27 07:57:44 636: WARNING: SUM: checkforce 0
+05/01/27 07:57:44 636: WARNING: SUM: checkunique 0
+05/01/27 07:57:45 636: WARNING: SUM: checkwarn 0
+05/01/27 07:57:45 636: WARNING: SUM: cmacros 0
+05/01/27 07:57:45 636: WARNING: SUM: conn 15
+05/01/27 07:57:45 636: WARNING: SUM: errors 2
+05/01/27 07:57:45 636: WARNING: SUM: genport 0
+05/01/27 07:57:45 636: WARNING: SUM: hdlfiles 19
+05/01/27 07:57:45 636: WARNING: SUM: inst 25
+05/01/27 07:57:45 636: WARNING: SUM: multdriver 0
+05/01/27 07:57:45 636: WARNING: SUM: nodriver 0
+05/01/27 07:57:45 636: WARNING: SUM: noload 0
+05/01/27 07:57:45 636: WARNING: SUM: openports 0
+05/01/27 07:57:45 636: WARNING: SUM: warnings 2
+05/01/27 07:57:45 636: WARNING: SUM: === Number of parsed input tables: ===
+05/01/27 07:57:46 636: WARNING: SUM: conf 0
+05/01/27 07:57:46 636: WARNING: SUM: hier 1
+05/01/27 07:57:46 636: WARNING: SUM: conn 1
+05/01/27 07:57:46 636: WARNING: SUM: io 0
+05/01/27 07:57:46 636: WARNING: SUM: i2c 0
+05/01/27 08:05:02 1404: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/27 08:05:02 1404: Reading worksheet HIER_VERIOVHD of h:/work/mix_new/mix/test/xls_input/generic/veriovhd/../../generic.xls
+05/01/27 08:05:03 1404: WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
+05/01/27 08:05:03 1404: WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
+05/01/27 08:05:03 1404: WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
+05/01/27 08:05:03 1404: WARNING: INFO: Creating name mix_const_0 for constant!
+05/01/27 08:05:03 1404: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
+05/01/27 08:05:03 1404: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
+05/01/27 08:05:03 1404: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_6!
+05/01/27 08:05:03 1404: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
+05/01/27 08:05:04 1404: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
+05/01/27 08:05:04 1404: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
+05/01/27 08:05:04 1404: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
+05/01/27 08:05:04 1404: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
+05/01/27 08:05:04 1404: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_5!
+05/01/27 08:05:04 1404: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
+05/01/27 08:05:04 1404: WARNING: INFO: Not all lowercase in new port element FOO!
+05/01/27 08:05:04 1404: WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
+05/01/27 08:05:04 1404: WARNING: INFO: Not all lowercase in new port element NO_NAME!
+05/01/27 08:05:04 1404: WARNING: INFO: Not all lowercase in new port element WIDTH!
+05/01/27 08:05:05 1404: WARNING: File generic-mixed.xls already exists! Contents will be changed
+05/01/27 08:05:06 1404: WARNING: Rotating 3 old sheets of CONF!
+05/01/27 08:05:08 1404: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/27 08:05:09 1404: WARNING: Rotating 3 old sheets of CONN!
+05/01/27 08:05:09 1404: WARNING: ERROR: workbook generic-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\generic\veriovhd) already opened!
+05/01/27 08:05:09 1404: WARNING: Rotating 3 old sheets of HIER!
+05/01/27 08:05:10 1404: WARNING: Removing old and and diff sheets in file: generic-mixed.xls
+05/01/27 08:05:10 1404: WARNING: ERROR: workbook with different path already opened!
+05/01/27 08:05:13 1404: WARNING: WARNING: applied non-integer parameter "nodefault" for generic NO_DEFAULT at instance inst_aa!
+05/01/27 08:05:13 1404: WARNING: WARNING: applied non-integer parameter "noname" for generic NO_NAME at instance inst_aa!
+05/01/27 08:05:14 1404: WARNING: ============= SUMMARY =================
+05/01/27 08:05:14 1404: WARNING: SUM: Summary of checks and created items:
+05/01/27 08:05:14 1404: WARNING: SUM: checkforce 0
+05/01/27 08:05:14 1404: WARNING: SUM: checkunique 0
+05/01/27 08:05:14 1404: WARNING: SUM: checkwarn 0
+05/01/27 08:05:14 1404: WARNING: SUM: cmacros 0
+05/01/27 08:05:14 1404: WARNING: SUM: conn 15
+05/01/27 08:05:14 1404: WARNING: SUM: errors 3
+05/01/27 08:05:14 1404: WARNING: SUM: genport 0
+05/01/27 08:05:14 1404: WARNING: SUM: hdlfiles 19
+05/01/27 08:05:14 1404: WARNING: SUM: inst 25
+05/01/27 08:05:15 1404: WARNING: SUM: multdriver 0
+05/01/27 08:05:15 1404: WARNING: SUM: nodriver 0
+05/01/27 08:05:15 1404: WARNING: SUM: noload 0
+05/01/27 08:05:15 1404: WARNING: SUM: openports 0
+05/01/27 08:05:15 1404: WARNING: SUM: warnings 2
+05/01/27 08:05:15 1404: WARNING: SUM: === Number of parsed input tables: ===
+05/01/27 08:05:15 1404: WARNING: SUM: conf 0
+05/01/27 08:05:15 1404: WARNING: SUM: hier 1
+05/01/27 08:05:15 1404: WARNING: SUM: conn 1
+05/01/27 08:05:15 1404: WARNING: SUM: io 0
+05/01/27 08:05:15 1404: WARNING: SUM: i2c 0
