@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / I2CParser                                |
 # | Modules:    $RCSfile: MixI2CParser.pm,v $                             |
-# | Revision:   $Revision: 1.2 $                                          |
+# | Revision:   $Revision: 1.3 $                                          |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/12/10 10:17:33 $                              |
+# | Date:       $Date: 2003/12/10 14:37:17 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/Attic/MixI2CParser.pm,v 1.2 2003/12/10 10:17:33 abauer Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/Attic/MixI2CParser.pm,v 1.3 2003/12/10 14:37:17 abauer Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
@@ -74,9 +74,9 @@ sub parse_i2c_init($);
 # RCS Id, to be put into output templates
 #
 
-my $thisid		= 	'$Id: MixI2CParser.pm,v 1.2 2003/12/10 10:17:33 abauer Exp $';
+my $thisid		= 	'$Id: MixI2CParser.pm,v 1.3 2003/12/10 14:37:17 abauer Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixI2CParser.pm,v $';
-my $thisrevision        =       '$Revision: 1.2 $';
+my $thisrevision        =       '$Revision: 1.3 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -116,8 +116,8 @@ sub parse_i2c_init($) {
 	    next if ( not defined( $i->{$j} ));
 	    if( $i->{$j} ne "") {
 		$i->{$j} = $ehr->{$i}[3]; # Set to DEFAULT Value
-	    }	   
-	}			  
+	    }
+	}
 	add_i2c_int($i);
     }
     return 0;
@@ -138,7 +138,7 @@ sub add_i2c_int(%) {
 
     my $interface = $in->{'::interface'};
 
-    if( defined $hierdb{$interface}) {
+    if( 0) { # Todo: check if interface exists
 	merge_i2c_int($in);
     }
     else {
@@ -161,7 +161,9 @@ sub create_i2c_int(%) {
 
     my $in = shift;
 
-    # add_subaddr(in);
+    # Todo: create new interface
+
+    add_subaddr( $in);
 
     return;
 }
@@ -179,12 +181,16 @@ sub merge_i2c_int(%) {
 
     my $in = shift;
 
+    # Todo: merge interface definition/ERROR if differ
+
+    add_subaddr( $in);
+
     return;
 }
 
 
 ####################################################################
-## add_i2c_
+## add_subaddr
 ####################################################################
 
 =head1
@@ -193,14 +199,19 @@ sub merge_i2c_int(%) {
 
 sub add_subaddr(%) {
 
-    my $in = shift;
+    if( 0) { # Todo: check if subaddr exists
+        merge_subaddr(shift);
+    }
+    else {
+        create_subaddr(shift);
+    }
 
     return;
 }
 
 
 ####################################################################
-## merge_reg
+## merge_subaddr
 ####################################################################
 
 =head1
@@ -216,7 +227,7 @@ sub merge_subaddr($%) {
 
     for my $i ( keys %$ehr) {
         if ( defined( $in->{$i} ) and $in->{$i} ne "" ) { #If it's an empty string -> use default
-	    # Todo: combine entries
+	    # Todo: merge subaddr definition/ERROR if differ
         }
     }
 
@@ -225,7 +236,7 @@ sub merge_subaddr($%) {
 
 
 ####################################################################
-## create_reg
+## create_subaddr
 ####################################################################
 
 =head1
@@ -239,7 +250,6 @@ sub create_subaddr($%) {
 
     my $ehr = $EH{'i2c'}{'field'};
 
-
     #
     # Add the rest, too
     #
@@ -247,7 +257,7 @@ sub create_subaddr($%) {
     #        $hierdb{$name}{$i} = $data->{$i};
     #    }
 
-    #    add_tree_node( $name, $hierdb{$name} );
+    # ?  add_tree_node( $name, $hierdb{$name} );
 
     return;
 }

@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.7 $                                          |
+# | Revision:   $Revision: 1.8 $                                          |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/12/10 10:17:33 $                              |
+# | Date:       $Date: 2003/12/10 14:37:17 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.8  2003/12/10 14:37:17  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.7  2003/12/10 10:17:33  abauer
 # | *** empty log message ***
 # |
@@ -100,7 +103,7 @@ use Micronas::MixUtils qw(:DEFAULT %OPTVAL %EH replace_mac convert_in
 
 use ooolib;
 use Spreadsheet::ParseExcel;
-use Spreadsheet::WriteExcel;
+#use Spreadsheet::WriteExcel;
 
 
 # Prototypes
@@ -115,11 +118,11 @@ sub mix_utils_mask_excel ($);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.7 2003/12/10 10:17:33 abauer Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.8 2003/12/10 14:37:17 abauer Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.7 $';
+my $thisrevision    =      '$Revision: 1.8 $';
 
-# Revision:   $Revision: 1.7 $
+# Revision:   $Revision: 1.8 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -261,11 +264,13 @@ Returns a OLE handle or undef if that fails.
 sub init_ole () {
 
 # Start Excel/OLE Server, do it in eval ....
-  unless ( eval "use Win32::OLE;" ) {  
-	eval {
-	  require "Win32::OLE";
+  unless ( eval "use Win32::OLE;" ) {
+#      eval "use Win32::OLE";
+      eval "use Win32::OLE::Const";
+#	eval {
+#	  require "Win32::OLE";
 #	  import Win32:OLE; # qw(in valof with);
-          require "Win32::OLE::Const";
+#          require "Win32::OLE::Const";
 #	  import Win32::OLE::Const; # 'Microsoft Excel';
 #          use Win32::OLE::NLS qw(:DEFAULT :LANG :SUBLANG);
 #          my $lgid = MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT);
@@ -284,7 +289,7 @@ sub init_ole () {
 		unless ( $ex=Win32::OLE->new('Excel.Application', sub {$_[0]->Quit;}) ) {
 		    return undef; # Did not work :-(
 		}
-          }
+#          }
           init_open_workbooks(); # Get list of already open files
           return $ex;  # Return OLE ExCEL object ....
 	}

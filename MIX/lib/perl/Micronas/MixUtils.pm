@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.36 $                                         |
+# | Revision:   $Revision: 1.37 $                                         |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/12/04 14:56:32 $                              |
+# | Date:       $Date: 2003/12/10 14:37:17 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.36 2003/12/04 14:56:32 abauer Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.37 2003/12/10 14:37:17 abauer Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.37  2003/12/10 14:37:17  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.36  2003/12/04 14:56:32  abauer
 # | corrected cvs problems
 # |
@@ -236,11 +239,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.36 2003/12/04 14:56:32 abauer Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.37 2003/12/10 14:37:17 abauer Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.36 $';
+my $thisrevision        =      '$Revision: 1.37 $';
 
-# Revision:   $Revision: 1.36 $   
+# Revision:   $Revision: 1.37 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1023,7 +1026,7 @@ sub mix_init () {
 	    #							Required: 0 = no, 1=yes, 2= init to ""
 	    #								Defaultvalue
 	    #									PresetOrder
-	    #                                  0      1      2	3       4
+	    #                                   0       1       2	3               4
 	    '::ign' 		=> [ qw(	0	0	1	%EMPTY% 	1 ) ],
 	    '::gen'		=> [ qw(	0	0	1	%EMPTY% 	2 ) ],
 	    '::bundle'	        => [ qw(	1	0	1	WARNING_NOT_SET	3 ) ],
@@ -1060,7 +1063,7 @@ sub mix_init () {
 	    #							Required
 	    #								Defaultvalue
 	    #									PrintOrder
-	    #                                  0      1       2	3       4
+	    #                                   0       1       2   	   3            4
 	    '::ign' 		=> [ qw(	0	0	1	%EMPTY% 	1 )],
 	    '::gen'		=> [ qw(	0	0	1	%EMPTY% 	2 )],
 	    '::variants'	=> [ qw(	1	0	0	Default	        3 )],
