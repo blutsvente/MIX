@@ -1,0 +1,871 @@
+04/08/04 10:52:03 1976: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 10:52:03 1976: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 10:52:04 1976: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 10:52:07 1976: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/04 10:52:07 1976: WARNING: Rotating 3 old sheets of CONN!
+04/08/04 10:52:08 1976: WARNING: Rotating 3 old sheets of HIER!
+04/08/04 10:52:09 1976: WARNING: ============= SUMMARY =================
+04/08/04 10:52:09 1976: WARNING: SUM: Summary of checks and created items:
+04/08/04 10:52:09 1976: WARNING: SUM: checkforce 0
+04/08/04 10:52:09 1976: WARNING: SUM: checkunique 0
+04/08/04 10:52:09 1976: WARNING: SUM: checkwarn 0
+04/08/04 10:52:09 1976: WARNING: SUM: cmacros 0
+04/08/04 10:52:09 1976: WARNING: SUM: conn 26
+04/08/04 10:52:09 1976: WARNING: SUM: errors 0
+04/08/04 10:52:09 1976: WARNING: SUM: genport 0
+04/08/04 10:52:09 1976: WARNING: SUM: hdlfiles 7
+04/08/04 10:52:09 1976: WARNING: SUM: inst 23
+04/08/04 10:52:10 1976: WARNING: SUM: multdriver 0
+04/08/04 10:52:10 1976: WARNING: SUM: nodriver 0
+04/08/04 10:52:10 1976: WARNING: SUM: noload 0
+04/08/04 10:52:10 1976: WARNING: SUM: openports 0
+04/08/04 10:52:10 1976: WARNING: SUM: warnings 0
+04/08/04 10:52:10 1976: WARNING: SUM: === Number of parsed input tables: ===
+04/08/04 10:52:10 1976: WARNING: SUM: conf 0
+04/08/04 10:52:10 1976: WARNING: SUM: hier 1
+04/08/04 10:52:10 1976: WARNING: SUM: conn 1
+04/08/04 10:52:10 1976: WARNING: SUM: io 1
+04/08/04 10:52:10 1976: WARNING: SUM: i2c 0
+04/08/04 10:53:09 2448: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 10:53:10 2448: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 10:53:10 2448: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 10:53:11 2448: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/04 10:53:12 2448: WARNING: Rotating 3 old sheets of CONF!
+04/08/04 10:53:13 2448: WARNING: Rotating 3 old sheets of CONN!
+04/08/04 10:53:14 2448: WARNING: Rotating 3 old sheets of HIER!
+04/08/04 10:53:16 2448: WARNING: ============= SUMMARY =================
+04/08/04 10:53:16 2448: WARNING: SUM: Summary of checks and created items:
+04/08/04 10:53:16 2448: WARNING: SUM: checkforce 0
+04/08/04 10:53:16 2448: WARNING: SUM: checkunique 0
+04/08/04 10:53:16 2448: WARNING: SUM: checkwarn 0
+04/08/04 10:53:16 2448: WARNING: SUM: cmacros 0
+04/08/04 10:53:16 2448: WARNING: SUM: conn 26
+04/08/04 10:53:16 2448: WARNING: SUM: errors 0
+04/08/04 10:53:16 2448: WARNING: SUM: genport 0
+04/08/04 10:53:16 2448: WARNING: SUM: hdlfiles 9
+04/08/04 10:53:16 2448: WARNING: SUM: inst 23
+04/08/04 10:53:16 2448: WARNING: SUM: multdriver 0
+04/08/04 10:53:16 2448: WARNING: SUM: nodriver 0
+04/08/04 10:53:16 2448: WARNING: SUM: noload 0
+04/08/04 10:53:17 2448: WARNING: SUM: openports 0
+04/08/04 10:53:17 2448: WARNING: SUM: warnings 0
+04/08/04 10:53:17 2448: WARNING: SUM: === Number of parsed input tables: ===
+04/08/04 10:53:17 2448: WARNING: SUM: conf 0
+04/08/04 10:53:17 2448: WARNING: SUM: hier 1
+04/08/04 10:53:17 2448: WARNING: SUM: conn 1
+04/08/04 10:53:18 2448: WARNING: SUM: io 1
+04/08/04 10:53:18 2448: WARNING: SUM: i2c 0
+04/08/04 10:55:58 2448: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 10:55:58 2448: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 10:55:59 2448: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 10:56:00 2448: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/04 10:56:01 2448: WARNING: Rotating 3 old sheets of CONF!
+04/08/04 10:56:04 2448: WARNING: Rotating 3 old sheets of CONN!
+04/08/04 10:56:05 2448: WARNING: Rotating 3 old sheets of HIER!
+04/08/04 10:56:07 2448: WARNING: ============= SUMMARY =================
+04/08/04 10:56:07 2448: WARNING: SUM: Summary of checks and created items:
+04/08/04 10:56:07 2448: WARNING: SUM: checkforce 0
+04/08/04 10:56:07 2448: WARNING: SUM: checkunique 0
+04/08/04 10:56:07 2448: WARNING: SUM: checkwarn 0
+04/08/04 10:56:07 2448: WARNING: SUM: cmacros 0
+04/08/04 10:56:07 2448: WARNING: SUM: conn 26
+04/08/04 10:56:08 2448: WARNING: SUM: errors 0
+04/08/04 10:56:08 2448: WARNING: SUM: genport 0
+04/08/04 10:56:08 2448: WARNING: SUM: hdlfiles 7
+04/08/04 10:56:08 2448: WARNING: SUM: inst 23
+04/08/04 10:56:08 2448: WARNING: SUM: multdriver 0
+04/08/04 10:56:08 2448: WARNING: SUM: nodriver 0
+04/08/04 10:56:08 2448: WARNING: SUM: noload 0
+04/08/04 10:56:08 2448: WARNING: SUM: openports 0
+04/08/04 10:56:08 2448: WARNING: SUM: warnings 0
+04/08/04 10:56:08 2448: WARNING: SUM: === Number of parsed input tables: ===
+04/08/04 10:56:08 2448: WARNING: SUM: conf 0
+04/08/04 10:56:08 2448: WARNING: SUM: hier 1
+04/08/04 10:56:08 2448: WARNING: SUM: conn 1
+04/08/04 10:56:08 2448: WARNING: SUM: io 1
+04/08/04 10:56:08 2448: WARNING: SUM: i2c 0
+04/08/04 10:57:33 2468: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 10:57:33 2468: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 10:57:34 2468: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 10:57:35 2468: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/04 10:57:36 2468: WARNING: Rotating 3 old sheets of CONF!
+04/08/04 10:57:39 2468: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/04 10:57:39 2468: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/04 10:57:42 2468: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/04 10:57:42 2468: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/04 10:57:43 2468: Info: unchanged file inst_a-e.vhd
+04/08/04 10:57:43 2468: Info: unchanged file inst_aa-e.vhd
+04/08/04 10:57:43 2468: Info: unchanged file inst_ab-e.vhd
+04/08/04 10:57:43 2468: Info: unchanged file inst_a-rtl-a.vhd
+04/08/04 10:57:43 2468: Info: unchanged file inst_aa-rtl-a.vhd
+04/08/04 10:57:44 2468: Info: unchanged file inst_ab-rtl-a.vhd
+04/08/04 10:57:44 2468: Info: unchanged file inst_a-rtl-conf-c.vhd
+04/08/04 10:57:44 2468: WARNING: ============= SUMMARY =================
+04/08/04 10:57:44 2468: WARNING: SUM: Summary of checks and created items:
+04/08/04 10:57:44 2468: WARNING: SUM: checkforce 0
+04/08/04 10:57:44 2468: WARNING: SUM: checkunique 0
+04/08/04 10:57:44 2468: WARNING: SUM: checkwarn 0
+04/08/04 10:57:44 2468: WARNING: SUM: cmacros 0
+04/08/04 10:57:45 2468: WARNING: SUM: conn 26
+04/08/04 10:57:45 2468: WARNING: SUM: errors 0
+04/08/04 10:57:45 2468: WARNING: SUM: genport 0
+04/08/04 10:57:45 2468: WARNING: SUM: hdlfiles 7
+04/08/04 10:57:45 2468: WARNING: SUM: inst 23
+04/08/04 10:57:45 2468: WARNING: SUM: multdriver 0
+04/08/04 10:57:45 2468: WARNING: SUM: nodriver 0
+04/08/04 10:57:45 2468: WARNING: SUM: noload 0
+04/08/04 10:57:45 2468: WARNING: SUM: openports 0
+04/08/04 10:57:45 2468: WARNING: SUM: warnings 0
+04/08/04 10:57:45 2468: WARNING: SUM: === Number of parsed input tables: ===
+04/08/04 10:57:45 2468: WARNING: SUM: conf 0
+04/08/04 10:57:45 2468: WARNING: SUM: hier 1
+04/08/04 10:57:45 2468: WARNING: SUM: conn 1
+04/08/04 10:57:45 2468: WARNING: SUM: io 1
+04/08/04 10:57:45 2468: WARNING: SUM: i2c 0
+04/08/04 10:57:46 2468: WARNING: SUM: Number of changes in intermediate: 0
+04/08/04 10:57:46 2468: WARNING: SUM: Number of changed files: 0
+04/08/04 13:26:38 2468: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 13:26:38 2468: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 13:26:38 2468: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 13:26:40 2468: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/04 13:26:40 2468: WARNING: Rotating 3 old sheets of CONF!
+04/08/04 13:26:44 2468: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/04 13:26:44 2468: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/04 13:26:47 2468: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/04 13:26:47 2468: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/04 13:26:48 2468: Info: unchanged file inst_a-e.vhd
+04/08/04 13:26:48 2468: Info: unchanged file inst_aa-e.vhd
+04/08/04 13:26:49 2468: Info: unchanged file inst_ab-e.vhd
+04/08/04 13:26:49 2468: Info: unchanged file inst_a-rtl-a.vhd
+04/08/04 13:26:49 2468: Info: unchanged file inst_aa-rtl-a.vhd
+04/08/04 13:26:49 2468: Info: unchanged file inst_ab-rtl-a.vhd
+04/08/04 13:26:49 2468: Info: unchanged file inst_a-rtl-conf-c.vhd
+04/08/04 13:26:49 2468: WARNING: ============= SUMMARY =================
+04/08/04 13:26:49 2468: WARNING: SUM: Summary of checks and created items:
+04/08/04 13:26:49 2468: WARNING: SUM: checkforce 0
+04/08/04 13:26:49 2468: WARNING: SUM: checkunique 0
+04/08/04 13:26:50 2468: WARNING: SUM: checkwarn 0
+04/08/04 13:26:50 2468: WARNING: SUM: cmacros 0
+04/08/04 13:26:50 2468: WARNING: SUM: conn 26
+04/08/04 13:26:50 2468: WARNING: SUM: errors 0
+04/08/04 13:26:50 2468: WARNING: SUM: genport 0
+04/08/04 13:26:50 2468: WARNING: SUM: hdlfiles 7
+04/08/04 13:26:50 2468: WARNING: SUM: inst 23
+04/08/04 13:26:50 2468: WARNING: SUM: multdriver 0
+04/08/04 13:26:50 2468: WARNING: SUM: nodriver 0
+04/08/04 13:26:50 2468: WARNING: SUM: noload 0
+04/08/04 13:26:50 2468: WARNING: SUM: openports 0
+04/08/04 13:26:50 2468: WARNING: SUM: warnings 0
+04/08/04 13:26:51 2468: WARNING: SUM: === Number of parsed input tables: ===
+04/08/04 13:26:51 2468: WARNING: SUM: conf 0
+04/08/04 13:26:51 2468: WARNING: SUM: hier 1
+04/08/04 13:26:51 2468: WARNING: SUM: conn 1
+04/08/04 13:26:51 2468: WARNING: SUM: io 1
+04/08/04 13:26:51 2468: WARNING: SUM: i2c 0
+04/08/04 13:26:51 2468: WARNING: SUM: Number of changes in intermediate: 0
+04/08/04 13:26:51 2468: WARNING: SUM: Number of changed files: 0
+04/08/04 15:18:15 2096: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 15:18:15 2096: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 15:18:16 2096: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 15:18:17 2096: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/04 15:18:18 2096: WARNING: Rotating 3 old sheets of CONF!
+04/08/04 15:18:21 2096: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/04 15:18:22 2096: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/04 15:18:25 2096: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/04 15:18:25 2096: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/04 15:18:26 2096: Info: unchanged file inst_a-e.vhd
+04/08/04 15:18:26 2096: Info: unchanged file inst_aa-e.vhd
+04/08/04 15:18:27 2096: Info: unchanged file inst_ab-e.vhd
+04/08/04 15:18:27 2096: Info: unchanged file inst_a-rtl-a.vhd
+04/08/04 15:18:27 2096: Info: unchanged file inst_aa-rtl-a.vhd
+04/08/04 15:18:27 2096: Info: unchanged file inst_ab-rtl-a.vhd
+04/08/04 15:18:27 2096: Info: unchanged file inst_a-rtl-conf-c.vhd
+04/08/04 15:18:27 2096: WARNING: ============= SUMMARY =================
+04/08/04 15:18:27 2096: WARNING: SUM: Summary of checks and created items:
+04/08/04 15:18:28 2096: WARNING: SUM: checkforce 0
+04/08/04 15:18:28 2096: WARNING: SUM: checkunique 0
+04/08/04 15:18:28 2096: WARNING: SUM: checkwarn 0
+04/08/04 15:18:28 2096: WARNING: SUM: cmacros 0
+04/08/04 15:18:28 2096: WARNING: SUM: conn 26
+04/08/04 15:18:28 2096: WARNING: SUM: errors 0
+04/08/04 15:18:28 2096: WARNING: SUM: genport 0
+04/08/04 15:18:28 2096: WARNING: SUM: hdlfiles 7
+04/08/04 15:18:28 2096: WARNING: SUM: inst 23
+04/08/04 15:18:28 2096: WARNING: SUM: multdriver 0
+04/08/04 15:18:28 2096: WARNING: SUM: nodriver 0
+04/08/04 15:18:28 2096: WARNING: SUM: noload 0
+04/08/04 15:18:28 2096: WARNING: SUM: openports 0
+04/08/04 15:18:28 2096: WARNING: SUM: warnings 0
+04/08/04 15:18:28 2096: WARNING: SUM: === Number of parsed input tables: ===
+04/08/04 15:18:28 2096: WARNING: SUM: conf 0
+04/08/04 15:18:29 2096: WARNING: SUM: hier 1
+04/08/04 15:18:29 2096: WARNING: SUM: conn 1
+04/08/04 15:18:29 2096: WARNING: SUM: io 1
+04/08/04 15:18:29 2096: WARNING: SUM: i2c 0
+04/08/04 15:18:29 2096: WARNING: SUM: Number of changes in intermediate: 0
+04/08/04 15:18:29 2096: WARNING: SUM: Number of changed files: 0
+04/08/04 16:13:29 144: Reading worksheet CONN of /cygdrive/h/work/mix_new/mix/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 16:13:30 144: Reading worksheet HIER of /cygdrive/h/work/mix_new/mix/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 16:13:31 144: Reading worksheet IO of /cygdrive/h/work/mix_new/mix/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/04 16:13:34 144: Reading worksheet CONN of /cygdrive/h/work/mix_new/mix/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/04 16:13:36 144: Reading worksheet HIER of /cygdrive/h/work/mix_new/mix/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/04 16:13:36 144: Info: unchanged file inst_a-e.vhd
+04/08/04 16:13:36 144: Info: unchanged file inst_aa-e.vhd
+04/08/04 16:13:37 144: Info: unchanged file inst_ab-e.vhd
+04/08/04 16:13:37 144: Info: unchanged file inst_a-rtl-a.vhd
+04/08/04 16:13:37 144: Info: unchanged file inst_aa-rtl-a.vhd
+04/08/04 16:13:37 144: Info: unchanged file inst_ab-rtl-a.vhd
+04/08/04 16:13:37 144: Info: unchanged file inst_a-rtl-conf-c.vhd
+04/08/04 16:13:37 144: WARNING: ============= SUMMARY =================
+04/08/04 16:13:38 144: WARNING: SUM: Summary of checks and created items:
+04/08/04 16:13:38 144: WARNING: SUM: checkforce 0
+04/08/04 16:13:38 144: WARNING: SUM: checkunique 0
+04/08/04 16:13:38 144: WARNING: SUM: checkwarn 0
+04/08/04 16:13:38 144: WARNING: SUM: cmacros 0
+04/08/04 16:13:38 144: WARNING: SUM: conn 26
+04/08/04 16:13:38 144: WARNING: SUM: errors 0
+04/08/04 16:13:38 144: WARNING: SUM: genport 0
+04/08/04 16:13:38 144: WARNING: SUM: hdlfiles 7
+04/08/04 16:13:38 144: WARNING: SUM: inst 23
+04/08/04 16:13:38 144: WARNING: SUM: multdriver 0
+04/08/04 16:13:38 144: WARNING: SUM: nodriver 0
+04/08/04 16:13:38 144: WARNING: SUM: noload 0
+04/08/04 16:13:39 144: WARNING: SUM: openports 0
+04/08/04 16:13:39 144: WARNING: SUM: warnings 0
+04/08/04 16:13:39 144: WARNING: SUM: === Number of parsed input tables: ===
+04/08/04 16:13:39 144: WARNING: SUM: conf 0
+04/08/04 16:13:39 144: WARNING: SUM: hier 1
+04/08/04 16:13:39 144: WARNING: SUM: conn 1
+04/08/04 16:13:40 144: WARNING: SUM: io 1
+04/08/04 16:13:40 144: WARNING: SUM: i2c 0
+04/08/04 16:13:40 144: WARNING: SUM: Number of changes in intermediate: 0
+04/08/04 16:13:40 144: WARNING: SUM: Number of changed files: 0
+04/08/05 18:00:31 2112: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/05 18:00:31 2112: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/05 18:00:32 2112: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/05 18:00:33 2112: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/05 18:00:34 2112: WARNING: Rotating 3 old sheets of CONF!
+04/08/05 18:00:37 2112: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/05 18:00:38 2112: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/05 18:00:41 2112: WARNING: INFO: Detected 14 changes in intermediate sheet CONN, in file typecast-mixed.xls
+04/08/05 18:00:43 2112: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/05 18:00:43 2112: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/05 18:00:44 2112: Info: unchanged file inst_a-e.vhd
+04/08/05 18:00:45 2112: Info: unchanged file inst_aa-e.vhd
+04/08/05 18:00:45 2112: Info: unchanged file inst_ab-e.vhd
+04/08/05 18:00:45 2112: WARNING: Info: file inst_a-rtl-a.vhd has changes!
+04/08/05 18:00:45 2112: Info: unchanged file inst_aa-rtl-a.vhd
+04/08/05 18:00:45 2112: Info: unchanged file inst_ab-rtl-a.vhd
+04/08/05 18:00:46 2112: Info: unchanged file inst_a-rtl-conf-c.vhd
+04/08/05 18:00:46 2112: WARNING: ============= SUMMARY =================
+04/08/05 18:00:46 2112: WARNING: SUM: Summary of checks and created items:
+04/08/05 18:00:46 2112: WARNING: SUM: checkforce 0
+04/08/05 18:00:46 2112: WARNING: SUM: checkunique 0
+04/08/05 18:00:46 2112: WARNING: SUM: checkwarn 0
+04/08/05 18:00:46 2112: WARNING: SUM: cmacros 0
+04/08/05 18:00:46 2112: WARNING: SUM: conn 26
+04/08/05 18:00:46 2112: WARNING: SUM: errors 0
+04/08/05 18:00:46 2112: WARNING: SUM: genport 0
+04/08/05 18:00:46 2112: WARNING: SUM: hdlfiles 7
+04/08/05 18:00:47 2112: WARNING: SUM: inst 23
+04/08/05 18:00:47 2112: WARNING: SUM: multdriver 0
+04/08/05 18:00:47 2112: WARNING: SUM: nodriver 0
+04/08/05 18:00:47 2112: WARNING: SUM: noload 0
+04/08/05 18:00:47 2112: WARNING: SUM: openports 0
+04/08/05 18:00:47 2112: WARNING: SUM: warnings 0
+04/08/05 18:00:47 2112: WARNING: SUM: === Number of parsed input tables: ===
+04/08/05 18:00:47 2112: WARNING: SUM: conf 0
+04/08/05 18:00:48 2112: WARNING: SUM: hier 1
+04/08/05 18:00:48 2112: WARNING: SUM: conn 1
+04/08/05 18:00:48 2112: WARNING: SUM: io 1
+04/08/05 18:00:48 2112: WARNING: SUM: i2c 0
+04/08/05 18:00:48 2112: WARNING: SUM: Number of changes in intermediate: 14
+04/08/05 18:00:48 2112: WARNING: SUM: Number of changed files: 1
+04/08/05 18:32:17 2324: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/05 18:32:17 2324: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/05 18:32:18 2324: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/05 18:32:21 2324: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/05 18:32:22 2324: WARNING: Rotating 3 old sheets of CONF!
+04/08/05 18:32:27 2324: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/05 18:32:28 2324: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/05 18:32:31 2324: WARNING: INFO: Detected 14 changes in intermediate sheet CONN, in file typecast-mixed.xls
+04/08/05 18:32:34 2324: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/05 18:32:34 2324: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/05 18:32:37 2324: Info: unchanged file inst_a-e.vhd
+04/08/05 18:32:37 2324: Info: unchanged file inst_aa-e.vhd
+04/08/05 18:32:37 2324: Info: unchanged file inst_ab-e.vhd
+04/08/05 18:32:38 2324: WARNING: Info: file inst_a-rtl-a.vhd has changes!
+04/08/05 18:32:38 2324: Info: unchanged file inst_aa-rtl-a.vhd
+04/08/05 18:32:38 2324: Info: unchanged file inst_ab-rtl-a.vhd
+04/08/05 18:32:38 2324: Info: unchanged file inst_a-rtl-conf-c.vhd
+04/08/05 18:32:38 2324: WARNING: ============= SUMMARY =================
+04/08/05 18:32:38 2324: WARNING: SUM: Summary of checks and created items:
+04/08/05 18:32:38 2324: WARNING: SUM: checkforce 0
+04/08/05 18:32:38 2324: WARNING: SUM: checkunique 0
+04/08/05 18:32:38 2324: WARNING: SUM: checkwarn 0
+04/08/05 18:32:38 2324: WARNING: SUM: cmacros 0
+04/08/05 18:32:38 2324: WARNING: SUM: conn 26
+04/08/05 18:32:38 2324: WARNING: SUM: errors 0
+04/08/05 18:32:38 2324: WARNING: SUM: genport 0
+04/08/05 18:32:38 2324: WARNING: SUM: hdlfiles 7
+04/08/05 18:32:38 2324: WARNING: SUM: inst 23
+04/08/05 18:32:38 2324: WARNING: SUM: multdriver 0
+04/08/05 18:32:38 2324: WARNING: SUM: nodriver 0
+04/08/05 18:32:38 2324: WARNING: SUM: noload 0
+04/08/05 18:32:38 2324: WARNING: SUM: openports 0
+04/08/05 18:32:38 2324: WARNING: SUM: warnings 0
+04/08/05 18:32:38 2324: WARNING: SUM: === Number of parsed input tables: ===
+04/08/05 18:32:38 2324: WARNING: SUM: conf 0
+04/08/05 18:32:38 2324: WARNING: SUM: hier 1
+04/08/05 18:32:38 2324: WARNING: SUM: conn 1
+04/08/05 18:32:38 2324: WARNING: SUM: io 1
+04/08/05 18:32:38 2324: WARNING: SUM: i2c 0
+04/08/05 18:32:38 2324: WARNING: SUM: Number of changes in intermediate: 14
+04/08/05 18:32:38 2324: WARNING: SUM: Number of changed files: 1
+04/08/05 18:52:41 880: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/05 18:52:41 880: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/05 18:52:42 880: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/05 18:52:45 880: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/05 18:52:46 880: WARNING: Rotating 3 old sheets of CONF!
+04/08/05 18:52:48 880: WARNING: Rotating 3 old sheets of CONN!
+04/08/05 18:52:48 880: WARNING: Rotating 3 old sheets of HIER!
+04/08/05 18:52:50 880: WARNING: ============= SUMMARY =================
+04/08/05 18:52:50 880: WARNING: SUM: Summary of checks and created items:
+04/08/05 18:52:50 880: WARNING: SUM: checkforce 0
+04/08/05 18:52:50 880: WARNING: SUM: checkunique 0
+04/08/05 18:52:50 880: WARNING: SUM: checkwarn 0
+04/08/05 18:52:50 880: WARNING: SUM: cmacros 0
+04/08/05 18:52:50 880: WARNING: SUM: conn 26
+04/08/05 18:52:50 880: WARNING: SUM: errors 0
+04/08/05 18:52:50 880: WARNING: SUM: genport 0
+04/08/05 18:52:50 880: WARNING: SUM: hdlfiles 7
+04/08/05 18:52:50 880: WARNING: SUM: inst 23
+04/08/05 18:52:50 880: WARNING: SUM: multdriver 0
+04/08/05 18:52:50 880: WARNING: SUM: nodriver 0
+04/08/05 18:52:50 880: WARNING: SUM: noload 0
+04/08/05 18:52:50 880: WARNING: SUM: openports 0
+04/08/05 18:52:50 880: WARNING: SUM: warnings 0
+04/08/05 18:52:50 880: WARNING: SUM: === Number of parsed input tables: ===
+04/08/05 18:52:50 880: WARNING: SUM: conf 0
+04/08/05 18:52:50 880: WARNING: SUM: hier 1
+04/08/05 18:52:50 880: WARNING: SUM: conn 1
+04/08/05 18:52:50 880: WARNING: SUM: io 1
+04/08/05 18:52:50 880: WARNING: SUM: i2c 0
+04/08/05 20:36:11 516: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/05 20:36:12 516: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/05 20:36:12 516: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/05 20:36:14 516: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/05 20:36:15 516: WARNING: Rotating 3 old sheets of CONF!
+04/08/05 20:36:19 516: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/05 20:36:20 516: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/05 20:36:23 516: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/05 20:36:24 516: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/05 20:36:25 516: Info: unchanged file inst_a-e.vhd
+04/08/05 20:36:25 516: Info: unchanged file inst_aa-e.vhd
+04/08/05 20:36:25 516: Info: unchanged file inst_ab-e.vhd
+04/08/05 20:36:26 516: Info: unchanged file inst_a-rtl-a.vhd
+04/08/05 20:36:26 516: Info: unchanged file inst_aa-rtl-a.vhd
+04/08/05 20:36:26 516: Info: unchanged file inst_ab-rtl-a.vhd
+04/08/05 20:36:26 516: Info: unchanged file inst_a-rtl-conf-c.vhd
+04/08/05 20:36:26 516: WARNING: ============= SUMMARY =================
+04/08/05 20:36:26 516: WARNING: SUM: Summary of checks and created items:
+04/08/05 20:36:26 516: WARNING: SUM: checkforce 0
+04/08/05 20:36:26 516: WARNING: SUM: checkunique 0
+04/08/05 20:36:26 516: WARNING: SUM: checkwarn 0
+04/08/05 20:36:26 516: WARNING: SUM: cmacros 0
+04/08/05 20:36:26 516: WARNING: SUM: conn 26
+04/08/05 20:36:26 516: WARNING: SUM: errors 0
+04/08/05 20:36:26 516: WARNING: SUM: genport 0
+04/08/05 20:36:26 516: WARNING: SUM: hdlfiles 7
+04/08/05 20:36:26 516: WARNING: SUM: inst 23
+04/08/05 20:36:26 516: WARNING: SUM: multdriver 0
+04/08/05 20:36:26 516: WARNING: SUM: nodriver 0
+04/08/05 20:36:26 516: WARNING: SUM: noload 0
+04/08/05 20:36:26 516: WARNING: SUM: openports 0
+04/08/05 20:36:26 516: WARNING: SUM: warnings 0
+04/08/05 20:36:26 516: WARNING: SUM: === Number of parsed input tables: ===
+04/08/05 20:36:26 516: WARNING: SUM: conf 0
+04/08/05 20:36:26 516: WARNING: SUM: hier 1
+04/08/05 20:36:26 516: WARNING: SUM: conn 1
+04/08/05 20:36:26 516: WARNING: SUM: io 1
+04/08/05 20:36:26 516: WARNING: SUM: i2c 0
+04/08/05 20:36:26 516: WARNING: SUM: Number of changes in intermediate: 0
+04/08/05 20:36:26 516: WARNING: SUM: Number of changed files: 0
+04/08/09 10:27:16 2304: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/09 10:27:17 2304: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/09 10:27:18 2304: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/09 10:27:25 2304: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/09 10:27:25 2304: WARNING: Rotating 3 old sheets of CONF!
+04/08/09 10:27:30 2304: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/09 10:27:31 2304: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/09 10:27:35 2304: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/09 10:27:35 2304: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/09 10:27:37 2304: Info: unchanged file inst_a-e.vhd
+04/08/09 10:27:37 2304: Info: unchanged file inst_aa-e.vhd
+04/08/09 10:27:37 2304: Info: unchanged file inst_ab-e.vhd
+04/08/09 10:27:38 2304: Info: unchanged file inst_a-rtl-a.vhd
+04/08/09 10:27:38 2304: Info: unchanged file inst_aa-rtl-a.vhd
+04/08/09 10:27:38 2304: Info: unchanged file inst_ab-rtl-a.vhd
+04/08/09 10:27:38 2304: Info: unchanged file inst_a-rtl-conf-c.vhd
+04/08/09 10:27:38 2304: WARNING: ============= SUMMARY =================
+04/08/09 10:27:38 2304: WARNING: SUM: Summary of checks and created items:
+04/08/09 10:27:38 2304: WARNING: SUM: checkforce 0
+04/08/09 10:27:38 2304: WARNING: SUM: checkunique 0
+04/08/09 10:27:38 2304: WARNING: SUM: checkwarn 0
+04/08/09 10:27:39 2304: WARNING: SUM: cmacros 0
+04/08/09 10:27:39 2304: WARNING: SUM: conn 26
+04/08/09 10:27:39 2304: WARNING: SUM: errors 0
+04/08/09 10:27:39 2304: WARNING: SUM: genport 0
+04/08/09 10:27:39 2304: WARNING: SUM: hdlfiles 7
+04/08/09 10:27:39 2304: WARNING: SUM: inst 23
+04/08/09 10:27:39 2304: WARNING: SUM: multdriver 0
+04/08/09 10:27:39 2304: WARNING: SUM: nodriver 0
+04/08/09 10:27:39 2304: WARNING: SUM: noload 0
+04/08/09 10:27:40 2304: WARNING: SUM: openports 0
+04/08/09 10:27:40 2304: WARNING: SUM: warnings 0
+04/08/09 10:27:40 2304: WARNING: SUM: === Number of parsed input tables: ===
+04/08/09 10:27:40 2304: WARNING: SUM: conf 0
+04/08/09 10:27:40 2304: WARNING: SUM: hier 1
+04/08/09 10:27:40 2304: WARNING: SUM: conn 1
+04/08/09 10:27:40 2304: WARNING: SUM: io 1
+04/08/09 10:27:40 2304: WARNING: SUM: i2c 0
+04/08/09 10:27:40 2304: WARNING: SUM: Number of changes in intermediate: 0
+04/08/09 10:27:41 2304: WARNING: SUM: Number of changed files: 0
+04/08/09 10:37:09 2304: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/09 10:37:10 2304: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/09 10:37:10 2304: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/09 10:37:13 2304: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/09 10:37:14 2304: WARNING: Rotating 3 old sheets of CONF!
+04/08/09 10:37:18 2304: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/09 10:37:18 2304: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/09 10:37:23 2304: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/09 10:37:23 2304: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/09 10:37:25 2304: Info: unchanged file inst_a-e.vhd
+04/08/09 10:37:25 2304: Info: unchanged file inst_aa-e.vhd
+04/08/09 10:37:25 2304: Info: unchanged file inst_ab-e.vhd
+04/08/09 10:37:26 2304: Info: unchanged file inst_a-rtl-a.vhd
+04/08/09 10:37:26 2304: Info: unchanged file inst_aa-rtl-a.vhd
+04/08/09 10:37:26 2304: Info: unchanged file inst_ab-rtl-a.vhd
+04/08/09 10:37:26 2304: Info: unchanged file inst_a-rtl-conf-c.vhd
+04/08/09 10:37:26 2304: WARNING: ============= SUMMARY =================
+04/08/09 10:37:26 2304: WARNING: SUM: Summary of checks and created items:
+04/08/09 10:37:26 2304: WARNING: SUM: checkforce 0
+04/08/09 10:37:26 2304: WARNING: SUM: checkunique 0
+04/08/09 10:37:27 2304: WARNING: SUM: checkwarn 0
+04/08/09 10:37:27 2304: WARNING: SUM: cmacros 0
+04/08/09 10:37:27 2304: WARNING: SUM: conn 26
+04/08/09 10:37:27 2304: WARNING: SUM: errors 0
+04/08/09 10:37:27 2304: WARNING: SUM: genport 0
+04/08/09 10:37:27 2304: WARNING: SUM: hdlfiles 7
+04/08/09 10:37:27 2304: WARNING: SUM: inst 23
+04/08/09 10:37:27 2304: WARNING: SUM: multdriver 0
+04/08/09 10:37:27 2304: WARNING: SUM: nodriver 0
+04/08/09 10:37:27 2304: WARNING: SUM: noload 0
+04/08/09 10:37:27 2304: WARNING: SUM: openports 0
+04/08/09 10:37:27 2304: WARNING: SUM: warnings 0
+04/08/09 10:37:27 2304: WARNING: SUM: === Number of parsed input tables: ===
+04/08/09 10:37:27 2304: WARNING: SUM: conf 0
+04/08/09 10:37:28 2304: WARNING: SUM: hier 1
+04/08/09 10:37:28 2304: WARNING: SUM: conn 1
+04/08/09 10:37:28 2304: WARNING: SUM: io 1
+04/08/09 10:37:28 2304: WARNING: SUM: i2c 0
+04/08/09 10:37:28 2304: WARNING: SUM: Number of changes in intermediate: 0
+04/08/09 10:37:28 2304: WARNING: SUM: Number of changed files: 0
+04/08/09 10:43:52 516: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/09 10:43:53 516: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/09 10:43:53 516: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/09 10:43:55 516: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/09 10:43:55 516: WARNING: Rotating 3 old sheets of CONF!
+04/08/09 10:44:00 516: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/09 10:44:00 516: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/09 10:44:05 516: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/09 10:44:05 516: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/09 10:44:07 516: Info: unchanged file inst_a-e.vhd
+04/08/09 10:44:07 516: Info: unchanged file inst_aa-e.vhd
+04/08/09 10:44:07 516: Info: unchanged file inst_ab-e.vhd
+04/08/09 10:44:07 516: Info: unchanged file inst_a-rtl-a.vhd
+04/08/09 10:44:08 516: Info: unchanged file inst_aa-rtl-a.vhd
+04/08/09 10:44:08 516: Info: unchanged file inst_ab-rtl-a.vhd
+04/08/09 10:44:08 516: Info: unchanged file inst_a-rtl-conf-c.vhd
+04/08/09 10:44:09 516: WARNING: ============= SUMMARY =================
+04/08/09 10:44:09 516: WARNING: SUM: Summary of checks and created items:
+04/08/09 10:44:09 516: WARNING: SUM: checkforce 0
+04/08/09 10:44:09 516: WARNING: SUM: checkunique 0
+04/08/09 10:44:09 516: WARNING: SUM: checkwarn 0
+04/08/09 10:44:09 516: WARNING: SUM: cmacros 0
+04/08/09 10:44:10 516: WARNING: SUM: conn 26
+04/08/09 10:44:10 516: WARNING: SUM: errors 0
+04/08/09 10:44:10 516: WARNING: SUM: genport 0
+04/08/09 10:44:10 516: WARNING: SUM: hdlfiles 7
+04/08/09 10:44:10 516: WARNING: SUM: inst 23
+04/08/09 10:44:10 516: WARNING: SUM: multdriver 0
+04/08/09 10:44:10 516: WARNING: SUM: nodriver 0
+04/08/09 10:44:10 516: WARNING: SUM: noload 0
+04/08/09 10:44:11 516: WARNING: SUM: openports 0
+04/08/09 10:44:11 516: WARNING: SUM: warnings 0
+04/08/09 10:44:11 516: WARNING: SUM: === Number of parsed input tables: ===
+04/08/09 10:44:11 516: WARNING: SUM: conf 0
+04/08/09 10:44:12 516: WARNING: SUM: hier 1
+04/08/09 10:44:12 516: WARNING: SUM: conn 1
+04/08/09 10:44:12 516: WARNING: SUM: io 1
+04/08/09 10:44:12 516: WARNING: SUM: i2c 0
+04/08/09 10:44:13 516: WARNING: SUM: Number of changes in intermediate: 0
+04/08/09 10:44:13 516: WARNING: SUM: Number of changed files: 0
+04/08/09 11:11:09 512: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/09 11:11:09 512: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/09 11:11:10 512: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/09 11:11:11 512: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/09 11:11:12 512: WARNING: Rotating 3 old sheets of CONF!
+04/08/09 11:11:16 512: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/09 11:11:16 512: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/09 11:11:21 512: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/09 11:11:21 512: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/09 11:11:23 512: Info: unchanged file inst_a-e.vhd
+04/08/09 11:11:23 512: Info: unchanged file inst_aa-e.vhd
+04/08/09 11:11:23 512: Info: unchanged file inst_ab-e.vhd
+04/08/09 11:11:23 512: Info: unchanged file inst_a-rtl-a.vhd
+04/08/09 11:11:23 512: Info: unchanged file inst_aa-rtl-a.vhd
+04/08/09 11:11:24 512: Info: unchanged file inst_ab-rtl-a.vhd
+04/08/09 11:11:24 512: Info: unchanged file inst_a-rtl-conf-c.vhd
+04/08/09 11:11:24 512: WARNING: ============= SUMMARY =================
+04/08/09 11:11:24 512: WARNING: SUM: Summary of checks and created items:
+04/08/09 11:11:24 512: WARNING: SUM: checkforce 0
+04/08/09 11:11:24 512: WARNING: SUM: checkunique 0
+04/08/09 11:11:24 512: WARNING: SUM: checkwarn 0
+04/08/09 11:11:24 512: WARNING: SUM: cmacros 0
+04/08/09 11:11:24 512: WARNING: SUM: conn 26
+04/08/09 11:11:24 512: WARNING: SUM: errors 0
+04/08/09 11:11:24 512: WARNING: SUM: genport 0
+04/08/09 11:11:24 512: WARNING: SUM: hdlfiles 7
+04/08/09 11:11:24 512: WARNING: SUM: inst 23
+04/08/09 11:11:24 512: WARNING: SUM: multdriver 0
+04/08/09 11:11:25 512: WARNING: SUM: nodriver 0
+04/08/09 11:11:25 512: WARNING: SUM: noload 0
+04/08/09 11:11:25 512: WARNING: SUM: openports 0
+04/08/09 11:11:25 512: WARNING: SUM: warnings 0
+04/08/09 11:11:25 512: WARNING: SUM: === Number of parsed input tables: ===
+04/08/09 11:11:25 512: WARNING: SUM: conf 0
+04/08/09 11:11:25 512: WARNING: SUM: hier 1
+04/08/09 11:11:25 512: WARNING: SUM: conn 1
+04/08/09 11:11:25 512: WARNING: SUM: io 1
+04/08/09 11:11:25 512: WARNING: SUM: i2c 0
+04/08/09 11:11:25 512: WARNING: SUM: Number of changes in intermediate: 0
+04/08/09 11:11:25 512: WARNING: SUM: Number of changed files: 0
+04/08/09 14:42:46 1720: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/09 14:42:47 1720: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/09 14:42:47 1720: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/../../typecast.xls
+04/08/09 14:42:49 1720: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/09 14:42:49 1720: WARNING: Rotating 3 old sheets of CONF!
+04/08/09 14:42:54 1720: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/09 14:42:54 1720: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/09 14:42:59 1720: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intsig/typecast-mixed.xls
+04/08/09 14:42:59 1720: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/09 14:43:01 1720: Info: unchanged file inst_a-e.vhd
+04/08/09 14:43:02 1720: Info: unchanged file inst_aa-e.vhd
+04/08/09 14:43:02 1720: Info: unchanged file inst_ab-e.vhd
+04/08/09 14:43:02 1720: Info: unchanged file inst_a-rtl-a.vhd
+04/08/09 14:43:02 1720: Info: unchanged file inst_aa-rtl-a.vhd
+04/08/09 14:43:03 1720: Info: unchanged file inst_ab-rtl-a.vhd
+04/08/09 14:43:03 1720: Info: unchanged file inst_a-rtl-conf-c.vhd
+04/08/09 14:43:03 1720: WARNING: ============= SUMMARY =================
+04/08/09 14:43:04 1720: WARNING: SUM: Summary of checks and created items:
+04/08/09 14:43:04 1720: WARNING: SUM: checkforce 0
+04/08/09 14:43:04 1720: WARNING: SUM: checkunique 0
+04/08/09 14:43:04 1720: WARNING: SUM: checkwarn 0
+04/08/09 14:43:05 1720: WARNING: SUM: cmacros 0
+04/08/09 14:43:05 1720: WARNING: SUM: conn 26
+04/08/09 14:43:05 1720: WARNING: SUM: errors 0
+04/08/09 14:43:05 1720: WARNING: SUM: genport 0
+04/08/09 14:43:05 1720: WARNING: SUM: hdlfiles 7
+04/08/09 14:43:05 1720: WARNING: SUM: inst 23
+04/08/09 14:43:06 1720: WARNING: SUM: multdriver 0
+04/08/09 14:43:06 1720: WARNING: SUM: nodriver 0
+04/08/09 14:43:06 1720: WARNING: SUM: noload 0
+04/08/09 14:43:06 1720: WARNING: SUM: openports 0
+04/08/09 14:43:06 1720: WARNING: SUM: warnings 0
+04/08/09 14:43:06 1720: WARNING: SUM: === Number of parsed input tables: ===
+04/08/09 14:43:07 1720: WARNING: SUM: conf 0
+04/08/09 14:43:07 1720: WARNING: SUM: hier 1
+04/08/09 14:43:07 1720: WARNING: SUM: conn 1
+04/08/09 14:43:07 1720: WARNING: SUM: io 1
+04/08/09 14:43:07 1720: WARNING: SUM: i2c 0
+04/08/09 14:43:08 1720: WARNING: SUM: Number of changes in intermediate: 0
+04/08/09 14:43:08 1720: WARNING: SUM: Number of changed files: 0
+04/08/09 17:16:16 2296: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/../../typecast.xls
+04/08/09 17:16:17 2296: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/../../typecast.xls
+04/08/09 17:16:17 2296: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/../../typecast.xls
+04/08/09 17:16:19 2296: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/09 17:16:19 2296: WARNING: Rotating 3 old sheets of CONF!
+04/08/09 17:16:24 2296: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/typecast-mixed.xls
+04/08/09 17:16:24 2296: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/09 17:16:29 2296: WARNING: INFO: Detected 26 changes in intermediate sheet CONN, in file typecast-mixed.xls
+04/08/09 17:16:32 2296: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/typecast-mixed.xls
+04/08/09 17:16:32 2296: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/09 17:16:34 2296: Info: unchanged file inst_a-e.vhd
+04/08/09 17:16:34 2296: WARNING: Info: file inst_aa-e.vhd has changes!
+04/08/09 17:16:34 2296: Info: unchanged file inst_ab-e.vhd
+04/08/09 17:16:34 2296: WARNING: Info: file inst_a-rtl-a.vhd has changes!
+04/08/09 17:16:34 2296: Info: unchanged file inst_aa-rtl-a.vhd
+04/08/09 17:16:35 2296: Info: unchanged file inst_ab-rtl-a.vhd
+04/08/09 17:16:35 2296: Info: unchanged file inst_a-rtl-conf-c.vhd
+04/08/09 17:16:35 2296: WARNING: ============= SUMMARY =================
+04/08/09 17:16:35 2296: WARNING: SUM: Summary of checks and created items:
+04/08/09 17:16:35 2296: WARNING: SUM: checkforce 0
+04/08/09 17:16:35 2296: WARNING: SUM: checkunique 0
+04/08/09 17:16:35 2296: WARNING: SUM: checkwarn 0
+04/08/09 17:16:35 2296: WARNING: SUM: cmacros 0
+04/08/09 17:16:36 2296: WARNING: SUM: conn 20
+04/08/09 17:16:36 2296: WARNING: SUM: errors 0
+04/08/09 17:16:36 2296: WARNING: SUM: genport 0
+04/08/09 17:16:36 2296: WARNING: SUM: hdlfiles 7
+04/08/09 17:16:36 2296: WARNING: SUM: inst 17
+04/08/09 17:16:36 2296: WARNING: SUM: multdriver 0
+04/08/09 17:16:36 2296: WARNING: SUM: nodriver 0
+04/08/09 17:16:36 2296: WARNING: SUM: noload 0
+04/08/09 17:16:36 2296: WARNING: SUM: openports 0
+04/08/09 17:16:36 2296: WARNING: SUM: warnings 0
+04/08/09 17:16:36 2296: WARNING: SUM: === Number of parsed input tables: ===
+04/08/09 17:16:36 2296: WARNING: SUM: conf 0
+04/08/09 17:16:36 2296: WARNING: SUM: hier 1
+04/08/09 17:16:37 2296: WARNING: SUM: conn 1
+04/08/09 17:16:37 2296: WARNING: SUM: io 1
+04/08/09 17:16:37 2296: WARNING: SUM: i2c 0
+04/08/09 17:16:37 2296: WARNING: SUM: Number of changes in intermediate: 26
+04/08/09 17:16:37 2296: WARNING: SUM: Number of changed files: 2
+04/08/09 17:28:22 548: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/../../typecast.xls
+04/08/09 17:28:23 548: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/../../typecast.xls
+04/08/09 17:28:24 548: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/../../typecast.xls
+04/08/09 17:28:26 548: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/09 17:28:26 548: WARNING: Rotating 3 old sheets of CONF!
+04/08/09 17:28:31 548: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/typecast-mixed.xls
+04/08/09 17:28:31 548: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/09 17:28:35 548: WARNING: INFO: Detected 26 changes in intermediate sheet CONN, in file typecast-mixed.xls
+04/08/09 17:28:38 548: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/typecast-mixed.xls
+04/08/09 17:28:38 548: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/09 17:28:40 548: Info: unchanged file inst_a-e.vhd
+04/08/09 17:28:40 548: Info: unchanged file inst_aa-e.vhd
+04/08/09 17:28:40 548: Info: unchanged file inst_ab-e.vhd
+04/08/09 17:28:40 548: WARNING: Info: file inst_a-rtl-a.vhd has changes!
+04/08/09 17:28:40 548: Info: unchanged file inst_aa-rtl-a.vhd
+04/08/09 17:28:41 548: Info: unchanged file inst_ab-rtl-a.vhd
+04/08/09 17:28:41 548: Info: unchanged file inst_a-rtl-conf-c.vhd
+04/08/09 17:28:41 548: WARNING: ============= SUMMARY =================
+04/08/09 17:28:41 548: WARNING: SUM: Summary of checks and created items:
+04/08/09 17:28:41 548: WARNING: SUM: checkforce 0
+04/08/09 17:28:41 548: WARNING: SUM: checkunique 0
+04/08/09 17:28:41 548: WARNING: SUM: checkwarn 0
+04/08/09 17:28:41 548: WARNING: SUM: cmacros 0
+04/08/09 17:28:42 548: WARNING: SUM: conn 20
+04/08/09 17:28:42 548: WARNING: SUM: errors 0
+04/08/09 17:28:42 548: WARNING: SUM: genport 0
+04/08/09 17:28:42 548: WARNING: SUM: hdlfiles 7
+04/08/09 17:28:42 548: WARNING: SUM: inst 17
+04/08/09 17:28:42 548: WARNING: SUM: multdriver 0
+04/08/09 17:28:42 548: WARNING: SUM: nodriver 0
+04/08/09 17:28:42 548: WARNING: SUM: noload 0
+04/08/09 17:28:42 548: WARNING: SUM: openports 0
+04/08/09 17:28:42 548: WARNING: SUM: warnings 0
+04/08/09 17:28:42 548: WARNING: SUM: === Number of parsed input tables: ===
+04/08/09 17:28:42 548: WARNING: SUM: conf 0
+04/08/09 17:28:42 548: WARNING: SUM: hier 1
+04/08/09 17:28:43 548: WARNING: SUM: conn 1
+04/08/09 17:28:43 548: WARNING: SUM: io 1
+04/08/09 17:28:43 548: WARNING: SUM: i2c 0
+04/08/09 17:28:43 548: WARNING: SUM: Number of changes in intermediate: 26
+04/08/09 17:28:43 548: WARNING: SUM: Number of changed files: 1
+04/08/09 17:31:13 2252: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/../../typecast.xls
+04/08/09 17:31:14 2252: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/../../typecast.xls
+04/08/09 17:31:14 2252: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/../../typecast.xls
+04/08/09 17:31:15 2252: std_log_ignore typecast for signal signal_4/std_ulogic_vector, port signal_4/std_logic_vector
+04/08/09 17:31:15 2252: std_log_ignore typecast for signal signal_11/std_logic_vector, port port_b_11/std_ulogic_vector
+04/08/09 17:31:15 2252: std_log_ignore typecast for signal signal_8/std_ulogic_vector, port port_b_8/std_logic_vector
+04/08/09 17:31:15 2252: std_log_ignore typecast for signal signal_3/std_logic_vector, port port_a_3/std_ulogic_vector
+04/08/09 17:31:15 2252: std_log_ignore typecast for signal signal_11/std_logic_vector, port port_a_11/std_ulogic_vector
+04/08/09 17:31:15 2252: std_log_ignore typecast for signal signal_10/std_ulogic, port signal_10/std_logic
+04/08/09 17:31:15 2252: std_log_ignore typecast for signal signal_1/std_logic, port port_a_1/std_ulogic
+04/08/09 17:31:15 2252: std_log_ignore typecast for signal signal_5/std_logic, port port_a_5/std_ulogic
+04/08/09 17:31:15 2252: std_log_ignore typecast for signal signal_9/std_logic, port port_a_9/std_ulogic
+04/08/09 17:31:15 2252: std_log_ignore typecast for signal signal_6/std_ulogic, port signal_6/std_logic
+04/08/09 17:31:15 2252: std_log_ignore typecast for signal signal_2/std_ulogic, port signal_2/std_logic
+04/08/09 17:31:15 2252: std_log_ignore typecast for signal signal_12/std_ulogic_vector, port signal_12/std_logic_vector
+04/08/09 17:31:15 2252: std_log_ignore typecast for signal signal_7/std_logic_vector, port port_b_7/std_ulogic_vector
+04/08/09 17:31:15 2252: std_log_ignore typecast for signal signal_12/std_ulogic_vector, port port_b_12/std_logic_vector
+04/08/09 17:31:16 2252: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/09 17:31:16 2252: WARNING: Rotating 3 old sheets of CONF!
+04/08/09 17:31:21 2252: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/typecast-mixed.xls
+04/08/09 17:31:21 2252: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/09 17:31:26 2252: WARNING: INFO: Detected 26 changes in intermediate sheet CONN, in file typecast-mixed.xls
+04/08/09 17:31:29 2252: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/typecast-mixed.xls
+04/08/09 17:31:29 2252: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/09 17:31:31 2252: Info: unchanged file inst_a-e.vhd
+04/08/09 17:31:31 2252: Info: unchanged file inst_aa-e.vhd
+04/08/09 17:31:31 2252: Info: unchanged file inst_ab-e.vhd
+04/08/09 17:31:31 2252: WARNING: Info: file inst_a-rtl-a.vhd has changes!
+04/08/09 17:31:32 2252: Info: unchanged file inst_aa-rtl-a.vhd
+04/08/09 17:31:32 2252: Info: unchanged file inst_ab-rtl-a.vhd
+04/08/09 17:31:32 2252: Info: unchanged file inst_a-rtl-conf-c.vhd
+04/08/09 17:31:32 2252: WARNING: ============= SUMMARY =================
+04/08/09 17:31:32 2252: WARNING: SUM: Summary of checks and created items:
+04/08/09 17:31:32 2252: WARNING: SUM: checkforce 0
+04/08/09 17:31:32 2252: WARNING: SUM: checkunique 0
+04/08/09 17:31:32 2252: WARNING: SUM: checkwarn 0
+04/08/09 17:31:32 2252: WARNING: SUM: cmacros 0
+04/08/09 17:31:32 2252: WARNING: SUM: conn 20
+04/08/09 17:31:32 2252: WARNING: SUM: errors 0
+04/08/09 17:31:32 2252: WARNING: SUM: genport 0
+04/08/09 17:31:32 2252: WARNING: SUM: hdlfiles 7
+04/08/09 17:31:32 2252: WARNING: SUM: inst 17
+04/08/09 17:31:32 2252: WARNING: SUM: multdriver 0
+04/08/09 17:31:33 2252: WARNING: SUM: nodriver 0
+04/08/09 17:31:33 2252: WARNING: SUM: noload 0
+04/08/09 17:31:33 2252: WARNING: SUM: openports 0
+04/08/09 17:31:33 2252: WARNING: SUM: warnings 0
+04/08/09 17:31:33 2252: WARNING: SUM: === Number of parsed input tables: ===
+04/08/09 17:31:33 2252: WARNING: SUM: conf 0
+04/08/09 17:31:33 2252: WARNING: SUM: hier 1
+04/08/09 17:31:33 2252: WARNING: SUM: conn 1
+04/08/09 17:31:33 2252: WARNING: SUM: io 1
+04/08/09 17:31:33 2252: WARNING: SUM: i2c 0
+04/08/09 17:31:33 2252: WARNING: SUM: Number of changes in intermediate: 26
+04/08/09 17:31:33 2252: WARNING: SUM: Number of changed files: 1
+04/08/09 17:36:17 144: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/../../typecast.xls
+04/08/09 17:36:18 144: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/../../typecast.xls
+04/08/09 17:36:19 144: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/../../typecast.xls
+04/08/09 17:36:19 144: std_log_ignore typecast for signal signal_4/std_ulogic_vector, port signal_4/std_logic_vector
+04/08/09 17:36:19 144: std_log_ignore typecast for signal signal_11/std_logic_vector, port port_b_11/std_ulogic_vector
+04/08/09 17:36:19 144: std_log_ignore typecast for signal signal_8/std_ulogic_vector, port port_b_8/std_logic_vector
+04/08/09 17:36:19 144: std_log_ignore typecast for signal signal_3/std_logic_vector, port port_a_3/std_ulogic_vector
+04/08/09 17:36:19 144: std_log_ignore typecast for signal signal_11/std_logic_vector, port port_a_11/std_ulogic_vector
+04/08/09 17:36:19 144: std_log_ignore typecast for signal signal_10/std_ulogic, port signal_10/std_logic
+04/08/09 17:36:19 144: std_log_ignore typecast for signal signal_1/std_logic, port port_a_1/std_ulogic
+04/08/09 17:36:19 144: std_log_ignore typecast for signal signal_5/std_logic, port port_a_5/std_ulogic
+04/08/09 17:36:19 144: std_log_ignore typecast for signal signal_9/std_logic, port port_a_9/std_ulogic
+04/08/09 17:36:19 144: std_log_ignore typecast for signal signal_6/std_ulogic, port signal_6/std_logic
+04/08/09 17:36:19 144: std_log_ignore typecast for signal signal_2/std_ulogic, port signal_2/std_logic
+04/08/09 17:36:19 144: std_log_ignore typecast for signal signal_12/std_ulogic_vector, port signal_12/std_logic_vector
+04/08/09 17:36:19 144: std_log_ignore typecast for signal signal_7/std_logic_vector, port port_b_7/std_ulogic_vector
+04/08/09 17:36:19 144: std_log_ignore typecast for signal signal_12/std_ulogic_vector, port port_b_12/std_logic_vector
+04/08/09 17:36:20 144: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/09 17:36:21 144: WARNING: Rotating 3 old sheets of CONF!
+04/08/09 17:36:23 144: WARNING: Rotating 3 old sheets of CONN!
+04/08/09 17:36:24 144: WARNING: Rotating 3 old sheets of HIER!
+04/08/09 17:36:25 144: WARNING: ============= SUMMARY =================
+04/08/09 17:36:25 144: WARNING: SUM: Summary of checks and created items:
+04/08/09 17:36:25 144: WARNING: SUM: checkforce 0
+04/08/09 17:36:25 144: WARNING: SUM: checkunique 0
+04/08/09 17:36:25 144: WARNING: SUM: checkwarn 0
+04/08/09 17:36:25 144: WARNING: SUM: cmacros 0
+04/08/09 17:36:26 144: WARNING: SUM: conn 20
+04/08/09 17:36:26 144: WARNING: SUM: errors 0
+04/08/09 17:36:26 144: WARNING: SUM: genport 0
+04/08/09 17:36:26 144: WARNING: SUM: hdlfiles 7
+04/08/09 17:36:26 144: WARNING: SUM: inst 17
+04/08/09 17:36:26 144: WARNING: SUM: multdriver 0
+04/08/09 17:36:26 144: WARNING: SUM: nodriver 0
+04/08/09 17:36:26 144: WARNING: SUM: noload 0
+04/08/09 17:36:26 144: WARNING: SUM: openports 0
+04/08/09 17:36:26 144: WARNING: SUM: warnings 0
+04/08/09 17:36:26 144: WARNING: SUM: === Number of parsed input tables: ===
+04/08/09 17:36:26 144: WARNING: SUM: conf 0
+04/08/09 17:36:26 144: WARNING: SUM: hier 1
+04/08/09 17:36:27 144: WARNING: SUM: conn 1
+04/08/09 17:36:27 144: WARNING: SUM: io 1
+04/08/09 17:36:27 144: WARNING: SUM: i2c 0
+04/08/09 17:43:36 1868: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/../../typecast.xls
+04/08/09 17:43:36 1868: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/../../typecast.xls
+04/08/09 17:43:37 1868: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/../../typecast.xls
+04/08/09 17:43:37 1868: std_log_ignore typecast for signal signal_4/std_ulogic_vector, port signal_4/std_logic_vector
+04/08/09 17:43:37 1868: std_log_ignore typecast for signal signal_11/std_logic_vector, port port_b_11/std_ulogic_vector
+04/08/09 17:43:37 1868: std_log_ignore typecast for signal signal_8/std_ulogic_vector, port port_b_8/std_logic_vector
+04/08/09 17:43:37 1868: std_log_ignore typecast for signal signal_3/std_logic_vector, port port_a_3/std_ulogic_vector
+04/08/09 17:43:37 1868: std_log_ignore typecast for signal signal_11/std_logic_vector, port port_a_11/std_ulogic_vector
+04/08/09 17:43:37 1868: std_log_ignore typecast for signal signal_10/std_ulogic, port signal_10/std_logic
+04/08/09 17:43:37 1868: std_log_ignore typecast for signal signal_1/std_logic, port port_a_1/std_ulogic
+04/08/09 17:43:37 1868: std_log_ignore typecast for signal signal_5/std_logic, port port_a_5/std_ulogic
+04/08/09 17:43:37 1868: std_log_ignore typecast for signal signal_9/std_logic, port port_a_9/std_ulogic
+04/08/09 17:43:37 1868: std_log_ignore typecast for signal signal_6/std_ulogic, port signal_6/std_logic
+04/08/09 17:43:37 1868: std_log_ignore typecast for signal signal_2/std_ulogic, port signal_2/std_logic
+04/08/09 17:43:37 1868: std_log_ignore typecast for signal signal_12/std_ulogic_vector, port signal_12/std_logic_vector
+04/08/09 17:43:37 1868: std_log_ignore typecast for signal signal_7/std_logic_vector, port port_b_7/std_ulogic_vector
+04/08/09 17:43:37 1868: std_log_ignore typecast for signal signal_12/std_ulogic_vector, port port_b_12/std_logic_vector
+04/08/09 17:43:38 1868: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/09 17:43:39 1868: WARNING: Rotating 3 old sheets of CONF!
+04/08/09 17:43:44 1868: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/typecast-mixed.xls
+04/08/09 17:43:44 1868: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/09 17:43:49 1868: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/typecast-mixed.xls
+04/08/09 17:43:49 1868: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/09 17:43:51 1868: Info: unchanged file inst_a-e.vhd
+04/08/09 17:43:51 1868: Info: unchanged file inst_aa-e.vhd
+04/08/09 17:43:51 1868: Info: unchanged file inst_ab-e.vhd
+04/08/09 17:43:51 1868: Info: unchanged file inst_a-rtl-a.vhd
+04/08/09 17:43:52 1868: Info: unchanged file inst_aa-rtl-a.vhd
+04/08/09 17:43:52 1868: Info: unchanged file inst_ab-rtl-a.vhd
+04/08/09 17:43:52 1868: Info: unchanged file inst_a-rtl-conf-c.vhd
+04/08/09 17:43:52 1868: WARNING: ============= SUMMARY =================
+04/08/09 17:43:52 1868: WARNING: SUM: Summary of checks and created items:
+04/08/09 17:43:52 1868: WARNING: SUM: checkforce 0
+04/08/09 17:43:52 1868: WARNING: SUM: checkunique 0
+04/08/09 17:43:52 1868: WARNING: SUM: checkwarn 0
+04/08/09 17:43:52 1868: WARNING: SUM: cmacros 0
+04/08/09 17:43:52 1868: WARNING: SUM: conn 20
+04/08/09 17:43:52 1868: WARNING: SUM: errors 0
+04/08/09 17:43:52 1868: WARNING: SUM: genport 0
+04/08/09 17:43:52 1868: WARNING: SUM: hdlfiles 7
+04/08/09 17:43:53 1868: WARNING: SUM: inst 17
+04/08/09 17:43:53 1868: WARNING: SUM: multdriver 0
+04/08/09 17:43:53 1868: WARNING: SUM: nodriver 0
+04/08/09 17:43:53 1868: WARNING: SUM: noload 0
+04/08/09 17:43:53 1868: WARNING: SUM: openports 0
+04/08/09 17:43:53 1868: WARNING: SUM: warnings 0
+04/08/09 17:43:53 1868: WARNING: SUM: === Number of parsed input tables: ===
+04/08/09 17:43:53 1868: WARNING: SUM: conf 0
+04/08/09 17:43:53 1868: WARNING: SUM: hier 1
+04/08/09 17:43:53 1868: WARNING: SUM: conn 1
+04/08/09 17:43:53 1868: WARNING: SUM: io 1
+04/08/09 17:43:53 1868: WARNING: SUM: i2c 0
+04/08/09 17:43:53 1868: WARNING: SUM: Number of changes in intermediate: 0
+04/08/09 17:43:53 1868: WARNING: SUM: Number of changed files: 0
+04/08/09 17:44:48 1660: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/../../typecast.xls
+04/08/09 17:44:48 1660: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/../../typecast.xls
+04/08/09 17:44:49 1660: Reading worksheet IO of H:/work/mix_new/MIX/test/xls_input/typecast/intbus/../../typecast.xls
+04/08/09 17:44:49 1660: std_log_ignore typecast for signal signal_4/std_ulogic_vector, port signal_4/std_logic_vector
+04/08/09 17:44:49 1660: std_log_ignore typecast for signal signal_11/std_logic_vector, port port_b_11/std_ulogic_vector
+04/08/09 17:44:49 1660: std_log_ignore typecast for signal signal_8/std_ulogic_vector, port port_b_8/std_logic_vector
+04/08/09 17:44:49 1660: std_log_ignore typecast for signal signal_3/std_logic_vector, port port_a_3/std_ulogic_vector
+04/08/09 17:44:49 1660: std_log_ignore typecast for signal signal_11/std_logic_vector, port port_a_11/std_ulogic_vector
+04/08/09 17:44:49 1660: std_log_ignore typecast for signal signal_10/std_ulogic, port signal_10/std_logic
+04/08/09 17:44:49 1660: std_log_ignore typecast for signal signal_1/std_logic, port port_a_1/std_ulogic
+04/08/09 17:44:49 1660: std_log_ignore typecast for signal signal_5/std_logic, port port_a_5/std_ulogic
+04/08/09 17:44:49 1660: std_log_ignore typecast for signal signal_9/std_logic, port port_a_9/std_ulogic
+04/08/09 17:44:49 1660: std_log_ignore typecast for signal signal_6/std_ulogic, port signal_6/std_logic
+04/08/09 17:44:49 1660: std_log_ignore typecast for signal signal_2/std_ulogic, port signal_2/std_logic
+04/08/09 17:44:49 1660: std_log_ignore typecast for signal signal_12/std_ulogic_vector, port signal_12/std_logic_vector
+04/08/09 17:44:49 1660: std_log_ignore typecast for signal signal_7/std_logic_vector, port port_b_7/std_ulogic_vector
+04/08/09 17:44:49 1660: std_log_ignore typecast for signal signal_12/std_ulogic_vector, port port_b_12/std_logic_vector
+04/08/09 17:44:50 1660: WARNING: File typecast-mixed.xls already exists! Contents will be changed
+04/08/09 17:44:50 1660: WARNING: Rotating 3 old sheets of CONF!
+04/08/09 17:44:52 1660: WARNING: Rotating 3 old sheets of CONN!
+04/08/09 17:44:53 1660: WARNING: Rotating 3 old sheets of HIER!
+04/08/09 17:44:54 1660: WARNING: Removing old and and diff sheets in file: typecast-mixed.xls
+04/08/09 17:44:56 1660: WARNING: ============= SUMMARY =================
+04/08/09 17:44:56 1660: WARNING: SUM: Summary of checks and created items:
+04/08/09 17:44:56 1660: WARNING: SUM: checkforce 0
+04/08/09 17:44:56 1660: WARNING: SUM: checkunique 0
+04/08/09 17:44:56 1660: WARNING: SUM: checkwarn 0
+04/08/09 17:44:56 1660: WARNING: SUM: cmacros 0
+04/08/09 17:44:56 1660: WARNING: SUM: conn 20
+04/08/09 17:44:56 1660: WARNING: SUM: errors 0
+04/08/09 17:44:56 1660: WARNING: SUM: genport 0
+04/08/09 17:44:57 1660: WARNING: SUM: hdlfiles 7
+04/08/09 17:44:57 1660: WARNING: SUM: inst 17
+04/08/09 17:44:57 1660: WARNING: SUM: multdriver 0
+04/08/09 17:44:57 1660: WARNING: SUM: nodriver 0
+04/08/09 17:44:57 1660: WARNING: SUM: noload 0
+04/08/09 17:44:57 1660: WARNING: SUM: openports 0
+04/08/09 17:44:57 1660: WARNING: SUM: warnings 0
+04/08/09 17:44:58 1660: WARNING: SUM: === Number of parsed input tables: ===
+04/08/09 17:44:58 1660: WARNING: SUM: conf 0
+04/08/09 17:44:58 1660: WARNING: SUM: hier 1
+04/08/09 17:44:58 1660: WARNING: SUM: conn 1
+04/08/09 17:44:58 1660: WARNING: SUM: io 1
+04/08/09 17:44:58 1660: WARNING: SUM: i2c 0

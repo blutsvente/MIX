@@ -1,4 +1,4 @@
-#!/bin/sh -- -*- perl -*- -w
+#!/bin/sh -- # -*- perl -*- -w
 #! -*- perl -*- -w
 eval 'exec ${PERL:-`[ ! -d $HOME/bin/perl -a -x $HOME/bin/perl ] && echo $HOME/bin/perl || { [ -x /usr/bin/perl ] && echo /usr/bin/perl || echo /usr/local/bin/perl ; } `} -x -S $0 ${1+"$@"} ;'
 if 0; # dynamic perl startup; suppress preceding line in perl
@@ -288,14 +288,19 @@ my @tests = (
 	  'path' => "padio2",
 	  'options' => "",
 	},
-	{
+	{ # Typecast in port maps (old default)
 	  'name' => "typecast",
 	  'path' => "typecast",
 	  'options' => "",
 	},
-	{
+	{ # Typecast via intermediate signales
 	  'name' => "typecast",
 	  'path' => "typecast/intsig",
+	  'options' => "",
+	},
+	{ # tyepcast for busses, only ...
+	  'name' => "typecast",
+	  'path' => "typecast/intbus",
 	  'options' => "",
 	},
 	{
@@ -340,7 +345,7 @@ sub init() {
 		 -channels    => {
 			  # 'error'  => "$0.err",
 			  'output' => getcwd() . "/test.out",
-			  'debug'  => getcwd() . "test.dbg", 
+			  'debug'  => getcwd() . "/test.dbg", 
 		 },
 	     )
     );
@@ -553,12 +558,15 @@ sub runMix($) {
     		    $ci = -1;
     		}
     		$failsum++;
+    		logtrc( "WARNING", "$testname.$type in directory $tests[$i]->{'path'} failed!" );
     	    } else {
 		# Timers average / min / max ..
 		$elapsed_sum += $elapsed;
 		$elapsed_cnt++;
 		$elapsed_min = $elapsed if ( $elapsed < $elapsed_min );
 		$elapsed_max = $elapsed if ( $elapsed > $elapsed_max );
+		logsay( "$testname.$type in directory $tests[$i]->{'path'}, time : " .
+			sprintf( "%.2fs", $elapsed ) );
 	    }
     	    ok( $status/256 == 0, "$testname.$type in directory $tests[$i]->{'path'}, time: " .
 		    sprintf( "%.2fs", $elapsed ) );
@@ -617,14 +625,14 @@ sub mkdirRec ($) {
 
 sub print_elapsed () {
 
-    logwarn( "SUM: Sucessfully timed tests: $elapsed_cnt\n" );
-    logwarn( "SUM: Overall run time: " . sprintf( "%.2fs" , $elapsed_sum ) . "\n" );
-    logwarn( "SUM: Average run time: " .
-	   (( $elapsed_cnt ) ? sprintf( "%.2fs", $elapsed_sum / $elapsed_cnt ) : "n/a") . " \n" );
-    logwarn( "SUM: Minimum run time: " .
-	   (( $elapsed_min != 1_000_000 ) ? sprintf( "%.2fs", $elapsed_min ) : "n/a" ) . "\n" );
-    logwarn( "SUM: Maximum run time: " .
-	   (( $elapsed_max ) ? sprintf( "%.2fs", $elapsed_max ): "n/a" ) . "\n" );
+    logsay( "SUM: Sucessfully timed tests: $elapsed_cnt" );
+    logsay( "SUM: Overall run time: " . sprintf( "%.2fs" , $elapsed_sum )  );
+    logsay( "SUM: Average run time: " .
+	   (( $elapsed_cnt ) ? sprintf( "%.2fs", $elapsed_sum / $elapsed_cnt ) : "n/a") );
+    logsay( "SUM: Minimum run time: " .
+	   (( $elapsed_min != 1_000_000 ) ? sprintf( "%.2fs", $elapsed_min ) : "n/a" ) );
+    logsay( "SUM: Maximum run time: " .
+	   (( $elapsed_max ) ? sprintf( "%.2fs", $elapsed_max ): "n/a" ) );
 
 }
 
@@ -645,7 +653,7 @@ sub print_arch () {
     my $clock = "CLOCK";
     my $os = $^O;
     
-    logwarn( "SUM: host: $host; arch: ARCH; clock: CLOCK; os: $os\n" );
+    logsay( "SUM: host: $host; arch: ARCH; clock: CLOCK; os: $os" );
 
 }
 #######################################################################
