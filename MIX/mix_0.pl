@@ -21,12 +21,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id              : $Id: mix_0.pl,v 1.15 2003/10/13 09:05:09 wig Exp $
+# | Id              : $Id: mix_0.pl,v 1.16 2003/10/14 10:18:41 wig Exp $
 # | Name         : $Name:  $
 # | Description  :$Description:$
 # | Parameters  : -
-# | Version       : $Revision: 1.15 $
-# | Mod.Date    : $Date: 2003/10/13 09:05:09 $
+# | Version       : $Revision: 1.16 $
+# | Mod.Date    : $Date: 2003/10/14 10:18:41 $
 # | Author        : $Author: wig $
 # | Phone         : $Phone: +49 89 54845 7275$
 # | Fax             : $Fax: $
@@ -41,12 +41,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |
 # | Changes:
 # | $Log: mix_0.pl,v $
-# | Revision 1.15  2003/10/13 09:05:09  wig
-# | Fixed misc. requests and bugs:
-# | - do not wire open signals
-# | - do not recreate ports alredy partially connected
-# | - ExCEL cells kept unter 1024 characters, will be split if needed
-# | ...
+# | Revision 1.16  2003/10/14 10:18:41  wig
+# | Added -bak command line option
+# | Added ::descr to port maps (just a try)
 # |
 # | Revision 1.14  2003/07/29 15:48:03  wig
 # | Lots of tiny issued fixed:
@@ -173,7 +170,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.15 $'; # RCS Id
+$::VERSION = '$Revision: 1.16 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # %EH comes from Mic::MixUtils ; All the configuration E-nvironment will be there
@@ -219,6 +216,8 @@ mix_init();               # Presets ....
 # -sheet SHEET=MATCH     SHEET can be one of "hier", "conn", "vi2c"
 # -delta                          Enable delta mode: Print diffs instead of full files.
 #                                   Maybe we can set a return value of 1 if no changes occured!
+# -bak                            Shift previous generated output to file.v[hd].bak. When combined
+#                                   with -delta you get both .diff, .bak and new files :-)
 #
 # -init                             Initialize MIX working area
 # -import FILE                  Try to import data from HDL files
@@ -239,6 +238,7 @@ mix_getopt_header(qw(
     sheet=s@
     listconf
     delta!
+    bak!
     init
     import=s@
     ));

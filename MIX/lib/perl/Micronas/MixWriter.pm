@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.28 $                                             |
+# | Revision:   $Revision: 1.29 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/10/13 09:03:11 $                                   |
+# | Date:       $Date: 2003/10/14 10:18:43 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.28 2003/10/13 09:03:11 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.29 2003/10/14 10:18:43 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,12 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
-# | Revision 1.28  2003/10/13 09:03:11  wig
-# | Fixed misc. requests and bugs:
-# | - do not wire open signals
-# | - do not recreate ports alredy partially connected
-# | - ExCEL cells kept unter 1024 characters, will be split if needed
-# | ...
+# | Revision 1.29  2003/10/14 10:18:43  wig
+# | Added -bak command line option
+# | Added ::descr to port maps (just a try)
 # |
 # | Revision 1.27  2003/09/08 15:14:24  wig
 # | Fixed Verilog, extended path checking
@@ -198,9 +195,9 @@ sub mix_wr_unsplice_port ($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.28 2003/10/13 09:03:11 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.29 2003/10/14 10:18:43 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.28 $';
+my $thisrevision   =      '$Revision: 1.29 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1681,8 +1678,8 @@ sub gen_instmap ($;$$) {
  
     $map .= port_map( 'out', $inst, $enty, $lang, $rinstc->{'out'}, \@out );
 
-    # Sort map:
-    $map = join( "\n", sort( split ( /\n/, $map ) ) );
+    # Sort map ...
+    $map = join( "\n", sort( split ( /\n/, $map ) ) ) . "\n";
 
     #wig20030808: Adding Verilog port splice collector .. for mpallas
     #TODO: Shouldn't that be integrated into the print_conn_matrix function?
@@ -1691,10 +1688,10 @@ sub gen_instmap ($;$$) {
     }
 
 
-    # Remove trailing , and such (VHDL)
-    $map =~ s/,(\s*--.*)\n?$/$1\n/o;
-    $map =~ s/,\s*\n?$/\n/o;
-    $gmap =~ s/,(\s*--.*)\n?$/$1\n/o;
+    # Remove trailing "," and such (VHDL)
+    $map =~ s/,(\s*$tcom.*)\n?$/$1\n/o;
+    $map =~ s/,\s*\n?$/\n/o; 
+    $gmap =~ s/,(\s*$tcom.*)\n?$/$1\n/o;
     $gmap =~ s/,\s*\n?$/\n/o;
 
     unless( is_vhdl_comment( $gmap ) or $lang =~ m,^veri,io ) {
@@ -1880,7 +1877,7 @@ sub mix_wr_unsplice_port ($$$) {
             }
         }
         # Replace the map ....
-        $map = join( "\n", sort( @out ) );
+        $map = join( "\n", sort( @out ) ) . "\n";
         return $map;
 }
 
@@ -2387,6 +2384,8 @@ sub mix_wr_port_check ($$) {
 #
 # Adding: __NAN__ support (string aka. generic ::high/::low bounds)
 #
+#!wig20031014: Print out the ::descr field if EH{output}{generate}{portdescr}
+#
 sub print_conn_matrix ($$$$$$$$;$) {
     my $port = shift;
     my $pf = shift;
@@ -2405,9 +2404,31 @@ sub print_conn_matrix ($$$$$$$$;$) {
     my $lb = undef;
     my $ub = $#$rcm;
     my $lstart = 0;
+    my $descr = "";
 
     my $tcom = $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'default'} || "#";
 
+    if ( $EH{'output'}{'generate'}{'portdescr'} ) {
+        # Available fields: %::descr%, %::ininst%, %::outinst%
+        # $descr .= $tcom . " ";
+        # TODO: Use the macro functions  ...
+        my %tm = ();
+        $tm{'%::descr%'} = $conndb{$signal}{'::descr'};
+        $tm{'%::comment%'} = $conndb{$signal}{'::comment'};
+        $tm{'%::ininst%'} = "";
+        $tm{'%::outinst%'} = "";
+        for my $i ( @{$conndb{$signal}{'::in'}} ) {
+            $tm{'%::ininst%'} .= " " . $i->{'inst'};
+        }
+        for my $i ( @{$conndb{$signal}{'::out'}} ) {
+            $tm{'%::outinst%'} .= " " . $i->{'inst'};
+        }
+        $descr = replace_mac( $EH{'output'}{'generate'}{'portdescr'}, \%tm );
+        if ( $descr ) {
+            $descr = " " . $tcom . " " . $descr;
+        }
+    }
+  
     #
     # Non-Numeric bounds:
     #
@@ -2415,12 +2436,12 @@ sub print_conn_matrix ($$$$$$$$;$) {
     # __NAN__ works for full connections, only (today)
     if ( defined( $rcm->[0] ) and $rcm->[0] eq "__NAN__" ) {
         if ( $lang =~ m,^veri,io ) { # Verilog
-            $t .= $EH{'macro'}{'%S%'} x 3 . "." . $port . "(" . $signal . "),\n"; #TODO, check Verilog syntax
+            $t .= $EH{'macro'}{'%S%'} x 3 . "." . $port . "(" . $signal . ")," . $descr . "\n"; #TODO, check Verilog syntax
         } else {
             if ( $cast ) {
-                $t .= $EH{'macro'}{'%S%'} x 3 . $cast . "(" . $port . ") => " . $signal . ",\n";
+                $t .= $EH{'macro'}{'%S%'} x 3 . $cast . "(" . $port . ") => " . $signal . "," . $descr . "\n";
             } else {
-                $t .= $EH{'macro'}{'%S%'} x 3 . $port . " => " . $signal . ",\n";
+                $t .= $EH{'macro'}{'%S%'} x 3 . $port . " => " . $signal . "," . $descr . "\n";
             }
         }
         return $t;
@@ -2433,13 +2454,12 @@ sub print_conn_matrix ($$$$$$$$;$) {
 	 $sf eq "__UNDEF__" and $st eq "__UNDEF__" and
 	 $rcm->[0] == 0 ) {
             if ( $lang =~ m,^veri,io ) { # Verilog
-                $t .= $EH{'macro'}{'%S%'} x 3 . "." . $port . "(" . $signal . "),\n"; #TODO, check Verilog syntax
+                $t .= $EH{'macro'}{'%S%'} x 3 . "." . $port . "(" . $signal . ")," . $descr . "\n";
             } else {
                 if ( $cast ) {
-                    $t .= $EH{'macro'}{'%S%'} x 3 . $cast . "(" . $port . ") => " . $signal . ",\n";
-                    #OLD $t .= $EH{'macro'}{'%S%'} x 3 . $port . " => " . $cast . "(" . $signal . "),\n";
+                    $t .= $EH{'macro'}{'%S%'} x 3 . $cast . "(" . $port . ") => " . $signal . "," . $descr . "\n";
                 } else {
-                    $t .= $EH{'macro'}{'%S%'} x 3 . $port . " => " . $signal . ",\n";
+                    $t .= $EH{'macro'}{'%S%'} x 3 . $port . " => " . $signal . "," . $descr . "\n";
                 }
             }
 	    return $t;
@@ -2614,6 +2634,7 @@ sub print_conn_matrix ($$$$$$$$;$) {
                 $t =~ s,(?<=%OPEN%)\s*\([\s\w]+?\),,g; # Remove ( ... ) definitons ...
             }
         }
+        $t =~ s,(\n)?$,$descr$1, if $descr; # Add ::descr comments ....
 	return $t;
     #
     #TODO: catch the most important cases here
@@ -2659,6 +2680,7 @@ sub print_conn_matrix ($$$$$$$$;$) {
         }
     }
 
+    $t =~ s,(\n)?$,$descr$1, if $descr; # Add ::descr comments ....
     return $t;
 
 }
@@ -3029,7 +3051,12 @@ sub _write_architecture ($$$$) {
                             $pm =~ s!(\.\w+?)\(\s*$ii(\s*\[.+?\])?\s*\)!$1($usesig$2)!g;
                         }
                     } else {
-                        $pm =~ s!(\w*)(\s+=>\s+)$ii(\(|,|\n)!$1$2$usesig$3!g;
+                        #!wig20031014: add -- as allowed continuation after the signal name!
+                        #   port => signal,
+                        #   port => signal, -- comment
+                        #   port => signal( ....
+                        #   port => signal\n
+                        $pm =~ s!(\w*)(\s+=>\s+)$ii(\s*(\(|,|\n|--))!$1$2$usesig$3!g; 
                         if ( $usesig eq "__open__" ) {
                             $pm =~ s!(\s+=>\s+)__open__    # Has __open__ in it
                                 (\s*$RE{balanced}{-parens=>'()'})?

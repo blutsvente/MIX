@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.21 2003/10/13 09:05:08 wig Exp $
+# $Id: TODO.txt,v 1.22 2003/10/14 10:18:41 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -25,6 +25,8 @@ Probleme:
 
     Req: wig
     Prio: low
+    Solution: not a bug, but a feature -> init and start editing :-)
+        to close, set conf import.close.after.init
 
 
 - 20031008d/Req: Maybe one could import architecture/port map's, too?
@@ -37,15 +39,6 @@ Probleme:
     Req: wig
     Prio: low
 
-- 20031008b/Req: Add ::descr to signals, too
-    Define places to go:
-        - entity
-        - port map
-        - signal
-        - ....
-
-    Req: wig
-    Prio: low
 
 - 20031008a/Bug: COMB and -delta mode produce rubbish ...
     
@@ -91,8 +84,6 @@ Probleme:
             get function mix_ident( N ) N being 0...N (e.g. 10) and or +/-N stepping in/out
 
 
-
-
 - 20030725b/Req: Add comments to signal names ....
 
 Ich danke dir fuer die bisherige Hilfe, habe aber noch ein Problem
@@ -105,8 +96,8 @@ z.B. IN EINER ENTITY
 
     Req: Kropfitsch
     Prio: medium
-
-    
+    Issue: There is no direct link between a entity/port names and a signal! Comments will be set in port map
+        
 - 20030725a/Bug: config file names are not according standard ...
     Might be bad setup, though.
     
@@ -120,21 +111,6 @@ WEITERS WUERDE ICH EMPFEHLEN DIE CONFIGURATION-DATEI ENTSPRECHEND DEN CODING GUI
     Fixed: wig20030728 (bug in filename creation ...)
     Testcase: vgca_20030723 (hand test)
     
-- 20030724b/Bug: dbo_o: generates busses with std_ulogic_vector with undefined width!
-
-			signal	dbo_15_do	: std_ulogic; 
-			signal	dbo_15_en	: std_ulogic
-			signal	dbo_o	: std_ulogic_vector; 
-			signal	dgo_10_di	: std_ulogic; 
-			signal	dgo_10_do	: std_ulogic; 
-			signal	dgo_10_en	: std_ulogic;
-
-    Possible solution: connect unused ports to "open"!
-    
-    Req: mpit
-    Prio: high
-    
-
 
 - 20030715b/Req: IOP: "get_next IOcell" (for given name/number ::pad)
     will allow to set up NAND-Trees easily
@@ -149,7 +125,8 @@ WEITERS WUERDE ICH EMPFEHLEN DIE CONFIGURATION-DATEI ENTSPRECHEND DEN CODING GUI
 
         eval( $hierdb{::inst[::pad + 1]}
 
-
+    Woraround: define youe own column in the input sheet and use the macro facility to
+              match against this column!
 
 - 20030712c/Req: only generate pad, no IO cell
     But how to connect that?
@@ -180,19 +157,6 @@ WEITERS WUERDE ICH EMPFEHLEN DIE CONFIGURATION-DATEI ENTSPRECHEND DEN CODING GUI
     -- HDL Designer / Mentor Grafics
     -- Spinner / Duolog (see Claus Schneider, 2003-06-06)
 
-
-- 20030604b/Req: Allow other keywords to match in generator/macros, not only ::inst
-  names.
-
-    Req: wig
-    Prio: medium
-
-
-- 20030516a/Bug: bus-port which has only single bit inputs gets connected incorrect
-
-    Testcase: bug20030516
-    Req: wig
-    Prio: High
 
 
 
@@ -304,6 +268,52 @@ is defined.
 ##########################################################
 DONE: +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ##########################################################
+
+
+- 20030516a/Bug: bus-port which has only single bit inputs gets connected incorrect
+
+    Testcase: bug20030516
+    Req: wig
+    Prio: High
+    Solved: yes (when, how?)
+
+- 20030604b/Req: Allow other keywords to match in generator/macros, not only ::inst
+  names.
+
+    Req: wig
+    Prio: medium
+    Solved: Additionally you can use CONN, now as prefix to iterate over the conndb!
+            e.g. CONN,$i...,/abc/ ...
+
+- 20030724b/Bug: dbo_o: generates busses with std_ulogic_vector with undefined width!
+
+			signal	dbo_15_do	: std_ulogic; 
+			signal	dbo_15_en	: std_ulogic
+			signal	dbo_o	: std_ulogic_vector; 
+			signal	dgo_10_di	: std_ulogic; 
+			signal	dgo_10_do	: std_ulogic; 
+			signal	dgo_10_en	: std_ulogic;
+
+    Possible solution: connect unused ports to "open"!
+    
+    Req: mpit
+    Prio: high
+    Solved: wig20031010
+    Testcase: autoopen
+
+
+- 20031008b/Req: Add ::descr to signals, too
+    Define places to go:
+        - entity
+        - port map
+        - signal
+        - ....
+
+    Req: wig
+    Prio: low
+    Solution: Set EH{output}{generate}{portdescr} = "%::descr%" will add the ::descr field contents
+            to the port maps. Additionally you can use %::ininst%, %::outinst% or/and %::comment%
+    Solvded: wig20031014
 
 - 20030730b/Bug: %LOW_BUS% without ::high ::low definition fails ...
     Automatically create ::high and ::low matching the bits ...

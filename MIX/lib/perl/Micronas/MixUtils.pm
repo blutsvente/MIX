@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.28 $                                             |
+# | Revision:   $Revision: 1.29 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/10/13 09:03:11 $                                   |
+# | Date:       $Date: 2003/10/14 10:18:42 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.28 2003/10/13 09:03:11 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.29 2003/10/14 10:18:42 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,12 +31,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
-# | Revision 1.28  2003/10/13 09:03:11  wig
-# | Fixed misc. requests and bugs:
-# | - do not wire open signals
-# | - do not recreate ports alredy partially connected
-# | - ExCEL cells kept unter 1024 characters, will be split if needed
-# | ...
+# | Revision 1.29  2003/10/14 10:18:42  wig
+# | Added -bak command line option
+# | Added ::descr to port maps (just a try)
 # |
 # | Revision 1.27  2003/09/08 15:14:23  wig
 # | Fixed Verilog, extended path checking
@@ -223,11 +220,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.28 2003/10/13 09:03:11 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.29 2003/10/14 10:18:42 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.28 $';
+my $thisrevision   =      '$Revision: 1.29 $';
 
-# | Revision:   $Revision: 1.28 $   
+# | Revision:   $Revision: 1.29 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -450,6 +447,27 @@ sub mix_getopt_header(@) {
 	    $OPTVAL{delta} = 1;
 	} else {
 	    $EH{'output'}{'generate'}{'delta'} = 0;
+	}
+    }
+
+    #
+    # -bak
+    # Shift previously generated files to FILE.V.bak
+    # Backup mode can be enabled by -bak switch of by configuration variable
+    # like -conf output.generate.bak=1 or enabled in mix.cfg file
+    #
+    if ( exists( $OPTVAL{bak} ) ) { # -bak |-nobak
+	if ( $OPTVAL{bak} ) {
+	    $EH{'output'}{'generate'}{'bak'} = 1;
+	} else { # Switch off backup mode
+	    $EH{'output'}{'generate'}{'bak'} = 0;
+	}
+    } else {
+	if ( $EH{'output'}{'generate'}{'bak'} ) { # Backup on by -conf or FILE.cfg
+	    $EH{'output'}{'generate'}{'bak'} = 1;
+	    $OPTVAL{bak} = 1;
+	} else {
+	    $EH{'output'}{'generate'}{'bak'} = 0;
 	}
     }
 
@@ -790,7 +808,11 @@ $ex = undef; # Container for OLE server
 					# noxfix: do not attach pre/postfix to signal names
 	      # 'port' => 'markgenerated',	# attach a _gIO to generated ports ...
 	      'delta' => 0,	    	# allows to use mix.cfg to preset delta mode
+	      'bak' => 0,		# Create backup of output HDL files
 	      'combine' => 0,	# Combine enty,arch and conf into one file, -combine switch
+	      'portdescr' => '%::descr%'	# Definitions for port map descriptions:
+		      #   %::descr% (contents of thsi signal's descr. field, %::ininst% (list of load instances),
+		      #   %::outinst% (list of driving instances), %::comment%
 	    },	
 	'ext' =>	{   'vhdl' => 'vhd',
 			    'verilog' => 'v' ,
@@ -1640,10 +1662,12 @@ The first argument is the file to open, the second contains flags like:
     COMB (combine mode)
 
 =cut
-{ # Block around the mix_utils_functions .... to keep ocont, ncont and this_delta intact ...
+{
+# Block around the mix_utils_functions .... to keep ocont, ncont and this_delta intact ...
 my @ocont = (); # Keep (filtered) contents of original file
 my @ncont = (); # Keep (filtered) contents of new file to feed into diff
 my %this_delta = (); # Remember for which files we could delta ....
+my %bfh = ();		# Keep backup file handle ....
 
 sub mix_utils_open ($;$){
     my $file= shift;
@@ -1660,7 +1684,8 @@ sub mix_utils_open ($;$){
     }
     
     my $ofile = $file;
-    
+
+    # Print out diff's
     if ( $EH{'output'}{'generate'}{'delta'} ) { # Delta mode!
 	my $ext;
 	my $c = "__NOCOMMENT";
@@ -1676,7 +1701,7 @@ sub mix_utils_open ($;$){
 	    my $ofh = new IO::File;
 	    unless( $ofh->open($file) ) {
 		logwarn( "ERROR: Cannot open org $file in delta mode: $!" );
-		return undef;
+		return undef, undef;
 	    }
 	    @ocont = <$ofh>; #Slurp in file to compare against
 	    chomp( @ocont );
@@ -1689,7 +1714,8 @@ sub mix_utils_open ($;$){
 	    }
 	    ( @ocont = sort( @ocont ) ) if ( $EH{'output'}{'delta'} =~ m,sort,io );
 
-	    close( $ofh ) or logwarn( "ERROR: Cannot close org $file in delta mode: $!" );
+	    close( $ofh ) or logwarn( "ERROR: Cannot close org $file in delta mode: $!" )
+		and $EH{'sum'}{'errors'}++;
 	    $ofile .= $EH{'output'}{'ext'}{'delta'}; # Attach a .diff to file name
 
 	    @ncont = (); # Reset new contents
@@ -1699,12 +1725,22 @@ sub mix_utils_open ($;$){
 	}
     }
 
+    # Save one backup
+    if ( $EH{'output'}{'generate'}{'bak'} ) {
+	# Shift previous version to file.bak ....
+	if ( -r $file ) {
+	    rename( $file, $file . ".bak" ) or
+		logwarn( "ERROR: Cannot rename $file to $file.bak" ) and $EH{'sum'}{'errors'}++;
+	}
+    }
+
     # Append or create a new file?
     # Append will be used if we get a "COMB" flag (combine mode)
     my $mode = O_CREAT|O_WRONLY|O_TRUNC;
     if ( $flags =~ m,^COMB, ) {
 	$mode = O_CREAT|O_WRONLY|O_APPEND;
     }
+    # $fh -> keep main file handle
     my $fh = new IO::File;
     unless( $fh->open( $ofile, $mode) ) {
 	logwarn( "ERROR: Cannot open $ofile: $!" );
@@ -1717,7 +1753,22 @@ sub mix_utils_open ($;$){
     } else {
 	$this_delta{"$fh"} = 0;
     }
-    
+
+    # If -delta and -bak -> create a new original file ...
+    if ( $EH{'output'}{'generate'}{'bak'} and $EH{'output'}{'generate'}{'delta'} ) {
+	# Append or create a new file?
+	# $bfh -> backup file handle (will get new data!)
+	my $bfh = new IO::File;
+	unless( $bfh->open( $file, $mode) ) {
+	    logwarn( "ERROR: Cannot open $file: $!" );
+		$EH{'sum'}{'errors'}++;
+		    $bfh{"$fh"} = undef;
+	} else {
+	    $bfh{"$fh"} = $bfh;
+	}
+    } else {
+	$bfh{"$fh"} = 0;
+    }
     return $fh;
 }
 
@@ -1759,6 +1810,9 @@ sub mix_utils_print ($@) {
     } else {
 	print( $fh @args );
     }
+    if ( $bfh{"$fh"} ) {
+	print( {$bfh{"$fh"}} @args );
+    }
 }
 
 #
@@ -1772,6 +1826,9 @@ sub mix_utils_printf ($@) {
 	push( @ncont, split( /\n/, sprintf( @args ) ) );
     } else {
 	printf( $fh @args );
+    }
+    if ( $bfh{"$fh"} ) {
+	printf( {$bfh{"$fh"}} @args );
     }
 }
 
@@ -1845,24 +1902,36 @@ $c ------------- CHANGES START HERE ------------- --
 	    if ( $EH{'output'}{'delta'} =~ m,remove,io ) {
 		# Remove empty diff files (removal before closing ????)
 		if ( $close_flag and not $fh->close ) {
-		    logwarn( "Cannot close file $file: $!" );
+		    logwarn( "ERROR: Cannot close file $file: $!" );
+		    $EH{'sum'}{'errors'}++;
 		}
 		$close_flag = 0;
 		unlink( "$file" . $EH{'output'}{'ext'}{'delta'} ) or
 		    logwarn( "WARNING: Cannot remove empty diff file $file" .
-			     $EH{'output'}{'ext'}{'delta'} . "!" );
+			     $EH{'output'}{'ext'}{'delta'} . "!" ) and
+			    $EH{'sum'}{'warnings'}++;
 	    }
 	}
     }
 
     if ( $close_flag and not $fh->close ) {
-	logwarn( "Cannot close file $file: $!" );
+	logwarn( "ERROR: Cannot close file $file: $!" );
+	$EH{'sum'}{'errors'}++;
 	return undef;
     }
+
+    # Close new file if in -bak mode and close_flag is set ...    
+    if ( $close_flag and $bfh{"$fh"} ) {
+	my $bfh = $bfh{"$fh"};
+	$bfh->close or logwarn( "ERROR: Cannot close file $file: $!" )
+	    and $EH{'sum'}{'errors'}++
+	    and return undef;
+    }
+
     return;    
 }
 
-}
+} # End of mix_util_FILE block ....
 
 #
 # Do some text replacements

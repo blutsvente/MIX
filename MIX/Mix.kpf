@@ -26,5 +26,7 @@
  </file>
  <file url="lib/perl/Micronas/MixIOParser.pm">
  </file>
+ <file url="t/t.pl">
+ </file>
 </files>
 </project>
