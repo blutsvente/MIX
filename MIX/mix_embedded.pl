@@ -13,12 +13,12 @@
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_embedded.pl,v 1.4 2004/07/22 10:16:35 abauer Exp $     |
+# | Id           : $Id: mix_embedded.pl,v 1.5 2004/07/22 11:31:39 abauer Exp $     |
 # | Name         : $Name:  $                                   |
 # | Description  : $Description: simple wrapper script for embedding MIX $|
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.4 $                                       |
-# | Mod.Date     : $Date: 2004/07/22 10:16:35 $                           |
+# | Version      : $Revision: 1.5 $                                       |
+# | Mod.Date     : $Date: 2004/07/22 11:31:39 $                           |
 # | Author       : $Author: abauer $                                      |
 # | Email        : $Email: Alexander.Bauer@micronas.com$                  |
 # |                                                                       |
@@ -87,7 +87,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.4 $'; # RCS Id
+$::VERSION = '$Revision: 1.5 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 mix_init(); # load Presets ....
@@ -120,13 +120,14 @@ my ($n_ioin_ext, $n_i2cin_ext);
 sub readSpreadsheet(@) {
 
     my $input = shift;
+    my $ref;
 
      #Fetches HIER, CONN, IO and I2C sheet(s)
     ( $r_connin, $r_hierin, $r_ioin, $r_i2cin) = mix_utils_open_input( $input);
+    $n_ioin_ext = 0;
+    $n_i2cin_ext = 0;
 
-    $n_ioin_ext = scalar $#{$r_ioin->[0]{'::muxopt'}};
-    $n_i2cin_ext = ""; # scalar $#{$r_i2cin->[0]{'::b'}};
-    print("iopad ext: " . $n_ioin_ext . "\ni2c ext: " . $n_i2cin_ext . "\n");
+    print("iopad ext: " . $EH{'io'}{'ext'} . "\ni2c ext: " . $EH{'i2c'}{'ext'}  . "\n");
 }
 
 #readSpreadsheet("/home/abauer/src/MIX/test/sxc_input/a_clk_i2c.sxc");
