@@ -23,13 +23,13 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.24 2003/12/10 15:00:48 abauer Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.25 2003/12/18 16:48:14 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.24 $                                      |
-# | Mod.Date     : $Date: 2003/12/10 15:00:48 $                           |
-# | Author       : $Author: abauer $                                      |
+# | Version      : $Revision: 1.25 $                                      |
+# | Mod.Date     : $Date: 2003/12/18 16:48:14 $                           |
+# | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
 # | Email        : $Email: wilfried.gaensheimer@micronas.com$             |
@@ -43,6 +43,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.25  2003/12/18 16:48:14  wig
+# | removed init_ole
+# |
 # | Revision 1.24  2003/12/10 15:00:48  abauer
 # | *** empty log message ***
 # |
@@ -205,7 +208,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.24 $'; # RCS Id
+$::VERSION = '$Revision: 1.25 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # %EH comes from Mic::MixUtils ; All the configuration E-nvironment will be there
@@ -289,9 +292,10 @@ if ( $#ARGV < 0 ) { # Need  at least one sheet!!
 # Do a first simple conversion from Excel arrays into array of hashes
 #
 
-if( ( $^O=~ m/MSWin/ && join( " ", @ARGV)=~ m/\.xls/) || $EH{'format'}{'out'}=~ m/^xls$/ ) {
-    init_ole();
-}
+#!wig20031217: now in write_xls (only used there) 
+# if( ( $^O=~ m/MSWin/ && join( " ", @ARGV)=~ m/\.xls/) || $EH{'format'}{'out'}=~ m/^xls$/ ) {
+#    init_ole();
+#}
 
 my( $r_connin, $r_hierin, $r_ioin, $r_i2cin);
 ( $r_connin, $r_hierin, $r_ioin, $r_i2cin ) = mix_utils_open_input( @ARGV ); #Fetches HIER and CONN sheet(s)
