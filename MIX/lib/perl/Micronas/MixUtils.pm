@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.7 $                                             |
+# | Revision:   $Revision: 1.8 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/20 15:07:13 $                                   |
+# | Date:       $Date: 2003/02/21 16:05:14 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.7 2003/02/20 15:07:13 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.8 2003/02/21 16:05:14 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,13 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.8  2003/02/21 16:05:14  wig
+# | Added options:
+# | -conf
+# | -sheet
+# | -listconf
+# | see TODO.txt, 20030220/21
+# |
 # | Revision 1.7  2003/02/20 15:07:13  wig
 # | Fixed: port signal assignment direction bus
 # | Capitalization (folding is still missing)
@@ -112,6 +119,9 @@ use Storable;
 # Prototypes
 #
 sub select_variant ($);
+sub mix_list_conf ();
+sub _mix_list_conf ($$);
+sub _mix_apply_conf ($$$);
 
 ##############################################################
 # Global variables
@@ -215,6 +225,28 @@ sub mix_getopt_header(@)
 	$EH{'outconf'} =~ s,(\.[^.]+)$,-c.vhd,;
     } else {
 	$EH{'outconf'} = "mix-c.vhd";
+    }
+
+    #
+    # SHEET selector -> overload built-in configuration
+    #
+    if ($OPTVAL{'sheet'}) {
+	mix_overload_sheet( $OPTVAL{'conf'} );
+    }
+
+    #
+    # CONF options set -> overload built-in configuration
+    #
+    if ($OPTVAL{'conf'}) {
+	mix_overload_conf( $OPTVAL{'conf'} );
+    }
+
+    #
+    # -listconf
+    # Dump %EH ...
+    #
+    if ( $OPTVAL{'listconf'} ) {
+	mix_list_conf();
     }
 
     # Print banner
@@ -498,8 +530,8 @@ $ex = undef; # Container for OLE server
 	'format' => 'ext',		# Output format derived from filename extension ???
 	'generate' =>
 	    { 'arch' => 'noleaf',
-	      'enty' => 'leaf',
-	      'conf' => 'leaf',
+	      'enty' => 'noleaf', # no leaf cells
+	      'conf' => 'noleaf', # no leaf cells
 	    },	
     },
     'intermediate' => {
@@ -539,6 +571,11 @@ $ex = undef; # Container for OLE server
 	    PAD_ACTIVE_PU	 	1
 	    PAD_ACTIVE_PD	 	1
 	)
+    },
+    # Possibly read configuration details from the CONF sheet, see -conf option
+    'conf' => {
+	'xls' => 'CONF',
+	'field' => {},
     },
     # Definitions regarding the CONN sheets:    
     'conn' => { 
@@ -587,7 +624,7 @@ $ex = undef; # Container for OLE server
 	    '::inst'		=> [ qw(	0	0	1	W_NO_INST	5 )],
 	    '::lang'		=> [ qw(	1	0	0	VHDL	7 )],
 	    '::entity'		=> [ qw(	1	0	1	W_NO_ENTITY	8 )],
-	    '::arch'		=> [ qw(	1	0	0	RTL			9 )],
+	    '::arch'		=> [ qw(	1	0	0	rtl			9 )],
 	    "::config"	=> [ qw(	1	0	1	W_NO_CONFIG	10 )],
 	    "::comment"	=> [ qw(	1	0	2	%EMPTY%	11 )],
 	    "::shortname"	=> [ qw(	0	0	0	%EMPTY%	6 )],
@@ -657,6 +694,7 @@ $ex = undef; # Container for OLE server
 	    "%BUFFER%"		=> "buffer",
 	    '%H%'		=> '$',			# RCS keyword saver ...
     },
+    # Counters and generic messages
     "ERROR" => "__ERROR__",
     "WARN" => "__WARNING__",
     "CONST_NR" => 0,
@@ -674,12 +712,258 @@ $ex = undef; # Container for OLE server
         $EH{'drive'} = "";
     }
 
-#TODO: collect more EH{'macro'} from other modules
+    $EH{'macro'}{'%ARGV%'} = "$0 " . join( " ", @ARGV );
+
+    $EH{'macro'}{'%VERSION%'} = $::VERSION;
+    $EH{'macro'}{'%0%'} = $::pgm;
+    $EH{'macro'}{'%DATE%'} = "" . localtime();
+    $EH{'macro'}{'%USER%'} = "W_UNKNOWN_USERNAME";
+    if ( $^O =~ m,^mswin,io ) {
+	if ( defined( $ENV{'USERNAME'} ) ) {
+	        $EH{'macro'}{'%USER%'} = $ENV{'USERNAME'};
+	}
+    } elsif ( defined( $ENV{'LOGNAME'} ) ) {
+		$EH{'macro'}{'%USER%'} = $ENV{'LOGNAME'};
+    }
+    
 #
-# Look into MixWriter.pm for EH templates for writer/backend
+# If there is a file called mix.cfg, try to read that ....
+# Configuraation parameters have to be written like
+#	MIXCFG key value
+#	key can be key.key.key ... (see %EH structure or use -listconf to dump current values)
+# !!Caveat: there will be no checks whatsoever on the values or keys !!
 #
+if ( -r "mix.cfg" ) {
+    logtrc( "INFO", "Reading extra configurations from mix.cfg\n" );
+
+    unless( open( CFG, "< mix.cfg" ) ) {
+	logwarn("Cannot open mix.cfg for reading: $!\n");
+    } else {
+	while( <CFG> ) {
+	    chomp;
+	    next if ( m,^\s*#,o );
+	    if ( m,^\s*MIXCFG\s+(\S+)\s*(.*), ) { # MIXCFG key.key.key value
+		_mix_apply_conf( $1, $2, "file:mix.cfg" );
+	    }
+	}
+	close( CFG );
+    }
 
 }
+
+} # End of mix_init
+
+#############################################################################
+# mix_list_conf
+#
+# print out current contents of %EH
+##############################################################################
+
+=head2 mix_list_conf()
+
+Triggered by -listconf command line switch. Print out current contents of
+%EH configuration hash and exit. Format is suitable to be dumped into a
+file mix.cfg and reread after edit.
+
+Lines starting with MIXCFG indicate possible configuration parameters.
+
+=cut
+
+sub mix_list_conf () {
+
+	# use Data::Dumper;
+	# Data::Dumper
+	# print( Dumper( \%EH ) );
+    foreach my $i ( sort ( keys( %EH ) )  ) {
+	_mix_list_conf( "$i", $EH{$i} );
+    }
+    # Stop here
+    exit 0;
+}
+
+#
+# (recursive) print of configuration options values
+#
+sub _mix_list_conf ($$) {
+    my $name = shift;
+    my $ref = shift;
+
+    if ( ref( $ref ) eq "HASH" ) {
+	foreach my $i ( sort( keys %$ref )  ) {
+	    _mix_list_conf( "$name.$i", $ref->{$i} );
+	}
+    } elsif ( ref( $ref ) eq "ARRAY" ) {
+	print( "MIXNOCFG $name ARRAY\n" );
+    } elsif ( ref( $ref ) )  {
+	print( "MIXNOCFG $name REF\n" );
+    } else {
+	$ref =~ s,\n,\\n,go;
+	$ref =~ s,\t,\\t,go;
+	print( "MIXCFG $name $ref\n" );
+    }
+}
+    
+##############################################################################
+# mix_overload_conf
+#
+# take -conf ARGUMENTS and transfer that into %EH (overloading values there)
+##############################################################################
+
+=head2 mix_overload_conf($OPTVAL{'conf'})
+
+Started if option -conf keys=value is given on command line. key is combined from
+the keys of the %EH configuration hash. Examples are
+
+=over 4
+
+= item -conf generate.output.arch=noleaf
+
+Suppress generation of architecture files for leaf blocks.
+
+=back
+
+Apply -listconf to get a list of all possible values. Several -conf options may be
+given on one command line. Apart from the command line you might change the
+configuration by a file "mix.cfg" in the current working directory or by adding
+values in a ExCEL sheet "CONF" in a form of <S MIXCONF key value>.
+Order is built-in, mix.cfg, CONF sheet and command line has highest priority.
+
+=cut
+
+sub mix_overload_conf ($) {
+    my $confs = shift;
+
+    my $e = "";
+    my ( $k, $v );
+
+    
+    for my $i ( @$confs ) {
+	( $k, $v ) = split( /=/, $i ); # Split key=value
+	unless( $k and $v ) {
+	    logwarn("Illegal key or value given: $i\n");
+	    next;
+	}
+	my $loga ='logtrc( "INFO", "Adding configuration ' . $i . '");';
+	my $logo ='logtrc( "INFO", "Overloading configuration ' . $i . '");';
+	$k =~ s/\./}{/og;
+	$k = '{' . $k . '}';
+
+	#TODO: Prevent overloading of non-scalar values!!
+	$e = "if ( exists( \$EH$k ) ) { \$EH$k = '$v'; $logo } else { \$EH$k = '$v'; $loga }";
+	unless ( eval $e ) {
+                logwarn("Evaluation of configuration $k=$v failed: $@") if ( $@ );
+                next;
+        }
+    }
+}
+
+##############################################################################
+# mix_excel_conf
+#
+# take CONF sheet  contents and transfer that into %EH (overloading values there)
+##############################################################################
+
+=head2 mix_excel_conf($conf,$source)
+
+Take array provided by the open_input function (excel), search for the
+MIXCFG tag. If found, convert that into %EH.
+
+=cut
+
+sub mix_excel_conf ($$) {
+    my $rconf = shift; # Input array
+    my $s = shift; # Source
+
+    ROW: for my $i ( @$rconf ) {
+	for my $ii ( 0..($#{ @$i }-2) ) {
+	    next unless ( $i->[$ii] ); # Skip empty cells in this row
+	    if ( $i->[$ii] eq "MIXCFG" ) { #Try to read $ii+1 and $ii+2
+		my $key = $i->[$ii+1];
+		my $val = $i->[$ii+2];
+		_mix_apply_conf( $key, $val, "EXCEL:$s" ); #Apply key/value
+	    } else { # If row does not have MIXCFG in first cell, skip it.
+		next ROW;
+	    }
+	}
+    }
+}
+
+# Similiar to _mix_overload_conf!!
+sub _mix_apply_conf ($$$) {
+    my $k = shift; # Key
+    my $v = shift; # Value
+    my $s = shift; # Source
+
+    unless( $k and $v ) {
+	    unless( $k ) { $k = ""; }
+	    unless( $v ) { $v = ""; }
+	    logwarn("Illegal key or value given in $s: key:$k val:$v\n");
+	    return undef;
+    }
+    my $loga ='logtrc( "INFO", "Adding ' . $s . ' configuration ' . $k . "=" . $v . '");';
+    my $logo ='logtrc( "INFO", "Overloading ' . $s . 'configuration ' . $k . "=" . $v . '");';
+    $k =~ s/\./}{/og;
+    $k = '{' . $k . '}';
+
+    #TODO: Prevent overloading of non-scalar values!!
+    my $e = "if ( exists( \$EH$k ) ) { \$EH$k = '$v'; $logo } else { \$EH$k = '$v'; $loga }";
+    unless ( eval $e ) {
+	    if ( $@ ) { # S.th. went wrong??
+	        logwarn("Eval of configuration overload from $s $k=$v failed: $@");
+	    }
+    }
+}
+
+##############################################################################
+# mix_overload_sheet
+#
+# take -sheet SHEET=MATCH_OP and transfer that into %EH (overloading values there)
+##############################################################################
+
+=head2 mix_overload_sheet($OPTVAL{'sheet'})
+
+Started if option -sheet SHEET=match_op is given on command line. SHEET can be one of
+<I hier>, <I conn>, <I vi2c> or <I conf>
+
+=over 4
+
+= item -sheet SHEET=match_op
+
+Replace the default match operator for the sheet type. match_op can be any perl
+regular expression.match_op shoud match the sheet names of the design descriptions.
+
+=back
+
+=cut
+
+sub mix_overload_sheet ($) {
+    my $sheets = shift;
+
+    my $e = "";
+    my ( $k, $v );
+
+    # %EH = ...
+    #		'vi2c' => {
+    #		'xls' => 'VI2C', ...
+    
+    for my $i ( @$sheets ) {
+	( $k, $v ) = split( /=/, $i ); # Split key=value
+	unless( $k and $v ) {
+	    logwarn("Illegal argument for overload sheet given: $i\n");
+	    next;
+	}
+
+	$k = lc( $k ); # $k := conn, hier, vi2c, conf, ...
+
+	if ( exists( $EH{$k}{'xls'} ) ) {
+	    logtrc( "INFO", "Overloading sheet match $i");
+	    $EH{$k} = $v;
+	} else {
+	    logwarn( "Illegal sheet selector $k found in $i\n" );
+	}
+    }
+}
+
 
 ####################################################################
 ## ??? BEGIN function
@@ -754,25 +1038,32 @@ sub open_input (@) {
 	    logwarn("Cannot read input file $i");
 	    next;
 	}
+	#
+	# maybe there is a CONF page?
+	#
+	my @conf = open_excel( $i, $EH{'conf'}{'xls'}, "optional" );
+	for my $c ( @conf ) {
+	    # Apply it immediately
+	    mix_excel_conf( $c, $EH{'conf'}{'xls'} );
+	}
 	# For ExCEL we need to provide absolute pathes!!
-	#TODO: Read CONN* ... (several CONN sheets per workbook)
-	my $sheet = open_excel( $i, $EH{'conn'}{'xls'} );
-	my @conn = convert_in( "conn", $sheet );
+	my @sheet = open_excel( $i, $EH{'conn'}{'xls'}, "mandatory" );
+	for my $c ( @sheet ) {
+	    my @conn = convert_in( "conn", $c ); # Normalize and read in
+	    push( @$aconn, @conn ); # Append
+	}
 
-	$sheet = open_excel( $i, $EH{'hier'}{'xls'} );
-	my @hier = convert_in( "hier", $sheet );
-
-	#
-	# Remove all lines not selected by our variant
-	#
-	select_variant( \@hier );
-	
-	push( @$aconn, @conn );	# Append
-	push( @$ahier,   @hier );	# Append
+	@sheet = open_excel( $i, $EH{'hier'}{'xls'}, "mandatory" );
+	for my $c ( @sheet ) {
+	    my @hier = convert_in( "hier", $c );
+	    #
+	    # Remove all lines not selected by our variant
+	    #
+	    select_variant( \@hier );
+	    push( @$ahier,   @hier );	# Append
+	}
     }
-
     return( $aconn, $ahier );
-
 }
 
 ####################################################################
@@ -1013,15 +1304,15 @@ sub parse_header($$@){
 
 =head2
 
-open_excel ($$) {
+open_excel ($$$) {
 
 Open a excel file, select the appropriate worksheets and return
 
-Arguments: $filename, $sheet
+Arguments: $filename, $sheet, $flag
 
 =cut
-sub open_excel($$){
-    my ($file, $sheetname)=@_;
+sub open_excel($$$){
+    my ($file, $sheetname, $warn_flag)=@_;
 
     my $openflag = 0;
     
@@ -1056,10 +1347,7 @@ sub open_excel($$){
 
     unless ( $openflag ) {
         $book = $ex->Workbooks->Open({FileName=>$file, ReadOnly=>1});
-    } # else {
-    #    $book = $ex->Workbook->Activate($file);
-    # }
-    #old my $book  =$ex->Workbooks->Open({FileName=>$file, ReadOnly=>1}); 
+    } 
 
 #  my $book  =$ex->Workbooks->Open(
 #				  $file.".xls",   # filename
@@ -1078,29 +1366,35 @@ sub open_excel($$){
 
     #TODO: use regular expression to match sheet names (would allow several
     # to be opened, but that creates another load of problems (columns might not be matching!)
-    my $flag = 0;
+    my @sheets = ();
     foreach my $sh ( in $book->{Worksheets} ) {
-	if ( $sh->{'Name'} eq $sheetname ) {
-		$flag = 1;
-		last;
+	if ( $sh->{'Name'} =~ m/^$sheetname$/ ) {
+		push( @sheets, $sh->{'Name'} );
         }
     }
-    unless( $flag ) { logwarn("Cannot locate a worksheet $sheetname in $file");
-	    return undef;
+    if ( $#sheets < 0 ) {
+	if ( $warn_flag eq "mandatory" ) {
+	    logwarn("Cannot locate a worksheet $sheetname in $file");
+	}
+	return ();
     }
-    
-    $ex->ActiveWorkbook->Sheets($sheetname)->Activate;
-    my $sheet =$book->ActiveSheet;
-    my $row=$sheet->UsedRange->{Value};
+
+    my @all = ();
+    foreach my $s ( @sheets ) {    
+	$ex->ActiveWorkbook->Sheets($s)->Activate;
+	my $sheet =$book->ActiveSheet;
+	my $row=$sheet->UsedRange->{Value};
+	push( @all, $row );
+    }
 
     unless( $openflag ) {
 	$book->Close or logdie "Cannot close $file spreadsheet";
     }
     #TODO: Keep open until all opes are done (avoid reopening ...)
 
-    return($row);
+    return(@all);
 
-}	
+}
 
 ####################################################################
 ## path_excel
@@ -1241,7 +1535,7 @@ sub db2array ($$) {
     $type = $1;
 
     my @o = ();
-    # Get order to print fields ...
+    # Get order for printing fields ...
     #TODO: check if fields do overlap!
     for my $ii ( keys( %{$EH{$type}{'field'}} ) ) {
 	next unless ( $ii =~ m/^::/o );
@@ -1256,6 +1550,16 @@ sub db2array ($$) {
 	$a[$n][$ii-1] = $o[$ii];
     }
     $n++;
+    # Print comment: generator, args, date
+    # First column is ::ign :-)
+    # As we are lazy, we will leave the rest of the line undefined ...
+    my %comment = ( qw( by %USER% on %DATE% cmd %ARGV% ));
+    $a[$n++][0] = "# Generated Intermediate Conn/Hier Data";
+    for my $c ( qw( by on cmd ) ) {
+	$a[$n++][0] = "# $c: " . $EH{'macro'}{$comment{$c}};
+    }
+
+    # Now comes THE data    
     for my $i ( sort( keys( %$ref ) ) ) {
 	for my $ii ( 1..$#o ) { # 0 contains fields to skip
 	    if ( $o[$ii] =~ m/^::(in|out)\s*$/o ) {
@@ -1265,7 +1569,7 @@ sub db2array ($$) {
 		#TODO: do that in debugging mode, only
 	    }
 	}
-    $n++;
+	$n++;
     }
     #TODO: check if we have printed all potential fields
     
@@ -1322,7 +1626,7 @@ sub inout2array ($) {
 	} elsif ( defined $i->{'sig_t'} ) {
 	# inst/port($port_f:$port_t) = ($sig_f:$sig_t)
 	    $s .= $i->{'inst'} . "/" . $i->{'port'} . "(" .
-		    $i->{'port_f'} . ":" . $i->{'port_t'} . ") = (" .
+		    $i->{'port_f'} . ":" . $i->{'port_t'} . ")=(" .
 		    $i->{'sig_f'} . ":" . $i->{'sig_t'} . "), %IOCR%"
 	} else {
 	    $s .= $i->{'inst'} . "/" . $i->{'port'} . ", %IOCR%";

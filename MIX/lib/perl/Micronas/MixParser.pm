@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.8 $                                             |
+# | Revision:   $Revision: 1.9 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/20 15:07:13 $                                   |
+# | Date:       $Date: 2003/02/21 16:05:14 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.8 2003/02/20 15:07:13 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.9 2003/02/21 16:05:14 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,13 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.9  2003/02/21 16:05:14  wig
+# | Added options:
+# | -conf
+# | -sheet
+# | -listconf
+# | see TODO.txt, 20030220/21
+# |
 # | Revision 1.8  2003/02/20 15:07:13  wig
 # | Fixed: port signal assignment direction bus
 # | Capitalization (folding is still missing)
@@ -944,11 +951,11 @@ sub _create_conn ($$%) {
                 my $const = $3;
                 my $t = $2;
                 if ( $inout =~ m,in, ) {
-                    logerror("Error: use constant value for signal " . $data{'::name'} . " in ::out column, only!");
+                    logerror("Error: illegal constant value for ::in signal " . $data{'::name'} . "!");
                     $data{'::comment'} .= "__E_BAD_CONSTANT_DEFINED";
                 }
                 if ( defined( $t ) ) {
-                    $co{'inst'} = $t;
+                    $co{'inst'} = "%" . $t . "%";
                 } elsif ( defined( $data{'::mode'} ) ) {
                 # Derive instance/type from mode field ....    
                     if ( $data{'::mode'} =~ m,^\s*G,io ) {

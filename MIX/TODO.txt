@@ -2,10 +2,46 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.2 2003/02/20 15:05:42 wig Exp $
+# $Id: TODO.txt,v 1.3 2003/02/21 16:05:27 wig Exp $
 #
-
 TODOs:
+
+- 20030221c: Add command args line to all output files ...
+   1. intermediate: ::comment ??
+     Done wig20030221
+   2. output: add to header.
+     Done wig20030221
+
+- 20030221a:
+    Read configuration options from "CONF" sheet
+    | MIXCFG | key | value |
+    keys are
+       generate.output.arch leaf|noleaf
+       generate.output.conf leaf|noleaf
+       generate.output.enty leaf|noleaf
+       .... (only existing keys in EH may be overridden) ....
+   Read file in current dir "mix.cfg"
+   
+  option: -conf KEY=VAL
+  option: -listconf  -> print out list of configuration keys
+
+  Order: builtin < mix.cfg < CONF < command line
+
+Done wig20030221
+
+- 20030221b: add option: -sheet CONN="CONN_PERLRE", -sheet HIER="HIER_PERLRE" ...
+
+  Done wig20030221
+
+
+- 20030220i: Rewrite writers:
+    -- Output into hash %outfiles{FILENAME}
+    -- Fix DOS/UNIX CR issue
+
+- 20030220j: Use Bugzilla for issues 
+
+- 20030220k: Format ExCEL intermediate (column layout, page breaks ...), color, ....
+
 - Accept %::COL% in :name and ::inst columns
   early expansion required!
   wig20030124
@@ -63,6 +99,10 @@ TODOs:
   Requested by ST. Bartels
   
 - 20030220c: lower case everything!
+  -- global configuration variable: lc := force|check|no
+  -- implement checker: see if cases sensitvitiy creates conflicts, report!
+  -- if force mode -> collaps conflicts
+  
   Possibly inform if a name is not unique
   Requested by M. Pallas
 
@@ -76,13 +116,15 @@ TODOs:
         
 - 20030220f: Port<->Signal assignment depends on IN vs. OUT
 
-- Add <CR> into ::in and ::out cells, recognize in inout
+- 20030220g: Add <CR> into ::in and ::out cells, recognize in inout
    done/wig20030220, rel. 1.7 MixUtils
+   Issue: late insertion not really handeled by regular "parse_macro"
 
-- Bug section:
+- 20030220h: Bug section:
     			p_mix_cp_lcmd_6_6_gi	: in	std_ulogic_vector(6); -- __W_SINGLEBITBUS
     should read as:
                     p_mix_cp_lcmd_6_6_gi : in std_ulogic; -- __I_SINGLEBITREDUCED
+
 
 DONE:
 

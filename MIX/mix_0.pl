@@ -20,12 +20,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id              : $Id: mix_0.pl,v 1.3 2003/02/20 15:05:42 wig Exp $
+# | Id              : $Id: mix_0.pl,v 1.4 2003/02/21 16:05:27 wig Exp $
 # | Name         : $Name:  $
 # | Description  :$Description:$
 # | Parameters  : -
 # | Version       : $Version: $
-# | Mod.Date    : $Date: 2003/02/20 15:05:42 $
+# | Mod.Date    : $Date: 2003/02/21 16:05:27 $
 # | Author        : $Author: wig $
 # | Phone         : $Phone: $
 # | Fax             : $Fax: $
@@ -40,6 +40,13 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |
 # | Changes:
 # | $Log: mix_0.pl,v $
+# | Revision 1.4  2003/02/21 16:05:27  wig
+# | Added options:
+# | -conf
+# | -sheet
+# | -listconf
+# | see TODO.txt, 20030220/21
+# |
 # | Revision 1.3  2003/02/20 15:05:42  wig
 # | Extended TODO list
 # |
@@ -150,12 +157,18 @@ mix_init();               # Presets ....
 #
 
 #
+#TODO: Add that to application note
 # -out OUTPUTFILE.ext       defines output filename and type
 # -outenty OUT-e.vhd        filename for entity. If argument is ENTY[NAME], each entity
 #                                   will be written into a file calles entityname-e.vhd
 # -top TOPCELL                 use TOPCELL as top. Default is TESTBENCH or daughter of TESTBENCH
 # -adump                        dump internal data in ASCII format, too (debugging, use with small data set).
+# -variant
+# -conf key.key.key=value Overwrite $EH{key}{key}{key} with value
+# -listconf                       Print out all available/predefined configurations options
+# -sheet SHEET=MATCH     SHEET can be one of "hier", "conn", "vi2c"
 #
+
 
 # Add your options here ....
 mix_getopt_header(qw(
@@ -166,6 +179,9 @@ mix_getopt_header(qw(
     top=s
     variant=s
     adump!
+    conf=s@
+    sheet=s@
+    listconf
     ));
 
 if ( $#ARGV < 0 ) { # Need  at least one sheet!!
@@ -250,6 +266,8 @@ add_sign2hier();
 #
 # Checks go here ...
 #
+# 1. Get everything lowercased (depends on configuration!)
+# check_cases();
 
 #
 # Backend jobs ...located here because I want to dump it with -adump!
