@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.18 2003/08/12 15:09:33 wig Exp $
+# $Id: TODO.txt,v 1.19 2003/08/13 09:09:19 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -21,17 +21,7 @@ TODOs:
 
  Probleme:
 
-- 20030811c/Bug: missing assing before Verilog constants:
 
-    Beispiel MDE-Toplevel (%HIGH% und %LOW%):
-
-    assign mix_logic1 = 1'b1;
-    assign mix_logic0 = 1'b0;
-
-    Req: mpallas
-    Prio: high
-    Solution: fixed in MixWriter.pm (appended assign in front of signal assignment )
-    
 - 20030811b/Req: port/signal mangeled:
     dbo_i -> see vgca_20030811!!
 
@@ -81,51 +71,15 @@ Wie programmiert man dies im Mix (Excel Sheet) ?
 
     Req: kropfisch
     Prio: low
-
+    Solution: partially implemented (strings can be used now)
+        Missing: cannot have different strings as ::high/::low and how should we
+            define s.th. for a port different from the connected signal?
 
 - 20030801a/Bug: Detect spaces in ::high and ::low and remove them!
 
     Req: wig
     Prio: high (causes MIX to break and produce bad results and warnings ...)
 
-- 20030730f/Bug:
-
-1) hinter der `timescale 1ns/1ps; Anweisung steht noch ein Semikolon am Ende,
-    das da nichts zu suchen hat.
-
-    Req: mpallas
-    Prio: High
-    Solution: wig20030730, changed in MixWriter
-
-- 20030730e/Bug:
-
-2) im `define <bla> 16´b1111000011110000 muss zwischen der Bitbreite und
-    dem Bitvektor (und nur dort !) ein 'Tick' und kein 'Backtick' stehen.
-
-    Req: mpallas
-    Prio: High
-    Solution: wig20030731, changed in MixWriter, maybe further processing is needed
-
-- 20030730d/Bug:
-
-3) zusammengesetzte Signale in der Instanziieruzng:
-
-sowas geht in Verilog nicht:
-
-...
-   .svm_o[7:0](vs_a_p_i), // __W_PORT
-   .svm_o[9:8](svm_vs_b_p), // __W_PORT
-...
-
-es muss vielmehr (wie in VHDL) erst zusammengesetzt und dann zugewiesen werden:
-
-...
-   .svm_o(svm_vs_b_p & vs_a_p_i),
-...
-
-    Req: mpallas
-    Prio: high
-    Solution: reprogramm "port_map" ....
 
 - 20030730c/Req: Ident made more flexible:
 
@@ -147,52 +101,7 @@ es muss vielmehr (wie in VHDL) erst zusammengesetzt und dann zugewiesen werden:
     Prio: low
     Solved: wig20030731, no testcase (really?)
 
-- 20030730a/Req: typecast request ...
 
-Wie kann ein Typecast duchgefuehrt werden?
-
-lm_y0_p6 _o: out std_ulogic_vector (3 downto 0);
-lm_y_o: out std_logic_vector(3 downto 0);
-lm_y0_p6 _o <= std_ulogic_vector (lm_y_o)
-
-    Req: michaelkropfitsch
-    Prio: low
-
-    Idea: While you find "type_mismatch", consider an matrix of allowed conversion to
-    put in place if defined.
-    Add attribute %::typecast% and/or to port description:
-        signal_a   typea inst_a/port_a#typeb  -> signal typea signal_a;
-                                                    signal_a <= typea( port_a );
-                                                    entity inst_a ... port
-                                                        port_a inout type_b ..
-
-
-- 20030729a/Bug: Konstanten Verilog
-
-    die Konstantendefinition in der Verilog Ausgabe von MIX ist
-    noch immer falsch:
-		`define mix_const_0_c 16`"0101100010110000"
-    sollte
-    `define mix_const_0_c 16`b0101100010110000
-    sein.
-
-    Req: mpallas
-    Prio: medium
-    
-- 20030728a/Bug:  1)pad_osc: xo port is in  
-
-    Req: mpit
-    Prio: high
-    Solution: any pad connection not known to MIX defaults to in. Please use
-
-- 20030728b/HOWTO: 2)pad werden als components deklariert und in die Configuration eingetragen
-
-    Req: mpit
-    Prio: high
-    
-
-Add:
-    %NCD% to ::use column
 
 - 20030728c/Bug: 3)nicht angeschlossene Eingänge ramd ?
 
@@ -429,10 +338,7 @@ is defined.
     Req: wig
     Prio: medium
     
-- 20030404b/CR: Improve delta/ExCEL mode:
-    add ::header tags to stringify
-    split deltas into different columns
-    
+      
 - 20030404a/CR: add -dan option : delta and new
     rename old files (*.vhd)
     create new files (*.vhd)
@@ -441,11 +347,6 @@ is defined.
     Req: wig
     Prio: low
 
-- 20030403a/CR: add signal between constant and port map
-    Req: pallas
-    Prio: medium
-    Done: wig20030404
-    Testcase: constant (updated output)
 
 - 20030313g/Bug: Improve Load/Driver evaluation
    If port width ne signal width, count "bit"wise. Save instead of integers
@@ -465,54 +366,27 @@ is defined.
     Req: wig
     Prio: medium
 
-- 20030311d/Check: Complain about unrestricted busses ( ..._vector missing High/Low).
-    Req: wig
-    Prio: medium
-
-
-- 20030311b/Bug?: Check mde-b_real / cgs_ramclk / cgs_ramclk_s (i58_core)
-    Req: Pallas
-    
-- 20030311a/Bug: Check mde-b_real / cl24_init_frame
-    Req: Pallas
 
 - 20030228d/Feature: generate hierachical sheets
     Req: Claus
     Prio: Low
 
- 
-
-
-- 20030228a/Feature: Write out evaluated contents of mix.cfg (and timestamp) and
-   command line switches and %EH to CONF sheet!
-   Reason: can be reevaluated on backend side, catch differences
-   
-   Req: wig
-   Prio: medium
-   
 - 20030227b: Check if signal ends in an intermediate hierachy
     Requested: wig
     Prio: medium
-    
-
-
  
 - 20030224a: Accept strings in (F:T) of ::in and ::out descriptions
   (string should be generic or constant)
 
 - 20030221d: Accept strings as high/low bus bounds.
   wig
- 
-
+  See 2030224a!!
 
 - 20030220i: Rewrite writers:
     -- Output into hash %outfiles{FILENAME}
     -- Fix DOS/UNIX CR issue
 
-
 - 20030220j: Use Bugzilla for issues 
-
-
 
 - OPEN wires to external
   wig20030124a
@@ -530,11 +404,6 @@ is defined.
 - Implement second run parameter $j for generator like:
     $j (1..17), $i (1,3,5,20), /blablubber/
     requested by sb20030117
-
-
-- ::variants: Default eq. "", if -variant VAR select Default + VAR.
-  ::variants := VAR1,VAR2,Default
-  ::variants := ""
 
 - iN_foo N := 1.. number of instances of entity foo.
 
@@ -560,8 +429,170 @@ is defined.
   Application note:
         non-leaf cells multiple instantiation, how-to: global signal names localization
 
-DONE: ++++++++++++++++++++++++
+##########################################################
+DONE: +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+##########################################################
 
+- 20030729a/Bug: Konstanten Verilog
+
+    die Konstantendefinition in der Verilog Ausgabe von MIX ist
+    noch immer falsch:
+		`define mix_const_0_c 16`"0101100010110000"
+    sollte
+    `define mix_const_0_c 16`b0101100010110000
+    sein.
+
+    Req: mpallas
+    Prio: medium
+    Fixed: wig200308xx
+    Testcase: constant/verilog
+
+- 20030728b/HOWTO: 2)pad werden als components deklariert und in die Configuration eingetragen
+
+    Req: mpit
+    Prio: high
+    
+
+Add:
+    %NCD% to ::use column
+      (no component declaration)
+
+- 20030812a/Bug: IO does not work for Verilog
+
+    Req: mpallas
+    Prio: high
+    Solution: added "inout" port to Verilog, testcase io\verilog
+
+- 20030728a/Bug:  1)pad_osc: xo port is in  
+
+    Req: mpit
+    Prio: high
+    Solution: any pad connection not known to MIX defaults to in. Please use
+    MIXCFG iocell.in list,foo,bar
+    MIXCFG iocell.out d_i,
+    MIXCFG iocell.inout pad_io
+
+- 20030730a/Req: typecast request ...
+
+Wie kann ein Typecast duchgefuehrt werden?
+
+lm_y0_p6 _o: out std_ulogic_vector (3 downto 0);
+lm_y_o: out std_logic_vector(3 downto 0);
+lm_y0_p6 _o <= std_ulogic_vector (lm_y_o)
+
+    Req: michaelkropfitsch
+    Prio: low
+
+    Idea: While you find "type_mismatch", consider an matrix of allowed conversion to
+    put in place if defined.
+    Add attribute %::typecast% and/or to port description:
+        signal_a   typea inst_a/port_a#typeb  -> signal typea signal_a;
+                                                    signal_a <= typea( port_a );
+                                                    entity inst_a ... port
+                                                        port_a inout type_b ..
+
+
+    Solution: done (tested by kropfitsch):
+        attach typecast function like port'typefunc
+                    ::type sig_type
+                -> signal : in|out|inout sig_type [ ( N downto M ) ]
+                    component port
+                        port : typefunc
+                    instances:
+                        port map
+                            sig_func( port ) => signal 
+
+
+- 20030404b/CR: Improve delta/ExCEL mode:
+    add ::header tags to stringify
+    split deltas into different columns
+
+    Done: old is green, new gets red;
+        minor issues: old color stays, if headers change we are lost, again ...
+
+- 20030403a/CR: add signal between constant and port map
+    Req: pallas
+    Prio: medium
+    Done: wig20030404
+    Testcase: constant (updated output)
+
+- 20030311d/Check: Complain about unrestricted busses ( ..._vector missing High/Low).
+    Req: wig
+    Prio: medium
+
+- 20030311b/Bug?: Check mde-b_real / cgs_ramclk / cgs_ramclk_s (i58_core)
+    Req: Pallas
+    Done: by aging :-) (works now)
+    
+- 20030311a/Bug: Check mde-b_real / cl24_init_frame
+    Req: Pallas
+    Done: by aging :-) (works now)
+
+- 20030228a/Feature: Write out evaluated contents of mix.cfg (and timestamp) and
+   command line switches and %EH to CONF sheet!
+   Reason: can be reevaluated on backend side, catch differences
+   
+   Req: wig
+   Prio: medium
+    Done: print CONF sheet
+
+   
+- ::variants: Default eq. "", if -variant VAR select Default + VAR.
+  ::variants := VAR1,VAR2,Default
+  ::variants := ""
+
+    Done: o.k. (see documentation)
+
+- 20030730f/Bug:
+
+1) hinter der `timescale 1ns/1ps; Anweisung steht noch ein Semikolon am Ende,
+    das da nichts zu suchen hat.
+
+    Req: mpallas
+    Prio: High
+    Solution: wig20030730, changed in MixWriter
+
+- 20030730e/Bug:
+
+2) im `define <bla> 16´b1111000011110000 muss zwischen der Bitbreite und
+    dem Bitvektor (und nur dort !) ein 'Tick' und kein 'Backtick' stehen.
+
+    Req: mpallas
+    Prio: High
+    Solution: wig20030731, changed in MixWriter, maybe further processing is needed
+
+- 20030730d/Bug:
+
+3) zusammengesetzte Signale in der Instanziieruzng:
+
+sowas geht in Verilog nicht:
+
+...
+   .svm_o[7:0](vs_a_p_i), // __W_PORT
+   .svm_o[9:8](svm_vs_b_p), // __W_PORT
+...
+
+es muss vielmehr (wie in VHDL) erst zusammengesetzt und dann zugewiesen werden:
+
+...
+   .svm_o(svm_vs_b_p & vs_a_p_i),
+...
+
+    Req: mpallas
+    Prio: high
+    Solution: reprogramm "port_map" ....
+
+- 20030811c/Bug: missing assing before Verilog constants:
+
+    Beispiel MDE-Toplevel (%HIGH% und %LOW%):
+
+    assign mix_logic1 = 1'b1;
+    assign mix_logic0 = 1'b0;
+
+    Req: mpallas
+    Prio: high
+    Solution: fixed in MixWriter.pm (appended assign in front of signal assignment )
+    
 - 20030714a/Bug: do not change _ to - in entity names!
 
     Req: mpit

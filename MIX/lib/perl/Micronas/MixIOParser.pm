@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / IOParser
 # | Modules:    $RCSfile: MixIOParser.pm,v $ 
-# | Revision:   $Revision: 1.10 $
+# | Revision:   $Revision: 1.11 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2003/08/11 07:16:23 $
+# | Date:       $Date: 2003/08/13 09:09:20 $
 # | 
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.10 2003/08/11 07:16:23 wig Exp $
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.11 2003/08/13 09:09:20 wig Exp $
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -36,6 +36,10 @@
 # |
 # | Changes:
 # | $Log: MixIOParser.pm,v $
+# | Revision 1.11  2003/08/13 09:09:20  wig
+# | Minor bug fixes
+# | Added -given mode for iocell.select (MDE-D)
+# |
 # | Revision 1.10  2003/08/11 07:16:23  wig
 # | Added typecast
 # | Fixed Verilog issues
@@ -120,9 +124,9 @@ sub _mix_iop_init();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixIOParser.pm,v 1.10 2003/08/11 07:16:23 wig Exp $';
+my $thisid		=	'$Id: MixIOParser.pm,v 1.11 2003/08/13 09:09:20 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixIOParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.10 $';
+my $thisrevision   =      '$Revision: 1.11 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -339,8 +343,12 @@ sub mix_iop_connioc ($$$) {
     my $r_cols = $r_sel;
     if ( $EH{'iocell'}{'select'} =~ m,given,io ) { # Don't worry about mismatch of
         # select signal and muxopt width ....
-        $r_cols = $r_h;
+        $r_cols = get_select_sigs( $r_h );
     }
+    #     foreach my $s ( grep( /^::muxopt/, keys( %$r_h ) ) ) {
+    #         $r_cols-> = $r_h;
+    # }
+
     # Iterate through all ::muxopt:N ...
     foreach my $s ( keys( %$r_cols ) ) {
         next if ( $s =~ m,^__, );
@@ -415,9 +423,16 @@ sub mix_iop_connioc ($$$) {
             }
 
             # Locally override select signal ...
+            # Caveat: this will work for one-hot, only!
             if ( $c[$c] =~ s,%sel\(\s*(\w+)\s*\),,io ) {
-                $tsel{$s} = $1;    
-                logwarn( "Info: local %SEL% override by %sel($1)!" );
+                my $locsel = $1;
+                if ( $EH{'iocell'}{'select'} =~ m,onehot, ) {
+                    $tsel{$s} = $locsel;
+                    logwarn( "Info: local %SEL% override by %sel($locsel)!" );
+                } else {
+                    logwarn( "WARNING: local %SEL% override by %sel($locsel) works in one-hot select mode, only!" );
+                    $EH{'sum'}{'warnings'}++;
+                }
             }
 
             # Accept ´0´, ´1´  ..
@@ -522,7 +537,13 @@ sub mix_iop_connioc ($$$) {
             add_conn( %d );
         }
     }
-    return \%tsel;
+    if ( $EH{'iocell'}{'select'} =~ m,given,io ) {
+        # Return what we got
+        return $r_sel;
+    } else {
+        # Possibly changed select lines ....
+        return \%tsel;
+    }
 }
 
 

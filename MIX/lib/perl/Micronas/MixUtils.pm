@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.25 $                                             |
+# | Revision:   $Revision: 1.26 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/08/12 15:09:45 $                                   |
+# | Date:       $Date: 2003/08/13 09:09:21 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.25 2003/08/12 15:09:45 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.26 2003/08/13 09:09:21 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,9 +31,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
-# | Revision 1.25  2003/08/12 15:09:45  wig
-# | Fixed Verilog Port Maps
-# | Added ::high/::low arb. string border
+# | Revision 1.26  2003/08/13 09:09:21  wig
+# | Minor bug fixes
+# | Added -given mode for iocell.select (MDE-D)
 # |
 # | Revision 1.24  2003/08/11 07:16:24  wig
 # | Added typecast
@@ -216,11 +216,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.25 2003/08/12 15:09:45 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.26 2003/08/13 09:09:21 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.25 $';
+my $thisrevision   =      '$Revision: 1.26 $';
 
-# | Revision:   $Revision: 1.25 $   
+# | Revision:   $Revision: 1.26 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1036,9 +1036,10 @@ $ex = undef; # Container for OLE server
 	    '::port'		=> [ qw(	1	0	1	%EMPTY%	8  )],
 	    '::name'		=> [ qw(	0	0	1	PAD_NAME	9  )],
 	    '::muxopt'	=> [ qw(	1	1	1	%EMPTY%	10  )],
+	    "::comment"	=> [ qw(	1	0	2	%EMPTY%	11 )],
 	    '::debug'	=> [ qw(	1	0	0	%NULL%	0 )],
 	    '::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
-	    'nr'		=> 11,  # Number of next field to print
+	    'nr'		=> 12,  # Number of next field to print
 	},
     },
 

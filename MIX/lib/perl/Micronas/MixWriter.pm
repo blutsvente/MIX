@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.25 $                                             |
+# | Revision:   $Revision: 1.26 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/08/12 15:09:46 $                                   |
+# | Date:       $Date: 2003/08/13 09:09:21 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.25 2003/08/12 15:09:46 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.26 2003/08/13 09:09:21 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,9 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
-# | Revision 1.25  2003/08/12 15:09:46  wig
-# | Fixed Verilog Port Maps
-# | Added ::high/::low arb. string border
+# | Revision 1.26  2003/08/13 09:09:21  wig
+# | Minor bug fixes
+# | Added -given mode for iocell.select (MDE-D)
 # |
 # | Revision 1.24  2003/08/11 07:16:25  wig
 # | Added typecast
@@ -188,9 +188,9 @@ sub mix_wr_unsplice_port ($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.25 2003/08/12 15:09:46 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.26 2003/08/13 09:09:21 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.25 $';
+my $thisrevision   =      '$Revision: 1.26 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1370,10 +1370,12 @@ sub _mix_wr_get_iveri ($$$) {
     my $ename = shift; # Name of entity ...
     my $tcom = shift;
 
+    # Possible Verilog modes. Please extend %ioky, %port and %portheader
     my %ioky = (
         'in' => "input",
         'out' => "output",
         'io' => "inout",
+        'inout' => "inout", 
         'not_valid' => "__W_INVALID_PORT",
     );
     
@@ -1383,6 +1385,7 @@ sub _mix_wr_get_iveri ($$$) {
         'out'   => "",
         'in'    => "",
         'io'    => "",
+        'inout' => "",
         'not_valid' => "",
         'wire'  => "",
     );
@@ -1390,6 +1393,7 @@ sub _mix_wr_get_iveri ($$$) {
         'out'   => "\t\t$tcom Generated Module Outputs:\n",
         'in'    => "\t\t$tcom Generated Module Inputs:\n",
         'io'    => "\t\t$tcom Generated Module In/Outputs:\n",
+        'inout'    => "\t\t$tcom Generated Module In/Outputs:\n",
         'not_valid' => "\t\t$tcom __W_NOT_VALID Module In/Outputs:\n",
         'wire'  => "\t\t$tcom Generated Wires:\n",
     );
