@@ -56,6 +56,9 @@ static struct {
 };
 
 
+static GtkTreeModel* create_i2c_model(void);
+
+
 GtkWidget* create_i2c_view()
 {
     int i = 0;
@@ -87,14 +90,11 @@ GtkWidget* create_i2c_view()
 	i++;
     }
 
-    // connect a cell data function
-    // gtk_tree_view_column_set_cell_data_func(col, renderer, age_cell_data_func, NULL, NULL);
+    model = (GtkTreeModel*) create_i2c_model();
 
-    //  model = create_iopoad_model();
+    gtk_tree_view_set_model(GTK_TREE_VIEW(view), model);
 
-    //    gtk_tree_view_set_model(GTK_TREE_VIEW(view), model);
-
-    //    g_object_unref(model); // destroy model automatically with view
+    g_object_unref(model); // destroy model automatically with view
 
     gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(view)), GTK_SELECTION_NONE);
 
@@ -102,24 +102,31 @@ GtkWidget* create_i2c_view()
 }
 
 
-static GtkTreeModel* create_and_fill_model(void)
+GtkTreeModel* create_i2c_model(void)
 {
+    int i = 0;
+    int numOfRows = mix_number_of_i2c_rows();
+    char ign[1024], com[1024], var[1024], dev[1024], sub[1024], inter[1024], blk[1024], dir[1024], spc[1024], clk[1024], rst[1024], bsy[1024], init[1024], rec[1024], b[1024];
+    char *row[] = {ign, com, var, dev, sub, inter, blk, dir, spc, clk, rst, bsy, init, rec, b};
     GtkTreeStore  *treestore;
-    GtkTreeIter    toplevel, child;
+    GtkTreeIter    toplevel;
 
-    //    treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT);
+    treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
+				             G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
+				             G_TYPE_STRING ,G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 
-    // Append a top level row and leave it empty
-    //    gtk_tree_store_append(treestore, &toplevel, NULL);
-    //    gtk_tree_store_set(treestore, &toplevel, COL_FIRST_NAME, "Maria", COL_LAST_NAME, "Incognito", -1);
+    while(i < numOfRows) {
 
-    // Append a second top level row, and fill it with some data
-    //    gtk_tree_store_append(treestore, &toplevel, NULL);
-    //    gtk_tree_store_set(treestore, &toplevel, COL_FIRST_NAME, "Jane", COL_LAST_NAME, "Average", COL_YEAR_BORN, (guint) 1962, -1);
+	mix_get_i2c_row(i, row);
 
-    // Append a child to the second top level row, and fill in some data
-    //    gtk_tree_store_append(treestore, &child, &toplevel);
-    //    gtk_tree_store_set(treestore, &child, COL_FIRST_NAME, "Janinita", COL_LAST_NAME, "Average", COL_YEAR_BORN, (guint) 1985, -1);
+	// Append a top level row and leave it empty
+	gtk_tree_store_append(treestore, &toplevel, NULL);
+        gtk_tree_store_set(treestore, &toplevel, COL_IGN, ign, COL_COM, com, COL_VAR, var, COL_DEV, dev, COL_SUB, sub,
+			   COL_INT, inter, COL_BLOCK, blk, COL_DIR, dir, COL_SPEC, spc, COL_CLOCK, clk, COL_RESET, rst,
+			   COL_BUSY, bsy, COL_INIT, init, COL_REC, rec, COL_B, b, -1);
+
+	i++;
+    }
 
     return GTK_TREE_MODEL(treestore);
 }

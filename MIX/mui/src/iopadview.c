@@ -15,6 +15,7 @@
 
 enum {
   COL_IGN = 0,
+  COL_COM,
   COL_CLASS,
   COL_ISPIN,
   COL_PIN,
@@ -44,6 +45,9 @@ static struct {
     {"::name", "text"},
     {"::muxopt", "text"},
 };
+
+
+static GtkTreeModel* create_iopad_model(void);
 
 
 GtkWidget* create_iopad_view(void)
@@ -77,65 +81,40 @@ GtkWidget* create_iopad_view(void)
 	i++;
     }
 
-    // connect a cell data function
-    // gtk_tree_view_column_set_cell_data_func(col, renderer, age_cell_data_func, NULL, NULL);
+    model = (GtkTreeModel*) create_iopad_model();
 
-    //  model = create_iopoad_model();
+    gtk_tree_view_set_model(GTK_TREE_VIEW(view), model);
 
-    //    gtk_tree_view_set_model(GTK_TREE_VIEW(view), model);
-
-    //    g_object_unref(model); // destroy model automatically with view
+    g_object_unref(model); // destroy model automatically with view
 
     gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(view)), GTK_SELECTION_NONE);
     return view;
 }
 
 
-static GtkTreeModel* create_and_fill_model(void)
+GtkTreeModel* create_iopad_model(void)
 {
+    int i = 0;
+    int numOfPads = mix_number_of_iopad_rows();
+    char ign[1024], com[1024], cls[1024], isp[1024], pin[1024], pad[1024], typ[1024], ioc[1024], prt[1024], nam[1024], mux[1024];
+    char *row[] = { ign, com, cls, isp, pin, pad, typ, ioc, prt, nam, mux};
     GtkTreeStore  *treestore;
-    GtkTreeIter    toplevel, child;
+    GtkTreeIter    toplevel;
 
-    //    treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT);
+    treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
+				   G_TYPE_STRING ,G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 
-    // Append a top level row and leave it empty
-    //    gtk_tree_store_append(treestore, &toplevel, NULL);
-    //    gtk_tree_store_set(treestore, &toplevel, COL_FIRST_NAME, "Maria", COL_LAST_NAME, "Incognito", -1);
+    while(i < numOfPads) {
 
-    // Append a second top level row, and fill it with some data
-    //    gtk_tree_store_append(treestore, &toplevel, NULL);
-    //    gtk_tree_store_set(treestore, &toplevel, COL_FIRST_NAME, "Jane", COL_LAST_NAME, "Average", COL_YEAR_BORN, (guint) 1962, -1);
+	mix_get_iopad_row(i, row);
 
-    // Append a child to the second top level row, and fill in some data
-    //    gtk_tree_store_append(treestore, &child, &toplevel);
-    //    gtk_tree_store_set(treestore, &child, COL_FIRST_NAME, "Janinita", COL_LAST_NAME, "Average", COL_YEAR_BORN, (guint) 1985, -1);
+	// Append a top level row and leave it empty
+	gtk_tree_store_append(treestore, &toplevel, NULL);
+	gtk_tree_store_set(treestore, &toplevel, COL_IGN, ign, COL_COM, com, COL_CLASS, cls, COL_ISPIN, isp, 
+			   COL_PIN, pin, COL_PAD, pad, COL_TYPE, typ, COL_IOCELL, ioc, COL_PORT, prt, COL_NAME, nam, COL_MUXOPT, mux, -1);
+
+	i++;
+    }
 
     return GTK_TREE_MODEL(treestore);
-}
-
-
-void age_cell_data_func(GtkTreeViewColumn *col, GtkCellRenderer *renderer, 
-			GtkTreeModel *model, GtkTreeIter *iter, gpointer user_data)
-{
-    guint  year_born;
-    guint  year_now = 2003; // to save code not relevant for the example
-    gchar  buf[64];
-
-    //    gtk_tree_model_get(model, iter, COL_YEAR_BORN, &year_born, -1);
-
-    if (year_born <= year_now && year_born > 0)	{
-      guint age = year_now - year_born;
-
-      g_snprintf(buf, sizeof(buf), "%u years old", age);
-
-      g_object_set(renderer, "foreground-set", FALSE, NULL); // print this normal
-    }
-    else {
-	g_snprintf(buf, sizeof(buf), "age unknown");
-
-	// make red
-	g_object_set(renderer, "foreground", "Red", "foreground-set", TRUE, NULL);
-    }
-
-    g_object_set(renderer, "text", buf, NULL);
 }

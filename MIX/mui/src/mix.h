@@ -189,5 +189,30 @@ bool mix_hasChilds();
  */
 const char* mix_getNextName(char *name);
 
+/**
+ * get the number of rows in the connection sheet
+ */
+int mix_number_of_conn_rows();
+/**
+ * get a row from conn sheet
+ */
+void mix_get_conn_row(int index, char *row[]);
+/**
+ * get the number of rows in the IOPad sheet
+ */
+int mix_number_of_iopad_rows();
+/**
+ * get a row from iopad sheet
+ */
+void mix_get_iopad_row(int index, char *row[]);
+/**
+ * get the number of rows in the I2C sheet
+ */
+int mix_number_of_i2c_rows();
+/**
+ * get a row from i2c sheet
+ */
+void mix_get_i2c_row(int index, char *row[]);
+
 
 #endif // __MIX_H_

@@ -280,3 +280,147 @@ const char* mix_getNextName(char *name)
     LEAVE;
 }
 
+
+int mix_number_of_conn_rows()
+{
+    dSP;
+    int count;
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+    PUTBACK;
+    call_pv("getNumConnRows", G_SCALAR);
+    SPAGAIN ;
+    count = POPi;
+    PUTBACK;
+    FREETMPS;
+    LEAVE;
+
+    return count;
+}
+
+
+void mix_get_conn_row(int index, char *row[])
+{
+    dSP;
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+    XPUSHs(sv_2mortal(newSViv(index)));
+    PUTBACK;
+    call_pv("getConnRow", G_ARRAY);
+    SPAGAIN ;
+    strcpy(row[0], POPp);
+    strcpy(row[1], POPp);
+    strcpy(row[2], POPp);
+    strcpy(row[3], POPp);
+    strcpy(row[4], POPp);
+    strcpy(row[5], POPp);
+    strcpy(row[6], POPp);
+    strcpy(row[7], POPp);
+    strcpy(row[8], POPp);
+    strcpy(row[9], POPp);
+    strcpy(row[10], POPp);
+    strcpy(row[11], POPp);
+    strcpy(row[12], POPp);
+    strcpy(row[13], POPp);
+    PUTBACK;
+    FREETMPS;
+    LEAVE;    
+} 
+
+
+int mix_number_of_iopad_rows()
+{
+    dSP;
+    int count;
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+    PUTBACK;
+    call_pv("getNumIOPadRows", G_SCALAR);
+    SPAGAIN ;
+    count = POPi;
+    PUTBACK;
+    FREETMPS ;
+    LEAVE;
+
+    return count;
+}
+
+
+void mix_get_iopad_row(int index, char *row[])
+{
+    dSP;
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+    XPUSHs(sv_2mortal(newSViv(index)));
+    PUTBACK;
+    call_pv("getIOPadRow", G_ARRAY);
+    SPAGAIN ;
+    strcpy(row[0], POPp);
+    strcpy(row[1], POPp);
+    strcpy(row[2], POPp);
+    strcpy(row[3], POPp);
+    strcpy(row[4], POPp);
+    strcpy(row[5], POPp);
+    strcpy(row[6], POPp);
+    strcpy(row[7], POPp);
+    strcpy(row[8], POPp);
+    strcpy(row[9], POPp);
+    strcpy(row[10], POPp);
+    PUTBACK;
+    FREETMPS;
+    LEAVE;
+}
+
+
+int mix_number_of_i2c_rows()
+{
+    dSP;
+    int count;
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+    PUTBACK;
+    call_pv("getNumI2CRows", G_SCALAR);
+    SPAGAIN ;
+    count = POPi;
+    PUTBACK ;
+    FREETMPS ;
+    LEAVE ;
+
+    return count;
+}
+
+
+void mix_get_i2c_row(int index, char *row[])
+{
+    dSP;
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+    XPUSHs(sv_2mortal(newSViv(index)));
+    PUTBACK;
+    call_pv("getIOPadRow", G_ARRAY);
+    SPAGAIN ;
+    strcpy(row[0], POPp);
+    strcpy(row[1], POPp);
+    strcpy(row[2], POPp);
+    strcpy(row[3], POPp);
+    strcpy(row[4], POPp);
+    strcpy(row[5], POPp);
+    strcpy(row[6], POPp);
+    strcpy(row[7], POPp);
+    strcpy(row[8], POPp);
+    strcpy(row[9], POPp);
+    strcpy(row[10], POPp);
+    strcpy(row[11], POPp);
+    strcpy(row[12], POPp);
+    strcpy(row[13], POPp);
+    strcpy(row[14], POPp);
+    PUTBACK;
+    FREETMPS;
+    LEAVE;
+}

@@ -214,47 +214,46 @@ void on_preferences_btn(GtkButton *button, gpointer user_data)
 void on_notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, gpointer user_data)
 {
     // int acview = get_current_page();
-    GtkWidget *view;
+    //    GtkWidget *view;
     //    if(view_modified(acview))
     // TODO: rerun MIX stage-1 if actual page is modified
 
     // clear actual pag
-    view = get_view_child(get_current_page());
+    /*    view = get_view_child(get_current_page());
     if(view != NULL)
-	gtk_widget_destroy(view);
+	gtk_widget_destroy(view);*/
 
-    // recreate new selected view on every selection and cleanup old one
-    switch(page_num) {
-        case 0: // selected hierarchical page
+    // recreate new selected view on every selection
+    /*    switch(page_num) {
+        case 0:
 	    view = (GtkWidget*) create_hier_view();
 	    gtk_widget_show_all(view);
 	    gtk_container_add(GTK_CONTAINER(get_view_frame(0)), view);
 	    set_view_child(view, page_num);
 	    break;
-        case 1: // selected connection page
+        case 1:
 	    view = (GtkWidget*) create_conn_view();
 	    gtk_widget_show_all(view);
 	    gtk_container_add(GTK_CONTAINER(get_view_frame(1)), view);
 	    set_view_child(view, page_num);
 	    break;
-        case 2: // selected IO-Pad page
+        case 2:
 	    view = (GtkWidget*) create_iopad_view();
 	    gtk_widget_show_all(view);
 	    gtk_container_add(GTK_CONTAINER(get_view_frame(2)), view);
 	    set_view_child(view, page_num);
 	    break;
-        case 3: // selected I2C page
+        case 3:
 	    view = (GtkWidget*) create_i2c_view();
 	    gtk_widget_show_all(view);
 	    gtk_container_add(GTK_CONTAINER(get_view_frame(3)), view);
 	    set_view_child(view, page_num);
 	    break;
-        case 4: // selected configuration page
-	    // page is static, so dont realloc it
+        case 4:
 	    break;
-        default: // unknown page requested
+        default:
 	    create_info_dialog("internal Error", "\n  an Error while switching to to Page!  \n");
-    }
+	    }*/
     set_current_page(page_num);
 }
 

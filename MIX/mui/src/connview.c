@@ -52,11 +52,12 @@ static struct {
     {"::comment", "text"},
 };
 
+static GtkTreeModel* create_conn_model(void);
+
 
 GtkWidget* create_conn_view(void)
 {
     int i = 0;
-    int num_ext_cols = 0;
     GtkTreeViewColumn   *col;
     GtkCellRenderer     *renderer;
     GtkWidget           *view;
@@ -64,7 +65,7 @@ GtkWidget* create_conn_view(void)
 
     view = gtk_tree_view_new();
     // --- Column #X ---
-    while(i < NUM_COLS + num_ext_cols) {
+    while(i < NUM_COLS) {
 
 	col = gtk_tree_view_column_new();
 
@@ -84,38 +85,42 @@ GtkWidget* create_conn_view(void)
 	i++;
     }
 
-    // connect a cell data function
-    // gtk_tree_view_column_set_cell_data_func(col, renderer, age_cell_data_func, NULL, NULL);
+    model = (GtkTreeModel*) create_conn_model();
 
-    //  model = create_conn_model();
+    gtk_tree_view_set_model(GTK_TREE_VIEW(view), model);
 
-    //    gtk_tree_view_set_model(GTK_TREE_VIEW(view), model);
-
-    //    g_object_unref(model); // destroy model automatically with view
+    g_object_unref(model); // destroy model automatically with view
 
     gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(view)), GTK_SELECTION_NONE);
     return view;
 }
 
 
-static GtkTreeModel* create_and_fill_model(void)
+GtkTreeModel* create_conn_model(void)
 {
+    int i = 0;
+    int numOfRows = mix_number_of_conn_rows();
+    char ign[1024], gen[1024], bun[1024], cls[1024], clk[1024], typ[1024], hig[1024], low[1024], mod[1024], nam[1024], out[1024], in[1024], des[1024], com[1024];
+    char *row[] = { ign, gen, bun, cls, clk, typ, hig, low, mod, nam, out, in, des, com};
     GtkTreeStore  *treestore;
-    GtkTreeIter    toplevel, child;
+    GtkTreeIter    toplevel;
 
-    //    treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT);
+    treestore = gtk_tree_store_new(NUM_COLS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
+				             G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
+				             G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 
-    // Append a top level row and leave it empty
-    //    gtk_tree_store_append(treestore, &toplevel, NULL);
-    //    gtk_tree_store_set(treestore, &toplevel, COL_FIRST_NAME, "Maria", COL_LAST_NAME, "Incognito", -1);
+    while(i < numOfRows) {
+	mix_get_conn_row(i,row);
 
-    // Append a second top level row, and fill it with some data
-    //    gtk_tree_store_append(treestore, &toplevel, NULL);
-    //    gtk_tree_store_set(treestore, &toplevel, COL_FIRST_NAME, "Jane", COL_LAST_NAME, "Average", COL_YEAR_BORN, (guint) 1962, -1);
+	// Append a top level row and leave it empty
+	gtk_tree_store_append(treestore, &toplevel, NULL);
+	gtk_tree_store_set(treestore, &toplevel, COL_IGN, ign, COL_GEN, gen, COL_BUNDLE, bun,
+			   COL_CLASS, cls, COL_CLOCK, clk, COL_TYPE, typ, COL_HIGH, hig, COL_LOW, low,
+			   COL_MODE, mod, COL_NAME, nam, COL_OUT, out, COL_IN, in, COL_DESC, des,
+			   COL_COM, com, -1);
 
-    // Append a child to the second top level row, and fill in some data
-    //    gtk_tree_store_append(treestore, &child, &toplevel);
-    //    gtk_tree_store_set(treestore, &child, COL_FIRST_NAME, "Janinita", COL_LAST_NAME, "Average", COL_YEAR_BORN, (guint) 1985, -1);
+	i++;
+    }
 
     return GTK_TREE_MODEL(treestore);
 }
