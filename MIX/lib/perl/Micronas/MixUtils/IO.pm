@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.8 $                                          |
+# | Revision:   $Revision: 1.9 $                                          |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/12/10 14:37:17 $                              |
+# | Date:       $Date: 2003/12/16 12:36:46 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.9  2003/12/16 12:36:46  abauer
+# | fixed csv: backslash before quota in cell
+# |
 # | Revision 1.8  2003/12/10 14:37:17  abauer
 # | *** empty log message ***
 # |
@@ -118,11 +121,11 @@ sub mix_utils_mask_excel ($);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.8 2003/12/10 14:37:17 abauer Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.9 2003/12/16 12:36:46 abauer Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.8 $';
+my $thisrevision    =      '$Revision: 1.9 $';
 
-# Revision:   $Revision: 1.8 $
+# Revision:   $Revision: 1.9 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -523,6 +526,7 @@ sub mix_utils_open_input(@) {
 	for my $c ( @i2c ) {
 	    $EH{'i2c'}{'parsed'}++;
 	    my @norm_i2c = convert_in( "i2c", $c);
+	    select_variant( \@norm_i2c);
 	    push(@$ai2c, @norm_i2c);
 	}
     }
@@ -935,7 +939,10 @@ sub open_csv($$$) {
 			    if($char=~ m/^\n$/) { 
 				$entry = $entry . " ";
 			    }
-			    else {
+			    elsif($char!~ m/^\\$/) {
+				if($lastchar eq "\\") {
+				    $entry = $entry . "\\";
+				}
 				$entry = $entry . $char;
 			    }
 			}
@@ -1195,7 +1202,8 @@ sub write_outfile($$$;$) {
     elsif( $EH{'format'}{'out'}=~ m/^sxc$/ || $file=~ m/\.sxc/) {
 	write_sxc($file, $sheet, $r_a, $r_c);
     }
-    elsif( $EH{'format'}{'out'}=~ m/^csv$/ || $file=~ m/\.csv/ || ($file=~ m/\.xls/ && $^O!~ m/MSWin/)) {
+    elsif( $EH{'format'}{'out'}=~ m/^csv$/ || $file=~ m/\.csv/ || $file=~ m/\.xls/) {
+	$file=~ s/\.xls$/\.csv/;
 	write_csv($file, $sheet, $r_a, $r_c);
     }
     else {
