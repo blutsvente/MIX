@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.35 $                                         |
-# | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/12/10 14:37:17 $                              |
+# | Revision:   $Revision: 1.36 $                                         |
+# | Author:     $Author: wig $                                         |
+# | Date:       $Date: 2003/12/22 08:33:16 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.35 2003/12/10 14:37:17 abauer Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.36 2003/12/22 08:33:16 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.36  2003/12/22 08:33:16  wig
+# | Added output.generate.xinout feature
+# |
 # | Revision 1.35  2003/12/10 14:37:17  abauer
 # | *** empty log message ***
 # |
@@ -236,11 +239,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.35 2003/12/10 14:37:17 abauer Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.36 2003/12/22 08:33:16 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.35 $';
+my $thisrevision   =      '$Revision: 1.36 $';
 
-# | Revision:   $Revision: 1.35 $
+# | Revision:   $Revision: 1.36 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2215,12 +2218,15 @@ sub add_portsig () {
         #
         # If signal mode is I |O | IO (not S), make sure it's connected to the
         # top level
+        # Add IO-port if not connected already ....
         #
-        if ( $EH{'output'}{'generate'}{'inout'} =~ m,mode,io ) {
-            if ( $mode =~ m,[IO],io or $mode =~ m,IO,io ) {
+        if ( $EH{'output'}{'generate'}{'inout'} =~ m,mode,io and
+            ( $mode =~ m,[IO],io or $mode =~ m,IO,io ) and
+            $signal !~ m/$EH{'output'}{'generate'}{'_re_xinout'}/o
+            ) {
             #wig20030625: adding IO switch ...
             #TODO: what about buffers and tristate? So far noone requested this ...
-            # Add IO-port if not connected already ....
+            #TODO: make "inout" more flexible, e.g. replace by io,o,i, ...
                 my @tops = get_top_cell();
                 my @addtop = ();
                 my @addtopn = ();
@@ -2273,7 +2279,6 @@ sub add_portsig () {
                     _mix_p_getconnected( $signal, "::in", $mode, \%modes );
                     _mix_p_getconnected( $signal, "::out", $mode, \%modes );
                 }
-            }
         }
 
         # Top cell is the common parent of all connected components ...
@@ -2283,7 +2288,7 @@ sub add_portsig () {
             logwarn( "ERROR: Signal $signal spawns several seperate trees! Will be dropped\n" );
             $EH{'sum'}{'errors'}++;
             next;
-            #TODO: How should such a case be handled? Should we add the top node here?
+            #TODO: How should such a case be handled? Should we add a common top node here?
         }
 
         # Keep name of top instance for later reuse ....

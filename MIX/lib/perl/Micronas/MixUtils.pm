@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.40 $                                         |
+# | Revision:   $Revision: 1.41 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2003/12/18 16:49:15 $                              |
+# | Date:       $Date: 2003/12/22 08:33:11 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.40 2003/12/18 16:49:15 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.41 2003/12/22 08:33:11 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.41  2003/12/22 08:33:11  wig
+# | Added output.generate.xinout feature
+# |
 # | Revision 1.40  2003/12/18 16:49:15  wig
 # | added OLE, again
 # | fixed misc. minor issues regarding delta mode
@@ -243,11 +246,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.40 2003/12/18 16:49:15 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.41 2003/12/22 08:33:11 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.40 $';
+my $thisrevision        =      '$Revision: 1.41 $';
 
-# Revision:   $Revision: 1.40 $   
+# Revision:   $Revision: 1.41 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -836,9 +839,11 @@ sub mix_init () {
 				      #   records for verilog subblocks (who wants that?)
 	      'use' => 'enty',     # apply ::use libraries to entity files, if not specified otherwise
 					# values: <enty|conf|arch|all>
-	      'inout' => 'mode,noxfix',	# Generate IO ports for TOP cell (or daughter of testbench
+	      'inout' => 'mode,noxfix',	# Generate IO ports for %TOP% cell (or daughter of testbench)
 					# controlled by ::mode I|O
-					# noxfix: do not attach pre/postfix to signal names
+					# noxfix: do not attach pre/postfix to signal names at %TOP%
+              'xinout'  => '',       # list of comma seperated signals to exclude from automatic wiring to %TOP%
+              '_re_xinout' => '',   # keeps converted content of xinout ...
 	      # 'port' => 'markgenerated',	# attach a _gIO to generated ports ...
 	      'delta' => 0,	    	# allows to use mix.cfg to preset delta mode
 	      'bak' => 0,		# Create backup of output HDL files
@@ -1390,6 +1395,16 @@ foreach my $conf (
 	    close( CFG );
 	}
     }
+}
+
+#
+# Post configuration processing
+#!wig20031219
+if ( $EH{'output'}{'generate'}{'xinout'} ) { # Convert comma seperated list into PERL-RE
+    my @si = split( "," , $EH{'output'}{'generate'}{'xinout'} );
+    $EH{'output'}{'generate'}{'_re_xinout'} = '^(' . join( "|", @si ) . ')$';
+} else {
+    $EH{'output'}{'generate'}{'_re_xinout'} = '^__NOEXCLUDESIGNAL__$';
 }
 
 } # End of mix_init
@@ -2783,4 +2798,3 @@ sub mix_utils_init_file($) {
 1;
 
 #!End
-

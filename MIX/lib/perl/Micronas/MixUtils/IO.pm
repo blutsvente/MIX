@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.10 $                                          |
+# | Revision:   $Revision: 1.11 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2003/12/18 16:49:45 $                              |
+# | Date:       $Date: 2003/12/22 08:33:30 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.11  2003/12/22 08:33:30  wig
+# | Added output.generate.xinout feature
+# |
 # | Revision 1.10  2003/12/18 16:49:45  wig
 # | added OLE support
 # |
@@ -126,11 +129,11 @@ sub windows_path ($);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.10 2003/12/18 16:49:45 wig Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.11 2003/12/22 08:33:30 wig Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.10 $';
+my $thisrevision    =      '$Revision: 1.11 $';
 
-# Revision:   $Revision: 1.10 $
+# Revision:   $Revision: 1.11 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2032,9 +2035,12 @@ sub clean_xls_sheets($) {
 	$ex->{DisplayAlerts}=0 if ( $EH{'script'}{'excel'}{'alerts'} =~ m,off,io );
 	$book->Activate;
 
-	# search for old sheets end remove them
-	foreach my $sh (in $book->{Worksheets} ) {
-	    if( $sh->{'Name'} =~ /^O_/ || $sh->{'Name'} =~ /DIFF_/) {
+	# search for old sheets end remove them: O_ DIFF_ SheetN
+	foreach my $sh (in( $book->{"Worksheets"} ) ) {
+	    if ( $sh->{'Name'} =~ /^O_/o or
+		$sh->{'Name'} =~ /DIFF_/o or
+		$sh->{'Name'} =~ /^Sheet\d+/o or
+		$sh->{'Name'} =~ /^Tabelle\d+/o ) {
 	        $book->{Worksheets}->{$sh->{'Name'}}->Delete;
 	    }
         }
