@@ -1,3 +1,7 @@
+#!/usr/bin/perl -w
+
+#!/usr/bin/perl -w
+
 #!/bin/sh -- # -*- perl -*- -w
 # TODO: Get better startup (look in FAQ ...)
 
@@ -21,12 +25,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id              : $Id: mix_0.pl,v 1.18 2003/11/27 09:08:25 abauer Exp $
+# | Id              : $Id: mix_0.pl,v 1.19 2003/11/27 10:24:29 abauer Exp $
 # | Name         : $Name:  $
 # | Description  :$Description:$
 # | Parameters  : -
-# | Version       : $Revision: 1.18 $
-# | Mod.Date    : $Date: 2003/11/27 09:08:25 $
+# | Version       : $Revision: 1.19 $
+# | Mod.Date    : $Date: 2003/11/27 10:24:29 $
 # | Author        : $Author: abauer $
 # | Phone         : $Phone: +49 89 54845 7275$
 # | Fax             : $Fax: $
@@ -41,6 +45,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |
 # | Changes:
 # | $Log: mix_0.pl,v $
+# | Revision 1.19  2003/11/27 10:24:29  abauer
+# | added i2c a_clk spreadsheet
+# |
 # | Revision 1.18  2003/11/27 09:08:25  abauer
 # | moved sheet handling into extra package
 # | added StarOffice Spreadsheet reader/writer
@@ -183,7 +190,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.18 $'; # RCS Id
+$::VERSION = '$Revision: 1.19 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # %EH comes from Mic::MixUtils ; All the configuration E-nvironment will be there
