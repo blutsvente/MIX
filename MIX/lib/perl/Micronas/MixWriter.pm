@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.36 $                                         |
+# | Revision:   $Revision: 1.37 $                                         |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/12/05 14:59:29 $                              |
+# | Date:       $Date: 2003/12/23 13:25:21 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.36 2003/12/05 14:59:29 abauer Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.37 2003/12/23 13:25:21 abauer Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.37  2003/12/23 13:25:21  abauer
+# | added i2c parser
+# |
 # | Revision 1.36  2003/12/05 14:59:29  abauer
 # | *** empty log message ***
 # |
@@ -209,9 +212,9 @@ sub mix_wr_unsplice_port ($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.36 2003/12/05 14:59:29 abauer Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.37 2003/12/23 13:25:21 abauer Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.36 $';
+my $thisrevision   =      '$Revision: 1.37 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -588,7 +591,7 @@ sub merge_entity ($$) {
 	$ient{'__LEAF__'}++;
     }
 
-    # Remember language for this entity ...    
+    # Remember language for this entity ...
     if ( exists( $inst->{'::lang'} ) and $inst->{'::lang'} ) {
         $ient{'__LANG__'}{lc($inst->{'::lang'})}++;
     } else {
@@ -613,9 +616,9 @@ sub compare_merge_entities ($$$$) {
 
     my $eflag = 1; # Is equal
 
-    # for all ports:    
+    # for all ports:
     for my $p ( keys( %$rent ) ) {
- 
+
 	next if ( $p =~ m,^__, ); # Skip internals like __LEAF__, __LANG__
        # Skip that if it does not exist in the new port map
         unless( exists( $rnew->{$p} ) ) {
@@ -649,7 +652,7 @@ sub compare_merge_entities ($$$$) {
             my $val = $1;
             my $re = $rent->{$p}{'high'};
             unless ( defined( $re ) and
-                     $re =~ m/^(\d+)$/o and 
+                     $re =~ m/^(\d+)$/o and
                      $re >= $val ) {
                 $rent->{$p}{'high'} = $val;
             }
@@ -659,7 +662,7 @@ sub compare_merge_entities ($$$$) {
             my $val = $1;
             my $re = $rent->{$p}{'low'};
             unless ( defined( $re ) and
-                     $re =~ m/^(\d+)$/o and 
+                     $re =~ m/^(\d+)$/o and
                      $re <= $val ) {
                 $rent->{$p}{'low'} = $val;
             }
@@ -692,7 +695,7 @@ sub compare_merge_entities ($$$$) {
 sub create_entity ($$) {
     my $ent = shift; # Entity name
     my $inst = shift; # Reference to instance.
-    
+
     if ( exists( $inst->{'::conn'}{'in'} ) ) {
         %{$entities{$ent}} = _create_entity( 'in', $inst->{'::conn'}{'in'} );
     } else {
@@ -1136,9 +1139,9 @@ sub _write_entities ($$$) {
             $entities{$ehname}{'__LEAF__'} == 0 or
             mix_wr_getlang( $ehname, $ae->{$ehname}{'__LANG__'}) ne "vhdl" )
         ) {
-            $write_flag = 0; # Do NOT write ...
+	$write_flag = 0; # Do NOT write ...
     }
-    
+
     if ( $write_flag ) {
         unless ( $fh = mix_utils_open( $file ) ) {
             logwarn( "Cannot open file $file to write entity declarations: $!" );
@@ -1399,7 +1402,7 @@ sub _mix_wr_get_iveri ($$$) {
         'not_valid' => "__W_INVALID_PORT",
         'parameter' => "parameter",
     );
-    
+
     my $gent = "";
     my $intf = "\t\t(\n"; # Module interface ...
     my %port = (
@@ -1425,7 +1428,7 @@ sub _mix_wr_get_iveri ($$$) {
     for my $p ( sort ( keys( %{$r_ent} ) ) ) {
 	    next if ( $p =~ m,^__,o ); #Skip internal data ...
             next if ( $p =~ m,^-- NO, );
-	    
+
 	    my $pdd = $r_ent->{$p};
 
 	    if ( $pdd->{'mode'} =~ m,^\s*(generic|G|P),io ) {
@@ -1579,7 +1582,7 @@ sub write_architecture () {
 
     # Set up architecture template;
     tmpl_arch();
-    
+
     # open output file
     my %seen = ();
     my $efname = $EH{'outarch'};
@@ -1671,11 +1674,11 @@ sub gen_instmap ($;$$) {
     my $inst = shift;
     my $lang = shift || lc( $EH{'macro'}{'%LANGUAGE%'} );
     my $tcom = shift || $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'default'};
-    
+
     my $map = "";
     my $gmap = "";
     my $dummies = []; # Reference 
-    
+
     my @in = ();
     my @out = ();
     my $enty = $hierdb{$inst}{'::entity'};
@@ -1689,7 +1692,7 @@ sub gen_instmap ($;$$) {
     if ( exists( $rinstc->{'generic'} ) ) {
         $gmap .= generic_map( 'in', $inst, $enty, $rinstc->{'generic'}, $lang );
     }
- 
+
     $map .= port_map( 'out', $inst, $enty, $lang, $rinstc->{'out'}, \@out );
 
     # Sort map ...
@@ -1754,7 +1757,7 @@ sub gen_instmap ($;$$) {
                 $map .
                 $EH{'macro'}{'%S%'} x 2 . $tcom . " End of Generated Instance Port Map for $inst\n";
     }
-                
+
     return( $map, \@in, \@out);
 }
 
@@ -1772,7 +1775,7 @@ sub mix_wr_unsplice_port ($$$) {
     my $map = shift;
     my $lang = shift;
     my $tcom = shift;
-    
+
     my @out = ();
     my %col = ();
     my @dummies = ();
@@ -3564,7 +3567,7 @@ sub gen_concur_port($$$$$$$$;$$) {
                 logwarn( "WARNING: Connection width mismatch for instance $inst, signal $signal, port $port: $tswidth vs. $tpwidth!");
                 $EH{'sum'}{'warnings'}++;
             }
-            
+
             # in:               SIGNAL <= PORT;
             # out (et al.)   PORT <= SIGNAL;
             if ( $lang =~ m,^veri,io ) {
@@ -3614,7 +3617,7 @@ sub is_comment ($$) {
         return 0;
     }
 }
-        
+
 sub strip_empty ($) {
     my $text = shift;
 
@@ -3632,7 +3635,7 @@ sub strip_empty ($) {
     # $text =~ s,^\s*--\sgeneric\s*\(\s+--[^\n]*\n(^(\s*--[^\n]*|\s*)\n$)*^\s*\)\s*;,\t\t-- nothing,siomg;
 
     # 20030227 I believe I no longer need that ...
-    # $text =~ s,^(\s*--\s*generics:\s*$)?^\s*generic\s*\(\s*$(\s*--.*$)*\s*\);,,iomg    
+    # $text =~ s,^(\s*--\s*generics:\s*$)?^\s*generic\s*\(\s*$(\s*--.*$)*\s*\);,,iomg
 #    $text =~ s
 #    $text =~ s,\s*--\s*Generics:\s+generic\s*\(\s+--\s+Generated\s+Generics\s+for\s+Entity\s+\w+\s+\);,,siog;
 #    $text =~ s,generic\s*\(\s+--\s+Generated\s+Generics\s+for\s+Entity\s+\w+\s+\);,,siog;
@@ -3687,7 +3690,7 @@ sub count_load_driver ($$$$) {
             'in' => 'driver',
             'out' => 'load',
     );
-    
+
     foreach my $s ( keys( %$rinsig ) ) {
         for my $io ( qw( in out ) ) {
             if ( exists( $rinsig->{$s}{$io} ) and $rinsig->{$s}{$io} ) {
@@ -3748,7 +3751,7 @@ sub count_load_driver ($$$$) {
                         ( $s =~ m/%(HIGH|LOW)(_BUS)?%/o );
                 }
                 $EH{'sum'}{'nodriver'}++;
-                $conndb{$s}{'::comment'} .= "__W_MISSING_DRIVER/$inst,";            
+                $conndb{$s}{'::comment'} .= "__W_MISSING_DRIVER/$inst,";
                 $rinsig->{$s}{'driver'} = 0;
             } elsif ( $rinsig->{$s}{'driver'} > 1 ) {
                 if ( $EH{'output'}{'warnings'} =~ m/driver/io ) {
@@ -3760,12 +3763,12 @@ sub count_load_driver ($$$$) {
                 $error_flag++;
                 $EH{'sum'}{'multdriver'}++;
             }
-        }   
+        }
     }
     return $error_flag;
 
 }
-   
+
 ####################################################################
 ## signal_port_resolve
 ## find if signals used internally and having the same name as the port it's connected to.
@@ -3790,7 +3793,7 @@ sub signal_port_resolve ($$) {
     }
 
     my %map = ();
-    
+
     for my $p ( keys( %{$entities{$enty}} ) ) {
         next if ( $p =~ m,^__,io );
         next if ( $p =~ m,^%,io ); # Special ports/signals will be skipped ...
@@ -3810,7 +3813,7 @@ sub signal_port_resolve ($$) {
     }
 
     return( %map );
-}    
+}
 
 
 ####################################################################
@@ -3830,7 +3833,7 @@ sub write_configuration () {
 
     # Set up configuration template;
     tmpl_conf();
-    
+
     # open output file
     my %seen = ();
     my $efname = $EH{'outconf'};
@@ -3851,7 +3854,7 @@ sub write_configuration () {
 
 		my $e = $hierdb{$i}{'::entity'};
                 next if ( $e eq "W_NO_ENTITY" );
-                
+
 		unless ( exists( $seen{$e} ) ) {
 		    # my %a; $a{$e} = %{$hierdb{$i}}; # Take one slice from the hierdb ...
 		    $seen{$e} = 1;  #TODO ?????
@@ -3873,12 +3876,12 @@ sub write_configuration () {
                         # Stip of entity name, replace _ by - and attach ...
                         if ( $ce =~ s,^\Q$e_fn\E,, ) { # entity name in configurartion
                             $ce =~ s,_,-,og; # Replace _ with - ... Micronas Design Guideline
-                            $ce = $e_fn . $ce;  
+                            $ce = $e_fn . $ce;
                         } else {
                             $ce =~ s,_,-,og; # Replace _ with - ... Micronas Design Guideline
                         }
                     }
-                        
+
                     # Language? vhdl, verilog or what else?
                     my $lang = lc( $hierdb{$i}{'::lang'} ) || $EH{'macro'}{'%LANGUAGE%'};
                     unless ( exists ( $EH{'template'}{$lang} ) ) {
@@ -3917,8 +3920,8 @@ sub _write_configuration ($$$$) {
     my %macros = %{$EH{'macro'}}; # Take predefined macro replacement set
 
     $macros{'%INSTNAME%'} = $instance;
-    $macros{'%ARCHNAME%'} = $entity . $EH{'postfix'}{'POSTFIX_ARCH'};    
-    $macros{'%CONFNAME%'} = $entity . $EH{'postfix'}{'POSTFIX_CONF'}; 
+    $macros{'%ARCHNAME%'} = $entity . $EH{'postfix'}{'POSTFIX_ARCH'};
+    $macros{'%CONFNAME%'} = $entity . $EH{'postfix'}{'POSTFIX_CONF'};
 
     if ( -r $filename and $EH{'outconf'} ne "COMB" ) {
 	logtrc(INFO, "Configuration definition file $filename will be overwritten!" );
@@ -3934,19 +3937,19 @@ sub _write_configuration ($$$$) {
 
     $macros{'%VHDL_USE%'} = use_lib( "conf", $instance );
 
-    my $et = replace_mac( $EH{'template'}{'vhdl'}{'conf'}{'head'}, \%macros);    
+    my $et = replace_mac( $EH{'template'}{'vhdl'}{'conf'}{'head'}, \%macros);
 
     my %seenthis = ();
 
     #
     # Go through all instances and generate a configuration for each !entity!
-    #TODO: or instance?
+    # TODO: or instance?
     #
     my @keys = ( $instance eq "__COMMON__" ) ? keys( %$ae ) : ( $instance );
     for my $i ( sort( @keys ) ) {
 
 	# Do not write configurations for leaf cells ...
-	#TODO: Check
+	# TODO: Check
 	if ( $EH{'output'}{'generate'}{'conf'} =~ m,noleaf,io and
 	    $hierdb{$i}{'::treeobj'}->daughters == 0  ) {
 		next;
@@ -3954,11 +3957,11 @@ sub _write_configuration ($$$$) {
 	# Skip some internals
 	if ( $i eq "W_NO_ENTITY" ) { next; };
 	if ( $i eq "W_NO_CONFIG" ) { next; };
-    
+
 	my $aent = $ae->{$i}{'::entity'};
 
 	if ( $aent eq "W_NO_ENTITY" ) { next; }
-	
+
 	$macros{'%ENTYNAME%'} = $aent;
 	$macros{'%CONFNAME%'} = $ae->{$i}{'::config'} . $EH{'postfix'}{'POSTFIX_CONF'};
 	$macros{'%ARCHNAME%'} = $ae->{$i}{'::arch'} . $EH{'postfix'}{'POSTFIX_ARCH'};
@@ -3979,9 +3982,10 @@ sub _write_configuration ($$$$) {
 
 	my $lang = lc ( $hierdb{$i}{'::lang'} || $EH{'macro'}{'%LANGUAGE%'} || 'vhdl' ) ;
         my $tcom = $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'default'} || "##";
-        
+
 	my $node = $ae->{$i}{'::treeobj'};
 	for my $daughter ( sort( { $a->name cmp $b->name } $node->daughters ) ) {
+
 	    my $d_name = $daughter->name;
 	    my $d_enty = $hierdb{$d_name}{'::entity'};
 	    my $d_conf = $hierdb{$d_name}{'::config'};
@@ -4011,10 +4015,10 @@ sub _write_configuration ($$$$) {
 	$et .= replace_mac( $tpg, \%macros );
 
     }
-     
+
     $et .=  $EH{'template'}{'vhdl'}{'conf'}{'foot'};
     $et = replace_mac( $et, \%macros );
-    
+
     mix_utils_print( $fh, $et );
 
     mix_utils_close( $fh, $filename );
@@ -4091,13 +4095,13 @@ sub use_lib ($$) {
             $all .= "use $p.all;\n"; # Attach .all by default ....
         }
     }
-    
+
     if ( $all ) {
         $all = "-- Generated use statements\n" . $all;
     } else {
         $all = $EH{'macro'}{'%VHDL_NOPROJ%'} . "/" . $type . "\n";
     }
-    
+
     return $all;
 
 }

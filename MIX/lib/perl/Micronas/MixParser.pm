@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.36 $                                         |
-# | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2003/12/22 08:33:16 $                              |
+# | Revision:   $Revision: 1.37 $                                         |
+# | Author:     $Author: abauer $                                         |
+# | Date:       $Date: 2003/12/23 13:25:20 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.36 2003/12/22 08:33:16 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.37 2003/12/23 13:25:20 abauer Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.37  2003/12/23 13:25:20  abauer
+# | added i2c parser
+# |
 # | Revision 1.36  2003/12/22 08:33:16  wig
 # | Added output.generate.xinout feature
 # |
@@ -166,6 +169,7 @@ require Exporter;
       apply_hier_gen
       apply_conn_gen
       add_inst
+      add_tree_node
       add_conn
       mix_p_updateconn
       mix_p_retcprop
@@ -239,11 +243,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.36 2003/12/22 08:33:16 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.37 2003/12/23 13:25:20 abauer Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.36 $';
+my $thisrevision   =      '$Revision: 1.37 $';
 
-# | Revision:   $Revision: 1.36 $
+# | Revision:   $Revision: 1.37 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -793,10 +797,10 @@ sub add_tree_node ($$) {
     }
 
     #!wig20030404: Caseing ...
-    $parent = mix_check_case( "inst", $parent );
+    $parent = mix_check_case( "inst", $parent);
 
     if ( defined( $hierdb{$parent} ) and $hierdb{$parent} ) {
-            $hierdb{$parent}{'::treeobj'}->add_daughter( $node );
+            $hierdb{$parent}{'::treeobj'}->add_daughter( $node);
     } else {
             my $parnode = Tree::DAG_Node -> new;
             $parnode->name($parent);
@@ -815,6 +819,7 @@ sub add_tree_node ($$) {
 }
 
 sub merge_inst ($%) {
+
     my $name = shift;
     my %data = @_;
 
@@ -868,10 +873,10 @@ sub merge_inst ($%) {
         if ( defined( $hierdb{$name}{$i} ) and
             $hierdb{$name}{$i} ne "" ) {
             if ( defined( $EH{'hier'}{'field'}{$i} ) and exists( $EH{'hier'}{'field'}{$i} ) and
-                ( $hierdb{$name}{$i} ne $EH{'hier'}{'field'}{$i}[3] ) ) { # Leave that value ....
-                 logtrc("INFO", "field $i for $name already filled");
+		 ( $hierdb{$name}{$i} ne $EH{'hier'}{'field'}{$i}[3] ) ) { # Leave that value ....
+		logtrc("INFO", "field $i for $name already filled");
             } else {
-                    if ( $data{$i} ne "" ) { $hierdb{$name}{$i} = $data{$i} };
+		if ( $data{$i} ne "" ) { $hierdb{$name}{$i} = $data{$i} };
             }
         } else {
         # Overwrite data ??? Is that always the rigth way to go

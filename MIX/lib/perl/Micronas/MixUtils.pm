@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.41 $                                         |
-# | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2003/12/22 08:33:11 $                              |
+# | Revision:   $Revision: 1.42 $                                         |
+# | Author:     $Author: abauer $                                         |
+# | Date:       $Date: 2003/12/23 13:25:21 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.41 2003/12/22 08:33:11 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.42 2003/12/23 13:25:21 abauer Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.42  2003/12/23 13:25:21  abauer
+# | added i2c parser
+# |
 # | Revision 1.41  2003/12/22 08:33:11  wig
 # | Added output.generate.xinout feature
 # |
@@ -246,11 +249,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.41 2003/12/22 08:33:11 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.42 2003/12/23 13:25:21 abauer Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.41 $';
+my $thisrevision        =      '$Revision: 1.42 $';
 
-# Revision:   $Revision: 1.41 $   
+# Revision:   $Revision: 1.42 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -973,6 +976,8 @@ sub mix_init () {
 		    PREFIX_KEYWORD	mix_key_
 		    POSTFIX_CONSTANT	_c
 		    POSTFIX_PARAMETER	_p
+	            POSTFIX_IIC_OUT     _iic_o
+	            POSTFIX_IIC_IN      _iic_i
 		)
     },
     'pad' => {
@@ -1015,6 +1020,12 @@ sub mix_init () {
 					# auto := choose width accordingly to wired io busses
 					# const := use %SEL% defined width
 
+    },
+    'i2c_cell' => {    # default prefixes for i2c interface units
+	    'type'               => 'ser', # default Register type
+	    '%IIC_SER_REG%'    => 'iic_ser_reg_', # prefix for serial subregister entity
+	    '%IIC_PAR_REG%'    => 'iic_par_reg_', # prefix for parallel subregister entity
+	    '%IIC_SYNC%'       => 'sync_iic',  # prefix for sync block
     },
     #
     # Possibly read configuration details from the CONF sheet, see -conf option
@@ -1118,12 +1129,12 @@ sub mix_init () {
 	    #                                   0       1       2	3       4
 	    '::ign' 		=> [ qw(	0	0	1	%EMPTY% 	1 )],
 	    '::class'		=> [ qw(	1	0	1	WARNING_NOT_SET	2 )],
-	    '::ispin'		=> [ qw(	0	0	1	%EMPTY%	        3 )],
+	    '::ispin'		=> [ qw(	0	0	1	%EMPTY%	3 )],
 	    '::pin'		=> [ qw(	0	0	1	WARNING_PIN_NR	4 )],
 	    '::pad'		=> [ qw(	0	0	1	WARNING_PAD_NR	5 )],
 	    '::type'		=> [ qw(	1	0	1	DEFAULT_PIN	6 )],
 	    '::iocell'		=> [ qw(	1	0	1	DEFAULT_IO	7 )],
-	    '::port'		=> [ qw(	1	0	1	%EMPTY%	        8 )],
+	    '::port'		=> [ qw(	1	0	1	%EMPTY%	8 )],
 	    '::name'		=> [ qw(	0	0	1	PAD_NAME	9 )],
 	    '::muxopt'	=> [ qw(	1	1	1	%EMPTY%	        10 )],
 	    "::comment"	=> [ qw(	1	0	2	%EMPTY%	        11 )],
@@ -1147,29 +1158,28 @@ sub mix_init () {
 	    #							  Defaultvalue
 	    #								    PrintOrder
 	    #                                   0       1       2	3       4
-	    '::ign' 		=> [ qw(	0	0	1	%EMPTY%     1 )],
-	    '::variants'	=> [ qw(	1	0	0	Default	   2 )],
-	    '::width'		=> [ qw(	0	0	1	16         3 )],
-	    '::dev'             => [ qw(        0       0       1       %EMPTY%     4)],
-	    '::sub'             => [ qw(        0       0       1       %EMPTY%     5)],
-	    '::interface'       => [ qw(        0       0       1       %EMPTY%     6)],	  
-	    '::block'           => [ qw(        0       0       1       %EMPTY%     7)],
-	    '::dir'             => [ qw(        0       0       1       RW          8)],
-	    '::spec'            => [ qw(        0       0       0       NTO         9)],
-	    '::clock'           => [ qw(        0       0       1       %EMPTY%     10)],
-	    '::reset'           => [ qw(        0       0       0       %EMPTY%     11)],
-	    '::busy'            => [ qw(        0       0       0       %EMPTY%     12)],
-	    # '::readDone'        => [ qw(        0       0       0       %EMPTY%     13)],
-	    '::b'		=> [ qw(	0	1	1	%EMPTY%	    13 )],
-	    '::init'            => [ qw(        0       0       0       0           14)],
-	    '::rec'             => [ qw(        0       0       0       0           15)],
-	    # '::range'	         => [ qw(	1	0	0	%EMPTY%	   17 )],
-	    # '::name'		 => [ qw(	0	1	0	%EMPTY%	   18 )],
-	    '::comment'	        => [ qw(	1	0	2	%EMPTY%	   16 )],
-            "::default"	=> [ qw(	1	1	0	%EMPTY%	0 )],	    
-	    '::debug'	=> [ qw(	1	0	0	%NULL%	        0 )],
-	    '::skip'		=> [ qw(	0	1	0	%NULL% 	        0 )],            
-	    'nr'		=> 17,  # Number of next field to print
+	    '::ign' 		=> [ qw(	0	0	1	%EMPTY%     1)],
+	    '::variants'	=> [ qw(	1	0	0	Default	     2)],
+	   # '::inst'            => [ qw(        0       0       0       W_NO_INST   2)],
+	   # '::width'		=> [ qw(	0	0	0	16           3)],
+	    '::dev'             => [ qw(        0       0       1       %EMPTY%     3)],
+	    '::sub'             => [ qw(        0       0       1       %EMPTY%     4)],
+	    '::interface'       => [ qw(        0       0       1       %EMPTY%     5)],
+	   # '::block'           => [ qw(        0       0       1       %EMPTY%    7)],
+	    '::dir'             => [ qw(        0       0       1       RW           6)],
+	    '::spec'            => [ qw(        0       0       0       NTO          7)],
+	    '::clock'           => [ qw(        0       0       1       %OPEN%      8)],
+	    '::reset'           => [ qw(        0       0       1       %OPEN%      9)],
+	    '::busy'            => [ qw(        0       0       0       %EMPTY%     10)],
+	   # '::readDone'        => [ qw(        0       0       0       %EMPTY%    13)],
+	    '::b'		=> [ qw(	0	1	1	%OPEN%      11)],
+	    '::init'            => [ qw(        0       0       0       0            12)],
+	    '::rec'             => [ qw(        0       0       0       0            13)],
+	   # '::range'	         => [ qw(	1	0	0	%EMPTY%     17)],
+	   # '::name'		 => [ qw(	0	1	0	%EMPTY%     18)],
+	    '::comment'	        => [ qw(	1	1	2	%EMPTY%     14)],
+	    '::default'	        => [ qw(	1	1	0	%EMPTY%     0)],
+	    'nr'		=> 15,  # Number of next field to print
 	},
     },
     # VI2C Definitions:
@@ -1260,9 +1270,15 @@ sub mix_init () {
 	    "%IMPORT_I%"	=> "I", # Meta instance for import mode
 	    "%IMPORT_O%"	=> "O", # Meta instance for import mode
 	    "%IMPORT_CLK%"	=> "__IMPORT_CLK__", # import mode, default clk
-	    "%IMPORT_BUNDLE%" => "__IMPORT_BUNDLE__", #
+	    "%IMPORT_BUNDLE%"   => "__IMPORT_BUNDLE__", #
 	    "%BUFFER%"		=> "buffer",
 	    '%H%'		=> '$',		# 'RCS keyword saver ...
+	    '%IIC_IF%'         => 'iic_if_', # prefix for i2c interface
+	    '%RREG%'            => 'read_reg_', # prefix for i2c read registers
+	    '%WREG%'            => 'write_reg_', # prefix for i2c write registers
+	    '%RWREG%'           => 'read_write_reg_', # prefix for i2c read-write registers
+	    '%IIC_TRANS%'     => 'transceiver_iic_if_', # prefix for i2c transceiver
+	    '%IIC_SYNC%'       => 'sync_if_', # prefix for i2c sync block
     },
     # Counters and generic messages
     'ERROR' => '__ERROR__',

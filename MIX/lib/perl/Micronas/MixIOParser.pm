@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / IOParser
 # | Modules:    $RCSfile: MixIOParser.pm,v $ 
-# | Revision:   $Revision: 1.12 $
+# | Revision:   $Revision: 1.13 $
 # | Author:     $Author: abauer $
-# | Date:       $Date: 2003/12/04 14:56:31 $
+# | Date:       $Date: 2003/12/23 13:25:20 $
 # | 
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.12 2003/12/04 14:56:31 abauer Exp $
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.13 2003/12/23 13:25:20 abauer Exp $
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -36,6 +36,9 @@
 # |
 # | Changes:
 # | $Log: MixIOParser.pm,v $
+# | Revision 1.13  2003/12/23 13:25:20  abauer
+# | added i2c parser
+# |
 # | Revision 1.12  2003/12/04 14:56:31  abauer
 # | corrected cvs problems
 # |
@@ -103,7 +106,7 @@ use Log::Agent;
 use Log::Agent::Priorities qw(:LEVELS);
 # use Tree::DAG_Node; # tree base class
 
-use Micronas::MixUtils qw( %EH );
+use Micronas::MixUtils qw( %EH);
 use Micronas::MixParser;
 
 # Prototypes:
@@ -124,9 +127,9 @@ sub _mix_iop_init();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixIOParser.pm,v 1.12 2003/12/04 14:56:31 abauer Exp $';
+my $thisid		=	'$Id: MixIOParser.pm,v 1.13 2003/12/23 13:25:20 abauer Exp $';
 my $thisrcsfile	=	'$RCSfile: MixIOParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.12 $';
+my $thisrevision   =      '$Revision: 1.13 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
