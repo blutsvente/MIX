@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.53 $                                         |
-# | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2004/08/04 12:16:48 $                              |
+# | Revision:   $Revision: 1.54 $                                         |
+# | Author:     $Author: wig $                                         |
+# | Date:       $Date: 2004/08/04 13:28:46 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.53 2004/08/04 12:16:48 abauer Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.54 2004/08/04 13:28:46 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.54  2004/08/04 13:28:46  wig
+# | Updates for TYPECAST
+# |
 # | Revision 1.53  2004/08/04 12:16:48  abauer
 # | - added multiple header count
 # |
@@ -277,11 +280,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.53 2004/08/04 12:16:48 abauer Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.54 2004/08/04 13:28:46 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.53 $';
+my $thisrevision        =      '$Revision: 1.54 $';
 
-# Revision:   $Revision: 1.53 $   
+# Revision:   $Revision: 1.54 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -913,6 +916,7 @@ sub mix_init () {
 ',   # This gets used by if the magma workaround is set ...
                     '_magma_mod_'   => '`%::entity%_inst_name', # module name
                     '_magma_uamn_' => '',   # Internal use, storage for generated defines
+                    'typecast'  => 'portmap',  # Synopsys tools: use intermediate signal := intsig
 	      }
         },
 	'ext' =>      {   'vhdl' => 'vhd',
@@ -1038,6 +1042,7 @@ sub mix_init () {
 		    PREFIX_IOC_GEN	ioc_
 		    POSTFIX_IOC_GEN	%EMPTY%
 		    PREFIX_SIG_INT	s_int_
+                    PREFIX_TC_INT       s_mix_tc_
 		    POSTFIX_SIGNAL	_s
 		    PREFIX_INSTANCE	i_
 		    POSTFIX_INSTANCE	%EMPTY%
@@ -1348,6 +1353,7 @@ sub mix_init () {
 	    "%HIGH_BUS%"	=> lc("MIX_LOGIC1_BUS"), # dito.
 	    "%LOW_BUS%"	=> lc("MIX_LOGIC0_BUS"), # dito.
 	    "%CONST%"		=> "__CONST__", # Meta instance, used to apply constant values
+            "%BUS%"               => "__BUS__", # Meta instance for bus connections
 	    "%TOP%"		=> "__TOP__", # Meta instance, TOP cell
 	    "%PARAMETER%"	=> "__PARAMETER__",	# Meta instance: stores paramter
 	    "%GENERIC%"		=> "__GENERIC__", # Meta instance, stores generic default
@@ -1365,12 +1371,15 @@ sub mix_init () {
 	    '%RWREG%'           => 'read_write_reg_', # prefix for i2c read-write registers
 	    '%IIC_TRANS%'     => 'transceiver_iic_if_', # prefix for i2c transceiver
 	    '%IIC_SYNC%'       => 'sync_if_', # prefix for i2c sync block
+            '%TPYECAST_ENT%' => '__TYPECAST_ENT__', # dummy typecast support entity
+            '%TYPECAST_CONF%' => '__TYPECAST_CONF__', # dummy for typecast ...
     },
     # Counters and generic messages
     'ERROR' => '__ERROR__',
     'WARN' => '__WARNING__',
     'CONST_NR' => 0,   # Some global counters
     'GENERIC_NR' => 0,
+    'TYPECAST_NR' => 0,
     'DELTA_NR' => 0,
     'DELTA_INT_NR' => 0,
     'DELTA_VER_NR' => 0, 
