@@ -1,3 +1,45 @@
+2003-11-10  wig
+	* TODO.txt:
+	* lib/perl/Micronas/MixParser.pm:
+	* lib/perl/Micronas/MixUtils.pm:
+	* lib/perl/Micronas/MixWriter.pm:
+	* t/open/inst_a_e-c.vhd:
+	* t/open/inst_a_e-e.vhd:
+	* t/open/inst_a_e-rtl-a.vhd:
+	* t/open/inst_a_e-rtl-conf-c.vhd:
+	* t/open/inst_b_e-c.vhd:
+	* t/open/inst_b_e-e.vhd:
+	* t/open/inst_b_e-rtl-a.vhd:
+	* t/open/inst_b_e-rtl-conf-c.vhd:
+	* t/open/inst_t_e-c.vhd:
+	* t/open/inst_t_e-e.vhd:
+	* t/open/inst_t_e-rtl-a.vhd:
+	* t/open/inst_t_e-rtl-conf-c.vhd:
+	* t/open/mix_0.pl.out:
+	* t/open/open-mixed.xls:
+	* t/open/open-t.out:
+	* t/open/open-t.out.0:
+	* t/open/open.pld:
+	* t/open/verilog/inst_t_e.v:
+	* t/open/verilog/mix_0.pl.out:
+	* t/open/verilog/open-mixed.xls:
+	* t/open/verilog/open-t.out:
+	* t/open/verilog/open-t.out.0:
+	* t/open/verilog/open.pld:
+	* t/open/verilog_ndmy/inst_t_e.v:
+	* t/open/verilog_ndmy/mix.cfg:
+	* t/open/verilog_ndmy/mix_0.pl.out:
+	* t/open/verilog_ndmy/open-mixed.xls:
+	* t/open/verilog_ndmy/open-update.bat:
+	* t/open/verilog_ndmy/open.bat:
+	* t/open/verilog_ndmy/open.pld:
+	* t/t.pl:
+		Adding testcase for verilog: create dummy open wires
+
+	* a_clk.xls:
+	* a_clk_io.xls:
+		Update of examples a_clk and a_clk_io
+
 2003-10-29  wig
 	* TODO.txt:
 	* doc/parts/simple/mix_simple.xls:
@@ -29,6 +71,18 @@
 	* howto/howto.pld:
 	* howto/mix.cfg:
 		Changing type of howto examples from bin to text
+
+	* doc/release_20031029.txt:
+		Added release note.
+
+2003-10-29  abauer
+	* doc/mix_userref-v0.1.pdf:
+	* doc/mix_userreference.pdf:
+	* lib/perl/Micronas/MixUtils.pm:
+		.
+
+	* doc/mix_userreference.pdf:
+		updated userref
 
 2003-10-23  wig
 	* lib/perl/Micronas/MixWriter.pm:
@@ -261,14 +315,6 @@
 	* t/sigport/sigport-mixed.xls:
 	* t/sigport/sigport-t.out:
 	* t/sigport/sigport-t.out.0:
-	* t/sigport/use/mix_0.pl.out:
-	* t/sigport/use/sigport-mixed.xls:
-	* t/sigport/use/sigport-t.out:
-	* t/sigport/use/sigport-t.out.0:
-	* t/sigport/verilog/mix_0.pl.out:
-	* t/sigport/verilog/sigport-mixed.xls:
-	* t/sigport/verilog/sigport-t.out:
-	* t/sigport/verilog/sigport-t.out.0:
 	* t/t.out:
 	* t/typecast/mix_0.pl.out:
 	* t/typecast/typecast-mixed.xls:
@@ -1158,52 +1204,6 @@
 	* t/sigport/sigport-t.out:
 	* t/sigport/sigport-t.out.0:
 	* t/sigport/sigport.pld:
-	* t/sigport/use/ent_a-e.vhd:
-	* t/sigport/use/ent_a-rtl-a.vhd:
-	* t/sigport/use/ent_aa-e.vhd:
-	* t/sigport/use/ent_aa-rtl-a.vhd:
-	* t/sigport/use/ent_ab-e.vhd:
-	* t/sigport/use/ent_ab-rtl-a.vhd:
-	* t/sigport/use/ent_ac-e.vhd:
-	* t/sigport/use/ent_ac-rtl-a.vhd:
-	* t/sigport/use/ent_ad-e.vhd:
-	* t/sigport/use/ent_ad-rtl-a.vhd:
-	* t/sigport/use/ent_ae-e.vhd:
-	* t/sigport/use/ent_ae-rtl-a.vhd:
-	* t/sigport/use/ent_b.v:
-	* t/sigport/use/ent_ba.v:
-	* t/sigport/use/ent_bb.v:
-	* t/sigport/use/ent_t-e.vhd:
-	* t/sigport/use/ent_t-rtl-a.vhd:
-	* t/sigport/use/mix_0.pl.out:
-	* t/sigport/use/sigport-c.vhd:
-	* t/sigport/use/sigport-mixed.xls:
-	* t/sigport/use/sigport-t.out:
-	* t/sigport/use/sigport-t.out.0:
-	* t/sigport/use/sigport.pld:
-	* t/sigport/verilog/ent_a-e.vhd:
-	* t/sigport/verilog/ent_a-rtl-a.vhd:
-	* t/sigport/verilog/ent_aa-e.vhd:
-	* t/sigport/verilog/ent_aa-rtl-a.vhd:
-	* t/sigport/verilog/ent_ab-e.vhd:
-	* t/sigport/verilog/ent_ab-rtl-a.vhd:
-	* t/sigport/verilog/ent_ac-e.vhd:
-	* t/sigport/verilog/ent_ac-rtl-a.vhd:
-	* t/sigport/verilog/ent_ad-e.vhd:
-	* t/sigport/verilog/ent_ad-rtl-a.vhd:
-	* t/sigport/verilog/ent_ae-e.vhd:
-	* t/sigport/verilog/ent_ae-rtl-a.vhd:
-	* t/sigport/verilog/ent_b.v:
-	* t/sigport/verilog/ent_ba.v:
-	* t/sigport/verilog/ent_bb.v:
-	* t/sigport/verilog/ent_t-e.vhd:
-	* t/sigport/verilog/ent_t-rtl-a.vhd:
-	* t/sigport/verilog/mix_0.pl.out:
-	* t/sigport/verilog/sigport-c.vhd:
-	* t/sigport/verilog/sigport-mixed.xls:
-	* t/sigport/verilog/sigport-t.out:
-	* t/sigport/verilog/sigport-t.out.0:
-	* t/sigport/verilog/sigport.pld:
 	* t/t.out:
 	* t/t.pl:
 	* t/typecast.xls:
@@ -1419,51 +1419,6 @@
 	* t/bitsplice/verilog/mix_0.pl.out:
 		Added testcase bitsplice/verilog
 
-	* t/sigport/verilog/ent-a-e.vhd:
-	* t/sigport/verilog/ent-a-rtl-a.vhd:
-	* t/sigport/verilog/ent-aa-e.vhd:
-	* t/sigport/verilog/ent-aa-rtl-a.vhd:
-	* t/sigport/verilog/ent-ab-e.vhd:
-	* t/sigport/verilog/ent-ab-rtl-a.vhd:
-	* t/sigport/verilog/ent-ac-e.vhd:
-	* t/sigport/verilog/ent-ac-rtl-a.vhd:
-	* t/sigport/verilog/ent-ad-e.vhd:
-	* t/sigport/verilog/ent-ad-rtl-a.vhd:
-	* t/sigport/verilog/ent-ae-e.vhd:
-	* t/sigport/verilog/ent-ae-rtl-a.vhd:
-	* t/sigport/verilog/ent-b-e.vhd:
-	* t/sigport/verilog/ent-b-rtl-a.vhd:
-	* t/sigport/verilog/ent-ba-e.vhd:
-	* t/sigport/verilog/ent-ba-rtl-a.vhd:
-	* t/sigport/verilog/ent-bb-e.vhd:
-	* t/sigport/verilog/ent-bb-rtl-a.vhd:
-	* t/sigport/verilog/ent-t-e.vhd:
-	* t/sigport/verilog/ent-t-rtl-a.vhd:
-	* t/sigport/verilog/ent_a-e.vhd:
-	* t/sigport/verilog/ent_a-rtl-a.vhd:
-	* t/sigport/verilog/ent_aa-e.vhd:
-	* t/sigport/verilog/ent_aa-rtl-a.vhd:
-	* t/sigport/verilog/ent_ab-e.vhd:
-	* t/sigport/verilog/ent_ab-rtl-a.vhd:
-	* t/sigport/verilog/ent_ac-e.vhd:
-	* t/sigport/verilog/ent_ac-rtl-a.vhd:
-	* t/sigport/verilog/ent_ad-e.vhd:
-	* t/sigport/verilog/ent_ad-rtl-a.vhd:
-	* t/sigport/verilog/ent_ae-e.vhd:
-	* t/sigport/verilog/ent_ae-rtl-a.vhd:
-	* t/sigport/verilog/ent_b.v:
-	* t/sigport/verilog/ent_ba.v:
-	* t/sigport/verilog/ent_bb.v:
-	* t/sigport/verilog/ent_t-e.vhd:
-	* t/sigport/verilog/ent_t-rtl-a.vhd:
-	* t/sigport/verilog/mix_0.pl.out:
-	* t/sigport/verilog/sigport-c.vhd:
-	* t/sigport/verilog/sigport-mixed.xls:
-	* t/sigport/verilog/sigport-t.out:
-	* t/sigport/verilog/sigport-t.out.0:
-	* t/sigport/verilog/sigport.pld:
-		Updated testcase sigport/verilog
-
 	* t/bitsplice/bitsplice-c.vhd:
 	* t/bitsplice/bitsplice-mixed.xls:
 	* t/bitsplice/bitsplice.pld:
@@ -1504,51 +1459,6 @@
 	* t/bitsplice/mix.cfg:
 	* t/bitsplice/mix_0.pl.out:
 		Updated testcase bitsplice
-
-	* t/sigport/use/ent-a-e.vhd:
-	* t/sigport/use/ent-a-rtl-a.vhd:
-	* t/sigport/use/ent-aa-e.vhd:
-	* t/sigport/use/ent-aa-rtl-a.vhd:
-	* t/sigport/use/ent-ab-e.vhd:
-	* t/sigport/use/ent-ab-rtl-a.vhd:
-	* t/sigport/use/ent-ac-e.vhd:
-	* t/sigport/use/ent-ac-rtl-a.vhd:
-	* t/sigport/use/ent-ad-e.vhd:
-	* t/sigport/use/ent-ad-rtl-a.vhd:
-	* t/sigport/use/ent-ae-e.vhd:
-	* t/sigport/use/ent-ae-rtl-a.vhd:
-	* t/sigport/use/ent-b-e.vhd:
-	* t/sigport/use/ent-b-rtl-a.vhd:
-	* t/sigport/use/ent-ba-e.vhd:
-	* t/sigport/use/ent-ba-rtl-a.vhd:
-	* t/sigport/use/ent-bb-e.vhd:
-	* t/sigport/use/ent-bb-rtl-a.vhd:
-	* t/sigport/use/ent-t-e.vhd:
-	* t/sigport/use/ent-t-rtl-a.vhd:
-	* t/sigport/use/ent_a-e.vhd:
-	* t/sigport/use/ent_a-rtl-a.vhd:
-	* t/sigport/use/ent_aa-e.vhd:
-	* t/sigport/use/ent_aa-rtl-a.vhd:
-	* t/sigport/use/ent_ab-e.vhd:
-	* t/sigport/use/ent_ab-rtl-a.vhd:
-	* t/sigport/use/ent_ac-e.vhd:
-	* t/sigport/use/ent_ac-rtl-a.vhd:
-	* t/sigport/use/ent_ad-e.vhd:
-	* t/sigport/use/ent_ad-rtl-a.vhd:
-	* t/sigport/use/ent_ae-e.vhd:
-	* t/sigport/use/ent_ae-rtl-a.vhd:
-	* t/sigport/use/ent_b.v:
-	* t/sigport/use/ent_ba.v:
-	* t/sigport/use/ent_bb.v:
-	* t/sigport/use/ent_t-e.vhd:
-	* t/sigport/use/ent_t-rtl-a.vhd:
-	* t/sigport/use/mix_0.pl.out:
-	* t/sigport/use/sigport-c.vhd:
-	* t/sigport/use/sigport-mixed.xls:
-	* t/sigport/use/sigport-t.out:
-	* t/sigport/use/sigport-t.out.0:
-	* t/sigport/use/sigport.pld:
-		Updated testcase sigport/use
 
 	* t/sigport/ent-a-RTL-CONF-c.vhd:
 	* t/sigport/ent-a-e.vhd:
@@ -2002,54 +1912,6 @@
 	* t/sigport/sigport-mixed.xls:
 	* t/sigport/sigport.pld:
 	* t/sigport/sigport.sws:
-	* t/sigport/use/ent-a-e.vhd:
-	* t/sigport/use/ent-a-rtl-a.vhd:
-	* t/sigport/use/ent-aa-e.vhd:
-	* t/sigport/use/ent-aa-rtl-a.vhd:
-	* t/sigport/use/ent-ab-e.vhd:
-	* t/sigport/use/ent-ab-rtl-a.vhd:
-	* t/sigport/use/ent-ac-e.vhd:
-	* t/sigport/use/ent-ac-rtl-a.vhd:
-	* t/sigport/use/ent-ad-e.vhd:
-	* t/sigport/use/ent-ad-rtl-a.vhd:
-	* t/sigport/use/ent-ae-e.vhd:
-	* t/sigport/use/ent-ae-rtl-a.vhd:
-	* t/sigport/use/ent-b-e.vhd:
-	* t/sigport/use/ent-b-rtl-a.vhd:
-	* t/sigport/use/ent-ba-e.vhd:
-	* t/sigport/use/ent-ba-rtl-a.vhd:
-	* t/sigport/use/ent-bb-e.vhd:
-	* t/sigport/use/ent-bb-rtl-a.vhd:
-	* t/sigport/use/ent-t-e.vhd:
-	* t/sigport/use/ent-t-rtl-a.vhd:
-	* t/sigport/use/mix_0.pl.out:
-	* t/sigport/use/sigport-c.vhd:
-	* t/sigport/use/sigport-mixed.xls:
-	* t/sigport/use/sigport.pld:
-	* t/sigport/verilog/ent-a-e.vhd:
-	* t/sigport/verilog/ent-a-rtl-a.vhd:
-	* t/sigport/verilog/ent-aa-e.vhd:
-	* t/sigport/verilog/ent-aa-rtl-a.vhd:
-	* t/sigport/verilog/ent-ab-e.vhd:
-	* t/sigport/verilog/ent-ab-rtl-a.vhd:
-	* t/sigport/verilog/ent-ac-e.vhd:
-	* t/sigport/verilog/ent-ac-rtl-a.vhd:
-	* t/sigport/verilog/ent-ad-e.vhd:
-	* t/sigport/verilog/ent-ad-rtl-a.vhd:
-	* t/sigport/verilog/ent-ae-e.vhd:
-	* t/sigport/verilog/ent-ae-rtl-a.vhd:
-	* t/sigport/verilog/ent-b-e.vhd:
-	* t/sigport/verilog/ent-b-rtl-a.vhd:
-	* t/sigport/verilog/ent-ba-e.vhd:
-	* t/sigport/verilog/ent-ba-rtl-a.vhd:
-	* t/sigport/verilog/ent-bb-e.vhd:
-	* t/sigport/verilog/ent-bb-rtl-a.vhd:
-	* t/sigport/verilog/ent-t-e.vhd:
-	* t/sigport/verilog/ent-t-rtl-a.vhd:
-	* t/sigport/verilog/mix_0.pl.out:
-	* t/sigport/verilog/sigport-c.vhd:
-	* t/sigport/verilog/sigport-mixed.xls:
-	* t/sigport/verilog/sigport.pld:
 		Added IN/OUT Top Port Generation
 
 	* t/sigport/sigport.bat:
@@ -2101,35 +1963,6 @@
 		IO sheets
 
 2003-03-25  wig
-	* t/sigport/verilog/ent-a-e.vhd:
-	* t/sigport/verilog/ent-a-rtl-a.vhd:
-	* t/sigport/verilog/ent-aa-e.vhd:
-	* t/sigport/verilog/ent-aa-rtl-a.vhd:
-	* t/sigport/verilog/ent-ab-e.vhd:
-	* t/sigport/verilog/ent-ab-rtl-a.vhd:
-	* t/sigport/verilog/ent-ac-e.vhd:
-	* t/sigport/verilog/ent-ac-rtl-a.vhd:
-	* t/sigport/verilog/ent-ad-e.vhd:
-	* t/sigport/verilog/ent-ad-rtl-a.vhd:
-	* t/sigport/verilog/ent-ae-e.vhd:
-	* t/sigport/verilog/ent-ae-rtl-a.vhd:
-	* t/sigport/verilog/ent-b-e.vhd:
-	* t/sigport/verilog/ent-b-rtl-a.vhd:
-	* t/sigport/verilog/ent-ba-e.vhd:
-	* t/sigport/verilog/ent-ba-rtl-a.vhd:
-	* t/sigport/verilog/ent-bb-e.vhd:
-	* t/sigport/verilog/ent-bb-rtl-a.vhd:
-	* t/sigport/verilog/ent-t-e.vhd:
-	* t/sigport/verilog/ent-t-rtl-a.vhd:
-	* t/sigport/verilog/mix.cfg:
-	* t/sigport/verilog/mix_0.pl.out:
-	* t/sigport/verilog/sigport-c.vhd:
-	* t/sigport/verilog/sigport-mixed.xls:
-	* t/sigport/verilog/sigport-update.bat:
-	* t/sigport/verilog/sigport.bat:
-	* t/sigport/verilog/sigport.pld:
-		sigport verilog testcase output files
-
 	* t/sigport/ent-a-e.vhd:
 	* t/sigport/ent-a-rtl-a.vhd:
 	* t/sigport/ent-a-rtl-a.vhd.diff:
@@ -2160,35 +1993,6 @@
 	* t/sigport/sigport.pld:
 	* t/sigport/sigport.sws:
 		sigport testcase output files
-
-	* t/sigport/use/ent-a-e.vhd:
-	* t/sigport/use/ent-a-rtl-a.vhd:
-	* t/sigport/use/ent-aa-e.vhd:
-	* t/sigport/use/ent-aa-rtl-a.vhd:
-	* t/sigport/use/ent-ab-e.vhd:
-	* t/sigport/use/ent-ab-rtl-a.vhd:
-	* t/sigport/use/ent-ac-e.vhd:
-	* t/sigport/use/ent-ac-rtl-a.vhd:
-	* t/sigport/use/ent-ad-e.vhd:
-	* t/sigport/use/ent-ad-rtl-a.vhd:
-	* t/sigport/use/ent-ae-e.vhd:
-	* t/sigport/use/ent-ae-rtl-a.vhd:
-	* t/sigport/use/ent-b-e.vhd:
-	* t/sigport/use/ent-b-rtl-a.vhd:
-	* t/sigport/use/ent-ba-e.vhd:
-	* t/sigport/use/ent-ba-rtl-a.vhd:
-	* t/sigport/use/ent-bb-e.vhd:
-	* t/sigport/use/ent-bb-rtl-a.vhd:
-	* t/sigport/use/ent-t-e.vhd:
-	* t/sigport/use/ent-t-rtl-a.vhd:
-	* t/sigport/use/mix.cfg:
-	* t/sigport/use/mix_0.pl.out:
-	* t/sigport/use/sigport-c.vhd:
-	* t/sigport/use/sigport-mixed.xls:
-	* t/sigport/use/sigport-update.bat:
-	* t/sigport/use/sigport.bat:
-	* t/sigport/use/sigport.pld:
-		sigport use testcase output files
 
 	* t/mde_tests/conn_nreset/conn_nreset.sws:
 	* t/mde_tests/conn_nreset/inst-a-e-e.vhd:
