@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.49 $                                         |
+# | Revision:   $Revision: 1.50 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/01/27 08:20:30 $                              |
+# | Date:       $Date: 2005/03/01 11:58:42 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.49 2005/01/27 08:20:30 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.50 2005/03/01 11:58:42 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.50  2005/03/01 11:58:42  wig
+# | Fixed _MODE_MISMATCH problem with mixed constant/signal ports.
+# |
 # | Revision 1.49  2005/01/27 08:20:30  wig
 # | verilog/vhdl parameters
 # |
@@ -255,9 +258,9 @@ sub _mix_wr_isinteger ($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.49 2005/01/27 08:20:30 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.50 2005/03/01 11:58:42 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.49 $';
+my $thisrevision   =      '$Revision: 1.50 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -857,91 +860,90 @@ sub _create_entity ($$) {
 		    # if ( $l == -100000 or $l > $thissig->{'port_t'} ) { $l = $thissig->{'port_t'}; }
 		}
 
-                #
-                # typecast required
-                #wig20030801
-                #wig20040803: the old way (creates port map typecast)
+            #
+            # typecast required
+            #wig20030801
+            #wig20040803: the old way (creates port map typecast)
  
-                # $type -> port type;
-                # $cast -> signal type;
-                if ( defined( $thissig->{'cast'} ) ) {
-                    
-                    if ( $EH{'output'}{'generate'}{'workaround'}{'typecast'} =~ m/\bportmap\b/o ) {
-                        $cast = $type;
-                        $type = $thissig->{'cast'};
-                        logtrc ( "INFO:4", "portmap typecast requested for signal $i/$cast, port $port/$type");
-                    } elsif ( $EH{'output'}{'generate'}{'workaround'}{'std_log_typecast'} =~ m/\bignore\b/o ) {
-                        $cast = $type;
-                        $type = $thissig->{'cast'};
-                        logtrc ( "INFO:4", "std_log_ignore typecast for signal $i/$cast, port $port/$type");
-                    }
+            # $type -> port type;
+            # $cast -> signal type;
+            if ( defined( $thissig->{'cast'} ) ) {    
+                if ( $EH{'output'}{'generate'}{'workaround'}{'typecast'} =~ m/\bportmap\b/o ) {
+                    $cast = $type;
+                    $type = $thissig->{'cast'};
+                    logtrc ( "INFO:4", "portmap typecast requested for signal $i/$cast, port $port/$type");
+                } elsif ( $EH{'output'}{'generate'}{'workaround'}{'std_log_typecast'} =~ m/\bignore\b/o ) {
+                    $cast = $type;
+                    $type = $thissig->{'cast'};
+                    logtrc ( "INFO:4", "std_log_ignore typecast for signal $i/$cast, port $port/$type");
                 }
+            }
 	    }
 	    if ( $l eq "-100000" ) {
-		$l = undef;
+			$l = undef;
 	    }
 	    if ( $h eq "-100000" ) {
-		$h = undef;
+			$h = undef;
 	    }
 
 	    # If connecting single signals to a bus-port, make type match!
 	    #TODO SPECIAL trick ???? Check if that is really so clever ....
 	    #TODO Should be done by just any type ...
 	    if ( ( $type eq "std_logic" or
-		 $type eq "std_ulogic" ) and
-		 defined( $h ) and defined( $l ) and
-		 ( $h ne $l ) ) { #!wig20030516 ...
-		$type = $type . "_vector";
-		logtrc( "INFO:4", "autoconnecting single signal $i to bus port $port" );
+		    $type eq "std_ulogic" ) and
+		    defined( $h ) and defined( $l ) and
+		    ( $h ne $l ) ) { #!wig20030516 ...
+			$type = $type . "_vector";
+			logtrc( "INFO:4", "autoconnecting single signal $i to bus port $port" );
 	    }
 
-            # If we connect a single bit to to a bus, we strip of the _vector from
-            # the type of the signal to get correct port type
-            #TODO: Expand to work for any type ...
-            #!wig20040330: if port spans from 0:0 remove the _vector, too (?)
-            if ( ( ( not defined( $h ) and not defined( $l )) or
+        # If we connect a single bit to to a bus, we strip of the _vector from
+        # the type of the signal to get correct port type
+        #TODO: Expand to work for any type ...
+        #!wig20040330: if port spans from 0:0 remove the _vector, too (?)
+        if ( ( ( not defined( $h ) and not defined( $l )) or
                    ( $h eq "0" and $l eq "0" ) ) and
                   $type =~ m,(.+)_vector, ) {
-		$type = $1;
-		logtrc( "INFO:4", "autoreducing port type for signal $i to $type" );
-            };
+			$type = $1;
+			logtrc( "INFO:4", "autoreducing port type for signal $i to $type" );
+		};
                 
-            my $m = $conndb{$i}{'::mode'};
+		my $m = $conndb{$i}{'::mode'};
 	    my $mode = "__E_MODE_DEFAULT_ERROR__";
 	    if ( $m ) { # not empty
-		if ( $m =~ m,IO,io ) { $mode = "inout"; } 		# inout mode!
-		elsif ( $m =~ m,B,io ) { $mode = "%BUFFER%"; }	# buffer
-                elsif ( $m =~ m,T,io ) { $mode = "%TRISTATE%"; }	# tristate bus ...
-		elsif ( $m =~ m,C,io ) { $mode = $m; }		# Constant
-		elsif ( $m =~ m,[GP],io ) {                             # Generic, parameter
-                    # Read "value" from ...:out
-                    $mode = $m;
-                }
-		elsif ( $m =~ m,S,io ) { $mode = $io; }			# signal -> derive from i/o
-		elsif ( $m =~ m,I,io ) {						# warn if mode mismatches
-		    #TODO: Need to look at all connections ....
-		    if ( $io eq "out" ) {
-			#!wig20030207:off: logwarn( "mode mismatch for signal $i, port $port: $m ne $io" );
-			$conndb{$i}{'::comment'} .= ",__W_MODE_MISMATCH"; #TODO:  __E??
-			$mode = $io;
-		    } else {
-			$mode = "in";
-		    }
-		} elsif ( $m =~ m,O,io ) {					# xls says O!
-		    if ( $io eq "in" ) {
-			#!wig20030207:off: logwarn( "mode mismatch for signal $i, port $port: $m ne $io" );
-			$conndb{$i}{'::comment'} .= ",__W_MODE_MISMATCH"; #TODO: __E??
-			$mode = $io;
-		    } else {
-			$mode = "out";
-		    }
-		} else {
-		    logwarn( "ERROR: signal $i mode $m defaults to bad value, set to $io\n" );
-                    $EH{'sum'}{'errors'}++;
-		    $mode = $io;
-		}
+			if ( $m =~ m,IO,io ) { $mode = "inout"; } 		# inout mode!
+			elsif ( $m =~ m,B,io ) { $mode = "%BUFFER%"; }	# buffer
+			elsif ( $m =~ m,T,io ) { $mode = "%TRISTATE%"; }	# tristate bus ...
+			elsif ( $m =~ m,C,io ) { $mode = $io; }		# Constant / wig20050202: map to S
+			elsif ( $m =~ m,[GP],io ) {                             # Generic, parameter
+                # Read "value" from ...:out
+                $mode = $m;
+            }
+			elsif ( $m =~ m,S,io ) { $mode = $io; }			# signal -> derive from i/o
+			elsif ( $m =~ m,I,io ) {						# warn if mode mismatches
+		    	#TODO: Need to look at all connections ....
+		    	if ( $io eq "out" ) {
+					#!wig20030207:off: logwarn( "mode mismatch for signal $i, port $port: $m ne $io" );
+					$conndb{$i}{'::comment'} .= ",__W_MODE_MISMATCH"; #TODO:  __E??
+					$mode = $io;
+		    	} else {
+					$mode = "in";
+		    	}
+			} elsif ( $m =~ m,O,io ) {					# xls says O!
+		    	if ( $io eq "in" ) {
+					#!wig20030207:off: logwarn( "mode mismatch for signal $i, port $port: $m ne $io" );
+					$conndb{$i}{'::comment'} .= ",__W_MODE_MISMATCH"; #TODO: __E??
+					$mode = $io;
+		    	} else {
+					$mode = "out";
+		    	}
+			} else {
+		    	logwarn( "ERROR: signal $i mode $m defaults to bad value, set to $io\n" );
+				$EH{'sum'}{'errors'}++;
+		    	$mode = $io;
+			}
 	    } else { # if no mode was specified, it defaults to S, which means to autodetecte in/out
-		$mode = $io;
+			$mode = $io;
 	    }
 
 	    #
