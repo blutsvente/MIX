@@ -23,12 +23,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.25 2003/12/18 16:48:14 wig Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.26 2003/12/22 08:22:44 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.25 $                                      |
-# | Mod.Date     : $Date: 2003/12/18 16:48:14 $                           |
+# | Version      : $Revision: 1.26 $                                      |
+# | Mod.Date     : $Date: 2003/12/22 08:22:44 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -43,6 +43,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.26  2003/12/22 08:22:44  wig
+# | Added output.generate.xinout feature
+# |
 # | Revision 1.25  2003/12/18 16:48:14  wig
 # | removed init_ole
 # |
@@ -208,7 +211,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.25 $'; # RCS Id
+$::VERSION = '$Revision: 1.26 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # %EH comes from Mic::MixUtils ; All the configuration E-nvironment will be there
@@ -254,6 +257,8 @@ mix_init();               # Presets ....
 # -sheet SHEET=MATCH     SHEET can be one of "hier", "conn", "vi2c"
 # -delta                          Enable delta mode: Print diffs instead of full files.
 #                                   Maybe we can set a return value of 1 if no changes occured!
+# -strip                          Remove extra worksheets from intermediate output
+#                                  Please be catious when using that option.
 # -bak                            Shift previous generated output to file.v[hd].bak. When combined
 #                                   with -delta you get both .diff, .bak and new files :-)
 #
