@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.39 $                                         |
+# | Revision:   $Revision: 1.40 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/04/14 11:08:32 $                              |
+# | Date:       $Date: 2004/08/02 07:13:41 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.39 2004/04/14 11:08:32 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.40 2004/08/02 07:13:41 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.40  2004/08/02 07:13:41  wig
+# | Improve constant support
+# |
 # | Revision 1.39  2004/04/14 11:08:32  wig
 # | minor code clearing
 # |
@@ -254,11 +257,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.39 2004/04/14 11:08:32 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.40 2004/08/02 07:13:41 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.39 $';
+my $thisrevision   =      '$Revision: 1.40 $';
 
-# | Revision:   $Revision: 1.39 $
+# | Revision:   $Revision: 1.40 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1210,25 +1213,28 @@ sub _create_conn ($$%) {
             # Recognize 'CONST' and "CONST"
             # Mark with %CONST% instance name .... the port name will hold the value
             # Force anything following %CONST%/ to be a constant value
-            $d =~ s,__(CONST|GENERIC|PARAMTER)__,%$1%,g; # Convert back __CONST__ to %CONST%
+            #Additionally allow partial assignments by a  =(N:M) ...
+            $d =~ s,__(CONST|GENERIC|PARAMETER)__,%$1%,g; # Convert back __CONST__ to %CONST%
+            # A constant could hold a partial assignment, too:
+            my ( $cd, $cpart ) = split( /=/, $d, 2 );
             if (
                 # Get VHDL constants : B#VAL#
-                $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(\d+#[_a-f\d]+#)\s*$,io or
+                $cd =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(\d+#[_a-f\d]+#)\s*$,io or
                 # or 0xHEX or 0b01xzhl or 0777 or 1000 (integers)
-                $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(0x[_\da-f]+|0b[_01xzhl]+|0[_0-7]+|[\d][._\d]*)\s*$,io or
+                $cd =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(0x[_\da-f]+|0b[_01xzhl]+|0[_0-7]+|[\d][._\d]*)\s*$,io or
                 # or reals or time definitions: ... 1 ns, 1.3 ps ...
-                $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?([+-]*[_\d]+\.*[_\d]*(e[+-]\d+)?\s*([munpf]s)?)\s*$,io or
+                $cd =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?([+-]*[_\d]+\.*[_\d]*(e[+-]\d+)?\s*([munpf]s)?)\s*$,io or
                 # or anything in ' text ' or " text "
-                $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?((['"]).+\4)\s*$,io or
+                $cd =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?((['"]).+\4)\s*$,io or
                 # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(".+")\s*$,io or
                 # or anything following a %CONST%/ or GENERIC or PARAMETER keyword
-                $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)(.+)\s*,io
+                $cd =~ m,^(%(CONST|GENERIC|PARAMETER)%/)(.+)\s*,io
                 ) { # Constant value ...
                 my $const = $3;
                 $co{'rvalue'} = $const; # Save raw value!!
                 my $t = $2;
                 if ( $inout =~ m,in, ) {
-                    logerr("ERROR: illegal constant value for ::in signal " . $data{'::name'} . "!");
+                    logerr("ERROR: illegal constant value for signal in ::in " . $data{'::name'} . "!");
                     $data{'::comment'} .= "__E_BAD_CONSTANT_DEFINED";
                     $EH{'sum'}{'errors'}++;
                 }
@@ -1261,24 +1267,50 @@ sub _create_conn ($$%) {
                 $const =~ tr/'/"/; # Convert ' to " (otherwise ExCEL will eat it).
 
                 $co{'port'} = $const; # Decimal base or literal
-                # Inherit bus width from signal definition ....
-                $co{'port_f'} = $h;
-                $co{'port_t'} = $l;
-                $co{'sig_f'} = $h;
-                $co{'sig_t'} = $l;
+                
+                # Inherit bus width from signal definition or if a =() is attached ...
+                #  but start at zero! Constants should not have an offset
+                if ( $cpart ) {
+                    #  (N), (N:N) ... assign appr. port_f:port_t and sig_f:sig_t
+                    if ( $cpart =~ m,^\s*\(([\w%#]+)(:([\w%#]+))?\), ) {
+                        my ( $mh, $ml ) = ( $1, $3 );
+                        $co{'port_t'} = 0;
+                        if ( not defined($ml)  ) { # No lower bound -> single bit width
+                            $co{'port_f'} = 0;
+                            $co{'sig_f'} = $co{'sig_t'} = $mh;
+                        } elsif ( $mh =~ m/^\d+$/ and $ml =~ m/^\d+$/ ) {
+                            $co{'port_f'} = $mh - $ml;
+                            $co{'sig_f'} = $mh;
+                            $co{'sig_t'} = $ml;
+                        } else { # ( $ml =~ m/^\d+$/ ) # 
+                            $co{'port_f'} = "$mh - $ml";
+                            $co{'sig_f'} = $mh;
+                            $co{'sig_t'} = $ml;
+                            logtrc( "INFO", "Textual bounds for constant" );
+                        }
+                    } else {
+                        logwarn( "Cannot parse constant signal assignment width definition: $cpart" );
+                        $EH{'sum'}{'warnings'}++;
+                            $co{'port_f'} = $co{'sig_f'} = $h;
+                            $co{'port_t'} = $co{'sig_t'} = $l;
+                    }
+                }else {
+                    # Full bus assigned ...
+                    $co{'port_f'} = $co{'sig_f'} = $h;
+                    $co{'port_t'} = $co{'sig_t'} = $l;
+                }
+
                 $co{'value'} = $const;
 
                 push( @co, { %co } );
-                #TODO: $mode = 'C'; # Autochange ::mode to constant
                 next;
-
             }
 
             #
             # Port and signal names and bounds may be composed of
             # \w   alphanumeric and _
             # %   marker for macros
-            # :    part of macro like %::name%
+            # :    part of macro like %::name% (converted to # here)
             #
 
             #
@@ -2231,7 +2263,7 @@ sub add_portsig () {
         #
         my $mode = $conndb{$signal}{'::mode'};
 
-        if ( $mode and ( $mode =~ m,^\s*[CGP],o ) ) {
+        if ( $mode and ( $mode =~ m,^\s*[CGP],o ) ) { #wig20040802: should C be removed?
             next;
         }
 

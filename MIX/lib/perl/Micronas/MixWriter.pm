@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.41 $                                         |
+# | Revision:   $Revision: 1.42 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/06/29 14:53:42 $                              |
+# | Date:       $Date: 2004/08/02 07:13:40 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.41 2004/06/29 14:53:42 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.42 2004/08/02 07:13:40 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.42  2004/08/02 07:13:40  wig
+# | Improve constant support
+# |
 # | Revision 1.41  2004/06/29 14:53:42  wig
 # | fixed remove-the-comma-bug (too many /o)
 # |
@@ -205,7 +208,8 @@ use Micronas::MixParser qw( %hierdb %conndb add_conn );
 #
 sub _write_entities ($$$);
 sub compare_merge_entities ($$$$);
-sub _write_constant ($$$;$);
+sub mix_wr_fromto ($$$$);
+sub _write_constant ($$$$$;$);
 sub write_architecture ();
 sub strip_empty ($);
 sub port_map ($$$$$$);
@@ -223,15 +227,15 @@ sub _mix_wr_get_iveri ($$$);
 sub mix_wr_port_check ($$);
 sub mix_wr_unsplice_port ($$$);
 sub mix_wr_hier2mac ($);
-
+sub mix_wr_getpwidth ($);
 # Internal variable
 
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.41 2004/06/29 14:53:42 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.42 2004/08/02 07:13:40 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.41 $';
+my $thisrevision   =      '$Revision: 1.42 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -3068,7 +3072,6 @@ sub _write_architecture ($$$$) {
 	    my $high = $s->{'::high'};
 	    my $low = $s->{'::low'};
 	    # The signal definition should be consistent here!
-	    my $dt = "";
 
             # Using %HIGH%, %LOW%, %HIGH_BUS%, %LOW_BUS%
             if ( $ii =~ m,^\s*%(HIGH|LOW)_BUS,o ) {
@@ -3112,48 +3115,23 @@ sub _write_architecture ($$$$) {
                 }
             }
 
-	    if ( defined( $high ) and defined( $low ) ) {
-                if ( $ilang =~ m,^veri,io ) {
-                    if ( $high =~ m/^\d+$/o and $low =~ m/^\d+$/o ) {
-                        # if ( $low < $high ) {
-                            $dt = "[" . $high . ":" . $low . "]"; #TODO: Consider all case in Verilog
-                        # } elsif ( $low > $high ) {
-                        #    $dt = "($high to $low . "]";
-                        # } else {
-                        #    $dt = " -- __W_SINGLE_BIT_BUS";
-                        # }
-                    } elsif ( $high ne '' ) {
-                        if ( $high ne $low ) {
-                            $dt = "[" . $high .":" . $low . "]"; # String used as high/low bound
-                        } else {
-                            $dt = "[" . $high . "] " . $tcom . " __W_HIGHLOW_EQUAL";
-                        }
-                    }
-                } else {
-                    if ( $high =~ m/^\d+$/o and $low =~ m/^\d+$/o ) {
-                        if ( $low < $high ) {
-                            $dt = "($high downto $low)";
-                        } elsif ( $low > $high ) {
-                            $dt = "($high to $low)";
-                        } else {
-                            $dt = " $tcom __W_SINGLE_BIT_BUS";
-                        }
-                    } elsif ( $high ne '' ) {
-                        if ( $high ne $low ) {
-                            $dt = "($high downto $low)"; # String used as high/low bound
-                        } else {
-                            $dt = "($high) $tcom __W_HIGHLOW_EQUAL";
-                        }
-                    }
-                }
-	    }
+            my ( $dt, $dc ) = mix_wr_fromto( $high, $low, $ilang, $tcom );
+            $dt .= $dc;
+
+
 	    # Add constant definitions here to concurrent signals ....
+	    # $dt has full signal width definition ...
+	    #20040730: allow to assign constants to bus splices
 	    if ( $s->{'::mode'} =~ m,C,io ) {
-                my ( $si, $a, $d ) = _write_constant( $s, $type, $dt, $ilang );
-                $signaltext .= $si; # add to signal declaration ...
-                $veridefs .= $d;
-                $macros{'%CONCURS%'} .= $a;  # add to signal assignment
-                next;
+                my $no = 0;
+                for my $o ( @{$s->{'::out'}} )  {
+                    my ( $si, $a, $d ) = _write_constant( $no, $o, $s, $type, $dt, $ilang );
+                    $signaltext .= $si;                    # add to signal declaration ...
+                    $veridefs .= $d;                       # Verilog defines
+                    $macros{'%CONCURS%'} .= $a;  # add to signal assignment
+                    $no++;
+                }
+                # next; #TODO: continue here -> ::out has rvalue, ignore below ...
 	    }
 
 	    # Generics and parameters: Not needed here
@@ -3367,6 +3345,77 @@ sub _write_architecture ($$$$) {
 
 }
 
+
+#
+# return a string  like  (N downto M) or verilog equiv.
+#   a second return value could be a comment in case some unusual things happen
+#
+sub mix_wr_fromto ($$$$) {
+            my $high = shift;
+            my $low = shift;
+            my $ilang = shift;
+            my $tcom = shift;
+
+            my $dt = "";
+            my $dc = "";
+
+	    if ( defined( $high ) and defined( $low ) ) {
+                if ( $ilang =~ m,^veri,io ) {
+                    if ( $high =~ m/^\d+$/o and $low =~ m/^\d+$/o ) {
+                        # if ( $low < $high ) {
+                            $dt = "[" . $high . ":" . $low . "]"; #TODO: Consider all case in Verilog
+                        # } elsif ( $low > $high ) {
+                        #    $dt = "($high to $low . "]";
+                        # } else {
+                        #    $dt = " -- __W_SINGLE_BIT_BUS";
+                        # }
+                    } elsif ( $high ne '' ) {
+                        if ( $high ne $low ) {
+                            $dt = "[" . $high .":" . $low . "]"; # String used as high/low bound
+                        } else {
+                            $dt = "[" . $high . "] ";
+                            $dc = " " . $tcom . " __W_HIGHLOW_EQUAL";
+                        }
+                    }
+                } else {
+                    if ( $high =~ m/^\d+$/o and $low =~ m/^\d+$/o ) {
+                        if ( $low < $high ) {
+                            $dt = "($high downto $low)";
+                        } elsif ( $low > $high ) {
+                            $dt = "($high to $low)";
+                        } elsif ( $high > 0 ) {
+                            $dt = "($high)";
+                            $dc = " " . $tcom . " __W_SINGLE_BIT_BUS";
+                        } else {
+                            $dt = "";
+                            $dc = " " . $tcom . " __W_SINGLE_BIT_BUS";
+                        }
+                    } elsif ( $high ne '' ) {
+                        if ( $high ne $low ) {
+                            $dt = "($high downto $low)"; # String used as high/low bound
+                        } else {
+                            $dt = "($high) ";
+                            $dc = " " . $tcom . " __W_HIGHLOW_EQUAL";
+                        }
+                    }
+                }
+	    }
+
+            return $dt, $dc;
+}
+
+#
+# Calculate port width ...
+#  input: portdescription ..
+#
+sub mix_wr_getpwidth ($) {
+    my $spd = shift;
+
+    my $w = $spd->{'port_f'} - $spd->{'port_t'} + 1;
+
+    return $w;
+}
+
 #
 # Print out constant definitions:
 #
@@ -3375,26 +3424,32 @@ sub _write_architecture ($$$$) {
 #
 # Special cases
 #20030710: adding Verilog support ...
+#20040730: changed interface: add out
 #
-sub _write_constant ($$$;$) {
-    my $s = shift; # ref to this signals definition ...
-    my $type = shift; # type of this constant
-    my $dt = shift; # has predefined (F downto T)
+sub _write_constant ($$$$$;$) {
+    my $n = shift;
+    my $out = shift;        # constant description
+    my $s    = shift;       # ref to signal definition
+    my $type = shift;     # type of this constant
+    my $dt = shift;         # has predefined (F downto T) # unused now ...
     my $lang = shift || $EH{'macro'}{'%LANGUAGE%'} || "vhdl";
 
     my $tcom = $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'default'} || "##";
     
-    my $t = ""; # Signal definitions
-    my $sat = ""; # Signal assignments
-    my $def = ""; # Take `defines
-    my $comm = ""; # Comments
+    my $t = "";         # Signal definitions
+    my $sat = "";      # Signal assignments
+    my $def = "";      # Take `defines
+    my $comm = "";   # Comments
     my $width = "__E_WIDTH_CONST";
 
-    unless( exists( $s->{'::out'}[0]{'rvalue'} ) ) {
-            logwarn( "WARNING: Missung value definition for constant $s->{'::name'}" );
-	    $t = "\t\t\t" . $tcom .  $s->{'::name'} . " <= __E_MISSING_CONST_VALUE;\n";
+    #TODO: remove this dead code?
+    unless( exists( $out->{'rvalue'} ) ) {
+            if ( $out->{'inst'} =~ m,(__|%)CONST(__|%),io ) {
+                logwarn( "WARNING: Missung value definition for constant $s->{'::name'}" );
+                $t = "\t\t\t" . $tcom .  $s->{'::name'} . " <= __W_MISSING_CONST_VALUE;\n";
+            }
     } else {
-	my $value = $s->{'::out'}[0]{'rvalue'};
+	my $value = $out->{'rvalue'};
 
         #
         #TODO: 
@@ -3424,18 +3479,14 @@ sub _write_constant ($$$;$) {
                 logwarn( "WARNING: Cannot handle time constant $value in verilog mode!" );
                 $EH{'sum'}{'warnings'}++;
             }
-            #TODO: Check it type is time ...
+            #TODO: Check if type is time ...
         } elsif ( $value eq "0" or $value eq "1" ) {
             # Bind a vector to 0 or 1
-            if ( $s->{'::type'} =~ m,_vector,io ) {
-                if ( $lang =~ m,^veri,io ) {
-                    $value =  "1'b" . $value; # Gives 1'b0 or 1'b1 ...
-                } else {
-                    $value = "( others => '$value' )"; ##VHDL, only
-                }
+            if ( $lang =~ m,^veri,io ) {
+                $value =  "1'b" . $value; # Gives 1'b0 or 1'b1 ....
             } else {
-                if ( $lang =~ m,^veri,io ) {
-                    $value =  "1'b" . $value; # Gives 1'b0 or 1'b1 ...
+                if ( $s->{'::type'} =~ m,_vector$,io and $out->{'port_f'} ne "0" ) {
+                    $value = "( others => '$value' )"; ##VHDL, only
                 } else {               
                     $value = "'" . $value . "'"; # Put ' around bit vectors, VHDL
                 }
@@ -3450,8 +3501,11 @@ sub _write_constant ($$$;$) {
                 #  convert value to binary!
                 # Not necessary for Verilog!
                 $comm = " " . $tcom . " __I_ConvConstant: " . $value;
-                my $w = $s->{'::high'} - $s->{'::low'} + 1; #Will complain if high/low not
+                #!wig20040730: improve ...
+               # my $w = $s->{'::high'} - $s->{'::low'} + 1; #Will complain if high/low not
                                 # defined or not digits!
+                my $w = mix_wr_getpwidth( $out );
+ 
                     if ( $value =~ m,^\s*(\d+)#([_a-f\d]+)#,io ) {
                         if ( $1 == 16 ) {
                             $value = "0x" . $2;
@@ -3521,19 +3575,43 @@ sub _write_constant ($$$;$) {
             $comm = " " . $tcom . " __I_ConstNoconv";
 	}
 
+        # Get this port's description ... port_width and signal_width ....
+        my( $dtp, $dtpc ) = mix_wr_fromto ( $out->{'port_f'}, $out->{'port_t'}, $lang, $tcom);
+        my( $dts, $dtsc ) = mix_wr_fromto ( $out->{'sig_f'}, $out->{'sig_t'}, $lang, $tcom);
+        my( $dtsa, $dtsac ) = mix_wr_fromto ( $s->{'::high'}, $s->{'::low'}, $lang, $tcom);
+
         #!wig20030403: Use intermediate signal ...
-        #!org: $t = "\t\t\tconstant $s->{'::name'} : $type$dt := $value;$comm\n";
+
         if ( $lang =~ m,^veri,io ) {
             $value =~ s,["],,g; # Quick hack ....
             #TODO: rework ident strategy ... e.g. mark with keywords ...
-            $def = "`define " . $s->{'::name'} . "_c " . $value . " " . $comm . "\n";
-            $t .= $EH{'macro'}{'%S%'} x 3 . "wire\t" . $dt . "\t" . $s->{'::name'} . ";\n";
-            $sat = $EH{'macro'}{'%S%'} x 3 . "assign " . $s->{'::name'} . " = `" . $s->{'::name'} . "_c;\n";
+            $def = "`define " . $s->{'::name'} . "_" . ( $n ? $n : "" ) . "c " . $value . " " . $comm . "\n";
+            $t .= $EH{'macro'}{'%S%'} x 3 . "wire\t" . $dtp . "\t" . $s->{'::name'} . ";" . $dtpc . "\n";
+            if ( $dtp eq $dtsa ) {
+                $sat = $EH{'macro'}{'%S%'} x 3 . "assign " . $s->{'::name'} . " = `" .
+                        $s->{'::name'} . "_" . ( $n ? $n : "" ) . "c;\n";
+            } else {
+                $sat = $EH{'macro'}{'%S%'} x 3 . "assign " . $s->{'::name'} . $dts . " = `" .
+                        $s->{'::name'} . "_" . ( $n ? $n : "" ) . "c;\n";
+            }
         } else {
-            $t = $EH{'macro'}{'%S%'} x 3 . "constant $s->{'::name'}_c : $type$dt := $value;$comm\n";
-            $t .= $EH{'macro'}{'%S%'} x 3 . "signal $s->{'::name'} : $type$dt;\n";        
-            $sat =  $EH{'macro'}{'%S%'} x 3 . "$s->{'::name'} <= $s->{'::name'}_c;\n";
-        }        
+            # Reduce type if constant is one-bit wide ...
+            if ( $type =~ m/_vector$/o and $out->{'port_f'} eq "0" and $out->{'port_t'} eq "0" ) {
+                $type =~ s/_vector$//;
+            }
+            $t = $EH{'macro'}{'%S%'} x 3 . "constant $s->{'::name'}_" . ( $n ? $n : "" ) .
+                "c : $type$dtp := $value;$comm $dtpc\n";
+            $t .= $EH{'macro'}{'%S%'} x 3 . $tcom . "__I_CONSTANT_DEFS" .
+                    $EH{'macro'}{'%S%'} . "signal " . $s->{'::name'} . ": " . $type . $dtp . "; " . $dtpc . "\n";
+            # Is the constant assigned to all of the signal?
+            if ( $dtp eq $dtsa ) {
+                $sat =  $EH{'macro'}{'%S%'} x 3 . "$s->{'::name'} <= $s->{'::name'}_" .
+                    ( $n ? $n : "" ) . "c;\n";
+            } else {
+                $sat =  $EH{'macro'}{'%S%'} x 3 . "$s->{'::name'}$dts <= $s->{'::name'}_" .
+                    ($n ? $n : "" ) . "c;" . $dtpc . $dtsc . "\n";
+            }
+        }
     }
 
     return $t, $sat, $def;
