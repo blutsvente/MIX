@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.13 2003/07/16 08:46:09 wig Exp $
+# $Id: TODO.txt,v 1.14 2003/07/17 12:10:28 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -18,6 +18,23 @@ Doku:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+- 20030717a/Bug: Fix some verilog stuff:
+
+einiges zur Verilog-Ausgabe:
+- Verilog Anweisungen wie `define oder `timescale sollten mit
+  einem "back-tick" beginnen
+  
+- `defines dürfen nicht mitten im module stehen, sondern sollten 
+  vor dem Header "module bla (...)" stehen
+
+- "open" gibt es in Verilog nicht, der entsprechende Pin wird
+  einfach nicht beschaltet. zB: .pinname(), ...
+
+Nach dem Patchen scheint nun zumindest Debussy zu kompilieren !
+
+    Req: mpallas
+    Prio: high
+
 - 20030715c/Req: IOP: consider actual ::muxopt columns used
     e.g. if less signals are to be connected, leave rest empty
 

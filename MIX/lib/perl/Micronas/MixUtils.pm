@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.20 $                                             |
+# | Revision:   $Revision: 1.21 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/07/16 08:46:15 $                                   |
+# | Date:       $Date: 2003/07/17 12:10:43 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.20 2003/07/16 08:46:15 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.21 2003/07/17 12:10:43 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,13 +31,11 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
-# | Revision 1.20  2003/07/16 08:46:15  wig
-# | Improved IO Parser:
-# | - select encoded bus vs. one-hot
-# | - constants
-# |
-# | ::use %NCD%: not write component declaration
-# | ::config %NO_CONFIG%: not write configuration for this instance
+# | Revision 1.21  2003/07/17 12:10:43  wig
+# | fixed minor bugs:
+# | - Verilog `define before module
+# | - Verilog open
+# | - signals(NN) in IO-Parser failed (bad reg-ex)
 # |
 # | Revision 1.16  2003/06/04 15:52:43  wig
 # | intermediate release, before releasing alpha IOParser
@@ -201,11 +199,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.20 2003/07/16 08:46:15 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.21 2003/07/17 12:10:43 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.20 $';
+my $thisrevision   =      '$Revision: 1.21 $';
 
-# | Revision:   $Revision: 1.20 $   
+# | Revision:   $Revision: 1.21 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1020,8 +1018,9 @@ $ex = undef; # Container for OLE server
 	    "%VHDL_USE_ENTY%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
 	    "%VHDL_USE_ARCH%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
 	    "%VHDL_USE_CONF%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
-	    "%VERILOG_TIMESCALE%"	=>	"'timescale 1ns / 1ns;",
+	    "%VERILOG_TIMESCALE%"	=>	"`timescale 1ns / 1ns;",
 	    "%VERILOG_USE_ARCH%"	=>	'%EMPTY%',
+	    "%VERILOG_DEFINES%"	=>	'	// No `defines in this module', # Used internally
 	    "%OPEN%"	=> "open",			#open signal
 	    "%UNDEF%"	=> "ERROR_UNDEF",	#should be 'undef',  #For debugging??  
 	    "%UNDEF_1%"	=> "ERROR_UNDEF_1",	#should be 'undef',  #For debugging??
@@ -2505,9 +2504,13 @@ sub write_delta_excel ($$$) {
 
     # Read in intermediate from previous runs ...    
     my @prev = open_excel( $predir . $file, $sheet, "mandatory,write" );
+    #TODO: Put back a single ' for excel ... ???
+ 
     my @prevd = two2one( $prev[0] );
     my @currd = two2one( $r_a );
 
+    my @colnhead = @{$r_a->[0]};
+   
     # Print header to ... (usual things like options, ....)
     # TODO: Add that header to header definitions
     my $head =
@@ -2538,7 +2541,13 @@ sub write_delta_excel ($$$) {
 
     # Was there a difference? If yes, report and sum up.
     if ( $diff ) {
-
+	my $niceform = 1; # Try to write in extended format ...
+	if ( $currd[0] ne $prevd[0] ) { # Column headers have changed!!
+	    logwarn("WARNING: EXCEL_DIFF with different headers useless!");
+	    # Fall back to write delta in old format
+	    $niceform = 0;
+	}
+	
         my @h = split( /\n/, $head );
 	@h = one2two( \@h );
 	shift @h;
@@ -2547,9 +2556,53 @@ sub write_delta_excel ($$$) {
 	@out = split( /\n/, $diff );
 	@out = one2two( \@out );
 	my $difflines = shift( @out );
+	my @delcols = ();
+
 	push( @h, [ "--NR--", "--CONT--", "--NR--", "--CONT--" ] );
-	push( @h, ( @out ) );
-        write_excel( $file, "DIFF_" . $sheet, \@h );
+	if ( $niceform ) {
+	    # Convert into tabular format, mark changed cells !!
+
+	    push( @h, [ "HEADER",  @colnhead ] ); # Attach header line
+	    unshift( @h, [ "HEADER", @colnhead ] ); # Preped full header line
+	    my $colwidth = scalar( @{$h[0]} ); # Matrix has to be wide enough ...
+
+	    # Now convert delta to two-line format ...
+	    for my $nf ( @out ) {
+		my @newex = ();
+		my @oldex = ();
+		if ( scalar( @$nf ) == 4 ) {
+		    $newex[0] = "NEW-" . $nf->[0];
+		    $oldex[0] = "OLD-" . $nf->[2];
+		    push( @newex, split( /@@@/, $nf->[1] ) ) if $nf->[1];
+		    push( @oldex, split( /@@@/, $nf->[3] ) ) if $nf->[3];
+		    push( @h, [ @newex ] ) if ( scalar( @newex ) > 1  );
+		    push( @h, [ @oldex ] ) if ( scalar( @oldex ) > 1 );
+		    my $fn = scalar( @newex );
+		    my $fo = scalar( @oldex );
+		    my $min = ( $fn < $fo ) ? $fn : $fo;
+		    my $max = ( $fn < $fo ) ? $fo : $fn;
+		    for my $iii ( 0..$min-1 ) {
+			if ( $newex[$iii] ne $oldex[$iii] ) {
+			    push( @delcols , scalar(@h) . "/" . ( $iii + 1 ) );
+			}
+		    }
+		    if ( $min < $max ) {
+			for my $iii ( $min..$max ) {
+			    push( @delcols, scalar( @h ) . "/" . ( $iii + 1 ) );
+			}
+		    } 
+		} else {
+		    push( @h, $nf );
+		}
+	    }
+	} else {
+	    # Remove the @@@ signs from output ...
+	    for my $o ( @out ) {
+		map( { s,@@@,,g } @$o );
+	    }
+	    push( @h, ( @out ) );
+	}
+        write_excel( $file, "DIFF_" . $sheet, \@h, \@delcols );
 
 	# One line has to differ (date)
 	if ( $difflines > 0 ) {
@@ -2568,20 +2621,22 @@ sub write_delta_excel ($$$) {
 # convert two dim. input arry into a one-dim. array.
 # by concatenation the cells with \tX\t
 #
+#wig20030716: use first line as header descriptions, field seperator!!
 sub two2one ($) {
     my $ref = shift;
 
     my @out = ();
+ 
     no warnings; # switch of warnings here, values might be undefined ...
     # Convert two dim. input array into one-dimensional
     for my $n ( @$ref ) {
-	my $l = join( "\t", @$n );
-	$l =~ s/\t+/\t/g;
-	$l =~ s/\t$//;
+	my $l = join( '@@@', @$n ); # Use @@@ as field seperator ...
+	$l =~ s/\t+/\t/g;# Remove multiple \t
+	$l =~ s/\t$//; # Convert \t to space ....
 	push( @out, $l );
     }
     if ( $EH{'output'}{'delta'} !~ m/space/ ) {
-	@out = grep( !/^\s*$/ , @out ); # Get rid of space only
+	@out = grep( !/^\s*$/ , @out ); # Get rid of "space only" elements
     }
     return @out;
 }
@@ -2602,7 +2657,7 @@ sub one2two ($) {
     my $difflines = -1;
     if ( @fields = split( /\+/, $ref->[0] ) ) {
 	$tline = $ref->[0];
-	# @fileds has lengthes, now ....
+	# @fields has lengthes, now ....
 	unless( $fields[0] ) { shift @fields; }; #Take away the first if empty
 	if ( scalar( @fields ) < 1 or scalar( @fields ) > 4 ) {
 	    logwarn( "WARNING: Bad number of fields found in write_delta_excel!" );
@@ -2626,8 +2681,8 @@ sub one2two ($) {
 		    $oval = $n2;
 		    $n2 = "";
 		}
-		$nval =~ s/\s+/ /og;
-		$oval =~ s/\s+/ /og;
+		$nval =~ s/ +/ /og; # Compress <space>
+		$oval =~ s/ +/ /og; # Compress <space>
 		@{$out[$n]} = ( $n1, $nval, $n2, $oval );
 		# Initialize difflines, but only count lines not starting with a # or a //
 		if ( $difflines == -1 ) { $difflines = 0; };
@@ -2656,7 +2711,7 @@ sub one2two ($) {
 
 =head2
 
-write_excel ($$$) {
+write_excel ($$$;$) {
 
 this subroutine is self explanatory. The only important thing is, that it will
 try to rotate older versions of the generated sheets.
@@ -2667,12 +2722,14 @@ $EH{'intermediate'}{'keep'}
 Arguments: $file   := filename
 		$type  := sheetname (CONN|HIER)
 		$ref_a := reference to array with data
+		$ref_c := mark the cells listed in this array ...
 
 =cut
-sub write_excel ($$$) {
+sub write_excel ($$$;$) {
     my $file = shift;
     my $sheet = shift;
     my $r_a = shift;
+    my $r_c = shift || undef;
 
     my $book;
     my $newflag = 0;
@@ -2810,6 +2867,41 @@ sub write_excel ($$$) {
     my $rng=$sheetr->Range($c1.":".$c2);
     $rng->{Value}=$r_a;
 
+    # Mark cells in that list in background color ..
+    # Format: row/col
+    if ( defined( $r_c ) ) {
+	$rng->Interior->{Color} = mix_utils_rgb( 255, 255, 255 ); # Set back color to white 
+	# Deselect ...
+	for my $cell ( @$r_c ) {
+	    my $x; my $y;
+	    ( $y , $x ) = split( '/', $cell );
+	    if ( $x =~ m,^\d+$, and $y =~ m,^\d+$, ) {
+		# my $ca=$sheetr->Cells($y,$x)->Address;
+		my $cn = chr( $x + 64 ) . ( $y - 1 ); #Hope that helps ...
+		my $co = chr( $x + 64 ) . $y;
+		my ( $ncol, $ocol );
+		if ( $x == 1 ) {
+		    $ncol = $ocol = mix_utils_rgb( 0, 0, 255 );
+		} else {
+		    $ocol = mix_utils_rgb( 0, 255, 0 );
+		    $ncol = mix_utils_rgb( 255, 0, 0 );
+		}
+		$rng= $sheetr->Range($cn);
+		$rng->Interior->{Color} = $ncol;
+		$rng =$sheetr->Range($co);
+		$rng->Interior->{Color} = $ocol;
+		
+# White background with a solid border
+#
+# $Chart->PlotArea->Border->{LineStyle} = xlContinuous;
+# $Chart->PlotArea->Border->{Color} = RGB(0,0,0);
+# $Chart->PlotArea->Interior->{Color} = RGB(255,255,255);
+		# $rng->{BackColor}=0;
+		# example: $workSheet->Range("A1:A6")->Interior->{ColorIndex} =XX;
+	    }
+	}
+    }
+	
     if ( $EH{'intermediate'}{'format'} =~ m,auto, ) {
 	$rng->Columns->AutoFit;
     }
@@ -2826,16 +2918,28 @@ sub write_excel ($$$) {
 }
 
 #
-# Mask pure digits (esp. with . and/or , inside) from ExCEL!
+# Convert RGB value to internal representation
+#
+sub mix_utils_rgb ($$$) {
+    return ( $_[0] | ($_[1] << 8) | ($_[2] << 16) );
+}
+
+
+
+#
+# Mask pure digits (esp. with . and/or , inside) for ExCEL!
 # Otherwise these will get converted to dates :-(
 #
+#wig20030716: add a ' before a trailing ' ...
 sub mix_utils_mask_excel ($) {
     my $r_a = shift;
 
     for my $i ( @$r_a ) {    
 	for my $ii ( @$i ) {
 	    if ( $ii =~ m/^[\d.,]+$/ ) {
-		# Put a ' in front of pure digits ...
+		# Put a double ' ' in front of pure digits ...
+		$ii = "'" . $ii;
+	    } elsif ( $ii =~ m/^'/ ) {
 		$ii = "'" . $ii;
 	    }
 	}

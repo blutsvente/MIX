@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.21 $                                             |
+# | Revision:   $Revision: 1.22 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/07/16 08:46:15 $                                   |
+# | Date:       $Date: 2003/07/17 12:10:42 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.21 2003/07/16 08:46:15 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.22 2003/07/17 12:10:42 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,13 +33,11 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
-# | Revision 1.21  2003/07/16 08:46:15  wig
-# | Improved IO Parser:
-# | - select encoded bus vs. one-hot
-# | - constants
-# |
-# | ::use %NCD%: not write component declaration
-# | ::config %NO_CONFIG%: not write configuration for this instance
+# | Revision 1.22  2003/07/17 12:10:42  wig
+# | fixed minor bugs:
+# | - Verilog `define before module
+# | - Verilog open
+# | - signals(NN) in IO-Parser failed (bad reg-ex)
 # |
 # | Revision 1.20  2003/07/09 13:01:01  wig
 # | Fixed mix_ioparse functions to get free programmanble pad cell naming,
@@ -193,11 +191,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.21 2003/07/16 08:46:15 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.22 2003/07/17 12:10:42 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.21 $';
+my $thisrevision   =      '$Revision: 1.22 $';
 
-# | Revision:   $Revision: 1.21 $   
+# | Revision:   $Revision: 1.22 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1657,10 +1655,11 @@ sub apply_conn_macros ($$) {
                     
                     my %mex = ();
                     # Gets matched variables
-                    eval $r_cm->[$ii]{'me'};
-                    if ( $@ ) {
-                        logwarn("Evaluation of macro $ii for macro expansion in line $i failed: $@");
-                        next;
+                    unless ( eval $r_cm->[$ii]{'me'} ) {
+                        if ( $@ ) {
+                            logwarn("Evaluation of macro $ii for macro expansion in line $i failed: $@");
+                            next;
+                        }
                     }
 
                     for my $md ( 0..$#{$r_cm->[$ii]{'md'}} ) {
@@ -1827,7 +1826,9 @@ sub apply_x_gen ($$) {
                     # Apply all fields defined in generator:
                     for my $ii ( keys %{$r_hg->{$cg}{'field'}} ) {
                         if ( $r_hg->{$cg}{'field'}{$ii} ) {
-                            my $e = "\$in{'$ii'} = \"" . $r_hg->{$cg}{'field'}{$ii} . "\"";
+                            # my $f = mix_p_genexp( $r_hg->{$cg}{'field'}{$ii}, $ky->{$i} );
+                            my $f = $r_hg->{$cg}{'field'}{$ii};
+                            my $e = "\$in{'$ii'} = \"" . $f . "\"";
                             if ( $ii eq "::gen" ) { # Mask \ 
                                     $e =~ s/\\/\\\\/g;
                             }
@@ -1916,6 +1917,7 @@ sub apply_x_gen ($$) {
                         #
                         my %in = (); # Hold input fields ....
                         for my $iii ( keys( %{$r_hg->{$cg}{'field'}} ) ) {
+                            # my $f = mix_p_genexp( $r_hg->{$cg}{'field'}{$iii}, $ky->{$i} );
                             my $f = $r_hg->{$cg}{'field'}{$iii};
                             if ( $iii =~ m/::gen/ ) { # Treat ::gen specially
                                 $f =~ s/\\/\\\\/g; #  Mask \
@@ -1944,6 +1946,24 @@ sub apply_x_gen ($$) {
             }
         }
     }
+}
+
+#
+# Expand available fields to real values
+#
+sub mix_p_genexp ($$) {
+    my $field = shift;
+    my $keys = shift;
+
+    while ( $field =~ m,%(::\w+?)%,g ) {
+        if ( defined( $keys->{$1} ) and not ref( $keys->{$1} ) ) {
+            my $k = $1;
+            # Found s.th, try to replace it now ...
+            $field =~ s,%$k%,$keys->{$k},;
+        }
+    }
+
+    return $field;
 }
 
 ####################################################################

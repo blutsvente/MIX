@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / IOParser
 # | Modules:    $RCSfile: MixIOParser.pm,v $ 
-# | Revision:   $Revision: 1.7 $
+# | Revision:   $Revision: 1.8 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2003/07/16 08:46:15 $
+# | Date:       $Date: 2003/07/17 12:10:42 $
 # | 
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.7 2003/07/16 08:46:15 wig Exp $
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.8 2003/07/17 12:10:42 wig Exp $
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -36,13 +36,11 @@
 # |
 # | Changes:
 # | $Log: MixIOParser.pm,v $
-# | Revision 1.7  2003/07/16 08:46:15  wig
-# | Improved IO Parser:
-# | - select encoded bus vs. one-hot
-# | - constants
-# |
-# | ::use %NCD%: not write component declaration
-# | ::config %NO_CONFIG%: not write configuration for this instance
+# | Revision 1.8  2003/07/17 12:10:42  wig
+# | fixed minor bugs:
+# | - Verilog `define before module
+# | - Verilog open
+# | - signals(NN) in IO-Parser failed (bad reg-ex)
 # |
 # | Revision 1.4  2003/06/05 14:48:01  wig
 # | Releasing alpha IO-Parser
@@ -112,9 +110,9 @@ sub _mix_iop_init();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixIOParser.pm,v 1.7 2003/07/16 08:46:15 wig Exp $';
+my $thisid		=	'$Id: MixIOParser.pm,v 1.8 2003/07/17 12:10:42 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixIOParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.7 $';
+my $thisrevision   =      '$Revision: 1.8 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -396,7 +394,7 @@ sub mix_iop_connioc ($$$) {
             if ( $c[$c] =~ m,^\s*'?([01])'?, ) {
                 $name = ( $1 eq '1' ) ? '%HIGH%' : '%LOW%';
                 $num = undef;
-            } elsif ( $c[$c] =~ m,(.+)\.(\d+)$, or $c[$c] =~ m,(.+)\((\d)\)$, ) {
+            } elsif ( $c[$c] =~ m,(.+)\.(\d+)$, or $c[$c] =~ m,(.+)\((\d+)\)$, ) {
                 # signal.N or signal(N)
                 $name = $1;
                 $num = $2;

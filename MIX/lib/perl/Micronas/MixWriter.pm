@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.20 $                                             |
+# | Revision:   $Revision: 1.21 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/07/16 08:46:16 $                                   |
+# | Date:       $Date: 2003/07/17 12:10:43 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.20 2003/07/16 08:46:16 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.21 2003/07/17 12:10:43 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,13 +32,11 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
-# | Revision 1.20  2003/07/16 08:46:16  wig
-# | Improved IO Parser:
-# | - select encoded bus vs. one-hot
-# | - constants
-# |
-# | ::use %NCD%: not write component declaration
-# | ::config %NO_CONFIG%: not write configuration for this instance
+# | Revision 1.21  2003/07/17 12:10:43  wig
+# | fixed minor bugs:
+# | - Verilog `define before module
+# | - Verilog open
+# | - signals(NN) in IO-Parser failed (bad reg-ex)
 # |
 # | Revision 1.19  2003/07/09 07:52:44  wig
 # | Adding first version of Verilog support.
@@ -173,9 +171,9 @@ sub _mix_wr_get_iveri ($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.20 2003/07/16 08:46:16 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.21 2003/07/17 12:10:43 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.20 $';
+my $thisrevision   =      '$Revision: 1.21 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -365,6 +363,7 @@ $EH{'template'}{'verilog'}{'arch'}{'head'} = <<'EOD';
 %VERILOG_USE_ARCH%
 
 %VERILOG_TIMESCALE%
+
 //
 EOD
 
@@ -375,6 +374,9 @@ $EH{'template'}{'verilog'}{'arch'}{'body'} = <<'EOD';
 //
 // Start of Generated Module %ARCHNAME% of %ENTYNAME%
 //
+
+%VERILOG_DEFINES%
+
 module %ENTYNAME%
 %VERILOG_INTF%
 
@@ -1977,7 +1979,11 @@ sub print_conn_matrix ($$$$$$$$) {
 	    logwarn("Warning: unexpected branch in print_conn_matrix, signal $signal, port $port");
 	}
         if ( $signal eq "%OPEN%" ) {
-            $t =~ s,%OPEN%\s*\(.*?\),%OPEN%,;
+            if ( $lang =~ m,^veri,io ) {
+                $t =~ s,%OPEN%(\s*\[[:\w]+?\])?,,; # Remove %OPEN% aka. open[a:b]
+            } else {
+                $t =~ s,%OPEN%\s*\(.*?\),%OPEN%,; # Remove ( ... ) definitons ...
+            }
         }
 	return $t;
     #
@@ -2006,7 +2012,11 @@ sub print_conn_matrix ($$$$$$$$) {
     }
     if ( $signal eq "%OPEN%" ) {
         #TODO: Verilog???
-        $t =~ s,%OPEN%\s*\(.*?\),%OPEN%,;
+        if ( $lang =~ m,^veri,io ) {
+            $t =~ s,%OPEN%(\s*\[[:\w]+?\])?,,; # Remove %OPEN%
+        } else {
+            $t =~ s,%OPEN%\s*\(.*?\),%OPEN%,;
+        }
     }
 
     return $t;
@@ -2084,7 +2094,7 @@ sub _write_architecture ($$$$) {
             $EH{'sum'}{'errors'}++;
         }
         $p_lang = $ilang;
-        my $tcom = $EH{'output'}{'comment'}{$ilang};
+        my $tcom = $EH{'output'}{'comment'}{$ilang} || $EH{'output'}{'comment'}{'default'} || "##" ;
         
 	$macros{'%ENTYNAME%'} = $aent;
 	$macros{'%ARCHNAME%'} = $arch . $EH{'postfix'}{'POSTFIX_ARCH'};
@@ -2229,6 +2239,7 @@ sub _write_architecture ($$$$) {
         }
         
 	my $signaltext;
+	my $veridefs = "";
 	if ( $ilang =~ m,^veri,io ) {
             $signaltext = "\t\t$tcom\n\t\t$tcom Generated Signal List\n\t\t$tcom\n";
 	}else {
@@ -2307,8 +2318,9 @@ sub _write_architecture ($$$$) {
 	    }
 	    # Add constant definitions here to concurrent signals ....
 	    if ( $s->{'::mode'} =~ m,C,io ) {
-                my ( $s, $a ) = _write_constant( $s, $type, $dt, $ilang ); # TODO_VERI
+                my ( $s, $a, $d ) = _write_constant( $s, $type, $dt, $ilang );
                 $signaltext .= $s; # add to signal declaration ...
+                $veridefs .= $d;
                 $macros{'%CONCURS%'} .= $a;  # add to signal assignment
                 next;
 	    }
@@ -2409,6 +2421,7 @@ sub _write_architecture ($$$$) {
 	# End is near for write_architecture ...
 	$signaltext .= "\t\t" . $tcom . "\n\t\t" . $tcom . " End of Generated Signal List\n\t\t" . $tcom . "\n";
 	$macros{'%SIGNALS%'} = $signaltext;
+        $macros{'%VERILOG_DEFINES%'} = $veridefs if ( $veridefs );
         if ( keys( %i_macros ) > 0 ) {
             $macros{'%INSTANCES%'} = replace_mac( $macros{'%INSTANCES%'}, \%i_macros );
         }
@@ -2458,6 +2471,7 @@ sub _write_constant ($$$;$) {
     
     my $t = ""; # Signal definitions
     my $sat = ""; # Signal assignments
+    my $def = ""; # Take `defines
     my $comm = ""; # Comments
     my $width = "__E_WIDTH_CONST";
 
@@ -2559,7 +2573,7 @@ sub _write_constant ($$$;$) {
         #!wig20030403: Use intermediate signal ...
         #!org: $t = "\t\t\tconstant $s->{'::name'} : $type$dt := $value;$comm\n";
         if ( $lang =~ m,^veri,io ) {
-            $t = "\t\t\t`define " . $s->{'::name'} . "_c " . $value . " " . $comm . "\n";
+            $def = "\t\t`define " . $s->{'::name'} . "_c " . $value . " " . $comm . "\n";
             $t .= "\t\t\twire\t" . $dt . "\t" . $s->{'::name'} . ";\n";
             $sat = "\t\t\tassign " . $s->{'::name'} . " = `" . $s->{'::name'} . "_c;\n";
         } else {
@@ -2569,7 +2583,7 @@ sub _write_constant ($$$;$) {
         }        
     }
 
-    return $t, $sat;
+    return $t, $sat, $def;
 }    
 
 
@@ -3192,7 +3206,7 @@ sub use_lib ($$) {
             foreach my $u ( @u ) {
                 # libs may be seperated by , and/or \s
                 # $u := SEL:library.component ...
-                next if ( $u =~ m,(NO_COMP|__NOCOMPDEC__),o ); 
+                next if ( $u =~ m,(%NDC%|%NO_COMPONENT_DECLARATION|NO_COMP|__NOCOMPDEC__),o ); 
                 my $sel = lc( $EH{'output'}{'generate'}{'use'} );
                 my $pack = '';
                 my $lib = '';
