@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / I2CParser                                |
 # | Modules:    $RCSfile: MixI2CParser.pm,v $                             |
-# | Revision:   $Revision: 1.7 $                                          |
+# | Revision:   $Revision: 1.8 $                                          |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2004/02/16 15:35:56 $                              |
+# | Date:       $Date: 2004/02/18 15:17:18 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/Attic/MixI2CParser.pm,v 1.7 2004/02/16 15:35:56 abauer Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/Attic/MixI2CParser.pm,v 1.8 2004/02/18 15:17:18 abauer Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
@@ -74,9 +74,9 @@ sub parse_i2c_init($);
 # RCS Id, to be put into output templates
 #
 
-my $thisid		= 	'$Id: MixI2CParser.pm,v 1.7 2004/02/16 15:35:56 abauer Exp $';
+my $thisid		= 	'$Id: MixI2CParser.pm,v 1.8 2004/02/18 15:17:18 abauer Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixI2CParser.pm,v $';
-my $thisrevision        =       '$Revision: 1.7 $';
+my $thisrevision        =       '$Revision: 1.8 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -217,7 +217,7 @@ sub add_interface(%) {
 sub create_sync_block($$) {
 
     my $in = shift;
-    my $block = shift;, \begin{tt}$hierdb\end{tt} and \begin{tt}\end{tt}
+    my $block = shift;
     my $parent = shift;
 
     my %conns;
