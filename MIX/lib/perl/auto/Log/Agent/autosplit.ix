@@ -1,0 +1,23 @@
+# Index created by AutoSplit for ./blib/lib/Log/Agent.pm
+#    (file acts as timestamp)
+package Log::Agent;
+sub logconfig ;
+sub inited ;
+sub DATUM_is_here ;
+sub log_default ;
+sub logconfess ;
+sub logcroak ;
+sub logxcroak ;
+sub logdie ;
+sub logerr ;
+sub logcarp ;
+sub logxcarp ;
+sub logwarn ;
+sub logsay ;
+sub logtrc ;
+sub logdbg ;
+sub logtags ;
+sub logwrite ;
+sub bug ;
+sub prio_tag ;
+1;

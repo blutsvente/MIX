@@ -1,0 +1,7 @@
+# Index created by AutoSplit for ./blib/lib/Log/Agent/Priorities.pm
+#    (file acts as timestamp)
+package Log::Agent::Priorities;
+sub prio_from_level ;
+sub level_from_prio ;
+sub priority_level ;
+1;
