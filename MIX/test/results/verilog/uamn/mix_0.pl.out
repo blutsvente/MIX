@@ -1,0 +1,82 @@
+04/03/23 10:47:29 1628: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/verilog/uamn/../../verilog.xls
+04/03/23 10:47:29 1628: Reading worksheet HIER_UAMN of H:/work/mix_new/MIX/test/xls_input/verilog/uamn/../../verilog.xls
+04/03/23 10:47:29 1628: WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+04/03/23 10:47:30 1628: add_port: signal sig_o_a2 adds port sig_o_a2 to instance inst_t
+04/03/23 10:47:30 1628: add_port: signal sig_o_ae adds port sig_o_ae to instance inst_t
+04/03/23 10:47:30 1628: Adding port to hierachy module inst_a for signal sig_o_ae!
+04/03/23 10:47:30 1628: add_port: signal sig_o_ae adds port p_mix_sig_o_ae_go to instance inst_a
+04/03/23 10:47:30 1628: add_port: signal sig_i_a2 adds port sig_i_a2 to instance inst_t
+04/03/23 10:47:30 1628: Adding port to hierachy module inst_a for signal sig_01!
+04/03/23 10:47:30 1628: Adding port to hierachy module inst_a for signal sig_01!
+04/03/23 10:47:30 1628: add_port: signal sig_01 adds port p_mix_sig_01_go to instance inst_a
+04/03/23 10:47:30 1628: add_port: signal sig_i_a adds port sig_i_a to instance inst_t
+04/03/23 10:47:30 1628: Adding port to hierachy module inst_a for signal sig_03!
+04/03/23 10:47:30 1628: add_port: signal sig_03 adds port p_mix_sig_03_go to instance inst_a
+04/03/23 10:47:30 1628: add_port: signal sig_o_a adds port sig_o_a to instance inst_t
+04/03/23 10:47:30 1628: Adding port to hierachy module inst_a for signal sig_04!
+04/03/23 10:47:30 1628: add_port: signal sig_04 adds port p_mix_sig_04_gi to instance inst_a
+04/03/23 10:47:30 1628: add_port: signal sig_i_ae adds port sig_i_ae to instance inst_t
+04/03/23 10:47:30 1628: Adding port to hierachy module inst_a for signal sig_i_ae!
+04/03/23 10:47:30 1628: add_port: signal sig_i_ae adds port p_mix_sig_i_ae_gi to instance inst_a
+04/03/23 10:47:30 1628: Adding port to hierachy module inst_a for signal sig_05!
+04/03/23 10:47:30 1628: Adding port to hierachy module inst_a for signal sig_05!
+04/03/23 10:47:30 1628: add_port: signal sig_05 adds port p_mix_sig_05_2_1_go to instance inst_a
+04/03/23 10:47:30 1628: Adding port to hierachy module inst_a for signal sig_06!
+04/03/23 10:47:30 1628: Adding port to hierachy module inst_a for signal sig_06!
+04/03/23 10:47:30 1628: WARNING: WARNING: Signal sig_06 has mixed links into instance inst_b!
+04/03/23 10:47:30 1628: WARNING: WARNING: Possible io mode conflict for sig_06 at inst_a
+04/03/23 10:47:30 1628: add_port: signal sig_06 adds port p_mix_sig_06_gi to instance inst_a
+04/03/23 10:47:30 1628: WARNING: File verilog-mixed.xls already exists! Contents will be changed
+04/03/23 10:47:31 1628: WARNING: Rotating 3 old sheets of CONF!
+04/03/23 10:47:32 1628: WARNING: Rotating 3 old sheets of CONN!
+04/03/23 10:47:33 1628: WARNING: Rotating 3 old sheets of HIER!
+04/03/23 10:47:33 1628: WARNING: Removing old and and diff sheets in file: verilog-mixed.xls
+04/03/23 10:47:34 1628: Port port_aa_2 of entity ent_aa one bit wide, reduce to signal
+
+04/03/23 10:47:34 1628: Port port_ab_2 of entity ent_ab one bit wide, reduce to signal
+
+04/03/23 10:47:34 1628: INFO: Port port_ac_2 of entity ent_ac one bit wide, reduce to signal
+
+04/03/23 10:47:34 1628: Port port_ad_2 of entity ent_ad one bit wide, reduce to signal
+
+04/03/23 10:47:34 1628: Port port_b_5_1 of entity ent_b one bit wide, reduce to signal
+
+04/03/23 10:47:34 1628: Port port_b_5_2 of entity ent_b one bit wide, reduce to signal
+
+04/03/23 10:47:34 1628: WARNING: ERROR: Detected missing bits in spliced port port_ae_2!
+04/03/23 10:47:34 1628: Warning: Signal sig_o_a2 does not have a driver in instance inst_a!
+04/03/23 10:47:34 1628: Signal sig_i_a2 does not have a load in instance inst_a!
+04/03/23 10:47:34 1628: Signal sig_i_a does not have a load in instance inst_a!
+04/03/23 10:47:34 1628: Warning: Signal sig_o_a does not have a driver in instance inst_a!
+04/03/23 10:47:34 1628: Signal sig_08 does not have a load in instance inst_b!
+04/03/23 10:47:34 1628: Signal sig_01 does not have a load in instance inst_b!
+04/03/23 10:47:34 1628: Signal sig_03 does not have a load in instance inst_b!
+04/03/23 10:47:34 1628: Warning: Signal sig_04 does not have a driver in instance inst_b!
+04/03/23 10:47:34 1628: Signal sig_05 does not have a load in instance inst_b!
+04/03/23 10:47:34 1628: Signal sig_07 does not have a load in instance inst_b!
+04/03/23 10:47:34 1628: Signal sig_13 does not have a load in instance inst_t!
+04/03/23 10:47:34 1628: Warning: Signal sig_07 does not have a driver in instance inst_t!
+04/03/23 10:47:34 1628: Leave unloaded port sig_13 open at instance inst_t
+04/03/23 10:47:35 1628: WARNING: ============= SUMMARY =================
+04/03/23 10:47:35 1628: WARNING: SUM: Summary of checks and created items:
+04/03/23 10:47:35 1628: WARNING: SUM: checkforce 0
+04/03/23 10:47:35 1628: WARNING: SUM: checkunique 0
+04/03/23 10:47:35 1628: WARNING: SUM: checkwarn 0
+04/03/23 10:47:35 1628: WARNING: SUM: cmacros 0
+04/03/23 10:47:35 1628: WARNING: SUM: conn 15
+04/03/23 10:47:35 1628: WARNING: SUM: error 1
+04/03/23 10:47:35 1628: WARNING: SUM: errors 0
+04/03/23 10:47:35 1628: WARNING: SUM: genport 13
+04/03/23 10:47:36 1628: WARNING: SUM: hdlfiles 7
+04/03/23 10:47:36 1628: WARNING: SUM: inst 15
+04/03/23 10:47:36 1628: WARNING: SUM: multdriver 4
+04/03/23 10:47:36 1628: WARNING: SUM: nodriver 4
+04/03/23 10:47:36 1628: WARNING: SUM: noload 8
+04/03/23 10:47:36 1628: WARNING: SUM: openports 1
+04/03/23 10:47:36 1628: WARNING: SUM: warnings 2
+04/03/23 10:47:37 1628: WARNING: SUM: Number of parsed input tables:
+04/03/23 10:47:37 1628: WARNING: SUM: conf 0
+04/03/23 10:47:37 1628: WARNING: SUM: hier 1
+04/03/23 10:47:37 1628: WARNING: SUM: conn 1
+04/03/23 10:47:37 1628: WARNING: SUM: io 0
+04/03/23 10:47:37 1628: WARNING: SUM: i2c 0
