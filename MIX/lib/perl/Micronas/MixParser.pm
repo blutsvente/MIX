@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.42 $                                         |
+# | Revision:   $Revision: 1.43 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/08/05 15:21:32 $                              |
+# | Date:       $Date: 2004/08/09 08:52:59 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.42 2004/08/05 15:21:32 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.43 2004/08/09 08:52:59 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.43  2004/08/09 08:52:59  wig
+# | minor updates for typecast (typeos, assignments, ...)
+# |
 # | Revision 1.42  2004/08/05 15:21:32  wig
 # | typecast added more columns
 # |
@@ -264,11 +267,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.42 2004/08/05 15:21:32 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.43 2004/08/09 08:52:59 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.42 $';
+my $thisrevision   =      '$Revision: 1.43 $';
 
-# | Revision:   $Revision: 1.42 $
+# | Revision:   $Revision: 1.43 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1446,12 +1449,18 @@ sub _create_conn ($$%) {
                 my $tcwr = '%TYPECAST_' . $EH{'TYPECAST_NR'}++ . '%' ;
                 my $tcsig = $EH{'postfix'}{'PREFIX_TC_INT'} . $EH{'TYPECAST_NR'} . "_" .
                         $data{'::name'};
+                my @tcassign = ();
+                if ( $inout =~ m/in/ ) {
+                    @tcassign = ( $tcsig , $tcdo, $data{'::name'} );
+                } else {
+                    @tcassign = ( $data{'::name'}, $data{'::type'}, $tcsig );
+                }
                 add_inst( '::inst' => $tcwr,
                               '::parent' => $hierdb{$co{'inst'}}{'::parent'},
                               '::entity' => '%TYPECAST_ENT%', # Just dummies
                               '::config' => '%TYPECAST_CONF%', # Just dummies
                               '::lang' => 'vhdl',                         # typecast in for VHDL
-                              '::typecast' => [ $data{'::name'}, $data{'::type'}, $tcsig  ], # remember what to typecast
+                              '::typecast' => \@tcassign , # remember what to typecast
                             );
                 #TODO: Language -> vhdl ....
 
@@ -1482,7 +1491,7 @@ sub _create_conn ($$%) {
                 $ec{'::low'} = $l;     # use the port border's, ... obviously noone should typecast
                                             # just parts of ports
                 $ec{'::mode'} = 'S';
-                $ec{'::comment'} = "__I_TYPECAST_INT" . ( $ec{'::comment'} ?
+                $ec{'::comment'} = "__I_TYPECAST_INT" . ( defined( $ec{'::comment'} ) ?
                             ( " " . $ec{'::comment'} ) : "" );
                 $ec{'::' . $inout} = $oeicon;
                 $ec{$oe} = $oecon;

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.54 $                                         |
+# | Revision:   $Revision: 1.55 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/08/04 13:28:46 $                              |
+# | Date:       $Date: 2004/08/09 08:53:02 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.54 2004/08/04 13:28:46 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.55 2004/08/09 08:53:02 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.55  2004/08/09 08:53:02  wig
+# | minor updates for typecast (typeos, assignments, ...)
+# |
 # | Revision 1.54  2004/08/04 13:28:46  wig
 # | Updates for TYPECAST
 # |
@@ -280,11 +283,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.54 2004/08/04 13:28:46 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.55 2004/08/09 08:53:02 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.54 $';
+my $thisrevision        =      '$Revision: 1.55 $';
 
-# Revision:   $Revision: 1.54 $   
+# Revision:   $Revision: 1.55 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -916,7 +919,7 @@ sub mix_init () {
 ',   # This gets used by if the magma workaround is set ...
                     '_magma_mod_'   => '`%::entity%_inst_name', # module name
                     '_magma_uamn_' => '',   # Internal use, storage for generated defines
-                    'typecast'  => 'portmap',  # Synopsys tools: use intermediate signal := intsig
+                    'typecast'  => 'intsig', # 'portmap' would be more native, but does not work for Synopsys
 	      }
         },
 	'ext' =>      {   'vhdl' => 'vhd',

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.43 $                                         |
+# | Revision:   $Revision: 1.44 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/08/04 12:49:37 $                              |
+# | Date:       $Date: 2004/08/09 08:53:05 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.43 2004/08/04 12:49:37 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.44 2004/08/09 08:53:05 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.44  2004/08/09 08:53:05  wig
+# | minor updates for typecast (typeos, assignments, ...)
+# |
 # | Revision 1.43  2004/08/04 12:49:37  wig
 # | Added typecast and partial constant assignments
 # |
@@ -238,9 +241,9 @@ sub sig_typecast($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.43 2004/08/04 12:49:37 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.44 2004/08/09 08:53:05 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.43 $';
+my $thisrevision   =      '$Revision: 1.44 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1769,7 +1772,8 @@ sub gen_instmap ($;$$) {
     if ( $inst =~ m/^(__|%)TYPECAST_/io ) {
         # Read $hierdb{$inst}{'::typecast'}  -> SIGNAME, TYPECAST, INTNAME
         my ( $orgsig, $tcf, $intsig ) = @{$hierdb{$inst}{'::typecast'}}; 
-	$map = $EH{'macro'}{'%S%'} x 2 . "$orgsig <= $tcf( $intsig );\n";
+	$map = $EH{'macro'}{'%S%'} x 2 . $orgsig . " <= " . $tcf . "( " . $intsig . " ) "
+            . $tcom . "; __I_TYPECAST\n";
     } else {
         # Sort map ...
         $map = join( "\n", sort( split ( /\n/, $map ) ) ) . "\n";
