@@ -13,12 +13,12 @@
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_embedded.pl,v 1.7 2004/08/05 11:53:04 abauer Exp $     |
+# | Id           : $Id: mix_embedded.pl,v 1.8 2004/08/05 13:55:37 abauer Exp $     |
 # | Name         : $Name:  $                                   |
 # | Description  : $Description: simple wrapper script for embedding MIX $|
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.7 $                                       |
-# | Mod.Date     : $Date: 2004/08/05 11:53:04 $                           |
+# | Version      : $Revision: 1.8 $                                       |
+# | Mod.Date     : $Date: 2004/08/05 13:55:37 $                           |
 # | Author       : $Author: abauer $                                      |
 # | Email        : $Email: Alexander.Bauer@micronas.com$                  |
 # |                                                                       |
@@ -87,7 +87,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.7 $'; # RCS Id
+$::VERSION = '$Revision: 1.8 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 mix_init(); # load Presets ....
@@ -110,7 +110,7 @@ mix_getopt_header( qw(
     bak!
     init
     import=s@
-    ));
+		      ));
 
 
 my ($r_hierin, $r_connin, $r_ioin, $r_i2cin);
@@ -135,6 +135,12 @@ sub writeSpreadsheet($) {
 #    write_outfile($filename, "CONN", db2array($r_connin, "CONN", undef));
 #    write_outfile($filename, "IO", db2array($r_ioin, "IO", undef));
 #    write_outfile($filename, "CONF", db2array($r_i2cin, "CONF", undef));
+}
+
+
+sub hash2array() {
+
+#    return ;
 }
 
 
@@ -241,6 +247,143 @@ sub getInstLang($) {
     print "Instance: $name -> $temp\n";
 
     return $temp;
+}
+
+
+sub getNumHierRows() {
+    return (scalar $#{$r_hierin});
+}
+
+
+sub getHierRow($) {
+
+    my $row = shift;
+
+    my @row = ();
+
+    if(exists($r_hierin->[$row]{'::ign'})) {
+      push(@row, $r_hierin->[$row]{'::ign'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_hierin->[$row]{'::gen'})) {
+      push(@row, $r_hierin->[$row]{'::gen'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_hierin->[$row]{'::variants'})) {
+      push(@row, $r_hierin->[$row]{'::variants'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_hierin->[$row]{'::parent'})) {
+      push(@row, $r_hierin->[$row]{'::parent'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_hierin->[$row]{'::inst'})) {
+      push(@row, $r_hierin->[$row]{'::inst'});
+    }
+    else{
+      push(@row,"");
+    }
+    if(exists($r_hierin->[$row]{'::lang'})) {
+      push(@row, $r_hierin->[$row]{'::lang'});
+    }
+    else{
+      push(@row,"");
+    }
+    if(exists($r_hierin->[$row]{'::entity'})) {
+      push(@row, $r_hierin->[$row]{'::entity'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_hierin->[$row]{'::arch'})) {
+      push(@row, $r_hierin->[$row]{'::arch'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_hierin->[$row]{'::config'})) {
+      push(@row, $r_hierin->[$row]{'::config'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_hierin->[$row]{'::use'})) {
+      push(@row, $r_hierin->[$row]{'::use'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_hierin->[$row]{'::comment'})) {
+      push(@row, $r_hierin->[$row]{'::comment'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_hierin->[$row]{'::descr'})) {
+      push(@row, $r_hierin->[$row]{'::descr'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_hierin->[$row]{'::shortname'})) {
+      push(@row, $r_hierin->[$row]{'::shortname'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_hierin->[$row]{'::default'})) {
+      push(@row, $r_hierin->[$row]{'::default'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_hierin->[$row]{'::hierarchy'})) {
+      push(@row, $r_hierin->[$row]{'::hierarchy'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_hierin->[$row]{'::debug'})) {
+      push(@row, $r_hierin->[$row]{'::debug'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_hierin->[$row]{'::skip'})) {
+      push(@row, $r_hierin->[$row]{'::skip'});
+    }
+    else {
+      push(@row,"");
+    }
+
+    return(@row);
+}
+
+
+sub setHierValue($$$) {
+
+    my $data = shift;
+    my $row = shift;
+    my $column = shift;
+
+    if(!defined($column)) {
+      $column = "";
+    }
+    if(!defined($data)) {
+      $data = "";
+    }
+
+    if(exists($r_hierin->[$row]{$column})) {
+      $r_hierin->[$row]{$column} = $data;
+    }
 }
 
 
