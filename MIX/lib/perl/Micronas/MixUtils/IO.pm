@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.18 $                                          |
+# | Revision:   $Revision: 1.19 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/01/26 14:01:46 $                              |
+# | Date:       $Date: 2005/01/31 12:40:36 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.19  2005/01/31 12:40:36  wig
+# |
+# |  	IO.pm : minor corrections
+# |
 # | Revision 1.18  2005/01/26 14:01:46  wig
 # | changed %OPEN% and -autoquote for cvs output
 # |
@@ -155,11 +159,11 @@ sub useOoolib ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.18 2005/01/26 14:01:46 wig Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.19 2005/01/31 12:40:36 wig Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.18 $';
+my $thisrevision    =      '$Revision: 1.19 $';
 
-# Revision:   $Revision: 1.18 $
+# Revision:   $Revision: 1.19 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2005,7 +2009,11 @@ sub write_csv($$$) {
 	}
     }
 
-    print FILE $EH{'format'}{'csv'}{'sheetsep'} . $sheet . $cr;
+	if ( $EH{'format'}{'csv'}{'sheetsep'} ) {
+    	print FILE $EH{'format'}{'csv'}{'sheetsep'} . $sheet . "\n";
+	} else {
+		logsay("INFO: Start printing sheet $sheet, no seperator selected!" );
+	}
 
     for(my $y=0; $y<$ymax; $y++) {
         for(my $x=0; $x<$xmax; $x++) {
