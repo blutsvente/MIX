@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.46 $                                         |
+# | Revision:   $Revision: 1.47 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/11/10 14:59:10 $                              |
+# | Date:       $Date: 2005/01/26 14:01:43 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.46 2004/11/10 14:59:10 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.47 2005/01/26 14:01:43 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.47  2005/01/26 14:01:43  wig
+# | changed %OPEN% and -autoquote for cvs output
+# |
 # | Revision 1.46  2004/11/10 14:59:10  wig
 # | usage of text a port width ...
 # |
@@ -270,11 +273,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.46 2004/11/10 14:59:10 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.47 2005/01/26 14:01:43 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.46 $';
+my $thisrevision   =      '$Revision: 1.47 $';
 
-# | Revision:   $Revision: 1.46 $
+# | Revision:   $Revision: 1.47 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -725,7 +728,7 @@ sub mix_expand_name ($$) {
     #
     while ( $n =~ m/%((::)?\w+?)%/g ) {
         my $key = $1;
-        next if $key =~ m,^(TOP|PARAMETER|OPEN|GENERIC|CONST|LOW|HIGH|LOW_BUS|HIGH_BUS|BUS)$,o;
+        next if $key =~ m,^(TOP|PARAMETER|OPEN(_\d+)?|GENERIC|CONST|LOW|HIGH|LOW_BUS|HIGH_BUS|BUS)$,o;
         next if $key =~ m,^(TYPECAST_),;
         if ( defined( $rdata->{$key} ) ) {
                 $n =~ s/%$key%/$rdata->{$key}/g; # replace %::key% ...
@@ -972,8 +975,8 @@ sub add_conn (%) {
 
         #
         # Special handling: open -> %OPEN%
-        if ( $name =~ m,^open$,i ) {
-            $name = "%OPEN%";
+        if ( $name =~ m,^open$,io or $name =~ m,^\s*%OPEN%,o ) {
+            $name = "%OPEN_" . $EH{OPEN_NR}++ . "%";
         }
 
         $in{'::name'} = $name;
@@ -1625,7 +1628,7 @@ sub merge_conn($%) {
             #
             if ( $conndb{$name}{$i} and
                  $conndb{$name}{$i} !~ m,%(SIGNAL|BUS_TYPE)%,o and
-                 $conndb{$name}{'::name'} ne "%OPEN%" ) {
+                 $conndb{$name}{'::name'} !~ m,%OPEN(_\d+)?%, ) {
                 # conndb{$name}{::type} is defined and ne the default
                  if ( $data{$i} and $data{$i} !~ m,%(SIGNAL|BUS_TYPE)%,o ) {
                     my $t_cdb = $conndb{$name}{$i};
@@ -1683,7 +1686,7 @@ sub merge_conn($%) {
                         } elsif ( $i =~ m,^\s*::low,o ) {
                             $conndb{$name}{$i} = $data{$i} if ( $data{$i} < $conndb{$name}{$i} );
                         }
-                    } elsif ( $name =~ m,^\s*%OPEN%,o ) {
+                    } elsif ( $name =~ m,^\s*%OPEN(_\d+)?%,o ) {
                         if ( not defined( $conndb{$name}{$i} ) or $conndb{$name}{$i} eq ""
                              or $conndb{$name}{$i} eq "%NULL%" ) {
                             $conndb{$name}{$i} = $data{$i};
@@ -3716,11 +3719,16 @@ sub __parse_mac ($$) {
 
     while ( $$ra =~ m/(%[\w:]+?%)/g ) {
         my $mac = $1;
+        my $mackey = $1;
+        # Strip %OPEN_NN% to %OPEN% ..
+        if ( $mac =~ m/%OPEN_\d+%/ ) {
+            $mackey = "%OPEN%";
+        }
         # O.K., ignore TYPECAST generated modules ...
         if ( $mac =~ m/^%TYPECAST_/ ) {
             return;
         }
-        if ( $mac =~ m/^%(::\w+)%/ ) {
+        if ( $mackey =~ m/^%(::\w+)%/ ) {
             if ( exists( $rb->{$1} ) ) {
                 my $r = $rb->{$1};
                 $$ra =~ s/%[\w:]+?%/$r/;
@@ -3728,8 +3736,8 @@ sub __parse_mac ($$) {
                 logwarn("WARNING: Cannot find macro $1 to replace!");
                 $EH{'sum'}{'warnings'}++;
             }
-        } elsif( exists( $ehmacs->{$mac} ) ) {
-            $$ra =~ s/$mac/$ehmacs->{$mac}/;
+        } elsif( exists( $ehmacs->{$mackey} ) ) {
+            $$ra =~ s/$mac/$ehmacs->{$mackey}/;
         } else {
             logwarn("WARNING: Cannot locate replacement for $mac in data!");
             $EH{'sum'}{'warnings'}++;
@@ -3788,7 +3796,7 @@ sub purge_relicts () {
         $conndb{$i}{'::high'} = '' if ( $conndb{$i}{'::high'} =~ m,^\s+,o );
         $conndb{$i}{'::low'} = '' if ( $conndb{$i}{'::low'} =~ m,^\s+,o );
 
-        next if ( $i eq '%OPEN%' ); # Ignore the %OPEN% pseudo-signal
+        #!wig20050113: next if ( $i =~ m,%OPEN(_\d+)?%, ); # Ignore the %OPEN% pseudo-signal
 
         if ( $conndb{$i}{'::high'} ne '' or $conndb{$i}{'::low'} ne '' ) {
             my $h = $conndb{$i}{'::high'};
@@ -3813,6 +3821,30 @@ sub purge_relicts () {
             }
         }
 
+        #!wig20030731: make sure "open" gets width!
+        if ( $i =~ m,^%OPEN(_\d+)?%$,o ) {
+            if ( $conndb{$i}{'::high'} eq '' or $conndb{$i}{'::low'} eq '' ) {
+                my $max = 0; # Minimal assign a 0 to the high/low bus width
+                for my $ii ( @{$conndb{$i}{'::out'}} ) {
+                    if ( $ii->{'sig_f'} and $ii->{'sig_f'} > $max ) {
+                        $max = $ii->{'sig_f'};
+                    }
+                }
+                if ( $max > 0 ) {
+                    $conndb{$i}{'::high'} = $max;
+                    $conndb{$i}{'::low'} = "0";
+                }
+            }
+            #TODO: Is "type" set correctely
+            unless( $conndb{$i}{'::type'} ) {
+                if ( $conndb{$i}{'::high'} ) {
+                    $conndb{$i}{'::type'} = "%BUS_TYPE%";
+                } else {
+                    $conndb{$i}{'::type'} = "%SIGNAL%";
+                }
+            }
+        }
+
 
         # Does a _vector type have bounds defined?
         if ( ( $conndb{$i}{'::high'} eq "" or $conndb{$i}{'::low'} eq "" ) and
@@ -3827,7 +3859,8 @@ sub purge_relicts () {
                 $conndb{$i}{'::high'} = '';
                 $conndb{$i}{'::low'} = '';
             } elsif ( $conndb{$i}{'::type'} =~ m,(std_u?logic)_vector\s*$,io ) {
-                logwarn("WARNING: reducing signal $i from mode $conndb{$i}{'::mode'} to $1!");
+                logwarn("WARNING: reducing signal $i from type $conndb{$i}{'::type'} to $1!");
+                $EH{'sum'}{'warnings'}++;
                 $conndb{$i}{'::high'} = '';
                 $conndb{$i}{'::low'} = '';
                 $conndb{$i}{'::type'} = $1;
@@ -3885,9 +3918,9 @@ sub _check_keywords ($$) {
                     $i->{$ii} = $EH{'postfix'}{'PREFIX_KEYWORD'} . $1;
                     logwarn( "WARNING: Detected keyword $1 in $ii got replaced!" );
                     $EH{'sum'}{'warnings'}++;
-                } elsif ( $name eq '%OPEN%' and $i->{$ii} eq '%::name%' ) {
+                } elsif ( $name =~ m,%OPEN(_\d+)%,o and $i->{$ii} eq '%::name%' ) {
                     $i->{$ii} = $EH{'postfix'}{'PREFIX_KEYWORD'} . $i->{$ii};
-                    logwarn( "WARNING: Detected keyword $name in $ii got replaced!" );
+                    logwarn( "WARNING: Detected keyword $name in $ii got extended!" );
                     $EH{'sum'}{'warnings'}++;
                 }
             }

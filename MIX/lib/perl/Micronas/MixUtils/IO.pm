@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.17 $                                          |
+# | Revision:   $Revision: 1.18 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/08/02 07:16:02 $                              |
+# | Date:       $Date: 2005/01/26 14:01:46 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.18  2005/01/26 14:01:46  wig
+# | changed %OPEN% and -autoquote for cvs output
+# |
 # | Revision 1.17  2004/08/02 07:16:02  wig
 # | Handle empty sheets ...
 # |
@@ -152,11 +155,11 @@ sub useOoolib ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.17 2004/08/02 07:16:02 wig Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.18 2005/01/26 14:01:46 wig Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.17 $';
+my $thisrevision    =      '$Revision: 1.18 $';
 
-# Revision:   $Revision: 1.17 $
+# Revision:   $Revision: 1.18 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1911,6 +1914,11 @@ E.g. sheet CONN will become O0_CONN while O0_CONN was shifted
 to O1_CONN. The maximum number of all versions to keep is
 defined by $EH{'intermediate'}{'keep'}
 
+#!wig20050125: adding quoting style "MS-EXCEL":
+    -cover newlines
+    -mask quoting character  ;" "" ";  (duplicate!)
+    -mask seperator (quotes!)
+
 =over 4
 
 =item $file filename
@@ -1936,6 +1944,7 @@ sub write_csv($$$) {
 
     my $cellsep = $EH{'format'}{'csv'}{'cellsep'};
     my $quoting = $EH{'format'}{'csv'}{'quoting'};
+    my $style = $EH{'format'}{'csv'}{'style'};
 
     my $temp;
 
@@ -1956,6 +1965,7 @@ sub write_csv($$$) {
 
 	# If it exists, it could be open, too?
         open(FILE, "<$file");
+	binmode FILE;
 	@data = <FILE>;
 	close(FILE);
 
@@ -1982,33 +1992,66 @@ sub write_csv($$$) {
         }
     }
 
+    # To support \n without \r on MS-Win, open in binmode
     open(FILE,">$file");
+    binmode FILE;
 
+    my $cr = ( $EH{iswin} ? "\r" : "" ) . "\n";
+
+    # Previous data
     for(my $i=0; $i<$start; $i++) {
         if(defined $data[$i]) {
 	    print FILE $data[$i];
 	}
     }
 
-    print FILE $EH{'format'}{'csv'}{'sheetsep'} . $sheet . "\n";
+    print FILE $EH{'format'}{'csv'}{'sheetsep'} . $sheet . $cr;
 
     for(my $y=0; $y<$ymax; $y++) {
         for(my $x=0; $x<$xmax; $x++) {
-	    if(defined $$r_a[$y][$x] && not $$r_a[$y][$x]=~ m/^$/) {
+	    if(defined $$r_a[$y][$x] and $$r_a[$y][$x] ne "" ) {
+		# Classic style -> single lines, remove new-lines!
+		#Print non-empty cells:
+		#'style'      => 'doublequote,auto,wrapnl,maxwidth',  # controll the CSV output
+		# doublequote: mask quoting char by duplication! Else mask with \
+		# autoquote: only quote if required (embedded whitespace)
+		# wrapnl: wrap embedded new-line to space
+		# masknl: replace newline by \\n
 	        $temp = $$r_a[$y][$x];
-		$temp =~ s/$quoting/\\$quoting/g;
-		$temp =~ s/\S\n/ /g; # remove linefeed
-		$temp =~ s/\s\n/ /g;
+		if ( $style =~ m/\bclassic\b/io ) {
+		    $temp =~ s/$quoting/\\$quoting/g if $quoting;
+		    $temp =~ s/\S\n/ /g; # remove linefeed
+		    $temp =~ s/\s\n/ /g; # bug here? why should newline always have a leading whitespace?
+		    $temp = $quoting . $temp . $quoting;
+		} else {
+		    if ( $style =~ m/\bwrapnl\b/io ) {
+			$temp =~ s/\s*\n/ /og; # Swallow newlines
+		    } elsif ( $style =~ m/\bmasknl\b/io ) {
+			$temp =~ s/\n/\\n/og; #What to do with leading/trailing tabs?
+		    } # elsif ( $EH{iswin} ) {
+		    # $temp =~ s/\n/\r/g; # Make the internal new-line a simple "nl"
+		    # }
+		    if ( $style =~ m/\bdoublequote\b/io ) {
+			$temp =~ s/$quoting/$quoting$quoting/go;
+		    }
+		    if ( $style =~ m/autoquote/io ) {
+			if ( $temp =~ m/($cellsep|$quoting|\n)/ ) {
+			    $temp = $quoting . $temp . $quoting;
+			}
+		    }
+		}
 		#$temp =~ tr/\n//;
-		print FILE "$quoting$temp$quoting";
+		print FILE $temp;
 	    }
 	    unless($x+1==$xmax) {
 	        print FILE $cellsep;
 	    }
 	}
-	print FILE "\n";
+	# End of this line: Add a ^M for MS-Windows ...
+	print FILE ( $cr );
     }
 
+    # Previous data
     for(my $i=$start; $i<$stop; $i++) {
         if(defined $data[$i]) {
 	    print FILE $data[$i];

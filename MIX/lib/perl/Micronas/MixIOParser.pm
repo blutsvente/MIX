@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / IOParser
 # | Modules:    $RCSfile: MixIOParser.pm,v $ 
-# | Revision:   $Revision: 1.16 $
+# | Revision:   $Revision: 1.17 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2004/04/14 11:08:32 $
+# | Date:       $Date: 2005/01/26 14:01:42 $
 # | 
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.16 2004/04/14 11:08:32 wig Exp $
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.17 2005/01/26 14:01:42 wig Exp $
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -36,6 +36,9 @@
 # |
 # | Changes:
 # | $Log: MixIOParser.pm,v $
+# | Revision 1.17  2005/01/26 14:01:42  wig
+# | changed %OPEN% and -autoquote for cvs output
+# |
 # | Revision 1.16  2004/04/14 11:08:32  wig
 # | minor code clearing
 # |
@@ -140,9 +143,9 @@ sub _mix_iop_init();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixIOParser.pm,v 1.16 2004/04/14 11:08:32 wig Exp $';
+my $thisid		=	'$Id: MixIOParser.pm,v 1.17 2005/01/26 14:01:42 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixIOParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.16 $';
+my $thisrevision   =      '$Revision: 1.17 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -338,6 +341,8 @@ sub mix_iop_iocell ($$) {
                 $s{'::low'} = ""; # Don't care
                 $s{'::high'} = ""; # Don't care
                 # $s{'::type'} = ""; ##How do we define the type? --> Take default for signal
+                #!wig20041228: remove ::type from input definition ..
+                if ( exists $s{'::type'} ) { delete $s{'::type'}; };
                 $s{'::mode'} = ""; # Don't care (automatically generated later on or inherited)
                 $s{'::class'} = "";
                 $s{'::clock'} = "";
@@ -656,6 +661,9 @@ sub mix_iop_padioc ($) {
     # Pad entitiy is defined by the ::type IO field!
     if ( $r_h->{'::type'} ) {
         $d{'::entity'} = $r_h->{'::type'};
+        #!wig20041228: rename ::type .... to avoid conflicts with signal ::type
+        $r_h->{'::__padtype__'} = $r_h->{'::type'};
+        delete $r_h->{'::type'};
     } else {
         logwarn( "WARNING: missing ::type entry for pad $r_h->{'::pad'}!" );
         $EH{'sum'}{'warnings'}++;

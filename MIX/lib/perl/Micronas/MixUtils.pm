@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.58 $                                         |
+# | Revision:   $Revision: 1.59 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/11/10 09:47:00 $                              |
+# | Date:       $Date: 2005/01/26 14:01:44 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.58 2004/11/10 09:47:00 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.59 2005/01/26 14:01:44 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,8 +30,8 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
-# | Revision 1.58  2004/11/10 09:47:00  wig
-# | added verilog includes
+# | Revision 1.59  2005/01/26 14:01:44  wig
+# | changed %OPEN% and -autoquote for cvs output
 # |
 # | Revision 1.57  2004/08/18 10:45:44  wig
 # | constant handling improved
@@ -289,11 +289,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.58 2004/11/10 09:47:00 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.59 2005/01/26 14:01:44 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.58 $';
+my $thisrevision        =      '$Revision: 1.59 $';
 
-# Revision:   $Revision: 1.58 $   
+# Revision:   $Revision: 1.59 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1393,6 +1393,9 @@ sub mix_init () {
     'CONST_NR' => 0,   # Some global counters
     'GENERIC_NR' => 0,
     'TYPECAST_NR' => 0,
+    'HIGH_NR' => 0,
+    'LOW_NR' => 0,
+    'OPEN_NR' => 0, # Count opens ...
     'DELTA_NR' => 0,
     'DELTA_INT_NR' => 0,
     'DELTA_VER_NR' => 0, 
@@ -1435,9 +1438,15 @@ sub mix_init () {
     },
     'format' => { # in - out file settings
        'csv' => {
-           'cellsep' => ';', # cell seperator
-           'sheetsep' => ':=:=:=>', # sheet seperator
-           'quoting' => '"', # quoting character
+           'cellsep' => ';',        # cell seperator
+           'sheetsep' => ':=:=:=>', # sheet seperator, set to empty string to supress
+           'quoting' => '"',    # quoting character
+           'style'      => 'doublequote,autoquote,nowrapnl,maxwidth',  # controll the CSV output
+               # doublequote: mask quoting char by duplication! Else mask with \
+               # autoquote: only quote if required (embedded whitespace)
+               # wrapnl: wrap embedded new-line to space
+               # masknl: replace newline by \\n
+               # maxwidth: make all lines contain maxwidht - 1 seperators
        },
        'out' => '',
     },
@@ -1661,16 +1670,19 @@ sub mix_overload_conf ($) {
     for my $i ( @$confs ) {
 	( $k, $v ) = split( /=/, $i ); # Split key=value
 	unless( $k and $v ) {
-	    logwarn("Illegal key or value given: $i\n");
+	    logwarn("WARNING: Illegal key or value given: $i\n");
+            $EH{'sum'}{'warnings'}++;
 	    next;
 	}
-	my $loga ='logtrc( "INFO", "Adding configuration ' . $i . '");';
-	my $logo ='logtrc( "INFO", "Overloading configuration ' . $i . '");';
+
+        $v =~ s/"/\\"/og;
+        
+	# Mask % and other wildcards:        
 	$k =~ s,[^%.\w],,og; # Remove anything unreasonable from the key ...
 	$k =~ s/\./'}{'/og;
 	$k = '{\'' . $k . '\'}';
-
-	# Mask % and other wildcards:
+	my $loga ='logtrc( "INFO", "Adding configuration ' . $i . '");';
+	my $logo ='logtrc( "INFO", "Overloading configuration ' . $i . '");';
 
 	#TODO: Prevent overloading of non-scalar values!!
 	$e = "if ( exists( \$EH" . $k . " ) ) { \$EH" . $k . " = '" . $v . "'; " . $logo .
@@ -1693,15 +1705,18 @@ sub _mix_apply_conf ($$$) {
     unless( $k and $v ) {
 	    unless( $k ) { $k = ""; }
 	    unless( $v ) { $v = ""; }
-	    logwarn("Illegal key or value given in $s: key:$k val:$v\n");
+	    logwarn("WARNING: Illegal key or value given in $s: key:$k val:$v\n");
+            $EH{'sum'}{'warnings'}++;
 	    return undef;
     }
-    my $loga ='logtrc( "INFO", "Adding ' . $s . ' configuration ' . $k . "=" . $v . '");';
-    my $logo ='logtrc( "INFO", "Overloading ' . $s . 'configuration ' . $k . "=" . $v . '");';
+
+    $v =~ s/"/\\"/g; # Mask " in input!
     $k =~ s,[^.%\w],,g; # Remove all characters not being ., % and \w ...
     $k =~ s/\./'}{'/og;
     $k = '{\'' . $k . '\'}';
-
+    my $loga ='logtrc( "INFO", "Adding ' . $s . ' configuration ' . $k . "=" . $v . '");';
+    my $logo ='logtrc( "INFO", "Overloading ' . $s . 'configuration ' . $k . "=" . $v . '");';
+ 
     #TODO: Prevent overloading of non-scalar values!!
     my $e = "if ( exists( \$EH$k ) ) { \$EH$k = '$v'; $logo } else { \$EH$k = '$v'; $loga }";
     unless ( eval $e ) {
@@ -1748,7 +1763,8 @@ sub mix_overload_sheet ($) {
     for my $i ( @$sheets ) {
 	( $k, $v ) = split( /=/, $i ); # Split key=value
 	unless( $k and $v ) {
-	    logwarn("Illegal argument for overload sheet given: $i\n");
+	    logwarn("WARNING: Illegal argument for overload sheet given: $i\n");
+            $EH{'sum'}{'warnings'}++;
 	    next;
 	}
 
@@ -2412,6 +2428,9 @@ sub replace_mac ($$) {
     my $text = shift;
     my $rmac = shift;
 
+   #!wig20050111: %OPEN_NN% could be around ... -> hard coded to %OPEN%
+    $text =~ s/%OPEN_\d+%/%OPEN%/gio;
+
     if ( keys( %$rmac ) > 0 ) {
         my $mkeys = "(" . join( '|', keys( %$rmac ) ) . ")";
         $text =~ s/$mkeys/$rmac->{$1}/mg;
@@ -3057,7 +3076,7 @@ sub inout2array ($;$) {
 			"), %IOCR%" );
 	    } else {
 		# If this is %OPEN% and neither port nor signal defined -> set to (0)
-		if ( $o eq '%OPEN%' ) {
+		if ( $o =~ m,%OPEN(_\d+)?%,o ) {
 		    push( @s, $i->{'inst'} . "/" . $i->{'port'} . $cast . "(0:0)=(0:0)" . ", %IOCR%" );
 		} else {
 		    push( @s,  $i->{'inst'} . "/" . $i->{'port'} . $cast . ", %IOCR%" );

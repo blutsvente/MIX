@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Checker
 # | Modules:    $RCSfile: MixChecker.pm,v $
-# | Revision:   $Revision: 1.6 $
+# | Revision:   $Revision: 1.7 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2004/04/14 11:08:32 $
+# | Date:       $Date: 2005/01/26 14:01:41 $
 # |
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.6 2004/04/14 11:08:32 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.7 2005/01/26 14:01:41 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the checking capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixChecker.pm,v $
+# | Revision 1.7  2005/01/26 14:01:41  wig
+# | changed %OPEN% and -autoquote for cvs output
+# |
 # | Revision 1.6  2004/04/14 11:08:32  wig
 # | minor code clearing
 # |
@@ -101,6 +104,7 @@ use Micronas::MixParser qw( %hierdb %conndb );
 # Prototypes
 #
 sub mix_check_case($$);
+sub mix_check_wiring($$);
 
 # Internal variable
 my %mix_check_list = ();
@@ -108,9 +112,9 @@ my %mix_check_list = ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixChecker.pm,v 1.6 2004/04/14 11:08:32 wig Exp $';
+my $thisid		=	'$Id: MixChecker.pm,v 1.7 2005/01/26 14:01:41 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixChecker.pm,v $';
-my $thisrevision   =      '$Revision: 1.6 $';
+my $thisrevision   =      '$Revision: 1.7 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -233,6 +237,68 @@ sub mix_check_case ($$) {
 
     return $name;
 
+}
+
+####################################################################
+## mix_check_wiring
+## Micronas specific: see if _n signals are connected to ports not _n!
+####################################################################
+
+=head2
+
+mix_check_wiring () {
+
+Check is signals ending with _n are connected to non-_n ports!
+If so, print a warning. This is controlled by a global configuration value.
+More wiring sanity checks can be added.
+
+=over 4
+
+=item t.b.d.
+
+Needs more options.
+
+
+=back
+
+Start this checker very late (after names have been resolved).
+It might run into problems if there are still macros in the descriptions.
+
+=cut
+
+sub mix_check_wiring ($$) {
+
+    my $conn_r = shift;
+
+    for my $s ( keys( %$conn_r ) ) {
+        # signal internal name -> $s
+        # signal "real" name -> $conn_r->{$s}{'::name'}
+
+        # 1. if signal is low active ( _n ) -> check all connected ports!
+        if ( $s =~ m/_n$/io ) {
+            check_n_ports( $s, $conn_r->{$s} );
+        }
+    }
+}
+
+sub check_n_ports ($$) {
+    my $s = shift;
+    my $s_r = shift;
+
+    my $name = $s_r->{'::name'};
+    if ( $name !~ m/_n$/io ) {
+        logwarn( "WARNING: signal internal name $s level mismatch real name $name" );
+        $EH{'sum'}{'checkconn'}++;
+    }
+
+    for my $p ( @{$s_r->{'::in'}}, @{$s_r->{'::out'}} ) {
+        my $port = $p->{'port'};
+        if ( $port !~ m/_n$/io ) {
+            logwarn( "WARNING: signal $s connection mismatch for port $port, instance ".
+                   $p->{'inst'} );
+            $EH{'sum'}{'checkconn'}++;
+        }
+    }
 }
 
 1;

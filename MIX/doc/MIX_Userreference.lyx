@@ -56,9 +56,9 @@ MIX - Micronas Interconnect Spec expander
 
 Author: Wilfried Gänsheimer
 \newline 
-$Date: 2005/01/13 15:06:16 $
+$Date: 2005/01/26 14:01:59 $
 \newline 
-Version: $Id: MIX_Userreference.lyx,v 1.5 2005/01/13 15:06:16 wig Exp $
+Version: $Id: MIX_Userreference.lyx,v 1.6 2005/01/26 14:01:59 wig Exp $
 \layout Standard
 
 
@@ -9227,6 +9227,53 @@ X
 \end_inset 
 
 .
+\layout List
+\labelwidthstring 00.00.0000
+
+
+\family typewriter 
+-[no]head
+\family default 
+ do [not] seperate sheets with a special marker line (=:=:=:> SHEETNAME).
+ On by default.
+\layout List
+\labelwidthstring 00.00.0000
+
+
+\family typewriter 
+-noquote
+\family default 
+ do not quote the csv cells.
+ Quotes are on by default.
+\layout List
+\labelwidthstring 00.00.0000
+
+
+\family typewriter 
+-quote\SpecialChar ~
+X
+\family default 
+ use 
+\family typewriter 
+X
+\family default 
+ as quoting character.
+ Default are double-quotes (
+\begin_inset Quotes eld
+\end_inset 
+
+).
+\layout List
+\labelwidthstring 00.00.0000
+
+
+\family typewriter 
+-sheet\SpecialChar ~
+RE
+\family default 
+ select only sheets which names match the regular expression 
+\family typewriter 
+RE.
 \layout Standard
 \noindent 
 Please remove the created files before updating.
@@ -9250,7 +9297,7 @@ xls2csv.pl
  ....
 \layout Standard
 \noindent 
-Options and syntax are the same.
+Options and syntax are the same as with UNIX/Linux.
 \layout Section
 
 Known Bugs and limitations

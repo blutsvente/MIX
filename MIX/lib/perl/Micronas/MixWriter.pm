@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.47 $                                         |
+# | Revision:   $Revision: 1.48 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/11/10 09:46:58 $                              |
+# | Date:       $Date: 2005/01/26 14:01:45 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.47 2004/11/10 09:46:58 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.48 2005/01/26 14:01:45 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.48  2005/01/26 14:01:45  wig
+# | changed %OPEN% and -autoquote for cvs output
+# |
 # | Revision 1.47  2004/11/10 09:46:58  wig
 # | added verilog includes
 # |
@@ -247,9 +250,9 @@ sub sig_typecast($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.47 2004/11/10 09:46:58 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.48 2005/01/26 14:01:45 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.47 $';
+my $thisrevision   =      '$Revision: 1.48 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1193,9 +1196,9 @@ sub _write_entities ($$$) {
     }
     # Are we in verify mode?
     if ( $EH{'check'}{'hdlout'}{'path'} and
-         $EH{'check'}{'hdlout'}{'mode'} =~ m,\b(enti|all),io ) { # Selected ...
+         $EH{'check'}{'hdlout'}{'mode'} =~ m,\b(ent[iy]|all),io ) { # Selected ...
         # Append check flag ...
-        if ( $EH{'check'}{'hdlout'}{'mode'} =~ m,\bleaf,io ) {
+        if ( $EH{'check'}{'hdlout'}{'mode'} =~ m,\bleaf,io ) { # opposite for nonleaf and dcleaf
             # __LEAF__ is 1 if this is not a LEAF!
             $write_flag .= ( $entities{$ehname}{'__LEAF__'} == 0 ) ? "_CHK_ENT_LEAF" : "";
         } else {
@@ -2588,9 +2591,11 @@ sub print_conn_matrix ($$$$$$$$;$) {
         $tm{'%::ininst%'} = "";
         $tm{'%::outinst%'} = "";
         for my $i ( @{$conndb{$signal}{'::in'}} ) {
+            next unless (exists( $i->{'inst'}));
             $tm{'%::ininst%'} .= " " . $i->{'inst'};
         }
         for my $i ( @{$conndb{$signal}{'::out'}} ) {
+            next unless (exists( $i->{'inst'}));
             $tm{'%::outinst%'} .= " " . $i->{'inst'};
         }
         $descr = replace_mac( $EH{'output'}{'generate'}{'portdescr'}, \%tm );
@@ -2612,6 +2617,7 @@ sub print_conn_matrix ($$$$$$$$;$) {
     # __NAN__ works for full connections, only (today)
     if ( defined( $rcm->[0] ) and $rcm->[0] eq "__NAN__" ) {
         if ( $lang =~ m,^veri,io ) { # Verilog
+            $signal = "" if ( $signal =~ m/^%OPEN(_\d+)?%/io ); # For Verilog: let %OPEN% disappear
             $t .= $EH{'macro'}{'%S%'} x 3 . "." . $port . "(" . $signal . ")," . $descr . "\n"; #TODO, check Verilog syntax
         } else {
             if ( $cast ) {
@@ -2630,6 +2636,7 @@ sub print_conn_matrix ($$$$$$$$;$) {
 	 $sf eq "__UNDEF__" and $st eq "__UNDEF__" and
 	 $rcm->[0] == 0 ) {
             if ( $lang =~ m,^veri,io ) { # Verilog
+                $signal = "" if ( $signal =~ m/^%OPEN(_\d+)?%/io ); # For Verilog: let %OPEN% disappear
                 $t .= $EH{'macro'}{'%S%'} x 3 . "." . $port . "(" . $signal . ")," . $descr . "\n";
             } else {
                 if ( $cast ) {
@@ -2803,11 +2810,11 @@ sub print_conn_matrix ($$$$$$$$;$) {
 	    logwarn("Warning: unexpected branch in print_conn_matrix, signal $signal, port $port");
             $EH{'sum'}{'warnings'}++;
 	}
-        if ( $signal eq "%OPEN%" ) {
+        if ( $signal =~ m,%OPEN(_\d+)?%, ) {
             if ( $lang =~ m,^veri,io ) {
-                $t =~ s,%OPEN%(\s*\[[:\w]+?\])?,,g; # Remove %OPEN% aka. open[a:b]
+                $t =~ s,%OPEN(_\d+)?%(\s*\[[:\w]+?\])?,,g; # Remove %OPEN% aka. open[a:b]
             } else {
-                $t =~ s,(?<=%OPEN%)\s*\([\s\w]+?\),,g; # Remove ( ... ) definitons ...
+                $t =~ s,((<=|=>)\s*%OPEN(_\d+)?%)\s*\([\s\w\.]+?\),$1,g; # Remove ( ... ) definitons ...
             }
         }
         $t =~ s,(\n)?$,$descr$1, if $descr; # Add ::descr comments ....
@@ -2847,12 +2854,12 @@ sub print_conn_matrix ($$$$$$$$;$) {
 	    }
 	}
     }
-    if ( $signal eq "%OPEN%" ) {
+    if ( $signal =~ m,%OPEN(_\d+)?%,o ) {
         #TODO: Verilog???
         if ( $lang =~ m,^veri,io ) {
-            $t =~ s,%OPEN%(\s*\[[:\w]+?\])?,,g; # Remove %OPEN%
+            $t =~ s,%OPEN(_\d+)?%(\s*\[[:\w]+?\])?,,g; # Remove %OPEN%
         } else {
-            $t =~ s,(?<=%OPEN%)\s*\([\s\w]+?\),,g; # Remove signal bus splices
+            $t =~ s,((<=|=>)\s*%OPEN(_\d+)?%)\s*\([\s\w\.]+?\),$1,g; # Remove signal bus splices
         }
     }
 
@@ -3121,7 +3128,7 @@ sub _write_architecture ($$$$) {
             next unless ( exists( $aeport{$ii}{'in'} ) or exists( $aeport{$ii}{'out'} ) );
 
             # Skip "open" pseudo-signal
-            next if ( $ii eq '%OPEN%' );
+            next if ( $ii =~ m,%OPEN(_\d+)?%, );
             
 	    my $s = $conndb{$ii};
 	    my $type = $s->{'::type'};
@@ -4007,14 +4014,6 @@ sub count_load_driver ($$$$) {
         for my $s ( keys( %$rinsig )  ) {
             unless( exists( $rinsig->{$s}{'load'} ) ) {
 
-                #wig20031009: remove useless code here (to late to wire to open)
-                # if ( $EH{'check'}{'signal'} =~ m,open, ) {
-                #    # Add connect it to "open" here ....
-                #    add_conn( 
-                #        ( "::in" => "$inst/$s", "::name" => "%OPEN%" )
-                #    );
-                #    logtrc( "INFO:4", "Wiring signal $s to open, had no load in instance $inst!" );
-                #} else {
                     if ( $EH{'output'}{'warnings'} =~ m/load/io ) {
                         logwarn( "Warning: Signal $s does not have a load in instance $inst!" );
                     } else {

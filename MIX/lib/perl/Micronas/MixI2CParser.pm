@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / I2CParser                                |
 # | Modules:    $RCSfile: MixI2CParser.pm,v $                             |
-# | Revision:   $Revision: 1.9 $                                          |
+# | Revision:   $Revision: 1.10 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/04/14 11:08:32 $                              |
+# | Date:       $Date: 2005/01/26 14:01:41 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/Attic/MixI2CParser.pm,v 1.9 2004/04/14 11:08:32 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/Attic/MixI2CParser.pm,v 1.10 2005/01/26 14:01:41 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
@@ -78,9 +78,9 @@ sub parse_i2c_init($);
 # RCS Id, to be put into output templates
 #
 
-my $thisid		= 	'$Id: MixI2CParser.pm,v 1.9 2004/04/14 11:08:32 wig Exp $';
+my $thisid		= 	'$Id: MixI2CParser.pm,v 1.10 2005/01/26 14:01:41 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixI2CParser.pm,v $';
-my $thisrevision        =       '$Revision: 1.9 $';
+my $thisrevision        =       '$Revision: 1.10 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -525,7 +525,7 @@ sub connect_subreg($$$) {
 	add_conn(%conns);
 
 	# subreg/ais_o => open
-	%conns = ( '::name' => "%OPEN%",
+	%conns = ( '::name' => "%OPEN" . $EH{'OPEN_NR'}++ . %",
 		   '::out' => "$parent/ais_" . $in->{'::interface'} . "_o , $instance/ais_o", );
 	add_conn(%conns);
 
@@ -557,12 +557,12 @@ sub connect_subreg($$$) {
 
     # add r-specific connections
 	# subreg/tf_ready_rd_i => open
-	%conns = ( '::name' => "%OPEN%",
+	%conns = ( '::name' => "%OPEN" . $EH{'OPEN_NR'}++ . "%",
 		   '::in' => $instance . "/tf_ready_rd_i", );
 	add_conn(%conns);
 
 	# subreg/tf_en_rd_o => open
-	%conns = ( '::name' => "%OPEN%",
+	%conns = ( '::name' => "%OPEN" . $EH{'OPEN_NR'}++ . %",
 		   '::out' => $instance . "/tf_en_rd_o", );
 	add_conn(%conns);
 
@@ -618,7 +618,7 @@ sub connect_subreg($$$) {
 		   '::in' => $instance . "/tf_ready_wr_i", );
 	add_conn(%conns);
 	# subreg/tf_en_wr_o => open
-	%conns = ( '::name' => "%OPEN%",
+	%conns = ( '::name' => "%OPEN" . $EH{'OPEN_NR'}++ . %",
 		   '::out' => $instance . "/tf_en_wr_o", );
 	add_conn(%conns);
         # subreg/en_load_data_wr_i => en_load_data_wr
