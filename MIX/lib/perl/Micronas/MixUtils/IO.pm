@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.13 $                                          |
+# | Revision:   $Revision: 1.14 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/03/25 11:21:57 $                              |
+# | Date:       $Date: 2004/04/07 15:13:10 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.14  2004/04/07 15:13:10  wig
+# | Modified Files:
+# | 	IO.pm : fixed delta mode xls on Solaris issue
+# |
 # | Revision 1.13  2004/03/25 11:21:57  wig
 # | Added -verifyentity option
 # |
@@ -135,11 +139,11 @@ sub absolute_path ($);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.13 2004/03/25 11:21:57 wig Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.14 2004/04/07 15:13:10 wig Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.13 $';
+my $thisrevision    =      '$Revision: 1.14 $';
 
-# Revision:   $Revision: 1.13 $
+# Revision:   $Revision: 1.14 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1106,8 +1110,10 @@ sub write_delta_sheet($$$) {
 	# -> map away \n and other whitespace ...
 	#TAG: maybe we need to generalize that ... should be done if we are sure to
 	#   not write xls output
-	map( { s/,\s+/,/g } @prevd );
+	map( { s/,\s+/,/g } @prevd ); # Remove \n and such
 	map( { s/,\s+/,/g } @currd );
+	map( { s/@@@\s+/@@@/g } @prevd ); # Remove \n and such
+	map( { s/@@@\s+/@@@/g } @currd );
     }
     
     my @colnhead = @{$r_a->[0]};
