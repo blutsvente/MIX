@@ -1,3 +1,7 @@
+#!/bin/sh -- # -*- perl -*- -w
+eval 'exec ${PERL:-`[ -x $HOME/bin/perl ] && echo $HOME/bin/perl || { [ -x /usr/bin/perl ] && echo /usr/bin/perl || echo /usr/local/bin/perl ; } `} -S $0 ${1+"$@"}'
+if 0; # dynamic perl startup; suppress preceding line in perl
+
 #!/usr/bin/perl
 
 #######################################################################
@@ -415,7 +419,7 @@ sub runMix($) {
     my $type = shift;
 
     my $failsum = 0;
-    my $wdir = getcwd();
+    my $wdir = getcwd() || die "Cannot change to ";
 
     for(my $i=0; $i<$numberOfTests; $i++) {
 
@@ -428,7 +432,7 @@ sub runMix($) {
         my $testpath = $tests[$i]->{'path'};
         $path = $wdir . "/$tests[$i]->{'path'}";
     
-        my $testname = @tests[$i]->{'name'};
+        my $testname = $tests[$i]->{'name'};
 
 		if ( $testRE and $testpath !~ m/$testRE/io ) {
 			# this test is not selected ...
@@ -654,7 +658,7 @@ init();
 # run tests
 foreach my $i (@inType) {
     logwarn "testing: $i-input";
-    chdir $i."_input";
+    chdir $i."_input" || die "Cannot change to " . $i . "_input";
     runMix( $i);
     chdir "$pgmpath";
 }
