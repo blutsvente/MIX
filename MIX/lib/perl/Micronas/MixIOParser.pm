@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / IOParser
 # | Modules:    $RCSfile: MixIOParser.pm,v $ 
-# | Revision:   $Revision: 1.14 $
+# | Revision:   $Revision: 1.15 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2004/03/30 11:05:57 $
+# | Date:       $Date: 2004/04/05 09:19:13 $
 # | 
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.14 2004/03/30 11:05:57 wig Exp $
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.15 2004/04/05 09:19:13 wig Exp $
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -36,6 +36,9 @@
 # |
 # | Changes:
 # | $Log: MixIOParser.pm,v $
+# | Revision 1.15  2004/04/05 09:19:13  wig
+# | Reset winCVS
+# |
 # | Revision 1.14  2004/03/30 11:05:57  wig
 # | fixed: IOparser handling of bit ports vs. bus signals
 # |
@@ -130,9 +133,9 @@ sub _mix_iop_init();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixIOParser.pm,v 1.14 2004/03/30 11:05:57 wig Exp $';
+my $thisid		=	'$Id: MixIOParser.pm,v 1.15 2004/04/05 09:19:13 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixIOParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.14 $';
+my $thisrevision   =      '$Revision: 1.15 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -180,27 +183,31 @@ sub parse_io_init ($) {
         }elsif ( $selsignals ) {
             # if this has got ::pad and ::iocell -> create pad and iocell
             if ( $i->{'::pad'} and $i->{'::iocell'} ) {
-                mix_iop_padioc( $i );
+                if ( $i->{'::type'} ) {
+                    mix_iop_padioc( $i );
+                    $EH{'sum'}{'io_cellandpad'}++;
+                } else {
+                    # only an iocell -> ignore pad ...
+                    unless ( $EH{'iocell'}{'embedded'} =~ m,\bpad\b,io ) {
+                        logwarn( "WARNING: missing pad cell type for iocell " . $i->{'::iocell'} .
+                             ", creating single iocell!" );
+                        $EH{'sum'}{'warnings'}++;
+                    }
+                    $EH{'sum'}{'io_cell_single'}++;
+                }
                 mix_iop_iocell( $i, $selsignals );
-                $EH{'sum'}{'io_cellandpad'}++;
-            } elsif ( $i->{'::iocell'} ) {
-                # only an iocell -> ignore pad ...
-                logwarn( "WARNING: missing pad cell name for iocell " . $i->{'::iocell'} .", creating single iocell!" ) unless
-                    $EH{'iocell'}{'embedded'} =~ m,\bpad\b,io and $EH{'sum'}{'warnings'}++;
-                mix_iop_iocell( $i, $selsignals );
-                $EH{'sum'}{'io_cell_single'}++;
             } elsif ( $i->{'::pad'} ) {
-                # only pad -> no iocell to create
+                # only pad -> no iocell defined -> to create
                 mix_iop_pad( $i );
                 $EH{'sum'}{'io_pad_single'}++;
             } else {
                 # Upps, empty line???
+                # At least ::pad HAS TO BE DEFINED!
                 #TODO: linenum does not reflect excel line number!
                 # Should get a counter in the input data aka _l_ _n_ ...
                 logwarn( "WARNING: neither ::pad nor ::iocell defined in IO input sheet, skipped!" );
                 $EH{'sum'}{'warnings'}++;
             }
-
         } else { # We need selsignals ...
             logwarn( "WARNING: Missing SEL line in input for parse_io_init, skipped!" );
             $EH{'sum'}{'warnings'}++;
