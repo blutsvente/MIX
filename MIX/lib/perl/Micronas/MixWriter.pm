@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.30 $                                             |
+# | Revision:   $Revision: 1.31 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/10/14 12:11:29 $                                   |
+# | Date:       $Date: 2003/10/23 12:13:17 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.30 2003/10/14 12:11:29 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.31 2003/10/23 12:13:17 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,9 +32,8 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
-# | Revision 1.30  2003/10/14 12:11:29  wig
-# | Added howto
-# | Fixed minor issue from last change (%LOW_BUS% conflicts with __open__)
+# | Revision 1.31  2003/10/23 12:13:17  wig
+# | minor modifications (typos ...)
 # |
 # | Revision 1.27  2003/09/08 15:14:24  wig
 # | Fixed Verilog, extended path checking
@@ -195,9 +194,9 @@ sub mix_wr_unsplice_port ($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.30 2003/10/14 12:11:29 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.31 2003/10/23 12:13:17 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.30 $';
+my $thisrevision   =      '$Revision: 1.31 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -570,7 +569,6 @@ sub merge_entity ($$) {
     my $eq = compare_merge_entities( $ent, $inst->{'::inst'}, $entities{$ent}, \%ient );
     #TODO: use result for further decision making
 
-    #TODO: __LEAF__, another name??
     if ( $inst->{'::treeobj'}->daughters ne "0" ) {
 	$ient{'__LEAF__'}++;
     }
@@ -1273,8 +1271,8 @@ sub mix_wr_get_interface ($$$$) {
     } else {
         logwarn( "WARNING: unimplemented get_interface for entity $ename, language $lang" );
         $EH{'sum'}{'warnings'}++;
-        return( "\t\t" . $tcom . " __W_MISSING_GET_INTERFACE for $lang",
-                    "\t\t" . $tcom . " __W_MISSING_GET_INTERFACE for $lang" );
+        return( $EH{'macro'}{'%S%'} x 2 . $tcom . " __W_MISSING_GET_INTERFACE for $lang",
+                    $EH{'macro'}{'%S%'} x 2 . $tcom . " __W_MISSING_GET_INTERFACE for $lang" );
     }
 }
 
