@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.47 $                                         |
+# | Revision:   $Revision: 1.48 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/04/15 11:59:40 $                              |
+# | Date:       $Date: 2004/04/20 15:22:46 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.47 2004/04/15 11:59:40 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.48 2004/04/20 15:22:46 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.48  2004/04/20 15:22:46  wig
+# | Improved verify mode
+# |
 # | Revision 1.47  2004/04/15 11:59:40  wig
 # | added ignorecase for delta mode
 # |
@@ -203,19 +206,6 @@ our $VERSION = '0.01';
 
 use strict;
 
-=head 4 old
-
-# Caveat: relies on proper setting of base, pgmpath and dir in main program!
-use lib "$main::base/";
-use lib "$main::base/lib/perl";
-use lib "$main::pgmpath/";
-use lib "$main::pgmpath/lib/perl";
-use lib "$main::dir/lib/perl";
-use lib "$main::dir/../lib/perl";
-#TODO: Which "use lib path" if $0 was found in PATH?
-
-=cut
-
 use File::Basename;
 use File::Copy;
 use DirHandle;
@@ -255,6 +245,7 @@ sub _mix_utils_loc_templ ($$);
 sub mix_utils_loc_sum ();
 sub mix_utils_open_diff ($;$);
 sub mix_utils_diff ($$$$);
+sub mix_utils_clean_data ($$;$);
 
 ##############################################################
 # Global variables
@@ -271,11 +262,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.47 2004/04/15 11:59:40 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.48 2004/04/20 15:22:46 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.47 $';
+my $thisrevision        =      '$Revision: 1.48 $';
 
-# Revision:   $Revision: 1.47 $   
+# Revision:   $Revision: 1.48 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1429,7 +1420,7 @@ sub mix_init () {
     $EH{'macro'}{'%ARGV%'} = "$0 " . join( " ", @ARGV );
 
     $EH{'macro'}{'%VERSION%'} = $::VERSION;
-    $EH{'macro'}{'%0%'} = $::pgm;
+    $EH{'macro'}{'%0%'} = $FindBin::Script;
     $EH{'macro'}{'%OS%'} = $^O;
     $EH{'macro'}{'%DATE%'} = "" . localtime();
     $EH{'macro'}{'%USER%'} = "W_UNKNOWN_USERNAME";
@@ -1749,6 +1740,32 @@ my $loc_flag = 0;
 my %loc_files = ();
 
 #
+# Streamline data for delta/diff purposes ...
+#
+sub mix_utils_clean_data ($$;$) {
+    my $d = shift;                              # Data, array ref
+    my $c = shift || "__NO_COMMENT";  # The current comment string
+    my $conf = shift || $EH{'output'}{'delta'}; # Which rules to apply ...
+    
+    # remove comments: -- for VHDL, // for Verilog
+    map( { s/\Q$c\E.*//; } @$d ) if ( $conf !~ m/\bcomment\b/io );
+    # condense whitespace, remove empty lines ...
+    #wig20040420: remove \s after ( and before ); remove trailing ";" ??
+    if ( $conf !~ m,\bspace\b,io ) {
+	map( { s/\s+/ /og; s/^\s+//og; s/\s+$//og; s/\s*([\(\)])\s*/$1/g; s/;$//; } @$d );
+	$d = [ grep( !/^$/, @$d ) ];
+    }
+
+    # ignore case -> make everything lowercase ....
+    $d = [ map( { lc( $_ ); } @$d ) ] if ( $conf =~ m,\b(ic|ignorecase)\b,io );
+    # sort lines before compare
+    ( $d = [ sort( @$d ) ] ) if ( $conf =~ m,\bsort\b,io );
+
+    return $d;
+
+}
+
+#
 # Open a file and read in the contents for comparison ...
 # e.g. in delta mode or for verify purposes ...
 #
@@ -1757,6 +1774,7 @@ sub mix_utils_open_diff ($;$) {
     my $flag = shift ||"";
 
     my @ocont = ();
+    my $ocontr = "";
 
     my $ext;
     my $c = "__NOCOMMENT";
@@ -1776,15 +1794,9 @@ sub mix_utils_open_diff ($;$) {
 	}
 	@ocont = <$ofh>; #Slurp in file to compare against
 	chomp( @ocont );
-	# remove comments: -- for VHDL, // for Verilog
-	map( { s/\Q$c\E.*//; } @ocont ) if ( $EH{'output'}{'delta'} !~ m/\bcomment\b/io );
-	if ( $EH{'output'}{'delta'} !~ m,\bspace\b,io ) {
-	    map( { s/\s+/ /og; s/^\s*//og; s/\s*$//og; } @ocont );
-	    @ocont = grep( !/^$/,  @ocont );
-	}
 
-        map( { lc(); } @ocont ) if ( $EH{'output'}{'delta'} =~ m,\b(ic|ignorecase)\b,io );
-	( @ocont = sort( @ocont ) ) if ( $EH{'output'}{'delta'} =~ m,\bsort\b,io );
+        # Get data in clean format ....
+        $ocontr = mix_utils_clean_data( \@ocont, $c );
 
 	close( $ofh ) or logwarn( "ERROR: Cannot close org $file in delta mode: $!" )
 	    and $EH{'sum'}{'errors'}++;
@@ -1794,7 +1806,7 @@ sub mix_utils_open_diff ($;$) {
         $EH{'sum'}{'errors'}++;
 	# $this_delta{"$file"} = 0;
     }
-    return \@ocont;
+    return $ocontr;
 }
 
 ####################################################################
@@ -2216,20 +2228,8 @@ sub mix_utils_diff ($$$$) {
     my $c  = shift;
     my $file = shift;
 
-    # strip off comments    
-    map( { s/\Q$c\E.*//; } @$nc ) if ( $EH{'output'}{'delta'} !~ m,\bcomment\b,io );
-
-    # condense whitespace, remove empty lines ...
-    if ( $EH{'output'}{'delta'} !~ m,\bspace\b,io ) {
-	map( { s/\s+/ /og; s/^\s+//o; s/\s+$//o; } @$nc );
-	    @$nc = grep( !/^$/,  @$nc );
-    }
-
-    # ignore case -> make everything lowercase ....
-    map( { lc } @$nc ) if ( $EH{'output'}{'delta'} =~ m,\b(ic|ignorecase)\b,io );
-
-    # sort lines before compare
-    @$nc = sort( @$nc ) if ( $EH{'output'}{'delta'} =~ m,\bsort\b,io );
+    # strip off comments and such (from generated data)
+    $nc = mix_utils_clean_data( $nc, $c );
 
     # Diff it ...
     my $diff = diff( $nc, $oc,
