@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.43 $                                         |
+# | Revision:   $Revision: 1.44 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/08/09 08:52:59 $                              |
+# | Date:       $Date: 2004/08/09 15:48:16 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.43 2004/08/09 08:52:59 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.44 2004/08/09 15:48:16 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,8 +33,8 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
-# | Revision 1.43  2004/08/09 08:52:59  wig
-# | minor updates for typecast (typeos, assignments, ...)
+# | Revision 1.44  2004/08/09 15:48:16  wig
+# | another variant of typecasting: ignore std_(u)logic!
 # |
 # | Revision 1.42  2004/08/05 15:21:32  wig
 # | typecast added more columns
@@ -267,11 +267,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.43 2004/08/09 08:52:59 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.44 2004/08/09 15:48:16 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.43 $';
+my $thisrevision   =      '$Revision: 1.44 $';
 
-# | Revision:   $Revision: 1.43 $
+# | Revision:   $Revision: 1.44 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1337,15 +1337,10 @@ sub _create_conn ($$%) {
             if ( $d =~ m,(/?'(\w+)), ) { # Get typecast   inst/port'cast or inst/'cast
                 if ( $tcmethod ) {
                     # Create a mapper instance and attach the signal the following way
-                    $tcdo = $2;
-                    $co{'cast'} = $2;
-                    # add_inst( '::inst' => ( '%TYPECAST_' . $EH{'TYPECAST_NR'}++ . '%' ));
-                    $d =~ s,$1,,;
-                            
-                } else { # tyepcasting in portmap ... (will not work for synopsys tools)
-                    $co{'cast'} = $2;
-                    $d =~ s,$1,,;
-                }
+                    $tcdo = $2;         
+                } 
+                $co{'cast'} = $2;
+                $d =~ s,$1,,;
             }
 
             $d =~ s/\(([\w%#]+)\)/($1:$1)/g; # Extend (N) to (N:N)
@@ -1445,7 +1440,15 @@ sub _create_conn ($$%) {
 
             # We have a full description of this port, now add typecast_wrapper
             #wig20040803, typecast wrapper
-            if ( $tcdo ) {
+
+            # no typecast for std_logic vs. std_ulogic:                
+            if ( $EH{'output'}{'generate'}{'workaround'}{'std_log_typecast'} =~ m/\bignore\b/io
+                and $tcdo =~ m/^std_(u)?logic$/io ) {
+                if ( $data{'::type'} =~ m/^std_(u)?logic$/io ) {
+                    $tcdo = "";
+                }
+            }
+            if ( $tcdo ) { 
                 my $tcwr = '%TYPECAST_' . $EH{'TYPECAST_NR'}++ . '%' ;
                 my $tcsig = $EH{'postfix'}{'PREFIX_TC_INT'} . $EH{'TYPECAST_NR'} . "_" .
                         $data{'::name'};
@@ -1462,7 +1465,6 @@ sub _create_conn ($$%) {
                               '::lang' => 'vhdl',                         # typecast in for VHDL
                               '::typecast' => \@tcassign , # remember what to typecast
                             );
-                #TODO: Language -> vhdl ....
 
                 my $oe = ( $inout =~ m/in/  ) ? "::out" : "::in"; # opposite end
                 my $portdef = "";

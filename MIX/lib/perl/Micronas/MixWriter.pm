@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.44 $                                         |
+# | Revision:   $Revision: 1.45 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/08/09 08:53:05 $                              |
+# | Date:       $Date: 2004/08/09 15:48:14 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.44 2004/08/09 08:53:05 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.45 2004/08/09 15:48:14 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,8 +32,8 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
-# | Revision 1.44  2004/08/09 08:53:05  wig
-# | minor updates for typecast (typeos, assignments, ...)
+# | Revision 1.45  2004/08/09 15:48:14  wig
+# | another variant of typecasting: ignore std_(u)logic!
 # |
 # | Revision 1.43  2004/08/04 12:49:37  wig
 # | Added typecast and partial constant assignments
@@ -241,9 +241,9 @@ sub sig_typecast($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.44 2004/08/09 08:53:05 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.45 2004/08/09 15:48:14 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.44 $';
+my $thisrevision   =      '$Revision: 1.45 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -849,12 +849,18 @@ sub _create_entity ($$) {
  
                 # $type -> port type;
                 # $cast -> signal type;
-                if ( defined( $thissig->{'cast'} ) and
-                     $EH{'output'}{'generate'}{'workaround'}{'typecast'} =~ m/\bportmap\b/ ) {
-                    $cast = $type;
-                    $type = $thissig->{'cast'};
-                    logtrc ( "INFO:4", "typecast requested for signal $i/$cast, port $port/$type");
-                }            
+                if ( defined( $thissig->{'cast'} ) ) {
+                    
+                    if ( $EH{'output'}{'generate'}{'workaround'}{'typecast'} =~ m/\bportmap\b/o ) {
+                        $cast = $type;
+                        $type = $thissig->{'cast'};
+                        logtrc ( "INFO:4", "portmap typecast requested for signal $i/$cast, port $port/$type");
+                    } elsif ( $EH{'output'}{'generate'}{'workaround'}{'std_log_typecast'} =~ m/\bignore\b/o ) {
+                        $cast = $type;
+                        $type = $thissig->{'cast'};
+                        logtrc ( "INFO:4", "std_log_ignore typecast for signal $i/$cast, port $port/$type");
+                    }
+                }
 	    }
 	    if ( $l eq "-100000" ) {
 		$l = undef;
@@ -3091,10 +3097,6 @@ sub _write_architecture ($$$$) {
             %sp_conflict = signal_port_resolve( $aent, \%aeport );
         }
 
-        #if ( $EH{'output'}{'generate'}{'workaround'}{'typecast'} =~ m/\bintsig\b/io ) {
-        #    %tc_sigs = sig_typecast( $aent, \%aeport );
-        # }
-        
 	my $signaltext;
 	my $veridefs = "";
 	if ( $ilang =~ m,^veri,io ) {
