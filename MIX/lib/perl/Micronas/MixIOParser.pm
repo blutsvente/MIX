@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / IOParser
 # | Modules:    $RCSfile: MixIOParser.pm,v $ 
-# | Revision:   $Revision: 1.15 $
+# | Revision:   $Revision: 1.16 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2004/04/05 09:19:13 $
+# | Date:       $Date: 2004/04/14 11:08:32 $
 # | 
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.15 2004/04/05 09:19:13 wig Exp $
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.16 2004/04/14 11:08:32 wig Exp $
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -36,6 +36,9 @@
 # |
 # | Changes:
 # | $Log: MixIOParser.pm,v $
+# | Revision 1.16  2004/04/14 11:08:32  wig
+# | minor code clearing
+# |
 # | Revision 1.15  2004/04/05 09:19:13  wig
 # | Reset winCVS
 # |
@@ -99,6 +102,8 @@ our $VERSION = '0.1'; #TODO: fill that from RCS ...
 use strict;
 # use vars qw();
 
+=head 4 old
+
 # Caveat: relies on proper setting of base, pgmpath and dir in main program!
 use lib "$main::base/";
 use lib "$main::base/lib/perl";
@@ -106,6 +111,8 @@ use lib "$main::pgmpath/";
 use lib "$main::pgmpath/lib/perl";
 use lib "$main::dir/lib/perl";
 use lib "$main::dir/../lib/perl";
+
+=cut
 
 # use lib 'h:\work\x2v\lib\perl'; #TODO Rewrite that !!!!
 use Log::Agent;
@@ -133,9 +140,9 @@ sub _mix_iop_init();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixIOParser.pm,v 1.15 2004/04/05 09:19:13 wig Exp $';
+my $thisid		=	'$Id: MixIOParser.pm,v 1.16 2004/04/14 11:08:32 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixIOParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.15 $';
+my $thisrevision   =      '$Revision: 1.16 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

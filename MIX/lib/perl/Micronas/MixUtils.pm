@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.45 $                                         |
+# | Revision:   $Revision: 1.46 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/04/07 15:12:24 $                              |
+# | Date:       $Date: 2004/04/14 11:08:33 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.45 2004/04/07 15:12:24 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.46 2004/04/14 11:08:33 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.46  2004/04/14 11:08:33  wig
+# | minor code clearing
+# |
 # | Revision 1.45  2004/04/07 15:12:24  wig
 # | Modified Files:
 # | 	MixUtils.pm (Solaris port)
@@ -197,6 +200,8 @@ our $VERSION = '0.01';
 
 use strict;
 
+=head 4 old
+
 # Caveat: relies on proper setting of base, pgmpath and dir in main program!
 use lib "$main::base/";
 use lib "$main::base/lib/perl";
@@ -205,6 +210,8 @@ use lib "$main::pgmpath/lib/perl";
 use lib "$main::dir/lib/perl";
 use lib "$main::dir/../lib/perl";
 #TODO: Which "use lib path" if $0 was found in PATH?
+
+=cut
 
 use File::Basename;
 use File::Copy;
@@ -217,7 +224,6 @@ use Log::Agent;
 use Log::Agent::Priorities qw(:LEVELS);
 
 use Storable;
-# use Micronas::MixParser qw( mix_parser_importhdl );
 
 # use Data::Dumper; # Will be evaled if -adump option is on
 # use Text::Diff;  # Will be eval'ed down there if -delta option is given!
@@ -262,11 +268,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.45 2004/04/07 15:12:24 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.46 2004/04/14 11:08:33 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.45 $';
+my $thisrevision        =      '$Revision: 1.46 $';
 
-# Revision:   $Revision: 1.45 $   
+# Revision:   $Revision: 1.46 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -516,7 +522,7 @@ sub mix_getopt_header(@) {
     }
     if ( $EH{'output'}{'generate'}{'delta'} or $EH{'check'}{'hdlout'}{'path'} ) {
 	# Eval use Text::Diff
-	    if ( eval "use Text::Diff;" ) {
+	    if ( eval 'use Text::Diff;' ) {
 		logwarn( "FATAL: Cannot load Text::Diff module for -conf *delta* mode: $@" );
 		exit(1);
 	    }
@@ -1535,7 +1541,7 @@ sub mix_list_conf () {
 	print( join( " ", @$i ) . "\n" );
     }
 
-    print( "\nCAVEAT: The list seen here might be different from the final configuration!!\n" );
+    print( "\nCAVEAT: The list here might be different from the final configuration!!\n" );
     print( "CAVEAT: Because it is dumped before CONF sheet evaluation!!\n" );
     print( "CAVEAT: Run MIX and check the CONF sheet of the intermediate workbook.\n" );
 
@@ -1636,7 +1642,8 @@ sub mix_overload_conf ($) {
 	$e = "if ( exists( \$EH" . $k . " ) ) { \$EH" . $k . " = '" . $v . "'; " . $logo .
 	    "} else { \$EH" . $k . " = '" . $v . "'; " . $loga . " }";
 	unless ( eval $e ) {
-                logwarn("Evaluation of configuration $k=$v failed: $@") if ( $@ );
+                logwarn("WARNING: Evaluation of configuration $k=$v failed: $@") if ( $@ );
+                $EH{'sum'}{'warnings'}++;
                 next;
         }
     }
@@ -1665,7 +1672,8 @@ sub _mix_apply_conf ($$$) {
     my $e = "if ( exists( \$EH$k ) ) { \$EH$k = '$v'; $logo } else { \$EH$k = '$v'; $loga }";
     unless ( eval $e ) {
 	    if ( $@ ) { # S.th. went wrong??
-	        logwarn("Eval of configuration overload from $s $k=$v failed: $@");
+	        logwarn("WARNING: Eval of configuration overload from $s $k=$v failed: $@");
+                $EH{'sum'}{'warnings'}++;
 	    }
     }
 }
@@ -2632,15 +2640,20 @@ sub mix_store ($$;$){
     #
 
     if ( $OPTVAL{'adump'} ) {
-	use Data::Dumper;
+	if ( eval 'use Data::Dumper;' ) {
+            logwarn("ERROR: Cannot load Data::Dumper module: $@");
+            $EH{'sum'}{'errors'}++;
+            $OPTVAL{'adump'} = "";
+            return;
+	}
 	$file .= "a";
 	unless( open( DUMP, ">$predir$file" ) ) {
-	    logwarn("FATAL: Cannot open file $predir$file for dumping: $!\n");
+	    logwarn("FATAL: Cannot open file $predir$file for dumping: $!");
 	    exit 1;
 	}
 	print( DUMP Dumper( $r_data ) );
 	unless( close( DUMP ) ) {
-	    logwarn("FATAL: Cannot close file $predir$file: $!\n");
+	    logwarn("FATAL: Cannot close file $predir$file: $!");
 	    exit 1;
 	}
     }
@@ -3221,7 +3234,7 @@ sub mix_utils_init_file($) {
 	    logwarn( "FATAL: Output file $output already existing!" );
 	    exit 1;
 	}
-	( $input = $main::pgmpath ."/template/mix." . $ext ) =~ s,\\,/,g;
+	( $input = $FindBin::Bin ."/template/mix." . $ext ) =~ s,\\,/,g;
 	if ( ! -r $input ) {
 	    logwarn( "FATAL: Cannot init mix from $input" );
 	    exit 1;

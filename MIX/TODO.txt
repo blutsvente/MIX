@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.31 2004/03/25 11:21:10 wig Exp $
+# $Id: TODO.txt,v 1.32 2004/04/14 11:08:50 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -18,6 +18,203 @@ Doku:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+
+- 20040407a/Req: Improve coding:
+    header:
+
+#!/bin/sh -- # -*- perl -*- -w
+# TODO: Get better startup (look in FAQ ...)
+
+eval 'exec $M_PERL -S $0 ${1+"$@"}'
+if 0; # dynamic perl startup; suppress preceding line in perl
+
+# eval '(exit $?0)' && eval 'exec perl -S $0 ${1+"$@"}' || eval 'exec perl -S $0 $argv'
+# if 0; # dynamic perl startup
+
+should be        
+
+
+and
+
+mix_0.pl header:
+    $pgm  <- basename $0    -> Script
+    $base <- path to $0 and one level up    -> dirname(Bin) 
+    $pgmpath <- path where $0 comes from  -> Bin
+    $dir  <- cwd()
+
+Example:
+ perl -d mix_0.pl
+    gives
+  DB<1> x $dir
+0  'H:\\work\\mix_new\\MIX'
+  DB<2> x $pgm
+0  'mix_0.pl'
+  DB<3> x $0
+0  'mix_0.pl'
+  DB<4> x $pgmpath
+0  'H:\\work\\mix_new\\MIX'
+  DB<5> x $base
+0  'H:\\work\\mix_new'
+  DB<6>
+
+  DB<9> x $FindBin::Bin
+0  'H:/work/mix_new/MIX'
+  DB<10> x $FindBin::Script
+0  'mix_0.pl'
+
+another example:
+  DB<1> x $dir
+0  'H:\\work\\mix_new\\MIX'
+  DB<2> x $pgm
+0  'mix_0.pl'
+  DB<3> x $pgmpath
+0  'h:\\work\\mix_new\\mix'
+  DB<4> x $base
+0  'h:\\work\\mix_new'
+  DB<5> x $0
+0  'h:\\work\\mix_new\\mix\\mix_0.pl'
+  DB<6> use FindBin
+
+  DB<7> x $FindBin::Bin
+0  'h:/work/mix_new/mix'
+  DB<8> x $FindBin::Script
+0  'mix_0.pl'
+
+use vars qw($pgm $base $pgmpath $dir);
+
+$dir = "";
+($^O=~/Win32/) ? ($dir=getcwd())=~s,/,\\,g : ($dir=getcwd());
+
+# Set library search path to:
+#   \PATH\PA\prg
+#    use lib \PATH\PA\lib\perl
+#    use lib \PATH\lib\perl
+#    use lib `cwd`\lib\perl
+#    use lib `cwd`..\lib\perl
+# ...
+BEGIN{
+    ($^O =~ /Win32/io ) ? ($dir=getcwd())=~s,/,\\,g : ($dir=getcwd());    
+
+    ($pgm=$0) =~s;^.*(/|\\);;g;
+    if ( $0 =~ m,[/\\],o ) { #$0 has path ...
+        ($base=$0) =~s;^(.*)[/\\]\w+[/\\][\w\.]+$;$1;g;
+        ($pgmpath=$0) =~ s;^(.*)[/\\][\w\.]+$;$1;g;
+    } else {
+        ( $base = $dir ) =~ s,^(.*)[/\\][\w\.]+$,$1,g;
+        $pgmpath = $dir;
+    }
+}
+
+use lib "$base/";
+use lib "$base/lib/perl";
+use lib "$pgmpath/";
+use lib "$pgmpath/lib/perl";
+use lib "$dir/lib/perl";
+use lib "$dir/../lib/perl";
+#TODO: Which "use lib path" if $0 was found in PATH?
+
+# *.pm header:
+
+# Caveat: relies on proper setting of base, pgmpath and dir in main program!
+use lib "$main::base/";
+use lib "$main::base/lib/perl";
+use lib "$main::pgmpath/";
+use lib "$main::pgmpath/lib/perl";
+use lib "$main::dir/lib/perl";
+use lib "$main::dir/../lib/perl";
+
+should be better
+
+ use FindBin;
+ use lib "$FindBin::Bin/../lib";
+
+- 20040401f/Req: add ::option column to all sheets
+    Keep all options there, e.g. the %UAMN% (use configuration as module name)
+    Allow VAR=VAL,VAR=VAL, ... pairs to be specified there, valid just for current
+       line
+
+    Req: wig
+    Prio: low
+    Plan:
+
+- 20040401e/Req: Improve import feature:
+    - Verilog
+    - VHDL architecture
+
+    Req: wig
+    Prio: low
+    Plan:
+
+- 20040401d/Req: Add -flatten option
+    Remove all hierachy, leave just leaf and top node -> in intermediate
+
+    Req: wig
+    Prio: low
+    Plan:
+
+- 20040401c/Req: Create pseudo block diagram / EXCEL
+    Create GIF image of module
+    Create HTML description
+    Create PDF description
+
+    Req: wig
+    Prio: low
+    Plan:
+
+- 20040401b/Req: Write hierachy sheets per module ...
+
+    Write a hierachy sheet for each non-leaf module
+    
+    Req: wig
+    Prio: low
+    
+- 20040401a/Check: VHDL typecast in port maps, HOWTO
+
+    ask in comp.language.vhdl
+
+    Example:
+	component inst_aa	-- typecast module
+		port (
+			port_a_1	: out	std_ulogic;
+			port_a_3	: out	std_ulogic_vector(7 downto 0);
+			signal_2	: out	std_logic;
+			signal_4	: out	std_logic_vector(15 downto 0)
+		);
+	end component;
+			signal	signal_1	: std_logic; 
+			signal	signal_2	: std_ulogic; 
+			signal	signal_3	: std_logic_vector(7 downto 0); 
+			signal	signal_4	: std_ulogic_vector(15 downto 0); 
+
+		inst_aa_i: inst_aa
+		port map (
+			std_logic(port_a_1) => signal_1,
+			std_logic_vector(port_a_3) => signal_3,
+			std_ulogic(signal_2) => signal_2,
+			std_ulogic_vector(signal_4) => signal_4
+		);
+
+Possible cases:
+    in
+    out
+    inout ???
+    
+My short-ref say typecast is allowed in portmaps, but tool doesn't like it (at least some
+of the tools).
+
+See test/typecast.xls
+
+    Req: mpit
+    Prio: medium
+    Solution: contact comp.lang.vhdl
+    
+
+-20040330a/Bug: Message "WARNING: Bad branch taken in parse_io_init, file bug report!"  is not descriptive!
+
+    Req: mpit
+    Prio: medium
+    Solution: rewrite error message with "No iocell and pad type defined in line XXXX, skipped!"
+    
 
 -20040324a/Req: Define %AUTO% signal name
     wires according to rules e.g.:
@@ -332,6 +529,23 @@ is defined.
 ##########################################################
 DONE: +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ##########################################################
+
+-20040329a/Req: define constants in Verilog:
+
+alt:
+`define cpu_h_int4_reserved_c 'h0  // __I_ConvConstant2:0x0
+
+neu:
+`define cpu_h_int1_reserved_c 1'b0  // __I_ConvConstant2:0x0
+
+    Reason: 0x0 ist konverted to hex in case of single bit signal
+
+    Req: mpallas
+    Prio: medium
+    Workaround: Use a plain 0 instead!
+
+    Solution: fixed in MixWriter 20040329
+
 - 20040210/Req: Use configuration instead of module names within Verilog modules referencing VHDL
 
 Update:

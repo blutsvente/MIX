@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.39 $                                         |
+# | Revision:   $Revision: 1.40 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/03/30 11:05:58 $                              |
+# | Date:       $Date: 2004/04/14 11:08:34 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.39 2004/03/30 11:05:58 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.40 2004/04/14 11:08:34 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.40  2004/04/14 11:08:34  wig
+# | minor code clearing
+# |
 # | Revision 1.39  2004/03/30 11:05:58  wig
 # | fixed: IOparser handling of bit ports vs. bus signals
 # |
@@ -170,6 +173,8 @@ our $VERSION = '0.01';
 use strict;
 use vars qw( %entities );
 
+=head 4 old
+
 # Caveat: relies on proper setting of base, pgmpath and dir in main program!
 use lib "$main::base/";
 use lib "$main::base/lib/perl";
@@ -177,6 +182,8 @@ use lib "$main::pgmpath/";
 use lib "$main::pgmpath/lib/perl";
 use lib "$main::dir/lib/perl";
 use lib "$main::dir/../lib/perl";
+
+=cut
 
 use Log::Agent;
 use Log::Agent::Priorities qw(:LEVELS);
@@ -219,9 +226,9 @@ sub mix_wr_hier2mac ($);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.39 2004/03/30 11:05:58 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.40 2004/04/14 11:08:34 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.39 $';
+my $thisrevision   =      '$Revision: 1.40 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / I2CParser                                |
 # | Modules:    $RCSfile: MixI2CParser.pm,v $                             |
-# | Revision:   $Revision: 1.8 $                                          |
-# | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2004/02/18 15:17:18 $                              |
+# | Revision:   $Revision: 1.9 $                                          |
+# | Author:     $Author: wig $                                         |
+# | Date:       $Date: 2004/04/14 11:08:32 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/Attic/MixI2CParser.pm,v 1.8 2004/02/18 15:17:18 abauer Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/Attic/MixI2CParser.pm,v 1.9 2004/04/14 11:08:32 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
@@ -45,6 +45,8 @@ our $VERSION = '0.1'; #TODO: fill that from RCS ...
 
 use strict;
 
+=head 4 old
+
 # Caveat: relies on proper setting of base, pgmpath and dir in main program!
 use lib "$main::base/";
 use lib "$main::base/lib/perl";
@@ -52,6 +54,8 @@ use lib "$main::pgmpath/";
 use lib "$main::pgmpath/lib/perl";
 use lib "$main::dir/lib/perl";
 use lib "$main::dir/../lib/perl";
+
+=cut
 
 use Log::Agent;
 use Log::Agent::Priorities qw( :LEVELS);
@@ -74,9 +78,9 @@ sub parse_i2c_init($);
 # RCS Id, to be put into output templates
 #
 
-my $thisid		= 	'$Id: MixI2CParser.pm,v 1.8 2004/02/18 15:17:18 abauer Exp $';
+my $thisid		= 	'$Id: MixI2CParser.pm,v 1.9 2004/04/14 11:08:32 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixI2CParser.pm,v $';
-my $thisrevision        =       '$Revision: 1.8 $';
+my $thisrevision        =       '$Revision: 1.9 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

@@ -30,6 +30,8 @@ use Getopt::Long qw(GetOptions);
 $::VERSION = '$Revision: 0.1 ';
 $::VERSION =~ s,\$,,go;
 
+=head 4 old
+
 use vars qw($pgm $base $pgmpath $cwd);
 
 BEGIN{
@@ -48,6 +50,20 @@ BEGIN{
 use lib "$pgmpath/../lib/perl";
 use lib "$pgmpath/lib";
 
+=cut
+
+use Findbin;
+
+use lib "$FindBin::Bin/..";
+use lib "$FindBin::Bin/../lib/perl";
+use lib "$FindBin::Bin/../../lib/perl";
+use lib "$FindBin::Bin";
+use lib "$FindBin::Bin/lib/perl";
+use lib "$FindBin::Bin/lib";
+use lib getcwd() . "/lib/perl";
+use lib getcwd() . "/../lib/perl";
+
+
 use Test::More tests => qw(no_plan);
 use Test::Differences;
 
@@ -59,6 +75,7 @@ my %opts = ();
 my $common_path = getcwd();
 # Where is mix_0.pl ->
 #   mswin -> take off last part of common_path (  test is subdirectory )
+#  will only work if we are in the test directory ... else use the -mix flag ..
 my $mix = dirname( $common_path ) . "/mix_0.pl";
 
 my $status = GetOptions( \%opts, qw (
@@ -333,8 +350,8 @@ sub init() {
 		 -duperr        => 1,   #Send errors to OUTPUT and ERROR channel ...
 		 -channels    => {
 			  # 'error'  => "$0.err",
-			  'output' => "$cwd/test.out",
-			  'debug'  => "$cwd/test.dbg", 
+			  'output' => getcwd() . "/test.out",
+			  'debug'  => getcwd() . "test.dbg", 
 		 },
 	     )
     );
@@ -660,7 +677,7 @@ foreach my $i (@inType) {
     logwarn "testing: $i-input";
     chdir $i."_input" || die "Cannot change to " . $i . "_input";
     runMix( $i);
-    chdir "$pgmpath";
+    chdir $FindBin::Bin;
 }
 
 my $summary = 0;

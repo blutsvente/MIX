@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Checker
 # | Modules:    $RCSfile: MixChecker.pm,v $
-# | Revision:   $Revision: 1.5 $
-# | Author:     $Author: abauer $
-# | Date:       $Date: 2003/11/27 09:08:56 $
+# | Revision:   $Revision: 1.6 $
+# | Author:     $Author: wig $
+# | Date:       $Date: 2004/04/14 11:08:32 $
 # |
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.5 2003/11/27 09:08:56 abauer Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.6 2004/04/14 11:08:32 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the checking capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixChecker.pm,v $
+# | Revision 1.6  2004/04/14 11:08:32  wig
+# | minor code clearing
+# |
 # | Revision 1.5  2003/11/27 09:08:56  abauer
 # | *** empty log message ***
 # |
@@ -73,6 +76,8 @@ our $VERSION = '0.01'; # TODO: use the RCS info
 use strict;
 # use vars qw();
 
+=head 4 old
+
 # Caveat: relies on proper setting of base, pgmpath and dir in main program!
 use lib "$main::base/";
 use lib "$main::base/lib/perl";
@@ -80,6 +85,8 @@ use lib "$main::pgmpath/";
 use lib "$main::pgmpath/lib/perl";
 use lib "$main::dir/lib/perl";
 use lib "$main::dir/../lib/perl";
+
+=cut
 
 use Log::Agent;
 use Log::Agent::Priorities qw(:LEVELS);
@@ -101,9 +108,9 @@ my %mix_check_list = ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixChecker.pm,v 1.5 2003/11/27 09:08:56 abauer Exp $';
+my $thisid		=	'$Id: MixChecker.pm,v 1.6 2004/04/14 11:08:32 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixChecker.pm,v $';
-my $thisrevision   =      '$Revision: 1.5 $';
+my $thisrevision   =      '$Revision: 1.6 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

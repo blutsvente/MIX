@@ -17,12 +17,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.29 2004/04/07 15:11:40 wig Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.30 2004/04/14 11:08:55 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.29 $                                      |
-# | Mod.Date     : $Date: 2004/04/07 15:11:40 $                           |
+# | Version      : $Revision: 1.30 $                                      |
+# | Mod.Date     : $Date: 2004/04/14 11:08:55 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -37,6 +37,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.30  2004/04/14 11:08:55  wig
+# | minor code clearing
+# |
 # | Revision 1.29  2004/04/07 15:11:40  wig
 # | Modified Files:
 # | 	mix_0.pl
@@ -155,8 +158,7 @@ use Pod::Text;
 # use diagnostics; # -> will be set by -debug option
 # use English;       # -> will not need this, just consumes performance
 
-# These packages need to be installed, too
-# use lib 'h:\work\x2v\lib\perl'; ##TODO: Rewrite that to a generic place ....
+=head 4 old 
 
 use vars qw($pgm $base $pgmpath $dir);
 
@@ -183,12 +185,22 @@ BEGIN{
     }
 }
 
-use lib "$base/";
-use lib "$base/lib/perl";
-use lib "$pgmpath/";
-use lib "$pgmpath/lib/perl";
-use lib "$dir/lib/perl";
-use lib "$dir/../lib/perl";
+=cut
+
+use Findbin;
+
+use lib "$FindBin::Bin/..";
+use lib "$FindBin::Bin/../lib/perl";
+use lib "$FindBin::Bin";
+use lib "$FindBin::Bin/lib/perl";
+use lib getcwd() . "/lib/perl";
+use lib getcwd() . "/../lib/perl";
+# use lib "$base/";
+# use lib "$base/lib/perl";
+# use lib "$pgmpath/";
+# use lib "$pgmpath/lib/perl";
+# use lib "$dir/lib/perl";
+# use lib "$dir/../lib/perl";
 #TODO: Which "use lib path" if $0 was found in PATH?
 
 use Log::Agent;
@@ -212,10 +224,9 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.29 $'; # RCS Id
+$::VERSION = '$Revision: 1.30 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
-# %EH comes from Mic::MixUtils ; All the configuration E-nvironment will be there
 logconfig(
         -driver => Log::Agent::Driver::File->make(
         # -prefix      => $0,
@@ -223,8 +234,8 @@ logconfig(
         -duperr        => 1,   #Send errors to OUTPUT and ERROR channel ...
         -channels    => {
         # 'error'  => "$0.err",
-            'output' => "$pgm.out",
-            'debug'  => "$pgm.dbg",
+            'output' => $FindBin::Script . ".out",
+            'debug'  => $FindBin::Script . ".dbg",
             },
         )
 );

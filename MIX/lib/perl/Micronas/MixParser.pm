@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.38 $                                         |
+# | Revision:   $Revision: 1.39 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/03/25 11:21:47 $                              |
+# | Date:       $Date: 2004/04/14 11:08:32 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.38 2004/03/25 11:21:47 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.39 2004/04/14 11:08:32 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.39  2004/04/14 11:08:32  wig
+# | minor code clearing
+# |
 # | Revision 1.38  2004/03/25 11:21:47  wig
 # | Added -verifyentity option
 # |
@@ -199,6 +202,8 @@ our $VERSION = '0.01';
 use strict;
 use vars qw( %hierdb %conndb );
 
+=head 4 old
+
 # Caveat: relies on proper setting of base, pgmpath and dir in main program!
 use lib "$main::base/";
 use lib "$main::base/lib/perl";
@@ -208,6 +213,9 @@ use lib "$main::dir/lib/perl";
 use lib "$main::dir/../lib/perl";
 
 # use lib 'h:\work\x2v\lib\perl'; #TODO Rewrite that !!!!
+
+=cut
+
 use Log::Agent;
 use Log::Agent::Priorities qw(:LEVELS);
 use Tree::DAG_Node; # tree base class
@@ -246,11 +254,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.38 2004/03/25 11:21:47 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.39 2004/04/14 11:08:32 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.38 $';
+my $thisrevision   =      '$Revision: 1.39 $';
 
-# | Revision:   $Revision: 1.38 $
+# | Revision:   $Revision: 1.39 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;

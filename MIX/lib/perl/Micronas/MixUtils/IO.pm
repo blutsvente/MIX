@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.14 $                                          |
+# | Revision:   $Revision: 1.15 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/04/07 15:13:10 $                              |
+# | Date:       $Date: 2004/04/14 11:08:34 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.15  2004/04/14 11:08:34  wig
+# | minor code clearing
+# |
 # | Revision 1.14  2004/04/07 15:13:10  wig
 # | Modified Files:
 # | 	IO.pm : fixed delta mode xls on Solaris issue
@@ -104,6 +107,8 @@ our $VERSION = '1.0';
 use strict;
 # use vars qw( $ex ); # Gets OLE object
 
+=head 4 old
+
 # Caveat: relies on proper setting of base, pgmpath and dir in main program!
 use lib "$main::base/";
 use lib "$main::base/lib/perl";
@@ -112,6 +117,7 @@ use lib "$main::pgmpath/lib/perl";
 use lib "$main::dir/lib/perl";
 use lib "$main::dir/../lib/perl";
 
+=cut
 
 use Cwd;
 use File::Basename;
@@ -122,7 +128,7 @@ use Micronas::MixUtils qw(:DEFAULT %OPTVAL %EH replace_mac convert_in
 			  select_variant two2one one2two);
 
 #TODO: Load these only if required ...
-use ooolib;
+# use ooolib;   -> Loaded on demand, only!
 use Spreadsheet::ParseExcel;
 #use Spreadsheet::WriteExcel;
 
@@ -135,15 +141,16 @@ sub mix_utils_open_input(@);
 sub close_open_workbooks ();
 sub mix_utils_mask_excel ($);
 sub absolute_path ($);
+sub useOoolib ();
 
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.14 2004/04/07 15:13:10 wig Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.15 2004/04/14 11:08:34 wig Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.14 $';
+my $thisrevision    =      '$Revision: 1.15 $';
 
-# Revision:   $Revision: 1.14 $
+# Revision:   $Revision: 1.15 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1521,7 +1528,6 @@ defined by $EH{'intermediate'}{'keep'}
 =cut
 
 sub write_sxc($$$;$) {
-
     my $file = shift;
     my $sheet = shift;
     my $r_a = shift;
@@ -1538,6 +1544,12 @@ sub write_sxc($$$;$) {
     $settings{'textbgcolor'} = "FFFFFF";    # background color
     $settings{'newflag'} = 0;
 
+    unless( useOoolib() ) {
+	logwarn("ERROR: Cannot initialze oolib to write out intermediate file $file!");
+	$EH{'sum'}{'errors'}++;
+	return;
+    }
+
     my $zip = Archive::Zip->new();
 
     # Write to other directory ...
@@ -1553,6 +1565,7 @@ sub write_sxc($$$;$) {
 	# unzip $file in $path
 	unless($zip->read($file)==AZ_OK) {
 	    logwarn "ERROR: can't open zip file $file!\n";
+	    $EH{'sum'}{'errors'}++;
 	    return undef;
 	}
 	# extract content.xml file from archive
@@ -1745,6 +1758,19 @@ sub write_sxc($$$;$) {
     return 1;
 }
 
+# use ooolib on demand, only!
+{ my $ooo_flag = 0; #static, tells me if we used ooolib already ....
+sub useOoolib () {
+
+    return 1 if ( $ooo_flag );
+    if ( eval 'use ooolib;' ){
+	logdie "ERROR: Cannot load ooolib module: $@\n";
+	return undef;	
+    }
+    $ooo_flag = 1;
+    return 1;
+}
+}
 
 # get document end tags position
 sub getDocumentEnd($) {
