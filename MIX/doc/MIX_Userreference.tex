@@ -205,6 +205,16 @@ Example:\newline
 The signal \begin{tt}signal\_a\end{tt} will be of type \begin{tt}type\_a\end{tt}, while the connecting ports of \begin{tt}inst\_a\end{tt} and \begin{tt}inst\_b\end{tt} are converted by applying the typecast function \begin{tt}typefunc\end{tt}.\newline
 Caveat: typecast support is experimental.\newline
 
+%wig20031222: top level port generation.
+\subsection{Automatic Generation of Toplevel Ports}
+
+If the signal mode as defined in the \begin{tt}::mode\end{tt} column matches one of I, O or IO, MIX will create top level ports.
+This feature can be disabled by the configuration variable \begin{tt}output.generate.inout\end{tt}. Possible values are
+\begin{tt}mode\end{tt}(enable top level port generation) and \being{tt}noxfix\end{tt}(do not prefix and postfix generated port names for
+top level ports), which are set by default.
+To exclude some signals from automatic top-level port generation, use 
+\begin{tt}output.generate.xinout sig\_foo,sig\_bar\end{tt}. This feature is usefull if you need to use internal inout signals, but do
+not want to have them wired to the top-level.
 
 \subsection{CONN columns details}
 
