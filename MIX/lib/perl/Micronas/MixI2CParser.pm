@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / I2CParser                                |
 # | Modules:    $RCSfile: MixI2CParser.pm,v $                             |
-# | Revision:   $Revision: 1.5 $                                          |
+# | Revision:   $Revision: 1.6 $                                          |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2004/01/15 13:31:35 $                              |
+# | Date:       $Date: 2004/01/22 15:29:21 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/Attic/MixI2CParser.pm,v 1.5 2004/01/15 13:31:35 abauer Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/Attic/MixI2CParser.pm,v 1.6 2004/01/22 15:29:21 abauer Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
@@ -74,9 +74,9 @@ sub parse_i2c_init($);
 # RCS Id, to be put into output templates
 #
 
-my $thisid		= 	'$Id: MixI2CParser.pm,v 1.5 2004/01/15 13:31:35 abauer Exp $';
+my $thisid		= 	'$Id: MixI2CParser.pm,v 1.6 2004/01/22 15:29:21 abauer Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixI2CParser.pm,v $';
-my $thisrevision        =       '$Revision: 1.5 $';
+my $thisrevision        =       '$Revision: 1.6 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -576,7 +576,8 @@ sub connect_subreg($$$) {
 
     # connect as read-register
 	my $prefix = $in->{'::block'} . "_" . $in->{'::sub'} . "_iic_i";
-        for my $i (keys %$in) {
+	my $pin;
+        for my $i (sort(keys %$in)) {
 	    if($i=~ m/^::b(:\d+)?$/ && $in->{$i}!~ m/^$/) {
 		$range++;
 	        if($i=~ m/^::b$/) {
@@ -586,9 +587,12 @@ sub connect_subreg($$$) {
 		    $number= $i;
 		    $number=~ s/^::b://;
 	        }
+		$pin = $in->{$i};
+		$pin =~ s/^.*\(//;
+		$pin =~ s/\)$//;
 		%conns = ( '::name' => "reg_data_in_$subreg",
-			   '::in' => "$parent/$prefix($number)",
-			   '::out' => $in->{$i}, );
+			   '::in' => "$parent/$prefix($number)=($number)",
+			   '::out' => $in->{$i} . "=($pin)", );
 		add_conn(%conns);
 	    }
 	}
@@ -620,6 +624,7 @@ sub connect_subreg($$$) {
 
 	# subreg/reg_data_out_o => reg_data_out_<hex_subadr>
 	%conns = ( '::name' => "reg_data_out_" . $subreg,
+		   '::type' => "std_ulogic_vector",
 		   '::out' => $instance . "/reg_data_out_o(15:0)",
 		   '::low' => "0",
 		   '::high' => "15", );
@@ -632,7 +637,8 @@ sub connect_subreg($$$) {
 
     # connect as write-register
 	my $prefix = $in->{'::block'} . "_" . $in->{'::sub'} . "_iic_o";
-        for my $i (keys %$in) {
+	my $pin;
+        for my $i (sort(keys %$in)) {
 	    if($i=~ m/^::b(:\d+)?$/ && defined $in->{$i} && $in->{$i}!~ m/^$/) {
 		$range++;
 	        if($i=~ m/^::b$/) {
@@ -642,9 +648,13 @@ sub connect_subreg($$$) {
 		    $number= $i;
 		    $number=~ s/^::b://;
 	        }
+		$pin = $in->{$i};
+		$pin =~ s/^.*\(//;
+		$pin =~ s/\)$//;
 		%conns = ( '::name' => "reg_data_out_$subreg",
-			   '::in' => $in->{$i},
-			   '::out' => "$parent/$prefix($number)",);
+			   '::in' => $in->{$i} . "=($pin)",
+			   '::out' => "$parent/$prefix($number)=($number)",
+			   '::comment' => "in:". $in->{$i} ."=($pin); out: $parent/$prefix($number); ",);
 		add_conn(%conns);
 	    }
 	}
