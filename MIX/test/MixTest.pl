@@ -1,18 +1,18 @@
 #!/usr/bin/perl
 
 #######################################################################
-#                MixTest - Test script for Mix
+#                MixTest - Test script for Mix                        #
 #######################################################################
 
 #######################################################################
-#
-#    MixTest should make it a little more easy to debug Mix. For
-#    verification of result, some Perl Test:: package has been used
-#
+#                                                                     #
+#    MixTest should make it a little more easy to debug Mix. For      #
+#    verification of result, some Perl Test:: package has been used   #
+#                                                                     #
 #######################################################################
 
 #######################################################################
-#               required packages and base path
+#               required packages and base path                       #
 #######################################################################
 
 use strict;
@@ -36,10 +36,10 @@ BEGIN{
     }
 }
 
-use lib "$base/lib/perl";
+use lib "$pgmpath/../lib/perl";
 use lib "$pgmpath/lib";
 
-use Test::More tests => 34;
+use Test::More tests => qw(no_plan);
 use Test::Differences;
 
 use Log::Agent;
@@ -49,21 +49,29 @@ use Log::Agent::Driver::File;
 use Getopt::Long qw(GetOptions);
 
 my %opts = ();
+
 my $status = GetOptions( \%opts, qw (
 	update!
 	release!
 	purge!
+	xls!
+	sxc!
+	csv!
     )
 );
+
+my $numTests = 0;
+my @inType;
+
+my %failstat = ();
 
 # TODO: move @tests to extra file
 
 #######################################################################
-#                          local variables
+#                          local variables                            #
 #######################################################################
 
 my $excel;
-my $failsum = 0;
 
 my @tests = (
 	{
@@ -241,7 +249,7 @@ my @tests = (
 my $numberOfTests = scalar @tests;
 
 #######################################################################
-#                          init - function
+#                          init - function                            #
 #######################################################################
 sub init() {
 
@@ -255,13 +263,39 @@ sub init() {
 			  # 'error'  => "$0.err",
 			  'output' => "$cwd/test.out",
 			  'debug'  => "$cwd/test.dbg", 
-		 }
+		 },
 	     )
     );
+
+    print "running Test:";
+    if(defined( $opts{'sxc'})) {
+      print " sxc,";
+      $numTests += $numberOfTests;
+      push(@inType, "sxc");
+    }
+    if(defined( $opts{'xls'})) {
+      print " xls,";
+      $numTests += $numberOfTests;
+      push(@inType, "xls");
+    }
+    if(defined( $opts{'csv'})) {
+      print " csv,";
+      $numTests += $numberOfTests;
+      push(@inType, "csv");
+    }
+
+    if(scalar(@inType)==0) {
+	print " ALL\n";
+	@inType = ("sxc", "xls", "csv");
+	$numTests = $numberOfTests * 3;
+    }
+    else {
+      print "\n";
+    }
 }
 
 #######################################################################
-#                          initExcel - function
+#                          initExcel - function                       #
 #######################################################################
 sub initExcel() {
 
@@ -272,7 +306,7 @@ sub initExcel() {
 }
 
 #######################################################################
-#                         gotScript
+#                         gotScript                                   #
 #######################################################################
 =head2 gotScript
     returns true if directory contains a start script, else false
@@ -287,7 +321,7 @@ sub gotScript($$) {
     close(DIR);
 
     for(my $i=0; defined $content[$i]; $i++) {
-	if($content[$i]=~ m/$name/) {	    
+	if($content[$i]=~ m/$name/) {
 	    return 1;
 	}
     }
@@ -295,19 +329,29 @@ sub gotScript($$) {
 }
 
 #######################################################################
-#                         runMix - function
+#                         runMix - function                           #
 #######################################################################
 =head2 runMix()
     run Mix using input files located in directory test
 =cut
 
-sub runMix() {
+sub runMix($) {
+
+    my $type = shift;
+    my $command;
+    my $options;
+    my $path;
+    my $find;
+
+    my $failsum = 0;
+    my $wdir = getcwd();
 
     for(my $i=0; $i<$numberOfTests; $i++) {
 
-	my $command;
-	my $options = $tests[$i]->{'options'};
-        my $path = "$pgmpath/$tests[$i]->{'path'}";
+	$command;
+	$options = $tests[$i]->{'options'};
+        $path = getcwd() . "/$tests[$i]->{'path'}";
+	$find = "";
 
 	if( defined( $opts{'update'} ) ) {
 		$options = "$options -nodelta";
@@ -322,17 +366,14 @@ sub runMix() {
 	    }
 	}
 	else {
-	    my $find = "";
 	    while($tests[$i]->{'path'} =~ /\//g) {
 		$find = $find . "../";
 	    }
-	    #$command  = "mix_0.pl $tests[$i]->{'options'} $find../$tests[$i]->{'name'}.xls";
-	    #$command  = "c:/usr/mix/mix_0.pl $tests[$i]->{'options'} $find../$tests[$i]->{'name'}.xls";
-	    $command  = "mix_0.pl $tests[$i]->{'options'} $find../$tests[$i]->{'name'}.sxc";
+	    $command  = "mix_0.pl $tests[$i]->{'options'} $find../$tests[$i]->{'name'}.$type";
 	}
         my $testname = @tests[$i]->{'name'};
 
-	chdir( $path) || logwarn("ERROR: Directory not found!");
+	chdir( $path) || logwarn("ERROR: Directory <$path> not found!");
 
         if ( -r "$testname-t.out" ) {
 	    rename( "$testname-t.out", "$testname-t.out.0" )
@@ -363,7 +404,7 @@ sub runMix() {
 			    $ci = $1;
 			}
 		    }
-		    close( LOG );
+		    close( LOG);
 		}
 		else {
 		    $cf = -1;
@@ -371,21 +412,37 @@ sub runMix() {
 		}
 		$failsum++;
 	    }
-	    ok( $status/256 == 0, "$testname in directory $tests[$i]->{'path'}");
-	    chdir( $cwd );
-	  }
+	    ok( $status/256 == 0, "$testname.$type in directory $tests[$i]->{'path'}");
+	    chdir( $wdir);
+	}
     }
-    #print "\n#### Mix result: $failsum of " . $numberOfTests . " runs failed!\n";
+    $failstat{$type} = $failsum;
 }
 
 #######################################################################
-#                            'main'
+#                            'main'                                   #
 #######################################################################
 
 init();
 
-runMix();
+# run tests
+foreach my $i (@inType) {
+    logwarn "testing: $i-input";
+    chdir $i."_input";
+    runMix( $i);
+    chdir "$pgmpath";
+}
 
-exit $failsum;
+my $summary = 0;
+
+# print out statistics
+print "\n\tStatistics:\n";
+foreach my $i (@inType) {
+    print "\tType: $i, ". $failstat{$i} ." of $numberOfTests Tests failed\n";
+    $summary += $failstat{$i};
+}
+print "\naltogether: $summary of all $numTests Tests failed!\n";
+
+exit;
 
 #!End
