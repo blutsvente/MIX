@@ -9,8 +9,6 @@
 #include "config.h"
 #include "tableview.h"
 
-#include "tablewindow.h"
-
 
 void init_TableView()
 {

@@ -7,7 +7,6 @@ mui_SOURCES = \
 	mainwindow.c mainwindow.h \
 	hiertree.c hiertree.h \
 	tableview.c tableview.h \
-	tablewindow.c tablewindow.h \
 	callbacks.c callbacks.h \
         support.c support.h \
 	settings.c settings.h \

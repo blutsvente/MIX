@@ -19,8 +19,20 @@
 #include "settings.h"
 
 
-Settings settings;
-GtkWidget *preferences = NULL;
+Settings settings = {NULL, NULL};
+GtkWidget *mainwindow = NULL;
+
+
+int init_settings(GtkWidget *window)
+{
+    mainwindow = window;
+}
+
+
+GtkWidget* get_mainwindow()
+{
+    return mainwindow;
+}
 
 
 int read_settings()
@@ -50,26 +62,19 @@ int read_settings()
     }
 
     // read config paths
-    if(fscanf(config_file, "MIX_PATH=%s", buffer)>0) {
+    if(fscanf(config_file, "MIX_PATH=%s\n", buffer)==1) {
 	settings.mix_path = (char*) malloc(strlen(buffer)+1);
 	strcpy(settings.mix_path, buffer);
     }
     else
 	settings.mix_path = NULL;
 
-    if(fscanf(config_file, "EDITOR_PATH=%s", buffer)>0) {
+    if(fscanf(config_file, "EDITOR_PATH=%s", buffer)==1) {
 	settings.editor_path = (char*) malloc(strlen(buffer)+1);
 	strcpy(settings.editor_path, buffer);
     }
     else
 	settings.editor_path = NULL;
-
-    if(fscanf(config_file, "SHEETEDIT_PATH=%s", buffer)>0) {
-	settings.sheetedit_path = (char*) malloc(strlen(buffer)+1);
-	strcpy(settings.sheetedit_path, buffer);
-    }
-    else
-	settings.sheetedit_path = NULL;
 
     fclose(config_file);
 
@@ -102,10 +107,8 @@ int write_settings()
 	fprintf(config_file, "MIX_PATH=%s\n", settings.mix_path);
     if(settings.editor_path!=NULL)
 	fprintf(config_file, "EDITOR_PATH=%s\n", settings.editor_path);
-    if(settings.sheetedit_path!=NULL)
-	fprintf(config_file, "SHEETEDIT_PATH=%s\n", settings.sheetedit_path);
 
-    close(config_file);
+    fclose(config_file);
     return 0;
 }
 
@@ -119,25 +122,14 @@ char* get_editor_path()
     return settings.editor_path;
 }
 
-char* get_sheetedit_path()
-{
-    return settings.sheetedit_path;
-}
-
 void show_preferences()
 {
-    GtkWidget *mix_path_entry, *editor_path_entry, *sheetedit_path_entry;
+    GtkWidget *preferences, *mix_path_entry, *editor_path_entry;
 
-    // TODO: set window to top-level
-    if(preferences != NULL) {
-	gdk_window_raise(GTK_WIDGET(preferences)->window);
-	return;
-    }
     preferences = (GtkWidget*) create_Preferences();
 
     mix_path_entry = (GtkWidget*) lookup_widget(preferences, ("entry2"));
     editor_path_entry = (GtkWidget*) lookup_widget(preferences, ("entry6"));
-    sheetedit_path_entry = (GtkWidget*) lookup_widget(preferences, ("entry7"));
 
     // display paths
     if(settings.mix_path != NULL)
@@ -150,42 +142,25 @@ void show_preferences()
     else
 	gtk_entry_set_text((GtkEntry*)editor_path_entry, "<none>");
 
-    if(settings.sheetedit_path != NULL)
-	gtk_entry_set_text((GtkEntry*)sheetedit_path_entry, settings.sheetedit_path);
-    else
-	gtk_entry_set_text((GtkEntry*)sheetedit_path_entry, "<none>");
+    gtk_window_set_transient_for((GtkWindow*)preferences,(GtkWindow*) mainwindow);
 
     if(gtk_dialog_run(GTK_DIALOG(preferences)) == GTK_RESPONSE_OK) {
 
 	char *buffer = (char*) gtk_entry_get_text((GtkEntry*)mix_path_entry);
-
-	if(buffer != NULL) {
-	    free(settings.mix_path);
-	    settings.mix_path = (char*) malloc(strlen(buffer+1));
+	if(buffer != NULL && strcmp(buffer, "<none>") != 0) {
+	    if(settings.mix_path != NULL) free(settings.mix_path);
+	    settings.mix_path = (char*) malloc(strlen(buffer)+1);
 	    strcpy( settings.mix_path, buffer);
 	}
 
 	buffer = (char*) gtk_entry_get_text((GtkEntry*)editor_path_entry);
-	if(buffer != NULL) {
-	    free(settings.editor_path);
-	    settings.editor_path = (char*) malloc(strlen(buffer+1));
+	if(buffer != NULL && strcmp(buffer, "<none>") != 0) {
+	    if(settings.editor_path != NULL)free(settings.editor_path);
+	    settings.editor_path = (char*) malloc(strlen(buffer)+1);
 	    strcpy( settings.editor_path, buffer);
 	}
-
-	buffer = (char*) gtk_entry_get_text((GtkEntry*)sheetedit_path_entry);
-	if(buffer != NULL) {
-	    free(settings.sheetedit_path);
-	    settings.sheetedit_path = (char*) malloc(strlen(buffer+1));
-	    strcpy( settings.sheetedit_path, buffer);
-	}
-
 	write_settings();
     }
     gtk_widget_destroy(preferences);
-    preferences = NULL;
 }
 
-GtkWidget* get_preferences()
-{
-    return preferences;
-}

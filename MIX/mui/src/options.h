@@ -11,9 +11,20 @@
 
 
 typedef struct Options_TAG {
-    bool import, combine, strip, bak, dump, verbose, delta;
+
+    bool import;
+    bool combine;
+    bool strip;
+    bool bak;
+    bool dump;
+    bool verbose;
+    bool delta;
+    char *input;
+    char *import_list;
+    char *variant;
+    char *target_dir;
     unsigned short dbglevel;
-    char *input, *import_list, *variant, *target_dir;
+
 } Options;
 
     

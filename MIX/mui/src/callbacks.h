@@ -23,7 +23,7 @@ void on_save_file_as_item(GtkMenuItem *menuitem, gpointer user_data);
 
 void on_app_quit_item(GtkMenuItem *menuitem, gpointer user_data);
 
-void on_preferences_btn(GtkMenuItem *menuitem, gpointer user_data);
+void on_preferences_item(GtkMenuItem *menuitem, gpointer user_data);
 
 void on_about_item(GtkMenuItem *menuitem, gpointer user_data);
 
@@ -43,6 +43,8 @@ void on_editor_btn(GtkButton *btn, gpointer user_data);
 
 void on_spreadsheet_btn(GtkButton *btn, gpointer user_data);
 
+void on_preferences_btn(GtkButton *btn, gpointer user_data);
+
 void on_strip_toggled(GtkToggleButton *btn, gpointer user_data);
 
 void on_bak_toggled(GtkToggleButton *btn, gpointer user_data);
@@ -59,9 +61,7 @@ void on_title_label_box_size_allocate(GtkWidget *widget, GdkRectangle *allocatio
 
 void on_mixpath_btn_clicked(GtkButton *button, gpointer user_data);
 
-void on_editor_btn_clicked(GtkButton *btn, gpointer user_data);
-
-void on_sheetedit_btn_clicked(GtkButton *button, gpointer user_data);
+void on_editorpath_btn_clicked(GtkButton *btn, gpointer user_data);
 
 void on_mixLog_cancel_btn_clicked(GtkButton *btn, gpointer user_data);
 

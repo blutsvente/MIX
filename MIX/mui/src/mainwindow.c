@@ -78,7 +78,6 @@ GtkWidget* create_MainWindow(void)
     GtkWidget *run_button;
     GtkWidget *tmp_toolbar_icon;
     GtkWidget *editor_button;
-    GtkWidget *spreadsheet_button;
     GtkWidget *preferences;
     GtkWidget *notebook1;
     GtkWidget *vbox4;
@@ -338,18 +337,14 @@ GtkWidget* create_MainWindow(void)
     gtk_label_set_use_underline( GTK_LABEL(((GtkToolbarChild*)(g_list_last( GTK_TOOLBAR(toolbar1)->children)->data))->label), TRUE);
     gtk_widget_set_name(editor_button, "editor_button");
     gtk_widget_show(editor_button);
-
-    tmp_toolbar_icon = gtk_image_new_from_stock("gtk-dnd-multiple", gtk_toolbar_get_icon_size( GTK_TOOLBAR(toolbar1)));
-    spreadsheet_button = gtk_toolbar_append_element( GTK_TOOLBAR(toolbar1), GTK_TOOLBAR_CHILD_BUTTON, NULL, _("Spreadsheet Editor"), _("run Spreadsheet Editor"), NULL, tmp_toolbar_icon, NULL, NULL);
-    gtk_label_set_use_underline( GTK_LABEL(((GtkToolbarChild*)(g_list_last( GTK_TOOLBAR(toolbar1)->children)->data))->label), TRUE);
-    gtk_widget_set_name(spreadsheet_button, "spreadsheet_button");
-    gtk_widget_show(spreadsheet_button);
     
     gtk_toolbar_append_space( GTK_TOOLBAR(toolbar1));
 
     preferences = gtk_toolbar_insert_stock( GTK_TOOLBAR(toolbar1), "gtk-properties", _("open preferences"), NULL, NULL, NULL, -1);
     gtk_widget_set_name(preferences, "preferences");
     gtk_widget_show(preferences);
+
+    gtk_toolbar_append_space( GTK_TOOLBAR(toolbar1));
 
     notebook1 = gtk_notebook_new();
     gtk_widget_set_name(notebook1, "notebook1");
@@ -797,7 +792,7 @@ GtkWidget* create_MainWindow(void)
     g_signal_connect((gpointer) save_file, "activate", G_CALLBACK(on_save_file_item), NULL);
     g_signal_connect((gpointer) save_file_as, "activate", G_CALLBACK(on_save_file_as_item), NULL);
     g_signal_connect((gpointer) quit1, "activate", G_CALLBACK(on_app_quit_item), NULL);
-    g_signal_connect((gpointer) preferences1, "activate", G_CALLBACK(on_preferences_btn), NULL);
+    g_signal_connect((gpointer) preferences1, "activate", G_CALLBACK(on_preferences_item), NULL);
     g_signal_connect((gpointer) about1, "activate", G_CALLBACK(on_about_item), NULL);
     g_signal_connect((gpointer) usage1, "activate", G_CALLBACK(on_usage1_activate), NULL);
     g_signal_connect((gpointer) new_file_button, "clicked", G_CALLBACK(on_new_file_btn), NULL);
@@ -806,7 +801,6 @@ GtkWidget* create_MainWindow(void)
     g_signal_connect((gpointer) save_as_button, "clicked", G_CALLBACK(on_save_file_as_btn), NULL);
     g_signal_connect((gpointer) run_button, "clicked", G_CALLBACK(on_run_btn), NULL);
     g_signal_connect((gpointer) editor_button, "clicked", G_CALLBACK(on_editor_btn), NULL);
-    g_signal_connect((gpointer) spreadsheet_button, "clicked", G_CALLBACK(on_spreadsheet_btn), NULL);
     g_signal_connect((gpointer) preferences, "clicked", G_CALLBACK(on_preferences_btn), NULL);
     g_signal_connect((gpointer) checkbutton7, "toggled", G_CALLBACK(on_strip_toggled), NULL);
     g_signal_connect((gpointer) checkbutton8, "toggled", G_CALLBACK(on_bak_toggled), NULL);
@@ -851,7 +845,6 @@ GtkWidget* create_MainWindow(void)
     GLADE_HOOKUP_OBJECT(mui, save_as_button, "save_as_button");
     GLADE_HOOKUP_OBJECT(mui, run_button, "run_button");
     GLADE_HOOKUP_OBJECT(mui, editor_button, "editor_button");
-    GLADE_HOOKUP_OBJECT(mui, spreadsheet_button, "spreadsheet_button");
     GLADE_HOOKUP_OBJECT(mui, preferences, "preferences");
     GLADE_HOOKUP_OBJECT(mui, notebook1, "notebook1");
     GLADE_HOOKUP_OBJECT(mui, vbox4, "vbox4");
@@ -940,7 +933,6 @@ GtkWidget* create_Preferences(void)
     GtkWidget *label25;
     GtkWidget *select_mixpath_button;
     GtkWidget *select_editor_button;
-    GtkWidget *select_sheetedit_button;
     GtkWidget *dialog_action_area3;
     GtkWidget *preferences_cancel_button;
     GtkWidget *alignment4;
@@ -985,18 +977,6 @@ GtkWidget* create_Preferences(void)
     gtk_fixed_put( GTK_FIXED(fixed6), entry6, 96, 64);
     gtk_widget_set_size_request(entry6, 158, 24);
 
-    entry7 = gtk_entry_new();
-    gtk_widget_set_name(entry7, "entry7");
-    gtk_widget_show(entry7);
-    gtk_fixed_put( GTK_FIXED(fixed6), entry7, 96, 96);
-    gtk_widget_set_size_request(entry7, 158, 24);
-
-    label27 = gtk_label_new(_("Sheeteditor:"));
-    gtk_widget_set_name(label27, "label27");
-    gtk_widget_show(label27);
-    gtk_fixed_put( GTK_FIXED(fixed6), label27, 8, 100);
-    gtk_widget_set_size_request(label27, 79, 16);
-
     label26 = gtk_label_new(_("Editor:"));
     gtk_widget_set_name(label26, "label26");
     gtk_widget_show(label26);
@@ -1020,12 +1000,6 @@ GtkWidget* create_Preferences(void)
     gtk_widget_show(select_editor_button);
     gtk_fixed_put( GTK_FIXED(fixed6), select_editor_button, 256, 64);
     gtk_widget_set_size_request(select_editor_button, 60, 24);
-
-    select_sheetedit_button = gtk_button_new_with_mnemonic(_("select..."));
-    gtk_widget_set_name(select_sheetedit_button, "select_sheetedit_button");
-    gtk_widget_show(select_sheetedit_button);
-    gtk_fixed_put( GTK_FIXED(fixed6), select_sheetedit_button, 256, 96);
-    gtk_widget_set_size_request(select_sheetedit_button, 60, 24);
 
     dialog_action_area3 = GTK_DIALOG(preferences)->action_area;
     gtk_widget_set_name(dialog_action_area3, "dialog_action_area3");
@@ -1085,10 +1059,7 @@ GtkWidget* create_Preferences(void)
     gtk_box_pack_start( GTK_BOX(hbox12), label17, FALSE, FALSE, 0);
 
     g_signal_connect((gpointer) select_mixpath_button, "clicked", G_CALLBACK(on_mixpath_btn_clicked), NULL);
-    g_signal_connect((gpointer) select_editor_button, "clicked", G_CALLBACK(on_editor_btn_clicked), NULL);
-    g_signal_connect((gpointer) select_sheetedit_button, "clicked", G_CALLBACK(on_sheetedit_btn_clicked), NULL);
-    //    g_signal_connect((gpointer) preferences_cancel_button, "clicked", G_CALLBACK(preferences_cancel_clicked), NULL);
-    //    g_signal_connect((gpointer) preferences_ok_button, "clicked", G_CALLBACK(preferences_ok_clicked), NULL);
+    g_signal_connect((gpointer) select_editor_button, "clicked", G_CALLBACK(on_editorpath_btn_clicked), NULL);
 
     // Store pointers to all widgets, for use by lookup_widget()
     GLADE_HOOKUP_OBJECT_NO_REF(preferences, preferences, "preferences");
@@ -1096,13 +1067,10 @@ GtkWidget* create_Preferences(void)
     GLADE_HOOKUP_OBJECT(preferences, fixed6, "fixed6");
     GLADE_HOOKUP_OBJECT(preferences, entry2, "entry2");
     GLADE_HOOKUP_OBJECT(preferences, entry6, "entry6");
-    GLADE_HOOKUP_OBJECT(preferences, entry7, "entry7");
-    GLADE_HOOKUP_OBJECT(preferences, label27, "label27");
     GLADE_HOOKUP_OBJECT(preferences, label26, "label26");
     GLADE_HOOKUP_OBJECT(preferences, label25, "label25");
     GLADE_HOOKUP_OBJECT(preferences, select_mixpath_button, "select_mixpath_button");
     GLADE_HOOKUP_OBJECT(preferences, select_editor_button, "select_editor_button");
-    GLADE_HOOKUP_OBJECT(preferences, select_sheetedit_button, "select_sheetedit_button");
     GLADE_HOOKUP_OBJECT_NO_REF(preferences, dialog_action_area3, "dialog_action_area3");
     GLADE_HOOKUP_OBJECT(preferences, preferences_cancel_button, "preferences_cancel_button");
     GLADE_HOOKUP_OBJECT(preferences, alignment4, "alignment4");
@@ -1278,4 +1246,27 @@ void about_destroy(GtkWidget *w, gpointer d)
   gtk_widget_destroy(GTK_WIDGET(w));
 
   return;
+}
+
+
+void create_info_dialog(char *title, char *message)
+{
+    GtkWidget *info_dialog, *label;
+
+    info_dialog = gtk_dialog_new();
+
+    info_dialog = gtk_dialog_new_with_buttons( title, get_mainwindow(),
+                                         GTK_DIALOG_DESTROY_WITH_PARENT,
+                                         GTK_STOCK_OK,
+                                         GTK_RESPONSE_ACCEPT,
+                                         NULL);
+
+    label = gtk_label_new(message);
+    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(info_dialog)->vbox), label, TRUE, TRUE, 0);
+    gtk_widget_show(label);
+
+    gtk_widget_show(info_dialog);
+
+    gtk_dialog_run(GTK_DIALOG(info_dialog));
+    gtk_widget_destroy(info_dialog);
 }

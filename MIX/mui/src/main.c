@@ -16,8 +16,6 @@
 #include "settings.h"
 
 
-
-
 int main(int argc, char *argv[])
 {
     GtkWidget *mainWindow;
@@ -43,6 +41,7 @@ int main(int argc, char *argv[])
 
     // create and show main window
     mainWindow = (GtkWidget*) create_MainWindow();
+    init_settings(mainWindow);
     gtk_widget_show(mainWindow);
 
     gtk_main();

@@ -20,6 +20,13 @@
 
 
 /**
+ * initialize settings
+ */
+int init_settings(GtkWidget *window);
+
+GtkWidget* get_mainwindow();
+
+/**
  * read settings from file
  */
 int read_settings();
@@ -30,11 +37,8 @@ int write_settings();
 
 char *get_mix_path();
 char *get_editor_path();
-char *get_sheetedit_path();
 
 void show_preferences();
-GtkWidget* get_preferences();
-
 
 /**
  * MIX settings
@@ -43,7 +47,6 @@ typedef struct Settings_TAG {
 
     char *mix_path;
     char *editor_path;
-    char *sheetedit_path;
 
 } Settings;
 
