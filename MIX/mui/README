@@ -1,0 +1,18 @@
+
+ MUI - Mix User Interface
+--------------------------
+
+MUI is a graphical User Interface for the Micronas Interconnect Specification Exapander ("MIX").
+
+
+
+Requirements:
+-------------
+
+  - MIX (Micronas Interconnect Spec. Expander)
+  - Gtk+-2.0
+
+
+Installation:
+-------------
+See INSTALL for generic installation instructions

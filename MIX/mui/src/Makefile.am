@@ -1,19 +1,18 @@
-## Process this file with automake to produce Makefile.in
-
-INCLUDES = \
-	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
-	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
-	@PACKAGE_CFLAGS@
 
 bin_PROGRAMS = mui
 
 mui_SOURCES = \
 	main.c \
-	support.c support.h \
-	user-interface.c user-interface.h \
+	mix.c mix.h \
+	mainwindow.c mainwindow.h \
+	hiertree.c hiertree.h \
+	tableview.c tableview.h \
+	tablewindow.c tablewindow.h \
 	callbacks.c callbacks.h \
-	mix-interface.c mix-interface.h \
-	files.c	files.h
+        support.c support.h \
+	settings.c settings.h \
+	options.h
 
-mui_LDADD = @PACKAGE_LIBS@ $(INTLLIBS)
+mui_CPPFLAGS = @PERL5_CCOPTS@
 
+mui_LDADD = @GTK_LDFLAGS@ @PERL5_LDOPTS@ @GLIB_LDFLAGS@
