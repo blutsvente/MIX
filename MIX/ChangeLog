@@ -1,4 +1,193 @@
+2003-10-23  wig
+	* lib/perl/Micronas/MixWriter.pm:
+		minor modifications (typos ...)
+
+	* lib/perl/Micronas/MixParser.pm:
+	* lib/perl/Micronas/MixUtils.pm:
+		added counter for macro evaluation cmacros
+
+	* TODO.txt:
+		see file contents
+
+2003-10-23  abauer
+	* lib/perl/Micronas/MixUtils.pm:
+	* t/bitsplice/bitsplice-mixed.xls:
+	* t/bitsplice/mix_0.pl.out:
+		added strip
+
+	* mix_0.pl:
+		.
+
 2003-10-14  wig
+	* doc/release_20030605.txt:
+	* doc/release_20030709.txt:
+	* doc/release_20030716.txt:
+		Adding howto
+
+	* howto.xls:
+	* howto/howto-a.vhd:
+	* howto/howto-c.vhd:
+	* howto/howto-debug.bat:
+	* howto/howto-e.vhd:
+	* howto/howto-mixed.xls:
+	* howto/howto-update.bat:
+	* howto/howto.bat:
+	* howto/howto.pld:
+	* howto/mix.cfg:
+	* lib/perl/Micronas/MixWriter.pm:
+	* template/mix.xls:
+		Added howto
+		Fixed minor issue from last change (%LOW_BUS% conflicts with __open__)
+
+	* t/autoopen/autoopen-mixed.xls:
+	* t/autoopen/mix_0.pl.out:
+	* t/bitsplice/bitsplice-mixed.xls:
+	* t/bitsplice/mix_0.pl.out:
+	* t/bitsplice/verilog/bitsplice-mixed.xls:
+	* t/bitsplice/verilog/mix_0.pl.out:
+	* t/case/case-mixed.xls:
+	* t/case/case-t.out:
+	* t/case/case-t.out.0:
+	* t/case/mix_0.pl.out:
+	* t/conf/conf-mixed.xls:
+	* t/conf/conf-t.out:
+	* t/conf/conf-t.out.0:
+	* t/conf/mix_0.pl.out:
+	* t/configuration/configuration-mixed.xls:
+	* t/configuration/configuration-t.out:
+	* t/configuration/configuration-t.out.0:
+	* t/configuration/mix_0.pl.out:
+	* t/constant/constant-mixed.xls:
+	* t/constant/constant-t.out:
+	* t/constant/constant-t.out.0:
+	* t/constant/mix_0.pl.out:
+	* t/constant/verilog/constant-mixed.xls:
+	* t/constant/verilog/constant-t.out:
+	* t/constant/verilog/constant-t.out.0:
+	* t/constant/verilog/mix_0.pl.out:
+	* t/generic/generic-mixed.xls:
+	* t/generic/generic-t.out:
+	* t/generic/generic-t.out.0:
+	* t/generic/mix_0.pl.out:
+	* t/generic/verilog/generic-mixed.xls:
+	* t/generic/verilog/generic-t.out:
+	* t/generic/verilog/generic-t.out.0:
+	* t/generic/verilog/mix_0.pl.out:
+	* t/genwidth/genwidth-mixed.xls:
+	* t/genwidth/genwidth-t.out:
+	* t/genwidth/genwidth-t.out.0:
+	* t/genwidth/mix_0.pl.out:
+	* t/genwidth/verilog/genwidth-mixed.xls:
+	* t/genwidth/verilog/genwidth-t.out:
+	* t/genwidth/verilog/genwidth-t.out.0:
+	* t/genwidth/verilog/mix_0.pl.out:
+	* t/highlow/highlow-mixed.xls:
+	* t/highlow/highlow-t.out:
+	* t/highlow/highlow-t.out.0:
+	* t/highlow/mix_0.pl.out:
+	* t/highlow/verilog/ent_a.v:
+	* t/highlow/verilog/ent_b.v:
+	* t/highlow/verilog/ent_t.v:
+	* t/highlow/verilog/highlow-c.vhd:
+	* t/highlow/verilog/highlow-mixed.xls:
+	* t/highlow/verilog/highlow-t.out:
+	* t/highlow/verilog/highlow-t.out.0:
+	* t/highlow/verilog/mix_0.pl.out:
+	* t/init/init-t.out:
+	* t/io/io-mixed.xls:
+	* t/io/io-t.out:
+	* t/io/io-t.out.0:
+	* t/io/mix_0.pl.out:
+	* t/io/verilog/io-mixed.xls:
+	* t/io/verilog/io-t.out:
+	* t/io/verilog/io-t.out.0:
+	* t/io/verilog/mix_0.pl.out:
+	* t/macro/macro-mixed.xls:
+	* t/macro/macro-t.out:
+	* t/macro/macro-t.out.0:
+	* t/macro/mix_0.pl.out:
+	* t/mde_tests/conn_nreset/mde_tests-mixed.xls:
+	* t/mde_tests/conn_nreset/mde_tests-t.out:
+	* t/mde_tests/conn_nreset/mde_tests-t.out.0:
+	* t/mde_tests/conn_nreset/mix_0.pl.out:
+	* t/nreset2/mix_0.pl.out:
+	* t/nreset2/nreset2-mixed.xls:
+	* t/nreset2/nreset2-t.out:
+	* t/nreset2/nreset2-t.out.0:
+	* t/open/mix_0.pl.out:
+	* t/open/open-mixed.xls:
+	* t/open/open-t.out:
+	* t/open/open-t.out.0:
+	* t/open/verilog/mix_0.pl.out:
+	* t/open/verilog/open-mixed.xls:
+	* t/open/verilog/open-t.out:
+	* t/open/verilog/open-t.out.0:
+	* t/padio/bus/mix_0.pl.out:
+	* t/padio/bus/padio-mixed.xls:
+	* t/padio/bus/padio-t.out:
+	* t/padio/bus/padio-t.out.0:
+	* t/padio/given/mix_0.pl.out:
+	* t/padio/given/padio-mixed.xls:
+	* t/padio/given/padio-t.out:
+	* t/padio/given/padio-t.out.0:
+	* t/padio/mix_0.pl.out:
+	* t/padio/names/mix_0.pl.out:
+	* t/padio/names/padio-mixed.xls:
+	* t/padio/names/padio-t.out:
+	* t/padio/names/padio-t.out.0:
+	* t/padio/padio-mixed.xls:
+	* t/padio/padio-t.out:
+	* t/padio/padio-t.out.0:
+	* t/padio2/mix_0.pl.out:
+	* t/padio2/pad_tb-e.vhd:
+	* t/padio2/pad_tb-struct-a.vhd:
+	* t/padio2/pad_tb-struct-conf-c.vhd:
+	* t/padio2/padframe-e.vhd:
+	* t/padio2/padframe-struct-a.vhd:
+	* t/padio2/padframe-struct-conf-c.vhd:
+	* t/padio2/padio2-mixed.xls:
+	* t/padio2/padio2-t.out:
+	* t/padio2/padio2-t.out.0:
+	* t/padio2/pads_eastnord-e.vhd:
+	* t/padio2/pads_eastnord-struct-a.vhd:
+	* t/padio2/pads_eastnord-struct-conf-c.vhd:
+	* t/padio2/pads_eastsouth-e.vhd:
+	* t/padio2/pads_eastsouth-struct-a.vhd:
+	* t/padio2/pads_eastsouth-struct-conf-c.vhd:
+	* t/padio2/pads_westsouth-e.vhd:
+	* t/padio2/pads_westsouth-struct-a.vhd:
+	* t/padio2/pads_westsouth-struct-conf-c.vhd:
+	* t/sigport/mix_0.pl.out:
+	* t/sigport/sigport-mixed.xls:
+	* t/sigport/sigport-t.out:
+	* t/sigport/sigport-t.out.0:
+	* t/sigport/use/mix_0.pl.out:
+	* t/sigport/use/sigport-mixed.xls:
+	* t/sigport/use/sigport-t.out:
+	* t/sigport/use/sigport-t.out.0:
+	* t/sigport/verilog/mix_0.pl.out:
+	* t/sigport/verilog/sigport-mixed.xls:
+	* t/sigport/verilog/sigport-t.out:
+	* t/sigport/verilog/sigport-t.out.0:
+	* t/t.out:
+	* t/typecast/mix_0.pl.out:
+	* t/typecast/typecast-mixed.xls:
+	* t/typecast/typecast-t.out:
+	* t/typecast/typecast-t.out.0:
+	* t/verilog/mix_0.pl.out:
+	* t/verilog/mixed/mix_0.pl.out:
+	* t/verilog/mixed/verilog-mixed.xls:
+	* t/verilog/mixed/verilog-t.out:
+	* t/verilog/mixed/verilog-t.out.0:
+	* t/verilog/verilog-mixed.xls:
+	* t/verilog/verilog-t.out:
+	* t/verilog/verilog-t.out.0:
+	* t/verilog/vhdl/mix_0.pl.out:
+	* t/verilog/vhdl/verilog-mixed.xls:
+	* t/verilog/vhdl/verilog-t.out:
+	* t/verilog/vhdl/verilog-t.out.0:
+		fixe3d padio2 and highlow/verilog test case
+
 	* Mix.kpf:
 	* TODO.txt:
 	* lib/perl/Micronas/MixUtils.pm:
@@ -6,6 +195,38 @@
 	* mix_0.pl:
 		Added -bak command line option
 		Added ::descr to port maps (just a try)
+
+	* lib/perl/Regexp/Common.pm:
+	* lib/perl/Regexp/Common/URI.pm:
+	* lib/perl/Regexp/Common/URI/RFC1035.pm:
+	* lib/perl/Regexp/Common/URI/RFC1738.pm:
+	* lib/perl/Regexp/Common/URI/RFC1808.pm:
+	* lib/perl/Regexp/Common/URI/RFC2384.pm:
+	* lib/perl/Regexp/Common/URI/RFC2396.pm:
+	* lib/perl/Regexp/Common/URI/RFC2806.pm:
+	* lib/perl/Regexp/Common/URI/fax.pm:
+	* lib/perl/Regexp/Common/URI/file.pm:
+	* lib/perl/Regexp/Common/URI/ftp.pm:
+	* lib/perl/Regexp/Common/URI/gopher.pm:
+	* lib/perl/Regexp/Common/URI/http.pm:
+	* lib/perl/Regexp/Common/URI/news.pm:
+	* lib/perl/Regexp/Common/URI/pop.pm:
+	* lib/perl/Regexp/Common/URI/prospero.pm:
+	* lib/perl/Regexp/Common/URI/tel.pm:
+	* lib/perl/Regexp/Common/URI/telnet.pm:
+	* lib/perl/Regexp/Common/URI/tv.pm:
+	* lib/perl/Regexp/Common/URI/wais.pm:
+	* lib/perl/Regexp/Common/balanced.pm:
+	* lib/perl/Regexp/Common/comment.pm:
+	* lib/perl/Regexp/Common/delimited.pm:
+	* lib/perl/Regexp/Common/lingua.pm:
+	* lib/perl/Regexp/Common/list.pm:
+	* lib/perl/Regexp/Common/net.pm:
+	* lib/perl/Regexp/Common/number.pm:
+	* lib/perl/Regexp/Common/profanity.pm:
+	* lib/perl/Regexp/Common/whitespace.pm:
+	* lib/perl/Regexp/Common/zip.pm:
+		Adding RegExp perl module to source tree
 
 2003-10-13  wig
 	* TODO.txt:
