@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.37 $                                         |
+# | Revision:   $Revision: 1.38 $                                         |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/12/10 14:37:17 $                              |
+# | Date:       $Date: 2003/12/16 14:29:47 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.37 2003/12/10 14:37:17 abauer Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.38 2003/12/16 14:29:47 abauer Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.38  2003/12/16 14:29:47  abauer
+# | added i2c header descriptor
+# |
 # | Revision 1.37  2003/12/10 14:37:17  abauer
 # | *** empty log message ***
 # |
@@ -239,11 +242,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.37 2003/12/10 14:37:17 abauer Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.38 2003/12/16 14:29:47 abauer Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.37 $';
+my $thisrevision        =      '$Revision: 1.38 $';
 
-# Revision:   $Revision: 1.37 $   
+# Revision:   $Revision: 1.38 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1132,26 +1135,28 @@ sub mix_init () {
 	    #							  Defaultvalue
 	    #								    PrintOrder
 	    #                                   0       1       2	3       4
-	    '::ign' 		=> [ qw(	0	0	1	%EMPTY%     1 )],
-	    '::variants'	=> [ qw(	1	0	0	Default	   2 )],
-	    '::width'		=> [ qw(	0	0	1	16         3 )],
-	    '::dev'             => [ qw(        0       0       1       %EMPTY%     4)],
-	    '::sub'             => [ qw(        0       0       1       %EMPTY%     5)],
-	    '::interface'       => [ qw(        0       0       1       %EMPTY%     6)],	  
-	    '::block'           => [ qw(        0       0       1       %EMPTY%     7)],
-	    '::dir'             => [ qw(        0       0       1       RW          8)],
-	    '::spec'            => [ qw(        0       0       0       NTO         9)],
-	    '::clock'           => [ qw(        0       0       1       %EMPTY%     10)],
-	    '::reset'           => [ qw(        0       0       0       %EMPTY%     11)],
-	    '::busy'            => [ qw(        0       0       0       %EMPTY%     12)],
-	   # '::readDone'        => [ qw(        0       0       0       %EMPTY%     13)],
-	    '::b'		=> [ qw(	0	1	1	%EMPTY%	    14 )],
+	    '::ign' 		=> [ qw(	0	0	1	%EMPTY%     1)],
+	    '::variants'	=> [ qw(	1	0	0	Default	    2)],
+	    '::inst'            => [ qw(        0       0       0       W_NO_INST   3)],
+	    '::width'		=> [ qw(	0	0	1	16          4)],
+	    '::dev'             => [ qw(        0       0       1       %EMPTY%     5)],
+	    '::sub'             => [ qw(        0       0       1       %EMPTY%     6)],
+	    '::interface'       => [ qw(        0       0       1       %EMPTY%     7)],	  
+	    '::block'           => [ qw(        0       0       1       %EMPTY%     8)],
+	    '::dir'             => [ qw(        0       0       1       RW          9)],
+	    '::spec'            => [ qw(        0       0       0       NTO         10)],
+	    '::clock'           => [ qw(        0       0       1       %EMPTY%     11)],
+	    '::reset'           => [ qw(        0       0       0       %EMPTY%     12)],
+	    '::busy'            => [ qw(        0       0       0       %EMPTY%     13)],
+	   # '::readDone'        => [ qw(        0       0       0       %EMPTY%    13)],
+	    '::b'		=> [ qw(	0	1	1	%EMPTY%	    14)],
 	    '::init'            => [ qw(        0       0       0       0           15)],
 	    '::rec'             => [ qw(        0       0       0       0           16)],
-	   # '::range'	         => [ qw(	1	0	0	%EMPTY%	   17 )],
-	   # '::name'		 => [ qw(	0	1	0	%EMPTY%	   18 )],
-	    '::comment'	        => [ qw(	1	0	2	%EMPTY%	   17 )],
-	    'nr'		=> 12,  # Number of next field to print
+	   # '::range'	         => [ qw(	1	0	0	%EMPTY%	    17)],
+	   # '::name'		 => [ qw(	0	1	0	%EMPTY%	    18)],
+	    '::comment'	        => [ qw(	1	1	2	%EMPTY%	    17)],
+	    '::default'	        => [ qw(	1	1	0	%EMPTY%     0)],
+	    'nr'		=> 18,  # Number of next field to print
 	},
     },
     # VI2C Definitions:
@@ -2121,16 +2126,16 @@ sub parse_header($$@){
 	next if ( $i =~ m/^::skip/ ); #Ignore bad fields
 	if ( $#{$rowh{$i}} > 0 ) {
 	    $or{$i} = $rowh{$i}[0]; # Save first field, rest will be seperated by name ...
-	     for my $ii ( 1..$#{$rowh{$i}} ) {
-		    unless( defined( $$templ->{'field'}{$i . ":" . $ii} ) ) {
-			logtrc(INFO, "Split multiple column header $i to $i:$ii");
-			$$templ->{'field'}{$i. ":". $ii} = $$templ->{'field'}{$i}; #Check: do a real copy ...
-			#Remember print order no longer is unique
-		    }
-		    $or{$i. ":". $ii} = $rowh{$i}[$ii];
-	     }
+	    for my $ii ( 1..$#{$rowh{$i}} ) {
+		unless( defined( $$templ->{'field'}{$i . ":" . $ii} ) ) {
+		    logtrc(INFO, "Split multiple column header $i to $i:$ii");
+		    $$templ->{'field'}{$i. ":". $ii} = $$templ->{'field'}{$i}; #Check: do a real copy ...
+		    #Remember print order no longer is unique
+		}
+		$or{$i. ":". $ii} = $rowh{$i}[$ii];
+	    }
 	} else {
-		$or{$i} = $rowh{$i}[0];
+	    $or{$i} = $rowh{$i}[0];
 	}
     }
 
