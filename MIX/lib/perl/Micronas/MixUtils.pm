@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.48 $                                         |
+# | Revision:   $Revision: 1.49 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/04/20 15:22:46 $                              |
+# | Date:       $Date: 2004/04/22 14:32:50 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.48 2004/04/20 15:22:46 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.49 2004/04/22 14:32:50 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.49  2004/04/22 14:32:50  wig
+# | fixed minor problems with verify mode
+# |
 # | Revision 1.48  2004/04/20 15:22:46  wig
 # | Improved verify mode
 # |
@@ -262,11 +265,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.48 2004/04/20 15:22:46 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.49 2004/04/22 14:32:50 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.48 $';
+my $thisrevision        =      '$Revision: 1.49 $';
 
-# Revision:   $Revision: 1.48 $   
+# Revision:   $Revision: 1.49 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1862,6 +1865,8 @@ sub mix_utils_open ($;$){
         my $templ = mix_utils_loc_templ( "ent", $file );
         if ( $templ ) { # Got a template file ...
             @ccont = @{mix_utils_open_diff( $templ )}; # Get template contents, filtered  ...
+	    @ncont = (); # Reset new contents ...
+            #TODO: combine mode??
 
             $fhstore{"$file"}{'tmpl'} = $templ;
             $fhstore{"$file"}{'tmplmode'} = $leaf_flag;
@@ -2186,13 +2191,25 @@ $c ------------- CHANGES START HERE ------------- --
     }
 
     #
+    # Do we need to close the delta file?
+    ##TODO: Close in the delta-if branch above ...
+    if ( $fhstore{"$fn"}{'tmplout'} ) {
+        unless ( $fhstore{"$fn"}{'tmplout'}->close ) {
+            logwarn( "ERROR: Cannot close file $fhstore{$fn}{'tmplname'}: $!" );
+            $EH{'sum'}{'errors'}++;
+            # $fhstore{"$fn"}{'tmplout'} = 0;
+            # return undef;
+        }
+        $fhstore{"$fn"}{'tmplout'} = 0;
+    }
+    #
     # Do we need to close the diff file?
     ##TODO: Close in the delta-if branch above ...
     if ( $fhstore{"$fn"}{'delta'} ) {
         unless ( $fhstore{"$fn"}{'delta'}->close ) {
             logwarn( "ERROR: Cannot close file $fhstore{$fn}{'deltaname'}: $!" );
             $EH{'sum'}{'errors'}++;
-            $fhstore{"$fn"}{'delta'} = 0;
+            # $fhstore{"$fn"}{'delta'} = 0;
             # return undef;
         }
         $fhstore{"$fn"}{'delta'} = 0;
