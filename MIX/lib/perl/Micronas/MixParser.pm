@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.26 $                                             |
+# | Revision:   $Revision: 1.27 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/10/13 09:03:10 $                                   |
+# | Date:       $Date: 2003/10/23 12:08:25 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.26 2003/10/13 09:03:10 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.27 2003/10/23 12:08:25 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,12 +33,8 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
-# | Revision 1.26  2003/10/13 09:03:10  wig
-# | Fixed misc. requests and bugs:
-# | - do not wire open signals
-# | - do not recreate ports alredy partially connected
-# | - ExCEL cells kept unter 1024 characters, will be split if needed
-# | ...
+# | Revision 1.27  2003/10/23 12:08:25  wig
+# | added counter for macro evaluation cmacros
 # |
 # | Revision 1.25  2003/08/11 07:16:24  wig
 # | Added typecast
@@ -215,11 +211,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.26 2003/10/13 09:03:10 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.27 2003/10/23 12:08:25 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.26 $';
+my $thisrevision   =      '$Revision: 1.27 $';
 
-# | Revision:   $Revision: 1.26 $   
+# | Revision:   $Revision: 1.27 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -249,18 +245,12 @@ sub parse_conn_macros ($) {
     my $rin = shift;
 
     unless( defined( $rin ) and $rin ) {
-        logdie( "ERROR: Undefined or empty input argument for parse_conn_macros!\n" );
+        logdie( "FATAL: Undefined or empty input argument for parse_conn_macros!\n" );
     }
     my $mflag = 0;
     my @m = ();
     my $n = -1;
     for my $i ( 0..$#{$rin} ) {
-        #wig:TODO what was that meant? Why would we skip the comment field???
-        #if ( defined( $rin->[$i]{'::comment'} ) and
-        #                $rin->[$i]{'::comment'} =~ m,^\s*(#|//),io ) {
-        #    next;
-        # }
-        #wig:bug: if ( not $mflag and $rin->[$i]{'::gen'} =~ m/^\s*MH/io ) {
             if ( $rin->[$i]{'::gen'} =~ m/^\s*MH/io ) {
             # New MH line, go to "read macro definition mode"
             $m[++$n]{'mh'} = $rin->[$i]; # Copy MH line
@@ -274,11 +264,11 @@ sub parse_conn_macros ($) {
             $rin->[$i]{'::comment'} = "#macro definition parsed /" . $rin->[$i]{'::comment'};            
             next;
         }
-        if ( $mflag ) {
-            # no new macro definition, go to status "wait for another MH"
+        # if ( $mflag ) {
+        # no new macro definition, go to status "wait for another MH"
             $mflag = 0;
-            next;
-        }
+        # next;
+        # }
     }
 
     $n++;
@@ -291,7 +281,7 @@ sub parse_conn_macros ($) {
 
     #
     # Convert mh into mm,mv and mo
-    # defining order of fileds, variables defined and matching string
+    # defining order of fields, variables defined and matching string
     #
     convert_conn_macros( \@m );
 
@@ -322,7 +312,7 @@ sub convert_conn_macros ($) {
     my $r_m = shift;
 
     unless( defined $r_m ) {
-        logdie("ERROR: bad input argument for check_conn_macros\n");
+        logdie("FATAL: bad input argument for check_conn_macros\n");
     }
 
     for my $i ( 0..$#{$r_m} ) {
@@ -334,14 +324,13 @@ sub convert_conn_macros ($) {
         my $n = 0;
         my %f = %{$r_m->[$i]{'mh'}};
         for my $ii ( keys( %f ) ) {
-            # if ( $f{$ii} =~ m/\$(.)/ ) { # Only cells with a $N in it are of interest
             if ( $f{$ii} !~ m/^$/o and $ii !~ /^::(comment|descr|gen|ign)/io ) {
                 # Only non-empty cells are of interest, and do not match comment, descr, ...
-                push( @oo, $ii );
+                push( @oo, $ii ); #Order preserve
                 $mm .= "${ii}::";
                 @{$vars{$ii}} = ( $f{$ii} =~ m{\$(\w)}xg ); # Give me all variables ....
-                ( my $tmp = $f{$ii} ) =~ s,\$\w,(.+),g;
-                $mm .= $tmp; # Replace variable names by (.+)
+                ( my $tmp = $f{$ii} ) =~ s,\$\w,(.+),g; # Replace variables by a (.+)
+                $mm .= $tmp;
                 
                 for my $iii ( 0..$#{$vars{$ii}} ) {
                     $n++;
@@ -361,6 +350,7 @@ sub convert_conn_macros ($) {
             for my $iii ( 0..$#{$vars{$ii}} ) {
                 if ( defined( $t{$vars{$ii}[$iii]} ) ) {
                     logwarn("variable $t{$vars{$ii}[$iii]} redefined in macro key $ii (macro nr. $i)!");
+                    $EH{'sum'}{'warnings'}++;
                 }
                 $t{$vars{$ii}[$iii]} = $ii . ":" . $vars{$ii}[$iii]; # $t{'N'} = "::FIELD:NAME"
                 $tl{$vars{$ii}[$iii]} = $ii . ":" . $iii; # $t{'N'} = "::FIELD:NR"
@@ -402,6 +392,7 @@ sub convert_conn_macros ($) {
 check_conn_macros ($) {
 
 Do simple checks on input macros
+
 =cut
 
 sub check_conn_macros ($) {
@@ -415,10 +406,12 @@ sub check_conn_macros ($) {
     for my $i ( 0..$#{$r_m} ) {
         unless ( defined( $r_m->[$i]{'mh'} )  ) {
             logwarn("ERROR: macro header missing $i");
+            $EH{'sum'}{'errors'}++;
             next;
         }
         unless ( defined( $r_m->[$i]{'md'} ) and $#{$r_m->[$i]{'md'}} >= 0 ) {
             logwarn("ERROR: macro definition missing $i");
+            $EH{'sum'}{'errors'}++;
             next;
         }
         push( @m, $r_m->[$i] );
@@ -960,6 +953,7 @@ sub add_conn (%) {
                 $in{'::name'} = $name;
             } else {
                 logwarn( "Cannot replace ::name for $name!" );
+                $EH{'sum'}{'warnings'}++;
             }
         }
             
@@ -972,7 +966,7 @@ sub add_conn (%) {
             merge_conn( $name, %in );
         } else {
             create_conn( $name, %in);
-            $EH{'sum'}{'conn'}++;
+            #now in create_conn: $EH{'sum'}{'conn'}++;
         }
 
 
@@ -1044,6 +1038,8 @@ sub create_conn ($%) {
         $conndb{$name}{$i} = $data{$i};
     }
 
+    # Give each signal a unique number: starting from 0 ... 
+    $conndb{$name}{'::connnr'} = $EH{'sum'}{'conn'}++;
 }
 
 ####################################################################
@@ -1687,8 +1683,8 @@ sub apply_conn_macros ($$) {
                 }
                 if ( $xre =~ /$r_cm->[$ii]{'mm'}/ ) {
                     # Got it .... catch matched variables and apply to MX line ...
-                    logtrc("INFO", "macro $ii matched");
-                    
+                    logtrc("INFO", "Macro $ii matches here");
+                    $EH{'sum'}{'cmacros'}++;
                     my %mex = ();
                     # Gets matched variables
                     unless ( eval $r_cm->[$ii]{'me'} ) {

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.30 $                                             |
-# | Author:     $Author: abauer $                                  |
-# | Date:       $Date: 2003/10/23 11:27:28 $                                   |
+# | Revision:   $Revision: 1.31 $                                             |
+# | Author:     $Author: wig $                                  |
+# | Date:       $Date: 2003/10/23 12:10:54 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.30 2003/10/23 11:27:28 abauer Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.31 2003/10/23 12:10:54 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.31  2003/10/23 12:10:54  wig
+# | added counter for macro evaluation cmacros
+# |
 # | Revision 1.30  2003/10/23 11:27:28  abauer
 # | added strip
 # |
@@ -224,11 +227,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.30 2003/10/23 11:27:28 abauer Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.31 2003/10/23 12:10:54 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.30 $';
+my $thisrevision   =      '$Revision: 1.31 $';
 
-# | Revision:   $Revision: 1.30 $   
+# Revision:   $Revision: 1.31 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1193,6 +1196,8 @@ $ex = undef; # Container for OLE server
 	'inst' => 0,		# number of instances	
 	'conn' => 0,	# number of connections
 	'genport' => 0, 	# number of generated ports
+
+	'cmacros' => 0,	# Number of matched connection macro's
 	
 	'noload' => 0,   	# signals with missing loads ...
 	'nodriver' => 0,	# signals without driver
