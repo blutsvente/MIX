@@ -25,6 +25,7 @@ use DirHandle;
 use File::Basename;
 use File::Copy;
 use Getopt::Long qw(GetOptions);
+use Time::HiRes qw(gettimeofday tv_interval);
 
 
 $::VERSION = '$Revision: 0.1 ';
@@ -41,7 +42,7 @@ use lib "$FindBin::Bin/lib";
 use lib getcwd() . "/lib/perl";
 use lib getcwd() . "/../lib/perl";
 
-use Test::More tests => qw(no_plan);
+use Test::More 'no_plan' ; # tests => qw(no_plan);
 use Test::Differences;
 
 use Log::Agent;
@@ -320,7 +321,10 @@ my @tests = (
 );
 
 my $numberOfTests = scalar @tests;
-
+my $elapsed_sum = 0;
+my $elapsed_cnt = 0;
+my $elapsed_min = 1_000_000; # Dummy large value ...
+my $elapsed_max = 0;
 
 #######################################################################
 #                          init - function                            #
@@ -358,19 +362,21 @@ sub init() {
       push(@inType, "csv");
     }
 
-	if ( scalar( @ARGV ) ) {
-		# Only run the tests matching the ARGS in ARGV
-		$testRE = '^(' . join( "|", @ARGV ) . ')$';
-	}
+    if ( scalar( @ARGV ) ) {
+	# Only run the tests matching the ARGS in ARGV
+	$testRE = '^(' . join( "|", @ARGV ) . ')$';
+    }
+
     if(scalar(@inType)==0) {
-		print " ALL\n";
-		@inType = ("sxc", "xls", "csv");
-		$numTests = $numberOfTests * 3;
+	print " ALL\n";
+	@inType = ("sxc", "xls", "csv");
+	$numTests = $numberOfTests * 3;
     }
     else {
       print "\n";
     }
 
+    
 }
 
 #######################################################################
@@ -397,14 +403,15 @@ sub gotScript($$) {
     my $dir = shift;
     my $name = shift;
 
-    opendir(DIR, $dir);
-    my @content = readdir(DIR);
-    close(DIR);
-
-    for(my $i=0; defined $content[$i]; $i++) {
-	if($content[$i]=~ m/$name/) {
-	    return 1;
+    if ( opendir(DIR, $dir) ) {
+	while( defined( $_ = readdir(DIR ) ) ) {
+	    if ( $_ =~ m/^$name$/ ) {
+		close( DIR );
+		return 1;
+	    }
 	}
+    } else {
+	logwarn( "WARNING, Cannot open directory $dir: $!" );
     }
     return 0;
 }
@@ -422,6 +429,7 @@ sub runMix($) {
 
     my $failsum = 0;
     my $wdir = getcwd() || die "Cannot change to ";
+    my $time = 0;
 
     for(my $i=0; $i<$numberOfTests; $i++) {
 
@@ -510,15 +518,21 @@ sub runMix($) {
     		print( "Purged test $testname\n" );
     		next;
     	} else {
-    		# "export", "update" and non-opt mode will create new output data:
+    	    # "export", "update" and non-opt mode will create new output data:
 	    my $status;
+	    my $t0;
+
+	    # measure elapsed time 
+	    $t0 = [gettimeofday];
+	    
 	    if ( $opts{'debug'} ) {
      		    $status = system( "$command" );
 			} else {
 		$status = system( "$command >$testname-t.out 2>&1" );
 	    }
-    	if ( $status / 256 != 0 ) {
-    	    my $cf = 0;
+	    my $elapsed = tv_interval ($t0, [gettimeofday]);
+	    if ( $status / 256 != 0 ) {
+		my $cf = 0;
     		my $ci = 0;
     		# 03/07/15 17:02:49 140: WARNING: SUM: Number of changes in intermediate: 1
     		# 03/07/15 17:02:49 140: WARNING: SUM: Number of changed files: 0
@@ -539,8 +553,15 @@ sub runMix($) {
     		    $ci = -1;
     		}
     		$failsum++;
-    	    }
-    	    ok( $status/256 == 0, "$testname.$type in directory $tests[$i]->{'path'}");
+    	    } else {
+		# Timers average / min / max ..
+		$elapsed_sum += $elapsed;
+		$elapsed_cnt++;
+		$elapsed_min = $elapsed if ( $elapsed < $elapsed_min );
+		$elapsed_max = $elapsed if ( $elapsed > $elapsed_max );
+	    }
+    	    ok( $status/256 == 0, "$testname.$type in directory $tests[$i]->{'path'}, time: " .
+		    sprintf( "%.2fs", $elapsed ) );
     	    chdir( $wdir );
     	}
 	}
@@ -585,6 +606,48 @@ sub mkdirRec ($) {
     return $uppath . $pp;
 }
 
+#######################################################################
+#                         print_elapsed - function                         #
+#######################################################################
+=head2 print_elapsed()
+
+    print out elased times for sucessfull run test
+
+=cut
+
+sub print_elapsed () {
+
+    logwarn( "SUM: Sucessfully timed tests: $elapsed_cnt\n" );
+    logwarn( "SUM: Overall run time: " . sprintf( "%.2fs" , $elapsed_sum ) . "\n" );
+    logwarn( "SUM: Average run time: " .
+	   (( $elapsed_cnt ) ? sprintf( "%.2fs", $elapsed_sum / $elapsed_cnt ) : "n/a") . " \n" );
+    logwarn( "SUM: Minimum run time: " .
+	   (( $elapsed_min != 1_000_000 ) ? sprintf( "%.2fs", $elapsed_min ) : "n/a" ) . "\n" );
+    logwarn( "SUM: Maximum run time: " .
+	   (( $elapsed_max ) ? sprintf( "%.2fs", $elapsed_max ): "n/a" ) . "\n" );
+
+}
+
+#######################################################################
+#                         print_arch - function                         #
+#######################################################################
+=head2 print_arch()
+
+    print out architecture, hostname, ...
+
+=cut
+sub print_arch () {
+
+    use Sys::Hostname;
+    my $host = hostname;
+
+    my $arch = "ARCH";
+    my $clock = "CLOCK";
+    my $os = $^O;
+    
+    logwarn( "SUM: host: $host; arch: ARCH; clock: CLOCK; os: $os\n" );
+
+}
 #######################################################################
 #                         doImport - function                         #
 #######################################################################
@@ -633,10 +696,10 @@ sub doImport ($$$) {
 		    }
 		} else {
 			print ( "ERROR: Cannot open directory $path\n" );
-			return;
+			return;ed fil
 		}
 
-		# Copy over all needed files from import ...
+		# Copy over all needed parts from import ...
 		# *.vhd[l], *.v, *-mixed.(csv|xls|sxc), *.bat
 		# Use *.bat on MS
 		for my $f ( glob( $import_path . "/*.v" ),
@@ -661,7 +724,7 @@ init();
 
 # run tests
 foreach my $i (@inType) {
-    logwarn "testing: $i-input";
+    logtrc "INFO" "testing: $i-input";
     chdir $i."_input" || die "Cannot change to " . $i . "_input";
     runMix( $i);
     chdir $FindBin::Bin;
@@ -676,6 +739,9 @@ foreach my $i (@inType) {
     $summary += $failstat{$i};
 }
 print "\naltogether: $summary of all $numTests Tests failed!\n";
+
+print_elapsed();
+print_arch();
 
 exit;
 
