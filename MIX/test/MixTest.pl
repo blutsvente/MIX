@@ -52,6 +52,10 @@ use Log::Agent::Priorities qw(:LEVELS);
 use Log::Agent::Driver::File;
 
 my %opts = ();
+my $common_path = getcwd();
+# Where is mix_0.pl ->
+#   mswin -> take off last part of common_path (  test is subdirectory )
+my $mix = dirname( $common_path ) . "/mix_0.pl";
 
 my $status = GetOptions( \%opts, qw (
 	update!
@@ -64,8 +68,17 @@ my $status = GetOptions( \%opts, qw (
 	xls!
 	sxc!
 	csv!
+	mix=s
     )
 );
+
+if ( $opts{'mix'} ) {
+    if ( -x $opts{'mix'} ) {
+	$mix = $opts{'mix'};
+    } else {
+	logwarn("WARNING: mix option does not point to executable! Ignored!");
+    }
+}
 
 my $numTests = 0;
 my @inType;
@@ -123,6 +136,16 @@ my @tests = (
 	  'options' => "",
 	},
 	{
+	  'name' => "mde_tests",
+	  'path' => "mde_tests/conn_nr_vhdl",
+	  'options' => "",
+	},
+	{
+	  'name' => "mde_tests",
+	  'path' => "mde_tests/nreset2",
+	  'options' => "",
+	},
+	{
 	  'name' => "constant",
 	  'path' => "constant",
 	  'options' => "",
@@ -137,6 +160,17 @@ my @tests = (
 	  'path' => "case",
 	  'options' => ""
 	},
+		{
+	  'name' => "case",
+	  'path' => "case/check",
+	  'options' => ""
+	},
+	{
+	  'name' => "case",
+	  'path' => "case/force",
+	  'options' => ""
+	},
+
 	{
 	  'name' => "io",
 	  'path' => "io",
@@ -183,6 +217,11 @@ my @tests = (
 	  'options' => "",
 	},
 	{
+	  'name' => "open",
+	  'path' => "open/verilog_ndmy",
+	  'options' => "",
+	},
+	{
 	  'name' => "macro",
 	  'path' => "macro",
 	  'options' => "",
@@ -200,6 +239,16 @@ my @tests = (
 	{
 	  'name' => "verilog",
 	  'path' => "verilog/mixed",
+	  'options' => "-sheet HIER=HIER_MIXED",
+	},
+	{
+	  'name' => "verilog",
+	  'path' => "verilog/uamn",
+	  'options' => "-sheet HIER=HIER_UAMN",
+	},
+	{
+	  'name' => "verilog",
+	  'path' => "verilog/useconfname",
 	  'options' => "-sheet HIER=HIER_MIXED",
 	},
 	{
@@ -252,9 +301,20 @@ my @tests = (
 	  'path' => "autoopen",
 	  'options' => "",
 	},
+	{
+	  'name' => "autoopen",
+	  'path' => "autoopen/aaa",
+	  'options' => "",
+	},
+	{
+	  'name' => "bugver",
+	  'path' => "bugver/ramd",
+	  'options' => "",
+	},
 );
 
 my $numberOfTests = scalar @tests;
+
 
 #######################################################################
 #                          init - function                            #
@@ -420,10 +480,11 @@ sub runMix($) {
     	    while($tests[$i]->{'path'} =~ /\//g) {
     			$find = $find . "../";
     	    }
-    	    $command  = "h:/work/mix_new/mix/mix_0.pl $options $find../$tests[$i]->{'name'}.$type";
-			if ( $opts{'debug'} ) {
-    	    	$command  = "perl -d " . $command;
-			}
+	    $mix = $mix || "mix_0.pl"; # Default ...
+	    # Define the mix_0.pl to run
+	    # $command  = "h:/work/mix_new/mix/mix_0.pl $options $find../$tests[$i]->{'name'}.$type";
+    	    $command  = "$mix $options $find../$tests[$i]->{'name'}.$type";
+    	    $command  = "perl -d " . $command if ( $opts{'debug'} );
     	}
     	chdir( $path) || logwarn("ERROR: Directory <$path> not found!");
     
@@ -479,6 +540,44 @@ sub runMix($) {
 }
 
 #######################################################################
+#                         mkdirRec - function                         #
+#######################################################################
+=head2 mkdirRec()
+
+    make directory, recursively if needed
+    
+=cut
+
+sub mkdirRec ($) {
+    my $path = shift;
+
+    my $uppath = $path;
+
+    while( $uppath = dirname( $uppath ) ) {
+	if ( -d $uppath ) { # Got it ...
+	    last;
+	}
+    }
+    unless( $uppath ) {
+	print( "ERROR: No start path found for $path! Cannot create!\n" );
+	return undef;
+    }
+
+    my $pp = "/";
+    # my $npath = substr( $path, length( $uppath )  ); # Get rest ...
+    ( my $npath = $path ) =~ s,^\Q$uppath\E,,;
+    $npath =~ s,^/+,,;
+    for my $p ( split( /\//, $npath ) ) {
+	unless( mkdir( $uppath . $pp . $p ) ) {
+	    print( "ERROR: Cannot create " . $uppath . $pp . $p . ": " . $! . "\n" );
+	    return undef;
+	}
+	$pp .= $p . "/";
+    }
+    return $uppath . $pp;
+}
+
+#######################################################################
 #                         doImport - function                         #
 #######################################################################
 =head2 doImport()
@@ -509,16 +608,21 @@ sub doImport ($$$) {
 		print( "ERROR: Missing input file $test.$type, skipped!\n" );
 		return;
 	}
-	
+
+	# Create test directory if needed ...
+	unless( -d $path ) {
+	    mkdirRec( $path ) or die( "ERROR: Cannot create test directory $path" );
+	}
+
 	# Remove all files in $path (!! Has no backup !!)
 	if ( chdir( $path ) ) {
 		my $d = new DirHandle ".";
 		if ( defined $d ) {
-        	while (defined($_ = $d->read)) {
+		    while (defined($_ = $d->read)) {
 				next if ( -d $_ );
-				remove $_ or
+				unlink( $_ ) or
 					print( "ERROR: Cannot delete $path/$_: $!\n" );
-			}
+		    }
 		} else {
 			print ( "ERROR: Cannot open directory $path\n" );
 			return;
@@ -537,7 +641,9 @@ sub doImport ($$$) {
 			copy ( $f, basename( $f ) ) or print( "ERROR: Cannot import $f: $!\n" );
 		}
 	}
+    chdir( $store_cwd ) or print( "ERROR: Cannot chdir to $store_cwd: $!\n" );
 }
+
 
 #######################################################################
 #                            'main'                                   #
