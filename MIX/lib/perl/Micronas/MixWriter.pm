@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.48 $                                         |
+# | Revision:   $Revision: 1.49 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/01/26 14:01:45 $                              |
+# | Date:       $Date: 2005/01/27 08:20:30 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.48 2005/01/26 14:01:45 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.49 2005/01/27 08:20:30 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.49  2005/01/27 08:20:30  wig
+# | verilog/vhdl parameters
+# |
 # | Revision 1.48  2005/01/26 14:01:45  wig
 # | changed %OPEN% and -autoquote for cvs output
 # |
@@ -228,12 +231,12 @@ sub _write_constant ($$$$$;$);
 sub write_architecture ();
 sub strip_empty ($);
 sub port_map ($$$$$$);
-sub generic_map ($$$$;$);
+sub generic_map ($$$$;$$);
 sub print_conn_matrix ($$$$$$$$;$);
 sub signal_port_resolve($$);
 sub use_lib($$);
-sub is_vhdl_comment($); # Should got to MixUtils ...
-sub is_comment($$);
+sub is_vhdl_comment($); # Should go to MixBase ...
+sub is_comment($$); # Should go to MixBase
 sub count_load_driver ($$$$);
 sub gen_concur_port($$$$$$$$;$$);
 sub mix_wr_get_interface ($$$$);
@@ -245,14 +248,16 @@ sub mix_wr_hier2mac ($);
 sub mix_wr_getpwidth ($);
 sub mix_wr_getconstname ($$);
 sub sig_typecast($$);
+sub _mix_wr_isinteger ($$$);
+
 # Internal variable
 
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.48 2005/01/26 14:01:45 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.49 2005/01/27 08:20:30 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.48 $';
+my $thisrevision   =      '$Revision: 1.49 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1750,7 +1755,7 @@ gen_instmap ($$$) {
 Return an port map for the instance and a list of in and out signals
 
 Input:
-    instancename
+    instancename (instantiated component)
     language (default: $EH{'macro'}{'%LANGUAGE%'} aka. VHDL)
     comment (default to comment string of language or ##)
 
@@ -1769,8 +1774,6 @@ sub gen_instmap ($;$$) {
     my @out = ();
     my $enty = $hierdb{$inst}{'::entity'};
 
-
-
         #
         # Iterate through all signals attached to that instance:
         #
@@ -1779,7 +1782,7 @@ sub gen_instmap ($;$$) {
         $map .= port_map( 'in', $inst, $enty, $lang, $rinstc->{'in'}, \@in );
     
         if ( exists( $rinstc->{'generic'} ) ) {
-           $gmap .= generic_map( 'in', $inst, $enty, $rinstc->{'generic'}, $lang );
+           $gmap .= generic_map( 'in', $inst, $enty, $rinstc->{'generic'}, $lang, $tcom );
         }
 
         $map .= port_map( 'out', $inst, $enty, $lang, $rinstc->{'out'}, \@out );
@@ -1788,7 +1791,7 @@ sub gen_instmap ($;$$) {
     if ( $inst =~ m/^(__|%)TYPECAST_/io ) {
         # Read $hierdb{$inst}{'::typecast'}  -> SIGNAME, TYPECAST, INTNAME
         my ( $orgsig, $tcf, $intsig ) = @{$hierdb{$inst}{'::typecast'}}; 
-	$map = $EH{'macro'}{'%S%'} x 2 . $orgsig . " <= " . $tcf . "( " . $intsig . " ) "
+	$map = '%S%' x 2 . $orgsig . " <= " . $tcf . "( " . $intsig . " ) "
             . "; " . $tcom . " __I_TYPECAST\n";
     } else {
         # Sort map ...
@@ -1804,23 +1807,29 @@ sub gen_instmap ($;$$) {
 
         # Quick hack: Get rid of possible %EMPTY%, which prevents end-of-map detection ...
         $map =~ s/%EMPTY%/$EH{'macro'}{'%EMPTY%'}/g; # Get rid of %EMPTY% ....
+        $map =~ s/%S%/$EH{'macro'}{'%S%'}/g;
+        $gmap =~ s/%EMPTY%/$EH{'macro'}{'%EMPTY%'}/g; 
+        $gmap =~ s/%S%/$EH{'macro'}{'%S%'}/g;
+        
         # Remove trailing "," and such (VHDL) and also for Verilog ...    
         $map =~ s/,(\s*$tcom.*)\n?$/$1\n/;
         $map =~ s/,\s*\n?$/\n/o; 
         $gmap =~ s/,(\s*$tcom.*)\n?$/$1\n/;
         $gmap =~ s/,\s*\n?$/\n/o;
 
+        # Create VHDL generic map frame
         unless( is_vhdl_comment( $gmap ) or $lang =~ m,^veri,io ) {
             $gmap = $EH{'macro'}{'%S%'} x 2 . "generic map (\n" . $gmap .
-                $EH{'macro'}{'%S%'} x 2 .")\n"; # Remove empty definitons
+                '%S%' x 2 .")\n"; # Remove empty definitons
         }
 
+        # Create VHDL port map frame
         unless( is_vhdl_comment( $map ) or $lang =~ m,^veri,io ) {    
             $map = $EH{'macro'}{'%S%'} x 2 . "port map (\n" . $map .
-                $EH{'macro'}{'%S%'} x 2 . ");\n";
+                '%S%' x 2 . ");\n";
         } else {
             if ( $lang !~ m,^veri,io ) {
-                $map .= $EH{'macro'}{'%S%'} x 2 . ";\n"; # Get a trailing ;
+                $map .= '%S%' x 2 . ";\n"; # Get a trailing ;
             }
         }
 
@@ -1829,13 +1838,16 @@ sub gen_instmap ($;$$) {
             my $dum = "";
             if ( scalar( @$dummies ) ) {
                 $dum = join( "\n", map(
-                    ( $EH{'macro'}{'%S%'} x 2 .  $_ ),
+                    ( '%S%' x 2 .  $_ ),
                     @$dummies
                 )) . "\n";
             }
 
+            # parent language is verilog -> Different parameter hand-over!
+            # format gets prepared in generic_map
+            my $hashm = " ";
             if  ( $hierdb{$inst}{'::lang'} =~ m,vhdl,io ) {
-                  # Special case: daughter is VHDL-> use config name instead of entity name ...
+                # Special case: daughter is VHDL-> use config name instead of entity name ...
                 # see 20040209/a req
                 # The "useconfname" option applies globally, while setting %UAMN% in the
                 #  ::config column works for each module individually
@@ -1855,27 +1867,32 @@ sub gen_instmap ($;$$) {
                         $enty = replace_mac( $EH{'output'}{'generate'}{'workaround'}{'_magma_mod_'}, $tm );
                     }
                 }
+                # if ( $lang =~ m,^veri,io ) {
+                    $hashm = $gmap || " "; #If gmap is empty -> do not replace hashm
+                    $gmap = "";
+                # }            
             }
-                
-            $map =  $EH{'macro'}{'%S%'} x 2 . $tcom . " Generated Instance Port Map for $inst\n" .
+            
+            $map = '%S%' x 2 . $tcom . " Generated Instance Port Map for $inst\n" .
                     $dum .
-                    $EH{'macro'}{'%S%'} x 2 . $enty . " " . $inst . "(" .
-                    (  $hierdb{$inst}{'::descr'} ? ( $EH{'macro'}{'%S%'} . "// "
+                    '%S%' x 2 . $enty . $hashm . $inst . " (" .
+                    (  $hierdb{$inst}{'::descr'} ? ( '%S%' . "// "
                             . $hierdb{$inst}{'::descr'} ) : "" ) .
                     "\n" .
                     $map .
-                    $EH{'macro'}{'%S%'} x 2 . ");\n" .
+                    '%S%' x 2 . ");\n" .
                     $gmap .
-                    $EH{'macro'}{'%S%'} x 2 . $tcom . " End of Generated Instance Port Map for $inst\n";
+                    '%S%' x 2 . $tcom . " End of Generated Instance Port Map for $inst\n";
         } else {
-            $map =  $EH{'macro'}{'%S%'} x 2 . $tcom . " Generated Instance Port Map for $inst\n" .
-                    $EH{'macro'}{'%S%'} x 2 . $inst . ": " . $enty .
-                    (  $hierdb{$inst}{'::descr'} ? ( $EH{'macro'}{'%S%'} . $tcom . " " .
+            # Verilog ....
+            $map =  '%S%' x 2 . $tcom . " Generated Instance Port Map for $inst\n" .
+                    '%S%' x 2 . $inst . ": " . $enty .
+                    (  $hierdb{$inst}{'::descr'} ? ( '%S%' . $tcom . " " .
                             $hierdb{$inst}{'::descr'} ) : "" ) .
                     "\n" .
                     $gmap .
                     $map .
-                    $EH{'macro'}{'%S%'} x 2 . $tcom . " End of Generated Instance Port Map for $inst\n";
+                    '%S%' x 2 . $tcom . " End of Generated Instance Port Map for $inst\n";
         }
     }
     return( $map, \@in, \@out);
@@ -2052,37 +2069,145 @@ sub mix_wr_unsplice_port ($$$) {
 }
 
 #
-# create generic map, ...
+# create generic map for component instantiation
 #
 # Input:
 #  $io  = 'in' or 'out'
 #  $inst = instancename
 #  $enty = entityname
 #  $ref = reference to $hierdb{$i}{::conn}{$io}
-#  $lang = language ....
+#  $lang = language .... of instantiating module!
+# $tcom = this language comment
 #
-sub generic_map ($$$$;$) {
+sub generic_map ($$$$;$$) {
     my $io = shift;
     my $inst = shift;
     my $enty = shift;
     my $ref = shift;
     my $lang = shift || $EH{'macro'}{'%LANGUAGE%'};
+    my $tcom = shift || $EH{'macro'}{'comment'}{$lang};
 
     my $map = "";
 
     if ( $lang =~ m,^veri,io ) {
-        for my $g ( sort( keys( %$ref ) ) ) {
-                  $map .=  "\t\t\t" . $inst . "." . $g . " = " .
-                  $ref->{$g} . ",\n";
+        #wig20050126: if this instance is VHDL -> do not use defparam, but
+        #  enty #( list ) inst ....
+        my $ilang = $hierdb{$inst}{'::lang'};
+        if ( $ilang =~ m,^vhd,io ) {
+            $map = '%S%' x 1 . "#(\n"; # Same line
+            #TODO: Add ::description if available ... -> does not work this way
+            #                                                   (lost param name here).
+            for my $g ( sort( keys( %$ref ) ) ) {
+                $map .= '%S%' x 3 . "." . $g . "(" . $ref->{$g} . ")," .
+                    # ( ( $conndb{$g}{'::descr'} ) ?
+                    #      ( " " . $tcom . " " . $conndb{$g}{'::descr'} ) : "" ) .
+                    (( _mix_wr_isinteger( $inst, $g, $ref->{$g} ) ) ?
+                         " $tcom __W_ILLEGAL_PARAM" : "" ) .
+                    "\n";
+            }
+            # Remove final ,
+            $map =~ s/,(\s*$tcom.+|\s*)\n$/$1\n/;
+            $map .= '%S%' x 2 . ") "; # Indent 2
+        } else {
+            # Verilog in Verilog uses defparam ....
+            for my $g ( sort( keys( %$ref ) ) ) {
+                $map .=  '%S%' x 3 . $inst . "." . $g . " = " . $ref->{$g} . "," .
+                        (( _mix_wr_isinteger( $inst, $g, $ref->{$g} ) ) ?
+                            " $tcom __W_ILLEGAL_PARAM" : "" ) .
+                "\n";
+            }
+            $map =~ s#,\n$#;\n#; # Replace the final , by a ;
+            $map =~ s,^%S%%S%%S%,%S%%S%defparam ,;
         }
-        $map =~ s#,\n$#;\n#;
-        $map =~ s,^\t\t\t,\t\tdefparam ,;
     } else {
         for my $g ( sort( keys( %$ref ) ) ) {
-                  $map .= "\t\t\t$g => $ref->{$g},\n";
+                  $map .= '%S%' x 3 . $g . " => " . $ref->{$g} . ",\n";
         }
     }
     return $map;
+}
+
+####################################################################
+## _mix_wr_isinteger
+##  check if input is integer 
+####################################################################
+
+=head2
+
+_mix_wr_isinteger ($$$) {
+
+Finds out if input is valid integer. Print warning if not.
+
+First try for integer:
+    [W['B]]NN_NNN
+    B: b o h d
+    W: NN
+    NN_NNN: depends on B
+
+TODO: migrate to MixChecker or MixBase
+
+Input:
+    instancename (instantiated component)
+   generic (name of the generic)
+   value (parameter value)
+
+=cut
+
+sub _mix_wr_isinteger ($$$) {
+    my $inst = shift;
+    my $generic = shift;
+    my $val = shift;
+    my $lang = shift || $EH{'macro'}{'%LANGUAGE%'};
+
+    my %allowed = (
+        'b' => '[01_]',
+        'o' => '[0-7_]',
+        'd' => '[0-9_]',
+        'h' => '[0-9a-fA-F_]',
+    );
+
+    my $set = "ILLEGAL";    
+
+    my $base = "d";
+    my $width = "";
+    my $number = "";
+    my $flag = 0;
+
+    # Split input string
+    if ( $val =~ m/(.*)'(\w)(.*)/ ) {
+        $base = $2;
+        $width = $1;
+        $number = $3;
+    } else {
+        $number = $val;
+    }
+
+    # base defined?
+     if ( $base !~ m/[bohd]/ ) {
+        $flag = 1;
+    } else {
+        $set = $allowed{$base};
+    }
+    # width defined?
+    if ( $width ) { # Has to be real number
+        unless( $width =~ m/^\d+$/o ) {
+            $flag = 1;
+        }
+    }
+    # check number:
+    if ( $number ne "" ) {
+        unless ( $number =~ m/^$set+$/ ) {
+            $flag = 1;
+        }
+    } else {
+        $flag = 1;
+    }
+    
+    if ( $flag ) {
+        logwarn("WARNING: applied non-integer parameter $val for generic $generic at instance $inst!" );
+        $EH{'sum'}{'warnings'}++;
+    }
+    return $flag;
 }
 
 #
@@ -3646,7 +3771,6 @@ sub _write_constant ($$$$$;$) {
         my( $dtsa, $dtsac ) = mix_wr_fromto ( $s->{'::high'}, $s->{'::low'}, $lang, $tcom);
 
         #!wig20030403: Use intermediate signal ...
-
         my ( $sname, $cname, $bref ) = mix_wr_getconstname( $s, $n );
 
         if ( $lang =~ m,^veri,io ) {
@@ -3907,6 +4031,33 @@ sub is_comment ($$) {
         return 0;
     }
 }
+
+####################################################################
+## strip_empty
+####################################################################
+
+=head2
+
+strip_empty ($) 
+
+    Remove empty "generic" statments
+
+like
+    component keyscan
+    		generic (
+    		-- Generated Generics for Entity keyscan
+               );
+    	generic(
+           -- Generated Generics for Entity ent_a
+           -- End of Generated Generics for Entity ent_a
+        );
+
+Input: generic map in string
+Output: condensed map string
+
+Current status: empty subroutine, no longer needed!
+
+=cut
 
 sub strip_empty ($) {
     my $text = shift;
