@@ -71,6 +71,8 @@ void on_list_configuration_button(GtkButton *button, gpointer user_data);
 
 void on_target_button(GtkButton *button, gpointer user_data);
 
+void on_leafcell_dir_button(GtkButton *button, gpointer user_data);
+
 void on_combine_toggled(GtkToggleButton *togglebutton, gpointer user_data);
 
 void on_strip_toggled(GtkToggleButton *togglebutton, gpointer user_data);

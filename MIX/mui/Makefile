@@ -91,7 +91,7 @@ USE_NLS = yes
 VERSION = 0.1
 am__include = include
 am__quote = 
-install_sh = /home/abauer/src/mix-gui/install-sh
+install_sh = /home/abauer/src/MIX/mui/install-sh
 
 SUBDIRS = src po
 

@@ -14,7 +14,7 @@ hostname = l-bauer.micronas.com
 uname -m = i686
 uname -r = 2.6.1
 uname -s = Linux
-uname -v = #1 Fri Jan 9 11:06:53 CET 2004
+uname -v = #2 SMP Wed Jan 21 11:04:59 CET 2004
 
 /usr/bin/uname -p = unknown
 /bin/uname -X     = unknown
@@ -383,6 +383,7 @@ config.status:674: creating Makefile
 config.status:674: creating src/Makefile
 config.status:674: creating po/Makefile.in
 config.status:778: creating config.h
+config.status:897: config.h is unchanged
 config.status:1003: executing depfiles commands
 config.status:1003: executing default-1 commands
 
@@ -522,7 +523,7 @@ exec_prefix='${prefix}'
 host_alias=''
 includedir='${prefix}/include'
 infodir='${prefix}/info'
-install_sh='/home/abauer/src/mix-gui/install-sh'
+install_sh='/home/abauer/src/MIX/mui/install-sh'
 libdir='${exec_prefix}/lib'
 libexecdir='${exec_prefix}/libexec'
 localstatedir='${prefix}/var'

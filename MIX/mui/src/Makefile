@@ -91,7 +91,7 @@ USE_NLS = yes
 VERSION = 0.1
 am__include = include
 am__quote = 
-install_sh = /home/abauer/src/mix-gui/install-sh
+install_sh = /home/abauer/src/MIX/mui/install-sh
 
 INCLUDES = \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
@@ -99,7 +99,7 @@ INCLUDES = \
 	-I/usr/include/gtk-2.0 -I/usr/lib/gtk-2.0/include -I/usr/include/atk-1.0 -I/usr/include/pango-1.0 -I/usr/X11R6/include -I/usr/include/freetype2 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include  
 
 
-bin_PROGRAMS = mui
+bin_PROGRAMS = ../build/mui
 
 mui_SOURCES = \
 	main.c \

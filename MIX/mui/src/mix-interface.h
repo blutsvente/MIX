@@ -37,10 +37,10 @@
 
 //#ifdef LINUX
 #define CONFIG_FILE_NAME "/.muirc"
-#define DIRECTORY_DELIMIT "/"
+#define DIRECTORY_DELIMIT '/'
 //endif
 //#ifdef WIN32
-// #define DIRECTORY_DELIMIT "\"
+// #define DIRECTORY_DELIMIT '\'
 //#endif
 
 
@@ -49,7 +49,7 @@
  */
 struct {
     unsigned int import, combine, strip, bak, dump, verbose, delta, dbglevel;
-    const char *input, *import_list, *variant, *targetDir;
+    const char *input, *import_list, *variant, *targetDir, *leafcellDir;
 } options;
 
 unsigned int modified;

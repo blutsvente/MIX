@@ -408,8 +408,8 @@ GtkWidget* create_mui(void) {
 
   combinebutton = gtk_check_button_new_with_mnemonic (_("combine"));
   gtk_widget_show (combinebutton);
-  gtk_fixed_put (GTK_FIXED (fixed5), combinebutton, 40, 128);
-  gtk_widget_set_size_request (combinebutton, 83, 20);
+  gtk_fixed_put (GTK_FIXED (fixed5), combinebutton, 168, 150);
+  gtk_widget_set_size_request (combinebutton, 82, 20);
   gtk_tooltips_set_tip (tooltips, combinebutton, _("combine entity, architecture and configuration into one file"), NULL);
 
   target_button = gtk_button_new_with_mnemonic (_("select..."));
@@ -622,6 +622,9 @@ GtkWidget* create_mui(void) {
   g_signal_connect ((gpointer) target_button, "clicked",
                     G_CALLBACK (on_target_button),
                     NULL);
+  g_signal_connect ((gpointer) leafcell_button, "clicked",
+                    G_CALLBACK (on_leafcell_dir_button),
+                    NULL);
   g_signal_connect ((gpointer) radiobutton2, "toggled",
                     G_CALLBACK (on_import_toggled),
                     NULL);
@@ -697,6 +700,9 @@ GtkWidget* create_mui(void) {
   GLADE_HOOKUP_OBJECT (mui, combo_entry1, "combo_entry1");
   GLADE_HOOKUP_OBJECT (mui, combinebutton, "combinebutton");
   GLADE_HOOKUP_OBJECT (mui, target_button, "target_button");
+  GLADE_HOOKUP_OBJECT (mui, leafcell_button, "leafcell_button");
+  GLADE_HOOKUP_OBJECT (mui, entry8, "entry8");
+  GLADE_HOOKUP_OBJECT (mui, label28, "label28");
   GLADE_HOOKUP_OBJECT (mui, label23, "label23");
   GLADE_HOOKUP_OBJECT (mui, label21, "label21");
   GLADE_HOOKUP_OBJECT (mui, label20, "label20");

@@ -200,6 +200,18 @@ void on_target_button(GtkButton *button, gpointer user_data) {
 }
 
 
+void on_leafcell_dir_button(GtkButton *button, gpointer user_data) {
+
+    const char *target;
+    if((target = create_target_dialog())!=NULL) {
+	GtkWidget *target_dir_entry = (GtkWidget*)lookup_widget(mui, ("entry8"));
+
+	options.leafcellDir = target;
+	gtk_entry_set_text((GtkEntry*) target_dir_entry, target);
+    }    
+}
+
+
 void on_import_toggled(GtkButton *button, gpointer user_data) {
     options.import = !options.import;
 }
@@ -213,7 +225,7 @@ void on_input_clicked(GtkButton *button, gpointer user_data) {
 	strcpy(buffer, input);
 	GtkWidget *input_entry = (GtkWidget*)lookup_widget(mui, ("list_input_entry"));
 	input = gtk_entry_get_text((GtkEntry*) input_entry);
-	sprintf(buffer, "%s; %s", buffer, input);
+	sprintf(buffer, "%s %s", buffer, input);
 	gtk_entry_set_text((GtkEntry*) input_entry, buffer);
     }
 }
@@ -227,7 +239,7 @@ void on_select_clicked(GtkButton *button, gpointer user_data) {
 	strcpy(buffer, import);
 	GtkWidget *select_entry = (GtkWidget*)lookup_widget(mui, ("list_import_entry"));
 	import = gtk_entry_get_text((GtkEntry*) select_entry);
-	sprintf(buffer,"%s; %s", buffer, import);
+	sprintf(buffer,"%s %s", buffer, import);
 	gtk_entry_set_text((GtkEntry*) select_entry, buffer);
     }
 }

@@ -61,8 +61,16 @@ int load_config() {
 
     if((config_file = fopen(buffer, "r"))==NULL) {
         fprintf(stderr, "error: reading config file!\n");
+	strcat(mix_path, "<none>");
+	strcat(editor_path, "<none>");
+	strcat(sheetedit_path, "<none>");
+	save_config();
 	return -1;
     }
+
+    mix_path[0] = 0;
+    editor_path[0] = 0;
+    sheetedit_path[0] = 0;
 
     // read config paths
     fscanf(config_file, "MIX_PATH=%s EDITOR_PATH=%s SHEETEDIT_PATH=%s", mix_path, editor_path, sheetedit_path);
@@ -77,14 +85,14 @@ int save_config() {
     // write config parameters into users configuration file (~/.muirc)
     FILE *config_file;
     char config_path[MAX_PATH_LENGTH];
+    int mix_path_length;
 
     // get users home directory
-    // #ifndef G_OS_WIN32
+#ifndef G_OS_WIN32
     sprintf(config_path, "%s%s", getenv("HOME"), CONFIG_FILE_NAME);
-    /* #else
-       <get home dir from "HOMEDRIVE"+"HOMEPATH", "USERPROFILE" or simply "c:\">
-       #endif
-     */
+// #else
+    //   <get home dir from "HOMEDRIVE"+"HOMEPATH", "USERPROFILE" or simply "c:\">
+#endif
 
 
     if((config_file = fopen(config_path, "w"))==NULL) {
@@ -92,17 +100,18 @@ int save_config() {
 	return -1;
     }
 
+
+    mix_path_length = strlen(mix_path);
+    if(mix_path[mix_path_length-1]==DIRECTORY_DELIMIT) {
+	mix_path[mix_path_length-1] = 0;
+    }
+
     // write configuration paths
-    if(mix_path!=NULL)
-	fprintf(config_file, "MIX_PATH=%s\n", mix_path);
-    if(editor_path!=NULL)
-	fprintf(config_file, "EDITOR_PATH=%s\n", editor_path);
-    if(sheetedit_path!=NULL)
-	fprintf(config_file, "SHEETEDIT_PATH=%s\n", sheetedit_path);
+    fprintf(config_file, "MIX_PATH=%s\n", mix_path);
+    fprintf(config_file, "EDITOR_PATH=%s\n", editor_path);
+    fprintf(config_file, "SHEETEDIT_PATH=%s\n", sheetedit_path);
 
-    // Todo: write other settings into file
-
-    close(config_file);
+    fclose(config_file);
     return 0;
 }
 
@@ -119,19 +128,16 @@ void new_session() {
 
     options.variant = "default";
 
-    options.input = "/home/alex";
-    options.import_list = NULL;
-    options.targetDir = NULL;
+    options.input = "";
+    options.import_list = "";
+    options.targetDir = "";
+    options.leafcellDir = "";
 
     modified = 0;
 }
 
 
 FILE* run_mix() {
-
-    if(options.input==NULL) {
-	return;
-    }
 
     FILE *log;
     char command[MAX_PATH_LENGTH];
@@ -142,39 +148,57 @@ FILE* run_mix() {
     variant_entry = (GtkWidget*)lookup_widget(mui, ("combo_entry1"));
 
     options.input = gtk_entry_get_text((GtkEntry*)list_input_entry);
+
+    if(options.input==NULL || strlen(options.input)<=0) {
+	// Todo: create dialog "no input selected"
+	fprintf(stderr, "no input selected!\n");
+	return NULL;
+    }
+
     options.import_list = gtk_entry_get_text((GtkEntry*)list_import_entry);
     options.variant = gtk_entry_get_text((GtkEntry*)variant_entry);
 
-    if(strlen(options.input)<=0) return NULL;
-
+    // turn off MIX banner
     sprintf(command, "%s%s%s -nobanner", mix_path, DIRECTORY_DELIMIT, MIX_NAME);
-    // set command line options
+
+    // set file to use for import
     if(options.import && strlen(options.import_list)>0) {
 	strcat(command, " -import ");
 	strcat(command, options.import_list);
     }
+    // combine entity and architecture into a single file
     if(options.combine) {
 	strcat(command, " -combine");
     }
+    // strip old intermediate sheets
     if(options.strip) {
 	strcat(command, " -strip");
     }
+    // generate backup of old files
     if(options.bak) {
 	strcat(command, " -bak");
     }
+    // dump internal data to file
     if(options.dump) {
 	strcat(command, " -adump");
     }
+    // give verbose output information
     if(options.verbose) {
 	strcat(command, " -verbose");
     }
+    // use delta mode or not
     if(!options.delta) {
 	strcat(command, " -nodelta");
     }
+    // append target path to command
     if(strlen(options.targetDir)>0) {
-	// Todo: check if dir exists and notify user to create
 	strcat(command, " -dir ");
 	strcat(command, options.targetDir);
+    }
+    // append leafcell path to command
+    if(strlen(options.leafcellDir)>0) {
+	strcat(command, " -lc ");
+	strcat(command, options.leafcellDir);
     }
 
     // Todo: debug level
