@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.4 $                                             |
+# | Revision:   $Revision: 1.5 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/07 13:18:45 $                                   |
+# | Date:       $Date: 2003/02/12 15:40:47 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.4 2003/02/07 13:18:45 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.5 2003/02/12 15:40:47 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,10 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.5  2003/02/12 15:40:47  wig
+# | Improved handling of bus splicing (but still a way to go)
+# | Added seom meta instances.
+# |
 # | Revision 1.4  2003/02/07 13:18:45  wig
 # | no changes
 # |
@@ -433,6 +437,14 @@ sub parse_hier_init ($) {
         add_inst( %{$r_hier->[$i]} );
 
     }
+
+    #
+    # Add some meta instances: %TOP%, %CONST%, %OPEN%
+    # These are needed for proper program flow .
+    #
+    add_inst( '::inst' => "%CONST%", );
+    add_inst( '::inst' => "%TOP%", );
+    add_inst( '::inst' => "%OPEN%", );
     
 }
 
@@ -649,7 +661,7 @@ sub add_conn (%) {
         my %in = @_;
 
         my $name = $in{'::name'};
-
+        my $nameflag = 0;
         #
         # strip of leading and trailing whitespace
         #
@@ -658,22 +670,24 @@ sub add_conn (%) {
         $in{'::name'} = $name;
         #
         # name must be defined:
+        # if not, assume that could be a generated name, check later on
         #
         if ( $name eq "" ) {
-            # Handle CONSTANTS ..
-            if ( $in{'::mode'} =~ m/C/ ) {
+            # Handle CONSTANTS ..either set in input or derived by detecting constants in ::out
+            # if ( $in{'::mode'} =~ m/C/ ) {
                 # Generate a name
+                $nameflag = 1;
                 $name = $EH{'postfix'}{'PREFIX_CONST'} . $EH{'CONST_NR'}++;
                 $in{'::name'} = $name;
                 logwarn( "INFO: Creating name $name for constant!" );
-            } else {
-            # Mark signal .... but add it anyway (user should be able to fix it)
-                logwarn( "Missing signal name. Will be ignored!" );
-                $in{'::ign'} = "#ERROR_MISSING_SIGNAL_NAME";
-                $in{'::comment'} = "#ERROR_MISSING_SIGNAL_NAME $name" . $in{'::comment'};
-                $name = "ERROR_MISSING_SIGNAL_NAME";
-                $in{'::name'} = $name;
-            }
+            # } else {
+                # Mark signal .... but add it anyway (user should be able to fix it)
+            #    logwarn( "Missing signal name. Will be ignored!" );
+            #    $in{'::ign'} = "#ERROR_MISSING_SIGNAL_NAME";
+            #    $in{'::comment'} = "#ERROR_MISSING_SIGNAL_NAME $name" . $in{'::comment'};
+            #    $name = "ERROR_MISSING_SIGNAL_NAME";
+            #    $in{'::name'} = $name;
+            #}
         }
         #
         # check name: only [a-z_A-Z0-9%:] allowed ..
@@ -708,6 +722,33 @@ sub add_conn (%) {
         } else {
             create_conn( $name, %in);
         }
+
+
+        # If name was not given, complain ...
+        if ( $nameflag and $conndb{$name}{'::mode'} !~ m/^\s*C/o ) {
+            # Check if this signals ::out has a %CONST% in it:
+            unless( $conndb{$name}{'::out'}[0]{'inst'} eq "%CONST%" ) {
+                # Mark signal .... but add it anyway (user should be able to fix it)
+                #TODO: fix up that code, should not deal with conndb here ....
+                logwarn( "Missing signal name in input. Generated name $name!" );
+                $conndb{$name}{'::ign'} = "#__E_MISSING_SIGNAL_NAME";
+                $conndb{$name}{'::comment'} = "#__E_MISSING_SIGNAL_NAME" . $conndb{$name}{'::comment'};
+                $conndb{$name}{'::name'} = $name;
+            } else {
+                $conndb{$name}{'::mode'} = 'C';
+            }
+        } elsif ( defined( $conndb{$name}{'::out'}[0]{'inst'} ) and
+            $conndb{$name}{'::out'}[0]{'inst'} eq "%CONST%" ) {
+                # If we found a constant, change the ::mode bit to be constant ...
+                if ( $conndb{$name}{'::mode'} and $conndb{$name}{'::mode'} !~ m,^\s*C,io ) {
+                    logwarn("Signal $name mode expected to be C, but is " .
+                            $conndb{$name}{'::mode'} ."!" );
+                    $conndb{$name}{'::mode'} = "C";
+                    $conndb{$name}{'::comment'} .= "__E_MODE_MISMATCH";
+                } else {
+                    $conndb{$name}{'::mode'} = "C";
+                }
+        }   
 }
 
 
@@ -721,8 +762,8 @@ sub create_conn ($%) {
         next unless ( $i =~ m/^::/ );
         # ::in and ::out are special case; split if it contains s.th.
         if ( $i =~ m/^::(in|out)$/o ) {
-            if ( $data{$i} ) {
-                $conndb{$name}{$i} = _create_conn( "$1", $data{$i}, %data );
+            if ( defined( $data{$i} ) and $data{$i} ne "" ) {#Bugfix20030212: create_conn if field defined ...
+                $conndb{$name}{$i} = _create_conn( $1, $data{$i}, %data );
             } else {
                 $conndb{$name}{$i} = []; #Initialize empty array. Will be removed later on
             }
@@ -732,7 +773,8 @@ sub create_conn ($%) {
             $conndb{$name}{$i} = $ehr->{$i}[3]; # Set to DEFAULT Value
             #TODO: Initialize fields to empty / Marker, set DEFAULT if still empty at end 
         }
-        $conndb{$name}{$i} =~ s/%NULL%//g; # Just to make sure fields are initialized
+        #TODO: Remove this ....
+        $conndb{$name}{$i} =~ s/%NULL%/$EH{'macro'}{'%NULL%'}/g; # Just to make sure fields are initialized
         delete( $data{$i} );
     }
 
@@ -756,6 +798,26 @@ _create_conn ($$%)
 
 Create/add/modify a bus/signal/connection; convert input into simple array of hashes.
 
+REcognize constant values like:
+
+=over 4
+
+=item hex
+
+0x[0-9a-f] ....
+
+=item octal
+
+0[0-7] ...
+
+=item quoted by " or '
+
+    "VALUE" or 'VALUE'
+
+Value can just be anything ... will be added literally to the output architecture.
+
+Returns mode and a array of hashes.
+
 =cut
 
 sub _create_conn ($$%) {
@@ -766,6 +828,7 @@ sub _create_conn ($$%) {
     #A bus with ::low and ::high    
     my $h = undef;
     my $l = undef;
+    
     #TODO: check bus definitions better!
     if ( defined( $data{'::low'} ) and defined ( $data{'::high'} ) ) {
         #    if ( $data{::low} <= $data{::high} ) {
@@ -794,7 +857,7 @@ sub _create_conn ($$%) {
     #    }
     my %co = ();
     my @co = ();
-    unless( $instr ) {
+    unless( defined( $instr ) and $instr ne "" ) {
         logwarn("Called _create_conn without data for $inout");
         return \@co; #Return dummy array, just in case
     }
@@ -810,6 +873,51 @@ sub _create_conn ($$%) {
             #   MOD/SIG(PF:PT)              <- (SF:ST) := (PF-PT:0)
             #   MOD/SIG                 take SF:ST and PF,PT from ::high and ::low
             #   
+
+            #
+            # Recognize 0xHEX, 0OCT, 0bBIN and DECIMAL values in ::out
+            # Recognize 'CONST' and "CONST"
+            # Mark with %CONST% instance name .... the port name will hold the value
+            #
+            $d =~ s,__CONST__,%CONST%,og; # Convert back __CONST__ to %CONST% 
+            if ( $d =~ m,^\s*(%CONST%/)?(0x[0-9a-f]+|0b[01xzhl]+|0[0-7]+|[0-9]+),io or
+                 $d =~ m,^\s*(%CONST%/)?('\w+'),io or
+                 $d =~ m,^\s*(%CONST%/)?("\w+"),io ) { # Constant value ...
+                my $const = $2;
+                if ( $inout =~ m,in, ) {
+                    logerror("Error: use constant value for signal " . $data{'::name'} . " in ::out column, only!");
+                    $data{'::comment'} .= "__E_BAD_CONSTANT_DEFINED";
+                }
+                $co{'inst'} = "%CONST%";
+                
+                # Convert input data ...hex, binary and decimal to decimal ....
+                if ( $d =~ m,^\s*0x,io ) {
+                    $const = hex( $const ); # Handles hex and octal
+                } elsif ( $d =~ m,^\s*0[0-7]+,io ) {
+                    $const = oct( $const ); # Handles oct and binary ....
+                } elsif ( $d =~ m,^\s*(0b[01xzhl]+),io ) {
+                    # Convert hl to 10.
+                    #TODO: What about x and z??
+                    $const =~tr/HhLl/1100/;
+                    $const = oct( $const );
+                }
+                $const =~ tr/'/"/; # Convert ' to " (otherwise ExCEL will eat it).
+                    
+                $co{'port'} = $const; # Decimal base or literal
+                # Inherit bus width from signal definition ....
+                $co{'port_f'} = $h;
+                $co{'port_t'} = $l;
+                $co{'sig_f'} = $h;
+                $co{'sig_t'} = $l;
+
+                push( @co, { %co } );
+                #TODO: $mode = 'C'; # Autochange ::mode to constant
+                next;
+            }
+
+            #
+            # Normal inst/ports ....
+            #
             $d =~ s/\((\d+)\)/($1:$1)/g; # Extend (N) to (N:N)
             if ( $d !~ m,/,o ) {
                 $d =~ s,(\w+),$1/%::name%,;
@@ -875,7 +983,7 @@ sub _create_conn ($$%) {
             
             push( @co, { %co } );
     }
-    return \@co;
+    return ( \@co );
 }
 
 #
@@ -1396,7 +1504,8 @@ sub add_portsig () {
         }
         for my $i ( 0..$#{$conndb{$signal}{'::out'}} ) {
                 my $inst = $conndb{$signal}{'::out'}[$i]{'inst'};
-                if ( defined ( $hierdb{$inst} )) {
+                next unless ( defined( $inst ) );
+                if ( exists ( $hierdb{$inst} )) {
                     $connected{$inst} = $hierdb{$inst}{'::treeobj'}; # Tree::DAG_Node objects
                     $modes{$inst} .= ":out:$i";
                 }
@@ -1619,6 +1728,7 @@ sub __parse_inout ($$) {
     my $rb = shift;
 
     for my $i ( keys( %$ra ) ) {
+        next if $i eq "inst"; # Do that later on ....
         if ( $ra->{$i} ) {
             __parse_mac( \$ra->{$i}, $rb );
         }
@@ -1744,12 +1854,15 @@ sub _add_sign2hier ($$$) {
 
     for my $iii ( 0..$#{$rsa} ) {
         my $inst = $rsa->[$iii]{'inst'};
-        unless ( exists( $hierdb{$inst} ) )  {
+        next unless ( defined( $inst ) ); # Skip undefined instance names ....
+        unless ( exists ( $hierdb{$inst} ) )  {
                 unless ( $conndb{$conn}{'::mode'} =~ m,^\s*(C), ) {
                     logwarn("Skipping connection $conn to undefined instance $inst!");
                 }
                 next; #TODO: Should we try to add that instance?
         }
+       next if ( defined( $inst ) and $inst =~ m,(__CONST__|%CONST%),io );
+        # Skip meta instance %CONST%
         my $port = $rsa->[$iii]{'port'};
         unless ( defined( $port ) ) {
                 logwarn("Undefined port for connection $conn, instance $inst!");

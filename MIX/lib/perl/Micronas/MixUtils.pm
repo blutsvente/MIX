@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.4 $                                             |
+# | Revision:   $Revision: 1.5 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/07 13:18:44 $                                   |
+# | Date:       $Date: 2003/02/12 15:40:47 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.4 2003/02/07 13:18:44 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.5 2003/02/12 15:40:47 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,10 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.5  2003/02/12 15:40:47  wig
+# | Improved handling of bus splicing (but still a way to go)
+# | Added seom meta instances.
+# |
 # | Revision 1.4  2003/02/07 13:18:44  wig
 # | no changes
 # |
@@ -615,7 +619,7 @@ $ex = undef; # Container for OLE server
 	    "%SIGNAL%"	=> "std_ulogic",
 	    "%BUS_TYPE"	=> "std_ulogic_vector",
 	    "%DEFAULT_MODE%" => "S",
-	    "%OPEN%"	=> "OPEN",			#open signal
+	    "%OPEN%"	=> "__OPEN__",			#open signal
 	    "%UNDEF%"	=> "ERROR_UNDEF",	#should be 'undef',  #For debugging??  
 	    "%UNDEF_1%"	=> "ERROR_UNDEF_1",	#should be 'undef',  #For debugging??
 	    "%UNDEF_2%"	=> "ERROR_UNDEF_2",	#should be 'undef',  #For debugging??
@@ -626,6 +630,8 @@ $ex = undef; # Container for OLE server
 	    "%LOW%"	=> "MIX__LOGIC0__",  # ???
 	    "%HIGH_BUS%"	=> "MIX__LOGIC1_BUS__",
 	    "%LOW_BUS%"	=> "MIX__LOGIC0_BUS__",
+	    "%CONST%"		=> "__CONST__", # Meta instance, used to apply constant values
+	    "%TOP%"		=> "__TOP__", # Meta instances, TOP cell
 	    "%BUFFER%"		=> "buffer",
 	    '%H%'		=> '$',			# RCS keyword saver ...
     },
@@ -1279,8 +1285,17 @@ sub inout2array ($) {
 #                 ],    
 
     for my $i ( @$f ) {
+
+	unless( defined( $i->{'inst'} ) ) {
+	    # TODO: Print only if that indicates an real error ????
+	    # logwarn( "Converting empty array slice, Skip!" );
+	    next;
+	}
+	# Constants are working a different way:
+	if ( $i->{'inst'} =~ m,^\s*(__CONST__|%CONST%),o ) {
+	    $s .= $i->{'port'} . ", ";
+	} elsif ( defined $i->{'sig_t'} ) {
 	# inst/port($port_f:$port_t) = ($sig_f:$sig_t)
-	if ( defined $i->{'sig_t'} ) { #No more error checking here ...
 	    $s .= $i->{'inst'} . "/" . $i->{'port'} . "(" .
 		    $i->{'port_f'} . ":" . $i->{'port_t'} . ") = (" .
 		    $i->{'sig_f'} . ":" . $i->{'sig_t'} . "), "

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.4 $                                             |
+# | Revision:   $Revision: 1.5 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/02/07 13:18:44 $                                   |
+# | Date:       $Date: 2003/02/12 15:40:47 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.4 2003/02/07 13:18:44 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.5 2003/02/12 15:40:47 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,10 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.5  2003/02/12 15:40:47  wig
+# | Improved handling of bus splicing (but still a way to go)
+# | Added seom meta instances.
+# |
 # | Revision 1.4  2003/02/07 13:18:44  wig
 # | no changes
 # |
@@ -111,7 +115,7 @@ $EH{'template'}{'vhdl'}{'enty'}{'head'} = <<'EOD';
 -- %H%Log%H%
 --
 -- Based on Mix Entity Template built into $RCSfile: MixWriter.pm,v $
--- $Id: MixWriter.pm,v 1.4 2003/02/07 13:18:44 wig Exp $
+-- $Id: MixWriter.pm,v 1.5 2003/02/12 15:40:47 wig Exp $
 --
 -- Generator: %0% Version: %VERSION%, wilfried.gaensheimer@micronas.com
 -- (C) 2003 Micronas GmbH
@@ -173,7 +177,7 @@ $EH{'template'}{'vhdl'}{'arch'}{'head'} = <<'EOD';
 -- %H%Log%H%
 --
 -- Based on Mix Architecture Template built into $RCSfile: MixWriter.pm,v $
--- $Id: MixWriter.pm,v 1.4 2003/02/07 13:18:44 wig Exp $
+-- $Id: MixWriter.pm,v 1.5 2003/02/12 15:40:47 wig Exp $
 --
 -- Generator: %0% %VERSION%, wilfried.gaensheimer@micronas.com
 -- (C) 2003 Micronas GmbH
@@ -549,7 +553,8 @@ sub _create_entity ($$) {
 	    if ( $m ) { # not empty
 		if ( $m =~ m,IO,io ) { $mode = "inout"; } 		# inout mode!
 		elsif ( $m =~ m,B,io ) { $mode = "%BUFFER%"; }	# buffer
-		elsif ( $m =~ m,(G|C),io ) { $mode = $m; }		# generic and constant
+		elsif ( $m =~ m,C,io ) { $mode = $m; }		# generic and constant
+		elsif ( $m =~ m,G,io ) { $mode = $m; }
 		elsif ( $m =~ m,S,io ) { $mode = $io; }			# signal -> derive from i/o
 		elsif ( $m =~ m,I,io ) {						# warn if mode mismatches
 		    #TODO: Need to look at all connections ....
@@ -569,7 +574,7 @@ sub _create_entity ($$) {
 			$mode = "out";
 		    }
 		} else {
-		    logwarn( "ERROR: TODO mode defaults to bad value for signal $i\n" );
+		    logwarn( "ERROR: signal $i mode $m defaults to bad value, set to $io\n" );
 		    $mode = $io;
 		}
 	    } else { # if no mode was specified, it defaults to S, which means to autodetecte in/out
@@ -580,13 +585,83 @@ sub _create_entity ($$) {
 	    # Duplicate signals will be caught by the compare_and_merge_entitiy
 	    # function
 	    #
-            %{$res{$port}} = (
-                'mode' => $mode, #TODO: do some sanity checking! e.g. high, low might be
+	    if ( exists( $res{$port} ) ) {
+	    #
+	    # Overlay port definitions ...
+	    # Mark mismatches ....
+	    #
+		if ( $mode ne $res{$port}{'mode'} ) {
+		    logwarn("Warning: port $port redefinition mode mismatch: $mode " .
+			    $res{$port}{'mode'} );
+			    $res{$port}{'mode'} = "__W_PORTMODE_MISMATCH"; #TODO ???
+		}
+
+		# High bound:
+		if ( defined( $h ) ) {
+		    if ( defined( $res{$port}{'high'} ) ) {
+			if ( $h > $res{$port}{'high'} ) {
+			    $res{$port}{'high'} = $h;
+			}
+		    } else {
+			if ( $h ) { # Defined, but 0, which is approx. undef.
+			    logwarn("Warning: port $port high bound redefinition mismatch: $h vs. undef" );
+			}
+			$res{$port}{'high'} = $h;
+		    }
+		} elsif ( defined( $res{$port}{'high'} ) ) {
+		    if( $res{$port}{'high'} ) { # Suppress message
+			logwarn("Warning: port $port high bound redefinition mismatch: undef  vs. " .
+			$res{$port}{'high'} );
+		    }
+		}
+		# Low bound:
+		if ( defined( $l ) ) {
+		    if ( defined( $res{$port}{'low'} ) ) {
+			if ( $l < $res{$port}{'low'} ) {
+			    $res{$port}{'low'} = $l;
+			}
+		    } else {
+			if ( $l ) {
+			    logwarn("Warning: port $port low bound redefinition mismatch: $l vs. undef" );
+			}
+			$res{$port}{'low'} = $l;
+		    }
+		} elsif ( defined( $res{$port}{'low'} ) ) {
+		    if ( $res{$port}{'low'} ) { # Suppress message if 0
+			logwarn("Warning: port $port low bound redefinition mismatch: undef  vs. " .
+			    $res{$port}{'low'} );
+		    }
+		}
+		$l = $res{$port}{'low'};
+		$h = $res{$port}{'high'};
+		#
+		# type mismatch handling:
+		#
+		if ( $type ne $res{$port}{'type'} ) {
+		    if ( defined( $l ) and defined( $h ) and ( $h > $l ) ) { #Take _vector ...
+			if ( $res{$port}{'type'} !~ m,_vector,io ) {
+			    if ( $type =~ m,(std_u?logic),io ) {
+				$res{$port}{'type'} = $type; # Automatically expand to vector type
+			    } else {
+				logwarn("Warning: port $port redefinition type mismatch: $type vs. " .
+				    $res{$port}{'type'} );
+			    }
+			# } else {
+			#    logwarn("Warning: port $port redefinition type mismatch: $type vs. " .
+			#    $res{$port}{'type'} );
+			#    # $res{$port}{'type'} #TODO ???
+			}
+		    }
+		}
+	    } else {
+		%{$res{$port}} = (
+		    'mode' => $mode, #TODO: do some sanity checking! e.g. high, low might be
 					# undefined, check if bus vs. bit. and consider the ::mode!
-                'type' => $type,  #|| 'signal', # type defaults to signal
-                'high' => $h,  # set default to '' string
-                'low'  => $l,   # set default to '' string
-            );
+		    'type' => $type,  #|| 'signal', # type defaults to signal
+		    'high' => $h,  # set default to '' string
+		    'low'  => $l,   # set default to '' string
+		);
+	    }
         }
 	# $res{'__SIGNAL__'}{$i}=; # Remember signals connected
     }
@@ -693,10 +768,12 @@ sub _write_entities ($$$) {
 	    next if ( $p eq "__LEAF__" );
 	    
 	    my $pdd = $pd->{$p};
-	    if ( $pdd->{'mode'} =~ m,^\s*(const|C),io ) {
+	    #TODO: Handle constants ??
+	    # if ( $pdd->{'mode'} =~ m,^\s*(const|C),io ) {
 		# $gent .= "\t\t\t -- " . $p . "\t: " . $pdd->{'type'} . "\t:= " . $pdd->{'value'} . "\n";
-		next;
-	    } elsif ( $pdd->{'mode'} =~ m,^\s*(generic|G),io ) {
+		# next;
+	    # } els
+	    if ( $pdd->{'mode'} =~ m,^\s*(generic|G),io ) {
 		# Generic
 		$gent .= "\t\t\t" . $p . "\t: " . $pdd->{'type'} . "\t:= " . $pdd->{'value'} . "\n";
 	    } elsif (	defined( $pdd->{'high'} ) and
@@ -704,6 +781,12 @@ sub _write_entities ($$$) {
 			$pdd->{'high'} =~ m/^\d+$/o and $pdd->{'low'} =~ m/^\d+$/ ) {
 		# Signal ...from high to low. Ignore everything not matching
 		# this pattern (e.g. only one bound set ....)
+		my $mode = "";
+		if ( $pdd->{'mode'} =~ m,^\s*C,io ) {
+		    $mode = "in";
+		} else {
+		    $mode = $pdd->{'mode'};
+		}
 		if ( $pdd->{'high'} == $pdd->{'low'} ) {
 		    if ( $pdd->{'high'} == 0 ) {
 			# Special case: single pin "bus" -> reduce to it ....
@@ -711,22 +794,28 @@ sub _write_entities ($$$) {
 			$pdd->{'type'} =~ s,_vector,,; # Try to strip away trailing vector!
 			$pdd->{'low'} = undef;
 			$pdd->{'high'} = undef;
-			$port .= "\t\t\t" . $p . "\t: " . $pdd->{'mode'} . "\t" . $pdd->{'type'} .
+			$port .= "\t\t\t" . $p . "\t: " . $mode . "\t" . $pdd->{'type'} .
 			    "; -- __W_AUTO_REDUCED_BUS2SIGNAL\n";
 		    } else {
 			logwarn( "Port $p of entity $e one bit wide, missing lower bits\n" );
-			$port .= "\t\t\t" . $p . "\t: " . $pdd->{'mode'} . "\t" . $pdd->{'type'} .
+			$port .= "\t\t\t" . $p . "\t: " . $mode . "\t" . $pdd->{'type'} .
 			    "(" . $pdd->{'high'} . "); -- __W_SINGLEBITBUS\n";
 		    }
 		} elsif ( $pdd->{'high'} > $pdd->{'low'} ) {
-		    $port .= "\t\t\t" . $p . "\t: " . $pdd->{'mode'} . "\t" . $pdd->{'type'} .
+		    $port .= "\t\t\t" . $p . "\t: " . $mode . "\t" . $pdd->{'type'} .
 			"(" . $pdd->{'high'} . " downto " . $pdd->{'low'} . ");\n";
 		} else {
-	    	    $port .= "\t\t\t" . $p . "\t: " . $pdd->{'mode'} . "\t" . $pdd->{'type'} .
+	    	    $port .= "\t\t\t" . $p . "\t: " . $mode. "\t" . $pdd->{'type'} .
 			"(" . $pdd->{'high'} . " to " . $pdd->{'low'} . ");\n";
 		}
 	    } else {
-		    $port .= "\t\t\t" . $p . "\t: " . $pdd->{'mode'} . "\t" . $pdd->{'type'} . ";\n";
+		my $mode = "";
+		if ( $pdd->{'mode'} =~ m,^\s*C,io ) {
+		    $mode = "in";
+		} else {
+		    $mode = $pdd->{'mode'};
+		}
+		    $port .= "\t\t\t" . $p . "\t: " . $mode . "\t" . $pdd->{'type'} . ";\n";
 	    }
 	}
 	#Get rid of trailing ;, replace %MACs%
@@ -909,10 +998,11 @@ sub port_map ($$$$$) {
     # Use simple assigment if yes, else slice bus
     my $map = "";
     for my $s ( sort( keys( %$ref ) ) ) {
-	if ( $conndb{$s}{'::mode'} =~ m,^\s*(C),io ) {
-	    push( @$rio, $s );
-	    next;
-	} # Skip constants
+	# constants work the same way as the rest here ...
+	# if ( $conndb{$s}{'::mode'} =~ m,^\s*(C),io ) {
+	#    push( @$rio, $s );
+	#    next;
+	# } # Skip constants
 	
 	my $sf = $conndb{$s}{'::high'}; # Set signal high bound
 	unless( defined( $sf ) and $sf ne '' ) { $sf = '__UNDEF__'; }
@@ -1062,8 +1152,10 @@ sub print_conn_matrix ($$$$$$$) {
 	}
     }
 	
-    if ( $cflag and $fflag == $ub ) { # Full port <-> signal
-	if ( $pf eq $pt and defined( $lb ) and $lb  == $ub ) {
+    if ( $cflag and $fflag == $ub ) {
+	# Full port <-> signal  or
+	# One bit of port connected to bit signal
+	if ( $pf eq $pt and defined( $lb ) and $lb eq $ub ) {
 	    # Single bit port .... connected to bus slice
 	    # TODO: do more checking ...
 	    if ( $pf eq "__UNDEF__" ) {
@@ -1071,10 +1163,16 @@ sub print_conn_matrix ($$$$$$$) {
 	    } else {
 		$t .= "\t\t\t$port($pf) => $signal(" . $rcm->[$ub] . "),\n";
 	    }
+	} elsif ( $sf eq "__UNDEF__" and $st eq "__UNDEF__" ) {
+	    $t .= "\t\t\t$port(" . $rcm->[$ub] . ") => $signal,\n"; #Needs more checking ..
 	} elsif ( $ub eq $sf ) { # Should == be used here instead?
 	    $t .= "\t\t\t$port => $signal,\n";
-	} elsif ( $ub < $sf ) {
-	    $t .= "\t\t\t$port => $signal($ub downto 0),\n";
+	} elsif ( $ub < $sf ) { #TODO: There could be more cases ???
+	    if ( $ub == 0 ) {
+		$t .= "\t\t\t$port => $signal($ub),\n";
+	    } else {
+		$t .= "\t\t\t$port => $signal($ub downto 0),\n";
+	    }
 	}
 	return $t;
 
@@ -1084,107 +1182,19 @@ sub print_conn_matrix ($$$$$$$) {
     } else { # Output each single bit!!
 	for my $i ( 0..$ub ) {
 	    if ( defined( $rcm->[$i] ) ) {
-		$t .= "\t\t\t$port(" . $i . ") => $signal(" . $rcm->[$i] ."),\n";
+		if ( $rcm->[$i] == 0 and $sf eq "__UNDEF__" ) {
+		    # signal is bit!
+		    $t .= "\t\t\t$port(" . $i . ") => $signal,\n";
+		} else {
+		    # signal is bus!
+		    $t .= "\t\t\t$port(" . $i . ") => $signal(" . $rcm->[$i] ."),\n";
+		}
 	    }
 	}
     }
     return $t;
 
 }
-
-=head2
-
-OLD STUFF, REMOVE ....
-
-	    # Various old possibilities ....
-	    # Found hole ....
-	    # Output port found up to now
-	    # Look if signal were assigned in row so far ....
-	    if ( defined( $lb ) and $lb eq $i ) { #will never happen!
-		$t .= "\t\t\t$p($i) => $s(" . $rcm[$i] . ")";
-		$lb = undef;
-		next;
-	    }
-	    if ( defined( $lb ) and $lb eq ( $i - 1 ) ) { #Connect single pin to bit of signal
-		$t .= "\t\t\t$p($lb) => $s(" . $rcm[$lb] . ")"; #TODO: check if signal isn't a single bit
-		$lb = undef;
-		next;
-	    } else {
-		for my $ii ( $lb..($i - 1) ) {
-		    if ( $sign = $rcm->[$ii] 
-		    $t .= "\t\t\t$p(" . ( $i - 1 ) ." downto " . $lb .") => $s";
-		}
-	    }  
-	} else {
-	    if ( $#tmp >= 0 ) {
-	    if ( $rcm->[$i] ne $i ) { # No longer in order ...
-		$t .= "\t\t\t$p(" . ( $i - 1 ) ." downto " . $lb .") => $s(" . 
-		
-	if ( not defined( $rcm->[$i] ) { # Hole in the pin definition ...
-	    if ( $lstart - $i == 0 ) { #Just one pin
-		    $t
-	    
-	
-	
-    	    if ( $sh eq $ph and $sl eq $pl ) {
-		#
-		# high and low are equal or undefined ..
-		# simple case, no further processing done ....
-		# but might be to optimistic (due to missing pins, which should not get
-		# connected ...
-		#
-		$map .= "\t\t\t\t$p => $s,\n";
-	    } else {
-		# Bus slice ???
-		if ( $sh eq '__UNDEF__' and $sl eq '__UNDEF__' ) {
-		    # port(N) => SIGNAL
-		    #TODO: is that valid???
-		    if ( $ph eq $pl ) {
-			$map .= "\t\t\t\t$p($ph) => $s,\n";
-		    } else {
-			$map .= "\t\t-- __E_BOUND_MISMATCH $p ( $ph downto $pl ) => $s,\n";
-			logwarn( "ERROR: BOUND_MISMATCH port $p, signal $s in entity $enty!" );
-		    }
-		} elsif ( $ph eq $pl ) {
-		    # Port is one bit (slices have to be combined by previous checks)!
-		    if ( $ph eq "__UNDEF__" or $ph eq "0" ) {
-			$map .= "\t\t\t\t$p => $s( XXXX ),\n";
-		    } else {
-			$map .= "\t\t\t\t$p => $s( XXXX ), -- __W_CHECK_BOUNDS\n";
-		    }
-		} else { # slice of bus attached to (slice) of port
-		    #TODO: Check if all s* and p* are numbers!
-		    my $swidth = $sh - $sl;
-		    my $pwidth = $ph - $pl;
-		    if ( $swidth == $pwidth ) { # Slice matches ...
-			if ( $sl == 0 ) {
-			    $map .= "\t\t\t\t$p($ph downto $pl) => $s,\n";
-			} elsif ( $pl == 0 ) {
-			    $map .= "\t\t\t\t$p => $s($sh downto $sl),\n";
-			} else {
-			    $map .= "\t\t\t\t$p($ph downto $pl) => $s($sh downto $sl),\n";
-			}
-		    } elsif ( $swidth < $pwidth ) { #Port is wider than signal ????
-			# Attach $pwidth bits of signal to port ....
-			logtrc( "INFO", "__W_SIGNAL_PORT_WIDTH_MISMATCH port $p, signal $s in entity $enty!" );
-			$map .= "\t\t\t\t$p(" . ( $pl + $swidth ) . " downto $pl) => $s($sh downto $sl),\n";
-		    } else { # Signal is wider than port ....
-			my $warn = "";
-			unless ( $s =~ m,%(LOW|HIGH),io ) {
-			    logwarn( "ERROR: BOUND_MISMATCH port $p, signal $s in entity $enty!" );
-			    $warn = "-- __W_BOUND_MISMATCH";
-			}
-			$map .= "\t\t\t\t$p => $s(" . ( $sl + $pwidth ) . " downto $sl), $warn\n";
-		    }
-		}
-	    }
-	    push( @$rio, $s );
-	}
-    }
-    return $map;
-}
-
-=cut
 
 #
 # Do the work: Collect ports and generics from %entities.
@@ -1249,6 +1259,8 @@ sub _write_architecture ($$$$) {
 	$macros{'%CONCURS%'} = "\t-- Generated Signal Assignments\n";
 	$macros{'%CONSTANTS%'} = "\t--Generated Constant Declarations\n";
 
+=head 2
+#### constants are working differently now ####
 	# Search for constants in our connection hash....
 	for my $ii ( sort( keys( %{$hierdb{$i}{'::conn'}{'in'}} ) ) ) {
 	    my $s = $conndb{$ii};
@@ -1279,6 +1291,7 @@ sub _write_architecture ($$$$) {
 		next;
 	    }
 	}
+=cut
 
 	#
 	# Collect components by looking through all our daughters
@@ -1362,7 +1375,7 @@ sub _write_architecture ($$$$) {
 		my $logicv = ( $1 eq '%HIGH' ) ? '1' : '0';
 		$macros{'%CONCURS%'} .= "\t\t\t$EH{'macro'}{$ii} <= ( others => '$logicv' );\n";
 	    } elsif ( $ii =~ m,^\s*(%HIGH%|%LOW%),o ) {
-	    	my $logicv = ( $1 eq '%HIGH' ) ? '1' : '0';
+	    	my $logicv = ( $1 eq '%HIGH%' ) ? '1' : '0';
 		$macros{'%CONCURS%'} .= "\t\t\t$EH{'macro'}{$ii} <= '$logicv';\n";
 	    }
 
@@ -1377,16 +1390,31 @@ sub _write_architecture ($$$$) {
 		    }
 	    }
 	    
-	    # Add constant and generic definitions here ...
-	    if ( $s->{'::mode'} =~ m,\s*(c),io ) {
+	    # Add constant definitions here to concurrent signals ....
+	    if ( $s->{'::mode'} =~ m,\s*C,io ) {
 		#unless( exists ( $s->{'::out'}[0]{'inst'} ) ) {
 		#    $s->{'::out'}[0]{'inst'} = "__E_MISSING_VALUE";
 		#}
 		#$macros{'%CONSTANTS%'} .= "\t\t\tconstant " . $s->{'::name'} . " : " .
 		#    $s->{'::type'} . $dt . " := " . $s->{'::out'}[0]{'inst'} . ";\n";
-		next;
+		unless( exists( $s->{'::out'}[0]{'port'} ) ) {
+		    $macros{'%CONCURS%'} .= "\t\t\t$s->{'::name'} <= __E_MISSING_CONST_VALUE;\n";
+		} else {
+		    my $value = $s->{'::out'}[0]{'port'};
+		    unless ( $value =~ s,["'],',go ) { # Take literally, replace " by '
+			if ( $value eq "0" or $value eq "1" and $type =~ m,_vector, ) {
+			    $value = "( others => '$value' )";
+			} else {
+			    $value = "'" . $value . "'"; # Add leading and trailing '
+			}
+		    }
+		    $macros{'%CONCURS%'} .=
+			"\t\t\t$s->{'::name'} <= $value;\n";
+		}
+		# next;
 	    }
 
+	    # Generics ?
 	    if ( $s->{'::mode'} =~ m,\s*(g),io ) {
 		next;
 	    }
