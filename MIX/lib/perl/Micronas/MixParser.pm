@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.45 $                                         |
+# | Revision:   $Revision: 1.46 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/11/10 09:47:01 $                              |
+# | Date:       $Date: 2004/11/10 14:59:10 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.45 2004/11/10 09:47:01 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.46 2004/11/10 14:59:10 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,8 +33,8 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
-# | Revision 1.45  2004/11/10 09:47:01  wig
-# | added verilog includes
+# | Revision 1.46  2004/11/10 14:59:10  wig
+# | usage of text a port width ...
 # |
 # | Revision 1.44  2004/08/09 15:48:16  wig
 # | another variant of typecasting: ignore std_(u)logic!
@@ -270,11 +270,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.45 2004/11/10 09:47:01 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.46 2004/11/10 14:59:10 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.45 $';
+my $thisrevision   =      '$Revision: 1.46 $';
 
-# | Revision:   $Revision: 1.45 $
+# | Revision:   $Revision: 1.46 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -3479,11 +3479,22 @@ sub generate_port ($$$$$$) {
         $t{'port_t'} = 0;
     }
 
+    #!wig: extend port guessing:
     if ( $f =~ m,^\s*$,o ) {
         $t{'port_f'} = $t{'sig_f'} = undef;
-    } else {
+    } elsif ( $f =~ m,^\d+$,o ) { # $f is a number ...
         $t{'sig_f'} = $f;
         $t{'port_f'} = $f - (( $t =~ m,^\d+$, ) ? $t : 0);
+    } else {
+        $t{'sig_f'} = $f;
+        # Take port_f literally!
+        if ( $t eq "0" or $t eq "" or $t !~ m,^\d+$, ) {
+            $t{'port_f'} = $f;
+        } else {
+            logwarn( "WARNING: need to create port, but cannot calculate width: $f .. $t for instance $inst/$t{port}!" );
+            $EH{'sum'}{'warnings'}++;            
+            $t{'port_f'} = "$f - $t"; # Try a simple " FROM - TO ";
+        }
     }
 
     if ( $f eq $t ) {
