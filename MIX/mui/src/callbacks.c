@@ -19,8 +19,10 @@
 #endif
 
 #include "mainwindow.h"
-//#include "iopadview.h"
-//#include "i2cview.h"
+#include "hierview.h"
+#include "connview.h"
+#include "iopadview.h"
+#include "i2cview.h"
 #include "settings.h"
 #include "support.h"
 #include "callbacks.h"
@@ -169,9 +171,9 @@ void on_notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page, guint
 	    set_view_child(view, page_num);
 	    break;
         case 1: // selected connection page
-	    view = NULL;//(GtkWidget*) create_conn_view();
-	    //	    gtk_widget_show_all(view);
-	    //	    gtk_container_add(GTK_CONTAINER(get_view_frame(1)), view);
+	    view = (GtkWidget*) create_conn_view();
+	    gtk_widget_show_all(view);
+	    gtk_container_add(GTK_CONTAINER(get_view_frame(1)), view);
 	    set_view_child(view, page_num);
 	    break;
         case 2: // selected IO-Pad page

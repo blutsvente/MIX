@@ -118,6 +118,7 @@ mui_SOURCES = \
 	mix.c mix.h \
 	mainwindow.c mainwindow.h \
 	hierview.c hierview.h \
+	connview.c connview.h \
 	iopadview.c iopadview.h \
 	i2cview.c i2cview.h \
 	callbacks.c callbacks.h \
@@ -139,9 +140,9 @@ PROGRAMS = $(bin_PROGRAMS)
 
 am_mui_OBJECTS = mui-main.$(OBJEXT) mui-mix.$(OBJEXT) \
 	mui-mainwindow.$(OBJEXT) mui-hierview.$(OBJEXT) \
-	mui-iopadview.$(OBJEXT) mui-i2cview.$(OBJEXT) \
-	mui-callbacks.$(OBJEXT) mui-support.$(OBJEXT) \
-	mui-settings.$(OBJEXT)
+	mui-connview.$(OBJEXT) mui-iopadview.$(OBJEXT) \
+	mui-i2cview.$(OBJEXT) mui-callbacks.$(OBJEXT) \
+	mui-support.$(OBJEXT) mui-settings.$(OBJEXT)
 mui_OBJECTS = $(am_mui_OBJECTS)
 mui_DEPENDENCIES =
 mui_LDFLAGS =
@@ -150,6 +151,7 @@ DEFAULT_INCLUDES =  -I. -I$(srcdir) -I.
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/mui-callbacks.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/mui-connview.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/mui-hierview.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/mui-i2cview.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/mui-iopadview.Po \
@@ -227,6 +229,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-callbacks.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-connview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-hierview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-i2cview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mui-iopadview.Po@am__quote@
@@ -345,6 +348,28 @@ mui-hierview.obj: hierview.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/mui-hierview.Po' tmpdepfile='$(DEPDIR)/mui-hierview.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mui-hierview.obj `if test -f 'hierview.c'; then $(CYGPATH_W) 'hierview.c'; else $(CYGPATH_W) '$(srcdir)/hierview.c'; fi`
+
+mui-connview.o: connview.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mui-connview.o -MD -MP -MF "$(DEPDIR)/mui-connview.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o mui-connview.o `test -f 'connview.c' || echo '$(srcdir)/'`connview.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/mui-connview.Tpo" "$(DEPDIR)/mui-connview.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/mui-connview.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='connview.c' object='mui-connview.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/mui-connview.Po' tmpdepfile='$(DEPDIR)/mui-connview.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mui-connview.o `test -f 'connview.c' || echo '$(srcdir)/'`connview.c
+
+mui-connview.obj: connview.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mui-connview.obj -MD -MP -MF "$(DEPDIR)/mui-connview.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o mui-connview.obj `if test -f 'connview.c'; then $(CYGPATH_W) 'connview.c'; else $(CYGPATH_W) '$(srcdir)/connview.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/mui-connview.Tpo" "$(DEPDIR)/mui-connview.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/mui-connview.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='connview.c' object='mui-connview.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/mui-connview.Po' tmpdepfile='$(DEPDIR)/mui-connview.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mui-connview.obj `if test -f 'connview.c'; then $(CYGPATH_W) 'connview.c'; else $(CYGPATH_W) '$(srcdir)/connview.c'; fi`
 
 mui-iopadview.o: iopadview.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mui_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mui-iopadview.o -MD -MP -MF "$(DEPDIR)/mui-iopadview.Tpo" \
