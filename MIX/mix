@@ -1,0 +1,15 @@
+#!/bin/sh
+
+#
+# UNIX wrapper for mix_0.pl ...
+#
+
+# Load a perl module ..
+if [ -r /tools/Modules/init/sh ]; then
+	. /tools/Modules/init/sh
+	module load perl
+fi
+
+perl mix_0.pl ${1+"$@"}
+
+#!End
