@@ -10,25 +10,21 @@
 \setlength{\topmargin}{-18mm}
 
 
-\usepackage[OT2,T1]{fontenc}
+%\usepackage[OT2,T1]{fontenc}
 \usepackage[latin1]{inputenc}
 \usepackage{color}
 %\usepackage{supertabular}
 %\usepackage{epsfig}
 \usepackage{graphicx}
-\usepackage{helvet}
+
+
 
 \definecolor{brown}{rgb}{0.55,0.32,0.23}
 \definecolor{pink}{rgb}{0.79,0.43,0.79}
 \definecolor{orange}{rgb}{1,0.76,0.24}
 
-
 %\usepackage{aaai}
-%\usepackage{times}
 
-%\title{MIX - Micronas Interconnect Specification Expander}
-%\author{I2C - Specification}
-%\date{6.10.2003}
 
 \begin{document}
 
@@ -49,7 +45,7 @@
 \raggedright
 
 \section{General}
-The I2C sheet is one more category of input specification. It's content describes I2C Register-blocks and Register connections to Signals of the design core. Signal-names can be used directly because MIX internal uses global signals. By default a new defined Register-block is bound to {\tt TOPLEVEL} (default Language: {\tt VHDL}), this could be changed by adding the Register-blocks Instance manual into the {\tt HIER}-Sheet. If no Instance is defined in {\tt HIER}-Sheet, {\tt MIX} adds this definition interal (Name: {\tt iic_if_$<$interface$>$}).
+The I2C sheet is one more category of input specification. It's content describes I2C Register-blocks and Register connections to Signals of the design core. Signal-names can be used directly because MIX internal uses global signals. By default a new defined Register-block is bound to {\tt TOPLEVEL} (default Language: {\tt VHDL}), this could be changed by adding the Register-blocks Instance manual into the {\tt HIER}-Sheet. If no Instance is defined in {\tt HIER}-Sheet, {\tt MIX} adds this definition interal (Name: {\tt iic\_if\_$<$interface$>$}).
 
 \section{I2C-Sheet details}
 The following table describes MIX I2C's header-keywords:
@@ -101,6 +97,8 @@ The following screenshots are showing a small part of  FRCA's I2C sheet. This se
 \includegraphics[scale=0.5]{images/FRCA_iic_part1.jpg}\newline
 \newline
 \includegraphics[scale=0.5]{images/FRCA_iic_part2.jpg}\newline
+\newline
+\includegraphics[scale=0.6]{images/FRCA_iic_block.jpg}\newline
 \newpage
 VHDL Architechture:\newline
 \includegraphics[scale=0.9]{images/FRCA_part_entity.jpg}\newline
@@ -109,7 +107,7 @@ VHDL Entity (uncomplete):\newline
 \includegraphics[scale=0.9]{images/FRCA_part0_arch.jpg}\newline
 \newline
 \includegraphics[scale=0.9]{images/FRCA_part1_arch.jpg}\newline
-This part of the "\begin{tt}cc0\end{tt}" Architechture only shows the Sub-Address 200 (Hex: \begin{tt}c8\end{tt}). As you can see the Interface-name (or Domainname) will become the Architechture-name while the Subaddress is used to identify the Sub-Registerblock. The Portmap describes connections as told in the I2C Sheet. In the Generic Map you can some I2C specific definitions as "\begin{tt}ra\_g\end{tt}" which hold the Registers Address as "\begin{tt}ur\_g\end{tt}" defines the Port-Range.\newline
+This part of the "\begin{tt}cc0\end{tt}" Architechture only shows the Sub-Address 200 (Hex: \begin{tt}c8\end{tt}). As you can see the Interface-name (or Domainname) will become the Architechture-name while the Subaddress is used to identify the Sub-Registerblock. The Portmap describes connections as told in the I2C Sheet. In the Generic Map you can some I2C specific definitions as "\begin{tt}ra\_g\end{tt}" which hold the Registers Address as "\begin{tt}ur\_g\end{tt}" defines the Port-Range.
 
 
 \end{document}
