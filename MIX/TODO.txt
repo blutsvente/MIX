@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.24 2003/10/29 12:23:27 wig Exp $
+# $Id: TODO.txt,v 1.25 2003/11/10 09:28:38 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -21,6 +21,14 @@ TODOs:
 
 Probleme:
 
+- 20031106a/Req: Compare generated entities against existing one
+
+    e.g. take all leave entities and try to find appropriate source files in the
+    current directory or in a given "models" directory
+    Ev. use the VHDL-Parser Perl-Package
+
+    Req: wig, mpit
+    Prio: medium
 
 - 20031008g/Bug: -import leaves created file open
 
@@ -257,6 +265,37 @@ is defined.
 ##########################################################
 DONE: +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ##########################################################
+
+
+- 20031107a/Req: Create dummy signals for open bus port splices in Verilog.
+    Elaborate stage fails when it sees 1'bz as input to output port :-(
+    
+    Req: mpallas
+    Prio: high
+    Status: solved wig20031110
+
+    
+- 20031105a ExCEL: Check ALL cells if they are to large (::comment, ::descr ...)
+    Req: mpallas
+    Prio: high
+    Resolved: wig20031106
+    
+- 20031104a Generated port names/Verilog
+  - disable _N_N  (make configurable)
+        - assume only this signal(portion), flag duplicates!
+        - always generate full width bus, assign open(s)
+  - check why assign and wire are generated (example from mpallas)
+  Examples: MDED-Goldtl.xls
+  
+  gdmack_io_0_0   (only signal, no bus!)
+    Reason: "0" ne "" -> now assume single bit bus 0 downto 0 is a bit, not a bus.
+    
+  assign cadc_clk = cadc_clk;
+  Reason: internal port name still ahs the %EMPTY% in it ... needs early expansion!
+
+    Req: mpallas
+    Prio: high
+    Resolved: wig20031106
 
 - 20031015a/Doc: document macro processing
 

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.27 $                                             |
+# | Revision:   $Revision: 1.28 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/10/23 12:08:25 $                                   |
+# | Date:       $Date: 2003/11/10 09:28:39 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.27 2003/10/23 12:08:25 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.28 2003/11/10 09:28:39 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.28  2003/11/10 09:28:39  wig
+# | Adding testcase for verilog: create dummy open wires
+# |
 # | Revision 1.27  2003/10/23 12:08:25  wig
 # | added counter for macro evaluation cmacros
 # |
@@ -179,7 +182,7 @@ use Tree::DAG_Node; # tree base class
 use Regexp::Common; # Needed for import/init functions: parse VHDL ...
 
 use Micronas::MixUtils qw( mix_store db2array write_excel write_delta_excel
-                           close_open_workbooks mix_list_econf %EH );
+                           close_open_workbooks mix_list_econf %EH replace_mac );
 
 use Micronas::MixChecker;
 
@@ -211,11 +214,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.27 2003/10/23 12:08:25 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.28 2003/11/10 09:28:39 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.27 $';
+my $thisrevision   =      '$Revision: 1.28 $';
 
-# | Revision:   $Revision: 1.27 $   
+# | Revision:   $Revision: 1.28 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -844,7 +847,7 @@ sub merge_inst ($%) {
             }
         } else {
         # Overwrite data ??? Is that always the rigth way to go
-            if ( $data{$i} ) {    #BAD: defined( $data{$i} ) ) {
+            if ( $data{$i} ) {
                 $hierdb{$name}{$i} = $data{$i};
             }
         }
@@ -884,6 +887,13 @@ sub parse_conn_init ($) {
 
         add_conn( %{$r_conn->[$i]} );
     }
+
+    #
+    # Add some internal/meta signals:
+    #
+
+    # add_conn( '::name' => "%DUMMY%", );
+
 }
 
 sub add_conn (%) {
@@ -1513,8 +1523,26 @@ sub merge_conn($%) {
             }
         } elsif ( $i =~ /^\s*::(gen|comment|descr)/o ) {
             # Accumulate generator infos, comments and description
-            if ( $data{$i} ) { #
-                $conndb{$name}{$i} .= $data{$i};
+            if ( $data{$i} and $data{$i} ne '%EMPTY%' ) {
+                #wig20031106: try to keep comments short ....
+                #   check if $data{$i} is part of $conndb{$name}{$i}
+                my $pos = rindex( $conndb{$name}{$i}, $data{$i} );
+                if ( $pos >= 0 and $EH{'output'}{'generate'}{'fold'} =~ m,signal,io ) {
+                    my $text = substr( $conndb{$name}{$i}, $pos );
+                    my $occurs = 0;
+                    $text = substr( $text, length( $data{$i} )); # Take rest of text ...
+                    if ( $text =~ m/^\s*\(X(\d+)\)/ ) {
+                        $occurs = $1 + 1;
+                        $text =~ s/^\s*\(X\d+\)/ (X$occurs)/;
+                    } else {
+                        $occurs = 2;
+                        $text = " (X2)" . $text;
+                    }
+                    # Put back text ...
+                    substr( $conndb{$name}{$i}, $pos ) = $data{$i} . $text;
+                } else {
+                    $conndb{$name}{$i} .= $data{$i};
+                }
             }
         } else {
             #TODO: Overwrite data ??? Is that always the right way to go
@@ -2933,7 +2961,7 @@ sub _add_port ($$$$$$$$) {
         unless ( defined $sf ) { $sf = ""; };
         unless ( defined $st ) { $st = ""; };
 
-        generate_port( $signal, $inst, $do, $sf, $st, $top_flag );
+        generate_port( $signal, $inst, $do, $sf, $st, $top_flag ); # Full connect, always!
  
         $tw = { $do => "A::" };
         $tm = $do;
@@ -3084,12 +3112,17 @@ sub _add_port ($$$$$$$$) {
                 # Now generate
                 $start = $ub-$lb;
                 my $m = "0";
+                my %full = (); # if generate port does a full connect -> remember that
                 my %bv = ( 'i' => "B::", 'o' => "B::", 'c' => "B::" );
                 for my $b ( reverse( 0..($ub-$lb) ) ) {
                     if ( substr( $p[$b], 0, 1 ) ne $m ) { # Change
-                        if ( $m ) {
-                            generate_port( $signal, $inst, $m, $start + $lb , $b + 1 + $lb, $top_flag );
+                        if ( $m and not exists( $full{$m} ) ) {
+                            if ( generate_port( $signal, $inst, $m, $start + $lb , $b + 1 + $lb, $top_flag ) ) {
+                                # Attached a full port!!
+                                #TODO: Check if there are conflicts! Dangerous!
+                                $full{$m} = 1;
                             }
+                        }
                         $m = substr( $p[$b], 0, 1 );
                         $start = $b;
                     }
@@ -3111,14 +3144,20 @@ sub _add_port ($$$$$$$$) {
                         $bv{c} .= "0";
                     }
                 }
-                if ( $m ) {
-                    generate_port( $signal, $inst, $m, $start + $lb , $lb, $top_flag );
+                if ( $m and not exists( $full{$m} ) ) {
+                    if ( generate_port( $signal, $inst, $m, $start + $lb , $lb, $top_flag ) ) {
+                        # Attached a full port!!
+                        $full{$m} = 1;
+                    }
                 }
                 
                 #TODO: Create tw for i and o, return hash
                 $tm = "";
                 for my $t ( sort( keys( %bv ) ) ) {
-                    if ( $bv{$t} =~ m,^B::0+$, ) {
+                    if ( $full{$t} ) {
+                        $bv{$t} = 'A::';
+                        $tm .= $t;
+                    } elsif ( $bv{$t} =~ m,^B::0+$, ) {
                         delete( $bv{$t} );
                     } elsif( $bv{$t} =~ m,^B::$t+$, ) {
                         $bv{$t} = 'A::';
@@ -3145,6 +3184,8 @@ sub _add_port ($$$$$$$$) {
 #
 # Generate an port for intermediate hierachy
 #
+#wig20031106: consider the new configuration options:
+#  $EH{'port'}{'generate'}{'name'} and {'width'} ...
 sub generate_port ($$$$$$) {
     my $signal = shift;
     my $inst = shift;
@@ -3156,32 +3197,83 @@ sub generate_port ($$$$$$) {
     my %t = ();
     my $post = $EH{'postfix'}{'POSTFIX_PORT_GEN'};
     my $ftp = "";
+    my $full = 0;
 
+    my $h = $conndb{$signal}{'::high'};
+    my $l = $conndb{$signal}{'::low'};
     # Get postfix for generated ports (special macro!):
     if ( $post =~ m,%IO%,o ) {
         $post =~ s/%IO%/$m/;
     }
 
-
-    # Unless high and low match $t and $f, we need to add a _F_T 
-    if ( $post =~ m,%FT%,o or
-            $f ne $conndb{$signal}{'::high'} or
-            $t ne $conndb{$signal}{'::low'} ) {
-        $ftp = ( $f !~ m,^\s*$,o ) ? ( "_" . $f ) : "";
-        $ftp .= ( $t !~ m,^\s*$,o ) ? ( "_" . $t ) : "";
-        $post =~ s,%FT%,,;
+    # If width is max -> use full signal to connect!
+    #TODO: Check if upper level recognized that ...
+    if ( $EH{'port'}{'generate'}{'width'} =~ m,max,io ) {
+        $post = "";
+        # Do some checks ....
+        if ( $f =~ m,^\d+$,o and $f ) { # $f is digit and > 0!
+            if ( $conndb{$signal}{'::high'} =~ m,^\s*\d+\s*$,o ) {
+                if ( $f > $h ) {
+                    logwarn( "WARNING: upper bound $f of generated port for signal $signal at instance $inst greater then signal upper bound!" );
+                    $EH{'sum'}{'warnings'}++;
+                }
+            } elsif ( $h =~ m,\s*$^,o ) { # Signal has no width
+                    logwarn( "WARNING: upper bound $f of generated port for signal $signal at instance $inst greater then signal upper bound!" );
+                    $EH{'sum'}{'warnings'}++;
+            }
+        } elsif ( $f =~ m,\S+,o and $f ne $h ) {
+            logwarn( "WARNING: upper bound $f of generated port for signal $signal at instance $inst not matching signal definition!" );
+                    $EH{'sum'}{'warnings'}++;
+        }
+        if ( $t =~ m,^\d+$,o and $t ) { # $f is digit and > 0!
+            if ( $l =~ m,^\s*\d+\s*$,o ) {
+                if ( $f < $l ) {
+                    logwarn( "WARNING: lower bound $t of generated port for signal $signal at instance $inst smaller then signal lower bound!" );
+                    $EH{'sum'}{'warnings'}++;
+                }
+            } elsif ( $l =~ m,\s*$^,o ) { # Signal has no width
+                    logwarn( "WARNING: lower bound $t of generated port for signal $signal at instance $inst smaller then signal lower bound!" );
+                    $EH{'sum'}{'warnings'}++;
+            }
+        } elsif ( $t =~ m,\S+,o and $t ne $l ) {
+            logwarn( "WARNING: lower bound $t of generated port for signal $signal at instance $inst not matching signal definition!" );
+                    $EH{'sum'}{'warnings'}++;
+        }
+        # Simply take signal width as port width:
+        $f = $h;
+        $t = $l;
+        $full = 1;
+    } else {
+        # Create port with minimum required number of bits ..
+        # Unless high and low match $t and $f, we need to add a _F_T
+        if ( $post =~ m,%FT%,o ) {
+            $ftp = ( $f !~ m,^\s*$,o ) ? ( "_" . $f ) : "";
+            $ftp .= ( $t !~ m,^\s*$,o ) ? ( "_" . $t ) : "";
+            $post =~ s,%FT%,,;
+        } elsif ( $f ne $h or $t ne $l ) {
+        # Special: if signal is only one bit (no bus!) -> port should be one bit wide, too
+            if ( ( $h eq "" or $h eq "0" ) and ( $l eq "" or $l eq "0" ) and
+             ( $f eq "" or $f eq "0" ) and ( $t eq "" or $t eq "0" ) ) {
+                $ftp = "";
+            } else {
+                $ftp = ( $f !~ m,^\s*$,o ) ? ( "_" . $f ) : "";
+                $ftp .= ( $t !~ m,^\s*$,o ) ? ( "_" . $t ) : "";
+            }
+        }
     }
     
     # Top level will get no postfix!
-    if ( $top_flag =~ m,top,io and $EH{'output'}{'generate'}{'inout'} =~ m,noxfix,io ) {
+    if ( ( $top_flag =~ m,top,io and $EH{'output'}{'generate'}{'inout'} =~ m,noxfix,io )
+         or $EH{'port'}{'generate'}{'name'} =~ m,signal,io ) {
         $t{'port'} = $signal;
-        #TODO: Check if port name is unique?
+        #TODO: Check if port name is unique? But how should that work?
     } elsif ( $top_flag =~ m,top,io ) {
         $t{'port'} = $signal . $ftp . $post;
     } else {
         $t{'port'} = $EH{'postfix'}{'PREFIX_PORT_GEN'} . $signal .
                 $ftp . $post;
     }
+
     $t{'inst'} = $inst;
 
     if ( $t =~ m,^\s*$, ) {
@@ -3211,9 +3303,13 @@ sub generate_port ($$$$$$) {
     } else {
         $m = '::in';
     }
+
+    # To avoid issues, get rid of %EMPTY% in port name now
+    $t{'port'} = replace_mac( $t{'port'}, $EH{'macro'} );
+    
     push( @{$conndb{$signal}{$m}},  { %t } ); # Push on conndb array ...
 
-    return;
+    return $full;
 }
 
 #
@@ -3419,12 +3515,14 @@ sub __parse_mac ($$) {
                 my $r = $rb->{$1};
                 $$ra =~ s/%[\w:]+?%/$r/;
             } else {
-                logwarn("Cannot find macro $1 to replace!");
+                logwarn("WARNING: Cannot find macro $1 to replace!");
+                $EH{'sum'}{'warnings'}++;
             }
         } elsif( exists( $ehmacs->{$mac} ) ) {
             $$ra =~ s/$mac/$ehmacs->{$mac}/;
         } else {
-            logwarn("Cannot locate replacement for $mac in data!");
+            logwarn("WARNING: Cannot locate replacement for $mac in data!");
+            $EH{'sum'}{'warnings'}++;
         }
     }
     return;

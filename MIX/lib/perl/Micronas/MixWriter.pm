@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.31 $                                             |
+# | Revision:   $Revision: 1.32 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/10/23 12:13:17 $                                   |
+# | Date:       $Date: 2003/11/10 09:30:58 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.31 2003/10/23 12:13:17 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.32 2003/11/10 09:30:58 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.32  2003/11/10 09:30:58  wig
+# | Adding testcase for verilog: create dummy open wires
+# |
 # | Revision 1.31  2003/10/23 12:13:17  wig
 # | minor modifications (typos ...)
 # |
@@ -194,9 +197,9 @@ sub mix_wr_unsplice_port ($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.31 2003/10/23 12:13:17 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.32 2003/11/10 09:30:58 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.31 $';
+my $thisrevision   =      '$Revision: 1.32 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1659,6 +1662,7 @@ sub gen_instmap ($;$$) {
     
     my $map = "";
     my $gmap = "";
+    my $dummies = []; # Reference 
     
     my @in = ();
     my @out = ();
@@ -1682,7 +1686,9 @@ sub gen_instmap ($;$$) {
     #wig20030808: Adding Verilog port splice collector .. for mpallas
     #TODO: Shouldn't that be integrated into the print_conn_matrix function?
     if ( $lang =~ m,^veri,io and $map =~ m,\]\(, ) {
-        $map = mix_wr_unsplice_port( $map, $lang, $tcom );
+        # Get a better map and a list of dummy signals (if needed for open port splices)
+        # Will add dummies to out signals ...
+        ($map, $dummies) = mix_wr_unsplice_port( $map, $lang, $tcom );
     }
 
 
@@ -1707,7 +1713,16 @@ sub gen_instmap ($;$$) {
     }
 
     if ( $lang =~ m,^veri,io ) {
+        #!wig20031107: Add dummy signals here (temp.)
+        my $dum = "";
+        if ( scalar( @$dummies ) ) {
+            $dum = join( "\n", map(
+                ( $EH{'macro'}{'%S%'} x 2 .  $_ ),
+                @$dummies
+            )) . "\n";
+        }
         $map =  $EH{'macro'}{'%S%'} x 2 . $tcom . " Generated Instance Port Map for $inst\n" .
+                $dum .
                 $EH{'macro'}{'%S%'} x 2 ."$enty $inst(" .
                 (  $hierdb{$inst}{'::descr'} ? ( $EH{'macro'}{'%S%'} . "// "
                         . $hierdb{$inst}{'::descr'} ) : "" ) .
@@ -1717,14 +1732,14 @@ sub gen_instmap ($;$$) {
                 $gmap .
                 $EH{'macro'}{'%S%'} x 2 . $tcom . " End of Generated Instance Port Map for $inst\n";
     } else {
-        $map =  $EH{'macro'}{'%S%'} x 2 . "-- Generated Instance Port Map for $inst\n" .
+        $map =  $EH{'macro'}{'%S%'} x 2 . $tcom . " Generated Instance Port Map for $inst\n" .
                 $EH{'macro'}{'%S%'} x 2 . $inst . ": " . $enty .
-                (  $hierdb{$inst}{'::descr'} ? ( $EH{'macro'}{'%S%'} . "-- " .
+                (  $hierdb{$inst}{'::descr'} ? ( $EH{'macro'}{'%S%'} . $tcom . " " .
                         $hierdb{$inst}{'::descr'} ) : "" ) .
                 "\n" .
                 $gmap .
                 $map .
-                $EH{'macro'}{'%S%'} x 2 . "-- End of Generated Instance Port Map for $inst\n";
+                $EH{'macro'}{'%S%'} x 2 . $tcom . " End of Generated Instance Port Map for $inst\n";
     }
                 
     return( $map, \@in, \@out);
@@ -1739,68 +1754,89 @@ sub gen_instmap ($;$$) {
 # of doing it backwards ...
 #
 # Currently only works for Verilog ...
+my $dummynr = 0; # Count dummy ports ....
 sub mix_wr_unsplice_port ($$$) {
     my $map = shift;
     my $lang = shift;
     my $tcom = shift;
     
- 
-        my @out = ();
-        my %col = ();
-        # Read in spliced port maps ...
-        for my $l ( split( "\n", $map ) ) {
-            # ($RE{balanced}{-parens=>'()'})
-            if ( $l =~ m!(\s*)\.(\w+)
-                        ($RE{balanced}{-parens=>'[]'})   # [(\d+)(:(\d+))]
-                         \s*
-                        ($RE{balanced}{-parens=>'()'})   # (.*?)
-                        ,(.*)                                       # Trailing comments
-                        !x ) {
-                # s.th. to collect ...
-                my ( $pre, $p, $hl, $s, $c ) = ( $1, $2, $3, $4, $5 );
-                my $hb = -2;
-                my $lb = -1;
-                if ( $hl =~ m,\[(\d+)(:(\d+))?\], ) {
+    my @out = ();
+    my %col = ();
+    my @dummies = ();
+    # Read in spliced port maps ...
+    for my $l ( split( "\n", $map ) ) {
+        # ($RE{balanced}{-parens=>'()'})
+        if ( $l =~ m!(\s*)\.(\w+)
+                    ($RE{balanced}{-parens=>'[]'})   # [(\d+)(:(\d+))]
+                    \s*
+                    ($RE{balanced}{-parens=>'()'})   # (.*?)
+                    ,(.*)                                       # Trailing comments
+                    !x ) {
+            # s.th. to collect ...
+            my ( $pre, $p, $hl, $s, $c ) = ( $1, $2, $3, $4, $5 );
+            my $hb = -2;
+            my $lb = -1;
+            if ( $hl =~ m,\[(\d+)(:(\d+))?\], ) {
                     $hb = $1;
                     $lb = ( defined( $3 ) ? $3 : $hb );
-                } # else {
-                #    logerr( "FATAL: Died of unexpected branch in collect_spliced_port" );
-                #    exit 1;
-                # }
-                if ( $s =~ m,\((.+)\), ) {
-                    $s = $1;
-                } else {
-                    # Open port .... put enough space in place 
-                    # logerr( "FATAL: Died of unexpected branch in collect_spliced_port" );
-                    # exit 1;
-                    # Add a dummy signal (use w'bz for now ... )
-                    #TODO: What if $hb and $lb are non numeric?
-                    my $w = $hb - $lb + 1;
-                    $s = $w . "'bz"; # Comes from open ports ....
-                }
-                push( @{$col{$p}}, [ $hb, $lb , $pre, $s, $c ] );
-            } else {
-                push( @out, $l );
             }
+            # Catch connected signal(s)
+            if ( $s =~ m,\((.+)\), ) {
+                    $s = $1;
+            } else {
+                # Open port .... put enough space in place 
+                # Add a dummy signal (use w'bz for now ... )
+                #   as this does not work as expected, we invent a dummy signal
+                #   conf{workaround.verilog} is set to dummyopen
+                # If bounds ($hb, $lb) are non numeric -> cry for help ...
+                if ( $hb =~ m,^\s*\d+\s*$,o and
+                     $lb =~ m,^\s*\d+\s*$,o ) {
+                    my $w = $hb - $lb + 1;
+                    if ( $EH{'output'}{'generate'}{'workaround'}{'verilog'} =~ m,dummyopen,io ) {
+                        $s = "mix_dmy_open_" . $dummynr++; # Create a dummy signal and attach this bit to it ...
+                        my $wid = ( $w > 1 ) ? ( "[" . $w . ":0] " ) : $EH{'macro'}{'%S%'};
+                        push( @dummies, "wire " . $wid . $s . "; " . $tcom .
+                                  "__I_OPEN_DUMMY" ); #   wire [N:0] mix_dmy_open_N; // __I_DUMMY_OPEN
+                    } else {
+                        $s = $w . "'bz"; # Comes from open ports ....
+                    }
+                } else {
+                    if ( $EH{'output'}{'generate'}{'workaround'}{'verilog'} =~ m,dummyopen,io ) {
+                        $s = "mix_dmy_open_" . $dummynr++; # Create a dummy signal and attach this bit to it ...
+                        my $wid = "[" . $hb . ":" . $lb . "] ";
+                        push( @dummies, "wire " . $wid . $s . "; " . $tcom .
+                                  "__I_DUMMY_OPEN, __I_NAN_BOUNDS" ); #   wire [N:0] mix_dmy_open_N; // __I_DUMMY_OPEN
+                    } else {
+                        logwarn( "WARNING: Cannot determine width of open port splice! Set marker! Please fix!" );
+                        $EH{'sum'}{'warnings'}++;
+                        $s = "__W_NANPORTSPLICE_WIDTH[" . $hb . ":" . $lb .
+                                "]" . "'bz"; # Comes from open ports ....
+                    }
+                }
+            }
+            push( @{$col{$p}}, [ $hb, $lb , $pre, $s, $c ] );
+        } else {
+            push( @out, $l );
         }
-        # We found collectable ports -> scan through them topdown and
-        # write out better format
-        my $flag = 0;
-        for my $p ( keys( %col ) ) {
-            my @arr=();
-            my $nn = -1;
-            for my $n ( @{$col{$p}} ) {
-                # Check bounds for this port
-                $nn++;
-                if ( $n->[0] < $n->[1] ) {
-                    logwarn( "ERROR: Cannot collect spliced port $p, bad bound order!");
-                    $EH{'sum'}{'errors'}++;
+    }
+    # We found collectable ports -> scan through them topdown and
+    # write out better format
+    my $flag = 0;
+    for my $p ( keys( %col ) ) {
+        my @arr=();
+        my $nn = -1;
+        for my $n ( @{$col{$p}} ) {
+            # Check bounds for this port
+            $nn++;
+            if ( $n->[0] < $n->[1] ) {
+                logwarn( "ERROR: Cannot collect spliced port $p, bad bound order!");
+                $EH{'sum'}{'errors'}++;
                     $flag = 1;
                     # Print out as-is
                     last;
-                }
-                # Create usage vector ...
-                for my $b ( $n->[1] .. $n->[0] ) {
+            }
+            # Create usage vector ...
+            for my $b ( $n->[1] .. $n->[0] ) {
                     if ( defined ( $arr[$b] ) ) {
                         logwarn( "ERROR: Duplicate connection at spliced port $p!" );
                         $flag = 1;
@@ -1808,14 +1844,14 @@ sub mix_wr_unsplice_port ($$$) {
                     } else {
                         $arr[$b] = $nn;
                     }
-                }
             }
-            # Finally: build port string, right to left
-            my $t = "";
+        }
+        # Finally: build port string, right to left
+        my $t = "";
             my @c = "";
-            unless( $flag ) {
-                my $start = -1;
-                for my $b ( 0..(scalar(@arr) - 1) ) {
+        unless( $flag ) {
+            my $start = -1;
+            for my $b ( 0..(scalar(@arr) - 1) ) {
                     if ( defined( $arr[$b] ) and $arr[$b] ne $start ) {
                         my $data = $col{$p}[$arr[$b]];
                         my $es = $data->[3];
@@ -1836,8 +1872,8 @@ sub mix_wr_unsplice_port ($$$) {
                         $flag = 1;
                         last;
                     }
-                }
             }
+        }
             #TODO: How can we check if the port width equals all found bits?
             # $t =~ s,^ & ,,;
             $t =~ s#^,##;
@@ -1876,7 +1912,7 @@ sub mix_wr_unsplice_port ($$$) {
         }
         # Replace the map ....
         $map = join( "\n", sort( @out ) ) . "\n";
-        return $map;
+        return $map, \@dummies;
 }
 
 #
@@ -2422,9 +2458,15 @@ sub print_conn_matrix ($$$$$$$$;$) {
             $tm{'%::outinst%'} .= " " . $i->{'inst'};
         }
         $descr = replace_mac( $EH{'output'}{'generate'}{'portdescr'}, \%tm );
-        if ( $descr ) {
+        if ( $descr and $descr ne '%EMPTY%' ) {
             $descr = " " . $tcom . " " . $descr;
         }
+        if ( $EH{'output'}{'generate'}{'portdescrlength'} =~ m,^(\d+)$, ) { # Limit lenght
+            if ( length( $descr)  > $1 ) {
+                $descr = substr( $descr, 0, $1 ) . "..."; # Cut
+            }
+        }
+        $descr =~ s,$tcom\s+$tcom,$tcom,; #Remove duplicate comments ...
     }
   
     #

@@ -1,6 +1,45 @@
+2003-10-29  wig
+	* TODO.txt:
+	* doc/parts/simple/mix_simple.xls:
+	* doc/parts/simple/mix_simple_block.xls:
+	* doc/parts/simple/mix_simple_conn.xls:
+	* doc/parts/simple/mix_simple_hier.xls:
+	* doc/parts/simple/mix_simple_macro.xls:
+	* howto/howto-a.vhd:
+	* howto/howto-c.vhd:
+	* howto/howto-debug.bat:
+	* howto/howto-e.vhd:
+	* howto/howto-update.bat:
+	* howto/howto.bat:
+	* howto/howto.pld:
+	* howto/mix.cfg:
+	* vhdl_simple_diff.pl:
+		Finally added more documentation (macro + generators)
+
+	* t/case.xls:
+	* t/sigport.xls:
+		Improved two testcases
+
+	* howto/howto-a.vhd:
+	* howto/howto-c.vhd:
+	* howto/howto-debug.bat:
+	* howto/howto-e.vhd:
+	* howto/howto-update.bat:
+	* howto/howto.bat:
+	* howto/howto.pld:
+	* howto/mix.cfg:
+		Changing type of howto examples from bin to text
+
 2003-10-23  wig
 	* lib/perl/Micronas/MixWriter.pm:
 		minor modifications (typos ...)
+
+	* mix_doc/MIX_Development_doc.log:
+	* mix_doc/MIX_Userreference.aux:
+	* mix_doc/MIX_Userreference.log:
+	* mix_doc/MIX_Userreference.tex:
+	* mix_doc/MIX_Userreference.toc:
+		start
 
 	* lib/perl/Micronas/MixParser.pm:
 	* lib/perl/Micronas/MixUtils.pm:
@@ -15,8 +54,69 @@
 	* t/bitsplice/mix_0.pl.out:
 		added strip
 
+	* mix_doc/MIX_Development_doc.aux:
+	* mix_doc/MIX_Development_doc.log:
+	* mix_doc/MIX_Development_doc.tex:
+	* mix_doc/MIX_Development_doc.toc:
+	* mix_doc/MIX_Userreference.log:
+	* mix_doc/README:
+		upload
+
 	* mix_0.pl:
+	* mix_doc/MIX_Development_doc.dvi:
+	* mix_doc/MIX_Development_doc.log:
+	* mix_doc/MIX_Development_doc.log:
+	* mix_doc/MIX_Development_doc.pdf:
+	* mix_doc/MIX_Development_doc.pdf:
+	* mix_doc/MIX_Userreference.dvi:
+	* mix_doc/MIX_Userreference.log:
+	* mix_doc/MIX_Userreference.log:
+	* mix_doc/mix_userreference.pdf:
+	* mix_doc/mix_userreference.pdf:
 		.
+
+2003-10-22  abauer
+	* mix_doc/MIX_Development_doc.aux:
+	* mix_doc/MIX_Development_doc.log:
+	* mix_doc/MIX_Development_doc.tex:
+	* mix_doc/MIX_Development_doc.toc:
+	* mix_doc/MIX_Userreference.log:
+		added additional informations
+
+	* mix_doc/MIX_Development_doc.tex:
+		modified mix_dev
+
+	* mix_doc/README:
+		*** empty log message ***
+
+	* mix_doc/MIX_Development_doc.log:
+	* mix_doc/MIX_Userreference.aux:
+	* mix_doc/MIX_Userreference.log:
+	* mix_doc/MIX_Userreference.toc:
+		made images binary
+
+	* mix_doc/MIX_Development_doc.log:
+	* mix_doc/MIX_Userreference.aux:
+	* mix_doc/MIX_Userreference.log:
+	* mix_doc/MIX_Userreference.toc:
+		- fixed binary files;
+		- added Readme;
+
+2003-10-20  abauer
+	* mix_doc/MIX_Development_doc.aux:
+	* mix_doc/MIX_Development_doc.dvi:
+	* mix_doc/MIX_Development_doc.log:
+	* mix_doc/MIX_Development_doc.pdf:
+	* mix_doc/MIX_Development_doc.tex:
+	* mix_doc/MIX_Development_doc.toc:
+	* mix_doc/MIX_Userreference.aux:
+	* mix_doc/MIX_Userreference.dvi:
+	* mix_doc/MIX_Userreference.log:
+	* mix_doc/MIX_Userreference.tex:
+	* mix_doc/MIX_Userreference.toc:
+	* mix_doc/Makefile:
+	* mix_doc/mix_userreference.pdf:
+		new Mix Documentation in LaTeX
 
 2003-10-14  wig
 	* doc/release_20030605.txt:

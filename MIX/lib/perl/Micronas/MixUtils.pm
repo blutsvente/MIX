@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.32 $                                             |
-# | Author:     $Author: abauer $                                  |
-# | Date:       $Date: 2003/10/29 13:34:49 $                                   |
+# | Revision:   $Revision: 1.33 $                                             |
+# | Author:     $Author: wig $                                  |
+# | Date:       $Date: 2003/11/10 09:30:57 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.32 2003/10/29 13:34:49 abauer Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.33 2003/11/10 09:30:57 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,6 +31,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.33  2003/11/10 09:30:57  wig
+# | Adding testcase for verilog: create dummy open wires
+# |
 # | Revision 1.32  2003/10/29 13:34:49  abauer
 # | .
 # |
@@ -230,11 +233,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.32 2003/10/29 13:34:49 abauer Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.33 2003/11/10 09:30:57 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.32 $';
+my $thisrevision   =      '$Revision: 1.33 $';
 
-# Revision:   $Revision: 1.32 $   
+# Revision:   $Revision: 1.33 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -825,9 +828,16 @@ $ex = undef; # Container for OLE server
 	      'delta' => 0,	    	# allows to use mix.cfg to preset delta mode
 	      'bak' => 0,		# Create backup of output HDL files
 	      'combine' => 0,	# Combine enty,arch and conf into one file, -combine switch
-	      'portdescr' => '%::descr%'	# Definitions for port map descriptions:
+	      'portdescr' => '%::descr%',	# Definitions for port map descriptions:
 		      #   %::descr% (contents of thsi signal's descr. field, %::ininst% (list of load instances),
 		      #   %::outinst% (list of driving instances), %::comment%
+	      'portdescrlength' => 100, # Limit length of comment to 100 characters!
+	      'fold' => 'signal',	# If set to [signal|hier], tries to collect ::comments, ::descr and ::gen
+					# like TEXT_FOO_BAR (X10), if TEXT_FOO_BAR appears several times
+					#TODO: Implement for hier
+	      'workaround' => {
+		    'verilog' => 'dummyopen', # dummyopen := create a dummy signal for open port splices 
+	      },
 	    },	
 	'ext' =>	{   'vhdl' => 'vhd',
 			    'verilog' => 'v' ,
@@ -953,6 +963,14 @@ $ex = undef; # Container for OLE server
 	    PAD_ACTIVE_PU	 	1
 	    PAD_ACTIVE_PD	 	1
 	)
+    },
+    'port' => {
+	'generate' => {   # Options related to generated port names. Please see also inout value
+	    'name' => 'postfix', # Take the postfix definitions: p_mix_SIGNAL_g[io], see descr. there
+				  # signal := take the signal name, not post/prefix!
+	    'width' => 'auto',    # auto := find out number of required connections and generate that
+				  # full := always generate a port for the full signal width
+	},
     },
     'iocell' => {
 	'name' => '%::iocell%_%::pad%',  # generated pad name with prefix and ::pad
@@ -1958,11 +1976,11 @@ sub replace_mac ($$) {
     my $text = shift;
     my $rmac = shift;
 
-    if ( keys( %$rmac ) > 0 ) { # Do nothing if there are no keys defined ...
+    if ( keys( %$rmac ) > 0 ) {
         my $mkeys = "(" . join( '|', keys( %$rmac ) ) . ")";
-    
         $text =~ s/$mkeys/$rmac->{$1}/mg;
     } else {
+	# Do nothing if there are no keys defined ...
         # Strange, why would one call a replace functions without replacement
         # keys ?
         logtrc( "INFO", "Called replace mac without macros for string " .
@@ -2550,7 +2568,8 @@ sub mix_load ($%){
 	    $r_data->{$i} = $r_d->{$i};
 	}
 	else {
-	    logwarn( "Dumped data does not have $i hash!" );
+	    logwarn( "WARNING: Dumped data does not have $i hash!" );
+	    $EH{'sum'}{'warnings'}++;
 	    $flag = undef;
 	}
     }
@@ -2579,9 +2598,13 @@ sub db2array ($$$) {
     my $type = shift;
     my $filter = shift;
     
-    unless( $ref ) { logwarn("called db2array without db argument!"); return }
+    unless( $ref ) { logwarn("WARNING: Called db2array without db argument!");
+	    $EH{'sum'}{'warnings'}++;
+	    return;
+    }
     unless ( $type =~ m/^(hier|conn)/io ) {
-	logwarn("bad db type $type, ne HIER or CONN!");
+	logwarn("WARNING: Bad db type $type, ne HIER or CONN!");
+	$EH{'sum'}{'warnings'}++;
 	return;
     }
     $type = lc($1);
@@ -2633,25 +2656,29 @@ sub db2array ($$$) {
     for my $i ( sort( @keys ) ) {
 	my $split_flag = 0; # If split_flag 
 	for my $ii ( 1..$#o ) { # 0 contains fields to skip
-	    if ( $o[$ii] =~ m/^::(in|out)\s*$/o ) {
+	    #wig20031106: split on all non key fields!
+	    if ( $o[$ii] =~ m/^::(in|out)\s*$/o ) { # ::in and ::out are special
 		$a[$n][$ii-1] = inout2array( $ref->{$i}{$o[$ii]}, $i );
-		if ( length( $a[$n][$ii-1] ) > 1024 ) {
-		    # Line too long! Split it!
-		    $split_flag=1;
-		    my @splits = mix_utils_split_cell( $a[$n][$ii-1] );
-
-		    # Prefill the split data .... key will be added later
-		    #Caveat: order should not matter!!
-		    for my $splitn ( 0..(scalar( @splits ) - 1 )  ) {
-			    $a[$n + $splitn][$ii-1] = $splits[$splitn];
-		    }
-		    $split_flag = scalar( @splits ) if ( $split_flag < scalar( @splits ) );
-		    
-		    # logwarn( "INFO: Splitting large cell for storing to ExCEL" )
-			
-		}
 	    } else {
 		$a[$n][$ii-1] = defined( $ref->{$i}{$o[$ii]} ) ? $ref->{$i}{$o[$ii]} : "%UNDEF_1%";
+	    }
+	    if ( length( $a[$n][$ii-1] ) > 1024 ) {
+		# Line too long! Split it!
+		# Assumes that the cell to be split are accumulated when reused later on.
+		# Will not check if that is not true!
+		if ( $ii - 1 == $primkeynr ) {
+		    logwarn( "WARNING: Splitting key of table: " . substr( $a[$n][$ii-1], 0, 32 ) );
+		    $EH{'sum'}{'warnings'}++;
+		}
+		$split_flag=1;
+		my @splits = mix_utils_split_cell( $a[$n][$ii-1] );
+
+		# Prefill the split data .... key will be added later
+		#Caveat: order should not matter!!
+		for my $splitn ( 0..(scalar( @splits ) - 1 )  ) {
+			$a[$n + $splitn][$ii-1] = $splits[$splitn];
+		}
+		$split_flag = scalar( @splits ) if ( $split_flag < scalar( @splits ) );	
 	    }
 	}
 	#This was a split cell?
@@ -2680,9 +2707,12 @@ sub db2array ($$$) {
 # Input: cell content
 # Return value: @chunks
 #
+# Caveat: if cell does not contain %IOCR% markers, will split somewhere in the middle!
+# Might lead to troubles if read back.
 sub mix_utils_split_cell ($) {
     my $data = shift;
 
+    my $flaga = 0;
     # Get pieces up to 1024 characters, seperated by ", %IOCR%"
     my $iocr = $EH{'macro'}{'%IOCR%'};
     my @chunks = ();
@@ -2690,15 +2720,23 @@ sub mix_utils_split_cell ($) {
 	my $tmp = substr( $data, 0, 1024 ); # Take 1024 chars
 	# Stuff back up to last %IOCR% ...
 	my $ri = rindex( $tmp, $iocr ); # Read back until next <CR>
-	if ( $ri < 1 ) {
-	    logwarn( "WARNING: Cannot split cell!" );
-	    push( @chunks, $data );
-	    return @chunks;
+	if ( $ri <= 0 ) { # No $iocr in string -> split at arbitrary location ??
+	    push( @chunks, $tmp );
+	    substr( $data, 0, 1024 ) = "";
+	    logtrc( "INFO:4",  "INFO: Split cell at arbitrary location: " . substr( $tmp, 0, 32 ) )
+		unless $flaga;
+	    $flaga = 1;
+	} else {
+	    if ( $flaga ) {
+		logwarn( "WARNING: Cell split might produce bad results, iocr detection failed: " .
+		    substr( $chunks[0], 0, 32 ) );
+		$EH{'sum'}{'warnings'}++;
+	    }
+	    substr( $data, 0, $ri ) = ""; # Take away leading chars
+	    push ( @chunks,  substr( $tmp, 0, $ri ) ); # Chunk found ...
 	}
-	substr( $data, 0, $ri ) = ""; # Take away leading chars
-	# .= substr( $tmp, $ri ); # Put back to data ....
-	push ( @chunks,  substr( $tmp, 0, $ri ) ); # Chunk found ...
     }
+    # Rest ...
     push( @chunks, $data );
     return @chunks;
     
@@ -3330,6 +3368,7 @@ sub mix_utils_rgb ($$$) {
 # Otherwise these will get converted to dates :-(
 #
 #wig20030716: add a ' before a trailing ' ...
+#wig20031106: last chance to limit cell size to a sane value ...
 sub mix_utils_mask_excel ($) {
     my $r_a = shift;
 
@@ -3338,6 +3377,12 @@ sub mix_utils_mask_excel ($) {
 	    unless( defined( $ii ) ) {
 		$ii = "";
 		next;
+	    } elsif ( length( $ii ) > 1200 ) {
+	    #wig20031106: allow some more characters (delta mode ...)
+		logwarn( "WARNING: Limit length of cell to save 1200 characters: " .
+			substr( $ii, 0, 32 ) );
+		$EH{'sum'}{'warnings'}++;
+		$ii = substr( $ii, 0, 1200 );
 	    }
 	    if ( $ii =~ m/^[\d.,]+$/ ) {
 		# Put a double ' ' in front of pure digits ...
