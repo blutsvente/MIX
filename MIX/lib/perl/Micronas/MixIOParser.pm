@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / IOParser
 # | Modules:    $RCSfile: MixIOParser.pm,v $ 
-# | Revision:   $Revision: 1.5 $
+# | Revision:   $Revision: 1.6 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2003/07/09 07:52:43 $
+# | Date:       $Date: 2003/07/09 13:01:01 $
 # | 
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.5 2003/07/09 07:52:43 wig Exp $
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.6 2003/07/09 13:01:01 wig Exp $
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -36,10 +36,9 @@
 # |
 # | Changes:
 # | $Log: MixIOParser.pm,v $
-# | Revision 1.5  2003/07/09 07:52:43  wig
-# | Adding first version of Verilog support.
-# | Fixing lots of tiny issues (see TODO).
-# | Adding first release of documentation.
+# | Revision 1.6  2003/07/09 13:01:01  wig
+# | Fixed mix_ioparse functions to get free programmanble pad cell naming,
+# | dito. for iocells
 # |
 # | Revision 1.4  2003/06/05 14:48:01  wig
 # | Releasing alpha IO-Parser
@@ -108,9 +107,9 @@ sub get_select_sigs ($);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixIOParser.pm,v 1.5 2003/07/09 07:52:43 wig Exp $';
+my $thisid		=	'$Id: MixIOParser.pm,v 1.6 2003/07/09 13:01:01 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixIOParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.5 $';
+my $thisrevision   =      '$Revision: 1.6 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -173,30 +172,29 @@ sub mix_iop_iocell ($$) {
     my $r_h = shift;
     my $r_sel = shift;
 
-    my %d = ();
+    my %d = %$r_h; # Copy input data ...
 
     if ( $r_h->{'::pad'} !~ m,^\s*(\d+)\s*$, ) {
         logwarn( "WARNING: bad ::pad entry $r_h->{'::pad'}, only digits allowed!" );
         $EH{'sum'}{'warnings'}++;
         return 1;
-    } else {
-        $d{'::inst'} = $1;
-        $d{'::pad'} = $1;
     }
+    $d{'::inst'} = $EH{'iocell'}{'name'}; # Name is defined by rule configured in %EH
 
     if ( $r_h->{'::iocell'} ) {
-        $d{'::inst'} = $r_h->{'::iocell'} . "_" . $d{'::inst'};
+        # $d{'::inst'} = $r_h->{'::iocell'} . "_" . $d{'::inst'};
         $d{'::entity'} = $r_h->{'::iocell'};
     } else {
-        $d{'::inst'} = $EH{'macro'}{'%IOCELL_TYPE%'} . "_" . $d{'::inst'};
+        $d{'::entity'} = $EH{'macro'}{'%IOCELL_TYPE%'} . "_" . $d{'::inst'};
+        #??? $d{'::inst'} = $EH{'macro'}{'%IOCELL_TYPE%'} . "_" . $d{'::inst'};
     }
 
     $d{'::class'} = $r_h->{'::class'} || '%PAD_CLASS%';
 
-    $d{'::comment'} = $r_h->{'::comment'} || "";
+    # $d{'::comment'} = $r_h->{'::comment'} || "";
 
     # Parent and all other attributes have to come from macros!!
-    add_inst( %d );
+    $d{'::inst'} = add_inst( %d ); # instance might be changed
 
     # Now to the connections ...
     #
@@ -365,17 +363,18 @@ sub mix_iop_getdir ($$) {
 sub mix_iop_padioc ($) {
     my $r_h = shift;
 
-    my %d = ();
+    my %d = %$r_h; #Transfer all data from input field to PAD
+    
     # Pad name
     if ( $r_h->{'::pad'} !~ m,^\s*(\d+)\s*$, ) {
         logwarn( "WARNING: bad ::pad entry $r_h->{'::pad'}, only digits allowed!" );
         return 1;
-    } else {
-        $d{'::inst'} = $EH{'pad'}{'name'}; # %::name% or %PREFIX_PAD_GEN%_%::pad%
-        $d{'::pad'} = $r_h->{'::pad'};
     }
+    # Define name of this pad:
+    $d{'::inst'} = $EH{'pad'}{'name'}; # %::name% or %PREFIX_PAD_GEN%_%::pad%
+    # $d{'::pad'} = $r_h->{'::pad'};
 
-    # Pad entitiy
+    # Pad entitiy is defined by the ::type IO field!
     if ( $r_h->{'::type'} ) {
         $d{'::entity'} = $r_h->{'::type'};
     } else {
@@ -384,6 +383,7 @@ sub mix_iop_padioc ($) {
         $d{'::entity'} = '%PAD_TYPE%';
     }
 
+    # Is "::class" defined?
     $d{'::class'} = $r_h->{'::class'} || '%PAD_CLASS%';
 
     # Some things we add to the ::comments field:

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.17 $                                             |
+# | Revision:   $Revision: 1.18 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/07/09 07:52:44 $                                   |
+# | Date:       $Date: 2003/07/09 13:01:01 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.17 2003/07/09 07:52:44 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.18 2003/07/09 13:01:01 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,10 +31,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
-# | Revision 1.17  2003/07/09 07:52:44  wig
-# | Adding first version of Verilog support.
-# | Fixing lots of tiny issues (see TODO).
-# | Adding first release of documentation.
+# | Revision 1.18  2003/07/09 13:01:01  wig
+# | Fixed mix_ioparse functions to get free programmanble pad cell naming,
+# | dito. for iocells
 # |
 # | Revision 1.16  2003/06/04 15:52:43  wig
 # | intermediate release, before releasing alpha IOParser
@@ -198,11 +197,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.17 2003/07/09 07:52:44 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.18 2003/07/09 13:01:01 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.17 $';
+my $thisrevision   =      '$Revision: 1.18 $';
 
-# | Revision:   $Revision: 1.17 $   
+# | Revision:   $Revision: 1.18 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -792,6 +791,8 @@ $ex = undef; # Container for OLE server
 		    POSTFIX_PORT_GEN	%EMPTY%
 		    PREFIX_PAD_GEN	pad_
 		    POSTFIX_PAD_GEN	%EMPTY%
+		    PREFIX_IOC_GEN	ioc_
+		    POSTFIX_IOC_GEN	%EMPTY%
 		    PREFIX_SIG_INT	s_int_
 		    POSTFIX_SIGNAL	_s
 		    PREFIX_INSTANCE	i_
@@ -812,7 +813,7 @@ $ex = undef; # Container for OLE server
 		)
     },
     'pad' => {
-	'name' => '%::name%',  # generate pad names like
+	'name' => '%PREFIX_PAD_GEN%%::name%',  # generate pad names like
 		    # '%PREFIX_PAD_GEN%_%::pad%'
 	qw(
 	    PAD_DEFAULT_DO	0
@@ -820,6 +821,10 @@ $ex = undef; # Container for OLE server
 	    PAD_ACTIVE_PU	 	1
 	    PAD_ACTIVE_PD	 	1
 	)
+    },
+    'iocell' => {
+	'name' => '%PREFIX_IOC_GEN%%::name%',  # generate iocell names like
+		    # '%PREFIX_PAD_GEN%_%::pad%'
     },
     #
     # Possibly read configuration details from the CONF sheet, see -conf option

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.19 $                                             |
+# | Revision:   $Revision: 1.20 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/07/09 07:52:44 $                                   |
+# | Date:       $Date: 2003/07/09 13:01:01 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.19 2003/07/09 07:52:44 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.20 2003/07/09 13:01:01 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,10 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
-# | Revision 1.19  2003/07/09 07:52:44  wig
-# | Adding first version of Verilog support.
-# | Fixing lots of tiny issues (see TODO).
-# | Adding first release of documentation.
+# | Revision 1.20  2003/07/09 13:01:01  wig
+# | Fixed mix_ioparse functions to get free programmanble pad cell naming,
+# | dito. for iocells
 # |
 # | Revision 1.18  2003/06/05 14:48:01  wig
 # | Releasing alpha IO-Parser
@@ -182,11 +181,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.19 2003/07/09 07:52:44 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.20 2003/07/09 13:01:01 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.19 $';
+my $thisrevision   =      '$Revision: 1.20 $';
 
-# | Revision:   $Revision: 1.19 $   
+# | Revision:   $Revision: 1.20 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -546,7 +545,8 @@ sub parse_hier_init ($) {
                 #    and it will not work recursive !!
                 $r_hier->[$i]{'::inst'} = $name;
             } else {
-                logwarn( "Cannot replace ::inst for $name!" );
+                logwarn( "ERROR: Cannot replace %::inst% for $name!" );
+                $EH{'sum'}{'errors'}++;
             }
         }
         add_inst( %{$r_hier->[$i]} );
@@ -587,7 +587,9 @@ sub add_inst (%) {
         return;
     }
 
-    my $name = mix_check_case( 'inst', $in{'::inst'} ); # Get appropriate name
+    my $name = mix_expand_name( 'inst', \%in ); # Expand names with %foobar% inside ..
+    
+    $name = mix_check_case( 'inst', $in{'::inst'} ); # Get appropriate name and fix it if flag is set
     
     if ( defined( $hierdb{$name} ) ) {
         # Alert user if this connection already got defined somewhere ....
@@ -600,6 +602,42 @@ sub add_inst (%) {
         create_inst( $name, %in );
         $EH{'sum'}{'inst'}++;
     }
+    # Return name of instance ...
+    return( $name );
+}
+
+#
+# Expand %::COL% in names ....
+# Will return expanded name and also replace it in the input data hash
+#
+sub mix_expand_name ($$) {
+    my $toex = shift;
+    my $rdata = shift;
+
+    my $n = $rdata->{'::' . $toex};
+    #
+    # Early name expansion required for primary keys (like ::inst)
+    #
+    while ( $n =~ m/%((::)?\w+?)%/g ) {
+        my $key = $1;
+        next if  $key =~ m,^(TOP|PARAMETER|OPEN|GENERIC|CONST|LOW|HIGH|LOW_BUS|HIGH_BUS)$,o;
+        if ( defined( $rdata->{$key} ) ) {
+                $n =~ s/%$key%/$rdata->{$key}/g; # replace %::key% ...
+                #
+                #TODO: multiple replacements could lead to troubles!
+                #    and it will not work recursive !!
+                #
+        } elsif ( defined( $EH{'postfix'}{$key} ) ) {
+            $n =~ s/%$key%/$EH{'postfix'}{$key}/g; # replace %::key% -> EH
+        } elsif ( defined( $EH{'macro'}{'%' . $key . '%'} ) ) {
+            $n =~ s/%$key%/$EH{'macro'}{'%' . $key .'%'}/g; # replace %::key% -> EH
+        }else {
+                logwarn( "ERROR: Cannot replace %$key% in name $n!" );
+                $EH{'sum'}{'errors'}++;
+        }
+    }
+    $rdata->{'::' . $toex} = $n;
+    return $n
 }
 
 sub create_inst ($%) {
@@ -829,6 +867,12 @@ sub add_conn (%) {
                 $in{'::name'} = $name;
                 logwarn( "INFO: Creating name $name for constant!" );
         }
+
+        #
+        # Get expanded signal name
+        #
+        if ( $in{'::name'} =~ m,%,o ) { $name = mix_expand_name( 'name', \%in ) };
+
         #
         # Check case ...
         #
