@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.35 $                                         |
+# | Revision:   $Revision: 1.36 $                                         |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/12/04 14:56:32 $                              |
+# | Date:       $Date: 2003/12/05 14:59:29 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.35 2003/12/04 14:56:32 abauer Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.36 2003/12/05 14:59:29 abauer Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.36  2003/12/05 14:59:29  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.35  2003/12/04 14:56:32  abauer
 # | corrected cvs problems
 # |
@@ -206,9 +209,9 @@ sub mix_wr_unsplice_port ($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.35 2003/12/04 14:56:32 abauer Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.36 2003/12/05 14:59:29 abauer Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.35 $';
+my $thisrevision   =      '$Revision: 1.36 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2752,12 +2755,12 @@ sub _write_architecture ($$$$) {
     
     $macros{'%ENTYNAME%'} = $entity;
     if ( $instance ne "__COMMON__" and exists ( $hierdb{$instance}{'::arch'}  ) ) {
-            $macros{'%ARCHNAME%'} = $hierdb{$instance}{'::arch'};
-            if ( $hierdb{$instance}{'::lang'} ) {
-                if ( exists( $EH{'template'}{lc($hierdb{$instance}{'::lang'})} ) ) {
-                    $lang = lc($hierdb{$instance}{'::lang'}); # Change language
-                }
-            }
+	$macros{'%ARCHNAME%'} = $hierdb{$instance}{'::arch'};
+	if ( $hierdb{$instance}{'::lang'} ) {
+	    if ( exists( $EH{'template'}{lc($hierdb{$instance}{'::lang'})} ) ) {
+		$lang = lc($hierdb{$instance}{'::lang'}); # Change language
+	    }
+	}
     } else {
         $macros{'%ARCHNAME%'} = $entity . $EH{'postfix'}{'POSTFIX_ARCH'};
         # For __COMMON__ header only, see below

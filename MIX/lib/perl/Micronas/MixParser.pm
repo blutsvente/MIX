@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.32 $                                         |
+# | Revision:   $Revision: 1.33 $                                         |
 # | Author:     $Author: abauer $                                         |
-# | Date:       $Date: 2003/12/05 11:49:43 $                              |
+# | Date:       $Date: 2003/12/05 14:59:29 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.32 2003/12/05 11:49:43 abauer Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.33 2003/12/05 14:59:29 abauer Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.33  2003/12/05 14:59:29  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.32  2003/12/05 11:49:43  abauer
 # | added MixI2CParser.pm (basics)
 # | added i2c sheet description (internal & doc)
@@ -227,11 +230,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.32 2003/12/05 11:49:43 abauer Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.33 2003/12/05 14:59:29 abauer Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.32 $';
+my $thisrevision   =      '$Revision: 1.33 $';
 
-# | Revision:   $Revision: 1.32 $
+# | Revision:   $Revision: 1.33 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -573,6 +576,7 @@ Build initial instance list from input data and generators.
 =cut
 
 sub parse_hier_init ($) {
+
     my $r_hier = shift;
     # my $r_conmac = shift;
     # my $r_congen = shift;
@@ -609,7 +613,7 @@ sub parse_hier_init ($) {
                 $EH{'sum'}{'errors'}++;
             }
         }
-        Add_inst( %{$r_hier->[$i]} );
+        add_inst( %{$r_hier->[$i]} );
 
     }
 
