@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.39 2004/11/10 09:40:42 wig Exp $
+# $Id: TODO.txt,v 1.40 2005/01/26 14:01:04 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -18,6 +18,128 @@ Doku:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+
+20050126a/Req: Use perl CSV modules for xls2csv and for reader!
+
+Text::CSV::Simple
+
+my $parser = Text::CSV::Simple->new;
+        my @data = $parser->read_file($datafile);
+        print @$_ foreach @data;
+
+        # Only want certain fields?
+        my $parser = Text::CSV::Simple->new;
+        $parser->want_fields(1, 2, 4, 8);
+        my @data = $parser->read_file($datafile);
+
+        # Map the fields to a hash?
+        my $parser = Text::CSV::Simple->new;
+        $parser->field_map(qw/id name null town/);
+        my @data = $parser->read_file($datafile);
+
+Text::CSV_XS
+
+new(\%attr)
+
+    (Class method) Returns a new instance of Text::CSV_XS. The objects attributes are described by the (optional) hash ref \%attr. Currently the following attributes are available:
+
+    quote_char
+
+        The char used for quoting fields containing blanks, by default the double quote character ("). A value of undef suppresses quote chars. (For simple cases only).
+    eol
+
+        An end-of-line string to add to rows, usually undef (nothing, default), "\012" (Line Feed) or "\015\012" (Carriage Return, Line Feed)
+    escape_char
+
+        The char used for escaping certain characters inside quoted fields, by default the same character. (")
+    sep_char
+
+        The char used for separating fields, by default a comme. (,)
+    binary
+
+        If this attribute is TRUE, you may use binary characters in quoted fields, including line feeds, carriage returns and NUL bytes. (The latter must be escaped as "0.) By default this feature is off.
+    types
+
+        A set of column types; this attribute is immediately passed to the types method below. You must not set this attribute otherwise, except for using the types method. For details see the description of the types method below.
+    always_quote
+
+        By default the generated fields are quoted only, if they need to, for example, if they contain the separator. If you set this attribute to a TRUE value, then all fields will be quoted. This is typically easier to handle in external applications. (Poor creatures who aren't using Text::CSV_XS. :-)
+
+
+20041220b/Req: Check signal _n does not get connected to port not _n!
+
+    verify usefull wiring
+
+    Req: wig
+    Prio: low
+
+20041220a/Req: %OPEN% should not collect
+
+    Store all OPEN as OPEN_NR++
+    dito. for HIGH_BUS and LOW_BUS
+
+    Req: mpit
+    Prio: medium
+    Solved: wig20041222
+
+20041215a/Req: extend constant/generics usage for verilog + check constant type
+
+Hi Wilfried,
+
+derzeit werden VHDL-Generics und Verilog-Parameter in MIX immer mit
+
+defparam <hierarchy-path>.<parameter-name> = <parameter-value>;
+
+instanziiert. Dies funktioniert allerdings nur, wenn der Parameter in einer 
+Verilog-Hierarchie endet. 
+
+Für VHDL-Generics sollte ein anderes Verfahren implementiert werden:
+<instance> #( generic-list ) <instance_name> ( port-list );
+
+Gleichzeitig könnte MIX prüfen, ob alle Parameter vom Typ 'integer' sind, da
+Verilog keine anderen Formate zuläßt und bei Abweichung zumindest eine 
+Warnung ausgeben.
+
+
+Hier noch ein Beispiel für eine IO-Logikzelle im MDE-D/S:
+iocell #(
+  .cinv0_g(0),
+  .cinv1_g(0),
+  .cinv2_g(0),
+  .cinv3_g(0),
+  .....  
+  .oreg3_g(0)
+ ) baudclk_ioc (
+  .bs_chain_i(bs_chain_tmu_short),
+  .bs_chain_o(bs_chain_138),
+  .bs_clockdr_i(bs_clockdr),
+  .....
+  .tm_leakage_i(tm_leakage)
+);
+
+    Req: mpallas
+    Prio: medium
+
+        
+20041112a/Req: Log run time in output summary!
+
+    Req: wig
+    Prio: medium
+
+-20041110a/Bug: " in macro definitions do not work
+
+mail from dirk, answer from wig:
+Ja,
+
+das geht ja auch anders:
+
+MIXCFG macro.%VERILOG_DEFINES% `include bla.vh
+
+Leider dürfen da keine " sein ...
+Das werde ich noch beseitigen (ist aber nicht so wichtig).
+
+    Req: wig
+    Prio: medium
 
 -20041109a/Req: add verilog include file support
 
