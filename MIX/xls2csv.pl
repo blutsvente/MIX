@@ -8,7 +8,7 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #
 #******************************************************************************
 #
-# $Id: xls2csv.pl,v 1.1 2005/01/21 11:51:05 wig Exp $
+# $Id: xls2csv.pl,v 1.2 2005/01/21 12:18:27 wig Exp $
 #
 # read in XLS file and print out a csv and and a sxc version of all sheets
 #
@@ -20,11 +20,16 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #                    -sheet 'PERL-RE'
 #					 -[no]verbose
 #					 -[no]head
-#					 -[no]quotes
+#					 -noquotes
+#					 -quote X
 #
 #  Define seperator:
 #
 # $Log: xls2csv.pl,v $
+# Revision 1.2  2005/01/21 12:18:27  wig
+#
+# 	xls2csv.pl - added some options -nohead -noquote ...
+#
 # Revision 1.1  2005/01/21 11:51:05  wig
 #
 # 	xls2csv.pl
@@ -62,7 +67,7 @@ use Micronas::MixUtils::IO;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.1 $'; # RCS Id
+$::VERSION = '$Revision: 1.2 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 mix_init();
@@ -87,7 +92,7 @@ unless( GetOptions( \%opts, 'csv!', 'sep=s', 'head!', 'sxc!', 'verbose|v!',
 }
 
 if (scalar(@ARGV) < 1 ) {
-    logwarn "Usage: $0 <-[no]csv|-[no]sxc> <-[no]quote> <-sep SEP> <-nohead> <-[no]verbose> <-sheet REGEX> <excel-file> ...";
+    logwarn "Usage: $0 <-[no]csv|-[no]sxc> <-[no]quote> <-quote X> <-sep SEP> <-nohead> <-[no]verbose> <-sheet REGEX> <excel-file> ...";
     die;
 }
 
