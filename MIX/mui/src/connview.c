@@ -10,6 +10,7 @@
 #  include <config.h>
 #endif
 
+#include "callbacks.h"
 #include "connview.h"
 
 
@@ -86,6 +87,8 @@ GtkWidget* create_conn_view(void)
 
 	renderer = gtk_cell_renderer_text_new();
 	g_object_set(renderer, "editable", header[i].editable, NULL);
+	g_object_set_data(G_OBJECT(renderer), "column_index", GUINT_TO_POINTER(i));
+	g_signal_connect(renderer, "edited", (GCallback) conn_edited_callback, NULL);
 
 	// pack cell renderer into tree view column
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);
@@ -103,6 +106,7 @@ GtkWidget* create_conn_view(void)
     g_object_unref(model); // destroy model automatically with view
 
     gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(view), TRUE);
+    gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(view), TRUE);
     gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(view)), GTK_SELECTION_MULTIPLE);
 
     return view;

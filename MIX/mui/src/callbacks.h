@@ -92,3 +92,9 @@ void on_genEntry_changed(GtkEditable *editable, gpointer user_data);
 void on_ignoreCheckbutton_toggled(GtkToggleButton *togglebutton, gpointer user_data);
 
 void on_langComboEntry_changed(GtkEntry *entry, gpointer user_data);
+
+void conn_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data);
+
+void iopad_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data);
+
+void i2c_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data);

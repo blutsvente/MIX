@@ -367,3 +367,31 @@ void on_langComboEntry_changed(GtkEntry *entry, gpointer user_data)
     // TODO: set language
     const gchar *text = gtk_entry_get_text(entry);
 }
+
+void conn_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)
+{
+    guint column;
+    GtkTreeIter *iter;
+
+    if(gtk_tree_model_get_iter_from_string(conn_model, iter, path_string)) {
+	column = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(renderer), "column_index"));
+    }
+}
+
+void iopad_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)
+{
+    GtkTreeIter *iter;
+
+    if(gtk_tree_model_get_iter_from_string(iopad_model, iter, path_string)) {
+	column = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(renderer), "column_index"));
+    }
+}
+
+void i2c_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)
+{
+    GtkTreeIter *iter;
+
+    if(gtk_tree_model_get_iter_from_string(i2c_model, iter, path_string)) {
+	column = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(renderer), "column_index"));
+    }
+}

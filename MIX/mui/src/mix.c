@@ -13,6 +13,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <gtk/gtk.h>
+
 #include "perlxsi.h"    // needed for dynamic Perl-module loading
 
 #include "mix.h"
@@ -33,6 +35,9 @@ int mix_stage = MIX_NO_INIT;        // starting in stage "not initialized"
 
 bool modified = false;              // project modified
 char *filename = NULL;              // filename / name of spreadheed
+
+int io_head_length = 0;
+int i2c_head_length = 0;
 
 
 bool mix_get_modified()
@@ -295,7 +300,7 @@ int mix_number_of_conn_rows()
     PUTBACK;
     FREETMPS;
     LEAVE;
-
+#include <glib/gconvert.h>
     return count;
 }
 
@@ -334,6 +339,24 @@ void mix_get_conn_row(int index, char *row[])
 } 
 
 
+int mix_number_of_iopad_headers()
+{
+    dSP;
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+    PUTBACK;
+    call_pv("getNumIOPadHeaders", G_SCALAR);
+    SPAGAIN ;
+    io_head_length = POPi;
+    PUTBACK;
+    FREETMPS ;
+    LEAVE;
+
+    return io_head_length;
+}
+
+
 int mix_number_of_iopad_rows()
 {
     dSP;
@@ -353,33 +376,62 @@ int mix_number_of_iopad_rows()
 }
 
 
-void mix_get_iopad_row(int index, char *row[])
+void mix_get_iopad_sta_row(int index, char *row[])
 {
+    int i = 0;
     dSP;
     ENTER;
     SAVETMPS;
     PUSHMARK(SP);
     XPUSHs(sv_2mortal(newSViv(index)));
     PUTBACK;
-    call_pv("getIOPadRow", G_ARRAY);
+    call_pv("get_sta_IOPadRow", G_ARRAY);
     SPAGAIN ;
-    strcpy(row[13], POPp);
-    strcpy(row[12], POPp);
-    strcpy(row[11], POPp);
-    strcpy(row[10], POPp);
-    strcpy(row[9], POPp);
-    strcpy(row[8], POPp);
-    strcpy(row[7], POPp);
-    strcpy(row[6], POPp);
-    strcpy(row[5], POPp);
-    strcpy(row[4], POPp);
-    strcpy(row[3], POPp);
-    strcpy(row[2], POPp);
-    strcpy(row[1], POPp);
-    strcpy(row[0], POPp);
+    // i < COL_MUXOPT
+    while(i < 13) {
+	strcpy(row[i], POPp);
+	i++;
+    }
     PUTBACK;
     FREETMPS;
     LEAVE;
+}
+
+void mix_get_iopad_dyn_row(int index, char *row[])
+{
+    int i = 0;
+    dSP;
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+    XPUSHs(sv_2mortal(newSViv(index)));
+    PUTBACK;
+    call_pv("get_dyn_IOPadRow", G_ARRAY);
+    SPAGAIN ;
+    while(i < io_head_length) {
+	strcpy(row[i], POPp);
+	i++;
+    }
+    PUTBACK;
+    FREETMPS;
+    LEAVE;
+}
+
+int mix_number_of_i2c_headers()
+{
+    dSP;
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+    PUTBACK;
+    call_pv("getNumI2CHeaders", G_SCALAR);
+    SPAGAIN ;
+    i2c_head_length = POPi;
+    PUTBACK;
+    FREETMPS;
+    LEAVE;
+
+    return i2c_head_length;
 }
 
 
@@ -392,41 +444,52 @@ int mix_number_of_i2c_rows()
     PUSHMARK(SP);
     PUTBACK;
     call_pv("getNumI2CRows", G_SCALAR);
-    SPAGAIN ;
+    SPAGAIN;
     count = POPi;
-    PUTBACK ;
-    FREETMPS ;
-    LEAVE ;
+    PUTBACK;
+    FREETMPS;
+    LEAVE;
 
     return count;
 }
 
 
-void mix_get_i2c_row(int index, char *row[])
+void mix_get_i2c_sta_row(int index, char *row[])
 {
+    int i = 13;
     dSP;
     ENTER;
     SAVETMPS;
     PUSHMARK(SP);
     XPUSHs(sv_2mortal(newSViv(index)));
     PUTBACK;
-    call_pv("getIOPadRow", G_ARRAY);
+    call_pv("get_sta_I2CRow", G_ARRAY);
     SPAGAIN ;
-    strcpy(row[14], POPp);
-    strcpy(row[13], POPp);
-    strcpy(row[12], POPp);
-    strcpy(row[11], POPp);
-    strcpy(row[10], POPp);
-    strcpy(row[9], POPp);
-    strcpy(row[8], POPp);
-    strcpy(row[7], POPp);
-    strcpy(row[6], POPp);
-    strcpy(row[5], POPp);
-    strcpy(row[4], POPp);
-    strcpy(row[3], POPp);
-    strcpy(row[2], POPp);
-    strcpy(row[1], POPp);
-    strcpy(row[0], POPp);
+    // i < COL_B
+    while(i > 0) {
+	strcpy(row[i], POPp);
+	i--;
+    }   
+    PUTBACK;
+    FREETMPS;
+    LEAVE;
+}
+
+void mix_get_i2c_dyn_row(int index, char *row[])
+{
+    int i = 0;
+    dSP;
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+    XPUSHs(sv_2mortal(newSViv(index)));
+    PUTBACK;
+    call_pv("get_dyn_I2CRow", G_ARRAY);
+    SPAGAIN ;
+    while(i < i2c_head_length) {
+	strcpy(row[i], POPp);
+	i++;
+    }   
     PUTBACK;
     FREETMPS;
     LEAVE;

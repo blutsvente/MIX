@@ -57,10 +57,10 @@ void open_project(const char *filename)
 	    gtk_container_add(GTK_CONTAINER(get_view_frame(2)), view);
 	    set_view_child(view, 2);
 
-	    //	    view = (GtkWidget*) create_i2c_view();
-	    //	    gtk_widget_show_all(view);
-	    //	    gtk_container_add(GTK_CONTAINER(get_view_frame(3)), view);
-	    //	    set_view_child(view, 3);
+	    view = (GtkWidget*) create_i2c_view();
+	    gtk_widget_show_all(view);
+	    gtk_container_add(GTK_CONTAINER(get_view_frame(3)), view);
+	    set_view_child(view, 3);
 	}
     }
 }
