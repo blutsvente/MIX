@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.35 2004/06/16 08:17:09 wig Exp $
+# $Id: TODO.txt,v 1.36 2004/06/29 09:13:14 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -18,6 +18,20 @@ Doku:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+
+- 20040628a/Bug: fix diff mode: sort ::in and ::out columns
+   else the diff yields false
+
+    Req: wig
+    Prio: low
+    Fixed: wig20040629 (sort all fields seperated by , in two2one)
+
+- 20040621a/Req: Remove error messages and warnings if port bounds are strings (instead
+    of numbers)
+    Also: add some documentation about it (HOWTO).
+
+    Req: mpit
+    Prio: low
 
 - 20040614a/Req: Change perl script header to get it started on all required platforms:
 

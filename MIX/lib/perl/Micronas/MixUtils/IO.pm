@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.15 $                                          |
+# | Revision:   $Revision: 1.16 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/04/14 11:08:34 $                              |
+# | Date:       $Date: 2004/06/29 09:13:37 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.16  2004/06/29 09:13:37  wig
+# | minor fiexes /test mode
+# |
 # | Revision 1.15  2004/04/14 11:08:34  wig
 # | minor code clearing
 # |
@@ -146,11 +149,11 @@ sub useOoolib ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.15 2004/04/14 11:08:34 wig Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.16 2004/06/29 09:13:37 wig Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.15 $';
+my $thisrevision    =      '$Revision: 1.16 $';
 
-# Revision:   $Revision: 1.15 $
+# Revision:   $Revision: 1.16 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1109,7 +1112,7 @@ sub write_delta_sheet($$$) {
 	$EH{'sum'}{'errors'}++;
 	return;
     }
-    #TODO: Put back a single ' for excel ... ???
+
     my @prevd = two2one( $prev[0] );
     my @currd = two2one( $r_a );
     if ( not $EH{'iswin'} and $file =~ m,.xls$, ) {

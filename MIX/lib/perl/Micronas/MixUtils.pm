@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.50 $                                         |
+# | Revision:   $Revision: 1.51 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/06/14 06:38:57 $                              |
+# | Date:       $Date: 2004/06/29 09:13:30 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.50 2004/06/14 06:38:57 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.51 2004/06/29 09:13:30 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.51  2004/06/29 09:13:30  wig
+# | minor fiexes /test mode
+# |
 # | Revision 1.50  2004/06/14 06:38:57  wig
 # | Minor beautification in reg-exp
 # |
@@ -268,11 +271,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.50 2004/06/14 06:38:57 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.51 2004/06/29 09:13:30 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.50 $';
+my $thisrevision        =      '$Revision: 1.51 $';
 
-# Revision:   $Revision: 1.50 $   
+# Revision:   $Revision: 1.51 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2957,7 +2960,7 @@ sub inout2array ($;$) {
 
     unless( defined( $f ) ) { return "%UNDEF_2%"; };
 
-    my $s = "";
+    my @s = (); # Holds data, ready to be sorted in a final step ...
 
 #       '::out' => [
 #
@@ -2971,6 +2974,7 @@ sub inout2array ($;$) {
 #                   }
 #                 ],
 
+    #!wig20040628: define output sort order
     for my $i ( @$f ) {
 
 	my $cast = "";
@@ -2986,37 +2990,41 @@ sub inout2array ($;$) {
 	if ( $i->{'inst'} =~
 	    m,^\s*(__CONST__|%CONST%),o ) {
             #!wig20040330: TODO: print out "rvalue" instead of "port"?? 
-	    $s .= $i->{'port'} . $cast . ", %IOCR%";
+	    push( @s,  $i->{'port'} . $cast . ", %IOCR%" );
 	} elsif ( defined $i->{'sig_t'} and $i->{'sig_t'} ne '' ) {
 	# inst/port($port_f:$port_t) = ($sig_f:$sig_t)
 	    if ( defined $i->{'port_t'} and $i->{'port_t'} ne '' ) {
-		$s .= $i->{'inst'} . "/" . $i->{'port'} . $cast . "(" .
+		push( @s, $i->{'inst'} . "/" . $i->{'port'} . $cast . "(" .
 			$i->{'port_f'} . ":" . $i->{'port_t'} . ")=(" .
-			$i->{'sig_f'} . ":" . $i->{'sig_t'} . "), %IOCR%";
+			$i->{'sig_f'} . ":" . $i->{'sig_t'} . "), %IOCR%" );
 	    } else {
 		# TODO inst/port = (sf:st)  vs. inst/port(0:0) = (sf:st)
-		$s .= $i->{'inst'} . "/" . $i->{'port'} . $cast . "=(" .
-			$i->{'sig_f'} . ":" . $i->{'sig_t'} . "), %IOCR%";
+		push( @s,  $i->{'inst'} . "/" . $i->{'port'} . $cast . "=(" .
+			$i->{'sig_f'} . ":" . $i->{'sig_t'} . "), %IOCR%" );
 	    }
 	} else {
 	    if ( defined $i->{'port_t'} and $i->{'port_t'} ne '' ) {
-		$s .= $i->{'inst'} . "/" . $i->{'port'} . $cast . "(" .
+		push( @s,$i->{'inst'} . "/" . $i->{'port'} . $cast . "(" .
 			$i->{'port_f'} . ":" . $i->{'port_t'} . # ")=(" .
-			# $i->{'sig_f'} . ":" . $i->{'sig_t'} .
-			"), %IOCR%";
+			"), %IOCR%" );
 	    } else {
 		# If this is %OPEN% and neither port nor signal defined -> set to (0)
 		if ( $o eq '%OPEN%' ) {
-		    $s .= $i->{'inst'} . "/" . $i->{'port'} . $cast . "(0:0)=(0:0)" . ", %IOCR%";
+		    push( @s, $i->{'inst'} . "/" . $i->{'port'} . $cast . "(0:0)=(0:0)" . ", %IOCR%" );
 		} else {
-		    $s .= $i->{'inst'} . "/" . $i->{'port'} . $cast . ", %IOCR%";
+		    push( @s,  $i->{'inst'} . "/" . $i->{'port'} . $cast . ", %IOCR%" );
 		}
 	    }
 	}
     }
 
+    # Do a simple sort on the output date and join
+    #!wig: TODO: sort better: my $s = join( "", sort( @s ) );
+    my $s = join( "", @s );
+
     if ( ( $s =~ m,\(:,o ) or ( $s =~ m,\(:,o ) ) {
 	logwarn( "WARNING: inout2array bad branch (: ! File bug report!" );
+        $EH{'sum'}{'warnings'}++;
     }
 
     $s =~ s/,\s*%IOCR%\s*$//o; #Remove trailing CR
@@ -3029,10 +3037,11 @@ sub inout2array ($;$) {
 
 ####################################################################
 ## convert two dim. input arry into a one-dim. array.
-## by concatenation the cells with \tX\t
+## by concatenation the cells with \t@@@\t
 ####################################################################
 #wig20030716: use first line as header descriptions, field seperator!!
 #wig20040324: if we read in FOO-mixed.xls and are not writing xls (e.g. not on mswin)
+#wig20040628: sort cells that contain ","
 #   -> remove \n in in/out ...
 sub two2one ($) {
     my $ref = shift;
@@ -3042,7 +3051,9 @@ sub two2one ($) {
     no warnings; # switch of warnings here, values might be undefined ...
     # Convert two dim. input array into one-dimensional
     for my $n ( @$ref ) {
-	my $l = join( '@@@', @$n ); # Use @@@ as field seperator ...
+        # @t = map { join( ",", sort( split( /,/ ) ))} @$n;
+            
+	my $l = join( '@@@', map { join( ",", sort( split( /[\s\n]*,[\s\n]*/ ) ))} @$n ); # Use @@@ as field seperator ...
 	$l =~ s/\t+/\t/g;# Remove multiple \t
 	$l =~ s/\t$//; # Convert \t to space ....
 	push( @out, $l );

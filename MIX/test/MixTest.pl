@@ -156,17 +156,20 @@ my @tests = (
 	{
 	  'name' => "case",
 	  'path' => "case",
-	  'options' => ""
+	  'options' => "",
+	  'skip' => 1,
 	},
 		{
 	  'name' => "case",
 	  'path' => "case/check",
-	  'options' => ""
+	  'options' => "",
+	  'skip' => 1,
 	},
 	{
 	  'name' => "case",
 	  'path' => "case/force",
-	  'options' => ""
+	  'options' => "",
+	  'skip' => 1,
 	},
 
 	{
@@ -422,13 +425,14 @@ sub runMix($) {
     	my $path = "";
     	my $find = "";
 
-		$options = $tests[$i]->{'options'};
+	$options = $tests[$i]->{'options'};
         my $testpath = $tests[$i]->{'path'};
         $path = $wdir . "/$tests[$i]->{'path'}";
     
         my $testname = $tests[$i]->{'name'};
 
-		if ( $testRE and $testpath !~ m/$testRE/io ) {
+		if ( $testRE and $testpath !~ m/$testRE/io or
+		     exists $tests[$i]->{'skip'} and $tests[$i]->{'skip'} ) {
 			# this test is not selected ...
 			print( "Skipped test $testname ($testpath)\n" );
 			next;
@@ -481,8 +485,9 @@ sub runMix($) {
 	    $mix = $mix || "mix_0.pl"; # Default ...
 	    # Define the mix_0.pl to run
 	    # $command  = "h:/work/mix_new/mix/mix_0.pl $options $find../$tests[$i]->{'name'}.$type";
-    	    $command  = "$mix $options $find../$tests[$i]->{'name'}.$type";
-    	    $command  = "perl -d " . $command if ( $opts{'debug'} );
+    	    $command  = "perl -x " . ( $opts{'debug'} ? "-d " : "" ) .
+		"$mix $options $find../$tests[$i]->{'name'}.$type";
+    	    # $command  = "perl -d " . $command if ( $opts{'debug'} );
     	}
     	chdir( $path) || logwarn("ERROR: Directory <$path> not found!");
     
