@@ -1,14 +1,16 @@
+# -*-* perl -*- -w
+#  header for MS-Win! Remove for UNIX ...
 #!/bin/sh --
 #!/bin/sh -- # -*- perl -*- -w
 eval 'exec ${PERL:-`[ ! -d "$HOME/bin/perl" -a -x "$HOME/bin/perl" ] && echo "$HOME/bin/perl" || { [ -x /usr/bin/perl ] && echo /usr/bin/perl || echo /usr/local/bin/perl ; } `} -x -S $0 ${1+"$@"} ;'
 if 0; # dynamic perl startup; suppress preceding line in perl
-#line 6
+#line 8
 #!/usr/bin/perl -w
 
 #
 #******************************************************************************
 #
-# $Id: xls2csv.pl,v 1.2 2005/01/21 12:18:27 wig Exp $
+# $Id: xls2csv.pl,v 1.3 2005/01/26 14:00:33 wig Exp $
 #
 # read in XLS file and print out a csv and and a sxc version of all sheets
 #
@@ -26,6 +28,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #  Define seperator:
 #
 # $Log: xls2csv.pl,v $
+# Revision 1.3  2005/01/26 14:00:33  wig
+# added -autoquote option
+#
 # Revision 1.2  2005/01/21 12:18:27  wig
 #
 # 	xls2csv.pl - added some options -nohead -noquote ...
@@ -67,7 +72,7 @@ use Micronas::MixUtils::IO;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.2 $'; # RCS Id
+$::VERSION = '$Revision: 1.3 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 mix_init();
@@ -86,13 +91,13 @@ my %opts = (
 );
 
 unless( GetOptions( \%opts, 'csv!', 'sep=s', 'head!', 'sxc!', 'verbose|v!',
-	'quote|q=s', 'noquote|noq', 'sheet=s@' ) ) {
+	'quote|q=s', 'autoq|autoquote', 'noquote|noq', 'sheet=s@' ) ) {
 	logerr "Illegal option detected!";
 	exit 1;
 }
 
 if (scalar(@ARGV) < 1 ) {
-    logwarn "Usage: $0 <-[no]csv|-[no]sxc> <-[no]quote> <-quote X> <-sep SEP> <-nohead> <-[no]verbose> <-sheet REGEX> <excel-file> ...";
+    logwarn "Usage: $0 <-[no]csv|-[no]sxc> <-[auto|no]quote>  <-quote X> <-sep SEP> <-nohead> <-[no]verbose> <-sheet REGEX> <excel-file> ...";
     die;
 }
 
@@ -121,8 +126,11 @@ if ( exists( $opts{sep} ) ) {
 unless ( $opts{head} ) {
 	$Micronas::MixUtils::EH{'format'}{'csv'}{'sheetsep'} = "";
 }
+# if ( exists( $opts{autoq} ) ) {
+# }
 if ( exists( $opts{noquote} ) ) {
 	$Micronas::MixUtils::EH{'format'}{'csv'}{'quoting'} = "";
+	$Micronas::MixUtils::EH{'format'}{'csv'}{'style'} = "classic";
 } elsif ( ( exists( $opts{quote} ) ) ) {
 	$Micronas::MixUtils::EH{'format'}{'csv'}{'quoting'} = $opts{quote};
 }
