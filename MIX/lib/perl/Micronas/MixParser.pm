@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.41 $                                         |
+# | Revision:   $Revision: 1.42 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2004/08/04 12:49:38 $                              |
+# | Date:       $Date: 2004/08/05 15:21:32 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.41 2004/08/04 12:49:38 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.42 2004/08/05 15:21:32 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
+# | Revision 1.42  2004/08/05 15:21:32  wig
+# | typecast added more columns
+# |
 # | Revision 1.41  2004/08/04 12:49:38  wig
 # | Added typecast and partial constant assignments
 # |
@@ -261,11 +264,11 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixParser.pm,v 1.41 2004/08/04 12:49:38 wig Exp $';
+my $thisid		=	'$Id: MixParser.pm,v 1.42 2004/08/05 15:21:32 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.41 $';
+my $thisrevision   =      '$Revision: 1.42 $';
 
-# | Revision:   $Revision: 1.41 $
+# | Revision:   $Revision: 1.42 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1470,16 +1473,20 @@ sub _create_conn ($$%) {
                         "=" . mix_p_co2str( $co{'sig_f'}, $co{'sig_t'} );
                 $oecon =~ s/=$//;
                 $oeicon =~ s/=$//;
-                add_conn(   '::type' => $tcdo,
-                                '::name' => $tcsig,
-                                '::high' => $h,   #TODO: Maybe that is to much? And we could
-                                '::low' => $l,     # use the port border's, ... obviously noone should typecast
-                                                      # just parts of ports
-                                '::mode' => 'S',
-                                '::comment' => "__I_TYPECAST_INT",
-                                ('::' . $inout ) => $oeicon,
-                                $oe => $oecon,
-                        );
+
+                #!wig20040805: add all of current line settings, just overload some values ...
+                my %ec = %data;
+                $ec{'::type'} = $tcdo;
+                $ec{'::name'} = $tcsig;
+                $ec{'::high'} = $h;   #TODO: Maybe that is to much? And we could
+                $ec{'::low'} = $l;     # use the port border's, ... obviously noone should typecast
+                                            # just parts of ports
+                $ec{'::mode'} = 'S';
+                $ec{'::comment'} = "__I_TYPECAST_INT" . ( $ec{'::comment'} ?
+                            ( " " . $ec{'::comment'} ) : "" );
+                $ec{'::' . $inout} = $oeicon;
+                $ec{$oe} = $oecon;
+                add_conn( %ec );
                 # Overload connection instance (shift typecast wrapper inplace ...)
                 $co{'inst'} = $tcwr;
                 
