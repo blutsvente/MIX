@@ -14,5 +14,7 @@
 
 GtkWidget* create_iopad_view();
 
+GtkTreeModel* get_iopad_model();
+
 
 #endif // __IOPADVIEW_H_

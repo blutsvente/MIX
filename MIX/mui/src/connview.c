@@ -62,6 +62,8 @@ static struct {
     {"::skip", "text", TRUE},
 };
 
+GtkTreeModel *model;
+
 static GtkTreeModel* create_conn_model(void);
 
 
@@ -71,7 +73,6 @@ GtkWidget* create_conn_view(void)
     GtkTreeViewColumn   *col;
     GtkCellRenderer     *renderer;
     GtkWidget           *view;
-    GtkTreeModel        *model;
 
     view = gtk_tree_view_new();
     // --- Column #X ---
@@ -142,4 +143,9 @@ GtkTreeModel* create_conn_model(void)
     }
 
     return GTK_TREE_MODEL(treestore);
+}
+
+GtkTreeModel* get_conn_model()
+{
+    return model;
 }

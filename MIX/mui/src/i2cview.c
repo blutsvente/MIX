@@ -57,6 +57,7 @@ static struct {
     {"::b", "text", TRUE},
 };
 
+GtkTreeModel *model;
 
 static GtkTreeModel* create_i2c_model(void);
 
@@ -69,7 +70,6 @@ GtkWidget* create_i2c_view()
     GtkTreeViewColumn   *col;
     GtkCellRenderer     *renderer;
     GtkWidget           *view;
-    GtkTreeModel        *model;
 
     view = gtk_tree_view_new();
     // --- Column #X ---
@@ -171,4 +171,9 @@ GtkTreeModel* create_i2c_model(void)
     free(b);
     free(header_types);
     return GTK_TREE_MODEL(treestore);
+}
+
+GtkTreeModel* get_i2c_model()
+{
+    return model;
 }

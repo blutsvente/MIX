@@ -370,28 +370,54 @@ void on_langComboEntry_changed(GtkEntry *entry, gpointer user_data)
 
 void conn_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)
 {
-    guint column;
-    GtkTreeIter *iter;
+    guint column = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(cell), "column_index"));
+    GtkTreePath *path = gtk_tree_path_new_from_string (path_string);
+    GtkTreeIter iter;
+    GtkTreeModel *model = get_conn_model();
+    gchar *content;
 
-    if(gtk_tree_model_get_iter_from_string(conn_model, iter, path_string)) {
-	column = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(renderer), "column_index"));
+    if(gtk_tree_model_get_iter(model, &iter, path)) {
+	gtk_tree_model_get(model, &iter, column, &content, -1);
+	// TODO: put content to MIX
+	gtk_tree_store_set(GTK_TREE_STORE(model), &iter, column, content, -1);
+	g_free(content);
     }
+    else
+	printf("error: getting iter from string for conn\n");
+
+    gtk_tree_path_free(path);
 }
 
 void iopad_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)
 {
-    GtkTreeIter *iter;
+    guint column = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(cell), "column_index"));
+    GtkTreePath *path = gtk_tree_path_new_from_string (path_string);
+    GtkTreeIter iter;
+    GtkTreeModel *model = get_iopad_model();
+    gchar *content;
 
-    if(gtk_tree_model_get_iter_from_string(iopad_model, iter, path_string)) {
-	column = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(renderer), "column_index"));
+    if(gtk_tree_model_get_iter(model, &iter, path)) {
+	gtk_tree_model_get(model, &iter, column, content, -1);
+	// TODO: put content to MIX
+	gtk_tree_store_set(GTK_TREE_STORE(model), &iter, column, content, -1);
+	g_free(content);
     }
+    gtk_tree_path_free(path);
 }
 
 void i2c_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)
 {
-    GtkTreeIter *iter;
+    guint column = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(cell), "column_index"));
+    GtkTreePath *path = gtk_tree_path_new_from_string (path_string);
+    GtkTreeIter iter;
+    GtkTreeModel *model = get_i2c_model();
+    gchar *content;
 
-    if(gtk_tree_model_get_iter_from_string(i2c_model, iter, path_string)) {
-	column = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(renderer), "column_index"));
+    if(gtk_tree_model_get_iter(model, &iter, path)) {
+	gtk_tree_model_get(model, &iter, column, &content, -1);
+	// TODO: put content to MIX
+	gtk_tree_store_set(GTK_TREE_STORE(model), &iter, column, content, -1);
+	g_free(content);
     }
+    gtk_tree_path_free(path);
 }

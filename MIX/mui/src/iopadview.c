@@ -54,6 +54,7 @@ static struct {
     {"::muxopt", "text", TRUE},
 };
 
+GtkTreeModel *model;
 
 static GtkTreeModel* create_iopad_model(void);
 
@@ -66,7 +67,6 @@ GtkWidget* create_iopad_view(void)
     GtkTreeViewColumn   *col;
     GtkCellRenderer     *renderer;
     GtkWidget           *view;
-    GtkTreeModel        *model;
 
     view = gtk_tree_view_new();
     // --- Column #X ---
@@ -168,3 +168,7 @@ GtkTreeModel* create_iopad_model(void)
     return GTK_TREE_MODEL(treestore);
 }
 
+GtkTreeModel* get_iopad_model()
+{
+    return model;
+}

@@ -14,5 +14,7 @@
 
 GtkWidget* create_i2c_view();
 
+GtkTreeModel* get_i2c_model();
+
 
 #endif // __I2CVIEW_H_

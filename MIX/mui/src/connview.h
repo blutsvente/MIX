@@ -14,5 +14,7 @@
 
 GtkWidget* create_conn_view();
 
+GtkTreeModel* get_conn_model();
+
 
 #endif // __IOPADVIEW_H_
