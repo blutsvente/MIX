@@ -102,8 +102,11 @@ GtkWidget* create_mui(void) {
   GtkWidget *combo1;
   GList *combo1_items = NULL;
   GtkWidget *combo_entry1;
+  GtkWidget *entry8;
   GtkWidget *combinebutton;
   GtkWidget *target_button;
+  GtkWidget *leafcell_button;
+  GtkWidget *label28;
   GtkWidget *label23;
   GtkWidget *label21;
   GtkWidget *label20;
@@ -414,6 +417,22 @@ GtkWidget* create_mui(void) {
   gtk_fixed_put (GTK_FIXED (fixed5), target_button, 128, 72);
   gtk_widget_set_size_request (target_button, 60, 24);
   gtk_tooltips_set_tip (tooltips, target_button, _("select target Directory"), NULL);
+
+  leafcell_button = gtk_button_new_with_mnemonic (_("select..."));
+  gtk_widget_show (leafcell_button);
+  gtk_fixed_put (GTK_FIXED (fixed5), leafcell_button, 128, 112);
+  gtk_widget_set_size_request (leafcell_button, 60, 24);
+  gtk_tooltips_set_tip (tooltips, leafcell_button, _("select directory where leafcells are located"), NULL);
+
+  entry8 = gtk_entry_new();
+  gtk_widget_show(entry8);
+  gtk_fixed_put(GTK_FIXED (fixed5), entry8, 192, 112);
+  gtk_widget_set_size_request(entry8, 208, 24);
+
+  label28 = gtk_label_new (_("leafcell Directory:"));
+  gtk_widget_show (label28);
+  gtk_fixed_put (GTK_FIXED (fixed5), label28, 16, 116);
+  gtk_widget_set_size_request (label28, 104, 16);
 
   label23 = gtk_label_new (_("target Directory:"));
   gtk_widget_show (label23);
