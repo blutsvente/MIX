@@ -13,12 +13,12 @@
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_embedded.pl,v 1.3 2004/07/08 11:21:49 abauer Exp $     |
+# | Id           : $Id: mix_embedded.pl,v 1.4 2004/07/22 10:16:35 abauer Exp $     |
 # | Name         : $Name:  $                                   |
 # | Description  : $Description: simple wrapper script for embedding MIX $|
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.3 $                                       |
-# | Mod.Date     : $Date: 2004/07/08 11:21:49 $                           |
+# | Version      : $Revision: 1.4 $                                       |
+# | Mod.Date     : $Date: 2004/07/22 10:16:35 $                           |
 # | Author       : $Author: abauer $                                      |
 # | Email        : $Email: Alexander.Bauer@micronas.com$                  |
 # |                                                                       |
@@ -87,7 +87,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.3 $'; # RCS Id
+$::VERSION = '$Revision: 1.4 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 mix_init(); # load Presets ....
@@ -113,55 +113,20 @@ mix_getopt_header( qw(
     ));
 
 
-my ($r_connin, $r_ioin, $r_i2cin);
+my ($r_hierin, $r_connin, $r_ioin, $r_i2cin);
+my ($n_ioin_ext, $n_i2cin_ext);
 
 
 sub readSpreadsheet(@) {
 
     my $input = shift;
 
-    my $r_hierin;
-    my $r_connmacros;
-    my( $r_conngen, $r_hiergen);
-
      #Fetches HIER, CONN, IO and I2C sheet(s)
     ( $r_connin, $r_hierin, $r_ioin, $r_i2cin) = mix_utils_open_input( $input);
 
-    # parse Data
-    $r_connmacros = parse_conn_macros( $r_connin);
-    $r_conngen = parse_conn_gen( $r_connin);
-    $r_hiergen = parse_conn_gen( $r_hierin);
-
-    parse_hier_init( $r_hierin);
-    parse_conn_init( $r_connin);
-    parse_io_init( $r_ioin);
-    parse_i2c_init( $r_i2cin);
-
-    # Parse connectivity and convert to internal format
-    apply_conn_macros( $r_connin, $r_connmacros);
-    apply_hier_gen( $r_hiergen);
-    apply_conn_gen( $r_conngen);
-
-    # Get rid of some "artefacts"
-    purge_relicts();
-
-    # Replace %MAC% before output
-    #    parse_mac();
-
-    # Add conections and ports if needed (hierachy traversal)
-    # Add connections to TOPLEVEL for connections without ::in or ::out
-    # Replace OPEN and %OPEN%
-    #    add_portsig();
-
-    # Replace %MAC% before output
-    #!do before signal expansion ..... parse_mac();
-
-    # Get rid of some "artefacts", again (add_portsig and add_sign2hier might have
-    # added something ....
-    #    purge_relicts();
-
-    # Add a list of all signals for each instance
-    #    add_sign2hier();
+    $n_ioin_ext = scalar $#{$r_ioin->[0]{'::muxopt'}};
+    $n_i2cin_ext = ""; # scalar $#{$r_i2cin->[0]{'::b'}};
+    print("iopad ext: " . $n_ioin_ext . "\ni2c ext: " . $n_i2cin_ext . "\n");
 }
 
 #readSpreadsheet("/home/abauer/src/MIX/test/sxc_input/a_clk_i2c.sxc");
@@ -192,6 +157,7 @@ sub getStringFromEH($) {
     # set location to TOPLEVEL
     sub initTreeWalk()
     {
+        $location = $hierdb{'TESTBENCH'}{'::treeobj'}->root;
         # get root node
 	$location = $hierdb{'TESTBENCH'};
 	if(!defined($location))
@@ -232,7 +198,8 @@ sub getStringFromEH($) {
     {
 	my @daughters = $location->daughters;
 
-	# step one level down if this Element got childs
+	# step one level down if thi
+        $location = $hierdb{'TESTBENCH'}{'::treeobj'}->root;
 	if( @daughters && $stepInto==1)
 	{
 	    # go to left field in level below
@@ -280,21 +247,115 @@ sub getConnRow($) {
     my $row = shift;
 
     my @row = ();
-		       
-    push(@row, $r_connin->[$row]{'::ign'});
-    push(@row, $r_connin->[$row]{'::gen'});
-    push(@row, $r_connin->[$row]{'::bundle'});
-    push(@row, $r_connin->[$row]{'::class'});
-    push(@row, $r_connin->[$row]{'::clock'});
-    push(@row, $r_connin->[$row]{'::type'});
-    push(@row, $r_connin->[$row]{'::high'});
-    push(@row, $r_connin->[$row]{'::low'});
-    push(@row, $r_connin->[$row]{'::mode'});
-    push(@row, $r_connin->[$row]{'::name'});
-    push(@row, $r_connin->[$row]{'::out'});
-    push(@row, $r_connin->[$row]{'::in'});
-    push(@row, $r_connin->[$row]{'::descr'});
-    push(@row, $r_connin->[$row]{'::comment'});
+
+    if(exists($r_connin->[$row]{'::ign'})) {
+      push(@row, $r_connin->[$row]{'::ign'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_connin->[$row]{'::gen'})) {
+      push(@row, $r_connin->[$row]{'::gen'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_connin->[$row]{'::bundle'})) {
+      push(@row, $r_connin->[$row]{'::bundle'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_connin->[$row]{'::class'})) {
+      push(@row, $r_connin->[$row]{'::class'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_connin->[$row]{'::clock'})) {
+      push(@row, $r_connin->[$row]{'::clock'});
+    }
+    else{
+      push(@row,"");
+    }
+    if(exists($r_connin->[$row]{'::type'})) {
+      push(@row, $r_connin->[$row]{'::type'});
+    }
+    else{
+      push(@row,"");
+    }
+    if(exists($r_connin->[$row]{'::high'})) {
+      push(@row, $r_connin->[$row]{'::high'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_connin->[$row]{'::low'})) {
+      push(@row, $r_connin->[$row]{'::low'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_connin->[$row]{'::mode'})) {
+      push(@row, $r_connin->[$row]{'::mode'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_connin->[$row]{'::name'})) {
+      push(@row, $r_connin->[$row]{'::name'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_connin->[$row]{'::shortname'})) {
+      push(@row, $r_connin->[$row]{'::shortname'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_connin->[$row]{'::out'})) {
+      push(@row, $r_connin->[$row]{'::out'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_connin->[$row]{'::in'})) {
+      push(@row, $r_connin->[$row]{'::in'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_connin->[$row]{'::descr'})) {
+      push(@row, $r_connin->[$row]{'::descr'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_connin->[$row]{'::comment'})) {
+      push(@row, $r_connin->[$row]{'::comment'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_connin->[$row]{'::default'})) {
+      push(@row, $r_connin->[$row]{'::default'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_connin->[$row]{'::debug'})) {
+      push(@row, $r_connin->[$row]{'::debug'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_connin->[$row]{'::skip'})) {
+      push(@row, $r_connin->[$row]{'::skip'});
+    }
+    else {
+      push(@row,"");
+    }
 
     return(@row);
 }
@@ -310,18 +371,91 @@ sub getIOPadRow($) {
     my $row = shift;
 
     my @row = ();
-		       
-    push(@row, $r_ioin->[$row]{'::ign'});
-    push(@row, $r_ioin->[$row]{'::comment'});
-    push(@row, $r_ioin->[$row]{'::class'});
-    push(@row, $r_ioin->[$row]{'::ispin'});
-    push(@row, $r_ioin->[$row]{'::pin'});
-    push(@row, $r_ioin->[$row]{'::pad'});
-    push(@row, $r_ioin->[$row]{'::type'});
-    push(@row, $r_ioin->[$row]{'::iocell'});
-    push(@row, $r_ioin->[$row]{'::port'});
-    push(@row, $r_ioin->[$row]{'::name'});
-    push(@row, $r_ioin->[$row]{'::muxopt'}); # TODO: get all n-th muxopt
+
+    if(exists($r_ioin->[$row]{'::ign'})) {
+      push(@row, $r_ioin->[$row]{'::ign'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::class'})) {
+      push(@row, $r_ioin->[$row]{'::class'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::ispin'})) {
+      push(@row, $r_ioin->[$row]{'::ispin'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::pin'})) {
+      push(@row, $r_ioin->[$row]{'::pin'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::pad'})) {
+      push(@row, $r_ioin->[$row]{'::pad'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::type'})) {
+      push(@row, $r_ioin->[$row]{'::type'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::iocell'})) {
+      push(@row, $r_ioin->[$row]{'::iocell'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::port'})) {
+      push(@row, $r_ioin->[$row]{'::port'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::name'})) {
+      push(@row, $r_ioin->[$row]{'::name'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::muxopt'})) {
+      push(@row, $r_ioin->[$row]{'::muxopt'}); # TODO: get all n-th muxopt
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::comment'})) {
+      push(@row, $r_ioin->[$row]{'::comment'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::default'})) {
+      push(@row, $r_ioin->[$row]{'::default'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::debug'})) {
+      push(@row, $r_ioin->[$row]{'::debug'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::skip'})) {
+      push(@row, $r_ioin->[$row]{'::skip'});
+    }
+    else {
+      push(@row,"");
+    }
 
     return(@row);
 }
@@ -337,22 +471,96 @@ sub getI2CRow($) {
     my $row = shift;
 
     my @row = ();
-		       
-    push(@row, $r_i2cin->[$row]{'::ign'});
-    push(@row, $r_i2cin->[$row]{'::comment'});
-    push(@row, $r_i2cin->[$row]{'::variants'});
-    push(@row, $r_i2cin->[$row]{'::dev'});
-    push(@row, $r_i2cin->[$row]{'::sub'});
-    push(@row, $r_i2cin->[$row]{'::interface'});
-    push(@row, $r_i2cin->[$row]{'::block'});
-    push(@row, $r_i2cin->[$row]{'::dir'});
-    push(@row, $r_i2cin->[$row]{'::spec'});
-    push(@row, $r_i2cin->[$row]{'::clock'});
-    push(@row, $r_i2cin->[$row]{'::reset'});
-    push(@row, $r_i2cin->[$row]{'::busy'});
-    push(@row, $r_i2cin->[$row]{'::init'});
-    push(@row, $r_i2cin->[$row]{'::rec'});
-    push(@row, $r_i2cin->[$row]{'::b'}); # TODO: get all n-th b
+
+    if(exists($r_ioin->[$row]{'::ign'})) {
+      push(@row, $r_i2cin->[$row]{'::ign'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::comment'})) {
+      push(@row, $r_i2cin->[$row]{'::comment'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::variants'})) {
+      push(@row, $r_i2cin->[$row]{'::variants'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::dev'})) {
+      push(@row, $r_i2cin->[$row]{'::dev'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::sub'})) {
+      push(@row, $r_i2cin->[$row]{'::sub'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::interface'})) {
+      push(@row, $r_i2cin->[$row]{'::interface'});    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::block'})) {
+      push(@row, $r_i2cin->[$row]{'::block'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::dir'})) {
+      push(@row, $r_i2cin->[$row]{'::dir'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::spec'})) {
+      push(@row, $r_i2cin->[$row]{'::spec'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::clock'})) {
+      push(@row, $r_i2cin->[$row]{'::clock'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::reset'})) {
+      push(@row, $r_i2cin->[$row]{'::reset'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::busy'})) {
+      push(@row, $r_i2cin->[$row]{'::busy'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::init'})) {
+      push(@row, $r_i2cin->[$row]{'::init'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::rec'})) {
+      push(@row, $r_i2cin->[$row]{'::rec'});
+    }
+    else {
+      push(@row,"");
+    }
+    if(exists($r_ioin->[$row]{'::b'})) {
+      push(@row, $r_i2cin->[$row]{'::b'}); # TODO: get all n-th b
+    }
+    else {
+      push(@row,"");
+    }
 
     return(@row);
 }
