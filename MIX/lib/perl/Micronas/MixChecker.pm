@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Checker
 # | Modules:    $RCSfile: MixChecker.pm,v $
-# | Revision:   $Revision: 1.4 $
-# | Author:     $Author: wig $
-# | Date:       $Date: 2003/10/13 09:03:10 $
+# | Revision:   $Revision: 1.5 $
+# | Author:     $Author: abauer $
+# | Date:       $Date: 2003/11/27 09:08:56 $
 # |
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.4 2003/10/13 09:03:10 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.5 2003/11/27 09:08:56 abauer Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the checking capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixChecker.pm,v $
+# | Revision 1.5  2003/11/27 09:08:56  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.4  2003/10/13 09:03:10  wig
 # | Fixed misc. requests and bugs:
 # | - do not wire open signals
@@ -82,7 +85,8 @@ use Log::Agent;
 use Log::Agent::Priorities qw(:LEVELS);
 use Tree::DAG_Node; # tree base class
 
-use Micronas::MixUtils qw( mix_store db2array write_excel %EH replace_mac);
+use Micronas::MixUtils qw( mix_store db2array %EH replace_mac);
+use Micronas::MixUtils::IO;
 use Micronas::MixParser qw( %hierdb %conndb );
 
 
@@ -97,9 +101,9 @@ my %mix_check_list = ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixChecker.pm,v 1.4 2003/10/13 09:03:10 wig Exp $';
+my $thisid		=	'$Id: MixChecker.pm,v 1.5 2003/11/27 09:08:56 abauer Exp $';
 my $thisrcsfile	=	'$RCSfile: MixChecker.pm,v $';
-my $thisrevision   =      '$Revision: 1.4 $';
+my $thisrevision   =      '$Revision: 1.5 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

@@ -1,0 +1,33 @@
+
+To build the pdf output use: pdflatex <filename> 
+or simply type: make
+
+The use of jpeg's causes to build of pdf-files, to generate a dvi you would have
+to convert each jpeg file to postscript format.
+
+
+Warning: 
+cvs adds special keywords for verification this causes damage of binary files!
+
+To check in a binary file use:
+
+      $ cvs add -kb -m"A test file" <file2permit>
+      $ cvs ci -m"First checkin; contains a keyword" <file2permit>
+
+
+To fix this problem in already checked in files use:
+
+      $ cvs admin -kb <file2change>
+      $ cvs update -A <file2change>
+      # For non-unix systems:
+      # Copy in a good copy of the file from outside CVS
+      $ cvs commit -m "make it binary" <file2change>
+
+
+The used -k options keeps the used mode -b (binary) for the given file.
+
+
+
+
+
+

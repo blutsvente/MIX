@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                    |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                     |
-# | Revision:   $Revision: 1.33 $                                             |
-# | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/11/10 09:30:57 $                                   |
+# | Revision:   $Revision: 1.34 $                                             |
+# | Author:     $Author: abauer $                                  |
+# | Date:       $Date: 2003/11/27 09:08:56 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.33 2003/11/10 09:30:57 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.34 2003/11/27 09:08:56 abauer Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # + A lot of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -31,11 +31,14 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.34  2003/11/27 09:08:56  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.33  2003/11/10 09:30:57  wig
 # | Adding testcase for verilog: create dummy open wires
 # |
 # | Revision 1.32  2003/10/29 13:34:49  abauer
-# | .
+# | new Documentation
 # |
 # | Revision 1.31  2003/10/23 12:10:54  wig
 # | added counter for macro evaluation cmacros
@@ -152,19 +155,17 @@ require Exporter;
 	mix_list_econf
 	is_absolute_path
 	replace_mac
-	init_ole
-	close_open_workbooks
-	mix_utils_open_input
 	db2array
-	write_excel
-	write_delta_excel
 	write_sum
-	clean_temp_sheets
+	convert_in
+	select_variant
+	two2one
+	one2two
         );
 # @Micronas::MixUtils::EXPORT_OK=qw(
 @EXPORT_OK = qw(
+		%OPTVAL
                 %EH
-		$ex
 	     );
 
 our $VERSION = '0.01';
@@ -199,7 +200,6 @@ use Storable;
 #
 # Prototypes
 #
-sub write_delta_excel ($$$);
 sub select_variant ($);
 sub mix_list_conf ();
 sub mix_list_econf ($);
@@ -210,12 +210,10 @@ sub mix_utils_open($;$);
 sub mix_utils_print($@);
 sub mix_utils_printf($@);
 sub mix_utils_close($$);
-sub close_open_workbooks ();
 sub replace_mac ($$);
 sub one2two ($);
 sub two2one ($);
 sub is_absolute_path ($);
-sub mix_utils_mask_excel ($);
 sub mix_utils_split_cell ($);
 
 ##############################################################
@@ -223,7 +221,7 @@ sub mix_utils_split_cell ($);
 ##############################################################
 
 use vars qw(
-    %OPTVAL %EH %MACVAL $ex
+    %OPTVAL %EH %MACVAL
 );
 
 ####################################################################
@@ -233,11 +231,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.33 2003/11/10 09:30:57 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.34 2003/11/27 09:08:56 abauer Exp $';
 my $thisrcsfile	=	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision   =      '$Revision: 1.33 $';
+my $thisrevision   =      '$Revision: 1.34 $';
 
-# Revision:   $Revision: 1.33 $   
+# Revision:   $Revision: 1.34 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -671,6 +669,8 @@ sub mix_banner(;$)
     my $MOD_VERSION = "";
     $MOD_VERSION .= ( "\n#####   MixUtils    " . $Micronas::MixUtils::VERSION )
 	if ( defined( $Micronas::MixUtils::VERSION ) );
+    $MOD_VERSION .= ( "\n#####   MixUtils::IO    " . $Micronas::MixUtils::IO::VERSION )
+	if ( defined( $Micronas::MixUtils::IO::VERSION ) );
     $MOD_VERSION .= ( "\n#####   MixParser   " . $Micronas::MixParser::VERSION )
 	if ( defined( $Micronas::MixParser::VERSION ) );
     $MOD_VERSION .= ( "\n#####   MixWriter   " . $Micronas::MixWriter::VERSION )
@@ -790,8 +790,6 @@ No input arguments (today).
 
 sub mix_init () {
 
-$ex = undef; # Container for OLE server
-
 %EH = (
     'template' => {
 	'vhdl' =>{
@@ -838,7 +836,7 @@ $ex = undef; # Container for OLE server
 	      'workaround' => {
 		    'verilog' => 'dummyopen', # dummyopen := create a dummy signal for open port splices 
 	      },
-	    },	
+	    },
 	'ext' =>	{   'vhdl' => 'vhd',
 			    'verilog' => 'v' ,
 			    'intermediate' => 'mixed', # not a real extension!
@@ -863,6 +861,7 @@ $ex = undef; # Container for OLE server
     'input' => {
 	'ext' =>	{
 	    'excel' =>	"xls",
+	    'soffice' => "sxc",
 	    'csv'   =>	"csv",
 	},
     },
@@ -1124,33 +1123,33 @@ $ex = undef; # Container for OLE server
 	'req' => 'optional',
 	'parsed' => 0,
 	'field' => {
-	    #Name   	=>		Inherits
-	    #						Multiple
-	    #							Required
-	    #								Defaultvalue
-	    #									PrintOrder
+	    #Name   	=>	  	   Inherits
+	    #					    Multiple
+	    #						    Required
+	    #							  Defaultvalue
+	    #								    PrintOrder
 	    #                                  0      1       2	3       4
-	    '::ign' 		=> [ qw(	0	0	1	%NULL% 	1 ) ],
-	    '::type'		=> [ qw(	0	0	1	%TBD%	2 ) ],	
+	    '::ign' 		=> [ qw(	0	0	1	%NULL% 1 ) ],
+	    '::type'		=> [ qw(	0	0	1	%TBD%  2 ) ],
 	    '::variants'	=> [ qw(	1	0	0	Default	3 )],
-	    '::inst'		=> [ qw(	0	0	1	W_NO_INST	4 )],
-	    "::comment"	=> [ qw(	1	0	2	%EMPTY%	6 )],
+	    '::inst'		=> [ qw(	0	0	1	W_NO_INST 4 )],
+	    "::comment"	        => [ qw(	1	0	2	%EMPTY%	6 )],
 	    "::shortname"	=> [ qw(	0	0	0	%EMPTY%	5 )],
 	    "::b"		=> [ qw(	0	1	1	%NULL%	7 )],
-	    "::default"	=> [ qw(	1	1	0	%NULL%	0 )],
+	    "::default"	        => [ qw(	1	1	0	%NULL%	0 )],
 	    "::hierachy"	=> [ qw(	1	0	0	%NULL%	0 )],
-	    "::debug"	=> [ qw(	1	0	0	%NULL%	0 )],
+	    "::debug"	        => [ qw(	1	0	0	%NULL%	0 )],
 	    '::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
 	    'nr'		=> 12,  # Number of next field to print
 	},
-    }, 
+    },
     "macro" => {
 	    "%SPACE%" 	=> " ",
 	    "%EMPTY%"	=> "",
 	    "%NULL%"	=> "0",
 	    "%TAB%"	=> "\t",
 	    "%S%"		=> "\t", # Output field ident ....
-	    "%IOCR%"	=> "\n",
+	    "%IOCR%"	=> " ",
 	    "%SIGNAL%"	=> "std_ulogic",
 	    "%BUS_TYPE%"	=> "std_ulogic_vector",
 	    "%PAD_TYPE%"	=> "__E_DEFAULT_PAD__",	# Default pad entity
@@ -1237,6 +1236,13 @@ $ex = undef; # Container for OLE server
 	    'alerts' => 'off', # Switch off ExCEL display alerts; could be on, to...
 	},
     },
+    'format' => { # in - out file settings
+       'csv' => {
+           'cellsep' => ';', # cell seperator
+           'sheetsep' => ':=:=:=>', # sheet seperator
+           'quoting' => '"', # quoting character
+       },
+    },
 );
 
 #
@@ -1309,6 +1315,7 @@ foreach my $conf (
 	} else {
 	    while( <CFG> ) {
 		chomp;
+		$_ =~ s,\r$,,;
 		next if ( m,^\s*#,o );
 		if ( m,^\s*MIXCFG\s+(\S+)\s*(.*), ) { # MIXCFG key.key.key value
 		    _mix_apply_conf( $1, $2, "file:mix.cfg" );
@@ -1352,7 +1359,7 @@ sub mix_list_conf () {
     print( "\nCAVEAT: The list seen here might be different from the final configuration!!\n" );
     print( "CAVEAT: Because it is dumped before CONF sheet evaluation!!\n" );
     print( "CAVEAT: Run MIX and check the CONF sheet of the intermediate workbook.\n" );
-    
+
     exit 0;
 }
 
@@ -1429,7 +1436,6 @@ sub mix_overload_conf ($) {
     my $e = "";
     my ( $k, $v );
 
-    
     for my $i ( @$confs ) {
 	( $k, $v ) = split( /=/, $i ); # Split key=value
 	unless( $k and $v ) {
@@ -1451,38 +1457,6 @@ sub mix_overload_conf ($) {
                 logwarn("Evaluation of configuration $k=$v failed: $@") if ( $@ );
                 next;
         }
-    }
-}
-
-##############################################################################
-# mix_excel_conf
-#
-# take CONF sheet  contents and transfer that into %EH (overloading values there)
-##############################################################################
-
-=head2 mix_excel_conf($conf,$source)
-
-Take array provided by the mix_utils_open_input function (excel), search for the
-MIXCFG tag. If found, convert that into %EH.
-
-=cut
-
-sub mix_excel_conf ($$) {
-    my $rconf = shift; # Input array
-    my $s = shift; # Source
-
-    ROW: for my $i ( @$rconf ) {
-	for my $ii ( 0..(scalar ( @$i ) - 3 ) ) {
-	    next unless ( $i->[$ii] ); # Skip empty cells in this row
-	    if ( $i->[$ii] eq "MIXCFG" ) { #Try to read $ii+1 and $ii+2
-		my $key = $i->[$ii+1] || '__E_ERROR.EXCEL_CONF.KEY';
-		my $val = $i->[$ii+2] || '__E_ERROR.EXCEL_CONF.VALUE';
-		_mix_apply_conf( $key, $val, "EXCEL:$s" ); #Apply key/value
-		next ROW;
-	    } else { # If row does not have MIXCFG in first cell, skip it.
-		next ROW;
-	    }
-	}
     }
 }
 
@@ -1544,7 +1518,7 @@ sub mix_overload_sheet ($) {
     # %EH = ...
     #		'vi2c' => {
     #		'xls' => 'VI2C', ...
-    
+
     for my $i ( @$sheets ) {
 	( $k, $v ) = split( /=/, $i ); # Split key=value
 	unless( $k and $v ) {
@@ -1563,124 +1537,6 @@ sub mix_overload_sheet ($) {
     }
 }
 
-
-####################################################################
-## ??? BEGIN function
-## initialise OLE
-####################################################################
-
-=head2
-
-init_ole () {
-
-Start OLE server (to read ExCEL spread sheets in our case)
-Returns a OLE handle or undef if that fails.
-
-=cut
-
-sub init_ole () {
-
-# Start Excel/OLE Server, do it in eval ....
-  unless ( eval "use Win32::OLE;" ) {  
-	eval {
-	  use Win32::OLE qw(in valof with);
-          use Win32::OLE::Const 'Microsoft Excel';
-          use Win32::OLE::NLS qw(:DEFAULT :LANG :SUBLANG);
-          my $lgid = MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT);
-          $Win32::OLE::LCID = MAKELCID($lgid);
-          $Win32::OLE::Warn = 3;
-
-# 527d535
-# usefull statements from the OLE tutorial ..
-# < # 	  my $Excel = Win32::OLE->GetActiveObject('Excel.Application')
-# < #       || Win32::OLE->new('Excel.Application', 'Quit');
-# < 
-#$Excel->{DisplayAlerts}=0; #Turn off popups ...
- 
-          unless( $ex=Win32::OLE->GetActiveObject('Excel.Application') ) {
-	    # Try to start a new OLE server:
-		unless ( $ex=Win32::OLE->new('Excel.Application', sub {$_[0]->Quit;}) ) {
-		    return undef; # Did not work :-(
-		}
-          }
-          init_open_workbooks(); # Get list of already open files
-          return $ex;  # Return OLE ExCEL object ....
-	}
-    } else {
-    logdie "FATAL: Cannot fire up OLE server: $!\n";
-    return undef;
-  }
-}
-
-####################################################################
-## mix_utils_open_input
-## open all input files and read in the worksheets needed
-## do basic checks and conversion 
-####################################################################
-
-=head2
-
-mix_utils_open_input (@) {
-
-Open all input files and read in their CONN, HIER and IO sheets
-Returns two (three) arrays with hashes ...
-
-=cut
-
-sub mix_utils_open_input (@) {
-    my @in = @_;
-
-    my $aconn = [];
-    my $ahier = [];
-    my $aio = [];
-    
-    for my $i ( @in ) {
-	unless ( -r $i ) {
-	    logwarn("Cannot read input file $i");
-	    next;
-	} 
-	#
-	# maybe there is a CONF page?
-	# Change CONF accordingly (will not be visible at upper world)
-	#
-	my @conf = open_excel( $i, $EH{'conf'}{'xls'}, $EH{'conf'}{'req'} );
-	for my $c ( @conf ) {
-	    $EH{'conf'}{'parsed'}++;
-	    # Apply it immediately
-	    mix_excel_conf( $c, $EH{'conf'}{'xls'} );
-	}
-	# Open connectivity sheet(s)
-	my @sheet = open_excel( $i, $EH{'conn'}{'xls'},  $EH{'conn'}{'req'});
-	for my $c ( @sheet ) {
-	    $EH{'conn'}{'parsed'}++;
- 	    my @conn = convert_in( "conn", $c ); # Normalize and read in
-	    push( @$aconn, @conn ); # Append
-	}
-
-	# Open hierachy sheets
-	@sheet = open_excel( $i, $EH{'hier'}{'xls'}, $EH{'hier'}{'req'} );
-	for my $c ( @sheet ) {
-	    $EH{'hier'}{'parsed'}++;
-	    my @hier = convert_in( "hier", $c );
-	    #
- 	    # Remove all lines not selected by our variant
-	    #TODO: Should we allow variants in the CONN sheet, too??
-	    select_variant( \@hier );
-	    push( @$ahier,   @hier );	# Append
-	}
-
-	# Open IO sheet (if available, not needed!)
-	@sheet = open_excel( $i, $EH{'io'}{'xls'}, $EH{'io'}{'req'} );
-	for my $c ( @sheet ) {
-	    $EH{'io'}{'parsed'}++;
-	    my @io = convert_in( "io", $c );
-	    #
-	    push( @$aio,   @io );   # Append
-	}	
-    }
-    return( $aconn, $ahier, $aio );
-}
-
 ####################################################################
 ## mix_utils_open
 ## Our interface for file output
@@ -1690,7 +1546,7 @@ sub mix_utils_open_input (@) {
 =head2
 
 mix_utils_open ($;$) {
-    
+
 Open file for writing. If the "delta" mode is active, then a diff will be generated
 instead of a full file!
 
@@ -1718,7 +1574,7 @@ sub mix_utils_open ($;$){
 	    $file = $EH{'output'}{'path'} . "/" . $file;
 	}
     }
-    
+
     my $ofile = $file;
 
     # Print out diff's
@@ -1817,7 +1673,7 @@ sub mix_utils_open ($;$){
 #
 sub is_absolute_path ($) {
     my $path = shift;
-    
+
     if ( $^O=~/Win32/ ) {
 	if ( $path =~ m,^[/\\], or $path =~ m,^[a-zA-Z]:[/\\], ) {
 	    return 1;
@@ -1891,7 +1747,7 @@ sub mix_utils_close ($$) {
 	    $c = $EH{'output'}{'comment'}{$k} || "__NOCOMMENT";
 	    last;
 	}
-    }    
+    }
 
     if ( $this_delta{"$fh"} ) {
     # Sort/map new content and compare .... print out to $fh
@@ -1956,7 +1812,7 @@ $c ------------- CHANGES START HERE ------------- --
 	return undef;
     }
 
-    # Close new file if in -bak mode and close_flag is set ...    
+    # Close new file if in -bak mode and close_flag is set ...
     if ( $close_flag and $bfh{"$fh"} ) {
 	my $bfh = $bfh{"$fh"};
 	$bfh->close or logwarn( "ERROR: Cannot close file $file: $!" )
@@ -1964,7 +1820,7 @@ $c ------------- CHANGES START HERE ------------- --
 	    and return undef;
     }
 
-    return;    
+    return;
 }
 
 } # End of mix_util_FILE block ....
@@ -2094,7 +1950,7 @@ sub convert_in ($$) {
 	# Skip ::ign marked with # or // comments, again ...
 	next if ( defined( $order{'::ign'}) and $i->[$order{'::ign'}] =~ m,^(#|//), );
 
-	# Copy rest to an 'another' array ....
+	# Copy rest to 'another' array ....
 	my $n = $#d + 1;
 	foreach my $ii ( keys( %order ) ) {
 	    if ( defined( $i->[$order{$ii}] ) ) {
@@ -2143,7 +1999,9 @@ sub parse_header($$@){
 	logwarn( "ERROR: parse header started with missing arguments!\n" );
 	exit 1;
     }
+
     my %rowh = ();
+
     for my $i ( 0 .. ( scalar( @row ) - 1 ) ) {
 	unless ( $row[$i] )  {
 	    logtrc("INFO:4" , "WARNING: Empty header in column $i, sheet-type $kind, skipping!");
@@ -2220,269 +2078,10 @@ sub parse_header($$@){
 	}
     }
 
-    #
     # Finally, got the field name list ... return now
-    #
     return %or;
 }
 
-#
-# Get a list of all open workbooks
-#
-
-
-{
-my %workbooks = ();
-my %newbooks = ();
-
-sub init_open_workbooks () {
-
-    foreach my $bk ( in $ex->{Workbooks} ) {
-	$workbooks{$bk->{'Name'}} = $bk; # Remember that
-    }
-    return;
-}
-
-#	if ( $bk->{'Name'} =~ m,^$basename$,i ) {
-#	    $openflag = 1;
-#	    $bk->Activate;
-#	    $book = $bk;
-#	    last;
-#	    # Already open ...
-#	    #TODO: Warning: Path might be different!
-#	}
-#    }
-#
-# Check name against list of already opened files
-#
-
-#
-# is_open_workbook
-#
-sub is_open_workbook ($) {
-    my $workbook = shift;
-
-    for my $i ( keys( %workbooks ) ) {
-	if ( $i =~ m,^$workbook$,i ) {
-	    return $workbooks{$i};
-	}
-    }
-
-    for my $i ( keys( %newbooks ) ) {
-	if ( $i =~ m,^$workbook$,i ) {
-	    return $newbooks{$i};
-	}
-    }
-    return undef;
-
-}
-
-#
-# Remember all workbooks we made
-#
-sub new_workbook ($$) {
-    my $workbook = shift;
-    my $book = shift;
-    
-    $newbooks{$workbook} = $book;
-
-}
-
-#
-# Finally, close all workbooks we opened while running along here ...
-#
-sub close_open_workbooks () {
-
-    for my $i ( keys( %newbooks ) ) {
-	$newbooks{$i}->Close or logwarn "ERROR: Cannot close $i workbook";
-    }
-
-}
-
-}
-
-####################################################################
-## open_excel
-## open excel file and get contents
-####################################################################
-
-=head2
-
-open_excel ($$$) {
-
-Open a excel file, select the appropriate worksheets and return
-
-Arguments: $filename, $sheet, $flag
-
-=cut
-
-sub open_excel($$$){
-    my ($file, $sheetname, $warn_flag)=@_;
-
-    my $openflag = 0;
-    
-    #old: logdie "Cannot use Excel OLE interface!" unless($use_csv);
-    $ex->{DisplayAlerts}=0 if ( $EH{'script'}{'excel'}{'alerts'} =~ m,off,io );
-
-    unless( $file =~ m/\.xls$/ ) {
-	$file .= ".xls";
-    }
-    unless( -r $file ) {
-      logwarn( "cannot read $file in open_excel!" );
-      return undef;
-    }
-
-    $file = path_excel( $file );
-    # my $basename = $file;
-    my $basename = basename( $file ); # s,.*[/\\],,; #Strip off / and \ 
-
-    my $book;    
-    my $ro = 1;
-    if ( $warn_flag =~ m,write,io or $OPTVAL{'import'} or $OPTVAL{'init'} ) {
-	$ro = 0;
-    }
-    # If it exists, it could be open, too?
-    unless ( $book = is_open_workbook( $basename ) ) {
-	$book = $ex->Workbooks->Open({FileName=>$file, ReadOnly=>$ro});
-	new_workbook( $basename, $book );
-    } else {
-	# Is the open thing at the right place?
-	my $wbpath = dirname( $file ) || $EH{'cwd'};
-	# wbpath needs some fix-up -> remove NAME\.., also \.
-	if ( $wbpath eq "." ) {
-	    $wbpath = $EH{'cwd'};
-	}
-	# If this is not an absolute path -> prepend cwd ....
-	if ( $wbpath !~ m,^(\w:)?[/\\], ) {
-	    $wbpath = $EH{'cwd'} . "\\" . $wbpath;
-	}
-	#TODO: Do not remove ... (three dots in a row ....)
-	#TODO: Use File::Spec for that matter (but that does not work today?).
-	while ( 1 ) {
-	    last unless ( $wbpath =~ s,\\?[^\\]+\\\.\.,,g ) # Remove DIR\..
-	    # last unless ( $wbpath =~ m,\\\.\., );
-	}
-	$wbpath =~ s,\\\.\\,\\,g;	      # Remove \.
-	
-	$wbpath =~ s,/,\\,g; # Replace potential / -> \
-	$wbpath =~ s,\\\\,\\,g; # Remove duplicate \
-
-	#Does our book have the right path?
-	if ( $book->Path ne $wbpath ) {
-	    logwarn("ERROR: workbook $basename with different path (" . $book->Path . ") already opened!");
-	    $EH{'sum'}{'errors'}++;
-	}
-    }
-
-    $book->Activate;
-    
-    #foreach my $bk ( in $ex->{Workbooks} ) {
-	#if ( $bk->{'Name'} =~ m,^$basename$,i ) {
-	#    $openflag = 1;
-	#    $bk->Activate;
-	#    $book = $bk;
-	#    last;
-	#    # Already open ...
-	#    #TODO: Warning: Path might be different!
-	#}
-    #}
-
-    #unless ( $openflag ) {
-    #    $book = $ex->Workbooks->Open({FileName=>$file, ReadOnly=>1});
-    #} 
-
-#  my $book  =$ex->Workbooks->Open(
-#				  $file.".xls",   # filename
-#				  0,              # update links
-#				  FALSE,          # readonly
-#				  undef,          # format
-#				  undef,          # password
-#				  undef,          # writeResPassword
-#				  TRUE,           # ingnoreReadOnlyRecommennded
-#				  undef,          # origin
-#				  FALSE,          # delimiter
-#				  FALSE,          # editable
-#				  FALSE           # notify
-#				 );
-#  my $sheet =$book->Worksheets($sheetnumber);
-
-    # Take all sheets matching the possible reg ex in $sheetname
-    my @sheets = ();
-    foreach my $sh ( in $book->{Worksheets} ) {
-	if ( $sh->{'Name'} =~ m/^$sheetname$/ ) {
-		push( @sheets, $sh->{'Name'} );
-        }
-    }
-    if ( scalar( @sheets ) < 1 ) {
-	if ( $warn_flag =~ m,mandatory,io ) {
-	    logwarn("Cannot locate a worksheet $sheetname in $file");
-	    $EH{'sum'}{'warnings'}++;
-	}
-	return ();
-    }
-
-    my @all = ();
-    foreach my $s ( @sheets ) {
-	logtrc( "INFO:4", "Reading worksheet $s of $file" );
-	$ex->ActiveWorkbook->Sheets($s)->Activate;
-	my $sheet = $book->ActiveSheet;
-	my $row=$sheet->UsedRange->{Value};
-
-	# Remove empty lines with all undefined values ... (ExCEL return all undef
-	#  values tagged to the end of the array ..
-	my $line = "";
-	PURGE:
-	while( $line = $row->[scalar( @$row ) - 1] ) {
-	    # See if last line is all empty/undef'd:
-	    for my $elem ( @$line ) {
-		# Found a defined element -> stop purging
-		last PURGE if ( defined( $elem ) );
-	    }
-	    pop( @$row ); # Take off undefined last line ....
-	}
-	push( @all, $row ); # Return array of arrays
-    }
-
-    $ex->{DisplayAlerts}=1; # Switch back on alerts ...
-    return(@all);
-
-}
-
-####################################################################
-## path_excel
-## convert "normal" filename to absolute path, usable for OLE server
-####################################################################
-
-=head2
-
-path_excel ($) {
-
-Take input file name with/out path name and convert it to absolute path
-Replace all / (I prefer to use) by  \ (ExCEL needs)
-
-Arguments: $filename
-
-=cut
-sub path_excel ($) {
-    my $file = shift;
-    #
-    # Make filename a absolute one (we are on MS ground)
-    # Has to start like
-    # 	N:\bla\blubber or N:/path/....
-    if ( $file =~ m,^[\\/], ) {
-    # Missing the letter for a drive
-        $file = $EH{'drive'} . $file;
-    } elsif ( $file !~ m,^\w:, ) {
-	$file = $EH{'cwd'} . "/" . $file;
-    }
- 
-    #
-    # Convert / to \ :-(, otherwise OLE will get confused
-    # As we will open Excel on MSWin only, there is no need to rethink that.
-    $file =~ s,/,\\,go;
-
-    return $file
-}
 
 ####################################################################
 ## mix_store
@@ -2539,7 +2138,7 @@ sub mix_store ($$;$){
 	    exit 1;
 	}
     }
-    
+
     return;
 }
 
@@ -2573,7 +2172,7 @@ sub mix_load ($%){
 	    $flag = undef;
 	}
     }
-    return $flag;    
+    return $flag;
 }
 
 ####################################################################
@@ -2597,7 +2196,7 @@ sub db2array ($$$) {
     my $ref = shift;
     my $type = shift;
     my $filter = shift;
-    
+
     unless( $ref ) { logwarn("WARNING: Called db2array without db argument!");
 	    $EH{'sum'}{'warnings'}++;
 	    return;
@@ -2651,8 +2250,8 @@ sub db2array ($$$) {
     } else {
 	@keys = keys( %$ref );
     }
-    
-    # Now comes THE data    
+
+    # Now comes THE data
     for my $i ( sort( @keys ) ) {
 	my $split_flag = 0; # If split_flag 
 	for my $ii ( 1..$#o ) { # 0 contains fields to skip
@@ -2700,22 +2299,25 @@ sub db2array ($$$) {
 
 }
 
-#
-# Split cells longer than 1024 characters into chunks suitable for excel
-# to swallow
-#
-# Input: cell content
-# Return value: @chunks
-#
-# Caveat: if cell does not contain %IOCR% markers, will split somewhere in the middle!
-# Might lead to troubles if read back.
+#####################################################################
+## Split cells longer than 1024 characters into chunks suitable for excel
+## to swallow
+##
+## Input: cell content
+## Return value: @chunks
+##
+## Caveat: if cell does not contain %IOCR% markers, will split somewhere in the middle!
+## Might lead to troubles if read back.
+####################################################################
 sub mix_utils_split_cell ($) {
-    my $data = shift;
 
+    my $data = shift;
     my $flaga = 0;
+
     # Get pieces up to 1024 characters, seperated by ", %IOCR%"
     my $iocr = $EH{'macro'}{'%IOCR%'};
     my @chunks = ();
+
     while( length( $data ) > 1024 ) {
 	my $tmp = substr( $data, 0, 1024 ); # Take 1024 chars
 	# Stuff back up to last %IOCR% ...
@@ -2738,8 +2340,8 @@ sub mix_utils_split_cell ($) {
     }
     # Rest ...
     push( @chunks, $data );
+
     return @chunks;
-    
 }
 
 ####################################################################
@@ -2762,7 +2364,7 @@ sub inout2array ($;$) {
     my $o = shift || "";
 
     unless( defined( $f ) ) { return "%UNDEF_2%"; };
-     
+
     my $s = "";
 
 #       '::out' => [
@@ -2775,7 +2377,7 @@ sub inout2array ($;$) {
 #                     'port_f' => undef
 #		    	'cast' => cast_func ....
 #                   }
-#                 ],    
+#                 ],
 
     for my $i ( @$f ) {
 
@@ -2809,7 +2411,6 @@ sub inout2array ($;$) {
 			$i->{'port_f'} . ":" . $i->{'port_t'} . # ")=(" .
 			# $i->{'sig_f'} . ":" . $i->{'sig_t'} .
 			"), %IOCR%";
-		
 	    } else {
 		# If this is %OPEN% and neither port nor signal defined -> set to (0)
 		if ( $o eq '%OPEN%' ) {
@@ -2824,163 +2425,19 @@ sub inout2array ($;$) {
     if ( ( $s =~ m,\(:,o ) or ( $s =~ m,\(:,o ) ) {
 	logwarn( "WARNING: inout2array bad branch (: ! File bug report!" );
     }
-	
+
     $s =~ s/,\s*%IOCR%\s*$//o; #Remove trailing CR
     # convert macros (parse_mac already done )!!!
     $s =~ s,%IOCR%,$EH{'macro'}{'%IOCR%'},g;
-    
+
     return $s;
 }
 
+
 ####################################################################
-## write_delta_excel
-## write delta intermediate data to excel sheet
+## convert two dim. input arry into a one-dim. array.
+## by concatenation the cells with \tX\t
 ####################################################################
-
-=head2
-
-write_delta_excel ($$$) {
-
-read in previous intermediate data, diff and print out only differences.
-
-Arguments:      $file  := filename
-		$type  := sheetname (CONN|HIER)
-		$ref_a := reference to array with data
-
-=cut
-
-sub write_delta_excel ($$$) {
-    my $file = shift;
-    my $sheet = shift;
-    my $r_a = shift;
-   
-    # Fix path
-    my $predir = "";
-    if ( $EH{'intermediate'}{'path'} ne "." and not is_absolute_path( $file ) ) {
-	# Prepend a directory name ...
-	$predir = $EH{'intermediate'}{'path'} . "/" ;
-	$predir =~ s,[/\\]+$,/,; # Strip of extra trailing slashes / and \ ...
-    }
-
-    # Read in intermediate from previous runs ...    
-    my @prev = open_excel( $predir . $file, $sheet, "mandatory,write" );
-    #TODO: Put back a single ' for excel ... ???
- 
-    my @prevd = two2one( $prev[0] );
-    my @currd = two2one( $r_a );
-
-    my @colnhead = @{$r_a->[0]};
-   
-    # Print header to ... (usual things like options, ....)
-    # TODO: Add that header to header definitions
-    my $head =
-"-------------------------------------------------------
--- ------------- delta mode for file $file ------------- --
---
--- Generated
---  by:  %USER%
---  on:  %DATE%
---  cmd: %ARGV%
---  delta mode (comment/space/sort/remove): $EH{'output'}{'delta'}
---
--- ------------------------------------------------- --
--- ------------- CHANGES START HERE ------------- --
-";
-    $head = replace_mac( $head, $EH{'macro'} );
-
-    # Diff it ...
-    my $diff = diff( \@currd, \@prevd,
-                { STYLE => "Table",
-                # STYLE => "Context",
-                FILENAME_A => 'NEW', #TODO: get new file name in here!
-                FILENAME_B => "OLD $file",
-                CONTEXT => 0,
-                # OUTPUT     => $fh,
-                }
-    );
-
-    # Was there a difference? If yes, report and sum up.
-    if ( $diff ) {
-	my $niceform = 1; # Try to write in extended format ...
-	if ( $currd[0] ne $prevd[0] ) { # Column headers have changed!!
-	    logwarn("WARNING: EXCEL_DIFF with different headers useless!");
-	    # Fall back to write delta in old format
-	    $niceform = 0;
-	}
-	
-        my @h = split( /\n/, $head );
-	@h = one2two( \@h );
-	shift @h;
-	$h[0][1] = $h[0][2] = $h[0][3] = "-- delta --";
-	my @out = ();
-	@out = split( /\n/, $diff );
-	@out = one2two( \@out );
-	my $difflines = shift( @out );
-	my @delcols = ();
-
-	push( @h, [ "--NR--", "--CONT--", "--NR--", "--CONT--" ] );
-	if ( $niceform ) {
-	    # Convert into tabular format, mark changed cells !!
-
-	    push( @h, [ "HEADER",  @colnhead ] ); # Attach header line
-	    unshift( @h, [ "HEADER", @colnhead ] ); # Preped full header line
-	    my $colwidth = scalar( @{$h[0]} ); # Matrix has to be wide enough ...
-
-	    # Now convert delta to two-line format ...
-	    for my $nf ( @out ) {
-		my @newex = ();
-		my @oldex = ();
-		if ( scalar( @$nf ) == 4 ) {
-		    $newex[0] = "NEW-" . $nf->[0];
-		    $oldex[0] = "OLD-" . $nf->[2];
-		    push( @newex, split( /@@@/, $nf->[1] ) ) if $nf->[1];
-		    push( @oldex, split( /@@@/, $nf->[3] ) ) if $nf->[3];
-		    push( @h, [ @newex ] ) if ( scalar( @newex ) > 1  );
-		    push( @h, [ @oldex ] ) if ( scalar( @oldex ) > 1 );
-		    my $fn = scalar( @newex );
-		    my $fo = scalar( @oldex );
-		    my $min = ( $fn < $fo ) ? $fn : $fo;
-		    my $max = ( $fn < $fo ) ? $fo : $fn;
-		    for my $iii ( 0..$min-1 ) {
-			if ( $newex[$iii] ne $oldex[$iii] ) {
-			    push( @delcols , scalar(@h) . "/" . ( $iii + 1 ) );
-			}
-		    }
-		    if ( $min < $max ) {
-			for my $iii ( $min..$max ) {
-			    push( @delcols, scalar( @h ) . "/" . ( $iii + 1 ) );
-			}
-		    } 
-		} else {
-		    push( @h, $nf );
-		}
-	    }
-	} else {
-	    # Remove the @@@ signs from output ...
-	    for my $o ( @out ) {
-		map( { s,@@@,,g } @$o );
-	    }
-	    push( @h, ( @out ) );
-	}
-        write_excel( $file, "DIFF_" . $sheet, \@h, \@delcols );
-
-	# One line has to differ (date)
-	if ( $difflines > 0 ) {
-	    logwarn( "INFO: Detected $difflines changes in intermediate ExCEL sheet $sheet, $file");
-	} elsif ( $difflines == -1 ) {
-	    logwarn( "WARNING: Missing changed date in intermediate ExCEL sheet $sheet, $file");
-	}
-	#TODO: Do not use logwarn here ...
-	return $difflines;
-    } else {
-	return -1;
-    }
-}
-
-#
-# convert two dim. input arry into a one-dim. array.
-# by concatenation the cells with \tX\t
-#
 #wig20030716: use first line as header descriptions, field seperator!!
 sub two2one ($) {
     my $ref = shift;
@@ -3001,11 +2458,11 @@ sub two2one ($) {
     return @out;
 }
 
-#
-# create a two-dim. array from a one-dim. one
-# suitable to be fed to ExCEL
-# possibly undo Text::Diff table format -> ExCEL
-#
+#####################################################################
+## create a two-dim. array from a one-dim. one
+## suitable to be fed to ExCEL
+## possibly undo Text::Diff table format -> ExCEL
+#####################################################################
 sub one2two ($) {
     my $ref = shift;
 
@@ -3066,333 +2523,6 @@ sub one2two ($) {
     return $difflines, @out;
 }
 
-
-####################################################################
-## write_excel
-## write intermediate data to excel sheet
-####################################################################
-
-=head2
-
-write_excel ($$$;$) {
-
-this subroutine is self explanatory. The only important thing is, that it will
-try to rotate older versions of the generated sheets.
-E.g. sheet CONN will become O0_CONN while O0_CONN was shifted
-to O1_CONN. The maximum number of all versions to keep is defined by
-$EH{'intermediate'}{'keep'}
-
-Arguments: $file   := filename
-		$type  := sheetname (CONN|HIER)
-		$ref_a := reference to array with data
-		$ref_c := mark the cells listed in this array ...
-
-=cut
-sub write_excel ($$$;$) {
-    my $file = shift;
-    my $sheet = shift;
-    my $r_a = shift;
-    my $r_c = shift || undef;
-
-    my $book;
-    my $newflag = 0;
-    my $openflag = 0;
-    my $sheetr = undef;
-
-    unless ( $file =~ m/\.xls$/ ) {
-	$file .= ".xls";
-    }
-
-    # Write to other directory ...
-    if ( $EH{'intermediate'}{'path'} ne "." and not is_absolute_path( $file ) ) {
-	$file = $EH{'intermediate'}{'path'} . "/" . $file;
-    }
-
-    my $efile = path_excel( $file );
-    # my $basename = $file;
-    my $basename = basename( $file ); # ~ s,.*[/\\],,; #TODO: check if Name is basename of filename, always??
-
-    # $ex->{DisplayAlerts}=0;
-    $ex->{DisplayAlerts}=0 if ( $EH{'script'}{'excel'}{'alerts'} =~ m,off,io );
-
-    if ( -r $file ) {
-	# If it exists, it could be open, too?
-	unless( $book = is_open_workbook( $basename ) ) {
-	    # No, not opened so far ....
-	    logwarn("File $file already exists! Contents will be changed");
-	    $book = $ex->Workbooks->Open($efile);
-	    new_workbook( $basename, $book );
-	} else {
-	    # Is the open thing at the right place?
-	    my $wbpath = dirname( $file ) || $EH{'cwd'};
-	    if ( $wbpath eq "." ) {
-		$wbpath = $EH{'cwd'};
-	    } elsif ( not is_absolute_path( $wbpath ) ) {
-		$wbpath = $EH{'cwd'} . "/" . $wbpath;
-	    }
-
-	    $wbpath =~ s,/,\\,g; # Replace / -> \
-	    #Does our book have the right path?
-	    if ( $book->Path ne $wbpath ) {
-		logwarn("ERROR: workbook $basename with different path (" . $book->Path .
-			") already opened!");
-		$EH{'sum'}{'errors'}++;
-	    }
-	}
-	$book->Activate;
-
-	#
-    	# rotate old versions of $sheet to O$n_$sheet_O ...
-	#
-	my %sh = ();
-	my $s_previous = undef;
-
-	foreach my $sh ( in $book->{Worksheets} ) {
-	    $sh{$sh->{'Name'}} = $sh; # Keep links
-	}
-
-	if ( $EH{'intermediate'}{'keep'} ) {
-
-	    # Rotate sheets ...
-	    # Delete eldest one:
-	    my $max = $EH{'intermediate'}{'keep'};
-	    logwarn("Rotating $max old sheets of $sheet!");
-	    if ( exists( $sh{ "O_" . $max . "_" . $sheet } ) ) {
-		$sh{"O_" . $max . "_" . $sheet}->Delete;
-	    }
-	    if ( $max >= 2 ) {
-		for my $n ( reverse( 2..$max ) ) {
-		    if ( exists( $sh{ "O_" . ( $n - 1 ) . "_" . $sheet } ) ) {
-			$sh{"O_" . ( $n - 1 ) . "_" . $sheet}->{'Name'} =
-			    "O_" . $n . "_" . $sheet;
-		    }
-		}
-	    }
-	    # Finally: Rename the latest/greatest ...
-	    if ( exists( $sh{ $sheet } ) ) {
-		$s_previous = $sh{$sheet};
-	        $sh{$sheet}->{'Name'} =
-			"O_1_" . $sheet;
-	    }
-	    # Copy previous format ....
-	    if ( $EH{'intermediate'}{'format'} =~ m,prev,o and
-		defined( $s_previous ) ) {
-		unless( $s_previous->Copy($s_previous) ) { # Add in new sheet before
-		    logwarn("Cannot copy previous sheet! Create new one.");
-		} else {
-		    $sheetr = $book->ActiveSheet();
-		    $sheetr->Unprotect;
-		    $sheetr->UsedRange->{'Value'} = (); #Will that delete contents?
-		    $sheetr->{'Name'} = $sheet;
-		}
-	    }
-	} else { # Delete contents or all of sheet ?
-	    if ( exists( $sh{ $sheet } ) ) {
-		#Keep format if EH.intermediate.format says so
-		if ( $EH{'intermediate'}{'format'} =~ m,prev,o ) {
-		    $sheetr = $sh{$sheet};
-		    $sheetr->Unprotect;
-		    $sheetr->UsedRange->{'Value'} = (); # Overwrite all used cells ...
-		} else {
-		    $sh{$sheet}->Delete;
-		}
-	    }
-	}
-    } else {
-	# Create new workbook
-	$book = $ex->Workbooks->Add();
-	$book->SaveAs($efile);
-	new_workbook( $basename, $book );
-	$newflag=1;
-    }
-
-    unless( defined( $sheetr ) ) {
-    # Create output worksheet:
-	$sheetr = $book->Worksheets->Add() || logwarn( "Cannot create worksheet $sheet in $file:$!");
-	$sheetr->{'Name'} = $sheet;
-    }
-
-    $sheetr->Activate();
-    $sheetr->Unprotect;
-
-    mix_utils_mask_excel( $r_a );
-
-    my $x=$#{$r_a->[0]}+1;
-    my $y=$#{$r_a}+1;
-    my $c1=$sheetr->Cells(1,1)->Address;
-    my $c2=$sheetr->Cells($y,$x)->Address;
-    my $rng=$sheetr->Range($c1.":".$c2);
-    $rng->{Value}=$r_a;
-
-    # Mark cells in that list in background color ..
-    # Format: row/col
-    if ( defined( $r_c ) ) {
-	$rng->Interior->{Color} = mix_utils_rgb( 255, 255, 255 ); # Set back color to white
-	# Deselect ...
-	for my $cell ( @$r_c ) {
-	    my $x; my $y;
-	    ( $y , $x ) = split( '/', $cell );
-	    if ( $x =~ m,^\d+$, and $y =~ m,^\d+$, ) {
-		# my $ca=$sheetr->Cells($y,$x)->Address;
-		my $cn = chr( $x + 64 ) . ( $y - 1 ); #Hope that helps ...
-		my $co = chr( $x + 64 ) . $y;
-		my ( $ncol, $ocol );
-		if ( $x == 1 ) {
-		    $ncol = $ocol = mix_utils_rgb( 0, 0, 255 );
-		} else {
-		    $ocol = mix_utils_rgb( 0, 255, 0 );
-		    $ncol = mix_utils_rgb( 255, 0, 0 );
-		}
-		$rng= $sheetr->Range($cn);
-		$rng->Interior->{Color} = $ncol;
-		$rng =$sheetr->Range($co);
-		$rng->Interior->{Color} = $ocol;
-
-# White background with a solid border
-#
-# $Chart->PlotArea->Border->{LineStyle} = xlContinuous;
-# $Chart->PlotArea->Border->{Color} = RGB(0,0,0);
-# $Chart->PlotArea->Interior->{Color} = RGB(255,255,255);
-		# $rng->{BackColor}=0;
-		# example: $workSheet->Range("A1:A6")->Interior->{ColorIndex} =XX;
-	    }
-	}
-    }
-
-    if ( $EH{'intermediate'}{'format'} =~ m,auto, ) {
-	$rng->Columns->AutoFit;
-    }
-
-    #TODO: pretty formating
-    # $book->Save;
-
-    $book->SaveAs($efile);
-
-    # $book->Close unless ( $openflag ); #TODO: only close if not open before ....
-
-    $ex->{DisplayAlerts}=1;
-    return;
-}
-
-####################################################################
-## clean_temp_excel
-## remove temporary sheets of excel sheet
-####################################################################
-
-=head2
-
-clean_temp_sheets () {
-
-subroutine removes old and diff sheets from excel files
-
-     Arguments: $file   := filename
-
-=cut
-sub clean_temp_sheets ($) {
-
-    my $file = shift;
-    my $book;
-
-    logwarn("cleaning up file: $file");
-
-    if( -r $file ) {
-
-          # use existing instance if Excel is already running
-          eval {$ex = Win32::OLE->GetActiveObject('Excel.Application')};
-          die "Excel not installed" if $@;
-          unless (defined $ex) {
-              $ex = Win32::OLE->new('Excel.Application', sub {$_[0]->Quit;})
-                    or die "running Excel";
-          }
-
-          # append
-          unless ( $file =~ m/\.xls$/ ) {
-    	      $file .= ".xls";
-          }
-
-	  # If it exists, it could be open, too?
-	  unless( defined $book) {
-	      # No, not opened so far...
-	      logwarn("Removing old and and diff sheets");
-	      $book = $ex->Workbooks->Open(cwd()."\\".$file);
-	  }
-          else {
-	      # Is the open thing at the right place?
-	      my $wbpath = dirname( $file ) || $EH{'cwd'};
-	      if ( $wbpath eq "." ) {
-		  $wbpath = $EH{'cwd'};
-	      }
-	      $wbpath =~ s,/,\\,g; # Replace / -> \
-	      #Does our book have the right path?
-	      if ( $book->Path ne $wbpath ) {
-		  logwarn("ERROR: workbook with different path already opened!");
-		  $EH{'sum'}{'errors'}++;
-	      }
-  	  }
-
-          $ex->{DisplayAlerts}=0 if ( $EH{'script'}{'excel'}{'alerts'} =~ m,off,io );
-
-          $book->Activate;
-
-          my %sh = ();
-
-          # search for old sheets end remove them
-          foreach my $sh (in $book->{Worksheets} ) {
-              if( $sh->{'Name'} =~ /^O_/ || $sh->{'Name'} =~ /DIFF_/) {
-                  $book->{Worksheets}->{$sh->{'Name'}}->Delete;
-          }
-      }
-
-      $book->Save;
-
-      $ex->{DisplayAlerts}=1;
-      return;
-
-    }
-
-    logwarn("File $file not found!");
-    return;
-}
-
-#
-# Convert RGB value to internal representation
-#
-sub mix_utils_rgb ($$$) {
-    return ( $_[0] | ($_[1] << 8) | ($_[2] << 16) );
-}
-
-
-
-#
-# Mask pure digits (esp. with . and/or , inside) for ExCEL!
-# Otherwise these will get converted to dates :-(
-#
-#wig20030716: add a ' before a trailing ' ...
-#wig20031106: last chance to limit cell size to a sane value ...
-sub mix_utils_mask_excel ($) {
-    my $r_a = shift;
-
-    for my $i ( @$r_a ) {
-	for my $ii ( @$i ) {
-	    unless( defined( $ii ) ) {
-		$ii = "";
-		next;
-	    } elsif ( length( $ii ) > 1200 ) {
-	    #wig20031106: allow some more characters (delta mode ...)
-		logwarn( "WARNING: Limit length of cell to save 1200 characters: " .
-			substr( $ii, 0, 32 ) );
-		$EH{'sum'}{'warnings'}++;
-		$ii = substr( $ii, 0, 1200 );
-	    }
-	    if ( $ii =~ m/^[\d.,]+$/ ) {
-		# Put a double ' ' in front of pure digits ...
-		$ii = "'" . $ii;
-	    } elsif ( $ii =~ m/^'/ ) { #'
-		      $ii = "'" . $ii;
-	    }
-	}
-    }
-}
 
 ####################################################################
 ## write_sum
@@ -3552,7 +2682,7 @@ sub mix_utils_init_file($) {
 	    my $ole = init_ole();
 	}
         #OFF: only Utils knows about that ... my $ole = init_ole(); # Start OLE Object ... for windows, only
-        mix_utils_open_input( $output );
+        Micronas::MixUtils::IO::mix_utils_open_input( $output );
         #Gets format from file to import too.
 
 	Micronas::MixParser::mix_parser_importhdl( $output, \@hdlimport ); # Found in MixParser ...

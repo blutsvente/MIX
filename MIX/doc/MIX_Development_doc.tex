@@ -1,0 +1,138 @@
+%
+%   MIX  - Developer Documentation
+%
+
+\documentclass[a4paper,12pt]{article}
+\setlength{\textwidth}{170mm}
+\setlength{\textheight}{255mm}
+\setlength{\oddsidemargin}{-5mm}
+\setlength{\topmargin}{-18mm}
+
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+%\usepackage{supertabular}
+\usepackage{epsfig}
+\usepackage{xr}
+
+\title{MIX - Micronas Interconnect Specification Expander}
+\author{Development Documentation}
+\date{6.10.2003}
+
+%\family{cmss}
+%\selection
+
+\begin{document}
+
+%\begin{titlepage}
+%\begin{tabular}{p{20mm}l}
+%\multicolumn{2}{r}{\bf {MIX} - Micronas Interconnect spec. eXpander}\\[1mm]
+%\hline \\[3mm]
+%& MIX - \\
+%& Developer\\
+%& Documentation\\[5mm]
+%& Micronas - Munich\\[5mm]
+%\hline \\[20mm]
+%\end{tabular}
+%\end{titlepage}gin{titlepage}
+
+\maketitle
+\newpage
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+This Document will give Developers a short introduction into Micronas Interconnect Specification Expander. It will \underline{not} give any help about MIX usage, if you need information about this, please refer the MIX-Userreference. The following Sections will explain the basic concepts of MIX and what you will need to install it(specially cvs).
+
+\section{Installation and Setup}
+\subsection{Requirements}
+Because of MIX is a Perl script (using additional Packages), you will have to install a Perl 5 interpreter. You may use the Packages included in CVS or optionally, download each of your own from the Internet. If you are using Linux you might find Perl 5 already beeing installed. The Packages included in cvs where used for developing and testing MIX, if you refer problems please you these ones. If you are using Windows you should install WinCVS (most Linux-Distributions include a CVS client per default) for keeping up to date and permiting own changes.
+
+\subsection{Getting from CVS}
+Instead using a obsolete Version you should decide to get MIX from CVS. The following steps discribe what to do, if you want to get MIX via this way:
+\begin{enumerate}
+\item{install a CVS client (visit http://www.wincvs.org for more information)}
+\item{install a ssh client (visit http://lexa.mckenna.edu/sshwindows/)}
+\item{change to the Base directory where you wan't MIX to recide}
+\item{set a Environment variable called "CVSRSH" to "ssh"}
+\item{enter the command: \tt{cvs -z3 -d:ext:...... co mix}}
+\item{optionally: install ActiveState Perl and Komodo}
+\item{optionally: download packages from CPan (http://cpan.perl.com)}
+\end{enumerate}
+Further informations about cvs usage could be found at: http://www.sourceforge.net\newline
+\hspace*{10mm}- select "Site Docs" from the section "SF.net Resources"\newline
+\hspace*{10mm}- visit section "F", which contains various information about CVS
+
+\section{Basic Concepts}
+\subsection{Input/Output formats}
+As mentioned above you won't find here any information about "how to build Hierachical, Connectivity and IO-Sheets", because of the MIX-Userreference gives some examples how to do this. In this point please read the MIX-Userreference.
+\subsection{Basical steps}
+The MIX main program, called "\begin{tt}mix\_0.pl\end{tt}", is containing calls to functions located in the Micronas Package. These calls represent MIX's procedural flow. Each of this procedures solves some basical problems, the following steps represent sections which include similar functions.
+\begin{enumerate}
+\item{Initialize the \%EH variable with all the default configuration}
+\item{Processing of command line switches, at least one argument has to be specified}
+\item{Read the input files one by one and retrieve tables (simple convert into Arrays of Hashes)}
+\item{Retrieve generator statements (generator, macros) from input data}
+\item{Initialize Hierarchy Data Base and convert to internal format}
+\item{Parse connectivity and IO sheet and convert to internal format}
+\item{Apply connectivity macros, hierachical and connectivity generation}
+\item{Do some internal clean up}
+\item{Replace all occurences of \begin{tt}\%MACRO\%\end{tt} in \begin{tt}\%hierdb\%\end{tt} and \begin{tt}\%conndb\%\end{tt}}
+\item{Add connections and ports if needed (hierarchy traversal)}
+\item{Clean up again}
+\item{Add a list of all signals for each instance and generate entities}
+\item{Dump intermediate data}
+\item{Write output (entities, architecture, configuration and status) and exit}
+\end{enumerate}
+
+\section{The Package: Micronas}
+Here can be found some additional information about the MIX Libraries which are inseperately part of MIX. Most of work is done here.
+
+\subsection{Library: MixUtils.pm}
+This package includes some utilities which are used in most of the other packages. Because of there are a lot of functions here, only the most importend are mentioned here.
+
+\subsubsection{mix\_getopt\_header, mix\_getops, mix\_banner, mix\_usage and mix\_help}
+These functions help us solving user interactions.\newline
+\hspace*{10mm}- mix\_getopt\_header() and mix\_getops() are used to get command line options, paased by the user.
+\hspace*{10mm}- mix\_banner() prints the headings MIX outputs to std every run
+\hspace*{10mm}- mix\_usage() and mix\_help() are needed to print the program help and/or usage
+
+\subsubsection{mix\_init and init\_ole}
+The function mix\_init() initializes the \%EH variable with all the configuration we have/need. This variable keeps all configuation information while the program is running.\newline
+The function init\_ole() initializes the Microsoft OLE System, which is needed for editing with Excel sheets.
+\subsubsection{}
+
+\subsection{Library: MixParser.pm}
+The package provides the parsing capabilites for the MIX project. A matrix of information in some well-known format is converted into intermediate format and/or source code files.
+
+\subsection{Library: MixIOParser.pm}
+This Package provides the parsing capabilites for the MIX project. Take a matrix of information in some well-known format and convert it into intermediate format and/or source code files MixIOParser is spezialized in parsing the IO description sheet Information about IOcells and Pads will be converted to connection and hierachy and added to the HIER and CONN databases accordingly.
+
+\subsection{Library: MixWriter.pm}
+The package provides the output capabilites for the MIX project. Here you can find the following functions: \begin{it}generate\_entities\end{it}, \begin{it}write\_entities\end{it}, \begin{it}write\_architecture\end{it} and \begin{it}write\_configuration\end{it}.\newline
+
+\subsubsection{generate\_entities ()}
+Scan all of hierachy and create consistent, checked list of entities. An entity has a name and a portmap (generic map). Produced data structure will look like \$entities{\$name}{\$port}{type|from|to|mode}. Type will be generic or std\_logic or std\_ulogic ....\newline
+This functions relies on \$hierdb{inst}{::conn}{::in|::out} to exist!\newline
+TODO: Usage of hierdb is not nice. Search for a better way.\newline
+TODO: Generics and inout mode ....\newline
+
+\subsubsection{write\_entities ()}
+This function writes entities into output file(s).\newline
+\hspace*{10mm}\begin{it}ENTY\end{it} -$>$ write each entity in a file of it's own\newline
+\hspace*{10mm}\begin{it}COMB(INE)\end{it} -$>$ combine entity, architecture and configuration\newline
+This is mostly important for architecture and configuration. In the both cases above the entity name is used as filename. In all other cases "\begin{it}efname\end{it}" is used as entity file name (write all entities into one file of that name). In combine mode, \begin{it}entity.vhd\end{it} is choosen as filename. Filename extension defaults to VHDL.
+
+\subsubsection{write\_architecture ()}
+This function writes architecture into (VHDL/Verilog) output file(s).
+
+\subsubsection{write\_configuration ()}
+This function writes configurarion into (VHDL/Verilog) output file(s).
+
+\subsection{Library: MixChecker.pm}
+Ths package here provides the checking capabilites for the MIX project. Accepts the intermediate (aka. final connection and hierachy description) and check if everything against your company design guide lines. Through plug-ins you can add these checks at will.
+
+% \epsfig{file=name.eps,height=1.5in,width=5in}
+\end{document}
+
+

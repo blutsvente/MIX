@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.33 $                                             |
-# | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/11/25 12:40:26 $                                   |
+# | Revision:   $Revision: 1.34 $                                             |
+# | Author:     $Author: abauer $                                  |
+# | Date:       $Date: 2003/11/27 09:08:56 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.33 2003/11/25 12:40:26 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.34 2003/11/27 09:08:56 abauer Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.34  2003/11/27 09:08:56  abauer
+# | *** empty log message ***
+# |
 # | Revision 1.33  2003/11/25 12:40:26  wig
 # | Fixed VHDL trailing , issue (%EMPTY% removal)
 # |
@@ -165,11 +168,11 @@ use Log::Agent::Priorities qw(:LEVELS);
 use Tree::DAG_Node; # tree base class
 use Regexp::Common; # Needed for reading back spliced ports
 
-use Micronas::MixUtils
-    qw(   mix_store db2array write_excel
-            mix_utils_open mix_utils_print mix_utils_printf mix_utils_close
-            replace_mac
-            %EH );
+use Micronas::MixUtils 
+    qw( mix_store db2array mix_utils_open mix_utils_print 
+	mix_utils_printf mix_utils_close replace_mac %EH );
+use Micronas::MixUtils::IO;
+
 use Micronas::MixParser qw( %hierdb %conndb add_conn );
 
 #
@@ -200,9 +203,9 @@ sub mix_wr_unsplice_port ($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.33 2003/11/25 12:40:26 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.34 2003/11/27 09:08:56 abauer Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.33 $';
+my $thisrevision   =      '$Revision: 1.34 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
