@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                    |
 # | Modules:    $RCSfile: MixParser.pm,v $                                     |
-# | Revision:   $Revision: 1.12 $                                             |
+# | Revision:   $Revision: 1.13 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/03/21 16:59:19 $                                   |
+# | Date:       $Date: 2003/03/24 13:04:45 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.12 2003/03/21 16:59:19 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.13 2003/03/24 13:04:45 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,8 +33,8 @@
 # |
 # | Changes:
 # | $Log: MixParser.pm,v $
-# | Revision 1.12  2003/03/21 16:59:19  wig
-# | Preliminary working version for bus splices
+# | Revision 1.13  2003/03/24 13:04:45  wig
+# | Extensively tested version, fixed lot's of issues (still with busses and bus splices).
 # |
 # | Revision 1.11  2003/03/13 14:05:19  wig
 # | Releasing major reworked version
@@ -2068,42 +2068,57 @@ sub add_port ($$) {
         # mode and width
         #
         my @desc = $hierdb{$inst}{'::treeobj'}->descendants;
+        my @anc = $hierdb{$inst}{'::treeobj'}->ancestors;
         my %non_desc = ();
-        my %ndm = ();
-        my %ndw = ();
-        map( { $non_desc{$_} = 1; } keys( %$r_connected ) ); 
+ 
+        map( { $non_desc{$_} = 1; } keys( %$r_connected ) ); #All instances connected 
         for my $d ( @desc ) {
+            # Delete all our descendants from the list
             delete( $non_desc{$d->name} );
         }
+        for my $d ( @anc ) {
+            if ( exists( $non_desc{$d->name} ) ) {
+                $non_desc{$d->name} = 2; #Mark our ancestors!
+            }
+        }
         delete( $non_desc{$inst} ); # Just in case
-        
+
+        my %ndm = ();
+        my %ndw = ();
+        # my %nhdm = ();
+        # my %nhdw = ();
         for my $d ( keys( %non_desc ) ) {
+            # Is this one of our ancestors? If yes, we reverse the direction settings
+            #  i -> o, o -> i
+            my $up_flag = 0;
+            if ( $non_desc{$d} == 2 ) {
+                $up_flag = 1;
+            }
             if( not exists( $d_mode{$d} ) ) {
                 logwarn( "ERROR: signal mode not defined internally ($d). File bug report!" );
             } else {
                 for my $dd ( keys( %{$d_mode{$d}} ) ) {
-                    if ( $dd =~ m,(i|o|e|b|m|c), ) {
+                    my $ddr = $dd;
+                    if ( $up_flag ) {
+                        if ( $dd eq 'o' ) {$ddr = 'i'; }
+                        elsif( $dd eq 'i' ) {$ddr = 'o'; }
+                    }    
+                    if ( $ddr =~ m,(i|o|e|b|m|c), ) {
                         $ndm{$1}++;
                     } else {
                         $ndm{'e'}++;
                     }
-                    if( not defined( $ndw{$dd} ) ) {
-                        $ndw{$dd} = $d_mode{$d}{$dd};
-                    } elsif ( $ndw{$dd} ne 'A::' ) {
+                    if( not defined( $ndw{$ddr} ) ) {
+                        $ndw{$ddr} = $d_mode{$d}{$dd};
+                    } elsif ( $ndw{$ddr} ne 'A::' ) {
                         if ( $d_mode{$d}{$dd} ne 'A::' ) {
-                            $ndw{$dd} = overlay_bits( $d_mode{$d}{$dd}, $ndw{$dd} );
+                            $ndw{$ddr} = overlay_bits( $d_mode{$d}{$dd}, $ndw{$ddr} );
                         } else {
-                            $ndw{$dd} = 'A::';
+                            $ndw{$ddr} = 'A::';
                         }
                     }
                 }
             }
-            # If d_wid equals A::, keep it. Else sum up ..
-            # TODO: correct that !! mode dependant bit vector width
-            # unless( $ndw eq 'A::' ) {
-            #    if ( $d_wid{$d}  eq 'A::' ) { $ndw = 'A::'; }
-            #    else { $ndw .= $d_wid{$d}; }
-            # }
         }
 
         # We have already some link?
@@ -2142,47 +2157,12 @@ sub add_port ($$) {
         }
 
         # Extend this instance/entitiy ....
-        # ( $this_width, $this_mode ) = _add_port( $r, $this_width, $this_mode, $dw, \%dm, $ndw, \%ndm );
-
-        # Set our datastrucutures
-        # $d_mode{$inst} = $this_mode;
-        # $d_wid{$inst} = $this_width;
-        # $r_connected->{$inst} = $hierdb{$inst}{'::treeobj'}; #TODO
         my @nb = ();
         for my $m ( keys( %{$d_mode{$inst}} ) ) {
             push( @nb , $d_mode{$inst}{$m} . ":" . $m );
         }
-        # Replace the description
+        # Replace the signal/port/hierachy data structure
         @{$hierdb{$inst}{'::sigbits'}{$signal}} = @nb;
-            
-=head 4
-
-OLD
-        # unless ( exists ( $hierdb{$inst}{'::sigbits'}{$r->[0]} ) ) {
-        #    $hierdb{$inst}{'::sigbits'}{$r->[0]} = [];
-        # }
-        # my $rsb = $hierdb{$inst}{'::sigbits'}{$r->[0]};
-        if ( scalar( @$rsb ) == 0 ) {
-            push( @$rsb, @new_sb );
-        } else {
-            my $flag = 1;
-            for my $sb ( 0..scalar( @$rsb ) - 1  ) {
-                for my $nb ( 0..scalar( @new_sb ) ) {
-                    if ( substr( $rsb->[$sb], -1, 1 ) eq substr( $new_sb[$nb], -1 , 1 ) ) {
-                        $rsb->[$sb] = $new_sb[$nb];
-                        $flag = 0;
-                    }
-                }
-            }
-            if ( $flag ) {
-                logwarn( "ERROR: Illegal branch taken for adding port" );
-                push( @$rsb, @new_sb );
-            }
-        }
-        # $hierdb{$inst}{'::sigbits'}{$r->[0]} = $this_width; # Remember this bits ...
-
-=cut
-
     }
 }
 
@@ -2259,11 +2239,11 @@ sub _add_port ($$$$$$$) {
         $dir = "::out";
         if ( $uw->{'i'} eq 'A::' ) {
             if ( exists( $dw->{'o'} ) and $dw->{'o'} eq 'A::' ) { $simple = 1; }
-        }
+        } #All others cases are handled in other branch
     } elsif ( $uk =~ m,o,o ) { # Upper inst. have out's, only ->
         #Maybe there are multiple driver's
         $do = 'i';
-        $dir = ":in";
+        $dir = "::in";
         if ( $uw->{'o'} eq 'A::' ) {
             if (  exists( $dw->{'i'} ) and $dw->{'i'} eq 'A::' and
                 not exists( $dw->{'o'} ) ) {
@@ -2272,14 +2252,10 @@ sub _add_port ($$$$$$$) {
         }
     }
     
-    #TODO: Check if that matches what we get provided from our daugthers:
-    #TODO
-    #TODO -> MixChecker
-    # And also use the ::mode value!!
-    
-    # How many bits need a connection:
-    # Calculate the diff of
-    #   requested by upper inst. - not used by daughters - already connected
+    # 
+    # If we identified the simple cases, let's do it.
+    # Else we go into bit counting ..
+    #
     my %t = ();
     if ( not $tw and $simple  ) {
         # I guess this is the most likely case

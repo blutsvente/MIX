@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                    |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                     |
-# | Revision:   $Revision: 1.13 $                                             |
+# | Revision:   $Revision: 1.14 $                                             |
 # | Author:     $Author: wig $                                  |
-# | Date:       $Date: 2003/03/21 16:59:05 $                                   |
+# | Date:       $Date: 2003/03/24 13:04:45 $                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.13 2003/03/21 16:59:05 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.14 2003/03/24 13:04:45 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,8 +32,8 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
-# | Revision 1.13  2003/03/21 16:59:05  wig
-# | Preliminary working version for bus splices
+# | Revision 1.14  2003/03/24 13:04:45  wig
+# | Extensively tested version, fixed lot's of issues (still with busses and bus splices).
 # |
 # | Revision 1.12  2003/03/14 14:52:11  wig
 # | Added -delta mode for backend.
@@ -141,7 +141,7 @@ sub gen_concur_port($$$$$$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.13 2003/03/21 16:59:05 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.14 2003/03/24 13:04:45 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
 
 $thisid =~ s,\$,,go;
@@ -618,7 +618,17 @@ sub _create_entity ($$) {
 		logtrc( "INFO", "autoconnecting single signal $i to bus port $port" );
 	    }
 
-	    my $m = $conndb{$i}{'::mode'};
+            # If we connect a single bit to to a bus, we strip of the _vector from
+            # the type of the signal to get correct port type
+            if(
+                  not defined( $h ) and not defined( $l ) and
+                  $type =~ m,(std_.*)_vector,
+                ) {
+		$type = $1;
+		logtrc( "INFO", "autoreducing port type for signal $i to $type" );
+            };
+                
+            my $m = $conndb{$i}{'::mode'};
 	    my $mode = "__E_MODE_DEFAULT_ERROR__";
 	    if ( $m ) { # not empty
 		if ( $m =~ m,IO,io ) { $mode = "inout"; } 		# inout mode!
@@ -1603,8 +1613,9 @@ sub _write_architecture ($$$$) {
                 for my $insts ( @{$sig2inst{$ii}} ) {
                     #TODO: is that the final idea? Maybe splitting gen_map
                     # in two parts makes it better
+                    # Port name might be ne signal name here (generated port!)
                     $i_macros{'%INST_' . $insts . '%'} =~
-                        s,$ii(\s+=>\s+)$ii,$ii$1$sp_conflict{$ii},g;
+                        s!(\w*$ii\w*)(\s+=>\s+)$ii(\(|,|\n)!$1$2$sp_conflict{$ii}$3!g;
                 }
 	    }
 
@@ -1806,7 +1817,13 @@ sub gen_concur_port($$$$$$$$) {
                     }
                 } elsif ( $tsh ne '' ) {
                     $tswidth = 1;
-                    $sslice = "(" . $tsh . ")";
+                    if ( $tsh eq '0' and $sh eq '' ) { # 
+                        $sslice = "";
+                        $type .= " -- SINGLE_BIT (" . $tsh . ")";
+                    } else {
+                        $sslice = "(" . $tsh . ")"; #TODO: should that better be written as (N downto N)
+                        $type .= " -- __W_SINGLE_BIT_SLICE";
+                    }
                 }
                 # Port slice?
                 if ( $tph ne $tpl ) {
