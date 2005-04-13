@@ -56,28 +56,35 @@ MIX - Micronas Interconnect Spec expander
 
 Author: Wilfried Gänsheimer
 \newline 
-$Date: 2005/01/26 14:01:59 $
+$Date: 2005/04/13 10:20:10 $
 \newline 
-Version: $Id: MIX_Userreference.lyx,v 1.6 2005/01/26 14:01:59 wig Exp $
-\layout Standard
-
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-newpage
-\end_inset 
-
-
+Version: $Id: MIX_Userreference.lyx,v 1.6 2005/01/26 14:01:59 wig Exp 
 \layout Section
 
 Introduction
+\layout Standard
+
+MIX is part of the registermaster tools.
+ The registermaster set is comprised of a method and a tool to automatically
+ derive top-level hardware description, low-level driver software and documentat
+ion out of a single source structural specification is presented.
+ In contrast to system-level design tools this approach focuses on structural
+ properties like interconnect, hierarchy and control/status registers instead
+ of refining a functional specification.
+ A table-based specification format was chosen to enable efficient data
+ entry and review.
+ Due to automatic code generation consistency between specification and
+ design is guaranteed and error-prone manual transformations can be avoided.
+ This paper focuses on specification and hardware generation.
 \layout Section
 
 Management Summary
+\layout Standard
+
+MIX is a simple to use script, which creates all of a chip top level source
+ files from a single input file.
+ This input file is the single source description of hierachy, connectivity,
+ IO wiring and internal control busses like I2C.
 \layout Section
 
 Table of Contents
@@ -88,17 +95,7 @@ Table of Contents
 
 \end_inset 
 
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-newpage
-\end_inset 
-
-
+ 
 \layout Section
 
 Installation
@@ -115,14 +112,27 @@ Perl
 \backslash 
 ActivePerl-5.8.4.*.msi
 \family default 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+MICRONAS
+\end_inset 
+
 .
- For UNIX (Solaris/Linux) no installation is needed.
+ For UNIX (Solaris/Linux) no user installation is required.
+ Everything needed is installed in 
+\family typewriter 
+/tools/mix
+\family default 
+.
 \newline 
 Start MIX from the network drive like described in the examples below.
  That will also make sure, that you are using the most recent release automatica
 lly.
- After the Perl installation, you can run MIX.
- immediately.
+ After the Perl installation, you can run MIX immediately.
  Open a command shell on your desktop workstation:
 \newline 
 Press 
@@ -139,6 +149,15 @@ Now change to your working directory and start the generator like
 \newline 
 
 \family typewriter 
+
+\begin_inset Note
+collapsed true
+
+\layout Standard
+
+MICRONAS
+\end_inset 
+
 K:
 \backslash 
 Projects
@@ -158,7 +177,8 @@ TODO: Describe MUI (MIX graphical User Interface).
 Getting Started
 \layout Standard
 
-To receive useful results, MIX reads in various input spreadsheet data.
+To receive useful results, MIX reads in various input date from spreadsheets,
+ typically stored in ExCEL workbooks.
  At least you will need to prepare a description of your design hierarchy
  (
 \series bold 
@@ -169,12 +189,19 @@ HIER
 CONN
 \series default 
 ).
- Optionally MIX will convert a input/output sheet 
+ If found, MIX will convert a input/output sheet 
 \series bold 
 IO
 \series default 
 , listing input/output pads and iocells and how these are linked to the
  core logic into appropriate hierarchy and connection lists.
+ The 
+\family typewriter 
+\series bold 
+I2C
+\family default 
+\series default 
+ sheet can be used to describe an on-chip I2C bus and it's configuration.
 \layout Subsection
 
 A simple example
@@ -234,16 +261,36 @@ HIER
 
 
 \newline 
- The first row defines the table headers names.
- The names have to be in the form "::NAME".
+The first row defines the table headers names.
+ The names have to be in the form "
+\family typewriter 
+::NAME
+\family default 
+".
  Several of the columns are required, some are optional and you can define
  additional columns on your own.
- For HIER sheets the "::inst" column is the primary key.
- One design element will be generated for each new name of an ::inst row.
+ For 
+\family typewriter 
+HIER
+\family default 
+ sheets the "
+\family typewriter 
+::inst
+\family default 
+" column is the primary key.
+ One design element will be generated for each new name of an 
+\family typewriter 
+::inst
+\family default 
+ row.
  If a name is defined several times, these lines will be overloaded or summarize
 d, depending on built-in rules of the MIX converter.
 \newline 
-The "::ign" column has to come first.
+The first column of all sheets has to be "
+\family typewriter 
+::ign
+\family default 
+".
  If it starts with a #, the rest of this row will be ignored.
  All other columns can be added in arbitrary order.
 \newline 
@@ -276,7 +323,7 @@ CONN
 Mix it!
 \layout Standard
 
-Run the MIX converter tool in the directory the excel spread sheet is stored
+Run the MIX converter tool in the directory the excel spreadsheet is stored
  in:
 \newline 
 MS-Windows:
@@ -301,7 +348,7 @@ UNIX:
 
 
 \family typewriter 
-$ module load mix
+$ module load perl mix
 \layout Standard
 
 
@@ -312,63 +359,23 @@ $ mix foo.xls
 \newline 
 This reads in the design description and evaluates the various sheets.
  It creates output files with an intermediate excel design description (
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}mix
-\backslash 
-_simple-mixed.xls
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+mix_simple-mixed.xls
+\family default 
 ) and the same data in a internal format (
-\begin_inset ERT
-status Open
-
-\layout Standard
-
-\backslash 
-begin{tt}mix
-\backslash 
-_simple.pld
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+mix_simple.pld
+\family default 
 ).
  A log file (
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}mix
-\backslash 
-_0.pl.log
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+mix_0.pl.log
+\family default 
 ) and the HDL output files are written in the same run.
  Image 2 shows a screenshot of the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}mix
-\backslash 
-_simpe.xls
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+mix_simpe.xls
+\family default 
  conversion.
  Only the most important errors and warnings are written to the screen,
  while a lot of information will be written to the log file.
@@ -392,8 +399,15 @@ end{tt}
 All output files are stored in the current working directory.
  Old versions of the output files are overwritten.
  Except the log file that is appended by each converter run.
- The intermediate excel description file keeps a history of previous HIER
- and CONN sheets by rotating _N extended worksheet names.
+ The intermediate excel description file keeps a history of previous 
+\family typewriter 
+HIER
+\family default 
+ and 
+\family typewriter 
+CONN
+\family default 
+ sheets by rotating _N extended worksheet names.
 \newline 
 
 \newline 
@@ -687,35 +701,17 @@ hspace*{20mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
+\family typewriter 
 
 \backslash 
-begin{tt}
-\backslash 
-$ mix
-\backslash 
-_0.pl -init foo.vhd bar.xls
-\backslash 
-end{tt}
-\end_inset 
-
+$ mix_0.pl -init foo.vhd bar.xls
+\family default 
 
 \newline 
 will create the file 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}bar.xls
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+bar.xls
+\family default 
 , which has the following three worksheet categories:
 \newline 
 
@@ -767,67 +763,27 @@ hspace*{11mm}
  *.v files are given as command line arguments).
 \newline 
 You will also get a 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}mix.cfg
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+mix.cfg
+\family default 
  file.
  If 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}bar.xls
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+bar.xls
+\family default 
  or 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}mix.cfg
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+mix.cfg
+\family default 
  already exists, the command will exit without changes.
  The import of 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}*.vhd
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+*.vhd
+\family default 
  and 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}*.v
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+*.v
+\family default 
  files is experimental and meant to give a way of getting a start description
  of your design.
  In case of VHDL files, only entity descriptions are imported.
@@ -845,93 +801,37 @@ All worksheets parsed by MIX share some common properties.
  Data in columns with no header or malformed headers will be ignored.
 \newline 
 Commonly understood table headings are 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::ign
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::ign
+\family default 
  and 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::comment
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::comment
+\family default 
 .
  The 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::ign
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::ign
+\family default 
  column is special, because it needs to be the first column of a sheet.
  If a cell in the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::ign
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::ign
+\family default 
  column starts with a 
-\begin_inset ERT
-status Collapsed
+\family typewriter 
 
-\layout Standard
-
-\backslash 
-begin{tt}
 \backslash 
 #
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
  or a 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}//
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+//
+\family default 
 , the complete row is ignored.The 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::comment
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::comment
+\family default 
  column can contain user or program generated comments for a given row.
  It's data will be appended to it's contents as it appears.
 \newline 
@@ -943,50 +843,26 @@ MIX reads the cell values.
 \newline 
 A lot of predefined text macros are understood and converted by MIX.
  A text macro is made up by a name surrounded by 
-\begin_inset ERT
-status Collapsed
+\family typewriter 
 
-\layout Standard
-
-\backslash 
-begin{tt}
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
  signs.
  Retrieve a complete list of macros with the -listconf command line switch
  and grep all lines starting with "
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}MIXCFG macro
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+MIXCFG macro
+\family default 
 ".
  The table 
-\begin_inset ERT
-status Collapsed
+\family typewriter 
 
-\layout Standard
-
-\backslash 
-begin{tt}
 \backslash 
 %macro
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
  gives a list of predefined macros, their default settings and wether this
  macro can be used by the user.
  You can use text macros inside of any cell.
@@ -1004,125 +880,53 @@ end{tt}
 \newline 
  A second type of macros are available to reference other columns of a like
  through 
-\begin_inset ERT
-status Collapsed
+\family typewriter 
 
-\layout Standard
-
-\backslash 
-begin{tt}
 \backslash 
 %::NAME
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
 .
  This will be replaced by the contents of the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::NAME
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::NAME
+\family default 
  column of this row.
  
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::NAME
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::NAME
+\family default 
  has to be defined for the current worksheet, obviously.
  In the above example 
-\begin_inset ERT
-status Collapsed
+\family typewriter 
 
-\layout Standard
-
-\backslash 
-begin{tt}
 \backslash 
 %::inst
 \backslash 
-%
-\backslash 
-_e
-\backslash 
-end{tt}
-\end_inset 
-
+%_e
+\family default 
  will evaluate to 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}chip
-\backslash 
-_e
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+chip_e
+\family default 
 , 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}a
-\backslash 
-_e
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+a_e
+\family default 
  and 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}b
-\backslash 
-_e
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+b_e
+\family default 
  accordingly.
  
-\begin_inset ERT
-status Collapsed
+\family typewriter 
 
-\layout Standard
-
-\backslash 
-begin{tt}
 \backslash 
 %LANGUAGE
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
  becomes vhdl.
  Macro expansion happens just before the intermediate design data is written
  out, after evaluation of all input data.
@@ -1146,53 +950,21 @@ sheets(for this an already installed Excel is needed).
  Trying to read a Excel-Sheet on non-Windows grounds will cause MIX to produce
  csv per default.
  The output format can be forced by setting 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}format.out
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+format.out
+\family default 
  to 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}csv
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+csv
+\family default 
 , 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}sxc
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+sxc
+\family default 
  or 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}xls
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+xls
+\family default 
 .
  In this case MIX will read the given input file and produce the forced
  output format.
@@ -1204,17 +976,9 @@ HIER sheet properties
 The hierarchy of a design is defined in the HIER sheet.
  By default the HIER sheet is named HIER, but you can set the configuration
  value 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{bf}hier.xls
-\backslash 
-end{bf}
-\end_inset 
-
+\series bold 
+hier.xls
+\series default 
  to a Perl regular expression.
  MIX will then consider all worksheets which names match the perl regular
  expression, to be HIER definitions.
@@ -1239,8 +1003,8 @@ collapsed false
 <column alignment="left" valignment="top" leftline="true" rightline="true" width="0pt">
 <column alignment="block" valignment="top" rightline="true" width="4cm">
 <column alignment="block" valignment="top" rightline="true" width="4cm">
-<column alignment="block" valignment="top" rightline="true" width="15mm">
-<column alignment="block" valignment="top" rightline="true" width="2cm">
+<column alignment="block" valignment="top" rightline="true" width="17mm">
+<column alignment="block" valignment="top" rightline="true" width="2.5cm">
 <row topline="true" bottomline="true">
 <cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
@@ -1315,15 +1079,9 @@ Example
 
 \layout Standard
 
- 
-\begin_inset Formula $<$
-\end_inset 
 
-empty
-\begin_inset Formula $>$
-\end_inset 
-
-
+\emph on 
+<empty>
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -1331,7 +1089,7 @@ empty
 
 \layout Standard
 
- man.
+man.
  
 \end_inset 
 </cell>
@@ -1340,7 +1098,7 @@ empty
 
 \layout Standard
 
- # comm.
+# comm.
  
 \end_inset 
 </cell>
@@ -1367,15 +1125,9 @@ empty
 
 \layout Standard
 
- 
-\begin_inset Formula $<$
-\end_inset 
 
-empty
-\begin_inset Formula $>$
-\end_inset 
-
-
+\emph on 
+<empty>
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -1383,7 +1135,7 @@ empty
 
 \layout Standard
 
- man.
+man.
  
 \end_inset 
 </cell>
@@ -1426,8 +1178,7 @@ empty
 
 \layout Standard
 
- opt.
- 
+opt.
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -1469,7 +1220,7 @@ empty
 
 \layout Standard
 
- man.
+man.
  
 \end_inset 
 </cell>
@@ -1504,7 +1255,11 @@ empty
 
 \layout Standard
 
- n/a 
+ 
+\emph on 
+<n/a>
+\emph default 
+ 
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -1512,7 +1267,7 @@ empty
 
 \layout Standard
 
- man.
+man.
  
 \end_inset 
 </cell>
@@ -1555,8 +1310,7 @@ empty
 
 \layout Standard
 
- opt.
- 
+opt.
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -1598,7 +1352,7 @@ empty
 
 \layout Standard
 
- man.
+man.
  
 \end_inset 
 </cell>
@@ -1641,7 +1395,7 @@ empty
 
 \layout Standard
 
- man.
+man.
  
 \end_inset 
 </cell>
@@ -1676,15 +1430,9 @@ empty
 
 \layout Standard
 
- 
-\begin_inset Formula $<$
-\end_inset 
 
-empty
-\begin_inset Formula $>$
-\end_inset 
-
-
+\emph on 
+<empty>
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -1692,8 +1440,7 @@ empty
 
 \layout Standard
 
- opt.
- 
+opt.
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -1728,15 +1475,9 @@ Additional, project specific libraries for VHDL modules.
 
 \layout Standard
 
- 
-\begin_inset Formula $<$
-\end_inset 
 
-empty
-\begin_inset Formula $>$
-\end_inset 
-
-
+\emph on 
+<empty>
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -1744,8 +1485,7 @@ empty
 
 \layout Standard
 
- opt.
- 
+opt.
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -1779,15 +1519,9 @@ empty
 
 \layout Standard
 
- 
-\begin_inset Formula $<$
-\end_inset 
 
-empty
-\begin_inset Formula $>$
-\end_inset 
-
-
+\emph on 
+<empty>
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -1795,8 +1529,7 @@ empty
 
 \layout Standard
 
- opt.
- 
+opt.
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -1819,102 +1552,46 @@ empty
 \layout Standard
 
 Internally the kewords 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::debug
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::debug
+\family default 
 , 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::hierarchy
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::hierarchy
+\family default 
 , 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::skip
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::skip
+\family default 
  and 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::default
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::default
+\family default 
  are used.
  Please do not use them.
  Apart from that you are free to add columns of your own.
  User defined columns are usable in 
-\begin_inset ERT
-status Collapsed
+\family typewriter 
 
-\layout Standard
-
-\backslash 
-begin{tt}
 \backslash 
 %::NAME
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
  macro expansion and are listed in the intermediate design data output.
 \newline 
 Only the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::inst
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::inst
+\family default 
  column has to contain a value in each row (which could be a 
-\begin_inset ERT
-status Collapsed
+\family typewriter 
 
-\layout Standard
-
-\backslash 
-begin{tt}
 \backslash 
 %::NAME
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
  macro, though).
  All other columns will receive more or less reasonable default values in
  case they are left empty.
@@ -1924,17 +1601,9 @@ HIER columns details
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{bf}::gen
-\backslash 
-end{bf}
-\end_inset 
-
+\series bold 
+::gen
+\series default 
 
 \begin_inset ERT
 status Collapsed
@@ -1961,17 +1630,9 @@ hspace*{18mm}
  See description of generator statements below.
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{bf}::variants
-\backslash 
-end{bf}
-\end_inset 
-
+\series bold 
+::variants
+\series default 
 
 \begin_inset ERT
 status Collapsed
@@ -1996,17 +1657,9 @@ hspace*{18mm}
 \end_inset 
 
 -variant VAR is set, only lines whose 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::variant
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::variant
+\family default 
  cell contains the keyword 
 \newline 
 
@@ -2034,17 +1687,9 @@ hspace*{18mm}
 
 given in one cell, separated by ",".
  Without specifying the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}-variant
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+-variant
+\family default 
  switch, 
 \newline 
 
@@ -2058,31 +1703,15 @@ hspace*{18mm}
 \end_inset 
 
 the "Default" and empty 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::variant
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::variant
+\family default 
  cells are read in and evaluated.
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{bf}::inst
-\backslash 
-end{bf}
-\end_inset 
-
+\series bold 
+::inst
+\series default 
 
 \begin_inset ERT
 status Collapsed
@@ -2123,17 +1752,9 @@ depends on the column name.
  Some are concatenated, some are replaced.
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{bf}::lang
-\backslash 
-end{bf}
-\end_inset 
-
+\series bold 
+::lang
+\series default 
 
 \begin_inset ERT
 status Collapsed
@@ -2186,17 +1807,9 @@ hspace*{18mm}
 Verilog are supported (XXX: Verilog output still t.b.d.).
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{bf}::config
-\backslash 
-end{bf}
-\end_inset 
-
+\series bold 
+::config
+\series default 
 
 \begin_inset ERT
 status Collapsed
@@ -2264,17 +1877,9 @@ configuration for this entity.
 Additional columns:
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{bf}::arch
-\backslash 
-end{bf}
-\end_inset 
-
+\series bold 
+::arch
+\series default 
 
 \begin_inset ERT
 status Collapsed
@@ -2301,17 +1906,9 @@ hspace*{18mm}
 by the configuration hier.field.::arch.[3] = rtl; and cannot be changed globally.
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{bf}::use
-\backslash 
-end{bf}
-\end_inset 
-
+\series bold 
+::use
+\series default 
 
 \begin_inset ERT
 status Collapsed
@@ -2343,57 +1940,25 @@ See the ::use details below.
 \layout Standard
 
 The optional "
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::use
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::use
+\family default 
 " column allows to add libraries and work packages for a entity.
  Several libraries can be added, separated by comma or white space.
  In case of VHDL output, the use statement is added to the entity declaration,
  only.
  You can override that by adding a leading 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}ALL:
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+ALL:
+\family default 
 , 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}ARCH:
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+ARCH:
+\family default 
  or 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}CONF:
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+CONF:
+\family default 
  keyword for this instance/entity.
  To change that globally, modify the configuration variable output.generate.use.
 \newline 
@@ -2410,29 +1975,13 @@ hspace*{20mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}foo.lib
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+foo.lib
+\family default 
 , 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}bar.lib.something
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+bar.lib.something
+\family default 
 
 \newline 
 will be printed as
@@ -2448,17 +1997,9 @@ hspace*{20mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}library foo;
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+library foo;
+\family default 
 
 \newline 
 
@@ -2472,17 +2013,9 @@ hspace*{20mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}use foo.lib.all;
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+use foo.lib.all;
+\family default 
 
 \newline 
 
@@ -2496,17 +2029,9 @@ hspace*{20mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}library bar;
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+library bar;
+\family default 
 
 \newline 
 
@@ -2520,17 +2045,9 @@ hspace*{20mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}use bar.lib.something.all;
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+use bar.lib.something.all;
+\family default 
 
 \newline 
 If different instantiations of a entity have different ::use
@@ -2550,17 +2067,9 @@ hspace*{20mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}library IEEE;
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+library IEEE;
+\family default 
 
 \newline 
 
@@ -2574,115 +2083,53 @@ hspace*{20mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}use IEEE.std
-\backslash 
-_logic
-\backslash 
-_1164.all;
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+use IEEE.std_logic_1164.all;
+\family default 
 
 \newline 
 modify macro 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
+\family typewriter 
 
 \backslash 
-begin{tt}
-\backslash 
-%VHDL
-\backslash 
-_USE
-\backslash 
-_DEFAULT
+%VHDL_USE_DEFAULT
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
 .
 \newline 
 To add a library globally, add the appropriate text to the macro.
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
+\family typewriter 
 
 \backslash 
-begin{tt}
-\backslash 
-%VHDL
-\backslash 
-_NOPROJ
+%VHDL_NOPROJ
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
  configuration, which will be used if no library is defined in the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::use
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::use
+\family default 
  column.
 \newline 
 A second usage is to suppress the component declaration output by the 
-\begin_inset ERT
-status Collapsed
+\family typewriter 
 
-\layout Standard
-
-\backslash 
-begin{tt}
 \backslash 
 %NDC
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
  or 
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
+\family typewriter 
 
 \backslash 
-begin{tt}
-\backslash 
-%NO
-\backslash 
-_COMPONENT
-\backslash 
-_DECLARATION
+%NO_COMPONENT_DECLARATION
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
  keyword.
  This is useful for instances, whose entities are taken from libraries.
 \newline 
@@ -2710,65 +2157,31 @@ The text is taken literally.
 \layout Standard
 
 Examples: see 
-\begin_inset ERT
-status Open
-
-\layout Standard
-
-\backslash 
-begin{tt}t/sigport.xls
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+t/sigport.xls
+\family default 
  and 
-\begin_inset ERT
-status Open
-
-\layout Standard
-
-\backslash 
-begin{tt}t/sigport/use/*.vhd
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+t/sigport/use/*.vhd
+\family default 
  for more examples.
 \newline 
 Configuration parameter: 
-\begin_inset ERT
-status Open
-
-\layout Standard
-
-\backslash 
-begin{tt}output.generate.use = enty
-\backslash 
-end{tt}
-\end_inset 
-
-
+\family typewriter 
+output.generate.use = enty
 \layout Subsection
 
 Special HIER sheet properties
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
+\family typewriter 
 
-\layout Standard
-
-\backslash 
-begin{tt}
 \backslash 
 %TOP
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
  is a pseudo instance and used for internal purposes, only.
 \layout Subsection
 
@@ -2777,17 +2190,9 @@ CONN sheet details
 
 The design connections are defined in the CONN sheet.
  The primary key of this sheet is the signalname as given in "
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::name
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::name
+\family default 
 ".
  Signalnames are globally known for the design.
  All appearances of a name are connected, creating intermediate ports as
@@ -2799,41 +2204,17 @@ typecast
 
 The type of a signal can be typecasted by appending a function name with
  a 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}'
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+'
+\family default 
  to the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::in
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::in
+\family default 
  and 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::out
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::out
+\family default 
  definitions.
 \newline 
 Example:
@@ -2849,17 +2230,9 @@ hspace*{20mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::name
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::name
+\family default 
 
 \begin_inset ERT
 status Collapsed
@@ -2871,19 +2244,9 @@ hspace*{20mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}signal
-\backslash 
-_a
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+signal_a
+\family default 
 
 \newline 
 
@@ -2897,17 +2260,9 @@ hspace*{20mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::type
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::type
+\family default 
 
 \begin_inset ERT
 status Collapsed
@@ -2919,19 +2274,9 @@ hspace*{20mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}type
-\backslash 
-_a
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+type_a
+\family default 
 
 \newline 
 
@@ -2945,17 +2290,9 @@ hspace*{20mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::in
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::in
+\family default 
 
 \begin_inset ERT
 status Collapsed
@@ -2967,21 +2304,9 @@ hspace*{24mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}inst
-\backslash 
-_a/port
-\backslash 
-_a'typefunc
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+inst_a/port_a'typefunc
+\family default 
 
 \newline 
 
@@ -2995,17 +2320,9 @@ hspace*{20mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::out
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::out
+\family default 
 
 \begin_inset ERT
 status Collapsed
@@ -3017,93 +2334,33 @@ hspace*{22mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}inst
-\backslash 
-_b/port
-\backslash 
-_b'typefunc
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+inst_b/port_b'typefunc
+\family default 
 
 \newline 
 
 \newline 
 The signal 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}signal
-\backslash 
-_a
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+signal_a
+\family default 
  will be of type 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}type
-\backslash 
-_a
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+type_a
+\family default 
 , while the connecting ports of 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}inst
-\backslash 
-_a
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+inst_a
+\family default 
  and 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}inst
-\backslash 
-_b
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+inst_b
+\family default 
  are converted by applying the typecast function 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}typefunc
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+typefunc
+\family default 
 .
 \newline 
 Caveat: typecast support is experimental.
@@ -3115,73 +2372,29 @@ Automatic Generation of Toplevel Ports
 \layout Standard
 
 If the signal mode as defined in the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::mode
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::mode
+\family default 
  column matches one of I, O or IO, MIX will create top level ports.
  This feature can be disabled by the configuration variable 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}output.generate.inout
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+output.generate.inout
+\family default 
 .
  Possible values are 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}mode
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+mode
+\family default 
 (enable top level port generation) and 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}noxfix
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+noxfix
+\family default 
 (do not prefix and postfix generated port names for top level ports), which
  are set by default.
  To exclude some signals from automatic top-level port generation, use 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}output.generate.xinout sig
-\backslash 
-_foo,sig
-\backslash 
-_bar
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+output.generate.xinout sig_foo,sig_bar
+\family default 
 .
  This feature is usefull if you need to use internal inout signals, but
  do not want to have them wired to the top-level.
@@ -3196,73 +2409,37 @@ Special CONN sheet signals
 Special signal names:
 \newline 
 
-\begin_inset ERT
-status Collapsed
+\family typewriter 
 
-\layout Standard
-
-\backslash 
-begin{tt}
 \backslash 
 %LOW
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
 , 
-\begin_inset ERT
-status Collapsed
+\family typewriter 
 
-\layout Standard
-
-\backslash 
-begin{tt}
 \backslash 
 %HIGH
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
 , 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
+\family typewriter 
 
 \backslash 
-begin{tt}
-\backslash 
-%LOW
-\backslash 
-_BUS
+%LOW_BUS
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
 , 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
+\family typewriter 
 
 \backslash 
-begin{tt}
-\backslash 
-%HIGH
-\backslash 
-_BUS
+%HIGH_BUS
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
 
 \newline 
 
@@ -3273,91 +2450,44 @@ end{tt}
 \layout Standard
 
 Used the 
-\begin_inset ERT
-status Collapsed
+\family typewriter 
 
-\layout Standard
-
-\backslash 
-begin{tt}
 \backslash 
 %OPEN
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
  signal to leave some pins of module bar port a open MIX has no knowledge
  about ports.
  Everything is defined in terms of signals and instances.
  Use the "
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}open
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+open
+\family default 
 " pseudo signal to define the extra pins.
 \newline 
 
 \newline 
 E.g.: wire 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}foo/a
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+foo/a
+\family default 
  port to 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}bar/a
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+bar/a
+\family default 
  port.
  
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}bar/a
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+bar/a
+\family default 
  has extra pins.
 \newline 
 
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}signal
-\backslash 
-_a
+\family typewriter 
+signal_a
 \backslash 
 , ::high 7, ::low 0, ::out foo/a ::in bar/asn
 \backslash 
@@ -3368,10 +2498,7 @@ newline
 %OPEN
 \backslash 
 %, ::high 1, ::low 0, ::out -, ::out bar/a(9:8)
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
 
 \newline 
 
@@ -3379,86 +2506,42 @@ end{tt}
 XXX write this in spreadsheet XXX
 \newline 
 You could also force the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::in
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::in
+\family default 
  pins to high or low, instead, e.g.
  use: 
 \newline 
 
-\begin_inset ERT
-status Collapsed
+\family typewriter 
 
-\layout Standard
-
-\backslash 
-begin{tt}
 \backslash 
 %HIGH
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
 , 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
+\family typewriter 
 
 \backslash 
-begin{tt}
-\backslash 
-%HIGH
-\backslash 
-_BUS
+%HIGH_BUS
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
 , 
-\begin_inset ERT
-status Collapsed
+\family typewriter 
 
-\layout Standard
-
-\backslash 
-begin{tt}
 \backslash 
 %LOW
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
  or 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
+\family typewriter 
 
 \backslash 
-begin{tt}
-\backslash 
-%LOW
-\backslash 
-_BUS
+%LOW_BUS
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
 .
  Or a constant.
 \layout Subsubsection
@@ -3468,30 +2551,14 @@ Constants
 
 Constant values can be defined and used in several ways in the CONN worksheet.
  Constants can be marked with a C in the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::mode
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::mode
+\family default 
  column.
  Basically anything resembling a number written in the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::out
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::out
+\family default 
  column will be considered to be a constant value.
  String and bit vector constants are enclosed in single or double quotes.
  Remember to type two single quotes in excel to start a single quote string.
@@ -3499,48 +2566,20 @@ end{tt}
  be interpolated by excel.
 \newline 
 If you do not name a constant (leave the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::name
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::name
+\family default 
  field empty), MIX will generate a name like 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}mix
-\backslash 
-_const
-\backslash 
-_N
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+mix_const_N
+\family default 
 .
  N starts by one and increments for each new constant value.
 \newline 
 Constant values can be assigned to instance ports in the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::in
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::in
+\family default 
  column of that constant.
  
 \newline 
@@ -3575,21 +2614,9 @@ MIX looks like in the following screenshot:
 
 \newline 
  Search for lines with 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}
-\backslash 
-_
-\backslash 
-_E
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+__E
+\family default 
  in the comments to detect constants MIX was not able to translate properly.
  Verilog constant output is not very mature as of today.
 \newline 
@@ -3600,146 +2627,58 @@ Generics and Parameters
 \layout Standard
 
 Generics for entities are defined by a 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{bf}G
-\backslash 
-end{bf}
-\end_inset 
-
+\series bold 
+G
+\series default 
  in the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::mode
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::mode
+\family default 
  column.
  The 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::name
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::name
+\family default 
  column defines the generics name.
  If the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::out
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::out
+\family default 
  column contains a string or a number, the value will be the default of
  this generic.
 \newline 
 A 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{bf}P
-\backslash 
-end{bf}
-\end_inset 
-
+\series bold 
+P
+\series default 
  in the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::mode
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::mode
+\family default 
  column marks parameters.
  The value given in the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::out
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::out
+\family default 
  column will be applied to the instances in the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::in
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::in
+\family default 
  column.
 \newline 
 If the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::name
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::name
+\family default 
  column is empty, MIX will assign a generated name.
  The HDL generic name is either the "port" name given in the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::in
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::in
+\family default 
  column or the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::name
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::name
+\family default 
 .
 \newline 
 A example description taken from a CONN sheet will create the following
@@ -3768,18 +2707,8 @@ collapsed false
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{bf}::type
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::type
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
@@ -3788,18 +2717,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::mode
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::mode
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
@@ -3808,18 +2727,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::name
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::name
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
@@ -3828,18 +2737,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::out
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::out
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
@@ -3848,18 +2747,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::in
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::in
 \end_inset 
 </cell>
 </row>
@@ -4083,17 +2972,9 @@ The following table contains a list of predefined macros.
  the current date), some are for internal purposes only.
  macros marked with a yes in the "User" column can be set freely by the
  user on the command line or in the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}mix.cfg
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+mix.cfg
+\family default 
  configuration file.
 \newline 
 
@@ -4112,25 +2993,13 @@ hspace*{20mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
+\family typewriter 
+-conf macro.
 \backslash 
-begin{tt}-conf macro.
+%THIS_MACRO
 \backslash 
-%THIS
-\backslash 
-_MACRO
-\backslash 
-%=my
-\backslash 
-_value
-\backslash 
-end{tt}
-\end_inset 
-
+%=my_value
+\family default 
 
 \newline 
 command line switch.
@@ -4149,25 +3018,13 @@ hspace*{20mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
+\family typewriter 
+MIXCFG macro.
 \backslash 
-begin{tt}MIXCFG macro.
+%THIS_MACRO
 \backslash 
-%THIS
-\backslash 
-_MACRO
-\backslash 
-% my
-\backslash 
-_value
-\backslash 
-end{tt}
-\end_inset 
-
+% my_value
+\family default 
 
 \newline 
 to the mix.cfg configuration file will achieve the same result.
@@ -4675,17 +3532,9 @@ hspace*{4mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::ign
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::ign
+\family default 
 
 \begin_inset ERT
 status Collapsed
@@ -4697,19 +3546,11 @@ hspace*{9mm}
 \end_inset 
 
 A 
-\begin_inset ERT
-status Collapsed
+\family typewriter 
 
-\layout Standard
-
-\backslash 
-begin{tt}
 \backslash 
 #
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
  marks a comment line.
  Has to be first column.
  Optional.
@@ -4735,17 +3576,9 @@ hspace*{4mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::class
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::class
+\family default 
 
 \begin_inset ERT
 status Collapsed
@@ -4757,17 +3590,9 @@ hspace*{4mm}
 \end_inset 
 
 The class name is forwarded to the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::class
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::class
+\family default 
  field of the CONN sheet.
  (opt.)
 \newline 
@@ -4792,17 +3617,9 @@ hspace*{4mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::ispin
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::ispin
+\family default 
 
 \begin_inset ERT
 status Collapsed
@@ -4836,17 +3653,9 @@ hspace*{4mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::pin
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::pin
+\family default 
 
 \begin_inset ERT
 status Collapsed
@@ -4881,17 +3690,9 @@ hspace*{4mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::pad
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::pad
+\family default 
 
 \begin_inset ERT
 status Collapsed
@@ -4940,17 +3741,9 @@ hspace*{4mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::type
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::type
+\family default 
 
 \begin_inset ERT
 status Collapsed
@@ -4984,17 +3777,9 @@ hspace*{4mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::iocell
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::iocell
+\family default 
 
 \begin_inset ERT
 status Collapsed
@@ -5028,17 +3813,9 @@ hspace*{4mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::port
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::port
+\family default 
 
 \begin_inset ERT
 status Collapsed
@@ -5085,17 +3862,9 @@ hspace*{4mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::name
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::name
+\family default 
 
 \begin_inset ERT
 status Collapsed
@@ -5129,17 +3898,9 @@ hspace*{4mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::muxopt
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::muxopt
+\family default 
 
 \begin_inset ERT
 status Collapsed
@@ -5178,33 +3939,13 @@ hspace*{33mm}
 
 slice.
  Type 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}core
-\backslash 
-_sig.N
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+core_sig.N
+\family default 
  or 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}core
-\backslash 
-_sig(N)
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+core_sig(N)
+\family default 
  for bit N of the core signale
 \newline 
 
@@ -5218,31 +3959,13 @@ hspace*{33mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}core
-\backslash 
-_sig
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+core_sig
+\family default 
 .
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::muxopt
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::muxopt
+\family default 
  is allowed to appear several times.
  The number of
 \newline 
@@ -5265,238 +3988,102 @@ IO sheet %SEL% rows
 \layout Standard
 
 The rows with the key 
-\begin_inset ERT
-status Collapsed
+\family typewriter 
 
-\layout Standard
-
-\backslash 
-begin{tt}
 \backslash 
 %SEL
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
  in the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::class
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::class
+\family default 
  field define the wiring of the IO cells multiplexer select lines.
  The name in the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::port
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::port
+\family default 
  field defined the io cell port to connect to.
  The 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::name
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::name
+\family default 
  field is ignored.
  The signal names listed in the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::muxopt
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::muxopt
+\family default 
  columns are connected from the designs core with the appropriate slice
  of the io cell multiplexer select lines (one hot select lines).
  The leftmost 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::muxopt
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::muxopt
+\family default 
  connects to bit 0, the next to bit 1 and so forth.
  
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}core
-\backslash 
-_sel.N
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+core_sel.N
+\family default 
  or 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}core
-\backslash 
-_cel(N)
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+core_cel(N)
+\family default 
 .
  can be used to wire select buses.
  The number of non-empty consecutive 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::muxopt
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::muxopt
+\family default 
  fields also define the width of the multiplexer.
  The actual multiplexer width is stored in the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
+\family typewriter 
 
 \backslash 
-begin{tt}
-\backslash 
-%::
-\backslash 
-_muxwidth
-\backslash 
-_
+%::_muxwidth_
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
  field.
 \newline 
 The given values for the select lines are valid until the last row or another
  
-\begin_inset ERT
-status Collapsed
+\family typewriter 
 
-\layout Standard
-
-\backslash 
-begin{tt}
 \backslash 
 %SEL
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
  line is found.
 \newline 
 
-\begin_inset ERT
-status Collapsed
+\family typewriter 
 
-\layout Standard
-
-\backslash 
-begin{tt}
 \backslash 
 %NOSEL
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
  will stop usage of in/out multiplexer and select lines.
 \newline 
 Setting the configuration switch "
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}iocell.select
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+iocell.select
+\family default 
 " to "
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}bus
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+bus
+\family default 
 " changes from a one-hot architecture to a select bus architecture.
  The select bus name is take in the leftmost 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::muxopt
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::muxopt
+\family default 
  column, an appropriate width is calculated by the number of defined 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::muxopt
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::muxopt
+\family default 
  columns.
 \newline 
 
@@ -5508,72 +4095,28 @@ IO sheet pad rows
 All other rows make up the connection matrix.
  For each row an io cell is instantiated.
  By default this io cell's name is composed by the type listed in the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::type
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::type
+\family default 
  field with the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::pad
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::pad
+\family default 
  number attached, separated by a 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}
-\backslash 
+\family typewriter 
 _
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
 .
 \newline 
 Secondly a pad cell is instantiated.
  By default this pad cell's name is composed from the prefix 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}pad
-\backslash 
-_
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+pad_
+\family default 
  and the pad number as given in the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::pad
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::pad
+\family default 
  field.
  The default naming for both io cell and pad is given by the configuration
  variables
@@ -5589,29 +4132,17 @@ hspace*{20mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
+\family typewriter 
+pad.name = 
 \backslash 
-begin{tt}pad.name = 
-\backslash 
-%PREFIX
-\backslash 
-_PAD
-\backslash 
-_GEN
+%PREFIX_PAD_GEN
 \backslash 
 %
 \backslash 
 %::pad
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
 
 \newline 
 
@@ -5625,41 +4156,23 @@ hspace*{20mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}iocell.name = 
+\family typewriter 
+iocell.name = 
 \backslash 
 %::iocell
 \backslash 
-%
-\backslash 
-_
+%_
 \backslash 
 %::pad
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
 
 \newline 
 You can leave unused 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::muxopt
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::muxopt
+\family default 
  columns empty.
  Then MIX will reduce the number of select lines accordingly.
 \layout Subsection
@@ -5671,17 +4184,9 @@ MIX IO sheet parser connects the IO cell internal interface towards the
  design core logic, only.
  Connections between pad and io cell need to be defined explicitely, usually
  be means of 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::gen
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::gen
+\family default 
  match operators.
 \newline 
 Additonal wires for NAND tree or boundary scan are specified the same way.Signal
@@ -5692,29 +4197,13 @@ Additonal wires for NAND tree or boundary scan are specified the same way.Signal
 The generated pad and iocells need to be linked into the design hierarchy
  properly, e.g.
  by adding 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::gen
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::gen
+\family default 
  match operators in the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}HIER
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+HIER
+\family default 
  sheet.
 \newline 
 
@@ -5761,18 +4250,8 @@ Some global configuration are available to tailor the IO sheet parser behaviour:
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}iocell.name
-\backslash 
-end{tt}
-\end_inset 
-
-
+\family typewriter 
+iocell.name
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
@@ -5782,25 +4261,15 @@ end{tt}
 
  Rule determines naming of the io cell instances.
  Default "
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
+\family typewriter 
 
 \backslash 
-begin{tt}
-\backslash 
-%::iocell
-\backslash 
-_
+%::iocell_
 \backslash 
 %::pad
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
 " 
 \end_inset 
 </cell>
@@ -5812,18 +4281,8 @@ end{tt}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}iocell.auto
-\backslash 
-end{tt}
-\end_inset 
-
-
+\family typewriter 
+iocell.auto
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -5832,17 +4291,9 @@ end{tt}
 \layout Standard
 
  If set to "
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}bus
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+bus
+\family default 
 ", create busses as needed.
  Otherwise MIX relies on appropriate definition of busses by the CONN sheets.
  
@@ -5856,18 +4307,8 @@ end{tt}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}iocell.bus
-\backslash 
-end{tt}
-\end_inset 
-
-
+\family typewriter 
+iocell.bus
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -5876,31 +4317,13 @@ end{tt}
 \layout Standard
 
  If 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}iocell.auto
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+iocell.auto
+\family default 
  is set to bus, MIX will attach the keyword listed here (
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}
-\backslash 
+\family typewriter 
 _vector
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
 ) to signal type definitions.
  
 \end_inset 
@@ -5913,18 +4336,8 @@ end{tt}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}iocell.defaultdir
-\backslash 
-end{tt}
-\end_inset 
-
-
+\family typewriter 
+iocell.defaultdir
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -5934,18 +4347,8 @@ end{tt}
 
  Defines default iocell port direction.
  Default: 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}in
-\backslash 
-end{tt}
-\end_inset 
-
-
+\family typewriter 
+in
 \end_inset 
 </cell>
 </row>
@@ -5956,18 +4359,8 @@ end{tt}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}iocell.in
-\backslash 
-end{tt}
-\end_inset 
-
-
+\family typewriter 
+iocell.in
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -5976,18 +4369,8 @@ end{tt}
 \layout Standard
 
  comma and/or white-space separated list of in ports Default: 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}do, en, pu, pd, xout
-\backslash 
-end{tt}
-\end_inset 
-
-
+\family typewriter 
+do, en, pu, pd, xout
 \end_inset 
 </cell>
 </row>
@@ -5998,18 +4381,8 @@ end{tt}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}iocell.out
-\backslash 
-end{tt}
-\end_inset 
-
-
+\family typewriter 
+iocell.out
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -6018,18 +4391,8 @@ end{tt}
 \layout Standard
 
  list of io-cells out ports Default: 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}di, xin
-\backslash 
-end{tt}
-\end_inset 
-
-
+\family typewriter 
+di, xin
 \end_inset 
 </cell>
 </row>
@@ -6040,18 +4403,8 @@ end{tt}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}iocell.select
-\backslash 
-end{tt}
-\end_inset 
-
-
+\family typewriter 
+iocell.select
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -6060,82 +4413,40 @@ end{tt}
 \layout Standard
 
  List of keywords defining the select multiplexer connections: 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}onehot
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+onehot
+\family default 
  -
 \begin_inset Formula $>$
 \end_inset 
 
  use one hot architecture for select lines, 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}bus
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+bus
+\family default 
  -
 \begin_inset Formula $>$
 \end_inset 
 
  use select line bus, 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}auto
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+auto
+\family default 
  -
 \begin_inset Formula $>$
 \end_inset 
 
  calculate width of select bus or one-hot based on 
-\begin_inset ERT
-status Collapsed
+\family typewriter 
 
-\layout Standard
-
-\backslash 
-begin{tt}
 \backslash 
 %SEL
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
  width; Default: 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}onehot,auto
-\backslash 
-end{tt}
-\end_inset 
-
-
+\family typewriter 
+onehot,auto
 \end_inset 
 </cell>
 </row>
@@ -6146,18 +4457,8 @@ end{tt}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}pad.name
-\backslash 
-end{tt}
-\end_inset 
-
-
+\family typewriter 
+pad.name
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -6167,29 +4468,17 @@ end{tt}
 
  Rule determines the naming of the pad instances.
  Default: "
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
+\family typewriter 
 
 \backslash 
-begin{tt}
-\backslash 
-%PREFIX
-\backslash 
-_PAD
-\backslash 
-_GEN
+%PREFIX_PAD_GEN
 \backslash 
 %
 \backslash 
 %::pad
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
+\family default 
 "  
 \end_inset 
 </cell>
@@ -6326,18 +4615,8 @@ C sheet.
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::ign
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::ign
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" usebox="none">
@@ -6356,18 +4635,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::variants
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::variants
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" usebox="none">
@@ -6377,32 +4646,16 @@ end{bf}
 
  select a line depending on the -variant command line switch.
  If -variant VAR is set, only lines whose 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::variant
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::variant
+\family default 
  cell contains the keyword VAR, default or empty, are selected and read
  in.
  several variants may be given in one cell, separated by ",".
  Without specifying the -variant switch, the "default" and empty 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}::variant
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+::variant
+\family default 
  cells are read in and evaluated.
 \end_inset 
 </cell>
@@ -6414,18 +4667,8 @@ end{tt}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::ign
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::ign
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" usebox="none">
@@ -6444,18 +4687,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::variants
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::variants
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" usebox="none">
@@ -6474,18 +4707,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::type
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::type
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" usebox="none">
@@ -6504,18 +4727,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::dev
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::dev
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" usebox="none">
@@ -6534,18 +4747,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::sub
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::sub
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" usebox="none">
@@ -6564,18 +4767,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::interface
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::interface
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" usebox="none">
@@ -6594,18 +4787,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::block
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::block
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" usebox="none">
@@ -6625,18 +4808,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::dir
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::dir
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" usebox="none">
@@ -6645,42 +4818,16 @@ end{bf}
 \layout Standard
 
  defines a registers input/output direction, possible values are: 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}R
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+R
+\family default 
 , 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}W
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+W
+\family default 
  or 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}RW
-\backslash 
-end{tt}
-\end_inset 
-
-
+\family typewriter 
+RW
 \end_inset 
 </cell>
 </row>
@@ -6691,18 +4838,8 @@ end{tt}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::spec
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::spec
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" usebox="none">
@@ -6721,18 +4858,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::clock
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::clock
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" usebox="none">
@@ -6756,18 +4883,8 @@ C register may receive it's own clock.
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::reset
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::reset
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" usebox="none">
@@ -6791,18 +4908,8 @@ C registers.
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::busy
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::busy
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" usebox="none">
@@ -6821,18 +4928,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::b
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::b
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" usebox="none">
@@ -6853,18 +4950,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::init
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::init
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" usebox="none">
@@ -6883,18 +4970,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::rec
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::rec
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" usebox="none">
@@ -6913,18 +4990,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}::comment
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+::comment
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" usebox="none">
@@ -6969,18 +5036,8 @@ collapsed false
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{bf}Column name
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+Column name
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
@@ -6989,18 +5046,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}Descriptionend
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+Descriptionend
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
@@ -7009,18 +5056,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}Default value
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+Default value
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
@@ -7029,18 +5066,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}Req.
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+Req.
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
@@ -7049,18 +5076,8 @@ end{bf}
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
- 
-\backslash 
-begin{bf}Example
-\backslash 
-end{bf}
-\end_inset 
-
-
+\series bold 
+Example
 \end_inset 
 </cell>
 </row>
@@ -7872,20 +5889,8 @@ C sheet parser behaviour:
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}i2c
-\backslash 
-_cell.type
-\backslash 
-end{tt}
-\end_inset 
-
-
+\family typewriter 
+i2c_cell.type
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
@@ -7908,28 +5913,12 @@ ser
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
+\family typewriter 
+i2c_cell.
 \backslash 
-begin{tt}i2c
-\backslash 
-_cell.
-\backslash 
-%IIC
-\backslash 
-_SER
-\backslash 
-_REG
+%IIC_SER_REG
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
-
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -7952,28 +5941,12 @@ iic_ser_reg_
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
+\family typewriter 
+i2c_cell.
 \backslash 
-begin{tt}i2c
-\backslash 
-_cell.
-\backslash 
-%IIC
-\backslash 
-_PAR
-\backslash 
-_REG
+%IIC_PAR_REG
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
-
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -7996,26 +5969,12 @@ iic_par_reg_
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
+\family typewriter 
+i2c_cell.
 \backslash 
-begin{tt}i2c
-\backslash 
-_cell.
-\backslash 
-%IIC
-\backslash 
-_SYNC
+%IIC_SYNC
 \backslash 
 %
-\backslash 
-end{tt}
-\end_inset 
-
-
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -8084,17 +6043,9 @@ Command line switches
 \layout Standard
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}-out OUTPUTFILE.ext
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+-out OUTPUTFILE.ext
+\family default 
 
 \newline 
 
@@ -8110,17 +6061,9 @@ hspace*{15mm}
 defines output filename and type
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}-outenty OUT-e.vhd|ENTY|COMB
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+-outenty OUT-e.vhd|ENTY|COMB
+\family default 
 
 \newline 
 
@@ -8197,17 +6140,9 @@ hspace*{15mm}
 will all be written into one file called entityname.vhd
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}-outarch OUT-rtl-a.vhd|ARCH|COMB
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+-outarch OUT-rtl-a.vhd|ARCH|COMB
+\family default 
 
 \newline 
 
@@ -8223,17 +6158,9 @@ hspace*{15mm}
 See description of outenty option.
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}-outconf OUT-c.vhd|CONF|COMB
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+-outconf OUT-c.vhd|CONF|COMB
+\family default 
 
 \newline 
 
@@ -8249,17 +6176,9 @@ hspace*{15mm}
 See description of outenty option.
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}-combine
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+-combine
+\family default 
 
 \newline 
 
@@ -8300,17 +6219,9 @@ hspace*{15mm}
 individually.
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}-dir DIRECTORY
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+-dir DIRECTORY
+\family default 
 
 \newline 
 
@@ -8339,17 +6250,9 @@ DIRECTORY.
  By default MIX writes to the current working directory
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}-top TOPCELL
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+-top TOPCELL
+\family default 
 
 \newline 
 
@@ -8366,17 +6269,9 @@ use TOPCELL as top.
  Default is TESTBENCH or daughter of TESTBENCH.
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}-adump
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+-adump
+\family default 
 
 \newline 
 
@@ -8404,17 +6299,9 @@ hspace*{15mm}
 (debugging, use with small data set).
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}-variant VAR1
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+-variant VAR1
+\family default 
 
 \begin_inset ERT
 status Collapsed
@@ -8428,17 +6315,9 @@ hspace*{15mm}
 Select VAR1 from the HIER worksheet.
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}-conf key.key.key=value
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+-conf key.key.key=value
+\family default 
 
 \newline 
 
@@ -8466,17 +6345,9 @@ hspace*{15mm}
 new configuration variable.
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}-listconf
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+-listconf
+\family default 
 
 \newline 
 
@@ -8492,17 +6363,9 @@ hspace*{15mm}
 Print out all available/predefined configurations options
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}-delta
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+-delta
+\family default 
 
 \newline 
 
@@ -8518,17 +6381,9 @@ hspace*{15mm}
 Output will be compared against previous runs.
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}-sheet SHEET=MATCH
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+-sheet SHEET=MATCH
+\family default 
 
 \newline 
 
@@ -8557,17 +6412,9 @@ hspace*{15mm}
 a perl regular expression.
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}-strip
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+-strip
+\family default 
 
 \newline 
 
@@ -8604,17 +6451,9 @@ hspace*{15mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}my @stdopts = qw(help|h! verbose|v! quiet|q! nobanner!  debug:i
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+my @stdopts = qw(help|h! verbose|v! quiet|q! nobanner! debug:i
+\family default 
 
 \newline 
 
@@ -8628,17 +6467,9 @@ hspace*{20mm}
 \end_inset 
 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}makeopts=s@ gmakeopts=s@);
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+makeopts=s@ gmakeopts=s@);
+\family default 
 
 \newline 
 Caveat: the -h option will not work on MS-Windows
@@ -8750,148 +6581,66 @@ Misc features
 -delta mode
 \layout Standard
 
-Do not change output files, but report number of changes.
- Adds extra sheets 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}DIFF
-\backslash 
-_CONN
-\backslash 
-end{tt}
-\end_inset 
-
+In delta mode, MIX does not change output files, but reports the number
+ of changes in the output files compared to a previous run.
+ Extra sheets 
+\family typewriter 
+DIFF_CONN
+\family default 
  and 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}DIFF
-\backslash 
-_HIER
-\backslash 
-end{tt}
-\end_inset 
-
- (and old versions of them) to the intermediate output.
+\family typewriter 
+DIFF_HIER
+\family default 
+ (and old versions of them) are added to the intermediate output file.
  The 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}FOO.pld
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+FOO.pld
+\family default 
  internal output gets overwritten, though.
- All messages are appended to 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}mix
-\backslash 
-_0.pl
-\backslash 
-end{tt}
-\end_inset 
-
+ Messages are appended to 
+\family typewriter 
+mix_0.pl.out
+\family default 
 
 \newline 
-If a new HDL-file needs to be created by the changes, the -delta mode is
- not be applied for that file, but it is generated as new.
+If a new HDL-file needs to be created by the changes, the 
+\family typewriter 
+-delta
+\family default 
+ mode is not be applied for that file, but it is generated as new.
  If you never have written a 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}FOO-mixed.xls
-\backslash 
-end{tt}
-\end_inset 
-
- intermediate output, there is no 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}HIER
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+FOO-mixed.xls
+\family default 
+ intermediate output, no 
+\family typewriter 
+HIER
+\family default 
  or 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}CONN
-\backslash 
-end{tt}
-\end_inset 
-
- sheet generated.
+\family typewriter 
+CONN
+\family default 
+ sheets are generated.
 \newline 
 By adding the following two lines to your configuration (e.g.
  
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}./mix.cfg
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+./mix.cfg
+\family default 
 ), delta mode will be the default:
 \newline 
 
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}MIXCFG output.generate.delta 1
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+MIXCFG output.generate.delta 1
+\family default 
 
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}MIXCFG output.delta sort,remove
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+MIXCFG output.delta sort,remove
+\family default 
 
 \newline 
 
@@ -8901,27 +6650,9 @@ See the configuration option description for more details.
 
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-hspace*{10mm}
-\end_inset 
-
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}-nodelta
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+-nodelta
+\family default 
  switches delta mode off, then.
 \newline 
 
@@ -8960,142 +6691,46 @@ MIX writes all output into the current working directory.
  By using the
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-hspace*{20mm}
-\end_inset 
-
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}-dir DIRECTORY
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+-dir DIRECTORY
+\family default 
 
 \newline 
 option, you can set the output directory for all intermediate, internal
  and HDL files to 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}DIRECTORY
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+DIRECTORY
+\family default 
 .
  Absolute path names defined by other options (e.g.
  -out) are not changed, though.
  If 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}DIRECTORY
-\backslash 
-end{tt}
-\end_inset 
-
- does not exist it will be created.
+\family typewriter 
+DIRECTORY
+\family default 
+ does not exist, it will be created.
  To have separate output directories, use the 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}mix.cfg
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+mix.cfg
+\family default 
  file:
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-hspace*{20mm}
-\end_inset 
-
-
-\begin_inset ERT
-status Open
-
-\layout Standard
-
-\backslash 
-begin{tt}MIXCFG output.path HDLDIRS
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+MIXCFG output.path HDLDIRS
+\family default 
 
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-hspace*{20mm}
-\end_inset 
-
-
-\begin_inset ERT
-status Open
-
-\layout Standard
-
-\backslash 
-begin{tt}MIXCFG internal.path MIXINTERNAL
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+MIXCFG internal.path MIXINTERNAL
+\family default 
 
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-hspace*{20mm}
-\end_inset 
-
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{tt}MIXCFG intermediate MIXINTERMEDIATE
-\backslash 
-end{tt}
-\end_inset 
-
+\family typewriter 
+MIXCFG intermediate MIXINTERMEDIATE
+\family default 
 
 \newline 
 writes internal, intermediate and HDL files to the given pathes.
@@ -9286,7 +6921,7 @@ For MS-Win workstations, use
 \family typewriter 
 K:
 \backslash 
-PROJECTS
+Projects
 \backslash 
 MIX
 \backslash 
@@ -9312,18 +6947,10 @@ If you find unexpected or buggy behavior, please issue a trouble ticket.
  command line switches and configuration files applied.
 \newline 
 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-begin{it}Please provide a comprehensive description of issues found including all required input data and command line switch to allow fast debugging and fixing.
-\backslash 
-end{it}
-\end_inset 
-
-
+\emph on 
+Please provide a comprehensive description of issues found including all
+ required input data and command line switch to allow fast debugging and
+ fixing.
 \layout Section
 
 Links
@@ -9371,133 +6998,31 @@ Others
 Resources
 \layout Standard
 
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-hspace*{10mm}
-\end_inset 
-
 Downloads for:
 \newline 
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-hspace*{20mm}
-\end_inset 
-
 - IO Examples
 \newline 
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-hspace*{20mm}
-\end_inset 
-
 - Standard bus examples
 \newline 
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-hspace*{20mm}
-\end_inset 
-
 - NAND Tree
 \newline 
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-hspace*{20mm}
-\end_inset 
-
 - BS example
 \newline 
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-hspace*{20mm}
-\end_inset 
-
 - miscellaneous useful macros
 \newline 
 
+\emph on 
+wig: this section needs to be done!
 \layout Subsection
 
 Used Software
 \layout Standard
 
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-hspace*{15mm}
-\end_inset 
-
-- Perl
+- Perl (from www.activestate.com) 
 \newline 
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-hspace*{15mm}
-\end_inset 
-
-- Komodo
+- Vim 
 \newline 
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-hspace*{15mm}
-\end_inset 
-
-- Vim
-\newline 
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-hspace*{15mm}
-\end_inset 
-
 - WinCVS
-\newline 
-
 \layout Subsection
 
 Release Notes
@@ -9506,59 +7031,23 @@ Release Notes
 20030716
 \layout Standard
 
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-hspace*{10mm}
-\end_inset 
-
 see doc
-\begin_inset Formula $\backslash$
-\end_inset 
-
+\backslash 
 release_20030716.txt
 \layout Subsubsection
 
 20030709
 \layout Standard
 
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-hspace*{10mm}
-\end_inset 
-
 see doc
-\begin_inset Formula $\backslash$
-\end_inset 
-
+\backslash 
 release_20030709.txt
 \layout Subsubsection
 
 20030605
 \layout Standard
 
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-hspace*{10mm}
-\end_inset 
-
 See doc
-\begin_inset Formula $\backslash$
-\end_inset 
-
+\backslash 
 release_20030605.txt
 \the_end

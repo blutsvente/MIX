@@ -8,7 +8,7 @@ anyway. Otherwise use S or leave the ::mode empty, MIX will detect the
 right mode automatically by consulting the ::in and ::out columns.
 
 The situation is different for inout signals. To tell MIX a signal should
-be of mode inout, you need to pit IO in the ::mode column. However, that
+be of mode inout, you need to put IO in the ::mode column. However, that
 automatically will wire that signal as inout port at the toplevel module.
 
 To avoid that, list the signal name in the configuration key
