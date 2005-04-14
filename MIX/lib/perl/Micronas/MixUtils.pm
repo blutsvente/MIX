@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.61 $                                         |
+# | Revision:   $Revision: 1.62 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/03/22 10:00:16 $                              |
+# | Date:       $Date: 2005/04/14 06:53:01 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.61 2005/03/22 10:00:16 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.62 2005/04/14 06:53:01 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.62  2005/04/14 06:53:01  wig
+# | Updates: fixed import errors and adjusted I2C parser
+# |
 # | Revision 1.61  2005/03/22 10:00:16  wig
 # | beta version i2c
 # |                                                 |
@@ -296,11 +299,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.61 2005/03/22 10:00:16 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.62 2005/04/14 06:53:01 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.61 $';
+my $thisrevision        =      '$Revision: 1.62 $';
 
-# Revision:   $Revision: 1.61 $   
+# Revision:   $Revision: 1.62 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -873,56 +876,62 @@ sub mix_init () {
 
 %EH = (
     'template' => {
-	'vhdl' =>{
-	    # Actual values are set in MixWriter
-	    'conf' => { 'head' => "## VHDL Configuration Template String t.b.d.", },
-	    'arch' => { 'head' => "## VHDL Architecture Template String t.b.d.", },
-	    'enty' => { 'head' => "## VHDL Entity Template String t.b.d.", },
-	},
-	'verilog' =>{
-	    'conf' => { 'head' => "## Verilog Configuration Template String t.b.d.", },
-	    'arch' => { 'head' => "## Verilog Architecture Template String t.b.d.", },
-	    'enty' => { 'head' => "## Verilog Entity Template String t.b.d.", },
-	    'wrap' => "## Verilog Wrapper Template String t.b.d.",
-	    'file' => "##Verilog File Template String t.b.d.",
-	},
+		'vhdl' =>{
+	    	# Actual values are set in MixWriter
+	    	'conf' => { 'head' => "## VHDL Configuration Template String t.b.d.", },
+	    	'arch' => { 'head' => "## VHDL Architecture Template String t.b.d.", },
+	    	'enty' => { 'head' => "## VHDL Entity Template String t.b.d.", },
+		},
+		'verilog' =>{
+	    	'conf' => { 'head' => "## Verilog Configuration Template String t.b.d.", },
+	    	'arch' => { 'head' => "## Verilog Architecture Template String t.b.d.", },
+	    	'enty' => { 'head' => "## Verilog Entity Template String t.b.d.", },
+	    	'wrap' => "## Verilog Wrapper Template String t.b.d.",
+	    	'file' => "##Verilog File Template String t.b.d.",
+		},
     },
     'output' => {
-	'path' => ".",		# Path to store backend data. Other values are a path, CWD or INPUT
-	'order' => 'input',		# Field order := as in input or predefined
-	'format' => 'ext',		# Output format derived from filename extension ???
-	'filename' => 'useminus', # Convert _ to - in filenames
-	'generate' =>
-	    { 'arch' => 'noleaf',
-	      'enty' => 'noleaf', # no leaf cells: [no]leaf,alt,
-	      'conf' => 'noleaf', # one of: [leaf|noleaf],verilog no leaf cells, defaults
+		'path' => ".",		# Path to store backend data. Other values are a path, CWD or INPUT
+		'order' => 'input',		# Field order := as in input or predefined
+		'format' => 'ext',		# Output format derived from filename extension ???
+		'filename' => 'useminus', # Convert _ to - in filenames
+		'generate' =>
+	    	{ 'arch' => 'noleaf',
+	      	'enty' => 'noleaf', # no leaf cells: [no]leaf,alt,
+	      	'conf' => 'noleaf', # one of: [leaf|noleaf],verilog no leaf cells, defaults
 				      # is "noleaf". The verilog keyword will add configuration
 				      #   records for verilog subblocks (who wants that?)
-	      'use' => 'enty',     # apply ::use libraries to entity files, if not specified otherwise
+	      	'use' => 'enty',     # apply ::use libraries to entity files, if not specified otherwise
 					# values: <enty|conf|arch|all>
-	      'inout' => 'mode,noxfix',	# Generate IO ports for %TOP% cell (or daughter of testbench)
+	      	'inout' => 'mode,noxfix',	# Generate IO ports for %TOP% cell (or daughter of testbench)
 					# controlled by ::mode I|O
 					# noxfix: do not attach pre/postfix to signal names at %TOP%
-              'xinout'  => '',       # list of comma seperated signals to exclude from automatic wiring to %TOP%
-              '_re_xinout' => '',   # keeps converted content of xinout (internal use, only)
-	      # 'port' => 'markgenerated',	# attach a _gIO to generated ports ...
-	      'delta' => 0,	    	# allows to use mix.cfg to preset delta mode -> 0 is off, 1 is on
-	      'bak' => 0,		# Create backup of output HDL files
-	      'combine' => 0,	# Combine enty,arch and conf into one file, -combine switch
-	      'portdescr' => '%::descr%',	# Definitions for port map descriptions:
-		      #   %::descr% (contents of thsi signal's descr. field, %::ininst% (list of load instances),
+            'xinout'  => '',       # list of comma seperated signals to exclude from automatic wiring to %TOP%
+            '_re_xinout' => '',   # keeps converted content of xinout (internal use, only)
+	      	# 'port' => 'markgenerated',	# attach a _gIO to generated ports ...
+	      	'delta' => 0,	    	# allows to use mix.cfg to preset delta mode -> 0 is off, 1 is on
+	      	'bak' => 0,		# Create backup of output HDL files
+	      	'combine' => 0,	# Combine enty,arch and conf into one file, -combine switch
+	      	'portdescr' => '%::descr%',	# Definitions for port map descriptions:
+		      #   %::descr% (contents of this signal's descr. field, %::ininst% (list of load instances),
 		      #   %::outinst% (list of driving instances), %::comment%
-	      'portdescrlength' => 100, # Limit length of comment to 100 characters!
-	      'fold' => 'signal',	# If set to [signal|hier], tries to collect ::comments, ::descr and ::gen
+	      	'portdescrlength' => 100, # Limit length of comment to 100 characters!
+		  	'portmapsort' => 'alpha', # How to sort port map; allowed values are:
+		  			# alpha := sorted by port name
+		  			# input (as listed in input files)
+		  			# inout | outin: seperate in/out/inout seperately
+		  			#    can be combined with the "input" key
+		  			# 
+	      	'fold' => 'signal',	# If set to [signal|hier], tries to collect ::comments, ::descr and ::gen
 					# like TEXT_FOO_BAR (X10), if TEXT_FOO_BAR appears several times
 					#TODO: Implement for hier
-              'verilog' => '', # switches for Verilog generation, off by default, but see %UAMN% tag
+          	'verilog' => '', # switches for Verilog generation, off by default, but see %UAMN% tag
                                           #  useconfname := use VHDL config name as verilog module name; works for e.g. NcSim
-	      'workaround' => {
-                    'verilog' => 'dummyopen', # dummyopen := create a dummy signal for open port splices 
+	      	'workaround' => {
+            	'verilog' => 'dummyopen', # dummyopen := create a dummy signal for open port splices 
                     ,
-                    'magma' => 'useasmodulename_define', # If the %UAMN% tag is used, use defines!
-                    '_magma_def_' =>
+                'magma' => 'useasmodulename_define', # If the %UAMN% tag is used, use defines!
+                '_magma_def_' =>
 '
 `ifdef MAGMA
     `define %::entity%_inst_name %::entity%
@@ -930,56 +939,59 @@ sub mix_init () {
     `define %::entity%_inst_name %::config%
 `endif
 ',   # This gets used by if the magma workaround is set ...
-                    '_magma_mod_'   => '`%::entity%_inst_name', # module name
-                    '_magma_uamn_' => '',   # Internal use, storage for generated defines
-                    'typecast'  => 'intsig', # 'portmap' would be more native, but does not work for Synopsys
-                    'std_log_typecast' => 'ignore', # will ignore typecast's for std_ulogic vs. std_logic ...
-	      }
-        },
-	'ext' =>      {   'vhdl' => 'vhd',
+                '_magma_mod_'   => '`%::entity%_inst_name', # module name
+                '_magma_uamn_' => '',   # Internal use, storage for generated defines
+                'typecast'  => 'intsig', # 'portmap' would be more native, but does not work for Synopsys
+                'std_log_typecast' => 'ignore', # will ignore typecast's for std_ulogic vs. std_logic ...
+	     	}
+       },
+		'ext' =>      {   'vhdl' => 'vhd',
 			  'verilog' => 'v' ,
 			  'intermediate' => 'mixed', # not a real extension!
 			  'internal' => 'pld',
 			  'delta' => '.diff',	  # delta mode
               'verify' => '.ediff',   # verify against template ...
-	},
-	'comment' => {	'vhdl' => '--',
+		},
+		'comment' => {	'vhdl' => '--',
 			'verilog' => '//',
 			'intermediate' => '#',
 			'internal' => '#',
 			'delta' => '#',
 			'default' => '#',
-	},
-	# 'warnings' => 'load,drivers',	# Warn about missing loads/drivers
-	'warnings' => '',
-	'delta' => 'sort', # Controlling delta output mode:
-				    # space: not consider whitespace
-				    # sort:   sort lines
+		},
+		# 'warnings' => 'load,drivers',	# Warn about missing loads/drivers
+		'warnings' => '',
+		'delta' => 'sort', # Controlling delta output mode:
+				    # space:   not consider whitespace
+				    # sort:    sort lines
 				    # comment: not remove all comments before compare
-				    # remove: remove empyt diff files
+				    # remove:  remove empyt diff files
                     # ignorecase|ic: -> ignore case if set
                     # mapstd[logic]: -> ignore std_logic s. std_ulogic diffs!
-    },
-    'input' => {
-	'ext' =>	{
-	    'excel' =>	"xls",
-	    'soffice' => "sxc",
-	    'csv'   =>	"csv",
-	},
-    },
+    	},
+    	'input' => {
+			'ext' =>	{
+	    		'excel' =>	"xls",
+	    		'soffice' => "sxc",
+	    		'csv'   =>	"csv",
+			},
+    	},
     'internal' => {
-	'path' => ".",
-	'order' => 'input',		# Field order := as in input or predefined
-	'format' => "perl", 	# Internal intermediate format := perl|xls|csv|xml ...
+		'path' => ".",
+		'order' => 'input',		# Field order := as in input or predefined
+		'format' => "perl", 	# Internal intermediate format := perl|xls|csv|xml ...
     },
     'intermediate' => {
-	'path' => ".",
-	'order' => 'input',
-	'keep' => '3',	# Number of old sheets to keep
-	'format' => 'prev', # One of: prev(ious), auto or n(o|ew)
-	# If set, previous uses old sheet format, auto applies auto-format and the others do nothing.
-	'strip' => '0',   # remove old and diff sheets
-	'ext' => '', # default intermediate-output extension
+		'path' => ".",
+		'order' => 'input',
+		'keep' => '3',	# Number of old sheets to keep
+		'format' => 'prev', # One of: prev(ious), auto or n(o|ew)
+		# If set, previous uses old sheet format, auto applies auto-format and the others do nothing.
+		'strip' => '0',   # remove old and diff sheets
+		'ext' => '', # default intermediate-output extension
+    },
+    'import' => { # import mode control
+    	'generate' => 'stripio', # remove trailing _i,_o from generated signal names
     },
     'check' => { # Checks enable/disable: Usually the keywords to use are
 		    # na (or empty), check (check and warn),
@@ -988,28 +1000,28 @@ sub mix_init () {
 		    # lc (lower case everything), postfix, prefix,
 		    # t.b.d.: uniq (make sure name apears only once!
 		    #
-	'name' => {
-	    #TODO: 'all' => '',	# Sets all others .... ->
-	    'pad' => 'check,lc',
-	    'conn' => 'check,lc', # check signal names ...
-	    'enty' => 'check,lc',
-	    'inst' => 'check,lc',   # check instance names ...
-	    'port' => 'check,lc',
-	    'conf' => 'check,lc',
-	},
-	'keywords' => { #These keywords will trigger warnings and get replaced
-	    'vhdl'	=> '(open|instance|entity|signal)', #TODO: Give me more keywords
-	    'verilog' 	=> '(register|net|wire|in|out|inout)', #TODO: give me more
-	},
-	'defs' => '',  # 'inst,conn',    # make sure elements are only defined once:
+		'name' => {
+	    	#TODO: 'all' => '',	# Sets all others .... ->
+	    	'pad' => 'check,lc',
+	    	'conn' => 'check,lc', # check signal names ...
+	    	'enty' => 'check,lc',
+	    	'inst' => 'check,lc',   # check instance names ...
+	    	'port' => 'check,lc',
+	    	'conf' => 'check,lc',
+		},
+		'keywords' => { #These keywords will trigger warnings and get replaced
+	    	'vhdl'	=> '(open|instance|entity|signal)', #TODO: Give me more keywords
+	    	'verilog' 	=> '(register|net|wire|in|out|inout)', #TODO: give me more
+		},
+		'defs' => '',  # 'inst,conn',    # make sure elements are only defined once:
 		    # possilbe values are: inst,conn
-	'signal' => 'load,driver,check,top_open',
+		'signal' => 'load,driver,check,top_open',
 						# reads: checks i f all signals have appr. loads
 						# and drivers.
 						# If "top_open" is in this list, will wire unused
 						# signals to open.
-	'inst' => 'nomulti',	# check and mark multiple instantiations
-    'hdlout' => { # act. should be named "hdlout"
+		'inst' => 'nomulti',	# check and mark multiple instantiations
+    	'hdlout' => { # act. should be named "hdlout"
             'mode' => "entity,leaf,generated,ignorecase", # check only LEAF cells -> LEAF
                                                       #  ignore case of filename -> ignorecase
                         # which objects: entity|module|arch[itecture]|conf[iguration]|all
@@ -3395,7 +3407,7 @@ sub mix_utils_init_file($) {
 	    	exit 1;
 		}
 		( $input = $FindBin::Bin ."/template/mix." . $ext ) =~ s,\\,/,g;
-		if ( ! -r $input ) { # Try again for UNIX:
+		if ( ! -r $input ) { # Try again for UNIX (search in ../template):
 			( $input = $FindBin::Bin ."/../template/mix." . $ext ) =~ s,\\,/,g;
 			if ( ! -r $input ) {
 	    		logwarn( "FATAL: Cannot init mix from $input" );
@@ -3432,6 +3444,53 @@ sub mix_utils_init_file($) {
 
 }
 
+=head 1 TODO
+
+#
+# Get a list of ::in/::out port descriptions and try to combine consecutive
+#  signal/port / aka. unsplice it
+#
+# input:  arbitrary in/out ...
+# output: array with unspliced signal/port description
+sub mix_utils_join_port ($$$) {
+	my $pdr = shift;
+	my $from = shift;
+	my $to = shift;
+	
+	my @out = ();
+	my %iport = ();
+	return \@out unless ( ref( $pdr ) eq "ARRAY" );
+	for my $i ( 0..(scalar( @$pdr ) - 1) )  {
+		next if ( exists( $pdr->[$i]{"value"} ) ); # Skip constants
+
+		unless( defined( $pdr->[$i]{"signal"} ) and defined( $pdr->[$i]{"port"} ) {
+			logwarn( "WARNING: detected bad signal/port description" );
+			$EH{'sum'}{'warnings'}++;
+			next;
+		}
+		
+		my $inst = $pdr->[$i]{"inst"};
+		my $port = $pdr->[$i]{"port"};
+		my $sf = $pdr->[$i]{"sig_f"};
+		my $st = $pdr->[$i]{"sig_t"};
+		my $pf = $pdr->[$i]{"port_f"};
+		my $pt = $pdr->[$i]{"port_t"};		
+		$iport{$inst}{$port} = _mix_utils_join_ip( $iport{$inst}{$port}, $i, $sf, $st, $pf, $pt );
+	}
+	
+}
+sub _mix_utils_join_ip ($$$$$) {
+	my $ref = shift;
+	my $i   = shift;
+	my $sf  = shift;
+	my $st  = shift;
+	my $pf  = shift;
+	my $pt  = shift;
+
+	unless 
+}
+
+=cut
 
 #
 # This module returns 1, as any good module does.

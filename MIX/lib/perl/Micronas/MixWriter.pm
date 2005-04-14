@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.50 $                                         |
+# | Revision:   $Revision: 1.51 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/03/01 11:58:42 $                              |
+# | Date:       $Date: 2005/04/14 06:53:01 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.50 2005/03/01 11:58:42 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.51 2005/04/14 06:53:01 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,8 +32,11 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.51  2005/04/14 06:53:01  wig
+# | Updates: fixed import errors and adjusted I2C parser
+# |
 # | Revision 1.50  2005/03/01 11:58:42  wig
-# | Fixed _MODE_MISMATCH problem with mixed constant/signal ports.
+# | Fixed _MODE_MISMATCH problem with mixed /signal ports.
 # |
 # | Revision 1.49  2005/01/27 08:20:30  wig
 # | verilog/vhdl parameters
@@ -230,7 +233,7 @@ use Micronas::MixParser qw( %hierdb %conndb add_conn );
 sub _write_entities ($$$);
 sub compare_merge_entities ($$$$);
 sub mix_wr_fromto ($$$$);
-sub _write_constant ($$$$$;$);
+sub _write_constantn ($$$$$;$);
 sub write_architecture ();
 sub strip_empty ($);
 sub port_map ($$$$$$);
@@ -258,9 +261,9 @@ sub _mix_wr_isinteger ($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.50 2005/03/01 11:58:42 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.51 2005/04/14 06:53:01 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.50 $';
+my $thisrevision   =      '$Revision: 1.51 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2176,7 +2179,7 @@ sub _mix_wr_isinteger ($$$) {
     my $flag = 0;
 
     # Split input string
-    if ( $val =~ m/(.*)'(\w)(.*)/ ) {
+    if ( $val =~ m/(.*)'(\w)(.*)/ ) {    # ' just for eclipse syntax higlighting
         $base = $2;
         $width = $1;
         $number = $3;
@@ -3457,7 +3460,7 @@ sub _write_architecture ($$$$) {
 
 	#
 	# Adding constant definitions for nan bounds signals ...
-        #
+	#
         my %parms = ();
         for my $ii ( keys( %nanbounds ) ) {
             for my $iii ( values( %{$nanbounds{$ii}} ) ) {
@@ -3620,10 +3623,10 @@ sub mix_wr_getpwidth ($) {
 #
 sub _write_constant ($$$$$;$) {
     my $n = shift;
-    my $out = shift;        # constant description
-    my $s    = shift;       # ref to signal definition
-    my $type = shift;     # type of this constant
-    my $dt = shift;         # has predefined (F downto T) # unused now ...
+    my $out = shift;      # constant description
+    my $s    = shift;     # ref to signal definition
+    my $type = shift;     # type of this constant 
+    my $dt = shift;       # has predefined (F downto T) # unused now ...
     my $lang = shift || $EH{'macro'}{'%LANGUAGE%'} || "vhdl";
 
     my $tcom = $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'default'} || "##";
@@ -3643,25 +3646,25 @@ sub _write_constant ($$$$$;$) {
     } else {
 	my $value = $out->{'rvalue'};
 
-        #
-        #TODO: 
+    #
+    #TODO: 
 	#
-        # Caveat: Keep the RE here in sync with MixParser::_create_conn
-        #
-        # Get VHDL constants : B#VAL#
-        # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(\d+#[_a-f\d]+#)\s*$,io o
-        # or 0xHEX or 0b01xzhl or 0777 or 1000 (integers)
-        # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(0x[_\da-f]+|0b[_01xzhl]+|0[_0-7]+|[\d][._\d]*)\s*$,io or
-        # or reals or time definitions: ... 1 ns, 1.3 ps ...
-        # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?([+-]*[_\d]+\.*[_\d]*(e[+-]\d+)?\s*([munpf]s)?)\s*$,io or
-        # or anything in ' text ' or " text "
-        # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?((['"]).+\4)\s*$,io or
-        # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(".+")\s*$,io or
-        # or anything following a %CONST%/ or GENERIC or PARAMETER keyword
-        # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)(.+)\s*,io
-        #TODO: Add conversion functions ... make sure to use " and ' appr.
+    # Caveat: Keep the RE here in sync with MixParser::_create_conn
+    #
+    # Get VHDL constants : B#VAL#
+    # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(\d+#[_a-f\d]+#)\s*$,io o
+    # or 0xHEX or 0b01xzhl or 0777 or 1000 (integers)
+    # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(0x[_\da-f]+|0b[_01xzhl]+|0[_0-7]+|[\d][._\d]*)\s*$,io or
+    # or reals or time definitions: ... 1 ns, 1.3 ps ...
+    # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?([+-]*[_\d]+\.*[_\d]*(e[+-]\d+)?\s*([munpf]s)?)\s*$,io or
+    # or anything in ' text ' or " text "
+    # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?((['"]).+\4)\s*$,io or
+    # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(".+")\s*$,io or
+    # or anything following a %CONST%/ or GENERIC or PARAMETER keyword
+    # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)(.+)\s*,io
+    #TODO: Add conversion functions ... make sure to use " and ' appr.
         
-        if ( $value =~ m,([+-]*[_\d]+\.*[_\d]*(e[+-]\d+)?)(\s*)([munpf]s),io ) {
+    if ( $value =~ m,([+-]*[_\d]+\.*[_\d]*(e[+-]\d+)?)(\s*)([munpf]s),io ) {
             # It's a time constant
             # Add a space before "s"
             if ( $3 eq "" ) {
@@ -3735,7 +3738,7 @@ sub _write_constant ($$$$$;$) {
             $comm = " " . $tcom . " __I_ConvConstant2:" . $value;
                 if ( $lang =~ m,^veri,io ) {
                     #!wig20040329: Add width of constant:
-                    $value =~ s,^\s*0x,'h,;
+                    $value =~ s,^\s*0x,'h,; # syntax highlight colors with a '
                     ( my $l = $value ) =~ s,_,,g;
                     $value = ( length( $l ) - 2 ) . $value;
                 } else {
@@ -3747,7 +3750,7 @@ sub _write_constant ($$$$$;$) {
             # Convert 0bBINV to 2#BINV# (VHDL) or 'bBINV (Verilog)
                 $comm = " " . $tcom . " __I_ConvConstant3:" . $value;
                 if ( $lang =~ m,^veri,io ) {
-                    $value =~ s,^\s*0b,'b,;
+                    $value =~ s,^\s*0b,'b,; # syntax highlight colors with a '
                     ( my $l = $value ) =~ s,_,,g;
                     $value = ( length( $l ) - 2 ) . $value;
                 } else {
@@ -3827,7 +3830,7 @@ sub mix_wr_getconstname ($$) {
 
     my $nt = $n || "0";
 
-    #Caveat: will only work is the constant has only >one< %BUS% reference!!
+    #Caveat: will only work if the constant has only >one< %BUS% reference!!
     #    and this reference has to be first!
     if ( exists( $sref->{'::in'}[0]{'inst'} ) and
          exists( $sref->{'::out'}[$nt] ) and
@@ -3835,7 +3838,7 @@ sub mix_wr_getconstname ($$) {
         $sref->{'::in'}[0]{'inst'} =~ m/(__|%)BUS(__|%)/io ) {
             $busref = 1;
             $cn = $sn . ( $n ? ( "_" . $n . "c" ) : "" ); # Signalname taken from ::in
-                # constant name as defined or attached a _Nc if N > 0 
+                # constant name as defined or attach a _Nc if N > 0 
             $sn = $sref->{'::in'}[0]{'port'} || "__W_UNKNOWN_CONST_BUS";
             if ( $cn eq $sn ) { $cn = $sn . ( $n ? ( "_" . $n . "c" ) : "_c" ); }
     }        

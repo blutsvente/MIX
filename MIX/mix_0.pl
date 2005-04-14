@@ -27,12 +27,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.33 2004/11/10 09:46:20 wig Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.34 2005/04/14 06:53:00 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.33 $                                      |
-# | Mod.Date     : $Date: 2004/11/10 09:46:20 $                           |
+# | Version      : $Revision: 1.34 $                                      |
+# | Mod.Date     : $Date: 2005/04/14 06:53:00 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -47,12 +47,15 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
-# | Revision 1.33  2004/11/10 09:46:20  wig
-# | added verilog includes
-# |
-# | Revision 1.32  2004/06/16 08:36:45  wig
-# | Removed comments.
-# |
+# | Revision 1.34  2005/04/14 06:53:00  wig
+# | Updates: fixed import errors and adjusted I2C parser
+# |                                                    |
+# | Revision 1.33  2004/11/10 09:46:20  wig                               |
+# | added verilog includes                                                |
+# |                                                                       |
+# | Revision 1.32  2004/06/16 08:36:45  wig                               |
+# | Removed comments.                                                     |
+# |                                                                       |
 # | Revision 1.30  2004/04/14 11:08:55  wig
 # | minor code clearing
 # |
@@ -80,7 +83,7 @@ use Pod::Text;
 # |
 # | Revision 1.21  2003/12/04 14:39:10  abauer
 # | *** empty log message ***
-# |                                                    |
+# |                                                                       |
 # | Revision 1.20  2003/11/27 13:18:33  abauer                            |
 # | *** empty log message ***                                             |
 # |                                                                       |
@@ -196,7 +199,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.33 $'; # RCS Id
+$::VERSION = '$Revision: 1.34 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 logconfig(
@@ -267,7 +270,7 @@ mix_getopt_header( qw(
     top=s
     variant=s
     adump!
-    conf=s@
+    conf|config=s@
     sheet=s@
     listconf
     delta!

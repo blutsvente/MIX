@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.41 2005/01/27 08:19:47 wig Exp $
+# $Id: TODO.txt,v 1.42 2005/04/14 06:53:00 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -18,6 +18,73 @@ Doku:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+
+20050330a/Req: dump signal description
+
+	dump info about a signal:
+      signal foo:
+	  instance/port -->|
+	                   |--> instance/port
+	                   |<-> instance/port
+	  
+	-dump instance:RE
+	-dump signal:RE
+	formats: text, ascii art, image
+	 
+	Req: wig
+	Prio: low
+                  
+20050300a/Req: dump module description
+
+	before/after rules evaluation
+	
+	create a GUI
+	
+	create an
+		Image (perl module!)
+		Ascii art (perl module)
+		List
+	work hierachically if possible
+
+                    instance(entity)
+	                +---+
+		 port in -->|   |--> port out  /  signal out
+					|   |
+					|   |<-> port inout / signal inout
+	    generic     |   |
+	    parameters  |   |
+	                +---+
+	                
+	    write port/signal width on demand, signal on demand
+	    sort by hierachy
+	    sort by name
+	    sort by entity
+	    
+	 hierachy browser
+	   +--- TOP
+	   |
+	   +---+ foo
+	   |   |
+	   |   +--- foo_sub
+	   |   +--- foo_sub2
+       |
+	   +--- bar
+
+   Consider perl modules to use: Tree::*
+   	       
+   Req: wig, gerstenberg
+   Prio: medium
+
+20050202a/Req: MIX/Req: allow IO sheet non-select busses in ::pin column
+
+allow to use busses in ::port definitions
+	supress auto-generated select bus generation on demand
+
+busses could get connected with busses of the same width X ::muxopt width ???
+	if ::muxopt is one -> straightforward.
+
+	Req: mpit20050202
+	Prio: low
 
 20050126a/Req: Use perl CSV modules for xls2csv and for reader!
 
@@ -65,10 +132,33 @@ new(\%attr)
 
         By default the generated fields are quoted only, if they need to, for example, if they contain the separator. If you set this attribute to a TRUE value, then all fields will be quoted. This is typically easier to handle in external applications. (Poor creatures who aren't using Text::CSV_XS. :-)
 
+20050112a/Bug: allow entities with mixed constant and signal ports!
 
+Currently you get an warning:
+05/01/12 10:29:01 6892: Warning: port kep redefinition mode mismatch: C in
+05/01/12 10:29:01 6892: WARNING: Entity port mode mismatch for enitity IO60DRV1 (pad_reset_n), port kep: __W_PORTMODE_MISMATCH was C!
+05/01/12 10:29:01 6892: WARNING: Declaration for entity IO60DRV1 (pad_reset_n) extended by kep!
+05/01/12 10:29:02 6892: WARNING: Entity port mode mismatch for enitity IO60DRV1 (pad_bo_0), port kep: C was __W_PORTMODE_MISMATCH!
+05/01/12 10:29:02 6892: WARNING: Declaration for entity IO60DRV1 (pad_bo_0) extended by kep!
+apart from the warning it seems to work, though.
+
+But: disallow these to become I/O/IO ports!
+Solution: do not propagate "C" to the entity ports, but set that to "S".
+
+	Req: mpit
+	Prio: low
+	
 20041220b/Req: Check signal _n does not get connected to port not _n!
 
     verify usefull wiring
+
+	Check signal and port connectivity:
+
+ 	_n  vs. not( _n )
+
+	But not for generated ports! (add a "generated" flag to ::in/::out structure
+
+	
 
     Req: wig
     Prio: low

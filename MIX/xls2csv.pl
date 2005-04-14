@@ -10,7 +10,7 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #
 #******************************************************************************
 #
-# $Id: xls2csv.pl,v 1.3 2005/01/26 14:00:33 wig Exp $
+# $Id: xls2csv.pl,v 1.4 2005/04/14 06:53:00 wig Exp $
 #
 # read in XLS file and print out a csv and and a sxc version of all sheets
 #
@@ -18,16 +18,21 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #******************************************************************************
 #
 # Primitive option parsing added: -[no]sxc, -[no]csv
-#                    -sep ,  (default; ;)
+#                    -sep ,  (default: ;)
 #                    -sheet 'PERL-RE'
 #					 -[no]verbose
 #					 -[no]head
 #					 -noquotes
 #					 -quote X
+#                    -[no]single
+#                    -[no]accumulate
 #
 #  Define seperator:
 #
 # $Log: xls2csv.pl,v $
+# Revision 1.4  2005/04/14 06:53:00  wig
+# Updates: fixed import errors and adjusted I2C parser
+#
 # Revision 1.3  2005/01/26 14:00:33  wig
 # added -autoquote option
 #
@@ -72,7 +77,7 @@ use Micronas::MixUtils::IO;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.3 $'; # RCS Id
+$::VERSION = '$Revision: 1.4 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 mix_init();
@@ -90,14 +95,49 @@ my %opts = (
 	'sheet' => [],
 );
 
-unless( GetOptions( \%opts, 'csv!', 'sep=s', 'head!', 'sxc!', 'verbose|v!',
-	'quote|q=s', 'autoq|autoquote', 'noquote|noq', 'sheet=s@' ) ) {
+unless( GetOptions( \%opts, 'help!', 'csv!', 'sep=s', 'head!', 'sxc!', 'verbose|v!',
+	'quote|q=s', 'autoq|autoquote', 'single!', 'accumulate|accu!', 
+	'noquote|noq', 'sheet=s@' ) ) {
 	logerr "Illegal option detected!";
 	exit 1;
 }
 
+sub print_usage () {
+	print "Usage: $0 <-[no]csv|-[no]sxc> <-sep SEP> <-sheet REGEX> <excel-file> <excel-file2 ...>\n";
+	print <<EOM;
+	
+	Convert ExCEL sheets to csv and/or sxc format.
+
+    Options:
+	-[no]csv      Don/t generate CSV formatter file (on by default)
+	-[no]sxc      Don/t generate sxc formatted output file (on by default)
+	-autoq[uote]  Do quoting the ExCEL style
+	-q[uote] X    Use X as quoting char (default: ")
+	-sep X        Use X as column seperator (default: ;)
+	-noquote      Do not quote the output
+	-sheet RE     Select only sheets matching the RE
+	-[no]single   Write each sheet into a seperate output csv; extend name by sheet name.
+                  Default is to write a single csv and/or sxc file per input excel file with
+                  seperating the sheets by the sheet header (see -[no]head). With -single
+                  no sheet seperator head will be printed.
+	-[no]accu[mulate] Combine all excel files into a sinlge output csv or sxc file.
+                  Default is to convert a single csv and/or sxc file per input excel file.
+                  Basename is taken from the first excel file name. 
+	-[no]head     Do not print sheet seperator head ("=:=:=:=> SHEETNAME" by default)
+	-[no]verbose  Print more messages
+
+EOM
+
+	return;
+}
+
+if ( $opts{'help'} ) {
+	print_usage;
+	exit 0;
+}
+
 if (scalar(@ARGV) < 1 ) {
-    logwarn "Usage: $0 <-[no]csv|-[no]sxc> <-[auto|no]quote>  <-quote X> <-sep SEP> <-nohead> <-[no]verbose> <-sheet REGEX> <excel-file> ...";
+    logwarn "Usage: $0 <-[no]csv|-[no]sxc> <-[auto|no]quote>  <-quote X> <-sep SEP> <-nohead> <-[no]verbose> <-sheet REGEX> -single -accu[mulate] <excel-file> ...";
     die;
 }
 
@@ -123,11 +163,12 @@ if ( scalar( @{$opts{sheet}} ) ) {
 if ( exists( $opts{sep} ) ) {
 	$Micronas::MixUtils::EH{'format'}{'csv'}{'cellsep'} = $opts{sep};
 }
-unless ( $opts{head} ) {
+
+unless ( $opts{head} or not $opts{single} ) {
 	$Micronas::MixUtils::EH{'format'}{'csv'}{'sheetsep'} = "";
 }
 # if ( exists( $opts{autoq} ) ) {
-# }
+# } -> on by default!
 if ( exists( $opts{noquote} ) ) {
 	$Micronas::MixUtils::EH{'format'}{'csv'}{'quoting'} = "";
 	$Micronas::MixUtils::EH{'format'}{'csv'}{'style'} = "classic";
@@ -138,11 +179,14 @@ if ( exists( $opts{noquote} ) ) {
 #
 # main loop: convert all xls files from input
 #
+
+my $accu = ""; # Remember first filename for accumlated output
+
 for my $file ( @ARGV ) {
 
 	my $cfile;
 	my $sfile;
-	if(not $file=~ m/\.xls/) {
+	if( $file !~ m/\.xls/) {
 	    $file = $file . ".xls";
 	}
 
@@ -152,9 +196,18 @@ for my $file ( @ARGV ) {
 	}
 	
 	if( $file=~ m/\.xls$/ ) {
-	    ( $cfile = $file )=~  s/\.xls$/.csv/;
-	    ( $sfile = $file )=~  s/\.xls$/.sxc/;
+		if ( $opts{'accumulate'} ) {
+			unless( $accu ) { # First time only ...
+				$accu = $file;
+			}
+	        ( $cfile = $accu )=~  s/\.xls$/.csv/;
+	        ( $sfile = $accu )=~  s/\.xls$/.sxc/;
+		} else {
+	        ( $cfile = $file )=~  s/\.xls$/.csv/;
+	        ( $sfile = $file )=~  s/\.xls$/.sxc/;
+		}
 	} 
+	#wig: what is this for ????
 	elsif( $file !~ m/.csv$/) { 
 	    $cfile = $file . ".csv";
 	    $sfile = $file . ".sxc";
@@ -191,8 +244,16 @@ for my $file ( @ARGV ) {
 	    @data = open_xls($file, $sname, 0);
 	    $ref = pop(@data);       # get the first sheet of the name $sname which was found
 	    logsay("INFO: Print out sheet " . $file . "::" . $sname ) if ( $opts{'verbose'} );
-	    write_csv($cfile, $sname, $ref) if $opts{csv};
-	    write_sxc($sfile, $sname, $ref) if $opts{sxc};
+		if ( $opts{single} ) {
+			my $snamean =~ s/\W+/_/g; #
+			$cfile =~ s/\.csv$/-$snamean.csv/;
+			$sfile =~ s/\.sxc$/-$snamean.sxc/;			
+		    write_csv($cfile, $sname, $ref) if $opts{csv};
+	        write_sxc($sfile, $sname, $ref) if $opts{sxc};
+		} else {
+	        write_csv($cfile, $sname, $ref) if $opts{csv};
+	        write_sxc($sfile, $sname, $ref) if $opts{sxc};
+		}
 	}
 
 }

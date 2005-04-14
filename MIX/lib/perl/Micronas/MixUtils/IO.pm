@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.19 $                                          |
+# | Revision:   $Revision: 1.20 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/01/31 12:40:36 $                              |
+# | Date:       $Date: 2005/04/14 06:53:01 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.20  2005/04/14 06:53:01  wig
+# | Updates: fixed import errors and adjusted I2C parser
+# |
 # | Revision 1.19  2005/01/31 12:40:36  wig
 # |
 # |  	IO.pm : minor corrections
@@ -159,11 +162,11 @@ sub useOoolib ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.19 2005/01/31 12:40:36 wig Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.20 2005/04/14 06:53:01 wig Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.19 $';
+my $thisrevision    =      '$Revision: 1.20 $';
 
-# Revision:   $Revision: 1.19 $
+# Revision:   $Revision: 1.20 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -506,71 +509,74 @@ sub mix_utils_open_input(@) {
     my $ai2c = [];
 
     for my $i ( @in ) {
-	unless ( -r $i ) {
-	    logwarn("WARNING: File $i does not exist!");
-	    $EH{'sum'}{'warnings'}++;
-	    next;
-	}
+		unless ( -r $i ) {
+	    	logwarn("WARNING: File $i does not exist!");
+	    	$EH{'sum'}{'warnings'}++;
+	    	next;
+		}
 
-	my @conf;
-	my @conn;
-	my @hier;
-	my @io;
-	my @i2c;
+		my @conf;
+		my @conn;
+		my @hier;
+		my @io;
+		my @i2c;
 
-	# maybe there is a CONF page?
-	# Change CONF accordingly (will not be visible at upper world)
-	#TODO: add plugin interface to read in whatever is needed ...
-	@conf = open_infile( $i, $EH{'conf'}{'xls'}, $EH{'conf'}{'req'} );
-	# Open connectivity sheet(s)
-	@conn = open_infile( $i, $EH{'conn'}{'xls'}, $EH{'conf'}{'req'} );
-	# Open hierachy sheets
-	@hier = open_infile( $i, $EH{'hier'}{'xls'}, $EH{'conf'}{'req'} );
-	# Open IO sheet (if available, not needed!)
-	@io = open_infile( $i, $EH{'io'}{'xls'}, $EH{'conf'}{'req'} );
-	# Open I2C sheet (if available, not needed!)
-	@i2c = open_infile( $i, $EH{'i2c'}{'xls'}, $EH{'conf'}{'req'} );
+		# maybe there is a CONF page?
+		# Change CONF accordingly (will not be visible at upper world)
+		#TODO: add plugin interface to read in whatever is needed ...
+		@conf = open_infile( $i, $EH{'conf'}{'xls'}, $EH{'conf'}{'req'} );
+		# Open connectivity sheet(s)
+		@conn = open_infile( $i, $EH{'conn'}{'xls'}, $EH{'conf'}{'req'} );
+		# Open hierachy sheets
+		@hier = open_infile( $i, $EH{'hier'}{'xls'}, $EH{'conf'}{'req'} );
+		# Open IO sheet (if available, not needed!)
+		@io = open_infile( $i, $EH{'io'}{'xls'}, $EH{'conf'}{'req'} );
+		# Open I2C sheet (if available, not needed!)
+		@i2c = open_infile( $i, $EH{'i2c'}{'xls'}, $EH{'conf'}{'req'} );
 
-	if(!@conn && !@conf && !@hier && !@io && !@i2c) {
-	    logwarn("ERROR: no input found in file $i!\n");
-	    $EH{'sum'}{'errors'}++;
-	    next; # -> skip to next
-	}
+	
+		if(!@conn && !@conf && !@hier && !@io && !@i2c) {
+	    	logwarn("ERROR: no input found in file $i!\n");
+	    	$EH{'sum'}{'errors'}++;
+	    	next; # -> skip to next
+		}
 
-	for my $c ( @conf ) {
-	    $EH{'conf'}{'parsed'}++;
-	    # Apply it immediately
-	    mix_sheet_conf( $c, $EH{'conf'}{'xls'} );
-	}
+		for my $c ( @conf ) {
+	    	$EH{'conf'}{'parsed'}++;
+	    	# Apply it immediately
+	    	mix_sheet_conf( $c, $EH{'conf'}{'xls'} );
+		}
 
-	for my $c ( @conn ) {
-	    $EH{'conn'}{'parsed'}++;
- 	    my @norm_conn = convert_in( "conn", $c ); # Normalize and read in
-	    push( @$aconn, @norm_conn ); # Append
-	}
+		for my $c ( @conn ) {
+	    	$EH{'conn'}{'parsed'}++;
+ 	    	my @norm_conn = convert_in( "conn", $c ); # Normalize and read in
+	    	push( @$aconn, @norm_conn ); # Append
+		}
 
-	for my $c ( @hier ) {
-	    $EH{'hier'}{'parsed'}++;
-	    my @norm_hier = convert_in( "hier", $c );
- 	    # Remove all lines not selected by our variant
-	    #TODO: Should we allow variants in the CONN sheet, too??
-	    select_variant( \@norm_hier );
-	    push( @$ahier,   @norm_hier );	# Append
-	}
+		for my $c ( @hier ) {
+	    	$EH{'hier'}{'parsed'}++;
+	    	my @norm_hier = convert_in( "hier", $c );
+ 	    	# Remove all lines not selected by our variant
+	    	#TODO: Should we allow variants in the CONN sheet, too??
+	    	select_variant( \@norm_hier );
+	    	push( @$ahier,   @norm_hier );	# Append
+		}
 
-	for my $c ( @io ) {
-	    $EH{'io'}{'parsed'}++;
-	    my @norm_io = convert_in( "io", $c );
-	    push( @$aio,   @norm_io );   # Append
-	}
+		for my $c ( @io ) {
+	    	$EH{'io'}{'parsed'}++;
+	    	my @norm_io = convert_in( "io", $c );
+	    	push( @$aio,   @norm_io );   # Append
+		}
 
-	for my $c ( @i2c ) {
-	    $EH{'i2c'}{'parsed'}++;
-	    my @norm_i2c = convert_in( "i2c", $c);
-	    select_variant( \@norm_i2c);
-	    push(@$ai2c, @norm_i2c);
-	}
+		for my $c ( @i2c ) {
+	    	$EH{'i2c'}{'parsed'}++;
+	    	my @norm_i2c = convert_in( "i2c", $c);
+	    	select_variant( \@norm_i2c);
+	    	push(@$ai2c, @norm_i2c);
+		}
     }
+
+	mix_utils_io_del_abook(); # Remove all cached input data (only for excel currently),    
     return( $aconn, $ahier, $aio, $ai2c);
 }
 
@@ -632,6 +638,10 @@ Open a excel file, select the appropriate worksheets and return
 
 =cut
 
+{   # wrap around $oBook static variable ...
+	# Cache openeded xls-file
+	my %aBook        = (); # xls-content
+	
 sub open_xls($$$){
     my ($file, $sheetname, $warn_flag)=@_;
 
@@ -642,7 +652,7 @@ sub open_xls($$$){
     my @sheets = ();
 
     #old: logdie "Cannot use Excel OLE interface!" unless($use_csv);
-#    $ex->{DisplayAlerts}=0 if ( $EH{'script'}{'excel'}{'alerts'} =~ m,off,io );
+	#    $ex->{DisplayAlerts}=0 if ( $EH{'script'}{'excel'}{'alerts'} =~ m,off,io );
 
     unless( -r $file ) {
       logwarn( "cannot read <$file> in open_xls!" );
@@ -657,8 +667,12 @@ sub open_xls($$$){
 	$ro = 0;
     }
 
-    $oBook = Spreadsheet::ParseExcel::Workbook->Parse($file);
-
+	unless( exists $aBook{$file} ) {
+		# Need to read in again ...
+		$aBook{$file} = Spreadsheet::ParseExcel::Workbook->Parse($file);
+	}
+	$oBook = $aBook{$file};
+	
     if(!defined $oBook) {
       logwarn("ERROR: opening File $file");
     }
@@ -725,6 +739,11 @@ sub open_xls($$$){
 
 }
 
+sub mix_utils_io_del_abook () {
+	%aBook = ();
+} 
+
+} # wrap around $aBook, static variable
 
 ####################################################################
 ## open_sxc
