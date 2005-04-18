@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.49 $                                         |
+# | Revision:   $Revision: 1.50 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/04/14 06:53:01 $                              |
+# | Date:       $Date: 2005/04/18 07:13:36 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.49 2005/04/14 06:53:01 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.50 2005/04/18 07:13:36 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.50  2005/04/18 07:13:36  wig
+# | *** empty log message ***
+# |
 # | Revision 1.49  2005/04/14 06:53:01  wig
 # | Updates: fixed import errors and adjusted I2C parser
 # |
@@ -208,10 +211,10 @@ require Exporter;
       parse_mac
       purge_relicts
       mix_parser_importhdl
-      );            # symbols to export by default
-  @EXPORT_OK = qw(
       %hierdb
       %conndb
+      );            # symbols to export by default
+  @EXPORT_OK = qw(
     ); # symbols to export on request
 
 # %EXPORT_TAGS = tag => [...];
@@ -278,9 +281,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.49 2005/04/14 06:53:01 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.50 2005/04/18 07:13:36 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.49 $';
+my $thisrevision =	'$Revision: 1.50 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

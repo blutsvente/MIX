@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Checker
 # | Modules:    $RCSfile: MixChecker.pm,v $
-# | Revision:   $Revision: 1.7 $
+# | Revision:   $Revision: 1.8 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2005/01/26 14:01:41 $
+# | Date:       $Date: 2005/04/18 07:13:36 $
 # |
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.7 2005/01/26 14:01:41 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.8 2005/04/18 07:13:36 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the checking capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixChecker.pm,v $
+# | Revision 1.8  2005/04/18 07:13:36  wig
+# | *** empty log message ***
+# |
 # | Revision 1.7  2005/01/26 14:01:41  wig
 # | changed %OPEN% and -autoquote for cvs output
 # |
@@ -97,7 +100,8 @@ use Tree::DAG_Node; # tree base class
 
 use Micronas::MixUtils qw( mix_store db2array %EH replace_mac);
 use Micronas::MixUtils::IO;
-use Micronas::MixParser qw( %hierdb %conndb );
+# use Micronas::MixParser qw( %hierdb %conndb );
+use Micronas::MixParser;
 
 
 #
@@ -112,9 +116,9 @@ my %mix_check_list = ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixChecker.pm,v 1.7 2005/01/26 14:01:41 wig Exp $';
+my $thisid		=	'$Id: MixChecker.pm,v 1.8 2005/04/18 07:13:36 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixChecker.pm,v $';
-my $thisrevision   =      '$Revision: 1.7 $';
+my $thisrevision   =      '$Revision: 1.8 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
