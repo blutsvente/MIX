@@ -56,7 +56,7 @@ MIX - Micronas Interconnect Spec expander
 
 Author: Wilfried Gänsheimer
 \newline 
-$Date: 2005/04/13 10:20:10 $
+$Date: 2005/05/11 11:37:56 $
 \newline 
 Version: $Id: MIX_Userreference.lyx,v 1.6 2005/01/26 14:01:59 wig Exp 
 \layout Section
@@ -2410,35 +2410,7 @@ Special signal names:
 \newline 
 
 \family typewriter 
-
-\backslash 
-%LOW
-\backslash 
-%
-\family default 
-, 
-\family typewriter 
-
-\backslash 
-%HIGH
-\backslash 
-%
-\family default 
-, 
-\family typewriter 
-
-\backslash 
-%LOW_BUS
-\backslash 
-%
-\family default 
-, 
-\family typewriter 
-
-\backslash 
-%HIGH_BUS
-\backslash 
-%
+%LOW%, %HIGH%, %LOW_BUS%, %HIGH_BUS%, %OPEN%
 \family default 
 
 \newline 
@@ -2451,11 +2423,7 @@ Special signal names:
 
 Used the 
 \family typewriter 
-
-\backslash 
-%OPEN
-\backslash 
-%
+%OPEN%
 \family default 
  signal to leave some pins of module bar port a open MIX has no knowledge
  about ports.
@@ -2487,17 +2455,11 @@ bar/a
 \newline 
 
 \family typewriter 
-signal_a
-\backslash 
-, ::high 7, ::low 0, ::out foo/a ::in bar/asn
+::name signal_a, ::high 7, ::low 0, ::out foo/a ::in bar/asn
 \backslash 
 newline
 \newline 
-
-\backslash 
-%OPEN
-\backslash 
-%, ::high 1, ::low 0, ::out -, ::out bar/a(9:8)
+%OPEN%, ::high 1, ::low 0, ::in -, ::out bar/a(9:8)
 \family default 
 
 \newline 
@@ -2514,33 +2476,19 @@ You could also force the
 \newline 
 
 \family typewriter 
-
-\backslash 
-%HIGH
-\backslash 
-%
+%HIGH%
 \family default 
 , 
 \family typewriter 
-
-\backslash 
-%HIGH_BUS
-\backslash 
-%
+%HIGH_BUS%
 \family default 
 , 
 \family typewriter 
-
-\backslash 
-%LOW
+%LOW%
 \family default 
  or 
 \family typewriter 
-
-\backslash 
-%LOW_BUS
-\backslash 
-%
+%LOW_BUS%
 \family default 
 .
  Or a constant.
@@ -2967,7 +2915,8 @@ Please consider that some text macros are used internally and some have
 Predefined and user macros
 \layout Standard
 
-The following table contains a list of predefined macros.
+The following table (XXXwhere is the listXXX) contains a list of predefined
+ macros.
  Some of them are defined at run time (e.g.
  the current date), some are for internal purposes only.
  macros marked with a yes in the "User" column can be set freely by the
@@ -3036,6 +2985,254 @@ Examples:
 
 \family typewriter 
 MIXCFG macro.%VERILOG_DEFINES% `include bar.vh
+\layout Subsection
+
+Global configuration parameters
+\layout Subsubsection
+
+output.generate.portmapsort
+\layout Standard
+
+The output.generate.portmapsort configuation defines the sort order for portmaps
+ in instantiations and component declarations.
+ You can set any combination of the keys in the following list, seperated
+ by whitespace or comma:
+\layout Standard
+
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="8" columns="2">
+<features>
+<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="center" valignment="top" leftline="true" rightline="true" width="0">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+key
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+meaning
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+alpha
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+strict alphabetical sort order (default)
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+input
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+sorted as defined in the input sheets
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+inout
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Quotes eld
+\end_inset 
+
+in
+\begin_inset Quotes erd
+\end_inset 
+
+ before 
+\begin_inset Quotes eld
+\end_inset 
+
+inout
+\begin_inset Quotes erd
+\end_inset 
+
+ before 
+\begin_inset Quotes eld
+\end_inset 
+
+out
+\begin_inset Quotes erd
+\end_inset 
+
+
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+outin
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Quotes eld
+\end_inset 
+
+out
+\begin_inset Quotes erd
+\end_inset 
+
+ before 
+\begin_inset Quotes eld
+\end_inset 
+
+inout
+\begin_inset Quotes erd
+\end_inset 
+
+ before 
+\begin_inset Quotes eld
+\end_inset 
+
+out
+\begin_inset Quotes erd
+\end_inset 
+
+
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+genpost
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+print generated port at the end
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+genpre
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+print generated ports at the beginning
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+::COL
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+sort alphabetical by using the values defined in the 
+\family typewriter 
+::COL
+\family default 
+ column 
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+The sort criteria are applied from left to right.
+ Thus 
+\begin_inset Quotes eld
+\end_inset 
+
+inout,input
+\begin_inset Quotes erd
+\end_inset 
+
+ will seperate in/inout/out ports and print them in the order of apperal
+ or generation.
+\layout Standard
+
+Caveat: ::COL is experimental!
 \layout Section
 
 CONN sheet macros
@@ -6765,7 +6962,7 @@ $ module load freeware; recode
 \begin_inset Quotes eld
 \end_inset 
 
-ps..lat1
+pc..lat1
 \begin_inset Quotes erd
 \end_inset 
 
