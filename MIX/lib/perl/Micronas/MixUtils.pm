@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.62 $                                         |
+# | Revision:   $Revision: 1.63 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/04/14 06:53:01 $                              |
+# | Date:       $Date: 2005/05/11 11:39:02 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.62 2005/04/14 06:53:01 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.63 2005/05/11 11:39:02 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.63  2005/05/11 11:39:02  wig
+# | intermediate update (still working on unsplice)
+# |
 # | Revision 1.62  2005/04/14 06:53:01  wig
 # | Updates: fixed import errors and adjusted I2C parser
 # |
@@ -299,11 +302,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.62 2005/04/14 06:53:01 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.63 2005/05/11 11:39:02 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.62 $';
+my $thisrevision        =      '$Revision: 1.63 $';
 
-# Revision:   $Revision: 1.62 $   
+# Revision:   $Revision: 1.63 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -917,11 +920,14 @@ sub mix_init () {
 		      #   %::outinst% (list of driving instances), %::comment%
 	      	'portdescrlength' => 100, # Limit length of comment to 100 characters!
 		  	'portmapsort' => 'alpha', # How to sort port map; allowed values are:
-		  			# alpha := sorted by port name
-		  			# input (as listed in input files)
+		  			# alpha := sorted by port name (default)
+		  			# input (ordered as listed in input files)
 		  			# inout | outin: seperate in/out/inout seperately
 		  			#    can be combined with the "input" key
-		  			# 
+		  			# ::COL : order as in column ::COL (alphanumeric!)
+			'logic' => 'wire,and,or,nand,xor,nor',
+			'_logic_' => '', # internal!!
+					# List of "logic" entities
 	      	'fold' => 'signal',	# If set to [signal|hier], tries to collect ::comments, ::descr and ::gen
 					# like TEXT_FOO_BAR (X10), if TEXT_FOO_BAR appears several times
 					#TODO: Implement for hier
@@ -1016,7 +1022,7 @@ sub mix_init () {
 		'defs' => '',  # 'inst,conn',    # make sure elements are only defined once:
 		    # possilbe values are: inst,conn
 		'signal' => 'load,driver,check,top_open',
-						# reads: checks i f all signals have appr. loads
+						# reads: checks if all signals have appr. loads
 						# and drivers.
 						# If "top_open" is in this list, will wire unused
 						# signals to open.
@@ -1440,12 +1446,12 @@ sub mix_init () {
 
 	## Inventory
 	'inst' => 0,		# number of instances
-	'conn' => 0,	# number of connections
+	'conn' => 0,		# number of connections
 	'genport' => 0, 	# number of generated ports
 
 	'cmacros' => 0,	# Number of matched connection macro's
 
-        'hdlfiles' => 0,      # Number of output files
+    'hdlfiles' => 0,      # Number of output files
 	'noload' => 0,   	# signals with missing loads ...
 	'nodriver' => 0,	# signals without driver
 	'multdriver' => 0,	# signals with multiple drivers
@@ -2726,19 +2732,21 @@ sub parse_header($$@){
 				logtrc(INFO, "Split multiple column header $i to $i:$ii");
 				$$templ->{'field'}{$i. ":". $ii} = $$templ->{'field'}{$i}; #Check: do a real copy ...
 				#Remember print order no longer is unique
-		    	}
-		    	$or{$i. ":". $ii} = $rowh{$i}[$ii];
-		    	if($ii > $EH{$kind}{'cols'}) {
-					$EH{$kind}{'cols'} = $ii; #TODO: remove this!
-		   		}
-		    	if($ii > $EH{$kind}{'_mult_max_'}{$i} ) {
+		    }
+		    $or{$i. ":". $ii} = $rowh{$i}[$ii];
+		    if($ii > $EH{$kind}{'cols'}) {
+				$EH{$kind}{'cols'} = $ii; #TODO: remove this!
+		   	}
+		   	# Remember number of columns 
+		    if(not defined( $EH{$kind}{'_mult_max_'}{$i} ) or
+		    	$ii > $EH{$kind}{'_mult_max_'}{$i} ) {
 					$EH{$kind}{'_mult_max_'}{$i} = $ii;
-		    	}
-	     	}
-		} else {
-			$or{$i} = $rowh{$i}[0];
-		}
-    }
+		    }
+	     }
+	} else {
+		$or{$i} = $rowh{$i}[0];
+	}
+   }
 
     $EH{$kind}{'ext'} = scalar(keys(%or));
 
