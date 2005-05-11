@@ -2,12 +2,17 @@
 
 notes: mix_0.pl has to be in your path
 
-usage: MixTest.pl <options>
+usage: MixTest.pl <options> [test test2]
 
 options: <none>    ->   run Tests with all kind of input (with diff)
 	 -csv      ->   run only csv-input Tests (with diff)
 	 -sxc      ->   run only sxc-input Tests (with diff)
 	 -xls      ->   run only xls-input Tests (with diff)
-	 -release  ->   <not implemented yet>
 	 -purge    ->   remove *.diff and mix_0.pl.out files
 	 -update   ->   don't expect diff-sheets, generate new ones
+     -import   ->   create test hierachy
+     -export   ->   make test hierachy ready for export (includes -purge)
+ 
+If no test name is given, runs all tests.
+If no input format is specified with the -csv/-sxc/-xls switch, all three
+formats will be tested.

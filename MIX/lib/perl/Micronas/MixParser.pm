@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.50 $                                         |
+# | Revision:   $Revision: 1.51 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/04/18 07:13:36 $                              |
+# | Date:       $Date: 2005/05/11 12:21:02 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.50 2005/04/18 07:13:36 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.51 2005/05/11 12:21:02 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.51  2005/05/11 12:21:02  wig
+# | intermediate update (still working on unsplice)
+# |
 # | Revision 1.50  2005/04/18 07:13:36  wig
 # | *** empty log message ***
 # |
@@ -264,6 +267,8 @@ sub mix_parser_importhdl ($$);
 sub _mix_parser_parsehdl ($);
 sub overlay_bits($$);
 sub mix_p_co2str ($$);
+sub _mix_p_unsplice_inout($);	
+sub _mix_p_try_merge ($);
 
 ####################################################################
 #
@@ -281,9 +286,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.50 2005/04/18 07:13:36 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.51 2005/05/11 12:21:02 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.50 $';
+my $thisrevision =	'$Revision: 1.51 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1251,8 +1256,7 @@ sub _create_conn ($$%) {
                 # or reals or time definitions: ... 1 ns, 1.3 ps ...
                 $cd =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?([+-]*[_\d]+\.*[_\d]*(e[+-]\d+)?\s*([munpf]s)?)\s*$,io or
                 # or anything in ' text ' or " text "
-                $cd =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?((['"]).+\4)\s*$,io or
-                # $d =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?(".+")\s*$,io or
+                $cd =~ m,^(%(CONST|GENERIC|PARAMETER)%/)?((['"]).+\4)\s*$,io or  # ' match
                 # or anything following a %CONST%/ or GENERIC or PARAMETER keyword
                 $cd =~ m,^(%(CONST|GENERIC|PARAMETER)%/)(.+)\s*,io
                 ) { # Constant value ...
@@ -1290,7 +1294,7 @@ sub _create_conn ($$%) {
                     $const =~tr/HhLl/1100/;
                     $const = oct( $const );
                 }
-                $const =~ tr/'/"/; # Convert ' to " (otherwise ExCEL will eat it).
+                $const =~ tr/'/"/; # Convert ' to " (otherwise ExCEL will eat it). # "
 
                 $co{'port'} = $const; # Decimal base or literal
                 
@@ -1346,7 +1350,7 @@ sub _create_conn ($$%) {
             #wig20040803: adding advanced typecast function: convert typecast request
             #  into internal instance (%TC_xxxxx%) mapper
             my $tcdo = "";
-            if ( $d =~ m,(/?'(\w+)), ) { # Get typecast   inst/port'cast or inst/'cast
+            if ( $d =~ m,(/?'(\w+)), ) { # Get typecast   inst/port'cast or inst/'cast  # '
                 if ( $tcmethod ) {
                     # Create a mapper instance and attach the signal the following way
                     $tcdo = $2;         
@@ -2492,7 +2496,7 @@ sub add_portsig () {
                         for my $lb ( @$bits ) {
                             if ( substr( $t, -1, 1 ) eq substr( $lb, -1, 1 ) ) { #Same i/o
                                 if ( $lb !~ m,A::, and $t ne $lb ) {
-                                    push( @addup, [ $signal, $name, $l, $modes{$l}, $t ] );#TODO: XXXX
+                                    push( @addup, [ $signal, $name, $l, $modes{$l}, $t ] );
                                 }
                             }
                         }
@@ -3522,6 +3526,7 @@ sub generate_port ($$$$$$) {
 
     # To avoid issues, get rid of %EMPTY% in port name now
     $t{'port'} = replace_mac( $t{'port'}, $EH{'macro'} );
+	$t{'_gen_'} = 1; # Mark this to be a generated port!
 
     push( @{$conndb{$signal}{$m}},  { %t } ); # Push on conndb array ...
 
@@ -3784,14 +3789,6 @@ sub purge_relicts () {
     }
 
     #
-    # uniquify signals
-    #TODO
-    for my $i ( keys( %conndb ) ) {
-            my $rsa = $conndb{$i}; #Reference
-            _scan_inout( $rsa->{'::out'} );
-            _scan_inout( $rsa->{'::in'} );
-    }
-    #
     # If ::high and ::low is defined, extend ::in and ::out definitions
     #
     for my $i ( keys( %conndb ) ) {
@@ -3850,7 +3847,11 @@ sub purge_relicts () {
                 }
             }
         }
-
+        
+    	# uniquify signals
+        my $rsa = $conndb{$i}; #Reference
+        $rsa->{'::out'} = _scan_inout( $rsa->{'::out'} );
+        $rsa->{'::in'}  = _scan_inout( $rsa->{'::in'} );
 
         # Does a _vector type have bounds defined?
         if ( ( $conndb{$i}{'::high'} eq "" or $conndb{$i}{'::low'} eq "" ) and
@@ -3876,6 +3877,7 @@ sub purge_relicts () {
             }
         }
     }
+
     #
     # Check for VHDL/Verilog/... keywords in instance and port names ...
     #
@@ -3903,7 +3905,7 @@ sub purge_relicts () {
 }
 
 #
-# Look through ::in and ::out arrays and check/change VHDL/VErilog keywords ..
+# Look through ::in and ::out arrays and check/change VHDL/Verilog keywords ..
 # e.g. open ....
 # Set configuration value postfix.PREFIX_KEYWORD to %NULL% to suppress changes
 #
@@ -3959,6 +3961,7 @@ sub _extend_inout ($$$) {
                 # not defined( $i->{'port_f'} )
                 ) {
             logwarn( "Warning: Unusual upper bound definitions for $i->{'inst'} / $i->{'port'}" );
+            $EH{'sum'}{'warnings++'};
         }
         if ( not defined( $i->{'sig_t'} ) and
             not defined( $i->{'port_t'} ) ) {
@@ -3968,7 +3971,15 @@ sub _extend_inout ($$$) {
                 # not defined( $i->{'port_t'} )
                   ) {
             logwarn( "Warning: Unusual lower bound definitions for $i->{'inst'} / $i->{'port'}" );
+            $EH{'sum'}{'warnings'}++;
         }
+        #!wig50050511: port bounds get derived from signal bounds (if unset).
+		if ( not defined( $i->{'port_f'} ) ) {
+			$i->{'port_f'} = $h;
+		}
+		if ( not defined( $i->{'port_t'} ) ) {
+			$i->{'port_t'} = $h;
+		}
     }
 #TODO: What if only one of is defined???
 }
@@ -3998,14 +4009,174 @@ sub _scan_inout ($) {
                         $rsa->[$iii]{'port'} = mix_check_case( 'port', $rsa->[$iii]{'port'} );
                     }
                 }
-                my $this = join( ',', values( %{$rsa->[$iii]} ) );
+                my $this = join( ',', sort( values( %{$rsa->[$iii]} ) ) );
                 if( $this and not defined( $seen{$this} ) ) {
                     push( @left, $rsa->[$iii] );
                     $seen{$this} = 1;
                 }
             }
         }
-        @$rsa = @left;
+        $rsa = _mix_p_unsplice_inout( \@left );
+        return $rsa;
+        # print "$rsa" if 0; # DEBUG ...
+        # @$rsa = @left;
+}
+
+#
+# See if certain parts of a signal/port can be combined into one description
+# 
+sub _mix_p_unsplice_inout ($) {
+	my $rsa = shift; # array ref with ::in or ::out
+
+	return $rsa unless( scalar @$rsa  > 1 );
+	
+	my @io = @$rsa; # Make a copy here
+
+	my %h  = ();
+	my %hi = ();
+	my %h2 = ();
+	my @ho = (); # Gets output ....
+	my $n   = 0;
+	# Find combinable ports (max port width)
+	# Prerequisite: port_f is > then port_t!!
+	for my $i ( @io ) {
+		# Read all in/out ...
+		# has to be dezimal limit (positive integer
+		if ( defined( $i->{'port_f'} ) and
+				$i->{'port_f'} =~ m/^\d+$/ and
+				$i->{'port_f'} >= 0 and
+				defined( $i->{'port_t'} ) and
+				$i->{'port_t'} =~ m/^\d+$/ and
+				$i->{'port_t'} >= 0
+			) {
+			# Check that parts match (should be done already
+			# somewhere else ...
+			if( $i->{'sig_f'} !~ m/^\d+/ or
+				$i->{'sig_t'} !~ m/^\d+/ ) {
+				logwarn("ERROR: mismatch port vs. signal borders for" .
+					$i->{'inst'} . "/" . $i->{'port'} . "!" );
+				$EH{'sum'}{'errors'}++;
+				$h2{$i->{'inst'}}{$i->{'port'}} = 1; # Not combinable ...
+				push( @ho, $i );
+			} elsif ( $i->{'port_f'} - $i->{'port_t'} !=
+				 	  $i->{'sig_f'} - $i->{'sig_t'} ) {
+				 logwarn("ERROR: mismatch port width vs. signal width for" .
+					$i->{'inst'} . "/" . $i->{'port'} . "!" );
+				$EH{'sum'}{'errors'}++;
+				$h2{$i->{'inst'}}{$i->{'port'}} = 1; # Not combinable ...
+				push( @ho, $i );
+			} else { 
+				# Remember this ports index number ...
+				push( @{$hi{$i->{'inst'}}{$i->{'port'}}}, $n );
+			}
+		} else {
+			$h2{$i->{'inst'}}{$i->{'port'}} = 1; # Not combinable ...
+			push( @ho, $i );
+		}
+		$n++;
+	}
+	# Remove all non-combinable ports from hi index!
+	# %h2 -> non-combinable!
+	# @ho -> all non-combinable
+	# %hi -> index to combinable
+	for my $k ( keys %h2 ) {
+		for my $kk ( keys %{$h2{$k}} ) {
+			if ( exists $hi{$k}{$kk} ) {
+				# This inst/port is not combinable -> send them to output
+				for my $kkk ( @{$hi{$k}{$kk}} ) {
+					push( @ho, $io[$kkk] );
+				}
+				delete $hi{$k}{$kk};
+			}
+		}
+	}
+	
+	#TODO: rebuild to_merge structure, but based on the left-over in the
+	#  %hi index -> h2;
+
+	for my $k ( keys %hi ) {
+		for my $kk ( keys( %{$hi{$k}} ) ) {
+			my $num = scalar( @{$hi{$k}{$kk}} );
+			if ( $num > 1 ) {
+				my @h = ();
+				for my $i ( @{$hi{$k}{$kk}} ) {
+					push( @h, $io[$i] );
+				}
+				# Try combine for all ports left in %hi
+				#   results go to @ho
+				push( @ho, _mix_p_try_merge( \@h )) ;				
+			} else {
+				push( @ho, $io[$hi{$k}{$kk}[0]] );
+			}
+		}
+	}
+
+	return \@ho; # Return a reworked array reference		
+}
+
+#
+# Check if some port descriptions are mergeable
+# use digits as tokens
+#!wig20050428						
+sub _mix_p_try_merge ($) {
+	my $r = shift;
+	
+	my %s = ();
+	my %smax = ();
+	my @out = ();
+
+	# Sort by diffs from signal_f vs. port_f
+	for my $i ( @$r ) {
+		my $d = $i->{'sig_f'} - $i->{'port_f'};
+		push( @{$s{$d}}, $i );
+		if ( not exists $smax{$d} or $smax{$d} < $i->{'port_f'} + 1  ) {
+			$smax{$d} = $i->{'port_f'} + 1;
+		}
+	}
+	for my $d ( keys( %s ) ) { # All parts with the same shift:
+		# Width of tokens is defined by number of slots;
+		my $ntokens = scalar( @{$s{$d}} );
+		my $tokwid = length( $ntokens );
+		my $map = " " x ( $smax{$d} * $tokwid ); 
+		# fill string with the tokens
+		my $n = 0;
+		for my $c ( @{$s{$d}} ) {
+			# calculate position -> port_f..port_t
+			my $lpos = $c->{'port_t'};
+			my $upos = $c->{'port_f'};
+			# my $rep  = $upos - $c->{'port_t'}; #TODO: What is port_t > port_f ?
+			my $token = sprintf( ("%0" . $tokwid . "d" ), $n );
+			# insert token into token string ....
+			# but: check if token position is already set (wig says: not needed!!)
+			for my $it ( $lpos..$upos ) {
+				if ( substr( $map, $it * $tokwid, $tokwid ) =~ m/^\s+$/io ) {
+					substr( $map, $it * $tokwid, $tokwid ) = $token;	
+				} 
+				# else: Already set? Conflict or just a duplicate definition:
+				# Skip it! port/signal have same offset!
+				#	my $prev = substr( $map, $it, $tokwid );
+				#	my $sig_prev = $s{$d}[$prev]
+			}
+			$n++;
+		}
+		# Scan through map and get consecutive tokens ....
+		for my $p ( split( /\s+/ , $map ) ) { # split by whitespace:
+			# Split $p in $tokwid wide pieces
+			my $partwidth = length( $p  ) / $tokwid; # Has to be integer ...
+			next if ( $partwidth < 1 ); # split returns empty string sometimes ...
+			#  read first token data
+			$p =~ m/^(\d{$tokwid})/;
+			# index number:
+			my %pout = %{$s{$d}->[$1]};
+			# correct width
+			$pout{'port_f'} = $pout{'port_t'} + $partwidth - 1;
+			$pout{'sig_f'}  = $pout{'sig_t'} + $partwidth - 1;
+			push( @out, \%pout );
+		}				
+	}
+	#TODO: check for overlapping port connections
+	
+	return( @out ); # Ref to unspliced ports description
 }
 
 ####################################################################

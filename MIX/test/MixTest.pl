@@ -106,6 +106,16 @@ my @tests = (
 	  'options' => "",
 	},
 	{
+	  'name' => "bitsplice",
+	  'path' => "bitsplice/vhdportsort",
+	  'options' => "",
+	},
+	{
+	  'name' => "bitsplice",
+	  'path' => "bitsplice/verportsort",
+	  'options' => "",
+	},
+	{
 	  'name' => "sigport",
 	  'path' => "sigport",
 	  'options' => "",
