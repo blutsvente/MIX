@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.52 $                                         |
+# | Revision:   $Revision: 1.53 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/05/11 11:39:15 $                              |
+# | Date:       $Date: 2005/05/18 13:42:07 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.52 2005/05/11 11:39:15 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.53 2005/05/18 13:42:07 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.53  2005/05/18 13:42:07  wig
+# | changes add_port after purge_relicts got the join_port function
+# |
 # | Revision 1.52  2005/05/11 11:39:15  wig
 # | intermediate update (still working on unsplice)
 # |
@@ -266,9 +269,9 @@ sub _mix_wr_is_modegennr ($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.52 2005/05/11 11:39:15 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.53 2005/05/18 13:42:07 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.52 $';
+my $thisrevision   =      '$Revision: 1.53 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2375,32 +2378,44 @@ sub port_map ($$$$$$) {
 	        my $pt = $entities{$enty}{$p}{'low'};
 	        unless( defined( $pt ) and $pt ne '' ) { $pt = '__UNDEF__'; }
 
-	        for my $n ( split( ',', $ref->{$s}{$p} ) ) {
-			    #
-			    # Read out the actual connection data
-		    	#  $conn->{inst}, $conn->{port}
-		    	#  $conn->{port_f}, $conn->{port_t},
-		    	#  $conn->{sig_f}, $conn->{sig_t}		
-		    	my $conn = $conndb{$s}{'::' . $io}[$n];
-		    	my $ret = add_conn_matrix( $p, $s, \@cm, $conn );
-            	#!wig20030908: very special trick to get constants for nan bounds:
-            	if ( $ret and $ret eq 2 ) { # nan bounds, matching .... store for later
-                	$hierdb{$inst}{'::nanbounds'}{$s} = \@cm;
-                	#TODO: check if that happeded already ...
-            	}
-	    	}
-
+			# typecast in port maps (seems to be problem with synopsys dc, see typecast switch)
         	my $cast = "";
         	if ( exists( $entities{$enty}{$p}{'cast'} ) and
                  $EH{'output'}{'generate'}{'workaround'}{'typecast'} =~ m/\bportmap\b/ ) {
             	#TODO: Check $EH{'typecast'}{} ....
             	$cast = $entities{$enty}{$p}{'cast'};
         	}
-	    	push( @map , print_conn_matrix( $inst, $p, $pf, $pt, $s, $sf, $st, $lang, \@cm, $cast ));
-	    	# Remember if a port got used ....
-	    	if ( store_conn_matrix( \%{$hierdb{$inst}{'::portbits'}}, $inst, $p, $pf, $pt, $s, \@cm ) ) {
-                #TODO: Do something against duplicate connections ...
+	        for my $n ( split( ',', $ref->{$s}{$p} ) ) {
+			    #
+			    # Read out the actual connection data
+		    	#  $conn->{inst}, $conn->{port}
+		    	#  $conn->{port_f}, $conn->{port_t},
+		    	#  $conn->{sig_f}, $conn->{sig_t}		
+		    	#!wig20050518: adding lcm
+		    	#TODO: remove cm (no longer needed!)
+		    	my @lcm = ();
+		    	my $conn = $conndb{$s}{'::' . $io}[$n];
+		    	my $lret = add_conn_matrix( $p, $s, \@lcm, $conn );
+		    	my $ret = add_conn_matrix( $p, $s, \@cm, $conn ); #Overlaps connection matrix
+            	#!wig20030908: very special trick to get constants for nan bounds:
+            	if ( $ret and $ret eq 2 ) { # nan bounds, matching .... store for later
+                	$hierdb{$inst}{'::nanbounds'}{$s} = \@cm;
+                	#TODO: check if that happened already ...
+            	}
+			
+				push( @map , print_conn_matrix( $inst, $p, $pf, $pt, $s, $sf, $st, $lang, \@lcm, $cast ));
+	    		# Remember if a port got used ....
+	    		if ( store_conn_matrix( \%{$hierdb{$inst}{'::portbits'}}, $inst, $p, $pf, $pt, $s, \@lcm ) ) {
+                	#DONE: Do something against duplicate connections ... -> handeled by purge_relicts
+	    		}
+				
 	    	}
+
+	    	#OLD: push( @map , print_conn_matrix( $inst, $p, $pf, $pt, $s, $sf, $st, $lang, \@cm, $cast ));
+	    	# Remember if a port got used ....
+	    	# if ( store_conn_matrix( \%{$hierdb{$inst}{'::portbits'}}, $inst, $p, $pf, $pt, $s, \@cm ) ) {
+            #    #DONE: Do something against duplicate connections ... -> handeled by purge_relicts
+	    	# }
 		}
 		push( @$rio, $s );
     }
@@ -2444,13 +2459,13 @@ sub add_conn_matrix ($$$$) {
         logwarn( "Info: signal $signal bounds $cpf .. $cpt or port $port $cpf .. $cpt not a number!" );
         # $EH{'sum'}{'warnings'}++;
         # $cpt and/or $cpf is not a number!!
-        # We carry one if cpf equals csf and cpt equals cst ->
+        # We carry on if cpf equals csf and cpt equals cst ->
         #   otherwise we bail out ...
         if ( $csf eq $cpf and $cst eq $cpt ) {
             # Is there already contents in the connection matrix?
             if ( scalar( @$matrix ) ) {
                 logwarn( "WARNING: redefinition of connection matrix for signal $signal, port $port!");
-            $EH{'sum'}{'warnings'}++;
+            	$EH{'sum'}{'warnings'}++;
             }
             # Store marker: __NAN__ , From, To
             $matrix->[0] = "__NAN__";
@@ -2795,7 +2810,7 @@ sub mix_wr_port_check ($$) {
 }
 
 #
-# print the connectios, aka. print a port map
+# print the connections, aka. print a port map
 #
 #!wig20030806: Optionally takes a typecast argument ...
 #  the cast function will be applied to the port (hopefully this is valid for most tools) ...
@@ -2905,32 +2920,32 @@ sub print_conn_matrix ($$$$$$$$$;$) {
     # Simple version: if the connection is not continuos, print bit slices ...
     #
     for my $i ( 0..$ub ) {
-	# Find starting point ($lb), first defined value in conn array
-	if ( not defined( $lb ) ) {
-	    if ( defined( $rcm->[$i] ) ) {
-		$lb = $i; # Find start point, offset ....
-	    } else {
-		next;
-	    }
-	}
-	# End of slice reached?
-	unless ( defined( $rcm->[$i] ) ) {
-	    $fflag = $i - 1; # fflag set to last valid entry ...
-	    last;
-	}
-	# Was last value just one off? Counts 
-	if ( $i ne $lb and $rcm->[$i] ne $rcm->[$i - 1] + 1 ) {
-	    $cflag = 0; # Continue flag set to zero ...
-	}
+		# Find starting point ($lb), first defined value in conn array
+		if ( not defined( $lb ) ) {
+	    	if ( defined( $rcm->[$i] ) ) {
+				$lb = $i; # Find start point, offset ....
+	    	} else {
+				next;
+	    	}
+		}
+		# End of slice reached?
+		unless ( defined( $rcm->[$i] ) ) {
+	    	$fflag = $i - 1; # fflag set to last valid entry ...
+	    	last;
+		}
+		# Was last value just one off? Counts 
+		if ( $i ne $lb and $rcm->[$i] ne $rcm->[$i - 1] + 1 ) {
+	    	$cflag = 0; # Continue flag set to zero ...
+		}
     }
 
     if ( $cflag and $fflag == $ub ) {
-	# Full conn matrix port <-> signal  or
-	# One bit of port connected to bit signal
-	if ( $pf eq $pt and defined( $lb ) and $lb eq $ub ) {
-	    # Single bit port .... connected to bus slice
-	    # TODO: do more checking ...
-	    if ( $pf eq "__UNDEF__" ) {
+		# Full conn matrix port <-> signal  or
+		# One bit of port connected to bit signal
+		if ( $pf eq $pt and defined( $lb ) and $lb eq $ub ) {
+	    	# Single bit port .... connected to bus slice
+	    	# TODO: do more checking ...
+	    	if ( $pf eq "__UNDEF__" ) {
                 if ( $lang =~ m,^veri,io ) { #Verilog
                     $t .= $EH{'macro'}{'%S%'} x 3 . "." . $port . "(" . $signal . "[" . $rcm->[$ub] . "]),\n"; #TODO: Check Verilog syntax
                 } else {
@@ -2942,7 +2957,7 @@ sub print_conn_matrix ($$$$$$$$$;$) {
                             $signal . "(" . $rcm->[$ub] . "),\n";
                     }
                 }
-	    } else {
+	    	} else {
                 if ( $lang =~ m,^veri,io ) { #Verilog
                     $t .= $EH{'macro'}{'%S%'} x 3 . "." . $port . "[" . $pf . "](" . $signal . "[" . $rcm->[$ub] . "]),\n"; #TODO: is this legal?
                 } else {
@@ -2954,8 +2969,8 @@ sub print_conn_matrix ($$$$$$$$$;$) {
                             $signal . "(" . $rcm->[$ub] . "),\n";
                     }
                 }               
-	    }
-	} elsif ( $sf eq "__UNDEF__" and $st eq "__UNDEF__" ) {
+	    	}
+		} elsif ( $sf eq "__UNDEF__" and $st eq "__UNDEF__" ) {
             # Single bit of signal connected to bus port ...
            if ( $lang =~ m,^veri,io ) { #Verilog
                 $t .= "\t\t\t." . $port . "[" . $ub . "](" . $signal . "), " . $tcom . " __I_BIT_TO_BUSPORT\n"; #
@@ -2968,10 +2983,10 @@ sub print_conn_matrix ($$$$$$$$$;$) {
                         $signal . ", " . $tcom . " __I_BIT_TO_BUSPORT\n";
                 }
             }
-	#!wig20030516: $t .= "\t\t\t$port(" . $rcm->[$ub] . ") => $signal,\n"; #Needs more checking ..
-	# } elsif ( $rcm->[$ub] eq $sf and $rcm->[$lb] eq $st ) { # Should == be used here instead?
-	#    $t .= "\t\t\t$port => $signal,\n";
-	} elsif ( $rcm->[$ub] eq $sf and $rcm->[$lb] eq $st ) { # Should == be used here instead?
+		#!wig20030516: $t .= "\t\t\t$port(" . $rcm->[$ub] . ") => $signal,\n"; #Needs more checking ..
+		# } elsif ( $rcm->[$ub] eq $sf and $rcm->[$lb] eq $st ) { # Should == be used here instead?
+		#    $t .= "\t\t\t$port => $signal,\n";
+		} elsif ( $rcm->[$ub] eq $sf and $rcm->[$lb] eq $st ) { # Should == be used here instead?
             # Full signal used
             if ( $ub - $lb eq $pf - $pt ) { # Port width eq signal width
                 if ( $lang =~ m,^veri,io ) { #Verilog
@@ -2997,33 +3012,33 @@ sub print_conn_matrix ($$$$$$$$$;$) {
                     }
                 }
             }
-	} elsif ( $sf =~ m,^\d+$,o and $st =~ m,^\d+$,o and ( $rcm->[$ub] < $sf or $rcm->[$lb] > $st ) ) { #TODO: There could be more cases ???
-	    if ( $ub == $lb ) {
-                if ( $lang =~ m,^veri,io ) { #Verilog
-                    $t .= $EH{'macro'}{'%S%'} x 3 . "." . $port . "[" . $ub . "](" . $signal . "[" . $rcm->[$ub] . "]),\n";
-                } else {
-                    if ( $cast ) {
-                        $t .= $EH{'macro'}{'%S%'} x 3 . $cast . "(" . $port . "(" . $ub . ")) => " .
-                            $signal . "(" . $rcm->[$ub] . "),\n";
-                    } else {
-                        $t .= $EH{'macro'}{'%S%'} x 3 . $port . "(" . $ub . ") => " .
-                            $signal . "(" . $rcm->[$ub] . "),\n";
-                    }
-                }
-	    } elsif ( $pf > $ub or $pt < $lb ) {
-                if ( $lang =~ m,^veri,io ) { #Verilog
-                    $t .= $EH{'macro'}{'%S%'} x 3 . "." . $port . "[" . $ub . ":" . $lb . "](" . $signal . "["
-                       . $rcm->[$ub] . ":" . $rcm->[$lb] . "]),\n";
-                } else {
-                    if ( $cast ) {
-                        $t .= $EH{'macro'}{'%S%'} x 3 . $cast . "(" . $port . "(" . $ub . " downto " . $lb . ")) => " .
-                            $signal . "(" . $rcm->[$ub] . " downto " . $rcm->[$lb] . "),\n";
-                    } else {
-                        $t .= $EH{'macro'}{'%S%'} x 3 . $port . "(" . $ub . " downto " . $lb . ") => " .
-                            $signal . "(" . $rcm->[$ub] . " downto " . $rcm->[$lb] . "),\n";
-                    }
-                }
-	    } elsif ( $ub == 0 ) {
+		} elsif ( $sf =~ m,^\d+$,o and $st =~ m,^\d+$,o and ( $rcm->[$ub] < $sf or $rcm->[$lb] > $st ) ) { #TODO: There could be more cases ???
+	    	if ( $ub == $lb ) {
+        		if ( $lang =~ m,^veri,io ) { #Verilog
+                	$t .= $EH{'macro'}{'%S%'} x 3 . "." . $port . "[" . $ub . "](" . $signal . "[" . $rcm->[$ub] . "]),\n";
+            	} else {
+                	if ( $cast ) {
+                    	$t .= $EH{'macro'}{'%S%'} x 3 . $cast . "(" . $port . "(" . $ub . ")) => " .
+                        	$signal . "(" . $rcm->[$ub] . "),\n";
+                	} else {
+                    	$t .= $EH{'macro'}{'%S%'} x 3 . $port . "(" . $ub . ") => " .
+                    	    $signal . "(" . $rcm->[$ub] . "),\n";
+                	}
+            	}
+	    	} elsif ( $pf > $ub or $pt < $lb ) {
+            	if ( $lang =~ m,^veri,io ) { #Verilog
+                	$t .= $EH{'macro'}{'%S%'} x 3 . "." . $port . "[" . $ub . ":" . $lb . "](" . $signal . "["
+                   	. $rcm->[$ub] . ":" . $rcm->[$lb] . "]),\n";
+            	} else {
+                	if ( $cast ) {
+                    	$t .= $EH{'macro'}{'%S%'} x 3 . $cast . "(" . $port . "(" . $ub . " downto " . $lb . ")) => " .
+                        	$signal . "(" . $rcm->[$ub] . " downto " . $rcm->[$lb] . "),\n";
+                	} else {
+                    	$t .= $EH{'macro'}{'%S%'} x 3 . $port . "(" . $ub . " downto " . $lb . ") => " .
+                        	$signal . "(" . $rcm->[$ub] . " downto " . $rcm->[$lb] . "),\n";
+                	}
+            	}
+	    	} elsif ( $ub == 0 ) {
                 if ( $lang =~ m,^veri,io ) { #Verilog
                     $t .= $EH{'macro'}{'%S%'} x 3 . "." . $port . "(" . $signal . "[" . $rcm->[$ub] . "]),\n";
                 } else {
@@ -3034,49 +3049,49 @@ sub print_conn_matrix ($$$$$$$$$;$) {
                         $t .= $EH{'macro'}{'%S%'} x 3 . $port . " => " . $signal . "(" . $rcm->[$ub] . "),\n";
                     }
                 }
-	    } else {
+	    	} else {
                 if ( $lang =~ m,^veri,io ) { #Verilog
                     $t .= $EH{'macro'}{'%S%'} x 3 . "." . $port . "(" . $signal . "[" . $rcm->[$ub] . ":" . $rcm->[$lb] . "]),\n";
                 } else {
                     if ( $cast ) {
                         $t .= $EH{'macro'}{'%S%'} x 3 . $cast . "(" . $port . " => " .
                             $signal . "(" . $rcm->[$ub] . " downto " . $rcm->[$lb] . "),\n";
-                    } else {
-                        $t .= $EH{'macro'}{'%S%'} x 3 . $port . " => " .
-                            $signal . "(" . $rcm->[$ub] . " downto " . $rcm->[$lb] . "),\n";
-                    }
+                    	} else {
+                        	$t .= $EH{'macro'}{'%S%'} x 3 . $port . " => " .
+                            	$signal . "(" . $rcm->[$ub] . " downto " . $rcm->[$lb] . "),\n";
+                    	}
+                	}
+	    		}           
+			} else {
+            	if ( $lang =~ m,^veri,io ) { # Verilog
+                	$t .= $EH{'macro'}{'%S%'} x 3 . $tcom . "__E_BAD_BOUNDS ." .
+                    	$port . "[" . $pf . ":" . $pt . "](" .
+                    	$signal . "[" . $sf . ":" . $st . "]),\n";
+            	} else {
+                	$t .= $EH{'macro'}{'%S%'} x 3 . $tcom . "__E_BAD_BOUNDS . " .
+                    	$port . "(" . $pf . " downto " . $pt . ")" . " => " .
+                    	$signal . "(" . $sf . " downto " . $st . "), \n";
                 }
-	    }           
-	} else {
-            if ( $lang =~ m,^veri,io ) { # Verilog
-                $t .= $EH{'macro'}{'%S%'} x 3 . $tcom . "__E_BAD_BOUNDS ." .
-                    $port . "[" . $pf . ":" . $pt . "](" .
-                    $signal . "[" . $sf . ":" . $st . "]),\n";
-            } else {
-                $t .= $EH{'macro'}{'%S%'} x 3 . $tcom . "__E_BAD_BOUNDS . " .
-                    $port . "(" . $pf . " downto " . $pt . ")" . " => " .
-                    $signal . "(" . $sf . " downto " . $st . "), \n";
-            }
-	    logwarn("Warning: unexpected branch in print_conn_matrix, signal $signal, port $port");
-            $EH{'sum'}{'warnings'}++;
-	}
-        if ( $signal =~ m,%OPEN(_\d+)?%, ) {
-            if ( $lang =~ m,^veri,io ) {
-                $t =~ s,%OPEN(_\d+)?%(\s*\[[:\w]+?\])?,,g; # Remove %OPEN% aka. open[a:b]
-            } else {
-                $t =~ s,((<=|=>)\s*%OPEN(_\d+)?%)\s*\([\s\w\.]+?\),$1,g; # Remove ( ... ) definitons ...
-            }
-        }
+	        	logwarn("Warning: unexpected branch in print_conn_matrix, signal $signal, port $port");
+            	$EH{'sum'}{'warnings'}++;
+	    	}
+        	if ( $signal =~ m,%OPEN(_\d+)?%, ) {
+            	if ( $lang =~ m,^veri,io ) {
+                	$t =~ s,%OPEN(_\d+)?%(\s*\[[:\w]+?\])?,,g; # Remove %OPEN% aka. open[a:b]
+            	} else {
+                	$t =~ s,((<=|=>)\s*%OPEN(_\d+)?%)\s*\([\s\w\.]+?\),$1,g; # Remove ( ... ) definitons ...
+            	}
+        	}
         $t =~ s,(\n)?$,$descr$1, if $descr; # Add ::descr comments ....
 		return ( $sortcrit . $t );
     #
-    #TODO: catch the most important cases here
+    #TODO: catch the most important cases here: XXXX partial connects!
     #
     } else { # Output each single bit!!
-	for my $i ( 0..$ub ) {
-	    if ( defined( $rcm->[$i] ) ) {
-		if ( $rcm->[$i] == 0 and $sf eq "__UNDEF__" ) {
-		    # signal is bit!
+		for my $i ( 0..$ub ) {
+	    	if ( defined( $rcm->[$i] ) ) {
+				if ( $rcm->[$i] == 0 and $sf eq "__UNDEF__" ) {
+		    	# signal is bit!
                     if ( $lang =~ m,^veri,io ) { #Verilog
                         $t .= $EH{'macro'}{'%S%'} x 3 . "." . $port . "[" . $i . "](" . $signal . "),\n";
                     } else {
@@ -3087,8 +3102,8 @@ sub print_conn_matrix ($$$$$$$$$;$) {
                             $t .= $EH{'macro'}{'%S%'} x 3 . $port . "(" . $i . ") => " . $signal . ",\n";
                         }
                     }
-		} else {
-		    # signal is bus!
+				} else {
+		    	# signal is bus!
                     if ( $lang =~ m,^veri,io ) { #Verilog
                         $t .= $EH{'macro'}{'%S%'} x 3 . "." . $port . "[" . $i . "](" . $signal . "[" . $rcm->[$i] ."]),\n";
                     } else {
@@ -3100,9 +3115,9 @@ sub print_conn_matrix ($$$$$$$$$;$) {
                                 $signal . "(" . $rcm->[$i] ."),\n";
                         }
                     }
+				}
+	    	}
 		}
-	    }
-	}
     }
     if ( $signal =~ m,%OPEN(_\d+)?%,o ) {
         #TODO: Verilog???
