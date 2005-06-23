@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.51 $                                         |
+# | Revision:   $Revision: 1.52 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/05/11 12:21:02 $                              |
+# | Date:       $Date: 2005/06/23 13:14:42 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.51 2005/05/11 12:21:02 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.52 2005/06/23 13:14:42 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.52  2005/06/23 13:14:42  wig
+# | Update repository, not yet verified
+# |
 # | Revision 1.51  2005/05/11 12:21:02  wig
 # | intermediate update (still working on unsplice)
 # |
@@ -286,9 +289,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.51 2005/05/11 12:21:02 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.52 2005/06/23 13:14:42 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.51 $';
+my $thisrevision =	'$Revision: 1.52 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1214,7 +1217,8 @@ sub _create_conn ($$%) {
     my %co = ();
     my @co = ();
     unless( defined( $instr ) and $instr ne "" ) {
-        logwarn("Called _create_conn without data for $inout");
+        logwarn("WARNING: Called _create_conn without data for $inout");
+        $EH{'sum'}{'warnings'}++;
         return \@co; #Return dummy array, just in case
     }
 
@@ -1232,6 +1236,8 @@ sub _create_conn ($$%) {
             #   MOD/SIG = (SF:ST)           <- (PF:PT) := (SF-ST:0)
             #   MOD/SIG(PF:PT)              <- (SF:ST) := (PF-PT:0)
             #   MOD/SIG                 take SF:ST and PF,PT from ::high and ::low
+            #!wig20050519:
+            #   MOD/%LOG(_N)%/SIG(PF:PT)    <- convert to MOD_%LOG(_N)% instance name
             #
 
             $d =~ s,^\s+,,o; # Remove leading whitespace
@@ -1334,7 +1340,7 @@ sub _create_conn ($$%) {
 
                 push( @co, { %co } );
                 next;
-            }
+            } #end of constants
 
             #
             # Port and signal names and bounds may be composed of
@@ -1361,11 +1367,19 @@ sub _create_conn ($$%) {
 
             $d =~ s/\(([\w%#]+)\)/($1:$1)/g; # Extend (N) to (N:N)
 
+            # Detect MOD/%LOGIC(_N)% -> MOD_%LOGIC(_N)%/....
+            # if( $d =~ m,^(.+)/(%\w+((_)?\d+)?%)(/(.+))?, ) {
+            #	my $pre = $1;
+            #	my $pot_logic = $2;
+            #	my $rest = $5;
+            #	# XXXXXX20050520;
+            # }
+
             if ( $d !~ m,/,o ) { # Add signal name as port name by default
                 $d =~ s,([\w%:#]+),$1/%::name%,;
             }
-
-            if ( $d =~ m,([\w%#]+)/(\S+)\(([\w%#]+):([\w%#]+)\)\s*=\s*\(([\w%#]+):([\w%#]+), ) {
+            
+           if ( $d =~ m,([\w%#]+)/(\S+)\(([\w%#]+):([\w%#]+)\)\s*=\s*\(([\w%#]+):([\w%#]+), ) {
                 # INST/PORTS(pf:pt)=(sf:st)
                 $co{'inst'} = $1;
                 $co{'port'} = $2;
@@ -3961,7 +3975,7 @@ sub _extend_inout ($$$) {
                 # not defined( $i->{'port_f'} )
                 ) {
             logwarn( "Warning: Unusual upper bound definitions for $i->{'inst'} / $i->{'port'}" );
-            $EH{'sum'}{'warnings++'};
+            $EH{'sum'}{'warnings++'}++;
         }
         if ( not defined( $i->{'sig_t'} ) and
             not defined( $i->{'port_t'} ) ) {

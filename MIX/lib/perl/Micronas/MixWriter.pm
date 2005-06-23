@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.53 $                                         |
+# | Revision:   $Revision: 1.54 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/05/18 13:42:07 $                              |
+# | Date:       $Date: 2005/06/23 13:14:42 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.53 2005/05/18 13:42:07 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.54 2005/06/23 13:14:42 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.54  2005/06/23 13:14:42  wig
+# | Update repository, not yet verified
+# |
 # | Revision 1.53  2005/05/18 13:42:07  wig
 # | changes add_port after purge_relicts got the join_port function
 # |
@@ -269,9 +272,9 @@ sub _mix_wr_is_modegennr ($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.53 2005/05/18 13:42:07 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.54 2005/06/23 13:14:42 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.53 $';
+my $thisrevision   =      '$Revision: 1.54 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -309,6 +312,7 @@ $EH{'template'}{'vhdl'}{'enty'}{'head'} = <<'EOD';
 --
 -- --------------------------------------------------------------
 %VHDL_USE_ENTY%
+%VHDL_HOOK_ENTY_HEAD%
 --
 
 EOD
@@ -321,6 +325,7 @@ $EH{'template'}{'vhdl'}{'enty'}{'body'} = <<'EOD';
 -- Start of Generated Entity %ENTYNAME%
 --
 entity %ENTYNAME% is
+%VHDL_HOOK_ENTY_BODY%
         -- Generics:
 %GENERIC%
     	-- Generated Port Declaration:
@@ -333,6 +338,7 @@ end %ENTYNAME%;
 EOD
 
 $EH{'template'}{'vhdl'}{'enty'}{'foot'} = <<'EOD';
+%VHDL_HOOK_ENTY_FOOT%
 --
 --!End of Entity/ies
 -- --------------------------------------------------------------
@@ -369,7 +375,7 @@ $EH{'template'}{'vhdl'}{'arch'}{'head'} = <<'EOD';
 --
 -- --------------------------------------------------------------
 %VHDL_USE_ARCH%
-
+%VHDL_HOOK_ARCH_HEAD%
 --
 EOD
 
@@ -401,6 +407,7 @@ begin
 	--
 	-- Generated Concurrent Statements
 	--
+%VHDL_HOOK_ARCH_BODY%
 
 %CONCURS%
 
@@ -417,6 +424,7 @@ EOD
 # Replaces end %ARCHNAME% by %ENTYNAME%
 
 $EH{'template'}{'vhdl'}{'arch'}{'foot'} = <<'EOD';
+%VHDL_HOOK_ARCH_FOOT%
 --
 --!End of Architecture/s
 -- --------------------------------------------------------------
@@ -535,7 +543,7 @@ $EH{'template'}{'vhdl'}{'conf'}{'head'} = <<'EOD';
 --
 -- --------------------------------------------------------------
 %VHDL_USE_CONF%
-
+%VHDL_HOOK_CONF_HEAD%
 EOD
 
 $EH{'template'}{'vhdl'}{'conf'}{'head'} =~ s/THISRCSFILE/$thisrcsfile/;
@@ -546,6 +554,7 @@ $EH{'template'}{'vhdl'}{'conf'}{'body'} = <<'EOD';
 -- Start of Generated Configuration %CONFNAME% / %ENTYNAME%
 --
 configuration %CONFNAME% of %ENTYNAME% is
+%VHDL_HOOK_CONF_BODY%
         for %ARCHNAME%
 
 	    %CONFIGURATION%
@@ -560,6 +569,7 @@ EOD
 # Replaced %ARCHNAME% by RTL, requested by Michael P. 
 
 $EH{'template'}{'vhdl'}{'conf'}{'foot'} = <<'EOD';
+%VHDL_HOOK_CONF_FOOT%
 --
 --!End of Configuration/ies
 -- --------------------------------------------------------------
@@ -1133,12 +1143,7 @@ sub write_entities () {
     # output file name
     my $efname = $EH{'outenty'};
 
-    # Get the _logic_ list ...
-    $EH{'output'}{'generate'}{'_logic_'} =
-    	'^(__|%)?(' .
-    	join( '|', split(/[,\s+]/, $EH{'output'}{'generate'}{'logic'} ) ) .
-    	')(__|%)?$';
-    	
+ 	
     if ( $efname =~m/^(ENTY|COMB)/o ) {
         # ENTY -> write each entity in a file of it's own
         # COMB(INE) -> combine entity, architecture and configuration
@@ -1220,7 +1225,7 @@ sub _write_entities ($$$) {
     $macros{'%ENTYNAME%'} = $ehname;
 
     if ( -r $file ) {
-	logtrc(INFO, "Entity declaration file $file will be overwritten!" );
+		logtrc(INFO, "Entity declaration file $file will be overwritten!" );
     }
 
     #
@@ -1240,7 +1245,7 @@ sub _write_entities ($$$) {
             $entities{$ehname}{'__LEAF__'} == 0 or
             mix_wr_getlang( $ehname, $ae->{$ehname}{'__LANG__'}) ne "vhdl" )
         ) {
-	$write_flag = "0"; # Do NOT write ...
+		$write_flag = "0"; # Do NOT write ...
     }
     #
     # another case: if this entity is in the "simple logic" list, do
@@ -1285,14 +1290,14 @@ sub _write_entities ($$$) {
     my @keys = ( $ehname eq "__COMMON__" ) ? keys( %$ae ) : ( $ehname );
     for my $e ( sort( @keys ) ) {
 
-	if ( $e eq "W_NO_ENTITY" ) { next; };
-	if ( $e eq "__COMMON__" ) { next; };
+		if ( $e eq "W_NO_ENTITY" ) { next; };
+		if ( $e eq "__COMMON__" ) { next; };
         if ( $e eq "%TYPECASTENT%" ) { next; };
 
-	$macros{'%ENTYNAME%'} = $e;
-	my $gent = "";
-	my $port = "";
-	my $pd = $ae->{$e};
+		$macros{'%ENTYNAME%'} = $e;
+		my $gent = "";
+		my $port = "";
+		my $pd = $ae->{$e};
         # This language and this comment is
         my $lang = mix_wr_getlang( $e, $pd->{'__LANG__'});
         my $tcom = $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'vhdl'};
@@ -1300,12 +1305,12 @@ sub _write_entities ($$$) {
         # Get interface description for this instance
         ( $port, $gent ) = mix_wr_get_interface( $pd, $e, $lang, $tcom );
 
-	#
-	# If we found ports, 
-	# get rid of trailing ; (possibly followed by a comment), replace %MACs%
-	# store the results in the entities data structure (will need it later on
-	# for the component declarations
-	#
+		#
+		# If we found ports, 
+		# get rid of trailing ; (possibly followed by a comment), replace %MACs%
+		# store the results in the entities data structure (will need it later on
+		# for the component declarations
+		#
         unless ( is_vhdl_comment( $port ) ) {
             # $port = 
             $port = "\t\t" . $tcom . " Generated Port for Entity $e\n" . $port;
@@ -1333,11 +1338,11 @@ sub _write_entities ($$$) {
             $gent = "\t\t" . $tcom . " No Generated Generics for Entity $e\n$gent";
         }
 	
-	$macros{'%PORT%'} = $port;
-	$macros{'%GENERIC%'} = $gent;
+		$macros{'%PORT%'} = $port;
+		$macros{'%GENERIC%'} = $gent;
 
-	unless ( $EH{'output'}{'generate'}{'enty'} =~ m,noleaf,io and
-	    $ae->{$e}{'__LEAF__'} == 0  ) {
+		unless ( $EH{'output'}{'generate'}{'enty'} =~ m,noleaf,io and
+		    $ae->{$e}{'__LEAF__'} == 0  ) {
 
             #
             # If language other then vhdl -> don't write a thing.
@@ -1348,7 +1353,7 @@ sub _write_entities ($$$) {
             } else {
                 $et .= replace_mac( $tpg, \%macros );
             }
-	}
+		}
     }
     
     $et .=  $EH{'template'}{'vhdl'}{'enty'}{'foot'};
@@ -1387,7 +1392,7 @@ sub _write_entities ($$$) {
 ## mix_wr_get_interface
 ## query entity and return description of their interface
 ## input:
-##  $r_ent   reference to entity description hash
+## $r_ent   reference to entity description hash
 ## $ename  entity name
 ## $lang      requested language
 ## $tcom     comment ( -- or // ... )
@@ -1430,7 +1435,7 @@ sub _mix_wr_get_ivhdl ($$$) {
     my $gent = "";
     my $port = "";
 
-    for my $p ( sort ( keys( %{$r_ent} ) ) ) {
+    for my $p ( sort ( keys( %{$r_ent} ) ) ) { # for each port ...
 	    next if ( $p =~ m,^__,o ); # Skip internal data ...
         next if ( $p =~ m,^-- NO, ); # Skip internal data ...
 
@@ -1856,8 +1861,8 @@ sub gen_instmap ($;$$) {
  
  	#!wig20050414: implement simple logic, simple start-up
  	if ( $enty =~ m/$EH{'output'}{'generate'}{'_logic_'}/io ) {
- 		$map .= port_simple( 'out', $inst, $enty, $lang, $rinstc->{'out'}, \@out );
- 		$map .= port_simple( 'in', $inst, $enty, $lang, $rinstc->{'in'}, \@in );
+ 		$map .= port_simple( 'outin', $inst, $enty, $lang,
+ 			$rinstc->{'out'}, $rinstc->{'in'}, \@out, \@in );
  	} else {	 
     	$map .= port_map( 'in', $inst, $enty, $lang, $rinstc->{'in'}, \@in );
   
@@ -2301,20 +2306,35 @@ sub port_simple ($$$$$$) {
     my $inst = shift;
     my $enty = shift;
     my $lang = shift;
-    my $ref = shift;
-    my $rio = shift;
-
-	my @map = ();
+    my $refo = shift;
+    my $refi = shift;
+    my $ro = shift;
+    my $ri = shift;
 	
 	# if out -> only one signal allowed!
-	if ( $io eq "out" ) {
-		if ( scalar( @$rio ) != 1 ) {
+	# if ( $io eq "out" ) {
+	# Simple logic always has ONE out
+		if ( scalar( @$ro ) != 1 ) {
 			logwarn("ERROR: OUTPUT_COUNT_MISMATCH instance $inst($enty)!" );
 			$EH{'sum'}{'errors'}++;
 		}
-	}
+	# }
 	
-    for my $s ( sort( keys( %$ref ) ) ) {
+	my $tcom = $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'default'} || "#";
+	# Get the output signal
+	my @sin = ();
+	
+	# OUT <= \n
+	my $out = "%S%" x 2 . $tcom . " Generated Logic\n" .
+		"%S%" x 2;
+	if ( $lang =~ /veri/io ) {
+		$out .= "assign SOUT =\n";
+	} else {
+		$out .= "SOUT <=\n";
+	}
+
+	#TODO: sort order, comments ....	
+    for my $s ( sort( keys( %$refi ) ) ) {
         if ( $conndb{$s}{'::mode'} =~ m,^\s*[GP],io ) {
             # Parameter for generics ... skip in port map ...
             next;
@@ -2326,12 +2346,55 @@ sub port_simple ($$$$$$) {
 	    my $st = $conndb{$s}{'::low'}; 	# Set signal low bound
 	    unless( defined( $st ) and $st ne '' ) { $st = '__UNDEF__'; }
 
-    }
+		for my $io ( @$ri ) {
+		}
 		
-	return "";
+		# _mix_w_simple_check();
+
+		# %WIRE%  -> one in / same out!
+		#
+		if ( $enty eq "%WIRE%" ) {
+			$out .= _mix_simple_wire( $sin[0], $lang);
+		} else {
+			$out .= _mix_simple_logic( \@sin, $lang );
+		}
+
+    }
+
+	# fix output
+	$out .= "%S%" x 2 . $tcom . " End of generated logic\n";
+	return $out;
 	    
 }
 
+#
+# print a simple wire (assignment)
+sub _mix_simple_wire ($$$) {
+	my $in = shift;
+	my $lang = shift;
+	
+	if ( $lang =~ m/veri/io ) {
+		return ( "%S%" x 3 . "$in;\n" );
+	} else { 
+		return ( "%S%" x 3 . "$in;\n" );
+	}
+}
+
+sub _mix_simple_logic ($$$) {
+	my $out  = shift;
+	my $inr  = shift;
+	my $lang = shift;
+
+	return "-- FOUND simple_logic with in's and out's";
+}
+
+#
+# do sanity checks on the simple ports ...
+#
+
+sub _mix_w_simpe_check () {
+	return;
+}
 #
 # create port map, handles bus slices ...
 # store port usage and print alert if a port gets attached twice!
@@ -3147,7 +3210,7 @@ sub mix_wr_mapsort ($$) {
 	return unless ( $order );
 	return "" if ( $order eq "alpha" );
 
-	#		  	'portmapsort' => 'alpha', # How to sort port map; allowed values are:
+	# portmapsort' => 'alpha', # How to sort port map; allowed values are:
 	# alpha := sorted by port name (default)
 	# input (ordered as listed in input files)
 	# inout | outin: seperate in/out/inout seperately; inout will always be in between
@@ -3214,6 +3277,7 @@ sub mix_wr_mapsort ($$) {
 #
 # find out the mode (i,o,io) of that port; find if that port is generated
 # and also the lowest signal number connected to that port (for sort)
+#
 sub _mix_wr_is_modegennr ($$) {
 	my $e = shift || "__E_NO_ENTY";
 	my $p = shift;
@@ -4799,7 +4863,7 @@ sub use_lib ($$) {
     my @keys = ();
     if ( $instance eq "__COMMON__" ) {
     # Do it for all instances ...
-        @keys = keys( %hierdb );
+    	@keys = keys( %hierdb );
     } elsif ( $type eq "enty" ) {
         # $instance is an entity name, collect all ...
         @keys = grep( { $hierdb{$_}{'::entity'} eq $instance; } keys( %hierdb ) );

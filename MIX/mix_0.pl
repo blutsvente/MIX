@@ -27,12 +27,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.34 2005/04/14 06:53:00 wig Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.35 2005/06/23 13:14:42 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.34 $                                      |
-# | Mod.Date     : $Date: 2005/04/14 06:53:00 $                           |
+# | Version      : $Revision: 1.35 $                                      |
+# | Mod.Date     : $Date: 2005/06/23 13:14:42 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -47,6 +47,9 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.35  2005/06/23 13:14:42  wig
+# | Update repository, not yet verified
+# |
 # | Revision 1.34  2005/04/14 06:53:00  wig
 # | Updates: fixed import errors and adjusted I2C parser
 # |                                                    |
@@ -199,7 +202,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.34 $'; # RCS Id
+$::VERSION = '$Revision: 1.35 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 logconfig(
@@ -231,30 +234,31 @@ mix_init();               # Presets ....
 
 #
 #TODO: Add that to application note
-# -dir DIRECTORY              write output data to DIRECTORY (default: cwd())
+# -dir DIRECTORY            write output data to DIRECTORY (default: cwd())
 # -out OUTPUTFILE.ext       defines intermediate output filename and type
 # -outenty OUT-e.vhd        filename for entity. If argument is ENTY[NAME], each entity
 #                                   will be written into a file calles entityname-e.vhd
-# -verifyentity PATH[:PATH]       compare entities against entities found in PATH
-# alias: checkentity | ve
-# -verifyentitymode MODE  define the mode: entity|module|arch[itecture]|conf[iguration]|all,
-#                                       all|inpath,ignorecase
-# -combine                      combine entitiy, architecture and configuration into one file
-# -top TOPCELL                 use TOPCELL as top. Default is TESTBENCH or daughter of TESTBENCH
-# -adump                        dump internal data in ASCII format, too (debugging, use with small data set).
+# -verifyentity PATH[:PATH] compare entities against entities found in PATH
+#                           alias: checkentity | ve
+# -verifyentitymode MODE    define the mode: entity|module|arch[itecture]|conf[iguration]|all,
+#                                    all|inpath,ignorecase
+# -combine                  combine entitiy, architecture and configuration into one file
+# -top TOPCELL              use TOPCELL as top. Default is TESTBENCH or daughter of TESTBENCH
+# -adump                    dump internal data in ASCII format, too (debugging, use with small data set).
 # -variant
-# -conf key.key.key=value Overwrite $EH{key}{key}{key} with value
-# -listconf                       Print out all available/predefined configurations options
-# -sheet SHEET=MATCH     SHEET can be one of "hier", "conn", "vi2c"
-# -delta                          Enable delta mode: Print diffs instead of full files.
+# -conf key.key.key=value   Overwrite $EH{key}{key}{key} with value
+# -listconf                 Print out all available/predefined configurations options
+# -sheet SHEET=MATCH        SHEET can be one of "hier", "conn", "vi2c"
+# -delta                    Enable delta mode: Print diffs instead of full files.
 #                                   Maybe we can set a return value of 1 if no changes occured!
-# -strip                          Remove extra worksheets from intermediate output
-#                                  Please be catious when using that option.
-# -bak                            Shift previous generated output to file.v[hd].bak. When combined
+# -strip                    Remove extra worksheets from intermediate output
+#                                   Please be catious when using that option.
+# -bak                      Shift previous generated output to file.v[hd].bak. When combined
 #                                   with -delta you get both .diff, .bak and new files :-)
 #
-# -init                             Initialize MIX working area
-# -import FILE                  Try to import data from HDL files
+# -init                     Initialize MIX working area
+# -import FILE              Try to import data from HDL files
+# -report HIER|ENTY|SIGN    Report hierachy, entities and/or signals  
 #
 
 # Add your options here ....

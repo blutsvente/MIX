@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.20 $                                          |
+# | Revision:   $Revision: 1.21 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/04/14 06:53:01 $                              |
+# | Date:       $Date: 2005/06/23 13:14:42 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.21  2005/06/23 13:14:42  wig
+# | Update repository, not yet verified
+# |
 # | Revision 1.20  2005/04/14 06:53:01  wig
 # | Updates: fixed import errors and adjusted I2C parser
 # |
@@ -162,11 +165,11 @@ sub useOoolib ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.20 2005/04/14 06:53:01 wig Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.21 2005/06/23 13:14:42 wig Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.20 $';
+my $thisrevision    =      '$Revision: 1.21 $';
 
-# Revision:   $Revision: 1.20 $
+# Revision:   $Revision: 1.21 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -525,16 +528,42 @@ sub mix_utils_open_input(@) {
 		# Change CONF accordingly (will not be visible at upper world)
 		#TODO: add plugin interface to read in whatever is needed ...
 		@conf = open_infile( $i, $EH{'conf'}{'xls'}, $EH{'conf'}{'req'} );
+
 		# Open connectivity sheet(s)
 		@conn = open_infile( $i, $EH{'conn'}{'xls'}, $EH{'conf'}{'req'} );
+		# check and reset multiple fields ...
+		# mix_utils_check_input_desc('conn');
 		# Open hierachy sheets
 		@hier = open_infile( $i, $EH{'hier'}{'xls'}, $EH{'conf'}{'req'} );
+		# check and reset multiple fields ...
+		# mix_utils_check_input_desc('hier');
 		# Open IO sheet (if available, not needed!)
 		@io = open_infile( $i, $EH{'io'}{'xls'}, $EH{'conf'}{'req'} );
+		# check and reset multiple fields ...
+		# mix_utils_check_input_desc('io');
 		# Open I2C sheet (if available, not needed!)
 		@i2c = open_infile( $i, $EH{'i2c'}{'xls'}, $EH{'conf'}{'req'} );
+		# check and reset multiple fields ...
+		# mix_utils_check_input_desc('i2c');
 
+#
+# reset muliple field counter
+# check if we got the same number of fields as before
+#
+
+=head 2
+
+sub mix_utils_check_input_desc ($) {
+	my $name = shift;
 	
+	if ( $EH{$name}{'fields'}{'_mult_'} ) {
+		# Have been here before!
+		for my $k ( keys( %{$EH{$name}{'fields'}{'_mult_'}} ) ) {
+			
+}	
+
+=cut
+
 		if(!@conn && !@conf && !@hier && !@io && !@i2c) {
 	    	logwarn("ERROR: no input found in file $i!\n");
 	    	$EH{'sum'}{'errors'}++;

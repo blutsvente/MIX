@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.42 2005/04/14 06:53:00 wig Exp $
+# $Id: TODO.txt,v 1.43 2005/06/23 13:14:42 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -19,7 +19,103 @@ Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
 
-20050330a/Req: dump signal description
+>>title: C should be defined (e.g. if uses as bus-width)
+
+	Add a define statement if needed for a constant
+	like with generics.
+	(see also genwidth)
+	
+	Req: thorsten
+	Prio: wig
+>>title: keep user defined code
+
+	merge created file and user defined code in existing file
+	
+	Req: thorsten
+	Prio: medium
+	
+>>title: 20050621a/Req: support multiple instantiations!
+	signal a -> t/g1/a
+    signal b -> t/g2/a (a is the same instance as above).
+    
+    Req: thorsten
+    Prio: medium
+
+>>title: 20050616a/Bug: opening mulitple sheets with ::b does not work
+
+multicolumns counter needs to be reset!
+
+	Req: thorsten
+	Prio: high
+	Status: open
+	Assigned: wig
+
+
+>>title: 20050615a/Bug: read csv without sheet seperators
+How to handle that?
+
+	Req: thorsten
+	Prio: low
+	Status: open20050615
+		
+>>title: 20050614a/Bug: remove spaces in header lines
+
+die function parse_header() in mixutils.pm sollte evtl. noch die whitespaces vor/hinter den markern entfernen (ich hatte hier den Fall " ::spec").
+
+Req: Thorsten Lutscher
+Prio: medium
+Solved: 20050416/wig
+Testcase: t.b.d.
+
+>>title: 20050609a/Req: extended checks/ideas for wires
+
+some notes from a paper found here:
+
+-- Check %SIMPLE_LOGIC% Nin -> Mout ( e.g. 1out, Nin ...)
+-- Check bus width for bus AND/OR/...
+    possibly extending/splicing/unspliceing busses
+-- Add a
+   OR '0000'
+   AND '1111'
+     from E. Schwenk, from code review
+-- what for XOR
+
+Req: wig
+Prio: medium
+
+
+>>title: 20050520d/Req: provide way to add per file text e.g. typedefs
+
+	%USER_TEXT%  -> evaluates to nothing
+		but how to add that to individual files?
+		e.g. reuse the ::use column?
+	
+	Req: Andreas Blumenschein
+	Prio: low
+
+>>title: 20050520c/Req: print %::description% values in entitiy declarations
+	make switchable comment printing
+	now it gets printed in port maps
+	extend to component declarations and entities!
+	
+	Req: Andread Blumenschein
+	Prio: low
+	
+>>title: 20050520a/Req: add macro.{%COMM%}
+	write language dependent comment at that place
+	( -- for VHDL, // for verilog, ) ;see EH.output.comment.LANG for definitions
+
+	Req: wig
+	Prio: low
+
+>>title: 20050520b/Req: add %CR% macro
+	will be replaced by \n
+	
+	Req: wig
+	Prio: low
+	Done: 20050520
+	
+>>title: 20050330a/Req: dump signal description
 
 	dump info about a signal:
       signal foo:
@@ -34,7 +130,7 @@ TODOs:
 	Req: wig
 	Prio: low
                   
-20050300a/Req: dump module description
+>>title: 20050300a/Req: dump module description
 
 	before/after rules evaluation
 	
@@ -75,7 +171,7 @@ TODOs:
    Req: wig, gerstenberg
    Prio: medium
 
-20050202a/Req: MIX/Req: allow IO sheet non-select busses in ::pin column
+>>title: 20050202a/Req: MIX/Req: allow IO sheet non-select busses in ::pin column
 
 allow to use busses in ::port definitions
 	supress auto-generated select bus generation on demand
@@ -86,7 +182,7 @@ busses could get connected with busses of the same width X ::muxopt width ???
 	Req: mpit20050202
 	Prio: low
 
-20050126a/Req: Use perl CSV modules for xls2csv and for reader!
+>>title: 20050126a/Req: Use perl CSV modules for xls2csv and for reader!
 
 Text::CSV::Simple
 
@@ -132,7 +228,7 @@ new(\%attr)
 
         By default the generated fields are quoted only, if they need to, for example, if they contain the separator. If you set this attribute to a TRUE value, then all fields will be quoted. This is typically easier to handle in external applications. (Poor creatures who aren't using Text::CSV_XS. :-)
 
-20050112a/Bug: allow entities with mixed constant and signal ports!
+>>title: 20050112a/Bug: allow entities with mixed constant and signal ports!
 
 Currently you get an warning:
 05/01/12 10:29:01 6892: Warning: port kep redefinition mode mismatch: C in
@@ -148,7 +244,7 @@ Solution: do not propagate "C" to the entity ports, but set that to "S".
 	Req: mpit
 	Prio: low
 	
-20041220b/Req: Check signal _n does not get connected to port not _n!
+>>title: 20041220b/Req: Check signal _n does not get connected to port not _n!
 
     verify usefull wiring
 
@@ -163,7 +259,7 @@ Solution: do not propagate "C" to the entity ports, but set that to "S".
     Req: wig
     Prio: low
 
-20041220a/Req: %OPEN% should not collect
+>>title: 20041220a/Req: %OPEN% should not collect
 
     Store all OPEN as OPEN_NR++
     dito. for HIGH_BUS and LOW_BUS
@@ -172,7 +268,7 @@ Solution: do not propagate "C" to the entity ports, but set that to "S".
     Prio: medium
     Solved: wig20041222
 
-20041215a/Req: extend constant/generics usage for verilog + check constant type
+>>title: 20041215a/Req: extend constant/generics usage for verilog + check constant type
 
 Hi Wilfried,
 
@@ -211,7 +307,7 @@ iocell #(
     Prio: medium
     Solved: wig20050127 (testcase generic/veriovhd)
         
-20041112a/Req: Log run time in output summary!
+>>title: 20041112a/Req: Log run time in output summary!
 
     Req: wig
     Prio: medium
@@ -231,7 +327,7 @@ Das werde ich noch beseitigen (ist aber nicht so wichtig).
     Req: wig
     Prio: medium
 
--20041109a/Req: add verilog include file support
+>>title: 20041109a/Req: add verilog include file support
 
 Global:
 MIXCFG VERILOG_DEFINES `include "include.h" // meine defines in include file
@@ -249,7 +345,7 @@ allowed format: separated by newline and/or comma!
     Impl: wig20041110
     Testcase: configuration.xls
 
--20041110a/Bug: range spec `width : 0 does not work in Verilog
+>>title: 20041110a/Bug: range spec `width : 0 does not work in Verilog
 
 
     Req: dirk siebert
@@ -296,7 +392,7 @@ Wilfried
     Prio: medium
 
 
-- 20040816a/Bug: Assigning constants to busses does not work in all cases.
+>>title: 20040816a/Bug: Assigning constants to busses does not work in all cases.
     Strip out testcase from vgca.xls (eic_int_src) and create testcase
     bugver/constbug
 
@@ -304,7 +400,7 @@ Wilfried
     Prio: high
     Fixed: wig20040817
 
-- 20040810a/Req: add some pseudo entities to do direct assignemts and basic logic functions
+>>title: 20040810a/Req: add some pseudo entities to do direct assignemts and basic logic functions
 
     Entities:
     %AND%, %OR%, %NAND%, %NOR%, %XOR%, %INV%, %BUF%, %MUX% ...
@@ -334,7 +430,7 @@ Wilfried
     Req: wig
     Prio: medium
         
-- 20040809a/Req: do ignore typecast's for std_(u)logic
+>>title: 20040809a/Req: do ignore typecast's for std_(u)logic
   Synopsys tools do not accept typecsting of signals.
 
     Req: mpit
@@ -342,7 +438,7 @@ Wilfried
     Solved: wig20040809
     Testcase: typecast/intbus; new default: MIXCFG output.generate.workaround.std_log_typecast ignore
     
-- 20040802a/Req: Extended support for bus joining
+>>title: 20040802a/Req: Extended support for bus joining
     Two signals should get connected togehter, but no duplicate port map
     should be created
 
@@ -351,7 +447,7 @@ Wilfried
     Solved:
     Testcase:
 
-- 20040728a/Req: Improve handling of constants
+>>title: 20040728a/Req: Improve handling of constants
 
     Allow to assign parts of a bus to high/low.
     Currently that leads to extra port maps assigned.
@@ -365,20 +461,20 @@ Wilfried
         ____      0=(10), 1=(15:12)     %BUS%/sig_a
 
  
-- 20040712a/Req: Add (__FILE__/__LINE__) to all logwarn/logtrc/logdie ....
+>>title: 20040712a/Req: Add (__FILE__/__LINE__) to all logwarn/logtrc/logdie ....
    Print out FILE/LINE in error messages to ease debugging.
 
     Req: wig
     Prio: low
 
-- 20040628a/Bug: fix diff mode: sort ::in and ::out columns
+>>title: 20040628a/Bug: fix diff mode: sort ::in and ::out columns
    else the diff yields false
 
     Req: wig
     Prio: low
     Fixed: wig20040629 (sort all fields seperated by , in two2one)
 
-- 20040621a/Req: Remove error messages and warnings if port bounds are strings (instead
+>>title: 20040621a/Req: Remove error messages and warnings if port bounds are strings (instead
     of numbers)
     Make using generics for port bounds easier. Do simple checks if possible ...
      
@@ -387,7 +483,7 @@ Wilfried
     Req: mpit
     Prio: low
 
-- 20040614a/Req: Change perl script header to get it started on all required platforms:
+>>title: 20040614a/Req: Change perl script header to get it started on all required platforms:
 
  1 #!/bin/sh
   2 #! -*- perl -*-
@@ -403,14 +499,14 @@ eval 'exec ${PERL:-`[ ! -d $HOME/bin/perl -a -x $HOME/bin/perl ] && echo $HOME/b
 if 0; # dynamic perl startup; suppress preceding line in perl
 
  
-- 20040415a/Req: add "ignorecase" for delta mode
+>>title: 20040415a/Req: add "ignorecase" for delta mode
   Usefull for verify entity. Split options for delta mode and verify mode.
 
   Req: mpit
   Prio: medium
   Done: wig20040420, plus some "remove spaces around () and :" logic.
 
-- 20040407a/Req: Improve coding:
+>>title: 20040407a/Req: Improve coding:
     header:
 
 #!/bin/sh -- # -*- perl -*- -w
@@ -516,7 +612,7 @@ should be better
  use FindBin;
  use lib "$FindBin::Bin/../lib";
 
-- 20040401f/Req: add ::option column to all sheets
+>>title: 20040401f/Req: add ::option column to all sheets
     Keep all options there, e.g. the %UAMN% (use configuration as module name)
     Allow VAR=VAL,VAR=VAL, ... pairs to be specified there, valid just for current
        line
@@ -525,7 +621,7 @@ should be better
     Prio: low
     Plan:
 
-- 20040401e/Req: Improve import feature:
+>>title: 20040401e/Req: Improve import feature:
     - Verilog
     - VHDL architecture
 
@@ -533,14 +629,14 @@ should be better
     Prio: low
     Plan:
 
-- 20040401d/Req: Add -flatten option
+>>title: 20040401d/Req: Add -flatten option
     Remove all hierachy, leave just leaf and top node -> in intermediate
 
     Req: wig
     Prio: low
     Plan:
 
-- 20040401c/Req: Create pseudo block diagram / EXCEL
+>>title: 20040401c/Req: Create pseudo block diagram / EXCEL
     Create GIF image of module
     Create HTML description
     Create PDF description
@@ -549,14 +645,14 @@ should be better
     Prio: low
     Plan:
 
-- 20040401b/Req: Write hierachy sheets per module ...
+>>title: 20040401b/Req: Write hierachy sheets per module ...
 
     Write a hierachy sheet for each non-leaf module
     
     Req: wig
     Prio: low
     
-- 20040401a/Check: VHDL typecast in port maps, HOWTO
+>>title: 20040401a/Check: VHDL typecast in port maps, HOWTO
 
     ask in comp.language.vhdl
 
@@ -597,28 +693,28 @@ See test/typecast.xls
     Solution: contact comp.lang.vhdl
     
 
--20040330a/Bug: Message "WARNING: Bad branch taken in parse_io_init, file bug report!"  is not descriptive!
+>>title: 20040330a/Bug: Message "WARNING: Bad branch taken in parse_io_init, file bug report!"  is not descriptive!
 
     Req: mpit
     Prio: medium
     Solution: rewrite error message with "No iocell and pad type defined in line XXXX, skipped!"
     
 
--20040324a/Req: Define %AUTO% signal name
+>>title: 20040324a/Req: Define %AUTO% signal name
     wires according to rules e.g.:
         ::name := PRE_MODULEFROM[_MODULETO]_PORT
     combined with -import -> create wires automatically
 
     Req: wig20040324
 
-- 20040217/Req: Add a "compare entities" facility.
+>>title: 20040217/Req: Add a "compare entities" facility.
 
   -verify PATH[:PATH]
   -> reads in all filenames in PATH and if this name matches a entity to create, do a
   diff instead.
 
 
-- 20040128a/Req: plugin-interface
+>>title: 20040128a/Req: plugin-interface
   allow definition of arbitryry plugins
     define sheets to parse
     define set of standard functions to be provided by plugin
@@ -626,7 +722,7 @@ See test/typecast.xls
 
     Req: wig
     
-- 20040127a/Req: Sort entity and signals by
+>>title: 20040127a/Req: Sort entity and signals by
    - order given from input-sheet
    - order by bundle
    - order by plugin function
@@ -636,7 +732,7 @@ See test/typecast.xls
 
     Req: mpit
 
-- 20040127b/Req: Leaf cell compare
+>>title: 20040127b/Req: Leaf cell compare
    take input argument: -leaf-path (or -conf ...leaf.path) to be colon seperated path list
    and compare all generated entities against the files to be found in that path
    (reuse delta mode capabilites).
@@ -644,11 +740,7 @@ See test/typecast.xls
 
    Req: mpit
 
-- WinCVS weigert sich aufobskure Art und Weise Dateien einzuchecken ...
-
-
-
-- 20031215c/Req: Do not generate a mux-port if no mux cells are defined for
+>>title: 20031215c/Req: Do not generate a mux-port if no mux cells are defined for
    an entity (only one cell filled in)
 
     Req: mpit
@@ -657,7 +749,7 @@ See test/typecast.xls
 
 
 
-- 2003113a/Req:
+>>title: 2003113a/Req:
     Fix warning messages:
 
 > meinst Du Meldungen ala:

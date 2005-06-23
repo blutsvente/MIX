@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.63 $                                         |
+# | Revision:   $Revision: 1.64 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/05/11 11:39:02 $                              |
+# | Date:       $Date: 2005/06/23 13:14:42 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.63 2005/05/11 11:39:02 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.64 2005/06/23 13:14:42 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.64  2005/06/23 13:14:42  wig
+# | Update repository, not yet verified
+# |
 # | Revision 1.63  2005/05/11 11:39:02  wig
 # | intermediate update (still working on unsplice)
 # |
@@ -302,11 +305,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.63 2005/05/11 11:39:02 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.64 2005/06/23 13:14:42 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.63 $';
+my $thisrevision        =      '$Revision: 1.64 $';
 
-# Revision:   $Revision: 1.63 $   
+# Revision:   $Revision: 1.64 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1205,6 +1208,7 @@ sub mix_init () {
 	    "::debug"	=>	[ qw(	1	0	0	%NULL%	        0 )],
 	    '::skip'	=>	[ qw(	0	1	0	%NULL% 	        0 )],
 	    'nr'		=>	16, # Number of next field to print
+	    '_mult_'	=> (),  # Internal counter for multiple fields	    
 		},
     },
 
@@ -1241,6 +1245,7 @@ sub mix_init () {
 	    "::debug"	        => [ qw(	1	0	0	%NULL%	        0 )],
 	    '::skip'		=> [ qw(	0	1	0	%NULL% 	        0 )],
 	    'nr'		=> 14,  # Number of next field to print
+	    '_mult_'	=> (),  # Internal counter for multiple fields	    
 	},
     },
     'variant' => 'Default', # Select default as default variant :-)
@@ -1277,6 +1282,7 @@ sub mix_init () {
 	    '::debug'	=> [ qw(	1	0	0	%NULL%	        0 )],
 	    '::skip'		=> [ qw(	0	1	0	%NULL% 	        0 )],
 	    'nr'		=> 12,  # Number of next field to print
+	    '_mult_'	=> (),  # Internal counter for multiple fields
 	},
     },
     #
@@ -1307,15 +1313,16 @@ sub mix_init () {
 	    '::clock'       => [ qw(    0   0   1   %OPEN%      8  )],
 	    '::reset'       => [ qw(    0   0   1   %OPEN%      9  )],
 	    '::busy'        => [ qw(    0   0   0   %EMPTY%     10 )],
-	   # '::readDone'    => [ qw(    0   0  0    %EMPTY%    13 )],
+	   # '::readDone'   => [ qw(    0   0  0    %EMPTY%    13 )],
 	    '::b'		    => [ qw(	0	1	1	%OPEN%      11 )],
 	    '::init'        => [ qw(    0   0   0   0           12 )],
 	    '::rec'         => [ qw(    0   0   0   0           13 )],
-	   # '::range'	         => [ qw(	1	0	0	%EMPTY%     17)],
-	   # '::name'		 => [ qw(	0	1	0	%EMPTY%     18 )],
-	    '::comment'	     => [ qw(	1	1	2	%EMPTY%     14 )],
-	    '::default'	     => [ qw(	1	1	0	%EMPTY%     0  )],
+	   # '::range'	    => [ qw(	1	0	0	%EMPTY%     17)],
+	   # '::name'		=> [ qw(	0	1	0	%EMPTY%     18 )],
+	    '::comment'	    => [ qw(	1	1	2	%EMPTY%     14 )],
+	    '::default'	    => [ qw(	1	1	0	%EMPTY%     0  )],
 	    'nr'		=> 16,  # Number of next field to print
+	    '_mult_'	=> (),  # Internal counter for multiple fields
 	},
     },
     # VI2C Definitions:
@@ -1341,24 +1348,27 @@ sub mix_init () {
 	    '::type'		=> [ qw(	0	0	1	%TBD%  2 ) ],
 	    '::variants'	=> [ qw(	1	0	0	Default	3 )],
 	    '::inst'		=> [ qw(	0	0	1	W_NO_INST 4 )],
-	    "::comment"	        => [ qw(	1	0	2	%EMPTY%	6 )],
+	    "::comment"	    => [ qw(	1	0	2	%EMPTY%	6 )],
 	    "::shortname"	=> [ qw(	0	0	0	%EMPTY%	5 )],
-	    "::b"		=> [ qw(	0	1	1	%NULL%	7 )],
-	    "::default"	        => [ qw(	1	1	0	%NULL%	0 )],
+	    "::b"			=> [ qw(	0	1	1	%NULL%	7 )],
+	    "::default"	    => [ qw(	1	1	0	%NULL%	0 )],
 	    "::hierachy"	=> [ qw(	1	0	0	%NULL%	0 )],
-	    "::debug"	        => [ qw(	1	0	0	%NULL%	0 )],
-            "::default"	=> [ qw(	1	1	0	%EMPTY%	0 )],	    
+	    "::debug"	    => [ qw(	1	0	0	%NULL%	0 )],
+        "::default"		=> [ qw(	1	1	0	%EMPTY%	0 )],	    
 	    '::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
-	    'nr'		=> 12,  # Number of next field to print
+	    'nr'			=> 12,  # Number of next field to print
+	    '_mult_'	=> (),  # Internal counter for multiple fields
 	},
     },
     "macro" => {
 	    "%SPACE%" 	=> " ",
 	    "%EMPTY%"	=> "",
 	    "%NULL%"	=> "0",
-	    "%TAB%"	=> "\t",
-	    "%S%"	=> "\t", # Output field ident ....
-	    "%IOCR%"	=> " ", # Will be set to \n if we are writting ExCEL on MSWin32 ...
+	    "%TAB%"		=> "\t",
+	    "%CR%"		=> "\n",	# A carriage return
+	    "%S%"		=> "\t",	# Output field ident ....
+	    "%IOCR%"	=> " ",		# Will be set to \n if we are writting ExCEL on MSWin32 ...
+		"%ACOM%"	=> "--",	# comment, automatically set by language currently
 	    "%SIGNAL%"	=> "std_ulogic",
 	    "%BUS_TYPE%"	=> "std_ulogic_vector",
 	    "%PAD_TYPE%"	=> "__E_DEFAULT_PAD__",	# Default pad entity
@@ -1374,38 +1384,47 @@ sub mix_init () {
 	    "%NO_CONFIG%"	=>	"NO_CONFIG", # Set this in ::conf if you want to not
 									    # get configurations for this instance
 	    "%NO_COMPONENT_DECLARATION%"	=>	"__NOCOMPDEC__",
-	    "%NO_COMP%"	=>	"__NOCOMPDEC__", # If this keyword is found in ::use -> no component decl ..
-	    "%NCD%"		=>	"__NOCOMPDEC__", # dito.
+	    "%NO_COMP%"		=>	"__NOCOMPDEC__", # If this keyword is found in ::use -> no component decl ..
+	    "%NCD%"			=>	"__NOCOMPDEC__", # dito.
 	    "%VHDL_USE_DEFAULT%"	=>
-		"library IEEE;\nuse IEEE.std_logic_1164.all;\n",
-		# "Library IEEE;\nUse IEEE.std_logic_1164.all;\nUse IEEE.std_logic_arith.all;",
+			"library IEEE;\nuse IEEE.std_logic_1164.all;\n",
+			# "Library IEEE;\nUse IEEE.std_logic_1164.all;\nUse IEEE.std_logic_arith.all;",
 	    "%VHDL_USE%"	=> "-- No project specific VHDL libraries", #Used internally
 	    "%VHDL_NOPROJ%"	=> "-- No project specific VHDL libraries", # Overwrite this ...
 	    "%VHDL_USE_ENTY%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
 	    "%VHDL_USE_ARCH%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
 	    "%VHDL_USE_CONF%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
+	    "%VHDL_HOOK_ENTY_HEAD%"	=>	"", # Hooks for user defined text
+   	    "%VHDL_HOOK_ENTY_BODY%"	=>	"",
+   	    "%VHDL_HOOK_ENTY_FOOT%"	=>	"",
+   	   	"%VHDL_HOOK_ARCH_HEAD%"	=>	"",
+   	    "%VHDL_HOOK_ARCH_BODY%"	=>	"",
+   	    "%VHDL_HOOK_ARCH_FOOT%"	=>	"",
+   	    "%VHDL_HOOK_CONF_HEAD%"	=>	"",
+   	    "%VHDL_HOOK_CONF_BODY%"	=>	"",
+   	    "%VHDL_HOOK_CONF_FOOT%"	=>	"",		
 	    "%VERILOG_TIMESCALE%"	=>	"`timescale 1ns / 1ps",
 	    "%VERILOG_USE_ARCH%"	=>	'%EMPTY%',
 	    "%VERILOG_DEFINES%"	=>	'	// No `defines in this module',  # Want to define s.th. globally?
-            "%INT_VERILOG_DEFINES%"     =>    '', # Used internally
-            "%INCLUDE%"     =>  '`include',   # Used internally for verilog include files in ::use!
-            "%DEFINE%"      =>  '`define',     # Used internally for verilog defines in ::use!
-            "%USEASMODULENAME%"  =>    '',  # If set in ::config column and obj. is Verilog -> module name
-            "%UAMN%"     => '',                     # dito. but shorter to write !! Internal use only !!
-	    "%OPEN%"	=> "open",			#open signal
-	    "%UNDEF%"	=> "ERROR_UNDEF",	#should be 'undef',  #For debugging??  
-	    "%UNDEF_1%"	=> "ERROR_UNDEF_1",	#should be 'undef',  #For debugging??
-	    "%UNDEF_2%"	=> "ERROR_UNDEF_2",	#should be 'undef',  #For debugging??
-	    "%UNDEF_3%"	=> "ERROR_UNDEF_3",	#should be 'undef',  #For debugging??
-	    "%UNDEF_4%"	=> "ERROR_UNDEF_4",	#should be 'undef',  #For debugging??
-	    "%TBD%"	=> "__W_TO_BE_DEFINED",
-	    "%HIGH%"	=> lc("MIX_LOGIC1"),  # VHDL does not like leading/trailing __
-	    "%LOW%"	=> lc("MIX_LOGIC0"),  # dito.
+        "%INT_VERILOG_DEFINES%"     =>    '', # Used internally
+        "%INCLUDE%"     =>  '`include',   # Used internally for verilog include files in ::use!
+        "%DEFINE%"      =>  '`define',     # Used internally for verilog defines in ::use!
+        "%USEASMODULENAME%"  =>    '',  # If set in ::config column and obj. is Verilog -> module name
+        "%UAMN%"     	=> '',                     # dito. but shorter to write !! Internal use only !!
+	    "%OPEN%"		=> "open",			#open signal
+	    "%UNDEF%"		=> "ERROR_UNDEF",	#should be 'undef',  #For debugging??  
+	    "%UNDEF_1%"		=> "ERROR_UNDEF_1",	#should be 'undef',  #For debugging??
+	    "%UNDEF_2%"		=> "ERROR_UNDEF_2",	#should be 'undef',  #For debugging??
+	    "%UNDEF_3%"		=> "ERROR_UNDEF_3",	#should be 'undef',  #For debugging??
+	    "%UNDEF_4%"		=> "ERROR_UNDEF_4",	#should be 'undef',  #For debugging??
+	    "%TBD%"			=> "__W_TO_BE_DEFINED",
+	    "%HIGH%"		=> lc("MIX_LOGIC1"),  # VHDL does not like leading/trailing __
+	    "%LOW%"			=> lc("MIX_LOGIC0"),  # dito.
 	    "%HIGH_BUS%"	=> lc("MIX_LOGIC1_BUS"), # dito.
-	    "%LOW_BUS%"	=> lc("MIX_LOGIC0_BUS"), # dito.
+	    "%LOW_BUS%"		=> lc("MIX_LOGIC0_BUS"), # dito.
 	    "%CONST%"		=> "__CONST__", # Meta instance, used to apply constant values
-            "%BUS%"               => "__BUS__", # Meta instance for bus connections
-	    "%TOP%"		=> "__TOP__", # Meta instance, TOP cell
+        "%BUS%"         => "__BUS__", # Meta instance for bus connections
+	    "%TOP%"			=> "__TOP__", # Meta instance, TOP cell
 	    "%PARAMETER%"	=> "__PARAMETER__",	# Meta instance: stores paramter
 	    "%GENERIC%"		=> "__GENERIC__", # Meta instance, stores generic default
 	    "%IMPORT%"		=> "__IMPORT__", # Meta instance for import mode
@@ -1414,19 +1433,19 @@ sub mix_init () {
 	    "%IMPORT_CLK%"	=> "__IMPORT_CLK__", # import mode, default clk
 	    "%IMPORT_BUNDLE%"   => "__IMPORT_BUNDLE__", #
 	    "%BUFFER%"		=> "buffer",
-        "%TRISTATE%"        => "tristate",
-	    '%H%'		=> '$',		# 'RCS keyword saver ...
-	    '%IIC_IF%'         => 'iic_if_', # prefix for i2c interface
-	    '%RREG%'            => 'read_reg_', # prefix for i2c read registers
-	    '%WREG%'            => 'write_reg_', # prefix for i2c write registers
-	    '%RWREG%'           => 'read_write_reg_', # prefix for i2c read-write registers
-	    '%IIC_TRANS%'     => 'transceiver_', # prefix for i2c transceiver
-	    '%IIC_SYNC%'       => 'sync_', # prefix for i2c sync block
-		'%PREFIX_IIC_GEN%' => 'iic_if_', # DUPLICATE to postfix!!!
-		'%POSTFIX_IIC_OUT%'  =>  '_iic_o', # DUPLICATE!!
-	    '%POSTFIX_IIC_IN%'   =>  '_iic_i', # DUPLICATE!!
-        '%TPYECAST_ENT%' => '__TYPECAST_ENT__', # dummy typecast support entity
-        '%TYPECAST_CONF%' => '__TYPECAST_CONF__', # dummy for typecast ...
+        "%TRISTATE%"    => "tristate",
+	    '%H%'			=> '$',		# 'RCS keyword saver ...
+	    '%IIC_IF%'      => 'iic_if_', # prefix for i2c interface
+	    '%RREG%'        => 'read_reg_', # prefix for i2c read registers
+	    '%WREG%'        => 'write_reg_', # prefix for i2c write registers
+	    '%RWREG%'       => 'read_write_reg_', # prefix for i2c read-write registers
+	    '%IIC_TRANS%'   => 'transceiver_', # prefix for i2c transceiver
+	    '%IIC_SYNC%'    => 'sync_', # prefix for i2c sync block
+		'%PREFIX_IIC_GEN%'	=> 'iic_if_', # DUPLICATE to postfix!!!
+		'%POSTFIX_IIC_OUT%' =>  '_iic_o', # DUPLICATE!!
+	    '%POSTFIX_IIC_IN%'  =>  '_iic_i', # DUPLICATE!!
+        '%TPYECAST_ENT%' 	=> '__TYPECAST_ENT__', # dummy typecast support entity
+        '%TYPECAST_CONF%'	=> '__TYPECAST_CONF__', # dummy for typecast ...
     },
     # Counters and generic messages
     'ERROR' => '__ERROR__',
@@ -1441,25 +1460,25 @@ sub mix_init () {
     'DELTA_INT_NR' => 0,
     'DELTA_VER_NR' => 0, 
     'sum' => { # Counters for summary
-	'warnings' => 0,
-	'errors' => 0,
+		'warnings' => 0,
+		'errors' => 0,
 
-	## Inventory
-	'inst' => 0,		# number of instances
-	'conn' => 0,		# number of connections
-	'genport' => 0, 	# number of generated ports
+		## Inventory
+		'inst' => 0,		# number of instances
+		'conn' => 0,		# number of connections
+		'genport' => 0, 	# number of generated ports
 
-	'cmacros' => 0,	# Number of matched connection macro's
+		'cmacros' => 0,	# Number of matched connection macro's
 
-    'hdlfiles' => 0,      # Number of output files
-	'noload' => 0,   	# signals with missing loads ...
-	'nodriver' => 0,	# signals without driver
-	'multdriver' => 0,	# signals with multiple drivers
-	'openports' => 0,
+    	'hdlfiles' => 0,      # Number of output files
+		'noload' => 0,   	# signals with missing loads ...
+		'nodriver' => 0,	# signals without driver
+		'multdriver' => 0,	# signals with multiple drivers
+		'openports' => 0,
 
-	'checkwarn' => 0,
-	'checkforce' => 0,
-	'checkunique' => 0,
+		'checkwarn' => 0,
+		'checkforce' => 0,
+		'checkunique' => 0,
 
         # Others values (e.g. verify_entity ...) will be created as needed.
 
@@ -1471,9 +1490,9 @@ sub mix_init () {
 
     },
     'script' => { # Set for pre and post execution script execution
-	'pre' => '',
-	'post' => '',
-	'excel' => {
+		'pre' => '',
+		'post' => '',
+		'excel' => {
 	    'alerts' => 'off', # Switch off ExCEL display alerts; could be on, to...
 	},
     },
@@ -1571,11 +1590,20 @@ foreach my $conf (
 	unless( open( CFG, "< $conf/mix.cfg" ) ) {
 	    logwarn("Cannot open $conf/mix.cfg for reading: $!\n");
 	} else {
+		my $prev = "";
 	    while( <CFG> ) {
 		chomp;
 		$_ =~ s,\r$,,;
+		$_ = $prev . $_; # prepen previous line
 		next if ( m,^\s*#,o );
-		if ( m,^\s*MIXCFG\s+(\S+)\s*(.*), ) { # MIXCFG key.key.key value
+		# Add next line if line ends with \
+		if ( $_ =~ s/\\$// ) {
+			$prev = $_ . "\n"; # Add a line break ...
+	    	next;
+	    }
+	    $prev = "";
+			
+		if ( m,^\s*MIXCFG\s+(\S+)\s*(.*),s ) { # MIXCFG key.key.key value
 		    _mix_apply_conf( $1, $2, "file:mix.cfg" );
 		}
 	    }
@@ -1584,16 +1612,23 @@ foreach my $conf (
     }
 }
 
-#
-# Post configuration processing
-#!wig20031219
-if ( $EH{'output'}{'generate'}{'xinout'} ) { # Convert comma seperated list into PERL-RE
-    my @si = split( "," , $EH{'output'}{'generate'}{'xinout'} );
-    $EH{'output'}{'generate'}{'_re_xinout'} = '^(' . join( "|", @si ) . ')$';
-} else {
-    $EH{'output'}{'generate'}{'_re_xinout'} = '^__NOEXCLUDESIGNAL__$';
-}
+	#
+	# Post configuration processing
+	#!wig20031219
+	if ( $EH{'output'}{'generate'}{'xinout'} ) { # Convert comma seperated list into PERL-RE
+    	my @si = split( "," , $EH{'output'}{'generate'}{'xinout'} );
+    	$EH{'output'}{'generate'}{'_re_xinout'} = '^(' . join( "|", @si ) . ')$';
+	} else {
+    	$EH{'output'}{'generate'}{'_re_xinout'} = '^__NOEXCLUDESIGNAL__$';
+	}
 
+    # Get the _logic_ list ...
+    #!wig20050519:
+    $EH{'output'}{'generate'}{'_logic_'} =
+    	'^(__|%)?(' .
+    	join( '|', split(/[,\s+]/, $EH{'output'}{'generate'}{'logic'} ) ) .
+    	')(__|%)?$';
+   
 } # End of mix_init
 
 #############################################################################
@@ -1750,12 +1785,14 @@ sub _mix_apply_conf ($$$) {
 	    return undef;
     }
 
-    $v =~ s/"/\\"/g; # Mask " in input!
+    #No longer needed: $v =~ s/"/\\"/g; # Mask " in input!
+	$v =~ s/'/\\'/g; # Mask ' in input!
     $k =~ s,[^.%\w],,g; # Remove all characters not being ., % and \w ...
+	my $ok = $k;
     $k =~ s/\./'}{'/og;
     $k = '{\'' . $k . '\'}';
-    my $loga ='logtrc( "INFO", "Adding ' . $s . ' configuration ' . $k . "=" . $v . '");';
-    my $logo ='logtrc( "INFO", "Overloading ' . $s . 'configuration ' . $k . "=" . $v . '");';
+    my $loga ='logtrc( "INFO", \'Adding ' . $s . ' configuration ' . $ok . "=" . $v . '\');';
+    my $logo ='logtrc( "INFO", \'Overloading ' . $s . ' configuration ' . $ok . "=" . $v . '\');';
  
     #TODO: Prevent overloading of non-scalar values!!
     my $e = "if ( exists( \$EH$k ) ) { \$EH$k = '$v'; $logo } else { \$EH$k = '$v'; $loga }";
@@ -2650,6 +2687,9 @@ I guess multiple headers are kind of evil (keep an eye on them)
 Arguments: $kind, \$eh{$kind}, @header_row
 
 Returns: %order (keys are the ::head items)
+
+20050614: remove extra whitespace around the keywords
+
 =cut
 
 sub parse_header($$@){
@@ -2672,6 +2712,11 @@ sub parse_header($$@){
 	    $row[$i] = "::skip";
 	    next;
 	}
+	#!wig20050614: get rid of extra whitespace
+	$row[$i] =~ s/^\s+(::)/::/; # Remove leading whitespace
+	if ( defined( $1 ) ) {
+		$row[$i]  =~ s/\s+$//;  # Remove trailing whitespace
+	}
 	if ( $row[$i] and $row[$i] !~ m/^::/o ) { #Header not starting with ::
 	    logwarn("WARNING: Bad name in header row: $row[$i] $i, type $kind, skipping!");
 	    $EH{'sum'}{'warnings'}++;
@@ -2687,17 +2732,18 @@ sub parse_header($$@){
     for my $i ( keys( %{$$templ->{'field'}} ) ) {
 	    next unless( $i =~ m/^::/o );
 	    if( $$templ->{'field'}{$i}[2] > 0 ) { #required field
-		if ( not defined( $rowh{$i} ) ) {
-		    if ( $$templ->{'field'}{$i}[2] > 1 ) { # 2 -> needs to be initialized silently
-			logtrc(INFO, "Info: appended optional data field $i.");
-			push ( @row, $i );
-			push( @{$rowh{$i}} ,$#row );
-			#TODO: do not print out such fields -> ... ???
-		    } else {
-			logwarn("Missing required field $i in input array!");
-			# exit;
-		    }
-		}
+			if ( not defined( $rowh{$i} ) ) {
+		    	if ( $$templ->{'field'}{$i}[2] > 1 ) { # 2 -> needs to be initialized silently
+					logtrc(INFO, "Info: appended optional data field $i.");
+					push ( @row, $i );
+					push( @{$rowh{$i}} ,$#row );
+		    	} else {
+		    		unless ( $i =~ m/:\d+$/ ) { # Ignore ::key:N fields! 
+						logwarn("Missing required field $i in input array!");
+						$EH{'sum'}{'warnings'}++;
+		    		}
+		    	}
+			}
 	    }
 	    if ( defined( $rowh{$i} ) and $#{$rowh{$i}} >= 1 and $$templ->{'field'}{$i}[1] <= 0 ) {
 			logwarn("WARNING: Multiple input header not allowed for $i!");
@@ -2710,13 +2756,13 @@ sub parse_header($$@){
     # This will catch multiply defined fields, too (together with the split code below)
     #
     for my $i ( 0..$#row ) {
-	my $head = $row[$i];	
-	unless ( defined( $$templ->{'field'}{$head} ) ) {
-	    logtrc(INFO, "Added new column header $head");
-	    @{$$templ->{'field'}{$head}} = @{$$templ->{'field'}{'::default'}}; #Check: does this really copy everything
-	    $$templ->{'field'}{$head}[4] = $$templ->{'field'}{'nr'};
-	    $$templ->{'field'}{'nr'}++;
-	}
+	    my $head = $row[$i];	
+	    unless ( defined( $$templ->{'field'}{$head} ) ) {
+	        logtrc(INFO, "Added new column header $head");
+	        @{$$templ->{'field'}{$head}} = @{$$templ->{'field'}{'::default'}}; #Check: does this really copy everything
+	        $$templ->{'field'}{$head}[4] = $$templ->{'field'}{'nr'};
+	        $$templ->{'field'}{'nr'}++;
+	    }
     }
 
     #
@@ -2730,7 +2776,8 @@ sub parse_header($$@){
 	     	for my $ii ( 1..$#{$rowh{$i}} ) {
 		    	unless( defined( $$templ->{'field'}{$i . ":" . $ii} ) ) {
 				logtrc(INFO, "Split multiple column header $i to $i:$ii");
-				$$templ->{'field'}{$i. ":". $ii} = $$templ->{'field'}{$i}; #Check: do a real copy ...
+				$$templ->{'field'}{$i. ":". $ii} = $$templ->{'field'}{$i};
+				#Check: do a real copy ...
 				#Remember print order no longer is unique
 		    }
 		    $or{$i. ":". $ii} = $rowh{$i}[$ii];
@@ -2743,9 +2790,9 @@ sub parse_header($$@){
 					$EH{$kind}{'_mult_max_'}{$i} = $ii;
 		    }
 	     }
-	} else {
-		$or{$i} = $rowh{$i}[0];
-	}
+	   } else {
+		  $or{$i} = $rowh{$i}[0];
+	   }
    }
 
     $EH{$kind}{'ext'} = scalar(keys(%or));

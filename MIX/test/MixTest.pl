@@ -116,6 +116,11 @@ my @tests = (
 	  'options' => "",
 	},
 	{
+	  'name' => "bitsplice",
+	  'path' => "bitsplice/connport",
+	  'options' => "",
+	},
+	{
 	  'name' => "sigport",
 	  'path' => "sigport",
 	  'options' => "",
@@ -344,7 +349,11 @@ my @tests = (
 	  'path' => "bugver/constbug",
 	  'options' => "",
 	},
-
+	{ # Create simple logic ...
+	  'name' => "logic",
+	  'path' => "logic",
+	  'options' => "",
+	},
 );
 
 my $numberOfTests = scalar @tests;
@@ -526,7 +535,7 @@ sub runMix($) {
 	    # Define the mix_0.pl to run
 	    # $command  = "h:/work/mix_new/mix/mix_0.pl $options $find../$tests[$i]->{'name'}.$type";
     	    $command  = "perl -x " . ( $opts{'debug'} ? "-d " : "" ) .
-		"$mix $options $find../$tests[$i]->{'name'}.$type";
+		"\"$mix\" $options \"$find../$tests[$i]->{'name'}.$type\"";
     	    # $command  = "perl -d " . $command if ( $opts{'debug'} );
     	}
     	chdir( $path) || logwarn("ERROR: Directory <$path> not found!");
