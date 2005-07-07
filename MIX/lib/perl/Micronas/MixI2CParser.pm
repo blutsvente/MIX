@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / I2CParser                                |
 # | Modules:    $RCSfile: MixI2CParser.pm,v $                             |
-# | Revision:   $Revision: 1.12 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/04/14 06:53:01 $                              |
+# | Revision:   $Revision: 1.13 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2005/07/07 12:29:35 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/Attic/MixI2CParser.pm,v 1.12 2005/04/14 06:53:01 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/Attic/MixI2CParser.pm,v 1.13 2005/07/07 12:29:35 lutscher Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
@@ -63,6 +63,7 @@ use Log::Agent::Priorities qw( :LEVELS);
 use Micronas::MixUtils qw( %EH );
 use Micronas::MixParser qw( %hierdb %conndb add_inst add_conn );
 use Micronas::MixChecker;
+use Micronas::Reg;
 
 ####################################################################
 ## Prototypes:
@@ -86,9 +87,9 @@ sub mix_i2c_init_assign ();
 # RCS Id, to be put into output templates
 #
 
-my $thisid		= 	'$Id: MixI2CParser.pm,v 1.12 2005/04/14 06:53:01 wig Exp $';
+my $thisid		= 	'$Id: MixI2CParser.pm,v 1.13 2005/07/07 12:29:35 lutscher Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixI2CParser.pm,v $';
-my $thisrevision        =       '$Revision: 1.12 $';
+my $thisrevision        =       '$Revision: 1.13 $'; #'
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -116,15 +117,28 @@ $thisrevision =~ s,^\$,,go;
 sub parse_i2c_init($) {
 
     my $r_i2c = shift;
+	
+	my($o_space) = Micronas::Reg->new();
 
-    my $ehr = $EH{'i2c'}{'field'};
+	if (grep($_ eq $EH{'reg_shell'}{'type'}, @{$o_space->global->{supported_views}})) {
+		# init register module for generation of register-shell
+		$o_space->init(	 
+					 inputformat => "register-master", 
+					 database_type => $EH{i2c}{regmas_type},
+					 register_master => $r_i2c
+					);
+		# make it so
+		$o_space->generate_view($EH{'reg_shell'}{'type'});
+	} else {
+		# use this module for generation of register-shell
+		my $ehr = $EH{'i2c'}{'field'};
 
-    foreach my $i (@$r_i2c) {
+		foreach my $i (@$r_i2c) {
 
-        next if ( $i->{'::ign'} =~ m,^\s*(#|\\),); # Skip comments, just in case they sneak in
-
-		# Fill up input field
-        for my $j ( keys %$ehr) {
+			next if ( $i->{'::ign'} =~ m,^\s*(#|\\),); # Skip comments, just in case they sneak in
+											  
+			# Fill up input field
+			for my $j ( keys %$ehr) {
 	    	next unless ( $j =~ m/^::/ );
 	    	if ( not defined( $i->{$j} )) {
 				next if( $ehr->{$j}[2] eq 0);
@@ -137,6 +151,7 @@ sub parse_i2c_init($) {
     }
     # assign all init values now:
     mix_i2c_init_assign();
+	};
     return 0;
 }
 
@@ -164,7 +179,7 @@ sub add_interface($) {
     # create a new instance in hierdb, create Interface first -> parent
     my $parent = $in->{'::interface'};
     #ORG: $in->{'::inst'} = $parent;
-    $in->{'::inst'} = $EH{'i2c_cell'}{'name'}; # Defines name for instance!
+    $in->{'::inst'} = $EH{'reg_shell'}{'top_name'}; # Defines name for instance!
 	$in->{'::entity'} = '%PREFIX_IIC_GEN%' . $in->{'::interface'}; #TODO: make more flexible
     $parent = add_inst( %$in);
 
@@ -192,7 +207,7 @@ sub add_interface($) {
 	  $name = $name . sprintf( "%lx", $in->{'::sub'}); # Print HEX extension (subaddress) ...
 
 	  $in->{'::inst'} = $name;
-	  $in->{'::entity'} = "iic_" . $EH{'i2c_cell'}{'type'} . "_reg_" . $type; #TODO: flex
+	  $in->{'::entity'} = "iic_" . $EH{'reg_shell'}{'type'} . "_reg_" . $type; #TODO: flex
 	  $in->{'::parent'} = $parent;
 	  $name = add_inst(%$in);
 
@@ -246,7 +261,7 @@ sub create_sync_block($$$) {
       my $instance = $in->{'::interface'} . "_" . $EH{'macro'}{'%IIC_SYNC%'} .
       			 $parent . "_" . $in->{'::spec'};
 	  $in->{'::inst'} = $instance;
-	  $in->{'::entity'} = $EH{'i2c_cell'}{'%IIC_SYNC%'};
+	  $in->{'::entity'} = $EH{'reg_shell'}{'%IIC_SYNC%'};
 	  $in->{'::parent'} = $parent;
       $instance = add_inst(%$in);
 
@@ -337,7 +352,7 @@ sub create_transceiver($$) {
     my %conns;
 
     $in->{'::inst'} = $instance;
-    $in->{'::entity'} = "iic_". $EH{'i2c_cell'}{'type'} . "_reg_rt";
+    $in->{'::entity'} = "iic_". $EH{'reg_shell'}{'type'} . "_reg_rt";
     $in->{'::parent'} = $parent;
     $instance = add_inst(%$in);
 
@@ -404,7 +419,7 @@ sub create_transceiver($$) {
 	%conns = ( '::name' => "adr_or_data_" . $parent,
 		   '::out' => $instance . "/adr_or_data_o", # std_ulogic_vector(0-15) 
 		   '::low' => 0,
-		   '::high' => $EH{'i2c_cell'}{'regwidth'} - 1, );
+		   '::high' => $EH{'reg_shell'}{'regwidth'} - 1, );
 	add_conn(%conns);
 
 	# transceiver/check_adr_o => check_adr
@@ -461,7 +476,7 @@ sub connect_subreg($$$) {
     my $number;
     my $range = 0;
 
-	my $width = $in->{'::width'} || $EH{'i2c_cell'}{'regwidth'};
+	my $width = $in->{'::width'} || $EH{'reg_shell'}{'regwidth'};
 #==> Generics
 
     # ra_g - Subaddress
@@ -642,7 +657,7 @@ sub connect_subreg($$$) {
 	        		$blocksig = $in->{$i};
 	        		$pin = "=";
 	        	}
-	        	if ( $EH{'i2c_cell'}{'mode'} =~ m/\blcport\b/io ) {
+	        	if ( $EH{'reg_shell'}{'mode'} =~ m/\blcport\b/io ) {
 	        		$blocksig = lc( $blocksig );
 	        	}
 	        	$blocksig =~ s/^\s+//;
@@ -652,7 +667,7 @@ sub connect_subreg($$$) {
 				#OLD: $pin =~ s/^.*\(//;
 				#OLD: $pin =~ s/\)$//;
 				# Create register to block wire:
-				my $linkn = $EH{'i2c_cell'}{'regwidth'} - $number - 1;
+				my $linkn = $EH{'reg_shell'}{'regwidth'} - $number - 1;
 				%conns = ( '::name' => "reg_data_out_$subreg",
 			   		'::out' => $parent . "/" . $blocksig . $pin . "(" . $linkn . ")," .
 			              $instance . "/$prefix($linkn)=($linkn)",
@@ -725,7 +740,7 @@ sub connect_subreg($$$) {
 	        		$blocksig = $in->{$i};
 	        		$pin = "=";
 	        	}
-	        	if ( $EH{'i2c_cell'}{'mode'} =~ m/\blcport\b/io ) {
+	        	if ( $EH{'reg_shell'}{'mode'} =~ m/\blcport\b/io ) {
 	        		$blocksig = lc( $blocksig );
 	        	}
 	        	$blocksig =~ s/^\s+//;
@@ -735,7 +750,7 @@ sub connect_subreg($$$) {
 				#OLD: $pin =~ s/^.*\(//;
 				#OLD: $pin =~ s/\)$//;
 				# Create register to block wire:
-				my $linkn = $EH{'i2c_cell'}{'regwidth'} - $number - 1;
+				my $linkn = $EH{'reg_shell'}{'regwidth'} - $number - 1;
 				%conns = ( '::name' => "reg_data_in_$subreg",
 			           '::in' => "$instance/$prefix($linkn)=($linkn)," .
 			   		   $parent . "/" . $blocksig . $pin . "(" . $linkn . ")",
