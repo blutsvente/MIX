@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.64 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/06/23 13:14:42 $                              |
+# | Revision:   $Revision: 1.65 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2005/07/07 12:32:50 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.64 2005/06/23 13:14:42 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.65 2005/07/07 12:32:50 lutscher Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,12 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.65  2005/07/07 12:32:50  lutscher
+# | o changed EH->i2c_cell to EH->reg_shell
+# | o made some cleaning-up of EH->reg_shell and EH->hier
+# | o changed parse_header() to disable the 'required' attribute of multiple headers
+# |   (was causing errors when reading multiple xls sheets)
+# |
 # | Revision 1.64  2005/06/23 13:14:42  wig
 # | Update repository, not yet verified
 # |
@@ -305,11 +311,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.64 2005/06/23 13:14:42 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.65 2005/07/07 12:32:50 lutscher Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.64 $';
+my $thisrevision        =      '$Revision: 1.65 $';         #'
 
-# Revision:   $Revision: 1.64 $   
+# Revision:   $Revision: 1.65 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1104,6 +1110,8 @@ sub mix_init () {
 		    POSTFIX_IIC_GEN		_i
 	        POSTFIX_IIC_OUT     _iic_o
 	        POSTFIX_IIC_IN      _iic_i
+		    POSTFIX_FIELD_OUT   _par_o
+            POSTFIX_FIELD_IN    _par_i
 		)
     },
     'pad' => {
@@ -1150,19 +1158,21 @@ sub mix_init () {
 
     },
     #TODO: add a "register configuration for plugin" interface
-    'i2c_cell' => {    # default prefixes for i2c interface units
+    'reg_shell' => {    # default prefixes for register interface units
 	    'type'               => 'ser', # default Register type
 	    '%IIC_SER_REG%'    => 'iic_ser_reg_', # prefix for serial subregister entity
 	    '%IIC_PAR_REG%'    => 'iic_par_reg_', # prefix for parallel subregister entity
 	    '%IIC_SYNC%'       => 'sync_iic',  # prefix for sync block
-		'name' => '%PREFIX_IIC_GEN%%::interface%%POSTFIX_IIC_GEN%', # Name for iic_interface instance 
-	    #'inst' => {
-	    #	'prefix' => "iic_if_",
-	    #	'postfix' => "_i",
-	    #}
-		'regwidth'	=> 16, # Default register width!
-		'addrwidth' => 8,  # Default address bus width!
-		'mode' => 'lcport', # lcport -> map created port names to lowercase
+		'top_name' => '%PREFIX_IIC_GEN%%::interface%%POSTFIX_IIC_GEN%', # Name reg_shell top-level instance 
+		'regwidth'	=> 16, # Default register width (not used for type HDL-vrs)
+		'addrwidth' => 8,  # Default address bus width
+		'datawidth' => 8,  # Default data bus width
+		'mode' => 'lcport', # lcport -> map created port names to lowercase	
+		'reset_active' => 0, # 0 for low-active reset at FFs
+		'syn_reset' => 0,    # 0 for asynchronous reset at FFs
+		'cac_del' => 0,      # 1 for OCP command accept delay
+        'dav_del' => 1,      # 1 for OCP data valid delay
+		'reg_output' => 1,   # 1 for OCP registered outputs (? doubtful)	
     },
     #
     # Possibly read configuration details from the CONF sheet, see -conf option
@@ -1288,12 +1298,14 @@ sub mix_init () {
     #
     # I2C sheet basic definitions
     #
-    'i2c' => {
-        'xls' => 'I2C',
-	'req' => 'optional',
-	'parsed' => 0,
-	'cols' => 0,
-	'field' => {
+    'i2c' => 
+	   {
+		'xls' => 'I2C',
+		'regmas_type' => 'VGCA', # format of register-master, currently either VGCA or FRCH
+		'req' => 'optional',
+		'parsed' => 0,
+		'cols' => 0,
+		'field' => {
 	    #Name   	=>	  	        Inherits
 	    #					            Multiple
 	    #						            Required
@@ -1302,26 +1314,28 @@ sub mix_init () {
 	    #                           0   1   2	3           4
 	    '::ign' 		=> [ qw(	0	0	1	%EMPTY%     1  )],
 	    '::variants'	=> [ qw(	1	0	0	Default	    2  )],
-	   # '::inst'       => [ qw(    0   0   0   W_NO_INST   2  )],
-	    '::width'		=> [ qw(	0	0	0	16          15 )],
-	    '::dev'         => [ qw(    0   0   1   %EMPTY%     3  )],
-	    '::sub'         => [ qw(    0   0   1   %EMPTY%     4  )],
-	    '::interface'   => [ qw(    0   0   1   %EMPTY%     5  )],
-	   # '::block'      => [ qw(    0   0   1   %EMPTY%      7  )],
-	    '::dir'         => [ qw(    0   0   1   RW          6  )],
-	    '::spec'        => [ qw(    0   0   0   NTO         7  )],
-	    '::clock'       => [ qw(    0   0   1   %OPEN%      8  )],
-	    '::reset'       => [ qw(    0   0   1   %OPEN%      9  )],
-	    '::busy'        => [ qw(    0   0   0   %EMPTY%     10 )],
-	   # '::readDone'   => [ qw(    0   0  0    %EMPTY%    13 )],
-	    '::b'		    => [ qw(	0	1	1	%OPEN%      11 )],
-	    '::init'        => [ qw(    0   0   0   0           12 )],
-	    '::rec'         => [ qw(    0   0   0   0           13 )],
-	   # '::range'	    => [ qw(	1	0	0	%EMPTY%     17)],
-	   # '::name'		=> [ qw(	0	1	0	%EMPTY%     18 )],
-	    '::comment'	    => [ qw(	1	1	2	%EMPTY%     14 )],
-	    '::default'	    => [ qw(	1	1	0	%EMPTY%     0  )],
-	    'nr'		=> 16,  # Number of next field to print
+	    '::inst'        => [ qw(    0   0   1   W_NO_INST   3  )],
+	    '::width'		=> [ qw(	0	0	0	16          4  )],
+	    '::dev'         => [ qw(    0   0   1   %EMPTY%     5  )],
+	    '::sub'         => [ qw(    0   0   1   %EMPTY%     6  )],
+	    '::interface'   => [ qw(    0   0   1   %EMPTY%     7  )],
+	    '::block'       => [ qw(    0   0   1   %EMPTY%     8  )],
+	    '::dir'         => [ qw(    0   0   1   RW          9  )],
+	    '::spec'        => [ qw(    0   0   0   %EMPTY%     10 )],
+	    '::clock'       => [ qw(    0   0   1   %OPEN%      11 )],
+	    '::reset'       => [ qw(    0   0   1   %OPEN%      12 )],
+	    '::busy'        => [ qw(    0   0   0   %EMPTY%     13 )],
+		'::sync'        => [ qw(    0   0   0   NTO         14 )],
+		'::update'      => [ qw(    0   0   0   %OPEN%      15 )],
+	    '::readDone'    => [ qw(    0   0   0   %EMPTY%     16 )],
+	    '::b'		    => [ qw(	0	1	1	%OPEN%      17 )],
+	    '::init'        => [ qw(    0   0   0   0           18 )],
+	    '::rec'         => [ qw(    0   0   0   0           19 )],
+	    '::range'	    => [ qw(	1	0	0	%EMPTY%     20 )],
+		'::auto'        => [ qw(    0   0   0   0           21 )],
+	    '::comment'	    => [ qw(	1	1	2	%EMPTY%     22 )],
+	    '::default'	    => [ qw(	1	1	0	%EMPTY%     23 )],
+	    'nr'		=> 23,  # Number of next field to print
 	    '_mult_'	=> (),  # Internal counter for multiple fields
 	},
     },
@@ -2641,7 +2655,7 @@ sub convert_in ($$) {
 	next if ( $all =~ m,^\s*(#|//), );			# If line starts with comment, skip it
 
 	unless ( $hflag ) { # We are still looking for our ::MARKER header line
-	    next unless ( $all =~ m/^::/ );			#Still no header ...
+	    next unless ( $all =~ m/^\s?::/ );			#Still no header ...
 	    %order = parse_header( $kind, \$EH{$kind}, @$i );		#Check header, return field number to name
 	    $hflag = 1;
 	    next;
@@ -2774,29 +2788,32 @@ sub parse_header($$@){
 		if ( $#{$rowh{$i}} > 0 ) {
 	    	$or{$i} = $rowh{$i}[0]; # Save first field, rest will be seperated by name ...
 	     	for my $ii ( 1..$#{$rowh{$i}} ) {
-		    	unless( defined( $$templ->{'field'}{$i . ":" . $ii} ) ) {
-				logtrc(INFO, "Split multiple column header $i to $i:$ii");
-				$$templ->{'field'}{$i. ":". $ii} = $$templ->{'field'}{$i};
-				#Check: do a real copy ...
-				#Remember print order no longer is unique
-		    }
-		    $or{$i. ":". $ii} = $rowh{$i}[$ii];
-		    if($ii > $EH{$kind}{'cols'}) {
-				$EH{$kind}{'cols'} = $ii; #TODO: remove this!
-		   	}
-		   	# Remember number of columns 
-		    if(not defined( $EH{$kind}{'_mult_max_'}{$i} ) or
-		    	$ii > $EH{$kind}{'_mult_max_'}{$i} ) {
+				my $funique = "$i:$ii";
+				unless( defined( $$templ->{'field'}{$funique} ) ) {
+					logtrc(INFO, "Split multiple column header $i to $funique");
+					$$templ->{'field'}{$funique} = $$templ->{'field'}{$i};
+					#lu20050624 disable required-attribute for the additional headers because they do not occur in input
+					$$templ->{'field'}{$funique}[2] = 0;
+					#Check: do a real copy ...
+					#Remember print order no longer is unique
+				}
+				$or{$funique} = $rowh{$i}[$ii];
+				if($ii > $EH{$kind}{'cols'}) {
+					$EH{$kind}{'cols'} = $ii; #TODO: remove this!
+				}
+				# Remember number of columns 
+				if(not defined( $EH{$kind}{'_mult_max_'}{$i} ) or
+				   $ii > $EH{$kind}{'_mult_max_'}{$i} ) {
 					$EH{$kind}{'_mult_max_'}{$i} = $ii;
-		    }
-	     }
-	   } else {
-		  $or{$i} = $rowh{$i}[0];
-	   }
-   }
-
+				}
+			}
+		} else {
+			$or{$i} = $rowh{$i}[0];
+		}
+	}
+	
     $EH{$kind}{'ext'} = scalar(keys(%or));
-
+	
     # Finally, got the field name list ... return now
     return %or;
 }
