@@ -340,6 +340,16 @@ my @tests = (
 	  'options' => "",
 	},
 	{
+	  'name' => "autoopen",
+	  'path' => "autoopen/simple",
+	  'options' => "",
+	},
+	{
+	  'name' => "autoopen",
+	  'path' => "autoopen/noaopen",
+	  'options' => "",
+	},
+	{
 	  'name' => "bugver",
 	  'path' => "bugver/ramd",
 	  'options' => "",
@@ -354,6 +364,11 @@ my @tests = (
 	  'path' => "logic",
 	  'options' => "",
 	},
+	{ # Add arbitrary text in hooks: ::udc
+		'name' => 'udc',
+		'path' => 'udc',
+		'options' => '',
+	}
 );
 
 my $numberOfTests = scalar @tests;
