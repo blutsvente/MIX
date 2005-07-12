@@ -1,0 +1,96 @@
+04/11/10 09:28:40 2632: WARNING: WARNING: File init.xls does not exist!
+04/11/10 09:28:40 2632: WARNING: INFO: Importing inst_aa_e-e.vhd now!
+04/11/10 09:28:40 2632: WARNING: INFO: Not all lowercase in new conn element NO_DEFAULT!
+04/11/10 09:28:41 2632: WARNING: INFO: Not all lowercase in new conn element NO_NAME!
+04/11/10 09:28:41 2632: WARNING: INFO: Not all lowercase in new conn element WIDTH!
+04/11/10 09:28:41 2632: WARNING: Unusual character in signal name: /WIDTH!
+04/11/10 09:28:41 2632: WARNING: WARNING: mix_check_name called without appropriate name definition!
+04/11/10 09:28:41 2632: WARNING: INFO: Not all lowercase in new conn element s_mix_tc_1_WIDTH!
+04/11/10 09:28:41 2632: WARNING: Unusual character in signal name: /WIDTH/s_mix_tc_1_WIDTH!
+04/11/10 09:28:41 2632: WARNING: INFO: Importing ddrv4-e.vhd now!
+04/11/10 09:28:47 2632: WARNING: File init.xls already exists! Contents will be changed
+04/11/10 09:28:47 2632: WARNING: Rotating 3 old sheets of IMP_HIER!
+04/11/10 10:06:30 2324: WARNING: WARNING: File init.xls does not exist!
+04/11/10 10:06:30 2324: WARNING: INFO: Importing inst_aa_e-e.vhd now!
+04/11/10 10:06:30 2324: WARNING: INFO: Not all lowercase in new conn element NO_DEFAULT!
+04/11/10 10:06:30 2324: WARNING: INFO: Not all lowercase in new conn element NO_NAME!
+04/11/10 10:06:30 2324: WARNING: INFO: Not all lowercase in new conn element WIDTH!
+04/11/10 10:06:30 2324: WARNING: Unusual character in signal name: /WIDTH!
+04/11/10 10:06:30 2324: WARNING: WARNING: mix_check_name called without appropriate name definition!
+04/11/10 10:06:30 2324: WARNING: INFO: Not all lowercase in new conn element s_mix_tc_1_WIDTH!
+04/11/10 10:06:30 2324: WARNING: Unusual character in signal name: /WIDTH/s_mix_tc_1_WIDTH!
+04/11/10 10:06:31 2324: WARNING: INFO: Importing ddrv4-e.vhd now!
+04/11/10 10:06:34 2324: WARNING: File init.xls already exists! Contents will be changed
+04/11/10 10:06:34 2324: WARNING: Rotating 3 old sheets of IMP_HIER!
+05/01/13 10:25:51 2644: WARNING: WARNING: File init.xls does not exist!
+05/01/13 10:25:51 2644: WARNING: INFO: Importing inst_aa_e-e.vhd now!
+05/01/13 10:25:52 2644: WARNING: INFO: Not all lowercase in new conn element NO_DEFAULT!
+05/01/13 10:25:52 2644: WARNING: INFO: Not all lowercase in new conn element NO_NAME!
+05/01/13 10:25:52 2644: WARNING: INFO: Not all lowercase in new conn element WIDTH!
+05/01/13 10:25:52 2644: WARNING: Unusual character in signal name: /WIDTH!
+05/01/13 10:25:52 2644: WARNING: WARNING: mix_check_name called without appropriate name definition!
+05/01/13 10:25:52 2644: WARNING: INFO: Not all lowercase in new conn element s_mix_tc_1_WIDTH!
+05/01/13 10:25:52 2644: WARNING: Unusual character in signal name: /WIDTH/s_mix_tc_1_WIDTH!
+05/01/13 10:25:52 2644: WARNING: INFO: Importing ddrv4-e.vhd now!
+05/01/13 10:25:56 2644: WARNING: File init.xls already exists! Contents will be changed
+05/01/13 10:25:56 2644: WARNING: Rotating 3 old sheets of IMP_HIER!
+05/01/21 09:17:47 2356: WARNING: WARNING: File init.xls does not exist!
+05/01/21 09:17:48 2356: WARNING: INFO: Importing inst_aa_e-e.vhd now!
+05/01/21 09:17:48 2356: WARNING: INFO: Not all lowercase in new conn element NO_DEFAULT!
+05/01/21 09:17:48 2356: WARNING: INFO: Not all lowercase in new conn element NO_NAME!
+05/01/21 09:17:48 2356: WARNING: INFO: Not all lowercase in new conn element WIDTH!
+05/01/21 09:17:48 2356: WARNING: Unusual character in signal name: /WIDTH!
+05/01/21 09:17:48 2356: WARNING: WARNING: mix_check_name called without appropriate name definition!
+05/01/21 09:17:48 2356: WARNING: INFO: Not all lowercase in new conn element s_mix_tc_1_WIDTH!
+05/01/21 09:17:48 2356: WARNING: Unusual character in signal name: /WIDTH/s_mix_tc_1_WIDTH!
+05/01/21 09:17:48 2356: WARNING: INFO: Importing ddrv4-e.vhd now!
+05/01/21 09:18:06 2356: WARNING: File init.xls already exists! Contents will be changed
+05/01/21 09:18:07 2356: WARNING: Rotating 3 old sheets of IMP_HIER!
+05/01/27 08:51:05 1760: WARNING: WARNING: File init.xls does not exist!
+05/01/27 08:51:06 1760: WARNING: INFO: Importing inst_aa_e-e.vhd now!
+05/01/27 08:51:06 1760: WARNING: INFO: Not all lowercase in new conn element NO_DEFAULT!
+05/01/27 08:51:06 1760: WARNING: INFO: Not all lowercase in new conn element NO_NAME!
+05/01/27 08:51:06 1760: WARNING: INFO: Not all lowercase in new conn element WIDTH!
+05/01/27 08:51:06 1760: WARNING: Unusual character in signal name: /WIDTH!
+05/01/27 08:51:06 1760: WARNING: WARNING: mix_check_name called without appropriate name definition!
+05/01/27 08:51:06 1760: WARNING: INFO: Not all lowercase in new conn element s_mix_tc_1_WIDTH!
+05/01/27 08:51:06 1760: WARNING: Unusual character in signal name: /WIDTH/s_mix_tc_1_WIDTH!
+05/01/27 08:51:07 1760: WARNING: INFO: Importing ddrv4-e.vhd now!
+05/01/27 08:51:10 1760: WARNING: File init.xls already exists! Contents will be changed
+05/01/27 08:51:10 1760: WARNING: Rotating 3 old sheets of IMP_HIER!
+05/01/31 15:55:48 3924: WARNING: WARNING: File init.xls does not exist!
+05/01/31 15:55:48 3924: WARNING: INFO: Importing inst_aa_e-e.vhd now!
+05/01/31 15:55:48 3924: WARNING: INFO: Not all lowercase in new conn element NO_DEFAULT!
+05/01/31 15:55:48 3924: WARNING: INFO: Not all lowercase in new conn element NO_NAME!
+05/01/31 15:55:48 3924: WARNING: INFO: Not all lowercase in new conn element WIDTH!
+05/01/31 15:55:48 3924: WARNING: Unusual character in signal name: /WIDTH!
+05/01/31 15:55:48 3924: WARNING: WARNING: mix_check_name called without appropriate name definition!
+05/01/31 15:55:48 3924: WARNING: INFO: Not all lowercase in new conn element s_mix_tc_1_WIDTH!
+05/01/31 15:55:48 3924: WARNING: Unusual character in signal name: /WIDTH/s_mix_tc_1_WIDTH!
+05/01/31 15:55:48 3924: WARNING: INFO: Importing ddrv4-e.vhd now!
+05/01/31 15:55:52 3924: WARNING: File init.xls already exists! Contents will be changed
+05/01/31 15:55:53 3924: WARNING: Rotating 3 old sheets of IMP_HIER!
+05/02/02 11:00:58 3676: WARNING: WARNING: File init.xls does not exist!
+05/02/02 11:00:58 3676: WARNING: INFO: Importing inst_aa_e-e.vhd now!
+05/02/02 11:00:59 3676: WARNING: INFO: Not all lowercase in new conn element NO_DEFAULT!
+05/02/02 11:00:59 3676: WARNING: INFO: Not all lowercase in new conn element NO_NAME!
+05/02/02 11:00:59 3676: WARNING: INFO: Not all lowercase in new conn element WIDTH!
+05/02/02 11:00:59 3676: WARNING: Unusual character in signal name: /WIDTH!
+05/02/02 11:00:59 3676: WARNING: WARNING: mix_check_name called without appropriate name definition!
+05/02/02 11:00:59 3676: WARNING: INFO: Not all lowercase in new conn element s_mix_tc_1_WIDTH!
+05/02/02 11:00:59 3676: WARNING: Unusual character in signal name: /WIDTH/s_mix_tc_1_WIDTH!
+05/02/02 11:00:59 3676: WARNING: INFO: Importing ddrv4-e.vhd now!
+05/02/02 11:01:01 3676: WARNING: File init.xls already exists! Contents will be changed
+05/02/02 11:01:01 3676: WARNING: Rotating 3 old sheets of IMP_HIER!
+05/02/10 18:58:29 2692: WARNING: WARNING: File init.xls does not exist!
+05/02/10 18:58:29 2692: WARNING: INFO: Importing inst_aa_e-e.vhd now!
+05/02/10 18:58:29 2692: WARNING: INFO: Not all lowercase in new conn element NO_DEFAULT!
+05/02/10 18:58:29 2692: WARNING: INFO: Not all lowercase in new conn element NO_NAME!
+05/02/10 18:58:29 2692: WARNING: INFO: Not all lowercase in new conn element WIDTH!
+05/02/10 18:58:29 2692: WARNING: Unusual character in signal name: /WIDTH!
+05/02/10 18:58:29 2692: WARNING: WARNING: mix_check_name called without appropriate name definition!
+05/02/10 18:58:29 2692: WARNING: INFO: Not all lowercase in new conn element s_mix_tc_1_WIDTH!
+05/02/10 18:58:29 2692: WARNING: Unusual character in signal name: /WIDTH/s_mix_tc_1_WIDTH!
+05/02/10 18:58:29 2692: WARNING: INFO: Importing ddrv4-e.vhd now!
+05/02/10 18:58:33 2692: WARNING: File init.xls already exists! Contents will be changed
+05/02/10 18:58:33 2692: WARNING: Rotating 3 old sheets of IMP_HIER!
