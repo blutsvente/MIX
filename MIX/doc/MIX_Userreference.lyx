@@ -56,7 +56,7 @@ MIX - Micronas Interconnect Spec expander
 
 Author: Wilfried Gänsheimer
 \newline 
-$Date: 2005/05/11 11:37:56 $
+$Date: 2005/07/12 07:06:14 $
 \newline 
 Version: $Id: MIX_Userreference.lyx,v 1.6 2005/01/26 14:01:59 wig Exp 
 \layout Section
@@ -1936,7 +1936,7 @@ hspace*{18mm}
 See the ::use details below.
 \layout Subsubsection
 
-::use Add Project Specific Libraries
+::use: Add Project Specific Libraries
 \layout Standard
 
 The optional "
@@ -2169,6 +2169,72 @@ t/sigport/use/*.vhd
 Configuration parameter: 
 \family typewriter 
 output.generate.use = enty
+\layout Subsubsection
+
+::udc: Adding user defined code
+\layout Standard
+
+Since the release from July 2005, the MIX template provides several new
+ hooks to add code into the header, body or footer of the created HDL files.
+ The globally available macros %VHDL_HOOK_
+\shape italic 
+MODE_LOCATION
+\shape default 
+% and %VERILOG_HOOK_BODY% can be set to an arbitrary string.
+ They will be overloaded by the instance specific ::udc text, if that is
+ defined in the HIER sheet.
+ The 
+\emph on 
+::udc
+\emph default 
+ cell contents will be split into several parts by markers like 
+\emph on 
+/%LOCATION%/
+\emph default 
+, by default the 
+\emph on 
+%BODY%
+\emph default 
+ tag will be used.
+ 
+\emph on 
+LOCATION
+\emph default 
+ can be one of 
+\emph on 
+HEAD, BODY
+\emph default 
+ or 
+\emph on 
+FOOT
+\emph default 
+, in case of VDHL architecure also 
+\emph on 
+DECL
+\emph default 
+.
+ Currently the ::udc text will be evaluated for the 
+\emph on 
+MODE
+\emph default 
+ arch, only.
+ Hooks are available for
+\emph on 
+ MODE
+\emph default 
+ 
+\emph on 
+arch
+\emph default 
+, 
+\emph on 
+enty
+\emph default 
+ and 
+\emph on 
+conf
+\emph default 
+, though.
 \layout Subsection
 
 Special HIER sheet properties
@@ -2421,7 +2487,7 @@ Special signal names:
  open
 \layout Standard
 
-Used the 
+Use the 
 \family typewriter 
 %OPEN%
 \family default 
@@ -3019,7 +3085,7 @@ key
 
 \layout Standard
 
-meaning
+description
 \end_inset 
 </cell>
 </row>
@@ -3219,6 +3285,9 @@ sort alphabetical by using the values defined in the
 
 \end_inset 
 
+
+\layout Standard
+\noindent 
 The sort criteria are applied from left to right.
  Thus 
 \begin_inset Quotes eld
@@ -3231,8 +3300,118 @@ inout,input
  will seperate in/inout/out ports and print them in the order of apperal
  or generation.
 \layout Standard
-
+\noindent 
 Caveat: ::COL is experimental!
+\layout Subsubsection
+
+check.signal: Controlling open port handling and misc.
+ signal checks
+\layout Standard
+
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="5" columns="2">
+<features>
+<column alignment="center" valignment="top" leftline="true" width="0.9in">
+<column alignment="block" valignment="top" leftline="true" rightline="true" width="4in">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+key
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+description
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+load
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+run the signal load check and report all signals without an appropriate
+ load
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+driver
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+run the signal driver check and report all signals with missing or multipledrive
+rs
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+check
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+used internally
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+top_open
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+automatically connect to open, if the signal is not used in it's top level
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+By default all the keys are set.
+ Specify a comma seperated list to modify this.
 \layout Section
 
 CONN sheet macros
