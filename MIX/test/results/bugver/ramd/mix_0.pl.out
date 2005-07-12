@@ -1,0 +1,2350 @@
+04/08/04 13:28:10 1368: Reading worksheet CONN_DevIO of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/04 13:28:10 1368: Reading worksheet CONN_2 of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/04 13:28:16 1368: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/04 13:28:27 1368: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+04/08/04 13:28:27 1368: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+04/08/04 13:28:27 1368: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/04 13:28:27 1368: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/04 13:28:30 1368: WARNING: Cannot locate a worksheet CONN in H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/04 13:28:30 1368: WARNING: ERROR: reading input for delta mode!
+04/08/04 13:28:30 1368: WARNING: Cannot locate a worksheet HIER in H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/04 13:28:30 1368: WARNING: ERROR: reading input for delta mode!
+04/08/04 13:28:30 1368: Info: unchanged file adc-e.vhd
+04/08/04 13:28:31 1368: Info: unchanged file bsr-e.vhd
+04/08/04 13:28:31 1368: Info: unchanged file clkgen-e.vhd
+04/08/04 13:28:31 1368: Info: unchanged file dac-e.vhd
+04/08/04 13:28:31 1368: Info: unchanged file padframe-e.vhd
+04/08/04 13:28:31 1368: Info: unchanged file tap_con-e.vhd
+04/08/04 13:28:32 1368: Info: unchanged file vgca-e.vhd
+04/08/04 13:28:32 1368: Info: unchanged file vgca_cpu-e.vhd
+04/08/04 13:28:32 1368: Info: unchanged file vgca_di-e.vhd
+04/08/04 13:28:32 1368: Info: unchanged file vgca_dp-e.vhd
+04/08/04 13:28:32 1368: Info: unchanged file vgca_fe-e.vhd
+04/08/04 13:28:32 1368: Info: unchanged file vgca_mm-e.vhd
+04/08/04 13:28:32 1368: Info: unchanged file vgca_rc-e.vhd
+04/08/04 13:28:33 1368: Info: unchanged file vgca_tb-e.vhd
+04/08/04 13:28:33 1368: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+04/08/04 13:28:33 1368: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+04/08/04 13:28:33 1368: Warning: Signal ramd_i does not have a driver in instance dut!
+04/08/04 13:28:33 1368: Signal ramd_o2 does not have a load in instance dut!
+04/08/04 13:28:33 1368: Warning: Signal ramd_i2 does not have a driver in instance dut!
+04/08/04 13:28:33 1368: Signal ramd_o does not have a load in instance dut!
+04/08/04 13:28:33 1368: Leave unloaded port ramd_o open at instance dut
+04/08/04 13:28:33 1368: Leave unloaded port ramd_o2 open at instance dut
+04/08/04 13:28:33 1368: WARNING: Info: file vgca-struct-a.vhd has changes!
+04/08/04 13:28:33 1368: Info: unchanged file adc-struct-a.vhd
+04/08/04 13:28:33 1368: Info: unchanged file bsr-struct-a.vhd
+04/08/04 13:28:34 1368: Info: unchanged file clkgen-struct-a.vhd
+04/08/04 13:28:34 1368: Info: unchanged file dac-struct-a.vhd
+04/08/04 13:28:34 1368: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+04/08/04 13:28:34 1368: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+04/08/04 13:28:34 1368: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+04/08/04 13:28:34 1368: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+04/08/04 13:28:34 1368: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/04 13:28:34 1368: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/04 13:28:35 1368: Signal %OPEN% does not have a load in instance i_padframe!
+04/08/04 13:28:35 1368: Info: unchanged file padframe-struct-a.vhd
+04/08/04 13:28:35 1368: Info: unchanged file tap_con-struct-a.vhd
+04/08/04 13:28:35 1368: Info: unchanged file vgca_cpu-struct-a.vhd
+04/08/04 13:28:35 1368: Info: unchanged file vgca_di-struct-a.vhd
+04/08/04 13:28:35 1368: Info: unchanged file vgca_dp-struct-a.vhd
+04/08/04 13:28:36 1368: Info: unchanged file vgca_fe-struct-a.vhd
+04/08/04 13:28:36 1368: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+04/08/04 13:28:36 1368: Signal mm_ramd does not have a load in instance i_vgca_mm!
+04/08/04 13:28:36 1368: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+04/08/04 13:28:36 1368: Info: unchanged file vgca_mm-struct-a.vhd
+04/08/04 13:28:36 1368: Info: unchanged file vgca_rc-struct-a.vhd
+04/08/04 13:28:36 1368: Info: unchanged file vgca_tb-struct-a.vhd
+04/08/04 13:28:36 1368: Info: unchanged file vgca-struct-conf-c.vhd
+04/08/04 13:28:37 1368: Info: unchanged file adc-struct-conf-c.vhd
+04/08/04 13:28:37 1368: Info: unchanged file bsr-struct-conf-c.vhd
+04/08/04 13:28:37 1368: Info: unchanged file clkgen-struct-conf-c.vhd
+04/08/04 13:28:37 1368: Info: unchanged file dac-struct-conf-c.vhd
+04/08/04 13:28:37 1368: Info: unchanged file padframe-struct-conf-c.vhd
+04/08/04 13:28:37 1368: Info: unchanged file tap_con-struct-conf-c.vhd
+04/08/04 13:28:38 1368: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+04/08/04 13:28:38 1368: Info: unchanged file vgca_di-struct-conf-c.vhd
+04/08/04 13:28:38 1368: Info: unchanged file vgca_dp-struct-conf-c.vhd
+04/08/04 13:28:38 1368: Info: unchanged file vgca_fe-struct-conf-c.vhd
+04/08/04 13:28:38 1368: Info: unchanged file vgca_mm-struct-conf-c.vhd
+04/08/04 13:28:38 1368: Info: unchanged file vgca_rc-struct-conf-c.vhd
+04/08/04 13:28:38 1368: Info: unchanged file vgca_tb-struct-conf-c.vhd
+04/08/04 13:28:39 1368: WARNING: ============= SUMMARY =================
+04/08/04 13:28:39 1368: WARNING: SUM: Summary of checks and created items:
+04/08/04 13:28:39 1368: WARNING: SUM: checkforce 0
+04/08/04 13:28:39 1368: WARNING: SUM: checkunique 0
+04/08/04 13:28:39 1368: WARNING: SUM: checkwarn 0
+04/08/04 13:28:39 1368: WARNING: SUM: cmacros 0
+04/08/04 13:28:39 1368: WARNING: SUM: conn 10
+04/08/04 13:28:39 1368: WARNING: SUM: errors 2
+04/08/04 13:28:39 1368: WARNING: SUM: genport 0
+04/08/04 13:28:39 1368: WARNING: SUM: hdlfiles 42
+04/08/04 13:28:39 1368: WARNING: SUM: inst 41
+04/08/04 13:28:39 1368: WARNING: SUM: multdriver 6
+04/08/04 13:28:39 1368: WARNING: SUM: nodriver 4
+04/08/04 13:28:39 1368: WARNING: SUM: noload 6
+04/08/04 13:28:39 1368: WARNING: SUM: openports 2
+04/08/04 13:28:39 1368: WARNING: SUM: warnings 10
+04/08/04 13:28:40 1368: WARNING: SUM: === Number of parsed input tables: ===
+04/08/04 13:28:40 1368: WARNING: SUM: conf 0
+04/08/04 13:28:40 1368: WARNING: SUM: hier 1
+04/08/04 13:28:40 1368: WARNING: SUM: conn 2
+04/08/04 13:28:40 1368: WARNING: SUM: io 0
+04/08/04 13:28:41 1368: WARNING: SUM: i2c 0
+04/08/04 13:28:41 1368: WARNING: SUM: Number of changes in intermediate: -1
+04/08/04 13:28:41 1368: WARNING: SUM: Number of changed files: 1
+04/08/04 15:19:38 1744: Reading worksheet CONN_DevIO of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/04 15:19:38 1744: Reading worksheet CONN_2 of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/04 15:19:44 1744: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/04 15:19:55 1744: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+04/08/04 15:19:55 1744: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+04/08/04 15:19:55 1744: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/04 15:19:55 1744: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/04 15:19:56 1744: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+04/08/04 15:19:56 1744: WARNING: Rotating 3 old sheets of CONF!
+04/08/04 15:19:59 1744: WARNING: Cannot locate a worksheet CONN in H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/04 15:19:59 1744: WARNING: ERROR: reading input for delta mode!
+04/08/04 15:20:00 1744: WARNING: Cannot locate a worksheet HIER in H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/04 15:20:00 1744: WARNING: ERROR: reading input for delta mode!
+04/08/04 15:20:00 1744: Info: unchanged file adc-e.vhd
+04/08/04 15:20:00 1744: Info: unchanged file bsr-e.vhd
+04/08/04 15:20:00 1744: Info: unchanged file clkgen-e.vhd
+04/08/04 15:20:01 1744: Info: unchanged file dac-e.vhd
+04/08/04 15:20:01 1744: Info: unchanged file padframe-e.vhd
+04/08/04 15:20:01 1744: Info: unchanged file tap_con-e.vhd
+04/08/04 15:20:01 1744: Info: unchanged file vgca-e.vhd
+04/08/04 15:20:02 1744: Info: unchanged file vgca_cpu-e.vhd
+04/08/04 15:20:02 1744: Info: unchanged file vgca_di-e.vhd
+04/08/04 15:20:02 1744: Info: unchanged file vgca_dp-e.vhd
+04/08/04 15:20:02 1744: Info: unchanged file vgca_fe-e.vhd
+04/08/04 15:20:03 1744: Info: unchanged file vgca_mm-e.vhd
+04/08/04 15:20:03 1744: Info: unchanged file vgca_rc-e.vhd
+04/08/04 15:20:03 1744: Info: unchanged file vgca_tb-e.vhd
+04/08/04 15:20:03 1744: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+04/08/04 15:20:03 1744: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+04/08/04 15:20:03 1744: Warning: Signal ramd_i does not have a driver in instance dut!
+04/08/04 15:20:03 1744: Signal ramd_o2 does not have a load in instance dut!
+04/08/04 15:20:03 1744: Warning: Signal ramd_i2 does not have a driver in instance dut!
+04/08/04 15:20:03 1744: Signal ramd_o does not have a load in instance dut!
+04/08/04 15:20:03 1744: Leave unloaded port ramd_o open at instance dut
+04/08/04 15:20:03 1744: Leave unloaded port ramd_o2 open at instance dut
+04/08/04 15:20:04 1744: WARNING: Info: file vgca-struct-a.vhd has changes!
+04/08/04 15:20:04 1744: Info: unchanged file adc-struct-a.vhd
+04/08/04 15:20:04 1744: Info: unchanged file bsr-struct-a.vhd
+04/08/04 15:20:04 1744: Info: unchanged file clkgen-struct-a.vhd
+04/08/04 15:20:04 1744: Info: unchanged file dac-struct-a.vhd
+04/08/04 15:20:04 1744: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+04/08/04 15:20:04 1744: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+04/08/04 15:20:05 1744: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+04/08/04 15:20:05 1744: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+04/08/04 15:20:05 1744: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/04 15:20:05 1744: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/04 15:20:05 1744: Signal %OPEN% does not have a load in instance i_padframe!
+04/08/04 15:20:05 1744: Info: unchanged file padframe-struct-a.vhd
+04/08/04 15:20:05 1744: Info: unchanged file tap_con-struct-a.vhd
+04/08/04 15:20:05 1744: Info: unchanged file vgca_cpu-struct-a.vhd
+04/08/04 15:20:06 1744: Info: unchanged file vgca_di-struct-a.vhd
+04/08/04 15:20:06 1744: Info: unchanged file vgca_dp-struct-a.vhd
+04/08/04 15:20:06 1744: Info: unchanged file vgca_fe-struct-a.vhd
+04/08/04 15:20:06 1744: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+04/08/04 15:20:06 1744: Signal mm_ramd does not have a load in instance i_vgca_mm!
+04/08/04 15:20:06 1744: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+04/08/04 15:20:06 1744: Info: unchanged file vgca_mm-struct-a.vhd
+04/08/04 15:20:06 1744: Info: unchanged file vgca_rc-struct-a.vhd
+04/08/04 15:20:06 1744: Info: unchanged file vgca_tb-struct-a.vhd
+04/08/04 15:20:07 1744: Info: unchanged file vgca-struct-conf-c.vhd
+04/08/04 15:20:07 1744: Info: unchanged file adc-struct-conf-c.vhd
+04/08/04 15:20:07 1744: Info: unchanged file bsr-struct-conf-c.vhd
+04/08/04 15:20:07 1744: Info: unchanged file clkgen-struct-conf-c.vhd
+04/08/04 15:20:07 1744: Info: unchanged file dac-struct-conf-c.vhd
+04/08/04 15:20:07 1744: Info: unchanged file padframe-struct-conf-c.vhd
+04/08/04 15:20:08 1744: Info: unchanged file tap_con-struct-conf-c.vhd
+04/08/04 15:20:08 1744: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+04/08/04 15:20:08 1744: Info: unchanged file vgca_di-struct-conf-c.vhd
+04/08/04 15:20:08 1744: Info: unchanged file vgca_dp-struct-conf-c.vhd
+04/08/04 15:20:08 1744: Info: unchanged file vgca_fe-struct-conf-c.vhd
+04/08/04 15:20:08 1744: Info: unchanged file vgca_mm-struct-conf-c.vhd
+04/08/04 15:20:09 1744: Info: unchanged file vgca_rc-struct-conf-c.vhd
+04/08/04 15:20:09 1744: Info: unchanged file vgca_tb-struct-conf-c.vhd
+04/08/04 15:20:09 1744: WARNING: ============= SUMMARY =================
+04/08/04 15:20:09 1744: WARNING: SUM: Summary of checks and created items:
+04/08/04 15:20:09 1744: WARNING: SUM: checkforce 0
+04/08/04 15:20:09 1744: WARNING: SUM: checkunique 0
+04/08/04 15:20:09 1744: WARNING: SUM: checkwarn 0
+04/08/04 15:20:09 1744: WARNING: SUM: cmacros 0
+04/08/04 15:20:09 1744: WARNING: SUM: conn 10
+04/08/04 15:20:09 1744: WARNING: SUM: errors 2
+04/08/04 15:20:09 1744: WARNING: SUM: genport 0
+04/08/04 15:20:09 1744: WARNING: SUM: hdlfiles 42
+04/08/04 15:20:09 1744: WARNING: SUM: inst 41
+04/08/04 15:20:09 1744: WARNING: SUM: multdriver 6
+04/08/04 15:20:09 1744: WARNING: SUM: nodriver 4
+04/08/04 15:20:10 1744: WARNING: SUM: noload 6
+04/08/04 15:20:10 1744: WARNING: SUM: openports 2
+04/08/04 15:20:10 1744: WARNING: SUM: warnings 10
+04/08/04 15:20:10 1744: WARNING: SUM: === Number of parsed input tables: ===
+04/08/04 15:20:10 1744: WARNING: SUM: conf 0
+04/08/04 15:20:10 1744: WARNING: SUM: hier 1
+04/08/04 15:20:10 1744: WARNING: SUM: conn 2
+04/08/04 15:20:10 1744: WARNING: SUM: io 0
+04/08/04 15:20:10 1744: WARNING: SUM: i2c 0
+04/08/04 15:20:10 1744: WARNING: SUM: Number of changes in intermediate: -1
+04/08/04 15:20:10 1744: WARNING: SUM: Number of changed files: 1
+04/08/04 16:14:41 2264: Reading worksheet CONN_DevIO of /cygdrive/h/work/mix_new/mix/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/04 16:14:41 2264: Reading worksheet CONN_2 of /cygdrive/h/work/mix_new/mix/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/04 16:14:45 2264: Reading worksheet HIER of /cygdrive/h/work/mix_new/mix/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/04 16:14:54 2264: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+04/08/04 16:14:54 2264: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+04/08/04 16:14:54 2264: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/04 16:14:54 2264: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/04 16:14:55 2264: WARNING: Cannot locate a worksheet CONN in /cygdrive/h/work/mix_new/mix/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/04 16:14:55 2264: WARNING: ERROR: reading input for delta mode!
+04/08/04 16:14:56 2264: WARNING: Cannot locate a worksheet HIER in /cygdrive/h/work/mix_new/mix/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/04 16:14:56 2264: WARNING: ERROR: reading input for delta mode!
+04/08/04 16:14:56 2264: Info: unchanged file adc-e.vhd
+04/08/04 16:14:57 2264: Info: unchanged file bsr-e.vhd
+04/08/04 16:14:57 2264: Info: unchanged file clkgen-e.vhd
+04/08/04 16:14:57 2264: Info: unchanged file dac-e.vhd
+04/08/04 16:14:57 2264: Info: unchanged file padframe-e.vhd
+04/08/04 16:14:58 2264: Info: unchanged file tap_con-e.vhd
+04/08/04 16:14:58 2264: Info: unchanged file vgca-e.vhd
+04/08/04 16:14:58 2264: Info: unchanged file vgca_cpu-e.vhd
+04/08/04 16:14:58 2264: Info: unchanged file vgca_di-e.vhd
+04/08/04 16:14:58 2264: Info: unchanged file vgca_dp-e.vhd
+04/08/04 16:14:58 2264: Info: unchanged file vgca_fe-e.vhd
+04/08/04 16:14:58 2264: Info: unchanged file vgca_mm-e.vhd
+04/08/04 16:14:59 2264: Info: unchanged file vgca_rc-e.vhd
+04/08/04 16:14:59 2264: Info: unchanged file vgca_tb-e.vhd
+04/08/04 16:14:59 2264: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+04/08/04 16:14:59 2264: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+04/08/04 16:14:59 2264: Signal ramd_o does not have a load in instance dut!
+04/08/04 16:14:59 2264: Warning: Signal ramd_i does not have a driver in instance dut!
+04/08/04 16:14:59 2264: Signal ramd_o2 does not have a load in instance dut!
+04/08/04 16:14:59 2264: Warning: Signal ramd_i2 does not have a driver in instance dut!
+04/08/04 16:14:59 2264: Leave unloaded port ramd_o open at instance dut
+04/08/04 16:14:59 2264: Leave unloaded port ramd_o2 open at instance dut
+04/08/04 16:14:59 2264: WARNING: Info: file vgca-struct-a.vhd has changes!
+04/08/04 16:15:00 2264: Info: unchanged file adc-struct-a.vhd
+04/08/04 16:15:00 2264: Info: unchanged file bsr-struct-a.vhd
+04/08/04 16:15:00 2264: Info: unchanged file clkgen-struct-a.vhd
+04/08/04 16:15:00 2264: Info: unchanged file dac-struct-a.vhd
+04/08/04 16:15:00 2264: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+04/08/04 16:15:00 2264: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+04/08/04 16:15:01 2264: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+04/08/04 16:15:01 2264: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+04/08/04 16:15:01 2264: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/04 16:15:01 2264: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/04 16:15:01 2264: Signal %OPEN% does not have a load in instance i_padframe!
+04/08/04 16:15:01 2264: Info: unchanged file padframe-struct-a.vhd
+04/08/04 16:15:01 2264: Info: unchanged file tap_con-struct-a.vhd
+04/08/04 16:15:02 2264: Info: unchanged file vgca_cpu-struct-a.vhd
+04/08/04 16:15:02 2264: Info: unchanged file vgca_di-struct-a.vhd
+04/08/04 16:15:02 2264: Info: unchanged file vgca_dp-struct-a.vhd
+04/08/04 16:15:02 2264: Info: unchanged file vgca_fe-struct-a.vhd
+04/08/04 16:15:02 2264: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+04/08/04 16:15:02 2264: Signal mm_ramd does not have a load in instance i_vgca_mm!
+04/08/04 16:15:02 2264: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+04/08/04 16:15:02 2264: Info: unchanged file vgca_mm-struct-a.vhd
+04/08/04 16:15:03 2264: Info: unchanged file vgca_rc-struct-a.vhd
+04/08/04 16:15:03 2264: Info: unchanged file vgca_tb-struct-a.vhd
+04/08/04 16:15:03 2264: Info: unchanged file vgca-struct-conf-c.vhd
+04/08/04 16:15:03 2264: Info: unchanged file adc-struct-conf-c.vhd
+04/08/04 16:15:03 2264: Info: unchanged file bsr-struct-conf-c.vhd
+04/08/04 16:15:04 2264: Info: unchanged file clkgen-struct-conf-c.vhd
+04/08/04 16:15:04 2264: Info: unchanged file dac-struct-conf-c.vhd
+04/08/04 16:15:04 2264: Info: unchanged file padframe-struct-conf-c.vhd
+04/08/04 16:15:04 2264: Info: unchanged file tap_con-struct-conf-c.vhd
+04/08/04 16:15:04 2264: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+04/08/04 16:15:05 2264: Info: unchanged file vgca_di-struct-conf-c.vhd
+04/08/04 16:15:05 2264: Info: unchanged file vgca_dp-struct-conf-c.vhd
+04/08/04 16:15:05 2264: Info: unchanged file vgca_fe-struct-conf-c.vhd
+04/08/04 16:15:05 2264: Info: unchanged file vgca_mm-struct-conf-c.vhd
+04/08/04 16:15:05 2264: Info: unchanged file vgca_rc-struct-conf-c.vhd
+04/08/04 16:15:05 2264: Info: unchanged file vgca_tb-struct-conf-c.vhd
+04/08/04 16:15:06 2264: WARNING: ============= SUMMARY =================
+04/08/04 16:15:06 2264: WARNING: SUM: Summary of checks and created items:
+04/08/04 16:15:06 2264: WARNING: SUM: checkforce 0
+04/08/04 16:15:06 2264: WARNING: SUM: checkunique 0
+04/08/04 16:15:06 2264: WARNING: SUM: checkwarn 0
+04/08/04 16:15:06 2264: WARNING: SUM: cmacros 0
+04/08/04 16:15:06 2264: WARNING: SUM: conn 10
+04/08/04 16:15:06 2264: WARNING: SUM: errors 2
+04/08/04 16:15:06 2264: WARNING: SUM: genport 0
+04/08/04 16:15:06 2264: WARNING: SUM: hdlfiles 42
+04/08/04 16:15:06 2264: WARNING: SUM: inst 41
+04/08/04 16:15:06 2264: WARNING: SUM: multdriver 6
+04/08/04 16:15:06 2264: WARNING: SUM: nodriver 4
+04/08/04 16:15:06 2264: WARNING: SUM: noload 6
+04/08/04 16:15:06 2264: WARNING: SUM: openports 2
+04/08/04 16:15:06 2264: WARNING: SUM: warnings 10
+04/08/04 16:15:06 2264: WARNING: SUM: === Number of parsed input tables: ===
+04/08/04 16:15:07 2264: WARNING: SUM: conf 0
+04/08/04 16:15:07 2264: WARNING: SUM: hier 1
+04/08/04 16:15:07 2264: WARNING: SUM: conn 2
+04/08/04 16:15:07 2264: WARNING: SUM: io 0
+04/08/04 16:15:07 2264: WARNING: SUM: i2c 0
+04/08/04 16:15:07 2264: WARNING: SUM: Number of changes in intermediate: -1
+04/08/04 16:15:07 2264: WARNING: SUM: Number of changed files: 1
+04/08/05 20:38:03 1264: Reading worksheet CONN_DevIO of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/05 20:38:03 1264: Reading worksheet CONN_2 of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/05 20:38:09 1264: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/05 20:38:21 1264: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+04/08/05 20:38:21 1264: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+04/08/05 20:38:21 1264: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/05 20:38:21 1264: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/05 20:38:22 1264: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+04/08/05 20:38:23 1264: WARNING: Rotating 3 old sheets of CONF!
+04/08/05 20:38:26 1264: WARNING: Cannot locate a worksheet CONN in H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/05 20:38:26 1264: WARNING: ERROR: reading input for delta mode!
+04/08/05 20:38:27 1264: WARNING: Cannot locate a worksheet HIER in H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/05 20:38:27 1264: WARNING: ERROR: reading input for delta mode!
+04/08/05 20:38:27 1264: Info: unchanged file adc-e.vhd
+04/08/05 20:38:27 1264: Info: unchanged file bsr-e.vhd
+04/08/05 20:38:28 1264: Info: unchanged file clkgen-e.vhd
+04/08/05 20:38:28 1264: Info: unchanged file dac-e.vhd
+04/08/05 20:38:28 1264: Info: unchanged file padframe-e.vhd
+04/08/05 20:38:29 1264: Info: unchanged file tap_con-e.vhd
+04/08/05 20:38:29 1264: Info: unchanged file vgca-e.vhd
+04/08/05 20:38:29 1264: Info: unchanged file vgca_cpu-e.vhd
+04/08/05 20:38:29 1264: Info: unchanged file vgca_di-e.vhd
+04/08/05 20:38:30 1264: Info: unchanged file vgca_dp-e.vhd
+04/08/05 20:38:30 1264: Info: unchanged file vgca_fe-e.vhd
+04/08/05 20:38:30 1264: Info: unchanged file vgca_mm-e.vhd
+04/08/05 20:38:30 1264: Info: unchanged file vgca_rc-e.vhd
+04/08/05 20:38:30 1264: Info: unchanged file vgca_tb-e.vhd
+04/08/05 20:38:30 1264: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+04/08/05 20:38:30 1264: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+04/08/05 20:38:30 1264: Warning: Signal ramd_i does not have a driver in instance dut!
+04/08/05 20:38:30 1264: Signal ramd_o2 does not have a load in instance dut!
+04/08/05 20:38:31 1264: Warning: Signal ramd_i2 does not have a driver in instance dut!
+04/08/05 20:38:31 1264: Signal ramd_o does not have a load in instance dut!
+04/08/05 20:38:31 1264: Leave unloaded port ramd_o open at instance dut
+04/08/05 20:38:31 1264: Leave unloaded port ramd_o2 open at instance dut
+04/08/05 20:38:31 1264: WARNING: Info: file vgca-struct-a.vhd has changes!
+04/08/05 20:38:31 1264: Info: unchanged file adc-struct-a.vhd
+04/08/05 20:38:31 1264: Info: unchanged file bsr-struct-a.vhd
+04/08/05 20:38:31 1264: Info: unchanged file clkgen-struct-a.vhd
+04/08/05 20:38:31 1264: Info: unchanged file dac-struct-a.vhd
+04/08/05 20:38:31 1264: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+04/08/05 20:38:31 1264: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+04/08/05 20:38:31 1264: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+04/08/05 20:38:31 1264: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+04/08/05 20:38:31 1264: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/05 20:38:31 1264: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/05 20:38:31 1264: Signal %OPEN% does not have a load in instance i_padframe!
+04/08/05 20:38:32 1264: Info: unchanged file padframe-struct-a.vhd
+04/08/05 20:38:32 1264: Info: unchanged file tap_con-struct-a.vhd
+04/08/05 20:38:32 1264: Info: unchanged file vgca_cpu-struct-a.vhd
+04/08/05 20:38:32 1264: Info: unchanged file vgca_di-struct-a.vhd
+04/08/05 20:38:32 1264: Info: unchanged file vgca_dp-struct-a.vhd
+04/08/05 20:38:33 1264: Info: unchanged file vgca_fe-struct-a.vhd
+04/08/05 20:38:33 1264: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+04/08/05 20:38:33 1264: Signal mm_ramd does not have a load in instance i_vgca_mm!
+04/08/05 20:38:33 1264: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+04/08/05 20:38:33 1264: Info: unchanged file vgca_mm-struct-a.vhd
+04/08/05 20:38:33 1264: Info: unchanged file vgca_rc-struct-a.vhd
+04/08/05 20:38:33 1264: Info: unchanged file vgca_tb-struct-a.vhd
+04/08/05 20:38:34 1264: Info: unchanged file vgca-struct-conf-c.vhd
+04/08/05 20:38:34 1264: Info: unchanged file adc-struct-conf-c.vhd
+04/08/05 20:38:34 1264: Info: unchanged file bsr-struct-conf-c.vhd
+04/08/05 20:38:34 1264: Info: unchanged file clkgen-struct-conf-c.vhd
+04/08/05 20:38:34 1264: Info: unchanged file dac-struct-conf-c.vhd
+04/08/05 20:38:34 1264: Info: unchanged file padframe-struct-conf-c.vhd
+04/08/05 20:38:35 1264: Info: unchanged file tap_con-struct-conf-c.vhd
+04/08/05 20:38:35 1264: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+04/08/05 20:38:35 1264: Info: unchanged file vgca_di-struct-conf-c.vhd
+04/08/05 20:38:35 1264: Info: unchanged file vgca_dp-struct-conf-c.vhd
+04/08/05 20:38:35 1264: Info: unchanged file vgca_fe-struct-conf-c.vhd
+04/08/05 20:38:35 1264: Info: unchanged file vgca_mm-struct-conf-c.vhd
+04/08/05 20:38:36 1264: Info: unchanged file vgca_rc-struct-conf-c.vhd
+04/08/05 20:38:36 1264: Info: unchanged file vgca_tb-struct-conf-c.vhd
+04/08/05 20:38:36 1264: WARNING: ============= SUMMARY =================
+04/08/05 20:38:36 1264: WARNING: SUM: Summary of checks and created items:
+04/08/05 20:38:36 1264: WARNING: SUM: checkforce 0
+04/08/05 20:38:36 1264: WARNING: SUM: checkunique 0
+04/08/05 20:38:36 1264: WARNING: SUM: checkwarn 0
+04/08/05 20:38:36 1264: WARNING: SUM: cmacros 0
+04/08/05 20:38:36 1264: WARNING: SUM: conn 10
+04/08/05 20:38:36 1264: WARNING: SUM: errors 2
+04/08/05 20:38:36 1264: WARNING: SUM: genport 0
+04/08/05 20:38:36 1264: WARNING: SUM: hdlfiles 42
+04/08/05 20:38:36 1264: WARNING: SUM: inst 41
+04/08/05 20:38:36 1264: WARNING: SUM: multdriver 6
+04/08/05 20:38:36 1264: WARNING: SUM: nodriver 4
+04/08/05 20:38:36 1264: WARNING: SUM: noload 6
+04/08/05 20:38:36 1264: WARNING: SUM: openports 2
+04/08/05 20:38:36 1264: WARNING: SUM: warnings 10
+04/08/05 20:38:36 1264: WARNING: SUM: === Number of parsed input tables: ===
+04/08/05 20:38:36 1264: WARNING: SUM: conf 0
+04/08/05 20:38:36 1264: WARNING: SUM: hier 1
+04/08/05 20:38:36 1264: WARNING: SUM: conn 2
+04/08/05 20:38:36 1264: WARNING: SUM: io 0
+04/08/05 20:38:36 1264: WARNING: SUM: i2c 0
+04/08/05 20:38:36 1264: WARNING: SUM: Number of changes in intermediate: -1
+04/08/05 20:38:36 1264: WARNING: SUM: Number of changed files: 1
+04/08/09 11:12:41 516: Reading worksheet CONN_DevIO of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/09 11:12:41 516: Reading worksheet CONN_2 of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/09 11:12:47 516: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/09 11:12:59 516: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+04/08/09 11:12:59 516: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+04/08/09 11:12:59 516: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/09 11:12:59 516: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/09 11:12:59 516: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+04/08/09 11:13:00 516: WARNING: Rotating 3 old sheets of CONF!
+04/08/09 11:13:04 516: WARNING: Cannot locate a worksheet CONN in H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/09 11:13:04 516: WARNING: ERROR: reading input for delta mode!
+04/08/09 11:13:05 516: WARNING: Cannot locate a worksheet HIER in H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/09 11:13:05 516: WARNING: ERROR: reading input for delta mode!
+04/08/09 11:13:06 516: Info: unchanged file adc-e.vhd
+04/08/09 11:13:06 516: Info: unchanged file bsr-e.vhd
+04/08/09 11:13:06 516: Info: unchanged file clkgen-e.vhd
+04/08/09 11:13:06 516: Info: unchanged file dac-e.vhd
+04/08/09 11:13:06 516: Info: unchanged file padframe-e.vhd
+04/08/09 11:13:07 516: Info: unchanged file tap_con-e.vhd
+04/08/09 11:13:07 516: Info: unchanged file vgca-e.vhd
+04/08/09 11:13:07 516: Info: unchanged file vgca_cpu-e.vhd
+04/08/09 11:13:07 516: Info: unchanged file vgca_di-e.vhd
+04/08/09 11:13:08 516: Info: unchanged file vgca_dp-e.vhd
+04/08/09 11:13:08 516: Info: unchanged file vgca_fe-e.vhd
+04/08/09 11:13:08 516: Info: unchanged file vgca_mm-e.vhd
+04/08/09 11:13:08 516: Info: unchanged file vgca_rc-e.vhd
+04/08/09 11:13:08 516: Info: unchanged file vgca_tb-e.vhd
+04/08/09 11:13:08 516: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+04/08/09 11:13:08 516: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+04/08/09 11:13:08 516: Warning: Signal ramd_i does not have a driver in instance dut!
+04/08/09 11:13:08 516: Signal ramd_o2 does not have a load in instance dut!
+04/08/09 11:13:09 516: Warning: Signal ramd_i2 does not have a driver in instance dut!
+04/08/09 11:13:09 516: Signal ramd_o does not have a load in instance dut!
+04/08/09 11:13:09 516: Leave unloaded port ramd_o open at instance dut
+04/08/09 11:13:09 516: Leave unloaded port ramd_o2 open at instance dut
+04/08/09 11:13:09 516: WARNING: Info: file vgca-struct-a.vhd has changes!
+04/08/09 11:13:09 516: Info: unchanged file adc-struct-a.vhd
+04/08/09 11:13:09 516: Info: unchanged file bsr-struct-a.vhd
+04/08/09 11:13:10 516: Info: unchanged file clkgen-struct-a.vhd
+04/08/09 11:13:10 516: Info: unchanged file dac-struct-a.vhd
+04/08/09 11:13:10 516: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+04/08/09 11:13:10 516: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+04/08/09 11:13:10 516: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+04/08/09 11:13:10 516: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+04/08/09 11:13:10 516: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/09 11:13:10 516: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/09 11:13:10 516: Signal %OPEN% does not have a load in instance i_padframe!
+04/08/09 11:13:11 516: Info: unchanged file padframe-struct-a.vhd
+04/08/09 11:13:11 516: Info: unchanged file tap_con-struct-a.vhd
+04/08/09 11:13:11 516: Info: unchanged file vgca_cpu-struct-a.vhd
+04/08/09 11:13:11 516: Info: unchanged file vgca_di-struct-a.vhd
+04/08/09 11:13:11 516: Info: unchanged file vgca_dp-struct-a.vhd
+04/08/09 11:13:12 516: Info: unchanged file vgca_fe-struct-a.vhd
+04/08/09 11:13:12 516: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+04/08/09 11:13:12 516: Signal mm_ramd does not have a load in instance i_vgca_mm!
+04/08/09 11:13:12 516: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+04/08/09 11:13:12 516: Info: unchanged file vgca_mm-struct-a.vhd
+04/08/09 11:13:12 516: Info: unchanged file vgca_rc-struct-a.vhd
+04/08/09 11:13:12 516: Info: unchanged file vgca_tb-struct-a.vhd
+04/08/09 11:13:12 516: Info: unchanged file vgca-struct-conf-c.vhd
+04/08/09 11:13:12 516: Info: unchanged file adc-struct-conf-c.vhd
+04/08/09 11:13:13 516: Info: unchanged file bsr-struct-conf-c.vhd
+04/08/09 11:13:13 516: Info: unchanged file clkgen-struct-conf-c.vhd
+04/08/09 11:13:13 516: Info: unchanged file dac-struct-conf-c.vhd
+04/08/09 11:13:14 516: Info: unchanged file padframe-struct-conf-c.vhd
+04/08/09 11:13:14 516: Info: unchanged file tap_con-struct-conf-c.vhd
+04/08/09 11:13:14 516: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+04/08/09 11:13:14 516: Info: unchanged file vgca_di-struct-conf-c.vhd
+04/08/09 11:13:14 516: Info: unchanged file vgca_dp-struct-conf-c.vhd
+04/08/09 11:13:14 516: Info: unchanged file vgca_fe-struct-conf-c.vhd
+04/08/09 11:13:14 516: Info: unchanged file vgca_mm-struct-conf-c.vhd
+04/08/09 11:13:15 516: Info: unchanged file vgca_rc-struct-conf-c.vhd
+04/08/09 11:13:15 516: Info: unchanged file vgca_tb-struct-conf-c.vhd
+04/08/09 11:13:15 516: WARNING: ============= SUMMARY =================
+04/08/09 11:13:15 516: WARNING: SUM: Summary of checks and created items:
+04/08/09 11:13:15 516: WARNING: SUM: checkforce 0
+04/08/09 11:13:15 516: WARNING: SUM: checkunique 0
+04/08/09 11:13:15 516: WARNING: SUM: checkwarn 0
+04/08/09 11:13:15 516: WARNING: SUM: cmacros 0
+04/08/09 11:13:15 516: WARNING: SUM: conn 10
+04/08/09 11:13:15 516: WARNING: SUM: errors 2
+04/08/09 11:13:15 516: WARNING: SUM: genport 0
+04/08/09 11:13:15 516: WARNING: SUM: hdlfiles 42
+04/08/09 11:13:15 516: WARNING: SUM: inst 41
+04/08/09 11:13:15 516: WARNING: SUM: multdriver 6
+04/08/09 11:13:16 516: WARNING: SUM: nodriver 4
+04/08/09 11:13:16 516: WARNING: SUM: noload 6
+04/08/09 11:13:16 516: WARNING: SUM: openports 2
+04/08/09 11:13:16 516: WARNING: SUM: warnings 10
+04/08/09 11:13:16 516: WARNING: SUM: === Number of parsed input tables: ===
+04/08/09 11:13:16 516: WARNING: SUM: conf 0
+04/08/09 11:13:16 516: WARNING: SUM: hier 1
+04/08/09 11:13:16 516: WARNING: SUM: conn 2
+04/08/09 11:13:16 516: WARNING: SUM: io 0
+04/08/09 11:13:16 516: WARNING: SUM: i2c 0
+04/08/09 11:13:16 516: WARNING: SUM: Number of changes in intermediate: -1
+04/08/09 11:13:16 516: WARNING: SUM: Number of changed files: 1
+04/08/09 14:45:03 2440: Reading worksheet CONN_DevIO of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/09 14:45:03 2440: Reading worksheet CONN_2 of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/09 14:45:08 2440: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/09 14:45:20 2440: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+04/08/09 14:45:20 2440: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+04/08/09 14:45:20 2440: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/09 14:45:20 2440: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/09 14:45:23 2440: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+04/08/09 14:45:25 2440: WARNING: Rotating 3 old sheets of CONF!
+04/08/09 14:45:28 2440: WARNING: Cannot locate a worksheet CONN in H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/09 14:45:28 2440: WARNING: ERROR: reading input for delta mode!
+04/08/09 14:45:30 2440: WARNING: Cannot locate a worksheet HIER in H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/09 14:45:30 2440: WARNING: ERROR: reading input for delta mode!
+04/08/09 14:45:30 2440: Info: unchanged file adc-e.vhd
+04/08/09 14:45:30 2440: Info: unchanged file bsr-e.vhd
+04/08/09 14:45:30 2440: Info: unchanged file clkgen-e.vhd
+04/08/09 14:45:31 2440: Info: unchanged file dac-e.vhd
+04/08/09 14:45:31 2440: Info: unchanged file padframe-e.vhd
+04/08/09 14:45:31 2440: Info: unchanged file tap_con-e.vhd
+04/08/09 14:45:31 2440: Info: unchanged file vgca-e.vhd
+04/08/09 14:45:31 2440: Info: unchanged file vgca_cpu-e.vhd
+04/08/09 14:45:31 2440: Info: unchanged file vgca_di-e.vhd
+04/08/09 14:45:32 2440: Info: unchanged file vgca_dp-e.vhd
+04/08/09 14:45:32 2440: Info: unchanged file vgca_fe-e.vhd
+04/08/09 14:45:32 2440: Info: unchanged file vgca_mm-e.vhd
+04/08/09 14:45:32 2440: Info: unchanged file vgca_rc-e.vhd
+04/08/09 14:45:32 2440: Info: unchanged file vgca_tb-e.vhd
+04/08/09 14:45:32 2440: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+04/08/09 14:45:33 2440: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+04/08/09 14:45:33 2440: Warning: Signal ramd_i does not have a driver in instance dut!
+04/08/09 14:45:33 2440: Signal ramd_o2 does not have a load in instance dut!
+04/08/09 14:45:33 2440: Warning: Signal ramd_i2 does not have a driver in instance dut!
+04/08/09 14:45:33 2440: Signal ramd_o does not have a load in instance dut!
+04/08/09 14:45:33 2440: Leave unloaded port ramd_o open at instance dut
+04/08/09 14:45:33 2440: Leave unloaded port ramd_o2 open at instance dut
+04/08/09 14:45:33 2440: WARNING: Info: file vgca-struct-a.vhd has changes!
+04/08/09 14:45:33 2440: Info: unchanged file adc-struct-a.vhd
+04/08/09 14:45:33 2440: Info: unchanged file bsr-struct-a.vhd
+04/08/09 14:45:34 2440: Info: unchanged file clkgen-struct-a.vhd
+04/08/09 14:45:34 2440: Info: unchanged file dac-struct-a.vhd
+04/08/09 14:45:34 2440: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+04/08/09 14:45:34 2440: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+04/08/09 14:45:34 2440: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+04/08/09 14:45:34 2440: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+04/08/09 14:45:34 2440: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/09 14:45:34 2440: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/09 14:45:34 2440: Signal %OPEN% does not have a load in instance i_padframe!
+04/08/09 14:45:35 2440: Info: unchanged file padframe-struct-a.vhd
+04/08/09 14:45:35 2440: Info: unchanged file tap_con-struct-a.vhd
+04/08/09 14:45:35 2440: Info: unchanged file vgca_cpu-struct-a.vhd
+04/08/09 14:45:35 2440: Info: unchanged file vgca_di-struct-a.vhd
+04/08/09 14:45:35 2440: Info: unchanged file vgca_dp-struct-a.vhd
+04/08/09 14:45:35 2440: Info: unchanged file vgca_fe-struct-a.vhd
+04/08/09 14:45:35 2440: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+04/08/09 14:45:35 2440: Signal mm_ramd does not have a load in instance i_vgca_mm!
+04/08/09 14:45:36 2440: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+04/08/09 14:45:36 2440: Info: unchanged file vgca_mm-struct-a.vhd
+04/08/09 14:45:36 2440: Info: unchanged file vgca_rc-struct-a.vhd
+04/08/09 14:45:36 2440: Info: unchanged file vgca_tb-struct-a.vhd
+04/08/09 14:45:36 2440: Info: unchanged file vgca-struct-conf-c.vhd
+04/08/09 14:45:36 2440: Info: unchanged file adc-struct-conf-c.vhd
+04/08/09 14:45:37 2440: Info: unchanged file bsr-struct-conf-c.vhd
+04/08/09 14:45:37 2440: Info: unchanged file clkgen-struct-conf-c.vhd
+04/08/09 14:45:37 2440: Info: unchanged file dac-struct-conf-c.vhd
+04/08/09 14:45:37 2440: Info: unchanged file padframe-struct-conf-c.vhd
+04/08/09 14:45:37 2440: Info: unchanged file tap_con-struct-conf-c.vhd
+04/08/09 14:45:37 2440: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+04/08/09 14:45:37 2440: Info: unchanged file vgca_di-struct-conf-c.vhd
+04/08/09 14:45:38 2440: Info: unchanged file vgca_dp-struct-conf-c.vhd
+04/08/09 14:45:38 2440: Info: unchanged file vgca_fe-struct-conf-c.vhd
+04/08/09 14:45:38 2440: Info: unchanged file vgca_mm-struct-conf-c.vhd
+04/08/09 14:45:38 2440: Info: unchanged file vgca_rc-struct-conf-c.vhd
+04/08/09 14:45:38 2440: Info: unchanged file vgca_tb-struct-conf-c.vhd
+04/08/09 14:45:38 2440: WARNING: ============= SUMMARY =================
+04/08/09 14:45:38 2440: WARNING: SUM: Summary of checks and created items:
+04/08/09 14:45:38 2440: WARNING: SUM: checkforce 0
+04/08/09 14:45:38 2440: WARNING: SUM: checkunique 0
+04/08/09 14:45:39 2440: WARNING: SUM: checkwarn 0
+04/08/09 14:45:39 2440: WARNING: SUM: cmacros 0
+04/08/09 14:45:39 2440: WARNING: SUM: conn 10
+04/08/09 14:45:39 2440: WARNING: SUM: errors 2
+04/08/09 14:45:39 2440: WARNING: SUM: genport 0
+04/08/09 14:45:39 2440: WARNING: SUM: hdlfiles 42
+04/08/09 14:45:39 2440: WARNING: SUM: inst 41
+04/08/09 14:45:39 2440: WARNING: SUM: multdriver 6
+04/08/09 14:45:40 2440: WARNING: SUM: nodriver 4
+04/08/09 14:45:40 2440: WARNING: SUM: noload 6
+04/08/09 14:45:40 2440: WARNING: SUM: openports 2
+04/08/09 14:45:40 2440: WARNING: SUM: warnings 10
+04/08/09 14:45:40 2440: WARNING: SUM: === Number of parsed input tables: ===
+04/08/09 14:45:40 2440: WARNING: SUM: conf 0
+04/08/09 14:45:40 2440: WARNING: SUM: hier 1
+04/08/09 14:45:40 2440: WARNING: SUM: conn 2
+04/08/09 14:45:40 2440: WARNING: SUM: io 0
+04/08/09 14:45:40 2440: WARNING: SUM: i2c 0
+04/08/09 14:45:40 2440: WARNING: SUM: Number of changes in intermediate: -1
+04/08/09 14:45:40 2440: WARNING: SUM: Number of changed files: 1
+04/08/09 17:13:46 2296: Reading worksheet CONN_DevIO of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/09 17:13:46 2296: Reading worksheet CONN_2 of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/09 17:13:53 2296: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/09 17:14:07 2296: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+04/08/09 17:14:07 2296: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+04/08/09 17:14:07 2296: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/09 17:14:07 2296: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/09 17:14:08 2296: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+04/08/09 17:14:09 2296: WARNING: Rotating 3 old sheets of CONF!
+04/08/09 17:14:12 2296: WARNING: Cannot locate a worksheet CONN in H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/09 17:14:12 2296: WARNING: ERROR: reading input for delta mode!
+04/08/09 17:14:14 2296: WARNING: Cannot locate a worksheet HIER in H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/09 17:14:14 2296: WARNING: ERROR: reading input for delta mode!
+04/08/09 17:14:14 2296: Info: unchanged file adc-e.vhd
+04/08/09 17:14:14 2296: Info: unchanged file bsr-e.vhd
+04/08/09 17:14:15 2296: Info: unchanged file clkgen-e.vhd
+04/08/09 17:14:15 2296: Info: unchanged file dac-e.vhd
+04/08/09 17:14:15 2296: Info: unchanged file padframe-e.vhd
+04/08/09 17:14:16 2296: Info: unchanged file tap_con-e.vhd
+04/08/09 17:14:16 2296: Info: unchanged file vgca-e.vhd
+04/08/09 17:14:16 2296: Info: unchanged file vgca_cpu-e.vhd
+04/08/09 17:14:16 2296: Info: unchanged file vgca_di-e.vhd
+04/08/09 17:14:16 2296: Info: unchanged file vgca_dp-e.vhd
+04/08/09 17:14:16 2296: Info: unchanged file vgca_fe-e.vhd
+04/08/09 17:14:17 2296: Info: unchanged file vgca_mm-e.vhd
+04/08/09 17:14:17 2296: Info: unchanged file vgca_rc-e.vhd
+04/08/09 17:14:17 2296: Info: unchanged file vgca_tb-e.vhd
+04/08/09 17:14:17 2296: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+04/08/09 17:14:17 2296: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+04/08/09 17:14:17 2296: Warning: Signal ramd_i does not have a driver in instance dut!
+04/08/09 17:14:17 2296: Signal ramd_o2 does not have a load in instance dut!
+04/08/09 17:14:17 2296: Warning: Signal ramd_i2 does not have a driver in instance dut!
+04/08/09 17:14:17 2296: Signal ramd_o does not have a load in instance dut!
+04/08/09 17:14:17 2296: Leave unloaded port ramd_o open at instance dut
+04/08/09 17:14:17 2296: Leave unloaded port ramd_o2 open at instance dut
+04/08/09 17:14:17 2296: WARNING: Info: file vgca-struct-a.vhd has changes!
+04/08/09 17:14:18 2296: Info: unchanged file adc-struct-a.vhd
+04/08/09 17:14:18 2296: Info: unchanged file bsr-struct-a.vhd
+04/08/09 17:14:18 2296: Info: unchanged file clkgen-struct-a.vhd
+04/08/09 17:14:19 2296: Info: unchanged file dac-struct-a.vhd
+04/08/09 17:14:19 2296: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+04/08/09 17:14:19 2296: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+04/08/09 17:14:19 2296: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+04/08/09 17:14:19 2296: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+04/08/09 17:14:19 2296: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/09 17:14:19 2296: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/09 17:14:19 2296: Signal %OPEN% does not have a load in instance i_padframe!
+04/08/09 17:14:19 2296: Info: unchanged file padframe-struct-a.vhd
+04/08/09 17:14:20 2296: Info: unchanged file tap_con-struct-a.vhd
+04/08/09 17:14:20 2296: Info: unchanged file vgca_cpu-struct-a.vhd
+04/08/09 17:14:20 2296: Info: unchanged file vgca_di-struct-a.vhd
+04/08/09 17:14:21 2296: Info: unchanged file vgca_dp-struct-a.vhd
+04/08/09 17:14:21 2296: Info: unchanged file vgca_fe-struct-a.vhd
+04/08/09 17:14:21 2296: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+04/08/09 17:14:21 2296: Signal mm_ramd does not have a load in instance i_vgca_mm!
+04/08/09 17:14:21 2296: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+04/08/09 17:14:21 2296: Info: unchanged file vgca_mm-struct-a.vhd
+04/08/09 17:14:21 2296: Info: unchanged file vgca_rc-struct-a.vhd
+04/08/09 17:14:21 2296: Info: unchanged file vgca_tb-struct-a.vhd
+04/08/09 17:14:22 2296: Info: unchanged file vgca-struct-conf-c.vhd
+04/08/09 17:14:22 2296: Info: unchanged file adc-struct-conf-c.vhd
+04/08/09 17:14:22 2296: Info: unchanged file bsr-struct-conf-c.vhd
+04/08/09 17:14:22 2296: Info: unchanged file clkgen-struct-conf-c.vhd
+04/08/09 17:14:22 2296: Info: unchanged file dac-struct-conf-c.vhd
+04/08/09 17:14:22 2296: Info: unchanged file padframe-struct-conf-c.vhd
+04/08/09 17:14:23 2296: Info: unchanged file tap_con-struct-conf-c.vhd
+04/08/09 17:14:23 2296: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+04/08/09 17:14:23 2296: Info: unchanged file vgca_di-struct-conf-c.vhd
+04/08/09 17:14:23 2296: Info: unchanged file vgca_dp-struct-conf-c.vhd
+04/08/09 17:14:23 2296: Info: unchanged file vgca_fe-struct-conf-c.vhd
+04/08/09 17:14:23 2296: Info: unchanged file vgca_mm-struct-conf-c.vhd
+04/08/09 17:14:23 2296: Info: unchanged file vgca_rc-struct-conf-c.vhd
+04/08/09 17:14:24 2296: Info: unchanged file vgca_tb-struct-conf-c.vhd
+04/08/09 17:14:24 2296: WARNING: ============= SUMMARY =================
+04/08/09 17:14:24 2296: WARNING: SUM: Summary of checks and created items:
+04/08/09 17:14:24 2296: WARNING: SUM: checkforce 0
+04/08/09 17:14:24 2296: WARNING: SUM: checkunique 0
+04/08/09 17:14:24 2296: WARNING: SUM: checkwarn 0
+04/08/09 17:14:24 2296: WARNING: SUM: cmacros 0
+04/08/09 17:14:24 2296: WARNING: SUM: conn 10
+04/08/09 17:14:24 2296: WARNING: SUM: errors 2
+04/08/09 17:14:24 2296: WARNING: SUM: genport 0
+04/08/09 17:14:24 2296: WARNING: SUM: hdlfiles 42
+04/08/09 17:14:24 2296: WARNING: SUM: inst 41
+04/08/09 17:14:24 2296: WARNING: SUM: multdriver 6
+04/08/09 17:14:24 2296: WARNING: SUM: nodriver 4
+04/08/09 17:14:24 2296: WARNING: SUM: noload 6
+04/08/09 17:14:25 2296: WARNING: SUM: openports 2
+04/08/09 17:14:25 2296: WARNING: SUM: warnings 10
+04/08/09 17:14:25 2296: WARNING: SUM: === Number of parsed input tables: ===
+04/08/09 17:14:25 2296: WARNING: SUM: conf 0
+04/08/09 17:14:25 2296: WARNING: SUM: hier 1
+04/08/09 17:14:25 2296: WARNING: SUM: conn 2
+04/08/09 17:14:25 2296: WARNING: SUM: io 0
+04/08/09 17:14:25 2296: WARNING: SUM: i2c 0
+04/08/09 17:14:25 2296: WARNING: SUM: Number of changes in intermediate: -1
+04/08/09 17:14:26 2296: WARNING: SUM: Number of changed files: 1
+04/08/17 14:33:12 2640: Reading worksheet CONN_DevIO of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/17 14:33:12 2640: Reading worksheet CONN_2 of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/17 14:33:12 2640: Reading worksheet CONN_CB of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/17 14:33:18 2640: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/17 14:33:30 2640: WARNING: INFO: Creating name mix_const_0 for constant!
+04/08/17 14:33:30 2640: WARNING: INFO: Creating name mix_const_1 for constant!
+04/08/17 14:33:30 2640: WARNING: INFO: Creating name mix_const_2 for constant!
+04/08/17 14:33:30 2640: WARNING: INFO: Creating name mix_const_3 for constant!
+04/08/17 14:33:30 2640: WARNING: INFO: Creating name mix_const_4 for constant!
+04/08/17 14:33:31 2640: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+04/08/17 14:33:31 2640: WARNING: ERROR: Signal eic_int_src_alt spawns several seperate trees! Will be dropped
+
+04/08/17 14:33:31 2640: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+04/08/17 14:33:31 2640: WARNING: Skipping connection eic_int_src_alt to undefined instance i_vgca_peri!
+04/08/17 14:33:31 2640: WARNING: Skipping connection eic_int_src_alt to undefined instance i_mic32_top!
+04/08/17 14:33:31 2640: WARNING: Skipping connection eic_int_src_alt to undefined instance i_mic32_top!
+04/08/17 14:33:31 2640: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 14:33:31 2640: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 14:33:31 2640: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 14:33:31 2640: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 14:33:31 2640: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 14:33:31 2640: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 14:33:31 2640: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 14:33:31 2640: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 14:33:31 2640: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 14:33:31 2640: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 14:33:31 2640: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 14:33:31 2640: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 14:33:31 2640: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 14:33:32 2640: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 14:33:32 2640: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 14:33:32 2640: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 14:33:32 2640: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 14:33:32 2640: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 14:33:32 2640: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 14:33:32 2640: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 14:33:32 2640: WARNING: Skipping connection eic_int_src to undefined instance i_mic32_top!
+04/08/17 14:33:32 2640: WARNING: Skipping connection eic_int_src to undefined instance i_mic32_top!
+04/08/17 14:33:32 2640: autoreducing port type for signal eic_int_src to std_ulogic
+04/08/17 14:33:32 2640: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/17 14:33:32 2640: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/17 14:33:33 2640: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+04/08/17 14:33:34 2640: WARNING: Rotating 3 old sheets of CONF!
+04/08/17 14:33:37 2640: WARNING: Cannot locate a worksheet CONN in H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/17 14:33:37 2640: WARNING: ERROR: reading input for delta mode!
+04/08/17 14:33:38 2640: WARNING: Cannot locate a worksheet HIER in H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/17 14:33:39 2640: WARNING: ERROR: reading input for delta mode!
+04/08/17 14:33:39 2640: Info: unchanged file adc-e.vhd
+04/08/17 14:33:39 2640: Info: unchanged file bsr-e.vhd
+04/08/17 14:33:39 2640: Info: unchanged file clkgen-e.vhd
+04/08/17 14:33:40 2640: Info: unchanged file dac-e.vhd
+04/08/17 14:33:40 2640: Info: unchanged file padframe-e.vhd
+04/08/17 14:33:40 2640: Info: unchanged file tap_con-e.vhd
+04/08/17 14:33:40 2640: Info: unchanged file vgca-e.vhd
+04/08/17 14:33:40 2640: Info: unchanged file vgca_cpu-e.vhd
+04/08/17 14:33:40 2640: Port fmdstatusm_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 14:33:40 2640: Port fmdstatuss_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 14:33:41 2640: Port lbdstatusm_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 14:33:41 2640: Port lbdstatuss_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 14:33:41 2640: Port line_stable_m_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 14:33:41 2640: Port line_stable_s_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 14:33:41 2640: Port pixel_stable_m_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 14:33:41 2640: Port pixel_stable_s_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 14:33:41 2640: Port vaqm_vsync_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 14:33:41 2640: Port vaqs_vsync_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 14:33:41 2640: WARNING: Info: file vgca_di-e.vhd has changes!
+04/08/17 14:33:41 2640: Info: unchanged file vgca_dp-e.vhd
+04/08/17 14:33:41 2640: Info: unchanged file vgca_fe-e.vhd
+04/08/17 14:33:41 2640: Info: unchanged file vgca_mm-e.vhd
+04/08/17 14:33:41 2640: Info: unchanged file vgca_rc-e.vhd
+04/08/17 14:33:41 2640: Info: unchanged file vgca_tb-e.vhd
+04/08/17 14:33:41 2640: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+04/08/17 14:33:42 2640: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+04/08/17 14:33:42 2640: Signal ramd_o does not have a load in instance dut!
+04/08/17 14:33:42 2640: Warning: Signal ramd_i does not have a driver in instance dut!
+04/08/17 14:33:42 2640: Signal ramd_o2 does not have a load in instance dut!
+04/08/17 14:33:42 2640: Warning: Signal ramd_i2 does not have a driver in instance dut!
+04/08/17 14:33:42 2640: Signal eic_int_src does not have a load in instance dut!
+04/08/17 14:33:42 2640: Leave unloaded port eic_int_src open at instance dut
+04/08/17 14:33:42 2640: Leave unloaded port ramd_o open at instance dut
+04/08/17 14:33:42 2640: Leave unloaded port ramd_o2 open at instance dut
+04/08/17 14:33:42 2640: WARNING: Info: file vgca-struct-a.vhd has changes!
+04/08/17 14:33:42 2640: Info: unchanged file adc-struct-a.vhd
+04/08/17 14:33:42 2640: Info: unchanged file bsr-struct-a.vhd
+04/08/17 14:33:43 2640: Info: unchanged file clkgen-struct-a.vhd
+04/08/17 14:33:43 2640: Info: unchanged file dac-struct-a.vhd
+04/08/17 14:33:43 2640: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+04/08/17 14:33:43 2640: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+04/08/17 14:33:43 2640: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+04/08/17 14:33:43 2640: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+04/08/17 14:33:43 2640: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/17 14:33:43 2640: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/17 14:33:43 2640: Signal %OPEN% does not have a load in instance i_padframe!
+04/08/17 14:33:44 2640: Info: unchanged file padframe-struct-a.vhd
+04/08/17 14:33:44 2640: Info: unchanged file tap_con-struct-a.vhd
+04/08/17 14:33:44 2640: Info: unchanged file vgca_cpu-struct-a.vhd
+04/08/17 14:33:44 2640: Warning: Signal eic_int_src does not have a driver in instance i_vgca_di!
+04/08/17 14:33:44 2640: Warning: Signal eic_int_src_c does not have a driver in instance i_vgca_di!
+04/08/17 14:33:44 2640: WARNING: Info: file vgca_di-struct-a.vhd has changes!
+04/08/17 14:33:45 2640: Info: unchanged file vgca_dp-struct-a.vhd
+04/08/17 14:33:45 2640: Info: unchanged file vgca_fe-struct-a.vhd
+04/08/17 14:33:45 2640: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+04/08/17 14:33:45 2640: Signal mm_ramd does not have a load in instance i_vgca_mm!
+04/08/17 14:33:45 2640: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+04/08/17 14:33:45 2640: Info: unchanged file vgca_mm-struct-a.vhd
+04/08/17 14:33:45 2640: Info: unchanged file vgca_rc-struct-a.vhd
+04/08/17 14:33:45 2640: Info: unchanged file vgca_tb-struct-a.vhd
+04/08/17 14:33:46 2640: Info: unchanged file vgca-struct-conf-c.vhd
+04/08/17 14:33:46 2640: Info: unchanged file adc-struct-conf-c.vhd
+04/08/17 14:33:46 2640: Info: unchanged file bsr-struct-conf-c.vhd
+04/08/17 14:33:46 2640: Info: unchanged file clkgen-struct-conf-c.vhd
+04/08/17 14:33:46 2640: Info: unchanged file dac-struct-conf-c.vhd
+04/08/17 14:33:46 2640: Info: unchanged file padframe-struct-conf-c.vhd
+04/08/17 14:33:47 2640: Info: unchanged file tap_con-struct-conf-c.vhd
+04/08/17 14:33:47 2640: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+04/08/17 14:33:47 2640: Info: unchanged file vgca_di-struct-conf-c.vhd
+04/08/17 14:33:47 2640: Info: unchanged file vgca_dp-struct-conf-c.vhd
+04/08/17 14:33:47 2640: Info: unchanged file vgca_fe-struct-conf-c.vhd
+04/08/17 14:33:47 2640: Info: unchanged file vgca_mm-struct-conf-c.vhd
+04/08/17 14:33:48 2640: Info: unchanged file vgca_rc-struct-conf-c.vhd
+04/08/17 14:33:48 2640: Info: unchanged file vgca_tb-struct-conf-c.vhd
+04/08/17 14:33:48 2640: WARNING: ============= SUMMARY =================
+04/08/17 14:33:48 2640: WARNING: SUM: Summary of checks and created items:
+04/08/17 14:33:48 2640: WARNING: SUM: checkforce 0
+04/08/17 14:33:48 2640: WARNING: SUM: checkunique 0
+04/08/17 14:33:48 2640: WARNING: SUM: checkwarn 0
+04/08/17 14:33:48 2640: WARNING: SUM: cmacros 0
+04/08/17 14:33:48 2640: WARNING: SUM: conn 18
+04/08/17 14:33:48 2640: WARNING: SUM: errors 3
+04/08/17 14:33:48 2640: WARNING: SUM: genport 0
+04/08/17 14:33:48 2640: WARNING: SUM: hdlfiles 42
+04/08/17 14:33:48 2640: WARNING: SUM: inst 41
+04/08/17 14:33:49 2640: WARNING: SUM: multdriver 6
+04/08/17 14:33:49 2640: WARNING: SUM: nodriver 6
+04/08/17 14:33:49 2640: WARNING: SUM: noload 7
+04/08/17 14:33:49 2640: WARNING: SUM: openports 3
+04/08/17 14:33:49 2640: WARNING: SUM: warnings 10
+04/08/17 14:33:49 2640: WARNING: SUM: === Number of parsed input tables: ===
+04/08/17 14:33:49 2640: WARNING: SUM: conf 0
+04/08/17 14:33:49 2640: WARNING: SUM: hier 1
+04/08/17 14:33:49 2640: WARNING: SUM: conn 3
+04/08/17 14:33:49 2640: WARNING: SUM: io 0
+04/08/17 14:33:49 2640: WARNING: SUM: i2c 0
+04/08/17 14:33:49 2640: WARNING: SUM: Number of changes in intermediate: -1
+04/08/17 14:33:49 2640: WARNING: SUM: Number of changed files: 3
+04/08/17 18:14:27 548: Reading worksheet CONN_DevIO of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/17 18:14:27 548: Reading worksheet CONN_2 of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/17 18:14:27 548: Reading worksheet CONN_CB of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/17 18:14:32 548: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/17 18:14:44 548: WARNING: INFO: Creating name mix_const_0 for constant!
+04/08/17 18:14:44 548: WARNING: INFO: Creating name mix_const_1 for constant!
+04/08/17 18:14:44 548: WARNING: INFO: Creating name mix_const_2 for constant!
+04/08/17 18:14:44 548: WARNING: INFO: Creating name mix_const_3 for constant!
+04/08/17 18:14:44 548: WARNING: INFO: Creating name mix_const_4 for constant!
+04/08/17 18:14:44 548: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+04/08/17 18:14:44 548: WARNING: ERROR: Signal eic_int_src_alt spawns several seperate trees! Will be dropped
+
+04/08/17 18:14:44 548: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src_alt to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src_alt to undefined instance i_mic32_top!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src_alt to undefined instance i_mic32_top!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_vgca_peri!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_mic32_top!
+04/08/17 18:14:44 548: WARNING: Skipping connection eic_int_src to undefined instance i_mic32_top!
+04/08/17 18:14:44 548: autoreducing port type for signal eic_int_src to std_ulogic
+04/08/17 18:14:44 548: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/17 18:14:44 548: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/17 18:14:45 548: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+04/08/17 18:14:46 548: WARNING: Rotating 3 old sheets of CONF!
+04/08/17 18:14:49 548: WARNING: Cannot locate a worksheet CONN in H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/17 18:14:49 548: WARNING: ERROR: reading input for delta mode!
+04/08/17 18:14:50 548: WARNING: Cannot locate a worksheet HIER in H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/17 18:14:50 548: WARNING: ERROR: reading input for delta mode!
+04/08/17 18:14:51 548: Info: unchanged file adc-e.vhd
+04/08/17 18:14:51 548: Info: unchanged file bsr-e.vhd
+04/08/17 18:14:51 548: Info: unchanged file clkgen-e.vhd
+04/08/17 18:14:51 548: Info: unchanged file dac-e.vhd
+04/08/17 18:14:52 548: Info: unchanged file padframe-e.vhd
+04/08/17 18:14:52 548: Info: unchanged file tap_con-e.vhd
+04/08/17 18:14:52 548: Info: unchanged file vgca-e.vhd
+04/08/17 18:14:53 548: Info: unchanged file vgca_cpu-e.vhd
+04/08/17 18:14:53 548: Port fmdstatusm_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 18:14:53 548: Port fmdstatuss_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 18:14:53 548: Port lbdstatusm_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 18:14:53 548: Port lbdstatuss_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 18:14:53 548: Port line_stable_m_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 18:14:53 548: Port line_stable_s_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 18:14:53 548: Port pixel_stable_m_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 18:14:53 548: Port pixel_stable_s_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 18:14:53 548: Port vaqm_vsync_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 18:14:53 548: Port vaqs_vsync_irq_o of entity vgca_di one bit wide, reduce to signal
+
+04/08/17 18:14:53 548: WARNING: Info: file vgca_di-e.vhd has changes!
+04/08/17 18:14:53 548: Info: unchanged file vgca_dp-e.vhd
+04/08/17 18:14:53 548: Info: unchanged file vgca_fe-e.vhd
+04/08/17 18:14:53 548: Info: unchanged file vgca_mm-e.vhd
+04/08/17 18:14:53 548: Info: unchanged file vgca_rc-e.vhd
+04/08/17 18:14:54 548: Info: unchanged file vgca_tb-e.vhd
+04/08/17 18:14:54 548: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+04/08/17 18:14:54 548: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+04/08/17 18:14:54 548: Signal ramd_o does not have a load in instance dut!
+04/08/17 18:14:54 548: Warning: Signal ramd_i does not have a driver in instance dut!
+04/08/17 18:14:54 548: Signal ramd_o2 does not have a load in instance dut!
+04/08/17 18:14:54 548: Warning: Signal ramd_i2 does not have a driver in instance dut!
+04/08/17 18:14:54 548: Signal eic_int_src does not have a load in instance dut!
+04/08/17 18:14:54 548: Leave unloaded port eic_int_src open at instance dut
+04/08/17 18:14:54 548: Leave unloaded port ramd_o open at instance dut
+04/08/17 18:14:54 548: Leave unloaded port ramd_o2 open at instance dut
+04/08/17 18:14:54 548: WARNING: Info: file vgca-struct-a.vhd has changes!
+04/08/17 18:14:54 548: Info: unchanged file adc-struct-a.vhd
+04/08/17 18:14:54 548: Info: unchanged file bsr-struct-a.vhd
+04/08/17 18:14:54 548: Info: unchanged file clkgen-struct-a.vhd
+04/08/17 18:14:55 548: Info: unchanged file dac-struct-a.vhd
+04/08/17 18:14:55 548: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+04/08/17 18:14:55 548: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+04/08/17 18:14:55 548: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+04/08/17 18:14:55 548: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+04/08/17 18:14:55 548: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/17 18:14:55 548: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/17 18:14:55 548: Signal %OPEN% does not have a load in instance i_padframe!
+04/08/17 18:14:55 548: Info: unchanged file padframe-struct-a.vhd
+04/08/17 18:14:55 548: Info: unchanged file tap_con-struct-a.vhd
+04/08/17 18:14:55 548: Info: unchanged file vgca_cpu-struct-a.vhd
+04/08/17 18:14:55 548: Warning: Signal eic_int_src does not have a driver in instance i_vgca_di!
+04/08/17 18:14:55 548: Warning: Signal eic_int_src_c does not have a driver in instance i_vgca_di!
+04/08/17 18:14:55 548: WARNING: Info: file vgca_di-struct-a.vhd has changes!
+04/08/17 18:14:55 548: Info: unchanged file vgca_dp-struct-a.vhd
+04/08/17 18:14:56 548: Info: unchanged file vgca_fe-struct-a.vhd
+04/08/17 18:14:56 548: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+04/08/17 18:14:56 548: Signal mm_ramd does not have a load in instance i_vgca_mm!
+04/08/17 18:14:56 548: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+04/08/17 18:14:56 548: Info: unchanged file vgca_mm-struct-a.vhd
+04/08/17 18:14:56 548: Info: unchanged file vgca_rc-struct-a.vhd
+04/08/17 18:14:56 548: Info: unchanged file vgca_tb-struct-a.vhd
+04/08/17 18:14:56 548: Info: unchanged file vgca-struct-conf-c.vhd
+04/08/17 18:14:56 548: Info: unchanged file adc-struct-conf-c.vhd
+04/08/17 18:14:57 548: Info: unchanged file bsr-struct-conf-c.vhd
+04/08/17 18:14:57 548: Info: unchanged file clkgen-struct-conf-c.vhd
+04/08/17 18:14:57 548: Info: unchanged file dac-struct-conf-c.vhd
+04/08/17 18:14:57 548: Info: unchanged file padframe-struct-conf-c.vhd
+04/08/17 18:14:57 548: Info: unchanged file tap_con-struct-conf-c.vhd
+04/08/17 18:14:57 548: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+04/08/17 18:14:58 548: Info: unchanged file vgca_di-struct-conf-c.vhd
+04/08/17 18:14:58 548: Info: unchanged file vgca_dp-struct-conf-c.vhd
+04/08/17 18:14:58 548: Info: unchanged file vgca_fe-struct-conf-c.vhd
+04/08/17 18:14:58 548: Info: unchanged file vgca_mm-struct-conf-c.vhd
+04/08/17 18:14:58 548: Info: unchanged file vgca_rc-struct-conf-c.vhd
+04/08/17 18:14:58 548: Info: unchanged file vgca_tb-struct-conf-c.vhd
+04/08/17 18:14:59 548: WARNING: ============= SUMMARY =================
+04/08/17 18:14:59 548: WARNING: SUM: Summary of checks and created items:
+04/08/17 18:14:59 548: WARNING: SUM: checkforce 0
+04/08/17 18:14:59 548: WARNING: SUM: checkunique 0
+04/08/17 18:14:59 548: WARNING: SUM: checkwarn 0
+04/08/17 18:14:59 548: WARNING: SUM: cmacros 0
+04/08/17 18:14:59 548: WARNING: SUM: conn 18
+04/08/17 18:14:59 548: WARNING: SUM: errors 3
+04/08/17 18:14:59 548: WARNING: SUM: genport 0
+04/08/17 18:14:59 548: WARNING: SUM: hdlfiles 42
+04/08/17 18:14:59 548: WARNING: SUM: inst 41
+04/08/17 18:14:59 548: WARNING: SUM: multdriver 6
+04/08/17 18:14:59 548: WARNING: SUM: nodriver 6
+04/08/17 18:14:59 548: WARNING: SUM: noload 7
+04/08/17 18:14:59 548: WARNING: SUM: openports 3
+04/08/17 18:14:59 548: WARNING: SUM: warnings 10
+04/08/17 18:14:59 548: WARNING: SUM: === Number of parsed input tables: ===
+04/08/17 18:14:59 548: WARNING: SUM: conf 0
+04/08/17 18:14:59 548: WARNING: SUM: hier 1
+04/08/17 18:14:59 548: WARNING: SUM: conn 3
+04/08/17 18:14:59 548: WARNING: SUM: io 0
+04/08/17 18:14:59 548: WARNING: SUM: i2c 0
+04/08/17 18:14:59 548: WARNING: SUM: Number of changes in intermediate: -1
+04/08/17 18:14:59 548: WARNING: SUM: Number of changed files: 3
+04/08/18 09:17:21 1632: Reading worksheet CONN_DevIO of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/18 09:17:21 1632: Reading worksheet CONN_2 of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/18 09:17:27 1632: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/18 09:17:39 1632: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+04/08/18 09:17:39 1632: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+04/08/18 09:17:39 1632: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/18 09:17:39 1632: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/18 09:17:41 1632: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+04/08/18 09:17:43 1632: WARNING: Rotating 3 old sheets of CONF!
+04/08/18 09:17:47 1632: WARNING: Rotating 3 old sheets of CONN!
+04/08/18 09:17:48 1632: WARNING: Rotating 3 old sheets of HIER!
+04/08/18 09:17:50 1632: WARNING: Removing old and and diff sheets in file: bugver-mixed.xls
+04/08/18 09:17:53 1632: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+04/08/18 09:17:54 1632: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+04/08/18 09:17:54 1632: Warning: Signal ramd_i does not have a driver in instance dut!
+04/08/18 09:17:54 1632: Signal ramd_o2 does not have a load in instance dut!
+04/08/18 09:17:54 1632: Warning: Signal ramd_i2 does not have a driver in instance dut!
+04/08/18 09:17:54 1632: Signal ramd_o does not have a load in instance dut!
+04/08/18 09:17:54 1632: Leave unloaded port ramd_o open at instance dut
+04/08/18 09:17:54 1632: Leave unloaded port ramd_o2 open at instance dut
+04/08/18 09:17:55 1632: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+04/08/18 09:17:56 1632: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+04/08/18 09:17:56 1632: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+04/08/18 09:17:56 1632: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+04/08/18 09:17:56 1632: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/18 09:17:57 1632: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/18 09:17:57 1632: Signal %OPEN% does not have a load in instance i_padframe!
+04/08/18 09:17:58 1632: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+04/08/18 09:17:58 1632: Signal mm_ramd does not have a load in instance i_vgca_mm!
+04/08/18 09:17:58 1632: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+04/08/18 09:18:01 1632: WARNING: ============= SUMMARY =================
+04/08/18 09:18:01 1632: WARNING: SUM: Summary of checks and created items:
+04/08/18 09:18:02 1632: WARNING: SUM: checkforce 0
+04/08/18 09:18:02 1632: WARNING: SUM: checkunique 0
+04/08/18 09:18:02 1632: WARNING: SUM: checkwarn 0
+04/08/18 09:18:02 1632: WARNING: SUM: cmacros 0
+04/08/18 09:18:02 1632: WARNING: SUM: conn 10
+04/08/18 09:18:02 1632: WARNING: SUM: errors 0
+04/08/18 09:18:03 1632: WARNING: SUM: genport 0
+04/08/18 09:18:03 1632: WARNING: SUM: hdlfiles 42
+04/08/18 09:18:03 1632: WARNING: SUM: inst 41
+04/08/18 09:18:03 1632: WARNING: SUM: multdriver 6
+04/08/18 09:18:03 1632: WARNING: SUM: nodriver 4
+04/08/18 09:18:04 1632: WARNING: SUM: noload 6
+04/08/18 09:18:04 1632: WARNING: SUM: openports 2
+04/08/18 09:18:04 1632: WARNING: SUM: warnings 8
+04/08/18 09:18:05 1632: WARNING: SUM: === Number of parsed input tables: ===
+04/08/18 09:18:05 1632: WARNING: SUM: conf 0
+04/08/18 09:18:06 1632: WARNING: SUM: hier 1
+04/08/18 09:18:06 1632: WARNING: SUM: conn 2
+04/08/18 09:18:06 1632: WARNING: SUM: io 0
+04/08/18 09:18:06 1632: WARNING: SUM: i2c 0
+04/08/18 10:26:22 2140: Reading worksheet CONN_DevIO of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/18 10:26:22 2140: Reading worksheet CONN_2 of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/18 10:26:28 2140: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/18 10:26:41 2140: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+04/08/18 10:26:41 2140: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+04/08/18 10:26:41 2140: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/18 10:26:41 2140: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/18 10:26:42 2140: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+04/08/18 10:26:42 2140: WARNING: Rotating 3 old sheets of CONF!
+04/08/18 10:26:46 2140: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/18 10:26:47 2140: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/18 10:26:50 2140: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/18 10:26:50 2140: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/18 10:26:51 2140: Info: unchanged file adc-e.vhd
+04/08/18 10:26:51 2140: Info: unchanged file bsr-e.vhd
+04/08/18 10:26:51 2140: Info: unchanged file clkgen-e.vhd
+04/08/18 10:26:52 2140: Info: unchanged file dac-e.vhd
+04/08/18 10:26:52 2140: Info: unchanged file padframe-e.vhd
+04/08/18 10:26:52 2140: Info: unchanged file tap_con-e.vhd
+04/08/18 10:26:52 2140: Info: unchanged file vgca-e.vhd
+04/08/18 10:26:52 2140: Info: unchanged file vgca_cpu-e.vhd
+04/08/18 10:26:52 2140: Info: unchanged file vgca_di-e.vhd
+04/08/18 10:26:52 2140: Info: unchanged file vgca_dp-e.vhd
+04/08/18 10:26:53 2140: Info: unchanged file vgca_fe-e.vhd
+04/08/18 10:26:53 2140: Info: unchanged file vgca_mm-e.vhd
+04/08/18 10:26:53 2140: Info: unchanged file vgca_rc-e.vhd
+04/08/18 10:26:53 2140: Info: unchanged file vgca_tb-e.vhd
+04/08/18 10:26:53 2140: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+04/08/18 10:26:53 2140: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+04/08/18 10:26:53 2140: Warning: Signal ramd_i does not have a driver in instance dut!
+04/08/18 10:26:53 2140: Signal ramd_o2 does not have a load in instance dut!
+04/08/18 10:26:53 2140: Warning: Signal ramd_i2 does not have a driver in instance dut!
+04/08/18 10:26:53 2140: Signal ramd_o does not have a load in instance dut!
+04/08/18 10:26:53 2140: Leave unloaded port ramd_o open at instance dut
+04/08/18 10:26:53 2140: Leave unloaded port ramd_o2 open at instance dut
+04/08/18 10:26:53 2140: Info: unchanged file vgca-struct-a.vhd
+04/08/18 10:26:54 2140: Info: unchanged file adc-struct-a.vhd
+04/08/18 10:26:54 2140: Info: unchanged file bsr-struct-a.vhd
+04/08/18 10:26:54 2140: Info: unchanged file clkgen-struct-a.vhd
+04/08/18 10:26:54 2140: Info: unchanged file dac-struct-a.vhd
+04/08/18 10:26:54 2140: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+04/08/18 10:26:54 2140: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+04/08/18 10:26:54 2140: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+04/08/18 10:26:54 2140: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+04/08/18 10:26:54 2140: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/18 10:26:54 2140: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/18 10:26:55 2140: Signal %OPEN% does not have a load in instance i_padframe!
+04/08/18 10:26:55 2140: Info: unchanged file padframe-struct-a.vhd
+04/08/18 10:26:55 2140: Info: unchanged file tap_con-struct-a.vhd
+04/08/18 10:26:55 2140: Info: unchanged file vgca_cpu-struct-a.vhd
+04/08/18 10:26:55 2140: Info: unchanged file vgca_di-struct-a.vhd
+04/08/18 10:26:56 2140: Info: unchanged file vgca_dp-struct-a.vhd
+04/08/18 10:26:56 2140: Info: unchanged file vgca_fe-struct-a.vhd
+04/08/18 10:26:56 2140: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+04/08/18 10:26:56 2140: Signal mm_ramd does not have a load in instance i_vgca_mm!
+04/08/18 10:26:56 2140: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+04/08/18 10:26:56 2140: Info: unchanged file vgca_mm-struct-a.vhd
+04/08/18 10:26:56 2140: Info: unchanged file vgca_rc-struct-a.vhd
+04/08/18 10:26:56 2140: Info: unchanged file vgca_tb-struct-a.vhd
+04/08/18 10:26:56 2140: Info: unchanged file vgca-struct-conf-c.vhd
+04/08/18 10:26:57 2140: Info: unchanged file adc-struct-conf-c.vhd
+04/08/18 10:26:57 2140: Info: unchanged file bsr-struct-conf-c.vhd
+04/08/18 10:26:57 2140: Info: unchanged file clkgen-struct-conf-c.vhd
+04/08/18 10:26:57 2140: Info: unchanged file dac-struct-conf-c.vhd
+04/08/18 10:26:57 2140: Info: unchanged file padframe-struct-conf-c.vhd
+04/08/18 10:26:58 2140: Info: unchanged file tap_con-struct-conf-c.vhd
+04/08/18 10:26:58 2140: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+04/08/18 10:26:58 2140: Info: unchanged file vgca_di-struct-conf-c.vhd
+04/08/18 10:26:58 2140: Info: unchanged file vgca_dp-struct-conf-c.vhd
+04/08/18 10:26:58 2140: Info: unchanged file vgca_fe-struct-conf-c.vhd
+04/08/18 10:26:59 2140: Info: unchanged file vgca_mm-struct-conf-c.vhd
+04/08/18 10:26:59 2140: Info: unchanged file vgca_rc-struct-conf-c.vhd
+04/08/18 10:26:59 2140: Info: unchanged file vgca_tb-struct-conf-c.vhd
+04/08/18 10:26:59 2140: WARNING: ============= SUMMARY =================
+04/08/18 10:26:59 2140: WARNING: SUM: Summary of checks and created items:
+04/08/18 10:26:59 2140: WARNING: SUM: checkforce 0
+04/08/18 10:26:59 2140: WARNING: SUM: checkunique 0
+04/08/18 10:26:59 2140: WARNING: SUM: checkwarn 0
+04/08/18 10:26:59 2140: WARNING: SUM: cmacros 0
+04/08/18 10:26:59 2140: WARNING: SUM: conn 10
+04/08/18 10:26:59 2140: WARNING: SUM: errors 0
+04/08/18 10:26:59 2140: WARNING: SUM: genport 0
+04/08/18 10:27:00 2140: WARNING: SUM: hdlfiles 42
+04/08/18 10:27:00 2140: WARNING: SUM: inst 41
+04/08/18 10:27:00 2140: WARNING: SUM: multdriver 6
+04/08/18 10:27:00 2140: WARNING: SUM: nodriver 4
+04/08/18 10:27:00 2140: WARNING: SUM: noload 6
+04/08/18 10:27:00 2140: WARNING: SUM: openports 2
+04/08/18 10:27:00 2140: WARNING: SUM: warnings 8
+04/08/18 10:27:00 2140: WARNING: SUM: === Number of parsed input tables: ===
+04/08/18 10:27:00 2140: WARNING: SUM: conf 0
+04/08/18 10:27:00 2140: WARNING: SUM: hier 1
+04/08/18 10:27:00 2140: WARNING: SUM: conn 2
+04/08/18 10:27:00 2140: WARNING: SUM: io 0
+04/08/18 10:27:01 2140: WARNING: SUM: i2c 0
+04/08/18 10:27:01 2140: WARNING: SUM: Number of changes in intermediate: 0
+04/08/18 10:27:01 2140: WARNING: SUM: Number of changed files: 0
+04/08/18 11:21:35 1708: Reading worksheet CONN_DevIO of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/18 11:21:35 1708: Reading worksheet CONN_2 of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/18 11:21:41 1708: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/18 11:21:53 1708: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+04/08/18 11:21:53 1708: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+04/08/18 11:21:53 1708: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/18 11:21:53 1708: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/18 11:21:54 1708: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+04/08/18 11:21:55 1708: WARNING: Rotating 3 old sheets of CONF!
+04/08/18 11:21:58 1708: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/18 11:21:58 1708: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/18 11:22:01 1708: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/18 11:22:01 1708: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/18 11:22:02 1708: Info: unchanged file adc-e.vhd
+04/08/18 11:22:02 1708: Info: unchanged file bsr-e.vhd
+04/08/18 11:22:03 1708: Info: unchanged file clkgen-e.vhd
+04/08/18 11:22:03 1708: Info: unchanged file dac-e.vhd
+04/08/18 11:22:03 1708: Info: unchanged file padframe-e.vhd
+04/08/18 11:22:03 1708: Info: unchanged file tap_con-e.vhd
+04/08/18 11:22:03 1708: Info: unchanged file vgca-e.vhd
+04/08/18 11:22:04 1708: Info: unchanged file vgca_cpu-e.vhd
+04/08/18 11:22:04 1708: Info: unchanged file vgca_di-e.vhd
+04/08/18 11:22:04 1708: Info: unchanged file vgca_dp-e.vhd
+04/08/18 11:22:04 1708: Info: unchanged file vgca_fe-e.vhd
+04/08/18 11:22:04 1708: Info: unchanged file vgca_mm-e.vhd
+04/08/18 11:22:05 1708: Info: unchanged file vgca_rc-e.vhd
+04/08/18 11:22:05 1708: Info: unchanged file vgca_tb-e.vhd
+04/08/18 11:22:05 1708: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+04/08/18 11:22:05 1708: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+04/08/18 11:22:05 1708: Warning: Signal ramd_i does not have a driver in instance dut!
+04/08/18 11:22:05 1708: Signal ramd_o2 does not have a load in instance dut!
+04/08/18 11:22:05 1708: Warning: Signal ramd_i2 does not have a driver in instance dut!
+04/08/18 11:22:05 1708: Signal ramd_o does not have a load in instance dut!
+04/08/18 11:22:05 1708: Leave unloaded port ramd_o open at instance dut
+04/08/18 11:22:05 1708: Leave unloaded port ramd_o2 open at instance dut
+04/08/18 11:22:05 1708: Info: unchanged file vgca-struct-a.vhd
+04/08/18 11:22:05 1708: Info: unchanged file adc-struct-a.vhd
+04/08/18 11:22:06 1708: Info: unchanged file bsr-struct-a.vhd
+04/08/18 11:22:06 1708: Info: unchanged file clkgen-struct-a.vhd
+04/08/18 11:22:06 1708: Info: unchanged file dac-struct-a.vhd
+04/08/18 11:22:06 1708: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+04/08/18 11:22:06 1708: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+04/08/18 11:22:06 1708: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+04/08/18 11:22:06 1708: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+04/08/18 11:22:06 1708: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/18 11:22:06 1708: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/18 11:22:06 1708: Signal %OPEN% does not have a load in instance i_padframe!
+04/08/18 11:22:07 1708: Info: unchanged file padframe-struct-a.vhd
+04/08/18 11:22:07 1708: Info: unchanged file tap_con-struct-a.vhd
+04/08/18 11:22:07 1708: Info: unchanged file vgca_cpu-struct-a.vhd
+04/08/18 11:22:07 1708: Info: unchanged file vgca_di-struct-a.vhd
+04/08/18 11:22:07 1708: Info: unchanged file vgca_dp-struct-a.vhd
+04/08/18 11:22:07 1708: Info: unchanged file vgca_fe-struct-a.vhd
+04/08/18 11:22:08 1708: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+04/08/18 11:22:08 1708: Signal mm_ramd does not have a load in instance i_vgca_mm!
+04/08/18 11:22:08 1708: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+04/08/18 11:22:08 1708: Info: unchanged file vgca_mm-struct-a.vhd
+04/08/18 11:22:08 1708: Info: unchanged file vgca_rc-struct-a.vhd
+04/08/18 11:22:08 1708: Info: unchanged file vgca_tb-struct-a.vhd
+04/08/18 11:22:08 1708: Info: unchanged file vgca-struct-conf-c.vhd
+04/08/18 11:22:08 1708: Info: unchanged file adc-struct-conf-c.vhd
+04/08/18 11:22:09 1708: Info: unchanged file bsr-struct-conf-c.vhd
+04/08/18 11:22:09 1708: Info: unchanged file clkgen-struct-conf-c.vhd
+04/08/18 11:22:09 1708: Info: unchanged file dac-struct-conf-c.vhd
+04/08/18 11:22:09 1708: Info: unchanged file padframe-struct-conf-c.vhd
+04/08/18 11:22:09 1708: Info: unchanged file tap_con-struct-conf-c.vhd
+04/08/18 11:22:09 1708: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+04/08/18 11:22:09 1708: Info: unchanged file vgca_di-struct-conf-c.vhd
+04/08/18 11:22:10 1708: Info: unchanged file vgca_dp-struct-conf-c.vhd
+04/08/18 11:22:10 1708: Info: unchanged file vgca_fe-struct-conf-c.vhd
+04/08/18 11:22:10 1708: Info: unchanged file vgca_mm-struct-conf-c.vhd
+04/08/18 11:22:11 1708: Info: unchanged file vgca_rc-struct-conf-c.vhd
+04/08/18 11:22:11 1708: Info: unchanged file vgca_tb-struct-conf-c.vhd
+04/08/18 11:22:11 1708: WARNING: ============= SUMMARY =================
+04/08/18 11:22:11 1708: WARNING: SUM: Summary of checks and created items:
+04/08/18 11:22:11 1708: WARNING: SUM: checkforce 0
+04/08/18 11:22:11 1708: WARNING: SUM: checkunique 0
+04/08/18 11:22:11 1708: WARNING: SUM: checkwarn 0
+04/08/18 11:22:11 1708: WARNING: SUM: cmacros 0
+04/08/18 11:22:11 1708: WARNING: SUM: conn 10
+04/08/18 11:22:11 1708: WARNING: SUM: errors 0
+04/08/18 11:22:11 1708: WARNING: SUM: genport 0
+04/08/18 11:22:11 1708: WARNING: SUM: hdlfiles 42
+04/08/18 11:22:12 1708: WARNING: SUM: inst 41
+04/08/18 11:22:12 1708: WARNING: SUM: multdriver 6
+04/08/18 11:22:12 1708: WARNING: SUM: nodriver 4
+04/08/18 11:22:12 1708: WARNING: SUM: noload 6
+04/08/18 11:22:12 1708: WARNING: SUM: openports 2
+04/08/18 11:22:12 1708: WARNING: SUM: warnings 8
+04/08/18 11:22:12 1708: WARNING: SUM: === Number of parsed input tables: ===
+04/08/18 11:22:12 1708: WARNING: SUM: conf 0
+04/08/18 11:22:12 1708: WARNING: SUM: hier 1
+04/08/18 11:22:12 1708: WARNING: SUM: conn 2
+04/08/18 11:22:12 1708: WARNING: SUM: io 0
+04/08/18 11:22:12 1708: WARNING: SUM: i2c 0
+04/08/18 11:22:12 1708: WARNING: SUM: Number of changes in intermediate: 0
+04/08/18 11:22:12 1708: WARNING: SUM: Number of changed files: 0
+04/08/18 13:09:18 2124: Reading worksheet CONN_DevIO of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/18 13:09:18 2124: Reading worksheet CONN_2 of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/18 13:09:24 2124: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/08/18 13:09:35 2124: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+04/08/18 13:09:36 2124: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+04/08/18 13:09:36 2124: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/18 13:09:36 2124: autoconnecting single signal %LOW% to bus port ramd_i
+04/08/18 13:09:36 2124: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+04/08/18 13:09:37 2124: WARNING: Rotating 3 old sheets of CONF!
+04/08/18 13:09:41 2124: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/18 13:09:41 2124: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/08/18 13:09:44 2124: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/08/18 13:09:44 2124: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/08/18 13:09:45 2124: Info: unchanged file adc-e.vhd
+04/08/18 13:09:46 2124: Info: unchanged file bsr-e.vhd
+04/08/18 13:09:46 2124: Info: unchanged file clkgen-e.vhd
+04/08/18 13:09:46 2124: Info: unchanged file dac-e.vhd
+04/08/18 13:09:46 2124: Info: unchanged file padframe-e.vhd
+04/08/18 13:09:46 2124: Info: unchanged file tap_con-e.vhd
+04/08/18 13:09:46 2124: Info: unchanged file vgca-e.vhd
+04/08/18 13:09:47 2124: Info: unchanged file vgca_cpu-e.vhd
+04/08/18 13:09:47 2124: Info: unchanged file vgca_di-e.vhd
+04/08/18 13:09:47 2124: Info: unchanged file vgca_dp-e.vhd
+04/08/18 13:09:47 2124: Info: unchanged file vgca_fe-e.vhd
+04/08/18 13:09:47 2124: Info: unchanged file vgca_mm-e.vhd
+04/08/18 13:09:47 2124: Info: unchanged file vgca_rc-e.vhd
+04/08/18 13:09:48 2124: Info: unchanged file vgca_tb-e.vhd
+04/08/18 13:09:48 2124: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+04/08/18 13:09:48 2124: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+04/08/18 13:09:48 2124: Warning: Signal ramd_i does not have a driver in instance dut!
+04/08/18 13:09:48 2124: Signal ramd_o2 does not have a load in instance dut!
+04/08/18 13:09:48 2124: Warning: Signal ramd_i2 does not have a driver in instance dut!
+04/08/18 13:09:48 2124: Signal ramd_o does not have a load in instance dut!
+04/08/18 13:09:48 2124: Leave unloaded port ramd_o open at instance dut
+04/08/18 13:09:48 2124: Leave unloaded port ramd_o2 open at instance dut
+04/08/18 13:09:48 2124: Info: unchanged file vgca-struct-a.vhd
+04/08/18 13:09:48 2124: Info: unchanged file adc-struct-a.vhd
+04/08/18 13:09:48 2124: Info: unchanged file bsr-struct-a.vhd
+04/08/18 13:09:49 2124: Info: unchanged file clkgen-struct-a.vhd
+04/08/18 13:09:49 2124: Info: unchanged file dac-struct-a.vhd
+04/08/18 13:09:49 2124: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+04/08/18 13:09:49 2124: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+04/08/18 13:09:49 2124: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+04/08/18 13:09:49 2124: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+04/08/18 13:09:49 2124: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/18 13:09:49 2124: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/08/18 13:09:49 2124: Signal %OPEN% does not have a load in instance i_padframe!
+04/08/18 13:09:49 2124: Info: unchanged file padframe-struct-a.vhd
+04/08/18 13:09:50 2124: Info: unchanged file tap_con-struct-a.vhd
+04/08/18 13:09:50 2124: Info: unchanged file vgca_cpu-struct-a.vhd
+04/08/18 13:09:50 2124: Info: unchanged file vgca_di-struct-a.vhd
+04/08/18 13:09:50 2124: Info: unchanged file vgca_dp-struct-a.vhd
+04/08/18 13:09:50 2124: Info: unchanged file vgca_fe-struct-a.vhd
+04/08/18 13:09:50 2124: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+04/08/18 13:09:50 2124: Signal mm_ramd does not have a load in instance i_vgca_mm!
+04/08/18 13:09:50 2124: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+04/08/18 13:09:50 2124: Info: unchanged file vgca_mm-struct-a.vhd
+04/08/18 13:09:51 2124: Info: unchanged file vgca_rc-struct-a.vhd
+04/08/18 13:09:51 2124: Info: unchanged file vgca_tb-struct-a.vhd
+04/08/18 13:09:51 2124: Info: unchanged file vgca-struct-conf-c.vhd
+04/08/18 13:09:51 2124: Info: unchanged file adc-struct-conf-c.vhd
+04/08/18 13:09:51 2124: Info: unchanged file bsr-struct-conf-c.vhd
+04/08/18 13:09:51 2124: Info: unchanged file clkgen-struct-conf-c.vhd
+04/08/18 13:09:52 2124: Info: unchanged file dac-struct-conf-c.vhd
+04/08/18 13:09:52 2124: Info: unchanged file padframe-struct-conf-c.vhd
+04/08/18 13:09:52 2124: Info: unchanged file tap_con-struct-conf-c.vhd
+04/08/18 13:09:52 2124: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+04/08/18 13:09:52 2124: Info: unchanged file vgca_di-struct-conf-c.vhd
+04/08/18 13:09:53 2124: Info: unchanged file vgca_dp-struct-conf-c.vhd
+04/08/18 13:09:53 2124: Info: unchanged file vgca_fe-struct-conf-c.vhd
+04/08/18 13:09:53 2124: Info: unchanged file vgca_mm-struct-conf-c.vhd
+04/08/18 13:09:53 2124: Info: unchanged file vgca_rc-struct-conf-c.vhd
+04/08/18 13:09:53 2124: Info: unchanged file vgca_tb-struct-conf-c.vhd
+04/08/18 13:09:53 2124: WARNING: ============= SUMMARY =================
+04/08/18 13:09:53 2124: WARNING: SUM: Summary of checks and created items:
+04/08/18 13:09:53 2124: WARNING: SUM: checkforce 0
+04/08/18 13:09:54 2124: WARNING: SUM: checkunique 0
+04/08/18 13:09:54 2124: WARNING: SUM: checkwarn 0
+04/08/18 13:09:54 2124: WARNING: SUM: cmacros 0
+04/08/18 13:09:54 2124: WARNING: SUM: conn 10
+04/08/18 13:09:54 2124: WARNING: SUM: errors 0
+04/08/18 13:09:54 2124: WARNING: SUM: genport 0
+04/08/18 13:09:54 2124: WARNING: SUM: hdlfiles 42
+04/08/18 13:09:54 2124: WARNING: SUM: inst 41
+04/08/18 13:09:54 2124: WARNING: SUM: multdriver 6
+04/08/18 13:09:54 2124: WARNING: SUM: nodriver 4
+04/08/18 13:09:54 2124: WARNING: SUM: noload 6
+04/08/18 13:09:54 2124: WARNING: SUM: openports 2
+04/08/18 13:09:54 2124: WARNING: SUM: warnings 8
+04/08/18 13:09:54 2124: WARNING: SUM: === Number of parsed input tables: ===
+04/08/18 13:09:54 2124: WARNING: SUM: conf 0
+04/08/18 13:09:54 2124: WARNING: SUM: hier 1
+04/08/18 13:09:55 2124: WARNING: SUM: conn 2
+04/08/18 13:09:55 2124: WARNING: SUM: io 0
+04/08/18 13:09:55 2124: WARNING: SUM: i2c 0
+04/08/18 13:09:55 2124: WARNING: SUM: Number of changes in intermediate: 0
+04/08/18 13:09:55 2124: WARNING: SUM: Number of changed files: 0
+04/11/10 09:30:10 2192: Reading worksheet CONN_DevIO of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/11/10 09:30:10 2192: Reading worksheet CONN_2 of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/11/10 09:30:16 2192: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/11/10 09:30:28 2192: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+04/11/10 09:30:28 2192: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+04/11/10 09:30:28 2192: autoconnecting single signal %LOW% to bus port ramd_i
+04/11/10 09:30:28 2192: autoconnecting single signal %LOW% to bus port ramd_i
+04/11/10 09:30:29 2192: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+04/11/10 09:30:29 2192: WARNING: Rotating 3 old sheets of CONF!
+04/11/10 09:30:33 2192: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/11/10 09:30:33 2192: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/11/10 09:30:36 2192: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/11/10 09:30:36 2192: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/11/10 09:30:38 2192: Info: unchanged file adc-e.vhd
+04/11/10 09:30:38 2192: Info: unchanged file bsr-e.vhd
+04/11/10 09:30:38 2192: Info: unchanged file clkgen-e.vhd
+04/11/10 09:30:39 2192: Info: unchanged file dac-e.vhd
+04/11/10 09:30:39 2192: Info: unchanged file padframe-e.vhd
+04/11/10 09:30:39 2192: Info: unchanged file tap_con-e.vhd
+04/11/10 09:30:39 2192: Info: unchanged file vgca-e.vhd
+04/11/10 09:30:39 2192: Info: unchanged file vgca_cpu-e.vhd
+04/11/10 09:30:40 2192: Info: unchanged file vgca_di-e.vhd
+04/11/10 09:30:40 2192: Info: unchanged file vgca_dp-e.vhd
+04/11/10 09:30:40 2192: Info: unchanged file vgca_fe-e.vhd
+04/11/10 09:30:40 2192: Info: unchanged file vgca_mm-e.vhd
+04/11/10 09:30:40 2192: Info: unchanged file vgca_rc-e.vhd
+04/11/10 09:30:41 2192: Info: unchanged file vgca_tb-e.vhd
+04/11/10 09:30:41 2192: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+04/11/10 09:30:41 2192: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+04/11/10 09:30:41 2192: Warning: Signal ramd_i does not have a driver in instance dut!
+04/11/10 09:30:41 2192: Signal ramd_o2 does not have a load in instance dut!
+04/11/10 09:30:41 2192: Warning: Signal ramd_i2 does not have a driver in instance dut!
+04/11/10 09:30:41 2192: Signal ramd_o does not have a load in instance dut!
+04/11/10 09:30:41 2192: Leave unloaded port ramd_o open at instance dut
+04/11/10 09:30:41 2192: Leave unloaded port ramd_o2 open at instance dut
+04/11/10 09:30:41 2192: Info: unchanged file vgca-struct-a.vhd
+04/11/10 09:30:41 2192: Info: unchanged file adc-struct-a.vhd
+04/11/10 09:30:41 2192: Info: unchanged file bsr-struct-a.vhd
+04/11/10 09:30:42 2192: Info: unchanged file clkgen-struct-a.vhd
+04/11/10 09:30:42 2192: Info: unchanged file dac-struct-a.vhd
+04/11/10 09:30:42 2192: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+04/11/10 09:30:42 2192: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+04/11/10 09:30:42 2192: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+04/11/10 09:30:42 2192: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+04/11/10 09:30:42 2192: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/11/10 09:30:42 2192: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/11/10 09:30:42 2192: Signal %OPEN% does not have a load in instance i_padframe!
+04/11/10 09:30:43 2192: Info: unchanged file padframe-struct-a.vhd
+04/11/10 09:30:43 2192: Info: unchanged file tap_con-struct-a.vhd
+04/11/10 09:30:43 2192: Info: unchanged file vgca_cpu-struct-a.vhd
+04/11/10 09:30:43 2192: Info: unchanged file vgca_di-struct-a.vhd
+04/11/10 09:30:43 2192: Info: unchanged file vgca_dp-struct-a.vhd
+04/11/10 09:30:44 2192: Info: unchanged file vgca_fe-struct-a.vhd
+04/11/10 09:30:44 2192: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+04/11/10 09:30:44 2192: Signal mm_ramd does not have a load in instance i_vgca_mm!
+04/11/10 09:30:44 2192: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+04/11/10 09:30:44 2192: Info: unchanged file vgca_mm-struct-a.vhd
+04/11/10 09:30:44 2192: Info: unchanged file vgca_rc-struct-a.vhd
+04/11/10 09:30:44 2192: Info: unchanged file vgca_tb-struct-a.vhd
+04/11/10 09:30:44 2192: Info: unchanged file vgca-struct-conf-c.vhd
+04/11/10 09:30:44 2192: Info: unchanged file adc-struct-conf-c.vhd
+04/11/10 09:30:45 2192: Info: unchanged file bsr-struct-conf-c.vhd
+04/11/10 09:30:45 2192: Info: unchanged file clkgen-struct-conf-c.vhd
+04/11/10 09:30:45 2192: Info: unchanged file dac-struct-conf-c.vhd
+04/11/10 09:30:45 2192: Info: unchanged file padframe-struct-conf-c.vhd
+04/11/10 09:30:45 2192: Info: unchanged file tap_con-struct-conf-c.vhd
+04/11/10 09:30:46 2192: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+04/11/10 09:30:46 2192: Info: unchanged file vgca_di-struct-conf-c.vhd
+04/11/10 09:30:46 2192: Info: unchanged file vgca_dp-struct-conf-c.vhd
+04/11/10 09:30:46 2192: Info: unchanged file vgca_fe-struct-conf-c.vhd
+04/11/10 09:30:46 2192: Info: unchanged file vgca_mm-struct-conf-c.vhd
+04/11/10 09:30:47 2192: Info: unchanged file vgca_rc-struct-conf-c.vhd
+04/11/10 09:30:47 2192: Info: unchanged file vgca_tb-struct-conf-c.vhd
+04/11/10 09:30:47 2192: WARNING: ============= SUMMARY =================
+04/11/10 09:30:47 2192: WARNING: SUM: Summary of checks and created items:
+04/11/10 09:30:47 2192: WARNING: SUM: checkforce 0
+04/11/10 09:30:47 2192: WARNING: SUM: checkunique 0
+04/11/10 09:30:47 2192: WARNING: SUM: checkwarn 0
+04/11/10 09:30:47 2192: WARNING: SUM: cmacros 0
+04/11/10 09:30:47 2192: WARNING: SUM: conn 10
+04/11/10 09:30:47 2192: WARNING: SUM: errors 0
+04/11/10 09:30:47 2192: WARNING: SUM: genport 0
+04/11/10 09:30:48 2192: WARNING: SUM: hdlfiles 42
+04/11/10 09:30:48 2192: WARNING: SUM: inst 41
+04/11/10 09:30:48 2192: WARNING: SUM: multdriver 6
+04/11/10 09:30:48 2192: WARNING: SUM: nodriver 4
+04/11/10 09:30:48 2192: WARNING: SUM: noload 6
+04/11/10 09:30:48 2192: WARNING: SUM: openports 2
+04/11/10 09:30:48 2192: WARNING: SUM: warnings 8
+04/11/10 09:30:48 2192: WARNING: SUM: === Number of parsed input tables: ===
+04/11/10 09:30:48 2192: WARNING: SUM: conf 0
+04/11/10 09:30:48 2192: WARNING: SUM: hier 1
+04/11/10 09:30:48 2192: WARNING: SUM: conn 2
+04/11/10 09:30:48 2192: WARNING: SUM: io 0
+04/11/10 09:30:48 2192: WARNING: SUM: i2c 0
+04/11/10 09:30:48 2192: WARNING: SUM: Number of changes in intermediate: 0
+04/11/10 09:30:49 2192: WARNING: SUM: Number of changed files: 0
+04/11/10 10:07:45 2324: Reading worksheet CONN_DevIO of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/11/10 10:07:45 2324: Reading worksheet CONN_2 of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/11/10 10:07:51 2324: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/11/10 10:08:03 2324: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+04/11/10 10:08:03 2324: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+04/11/10 10:08:03 2324: autoconnecting single signal %LOW% to bus port ramd_i
+04/11/10 10:08:03 2324: autoconnecting single signal %LOW% to bus port ramd_i
+04/11/10 10:08:04 2324: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+04/11/10 10:08:04 2324: WARNING: Rotating 3 old sheets of CONF!
+04/11/10 10:08:08 2324: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/11/10 10:08:08 2324: WARNING: Rotating 3 old sheets of DIFF_CONN!
+04/11/10 10:08:11 2324: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/11/10 10:08:11 2324: WARNING: Rotating 3 old sheets of DIFF_HIER!
+04/11/10 10:08:13 2324: Info: unchanged file adc-e.vhd
+04/11/10 10:08:13 2324: Info: unchanged file bsr-e.vhd
+04/11/10 10:08:13 2324: Info: unchanged file clkgen-e.vhd
+04/11/10 10:08:13 2324: Info: unchanged file dac-e.vhd
+04/11/10 10:08:14 2324: Info: unchanged file padframe-e.vhd
+04/11/10 10:08:14 2324: Info: unchanged file tap_con-e.vhd
+04/11/10 10:08:14 2324: Info: unchanged file vgca-e.vhd
+04/11/10 10:08:14 2324: Info: unchanged file vgca_cpu-e.vhd
+04/11/10 10:08:14 2324: Info: unchanged file vgca_di-e.vhd
+04/11/10 10:08:14 2324: Info: unchanged file vgca_dp-e.vhd
+04/11/10 10:08:15 2324: Info: unchanged file vgca_fe-e.vhd
+04/11/10 10:08:15 2324: Info: unchanged file vgca_mm-e.vhd
+04/11/10 10:08:15 2324: Info: unchanged file vgca_rc-e.vhd
+04/11/10 10:08:15 2324: Info: unchanged file vgca_tb-e.vhd
+04/11/10 10:08:15 2324: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+04/11/10 10:08:15 2324: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+04/11/10 10:08:15 2324: Warning: Signal ramd_i does not have a driver in instance dut!
+04/11/10 10:08:15 2324: Signal ramd_o2 does not have a load in instance dut!
+04/11/10 10:08:15 2324: Warning: Signal ramd_i2 does not have a driver in instance dut!
+04/11/10 10:08:15 2324: Signal ramd_o does not have a load in instance dut!
+04/11/10 10:08:15 2324: Leave unloaded port ramd_o open at instance dut
+04/11/10 10:08:15 2324: Leave unloaded port ramd_o2 open at instance dut
+04/11/10 10:08:15 2324: Info: unchanged file vgca-struct-a.vhd
+04/11/10 10:08:16 2324: Info: unchanged file adc-struct-a.vhd
+04/11/10 10:08:16 2324: Info: unchanged file bsr-struct-a.vhd
+04/11/10 10:08:16 2324: Info: unchanged file clkgen-struct-a.vhd
+04/11/10 10:08:16 2324: Info: unchanged file dac-struct-a.vhd
+04/11/10 10:08:16 2324: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+04/11/10 10:08:16 2324: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+04/11/10 10:08:16 2324: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+04/11/10 10:08:16 2324: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+04/11/10 10:08:16 2324: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/11/10 10:08:16 2324: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/11/10 10:08:16 2324: Signal %OPEN% does not have a load in instance i_padframe!
+04/11/10 10:08:17 2324: Info: unchanged file padframe-struct-a.vhd
+04/11/10 10:08:17 2324: Info: unchanged file tap_con-struct-a.vhd
+04/11/10 10:08:17 2324: Info: unchanged file vgca_cpu-struct-a.vhd
+04/11/10 10:08:17 2324: Info: unchanged file vgca_di-struct-a.vhd
+04/11/10 10:08:17 2324: Info: unchanged file vgca_dp-struct-a.vhd
+04/11/10 10:08:17 2324: Info: unchanged file vgca_fe-struct-a.vhd
+04/11/10 10:08:18 2324: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+04/11/10 10:08:18 2324: Signal mm_ramd does not have a load in instance i_vgca_mm!
+04/11/10 10:08:18 2324: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+04/11/10 10:08:18 2324: Info: unchanged file vgca_mm-struct-a.vhd
+04/11/10 10:08:18 2324: Info: unchanged file vgca_rc-struct-a.vhd
+04/11/10 10:08:18 2324: Info: unchanged file vgca_tb-struct-a.vhd
+04/11/10 10:08:18 2324: Info: unchanged file vgca-struct-conf-c.vhd
+04/11/10 10:08:18 2324: Info: unchanged file adc-struct-conf-c.vhd
+04/11/10 10:08:18 2324: Info: unchanged file bsr-struct-conf-c.vhd
+04/11/10 10:08:19 2324: Info: unchanged file clkgen-struct-conf-c.vhd
+04/11/10 10:08:19 2324: Info: unchanged file dac-struct-conf-c.vhd
+04/11/10 10:08:19 2324: Info: unchanged file padframe-struct-conf-c.vhd
+04/11/10 10:08:19 2324: Info: unchanged file tap_con-struct-conf-c.vhd
+04/11/10 10:08:19 2324: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+04/11/10 10:08:19 2324: Info: unchanged file vgca_di-struct-conf-c.vhd
+04/11/10 10:08:20 2324: Info: unchanged file vgca_dp-struct-conf-c.vhd
+04/11/10 10:08:20 2324: Info: unchanged file vgca_fe-struct-conf-c.vhd
+04/11/10 10:08:20 2324: Info: unchanged file vgca_mm-struct-conf-c.vhd
+04/11/10 10:08:20 2324: Info: unchanged file vgca_rc-struct-conf-c.vhd
+04/11/10 10:08:20 2324: Info: unchanged file vgca_tb-struct-conf-c.vhd
+04/11/10 10:08:20 2324: WARNING: ============= SUMMARY =================
+04/11/10 10:08:20 2324: WARNING: SUM: Summary of checks and created items:
+04/11/10 10:08:20 2324: WARNING: SUM: checkforce 0
+04/11/10 10:08:20 2324: WARNING: SUM: checkunique 0
+04/11/10 10:08:20 2324: WARNING: SUM: checkwarn 0
+04/11/10 10:08:20 2324: WARNING: SUM: cmacros 0
+04/11/10 10:08:20 2324: WARNING: SUM: conn 10
+04/11/10 10:08:21 2324: WARNING: SUM: errors 0
+04/11/10 10:08:21 2324: WARNING: SUM: genport 0
+04/11/10 10:08:21 2324: WARNING: SUM: hdlfiles 42
+04/11/10 10:08:21 2324: WARNING: SUM: inst 41
+04/11/10 10:08:21 2324: WARNING: SUM: multdriver 6
+04/11/10 10:08:21 2324: WARNING: SUM: nodriver 4
+04/11/10 10:08:21 2324: WARNING: SUM: noload 6
+04/11/10 10:08:21 2324: WARNING: SUM: openports 2
+04/11/10 10:08:21 2324: WARNING: SUM: warnings 8
+04/11/10 10:08:21 2324: WARNING: SUM: === Number of parsed input tables: ===
+04/11/10 10:08:21 2324: WARNING: SUM: conf 0
+04/11/10 10:08:21 2324: WARNING: SUM: hier 1
+04/11/10 10:08:21 2324: WARNING: SUM: conn 2
+04/11/10 10:08:21 2324: WARNING: SUM: io 0
+04/11/10 10:08:21 2324: WARNING: SUM: i2c 0
+04/11/10 10:08:21 2324: WARNING: SUM: Number of changes in intermediate: 0
+04/11/10 10:08:21 2324: WARNING: SUM: Number of changed files: 0
+04/11/10 14:54:20 2344: Reading worksheet CONN_DevIO of /cygdrive/h/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/11/10 14:54:20 2344: Reading worksheet CONN_2 of /cygdrive/h/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/11/10 14:54:25 2344: Reading worksheet HIER of /cygdrive/h/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/11/10 14:54:35 2344: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+04/11/10 14:54:35 2344: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+04/11/10 14:54:35 2344: autoconnecting single signal %LOW% to bus port ramd_i
+04/11/10 14:54:35 2344: autoconnecting single signal %LOW% to bus port ramd_i
+04/11/10 14:54:38 2344: Reading worksheet CONN of /cygdrive/h/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/11/10 14:54:40 2344: Reading worksheet HIER of /cygdrive/h/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/11/10 14:54:41 2344: Info: unchanged file adc-e.vhd
+04/11/10 14:54:41 2344: Info: unchanged file bsr-e.vhd
+04/11/10 14:54:41 2344: Info: unchanged file clkgen-e.vhd
+04/11/10 14:54:42 2344: Info: unchanged file dac-e.vhd
+04/11/10 14:54:43 2344: Info: unchanged file padframe-e.vhd
+04/11/10 14:54:43 2344: Info: unchanged file tap_con-e.vhd
+04/11/10 14:54:44 2344: Info: unchanged file vgca-e.vhd
+04/11/10 14:54:44 2344: Info: unchanged file vgca_cpu-e.vhd
+04/11/10 14:54:44 2344: Info: unchanged file vgca_di-e.vhd
+04/11/10 14:54:45 2344: Info: unchanged file vgca_dp-e.vhd
+04/11/10 14:54:45 2344: Info: unchanged file vgca_fe-e.vhd
+04/11/10 14:54:46 2344: Info: unchanged file vgca_mm-e.vhd
+04/11/10 14:54:46 2344: Info: unchanged file vgca_rc-e.vhd
+04/11/10 14:54:46 2344: Info: unchanged file vgca_tb-e.vhd
+04/11/10 14:54:47 2344: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+04/11/10 14:54:47 2344: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+04/11/10 14:54:47 2344: Signal ramd_o does not have a load in instance dut!
+04/11/10 14:54:47 2344: Warning: Signal ramd_i does not have a driver in instance dut!
+04/11/10 14:54:47 2344: Signal ramd_o2 does not have a load in instance dut!
+04/11/10 14:54:47 2344: Warning: Signal ramd_i2 does not have a driver in instance dut!
+04/11/10 14:54:47 2344: Leave unloaded port ramd_o open at instance dut
+04/11/10 14:54:47 2344: Leave unloaded port ramd_o2 open at instance dut
+04/11/10 14:54:47 2344: Info: unchanged file vgca-struct-a.vhd
+04/11/10 14:54:48 2344: Info: unchanged file adc-struct-a.vhd
+04/11/10 14:54:48 2344: Info: unchanged file bsr-struct-a.vhd
+04/11/10 14:54:48 2344: Info: unchanged file clkgen-struct-a.vhd
+04/11/10 14:54:48 2344: Info: unchanged file dac-struct-a.vhd
+04/11/10 14:54:49 2344: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+04/11/10 14:54:49 2344: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+04/11/10 14:54:49 2344: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+04/11/10 14:54:49 2344: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+04/11/10 14:54:49 2344: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/11/10 14:54:49 2344: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/11/10 14:54:49 2344: Signal %OPEN% does not have a load in instance i_padframe!
+04/11/10 14:54:49 2344: Info: unchanged file padframe-struct-a.vhd
+04/11/10 14:54:49 2344: Info: unchanged file tap_con-struct-a.vhd
+04/11/10 14:54:49 2344: Info: unchanged file vgca_cpu-struct-a.vhd
+04/11/10 14:54:50 2344: Info: unchanged file vgca_di-struct-a.vhd
+04/11/10 14:54:50 2344: Info: unchanged file vgca_dp-struct-a.vhd
+04/11/10 14:54:50 2344: Info: unchanged file vgca_fe-struct-a.vhd
+04/11/10 14:54:50 2344: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+04/11/10 14:54:50 2344: Signal mm_ramd does not have a load in instance i_vgca_mm!
+04/11/10 14:54:50 2344: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+04/11/10 14:54:50 2344: Info: unchanged file vgca_mm-struct-a.vhd
+04/11/10 14:54:51 2344: Info: unchanged file vgca_rc-struct-a.vhd
+04/11/10 14:54:51 2344: Info: unchanged file vgca_tb-struct-a.vhd
+04/11/10 14:54:51 2344: Info: unchanged file vgca-struct-conf-c.vhd
+04/11/10 14:54:52 2344: Info: unchanged file adc-struct-conf-c.vhd
+04/11/10 14:54:52 2344: Info: unchanged file bsr-struct-conf-c.vhd
+04/11/10 14:54:52 2344: Info: unchanged file clkgen-struct-conf-c.vhd
+04/11/10 14:54:52 2344: Info: unchanged file dac-struct-conf-c.vhd
+04/11/10 14:54:52 2344: Info: unchanged file padframe-struct-conf-c.vhd
+04/11/10 14:54:53 2344: Info: unchanged file tap_con-struct-conf-c.vhd
+04/11/10 14:54:53 2344: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+04/11/10 14:54:53 2344: Info: unchanged file vgca_di-struct-conf-c.vhd
+04/11/10 14:54:53 2344: Info: unchanged file vgca_dp-struct-conf-c.vhd
+04/11/10 14:54:53 2344: Info: unchanged file vgca_fe-struct-conf-c.vhd
+04/11/10 14:54:54 2344: Info: unchanged file vgca_mm-struct-conf-c.vhd
+04/11/10 14:54:54 2344: Info: unchanged file vgca_rc-struct-conf-c.vhd
+04/11/10 14:54:54 2344: Info: unchanged file vgca_tb-struct-conf-c.vhd
+04/11/10 14:54:54 2344: WARNING: ============= SUMMARY =================
+04/11/10 14:54:54 2344: WARNING: SUM: Summary of checks and created items:
+04/11/10 14:54:54 2344: WARNING: SUM: checkforce 0
+04/11/10 14:54:54 2344: WARNING: SUM: checkunique 0
+04/11/10 14:54:54 2344: WARNING: SUM: checkwarn 0
+04/11/10 14:54:54 2344: WARNING: SUM: cmacros 0
+04/11/10 14:54:54 2344: WARNING: SUM: conn 10
+04/11/10 14:54:54 2344: WARNING: SUM: errors 0
+04/11/10 14:54:55 2344: WARNING: SUM: genport 0
+04/11/10 14:54:55 2344: WARNING: SUM: hdlfiles 42
+04/11/10 14:54:55 2344: WARNING: SUM: inst 41
+04/11/10 14:54:55 2344: WARNING: SUM: multdriver 6
+04/11/10 14:54:55 2344: WARNING: SUM: nodriver 4
+04/11/10 14:54:55 2344: WARNING: SUM: noload 6
+04/11/10 14:54:55 2344: WARNING: SUM: openports 2
+04/11/10 14:54:55 2344: WARNING: SUM: warnings 8
+04/11/10 14:54:55 2344: WARNING: SUM: === Number of parsed input tables: ===
+04/11/10 14:54:55 2344: WARNING: SUM: conf 0
+04/11/10 14:54:55 2344: WARNING: SUM: hier 1
+04/11/10 14:54:55 2344: WARNING: SUM: conn 2
+04/11/10 14:54:55 2344: WARNING: SUM: io 0
+04/11/10 14:54:55 2344: WARNING: SUM: i2c 0
+04/11/10 14:54:55 2344: WARNING: SUM: Number of changes in intermediate: 0
+04/11/10 14:54:55 2344: WARNING: SUM: Number of changed files: 0
+04/11/10 17:23:53 2536: Reading worksheet CONN_DevIO of /cygdrive/h/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/11/10 17:23:53 2536: Reading worksheet CONN_2 of /cygdrive/h/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/11/10 17:23:58 2536: Reading worksheet HIER of /cygdrive/h/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+04/11/10 17:24:07 2536: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+04/11/10 17:24:07 2536: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+04/11/10 17:24:07 2536: autoconnecting single signal %LOW% to bus port ramd_i
+04/11/10 17:24:07 2536: autoconnecting single signal %LOW% to bus port ramd_i
+04/11/10 17:24:09 2536: Reading worksheet CONN of /cygdrive/h/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/11/10 17:24:11 2536: Reading worksheet HIER of /cygdrive/h/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+04/11/10 17:24:11 2536: Info: unchanged file adc-e.vhd
+04/11/10 17:24:12 2536: Info: unchanged file bsr-e.vhd
+04/11/10 17:24:12 2536: Info: unchanged file clkgen-e.vhd
+04/11/10 17:24:12 2536: Info: unchanged file dac-e.vhd
+04/11/10 17:24:13 2536: Info: unchanged file padframe-e.vhd
+04/11/10 17:24:13 2536: Info: unchanged file tap_con-e.vhd
+04/11/10 17:24:13 2536: Info: unchanged file vgca-e.vhd
+04/11/10 17:24:13 2536: Info: unchanged file vgca_cpu-e.vhd
+04/11/10 17:24:14 2536: Info: unchanged file vgca_di-e.vhd
+04/11/10 17:24:14 2536: Info: unchanged file vgca_dp-e.vhd
+04/11/10 17:24:14 2536: Info: unchanged file vgca_fe-e.vhd
+04/11/10 17:24:14 2536: Info: unchanged file vgca_mm-e.vhd
+04/11/10 17:24:15 2536: Info: unchanged file vgca_rc-e.vhd
+04/11/10 17:24:15 2536: Info: unchanged file vgca_tb-e.vhd
+04/11/10 17:24:15 2536: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+04/11/10 17:24:15 2536: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+04/11/10 17:24:15 2536: Signal ramd_o does not have a load in instance dut!
+04/11/10 17:24:15 2536: Warning: Signal ramd_i does not have a driver in instance dut!
+04/11/10 17:24:15 2536: Signal ramd_o2 does not have a load in instance dut!
+04/11/10 17:24:15 2536: Warning: Signal ramd_i2 does not have a driver in instance dut!
+04/11/10 17:24:15 2536: Leave unloaded port ramd_o open at instance dut
+04/11/10 17:24:15 2536: Leave unloaded port ramd_o2 open at instance dut
+04/11/10 17:24:15 2536: Info: unchanged file vgca-struct-a.vhd
+04/11/10 17:24:15 2536: Info: unchanged file adc-struct-a.vhd
+04/11/10 17:24:16 2536: Info: unchanged file bsr-struct-a.vhd
+04/11/10 17:24:16 2536: Info: unchanged file clkgen-struct-a.vhd
+04/11/10 17:24:16 2536: Info: unchanged file dac-struct-a.vhd
+04/11/10 17:24:16 2536: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+04/11/10 17:24:16 2536: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+04/11/10 17:24:16 2536: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+04/11/10 17:24:16 2536: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+04/11/10 17:24:17 2536: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/11/10 17:24:17 2536: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+04/11/10 17:24:17 2536: Signal %OPEN% does not have a load in instance i_padframe!
+04/11/10 17:24:17 2536: Info: unchanged file padframe-struct-a.vhd
+04/11/10 17:24:17 2536: Info: unchanged file tap_con-struct-a.vhd
+04/11/10 17:24:18 2536: Info: unchanged file vgca_cpu-struct-a.vhd
+04/11/10 17:24:18 2536: Info: unchanged file vgca_di-struct-a.vhd
+04/11/10 17:24:18 2536: Info: unchanged file vgca_dp-struct-a.vhd
+04/11/10 17:24:18 2536: Info: unchanged file vgca_fe-struct-a.vhd
+04/11/10 17:24:18 2536: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+04/11/10 17:24:18 2536: Signal mm_ramd does not have a load in instance i_vgca_mm!
+04/11/10 17:24:18 2536: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+04/11/10 17:24:18 2536: Info: unchanged file vgca_mm-struct-a.vhd
+04/11/10 17:24:19 2536: Info: unchanged file vgca_rc-struct-a.vhd
+04/11/10 17:24:19 2536: Info: unchanged file vgca_tb-struct-a.vhd
+04/11/10 17:24:19 2536: Info: unchanged file vgca-struct-conf-c.vhd
+04/11/10 17:24:19 2536: Info: unchanged file adc-struct-conf-c.vhd
+04/11/10 17:24:19 2536: Info: unchanged file bsr-struct-conf-c.vhd
+04/11/10 17:24:20 2536: Info: unchanged file clkgen-struct-conf-c.vhd
+04/11/10 17:24:20 2536: Info: unchanged file dac-struct-conf-c.vhd
+04/11/10 17:24:20 2536: Info: unchanged file padframe-struct-conf-c.vhd
+04/11/10 17:24:20 2536: Info: unchanged file tap_con-struct-conf-c.vhd
+04/11/10 17:24:20 2536: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+04/11/10 17:24:21 2536: Info: unchanged file vgca_di-struct-conf-c.vhd
+04/11/10 17:24:21 2536: Info: unchanged file vgca_dp-struct-conf-c.vhd
+04/11/10 17:24:21 2536: Info: unchanged file vgca_fe-struct-conf-c.vhd
+04/11/10 17:24:21 2536: Info: unchanged file vgca_mm-struct-conf-c.vhd
+04/11/10 17:24:21 2536: Info: unchanged file vgca_rc-struct-conf-c.vhd
+04/11/10 17:24:22 2536: Info: unchanged file vgca_tb-struct-conf-c.vhd
+04/11/10 17:24:22 2536: WARNING: ============= SUMMARY =================
+04/11/10 17:24:22 2536: WARNING: SUM: Summary of checks and created items:
+04/11/10 17:24:22 2536: WARNING: SUM: checkforce 0
+04/11/10 17:24:22 2536: WARNING: SUM: checkunique 0
+04/11/10 17:24:22 2536: WARNING: SUM: checkwarn 0
+04/11/10 17:24:22 2536: WARNING: SUM: cmacros 0
+04/11/10 17:24:22 2536: WARNING: SUM: conn 10
+04/11/10 17:24:22 2536: WARNING: SUM: errors 0
+04/11/10 17:24:22 2536: WARNING: SUM: genport 0
+04/11/10 17:24:22 2536: WARNING: SUM: hdlfiles 42
+04/11/10 17:24:22 2536: WARNING: SUM: inst 41
+04/11/10 17:24:22 2536: WARNING: SUM: multdriver 6
+04/11/10 17:24:22 2536: WARNING: SUM: nodriver 4
+04/11/10 17:24:22 2536: WARNING: SUM: noload 6
+04/11/10 17:24:22 2536: WARNING: SUM: openports 2
+04/11/10 17:24:22 2536: WARNING: SUM: warnings 8
+04/11/10 17:24:23 2536: WARNING: SUM: === Number of parsed input tables: ===
+04/11/10 17:24:23 2536: WARNING: SUM: conf 0
+04/11/10 17:24:23 2536: WARNING: SUM: hier 1
+04/11/10 17:24:23 2536: WARNING: SUM: conn 2
+04/11/10 17:24:23 2536: WARNING: SUM: io 0
+04/11/10 17:24:23 2536: WARNING: SUM: i2c 0
+04/11/10 17:24:23 2536: WARNING: SUM: Number of changes in intermediate: 0
+04/11/10 17:24:23 2536: WARNING: SUM: Number of changed files: 0
+05/01/13 10:27:11 2716: Reading worksheet CONN_DevIO of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+05/01/13 10:27:11 2716: Reading worksheet CONN_2 of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+05/01/13 10:27:18 2716: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+05/01/13 10:27:30 2716: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+05/01/13 10:27:30 2716: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+05/01/13 10:27:30 2716: autoconnecting single signal %LOW% to bus port ramd_i
+05/01/13 10:27:30 2716: autoconnecting single signal %LOW% to bus port ramd_i
+05/01/13 10:27:31 2716: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+05/01/13 10:27:32 2716: WARNING: Rotating 3 old sheets of CONF!
+05/01/13 10:27:36 2716: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+05/01/13 10:27:36 2716: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/13 10:27:39 2716: WARNING: INFO: Detected 8 changes in intermediate sheet CONN, in file bugver-mixed.xls
+05/01/13 10:27:41 2716: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+05/01/13 10:27:41 2716: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/13 10:27:43 2716: Info: unchanged file adc-e.vhd
+05/01/13 10:27:43 2716: Info: unchanged file bsr-e.vhd
+05/01/13 10:27:43 2716: Info: unchanged file clkgen-e.vhd
+05/01/13 10:27:43 2716: Info: unchanged file dac-e.vhd
+05/01/13 10:27:44 2716: Info: unchanged file padframe-e.vhd
+05/01/13 10:27:44 2716: Info: unchanged file tap_con-e.vhd
+05/01/13 10:27:44 2716: Info: unchanged file vgca-e.vhd
+05/01/13 10:27:44 2716: Info: unchanged file vgca_cpu-e.vhd
+05/01/13 10:27:45 2716: Info: unchanged file vgca_di-e.vhd
+05/01/13 10:27:45 2716: Info: unchanged file vgca_dp-e.vhd
+05/01/13 10:27:45 2716: Info: unchanged file vgca_fe-e.vhd
+05/01/13 10:27:45 2716: Info: unchanged file vgca_mm-e.vhd
+05/01/13 10:27:45 2716: Info: unchanged file vgca_rc-e.vhd
+05/01/13 10:27:45 2716: Info: unchanged file vgca_tb-e.vhd
+05/01/13 10:27:46 2716: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+05/01/13 10:27:46 2716: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+05/01/13 10:27:46 2716: Warning: Signal ramd_i does not have a driver in instance dut!
+05/01/13 10:27:46 2716: Signal ramd_o2 does not have a load in instance dut!
+05/01/13 10:27:46 2716: Warning: Signal ramd_i2 does not have a driver in instance dut!
+05/01/13 10:27:46 2716: Signal ramd_o does not have a load in instance dut!
+05/01/13 10:27:46 2716: Leave unloaded port ramd_o open at instance dut
+05/01/13 10:27:46 2716: Leave unloaded port ramd_o2 open at instance dut
+05/01/13 10:27:46 2716: Info: unchanged file vgca-struct-a.vhd
+05/01/13 10:27:46 2716: Info: unchanged file adc-struct-a.vhd
+05/01/13 10:27:46 2716: Info: unchanged file bsr-struct-a.vhd
+05/01/13 10:27:46 2716: Info: unchanged file clkgen-struct-a.vhd
+05/01/13 10:27:47 2716: Info: unchanged file dac-struct-a.vhd
+05/01/13 10:27:47 2716: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+05/01/13 10:27:47 2716: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+05/01/13 10:27:47 2716: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+05/01/13 10:27:47 2716: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+05/01/13 10:27:47 2716: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+05/01/13 10:27:47 2716: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+05/01/13 10:27:47 2716: Signal %OPEN_7% does not have a load in instance i_padframe!
+05/01/13 10:27:47 2716: Signal %OPEN_3% does not have a load in instance i_padframe!
+05/01/13 10:27:47 2716: Signal %OPEN_4% does not have a load in instance i_padframe!
+05/01/13 10:27:47 2716: Signal %OPEN_0% does not have a load in instance i_padframe!
+05/01/13 10:27:47 2716: Signal %OPEN_5% does not have a load in instance i_padframe!
+05/01/13 10:27:47 2716: Signal %OPEN_6% does not have a load in instance i_padframe!
+05/01/13 10:27:47 2716: Signal %OPEN_2% does not have a load in instance i_padframe!
+05/01/13 10:27:47 2716: Signal %OPEN_1% does not have a load in instance i_padframe!
+05/01/13 10:27:47 2716: WARNING: Info: file padframe-struct-a.vhd has changes!
+05/01/13 10:27:48 2716: Info: unchanged file tap_con-struct-a.vhd
+05/01/13 10:27:48 2716: Info: unchanged file vgca_cpu-struct-a.vhd
+05/01/13 10:27:48 2716: Info: unchanged file vgca_di-struct-a.vhd
+05/01/13 10:27:48 2716: Info: unchanged file vgca_dp-struct-a.vhd
+05/01/13 10:27:48 2716: Info: unchanged file vgca_fe-struct-a.vhd
+05/01/13 10:27:49 2716: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+05/01/13 10:27:49 2716: Signal mm_ramd does not have a load in instance i_vgca_mm!
+05/01/13 10:27:49 2716: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+05/01/13 10:27:49 2716: Info: unchanged file vgca_mm-struct-a.vhd
+05/01/13 10:27:49 2716: Info: unchanged file vgca_rc-struct-a.vhd
+05/01/13 10:27:49 2716: Info: unchanged file vgca_tb-struct-a.vhd
+05/01/13 10:27:49 2716: Info: unchanged file vgca-struct-conf-c.vhd
+05/01/13 10:27:49 2716: Info: unchanged file adc-struct-conf-c.vhd
+05/01/13 10:27:50 2716: Info: unchanged file bsr-struct-conf-c.vhd
+05/01/13 10:27:50 2716: Info: unchanged file clkgen-struct-conf-c.vhd
+05/01/13 10:27:50 2716: Info: unchanged file dac-struct-conf-c.vhd
+05/01/13 10:27:50 2716: Info: unchanged file padframe-struct-conf-c.vhd
+05/01/13 10:27:50 2716: Info: unchanged file tap_con-struct-conf-c.vhd
+05/01/13 10:27:50 2716: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+05/01/13 10:27:51 2716: Info: unchanged file vgca_di-struct-conf-c.vhd
+05/01/13 10:27:51 2716: Info: unchanged file vgca_dp-struct-conf-c.vhd
+05/01/13 10:27:51 2716: Info: unchanged file vgca_fe-struct-conf-c.vhd
+05/01/13 10:27:51 2716: Info: unchanged file vgca_mm-struct-conf-c.vhd
+05/01/13 10:27:51 2716: Info: unchanged file vgca_rc-struct-conf-c.vhd
+05/01/13 10:27:52 2716: Info: unchanged file vgca_tb-struct-conf-c.vhd
+05/01/13 10:27:52 2716: WARNING: ============= SUMMARY =================
+05/01/13 10:27:52 2716: WARNING: SUM: Summary of checks and created items:
+05/01/13 10:27:52 2716: WARNING: SUM: checkforce 0
+05/01/13 10:27:52 2716: WARNING: SUM: checkunique 0
+05/01/13 10:27:52 2716: WARNING: SUM: checkwarn 0
+05/01/13 10:27:52 2716: WARNING: SUM: cmacros 0
+05/01/13 10:27:52 2716: WARNING: SUM: conn 17
+05/01/13 10:27:52 2716: WARNING: SUM: errors 0
+05/01/13 10:27:52 2716: WARNING: SUM: genport 0
+05/01/13 10:27:52 2716: WARNING: SUM: hdlfiles 42
+05/01/13 10:27:52 2716: WARNING: SUM: inst 41
+05/01/13 10:27:52 2716: WARNING: SUM: multdriver 5
+05/01/13 10:27:53 2716: WARNING: SUM: nodriver 4
+05/01/13 10:27:53 2716: WARNING: SUM: noload 13
+05/01/13 10:27:53 2716: WARNING: SUM: openports 2
+05/01/13 10:27:53 2716: WARNING: SUM: warnings 8
+05/01/13 10:27:53 2716: WARNING: SUM: === Number of parsed input tables: ===
+05/01/13 10:27:53 2716: WARNING: SUM: conf 0
+05/01/13 10:27:53 2716: WARNING: SUM: hier 1
+05/01/13 10:27:53 2716: WARNING: SUM: conn 2
+05/01/13 10:27:53 2716: WARNING: SUM: io 0
+05/01/13 10:27:53 2716: WARNING: SUM: i2c 0
+05/01/13 10:27:53 2716: WARNING: SUM: Number of changes in intermediate: 8
+05/01/13 10:27:54 2716: WARNING: SUM: Number of changed files: 1
+05/01/13 19:00:37 1952: Reading worksheet CONN_DevIO of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+05/01/13 19:00:37 1952: Reading worksheet CONN_2 of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+05/01/13 19:00:43 1952: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+05/01/13 19:00:55 1952: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+05/01/13 19:00:55 1952: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+05/01/13 19:00:55 1952: autoconnecting single signal %LOW% to bus port ramd_i
+05/01/13 19:00:55 1952: autoconnecting single signal %LOW% to bus port ramd_i
+05/01/13 19:01:02 1952: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+05/01/13 19:01:04 1952: WARNING: Rotating 3 old sheets of CONF!
+05/01/13 19:01:07 1952: WARNING: Rotating 3 old sheets of CONN!
+05/01/13 19:01:07 1952: WARNING: Rotating 3 old sheets of HIER!
+05/01/13 19:01:11 1952: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+05/01/13 19:01:11 1952: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+05/01/13 19:01:11 1952: Warning: Signal ramd_i does not have a driver in instance dut!
+05/01/13 19:01:11 1952: Signal ramd_o2 does not have a load in instance dut!
+05/01/13 19:01:11 1952: Warning: Signal ramd_i2 does not have a driver in instance dut!
+05/01/13 19:01:11 1952: Signal ramd_o does not have a load in instance dut!
+05/01/13 19:01:11 1952: Leave unloaded port ramd_o open at instance dut
+05/01/13 19:01:11 1952: Leave unloaded port ramd_o2 open at instance dut
+05/01/13 19:01:12 1952: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+05/01/13 19:01:12 1952: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+05/01/13 19:01:12 1952: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+05/01/13 19:01:12 1952: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+05/01/13 19:01:12 1952: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+05/01/13 19:01:12 1952: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+05/01/13 19:01:12 1952: Signal %OPEN_7% does not have a load in instance i_padframe!
+05/01/13 19:01:12 1952: Signal %OPEN_3% does not have a load in instance i_padframe!
+05/01/13 19:01:12 1952: Signal %OPEN_4% does not have a load in instance i_padframe!
+05/01/13 19:01:12 1952: Signal %OPEN_0% does not have a load in instance i_padframe!
+05/01/13 19:01:12 1952: Signal %OPEN_5% does not have a load in instance i_padframe!
+05/01/13 19:01:12 1952: Signal %OPEN_6% does not have a load in instance i_padframe!
+05/01/13 19:01:12 1952: Signal %OPEN_2% does not have a load in instance i_padframe!
+05/01/13 19:01:12 1952: Signal %OPEN_1% does not have a load in instance i_padframe!
+05/01/13 19:01:13 1952: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+05/01/13 19:01:13 1952: Signal mm_ramd does not have a load in instance i_vgca_mm!
+05/01/13 19:01:13 1952: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+05/01/13 19:01:17 1952: WARNING: ============= SUMMARY =================
+05/01/13 19:01:17 1952: WARNING: SUM: Summary of checks and created items:
+05/01/13 19:01:17 1952: WARNING: SUM: checkforce 0
+05/01/13 19:01:17 1952: WARNING: SUM: checkunique 0
+05/01/13 19:01:17 1952: WARNING: SUM: checkwarn 0
+05/01/13 19:01:17 1952: WARNING: SUM: cmacros 0
+05/01/13 19:01:17 1952: WARNING: SUM: conn 17
+05/01/13 19:01:17 1952: WARNING: SUM: errors 0
+05/01/13 19:01:17 1952: WARNING: SUM: genport 0
+05/01/13 19:01:17 1952: WARNING: SUM: hdlfiles 42
+05/01/13 19:01:17 1952: WARNING: SUM: inst 41
+05/01/13 19:01:17 1952: WARNING: SUM: multdriver 5
+05/01/13 19:01:17 1952: WARNING: SUM: nodriver 4
+05/01/13 19:01:17 1952: WARNING: SUM: noload 13
+05/01/13 19:01:17 1952: WARNING: SUM: openports 2
+05/01/13 19:01:17 1952: WARNING: SUM: warnings 8
+05/01/13 19:01:17 1952: WARNING: SUM: === Number of parsed input tables: ===
+05/01/13 19:01:17 1952: WARNING: SUM: conf 0
+05/01/13 19:01:17 1952: WARNING: SUM: hier 1
+05/01/13 19:01:17 1952: WARNING: SUM: conn 2
+05/01/13 19:01:17 1952: WARNING: SUM: io 0
+05/01/13 19:01:17 1952: WARNING: SUM: i2c 0
+05/01/21 09:20:32 2172: Reading worksheet CONN_DevIO of h:/work/mix_new/mix/test/xls_input/bugver/ramd/../../bugver.xls
+05/01/21 09:20:32 2172: Reading worksheet CONN_2 of h:/work/mix_new/mix/test/xls_input/bugver/ramd/../../bugver.xls
+05/01/21 09:20:39 2172: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/bugver/ramd/../../bugver.xls
+05/01/21 09:20:52 2172: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+05/01/21 09:20:52 2172: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+05/01/21 09:20:52 2172: autoconnecting single signal %LOW% to bus port ramd_i
+05/01/21 09:20:52 2172: autoconnecting single signal %LOW% to bus port ramd_i
+05/01/21 09:21:06 2172: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+05/01/21 09:21:07 2172: WARNING: Rotating 3 old sheets of CONF!
+05/01/21 09:21:11 2172: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/bugver/ramd/bugver-mixed.xls
+05/01/21 09:21:12 2172: WARNING: ERROR: workbook bugver-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\bugver\ramd) already opened!
+05/01/21 09:21:12 2172: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/21 09:21:15 2172: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/bugver/ramd/bugver-mixed.xls
+05/01/21 09:21:15 2172: WARNING: ERROR: workbook bugver-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\bugver\ramd) already opened!
+05/01/21 09:21:15 2172: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/21 09:21:17 2172: Info: unchanged file adc-e.vhd
+05/01/21 09:21:17 2172: Info: unchanged file bsr-e.vhd
+05/01/21 09:21:18 2172: Info: unchanged file clkgen-e.vhd
+05/01/21 09:21:18 2172: Info: unchanged file dac-e.vhd
+05/01/21 09:21:19 2172: Info: unchanged file padframe-e.vhd
+05/01/21 09:21:19 2172: Info: unchanged file tap_con-e.vhd
+05/01/21 09:21:19 2172: Info: unchanged file vgca-e.vhd
+05/01/21 09:21:20 2172: Info: unchanged file vgca_cpu-e.vhd
+05/01/21 09:21:20 2172: Info: unchanged file vgca_di-e.vhd
+05/01/21 09:21:20 2172: Info: unchanged file vgca_dp-e.vhd
+05/01/21 09:21:21 2172: Info: unchanged file vgca_fe-e.vhd
+05/01/21 09:21:21 2172: Info: unchanged file vgca_mm-e.vhd
+05/01/21 09:21:21 2172: Info: unchanged file vgca_rc-e.vhd
+05/01/21 09:21:21 2172: Info: unchanged file vgca_tb-e.vhd
+05/01/21 09:21:22 2172: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+05/01/21 09:21:22 2172: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+05/01/21 09:21:22 2172: Warning: Signal ramd_i does not have a driver in instance dut!
+05/01/21 09:21:22 2172: Signal ramd_o2 does not have a load in instance dut!
+05/01/21 09:21:22 2172: Warning: Signal ramd_i2 does not have a driver in instance dut!
+05/01/21 09:21:22 2172: Signal ramd_o does not have a load in instance dut!
+05/01/21 09:21:22 2172: Leave unloaded port ramd_o open at instance dut
+05/01/21 09:21:22 2172: Leave unloaded port ramd_o2 open at instance dut
+05/01/21 09:21:22 2172: Info: unchanged file vgca-struct-a.vhd
+05/01/21 09:21:22 2172: Info: unchanged file adc-struct-a.vhd
+05/01/21 09:21:22 2172: Info: unchanged file bsr-struct-a.vhd
+05/01/21 09:21:23 2172: Info: unchanged file clkgen-struct-a.vhd
+05/01/21 09:21:23 2172: Info: unchanged file dac-struct-a.vhd
+05/01/21 09:21:23 2172: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+05/01/21 09:21:23 2172: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+05/01/21 09:21:23 2172: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+05/01/21 09:21:23 2172: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+05/01/21 09:21:23 2172: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+05/01/21 09:21:23 2172: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+05/01/21 09:21:23 2172: Signal %OPEN_7% does not have a load in instance i_padframe!
+05/01/21 09:21:23 2172: Signal %OPEN_3% does not have a load in instance i_padframe!
+05/01/21 09:21:23 2172: Signal %OPEN_4% does not have a load in instance i_padframe!
+05/01/21 09:21:23 2172: Signal %OPEN_0% does not have a load in instance i_padframe!
+05/01/21 09:21:23 2172: Signal %OPEN_5% does not have a load in instance i_padframe!
+05/01/21 09:21:23 2172: Signal %OPEN_6% does not have a load in instance i_padframe!
+05/01/21 09:21:23 2172: Signal %OPEN_2% does not have a load in instance i_padframe!
+05/01/21 09:21:23 2172: Signal %OPEN_1% does not have a load in instance i_padframe!
+05/01/21 09:21:23 2172: Info: unchanged file padframe-struct-a.vhd
+05/01/21 09:21:24 2172: Info: unchanged file tap_con-struct-a.vhd
+05/01/21 09:21:24 2172: Info: unchanged file vgca_cpu-struct-a.vhd
+05/01/21 09:21:24 2172: Info: unchanged file vgca_di-struct-a.vhd
+05/01/21 09:21:25 2172: Info: unchanged file vgca_dp-struct-a.vhd
+05/01/21 09:21:25 2172: Info: unchanged file vgca_fe-struct-a.vhd
+05/01/21 09:21:25 2172: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+05/01/21 09:21:25 2172: Signal mm_ramd does not have a load in instance i_vgca_mm!
+05/01/21 09:21:25 2172: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+05/01/21 09:21:25 2172: Info: unchanged file vgca_mm-struct-a.vhd
+05/01/21 09:21:26 2172: Info: unchanged file vgca_rc-struct-a.vhd
+05/01/21 09:21:26 2172: Info: unchanged file vgca_tb-struct-a.vhd
+05/01/21 09:21:26 2172: Info: unchanged file vgca-struct-conf-c.vhd
+05/01/21 09:21:26 2172: Info: unchanged file adc-struct-conf-c.vhd
+05/01/21 09:21:27 2172: Info: unchanged file bsr-struct-conf-c.vhd
+05/01/21 09:21:27 2172: Info: unchanged file clkgen-struct-conf-c.vhd
+05/01/21 09:21:27 2172: Info: unchanged file dac-struct-conf-c.vhd
+05/01/21 09:21:28 2172: Info: unchanged file padframe-struct-conf-c.vhd
+05/01/21 09:21:28 2172: Info: unchanged file tap_con-struct-conf-c.vhd
+05/01/21 09:21:28 2172: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+05/01/21 09:21:29 2172: Info: unchanged file vgca_di-struct-conf-c.vhd
+05/01/21 09:21:29 2172: Info: unchanged file vgca_dp-struct-conf-c.vhd
+05/01/21 09:21:29 2172: Info: unchanged file vgca_fe-struct-conf-c.vhd
+05/01/21 09:21:30 2172: Info: unchanged file vgca_mm-struct-conf-c.vhd
+05/01/21 09:21:30 2172: Info: unchanged file vgca_rc-struct-conf-c.vhd
+05/01/21 09:21:30 2172: Info: unchanged file vgca_tb-struct-conf-c.vhd
+05/01/21 09:21:30 2172: WARNING: ============= SUMMARY =================
+05/01/21 09:21:30 2172: WARNING: SUM: Summary of checks and created items:
+05/01/21 09:21:30 2172: WARNING: SUM: checkforce 0
+05/01/21 09:21:30 2172: WARNING: SUM: checkunique 0
+05/01/21 09:21:30 2172: WARNING: SUM: checkwarn 0
+05/01/21 09:21:30 2172: WARNING: SUM: cmacros 0
+05/01/21 09:21:30 2172: WARNING: SUM: conn 17
+05/01/21 09:21:30 2172: WARNING: SUM: errors 2
+05/01/21 09:21:30 2172: WARNING: SUM: genport 0
+05/01/21 09:21:30 2172: WARNING: SUM: hdlfiles 42
+05/01/21 09:21:30 2172: WARNING: SUM: inst 41
+05/01/21 09:21:30 2172: WARNING: SUM: multdriver 5
+05/01/21 09:21:30 2172: WARNING: SUM: nodriver 4
+05/01/21 09:21:30 2172: WARNING: SUM: noload 13
+05/01/21 09:21:30 2172: WARNING: SUM: openports 2
+05/01/21 09:21:30 2172: WARNING: SUM: warnings 8
+05/01/21 09:21:30 2172: WARNING: SUM: === Number of parsed input tables: ===
+05/01/21 09:21:30 2172: WARNING: SUM: conf 0
+05/01/21 09:21:30 2172: WARNING: SUM: hier 1
+05/01/21 09:21:30 2172: WARNING: SUM: conn 2
+05/01/21 09:21:30 2172: WARNING: SUM: io 0
+05/01/21 09:21:30 2172: WARNING: SUM: i2c 0
+05/01/21 09:21:30 2172: WARNING: SUM: Number of changes in intermediate: 0
+05/01/21 09:21:30 2172: WARNING: SUM: Number of changed files: 0
+05/01/27 08:52:26 508: Reading worksheet CONN_DevIO of h:/work/mix_new/mix/test/xls_input/bugver/ramd/../../bugver.xls
+05/01/27 08:52:26 508: Reading worksheet CONN_2 of h:/work/mix_new/mix/test/xls_input/bugver/ramd/../../bugver.xls
+05/01/27 08:52:32 508: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/bugver/ramd/../../bugver.xls
+05/01/27 08:52:45 508: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+05/01/27 08:52:45 508: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+05/01/27 08:52:45 508: autoconnecting single signal %LOW% to bus port ramd_i
+05/01/27 08:52:45 508: autoconnecting single signal %LOW% to bus port ramd_i
+05/01/27 08:52:46 508: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+05/01/27 08:52:46 508: WARNING: Rotating 3 old sheets of CONF!
+05/01/27 08:52:50 508: Reading worksheet CONN of h:/work/mix_new/mix/test/xls_input/bugver/ramd/bugver-mixed.xls
+05/01/27 08:52:50 508: WARNING: ERROR: workbook bugver-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\bugver\ramd) already opened!
+05/01/27 08:52:50 508: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/27 08:52:54 508: Reading worksheet HIER of h:/work/mix_new/mix/test/xls_input/bugver/ramd/bugver-mixed.xls
+05/01/27 08:52:54 508: WARNING: ERROR: workbook bugver-mixed.xls with different path (H:\work\mix_new\mix\test\xls_input\bugver\ramd) already opened!
+05/01/27 08:52:54 508: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/27 08:52:56 508: Info: unchanged file adc-e.vhd
+05/01/27 08:52:56 508: Info: unchanged file bsr-e.vhd
+05/01/27 08:52:56 508: Info: unchanged file clkgen-e.vhd
+05/01/27 08:52:57 508: Info: unchanged file dac-e.vhd
+05/01/27 08:52:57 508: Info: unchanged file padframe-e.vhd
+05/01/27 08:52:57 508: Info: unchanged file tap_con-e.vhd
+05/01/27 08:52:57 508: Info: unchanged file vgca-e.vhd
+05/01/27 08:52:58 508: Info: unchanged file vgca_cpu-e.vhd
+05/01/27 08:52:58 508: Info: unchanged file vgca_di-e.vhd
+05/01/27 08:52:58 508: Info: unchanged file vgca_dp-e.vhd
+05/01/27 08:52:58 508: Info: unchanged file vgca_fe-e.vhd
+05/01/27 08:52:58 508: Info: unchanged file vgca_mm-e.vhd
+05/01/27 08:52:59 508: Info: unchanged file vgca_rc-e.vhd
+05/01/27 08:52:59 508: Info: unchanged file vgca_tb-e.vhd
+05/01/27 08:52:59 508: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+05/01/27 08:52:59 508: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+05/01/27 08:52:59 508: Warning: Signal ramd_i does not have a driver in instance dut!
+05/01/27 08:52:59 508: Signal ramd_o2 does not have a load in instance dut!
+05/01/27 08:52:59 508: Warning: Signal ramd_i2 does not have a driver in instance dut!
+05/01/27 08:52:59 508: Signal ramd_o does not have a load in instance dut!
+05/01/27 08:52:59 508: Leave unloaded port ramd_o open at instance dut
+05/01/27 08:52:59 508: Leave unloaded port ramd_o2 open at instance dut
+05/01/27 08:52:59 508: Info: unchanged file vgca-struct-a.vhd
+05/01/27 08:52:59 508: Info: unchanged file adc-struct-a.vhd
+05/01/27 08:53:00 508: Info: unchanged file bsr-struct-a.vhd
+05/01/27 08:53:00 508: Info: unchanged file clkgen-struct-a.vhd
+05/01/27 08:53:00 508: Info: unchanged file dac-struct-a.vhd
+05/01/27 08:53:00 508: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+05/01/27 08:53:00 508: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+05/01/27 08:53:00 508: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+05/01/27 08:53:00 508: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+05/01/27 08:53:00 508: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+05/01/27 08:53:00 508: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+05/01/27 08:53:00 508: Signal %OPEN_7% does not have a load in instance i_padframe!
+05/01/27 08:53:01 508: Signal %OPEN_3% does not have a load in instance i_padframe!
+05/01/27 08:53:01 508: Signal %OPEN_4% does not have a load in instance i_padframe!
+05/01/27 08:53:01 508: Signal %OPEN_0% does not have a load in instance i_padframe!
+05/01/27 08:53:01 508: Signal %OPEN_5% does not have a load in instance i_padframe!
+05/01/27 08:53:01 508: Signal %OPEN_6% does not have a load in instance i_padframe!
+05/01/27 08:53:01 508: Signal %OPEN_2% does not have a load in instance i_padframe!
+05/01/27 08:53:01 508: Signal %OPEN_1% does not have a load in instance i_padframe!
+05/01/27 08:53:01 508: Info: unchanged file padframe-struct-a.vhd
+05/01/27 08:53:01 508: Info: unchanged file tap_con-struct-a.vhd
+05/01/27 08:53:01 508: Info: unchanged file vgca_cpu-struct-a.vhd
+05/01/27 08:53:01 508: Info: unchanged file vgca_di-struct-a.vhd
+05/01/27 08:53:01 508: Info: unchanged file vgca_dp-struct-a.vhd
+05/01/27 08:53:02 508: Info: unchanged file vgca_fe-struct-a.vhd
+05/01/27 08:53:02 508: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+05/01/27 08:53:02 508: Signal mm_ramd does not have a load in instance i_vgca_mm!
+05/01/27 08:53:02 508: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+05/01/27 08:53:02 508: Info: unchanged file vgca_mm-struct-a.vhd
+05/01/27 08:53:02 508: Info: unchanged file vgca_rc-struct-a.vhd
+05/01/27 08:53:02 508: Info: unchanged file vgca_tb-struct-a.vhd
+05/01/27 08:53:02 508: Info: unchanged file vgca-struct-conf-c.vhd
+05/01/27 08:53:03 508: Info: unchanged file adc-struct-conf-c.vhd
+05/01/27 08:53:03 508: Info: unchanged file bsr-struct-conf-c.vhd
+05/01/27 08:53:03 508: Info: unchanged file clkgen-struct-conf-c.vhd
+05/01/27 08:53:03 508: Info: unchanged file dac-struct-conf-c.vhd
+05/01/27 08:53:03 508: Info: unchanged file padframe-struct-conf-c.vhd
+05/01/27 08:53:04 508: Info: unchanged file tap_con-struct-conf-c.vhd
+05/01/27 08:53:04 508: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+05/01/27 08:53:04 508: Info: unchanged file vgca_di-struct-conf-c.vhd
+05/01/27 08:53:04 508: Info: unchanged file vgca_dp-struct-conf-c.vhd
+05/01/27 08:53:04 508: Info: unchanged file vgca_fe-struct-conf-c.vhd
+05/01/27 08:53:05 508: Info: unchanged file vgca_mm-struct-conf-c.vhd
+05/01/27 08:53:05 508: Info: unchanged file vgca_rc-struct-conf-c.vhd
+05/01/27 08:53:05 508: Info: unchanged file vgca_tb-struct-conf-c.vhd
+05/01/27 08:53:05 508: WARNING: ============= SUMMARY =================
+05/01/27 08:53:05 508: WARNING: SUM: Summary of checks and created items:
+05/01/27 08:53:05 508: WARNING: SUM: checkforce 0
+05/01/27 08:53:05 508: WARNING: SUM: checkunique 0
+05/01/27 08:53:06 508: WARNING: SUM: checkwarn 0
+05/01/27 08:53:06 508: WARNING: SUM: cmacros 0
+05/01/27 08:53:06 508: WARNING: SUM: conn 17
+05/01/27 08:53:06 508: WARNING: SUM: errors 2
+05/01/27 08:53:06 508: WARNING: SUM: genport 0
+05/01/27 08:53:07 508: WARNING: SUM: hdlfiles 42
+05/01/27 08:53:07 508: WARNING: SUM: inst 41
+05/01/27 08:53:07 508: WARNING: SUM: multdriver 5
+05/01/27 08:53:07 508: WARNING: SUM: nodriver 4
+05/01/27 08:53:07 508: WARNING: SUM: noload 13
+05/01/27 08:53:07 508: WARNING: SUM: openports 2
+05/01/27 08:53:07 508: WARNING: SUM: warnings 8
+05/01/27 08:53:07 508: WARNING: SUM: === Number of parsed input tables: ===
+05/01/27 08:53:07 508: WARNING: SUM: conf 0
+05/01/27 08:53:07 508: WARNING: SUM: hier 1
+05/01/27 08:53:07 508: WARNING: SUM: conn 2
+05/01/27 08:53:08 508: WARNING: SUM: io 0
+05/01/27 08:53:08 508: WARNING: SUM: i2c 0
+05/01/27 08:53:08 508: WARNING: SUM: Number of changes in intermediate: 0
+05/01/27 08:53:08 508: WARNING: SUM: Number of changed files: 0
+05/01/31 15:57:44 528: Reading worksheet CONN_DevIO of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+05/01/31 15:57:44 528: Reading worksheet CONN_2 of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+05/01/31 15:57:50 528: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+05/01/31 15:58:09 528: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+05/01/31 15:58:09 528: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+05/01/31 15:58:09 528: autoconnecting single signal %LOW% to bus port ramd_i
+05/01/31 15:58:09 528: autoconnecting single signal %LOW% to bus port ramd_i
+05/01/31 15:58:12 528: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+05/01/31 15:58:14 528: WARNING: Rotating 3 old sheets of CONF!
+05/01/31 15:58:19 528: Reading worksheet CONN of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+05/01/31 15:58:19 528: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/01/31 15:58:24 528: Reading worksheet HIER of H:/work/mix_new/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+05/01/31 15:58:24 528: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/01/31 15:58:26 528: Info: unchanged file adc-e.vhd
+05/01/31 15:58:26 528: Info: unchanged file bsr-e.vhd
+05/01/31 15:58:26 528: Info: unchanged file clkgen-e.vhd
+05/01/31 15:58:27 528: Info: unchanged file dac-e.vhd
+05/01/31 15:58:27 528: Info: unchanged file padframe-e.vhd
+05/01/31 15:58:28 528: Info: unchanged file tap_con-e.vhd
+05/01/31 15:58:28 528: Info: unchanged file vgca-e.vhd
+05/01/31 15:58:28 528: Info: unchanged file vgca_cpu-e.vhd
+05/01/31 15:58:28 528: Info: unchanged file vgca_di-e.vhd
+05/01/31 15:58:29 528: Info: unchanged file vgca_dp-e.vhd
+05/01/31 15:58:29 528: Info: unchanged file vgca_fe-e.vhd
+05/01/31 15:58:29 528: Info: unchanged file vgca_mm-e.vhd
+05/01/31 15:58:29 528: Info: unchanged file vgca_rc-e.vhd
+05/01/31 15:58:30 528: Info: unchanged file vgca_tb-e.vhd
+05/01/31 15:58:30 528: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+05/01/31 15:58:30 528: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+05/01/31 15:58:30 528: Warning: Signal ramd_i does not have a driver in instance dut!
+05/01/31 15:58:30 528: Signal ramd_o2 does not have a load in instance dut!
+05/01/31 15:58:30 528: Warning: Signal ramd_i2 does not have a driver in instance dut!
+05/01/31 15:58:30 528: Signal ramd_o does not have a load in instance dut!
+05/01/31 15:58:30 528: Leave unloaded port ramd_o open at instance dut
+05/01/31 15:58:30 528: Leave unloaded port ramd_o2 open at instance dut
+05/01/31 15:58:30 528: Info: unchanged file vgca-struct-a.vhd
+05/01/31 15:58:30 528: Info: unchanged file adc-struct-a.vhd
+05/01/31 15:58:30 528: Info: unchanged file bsr-struct-a.vhd
+05/01/31 15:58:31 528: Info: unchanged file clkgen-struct-a.vhd
+05/01/31 15:58:31 528: Info: unchanged file dac-struct-a.vhd
+05/01/31 15:58:31 528: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+05/01/31 15:58:31 528: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+05/01/31 15:58:31 528: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+05/01/31 15:58:31 528: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+05/01/31 15:58:31 528: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+05/01/31 15:58:31 528: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+05/01/31 15:58:31 528: Signal %OPEN_7% does not have a load in instance i_padframe!
+05/01/31 15:58:31 528: Signal %OPEN_3% does not have a load in instance i_padframe!
+05/01/31 15:58:31 528: Signal %OPEN_4% does not have a load in instance i_padframe!
+05/01/31 15:58:31 528: Signal %OPEN_0% does not have a load in instance i_padframe!
+05/01/31 15:58:31 528: Signal %OPEN_5% does not have a load in instance i_padframe!
+05/01/31 15:58:31 528: Signal %OPEN_6% does not have a load in instance i_padframe!
+05/01/31 15:58:31 528: Signal %OPEN_2% does not have a load in instance i_padframe!
+05/01/31 15:58:31 528: Signal %OPEN_1% does not have a load in instance i_padframe!
+05/01/31 15:58:31 528: Info: unchanged file padframe-struct-a.vhd
+05/01/31 15:58:32 528: Info: unchanged file tap_con-struct-a.vhd
+05/01/31 15:58:32 528: Info: unchanged file vgca_cpu-struct-a.vhd
+05/01/31 15:58:32 528: Info: unchanged file vgca_di-struct-a.vhd
+05/01/31 15:58:32 528: Info: unchanged file vgca_dp-struct-a.vhd
+05/01/31 15:58:33 528: Info: unchanged file vgca_fe-struct-a.vhd
+05/01/31 15:58:33 528: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+05/01/31 15:58:33 528: Signal mm_ramd does not have a load in instance i_vgca_mm!
+05/01/31 15:58:33 528: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+05/01/31 15:58:33 528: Info: unchanged file vgca_mm-struct-a.vhd
+05/01/31 15:58:33 528: Info: unchanged file vgca_rc-struct-a.vhd
+05/01/31 15:58:33 528: Info: unchanged file vgca_tb-struct-a.vhd
+05/01/31 15:58:34 528: Info: unchanged file vgca-struct-conf-c.vhd
+05/01/31 15:58:34 528: Info: unchanged file adc-struct-conf-c.vhd
+05/01/31 15:58:34 528: Info: unchanged file bsr-struct-conf-c.vhd
+05/01/31 15:58:34 528: Info: unchanged file clkgen-struct-conf-c.vhd
+05/01/31 15:58:35 528: Info: unchanged file dac-struct-conf-c.vhd
+05/01/31 15:58:35 528: Info: unchanged file padframe-struct-conf-c.vhd
+05/01/31 15:58:35 528: Info: unchanged file tap_con-struct-conf-c.vhd
+05/01/31 15:58:35 528: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+05/01/31 15:58:36 528: Info: unchanged file vgca_di-struct-conf-c.vhd
+05/01/31 15:58:36 528: Info: unchanged file vgca_dp-struct-conf-c.vhd
+05/01/31 15:58:36 528: Info: unchanged file vgca_fe-struct-conf-c.vhd
+05/01/31 15:58:36 528: Info: unchanged file vgca_mm-struct-conf-c.vhd
+05/01/31 15:58:37 528: Info: unchanged file vgca_rc-struct-conf-c.vhd
+05/01/31 15:58:37 528: Info: unchanged file vgca_tb-struct-conf-c.vhd
+05/01/31 15:58:37 528: WARNING: ============= SUMMARY =================
+05/01/31 15:58:37 528: WARNING: SUM: Summary of checks and created items:
+05/01/31 15:58:37 528: WARNING: SUM: checkforce 0
+05/01/31 15:58:37 528: WARNING: SUM: checkunique 0
+05/01/31 15:58:37 528: WARNING: SUM: checkwarn 0
+05/01/31 15:58:37 528: WARNING: SUM: cmacros 0
+05/01/31 15:58:37 528: WARNING: SUM: conn 17
+05/01/31 15:58:37 528: WARNING: SUM: errors 0
+05/01/31 15:58:37 528: WARNING: SUM: genport 0
+05/01/31 15:58:37 528: WARNING: SUM: hdlfiles 42
+05/01/31 15:58:37 528: WARNING: SUM: inst 41
+05/01/31 15:58:37 528: WARNING: SUM: multdriver 5
+05/01/31 15:58:37 528: WARNING: SUM: nodriver 4
+05/01/31 15:58:37 528: WARNING: SUM: noload 13
+05/01/31 15:58:37 528: WARNING: SUM: openports 2
+05/01/31 15:58:37 528: WARNING: SUM: warnings 8
+05/01/31 15:58:37 528: WARNING: SUM: === Number of parsed input tables: ===
+05/01/31 15:58:37 528: WARNING: SUM: conf 0
+05/01/31 15:58:37 528: WARNING: SUM: hier 1
+05/01/31 15:58:37 528: WARNING: SUM: conn 2
+05/01/31 15:58:37 528: WARNING: SUM: io 0
+05/01/31 15:58:37 528: WARNING: SUM: i2c 0
+05/01/31 15:58:37 528: WARNING: SUM: Number of changes in intermediate: 0
+05/01/31 15:58:37 528: WARNING: SUM: Number of changed files: 0
+05/02/02 11:02:16 3316: Reading worksheet CONN_DevIO of H:/work/eclipse/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+05/02/02 11:02:17 3316: Reading worksheet CONN_2 of H:/work/eclipse/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+05/02/02 11:02:23 3316: Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+05/02/02 11:02:35 3316: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+05/02/02 11:02:35 3316: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+05/02/02 11:02:35 3316: autoconnecting single signal %LOW% to bus port ramd_i
+05/02/02 11:02:35 3316: autoconnecting single signal %LOW% to bus port ramd_i
+05/02/02 11:02:36 3316: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+05/02/02 11:02:36 3316: WARNING: Rotating 3 old sheets of CONF!
+05/02/02 11:02:40 3316: Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+05/02/02 11:02:40 3316: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/02/02 11:02:44 3316: Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/bugver/ramd/bugver-mixed.xls
+05/02/02 11:02:45 3316: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/02/02 11:02:46 3316: Info: unchanged file adc-e.vhd
+05/02/02 11:02:47 3316: Info: unchanged file bsr-e.vhd
+05/02/02 11:02:47 3316: Info: unchanged file clkgen-e.vhd
+05/02/02 11:02:47 3316: Info: unchanged file dac-e.vhd
+05/02/02 11:02:47 3316: Info: unchanged file padframe-e.vhd
+05/02/02 11:02:48 3316: Info: unchanged file tap_con-e.vhd
+05/02/02 11:02:48 3316: Info: unchanged file vgca-e.vhd
+05/02/02 11:02:48 3316: Info: unchanged file vgca_cpu-e.vhd
+05/02/02 11:02:48 3316: Info: unchanged file vgca_di-e.vhd
+05/02/02 11:02:48 3316: Info: unchanged file vgca_dp-e.vhd
+05/02/02 11:02:48 3316: Info: unchanged file vgca_fe-e.vhd
+05/02/02 11:02:49 3316: Info: unchanged file vgca_mm-e.vhd
+05/02/02 11:02:49 3316: Info: unchanged file vgca_rc-e.vhd
+05/02/02 11:02:49 3316: Info: unchanged file vgca_tb-e.vhd
+05/02/02 11:02:49 3316: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+05/02/02 11:02:49 3316: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+05/02/02 11:02:49 3316: Warning: Signal ramd_i does not have a driver in instance dut!
+05/02/02 11:02:49 3316: Signal ramd_o2 does not have a load in instance dut!
+05/02/02 11:02:49 3316: Warning: Signal ramd_i2 does not have a driver in instance dut!
+05/02/02 11:02:49 3316: Signal ramd_o does not have a load in instance dut!
+05/02/02 11:02:49 3316: Leave unloaded port ramd_o open at instance dut
+05/02/02 11:02:49 3316: Leave unloaded port ramd_o2 open at instance dut
+05/02/02 11:02:50 3316: Info: unchanged file vgca-struct-a.vhd
+05/02/02 11:02:50 3316: Info: unchanged file adc-struct-a.vhd
+05/02/02 11:02:50 3316: Info: unchanged file bsr-struct-a.vhd
+05/02/02 11:02:50 3316: Info: unchanged file clkgen-struct-a.vhd
+05/02/02 11:02:50 3316: Info: unchanged file dac-struct-a.vhd
+05/02/02 11:02:50 3316: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+05/02/02 11:02:50 3316: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+05/02/02 11:02:51 3316: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+05/02/02 11:02:51 3316: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+05/02/02 11:02:51 3316: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+05/02/02 11:02:51 3316: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+05/02/02 11:02:51 3316: Signal %OPEN_7% does not have a load in instance i_padframe!
+05/02/02 11:02:51 3316: Signal %OPEN_3% does not have a load in instance i_padframe!
+05/02/02 11:02:51 3316: Signal %OPEN_4% does not have a load in instance i_padframe!
+05/02/02 11:02:51 3316: Signal %OPEN_0% does not have a load in instance i_padframe!
+05/02/02 11:02:51 3316: Signal %OPEN_5% does not have a load in instance i_padframe!
+05/02/02 11:02:51 3316: Signal %OPEN_6% does not have a load in instance i_padframe!
+05/02/02 11:02:51 3316: Signal %OPEN_2% does not have a load in instance i_padframe!
+05/02/02 11:02:51 3316: Signal %OPEN_1% does not have a load in instance i_padframe!
+05/02/02 11:02:51 3316: Info: unchanged file padframe-struct-a.vhd
+05/02/02 11:02:51 3316: Info: unchanged file tap_con-struct-a.vhd
+05/02/02 11:02:51 3316: Info: unchanged file vgca_cpu-struct-a.vhd
+05/02/02 11:02:52 3316: Info: unchanged file vgca_di-struct-a.vhd
+05/02/02 11:02:52 3316: Info: unchanged file vgca_dp-struct-a.vhd
+05/02/02 11:02:52 3316: Info: unchanged file vgca_fe-struct-a.vhd
+05/02/02 11:02:52 3316: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+05/02/02 11:02:52 3316: Signal mm_ramd does not have a load in instance i_vgca_mm!
+05/02/02 11:02:52 3316: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+05/02/02 11:02:52 3316: Info: unchanged file vgca_mm-struct-a.vhd
+05/02/02 11:02:52 3316: Info: unchanged file vgca_rc-struct-a.vhd
+05/02/02 11:02:53 3316: Info: unchanged file vgca_tb-struct-a.vhd
+05/02/02 11:02:53 3316: Info: unchanged file vgca-struct-conf-c.vhd
+05/02/02 11:02:53 3316: Info: unchanged file adc-struct-conf-c.vhd
+05/02/02 11:02:53 3316: Info: unchanged file bsr-struct-conf-c.vhd
+05/02/02 11:02:53 3316: Info: unchanged file clkgen-struct-conf-c.vhd
+05/02/02 11:02:53 3316: Info: unchanged file dac-struct-conf-c.vhd
+05/02/02 11:02:54 3316: Info: unchanged file padframe-struct-conf-c.vhd
+05/02/02 11:02:54 3316: Info: unchanged file tap_con-struct-conf-c.vhd
+05/02/02 11:02:54 3316: Info: unchanged file vgca_cpu-struct-conf-c.vhd
+05/02/02 11:02:54 3316: Info: unchanged file vgca_di-struct-conf-c.vhd
+05/02/02 11:02:54 3316: Info: unchanged file vgca_dp-struct-conf-c.vhd
+05/02/02 11:02:55 3316: Info: unchanged file vgca_fe-struct-conf-c.vhd
+05/02/02 11:02:55 3316: Info: unchanged file vgca_mm-struct-conf-c.vhd
+05/02/02 11:02:55 3316: Info: unchanged file vgca_rc-struct-conf-c.vhd
+05/02/02 11:02:55 3316: Info: unchanged file vgca_tb-struct-conf-c.vhd
+05/02/02 11:02:55 3316: WARNING: ============= SUMMARY =================
+05/02/02 11:02:55 3316: WARNING: SUM: Summary of checks and created items:
+05/02/02 11:02:55 3316: WARNING: SUM: checkforce 0
+05/02/02 11:02:55 3316: WARNING: SUM: checkunique 0
+05/02/02 11:02:55 3316: WARNING: SUM: checkwarn 0
+05/02/02 11:02:55 3316: WARNING: SUM: cmacros 0
+05/02/02 11:02:55 3316: WARNING: SUM: conn 17
+05/02/02 11:02:55 3316: WARNING: SUM: errors 0
+05/02/02 11:02:55 3316: WARNING: SUM: genport 0
+05/02/02 11:02:56 3316: WARNING: SUM: hdlfiles 42
+05/02/02 11:02:56 3316: WARNING: SUM: inst 41
+05/02/02 11:02:56 3316: WARNING: SUM: multdriver 5
+05/02/02 11:02:56 3316: WARNING: SUM: nodriver 4
+05/02/02 11:02:56 3316: WARNING: SUM: noload 13
+05/02/02 11:02:56 3316: WARNING: SUM: openports 2
+05/02/02 11:02:56 3316: WARNING: SUM: warnings 8
+05/02/02 11:02:56 3316: WARNING: SUM: === Number of parsed input tables: ===
+05/02/02 11:02:56 3316: WARNING: SUM: conf 0
+05/02/02 11:02:56 3316: WARNING: SUM: hier 1
+05/02/02 11:02:56 3316: WARNING: SUM: conn 2
+05/02/02 11:02:56 3316: WARNING: SUM: io 0
+05/02/02 11:02:56 3316: WARNING: SUM: i2c 0
+05/02/02 11:02:56 3316: WARNING: SUM: Number of changes in intermediate: 0
+05/02/02 11:02:56 3316: WARNING: SUM: Number of changed files: 0
+05/02/10 19:03:29 3928: Reading worksheet CONN_DevIO of H:/work/eclipse/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+05/02/10 19:03:29 3928: Reading worksheet CONN_2 of H:/work/eclipse/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+05/02/10 19:03:35 3928: Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/bugver/ramd/../../bugver.xls
+05/02/10 19:03:47 3928: Already connected daughters of i_padframe properly for signal mm_ramd2, ignore uppers
+05/02/10 19:03:47 3928: Already connected daughters of i_padframe properly for signal mm_ramd, ignore uppers
+05/02/10 19:03:47 3928: autoconnecting single signal %LOW% to bus port ramd_i
+05/02/10 19:03:47 3928: autoconnecting single signal %LOW% to bus port ramd_i
+05/02/10 19:03:49 3928: WARNING: File bugver-mixed.xls already exists! Contents will be changed
+05/02/10 19:03:50 3928: WARNING: Rotating 3 old sheets of CONF!
+05/02/10 19:03:52 3928: WARNING: Rotating 3 old sheets of CONN!
+05/02/10 19:03:52 3928: WARNING: Rotating 3 old sheets of HIER!
+05/02/10 19:03:54 3928: WARNING: Removing old and and diff sheets in file: bugver-mixed.xls
+05/02/10 19:03:56 3928: WARNING: WARNING: Reconnecting port ramd_o at instance i_padframe: now: A::, was: A::!
+05/02/10 19:03:56 3928: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_padframe: now: A::, was: A::!
+05/02/10 19:03:56 3928: Warning: Signal ramd_i does not have a driver in instance dut!
+05/02/10 19:03:56 3928: Signal ramd_o2 does not have a load in instance dut!
+05/02/10 19:03:56 3928: Warning: Signal ramd_i2 does not have a driver in instance dut!
+05/02/10 19:03:56 3928: Signal ramd_o does not have a load in instance dut!
+05/02/10 19:03:56 3928: Leave unloaded port ramd_o open at instance dut
+05/02/10 19:03:56 3928: Leave unloaded port ramd_o2 open at instance dut
+05/02/10 19:03:56 3928: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::00000000000111111111111111111111 was B::00000000111111110000011111111111!
+05/02/10 19:03:56 3928: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_en: A:: was B::00000000111111110000011111111111!
+05/02/10 19:03:56 3928: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_en: B::11111111000000001111100000000000 was B::00000000111111111111111111111111!
+05/02/10 19:03:56 3928: WARNING: WARNING: Reconnecting port ramd_o2 at instance i_pads_en: now: B::11111111000000001111100000000000, was: A::!
+05/02/10 19:03:56 3928: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+05/02/10 19:03:56 3928: WARNING: WARNING: Pot. conflict with reconnection of port ramd_o2 at instance i_pads_es: B::00000000111111110000011111111111 was B::11111111000000001111111111111111!
+05/02/10 19:03:56 3928: Signal %OPEN_7% does not have a load in instance i_padframe!
+05/02/10 19:03:56 3928: Signal %OPEN_3% does not have a load in instance i_padframe!
+05/02/10 19:03:56 3928: Signal %OPEN_4% does not have a load in instance i_padframe!
+05/02/10 19:03:56 3928: Signal %OPEN_0% does not have a load in instance i_padframe!
+05/02/10 19:03:56 3928: Signal %OPEN_5% does not have a load in instance i_padframe!
+05/02/10 19:03:56 3928: Signal %OPEN_6% does not have a load in instance i_padframe!
+05/02/10 19:03:56 3928: Signal %OPEN_2% does not have a load in instance i_padframe!
+05/02/10 19:03:56 3928: Signal %OPEN_1% does not have a load in instance i_padframe!
+05/02/10 19:03:57 3928: Signal mm_ramd2 does not have a load in instance i_vgca_mm!
+05/02/10 19:03:57 3928: Signal mm_ramd does not have a load in instance i_vgca_mm!
+05/02/10 19:03:57 3928: Signal mm_ramd3 does not have a load in instance i_vgca_mm!
+05/02/10 19:03:58 3928: WARNING: ============= SUMMARY =================
+05/02/10 19:03:58 3928: WARNING: SUM: Summary of checks and created items:
+05/02/10 19:03:58 3928: WARNING: SUM: checkforce 0
+05/02/10 19:03:58 3928: WARNING: SUM: checkunique 0
+05/02/10 19:03:58 3928: WARNING: SUM: checkwarn 0
+05/02/10 19:03:58 3928: WARNING: SUM: cmacros 0
+05/02/10 19:03:58 3928: WARNING: SUM: conn 17
+05/02/10 19:03:58 3928: WARNING: SUM: errors 0
+05/02/10 19:03:58 3928: WARNING: SUM: genport 0
+05/02/10 19:03:58 3928: WARNING: SUM: hdlfiles 42
+05/02/10 19:03:58 3928: WARNING: SUM: inst 41
+05/02/10 19:03:58 3928: WARNING: SUM: multdriver 5
+05/02/10 19:03:58 3928: WARNING: SUM: nodriver 4
+05/02/10 19:03:58 3928: WARNING: SUM: noload 13
+05/02/10 19:03:58 3928: WARNING: SUM: openports 2
+05/02/10 19:03:58 3928: WARNING: SUM: warnings 8
+05/02/10 19:03:58 3928: WARNING: SUM: === Number of parsed input tables: ===
+05/02/10 19:03:58 3928: WARNING: SUM: conf 0
+05/02/10 19:03:58 3928: WARNING: SUM: hier 1
+05/02/10 19:03:58 3928: WARNING: SUM: conn 2
+05/02/10 19:03:58 3928: WARNING: SUM: io 0
+05/02/10 19:03:58 3928: WARNING: SUM: i2c 0
