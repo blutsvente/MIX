@@ -1,0 +1,20 @@
+#!/usr/bin/perl
+#
+# wrapper for MixTest.pl (which is the MS-Win version of the test program
+#
+# (c) 2005 Micronas GmbH wilfried.gaensheimer@micronas.com
+#
+# $ID:$
+#
+# $Author: wig $
+#
+# $Log: MixTest,v $
+# Revision 1.1  2005/07/12 07:02:13  wig
+# MixTest.pl wrapper for unix
+#
+#
+
+unshift( @ARGV, "perl -x", "MixTest.pl" )
+exec( @ARGV );
+
+#!End
