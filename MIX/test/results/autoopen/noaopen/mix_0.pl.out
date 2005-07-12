@@ -1,0 +1,103 @@
+05/07/12 07:34:26 4348: Reading worksheet CONN_SIMP of H:/work/eclipse/MIX/test/xls_input/autoopen/noaopen/../../autoopen.xls
+05/07/12 07:34:26 4348: Reading worksheet HIER_SIMP of H:/work/eclipse/MIX/test/xls_input/autoopen/noaopen/../../autoopen.xls
+05/07/12 07:34:26 4348: Reading worksheet IO of H:/work/eclipse/MIX/test/xls_input/autoopen/noaopen/../../autoopen.xls
+05/07/12 07:34:32 4348: WARNING: File autoopen-mixed.xls already exists! Contents will be changed
+05/07/12 07:34:33 4348: WARNING: Rotating 3 old sheets of CONF!
+05/07/12 07:34:34 4348: Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/autoopen/noaopen/autoopen-mixed.xls
+05/07/12 07:34:35 4348: WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/07/12 07:34:35 4348: Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/autoopen/noaopen/autoopen-mixed.xls
+05/07/12 07:34:35 4348: WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/07/12 07:34:36 4348: Info: unchanged file inst_a_e-e.vhd
+05/07/12 07:34:36 4348: Info: unchanged file inst_t_e-e.vhd
+05/07/12 07:34:36 4348: Info: unchanged file inst_a_e-rtl-a.vhd
+05/07/12 07:34:36 4348: Signal s_open_o does not have a load in instance inst_t!
+05/07/12 07:34:36 4348: Warning: Signal s_open_i does not have a driver in instance inst_t!
+05/07/12 07:34:36 4348: WARNING: Info: file inst_t_e-rtl-a.vhd has changes!
+05/07/12 07:34:36 4348: Info: unchanged file inst_t_e-rtl-conf-c.vhd
+05/07/12 07:34:36 4348: WARNING: ============= SUMMARY =================
+05/07/12 07:34:36 4348: WARNING: SUM: Summary of checks and created items:
+05/07/12 07:34:36 4348: WARNING: SUM: checkforce 0
+05/07/12 07:34:36 4348: WARNING: SUM: checkunique 0
+05/07/12 07:34:36 4348: WARNING: SUM: checkwarn 0
+05/07/12 07:34:36 4348: WARNING: SUM: cmacros 0
+05/07/12 07:34:36 4348: WARNING: SUM: conn 2
+05/07/12 07:34:36 4348: WARNING: SUM: errors 0
+05/07/12 07:34:36 4348: WARNING: SUM: genport 0
+05/07/12 07:34:36 4348: WARNING: SUM: hdlfiles 5
+05/07/12 07:34:36 4348: WARNING: SUM: inst 8
+05/07/12 07:34:36 4348: WARNING: SUM: multdriver 0
+05/07/12 07:34:36 4348: WARNING: SUM: nodriver 1
+05/07/12 07:34:36 4348: WARNING: SUM: noload 1
+05/07/12 07:34:36 4348: WARNING: SUM: openports 0
+05/07/12 07:34:36 4348: WARNING: SUM: warnings 0
+05/07/12 07:34:36 4348: WARNING: SUM: === Number of parsed input tables: ===
+05/07/12 07:34:36 4348: WARNING: SUM: conf 0
+05/07/12 07:34:36 4348: WARNING: SUM: hier 1
+05/07/12 07:34:36 4348: WARNING: SUM: conn 1
+05/07/12 07:34:36 4348: WARNING: SUM: io 1
+05/07/12 07:34:36 4348: WARNING: SUM: i2c 0
+05/07/12 07:34:36 4348: WARNING: SUM: Number of changes in intermediate: 0
+05/07/12 07:34:36 4348: WARNING: SUM: Number of changed files: 1
+05/07/12 07:37:24 4304: Reading worksheet CONN_SIMP of H:/work/eclipse/MIX/test/xls_input/autoopen/noaopen/../../autoopen.xls
+05/07/12 07:37:24 4304: Reading worksheet HIER_SIMP of H:/work/eclipse/MIX/test/xls_input/autoopen/noaopen/../../autoopen.xls
+05/07/12 07:37:24 4304: Reading worksheet IO of H:/work/eclipse/MIX/test/xls_input/autoopen/noaopen/../../autoopen.xls
+05/07/12 07:37:25 4304: WARNING: File autoopen-mixed.xls already exists! Contents will be changed
+05/07/12 07:37:25 4304: WARNING: Rotating 3 old sheets of CONF!
+05/07/12 07:37:26 4304: WARNING: Rotating 3 old sheets of CONN!
+05/07/12 07:37:26 4304: WARNING: Rotating 3 old sheets of HIER!
+05/07/12 07:37:26 4304: Signal s_open_o does not have a load in instance inst_t!
+05/07/12 07:37:26 4304: Warning: Signal s_open_i does not have a driver in instance inst_t!
+05/07/12 07:37:26 4304: WARNING: ============= SUMMARY =================
+05/07/12 07:37:26 4304: WARNING: SUM: Summary of checks and created items:
+05/07/12 07:37:26 4304: WARNING: SUM: checkforce 0
+05/07/12 07:37:26 4304: WARNING: SUM: checkunique 0
+05/07/12 07:37:26 4304: WARNING: SUM: checkwarn 0
+05/07/12 07:37:26 4304: WARNING: SUM: cmacros 0
+05/07/12 07:37:26 4304: WARNING: SUM: conn 2
+05/07/12 07:37:26 4304: WARNING: SUM: errors 0
+05/07/12 07:37:26 4304: WARNING: SUM: genport 0
+05/07/12 07:37:26 4304: WARNING: SUM: hdlfiles 5
+05/07/12 07:37:26 4304: WARNING: SUM: inst 8
+05/07/12 07:37:26 4304: WARNING: SUM: multdriver 0
+05/07/12 07:37:26 4304: WARNING: SUM: nodriver 1
+05/07/12 07:37:26 4304: WARNING: SUM: noload 1
+05/07/12 07:37:26 4304: WARNING: SUM: openports 0
+05/07/12 07:37:26 4304: WARNING: SUM: warnings 0
+05/07/12 07:37:26 4304: WARNING: SUM: === Number of parsed input tables: ===
+05/07/12 07:37:26 4304: WARNING: SUM: conf 0
+05/07/12 07:37:26 4304: WARNING: SUM: hier 1
+05/07/12 07:37:26 4304: WARNING: SUM: conn 1
+05/07/12 07:37:26 4304: WARNING: SUM: io 1
+05/07/12 07:37:26 4304: WARNING: SUM: i2c 0
+05/07/12 07:37:55 2716: Reading worksheet CONN_SIMP of H:/work/eclipse/MIX/test/xls_input/autoopen/noaopen/../../autoopen.xls
+05/07/12 07:37:55 2716: Reading worksheet HIER_SIMP of H:/work/eclipse/MIX/test/xls_input/autoopen/noaopen/../../autoopen.xls
+05/07/12 07:37:55 2716: Reading worksheet IO of H:/work/eclipse/MIX/test/xls_input/autoopen/noaopen/../../autoopen.xls
+05/07/12 07:37:55 2716: WARNING: File autoopen-mixed.xls already exists! Contents will be changed
+05/07/12 07:37:56 2716: WARNING: Rotating 3 old sheets of CONF!
+05/07/12 07:37:56 2716: WARNING: Rotating 3 old sheets of CONN!
+05/07/12 07:37:56 2716: WARNING: Rotating 3 old sheets of HIER!
+05/07/12 07:37:56 2716: WARNING: Removing old and and diff sheets in file: autoopen-mixed.xls
+05/07/12 07:37:56 2716: Signal s_open_o does not have a load in instance inst_t!
+05/07/12 07:37:56 2716: Warning: Signal s_open_i does not have a driver in instance inst_t!
+05/07/12 07:37:56 2716: WARNING: ============= SUMMARY =================
+05/07/12 07:37:56 2716: WARNING: SUM: Summary of checks and created items:
+05/07/12 07:37:56 2716: WARNING: SUM: checkforce 0
+05/07/12 07:37:56 2716: WARNING: SUM: checkunique 0
+05/07/12 07:37:56 2716: WARNING: SUM: checkwarn 0
+05/07/12 07:37:56 2716: WARNING: SUM: cmacros 0
+05/07/12 07:37:56 2716: WARNING: SUM: conn 2
+05/07/12 07:37:56 2716: WARNING: SUM: errors 0
+05/07/12 07:37:56 2716: WARNING: SUM: genport 0
+05/07/12 07:37:56 2716: WARNING: SUM: hdlfiles 5
+05/07/12 07:37:56 2716: WARNING: SUM: inst 8
+05/07/12 07:37:56 2716: WARNING: SUM: multdriver 0
+05/07/12 07:37:56 2716: WARNING: SUM: nodriver 1
+05/07/12 07:37:56 2716: WARNING: SUM: noload 1
+05/07/12 07:37:56 2716: WARNING: SUM: openports 0
+05/07/12 07:37:56 2716: WARNING: SUM: warnings 0
+05/07/12 07:37:56 2716: WARNING: SUM: === Number of parsed input tables: ===
+05/07/12 07:37:56 2716: WARNING: SUM: conf 0
+05/07/12 07:37:56 2716: WARNING: SUM: hier 1
+05/07/12 07:37:56 2716: WARNING: SUM: conn 1
+05/07/12 07:37:56 2716: WARNING: SUM: io 1
+05/07/12 07:37:56 2716: WARNING: SUM: i2c 0
