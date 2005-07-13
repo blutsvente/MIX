@@ -27,12 +27,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.35 2005/06/23 13:14:42 wig Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.36 2005/07/13 15:41:21 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.35 $                                      |
-# | Mod.Date     : $Date: 2005/06/23 13:14:42 $                           |
+# | Version      : $Revision: 1.36 $                                      |
+# | Mod.Date     : $Date: 2005/07/13 15:41:21 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -47,6 +47,9 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.36  2005/07/13 15:41:21  wig
+# | Remove pid from log output
+# |
 # | Revision 1.35  2005/06/23 13:14:42  wig
 # | Update repository, not yet verified
 # |
@@ -202,13 +205,13 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.35 $'; # RCS Id
+$::VERSION = '$Revision: 1.36 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 logconfig(
         -driver => Log::Agent::Driver::File->make(
         # -prefix      => $0,
-        -showpid       => 1,
+        -showpid       => 0,
         -duperr        => 1,   #Send errors to OUTPUT and ERROR channel ...
         -channels    => {
         # 'error'  => "$0.err",
