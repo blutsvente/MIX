@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.52 $                                         |
+# | Revision:   $Revision: 1.53 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/06/23 13:14:42 $                              |
+# | Date:       $Date: 2005/07/13 15:38:34 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.52 2005/06/23 13:14:42 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.53 2005/07/13 15:38:34 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,11 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.53  2005/07/13 15:38:34  wig
+# | Added prototype for simple logic
+# | Added ::udc for HIER
+# | Fixed some nagging bugs
+# |
 # | Revision 1.52  2005/06/23 13:14:42  wig
 # | Update repository, not yet verified
 # |
@@ -289,9 +294,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.52 2005/06/23 13:14:42 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.53 2005/07/13 15:38:34 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.52 $';
+my $thisrevision =	'$Revision: 1.53 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -656,7 +661,7 @@ sub parse_hier_init ($) {
 
         #
         # Early name expansion required for primary key ::inst
-        #
+        #!wig: this is a sepcial case of replace_mac!
         if ( $r_hier->[$i]{'::inst'} =~ m/^\s*%(::\w+?)%/o ) {
             my $name = $r_hier->[$i]{'::inst'};
             if ( defined( $r_hier->[$i]{$1} ) ) {
@@ -665,7 +670,7 @@ sub parse_hier_init ($) {
                 #TODO: multiple replacements could lead to troubles!
                 #    and it will not work recursive !!
                 $r_hier->[$i]{'::inst'} = $name;
-            } else {
+            } elsif ( $name !~ m/$EH{'output'}{'generate'}{'_logicre_'}/io ) {
                 logwarn( "ERROR: Cannot replace %::inst% for $name!" );
                 $EH{'sum'}{'errors'}++;
             }
@@ -1112,9 +1117,11 @@ sub create_conn ($%) {
             $conndb{$name}{$i} = $ehr->{$i}[3]; # Set to DEFAULT Value
             #TODO: Initialize fields to empty / Marker, set DEFAULT if still empty at end 
         }
-        #wig20030801
-        $conndb{$name}{$i} =~ s/%NULL%/$EH{'macro'}{'%NULL%'}/g; # Just to make sure fields are initialized
-        $conndb{$name}{$i} =~ s/%EMPTY%/$EH{'macro'}{'%EMPTY%'}/g; # Just to make sure fields are initialized
+        #wig20030801/20050713: remove %NULL% and %EMPTY% on the fly ...
+        unless( ref( $conndb{$name}{$i} ) ) {
+        	$conndb{$name}{$i} =~ s/%NULL%/$EH{'macro'}{'%NULL%'}/g; # Just to make sure fields are initialized
+        	$conndb{$name}{$i} =~ s/%EMPTY%/$EH{'macro'}{'%EMPTY%'}/g; # Just to make sure fields are initialized
+        }
         #!wig: shifted down (bug20040319): delete( $data{$i} );
     }
     #
@@ -1777,7 +1784,7 @@ sub merge_conn($%) {
 
 mix_store_db ($$$)
 
-Save intermediate connection and hierachy data into disk.
+Save intermediate connection and hierachy data into disk file.
 Arguments:
     $file  filename to dump or "out" (will be replaced by the filename provided by
             -out FILE or the default, which is INPUT-mixed.ext
@@ -2307,7 +2314,7 @@ sub mix_p_prep_match ($$$$) {
 }
 
 ####################################################################
-## get_opt_cell
+## get_top_cell
 ## Return list of top cell(s).
 ## If not specified otherwise, these are the daughter(s) of the testbench cell
 ####################################################################
@@ -3712,6 +3719,7 @@ sub _parse_mac ($) {
                 __parse_mac( $rf, $rh->{$h} );
             } else {
                 logwarn("TODO: Implement recursive parse_mac for $h $f");
+                $EH{'sum'}{'warnings'}++;
                 next;
             }
         }
@@ -3730,6 +3738,15 @@ sub __parse_inout ($$) {
     }
 }
 
+#
+# replace %text%
+#
+# Arguments:
+#  1. text to scan through
+#  2. hash array reference (to e.g. add comments)
+#  Will modify contents of first argument directely
+# 
+#!wig20050712: add exceptions for the logic keywords
 sub __parse_mac ($$) {
     my $ra = shift;
     my $rb = shift;
@@ -3742,6 +3759,7 @@ sub __parse_mac ($$) {
         return;
     }
 
+	# Iterate through text:
     while ( $$ra =~ m/(%[\w:]+?%)/g ) {
         my $mac = $1;
         my $mackey = $1;
@@ -3763,7 +3781,8 @@ sub __parse_mac ($$) {
             }
         } elsif( exists( $ehmacs->{$mackey} ) ) {
             $$ra =~ s/$mac/$ehmacs->{$mackey}/;
-        } else {
+        } elsif ( $mackey !~ m/$EH{'output'}{'generate'}{'_logicre_'}/io ) {
+        # } else {
             logwarn("WARNING: Cannot locate replacement for $mac in data!");
             $EH{'sum'}{'warnings'}++;
         }
@@ -3815,6 +3834,7 @@ sub purge_relicts () {
 
         #!wig20050113: next if ( $i =~ m,%OPEN(_\d+)?%, ); # Ignore the %OPEN% pseudo-signal
 
+		# Remove empty entries (s.times we have an empty array!	
         if ( $conndb{$i}{'::high'} ne '' or $conndb{$i}{'::low'} ne '' ) {
             my $h = $conndb{$i}{'::high'};
             my $l = $conndb{$i}{'::low'};
@@ -3936,7 +3956,11 @@ sub _check_keywords ($$) {
     for my $l ( keys( %{$EH{'check'}{'keywords'}} ) ) {    
         for my $i ( @$ior ) {
             for my $ii ( qw( inst port ) ) {
-                if ( $i->{$ii} =~ m,^$EH{'check'}{'keywords'}{$l}$, ) {
+            	#!wig20050713: Found ports defined without "inst" and "port"!
+            	if( not exists( $i->{$ii} ) or not defined( $i->{$ii} ) ) {
+            		logwarn( "ERROR: Missing key $ii in structure $name! Contact MIX maintainer" );
+					$EH{'sum'}{'errors'}++;
+            	} elsif ( $i->{$ii} =~ m,^$EH{'check'}{'keywords'}{$l}$, ) {
                     $i->{$ii} = $EH{'postfix'}{'PREFIX_KEYWORD'} . $1;
                     logwarn( "WARNING: Detected keyword $1 in $ii got replaced!" );
                     $EH{'sum'}{'warnings'}++;
@@ -3960,13 +3984,15 @@ sub _check_keywords ($$) {
 # If ::high and/or ::low is defined,
 # check if there are port definitions to be extended
 #
-
+#!wig20050713: return when $ref has no real contents!
 sub _extend_inout ($$$) {
     my $h = shift;
     my $l = shift;
     my $ref = shift;
-
+		
+	# remove empty hashes:
     for my $i ( @{$ref} ) {
+    	next if ( scalar( keys ( %$i ) ) == 0 ); # Skip empty hashes
         if( not defined( $i->{'sig_f'} ) and
             not defined( $i->{'port_f'} ) ) {
                 $i->{'sig_f'} = $h;

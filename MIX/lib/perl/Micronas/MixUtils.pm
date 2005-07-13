@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.65 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2005/07/07 12:32:50 $                              |
+# | Revision:   $Revision: 1.66 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2005/07/13 15:38:33 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.65 2005/07/07 12:32:50 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.66 2005/07/13 15:38:33 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,11 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.66  2005/07/13 15:38:33  wig
+# | Added prototype for simple logic
+# | Added ::udc for HIER
+# | Fixed some nagging bugs
+# |
 # | Revision 1.65  2005/07/07 12:32:50  lutscher
 # | o changed EH->i2c_cell to EH->reg_shell
 # | o made some cleaning-up of EH->reg_shell and EH->hier
@@ -311,11 +316,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.65 2005/07/07 12:32:50 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.66 2005/07/13 15:38:33 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.65 $';         #'
+my $thisrevision        =      '$Revision: 1.66 $';         #'
 
-# Revision:   $Revision: 1.65 $   
+# Revision:   $Revision: 1.66 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -783,11 +788,23 @@ sub mix_banner(;$)
 ##### $NAME ($VERSION)
 #####
 ##### $FLOW $FLOW_VERSION $MOD_VERSION
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
 #######################################################################
 EOF
-##### Copyright(c) Micronas GmbH 2002 ALL RIGHTS RESERVED
+
+	# Store the header in the log file, too:
+	logsay(
+"
+#######################################################################
+##### $NAME ($VERSION)
+#####
+##### $FLOW $FLOW_VERSION $MOD_VERSION
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################" );
+
     if ($EH{'PRINTTIMING}'} ) {
         print "NOTE ($NAME): Execution started " . localtime() . "\n\n";
+        logsay( "NOTE ($NAME): Execution started " . localtime() . "\n" );
     }
     1;
 }
@@ -934,9 +951,16 @@ sub mix_init () {
 		  			# inout | outin: seperate in/out/inout seperately
 		  			#    can be combined with the "input" key
 		  			# ::COL : order as in column ::COL (alphanumeric!)
-			'logic' => 'wire,and,or,nand,xor,nor',
-			'_logic_' => '', # internal!!
-					# List of "logic" entities
+		  			
+		  	# List of "logic" entities
+			'logic' => 'wire(1:1),and(1:N),or(1:N),nand(1:N),xor(1:N),nor(1:N),not(1:1)',
+			'_logicre_' => '', 		# internal usage!
+			'_logiciocheck_' => {}, # internal usage!
+			'logicmap' => 'uc',
+				# uc|upper[case] -> create uppercase style logic (default)
+				# lc|lower[case] -> create lowercase style logic
+				# review		 -> add "AND 1" or "OR 0" 
+
 	      	'fold' => 'signal',	# If set to [signal|hier], tries to collect ::comments, ::descr and ::gen
 					# like TEXT_FOO_BAR (X10), if TEXT_FOO_BAR appears several times
 					#TODO: Implement for hier
@@ -1193,32 +1217,35 @@ sub mix_init () {
 		'parsed' => 0,
 		'key' => '::name', # Primary key to %conndb
 		'field' => {
-	    #Name   	=>		Inherits
-	    #						Multiple
-	    #							Required: 0 = no, 1=yes, 2= init to ""
-	    #								Defaultvalue
-	    #									PresetOrder
-	    #                                   0       1       2	3               4
-	    '::ign' 	=> 	[ qw(	0	0	1	%EMPTY% 	1 ) ],
-	    '::gen'		=>	[ qw(	0	0	1	%EMPTY% 	2 ) ],
+	    #Name   	=>			Inherits
+	    #							Multiple
+	    #								Required: 0 = no, 1=yes, 2= init to ""
+	    #									Defaultvalue
+	    #													PrintOrder
+	    #                       0   1   2	3           	4
+	    '::ign' 	=> 	[ qw(	0	0	1	%EMPTY% 		1 ) ],
+	    '::gen'		=>	[ qw(	0	0	1	%EMPTY% 		2 ) ],
 	    '::bundle'	=>	[ qw(	1	0	1	WARNING_NOT_SET	3 ) ],
 	    '::class'	=>	[ qw(	1	0	1	WARNING_NOT_SET	4 ) ],
 	    '::clock'	=> 	[ qw(	1	0	1	WARNING_NOT_SET	5 ) ],
-	    '::type'	=> 	[ qw(	1	0	1	%SIGNAL%	6 ) ],
-	    '::high'	=> 	[ qw(	1	0	0	%EMPTY% 	7 ) ],
-	    '::low'		=> 	[ qw(	1	0	0	%EMPTY% 	8 )],
+	    '::type'	=> 	[ qw(	1	0	1	%SIGNAL%		6 ) ],
+	    '::high'	=> 	[ qw(	1	0	0	%EMPTY% 		7 ) ],
+	    '::low'		=> 	[ qw(	1	0	0	%EMPTY% 		8 )],
 	    '::mode'	=> 	[ qw(	1	0	1	%DEFAULT_MODE%	9 )],
 	    '::name'	=> 	[ qw(	0	0	1	ERROR_NO_NAME	10 )],
 	    '::shortname'	=> [ qw(	0	0	0	%EMPTY% 	11 )],
-	    '::out'		=> 	[ qw(	1	0	0	%SPACE% 	12 )],
-	    '::in'		=> 	[ qw(	1	0	0	%SPACE% 	13 )],
-	    '::descr'	=> 	[ qw(	1	0	0	%EMPTY% 	14 )],
-	    '::comment'	=>	[ qw(	1	1	2	%EMPTY% 	15 )],
-	    '::default'	=>	[ qw(	1	1	0	%EMPTY% 	0 )],
-	    "::debug"	=>	[ qw(	1	0	0	%NULL%	        0 )],
+	    '::out'		=> 	[ qw(	1	0	0	%SPACE% 		12 )],
+	    '::in'		=> 	[ qw(	1	0	0	%SPACE% 		13 )],
+	    '::descr'	=> 	[ qw(	1	0	0	%EMPTY% 		14 )],
+	    '::comment'	=>	[ qw(	1	1	2	%EMPTY% 		15 )],
+	    '::default'	=>	[ qw(	1	1	0	%EMPTY% 		0 )],
+	    '::debug'	=>	[ qw(	1	0	0	%NULL%	        0 )],
 	    '::skip'	=>	[ qw(	0	1	0	%NULL% 	        0 )],
 	    'nr'		=>	16, # Number of next field to print
-	    '_mult_'	=> (),  # Internal counter for multiple fields	    
+	    '_mult_'	=> {},  # Internal counter for multiple fields
+	    '_multorder_' => 0, # Sort order for multiple fields -> left to right increases
+	    					# 1 / RL -> left to right decreasing
+	    					# xF -> map the first to ::head:0 (defaults: ::head)	    
 		},
     },
 
@@ -1227,37 +1254,41 @@ sub mix_init () {
     #
     'hier' => {
         'xls' => 'HIER',
-	'req' => 'mandatory',
-	'parsed' => 0,
-	'key' => '::inst', # Primary key to %hierdb
-	'field' => {
-	    #Name   	=>		Inherits
-	    #						Multiple
-	    #							Required
-	    #								Defaultvalue
-	    #									PrintOrder
-	    #                                   0       1       2   	   3            4
-	    '::ign' 		=> [ qw(	0	0	1	%EMPTY% 	1 )],
-	    '::gen'		=> [ qw(	0	0	1	%EMPTY% 	2 )],
-	    '::variants'	=> [ qw(	1	0	0	Default	        3 )],
-	    '::parent'	        => [ qw(	1	0	1	W_NO_PARENT	4 )],
-	    '::inst'		=> [ qw(	0	0	1	W_NO_INST	5 )],
-	    '::lang'		=> [ qw(	1	0	0	%LANGUAGE%	7 )],
-	    '::entity'		=> [ qw(	1	0	1	W_NO_ENTITY	8 )],
-	    '::arch'		=> [ qw(	1	0	0	rtl		9 )],
-	    "::config"	        => [ qw(	1	0	1	%DEFAULT_CONFIG% 11 )],
-	    '::use'		=> [ qw(	1	0	0	%EMPTY%		10 )],
-	    "::comment"	        => [ qw(	1	0	2	%EMPTY%	        12 )],
-	    "::descr"	        => [ qw(	1	0	0	%EMPTY%	        13 )],
-	    "::shortname"	=> [ qw(	0	0	0	%EMPTY%	        6 )],
-	    "::default"	        => [ qw(	1	1	0	%EMPTY%	        0 )],
-	    "::hierachy"	=> [ qw(	1	0	0	%EMPTY%	        0 )],
-	    "::debug"	        => [ qw(	1	0	0	%NULL%	        0 )],
-	    '::skip'		=> [ qw(	0	1	0	%NULL% 	        0 )],
-	    'nr'		=> 14,  # Number of next field to print
-	    '_mult_'	=> (),  # Internal counter for multiple fields	    
+		'req' => 'mandatory',
+		'parsed' => 0,
+		'key' => '::inst', # Primary key to %hierdb
+		'field' => {
+	    #Name   	=>				Inherits
+	    #								Multiple
+	    #									Required
+	    #										Defaultvalue
+	    #													PrintOrder
+	    #                           0   1   2	3			 4
+	    '::ign' 		=>	[ qw(	0	0	1	%EMPTY% 	 1 )],
+	    '::gen'			=>	[ qw(	0	0	1	%EMPTY% 	 2 )],
+	    '::variants'	=>	[ qw(	1	0	0	Default	     3 )],
+	    '::parent'	    =>	[ qw(	1	0	1	W_NO_PARENT	 4 )],
+	    '::inst'		=>	[ qw(	0	0	1	W_NO_INST	 5 )],
+	    '::lang'		=>	[ qw(	1	0	0	%LANGUAGE%	 7 )],
+	    '::entity'		=>	[ qw(	1	0	1	W_NO_ENTITY	 8 )],
+	    '::arch'		=>	[ qw(	1	0	0	rtl			 9 )],
+	    '::config'	    =>	[ qw(	1	0	1	%DEFAULT_CONFIG% 11 )],
+	    '::use'			=>	[ qw(	1	0	0	%EMPTY%		10 )],
+	    '::udc'			=>	[ qw(	1	0	0	%EMPTY%		 0 )],
+	    '::comment'	    =>	[ qw(	1	0	2	%EMPTY%	    12 )],
+	    '::descr'	    =>	[ qw(	1	0	0	%EMPTY%	    13 )],
+	    '::shortname'	=>	[ qw(	0	0	0	%EMPTY%	     6 )],
+	    '::default'	    =>	[ qw(	1	1	0	%EMPTY%	     0 )],
+	    '::hierachy'	=>	[ qw(	1	0	0	%EMPTY%	     0 )],
+	    '::debug'	    =>	[ qw(	1	0	0	%NULL%	     0 )],
+	    '::skip'		=>	[ qw(	0	1	0	%NULL% 	     0 )],
+	    'nr'			=> 14,  # Number of next field to print
+	    '_mult_'		=> {},  # Internal counter for multiple fields
+	    '_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
+	    					# 1 / RL -> left to right decreasing
+	    					# xF -> map the first to ::head:0 (defaults: ::head)	    
+		},	    
 	},
-    },
     'variant' => 'Default', # Select default as default variant :-)
 
     #
@@ -1271,30 +1302,33 @@ sub mix_init () {
 	'parsed' => 0,
 	'cols' => 0,
 	'field' => {
-	    #Name   	=>		    Inherits
-	    #					    Multiple
-	    #						    Required
-	    #							   Defaultvalue
-	    #								    PrintOrder
-	    #                                   0       1       2	3       4
-	    '::ign' 		=> [ qw(	0	0	1	%EMPTY% 	1 )],
-	    '::class'		=> [ qw(	1	0	1	WARNING_NOT_SET	2 )],
-	    '::ispin'		=> [ qw(	0	0	1	%EMPTY%	3 )],
-	    '::pin'		=> [ qw(	0	0	1	WARNING_PIN_NR	4 )],
-	    '::pad'		=> [ qw(	0	0	1	WARNING_PAD_NR	5 )],
-	    '::type'		=> [ qw(	1	0	1	DEFAULT_PIN	6 )],
-	    '::iocell'		=> [ qw(	1	0	1	DEFAULT_IO	7 )],
-	    '::port'		=> [ qw(	1	0	1	%EMPTY%	8 )],
-	    '::name'		=> [ qw(	0	0	1	PAD_NAME	9 )],
-	    '::muxopt'	=> [ qw(	1	1	1	%EMPTY%	        10 )],
-	    "::comment"	=> [ qw(	1	0	2	%EMPTY%	        11 )],
-            "::default"	=> [ qw(	1	1	0	%EMPTY%	0 )],	    
-	    '::debug'	=> [ qw(	1	0	0	%NULL%	        0 )],
-	    '::skip'		=> [ qw(	0	1	0	%NULL% 	        0 )],
-	    'nr'		=> 12,  # Number of next field to print
-	    '_mult_'	=> (),  # Internal counter for multiple fields
+	    #Name   	=>		    	Inherits
+	    #					    		Multiple
+	    #						    		Required
+	    #							   			Defaultvalue
+	    #								    					PrintOrder
+	    #                           0   1   2	3				4
+	    '::ign' 		=>	[ qw(	0	0	1	%EMPTY% 		1 )],
+	    '::class'		=>	[ qw(	1	0	1	WARNING_NOT_SET	2 )],
+	    '::ispin'		=>	[ qw(	0	0	1	%EMPTY%			3 )],
+	    '::pin'			=>	[ qw(	0	0	1	WARNING_PIN_NR	4 )],
+	    '::pad'			=>	[ qw(	0	0	1	WARNING_PAD_NR	5 )],
+	    '::type'		=>	[ qw(	1	0	1	DEFAULT_PIN		6 )],
+	    '::iocell'		=>	[ qw(	1	0	1	DEFAULT_IO		7 )],
+	    '::port'		=>	[ qw(	1	0	1	%EMPTY%			8 )],
+	    '::name'		=>	[ qw(	0	0	1	PAD_NAME		9 )],
+	    '::muxopt'		=>	[ qw(	1	1	1	%EMPTY%	        10 )],
+	    '::comment'		=>	[ qw(	1	0	2	%EMPTY%	        11 )],
+        '::default'		=>	[ qw(	1	1	0	%EMPTY%			0 )],	    
+	    '::debug'		=>	[ qw(	1	0	0	%NULL%	        0 )],
+	    '::skip'		=>	[ qw(	0	1	0	%NULL% 	        0 )],
+	    'nr'			=> 12,  # Number of next field to print
+	    '_mult_'		=> {},  # Internal counter for multiple fields
+	    '_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
+	    					# 1 / RL -> left to right decreasing
+	    					# xF -> map the first to ::head:0 (defaults: ::head)	    
+		},
 	},
-    },
     #
     # I2C sheet basic definitions
     #
@@ -1335,9 +1369,12 @@ sub mix_init () {
 		'::auto'        => [ qw(    0   0   0   0           21 )],
 	    '::comment'	    => [ qw(	1	1	2	%EMPTY%     22 )],
 	    '::default'	    => [ qw(	1	1	0	%EMPTY%     23 )],
-	    'nr'		=> 23,  # Number of next field to print
-	    '_mult_'	=> (),  # Internal counter for multiple fields
-	},
+	    'nr'			=> 23,  # Number of next field to print
+	    '_mult_'		=> {},  # Internal counter for multiple fields
+	   	'_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
+	    					# 1 / RL -> left to right decreasing
+	    					# xF -> map the first to ::head:0 (defaults: ::head)
+		},
     },
     # VI2C Definitions:
     # ::ign	::type	::width	::dev	::sub	::addr
@@ -1352,26 +1389,30 @@ sub mix_init () {
 	'req' => 'optional',
 	'parsed' => 0,
 	'field' => {
-	    #Name   	=>	  	   Inherits
-	    #					    Multiple
-	    #						    Required
-	    #							  Defaultvalue
-	    #								    PrintOrder
-	    #                                  0      1       2	3       4
-	    '::ign' 		=> [ qw(	0	0	1	%NULL% 1 ) ],
-	    '::type'		=> [ qw(	0	0	1	%TBD%  2 ) ],
+	    #Name   	=>	  	   		Inherits
+	    #					    		Multiple
+	    #						    		Required
+	    #							  		Defaultvalue
+	    #								    			PrintOrder
+	    #                           0   1   2	3       4
+	    '::ign' 		=> [ qw(	0	0	1	%NULL%	1 ) ],
+	    '::type'		=> [ qw(	0	0	1	%TBD% 	2 ) ],
 	    '::variants'	=> [ qw(	1	0	0	Default	3 )],
 	    '::inst'		=> [ qw(	0	0	1	W_NO_INST 4 )],
-	    "::comment"	    => [ qw(	1	0	2	%EMPTY%	6 )],
-	    "::shortname"	=> [ qw(	0	0	0	%EMPTY%	5 )],
-	    "::b"			=> [ qw(	0	1	1	%NULL%	7 )],
-	    "::default"	    => [ qw(	1	1	0	%NULL%	0 )],
-	    "::hierachy"	=> [ qw(	1	0	0	%NULL%	0 )],
-	    "::debug"	    => [ qw(	1	0	0	%NULL%	0 )],
-        "::default"		=> [ qw(	1	1	0	%EMPTY%	0 )],	    
+	    '::comment'	    => [ qw(	1	0	2	%EMPTY%	6 )],
+	    '::shortname'	=> [ qw(	0	0	0	%EMPTY%	5 )],
+	    '::b'			=> [ qw(	0	1	1	%NULL%	7 )],
+	    '::default'	    => [ qw(	1	1	0	%NULL%	0 )],
+	    '::hierachy'	=> [ qw(	1	0	0	%NULL%	0 )],
+	    '::debug'	    => [ qw(	1	0	0	%NULL%	0 )],
+        '::default'		=> [ qw(	1	1	0	%EMPTY%	0 )],	    
 	    '::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
-	    'nr'			=> 12,  # Number of next field to print
-	    '_mult_'	=> (),  # Internal counter for multiple fields
+	    'nr'			=> 8,  # Number of next field to print
+	    '_mult_'		=> {},  # Internal counter for multiple fields
+   	    '_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
+	    					# 1 / RL -> left to right decreasing
+	    					# xF -> map the first to ::head:0 (defaults: ::head)
+	    
 	},
     },
     "macro" => {
@@ -1408,18 +1449,24 @@ sub mix_init () {
 	    "%VHDL_USE_ENTY%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
 	    "%VHDL_USE_ARCH%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
 	    "%VHDL_USE_CONF%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
-	    "%VHDL_HOOK_ENTY_HEAD%"	=>	"", # Hooks for user defined text
+	    "%VHDL_HOOK_ENTY_HEAD%"	=>	"", # Hooks for user defined text, see ::udc!
    	    "%VHDL_HOOK_ENTY_BODY%"	=>	"",
    	    "%VHDL_HOOK_ENTY_FOOT%"	=>	"",
    	   	"%VHDL_HOOK_ARCH_HEAD%"	=>	"",
+   	   	"%VHDL_HOOK_ARCH_DECL%" =>	"",
    	    "%VHDL_HOOK_ARCH_BODY%"	=>	"",
    	    "%VHDL_HOOK_ARCH_FOOT%"	=>	"",
    	    "%VHDL_HOOK_CONF_HEAD%"	=>	"",
    	    "%VHDL_HOOK_CONF_BODY%"	=>	"",
-   	    "%VHDL_HOOK_CONF_FOOT%"	=>	"",		
+   	    "%VHDL_HOOK_CONF_FOOT%"	=>	"",
+   	    '%HEAD%'	=> '__HEAD__', # Used internally for ::udc
+   	    '%BODY%'	=> '__BODY__', # Used internally for ::udc
+   	    '%FOOT%'	=> '__FOOT__', # Used internally for ::udc
+   	    '%DECL%'	=> '__DECL__', # Used internally for ::udc	
 	    "%VERILOG_TIMESCALE%"	=>	"`timescale 1ns / 1ps",
 	    "%VERILOG_USE_ARCH%"	=>	'%EMPTY%',
 	    "%VERILOG_DEFINES%"	=>	'	// No `defines in this module',  # Want to define s.th. globally?
+		"%VERILOG_HOOK_BODY%"	=>	"",
         "%INT_VERILOG_DEFINES%"     =>    '', # Used internally
         "%INCLUDE%"     =>  '`include',   # Used internally for verilog include files in ::use!
         "%DEFINE%"      =>  '`define',     # Used internally for verilog defines in ::use!
@@ -1521,6 +1568,9 @@ sub mix_init () {
                # wrapnl: wrap embedded new-line to space
                # masknl: replace newline by \\n
                # maxwidth: make all lines contain maxwidht - 1 seperators
+       },
+       'xls' => {
+       		'maxcelllength' => 500, # Limit number of characters in ExCEL cells
        },
        'out' => '',
     },
@@ -1638,11 +1688,32 @@ foreach my $conf (
 
     # Get the _logic_ list ...
     #!wig20050519:
-    $EH{'output'}{'generate'}{'_logic_'} =
-    	'^(__|%)?(' .
-    	join( '|', split(/[,\s+]/, $EH{'output'}{'generate'}{'logic'} ) ) .
-    	')(__|%)?$';
-   
+    #  split into list and seperate (M:N)
+    #    M = number of outputs
+    #    N = number of inputs
+    my @logic = split(/[,\s+]/, $EH{'output'}{'generate'}{'logic'} );
+    my @names = ();
+    for my $i ( @logic ) {
+    	if ( $i =~ m/^(\w+)\(([NM\d]+)(:([NM\d]+))?\)/ ) {
+    		my $omax = $4 || "N";
+    		$EH{'output'}{'generate'}{'_logiciocheck_'}{$1}{'omax'} = $omax;
+    		$EH{'output'}{'generate'}{'_logiciocheck_'}{$1}{'imax'} = $2;
+    		push( @names, $1 );
+    	} else {
+    		$EH{'output'}{'generate'}{'_logiciocheck_'}{$i}{'imax'} = "N";
+    		$EH{'output'}{'generate'}{'_logiciocheck_'}{$i}{'omax'} = "N";
+    		push( @names, $i );
+    	}
+    }
+    	
+    $EH{'output'}{'generate'}{'_logicre_'} =
+    	'^(__|%)?(' . join( '|', @names ) . ')(__|%)?$';
+   # Create LOGIC macros:
+   for my $log ( split(/[,\s+]/, $EH{'output'}{'generate'}{'logic'} ) ) {
+   		$EH{'output'}{'generate'}{'_logic_map_'}{'%' . uc( $log ) . '%'}
+   			= $log;
+   }
+   # $EH{'macro'}{'%WIRE%'} = "%EMPTY%"; # Wire is replaced by nothing!
 } # End of mix_init
 
 #############################################################################
@@ -2695,6 +2766,9 @@ parse_header ($$@) {
 
 See if the header line is complete, check if we all required fields and if we have extra fields
 Convert multiple ::head to ::head, ::head:2, ....
+	If the _multoder_ flag is set to RL, the :N numbers are assigned from right
+	to left, defaults is left to right. A "F" in _multorder_ maps the first (left
+	or right) column header to ::head:0, default is to leave that name as-is.
 
 I guess multiple headers are kind of evil (keep an eye on them)
 
@@ -2702,6 +2776,7 @@ Arguments: $kind, \$eh{$kind}, @header_row
 
 Returns: %order (keys are the ::head items)
 
+20050708wig: add _multorder_ handling
 20050614: remove extra whitespace around the keywords
 
 =cut
@@ -2750,10 +2825,10 @@ sub parse_header($$@){
 		    	if ( $$templ->{'field'}{$i}[2] > 1 ) { # 2 -> needs to be initialized silently
 					logtrc(INFO, "Info: appended optional data field $i.");
 					push ( @row, $i );
-					push( @{$rowh{$i}} ,$#row );
+					push ( @{$rowh{$i}} ,$#row );
 		    	} else {
 		    		unless ( $i =~ m/:\d+$/ ) { # Ignore ::key:N fields! 
-						logwarn("Missing required field $i in input array!");
+						logwarn("WARNING: Missing required field $i in input array!");
 						$EH{'sum'}{'warnings'}++;
 		    		}
 		    	}
@@ -2773,7 +2848,8 @@ sub parse_header($$@){
 	    my $head = $row[$i];	
 	    unless ( defined( $$templ->{'field'}{$head} ) ) {
 	        logtrc(INFO, "Added new column header $head");
-	        @{$$templ->{'field'}{$head}} = @{$$templ->{'field'}{'::default'}}; #Check: does this really copy everything
+	        @{$$templ->{'field'}{$head}} = @{$$templ->{'field'}{'::default'}};
+	        #Check: does this really copy everything
 	        $$templ->{'field'}{$head}[4] = $$templ->{'field'}{'nr'};
 	        $$templ->{'field'}{'nr'}++;
 	    }
@@ -2783,28 +2859,52 @@ sub parse_header($$@){
     # Split/rename muliple headers ::head becomes ::head, ::head:1 ::head:2, ::head:3 ...
     #
     my %or = (); # "flattened" ordering
-    for my $i ( keys( %rowh ) ) {
+    for my $i ( keys( %rowh ) ) { # Iterate through multiple headers ...
 		next if ( $i =~ m/^::skip/ ); #Ignore bad fields
-		if ( $#{$rowh{$i}} > 0 ) {
-	    	$or{$i} = $rowh{$i}[0]; # Save first field, rest will be seperated by name ...
-	     	for my $ii ( 1..$#{$rowh{$i}} ) {
+		if ( $#{$rowh{$i}} > 0 ) { # Multiple field header:
+			my $colorder = $$templ->{'field'}{'_multorder_'} || "0";
+			my $reverse = 0;
+			if ( $colorder =~ m/(1|RL)/o ) { # From right to left
+				$reverse = 1;
+			}
+			my $nummultcols = $#{$rowh{$i}};
+			my @range = 0..$nummultcols;
+			@range = reverse( @range ) if $reverse;
+			unless ( $colorder =~ m/F/o ) { # no F -> do not map first/last to :0!
+				$or{$i} = $rowh{$i}[$range[0]];
+				shift @range;
+			}
+				
+	    	# $or{$i} = $rowh{$i}[0]; # Save first field, rest will be seperated by name ...
+	     	for my $ii ( @range ) {
 				my $funique = "$i:$ii";
 				unless( defined( $$templ->{'field'}{$funique} ) ) {
 					logtrc(INFO, "Split multiple column header $i to $funique");
 					$$templ->{'field'}{$funique} = $$templ->{'field'}{$i};
-					#lu20050624 disable required-attribute for the additional headers because they do not occur in input
+					#lu20050624 disable required-attribute for the additional
+					# headers because they do not occur in input
 					$$templ->{'field'}{$funique}[2] = 0;
 					#Check: do a real copy ...
 					#Remember print order no longer is unique
 				}
 				$or{$funique} = $rowh{$i}[$ii];
-				if($ii > $EH{$kind}{'cols'}) {
-					$EH{$kind}{'cols'} = $ii; #TODO: remove this!
+				#!wig20050708: removed the 'cols' counter -> now in _mult_
+				# if ($ii > $EH{$kind}{'cols'}) {
+				# 	$EH{$kind}{'cols'} = $ii; #TODO: remove this!
+				# }
+
+			}
+			# Remember number of multiple header columns
+			if ( not exists( $EH{$kind}{'_mult_'}{$i} ) ) {
+					$EH{$kind}{'_mult_'}{$i} = $nummultcols;
+			} else {
+				if ( $EH{$kind}{'_mult_'}{$i} ne $nummultcols ) {
+					logwarn("WARNING: Multiple column header $i in $kind count mismatch: " .
+					$nummultcols . " now, " . $EH{$kind}{'_mult_'}{$i} . " previously" );
+					$EH{'sum'}{'warnings'}++;
 				}
-				# Remember number of columns 
-				if(not defined( $EH{$kind}{'_mult_max_'}{$i} ) or
-				   $ii > $EH{$kind}{'_mult_max_'}{$i} ) {
-					$EH{$kind}{'_mult_max_'}{$i} = $ii;
+				if ( $EH{$kind}{'_mult_'}{$i} < $nummultcols ) {
+					$EH{$kind}{'_mult_'}{$i} = $nummultcols;
 				}
 			}
 		} else {
@@ -3089,35 +3189,37 @@ sub db2array ($$$) {
 ## Caveat: if cell does not contain %IOCR% markers, will split somewhere in the middle!
 ## Might lead to troubles if read back.
 ##!wig20031216: use 1023 as limit
+##!wig20050713: limit to 511!
 ####################################################################
 sub mix_utils_split_cell ($) {
 
     my $data = shift;
     my $flaga = 0;
 
-    # Get pieces up to 1023 characters, seperated by ", %IOCR%"
+	my $maxlengthexcel = 500;
+    # Get pieces up to 1023/500 characters, seperated by ", %IOCR%"
     my $iocr = $EH{'macro'}{'%IOCR%'};
     my @chunks = ();
 
-    while( length( $data ) > 1023 ) {
-	my $tmp = substr( $data, 0, 1023 ); # Take 1023 chars
-	# Stuff back up to last %IOCR% ...
-	my $ri = rindex( $tmp, $iocr ); # Read back until next <CR>
-	if ( $ri <= 0 ) { # No $iocr in string -> split at arbitrary location ??
-	    push( @chunks, $tmp );
-	    substr( $data, 0, 1023 ) = "";
-	    logtrc( "INFO:4",  "INFO: Split cell at arbitrary location: " . substr( $tmp, 0, 32 ) )
-		unless $flaga;
-	    $flaga = 1;
-	} else {
-	    if ( $flaga ) {
-		logwarn( "WARNING: Cell split might produce bad results, iocr detection failed: " .
-		    substr( $chunks[0], 0, 32 ) );
-		$EH{'sum'}{'warnings'}++;
-	    }
-	    substr( $data, 0, $ri ) = ""; # Take away leading chars
-	    push ( @chunks,  substr( $tmp, 0, $ri ) ); # Chunk found ...
-	}
+    while( length( $data ) > $maxlengthexcel ) {
+		my $tmp = substr( $data, 0, $maxlengthexcel ); # Take 1023 chars
+		# Stuff back up to last %IOCR% ...
+		my $ri = rindex( $tmp, $iocr ); # Read back until next <CR>
+		if ( $ri <= 0 ) { # No $iocr in string -> split at arbitrary location ??
+	    	push( @chunks, $tmp );
+	    	substr( $data, 0, $maxlengthexcel ) = "";
+	    	logtrc( "INFO:4",  "INFO: Split cell at arbitrary location: " . substr( $tmp, 0, 32 ) )
+				unless $flaga;
+	    	$flaga = 1;
+		} else {
+	    	if ( $flaga ) {
+				logwarn( "WARNING: Cell split might produce bad results, iocr detection failed: " .
+		    		substr( $chunks[0], 0, 32 ) );
+				$EH{'sum'}{'warnings'}++;
+	    	}
+	    	substr( $data, 0, $ri ) = ""; # Take away leading chars
+	    	push ( @chunks,  substr( $tmp, 0, $ri ) ); # Chunk found ...
+		}
     }
     # Rest ...
     push( @chunks, $data );
@@ -3282,11 +3384,13 @@ sub one2two ($) {
 	unless( $fields[0] ) { shift @fields; }; #Take away the first if empty
 	if ( scalar( @fields ) < 1 or scalar( @fields ) > 4 ) {
 	    logwarn( "WARNING: Bad number of fields found in write_delta_excel!" );
+	    $EH{'sum'}{'warnings'}++;
 	}
 	my @w = map( { length( $_ ) }@fields );
 	for my $i ( @w ) {
 	    if ( $i > 1024 * 10 ) { # reg expression seems to be limited to 32766 chars ..
 		logwarn( "WARNING: Cannot split field with $i chars in delta mode!\n" );
+		$EH{'sum'}{'warnings'}++;
 		$match .= '[*|]([^*|]+)';
 	    } else {
 		$match .= '[*|](.{' . $i . '})';

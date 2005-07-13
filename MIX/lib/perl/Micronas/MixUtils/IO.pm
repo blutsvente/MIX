@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.21 $                                          |
+# | Revision:   $Revision: 1.22 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/06/23 13:14:42 $                              |
+# | Date:       $Date: 2005/07/13 15:38:34 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,11 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.22  2005/07/13 15:38:34  wig
+# | Added prototype for simple logic
+# | Added ::udc for HIER
+# | Fixed some nagging bugs
+# |
 # | Revision 1.21  2005/06/23 13:14:42  wig
 # | Update repository, not yet verified
 # |
@@ -165,11 +170,11 @@ sub useOoolib ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.21 2005/06/23 13:14:42 wig Exp $';
+my $thisid          =      '$Id: IO.pm,v 1.22 2005/07/13 15:38:34 wig Exp $';
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.21 $';
+my $thisrevision    =      '$Revision: 1.22 $';
 
-# Revision:   $Revision: 1.21 $
+# Revision:   $Revision: 1.22 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1256,33 +1261,33 @@ sub write_delta_sheet($$$) {
 
 	    # Now convert delta to two-line format ...
 	    for my $nf ( @out ) {
-		my @newex = ();
-		my @oldex = ();
-		if ( scalar( @$nf ) == 4 ) {
-		    $newex[0] = "NEW-" . $nf->[0];
-		    $oldex[0] = "OLD-" . $nf->[2];
-		    push( @newex, split( /@@@/, $nf->[1] ) ) if $nf->[1];
-		    push( @oldex, split( /@@@/, $nf->[3] ) ) if $nf->[3];
-		    push( @h, [ @newex ] ) if ( scalar( @newex ) > 1  );
-		    push( @h, [ @oldex ] ) if ( scalar( @oldex ) > 1 );
-		    my $fn = scalar( @newex );
-		    my $fo = scalar( @oldex );
-		    my $min = ( $fn < $fo ) ? $fn : $fo;
-		    my $max = ( $fn < $fo ) ? $fo : $fn;
-		    for my $iii ( 0..$min-1 ) {
-			if ( $newex[$iii] ne $oldex[$iii] ) {
-			    push( @delcols , scalar(@h) . "/" . ( $iii + 1 ) );
+			my @newex = ();
+			my @oldex = ();
+			if ( scalar( @$nf ) == 4 ) {
+		    	$newex[0] = "NEW-" . $nf->[0];
+		    	$oldex[0] = "OLD-" . $nf->[2];
+		    	push( @newex, split( /@@@/, $nf->[1] ) ) if $nf->[1];
+		    	push( @oldex, split( /@@@/, $nf->[3] ) ) if $nf->[3];
+		    	push( @h, [ @newex ] ) if ( scalar( @newex ) > 1  );
+		    	push( @h, [ @oldex ] ) if ( scalar( @oldex ) > 1 );
+		    	my $fn = scalar( @newex );
+		    	my $fo = scalar( @oldex );
+		    	my $min = ( $fn < $fo ) ? $fn : $fo;
+		    	my $max = ( $fn < $fo ) ? $fo : $fn;
+		    	for my $iii ( 0..$min-1 ) {
+				if ( $newex[$iii] ne $oldex[$iii] ) {
+			    	push( @delcols , scalar(@h) . "/" . ( $iii + 1 ) );
+				}
+		    	}
+		    	if ( $min < $max ) {
+					for my $iii ( $min..$max ) {
+			    		push( @delcols, scalar( @h ) . "/" . ( $iii + 1 ) );
+					}
+		    	} 
+			} 
+			else {
+		    	push( @h, $nf );
 			}
-		    }
-		    if ( $min < $max ) {
-			for my $iii ( $min..$max ) {
-			    push( @delcols, scalar( @h ) . "/" . ( $iii + 1 ) );
-			}
-		    } 
-		} 
-		else {
-		    push( @h, $nf );
-		}
 	    }
 	} 
 	else {
@@ -1293,21 +1298,27 @@ sub write_delta_sheet($$$) {
 	    push( @h, ( @out ) );
 	}
 
+	#!wig20050712: add a bottom --END-- line to seperate current contents
+	#  from previous one (comes from copying data)
+	push( @h, [ "--END--", "--END--", "--END--", "--END--" ] );
+	push( @h, [ '','','','' ], [ '','','','' ], [ '','','','' ], [ '','','','' ] );
+	
 	write_outfile($file, "DIFF_" . $sheet, \@h, \@delcols);
 
 	# One line has to differ (date)
 	if ( $difflines > 0 ) {
-
 	    logwarn( "INFO: Detected $difflines changes in intermediate sheet $sheet, in file $file");
+	    $EH{'sum'}{'warnings'}++;
 	} 
 	elsif ( $difflines == -1 ) {
 	    logwarn( "WARNING: Missing changed date in intermediate sheet $sheet, in file $file");
+	    $EH{'sum'}{'warnings'}++;
 	}
 	#TODO: Do not use logwarn here ...
 	return $difflines;
     }
     else {
-	return -1;
+		return -1;
     }
 }
 
@@ -1426,24 +1437,27 @@ sub write_xls($$$;$) {
 		$wbpath =~ s,/,\\,g; # Replace / -> \
 		#Does our book have the right path?
 		if ( $book->Path ne $wbpath ) {
-		    logwarn("ERROR: workbook $basename with different path (" . $book->Path .
-			    ") already opened!");
-		    $EH{'sum'}{'errors'}++;
+			# Sometimes (win32 and cygwin) the same path has different cases ->
+			if ( $^O =~ m/mswin/io and lc( $book->Path ) ne lc ( $wbpath ) ) {
+		    	logwarn("ERROR: workbook $basename with different path (" . $book->Path .
+			    	") already opened!");
+		    	$EH{'sum'}{'errors'}++;
+			}
 		}
-	    }
-	    $book->Activate;
+	}
+	$book->Activate;
 
-	    #
-	    # rotate old versions of $sheet to O$n_$sheet_O ...
-	    #
-	    my %sh = ();
-	    my $s_previous = undef;
+	#
+	# rotate old versions of $sheet to O$n_$sheet_O ...
+	#
+	my %sh = ();
+	my $s_previous = undef;
 
-	    foreach my $sh ( in( $book->{'Worksheets'} ) ) {
+	foreach my $sh ( in( $book->{'Worksheets'} ) ) {
 		$sh{$sh->{'Name'}} = $sh; # Keep links
-	    }
+	}
 
-	    if ( $EH{'intermediate'}{'keep'} ) {
+	if ( $EH{'intermediate'}{'keep'} ) {
 
 		# Rotate sheets ...
 		# Delete eldest one:
@@ -1454,10 +1468,10 @@ sub write_xls($$$;$) {
 		}
 		if ( $max >= 2 ) {
 		    for my $n ( reverse( 2..$max ) ) {
-			if ( exists( $sh{ "O_" . ( $n - 1 ) . "_" . $sheet } ) ) {
-			    $sh{"O_" . ( $n - 1 ) . "_" . $sheet}->{'Name'} =
-				"O_" . $n . "_" . $sheet;
-			}
+				if ( exists( $sh{ "O_" . ( $n - 1 ) . "_" . $sheet } ) ) {
+			    	$sh{"O_" . ( $n - 1 ) . "_" . $sheet}->{'Name'} =
+					"O_" . $n . "_" . $sheet;
+				}
 		    }
 		}
 		# Finally: Rename the latest/greatest ...
@@ -1469,23 +1483,23 @@ sub write_xls($$$;$) {
 		if ( $EH{'intermediate'}{'format'} =~ m,prev,o and
 		     defined( $s_previous ) ) {
 		    unless( $s_previous->Copy($s_previous) ) { # Add in new sheet before
-			logwarn("Cannot copy previous sheet! Create new one.");
-		    } else {
-			$sheetr = $book->ActiveSheet();
-			$sheetr->Unprotect;
-			$sheetr->UsedRange->{'Value'} = (); #Will that delete contents?
-			$sheetr->{'Name'} = $sheet;
-		    }
+				logwarn("Cannot copy previous sheet! Create new one.");
+			} else {
+				$sheetr = $book->ActiveSheet();
+				$sheetr->Unprotect;
+				$sheetr->UsedRange->{'Value'} = (); #Will that delete contents?
+				$sheetr->{'Name'} = $sheet;
+			}
 		}
-	    } else { # Delete contents or all of sheet ?
+	} else { # Delete contents or all of sheet ?
 		if ( exists( $sh{ $sheet } ) ) {
 		    #Keep format if EH.intermediate.format says so
 		    if ( $EH{'intermediate'}{'format'} =~ m,prev,o ) {
-			$sheetr = $sh{$sheet};
-			$sheetr->Unprotect;
-			$sheetr->UsedRange->{'Value'} = (); # Overwrite all used cells ...
+				$sheetr = $sh{$sheet};
+				$sheetr->Unprotect;
+				$sheetr->UsedRange->{'Value'} = (); # Overwrite all used cells ...
 		    } else {
-			$sh{$sheet}->Delete;
+				$sh{$sheet}->Delete;
 		    }
 		}
 	    }
@@ -1513,7 +1527,15 @@ sub write_xls($$$;$) {
 	my $c1=$sheetr->Cells(1,1)->Address;
 	my $c2=$sheetr->Cells($y,$x)->Address;
 	my $rng=$sheetr->Range($c1.":".$c2);
-	$rng->{Value}=$r_a;
+	
+	#!wig20050713: protect against ExCEL failures:
+	eval '$rng->{Value}=$r_a;';
+	if ( $@ ) {
+	    logwarn "ERROR: cannot write ExCEL $file:$sheet: $@";
+	    $EH{'sum'}{'errors'}++;
+	    $ex->{DisplayAlerts}=1;
+	    return;
+    }
 
 	# Mark cells in that list in background color ..
 	# Format: row/col
@@ -1554,19 +1576,19 @@ sub write_xls($$$;$) {
 	    $rng->Columns->AutoFit;
 	}
 
-	#TODO: pretty formating
-	# $book->Save;
+		#TODO: pretty formating
+		# $book->Save;
 
-	$book->SaveAs($wfile);
+		$book->SaveAs($wfile);
 
-	# $book->Close unless ( $openflag ); #TODO: only close if not open before ....
+		# $book->Close unless ( $openflag ); #TODO: only close if not open before ....
 
-	$ex->{DisplayAlerts}=1;
+		$ex->{DisplayAlerts}=1;
 
-	return;
+		return;
     }
     else {
-	$file=~ s/\.xls$/\.csv/;
+		$file=~ s/\.xls$/\.csv/;
     	return write_csv($file, $sheet, $r_a);
     }
 }
@@ -1833,8 +1855,8 @@ sub useOoolib () {
 
     return 1 if ( $ooo_flag );
     if ( eval 'use ooolib;' ){
-	logdie "ERROR: Cannot load ooolib module: $@\n";
-	return undef;	
+		logdie "ERROR: Cannot load ooolib module: $@\n";
+		return undef;	
     }
     $ooo_flag = 1;
     return 1;
@@ -2403,6 +2425,7 @@ sub mix_utils_rgb($$$) {
 ## Mask pure digits (esp. with . and/or , inside) for ExCEL!
 ## Otherwise these will get converted to dates :-(
 ## wig20030716: add a ' before a trailing ' ...
+##!wig20050713: limit length of EXCEL cells to $EH{'format'}{'xls'}{'maxcelllength'}
 ####################################################################
 
 =head2 mix_utils_mask_excel($)
@@ -2415,20 +2438,23 @@ Otherwise these will get converted to dates :-(
 sub mix_utils_mask_excel($) {
     my $r_a = shift;
 
+	my $maxlength = $EH{'format'}{'xls'}{'maxcelllength'} + 10;
+	
     for my $i ( @$r_a ) {
-	for my $ii ( @$i ) {
-	    unless( defined( $ii ) ) {
-		$ii = "";
-		next;
-	    } elsif ( length( $ii ) > 1200 ) { #!wig20031215: 1200 will be accepted by Excel
-		logwarn( "WARNING: Limit length of cell to save 1200 characters: " .
-			substr( $ii, 0, 32 ) );
-		$EH{'sum'}{'warnings'}++;
-		$ii = substr( $ii, 0, 1200 );
-		substr( $ii, 1191, 9 ) = "__ERROR__"; # Attach __ERROR__ to string!
-	    }
+		for my $ii ( @$i ) {
+	    	unless( defined( $ii ) ) {
+				$ii = "";
+				next;
+	    	} elsif ( length( $ii ) > $maxlength )
+	    	{ #!wig20031215: 1200 will be accepted by Excel
+				logwarn( "WARNING: Limit length of cell to save $maxlength characters: " .
+				substr( $ii, 0, 32 ) );
+				$EH{'sum'}{'warnings'}++;
+				$ii = substr( $ii, 0, $maxlength );
+				substr( $ii, $maxlength - 9 , 9 ) = "__ERROR__"; # Attach __ERROR__ to string!
+	    	}
 	    $ii = "'" . $ii if ( $ii =~ m!^\s*[.,='"\d]! ); # Put a 'tick' in front of ExCEL special character  ....
-	}
+		}
     }
 }
 
