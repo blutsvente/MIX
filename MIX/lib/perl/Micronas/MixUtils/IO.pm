@@ -15,10 +15,10 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.22 $                                          |
-# | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/07/13 15:38:34 $                              |
-# |                                                                       |
+# | Revision:   $Revision: 1.23 $                                          |
+# | Author:     $Author: lutscher $                                         |
+# | Date:       $Date: 2005/07/14 09:04:12 $                              |
+# |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.23  2005/07/14 09:04:12  lutscher
+# | minor changes in comments
+# |
 # | Revision 1.22  2005/07/13 15:38:34  wig
 # | Added prototype for simple logic
 # | Added ::udc for HIER
@@ -170,11 +173,11 @@ sub useOoolib ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.22 2005/07/13 15:38:34 wig Exp $';
-my $thisrcsfile	    =      '$RCSfile: IO.pm,v $';
-my $thisrevision    =      '$Revision: 1.22 $';
+my $thisid          =      '$Id: IO.pm,v 1.23 2005/07/14 09:04:12 lutscher Exp $';#'  
+my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
+my $thisrevision    =      '$Revision: 1.23 $'; #'  
 
-# Revision:   $Revision: 1.22 $
+# Revision:   $Revision: 1.23 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -329,7 +332,7 @@ sub init_ole () {
         use Win32::OLE::NLS qw(:DEFAULT :LANG :SUBLANG);
         my $lgid = MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT);
         $Win32::OLE::LCID = MAKELCID($lgid);
-        $Win32::OLE::Warn = 3;';
+        $Win32::OLE::Warn = 3;'; #'
 	if ( $@ ) {
 	    logdie "FATAL: eval use Win32 failed: $@";
         }
@@ -738,25 +741,26 @@ sub open_xls($$$){
 	$isheet = $oBook->{Worksheet}[$sname];
 	logtrc( "INFO:4", "Reading worksheet " . $isheet->{Name} . " of $file" );
 
-        for(my $y=$isheet->{MinRow}; defined $isheet->{MaxRow} && $y <= $isheet->{MaxRow}; $y++) {
-            for(my $x =$isheet->{MinCol}; defined $isheet->{MaxCol} && $x <= $isheet->{MaxCol}; $x++) {
-                $cell = $isheet->{Cells}[$y][$x];
-		if(defined $cell) {
-		  push(@line, $cell->Value);  # $cell->Value || $cell->{Val} ?
+	for(my $y=$isheet->{MinRow}; defined $isheet->{MaxRow} && $y <= $isheet->{MaxRow}; $y++) {
+		for(my $x =$isheet->{MinCol}; defined $isheet->{MaxCol} && $x <= $isheet->{MaxCol}; $x++) {
+			$cell = $isheet->{Cells}[$y][$x];
+			if(defined $cell) {
+				push(@line, $cell->Value);  # $cell->Value || $cell->{Val} ?
+			}
+			else {
+				push(@line, "");
+			}
 		}
-		else {
-		  push(@line, "");
-		}
-            }
 	    push(@sheet, [@line]);
 	    # print "Line ". (scalar(@sheet)-1) . ": ";
 	    # print join(' ; ', @line) ."\n";
 	    @line = ();
-        }
+	}
+
 	#!wig20031218: take away trainling empty lines ...
 	if ( scalar( @sheet ) > 0 ) {
 	    while( not join( "", @{$sheet[-1]} ) ) {
-		pop( @sheet );
+			pop( @sheet );
 	    }
 	}
 	if ( scalar( @sheet ) > 0 ) {
