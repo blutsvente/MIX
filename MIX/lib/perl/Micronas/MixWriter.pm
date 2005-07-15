@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.55 $                                         |
+# | Revision:   $Revision: 1.56 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/07/13 15:38:34 $                              |
+# | Date:       $Date: 2005/07/15 16:39:38 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.55 2005/07/13 15:38:34 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.56 2005/07/15 16:39:38 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.56  2005/07/15 16:39:38  wig
+# | Update of some tiny fixes (test case related)
+# |
 # | Revision 1.55  2005/07/13 15:38:34  wig
 # | Added prototype for simple logic
 # | Added ::udc for HIER
@@ -281,9 +284,9 @@ sub _mix_wr_preset_hooks (); # preset _HOOK_ macros
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.55 2005/07/13 15:38:34 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.56 2005/07/15 16:39:38 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.55 $';
+my $thisrevision   =      '$Revision: 1.56 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -943,7 +946,7 @@ sub _create_entity ($$) {
 		    	defined( $h ) and defined( $l ) and
 		    	( $h ne $l ) ) { #!wig20030516 ...
 				$type = $type . "_vector";
-				logtrc( "INFO:4", "autoconnecting single signal $i to bus port $port" );
+				logtrc( "INFO:4", "Autoconnecting bit signal $i to bus port $port" );
 	    	}
 
         	# If we connect a single bit to to a bus, we strip of the _vector from
@@ -954,7 +957,7 @@ sub _create_entity ($$) {
                    ( $h eq "0" and $l eq "0" ) ) and
                   $type =~ m,(.+)_vector, ) {
 				$type = $1;
-				logtrc( "INFO:4", "autoreducing port type for signal $i to $type" );
+				logtrc( "INFO:4", "Autoreducing port type for signal $i to $type" );
 			};
 
     

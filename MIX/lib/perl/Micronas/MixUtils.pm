@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.66 $                                         |
+# | Revision:   $Revision: 1.67 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/07/13 15:38:33 $                              |
+# | Date:       $Date: 2005/07/15 16:39:38 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.66 2005/07/13 15:38:33 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.67 2005/07/15 16:39:38 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.67  2005/07/15 16:39:38  wig
+# | Update of some tiny fixes (test case related)
+# |
 # | Revision 1.66  2005/07/13 15:38:33  wig
 # | Added prototype for simple logic
 # | Added ::udc for HIER
@@ -316,11 +319,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.66 2005/07/13 15:38:33 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.67 2005/07/15 16:39:38 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.66 $';         #'
+my $thisrevision        =      '$Revision: 1.67 $';         #'
 
-# Revision:   $Revision: 1.66 $   
+# Revision:   $Revision: 1.67 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1274,7 +1277,7 @@ sub mix_init () {
 	    '::arch'		=>	[ qw(	1	0	0	rtl			 9 )],
 	    '::config'	    =>	[ qw(	1	0	1	%DEFAULT_CONFIG% 11 )],
 	    '::use'			=>	[ qw(	1	0	0	%EMPTY%		10 )],
-	    '::udc'			=>	[ qw(	1	0	0	%EMPTY%		 0 )],
+	    '::udc'			=>	[ qw(	1	0	0	%EMPTY%		-1 )],
 	    '::comment'	    =>	[ qw(	1	0	2	%EMPTY%	    12 )],
 	    '::descr'	    =>	[ qw(	1	0	0	%EMPTY%	    13 )],
 	    '::shortname'	=>	[ qw(	0	0	0	%EMPTY%	     6 )],
@@ -1287,6 +1290,10 @@ sub mix_init () {
 	    '_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
 	    					# 1 / RL -> left to right decreasing
 	    					# xF -> map the first to ::head:0 (defaults: ::head)	    
+
+	    					# Regarding Print order: -1 -> print at end if defined in input!
+							#                         0 -> do not print
+							#                         all newly defined fields will be added at end
 		},	    
 	},
     'variant' => 'Default', # Select default as default variant :-)
@@ -2794,26 +2801,26 @@ sub parse_header($$@){
     my %rowh = ();
 
     for my $i ( 0 .. ( scalar( @row ) - 1 ) ) {
-	unless ( $row[$i] )  {
-	    logtrc("INFO:4" , "WARNING: Empty header in column $i, sheet-type $kind, skipping!");
-	    # $EH{'sum'}{'warnings'}++;
-	    push( @{$rowh{"::skip"}}, $i);
-	    $row[$i] = "::skip";
-	    next;
-	}
-	#!wig20050614: get rid of extra whitespace
-	$row[$i] =~ s/^\s+(::)/::/; # Remove leading whitespace
-	if ( defined( $1 ) ) {
-		$row[$i]  =~ s/\s+$//;  # Remove trailing whitespace
-	}
-	if ( $row[$i] and $row[$i] !~ m/^::/o ) { #Header not starting with ::
-	    logwarn("WARNING: Bad name in header row: $row[$i] $i, type $kind, skipping!");
-	    $EH{'sum'}{'warnings'}++;
-	    push( @{$rowh{"::skip"}}, $i);
-	    next;
-	}
-	# Get multiple columns and such ... in %rowh
-	push( @{$rowh{$row[$i]}}, $i );
+		unless ( $row[$i] )  {
+	    	logtrc("INFO:4" , "WARNING: Empty header in column $i, sheet-type $kind, skipping!");
+	    	# $EH{'sum'}{'warnings'}++;
+	    	push( @{$rowh{"::skip"}}, $i);
+	    	$row[$i] = "::skip";
+	    	next;
+		}
+		#!wig20050614: get rid of extra whitespace
+		$row[$i] =~ s/^\s+(::)/::/; # Remove leading whitespace
+		if ( defined( $1 ) ) {
+			$row[$i]  =~ s/\s+$//;  # Remove trailing whitespace
+		}
+		if ( $row[$i] and $row[$i] !~ m/^::/o ) { #Header not starting with ::
+	    	logwarn("WARNING: Bad name in header row: $row[$i] $i, type $kind, skipping!");
+	    	$EH{'sum'}{'warnings'}++;
+	    	push( @{$rowh{"::skip"}}, $i);
+	    	next;
+		}
+		# Get multiple columns and such ... in %rowh
+		push( @{$rowh{$row[$i]}}, $i );
     }
     #
     # Are all required fields in @row, multiple rows?
@@ -2847,10 +2854,15 @@ sub parse_header($$@){
     for my $i ( 0..$#row ) {
 	    my $head = $row[$i];	
 	    unless ( defined( $$templ->{'field'}{$head} ) ) {
-	        logtrc(INFO, "Added new column header $head");
+	        logsay("Added new column header $head");
 	        @{$$templ->{'field'}{$head}} = @{$$templ->{'field'}{'::default'}};
 	        #Check: does this really copy everything
 	        $$templ->{'field'}{$head}[4] = $$templ->{'field'}{'nr'};
+	        $$templ->{'field'}{'nr'}++;
+	    }
+	    #!wig20050715: map -1 rows to get printed at end ...
+	    if ( $$templ->{'field'}{$head}[4] == "-1" ) {
+	    	$$templ->{'field'}{$head}[4] = $$templ->{'field'}{'nr'};
 	        $$templ->{'field'}{'nr'}++;
 	    }
     }
@@ -3026,50 +3038,57 @@ sub mix_load ($%){
 db2array ($$$) {
 
 convert the datastructure to a flat array
+adds the header line as defined in the $EH{$type}{'field'} ..
 
-Arguments: $ref    := hash reference
-		$type  := (hier|conn)
-		$filter := Perl_RE,if it matches a key of ref, do not print that out
-			    if $filter is an sub ref, will be used in grep
+Arguments: 	$ref    := hash reference
+			$type   := (hier|conn)
+			$filter := Perl_RE,if it matches a key of ref, do not print that out
+			    		if $filter is an sub ref, will be used in grep
 
 =cut
+
 sub db2array ($$$) {
     my $ref = shift;
     my $type = shift;
     my $filter = shift;
 
-    unless( $ref ) { logwarn("WARNING: Called db2array without db argument!");
+    unless( $ref ) {
+    	logwarn("WARNING: Called db2array without db argument!");
 	    $EH{'sum'}{'warnings'}++;
 	    return;
     }
     unless ( $type =~ m/^(hier|conn)/io ) {
-	logwarn("WARNING: Bad db type $type, ne HIER or CONN!");
-	$EH{'sum'}{'warnings'}++;
-	return;
+		logwarn("WARNING: Bad db type $type, ne HIER or CONN!");
+		$EH{'sum'}{'warnings'}++;
+		return;
     }
     $type = lc($1);
 
     my @o = ();
     my $primkeynr = 0; # Primary key identifier
     my $commentnr = "";
+    
     # Get order for printing fields ...
     #TODO: check if fields do overlap!
     for my $ii ( keys( %{$EH{$type}{'field'}} ) ) {
-	next unless ( $ii =~ m/^::/o );
-	$o[$EH{$type}{'field'}{$ii}[4]] = $ii;
-	if ( $EH{$type}{'key'} eq $ii ) {
-	    $primkeynr = $EH{$type}{'field'}{$ii}[4];
-	} elsif ( $ii eq "::comment" ) {
-	    $commentnr = $EH{$type}{'field'}{$ii}[4];
-	}
+		next unless ( $ii =~ m/^::/o );
+		# Only print if PrintOrder > 0:
+		if ( $EH{$type}{'field'}{$ii}[4] > 0 ) {
+			$o[$EH{$type}{'field'}{$ii}[4]] = $ii; # Print Order ...
+		}
+		if ( $EH{$type}{'key'} eq $ii ) {
+	    	$primkeynr = $EH{$type}{'field'}{$ii}[4];
+		} elsif ( $ii eq '::comment' ) {
+	    	$commentnr = $EH{$type}{'field'}{$ii}[4];
+		}
     }
 
     my @a = ();
     my $n = 0;
 
     # Print header
-    for my $ii ( 1..$#o ) {
-	$a[$n][$ii-1] = $o[$ii];
+    for my $ii ( 1..(scalar @o - 1) ) {
+		$a[$n][$ii-1] = $o[$ii];
     }
     $n++;
     # Print comment: generator, args, date
@@ -3078,18 +3097,18 @@ sub db2array ($$$) {
     my %comment = ( qw( by %USER% on %DATE% cmd %ARGV% ));
     $a[$n++][0] = "# Generated Intermediate Conn/Hier Data";
     for my $c ( qw( by on cmd ) ) {
-	$a[$n++][0] = "# $c: " . $EH{'macro'}{$comment{$c}};
+		$a[$n++][0] = "# $c: " . $EH{'macro'}{$comment{$c}};
     }
 
     my @keys = ();
     if ( $filter ) { # Filter the keys ....
-	if ( ref( $filter ) eq "CODE" ) {
-	    @keys = grep( &$filter, keys( %$ref ) );
-	} else {
-	    @keys = grep( !/$filter/, keys( %$ref ) );
-	}
+		if ( ref( $filter ) eq "CODE" ) {
+	    	@keys = grep( &$filter, keys( %$ref ) );
+		} else {
+	    	@keys = grep( !/$filter/, keys( %$ref ) );
+		}
     } else {
-	@keys = keys( %$ref );
+		@keys = keys( %$ref );
     }
 
     #WORKAROUND
@@ -3112,50 +3131,50 @@ sub db2array ($$$) {
 
     # Now comes THE data
     for my $i ( sort( @keys ) ) {
-	my $split_flag = 0; # If split_flag 
-	for my $ii ( 1..$#o ) { # 0 contains fields to skip
-	    #wig20031106: split on all non key fields!
-	    if ( $o[$ii] =~ m/^::(in|out)\s*$/o ) { # ::in and ::out are special
-		$a[$n][$ii-1] = inout2array( $ref->{$i}{$o[$ii]}, $i );
-	    } else {
-		$a[$n][$ii-1] = defined( $ref->{$i}{$o[$ii]} ) ? $ref->{$i}{$o[$ii]} : "%UNDEF_1%";
-	    }
-	    if ( length( $a[$n][$ii-1] ) > 1023 ) {
-		# Line too long! Split it!
-		# Assumes that the cell to be split are accumulated when reused later on.
-		# Will not check if that is not true!
-		if ( $ii - 1 == $primkeynr ) {
-		    logwarn( "WARNING: Splitting key of table: " . substr( $a[$n][$ii-1], 0, 32 ) );
-		    $EH{'sum'}{'warnings'}++;
-		}
-		$split_flag=1;
-		my @splits = mix_utils_split_cell( $a[$n][$ii-1] );
+		my $split_flag = 0; # If split_flag 
+		for my $ii ( 1..$#o ) { # 0 contains fields to skip
+	    	#wig20031106: split on all non key fields!
+	    	if ( $o[$ii] =~ m/^::(in|out)\s*$/o ) { # ::in and ::out are special
+				$a[$n][$ii-1] = inout2array( $ref->{$i}{$o[$ii]}, $i );
+	    	} else {
+				$a[$n][$ii-1] = defined( $ref->{$i}{$o[$ii]} ) ? $ref->{$i}{$o[$ii]} : "%UNDEF_1%";
+	    	}
+	    	if ( length( $a[$n][$ii-1] ) > $EH{'format'}{'xls'}{'maxcelllength'} ) {
+				# Line too long! Split it!
+				# Assumes that the cell to be split are accumulated when reused later on.
+				# Will not check if that is not true!
+				if ( $ii - 1 == $primkeynr ) {
+		    		logwarn( "WARNING: Splitting key of table: " . substr( $a[$n][$ii-1], 0, 32 ) );
+		    		$EH{'sum'}{'warnings'}++;
+				}
+				$split_flag=1;
+				my @splits = mix_utils_split_cell( $a[$n][$ii-1] );
 
-		# Prefill the split data .... key will be added later
-		#Caveat: order should not matter!!
-		for my $splitn ( 0..(scalar( @splits ) - 1 )  ) {
-			$a[$n + $splitn][$ii-1] = $splits[$splitn];
+				# Prefill the split data .... key will be added later
+				#Caveat: order should not matter!!
+				for my $splitn ( 0..(scalar( @splits ) - 1 )  ) {
+					$a[$n + $splitn][$ii-1] = $splits[$splitn];
+				}
+				$split_flag = scalar( @splits ) if ( $split_flag < scalar( @splits ) );	
+	    	}
 		}
-		$split_flag = scalar( @splits ) if ( $split_flag < scalar( @splits ) );	
-	    }
-	}
-	#This was a split cell?
-	if ( $split_flag > 1 ) {
-	    # Set primary key in cells, add comments
-	    for my $sn ( 1..( $split_flag - 1 ) ) {
-		$a[$n + $sn][$primkeynr-1] = $a[$n][$primkeynr-1];
-		if ( $commentnr ne "" ) { # Add split comment
-		    $a[$n + $sn][$commentnr-1] .= "# __I_SPLIT_CONT_$sn";
-		}
+		#This was a split cell?
+		if ( $split_flag > 1 ) {
+	    	# Set primary key in cells, add comments
+	    	for my $sn ( 1..( $split_flag - 1 ) ) {
+				$a[$n + $sn][$primkeynr-1] = $a[$n][$primkeynr-1];
+				if ( $commentnr ne "" ) { # Add split comment
+		    		$a[$n + $sn][$commentnr-1] .= "# __I_SPLIT_CONT_$sn";
+				}
                 # Make sure all cells are defined
                 for my $ssn ( 0..(scalar( @{$a[$n]} ) - 1) ) {
                     $a[$n + $sn][$ssn] = "" unless defined( $a[$n + $sn][$ssn] );
                 }                    
-	    }
-	    $n += $split_flag; # Goto next free line ...
-	} else {
-	    $n++;
-	}
+	    	}
+	    	$n += $split_flag; # Goto next free line ...
+		} else {
+	    	$n++;
+		}
     }
 
     #WORKAROUND:
@@ -3189,14 +3208,14 @@ sub db2array ($$$) {
 ## Caveat: if cell does not contain %IOCR% markers, will split somewhere in the middle!
 ## Might lead to troubles if read back.
 ##!wig20031216: use 1023 as limit
-##!wig20050713: limit to 511!
+##!wig20050713: limit to maxcelllength ...!
 ####################################################################
 sub mix_utils_split_cell ($) {
 
     my $data = shift;
     my $flaga = 0;
 
-	my $maxlengthexcel = 500;
+	my $maxlengthexcel = $EH{'format'}{'xls'}{'maxcelllength'};
     # Get pieces up to 1023/500 characters, seperated by ", %IOCR%"
     my $iocr = $EH{'macro'}{'%IOCR%'};
     my @chunks = ();
