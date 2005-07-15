@@ -1,0 +1,102 @@
+05/07/15 13:54:31 
+#######################################################################
+##### mix_0.pl (Revision: 1.36 )
+#####
+##### MIX  
+#####   MixUtils    1.66 $
+#####   MixUtils::IO    1.22 $
+#####   MixParser   1.53 $
+#####   MixWriter   1.55 $
+#####   MixChecker  1.8 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.13 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/07/15 13:54:31 Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/macro/../macro.xls
+05/07/15 13:54:31 Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/macro/../macro.xls
+05/07/15 13:54:31 WARNING: ERROR: Generator $i(1..10),/inst_(\w+)/ does not define run parameter $i!
+05/07/15 13:54:31 Add_port: signal macro_sign_1 adds port macro_sign_1 to instance inst_t
+05/07/15 13:54:31 Add_port: signal macro_sign_2 adds port macro_sign_2 to instance inst_t
+05/07/15 13:54:31 Add_port: signal macro_sig2_k1_k2 adds port macro_sig2_k1_k2 to instance inst_t
+05/07/15 13:54:31 Add_port: signal macro_sig2_k3_k2 adds port macro_sig2_k3_k2 to instance inst_t
+05/07/15 13:54:31 Add_port: signal macro_sig1_k1_k4 adds port macro_sig1_k1_k4 to instance inst_t
+05/07/15 13:54:31 Add_port: signal macro_sign_0 adds port macro_sign_0 to instance inst_t
+05/07/15 13:54:31 Add_port: signal macro_sig2_k3_k4 adds port macro_sig2_k3_k4 to instance inst_t
+05/07/15 13:54:31 Add_port: signal macro_sig4_k3_k4 adds port macro_sig4_k3_k4 to instance inst_t
+05/07/15 13:54:31 Add_port: signal macro_sig1_k3_k4 adds port macro_sig1_k3_k4 to instance inst_t
+05/07/15 13:54:31 Add_port: signal macro_sign_3 adds port macro_sign_3 to instance inst_t
+05/07/15 13:54:31 Add_port: signal macro_sig1_k1_k2 adds port macro_sig1_k1_k2 to instance inst_t
+05/07/15 13:54:31 Add_port: signal macro_sig2_k1_k4 adds port macro_sig2_k1_k4 to instance inst_t
+05/07/15 13:54:31 Add_port: signal macro_sig4_k3_k2 adds port macro_sig4_k3_k2 to instance inst_t
+05/07/15 13:54:31 Add_port: signal macro_sig4_k1_k2 adds port macro_sig4_k1_k2 to instance inst_t
+05/07/15 13:54:31 Add_port: signal macro_sig4_k1_k4 adds port macro_sig4_k1_k4 to instance inst_t
+05/07/15 13:54:31 Add_port: signal macro_sig1_k3_k2 adds port macro_sig1_k3_k2 to instance inst_t
+05/07/15 13:54:31 Autoreducing port type for signal macro_sigc to std_ulogic
+05/07/15 13:54:31 Autoreducing port type for signal macro_sigc to std_ulogic
+05/07/15 13:54:31 Autoreducing port type for signal macro_sigc to std_ulogic
+05/07/15 13:54:31 Autoreducing port type for signal macro_sigc to std_ulogic
+05/07/15 13:54:31 WARNING: File macro-mixed.xls already exists! Contents will be changed
+05/07/15 13:54:32 WARNING: Rotating 3 old sheets of CONF!
+05/07/15 13:54:32 WARNING: Rotating 3 old sheets of CONN!
+05/07/15 13:54:32 WARNING: Rotating 3 old sheets of HIER!
+05/07/15 13:54:33 Port port_mac of entity inst_k1_k2_e one bit wide, reduce to signal
+
+05/07/15 13:54:33 Port port_mac of entity inst_k1_k4_e one bit wide, reduce to signal
+
+05/07/15 13:54:33 Port port_mac of entity inst_k3_k2_e one bit wide, reduce to signal
+
+05/07/15 13:54:33 Port port_mac of entity inst_k3_k4_e one bit wide, reduce to signal
+
+05/07/15 13:54:35 Warning: Signal gensig_2 does not have a driver in instance inst_a!
+05/07/15 13:54:35 Warning: Signal gensig_1 does not have a driver in instance inst_a!
+05/07/15 13:54:35 Signal gensig_10 does not have a load in instance inst_a!
+05/07/15 13:54:35 Signal gensig_8 does not have a load in instance inst_a!
+05/07/15 13:54:35 Warning: Signal gensig_5 does not have a driver in instance inst_a!
+05/07/15 13:54:35 Warning: Signal gensig_4 does not have a driver in instance inst_a!
+05/07/15 13:54:35 Signal macro_sigc does not have a load in instance inst_a!
+05/07/15 13:54:35 Warning: Signal gensig_3 does not have a driver in instance inst_a!
+05/07/15 13:54:35 Signal gensig_6 does not have a load in instance inst_a!
+05/07/15 13:54:35 Signal gensig_7 does not have a load in instance inst_a!
+05/07/15 13:54:35 Signal gensig_9 does not have a load in instance inst_a!
+05/07/15 13:54:35 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/07/15 13:54:35 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/07/15 13:54:36 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/07/15 13:54:36 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/07/15 13:54:36 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/07/15 13:54:36 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/07/15 13:54:36 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/07/15 13:54:36 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/07/15 13:54:36 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/07/15 13:54:36 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/07/15 13:54:38 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/07/15 13:54:38 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/07/15 13:54:38 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/07/15 13:54:39 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/07/15 13:54:39 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/07/15 13:54:39 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/07/15 13:54:39 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/07/15 13:54:39 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/07/15 13:54:39 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/07/15 13:54:39 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/07/15 13:54:41 WARNING: ============= SUMMARY =================
+05/07/15 13:54:41 WARNING: SUM: Summary of checks and created items:
+05/07/15 13:54:41 WARNING: SUM: checkforce 0
+05/07/15 13:54:41 WARNING: SUM: checkunique 0
+05/07/15 13:54:41 WARNING: SUM: checkwarn 0
+05/07/15 13:54:41 WARNING: SUM: cmacros 4
+05/07/15 13:54:41 WARNING: SUM: conn 27
+05/07/15 13:54:41 WARNING: SUM: errors 1
+05/07/15 13:54:41 WARNING: SUM: genport 16
+05/07/15 13:54:41 WARNING: SUM: hdlfiles 132
+05/07/15 13:54:41 WARNING: SUM: inst 50
+05/07/15 13:54:41 WARNING: SUM: multdriver 1
+05/07/15 13:54:41 WARNING: SUM: nodriver 5
+05/07/15 13:54:41 WARNING: SUM: noload 6
+05/07/15 13:54:41 WARNING: SUM: openports 0
+05/07/15 13:54:41 WARNING: SUM: warnings 0
+05/07/15 13:54:41 WARNING: SUM: === Number of parsed input tables: ===
+05/07/15 13:54:41 WARNING: SUM: conf 0
+05/07/15 13:54:41 WARNING: SUM: hier 1
+05/07/15 13:54:41 WARNING: SUM: conn 1
+05/07/15 13:54:41 WARNING: SUM: io 0
+05/07/15 13:54:41 WARNING: SUM: i2c 0

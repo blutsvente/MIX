@@ -1,0 +1,100 @@
+05/07/15 15:11:02 
+#######################################################################
+##### mix_0.pl (Revision: 1.36 )
+#####
+##### MIX  
+#####   MixUtils    1.66 $
+#####   MixUtils::IO    1.22 $
+#####   MixParser   1.53 $
+#####   MixWriter   1.55 $
+#####   MixChecker  1.8 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.13 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/07/15 15:11:02 Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/verilog/vhdl/../../verilog.xls
+05/07/15 15:11:02 Reading worksheet HIER_VHDL of h:/work/eclipse/mix/test/xls_input/verilog/vhdl/../../verilog.xls
+05/07/15 15:11:02 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/07/15 15:11:02 Add_port: signal sig_i_ae adds port sig_i_ae to instance inst_t
+05/07/15 15:11:02 Adding port to hierachy module inst_a for signal sig_i_ae!
+05/07/15 15:11:02 Add_port: signal sig_i_ae adds port p_mix_sig_i_ae_gi to instance inst_a
+05/07/15 15:11:02 Add_port: signal sig_i_a adds port sig_i_a to instance inst_t
+05/07/15 15:11:02 Add_port: signal sig_o_ae adds port sig_o_ae to instance inst_t
+05/07/15 15:11:02 Adding port to hierachy module inst_a for signal sig_o_ae!
+05/07/15 15:11:02 Add_port: signal sig_o_ae adds port p_mix_sig_o_ae_go to instance inst_a
+05/07/15 15:11:02 Adding port to hierachy module inst_a for signal sig_01!
+05/07/15 15:11:02 Adding port to hierachy module inst_a for signal sig_01!
+05/07/15 15:11:02 Add_port: signal sig_01 adds port p_mix_sig_01_go to instance inst_a
+05/07/15 15:11:02 Adding port to hierachy module inst_a for signal sig_06!
+05/07/15 15:11:02 WARNING: WARNING: Signal sig_06 has mixed links into instance inst_b!
+05/07/15 15:11:02 Adding port to hierachy module inst_a for signal sig_06!
+05/07/15 15:11:02 WARNING: WARNING: Possible io mode conflict for sig_06 at inst_a
+05/07/15 15:11:02 Add_port: signal sig_06 adds port p_mix_sig_06_gi to instance inst_a
+05/07/15 15:11:02 Adding port to hierachy module inst_a for signal sig_04!
+05/07/15 15:11:02 Add_port: signal sig_04 adds port p_mix_sig_04_gi to instance inst_a
+05/07/15 15:11:02 Add_port: signal sig_i_a2 adds port sig_i_a2 to instance inst_t
+05/07/15 15:11:02 Adding port to hierachy module inst_a for signal sig_03!
+05/07/15 15:11:02 Add_port: signal sig_03 adds port p_mix_sig_03_go to instance inst_a
+05/07/15 15:11:02 Add_port: signal sig_o_a adds port sig_o_a to instance inst_t
+05/07/15 15:11:02 Adding port to hierachy module inst_a for signal sig_05!
+05/07/15 15:11:02 Adding port to hierachy module inst_a for signal sig_05!
+05/07/15 15:11:02 Add_port: signal sig_05 adds port p_mix_sig_05_2_1_go to instance inst_a
+05/07/15 15:11:02 Add_port: signal sig_o_a2 adds port sig_o_a2 to instance inst_t
+05/07/15 15:11:02 Autoreducing port type for signal sig_02 to std_ulogic
+05/07/15 15:11:02 Autoreducing port type for signal sig_02 to std_ulogic
+05/07/15 15:11:02 Autoreducing port type for signal sig_02 to std_ulogic
+05/07/15 15:11:02 Autoreducing port type for signal sig_02 to std_ulogic
+05/07/15 15:11:02 Autoreducing port type for signal sig_05 to std_ulogic
+05/07/15 15:11:03 WARNING: File verilog-mixed.xls already exists! Contents will be changed
+05/07/15 15:11:03 WARNING: Rotating 3 old sheets of CONF!
+05/07/15 15:11:03 WARNING: Rotating 3 old sheets of CONN!
+05/07/15 15:11:04 WARNING: Rotating 3 old sheets of HIER!
+05/07/15 15:11:04 WARNING: Removing old and and diff sheets in file: verilog-mixed.xls
+05/07/15 15:11:04 WARNING: ERROR: workbook with different path already opened!
+05/07/15 15:11:04 Port port_aa_2 of entity ent_aa one bit wide, reduce to signal
+
+05/07/15 15:11:04 Port port_ab_2 of entity ent_ab one bit wide, reduce to signal
+
+05/07/15 15:11:04 Port port_ac_2 of entity ent_ac one bit wide, reduce to signal
+
+05/07/15 15:11:04 Port port_ad_2 of entity ent_ad one bit wide, reduce to signal
+
+05/07/15 15:11:04 Port port_b_5_1 of entity ent_b one bit wide, reduce to signal
+
+05/07/15 15:11:04 Port port_b_5_2 of entity ent_b one bit wide, reduce to signal
+
+05/07/15 15:11:04 Signal sig_i_a does not have a load in instance inst_a!
+05/07/15 15:11:04 Signal sig_i_a2 does not have a load in instance inst_a!
+05/07/15 15:11:04 Warning: Signal sig_o_a does not have a driver in instance inst_a!
+05/07/15 15:11:04 Warning: Signal sig_o_a2 does not have a driver in instance inst_a!
+05/07/15 15:11:04 Signal sig_08 does not have a load in instance inst_b!
+05/07/15 15:11:04 Signal sig_01 does not have a load in instance inst_b!
+05/07/15 15:11:04 Warning: Signal sig_04 does not have a driver in instance inst_b!
+05/07/15 15:11:04 Signal sig_07 does not have a load in instance inst_b!
+05/07/15 15:11:04 Signal sig_03 does not have a load in instance inst_b!
+05/07/15 15:11:04 Signal sig_05 does not have a load in instance inst_b!
+05/07/15 15:11:05 Warning: Signal sig_07 does not have a driver in instance inst_t!
+05/07/15 15:11:05 Signal sig_13 does not have a load in instance inst_t!
+05/07/15 15:11:05 Leave unloaded port sig_13 open at instance inst_t
+05/07/15 15:11:05 WARNING: ============= SUMMARY =================
+05/07/15 15:11:05 WARNING: SUM: Summary of checks and created items:
+05/07/15 15:11:05 WARNING: SUM: checkforce 0
+05/07/15 15:11:05 WARNING: SUM: checkunique 0
+05/07/15 15:11:05 WARNING: SUM: checkwarn 0
+05/07/15 15:11:05 WARNING: SUM: cmacros 0
+05/07/15 15:11:05 WARNING: SUM: conn 15
+05/07/15 15:11:05 WARNING: SUM: errors 1
+05/07/15 15:11:05 WARNING: SUM: genport 13
+05/07/15 15:11:05 WARNING: SUM: hdlfiles 30
+05/07/15 15:11:05 WARNING: SUM: inst 16
+05/07/15 15:11:05 WARNING: SUM: multdriver 4
+05/07/15 15:11:05 WARNING: SUM: nodriver 4
+05/07/15 15:11:05 WARNING: SUM: noload 8
+05/07/15 15:11:05 WARNING: SUM: openports 1
+05/07/15 15:11:05 WARNING: SUM: warnings 2
+05/07/15 15:11:05 WARNING: SUM: === Number of parsed input tables: ===
+05/07/15 15:11:05 WARNING: SUM: conf 0
+05/07/15 15:11:05 WARNING: SUM: hier 1
+05/07/15 15:11:05 WARNING: SUM: conn 1
+05/07/15 15:11:05 WARNING: SUM: io 0
+05/07/15 15:11:05 WARNING: SUM: i2c 0

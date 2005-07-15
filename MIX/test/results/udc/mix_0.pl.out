@@ -1,604 +1,72 @@
-05/07/11 13:12:11 2292: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:12:11 2292: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:12:11 2292: Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:12:11 2292: WARNING: WARNING: Cannot locate replacement for %DECL% in data!
-05/07/11 13:12:11 2292: WARNING: WARNING: Cannot locate replacement for %BODY% in data!
-05/07/11 13:12:11 2292: WARNING: WARNING: Cannot locate replacement for %DECL% in data!
-05/07/11 13:12:11 2292: WARNING: WARNING: Cannot locate replacement for %HEAD% in data!
-05/07/11 13:12:11 2292: WARNING: WARNING: Cannot locate replacement for %FOOT% in data!
-05/07/11 13:12:11 2292: WARNING: WARNING: Cannot locate replacement for %DECL% in data!
-05/07/11 13:12:11 2292: WARNING: WARNING: Cannot locate replacement for %BODY% in data!
-05/07/11 13:12:11 2292: WARNING: ERROR: Signal signal_bb_ab spawns several seperate trees! Will be dropped
-
-05/07/11 13:12:11 2292: WARNING: ERROR: Signal signal_aa_ba spawns several seperate trees! Will be dropped
-
-05/07/11 13:12:11 2292: WARNING: Skipping connection signal_bb_ab to undefined instance inst_bb!
-05/07/11 13:12:11 2292: WARNING: Skipping connection signal_bb_ab to undefined instance inst_ab!
-05/07/11 13:12:11 2292: WARNING: Skipping connection signal_bb_ab to undefined instance inst_ab!
-05/07/11 13:12:11 2292: WARNING: Skipping connection signal_aa_ba to undefined instance inst_aa!
-05/07/11 13:12:11 2292: WARNING: Skipping connection signal_aa_ba to undefined instance inst_ba!
-05/07/11 13:12:11 2292: WARNING: Skipping connection signal_aa_ba to undefined instance inst_ba!
-05/07/11 13:12:16 2292: WARNING: File udc-mixed.xls already exists! Contents will be changed
-05/07/11 13:12:16 2292: WARNING: Rotating 3 old sheets of CONN!
-05/07/11 13:12:16 2292: WARNING: Rotating 3 old sheets of HIER!
-05/07/11 13:12:18 2292: WARNING: ============= SUMMARY =================
-05/07/11 13:12:18 2292: WARNING: SUM: Summary of checks and created items:
-05/07/11 13:12:18 2292: WARNING: SUM: checkforce 0
-05/07/11 13:12:18 2292: WARNING: SUM: checkunique 0
-05/07/11 13:12:18 2292: WARNING: SUM: checkwarn 0
-05/07/11 13:12:18 2292: WARNING: SUM: cmacros 0
-05/07/11 13:12:18 2292: WARNING: SUM: conn 2
-05/07/11 13:12:18 2292: WARNING: SUM: errors 2
-05/07/11 13:12:18 2292: WARNING: SUM: genport 0
-05/07/11 13:12:18 2292: WARNING: SUM: hdlfiles 15
-05/07/11 13:12:18 2292: WARNING: SUM: inst 13
-05/07/11 13:12:18 2292: WARNING: SUM: multdriver 0
-05/07/11 13:12:18 2292: WARNING: SUM: nodriver 0
-05/07/11 13:12:18 2292: WARNING: SUM: noload 0
-05/07/11 13:12:18 2292: WARNING: SUM: openports 0
-05/07/11 13:12:18 2292: WARNING: SUM: warnings 7
-05/07/11 13:12:18 2292: WARNING: SUM: === Number of parsed input tables: ===
-05/07/11 13:12:18 2292: WARNING: SUM: conf 0
-05/07/11 13:12:18 2292: WARNING: SUM: hier 1
-05/07/11 13:12:18 2292: WARNING: SUM: conn 1
-05/07/11 13:12:18 2292: WARNING: SUM: io 1
-05/07/11 13:12:18 2292: WARNING: SUM: i2c 0
-05/07/11 13:19:37 2520: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:19:37 2520: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:19:37 2520: Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:19:37 2520: WARNING: WARNING: Cannot locate replacement for %DECL% in data!
-05/07/11 13:19:37 2520: WARNING: WARNING: Cannot locate replacement for %BODY% in data!
-05/07/11 13:19:37 2520: WARNING: WARNING: Cannot locate replacement for %DECL% in data!
-05/07/11 13:19:37 2520: WARNING: WARNING: Cannot locate replacement for %HEAD% in data!
-05/07/11 13:19:37 2520: WARNING: WARNING: Cannot locate replacement for %FOOT% in data!
-05/07/11 13:19:37 2520: WARNING: WARNING: Cannot locate replacement for %DECL% in data!
-05/07/11 13:19:37 2520: WARNING: WARNING: Cannot locate replacement for %BODY% in data!
-05/07/11 13:19:37 2520: add_port: signal signal_bb_ab adds port signal_bb_ab to instance inst_t_i
-05/07/11 13:19:38 2520: Adding port to hierachy module inst_a_i for signal signal_bb_ab!
-05/07/11 13:19:38 2520: Adding port to hierachy module inst_b_i for signal signal_bb_ab!
-05/07/11 13:19:38 2520: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_gi to instance inst_a_i
-05/07/11 13:19:38 2520: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_go to instance inst_b_i
-05/07/11 13:19:38 2520: Adding port to hierachy module inst_b_i for signal signal_aa_ba!
-05/07/11 13:19:38 2520: Adding port to hierachy module inst_a_i for signal signal_aa_ba!
-05/07/11 13:19:38 2520: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_gi to instance inst_b_i
-05/07/11 13:19:38 2520: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_go to instance inst_a_i
-05/07/11 13:19:38 2520: WARNING: WARNING: Missing port port_ba_i in entity inst_xa_e (inst_aa_i) redeclaration, ignoreing!
-05/07/11 13:19:38 2520: WARNING: WARNING: Declaration for entity inst_xa_e (inst_aa_i) extended by port_aa_o!
-05/07/11 13:19:40 2520: WARNING: Rotating 3 old sheets of CONF!
-05/07/11 13:19:42 2520: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/udc-mixed.xls
-05/07/11 13:19:43 2520: WARNING: Rotating 3 old sheets of DIFF_CONN!
-05/07/11 13:19:44 2520: WARNING: INFO: Detected 2 changes in intermediate sheet CONN, in file udc-mixed.xls
-05/07/11 13:19:44 2520: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/udc-mixed.xls
-05/07/11 13:19:44 2520: WARNING: Rotating 3 old sheets of DIFF_HIER!
-05/07/11 13:19:45 2520: WARNING: Info: file inst_a_e-e.vhd has changes!
-05/07/11 13:19:45 2520: WARNING: Info: file inst_ab_e-e.vhd has changes!
-05/07/11 13:19:45 2520: WARNING: Info: file inst_b_e-e.vhd has changes!
-05/07/11 13:19:45 2520: WARNING: Info: file inst_bb_e-e.vhd has changes!
-05/07/11 13:19:45 2520: WARNING: Info: file inst_t_e-e.vhd has changes!
-05/07/11 13:19:46 2520: WARNING: Info: file inst_xa_e-e.vhd has changes!
-05/07/11 13:28:20 2216: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:28:20 2216: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:28:20 2216: Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:28:20 2216: add_port: signal signal_bb_ab adds port signal_bb_ab to instance inst_t_i
-05/07/11 13:28:20 2216: Adding port to hierachy module inst_a_i for signal signal_bb_ab!
-05/07/11 13:28:20 2216: Adding port to hierachy module inst_b_i for signal signal_bb_ab!
-05/07/11 13:28:20 2216: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_gi to instance inst_a_i
-05/07/11 13:28:20 2216: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_go to instance inst_b_i
-05/07/11 13:28:20 2216: Adding port to hierachy module inst_b_i for signal signal_aa_ba!
-05/07/11 13:28:20 2216: Adding port to hierachy module inst_a_i for signal signal_aa_ba!
-05/07/11 13:28:20 2216: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_gi to instance inst_b_i
-05/07/11 13:28:20 2216: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_go to instance inst_a_i
-05/07/11 13:28:20 2216: WARNING: WARNING: Missing port port_ba_i in entity inst_xa_e (inst_aa_i) redeclaration, ignoreing!
-05/07/11 13:28:20 2216: WARNING: WARNING: Declaration for entity inst_xa_e (inst_aa_i) extended by port_aa_o!
-05/07/11 13:28:21 2216: WARNING: Rotating 3 old sheets of CONF!
-05/07/11 13:28:23 2216: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/udc-mixed.xls
-05/07/11 13:28:23 2216: WARNING: Rotating 3 old sheets of DIFF_CONN!
-05/07/11 13:28:24 2216: WARNING: INFO: Detected 2 changes in intermediate sheet CONN, in file udc-mixed.xls
-05/07/11 13:28:24 2216: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/udc-mixed.xls
-05/07/11 13:28:24 2216: WARNING: Rotating 3 old sheets of DIFF_HIER!
-05/07/11 13:28:25 2216: WARNING: INFO: Detected 3 changes in intermediate sheet HIER, in file udc-mixed.xls
-05/07/11 13:28:25 2216: WARNING: Info: file inst_a_e-e.vhd has changes!
-05/07/11 13:28:25 2216: WARNING: Info: file inst_ab_e-e.vhd has changes!
-05/07/11 13:28:25 2216: WARNING: Info: file inst_b_e-e.vhd has changes!
-05/07/11 13:28:25 2216: WARNING: Info: file inst_bb_e-e.vhd has changes!
-05/07/11 13:28:25 2216: WARNING: Info: file inst_t_e-e.vhd has changes!
-05/07/11 13:28:26 2216: WARNING: Info: file inst_xa_e-e.vhd has changes!
-05/07/11 13:29:54 2216: WARNING: Info: file inst_a_e-rtl-a.vhd has changes!
-05/07/11 13:31:40 3288: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:31:40 3288: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:31:40 3288: Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:31:40 3288: add_port: signal signal_bb_ab adds port signal_bb_ab to instance inst_t_i
-05/07/11 13:31:40 3288: Adding port to hierachy module inst_a_i for signal signal_bb_ab!
-05/07/11 13:31:40 3288: Adding port to hierachy module inst_b_i for signal signal_bb_ab!
-05/07/11 13:31:40 3288: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_gi to instance inst_a_i
-05/07/11 13:31:40 3288: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_go to instance inst_b_i
-05/07/11 13:31:40 3288: Adding port to hierachy module inst_b_i for signal signal_aa_ba!
-05/07/11 13:31:40 3288: Adding port to hierachy module inst_a_i for signal signal_aa_ba!
-05/07/11 13:31:40 3288: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_gi to instance inst_b_i
-05/07/11 13:31:40 3288: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_go to instance inst_a_i
-05/07/11 13:31:40 3288: WARNING: WARNING: Missing port port_ba_i in entity inst_xa_e (inst_aa_i) redeclaration, ignoreing!
-05/07/11 13:31:40 3288: WARNING: WARNING: Declaration for entity inst_xa_e (inst_aa_i) extended by port_aa_o!
-05/07/11 13:31:40 3288: WARNING: Rotating 3 old sheets of CONF!
-05/07/11 13:31:42 3288: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/udc-mixed.xls
-05/07/11 13:31:42 3288: WARNING: Rotating 3 old sheets of DIFF_CONN!
-05/07/11 13:31:43 3288: WARNING: INFO: Detected 2 changes in intermediate sheet CONN, in file udc-mixed.xls
-05/07/11 13:31:43 3288: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/udc-mixed.xls
-05/07/11 13:31:43 3288: WARNING: Rotating 3 old sheets of DIFF_HIER!
-05/07/11 13:31:43 3288: WARNING: INFO: Detected 3 changes in intermediate sheet HIER, in file udc-mixed.xls
-05/07/11 13:31:43 3288: WARNING: Info: file inst_a_e-e.vhd has changes!
-05/07/11 13:31:43 3288: WARNING: Info: file inst_ab_e-e.vhd has changes!
-05/07/11 13:31:43 3288: WARNING: Info: file inst_b_e-e.vhd has changes!
-05/07/11 13:31:44 3288: WARNING: Info: file inst_bb_e-e.vhd has changes!
-05/07/11 13:31:44 3288: WARNING: Info: file inst_t_e-e.vhd has changes!
-05/07/11 13:31:44 3288: WARNING: Info: file inst_xa_e-e.vhd has changes!
-05/07/11 13:31:45 3288: WARNING: Info: file inst_a_e-rtl-a.vhd has changes!
-05/07/11 13:33:16 836: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:33:16 836: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:33:16 836: Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:33:16 836: add_port: signal signal_bb_ab adds port signal_bb_ab to instance inst_t_i
-05/07/11 13:33:16 836: Adding port to hierachy module inst_a_i for signal signal_bb_ab!
-05/07/11 13:33:16 836: Adding port to hierachy module inst_b_i for signal signal_bb_ab!
-05/07/11 13:33:16 836: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_gi to instance inst_a_i
-05/07/11 13:33:16 836: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_go to instance inst_b_i
-05/07/11 13:33:16 836: Adding port to hierachy module inst_b_i for signal signal_aa_ba!
-05/07/11 13:33:16 836: Adding port to hierachy module inst_a_i for signal signal_aa_ba!
-05/07/11 13:33:16 836: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_gi to instance inst_b_i
-05/07/11 13:33:16 836: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_go to instance inst_a_i
-05/07/11 13:33:16 836: WARNING: WARNING: Missing port port_ba_i in entity inst_xa_e (inst_aa_i) redeclaration, ignoreing!
-05/07/11 13:33:16 836: WARNING: WARNING: Declaration for entity inst_xa_e (inst_aa_i) extended by port_aa_o!
-05/07/11 13:33:17 836: WARNING: Rotating 3 old sheets of CONF!
-05/07/11 13:33:19 836: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/udc-mixed.xls
-05/07/11 13:33:19 836: WARNING: Rotating 3 old sheets of DIFF_CONN!
-05/07/11 13:33:19 836: WARNING: INFO: Detected 2 changes in intermediate sheet CONN, in file udc-mixed.xls
-05/07/11 13:33:19 836: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/udc-mixed.xls
-05/07/11 13:33:19 836: WARNING: Rotating 3 old sheets of DIFF_HIER!
-05/07/11 13:33:20 836: WARNING: INFO: Detected 3 changes in intermediate sheet HIER, in file udc-mixed.xls
-05/07/11 13:33:20 836: WARNING: Info: file inst_a_e-e.vhd has changes!
-05/07/11 13:33:20 836: WARNING: Info: file inst_ab_e-e.vhd has changes!
-05/07/11 13:33:20 836: WARNING: Info: file inst_b_e-e.vhd has changes!
-05/07/11 13:33:20 836: WARNING: Info: file inst_bb_e-e.vhd has changes!
-05/07/11 13:33:20 836: WARNING: Info: file inst_t_e-e.vhd has changes!
-05/07/11 13:33:20 836: WARNING: Info: file inst_xa_e-e.vhd has changes!
-05/07/11 13:33:23 836: WARNING: Info: file inst_a_e-rtl-a.vhd has changes!
-05/07/11 13:38:03 836: WARNING: Info: file inst_xa_e-rtl-a.vhd has changes!
-05/07/11 13:38:13 836: Info: unchanged file inst_ab_e-rtl-a.vhd
-05/07/11 13:40:17 1232: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:40:17 1232: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:40:17 1232: Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:40:17 1232: add_port: signal signal_bb_ab adds port signal_bb_ab to instance inst_t_i
-05/07/11 13:40:17 1232: Adding port to hierachy module inst_a_i for signal signal_bb_ab!
-05/07/11 13:40:17 1232: Adding port to hierachy module inst_b_i for signal signal_bb_ab!
-05/07/11 13:40:17 1232: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_gi to instance inst_a_i
-05/07/11 13:40:17 1232: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_go to instance inst_b_i
-05/07/11 13:40:17 1232: Adding port to hierachy module inst_b_i for signal signal_aa_ba!
-05/07/11 13:40:17 1232: Adding port to hierachy module inst_a_i for signal signal_aa_ba!
-05/07/11 13:40:17 1232: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_gi to instance inst_b_i
-05/07/11 13:40:17 1232: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_go to instance inst_a_i
-05/07/11 13:40:17 1232: WARNING: WARNING: Missing port port_ba_i in entity inst_xa_e (inst_aa_i) redeclaration, ignoreing!
-05/07/11 13:40:17 1232: WARNING: WARNING: Declaration for entity inst_xa_e (inst_aa_i) extended by port_aa_o!
-05/07/11 13:40:17 1232: WARNING: Rotating 3 old sheets of CONF!
-05/07/11 13:40:19 1232: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/udc-mixed.xls
-05/07/11 13:40:19 1232: WARNING: Rotating 3 old sheets of DIFF_CONN!
-05/07/11 13:40:20 1232: WARNING: INFO: Detected 2 changes in intermediate sheet CONN, in file udc-mixed.xls
-05/07/11 13:40:20 1232: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/udc-mixed.xls
-05/07/11 13:40:20 1232: WARNING: Rotating 3 old sheets of DIFF_HIER!
-05/07/11 13:40:21 1232: WARNING: INFO: Detected 3 changes in intermediate sheet HIER, in file udc-mixed.xls
-05/07/11 13:40:21 1232: WARNING: Info: file inst_a_e-e.vhd has changes!
-05/07/11 13:40:21 1232: WARNING: Info: file inst_ab_e-e.vhd has changes!
-05/07/11 13:40:21 1232: WARNING: Info: file inst_b_e-e.vhd has changes!
-05/07/11 13:40:21 1232: WARNING: Info: file inst_bb_e-e.vhd has changes!
-05/07/11 13:40:21 1232: WARNING: Info: file inst_t_e-e.vhd has changes!
-05/07/11 13:40:21 1232: WARNING: Info: file inst_xa_e-e.vhd has changes!
-05/07/11 13:40:53 1232: WARNING: Info: file inst_a_e-rtl-a.vhd has changes!
-05/07/11 13:45:33 3408: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:45:33 3408: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:45:33 3408: Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:45:33 3408: add_port: signal signal_bb_ab adds port signal_bb_ab to instance inst_t_i
-05/07/11 13:45:33 3408: Adding port to hierachy module inst_a_i for signal signal_bb_ab!
-05/07/11 13:45:33 3408: Adding port to hierachy module inst_b_i for signal signal_bb_ab!
-05/07/11 13:45:33 3408: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_gi to instance inst_a_i
-05/07/11 13:45:33 3408: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_go to instance inst_b_i
-05/07/11 13:45:33 3408: Adding port to hierachy module inst_b_i for signal signal_aa_ba!
-05/07/11 13:45:33 3408: Adding port to hierachy module inst_a_i for signal signal_aa_ba!
-05/07/11 13:45:33 3408: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_gi to instance inst_b_i
-05/07/11 13:45:33 3408: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_go to instance inst_a_i
-05/07/11 13:45:33 3408: WARNING: WARNING: Missing port port_ba_i in entity inst_xa_e (inst_aa_i) redeclaration, ignoreing!
-05/07/11 13:45:33 3408: WARNING: WARNING: Declaration for entity inst_xa_e (inst_aa_i) extended by port_aa_o!
-05/07/11 13:45:33 3408: WARNING: Rotating 3 old sheets of CONF!
-05/07/11 13:45:36 3408: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/udc-mixed.xls
-05/07/11 13:45:36 3408: WARNING: Rotating 3 old sheets of DIFF_CONN!
-05/07/11 13:45:36 3408: WARNING: INFO: Detected 2 changes in intermediate sheet CONN, in file udc-mixed.xls
-05/07/11 13:45:37 3408: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/udc-mixed.xls
-05/07/11 13:45:37 3408: WARNING: Rotating 3 old sheets of DIFF_HIER!
-05/07/11 13:45:37 3408: WARNING: INFO: Detected 4 changes in intermediate sheet HIER, in file udc-mixed.xls
-05/07/11 13:45:37 3408: WARNING: Info: file inst_a_e-e.vhd has changes!
-05/07/11 13:45:37 3408: WARNING: Info: file inst_ab_e-e.vhd has changes!
-05/07/11 13:45:37 3408: WARNING: Info: file inst_b_e-e.vhd has changes!
-05/07/11 13:45:37 3408: WARNING: Info: file inst_bb_e-e.vhd has changes!
-05/07/11 13:45:37 3408: WARNING: Info: file inst_t_e-e.vhd has changes!
-05/07/11 13:45:37 3408: WARNING: Info: file inst_xa_e-e.vhd has changes!
-05/07/11 13:46:12 3408: WARNING: Info: file inst_a_e-rtl-a.vhd has changes!
-05/07/11 13:47:29 3408: WARNING: Info: file inst_xa_e-rtl-a.vhd has changes!
-05/07/11 13:47:35 3408: Info: unchanged file inst_ab_e-rtl-a.vhd
-05/07/11 13:48:22 3408: WARNING: Info: file inst_b_e-rtl-a.vhd has changes!
-05/07/11 13:53:55 3408: WARNING: Info: file inst_bb_e-rtl-a.vhd has changes!
-05/07/11 13:54:10 3408: WARNING: Info: file inst_t_e-rtl-a.vhd has changes!
-05/07/11 13:54:12 3408: Info: unchanged file inst_a_e-rtl-conf-c.vhd
-05/07/11 13:54:12 3408: Info: unchanged file inst_b_e-rtl-conf-c.vhd
-05/07/11 13:54:13 3408: Info: unchanged file inst_t_e-rtl-conf-c.vhd
-05/07/11 13:54:13 3408: WARNING: ============= SUMMARY =================
-05/07/11 13:54:13 3408: WARNING: SUM: Summary of checks and created items:
-05/07/11 13:54:13 3408: WARNING: SUM: checkforce 0
-05/07/11 13:54:13 3408: WARNING: SUM: checkunique 0
-05/07/11 13:54:13 3408: WARNING: SUM: checkwarn 0
-05/07/11 13:54:13 3408: WARNING: SUM: cmacros 0
-05/07/11 13:54:13 3408: WARNING: SUM: conn 2
-05/07/11 13:54:13 3408: WARNING: SUM: errors 0
-05/07/11 13:54:13 3408: WARNING: SUM: genport 5
-05/07/11 13:54:13 3408: WARNING: SUM: hdlfiles 15
-05/07/11 13:54:13 3408: WARNING: SUM: inst 13
-05/07/11 13:54:13 3408: WARNING: SUM: multdriver 0
-05/07/11 13:54:13 3408: WARNING: SUM: nodriver 0
-05/07/11 13:54:13 3408: WARNING: SUM: noload 0
-05/07/11 13:54:13 3408: WARNING: SUM: openports 0
-05/07/11 13:54:13 3408: WARNING: SUM: warnings 2
-05/07/11 13:54:13 3408: WARNING: SUM: === Number of parsed input tables: ===
-05/07/11 13:54:13 3408: WARNING: SUM: conf 0
-05/07/11 13:54:13 3408: WARNING: SUM: hier 1
-05/07/11 13:54:13 3408: WARNING: SUM: conn 1
-05/07/11 13:54:13 3408: WARNING: SUM: io 1
-05/07/11 13:54:13 3408: WARNING: SUM: i2c 0
-05/07/11 13:54:13 3408: WARNING: SUM: Number of changes in intermediate: 6
-05/07/11 13:54:13 3408: WARNING: SUM: Number of changed files: 11
-05/07/11 13:54:30 2288: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:54:30 2288: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:54:30 2288: Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 13:54:30 2288: add_port: signal signal_bb_ab adds port signal_bb_ab to instance inst_t_i
-05/07/11 13:54:30 2288: Adding port to hierachy module inst_a_i for signal signal_bb_ab!
-05/07/11 13:54:30 2288: Adding port to hierachy module inst_b_i for signal signal_bb_ab!
-05/07/11 13:54:30 2288: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_gi to instance inst_a_i
-05/07/11 13:54:30 2288: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_go to instance inst_b_i
-05/07/11 13:54:30 2288: Adding port to hierachy module inst_b_i for signal signal_aa_ba!
-05/07/11 13:54:30 2288: Adding port to hierachy module inst_a_i for signal signal_aa_ba!
-05/07/11 13:54:30 2288: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_gi to instance inst_b_i
-05/07/11 13:54:30 2288: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_go to instance inst_a_i
-05/07/11 13:54:30 2288: WARNING: WARNING: Missing port port_ba_i in entity inst_xa_e (inst_aa_i) redeclaration, ignoreing!
-05/07/11 13:54:30 2288: WARNING: WARNING: Declaration for entity inst_xa_e (inst_aa_i) extended by port_aa_o!
-05/07/11 13:54:30 2288: WARNING: Rotating 3 old sheets of CONF!
-05/07/11 13:54:31 2288: WARNING: Rotating 3 old sheets of CONN!
-05/07/11 13:54:31 2288: WARNING: Rotating 3 old sheets of HIER!
-05/07/11 13:54:32 2288: WARNING: ============= SUMMARY =================
-05/07/11 13:54:32 2288: WARNING: SUM: Summary of checks and created items:
-05/07/11 13:54:32 2288: WARNING: SUM: checkforce 0
-05/07/11 13:54:32 2288: WARNING: SUM: checkunique 0
-05/07/11 13:54:32 2288: WARNING: SUM: checkwarn 0
-05/07/11 13:54:32 2288: WARNING: SUM: cmacros 0
-05/07/11 13:54:32 2288: WARNING: SUM: conn 2
-05/07/11 13:54:32 2288: WARNING: SUM: errors 0
-05/07/11 13:54:32 2288: WARNING: SUM: genport 5
-05/07/11 13:54:32 2288: WARNING: SUM: hdlfiles 15
-05/07/11 13:54:32 2288: WARNING: SUM: inst 13
-05/07/11 13:54:32 2288: WARNING: SUM: multdriver 0
-05/07/11 13:54:32 2288: WARNING: SUM: nodriver 0
-05/07/11 13:54:32 2288: WARNING: SUM: noload 0
-05/07/11 13:54:32 2288: WARNING: SUM: openports 0
-05/07/11 13:54:32 2288: WARNING: SUM: warnings 2
-05/07/11 13:54:32 2288: WARNING: SUM: === Number of parsed input tables: ===
-05/07/11 13:54:32 2288: WARNING: SUM: conf 0
-05/07/11 13:54:32 2288: WARNING: SUM: hier 1
-05/07/11 13:54:32 2288: WARNING: SUM: conn 1
-05/07/11 13:54:32 2288: WARNING: SUM: io 1
-05/07/11 13:54:32 2288: WARNING: SUM: i2c 0
-05/07/11 14:19:22 2568: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 14:19:22 2568: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 14:19:22 2568: Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 14:19:22 2568: add_port: signal signal_bb_ab adds port signal_bb_ab to instance inst_t_i
-05/07/11 14:19:22 2568: Adding port to hierachy module inst_a_i for signal signal_bb_ab!
-05/07/11 14:19:22 2568: Adding port to hierachy module inst_b_i for signal signal_bb_ab!
-05/07/11 14:19:22 2568: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_gi to instance inst_a_i
-05/07/11 14:19:22 2568: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_go to instance inst_b_i
-05/07/11 14:19:22 2568: Adding port to hierachy module inst_b_i for signal signal_aa_ba!
-05/07/11 14:19:22 2568: Adding port to hierachy module inst_a_i for signal signal_aa_ba!
-05/07/11 14:19:22 2568: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_gi to instance inst_b_i
-05/07/11 14:19:22 2568: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_go to instance inst_a_i
-05/07/11 14:19:23 2568: WARNING: Rotating 3 old sheets of CONF!
-05/07/11 14:19:23 2568: WARNING: Rotating 3 old sheets of CONN!
-05/07/11 14:19:24 2568: WARNING: Rotating 3 old sheets of HIER!
-05/07/11 14:19:24 2568: Signal %OPEN_0% does not have a load in instance inst_b_i!
-05/07/11 14:19:24 2568: WARNING: ============= SUMMARY =================
-05/07/11 14:19:24 2568: WARNING: SUM: Summary of checks and created items:
-05/07/11 14:19:24 2568: WARNING: SUM: checkforce 0
-05/07/11 14:19:25 2568: WARNING: SUM: checkunique 0
-05/07/11 14:19:25 2568: WARNING: SUM: checkwarn 0
-05/07/11 14:19:25 2568: WARNING: SUM: cmacros 0
-05/07/11 14:19:25 2568: WARNING: SUM: conn 4
-05/07/11 14:19:25 2568: WARNING: SUM: errors 0
-05/07/11 14:19:25 2568: WARNING: SUM: genport 5
-05/07/11 14:19:25 2568: WARNING: SUM: hdlfiles 15
-05/07/11 14:19:25 2568: WARNING: SUM: inst 13
-05/07/11 14:19:25 2568: WARNING: SUM: multdriver 0
-05/07/11 14:19:25 2568: WARNING: SUM: nodriver 1
-05/07/11 14:19:25 2568: WARNING: SUM: noload 1
-05/07/11 14:19:25 2568: WARNING: SUM: openports 0
-05/07/11 14:19:25 2568: WARNING: SUM: warnings 0
-05/07/11 14:19:25 2568: WARNING: SUM: === Number of parsed input tables: ===
-05/07/11 14:19:25 2568: WARNING: SUM: conf 0
-05/07/11 14:19:25 2568: WARNING: SUM: hier 1
-05/07/11 14:19:25 2568: WARNING: SUM: conn 1
-05/07/11 14:19:25 2568: WARNING: SUM: io 1
-05/07/11 14:19:25 2568: WARNING: SUM: i2c 0
-05/07/11 14:45:11 2356: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 14:45:11 2356: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 14:45:11 2356: Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 14:45:11 2356: add_port: signal signal_bb_ab adds port signal_bb_ab to instance inst_t_i
-05/07/11 14:45:11 2356: Adding port to hierachy module inst_a_i for signal signal_bb_ab!
-05/07/11 14:45:11 2356: Adding port to hierachy module inst_b_i for signal signal_bb_ab!
-05/07/11 14:45:11 2356: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_gi to instance inst_a_i
-05/07/11 14:45:11 2356: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_go to instance inst_b_i
-05/07/11 14:45:11 2356: Adding port to hierachy module inst_b_i for signal signal_aa_ba!
-05/07/11 14:45:11 2356: Adding port to hierachy module inst_a_i for signal signal_aa_ba!
-05/07/11 14:45:11 2356: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_gi to instance inst_b_i
-05/07/11 14:45:11 2356: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_go to instance inst_a_i
-05/07/11 14:45:13 2356: WARNING: Rotating 3 old sheets of CONF!
-05/07/11 14:45:13 2356: WARNING: Rotating 3 old sheets of CONN!
-05/07/11 14:45:14 2356: WARNING: Rotating 3 old sheets of HIER!
-05/07/11 14:45:15 2356: WARNING: ============= SUMMARY =================
-05/07/11 14:45:15 2356: WARNING: SUM: Summary of checks and created items:
-05/07/11 14:45:15 2356: WARNING: SUM: checkforce 0
-05/07/11 14:45:15 2356: WARNING: SUM: checkunique 0
-05/07/11 14:45:15 2356: WARNING: SUM: checkwarn 0
-05/07/11 14:45:15 2356: WARNING: SUM: cmacros 0
-05/07/11 14:45:15 2356: WARNING: SUM: conn 4
-05/07/11 14:45:15 2356: WARNING: SUM: errors 0
-05/07/11 14:45:15 2356: WARNING: SUM: genport 5
-05/07/11 14:45:15 2356: WARNING: SUM: hdlfiles 15
-05/07/11 14:45:15 2356: WARNING: SUM: inst 13
-05/07/11 14:45:15 2356: WARNING: SUM: multdriver 0
-05/07/11 14:45:15 2356: WARNING: SUM: nodriver 0
-05/07/11 14:45:15 2356: WARNING: SUM: noload 0
-05/07/11 14:45:15 2356: WARNING: SUM: open 1
-05/07/11 14:45:15 2356: WARNING: SUM: openports 0
-05/07/11 14:45:15 2356: WARNING: SUM: tie_hl 1
-05/07/11 14:45:15 2356: WARNING: SUM: warnings 0
-05/07/11 14:45:15 2356: WARNING: SUM: === Number of parsed input tables: ===
-05/07/11 14:45:15 2356: WARNING: SUM: conf 0
-05/07/11 14:45:15 2356: WARNING: SUM: hier 1
-05/07/11 14:45:15 2356: WARNING: SUM: conn 1
-05/07/11 14:45:15 2356: WARNING: SUM: io 1
-05/07/11 14:45:15 2356: WARNING: SUM: i2c 0
-05/07/11 14:56:09 1268: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 14:56:09 1268: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 14:56:09 1268: Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 14:56:09 1268: add_port: signal signal_bb_ab adds port signal_bb_ab to instance inst_t_i
-05/07/11 14:56:09 1268: Adding port to hierachy module inst_a_i for signal signal_bb_ab!
-05/07/11 14:56:09 1268: Adding port to hierachy module inst_b_i for signal signal_bb_ab!
-05/07/11 14:56:09 1268: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_gi to instance inst_a_i
-05/07/11 14:56:09 1268: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_go to instance inst_b_i
-05/07/11 14:56:09 1268: Adding port to hierachy module inst_b_i for signal signal_aa_ba!
-05/07/11 14:56:09 1268: Adding port to hierachy module inst_a_i for signal signal_aa_ba!
-05/07/11 14:56:09 1268: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_gi to instance inst_b_i
-05/07/11 14:56:09 1268: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_go to instance inst_a_i
-05/07/11 14:56:09 1268: WARNING: Rotating 3 old sheets of CONF!
-05/07/11 14:56:10 1268: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/udc-mixed.xls
-05/07/11 14:56:11 1268: WARNING: Rotating 3 old sheets of DIFF_CONN!
-05/07/11 14:56:11 1268: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/udc-mixed.xls
-05/07/11 14:56:11 1268: WARNING: Rotating 3 old sheets of DIFF_HIER!
-05/07/11 14:56:12 1268: WARNING: INFO: Detected 2 changes in intermediate sheet HIER, in file udc-mixed.xls
-05/07/11 14:56:12 1268: Info: unchanged file inst_a_e-e.vhd
-05/07/11 14:56:12 1268: Info: unchanged file inst_ab_e-e.vhd
-05/07/11 14:56:12 1268: Info: unchanged file inst_b_e-e.vhd
-05/07/11 14:56:12 1268: Info: unchanged file inst_bb_e-e.vhd
-05/07/11 14:56:12 1268: Info: unchanged file inst_t_e-e.vhd
-05/07/11 14:56:13 1268: Info: unchanged file inst_xa_e-e.vhd
-05/07/11 14:56:13 1268: Info: unchanged file inst_a_e-rtl-a.vhd
-05/07/11 14:56:13 1268: WARNING: Info: file inst_xa_e-rtl-a.vhd has changes!
-05/07/11 14:56:13 1268: WARNING: Info: file inst_ab_e-rtl-a.vhd has changes!
-05/07/11 14:56:13 1268: Info: unchanged file inst_b_e-rtl-a.vhd
-05/07/11 14:56:13 1268: Info: unchanged file inst_bb_e-rtl-a.vhd
-05/07/11 14:56:13 1268: Info: unchanged file inst_t_e-rtl-a.vhd
-05/07/11 14:56:13 1268: Info: unchanged file inst_a_e-rtl-conf-c.vhd
-05/07/11 14:56:13 1268: Info: unchanged file inst_b_e-rtl-conf-c.vhd
-05/07/11 14:56:13 1268: Info: unchanged file inst_t_e-rtl-conf-c.vhd
-05/07/11 14:56:13 1268: WARNING: ============= SUMMARY =================
-05/07/11 14:56:14 1268: WARNING: SUM: Summary of checks and created items:
-05/07/11 14:56:14 1268: WARNING: SUM: checkforce 0
-05/07/11 14:56:14 1268: WARNING: SUM: checkunique 0
-05/07/11 14:56:14 1268: WARNING: SUM: checkwarn 0
-05/07/11 14:56:14 1268: WARNING: SUM: cmacros 0
-05/07/11 14:56:14 1268: WARNING: SUM: conn 4
-05/07/11 14:56:14 1268: WARNING: SUM: errors 0
-05/07/11 14:56:14 1268: WARNING: SUM: genport 5
-05/07/11 14:56:14 1268: WARNING: SUM: hdlfiles 15
-05/07/11 14:56:14 1268: WARNING: SUM: inst 13
-05/07/11 14:56:14 1268: WARNING: SUM: multdriver 0
-05/07/11 14:56:14 1268: WARNING: SUM: nodriver 0
-05/07/11 14:56:14 1268: WARNING: SUM: noload 0
-05/07/11 14:56:14 1268: WARNING: SUM: open 1
-05/07/11 14:56:14 1268: WARNING: SUM: openports 0
-05/07/11 14:56:14 1268: WARNING: SUM: tie_hl 1
-05/07/11 14:56:14 1268: WARNING: SUM: warnings 0
-05/07/11 14:56:14 1268: WARNING: SUM: === Number of parsed input tables: ===
-05/07/11 14:56:14 1268: WARNING: SUM: conf 0
-05/07/11 14:56:14 1268: WARNING: SUM: hier 1
-05/07/11 14:56:14 1268: WARNING: SUM: conn 1
-05/07/11 14:56:14 1268: WARNING: SUM: io 1
-05/07/11 14:56:14 1268: WARNING: SUM: i2c 0
-05/07/11 14:56:14 1268: WARNING: SUM: Number of changes in intermediate: 2
-05/07/11 14:56:14 1268: WARNING: SUM: Number of changed files: 2
-05/07/11 14:56:47 3620: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 14:56:47 3620: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 14:56:47 3620: Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 14:56:47 3620: add_port: signal signal_bb_ab adds port signal_bb_ab to instance inst_t_i
-05/07/11 14:56:47 3620: Adding port to hierachy module inst_a_i for signal signal_bb_ab!
-05/07/11 14:56:47 3620: Adding port to hierachy module inst_b_i for signal signal_bb_ab!
-05/07/11 14:56:47 3620: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_gi to instance inst_a_i
-05/07/11 14:56:47 3620: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_go to instance inst_b_i
-05/07/11 14:56:47 3620: Adding port to hierachy module inst_b_i for signal signal_aa_ba!
-05/07/11 14:56:47 3620: Adding port to hierachy module inst_a_i for signal signal_aa_ba!
-05/07/11 14:56:47 3620: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_gi to instance inst_b_i
-05/07/11 14:56:47 3620: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_go to instance inst_a_i
-05/07/11 14:56:47 3620: WARNING: Rotating 3 old sheets of CONF!
-05/07/11 14:56:47 3620: WARNING: Rotating 3 old sheets of CONN!
-05/07/11 14:56:48 3620: WARNING: Rotating 3 old sheets of HIER!
-05/07/11 14:56:49 3620: WARNING: ============= SUMMARY =================
-05/07/11 14:56:49 3620: WARNING: SUM: Summary of checks and created items:
-05/07/11 14:56:49 3620: WARNING: SUM: checkforce 0
-05/07/11 14:56:49 3620: WARNING: SUM: checkunique 0
-05/07/11 14:56:49 3620: WARNING: SUM: checkwarn 0
-05/07/11 14:56:49 3620: WARNING: SUM: cmacros 0
-05/07/11 14:56:49 3620: WARNING: SUM: conn 4
-05/07/11 14:56:49 3620: WARNING: SUM: errors 0
-05/07/11 14:56:49 3620: WARNING: SUM: genport 5
-05/07/11 14:56:49 3620: WARNING: SUM: hdlfiles 15
-05/07/11 14:56:49 3620: WARNING: SUM: inst 13
-05/07/11 14:56:49 3620: WARNING: SUM: multdriver 0
-05/07/11 14:56:49 3620: WARNING: SUM: nodriver 0
-05/07/11 14:56:49 3620: WARNING: SUM: noload 0
-05/07/11 14:56:49 3620: WARNING: SUM: open 1
-05/07/11 14:56:49 3620: WARNING: SUM: openports 0
-05/07/11 14:56:49 3620: WARNING: SUM: tie_hl 1
-05/07/11 14:56:49 3620: WARNING: SUM: warnings 0
-05/07/11 14:56:49 3620: WARNING: SUM: === Number of parsed input tables: ===
-05/07/11 14:56:49 3620: WARNING: SUM: conf 0
-05/07/11 14:56:49 3620: WARNING: SUM: hier 1
-05/07/11 14:56:49 3620: WARNING: SUM: conn 1
-05/07/11 14:56:49 3620: WARNING: SUM: io 1
-05/07/11 14:56:49 3620: WARNING: SUM: i2c 0
-05/07/11 14:59:24 3184: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 14:59:24 3184: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 14:59:24 3184: Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 14:59:24 3184: add_port: signal signal_bb_ab adds port signal_bb_ab to instance inst_t_i
-05/07/11 14:59:24 3184: Adding port to hierachy module inst_a_i for signal signal_bb_ab!
-05/07/11 14:59:24 3184: Adding port to hierachy module inst_b_i for signal signal_bb_ab!
-05/07/11 14:59:24 3184: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_gi to instance inst_a_i
-05/07/11 14:59:24 3184: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_go to instance inst_b_i
-05/07/11 14:59:24 3184: Adding port to hierachy module inst_b_i for signal signal_aa_ba!
-05/07/11 14:59:24 3184: Adding port to hierachy module inst_a_i for signal signal_aa_ba!
-05/07/11 14:59:24 3184: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_gi to instance inst_b_i
-05/07/11 14:59:24 3184: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_go to instance inst_a_i
-05/07/11 14:59:25 3184: WARNING: Rotating 3 old sheets of CONF!
-05/07/11 14:59:26 3184: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/udc-mixed.xls
-05/07/11 14:59:26 3184: WARNING: Rotating 3 old sheets of DIFF_CONN!
-05/07/11 14:59:27 3184: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/udc-mixed.xls
-05/07/11 14:59:27 3184: WARNING: Rotating 3 old sheets of DIFF_HIER!
-05/07/11 14:59:27 3184: WARNING: Info: file inst_a_e-e.vhd has changes!
-05/07/11 14:59:28 3184: WARNING: Info: file inst_ab_e-e.vhd has changes!
-05/07/11 14:59:28 3184: WARNING: Info: file inst_b_e-e.vhd has changes!
-05/07/11 14:59:28 3184: WARNING: Info: file inst_bb_e-e.vhd has changes!
-05/07/11 14:59:28 3184: WARNING: Info: file inst_t_e-e.vhd has changes!
-05/07/11 14:59:28 3184: WARNING: Info: file inst_xa_e-e.vhd has changes!
-05/07/11 14:59:28 3184: WARNING: Info: file inst_a_e-rtl-a.vhd has changes!
-05/07/11 14:59:28 3184: WARNING: Info: file inst_xa_e-rtl-a.vhd has changes!
-05/07/11 14:59:28 3184: WARNING: Info: file inst_ab_e-rtl-a.vhd has changes!
-05/07/11 14:59:28 3184: WARNING: Info: file inst_b_e-rtl-a.vhd has changes!
-05/07/11 14:59:28 3184: Info: unchanged file inst_bb_e-rtl-a.vhd
-05/07/11 14:59:28 3184: WARNING: Info: file inst_t_e-rtl-a.vhd has changes!
-05/07/11 14:59:29 3184: Info: unchanged file inst_a_e-rtl-conf-c.vhd
-05/07/11 14:59:29 3184: Info: unchanged file inst_b_e-rtl-conf-c.vhd
-05/07/11 14:59:29 3184: Info: unchanged file inst_t_e-rtl-conf-c.vhd
-05/07/11 14:59:29 3184: WARNING: ============= SUMMARY =================
-05/07/11 14:59:29 3184: WARNING: SUM: Summary of checks and created items:
-05/07/11 14:59:29 3184: WARNING: SUM: checkforce 0
-05/07/11 14:59:29 3184: WARNING: SUM: checkunique 0
-05/07/11 14:59:29 3184: WARNING: SUM: checkwarn 0
-05/07/11 14:59:29 3184: WARNING: SUM: cmacros 0
-05/07/11 14:59:29 3184: WARNING: SUM: conn 4
-05/07/11 14:59:29 3184: WARNING: SUM: errors 0
-05/07/11 14:59:29 3184: WARNING: SUM: genport 5
-05/07/11 14:59:29 3184: WARNING: SUM: hdlfiles 15
-05/07/11 14:59:29 3184: WARNING: SUM: inst 13
-05/07/11 14:59:29 3184: WARNING: SUM: multdriver 0
-05/07/11 14:59:29 3184: WARNING: SUM: nodriver 0
-05/07/11 14:59:29 3184: WARNING: SUM: noload 0
-05/07/11 14:59:29 3184: WARNING: SUM: open 1
-05/07/11 14:59:29 3184: WARNING: SUM: openports 0
-05/07/11 14:59:29 3184: WARNING: SUM: tie_hl 1
-05/07/11 14:59:29 3184: WARNING: SUM: warnings 0
-05/07/11 14:59:29 3184: WARNING: SUM: === Number of parsed input tables: ===
-05/07/11 14:59:29 3184: WARNING: SUM: conf 0
-05/07/11 14:59:29 3184: WARNING: SUM: hier 1
-05/07/11 14:59:29 3184: WARNING: SUM: conn 1
-05/07/11 14:59:29 3184: WARNING: SUM: io 1
-05/07/11 14:59:29 3184: WARNING: SUM: i2c 0
-05/07/11 14:59:29 3184: WARNING: SUM: Number of changes in intermediate: 0
-05/07/11 14:59:29 3184: WARNING: SUM: Number of changed files: 11
-05/07/11 15:02:50 3400: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 15:02:50 3400: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 15:02:50 3400: Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 15:02:50 3400: add_port: signal signal_bb_ab adds port signal_bb_ab to instance inst_t_i
-05/07/11 15:02:50 3400: Adding port to hierachy module inst_a_i for signal signal_bb_ab!
-05/07/11 15:02:50 3400: Adding port to hierachy module inst_b_i for signal signal_bb_ab!
-05/07/11 15:02:50 3400: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_gi to instance inst_a_i
-05/07/11 15:02:50 3400: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_go to instance inst_b_i
-05/07/11 15:02:50 3400: Adding port to hierachy module inst_b_i for signal signal_aa_ba!
-05/07/11 15:02:50 3400: Adding port to hierachy module inst_a_i for signal signal_aa_ba!
-05/07/11 15:02:50 3400: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_gi to instance inst_b_i
-05/07/11 15:02:50 3400: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_go to instance inst_a_i
-05/07/11 15:02:50 3400: WARNING: Rotating 3 old sheets of CONF!
-05/07/11 15:02:50 3400: WARNING: Rotating 3 old sheets of CONN!
-05/07/11 15:02:51 3400: WARNING: Rotating 3 old sheets of HIER!
-05/07/11 15:02:52 3400: WARNING: ============= SUMMARY =================
-05/07/11 15:02:52 3400: WARNING: SUM: Summary of checks and created items:
-05/07/11 15:02:52 3400: WARNING: SUM: checkforce 0
-05/07/11 15:02:52 3400: WARNING: SUM: checkunique 0
-05/07/11 15:02:52 3400: WARNING: SUM: checkwarn 0
-05/07/11 15:02:52 3400: WARNING: SUM: cmacros 0
-05/07/11 15:02:52 3400: WARNING: SUM: conn 4
-05/07/11 15:02:52 3400: WARNING: SUM: errors 0
-05/07/11 15:02:52 3400: WARNING: SUM: genport 5
-05/07/11 15:02:52 3400: WARNING: SUM: hdlfiles 15
-05/07/11 15:02:52 3400: WARNING: SUM: inst 13
-05/07/11 15:02:52 3400: WARNING: SUM: multdriver 0
-05/07/11 15:02:52 3400: WARNING: SUM: nodriver 0
-05/07/11 15:02:52 3400: WARNING: SUM: noload 0
-05/07/11 15:02:52 3400: WARNING: SUM: open 1
-05/07/11 15:02:52 3400: WARNING: SUM: openports 0
-05/07/11 15:02:52 3400: WARNING: SUM: tie_hl 1
-05/07/11 15:02:52 3400: WARNING: SUM: warnings 0
-05/07/11 15:02:52 3400: WARNING: SUM: === Number of parsed input tables: ===
-05/07/11 15:02:52 3400: WARNING: SUM: conf 0
-05/07/11 15:02:52 3400: WARNING: SUM: hier 1
-05/07/11 15:02:52 3400: WARNING: SUM: conn 1
-05/07/11 15:02:52 3400: WARNING: SUM: io 1
-05/07/11 15:02:52 3400: WARNING: SUM: i2c 0
-05/07/11 15:05:02 3840: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 15:05:02 3840: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 15:05:02 3840: Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/11 15:05:02 3840: add_port: signal signal_bb_ab adds port signal_bb_ab to instance inst_t_i
-05/07/11 15:05:02 3840: Adding port to hierachy module inst_a_i for signal signal_bb_ab!
-05/07/11 15:05:02 3840: Adding port to hierachy module inst_b_i for signal signal_bb_ab!
-05/07/11 15:05:02 3840: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_gi to instance inst_a_i
-05/07/11 15:05:02 3840: add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_go to instance inst_b_i
-05/07/11 15:05:02 3840: Adding port to hierachy module inst_b_i for signal signal_aa_ba!
-05/07/11 15:05:02 3840: Adding port to hierachy module inst_a_i for signal signal_aa_ba!
-05/07/11 15:05:02 3840: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_gi to instance inst_b_i
-05/07/11 15:05:02 3840: add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_go to instance inst_a_i
-05/07/11 15:05:03 3840: WARNING: Rotating 3 old sheets of CONF!
-05/07/11 15:05:04 3840: WARNING: Rotating 3 old sheets of CONN!
-05/07/11 15:05:04 3840: WARNING: Rotating 3 old sheets of HIER!
-05/07/11 15:05:05 3840: WARNING: Removing old and and diff sheets in file: udc-mixed.xls
-05/07/11 15:05:05 3840: WARNING: ERROR: workbook with different path already opened!
-05/07/11 15:05:06 3840: WARNING: ============= SUMMARY =================
-05/07/11 15:05:06 3840: WARNING: SUM: Summary of checks and created items:
-05/07/11 15:05:06 3840: WARNING: SUM: checkforce 0
-05/07/11 15:05:06 3840: WARNING: SUM: checkunique 0
-05/07/11 15:05:06 3840: WARNING: SUM: checkwarn 0
-05/07/11 15:05:06 3840: WARNING: SUM: cmacros 0
-05/07/11 15:05:06 3840: WARNING: SUM: conn 4
-05/07/11 15:05:06 3840: WARNING: SUM: errors 1
-05/07/11 15:05:06 3840: WARNING: SUM: genport 5
-05/07/11 15:05:06 3840: WARNING: SUM: hdlfiles 15
-05/07/11 15:05:06 3840: WARNING: SUM: inst 13
-05/07/11 15:05:06 3840: WARNING: SUM: multdriver 0
-05/07/11 15:05:06 3840: WARNING: SUM: nodriver 0
-05/07/11 15:05:06 3840: WARNING: SUM: noload 0
-05/07/11 15:05:06 3840: WARNING: SUM: open 1
-05/07/11 15:05:06 3840: WARNING: SUM: openports 0
-05/07/11 15:05:06 3840: WARNING: SUM: tie_hl 1
-05/07/11 15:05:06 3840: WARNING: SUM: warnings 0
-05/07/11 15:05:06 3840: WARNING: SUM: === Number of parsed input tables: ===
-05/07/11 15:05:06 3840: WARNING: SUM: conf 0
-05/07/11 15:05:06 3840: WARNING: SUM: hier 1
-05/07/11 15:05:06 3840: WARNING: SUM: conn 1
-05/07/11 15:05:06 3840: WARNING: SUM: io 1
-05/07/11 15:05:06 3840: WARNING: SUM: i2c 0
+05/07/15 15:04:45 
+#######################################################################
+##### mix_0.pl (Revision: 1.36 )
+#####
+##### MIX  
+#####   MixUtils    1.66 $
+#####   MixUtils::IO    1.22 $
+#####   MixParser   1.53 $
+#####   MixWriter   1.55 $
+#####   MixChecker  1.8 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.13 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/07/15 15:04:45 Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
+05/07/15 15:04:45 Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
+05/07/15 15:04:45 Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
+05/07/15 15:04:45 Add_port: signal signal_bb_ab adds port signal_bb_ab to instance inst_t_i
+05/07/15 15:04:45 Adding port to hierachy module inst_a_i for signal signal_bb_ab!
+05/07/15 15:04:45 Adding port to hierachy module inst_b_i for signal signal_bb_ab!
+05/07/15 15:04:45 Add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_gi to instance inst_a_i
+05/07/15 15:04:45 Add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_go to instance inst_b_i
+05/07/15 15:04:45 Adding port to hierachy module inst_b_i for signal signal_aa_ba!
+05/07/15 15:04:45 Adding port to hierachy module inst_a_i for signal signal_aa_ba!
+05/07/15 15:04:45 Add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_gi to instance inst_b_i
+05/07/15 15:04:45 Add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_go to instance inst_a_i
+05/07/15 15:04:47 WARNING: Rotating 3 old sheets of CONF!
+05/07/15 15:04:48 Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/udc-mixed.xls
+05/07/15 15:04:48 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/07/15 15:04:48 Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/udc-mixed.xls
+05/07/15 15:04:48 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/07/15 15:04:48 Info: unchanged file inst_a_e-e.vhd
+05/07/15 15:04:48 Info: unchanged file inst_ab_e-e.vhd
+05/07/15 15:04:48 Info: unchanged file inst_b_e-e.vhd
+05/07/15 15:04:49 Info: unchanged file inst_bb_e-e.vhd
+05/07/15 15:04:49 Info: unchanged file inst_t_e-e.vhd
+05/07/15 15:04:49 Info: unchanged file inst_xa_e-e.vhd
+05/07/15 15:04:49 Info: unchanged file inst_a_e-rtl-a.vhd
+05/07/15 15:04:49 Info: unchanged file inst_xa_e-rtl-a.vhd
+05/07/15 15:04:49 Info: unchanged file inst_ab_e-rtl-a.vhd
+05/07/15 15:04:49 Info: unchanged file inst_b_e-rtl-a.vhd
+05/07/15 15:04:49 Info: unchanged file inst_bb_e-rtl-a.vhd
+05/07/15 15:04:49 Info: unchanged file inst_t_e-rtl-a.vhd
+05/07/15 15:04:49 Info: unchanged file inst_a_e-rtl-conf-c.vhd
+05/07/15 15:04:49 Info: unchanged file inst_b_e-rtl-conf-c.vhd
+05/07/15 15:04:49 Info: unchanged file inst_t_e-rtl-conf-c.vhd
+05/07/15 15:04:49 WARNING: ============= SUMMARY =================
+05/07/15 15:04:49 WARNING: SUM: Summary of checks and created items:
+05/07/15 15:04:49 WARNING: SUM: checkforce 0
+05/07/15 15:04:49 WARNING: SUM: checkunique 0
+05/07/15 15:04:49 WARNING: SUM: checkwarn 0
+05/07/15 15:04:49 WARNING: SUM: cmacros 0
+05/07/15 15:04:49 WARNING: SUM: conn 4
+05/07/15 15:04:49 WARNING: SUM: errors 0
+05/07/15 15:04:49 WARNING: SUM: genport 5
+05/07/15 15:04:49 WARNING: SUM: hdlfiles 15
+05/07/15 15:04:49 WARNING: SUM: inst 13
+05/07/15 15:04:49 WARNING: SUM: multdriver 0
+05/07/15 15:04:49 WARNING: SUM: nodriver 0
+05/07/15 15:04:49 WARNING: SUM: noload 0
+05/07/15 15:04:49 WARNING: SUM: open 1
+05/07/15 15:04:49 WARNING: SUM: openports 0
+05/07/15 15:04:49 WARNING: SUM: tie_hl 1
+05/07/15 15:04:49 WARNING: SUM: warnings 0
+05/07/15 15:04:49 WARNING: SUM: === Number of parsed input tables: ===
+05/07/15 15:04:49 WARNING: SUM: conf 0
+05/07/15 15:04:49 WARNING: SUM: hier 1
+05/07/15 15:04:49 WARNING: SUM: conn 1
+05/07/15 15:04:49 WARNING: SUM: io 1
+05/07/15 15:04:49 WARNING: SUM: i2c 0
+05/07/15 15:04:49 WARNING: SUM: Number of changes in intermediate: 0
+05/07/15 15:04:49 WARNING: SUM: Number of changed files: 0

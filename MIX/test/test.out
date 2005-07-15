@@ -2511,3 +2511,513 @@
 05/07/13 17:37:22 5168: SUM: Minimum run time: 8.04s
 05/07/13 17:37:22 5168: SUM: Maximum run time: 15.58s
 05/07/13 17:37:22 5168: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/13 18:43:34 5232: logic.xls in directory logic, time : 429.70s
+05/07/13 18:43:34 5232: SUM: Sucessfully timed tests: 1
+05/07/13 18:43:34 5232: SUM: Overall run time: 429.70s
+05/07/13 18:43:34 5232: SUM: Average run time: 429.70s
+05/07/13 18:43:34 5232: SUM: Minimum run time: 429.70s
+05/07/13 18:43:34 5232: SUM: Maximum run time: 429.70s
+05/07/13 18:43:34 5232: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/13 18:43:54 5988: logic.xls in directory logic failed!
+05/07/13 18:43:54 5988: SUM: Sucessfully timed tests: 0
+05/07/13 18:43:54 5988: SUM: Overall run time: 0.00s
+05/07/13 18:43:54 5988: SUM: Average run time: n/a
+05/07/13 18:43:54 5988: SUM: Minimum run time: n/a
+05/07/13 18:43:54 5988: SUM: Maximum run time: n/a
+05/07/13 18:43:54 5988: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/13 18:45:08 4760: logic.xls in directory logic, time : 7.02s
+05/07/13 18:45:08 4760: SUM: Sucessfully timed tests: 1
+05/07/13 18:45:08 4760: SUM: Overall run time: 7.02s
+05/07/13 18:45:08 4760: SUM: Average run time: 7.02s
+05/07/13 18:45:08 4760: SUM: Minimum run time: 7.02s
+05/07/13 18:45:08 4760: SUM: Maximum run time: 7.02s
+05/07/13 18:45:08 4760: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/14 15:09:12 6068: autoopen.xls in directory autoopen/noaopen failed!
+05/07/14 15:09:12 6068: SUM: Sucessfully timed tests: 0
+05/07/14 15:09:12 6068: SUM: Overall run time: 0.00s
+05/07/14 15:09:12 6068: SUM: Average run time: n/a
+05/07/14 15:09:12 6068: SUM: Minimum run time: n/a
+05/07/14 15:09:12 6068: SUM: Maximum run time: n/a
+05/07/14 15:09:12 6068: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/14 22:27:19 5644: autoopen.xls in directory autoopen/noaopen failed!
+05/07/14 22:27:19 5644: SUM: Sucessfully timed tests: 0
+05/07/14 22:27:19 5644: SUM: Overall run time: 0.00s
+05/07/14 22:27:19 5644: SUM: Average run time: n/a
+05/07/14 22:27:19 5644: SUM: Minimum run time: n/a
+05/07/14 22:27:19 5644: SUM: Maximum run time: n/a
+05/07/14 22:27:19 5644: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/14 22:45:20 5040: autoopen.xls in directory autoopen/noaopen failed!
+05/07/14 22:45:20 5040: SUM: Sucessfully timed tests: 0
+05/07/14 22:45:20 5040: SUM: Overall run time: 0.00s
+05/07/14 22:45:20 5040: SUM: Average run time: n/a
+05/07/14 22:45:20 5040: SUM: Minimum run time: n/a
+05/07/14 22:45:20 5040: SUM: Maximum run time: n/a
+05/07/14 22:45:20 5040: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/14 22:54:46 3888: autoopen.xls in directory autoopen/noaopen, time : 562.94s
+05/07/14 22:54:46 3888: SUM: Sucessfully timed tests: 1
+05/07/14 22:54:46 3888: SUM: Overall run time: 562.94s
+05/07/14 22:54:46 3888: SUM: Average run time: 562.94s
+05/07/14 22:54:46 3888: SUM: Minimum run time: 562.94s
+05/07/14 22:54:46 3888: SUM: Maximum run time: 562.94s
+05/07/14 22:54:46 3888: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 09:44:05 5276: autoopen.xls in directory autoopen/noaopen failed!
+05/07/15 09:44:05 5276: SUM: Sucessfully timed tests: 0
+05/07/15 09:44:05 5276: SUM: Overall run time: 0.00s
+05/07/15 09:44:05 5276: SUM: Average run time: n/a
+05/07/15 09:44:05 5276: SUM: Minimum run time: n/a
+05/07/15 09:44:05 5276: SUM: Maximum run time: n/a
+05/07/15 09:44:05 5276: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 10:00:51 4924: autoopen.xls in directory autoopen/noaopen failed!
+05/07/15 10:00:51 4924: SUM: Sucessfully timed tests: 0
+05/07/15 10:00:51 4924: SUM: Overall run time: 0.00s
+05/07/15 10:00:51 4924: SUM: Average run time: n/a
+05/07/15 10:00:51 4924: SUM: Minimum run time: n/a
+05/07/15 10:00:51 4924: SUM: Maximum run time: n/a
+05/07/15 10:00:51 4924: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 10:02:23 4112: autoopen.xls in directory autoopen/noaopen failed!
+05/07/15 10:02:23 4112: SUM: Sucessfully timed tests: 0
+05/07/15 10:02:23 4112: SUM: Overall run time: 0.00s
+05/07/15 10:02:23 4112: SUM: Average run time: n/a
+05/07/15 10:02:23 4112: SUM: Minimum run time: n/a
+05/07/15 10:02:23 4112: SUM: Maximum run time: n/a
+05/07/15 10:02:23 4112: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 10:10:28 3920: autoopen.xls in directory autoopen/noaopen, time : 482.12s
+05/07/15 10:10:28 3920: SUM: Sucessfully timed tests: 1
+05/07/15 10:10:28 3920: SUM: Overall run time: 482.12s
+05/07/15 10:10:28 3920: SUM: Average run time: 482.12s
+05/07/15 10:10:28 3920: SUM: Minimum run time: 482.12s
+05/07/15 10:10:28 3920: SUM: Maximum run time: 482.12s
+05/07/15 10:10:28 3920: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 10:10:49 5972: autoopen.xls in directory autoopen/noaopen failed!
+05/07/15 10:10:49 5972: SUM: Sucessfully timed tests: 0
+05/07/15 10:10:49 5972: SUM: Overall run time: 0.00s
+05/07/15 10:10:49 5972: SUM: Average run time: n/a
+05/07/15 10:10:49 5972: SUM: Minimum run time: n/a
+05/07/15 10:10:49 5972: SUM: Maximum run time: n/a
+05/07/15 10:10:49 5972: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 10:12:15 5772: autoopen.xls in directory autoopen/noaopen, time : 7.89s
+05/07/15 10:12:15 5772: SUM: Sucessfully timed tests: 1
+05/07/15 10:12:15 5772: SUM: Overall run time: 7.89s
+05/07/15 10:12:15 5772: SUM: Average run time: 7.89s
+05/07/15 10:12:15 5772: SUM: Minimum run time: 7.89s
+05/07/15 10:12:15 5772: SUM: Maximum run time: 7.89s
+05/07/15 10:12:15 5772: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 10:15:01 6024: autoopen.xls in directory autoopen failed!
+05/07/15 10:15:12 6024: autoopen.xls in directory autoopen/aaa failed!
+05/07/15 10:15:24 6024: autoopen.xls in directory autoopen/simple failed!
+05/07/15 10:15:24 6024: SUM: Sucessfully timed tests: 0
+05/07/15 10:15:24 6024: SUM: Overall run time: 0.00s
+05/07/15 10:15:24 6024: SUM: Average run time: n/a
+05/07/15 10:15:24 6024: SUM: Minimum run time: n/a
+05/07/15 10:15:24 6024: SUM: Maximum run time: n/a
+05/07/15 10:15:24 6024: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 10:15:44 5496: autoopen.xls in directory autoopen/noaopen, time : 8.32s
+05/07/15 10:15:44 5496: SUM: Sucessfully timed tests: 1
+05/07/15 10:15:44 5496: SUM: Overall run time: 8.32s
+05/07/15 10:15:44 5496: SUM: Average run time: 8.32s
+05/07/15 10:15:44 5496: SUM: Minimum run time: 8.32s
+05/07/15 10:15:44 5496: SUM: Maximum run time: 8.32s
+05/07/15 10:15:44 5496: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 10:21:24 3584: autoopen.xls in directory autoopen/aaa failed!
+05/07/15 10:21:24 3584: SUM: Sucessfully timed tests: 0
+05/07/15 10:21:24 3584: SUM: Overall run time: 0.00s
+05/07/15 10:21:24 3584: SUM: Average run time: n/a
+05/07/15 10:21:24 3584: SUM: Minimum run time: n/a
+05/07/15 10:21:24 3584: SUM: Maximum run time: n/a
+05/07/15 10:21:24 3584: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 10:26:22 612: autoopen.xls in directory autoopen failed!
+05/07/15 10:26:31 612: autoopen.xls in directory autoopen/aaa, time : 8.60s
+05/07/15 10:26:44 612: autoopen.xls in directory autoopen/simple failed!
+05/07/15 10:26:52 612: autoopen.xls in directory autoopen/noaopen, time : 8.59s
+05/07/15 10:26:52 612: SUM: Sucessfully timed tests: 2
+05/07/15 10:26:52 612: SUM: Overall run time: 17.19s
+05/07/15 10:26:52 612: SUM: Average run time: 8.60s
+05/07/15 10:26:52 612: SUM: Minimum run time: 8.59s
+05/07/15 10:26:52 612: SUM: Maximum run time: 8.60s
+05/07/15 10:26:52 612: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 10:27:46 2796: autoopen.xls in directory autoopen, time : 7.46s
+05/07/15 10:27:46 2796: SUM: Sucessfully timed tests: 1
+05/07/15 10:27:46 2796: SUM: Overall run time: 7.46s
+05/07/15 10:27:46 2796: SUM: Average run time: 7.46s
+05/07/15 10:27:46 2796: SUM: Minimum run time: 7.46s
+05/07/15 10:27:46 2796: SUM: Maximum run time: 7.46s
+05/07/15 10:27:46 2796: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 10:30:36 4124: autoopen.xls in directory autoopen, time : 8.19s
+05/07/15 10:30:45 4124: autoopen.xls in directory autoopen/aaa, time : 8.88s
+05/07/15 10:30:54 4124: autoopen.xls in directory autoopen/simple failed!
+05/07/15 10:31:03 4124: autoopen.xls in directory autoopen/noaopen, time : 8.80s
+05/07/15 10:31:03 4124: SUM: Sucessfully timed tests: 3
+05/07/15 10:31:03 4124: SUM: Overall run time: 25.88s
+05/07/15 10:31:03 4124: SUM: Average run time: 8.63s
+05/07/15 10:31:03 4124: SUM: Minimum run time: 8.19s
+05/07/15 10:31:03 4124: SUM: Maximum run time: 8.88s
+05/07/15 10:31:03 4124: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 10:32:47 5212: autoopen.xls in directory autoopen/simple, time : 7.57s
+05/07/15 10:32:47 5212: SUM: Sucessfully timed tests: 1
+05/07/15 10:32:47 5212: SUM: Overall run time: 7.57s
+05/07/15 10:32:47 5212: SUM: Average run time: 7.57s
+05/07/15 10:32:47 5212: SUM: Minimum run time: 7.57s
+05/07/15 10:32:47 5212: SUM: Maximum run time: 7.57s
+05/07/15 10:32:47 5212: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 11:03:30 4696: bugver.xls in directory bugver/ramd, time : 12.77s
+05/07/15 11:03:30 4696: SUM: Sucessfully timed tests: 1
+05/07/15 11:03:30 4696: SUM: Overall run time: 12.77s
+05/07/15 11:03:30 4696: SUM: Average run time: 12.77s
+05/07/15 11:03:30 4696: SUM: Minimum run time: 12.77s
+05/07/15 11:03:30 4696: SUM: Maximum run time: 12.77s
+05/07/15 11:03:30 4696: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 12:54:29 5640: bugver.xls in directory bugver/ramd, time : 1088.62s
+05/07/15 12:54:29 5640: SUM: Sucessfully timed tests: 1
+05/07/15 12:54:29 5640: SUM: Overall run time: 1088.62s
+05/07/15 12:54:29 5640: SUM: Average run time: 1088.62s
+05/07/15 12:54:29 5640: SUM: Minimum run time: 1088.62s
+05/07/15 12:54:29 5640: SUM: Maximum run time: 1088.62s
+05/07/15 12:54:29 5640: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 12:55:17 5820: conf.xls in directory conf, time : 8.96s
+05/07/15 12:55:17 5820: SUM: Sucessfully timed tests: 1
+05/07/15 12:55:17 5820: SUM: Overall run time: 8.96s
+05/07/15 12:55:17 5820: SUM: Average run time: 8.96s
+05/07/15 12:55:17 5820: SUM: Minimum run time: 8.96s
+05/07/15 12:55:17 5820: SUM: Maximum run time: 8.96s
+05/07/15 12:55:17 5820: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 13:04:03 4968: configuration.xls in directory configuration, time : 7.66s
+05/07/15 13:04:03 4968: SUM: Sucessfully timed tests: 1
+05/07/15 13:04:03 4968: SUM: Overall run time: 7.66s
+05/07/15 13:04:03 4968: SUM: Average run time: 7.66s
+05/07/15 13:04:03 4968: SUM: Minimum run time: 7.66s
+05/07/15 13:04:03 4968: SUM: Maximum run time: 7.66s
+05/07/15 13:04:03 4968: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 13:09:27 3436: generic.xls in directory generic failed!
+05/07/15 13:09:27 3436: SUM: Sucessfully timed tests: 0
+05/07/15 13:09:27 3436: SUM: Overall run time: 0.00s
+05/07/15 13:09:27 3436: SUM: Average run time: n/a
+05/07/15 13:09:27 3436: SUM: Minimum run time: n/a
+05/07/15 13:09:27 3436: SUM: Maximum run time: n/a
+05/07/15 13:09:27 3436: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 13:11:40 4092: generic.xls in directory generic, time : 10.34s
+05/07/15 13:11:40 4092: SUM: Sucessfully timed tests: 1
+05/07/15 13:11:40 4092: SUM: Overall run time: 10.34s
+05/07/15 13:11:40 4092: SUM: Average run time: 10.34s
+05/07/15 13:11:40 4092: SUM: Minimum run time: 10.34s
+05/07/15 13:11:40 4092: SUM: Maximum run time: 10.34s
+05/07/15 13:11:40 4092: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 13:18:39 4056: generic.xls in directory generic, time : 30.39s
+05/07/15 13:18:40 4056: SUM: Sucessfully timed tests: 1
+05/07/15 13:18:40 4056: SUM: Overall run time: 30.39s
+05/07/15 13:18:40 4056: SUM: Average run time: 30.39s
+05/07/15 13:18:40 4056: SUM: Minimum run time: 30.39s
+05/07/15 13:18:40 4056: SUM: Maximum run time: 30.39s
+05/07/15 13:18:40 4056: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 13:21:34 3592: generic.xls in directory generic/verilog, time : 17.70s
+05/07/15 13:21:34 3592: SUM: Sucessfully timed tests: 1
+05/07/15 13:21:34 3592: SUM: Overall run time: 17.70s
+05/07/15 13:21:34 3592: SUM: Average run time: 17.70s
+05/07/15 13:21:34 3592: SUM: Minimum run time: 17.70s
+05/07/15 13:21:34 3592: SUM: Maximum run time: 17.70s
+05/07/15 13:21:35 3592: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 13:29:17 5652: generic.xls in directory generic, time : 18.93s
+05/07/15 13:29:27 5652: generic.xls in directory generic/verilog, time : 9.62s
+05/07/15 13:29:37 5652: generic.xls in directory generic/veriovhd, time : 10.15s
+05/07/15 13:29:37 5652: SUM: Sucessfully timed tests: 3
+05/07/15 13:29:37 5652: SUM: Overall run time: 38.71s
+05/07/15 13:29:37 5652: SUM: Average run time: 12.90s
+05/07/15 13:29:37 5652: SUM: Minimum run time: 9.62s
+05/07/15 13:29:37 5652: SUM: Maximum run time: 18.93s
+05/07/15 13:29:37 5652: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 13:44:39 5652: init.xls in directory init failed!
+05/07/15 13:44:39 5652: SUM: Sucessfully timed tests: 0
+05/07/15 13:44:39 5652: SUM: Overall run time: 0.00s
+05/07/15 13:44:39 5652: SUM: Average run time: n/a
+05/07/15 13:44:39 5652: SUM: Minimum run time: n/a
+05/07/15 13:44:39 5652: SUM: Maximum run time: n/a
+05/07/15 13:44:39 5652: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 13:45:50 5444: init.xls in directory init, time : 23.90s
+05/07/15 13:45:50 5444: SUM: Sucessfully timed tests: 1
+05/07/15 13:45:50 5444: SUM: Overall run time: 23.90s
+05/07/15 13:45:50 5444: SUM: Average run time: 23.90s
+05/07/15 13:45:50 5444: SUM: Minimum run time: 23.90s
+05/07/15 13:45:50 5444: SUM: Maximum run time: 23.90s
+05/07/15 13:45:50 5444: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 13:46:14 3188: init.xls in directory init, time : 6.20s
+05/07/15 13:46:14 3188: SUM: Sucessfully timed tests: 1
+05/07/15 13:46:14 3188: SUM: Overall run time: 6.20s
+05/07/15 13:46:14 3188: SUM: Average run time: 6.20s
+05/07/15 13:46:14 3188: SUM: Minimum run time: 6.20s
+05/07/15 13:46:14 3188: SUM: Maximum run time: 6.20s
+05/07/15 13:46:14 3188: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 13:49:26 4548: logic.xls in directory logic, time : 7.76s
+05/07/15 13:49:26 4548: SUM: Sucessfully timed tests: 1
+05/07/15 13:49:26 4548: SUM: Overall run time: 7.76s
+05/07/15 13:49:26 4548: SUM: Average run time: 7.76s
+05/07/15 13:49:26 4548: SUM: Minimum run time: 7.76s
+05/07/15 13:49:26 4548: SUM: Maximum run time: 7.76s
+05/07/15 13:49:26 4548: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 13:54:41 4972: macro.xls in directory macro, time : 15.85s
+05/07/15 13:54:41 4972: SUM: Sucessfully timed tests: 1
+05/07/15 13:54:41 4972: SUM: Overall run time: 15.85s
+05/07/15 13:54:41 4972: SUM: Average run time: 15.85s
+05/07/15 13:54:41 4972: SUM: Minimum run time: 15.85s
+05/07/15 13:54:41 4972: SUM: Maximum run time: 15.85s
+05/07/15 13:54:41 4972: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 14:35:42 2112: padio.xls in directory padio, time : 14.17s
+05/07/15 14:35:42 2112: SUM: Sucessfully timed tests: 1
+05/07/15 14:35:42 2112: SUM: Overall run time: 14.17s
+05/07/15 14:35:42 2112: SUM: Average run time: 14.17s
+05/07/15 14:35:42 2112: SUM: Minimum run time: 14.17s
+05/07/15 14:35:42 2112: SUM: Maximum run time: 14.17s
+05/07/15 14:35:42 2112: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 14:36:26 2840: padio.xls in directory padio, time : 8.79s
+05/07/15 14:36:26 2840: SUM: Sucessfully timed tests: 1
+05/07/15 14:36:26 2840: SUM: Overall run time: 8.79s
+05/07/15 14:36:26 2840: SUM: Average run time: 8.79s
+05/07/15 14:36:26 2840: SUM: Minimum run time: 8.79s
+05/07/15 14:36:26 2840: SUM: Maximum run time: 8.79s
+05/07/15 14:36:26 2840: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 14:43:29 788: padio.xls in directory padio/names, time : 10.10s
+05/07/15 14:43:29 788: SUM: Sucessfully timed tests: 1
+05/07/15 14:43:29 788: SUM: Overall run time: 10.10s
+05/07/15 14:43:29 788: SUM: Average run time: 10.10s
+05/07/15 14:43:29 788: SUM: Minimum run time: 10.10s
+05/07/15 14:43:29 788: SUM: Maximum run time: 10.10s
+05/07/15 14:43:29 788: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 14:45:34 5320: padio2.xls in directory padio2 failed!
+05/07/15 14:45:34 5320: SUM: Sucessfully timed tests: 0
+05/07/15 14:45:34 5320: SUM: Overall run time: 0.00s
+05/07/15 14:45:34 5320: SUM: Average run time: n/a
+05/07/15 14:45:34 5320: SUM: Minimum run time: n/a
+05/07/15 14:45:34 5320: SUM: Maximum run time: n/a
+05/07/15 14:45:34 5320: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 14:47:43 4276: padio2.xls in directory padio2, time : 10.13s
+05/07/15 14:47:43 4276: SUM: Sucessfully timed tests: 1
+05/07/15 14:47:43 4276: SUM: Overall run time: 10.13s
+05/07/15 14:47:43 4276: SUM: Average run time: 10.13s
+05/07/15 14:47:43 4276: SUM: Minimum run time: 10.13s
+05/07/15 14:47:43 4276: SUM: Maximum run time: 10.13s
+05/07/15 14:47:43 4276: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 14:50:40 5520: sigport.xls in directory sigport, time : 9.65s
+05/07/15 14:50:40 5520: SUM: Sucessfully timed tests: 1
+05/07/15 14:50:40 5520: SUM: Overall run time: 9.65s
+05/07/15 14:50:40 5520: SUM: Average run time: 9.65s
+05/07/15 14:50:40 5520: SUM: Minimum run time: 9.65s
+05/07/15 14:50:40 5520: SUM: Maximum run time: 9.65s
+05/07/15 14:50:40 5520: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 14:52:43 4836: sigport.xls in directory sigport/use, time : 9.88s
+05/07/15 14:52:43 4836: SUM: Sucessfully timed tests: 1
+05/07/15 14:52:43 4836: SUM: Overall run time: 9.88s
+05/07/15 14:52:43 4836: SUM: Average run time: 9.88s
+05/07/15 14:52:43 4836: SUM: Minimum run time: 9.88s
+05/07/15 14:52:43 4836: SUM: Maximum run time: 9.88s
+05/07/15 14:52:43 4836: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 14:53:10 612: sigport.xls in directory sigport/verilog, time : 9.46s
+05/07/15 14:53:10 612: SUM: Sucessfully timed tests: 1
+05/07/15 14:53:10 612: SUM: Overall run time: 9.46s
+05/07/15 14:53:10 612: SUM: Average run time: 9.46s
+05/07/15 14:53:10 612: SUM: Minimum run time: 9.46s
+05/07/15 14:53:10 612: SUM: Maximum run time: 9.46s
+05/07/15 14:53:10 612: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 15:04:50 2900: udc.xls in directory udc, time : 11.58s
+05/07/15 15:04:50 2900: SUM: Sucessfully timed tests: 1
+05/07/15 15:04:50 2900: SUM: Overall run time: 11.58s
+05/07/15 15:04:50 2900: SUM: Average run time: 11.58s
+05/07/15 15:04:50 2900: SUM: Minimum run time: 11.58s
+05/07/15 15:04:50 2900: SUM: Maximum run time: 11.58s
+05/07/15 15:04:50 2900: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 15:10:56 4688: verilog.xls in directory verilog, time : 8.75s
+05/07/15 15:11:05 4688: verilog.xls in directory verilog/vhdl, time : 8.92s
+05/07/15 15:11:14 4688: verilog.xls in directory verilog/mixed, time : 8.29s
+05/07/15 15:11:21 4688: verilog.xls in directory verilog/uamn, time : 7.49s
+05/07/15 15:11:29 4688: verilog.xls in directory verilog/useconfname, time : 7.83s
+05/07/15 15:11:29 4688: SUM: Sucessfully timed tests: 5
+05/07/15 15:11:29 4688: SUM: Overall run time: 41.29s
+05/07/15 15:11:29 4688: SUM: Average run time: 8.26s
+05/07/15 15:11:29 4688: SUM: Minimum run time: 7.49s
+05/07/15 15:11:29 4688: SUM: Maximum run time: 8.92s
+05/07/15 15:11:29 4688: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 15:21:31 5592: bitsplice.xls in directory bitsplice failed!
+05/07/15 15:21:45 5592: bitsplice.xls in directory bitsplice/verilog failed!
+05/07/15 15:22:00 5592: bitsplice.xls in directory bitsplice/vhdportsort failed!
+05/07/15 15:22:14 5592: bitsplice.xls in directory bitsplice/verportsort failed!
+05/07/15 15:22:35 5592: bitsplice.xls in directory bitsplice/connport failed!
+05/07/15 15:22:45 5592: sigport.xls in directory sigport failed!
+05/07/15 15:22:55 5592: sigport.xls in directory sigport/use failed!
+05/07/15 15:23:05 5592: sigport.xls in directory sigport/verilog failed!
+05/07/15 15:23:14 5592: highlow.xls in directory highlow failed!
+05/07/15 15:23:24 5592: highlow.xls in directory highlow/verilog failed!
+05/07/15 15:23:38 5592: mde_tests.xls in directory mde_tests/conn_nreset failed!
+05/07/15 15:23:53 5592: mde_tests.xls in directory mde_tests/conn_nr_vhdl failed!
+05/07/15 15:24:07 5592: mde_tests.xls in directory mde_tests/nreset2 failed!
+05/07/15 15:24:18 5592: constant.xls in directory constant failed!
+05/07/15 15:24:29 5592: constant.xls in directory constant/verilog failed!
+05/07/15 15:24:40 5592: io.xls in directory io failed!
+05/07/15 15:24:50 5592: io.xls in directory io/verilog failed!
+05/07/15 15:25:02 5592: generic.xls in directory generic failed!
+05/07/15 15:25:12 5592: generic.xls in directory generic/verilog failed!
+05/07/15 15:25:23 5592: generic.xls in directory generic/veriovhd failed!
+05/07/15 15:25:32 5592: genwidth.xls in directory genwidth failed!
+05/07/15 15:25:42 5592: genwidth.xls in directory genwidth/verilog failed!
+05/07/15 15:25:54 5592: nreset2.xls in directory nreset2 failed!
+05/07/15 15:26:04 5592: open.xls in directory open failed!
+05/07/15 15:26:13 5592: open.xls in directory open/verilog failed!
+05/07/15 15:26:23 5592: open.xls in directory open/verilog_ndmy failed!
+05/07/15 15:26:43 5592: macro.xls in directory macro failed!
+05/07/15 15:26:52 5592: verilog.xls in directory verilog, time : 8.92s
+05/07/15 15:27:03 5592: verilog.xls in directory verilog/vhdl, time : 10.56s
+05/07/15 15:27:13 5592: verilog.xls in directory verilog/mixed, time : 10.05s
+05/07/15 15:27:21 5592: verilog.xls in directory verilog/uamn, time : 8.17s
+05/07/15 15:27:30 5592: verilog.xls in directory verilog/useconfname, time : 9.07s
+05/07/15 15:27:40 5592: conf.xls in directory conf failed!
+05/07/15 15:27:49 5592: configuration.xls in directory configuration failed!
+05/07/15 15:28:02 5592: padio.xls in directory padio failed!
+05/07/15 15:28:15 5592: padio.xls in directory padio/names failed!
+05/07/15 15:28:32 5592: padio.xls in directory padio/bus failed!
+05/07/15 15:28:52 5592: padio.xls in directory padio/given failed!
+05/07/15 15:29:05 5592: padio2.xls in directory padio2 failed!
+05/07/15 15:29:14 5592: typecast.xls in directory typecast failed!
+05/07/15 15:29:25 5592: typecast.xls in directory typecast/intsig failed!
+05/07/15 15:29:36 5592: typecast.xls in directory typecast/intbus failed!
+05/07/15 15:29:43 5592: init.xls in directory init, time : 7.11s
+05/07/15 15:29:53 5592: autoopen.xls in directory autoopen failed!
+05/07/15 15:30:05 5592: autoopen.xls in directory autoopen/aaa failed!
+05/07/15 15:30:14 5592: autoopen.xls in directory autoopen/simple failed!
+05/07/15 15:30:24 5592: autoopen.xls in directory autoopen/noaopen failed!
+05/07/15 15:30:43 5592: bugver.xls in directory bugver/ramd failed!
+05/07/15 15:30:56 5592: bugver.xls in directory bugver/constbug failed!
+05/07/15 15:31:06 5592: logic.xls in directory logic failed!
+05/07/15 15:31:15 5592: udc.xls in directory udc, time : 9.06s
+05/07/15 15:31:15 5592: SUM: Sucessfully timed tests: 7
+05/07/15 15:31:15 5592: SUM: Overall run time: 62.95s
+05/07/15 15:31:15 5592: SUM: Average run time: 8.99s
+05/07/15 15:31:15 5592: SUM: Minimum run time: 7.11s
+05/07/15 15:31:15 5592: SUM: Maximum run time: 10.56s
+05/07/15 15:31:15 5592: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 16:10:10 3444: sigport.xls in directory sigport, time : 1277.52s
+05/07/15 16:10:10 3444: SUM: Sucessfully timed tests: 1
+05/07/15 16:10:10 3444: SUM: Overall run time: 1277.52s
+05/07/15 16:10:10 3444: SUM: Average run time: 1277.52s
+05/07/15 16:10:10 3444: SUM: Minimum run time: 1277.52s
+05/07/15 16:10:10 3444: SUM: Maximum run time: 1277.52s
+05/07/15 16:10:10 3444: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 16:11:50 3864: sigport.xls in directory sigport, time : 97.04s
+05/07/15 16:11:50 3864: SUM: Sucessfully timed tests: 1
+05/07/15 16:11:50 3864: SUM: Overall run time: 97.04s
+05/07/15 16:11:50 3864: SUM: Average run time: 97.04s
+05/07/15 16:11:50 3864: SUM: Minimum run time: 97.04s
+05/07/15 16:11:50 3864: SUM: Maximum run time: 97.04s
+05/07/15 16:11:50 3864: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 16:12:09 4152: bitsplice.xls in directory bitsplice failed!
+05/07/15 16:12:22 4152: bitsplice.xls in directory bitsplice/verilog failed!
+05/07/15 16:12:37 4152: bitsplice.xls in directory bitsplice/vhdportsort failed!
+05/07/15 16:12:51 4152: bitsplice.xls in directory bitsplice/verportsort failed!
+05/07/15 16:13:11 4152: bitsplice.xls in directory bitsplice/connport failed!
+05/07/15 16:13:21 4152: sigport.xls in directory sigport, time : 9.71s
+05/07/15 16:13:32 4152: sigport.xls in directory sigport/use failed!
+05/07/15 16:13:43 4152: sigport.xls in directory sigport/verilog failed!
+05/07/15 16:13:53 4152: highlow.xls in directory highlow, time : 9.74s
+05/07/15 16:14:03 4152: highlow.xls in directory highlow/verilog, time : 9.78s
+05/07/15 16:14:16 4152: mde_tests.xls in directory mde_tests/conn_nreset failed!
+05/07/15 16:14:30 4152: mde_tests.xls in directory mde_tests/conn_nr_vhdl failed!
+05/07/15 16:14:43 4152: mde_tests.xls in directory mde_tests/nreset2, time : 13.03s
+05/07/15 16:14:54 4152: constant.xls in directory constant, time : 10.75s
+05/07/15 16:15:06 4152: constant.xls in directory constant/verilog, time : 11.92s
+05/07/15 16:15:17 4152: io.xls in directory io, time : 9.95s
+05/07/15 16:15:27 4152: io.xls in directory io/verilog, time : 9.87s
+05/07/15 16:15:38 4152: generic.xls in directory generic, time : 11.46s
+05/07/15 16:15:49 4152: generic.xls in directory generic/verilog, time : 10.33s
+05/07/15 16:15:59 4152: generic.xls in directory generic/veriovhd, time : 10.42s
+05/07/15 16:16:09 4152: genwidth.xls in directory genwidth, time : 9.41s
+05/07/15 16:16:19 4152: genwidth.xls in directory genwidth/verilog, time : 9.81s
+05/07/15 16:16:30 4152: nreset2.xls in directory nreset2, time : 11.35s
+05/07/15 16:16:40 4152: open.xls in directory open, time : 9.37s
+05/07/15 16:16:50 4152: open.xls in directory open/verilog, time : 9.50s
+05/07/15 16:16:59 4152: open.xls in directory open/verilog_ndmy, time : 9.52s
+05/07/15 16:17:19 4152: macro.xls in directory macro, time : 19.33s
+05/07/15 16:17:28 4152: verilog.xls in directory verilog failed!
+05/07/15 16:17:40 4152: verilog.xls in directory verilog/vhdl failed!
+05/07/15 16:17:51 4152: verilog.xls in directory verilog/mixed failed!
+05/07/15 16:18:00 4152: verilog.xls in directory verilog/uamn failed!
+05/07/15 16:18:10 4152: verilog.xls in directory verilog/useconfname failed!
+05/07/15 16:18:21 4152: conf.xls in directory conf failed!
+05/07/15 16:18:31 4152: configuration.xls in directory configuration, time : 9.81s
+05/07/15 16:18:43 4152: padio.xls in directory padio failed!
+05/07/15 16:18:56 4152: padio.xls in directory padio/names failed!
+05/07/15 16:19:12 4152: padio.xls in directory padio/bus failed!
+05/07/15 16:19:34 4152: padio.xls in directory padio/given failed!
+05/07/15 16:19:49 4152: padio2.xls in directory padio2 failed!
+05/07/15 16:20:00 4152: typecast.xls in directory typecast, time : 10.51s
+05/07/15 16:20:11 4152: typecast.xls in directory typecast/intsig, time : 11.10s
+05/07/15 16:20:22 4152: typecast.xls in directory typecast/intbus, time : 10.55s
+05/07/15 16:20:29 4152: init.xls in directory init, time : 7.00s
+05/07/15 16:20:39 4152: autoopen.xls in directory autoopen, time : 10.14s
+05/07/15 16:20:50 4152: autoopen.xls in directory autoopen/aaa, time : 10.82s
+05/07/15 16:21:00 4152: autoopen.xls in directory autoopen/simple, time : 9.43s
+05/07/15 16:21:10 4152: autoopen.xls in directory autoopen/noaopen, time : 10.21s
+05/07/15 16:21:28 4152: bugver.xls in directory bugver/ramd, time : 17.34s
+05/07/15 16:21:41 4152: bugver.xls in directory bugver/constbug failed!
+05/07/15 16:21:50 4152: logic.xls in directory logic, time : 9.26s
+05/07/15 16:22:00 4152: udc.xls in directory udc, time : 10.09s
+05/07/15 16:22:00 4152: SUM: Sucessfully timed tests: 30
+05/07/15 16:22:00 4152: SUM: Overall run time: 321.55s
+05/07/15 16:22:00 4152: SUM: Average run time: 10.72s
+05/07/15 16:22:00 4152: SUM: Minimum run time: 7.00s
+05/07/15 16:22:00 4152: SUM: Maximum run time: 19.33s
+05/07/15 16:22:00 4152: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 16:37:15 5200: sigport.xls in directory sigport/use, time : 8.69s
+05/07/15 16:37:23 5200: sigport.xls in directory sigport/verilog, time : 8.56s
+05/07/15 16:37:24 5200: SUM: Sucessfully timed tests: 2
+05/07/15 16:37:24 5200: SUM: Overall run time: 17.25s
+05/07/15 16:37:24 5200: SUM: Average run time: 8.63s
+05/07/15 16:37:24 5200: SUM: Minimum run time: 8.56s
+05/07/15 16:37:24 5200: SUM: Maximum run time: 8.69s
+05/07/15 16:37:24 5200: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 17:40:24 1420: padio.xls in directory padio, time : 11.75s
+05/07/15 17:40:24 1420: SUM: Sucessfully timed tests: 1
+05/07/15 17:40:24 1420: SUM: Overall run time: 11.75s
+05/07/15 17:40:24 1420: SUM: Average run time: 11.75s
+05/07/15 17:40:24 1420: SUM: Minimum run time: 11.75s
+05/07/15 17:40:24 1420: SUM: Maximum run time: 11.75s
+05/07/15 17:40:24 1420: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 17:46:32 4652: padio.xls in directory padio failed!
+05/07/15 17:46:32 4652: SUM: Sucessfully timed tests: 0
+05/07/15 17:46:32 4652: SUM: Overall run time: 0.00s
+05/07/15 17:46:32 4652: SUM: Average run time: n/a
+05/07/15 17:46:32 4652: SUM: Minimum run time: n/a
+05/07/15 17:46:32 4652: SUM: Maximum run time: n/a
+05/07/15 17:46:32 4652: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 17:49:32 2000: padio.xls in directory padio, time : 9.31s
+05/07/15 17:49:32 2000: SUM: Sucessfully timed tests: 1
+05/07/15 17:49:32 2000: SUM: Overall run time: 9.31s
+05/07/15 17:49:32 2000: SUM: Average run time: 9.31s
+05/07/15 17:49:32 2000: SUM: Minimum run time: 9.31s
+05/07/15 17:49:32 2000: SUM: Maximum run time: 9.31s
+05/07/15 17:49:32 2000: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 17:51:00 3756: padio.xls in directory padio, time : 11.20s
+05/07/15 17:51:01 3756: SUM: Sucessfully timed tests: 1
+05/07/15 17:51:01 3756: SUM: Overall run time: 11.20s
+05/07/15 17:51:01 3756: SUM: Average run time: 11.20s
+05/07/15 17:51:01 3756: SUM: Minimum run time: 11.20s
+05/07/15 17:51:01 3756: SUM: Maximum run time: 11.20s
+05/07/15 17:51:01 3756: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 17:53:44 4988: padio.xls in directory padio/names failed!
+05/07/15 17:54:04 4988: padio.xls in directory padio/given failed!
+05/07/15 17:54:04 4988: SUM: Sucessfully timed tests: 0
+05/07/15 17:54:04 4988: SUM: Overall run time: 0.00s
+05/07/15 17:54:04 4988: SUM: Average run time: n/a
+05/07/15 17:54:04 4988: SUM: Minimum run time: n/a
+05/07/15 17:54:04 4988: SUM: Maximum run time: n/a
+05/07/15 17:54:04 4988: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 17:57:03 1416: padio.xls in directory padio/names, time : 10.12s
+05/07/15 17:57:14 1416: padio.xls in directory padio/given, time : 11.02s
+05/07/15 17:57:14 1416: SUM: Sucessfully timed tests: 2
+05/07/15 17:57:14 1416: SUM: Overall run time: 21.14s
+05/07/15 17:57:14 1416: SUM: Average run time: 10.57s
+05/07/15 17:57:14 1416: SUM: Minimum run time: 10.12s
+05/07/15 17:57:14 1416: SUM: Maximum run time: 11.02s
+05/07/15 17:57:14 1416: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32
+05/07/15 17:57:46 5196: padio.xls in directory padio/names failed!
+05/07/15 17:57:58 5196: padio.xls in directory padio/given failed!
+05/07/15 17:57:58 5196: SUM: Sucessfully timed tests: 0
+05/07/15 17:57:58 5196: SUM: Overall run time: 0.00s
+05/07/15 17:57:58 5196: SUM: Average run time: n/a
+05/07/15 17:57:58 5196: SUM: Minimum run time: n/a
+05/07/15 17:57:58 5196: SUM: Maximum run time: n/a
+05/07/15 17:57:58 5196: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: MSWin32

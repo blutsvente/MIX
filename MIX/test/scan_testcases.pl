@@ -96,7 +96,7 @@ for my $c ( sort( @cases ) ) {
 			$mix0 = <$fh>;
 			close( $fh );
 		} else {
-			print "ERROR: cannot open $dir/$c/mix_0.pl.out: $!\n";
+			print "ERROR: cannot open $mo: $!\n";
 		}
 		#
 		#05/07/13 17:29:56 WARNING: SUM: Number of changes in intermediate: 0
@@ -117,7 +117,9 @@ for my $c ( sort( @cases ) ) {
 			$delta = 0;
 			$change_f = $change_i = "<NA>";
 		}
-		print "## Subtestcase success: $mo: delta: $delta, change_i: $change_i, change_f: $change_f\n";
+		( my $printmo = $mo ) =~ s!$dir/$c/!!;
+		my $result = ( $delta == -1 ) ? "FAILURE" : ( $delta == 0 ) ? "UPDATE" : "delta";
+		print "## Subtestcase_" . $result . ": " . $printmo . ": delta: $delta, change_i: $change_i, change_f: $change_f\n";
 	}
 
 	while ( $diffs =~ s/^diff.*mix_0\.pl\.out\n+
