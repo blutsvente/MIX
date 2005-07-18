@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.1 2005/07/07 12:35:26 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.2 2005/07/18 08:40:59 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,10 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.2  2005/07/18 08:40:59  lutscher
+#  o fixed parser for register-master sheet
+#  o changed global parameter _mult_max_ -> _mult_
+#
 #  Revision 1.1  2005/07/07 12:35:26  lutscher
 #  Reg: register space class; represents register space
 #  of a device and contains register domains; also contains
@@ -71,6 +75,8 @@ our(%hglobal) =
    supported_views => ["HDL-vrs"], 
    # attributes in register-master that do not belong to a field
    non_field_attributes => [qw(::ign ::sub ::interface ::inst ::width ::b:.* ::b ::addr ::dev ::vi2c ::default ::name ::type)],
+   # language for code generation, currently only VHDL supported
+   lang => "vhdl",
   );
 
 #------------------------------------------------------------------------------
@@ -216,12 +222,12 @@ sub _map_register_master {
 	};
 
 	# highest bit specified in register-master
-	$msb_max = $EH{'i2c'}{'_mult_max_'}{'::b'};
-
+	$msb_max = $EH{'i2c'}{'_mult_'}{'::b'} || die "ERROR: internal error";
+	
 	# iterate each row
 	foreach $href_row (@$lref_rm) {
 		# skip lines to ignore
-		next if (exists ($href_row->{"::ign"}) and $href_row->{"::ign"} =~ /.+/);
+		next if (exists ($href_row->{"::ign"}) and ($href_row->{"::ign"} =~ m,^(#|//|\w+),));
 		next if (!scalar(%$href_row));
 
 		$col_cnt = 0;
@@ -300,7 +306,6 @@ sub _map_register_master {
 				$o_domain = $this->find_domain_by_name_first($domain);
 				if (!ref($o_domain)) {
 					$o_domain = Micronas::RegDomain->new(name => $domain);
-					# BAUSTELLE set 'implementation' field
 					
 					# get base-address
 					if ($database_type eq "VGCA") {
