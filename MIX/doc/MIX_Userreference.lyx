@@ -56,7 +56,7 @@ MIX - Micronas Interconnect Spec expander
 
 Author: Wilfried Gänsheimer
 \newline 
-$Date: 2005/07/12 07:06:14 $
+$Date: 2005/07/18 09:00:25 $
 \newline 
 Version: $Id: MIX_Userreference.lyx,v 1.6 2005/01/26 14:01:59 wig Exp 
 \layout Section
@@ -2238,17 +2238,44 @@ conf
 \layout Subsection
 
 Special HIER sheet properties
+\layout Subsubsection
+
+Pseudo Instances %TOP% et al.
 \layout Standard
 
 
 \family typewriter 
-
-\backslash 
-%TOP
-\backslash 
-%
+%TOP%
 \family default 
  is a pseudo instance and used for internal purposes, only.
+ Please use testbench as the top level of your description.
+ Another internally used instance is %TYPECAST% ...
+\layout Subsubsection
+
+Simple logic creation
+\layout Standard
+
+MIX will support simple logic creation when you use one of the following
+ keywords as the entity of a hierachical element:
+\layout Standard
+
+%AND%, %OR%, %NAND%, %NOR%, %XOR%, %NOT%, %WIRE%
+\layout Standard
+
+%WIRE% will be handeled as connection (assignment), while the logic will
+ be created with HDL logic description.
+ Currently no bit-splicing is supported and appropriate bit width of busse
+ will not be checked.
+ Make sure only one output signal gets connected.
+ See the testcase 
+\begin_inset Quotes eld
+\end_inset 
+
+logic
+\begin_inset Quotes erd
+\end_inset 
+
+ for an example.
 \layout Subsection
 
 CONN sheet details
