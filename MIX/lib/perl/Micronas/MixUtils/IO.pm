@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.23 $                                          |
-# | Author:     $Author: lutscher $                                         |
-# | Date:       $Date: 2005/07/14 09:04:12 $                              |
+# | Revision:   $Revision: 1.24 $                                          |
+# | Author:     $Author: wig $                                         |
+# | Date:       $Date: 2005/07/18 05:46:54 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.24  2005/07/18 05:46:54  wig
+# | Update of some tiny fixes (test case related)
+# |
 # | Revision 1.23  2005/07/14 09:04:12  lutscher
 # | minor changes in comments
 # |
@@ -169,15 +172,16 @@ sub close_open_workbooks ();
 sub mix_utils_mask_excel ($);
 sub absolute_path ($);
 sub useOoolib ();
+sub _split_diff2xls ($$);
 
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.23 2005/07/14 09:04:12 lutscher Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.24 2005/07/18 05:46:54 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.23 $'; #'  
+my $thisrevision    =      '$Revision: 1.24 $'; #'  
 
-# Revision:   $Revision: 1.23 $
+# Revision:   $Revision: 1.24 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1238,119 +1242,157 @@ sub write_delta_sheet($$$) {
 
     # Was there a difference? If yes, report and sum up.
     if ( $diff ) {
-	my $niceform = 1; # Try to write in extended format ...
-	if ( $currd[0] ne $prevd[0] ) { # Column headers have changed!!
-	    logwarn("WARNING: SHEET_DIFF with different headers useless!");
-	    # Fall back to write delta in old format
-	    $niceform = 0;
-	}
+		my $niceform = 1; # Try to write in extended format ...
+		if ( $currd[0] ne $prevd[0] ) { # Column headers have changed!!
+	    	logwarn("WARNING: SHEET_DIFF with different headers useless!");
+	    	$EH{'sum'}{'warnings'}++;
+	    	# Fall back to write delta in old format
+	    	$niceform = 0;
+		}
 
         my @h = split( /\n/, $head );
-	@h = one2two( \@h );
-	shift @h;
-	$h[0][1] = $h[0][2] = $h[0][3] = "-- delta --";
-	my @out = ();
-	@out = split( /\n/, $diff );
-	@out = one2two( \@out );
-	my $difflines = shift( @out );
-	my @delcols = ();
+		@h = one2two( \@h );
+		shift @h;
+		$h[0][1] = $h[0][2] = $h[0][3] = "-- delta --";
+		my @out = ();
+		@out = split( /\n/, $diff );
+		@out = one2two( \@out );
+		my $difflines = shift( @out );
+		my $r_delcols = [];
 
-	push( @h, [ "--NR--", "--CONT--", "--NR--", "--CONT--" ] );
-	if ( $niceform ) {
-	    # Convert into tabular format, mark changed cells !!
+		push( @h, [ "--NR--", "--CONT--", "--NR--", "--CONT--" ] );
+		if ( $niceform ) {
+	    	# Convert into tabular format, mark changed cells !!
+			push( @h, [ "HEADER",  @colnhead ] ); # Attach header line
+	    	unshift( @h, [ "HEADER", @colnhead ] ); # Preped full header line
+	    	my $colwidth = scalar( @{$h[0]} ); # Matrix has to be wide enough ...
 
-	    push( @h, [ "HEADER",  @colnhead ] ); # Attach header line
-	    unshift( @h, [ "HEADER", @colnhead ] ); # Preped full header line
-	    my $colwidth = scalar( @{$h[0]} ); # Matrix has to be wide enough ...
+			( my $ref_h, $r_delcols ) = _split_diff2xls( \@out, scalar( @h ) );
 
+			push( @h, @$ref_h );
+		} else {
+	   		push( @h, [ "--COLUMN_MISMATCH--", "--COLUMN_MISMATCH--", "--COLUMN_MISMATCH--", "--COLUMN_MISMATCH--" ] );
+	   		my $offset = scalar( @h );
+			push( @$r_delcols, ( $offset . "/" . "1" ),
+	    					( $offset . "/" . "2"),
+	    					( $offset . "/" . "3"),
+	    					( $offset . "/" . "4"),
+	    					  );
+
+			# Remove the @@@ signs from output ...
+	    	for my $o ( @out ) {
+				map( { s,@@@,,g } @$o );
+	    	}
+	    	# Usually we have four columns; try to match 1 against 3:
+	    	for my $o ( 0..scalar(@out)-1 ) {
+	    		if ( defined $out[$o][1] and defined $out[$o][3]
+	    			and $out[$o][1] ne $out[$o][3] ) {
+	    				push( @$r_delcols, ( $o+1+$offset . "/" . "2" ),
+	    					( $o+1+$offset . "/" . "4") );
+	    		}
+	    	}
+	    	push( @h, ( @out ) );
+		}
+
+		#!wig20050712: add a bottom --END-- line to seperate current contents
+		#  from previous one (comes from copying data)
+		push( @h, [ "--END--", "--END--", "--END--", "--END--" ] );
+		push( @h, [ '','','','' ], [ '','','','' ], [ '','','','' ], [ '','','','' ] );
+	
+		write_outfile($file, "DIFF_" . $sheet, \@h, $r_delcols, $niceform);
+
+		# One line has to differ (date)
+		if ( $difflines > 0 ) {
+	    	logwarn( "INFO: Detected $difflines changes in intermediate sheet $sheet, in file $file");
+	    	$EH{'sum'}{'warnings'}++;
+		} 
+		elsif ( $difflines == -1 ) {
+	    	logwarn( "WARNING: Missing changed date in intermediate sheet $sheet, in file $file");
+	    	$EH{'sum'}{'warnings'}++;
+		}
+		#TODO: Do not use logwarn here ...
+		return $difflines;
+    } else {
+		return -1;
+    }
+}
+
+#
+# Take diff array and convert back to XLS format
+#
+# Input: reference to @out two-dim array
+# Return: \@array: text to print
+#         \@delcols: color info for XLS
+#
+#!wig20050714: split this from write_delta_sheet
+sub _split_diff2xls ($$) {
+		my $r_diffs = shift;
+		my $offset  = shift; # Offset for coloring ...
+		
+		my @array = ();
+		my @delcols = ();
+		
 	    # Now convert delta to two-line format ...
-	    for my $nf ( @out ) {
+	    #   NEW ...
+	    #   OLD ...
+	    for my $nf ( @$r_diffs ) {
 			my @newex = ();
 			my @oldex = ();
 			if ( scalar( @$nf ) == 4 ) {
-		    	$newex[0] = "NEW-" . $nf->[0];
-		    	$oldex[0] = "OLD-" . $nf->[2];
+		    	$newex[0] = "NEW-" . $nf->[0]; # Prepend NEW-
+		    	$oldex[0] = "OLD-" . $nf->[2]; # Prepend OLD-
 		    	push( @newex, split( /@@@/, $nf->[1] ) ) if $nf->[1];
 		    	push( @oldex, split( /@@@/, $nf->[3] ) ) if $nf->[3];
-		    	push( @h, [ @newex ] ) if ( scalar( @newex ) > 1  );
-		    	push( @h, [ @oldex ] ) if ( scalar( @oldex ) > 1 );
+		    	push( @array, [ @newex ] ) if ( scalar( @newex ) > 1  );
+		    	push( @array, [ @oldex ] ) if ( scalar( @oldex ) > 1 );
 		    	my $fn = scalar( @newex );
 		    	my $fo = scalar( @oldex );
 		    	my $min = ( $fn < $fo ) ? $fn : $fo;
 		    	my $max = ( $fn < $fo ) ? $fo : $fn;
 		    	for my $iii ( 0..$min-1 ) {
-				if ( $newex[$iii] ne $oldex[$iii] ) {
-			    	push( @delcols , scalar(@h) . "/" . ( $iii + 1 ) );
-				}
+		    		# Compare two cells ...
+					if ( $newex[$iii] ne $oldex[$iii] ) {
+			    		push( @delcols , (scalar(@array) + $offset) . "/" . ( $iii + 1 ) );
+					}
 		    	}
+		    	# Create colors for all newly created cells ....
 		    	if ( $min < $max ) {
 					for my $iii ( $min..$max ) {
-			    		push( @delcols, scalar( @h ) . "/" . ( $iii + 1 ) );
+						if ( defined( $newex[$iii] ) and $newex[$iii] or
+							 defined( $oldex[$iii] ) and $oldex[$iii] ) {
+			    				push( @delcols, (scalar( @array ) + $offset). "/" . ( $iii + 1 ) );
+						}
 					}
 		    	} 
-			} 
-			else {
-		    	push( @h, $nf );
+			} else {
+		    	push( @array, $nf );
 			}
 	    }
-	} 
-	else {
-	    # Remove the @@@ signs from output ...
-	    for my $o ( @out ) {
-		map( { s,@@@,,g } @$o );
-	    }
-	    push( @h, ( @out ) );
-	}
-
-	#!wig20050712: add a bottom --END-- line to seperate current contents
-	#  from previous one (comes from copying data)
-	push( @h, [ "--END--", "--END--", "--END--", "--END--" ] );
-	push( @h, [ '','','','' ], [ '','','','' ], [ '','','','' ], [ '','','','' ] );
-	
-	write_outfile($file, "DIFF_" . $sheet, \@h, \@delcols);
-
-	# One line has to differ (date)
-	if ( $difflines > 0 ) {
-	    logwarn( "INFO: Detected $difflines changes in intermediate sheet $sheet, in file $file");
-	    $EH{'sum'}{'warnings'}++;
-	} 
-	elsif ( $difflines == -1 ) {
-	    logwarn( "WARNING: Missing changed date in intermediate sheet $sheet, in file $file");
-	    $EH{'sum'}{'warnings'}++;
-	}
-	#TODO: Do not use logwarn here ...
-	return $difflines;
-    }
-    else {
-		return -1;
-    }
+	return( \@array, \@delcols );
 }
-
 
 ####################################################################
 ## write_outfile
 ## write data into outfile
 ####################################################################
-sub write_outfile($$$;$) {
+sub write_outfile($$$;$$) {
 
     my $file = shift;
     my $sheet = shift;
     my $r_a = shift;
     my $r_c = shift || undef;
+    my $newold_flag = shift || undef;
 
     if( $EH{'format'}{'out'}=~ m/^xls$/ || ($file=~ m/\.xls/ && $EH{'iswin'})) {
-	write_xls($file, $sheet, $r_a, $r_c);
-    }
-    elsif( $EH{'format'}{'out'}=~ m/^sxc$/ || $file=~ m/\.sxc/) {
-	write_sxc($file, $sheet, $r_a, $r_c);
-    }
-    elsif( $EH{'format'}{'out'}=~ m/^csv$/ || $file=~ m/\.csv/ || $file=~ m/\.xls/) {
-	$file=~ s/\.xls$/\.csv/;
-	write_csv($file, $sheet, $r_a, $r_c);
-    }
-    else {
-	logwarn "unknown outfile format";
-	return;
+		write_xls($file, $sheet, $r_a, $r_c, $newold_flag);
+    } elsif( $EH{'format'}{'out'}=~ m/^sxc$/ || $file=~ m/\.sxc/) {
+		write_sxc($file, $sheet, $r_a, $r_c);
+    } elsif( $EH{'format'}{'out'}=~ m/^csv$/ || $file=~ m/\.csv/ || $file=~ m/\.xls/) {
+		$file=~ s/\.xls$/\.csv/;
+		write_csv($file, $sheet, $r_a, $r_c);
+    } else {
+		logwarn "unknown outfile format";
+		return;
     }
     return;
 }
@@ -1360,7 +1402,7 @@ sub write_outfile($$$;$) {
 ## write_xls
 ## write intermediate data to excel sheet
 ####################################################################
-=head2 write_xls($$$;$)
+=head2 write_xls($$$;$$)
 
 this subroutine is self explanatory. The only important thing is,
 that it will try to rotate older versions of the generated sheets.
@@ -1374,229 +1416,230 @@ defined by $EH{'intermediate'}{'keep'}
 =item $type sheetname (CONN|HIER)
 =item $ref_a reference to array with data
 =item $ref_c mark the cells listed in this array
+=item $newold_flag  : set if we got a regular newold diff
 
 =back
 
 =cut
 
-sub write_xls($$$;$) {
+sub write_xls($$$;$$) {
 
     my $file = shift;
     my $sheet = shift;
     my $r_a = shift;
     my $r_c = shift || undef;
+    my $newold_flag = shift || 0;
 
     if( $EH{'iswin'} || $EH{'format'}{'out'}) {
 
-	my $book;
-	my $newflag = 0;
-	my $openflag = 0;
-	my $sheetr = undef;
+		my $book;
+		my $newflag = 0;
+		my $openflag = 0;
+		my $sheetr = undef;
 
-	# Add extension
-	unless ( $file =~ m/\.xls$/ ) {
-	    $file .= ".xls";
-	}
-
-	# Was OLE already started?
-	unless( $ex ) {
-	# if( ( $^O=~ m/MSWin/ && join( " ", @ARGV)=~ m/\.xls/) || $EH{'format'}{'out'}=~ m/^xls$/ ) {
-	    $ex = init_ole();
-	    unless( $ex ) {
-		logwarn( "ERROR: Cannot initialize OLE, intermediate file $file will written as CSV" );
-		$file=~ s/\.xls$/\.csv/;
-		return write_csv($file, $sheet, $r_a);
-	    }
-	    init_open_workbooks();
-	}
-
-	# Write to other directory ...
-	if ( $EH{'intermediate'}{'path'} ne "." and not is_absolute_path( $file ) ) {
-	    $file = $EH{'intermediate'}{'path'} . "/" . $file;
-	}
-
-	my $efile = absolute_path( $file );
-	my $basename = basename( $file );
-	( my $wfile = $efile ) =~ s,/,\\,g; # Windows32 ....
-
-	# $ex->{DisplayAlerts}=0;
-	$ex->{DisplayAlerts}=0 if ( $EH{'script'}{'excel'}{'alerts'} =~ m,off,io );
-
-	if ( -r $file ) {
-	    # If it exists, it could be open, too?
-	    unless( $book = is_open_workbook( $basename ) ) {
-		# No, not opened so far ....
-		logwarn("File $file already exists! Contents will be changed");
-		$book = $ex->Workbooks->Open($wfile); #Needs correct PATH ... / or \ ...
-		new_workbook( $basename, $book );
-	    } else {
-		# Is the open thing at the right place?
-		my $wbpath = dirname( $file ) || $EH{'cwd'};
-		if ( $wbpath eq "." ) {
-		    $wbpath = $EH{'cwd'};
-		} elsif ( not is_absolute_path( $wbpath ) ) {
-		    $wbpath = $EH{'cwd'} . "/" . $wbpath;
+		# Add extension
+		unless ( $file =~ m/\.xls$/ ) {
+	    	$file .= ".xls";
 		}
 
-		$wbpath =~ s,/,\\,g; # Replace / -> \
-		#Does our book have the right path?
-		if ( $book->Path ne $wbpath ) {
-			# Sometimes (win32 and cygwin) the same path has different cases ->
-			if ( $^O =~ m/mswin/io and lc( $book->Path ) ne lc ( $wbpath ) ) {
-		    	logwarn("ERROR: workbook $basename with different path (" . $book->Path .
-			    	") already opened!");
-		    	$EH{'sum'}{'errors'}++;
-			}
+		# Was OLE already started?
+		unless( $ex ) {
+		# if( ( $^O=~ m/MSWin/ && join( " ", @ARGV)=~ m/\.xls/) || $EH{'format'}{'out'}=~ m/^xls$/ ) {
+	    	$ex = init_ole();
+	    	unless( $ex ) {
+				logwarn( "ERROR: Cannot initialize OLE, intermediate file $file will written as CSV" );
+				$EH{'sum'}{'errors'}++;
+				$file=~ s/\.xls$/\.csv/;
+				return write_csv($file, $sheet, $r_a);
+	    	}
+	    	init_open_workbooks();
 		}
-	}
-	$book->Activate;
 
-	#
-	# rotate old versions of $sheet to O$n_$sheet_O ...
-	#
-	my %sh = ();
-	my $s_previous = undef;
-
-	foreach my $sh ( in( $book->{'Worksheets'} ) ) {
-		$sh{$sh->{'Name'}} = $sh; # Keep links
-	}
-
-	if ( $EH{'intermediate'}{'keep'} ) {
-
-		# Rotate sheets ...
-		# Delete eldest one:
-		my $max = $EH{'intermediate'}{'keep'};
-		logwarn("Rotating $max old sheets of $sheet!");
-		if ( exists( $sh{ "O_" . $max . "_" . $sheet } ) ) {
-		    $sh{"O_" . $max . "_" . $sheet}->Delete;
+		# Write to other directory ...
+		if ( $EH{'intermediate'}{'path'} ne "." and not is_absolute_path( $file ) ) {
+	    	$file = $EH{'intermediate'}{'path'} . "/" . $file;
 		}
-		if ( $max >= 2 ) {
-		    for my $n ( reverse( 2..$max ) ) {
-				if ( exists( $sh{ "O_" . ( $n - 1 ) . "_" . $sheet } ) ) {
-			    	$sh{"O_" . ( $n - 1 ) . "_" . $sheet}->{'Name'} =
-					"O_" . $n . "_" . $sheet;
+
+		my $efile = absolute_path( $file );
+		my $basename = basename( $file );
+		( my $wfile = $efile ) =~ s,/,\\,g; # Windows32 ....
+
+		$ex->{DisplayAlerts}=0 if ( $EH{'script'}{'excel'}{'alerts'} =~ m,off,io );
+
+		if ( -r $file ) {
+	    	# If it exists, it could be open, too?
+	    	unless( $book = is_open_workbook( $basename ) ) {
+				# No, not opened so far ....
+				logwarn("File $file already exists! Contents will be changed");
+				$book = $ex->Workbooks->Open($wfile); #Needs correct PATH ... / or \ ...
+				new_workbook( $basename, $book );
+	    	} else {
+				# Is the open thing at the right place?
+				my $wbpath = dirname( $file ) || $EH{'cwd'};
+				if ( $wbpath eq "." ) {
+		    		$wbpath = $EH{'cwd'};
+				} elsif ( not is_absolute_path( $wbpath ) ) {
+		    		$wbpath = $EH{'cwd'} . "/" . $wbpath;
 				}
-		    }
-		}
-		# Finally: Rename the latest/greatest ...
-		if ( exists( $sh{ $sheet } ) ) {
-		    $s_previous = $sh{$sheet};
-		    $sh{$sheet}->{'Name'} = "O_1_" . $sheet;
-		}
-		# Copy previous format ....
-		if ( $EH{'intermediate'}{'format'} =~ m,prev,o and
-		     defined( $s_previous ) ) {
-		    unless( $s_previous->Copy($s_previous) ) { # Add in new sheet before
-				logwarn("Cannot copy previous sheet! Create new one.");
-			} else {
-				$sheetr = $book->ActiveSheet();
-				$sheetr->Unprotect;
-				$sheetr->UsedRange->{'Value'} = (); #Will that delete contents?
-				$sheetr->{'Name'} = $sheet;
+
+				$wbpath =~ s,/,\\,g; # Replace / -> \
+				#Does our book have the right path?
+				if ( $book->Path ne $wbpath ) {
+				# Sometimes (win32 and cygwin) the same path has different cases ->
+					if ( $^O =~ m/mswin/io and lc( $book->Path ) ne lc ( $wbpath ) ) {
+		    			logwarn("ERROR: workbook $basename with different path (" . $book->Path .
+			    			") already opened!");
+		    			$EH{'sum'}{'errors'}++;
+					}
+				}
 			}
+			$book->Activate;
+
+			#
+			# rotate old versions of $sheet to O$n_$sheet_O ...
+			#
+			my %sh = ();
+			my $s_previous = undef;
+
+			foreach my $sh ( in( $book->{'Worksheets'} ) ) {
+				$sh{$sh->{'Name'}} = $sh; # Keep links
+			}
+
+			if ( $EH{'intermediate'}{'keep'} ) {
+
+				# Rotate sheets ...
+				# Delete eldest one:
+				my $max = $EH{'intermediate'}{'keep'};
+				logwarn("Rotating $max old sheets of $sheet!");
+				if ( exists( $sh{ "O_" . $max . "_" . $sheet } ) ) {
+		    		$sh{"O_" . $max . "_" . $sheet}->Delete;
+				}
+				if ( $max >= 2 ) {
+		    		for my $n ( reverse( 2..$max ) ) {
+						if ( exists( $sh{ "O_" . ( $n - 1 ) . "_" . $sheet } ) ) {
+			    			$sh{"O_" . ( $n - 1 ) . "_" . $sheet}->{'Name'} =
+							"O_" . $n . "_" . $sheet;
+						}
+		    		}
+				}
+				# Finally: Rename the latest/greatest ...
+				if ( exists( $sh{ $sheet } ) ) {
+		    		$s_previous = $sh{$sheet};
+		    		$sh{$sheet}->{'Name'} = "O_1_" . $sheet;
+				}
+				# Copy previous format ....
+				if ( $EH{'intermediate'}{'format'} =~ m,prev,o and
+		     			defined( $s_previous ) ) {
+		    		unless( $s_previous->Copy($s_previous) ) { # Add in new sheet before
+						logwarn("Cannot copy previous sheet! Create new one.");
+					} else {
+						$sheetr = $book->ActiveSheet();
+						$sheetr->Unprotect;
+						$sheetr->UsedRange->{'Value'} = (); #Will that delete contents?
+						$sheetr->{'Name'} = $sheet;
+					}
+				}
+			} else { # Delete contents or all of sheet ?
+				if ( exists( $sh{ $sheet } ) ) {
+		    		#Keep format if EH.intermediate.format says so
+		    		if ( $EH{'intermediate'}{'format'} =~ m,prev,o ) {
+						$sheetr = $sh{$sheet};
+						$sheetr->Unprotect;
+						$sheetr->UsedRange->{'Value'} = (); # Overwrite all used cells ...
+		    		} else {
+						$sh{$sheet}->Delete;
+		    		}
+				}
+	    	}
+		} else {
+	    	# Create new workbook
+	    	$book = $ex->Workbooks->Add();
+	    	$book->SaveAs($wfile);
+	    	# new_workbook( $basename, $book );
+	    	$newflag=1;
 		}
-	} else { # Delete contents or all of sheet ?
-		if ( exists( $sh{ $sheet } ) ) {
-		    #Keep format if EH.intermediate.format says so
-		    if ( $EH{'intermediate'}{'format'} =~ m,prev,o ) {
-				$sheetr = $sh{$sheet};
-				$sheetr->Unprotect;
-				$sheetr->UsedRange->{'Value'} = (); # Overwrite all used cells ...
-		    } else {
-				$sh{$sheet}->Delete;
-		    }
+
+		unless( defined( $sheetr ) ) {
+	    	# Create output worksheet:
+	    	$sheetr = $book->Worksheets->Add() || logwarn( "Cannot create worksheet $sheet in $file:$!");
+	    	$sheetr->{'Name'} = $sheet;
 		}
-	    }
-	} else {
-	    # Create new workbook
-	    $book = $ex->Workbooks->Add();
-	    $book->SaveAs($wfile);
-	    # new_workbook( $basename, $book );
-	    $newflag=1;
-	}
 
-	unless( defined( $sheetr ) ) {
-	    # Create output worksheet:
-	    $sheetr = $book->Worksheets->Add() || logwarn( "Cannot create worksheet $sheet in $file:$!");
-	    $sheetr->{'Name'} = $sheet;
-	}
+		$sheetr->Activate();
+		$sheetr->Unprotect;
 
-	$sheetr->Activate();
-	$sheetr->Unprotect;
+		mix_utils_mask_excel( $r_a );
 
-	mix_utils_mask_excel( $r_a );
-
-	my $x=$#{$r_a->[0]}+1;
-	my $y=$#{$r_a}+1;
-	my $c1=$sheetr->Cells(1,1)->Address;
-	my $c2=$sheetr->Cells($y,$x)->Address;
-	my $rng=$sheetr->Range($c1.":".$c2);
+		my $x=$#{$r_a->[0]}+1;
+		my $y=$#{$r_a}+1;
+		my $c1=$sheetr->Cells(1,1)->Address;
+		my $c2=$sheetr->Cells($y,$x)->Address;
+		my $rng=$sheetr->Range($c1.":".$c2);
 	
-	#!wig20050713: protect against ExCEL failures:
-	eval '$rng->{Value}=$r_a;';
-	if ( $@ ) {
-	    logwarn "ERROR: cannot write ExCEL $file:$sheet: $@";
-	    $EH{'sum'}{'errors'}++;
-	    $ex->{DisplayAlerts}=1;
-	    return;
-    }
+		#!wig20050713: protect against ExCEL failures:
+		eval '$rng->{Value}=$r_a;';
+		if ( $@ ) {
+	    	logwarn "ERROR: cannot write ExCEL $file:$sheet: $@";
+	    	$EH{'sum'}{'errors'}++;
+	    	$ex->{DisplayAlerts}=1;
+	    	return;
+    	}
 
-	# Mark cells in that list in background color ..
-	# Format: row/col
-	if ( defined( $r_c ) ) {
-	    $rng->Interior->{Color} = mix_utils_rgb( 255, 255, 255 ); # Set back color to white
-	    # Deselect ...
-	    for my $cell ( @$r_c ) {
-		my $x; my $y;
-		( $y , $x ) = split( '/', $cell );
-		if ( $x =~ m,^\d+$, and $y =~ m,^\d+$, ) {
-		    # my $ca=$sheetr->Cells($y,$x)->Address;
-		    my $cn = chr( $x + 64 ) . ( $y - 1 ); #Hope that helps ...
-		    my $co = chr( $x + 64 ) . $y;
-		    my ( $ncol, $ocol );
-		    if ( $x == 1 ) {
-			$ncol = $ocol = mix_utils_rgb( 0, 0, 255 );
-		    } else {
-			$ocol = mix_utils_rgb( 0, 255, 0 );
-			$ncol = mix_utils_rgb( 255, 0, 0 );
-		    }
-		    $rng= $sheetr->Range($cn);
-		    $rng->Interior->{Color} = $ncol;
-		    $rng =$sheetr->Range($co);
-		    $rng->Interior->{Color} = $ocol;
+		# Mark cells in that list in background color ..
+		# Format: row/col
+		if ( defined( $r_c ) ) {
+	    	$rng->Interior->{Color} = mix_utils_rgb( 255, 255, 255 ); # Set back color to white
+	    	# Deselect ...
+	    	for my $cell ( @$r_c ) {
+				my $x; my $y;
+				( $y , $x ) = split( '/', $cell );
+				if ( $x =~ m,^\d+$, and $y =~ m,^\d+$, ) {
+		    		# my $ca=$sheetr->Cells($y,$x)->Address;
+		    		my $cn = chr( $x + 64 ) . ( $y - 1 ); #Hope that helps ...
+		    		my $co = chr( $x + 64 ) . $y;
+		    		my ( $ncol, $ocol );
+		    		if ( $newold_flag ) { # three colors:
+		    			# first column blue
+		    			# "new" lines red, old lines green, only changes get marked
+		    			if ( $x == 1 ) { # blue to first column
+							$ncol = $ocol = mix_utils_rgb( 0, 0, 255 );
+		    			} else {
+							$ocol = mix_utils_rgb( 0, 255, 0 );
+							$ncol = mix_utils_rgb( 255, 0, 0 );
+		    			}
+		    		} else { # Print all in red in non-newold mode
+		    			$ocol = $ncol = mix_utils_rgb( 255, 0, 0 );
+		    		}
+		    		$rng= $sheetr->Range($cn) if $newold_flag;
+		    		$rng->Interior->{Color} = $ncol if $newold_flag;
+		    		$rng =$sheetr->Range($co);
+		    		$rng->Interior->{Color} = $ocol;
 
-		    # White background with a solid border
-		    #
-		    # $Chart->PlotArea->Border->{LineStyle} = xlContinuous;
-		    # $Chart->PlotArea->Border->{Color} = RGB(0,0,0);
-		    # $Chart->PlotArea->Interior->{Color} = RGB(255,255,255);
-		    # $rng->{BackColor}=0;
-		    # example: $workSheet->Range("A1:A6")->Interior->{ColorIndex} =XX;
+		    		# White background with a solid border
+		    		#
+		    		# $Chart->PlotArea->Border->{LineStyle} = xlContinuous;
+		    		# $Chart->PlotArea->Border->{Color} = RGB(0,0,0);
+		    		# $Chart->PlotArea->Interior->{Color} = RGB(255,255,255);
+		    		# $rng->{BackColor}=0;
+		    		# example: $workSheet->Range("A1:A6")->Interior->{ColorIndex} =XX;
+				}
+	    	}
 		}
-	    }
-	}
 
-	if ( $EH{'intermediate'}{'format'} =~ m,auto, ) {
-	    $rng->Columns->AutoFit;
-	}
-
-		#TODO: pretty formating
-		# $book->Save;
+		if ( $EH{'intermediate'}{'format'} =~ m,auto, ) {
+	    	$rng->Columns->AutoFit;
+		}
 
 		$book->SaveAs($wfile);
-
-		# $book->Close unless ( $openflag ); #TODO: only close if not open before ....
 
 		$ex->{DisplayAlerts}=1;
 
 		return;
-    }
-    else {
+    } else {
 		$file=~ s/\.xls$/\.csv/;
     	return write_csv($file, $sheet, $r_a);
     }
 }
-
 
 ####################################################################
 ## write_sxc
@@ -2442,7 +2485,7 @@ Otherwise these will get converted to dates :-(
 sub mix_utils_mask_excel($) {
     my $r_a = shift;
 
-	my $maxlength = $EH{'format'}{'xls'}{'maxcelllength'} + 10;
+	my $maxlength = $EH{'format'}{'xls'}{'maxcelllength'} + 20; # Leave 20bytes extra
 	
     for my $i ( @$r_a ) {
 		for my $ii ( @$i ) {
