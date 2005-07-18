@@ -88,7 +88,7 @@ use Micronas::MixUtils::IO;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.1 $'; # RCS Id
+$::VERSION = '$Revision: 1.2 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # %EH comes from Mic::MixUtils ; All the configuration E-nvironment will be there

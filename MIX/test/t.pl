@@ -41,7 +41,7 @@ use Log::Agent;
 use Log::Agent::Priorities qw(:LEVELS);
 use Log::Agent::Driver::File;
 
-$::VERSION = '$Revision: 1.1 $'; # RCS Id
+$::VERSION = '$Revision: 1.2 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 my $home = "h:/work/mix/t";
@@ -148,7 +148,7 @@ for my $test ( @tests ) {
 		if ( $status / 256 != 0 ) {
 			my $cf = 0;
 			my $ci = 0;
-			# 03/07/15 17:02:49 140: WARNING: SUM: Number of changes in intermediate: 1
+			# 03/07/15 17:02:49 140: WARNING: SUM: Number of changes in intermediate: 1
 			# 03/07/15 17:02:49 140: WARNING: SUM: Number of changed files: 0
 			if ( open( LOG, "< $testname-t.out" ) ) {
 				while ( <LOG> ) {
