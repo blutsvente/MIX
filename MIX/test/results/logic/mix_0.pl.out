@@ -1,48 +1,49 @@
-05/07/15 13:49:23 
+05/07/18 10:55:02 
 #######################################################################
 ##### mix_0.pl (Revision: 1.36 )
 #####
 ##### MIX  
-#####   MixUtils    1.66 $
-#####   MixUtils::IO    1.22 $
+#####   MixUtils    1.67 $
+#####   MixUtils::IO    1.24 $
 #####   MixParser   1.53 $
-#####   MixWriter   1.55 $
+#####   MixWriter   1.56 $
 #####   MixChecker  1.8 $
 #####   MixIOParser 1.17 $
 #####   MixI2CParser 1.13 $
 ##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
 #######################################################################
-05/07/15 13:49:23 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/logic/../logic.xls
-05/07/15 13:49:23 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/logic/../logic.xls
-05/07/15 13:49:23 Reading worksheet IO of H:/work/eclipse/MIX/test/xls_input/logic/../logic.xls
-05/07/15 13:49:23 Add_port: signal or_o2 adds port or_o2 to instance inst_a_i
-05/07/15 13:49:23 Add_port: signal and_o2 adds port and_o2 to instance inst_a_i
-05/07/15 13:49:23 Add_port: signal or_o1 adds port or_o1 to instance inst_a_i
-05/07/15 13:49:23 Add_port: signal and_o1 adds port and_o1 to instance inst_a_i
-05/07/15 13:49:24 WARNING: File logic-mixed.xls already exists! Contents will be changed
-05/07/15 13:49:24 WARNING: Rotating 3 old sheets of CONF!
-05/07/15 13:49:24 WARNING: Rotating 3 old sheets of CONN!
-05/07/15 13:49:25 WARNING: Rotating 3 old sheets of HIER!
-05/07/15 13:49:25 WARNING: Removing old and and diff sheets in file: logic-mixed.xls
-05/07/15 13:49:25 WARNING: ============= SUMMARY =================
-05/07/15 13:49:25 WARNING: SUM: Summary of checks and created items:
-05/07/15 13:49:25 WARNING: SUM: checkforce 0
-05/07/15 13:49:25 WARNING: SUM: checkunique 0
-05/07/15 13:49:25 WARNING: SUM: checkwarn 0
-05/07/15 13:49:25 WARNING: SUM: cmacros 0
-05/07/15 13:49:25 WARNING: SUM: conn 20
-05/07/15 13:49:25 WARNING: SUM: errors 0
-05/07/15 13:49:25 WARNING: SUM: genport 4
-05/07/15 13:49:25 WARNING: SUM: hdlfiles 9
-05/07/15 13:49:25 WARNING: SUM: inst 15
-05/07/15 13:49:25 WARNING: SUM: multdriver 0
-05/07/15 13:49:25 WARNING: SUM: nodriver 0
-05/07/15 13:49:25 WARNING: SUM: noload 0
-05/07/15 13:49:25 WARNING: SUM: openports 0
-05/07/15 13:49:25 WARNING: SUM: warnings 0
-05/07/15 13:49:25 WARNING: SUM: === Number of parsed input tables: ===
-05/07/15 13:49:25 WARNING: SUM: conf 0
-05/07/15 13:49:25 WARNING: SUM: hier 1
-05/07/15 13:49:25 WARNING: SUM: conn 1
-05/07/15 13:49:25 WARNING: SUM: io 1
-05/07/15 13:49:25 WARNING: SUM: i2c 0
+05/07/18 10:55:02 Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/logic/../logic.xls
+05/07/18 10:55:02 Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/logic/../logic.xls
+05/07/18 10:55:02 Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/logic/../logic.xls
+05/07/18 10:55:02 Add_port: signal or_o2 adds port or_o2 to instance inst_a_i
+05/07/18 10:55:02 Add_port: signal and_o2 adds port and_o2 to instance inst_a_i
+05/07/18 10:55:02 Add_port: signal or_o1 adds port or_o1 to instance inst_a_i
+05/07/18 10:55:02 Add_port: signal and_o1 adds port and_o1 to instance inst_a_i
+05/07/18 10:55:03 WARNING: File logic-mixed.xls already exists! Contents will be changed
+05/07/18 10:55:03 WARNING: Rotating 3 old sheets of CONF!
+05/07/18 10:55:04 WARNING: Rotating 3 old sheets of CONN!
+05/07/18 10:55:04 WARNING: Rotating 3 old sheets of HIER!
+05/07/18 10:55:04 WARNING: Removing old and and diff sheets in file: logic-mixed.xls
+05/07/18 10:55:04 WARNING: ERROR: workbook with different path already opened!
+05/07/18 10:55:05 WARNING: ============= SUMMARY =================
+05/07/18 10:55:05 WARNING: SUM: Summary of checks and created items:
+05/07/18 10:55:05 WARNING: SUM: checkforce 0
+05/07/18 10:55:05 WARNING: SUM: checkunique 0
+05/07/18 10:55:05 WARNING: SUM: checkwarn 0
+05/07/18 10:55:05 WARNING: SUM: cmacros 0
+05/07/18 10:55:05 WARNING: SUM: conn 20
+05/07/18 10:55:05 WARNING: SUM: errors 1
+05/07/18 10:55:05 WARNING: SUM: genport 4
+05/07/18 10:55:05 WARNING: SUM: hdlfiles 9
+05/07/18 10:55:05 WARNING: SUM: inst 15
+05/07/18 10:55:05 WARNING: SUM: multdriver 0
+05/07/18 10:55:05 WARNING: SUM: nodriver 0
+05/07/18 10:55:05 WARNING: SUM: noload 0
+05/07/18 10:55:05 WARNING: SUM: openports 0
+05/07/18 10:55:05 WARNING: SUM: warnings 0
+05/07/18 10:55:05 WARNING: SUM: === Number of parsed input tables: ===
+05/07/18 10:55:05 WARNING: SUM: conf 0
+05/07/18 10:55:05 WARNING: SUM: hier 1
+05/07/18 10:55:05 WARNING: SUM: conn 1
+05/07/18 10:55:05 WARNING: SUM: io 1
+05/07/18 10:55:05 WARNING: SUM: i2c 0

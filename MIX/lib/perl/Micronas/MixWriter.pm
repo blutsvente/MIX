@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.56 $                                         |
+# | Revision:   $Revision: 1.57 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/07/15 16:39:38 $                              |
+# | Date:       $Date: 2005/07/18 08:58:22 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.56 2005/07/15 16:39:38 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.57 2005/07/18 08:58:22 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.57  2005/07/18 08:58:22  wig
+# | do not write config for simple logic
+# |
 # | Revision 1.56  2005/07/15 16:39:38  wig
 # | Update of some tiny fixes (test case related)
 # |
@@ -284,9 +287,9 @@ sub _mix_wr_preset_hooks (); # preset _HOOK_ macros
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.56 2005/07/15 16:39:38 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.57 2005/07/18 08:58:22 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.56 $';
+my $thisrevision   =      '$Revision: 1.57 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -4921,6 +4924,10 @@ sub _write_configuration ($$$$) {
                 if ( $ae->{$d_name}{'::lang'} =~ m,veri,io ) {
                     $pre = $tcom . " __I_NO_CONFIG_VERILOG " . $tcom;
                 }
+            }
+            # If this daughter is from the simple logic list -> do not add a configuration
+            if ( $d_enty =~ m/$EH{'output'}{'generate'}{'_logicre_'}/io ) {
+            	$pre = $tcom . " __I_NO_CONF_LOGIC " . $pre;
             }
             # If this daughter has a NO_CONFIG in it's configuration -> comment it out:
             if ( $ae->{$d_name}{'::config'} =~ m,(W_NO_CONFIG|NO_CONFIG),o ) {
