@@ -1,0 +1,4124 @@
+:=:=:=>CONN_DevIO
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::out;::in;::descr
+#;;Bundle Name;Class;Clk Domain;Data Type;High;Low;;Signal Name;Outputs (Driver);Inputs;Description
+#;;;;;;;;;;;;
+#;MH;RGB_out;;;;;;IO;$1;;;
+#;MD;RGB_out;analog;async;std_ulogic;;;IO;rout;"dut, 
+i_dac";;
+#;MD;RGB_out;analog;async;std_ulogic;;;IO;gout;"dut, 
+i_dac";;
+#;MD;RGB_out;analog;async;std_ulogic;;;IO;bout;"dut, 
+i_dac";;
+#;MD;RGB_out;analog;async;std_ulogic;;;IO;svm;"dut, 
+i_dac";;
+#;MD;RGB_out;analog;async;std_ulogic;;;IO;svmdis;"dut, 
+i_padframe,
+i_pads_sw";;
+#;MD;RGB_out;analog;async;std_ulogic;;;IO;avo;"dut, 
+i_padframe,
+i_pads_sw";;
+#;MD;RGB_out;analog;async;std_ulogic;;;IO;hout;"dut, 
+i_padframe,
+i_pads_ws";;
+#;MD;RGB_out;analog;async;std_ulogic;;;IO;vout;"dut, 
+i_padframe,
+i_pads_ws";;
+#;;;;;;;;;;;;
+#;MH;DIG_in;;;;;;IO;$1;;$2;
+#;MD;DIG_in;clkin;async;std_ulogic;;;IO;$1_0;;"dut, 
+i_padframe,
+i_pads_$2,";
+#;MD;DIG_in;clkin;async;std_ulogic;;;IO;$1_1;;"dut, 
+i_padframe,
+i_pads_$2,";
+#;MD;DIG_in;clkin;async;std_ulogic;;;IO;$1_2;;"dut, 
+i_padframe,
+i_pads_$2,";
+#;MD;DIG_in;clkin;async;std_ulogic;;;IO;$1_3;;"dut, 
+i_padframe,
+i_pads_$2,";
+#;MD;DIG_in;clkin;async;std_ulogic;;;IO;$1_4;;"dut, 
+i_padframe,
+i_pads_$2,";
+#;MD;DIG_in;clkin;async;std_ulogic;;;IO;$1_5;;"dut, 
+i_padframe,
+i_pads_$2,";
+#;MD;DIG_in;clkin;async;std_ulogic;;;IO;$1_6;;"dut, 
+i_padframe,
+i_pads_$2,";
+#;MD;DIG_in;clkin;async;std_ulogic;;;IO;$1_7;;"dut, 
+i_padframe,
+i_pads_$2,";
+;;;;;;;;;;;;
+#;;;Data;clkf;std_ulogic;;;I;xin;;"dut/gclkp,
+i_padframe/xin,
+i_pads_sw/xin";XTAL
+#;;;Data_O;async;std_ulogic;;;IO;xout;"dut/xo, 
+i_padframe/xout,
+i_pads_sw/xout";;XTAL
+#;;;;;std_ulogic;;;;xin_clk_o;"i_padframe,
+i_pads_sw";;padout
+#;;;Reset;async;std_ulogic;;;I;reset_n;;"dut/reset_n,
+i_padframe/reset_n,
+i_pads_sw/reset_n";EXT RESET
+#;;;;async;std_ulogic;;;;reset_n_o;"i_padframe,
+i_pads_sw";;padout
+#;;;Data_O;async;std_ulogic;;;IO;tm;"dut,
+i_padframe,
+i_pads_nw";;Test Mode Enable
+#;;;;async;std_ulogic;;;;tm_i;;"i_padframe,
+i_pads_nw";padin
+#;;;Data_O;async;std_ulogic;;;IO;varclk;"dut/varclk,
+i_padframe/varclk,
+i_pads_sw/varclk";;Variable clock output
+#;;;;async;std_ulogic;;;;varclk_i;;"i_padframe,
+i_pads_sw";padin
+#;;Analog_out;;;std_ulogic;;;IO;cvo1;"dut,
+i_adc/vout_1_o";;INOUT
+#;;Analog_out;;;std_ulogic;;;IO;cvo2;"dut,
+i_adc/vout_2_o";;INOUT
+#;;Analog_out;;;std_ulogic;;;IO;cvo3;"dut,
+i_adc/vout_3_o";;INOUT
+#;;Analog_out;;;std_ulogic;;;IO;cvo4;"dut,
+i_adc/vout_4_o";;INOUT
+#;;Analog_out;;;std_ulogic;;;IO;cvo5;"dut,
+i_adc/vout_5_o";;INOUT
+#;;Analog_out;;;std_ulogic;;;IO;cvo6;"dut,
+i_adc/vout_6_o";;INOUT
+#;;Analog_out;;;std_ulogic;;;IO;cvo7;"dut,
+i_adc/vout_7_o";;INOUT
+#;;Analog_in;analog;async;std_ulogic;;;IO;cvi1;;"dut,
+i_adc/vin_1_i";INOUT
+#;;Analog_in;analog;async;std_ulogic;;;IO;cvi2;;"dut,
+i_adc/vin_2_i";INOUT
+#;;Analog_in;analog;async;std_ulogic;;;IO;cvi3;;"dut,
+i_adc/vin_3_i";INOUT
+#;;Analog_in;analog;async;std_ulogic;;;IO;cvi4;;"dut,
+i_adc/vin_4_i";INOUT
+#;;Analog_in;analog;async;std_ulogic;;;IO;yi1;;"dut,
+i_adc/vin_5_i";INOUT
+#;;Analog_in;analog;async;std_ulogic;;;IO;yi2;;"dut,
+i_adc/vin_6_i";INOUT
+#;;Analog_in;analog;async;std_ulogic;;;IO;yi3;;"dut,
+i_adc/vin_7_i";INOUT
+#;;Analog_in;analog;async;std_ulogic;;;IO;ci1;;"dut,
+i_adc/vin_8_i";INOUT
+#;;Analog_in;analog;async;std_ulogic;;;IO;ci2;;"dut,
+i_adc/vin_9_i";INOUT
+#;;Analog_in;analog;async;std_ulogic;;;IO;ci3;;"dut,
+i_adc/vin_10_i";INOUT
+#;;RGB_in;analog;async;std_ulogic;;;IO;ri1;;"dut,
+i_adc/vin_11_i";INOUT
+#;;RGB_in;analog;async;std_ulogic;;;IO;gi1;;"dut,
+i_adc/vin_12_i";INOUT
+#;;RGB_in;analog;async;std_ulogic;;;IO;bi1;;"dut,
+i_adc/vin_13_i";INOUT
+#;;RGB_in;analog;async;std_ulogic;;;IO;fbi1;;"dut,
+i_adc/vin_14_i";INOUT
+#;;RGB_in;analog;async;std_ulogic;;;IO;ri2;;"dut,
+i_adc/vin_15_i";INOUT
+#;;RGB_in;analog;async;std_ulogic;;;IO;gi2;;"dut,
+i_adc/vin_16_i";INOUT
+#;;RGB_in;analog;async;std_ulogic;;;IO;bi2;;"dut,
+i_adc/vin_17_i";INOUT
+#;;RGB_in;analog;async;std_ulogic;;;IO;fbi2;;"dut,
+i_adc/vin_18_i";INOUT
+#;;RGB_in;analog;async;std_ulogic;;;IO;ri3;;"dut,
+i_adc/vin_19_i";INOUT
+#;;RGB_in;analog;async;std_ulogic;;;IO;gi3;;"dut,
+i_adc/vin_20_i";INOUT
+#;;RGB_in;analog;async;std_ulogic;;;IO;bi3;;"dut,
+i_adc/vin_21_i";INOUT
+#;;RGB_in;analog;async;std_ulogic;;;IO;fbi3;;"dut,
+i_adc/vin_22_i";INOUT
+#;;RGB_in;analog;async;std_ulogic;;;IO;vin1;;"dut,
+i_padframe,
+i_pads_ws";INOUT
+#;;;;;std_ulogic;;;;vin1_o;"i_padframe,
+i_pads_ws";;padout
+#;;RGB_in;analog;async;std_ulogic;;;IO;vin2;;"dut,
+i_padframe,
+i_pads_ws";INOUT
+#;;;;;std_ulogic;;;;vin2_o;"i_padframe,
+i_pads_ws";;padout
+#;;RGB_in;analog;async;std_ulogic;;;IO;vin3;;"dut,
+i_padframe,
+i_pads_ws";INOUT
+#;;;;;std_ulogic;;;;vin3_o;"i_padframe,
+i_pads_ws";;padout
+#;MX;RGB_out;;;;;;IO;rgb;;;INOUT
+#;;;;async;std_ulogic;;;;svmdis_i;;"i_padframe,
+i_pads_sw";padin
+#;;;;async;std_ulogic;;;;svmdis_o;"i_padframe,
+i_pads_sw";;padout
+#;;;;async;std_ulogic;;;;avo_i;;"i_padframe,
+i_pads_sw";padin
+#;;;;async;std_ulogic;;;;avo_o;"i_padframe,
+i_pads_sw";;padout
+#;;;;async;std_ulogic;;;;hout_i;;"i_padframe,
+i_pads_ws";padin
+#;;;;async;std_ulogic;;;;hout_o;"i_padframe,
+i_pads_ws";;padout
+#;;;;async;std_ulogic;;;;vout_i;;"i_padframe,
+i_pads_ws";padin
+#;;;;async;std_ulogic;;;;vout_o;"i_padframe,
+i_pads_ws";;padout
+#;MX;DIG_in;;;;;;IO;dri;;ne;INOUT
+#;;;;;std_ulogic_vector;7;0;;dri_o;"i_padframe,
+i_pads_ne";;padout
+#;;;;;std_ulogic_vector;7;0;;dri_i;;"i_padframe,
+i_pads_ne";padin
+#;MX;DIG_in;;;;;;IO;dgi;;ne;INOUT
+#;;;;;std_ulogic_vector;7;0;;dgi_o;"i_padframe,
+i_pads_ne";;padout
+#;;;;;std_ulogic_vector;7;0;;dgi_i;;"i_padframe,
+i_pads_ne";padin
+#;#;DIG_in;;;;;;IO;dbi;;ne;INOUT
+#;;DIG_in;clkin;async;std_ulogic;;;IO;dbi_0;;"dut, 
+i_padframe,
+i_pads_en";
+#;;DIG_in;clkin;async;std_ulogic;;;IO;dbi_1;;"dut, 
+i_padframe,
+i_pads_en";
+#;;DIG_in;clkin;async;std_ulogic;;;IO;dbi_2;;"dut, 
+i_padframe,
+i_pads_ne";
+#;;DIG_in;clkin;async;std_ulogic;;;IO;dbi_3;;"dut, 
+i_padframe,
+i_pads_ne";
+#;;DIG_in;clkin;async;std_ulogic;;;IO;dbi_4;;"dut, 
+i_padframe,
+i_pads_ne";
+#;;DIG_in;clkin;async;std_ulogic;;;IO;dbi_5;;"dut, 
+i_padframe,
+i_pads_ne";
+#;;DIG_in;clkin;async;std_ulogic;;;IO;dbi_6;;"dut, 
+i_padframe,
+i_pads_ne";
+#;;DIG_in;clkin;async;std_ulogic;;;IO;dbi_7;;"dut, 
+i_padframe,
+i_pads_ne";
+#;;;;;std_ulogic_vector;7;0;;dbi_o;"i_padframe,
+i_pads_en(1:0)=(1:0)";;padout
+#;;;;async;std_ulogic_vector;7;0;;dbi_o;i_pads_ne(7:2)=(7:2);;padout
+#;;;;;std_ulogic_vector;7;0;;dbi_i;;"i_padframe,
+i_pads_en(1:0)=(1:0)";padin
+#;;;;async;std_ulogic_vector;7;0;;dbi_i;;i_pads_ne(7:2)=(7:2);padin
+#;;;data;clkin;std_ulogic;;;IO;rgbde;;"dut, 
+i_padframe,
+i_pads_ne";data enable
+#;;;;async;std_ulogic;;;;rgbde_o;"i_padframe,
+i_pads_ne";;padout
+#;;;data;clkin;std_ulogic;;;IO;rgbh;;"dut, 
+i_padframe,
+i_pads_en";
+#;;;;async;std_ulogic;;;;rgbh_o;"i_padframe,
+i_pads_en";;padout
+#;;;data;clkin;std_ulogic;;;IO;rgbv;;"dut, 
+i_padframe,
+i_pads_en";
+#;;;;async;std_ulogic;;;;rgbv_o;"i_padframe,
+i_pads_en";;padout
+#;;;clock;clkin;std_ulogic;;;I;rgbclkin;;"dut, 
+i_padframe,
+i_pads_en";RGB Clock in
+#;;;Clock;async;std_ulogic;;;;rgbclkin_o;"i_padframe,
+i_pads_en";;padout
+#;MX;DIG_in;;;;;;IO;itu656in;;es;INOUT 656 input
+#;;;;656clkin;std_ulogic_vector;7;0;;itu656in_o;"i_padframe,
+i_pads_es";;padout
+#;;;clock;async;std_ulogic;;;I;itu656clkin;;"dut, 
+i_padframe,
+i_pads_es";Reset Input
+#;;;Clock;async;std_ulogic;;;;itu656clkin_o;"i_padframe,
+i_pads_es";;padout
+#;;;data;clkout;std_ulogic;;;IO;video_0;"dut,
+i_padframe,
+i_pads_sw";;CCIR-656 output
+#;;;data;clkout;std_ulogic;;;IO;video_1;"dut,
+i_padframe,
+i_pads_sw";;CCIR-656 output
+#;;;data;clkout;std_ulogic;;;IO;video_2;"dut,
+i_padframe,
+i_pads_sw";;CCIR-656 output
+#;;;data;clkout;std_ulogic;;;IO;video_3;"dut,
+i_padframe,
+i_pads_sw";;CCIR-656 output
+#;;;data;clkout;std_ulogic;;;IO;video_4;"dut,
+i_padframe,
+i_pads_sw";;CCIR-656 output
+#;;;data;clkout;std_ulogic;;;IO;video_5;"dut,
+i_padframe,
+i_pads_sw";;CCIR-656 output
+#;;;data;clkout;std_ulogic;;;IO;video_6;"dut,
+i_padframe,
+i_pads_sw";;CCIR-656 output
+#;;;data;clkout;std_ulogic;;;IO;video_7;"dut,
+i_padframe,
+i_pads_sw";;CCIR-656 output
+#;;;;vclk27;std_ulogic_vector;7;0;;video_i;;"i_padframe,
+i_pads_sw";padin
+#;;;;vclk28;std_ulogic_vector;7;0;;video_o;"i_padframe,
+i_pads_sw";;padout
+#;;;Data_O;clkout;std_ulogic;;;IO;vclk27;"dut,
+i_padframe,
+i_pads_sw";;Main video clock output, 27.0 MHz
+#;;;;async;std_ulogic;;;;vclk27_i;;"i_padframe,
+i_pads_sw";padin
+#;;;data;clkout;std_ulogic;;;IO;i2sws;"dut,
+i_padframe,
+i_pads_sw";;I2S word strobe
+#;;;;async;std_ulogic;;;;i2sws_i;;"i_padframe,
+i_pads_sw";padin
+#;;;data;clkout;std_ulogic;;;IO;i2scl;"dut,
+i_padframe,
+i_pads_sw";;I2S clock
+#;;;;async;std_ulogic;;;;i2scl_i;;"i_padframe,
+i_pads_sw";padin
+#;;;data;clkout;std_ulogic;;;IO;i2sdao;"dut,
+i_padframe,
+i_pads_sw";;I2S data output
+#;;;;async;std_ulogic;;;;i2sdao_i;;"i_padframe,
+i_pads_sw";padin
+#;;;data;clkout;std_ulogic;;;IO;i2sdai;;"dut,
+i_padframe,
+i_pads_sw";I2S data input
+#;;;;async;std_ulogic;;;;i2sdai_o;"i_padframe,
+i_pads_sw";;padout
+#;;;data;clkin;std_ulogic;;;IO;ramd_0;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_1;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_2;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_3;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_4;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_5;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_6;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_7;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_8;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_9;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_10;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_11;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_12;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_13;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_14;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_15;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_16;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_17;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_18;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_19;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_20;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_21;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_22;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_23;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_24;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_25;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_26;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_27;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_28;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_29;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_30;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+#;;;data;clkin;std_ulogic;;;IO;ramd_31;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+;;;Data;async;;;;;OPEN;i_pads_en/ramd_o(10:0);;padout
+;;;Data;async;std_ulogic_vector;31;0;;ramd_o;"i_padframe,
+i_pads_en/ramd_o(15:11)=(15:11)";;padout
+;;;Data;async;;;;;OPEN;i_pads_en/ramd_o(23:16);;padout
+;;;Data;async;std_ulogic_vector;31;0;;ramd_o;i_pads_en/ramd_o(31:24)=(31:24);;padout
+;;;Data;async;std_ulogic_vector;31;0;;ramd_o;i_pads_es/ramd_o(10:0)=(10:0);;padout
+;;;;;;;;;OPEN;i_pads_es/ramd_o(15:11);;padout
+;;;Data;async;std_ulogic_vector;31;0;;ramd_o;i_pads_es/ramd_o(23:16)=(23:16);;padout
+;;;;;;;;;OPEN;i_pads_es/ramd_o(31:24);;padout
+;;;Data;async;std_ulogic;;;;%LOW%;;"i_padframe,
+i_pads_en/ramd_i(10:0)";padin
+;;;Data;async;std_ulogic_vector;31;0;;ramd_i;;i_pads_en/ramd_i(15:11)=(15:11);padin
+;;;Data;async;std_ulogic;;;;%LOW%;;i_pads_en/ramd_i(23:16);padin
+;;;Data;async;std_ulogic_vector;31;0;;ramd_i;;i_pads_en/ramd_i(31:24)=(31:24);padin
+;;;Data;async;std_ulogic_vector;31;0;;ramd_i;;"i_padframe,
+i_pads_es/ramd_i(10:0)=(10:0)";padin
+;;;;;std_ulogic;;;;%LOW%;;i_pads_es/ramd_i(15:11);padin
+;;;Data;async;std_ulogic_vector;31;0;;ramd_i;;i_pads_es/ramd_i(23:16)=(23:16);padin
+;;;;;std_ulogic;;;;%LOW%;;i_pads_es/ramd_i(31:24);padin
+;;;Data;async;;;;;OPEN;i_pads_en/ramd_o2(10:0);;padout
+;;;Data;async;std_ulogic_vector;31;0;;ramd_o2;"i_padframe,
+i_pads_en/ramd_o2(15:11)=(15:11)";;padout
+;;;Data;async;;;;;OPEN;i_pads_en/ramd_o2(23:16);;padout
+;;;Data;async;std_ulogic_vector;31;0;;ramd_o2;i_pads_en/ramd_o2(31:24)=(31:24);;padout
+;;;Data;async;std_ulogic_vector;31;0;;ramd_o2;i_pads_es/ramd_o2(10:0)=(10:0);;padout
+;;;;;;;;;OPEN;i_pads_es/ramd_o2(15:11);;padout
+;;;Data;async;std_ulogic_vector;31;0;;ramd_o2;i_pads_es/ramd_o2(23:16)=(23:16);;padout
+;;;;;;;;;OPEN;i_pads_es/ramd_o2(31:24);;padout
+;;;Data;async;std_ulogic_vector;31;0;;%LOW_BUS%;;"i_padframe,
+i_pads_en/ramd_i2(10:0)";padin
+;;;Data;async;std_ulogic_vector;31;0;;ramd_i2;;i_pads_en/ramd_i2(15:11)=(15:11);padin
+;;;Data;async;std_ulogic_vector;31;0;;%LOW_BUS%;;i_pads_en/ramd_i2(23:16);padin
+;;;Data;async;std_ulogic_vector;31;0;;ramd_i2;;i_pads_en/ramd_i2(31:24)=(31:24);padin
+;;;Data;async;std_ulogic_vector;31;0;;ramd_i2;;"i_padframe,
+i_pads_es/ramd_i2(10:0)=(10:0)";padin
+;;;;;std_ulogic_vector;31;0;;%LOW_BUS%;;i_pads_es/ramd_i2(15:11);padin
+;;;Data;async;std_ulogic_vector;31;0;;ramd_i2;;i_pads_es/ramd_i2(23:16)=(23:16);padin
+;;;;;std_ulogic_vector;31;0;;%LOW_BUS%;;i_pads_es/ramd_i2(31:24);padin
+#;;;data;clkin;std_ulogic;;;IO;rama_10;"dut, 
+i_padframe,
+i_pads_es";;address bits for DRAM
+#;;;data;clkin;std_ulogic;;;IO;rama_11;"dut, 
+i_padframe,
+i_pads_es";;address bits for DRAM
+#;;;data;clkin;std_ulogic;;;IO;rama_12;"dut, 
+i_padframe,
+i_pads_es";;address bits for DRAM
+#;;;Data;async;std_ulogic_vector;12;0;;rama_i;;"i_padframe,
+i_pads_es";padin
+#;;;Data;async;std_ulogic_vector;12;0;;rama_o;"i_padframe,
+i_pads_es";;padout
+#;;;data;clkin;std_ulogic;;;IO;ramba0;"dut, 
+i_padframe,
+i_pads_en";;DRAM bank select
+#;;;;;std_ulogic;;;;ramba0_i;;"i_padframe,
+i_pads_en";padin
+#;;;data;clkin;std_ulogic;;;IO;ramba1;"dut, 
+i_padframe,
+i_pads_en";;DRAM bank select
+#;;;;;std_ulogic;;;;ramba1_i;;"i_padframe,
+i_pads_en";padin
+#;;;data;clkin;std_ulogic;;;IO;ramras_n;"dut, 
+i_padframe,
+i_pads_en";;DRAM row address strobe
+#;;;;;std_ulogic;;;;ramras_n_i;;"i_padframe,
+i_pads_en";padin
+#;;;data;clkin;std_ulogic;;;IO;ramcas_n;"dut, 
+i_padframe,
+i_pads_en";;DRAM column address strobe
+#;;;;;std_ulogic;;;;ramcas_n_i;;"i_padframe,
+i_pads_en";padin
+#;;;data;clkin;std_ulogic;;;IO;ramdqm0;"dut, 
+i_padframe,
+i_pads_en";;DRAM byte mask lines
+#;;;;;std_ulogic;;;;ramdqm0_i;;"i_padframe,
+i_pads_en";padin
+#;;;data;clkin;std_ulogic;;;IO;ramdqm1;"dut, 
+i_padframe,
+i_pads_en";;DRAM byte mask lines
+#;;;;;std_ulogic;;;;ramdqm1_i;;"i_padframe,
+i_pads_en";padin
+#;;;data;clkin;std_ulogic;;;IO;ramdqm2;"dut, 
+i_padframe,
+i_pads_en";;DRAM byte mask lines
+#;;;;;std_ulogic;;;;ramdqm2_i;;"i_padframe,
+i_pads_en";padin
+#;;;data;clkin;std_ulogic;;;IO;ramdqm3;"dut, 
+i_padframe,
+i_pads_en";;DRAM byte mask lines
+#;;;;;std_ulogic;;;;ramdqm3_i;;"i_padframe,
+i_pads_en";padin
+#;;;data;clkin;std_ulogic;;;IO;ramwe_n;"dut, 
+i_padframe,
+i_pads_en";;DRAM write enable
+#;;;;;std_ulogic;;;;ramwe_n_i;;"i_padframe,
+i_pads_en";padin
+#;;;data;clkin;std_ulogic;;;IO;ramcs_n;"dut, 
+i_padframe,
+i_pads_en";;DRAM chip select
+#;;;;;std_ulogic;;;;ramcs_n_i;;"i_padframe,
+i_pads_en";padin
+#;;;Data_O;clkin;std_ulogic;;;IO;ramcke;"dut, 
+i_padframe,
+i_pads_en";;DRAM clock enable
+#;;;;;std_ulogic;;;;ramcke_i;;"i_padframe,
+i_pads_en";padin
+#;;;Data_O;clkin;std_ulogic;;;IO;ramclk;"dut, 
+i_padframe,
+i_pads_en";;DRAM clock output
+#;;;;;std_ulogic;;;;ramclk_i;;"i_padframe,
+i_pads_en";padin
+#;;;Data_O;clkin;std_ulogic;;;IO;ramclk_n;"dut, 
+i_padframe,
+i_pads_en";;DRAM clock output (inverted)
+#;;;;;std_ulogic;;;;ramclk_n_i;;"i_padframe,
+i_pads_en";padin
+#;;;data;clkin;std_ulogic;;;IO;ramdqs0;"dut, 
+i_padframe,
+i_pads_en";;strobe signal
+#;;;;;std_ulogic;;;;ramdqs0_i;;"i_padframe,
+i_pads_en";padin
+#;;;data;clkin;std_ulogic;;;IO;ramdqs1;"dut, 
+i_padframe,
+i_pads_en";;strobe signal
+#;;;;;std_ulogic;;;;ramdqs1_i;;"i_padframe,
+i_pads_en";padin
+#;;;data;clkin;std_ulogic;;;IO;ramdqs2;"dut, 
+i_padframe,
+i_pads_en";;strobe signal
+#;;;;;std_ulogic;;;;ramdqs2_i;;"i_padframe,
+i_pads_en";padin
+#;;;data;clkin;std_ulogic;;;IO;ramdqs3;"dut, 
+i_padframe,
+i_pads_en";;ramclk feedback
+#;;;;;std_ulogic;;;;ramdqs3_i;;"i_padframe,
+i_pads_en";padin
+#;;;data;clkin;std_ulogic;;;I;ramclkin;;"dut, 
+i_padframe,
+i_pads_en";ramclk feedback
+#;;;Clock;async;std_ulogic;;;;ramclkin_o;"i_padframe,
+i_pads_en";;padout
+#;;;data;clkin;std_ulogic;;;I;sstl;;"dut, 
+i_padframe,
+i_pads_es";sstl reference voltage
+#;;;Clock;async;std_ulogic;;;;sstl_o;"i_padframe,
+i_pads_es";;padout
+#;;;data;;std_ulogic;;;IO;scl1;;"dut,
+i_padframe,
+i_pads_ne";I2C Bus 1 Data
+#;;;;async;std_ulogic;;;;scl1_o;"i_padframe,
+i_pads_ne";;padout
+#;;;data;;std_ulogic;;;IO;sda1;;"dut,
+i_padframe,
+i_pads_ne";I2C Bus 1 Clock
+#;;;;async;std_ulogic;;;;sda1_o;"i_padframe,
+i_pads_ne";;padout
+#;;;;;std_ulogic;;;;sda1_i;;"i_padframe,
+i_pads_ne";
+#;;;data;;std_ulogic;;;IO;scl2;;"dut,
+i_padframe,
+i_pads_nw";I2C Bus 2 Data
+#;;;;async;std_ulogic;;;;scl2_o;"i_padframe,
+i_pads_nw";;padout
+#;;;data;;std_ulogic;;;IO;sda2;;"dut,
+i_padframe,
+i_pads_nw";I2C Bus 2 Clock
+#;;;;async;std_ulogic;;;;sda2_o;"i_padframe,
+i_pads_nw";;padout
+#;;;;;std_ulogic;;;;sda2_i;;"i_padframe,
+i_pads_nw";padin
+#;;;data;;std_ulogic;;;IO;scl3;;"dut,
+i_padframe,
+i_pads_nw";I2C Bus 3 Data
+#;;;;async;std_ulogic;;;;scl3_o;"i_padframe,
+i_pads_nw";;padout
+#;;;data;;std_ulogic;;;IO;sda3;;"dut,
+i_padframe,
+i_pads_nw";I2C Bus 3 Clock
+#;;;;async;std_ulogic;;;;sda3_o;"i_padframe,
+i_pads_nw";;padout
+#;;;;;std_ulogic;;;;sda3_i;;"i_padframe,
+i_pads_nw";padin
+#;;;data;tclk;std_ulogic;;;I;tms;;"dut/tms,
+i_padframe/tms,
+i_pads_ws/tms";ICE interface mode select input
+#;;;data;tclk;std_ulogic;;;;tms_o;"i_padframe,
+i_pads_ws";;padout
+#;;;data;tclk;std_ulogic;;;I;tdi;;"dut/tdi,
+i_padframe/tdi,
+i_pads_ws/tdi";ICE interface
+#;;;data;tclk;std_ulogic;;;;tdi_o;"i_padframe,
+i_pads_ws";;padout
+#;;;Data_O;tclk;std_ulogic;;;IO;tdo;"dut/tdo,
+i_padframe/tdo,
+i_pads_ws/tdo";;ICE interface
+#;;;data;tclk;std_ulogic;;;;tdo_i;;"i_padframe,
+i_pads_ws";padin
+#;;;Clock;tclk;std_ulogic;;;I;tclk;;"dut/tclk,
+i_padframe/tclk,
+i_pads_ws/tclk";ICE interface
+#;;;data;tclk;std_ulogic;;;;tclk_o;"i_padframe,
+i_pads_ws";;padout
+#;;;data;tclk;std_ulogic;;;I;trst;;"dut/trst,
+i_padframe/trst,
+i_pads_ws/trst";ICE interface
+#;;;data;tclk;std_ulogic;;;;trst_o;"i_padframe,
+i_pads_ws";;padout
+#;;;data;async;std_ulogic;;;IO;gpio_0;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_1;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_2;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_3;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_4;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_5;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_6;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_7;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_8;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_9;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_10;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_11;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_12;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_13;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_14;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_15;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_16;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_17;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_18;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_19;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_20;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_21;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_22;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_23;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_24;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_25;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+#;;;data;async;std_ulogic;;;IO;gpio_26;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+#;;;;async;std_ulogic_vector;26;0;;gpio_o;"i_padframe,
+i_pads_ws(12:0)=(12:0)";;padout
+#;;;;async;std_ulogic_vector;26;0;;gpio_o;i_pads_sw(26:13)=(26:13);;padout
+#;;;;async;std_ulogic_vector;26;0;;gpio_i;;"i_padframe,
+i_pads_ws(12:0)=(12:0)";padin
+#;;;;async;std_ulogic_vector;26;0;;gpio_i;;i_pads_sw(26:13)=(26:13);padin
+#;;;data;clkin;std_ulogic;;;IO;cadc0;;"dut,
+i_adc";CADC analog source inputs control
+#;;;data;clkin;std_ulogic;;;IO;cadc1;;"dut,
+i_adc";CADC analog source inputs control
+#;;;data;clkin;std_ulogic;;;IO;cadc2;;"dut,
+i_adc";CADC analog source inputs control
+#;;;data;clkin;std_ulogic;;;IO;cadc3;;"dut,
+i_adc";CADC analog source inputs control
+#;;;data;clkin;std_ulogic;;;IO;cadc4;;"dut,
+i_adc";CADC analog source inputs control
+#;;;data;clkin;std_ulogic;;;IO;cadc5;;"dut,
+i_adc";CADC analog source inputs control
+#;;;data;async;std_ulogic;;;IO;dro_0;"dut,
+i_padframe,
+i_pads_sw";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dro_1;"dut,
+i_padframe,
+i_pads_sw";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dro_2;"dut,
+i_padframe,
+i_pads_sw";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dro_3;"dut,
+i_padframe,
+i_pads_sw";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dro_4;"dut,
+i_padframe,
+i_pads_sw";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dro_5;"dut,
+i_padframe,
+i_pads_sw";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dro_6;"dut,
+i_padframe,
+i_pads_sw";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dro_7;"dut,
+i_padframe,
+i_pads_sw";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dro_8;"dut,
+i_padframe,
+i_pads_sw";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dro_9;"dut,
+i_padframe,
+i_pads_sw";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dro_10;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dro_11;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dro_12;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dro_13;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dro_14;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dro_15;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+#;;;;async;std_ulogic_vector;15;0;;dro_i;;"i_padframe,
+i_pads_sw(9:0)=(9:0)";padin
+#;;;;async;std_ulogic_vector;15;0;;dro_i;;i_pads_se(15:10)=(15:10);padin
+#;;;;async;std_ulogic_vector;15;0;;dro_o;"i_padframe,
+i_pads_sw(9:0)=(9:0)";;padout
+#;;;;async;std_ulogic_vector;15;0;;dro_o;i_pads_se(15:10)=(15:10);;padout
+#;;;data;async;std_ulogic;;;IO;dgo_0;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dgo_1;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dgo_2;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dgo_3;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dgo_4;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dgo_5;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dgo_6;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dgo_7;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dgo_8;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dgo_9;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dgo_10;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dgo_11;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dgo_12;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dgo_13;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dgo_14;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dgo_15;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+#;;;;async;std_ulogic_vector;15;0;;dgo_i;;"i_padframe,
+i_pads_ne(9:0)=(9:0)";padin
+#;;;;async;std_ulogic_vector;15;0;;dgo_i;;i_pads_se(15:10)=(15:10);padin
+#;;;;async;std_ulogic_vector;15;0;;dgo_o;"i_padframe,
+i_pads_ne(9:0)=(9:0)";;padout
+#;;;;async;std_ulogic_vector;15;0;;dgo_o;i_pads_se(15:10)=(15:10);;padout
+#;;;data;async;std_ulogic;;;IO;dbo_0;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dbo_1;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dbo_2;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dbo_3;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dbo_4;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dbo_5;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dbo_6;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dbo_7;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dbo_8;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dbo_9;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dbo_10;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dbo_11;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dbo_12;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dbo_13;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dbo_14;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+#;;;data;async;std_ulogic;;;IO;dbo_15;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+#;;;;async;std_ulogic_vector;15;0;;dbo_i;;"i_padframe,
+i_pads_ne(9:0)=(9:0)";padin
+#;;;;async;std_ulogic_vector;15;0;;dbo_i;;i_pads_se(15:10)=(15:10);padin
+#;;;;async;std_ulogic_vector;15;0;;dbo_o;"i_padframe,
+i_pads_ne(9:0)=(9:0)";;padout
+#;;;;async;std_ulogic_vector;15;0;;dbo_o;i_pads_se(15:10)=(15:10);;padout
+#;;;Data_O;async;std_ulogic;;;IO;pclk1;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel Pixel Clock 1
+#;;;;async;std_ulogic;;;;pclk1_i;;"i_padframe,
+i_pads_ne";padin
+#;;;Data_O;async;std_ulogic;;;IO;pclk2;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel Pixel Clock 2
+#;;;;async;std_ulogic;;;;pclk2_i;;"i_padframe,
+i_pads_ne";padin
+#;;;data;async;std_ulogic;;;IO;pde1;"dut,
+i_padframe,
+i_pads_sw";;"Flat Panel
+single bus or dual bus odd data valid"
+#;;;;async;std_ulogic;;;;pde1_i;;"i_padframe,
+i_pads_sw";padin
+#;;;data;async;std_ulogic;;;IO;pde2;"dut,
+i_padframe,
+i_pads_ws";;"Flat Panel
+dual bus even data valid"
+#;;;;async;std_ulogic;;;;pde2_i;;"i_padframe,
+i_pads_ws";padin
+#;;;data;async;std_ulogic;;;IO;pcs0;"dut,
+i_padframe,
+i_pads_ws";;"Flat Panel
+programmable panel control signals"
+#;;;;async;std_ulogic;;;;pcs0_i;;"i_padframe,
+i_pads_ws";padin
+#;;;data;async;std_ulogic;;;IO;pcs1;"dut,
+i_padframe,
+i_pads_ws";;"Flat Panel
+programmable panel control signals"
+#;;;;async;std_ulogic;;;;pcs1_i;;"i_padframe,
+i_pads_ws";padin
+#;;;data;async;std_ulogic;;;IO;pcs2;"dut,
+i_padframe,
+i_pads_ws";;"Flat Panel
+programmable panel control signals"
+#;;;;async;std_ulogic;;;;pcs2_i;;"i_padframe,
+i_pads_ws";padin
+#;;;data;async;std_ulogic;;;IO;pcs3;"dut,
+i_padframe,
+i_pads_ws";;"Flat Panel
+programmable panel control signals"
+#;;;;async;std_ulogic;;;;pcs3_i;;"i_padframe,
+i_pads_ws";padin
+#;;;data;async;std_ulogic;;;IO;rev;"dut,
+i_padframe,
+i_pads_sw";;"Flat Panel
+reverse signal"
+#;;;;async;std_ulogic;;;;rev_i;;"i_padframe,
+i_pads_sw";padin
+#;;;data;async;std_ulogic;;;IO;pmp0;"dut,
+i_padframe,
+i_pads_sw";;"Flat Panel
+reverse signal"
+#;;;;async;std_ulogic;;;;pmp0_i;;"i_padframe,
+i_pads_sw";padin
+#;;;data;async;std_ulogic;;;IO;pmp1;"dut,
+i_padframe,
+i_pads_sw";;"Flat Panel
+reverse signal"
+#;;;;async;std_ulogic;;;;pmp1_i;;"i_padframe,
+i_pads_sw";padin
+#;;;data;async;std_ulogic;;;IO;pmp2;"dut,
+i_padframe,
+i_pads_sw";;"Flat Panel
+reverse signal"
+#;;;;async;std_ulogic;;;;pmp2_i;;"i_padframe,
+i_pads_sw";padin
+#;;;data;async;std_ulogic;;;IO;nvm_16;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+upper address bits"
+#;;;data;async;std_ulogic;;;IO;nvm_17;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+upper address bits"
+#;;;data;async;std_ulogic;;;IO;nvm_18;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+upper address bits"
+#;;;data;async;std_ulogic;;;IO;nvm_19;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+upper address bits"
+#;;;data;async;std_ulogic;;;IO;nvm_20;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+upper address bits"
+#;;;data;async;std_ulogic;;;IO;nvm_21;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+upper address bits"
+#;;;data;async;std_ulogic;;;IO;nvm_22;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+upper address bits"
+#;;;data;async;std_ulogic;;;IO;nvm_0;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+#;;;data;async;std_ulogic;;;IO;nvm_1;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+#;;;data;async;std_ulogic;;;IO;nvm_2;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+#;;;data;async;std_ulogic;;;IO;nvm_3;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+#;;;data;async;std_ulogic;;;IO;nvm_4;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+#;;;data;async;std_ulogic;;;IO;nvm_5;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+#;;;data;async;std_ulogic;;;IO;nvm_6;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+#;;;data;async;std_ulogic;;;IO;nvm_7;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+#;;;data;async;std_ulogic;;;IO;nvm_8;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+#;;;data;async;std_ulogic;;;IO;nvm_9;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+#;;;data;async;std_ulogic;;;IO;nvm_10;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+#;;;data;async;std_ulogic;;;IO;nvm_11;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+#;;;data;async;std_ulogic;;;IO;nvm_12;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+#;;;data;async;std_ulogic;;;IO;nvm_13;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+#;;;data;async;std_ulogic;;;IO;nvm_14;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+#;;;data;async;std_ulogic;;;IO;nvm_15;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+#;;;;async;std_ulogic_vector;22;0;;nvm_i;;"i_padframe,
+i_pads_se";padin
+#;;;;async;std_ulogic_vector;22;0;;nvm_o;"i_padframe,
+i_pads_se";;padout
+#;;;data;async;std_ulogic;;;IO;nvmoe;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+output enable"
+#;;;;async;std_ulogic;;;;nvmoe_i;;"i_padframe,
+i_pads_se";padin
+#;;;data;async;std_ulogic;;;IO;nvmwe;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+write enable"
+#;;;;async;std_ulogic;;;;nvmwe_i;;"i_padframe,
+i_pads_se";padin
+#;;;data;async;std_ulogic;;;IO;nvmale;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+address latch enable"
+#;;;;async;std_ulogic;;;;nvmale_i;;"i_padframe,
+i_pads_se";padin
+#;;;data;frcclkin;std_ulogic;;;IO;frcd_0;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+#;;;data;frcclkin;std_ulogic;;;IO;frcd_1;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+#;;;data;frcclkin;std_ulogic;;;IO;frcd_2;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+#;;;data;frcclkin;std_ulogic;;;IO;frcd_3;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+#;;;data;frcclkin;std_ulogic;;;IO;frcd_4;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+#;;;data;frcclkin;std_ulogic;;;IO;frcd_5;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+#;;;data;frcclkin;std_ulogic;;;IO;frcd_6;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+#;;;data;frcclkin;std_ulogic;;;IO;frcd_7;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+#;;;data;frcclkin;std_ulogic;;;IO;frcd_8;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+#;;;data;frcclkin;std_ulogic;;;IO;frcd_9;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+#;;;data;frcclkin;std_ulogic;;;IO;frcd_10;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+#;;;data;frcclkin;std_ulogic;;;IO;frcd_11;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+#;;;data;frcclkin;std_ulogic;;;IO;frcd_12;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+#;;;data;frcclkin;std_ulogic;;;IO;frcd_13;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+#;;;data;frcclkin;std_ulogic;;;IO;frcd_14;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+#;;;data;frcclkin;std_ulogic;;;IO;frcd_15;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+#;;;;frcclkin;std_ulogic_vector;15;0;;frcd_o;"i_padframe,
+i_pads_ws";;padout
+#;;;;frcclkin;std_ulogic_vector;15;0;;frcd_i;;"i_padframe,
+i_pads_ws";padin
+#;;;clock;async;std_ulogic;;;I;frcclkin;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+clk input"
+#;;;;frcclkin;std_ulogic;;;;frcclkin_o;"i_padframe,
+i_pads_ws";;padout
+#;;;data;frcclkin;std_ulogic;;;IO;frch;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+h input"
+#;;;;frcclkin;std_ulogic;;;;frch_o;"i_padframe,
+i_pads_ws";;padout
+#;;;;frcclkin;std_ulogic;;;;frch_i;;"i_padframe,
+i_pads_ws";padin
+#;;;data;frcclkin;std_ulogic;;;IO;frcv;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+v input"
+#;;;;frcclkin;std_ulogic;;;;frcv_o;"i_padframe,
+i_pads_ws";;padout
+#;;;;frcclkin;std_ulogic;;;;frcv_i;;"i_padframe,
+i_pads_ws";padin
+#;;;data;async;std_ulogic;;;I;vss_pll;;"dut,
+i_padframe,
+i_pads_sw";power supply 
+#;;;;async;std_ulogic;;;;vss_pll_o;"i_padframe,
+i_pads_sw";;padout
+#;;;data;async;std_ulogic;;;I;vdd_pll;;"dut,
+i_padframe,
+i_pads_sw";power supply 
+#;;;;async;std_ulogic;;;;vdd_pll_o;"i_padframe,
+i_pads_sw";;padout
+:=:=:=>HIER
+::ign;::gen;::variants;::parent;::inst;::entity;::use;::arch;::config;::comment
+;;Default;testbench;vgca_tb;vgca_tb;analog_hw.analog_pack;struct;vgca_tb_struct_conf;
+;;Default;vgca_tb;dut;vgca;analog_hw.analog_pack;struct;vgca_struct_conf;
+#;;Default;dut;i_padframe;padframe;;struct;padframe_struct_conf;Will be replaced by generated pad instances
+;;Default;dut;i_bsr;bsr;;struct;bsr_struct_conf;Will be replaced by boundary scan logic
+;;Default;dut;i_tap_con;tap_con;;struct;tap_con_struct_conf;
+#;;Default;dut;i_vgca;vgca;;struct;vgca_struct_conf;
+;;Default;dut;i_dac;dac;;struct;dac_struct_conf;
+;;Default;dut;i_adc;adc;;struct;adc_struct_conf;
+;;Default;dut;i_clkgen;clkgen;;struct;clkgen_struct_conf;
+#;;Default;dut;i_core;core;;struct;core_struct_conf;
+#;;Default;dut;i_i2c_kernel;i2c_kernel;;struct;i2c_kernel_struct_conf;
+#;;Default;dut;i_i2c_test;i2c_test;;struct;i2c_test_struct_conf;
+;;Default;dut;i_vgca_fe;vgca_fe;;struct;vgca_fe_struct_conf;
+;;Default;dut;i_vgca_di;vgca_di;;struct;vgca_di_struct_conf;
+;;Default;dut;i_vgca_rc;vgca_rc;;struct;vgca_rc_struct_conf;
+;;Default;dut;i_vgca_dp;vgca_dp;;struct;vgca_dp_struct_conf;
+;;Default;dut;i_vgca_cpu;vgca_cpu;;struct;vgca_cpu_struct_conf;
+;;Default;dut;i_vgca_mm;vgca_mm;;struct;vgca_mm_struct_conf;
+;;Default;i_vgca_fe;i_fe_dii;fe_dii;;struct;fe_dii_struct_conf;
+;;Default;i_vgca_di;i_di_m;di_m;;struct;di_m_struct_conf;
+;;Default;i_vgca_di;i_di_s;di_s;;struct;di_s_struct_conf;
+;;Default;i_vgca_dp;i_dp_dd;dp_dd;;struct;dp_dd_struct_conf;
+;;Default;i_vgca_dp;i_dp_ga;dp_ga;;struct;dp_ga_struct_conf;
+;;Default;i_vgca_mm;i_mm_mm1;mm_mm1;;struct;mm_mm1_struct_conf;
+;;Default;i_vgca_cpu;i_cpu_watch;cpu_watch;;struct;cpu_watch_struct_conf;
+;;Default;i_vgca_rc;i_rc_ctrl;rc_ctrl;;struct;rc_ctrl_struct_conf;
+;;Default;i_clkgen;i_clkgen_sc;clkgen_sc;;struct;clkgen_sc_struct_conf;
+;;Default;i_tap_con;i_tap_con_ctrl;tap_con_ctrl;;struct;tap_con_ctrl_struct_conf;
+;;Default;i_bsr;i_bsr_ctrl;bsr_ctrl;;struct;bsr_ctrl_struct_conf;
+;;Default;i_adc;i_adc_ctrl;adc_ctrl;;struct;adc_ctrl_struct_conf;
+;;Default;i_dac;i_dac_ctrl;dac_ctrl;;struct;dac_ctrl_struct_conf;
+;;;;;;;;;
+;;;;;;;;;
+;;Default;dut;i_padframe;padframe;;struct;padframe_struct_conf;
+;;Default;i_padframe;i_pads_nw;pads_nordwest;;struct;pads_nordwest_struct_conf;
+;;Default;i_padframe;i_pads_ne;pads_nordeast;;struct;pads_nordeast_struct_conf;
+;;Default;i_padframe;i_pads_en;pads_eastnord;;struct;pads_eastnord_struct_conf;
+;;Default;i_padframe;i_pads_es;pads_eastsouth;;struct;pads_eastsouth_struct_conf;
+;;Default;i_padframe;i_pads_wn;pads_westnord;;struct;pads_westnord_struct_conf;
+;;Default;i_padframe;i_pads_ws;pads_westsouth;;struct;pads_westsouth_struct_conf;
+;;Default;i_padframe;i_pads_sw;pads_southwest;;struct;pads_southwest_struct_conf;
+;;Default;i_padframe;i_pads_se;pads_southeast;;struct;pads_southeast_struct_conf;
+;;;;;;;;;
+;;;;;;;;;
+#;$i(1..59),/ioc_(.*)::pad=($i)/;Default;i_pads_es;ioc_$1;;;;;
+#;$i(1..59),/pad_(.*)::pad=($i)/;Default;i_pads_es;pad_$1;;;;;
+#;$i(60..117),/ioc_(.*)::pad=($i)/;Default;i_pads_en;ioc_$1;;;;;
+#;$i(60..117),/pad_(.*)::pad=($i)/;Default;i_pads_en;pad_$1;;;;;
+#;$i(118..177),/ioc_(.*)::pad=($i)/;Default;i_pads_ne;ioc_$1;;;;;
+#;$i(118..177),/pad_(.*)::pad=($i)/;Default;i_pads_ne;pad_$1;;;;;
+#;$i(178..234),/ioc_(.*)::pad=($i)/;Default;i_pads_nw;ioc_$1;;;;;
+#;$i(178..234),/pad_(.*)::pad=($i)/;Default;i_pads_nw;pad_$1;;;;;
+#;$i(235..293),/ioc_(.*)::pad=($i)/;Default;i_pads_wn;ioc_$1;;;;;
+#;$i(235..293),/pad_(.*)::pad=($i)/;Default;i_pads_wn;pad_$1;;;;;
+#;$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_$1;;;;;
+#;$i(294..351),/pad_(.*)::pad=($i)/;Default;i_pads_ws;pad_$1;;;;;
+#;$i(352..411),/ioc_(.*)::pad=($i)/;Default;i_pads_sw;ioc_$1;;;;;
+#;$i(352..411),/pad_(.*)::pad=($i)/;Default;i_pads_sw;pad_$1;;;;;
+#;$i(412..468),/ioc_(.*)::pad=($i)/;Default;i_pads_se;ioc_$1;;;;;
+#;$i(412..468),/pad_(.*)::pad=($i)/;Default;i_pads_se;pad_$1;;;;;
+# Do not print component declaration and configuration for pads and iocells:;;;;;;;;;
+#;/pad_(.*)/;;;pad_$1;;%NCD%;;%NO_CONFIG%;
+#;/ioc_(.*)/;;;ioc_$1;;%NCD%;;%NO_CONFIG%;
+;;;;;;;;;
+#;/pad_(.*)/;;;i_padioc_$1;;;;;
+;/pad_(.*)/;;;pad_$1;;%NCD%;;%NO_CONFIG%;
+#;/ioc_(.*)/;;;i_padioc_$1;;;;;
+;/ioc_(.*)/;;;ioc_$1;;%NCD%;;%NO_CONFIG%;
+;;;;;;;;;
+;$i(1..59),/ioc_(.*)::pad=($i)/;Default;i_padioc_$1;ioc_$1;;;;;
+;$i(1..59),/ioc_(.*)::pad=($i)/;Default;i_pads_es;i_padioc_$1;padioc;vst_5lm_io.vst_5lm_io_components;struct;padioc_struct;
+;$i(1..59),/pad_(.*)::pad=($i)/;Default;i_pads_es;pad_$1;;;;;
+;$i(1..59),/pad_(.*)::iocell=(.+)::::pad=($i)/;Default;i_padioc_$1;pad_$1;;;;;
+;$i(1..59),/pad_(.*)::iocell=(.*)::::pad=($i)/;Default;i_pads_es;i_padioc_$1;padioc;vst_5lm_io.vst_5lm_io_components;struct;padioc_struct;
+ ;$i(60..117),/ioc_(.+)::pad=($i)/;Default;i_pads_en;ioc_$1;;;;;
+ ;$i(60..117),/pad_(.*)::pad=($i)/;Default;i_pads_en;pad_$1;;;;;
+ ;$i(118..177),/ioc_(.*)::pad=($i)/;Default;i_pads_ne;ioc_$1;;;;;
+ ;$i(118..177),/pad_(.*)::pad=($i)/;Default;i_pads_ne;pad_$1;;;;;
+ ;$i(178..234),/ioc_(.*)::pad=($i)/;Default;i_pads_nw;ioc_$1;;;;;
+ ;$i(178..234),/pad_(.*)::pad=($i)/;Default;i_pads_nw;pad_$1;;;;;
+ ;$i(235..293),/ioc_(.*)::pad=($i)/;Default;i_pads_wn;ioc_$1;;;;;
+ ;$i(235..293),/pad_(.*)::pad=($i)/;Default;i_pads_wn;pad_$1;;;;;
+ ;$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_$1;;;;;
+ ;$i(294..351),/pad_(.*)::pad=($i)/;Default;i_pads_ws;pad_$1;;;;;
+ ;$i(352..411),/ioc_(.*)::pad=($i)/;Default;i_pads_sw;ioc_$1;;;;;
+ ;$i(352..411),/pad_(.*)::pad=($i)/;Default;i_pads_sw;pad_$1;;;;;
+ ;$i(412..468),/ioc_(.*)::pad=($i)/;Default;i_pads_se;ioc_$1;;;;;
+ ;$i(412..468),/pad_(.*)::pad=($i)/;Default;i_pads_se;pad_$1;;;;;
+#;;;;;;;;;
+#;/i_padioc_(\d+)/;Default;i_padframe;i_padioc_$1;;;;;
+:=:=:=>OFF_CONN_DevIO
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::out;::in;::descr
+#;;Bundle Name;Class;Clk Domain;Data Type;High;Low;;Signal Name;Outputs (Driver);Inputs;Description
+#;MD;;StdIF;$1;YCrCb_$2_$3_$4;;;;;$5;$6;example for macro definition
+#;ME;$5_$6;StdIF C;$1;std_ulogic;;;;$5_AF;$5/AF;$6/AF;
+#;ME;$5_$6;StdIF C;$1;std_ulogic;;;;$5_AL;$5/AL;$6/AL;
+#;ME;$5_$6;StdIF C;$1;std_ulogic;;;;$5_AP;$5/AP;$6/AP;
+#;ME;$5_$6;StdIF C;$1;std_ulogic;;;;$5_FIELD;$5/FIELD;$6/FIELD;
+#;ME;$5_$6;StdIF C;$1;std_ulogic;;;;$5_HSYNC;$5/HSYNC;$6/HSYNC;
+#;ME;$5_$6;StdIF C;$1;std_ulogic;;;;$5_UEN;$5/UEN;$6/UEN;
+#;ME;$5_$6;StdIF C;$1;std_ulogic;;;;$5_VSYNC;$5/VSYNC;$6/VSYNC;
+#;ME;$5_$6;StdIF D;$1;std_ulogic_vector;$4;0;;$5_CB;$5/CB($4:0);$6/CB($4:0);
+#;ME;$5_$6;StdIF D;$1;std_ulogic_vector;$3;0;;$5_CR;$5/CR($3:0);$6/CR($3:0);
+#;ME;$5_$6;StdIF D;$1;std_ulogic_vector;$2;0;;$5_Y;$5/Y($2:0);$6/Y($2:0);
+#;;;;;;;;;;;;
+;MH;RGB_out;;;;;;O;$1;;;
+;MD;RGB_out;analog;async;std_ulogic;;;O;rout;"dut, 
+i_dac";;
+;MD;RGB_out;analog;async;std_ulogic;;;O;gout;"dut, 
+i_dac";;
+;MD;RGB_out;analog;async;std_ulogic;;;O;bout;"dut, 
+i_dac";;
+;MD;RGB_out;analog;async;std_ulogic;;;O;svm;"dut, 
+i_dac";;
+;MD;RGB_out;analog;async;std_ulogic;;;O;svmdis;"dut, 
+i_padframe,
+i_pads_sw";;
+;MD;RGB_out;analog;async;std_ulogic;;;O;avo;"dut, 
+i_padframe,
+i_pads_sw";;
+;MD;RGB_out;analog;async;std_ulogic;;;O;hout;"dut, 
+i_padframe,
+i_pads_ws";;
+;MD;RGB_out;analog;async;std_ulogic;;;O;vout;"dut, 
+i_padframe,
+i_pads_ws";;
+#;;;;;;;;;;;;
+;MH;DIG_in;;;;;;I;$1;;$2;
+;MD;DIG_in;clkin;async;std_ulogic;;;I;$1_0;;"dut, 
+i_padframe,
+i_pads_$2,";
+;MD;DIG_in;clkin;async;std_ulogic;;;I;$1_1;;"dut, 
+i_padframe,
+i_pads_$2,";
+;MD;DIG_in;clkin;async;std_ulogic;;;I;$1_2;;"dut, 
+i_padframe,
+i_pads_$2,";
+;MD;DIG_in;clkin;async;std_ulogic;;;I;$1_3;;"dut, 
+i_padframe,
+i_pads_$2,";
+;MD;DIG_in;clkin;async;std_ulogic;;;I;$1_4;;"dut, 
+i_padframe,
+i_pads_$2,";
+;MD;DIG_in;clkin;async;std_ulogic;;;I;$1_5;;"dut, 
+i_padframe,
+i_pads_$2,";
+;MD;DIG_in;clkin;async;std_ulogic;;;I;$1_6;;"dut, 
+i_padframe,
+i_pads_$2,";
+;MD;DIG_in;clkin;async;std_ulogic;;;I;$1_7;;"dut, 
+i_padframe,
+i_pads_$2,";
+#;;device I/O;;;;;;;;;;
+;;;Data;clkf;std_ulogic;;;I;xin;;"dut/gclkp,
+i_padframe/xin,
+i_pads_sw/xin";
+;;;Data;clkf;std_ulogic;;;O;xout;"dut/xo, 
+i_padframe/xout,
+i_pads_sw/xout";;
+;;;Reset;async;std_ulogic;;;;reset_n;;"dut/reset_n,
+i_padframe/reset_n,
+i_pads_sw/reset_n";
+;;;data;async;std_ulogic;;;;tm;;"dut,
+i_padframe,
+i_pads_ne";Test Mode Enable
+;;;Clock;async;std_ulogic;;;;varclk;"dut/varclk,
+i_padframe/varclk,
+i_pads_sw/varclk";;Variable clock output
+;;Analog_out;;;std_ulogic;;;O;cvo1;"dut,
+i_adc/vout_1_o";;INOUT
+;;Analog_out;;;std_ulogic;;;O;cvo2;"dut,
+i_adc/vout_2_o";;INOUT
+;;Analog_out;;;std_ulogic;;;O;cvo3;"dut,
+i_adc/vout_3_o";;INOUT
+;;Analog_out;;;std_ulogic;;;O;cvo4;"dut,
+i_adc/vout_4_o";;INOUT
+;;Analog_out;;;std_ulogic;;;O;cvo5;"dut,
+i_adc/vout_5_o";;INOUT
+;;Analog_out;;;std_ulogic;;;O;cvo6;"dut,
+i_adc/vout_6_o";;INOUT
+;;Analog_out;;;std_ulogic;;;O;cvo7;"dut,
+i_adc/vout_7_o";;INOUT
+;;Analog_in;analog;async;std_ulogic;;;I;cvi1;;"dut,
+i_adc/vin_1_i";INOUT
+;;Analog_in;analog;async;std_ulogic;;;I;cvi2;;"dut,
+i_adc/vin_2_i";INOUT
+;;Analog_in;analog;async;std_ulogic;;;I;cvi3;;"dut,
+i_adc/vin_3_i";INOUT
+;;Analog_in;analog;async;std_ulogic;;;I;cvi4;;"dut,
+i_adc/vin_4_i";INOUT
+;;Analog_in;analog;async;std_ulogic;;;I;yi1;;"dut,
+i_adc/vin_5_i";INOUT
+;;Analog_in;analog;async;std_ulogic;;;I;yi2;;"dut,
+i_adc/vin_6_i";INOUT
+;;Analog_in;analog;async;std_ulogic;;;I;yi3;;"dut,
+i_adc/vin_7_i";INOUT
+;;Analog_in;analog;async;std_ulogic;;;I;ci1;;"dut,
+i_adc/vin_8_i";INOUT
+;;Analog_in;analog;async;std_ulogic;;;I;ci2;;"dut,
+i_adc/vin_9_i";INOUT
+;;Analog_in;analog;async;std_ulogic;;;I;ci3;;"dut,
+i_adc/vin_10_i";INOUT
+;;RGB_in;analog;async;std_ulogic;;;I;ri1;;"dut,
+i_adc/vin_11_i";INOUT
+;;RGB_in;analog;async;std_ulogic;;;I;gi1;;"dut,
+i_adc/vin_12_i";INOUT
+;;RGB_in;analog;async;std_ulogic;;;I;bi1;;"dut,
+i_adc/vin_13_i";INOUT
+;;RGB_in;analog;async;std_ulogic;;;I;fbi1;;"dut,
+i_adc/vin_14_i";INOUT
+;;RGB_in;analog;async;std_ulogic;;;I;ri2;;"dut,
+i_adc/vin_15_i";INOUT
+;;RGB_in;analog;async;std_ulogic;;;I;gi2;;"dut,
+i_adc/vin_16_i";INOUT
+;;RGB_in;analog;async;std_ulogic;;;I;bi2;;"dut,
+i_adc/vin_17_i";INOUT
+;;RGB_in;analog;async;std_ulogic;;;I;fbi2;;"dut,
+i_adc/vin_18_i";INOUT
+;;RGB_in;analog;async;std_ulogic;;;I;ri3;;"dut,
+i_adc/vin_19_i";INOUT
+;;RGB_in;analog;async;std_ulogic;;;I;gi3;;"dut,
+i_adc/vin_20_i";INOUT
+;;RGB_in;analog;async;std_ulogic;;;I;bi3;;"dut,
+i_adc/vin_21_i";INOUT
+;;RGB_in;analog;async;std_ulogic;;;I;fbi3;;"dut,
+i_adc/vin_22_i";INOUT
+;;RGB_in;analog;async;std_ulogic;;;I;vin1;;"dut,
+i_padframe/vin1";
+;;RGB_in;analog;async;std_ulogic;;;I;vin2;;"dut,
+i_padframe/vin2";
+;;RGB_in;analog;async;std_ulogic;;;I;vin3;;"dut,
+i_padframe/vin3";INOUT
+;MX;RGB_out;;;;;;O;rgb;;;INOUT
+;MX;DIG_in;;;;;;I;dri;;ne;INOUT
+;MX;DIG_in;;;;;;I;dgi;;ne;INOUT
+;#;DIG_in;;;;;;I;dbi;;ws;INOUT
+;;DIG_in;clkin;async;std_ulogic;;;I;dbi_0;;"dut, 
+i_padframe,
+i_pads_en,";
+;;DIG_in;clkin;async;std_ulogic;;;I;dbi_1;;"dut, 
+i_padframe,
+i_pads_en,";
+;;DIG_in;clkin;async;std_ulogic;;;I;dbi_2;;"dut, 
+i_padframe,
+i_pads_ne,";
+;;DIG_in;clkin;async;std_ulogic;;;I;dbi_3;;"dut, 
+i_padframe,
+i_pads_ne,";
+;;DIG_in;clkin;async;std_ulogic;;;I;dbi_4;;"dut, 
+i_padframe,
+i_pads_ne,";
+;;DIG_in;clkin;async;std_ulogic;;;I;dbi_5;;"dut, 
+i_padframe,
+i_pads_ne,";
+;;DIG_in;clkin;async;std_ulogic;;;I;dbi_6;;"dut, 
+i_padframe,
+i_pads_ws,";
+;;DIG_in;clkin;async;std_ulogic;;;I;dbi_7;;"dut, 
+i_padframe,
+i_pads_ws,";
+;;;data;clkin;std_ulogic;;;I;rgbde;;"dut, 
+i_padframe,
+i_pads_ne,";data enable
+;;;data;clkin;std_ulogic;;;I;rgbh;;"dut, 
+i_padframe,
+i_pads_en,";
+;;;data;clkin;std_ulogic;;;I;rgbv;;"dut, 
+i_padframe,
+i_pads_en,";
+;;;clock;clkin;std_ulogic;;;I;rgbclkin;;"dut, 
+i_padframe,
+i_pads_en,";
+;MX;DIG_in;;;;;;I;656in;;es;INOUT 656 input
+;;;clock;async;std_ulogic;;;I;656clkin;;"dut, 
+i_padframe,
+i_pads_es";Reset Input
+;;;data;clkout;std_ulogic;;;O;video_0;"dut,
+i_padframe,
+i_pads_sw";;CCIR-656 output
+;;;data;clkout;std_ulogic;;;O;video_1;"dut,
+i_padframe,
+i_pads_sw";;CCIR-656 output
+;;;data;clkout;std_ulogic;;;O;video_2;"dut,
+i_padframe,
+i_pads_sw";;CCIR-656 output
+;;;data;clkout;std_ulogic;;;O;video_3;"dut,
+i_padframe,
+i_pads_sw";;CCIR-656 output
+;;;data;clkout;std_ulogic;;;O;video_4;"dut,
+i_padframe,
+i_pads_sw";;CCIR-656 output
+;;;data;clkout;std_ulogic;;;O;video_5;"dut,
+i_padframe,
+i_pads_sw";;CCIR-656 output
+;;;data;clkout;std_ulogic;;;O;video_6;"dut,
+i_padframe,
+i_pads_sw";;CCIR-656 output
+;;;data;clkout;std_ulogic;;;O;video_7;"dut,
+i_padframe,
+i_pads_sw";;CCIR-656 output
+;;;data;clkout;std_ulogic;;;O;vclk27;"dut,
+i_padframe,
+i_pads_sw";;Main video clock output, 27.0 MHz
+;;;data;clkout;std_ulogic;;;O;i2sws;"dut,
+i_padframe,
+i_pads_sw";;I2S word strobe
+;;;data;clkout;std_ulogic;;;O;i2scl;"dut,
+i_padframe,
+i_pads_sw";;I2S clock
+;;;data;clkout;std_ulogic;;;O;i2sdao;"dut,
+i_padframe,
+i_pads_sw";;I2S data output
+;;;data;clkout;std_ulogic;;;I;i2sdain;;"dut,
+i_padframe,
+i_pads_ws";I2S data input
+;;;data;clkin;std_ulogic;;;I;ramd_0;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_1;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_2;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_3;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_4;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_5;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_6;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_7;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_8;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_9;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_10;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_11;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_12;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_13;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_14;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_15;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_16;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_17;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_18;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_19;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_20;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_21;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_22;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_23;;"dut, 
+i_padframe,
+i_pads_es";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_24;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_25;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_26;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_27;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_28;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_29;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_30;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;I;ramd_31;;"dut, 
+i_padframe,
+i_pads_en";DRAM bi-directional data bus
+;;;data;clkin;std_ulogic;;;O;rama_0;"dut, 
+i_padframe,
+i_pads_es";;address bits for DRAM
+;;;data;clkin;std_ulogic;;;O;rama_1;"dut, 
+i_padframe,
+i_pads_es";;address bits for DRAM
+;;;data;clkin;std_ulogic;;;O;rama_2;"dut, 
+i_padframe,
+i_pads_es";;address bits for DRAM
+;;;data;clkin;std_ulogic;;;O;rama_3;"dut, 
+i_padframe,
+i_pads_es";;address bits for DRAM
+;;;data;clkin;std_ulogic;;;O;rama_4;"dut, 
+i_padframe,
+i_pads_es";;address bits for DRAM
+;;;data;clkin;std_ulogic;;;O;rama_5;"dut, 
+i_padframe,
+i_pads_es";;address bits for DRAM
+;;;data;clkin;std_ulogic;;;O;rama_6;"dut, 
+i_padframe,
+i_pads_es";;address bits for DRAM
+;;;data;clkin;std_ulogic;;;O;rama_7;"dut, 
+i_padframe,
+i_pads_es";;address bits for DRAM
+;;;data;clkin;std_ulogic;;;O;rama_8;"dut, 
+i_padframe,
+i_pads_es";;address bits for DRAM
+;;;data;clkin;std_ulogic;;;O;rama_9;"dut, 
+i_padframe,
+i_pads_es";;address bits for DRAM
+;;;data;clkin;std_ulogic;;;O;rama_10;"dut, 
+i_padframe,
+i_pads_es";;address bits for DRAM
+;;;data;clkin;std_ulogic;;;O;rama_11;"dut, 
+i_padframe,
+i_pads_es";;address bits for DRAM
+;;;data;clkin;std_ulogic;;;O;rama_12;"dut, 
+i_padframe,
+i_pads_es";;address bits for DRAM
+;;;data;clkin;std_ulogic;;;O;ramba_0;"dut, 
+i_padframe,
+i_pads_es";;DRAM bank select
+;;;data;clkin;std_ulogic;;;O;ramba_1;"dut, 
+i_padframe,
+i_pads_es";;DRAM bank select
+;;;data;clkin;std_ulogic;;;O;ramras_n;"dut, 
+i_padframe,
+i_pads_en";;DRAM row address strobe
+;;;data;clkin;std_ulogic;;;O;ramcas_n;"dut, 
+i_padframe,
+i_pads_en";;DRAM column address strobe
+;;;data;clkin;std_ulogic;;;O;ramdqm_0;"dut, 
+i_padframe,
+i_pads_es";;DRAM byte mask lines
+;;;data;clkin;std_ulogic;;;O;ramdqm_1;"dut, 
+i_padframe,
+i_pads_es";;DRAM byte mask lines
+;;;data;clkin;std_ulogic;;;O;ramdqm_2;"dut, 
+i_padframe,
+i_pads_es";;DRAM byte mask lines
+;;;data;clkin;std_ulogic;;;O;ramdqm_3;"dut, 
+i_padframe,
+i_pads_es";;DRAM byte mask lines
+;;;data;clkin;std_ulogic;;;O;ramwe_n;"dut, 
+i_padframe,
+i_pads_en";;DRAM write enable
+;;;data;clkin;std_ulogic;;;O;ramcs_n;"dut, 
+i_padframe,
+i_pads_en";;DRAM chip select
+;;;data;clkin;std_ulogic;;;O;ramcke;"dut, 
+i_padframe,
+i_pads_en";;DRAM clock enable
+;;;data;clkin;std_ulogic;;;O;ramclk;"dut, 
+i_padframe,
+i_pads_en";;DRAM clock output
+;;;data;clkin;std_ulogic;;;O;ramclk_n;"dut, 
+i_padframe,
+i_pads_en";;DRAM clock output (inverted)
+;;;data;clkin;std_ulogic;;;O;ramdqs_0;"dut, 
+i_padframe,
+i_pads_es";;strobe signal
+;;;data;clkin;std_ulogic;;;O;ramdqs_1;"dut, 
+i_padframe,
+i_pads_es";;strobe signal
+;;;data;clkin;std_ulogic;;;O;ramdqs_2;"dut, 
+i_padframe,
+i_pads_es";;strobe signal
+;;;data;clkin;std_ulogic;;;O;ramdqs_3;"dut, 
+i_padframe,
+i_pads_es";;ramclk feedback
+;;;data;clkin;std_ulogic;;;O;ramclkin;;"dut, 
+i_padframe,
+i_pads_en";ramclk feedback
+;;;data;clkin;std_ulogic;;;I;sstl;;"dut, 
+i_padframe,
+i_pads_se";sstl reference voltage
+;;;data;clkin;std_ulogic;;;I;scl1;;"dut,
+i_padframe,
+i_pads_ne";I2C Bus 1 Data
+;;;data;clkin;std_ulogic;;;I;sda1;;"dut,
+i_padframe,
+i_pads_ne";I2C Bus 1 Clock
+;;;data;clkin;std_ulogic;;;I;scl2;;"dut,
+i_padframe,
+i_pads_nw";I2C Bus 2 Data
+;;;data;clkin;std_ulogic;;;I;sda2;;"dut,
+i_padframe,
+i_pads_nw";I2C Bus 2 Clock
+;;;data;clkin;std_ulogic;;;I;scl3;;"dut,
+i_padframe,
+i_pads_nw";I2C Bus 3 Data
+;;;data;clkin;std_ulogic;;;I;sda3;;"dut,
+i_padframe,
+i_pads_nw";I2C Bus 3 Clock
+;;;data;tclk;std_ulogic;;;I;tms;;"dut/tms,
+i_padframe/tms,
+i_pads_ws/tms";ICE interface mode select input
+;;;data;tclk;std_ulogic;;;I;tdi;;"dut/tdi,
+i_padframe/tdi,
+i_pads_ws/tdi";ICE interface
+;;;data;tclk;std_ulogic;;;O;tdo;"dut/tdo,
+i_padframe/tdo,
+i_pads_ws/tdo";;ICE interface
+;;;Clock;tclk;std_ulogic;;;I;tclk;;"dut/tclk,
+i_padframe/tclk,
+i_pads_ws/tclk";ICE interface
+;;;data;tclk;std_ulogic;;;I;trst;;"dut/trst,
+i_padframe/trst,
+i_pads_ws/trst";ICE interface
+;;;data;async;std_ulogic;;;I;gpio_0;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_1;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_2;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_3;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_4;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_5;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_6;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_7;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_8;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_9;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_10;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_11;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_12;;"dut,
+i_padframe,
+i_pads_ws";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_13;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_14;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_15;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_16;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_17;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_18;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_19;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_20;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_21;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_22;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_23;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_24;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_25;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+;;;data;async;std_ulogic;;;I;gpio_26;;"dut,
+i_padframe,
+i_pads_sw";Multifunction ports I/O
+;;;data;clkin;std_ulogic;;;I;cadc_0;;"dut,
+i_padframe,
+i_pads_es";CADC analog source inputs control
+;;;data;clkin;std_ulogic;;;I;cadc_1;;"dut,
+i_padframe,
+i_pads_es";CADC analog source inputs control
+;;;data;clkin;std_ulogic;;;I;cadc_2;;"dut,
+i_padframe,
+i_pads_es";CADC analog source inputs control
+;;;data;clkin;std_ulogic;;;I;cadc_3;;"dut,
+i_padframe,
+i_pads_es";CADC analog source inputs control
+;;;data;clkin;std_ulogic;;;I;cadc_4;;"dut,
+i_padframe,
+i_pads_es";CADC analog source inputs control
+;;;data;clkin;std_ulogic;;;I;cadc_5;;"dut,
+i_padframe,
+i_pads_es";CADC analog source inputs control
+;;;data;async;std_ulogic;;;O;dro_0;"dut,
+i_padframe,
+i_pads_sw";;Flat Panel
+;;;data;async;std_ulogic;;;O;dro_1;"dut,
+i_padframe,
+i_pads_sw";;Flat Panel
+;;;data;async;std_ulogic;;;O;dro_2;"dut,
+i_padframe,
+i_pads_sw";;Flat Panel
+;;;data;async;std_ulogic;;;O;dro_3;"dut,
+i_padframe,
+i_pads_sw";;Flat Panel
+;;;data;async;std_ulogic;;;O;dro_4;"dut,
+i_padframe,
+i_pads_sw";;Flat Panel
+;;;data;async;std_ulogic;;;O;dro_5;"dut,
+i_padframe,
+i_pads_sw";;Flat Panel
+;;;data;async;std_ulogic;;;O;dro_6;"dut,
+i_padframe,
+i_pads_sw";;Flat Panel
+;;;data;async;std_ulogic;;;O;dro_7;"dut,
+i_padframe,
+i_pads_sw";;Flat Panel
+;;;data;async;std_ulogic;;;O;dro_8;"dut,
+i_padframe,
+i_pads_sw";;Flat Panel
+;;;data;async;std_ulogic;;;O;dro_9;"dut,
+i_padframe,
+i_pads_sw";;Flat Panel
+;;;data;async;std_ulogic;;;O;dro_10;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+;;;data;async;std_ulogic;;;O;dro_11;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+;;;data;async;std_ulogic;;;O;dro_12;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+;;;data;async;std_ulogic;;;O;dro_13;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+;;;data;async;std_ulogic;;;O;dro_14;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+;;;data;async;std_ulogic;;;O;dro_15;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+;;;data;async;std_ulogic;;;O;dgo_0;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+;;;data;async;std_ulogic;;;O;dgo_1;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+;;;data;async;std_ulogic;;;O;dgo_2;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+;;;data;async;std_ulogic;;;O;dgo_3;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+;;;data;async;std_ulogic;;;O;dgo_4;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+;;;data;async;std_ulogic;;;O;dgo_5;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+;;;data;async;std_ulogic;;;O;dgo_6;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+;;;data;async;std_ulogic;;;O;dgo_7;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+;;;data;async;std_ulogic;;;O;dgo_8;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+;;;data;async;std_ulogic;;;O;dgo_9;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+;;;data;async;std_ulogic;;;O;dgo_10;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+;;;data;async;std_ulogic;;;O;dgo_11;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+;;;data;async;std_ulogic;;;O;dgo_12;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+;;;data;async;std_ulogic;;;O;dgo_13;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+;;;data;async;std_ulogic;;;O;dgo_14;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+;;;data;async;std_ulogic;;;O;dgo_15;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+;;;data;async;std_ulogic;;;O;dbo_0;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+;;;data;async;std_ulogic;;;O;dbo_1;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+;;;data;async;std_ulogic;;;O;dbo_2;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+;;;data;async;std_ulogic;;;O;dbo_3;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+;;;data;async;std_ulogic;;;O;dbo_4;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+;;;data;async;std_ulogic;;;O;dbo_5;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+;;;data;async;std_ulogic;;;O;dbo_6;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+;;;data;async;std_ulogic;;;O;dbo_7;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+;;;data;async;std_ulogic;;;O;dbo_8;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+;;;data;async;std_ulogic;;;O;dbo_9;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel
+;;;data;async;std_ulogic;;;O;dbo_10;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+;;;data;async;std_ulogic;;;O;dbo_11;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+;;;data;async;std_ulogic;;;O;dbo_12;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+;;;data;async;std_ulogic;;;O;dbo_13;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+;;;data;async;std_ulogic;;;O;dbo_14;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+;;;data;async;std_ulogic;;;O;dbo_15;"dut,
+i_padframe,
+i_pads_se";;Flat Panel
+;;;data;async;std_ulogic;;;O;pclk1;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel Pixel Clock 1
+;;;data;async;std_ulogic;;;O;pclk2;"dut,
+i_padframe,
+i_pads_ne";;Flat Panel Pixel Clock 2
+;;;data;async;std_ulogic;;;O;pde1;"dut,
+i_padframe,
+i_pads_sw";;"Flat Panel
+single bus or dual bus odd data valid"
+;;;data;async;std_ulogic;;;O;pde2;"dut,
+i_padframe,
+i_pads_ws";;"Flat Panel
+dual bus even data valid"
+;;;data;async;std_ulogic;;;O;pcs_0;"dut,
+i_padframe,
+i_pads_es";;"Flat Panel
+programmable panel control signals"
+;;;data;async;std_ulogic;;;O;pcs_1;"dut,
+i_padframe,
+i_pads_es";;"Flat Panel
+programmable panel control signals"
+;;;data;async;std_ulogic;;;O;pcs_2;"dut,
+i_padframe,
+i_pads_es";;"Flat Panel
+programmable panel control signals"
+;;;data;async;std_ulogic;;;O;pcs_3;"dut,
+i_padframe,
+i_pads_es";;"Flat Panel
+programmable panel control signals"
+;;;data;async;std_ulogic;;;O;rev;"dut,
+i_padframe,
+i_pads_sw";;"Flat Panel
+reverse signal"
+;;;data;async;std_ulogic;;;O;nvma_16;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+upper address bits"
+;;;data;async;std_ulogic;;;O;nvma_17;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+upper address bits"
+;;;data;async;std_ulogic;;;O;nvma_18;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+upper address bits"
+;;;data;async;std_ulogic;;;O;nvma_19;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+upper address bits"
+;;;data;async;std_ulogic;;;O;nvma_20;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+upper address bits"
+;;;data;async;std_ulogic;;;O;nvma_21;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+upper address bits"
+;;;data;async;std_ulogic;;;O;nvma_22;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+upper address bits"
+;;;data;async;std_ulogic;;;O;nvmd_0;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+;;;data;async;std_ulogic;;;O;nvmd_1;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+;;;data;async;std_ulogic;;;O;nvmd_2;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+;;;data;async;std_ulogic;;;O;nvmd_3;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+;;;data;async;std_ulogic;;;O;nvmd_4;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+;;;data;async;std_ulogic;;;O;nvmd_5;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+;;;data;async;std_ulogic;;;O;nvmd_6;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+;;;data;async;std_ulogic;;;O;nvmd_7;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+;;;data;async;std_ulogic;;;O;nvmd_8;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+;;;data;async;std_ulogic;;;O;nvmd_9;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+;;;data;async;std_ulogic;;;O;nvmd_10;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+;;;data;async;std_ulogic;;;O;nvmd_11;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+;;;data;async;std_ulogic;;;O;nvmd_12;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+;;;data;async;std_ulogic;;;O;nvmd_13;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+;;;data;async;std_ulogic;;;O;nvmd_14;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+;;;data;async;std_ulogic;;;O;nvmd_15;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+;;;data;async;std_ulogic;;;O;nvmd_16;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+multiplexed address/ data"
+;;;data;async;std_ulogic;;;O;nvmoe;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+output enable"
+;;;data;async;std_ulogic;;;O;nvmwe;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+write enable"
+;;;data;async;std_ulogic;;;O;nvmale;"dut,
+i_padframe,
+i_pads_se";;"Flat Panel
+address latch enable"
+;;;data;async;std_ulogic;;;I;frcd_0;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+;;;data;async;std_ulogic;;;I;frcd_1;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+;;;data;async;std_ulogic;;;I;frcd_2;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+;;;data;async;std_ulogic;;;I;frcd_3;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+;;;data;async;std_ulogic;;;I;frcd_4;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+;;;data;async;std_ulogic;;;I;frcd_5;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+;;;data;async;std_ulogic;;;I;frcd_6;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+;;;data;async;std_ulogic;;;I;frcd_7;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+;;;data;async;std_ulogic;;;I;frcd_8;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+;;;data;async;std_ulogic;;;I;frcd_9;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+;;;data;async;std_ulogic;;;I;frcd_10;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+;;;data;async;std_ulogic;;;I;frcd_11;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+;;;data;async;std_ulogic;;;I;frcd_12;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+;;;data;async;std_ulogic;;;I;frcd_13;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+;;;data;async;std_ulogic;;;I;frcd_14;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+;;;data;frcclkin;std_ulogic;;;I;frcd_15;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+601 input from frc"
+;;;clock;async;std_ulogic;;;I;frcclkin;;"dut,
+i_padframe,
+i_pads_es";"FRC Connector
+clk input"
+;;;data;frcclkin;std_ulogic;;;I;frch;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+h input"
+;;;data;frcclkin;std_ulogic;;;I;frcv;;"dut,
+i_padframe,
+i_pads_ws";"FRC Connector
+v input"
+:=:=:=>OFF_CONN_1
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::out;::in;::descr
+#;;Bundle Name;Class;Clk Domain;Data Type;High;Low;;Signal Name;Outputs (Driver);Inputs;Description
+;;;;;;;;;;;;
+#;;clock generator clkgen;;;;;;;;;;
+;;;Data;clkf;std_ulogic;;;;xin_clk;"i_padframe/xin_clk_o,
+i_pads_sw/xin_clk_o";i_clkgen/xin_clk_i;
+;;;Data;clkf;std_ulogic;;;I;test_clk_i;dut/test_clk_i;i_clkgen/test_clk_i;
+;;;Data;clkf;std_ulogic;;;I;ext_clk_i;dut/ext_clk_i;i_clkgen/ext_clk_i;
+;;;Data;async;std_ulogic;;;;pad_reset_n;"i_padframe/pad_reset_n,
+i_pads_sw/pad_reset_n";"i_clkgen/res_n_i,
+i_tap_con/reset_n";
+;;;Data;clkf;std_ulogic;;;;scan_mode;i_tap_con/scan_mode_o;i_clkgen/scan_mode_i;
+;;;;;;;;;;;;
+;;;Data;clkf;std_ulogic_vector;12;0;;pplip_iic;i_fe/pplip_iic_o;i_clkgen/pplip_iic_i;
+;;;Data;clkf;std_ulogic_vector;18;0;;hincr_iic;i_fe/hincr_iic_o;i_clkgen/hincr_iic_i;
+;;;Data;clkf;std_ulogic;;;;ll_en_iic;i_fe/ll_en_iic_o;i_clkgen/ll_en_iic_i;
+;;;Data;clkf;std_ulogic_vector;2;0;;ll_csel_iic;i_fe/ll_csel_iic_o;i_clkgen/ll_csel_iic_i;
+;;;Data;clkf;std_ulogic_vector;2;0;;kpcp_iic;i_fe/kpcp_iic_o;i_clkgen/kpcp_iic_i;
+;;;Data;clkf;std_ulogic_vector;1;0;;kicp_iic;i_fe/kicp_iic_o;i_clkgen/kicp_iic_i;
+;;;Data;clkf;std_ulogic_vector;2;0;;kpfp_iic;i_fe/kpfp_iic_o;i_clkgen/kpfp_iic_i;
+;;;Data;clkf;std_ulogic_vector;1;0;;kifp_iic;i_fe/kifp_iic_o;i_clkgen/kifp_iic_i;
+;;;;;;;;;;;;
+;;;Data;clkf;std_ulogic;;;;mssp_hsync;i_fe/mssp_hsync_o;i_clkgen/mssp_hsync_i;
+;;;Data;clkf;std_ulogic;;;;mssp_hdf;i_fe/mssp_hdf_o;i_clkgen/mssp_hdf_i;
+;;;Data;clkf;std_ulogic;;;;mssp_stab;i_fe/mssp_stab_o;i_clkgen/mssp_stab_i;
+;;;Data;clkf;std_ulogic_vector;5;0;;mssp_skew;i_fe/mssp_skew_o;i_clkgen/mssp_skew_i;
+;;;;;;;;;;;;
+;;;Data;clkf;std_ulogic;;;;pll_test;i_tap_con/pll_test_o;i_clkgen/pll_test_i;
+;;;Data;clkf;std_ulogic;;;;pll_iddq_n;i_tap_con/pll_iddq_n_o;i_clkgen/pll_iddq_n_i;
+;;;;;;;;;;;;
+;;;Clock ;clk_108;std_ulogic;;;;clk_108;i_clkgen/clk_108;"i_fe/clk_108,
+i_di/clk_108,
+i_dp/clk_108,
+i_mm/clk_108,
+i_cpu/clk_108,
+i_frc/clk_108";
+;;;Clock ;clk_72;std_ulogic;;;;clk_72;i_clkgen/clk_72;"i_fe/clk_72,
+i_di/clk_72,
+i_dp/clk_72,
+i_mm/clk_72,
+i_cpu/clk_72,
+i_frc/clk_72";
+;;;Clock ;clk_54;std_ulogic;;;;clk_54;i_clkgen/clk_54;"i_fe/clk_54,
+i_di/clk_54,
+i_dp/clk_54,
+i_mm/clk_54,
+i_cpu/clk_54,
+i_frc/clk_54";
+;;;Clock ;clk_36;std_ulogic;;;;clk_36;i_clkgen/clk_36;"i_fe/clk_36,
+i_di/clk_36,
+i_dp/clk_36,
+i_mm/clk_36,
+i_cpu/clk_36,
+i_frc/clk_36";
+;;;Clock ;clk_27;std_ulogic;;;;clk_27;i_clkgen/clk_27;"i_fe/clk_27,
+i_di/clk_27,
+i_dp/clk_27,
+i_mm/clk_27,
+i_cpu/clk_27,
+i_frc/clk_27";
+;;;Clock ;clkfr_162;std_ulogic;;;;clkfr_162;i_clkgen/clkfr_162;"i_fe/clkfr_162,
+i_di/clkfr_162,
+i_dp/clkfr_162,
+i_mm/clkfr_162,
+i_cpu/clkfr_162,
+i_frc/clkfr_162";
+;;;Clock ;clkfr_81;std_ulogic;;;;clkfr_81;i_clkgen/clkfr_81;"i_fe/clkfr_81,
+i_di/clkfr_81,
+i_dp/clkfr_81,
+i_mm/clkfr_81,
+i_cpu/clkfr_81,
+i_frc/clkfr_81,
+i_adc/clkllrgb,
+i_adc/clkllfbl";
+;;;Clock ;clkfr_40;std_ulogic;;;;clkfr_40;i_clkgen/clkfr_40;"i_fe/clkfr_40,
+i_di/clkfr_40,
+i_dp/clkfr_40,
+i_mm/clkfr_40,
+i_cpu/clkfr_40,
+i_frc/clkfr_40,
+i_adc/clkf40";
+;;;Clock;clkfr_20;std_ulogic;;;;clkfr_20;i_clkgen/clkfr_20;"i_fe/clkfr_20,
+i_di/clkfr_20,
+i_dp/clkfr_20,
+i_mm/clkfr_20,
+i_cpu/clkfr_20,
+i_frc/clkfr_20,
+i_adc/clkf20";Frontend Clock
+;;;;;;;;;;;;
+;;;Data;clk_108;std_ulogic;;;;res_108_n;i_clkgen/res_108_n;"i_fe/res_108_n,
+i_di/res_108_n,
+i_dp/res_108_n,
+i_mm/res_108_n,
+i_cpu/res_108_n,
+i_frc/res_108_n";
+;;;Data;clk_72;std_ulogic;;;;res_72_n;i_clkgen/res_72_n;"i_fe/res_72_n,
+i_di/res_72_n,
+i_dp/res_72_n,
+i_mm/res_72_n,
+i_cpu/res_72_n,
+i_frc/res_72_n";
+;;;Data;clk_54;std_ulogic;;;;res_54_n;i_clkgen/res_54_n;"i_fe/res_54_n,
+i_di/res_54_n,
+i_dp/res_54_n,
+i_mm/res_54_n,
+i_cpu/res_54_n,
+i_frc/res_54_n";
+;;;Data;clk_36;std_ulogic;;;;res_36_n;i_clkgen/res_36_n;"i_fe/res_36_n,
+i_di/res_36_n,
+i_dp/res_36_n,
+i_mm/res_36_n,
+i_cpu/res_36_n,
+i_frc/res_36_n";
+;;;Data;clk_27;std_ulogic;;;;res_27_n;i_clkgen/res_27_n;"i_fe/res_27_n,
+i_di/res_27_n,
+i_dp/res_27_n,
+i_mm/res_27_n,
+i_cpu/res_27_n,
+i_frc/res_27_n";
+;;;Data;clkfr_162;std_ulogic;;;;resfr_162_n;i_clkgen/resfr_162_n;"i_fe/resfr_162_n,
+i_di/resfr_162_n,
+i_dp/resfr_162_n,
+i_mm/resfr_162_n,
+i_cpu/resfr_162_n,
+i_frc/resfr_162_n";
+;;;Data;clkfr_81;std_ulogic;;;;resfr_81_n;i_clkgen/resfr_81_n;"i_fe/resfr_81_n,
+i_di/resfr_81_n,
+i_dp/resfr_81_n,
+i_mm/resfr_81_n,
+i_cpu/resfr_81_n,
+i_frc/resfr_81_n";
+;;;Data;clkfr_40;std_ulogic;;;;resfr_40_n;i_clkgen/resfr_40_n;"i_fe/resfr_40_n,
+i_di/resfr_40_n,
+i_dp/resfr_40_n,
+i_mm/resfr_40_n,
+i_cpu/resfr_40_n,
+i_frc/resfr_40_n,";
+;;;Data;clkfr_20;std_ulogic;;;;resfr_20_n;i_clkgen/resfr_20_n;"i_fe/resfr_20_n,
+i_di/resfr_20_n,
+i_dp/resfr_20_n,
+i_mm/resfr_20_n,
+i_cpu/resfr_20_n,
+i_frc/resfr_20_n,
+i_adc/asres_n1_i,
+i_adc/asres_n2_i,
+i_adc/asres_n3_i,
+i_adc/asres_n4_i,
+i_adc/asres_n5_i,
+i_adc/asres_n6_i,
+i_adc/asres_n7_i,
+i_adc/asres_n8_i";
+;;;;;;;;;;;;
+;#;iocell -- pad connections;;;;;;;;;;
+;;;Data;async;std_ulogic;;;;osc_xin;ioc_osc/xin_o;pad_osc/xin;
+;;;Data;async;std_ulogic;;;;osc_pd;ioc_osc/pd_o;pad_osc/pd;
+;;;Data;async;std_ulogic;;;;pad_xout;pad_osc/xout;ioc_osc/xout_i;
+;;;Data;async;std_ulogic;;;;pad_xo;pad_osc/xo;ioc_osc/xo_i;
+;;;;;;;;;;;;
+;;;Data;async;std_ulogic;;;;default;;"i_padframe/default,
+i_pads_ne/default,
+i_pads_es/default";
+#;;;Data;async;std_ulogic;;;;default;;"i_padframe/default1,
+i_pads_ne/default1,
+i_pads_es/default1";
+;;;;;;;;;;;;
+;;;Data;async;std_ulogic;;;;reset_di;ioc_reset_n/di_o;pad_reset_n/di;
+;;;Data;async;std_ulogic;;;;reset_do;pad_reset_n/do;ioc_reset_n/do_i;
+;;;Data;async;std_ulogic;;;;tdi_di;ioc_tdi/di_o;pad_tdi/di;
+;;;Data;async;std_ulogic;;;;tdi_do;pad_tdi/do;ioc_tdi/do_i;
+;;;Data;async;std_ulogic;;;;tms_di;ioc_tms/di_o;pad_tms/di;
+;;;Data;async;std_ulogic;;;;tms_do;pad_tms/do;ioc_tms/do_i;
+;;;Data;async;std_ulogic;;;;tclk_di;ioc_tclk/di_o;pad_tclk/di;
+;;;Data;async;std_ulogic;;;;tclk_do;pad_tclk/do;ioc_tclk/do_i;
+;;;Data;async;std_ulogic;;;;tdo_di;ioc_tdo/di_o;pad_tdo/di;
+;;;Data;async;std_ulogic;;;;tdo_do;pad_tdo/do;ioc_tdo/do_i;
+;;;Data;async;std_ulogic;;;;scl2_pad;ioc_scl2/pad_o;pad_scl2/pad;
+;;;Data;async;std_ulogic;;;;scl2_di;ioc_scl2/di_o;pad_scl2/di;
+;;;Data;async;std_ulogic;;;;scl2_do;pad_scl2/do;ioc_scl2/do_i;
+;;;Data;async;std_ulogic;;;;scl2_en;ioc_scl2/en_o;pad_scl2/en;
+;;;Data;async;std_ulogic;;;;sda2_pad;ioc_sda2/pad_o;pad_sda2/pad;
+;;;Data;async;std_ulogic;;;;sda2_di;ioc_sda2/di_o;pad_sda2/di;
+;;;Data;async;std_ulogic;;;;sda2_do;pad_sda2/do;ioc_sda2/do_i;
+;;;Data;async;std_ulogic;;;;sda2_en;ioc_sda2/en_o;pad_sda2/en;
+;;;Data;async;std_ulogic;;;;scl1_pad;ioc_scl1/pad_o;pad_scl1/pad;
+;;;Data;async;std_ulogic;;;;scl1_di;ioc_scl1/di_o;pad_scl1/di;
+;;;Data;async;std_ulogic;;;;scl1_do;pad_scl1/do;ioc_scl1/do_i;
+;;;Data;async;std_ulogic;;;;scl1_en;ioc_scl1/en_o;pad_scl1/en;
+;;;Data;async;std_ulogic;;;;sda1_pad;ioc_sda1/pad_o;pad_sda1/pad;
+;;;Data;async;std_ulogic;;;;sda1_di;ioc_sda1/di_o;pad_sda1/di;
+;;;Data;async;std_ulogic;;;;sda1_do;pad_sda1/do;ioc_sda1/do_i;
+;;;Data;async;std_ulogic;;;;sda1_en;ioc_sda1/en_o;pad_sda1/en;
+;;;;;;;;;;;;
+;$i(0..7),/pad_dri_$i/;;Data;async;std_ulogic;;;;dri_$i_pad;ioc_dri_$i/pad_o;pad_dri_$i/pad;
+;$i(0..7),/pad_dri_$i/;;Data;async;std_ulogic;;;;dri_$i_di;ioc_dri_$i/di_o;pad_dri_$i/di;
+;$i(0..7),/pad_dri_$i/;;Data;async;std_ulogic;;;;dri_$i_do;pad_dri_$i/do;ioc_dri_$i/do_i;
+;$i(0..7),/pad_dri_$i/;;Data;async;std_ulogic;;;;dri_$i_en;ioc_dri_$i/en_o;pad_dri_$i/en;
+;$i(0..7),/pad_dgi_$i/;;Data;async;std_ulogic;;;;dgi_$i_pad;ioc_dgi_$i/pad_o;pad_dgi_$i/pad;
+;$i(0..7),/pad_dgi_$i/;;Data;async;std_ulogic;;;;dgi_$i_di;ioc_dgi_$i/di_o;pad_dgi_$i/di;
+;$i(0..7),/pad_dgi_$i/;;Data;async;std_ulogic;;;;dgi_$i_do;pad_dgi_$i/do;ioc_dgi_$i/do_i;
+;$i(0..7),/pad_dgi_$i/;;Data;async;std_ulogic;;;;dgi_$i_en;ioc_dgi_$i/en_o;pad_dgi_$i/en;
+;$i(0..7),/pad_dbi_$i/;;Data;async;std_ulogic;;;;dbi_$i_pad;ioc_dbi_$i/pad_o;pad_dbi_$i/pad;
+;$i(0..7),/pad_dbi_$i/;;Data;async;std_ulogic;;;;dbi_$i_di;ioc_dbi_$i/di_o;pad_dbi_$i/di;
+;$i(0..7),/pad_dbi_$i/;;Data;async;std_ulogic;;;;dbi_$i_do;pad_dbi_$i/do;ioc_dbi_$i/do_i;
+;$i(0..7),/pad_dbi_$i/;;Data;async;std_ulogic;;;;dbi_$i_en;ioc_dbi_$i/en_o;pad_dbi_$i/en;
+;;;Data;async;std_ulogic;;;;rgbde_pad;ioc_rgbde/pad_o;pad_rgbde/pad;
+;;;Data;async;std_ulogic;;;;rgbde_di;ioc_rgbde/di_o;pad_rgbde/di;
+;;;Data;async;std_ulogic;;;;rgbde_do;pad_rgbde/do;ioc_rgbde/do_i;
+;;;Data;async;std_ulogic;;;;rgbde_en;ioc_rgbde/en_o;pad_rgbde/en;
+;;;Data;async;std_ulogic;;;;rgbh_pad;ioc_rgbh/pad_o;pad_rgbh/pad;
+;;;Data;async;std_ulogic;;;;rgbh_di;ioc_rgbh/di_o;pad_rgbh/di;
+;;;Data;async;std_ulogic;;;;rgbh_do;pad_rgbh/do;ioc_rgbh/do_i;
+;;;Data;async;std_ulogic;;;;rgbh_en;ioc_rgbh/en_o;pad_rgbh/en;
+;;;Data;async;std_ulogic;;;;rgbv_pad;ioc_rgbv/pad_o;pad_rgbv/pad;
+;;;Data;async;std_ulogic;;;;rgbv_di;ioc_rgbv/di_o;pad_rgbv/di;
+;;;Data;async;std_ulogic;;;;rgbv_do;pad_rgbv/do;ioc_rgbv/do_i;
+;;;Data;async;std_ulogic;;;;rgbv_en;ioc_rgbv/en_o;pad_rgbv/en;
+;;;Data;async;std_ulogic;;;;rgbclkin_pad;ioc_rgbclkin/pad_o;pad_rgbclkin/pad;
+;;;Data;async;std_ulogic;;;;rgbclkin_di;ioc_rgbclkin/di_o;pad_rgbclkin/di;
+;;;Data;async;std_ulogic;;;;rgbclkin_do;pad_rgbclkin/do;ioc_rgbclkin/do_i;
+;;;Data;async;std_ulogic;;;;rgbclkin_en;ioc_rgbclkin/en_o;pad_rgbclkin/en;
+:=:=:=>CONN_2
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::out;::in;::descr
+#;;Bundle Name;Class;Clk Domain;Data Type;High;Low;;Signal Name;Outputs (Driver);Inputs;Description
+#;;;;;;;;;;;;
+#;;JTAG;;;;;;;;;;
+#;;;Data;async;std_ulogic;;;;pad_tdi;"i_padframe/pad_tdi,
+i_pads_ws/pad_tdi";i_tap_con/tdi;
+#;;;Data;async;std_ulogic;;;;pad_tms;"i_padframe/pad_tms,
+i_pads_ws/pad_tms";i_tap_con/tms;
+#;;;Data;async;std_ulogic;;;;pad_tclk;"i_padframe/pad_tclk,
+i_pads_ws/pad_tclk";i_tap_con/tclk;
+#;;;Data;async;std_ulogic;;;;tap_tdo;i_tap_con/tdo;"i_padframe/tap_tdo,
+i_pads_ws/tap_tdo";
+#;;Digital RGB in;;;;;;;;;;
+#;;;Data;async;std_ulogic_vector;7;0;;pad_dri;"i_padframe/dri_o,
+i_pads_ws/dri_o";i_fe/dri_i;
+#;;;Data;async;std_ulogic_vector;7;0;;pad_dgi;"i_padframe/dgi_o,
+i_pads_ws/dgi_o";i_fe/dgi_i;
+#;;;Data;async;std_ulogic_vector;7;0;;pad_dbi;"i_padframe/dbi_o,
+i_pads_ws/dbi_o";i_fe/dbi_i;
+#;;;;;;;;;;;;
+#;;;;;;;;;;;;
+#;;;Data;async;std_ulogic_vector;12;0;;mm_rama;i_vgca_mm/rama_o;"i_padframe/rama_i,
+i_pads_es/rama_i";
+;;;Data;async;std_ulogic_vector;31;0;;mm_ramd;"i_padframe/ramd_o(31:0)=(31:0),
+i_pads_en/ramd_o(20:0)=(31:11)";i_vgca_mm/ramd_i;
+;;;Data;async;std_ulogic_vector;31;0;;mm_ramd;i_pads_es/ramd_o(10:0)=(10:0);;
+;;;Data;async;std_ulogic_vector;31;0;;mm_ramd2;"i_padframe/ramd_o2(31:0)=(31:0),
+i_pads_en/ramd_o2(31:0)=(31:0)";i_vgca_mm/ramd_i2;
+;;;Data;async;std_ulogic_vector;31;0;;mm_ramd2;i_pads_es/ramd_o2(10:0)=(10:0);;
+;;;Data;async;std_ulogic_vector;31;0;;mm_ramd3;"i_padframe/ramd_o3(31:0)=(31:0),
+i_pads_en/ramd_o3(31:0)=(31:0)";i_vgca_mm/ramd_i3;
+;;;Data;async;std_ulogic_vector;31;0;;mm_ramd3;i_pads_es/ramd_o3(31:0)=(31:0);;
+#;;;;;;;;;;;;
+#;;;;;;;;;;;;
+#;;;;;;;;;;;;
+#;;ADC;;;;;;;;;;
+#;;;;;;;;;;;;
+#;;;;;;;;;;;;
+#;;;;;;;;;;;;
+#;;;Data;async;std_ulogic;;;;%HIGH%;;i_adc/por_resn_c_i;
+#;;;Data;async;std_ulogic_vector;5;0;;agcadj1_c;i_fe/%::name%_o;i_adc/%::name%_i;I2C gain control
+#;;;Data;async;std_ulogic_vector;5;0;;agcadj2_c;i_fe/%::name%_o;i_adc/%::name%_i;I2C gain control
+#;;;Data;async;std_ulogic_vector;5;0;;agcadj3_c;i_fe/%::name%_o;i_adc/%::name%_i;I2C gain control
+#;;;Data;async;std_ulogic_vector;5;0;;agcadj4_c;i_fe/%::name%_o;i_adc/%::name%_i;I2C gain control
+#;;;Data;async;std_ulogic_vector;3;0;;agcadj5_c;i_fe/%::name%_o;i_adc/%::name%_i;I2C gain control
+#;;;Data;async;std_ulogic_vector;3;0;;agcadj6_c;i_fe/%::name%_o;i_adc/%::name%_i;I2C gain control
+#;;;Data;async;std_ulogic_vector;3;0;;agcadj7_c;i_fe/%::name%_o;i_adc/%::name%_i;I2C gain control
+#;;;Data;async;std_ulogic_vector;3;0;;agcadj8_c;i_fe/%::name%_o;i_adc/%::name%_i;I2C gain control
+#;;;Data;async;std_ulogic_vector;4;0;;vinsel1_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;4;0;;vinsel2_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;4;0;;vinsel3_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;4;0;;vinsel4_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;4;0;;vinselrgb_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;4;0;;vinselfbl_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;;;;;;;;;;
+#;;;Data;async;std_ulogic;;;;afil_off1_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;afil_off2_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;afil_off3_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;afil_off4_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;afil_off5_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;afil_off6_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;afil_off7_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;afil_off8_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;4;0;;trim_filter1_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;4;0;;trim_filter2_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;4;0;;trim_filter3_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;4;0;;trim_filter4_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;3;0;;trim_filter5_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;3;0;;trim_filter6_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;3;0;;trim_filter7_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;3;0;;trim_filter8_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;trim_filter_enable_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;calibrate_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;trim_bgp_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;;;;;;;;;;
+#;;;Data;async;std_ulogic_vector;2;0;;dither_gain1_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;2;0;;dither_gain2_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;2;0;;dither_gain3_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;2;0;;dither_gain4_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;2;0;;dither_gain5_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;2;0;;dither_gain6_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;2;0;;dither_gain7_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;2;0;;dither_gain8_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_measure1_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_measure2_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_measure3_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_measure4_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_measure5_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_measure6_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_measure7_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_measure8_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_on1_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_on2_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_on3_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_on4_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_on5_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_on6_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_on7_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_on8_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;hpll_stable1_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;hpll_stable2_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;hpll_stable3_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;hpll_stable4_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;hpll_stable5_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;hpll_stable6_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;hpll_stable7_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;hpll_stable8_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_chroma1_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_chroma2_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_chroma3_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_chroma4_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_chroma5_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_chroma6_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_chroma7_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_chroma8_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_sync1_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_sync2_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_sync3_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_sync4_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_sync5_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_sync6_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_sync7_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_sync8_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_rgb1_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_rgb2_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_rgb3_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_rgb4_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_rgb5_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_rgb6_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_rgb7_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_rgb8_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;dis_clamp_fbl2_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;dis_clamp_fbl8_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;dis_agcclp1_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;dis_agcclp2_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;dis_agcclp3_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;dis_agcclp4_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;dis_agcclp5_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;dis_agcclp6_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;dis_agcclp7_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;dis_agcclp8_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;1;0;;clamp_gain1_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;1;0;;clamp_gain2_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;1;0;;clamp_gain3_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;1;0;;clamp_gain4_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;1;0;;clamp_gain5_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;1;0;;clamp_gain6_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;1;0;;clamp_gain7_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;1;0;;clamp_gain8_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_dwnsam1_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_dwnsam3_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_shutoff1_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_shutoff2_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_shutoff3_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_shutoff4_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_shutoff5_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_shutoff6_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_shutoff7_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;clamp_shutoff8_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;adc_1_mode;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;adc_3_mode;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;burstfilter1_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;burstfilter3_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;burstfilter8_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;3;0;;voutsel1_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;3;0;;voutsel2_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;3;0;;voutsel3_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;3;0;;voutsel4_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;2;0;;voutsel5_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;2;0;;voutsel6_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic_vector;2;0;;voutsel7_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;standby_pp1_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;standby_pp2_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;standby_pp3_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;standby_pp4_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;standby_pp5_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;standby_pp6_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;standby_pp7_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;standby_pp8_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;standby_obuf1_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;standby_obuf2_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;standby_obuf3_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;standby_obuf4_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;standby_obuf5_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;standby_obuf6_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;standby_obuf7_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;Data;async;std_ulogic;;;;standby_obuf8_c;i_fe/%::name%_o;i_adc/%::name%_i;
+#;;;;;;;;;;;;
+#;;;;;;;;;;;;
+#;;;;;;;;;;;;
+#;;;Data;async;std_ulogic_vector;8;0;;dadc1_p;i_adc/%::name%_o;i_fe/%::name%_i;
+#;;;Data;async;std_ulogic_vector;8;0;;dadc2_p;i_adc/%::name%_o;i_fe/%::name%_i;
+#;;;Data;async;std_ulogic_vector;8;0;;dadc3_p;i_adc/%::name%_o;i_fe/%::name%_i;
+#;;;Data;async;std_ulogic_vector;8;0;;dadc4_p;i_adc/%::name%_o;i_fe/%::name%_i;
+#;;;Data;async;std_ulogic_vector;8;0;;dadc5_p;i_adc/%::name%_o;i_fe/%::name%_i;
+#;;;Data;async;std_ulogic_vector;8;0;;dadc6_p;i_adc/%::name%_o;i_fe/%::name%_i;
+#;;;Data;async;std_ulogic_vector;8;0;;dadc7_p;i_adc/%::name%_o;i_fe/%::name%_i;
+#;;;Data;async;std_ulogic_vector;8;0;;dadc8_p;i_adc/%::name%_o;i_fe/%::name%_i;
+:=:=:=>HIER_OLD
+::ign;::gen;::variants;::parent;::inst;::entity;::use;::arch;::config;::comment
+;;Default;testbench;vgca_tb;vgca_tb;analog_hw.analog_pack;struct;vgca_tb_struct_conf;
+;;Default;vgca_tb;dut;vgca;analog_hw.analog_pack;struct;vgca_struct_conf;
+#;;Default;dut;i_padframe;padframe;;struct;padframe_struct_conf;Will be replaced by generated pad instances
+#;;Default;dut;i_bsr;bsr;;struct;bsr_struct_conf;Will be replaced by boundary scan logic
+#;;Default;dut;i_tap_con;tap_con;;struct;tap_con_struct_conf;
+#;;Default;dut;i_vgca;vgca;;struct;vgca_struct_conf;
+#;;Default;dut;i_dac;dac;;struct;dac_struct_conf;
+#;;Default;dut;i_adc;adc;;struct;adc_struct_conf;
+#;;Default;dut;i_clkgen;clkgen;;struct;clkgen_struct_conf;
+#;;Default;dut;i_core;core;;struct;core_struct_conf;
+#;;Default;dut;i_i2c_kernel;i2c_kernel;;struct;i2c_kernel_struct_conf;
+#;;Default;dut;i_i2c_test;i2c_test;;struct;i2c_test_struct_conf;
+#;;Default;dut;i_fe;fe;;struct;fe_struct_conf;
+#;;Default;dut;i_di;di;;struct;di_struct_conf;
+#;;Default;dut;i_frc;frc;;struct;frc_struct_conf;
+#;;Default;dut;i_dp;dp;;struct;dp_struct_conf;
+#;;Default;dut;i_cpu;cpu;;struct;cpu_struct_conf;
+;;Default;dut;i_mm;mm;;struct;mm_struct_conf;
+#;;Default;i_fe;i_dii;dii;;struct;dii_struct_conf;
+#;;Default;i_di;i_di_m;di_m;;struct;di_m_struct_conf;
+#;;Default;i_di;i_di_s;di_s;;struct;di_s_struct_conf;
+#;;Default;i_dp;i_dpxx;dpxx;;struct;dpxx_struct_conf;
+#;;Default;i_dp;i_ga;ga;;struct;ga_struct_conf;
+#;;;;;;;;;
+;;;;;;;;;
+;;;;;;;;;
+;;Default;dut;i_padframe;padframe;;struct;padframe_struct_conf;
+#;;Default;i_padframe;i_pads_nw;pads_nordwest;vst_5lm_io.components;struct;pads_nordwest_struct_conf;
+#;;Default;i_padframe;i_pads_ne;pads_nordeast;vst_5lm_io.components;struct;pads_nordeast_struct_conf;
+;;Default;i_padframe;i_pads_en;pads_eastnord;vst_5lm_io.components;struct;pads_eastnord_struct_conf;
+;;Default;i_padframe;i_pads_es;pads_eastsouth;vst_5lm_io.components;struct;pads_eastsouth_struct_conf;
+#;;Default;i_padframe;i_pads_wn;pads_westnord;vst_5lm_io.components;struct;pads_westnord_struct_conf;
+#;;Default;i_padframe;i_pads_ws;pads_westsouth;vst_5lm_io.components;struct;pads_westsouth_struct_conf;
+#;;Default;i_padframe;i_pads_sw;pads_southwest;vst_5lm_io.components;struct;pads_southwest_struct_conf;
+#;;Default;i_padframe;i_pads_se;pads_southeast;vst_5lm_io.components;struct;pads_southeast_struct_conf;
+#;;;;;;;;;
+#;;;;;;;;;
+#;$i(1..59),/ioc_(.*)::pad=($i)/;Default;i_pads_es;ioc_$1;;;;;
+#;$i(1..59),/pad_(.*)::pad=($i)/;Default;i_pads_es;pad_$1;;;;;
+#;$i(60..117),/ioc_(.*)::pad=($i)/;Default;i_pads_en;ioc_$1;;;;;
+#;$i(60..117),/pad_(.*)::pad=($i)/;Default;i_pads_en;pad_$1;;;;;
+#;$i(118..177),/ioc_(.*)::pad=($i)/;Default;i_pads_ne;ioc_$1;;;;;
+#;$i(118..177),/pad_(.*)::pad=($i)/;Default;i_pads_ne;pad_$1;;;;;
+#;$i(178..234),/ioc_(.*)::pad=($i)/;Default;i_pads_nw;ioc_$1;;;;;
+#;$i(178..234),/pad_(.*)::pad=($i)/;Default;i_pads_nw;pad_$1;;;;;
+#;$i(235..293),/ioc_(.*)::pad=($i)/;Default;i_pads_wn;ioc_$1;;;;;
+#;$i(235..293),/pad_(.*)::pad=($i)/;Default;i_pads_wn;pad_$1;;;;;
+#;$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_$1;;;;;
+#;$i(294..351),/pad_(.*)::pad=($i)/;Default;i_pads_ws;pad_$1;;;;;
+#;$i(352..411),/ioc_(.*)::pad=($i)/;Default;i_pads_sw;ioc_$1;;;;;
+#;$i(352..411),/pad_(.*)::pad=($i)/;Default;i_pads_sw;pad_$1;;;;;
+#;$i(412..468),/ioc_(.*)::pad=($i)/;Default;i_pads_se;ioc_$1;;;;;
+#;$i(412..468),/pad_(.*)::pad=($i)/;Default;i_pads_se;pad_$1;;;;;
+:=:=:=>IO_OFF
+::ign;::class;::ispin;::pin;::pad;::type;::iocell;::name;::port;::muxopt;::muxopt;::muxopt;::muxopt;::muxopt;::muxopt;::muxopt;;;;;;;
+#;;;;;;;Pad Multiplex Option;;OPT 0;OPT 1;OPT 2;OPT 3;OPT 4;Test Mode;Scan Mode;;;;;;;
+#;;;;;;;Input Digital ITU656/601;;16-bit;;8-bit;16-bit;8-bit;;;;;;;;;
+#;;;;;;;Input Digital RGB 24-bit;;;yes;yes;;;;;;;;;;;
+#;;;;;;;Input Analog RGB 1/2;;yes;yes;yes;yes;yes;yes;yes;;;;;;;
+#;;;;;;;Input Digital OSD;;12-bit;;6-bit;6-bit;6-bit;;;;;;;;;
+#;;;;;;;Output Digital RGB;;24-bit;2 x 18-bit;24-bit;2 x 18-bit;2 x 24-bit;;;;;;;;;
+#;;;;;;;GPIO;;8;;;2;;;;;;;;;;
+#;%SEL%;;;;;;;;DEFAULT;PMUX_SEL_OPT1;PMUX_SEL_OPT2;PMUX_SEL_OPT3;PMUX_SEL_OPT4;PMUX_SEL_TEST;PMUX_SEL_SCAN;;;;;;;
+;%SEL%;;;;;;;muxsel_p;default;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;Pad;1;1;1;WC3I80;;656clkin;"di,
+do";"656clkin,
+pad_656clkin";;;;;;;;;;;;;
+;Pad;1;2;2;WC3B60;ioci;656in_0;"di,
+do,
+en";"656in_0,
+656in_0_o,
+656in_0_en_n";;;;;;;;;;;;;
+;Pad;1;3;3;WC3B60;ioci;656in_1;"di,
+do,
+en";"656in_1,
+656in_1_o,
+656in_1_en_n";;;;;;;;;;;;;
+;Pad;1;4;4;WC3B60;ioci;656in_2;"di,
+do,
+en";"656in_2,
+656in_2_o,
+656in_2_en_n";;;;;;;;;;;;;
+;Pad;1;5;5;WC3B60;ioci;656in_3;"di,
+do,
+en";"656in_3,
+656in_3_o,
+656in_3_en_n";;;;;;;;;;;;;
+;Pad;1;6;6;WC3B60;ioci;656in_4;"di,
+do,
+en";"656in_4,
+656in_4_o,
+656in_4_en_n";;;;;;;;;;;;;
+;Pad;1;7;7;WC3B60;ioci;656in_5;"di,
+do,
+en";"656in_5,
+656in_5_o,
+656in_5_en_n";;;;;;;;;;;;;
+;Pad;1;8;8;WC3B60;ioci;656in_6;"di,
+do,
+en";"656in_6,
+656in_6_o,
+656in_6_en_n";;;;;;;;;;;;;
+;Pad;1;9;9;WC3B60;ioci;656in_7;"di,
+do,
+en";"656in_7,
+656in_7_o,
+656in_7_en_n";;;;;;;;;;;;;
+#;;;;10;;;;;;;;;;;;;;;;;;
+#;;;;11;;;;;;;;;;;;;;;;;;
+#;;;;12;;;;;;;;;;;;;;;;;;
+#;;;;13;;;;;;;;;;;;;;;;;;
+#;;;;14;;;;;;;;;;;;;;;;;;
+;Pad;1;10;15;WC3B60;ioco;rama_0;"di,
+do,
+en";"rama_i(0),
+rama_0,
+rama_en_n(0)";;;;;;;;;;;;;
+;Pad;1;11;16;WC3B60;ioco;rama_1;"di,
+do,
+en";"rama_i(1),
+rama_1,
+rama_en_n(1)";;;;;;;;;;;;;
+;Pad;1;12;17;WC3B60;ioco;rama_2;"di,
+do,
+en";"rama_i(2),
+rama_2,
+rama_en_n(2)";;;;;;;;;;;;;
+;Pad;1;13;18;WC3B60;ioco;rama_3;"di,
+do,
+en";"rama_i(3),
+rama_3,
+rama_en_n(3)";;;;;;;;;;;;;
+#;S;0;13;19;;;vssp;;;;;;;;;;;;;;;
+#;S;0;13;20;;;vddsd;;;;;;;;;;;;;;;
+;Pad;1;14;21;WC3B60;ioco;rama_4;"di,
+do,
+en";"rama_i(4),
+rama_4,
+rama_en_n(4)";;;;;;;;;;;;;
+;Pad;1;15;22;WC3B60;ioco;rama_5;"di,
+do,
+en";"rama_i(5),
+rama_5,
+rama_en_n(5)";;;;;;;;;;;;;
+;Pad;1;16;23;WC3B60;ioco;rama_6;"di,
+do,
+en";"rama_i(6),
+rama_6,
+rama_en_n(6)";;;;;;;;;;;;;
+;Pad;1;17;24;WC3B60;ioco;rama_7;"di,
+do,
+en";"rama_i(7),
+rama_7,
+rama_en_n(7)";;;;;;;;;;;;;
+;Pad;1;18;25;WC3B60;ioco;rama_8;"di,
+do,
+en";"rama_i(8),
+rama_8,
+rama_en_n(8)";;;;;;;;;;;;;
+#;S;0;18;26;;;vssp;;;;;;;;;;;;;;;
+#;S;0;18;27;;;vddsd;;;;;;;;;;;;;;;
+;Pad;1;19;28;WC3B60;ioco;rama_9;"di,
+do,
+en";"rama_i(9),
+rama_9,
+rama_en_n(9)";;;;;;;;;;;;;
+;Pad;1;20;29;WC3B60;ioco;rama_10;"di,
+do,
+en";"rama_i(10),
+rama_10,
+rama_en_n(10)";;;;;;;;;;;;;
+;Pad;1;21;30;WC3B60;ioco;rama_11;"di,
+do,
+en";"rama_i(11),
+rama_11,
+rama_en_n(11)";;;;;;;;;;;;;
+;Pad;1;22;31;WC3B60;ioco;rama_12;"di,
+do,
+en";"rama_i(12),
+rama_12,
+rama_en_n(12)";;;;;;;;;;;;;
+;Pad;1;23;32;WC3B60;ioci;ramd_0;"di,
+do,
+en";"ramd_0,
+ramd_0_o,
+ramd_0_en_n";;;;;;;;;;;;;
+;Pad;1;24;33;WC3B60;ioci;ramd_1;"di,
+do,
+en";"ramd_1,
+ramd_1_o,
+ramd_1_en_n";;;;;;;;;;;;;
+;Pad;1;25;34;WC3B60;ioci;ramd_16;"di,
+do,
+en";"ramd_16,
+ramd_16_o,
+ramd_16_en_n";;;;;;;;;;;;;
+;Pad;1;26;35;WC3B60;ioci;ramd_17;"di,
+do,
+en";"ramd_17,
+ramd_17_o,
+ramd_17_en_n";;;;;;;;;;;;;
+#;S;0;26;36;;;vddd;;;;;;;;;;;;;;;
+#;S;0;26;37;;;vssd;;;;;;;;;;;;;;;
+#;S;0;26;38;;;vssp;;;;;;;;;;;;;;;
+#;S;0;26;39;;;vddsd;;;;;;;;;;;;;;;
+;Pad;1;27;40;WC3B60;ioci;ramd_2;"di,
+do,
+en";"ramd_2,
+ramd_2_o,
+ramd_2_en_n";;;;;;;;;;;;;
+;Pad;1;28;41;WC3B60;ioci;ramd_3;"di,
+do,
+en";"ramd_3,
+ramd_3_o,
+ramd_3_en_n";;;;;;;;;;;;;
+;Pad;1;29;42;WC3B60;ioci;ramd_18;"di,
+do,
+en";"ramd_18,
+ramd_18_o,
+ramd_18_en_n";;;;;;;;;;;;;
+;Pad;1;30;43;WC3B60;ioci;ramd_19;"di,
+do,
+en";"ramd_19,
+ramd_19_o,
+ramd_19_en_n";;;;;;;;;;;;;
+#;S;0;30;44;;;vssp;;;;;;;;;;;;;;;
+#;S;0;30;45;;;vddsd;;;;;;;;;;;;;;;
+;Pad;1;31;46;WC3B60;ioci;ramd_4;"di,
+do,
+en";"ramd_4,
+ramd_4_o,
+ramd_4_en_n";;;;;;;;;;;;;
+;Pad;1;32;47;WC3B60;ioci;ramd_5;"di,
+do,
+en";"ramd_5,
+ramd_5_o,
+ramd_5_en_n";;;;;;;;;;;;;
+;Pad;1;33;48;WC3B60;ioci;ramd_20;"di,
+do,
+en";"ramd_20,
+ramd_20_o,
+ramd_20_en_n";;;;;;;;;;;;;
+;Pad;1;34;49;WC3B60;ioci;ramd_21;"di,
+do,
+en";"ramd_21,
+ramd_21_o,
+ramd_21_en_n";;;;;;;;;;;;;
+;Pad;1;35;50;WC3I80;;sstl;;;;;;;;;;;;;;;
+;Pad;1;36;51;WC3B60;ioci;ramd_6;"di,
+do,
+en";"ramd_6,
+ramd_6_o,
+ramd_6_en_n";;;;;;;;;;;;;
+;Pad;1;37;52;WC3B60;ioci;ramd_7;"di,
+do,
+en";"ramd_7,
+ramd_7_o,
+ramd_7_en_n";;;;;;;;;;;;;
+;Pad;1;38;53;WC3B60;ioci;ramd_22;"di,
+do,
+en";"ramd_22,
+ramd_22_o,
+ramd_22_en_n";;;;;;;;;;;;;
+;Pad;1;39;54;WC3B60;ioci;ramd_23;"di,
+do,
+en";"ramd_23,
+ramd_23_o,
+ramd_23_en_n";;;;;;;;;;;;;
+#;S;0;39;55;;;vssp;;;;;;;;;;;;;;;
+#;S;0;39;56;;;vddsd;;;;;;;;;;;;;;;
+;Pad;1;40;57;WC3B60;ioci;ramd_8;"di,
+do,
+en";"ramd_8,
+ramd_8_o,
+ramd_8_en_n";;;;;;;;;;;;;
+;Pad;1;41;58;WC3B60;ioci;ramd_9;"di,
+do,
+en";"ramd_9,
+ramd_9_o,
+ramd_9_en_n";;;;;;;;;;;;;
+;Pad;1;42;59;WC3B60;ioci;ramd_10;"di,
+do,
+en";"ramd_10,
+ramd_10_o,
+ramd_10_en_n";;;;;;;;;;;;;
+;Pad;1;43;60;WC3B60;ioci;ramd_11;"di,
+do,
+en";"ramd_11,
+ramd_11_o,
+ramd_11_en_n";;;;;;;;;;;;;
+;Pad;1;44;61;WC3B60;ioci;ramd_12;"di,
+do,
+en";"ramd_12,
+ramd_12_o,
+ramd_12_en_n";;;;;;;;;;;;;
+;Pad;1;45;62;WC3B60;ioci;ramd_13;"di,
+do,
+en";"ramd_13,
+ramd_13_o,
+ramd_13_en_n";;;;;;;;;;;;;
+;Pad;1;46;63;WC3B60;ioci;ramd_14;"di,
+do,
+en";"ramd_14,
+ramd_14_o,
+ramd_14_en_n";;;;;;;;;;;;;
+;Pad;1;47;64;WC3B60;ioci;ramd_15;"di,
+do,
+en";"ramd_15,
+ramd_15_o,
+ramd_15_en_n";;;;;;;;;;;;;
+#;S;0;47;65;;;vssp;;;;;;;;;;;;;;;
+#;S;0;47;66;;;vddsd;;;;;;;;;;;;;;;
+;Pad;1;48;67;WC3B60;ioci;ramd_24;"di,
+do,
+en";"ramd_24,
+ramd_24_o,
+ramd_24_en_n";;;;;;;;;;;;;
+;Pad;1;49;68;WC3B60;ioci;ramd_25;"di,
+do,
+en";"ramd_25,
+ramd_25_o,
+ramd_25_en_n";;;;;;;;;;;;;
+;Pad;1;50;69;WC3B60;ioci;ramd_26;"di,
+do,
+en";"ramd_26,
+ramd_26_o,
+ramd_26_en_n";;;;;;;;;;;;;
+;Pad;1;51;70;WC3B60;ioci;ramd_27;"di,
+do,
+en";"ramd_27,
+ramd_27_o,
+ramd_27_en_n";;;;;;;;;;;;;
+;Pad;1;52;71;WC3B60;ioci;ramd_28;"di,
+do,
+en";"ramd_28,
+ramd_28_o,
+ramd_28_en_n";;;;;;;;;;;;;
+;Pad;1;53;72;WC3B60;ioci;ramd_29;"di,
+do,
+en";"ramd_29,
+ramd_29_o,
+ramd_29_en_n";;;;;;;;;;;;;
+;Pad;1;54;73;WC3B60;ioci;ramd_30;"di,
+do,
+en";"ramd_30,
+ramd_30_o,
+ramd_30_en_n";;;;;;;;;;;;;
+;Pad;1;55;74;WC3B60;ioci;ramd_31;"di,
+do,
+en";"ramd_31,
+ramd_31_o,
+ramd_31_en_n";;;;;;;;;;;;;
+#;S;0;55;75;;;vddd;;;;;;;;;;;;;;;
+#;S;0;55;76;;;vssd;;;;;;;;;;;;;;;
+#;S;0;55;77;;;vssp;;;;;;;;;;;;;;;
+#;S;0;55;78;;;vddsd;;;;;;;;;;;;;;;
+;Pad;1;56;79;WC3O80;;ramcke;"di,
+do";"mm_ramcke,
+ramcke";;;;;;;;;;;;;
+;Pad;1;57;80;WC3O80;;ramclk;"di,
+do";"mm_ramclk,
+ramclk";;;;;;;;;;;;;
+;Pad;1;58;81;WC3O80;;ramclk_n;"di,
+do";"mm_ramclk_n,
+ramclk_n";;;;;;;;;;;;;
+;Pad;1;59;82;WC3I80;;ramcklin;"di,
+do";"ramclkin,
+pad_ramclkin";;;;;;;;;;;;;
+;Pad;1;60;83;WC3B60;ioco;ramdqs0;"di,
+do,
+en";"ramdqs0_i,
+ramdqs0,
+ramdqs0_en_n";;;;;;;;;;;;;
+#;S;0;60;84;;;vssp;;;;;;;;;;;;;;;
+#;S;0;60;85;;;vddsd;;;;;;;;;;;;;;;
+;Pad;1;61;86;WC3B60;ioco;ramdqs1;"di,
+do,
+en";"ramdqs1_i,
+ramdqs1,
+ramdqs1_en_n";;;;;;;;;;;;;
+;Pad;1;62;87;WC3B60;ioco;ramdqs2;"di,
+do,
+en";"ramdqs2_i,
+ramdqs2,
+ramdqs2_en_n";;;;;;;;;;;;;
+;Pad;1;63;88;WC3B60;ioco;ramdqs3;"di,
+do,
+en";"ramdqs3_i,
+ramdqs3,
+ramdqs3_en_n";;;;;;;;;;;;;
+;Pad;1;64;89;WC3B60;ioco;ramwe_n;"di,
+do,
+en";"ramwe_n_i,
+ramwe_n,
+ramwe_n_en_n";;;;;;;;;;;;;
+;Pad;1;65;90;WC3B60;ioco;ramcas_n;"di,
+do,
+en";"ramcas_n_i,
+ramcas_n,
+ramcas_n_en_n";;;;;;;;;;;;;
+;Pad;1;66;91;WC3B60;ioco;ramras_n;"di,
+do,
+en";"ramras_n_i,
+ramras_n,
+ramras_n_en_n";;;;;;;;;;;;;
+;Pad;1;67;92;WC3B60;ioco;ramcs_n;"di,
+do,
+en";"ramcs_n_i,
+ramcs_n,
+ramcs_n_en_n";;;;;;;;;;;;;
+;Pad;1;68;93;WC3B60;ioco;ramba0;"di,
+do,
+en";"ramba0_i,
+ramba0,
+ramba0_en_n";;;;;;;;;;;;;
+#;S;0;68;94;;;vssp;;;;;;;;;;;;;;;
+#;S;0;68;95;;;vddsd;;;;;;;;;;;;;;;
+;Pad;1;69;96;WC3B60;ioco;ramba1;"di,
+do,
+en";"ramba1_i,
+ramba1,
+ramba1_en_n";;;;;;;;;;;;;
+;Pad;1;70;97;WC3B60;ioco;ramdqm0;"di,
+do,
+en";"ramdqm0_i,
+ramdqm0,
+ramdqm0_en_n";;;;;;;;;;;;;
+;Pad;1;71;98;WC3B60;ioco;ramdqm1;"di,
+do,
+en";"ramdqm1_i,
+ramdqm1,
+ramdqm1_en_n";;;;;;;;;;;;;
+;Pad;1;72;99;WC3B60;ioco;ramdqm2;"di,
+do,
+en";"ramdqm2_i,
+ramdqm2,
+ramdqm2_en_n";;;;;;;;;;;;;
+;Pad;1;73;100;WC3B60;ioco;ramdqm3;"di,
+do,
+en";"ramdqm3_i,
+ramdqm3,
+ramdqm3_en_n";;;;;;;;;;;;;
+#;;;;101;;;;;;;;;;;;;;;;;;
+;Pad;1;74;102;WC3B60;drgbi;rgbh;"di,
+do,
+en";"rgbh,
+rgbh_o,
+rgbh_en_n";;;;;;;;;;;;;
+;Pad;1;75;103;WC3B60;drgbi;rgbv;"di,
+do,
+en";"rgbv,
+rgbv_o,
+rgbv_en_n";;;;;;;;;;;;;
+;Pad;1;76;104;WC3I80;;rgbclkin;"di,
+do";"rgbclkin,
+pad_rgbclkin";;;;;;;;;;;;;
+;Pad;1;77;105;WC3B60;drgbi;dbi_0;"di,
+do,
+en";"dbi_0,
+dbi_o(0),
+dbi_en_n(0)";;;;;;;;;;;;;
+;Pad;1;78;106;WC3B60;drgbi;dbi_1;"di,
+do,
+en";"dbi_1,
+dbi_o(1),
+dbi_en_n(1)";;;;;;;;;;;;;
+#;;;;107;;;;;;;;;;;;;;;;;;
+#;;;;108;;;;;;;;;;;;;;;;;;
+#;;;;109;;;;;;;;;;;;;;;;;;
+#;;;;110;;;;;;;;;;;;;;;;;;
+#;;;;111;;;;;;;;;;;;;;;;;;
+#;;;;112;;;;;;;;;;;;;;;;;;
+#;;;;113;;;;;;;;;;;;;;;;;;
+#;;;;114;;;;;;;;;;;;;;;;;;
+#;;;;115;;;;;;;;;;;;;;;;;;
+#;;;;116;;;;;;;;;;;;;;;;;;
+#;;;;117;;;;;;;;;;;;;;;;;;
+;Pad;1;79;118;WC3B60;drgbi;dri_0;"di,
+do,
+en";"dri_0,
+dri_o(0),
+dri_en_n(0)";;;;;;;;;;;;;
+;Pad;1;80;119;WC3B60;drgbi;dri_1;"di,
+do,
+en";"dri_1,
+dri_o(1),
+dri_en_n(1)";;;;;;;;;;;;;
+;Pad;1;81;120;WC3B60;drgbi;dri_2;"di,
+do,
+en";"dri_2,
+dri_o(2),
+dri_en_n(2)";;;;;;;;;;;;;
+;Pad;1;82;121;WC3B60;drgbi;dri_3;"di,
+do,
+en";"dri_3,
+dri_o(3),
+dri_en_n(3)";;;;;;;;;;;;;
+#;S;0;82;122;;;vssp;;;;;;;;;;;;;;;
+#;S;0;82;123;;;vddp;;;;;;;;;;;;;;;
+;Pad;1;83;124;WC3B60;drgbi;dri_4;"di,
+do,
+en";"dri_4,
+dri_o(4),
+dri_en_n(4)";;;;;;;;;;;;;
+;Pad;1;84;125;WC3B60;drgbi;dri_5;"di,
+do,
+en";"dri_5,
+dri_o(5),
+dri_en_n(5)";;;;;;;;;;;;;
+;Pad;1;85;126;WC3B60;drgbi;dri_6;"di,
+do,
+en";"dri_6,
+dri_o(6),
+dri_en_n(6)";;;;;;;;;;;;;
+;Pad;1;86;127;WC3B60;drgbi;dri_7;"di,
+do,
+en";"dri_7,
+dri_o(7),
+dri_en_n(7)";;;;;;;;;;;;;
+;Pad;1;87;128;WC3B60;drgbi;dbi_2;"di,
+do,
+en";"dbi_2,
+dbi_o(2),
+dbi_en_n(2)";;;;;;;;;;;;;
+;Pad;1;88;129;WC3B60;drgbi;dbi_3;"di,
+do,
+en";"dbi_3,
+dbi_o(3),
+dbi_en_n(3)";;;;;;;;;;;;;
+;Pad;1;89;130;WC3B60;drgbi;dbi_4;"di,
+do,
+en";"dbi_4,
+dbi_o(4),
+dbi_en_n(4)";;;;;;;;;;;;;
+;Pad;1;90;131;WC3B60;drgbi;dbi_5;"di,
+do,
+en";"dbi_5,
+dbi_o(5),
+dbi_en_n(5)";;;;;;;;;;;;;
+;Pad;1;91;132;WC3B60;drgbi;dbi_6;"di,
+do,
+en";"dgi_6,
+dgi_o(6),
+dgi_en_n(6)";;;;;;;;;;;;;
+;Pad;1;92;133;WC3B60;drgbi;dbi_7;"di,
+do,
+en";"dgi_7,
+dgi_o(7),
+dgi_en_n(7)";;;;;;;;;;;;;
+;Pad;1;93;134;WC3B60;drgbi;dgi_0;"di,
+do,
+en";"dgi_0,
+dgi_o(0),
+dgi_en_n(0)";;;;;;;;;;;;;
+;Pad;1;94;135;WC3B60;drgbi;dgi_1;"di,
+do,
+en";"dgi_1,
+dgi_o(1),
+dgi_en_n(1)";;;;;;;;;;;;;
+;Pad;1;95;136;WC3B60;drgbi;dgi_2;"di,
+do,
+en";"dgi_2,
+dgi_o(2),
+dgi_en_n(2)";;;;;;;;;;;;;
+;Pad;1;96;137;WC3B60;drgbi;dgi_3;"di,
+do,
+en";"dgi_3,
+dgi_o(3),
+dgi_en_n(3)";;;;;;;;;;;;;
+;Pad;1;97;138;WC3B60;drgbi;dgi_4;"di,
+do,
+en";"dgi_4,
+dgi_o(4),
+dgi_en_n(4)";;;;;;;;;;;;;
+;Pad;1;98;139;WC3B60;drgbi;dgi_5;"di,
+do,
+en";"dgi_5,
+dgi_o(5),
+dgi_en_n(5)";;;;;;;;;;;;;
+;Pad;1;99;140;WC3B60;drgbi;dgi_6;"di,
+do,
+en";"dgi_6,
+dgi_o(6),
+dgi_en_n(6)";;;;;;;;;;;;;
+;Pad;1;100;141;WC3B60;drgbi;dgi_7;"di,
+do,
+en";"dgi_7,
+dgi_o(7),
+dgi_en_n(7)";;;;;;;;;;;;;
+;Pad;1;101;142;WC3B60;rgbde;rgbde;"di,
+do,
+en";"rgbde,
+rgbde_o,
+rgbde_en_n";;;;;;;;;;;;;
+;Pad;1;102;143;WC3B60;ioco;dbo_0;"di,
+do,
+en";"dbo_0_i,
+dbo_0,
+dbo_0_en_n";;;;;;;;;;;;;
+;Pad;1;103;144;WC3B60;ioco;dbo_1;"di,
+do,
+en";"dbo_1_i,
+dbo_1,
+dbo_1_en_n";;;;;;;;;;;;;
+;Pad;1;104;145;WC3B60;ioco;dbo_2;"di,
+do,
+en";"dbo_2_i,
+dbo_2,
+dbo_2_en_n";;;;;;;;;;;;;
+;Pad;1;105;146;WC3B60;ioco;dbo_3;"di,
+do,
+en";"dbo_3_i,
+dbo_3,
+dbo_3_en_n";;;;;;;;;;;;;
+#;S;0;105;147;;;vssp;;;;;;;;;;;;;;;
+#;S;0;105;148;;;vddp;;;;;;;;;;;;;;;
+;Pad;1;106;149;WC3B60;ioco;dbo_4;"di,
+do,
+en";"dbo_4_i,
+dbo_4,
+dbo_4_en_n";;;;;;;;;;;;;
+;Pad;1;107;150;WC3B60;ioco;dbo_5;"di,
+do,
+en";"dbo_5_i,
+dbo_5,
+dbo_5_en_n";;;;;;;;;;;;;
+;Pad;1;108;151;WC3B60;ioco;dbo_6;"di,
+do,
+en";"dbo_6_i,
+dbo_6,
+dbo_6_en_n";;;;;;;;;;;;;
+;Pad;1;109;152;WC3B60;ioco;dbo_7;"di,
+do,
+en";"dbo_7_i,
+dbo_7,
+dbo_7_en_n";;;;;;;;;;;;;
+;Pad;1;110;153;WC3B60;ioco;dbo_8;"di,
+do,
+en";"dbo_8_i,
+dbo_8,
+dbo_8_en_n";;;;;;;;;;;;;
+;Pad;1;111;154;WC3B60;ioco;dbo_9;"di,
+do,
+en";"dbo_9_i,
+dbo_9,
+dbo_9_en_n";;;;;;;;;;;;;
+;Pad;1;112;155;WC3B60;ioco;dgo_0;"di,
+do,
+en";"dgo_0_i,
+dgo_0,
+dgo_0_en_n";;;;;;;;;;;;;
+#;S;0;112;156;;;vddd;;;;;;;;;;;;;;;
+#;S;0;112;157;;;vssd;;;;;;;;;;;;;;;
+#;S;0;112;158;;;vssp;;;;;;;;;;;;;;;
+#;S;0;112;159;;;vddp;;;;;;;;;;;;;;;
+;Pad;1;113;160;WC3B60;ioco;dgo_1;"di,
+do,
+en";"dgo_1_i,
+dgo_1,
+dgo_1_en_n";;;;;;;;;;;;;
+;Pad;1;114;161;WC3B60;ioco;dgo_2;"di,
+do,
+en";"dgo_2_i,
+dgo_2,
+dgo_2_en_n";;;;;;;;;;;;;
+;Pad;1;115;162;WC3B60;ioco;dgo_3;"di,
+do,
+en";"dgo_3_i,
+dgo_3,
+dgo_3_en_n";;;;;;;;;;;;;
+;Pad;1;116;163;WC3B60;ioco;dgo_4;"di,
+do,
+en";"dgo_4_i,
+dgo_4,
+dgo_4_en_n";;;;;;;;;;;;;
+;Pad;1;117;164;WC3B60;ioco;dgo_5;"di,
+do,
+en";"dgo_5_i,
+dgo_5,
+dgo_5_en_n";;;;;;;;;;;;;
+;Pad;1;118;165;WC3B60;ioco;dgo_6;"di,
+do,
+en";"dgo_6_i,
+dgo_6,
+dgo_6_en_n";;;;;;;;;;;;;
+;Pad;1;119;166;WC3B60;ioco;dgo_7;"di,
+do,
+en";"dgo_7_i,
+dgo_7,
+dgo_7_en_n";;;;;;;;;;;;;
+;Pad;1;120;167;WC3B60;ioco;dgo_8;"di,
+do,
+en";"dgo_8_i,
+dgo_8,
+dgo_8_en_n";;;;;;;;;;;;;
+;Pad;1;121;168;WC3B60;ioco;dgo_9;"di,
+do,
+en";"dgo_9_i,
+dgo_9,
+dgo_9_en_n";;;;;;;;;;;;;
+;Pad;1;122;169;WC3O80;;pclk1;"di,
+do";"mm_pclk1,
+pclk1";;;;;;;;;;;;;
+#;S;0;122;170;;;vssp;;;;;;;;;;;;;;;
+#;S;0;122;171;;;vddp;;;;;;;;;;;;;;;
+;Pad;1;123;172;WC3O80;;pclk2;"di,
+do";"mm_pclk2,
+pclk2";;;;;;;;;;;;;
+#;;;;173;;;;;;;;;;;;;;;;;;
+#;;;;174;;;;;;;;;;;;;;;;;;
+#;;;;175;;;;;;;;;;;;;;;;;;
+;Pad;1;124;176;WC3B60;scl_ioc;scl1;"di,
+do,
+en";"scl1,
+scl1_pp_do,
+iic_pp_en_n";;;;;;;;;;;;;
+;Pad;1;125;177;WC3B60;sda_ioc;sda1;"di,
+do,
+en";"sda1,
+sda1_pp_do,
+sda1_pp_en";;;;;;;;;;;;;
+;Pad;1;126;178;WC3B60;scl_ioc;scl2;"di,
+do,
+en";"scl2,
+scl2_pp_do,
+iic_pp_en_n";;;;;;;;;;;;;
+;Pad;1;127;179;WC3B60;sda_ioc;sda2;"di,
+do,
+en";"sda2,
+sda2_pp_do,
+sda2_pp_en";;;;;;;;;;;;;
+#;S;0;127;180;;;vssp;;;;;;;;;;;;;;;
+#;S;0;127;181;;;vddp;;;;;;;;;;;;;;;
+#;;;;182;VOID;;;;;;;;;;;;;;;;;
+#;;;;183;VOID;;;;;;;;;;;;;;;;;
+#;;;;184;VOID;;bo_0;;;;;;;;;;;;;;;
+#;;;;185;VOID;;bo_1;;;;;;;;;;;;;;;
+#;;;;186;VOID;;bo_2;;;;;;;;;;;;;;;
+;Pad;1;128;187;WC3B60;;tm;;;;;;;;;;;;;;;
+#;;;;188;VOID;;;;;;;;;;;;;;;;;
+;Pad;1;129;189;WC3B60;scl_ioc;scl3;"di,
+do,
+en";"scl3,
+scl3_pp_do,
+iic_pp_en_n";;;;;;;;;;;;;
+;Pad;1;130;190;WC3B60;sda_ioc;sda3;"di,
+do,
+en";"sda3,
+sda3_pp_do,
+sda3_pp_en";;;;;;;;;;;;;
+#;S;0;130;191;;;vddd;;;;;;;;;;;;;;;
+#;S;0;130;192;;;vssd;;;;;;;;;;;;;;;
+#;;;;193;VOID;;;;;;;;;;;;;;;;;
+#;Mpad;;;194;Separation;;;;;;;;;;;;;;;;;
+#;S;;;195;;;vdda33_r;;;;;;;;;;;;;;;
+#;Mpad;1;131;196;;;rout;;;;;;;;;;;;;;;
+#;S;;;197;;;vssa33_dac;;;;;;;;;;;;;;;
+#;S;;;198;;;vssa33_dac;;;;;;;;;;;;;;;
+#;Mpad;1;132;199;;;gout;;;;;;;;;;;;;;;
+#;S;;;200;;;vdda33_g;;;;;;;;;;;;;;;
+#;S;;;201;;;vdda33_b;;;;;;;;;;;;;;;
+#;Mpad;1;133;202;;;bout;;;;;;;;;;;;;;;
+#;S;;;203;;;vssa33_dac;;;;;;;;;;;;;;;
+#;S;;;204;;;vssa33_dac;;;;;;;;;;;;;;;
+#;Mpad;1;134;205;;;svm;;;;;;;;;;;;;;;
+#;S;;;206;;;vdda33_s;;;;;;;;;;;;;;;
+#;S;;;207;;;vdda33_cadc;;;;;;;;;;;;;;;
+#;S;;;208;;;vssa33_cadc;;;;;;;;;;;;;;;
+#;;;;209;Separation;;;;;;;;;;;;;;;;;
+#;S;;;210;;;vssa33_buf;;;;;;;;;;;;;;;
+#;S;;;211;;;vdda33_buf;;;;;;;;;;;;;;;
+#;Mpad;1;135;212;;;cvo_4;;;;;;;;;;;;;;;
+#;Mpad;1;136;213;;;cvo_7;;;;;;;;;;;;;;;
+#;Mpad;1;137;214;;;cvo_3;;;;;;;;;;;;;;;
+#;;;;215;80µ;;;;;;;;;;;;;;;;;
+#;Mpad;1;138;216;;;cvo_6;;;;;;;;;;;;;;;
+#;Mpad;1;139;217;;;cvo_2;;;;;;;;;;;;;;;
+#;Mpad;1;140;218;;;cvo_5;;;;;;;;;;;;;;;
+#;;;;219;80µ;;;;;;;;;;;;;;;;;
+#;Mpad;1;141;220;;;cvo_1;;;;;;;;;;;;;;;
+#;S;;;221;;;;;;;;;;;;;;;;;;
+#;S;;;222;;;;;;;;;;;;;;;;;;
+#;S;;;223;;;;;;;;;;;;;;;;;;
+#;S;;;224;;;;;;;;;;;;;;;;;;
+#;Mpad;1;142;225;;;ci_3;;;;;;;;;;;;;;;
+#;;;;226;80µ;;;;;;;;;;;;;;;;;
+#;Mpad;1;143;227;;;ci_2;;;;;;;;;;;;;;;
+#;Mpad;1;144;228;;;ci_1;;;;;;;;;;;;;;;
+#;Mpad;1;145;229;;;yi_3;;;;;;;;;;;;;;;
+#;;;;230;80µ;;;;;;;;;;;;;;;;;
+#;Mpad;1;146;231;;;yi_2;;;;;;;;;;;;;;;
+#;Mpad;1;147;232;;;yi_1;;;;;;;;;;;;;;;
+#;Mpad;1;148;233;;;cvi_1;;;;;;;;;;;;;;;
+#;Mpad;1;149;234;;;cvi_2;;;;;;;;;;;;;;;
+#;;;;235;;;cvi_1;;;;;;;;;;;;;;;
+#;;;;236;;;cvi_2;;;;;;;;;;;;;;;
+#;Mpad;1;150;237;;;cvi_3;;;;;;;;;;;;;;;
+#;Mpad;1;151;238;;;cvi_4;;;;;;;;;;;;;;;
+#;;;;239;80µ;;;;;;;;;;;;;;;;;
+#;S;;;240;;;;;;;;;;;;;;;;;;
+#;S;;;241;;;;;;;;;;;;;;;;;;
+#;S;;;242;;;;;;;;;;;;;;;;;;
+#;S;;;243;;;;;;;;;;;;;;;;;;
+#;;;;244;0;;;;;;;;;;;;;;;;;
+#;S;;;245;;;;;;;;;;;;;;;;;;
+#;S;;;246;;;;;;;;;;;;;;;;;;
+#;S;;;247;;;;;;;;;;;;;;;;;;
+#;S;;;248;;;;;;;;;;;;;;;;;;
+#;;;;249;80µ;;;;;;;;;;;;;;;;;
+#;Mpad;1;152;250;;;fbi_3;;;;;;;;;;;;;;;
+#;Mpad;1;153;251;;;bi_3;;;;;;;;;;;;;;;
+#;Mpad;1;154;252;;;gi_3;;;;;;;;;;;;;;;
+#;;;;253;80µ;;;;;;;;;;;;;;;;;
+#;Mpad;1;155;254;;;fbi_2;;;;;;;;;;;;;;;
+#;Mpad;1;156;255;;;bi_2;;;;;;;;;;;;;;;
+#;Mpad;1;157;256;;;gi_2;;;;;;;;;;;;;;;
+#;;;;257;80µ;;;;;;;;;;;;;;;;;
+#;Mpad;1;158;258;;;ri_2;;;;;;;;;;;;;;;
+#;Mpad;1;159;259;;;ri_3;;;;;;;;;;;;;;;
+#;Mpad;1;160;260;;;fbi_1;;;;;;;;;;;;;;;
+#;;;;261;80µ;;;;;;;;;;;;;;;;;
+#;Mpad;1;161;262;;;bi_1;;;;;;;;;;;;;;;
+#;Mpad;1;162;263;;;gi_1;;;;;;;;;;;;;;;
+#;Mpad;1;163;264;;;ri_1;;;;;;;;;;;;;;;
+#;S;;;265;;;;;;;;;;;;;;;;;;
+#;S;;;266;;;;;;;;;;;;;;;;;;
+#;S;;;267;;;;;;;;;;;;;;;;;;
+#;S;;;268;;;;;;;;;;;;;;;;;;
+#;;;;269;3x20µ;;;;;;;;;;;;;;;;;
+#;S;;;270;;;;;;;;;;;;;;;;;;
+#;S;;;271;;;;;;;;;;;;;;;;;;
+#;S;;;272;;;;;;;;;;;;;;;;;;
+#;S;;;273;;;;;;;;;;;;;;;;;;
+#;S;;;274;;;;;;;;;;;;;;;;;;
+#;S;;;275;;;;;;;;;;;;;;;;;;
+#;Mpad;1;164;276;;;cadc0;;;;;;;;;;;;;;;
+#;Mpad;1;165;277;;;cadc1;;;;;;;;;;;;;;;
+#;S;;;278;;;;;;;;;;;;;;;;;;
+#;S;;;279;;;;;;;;;;;;;;;;;;
+#;S;;;280;;;;;;;;;;;;;;;;;;
+#;S;;;281;;;;;;;;;;;;;;;;;;
+#;Mpad;1;166;282;;;cadc2;;;;;;;;;;;;;;;
+#;Mpad;1;167;283;;;cadc3;;;;;;;;;;;;;;;
+#;S;;;284;;;;;;;;;;;;;;;;;;
+#;S;;;285;;;;;;;;;;;;;;;;;;
+#;S;;;286;;;;;;;;;;;;;;;;;;
+#;S;;;287;;;;;;;;;;;;;;;;;;
+#;Mpad;1;168;288;;;cadc4;;;;;;;;;;;;;;;
+#;Mpad;1;169;289;;;cadc4;;;;;;;;;;;;;;;
+#;S;;;290;;;;;;;;;;;;;;;;;;
+#;S;;;291;;;;;;;;;;;;;;;;;;
+#;S;;;292;;;;;;;;;;;;;;;;;;
+#;S;;;293;;;;;;;;;;;;;;;;;;
+#;;;;294;;;3x20µ;;;;;;;;;;;;;;;
+#;;;;295;;;Separation;;;;;;;;;;;;;;;
+#;S;0;169;296;;;vddd;;;;;;;;;;;;;;;
+#;S;0;169;297;;;vssd;;;;;;;;;;;;;;;
+;Pad;1;170;298;WC3I80;tms_ioc;tms;"di,
+do";"tms,
+pad_tms";;;;;;;;;;;;;
+;Pad;1;171;299;WC3I80;tdi_ioc;tdi;"di,
+do";"tdi,
+pad_tdi";;;;;;;;;;;;;
+;Pad;1;172;300;WC3O80;tdo_ioc;tdo;"di,
+do";"tap_tdo,
+tdo";;;;;;;;;;;;;
+;Pad;1;173;301;WC3I80;tclk_ioc;tclk;"di,
+do";"tclk,
+pad_tclk";;;;;;;;;;;;;
+;Pad;1;174;302;WC3I80;trst_ioc;trst;"di,
+do";"trst,
+pad_trst";;;;;;;;;;;;;
+;Pad;1;175;303;WC3B60;ioco;hout;"di,
+do,
+en";"hout_i,
+hout,
+hout_en_n";;;;;;;;;;;;;
+;Pad;1;176;304;WC3B60;ioco;vout;"di,
+do,
+en";"vout_i,
+vout,
+vout_en_n";;;;;;;;;;;;;
+;Pad;1;177;305;WC3B60;ioci;vin_1;"di,
+do,
+en";"vin_1,
+vin_1_o,
+vin_1_en_n";;;;;;;;;;;;;
+;Pad;1;178;306;WC3B60;ioci;vin_2;"di,
+do,
+en";"vin_2,
+vin_2_o,
+vin_2_en_n";;;;;;;;;;;;;
+#;S;0;178;307;;;vssp;;;;;;;;;;;;;;;
+#;S;0;178;308;;;vddp;;;;;;;;;;;;;;;
+;Pad;1;179;309;WC3B60;ioci;frcv;"di,
+do,
+en";"frcv,
+frcv_o,
+frcv_en_n";;;;;;;;;;;;;
+;Pad;1;180;310;WC3B60;ioci;frch;"di,
+do,
+en";"frch,
+frch_o,
+frch_en_n";;;;;;;;;;;;;
+;Pad;1;181;311;WC3B60;ioci;frcd_0;"di,
+do,
+en";"frcd_0,
+frcd_0_o,
+frcd_0_en_n";;;;;;;;;;;;;
+;Pad;1;182;312;WC3B60;ioci;frcd_1;"di,
+do,
+en";"frcd_1,
+frcd_1_o,
+frcd_1_en_n";;;;;;;;;;;;;
+;Pad;1;183;313;WC3B60;ioci;frcd_2;"di,
+do,
+en";"frcd_2,
+frcd_2_o,
+frcd_2_en_n";;;;;;;;;;;;;
+;Pad;1;184;314;WC3B60;ioci;frcd_3;"di,
+do,
+en";"frcd_3,
+frcd_3_o,
+frcd_3_en_n";;;;;;;;;;;;;
+;Pad;1;185;315;WC3B60;ioci;frcd_4;"di,
+do,
+en";"frcd_4,
+frcd_4_o,
+frcd_4_en_n";;;;;;;;;;;;;
+;Pad;1;186;316;WC3B60;ioci;frcd_5;"di,
+do,
+en";"frcd_5,
+frcd_5_o,
+frcd_5_en_n";;;;;;;;;;;;;
+;Pad;1;187;317;WC3B60;ioci;frcd_6;"di,
+do,
+en";"frcd_6,
+frcd_6_o,
+frcd_6_en_n";;;;;;;;;;;;;
+;Pad;1;188;318;WC3B60;ioci;frcd_7;"di,
+do,
+en";"frcd_7,
+frcd_7_o,
+frcd_7_en_n";;;;;;;;;;;;;
+;Pad;1;189;319;WC3B60;ioci;frcd_8;"di,
+do,
+en";"frcd_8,
+frcd_8_o,
+frcd_8_en_n";;;;;;;;;;;;;
+;Pad;1;190;320;WC3B60;ioci;frcd_9;"di,
+do,
+en";"frcd_9,
+frcd_9_o,
+frcd_9_en_n";;;;;;;;;;;;;
+;Pad;1;191;321;WC3B60;ioci;frcd_10;"di,
+do,
+en";"frcd_10,
+frcd_10_o,
+frcd_10_en_n";;;;;;;;;;;;;
+;Pad;1;192;322;WC3B60;ioci;frcd_11;"di,
+do,
+en";"frcd_11,
+frcd_11_o,
+frcd_11_en_n";;;;;;;;;;;;;
+;Pad;1;193;323;WC3B60;ioci;frcd_12;"di,
+do,
+en";"frcd_12,
+frcd_12_o,
+frcd_12_en_n";;;;;;;;;;;;;
+;Pad;1;194;324;WC3B60;ioci;frcd_13;"di,
+do,
+en";"frcd_13,
+frcd_13_o,
+frcd_13_en_n";;;;;;;;;;;;;
+;Pad;1;195;325;WC3B60;ioci;frcd_14;"di,
+do,
+en";"frcd_14,
+frcd_14_o,
+frcd_14_en_n";;;;;;;;;;;;;
+;Pad;1;196;326;WC3B60;ioci;frcd_15;"di,
+do,
+en";"frcd_15,
+frcd_15_o,
+frcd_15_en_n";;;;;;;;;;;;;
+;Pad;1;197;327;WC3I80;;frcclk;"di,
+do";"frcclk,
+pad_frcclk";;;;;;;;;;;;;
+#;S;0;197;328;;;vssp;;;;;;;;;;;;;;;
+#;S;0;197;329;;;vddp;;;;;;;;;;;;;;;
+;Pad;1;198;330;WC3B60;ioci;gpio_0;"di,
+do,
+en";"gpio_0,
+gpio_0_o,
+gpio_0_en_n";;;;;;;;;;;;;
+;Pad;1;199;331;WC3B60;ioci;gpio_1;"di,
+do,
+en";"gpio_1,
+gpio_1_o,
+gpio_1_en_n";;;;;;;;;;;;;
+;Pad;1;200;332;WC3B60;ioci;gpio_2;"di,
+do,
+en";"gpio_2,
+gpio_2_o,
+gpio_2_en_n";;;;;;;;;;;;;
+;Pad;1;201;333;WC3B60;ioci;gpio_3;"di,
+do,
+en";"gpio_3,
+gpio_3_o,
+gpio_3_en_n";;;;;;;;;;;;;
+;Pad;1;202;334;WC3B60;ioci;gpio_4;"di,
+do,
+en";"gpio_4,
+gpio_4_o,
+gpio_4_en_n";;;;;;;;;;;;;
+;Pad;1;203;335;WC3B60;ioci;gpio_5;"di,
+do,
+en";"gpio_5,
+gpio_5_o,
+gpio_5_en_n";;;;;;;;;;;;;
+;Pad;1;204;336;WC3B60;ioci;gpio_6;"di,
+do,
+en";"gpio_6,
+gpio_6_o,
+gpio_6_en_n";;;;;;;;;;;;;
+;Pad;1;205;337;WC3B60;ioci;gpio_7;"di,
+do,
+en";"gpio_7,
+gpio_7_o,
+gpio_7_en_n";;;;;;;;;;;;;
+;Pad;1;206;338;WC3B60;ioci;gpio_8;"di,
+do,
+en";"gpio_8,
+gpio_8_o,
+gpio_8_en_n";;;;;;;;;;;;;
+;Pad;1;207;339;WC3B60;ioci;gpio_9;"di,
+do,
+en";"gpio_9,
+gpio_9_o,
+gpio_9_en_n";;;;;;;;;;;;;
+#;S;0;207;340;;;vssp;;;;;;;;;;;;;;;
+#;S;0;207;341;;;vddp;;;;;;;;;;;;;;;
+;Pad;1;208;342;WC3B60;ioci;gpio_10;"di,
+do,
+en";"gpio_10,
+gpio_10_o,
+gpio_10_en_n";;;;;;;;;;;;;
+;Pad;1;209;343;WC3B60;ioci;gpio_11;"di,
+do,
+en";"gpio_11,
+gpio_11_o,
+gpio_11_en_n";;;;;;;;;;;;;
+;Pad;1;210;344;WC3B60;ioci;gpio_12;"di,
+do,
+en";"gpio_12,
+gpio_12_o,
+gpio_12_en_n";;;;;;;;;;;;;
+;Pad;1;211;345;WC3B60;ioci;pde2;"di,
+do,
+en";"pde2,
+pde2_o,
+pde2_en_n";;;;;;;;;;;;;
+;Pad;1;212;346;WC3B60;ioci;pcs0;"di,
+do,
+en";"pcs0,
+pcs0_o,
+pcs0_en_n";;;;;;;;;;;;;
+;Pad;1;213;347;WC3B60;ioci;pcs1;"di,
+do,
+en";"pcs1,
+pcs1_o,
+pcs1_en_n";;;;;;;;;;;;;
+;Pad;1;214;348;WC3B60;ioci;pcs2;"di,
+do,
+en";"pcs2,
+pcs2_o,
+pcs2_en_n";;;;;;;;;;;;;
+;Pad;1;215;349;WC3B60;ioci;pcs3;"di,
+do,
+en";"pcs3,
+pcs3_o,
+pcs3_en_n";;;;;;;;;;;;;
+#;S;0;215;350;;;vssp;;;;;;;;;;;;;;;
+#;S;0;215;351;;;vddp;;;;;;;;;;;;;;;
+;Pad;1;216;352;WC3B60;ioci;pde1;"di,
+do,
+en";"pde1,
+pde1_o,
+pde1_en_n";;;;;;;;;;;;;
+;Pad;1;217;353;WC3B60;ioci;pmp0;"di,
+do,
+en";"pmp0,
+pmp0_o,
+pmp0_en_n";;;;;;;;;;;;;
+;Pad;1;218;354;WC3B60;ioci;pmp1;"di,
+do,
+en";"pmp1,
+pmp1_o,
+pmp1_en_n";;;;;;;;;;;;;
+;Pad;1;219;355;WC3B60;ioci;i2sws;"di,
+do,
+en";"i2sws,
+i2sws_o,
+i2sws_en_n";;;;;;;;;;;;;
+;Pad;1;220;356;WC3B60;ioci;i2scl;"di,
+do,
+en";"i2scl,
+i2scl_o,
+i2scl_en_n";;;;;;;;;;;;;
+;Pad;1;221;357;WC3B60;ioco;i2sdao;"di,
+do,
+en";"i2sdao_i,
+i2sdao,
+i2sdao_en_n";;;;;;;;;;;;;
+;Pad;1;222;358;WC3B60;ioci;i2sdai;"di,
+do,
+en";"i2sdai,
+i2sdai_o,
+i2sdai_en_n";;;;;;;;;;;;;
+;Pad;1;223;359;WC3O80;;varclk;"di,
+do";"dp_varclk,
+varclk";;;;;;;;;;;;;
+;Pad;1;224;360;WC3B60;ioci;pmp2;"di,
+do,
+en";"pmp2,
+pmp2_o,
+pmp2_en_n";;;;;;;;;;;;;
+;Pad;1;225;361;WC3B60;ioci;rev;"di,
+do,
+en";"rev,
+rev_o,
+rev_en_n";;;;;;;;;;;;;
+;Pad;1;226;362;WC3B60;ioco;dro_0;"di,
+do,
+en";"dro_0_i,
+dro_0,
+dro_0_en_n";;;;;;;;;;;;;
+;Pad;1;227;363;WC3B60;ioco;dro_1;"di,
+do,
+en";"dro_1_i,
+dro_1,
+dro_1_en_n";;;;;;;;;;;;;
+;Pad;1;228;364;WC3B60;ioco;dro_2;"di,
+do,
+en";"dro_2_i,
+dro_2,
+dro_2_en_n";;;;;;;;;;;;;
+;Pad;1;229;365;WC3B60;ioco;dro_3;"di,
+do,
+en";"dro_3_i,
+dro_3,
+dro_3_en_n";;;;;;;;;;;;;
+;Pad;1;230;366;WC3B60;ioco;dro_4;"di,
+do,
+en";"dro_4_i,
+dro_4,
+dro_4_en_n";;;;;;;;;;;;;
+#;S;0;230;367;;;vssp;;;;;;;;;;;;;;;
+#;S;0;230;368;;;vddp;;;;;;;;;;;;;;;
+;Pad;1;231;369;WC3B60;ioco;dro_5;"di,
+do,
+en";"dro_5_i,
+dro_5,
+dro_5_en_n";;;;;;;;;;;;;
+;Pad;1;232;370;WC3B60;ioco;dro_6;"di,
+do,
+en";"dro_6_i,
+dro_6,
+dro_6_en_n";;;;;;;;;;;;;
+;Pad;1;233;371;WC3B60;ioco;dro_7;"di,
+do,
+en";"dro_7_i,
+dro_7,
+dro_7_en_n";;;;;;;;;;;;;
+;Pad;1;234;372;WC3B60;ioco;dro_8;"di,
+do,
+en";"dro_8_i,
+dro_8,
+dro_8_en_n";;;;;;;;;;;;;
+;Pad;1;235;373;WC3B60;ioco;dro_9;"di,
+do,
+en";"dro_9_i,
+dro_9,
+dro_9_en_n";;;;;;;;;;;;;
+;Pad;1;236;374;WC3B60;ioci;video_0;"di,
+do,
+en";"video_0,
+video_0_o,
+video_0_en_n";;;;;;;;;;;;;
+;Pad;1;237;375;WC3B60;ioci;video_1;"di,
+do,
+en";"video_1,
+video_1_o,
+video_1_en_n";;;;;;;;;;;;;
+;Pad;1;238;376;WC3B60;ioci;video_2;"di,
+do,
+en";"video_2,
+video_2_o,
+video_2_en_n";;;;;;;;;;;;;
+;Pad;1;239;377;WC3B60;ioci;video_3;"di,
+do,
+en";"video_3,
+video_3_o,
+video_3_en_n";;;;;;;;;;;;;
+#;S;0;239;378;;;vssp;;;;;;;;;;;;;;;
+#;S;0;239;379;;;vddp;;;;;;;;;;;;;;;
+;Pad;1;240;380;WC3B60;ioci;video_4;"di,
+do,
+en";"video_4,
+video_4_o,
+video_4_en_n";;;;;;;;;;;;;
+;Pad;1;241;381;WC3B60;ioci;video_5;"di,
+do,
+en";"video_5,
+video_5_o,
+video_5_en_n";;;;;;;;;;;;;
+;Pad;1;242;382;WC3B60;ioci;video_6;"di,
+do,
+en";"video_6,
+video_6_o,
+video_6_en_n";;;;;;;;;;;;;
+;Pad;1;243;383;WC3B60;ioci;video_7;"di,
+do,
+en";"video_7,
+video_7_o,
+video_7_en_n";;;;;;;;;;;;;
+;Pad;1;244;384;WC3O80;;vclk27;"di,
+do";"dp_vclk27,
+vclk27";;;;;;;;;;;;;
+#;S;0;244;385;;;vddd;;;;;;;;;;;;;;;
+#;S;0;244;386;;;vssd;;;;;;;;;;;;;;;
+;Pad;1;245;387;WC3B60;ioci;gpio_13;"di,
+do,
+en";"gpio_13,
+gpio_13_o,
+gpio_13_en_n";;;;;;;;;;;;;
+;Pad;1;246;388;WC3B60;ioci;gpio_14;"di,
+do,
+en";"gpio_14,
+gpio_14_o,
+gpio_14_en_n";;;;;;;;;;;;;
+;Pad;1;247;389;WC3B60;ioci;gpio_15;"di,
+do,
+en";"gpio_15,
+gpio_15_o,
+gpio_15_en_n";;;;;;;;;;;;;
+#;S;0;247;390;;;vssp;;;;;;;;;;;;;;;
+#;S;0;247;391;;;vddp;;;;;;;;;;;;;;;
+;Pad;1;248;392;WC3B60;ioci;gpio_16;"di,
+do,
+en";"gpio_16,
+gpio_16_o,
+gpio_16_en_n";;;;;;;;;;;;;
+;Pad;1;249;393;WC3B60;ioci;gpio_17;"di,
+do,
+en";"gpio_17,
+gpio_17_o,
+gpio_17_en_n";;;;;;;;;;;;;
+;Pad;1;250;394;WC3B60;ioci;gpio_18;"di,
+do,
+en";"gpio_18,
+gpio_18_o,
+gpio_18_en_n";;;;;;;;;;;;;
+;Pad;1;251;395;WC3B60;ioci;gpio_19;"di,
+do,
+en";"gpio_19,
+gpio_19_o,
+gpio_19_en_n";;;;;;;;;;;;;
+#;S;0;251;396;;;vssp;;;;;;;;;;;;;;;
+#;S;0;251;397;;;vddp;;;;;;;;;;;;;;;
+;Pad;1;252;398;WC3B60;ioci;gpio_20;"di,
+do,
+en";"gpio_20,
+gpio_20_o,
+gpio_20_en_n";;;;;;;;;;;;;
+;Pad;1;253;399;WC3B60;ioci;gpio_21;"di,
+do,
+en";"gpio_21,
+gpio_21_o,
+gpio_21_en_n";;;;;;;;;;;;;
+;Pad;1;254;400;WC3B60;ioci;gpio_22;"di,
+do,
+en";"gpio_22,
+gpio_22_o,
+gpio_22_en_n";;;;;;;;;;;;;
+;Pad;1;255;401;WC3B60;ioci;gpio_23;"di,
+do,
+en";"gpio_23,
+gpio_23_o,
+gpio_23_en_n";;;;;;;;;;;;;
+;Pad;1;256;402;WC3B60;ioci;gpio_24;"di,
+do,
+en";"gpio_24,
+gpio_24_o,
+gpio_24_en_n";;;;;;;;;;;;;
+;Pad;1;257;403;WC3B60;ioci;gpio_25;"di,
+do,
+en";"gpio_25,
+gpio_25_o,
+gpio_25_en_n";;;;;;;;;;;;;
+;Pad;1;258;404;WC3B60;ioci;gpio_26;"di,
+do,
+en";"gpio_26,
+gpio_26_o,
+gpio_26_en_n";;;;;;;;;;;;;
+;Pad;1;259;405;WC3B60;ioci;svmdis;"di,
+do,
+en";"svmdis,
+svmdis_o,
+svmdis_en_n";;;;;;;;;;;;;
+;Pad;1;260;406;WC3B60;ioco;avo;"di,
+do,
+en";"avo_i,
+avo,
+avo_en_n";;;;;;;;;;;;;
+;Pad;1;261;407;WC3I80;reset_ioc;reset_n;"di,
+do";"reset_n,
+pad_reset_n";;;;;;;;;;;;;
+;Pad;1;262;408;WX315P;osc_ioc;osc;"xin,
+xout,
+pd,
+xo";"xin,
+xout,
+%HIGH%,
+xin_clk";;;;;;;;;;;;;
+#;;;;409;dummy;xo;;;;;;;;;;;;;;;;
+;Pad;1;263;410;WC3I80;;vss_pll;;;;;;;;;;;;;;;
+;Pad;1;264;411;WC3I80;;vdd_pll;;;;;;;;;;;;;;;
+#;S;0;264;412;;;vssp;;;;;;;;;;;;;;;
+#;S;0;264;413;;;vddp;;;;;;;;;;;;;;;
+;Pad;1;265;414;WC3B60;ioci;nvmd_0;"di,
+do,
+en";"nvmd_0,
+nvmd_0_o,
+nvmd_0_en_n";;;;;;;;;;;;;
+;Pad;1;266;415;WC3B60;ioci;nvmd_1;"di,
+do,
+en";"nvmd_1,
+nvmd_1_o,
+nvmd_1_en_n";;;;;;;;;;;;;
+;Pad;1;267;416;WC3B60;ioci;nvmd_2;"di,
+do,
+en";"nvmd_2,
+nvmd_2_o,
+nvmd_2_en_n";;;;;;;;;;;;;
+;Pad;1;268;417;WC3B60;ioci;nvmd_3;"di,
+do,
+en";"nvmd_3,
+nvmd_3_o,
+nvmd_3_en_n";;;;;;;;;;;;;
+;Pad;1;269;418;WC3B60;ioci;nvmd_4;"di,
+do,
+en";"nvmd_4,
+nvmd_4_o,
+nvmd_4_en_n";;;;;;;;;;;;;
+;Pad;1;270;419;WC3B60;ioci;nvmd_5;"di,
+do,
+en";"nvmd_5,
+nvmd_5_o,
+nvmd_5_en_n";;;;;;;;;;;;;
+;Pad;1;271;420;WC3B60;ioci;nvmd_6;"di,
+do,
+en";"nvmd_6,
+nvmd_6_o,
+nvmd_6_en_n";;;;;;;;;;;;;
+;Pad;1;272;421;WC3B60;ioci;nvmd_7;"di,
+do,
+en";"nvmd_7,
+nvmd_7_o,
+nvmd_7_en_n";;;;;;;;;;;;;
+#;S;0;272;422;;;vssp;;;;;;;;;;;;;;;
+#;S;0;272;423;;;vddp;;;;;;;;;;;;;;;
+;Pad;1;273;424;WC3B60;ioci;nvmd_8;"di,
+do,
+en";"nvmd_8,
+nvmd_8_o,
+nvmd_8_en_n";;;;;;;;;;;;;
+;Pad;1;274;425;WC3B60;ioci;nvmd_9;"di,
+do,
+en";"nvmd_9,
+nvmd_9_o,
+nvmd_9_en_n";;;;;;;;;;;;;
+;Pad;1;275;426;WC3B60;ioci;nvmd_10;"di,
+do,
+en";"nvmd_10,
+nvmd_10_o,
+nvmd_10_en_n";;;;;;;;;;;;;
+;Pad;1;276;427;WC3B60;ioci;nvmd_11;"di,
+do,
+en";"nvmd_11,
+nvmd_11_o,
+nvmd_11_en_n";;;;;;;;;;;;;
+#;S;0;276;428;;;vddd;;;;;;;;;;;;;;;
+#;S;0;276;429;;;vssd;;;;;;;;;;;;;;;
+;Pad;1;277;430;WC3B60;ioci;nvmd_12;"di,
+do,
+en";"nvmd_12,
+nvmd_12_o,
+nvmd_12_en_n";;;;;;;;;;;;;
+;Pad;1;278;431;WC3B60;ioci;nvmd_13;"di,
+do,
+en";"nvmd_13,
+nvmd_13_o,
+nvmd_13_en_n";;;;;;;;;;;;;
+;Pad;1;279;432;WC3B60;ioci;nvmd_14;"di,
+do,
+en";"nvmd_14,
+nvmd_14_o,
+nvmd_14_en_n";;;;;;;;;;;;;
+;Pad;1;280;433;WC3B60;ioci;nvmd_15;"di,
+do,
+en";"nvmd_15,
+nvmd_15_o,
+nvmd_15_en_n";;;;;;;;;;;;;
+#;S;0;280;434;;;vssp;;;;;;;;;;;;;;;
+#;S;0;280;435;;;vddp;;;;;;;;;;;;;;;
+;Pad;1;281;436;WC3B60;ioco;dbo_10;"di,
+do,
+en";"dbo_10_i,
+dbo_10,
+dbo_10_en_n";;;;;;;;;;;;;
+;Pad;1;282;437;WC3B60;ioco;dbo_11;"di,
+do,
+en";"dbo_11_i,
+dbo_11,
+dbo_11_en_n";;;;;;;;;;;;;
+;Pad;1;283;438;WC3B60;ioco;dbo_12;"di,
+do,
+en";"dbo_12_i,
+dbo_12,
+dbo_12_en_n";;;;;;;;;;;;;
+;Pad;1;284;439;WC3B60;ioco;dbo_13;"di,
+do,
+en";"dbo_13_i,
+dbo_13,
+dbo_13_en_n";;;;;;;;;;;;;
+;Pad;1;285;440;WC3B60;ioco;dbo_14;"di,
+do,
+en";"dbo_14_i,
+dbo_14,
+dbo_14_en_n";;;;;;;;;;;;;
+;Pad;1;286;441;WC3B60;ioco;dbo_15;"di,
+do,
+en";"dbo_15_i,
+dbo_15,
+dbo_15_en_n";;;;;;;;;;;;;
+;Pad;1;287;442;WC3B60;ioco;dro_10;"di,
+do,
+en";"dro_10_i,
+dro_10,
+dro_10_en_n";;;;;;;;;;;;;
+;Pad;1;288;443;WC3B60;ioco;dro_11;"di,
+do,
+en";"dro_11_i,
+dro_11,
+dro_11_en_n";;;;;;;;;;;;;
+;Pad;1;289;444;WC3B60;ioco;dro_12;"di,
+do,
+en";"dro_12_i,
+dro_12,
+dro_12_en_n";;;;;;;;;;;;;
+;Pad;1;290;445;WC3B60;ioco;dro_13;"di,
+do,
+en";"dro_13_i,
+dro_13,
+dro_13_en_n";;;;;;;;;;;;;
+;Pad;1;291;446;WC3B60;ioco;dro_14;"di,
+do,
+en";"dro_14_i,
+dro_14,
+dro_14_en_n";;;;;;;;;;;;;
+;Pad;1;292;447;WC3B60;ioco;dro_15;"di,
+do,
+en";"dro_15_i,
+dro_15,
+dro_15_en_n";;;;;;;;;;;;;
+;Pad;1;293;448;WC3B60;ioco;dgo_10;"di,
+do,
+en";"dgo_10_i,
+dgo_10,
+dgo_10_en_n";;;;;;;;;;;;;
+;Pad;1;294;449;WC3B60;ioco;dgo_11;"di,
+do,
+en";"dgo_11_i,
+dgo_11,
+dgo_11_en_n";;;;;;;;;;;;;
+;Pad;1;295;450;WC3B60;ioco;dgo_12;"di,
+do,
+en";"dgo_12_i,
+dgo_12,
+dgo_12_en_n";;;;;;;;;;;;;
+;Pad;1;296;451;WC3B60;ioco;dgo_13;"di,
+do,
+en";"dgo_13_i,
+dgo_13,
+dgo_13_en_n";;;;;;;;;;;;;
+;Pad;1;297;452;WC3B60;ioco;dgo_14;"di,
+do,
+en";"dgo_14_i,
+dgo_14,
+dgo_14_en_n";;;;;;;;;;;;;
+;Pad;1;298;453;WC3B60;ioco;dgo_15;"di,
+do,
+en";"dgo_15_i,
+dgo_15,
+dgo_15_en_n";;;;;;;;;;;;;
+#;S;0;298;454;;;vssp;;;;;;;;;;;;;;;
+#;S;0;298;455;;;vddp;;;;;;;;;;;;;;;
+;Pad;1;299;456;WC3B60;ioci;nvma_16;"di,
+do,
+en";"nvma_16,
+nvma_16_o,
+nvma_16_en_n";;;;;;;;;;;;;
+;Pad;1;300;457;WC3B60;ioci;nvma_17;"di,
+do,
+en";"nvma_17,
+nvma_17_o,
+nvma_17_en_n";;;;;;;;;;;;;
+;Pad;1;301;458;WC3B60;ioci;nvma_18;"di,
+do,
+en";"nvma_18,
+nvma_18_o,
+nvma_18_en_n";;;;;;;;;;;;;
+;Pad;1;302;459;WC3B60;ioci;nvma_19;"di,
+do,
+en";"nvma_19,
+nvma_19_o,
+nvma_19_en_n";;;;;;;;;;;;;
+;Pad;1;303;460;WC3B60;ioci;nvma_20;"di,
+do,
+en";"nvma_20,
+nvma_20_o,
+nvma_20_en_n";;;;;;;;;;;;;
+;Pad;1;304;461;WC3B60;ioci;nvma_21;"di,
+do,
+en";"nvma_21,
+nvma_21_o,
+nvma_21_en_n";;;;;;;;;;;;;
+;Pad;1;305;462;WC3B60;ioci;nvma_22;"di,
+do,
+en";"nvma_22,
+nvma_22_o,
+nvma_22_en_n";;;;;;;;;;;;;
+#;S;1;306;463;WVVSS;;vssp;;;;;;;;;;;;;;;
+#;S;1;307;464;WVVDD;;vddp;;;;;;;;;;;;;;;
+;Pad;1;308;465;WC3B60;ioci;nvmoe;"di,
+do,
+en";"nvmoe,
+nvmoe_o,
+nvmoe_en_n";;;;;;;;;;;;;
+;Pad;1;309;466;WC3B60;ioci;nvmwe;"di,
+do,
+en";"nvmwe,
+nvmwe_o,
+nvmwe_en_n";;;;;;;;;;;;;
+;Pad;1;310;467;WC3B60;ioci;nvmale;"di,
+do,
+en";"nvmale,
+nvmale_o,
+nvmale_en_n";;;;;;;;;;;;;
+#;;;;468;;0;;;;;;;;;;;;;;;;
+#;S;1;1;1;WVV3IOI;;VDD_PAD1;;;;;;;;;;;;;;;
+#;S;1;2;2;WVV0IO;;VSS_PAD1;;;;;;;;;;;;;;;
+#;F;0;2;3;WC3I80U;;IICPPEN;DI;IIC_PP_EN;;;;;;;;;;;;;

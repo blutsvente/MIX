@@ -1,899 +1,914 @@
-05/07/15 17:50:55 
+05/07/18 15:44:45 
 #######################################################################
 ##### mix_0.pl (Revision: 1.36 )
 #####
 ##### MIX  
-#####   MixUtils    1.66 $
-#####   MixUtils::IO    1.22 $
+#####   MixUtils    1.67 $
+#####   MixUtils::IO    1.24 $
 #####   MixParser   1.53 $
-#####   MixWriter   1.55 $
+#####   MixWriter   1.57 $
 #####   MixChecker  1.8 $
 #####   MixIOParser 1.17 $
 #####   MixI2CParser 1.13 $
 ##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
 #######################################################################
-05/07/15 17:50:55 Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/padio/../padio.xls
-05/07/15 17:50:55 Reading worksheet CONN_IO of h:/work/eclipse/mix/test/xls_input/padio/../padio.xls
-05/07/15 17:50:55 Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/padio/../padio.xls
-05/07/15 17:50:55 Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/padio/../padio.xls
-05/07/15 17:50:56 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: %comb not implemented now by MIX!
+05/07/18 15:44:46 Reading worksheet CONN of H:/work/eclipse/mix/test/xls_input/padio/../padio.xls
+05/07/18 15:44:46 Reading worksheet CONN_IO of H:/work/eclipse/mix/test/xls_input/padio/../padio.xls
+05/07/18 15:44:46 Reading worksheet HIER of H:/work/eclipse/mix/test/xls_input/padio/../padio.xls
+05/07/18 15:44:46 Reading worksheet IO of H:/work/eclipse/mix/test/xls_input/padio/../padio.xls
+05/07/18 15:44:46 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: %comb not implemented now by MIX!
 
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: Info: local %SEL% override by %sel(iosel_0)!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 17:50:56 WARNING: port xo in iocell pad_41 has undefined direction, applied default!
-05/07/15 17:50:56 WARNING: port xo in iocell pad_42 has undefined direction, applied default!
-05/07/15 17:50:56 WARNING: port xo in iocell pad_43 has undefined direction, applied default!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_di_39!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal pad_di_39!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_di_39!
-05/07/15 17:50:56 Add_port: signal pad_di_39 adds port p_mix_pad_di_39_gi to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal pad_di_39 adds port p_mix_pad_di_39_go to instance pad_pads
-05/07/15 17:50:56 Add_port: signal pad_di_39 adds port p_mix_pad_di_39_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal pad_do_35!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_do_35!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_do_35!
-05/07/15 17:50:56 Add_port: signal pad_do_35 adds port p_mix_pad_do_35_go to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal pad_do_35 adds port p_mix_pad_do_35_go to instance ios
-05/07/15 17:50:56 Add_port: signal pad_do_35 adds port p_mix_pad_do_35_gi to instance pad_pads
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ms_hr!
-05/07/15 17:50:56 Add_port: signal iosel_ms_hr adds port p_mix_iosel_ms_hr_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal iosel_ms_hr adds port p_mix_iosel_ms_hr_gi to instance ios
-05/07/15 17:50:56 Add_port: signal key_buffer_0 adds port key_buffer_0 to instance a_clk
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal pad_do_2!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_do_2!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_do_2!
-05/07/15 17:50:56 Add_port: signal pad_do_2 adds port p_mix_pad_do_2_go to instance ioblock_0
-05/07/15 17:50:56 Add_port: signal pad_do_2 adds port p_mix_pad_do_2_go to instance ios
-05/07/15 17:50:56 Add_port: signal pad_do_2 adds port p_mix_pad_do_2_gi to instance pad_pads
-05/07/15 17:50:56 Add_port: signal sound_alarm adds port sound_alarm to instance a_clk
-05/07/15 17:50:56 Adding port to hierachy module u_ddrv4 for signal sound_alarm!
-05/07/15 17:50:56 Add_port: signal sound_alarm adds port p_mix_sound_alarm_go to instance u_ddrv4
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ls_min!
-05/07/15 17:50:56 Add_port: signal iosel_ls_min adds port p_mix_iosel_ls_min_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal iosel_ls_min adds port p_mix_iosel_ls_min_gi to instance ios
-05/07/15 17:50:56 Add_port: signal key_buffer_2 adds port key_buffer_2 to instance a_clk
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal iosel_4!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_4!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal iosel_4!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_4!
-05/07/15 17:50:56 Add_port: signal iosel_4 adds port p_mix_iosel_4_gi to instance ioblock_0
-05/07/15 17:50:56 Add_port: signal iosel_4 adds port p_mix_iosel_4_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal nand_out_2!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal nand_out_2!
-05/07/15 17:50:56 Add_port: signal nand_out_2 adds port p_mix_nand_out_2_go to instance ioblock_0
-05/07/15 17:50:56 Add_port: signal nand_out_2 adds port p_mix_nand_out_2_gi to instance ioblock_1
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal iosel_6!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_6!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal iosel_6!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_6!
-05/07/15 17:50:56 Add_port: signal iosel_6 adds port p_mix_iosel_6_gi to instance ioblock_0
-05/07/15 17:50:56 Add_port: signal iosel_6 adds port p_mix_iosel_6_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_en_12!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal pad_en_12!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_en_12!
-05/07/15 17:50:56 Add_port: signal pad_en_12 adds port p_mix_pad_en_12_go to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal pad_en_12 adds port p_mix_pad_en_12_gi to instance pad_pads
-05/07/15 17:50:56 Add_port: signal pad_en_12 adds port p_mix_pad_en_12_go to instance ios
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_do_16!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal pad_do_16!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_do_16!
-05/07/15 17:50:56 Add_port: signal pad_do_16 adds port p_mix_pad_do_16_go to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal pad_do_16 adds port p_mix_pad_do_16_gi to instance pad_pads
-05/07/15 17:50:56 Add_port: signal pad_do_16 adds port p_mix_pad_do_16_go to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal pad_di_15!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_di_15!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_di_15!
-05/07/15 17:50:56 Add_port: signal pad_di_15 adds port p_mix_pad_di_15_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal pad_di_15 adds port p_mix_pad_di_15_gi to instance ios
-05/07/15 17:50:56 Add_port: signal pad_di_15 adds port p_mix_pad_di_15_go to instance pad_pads
-05/07/15 17:50:56 Add_port: signal alarm_time_ls_hr adds port alarm_time_ls_hr to instance a_clk
-05/07/15 17:50:56 Add_port: signal current_time_ls_min adds port current_time_ls_min to instance a_clk
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal pad_di_13!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_di_13!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_di_13!
-05/07/15 17:50:56 Add_port: signal pad_di_13 adds port p_mix_pad_di_13_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal pad_di_13 adds port p_mix_pad_di_13_gi to instance ios
-05/07/15 17:50:56 Add_port: signal pad_di_13 adds port p_mix_pad_di_13_go to instance pad_pads
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_do_18!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal pad_do_18!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_do_18!
-05/07/15 17:50:56 Add_port: signal pad_do_18 adds port p_mix_pad_do_18_go to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal pad_do_18 adds port p_mix_pad_do_18_gi to instance pad_pads
-05/07/15 17:50:56 Add_port: signal pad_do_18 adds port p_mix_pad_do_18_go to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal d9_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal d9_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal d9_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal d9_en!
-05/07/15 17:50:56 Add_port: signal d9_en adds port p_mix_d9_en_gi to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal d9_en adds port p_mix_d9_en_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal pad_di_32!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_di_32!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_di_32!
-05/07/15 17:50:56 Add_port: signal pad_di_32 adds port p_mix_pad_di_32_gi to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal pad_di_32 adds port p_mix_pad_di_32_gi to instance ios
-05/07/15 17:50:56 Add_port: signal pad_di_32 adds port p_mix_pad_di_32_go to instance pad_pads
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal pad_en_32!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_en_32!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_en_32!
-05/07/15 17:50:56 Add_port: signal pad_en_32 adds port p_mix_pad_en_32_go to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal pad_en_32 adds port p_mix_pad_en_32_go to instance ios
-05/07/15 17:50:56 Add_port: signal pad_en_32 adds port p_mix_pad_en_32_gi to instance pad_pads
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal pad_en_14!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_en_14!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_en_14!
-05/07/15 17:50:56 Add_port: signal pad_en_14 adds port p_mix_pad_en_14_go to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal pad_en_14 adds port p_mix_pad_en_14_go to instance ios
-05/07/15 17:50:56 Add_port: signal pad_en_14 adds port p_mix_pad_en_14_gi to instance pad_pads
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal disp2_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal disp2_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal disp2_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal disp2_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal disp2_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal disp2_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal disp2_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal disp2_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal disp2_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal disp2_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal disp2_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal disp2_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal disp2_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal disp2_en!
-05/07/15 17:50:56 Add_port: signal disp2_en adds port p_mix_disp2_en_7_3_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal disp2_en adds port p_mix_disp2_en_1_0_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal disp2_en adds port p_mix_disp2_en_7_3_gi to instance ios
-05/07/15 17:50:56 Add_port: signal disp2_en adds port p_mix_disp2_en_1_0_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal di2!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal di2!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal di2!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal di2!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal di2!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal di2!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal di2!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal di2!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal di2!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal di2!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal di2!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal di2!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal di2!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal di2!
-05/07/15 17:50:56 Add_port: signal di2 adds port p_mix_di2_7_3_go to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal di2 adds port p_mix_di2_1_0_go to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal di2 adds port p_mix_di2_7_3_go to instance ios
-05/07/15 17:50:56 Add_port: signal di2 adds port p_mix_di2_1_0_go to instance ios
-05/07/15 17:50:56 Add_port: signal current_time_ms_min adds port current_time_ms_min to instance a_clk
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_di_34!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal pad_di_34!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_di_34!
-05/07/15 17:50:56 Add_port: signal pad_di_34 adds port p_mix_pad_di_34_gi to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal pad_di_34 adds port p_mix_pad_di_34_go to instance pad_pads
-05/07/15 17:50:56 Add_port: signal pad_di_34 adds port p_mix_pad_di_34_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_di_17!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal pad_di_17!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_di_17!
-05/07/15 17:50:56 Add_port: signal pad_di_17 adds port p_mix_pad_di_17_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal pad_di_17 adds port p_mix_pad_di_17_go to instance pad_pads
-05/07/15 17:50:56 Add_port: signal pad_di_17 adds port p_mix_pad_di_17_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal pad_en_2!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_en_2!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_en_2!
-05/07/15 17:50:56 Add_port: signal pad_en_2 adds port p_mix_pad_en_2_go to instance ioblock_0
-05/07/15 17:50:56 Add_port: signal pad_en_2 adds port p_mix_pad_en_2_go to instance ios
-05/07/15 17:50:56 Add_port: signal pad_en_2 adds port p_mix_pad_en_2_gi to instance pad_pads
-05/07/15 17:50:56 Add_port: signal display_ls_hr adds port display_ls_hr to instance a_clk
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module u_ddrv4 for signal display_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_hr!
-05/07/15 17:50:56 Add_port: signal display_ls_hr adds port p_mix_display_ls_hr_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal display_ls_hr adds port p_mix_display_ls_hr_gi to instance ios
-05/07/15 17:50:56 Add_port: signal display_ls_hr adds port p_mix_display_ls_hr_go to instance u_ddrv4
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal data_o36!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal data_o36!
-05/07/15 17:50:56 Add_port: signal data_o36 adds port p_mix_data_o36_gi to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal data_o36 adds port p_mix_data_o36_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal nand_dir!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal nand_dir!
-05/07/15 17:50:56 Add_port: signal nand_dir adds port p_mix_nand_dir_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal nand_dir adds port p_mix_nand_dir_gi to instance ioblock_0
-05/07/15 17:50:56 Add_port: signal nand_dir adds port p_mix_nand_dir_gi to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal nand_dir adds port p_mix_nand_dir_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal iosel_7!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_7!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal iosel_7!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_7!
-05/07/15 17:50:56 Add_port: signal iosel_7 adds port p_mix_iosel_7_gi to instance ioblock_0
-05/07/15 17:50:56 Add_port: signal iosel_7 adds port p_mix_iosel_7_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal pad_en_40!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_en_40!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_en_40!
-05/07/15 17:50:56 Add_port: signal pad_en_40 adds port p_mix_pad_en_40_go to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal pad_en_40 adds port p_mix_pad_en_40_go to instance ios
-05/07/15 17:50:56 Add_port: signal pad_en_40 adds port p_mix_pad_en_40_gi to instance pad_pads
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal pad_do_13!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_do_13!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_do_13!
-05/07/15 17:50:56 Add_port: signal pad_do_13 adds port p_mix_pad_do_13_go to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal pad_do_13 adds port p_mix_pad_do_13_go to instance ios
-05/07/15 17:50:56 Add_port: signal pad_do_13 adds port p_mix_pad_do_13_gi to instance pad_pads
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal pad_en_18!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_en_18!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_en_18!
-05/07/15 17:50:56 Add_port: signal pad_en_18 adds port p_mix_pad_en_18_go to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal pad_en_18 adds port p_mix_pad_en_18_go to instance ios
-05/07/15 17:50:56 Add_port: signal pad_en_18 adds port p_mix_pad_en_18_gi to instance pad_pads
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal iosel_3!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_3!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal iosel_3!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_3!
-05/07/15 17:50:56 Add_port: signal iosel_3 adds port p_mix_iosel_3_gi to instance ioblock_0
-05/07/15 17:50:56 Add_port: signal iosel_3 adds port p_mix_iosel_3_gi to instance ios
-05/07/15 17:50:56 Add_port: signal alarm_time_ms_hr adds port alarm_time_ms_hr to instance a_clk
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal display_ms_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal display_ms_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_en!
-05/07/15 17:50:56 Add_port: signal display_ms_en adds port p_mix_display_ms_en_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal display_ms_en adds port p_mix_display_ms_en_gi to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal display_ms_en adds port p_mix_display_ms_en_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ls_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ls_hr!
-05/07/15 17:50:56 Add_port: signal iosel_ls_hr adds port p_mix_iosel_ls_hr_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal iosel_ls_hr adds port p_mix_iosel_ls_hr_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal pad_do_15!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_do_15!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_do_15!
-05/07/15 17:50:56 Add_port: signal pad_do_15 adds port p_mix_pad_do_15_go to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal pad_do_15 adds port p_mix_pad_do_15_go to instance ios
-05/07/15 17:50:56 Add_port: signal pad_do_15 adds port p_mix_pad_do_15_gi to instance pad_pads
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_pu_32!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal pad_pu_32!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_pu_32!
-05/07/15 17:50:56 Add_port: signal pad_pu_32 adds port p_mix_pad_pu_32_go to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal pad_pu_32 adds port p_mix_pad_pu_32_gi to instance pad_pads
-05/07/15 17:50:56 Add_port: signal pad_pu_32 adds port p_mix_pad_pu_32_go to instance ios
-05/07/15 17:50:56 Add_port: signal display_ms_min adds port display_ms_min to instance a_clk
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module u_ddrv4 for signal display_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_min!
-05/07/15 17:50:56 Add_port: signal display_ms_min adds port p_mix_display_ms_min_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal display_ms_min adds port p_mix_display_ms_min_gi to instance ios
-05/07/15 17:50:56 Add_port: signal display_ms_min adds port p_mix_display_ms_min_go to instance u_ddrv4
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal pad_en_15!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_en_15!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_en_15!
-05/07/15 17:50:56 Add_port: signal pad_en_15 adds port p_mix_pad_en_15_go to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal pad_en_15 adds port p_mix_pad_en_15_go to instance ios
-05/07/15 17:50:56 Add_port: signal pad_en_15 adds port p_mix_pad_en_15_gi to instance pad_pads
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal data_i34!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal data_i34!
-05/07/15 17:50:56 Add_port: signal data_i34 adds port p_mix_data_i34_go to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal data_i34 adds port p_mix_data_i34_go to instance ios
-05/07/15 17:50:56 Add_port: signal current_time_ls_hr adds port current_time_ls_hr to instance a_clk
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal pad_en_35!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_en_35!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_en_35!
-05/07/15 17:50:56 Add_port: signal pad_en_35 adds port p_mix_pad_en_35_go to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal pad_en_35 adds port p_mix_pad_en_35_go to instance ios
-05/07/15 17:50:56 Add_port: signal pad_en_35 adds port p_mix_pad_en_35_gi to instance pad_pads
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_disp!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_disp!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_disp!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_disp!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_disp!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_disp!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_disp!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_disp!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_disp!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_disp!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_disp!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_disp!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_disp!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_disp!
-05/07/15 17:50:56 Add_port: signal iosel_disp adds port p_mix_iosel_disp_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal iosel_disp adds port p_mix_iosel_disp_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal iosel_0!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_0!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal iosel_0!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_0!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal iosel_0!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_0!
-05/07/15 17:50:56 Add_port: signal iosel_0 adds port p_mix_iosel_0_gi to instance ioblock_0
-05/07/15 17:50:56 Add_port: signal iosel_0 adds port p_mix_iosel_0_gi to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal iosel_0 adds port p_mix_iosel_0_gi to instance ios
-05/07/15 17:50:56 Add_port: signal display_ms_hr adds port display_ms_hr to instance a_clk
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ms_hr!
-05/07/15 17:50:56 Adding port to hierachy module u_ddrv4 for signal display_ms_hr!
-05/07/15 17:50:56 Add_port: signal display_ms_hr adds port p_mix_display_ms_hr_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal display_ms_hr adds port p_mix_display_ms_hr_gi to instance ios
-05/07/15 17:50:56 Add_port: signal display_ms_hr adds port p_mix_display_ms_hr_go to instance u_ddrv4
-05/07/15 17:50:56 Add_port: signal alarm_time_ls_min adds port alarm_time_ls_min to instance a_clk
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal data_o35!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal data_o35!
-05/07/15 17:50:56 Add_port: signal data_o35 adds port p_mix_data_o35_gi to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal data_o35 adds port p_mix_data_o35_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal disp2!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal disp2!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal disp2!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal disp2!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal disp2!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal disp2!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal disp2!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal disp2!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal disp2!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal disp2!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal disp2!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal disp2!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal disp2!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal disp2!
-05/07/15 17:50:56 Add_port: signal disp2 adds port p_mix_disp2_7_3_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal disp2 adds port p_mix_disp2_1_0_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal disp2 adds port p_mix_disp2_7_3_gi to instance ios
-05/07/15 17:50:56 Add_port: signal disp2 adds port p_mix_disp2_1_0_gi to instance ios
-05/07/15 17:50:56 Add_port: signal current_time_ms_hr adds port current_time_ms_hr to instance a_clk
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal pad_en_36!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_en_36!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_en_36!
-05/07/15 17:50:56 Add_port: signal pad_en_36 adds port p_mix_pad_en_36_go to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal pad_en_36 adds port p_mix_pad_en_36_go to instance ios
-05/07/15 17:50:56 Add_port: signal pad_en_36 adds port p_mix_pad_en_36_gi to instance pad_pads
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal d9_pu!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal d9_pu!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal d9_pu!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal d9_pu!
-05/07/15 17:50:56 Add_port: signal d9_pu adds port p_mix_d9_pu_gi to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal d9_pu adds port p_mix_d9_pu_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_en_31!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal pad_en_31!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_en_31!
-05/07/15 17:50:56 Add_port: signal pad_en_31 adds port p_mix_pad_en_31_go to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal pad_en_31 adds port p_mix_pad_en_31_gi to instance pad_pads
-05/07/15 17:50:56 Add_port: signal pad_en_31 adds port p_mix_pad_en_31_go to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal pad_di_33!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_di_33!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_di_33!
-05/07/15 17:50:56 Add_port: signal pad_di_33 adds port p_mix_pad_di_33_gi to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal pad_di_33 adds port p_mix_pad_di_33_gi to instance ios
-05/07/15 17:50:56 Add_port: signal pad_di_33 adds port p_mix_pad_di_33_go to instance pad_pads
-05/07/15 17:50:56 Add_port: signal key_buffer_3 adds port key_buffer_3 to instance a_clk
-05/07/15 17:50:56 Add_port: signal key_buffer_1 adds port key_buffer_1 to instance a_clk
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal iosel_5!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_5!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal iosel_5!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_5!
-05/07/15 17:50:56 Add_port: signal iosel_5 adds port p_mix_iosel_5_gi to instance ioblock_0
-05/07/15 17:50:56 Add_port: signal iosel_5 adds port p_mix_iosel_5_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_pu_31!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal pad_pu_31!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_pu_31!
-05/07/15 17:50:56 Add_port: signal pad_pu_31 adds port p_mix_pad_pu_31_go to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal pad_pu_31 adds port p_mix_pad_pu_31_gi to instance pad_pads
-05/07/15 17:50:56 Add_port: signal pad_pu_31 adds port p_mix_pad_pu_31_go to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal data_i1!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal data_i1!
-05/07/15 17:50:56 Add_port: signal data_i1 adds port p_mix_data_i1_go to instance ioblock_0
-05/07/15 17:50:56 Add_port: signal data_i1 adds port p_mix_data_i1_go to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal display_ls_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal display_ls_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_en!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_en!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_en!
-05/07/15 17:50:56 Add_port: signal display_ls_en adds port p_mix_display_ls_en_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal display_ls_en adds port p_mix_display_ls_en_gi to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal display_ls_en adds port p_mix_display_ls_en_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal iosel_2!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_2!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal iosel_2!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_2!
-05/07/15 17:50:56 Add_port: signal iosel_2 adds port p_mix_iosel_2_gi to instance ioblock_0
-05/07/15 17:50:56 Add_port: signal iosel_2 adds port p_mix_iosel_2_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal pad_do_40!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_do_40!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_do_40!
-05/07/15 17:50:56 Add_port: signal pad_do_40 adds port p_mix_pad_do_40_go to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal pad_do_40 adds port p_mix_pad_do_40_go to instance ios
-05/07/15 17:50:56 Add_port: signal pad_do_40 adds port p_mix_pad_do_40_gi to instance pad_pads
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal pad_en_39!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_en_39!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_en_39!
-05/07/15 17:50:56 Add_port: signal pad_en_39 adds port p_mix_pad_en_39_go to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal pad_en_39 adds port p_mix_pad_en_39_go to instance ios
-05/07/15 17:50:56 Add_port: signal pad_en_39 adds port p_mix_pad_en_39_gi to instance pad_pads
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_do_12!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal pad_do_12!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_do_12!
-05/07/15 17:50:56 Add_port: signal pad_do_12 adds port p_mix_pad_do_12_go to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal pad_do_12 adds port p_mix_pad_do_12_gi to instance pad_pads
-05/07/15 17:50:56 Add_port: signal pad_do_12 adds port p_mix_pad_do_12_go to instance ios
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_di_16!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal pad_di_16!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_di_16!
-05/07/15 17:50:56 Add_port: signal pad_di_16 adds port p_mix_pad_di_16_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal pad_di_16 adds port p_mix_pad_di_16_go to instance pad_pads
-05/07/15 17:50:56 Add_port: signal pad_di_16 adds port p_mix_pad_di_16_gi to instance ios
-05/07/15 17:50:56 Add_port: signal stopwatch adds port stopwatch to instance a_clk
-05/07/15 17:50:56 Add_port: signal show_new_time adds port show_new_time to instance a_clk
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_di_31!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal pad_di_31!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_di_31!
-05/07/15 17:50:56 Add_port: signal pad_di_31 adds port p_mix_pad_di_31_gi to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal pad_di_31 adds port p_mix_pad_di_31_go to instance pad_pads
-05/07/15 17:50:56 Add_port: signal pad_di_31 adds port p_mix_pad_di_31_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_do_31!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal pad_do_31!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_do_31!
-05/07/15 17:50:56 Add_port: signal pad_do_31 adds port p_mix_pad_do_31_go to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal pad_do_31 adds port p_mix_pad_do_31_gi to instance pad_pads
-05/07/15 17:50:56 Add_port: signal pad_do_31 adds port p_mix_pad_do_31_go to instance ios
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_do_17!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal pad_do_17!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_do_17!
-05/07/15 17:50:56 Add_port: signal pad_do_17 adds port p_mix_pad_do_17_go to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal pad_do_17 adds port p_mix_pad_do_17_gi to instance pad_pads
-05/07/15 17:50:56 Add_port: signal pad_do_17 adds port p_mix_pad_do_17_go to instance ios
-05/07/15 17:50:56 Add_port: signal clk adds port clk to instance a_clk
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_di_12!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal pad_di_12!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_di_12!
-05/07/15 17:50:56 Add_port: signal pad_di_12 adds port p_mix_pad_di_12_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal pad_di_12 adds port p_mix_pad_di_12_go to instance pad_pads
-05/07/15 17:50:56 Add_port: signal pad_di_12 adds port p_mix_pad_di_12_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal pad_en_13!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_en_13!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_en_13!
-05/07/15 17:50:56 Add_port: signal pad_en_13 adds port p_mix_pad_en_13_go to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal pad_en_13 adds port p_mix_pad_en_13_go to instance ios
-05/07/15 17:50:56 Add_port: signal pad_en_13 adds port p_mix_pad_en_13_gi to instance pad_pads
-05/07/15 17:50:56 Add_port: signal alarm_time_ms_min adds port alarm_time_ms_min to instance a_clk
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal iosel_ms_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_ms_min!
-05/07/15 17:50:56 Add_port: signal iosel_ms_min adds port p_mix_iosel_ms_min_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal iosel_ms_min adds port p_mix_iosel_ms_min_gi to instance ios
-05/07/15 17:50:56 Add_port: signal display_ls_min adds port display_ls_min to instance a_clk
-05/07/15 17:50:56 Adding port to hierachy module u_ddrv4 for signal display_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal display_ls_min!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal display_ls_min!
-05/07/15 17:50:56 Add_port: signal display_ls_min adds port p_mix_display_ls_min_gi to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal display_ls_min adds port p_mix_display_ls_min_gi to instance ios
-05/07/15 17:50:56 Add_port: signal display_ls_min adds port p_mix_display_ls_min_go to instance u_ddrv4
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal iosel_bus!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_bus!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal iosel_bus!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_bus!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal iosel_bus!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_bus!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal iosel_bus!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal iosel_bus!
-05/07/15 17:50:56 Add_port: signal iosel_bus adds port p_mix_iosel_bus_gi to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal iosel_bus adds port p_mix_iosel_bus_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal pad_do_39!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_do_39!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_do_39!
-05/07/15 17:50:56 Add_port: signal pad_do_39 adds port p_mix_pad_do_39_go to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal pad_do_39 adds port p_mix_pad_do_39_go to instance ios
-05/07/15 17:50:56 Add_port: signal pad_do_39 adds port p_mix_pad_do_39_gi to instance pad_pads
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal pad_di_1!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_di_1!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_di_1!
-05/07/15 17:50:56 Add_port: signal pad_di_1 adds port p_mix_pad_di_1_gi to instance ioblock_0
-05/07/15 17:50:56 Add_port: signal pad_di_1 adds port p_mix_pad_di_1_gi to instance ios
-05/07/15 17:50:56 Add_port: signal pad_di_1 adds port p_mix_pad_di_1_go to instance pad_pads
-05/07/15 17:50:56 Adding port to hierachy module ioblock_0 for signal data_o1!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal data_o1!
-05/07/15 17:50:56 Add_port: signal data_o1 adds port p_mix_data_o1_gi to instance ioblock_0
-05/07/15 17:50:56 Add_port: signal data_o1 adds port p_mix_data_o1_gi to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal pad_do_14!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_do_14!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_do_14!
-05/07/15 17:50:56 Add_port: signal pad_do_14 adds port p_mix_pad_do_14_go to instance ioblock_1
-05/07/15 17:50:56 Add_port: signal pad_do_14 adds port p_mix_pad_do_14_go to instance ios
-05/07/15 17:50:56 Add_port: signal pad_do_14 adds port p_mix_pad_do_14_gi to instance pad_pads
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal pad_do_36!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_do_36!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_do_36!
-05/07/15 17:50:56 Add_port: signal pad_do_36 adds port p_mix_pad_do_36_go to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal pad_do_36 adds port p_mix_pad_do_36_go to instance ios
-05/07/15 17:50:56 Add_port: signal pad_do_36 adds port p_mix_pad_do_36_gi to instance pad_pads
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal pad_di_40!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_di_40!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_di_40!
-05/07/15 17:50:56 Add_port: signal pad_di_40 adds port p_mix_pad_di_40_gi to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal pad_di_40 adds port p_mix_pad_di_40_gi to instance ios
-05/07/15 17:50:56 Add_port: signal pad_di_40 adds port p_mix_pad_di_40_go to instance pad_pads
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal d9_di!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal d9_di!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal d9_di!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal d9_di!
-05/07/15 17:50:56 Add_port: signal d9_di adds port p_mix_d9_di_go to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal d9_di adds port p_mix_d9_di_go to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal d9_do!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal d9_do!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal d9_do!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal d9_do!
-05/07/15 17:50:56 Add_port: signal d9_do adds port p_mix_d9_do_gi to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal d9_do adds port p_mix_d9_do_gi to instance ios
-05/07/15 17:50:56 Add_port: signal show_a adds port show_a to instance a_clk
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_do_32!
-05/07/15 17:50:56 Adding port to hierachy module ioblock_3 for signal pad_do_32!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_do_32!
-05/07/15 17:50:56 Add_port: signal pad_do_32 adds port p_mix_pad_do_32_go to instance ioblock_3
-05/07/15 17:50:56 Add_port: signal pad_do_32 adds port p_mix_pad_do_32_gi to instance pad_pads
-05/07/15 17:50:56 Add_port: signal pad_do_32 adds port p_mix_pad_do_32_go to instance ios
-05/07/15 17:50:56 Adding port to hierachy module ioblock_1 for signal pad_di_14!
-05/07/15 17:50:56 Adding port to hierachy module ios for signal pad_di_14!
-05/07/15 17:50:56 Adding port to hierachy module pad_pads for signal pad_di_14!
-05/07/15 17:50:56 Add_port: signal pad_di_14 adds port p_mix_pad_di_14_gi to instance ioblock_1
-05/07/15 17:50:57 Add_port: signal pad_di_14 adds port p_mix_pad_di_14_gi to instance ios
-05/07/15 17:50:57 Add_port: signal pad_di_14 adds port p_mix_pad_di_14_go to instance pad_pads
-05/07/15 17:50:57 Add_port: signal reset adds port reset to instance a_clk
-05/07/15 17:50:57 Adding port to hierachy module pad_pads for signal pad_en_16!
-05/07/15 17:50:57 Adding port to hierachy module ioblock_1 for signal pad_en_16!
-05/07/15 17:50:57 Adding port to hierachy module ios for signal pad_en_16!
-05/07/15 17:50:57 Add_port: signal pad_en_16 adds port p_mix_pad_en_16_go to instance ioblock_1
-05/07/15 17:50:57 Add_port: signal pad_en_16 adds port p_mix_pad_en_16_gi to instance pad_pads
-05/07/15 17:50:57 Add_port: signal pad_en_16 adds port p_mix_pad_en_16_go to instance ios
-05/07/15 17:50:57 Adding port to hierachy module ioblock_1 for signal pad_di_18!
-05/07/15 17:50:57 Adding port to hierachy module ios for signal pad_di_18!
-05/07/15 17:50:57 Adding port to hierachy module pad_pads for signal pad_di_18!
-05/07/15 17:50:57 Add_port: signal pad_di_18 adds port p_mix_pad_di_18_gi to instance ioblock_1
-05/07/15 17:50:57 Add_port: signal pad_di_18 adds port p_mix_pad_di_18_gi to instance ios
-05/07/15 17:50:57 Add_port: signal pad_di_18 adds port p_mix_pad_di_18_go to instance pad_pads
-05/07/15 17:50:57 Adding port to hierachy module ioblock_3 for signal data_i33!
-05/07/15 17:50:57 Adding port to hierachy module ios for signal data_i33!
-05/07/15 17:50:57 Add_port: signal data_i33 adds port p_mix_data_i33_go to instance ioblock_3
-05/07/15 17:50:57 Add_port: signal data_i33 adds port p_mix_data_i33_go to instance ios
-05/07/15 17:50:57 Adding port to hierachy module pad_pads for signal pad_en_17!
-05/07/15 17:50:57 Adding port to hierachy module ioblock_1 for signal pad_en_17!
-05/07/15 17:50:57 Adding port to hierachy module ios for signal pad_en_17!
-05/07/15 17:50:57 Add_port: signal pad_en_17 adds port p_mix_pad_en_17_go to instance ioblock_1
-05/07/15 17:50:57 Add_port: signal pad_en_17 adds port p_mix_pad_en_17_gi to instance pad_pads
-05/07/15 17:50:57 Add_port: signal pad_en_17 adds port p_mix_pad_en_17_go to instance ios
-05/07/15 17:50:57 Adding port to hierachy module ioblock_0 for signal iosel_1!
-05/07/15 17:50:57 Adding port to hierachy module ios for signal iosel_1!
-05/07/15 17:50:57 Adding port to hierachy module ioblock_0 for signal iosel_1!
-05/07/15 17:50:57 Adding port to hierachy module ios for signal iosel_1!
-05/07/15 17:50:57 Add_port: signal iosel_1 adds port p_mix_iosel_1_gi to instance ioblock_0
-05/07/15 17:50:57 Add_port: signal iosel_1 adds port p_mix_iosel_1_gi to instance ios
-05/07/15 17:50:57 Autoexpand port sel from std_ulogic to vector type!
-05/07/15 17:50:57 WARNING: WARNING: Missing port nand_in in entity ioc_g_o (ioc_g_o_35) redeclaration, ignoreing!
-05/07/15 17:50:57 WARNING: WARNING: Missing port nand_out in entity ioc_g_o (ioc_g_o_35) redeclaration, ignoreing!
-05/07/15 17:50:57 Autoreducing port type for signal d9_do to std_ulogic
-05/07/15 17:50:57 Autoreducing port type for signal d9_pu to std_ulogic
-05/07/15 17:50:57 Autoreducing port type for signal d9_en to std_ulogic
-05/07/15 17:50:57 Autoreducing port type for signal d9_di to std_ulogic
-05/07/15 17:50:57 Autoreducing port type for signal alarm to std_ulogic
-05/07/15 17:50:57 Autoreducing port type for signal d9_do to std_ulogic
-05/07/15 17:50:57 Autoreducing port type for signal d9_pu to std_ulogic
-05/07/15 17:50:57 Autoreducing port type for signal d9_en to std_ulogic
-05/07/15 17:50:57 Autoreducing port type for signal d9_di to std_ulogic
-05/07/15 17:50:57 WARNING: WARNING: Missing port nand_in in entity ioc_g_o (ioc_g_o_36) redeclaration, ignoreing!
-05/07/15 17:50:57 WARNING: WARNING: Missing port nand_out in entity ioc_g_o (ioc_g_o_36) redeclaration, ignoreing!
-05/07/15 17:50:57 Autoreducing port type for signal disp2 to std_ulogic
-05/07/15 17:50:57 Autoexpand port sel from std_ulogic to vector type!
-05/07/15 17:50:57 Autoconnecting bit signal display_ls_en to bus port en
-05/07/15 17:50:57 Autoreducing port type for signal disp2_en to std_ulogic
-05/07/15 17:50:57 Autoconnecting bit signal display_ms_en to bus port en
-05/07/15 17:50:57 Autoreducing port type for signal di2 to std_ulogic
-05/07/15 17:50:57 Autoexpand port sel from std_ulogic to vector type!
-05/07/15 17:50:57 WARNING: WARNING: Declaration for entity ioc_g_i (ioc_g_i_1) extended by nand_in!
-05/07/15 17:50:57 WARNING: WARNING: Declaration for entity ioc_g_i (ioc_g_i_1) extended by nand_out!
-05/07/15 17:50:57 Autoreducing port type for signal disp2 to std_ulogic
-05/07/15 17:50:57 Autoexpand port sel from std_ulogic to vector type!
-05/07/15 17:50:57 Autoconnecting bit signal display_ls_en to bus port en
-05/07/15 17:50:57 Autoreducing port type for signal disp2_en to std_ulogic
-05/07/15 17:50:57 Autoconnecting bit signal display_ms_en to bus port en
-05/07/15 17:50:57 Autoreducing port type for signal di2 to std_ulogic
-05/07/15 17:50:57 Autoreducing port type for signal disp2 to std_ulogic
-05/07/15 17:50:57 Autoexpand port sel from std_ulogic to vector type!
-05/07/15 17:50:57 Autoconnecting bit signal display_ls_en to bus port en
-05/07/15 17:50:57 Autoreducing port type for signal disp2_en to std_ulogic
-05/07/15 17:50:57 Autoconnecting bit signal display_ms_en to bus port en
-05/07/15 17:50:57 Autoreducing port type for signal di2 to std_ulogic
-05/07/15 17:50:57 Autoreducing port type for signal disp2 to std_ulogic
-05/07/15 17:50:57 Autoexpand port sel from std_ulogic to vector type!
-05/07/15 17:50:57 Autoconnecting bit signal display_ls_en to bus port en
-05/07/15 17:50:57 Autoreducing port type for signal disp2_en to std_ulogic
-05/07/15 17:50:57 Autoconnecting bit signal display_ms_en to bus port en
-05/07/15 17:50:57 Autoreducing port type for signal di2 to std_ulogic
-05/07/15 17:50:57 Autoconnecting bit signal display_ls_en to bus port en
-05/07/15 17:50:57 Autoexpand port sel from std_ulogic to vector type!
-05/07/15 17:50:57 Autoconnecting bit signal display_ms_en to bus port en
-05/07/15 17:50:57 Autoreducing port type for signal alarm to std_ulogic
-05/07/15 17:50:57 WARNING: WARNING: Missing port nand_in in entity ioc_g_i (ioc_g_i_33) redeclaration, ignoreing!
-05/07/15 17:50:57 WARNING: WARNING: Missing port nand_out in entity ioc_g_i (ioc_g_i_33) redeclaration, ignoreing!
-05/07/15 17:50:57 Autoreducing port type for signal disp2 to std_ulogic
-05/07/15 17:50:57 Autoexpand port sel from std_ulogic to vector type!
-05/07/15 17:50:57 Autoconnecting bit signal display_ls_en to bus port en
-05/07/15 17:50:57 Autoreducing port type for signal disp2_en to std_ulogic
-05/07/15 17:50:57 Autoconnecting bit signal display_ms_en to bus port en
-05/07/15 17:50:57 Autoreducing port type for signal di2 to std_ulogic
-05/07/15 17:50:57 Autoconnecting bit signal display_ls_en to bus port en
-05/07/15 17:50:57 Autoexpand port sel from std_ulogic to vector type!
-05/07/15 17:50:57 Autoconnecting bit signal display_ms_en to bus port en
-05/07/15 17:50:57 Autoreducing port type for signal disp2 to std_ulogic
-05/07/15 17:50:57 Autoexpand port sel from std_ulogic to vector type!
-05/07/15 17:50:57 Autoconnecting bit signal display_ls_en to bus port en
-05/07/15 17:50:57 Autoreducing port type for signal disp2_en to std_ulogic
-05/07/15 17:50:57 Autoconnecting bit signal display_ms_en to bus port en
-05/07/15 17:50:57 Autoreducing port type for signal di2 to std_ulogic
-05/07/15 17:50:57 Autoreducing port type for signal alarm to std_ulogic
-05/07/15 17:50:57 Autoreducing port type for signal disp2 to std_ulogic
-05/07/15 17:50:57 Autoexpand port sel from std_ulogic to vector type!
-05/07/15 17:50:57 Autoconnecting bit signal display_ls_en to bus port en
-05/07/15 17:50:57 Autoreducing port type for signal disp2_en to std_ulogic
-05/07/15 17:50:57 Autoconnecting bit signal display_ms_en to bus port en
-05/07/15 17:50:57 Autoreducing port type for signal di2 to std_ulogic
-05/07/15 17:50:57 Autoexpand port iosel_bus from std_ulogic to vector type!
-05/07/15 17:50:57 Autoreducing port type for signal alarm to std_ulogic
-05/07/15 17:50:57 WARNING: File padio-mixed.xls already exists! Contents will be changed
-05/07/15 17:50:58 WARNING: Rotating 3 old sheets of CONF!
-05/07/15 17:50:58 WARNING: Rotating 3 old sheets of CONN!
-05/07/15 17:50:58 WARNING: WARNING: Limit length of cell to save 520 characters: ioblock_1/p_mix_display_ls_en_gi
-05/07/15 17:50:58 WARNING: WARNING: Limit length of cell to save 520 characters: ioblock_1/p_mix_display_ms_en_gi
-05/07/15 17:50:58 WARNING: Rotating 3 old sheets of HIER!
-05/07/15 17:50:58 WARNING: Removing old and and diff sheets in file: padio-mixed.xls
-05/07/15 17:50:58 WARNING: ERROR: workbook with different path already opened!
-05/07/15 17:50:59 Port sound_alarm of entity ddrv one bit wide, reduce to signal
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: Info: local %SEL% override by %sel(iosel_0)!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 15:44:46 WARNING: port xo in iocell pad_41 has undefined direction, applied default!
+05/07/18 15:44:46 WARNING: port xo in iocell pad_42 has undefined direction, applied default!
+05/07/18 15:44:46 WARNING: port xo in iocell pad_43 has undefined direction, applied default!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_di_39!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal pad_di_39!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_di_39!
+05/07/18 15:44:47 Add_port: signal pad_di_39 adds port p_mix_pad_di_39_gi to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal pad_di_39 adds port p_mix_pad_di_39_go to instance pad_pads
+05/07/18 15:44:47 Add_port: signal pad_di_39 adds port p_mix_pad_di_39_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal pad_do_35!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_do_35!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_do_35!
+05/07/18 15:44:47 Add_port: signal pad_do_35 adds port p_mix_pad_do_35_go to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal pad_do_35 adds port p_mix_pad_do_35_go to instance ios
+05/07/18 15:44:47 Add_port: signal pad_do_35 adds port p_mix_pad_do_35_gi to instance pad_pads
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ms_hr!
+05/07/18 15:44:47 Add_port: signal iosel_ms_hr adds port p_mix_iosel_ms_hr_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal iosel_ms_hr adds port p_mix_iosel_ms_hr_gi to instance ios
+05/07/18 15:44:47 Add_port: signal key_buffer_0 adds port key_buffer_0 to instance a_clk
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal pad_do_2!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_do_2!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_do_2!
+05/07/18 15:44:47 Add_port: signal pad_do_2 adds port p_mix_pad_do_2_go to instance ioblock_0
+05/07/18 15:44:47 Add_port: signal pad_do_2 adds port p_mix_pad_do_2_go to instance ios
+05/07/18 15:44:47 Add_port: signal pad_do_2 adds port p_mix_pad_do_2_gi to instance pad_pads
+05/07/18 15:44:47 Add_port: signal sound_alarm adds port sound_alarm to instance a_clk
+05/07/18 15:44:47 Adding port to hierachy module u_ddrv4 for signal sound_alarm!
+05/07/18 15:44:47 Add_port: signal sound_alarm adds port p_mix_sound_alarm_go to instance u_ddrv4
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ls_min!
+05/07/18 15:44:47 Add_port: signal iosel_ls_min adds port p_mix_iosel_ls_min_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal iosel_ls_min adds port p_mix_iosel_ls_min_gi to instance ios
+05/07/18 15:44:47 Add_port: signal key_buffer_2 adds port key_buffer_2 to instance a_clk
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal iosel_4!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_4!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal iosel_4!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_4!
+05/07/18 15:44:47 Add_port: signal iosel_4 adds port p_mix_iosel_4_gi to instance ioblock_0
+05/07/18 15:44:47 Add_port: signal iosel_4 adds port p_mix_iosel_4_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal nand_out_2!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal nand_out_2!
+05/07/18 15:44:47 Add_port: signal nand_out_2 adds port p_mix_nand_out_2_go to instance ioblock_0
+05/07/18 15:44:47 Add_port: signal nand_out_2 adds port p_mix_nand_out_2_gi to instance ioblock_1
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal iosel_6!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_6!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal iosel_6!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_6!
+05/07/18 15:44:47 Add_port: signal iosel_6 adds port p_mix_iosel_6_gi to instance ioblock_0
+05/07/18 15:44:47 Add_port: signal iosel_6 adds port p_mix_iosel_6_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_en_12!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_en_12!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_en_12!
+05/07/18 15:44:47 Add_port: signal pad_en_12 adds port p_mix_pad_en_12_go to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_en_12 adds port p_mix_pad_en_12_gi to instance pad_pads
+05/07/18 15:44:47 Add_port: signal pad_en_12 adds port p_mix_pad_en_12_go to instance ios
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_do_16!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_do_16!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_do_16!
+05/07/18 15:44:47 Add_port: signal pad_do_16 adds port p_mix_pad_do_16_go to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_do_16 adds port p_mix_pad_do_16_gi to instance pad_pads
+05/07/18 15:44:47 Add_port: signal pad_do_16 adds port p_mix_pad_do_16_go to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_di_15!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_di_15!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_di_15!
+05/07/18 15:44:47 Add_port: signal pad_di_15 adds port p_mix_pad_di_15_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_di_15 adds port p_mix_pad_di_15_gi to instance ios
+05/07/18 15:44:47 Add_port: signal pad_di_15 adds port p_mix_pad_di_15_go to instance pad_pads
+05/07/18 15:44:47 Add_port: signal alarm_time_ls_hr adds port alarm_time_ls_hr to instance a_clk
+05/07/18 15:44:47 Add_port: signal current_time_ls_min adds port current_time_ls_min to instance a_clk
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_di_13!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_di_13!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_di_13!
+05/07/18 15:44:47 Add_port: signal pad_di_13 adds port p_mix_pad_di_13_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_di_13 adds port p_mix_pad_di_13_gi to instance ios
+05/07/18 15:44:47 Add_port: signal pad_di_13 adds port p_mix_pad_di_13_go to instance pad_pads
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_do_18!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_do_18!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_do_18!
+05/07/18 15:44:47 Add_port: signal pad_do_18 adds port p_mix_pad_do_18_go to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_do_18 adds port p_mix_pad_do_18_gi to instance pad_pads
+05/07/18 15:44:47 Add_port: signal pad_do_18 adds port p_mix_pad_do_18_go to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal d9_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal d9_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal d9_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal d9_en!
+05/07/18 15:44:47 Add_port: signal d9_en adds port p_mix_d9_en_gi to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal d9_en adds port p_mix_d9_en_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal pad_di_32!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_di_32!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_di_32!
+05/07/18 15:44:47 Add_port: signal pad_di_32 adds port p_mix_pad_di_32_gi to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal pad_di_32 adds port p_mix_pad_di_32_gi to instance ios
+05/07/18 15:44:47 Add_port: signal pad_di_32 adds port p_mix_pad_di_32_go to instance pad_pads
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal pad_en_32!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_en_32!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_en_32!
+05/07/18 15:44:47 Add_port: signal pad_en_32 adds port p_mix_pad_en_32_go to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal pad_en_32 adds port p_mix_pad_en_32_go to instance ios
+05/07/18 15:44:47 Add_port: signal pad_en_32 adds port p_mix_pad_en_32_gi to instance pad_pads
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_en_14!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_en_14!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_en_14!
+05/07/18 15:44:47 Add_port: signal pad_en_14 adds port p_mix_pad_en_14_go to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_en_14 adds port p_mix_pad_en_14_go to instance ios
+05/07/18 15:44:47 Add_port: signal pad_en_14 adds port p_mix_pad_en_14_gi to instance pad_pads
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal disp2_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal disp2_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal disp2_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal disp2_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal disp2_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal disp2_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal disp2_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal disp2_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal disp2_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal disp2_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal disp2_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal disp2_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal disp2_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal disp2_en!
+05/07/18 15:44:47 Add_port: signal disp2_en adds port p_mix_disp2_en_7_3_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal disp2_en adds port p_mix_disp2_en_1_0_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal disp2_en adds port p_mix_disp2_en_7_3_gi to instance ios
+05/07/18 15:44:47 Add_port: signal disp2_en adds port p_mix_disp2_en_1_0_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal di2!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal di2!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal di2!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal di2!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal di2!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal di2!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal di2!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal di2!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal di2!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal di2!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal di2!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal di2!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal di2!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal di2!
+05/07/18 15:44:47 Add_port: signal di2 adds port p_mix_di2_7_3_go to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal di2 adds port p_mix_di2_1_0_go to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal di2 adds port p_mix_di2_7_3_go to instance ios
+05/07/18 15:44:47 Add_port: signal di2 adds port p_mix_di2_1_0_go to instance ios
+05/07/18 15:44:47 Add_port: signal current_time_ms_min adds port current_time_ms_min to instance a_clk
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_di_34!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal pad_di_34!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_di_34!
+05/07/18 15:44:47 Add_port: signal pad_di_34 adds port p_mix_pad_di_34_gi to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal pad_di_34 adds port p_mix_pad_di_34_go to instance pad_pads
+05/07/18 15:44:47 Add_port: signal pad_di_34 adds port p_mix_pad_di_34_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_di_17!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_di_17!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_di_17!
+05/07/18 15:44:47 Add_port: signal pad_di_17 adds port p_mix_pad_di_17_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_di_17 adds port p_mix_pad_di_17_go to instance pad_pads
+05/07/18 15:44:47 Add_port: signal pad_di_17 adds port p_mix_pad_di_17_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal pad_en_2!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_en_2!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_en_2!
+05/07/18 15:44:47 Add_port: signal pad_en_2 adds port p_mix_pad_en_2_go to instance ioblock_0
+05/07/18 15:44:47 Add_port: signal pad_en_2 adds port p_mix_pad_en_2_go to instance ios
+05/07/18 15:44:47 Add_port: signal pad_en_2 adds port p_mix_pad_en_2_gi to instance pad_pads
+05/07/18 15:44:47 Add_port: signal display_ls_hr adds port display_ls_hr to instance a_clk
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module u_ddrv4 for signal display_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_hr!
+05/07/18 15:44:47 Add_port: signal display_ls_hr adds port p_mix_display_ls_hr_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal display_ls_hr adds port p_mix_display_ls_hr_gi to instance ios
+05/07/18 15:44:47 Add_port: signal display_ls_hr adds port p_mix_display_ls_hr_go to instance u_ddrv4
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal data_o36!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal data_o36!
+05/07/18 15:44:47 Add_port: signal data_o36 adds port p_mix_data_o36_gi to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal data_o36 adds port p_mix_data_o36_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal nand_dir!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal nand_dir!
+05/07/18 15:44:47 Add_port: signal nand_dir adds port p_mix_nand_dir_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal nand_dir adds port p_mix_nand_dir_gi to instance ioblock_0
+05/07/18 15:44:47 Add_port: signal nand_dir adds port p_mix_nand_dir_gi to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal nand_dir adds port p_mix_nand_dir_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal iosel_7!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_7!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal iosel_7!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_7!
+05/07/18 15:44:47 Add_port: signal iosel_7 adds port p_mix_iosel_7_gi to instance ioblock_0
+05/07/18 15:44:47 Add_port: signal iosel_7 adds port p_mix_iosel_7_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal pad_en_40!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_en_40!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_en_40!
+05/07/18 15:44:47 Add_port: signal pad_en_40 adds port p_mix_pad_en_40_go to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal pad_en_40 adds port p_mix_pad_en_40_go to instance ios
+05/07/18 15:44:47 Add_port: signal pad_en_40 adds port p_mix_pad_en_40_gi to instance pad_pads
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_do_13!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_do_13!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_do_13!
+05/07/18 15:44:47 Add_port: signal pad_do_13 adds port p_mix_pad_do_13_go to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_do_13 adds port p_mix_pad_do_13_go to instance ios
+05/07/18 15:44:47 Add_port: signal pad_do_13 adds port p_mix_pad_do_13_gi to instance pad_pads
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_en_18!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_en_18!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_en_18!
+05/07/18 15:44:47 Add_port: signal pad_en_18 adds port p_mix_pad_en_18_go to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_en_18 adds port p_mix_pad_en_18_go to instance ios
+05/07/18 15:44:47 Add_port: signal pad_en_18 adds port p_mix_pad_en_18_gi to instance pad_pads
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal iosel_3!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_3!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal iosel_3!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_3!
+05/07/18 15:44:47 Add_port: signal iosel_3 adds port p_mix_iosel_3_gi to instance ioblock_0
+05/07/18 15:44:47 Add_port: signal iosel_3 adds port p_mix_iosel_3_gi to instance ios
+05/07/18 15:44:47 Add_port: signal alarm_time_ms_hr adds port alarm_time_ms_hr to instance a_clk
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal display_ms_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal display_ms_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_en!
+05/07/18 15:44:47 Add_port: signal display_ms_en adds port p_mix_display_ms_en_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal display_ms_en adds port p_mix_display_ms_en_gi to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal display_ms_en adds port p_mix_display_ms_en_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ls_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ls_hr!
+05/07/18 15:44:47 Add_port: signal iosel_ls_hr adds port p_mix_iosel_ls_hr_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal iosel_ls_hr adds port p_mix_iosel_ls_hr_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_do_15!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_do_15!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_do_15!
+05/07/18 15:44:47 Add_port: signal pad_do_15 adds port p_mix_pad_do_15_go to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_do_15 adds port p_mix_pad_do_15_go to instance ios
+05/07/18 15:44:47 Add_port: signal pad_do_15 adds port p_mix_pad_do_15_gi to instance pad_pads
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_pu_32!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal pad_pu_32!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_pu_32!
+05/07/18 15:44:47 Add_port: signal pad_pu_32 adds port p_mix_pad_pu_32_go to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal pad_pu_32 adds port p_mix_pad_pu_32_gi to instance pad_pads
+05/07/18 15:44:47 Add_port: signal pad_pu_32 adds port p_mix_pad_pu_32_go to instance ios
+05/07/18 15:44:47 Add_port: signal display_ms_min adds port display_ms_min to instance a_clk
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module u_ddrv4 for signal display_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_min!
+05/07/18 15:44:47 Add_port: signal display_ms_min adds port p_mix_display_ms_min_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal display_ms_min adds port p_mix_display_ms_min_gi to instance ios
+05/07/18 15:44:47 Add_port: signal display_ms_min adds port p_mix_display_ms_min_go to instance u_ddrv4
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_en_15!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_en_15!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_en_15!
+05/07/18 15:44:47 Add_port: signal pad_en_15 adds port p_mix_pad_en_15_go to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_en_15 adds port p_mix_pad_en_15_go to instance ios
+05/07/18 15:44:47 Add_port: signal pad_en_15 adds port p_mix_pad_en_15_gi to instance pad_pads
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal data_i34!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal data_i34!
+05/07/18 15:44:47 Add_port: signal data_i34 adds port p_mix_data_i34_go to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal data_i34 adds port p_mix_data_i34_go to instance ios
+05/07/18 15:44:47 Add_port: signal current_time_ls_hr adds port current_time_ls_hr to instance a_clk
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal pad_en_35!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_en_35!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_en_35!
+05/07/18 15:44:47 Add_port: signal pad_en_35 adds port p_mix_pad_en_35_go to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal pad_en_35 adds port p_mix_pad_en_35_go to instance ios
+05/07/18 15:44:47 Add_port: signal pad_en_35 adds port p_mix_pad_en_35_gi to instance pad_pads
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_disp!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_disp!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_disp!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_disp!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_disp!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_disp!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_disp!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_disp!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_disp!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_disp!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_disp!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_disp!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_disp!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_disp!
+05/07/18 15:44:47 Add_port: signal iosel_disp adds port p_mix_iosel_disp_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal iosel_disp adds port p_mix_iosel_disp_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal iosel_0!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_0!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal iosel_0!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_0!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal iosel_0!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_0!
+05/07/18 15:44:47 Add_port: signal iosel_0 adds port p_mix_iosel_0_gi to instance ioblock_0
+05/07/18 15:44:47 Add_port: signal iosel_0 adds port p_mix_iosel_0_gi to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal iosel_0 adds port p_mix_iosel_0_gi to instance ios
+05/07/18 15:44:47 Add_port: signal display_ms_hr adds port display_ms_hr to instance a_clk
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ms_hr!
+05/07/18 15:44:47 Adding port to hierachy module u_ddrv4 for signal display_ms_hr!
+05/07/18 15:44:47 Add_port: signal display_ms_hr adds port p_mix_display_ms_hr_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal display_ms_hr adds port p_mix_display_ms_hr_gi to instance ios
+05/07/18 15:44:47 Add_port: signal display_ms_hr adds port p_mix_display_ms_hr_go to instance u_ddrv4
+05/07/18 15:44:47 Add_port: signal alarm_time_ls_min adds port alarm_time_ls_min to instance a_clk
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal data_o35!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal data_o35!
+05/07/18 15:44:47 Add_port: signal data_o35 adds port p_mix_data_o35_gi to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal data_o35 adds port p_mix_data_o35_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal disp2!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal disp2!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal disp2!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal disp2!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal disp2!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal disp2!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal disp2!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal disp2!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal disp2!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal disp2!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal disp2!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal disp2!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal disp2!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal disp2!
+05/07/18 15:44:47 Add_port: signal disp2 adds port p_mix_disp2_7_3_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal disp2 adds port p_mix_disp2_1_0_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal disp2 adds port p_mix_disp2_7_3_gi to instance ios
+05/07/18 15:44:47 Add_port: signal disp2 adds port p_mix_disp2_1_0_gi to instance ios
+05/07/18 15:44:47 Add_port: signal current_time_ms_hr adds port current_time_ms_hr to instance a_clk
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal pad_en_36!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_en_36!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_en_36!
+05/07/18 15:44:47 Add_port: signal pad_en_36 adds port p_mix_pad_en_36_go to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal pad_en_36 adds port p_mix_pad_en_36_go to instance ios
+05/07/18 15:44:47 Add_port: signal pad_en_36 adds port p_mix_pad_en_36_gi to instance pad_pads
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal d9_pu!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal d9_pu!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal d9_pu!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal d9_pu!
+05/07/18 15:44:47 Add_port: signal d9_pu adds port p_mix_d9_pu_gi to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal d9_pu adds port p_mix_d9_pu_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_en_31!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal pad_en_31!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_en_31!
+05/07/18 15:44:47 Add_port: signal pad_en_31 adds port p_mix_pad_en_31_go to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal pad_en_31 adds port p_mix_pad_en_31_gi to instance pad_pads
+05/07/18 15:44:47 Add_port: signal pad_en_31 adds port p_mix_pad_en_31_go to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal pad_di_33!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_di_33!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_di_33!
+05/07/18 15:44:47 Add_port: signal pad_di_33 adds port p_mix_pad_di_33_gi to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal pad_di_33 adds port p_mix_pad_di_33_gi to instance ios
+05/07/18 15:44:47 Add_port: signal pad_di_33 adds port p_mix_pad_di_33_go to instance pad_pads
+05/07/18 15:44:47 Add_port: signal key_buffer_3 adds port key_buffer_3 to instance a_clk
+05/07/18 15:44:47 Add_port: signal key_buffer_1 adds port key_buffer_1 to instance a_clk
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal iosel_5!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_5!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal iosel_5!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_5!
+05/07/18 15:44:47 Add_port: signal iosel_5 adds port p_mix_iosel_5_gi to instance ioblock_0
+05/07/18 15:44:47 Add_port: signal iosel_5 adds port p_mix_iosel_5_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_pu_31!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal pad_pu_31!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_pu_31!
+05/07/18 15:44:47 Add_port: signal pad_pu_31 adds port p_mix_pad_pu_31_go to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal pad_pu_31 adds port p_mix_pad_pu_31_gi to instance pad_pads
+05/07/18 15:44:47 Add_port: signal pad_pu_31 adds port p_mix_pad_pu_31_go to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal data_i1!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal data_i1!
+05/07/18 15:44:47 Add_port: signal data_i1 adds port p_mix_data_i1_go to instance ioblock_0
+05/07/18 15:44:47 Add_port: signal data_i1 adds port p_mix_data_i1_go to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal display_ls_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal display_ls_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_en!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_en!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_en!
+05/07/18 15:44:47 Add_port: signal display_ls_en adds port p_mix_display_ls_en_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal display_ls_en adds port p_mix_display_ls_en_gi to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal display_ls_en adds port p_mix_display_ls_en_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal iosel_2!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_2!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal iosel_2!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_2!
+05/07/18 15:44:47 Add_port: signal iosel_2 adds port p_mix_iosel_2_gi to instance ioblock_0
+05/07/18 15:44:47 Add_port: signal iosel_2 adds port p_mix_iosel_2_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal pad_do_40!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_do_40!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_do_40!
+05/07/18 15:44:47 Add_port: signal pad_do_40 adds port p_mix_pad_do_40_go to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal pad_do_40 adds port p_mix_pad_do_40_go to instance ios
+05/07/18 15:44:47 Add_port: signal pad_do_40 adds port p_mix_pad_do_40_gi to instance pad_pads
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal pad_en_39!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_en_39!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_en_39!
+05/07/18 15:44:47 Add_port: signal pad_en_39 adds port p_mix_pad_en_39_go to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal pad_en_39 adds port p_mix_pad_en_39_go to instance ios
+05/07/18 15:44:47 Add_port: signal pad_en_39 adds port p_mix_pad_en_39_gi to instance pad_pads
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_do_12!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_do_12!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_do_12!
+05/07/18 15:44:47 Add_port: signal pad_do_12 adds port p_mix_pad_do_12_go to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_do_12 adds port p_mix_pad_do_12_gi to instance pad_pads
+05/07/18 15:44:47 Add_port: signal pad_do_12 adds port p_mix_pad_do_12_go to instance ios
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_di_16!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_di_16!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_di_16!
+05/07/18 15:44:47 Add_port: signal pad_di_16 adds port p_mix_pad_di_16_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_di_16 adds port p_mix_pad_di_16_go to instance pad_pads
+05/07/18 15:44:47 Add_port: signal pad_di_16 adds port p_mix_pad_di_16_gi to instance ios
+05/07/18 15:44:47 Add_port: signal stopwatch adds port stopwatch to instance a_clk
+05/07/18 15:44:47 Add_port: signal show_new_time adds port show_new_time to instance a_clk
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_di_31!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal pad_di_31!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_di_31!
+05/07/18 15:44:47 Add_port: signal pad_di_31 adds port p_mix_pad_di_31_gi to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal pad_di_31 adds port p_mix_pad_di_31_go to instance pad_pads
+05/07/18 15:44:47 Add_port: signal pad_di_31 adds port p_mix_pad_di_31_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_do_31!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal pad_do_31!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_do_31!
+05/07/18 15:44:47 Add_port: signal pad_do_31 adds port p_mix_pad_do_31_go to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal pad_do_31 adds port p_mix_pad_do_31_gi to instance pad_pads
+05/07/18 15:44:47 Add_port: signal pad_do_31 adds port p_mix_pad_do_31_go to instance ios
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_do_17!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_do_17!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_do_17!
+05/07/18 15:44:47 Add_port: signal pad_do_17 adds port p_mix_pad_do_17_go to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_do_17 adds port p_mix_pad_do_17_gi to instance pad_pads
+05/07/18 15:44:47 Add_port: signal pad_do_17 adds port p_mix_pad_do_17_go to instance ios
+05/07/18 15:44:47 Add_port: signal clk adds port clk to instance a_clk
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_di_12!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_di_12!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_di_12!
+05/07/18 15:44:47 Add_port: signal pad_di_12 adds port p_mix_pad_di_12_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_di_12 adds port p_mix_pad_di_12_go to instance pad_pads
+05/07/18 15:44:47 Add_port: signal pad_di_12 adds port p_mix_pad_di_12_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_en_13!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_en_13!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_en_13!
+05/07/18 15:44:47 Add_port: signal pad_en_13 adds port p_mix_pad_en_13_go to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_en_13 adds port p_mix_pad_en_13_go to instance ios
+05/07/18 15:44:47 Add_port: signal pad_en_13 adds port p_mix_pad_en_13_gi to instance pad_pads
+05/07/18 15:44:47 Add_port: signal alarm_time_ms_min adds port alarm_time_ms_min to instance a_clk
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal iosel_ms_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_ms_min!
+05/07/18 15:44:47 Add_port: signal iosel_ms_min adds port p_mix_iosel_ms_min_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal iosel_ms_min adds port p_mix_iosel_ms_min_gi to instance ios
+05/07/18 15:44:47 Add_port: signal display_ls_min adds port display_ls_min to instance a_clk
+05/07/18 15:44:47 Adding port to hierachy module u_ddrv4 for signal display_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal display_ls_min!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal display_ls_min!
+05/07/18 15:44:47 Add_port: signal display_ls_min adds port p_mix_display_ls_min_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal display_ls_min adds port p_mix_display_ls_min_gi to instance ios
+05/07/18 15:44:47 Add_port: signal display_ls_min adds port p_mix_display_ls_min_go to instance u_ddrv4
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal iosel_bus!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_bus!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal iosel_bus!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_bus!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal iosel_bus!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_bus!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal iosel_bus!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_bus!
+05/07/18 15:44:47 Add_port: signal iosel_bus adds port p_mix_iosel_bus_gi to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal iosel_bus adds port p_mix_iosel_bus_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal pad_do_39!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_do_39!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_do_39!
+05/07/18 15:44:47 Add_port: signal pad_do_39 adds port p_mix_pad_do_39_go to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal pad_do_39 adds port p_mix_pad_do_39_go to instance ios
+05/07/18 15:44:47 Add_port: signal pad_do_39 adds port p_mix_pad_do_39_gi to instance pad_pads
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal pad_di_1!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_di_1!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_di_1!
+05/07/18 15:44:47 Add_port: signal pad_di_1 adds port p_mix_pad_di_1_gi to instance ioblock_0
+05/07/18 15:44:47 Add_port: signal pad_di_1 adds port p_mix_pad_di_1_gi to instance ios
+05/07/18 15:44:47 Add_port: signal pad_di_1 adds port p_mix_pad_di_1_go to instance pad_pads
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal data_o1!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal data_o1!
+05/07/18 15:44:47 Add_port: signal data_o1 adds port p_mix_data_o1_gi to instance ioblock_0
+05/07/18 15:44:47 Add_port: signal data_o1 adds port p_mix_data_o1_gi to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_do_14!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_do_14!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_do_14!
+05/07/18 15:44:47 Add_port: signal pad_do_14 adds port p_mix_pad_do_14_go to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_do_14 adds port p_mix_pad_do_14_go to instance ios
+05/07/18 15:44:47 Add_port: signal pad_do_14 adds port p_mix_pad_do_14_gi to instance pad_pads
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal pad_do_36!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_do_36!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_do_36!
+05/07/18 15:44:47 Add_port: signal pad_do_36 adds port p_mix_pad_do_36_go to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal pad_do_36 adds port p_mix_pad_do_36_go to instance ios
+05/07/18 15:44:47 Add_port: signal pad_do_36 adds port p_mix_pad_do_36_gi to instance pad_pads
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal pad_di_40!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_di_40!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_di_40!
+05/07/18 15:44:47 Add_port: signal pad_di_40 adds port p_mix_pad_di_40_gi to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal pad_di_40 adds port p_mix_pad_di_40_gi to instance ios
+05/07/18 15:44:47 Add_port: signal pad_di_40 adds port p_mix_pad_di_40_go to instance pad_pads
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal d9_di!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal d9_di!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal d9_di!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal d9_di!
+05/07/18 15:44:47 Add_port: signal d9_di adds port p_mix_d9_di_go to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal d9_di adds port p_mix_d9_di_go to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal d9_do!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal d9_do!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal d9_do!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal d9_do!
+05/07/18 15:44:47 Add_port: signal d9_do adds port p_mix_d9_do_gi to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal d9_do adds port p_mix_d9_do_gi to instance ios
+05/07/18 15:44:47 Add_port: signal show_a adds port show_a to instance a_clk
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_do_32!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal pad_do_32!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_do_32!
+05/07/18 15:44:47 Add_port: signal pad_do_32 adds port p_mix_pad_do_32_go to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal pad_do_32 adds port p_mix_pad_do_32_gi to instance pad_pads
+05/07/18 15:44:47 Add_port: signal pad_do_32 adds port p_mix_pad_do_32_go to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_di_14!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_di_14!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_di_14!
+05/07/18 15:44:47 Add_port: signal pad_di_14 adds port p_mix_pad_di_14_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_di_14 adds port p_mix_pad_di_14_gi to instance ios
+05/07/18 15:44:47 Add_port: signal pad_di_14 adds port p_mix_pad_di_14_go to instance pad_pads
+05/07/18 15:44:47 Add_port: signal reset adds port reset to instance a_clk
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_en_16!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_en_16!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_en_16!
+05/07/18 15:44:47 Add_port: signal pad_en_16 adds port p_mix_pad_en_16_go to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_en_16 adds port p_mix_pad_en_16_gi to instance pad_pads
+05/07/18 15:44:47 Add_port: signal pad_en_16 adds port p_mix_pad_en_16_go to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_di_18!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_di_18!
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_di_18!
+05/07/18 15:44:47 Add_port: signal pad_di_18 adds port p_mix_pad_di_18_gi to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_di_18 adds port p_mix_pad_di_18_gi to instance ios
+05/07/18 15:44:47 Add_port: signal pad_di_18 adds port p_mix_pad_di_18_go to instance pad_pads
+05/07/18 15:44:47 Adding port to hierachy module ioblock_3 for signal data_i33!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal data_i33!
+05/07/18 15:44:47 Add_port: signal data_i33 adds port p_mix_data_i33_go to instance ioblock_3
+05/07/18 15:44:47 Add_port: signal data_i33 adds port p_mix_data_i33_go to instance ios
+05/07/18 15:44:47 Adding port to hierachy module pad_pads for signal pad_en_17!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_1 for signal pad_en_17!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal pad_en_17!
+05/07/18 15:44:47 Add_port: signal pad_en_17 adds port p_mix_pad_en_17_go to instance ioblock_1
+05/07/18 15:44:47 Add_port: signal pad_en_17 adds port p_mix_pad_en_17_gi to instance pad_pads
+05/07/18 15:44:47 Add_port: signal pad_en_17 adds port p_mix_pad_en_17_go to instance ios
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal iosel_1!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_1!
+05/07/18 15:44:47 Adding port to hierachy module ioblock_0 for signal iosel_1!
+05/07/18 15:44:47 Adding port to hierachy module ios for signal iosel_1!
+05/07/18 15:44:47 Add_port: signal iosel_1 adds port p_mix_iosel_1_gi to instance ioblock_0
+05/07/18 15:44:47 Add_port: signal iosel_1 adds port p_mix_iosel_1_gi to instance ios
+05/07/18 15:44:47 Autoexpand port sel from std_ulogic to vector type!
+05/07/18 15:44:47 WARNING: WARNING: Missing port nand_in in entity ioc_g_o (ioc_g_o_35) redeclaration, ignoreing!
+05/07/18 15:44:47 WARNING: WARNING: Missing port nand_out in entity ioc_g_o (ioc_g_o_35) redeclaration, ignoreing!
+05/07/18 15:44:47 Autoreducing port type for signal d9_do to std_ulogic
+05/07/18 15:44:47 Autoreducing port type for signal d9_pu to std_ulogic
+05/07/18 15:44:47 Autoreducing port type for signal d9_en to std_ulogic
+05/07/18 15:44:47 Autoreducing port type for signal d9_di to std_ulogic
+05/07/18 15:44:47 Autoreducing port type for signal alarm to std_ulogic
+05/07/18 15:44:47 Autoreducing port type for signal d9_do to std_ulogic
+05/07/18 15:44:47 Autoreducing port type for signal d9_pu to std_ulogic
+05/07/18 15:44:47 Autoreducing port type for signal d9_en to std_ulogic
+05/07/18 15:44:47 Autoreducing port type for signal d9_di to std_ulogic
+05/07/18 15:44:47 WARNING: WARNING: Missing port nand_in in entity ioc_g_o (ioc_g_o_36) redeclaration, ignoreing!
+05/07/18 15:44:47 WARNING: WARNING: Missing port nand_out in entity ioc_g_o (ioc_g_o_36) redeclaration, ignoreing!
+05/07/18 15:44:47 Autoreducing port type for signal disp2 to std_ulogic
+05/07/18 15:44:47 Autoexpand port sel from std_ulogic to vector type!
+05/07/18 15:44:47 Autoconnecting bit signal display_ls_en to bus port en
+05/07/18 15:44:47 Autoreducing port type for signal disp2_en to std_ulogic
+05/07/18 15:44:47 Autoconnecting bit signal display_ms_en to bus port en
+05/07/18 15:44:47 Autoreducing port type for signal di2 to std_ulogic
+05/07/18 15:44:47 Autoexpand port sel from std_ulogic to vector type!
+05/07/18 15:44:47 WARNING: WARNING: Declaration for entity ioc_g_i (ioc_g_i_1) extended by nand_in!
+05/07/18 15:44:47 WARNING: WARNING: Declaration for entity ioc_g_i (ioc_g_i_1) extended by nand_out!
+05/07/18 15:44:47 Autoreducing port type for signal disp2 to std_ulogic
+05/07/18 15:44:47 Autoexpand port sel from std_ulogic to vector type!
+05/07/18 15:44:47 Autoconnecting bit signal display_ls_en to bus port en
+05/07/18 15:44:47 Autoreducing port type for signal disp2_en to std_ulogic
+05/07/18 15:44:47 Autoconnecting bit signal display_ms_en to bus port en
+05/07/18 15:44:47 Autoreducing port type for signal di2 to std_ulogic
+05/07/18 15:44:47 Autoreducing port type for signal disp2 to std_ulogic
+05/07/18 15:44:47 Autoexpand port sel from std_ulogic to vector type!
+05/07/18 15:44:47 Autoconnecting bit signal display_ls_en to bus port en
+05/07/18 15:44:47 Autoreducing port type for signal disp2_en to std_ulogic
+05/07/18 15:44:47 Autoconnecting bit signal display_ms_en to bus port en
+05/07/18 15:44:47 Autoreducing port type for signal di2 to std_ulogic
+05/07/18 15:44:47 Autoreducing port type for signal disp2 to std_ulogic
+05/07/18 15:44:47 Autoexpand port sel from std_ulogic to vector type!
+05/07/18 15:44:47 Autoconnecting bit signal display_ls_en to bus port en
+05/07/18 15:44:47 Autoreducing port type for signal disp2_en to std_ulogic
+05/07/18 15:44:47 Autoconnecting bit signal display_ms_en to bus port en
+05/07/18 15:44:47 Autoreducing port type for signal di2 to std_ulogic
+05/07/18 15:44:47 Autoconnecting bit signal display_ls_en to bus port en
+05/07/18 15:44:47 Autoexpand port sel from std_ulogic to vector type!
+05/07/18 15:44:47 Autoconnecting bit signal display_ms_en to bus port en
+05/07/18 15:44:47 Autoreducing port type for signal alarm to std_ulogic
+05/07/18 15:44:47 WARNING: WARNING: Missing port nand_in in entity ioc_g_i (ioc_g_i_33) redeclaration, ignoreing!
+05/07/18 15:44:47 WARNING: WARNING: Missing port nand_out in entity ioc_g_i (ioc_g_i_33) redeclaration, ignoreing!
+05/07/18 15:44:47 Autoreducing port type for signal disp2 to std_ulogic
+05/07/18 15:44:47 Autoexpand port sel from std_ulogic to vector type!
+05/07/18 15:44:47 Autoconnecting bit signal display_ls_en to bus port en
+05/07/18 15:44:47 Autoreducing port type for signal disp2_en to std_ulogic
+05/07/18 15:44:47 Autoconnecting bit signal display_ms_en to bus port en
+05/07/18 15:44:47 Autoreducing port type for signal di2 to std_ulogic
+05/07/18 15:44:47 Autoconnecting bit signal display_ls_en to bus port en
+05/07/18 15:44:47 Autoexpand port sel from std_ulogic to vector type!
+05/07/18 15:44:47 Autoconnecting bit signal display_ms_en to bus port en
+05/07/18 15:44:47 Autoreducing port type for signal disp2 to std_ulogic
+05/07/18 15:44:47 Autoexpand port sel from std_ulogic to vector type!
+05/07/18 15:44:47 Autoconnecting bit signal display_ls_en to bus port en
+05/07/18 15:44:47 Autoreducing port type for signal disp2_en to std_ulogic
+05/07/18 15:44:47 Autoconnecting bit signal display_ms_en to bus port en
+05/07/18 15:44:47 Autoreducing port type for signal di2 to std_ulogic
+05/07/18 15:44:47 Autoreducing port type for signal alarm to std_ulogic
+05/07/18 15:44:47 Autoreducing port type for signal disp2 to std_ulogic
+05/07/18 15:44:47 Autoexpand port sel from std_ulogic to vector type!
+05/07/18 15:44:47 Autoconnecting bit signal display_ls_en to bus port en
+05/07/18 15:44:47 Autoreducing port type for signal disp2_en to std_ulogic
+05/07/18 15:44:47 Autoconnecting bit signal display_ms_en to bus port en
+05/07/18 15:44:47 Autoreducing port type for signal di2 to std_ulogic
+05/07/18 15:44:47 Autoexpand port iosel_bus from std_ulogic to vector type!
+05/07/18 15:44:47 Autoreducing port type for signal alarm to std_ulogic
+05/07/18 15:44:49 WARNING: File padio-mixed.xls already exists! Contents will be changed
+05/07/18 15:44:49 WARNING: Rotating 3 old sheets of CONF!
+05/07/18 15:44:50 Reading worksheet CONN of H:/work/eclipse/mix/test/xls_input/padio/padio-mixed.xls
+05/07/18 15:44:50 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/07/18 15:44:51 Reading worksheet HIER of H:/work/eclipse/mix/test/xls_input/padio/padio-mixed.xls
+05/07/18 15:44:51 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/07/18 15:44:52 Info: unchanged file a_clk-e.vhd
+05/07/18 15:44:52 Port sound_alarm of entity ddrv one bit wide, reduce to signal
 
-05/07/15 17:50:59 Port di of entity ioc_r_io one bit wide, reduce to signal
+05/07/18 15:44:52 Info: unchanged file ddrv4-e.vhd
+05/07/18 15:44:52 Info: unchanged file ioblock0_e-e.vhd
+05/07/18 15:44:52 Info: unchanged file ioblock1_e-e.vhd
+05/07/18 15:44:52 Info: unchanged file ioblock3_e-e.vhd
+05/07/18 15:44:52 Port di of entity ioc_r_io one bit wide, reduce to signal
 
-05/07/15 17:50:59 Port di of entity ioc_r_iou one bit wide, reduce to signal
+05/07/18 15:44:52 Port di of entity ioc_r_iou one bit wide, reduce to signal
 
-05/07/15 17:50:59 Port do of entity ioc_r_iou one bit wide, reduce to signal
+05/07/18 15:44:52 Port do of entity ioc_r_iou one bit wide, reduce to signal
 
-05/07/15 17:50:59 Port en of entity ioc_r_iou one bit wide, reduce to signal
+05/07/18 15:44:52 Port en of entity ioc_r_iou one bit wide, reduce to signal
 
-05/07/15 17:50:59 Port pu of entity ioc_r_iou one bit wide, reduce to signal
+05/07/18 15:44:52 Port pu of entity ioc_r_iou one bit wide, reduce to signal
 
-05/07/15 17:50:59 Port pd of entity w_osc one bit wide, reduce to signal
+05/07/18 15:44:53 Info: unchanged file ios_e-e.vhd
+05/07/18 15:44:53 Info: unchanged file pad_pads_e-e.vhd
+05/07/18 15:44:53 Port pd of entity w_osc one bit wide, reduce to signal
 
-05/07/15 17:50:59 Port xo of entity w_osc one bit wide, reduce to signal
+05/07/18 15:44:53 Port xo of entity w_osc one bit wide, reduce to signal
 
-05/07/15 17:50:59 Port di of entity w_pad_dir one bit wide, reduce to signal
+05/07/18 15:44:53 Port di of entity w_pad_dir one bit wide, reduce to signal
 
-05/07/15 17:50:59 Port di of entity w_pad_dire one bit wide, reduce to signal
+05/07/18 15:44:53 Port di of entity w_pad_dire one bit wide, reduce to signal
 
-05/07/15 17:50:59 Port do of entity w_pad_dire one bit wide, reduce to signal
+05/07/18 15:44:53 Port do of entity w_pad_dire one bit wide, reduce to signal
 
-05/07/15 17:50:59 Port en of entity w_pad_dire one bit wide, reduce to signal
+05/07/18 15:44:53 Port en of entity w_pad_dire one bit wide, reduce to signal
 
-05/07/15 17:50:59 Warning: Signal disp2 does not have a driver in instance a_clk!
-05/07/15 17:50:59 Warning: Signal d9_pu does not have a driver in instance a_clk!
-05/07/15 17:50:59 Warning: Signal d9_en does not have a driver in instance a_clk!
-05/07/15 17:50:59 Signal nand_en does not have a load in instance a_clk!
-05/07/15 17:50:59 Warning: Signal disp2_en does not have a driver in instance a_clk!
-05/07/15 17:50:59 Signal iosel_nosel does not have a load in instance a_clk!
-05/07/15 17:50:59 Leave unloaded port iosel_nosel open at instance a_clk
-05/07/15 17:50:59 Leave unloaded port nand_en open at instance a_clk
-05/07/15 17:50:59 Warning: Signal nand_out_0 does not have a driver in instance ioblock_0!
-05/07/15 17:51:00 Warning: Signal ioseldi_1 does not have a driver in instance ioblock_3!
-05/07/15 17:51:00 Warning: Signal display_ls does not have a driver in instance ioblock_3!
-05/07/15 17:51:00 Warning: Signal ioseldi_3 does not have a driver in instance ioblock_3!
-05/07/15 17:51:00 Warning: Signal ioseldi_2 does not have a driver in instance ioblock_3!
-05/07/15 17:51:00 Warning: Signal ioseldi_0 does not have a driver in instance ioblock_3!
-05/07/15 17:51:00 Warning: Signal pad_dir_do38 does not have a driver in instance pad_pads!
-05/07/15 17:51:00 Signal pad_dir_di does not have a load in instance pad_pads!
-05/07/15 17:51:00 Warning: Signal clki3c does not have a driver in instance pad_pads!
-05/07/15 17:51:00 Warning: Signal pad_dir_en38 does not have a driver in instance pad_pads!
-05/07/15 17:51:00 Signal pad_dir_di38 does not have a load in instance pad_pads!
-05/07/15 17:51:00 Warning: Signal clki2c does not have a driver in instance pad_pads!
-05/07/15 17:51:00 Leave unloaded port pad_dir_di open at instance pad_pads
-05/07/15 17:51:00 Leave unloaded port pad_dir_di38 open at instance pad_pads
-05/07/15 17:51:00 WARNING: ============= SUMMARY =================
-05/07/15 17:51:00 WARNING: SUM: Summary of checks and created items:
-05/07/15 17:51:00 WARNING: SUM: checkforce 0
-05/07/15 17:51:00 WARNING: SUM: checkunique 0
-05/07/15 17:51:00 WARNING: SUM: checkwarn 0
-05/07/15 17:51:00 WARNING: SUM: cmacros 18
-05/07/15 17:51:00 WARNING: SUM: conn 132
-05/07/15 17:51:00 WARNING: SUM: errors 1
-05/07/15 17:51:00 WARNING: SUM: genport 240
-05/07/15 17:51:00 WARNING: SUM: hdlfiles 15
-05/07/15 17:51:00 WARNING: SUM: inst 68
-05/07/15 17:51:00 WARNING: SUM: io_cellandpad 17
-05/07/15 17:51:00 WARNING: SUM: io_pad_single 5
-05/07/15 17:51:00 WARNING: SUM: multdriver 21
-05/07/15 17:51:00 WARNING: SUM: nodriver 14
-05/07/15 17:51:00 WARNING: SUM: noload 4
-05/07/15 17:51:00 WARNING: SUM: open 1
-05/07/15 17:51:00 WARNING: SUM: openports 4
-05/07/15 17:51:00 WARNING: SUM: tie_hl 2
-05/07/15 17:51:00 WARNING: SUM: warnings 47
-05/07/15 17:51:00 WARNING: SUM: === Number of parsed input tables: ===
-05/07/15 17:51:00 WARNING: SUM: conf 0
-05/07/15 17:51:00 WARNING: SUM: hier 1
-05/07/15 17:51:00 WARNING: SUM: conn 2
-05/07/15 17:51:00 WARNING: SUM: io 1
-05/07/15 17:51:00 WARNING: SUM: i2c 0
+05/07/18 15:44:53 Warning: Signal disp2 does not have a driver in instance a_clk!
+05/07/18 15:44:53 Warning: Signal d9_pu does not have a driver in instance a_clk!
+05/07/18 15:44:53 Warning: Signal d9_en does not have a driver in instance a_clk!
+05/07/18 15:44:53 Signal nand_en does not have a load in instance a_clk!
+05/07/18 15:44:53 Warning: Signal disp2_en does not have a driver in instance a_clk!
+05/07/18 15:44:53 Signal iosel_nosel does not have a load in instance a_clk!
+05/07/18 15:44:53 Leave unloaded port iosel_nosel open at instance a_clk
+05/07/18 15:44:53 Leave unloaded port nand_en open at instance a_clk
+05/07/18 15:44:53 Info: unchanged file a_clk-rtl-a.vhd
+05/07/18 15:44:53 Warning: Signal nand_out_0 does not have a driver in instance ioblock_0!
+05/07/18 15:44:53 Info: unchanged file ioblock0_e-rtl-a.vhd
+05/07/18 15:44:54 Info: unchanged file ioblock1_e-rtl-a.vhd
+05/07/18 15:44:54 Warning: Signal ioseldi_1 does not have a driver in instance ioblock_3!
+05/07/18 15:44:54 Warning: Signal display_ls does not have a driver in instance ioblock_3!
+05/07/18 15:44:54 Warning: Signal ioseldi_3 does not have a driver in instance ioblock_3!
+05/07/18 15:44:54 Warning: Signal ioseldi_2 does not have a driver in instance ioblock_3!
+05/07/18 15:44:54 Warning: Signal ioseldi_0 does not have a driver in instance ioblock_3!
+05/07/18 15:44:54 Info: unchanged file ioblock3_e-rtl-a.vhd
+05/07/18 15:44:54 Info: unchanged file ios_e-rtl-a.vhd
+05/07/18 15:44:54 Warning: Signal pad_dir_do38 does not have a driver in instance pad_pads!
+05/07/18 15:44:54 Signal pad_dir_di does not have a load in instance pad_pads!
+05/07/18 15:44:54 Warning: Signal clki3c does not have a driver in instance pad_pads!
+05/07/18 15:44:54 Warning: Signal pad_dir_en38 does not have a driver in instance pad_pads!
+05/07/18 15:44:54 Signal pad_dir_di38 does not have a load in instance pad_pads!
+05/07/18 15:44:54 Warning: Signal clki2c does not have a driver in instance pad_pads!
+05/07/18 15:44:54 Leave unloaded port pad_dir_di open at instance pad_pads
+05/07/18 15:44:54 Leave unloaded port pad_dir_di38 open at instance pad_pads
+05/07/18 15:44:54 Info: unchanged file pad_pads_e-rtl-a.vhd
+05/07/18 15:44:55 Info: unchanged file ddrv4-rtl-a.vhd
+05/07/18 15:44:55 Info: unchanged file padio-c.vhd
+05/07/18 15:44:55 WARNING: ============= SUMMARY =================
+05/07/18 15:44:55 WARNING: SUM: Summary of checks and created items:
+05/07/18 15:44:55 WARNING: SUM: checkforce 0
+05/07/18 15:44:55 WARNING: SUM: checkunique 0
+05/07/18 15:44:55 WARNING: SUM: checkwarn 0
+05/07/18 15:44:55 WARNING: SUM: cmacros 18
+05/07/18 15:44:55 WARNING: SUM: conn 132
+05/07/18 15:44:55 WARNING: SUM: errors 0
+05/07/18 15:44:55 WARNING: SUM: genport 240
+05/07/18 15:44:55 WARNING: SUM: hdlfiles 15
+05/07/18 15:44:55 WARNING: SUM: inst 68
+05/07/18 15:44:55 WARNING: SUM: io_cellandpad 17
+05/07/18 15:44:55 WARNING: SUM: io_pad_single 5
+05/07/18 15:44:55 WARNING: SUM: multdriver 21
+05/07/18 15:44:55 WARNING: SUM: nodriver 14
+05/07/18 15:44:55 WARNING: SUM: noload 4
+05/07/18 15:44:55 WARNING: SUM: open 1
+05/07/18 15:44:55 WARNING: SUM: openports 4
+05/07/18 15:44:55 WARNING: SUM: tie_hl 2
+05/07/18 15:44:55 WARNING: SUM: warnings 45
+05/07/18 15:44:55 WARNING: SUM: === Number of parsed input tables: ===
+05/07/18 15:44:55 WARNING: SUM: conf 0
+05/07/18 15:44:55 WARNING: SUM: hier 1
+05/07/18 15:44:55 WARNING: SUM: conn 2
+05/07/18 15:44:55 WARNING: SUM: io 1
+05/07/18 15:44:55 WARNING: SUM: i2c 0
+05/07/18 15:44:55 WARNING: SUM: Number of changes in intermediate: 0
+05/07/18 15:44:55 WARNING: SUM: Number of changed files: 0

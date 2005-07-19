@@ -1,0 +1,97 @@
+:=:=:=>HIER
+::ign;::gen;::variants;::parent;::inst;::lang;::entity;::config;::comment
+#Kommentar;;;;Toplevel;;;;
+;;Default;TESTBENCH;inst_t;VHDL;ent_t;ent_t_RTL_CONF;
+;;Default;inst_t;inst_a;VHDL;ent_a;ent_a_RTL_CONF;
+;;Default;inst_t;inst_b;VHDL;ent_b;ent_b_RTL_CONF;
+;;Default;inst_a;inst_aa;VHDL;ent_aa;ent_aa_RTL_CONF;
+;;Default;inst_a;inst_ab;VHDL;ent_ab;ent_ab_RTL_CONF;
+;;Default;inst_a;inst_ac;VHDL;ent_ac;ent_ac_RTL_CONF;
+;;Default;inst_a;inst_ad;VHDL;ent_ad;ent_ad_RTL_CONF;
+;;Default;inst_a;inst_ae;VHDL;ent_ae;ent_ae_RTL_CONF;
+;;Default;inst_b;inst_ba;VHDL;ent_ba;ent_ba_RTL_CONF;
+;;Default;inst_b;inst_bb;VHDL;ent_bb;ent_bb_RTL_CONF;
+;;;;;;;;
+;;Verilog;TESTBENCH;inst_t;Verilog;ent_t;ent_t_RTL_CONF;
+;;Verilog;inst_t;inst_a;Verilog;ent_a;ent_a_RTL_CONF;
+;;Verilog;inst_t;inst_b;Verilog;ent_b;ent_b_RTL_CONF;
+;;Verilog;inst_a;inst_aa;Verilog;ent_aa;ent_aa_RTL_CONF;
+;;Verilog;inst_a;inst_ab;Verilog;ent_ab;ent_ab_RTL_CONF;
+;;Verilog;inst_a;inst_ac;Verilog;ent_ac;ent_ac_RTL_CONF;
+;;Verilog;inst_a;inst_ad;Verilog;ent_ad;ent_ad_RTL_CONF;
+;;Verilog;inst_a;inst_ae;Verilog;ent_ae;ent_ae_RTL_CONF;
+;;Verilog;inst_b;inst_ba;Verilog;ent_ba;ent_ba_RTL_CONF;
+;;Verilog;inst_b;inst_bb;Verilog;ent_bb;ent_bb_RTL_CONF;
+:=:=:=>SCHEMA
+Instance;Port;Bits;;Target;;;;;;;
+;;;;inst_a;;;;;;;
+;;;;;;;;;;;
+inst_aa;;;;;;low_bit_a;;;0;;
+;;;;;;;;;;;
+;low_bit_aa;;;0;;;;;;;
+;;;;;;;;;;;
+;LOW_BUS (3 downto 0);;;0;;;;;;;
+;;;;;;;;;;;
+;HIGH;;;1;;;;;;;
+;;;;;;;;;;;
+;high_bus_3_0;;;1;;;;;;;
+;;;;;;;;std_ulogic;%LOW%;;inst_a/low_bit_a
+;part_zero (3 downto 0);;0;;;;;std_ulogic;%LOW%;;inst_aa/low_bit_aa
+;;;1;;;;;std_ulogic_vector( 3 downto 0);%LOW_BUS%;;inst_aa
+;;;;;;;;std_ulogic;%HIGH%;;inst_aa
+;;;;;;;;std_ulogic_vector( 3 downto 0);%HIGH_BUS%;;inst_aa/low_bus_3_0
+;;;;;;;;std_ulogic_vector( 6 downto 0);%LOW_BUS%;;inst_ab/low_bus_6_0
+;;;;;;;;;;;
+inst_ab;;;;;;;;std_ulogic_vector( 3 downto 0);part_zero;inst_aa;inst_ab/port_part_zero_u=(3:2)
+;;;;;;;;;%LOW_BUS%;;inst_ab/port_part_zero_u(3:2)
+;low_bus_6_0;0;;;;;;;;;
+;;;;;;;;;;;
+;port_part_zero_u;0;2;;;;;;;;
+;;1;3;;;;;;;;
+;;2;;0;;;;;;;
+;;3;;0;;;;;;;
+:=:=:=>CONN
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::out;::in;::descr;::comment;
+#;;Bundle Name;Class;Clk Domain;Type;High;Low;;Signal;Outputs;Inputs;Description;;
+#;Version 1.0;20021112;wilfried.gaensheimer@micronas.com;;;;;;;Drivers;;;;
+#InOutput;;;;;;;;;;;;;;
+# Wire LOGIC_0 and LOGIC_1;;;;;;;;;#-currently %LOW% and %LOW_BUS% have to be specified;;;;;
+;;logic0;logic;clk;std_ulogic;;;;%LOW%;;inst_a/low_bit_a;Ground bit port;;
+;;logic0;logic;clk;std_ulogic;;;;%LOW%;;inst_aa/low_bit_aa;;;
+;;logic0;logic;clk;std_ulogic_vector;3;0;;%LOW_BUS%;;inst_aa;Ground port;;
+;;logic1;logic;clk;std_ulogic;;;;%HIGH%;;inst_aa; Wire bit to high;;
+;;logic1;logic;clk;std_ulogic_vector;3;0;;%HIGH_BUS%;;inst_aa/high_bus_3_0;Ground wire_low port;;
+;;logic1;logic;clk;std_ulogic_vector;6;0;;%LOW_BUS%;;inst_ab/low_bus_6_0;Wide low port;;
+# Test cases;;;;;;;;;;;;;;
+;;logic_test1;logic;clk;std_ulogic_vector;3;0;;part_zero;inst_aa;inst_ab/port_part_zero_u=(3:2);Wire two bits to port;;
+;;logic_test1;logic;clk;;;;;%LOW_BUS%;;inst_ab/port_part_zero_u(3:2);Wire two bits to low;;
+:=:=:=>CONNLOWNOBUS
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::out;::in;::descr;::comment;
+#;;Bundle Name;Class;Clk Domain;Type;High;Low;;Signal;Outputs;Inputs;Description;;
+#;Version 1.0;20021112;wilfried.gaensheimer@micronas.com;;;;;;;Drivers;;;;
+#InOutput;;;;;;;;;;;;;;
+# Wire LOGIC_0 and LOGIC_1;;;;;;;;;#-currently %LOW% and %LOW_BUS% have to be specified;;;;;
+#;;logic0;logic;clk;std_ulogic;;;;%LOW%;;inst_a/low_bit_a;Ground bit port;;
+#;;logic0;logic;clk;std_ulogic;;;;%LOW%;;inst_aa/low_bit_aa;;;
+#;;logic0;logic;clk;std_ulogic_vector;3;0;;%LOW_BUS%;;inst_aa;Ground port;;
+#;;logic1;logic;clk;std_ulogic;;;;%HIGH%;;inst_aa; Wire bit to high;;
+#;;logic1;logic;clk;std_ulogic_vector;3;0;;%HIGH_BUS%;;inst_aa/high_bus_3_0;Ground wire_low port;;
+#;;logic1;logic;clk;std_ulogic_vector;6;0;;%LOW_BUS%;;inst_ab/low_bus_6_0;Wide low port;;
+# Test cases;;;;;;;;;;;;;;
+#;;logic_test1;logic;clk;std_ulogic_vector;3;0;;part_zero;inst_aa;inst_ab/port_part_zero_u=(3:2);Wire two bits to port;;
+#;;logic_test1;logic;clk;;;;;%LOW_BUS%;;inst_ab/port_part_zero_u(3:2);Wire two bits to low;;
+#;;;;;;;;;;;;;;
+#!wig20050718: adding %LOW% mapped to bus!;;;;;;;;;;;;;;
+;;logic_test2;logic;clk;std_ulogic_vector;5;0;;%LOW%;;inst_ab/port_low2bus;Map %LOW% to a bus, use std_ulogic_vector;;
+;;logic_test3;logic;clk;std_ulogic_vector;4;0;;%LOW%;;inst_ab/port_low3bus;Map %LOW% to a bus no vector;;
+;;;;;;;;;;;;;;
+;;logic_test4;logic;clk;std_ulogic_vector;5;0;;%LOW_BUS%;;inst_ab/port_lowbus;Correct %LOW_BUS%;;
+;;logic_test5;logic;clk;std_ulogic_vector;4;0;;%LOW_BUS%;;inst_ab/port_lowbus2;Correct %LOW_BUS%, second try;;
+;;;;;;;;;;;;;;
+;;logic_test2;logic;clk;std_ulogic_vector;5;0;;%LOW%;;inst_ab/port_low2bus;Map %LOW% to a bus, use std_ulogic_vector;;
+;;;;;;;;;;;;;;
+#wig20050719: new style high/low assignment:;;;;;;;;;;;;;;
+;;highlow_1;logic;clk;std_ulogic_vector;15;0;;partzero;0=(15:12),1=(10:9),0=(6);inst_ab/partzero;map parts to high and low;;
+;;;;;;;;;partzero;inst_ac/partzero_1=(11);;map parts to high and low inst_aa, single bit;;
+;;;;;;;;;partzero;inst_aa/partzero_2(7:6)=(8:7);;map partzero to inst_aa;;
+;;;;;;;;;partzero;inst_aa/partzero_2(5:0)=(5:0);;map partzero to inst_aa, 2;;

@@ -1,0 +1,435 @@
+:=:=:=>HIER
+::ign;::gen;::variants;::parent;::inst;::shortname;::lang;::entity;::arch;::use;::config;::comment;::descr
+# Generated Intermediate Conn/Hier Data;;;;;;;;;;;;
+# by: wig;;;;;;;;;;;;
+# on: Wed Aug 18 12:41:45 2004;;;;;;;;;;;;
+# cmd: H:/work/mix_new/MIX/mix_0.pl -strip -nodelta ../constant.xls;;;;;;;;;;;;
+;;Default;inst_t;inst_a;;VHDL;inst_a_e;rtl;;inst_a_e_rtl_conf;;
+;;Default;inst_a;inst_aa;;VHDL;inst_aa_e;rtl;;inst_aa_e_rtl_conf;;
+;;Default;inst_a;inst_ab;;VHDL;inst_ab_e;rtl;;inst_ab_e_rtl_conf;;
+;;Default;inst_a;inst_ac;;VHDL;inst_ac_e;rtl;;inst_ac_e_rtl_conf;;
+;;Default;inst_a;inst_ad;;VHDL;inst_ad_e;rtl;;inst_ad_e_rtl_conf;;
+;;Default;inst_a;inst_ae;;VHDL;inst_ae_e;rtl;;inst_ae_e_rtl_conf;;
+;;Default;inst_ae;inst_aea;;VHDL;inst_aea_e;rtl;;inst_aea_e_rtl_conf;;
+;;Default;inst_t;inst_e;;VHDL;inst_e_e;rtl;;inst_e_e_rtl_conf;;
+;;Default;inst_e;inst_ea;;VHDL;inst_ea_e;rtl;;inst_ea_e_rtl_conf;;
+;;Default;testbench;inst_t;;VHDL;inst_t_e;rtl;;inst_t_e_rtl_conf;;
+;;Default;W_NO_PARENT;testbench;;vhdl;W_NO_ENTITY;rtl;;W_NO_ENTITY_rtl_conf;;
+:=:=:=>CONN
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::shortname;::out;::in;::descr;::comment;::const_name;::result_vhdl;::result_veri
+# Generated Intermediate Conn/Hier Data;;;;;;;;;;;;;;;;;
+# by: wig;;;;;;;;;;;;;;;;;
+# on: Wed Aug 18 12:41:45 2004;;;;;;;;;;;;;;;;;
+# cmd: H:/work/mix_new/MIX/mix_0.pl -strip -nodelta ../constant.xls;;;;;;;;;;;;;;;;;
+;;Bug20040329a;;;std_ulogic;;;C;bug20040329a_t1;;0;inst_aa/bug20040329a_t1;;__I_SET_MODE_C;bug20040329a_t1;"constant bug20040329a_t1_c : std_ulogic := 16#0#; -- __I_ConvConstant2:0x0";1'h0
+;;Bug20040329a;;;std_ulogic;;;C;bug20040329a_t2;;0;inst_aa/bug20040329a_t2;;__I_SET_MODE_C;bug20040329a_t2;"constant bug20040329a_t2_c : std_ulogic := '0';";1'b0
+;;Bug20040329a;;;std_ulogic;;;C;bug20040329a_t3;;0;inst_aa/bug20040329a_t3;;__I_SET_MODE_C;bug20040329a_t3;"constant bug20040329a_t3_c : std_ulogic := 2#0#; -- __I_ConvConstant3:0b0";1'b0
+;;Bug20040329a;;;std_ulogic;;;C;bug20040329a_t4;;85;inst_aa/bug20040329a_t4;;__I_SET_MODE_C;bug20040329a_t4;"constant bug20040329a_t4_c : std_ulogic := 2#0101_0101#; -- __I_ConvConstant3:0b0101_0101";8'b0101_0101
+;;BusPartAs20040728;;;std_ulogic_vector;7;0;C;bus20040728;;0(7:0)=(7:0);inst_aa/bus20040728_all_i(7:0)=(7:0);;__I_SET_MODE_C;;;
+;;;;;std_ulogic_vector;7;0;C;bus20040728_altconst;;0(2:0)=(3:1);__BUS__/bus20040728_altop(7:0)=(7:0);;__I_SET_MODE_C;;;
+;;;;;std_ulogic_vector;7;0;C;bus20040728_altconst2;;1=(0:0);__BUS__/bus20040728_altop(7:0)=(7:0);;__I_SET_MODE_C;;;
+;;BusPartAs20040728;;;std_ulogic_vector;7;0;;bus20040728_altop;;inst_ab/bus20040728_altop_o1(3:0)=(7:4);"inst_aea/bus20040728_altop_i(7:0)=(7:0), 
+inst_ae/bus20040728_altop_i(7:0)=(7:0)";;;;;
+;;BusPartAs20040728;;;std_ulogic_vector;7;0;;bus20040728_part;;"inst_ab/bus20040728_o1(1:0)=(1:0), 
+inst_ab/bus20040728_o2(0:0)=(3:3), 
+inst_ac/bus20040728_oc(0:0)=(7:7)";inst_aa/bus20040728_part_i(7:0)=(7:0);;;;;
+;;;;;std_ulogic_vector;7;0;C;bus20040728_part_c1;;0=(2:2);__BUS__/bus20040728_part(7:0)=(7:0);map_const_bus;__I_SET_MODE_C;;;
+;;;;;std_ulogic_vector;7;0;C;bus20040728_part_c2;;0(2:0)=(6:4);__BUS__/bus20040728_part(7:0)=(7:0);map_const_bus;__I_SET_MODE_C;;;
+;;BusPartAs20040728;;;std_ulogic_vector;7;0;;bus20040728_top;;inst_ab/bus20040728_top_o1(3:0)=(7:4);"inst_aea/bus20040728_top_i(7:0)=(7:0), 
+inst_ae/p_mix_bus20040728_top_7_4_gi(3:0)=(7:4)";;;;;
+;;;;;std_ulogic_vector;7;0;C;bus20040728_top_c1;;0(2:0)=(3:1);__BUS__/bus20040728_top(7:0)=(7:0);;;;;
+;;;;;std_ulogic_vector;7;0;C;bus20040728_top_c2;;1=(0:0);__BUS__/bus20040728_top(7:0)=(7:0);;;;;
+;;CONSTANT;;;std_ulogic;;;C;const_01;;0;inst_aa/const_01_p;;;const_01_c;std_ulogic := '0';'0' 
+;;CONSTANT;;;std_ulogic;;;C;const_02;;1;inst_aa/const_02_p;;;const_02_c;std_ulogic := '1';'1' 
+;;const_signal;const_signal;;std_ulogic_vector;6;0;C;const_03;;"""64""(6:0)=(6:0)";inst_aa/const_03(6:0)=(6:0);Constant Wire, wire port const_wire to constant;__I_SET_MODE_C;const_03_c;"std_ulogic_vector(6 downto 0) := ""64"";";"""64""  // __I_VectorConv"
+;;const_signal;const_signal;;std_ulogic_vector;3;0;C;const_04;;"""32""(3:0)=(3:0)";inst_ab/const_04(3:0)=(3:0);Constant Wire, wire port const_wire to constant;__I_SET_MODE_C;const_04_c;"std_ulogic_vector(3 downto 0) := ""32""";"""32""  // __I_VectorConv"
+;;const_signal;const_signal;;std_ulogic;;;C;const_05;;1;inst_aa/const_05;Constant Wire, wire port const_wire to constant;__I_SET_MODE_C;const_05_c;std_ulogic := '1';'1' 
+;;const_signal;const_signal;;std_ulogic_vector;6;0;C;const_06;;15(6:0)=(6:0);inst_ea/const_06_p(6:0)=(6:0);Constant Wire, # take literally, but will not work!;__I_SET_MODE_C;const_06_c;"std_ulogic_vector(6 downto 0) := ""0001111""; -- __I_ConvConstant: 0xf";"7`""0001111"""
+;;const_signal;const_signal;;std_ulogic_vector;5;0;C;mix_const_0;;15(5:0)=(5:0);inst_ea/const_07_p(5:0)=(5:0);Constant Wire, # take literally, but will not valid VHDL;;mix_const_0_c;"std_ulogic_vector(5 downto 0) := ""001111""; -- __I_ConvConstant: 0xf";"6`""001111"""
+;;const_signal;const_signal;;std_ulogic_vector;4;0;C;mix_const_1;;0(4:0)=(4:0);inst_ab/const_08_p(4:0)=(4:0);Set to 0;;mix_const_1_c;"std_ulogic_vector(4 downto 0) := ( others => '0');";'0' 
+;;Formats;;;integer;;;C;mix_const_10;;16#FF#;inst_aa/vhdl_basehex_p;;;mix_const_10_c;"integer := 16#FF#;";16#FF#  // __I_ConstNoconv
+;;Formats;;;integer;;;C;mix_const_11;;2#1010_1010#;inst_aa/vhdlbase2_p;;;mix_const_11_c;"integer := 2#1010_1010#;";2#1010_1010#  // __I_ConstNoconv
+;;Formats;;;real;;;C;mix_const_12;;2.2E-6;inst_aa/reale_p;;;mix_const_12_c;"real := 2.2E-6;";2.2E-6  // __I_ConstNoconv
+;;Formats;;;time;;;C;mix_const_13;;10 ns;inst_aa/int_time_p;;;mix_const_13_c;"time := 10 ns;";10 ns 
+;;Formats;;;time;;;C;mix_const_14;;2.27us;inst_aa/real_time_p;;;mix_const_14_c;time := 2.27 us;2.27 us 
+;;Formats;;;string;;;C;mix_const_15;;"""ein string""";inst_aa/string_p;;;mix_const_15_c;"string := ""ein string"";";"""ein string""  // __I_ConstNoconv"
+;;Formats;;;bit_vector;7;0;C;mix_const_16;;"""11111111""(7:0)=(7:0)";inst_aa/bit_vector_p(7:0)=(7:0);;;mix_const_16_c;"bit_vector(7 downto 0) := ""11111111"";";"""11111111""  // __I_VectorConv"
+;;Formats;;;bit_vector;7;0;C;mix_const_17;;"""1010""(7:0)=(7:0)";inst_ea/bad_width_p(7:0)=(7:0);#!Illegal;;mix_const_17_c;"bit_vector(7 downto 0) := ""1010""; -- __I_VectorConv";"""1010"""
+;;Formats;;;std_ulogic_vector;7;0;C;mix_const_18;;"""01010101""(7:0)=(7:0)";inst_aa/std_ulogic_vector_p(7:0)=(7:0);;;mix_const_18_c;"std_ulogic_vector(7 downto 0) := ""01010101"";";"""01010101""  // __I_VectorConv"
+;;Constant;;;std_ulogic;;;C;mix_const_19;;0;inst_ea/zero_dup_e;#Illegal;;mix_const_19_c;"std_ulogic := '0';";'0'
+;;const_signal;const_signal;;std_ulogic_vector;2;0;C;mix_const_2;;1(2:0)=(2:0);inst_ab/const_09_p(2:0)=(2:0);Set to 1;;mix_const_2_c;"std_ulogic_vector(2 downto 0) := ( others => '1' );";'1' 
+;;;;;std_ulogic;;;C;mix_const_20;;1;inst_ea/zero_dup_e;#Illegal;;mix_const_20_c;"std_ulogic := '1';";'1'
+;;;;;std_ulogic_vector;7;0;C;mix_const_21;;"""10101100""(7:0)=(7:0)";"inst_aa/vector_duo_1(7:0)=(7:0), 
+inst_aa/vector_duo_2(7:0)=(7:0)";;;mix_const_21_c;"std_ulogic_vector(7 downto 0) := ""10101100"";";"""10101100""  // __I_VectorConv"
+;;;;;std_ulogic_vector;7;0;C;mix_const_22;;"""10101100""(7:0)=(7:0)";"inst_aa/inst_duo_1(7:0)=(7:0), 
+inst_ab/inst_duo_2(7:0)=(7:0)";;;mix_const_22_c;"std_ulogic_vector(7 downto 0) := ""10101100"";";"""10101100""  // __I_VectorConv"
+;;Std_ulogic;;;std_ulogic_vector;7;0;C;mix_const_23;;16#FF#(7:0)=(7:0);inst_aa/std_u_logic_vport(7:0)=(7:0);;;mix_const_23_c;"std_ulogic_vector(7 downto 0) := ""11111111""; -- __I_ConvConstant: 16#FF#";"8`""11111111""  // __I_ConvConstant: 16#FF#"
+;;Std_ulogic;;;std_ulogic_vector;7;0;C;mix_const_24;;16#11#(7:0)=(7:0);inst_aa/std_u_11_vport(7:0)=(7:0);;;mix_const_24_c;"std_ulogic_vector(7 downto 0) := ""00010001""; -- __I_ConvConstant: 16#11#";"8`""00010001""  // __I_ConvConstant: 16#11#"
+;;Std_ulogic;;;std_ulogic_vector;10;0;C;mix_const_25;;16#FF#(10:0)=(10:0);inst_aa/std_u_logic_vport_ext(10:0)=(10:0);;;mix_const_25_c;"std_ulogic_vector(10 downto 0) := ""00011111111""; -- __I_ConvConstant: 16#FF#";"11`""00011111111""  // __I_ConvConstant: 16#FF#"
+;;Std_ulogic;;;std_ulogic_vector;7;0;C;mix_const_26;;255(7:0)=(7:0);inst_aa/std_u_logic_port_02(7:0)=(7:0);;;mix_const_26_c;"std_ulogic_vector(7 downto 0) := ""11111111""; -- __I_ConvConstant: 0xff";"8`""11111111""  // __I_ConvConstant: 0xff"
+;;Std_ulogic;;;std_ulogic_vector;7;0;C;mix_const_27;;85(7:0)=(7:0);inst_aa/std_u_logic_bin_p(7:0)=(7:0);;;mix_const_27_c;"std_ulogic_vector(7 downto 0) := ""01010101""; -- __I_ConvConstant: 0b01010101";"8`""01010101""  // __I_ConvConstant: 0b01010101"
+;;Std_ulogic;;;std_ulogic_vector;7;0;C;mix_const_28;;8#07#(7:0)=(7:0);inst_aa/std_u_logic_octv_p(7:0)=(7:0);;;mix_const_28_c;"std_ulogic_vector(7 downto 0) := ""00000111""; -- __I_ConvConstant: 8#07#";"8`""00000111""  // __I_ConvConstant: 8#07#"
+;;Std_ulogic;;;std_ulogic_vector;7;0;C;mix_const_29;;2#11001100#(7:0)=(7:0);inst_aa/std_u_logic_binv_p(7:0)=(7:0);;;mix_const_29_c;"std_ulogic_vector(7 downto 0) := ""11001100""; -- __I_ConvConstant: 2#11001100#";"8`""11001100""  // __I_ConvConstant: 2#11001100#"
+;;const_signal;const_signal;;std_ulogic_vector;3;0;C;mix_const_3;;1(3:0)=(3:0);"inst_ab/const_10_2(2:2)=(0:0), 
+inst_ab/const_10_2(0:0)=(0:0)";Set two pins to 1;;mix_const_3_c;"std_ulogic_vector(3 downto 0) := ( others => '1' );";'1' 
+;;Std_ulogic;;;std_ulogic_vector;7;0;C;mix_const_30;;4#3030#(7:0)=(7:0);inst_aa/std_u_logic_quadv_p(7:0)=(7:0);;;mix_const_30_c;"std_ulogic_vector(7 downto 0) := 4#3030#; -- __I_ConvConstant: 4#3030#";4#3030#  // __I_ConvConstant: 4#3030#
+;;Std_ulogic;;;std_ulogic_vector;3;0;C;mix_const_31;;16#ee#(3:0)=(3:0);inst_aa/std_u_logic_hexerr_p(3:0)=(3:0);;;mix_const_31_c;"std_ulogic_vector(3 downto 0) := ""11101110""; -- __E_VECTOR_WIDTH  -- __I_ConvConstant: 16#ee#";"4`""11101110""  // __E_VECTOR_WIDTH  // __I_ConvConstant: 16#ee#"
+;;const_signal;const_signal;;std_ulogic_vector;3;0;C;mix_const_4;;0(3:0)=(3:0);"inst_ab/const_10_2(3:3)=(0:0), 
+inst_ab/const_10_2(1:1)=(0:0)";Set two pins to 0;;mix_const_4_c;"std_ulogic_vector(3 downto 0) := ( others => '0' );";'0' 
+;;Formats;;;std_ulogic;;;C;mix_const_5;;0;inst_aa/zero_p;;;mix_const_5_c;"std_ulogic := '0';";'0' 
+;;Formats;;;std_ulogic;;;C;mix_const_6;;1;inst_aa/one_p;;;mix_const_6_c;std_ulogic := '1';'1' 
+;;Formats;;;integer;;;C;mix_const_7;;10;inst_aa/integer_p;;;mix_const_7_c;"integer := 10;";10  // __I_ConstNoconv
+;;Formats;;;real;;;C;mix_const_8;;10.2;inst_aa/real_p;;;mix_const_8_c;"real := 10.2;";10.2  // __I_ConstNoconv
+;;Formats;;;real;;;C;mix_const_9;;1_000_000.0;inst_aa/under_p;;;mix_const_9_c;"real := 1_000_000.0;";1_000_000.0  // __I_ConstNoconv
+:=:=:=>CONF
+MIXCFG;CONST_NR;32
+MIXCFG;DELTA_INT_NR;0
+MIXCFG;DELTA_NR;0
+MIXCFG;DELTA_VER_NR;0
+MIXCFG;ERROR;__ERROR__
+MIXCFG;GENERIC_NR;0
+MIXCFG;PRINTTIMING;1
+MIXCFG;TYPECAST_NR;0
+MIXCFG;WARN;__WARNING__
+MIXCFG;check.defs;
+MIXCFG;check.hdlout.extmask.arch;
+MIXCFG;check.hdlout.extmask.conf;
+MIXCFG;check.hdlout.extmask.entity;
+MIXCFG;check.hdlout.filter.arch;
+MIXCFG;check.hdlout.filter.conf;
+MIXCFG;check.hdlout.filter.entity;
+MIXCFG;check.hdlout.mode;entity,leaf,generated,ignorecase
+MIXCFG;check.hdlout.path;
+MIXCFG;check.inst;nomulti
+MIXCFG;check.keywords.verilog;(register|net|wire|in|out|inout)
+MIXCFG;check.keywords.vhdl;(open|instance|entity|signal)
+MIXCFG;check.name.conf;check,lc
+MIXCFG;check.name.conn;check,lc
+MIXCFG;check.name.enty;check,lc
+MIXCFG;check.name.inst;check,lc
+MIXCFG;check.name.pad;check,lc
+MIXCFG;check.name.port;check,lc
+MIXCFG;check.signal;load,driver,check,top_open
+MIXCFG;conf.parsed;0
+MIXCFG;conf.req;optional
+MIXCFG;conf.xls;CONF
+MIXCFG;conn.ext;17
+MIXNOCFG;conn.field.::bundle;ARRAY
+MIXNOCFG;conn.field.::class;ARRAY
+MIXNOCFG;conn.field.::clock;ARRAY
+MIXNOCFG;conn.field.::comment;ARRAY
+MIXNOCFG;conn.field.::const_name;ARRAY
+MIXNOCFG;conn.field.::debug;ARRAY
+MIXNOCFG;conn.field.::default;ARRAY
+MIXNOCFG;conn.field.::descr;ARRAY
+MIXNOCFG;conn.field.::gen;ARRAY
+MIXNOCFG;conn.field.::high;ARRAY
+MIXNOCFG;conn.field.::ign;ARRAY
+MIXNOCFG;conn.field.::in;ARRAY
+MIXNOCFG;conn.field.::low;ARRAY
+MIXNOCFG;conn.field.::mode;ARRAY
+MIXNOCFG;conn.field.::name;ARRAY
+MIXNOCFG;conn.field.::out;ARRAY
+MIXNOCFG;conn.field.::result_veri;ARRAY
+MIXNOCFG;conn.field.::result_vhdl;ARRAY
+MIXNOCFG;conn.field.::shortname;ARRAY
+MIXNOCFG;conn.field.::skip;ARRAY
+MIXNOCFG;conn.field.::type;ARRAY
+MIXCFG;conn.field.nr;19
+MIXCFG;conn.key;::name
+MIXCFG;conn.parsed;1
+MIXCFG;conn.req;mandatory
+MIXCFG;conn.xls;CONN
+MIXCFG;cwd;H:/work/mix_new/MIX/test/xls_input/constant
+MIXCFG;drive;H:/
+MIXCFG;dump;constant.pld
+MIXCFG;format.csv.cellsep;";"
+MIXCFG;format.csv.quoting;""""
+MIXCFG;format.csv.sheetsep;:=:=:=>
+MIXCFG;format.out;
+MIXCFG;hier.ext;9
+MIXNOCFG;hier.field.::arch;ARRAY
+MIXNOCFG;hier.field.::comment;ARRAY
+MIXNOCFG;hier.field.::config;ARRAY
+MIXNOCFG;hier.field.::debug;ARRAY
+MIXNOCFG;hier.field.::default;ARRAY
+MIXNOCFG;hier.field.::descr;ARRAY
+MIXNOCFG;hier.field.::entity;ARRAY
+MIXNOCFG;hier.field.::gen;ARRAY
+MIXNOCFG;hier.field.::hierachy;ARRAY
+MIXNOCFG;hier.field.::ign;ARRAY
+MIXNOCFG;hier.field.::inst;ARRAY
+MIXNOCFG;hier.field.::lang;ARRAY
+MIXNOCFG;hier.field.::parent;ARRAY
+MIXNOCFG;hier.field.::shortname;ARRAY
+MIXNOCFG;hier.field.::skip;ARRAY
+MIXNOCFG;hier.field.::use;ARRAY
+MIXNOCFG;hier.field.::variants;ARRAY
+MIXCFG;hier.field.nr;14
+MIXCFG;hier.key;::inst
+MIXCFG;hier.parsed;1
+MIXCFG;hier.req;mandatory
+MIXCFG;hier.xls;HIER
+MIXCFG;i2c.cols;0
+MIXNOCFG;i2c.field.::b;ARRAY
+MIXNOCFG;i2c.field.::busy;ARRAY
+MIXNOCFG;i2c.field.::clock;ARRAY
+MIXNOCFG;i2c.field.::comment;ARRAY
+MIXNOCFG;i2c.field.::default;ARRAY
+MIXNOCFG;i2c.field.::dev;ARRAY
+MIXNOCFG;i2c.field.::dir;ARRAY
+MIXNOCFG;i2c.field.::ign;ARRAY
+MIXNOCFG;i2c.field.::init;ARRAY
+MIXNOCFG;i2c.field.::interface;ARRAY
+MIXNOCFG;i2c.field.::rec;ARRAY
+MIXNOCFG;i2c.field.::reset;ARRAY
+MIXNOCFG;i2c.field.::spec;ARRAY
+MIXNOCFG;i2c.field.::sub;ARRAY
+MIXNOCFG;i2c.field.::variants;ARRAY
+MIXCFG;i2c.field.nr;15
+MIXCFG;i2c.parsed;0
+MIXCFG;i2c.req;optional
+MIXCFG;i2c.xls;I2C
+MIXCFG;i2c_cell.%IIC_PAR_REG%;iic_par_reg_
+MIXCFG;i2c_cell.%IIC_SER_REG%;iic_ser_reg_
+MIXCFG;i2c_cell.%IIC_SYNC%;sync_iic
+MIXCFG;i2c_cell.type;ser
+MIXCFG;input.ext.csv;csv
+MIXCFG;input.ext.excel;xls
+MIXCFG;input.ext.soffice;sxc
+MIXCFG;intermediate.ext;
+MIXCFG;intermediate.format;prev
+MIXCFG;intermediate.keep;3
+MIXCFG;intermediate.order;input
+MIXCFG;intermediate.path;.
+MIXCFG;intermediate.strip;1
+MIXCFG;internal.format;perl
+MIXCFG;internal.order;input
+MIXCFG;internal.path;.
+MIXCFG;io.cols;0
+MIXNOCFG;io.field.::class;ARRAY
+MIXNOCFG;io.field.::comment;ARRAY
+MIXNOCFG;io.field.::debug;ARRAY
+MIXNOCFG;io.field.::default;ARRAY
+MIXNOCFG;io.field.::ign;ARRAY
+MIXNOCFG;io.field.::iocell;ARRAY
+MIXNOCFG;io.field.::ispin;ARRAY
+MIXNOCFG;io.field.::muxopt;ARRAY
+MIXNOCFG;io.field.::name;ARRAY
+MIXNOCFG;io.field.::pad;ARRAY
+MIXNOCFG;io.field.::pin;ARRAY
+MIXNOCFG;io.field.::port;ARRAY
+MIXNOCFG;io.field.::skip;ARRAY
+MIXNOCFG;io.field.::type;ARRAY
+MIXCFG;io.field.nr;12
+MIXCFG;io.parsed;0
+MIXCFG;io.req;optional
+MIXCFG;io.xls;IO
+MIXCFG;iocell.auto;bus
+MIXCFG;iocell.bus;_vector
+MIXCFG;iocell.defaultdir;in
+MIXCFG;iocell.embedded;
+MIXCFG;iocell.in;do,en,pu,pd,xout
+MIXCFG;iocell.inout;__NOINOUT__
+MIXCFG;iocell.name;%::iocell%_%::pad%
+MIXCFG;iocell.out;di,xin
+MIXCFG;iocell.select;onehot,auto
+MIXCFG;iswin;1
+MIXCFG;macro.%0%;mix_0.pl
+MIXCFG;macro.%ARGV%;H:/work/mix_new/MIX/mix_0.pl -strip -nodelta ../constant.xls
+MIXCFG;macro.%BUFFER%;buffer
+MIXCFG;macro.%BUS%;__BUS__
+MIXCFG;macro.%BUS_TYPE%;std_ulogic_vector
+MIXCFG;macro.%CONST%;__CONST__
+MIXCFG;macro.%DATE%;Wed Aug 18 12:41:45 2004
+MIXCFG;macro.%DEFAULT_CONFIG%;%::entity%_%::arch%_conf
+MIXCFG;macro.%DEFAULT_MODE%;S
+MIXCFG;macro.%EMPTY%;
+MIXCFG;macro.%GENERIC%;__GENERIC__
+MIXCFG;macro.%H%;$
+MIXCFG;macro.%HIGH%;mix_logic1
+MIXCFG;macro.%HIGH_BUS%;mix_logic1_bus
+MIXCFG;macro.%HOME%;H:\
+MIXCFG;macro.%IIC_IF%;iic_if_
+MIXCFG;macro.%IIC_SYNC%;sync_if_
+MIXCFG;macro.%IIC_TRANS%;transceiver_iic_if_
+MIXCFG;macro.%IMPORT%;__IMPORT__
+MIXCFG;macro.%IMPORT_BUNDLE%;__IMPORT_BUNDLE__
+MIXCFG;macro.%IMPORT_CLK%;__IMPORT_CLK__
+MIXCFG;macro.%IMPORT_I%;I
+MIXCFG;macro.%IMPORT_O%;O
+MIXCFG;macro.%IOCELL_CLK%;CLK
+MIXCFG;macro.%IOCELL_SELECT_PORT%;__I_default_select
+MIXCFG;macro.%IOCELL_TYPE%;__E_DEFAULT_IOCELL__
+MIXCFG;macro.%IOCR%;\n
+MIXCFG;macro.%LANGUAGE%;vhdl
+MIXCFG;macro.%LOW%;mix_logic0
+MIXCFG;macro.%LOW_BUS%;mix_logic0_bus
+MIXCFG;macro.%NCD%;__NOCOMPDEC__
+MIXCFG;macro.%NOSEL%;__I_NOSEL__
+MIXCFG;macro.%NOSELPORT%;__I_NOSELPORT__
+MIXCFG;macro.%NO_COMP%;__NOCOMPDEC__
+MIXCFG;macro.%NO_COMPONENT_DECLARATION%;__NOCOMPDEC__
+MIXCFG;macro.%NO_CONFIG%;NO_CONFIG
+MIXCFG;macro.%NULL%;0
+MIXCFG;macro.%OPEN%;open
+MIXCFG;macro.%OS%;MSWin32
+MIXCFG;macro.%PAD_CLASS%;PAD
+MIXCFG;macro.%PAD_TYPE%;__E_DEFAULT_PAD__
+MIXCFG;macro.%PARAMETER%;__PARAMETER__
+MIXCFG;macro.%PROJECT%;NO_PROJECT_SET
+MIXCFG;macro.%RREG%;read_reg_
+MIXCFG;macro.%RWREG%;read_write_reg_
+MIXCFG;macro.%S%;\t
+MIXCFG;macro.%SIGNAL%;std_ulogic
+MIXCFG;macro.%SPACE%; 
+MIXCFG;macro.%TAB%;\t
+MIXCFG;macro.%TBD%;__W_TO_BE_DEFINED
+MIXCFG;macro.%TOP%;__TOP__
+MIXCFG;macro.%TPYECAST_ENT%;__TYPECAST_ENT__
+MIXCFG;macro.%TRISTATE%;tristate
+MIXCFG;macro.%TYPECAST_CONF%;__TYPECAST_CONF__
+MIXCFG;macro.%UAMN%;
+MIXCFG;macro.%UNDEF%;ERROR_UNDEF
+MIXCFG;macro.%UNDEF_1%;ERROR_UNDEF_1
+MIXCFG;macro.%UNDEF_2%;ERROR_UNDEF_2
+MIXCFG;macro.%UNDEF_3%;ERROR_UNDEF_3
+MIXCFG;macro.%UNDEF_4%;ERROR_UNDEF_4
+MIXCFG;macro.%USEASMODULENAME%;
+MIXCFG;macro.%USER%;wig
+MIXCFG;macro.%VERILOG_DEFINES%;\t// No `defines in this module
+MIXCFG;macro.%VERILOG_TIMESCALE%;`timescale 1ns / 1ps
+MIXCFG;macro.%VERILOG_USE_ARCH%;%EMPTY%
+MIXCFG;macro.%VERSION%;Revision: 1.32 
+MIXCFG;macro.%VHDL_NOPROJ%;-- No project specific VHDL libraries
+MIXCFG;macro.%VHDL_USE%;-- No project specific VHDL libraries
+MIXCFG;macro.%VHDL_USE_ARCH%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;macro.%VHDL_USE_CONF%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;macro.%VHDL_USE_DEFAULT%;"library IEEE;\nuse IEEE.std_logic_1164.all;\n"
+MIXCFG;macro.%VHDL_USE_ENTY%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;macro.%WREG%;write_reg_
+MIXCFG;out;constant-mixed.xls
+MIXCFG;outarch;ARCH
+MIXCFG;outconf;constant-c.vhd
+MIXCFG;outenty;ENTY
+MIXCFG;output.comment.default;#
+MIXCFG;output.comment.delta;#
+MIXCFG;output.comment.intermediate;#
+MIXCFG;output.comment.internal;#
+MIXCFG;output.comment.verilog;//
+MIXCFG;output.comment.vhdl;--
+MIXCFG;output.delta;sort,remove
+MIXCFG;output.ext.delta;.diff
+MIXCFG;output.ext.intermediate;mixed
+MIXCFG;output.ext.internal;pld
+MIXCFG;output.ext.verify;.ediff
+MIXCFG;output.ext.verilog;v
+MIXCFG;output.ext.vhdl;vhd
+MIXCFG;output.filename;useminus
+MIXCFG;output.format;ext
+MIXCFG;output.generate._re_xinout;^__NOEXCLUDESIGNAL__$
+MIXCFG;output.generate.arch;leaf
+MIXCFG;output.generate.bak;0
+MIXCFG;output.generate.combine;0
+MIXCFG;output.generate.conf;leaf
+MIXCFG;output.generate.delta;0
+MIXCFG;output.generate.enty;leaf
+MIXCFG;output.generate.fold;signal
+MIXCFG;output.generate.inout;mode,noxfix
+MIXCFG;output.generate.portdescr;%::descr%
+MIXCFG;output.generate.portdescrlength;100
+MIXCFG;output.generate.use;enty
+MIXCFG;output.generate.verilog;
+MIXCFG;output.generate.workaround._magma_def_;\n`ifdef MAGMA\n    `define %::entity%_inst_name %::entity%\n`else\n    `define %::entity%_inst_name %::config%\n`endif\n
+MIXCFG;output.generate.workaround._magma_mod_;`%::entity%_inst_name
+MIXCFG;output.generate.workaround._magma_uamn_;
+MIXCFG;output.generate.workaround.magma;useasmodulename_define
+MIXCFG;output.generate.workaround.std_log_typecast;ignore
+MIXCFG;output.generate.workaround.typecast;intsig
+MIXCFG;output.generate.workaround.verilog;dummyopen
+MIXCFG;output.generate.xinout;
+MIXCFG;output.order;input
+MIXCFG;output.path;.
+MIXCFG;output.warnings;
+MIXCFG;pad.PAD_ACTIVE_EN;1
+MIXCFG;pad.PAD_ACTIVE_PD;1
+MIXCFG;pad.PAD_ACTIVE_PU;1
+MIXCFG;pad.PAD_DEFAULT_DO;0
+MIXCFG;pad.name;%PREFIX_PAD_GEN%%::pad%
+MIXCFG;port.generate.name;postfix
+MIXCFG;port.generate.width;auto
+MIXCFG;postfix.POSTFILE_ARCH;-a
+MIXCFG;postfix.POSTFILE_CONF;-c
+MIXCFG;postfix.POSTFILE_ENTY;-e
+MIXCFG;postfix.POSTFIX_ARCH;%EMPTY%
+MIXCFG;postfix.POSTFIX_CONF;%EMPTY%
+MIXCFG;postfix.POSTFIX_CONSTANT;_c
+MIXCFG;postfix.POSTFIX_ENTY;%EMPTY%
+MIXCFG;postfix.POSTFIX_GENERIC;_g
+MIXCFG;postfix.POSTFIX_IIC_IN;_iic_i
+MIXCFG;postfix.POSTFIX_IIC_OUT;_iic_o
+MIXCFG;postfix.POSTFIX_INSTANCE;%EMPTY%
+MIXCFG;postfix.POSTFIX_IOC_GEN;%EMPTY%
+MIXCFG;postfix.POSTFIX_PAD_GEN;%EMPTY%
+MIXCFG;postfix.POSTFIX_PARAMETER;_p
+MIXCFG;postfix.POSTFIX_PORT_GEN;_g%IO%
+MIXCFG;postfix.POSTFIX_PORT_IN;_i
+MIXCFG;postfix.POSTFIX_PORT_IO;_io
+MIXCFG;postfix.POSTFIX_PORT_OUT;_o
+MIXCFG;postfix.POSTFIX_SIGNAL;_s
+MIXCFG;postfix.PREFIX_CONST;mix_const_
+MIXCFG;postfix.PREFIX_GENERIC;mix_generic_
+MIXCFG;postfix.PREFIX_INSTANCE;i_
+MIXCFG;postfix.PREFIX_IOC_GEN;ioc_
+MIXCFG;postfix.PREFIX_KEYWORD;mix_key_
+MIXCFG;postfix.PREFIX_PAD_GEN;pad_
+MIXCFG;postfix.PREFIX_PARAMETER;mix_parameter_
+MIXCFG;postfix.PREFIX_PORT_GEN;p_mix_
+MIXCFG;postfix.PREFIX_SIG_INT;s_int_
+MIXCFG;postfix.PREFIX_TC_INT;s_mix_tc_
+MIXCFG;script.excel.alerts;off
+MIXCFG;script.post;
+MIXCFG;script.pre;
+MIXCFG;sum.checkforce;0
+MIXCFG;sum.checkunique;0
+MIXCFG;sum.checkwarn;0
+MIXCFG;sum.cmacros;0
+MIXCFG;sum.conn;52
+MIXCFG;sum.errors;0
+MIXCFG;sum.genport;1
+MIXCFG;sum.hdlfiles;0
+MIXCFG;sum.inst;16
+MIXCFG;sum.multdriver;0
+MIXCFG;sum.nodriver;0
+MIXCFG;sum.noload;0
+MIXCFG;sum.openports;0
+MIXCFG;sum.warnings;0
+MIXCFG;template.verilog.arch.head;## Verilog Architecture Template String t.b.d.
+MIXCFG;template.verilog.conf.head;## Verilog Configuration Template String t.b.d.
+MIXCFG;template.verilog.enty.head;## Verilog Entity Template String t.b.d.
+MIXCFG;template.verilog.file;##Verilog File Template String t.b.d.
+MIXCFG;template.verilog.wrap;## Verilog Wrapper Template String t.b.d.
+MIXCFG;template.vhdl.arch.head;## VHDL Architecture Template String t.b.d.
+MIXCFG;template.vhdl.conf.head;## VHDL Configuration Template String t.b.d.
+MIXCFG;template.vhdl.enty.head;## VHDL Entity Template String t.b.d.
+MIXCFG;top;TESTBENCH
+MIXCFG;typecast.std_logic.std_ulogic;"std_logic( %signal% );"
+MIXCFG;typecast.std_logic_vector.std_ulogic_vector;"std_logic_vector( %signal% );"
+MIXCFG;typecast.std_ulogic.std_logic;"std_ulogic( %signal% );"
+MIXCFG;typecast.std_ulogic_vector.std_logic_vector;"std_ulogic_vector( %signal% );"
+MIXCFG;variant;Default
+MIXNOCFG;vi2c.field.::b;ARRAY
+MIXNOCFG;vi2c.field.::comment;ARRAY
+MIXNOCFG;vi2c.field.::debug;ARRAY
+MIXNOCFG;vi2c.field.::default;ARRAY
+MIXNOCFG;vi2c.field.::hierachy;ARRAY
+MIXNOCFG;vi2c.field.::ign;ARRAY
+MIXNOCFG;vi2c.field.::inst;ARRAY
+MIXNOCFG;vi2c.field.::shortname;ARRAY
+MIXNOCFG;vi2c.field.::skip;ARRAY
+MIXNOCFG;vi2c.field.::type;ARRAY
+MIXNOCFG;vi2c.field.::variants;ARRAY
+MIXCFG;vi2c.field.nr;12
+MIXCFG;vi2c.parsed;0
+MIXCFG;vi2c.req;optional
+MIXCFG;vi2c.xls;VI2C

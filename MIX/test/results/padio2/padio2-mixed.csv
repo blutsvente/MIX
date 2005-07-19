@@ -1,0 +1,728 @@
+:=:=:=>HIER
+::ign;::gen;::variants;::parent;::inst;::shortname;::lang;::entity;::arch;::use;::config;::comment;::descr
+# Generated Intermediate Conn/Hier Data;;;;;;;;;;;;
+# by: wig;;;;;;;;;;;;
+# on: Mon Jul 18 17:59:48 2005;;;;;;;;;;;;
+# cmd: h:/work/eclipse/mix/mix_0.pl -strip -nodelta ../padio2.xls;;;;;;;;;;;;
+;;Default;testbench;dut;;vhdl;pad_tb;struct;;pad_tb_struct_conf;;
+;;Default;dut;i_padframe;;vhdl;padframe;struct;;padframe_struct_conf;;
+;;Default;i_padframe;i_pads_en;;vhdl;pads_eastnord;struct;work.vst_5lm_io_components;pads_eastnord_struct_conf;;
+;;Default;i_padframe;i_pads_es;;vhdl;pads_eastsouth;struct;work.vst_5lm_io_components;pads_eastsouth_struct_conf;;
+;;Default;i_padframe;i_pads_ne;;vhdl;pads_nordeast;struct;work.vst_5lm_io_components;pads_nordeast_struct_conf;;
+;;Default;i_padframe;i_pads_nw;;vhdl;pads_nordwest;struct;work.vst_5lm_io_components;pads_nordwest_struct_conf;;
+;;Default;i_padframe;i_pads_se;;vhdl;pads_southeast;struct;work.vst_5lm_io_components;pads_southeast_struct_conf;;
+;;Default;i_padframe;i_pads_sw;;vhdl;pads_southwest;struct;work.vst_5lm_io_components;pads_southwest_struct_conf;;
+;;Default;i_padframe;i_pads_ws;;vhdl;pads_westsouth;struct;work.vst_5lm_io_components;pads_westsouth_struct_conf;;
+;G # i = 320 #$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_db2o_0;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 321 #$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_db2o_1;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 59 #$i(59..116),/ioc_(.*)::pad=($i)/;Default;i_pads_en;ioc_db2o_10;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 60 #$i(59..116),/ioc_(.*)::pad=($i)/;Default;i_pads_en;ioc_db2o_11;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 61 #$i(59..116),/ioc_(.*)::pad=($i)/;Default;i_pads_en;ioc_db2o_12;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 62 #$i(59..116),/ioc_(.*)::pad=($i)/;Default;i_pads_en;ioc_db2o_13;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 63 #$i(59..116),/ioc_(.*)::pad=($i)/;Default;i_pads_en;ioc_db2o_14;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 64 #$i(59..116),/ioc_(.*)::pad=($i)/;Default;i_pads_en;ioc_db2o_15;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 322 #$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_db2o_2;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 323 #$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_db2o_3;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 324 #$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_db2o_4;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 325 #$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_db2o_5;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 326 #$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_db2o_6;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 327 #$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_db2o_7;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 346 #$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_db2o_8;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 347 #$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_db2o_9;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 320 #$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_dbo_0;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 321 #$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_dbo_1;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 59 #$i(59..116),/ioc_(.*)::pad=($i)/;Default;i_pads_en;ioc_dbo_10;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 60 #$i(59..116),/ioc_(.*)::pad=($i)/;Default;i_pads_en;ioc_dbo_11;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 61 #$i(59..116),/ioc_(.*)::pad=($i)/;Default;i_pads_en;ioc_dbo_12;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 62 #$i(59..116),/ioc_(.*)::pad=($i)/;Default;i_pads_en;ioc_dbo_13;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 63 #$i(59..116),/ioc_(.*)::pad=($i)/;Default;i_pads_en;ioc_dbo_14;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 64 #$i(59..116),/ioc_(.*)::pad=($i)/;Default;i_pads_en;ioc_dbo_15;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 322 #$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_dbo_2;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 323 #$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_dbo_3;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 324 #$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_dbo_4;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 325 #$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_dbo_5;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 326 #$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_dbo_6;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 327 #$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_dbo_7;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 346 #$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_dbo_8;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 347 #$i(294..351),/ioc_(.*)::pad=($i)/;Default;i_pads_ws;ioc_dbo_9;;vhdl;ioc;rtl;work.vst_5lm_io_components;ioc_rtl_conf;# Generator parsed /;
+;G # i = 1 #$i(1..58),/ioc_(.*)::pad=($i)/;Default;i_pads_es;ioc_ramd_12;;vhdl;iom_sstl;rtl;work.vst_5lm_io_components;iom_sstl_rtl_conf;# Generator parsed /;
+;;Default;W_NO_PARENT;pad_db2o_0;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 7;
+;;Default;W_NO_PARENT;pad_db2o_1;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 8;
+;;Default;W_NO_PARENT;pad_db2o_10;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 1;
+;;Default;W_NO_PARENT;pad_db2o_11;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 2;
+;;Default;W_NO_PARENT;pad_db2o_12;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 3;
+;;Default;W_NO_PARENT;pad_db2o_13;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 4;
+;;Default;W_NO_PARENT;pad_db2o_14;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 5;
+;;Default;W_NO_PARENT;pad_db2o_15;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 6;
+;;Default;W_NO_PARENT;pad_db2o_2;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 9;
+;;Default;W_NO_PARENT;pad_db2o_3;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 10;
+;;Default;W_NO_PARENT;pad_db2o_4;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 11;
+;;Default;W_NO_PARENT;pad_db2o_5;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 12;
+;;Default;W_NO_PARENT;pad_db2o_6;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 13;
+;;Default;W_NO_PARENT;pad_db2o_7;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 14;
+;;Default;W_NO_PARENT;pad_db2o_8;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 15;
+;;Default;W_NO_PARENT;pad_db2o_9;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 16;
+;;Default;W_NO_PARENT;pad_dbo_0;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 7;
+;;Default;W_NO_PARENT;pad_dbo_1;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 8;
+;;Default;W_NO_PARENT;pad_dbo_10;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 1;
+;;Default;W_NO_PARENT;pad_dbo_11;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 2;
+;;Default;W_NO_PARENT;pad_dbo_12;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 3;
+;;Default;W_NO_PARENT;pad_dbo_13;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 4;
+;;Default;W_NO_PARENT;pad_dbo_14;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 5;
+;;Default;W_NO_PARENT;pad_dbo_15;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 6;
+;;Default;W_NO_PARENT;pad_dbo_2;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 9;
+;;Default;W_NO_PARENT;pad_dbo_3;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 10;
+;;Default;W_NO_PARENT;pad_dbo_4;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 11;
+;;Default;W_NO_PARENT;pad_dbo_5;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 12;
+;;Default;W_NO_PARENT;pad_dbo_6;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 13;
+;;Default;W_NO_PARENT;pad_dbo_7;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 14;
+;;Default;W_NO_PARENT;pad_dbo_8;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 15;
+;;Default;W_NO_PARENT;pad_dbo_9;;vhdl;WC3B20U;rtl;;WC3B20U_rtl_conf;# ::comment: # ::iocell: ioc# ::ispin: 1# ::pin: 16;
+;;Default;W_NO_PARENT;pad_ramd_12;;vhdl;S25B10C1J;rtl;;S25B10C1J_rtl_conf;# ::comment: # ::iocell: iom_sstl# ::ispin: 1# ::pin: 1;
+;;Default;W_NO_PARENT;testbench;;vhdl;W_NO_ENTITY;rtl;;W_NO_ENTITY_rtl_conf;;
+:=:=:=>CONN
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::shortname;::out;::in;::descr;::comment;::descr1
+# Generated Intermediate Conn/Hier Data;;;;;;;;;;;;;;;
+# by: wig;;;;;;;;;;;;;;;
+# on: Mon Jul 18 17:59:48 2005;;;;;;;;;;;;;;;
+# cmd: h:/work/eclipse/mix/mix_0.pl -strip -nodelta ../padio2.xls;;;;;;;;;;;;;;;
+;;WARNING_NOT_SET;SSTL;CLK;std_ulogic;;;;mix_logic1;;;ioc_dbo_4/iddq(1:1)=(0:0),  ioc_dbo_4/do(1:1)=(0:0),  ioc_dbo_4/bypass(1:1)=(0:0),  ioc_dbo_5/iddq(1:1)=(0:0),  ioc_dbo_5/do(1:1)=(0:0),  ioc_dbo_5/bypass(1:1)=(0:0),  ioc_dbo_14/iddq(1:1)=(0:0),  ioc_dbo_14/do(1:1)=(0:0),  ioc_dbo_14/bypass(1:1)=(0:0),  ioc_db2o_5/iddq(1:1)=(0:0),  ioc_db2o_5/do(1:1)=(0:0),  ioc_db2o_5/bypass(1:1)=(0:0),  ioc_db2o_9/iddq(1:1)=(0:0),  ioc_db2o_9/do(1:1)=(0:0),  ioc_db2o_9/bypass(1:1)=(0:0),  ioc_db2o_1/iddq(1:1)=(0:0),  ioc_db2o_1/do(1:1)=(0:0), ;;__IO_MuxedPort  (X98);
+;;;;;;;;;mix_logic1;;; ioc_db2o_1/bypass(1:1)=(0:0),  ioc_db2o_8/iddq(1:1)=(0:0),  ioc_db2o_8/do(1:1)=(0:0),  ioc_db2o_8/bypass(1:1)=(0:0),  ioc_db2o_13/iddq(1:1)=(0:0),  ioc_db2o_13/do(1:1)=(0:0),  ioc_db2o_13/bypass(1:1)=(0:0),  ioc_dbo_13/iddq(1:1)=(0:0),  ioc_dbo_13/do(1:1)=(0:0),  ioc_dbo_13/bypass(1:1)=(0:0),  ioc_db2o_6/iddq(1:1)=(0:0),  ioc_db2o_6/do(1:1)=(0:0),  ioc_db2o_6/bypass(1:1)=(0:0),  ioc_dbo_1/iddq(1:1)=(0:0),  ioc_dbo_1/do(1:1)=(0:0),  ioc_dbo_1/bypass(1:1)=(0:0),  ioc_db2o_0/iddq(1:1)=(0:0), ;;# __I_SPLIT_CONT_1;
+;;;;;;;;;mix_logic1;;; ioc_db2o_0/do(1:1)=(0:0),  ioc_db2o_0/bypass(1:1)=(0:0),  ioc_db2o_2/iddq(1:1)=(0:0),  ioc_db2o_2/do(1:1)=(0:0),  ioc_db2o_2/bypass(1:1)=(0:0),  ioc_dbo_3/iddq(1:1)=(0:0),  ioc_dbo_3/do(1:1)=(0:0),  ioc_dbo_3/bypass(1:1)=(0:0),  ioc_db2o_3/iddq(1:1)=(0:0),  ioc_db2o_3/do(1:1)=(0:0),  ioc_db2o_3/bypass(1:1)=(0:0),  ioc_db2o_7/iddq(1:1)=(0:0),  ioc_db2o_7/do(1:1)=(0:0),  ioc_db2o_7/bypass(1:1)=(0:0),  ioc_dbo_0/iddq(1:1)=(0:0),  ioc_dbo_0/do(1:1)=(0:0),  ioc_dbo_0/bypass(1:1)=(0:0), ;;# __I_SPLIT_CONT_2;
+;;;;;;;;;mix_logic1;;; ioc_ramd_12/pd(1:1)=(0:0),  ioc_ramd_12/do(1:1)=(0:0),  ioc_db2o_12/iddq(1:1)=(0:0),  ioc_db2o_12/do(1:1)=(0:0),  ioc_db2o_12/bypass(1:1)=(0:0),  ioc_db2o_11/iddq(1:1)=(0:0),  ioc_db2o_11/do(1:1)=(0:0),  ioc_db2o_11/bypass(1:1)=(0:0),  ioc_dbo_2/iddq(1:1)=(0:0),  ioc_dbo_2/do(1:1)=(0:0),  ioc_dbo_2/bypass(1:1)=(0:0),  ioc_dbo_10/iddq(1:1)=(0:0),  ioc_dbo_10/do(1:1)=(0:0),  ioc_dbo_10/bypass(1:1)=(0:0),  ioc_dbo_12/iddq(1:1)=(0:0),  ioc_dbo_12/do(1:1)=(0:0),  ioc_dbo_12/bypass(1:1)=(0:0), ;;# __I_SPLIT_CONT_3;
+;;;;;;;;;mix_logic1;;; ioc_dbo_8/iddq(1:1)=(0:0),  ioc_dbo_8/do(1:1)=(0:0),  ioc_dbo_8/bypass(1:1)=(0:0),  ioc_db2o_4/iddq(1:1)=(0:0),  ioc_db2o_4/do(1:1)=(0:0),  ioc_db2o_4/bypass(1:1)=(0:0),  ioc_db2o_14/iddq(1:1)=(0:0),  ioc_db2o_14/do(1:1)=(0:0),  ioc_db2o_14/bypass(1:1)=(0:0),  ioc_dbo_9/iddq(1:1)=(0:0),  ioc_dbo_9/do(1:1)=(0:0),  ioc_dbo_9/bypass(1:1)=(0:0),  ioc_db2o_15/iddq(1:1)=(0:0),  ioc_db2o_15/do(1:1)=(0:0),  ioc_db2o_15/bypass(1:1)=(0:0),  ioc_dbo_7/iddq(1:1)=(0:0),  ioc_dbo_7/do(1:1)=(0:0), ;;# __I_SPLIT_CONT_4;
+;;;;;;;;;mix_logic1;;; ioc_dbo_7/bypass(1:1)=(0:0),  ioc_dbo_6/iddq(1:1)=(0:0),  ioc_dbo_6/do(1:1)=(0:0),  ioc_dbo_6/bypass(1:1)=(0:0),  ioc_db2o_10/iddq(1:1)=(0:0),  ioc_db2o_10/do(1:1)=(0:0),  ioc_db2o_10/bypass(1:1)=(0:0),  ioc_dbo_15/iddq(1:1)=(0:0),  ioc_dbo_15/do(1:1)=(0:0),  ioc_dbo_15/bypass(1:1)=(0:0),  ioc_dbo_11/iddq(1:1)=(0:0),  ioc_dbo_11/do(1:1)=(0:0),  ioc_dbo_11/bypass(1:1)=(0:0);;# __I_SPLIT_CONT_5;
+;G1 #/pad_(.*)::iocell=(\w+)/ (X33);WARNING_NOT_SET;Data;async;std_ulogic;;;;mix_logic0;;;ioc_dbo_2/scan_i,  ioc_db2o_10/scan_i,  ioc_ramd_12/scan_i,  ioc_db2o_0/scan_i,  ioc_db2o_13/scan_i,  ioc_dbo_9/scan_i,  ioc_db2o_11/scan_i,  ioc_dbo_5/scan_i,  ioc_db2o_15/scan_i,  ioc_db2o_3/scan_i,  ioc_dbo_13/scan_i,  ioc_dbo_3/scan_i,  ioc_db2o_14/scan_i,  ioc_dbo_6/scan_i,  ioc_db2o_2/scan_i,  ioc_dbo_8/scan_i,  ioc_db2o_7/scan_i,  ioc_dbo_10/scan_i,  ioc_db2o_4/scan_i,  ioc_db2o_6/scan_i,  ioc_dbo_12/scan_i,  ioc_dbo_0/scan_i,  ioc_db2o_12/scan_i,  ioc_dbo_14/scan_i,  ioc_dbo_4/scan_i, ;;__IO_MuxedPort  (X33)# Generator parsed / (X33);
+;;;;;;;;;mix_logic0;;; ioc_db2o_8/scan_i,  ioc_db2o_9/scan_i,  ioc_dbo_1/scan_i,  ioc_dbo_11/scan_i,  ioc_db2o_1/scan_i,  ioc_dbo_15/scan_i,  ioc_dbo_7/scan_i,  ioc_db2o_5/scan_i,  ioc_dbo_4/en(1:1)=(0:0),  ioc_dbo_5/en(1:1)=(0:0),  ioc_dbo_14/en(1:1)=(0:0),  ioc_db2o_5/en(1:1)=(0:0),  ioc_db2o_9/en(1:1)=(0:0),  ioc_db2o_1/en(1:1)=(0:0),  ioc_db2o_8/en(1:1)=(0:0),  ioc_db2o_13/en(1:1)=(0:0),  ioc_dbo_13/en(1:1)=(0:0),  ioc_db2o_6/en(1:1)=(0:0),  ioc_dbo_1/en(1:1)=(0:0),  ioc_db2o_0/en(1:1)=(0:0), ;;# __I_SPLIT_CONT_1;
+;;;;;;;;;mix_logic0;;; ioc_db2o_2/en(1:1)=(0:0),  ioc_dbo_3/en(1:1)=(0:0),  ioc_db2o_3/en(1:1)=(0:0),  ioc_db2o_7/en(1:1)=(0:0),  ioc_dbo_0/en(1:1)=(0:0),  ioc_ramd_12/oe(1:1)=(0:0),  ioc_db2o_12/en(1:1)=(0:0),  ioc_db2o_11/en(1:1)=(0:0),  ioc_dbo_2/en(1:1)=(0:0),  ioc_dbo_10/en(1:1)=(0:0),  ioc_dbo_12/en(1:1)=(0:0),  ioc_dbo_8/en(1:1)=(0:0),  ioc_db2o_4/en(1:1)=(0:0),  ioc_db2o_14/en(1:1)=(0:0),  ioc_dbo_9/en(1:1)=(0:0),  ioc_db2o_15/en(1:1)=(0:0),  ioc_dbo_7/en(1:1)=(0:0),  ioc_dbo_6/en(1:1)=(0:0), ;;# __I_SPLIT_CONT_2;
+;;;;;;;;;mix_logic0;;; ioc_db2o_10/en(1:1)=(0:0),  ioc_dbo_15/en(1:1)=(0:0),  ioc_dbo_11/en(1:1)=(0:0);;# __I_SPLIT_CONT_3;
+;;;;;std_logic;;;;open;;;;;;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_dbo_2/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_db2o_3/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_dbo_13/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_dbo_3/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_db2o_14/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_dbo_6/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_db2o_2/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_dbo_8/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_db2o_7/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_dbo_10/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_db2o_4/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_db2o_10/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_db2o_6/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_dbo_12/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_dbo_0/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_db2o_12/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_dbo_14/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_dbo_4/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_db2o_8/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_db2o_9/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_dbo_1/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_dbo_11/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_ramd_12/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_db2o_1/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_dbo_15/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_dbo_7/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_db2o_5/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_db2o_0/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_db2o_13/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_dbo_9/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_db2o_11/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_dbo_5/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;open;;ioc_db2o_15/scan_o(0:0)=(0:0);;;# Generator parsed /;
+;;WARNING_NOT_SET;SSTL;CLK;std_ulogic;;;;clkf81;;;i_pads_ws/clkf81_gi=(0:0),  i_pads_en/clkf81_gi=(0:0),  i_pads_es/clkf81_gi=(0:0),  ioc_dbo_4/clk(1:1)=(0:0),  ioc_dbo_5/clk(1:1)=(0:0),  ioc_dbo_14/clk(1:1)=(0:0),  ioc_db2o_5/clk(1:1)=(0:0),  ioc_db2o_9/clk(1:1)=(0:0),  ioc_db2o_1/clk(1:1)=(0:0),  ioc_db2o_8/clk(1:1)=(0:0),  ioc_db2o_13/clk(1:1)=(0:0),  ioc_dbo_13/clk(1:1)=(0:0),  ioc_db2o_6/clk(1:1)=(0:0),  ioc_dbo_1/clk(1:1)=(0:0),  ioc_db2o_0/clk(1:1)=(0:0),  ioc_db2o_2/clk(1:1)=(0:0),  ioc_dbo_3/clk(1:1)=(0:0),  ioc_db2o_3/clk(1:1)=(0:0),;;__IO_MuxedPort  (X33);
+;;;;;;;;;clkf81;;;  ioc_db2o_7/clk(1:1)=(0:0),  ioc_dbo_0/clk(1:1)=(0:0),  ioc_ramd_12/clk(1:1)=(0:0),  ioc_db2o_12/clk(1:1)=(0:0),  ioc_db2o_11/clk(1:1)=(0:0),  ioc_dbo_2/clk(1:1)=(0:0),  ioc_dbo_10/clk(1:1)=(0:0),  ioc_dbo_12/clk(1:1)=(0:0),  ioc_dbo_8/clk(1:1)=(0:0),  ioc_db2o_4/clk(1:1)=(0:0),  ioc_db2o_14/clk(1:1)=(0:0),  ioc_dbo_9/clk(1:1)=(0:0),  ioc_db2o_15/clk(1:1)=(0:0),  ioc_dbo_7/clk(1:1)=(0:0),  ioc_dbo_6/clk(1:1)=(0:0),  ioc_db2o_10/clk(1:1)=(0:0),  ioc_dbo_15/clk(1:1)=(0:0), ;;# __I_SPLIT_CONT_1;
+;;;;;;;;;clkf81;;; ioc_dbo_11/clk(1:1)=(0:0);;# __I_SPLIT_CONT_2;
+;G1 #/pad_(.*)::iocell=(\w+)/ (X33);WARNING_NOT_SET;Data;async;std_ulogic;;;S;clockdr_i;;;ioc_dbo_2/clockdr_i,  ioc_db2o_10/clockdr_i,  ioc_ramd_12/clockdr_i,  ioc_db2o_0/clockdr_i,  ioc_db2o_13/clockdr_i,  ioc_dbo_9/clockdr_i,  ioc_db2o_11/clockdr_i,  ioc_dbo_5/clockdr_i,  ioc_db2o_15/clockdr_i,  ioc_db2o_3/clockdr_i,  ioc_dbo_13/clockdr_i,  ioc_dbo_3/clockdr_i,  ioc_db2o_14/clockdr_i,  ioc_dbo_6/clockdr_i,  ioc_db2o_2/clockdr_i,  ioc_dbo_8/clockdr_i,  ioc_db2o_7/clockdr_i,  ioc_dbo_10/clockdr_i,  ioc_db2o_4/clockdr_i,  ioc_db2o_6/clockdr_i,  ioc_dbo_12/clockdr_i, ;;# Generator parsed /# Generator parsed / (X32);
+;;;;;;;;;clockdr_i;;; ioc_dbo_0/clockdr_i,  ioc_db2o_12/clockdr_i,  ioc_dbo_14/clockdr_i,  ioc_dbo_4/clockdr_i,  ioc_db2o_8/clockdr_i,  ioc_db2o_9/clockdr_i,  ioc_dbo_1/clockdr_i,  ioc_dbo_11/clockdr_i,  ioc_db2o_1/clockdr_i,  ioc_dbo_15/clockdr_i,  ioc_dbo_7/clockdr_i,  ioc_db2o_5/clockdr_i,  i_pads_ws/clockdr_i_gi=(0:0),  i_pads_en/clockdr_i_gi=(0:0),  i_pads_es/clockdr_i_gi=(0:0);;# __I_SPLIT_CONT_1;
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;db2o_0;;dut/db2o_0,  i_padframe/db2o_0,  i_pads_ws/db2o_0;ioc_db2o_0/pad,  dut/db2o_0;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;db2o_1;;dut/db2o_1,  i_padframe/db2o_1,  i_pads_ws/db2o_1;ioc_db2o_1/pad,  dut/db2o_1;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;db2o_10;;dut/db2o_10,  i_padframe/db2o_10,  i_pads_en/db2o_10;ioc_db2o_10/pad,  dut/db2o_10;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;db2o_11;;dut/db2o_11,  i_padframe/db2o_11,  i_pads_en/db2o_11;ioc_db2o_11/pad,  dut/db2o_11;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;db2o_12;;dut/db2o_12,  i_padframe/db2o_12,  i_pads_en/db2o_12;ioc_db2o_12/pad,  dut/db2o_12;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;db2o_13;;dut/db2o_13,  i_padframe/db2o_13,  i_pads_en/db2o_13;ioc_db2o_13/pad,  dut/db2o_13;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;db2o_14;;dut/db2o_14,  i_padframe/db2o_14,  i_pads_en/db2o_14;ioc_db2o_14/pad,  dut/db2o_14;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;db2o_15;;dut/db2o_15,  i_padframe/db2o_15,  i_pads_en/db2o_15;ioc_db2o_15/pad,  dut/db2o_15;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;db2o_2;;dut/db2o_2,  i_padframe/db2o_2,  i_pads_ws/db2o_2;ioc_db2o_2/pad,  dut/db2o_2;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;db2o_3;;dut/db2o_3,  i_padframe/db2o_3,  i_pads_ws/db2o_3;ioc_db2o_3/pad,  dut/db2o_3;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;db2o_4;;dut/db2o_4,  i_padframe/db2o_4,  i_pads_ws/db2o_4;ioc_db2o_4/pad,  dut/db2o_4;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;db2o_5;;dut/db2o_5,  i_padframe/db2o_5,  i_pads_ws/db2o_5;ioc_db2o_5/pad,  dut/db2o_5;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;db2o_6;;dut/db2o_6,  i_padframe/db2o_6,  i_pads_ws/db2o_6;ioc_db2o_6/pad,  dut/db2o_6;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;db2o_7;;dut/db2o_7,  i_padframe/db2o_7,  i_pads_ws/db2o_7;ioc_db2o_7/pad,  dut/db2o_7;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;db2o_8;;dut/db2o_8,  i_padframe/db2o_8,  i_pads_ws/db2o_8;ioc_db2o_8/pad,  dut/db2o_8;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;db2o_9;;dut/db2o_9,  i_padframe/db2o_9,  i_pads_ws/db2o_9;ioc_db2o_9/pad,  dut/db2o_9;Flat Panel;# Generator parsed /;out
+;;;RGBO;CLK;std_ulogic_vector;15;0;;db2o_i;;;ioc_db2o_5/do(0:0)=(5:5),  ioc_db2o_9/do(0:0)=(9:9),  ioc_db2o_1/do(0:0)=(1:1),  ioc_db2o_8/do(0:0)=(8:8),  ioc_db2o_13/do(0:0)=(13:13),  ioc_db2o_6/do(0:0)=(6:6),  ioc_db2o_0/do(0:0)=(0:0),  ioc_db2o_2/do(0:0)=(2:2),  ioc_db2o_3/do(0:0)=(3:3),  ioc_db2o_7/do(0:0)=(7:7),  i_pads_en/db2o_i(15:10)=(15:10),  ioc_db2o_12/do(0:0)=(12:12),  i_padframe/db2o_i(15:0)=(15:0),  i_pads_ws/db2o_i(9:0)=(9:0),  ioc_db2o_11/do(0:0)=(11:11),  ioc_db2o_4/do(0:0)=(4:4),  ioc_db2o_14/do(0:0)=(14:14), ;padin (X2);__IO_MuxedPort  (X16);
+;;;;;;;;;db2o_i;;; ioc_db2o_15/do(0:0)=(15:15),  ioc_db2o_10/do(0:0)=(10:10);;# __I_SPLIT_CONT_1;
+;G1 #/pad_(.*)_(\d+)::iocell=(\w+)/ (X16);;Data;async;std_ulogic_vector;15;0;;db2o_o;;ioc_db2o_9/di(0:0)=(9:9),  ioc_db2o_5/di(0:0)=(5:5),  ioc_db2o_1/di(0:0)=(1:1),  ioc_db2o_8/di(0:0)=(8:8),  ioc_db2o_13/di(0:0)=(13:13),  ioc_db2o_6/di(0:0)=(6:6),  ioc_db2o_0/di(0:0)=(0:0),  ioc_db2o_2/di(0:0)=(2:2),  ioc_db2o_3/di(0:0)=(3:3),  ioc_db2o_7/di(0:0)=(7:7),  i_pads_en/db2o_o(15:10)=(15:10),  ioc_db2o_12/di(0:0)=(12:12),  i_padframe/db2o_o(15:0)=(15:0),  i_pads_ws/db2o_o(9:0)=(9:0),  ioc_db2o_11/di(0:0)=(11:11),  ioc_db2o_4/di(0:0)=(4:4),  ioc_db2o_14/di(0:0)=(14:14), ;;padout (X2);# Generator parsed / (X16);
+;;;;;;;;;db2o_o;; ioc_db2o_15/di(0:0)=(15:15),  ioc_db2o_10/di(0:0)=(10:10);;;# __I_SPLIT_CONT_1;
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;dbo_0;;dut/dbo_0,  i_padframe/dbo_0,  i_pads_ws/dbo_0;ioc_dbo_0/pad,  dut/dbo_0;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;dbo_1;;dut/dbo_1,  i_padframe/dbo_1,  i_pads_ws/dbo_1;ioc_dbo_1/pad,  dut/dbo_1;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;dbo_10;;dut/dbo_10,  i_padframe/dbo_10,  i_pads_en/dbo_10;ioc_dbo_10/pad,  dut/dbo_10;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;dbo_11;;dut/dbo_11,  i_padframe/dbo_11,  i_pads_en/dbo_11;ioc_dbo_11/pad,  dut/dbo_11;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;dbo_12;;dut/dbo_12,  i_padframe/dbo_12,  i_pads_en/dbo_12;ioc_dbo_12/pad,  dut/dbo_12;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;dbo_13;;dut/dbo_13,  i_padframe/dbo_13,  i_pads_en/dbo_13;ioc_dbo_13/pad,  dut/dbo_13;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;dbo_14;;dut/dbo_14,  i_padframe/dbo_14,  i_pads_en/dbo_14;ioc_dbo_14/pad,  dut/dbo_14;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;dbo_15;;dut/dbo_15,  i_padframe/dbo_15,  i_pads_en/dbo_15;ioc_dbo_15/pad,  dut/dbo_15;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;dbo_2;;dut/dbo_2,  i_padframe/dbo_2,  i_pads_ws/dbo_2;ioc_dbo_2/pad,  dut/dbo_2;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;dbo_3;;dut/dbo_3,  i_padframe/dbo_3,  i_pads_ws/dbo_3;ioc_dbo_3/pad,  dut/dbo_3;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;dbo_4;;dut/dbo_4,  i_padframe/dbo_4,  i_pads_ws/dbo_4;ioc_dbo_4/pad,  dut/dbo_4;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;dbo_5;;dut/dbo_5,  i_padframe/dbo_5,  i_pads_ws/dbo_5;ioc_dbo_5/pad,  dut/dbo_5;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;dbo_6;;dut/dbo_6,  i_padframe/dbo_6,  i_pads_ws/dbo_6;ioc_dbo_6/pad,  dut/dbo_6;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;dbo_7;;dut/dbo_7,  i_padframe/dbo_7,  i_pads_ws/dbo_7;ioc_dbo_7/pad,  dut/dbo_7;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;dbo_8;;dut/dbo_8,  i_padframe/dbo_8,  i_pads_ws/dbo_8;ioc_dbo_8/pad,  dut/dbo_8;Flat Panel;# Generator parsed /;out
+;G1 #/pad_(.*)::iocell=(\w+)/;D_OUT;Data;async;std_ulogic;;;IO;dbo_9;;dut/dbo_9,  i_padframe/dbo_9,  i_pads_ws/dbo_9;ioc_dbo_9/pad,  dut/dbo_9;Flat Panel;# Generator parsed /;out
+;;;RGBO;CLK;std_ulogic_vector;15;0;;dbo_i;;;ioc_dbo_4/do(0:0)=(4:4),  ioc_dbo_5/do(0:0)=(5:5),  ioc_dbo_14/do(0:0)=(14:14),  ioc_dbo_13/do(0:0)=(13:13),  ioc_dbo_1/do(0:0)=(1:1),  ioc_dbo_3/do(0:0)=(3:3),  ioc_dbo_0/do(0:0)=(0:0),  i_pads_en/dbo_i(15:10)=(15:10),  i_padframe/dbo_i(15:0)=(15:0),  i_pads_ws/dbo_i(9:0)=(9:0),  ioc_dbo_2/do(0:0)=(2:2),  ioc_dbo_10/do(0:0)=(10:10),  ioc_dbo_12/do(0:0)=(12:12),  ioc_dbo_8/do(0:0)=(8:8),  ioc_dbo_9/do(0:0)=(9:9),  ioc_dbo_7/do(0:0)=(7:7),  ioc_dbo_6/do(0:0)=(6:6),  ioc_dbo_15/do(0:0)=(15:15), ;padin (X2);__IO_MuxedPort  (X16);
+;;;;;;;;;dbo_i;;; ioc_dbo_11/do(0:0)=(11:11);;# __I_SPLIT_CONT_1;
+;G1 #/pad_(.*)_(\d+)::iocell=(\w+)/ (X16);;Data;async;std_ulogic_vector;15;0;;dbo_o;;ioc_dbo_4/di(0:0)=(4:4),  ioc_dbo_5/di(0:0)=(5:5),  ioc_dbo_14/di(0:0)=(14:14),  ioc_dbo_13/di(0:0)=(13:13),  ioc_dbo_1/di(0:0)=(1:1),  ioc_dbo_3/di(0:0)=(3:3),  ioc_dbo_0/di(0:0)=(0:0),  i_pads_en/dbo_o_15_10_go(5:0)=(15:10),  i_padframe/dbo_o(15:0)=(15:0),  i_pads_ws/dbo_o_9_0_go(9:0)=(9:0),  ioc_dbo_2/di(0:0)=(2:2),  ioc_dbo_10/di(0:0)=(10:10),  ioc_dbo_8/di(0:0)=(8:8),  ioc_dbo_12/di(0:0)=(12:12),  ioc_dbo_9/di(0:0)=(9:9),  ioc_dbo_7/di(0:0)=(7:7),  ioc_dbo_6/di(0:0)=(6:6), ;;padout;# Generator parsed / (X16);
+;;;;;;;;;dbo_o;; ioc_dbo_15/di(0:0)=(15:15),  ioc_dbo_11/di(0:0)=(11:11);;;# __I_SPLIT_CONT_1;
+;;WARNING_NOT_SET;;;std_ulogic;;;;default;;;i_pads_ws/default_gi=(0:0),  i_pads_en/default_gi=(0:0),  i_pads_es/default_gi=(0:0),  ioc_dbo_4/mux_sel_p(0:0)=(0:0),  ioc_dbo_5/mux_sel_p(0:0)=(0:0),  ioc_dbo_14/mux_sel_p(0:0)=(0:0),  ioc_db2o_5/mux_sel_p(0:0)=(0:0),  ioc_db2o_9/mux_sel_p(0:0)=(0:0),  ioc_db2o_1/mux_sel_p(0:0)=(0:0),  ioc_db2o_8/mux_sel_p(0:0)=(0:0),  ioc_db2o_13/mux_sel_p(0:0)=(0:0),  ioc_dbo_13/mux_sel_p(0:0)=(0:0),  ioc_db2o_6/mux_sel_p(0:0)=(0:0),  ioc_dbo_1/mux_sel_p(0:0)=(0:0),  ioc_db2o_0/mux_sel_p(0:0)=(0:0), ;;__IO_MuxSel  (X33);
+;;;;;;;;;default;;; ioc_db2o_2/mux_sel_p(0:0)=(0:0),  ioc_dbo_3/mux_sel_p(0:0)=(0:0),  ioc_db2o_3/mux_sel_p(0:0)=(0:0),  ioc_db2o_7/mux_sel_p(0:0)=(0:0),  ioc_dbo_0/mux_sel_p(0:0)=(0:0),  ioc_ramd_12/mux_sel_p(0:0)=(0:0),  ioc_db2o_12/mux_sel_p(0:0)=(0:0),  ioc_db2o_11/mux_sel_p(0:0)=(0:0),  ioc_dbo_2/mux_sel_p(0:0)=(0:0),  ioc_dbo_10/mux_sel_p(0:0)=(0:0),  ioc_dbo_12/mux_sel_p(0:0)=(0:0),  ioc_dbo_8/mux_sel_p(0:0)=(0:0),  ioc_db2o_4/mux_sel_p(0:0)=(0:0),  ioc_db2o_14/mux_sel_p(0:0)=(0:0), ;;# __I_SPLIT_CONT_1;
+;;;;;;;;;default;;; ioc_dbo_9/mux_sel_p(0:0)=(0:0),  ioc_db2o_15/mux_sel_p(0:0)=(0:0),  ioc_dbo_7/mux_sel_p(0:0)=(0:0),  ioc_dbo_6/mux_sel_p(0:0)=(0:0),  ioc_db2o_10/mux_sel_p(0:0)=(0:0),  ioc_dbo_15/mux_sel_p(0:0)=(0:0),  ioc_dbo_11/mux_sel_p(0:0)=(0:0);;# __I_SPLIT_CONT_2;
+;G1 #/pad_(.*)::iocell=(\w+)/ (X33);WARNING_NOT_SET;Data;async;std_ulogic;;;S;mode_1_i;;;ioc_dbo_2/mode_1_i,  ioc_db2o_10/mode_1_i,  ioc_ramd_12/mode_1_i,  ioc_db2o_0/mode_1_i,  ioc_db2o_13/mode_1_i,  ioc_dbo_9/mode_1_i,  ioc_db2o_11/mode_1_i,  ioc_dbo_5/mode_1_i,  ioc_db2o_15/mode_1_i,  ioc_db2o_3/mode_1_i,  ioc_dbo_13/mode_1_i,  ioc_dbo_3/mode_1_i,  ioc_db2o_14/mode_1_i,  ioc_dbo_6/mode_1_i,  ioc_db2o_2/mode_1_i,  ioc_dbo_8/mode_1_i,  ioc_db2o_7/mode_1_i,  ioc_dbo_10/mode_1_i,  ioc_db2o_4/mode_1_i,  ioc_db2o_6/mode_1_i,  ioc_dbo_12/mode_1_i,  ioc_dbo_0/mode_1_i, ;;# Generator parsed /# Generator parsed / (X32);
+;;;;;;;;;mode_1_i;;; ioc_db2o_12/mode_1_i,  ioc_dbo_14/mode_1_i,  ioc_dbo_4/mode_1_i,  ioc_db2o_8/mode_1_i,  ioc_db2o_9/mode_1_i,  ioc_dbo_1/mode_1_i,  ioc_dbo_11/mode_1_i,  ioc_db2o_1/mode_1_i,  ioc_dbo_15/mode_1_i,  ioc_dbo_7/mode_1_i,  ioc_db2o_5/mode_1_i,  i_pads_ws/mode_1_i_gi=(0:0),  i_pads_en/mode_1_i_gi=(0:0),  i_pads_es/mode_1_i_gi=(0:0);;# __I_SPLIT_CONT_1;
+;G1 #/pad_(.*)::iocell=(\w+)/ (X33);WARNING_NOT_SET;Data;async;std_ulogic;;;S;mode_2_i;;;ioc_dbo_2/mode_2_i,  ioc_db2o_10/mode_2_i,  ioc_ramd_12/mode_2_i,  ioc_db2o_0/mode_2_i,  ioc_db2o_13/mode_2_i,  ioc_dbo_9/mode_2_i,  ioc_db2o_11/mode_2_i,  ioc_dbo_5/mode_2_i,  ioc_db2o_15/mode_2_i,  ioc_db2o_3/mode_2_i,  ioc_dbo_13/mode_2_i,  ioc_dbo_3/mode_2_i,  ioc_db2o_14/mode_2_i,  ioc_dbo_6/mode_2_i,  ioc_db2o_2/mode_2_i,  ioc_dbo_8/mode_2_i,  ioc_db2o_7/mode_2_i,  ioc_dbo_10/mode_2_i,  ioc_db2o_4/mode_2_i,  ioc_db2o_6/mode_2_i,  ioc_dbo_12/mode_2_i,  ioc_dbo_0/mode_2_i, ;;# Generator parsed /# Generator parsed / (X32);
+;;;;;;;;;mode_2_i;;; ioc_db2o_12/mode_2_i,  ioc_dbo_14/mode_2_i,  ioc_dbo_4/mode_2_i,  ioc_db2o_8/mode_2_i,  ioc_db2o_9/mode_2_i,  ioc_dbo_1/mode_2_i,  ioc_dbo_11/mode_2_i,  ioc_db2o_1/mode_2_i,  ioc_dbo_15/mode_2_i,  ioc_dbo_7/mode_2_i,  ioc_db2o_5/mode_2_i,  i_pads_ws/mode_2_i_gi=(0:0),  i_pads_en/mode_2_i_gi=(0:0),  i_pads_es/mode_2_i_gi=(0:0);;# __I_SPLIT_CONT_1;
+;G1 #/pad_(.*)::iocell=(\w+)/ (X33);WARNING_NOT_SET;Data;async;std_ulogic;;;S;mode_3_i;;;ioc_dbo_2/mode_3_i,  ioc_db2o_10/mode_3_i,  ioc_ramd_12/mode_3_i,  ioc_db2o_0/mode_3_i,  ioc_db2o_13/mode_3_i,  ioc_dbo_9/mode_3_i,  ioc_db2o_11/mode_3_i,  ioc_dbo_5/mode_3_i,  ioc_db2o_15/mode_3_i,  ioc_db2o_3/mode_3_i,  ioc_dbo_13/mode_3_i,  ioc_dbo_3/mode_3_i,  ioc_db2o_14/mode_3_i,  ioc_dbo_6/mode_3_i,  ioc_db2o_2/mode_3_i,  ioc_dbo_8/mode_3_i,  ioc_db2o_7/mode_3_i,  ioc_dbo_10/mode_3_i,  ioc_db2o_4/mode_3_i,  ioc_db2o_6/mode_3_i,  ioc_dbo_12/mode_3_i,  ioc_dbo_0/mode_3_i, ;;# Generator parsed /# Generator parsed / (X32);
+;;;;;;;;;mode_3_i;;; ioc_db2o_12/mode_3_i,  ioc_dbo_14/mode_3_i,  ioc_dbo_4/mode_3_i,  ioc_db2o_8/mode_3_i,  ioc_db2o_9/mode_3_i,  ioc_dbo_1/mode_3_i,  ioc_dbo_11/mode_3_i,  ioc_db2o_1/mode_3_i,  ioc_dbo_15/mode_3_i,  ioc_dbo_7/mode_3_i,  ioc_db2o_5/mode_3_i,  i_pads_ws/mode_3_i_gi=(0:0),  i_pads_en/mode_3_i_gi=(0:0),  i_pads_es/mode_3_i_gi=(0:0);;# __I_SPLIT_CONT_1;
+;;WARNING_NOT_SET;;;std_ulogic;;;;pmux_sel_por;;;i_pads_ws/pmux_sel_por_gi=(0:0),  i_pads_en/pmux_sel_por_gi=(0:0),  i_pads_es/pmux_sel_por_gi=(0:0),  ioc_dbo_4/mux_sel_p(1:1)=(0:0),  ioc_dbo_5/mux_sel_p(1:1)=(0:0),  ioc_dbo_14/mux_sel_p(1:1)=(0:0),  ioc_db2o_5/mux_sel_p(1:1)=(0:0),  ioc_db2o_9/mux_sel_p(1:1)=(0:0),  ioc_db2o_1/mux_sel_p(1:1)=(0:0),  ioc_db2o_8/mux_sel_p(1:1)=(0:0),  ioc_db2o_13/mux_sel_p(1:1)=(0:0),  ioc_dbo_13/mux_sel_p(1:1)=(0:0),  ioc_db2o_6/mux_sel_p(1:1)=(0:0),  ioc_dbo_1/mux_sel_p(1:1)=(0:0), ;;__IO_MuxSel  (X33);
+;;;;;;;;;pmux_sel_por;;; ioc_db2o_0/mux_sel_p(1:1)=(0:0),  ioc_db2o_2/mux_sel_p(1:1)=(0:0),  ioc_dbo_3/mux_sel_p(1:1)=(0:0),  ioc_db2o_3/mux_sel_p(1:1)=(0:0),  ioc_db2o_7/mux_sel_p(1:1)=(0:0),  ioc_dbo_0/mux_sel_p(1:1)=(0:0),  ioc_ramd_12/mux_sel_p(1:1)=(0:0),  ioc_db2o_12/mux_sel_p(1:1)=(0:0),  ioc_db2o_11/mux_sel_p(1:1)=(0:0),  ioc_dbo_2/mux_sel_p(1:1)=(0:0),  ioc_dbo_10/mux_sel_p(1:1)=(0:0),  ioc_dbo_12/mux_sel_p(1:1)=(0:0),  ioc_dbo_8/mux_sel_p(1:1)=(0:0),  ioc_db2o_4/mux_sel_p(1:1)=(0:0), ;;# __I_SPLIT_CONT_1;
+;;;;;;;;;pmux_sel_por;;; ioc_db2o_14/mux_sel_p(1:1)=(0:0),  ioc_dbo_9/mux_sel_p(1:1)=(0:0),  ioc_db2o_15/mux_sel_p(1:1)=(0:0),  ioc_dbo_7/mux_sel_p(1:1)=(0:0),  ioc_dbo_6/mux_sel_p(1:1)=(0:0),  ioc_db2o_10/mux_sel_p(1:1)=(0:0),  ioc_dbo_15/mux_sel_p(1:1)=(0:0),  ioc_dbo_11/mux_sel_p(1:1)=(0:0);;# __I_SPLIT_CONT_2;
+;;WARNING_NOT_SET;SSTL;CLK;std_ulogic;;;;ramclkin_o;;;ioc_ramd_12/clk(0:0)=(0:0);;__IO_MuxedPort ;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;ramd_12;;;ioc_ramd_12/pad;;# Generator parsed /;
+;;WARNING_NOT_SET;SSTL;CLK;std_ulogic;;;;ramd_byp_i;;;ioc_ramd_12/bypass(0:0)=(0:0);;__IO_MuxedPort ;
+;;WARNING_NOT_SET;SSTL;CLK;std_ulogic;;;;ramd_enq_i;;;ioc_ramd_12/enq(0:0)=(0:0);;__IO_MuxedPort ;
+;;WARNING_NOT_SET;SSTL;CLK;std_ulogic_vector;12;12;;ramd_i;;;ioc_ramd_12/do(0:0)=(12:12);;__IO_MuxedPort ;
+;G1 #/pad_(.*)_(\d+)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic_vector;12;12;;ramd_o;;ioc_ramd_12/di(0:0)=(12:12);;;__IO_MuxedPort # Generator parsed /;
+;;WARNING_NOT_SET;SSTL;CLK;std_ulogic;;;;ramd_oe_i;;;ioc_ramd_12/oe(0:0)=(0:0);;__IO_MuxedPort ;
+;;WARNING_NOT_SET;SSTL;CLK;std_ulogic;;;;ramd_pd_i;;;ioc_ramd_12/pd(0:0)=(0:0);;__IO_MuxedPort ;
+;;WARNING_NOT_SET;SSTL;CLK;std_ulogic;;;;ramd_tenq_i;;;ioc_ramd_12/tenq(0:0)=(0:0);;__IO_MuxedPort ;
+;G1 #/pad_(.*)::iocell=(\w+)/ (X33);WARNING_NOT_SET;Data;async;std_ulogic;;;S;res_f81_n;;;ioc_dbo_2/res_n,  ioc_db2o_10/res_n,  ioc_ramd_12/res_n,  ioc_db2o_0/res_n,  ioc_db2o_13/res_n,  ioc_dbo_9/res_n,  ioc_db2o_11/res_n,  ioc_dbo_5/res_n,  ioc_db2o_15/res_n,  ioc_db2o_3/res_n,  ioc_dbo_13/res_n,  ioc_dbo_3/res_n,  ioc_db2o_14/res_n,  ioc_dbo_6/res_n,  ioc_db2o_2/res_n,  ioc_dbo_8/res_n,  ioc_db2o_7/res_n,  ioc_dbo_10/res_n,  ioc_db2o_4/res_n,  ioc_db2o_6/res_n,  ioc_dbo_12/res_n,  ioc_dbo_0/res_n,  ioc_db2o_12/res_n,  ioc_dbo_14/res_n,  ioc_dbo_4/res_n,  ioc_db2o_8/res_n, ;;# Generator parsed /# Generator parsed / (X32);
+;;;;;;;;;res_f81_n;;; ioc_db2o_9/res_n,  ioc_dbo_1/res_n,  ioc_dbo_11/res_n,  ioc_db2o_1/res_n,  ioc_dbo_15/res_n,  ioc_dbo_7/res_n,  ioc_db2o_5/res_n,  i_pads_ws/res_f81_n_gi=(0:0),  i_pads_en/res_f81_n_gi=(0:0),  i_pads_es/res_f81_n_gi=(0:0);;# __I_SPLIT_CONT_1;
+;;WARNING_NOT_SET;RGBO;CLK;std_ulogic;;;;rgbout_byp_i;;;i_pads_ws/rgbout_byp_i_gi=(0:0),  i_pads_en/rgbout_byp_i_gi=(0:0),  ioc_dbo_4/bypass(0:0)=(0:0),  ioc_dbo_5/bypass(0:0)=(0:0),  ioc_dbo_14/bypass(0:0)=(0:0),  ioc_db2o_5/bypass(0:0)=(0:0),  ioc_db2o_9/bypass(0:0)=(0:0),  ioc_db2o_1/bypass(0:0)=(0:0),  ioc_db2o_8/bypass(0:0)=(0:0),  ioc_db2o_13/bypass(0:0)=(0:0),  ioc_dbo_13/bypass(0:0)=(0:0),  ioc_db2o_6/bypass(0:0)=(0:0),  ioc_dbo_1/bypass(0:0)=(0:0),  ioc_db2o_0/bypass(0:0)=(0:0),  ioc_db2o_2/bypass(0:0)=(0:0),  ioc_dbo_3/bypass(0:0)=(0:0), ;;__IO_MuxedPort  (X32);
+;;;;;;;;;rgbout_byp_i;;; ioc_db2o_3/bypass(0:0)=(0:0),  ioc_db2o_7/bypass(0:0)=(0:0),  ioc_dbo_0/bypass(0:0)=(0:0),  ioc_db2o_12/bypass(0:0)=(0:0),  ioc_db2o_11/bypass(0:0)=(0:0),  ioc_dbo_2/bypass(0:0)=(0:0),  ioc_dbo_10/bypass(0:0)=(0:0),  ioc_db2o_4/bypass(0:0)=(0:0),  ioc_dbo_12/bypass(0:0)=(0:0),  ioc_dbo_8/bypass(0:0)=(0:0),  ioc_db2o_14/bypass(0:0)=(0:0),  ioc_dbo_9/bypass(0:0)=(0:0),  ioc_db2o_15/bypass(0:0)=(0:0),  ioc_dbo_7/bypass(0:0)=(0:0),  ioc_db2o_10/bypass(0:0)=(0:0),  ioc_dbo_6/bypass(0:0)=(0:0), ;;# __I_SPLIT_CONT_1;
+;;;;;;;;;rgbout_byp_i;;; ioc_dbo_15/bypass(0:0)=(0:0),  ioc_dbo_11/bypass(0:0)=(0:0);;# __I_SPLIT_CONT_2;
+;;WARNING_NOT_SET;RGBO;CLK;std_ulogic;;;;rgbout_iddq_i;;;i_pads_ws/rgbout_iddq_i_gi=(0:0),  i_pads_en/rgbout_iddq_i_gi=(0:0),  ioc_dbo_4/iddq(0:0)=(0:0),  ioc_dbo_5/iddq(0:0)=(0:0),  ioc_dbo_14/iddq(0:0)=(0:0),  ioc_db2o_5/iddq(0:0)=(0:0),  ioc_db2o_9/iddq(0:0)=(0:0),  ioc_db2o_1/iddq(0:0)=(0:0),  ioc_db2o_8/iddq(0:0)=(0:0),  ioc_db2o_13/iddq(0:0)=(0:0),  ioc_dbo_13/iddq(0:0)=(0:0),  ioc_db2o_6/iddq(0:0)=(0:0),  ioc_dbo_1/iddq(0:0)=(0:0),  ioc_db2o_0/iddq(0:0)=(0:0),  ioc_db2o_2/iddq(0:0)=(0:0),  ioc_dbo_3/iddq(0:0)=(0:0), ;;__IO_MuxedPort  (X32);
+;;;;;;;;;rgbout_iddq_i;;; ioc_db2o_3/iddq(0:0)=(0:0),  ioc_db2o_7/iddq(0:0)=(0:0),  ioc_dbo_0/iddq(0:0)=(0:0),  ioc_db2o_12/iddq(0:0)=(0:0),  ioc_db2o_11/iddq(0:0)=(0:0),  ioc_dbo_2/iddq(0:0)=(0:0),  ioc_dbo_10/iddq(0:0)=(0:0),  ioc_dbo_12/iddq(0:0)=(0:0),  ioc_dbo_8/iddq(0:0)=(0:0),  ioc_db2o_4/iddq(0:0)=(0:0),  ioc_db2o_14/iddq(0:0)=(0:0),  ioc_dbo_9/iddq(0:0)=(0:0),  ioc_db2o_15/iddq(0:0)=(0:0),  ioc_dbo_7/iddq(0:0)=(0:0),  ioc_dbo_6/iddq(0:0)=(0:0),  ioc_db2o_10/iddq(0:0)=(0:0),  ioc_dbo_15/iddq(0:0)=(0:0), ;;# __I_SPLIT_CONT_1;
+;;;;;;;;;rgbout_iddq_i;;; ioc_dbo_11/iddq(0:0)=(0:0);;# __I_SPLIT_CONT_2;
+;;WARNING_NOT_SET;RGBO;CLK;std_ulogic;;;;rgbout_sio_i;;;i_pads_ws/rgbout_sio_i_gi=(0:0),  i_pads_en/rgbout_sio_i_gi=(0:0),  ioc_dbo_4/en(0:0)=(0:0),  ioc_dbo_5/en(0:0)=(0:0),  ioc_dbo_14/en(0:0)=(0:0),  ioc_db2o_5/en(0:0)=(0:0),  ioc_db2o_9/en(0:0)=(0:0),  ioc_db2o_1/en(0:0)=(0:0),  ioc_db2o_8/en(0:0)=(0:0),  ioc_db2o_13/en(0:0)=(0:0),  ioc_dbo_13/en(0:0)=(0:0),  ioc_db2o_6/en(0:0)=(0:0),  ioc_dbo_1/en(0:0)=(0:0),  ioc_db2o_0/en(0:0)=(0:0),  ioc_db2o_2/en(0:0)=(0:0),  ioc_dbo_3/en(0:0)=(0:0),  ioc_db2o_3/en(0:0)=(0:0),  ioc_db2o_7/en(0:0)=(0:0), ;;__IO_MuxedPort  (X32);
+;;;;;;;;;rgbout_sio_i;;; ioc_dbo_0/en(0:0)=(0:0),  ioc_db2o_12/en(0:0)=(0:0),  ioc_db2o_11/en(0:0)=(0:0),  ioc_dbo_2/en(0:0)=(0:0),  ioc_dbo_10/en(0:0)=(0:0),  ioc_dbo_12/en(0:0)=(0:0),  ioc_dbo_8/en(0:0)=(0:0),  ioc_db2o_4/en(0:0)=(0:0),  ioc_db2o_14/en(0:0)=(0:0),  ioc_dbo_9/en(0:0)=(0:0),  ioc_db2o_15/en(0:0)=(0:0),  ioc_dbo_7/en(0:0)=(0:0),  ioc_dbo_6/en(0:0)=(0:0),  ioc_db2o_10/en(0:0)=(0:0),  ioc_dbo_15/en(0:0)=(0:0),  ioc_dbo_11/en(0:0)=(0:0);;# __I_SPLIT_CONT_1;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_db2o_0;;;ioc_db2o_0/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_db2o_1;;;ioc_db2o_1/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_db2o_10;;;ioc_db2o_10/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_db2o_11;;;ioc_db2o_11/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_db2o_12;;;ioc_db2o_12/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_db2o_13;;;ioc_db2o_13/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_db2o_14;;;ioc_db2o_14/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_db2o_15;;;ioc_db2o_15/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_db2o_2;;;ioc_db2o_2/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_db2o_3;;;ioc_db2o_3/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_db2o_4;;;ioc_db2o_4/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_db2o_5;;;ioc_db2o_5/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_db2o_6;;;ioc_db2o_6/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_db2o_7;;;ioc_db2o_7/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_db2o_8;;;ioc_db2o_8/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_db2o_9;;;ioc_db2o_9/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_dbo_0;;;ioc_dbo_0/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_dbo_1;;;ioc_dbo_1/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_dbo_10;;;ioc_dbo_10/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_dbo_11;;;ioc_dbo_11/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_dbo_12;;;ioc_dbo_12/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_dbo_13;;;ioc_dbo_13/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_dbo_14;;;ioc_dbo_14/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_dbo_15;;;ioc_dbo_15/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_dbo_2;;;ioc_dbo_2/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_dbo_3;;;ioc_dbo_3/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_dbo_4;;;ioc_dbo_4/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_dbo_5;;;ioc_dbo_5/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_dbo_6;;;ioc_dbo_6/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_dbo_7;;;ioc_dbo_7/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_dbo_8;;;ioc_dbo_8/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_dbo_9;;;ioc_dbo_9/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_in_ramd_12;;;ioc_ramd_12/serial_input_i;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_db2o_0;;ioc_db2o_0/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_db2o_1;;ioc_db2o_1/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_db2o_10;;ioc_db2o_10/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_db2o_11;;ioc_db2o_11/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_db2o_12;;ioc_db2o_12/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_db2o_13;;ioc_db2o_13/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_db2o_14;;ioc_db2o_14/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_db2o_15;;ioc_db2o_15/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_db2o_2;;ioc_db2o_2/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_db2o_3;;ioc_db2o_3/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_db2o_4;;ioc_db2o_4/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_db2o_5;;ioc_db2o_5/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_db2o_6;;ioc_db2o_6/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_db2o_7;;ioc_db2o_7/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_db2o_8;;ioc_db2o_8/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_db2o_9;;ioc_db2o_9/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_dbo_0;;ioc_dbo_0/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_dbo_1;;ioc_dbo_1/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_dbo_10;;ioc_dbo_10/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_dbo_11;;ioc_dbo_11/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_dbo_12;;ioc_dbo_12/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_dbo_13;;ioc_dbo_13/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_dbo_14;;ioc_dbo_14/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_dbo_15;;ioc_dbo_15/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_dbo_2;;ioc_dbo_2/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_dbo_3;;ioc_dbo_3/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_dbo_4;;ioc_dbo_4/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_dbo_5;;ioc_dbo_5/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_dbo_6;;ioc_dbo_6/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_dbo_7;;ioc_dbo_7/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_dbo_8;;ioc_dbo_8/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_dbo_9;;ioc_dbo_9/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/;WARNING_NOT_SET;Data;async;std_ulogic;;;S;s_out_ramd_12;;ioc_ramd_12/serial_output_o;;;# Generator parsed /;
+;G1 #/pad_(.*)::iocell=(\w+)/ (X33);WARNING_NOT_SET;Data;async;std_ulogic;;;S;scan_en_i;;;ioc_dbo_2/scan_en_i,  ioc_db2o_10/scan_en_i,  ioc_ramd_12/scan_en_i,  ioc_db2o_0/scan_en_i,  ioc_db2o_13/scan_en_i,  ioc_dbo_9/scan_en_i,  ioc_db2o_11/scan_en_i,  ioc_dbo_5/scan_en_i,  ioc_db2o_15/scan_en_i,  ioc_db2o_3/scan_en_i,  ioc_dbo_13/scan_en_i,  ioc_dbo_3/scan_en_i,  ioc_db2o_14/scan_en_i,  ioc_dbo_6/scan_en_i,  ioc_db2o_2/scan_en_i,  ioc_dbo_8/scan_en_i,  ioc_db2o_7/scan_en_i,  ioc_dbo_10/scan_en_i,  ioc_db2o_4/scan_en_i,  ioc_db2o_6/scan_en_i,  ioc_dbo_12/scan_en_i, ;;# Generator parsed /# Generator parsed / (X32);
+;;;;;;;;;scan_en_i;;; ioc_dbo_0/scan_en_i,  ioc_db2o_12/scan_en_i,  ioc_dbo_14/scan_en_i,  ioc_dbo_4/scan_en_i,  ioc_db2o_8/scan_en_i,  ioc_db2o_9/scan_en_i,  ioc_dbo_1/scan_en_i,  ioc_dbo_11/scan_en_i,  ioc_db2o_1/scan_en_i,  ioc_dbo_15/scan_en_i,  ioc_dbo_7/scan_en_i,  ioc_db2o_5/scan_en_i,  i_pads_ws/scan_en_i_gi=(0:0),  i_pads_en/scan_en_i_gi=(0:0),  i_pads_es/scan_en_i_gi=(0:0);;# __I_SPLIT_CONT_1;
+;G1 #/pad_(.*)::iocell=(\w+)/ (X33);WARNING_NOT_SET;Data;async;std_ulogic;;;S;shiftdr_i;;;ioc_dbo_2/shiftdr_i,  ioc_db2o_10/shiftdr_i,  ioc_ramd_12/shiftdr_i,  ioc_db2o_0/shiftdr_i,  ioc_db2o_13/shiftdr_i,  ioc_dbo_9/shiftdr_i,  ioc_db2o_11/shiftdr_i,  ioc_dbo_5/shiftdr_i,  ioc_db2o_15/shiftdr_i,  ioc_db2o_3/shiftdr_i,  ioc_dbo_13/shiftdr_i,  ioc_dbo_3/shiftdr_i,  ioc_db2o_14/shiftdr_i,  ioc_dbo_6/shiftdr_i,  ioc_db2o_2/shiftdr_i,  ioc_dbo_8/shiftdr_i,  ioc_db2o_7/shiftdr_i,  ioc_dbo_10/shiftdr_i,  ioc_db2o_4/shiftdr_i,  ioc_db2o_6/shiftdr_i,  ioc_dbo_12/shiftdr_i, ;;# Generator parsed /# Generator parsed / (X32);
+;;;;;;;;;shiftdr_i;;; ioc_dbo_0/shiftdr_i,  ioc_db2o_12/shiftdr_i,  ioc_dbo_14/shiftdr_i,  ioc_dbo_4/shiftdr_i,  ioc_db2o_8/shiftdr_i,  ioc_db2o_9/shiftdr_i,  ioc_dbo_1/shiftdr_i,  ioc_dbo_11/shiftdr_i,  ioc_db2o_1/shiftdr_i,  ioc_dbo_15/shiftdr_i,  ioc_dbo_7/shiftdr_i,  ioc_db2o_5/shiftdr_i,  i_pads_ws/shiftdr_i_gi=(0:0),  i_pads_en/shiftdr_i_gi=(0:0),  i_pads_es/shiftdr_i_gi=(0:0);;# __I_SPLIT_CONT_1;
+;G1 #/pad_(.*)::iocell=(\w+)/ (X33);WARNING_NOT_SET;Data;async;std_ulogic;;;S;tck_i;;;ioc_dbo_2/tck_i,  ioc_db2o_10/tck_i,  ioc_ramd_12/tck_i,  ioc_db2o_0/tck_i,  ioc_db2o_13/tck_i,  ioc_dbo_9/tck_i,  ioc_db2o_11/tck_i,  ioc_dbo_5/tck_i,  ioc_db2o_15/tck_i,  ioc_db2o_3/tck_i,  ioc_dbo_13/tck_i,  ioc_dbo_3/tck_i,  ioc_db2o_14/tck_i,  ioc_dbo_6/tck_i,  ioc_db2o_2/tck_i,  ioc_dbo_8/tck_i,  ioc_db2o_7/tck_i,  ioc_dbo_10/tck_i,  ioc_db2o_4/tck_i,  ioc_db2o_6/tck_i,  ioc_dbo_12/tck_i,  ioc_dbo_0/tck_i,  ioc_db2o_12/tck_i,  ioc_dbo_14/tck_i,  ioc_dbo_4/tck_i,  ioc_db2o_8/tck_i, ;;# Generator parsed /# Generator parsed / (X32);
+;;;;;;;;;tck_i;;; ioc_db2o_9/tck_i,  ioc_dbo_1/tck_i,  ioc_dbo_11/tck_i,  ioc_db2o_1/tck_i,  ioc_dbo_15/tck_i,  ioc_dbo_7/tck_i,  ioc_db2o_5/tck_i,  i_pads_ws/tck_i_gi=(0:0),  i_pads_en/tck_i_gi=(0:0),  i_pads_es/tck_i_gi=(0:0);;# __I_SPLIT_CONT_1;
+;G1 #/pad_(.*)::iocell=(\w+)/ (X33);WARNING_NOT_SET;Data;async;std_ulogic;;;S;updatedr_i;;;ioc_dbo_2/updatedr_i,  ioc_db2o_10/updatedr_i,  ioc_ramd_12/updatedr_i,  ioc_db2o_0/updatedr_i,  ioc_db2o_13/updatedr_i,  ioc_dbo_9/updatedr_i,  ioc_db2o_11/updatedr_i,  ioc_dbo_5/updatedr_i,  ioc_db2o_15/updatedr_i,  ioc_db2o_3/updatedr_i,  ioc_dbo_13/updatedr_i,  ioc_dbo_3/updatedr_i,  ioc_db2o_14/updatedr_i,  ioc_dbo_6/updatedr_i,  ioc_db2o_2/updatedr_i,  ioc_dbo_8/updatedr_i,  ioc_db2o_7/updatedr_i,  ioc_dbo_10/updatedr_i,  ioc_db2o_4/updatedr_i,  ioc_db2o_6/updatedr_i, ;;# Generator parsed /# Generator parsed / (X32);
+;;;;;;;;;updatedr_i;;; ioc_dbo_12/updatedr_i,  ioc_dbo_0/updatedr_i,  ioc_db2o_12/updatedr_i,  ioc_dbo_14/updatedr_i,  ioc_dbo_4/updatedr_i,  ioc_db2o_8/updatedr_i,  ioc_db2o_9/updatedr_i,  ioc_dbo_1/updatedr_i,  ioc_dbo_11/updatedr_i,  ioc_db2o_1/updatedr_i,  ioc_dbo_15/updatedr_i,  ioc_dbo_7/updatedr_i,  ioc_db2o_5/updatedr_i,  i_pads_ws/updatedr_i_gi=(0:0),  i_pads_en/updatedr_i_gi=(0:0),  i_pads_es/updatedr_i_gi=(0:0);;# __I_SPLIT_CONT_1;
+;;WARNING_NOT_SET;RGBO;CLK;std_ulogic;;;;varclk_i;;;i_pads_ws/varclk_i_gi=(0:0),  i_pads_en/varclk_i_gi=(0:0),  ioc_dbo_4/clk(0:0)=(0:0),  ioc_dbo_5/clk(0:0)=(0:0),  ioc_dbo_14/clk(0:0)=(0:0),  ioc_db2o_5/clk(0:0)=(0:0),  ioc_db2o_9/clk(0:0)=(0:0),  ioc_db2o_1/clk(0:0)=(0:0),  ioc_db2o_8/clk(0:0)=(0:0),  ioc_db2o_13/clk(0:0)=(0:0),  ioc_dbo_13/clk(0:0)=(0:0),  ioc_db2o_6/clk(0:0)=(0:0),  ioc_dbo_1/clk(0:0)=(0:0),  ioc_db2o_0/clk(0:0)=(0:0),  ioc_db2o_2/clk(0:0)=(0:0),  ioc_dbo_3/clk(0:0)=(0:0),  ioc_db2o_3/clk(0:0)=(0:0), ;;__IO_MuxedPort  (X32);
+;;;;;;;;;varclk_i;;; ioc_db2o_7/clk(0:0)=(0:0),  ioc_dbo_0/clk(0:0)=(0:0),  ioc_db2o_12/clk(0:0)=(0:0),  ioc_db2o_11/clk(0:0)=(0:0),  ioc_dbo_2/clk(0:0)=(0:0),  ioc_dbo_10/clk(0:0)=(0:0),  ioc_dbo_12/clk(0:0)=(0:0),  ioc_dbo_8/clk(0:0)=(0:0),  ioc_db2o_4/clk(0:0)=(0:0),  ioc_db2o_14/clk(0:0)=(0:0),  ioc_dbo_9/clk(0:0)=(0:0),  ioc_db2o_15/clk(0:0)=(0:0),  ioc_dbo_7/clk(0:0)=(0:0),  ioc_dbo_6/clk(0:0)=(0:0),  ioc_db2o_10/clk(0:0)=(0:0),  ioc_dbo_15/clk(0:0)=(0:0),  ioc_dbo_11/clk(0:0)=(0:0);;# __I_SPLIT_CONT_1;
+:=:=:=>CONF
+MIXCFG;CONST_NR;0
+MIXCFG;DELTA_INT_NR;0
+MIXCFG;DELTA_NR;0
+MIXCFG;DELTA_VER_NR;0
+MIXCFG;ERROR;__ERROR__
+MIXCFG;GENERIC_NR;0
+MIXCFG;HIGH_NR;0
+MIXCFG;LOW_NR;0
+MIXCFG;OPEN_NR;34
+MIXCFG;PRINTTIMING;1
+MIXCFG;TYPECAST_NR;0
+MIXCFG;WARN;__WARNING__
+MIXCFG;check.defs;
+MIXCFG;check.hdlout.delta;
+MIXCFG;check.hdlout.extmask.arch;
+MIXCFG;check.hdlout.extmask.conf;
+MIXCFG;check.hdlout.extmask.entity;
+MIXCFG;check.hdlout.filter.arch;
+MIXCFG;check.hdlout.filter.conf;
+MIXCFG;check.hdlout.filter.entity;
+MIXCFG;check.hdlout.mode;entity,leaf,generated,ignorecase
+MIXCFG;check.hdlout.path;
+MIXCFG;check.inst;nomulti
+MIXCFG;check.keywords.verilog;(register|net|wire|in|out|inout)
+MIXCFG;check.keywords.vhdl;(open|instance|entity|signal)
+MIXCFG;check.name.conf;check,lc
+MIXCFG;check.name.conn;check,lc
+MIXCFG;check.name.enty;check,lc
+MIXCFG;check.name.inst;check,lc
+MIXCFG;check.name.pad;check,lc
+MIXCFG;check.name.port;check,lc
+MIXCFG;check.signal;load,driver,check,top_open
+MIXCFG;conf.parsed;0
+MIXCFG;conf.req;optional
+MIXCFG;conf.xls;CONF
+MIXCFG;conn.ext;14
+MIXNOCFG;conn.field.::bundle;ARRAY
+MIXNOCFG;conn.field.::class;ARRAY
+MIXNOCFG;conn.field.::clock;ARRAY
+MIXNOCFG;conn.field.::comment;ARRAY
+MIXNOCFG;conn.field.::debug;ARRAY
+MIXNOCFG;conn.field.::default;ARRAY
+MIXNOCFG;conn.field.::descr;ARRAY
+MIXNOCFG;conn.field.::descr1;ARRAY
+MIXNOCFG;conn.field.::gen;ARRAY
+MIXNOCFG;conn.field.::high;ARRAY
+MIXNOCFG;conn.field.::ign;ARRAY
+MIXNOCFG;conn.field.::in;ARRAY
+MIXNOCFG;conn.field.::low;ARRAY
+MIXNOCFG;conn.field.::mode;ARRAY
+MIXNOCFG;conn.field.::name;ARRAY
+MIXNOCFG;conn.field.::out;ARRAY
+MIXNOCFG;conn.field.::shortname;ARRAY
+MIXNOCFG;conn.field.::skip;ARRAY
+MIXNOCFG;conn.field.::type;ARRAY
+MIXCFG;conn.field._multorder_;0
+MIXCFG;conn.field.nr;17
+MIXCFG;conn.key;::name
+MIXCFG;conn.parsed;2
+MIXCFG;conn.req;mandatory
+MIXCFG;conn.xls;CONN.*
+MIXCFG;cwd;/cygdrive/h/work/eclipse/mix/test/xls_input/padio2
+MIXCFG;drive;
+MIXCFG;dump;padio2.pld
+MIXCFG;format.csv.cellsep;";"
+MIXCFG;format.csv.quoting;""""
+MIXCFG;format.csv.sheetsep;:=:=:=>
+MIXCFG;format.csv.style;doublequote,autoquote,nowrapnl,maxwidth
+MIXCFG;format.out;
+MIXCFG;format.xls.maxcelllength;500
+MIXCFG;hier.ext;10
+MIXNOCFG;hier.field.::arch;ARRAY
+MIXNOCFG;hier.field.::comment;ARRAY
+MIXNOCFG;hier.field.::config;ARRAY
+MIXNOCFG;hier.field.::debug;ARRAY
+MIXNOCFG;hier.field.::default;ARRAY
+MIXNOCFG;hier.field.::descr;ARRAY
+MIXNOCFG;hier.field.::entity;ARRAY
+MIXNOCFG;hier.field.::gen;ARRAY
+MIXNOCFG;hier.field.::hierachy;ARRAY
+MIXNOCFG;hier.field.::ign;ARRAY
+MIXNOCFG;hier.field.::inst;ARRAY
+MIXNOCFG;hier.field.::lang;ARRAY
+MIXNOCFG;hier.field.::parent;ARRAY
+MIXNOCFG;hier.field.::shortname;ARRAY
+MIXNOCFG;hier.field.::skip;ARRAY
+MIXNOCFG;hier.field.::udc;ARRAY
+MIXNOCFG;hier.field.::use;ARRAY
+MIXNOCFG;hier.field.::variants;ARRAY
+MIXCFG;hier.field._multorder_;0
+MIXCFG;hier.field.nr;14
+MIXCFG;hier.key;::inst
+MIXCFG;hier.parsed;1
+MIXCFG;hier.req;mandatory
+MIXCFG;hier.xls;HIER
+MIXCFG;i2c.cols;0
+MIXNOCFG;i2c.field.::auto;ARRAY
+MIXNOCFG;i2c.field.::b;ARRAY
+MIXNOCFG;i2c.field.::block;ARRAY
+MIXNOCFG;i2c.field.::busy;ARRAY
+MIXNOCFG;i2c.field.::clock;ARRAY
+MIXNOCFG;i2c.field.::comment;ARRAY
+MIXNOCFG;i2c.field.::default;ARRAY
+MIXNOCFG;i2c.field.::dev;ARRAY
+MIXNOCFG;i2c.field.::dir;ARRAY
+MIXNOCFG;i2c.field.::ign;ARRAY
+MIXNOCFG;i2c.field.::init;ARRAY
+MIXNOCFG;i2c.field.::inst;ARRAY
+MIXNOCFG;i2c.field.::interface;ARRAY
+MIXNOCFG;i2c.field.::range;ARRAY
+MIXNOCFG;i2c.field.::readDone;ARRAY
+MIXNOCFG;i2c.field.::rec;ARRAY
+MIXNOCFG;i2c.field.::reset;ARRAY
+MIXNOCFG;i2c.field.::spec;ARRAY
+MIXNOCFG;i2c.field.::sub;ARRAY
+MIXNOCFG;i2c.field.::sync;ARRAY
+MIXNOCFG;i2c.field.::update;ARRAY
+MIXNOCFG;i2c.field.::variants;ARRAY
+MIXNOCFG;i2c.field.::width;ARRAY
+MIXCFG;i2c.field._multorder_;0
+MIXCFG;i2c.field.nr;23
+MIXCFG;i2c.parsed;0
+MIXCFG;i2c.regmas_type;VGCA
+MIXCFG;i2c.req;optional
+MIXCFG;i2c.xls;I2C
+MIXCFG;import.generate;stripio
+MIXCFG;input.ext.csv;csv
+MIXCFG;input.ext.excel;xls
+MIXCFG;input.ext.soffice;sxc
+MIXCFG;intermediate.ext;
+MIXCFG;intermediate.format;prev
+MIXCFG;intermediate.keep;3
+MIXCFG;intermediate.order;input
+MIXCFG;intermediate.path;.
+MIXCFG;intermediate.strip;1
+MIXCFG;internal.format;perl
+MIXCFG;internal.order;input
+MIXCFG;internal.path;.
+MIXCFG;io._mult_.::muxopt;6
+MIXCFG;io.cols;0
+MIXCFG;io.ext;17
+MIXNOCFG;io.field.::class;ARRAY
+MIXNOCFG;io.field.::comment;ARRAY
+MIXNOCFG;io.field.::debug;ARRAY
+MIXNOCFG;io.field.::default;ARRAY
+MIXNOCFG;io.field.::ign;ARRAY
+MIXNOCFG;io.field.::iocell;ARRAY
+MIXNOCFG;io.field.::ispin;ARRAY
+MIXNOCFG;io.field.::muxopt;ARRAY
+MIXNOCFG;io.field.::muxopt:1;ARRAY
+MIXNOCFG;io.field.::muxopt:2;ARRAY
+MIXNOCFG;io.field.::muxopt:3;ARRAY
+MIXNOCFG;io.field.::muxopt:4;ARRAY
+MIXNOCFG;io.field.::muxopt:5;ARRAY
+MIXNOCFG;io.field.::muxopt:6;ARRAY
+MIXNOCFG;io.field.::name;ARRAY
+MIXNOCFG;io.field.::pad;ARRAY
+MIXNOCFG;io.field.::pin;ARRAY
+MIXNOCFG;io.field.::port;ARRAY
+MIXNOCFG;io.field.::skip;ARRAY
+MIXNOCFG;io.field.::type;ARRAY
+MIXCFG;io.field._multorder_;0
+MIXCFG;io.field.nr;12
+MIXCFG;io.parsed;1
+MIXCFG;io.req;optional
+MIXCFG;io.xls;IO
+MIXCFG;iocell.auto;bus
+MIXCFG;iocell.bus;_vector
+MIXCFG;iocell.defaultdir;in
+MIXCFG;iocell.embedded;
+MIXCFG;iocell.in;do,en,pu,pd,xin,clk,res_n
+MIXCFG;iocell.inout;pad
+MIXCFG;iocell.name;%PREFIX_IOC_GEN%%::name%
+MIXCFG;iocell.out;di,xout,xo
+MIXCFG;iocell.select;given,auto
+MIXCFG;iscygwin;1
+MIXCFG;iswin;0
+MIXCFG;macro.%0%;mix_0.pl
+MIXCFG;macro.%ACOM%;--
+MIXCFG;macro.%ARGV%;h:/work/eclipse/mix/mix_0.pl -strip -nodelta ../padio2.xls
+MIXCFG;macro.%BODY%;__BODY__
+MIXCFG;macro.%BUFFER%;buffer
+MIXCFG;macro.%BUS%;__BUS__
+MIXCFG;macro.%BUS_TYPE%;std_ulogic_vector
+MIXCFG;macro.%CONST%;__CONST__
+MIXCFG;macro.%CR%;\n
+MIXCFG;macro.%DATE%;Mon Jul 18 17:59:48 2005
+MIXCFG;macro.%DECL%;__DECL__
+MIXCFG;macro.%DEFAULT_CONFIG%;%::entity%_%::arch%_conf
+MIXCFG;macro.%DEFAULT_MODE%;S
+MIXCFG;macro.%DEFINE%;`define
+MIXCFG;macro.%EMPTY%;
+MIXCFG;macro.%FOOT%;__FOOT__
+MIXCFG;macro.%GENERIC%;__GENERIC__
+MIXCFG;macro.%H%;$
+MIXCFG;macro.%HEAD%;__HEAD__
+MIXCFG;macro.%HIGH%;mix_logic1
+MIXCFG;macro.%HIGH_BUS%;mix_logic1_bus
+MIXCFG;macro.%HOME%;/cygdrive/h
+MIXCFG;macro.%IIC_IF%;iic_if_
+MIXCFG;macro.%IIC_SYNC%;sync_
+MIXCFG;macro.%IIC_TRANS%;transceiver_
+MIXCFG;macro.%IMPORT%;__IMPORT__
+MIXCFG;macro.%IMPORT_BUNDLE%;__IMPORT_BUNDLE__
+MIXCFG;macro.%IMPORT_CLK%;__IMPORT_CLK__
+MIXCFG;macro.%IMPORT_I%;I
+MIXCFG;macro.%IMPORT_O%;O
+MIXCFG;macro.%INCLUDE%;`include
+MIXCFG;macro.%INT_VERILOG_DEFINES%;
+MIXCFG;macro.%IOCELL_CLK%;CLK
+MIXCFG;macro.%IOCELL_SELECT_PORT%;__I_default_select
+MIXCFG;macro.%IOCELL_TYPE%;__E_DEFAULT_IOCELL__
+MIXCFG;macro.%IOCR%; 
+MIXCFG;macro.%LANGUAGE%;vhdl
+MIXCFG;macro.%LOW%;mix_logic0
+MIXCFG;macro.%LOW_BUS%;mix_logic0_bus
+MIXCFG;macro.%NCD%;__NOCOMPDEC__
+MIXCFG;macro.%NOSEL%;__I_NOSEL__
+MIXCFG;macro.%NOSELPORT%;__I_NOSELPORT__
+MIXCFG;macro.%NO_COMP%;__NOCOMPDEC__
+MIXCFG;macro.%NO_COMPONENT_DECLARATION%;__NOCOMPDEC__
+MIXCFG;macro.%NO_CONFIG%;NO_CONFIG
+MIXCFG;macro.%NULL%;0
+MIXCFG;macro.%OPEN%;open
+MIXCFG;macro.%OS%;cygwin
+MIXCFG;macro.%PAD_CLASS%;PAD
+MIXCFG;macro.%PAD_TYPE%;__E_DEFAULT_PAD__
+MIXCFG;macro.%PARAMETER%;__PARAMETER__
+MIXCFG;macro.%POSTFIX_IIC_IN%;_iic_i
+MIXCFG;macro.%POSTFIX_IIC_OUT%;_iic_o
+MIXCFG;macro.%PREFIX_IIC_GEN%;iic_if_
+MIXCFG;macro.%PROJECT%;NO_PROJECT_SET
+MIXCFG;macro.%RREG%;read_reg_
+MIXCFG;macro.%RWREG%;read_write_reg_
+MIXCFG;macro.%S%;\t
+MIXCFG;macro.%SIGNAL%;std_ulogic
+MIXCFG;macro.%SPACE%; 
+MIXCFG;macro.%TAB%;\t
+MIXCFG;macro.%TBD%;__W_TO_BE_DEFINED
+MIXCFG;macro.%TOP%;__TOP__
+MIXCFG;macro.%TPYECAST_ENT%;__TYPECAST_ENT__
+MIXCFG;macro.%TRISTATE%;tristate
+MIXCFG;macro.%TYPECAST_CONF%;__TYPECAST_CONF__
+MIXCFG;macro.%UAMN%;
+MIXCFG;macro.%UNDEF%;ERROR_UNDEF
+MIXCFG;macro.%UNDEF_1%;ERROR_UNDEF_1
+MIXCFG;macro.%UNDEF_2%;ERROR_UNDEF_2
+MIXCFG;macro.%UNDEF_3%;ERROR_UNDEF_3
+MIXCFG;macro.%UNDEF_4%;ERROR_UNDEF_4
+MIXCFG;macro.%USEASMODULENAME%;
+MIXCFG;macro.%USER%;wig
+MIXCFG;macro.%VERILOG_DEFINES%;\t// No `defines in this module
+MIXCFG;macro.%VERILOG_HOOK_BODY%;
+MIXCFG;macro.%VERILOG_TIMESCALE%;`timescale 1ns / 1ps
+MIXCFG;macro.%VERILOG_USE_ARCH%;%EMPTY%
+MIXCFG;macro.%VERSION%;Revision: 1.36 
+MIXCFG;macro.%VHDL_HOOK_ARCH_BODY%;
+MIXCFG;macro.%VHDL_HOOK_ARCH_DECL%;
+MIXCFG;macro.%VHDL_HOOK_ARCH_FOOT%;
+MIXCFG;macro.%VHDL_HOOK_ARCH_HEAD%;
+MIXCFG;macro.%VHDL_HOOK_CONF_BODY%;
+MIXCFG;macro.%VHDL_HOOK_CONF_FOOT%;
+MIXCFG;macro.%VHDL_HOOK_CONF_HEAD%;
+MIXCFG;macro.%VHDL_HOOK_ENTY_BODY%;
+MIXCFG;macro.%VHDL_HOOK_ENTY_FOOT%;
+MIXCFG;macro.%VHDL_HOOK_ENTY_HEAD%;
+MIXCFG;macro.%VHDL_NOPROJ%;-- No project specific VHDL libraries
+MIXCFG;macro.%VHDL_USE%;-- No project specific VHDL libraries
+MIXCFG;macro.%VHDL_USE_ARCH%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;macro.%VHDL_USE_CONF%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;macro.%VHDL_USE_DEFAULT%;"library IEEE;\nuse IEEE.std_logic_1164.all;\n"
+MIXCFG;macro.%VHDL_USE_ENTY%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;macro.%WREG%;write_reg_
+MIXCFG;out;padio2-mixed.xls
+MIXCFG;outarch;ARCH
+MIXCFG;outconf;CONF
+MIXCFG;outenty;ENTY
+MIXCFG;output.comment.default;#
+MIXCFG;output.comment.delta;#
+MIXCFG;output.comment.intermediate;#
+MIXCFG;output.comment.internal;#
+MIXCFG;output.comment.verilog;//
+MIXCFG;output.comment.vhdl;--
+MIXCFG;output.delta;sort,remove
+MIXCFG;output.ext.delta;.diff
+MIXCFG;output.ext.intermediate;mixed
+MIXCFG;output.ext.internal;pld
+MIXCFG;output.ext.verify;.ediff
+MIXCFG;output.ext.verilog;v
+MIXCFG;output.ext.vhdl;vhd
+MIXCFG;output.filename;useminus
+MIXCFG;output.format;ext
+MIXCFG;output.generate._logic_map_.%AND(1:N)%;and(1:N)
+MIXCFG;output.generate._logic_map_.%NAND(1:N)%;nand(1:N)
+MIXCFG;output.generate._logic_map_.%NOR(1:N)%;nor(1:N)
+MIXCFG;output.generate._logic_map_.%NOT(1:1)%;not(1:1)
+MIXCFG;output.generate._logic_map_.%OR(1:N)%;or(1:N)
+MIXCFG;output.generate._logic_map_.%WIRE(1:1)%;wire(1:1)
+MIXCFG;output.generate._logic_map_.%XOR(1:N)%;xor(1:N)
+MIXCFG;output.generate._logiciocheck_.and.imax;1
+MIXCFG;output.generate._logiciocheck_.and.omax;N
+MIXCFG;output.generate._logiciocheck_.nand.imax;1
+MIXCFG;output.generate._logiciocheck_.nand.omax;N
+MIXCFG;output.generate._logiciocheck_.nor.imax;1
+MIXCFG;output.generate._logiciocheck_.nor.omax;N
+MIXCFG;output.generate._logiciocheck_.not.imax;1
+MIXCFG;output.generate._logiciocheck_.not.omax;1
+MIXCFG;output.generate._logiciocheck_.or.imax;1
+MIXCFG;output.generate._logiciocheck_.or.omax;N
+MIXCFG;output.generate._logiciocheck_.wire.imax;1
+MIXCFG;output.generate._logiciocheck_.wire.omax;1
+MIXCFG;output.generate._logiciocheck_.xor.imax;1
+MIXCFG;output.generate._logiciocheck_.xor.omax;N
+MIXCFG;output.generate._logicre_;^(__|%)?(wire|and|or|nand|xor|nor|not)(__|%)?$
+MIXCFG;output.generate._re_xinout;^__NOEXCLUDESIGNAL__$
+MIXCFG;output.generate.arch;noleaf
+MIXCFG;output.generate.bak;0
+MIXCFG;output.generate.combine;0
+MIXCFG;output.generate.conf;noleaf
+MIXCFG;output.generate.delta;0
+MIXCFG;output.generate.enty;noleaf
+MIXCFG;output.generate.fold;signal
+MIXCFG;output.generate.inout;mode,noxfix
+MIXCFG;output.generate.logic;wire(1:1),and(1:N),or(1:N),nand(1:N),xor(1:N),nor(1:N),not(1:1)
+MIXCFG;output.generate.logicmap;uc
+MIXCFG;output.generate.portdescr;%::descr%
+MIXCFG;output.generate.portdescrlength;100
+MIXCFG;output.generate.portmapsort;alpha
+MIXCFG;output.generate.use;enty
+MIXCFG;output.generate.verilog;
+MIXCFG;output.generate.workaround._magma_def_;\n`ifdef MAGMA\n    `define %::entity%_inst_name %::entity%\n`else\n    `define %::entity%_inst_name %::config%\n`endif\n
+MIXCFG;output.generate.workaround._magma_mod_;`%::entity%_inst_name
+MIXCFG;output.generate.workaround._magma_uamn_;
+MIXCFG;output.generate.workaround.magma;useasmodulename_define
+MIXCFG;output.generate.workaround.std_log_typecast;ignore
+MIXCFG;output.generate.workaround.typecast;intsig
+MIXCFG;output.generate.workaround.verilog;dummyopen
+MIXCFG;output.generate.xinout;
+MIXCFG;output.order;input
+MIXCFG;output.path;.
+MIXCFG;output.warnings;
+MIXCFG;pad.PAD_ACTIVE_EN;1
+MIXCFG;pad.PAD_ACTIVE_PD;1
+MIXCFG;pad.PAD_ACTIVE_PU;1
+MIXCFG;pad.PAD_DEFAULT_DO;0
+MIXCFG;pad.name;%PREFIX_PAD_GEN%%::name%
+MIXCFG;port.generate.name;postfix
+MIXCFG;port.generate.width;auto
+MIXCFG;postfix.POSTFILE_ARCH;-a
+MIXCFG;postfix.POSTFILE_CONF;-c
+MIXCFG;postfix.POSTFILE_ENTY;-e
+MIXCFG;postfix.POSTFIX_ARCH;%EMPTY%
+MIXCFG;postfix.POSTFIX_CONF;%EMPTY%
+MIXCFG;postfix.POSTFIX_CONSTANT;_c
+MIXCFG;postfix.POSTFIX_ENTY;%EMPTY%
+MIXCFG;postfix.POSTFIX_FIELD_IN;_par_i
+MIXCFG;postfix.POSTFIX_FIELD_OUT;_par_o
+MIXCFG;postfix.POSTFIX_GENERIC;_g
+MIXCFG;postfix.POSTFIX_IIC_GEN;_i
+MIXCFG;postfix.POSTFIX_IIC_IN;_iic_i
+MIXCFG;postfix.POSTFIX_IIC_OUT;_iic_o
+MIXCFG;postfix.POSTFIX_INSTANCE;%EMPTY%
+MIXCFG;postfix.POSTFIX_IOC_GEN;%EMPTY%
+MIXCFG;postfix.POSTFIX_PAD_GEN;%EMPTY%
+MIXCFG;postfix.POSTFIX_PARAMETER;_p
+MIXCFG;postfix.POSTFIX_PORT_GEN;_g%IO%
+MIXCFG;postfix.POSTFIX_PORT_IN;_i
+MIXCFG;postfix.POSTFIX_PORT_IO;_io
+MIXCFG;postfix.POSTFIX_PORT_OUT;_o
+MIXCFG;postfix.POSTFIX_SIGNAL;_s
+MIXCFG;postfix.PREFIX_CONST;mix_const_
+MIXCFG;postfix.PREFIX_GENERIC;mix_generic_
+MIXCFG;postfix.PREFIX_IIC_GEN;iic_if_
+MIXCFG;postfix.PREFIX_INSTANCE;i_
+MIXCFG;postfix.PREFIX_IOC_GEN;ioc_
+MIXCFG;postfix.PREFIX_KEYWORD;mix_key_
+MIXCFG;postfix.PREFIX_PAD_GEN;pad_
+MIXCFG;postfix.PREFIX_PARAMETER;mix_parameter_
+MIXCFG;postfix.PREFIX_PORT_GEN;%EMPTY%
+MIXCFG;postfix.PREFIX_SIG_INT;s_int_
+MIXCFG;postfix.PREFIX_TC_INT;s_mix_tc_
+MIXCFG;reg_shell.%IIC_PAR_REG%;iic_par_reg_
+MIXCFG;reg_shell.%IIC_SER_REG%;iic_ser_reg_
+MIXCFG;reg_shell.%IIC_SYNC%;sync_iic
+MIXCFG;reg_shell.addrwidth;8
+MIXCFG;reg_shell.cac_del;0
+MIXCFG;reg_shell.datawidth;8
+MIXCFG;reg_shell.dav_del;1
+MIXCFG;reg_shell.mode;lcport
+MIXCFG;reg_shell.reg_output;1
+MIXCFG;reg_shell.regwidth;16
+MIXCFG;reg_shell.reset_active;0
+MIXCFG;reg_shell.syn_reset;0
+MIXCFG;reg_shell.top_name;%PREFIX_IIC_GEN%%::interface%%POSTFIX_IIC_GEN%
+MIXCFG;reg_shell.type;ser
+MIXCFG;script.excel.alerts;off
+MIXCFG;script.post;
+MIXCFG;script.pre;
+MIXCFG;sum.checkforce;0
+MIXCFG;sum.checkunique;0
+MIXCFG;sum.checkwarn;0
+MIXCFG;sum.cmacros;0
+MIXCFG;sum.conn;163
+MIXCFG;sum.errors;0
+MIXCFG;sum.genport;78
+MIXCFG;sum.hdlfiles;0
+MIXCFG;sum.inst;81
+MIXCFG;sum.io_cellandpad;33
+MIXCFG;sum.multdriver;0
+MIXCFG;sum.nodriver;0
+MIXCFG;sum.noload;0
+MIXCFG;sum.openports;0
+MIXCFG;sum.warnings;1
+MIXCFG;template.verilog.arch.head;## Verilog Architecture Template String t.b.d.
+MIXCFG;template.verilog.conf.head;## Verilog Configuration Template String t.b.d.
+MIXCFG;template.verilog.enty.head;## Verilog Entity Template String t.b.d.
+MIXCFG;template.verilog.file;##Verilog File Template String t.b.d.
+MIXCFG;template.verilog.wrap;## Verilog Wrapper Template String t.b.d.
+MIXCFG;template.vhdl.arch.head;## VHDL Architecture Template String t.b.d.
+MIXCFG;template.vhdl.conf.head;## VHDL Configuration Template String t.b.d.
+MIXCFG;template.vhdl.enty.head;## VHDL Entity Template String t.b.d.
+MIXCFG;top;TESTBENCH
+MIXCFG;typecast.std_logic.std_ulogic;"std_logic( %signal% );"
+MIXCFG;typecast.std_logic_vector.std_ulogic_vector;"std_logic_vector( %signal% );"
+MIXCFG;typecast.std_ulogic.std_logic;"std_ulogic( %signal% );"
+MIXCFG;typecast.std_ulogic_vector.std_logic_vector;"std_ulogic_vector( %signal% );"
+MIXCFG;variant;Default
+MIXNOCFG;vi2c.field.::b;ARRAY
+MIXNOCFG;vi2c.field.::comment;ARRAY
+MIXNOCFG;vi2c.field.::debug;ARRAY
+MIXNOCFG;vi2c.field.::default;ARRAY
+MIXNOCFG;vi2c.field.::hierachy;ARRAY
+MIXNOCFG;vi2c.field.::ign;ARRAY
+MIXNOCFG;vi2c.field.::inst;ARRAY
+MIXNOCFG;vi2c.field.::shortname;ARRAY
+MIXNOCFG;vi2c.field.::skip;ARRAY
+MIXNOCFG;vi2c.field.::type;ARRAY
+MIXNOCFG;vi2c.field.::variants;ARRAY
+MIXCFG;vi2c.field._multorder_;0
+MIXCFG;vi2c.field.nr;8
+MIXCFG;vi2c.parsed;0
+MIXCFG;vi2c.req;optional
+MIXCFG;vi2c.xls;VI2C

@@ -1,0 +1,147 @@
+:=:=:=>HIER
+::ign;::gen;::variants;::parent;::inst;::lang;::entity;::config;::comment
+#Kommentar;;;;Toplevel;;;;
+;;Default;TESTBENCH;inst_t;VHDL;ent_t;ent_t_RTL_CONF;
+;;Default;inst_t;inst_a;VHDL;ent_a;ent_a_RTL_CONF;
+;;Default;inst_t;inst_b;VHDL;ent_b;ent_b_RTL_CONF;
+;;Default;inst_a;inst_aa;VHDL;ent_aa;ent_aa_RTL_CONF;
+;;Default;inst_a;inst_ab;VHDL;ent_ab;ent_ab_RTL_CONF;
+;;Default;inst_a;inst_ac;VHDL;ent_ac;ent_ac_RTL_CONF;
+;;Default;inst_a;inst_ad;VHDL;ent_ad;ent_ad_RTL_CONF;
+;;Default;inst_a;inst_ae;VHDL;ent_ae;ent_ae_RTL_CONF;
+;;Default;inst_b;inst_ba;VHDL;ent_ba;ent_ba_RTL_CONF;
+;;Default;inst_b;inst_bb;VHDL;ent_bb;ent_bb_RTL_CONF;
+:=:=:=>Regression test
+Regression tests:;;
+;;
+"use Test::Simple;";;
+"use Test::More;";;
+"use Test::Harness;";;
+;;
+1;Start OLE-Server;
+2;Open ExCEL Sheet;
+3;Read CONN worksheet;
+4;Read HIER worksheet;
+5;Config environment;
+6;Write ExCEL file;
+7;Write CSV file;
+8;Write storable;
+9;Read CONNa worksheet;
+10;Read CONNb workshee;
+11;Extract Macros;
+12;Extract Generators;
+13;Build basic output CONN;
+14;Read HIERa worksheet;
+15;Read HIERb worksheet;
+16;Extract Generator Lines;
+17;Build basic output HIER;
+;;
+18;check parse_...;for each util function
+:=:=:=>Struct
+Start;;;;Field names;;;;;;;;
+;;;;;;;;;;;;
+Initialize Datastructures;;;;;;;;;;;;
+Parse Options and Arguments;;;;CONN;Name;Desr.;Inherits;Multiple;Req./Opt.;Default;Primary;Preset Order
+Read all input files;;;;;::ign;if // or # -> ignore;n/a;n;y;<space>;;1
+Check input;;;;;::gen;Generator;n/a;n;n;<space>;;2
+;;;;;::bundle;;yes;n;y;<no>;;3
+Main parsing;in_conn_macros;;;;::class;;yes;n;y;<no>;;4
+;in_conn_generators;;;;::clock;Clock domain;yes;n;y;Clk;;5
+;in_hier_generators;;;;::type;Type;yes;n;y;std_ulogic[_vector];;6
+;;;;;::high;upper bound;yes;n;n;<no>;;7
+out_hier;parse_hierachy;add_instance;Order?;;::low;lower bound;yes;n;n;0;;8
+out_conn;;add_signal;;;::mode;io mode;yes;n;y;<no>;;9
+;parse_hierachy_hier;;;;::name;signal name;no;n;y;required arg;X;10
+;parse_conn_conn;;;;::shortname;signal short name;no;n;n;<no>;;11
+;parse_hier_ext;;;;::out;drivers;yes;n;n;<space>;;12
+;parse_io;;;;::in;loads;yes;n;n;<space>;;13
+;parse_i2c;;;;::descr;Description;yes;n;n;<space>;;14
+;;;;;::comment;More comments;yes;n;n;<space>;;15
+Write out results;;;;;;;;;;;;
+;dump_data;;;;::default;Default for not predefined fields;yes;y;n;;;16 - 
+;;;;;;;;;;;;
+Write summary report;;;;;;;;;;;;
+;Nr. signals;;;HIER;Name;Description;Inherits;Multiple;Required;Default;Primary;Preset Order
+;Generated signals;;;;::ign;if // or # -> ignore;n/a;n;y;<space>;;1
+;Number of warnings;;;;::gen;Generator;n/a;n;n;<space>;;2
+;Nr. of instances;;;;::variants;Chip Variants;yes;n;n;Default;;3
+;Nr. of entities;;;;::parent;Parent module;yes;n;y;<no>;;4
+;Hierachy levels;;;;::inst;Instance name;no;n;y;<no>;X;5
+;Top cell;;;;::lang;VHDL/Verilog/...;yes;n;n;VHDL;;7
+;Errors;;;;::entity;Entity name;yes;n;y;<no>;;8
+;Timing;;;;::config;Configuration;yes;n;y;<no>;;9
+;Date;;;;::comment;More comments;yes;n;n;<space>;;10
+;;;;;::shortname;Instance short name;no;n;n;<no>;;6
+;;;;;::default;Default for not predefined fields;yes;y;n;;;11 -
+;;;;;;;;;;;;
+;;;;;::hierachy;store pathes;yes;n;internal;<no>;;0 / not print
+;;;;;::debug;internal storage;yes;n;internal;<no>;;0 / no print
+;;;;;;;;;;;;
+Intermediate format;;;;;;;;;;;;
+;use Data::Dumper;;;I2C;tbd.;;;;;;;
+;use Storable;;;IO;tbd.;;;;;;;
+Logging;;;;;;;;;;;;
+;use Log::Agent;;;;;;;;;;;
+;;;;;;;;;;;;
+Test;;;;;;;;;;;;
+;use Test::*;;;;;;;;;;;
+:=:=:=>HIER_USE
+::ign;::gen;::variants;::parent;::inst;::lang;::entity;::config;::use;::comment
+"# Eval with: 1. mix_0.pl -outenty ENTY -conf output.generate.enty=noleaf -sheet HIER=HIER_USE ..\sigport.xls,
+# Eval with: 2. mix_0.pl -conf output.generate.enty=noleaf -sheet HIER=HIER_USE ..\sigport.xls
+Case 2 will collect all libs in sigport-e.vhd, while case 1 will add individual use statements to each generated entity file";;;;;;;;;
+#Kommentar;;;;Toplevel;;;;;
+;;Default;TESTBENCH;inst_t;VHDL;ent_t;ent_t_RTL_CONF;;
+;;Default;inst_t;inst_a;VHDL;ent_a;ent_a_RTL_CONF;use_a.c_a.c_b;Simple use_a
+;;Default;inst_t;inst_b;Verilog;ent_b;ent_b_RTL_CONF;use_b.c_b1 use_b.c_b2;space seperated list
+;;Default;inst_a;inst_aa;VHDL;ent_aa;ent_aa_RTL_CONF;use_a.c_a.c_b,use_a.c_a2;comma seperated list
+;;Default;inst_a;inst_ab;VHDL;ent_ab;ent_ab_RTL_CONF;"use_ab.c_ab1
+use_ab.c_ab2";line break seperated
+;;Default;inst_a;inst_ac;VHDL;ent_ac;ent_ac_RTL_CONF;;No lib
+;;Default;inst_a;inst_ad;VHDL;ent_ad;ent_ad_RTL_CONF;ARCH:use_ad_arch;
+;;Default;inst_a;inst_ae;VHDL;ent_ae;ent_ae_RTL_CONF;use_ae.c_ae;another lib
+;;Default;inst_a;inst_ae2;VHDL;ent_ae;ent_ae_RTL_CONF;use_ae.c_ae2;adds to use ent_ae
+;;Default;inst_b;inst_ba;Verilog;ent_ba;ent_ba_RTL_CONF;;
+;;Default;inst_b;inst_bb;Verilog;ent_bb;ent_bb_RTL_CONF;;
+:=:=:=>HIER_VERI
+::ign;::gen;::variants;::parent;::inst;::lang;::entity;::config;::comment
+#Kommentar;;;;Toplevel;;;;
+;;Default;TESTBENCH;inst_t;VHDL;ent_t;ent_t_RTL_CONF;
+;;Default;inst_t;inst_a;VHDL;ent_a;ent_a_RTL_CONF;
+;;Default;inst_t;inst_b;Verilog;ent_b;ent_b_RTL_CONF;
+;;Default;inst_a;inst_aa;VHDL;ent_aa;ent_aa_RTL_CONF;
+;;Default;inst_a;inst_ab;VHDL;ent_ab;ent_ab_RTL_CONF;
+;;Default;inst_a;inst_ac;VHDL;ent_ac;ent_ac_RTL_CONF;
+;;Default;inst_a;inst_ad;VHDL;ent_ad;ent_ad_RTL_CONF;
+;;Default;inst_a;inst_ae;VHDL;ent_ae;ent_ae_RTL_CONF;
+;;Default;inst_b;inst_ba;Verilog;ent_ba;ent_ba_RTL_CONF;
+;;Default;inst_b;inst_bb;Verilog;ent_bb;ent_bb_RTL_CONF;
+:=:=:=>CONN
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::out;::in;::descr;::comment
+#;;Bundle Name;Class;Clk Domain;Type;High;Low;;Signal;Outputs;Inputs;Description;
+#;Version 1.0;20021112;wilfried.gaensheimer@micronas.com;;;;;;;Drivers;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+# Testcases for signals crossing hierachy 20030225;;;;;;;;;;;;;
+;;TestPortExt;Test1;clk;std_ulogic;;;;sig_01;inst_aa/port_aa_1;inst_ab/port_ab_1;Use internally test1;
+;;TestPortExt;;;;;;;sig_01;;inst_b/port_b_1;Will create p_mix_sig_1_go port;
+;;TestPortExt;Test2;clk;std_ulogic_vector;4;0;S;sig_02;inst_aa/port_aa_2(0) = (0), inst_ab/port_ab_2(0) = (1), inst_ac/port_ac_2(0) = (3), inst_ad/port_ad_2(0) = (4);inst_ae/port_ae_2(0)=(0), inst_ae/port_ae_2(1)=(1), inst_ae/port_ae_2(3)=(3), inst_ae/port_ae_2(4) = (4);Use internally test2, no port generated;
+;;TestPortExt;Test3;clk;std_ulogic;;;S;sig_03;inst_aa/port_aa_3;inst_b/port_b_3;Interhierachy link, will create p_mix_sig_3_go;
+;;TestPortExt;Test4;clk;std_ulogic;;;S;sig_04;inst_b/port_b_4;inst_aa/port_aa_4;Interhierachy link, will create p_mix_sig_4_gi;
+;;TestPortExt;Test5;clk;std_ulogic_vector;3;0;S;sig_05;inst_aa/port_aa_5;inst_ae/port_ae_5;Bus, single bits go to outside;
+;;TestPortExt;;;;;;;sig_05;;inst_b/port_b_5_1(0)=(2);Bus, single bits go to outside, will create p_mix_sig_5_2_2_go;
+;;TestPortExt;;;;;;;sig_05;;inst_b/port_b_5_2(0)=(1);Bus, single bits go to outside, will create P_MIX_sound_alarm_test5_1_1_GO;
+;;TestPortExt;Test6;clk;std_ulogic_vector;3;0;S;sig_06;inst_aa/port_aa_6;inst_ae/port_ae_6;Conflicting definition;
+;;;;;;;;;sig_06;inst_b/port_b_6o;inst_b/port_b_6i;Conflicting definition;
+;;TestPortExt;Test7;clk;std_ulogic_vector;5;0;S;sig_07;inst_aa;inst_ae,inst_b,inst_a;Conflicting definition, IN false!;
+;;TestPortExt;Test8;clk;std_ulogic_vector;8;2;S;sig_08;inst_aa,inst_a;inst_ae,inst_b;VHDL intermediate needed (port name);
+;;TestPortExt;Test9;clk;std_ulogic_vector;6;0;I;sig_i_ae;;inst_ae;Input Bus;
+;;TestPortExt;Test10;clk;std_ulogic_vector;7;0;O;sig_o_ae;inst_ae;;Output Bus;
+;;TestPortExt;Test11;clk;std_ulogic;;;I;sig_i_a;;inst_a/port_i_a;Input Port;
+;;TestPortExt;Test11;clk;std_ulogic;;;I;sig_i_a2;;inst_a;Input Port;
+;;TestPortExt;Test12;clk;std_ulogic;;;O;sig_o_a;inst_a/port_o_a;;Output Port;
+;;TestPortExt;Test12;clk;std_ulogic;;;O;sig_o_a2;inst_a;;Output Port;
+;;;;;;;;;;;;;
+#change;;;;;;;;;;;;;
+#wig2003-03-24;;;;;;;;;;;;;
+;;TestPortExt;Test13;clk;std_ulogic_vector;4;0;S;sig_13;inst_aa,inst_a;inst_ab;Create internal signal name;

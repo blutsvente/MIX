@@ -1,0 +1,548 @@
+:=:=:=>Issues
+Topic;Description;Description;Description;Issuer;Resolved
+Macro definition:;Add column for variables;;;wig20021112;
+CONN sheet:;Add ::comment column;;;wig20021112;
+;;;;;
+;;;;;
+Macro defines:;;;;wig20021112;
+;%inst%;current instance;;;
+;%all_inst%;all instances;;;
+;%each_inst%;each instance;;;
+;%top%;current top;;;
+;%generic%;???;;;
+;%conn%;current connection name;;;
+;;;;;
+Configuration:;one per entity vs. One per instance;;;wig20021112;
+;;;;;
+::mode;mode regarding what? Current or top;;;wig20021112;
+;;;;;
+CONN: ::in;*/clk;Match all instances;;wig20021112;
+;*/reset;* match all instance;;;
+;Attach that to all;;;;
+;Check: Does each module have reset and clk?;;;;
+;;;;;
+Path;path to created vhdl files;;;;
+;all files in one directory (unit);;;;
+;"overwrite mode vs. ""stop if already there""";;;;
+;write one file per entity;;;;
+;;;;;
+;;;;;
+Generated output;Has input files (incl. Size and date);;;wig20021112;
+;Has tool version (lib version and mix version);;;;
+;;;;;
+Hierachy;Add hierachy while parsing;Linkliste?;;wig20021112;
+;´- leaf;;;;
+;´- top;attribute;::hierachy;;
+;´- hierachical;;;;
+;;;;;
+Leafnode checking;check leaf nodes entities;;;wig20021112;
+;x all signals/ports mapped;;;;
+;x type matching;;;;
+;;;;;
+Tool name;mix_1.pl, mix_fe.pl, mix_be.pl;;;wig20021112;
+;;;;;
+Sanity checks;implemented in Mic::Mixutils.pm;;;wig20021112;
+;Mehrdeutige Signale;;;;
+;Type mismatch;;;;
+;Mehrdeutige Definitionen/Konflikte;;;;
+;Vollständige Belegung;;;;
+;VHDL/Verilog spzifisch;;;;
+;;;;;
+Output field order;Use input filed order or preset order;;;wig20021112;
+;;;;;
+;;;;;
+VHDL output;;;;wig20021113;
+;Controlled by environment;;;;
+;Pathes;ev{'project_path'};units/.../gen/;;
+;- entity / architecture / configuration;seperate vs. Single file;;;
+;;;;;
+;VHDL Template built-in;;;;
+;(take from Mway);entity;;;
+;;architecture;;;
+;;configuration;;;
+;;;;;
+;Configuration: hierachical vs. Flat;ev{'conf'};;;
+;;;;;
+Verify Leafblocks;do connectivity and components match;;;wig20021113;
+;;;;;
+;;;;;
+Output formats;data dump;yes;;wig20021113;
+;csv;alt;;;
+;ExCEL;later;;;
+;;;;;
+;controlled by extension or option;;;;
+;-o BLA.{csv|xls|pdata};;;;
+;;;;;
+Hierachy sheet;Print out hierachical blocks;;;wig20021113;
+;;;;;
+Logging;Levels;INFO;;wig20021113;
+;;WARNING;;;
+;;ERROR;;;
+;;FATAL;;;
+:=:=:=>HIER_OLD
+::ign;::gen;::variants;::parent;::inst;::lang;::entity;::config;::comment
+#Kommentar;;;;Toplevel;;;;
+;;Default;TESTBENCH;A_CLK;VHDL;A_CLK;A_CLK_RTL_CONF;
+#;;Default;A_CLK;u_timegen;VHDL;timegen;timegen_RTL_CONF;
+;;Default;A_CLK;control;VHDL;a_fsm;a_fsm_RTL_CONF;
+#;;Default;A_CLK;u_keyscan;VHDL;keyscan;keyscan_RTL_CONF;
+#;;Default;A_CLK;u_keypad;VHDL;keypad;keypad_RTL_CONF;
+#;;Default;A_CLK;u0_alreg;VHDL;alreg;alreg_RTL_CONF;
+#;;Default;A_CLK;u1_alreg;VHDL;alreg;alreg_RTL_CONF;
+#;;Default;A_CLK;u2_alreg;VHDL;alreg;alreg_RTL_CONF;
+#;;Default;A_CLK;u3_alreg;VHDL;alreg;alreg_RTL_CONF;
+#;;Default;A_CLK;u_counter;VHDL;count4;count4_RTL_CONF;
+;;Default;A_CLK;u_ddrv4;VHDL;ddrv4;ddrv4_RTL_CONF;
+# ...;;Default;A_CLK;a_fsm;VHDL;fsm;fsm_RTL_CONF;
+#End of top level;;;;;;;;
+;;;;;;;;
+;;;;;;;;
+# ddrv4;;;;;;;;
+;;Default;u_ddrv4;d_ms_hr;VHDL;ddrv;%::inst%_RTL_CONF;
+#;;Var2;;d_ms_hr;VHDL;ddrv;%::entity%_var2_RTL_CONF;
+#;;Var1;u_ddrv4;d_ms_hr;Verilog;ddrv_var1;%::entity%_RTL_CONF;
+#;;Defaut,Var2;u_ddrv4;d_ms_hr;VHDL;ddrv;%::inst%_RTL_CONF;
+;;Default;u_ddrv4;d_ls_hr;VHDL;ddrv;%::inst%_RTL_CONF;
+;;Default;u_ddrv4;d_ms_min;VHDL;ddrv;%::inst%_RTL_CONF;
+;;Default;u_ddrv4;d_ls_min;VHDL;ddrv;%::inst%_RTL_CONF;
+;;Default;u_ddrv4;u_and_f;VHDL;and_f;%::inst%_RTL_CONF;
+#End of stage 1;;;;;;;;
+;;;;;;;;
+# Generate s.th.:;;;;;;;;
+# Generate 10 pads:;;;;;;;;
+#;;Default;A_CLK;PADS;VHDL;PADS;PADS_RTL_CONF;
+#;$i(1..10),/Pad_$i/;Default;PADS;Pad_$i;VHDL;padcell;%::inst%_structural_conf;generated pad
+#;;;;Pad_1;;;;Pad 1
+#;;;;Pad_2;;;Pad_2_extra_conf;Pad 2
+#;;;;Pad_3;;;;
+#;;;;Pad_4;;padcell_4_e;;
+#;;;;Pad_5;;;;
+#;;;;Pad_6;;;;
+#;;;;Pad_7;;;;
+#;;;;Pad_8;;;;
+#;;;;Pad_9;;;;
+#;;;;Pad_10;;;;
+#;;;;Pad_11;;;;Pad_11
+:=:=:=>CONN
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::out;::in;::descr;::comment
+#;;Bundle Name;Class;Clk Domain;Type;High;Low;;Signal;Outputs;Inputs;Description;
+# Various testcases showing bit and bus splicing ..;;;;;;;;;;;;;
+# Testcase 2003012201;;;;;;;;;Add a signal reused internally;;;;
+;;Test1;Test1;clk;std_ulogic;;;;test1;inst_aa/port_1;inst_ab/port_ab_1;Use internally test1;
+;;;;;;;;;test1;;inst_b/port_b_1;;
+;;Test2;Test2;clk;std_ulogic_vector;4;0;S;test2;inst_aa/port_2(0) = (0), inst_ab/port_2(0) = (1), inst_ac/port_2(0) = (3), inst_ad/port_2(0) = (4);inst_ae/port_2(0)=(0), inst_ae/port_2(1)=(1), inst_ae/port_2(3)=(3), inst_ae/port_2(4) = (4);Bus with hole in the middle;
+;;;;;;;;;test2;;inst_ae/port_2(2)=(2);Needs input to be happy;
+;;Test3;Test3;clk;std_ulogic_vector;3;0;S;test3;inst_aa/port_3(0) = (0), inst_ab/port_3(0) = (1), inst_ac/port_3(0) = (2), inst_ad/port_3(0) = (3);inst_ae/port_3(0)=(0), inst_ae/port_3(1)=(1), inst_ae/port_3(2)=(2), inst_ae/port_3(3) = (3);Bus combining o.k.;
+#DISABLE, created bas VHDL;;Test4;Test4;clk;std_ulogic_vector;3;0;S;test4;inst_aa/port_4(2) = (0), inst_ab/port_4(2) = (1), inst_ac/port_4(2) = (2), inst_ad/port_4(2) = (3);inst_ae/port_4(0)=(0), inst_ae/port_4(1)=(1), inst_ae/port_4(2)=(2), inst_ae/port_4(3) = (3);Use one bit of port, only, index 2;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+# Testcase issues mde-B;;;;;;;;;;;;;
+#  20030220h: Bug section: cp_lcmd;;;;;;;;;;;;;
+#;;;;;std_ulogic_vector;6;0;S;cp_lcmd;cpu_i1/cp_lcmd;ifu_top_i1/cp_lcmd(6)=(6);GuestBusLBC(memorymappedI/O)Interface;
+#;;;;;std_ulogic_vector;5;0;S;%LOW_BUS%;;ifu_top_i1/cp_lcmd(5:0)=(5:0);;
+#;;;;;;;;;;;;;
+;;TestMDE;TestMDE_1;clk;std_ulogic_vector;6;0;S;cp_lcmd;inst_ef/cp_lcmd;inst_eac/cp_lcmd(6)=(6);GuestBusLBC(memorymappedI/O)Interface;
+;;TestMDE;TestMDE_1;clk;std_ulogic_vector;5;0;S;%LOW_BUS%;;inst_eac/cp_lcmd(5:0)=(5:0);;
+;;;;;;;;;;;;;
+;;TestMDE;TestMDE_1;clk;std_ulogic_vector;6;0;S;cp_lcmd_3;inst_ef/cp_lcmd_p;inst_eac/cp_lcmd_p(6)=(6);Signal name != port name;
+;;TestMDE;TestMDE_1;clk;std_ulogic_vector;5;0;S;%LOW_BUS%;;inst_eac/cp_lcmd_p(5:0)=(5:0);;
+;;;;;;;;;;;;;
+;;TestMDE;TestMDE_1;clk;std_ulogic_vector;6;0;S;cp_lcmd_2;inst_ef/cp_lcmd_2;inst_eac/cp_lcmd_2(6)=(6);Second way to wire to zero / GuestBusLBC(memorymappedI/O)Interface;
+;;TestMDE;TestMDE_1;clk;std_ulogic_vector;;;S;cp_lcmd_2;0;inst_eac/cp_lcmd_2(5:0)=(5:0);;
+;;;;;;;;;;;;;
+# 20030312 (no ticket number);;;;;;;;;;;;;
+#;;MCU;;;std_ulogic_vector;5;0;S;v_select;;mcu_i1/v_select;RequestBusinterface:RequestBus#6(VPU);
+#;;EMA;;;std_ulogic_vector;5;0;S;v_select;;ema_i1/v_select(2)=(2),ema_i1/v_select(5)=(5);VPUinterface;
+#;;EMA;;;std_ulogic;;;;%LOW%;;ema_i1/v_select(0), ema_i1/v_select(1), ema_i1/v_select(3), ema_i1/v_select(4);;
+;;TestMDE;TestMDE_2;clk;std_ulogic_vector;5;0;S;v_select;;inst_eca/v_select;RequestBusinterface:RequestBus#6(VPU);
+;;TestMDE;TestMDE_2;clk;std_ulogic_vector;5;0;S;v_select;;inst_eab/v_select(2)=(2),inst_eab/v_select(5)=(5);VPUinterface;
+;;TestMDE;TestMDE_2;clk;std_ulogic;;;;%LOW%;;inst_eab/v_select(0), inst_eab/v_select(1), inst_eab/v_select(3), inst_eab/v_select(4);;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+# 20030312 (no ticket number);;;;;;;;;;;;;
+#;;CPU;;;std_ulogic_vector;12;0;S;c_addr;cpu_i1/c_addr;ga_i1/c_addr_i,ema_i1/c_add,ifu_top_i1/c_addr,cgu_logic_i1/c_add;CBUSinterface;
+#;;ADP58;;;std_ulogic_vector;12;0;S;c_addr;;adp58_i1/c_addr;cpui/finputs;
+#;;VPU;;;std_ulogic_vector;12;0;S;c_addr;;vpu_i1/c_addr_i;CPUInterface;
+#;;VIDENC;;;std_ulogic_vector;12;0;S;c_addr;;vid_enc_i1/c_addr;;
+#;;CVI;;;std_ulogic_vector;12;0;S;c_addr;;cvi_i1/c_addr_i;C-Businterface;
+#;;MCU;;;std_ulogic_vector;12;0;S;c_addr;;mcu_i1/c_add;CPUinterface;
+#;;PDU;;;std_ulogic_vector;12;0;S;c_addr;;pdu_i1/c_addr;;
+#;;TSDTOP;;;std_ulogic_vector;12;0;S;c_addr;;tsd_top_i1/c_addr;CPUInterface;
+;;TestMDE;TestMDE_3;;std_ulogic_vector;12;0;S;c_addr;inst_ef/c_addr;inst_eaa/c_addr_i,inst_eab/c_add,inst_eac/c_addr,inst_edb/c_add;;
+;;TestMDE;TestMDE_3;;std_ulogic_vector;12;0;S;c_addr;;inst_eg/c_addr;;
+;;TestMDE;TestMDE_3;;std_ulogic_vector;12;0;S;c_addr;;inst_ebb/c_addr_i;;
+;;TestMDE;TestMDE_3;;std_ulogic_vector;12;0;S;c_addr;;inst_ebc/c_addr;;
+;;TestMDE;TestMDE_3;;std_ulogic_vector;12;0;S;c_addr;;inst_eba/c_addr_i;;
+;;TestMDE;TestMDE_3;;std_ulogic_vector;12;0;S;c_addr;;inst_eca/c_add;;
+;;TestMDE;TestMDE_3;;std_ulogic_vector;12;0;S;c_addr;;inst_ecb/c_addr;;
+;;TestMDE;TestMDE_3;;std_ulogic_vector;12;0;S;c_addr;;inst_ecc/c_addr;;
+;;;;;;;;;;;;;
+#20030312 (no ticket number);;;;;;;;;;;;;
+#;;CPU;;;std_ulogic_vector;31;0;S;c_bus_in;cpu_i1/c_bus_in;ga_i1/c_bus_i,ema_i1/c_bus_in,ifu_top_i1/c_bus_in,cgu_logic_i1/c_bus_in;CBUSinterface;
+#;;ADP58;;;std_ulogic_vector;31;0;S;c_bus_in;;adp58_i1/c_bus_in;cpui/finputs;
+#;;VPU;;;std_ulogic_vector;31;0;S;c_bus_in;;vpu_i1/c_bus_i;CPUInterface;
+#;;VIDENC;;;std_ulogic_vector;31;0;S;c_bus_in;;vid_enc_i1/c_bus_in;;
+#;;CVI;;;std_ulogic_vector;31;0;S;c_bus_in;;cvi_i1/c_bus_i;C-Businterface;
+#;;MCU;;;std_ulogic_vector;31;0;S;c_bus_in;;mcu_i1/c_bus_in;CPUinterface;
+#;;PDU;;;std_ulogic_vector;31;0;S;c_bus_in;;pdu_i1/c_bus_in;;
+#;;TSDTOP;;;std_ulogic_vector;31;0;S;c_bus_in;;tsd_top_i1/c_bus_in;CPUInterface;
+;;TestMDE;TestMDE_5;;std_ulogic_vector;31;0;S;c_bus_in;inst_ef/c_bus_in;inst_eaa/c_bus_i,inst_eab/c_bus_in,inst_eac/c_bus_in,inst_edb/c_bus_in;CBUSinterface;
+;;TestMDE;TestMDE_5;;std_ulogic_vector;31;0;S;c_bus_in;;inst_eg/c_bus_in;cpui/finputs;
+;;TestMDE;TestMDE_5;;std_ulogic_vector;31;0;S;c_bus_in;;inst_ebb/c_bus_i;CPUInterface;
+;;TestMDE;TestMDE_5;;std_ulogic_vector;31;0;S;c_bus_in;;inst_ebc/c_bus_in;;
+;;TestMDE;TestMDE_5;;std_ulogic_vector;31;0;S;c_bus_in;;inst_eba/c_bus_i;C-Businterface;
+;;TestMDE;TestMDE_5;;std_ulogic_vector;31;0;S;c_bus_in;;inst_eca/c_bus_in;CPUinterface;
+;;TestMDE;TestMDE_5;;std_ulogic_vector;31;0;S;c_bus_in;;inst_ecb/c_bus_in;;
+;;TestMDE;TestMDE_5;;std_ulogic_vector;31;0;S;c_bus_in;;inst_ecc/c_bus_in;CPUInterface;
+;;;;;;;;;;;;;
+#20030312 (no ticket number);;;;;;;;;;;;;
+#;;I58IOLOGIC;;;std_ulogic_vector;12;0;S;tmi_sbist_fail;vpu_i1/mbist_sum_fail_o=(12),cvi_i1/mbist_vcd_fail_o=(11),cvi_i1/mbist_aci_fail_o=(10),ga_i1/mbist_fifo_fail_o=(9),ga_i1/mbist_clut_fail_o=(8),ifu_top_i1/ema_bist_fail=(7),ifu_top_i1/ifu_bist_fail=(6),ifu_top_i1/tsd_bist_fail=(5),ifu_top_i1/pdu_bist_fail1=(4),ifu_top_i1/pdu_bist_fail0=(3),ifu_top_i1/mcu_bist_fail=(2),ifu_top_i1/cpu_bist_fail=(1),ifu_top_i1/adp_bist_fail=(0);i58_io_logic_i1/tmi_sbist_fail, ifu_top_i1/cvi_sbist_fail0=(10), ifu_top_i1/cvi_sbist_fail1=(11), ifu_top_i1/ga_sbist_fail1=(9), ifu_top_i1/ga_sbist_fail0=(8);;
+;;TestMDE;TestMDE_4;;std_ulogic_vector;12;0;S;tmi_sbist_fail;inst_ebb/mbist_sum_fail_o=(12),inst_eba/mbist_vcd_fail_o=(11),inst_eba/mbist_aci_fail_o=(10),inst_eaa/mbist_fifo_fail_o=(9),inst_eaa/mbist_clut_fail_o=(8),inst_eac/ema_bist_fail=(7),inst_eac/ifu_bist_fail=(6),inst_eac/tsd_bist_fail=(5),inst_eac/pdu_bist_fail1=(4),inst_eac/pdu_bist_fail0=(3),inst_eac/mcu_bist_fail=(2),inst_eac/cpu_bist_fail=(1),inst_eac/adp_bist_fail=(0);inst_ee/tmi_sbist_fail, inst_eac/cvi_sbist_fail0=(10), inst_eac/cvi_sbist_fail1=(11), inst_eac/ga_sbist_fail1=(9), inst_eac/ga_sbist_fail0=(8);;
+;;;;;;;;;;;;;
+#20030328: adding port not starting at 0;;;;;;;;;;;;;
+;;TESTPORT;TestPort;;std_ulogic_vector;7;0;S;s_port_offset_01;inst_aa/port_o(10:3);inst_ab/port_i(10:3);;
+#20030328: adding ports with holes ...;;;;;;;;;;;;;
+;;TESTPORT;TestPort;;std_ulogic_vector;7;0;S;s_port_offset_02;inst_aa/port_o02(10:3);inst_ab/port_i02(10:3);;
+;;TESTPORT;TestPort;;std_ulogic_vector;1;0;S;s_port_offset_02b;inst_aa/port_o02(1:0);inst_ab/port_i02(2:1);;
+#20030729: adding more complicated constellations: single bits connected to bus ..;;;;;;;;;;;;;
+;;TESTVGCA;;;std_ulogic_vector;3;0;S;video_i;;"inst_e/video_i,
+inst_ea/video_i";;
+;;TESTVGCA;;;;;;;video_i;;inst_eaa/video_p_0=(0);;
+;;TESTVGCA;;;;;;;video_i;;inst_eab/video_p_1=(1);;
+;;TESTVGCA;;;;;;;video_i;;inst_eac/video_p_2=(2);;
+;;TESTVGCA;;;;;;;video_i;;inst_ead/video_p_3=(3);;
+#20030730: adding a signal with > 10 bits to force appropriate sorting ...;;;;;;;;;;;;;
+;;TESTSORT;;;std_ulogic_vector;31;0;S;widesig;inst_a/widesig_o;inst_e/widesig_i;;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_0=(0);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_1=(1);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_2=(2);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_3=(3);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_4=(4);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_5=(5);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_6=(6);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_7=(7);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_8=(8);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_9=(9);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_10=(10);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_11=(11);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_12=(12);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_13=(13);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_14=(14);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_15=(15);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_16=(16);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_17=(17);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_18=(18);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_19=(19);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_20=(20);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_21=(21);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_22=(22);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_23=(23);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_24=(24);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_25=(25);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_26=(26);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_27=(27);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_28=(28);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_29=(29);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_30=(30);;
+;;;;;;;;;widesig;;inst_eaa/widesig_p_31=(31);;
+;;;;# And the opposite;;;;;;;;;
+;;;;;std_ulogic;;;S;widesig_r_0;inst_a;inst_eaa/widesig_p(0);;0
+;;;;;std_ulogic;;;S;widesig_r_1;inst_a;inst_eaa/widesig_p(1);;1
+;;;;;std_ulogic;;;S;widesig_r_2;inst_a;inst_eaa/widesig_p(2);;2
+;;;;;std_ulogic;;;S;widesig_r_3;inst_a;inst_eaa/widesig_p(3);;3
+;;;;;std_ulogic;;;S;widesig_r_4;inst_a;inst_eaa/widesig_p(4);;4
+;;;;;std_ulogic;;;S;widesig_r_5;inst_a;inst_eaa/widesig_p(5);;5
+;;;;;std_ulogic;;;S;widesig_r_6;inst_a;inst_eaa/widesig_p(6);;6
+;;;;;std_ulogic;;;S;widesig_r_7;inst_a;inst_eaa/widesig_p(7);;7
+;;;;;std_ulogic;;;S;widesig_r_8;inst_a;inst_eaa/widesig_p(8);;8
+;;;;;std_ulogic;;;S;widesig_r_9;inst_a;inst_eaa/widesig_p(9);;9
+;;;;;std_ulogic;;;S;widesig_r_10;inst_a;inst_eaa/widesig_p(10);;10
+;;;;;std_ulogic;;;S;widesig_r_11;inst_a;inst_eaa/widesig_p(11);;11
+;;;;;std_ulogic;;;S;widesig_r_12;inst_a;inst_eaa/widesig_p(12);;12
+;;;;;std_ulogic;;;S;widesig_r_13;inst_a;inst_eaa/widesig_p(13);;13
+;;;;;std_ulogic;;;S;widesig_r_14;inst_a;inst_eaa/widesig_p(14);;14
+;;;;;std_ulogic;;;S;widesig_r_15;inst_a;inst_eaa/widesig_p(15);;15
+;;;;;std_ulogic;;;S;widesig_r_16;inst_a;inst_eaa/widesig_p(16);;16
+;;;;;std_ulogic;;;S;widesig_r_17;inst_a;inst_eaa/widesig_p(17);;17
+;;;;;std_ulogic;;;S;widesig_r_18;inst_a;inst_eaa/widesig_p(18);;18
+;;;;;std_ulogic;;;S;widesig_r_19;inst_a;inst_eaa/widesig_p(19);;19
+;;;;;std_ulogic;;;S;widesig_r_20;inst_a;inst_eaa/widesig_p(20);;20
+;;;;;std_ulogic;;;S;widesig_r_21;inst_a;inst_eaa/widesig_p(21);;21
+;;;;;std_ulogic;;;S;widesig_r_22;inst_a;inst_eaa/widesig_p(22);;22
+;;;;;std_ulogic;;;S;widesig_r_23;inst_a;inst_eaa/widesig_p(23);;23
+;;;;;std_ulogic;;;S;widesig_r_24;inst_a;inst_eaa/widesig_p(24);;24
+;;;;;std_ulogic;;;S;widesig_r_25;inst_a;inst_eaa/widesig_p(25);;25
+;;;;;std_ulogic;;;S;widesig_r_26;inst_a;inst_eaa/widesig_p(26);;26
+;;;;;std_ulogic;;;S;widesig_r_27;inst_a;inst_eaa/widesig_p(27);;27
+;;;;;std_ulogic;;;S;widesig_r_28;inst_a;inst_eaa/widesig_p(28);;28
+;;;;;std_ulogic;;;S;widesig_r_29;inst_a;inst_eaa/widesig_p(29);;29
+;;;;;std_ulogic;;;S;widesig_r_30;inst_a;inst_eaa/widesig_p(30);;30
+#!wig20050502: adding testcase for unsplice;;;;;;;;;;;;;
+;;;;;std_ulogic_vector;127;0;S;unsplice_a1_no3;inst_a;inst_eaa(0)=(0);leaves 3 unconnected;
+;;;;;;;;;unsplice_a1_no3;inst_a;inst_eaa(1)=(1);;
+;;;;;;;;;unsplice_a1_no3;inst_a;inst_eaa(2)=(127);;
+;;;;;;;;;unsplice_a1_no3;inst_a;inst_eaa(127:4)=(125:2);;
+;;;;;std_ulogic_vector;127;0;S;unsplice_a2_all128;inst_a;inst_eaa(0)=(0);full 128 bit port;
+;;;;;;;;;unsplice_a2_all128;inst_a;inst_eaa(1)=(1);;
+;;;;;;;;;unsplice_a2_all128;inst_a;inst_eaa(2)=(2);;
+;;;;;;;;;unsplice_a2_all128;inst_a;inst_eaa(127:3)=(127:3);;
+;;;;;std_ulogic_vector;127;0;S;unsplice_a3_up100;inst_a;inst_eaa(0)=(0);connect 100 bits from 0;
+;;;;;;;;;unsplice_a3_up100;inst_a;inst_eaa(1)=(1);;
+;;;;;;;;;unsplice_a3_up100;inst_a;inst_eaa(2)=(2);;
+;;;;;;;;;unsplice_a3_up100;inst_a;inst_eaa(100:3)=(100:3);;
+;;;;;std_ulogic_vector;127;0;S;unsplice_a4_mid100;inst_a;inst_eaa(0)=(2);connect mid 100 bits;
+;;;;;;;;;unsplice_a4_mid100;inst_a;inst_eaa(1)=(3);;
+;;;;;;;;;unsplice_a4_mid100;inst_a;inst_eaa(97)=(99);;
+;;;;;;;;;unsplice_a4_mid100;inst_a;inst_eaa(96:2)=(98:4);;
+;;;;;std_ulogic_vector;127;0;S;unsplice_a5_midp100;inst_a;inst_eaa(2)=(2);connect mid 100 bits;
+;;;;;;;;;unsplice_a5_midp100;inst_a;inst_eaa(3)=(3);;
+;;;;;;;;;unsplice_a5_midp100;inst_a;inst_eaa(99)=(99);;
+;;;;;;;;;unsplice_a5_midp100;inst_a;inst_eaa(98:4)=(98:4);;
+;;;;;std_ulogic_vector;127;0;S;unsplice_bad_a;inst_a;inst_eaa(1:0)=(1);;
+;;;;;std_ulogic_vector;127;0;S;unsplice_bad_b;inst_a;inst_eaa(1:0)=(1:0);;
+;;;;;;;;;unsplice_bad_b;inst_a;inst_eaa(3:2)=(1:0);# conflict;conflicting map
+#wig20050510: wide_merge;;;;;;;;;;;;;
+;;;;;std_ulogic_vector;31;0;S;widemerge_a1;inst_a;inst_eaa/widemerge_a1_p(0)=(0);;0
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(1)=(1);;1
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(2)=(2);;2
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(3)=(3);;3
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(4)=(4);;4
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(5)=(5);;5
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(6)=(6);;6
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(7)=(7);;7
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(8)=(8);;8
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(9)=(9);;9
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(10)=(10);;10
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(11)=(11);;11
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(12)=(12);;12
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(13)=(13);;13
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(14)=(14);;14
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(15)=(15);;15
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(16)=(16);;16
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(17)=(17);;17
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(18)=(18);;18
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(19)=(19);;19
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(20)=(20);;20
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(21)=(21);;21
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(22)=(22);;22
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(23)=(23);;23
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(24)=(24);;24
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(25)=(25);;25
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(26)=(26);;26
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(27)=(27);;27
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(28)=(28);;28
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(29)=(29);;29
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(30)=(30);;30
+;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(31)=(31);;31
+:=:=:=>CONNPORT
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::out;::in;::descr;::comment
+#;;Bundle Name;Class;Clk Domain;Type;High;Low;;Signal;Outputs;Inputs;Description;
+#;;;;;;;;;;;;;
+#;;;;;;;;;Add a signal reused internally;;;;
+#;;Test1;Test1;clk;std_ulogic;;;;test1;inst_aa/port_1;inst_ab/port_ab_1;Use internally test1;
+#;;;;;;;;;test1;;inst_b/port_b_1;;
+#;;Test2;Test2;clk;std_ulogic_vector;4;0;S;test2;inst_aa/port_2(0) = (0), inst_ab/port_2(0) = (1), inst_ac/port_2(0) = (3), inst_ad/port_2(0) = (4);inst_ae/port_2(0)=(0), inst_ae/port_2(1)=(1), inst_ae/port_2(3)=(3), inst_ae/port_2(4) = (4);Bus with hole in the middle;
+#;;;;;;;;;test2;;inst_ae/port_2(2)=(2);Needs input to be happy;
+#;;Test3;Test3;clk;std_ulogic_vector;3;0;S;test3;inst_aa/port_3(0) = (0), inst_ab/port_3(0) = (1), inst_ac/port_3(0) = (2), inst_ad/port_3(0) = (3);inst_ae/port_3(0)=(0), inst_ae/port_3(1)=(1), inst_ae/port_3(2)=(2), inst_ae/port_3(3) = (3);Bus combining o.k.;
+#;;Test4;Test4;clk;std_ulogic_vector;3;0;S;test4;inst_aa/port_4(2) = (0), inst_ab/port_4(2) = (1), inst_ac/port_4(2) = (2), inst_ad/port_4(2) = (3);inst_ae/port_4(0)=(0), inst_ae/port_4(1)=(1), inst_ae/port_4(2)=(2), inst_ae/port_4(3) = (3);Use one bit of port, only, index 2;
+#;;;;;;;;;;;;;
+#;;;;;;;;;;;;;
+#;;;;;;;;;;;;;
+#;;;;;;;;;;;;;
+#;;;;;std_ulogic_vector;6;0;S;cp_lcmd;cpu_i1/cp_lcmd;ifu_top_i1/cp_lcmd(6)=(6);GuestBusLBC(memorymappedI/O)Interface;
+#;;;;;std_ulogic_vector;5;0;S;%LOW_BUS%;;ifu_top_i1/cp_lcmd(5:0)=(5:0);;
+#;;;;;;;;;;;;;
+#;;TestMDE;TestMDE_1;clk;std_ulogic_vector;6;0;S;cp_lcmd;inst_ef/cp_lcmd;inst_eac/cp_lcmd(6)=(6);GuestBusLBC(memorymappedI/O)Interface;
+#;;TestMDE;TestMDE_1;clk;std_ulogic_vector;5;0;S;%LOW_BUS%;;inst_eac/cp_lcmd(5:0)=(5:0);;
+#;;;;;;;;;;;;;
+#;;TestMDE;TestMDE_1;clk;std_ulogic_vector;6;0;S;cp_lcmd_3;inst_ef/cp_lcmd_p;inst_eac/cp_lcmd_p(6)=(6);Signal name != port name;
+#;;TestMDE;TestMDE_1;clk;std_ulogic_vector;5;0;S;%LOW_BUS%;;inst_eac/cp_lcmd_p(5:0)=(5:0);;
+#;;;;;;;;;;;;;
+#;;TestMDE;TestMDE_1;clk;std_ulogic_vector;6;0;S;cp_lcmd_2;inst_ef/cp_lcmd_2;inst_eac/cp_lcmd_2(6)=(6);Second way to wire to zero / GuestBusLBC(memorymappedI/O)Interface;
+#;;TestMDE;TestMDE_1;clk;std_ulogic_vector;;;S;cp_lcmd_2;0;inst_eac/cp_lcmd_2(5:0)=(5:0);;
+#;;;;;;;;;;;;;
+#;;;;;;;;;;;;;
+#;;MCU;;;std_ulogic_vector;5;0;S;v_select;;mcu_i1/v_select;RequestBusinterface:RequestBus#6(VPU);
+#;;EMA;;;std_ulogic_vector;5;0;S;v_select;;ema_i1/v_select(2)=(2),ema_i1/v_select(5)=(5);VPUinterface;
+#;;EMA;;;std_ulogic;;;;%LOW%;;ema_i1/v_select(0), ema_i1/v_select(1), ema_i1/v_select(3), ema_i1/v_select(4);;
+#;;TestMDE;TestMDE_2;clk;std_ulogic_vector;5;0;S;v_select;;inst_eca/v_select;RequestBusinterface:RequestBus#6(VPU);
+#;;TestMDE;TestMDE_2;clk;std_ulogic_vector;5;0;S;v_select;;inst_eab/v_select(2)=(2),inst_eab/v_select(5)=(5);VPUinterface;
+#;;TestMDE;TestMDE_2;clk;std_ulogic;;;;%LOW%;;inst_eab/v_select(0), inst_eab/v_select(1), inst_eab/v_select(3), inst_eab/v_select(4);;
+#;;;;;;;;;;;;;
+#;;;;;;;;;;;;;
+#;;;;;;;;;;;;;
+#;;CPU;;;std_ulogic_vector;12;0;S;c_addr;cpu_i1/c_addr;ga_i1/c_addr_i,ema_i1/c_add,ifu_top_i1/c_addr,cgu_logic_i1/c_add;CBUSinterface;
+#;;ADP58;;;std_ulogic_vector;12;0;S;c_addr;;adp58_i1/c_addr;cpui/finputs;
+#;;VPU;;;std_ulogic_vector;12;0;S;c_addr;;vpu_i1/c_addr_i;CPUInterface;
+#;;VIDENC;;;std_ulogic_vector;12;0;S;c_addr;;vid_enc_i1/c_addr;;
+#;;CVI;;;std_ulogic_vector;12;0;S;c_addr;;cvi_i1/c_addr_i;C-Businterface;
+#;;MCU;;;std_ulogic_vector;12;0;S;c_addr;;mcu_i1/c_add;CPUinterface;
+#;;PDU;;;std_ulogic_vector;12;0;S;c_addr;;pdu_i1/c_addr;;
+#;;TSDTOP;;;std_ulogic_vector;12;0;S;c_addr;;tsd_top_i1/c_addr;CPUInterface;
+#;;TestMDE;TestMDE_3;;std_ulogic_vector;12;0;S;c_addr;inst_ef/c_addr;inst_eaa/c_addr_i,inst_eab/c_add,inst_eac/c_addr,inst_edb/c_add;;
+#;;TestMDE;TestMDE_3;;std_ulogic_vector;12;0;S;c_addr;;inst_eg/c_addr;;
+#;;TestMDE;TestMDE_3;;std_ulogic_vector;12;0;S;c_addr;;inst_ebb/c_addr_i;;
+#;;TestMDE;TestMDE_3;;std_ulogic_vector;12;0;S;c_addr;;inst_ebc/c_addr;;
+#;;TestMDE;TestMDE_3;;std_ulogic_vector;12;0;S;c_addr;;inst_eba/c_addr_i;;
+#;;TestMDE;TestMDE_3;;std_ulogic_vector;12;0;S;c_addr;;inst_eca/c_add;;
+#;;TestMDE;TestMDE_3;;std_ulogic_vector;12;0;S;c_addr;;inst_ecb/c_addr;;
+#;;TestMDE;TestMDE_3;;std_ulogic_vector;12;0;S;c_addr;;inst_ecc/c_addr;;
+#;;;;;;;;;;;;;
+#;;;;;;;;;;;;;
+#;;CPU;;;std_ulogic_vector;31;0;S;c_bus_in;cpu_i1/c_bus_in;ga_i1/c_bus_i,ema_i1/c_bus_in,ifu_top_i1/c_bus_in,cgu_logic_i1/c_bus_in;CBUSinterface;
+#;;ADP58;;;std_ulogic_vector;31;0;S;c_bus_in;;adp58_i1/c_bus_in;cpui/finputs;
+#;;VPU;;;std_ulogic_vector;31;0;S;c_bus_in;;vpu_i1/c_bus_i;CPUInterface;
+#;;VIDENC;;;std_ulogic_vector;31;0;S;c_bus_in;;vid_enc_i1/c_bus_in;;
+#;;CVI;;;std_ulogic_vector;31;0;S;c_bus_in;;cvi_i1/c_bus_i;C-Businterface;
+#;;MCU;;;std_ulogic_vector;31;0;S;c_bus_in;;mcu_i1/c_bus_in;CPUinterface;
+#;;PDU;;;std_ulogic_vector;31;0;S;c_bus_in;;pdu_i1/c_bus_in;;
+#;;TSDTOP;;;std_ulogic_vector;31;0;S;c_bus_in;;tsd_top_i1/c_bus_in;CPUInterface;
+#;;TestMDE;TestMDE_5;;std_ulogic_vector;31;0;S;c_bus_in;inst_ef/c_bus_in;inst_eaa/c_bus_i,inst_eab/c_bus_in,inst_eac/c_bus_in,inst_edb/c_bus_in;CBUSinterface;
+#;;TestMDE;TestMDE_5;;std_ulogic_vector;31;0;S;c_bus_in;;inst_eg/c_bus_in;cpui/finputs;
+#;;TestMDE;TestMDE_5;;std_ulogic_vector;31;0;S;c_bus_in;;inst_ebb/c_bus_i;CPUInterface;
+#;;TestMDE;TestMDE_5;;std_ulogic_vector;31;0;S;c_bus_in;;inst_ebc/c_bus_in;;
+#;;TestMDE;TestMDE_5;;std_ulogic_vector;31;0;S;c_bus_in;;inst_eba/c_bus_i;C-Businterface;
+#;;TestMDE;TestMDE_5;;std_ulogic_vector;31;0;S;c_bus_in;;inst_eca/c_bus_in;CPUinterface;
+#;;TestMDE;TestMDE_5;;std_ulogic_vector;31;0;S;c_bus_in;;inst_ecb/c_bus_in;;
+#;;TestMDE;TestMDE_5;;std_ulogic_vector;31;0;S;c_bus_in;;inst_ecc/c_bus_in;CPUInterface;
+#;;;;;;;;;;;;;
+#;;;;;;;;;;;;;
+#;;I58IOLOGIC;;;std_ulogic_vector;12;0;S;tmi_sbist_fail;vpu_i1/mbist_sum_fail_o=(12),cvi_i1/mbist_vcd_fail_o=(11),cvi_i1/mbist_aci_fail_o=(10),ga_i1/mbist_fifo_fail_o=(9),ga_i1/mbist_clut_fail_o=(8),ifu_top_i1/ema_bist_fail=(7),ifu_top_i1/ifu_bist_fail=(6),ifu_top_i1/tsd_bist_fail=(5),ifu_top_i1/pdu_bist_fail1;i58_io_logic_i1/tmi_sbist_fail, ifu_top_i1/cvi_sbist_fail0=(10), ifu_top_i1/cvi_sbist_fail1=(11), ifu_top_i1/ga_sbist_fail1=(9), ifu_top_i1/ga_sbist_fail0=(8);;
+#;;TestMDE;TestMDE_4;;std_ulogic_vector;12;0;S;tmi_sbist_fail;inst_ebb/mbist_sum_fail_o=(12),inst_eba/mbist_vcd_fail_o=(11),inst_eba/mbist_aci_fail_o=(10),inst_eaa/mbist_fifo_fail_o=(9),inst_eaa/mbist_clut_fail_o=(8),inst_eac/ema_bist_fail=(7),inst_eac/ifu_bist_fail=(6),inst_eac/tsd_bist_fail=(5),inst_eac/pdu_bist_f;inst_ee/tmi_sbist_fail, inst_eac/cvi_sbist_fail0=(10), inst_eac/cvi_sbist_fail1=(11), inst_eac/ga_sbist_fail1=(9), inst_eac/ga_sbist_fail0=(8);;
+#;;;;;;;;;;;;;
+#;;;;;;;;;;;;;
+#;;TESTPORT;TestPort;;std_ulogic_vector;7;0;S;s_port_offset_01;inst_aa/port_o(10:3);inst_ab/port_i(10:3);;
+#;;;;;;;;;;;;;
+#;;TESTPORT;TestPort;;std_ulogic_vector;7;0;S;s_port_offset_02;inst_aa/port_o02(10:3);inst_ab/port_i02(10:3);;
+#;;TESTPORT;TestPort;;std_ulogic_vector;1;0;S;s_port_offset_02b;inst_aa/port_o02(1:0);inst_ab/port_i02(2:1);;
+#;;;;;;;;;;;;;
+#;;TESTVGCA;;;std_ulogic_vector;3;0;S;video_i;;"inst_e/video_i,
+inst_ea/video_i";;
+#;;TESTVGCA;;;;;;;video_i;;inst_eaa/video_p_0=(0);;
+#;;TESTVGCA;;;;;;;video_i;;inst_eab/video_p_1=(1);;
+#;;TESTVGCA;;;;;;;video_i;;inst_eac/video_p_2=(2);;
+#;;TESTVGCA;;;;;;;video_i;;inst_ead/video_p_3=(3);;
+#;;;;;;;;;;;;;
+#;;TESTSORT;;;std_ulogic_vector;31;0;S;widesig;inst_a/widesig_o;inst_e/widesig_i;;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_0=(0);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_1=(1);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_2=(2);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_3=(3);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_4=(4);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_5=(5);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_6=(6);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_7=(7);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_8=(8);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_9=(9);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_10=(10);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_11=(11);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_12=(12);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_13=(13);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_14=(14);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_15=(15);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_16=(16);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_17=(17);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_18=(18);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_19=(19);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_20=(20);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_21=(21);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_22=(22);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_23=(23);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_24=(24);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_25=(25);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_26=(26);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_27=(27);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_28=(28);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_29=(29);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_30=(30);;
+#;;;;;;;;;widesig;;inst_eaa/widesig_p_31=(31);;
+#;;;;# And the opposite;;;;;;;;;
+#;;;;;std_ulogic;;;S;widesig_r_0;inst_a;inst_eaa/widesig_p(0);;0
+#;;;;;std_ulogic;;;S;widesig_r_1;inst_a;inst_eaa/widesig_p(1);;1
+#;;;;;std_ulogic;;;S;widesig_r_2;inst_a;inst_eaa/widesig_p(2);;2
+#;;;;;std_ulogic;;;S;widesig_r_3;inst_a;inst_eaa/widesig_p(3);;3
+#;;;;;std_ulogic;;;S;widesig_r_4;inst_a;inst_eaa/widesig_p(4);;4
+#;;;;;std_ulogic;;;S;widesig_r_5;inst_a;inst_eaa/widesig_p(5);;5
+#;;;;;std_ulogic;;;S;widesig_r_6;inst_a;inst_eaa/widesig_p(6);;6
+#;;;;;std_ulogic;;;S;widesig_r_7;inst_a;inst_eaa/widesig_p(7);;7
+#;;;;;std_ulogic;;;S;widesig_r_8;inst_a;inst_eaa/widesig_p(8);;8
+#;;;;;std_ulogic;;;S;widesig_r_9;inst_a;inst_eaa/widesig_p(9);;9
+#;;;;;std_ulogic;;;S;widesig_r_10;inst_a;inst_eaa/widesig_p(10);;10
+#;;;;;std_ulogic;;;S;widesig_r_11;inst_a;inst_eaa/widesig_p(11);;11
+#;;;;;std_ulogic;;;S;widesig_r_12;inst_a;inst_eaa/widesig_p(12);;12
+#;;;;;std_ulogic;;;S;widesig_r_13;inst_a;inst_eaa/widesig_p(13);;13
+#;;;;;std_ulogic;;;S;widesig_r_14;inst_a;inst_eaa/widesig_p(14);;14
+#;;;;;std_ulogic;;;S;widesig_r_15;inst_a;inst_eaa/widesig_p(15);;15
+#;;;;;std_ulogic;;;S;widesig_r_16;inst_a;inst_eaa/widesig_p(16);;16
+#;;;;;std_ulogic;;;S;widesig_r_17;inst_a;inst_eaa/widesig_p(17);;17
+#;;;;;std_ulogic;;;S;widesig_r_18;inst_a;inst_eaa/widesig_p(18);;18
+#;;;;;std_ulogic;;;S;widesig_r_19;inst_a;inst_eaa/widesig_p(19);;19
+#;;;;;std_ulogic;;;S;widesig_r_20;inst_a;inst_eaa/widesig_p(20);;20
+#;;;;;std_ulogic;;;S;widesig_r_21;inst_a;inst_eaa/widesig_p(21);;21
+#;;;;;std_ulogic;;;S;widesig_r_22;inst_a;inst_eaa/widesig_p(22);;22
+#;;;;;std_ulogic;;;S;widesig_r_23;inst_a;inst_eaa/widesig_p(23);;23
+#;;;;;std_ulogic;;;S;widesig_r_24;inst_a;inst_eaa/widesig_p(24);;24
+#;;;;;std_ulogic;;;S;widesig_r_25;inst_a;inst_eaa/widesig_p(25);;25
+#;;;;;std_ulogic;;;S;widesig_r_26;inst_a;inst_eaa/widesig_p(26);;26
+#;;;;;std_ulogic;;;S;widesig_r_27;inst_a;inst_eaa/widesig_p(27);;27
+#;;;;;std_ulogic;;;S;widesig_r_28;inst_a;inst_eaa/widesig_p(28);;28
+#;;;;;std_ulogic;;;S;widesig_r_29;inst_a;inst_eaa/widesig_p(29);;29
+#;;;;;std_ulogic;;;S;widesig_r_30;inst_a;inst_eaa/widesig_p(30);;30
+#!wig20050502: adding testcase for unsplice;;;;;;;;;;;;;
+;;;;;std_ulogic_vector;127;0;S;unsplice_a1;inst_a;inst_eaa(0)=(0);leaves 3 unconnected;
+;;;;;;;;;unsplice_a1;inst_a;inst_eaa(1)=(1);;
+;;;;;;;;;unsplice_a1;inst_a;inst_eaa(2)=(127);;
+;;;;;;;;;unsplice_a1;inst_a;inst_eaa(127:4)=(125:2);;
+;;;;;std_ulogic_vector;127;0;S;unsplice_a2_all128;inst_a;inst_eaa(0)=(0);full 128 bit port;
+;;;;;;;;;unsplice_a2_all128;inst_a;inst_eaa(1)=(1);;
+;;;;;;;;;unsplice_a2_all128;inst_a;inst_eaa(2)=(2);;
+;;;;;;;;;unsplice_a2_all128;inst_a;inst_eaa(127:3)=(127:3);;
+;;;;;std_ulogic_vector;127;0;S;unsplice_a3_up100;inst_a;inst_eaa(0)=(0);connect 100 bits from 0;
+;;;;;;;;;unsplice_a3_up100;inst_a;inst_eaa(1)=(1);;
+;;;;;;;;;unsplice_a3_up100;inst_a;inst_eaa(2)=(2);;
+;;;;;;;;;unsplice_a3_up100;inst_a;inst_eaa(100:3)=(100:3);;
+;;;;;std_ulogic_vector;127;0;S;unsplice_a4_mid100;inst_a;inst_eaa(0)=(2);connect mid 100 bits;
+;;;;;;;;;unsplice_a4_mid100;inst_a;inst_eaa(1)=(3);;
+;;;;;;;;;unsplice_a4_mid100;inst_a;inst_eaa(97)=(99);;
+;;;;;;;;;unsplice_a4_mid100;inst_a;inst_eaa(96:2)=(98:4);;
+;;;;;std_ulogic_vector;127;0;S;unsplice_a5_midp100;inst_a;inst_eaa(2)=(2);connect mid 100 bits;
+;;;;;;;;;unsplice_a5_midp100;inst_a;inst_eaa(3)=(3);;
+;;;;;;;;;unsplice_a5_midp100;inst_a;inst_eaa(99)=(99);;
+;;;;;;;;;unsplice_a5_midp100;inst_a;inst_eaa(98:4)=(98:4);;
+;;;;;std_ulogic_vector;127;0;S;unsplice_bad_a;inst_a;inst_eaa(1:0)=(1);;
+;;;;;std_ulogic_vector;127;0;S;unsplice_bad_b;inst_a;inst_eaa(1:0)=(1:0);;
+;;;;;;;;;unsplice_bad_b;inst_a;inst_eaa(3:2)=(1:0);# conflict;conflicting map
+;;;;;;;;;;;;;
+#wig20050510: wide_merge;;;;;;;;;;;;;
+#;;;;;std_ulogic_vector;31;0;S;widemerge_a1;inst_a;inst_eaa/widemerge_a1_p(0)=(0);;0
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(1)=(1);;1
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(2)=(2);;2
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(3)=(3);;3
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(4)=(4);;4
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(5)=(5);;5
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(6)=(6);;6
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(7)=(7);;7
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(8)=(8);;8
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(9)=(9);;9
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(10)=(10);;10
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(11)=(11);;11
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(12)=(12);;12
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(13)=(13);;13
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(14)=(14);;14
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(15)=(15);;15
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(16)=(16);;16
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(17)=(17);;17
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(18)=(18);;18
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(19)=(19);;19
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(20)=(20);;20
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(21)=(21);;21
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(22)=(22);;22
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(23)=(23);;23
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(24)=(24);;24
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(25)=(25);;25
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(26)=(26);;26
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(27)=(27);;27
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(28)=(28);;28
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(29)=(29);;29
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(30)=(30);;30
+#;;;;;;;;;widemerge_a1;;inst_eaa/widemerge_a1_p(31)=(31);;31

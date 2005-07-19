@@ -1,0 +1,67 @@
+:=:=:=>CONF
+# Configuration Options Testcase, wig20030711;;;
+# No special configuration, consider mix.cfg!;;;
+#2005-05-20: adding vhdl_use_enty testcase;;;
+MIXCFG;macro.%VHDL_USE_ENTY%;"-- adding to vhdl_use_enty
+%VHDL_USE_DEFAULT%
+%VHDL_USE%
+typedef use_enty_private std_ulogic_vector;";
+# MIXCFG;macro.%VHDL_NOPROJ%;-- No project specific VHDL libraries;
+# MIXCFG;macro.%VHDL_USE%;-- No project specific VHDL libraries;
+# MIXCFG;macro.%VHDL_USE_ARCH%;%VHDL_USE_DEFAULT%\n%VHDL_USE%;
+# MIXCFG;macro.%VHDL_USE_CONF%;%VHDL_USE_DEFAULT%\n%VHDL_USE%;
+# MIXCFG;macro.%VHDL_USE_DEFAULT%;"library IEEE;\nuse IEEE.std_logic_1164.all;\n";
+# MIXCFG;macro.%VHDL_USE_ENTY%;%VHDL_USE_DEFAULT%\n%VHDL_USE%;
+:=:=:=>HIER
+::ign;::gen;::variants;::parent;::inst;::lang;::use;::entity;::config;::comment
+# Test various configuration options (see 20030711 requirements);;;;;;;;;
+"# Major tests: create configuration by default (rule = ::entity_::arch_conf)
+ do not output configuration in %NO_CONFIG% case";;;;;;;;;
+;;Default;TESTBENCH;inst_t;vhdl;;ent_t;;
+;;Default;inst_t;inst_a;;wig.test;ent_a;;
+;;Default;inst_t;inst_b;;;ent_b;;
+;;Default;inst_a;inst_aa;;;ent_aa;;
+;;Default;inst_a;inst_ab;;%NO_COMPONENT_DECLARATION%;ent_ab;;!Suppress component declaration
+;;Default;inst_a;inst_ac;;%NO_COMP%;ent_ac;;!Suppress component declaration
+;;Default;inst_a;inst_ad;vhdl;;ent_ad;;
+;;Default;inst_a;inst_ae;verilog;;ent_ae;;!No configuration (verilog cell!)
+;;Default;inst_b;inst_ba;;;ent_ba;%NO_CONFIG%;!No configuration (user suppressed)
+;;Default;inst_b;inst_bb;;;ent_bb;;
+#!wig 20041110: added ::use for verilog!;;;;;;;;;
+;;Default;inst_t;inst_c;verilog;"`include ""include.h"" // some include test
+%DEFINE% some_var somevalue,%INCLUDE% ""include2.h""";ent_c;;!module specific include
+;;Default;inst_c;inst_ca;;;ent_ca;;!daughter for inst_c
+;;Default;inst_c;inst_cb;;;ent_cb;;!daughter for inst_c
+:=:=:=>CONN
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::out;::in;::descr;::comment
+#;;Bundle Name;Class;Clk Domain;Type;High;Low;;Signal;Outputs;Inputs;Description;
+#;Version 1.0;20021112;wilfried.gaensheimer@micronas.com;;;;;;;Drivers;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+# Testcases for signals crossing hierachy 20030225;;;;;;;;;;;;;
+;;TestPortExt;Test1;clk;std_ulogic;;;;sig_01;inst_aa/port_aa_1;inst_ab/port_ab_1;Use internally test1;
+;;TestPortExt;;;;;;;sig_01;;inst_b/port_b_1;Will create p_mix_sig_1_go port;
+;;TestPortExt;Test2;clk;std_ulogic_vector;4;0;S;sig_02;inst_aa/port_aa_2(0) = (0), inst_ab/port_ab_2(0) = (1), inst_ac/port_ac_2(0) = (3), inst_ad/port_ad_2(0) = (4);inst_ae/port_ae_2(0)=(0), inst_ae/port_ae_2(1)=(1), inst_ae/port_ae_2(3)=(3), inst_ae/port_ae_2(4) = (4);Use internally test2, no port generated;
+;;TestPortExt;Test3;clk;std_ulogic;;;S;sig_03;inst_aa/port_aa_3;inst_b/port_b_3;Interhierachy link, will create p_mix_sig_3_go;
+;;TestPortExt;Test4;clk;std_ulogic;;;S;sig_04;inst_b/port_b_4;inst_aa/port_aa_4;Interhierachy link, will create p_mix_sig_4_gi;
+;;TestPortExt;Test5;clk;std_ulogic_vector;3;0;S;sig_05;inst_aa/port_aa_5;inst_ae/port_ae_5;Bus, single bits go to outside;
+;;TestPortExt;;;;;;;sig_05;;inst_b/port_b_5_1(0)=(2);Bus, single bits go to outside, will create p_mix_sig_5_2_2_go;
+;;TestPortExt;;;;;;;sig_05;;inst_b/port_b_5_2(0)=(1);Bus, single bits go to outside, will create P_MIX_sound_alarm_test5_1_1_GO;
+;;TestPortExt;Test6;clk;std_ulogic_vector;3;0;S;sig_06;inst_aa/port_aa_6;inst_ae/port_ae_6;Conflicting definition;
+;;;;;;;;;sig_06;inst_b/port_b_6o;inst_b/port_b_6i;Conflicting definition;
+;;TestPortExt;Test7;clk;std_ulogic_vector;5;0;S;sig_07;inst_aa;inst_ae,inst_b,inst_a;Conflicting definition, IN false!;
+;;TestPortExt;Test8;clk;std_ulogic_vector;8;2;S;sig_08;inst_aa,inst_a;inst_ae,inst_b;VHDL intermediate needed (port name);
+;;TestPortExt;Test9;clk;std_ulogic_vector;6;0;I;sig_i_ae;;inst_ae;Input Bus;
+;;TestPortExt;Test10;clk;std_ulogic_vector;7;0;O;sig_o_ae;inst_ae;;Output Bus;
+;;TestPortExt;Test11;clk;std_ulogic;;;I;sig_i_a;;inst_a/port_i_a;Input Port;
+;;TestPortExt;Test11;clk;std_ulogic;;;I;sig_i_a2;;inst_a;Input Port;
+;;TestPortExt;Test12;clk;std_ulogic;;;O;sig_o_a;inst_a/port_o_a;;Output Port;
+;;TestPortExt;Test12;clk;std_ulogic;;;O;sig_o_a2;inst_a;;Output Port;
+;;;;;;;;;;;;;
+#change;;;;;;;;;;;;;
+#wig2003-03-24;;;;;;;;;;;;;
+;;TestPortExt;Test13;clk;std_ulogic_vector;4;0;S;sig_13;inst_aa,inst_a;inst_ab;Create internal signal name;
+#wig2004-11-10: add signal for inst_c;;;;;;;;;;;;;
+;;TestUseVerilog;Test14;clk;std_ulogic;;;S;sig_14;inst_ca;inst_cb;Create connection for inst_c;
+#wig20050520: use MY_* macro defintions;;;;;;;;;;;;;
+;;my_test;macro;clk;std_test;;;;sig_ADD_MY_SIG;inst_aa;inst_ab/%ADD_MY_SIG%;adding my own macro;

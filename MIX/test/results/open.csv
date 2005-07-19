@@ -1,0 +1,64 @@
+:=:=:=>HIER
+::ign;::gen;::variants;::parent;::inst;::lang;::entity;::config;::comment
+;;;testbench;inst_t;%LANGUAGE%;inst_t_e;inst_t_e_rtl_conf;
+;;;inst_t;inst_a;%LANGUAGE%;inst_a_e;inst_a_e_rtl_conf;
+;;Off;inst_a;inst_aa;%LANGUAGE%;inst_aa_e;inst_aa_e_rtl_conf;
+;;Off;inst_a;inst_ab;%LANGUAGE%;inst_ab_e;inst_ab_e_rtl_conf;
+;;Off;inst_a;inst_ac;%LANGUAGE%;inst_ac_e;inst_ac_e_rtl_conf;
+;;Off;inst_a;inst_ad;%LANGUAGE%;inst_ad_e;inst_ad_e_rtl_conf;
+;;Off;inst_a;inst_ae;%LANGUAGE%;inst_ae_e;inst_ae_e_rtl_conf;
+;;;inst_t;inst_b;%LANGUAGE%;inst_b_e;inst_b_e_rtl_conf;
+;;Off;inst_t;inst_c;%LANGUAGE%;inst_c_e;inst_c_e_rtl_conf;
+;;Off;inst_t;inst_d;%LANGUAGE%;inst_d_e;inst_d_e_rtl_conf;
+;;Off;inst_t;inst_e;%LANGUAGE%;inst_e_e;inst_e_e_rtl_conf;
+;;Off;inst_e;inst_ea;%LANGUAGE%;inst_ea_e;inst_ea_e_rtl_conf;
+;;Off;inst_e;inst_eb;%LANGUAGE%;inst_eb_e;inst_eb_e_rtl_conf;
+;;Off;inst_e;inst_ec;%LANGUAGE%;inst_ec_e;inst_ec_e_rtl_conf;
+;;Off;inst_e;inst_ed;%LANGUAGE%;inst_ed_e;inst_ed_e_rtl_conf;
+;;Off;inst_e;inst_ee;Verilog;inst_ee_e;inst_ee_e_rtl_conf;
+;;Off;inst_e;inst_ef;Verilog;inst_ef_e;inst_ef_e_rtl_conf;
+;;Off;inst_e;inst_eg;Verilog;inst_eg_e;inst_eg_e_rtl_conf;
+;;Off;inst_ea;inst_eaa;%LANGUAGE%;inst_eaa_e;inst_eaa_e_rtl_conf;
+;;Off;inst_ea;inst_eab;Verilog;inst_eab_e;inst_eab_e_rtl_conf;
+;;Off;inst_ea;inst_eac;Verilog;inst_eac_e;inst_eac_e_rtl_conf;
+;;Off;inst_eb;inst_eba;%LANGUAGE%;inst_eba_e;inst_eba_e_rtl_conf;
+;;Off;inst_eb;inst_ebb;%LANGUAGE%;inst_ebb_e;inst_ebb_e_rtl_conf;
+;;Off;inst_eb;inst_ebc;Verilog;inst_ebc_e;inst_ebc_e_rtl_conf;
+;;Off;inst_ec;inst_eca;Verilog;inst_eca_e;inst_eca_e_rtl_conf;
+;;Off;inst_ec;inst_ecb;Verilog;inst_ecb_e;inst_ecb_e_rtl_conf;
+;;Off;inst_ec;inst_ecc;Verilog;inst_ecc_e;inst_ecc_e_rtl_conf;
+;;Off;inst_ed;inst_eda;Verilog;inst_eda_e;inst_eda_e_rtl_conf;
+;;Off;inst_ed;inst_edb;Verilog;inst_edb_e;inst_edb_e_rtl_conf;
+#;Generate 10 instances;;inst_a;inst_1;Verilog;inst_1_e;inst_1_e_rtl_conf;
+#;$i(1..10);;inst_a;inst_$i;VHDL;inst_$i_e;inst_$i_e_rtl_conf;
+:=:=:=>CONN
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::out;::in;::descr;::comment
+#;;Bundle Name;Class;Clk Domain;Type;High;Low;;Signal;Outputs;Inputs;Description;
+# open.xls 20020429 wilfried.gaensheimer@micronas.com;;;;;;;;;;;;;
+# OPEN;;;;;;;;;;;;;
+;;open;open1;clk;std_ulogic;;;;%OPEN%;inst_a/open_bit;;;# open bit
+;;open;open2;clk;std_ulogic_vector;3;0;;%OPEN%;inst_a/open_bus;;;# open bus
+;;open;open3;clk;std_ulogic_vector;3;0;;wire_open;inst_a/wire_open;inst_a/wire_open_in;;# wired part of port wire_open
+;;open;open3b;clk;std_ulogic_vector;1;0;;%OPEN%;inst_a/wire_open(5:4);;;# open part of port wire_open
+;;;;;;;;;;;;;
+;;open;open5;clk;std_ulogic;;;;open;inst_b;;replace name;# Trigger rename to mix_key_open
+;;open;open6;clk;std_ulogic;;;;open;inst_b/open_bit_2(0);;;# Variant of single bit
+;;open;open7;clk;std_ulogic_vector;0;0;;open;inst_b/open_bit_3;;;# Variant of single bit
+;;open;open8;clk;std_ulogic_vector;0;0;;open;inst_b/open_bit_4(0);;;# Variant of single bit
+;;;;;;;;;;;;;
+;;open;open9;clk;std_ulogic_vector;5;0;;open;inst_a/open_bus_9;;;#open bus with more pins (open2!!)
+;;open;open10;clk;std_ulogic_vector;7;0;;open;;inst_a/open_in_bus_10;;#open input bus
+;;open;open11;clk;std_ulogic;;;;open;;inst_a/open_in_bit_11;;#open input bit
+#NEW 20030722: partiall opens ...;;;;;;;;;;;;;
+;;open;open12;clk;;;;;open;inst_a/open_part12(5:3);;from 5 to 3;
+;;open;open12;clk;std_ulogic_vector;2;0;;non_open;inst_a/open_part12(2:0);inst_b;;
+;;open;open12;clk;std_ulogic;;;;non_open_bit;inst_a/open_part12(6);inst_b;;
+#NEW 20030722: partial open, spliced;;;;;;;;;;;;;
+;;open;open13;clk;;;;;open;inst_a/open_part13(6);;;
+;;open;open13;clk;std_ulogic_vector;2;0;;non_open;inst_a/open_part13(2:0);inst_b;;
+;;open;open13;clk;std_ulogic;;;;non_open_bit;inst_a/open_part13(5);inst_b;;
+;;open;open13;clk;;;;;open;inst_a/open_part13(4);;;
+;;open;open13;clk;;;;;open;inst_a/open_part13(3);;;
+;;;;;;;;;;;;;
+#NEW 20050113: get width set correctely;;;;;;;;;;;;;
+;;open;open14;clk;;;;;open;inst_a/openport14(2:0);;check width and type;#use default type and find out width

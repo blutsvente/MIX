@@ -1,0 +1,1549 @@
+:=:=:=>CONF
+MIXCFG;CONST_NR;0
+MIXCFG;DELTA_INT_NR;0
+MIXCFG;DELTA_NR;0
+MIXCFG;ERROR;__ERROR__
+MIXCFG;GENERIC_NR;0
+MIXCFG;PRINTTIMING;1
+MIXCFG;WARN;__WARNING__
+MIXCFG;check.defs;inst,conn
+MIXCFG;check.inst;nomulti
+MIXCFG;check.keywords.verilog;(register|net|wire|in|out|inout)
+MIXCFG;check.keywords.vhdl;(open|instance|entity|signal)
+MIXCFG;check.name.conf;no
+MIXCFG;check.name.conn;no
+MIXCFG;check.name.enty;no
+MIXCFG;check.name.inst;no
+MIXCFG;check.name.pad;no
+MIXCFG;check.name.port;no
+MIXCFG;check.signal;load,driver,check,top_open
+MIXCFG;conf.parsed;0
+MIXCFG;conf.req;optional
+MIXCFG;conf.xls;CONF
+MIXNOCFG;conn.field.::bundle;ARRAY
+MIXNOCFG;conn.field.::class;ARRAY
+MIXNOCFG;conn.field.::clock;ARRAY
+MIXNOCFG;conn.field.::comment;ARRAY
+MIXNOCFG;conn.field.::debug;ARRAY
+MIXNOCFG;conn.field.::default;ARRAY
+MIXNOCFG;conn.field.::descr;ARRAY
+MIXNOCFG;conn.field.::gen;ARRAY
+MIXNOCFG;conn.field.::high;ARRAY
+MIXNOCFG;conn.field.::ign;ARRAY
+MIXNOCFG;conn.field.::in;ARRAY
+MIXNOCFG;conn.field.::low;ARRAY
+MIXNOCFG;conn.field.::mdein;ARRAY
+MIXNOCFG;conn.field.::mdeout;ARRAY
+MIXNOCFG;conn.field.::mode;ARRAY
+MIXNOCFG;conn.field.::name;ARRAY
+MIXNOCFG;conn.field.::out;ARRAY
+MIXNOCFG;conn.field.::result;ARRAY
+MIXNOCFG;conn.field.::shortname;ARRAY
+MIXNOCFG;conn.field.::skip;ARRAY
+MIXNOCFG;conn.field.::type;ARRAY
+MIXCFG;conn.field.nr;19
+MIXCFG;conn.key;::name
+MIXCFG;conn.parsed;1
+MIXCFG;conn.req;mandatory
+MIXCFG;conn.xls;CONN
+MIXCFG;cwd;H:/work/x2v/t/case
+MIXCFG;drive;H:/
+MIXCFG;dump;case.pld
+MIXCFG;format.csv.cellsep;";"
+MIXCFG;format.csv.quoting;""""
+MIXCFG;format.csv.sheetsep;:=:=:=>
+MIXCFG;format.out;
+MIXNOCFG;hier.field.::arch;ARRAY
+MIXNOCFG;hier.field.::comment;ARRAY
+MIXNOCFG;hier.field.::config;ARRAY
+MIXNOCFG;hier.field.::debug;ARRAY
+MIXNOCFG;hier.field.::default;ARRAY
+MIXNOCFG;hier.field.::descr;ARRAY
+MIXNOCFG;hier.field.::entity;ARRAY
+MIXNOCFG;hier.field.::gen;ARRAY
+MIXNOCFG;hier.field.::hierachy;ARRAY
+MIXNOCFG;hier.field.::ign;ARRAY
+MIXNOCFG;hier.field.::inst;ARRAY
+MIXNOCFG;hier.field.::lang;ARRAY
+MIXNOCFG;hier.field.::parent;ARRAY
+MIXNOCFG;hier.field.::shortname;ARRAY
+MIXNOCFG;hier.field.::skip;ARRAY
+MIXNOCFG;hier.field.::use;ARRAY
+MIXNOCFG;hier.field.::variants;ARRAY
+MIXCFG;hier.field.nr;14
+MIXCFG;hier.key;::inst
+MIXCFG;hier.parsed;1
+MIXCFG;hier.req;mandatory
+MIXCFG;hier.xls;HIER
+MIXNOCFG;i2c.field.::b;ARRAY
+MIXNOCFG;i2c.field.::block;ARRAY
+MIXNOCFG;i2c.field.::busy;ARRAY
+MIXNOCFG;i2c.field.::clock;ARRAY
+MIXNOCFG;i2c.field.::comment;ARRAY
+MIXNOCFG;i2c.field.::debug;ARRAY
+MIXNOCFG;i2c.field.::default;ARRAY
+MIXNOCFG;i2c.field.::dev;ARRAY
+MIXNOCFG;i2c.field.::dir;ARRAY
+MIXNOCFG;i2c.field.::ign;ARRAY
+MIXNOCFG;i2c.field.::init;ARRAY
+MIXNOCFG;i2c.field.::interface;ARRAY
+MIXNOCFG;i2c.field.::rec;ARRAY
+MIXNOCFG;i2c.field.::reset;ARRAY
+MIXNOCFG;i2c.field.::skip;ARRAY
+MIXNOCFG;i2c.field.::spec;ARRAY
+MIXNOCFG;i2c.field.::sub;ARRAY
+MIXNOCFG;i2c.field.::variants;ARRAY
+MIXNOCFG;i2c.field.::width;ARRAY
+MIXCFG;i2c.field.nr;17
+MIXCFG;i2c.parsed;0
+MIXCFG;i2c.req;optional
+MIXCFG;i2c.xls;I2C
+MIXCFG;input.ext.csv;csv
+MIXCFG;input.ext.excel;xls
+MIXCFG;input.ext.soffice;sxc
+MIXCFG;intermediate.ext;
+MIXCFG;intermediate.format;prev
+MIXCFG;intermediate.keep;3
+MIXCFG;intermediate.order;input
+MIXCFG;intermediate.path;.
+MIXCFG;intermediate.strip;0
+MIXCFG;internal.format;perl
+MIXCFG;internal.order;input
+MIXCFG;internal.path;.
+MIXNOCFG;io.field.::class;ARRAY
+MIXNOCFG;io.field.::comment;ARRAY
+MIXNOCFG;io.field.::debug;ARRAY
+MIXNOCFG;io.field.::default;ARRAY
+MIXNOCFG;io.field.::ign;ARRAY
+MIXNOCFG;io.field.::iocell;ARRAY
+MIXNOCFG;io.field.::ispin;ARRAY
+MIXNOCFG;io.field.::muxopt;ARRAY
+MIXNOCFG;io.field.::name;ARRAY
+MIXNOCFG;io.field.::pad;ARRAY
+MIXNOCFG;io.field.::pin;ARRAY
+MIXNOCFG;io.field.::port;ARRAY
+MIXNOCFG;io.field.::skip;ARRAY
+MIXNOCFG;io.field.::type;ARRAY
+MIXCFG;io.field.nr;12
+MIXCFG;io.parsed;0
+MIXCFG;io.req;optional
+MIXCFG;io.xls;IO
+MIXCFG;iocell.auto;bus
+MIXCFG;iocell.bus;_vector
+MIXCFG;iocell.defaultdir;in
+MIXCFG;iocell.in;do,en,pu,pd,xout
+MIXCFG;iocell.inout;__NOINOUT__
+MIXCFG;iocell.name;%::iocell%_%::pad%
+MIXCFG;iocell.out;di,xin
+MIXCFG;iocell.select;onehot,auto
+MIXCFG;macro.%0%;mix_0.pl
+MIXCFG;macro.%ARGV%;H:\work\mix\mix_0.pl ..\case.xls
+MIXCFG;macro.%BUFFER%;buffer
+MIXCFG;macro.%BUS_TYPE%;std_ulogic_vector
+MIXCFG;macro.%CONST%;__CONST__
+MIXCFG;macro.%DATE%;Fri Dec 19 14:40:36 2003
+MIXCFG;macro.%DEFAULT_CONFIG%;%::entity%_%::arch%_conf
+MIXCFG;macro.%DEFAULT_MODE%;S
+MIXCFG;macro.%EMPTY%;
+MIXCFG;macro.%GENERIC%;__GENERIC__
+MIXCFG;macro.%H%;$
+MIXCFG;macro.%HIGH%;mix_logic1
+MIXCFG;macro.%HIGH_BUS%;mix_logic1_bus
+MIXCFG;macro.%HOME%;H:\
+MIXCFG;macro.%IMPORT%;__IMPORT__
+MIXCFG;macro.%IMPORT_BUNDLE%;__IMPORT_BUNDLE__
+MIXCFG;macro.%IMPORT_CLK%;__IMPORT_CLK__
+MIXCFG;macro.%IMPORT_I%;I
+MIXCFG;macro.%IMPORT_O%;O
+MIXCFG;macro.%IOCELL_CLK%;CLK
+MIXCFG;macro.%IOCELL_SELECT_PORT%;__I_default_select
+MIXCFG;macro.%IOCELL_TYPE%;__E_DEFAULT_IOCELL__
+MIXCFG;macro.%IOCR%;\n
+MIXCFG;macro.%LANGUAGE%;vhdl
+MIXCFG;macro.%LOW%;mix_logic0
+MIXCFG;macro.%LOW_BUS%;mix_logic0_bus
+MIXCFG;macro.%NCD%;__NOCOMPDEC__
+MIXCFG;macro.%NOSEL%;__I_NOSEL__
+MIXCFG;macro.%NOSELPORT%;__I_NOSELPORT__
+MIXCFG;macro.%NO_COMP%;__NOCOMPDEC__
+MIXCFG;macro.%NO_COMPONENT_DECLARATION%;__NOCOMPDEC__
+MIXCFG;macro.%NO_CONFIG%;NO_CONFIG
+MIXCFG;macro.%NULL%;0
+MIXCFG;macro.%OPEN%;open
+MIXCFG;macro.%PAD_CLASS%;PAD
+MIXCFG;macro.%PAD_TYPE%;__E_DEFAULT_PAD__
+MIXCFG;macro.%PARAMETER%;__PARAMETER__
+MIXCFG;macro.%PROJECT%;NO_PROJECT_SET
+MIXCFG;macro.%S%;\t
+MIXCFG;macro.%SIGNAL%;std_ulogic
+MIXCFG;macro.%SPACE%; 
+MIXCFG;macro.%TAB%;\t
+MIXCFG;macro.%TBD%;__W_TO_BE_DEFINED
+MIXCFG;macro.%TOP%;__TOP__
+MIXCFG;macro.%UNDEF%;ERROR_UNDEF
+MIXCFG;macro.%UNDEF_1%;ERROR_UNDEF_1
+MIXCFG;macro.%UNDEF_2%;ERROR_UNDEF_2
+MIXCFG;macro.%UNDEF_3%;ERROR_UNDEF_3
+MIXCFG;macro.%UNDEF_4%;ERROR_UNDEF_4
+MIXCFG;macro.%USER%;wig
+MIXCFG;macro.%VERILOG_DEFINES%;\t// No `defines in this module
+MIXCFG;macro.%VERILOG_TIMESCALE%;`timescale 1ns / 1ps
+MIXCFG;macro.%VERILOG_USE_ARCH%;%EMPTY%
+MIXCFG;macro.%VERSION%;Revision: 1.25 
+MIXCFG;macro.%VHDL_NOPROJ%;-- No project specific VHDL libraries
+MIXCFG;macro.%VHDL_USE%;-- No project specific VHDL libraries
+MIXCFG;macro.%VHDL_USE_ARCH%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;macro.%VHDL_USE_CONF%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;macro.%VHDL_USE_DEFAULT%;"library IEEE;\nuse IEEE.std_logic_1164.all;\n"
+MIXCFG;macro.%VHDL_USE_ENTY%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;out;case-mixed.xls
+MIXCFG;outarch;ARCH
+MIXCFG;outconf;case-c.vhd
+MIXCFG;outenty;ENTY
+MIXCFG;output.comment.default;#
+MIXCFG;output.comment.delta;#
+MIXCFG;output.comment.intermediate;#
+MIXCFG;output.comment.internal;#
+MIXCFG;output.comment.verilog;//
+MIXCFG;output.comment.vhdl;--
+MIXCFG;output.delta;sort,remove
+MIXCFG;output.ext.delta;.diff
+MIXCFG;output.ext.intermediate;mixed
+MIXCFG;output.ext.internal;pld
+MIXCFG;output.ext.verilog;v
+MIXCFG;output.ext.vhdl;vhd
+MIXCFG;output.filename;useminus
+MIXCFG;output.format;ext
+MIXCFG;output.generate._re_xinout;^__NOEXCLUDESIGNAL__$
+MIXCFG;output.generate.arch;leaf
+MIXCFG;output.generate.bak;0
+MIXCFG;output.generate.combine;0
+MIXCFG;output.generate.conf;leaf
+MIXCFG;output.generate.delta;1
+MIXCFG;output.generate.enty;leaf
+MIXCFG;output.generate.fold;signal
+MIXCFG;output.generate.inout;mode,noxfix
+MIXCFG;output.generate.portdescr;%::descr%
+MIXCFG;output.generate.portdescrlength;100
+MIXCFG;output.generate.use;enty
+MIXCFG;output.generate.workaround.verilog;dummyopen
+MIXCFG;output.generate.xinout;
+MIXCFG;output.order;input
+MIXCFG;output.path;.
+MIXCFG;output.warnings;
+MIXCFG;pad.PAD_ACTIVE_EN;1
+MIXCFG;pad.PAD_ACTIVE_PD;1
+MIXCFG;pad.PAD_ACTIVE_PU;1
+MIXCFG;pad.PAD_DEFAULT_DO;0
+MIXCFG;pad.name;%PREFIX_PAD_GEN%%::pad%
+MIXCFG;port.generate.name;postfix
+MIXCFG;port.generate.width;auto
+MIXCFG;postfix.POSTFILE_ARCH;-a
+MIXCFG;postfix.POSTFILE_CONF;-c
+MIXCFG;postfix.POSTFILE_ENTY;-e
+MIXCFG;postfix.POSTFIX_ARCH;%EMPTY%
+MIXCFG;postfix.POSTFIX_CONF;%EMPTY%
+MIXCFG;postfix.POSTFIX_CONSTANT;_c
+MIXCFG;postfix.POSTFIX_ENTY;%EMPTY%
+MIXCFG;postfix.POSTFIX_GENERIC;_g
+MIXCFG;postfix.POSTFIX_INSTANCE;%EMPTY%
+MIXCFG;postfix.POSTFIX_IOC_GEN;%EMPTY%
+MIXCFG;postfix.POSTFIX_PAD_GEN;%EMPTY%
+MIXCFG;postfix.POSTFIX_PARAMETER;_p
+MIXCFG;postfix.POSTFIX_PORT_GEN;_g%IO%
+MIXCFG;postfix.POSTFIX_PORT_IN;_i
+MIXCFG;postfix.POSTFIX_PORT_IO;_io
+MIXCFG;postfix.POSTFIX_PORT_OUT;_o
+MIXCFG;postfix.POSTFIX_SIGNAL;_s
+MIXCFG;postfix.PREFIX_CONST;mix_const_
+MIXCFG;postfix.PREFIX_GENERIC;mix_generic_
+MIXCFG;postfix.PREFIX_INSTANCE;i_
+MIXCFG;postfix.PREFIX_IOC_GEN;ioc_
+MIXCFG;postfix.PREFIX_KEYWORD;mix_key_
+MIXCFG;postfix.PREFIX_PAD_GEN;pad_
+MIXCFG;postfix.PREFIX_PARAMETER;mix_parameter_
+MIXCFG;postfix.PREFIX_PORT_GEN;p_mix_
+MIXCFG;postfix.PREFIX_SIG_INT;s_int_
+MIXCFG;script.excel.alerts;off
+MIXCFG;script.post;
+MIXCFG;script.pre;
+MIXCFG;sum.checkforce;0
+MIXCFG;sum.checkunique;0
+MIXCFG;sum.checkwarn;0
+MIXCFG;sum.cmacros;0
+MIXCFG;sum.conn;2
+MIXCFG;sum.errors;0
+MIXCFG;sum.genport;0
+MIXCFG;sum.inst;14
+MIXCFG;sum.multdriver;0
+MIXCFG;sum.nodriver;0
+MIXCFG;sum.noload;0
+MIXCFG;sum.openports;0
+MIXCFG;sum.uniq;2
+MIXCFG;sum.warnings;0
+MIXCFG;template.verilog.arch.head;## Verilog Architecture Template String t.b.d.
+MIXCFG;template.verilog.conf.head;## Verilog Configuration Template String t.b.d.
+MIXCFG;template.verilog.enty.head;## Verilog Entity Template String t.b.d.
+MIXCFG;template.verilog.file;##Verilog File Template String t.b.d.
+MIXCFG;template.verilog.wrap;## Verilog Wrapper Template String t.b.d.
+MIXCFG;template.vhdl.arch.head;## VHDL Architecture Template String t.b.d.
+MIXCFG;template.vhdl.conf.head;## VHDL Configuration Template String t.b.d.
+MIXCFG;template.vhdl.enty.head;## VHDL Entity Template String t.b.d.
+MIXCFG;top;TESTBENCH
+MIXCFG;typecast.std_logic.std_ulogic;"std_logic( %signal% );"
+MIXCFG;typecast.std_logic_vector.std_ulogic_vector;"std_logic_vector( %signal% );"
+MIXCFG;typecast.std_ulogic.std_logic;"std_ulogic( %signal% );"
+MIXCFG;typecast.std_ulogic_vector.std_logic_vector;"std_ulogic_vector( %signal% );"
+MIXCFG;variant;Default
+MIXNOCFG;vi2c.field.::b;ARRAY
+MIXNOCFG;vi2c.field.::comment;ARRAY
+MIXNOCFG;vi2c.field.::debug;ARRAY
+MIXNOCFG;vi2c.field.::default;ARRAY
+MIXNOCFG;vi2c.field.::hierachy;ARRAY
+MIXNOCFG;vi2c.field.::ign;ARRAY
+MIXNOCFG;vi2c.field.::inst;ARRAY
+MIXNOCFG;vi2c.field.::shortname;ARRAY
+MIXNOCFG;vi2c.field.::skip;ARRAY
+MIXNOCFG;vi2c.field.::type;ARRAY
+MIXNOCFG;vi2c.field.::variants;ARRAY
+MIXCFG;vi2c.field.nr;12
+MIXCFG;vi2c.parsed;0
+MIXCFG;vi2c.req;optional
+MIXCFG;vi2c.xls;VI2C
+:=:=:=>O_1_CONF
+MIXCFG;CONST_NR;0
+MIXCFG;DELTA_INT_NR;0
+MIXCFG;DELTA_NR;0
+MIXCFG;ERROR;__ERROR__
+MIXCFG;GENERIC_NR;0
+MIXCFG;PRINTTIMING;1
+MIXCFG;WARN;__WARNING__
+MIXCFG;check.defs;inst,conn
+MIXCFG;check.inst;nomulti
+MIXCFG;check.keywords.verilog;(register|net|wire|in|out|inout)
+MIXCFG;check.keywords.vhdl;(open|instance|entity|signal)
+MIXCFG;check.name.conf;no
+MIXCFG;check.name.conn;no
+MIXCFG;check.name.enty;no
+MIXCFG;check.name.inst;no
+MIXCFG;check.name.pad;no
+MIXCFG;check.name.port;no
+MIXCFG;check.signal;load,driver,check,top_open
+MIXCFG;conf.parsed;0
+MIXCFG;conf.req;optional
+MIXCFG;conf.xls;CONF
+MIXNOCFG;conn.field.::bundle;ARRAY
+MIXNOCFG;conn.field.::class;ARRAY
+MIXNOCFG;conn.field.::clock;ARRAY
+MIXNOCFG;conn.field.::comment;ARRAY
+MIXNOCFG;conn.field.::debug;ARRAY
+MIXNOCFG;conn.field.::default;ARRAY
+MIXNOCFG;conn.field.::descr;ARRAY
+MIXNOCFG;conn.field.::gen;ARRAY
+MIXNOCFG;conn.field.::high;ARRAY
+MIXNOCFG;conn.field.::ign;ARRAY
+MIXNOCFG;conn.field.::in;ARRAY
+MIXNOCFG;conn.field.::low;ARRAY
+MIXNOCFG;conn.field.::mdein;ARRAY
+MIXNOCFG;conn.field.::mdeout;ARRAY
+MIXNOCFG;conn.field.::mode;ARRAY
+MIXNOCFG;conn.field.::name;ARRAY
+MIXNOCFG;conn.field.::out;ARRAY
+MIXNOCFG;conn.field.::result;ARRAY
+MIXNOCFG;conn.field.::shortname;ARRAY
+MIXNOCFG;conn.field.::skip;ARRAY
+MIXNOCFG;conn.field.::type;ARRAY
+MIXCFG;conn.field.nr;19
+MIXCFG;conn.key;::name
+MIXCFG;conn.parsed;1
+MIXCFG;conn.req;mandatory
+MIXCFG;conn.xls;CONN
+MIXCFG;cwd;H:/work/x2v/t/case
+MIXCFG;drive;H:/
+MIXCFG;dump;case.pld
+MIXCFG;format.csv.cellsep;";"
+MIXCFG;format.csv.quoting;""""
+MIXCFG;format.csv.sheetsep;:=:=:=>
+MIXCFG;format.out;
+MIXNOCFG;hier.field.::arch;ARRAY
+MIXNOCFG;hier.field.::comment;ARRAY
+MIXNOCFG;hier.field.::config;ARRAY
+MIXNOCFG;hier.field.::debug;ARRAY
+MIXNOCFG;hier.field.::default;ARRAY
+MIXNOCFG;hier.field.::descr;ARRAY
+MIXNOCFG;hier.field.::entity;ARRAY
+MIXNOCFG;hier.field.::gen;ARRAY
+MIXNOCFG;hier.field.::hierachy;ARRAY
+MIXNOCFG;hier.field.::ign;ARRAY
+MIXNOCFG;hier.field.::inst;ARRAY
+MIXNOCFG;hier.field.::lang;ARRAY
+MIXNOCFG;hier.field.::parent;ARRAY
+MIXNOCFG;hier.field.::shortname;ARRAY
+MIXNOCFG;hier.field.::skip;ARRAY
+MIXNOCFG;hier.field.::use;ARRAY
+MIXNOCFG;hier.field.::variants;ARRAY
+MIXCFG;hier.field.nr;14
+MIXCFG;hier.key;::inst
+MIXCFG;hier.parsed;1
+MIXCFG;hier.req;mandatory
+MIXCFG;hier.xls;HIER
+MIXNOCFG;i2c.field.::b;ARRAY
+MIXNOCFG;i2c.field.::block;ARRAY
+MIXNOCFG;i2c.field.::busy;ARRAY
+MIXNOCFG;i2c.field.::clock;ARRAY
+MIXNOCFG;i2c.field.::comment;ARRAY
+MIXNOCFG;i2c.field.::debug;ARRAY
+MIXNOCFG;i2c.field.::default;ARRAY
+MIXNOCFG;i2c.field.::dev;ARRAY
+MIXNOCFG;i2c.field.::dir;ARRAY
+MIXNOCFG;i2c.field.::ign;ARRAY
+MIXNOCFG;i2c.field.::init;ARRAY
+MIXNOCFG;i2c.field.::interface;ARRAY
+MIXNOCFG;i2c.field.::rec;ARRAY
+MIXNOCFG;i2c.field.::reset;ARRAY
+MIXNOCFG;i2c.field.::skip;ARRAY
+MIXNOCFG;i2c.field.::spec;ARRAY
+MIXNOCFG;i2c.field.::sub;ARRAY
+MIXNOCFG;i2c.field.::variants;ARRAY
+MIXNOCFG;i2c.field.::width;ARRAY
+MIXCFG;i2c.field.nr;17
+MIXCFG;i2c.parsed;0
+MIXCFG;i2c.req;optional
+MIXCFG;i2c.xls;I2C
+MIXCFG;input.ext.csv;csv
+MIXCFG;input.ext.excel;xls
+MIXCFG;input.ext.soffice;sxc
+MIXCFG;intermediate.ext;
+MIXCFG;intermediate.format;prev
+MIXCFG;intermediate.keep;3
+MIXCFG;intermediate.order;input
+MIXCFG;intermediate.path;.
+MIXCFG;intermediate.strip;0
+MIXCFG;internal.format;perl
+MIXCFG;internal.order;input
+MIXCFG;internal.path;.
+MIXNOCFG;io.field.::class;ARRAY
+MIXNOCFG;io.field.::comment;ARRAY
+MIXNOCFG;io.field.::debug;ARRAY
+MIXNOCFG;io.field.::default;ARRAY
+MIXNOCFG;io.field.::ign;ARRAY
+MIXNOCFG;io.field.::iocell;ARRAY
+MIXNOCFG;io.field.::ispin;ARRAY
+MIXNOCFG;io.field.::muxopt;ARRAY
+MIXNOCFG;io.field.::name;ARRAY
+MIXNOCFG;io.field.::pad;ARRAY
+MIXNOCFG;io.field.::pin;ARRAY
+MIXNOCFG;io.field.::port;ARRAY
+MIXNOCFG;io.field.::skip;ARRAY
+MIXNOCFG;io.field.::type;ARRAY
+MIXCFG;io.field.nr;12
+MIXCFG;io.parsed;0
+MIXCFG;io.req;optional
+MIXCFG;io.xls;IO
+MIXCFG;iocell.auto;bus
+MIXCFG;iocell.bus;_vector
+MIXCFG;iocell.defaultdir;in
+MIXCFG;iocell.in;do,en,pu,pd,xout
+MIXCFG;iocell.inout;__NOINOUT__
+MIXCFG;iocell.name;%::iocell%_%::pad%
+MIXCFG;iocell.out;di,xin
+MIXCFG;iocell.select;onehot,auto
+MIXCFG;macro.%0%;mix_0.pl
+MIXCFG;macro.%ARGV%;H:\work\mix\mix_0.pl ..\case.xls
+MIXCFG;macro.%BUFFER%;buffer
+MIXCFG;macro.%BUS_TYPE%;std_ulogic_vector
+MIXCFG;macro.%CONST%;__CONST__
+MIXCFG;macro.%DATE%;Thu Dec 18 18:40:32 2003
+MIXCFG;macro.%DEFAULT_CONFIG%;%::entity%_%::arch%_conf
+MIXCFG;macro.%DEFAULT_MODE%;S
+MIXCFG;macro.%EMPTY%;
+MIXCFG;macro.%GENERIC%;__GENERIC__
+MIXCFG;macro.%H%;$
+MIXCFG;macro.%HIGH%;mix_logic1
+MIXCFG;macro.%HIGH_BUS%;mix_logic1_bus
+MIXCFG;macro.%HOME%;H:\
+MIXCFG;macro.%IMPORT%;__IMPORT__
+MIXCFG;macro.%IMPORT_BUNDLE%;__IMPORT_BUNDLE__
+MIXCFG;macro.%IMPORT_CLK%;__IMPORT_CLK__
+MIXCFG;macro.%IMPORT_I%;I
+MIXCFG;macro.%IMPORT_O%;O
+MIXCFG;macro.%IOCELL_CLK%;CLK
+MIXCFG;macro.%IOCELL_SELECT_PORT%;__I_default_select
+MIXCFG;macro.%IOCELL_TYPE%;__E_DEFAULT_IOCELL__
+MIXCFG;macro.%IOCR%;\n
+MIXCFG;macro.%LANGUAGE%;vhdl
+MIXCFG;macro.%LOW%;mix_logic0
+MIXCFG;macro.%LOW_BUS%;mix_logic0_bus
+MIXCFG;macro.%NCD%;__NOCOMPDEC__
+MIXCFG;macro.%NOSEL%;__I_NOSEL__
+MIXCFG;macro.%NOSELPORT%;__I_NOSELPORT__
+MIXCFG;macro.%NO_COMP%;__NOCOMPDEC__
+MIXCFG;macro.%NO_COMPONENT_DECLARATION%;__NOCOMPDEC__
+MIXCFG;macro.%NO_CONFIG%;NO_CONFIG
+MIXCFG;macro.%NULL%;0
+MIXCFG;macro.%OPEN%;open
+MIXCFG;macro.%PAD_CLASS%;PAD
+MIXCFG;macro.%PAD_TYPE%;__E_DEFAULT_PAD__
+MIXCFG;macro.%PARAMETER%;__PARAMETER__
+MIXCFG;macro.%PROJECT%;NO_PROJECT_SET
+MIXCFG;macro.%S%;\t
+MIXCFG;macro.%SIGNAL%;std_ulogic
+MIXCFG;macro.%SPACE%; 
+MIXCFG;macro.%TAB%;\t
+MIXCFG;macro.%TBD%;__W_TO_BE_DEFINED
+MIXCFG;macro.%TOP%;__TOP__
+MIXCFG;macro.%UNDEF%;ERROR_UNDEF
+MIXCFG;macro.%UNDEF_1%;ERROR_UNDEF_1
+MIXCFG;macro.%UNDEF_2%;ERROR_UNDEF_2
+MIXCFG;macro.%UNDEF_3%;ERROR_UNDEF_3
+MIXCFG;macro.%UNDEF_4%;ERROR_UNDEF_4
+MIXCFG;macro.%USER%;wig
+MIXCFG;macro.%VERILOG_DEFINES%;\t// No `defines in this module
+MIXCFG;macro.%VERILOG_TIMESCALE%;`timescale 1ns / 1ps
+MIXCFG;macro.%VERILOG_USE_ARCH%;%EMPTY%
+MIXCFG;macro.%VERSION%;Revision: 1.25 
+MIXCFG;macro.%VHDL_NOPROJ%;-- No project specific VHDL libraries
+MIXCFG;macro.%VHDL_USE%;-- No project specific VHDL libraries
+MIXCFG;macro.%VHDL_USE_ARCH%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;macro.%VHDL_USE_CONF%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;macro.%VHDL_USE_DEFAULT%;"library IEEE;\nuse IEEE.std_logic_1164.all;\n"
+MIXCFG;macro.%VHDL_USE_ENTY%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;out;case-mixed.xls
+MIXCFG;outarch;ARCH
+MIXCFG;outconf;case-c.vhd
+MIXCFG;outenty;ENTY
+MIXCFG;output.comment.default;#
+MIXCFG;output.comment.delta;#
+MIXCFG;output.comment.intermediate;#
+MIXCFG;output.comment.internal;#
+MIXCFG;output.comment.verilog;//
+MIXCFG;output.comment.vhdl;--
+MIXCFG;output.delta;sort,remove
+MIXCFG;output.ext.delta;.diff
+MIXCFG;output.ext.intermediate;mixed
+MIXCFG;output.ext.internal;pld
+MIXCFG;output.ext.verilog;v
+MIXCFG;output.ext.vhdl;vhd
+MIXCFG;output.filename;useminus
+MIXCFG;output.format;ext
+MIXCFG;output.generate.arch;leaf
+MIXCFG;output.generate.bak;0
+MIXCFG;output.generate.combine;0
+MIXCFG;output.generate.conf;leaf
+MIXCFG;output.generate.delta;1
+MIXCFG;output.generate.enty;leaf
+MIXCFG;output.generate.fold;signal
+MIXCFG;output.generate.inout;mode,noxfix
+MIXCFG;output.generate.portdescr;%::descr%
+MIXCFG;output.generate.portdescrlength;100
+MIXCFG;output.generate.use;enty
+MIXCFG;output.generate.workaround.verilog;dummyopen
+MIXCFG;output.order;input
+MIXCFG;output.path;.
+MIXCFG;output.warnings;
+MIXCFG;pad.PAD_ACTIVE_EN;1
+MIXCFG;pad.PAD_ACTIVE_PD;1
+MIXCFG;pad.PAD_ACTIVE_PU;1
+MIXCFG;pad.PAD_DEFAULT_DO;0
+MIXCFG;pad.name;%PREFIX_PAD_GEN%%::pad%
+MIXCFG;port.generate.name;postfix
+MIXCFG;port.generate.width;auto
+MIXCFG;postfix.POSTFILE_ARCH;-a
+MIXCFG;postfix.POSTFILE_CONF;-c
+MIXCFG;postfix.POSTFILE_ENTY;-e
+MIXCFG;postfix.POSTFIX_ARCH;%EMPTY%
+MIXCFG;postfix.POSTFIX_CONF;%EMPTY%
+MIXCFG;postfix.POSTFIX_CONSTANT;_c
+MIXCFG;postfix.POSTFIX_ENTY;%EMPTY%
+MIXCFG;postfix.POSTFIX_GENERIC;_g
+MIXCFG;postfix.POSTFIX_INSTANCE;%EMPTY%
+MIXCFG;postfix.POSTFIX_IOC_GEN;%EMPTY%
+MIXCFG;postfix.POSTFIX_PAD_GEN;%EMPTY%
+MIXCFG;postfix.POSTFIX_PARAMETER;_p
+MIXCFG;postfix.POSTFIX_PORT_GEN;_g%IO%
+MIXCFG;postfix.POSTFIX_PORT_IN;_i
+MIXCFG;postfix.POSTFIX_PORT_IO;_io
+MIXCFG;postfix.POSTFIX_PORT_OUT;_o
+MIXCFG;postfix.POSTFIX_SIGNAL;_s
+MIXCFG;postfix.PREFIX_CONST;mix_const_
+MIXCFG;postfix.PREFIX_GENERIC;mix_generic_
+MIXCFG;postfix.PREFIX_INSTANCE;i_
+MIXCFG;postfix.PREFIX_IOC_GEN;ioc_
+MIXCFG;postfix.PREFIX_KEYWORD;mix_key_
+MIXCFG;postfix.PREFIX_PAD_GEN;pad_
+MIXCFG;postfix.PREFIX_PARAMETER;mix_parameter_
+MIXCFG;postfix.PREFIX_PORT_GEN;p_mix_
+MIXCFG;postfix.PREFIX_SIG_INT;s_int_
+MIXCFG;script.excel.alerts;off
+MIXCFG;script.post;
+MIXCFG;script.pre;
+MIXCFG;sum.checkforce;0
+MIXCFG;sum.checkunique;0
+MIXCFG;sum.checkwarn;0
+MIXCFG;sum.cmacros;0
+MIXCFG;sum.conn;2
+MIXCFG;sum.errors;0
+MIXCFG;sum.genport;0
+MIXCFG;sum.inst;14
+MIXCFG;sum.multdriver;0
+MIXCFG;sum.nodriver;0
+MIXCFG;sum.noload;0
+MIXCFG;sum.openports;0
+MIXCFG;sum.uniq;2
+MIXCFG;sum.warnings;0
+MIXCFG;template.verilog.arch.head;## Verilog Architecture Template String t.b.d.
+MIXCFG;template.verilog.conf.head;## Verilog Configuration Template String t.b.d.
+MIXCFG;template.verilog.enty.head;## Verilog Entity Template String t.b.d.
+MIXCFG;template.verilog.file;##Verilog File Template String t.b.d.
+MIXCFG;template.verilog.wrap;## Verilog Wrapper Template String t.b.d.
+MIXCFG;template.vhdl.arch.head;## VHDL Architecture Template String t.b.d.
+MIXCFG;template.vhdl.conf.head;## VHDL Configuration Template String t.b.d.
+MIXCFG;template.vhdl.enty.head;## VHDL Entity Template String t.b.d.
+MIXCFG;top;TESTBENCH
+MIXCFG;typecast.std_logic.std_ulogic;"std_logic( %signal% );"
+MIXCFG;typecast.std_logic_vector.std_ulogic_vector;"std_logic_vector( %signal% );"
+MIXCFG;typecast.std_ulogic.std_logic;"std_ulogic( %signal% );"
+MIXCFG;typecast.std_ulogic_vector.std_logic_vector;"std_ulogic_vector( %signal% );"
+MIXCFG;variant;Default
+MIXNOCFG;vi2c.field.::b;ARRAY
+MIXNOCFG;vi2c.field.::comment;ARRAY
+MIXNOCFG;vi2c.field.::debug;ARRAY
+MIXNOCFG;vi2c.field.::default;ARRAY
+MIXNOCFG;vi2c.field.::hierachy;ARRAY
+MIXNOCFG;vi2c.field.::ign;ARRAY
+MIXNOCFG;vi2c.field.::inst;ARRAY
+MIXNOCFG;vi2c.field.::shortname;ARRAY
+MIXNOCFG;vi2c.field.::skip;ARRAY
+MIXNOCFG;vi2c.field.::type;ARRAY
+MIXNOCFG;vi2c.field.::variants;ARRAY
+MIXCFG;vi2c.field.nr;12
+MIXCFG;vi2c.parsed;0
+MIXCFG;vi2c.req;optional
+MIXCFG;vi2c.xls;VI2C
+:=:=:=>O_2_CONF
+MIXCFG;CONST_NR;0
+MIXCFG;DELTA_INT_NR;0
+MIXCFG;DELTA_NR;0
+MIXCFG;ERROR;__ERROR__
+MIXCFG;GENERIC_NR;0
+MIXCFG;PRINTTIMING;1
+MIXCFG;WARN;__WARNING__
+MIXCFG;check.defs;inst,conn
+MIXCFG;check.inst;nomulti
+MIXCFG;check.keywords.verilog;(register|net|wire|in|out|inout)
+MIXCFG;check.keywords.vhdl;(open|instance|entity|signal)
+MIXCFG;check.name.conf;no
+MIXCFG;check.name.conn;no
+MIXCFG;check.name.enty;no
+MIXCFG;check.name.inst;no
+MIXCFG;check.name.pad;no
+MIXCFG;check.name.port;no
+MIXCFG;check.signal;load,driver,check,top_open
+MIXCFG;conf.parsed;0
+MIXCFG;conf.req;optional
+MIXCFG;conf.xls;CONF
+MIXNOCFG;conn.field.::bundle;ARRAY
+MIXNOCFG;conn.field.::class;ARRAY
+MIXNOCFG;conn.field.::clock;ARRAY
+MIXNOCFG;conn.field.::comment;ARRAY
+MIXNOCFG;conn.field.::debug;ARRAY
+MIXNOCFG;conn.field.::default;ARRAY
+MIXNOCFG;conn.field.::descr;ARRAY
+MIXNOCFG;conn.field.::gen;ARRAY
+MIXNOCFG;conn.field.::high;ARRAY
+MIXNOCFG;conn.field.::ign;ARRAY
+MIXNOCFG;conn.field.::in;ARRAY
+MIXNOCFG;conn.field.::low;ARRAY
+MIXNOCFG;conn.field.::mdein;ARRAY
+MIXNOCFG;conn.field.::mdeout;ARRAY
+MIXNOCFG;conn.field.::mode;ARRAY
+MIXNOCFG;conn.field.::name;ARRAY
+MIXNOCFG;conn.field.::out;ARRAY
+MIXNOCFG;conn.field.::result;ARRAY
+MIXNOCFG;conn.field.::shortname;ARRAY
+MIXNOCFG;conn.field.::skip;ARRAY
+MIXNOCFG;conn.field.::type;ARRAY
+MIXCFG;conn.field.nr;19
+MIXCFG;conn.key;::name
+MIXCFG;conn.parsed;1
+MIXCFG;conn.req;mandatory
+MIXCFG;conn.xls;CONN
+MIXCFG;cwd;H:/work/x2v/t/case
+MIXCFG;drive;H:/
+MIXCFG;dump;case.pld
+MIXCFG;format.csv.cellsep;";"
+MIXCFG;format.csv.quoting;""""
+MIXCFG;format.csv.sheetsep;:=:=:=>
+MIXCFG;format.out;
+MIXNOCFG;hier.field.::arch;ARRAY
+MIXNOCFG;hier.field.::comment;ARRAY
+MIXNOCFG;hier.field.::config;ARRAY
+MIXNOCFG;hier.field.::debug;ARRAY
+MIXNOCFG;hier.field.::default;ARRAY
+MIXNOCFG;hier.field.::descr;ARRAY
+MIXNOCFG;hier.field.::entity;ARRAY
+MIXNOCFG;hier.field.::gen;ARRAY
+MIXNOCFG;hier.field.::hierachy;ARRAY
+MIXNOCFG;hier.field.::ign;ARRAY
+MIXNOCFG;hier.field.::inst;ARRAY
+MIXNOCFG;hier.field.::lang;ARRAY
+MIXNOCFG;hier.field.::parent;ARRAY
+MIXNOCFG;hier.field.::shortname;ARRAY
+MIXNOCFG;hier.field.::skip;ARRAY
+MIXNOCFG;hier.field.::use;ARRAY
+MIXNOCFG;hier.field.::variants;ARRAY
+MIXCFG;hier.field.nr;14
+MIXCFG;hier.key;::inst
+MIXCFG;hier.parsed;1
+MIXCFG;hier.req;mandatory
+MIXCFG;hier.xls;HIER
+MIXNOCFG;i2c.field.::b;ARRAY
+MIXNOCFG;i2c.field.::block;ARRAY
+MIXNOCFG;i2c.field.::busy;ARRAY
+MIXNOCFG;i2c.field.::clock;ARRAY
+MIXNOCFG;i2c.field.::comment;ARRAY
+MIXNOCFG;i2c.field.::debug;ARRAY
+MIXNOCFG;i2c.field.::default;ARRAY
+MIXNOCFG;i2c.field.::dev;ARRAY
+MIXNOCFG;i2c.field.::dir;ARRAY
+MIXNOCFG;i2c.field.::ign;ARRAY
+MIXNOCFG;i2c.field.::init;ARRAY
+MIXNOCFG;i2c.field.::interface;ARRAY
+MIXNOCFG;i2c.field.::rec;ARRAY
+MIXNOCFG;i2c.field.::reset;ARRAY
+MIXNOCFG;i2c.field.::skip;ARRAY
+MIXNOCFG;i2c.field.::spec;ARRAY
+MIXNOCFG;i2c.field.::sub;ARRAY
+MIXNOCFG;i2c.field.::variants;ARRAY
+MIXNOCFG;i2c.field.::width;ARRAY
+MIXCFG;i2c.field.nr;12
+MIXCFG;i2c.parsed;0
+MIXCFG;i2c.req;optional
+MIXCFG;i2c.xls;I2C
+MIXCFG;input.ext.csv;csv
+MIXCFG;input.ext.excel;xls
+MIXCFG;input.ext.soffice;sxc
+MIXCFG;intermediate.ext;
+MIXCFG;intermediate.format;prev
+MIXCFG;intermediate.keep;3
+MIXCFG;intermediate.order;input
+MIXCFG;intermediate.path;.
+MIXCFG;intermediate.strip;0
+MIXCFG;internal.format;perl
+MIXCFG;internal.order;input
+MIXCFG;internal.path;.
+MIXNOCFG;io.field.::class;ARRAY
+MIXNOCFG;io.field.::comment;ARRAY
+MIXNOCFG;io.field.::debug;ARRAY
+MIXNOCFG;io.field.::default;ARRAY
+MIXNOCFG;io.field.::ign;ARRAY
+MIXNOCFG;io.field.::iocell;ARRAY
+MIXNOCFG;io.field.::ispin;ARRAY
+MIXNOCFG;io.field.::muxopt;ARRAY
+MIXNOCFG;io.field.::name;ARRAY
+MIXNOCFG;io.field.::pad;ARRAY
+MIXNOCFG;io.field.::pin;ARRAY
+MIXNOCFG;io.field.::port;ARRAY
+MIXNOCFG;io.field.::skip;ARRAY
+MIXNOCFG;io.field.::type;ARRAY
+MIXCFG;io.field.nr;12
+MIXCFG;io.parsed;0
+MIXCFG;io.req;optional
+MIXCFG;io.xls;IO
+MIXCFG;iocell.auto;bus
+MIXCFG;iocell.bus;_vector
+MIXCFG;iocell.defaultdir;in
+MIXCFG;iocell.in;do,en,pu,pd,xout
+MIXCFG;iocell.inout;__NOINOUT__
+MIXCFG;iocell.name;%::iocell%_%::pad%
+MIXCFG;iocell.out;di,xin
+MIXCFG;iocell.select;onehot,auto
+MIXCFG;macro.%0%;mix_0.pl
+MIXCFG;macro.%ARGV%;H:\work\mix\mix_0.pl ..\case.xls
+MIXCFG;macro.%BUFFER%;buffer
+MIXCFG;macro.%BUS_TYPE%;std_ulogic_vector
+MIXCFG;macro.%CONST%;__CONST__
+MIXCFG;macro.%DATE%;Thu Dec 18 12:16:45 2003
+MIXCFG;macro.%DEFAULT_CONFIG%;%::entity%_%::arch%_conf
+MIXCFG;macro.%DEFAULT_MODE%;S
+MIXCFG;macro.%EMPTY%;
+MIXCFG;macro.%GENERIC%;__GENERIC__
+MIXCFG;macro.%H%;$
+MIXCFG;macro.%HIGH%;mix_logic1
+MIXCFG;macro.%HIGH_BUS%;mix_logic1_bus
+MIXCFG;macro.%HOME%;H:\
+MIXCFG;macro.%IMPORT%;__IMPORT__
+MIXCFG;macro.%IMPORT_BUNDLE%;__IMPORT_BUNDLE__
+MIXCFG;macro.%IMPORT_CLK%;__IMPORT_CLK__
+MIXCFG;macro.%IMPORT_I%;I
+MIXCFG;macro.%IMPORT_O%;O
+MIXCFG;macro.%IOCELL_CLK%;CLK
+MIXCFG;macro.%IOCELL_SELECT_PORT%;__I_default_select
+MIXCFG;macro.%IOCELL_TYPE%;__E_DEFAULT_IOCELL__
+MIXCFG;macro.%IOCR%;\n
+MIXCFG;macro.%LANGUAGE%;vhdl
+MIXCFG;macro.%LOW%;mix_logic0
+MIXCFG;macro.%LOW_BUS%;mix_logic0_bus
+MIXCFG;macro.%NCD%;__NOCOMPDEC__
+MIXCFG;macro.%NOSEL%;__I_NOSEL__
+MIXCFG;macro.%NOSELPORT%;__I_NOSELPORT__
+MIXCFG;macro.%NO_COMP%;__NOCOMPDEC__
+MIXCFG;macro.%NO_COMPONENT_DECLARATION%;__NOCOMPDEC__
+MIXCFG;macro.%NO_CONFIG%;NO_CONFIG
+MIXCFG;macro.%NULL%;0
+MIXCFG;macro.%OPEN%;open
+MIXCFG;macro.%PAD_CLASS%;PAD
+MIXCFG;macro.%PAD_TYPE%;__E_DEFAULT_PAD__
+MIXCFG;macro.%PARAMETER%;__PARAMETER__
+MIXCFG;macro.%PROJECT%;NO_PROJECT_SET
+MIXCFG;macro.%S%;\t
+MIXCFG;macro.%SIGNAL%;std_ulogic
+MIXCFG;macro.%SPACE%; 
+MIXCFG;macro.%TAB%;\t
+MIXCFG;macro.%TBD%;__W_TO_BE_DEFINED
+MIXCFG;macro.%TOP%;__TOP__
+MIXCFG;macro.%UNDEF%;ERROR_UNDEF
+MIXCFG;macro.%UNDEF_1%;ERROR_UNDEF_1
+MIXCFG;macro.%UNDEF_2%;ERROR_UNDEF_2
+MIXCFG;macro.%UNDEF_3%;ERROR_UNDEF_3
+MIXCFG;macro.%UNDEF_4%;ERROR_UNDEF_4
+MIXCFG;macro.%USER%;wig
+MIXCFG;macro.%VERILOG_DEFINES%;\t// No `defines in this module
+MIXCFG;macro.%VERILOG_TIMESCALE%;`timescale 1ns / 1ps
+MIXCFG;macro.%VERILOG_USE_ARCH%;%EMPTY%
+MIXCFG;macro.%VERSION%;Revision: 1.24 
+MIXCFG;macro.%VHDL_NOPROJ%;-- No project specific VHDL libraries
+MIXCFG;macro.%VHDL_USE%;-- No project specific VHDL libraries
+MIXCFG;macro.%VHDL_USE_ARCH%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;macro.%VHDL_USE_CONF%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;macro.%VHDL_USE_DEFAULT%;"library IEEE;\nuse IEEE.std_logic_1164.all;\n"
+MIXCFG;macro.%VHDL_USE_ENTY%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;out;case-mixed.xls
+MIXCFG;outarch;ARCH
+MIXCFG;outconf;case-c.vhd
+MIXCFG;outenty;ENTY
+MIXCFG;output.comment.default;#
+MIXCFG;output.comment.delta;#
+MIXCFG;output.comment.intermediate;#
+MIXCFG;output.comment.internal;#
+MIXCFG;output.comment.verilog;//
+MIXCFG;output.comment.vhdl;--
+MIXCFG;output.delta;sort,remove
+MIXCFG;output.ext.delta;.diff
+MIXCFG;output.ext.intermediate;mixed
+MIXCFG;output.ext.internal;pld
+MIXCFG;output.ext.verilog;v
+MIXCFG;output.ext.vhdl;vhd
+MIXCFG;output.filename;useminus
+MIXCFG;output.format;ext
+MIXCFG;output.generate.arch;leaf
+MIXCFG;output.generate.bak;0
+MIXCFG;output.generate.combine;0
+MIXCFG;output.generate.conf;leaf
+MIXCFG;output.generate.delta;1
+MIXCFG;output.generate.enty;leaf
+MIXCFG;output.generate.fold;signal
+MIXCFG;output.generate.inout;mode,noxfix
+MIXCFG;output.generate.portdescr;%::descr%
+MIXCFG;output.generate.portdescrlength;100
+MIXCFG;output.generate.use;enty
+MIXCFG;output.generate.workaround.verilog;dummyopen
+MIXCFG;output.order;input
+MIXCFG;output.path;.
+MIXCFG;output.warnings;
+MIXCFG;pad.PAD_ACTIVE_EN;1
+MIXCFG;pad.PAD_ACTIVE_PD;1
+MIXCFG;pad.PAD_ACTIVE_PU;1
+MIXCFG;pad.PAD_DEFAULT_DO;0
+MIXCFG;pad.name;%PREFIX_PAD_GEN%%::pad%
+MIXCFG;port.generate.name;postfix
+MIXCFG;port.generate.width;auto
+MIXCFG;postfix.POSTFILE_ARCH;-a
+MIXCFG;postfix.POSTFILE_CONF;-c
+MIXCFG;postfix.POSTFILE_ENTY;-e
+MIXCFG;postfix.POSTFIX_ARCH;%EMPTY%
+MIXCFG;postfix.POSTFIX_CONF;%EMPTY%
+MIXCFG;postfix.POSTFIX_CONSTANT;_c
+MIXCFG;postfix.POSTFIX_ENTY;%EMPTY%
+MIXCFG;postfix.POSTFIX_GENERIC;_g
+MIXCFG;postfix.POSTFIX_INSTANCE;%EMPTY%
+MIXCFG;postfix.POSTFIX_IOC_GEN;%EMPTY%
+MIXCFG;postfix.POSTFIX_PAD_GEN;%EMPTY%
+MIXCFG;postfix.POSTFIX_PARAMETER;_p
+MIXCFG;postfix.POSTFIX_PORT_GEN;_g%IO%
+MIXCFG;postfix.POSTFIX_PORT_IN;_i
+MIXCFG;postfix.POSTFIX_PORT_IO;_io
+MIXCFG;postfix.POSTFIX_PORT_OUT;_o
+MIXCFG;postfix.POSTFIX_SIGNAL;_s
+MIXCFG;postfix.PREFIX_CONST;mix_const_
+MIXCFG;postfix.PREFIX_GENERIC;mix_generic_
+MIXCFG;postfix.PREFIX_INSTANCE;i_
+MIXCFG;postfix.PREFIX_IOC_GEN;ioc_
+MIXCFG;postfix.PREFIX_KEYWORD;mix_key_
+MIXCFG;postfix.PREFIX_PAD_GEN;pad_
+MIXCFG;postfix.PREFIX_PARAMETER;mix_parameter_
+MIXCFG;postfix.PREFIX_PORT_GEN;p_mix_
+MIXCFG;postfix.PREFIX_SIG_INT;s_int_
+MIXCFG;script.excel.alerts;off
+MIXCFG;script.post;
+MIXCFG;script.pre;
+MIXCFG;sum.checkforce;0
+MIXCFG;sum.checkunique;0
+MIXCFG;sum.checkwarn;0
+MIXCFG;sum.cmacros;0
+MIXCFG;sum.conn;2
+MIXCFG;sum.errors;0
+MIXCFG;sum.genport;0
+MIXCFG;sum.inst;14
+MIXCFG;sum.multdriver;0
+MIXCFG;sum.nodriver;0
+MIXCFG;sum.noload;0
+MIXCFG;sum.openports;0
+MIXCFG;sum.uniq;2
+MIXCFG;sum.warnings;0
+MIXCFG;template.verilog.arch.head;## Verilog Architecture Template String t.b.d.
+MIXCFG;template.verilog.conf.head;## Verilog Configuration Template String t.b.d.
+MIXCFG;template.verilog.enty.head;## Verilog Entity Template String t.b.d.
+MIXCFG;template.verilog.file;##Verilog File Template String t.b.d.
+MIXCFG;template.verilog.wrap;## Verilog Wrapper Template String t.b.d.
+MIXCFG;template.vhdl.arch.head;## VHDL Architecture Template String t.b.d.
+MIXCFG;template.vhdl.conf.head;## VHDL Configuration Template String t.b.d.
+MIXCFG;template.vhdl.enty.head;## VHDL Entity Template String t.b.d.
+MIXCFG;top;TESTBENCH
+MIXCFG;typecast.std_logic.std_ulogic;"std_logic( %signal% );"
+MIXCFG;typecast.std_logic_vector.std_ulogic_vector;"std_logic_vector( %signal% );"
+MIXCFG;typecast.std_ulogic.std_logic;"std_ulogic( %signal% );"
+MIXCFG;typecast.std_ulogic_vector.std_logic_vector;"std_ulogic_vector( %signal% );"
+MIXCFG;variant;Default
+MIXNOCFG;vi2c.field.::b;ARRAY
+MIXNOCFG;vi2c.field.::comment;ARRAY
+MIXNOCFG;vi2c.field.::debug;ARRAY
+MIXNOCFG;vi2c.field.::default;ARRAY
+MIXNOCFG;vi2c.field.::hierachy;ARRAY
+MIXNOCFG;vi2c.field.::ign;ARRAY
+MIXNOCFG;vi2c.field.::inst;ARRAY
+MIXNOCFG;vi2c.field.::shortname;ARRAY
+MIXNOCFG;vi2c.field.::skip;ARRAY
+MIXNOCFG;vi2c.field.::type;ARRAY
+MIXNOCFG;vi2c.field.::variants;ARRAY
+MIXCFG;vi2c.field.nr;12
+MIXCFG;vi2c.parsed;0
+MIXCFG;vi2c.req;optional
+MIXCFG;vi2c.xls;VI2C
+:=:=:=>O_3_CONF
+MIXCFG;CONST_NR;0
+MIXCFG;DELTA_INT_NR;0
+MIXCFG;DELTA_NR;0
+MIXCFG;ERROR;__ERROR__
+MIXCFG;GENERIC_NR;0
+MIXCFG;PRINTTIMING;1
+MIXCFG;WARN;__WARNING__
+MIXCFG;check.defs;inst,conn
+MIXCFG;check.inst;nomulti
+MIXCFG;check.keywords.verilog;(register|net|wire|in|out|inout)
+MIXCFG;check.keywords.vhdl;(open|instance|entity|signal)
+MIXCFG;check.name.conf;no
+MIXCFG;check.name.conn;no
+MIXCFG;check.name.enty;no
+MIXCFG;check.name.inst;no
+MIXCFG;check.name.pad;no
+MIXCFG;check.name.port;no
+MIXCFG;check.signal;load,driver,check,top_open
+MIXCFG;conf.parsed;0
+MIXCFG;conf.req;optional
+MIXCFG;conf.xls;CONF
+MIXNOCFG;conn.field.::bundle;ARRAY
+MIXNOCFG;conn.field.::class;ARRAY
+MIXNOCFG;conn.field.::clock;ARRAY
+MIXNOCFG;conn.field.::comment;ARRAY
+MIXNOCFG;conn.field.::debug;ARRAY
+MIXNOCFG;conn.field.::default;ARRAY
+MIXNOCFG;conn.field.::descr;ARRAY
+MIXNOCFG;conn.field.::gen;ARRAY
+MIXNOCFG;conn.field.::high;ARRAY
+MIXNOCFG;conn.field.::ign;ARRAY
+MIXNOCFG;conn.field.::in;ARRAY
+MIXNOCFG;conn.field.::low;ARRAY
+MIXNOCFG;conn.field.::mdein;ARRAY
+MIXNOCFG;conn.field.::mdeout;ARRAY
+MIXNOCFG;conn.field.::mode;ARRAY
+MIXNOCFG;conn.field.::name;ARRAY
+MIXNOCFG;conn.field.::out;ARRAY
+MIXNOCFG;conn.field.::result;ARRAY
+MIXNOCFG;conn.field.::shortname;ARRAY
+MIXNOCFG;conn.field.::skip;ARRAY
+MIXNOCFG;conn.field.::type;ARRAY
+MIXCFG;conn.field.nr;19
+MIXCFG;conn.key;::name
+MIXCFG;conn.parsed;1
+MIXCFG;conn.req;mandatory
+MIXCFG;conn.xls;CONN
+MIXCFG;cwd;H:/work/x2v/t/case
+MIXCFG;drive;H:/
+MIXCFG;dump;case.pld
+MIXCFG;format.csv.cellsep;";"
+MIXCFG;format.csv.quoting;""""
+MIXCFG;format.csv.sheetsep;:=:=:=>
+MIXCFG;format.out;
+MIXNOCFG;hier.field.::arch;ARRAY
+MIXNOCFG;hier.field.::comment;ARRAY
+MIXNOCFG;hier.field.::config;ARRAY
+MIXNOCFG;hier.field.::debug;ARRAY
+MIXNOCFG;hier.field.::default;ARRAY
+MIXNOCFG;hier.field.::descr;ARRAY
+MIXNOCFG;hier.field.::entity;ARRAY
+MIXNOCFG;hier.field.::gen;ARRAY
+MIXNOCFG;hier.field.::hierachy;ARRAY
+MIXNOCFG;hier.field.::ign;ARRAY
+MIXNOCFG;hier.field.::inst;ARRAY
+MIXNOCFG;hier.field.::lang;ARRAY
+MIXNOCFG;hier.field.::parent;ARRAY
+MIXNOCFG;hier.field.::shortname;ARRAY
+MIXNOCFG;hier.field.::skip;ARRAY
+MIXNOCFG;hier.field.::use;ARRAY
+MIXNOCFG;hier.field.::variants;ARRAY
+MIXCFG;hier.field.nr;14
+MIXCFG;hier.key;::inst
+MIXCFG;hier.parsed;1
+MIXCFG;hier.req;mandatory
+MIXCFG;hier.xls;HIER
+MIXNOCFG;i2c.field.::b;ARRAY
+MIXNOCFG;i2c.field.::block;ARRAY
+MIXNOCFG;i2c.field.::busy;ARRAY
+MIXNOCFG;i2c.field.::clock;ARRAY
+MIXNOCFG;i2c.field.::comment;ARRAY
+MIXNOCFG;i2c.field.::debug;ARRAY
+MIXNOCFG;i2c.field.::default;ARRAY
+MIXNOCFG;i2c.field.::dev;ARRAY
+MIXNOCFG;i2c.field.::dir;ARRAY
+MIXNOCFG;i2c.field.::ign;ARRAY
+MIXNOCFG;i2c.field.::init;ARRAY
+MIXNOCFG;i2c.field.::interface;ARRAY
+MIXNOCFG;i2c.field.::rec;ARRAY
+MIXNOCFG;i2c.field.::reset;ARRAY
+MIXNOCFG;i2c.field.::skip;ARRAY
+MIXNOCFG;i2c.field.::spec;ARRAY
+MIXNOCFG;i2c.field.::sub;ARRAY
+MIXNOCFG;i2c.field.::variants;ARRAY
+MIXNOCFG;i2c.field.::width;ARRAY
+MIXCFG;i2c.field.nr;12
+MIXCFG;i2c.parsed;0
+MIXCFG;i2c.req;optional
+MIXCFG;i2c.xls;I2C
+MIXCFG;input.ext.csv;csv
+MIXCFG;input.ext.excel;xls
+MIXCFG;input.ext.soffice;sxc
+MIXCFG;intermediate.ext;
+MIXCFG;intermediate.format;prev
+MIXCFG;intermediate.keep;3
+MIXCFG;intermediate.order;input
+MIXCFG;intermediate.path;.
+MIXCFG;intermediate.strip;0
+MIXCFG;internal.format;perl
+MIXCFG;internal.order;input
+MIXCFG;internal.path;.
+MIXNOCFG;io.field.::class;ARRAY
+MIXNOCFG;io.field.::comment;ARRAY
+MIXNOCFG;io.field.::debug;ARRAY
+MIXNOCFG;io.field.::default;ARRAY
+MIXNOCFG;io.field.::ign;ARRAY
+MIXNOCFG;io.field.::iocell;ARRAY
+MIXNOCFG;io.field.::ispin;ARRAY
+MIXNOCFG;io.field.::muxopt;ARRAY
+MIXNOCFG;io.field.::name;ARRAY
+MIXNOCFG;io.field.::pad;ARRAY
+MIXNOCFG;io.field.::pin;ARRAY
+MIXNOCFG;io.field.::port;ARRAY
+MIXNOCFG;io.field.::skip;ARRAY
+MIXNOCFG;io.field.::type;ARRAY
+MIXCFG;io.field.nr;12
+MIXCFG;io.parsed;0
+MIXCFG;io.req;optional
+MIXCFG;io.xls;IO
+MIXCFG;iocell.auto;bus
+MIXCFG;iocell.bus;_vector
+MIXCFG;iocell.defaultdir;in
+MIXCFG;iocell.in;do,en,pu,pd,xout
+MIXCFG;iocell.inout;__NOINOUT__
+MIXCFG;iocell.name;%::iocell%_%::pad%
+MIXCFG;iocell.out;di,xin
+MIXCFG;iocell.select;onehot,auto
+MIXCFG;macro.%0%;mix_0.pl
+MIXCFG;macro.%ARGV%;H:\work\mix\mix_0.pl ..\case.xls
+MIXCFG;macro.%BUFFER%;buffer
+MIXCFG;macro.%BUS_TYPE%;std_ulogic_vector
+MIXCFG;macro.%CONST%;__CONST__
+MIXCFG;macro.%DATE%;Thu Dec 18 11:49:32 2003
+MIXCFG;macro.%DEFAULT_CONFIG%;%::entity%_%::arch%_conf
+MIXCFG;macro.%DEFAULT_MODE%;S
+MIXCFG;macro.%EMPTY%;
+MIXCFG;macro.%GENERIC%;__GENERIC__
+MIXCFG;macro.%H%;$
+MIXCFG;macro.%HIGH%;mix_logic1
+MIXCFG;macro.%HIGH_BUS%;mix_logic1_bus
+MIXCFG;macro.%HOME%;H:\
+MIXCFG;macro.%IMPORT%;__IMPORT__
+MIXCFG;macro.%IMPORT_BUNDLE%;__IMPORT_BUNDLE__
+MIXCFG;macro.%IMPORT_CLK%;__IMPORT_CLK__
+MIXCFG;macro.%IMPORT_I%;I
+MIXCFG;macro.%IMPORT_O%;O
+MIXCFG;macro.%IOCELL_CLK%;CLK
+MIXCFG;macro.%IOCELL_SELECT_PORT%;__I_default_select
+MIXCFG;macro.%IOCELL_TYPE%;__E_DEFAULT_IOCELL__
+MIXCFG;macro.%IOCR%;\n
+MIXCFG;macro.%LANGUAGE%;vhdl
+MIXCFG;macro.%LOW%;mix_logic0
+MIXCFG;macro.%LOW_BUS%;mix_logic0_bus
+MIXCFG;macro.%NCD%;__NOCOMPDEC__
+MIXCFG;macro.%NOSEL%;__I_NOSEL__
+MIXCFG;macro.%NOSELPORT%;__I_NOSELPORT__
+MIXCFG;macro.%NO_COMP%;__NOCOMPDEC__
+MIXCFG;macro.%NO_COMPONENT_DECLARATION%;__NOCOMPDEC__
+MIXCFG;macro.%NO_CONFIG%;NO_CONFIG
+MIXCFG;macro.%NULL%;0
+MIXCFG;macro.%OPEN%;open
+MIXCFG;macro.%PAD_CLASS%;PAD
+MIXCFG;macro.%PAD_TYPE%;__E_DEFAULT_PAD__
+MIXCFG;macro.%PARAMETER%;__PARAMETER__
+MIXCFG;macro.%PROJECT%;NO_PROJECT_SET
+MIXCFG;macro.%S%;\t
+MIXCFG;macro.%SIGNAL%;std_ulogic
+MIXCFG;macro.%SPACE%; 
+MIXCFG;macro.%TAB%;\t
+MIXCFG;macro.%TBD%;__W_TO_BE_DEFINED
+MIXCFG;macro.%TOP%;__TOP__
+MIXCFG;macro.%UNDEF%;ERROR_UNDEF
+MIXCFG;macro.%UNDEF_1%;ERROR_UNDEF_1
+MIXCFG;macro.%UNDEF_2%;ERROR_UNDEF_2
+MIXCFG;macro.%UNDEF_3%;ERROR_UNDEF_3
+MIXCFG;macro.%UNDEF_4%;ERROR_UNDEF_4
+MIXCFG;macro.%USER%;wig
+MIXCFG;macro.%VERILOG_DEFINES%;\t// No `defines in this module
+MIXCFG;macro.%VERILOG_TIMESCALE%;`timescale 1ns / 1ps
+MIXCFG;macro.%VERILOG_USE_ARCH%;%EMPTY%
+MIXCFG;macro.%VERSION%;Revision: 1.24 
+MIXCFG;macro.%VHDL_NOPROJ%;-- No project specific VHDL libraries
+MIXCFG;macro.%VHDL_USE%;-- No project specific VHDL libraries
+MIXCFG;macro.%VHDL_USE_ARCH%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;macro.%VHDL_USE_CONF%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;macro.%VHDL_USE_DEFAULT%;"library IEEE;\nuse IEEE.std_logic_1164.all;\n"
+MIXCFG;macro.%VHDL_USE_ENTY%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;out;case-mixed.xls
+MIXCFG;outarch;ARCH
+MIXCFG;outconf;case-c.vhd
+MIXCFG;outenty;ENTY
+MIXCFG;output.comment.default;#
+MIXCFG;output.comment.delta;#
+MIXCFG;output.comment.intermediate;#
+MIXCFG;output.comment.internal;#
+MIXCFG;output.comment.verilog;//
+MIXCFG;output.comment.vhdl;--
+MIXCFG;output.delta;sort,remove
+MIXCFG;output.ext.delta;.diff
+MIXCFG;output.ext.intermediate;mixed
+MIXCFG;output.ext.internal;pld
+MIXCFG;output.ext.verilog;v
+MIXCFG;output.ext.vhdl;vhd
+MIXCFG;output.filename;useminus
+MIXCFG;output.format;ext
+MIXCFG;output.generate.arch;leaf
+MIXCFG;output.generate.bak;0
+MIXCFG;output.generate.combine;0
+MIXCFG;output.generate.conf;leaf
+MIXCFG;output.generate.delta;1
+MIXCFG;output.generate.enty;leaf
+MIXCFG;output.generate.fold;signal
+MIXCFG;output.generate.inout;mode,noxfix
+MIXCFG;output.generate.portdescr;%::descr%
+MIXCFG;output.generate.portdescrlength;100
+MIXCFG;output.generate.use;enty
+MIXCFG;output.generate.workaround.verilog;dummyopen
+MIXCFG;output.order;input
+MIXCFG;output.path;.
+MIXCFG;output.warnings;
+MIXCFG;pad.PAD_ACTIVE_EN;1
+MIXCFG;pad.PAD_ACTIVE_PD;1
+MIXCFG;pad.PAD_ACTIVE_PU;1
+MIXCFG;pad.PAD_DEFAULT_DO;0
+MIXCFG;pad.name;%PREFIX_PAD_GEN%%::pad%
+MIXCFG;port.generate.name;postfix
+MIXCFG;port.generate.width;auto
+MIXCFG;postfix.POSTFILE_ARCH;-a
+MIXCFG;postfix.POSTFILE_CONF;-c
+MIXCFG;postfix.POSTFILE_ENTY;-e
+MIXCFG;postfix.POSTFIX_ARCH;%EMPTY%
+MIXCFG;postfix.POSTFIX_CONF;%EMPTY%
+MIXCFG;postfix.POSTFIX_CONSTANT;_c
+MIXCFG;postfix.POSTFIX_ENTY;%EMPTY%
+MIXCFG;postfix.POSTFIX_GENERIC;_g
+MIXCFG;postfix.POSTFIX_INSTANCE;%EMPTY%
+MIXCFG;postfix.POSTFIX_IOC_GEN;%EMPTY%
+MIXCFG;postfix.POSTFIX_PAD_GEN;%EMPTY%
+MIXCFG;postfix.POSTFIX_PARAMETER;_p
+MIXCFG;postfix.POSTFIX_PORT_GEN;_g%IO%
+MIXCFG;postfix.POSTFIX_PORT_IN;_i
+MIXCFG;postfix.POSTFIX_PORT_IO;_io
+MIXCFG;postfix.POSTFIX_PORT_OUT;_o
+MIXCFG;postfix.POSTFIX_SIGNAL;_s
+MIXCFG;postfix.PREFIX_CONST;mix_const_
+MIXCFG;postfix.PREFIX_GENERIC;mix_generic_
+MIXCFG;postfix.PREFIX_INSTANCE;i_
+MIXCFG;postfix.PREFIX_IOC_GEN;ioc_
+MIXCFG;postfix.PREFIX_KEYWORD;mix_key_
+MIXCFG;postfix.PREFIX_PAD_GEN;pad_
+MIXCFG;postfix.PREFIX_PARAMETER;mix_parameter_
+MIXCFG;postfix.PREFIX_PORT_GEN;p_mix_
+MIXCFG;postfix.PREFIX_SIG_INT;s_int_
+MIXCFG;script.excel.alerts;off
+MIXCFG;script.post;
+MIXCFG;script.pre;
+MIXCFG;sum.checkforce;0
+MIXCFG;sum.checkunique;0
+MIXCFG;sum.checkwarn;0
+MIXCFG;sum.cmacros;0
+MIXCFG;sum.conn;2
+MIXCFG;sum.errors;0
+MIXCFG;sum.genport;0
+MIXCFG;sum.inst;14
+MIXCFG;sum.multdriver;0
+MIXCFG;sum.nodriver;0
+MIXCFG;sum.noload;0
+MIXCFG;sum.openports;0
+MIXCFG;sum.uniq;2
+MIXCFG;sum.warnings;0
+MIXCFG;template.verilog.arch.head;## Verilog Architecture Template String t.b.d.
+MIXCFG;template.verilog.conf.head;## Verilog Configuration Template String t.b.d.
+MIXCFG;template.verilog.enty.head;## Verilog Entity Template String t.b.d.
+MIXCFG;template.verilog.file;##Verilog File Template String t.b.d.
+MIXCFG;template.verilog.wrap;## Verilog Wrapper Template String t.b.d.
+MIXCFG;template.vhdl.arch.head;## VHDL Architecture Template String t.b.d.
+MIXCFG;template.vhdl.conf.head;## VHDL Configuration Template String t.b.d.
+MIXCFG;template.vhdl.enty.head;## VHDL Entity Template String t.b.d.
+MIXCFG;top;TESTBENCH
+MIXCFG;typecast.std_logic.std_ulogic;"std_logic( %signal% );"
+MIXCFG;typecast.std_logic_vector.std_ulogic_vector;"std_logic_vector( %signal% );"
+MIXCFG;typecast.std_ulogic.std_logic;"std_ulogic( %signal% );"
+MIXCFG;typecast.std_ulogic_vector.std_logic_vector;"std_ulogic_vector( %signal% );"
+MIXCFG;variant;Default
+MIXNOCFG;vi2c.field.::b;ARRAY
+MIXNOCFG;vi2c.field.::comment;ARRAY
+MIXNOCFG;vi2c.field.::debug;ARRAY
+MIXNOCFG;vi2c.field.::default;ARRAY
+MIXNOCFG;vi2c.field.::hierachy;ARRAY
+MIXNOCFG;vi2c.field.::ign;ARRAY
+MIXNOCFG;vi2c.field.::inst;ARRAY
+MIXNOCFG;vi2c.field.::shortname;ARRAY
+MIXNOCFG;vi2c.field.::skip;ARRAY
+MIXNOCFG;vi2c.field.::type;ARRAY
+MIXNOCFG;vi2c.field.::variants;ARRAY
+MIXCFG;vi2c.field.nr;12
+MIXCFG;vi2c.parsed;0
+MIXCFG;vi2c.req;optional
+MIXCFG;vi2c.xls;VI2C
+:=:=:=>DIFF_HIER
+HEADER;::ign;::gen;::variants;::parent;::inst;::shortname;::lang;::entity;::arch;::use;::config;::comment;::descr;
+--------------------------;-- delta --;-- delta --;-- delta --;;;;;;;;;;;
+-- ------------- delta mode for file case-mixed.xls ------------- --;;;;;;;;;;;;;;
+--;;;;;;;;;;;;;;
+-- Generated;;;;;;;;;;;;;;
+--  by:  wig;;;;;;;;;;;;;;
+--  on:  Fri Dec 19 14:40:36 2003;;;;;;;;;;;;;;
+--  cmd: H:\work\mix\mix_0.pl ..\case.xls;;;;;;;;;;;;;;
+--  delta mode (comment/space/sort/remove): sort,remove;;;;;;;;;;;;;;
+--;;;;;;;;;;;;;;
+-- ------------------------------------------------- --;;;;;;;;;;;;;;
+-- ------------- CHANGES START HERE ------------- --;;;;;;;;;;;;;;
+--NR--;--CONT--;--NR--;--CONT--;;;;;;;;;;;
+HEADER;::ign;::gen;::variants;::parent;::inst;::shortname;::lang;::entity;::arch;::use;::config;::comment;::descr;
+--------------------------;;;;;;;;;;;;;;
+NEW-  ;NEW ;;;;;;;;;;;;;
+OLD-;OLD case-mixed.xls ;;;;;;;;;;;;;
+--------------------------;;;;;;;;;;;;;;
+NEW- 1;# Generated Intermediate Conn/Hier Data ;;;;;;;;;;;;;
+OLD-;# Generated Intermediate Conn/Hier Data;;;;;;;;;;;; ;
+NEW- 2;# by: wig ;;;;;;;;;;;;;
+OLD-;# by: wig;;;;;;;;;;;; ;
+NEW- 3;# on: Fri Dec 19 14:40:36 2003 ;;;;;;;;;;;;;
+OLD-;# on: Thu Nov 6 15:55:32 2003;;;;;;;;;;;; ;
+NEW- 4;# cmd: H:\work\mix\mix_0.pl ..\case.xls ;;;;;;;;;;;;;
+OLD-;# cmd: H:\work\mix\mix_0.pl -nodelta ..\case.xls;;;;;;;;;;;; ;
+--------------------------;;;;;;;;;;;;;;
+:=:=:=>O_1_DIFF_HIER
+HEADER;::ign;::gen;::variants;::parent;::inst;::shortname;::lang;::entity;::arch;::use;::config;::comment;::descr;
+--------------------------;-- delta --;-- delta --;-- delta --;;;;;;;;;;;
+-- ------------- delta mode for file case-mixed.xls ------------- --;;;;;;;;;;;;;;
+--;;;;;;;;;;;;;;
+-- Generated;;;;;;;;;;;;;;
+--  by:  wig;;;;;;;;;;;;;;
+--  on:  Thu Dec 18 18:40:32 2003;;;;;;;;;;;;;;
+--  cmd: H:\work\mix\mix_0.pl ..\case.xls;;;;;;;;;;;;;;
+--  delta mode (comment/space/sort/remove): sort,remove;;;;;;;;;;;;;;
+--;;;;;;;;;;;;;;
+-- ------------------------------------------------- --;;;;;;;;;;;;;;
+-- ------------- CHANGES START HERE ------------- --;;;;;;;;;;;;;;
+--NR--;--CONT--;--NR--;--CONT--;;;;;;;;;;;
+HEADER;::ign;::gen;::variants;::parent;::inst;::shortname;::lang;::entity;::arch;::use;::config;::comment;::descr;
+--------------------------;;;;;;;;;;;;;;
+NEW-  ;NEW ;;;;;;;;;;;;;
+OLD-;OLD case-mixed.xls ;;;;;;;;;;;;;
+--------------------------;;;;;;;;;;;;;;
+NEW- 1;# Generated Intermediate Conn/Hier Data ;;;;;;;;;;;;;
+OLD-;# Generated Intermediate Conn/Hier Data;;;;;;;;;;;; ;
+NEW- 2;# by: wig ;;;;;;;;;;;;;
+OLD-;# by: wig;;;;;;;;;;;; ;
+NEW- 3;# on: Thu Dec 18 18:40:32 2003 ;;;;;;;;;;;;;
+OLD-;# on: Thu Nov 6 15:55:32 2003;;;;;;;;;;;; ;
+NEW- 4;# cmd: H:\work\mix\mix_0.pl ..\case.xls ;;;;;;;;;;;;;
+OLD-;# cmd: H:\work\mix\mix_0.pl -nodelta ..\case.xls;;;;;;;;;;;; ;
+--------------------------;;;;;;;;;;;;;;
+:=:=:=>O_2_DIFF_HIER
+HEADER;::ign;::gen;::variants;::parent;::inst;::shortname;::lang;::entity;::arch;::use;::config;::comment;::descr;
+--------------------------;-- delta --;-- delta --;-- delta --;;;;;;;;;;;
+-- ------------- delta mode for file case-mixed.xls ------------- --;;;;;;;;;;;;;;
+--;;;;;;;;;;;;;;
+-- Generated;;;;;;;;;;;;;;
+--  by:  wig;;;;;;;;;;;;;;
+--  on:  Thu Dec 18 12:16:45 2003;;;;;;;;;;;;;;
+--  cmd: H:\work\mix\mix_0.pl ..\case.xls;;;;;;;;;;;;;;
+--  delta mode (comment/space/sort/remove): sort,remove;;;;;;;;;;;;;;
+--;;;;;;;;;;;;;;
+-- ------------------------------------------------- --;;;;;;;;;;;;;;
+-- ------------- CHANGES START HERE ------------- --;;;;;;;;;;;;;;
+--NR--;--CONT--;--NR--;--CONT--;;;;;;;;;;;
+HEADER;::ign;::gen;::variants;::parent;::inst;::shortname;::lang;::entity;::arch;::use;::config;::comment;::descr;
+--------------------------;;;;;;;;;;;;;;
+NEW-  ;NEW ;;;;;;;;;;;;;
+OLD-;OLD case-mixed.xls ;;;;;;;;;;;;;
+--------------------------;;;;;;;;;;;;;;
+NEW- 1;# Generated Intermediate Conn/Hier Data ;;;;;;;;;;;;;
+OLD-;# Generated Intermediate Conn/Hier Data;;;;;;;;;;;; ;
+NEW- 2;# by: wig ;;;;;;;;;;;;;
+OLD-;# by: wig;;;;;;;;;;;; ;
+NEW- 3;# on: Thu Dec 18 12:16:45 2003 ;;;;;;;;;;;;;
+OLD-;# on: Thu Nov 6 15:55:32 2003;;;;;;;;;;;; ;
+NEW- 4;# cmd: H:\work\mix\mix_0.pl ..\case.xls ;;;;;;;;;;;;;
+OLD-;# cmd: H:\work\mix\mix_0.pl -nodelta ..\case.xls;;;;;;;;;;;; ;
+--------------------------;;;;;;;;;;;;;;
+:=:=:=>O_3_DIFF_HIER
+HEADER;::ign;::gen;::variants;::parent;::inst;::shortname;::lang;::entity;::arch;::use;::config;::comment;::descr;
+--------------------------;-- delta --;-- delta --;-- delta --;;;;;;;;;;;
+-- ------------- delta mode for file case-mixed.xls ------------- --;;;;;;;;;;;;;;
+--;;;;;;;;;;;;;;
+-- Generated;;;;;;;;;;;;;;
+--  by:  wig;;;;;;;;;;;;;;
+--  on:  Thu Dec 18 11:49:32 2003;;;;;;;;;;;;;;
+--  cmd: H:\work\mix\mix_0.pl ..\case.xls;;;;;;;;;;;;;;
+--  delta mode (comment/space/sort/remove): sort,remove;;;;;;;;;;;;;;
+--;;;;;;;;;;;;;;
+-- ------------------------------------------------- --;;;;;;;;;;;;;;
+-- ------------- CHANGES START HERE ------------- --;;;;;;;;;;;;;;
+--NR--;--CONT--;--NR--;--CONT--;;;;;;;;;;;
+HEADER;::ign;::gen;::variants;::parent;::inst;::shortname;::lang;::entity;::arch;::use;::config;::comment;::descr;
+--------------------------;;;;;;;;;;;;;;
+NEW-  ;NEW ;;;;;;;;;;;;;
+OLD-;OLD case-mixed.xls ;;;;;;;;;;;;;
+--------------------------;;;;;;;;;;;;;;
+NEW- 1;# Generated Intermediate Conn/Hier Data ;;;;;;;;;;;;;
+OLD-;# Generated Intermediate Conn/Hier Data;;;;;;;;;;;; ;
+NEW- 2;# by: wig ;;;;;;;;;;;;;
+OLD-;# by: wig;;;;;;;;;;;; ;
+NEW- 3;# on: Thu Dec 18 11:49:32 2003 ;;;;;;;;;;;;;
+OLD-;# on: Thu Nov 6 15:55:32 2003;;;;;;;;;;;; ;
+NEW- 4;# cmd: H:\work\mix\mix_0.pl ..\case.xls ;;;;;;;;;;;;;
+OLD-;# cmd: H:\work\mix\mix_0.pl -nodelta ..\case.xls;;;;;;;;;;;; ;
+--------------------------;;;;;;;;;;;;;;
+:=:=:=>HIER
+::ign;::gen;::variants;::parent;::inst;::shortname;::lang;::entity;::arch;::use;::config;::comment;::descr
+# Generated Intermediate Conn/Hier Data;;;;;;;;;;;;
+# by: wig;;;;;;;;;;;;
+# on: Thu Nov  6 15:55:32 2003;;;;;;;;;;;;
+# cmd: H:\work\mix\mix_0.pl -nodelta ..\case.xls;;;;;;;;;;;;
+;;Default;inst_A;INST_AA;;VHDL;INST_AA_e;rtl;;INST_AA_e_rtl_conf;conflict;
+;;Default;inst_c;INST_AB;;VHDL;INST_AB_e;rtl;;INST_AB_e_rtl_conf;;
+;;Default;inst_t;inst_A;;VHDL;inst_A_e;rtl;;inst_A_e_rtl_conf;conflict;
+;;Default;inst_b;inst_AB;;VHDL;inst_AB_e;rtl;;inst_AB_e_rtl_conf;;
+;;Default;inst_t;inst_a;;VHDL;inst_a_e;rtl;;inst_a_e_rtl_conf;lc all;
+;;Default;inst_a;inst_aa;;Verilog;inst_aa_e;rtl;;inst_aa_e_rtl_conf;conflict;
+;;Default;inst_a;inst_ab;;VHDL;inst_ab_e;rtl;;inst_ab_e_rtl_conf;;
+;;Default;inst_a;inst_ac;;VHDL;inst_ac_e;rtl;;inst_ac_e_rtl_conf;;
+;;Default;inst_t;inst_b;;VHDL;inst_b_e;rtl;;inst_b_e_rtl_conf;;
+;;Default;W_NO_PARENT;inst_c;;vhdl;W_NO_ENTITY;rtl;;W_NO_ENTITY_rtl_conf;;
+;;Default;testbench;inst_t;;VHDL;inst_t_e;rtl;;inst_t_e_rtl_conf;TESTBENCH;
+;;Default;W_NO_PARENT;testbench;;vhdl;W_NO_ENTITY;rtl;;W_NO_ENTITY_rtl_conf;;
+:=:=:=>O_1_HIER
+::ign;::gen;::variants;::parent;::inst;::shortname;::lang;::entity;::arch;::use;::config;::comment;::descr
+# Generated Intermediate Conn/Hier Data;;;;;;;;;;;;
+# by: wig;;;;;;;;;;;;
+# on: Mon Oct 13 09:30:23 2003;;;;;;;;;;;;
+# cmd: H:\work\mix\mix_0.pl -nodelta ..\case.xls;;;;;;;;;;;;
+;;Default;inst_A;INST_AA;;VHDL;INST_AA_e;rtl;;INST_AA_e_rtl_conf;conflict;
+;;Default;inst_c;INST_AB;;VHDL;INST_AB_e;rtl;;INST_AB_e_rtl_conf;;
+;;Default;inst_t;inst_A;;VHDL;inst_A_e;rtl;;inst_A_e_rtl_conf;conflict;
+;;Default;inst_b;inst_AB;;VHDL;inst_AB_e;rtl;;inst_AB_e_rtl_conf;;
+;;Default;inst_t;inst_a;;VHDL;inst_a_e;rtl;;inst_a_e_rtl_conf;lc all;
+;;Default;inst_a;inst_aa;;Verilog;inst_aa_e;rtl;;inst_aa_e_rtl_conf;conflict;
+;;Default;inst_a;inst_ab;;VHDL;inst_ab_e;rtl;;inst_ab_e_rtl_conf;;
+;;Default;inst_a;inst_ac;;VHDL;inst_ac_e;rtl;;inst_ac_e_rtl_conf;;
+;;Default;inst_t;inst_b;;VHDL;inst_b_e;rtl;;inst_b_e_rtl_conf;;
+;;Default;W_NO_PARENT;inst_c;;vhdl;W_NO_ENTITY;rtl;;W_NO_ENTITY_rtl_conf;;
+;;Default;testbench;inst_t;;VHDL;inst_t_e;rtl;;inst_t_e_rtl_conf;TESTBENCH;
+;;Default;W_NO_PARENT;testbench;;vhdl;W_NO_ENTITY;rtl;;W_NO_ENTITY_rtl_conf;;
+:=:=:=>O_2_HIER
+::ign;::gen;::variants;::parent;::inst;::shortname;::lang;::entity;::arch;::use;::config;::comment
+# Generated Intermediate Conn/Hier Data;;;;;;;;;;;
+# by: wig;;;;;;;;;;;
+# on: Fri Apr  4 15:45:31 2003;;;;;;;;;;;
+# cmd: H:\work\mix\mix_0.pl -nodelta ..\case.xls;;;;;;;;;;;
+;;Default;inst_d;INST_A;;VHDL;INST_A_e;rtl;;INST_A_e_rtl_conf;
+;;Default;inst_A;INST_AA;;VHDL;INST_AA_e;rtl;;INST_AA_e_rtl_conf;conflict
+;;Default;inst_t;inst_A;;VHDL;inst_A_e;rtl;;inst_A_e_rtl_conf;conflict
+;;Default;inst_t;inst_a;;VHDL;inst_a_e;rtl;;inst_a_e_rtl_conf;lc all
+;;Default;inst_a;inst_aa;;Verilog;inst_aa_e;rtl;;inst_aa_e_rtl_conf;conflict
+;;Default;inst_a;inst_ab;;VHDL;inst_ab_e;rtl;;inst_ab_e_rtl_conf;
+;;Default;inst_t;inst_b;;VHDL;inst_b_e;rtl;;inst_b_e_rtl_conf;
+;;Default;W_NO_PARENT;W_NO_INST;;VHDL;W_NO_ENTITY;rtl;;W_NO_CONFIG;#WARNING: undef value somewhere
+;;Default;W_NO_PARENT;inst_d;;VHDL;W_NO_ENTITY;rtl;;W_NO_CONFIG;
+;;Default;testbench;inst_t;;VHDL;inst_t_e;rtl;;inst_t_e_rtl_conf;TESTBENCH
+;;Default;W_NO_PARENT;testbench;;VHDL;W_NO_ENTITY;rtl;;W_NO_CONFIG;
+:=:=:=>DIFF_CONN
+HEADER;::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::shortname;::out;::in;::descr;::comment;::mdeout;::mdein;::result;
+--------------------------;-- delta --;-- delta --;-- delta --;;;;;;;;;;;;;;;;
+-- ------------- delta mode for file case-mixed.xls ------------- --;;;;;;;;;;;;;;;;;;;
+--;;;;;;;;;;;;;;;;;;;
+-- Generated;;;;;;;;;;;;;;;;;;;
+--  by:  wig;;;;;;;;;;;;;;;;;;;
+--  on:  Fri Dec 19 14:40:36 2003;;;;;;;;;;;;;;;;;;;
+--  cmd: H:\work\mix\mix_0.pl ..\case.xls;;;;;;;;;;;;;;;;;;;
+--  delta mode (comment/space/sort/remove): sort,remove;;;;;;;;;;;;;;;;;;;
+--;;;;;;;;;;;;;;;;;;;
+-- ------------------------------------------------- --;;;;;;;;;;;;;;;;;;;
+-- ------------- CHANGES START HERE ------------- --;;;;;;;;;;;;;;;;;;;
+--NR--;--CONT--;--NR--;--CONT--;;;;;;;;;;;;;;;;
+HEADER;::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::shortname;::out;::in;::descr;::comment;::mdeout;::mdein;::result;
+--------------------------;;;;;;;;;;;;;;;;;;;
+NEW-  ;NEW ;;;;;;;;;;;;;;;;;;
+OLD-;OLD case-mixed.xls ;;;;;;;;;;;;;;;;;;
+--------------------------;;;;;;;;;;;;;;;;;;;
+NEW- 1;# Generated Intermediate Conn/Hier Data ;;;;;;;;;;;;;;;;;;
+OLD-;# Generated Intermediate Conn/Hier Data;;;;;;;;;;;;;;;;; ;
+NEW- 2;# by: wig ;;;;;;;;;;;;;;;;;;
+OLD-;# by: wig;;;;;;;;;;;;;;;;; ;
+NEW- 3;# on: Fri Dec 19 14:40:36 2003 ;;;;;;;;;;;;;;;;;;
+OLD-;# on: Thu Nov 6 15:55:32 2003;;;;;;;;;;;;;;;;; ;
+NEW- 4;# cmd: H:\work\mix\mix_0.pl ..\case.xls ;;;;;;;;;;;;;;;;;;
+OLD-;# cmd: H:\work\mix\mix_0.pl -nodelta ..\case.xls;;;;;;;;;;;;;;;;; ;
+--------------------------;;;;;;;;;;;;;;;;;;;
+:=:=:=>O_1_DIFF_CONN
+HEADER;::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::shortname;::out;::in;::descr;::comment;::mdeout;::mdein;::result;
+--------------------------;-- delta --;-- delta --;-- delta --;;;;;;;;;;;;;;;;
+-- ------------- delta mode for file case-mixed.xls ------------- --;;;;;;;;;;;;;;;;;;;
+--;;;;;;;;;;;;;;;;;;;
+-- Generated;;;;;;;;;;;;;;;;;;;
+--  by:  wig;;;;;;;;;;;;;;;;;;;
+--  on:  Thu Dec 18 18:40:32 2003;;;;;;;;;;;;;;;;;;;
+--  cmd: H:\work\mix\mix_0.pl ..\case.xls;;;;;;;;;;;;;;;;;;;
+--  delta mode (comment/space/sort/remove): sort,remove;;;;;;;;;;;;;;;;;;;
+--;;;;;;;;;;;;;;;;;;;
+-- ------------------------------------------------- --;;;;;;;;;;;;;;;;;;;
+-- ------------- CHANGES START HERE ------------- --;;;;;;;;;;;;;;;;;;;
+--NR--;--CONT--;--NR--;--CONT--;;;;;;;;;;;;;;;;
+HEADER;::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::shortname;::out;::in;::descr;::comment;::mdeout;::mdein;::result;
+--------------------------;;;;;;;;;;;;;;;;;;;
+NEW-  ;NEW ;;;;;;;;;;;;;;;;;;
+OLD-;OLD case-mixed.xls ;;;;;;;;;;;;;;;;;;
+--------------------------;;;;;;;;;;;;;;;;;;;
+NEW- 1;# Generated Intermediate Conn/Hier Data ;;;;;;;;;;;;;;;;;;
+OLD-;# Generated Intermediate Conn/Hier Data;;;;;;;;;;;;;;;;; ;
+NEW- 2;# by: wig ;;;;;;;;;;;;;;;;;;
+OLD-;# by: wig;;;;;;;;;;;;;;;;; ;
+NEW- 3;# on: Thu Dec 18 18:40:32 2003 ;;;;;;;;;;;;;;;;;;
+OLD-;# on: Thu Nov 6 15:55:32 2003;;;;;;;;;;;;;;;;; ;
+NEW- 4;# cmd: H:\work\mix\mix_0.pl ..\case.xls ;;;;;;;;;;;;;;;;;;
+OLD-;# cmd: H:\work\mix\mix_0.pl -nodelta ..\case.xls;;;;;;;;;;;;;;;;; ;
+--------------------------;;;;;;;;;;;;;;;;;;;
+:=:=:=>O_2_DIFF_CONN
+HEADER;::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::shortname;::out;::in;::descr;::comment;::mdeout;::mdein;::result;
+--------------------------;-- delta --;-- delta --;-- delta --;;;;;;;;;;;;;;;;
+-- ------------- delta mode for file case-mixed.xls ------------- --;;;;;;;;;;;;;;;;;;;
+--;;;;;;;;;;;;;;;;;;;
+-- Generated;;;;;;;;;;;;;;;;;;;
+--  by:  wig;;;;;;;;;;;;;;;;;;;
+--  on:  Thu Dec 18 12:16:45 2003;;;;;;;;;;;;;;;;;;;
+--  cmd: H:\work\mix\mix_0.pl ..\case.xls;;;;;;;;;;;;;;;;;;;
+--  delta mode (comment/space/sort/remove): sort,remove;;;;;;;;;;;;;;;;;;;
+--;;;;;;;;;;;;;;;;;;;
+-- ------------------------------------------------- --;;;;;;;;;;;;;;;;;;;
+-- ------------- CHANGES START HERE ------------- --;;;;;;;;;;;;;;;;;;;
+--NR--;--CONT--;--NR--;--CONT--;;;;;;;;;;;;;;;;
+HEADER;::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::shortname;::out;::in;::descr;::comment;::mdeout;::mdein;::result;
+--------------------------;;;;;;;;;;;;;;;;;;;
+NEW-  ;NEW ;;;;;;;;;;;;;;;;;;
+OLD-;OLD case-mixed.xls ;;;;;;;;;;;;;;;;;;
+--------------------------;;;;;;;;;;;;;;;;;;;
+NEW- 1;# Generated Intermediate Conn/Hier Data ;;;;;;;;;;;;;;;;;;
+OLD-;# Generated Intermediate Conn/Hier Data;;;;;;;;;;;;;;;;; ;
+NEW- 2;# by: wig ;;;;;;;;;;;;;;;;;;
+OLD-;# by: wig;;;;;;;;;;;;;;;;; ;
+NEW- 3;# on: Thu Dec 18 12:16:45 2003 ;;;;;;;;;;;;;;;;;;
+OLD-;# on: Thu Nov 6 15:55:32 2003;;;;;;;;;;;;;;;;; ;
+NEW- 4;# cmd: H:\work\mix\mix_0.pl ..\case.xls ;;;;;;;;;;;;;;;;;;
+OLD-;# cmd: H:\work\mix\mix_0.pl -nodelta ..\case.xls;;;;;;;;;;;;;;;;; ;
+--------------------------;;;;;;;;;;;;;;;;;;;
+:=:=:=>O_3_DIFF_CONN
+HEADER;::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::shortname;::out;::in;::descr;::comment;::mdeout;::mdein;::result;
+--------------------------;-- delta --;-- delta --;-- delta --;;;;;;;;;;;;;;;;
+-- ------------- delta mode for file case-mixed.xls ------------- --;;;;;;;;;;;;;;;;;;;
+--;;;;;;;;;;;;;;;;;;;
+-- Generated;;;;;;;;;;;;;;;;;;;
+--  by:  wig;;;;;;;;;;;;;;;;;;;
+--  on:  Thu Dec 18 11:49:32 2003;;;;;;;;;;;;;;;;;;;
+--  cmd: H:\work\mix\mix_0.pl ..\case.xls;;;;;;;;;;;;;;;;;;;
+--  delta mode (comment/space/sort/remove): sort,remove;;;;;;;;;;;;;;;;;;;
+--;;;;;;;;;;;;;;;;;;;
+-- ------------------------------------------------- --;;;;;;;;;;;;;;;;;;;
+-- ------------- CHANGES START HERE ------------- --;;;;;;;;;;;;;;;;;;;
+--NR--;--CONT--;--NR--;--CONT--;;;;;;;;;;;;;;;;
+HEADER;::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::shortname;::out;::in;::descr;::comment;::mdeout;::mdein;::result;
+--------------------------;;;;;;;;;;;;;;;;;;;
+NEW-  ;NEW ;;;;;;;;;;;;;;;;;;
+OLD-;OLD case-mixed.xls ;;;;;;;;;;;;;;;;;;
+--------------------------;;;;;;;;;;;;;;;;;;;
+NEW- 1;# Generated Intermediate Conn/Hier Data ;;;;;;;;;;;;;;;;;;
+OLD-;# Generated Intermediate Conn/Hier Data;;;;;;;;;;;;;;;;; ;
+NEW- 2;# by: wig ;;;;;;;;;;;;;;;;;;
+OLD-;# by: wig;;;;;;;;;;;;;;;;; ;
+NEW- 3;# on: Thu Dec 18 11:49:32 2003 ;;;;;;;;;;;;;;;;;;
+OLD-;# on: Thu Nov 6 15:55:32 2003;;;;;;;;;;;;;;;;; ;
+NEW- 4;# cmd: H:\work\mix\mix_0.pl ..\case.xls ;;;;;;;;;;;;;;;;;;
+OLD-;# cmd: H:\work\mix\mix_0.pl -nodelta ..\case.xls;;;;;;;;;;;;;;;;; ;
+--------------------------;;;;;;;;;;;;;;;;;;;
+:=:=:=>CONN
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::shortname;::out;::in;::descr;::comment;::mdeout;::mdein;::result
+# Generated Intermediate Conn/Hier Data;;;;;;;;;;;;;;;;;
+# by: wig;;;;;;;;;;;;;;;;;
+# on: Thu Nov  6 15:55:32 2003;;;;;;;;;;;;;;;;;
+# cmd: H:\work\mix\mix_0.pl -nodelta ..\case.xls;;;;;;;;;;;;;;;;;
+;;;;;;;;;Case;;inst_aa/case_aa_p;inst_ab/case_ab_p;;;;;
+;;CASE1;CASE;clk;std_ulogic;;;;case;;inst_a/case_a_p;inst_b/case_b_p;;;;;
+:=:=:=>O_1_CONN
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::shortname;::out;::in;::descr;::comment;::mdeout;::mdein;::result
+# Generated Intermediate Conn/Hier Data;;;;;;;;;;;;;;;;;
+# by: wig;;;;;;;;;;;;;;;;;
+# on: Mon Oct 13 09:30:23 2003;;;;;;;;;;;;;;;;;
+# cmd: H:\work\mix\mix_0.pl -nodelta ..\case.xls;;;;;;;;;;;;;;;;;
+;;;;;;;;;Case;;inst_aa/case_aa_p;inst_ab/case_ab_p;;;;;
+;;CASE1;CASE;clk;std_ulogic;;;;case;;inst_a/case_a_p;inst_b/case_b_p;;;;;
+:=:=:=>O_2_CONN
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::shortname;::out;::in;::descr;::comment;::mdeout;::mdein;::result
+# Generated Intermediate Conn/Hier Data;;;;;;;;;;;;;;;;;
+# by: wig;;;;;;;;;;;;;;;;;
+# on: Fri Apr  4 15:45:31 2003;;;;;;;;;;;;;;;;;
+# cmd: H:\work\mix\mix_0.pl -nodelta ..\case.xls;;;;;;;;;;;;;;;;;
+;;;;;;;;;Case;;inst_aa/case_aa_p;inst_ab/case_ab_p;;;;;
+;;CASE1;CASE;clk;std_ulogic;;;;case;;inst_a/case_a_p;inst_b/case_b_p;;;;;
+:=:=:=>Tabelle1
+
+:=:=:=>Tabelle2
+
+:=:=:=>Tabelle3
+

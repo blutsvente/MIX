@@ -1,0 +1,51 @@
+:=:=:=>IMP_HIER
+::ign;::gen;::variants;::parent;::inst;::shortname;::lang;::entity;::arch;::use;::config;::comment;::descr
+# Generated Intermediate Conn/Hier Data;;;;;;;;;;;;
+# by: wig;;;;;;;;;;;;
+# on: Thu Feb 10 18:58:27 2005;;;;;;;;;;;;
+# cmd: h:\work\mix_new\mix\mix_0.pl -import inst_aa_e-e.vhd ddrv4-e.vhd init.xls;;;;;;;;;;;;
+%UNDEF_1%;%UNDEF_1%;%UNDEF_1%;%UNDEF_1%;%UNDEF_1%;%UNDEF_1%;%UNDEF_1%;%UNDEF_1%;%UNDEF_1%;%UNDEF_1%;%UNDEF_1%;%UNDEF_1%;%UNDEF_1%
+;;Default;__IMPORT__;i_ddrv4;;vhdl;ddrv4;rtl;;ddrv4_rtl_conf;;
+;;Default;__IMPORT__;i_inst_aa_e;;vhdl;inst_aa_e;rtl;;inst_aa_e_rtl_conf;;
+:=:=:=>IMP_CONN
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::shortname;::out;::in;::descr;::comment
+# Generated Intermediate Conn/Hier Data;;;;;;;;;;;;;;
+# by: wig;;;;;;;;;;;;;;
+# on: Thu Feb 10 18:58:27 2005;;;;;;;;;;;;;;
+# cmd: h:\work\mix_new\mix\mix_0.pl -import inst_aa_e-e.vhd ddrv4-e.vhd init.xls;;;;;;;;;;;;;;
+;;__IMPORT_BUNDLE__I_INST_AA_E;__IMPORT__I_INST_AA_E;__IMPORT_CLK__I_INST_AA_E;string;;;G;NO_DEFAULT;;;i_inst_aa_e/NO_DEFAULT;; -- __W_NODEFAULT
+;;__IMPORT_BUNDLE__I_INST_AA_E;__IMPORT__I_INST_AA_E;__IMPORT_CLK__I_INST_AA_E;string;;;G;NO_NAME;;;i_inst_aa_e/NO_NAME;; -- __W_NODEFAULT
+;;__IMPORT_BUNDLE__I_INST_AA_E;__IMPORT__I_INST_AA_E;__IMPORT_CLK__I_INST_AA_E;integer;;;G;WIDTH;;%TYPECAST_0%/WIDTH'7;i_inst_aa_e/WIDTH;;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;alarm_time_ls_hr;;;i_ddrv4/alarm_time_ls_hr(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;alarm_time_ls_min;;;i_ddrv4/alarm_time_ls_min(3:0)=(3:0);; -- alarm_time_ls_min comment
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;alarm_time_ms_hr;;;i_ddrv4/alarm_time_ms_hr(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;alarm_time_ms_min;;;i_ddrv4/alarm_time_ms_min(3:0)=(3:0);; -- alarm_time_ms_min paren ___LEFTPAR___
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic;;;I;clk;;;i_ddrv4/clk;;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;current_time_ls_hr;;;i_ddrv4/current_time_ls_hr(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;current_time_ls_min;;;i_ddrv4/current_time_ls_min(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;current_time_ms_hr;;;i_ddrv4/current_time_ms_hr(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;current_time_ms_min;;;i_ddrv4/current_time_ms_min(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;6;0;O;display_ls_hr;;i_ddrv4/display_ls_hr(6:0)=(6:0);;;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;6;0;O;display_ms_min;;i_ddrv4/display_ms_min(6:0)=(6:0);;;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;key_buffer_0;;;i_ddrv4/key_buffer_0(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;key_buffer_1;;;i_ddrv4/key_buffer_1(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;key_buffer_2;;;i_ddrv4/key_buffer_2(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;key_buffer_3;;;i_ddrv4/key_buffer_3(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;p_mix_sa_test6_3_0_gi;;;i_ddrv4/p_mix_sa_test6_3_0_gi(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic;;;O;p_mix_sound_alarm_test1_go;;i_ddrv4/p_mix_sound_alarm_test1_go;;;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic;;;O;p_mix_sound_alarm_test3_go;;i_ddrv4/p_mix_sound_alarm_test3_go;;; -- p_mix_sound_alarm_test1_go comment
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic;;;I;p_mix_sound_alarm_test4_gi;;;i_ddrv4/p_mix_sound_alarm_test4_gi;; -- p_mix_sound_alarm_test4_gi comment paren ___LEFTPAR___ ___LEFTPAR___ more to come
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;1;0;O;p_mix_sound_alarm_test5_2_1_go;;i_ddrv4/p_mix_sound_alarm_test5_2_1_go(1:0)=(1:0);;;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic;;;I;reset;;;i_ddrv4/reset;;
+;;__IMPORT_BUNDLE__I_INST_AA_E;__IMPORT__I_INST_AA_E;__IMPORT_CLK__I_INST_AA_E;7;;;S;s_mix_tc_1_WIDTH;;/WIDTH/s_mix_tc_1_WIDTH;%TYPECAST_0%/WIDTH;;__I_TYPECAST_INT
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;5;0;I;sa_test7;;;i_ddrv4/sa_test7(5:0)=(5:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;8;2;O;sa_test8;;i_ddrv4/sa_test8(8:2)=(8:2);;;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic;;;I;show_a;;;i_ddrv4/show_a;;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic;;;I;show_new_time;;;i_ddrv4/show_new_time;;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic;;;O;sound_alarm;;i_ddrv4/sound_alarm;;;
+:=:=:=>Sheet1
+
+:=:=:=>Sheet2
+
+:=:=:=>Sheet3
+

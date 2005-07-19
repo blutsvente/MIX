@@ -1,1218 +1,1187 @@
-05/07/15 14:47:37 
+05/07/18 17:59:49 
 #######################################################################
 ##### mix_0.pl (Revision: 1.36 )
 #####
 ##### MIX  
-#####   MixUtils    1.66 $
-#####   MixUtils::IO    1.22 $
+#####   MixUtils    1.67 $
+#####   MixUtils::IO    1.24 $
 #####   MixParser   1.53 $
-#####   MixWriter   1.55 $
+#####   MixWriter   1.57 $
 #####   MixChecker  1.8 $
 #####   MixIOParser 1.17 $
 #####   MixI2CParser 1.13 $
 ##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
 #######################################################################
-05/07/15 14:47:38 Reading worksheet CONN_TOP_IO of h:/work/eclipse/mix/test/xls_input/padio2/../padio2.xls
-05/07/15 14:47:38 Reading worksheet CONN_IOC of h:/work/eclipse/mix/test/xls_input/padio2/../padio2.xls
-05/07/15 14:47:38 Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/padio2/../padio2.xls
-05/07/15 14:47:38 Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/padio2/../padio2.xls
-05/07/15 14:47:38 WARNING: Empty header in column 16, sheet-type io, skipping!
-05/07/15 14:47:38 WARNING: Empty header in column 17, sheet-type io, skipping!
-05/07/15 14:47:38 WARNING: Empty header in column 18, sheet-type io, skipping!
-05/07/15 14:47:38 WARNING: Empty header in column 19, sheet-type io, skipping!
-05/07/15 14:47:38 WARNING: Empty header in column 20, sheet-type io, skipping!
-05/07/15 14:47:38 WARNING: Empty header in column 21, sheet-type io, skipping!
-05/07/15 14:47:38 WARNING: Empty header in column 22, sheet-type io, skipping!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_10 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_10 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_10 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_10 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_11 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_11 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_11 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_11 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_12 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_12 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_12 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_12 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_13 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_13 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_13 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_13 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_14 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_14 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_14 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_14 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_15 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_15 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_15 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_15 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_0 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_0 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_0 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_0 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_1 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_1 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_1 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_1 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_2 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_2 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_2 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_2 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_3 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_3 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_3 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_3 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_4 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_4 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_4 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_4 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_5 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_5 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_5 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_5 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_6 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_6 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_6 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_6 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_7 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_7 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_7 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_7 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_8 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_8 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_8 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_8 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_9 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_9 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_dbo_9 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_dbo_9 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_db2o_10 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_db2o_10 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_db2o_10 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_db2o_10 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_db2o_11 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_db2o_11 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_db2o_11 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_db2o_11 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_db2o_12 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_db2o_12 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_db2o_12 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_db2o_12 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_db2o_13 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_db2o_13 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_db2o_13 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_db2o_13 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_db2o_14 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_db2o_14 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port iddq in iocell ioc_db2o_14 has undefined direction, applied default!
-05/07/15 14:47:38 WARNING: port bypass in iocell ioc_db2o_14 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_15 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_15 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_15 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_15 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_0 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_0 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_0 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_0 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_1 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_1 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_1 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_1 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_2 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_2 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_2 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_2 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_3 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_3 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_3 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_3 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_4 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_4 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_4 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_4 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_5 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_5 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_5 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_5 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_6 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_6 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_6 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_6 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_7 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_7 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_7 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_7 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_8 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_8 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_8 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_8 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_9 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_9 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port iddq in iocell ioc_db2o_9 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_db2o_9 has undefined direction, applied default!
-05/07/15 14:47:39 INFO: muxopt ::muxopt:1 not completely defined for pad 1!
-05/07/15 14:47:39 WARNING: WARNING: Empty ::muxopt cell line not implemented!
-05/07/15 14:47:39 WARNING: port oe in iocell ioc_ramd_12 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port oe in iocell ioc_ramd_12 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port bypass in iocell ioc_ramd_12 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port enq in iocell ioc_ramd_12 has undefined direction, applied default!
-05/07/15 14:47:39 WARNING: port tenq in iocell ioc_ramd_12 has undefined direction, applied default!
-05/07/15 14:47:39 Add_port: signal dbo_11 adds port dbo_11 to instance dut
-05/07/15 14:47:39 Add_port: signal db2o_1 adds port db2o_1 to instance dut
-05/07/15 14:47:39 Add_port: signal dbo_0 adds port dbo_0 to instance dut
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
-05/07/15 14:47:39 Add_port: signal rgbout_byp_i adds port %EMPTY%rgbout_byp_i_gi to instance i_pads_ws
-05/07/15 14:47:39 Add_port: signal rgbout_byp_i adds port %EMPTY%rgbout_byp_i_gi to instance i_pads_en
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_es for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal shiftdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal shiftdr_i!
-05/07/15 14:47:39 Add_port: signal shiftdr_i adds port %EMPTY%shiftdr_i_gi to instance i_pads_ws
-05/07/15 14:47:39 Add_port: signal shiftdr_i adds port %EMPTY%shiftdr_i_gi to instance i_pads_en
-05/07/15 14:47:39 Add_port: signal shiftdr_i adds port %EMPTY%shiftdr_i_gi to instance i_pads_es
-05/07/15 14:47:39 Add_port: signal dbo_13 adds port dbo_13 to instance dut
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
-05/07/15 14:47:39 Add_port: signal rgbout_sio_i adds port %EMPTY%rgbout_sio_i_gi to instance i_pads_ws
-05/07/15 14:47:39 Add_port: signal rgbout_sio_i adds port %EMPTY%rgbout_sio_i_gi to instance i_pads_en
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal dbo_o!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal dbo_o!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal dbo_o!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal dbo_o!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal dbo_o!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal dbo_o!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal dbo_o!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal dbo_o!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal dbo_o!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal dbo_o!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal dbo_o!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal dbo_o!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal dbo_o!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal dbo_o!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal dbo_o!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal dbo_o!
-05/07/15 14:47:39 Add_port: signal dbo_o adds port %EMPTY%dbo_o_9_0_go to instance i_pads_ws
-05/07/15 14:47:39 Add_port: signal dbo_o adds port %EMPTY%dbo_o_15_10_go to instance i_pads_en
-05/07/15 14:47:39 Add_port: signal db2o_9 adds port db2o_9 to instance dut
-05/07/15 14:47:39 Add_port: signal db2o_14 adds port db2o_14 to instance dut
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_es for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
-05/07/15 14:47:39 Add_port: signal pmux_sel_por adds port %EMPTY%pmux_sel_por_gi to instance i_pads_ws
-05/07/15 14:47:39 Add_port: signal pmux_sel_por adds port %EMPTY%pmux_sel_por_gi to instance i_pads_en
-05/07/15 14:47:39 Add_port: signal pmux_sel_por adds port %EMPTY%pmux_sel_por_gi to instance i_pads_es
-05/07/15 14:47:39 Add_port: signal db2o_6 adds port db2o_6 to instance dut
-05/07/15 14:47:39 Already connected daughters of i_pads_ws properly for signal db2o_i, ignore uppers
-05/07/15 14:47:39 Already connected daughters of i_pads_en properly for signal db2o_i, ignore uppers
-05/07/15 14:47:39 Add_port: signal dbo_2 adds port dbo_2 to instance dut
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_es for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal updatedr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal updatedr_i!
-05/07/15 14:47:39 Add_port: signal updatedr_i adds port %EMPTY%updatedr_i_gi to instance i_pads_ws
-05/07/15 14:47:39 Add_port: signal updatedr_i adds port %EMPTY%updatedr_i_gi to instance i_pads_en
-05/07/15 14:47:39 Add_port: signal updatedr_i adds port %EMPTY%updatedr_i_gi to instance i_pads_es
-05/07/15 14:47:39 Add_port: signal dbo_5 adds port dbo_5 to instance dut
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_es for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clkf81!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clkf81!
-05/07/15 14:47:39 Add_port: signal clkf81 adds port %EMPTY%clkf81_gi to instance i_pads_ws
-05/07/15 14:47:39 Add_port: signal clkf81 adds port %EMPTY%clkf81_gi to instance i_pads_en
-05/07/15 14:47:39 Add_port: signal clkf81 adds port %EMPTY%clkf81_gi to instance i_pads_es
-05/07/15 14:47:39 Add_port: signal dbo_14 adds port dbo_14 to instance dut
-05/07/15 14:47:39 Add_port: signal db2o_11 adds port db2o_11 to instance dut
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
-05/07/15 14:47:39 Add_port: signal rgbout_iddq_i adds port %EMPTY%rgbout_iddq_i_gi to instance i_pads_ws
-05/07/15 14:47:39 Add_port: signal rgbout_iddq_i adds port %EMPTY%rgbout_iddq_i_gi to instance i_pads_en
-05/07/15 14:47:39 Add_port: signal dbo_8 adds port dbo_8 to instance dut
-05/07/15 14:47:39 Add_port: signal dbo_12 adds port dbo_12 to instance dut
-05/07/15 14:47:39 Add_port: signal db2o_4 adds port db2o_4 to instance dut
-05/07/15 14:47:39 Add_port: signal db2o_7 adds port db2o_7 to instance dut
-05/07/15 14:47:39 Add_port: signal db2o_15 adds port db2o_15 to instance dut
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_es for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_1_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_1_i!
-05/07/15 14:47:39 Add_port: signal mode_1_i adds port %EMPTYBad file descriptorode_1_i_gi to instance i_pads_ws
-05/07/15 14:47:39 Add_port: signal mode_1_i adds port %EMPTYBad file descriptorode_1_i_gi to instance i_pads_en
-05/07/15 14:47:39 Add_port: signal mode_1_i adds port %EMPTYBad file descriptorode_1_i_gi to instance i_pads_es
-05/07/15 14:47:39 Add_port: signal dbo_9 adds port dbo_9 to instance dut
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_es for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_2_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_2_i!
-05/07/15 14:47:39 Add_port: signal mode_2_i adds port %EMPTYBad file descriptorode_2_i_gi to instance i_pads_ws
-05/07/15 14:47:39 Add_port: signal mode_2_i adds port %EMPTYBad file descriptorode_2_i_gi to instance i_pads_en
-05/07/15 14:47:39 Add_port: signal mode_2_i adds port %EMPTYBad file descriptorode_2_i_gi to instance i_pads_es
-05/07/15 14:47:39 Add_port: signal dbo_3 adds port dbo_3 to instance dut
-05/07/15 14:47:39 Add_port: signal db2o_5 adds port db2o_5 to instance dut
-05/07/15 14:47:39 Add_port: signal dbo_10 adds port dbo_10 to instance dut
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_es for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clockdr_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal clockdr_i!
-05/07/15 14:47:39 Add_port: signal clockdr_i adds port %EMPTY%clockdr_i_gi to instance i_pads_ws
-05/07/15 14:47:39 Add_port: signal clockdr_i adds port %EMPTY%clockdr_i_gi to instance i_pads_en
-05/07/15 14:47:39 Add_port: signal clockdr_i adds port %EMPTY%clockdr_i_gi to instance i_pads_es
-05/07/15 14:47:39 Add_port: signal dbo_1 adds port dbo_1 to instance dut
-05/07/15 14:47:39 Add_port: signal db2o_2 adds port db2o_2 to instance dut
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_es for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal res_f81_n!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal res_f81_n!
-05/07/15 14:47:39 Add_port: signal res_f81_n adds port %EMPTY%res_f81_n_gi to instance i_pads_ws
-05/07/15 14:47:39 Add_port: signal res_f81_n adds port %EMPTY%res_f81_n_gi to instance i_pads_en
-05/07/15 14:47:39 Add_port: signal res_f81_n adds port %EMPTY%res_f81_n_gi to instance i_pads_es
-05/07/15 14:47:39 Add_port: signal db2o_13 adds port db2o_13 to instance dut
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal varclk_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal varclk_i!
-05/07/15 14:47:39 Add_port: signal varclk_i adds port %EMPTY%varclk_i_gi to instance i_pads_ws
-05/07/15 14:47:39 Add_port: signal varclk_i adds port %EMPTY%varclk_i_gi to instance i_pads_en
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_es for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal tck_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal tck_i!
-05/07/15 14:47:39 Add_port: signal tck_i adds port %EMPTY%tck_i_gi to instance i_pads_ws
-05/07/15 14:47:39 Add_port: signal tck_i adds port %EMPTY%tck_i_gi to instance i_pads_en
-05/07/15 14:47:39 Add_port: signal tck_i adds port %EMPTY%tck_i_gi to instance i_pads_es
-05/07/15 14:47:39 Add_port: signal db2o_0 adds port db2o_0 to instance dut
-05/07/15 14:47:39 Add_port: signal dbo_6 adds port dbo_6 to instance dut
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_es for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_3_i!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal mode_3_i!
-05/07/15 14:47:39 Add_port: signal mode_3_i adds port %EMPTYBad file descriptorode_3_i_gi to instance i_pads_ws
-05/07/15 14:47:39 Add_port: signal mode_3_i adds port %EMPTYBad file descriptorode_3_i_gi to instance i_pads_en
-05/07/15 14:47:39 Add_port: signal mode_3_i adds port %EMPTYBad file descriptorode_3_i_gi to instance i_pads_es
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_es for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_ws for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal default!
-05/07/15 14:47:39 Adding port to hierachy module i_pads_en for signal default!
-05/07/15 14:47:39 Add_port: signal default adds port %EMPTY%default_gi to instance i_pads_ws
-05/07/15 14:47:39 Add_port: signal default adds port %EMPTY%default_gi to instance i_pads_en
-05/07/15 14:47:39 Add_port: signal default adds port %EMPTY%default_gi to instance i_pads_es
-05/07/15 14:47:39 Add_port: signal dbo_15 adds port dbo_15 to instance dut
-05/07/15 14:47:39 Add_port: signal db2o_10 adds port db2o_10 to instance dut
-05/07/15 14:47:39 Add_port: signal dbo_7 adds port dbo_7 to instance dut
-05/07/15 14:47:39 Add_port: signal db2o_12 adds port db2o_12 to instance dut
-05/07/15 14:47:39 Add_port: signal dbo_4 adds port dbo_4 to instance dut
-05/07/15 14:47:39 Already connected daughters of i_pads_ws properly for signal db2o_o, ignore uppers
-05/07/15 14:47:39 Already connected daughters of i_pads_en properly for signal db2o_o, ignore uppers
-05/07/15 14:47:39 Already connected daughters of i_pads_ws properly for signal dbo_i, ignore uppers
-05/07/15 14:47:39 Already connected daughters of i_pads_en properly for signal dbo_i, ignore uppers
-05/07/15 14:47:40 Adding port to hierachy module i_pads_ws for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_ws for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_ws for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_ws for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_en for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_ws for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_ws for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_en for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_ws for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_en for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_ws for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_ws for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_ws for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_ws for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_ws for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_ws for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_ws for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_es for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_en for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_en for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_ws for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_en for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_en for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_ws for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_ws for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_en for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_ws for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_en for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_ws for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_ws for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_en for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_en for signal scan_en_i!
-05/07/15 14:47:40 Adding port to hierachy module i_pads_en for signal scan_en_i!
-05/07/15 14:47:40 Add_port: signal scan_en_i adds port %EMPTY%scan_en_i_gi to instance i_pads_ws
-05/07/15 14:47:40 Add_port: signal scan_en_i adds port %EMPTY%scan_en_i_gi to instance i_pads_en
-05/07/15 14:47:40 Add_port: signal scan_en_i adds port %EMPTY%scan_en_i_gi to instance i_pads_es
-05/07/15 14:47:40 Add_port: signal db2o_3 adds port db2o_3 to instance dut
-05/07/15 14:47:40 Add_port: signal db2o_8 adds port db2o_8 to instance dut
-05/07/15 14:47:40 Autoreducing port type for signal dbo_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal dbo_o to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_o to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_o to std_ulogic
-05/07/15 14:47:40 Autoreducing port type for signal dbo_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal dbo_o to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_o to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_o to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_o to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_o to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_o to std_ulogic
-05/07/15 14:47:40 Autoreducing port type for signal ramd_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port pd from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port oe from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal ramd_o to std_ulogic
-05/07/15 14:47:40 Autoreducing port type for signal dbo_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal dbo_o to std_ulogic
-05/07/15 14:47:40 Autoreducing port type for signal dbo_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal dbo_o to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_o to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_o to std_ulogic
-05/07/15 14:47:40 Autoreducing port type for signal dbo_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal dbo_o to std_ulogic
-05/07/15 14:47:40 Autoreducing port type for signal dbo_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal dbo_o to std_ulogic
-05/07/15 14:47:40 Autoreducing port type for signal dbo_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal dbo_o to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_o to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_o to std_ulogic
-05/07/15 14:47:40 Autoreducing port type for signal dbo_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal dbo_o to std_ulogic
-05/07/15 14:47:40 Autoreducing port type for signal dbo_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal dbo_o to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_o to std_ulogic
-05/07/15 14:47:40 Autoreducing port type for signal dbo_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal dbo_o to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_o to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_o to std_ulogic
-05/07/15 14:47:40 Autoreducing port type for signal dbo_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal dbo_o to std_ulogic
-05/07/15 14:47:40 Autoreducing port type for signal dbo_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal dbo_o to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_o to std_ulogic
-05/07/15 14:47:40 Autoreducing port type for signal dbo_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal dbo_o to std_ulogic
-05/07/15 14:47:40 Autoreducing port type for signal dbo_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal dbo_o to std_ulogic
-05/07/15 14:47:40 Autoreducing port type for signal dbo_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal dbo_o to std_ulogic
-05/07/15 14:47:40 Autoreducing port type for signal dbo_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal dbo_o to std_ulogic
-05/07/15 14:47:40 Autoexpand port clk from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_i to std_ulogic
-05/07/15 14:47:40 Autoexpand port mux_sel_p from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port iddq from std_ulogic to vector type!
-05/07/15 14:47:40 Autoexpand port en from std_ulogic to vector type!
-05/07/15 14:47:40 Autoreducing port type for signal db2o_o to std_ulogic
-05/07/15 14:47:41 WARNING: File padio2-mixed.xls already exists! Contents will be changed
-05/07/15 14:47:41 WARNING: Rotating 3 old sheets of CONF!
-05/07/15 14:47:41 WARNING: Rotating 3 old sheets of CONN!
-05/07/15 14:47:41 WARNING: WARNING: Limit length of cell to save 510 characters: i_pads_ws/clkf81_gi=(0:0), 
-i_pa
-05/07/15 14:47:41 WARNING: WARNING: Limit length of cell to save 510 characters: ioc_dbo_2/clockdr_i, 
-ioc_db2o_1
-05/07/15 14:47:41 WARNING: WARNING: Limit length of cell to save 510 characters: ioc_db2o_5/do(0:0)=(5:5), 
-ioc_d
-05/07/15 14:47:41 WARNING: WARNING: Limit length of cell to save 510 characters: ioc_db2o_9/di(0:0)=(9:9), 
-ioc_d
-05/07/15 14:47:41 WARNING: WARNING: Limit length of cell to save 510 characters: ioc_dbo_4/do(0:0)=(4:4), 
-ioc_db
-05/07/15 14:47:41 WARNING: WARNING: Limit length of cell to save 510 characters: ioc_dbo_4/di(0:0)=(4:4), 
-ioc_db
-05/07/15 14:47:41 WARNING: WARNING: Limit length of cell to save 510 characters: ioc_dbo_2/mode_1_i, 
-ioc_db2o_10
-05/07/15 14:47:41 WARNING: WARNING: Limit length of cell to save 510 characters: ioc_dbo_2/mode_2_i, 
-ioc_db2o_10
-05/07/15 14:47:41 WARNING: WARNING: Limit length of cell to save 510 characters: ioc_dbo_2/mode_3_i, 
-ioc_db2o_10
-05/07/15 14:47:41 WARNING: WARNING: Limit length of cell to save 510 characters: ioc_dbo_2/res_n, 
-ioc_db2o_10/re
-05/07/15 14:47:41 WARNING: WARNING: Limit length of cell to save 510 characters: i_pads_ws/rgbout_iddq_i_gi=(0:0)
-05/07/15 14:47:41 WARNING: WARNING: Limit length of cell to save 510 characters: i_pads_ws/rgbout_sio_i_gi=(0:0),
-05/07/15 14:47:41 WARNING: WARNING: Limit length of cell to save 510 characters: ioc_dbo_2/scan_en_i, 
-ioc_db2o_1
-05/07/15 14:47:41 WARNING: WARNING: Limit length of cell to save 510 characters: ioc_dbo_2/shiftdr_i, 
-ioc_db2o_1
-05/07/15 14:47:41 WARNING: WARNING: Limit length of cell to save 510 characters: ioc_dbo_2/tck_i, 
-ioc_db2o_10/tc
-05/07/15 14:47:41 WARNING: WARNING: Limit length of cell to save 510 characters: ioc_dbo_2/updatedr_i, 
-ioc_db2o_
-05/07/15 14:47:41 WARNING: WARNING: Limit length of cell to save 510 characters: i_pads_ws/varclk_i_gi=(0:0), 
-i_
-05/07/15 14:47:41 WARNING: Rotating 3 old sheets of HIER!
-05/07/15 14:47:42 WARNING: Removing old and and diff sheets in file: padio2-mixed.xls
-05/07/15 14:47:42 WARNING: ERROR: workbook with different path already opened!
-05/07/15 14:47:42 Port di of entity ioc one bit wide, reduce to signal
+05/07/18 17:59:50 Reading worksheet CONN_TOP_IO of H:/work/eclipse/mix/test/xls_input/padio2/../padio2.xls
+05/07/18 17:59:50 Reading worksheet CONN_IOC of H:/work/eclipse/mix/test/xls_input/padio2/../padio2.xls
+05/07/18 17:59:50 Reading worksheet HIER of H:/work/eclipse/mix/test/xls_input/padio2/../padio2.xls
+05/07/18 17:59:50 Reading worksheet IO of H:/work/eclipse/mix/test/xls_input/padio2/../padio2.xls
+05/07/18 17:59:50 Added new column header ::descr1
+05/07/18 17:59:50 WARNING: Empty header in column 16, sheet-type io, skipping!
+05/07/18 17:59:50 WARNING: Empty header in column 17, sheet-type io, skipping!
+05/07/18 17:59:50 WARNING: Empty header in column 18, sheet-type io, skipping!
+05/07/18 17:59:50 WARNING: Empty header in column 19, sheet-type io, skipping!
+05/07/18 17:59:50 WARNING: Empty header in column 20, sheet-type io, skipping!
+05/07/18 17:59:50 WARNING: Empty header in column 21, sheet-type io, skipping!
+05/07/18 17:59:50 WARNING: Empty header in column 22, sheet-type io, skipping!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_10 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_10 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_10 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_10 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_11 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_11 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_11 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_11 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_12 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_12 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_12 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_12 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_13 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_13 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_13 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_13 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_14 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_14 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_14 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_14 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_15 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_15 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_15 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_15 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_0 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_0 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_0 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_0 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_1 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_1 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_1 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_1 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_2 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_2 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_2 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_2 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_3 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_3 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_3 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_3 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_4 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_4 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_4 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_4 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_5 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_5 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_5 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_5 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_6 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_6 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_6 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_6 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_7 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_7 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_7 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_7 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_8 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_8 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_8 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_8 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_9 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_9 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_dbo_9 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_dbo_9 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_10 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_10 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_10 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_10 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_11 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_11 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_11 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_11 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_12 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_12 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_12 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_12 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_13 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_13 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_13 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_13 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_14 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_14 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_14 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_14 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_15 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_15 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_15 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_15 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_0 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_0 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_0 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_0 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_1 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_1 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_1 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_1 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_2 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_2 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_2 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_2 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_3 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_3 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_3 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_3 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_4 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_4 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_4 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_4 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_5 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_5 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_5 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_5 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_6 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_6 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_6 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_6 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_7 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_7 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_7 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_7 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_8 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_8 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_8 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_8 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_9 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_9 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port iddq in iocell ioc_db2o_9 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_db2o_9 has undefined direction, applied default!
+05/07/18 17:59:50 INFO: muxopt ::muxopt:1 not completely defined for pad 1!
+05/07/18 17:59:50 WARNING: WARNING: Empty ::muxopt cell line not implemented!
+05/07/18 17:59:50 WARNING: port oe in iocell ioc_ramd_12 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port oe in iocell ioc_ramd_12 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port bypass in iocell ioc_ramd_12 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port enq in iocell ioc_ramd_12 has undefined direction, applied default!
+05/07/18 17:59:50 WARNING: port tenq in iocell ioc_ramd_12 has undefined direction, applied default!
+05/07/18 17:59:51 Add_port: signal dbo_11 adds port dbo_11 to instance dut
+05/07/18 17:59:51 Add_port: signal db2o_1 adds port db2o_1 to instance dut
+05/07/18 17:59:51 Add_port: signal dbo_0 adds port dbo_0 to instance dut
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_byp_i!
+05/07/18 17:59:51 Add_port: signal rgbout_byp_i adds port %EMPTY%rgbout_byp_i_gi to instance i_pads_ws
+05/07/18 17:59:51 Add_port: signal rgbout_byp_i adds port %EMPTY%rgbout_byp_i_gi to instance i_pads_en
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_es for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal shiftdr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal shiftdr_i!
+05/07/18 17:59:51 Add_port: signal shiftdr_i adds port %EMPTY%shiftdr_i_gi to instance i_pads_ws
+05/07/18 17:59:51 Add_port: signal shiftdr_i adds port %EMPTY%shiftdr_i_gi to instance i_pads_en
+05/07/18 17:59:51 Add_port: signal shiftdr_i adds port %EMPTY%shiftdr_i_gi to instance i_pads_es
+05/07/18 17:59:51 Add_port: signal dbo_13 adds port dbo_13 to instance dut
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_sio_i!
+05/07/18 17:59:51 Add_port: signal rgbout_sio_i adds port %EMPTY%rgbout_sio_i_gi to instance i_pads_ws
+05/07/18 17:59:51 Add_port: signal rgbout_sio_i adds port %EMPTY%rgbout_sio_i_gi to instance i_pads_en
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal dbo_o!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal dbo_o!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal dbo_o!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal dbo_o!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal dbo_o!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal dbo_o!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal dbo_o!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal dbo_o!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal dbo_o!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal dbo_o!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal dbo_o!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal dbo_o!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal dbo_o!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal dbo_o!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal dbo_o!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal dbo_o!
+05/07/18 17:59:51 Add_port: signal dbo_o adds port %EMPTY%dbo_o_9_0_go to instance i_pads_ws
+05/07/18 17:59:51 Add_port: signal dbo_o adds port %EMPTY%dbo_o_15_10_go to instance i_pads_en
+05/07/18 17:59:51 Add_port: signal db2o_9 adds port db2o_9 to instance dut
+05/07/18 17:59:51 Add_port: signal db2o_14 adds port db2o_14 to instance dut
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_es for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal pmux_sel_por!
+05/07/18 17:59:51 Add_port: signal pmux_sel_por adds port %EMPTY%pmux_sel_por_gi to instance i_pads_ws
+05/07/18 17:59:51 Add_port: signal pmux_sel_por adds port %EMPTY%pmux_sel_por_gi to instance i_pads_en
+05/07/18 17:59:51 Add_port: signal pmux_sel_por adds port %EMPTY%pmux_sel_por_gi to instance i_pads_es
+05/07/18 17:59:51 Add_port: signal db2o_6 adds port db2o_6 to instance dut
+05/07/18 17:59:51 Already connected daughters of i_pads_ws properly for signal db2o_i, ignore uppers
+05/07/18 17:59:51 Already connected daughters of i_pads_en properly for signal db2o_i, ignore uppers
+05/07/18 17:59:51 Add_port: signal dbo_2 adds port dbo_2 to instance dut
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_es for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal updatedr_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal updatedr_i!
+05/07/18 17:59:51 Add_port: signal updatedr_i adds port %EMPTY%updatedr_i_gi to instance i_pads_ws
+05/07/18 17:59:51 Add_port: signal updatedr_i adds port %EMPTY%updatedr_i_gi to instance i_pads_en
+05/07/18 17:59:51 Add_port: signal updatedr_i adds port %EMPTY%updatedr_i_gi to instance i_pads_es
+05/07/18 17:59:51 Add_port: signal dbo_5 adds port dbo_5 to instance dut
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_es for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal clkf81!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal clkf81!
+05/07/18 17:59:51 Add_port: signal clkf81 adds port %EMPTY%clkf81_gi to instance i_pads_ws
+05/07/18 17:59:51 Add_port: signal clkf81 adds port %EMPTY%clkf81_gi to instance i_pads_en
+05/07/18 17:59:51 Add_port: signal clkf81 adds port %EMPTY%clkf81_gi to instance i_pads_es
+05/07/18 17:59:51 Add_port: signal dbo_14 adds port dbo_14 to instance dut
+05/07/18 17:59:51 Add_port: signal db2o_11 adds port db2o_11 to instance dut
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal rgbout_iddq_i!
+05/07/18 17:59:51 Add_port: signal rgbout_iddq_i adds port %EMPTY%rgbout_iddq_i_gi to instance i_pads_ws
+05/07/18 17:59:51 Add_port: signal rgbout_iddq_i adds port %EMPTY%rgbout_iddq_i_gi to instance i_pads_en
+05/07/18 17:59:51 Add_port: signal dbo_8 adds port dbo_8 to instance dut
+05/07/18 17:59:51 Add_port: signal dbo_12 adds port dbo_12 to instance dut
+05/07/18 17:59:51 Add_port: signal db2o_4 adds port db2o_4 to instance dut
+05/07/18 17:59:51 Add_port: signal db2o_7 adds port db2o_7 to instance dut
+05/07/18 17:59:51 Add_port: signal db2o_15 adds port db2o_15 to instance dut
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_es for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_1_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_1_i!
+05/07/18 17:59:51 Add_port: signal mode_1_i adds port %EMPTYode_1_i_gi to instance i_pads_ws
+05/07/18 17:59:51 Add_port: signal mode_1_i adds port %EMPTYode_1_i_gi to instance i_pads_en
+05/07/18 17:59:51 Add_port: signal mode_1_i adds port %EMPTYode_1_i_gi to instance i_pads_es
+05/07/18 17:59:51 Add_port: signal dbo_9 adds port dbo_9 to instance dut
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_es for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_ws for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_2_i!
+05/07/18 17:59:51 Adding port to hierachy module i_pads_en for signal mode_2_i!
+05/07/18 17:59:51 Add_port: signal mode_2_i adds port %EMPTYode_2_i_gi to instance i_pads_ws
+05/07/18 17:59:51 Add_port: signal mode_2_i adds port %EMPTYode_2_i_gi to instance i_pads_en
+05/07/18 17:59:51 Add_port: signal mode_2_i adds port %EMPTYode_2_i_gi to instance i_pads_es
+05/07/18 17:59:51 Add_port: signal dbo_3 adds port dbo_3 to instance dut
+05/07/18 17:59:51 Add_port: signal db2o_5 adds port db2o_5 to instance dut
+05/07/18 17:59:51 Add_port: signal dbo_10 adds port dbo_10 to instance dut
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_es for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal clockdr_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal clockdr_i!
+05/07/18 17:59:52 Add_port: signal clockdr_i adds port %EMPTY%clockdr_i_gi to instance i_pads_ws
+05/07/18 17:59:52 Add_port: signal clockdr_i adds port %EMPTY%clockdr_i_gi to instance i_pads_en
+05/07/18 17:59:52 Add_port: signal clockdr_i adds port %EMPTY%clockdr_i_gi to instance i_pads_es
+05/07/18 17:59:52 Add_port: signal dbo_1 adds port dbo_1 to instance dut
+05/07/18 17:59:52 Add_port: signal db2o_2 adds port db2o_2 to instance dut
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_es for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal res_f81_n!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal res_f81_n!
+05/07/18 17:59:52 Add_port: signal res_f81_n adds port %EMPTY%res_f81_n_gi to instance i_pads_ws
+05/07/18 17:59:52 Add_port: signal res_f81_n adds port %EMPTY%res_f81_n_gi to instance i_pads_en
+05/07/18 17:59:52 Add_port: signal res_f81_n adds port %EMPTY%res_f81_n_gi to instance i_pads_es
+05/07/18 17:59:52 Add_port: signal db2o_13 adds port db2o_13 to instance dut
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal varclk_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal varclk_i!
+05/07/18 17:59:52 Add_port: signal varclk_i adds port %EMPTY%varclk_i_gi to instance i_pads_ws
+05/07/18 17:59:52 Add_port: signal varclk_i adds port %EMPTY%varclk_i_gi to instance i_pads_en
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_es for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal tck_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal tck_i!
+05/07/18 17:59:52 Add_port: signal tck_i adds port %EMPTY%tck_i_gi to instance i_pads_ws
+05/07/18 17:59:52 Add_port: signal tck_i adds port %EMPTY%tck_i_gi to instance i_pads_en
+05/07/18 17:59:52 Add_port: signal tck_i adds port %EMPTY%tck_i_gi to instance i_pads_es
+05/07/18 17:59:52 Add_port: signal db2o_0 adds port db2o_0 to instance dut
+05/07/18 17:59:52 Add_port: signal dbo_6 adds port dbo_6 to instance dut
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_es for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal mode_3_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal mode_3_i!
+05/07/18 17:59:52 Add_port: signal mode_3_i adds port %EMPTYode_3_i_gi to instance i_pads_ws
+05/07/18 17:59:52 Add_port: signal mode_3_i adds port %EMPTYode_3_i_gi to instance i_pads_en
+05/07/18 17:59:52 Add_port: signal mode_3_i adds port %EMPTYode_3_i_gi to instance i_pads_es
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_es for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal default!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal default!
+05/07/18 17:59:52 Add_port: signal default adds port %EMPTY%default_gi to instance i_pads_ws
+05/07/18 17:59:52 Add_port: signal default adds port %EMPTY%default_gi to instance i_pads_en
+05/07/18 17:59:52 Add_port: signal default adds port %EMPTY%default_gi to instance i_pads_es
+05/07/18 17:59:52 Add_port: signal dbo_15 adds port dbo_15 to instance dut
+05/07/18 17:59:52 Add_port: signal db2o_10 adds port db2o_10 to instance dut
+05/07/18 17:59:52 Add_port: signal dbo_7 adds port dbo_7 to instance dut
+05/07/18 17:59:52 Add_port: signal db2o_12 adds port db2o_12 to instance dut
+05/07/18 17:59:52 Add_port: signal dbo_4 adds port dbo_4 to instance dut
+05/07/18 17:59:52 Already connected daughters of i_pads_ws properly for signal db2o_o, ignore uppers
+05/07/18 17:59:52 Already connected daughters of i_pads_en properly for signal db2o_o, ignore uppers
+05/07/18 17:59:52 Already connected daughters of i_pads_ws properly for signal dbo_i, ignore uppers
+05/07/18 17:59:52 Already connected daughters of i_pads_en properly for signal dbo_i, ignore uppers
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_es for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_ws for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal scan_en_i!
+05/07/18 17:59:52 Adding port to hierachy module i_pads_en for signal scan_en_i!
+05/07/18 17:59:52 Add_port: signal scan_en_i adds port %EMPTY%scan_en_i_gi to instance i_pads_ws
+05/07/18 17:59:52 Add_port: signal scan_en_i adds port %EMPTY%scan_en_i_gi to instance i_pads_en
+05/07/18 17:59:52 Add_port: signal scan_en_i adds port %EMPTY%scan_en_i_gi to instance i_pads_es
+05/07/18 17:59:52 Add_port: signal db2o_3 adds port db2o_3 to instance dut
+05/07/18 17:59:52 Add_port: signal db2o_8 adds port db2o_8 to instance dut
+05/07/18 17:59:52 Autoreducing port type for signal dbo_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal dbo_o to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_o to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_o to std_ulogic
+05/07/18 17:59:52 Autoreducing port type for signal dbo_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal dbo_o to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_o to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_o to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_o to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_o to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_o to std_ulogic
+05/07/18 17:59:52 Autoreducing port type for signal ramd_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port pd from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port oe from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal ramd_o to std_ulogic
+05/07/18 17:59:52 Autoreducing port type for signal dbo_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal dbo_o to std_ulogic
+05/07/18 17:59:52 Autoreducing port type for signal dbo_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal dbo_o to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_o to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_o to std_ulogic
+05/07/18 17:59:52 Autoreducing port type for signal dbo_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal dbo_o to std_ulogic
+05/07/18 17:59:52 Autoreducing port type for signal dbo_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal dbo_o to std_ulogic
+05/07/18 17:59:52 Autoreducing port type for signal dbo_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal dbo_o to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_o to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_o to std_ulogic
+05/07/18 17:59:52 Autoreducing port type for signal dbo_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal dbo_o to std_ulogic
+05/07/18 17:59:52 Autoreducing port type for signal dbo_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal dbo_o to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_o to std_ulogic
+05/07/18 17:59:52 Autoreducing port type for signal dbo_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal dbo_o to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_o to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_o to std_ulogic
+05/07/18 17:59:52 Autoreducing port type for signal dbo_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal dbo_o to std_ulogic
+05/07/18 17:59:52 Autoreducing port type for signal dbo_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal dbo_o to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_o to std_ulogic
+05/07/18 17:59:52 Autoreducing port type for signal dbo_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal dbo_o to std_ulogic
+05/07/18 17:59:52 Autoreducing port type for signal dbo_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal dbo_o to std_ulogic
+05/07/18 17:59:52 Autoreducing port type for signal dbo_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal dbo_o to std_ulogic
+05/07/18 17:59:52 Autoreducing port type for signal dbo_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal dbo_o to std_ulogic
+05/07/18 17:59:52 Autoexpand port clk from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_i to std_ulogic
+05/07/18 17:59:52 Autoexpand port mux_sel_p from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port iddq from std_ulogic to vector type!
+05/07/18 17:59:52 Autoexpand port en from std_ulogic to vector type!
+05/07/18 17:59:52 Autoreducing port type for signal db2o_o to std_ulogic
+05/07/18 17:59:54 WARNING: File padio2-mixed.xls already exists! Contents will be changed
+05/07/18 17:59:54 WARNING: Rotating 3 old sheets of CONF!
+05/07/18 17:59:54 WARNING: Rotating 3 old sheets of CONN!
+05/07/18 17:59:55 WARNING: Rotating 3 old sheets of HIER!
+05/07/18 17:59:55 WARNING: Removing old and and diff sheets in file: padio2-mixed.xls
+05/07/18 17:59:55 WARNING: ERROR: workbook with different path already opened!
+05/07/18 17:59:55 Port di of entity ioc one bit wide, reduce to signal
 
-05/07/15 14:47:42 Port bypass of entity iom_sstl one bit wide, reduce to signal
+05/07/18 17:59:55 Port bypass of entity iom_sstl one bit wide, reduce to signal
 
-05/07/15 14:47:42 Port di of entity iom_sstl one bit wide, reduce to signal
+05/07/18 17:59:55 Port di of entity iom_sstl one bit wide, reduce to signal
 
-05/07/15 14:47:42 Port enq of entity iom_sstl one bit wide, reduce to signal
+05/07/18 17:59:55 Port enq of entity iom_sstl one bit wide, reduce to signal
 
-05/07/15 14:47:42 Port tenq of entity iom_sstl one bit wide, reduce to signal
+05/07/18 17:59:55 Port tenq of entity iom_sstl one bit wide, reduce to signal
 
-05/07/15 14:47:42 Signal dbo_o does not have a load in instance dut!
-05/07/15 14:47:42 Signal db2o_o does not have a load in instance dut!
-05/07/15 14:47:42 Warning: Signal dbo_i does not have a driver in instance dut!
-05/07/15 14:47:42 Warning: Signal db2o_i does not have a driver in instance dut!
-05/07/15 14:47:42 Leave unloaded port db2o_o open at instance dut
-05/07/15 14:47:42 Leave unloaded port dbo_o open at instance dut
-05/07/15 14:47:42 Warning: Signal mode_2_i does not have a driver in instance i_padframe!
-05/07/15 14:47:42 Warning: Signal clkf81 does not have a driver in instance i_padframe!
-05/07/15 14:47:42 Warning: Signal rgbout_byp_i does not have a driver in instance i_padframe!
-05/07/15 14:47:42 Warning: Signal rgbout_iddq_i does not have a driver in instance i_padframe!
-05/07/15 14:47:42 Warning: Signal clockdr_i does not have a driver in instance i_padframe!
-05/07/15 14:47:42 Warning: Signal default does not have a driver in instance i_padframe!
-05/07/15 14:47:42 Warning: Signal shiftdr_i does not have a driver in instance i_padframe!
-05/07/15 14:47:42 Warning: Signal rgbout_sio_i does not have a driver in instance i_padframe!
-05/07/15 14:47:42 Warning: Signal varclk_i does not have a driver in instance i_padframe!
-05/07/15 14:47:42 Warning: Signal res_f81_n does not have a driver in instance i_padframe!
-05/07/15 14:47:42 Warning: Signal tck_i does not have a driver in instance i_padframe!
-05/07/15 14:47:42 Warning: Signal pmux_sel_por does not have a driver in instance i_padframe!
-05/07/15 14:47:42 Warning: Signal scan_en_i does not have a driver in instance i_padframe!
-05/07/15 14:47:42 Warning: Signal updatedr_i does not have a driver in instance i_padframe!
-05/07/15 14:47:42 Warning: Signal mode_3_i does not have a driver in instance i_padframe!
-05/07/15 14:47:42 Warning: Signal mode_1_i does not have a driver in instance i_padframe!
-05/07/15 14:47:42 Warning: Signal dbo_11 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Signal s_out_db2o_11 does not have a load in instance i_pads_en!
-05/07/15 14:47:42 Signal s_out_db2o_12 does not have a load in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal s_in_dbo_10 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal dbo_10 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Signal s_out_dbo_10 does not have a load in instance i_pads_en!
-05/07/15 14:47:42 Signal s_out_db2o_15 does not have a load in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal s_in_dbo_13 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal s_in_db2o_11 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal dbo_13 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal s_in_dbo_12 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal s_in_db2o_10 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal db2o_13 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Signal s_out_db2o_14 does not have a load in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal db2o_14 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Signal s_out_db2o_13 does not have a load in instance i_pads_en!
-05/07/15 14:47:42 Signal s_out_dbo_12 does not have a load in instance i_pads_en!
-05/07/15 14:47:42 Signal s_out_dbo_14 does not have a load in instance i_pads_en!
-05/07/15 14:47:42 Signal s_out_dbo_11 does not have a load in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal s_in_dbo_14 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal dbo_14 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Signal s_out_dbo_15 does not have a load in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal db2o_11 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Signal s_out_db2o_10 does not have a load in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal dbo_15 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal db2o_10 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Signal s_out_dbo_13 does not have a load in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal db2o_12 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal s_in_db2o_12 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal s_in_dbo_11 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal dbo_12 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal s_in_db2o_14 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal s_in_db2o_15 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal s_in_db2o_13 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal s_in_dbo_15 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Warning: Signal db2o_15 does not have a driver in instance i_pads_en!
-05/07/15 14:47:42 Leave unloaded port s_out_db2o_10 open at instance i_pads_en
-05/07/15 14:47:42 Leave unloaded port s_out_db2o_11 open at instance i_pads_en
-05/07/15 14:47:42 Leave unloaded port s_out_db2o_12 open at instance i_pads_en
-05/07/15 14:47:42 Leave unloaded port s_out_db2o_13 open at instance i_pads_en
-05/07/15 14:47:42 Leave unloaded port s_out_db2o_14 open at instance i_pads_en
-05/07/15 14:47:42 Leave unloaded port s_out_db2o_15 open at instance i_pads_en
-05/07/15 14:47:42 Leave unloaded port s_out_dbo_10 open at instance i_pads_en
-05/07/15 14:47:42 Leave unloaded port s_out_dbo_11 open at instance i_pads_en
-05/07/15 14:47:42 Leave unloaded port s_out_dbo_12 open at instance i_pads_en
-05/07/15 14:47:42 Leave unloaded port s_out_dbo_13 open at instance i_pads_en
-05/07/15 14:47:42 Leave unloaded port s_out_dbo_14 open at instance i_pads_en
-05/07/15 14:47:42 Leave unloaded port s_out_dbo_15 open at instance i_pads_en
-05/07/15 14:47:42 Warning: Signal ramd_pd_i does not have a driver in instance i_pads_es!
-05/07/15 14:47:42 Warning: Signal ramd_tenq_i does not have a driver in instance i_pads_es!
-05/07/15 14:47:42 Warning: Signal ramd_i does not have a driver in instance i_pads_es!
-05/07/15 14:47:42 Signal s_out_ramd_12 does not have a load in instance i_pads_es!
-05/07/15 14:47:42 Warning: Signal ramd_enq_i does not have a driver in instance i_pads_es!
-05/07/15 14:47:42 Signal ramd_o does not have a load in instance i_pads_es!
-05/07/15 14:47:42 Warning: Signal s_in_ramd_12 does not have a driver in instance i_pads_es!
-05/07/15 14:47:42 Warning: Signal ramclkin_o does not have a driver in instance i_pads_es!
-05/07/15 14:47:42 Warning: Signal ramd_byp_i does not have a driver in instance i_pads_es!
-05/07/15 14:47:42 Warning: Signal ramd_12 does not have a driver in instance i_pads_es!
-05/07/15 14:47:42 Warning: Signal ramd_oe_i does not have a driver in instance i_pads_es!
-05/07/15 14:47:42 Leave unloaded port ramd_o open at instance i_pads_es
-05/07/15 14:47:42 Leave unloaded port s_out_ramd_12 open at instance i_pads_es
-05/07/15 14:47:42 Warning: Signal s_in_dbo_6 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal dbo_9 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal db2o_1 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Signal s_out_dbo_5 does not have a load in instance i_pads_ws!
-05/07/15 14:47:42 Signal s_out_db2o_5 does not have a load in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal dbo_0 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal dbo_3 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal s_in_dbo_8 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Signal s_out_dbo_3 does not have a load in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal db2o_5 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal s_in_db2o_2 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Signal s_out_dbo_8 does not have a load in instance i_pads_ws!
-05/07/15 14:47:42 Signal s_out_db2o_3 does not have a load in instance i_pads_ws!
-05/07/15 14:47:42 Signal s_out_dbo_4 does not have a load in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal dbo_1 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal s_in_dbo_2 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Signal s_out_db2o_8 does not have a load in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal db2o_9 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal db2o_2 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Signal s_out_db2o_7 does not have a load in instance i_pads_ws!
-05/07/15 14:47:42 Signal s_out_dbo_2 does not have a load in instance i_pads_ws!
-05/07/15 14:47:42 Signal s_out_db2o_9 does not have a load in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal s_in_dbo_5 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal db2o_0 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal dbo_6 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal db2o_6 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal s_in_db2o_1 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal dbo_2 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal s_in_db2o_0 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Signal s_out_dbo_7 does not have a load in instance i_pads_ws!
-05/07/15 14:47:42 Signal s_out_dbo_6 does not have a load in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal s_in_dbo_9 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal dbo_5 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Signal s_out_db2o_6 does not have a load in instance i_pads_ws!
-05/07/15 14:47:42 Signal s_out_db2o_1 does not have a load in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal s_in_db2o_8 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal s_in_db2o_6 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal s_in_dbo_3 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal dbo_7 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Signal s_out_dbo_9 does not have a load in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal dbo_4 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal s_in_db2o_9 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal s_in_dbo_4 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Signal s_out_dbo_0 does not have a load in instance i_pads_ws!
-05/07/15 14:47:42 Signal s_out_db2o_4 does not have a load in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal dbo_8 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal s_in_db2o_4 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal db2o_4 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal s_in_dbo_7 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal s_in_db2o_7 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal db2o_7 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal s_in_dbo_0 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Signal s_out_dbo_1 does not have a load in instance i_pads_ws!
-05/07/15 14:47:42 Signal s_out_db2o_0 does not have a load in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal db2o_3 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal s_in_db2o_3 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal db2o_8 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal s_in_db2o_5 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Signal s_out_db2o_2 does not have a load in instance i_pads_ws!
-05/07/15 14:47:42 Warning: Signal s_in_dbo_1 does not have a driver in instance i_pads_ws!
-05/07/15 14:47:42 Leave unloaded port s_out_db2o_0 open at instance i_pads_ws
-05/07/15 14:47:42 Leave unloaded port s_out_db2o_1 open at instance i_pads_ws
-05/07/15 14:47:42 Leave unloaded port s_out_db2o_2 open at instance i_pads_ws
-05/07/15 14:47:42 Leave unloaded port s_out_db2o_3 open at instance i_pads_ws
-05/07/15 14:47:42 Leave unloaded port s_out_db2o_4 open at instance i_pads_ws
-05/07/15 14:47:42 Leave unloaded port s_out_db2o_5 open at instance i_pads_ws
-05/07/15 14:47:42 Leave unloaded port s_out_db2o_6 open at instance i_pads_ws
-05/07/15 14:47:42 Leave unloaded port s_out_db2o_7 open at instance i_pads_ws
-05/07/15 14:47:42 Leave unloaded port s_out_db2o_8 open at instance i_pads_ws
-05/07/15 14:47:42 Leave unloaded port s_out_db2o_9 open at instance i_pads_ws
-05/07/15 14:47:42 Leave unloaded port s_out_dbo_0 open at instance i_pads_ws
-05/07/15 14:47:42 Leave unloaded port s_out_dbo_1 open at instance i_pads_ws
-05/07/15 14:47:42 Leave unloaded port s_out_dbo_2 open at instance i_pads_ws
-05/07/15 14:47:42 Leave unloaded port s_out_dbo_3 open at instance i_pads_ws
-05/07/15 14:47:42 Leave unloaded port s_out_dbo_4 open at instance i_pads_ws
-05/07/15 14:47:42 Leave unloaded port s_out_dbo_5 open at instance i_pads_ws
-05/07/15 14:47:42 Leave unloaded port s_out_dbo_6 open at instance i_pads_ws
-05/07/15 14:47:42 Leave unloaded port s_out_dbo_7 open at instance i_pads_ws
-05/07/15 14:47:42 Leave unloaded port s_out_dbo_8 open at instance i_pads_ws
-05/07/15 14:47:42 Leave unloaded port s_out_dbo_9 open at instance i_pads_ws
-05/07/15 14:47:42 WARNING: ============= SUMMARY =================
-05/07/15 14:47:42 WARNING: SUM: Summary of checks and created items:
-05/07/15 14:47:42 WARNING: SUM: checkforce 0
-05/07/15 14:47:42 WARNING: SUM: checkunique 0
-05/07/15 14:47:42 WARNING: SUM: checkwarn 0
-05/07/15 14:47:42 WARNING: SUM: cmacros 0
-05/07/15 14:47:42 WARNING: SUM: conn 163
-05/07/15 14:47:42 WARNING: SUM: errors 1
-05/07/15 14:47:42 WARNING: SUM: genport 78
-05/07/15 14:47:42 WARNING: SUM: hdlfiles 15
-05/07/15 14:47:42 WARNING: SUM: inst 81
-05/07/15 14:47:42 WARNING: SUM: io_cellandpad 33
-05/07/15 14:47:42 WARNING: SUM: multdriver 38
-05/07/15 14:47:42 WARNING: SUM: nodriver 91
-05/07/15 14:47:42 WARNING: SUM: noload 36
-05/07/15 14:47:42 WARNING: SUM: open 33
-05/07/15 14:47:42 WARNING: SUM: openports 36
-05/07/15 14:47:42 WARNING: SUM: tie_hl 6
-05/07/15 14:47:42 WARNING: SUM: warnings 18
-05/07/15 14:47:42 WARNING: SUM: === Number of parsed input tables: ===
-05/07/15 14:47:43 WARNING: SUM: conf 0
-05/07/15 14:47:43 WARNING: SUM: hier 1
-05/07/15 14:47:43 WARNING: SUM: conn 2
-05/07/15 14:47:43 WARNING: SUM: io 1
-05/07/15 14:47:43 WARNING: SUM: i2c 0
+05/07/18 17:59:56 Signal dbo_o does not have a load in instance dut!
+05/07/18 17:59:56 Signal db2o_o does not have a load in instance dut!
+05/07/18 17:59:56 Warning: Signal dbo_i does not have a driver in instance dut!
+05/07/18 17:59:56 Warning: Signal db2o_i does not have a driver in instance dut!
+05/07/18 17:59:56 Leave unloaded port db2o_o open at instance dut
+05/07/18 17:59:56 Leave unloaded port dbo_o open at instance dut
+05/07/18 17:59:56 Warning: Signal mode_2_i does not have a driver in instance i_padframe!
+05/07/18 17:59:56 Warning: Signal clkf81 does not have a driver in instance i_padframe!
+05/07/18 17:59:56 Warning: Signal rgbout_byp_i does not have a driver in instance i_padframe!
+05/07/18 17:59:56 Warning: Signal rgbout_iddq_i does not have a driver in instance i_padframe!
+05/07/18 17:59:56 Warning: Signal clockdr_i does not have a driver in instance i_padframe!
+05/07/18 17:59:56 Warning: Signal default does not have a driver in instance i_padframe!
+05/07/18 17:59:56 Warning: Signal shiftdr_i does not have a driver in instance i_padframe!
+05/07/18 17:59:56 Warning: Signal rgbout_sio_i does not have a driver in instance i_padframe!
+05/07/18 17:59:56 Warning: Signal varclk_i does not have a driver in instance i_padframe!
+05/07/18 17:59:56 Warning: Signal res_f81_n does not have a driver in instance i_padframe!
+05/07/18 17:59:56 Warning: Signal tck_i does not have a driver in instance i_padframe!
+05/07/18 17:59:56 Warning: Signal pmux_sel_por does not have a driver in instance i_padframe!
+05/07/18 17:59:56 Warning: Signal scan_en_i does not have a driver in instance i_padframe!
+05/07/18 17:59:56 Warning: Signal updatedr_i does not have a driver in instance i_padframe!
+05/07/18 17:59:56 Warning: Signal mode_3_i does not have a driver in instance i_padframe!
+05/07/18 17:59:56 Warning: Signal mode_1_i does not have a driver in instance i_padframe!
+05/07/18 17:59:56 Warning: Signal dbo_11 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Signal s_out_db2o_11 does not have a load in instance i_pads_en!
+05/07/18 17:59:56 Signal s_out_db2o_12 does not have a load in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal s_in_dbo_10 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal dbo_10 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Signal s_out_dbo_10 does not have a load in instance i_pads_en!
+05/07/18 17:59:56 Signal s_out_db2o_15 does not have a load in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal s_in_dbo_13 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal s_in_db2o_11 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal dbo_13 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal s_in_dbo_12 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal s_in_db2o_10 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal db2o_13 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Signal s_out_db2o_14 does not have a load in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal db2o_14 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Signal s_out_db2o_13 does not have a load in instance i_pads_en!
+05/07/18 17:59:56 Signal s_out_dbo_12 does not have a load in instance i_pads_en!
+05/07/18 17:59:56 Signal s_out_dbo_14 does not have a load in instance i_pads_en!
+05/07/18 17:59:56 Signal s_out_dbo_11 does not have a load in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal s_in_dbo_14 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal dbo_14 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Signal s_out_dbo_15 does not have a load in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal db2o_11 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Signal s_out_db2o_10 does not have a load in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal dbo_15 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal db2o_10 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Signal s_out_dbo_13 does not have a load in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal db2o_12 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal s_in_db2o_12 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal s_in_dbo_11 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal dbo_12 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal s_in_db2o_14 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal s_in_db2o_15 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal s_in_db2o_13 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal s_in_dbo_15 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Warning: Signal db2o_15 does not have a driver in instance i_pads_en!
+05/07/18 17:59:56 Leave unloaded port s_out_db2o_10 open at instance i_pads_en
+05/07/18 17:59:56 Leave unloaded port s_out_db2o_11 open at instance i_pads_en
+05/07/18 17:59:56 Leave unloaded port s_out_db2o_12 open at instance i_pads_en
+05/07/18 17:59:56 Leave unloaded port s_out_db2o_13 open at instance i_pads_en
+05/07/18 17:59:56 Leave unloaded port s_out_db2o_14 open at instance i_pads_en
+05/07/18 17:59:56 Leave unloaded port s_out_db2o_15 open at instance i_pads_en
+05/07/18 17:59:56 Leave unloaded port s_out_dbo_10 open at instance i_pads_en
+05/07/18 17:59:56 Leave unloaded port s_out_dbo_11 open at instance i_pads_en
+05/07/18 17:59:56 Leave unloaded port s_out_dbo_12 open at instance i_pads_en
+05/07/18 17:59:56 Leave unloaded port s_out_dbo_13 open at instance i_pads_en
+05/07/18 17:59:56 Leave unloaded port s_out_dbo_14 open at instance i_pads_en
+05/07/18 17:59:56 Leave unloaded port s_out_dbo_15 open at instance i_pads_en
+05/07/18 17:59:56 Warning: Signal ramd_pd_i does not have a driver in instance i_pads_es!
+05/07/18 17:59:56 Warning: Signal ramd_tenq_i does not have a driver in instance i_pads_es!
+05/07/18 17:59:56 Warning: Signal ramd_i does not have a driver in instance i_pads_es!
+05/07/18 17:59:56 Signal s_out_ramd_12 does not have a load in instance i_pads_es!
+05/07/18 17:59:56 Warning: Signal ramd_enq_i does not have a driver in instance i_pads_es!
+05/07/18 17:59:56 Signal ramd_o does not have a load in instance i_pads_es!
+05/07/18 17:59:56 Warning: Signal s_in_ramd_12 does not have a driver in instance i_pads_es!
+05/07/18 17:59:56 Warning: Signal ramclkin_o does not have a driver in instance i_pads_es!
+05/07/18 17:59:56 Warning: Signal ramd_byp_i does not have a driver in instance i_pads_es!
+05/07/18 17:59:56 Warning: Signal ramd_12 does not have a driver in instance i_pads_es!
+05/07/18 17:59:56 Warning: Signal ramd_oe_i does not have a driver in instance i_pads_es!
+05/07/18 17:59:56 Leave unloaded port ramd_o open at instance i_pads_es
+05/07/18 17:59:56 Leave unloaded port s_out_ramd_12 open at instance i_pads_es
+05/07/18 17:59:56 Warning: Signal s_in_dbo_6 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal dbo_9 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal db2o_1 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Signal s_out_dbo_5 does not have a load in instance i_pads_ws!
+05/07/18 17:59:56 Signal s_out_db2o_5 does not have a load in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal dbo_0 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal dbo_3 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal s_in_dbo_8 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Signal s_out_dbo_3 does not have a load in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal db2o_5 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal s_in_db2o_2 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Signal s_out_dbo_8 does not have a load in instance i_pads_ws!
+05/07/18 17:59:56 Signal s_out_db2o_3 does not have a load in instance i_pads_ws!
+05/07/18 17:59:56 Signal s_out_dbo_4 does not have a load in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal dbo_1 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal s_in_dbo_2 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Signal s_out_db2o_8 does not have a load in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal db2o_9 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal db2o_2 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Signal s_out_db2o_7 does not have a load in instance i_pads_ws!
+05/07/18 17:59:56 Signal s_out_dbo_2 does not have a load in instance i_pads_ws!
+05/07/18 17:59:56 Signal s_out_db2o_9 does not have a load in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal s_in_dbo_5 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal db2o_0 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal dbo_6 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal db2o_6 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal s_in_db2o_1 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal dbo_2 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal s_in_db2o_0 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Signal s_out_dbo_7 does not have a load in instance i_pads_ws!
+05/07/18 17:59:56 Signal s_out_dbo_6 does not have a load in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal s_in_dbo_9 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal dbo_5 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Signal s_out_db2o_6 does not have a load in instance i_pads_ws!
+05/07/18 17:59:56 Signal s_out_db2o_1 does not have a load in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal s_in_db2o_8 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal s_in_db2o_6 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal s_in_dbo_3 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal dbo_7 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Signal s_out_dbo_9 does not have a load in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal dbo_4 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal s_in_db2o_9 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal s_in_dbo_4 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Signal s_out_dbo_0 does not have a load in instance i_pads_ws!
+05/07/18 17:59:56 Signal s_out_db2o_4 does not have a load in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal dbo_8 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal s_in_db2o_4 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal db2o_4 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal s_in_dbo_7 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal s_in_db2o_7 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal db2o_7 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal s_in_dbo_0 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Signal s_out_dbo_1 does not have a load in instance i_pads_ws!
+05/07/18 17:59:56 Signal s_out_db2o_0 does not have a load in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal db2o_3 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal s_in_db2o_3 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal db2o_8 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal s_in_db2o_5 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Signal s_out_db2o_2 does not have a load in instance i_pads_ws!
+05/07/18 17:59:56 Warning: Signal s_in_dbo_1 does not have a driver in instance i_pads_ws!
+05/07/18 17:59:56 Leave unloaded port s_out_db2o_0 open at instance i_pads_ws
+05/07/18 17:59:56 Leave unloaded port s_out_db2o_1 open at instance i_pads_ws
+05/07/18 17:59:56 Leave unloaded port s_out_db2o_2 open at instance i_pads_ws
+05/07/18 17:59:56 Leave unloaded port s_out_db2o_3 open at instance i_pads_ws
+05/07/18 17:59:56 Leave unloaded port s_out_db2o_4 open at instance i_pads_ws
+05/07/18 17:59:56 Leave unloaded port s_out_db2o_5 open at instance i_pads_ws
+05/07/18 17:59:56 Leave unloaded port s_out_db2o_6 open at instance i_pads_ws
+05/07/18 17:59:56 Leave unloaded port s_out_db2o_7 open at instance i_pads_ws
+05/07/18 17:59:56 Leave unloaded port s_out_db2o_8 open at instance i_pads_ws
+05/07/18 17:59:56 Leave unloaded port s_out_db2o_9 open at instance i_pads_ws
+05/07/18 17:59:56 Leave unloaded port s_out_dbo_0 open at instance i_pads_ws
+05/07/18 17:59:56 Leave unloaded port s_out_dbo_1 open at instance i_pads_ws
+05/07/18 17:59:56 Leave unloaded port s_out_dbo_2 open at instance i_pads_ws
+05/07/18 17:59:56 Leave unloaded port s_out_dbo_3 open at instance i_pads_ws
+05/07/18 17:59:56 Leave unloaded port s_out_dbo_4 open at instance i_pads_ws
+05/07/18 17:59:56 Leave unloaded port s_out_dbo_5 open at instance i_pads_ws
+05/07/18 17:59:56 Leave unloaded port s_out_dbo_6 open at instance i_pads_ws
+05/07/18 17:59:56 Leave unloaded port s_out_dbo_7 open at instance i_pads_ws
+05/07/18 17:59:56 Leave unloaded port s_out_dbo_8 open at instance i_pads_ws
+05/07/18 17:59:56 Leave unloaded port s_out_dbo_9 open at instance i_pads_ws
+05/07/18 17:59:57 WARNING: ============= SUMMARY =================
+05/07/18 17:59:57 WARNING: SUM: Summary of checks and created items:
+05/07/18 17:59:57 WARNING: SUM: checkforce 0
+05/07/18 17:59:57 WARNING: SUM: checkunique 0
+05/07/18 17:59:57 WARNING: SUM: checkwarn 0
+05/07/18 17:59:57 WARNING: SUM: cmacros 0
+05/07/18 17:59:57 WARNING: SUM: conn 163
+05/07/18 17:59:57 WARNING: SUM: errors 1
+05/07/18 17:59:57 WARNING: SUM: genport 78
+05/07/18 17:59:57 WARNING: SUM: hdlfiles 15
+05/07/18 17:59:57 WARNING: SUM: inst 81
+05/07/18 17:59:57 WARNING: SUM: io_cellandpad 33
+05/07/18 17:59:57 WARNING: SUM: multdriver 38
+05/07/18 17:59:57 WARNING: SUM: nodriver 91
+05/07/18 17:59:57 WARNING: SUM: noload 36
+05/07/18 17:59:57 WARNING: SUM: open 33
+05/07/18 17:59:57 WARNING: SUM: openports 36
+05/07/18 17:59:57 WARNING: SUM: tie_hl 6
+05/07/18 17:59:57 WARNING: SUM: warnings 1
+05/07/18 17:59:57 WARNING: SUM: === Number of parsed input tables: ===
+05/07/18 17:59:57 WARNING: SUM: conf 0
+05/07/18 17:59:57 WARNING: SUM: hier 1
+05/07/18 17:59:57 WARNING: SUM: conn 2
+05/07/18 17:59:57 WARNING: SUM: io 1
+05/07/18 17:59:57 WARNING: SUM: i2c 0

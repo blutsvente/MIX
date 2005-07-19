@@ -1,0 +1,56 @@
+:=:=:=>CONF
+# CONF Options Testcase, wig20030708;;;
+MIXCFG;macro.%WIG%;wigmacro_test;# A new macro
+MIXCFG;macro.%LANGUAGE%;verilog;# Overwrite s.th. given
+MIXCFG;macro.%WIG_VERI%;verilog;
+MIXCFG;macro.%WIG_VHDL%;vhdl;
+MIXCFG;macro.%wig_conf%;_rtl_config;
+# Ignoring empty cells;;;
+;MIXCFG;macro.%wig_test2%;#shifted
+# Errors;;;
+;;MIXCFG;macro.%wig_test3%
+MIXCFG;;;
+MIXCFG;;macro.%wig_test3%;generate_error
+MIXCFG;macro.%wig_test4%;;
+:=:=:=>HIER
+::ign;::gen;::variants;::parent;::inst;::lang;::entity;::config;::comment
+#Kommentar;;;;Toplevel;;;;
+;;Default;TESTBENCH;inst_t;vhdl;ent_t;%::entity%%wig_conf%;
+;;Default;inst_t;inst_a;%WIG_VHDL%;ent_a;%::entity%%wig_conf%;
+;;Default;inst_t;inst_b;%WIG_VERI%;ent_b;%::entity%%wig_conf%;
+;;Default;inst_a;inst_aa;;ent_aa;%::entity%%wig_conf%;
+;;Default;inst_a;inst_ab;;ent_ab;%::entity%%wig_conf%;
+;;Default;inst_a;inst_ac;%WIG_VERI%;ent_ac;%::entity%%wig_conf%;
+;;Default;inst_a;inst_ad;vhdl;ent_ad;%::entity%%wig_conf%;
+;;Default;inst_a;inst_ae;verilog;ent_ae;%::entity%%wig_conf%;
+;;Default;inst_b;inst_ba;;ent_ba;%::entity%%wig_conf%;
+;;Default;inst_b;inst_bb;;ent_bb;%::entity%%wig_conf%;
+:=:=:=>CONN
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::out;::in;::descr;::comment
+#;;Bundle Name;Class;Clk Domain;Type;High;Low;;Signal;Outputs;Inputs;Description;
+#;Version 1.0;20021112;wilfried.gaensheimer@micronas.com;;;;;;;Drivers;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+# Testcases for signals crossing hierachy 20030225;;;;;;;;;;;;;
+;;TestPortExt;Test1;clk;std_ulogic;;;;sig_01;inst_aa/port_aa_1;inst_ab/port_ab_1;Use internally test1;
+;;TestPortExt;;;;;;;sig_01;;inst_b/port_b_1;Will create p_mix_sig_1_go port;
+;;TestPortExt;Test2;clk;std_ulogic_vector;4;0;S;sig_02;inst_aa/port_aa_2(0) = (0), inst_ab/port_ab_2(0) = (1), inst_ac/port_ac_2(0) = (3), inst_ad/port_ad_2(0) = (4);inst_ae/port_ae_2(0)=(0), inst_ae/port_ae_2(1)=(1), inst_ae/port_ae_2(3)=(3), inst_ae/port_ae_2(4) = (4);Use internally test2, no port generated;
+;;TestPortExt;Test3;clk;std_ulogic;;;S;sig_03;inst_aa/port_aa_3;inst_b/port_b_3;Interhierachy link, will create p_mix_sig_3_go;
+;;TestPortExt;Test4;clk;std_ulogic;;;S;sig_04;inst_b/port_b_4;inst_aa/port_aa_4;Interhierachy link, will create p_mix_sig_4_gi;
+;;TestPortExt;Test5;clk;std_ulogic_vector;3;0;S;sig_05;inst_aa/port_aa_5;inst_ae/port_ae_5;Bus, single bits go to outside;
+;;TestPortExt;;;;;;;sig_05;;inst_b/port_b_5_1(0)=(2);Bus, single bits go to outside, will create p_mix_sig_5_2_2_go;
+;;TestPortExt;;;;;;;sig_05;;inst_b/port_b_5_2(0)=(1);Bus, single bits go to outside, will create P_MIX_sound_alarm_test5_1_1_GO;
+;;TestPortExt;Test6;clk;std_ulogic_vector;3;0;S;sig_06;inst_aa/port_aa_6;inst_ae/port_ae_6;Conflicting definition;
+;;;;;;;;;sig_06;inst_b/port_b_6o;inst_b/port_b_6i;Conflicting definition;
+;;TestPortExt;Test7;clk;std_ulogic_vector;5;0;S;sig_07;inst_aa;inst_ae,inst_b,inst_a;Conflicting definition, IN false!;
+;;TestPortExt;Test8;clk;std_ulogic_vector;8;2;S;sig_08;inst_aa,inst_a;inst_ae,inst_b;VHDL intermediate needed (port name);
+;;TestPortExt;Test9;clk;std_ulogic_vector;6;0;I;sig_i_ae;;inst_ae;Input Bus;
+;;TestPortExt;Test10;clk;std_ulogic_vector;7;0;O;sig_o_ae;inst_ae;;Output Bus;
+;;TestPortExt;Test11;clk;std_ulogic;;;I;sig_i_a;;inst_a/port_i_a;Input Port;
+;;TestPortExt;Test11;clk;std_ulogic;;;I;sig_i_a2;;inst_a;Input Port;
+;;TestPortExt;Test12;clk;std_ulogic;;;O;sig_o_a;inst_a/port_o_a;;Output Port;
+;;TestPortExt;Test12;clk;std_ulogic;;;O;sig_o_a2;inst_a;;Output Port;
+;;;;;;;;;;;;;
+#change;;;;;;;;;;;;;
+#wig2003-03-24;;;;;;;;;;;;;
+;;TestPortExt;Test13;clk;std_ulogic_vector;4;0;S;sig_13;inst_aa,inst_a;inst_ab;Create internal signal name;

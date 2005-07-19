@@ -1,0 +1,49 @@
+:=:=:=>HIER
+::ign;::gen;::variants;::parent;::inst;::lang;::entity;::config;::comment;::descr
+#;;Variants;Parent;Instance;Language;Entity;Configuration;Comment;Description
+# typecast testcase / was MIX %HIER% %TEMPLATE% V1.0 20030724 wilfried.gaensheimer@micronas.com, © Micronas GmbH 2003;;;;;;;;;
+;;;testbench;inst_a_i;;inst_a;inst_a_rtl_conf;;top level module
+;;;inst_a_i;inst_aa_i;;inst_aa;inst_aa_rtl_conf;;typecast module
+;;;inst_a_i;inst_ab_i;;inst_ab;inst_ab_rtl_conf;;receiver module
+:=:=:=>CONN
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::out;::in;::descr;::comment
+#;;Bundle Name;Class;Clk Domain;Type;High;Low;;Signal;Outputs;Inputs;Description;
+# MIX %CONN% %TEMPLATE% V1.0 20030724 wilfried.gaensheimer@micronas.com, © Micronas GmbH 2003;;;;;;;;;;;;;
+#;;Name;Data;clk;std_ulogic;;;;signal_a;inst_aa;inst_ab;;
+#;;Name;Port;clk;std_ulogic;;;O;signal_o;inst_aa;;;
+#;;Name;Data;clk;std_ulogic_vector;7;0;;signal_b;inst_aa/port_b;inst_ab/port_c;;
+# typecasting signals;;;;;;;;;;port is ulogic ...;;;
+;;TYPECAST;Data;clk;std_logic;;;;signal_1;inst_aa_i/port_a_1'std_ulogic;inst_ab_i/port_b_1;;
+;;TYPECAST;Data;clk;std_ulogic;;;;signal_2;inst_aa_i/'std_logic;inst_ab_i/port_b_2;;
+# typecasting busses;;;;;;;;;;;;;
+;;TYPECAST;Data;clk;std_logic_vector;7;0;;signal_3;inst_aa_i/port_a_3'std_ulogic_vector;inst_ab_i/port_b_3;;
+;;TYPECAST;Data;clk;std_ulogic_vector;15;0;;signal_4;inst_aa_i/'std_logic_vector;inst_ab_i/port_b_4;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+"# typecast ""in"", added wig20040401";;;;;;;;;;;;;
+;;TYPECAST;Data;clk;std_logic;;;;signal_5;inst_aa_i/port_a_5'std_ulogic;inst_ab_i/port_b_5;;
+;;TYPECAST;Data;clk;std_ulogic;;;;signal_6;inst_aa_i/'std_logic;inst_ab_i/port_b_6;;
+;;TYPECAST;Data;clk;std_logic_vector;7;0;;signal_7;inst_aa_i/port_a_7;inst_ab_i/port_b_7'std_ulogic_vector;;
+;;TYPECAST;Data;clk;std_ulogic_vector;15;0;;signal_8;inst_aa_i;inst_ab_i/port_b_8'std_logic_vector;;
+# typecast in/out;;;;;;;;;;;;;
+;;TYPECAST;Data;clk;std_logic;;;;signal_9;inst_aa_i/port_a_9'std_ulogic;inst_ab_i/port_b_9;;
+;;TYPECAST;Data;clk;std_ulogic;;;;signal_10;inst_aa_i/'std_logic;inst_ab_i/port_b_10;;
+;;TYPECAST;Data;clk;std_logic_vector;7;0;;signal_11;inst_aa_i/port_a_11'std_ulogic_vector;inst_ab_i/port_b_11'std_ulogic_vector;;
+;;TYPECAST;Data;clk;std_ulogic_vector;15;0;;signal_12;inst_aa_i/'std_logic_vector;inst_ab_i/port_b_12'std_logic_vector;;
+:=:=:=>IO
+::ign;::class;::ispin;::pin;::pad;::type;::iocell;::port;::name;::muxopt;::muxopt;::muxopt;::muxopt;::muxopt;::muxopt;::muxopt;::muxopt
+#;;;Pin;Pad#;Padtype;Iocelltype;IOcell port definition;Padname;Multiplexer;Multiplexer;Multiplexer;Multiplexer;Multiplexer;Multiplexer;Multiplexer;Multiplexer
+# MIX %IO% %TEMPLATE% V1.0 20030724 wilfried.gaensheimer@micronas.com, © Micronas GmbH 2003;;;;;;;;;;;;;;;;
+#;%SEL%;;;;;;sel;pad;iosel_0;iosel_1;iosel_2;iosel_3;;;;
+#;DATA_I;1;1;1;w_pad_i;ioc_g_i;"di,
+do,
+en";data_i1;"data_i1.0,
+data_i1.0,
+en_0";"data_i1.1,
+data_i1.1,
+en_1";"data_i1.2,
+data_i1.2,
+en_2";"data_i1.3,
+data_i1.3,
+en_3";;;;
+#;DATA_O;;1;2;w_pad_o;ioc_g_o;do;data_o1;data_o1.0;data_o1.1;data_o1.2;data_o1.3;;;;

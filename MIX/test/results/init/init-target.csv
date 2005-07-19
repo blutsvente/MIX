@@ -1,43 +1,409 @@
 :=:=:=>IMP_CONN
-"::ign";"::gen";"::bundle";"::class";"::clock";"::type";"::high";"::low";"::mode";"::name";"::shortname";"::out";"::in";"::descr";"::comment"
-"# Generated Intermediate Conn/Hier Data";;;;;;;;;;;;;;
-"# by: knoppix";;;;;;;;;;;;;;
-"# on: Sat May 29 03:56:52 2004";;;;;;;;;;;;;;
-"# cmd: ../../../mix_0.pl -import inst_aa_e-e.vhd ddrv4-e.vhd init.xls";;;;;;;;;;;;;;
-;;"__IMPORT_BUNDLE__I_INST_AA_E";"__IMPORT__I_INST_AA_E";"__IMPORT_CLK__I_INST_AA_E";"string";;;"G";"NO_DEFAULT";;;"i_inst_aa_e/NO_DEFAULT";;" -- __W_NODEFAULT"
-;;"__IMPORT_BUNDLE__I_INST_AA_E";"__IMPORT__I_INST_AA_E";"__IMPORT_CLK__I_INST_AA_E";"string";;;"G";"NO_NAME";;;"i_inst_aa_e/NO_NAME";;" -- __W_NODEFAULT"
-;;"__IMPORT_BUNDLE__I_INST_AA_E";"__IMPORT__I_INST_AA_E";"__IMPORT_CLK__I_INST_AA_E";"integer";;;"G";"WIDTH";;"/WIDTH'7";"i_inst_aa_e/WIDTH";;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic_vector";"3";"0";"I";"alarm_time_ls_hr";;;"i_ddrv4/alarm_time_ls_hr(3:0)=(3:0)";;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic_vector";"3";"0";"I";"alarm_time_ls_min";;;"i_ddrv4/alarm_time_ls_min(3:0)=(3:0)";;" -- alarm_time_ls_min comment"
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic_vector";"3";"0";"I";"alarm_time_ms_hr";;;"i_ddrv4/alarm_time_ms_hr(3:0)=(3:0)";;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic_vector";"3";"0";"I";"alarm_time_ms_min";;;"i_ddrv4/alarm_time_ms_min(3:0)=(3:0)";;" -- alarm_time_ms_min paren ___LEFTPAR___"
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic";;;"I";"clk";;;"i_ddrv4/clk";;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic_vector";"3";"0";"I";"current_time_ls_hr";;;"i_ddrv4/current_time_ls_hr(3:0)=(3:0)";;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic_vector";"3";"0";"I";"current_time_ls_min";;;"i_ddrv4/current_time_ls_min(3:0)=(3:0)";;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic_vector";"3";"0";"I";"current_time_ms_hr";;;"i_ddrv4/current_time_ms_hr(3:0)=(3:0)";;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic_vector";"3";"0";"I";"current_time_ms_min";;;"i_ddrv4/current_time_ms_min(3:0)=(3:0)";;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic_vector";"6";"0";"O";"display_ls_hr";;"i_ddrv4/display_ls_hr(6:0)=(6:0)";;;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic_vector";"6";"0";"O";"display_ms_min";;"i_ddrv4/display_ms_min(6:0)=(6:0)";;;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic_vector";"3";"0";"I";"key_buffer_0";;;"i_ddrv4/key_buffer_0(3:0)=(3:0)";;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic_vector";"3";"0";"I";"key_buffer_1";;;"i_ddrv4/key_buffer_1(3:0)=(3:0)";;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic_vector";"3";"0";"I";"key_buffer_2";;;"i_ddrv4/key_buffer_2(3:0)=(3:0)";;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic_vector";"3";"0";"I";"key_buffer_3";;;"i_ddrv4/key_buffer_3(3:0)=(3:0)";;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic_vector";"3";"0";"I";"p_mix_sa_test6_3_0_gi";;;"i_ddrv4/p_mix_sa_test6_3_0_gi(3:0)=(3:0)";;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic";;;"O";"p_mix_sound_alarm_test1_go";;"i_ddrv4/p_mix_sound_alarm_test1_go";;;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic";;;"O";"p_mix_sound_alarm_test3_go";;"i_ddrv4/p_mix_sound_alarm_test3_go";;;" -- p_mix_sound_alarm_test1_go comment"
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic";;;"I";"p_mix_sound_alarm_test4_gi";;;"i_ddrv4/p_mix_sound_alarm_test4_gi";;" -- p_mix_sound_alarm_test4_gi comment paren ___LEFTPAR___ ___LEFTPAR___ more to come"
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic_vector";"1";"0";"O";"p_mix_sound_alarm_test5_2_1_go";;"i_ddrv4/p_mix_sound_alarm_test5_2_1_go(1:0)=(1:0)";;;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic";;;"I";"reset";;;"i_ddrv4/reset";;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic_vector";"5";"0";"I";"sa_test7";;;"i_ddrv4/sa_test7(5:0)=(5:0)";;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic_vector";"8";"2";"O";"sa_test8";;"i_ddrv4/sa_test8(8:2)=(8:2)";;;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic";;;"I";"show_a";;;"i_ddrv4/show_a";;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic";;;"I";"show_new_time";;;"i_ddrv4/show_new_time";;
-;;"__IMPORT_BUNDLE__I_DDRV4";"__IMPORT__I_DDRV4";"__IMPORT_CLK__I_DDRV4";"std_ulogic";;;"O";"sound_alarm";;"i_ddrv4/sound_alarm";;;
-:=:=:=>IMP_HIER
-"::ign";"::gen";"::variants";"::parent";"::inst";"::shortname";"::lang";"::entity";"::arch";"::use";"::config";"::comment";"::descr"
-"# Generated Intermediate Conn/Hier Data";;;;;;;;;;;;
-"# by: knoppix";;;;;;;;;;;;
-"# on: Sat May 29 03:56:52 2004";;;;;;;;;;;;
-"# cmd: ../../../mix_0.pl -import inst_aa_e-e.vhd ddrv4-e.vhd init.xls";;;;;;;;;;;;
-;;"Default";"__IMPORT__";"i_ddrv4";;"vhdl";"ddrv4";"rtl";;"ddrv4_rtl_conf";;
-;;"Default";"__IMPORT__";"i_inst_aa_e";;"vhdl";"inst_aa_e";"rtl";;"inst_aa_e_rtl_conf";;
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::shortname;::out;::in;::descr;::comment
+# Generated Intermediate Conn/Hier Data;;;;;;;;;;;;;;
+# by: wig;;;;;;;;;;;;;;
+# on: Mon Jul 28 22:42:24 2003;;;;;;;;;;;;;;
+# cmd: h:\work\mix\mix_0.pl -import ddrv4-e.vhd inst_aa_e-e.vhd init.xls;;;;;;;;;;;;;;
+;;__IMPORT_BUNDLE__I_INST_AA_E;__IMPORT__I_INST_AA_E;__IMPORT_CLK__I_INST_AA_E;string;;;G;NO_DEFAULT;;;i_inst_aa_e/NO_DEFAULT;; -- __W_NODEFAULT
+;;__IMPORT_BUNDLE__I_INST_AA_E;__IMPORT__I_INST_AA_E;__IMPORT_CLK__I_INST_AA_E;string;;;G;NO_NAME;;;i_inst_aa_e/NO_NAME;; -- __W_NODEFAULT
+;;__IMPORT_BUNDLE__I_INST_AA_E;__IMPORT__I_INST_AA_E;__IMPORT_CLK__I_INST_AA_E;integer;;;G;WIDTH;;7/WIDTH;i_inst_aa_e/WIDTH;;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;alarm_time_ls_hr;;;i_ddrv4/alarm_time_ls_hr(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;alarm_time_ls_min;;;i_ddrv4/alarm_time_ls_min(3:0)=(3:0);; -- alarm_time_ls_min comment
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;alarm_time_ms_hr;;;i_ddrv4/alarm_time_ms_hr(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;alarm_time_ms_min;;;i_ddrv4/alarm_time_ms_min(3:0)=(3:0);; -- alarm_time_ms_min paren ___LEFTPAR___
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic;;;I;clk;;;i_ddrv4/clk;;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;current_time_ls_hr;;;i_ddrv4/current_time_ls_hr(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;current_time_ls_min;;;i_ddrv4/current_time_ls_min(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;current_time_ms_hr;;;i_ddrv4/current_time_ms_hr(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;current_time_ms_min;;;i_ddrv4/current_time_ms_min(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;6;0;O;display_ls_hr;;i_ddrv4/display_ls_hr(6:0)=(6:0);;;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;6;0;O;display_ms_min;;i_ddrv4/display_ms_min(6:0)=(6:0);;;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;key_buffer_0;;;i_ddrv4/key_buffer_0(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;key_buffer_1;;;i_ddrv4/key_buffer_1(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;key_buffer_2;;;i_ddrv4/key_buffer_2(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;key_buffer_3;;;i_ddrv4/key_buffer_3(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;3;0;I;p_mix_sa_test6_3_0_gi;;;i_ddrv4/p_mix_sa_test6_3_0_gi(3:0)=(3:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic;;;O;p_mix_sound_alarm_test1_go;;i_ddrv4/p_mix_sound_alarm_test1_go;;;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic;;;O;p_mix_sound_alarm_test3_go;;i_ddrv4/p_mix_sound_alarm_test3_go;;; -- p_mix_sound_alarm_test1_go comment
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic;;;I;p_mix_sound_alarm_test4_gi;;;i_ddrv4/p_mix_sound_alarm_test4_gi;; -- p_mix_sound_alarm_test4_gi comment paren ___LEFTPAR___ ___LEFTPAR___ more to come
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;1;0;O;p_mix_sound_alarm_test5_2_1_go;;i_ddrv4/p_mix_sound_alarm_test5_2_1_go(1:0)=(1:0);;;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic;;;I;reset;;;i_ddrv4/reset;;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;5;0;I;sa_test7;;;i_ddrv4/sa_test7(5:0)=(5:0);;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic_vector;8;2;O;sa_test8;;i_ddrv4/sa_test8(8:2)=(8:2);;;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic;;;I;show_a;;;i_ddrv4/show_a;;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__I_DDRV4;__IMPORT_CLK__I_DDRV4;std_ulogic;;;I;show_new_time;;;i_ddrv4/show_new_time;;
+;;__IMPORT_BUNDLE__I_DDRV4;__IMPORT__;__IMPORT_CLK__;std_ulogic;;;O;sound_alarm;;i_ddrv4/sound_alarm;;;
+:=:=:=>TMPL_HIER
+::ign;::gen;::variants;::parent;::inst;::lang;::entity;::config;::comment
+#Kommentar;;;;Toplevel;;;;
+;;Default;TESTBENCH;a_clk;VHDL;a_clk;a_clk_rtl_conf;
+;;Default;a_clk;u_timegen;VHDL;timegen;timegen_rtl_conf;
+;;Default;a_clk;control;VHDL;a_fsm;a_fsm_rtl_conf;
+;;Default;a_clk;u_keyscan;VHDL;keyscan;keyscan_rtl_conf;
+;;Default;a_clk;u_keypad;VHDL;keypad;keypad_rtl_conf;
+;;Default;a_clk;u0_alreg;VHDL;alreg;alreg_rtl_conf;
+;;Default;a_clk;u1_alreg;VHDL;alreg;alreg_rtl_conf;
+;;Default;a_clk;u2_alreg;VHDL;alreg;alreg_rtl_conf;
+;;Default;a_clk;u3_alreg;VHDL;alreg;alreg_rtl_conf;
+;;Default;a_clk;u_counter;VHDL;count4;count4_rtl_conf;
+;;Default;a_clk;u_ddrv4;VHDL;ddrv4;ddrv4_rtl_conf;
+;;Default;a_clk;a_fsm;VHDL;fsm;fsm_rtl_conf;
+#End of top level;;;;;;;;
+;;Default;a_clk;test_ctrl;vhdl;testctrl_e;%::entity%_rtl_conf;
+;;;;;;;;
+# ddrv4;;;;;;;;
+;;Default;u_ddrv4;d_ms_hr;VHDL;ddrv;%::inst%_RTL_CONF;
+;;TestVar2;;d_ms_hr;VHDL;ddrv;%::entity%_var2_RTL_CONF;
+;;TestVar1;u_ddrv4;d_ms_hr;Verilog;ddrv_var1;%::entity%_RTL_CONF;
+;;Defaut,TestVar2;u_ddrv4;d_ms_hr;VHDL;ddrv;%::inst%_RTL_CONF;
+;;Default;u_ddrv4;d_ls_hr;VHDL;ddrv;%::inst%_RTL_CONF;
+;;Default;u_ddrv4;d_ms_min;VHDL;ddrv;%::inst%_RTL_CONF;
+;;Default;u_ddrv4;d_ls_min;VHDL;ddrv;%::inst%_RTL_CONF;
+;;Default;u_ddrv4;u_and_f;VHDL;and_f;%::inst%_RTL_CONF;
+#End of stage 1;;;;;;;;
+;;;;;;;;
+;;;;;;;;
+# Generator statements for IOCells and Pads;;;;;;;;
+;;Default;a_clk;ios;;ios_e;%::entity%_conf;
+;;;;;;;;
+;;Default;ios;ioblock_0;;ioblock0_e;%::entity%_conf;
+;;Default;ios;ioblock_1;;ioblock1_e;%::entity%_conf;
+;;Default;ios;ioblock_2;;ioblock2_e;%::entity%_conf;
+;;Default;ios;ioblock_3;;ioblock3_e;%::entity%_conf;
+;$i(1..9),/ioc_(\w+)_(\w+)_$i/;Default;ioblock_0;ioc_$1_$2_$i;VHDL;;ioc_$1_$2_conf;
+;$i(10..19),/ioc_(\w+)_(\w+)_$i/;Default;ioblock_1;ioc_$1_$2_$i;VHDL;;ioc_$1_$2_conf;
+;$i(20..29),/ioc_(\w+)_(\w+)_$i/;Default;ioblock_2;ioc_$1_$2_$i;VHDL;;ioc_$1_$2_conf;
+;$i(30..50),/ioc_(\w+)_(\w+)_$i/;Default;ioblock_3;ioc_$1_$2_$i;VHDL;;ioc_$1_$2_conf;
+;;;;;;;;
+;;;;;;;;
+;;;;;;;;
+# Pads, name is pad_NN, NN is taken from ::pad column in IO;;;;;;;;
+# Default case: all Pads are in block pad_pads!;;;;;;;;
+;;Default;a_clk;pad_pads;VHDL;pad_pads_e;%::entity%_conf;
+;/pad_(\d+)/;Default;pad_pads;pad_$1;VHDL;;%::entity%_conf;
+#Alternative implementation: Get pads into ioblock_N block;;;;;;;;
+;$i(1..9),/pad_$i/;PadIO;ioblock_0;pad_$i;VHDL;;%::entity%_conf;
+;$i(10..19),/pad_$i/;PadIO;ioblock_1;pad_$i;VHDL;;%::entity%_conf;
+;$i(20..29),/pad_$i/;PadIO;ioblock_2;pad_$i;VHDL;;%::entity%_conf;
+;$i(30..50),/pad_$i/;PadIO;ioblock_3;pad_$i;VHDL;;%::entity%_conf;
+:=:=:=>TMPL_CONN
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::out;::in;::descr;::comment
+#;;Bundle Name;Class;Clk Domain;Type;High;Low;;Signal;Outputs;Inputs;Description;
+#;Version 1.0;20021112;wilfried.gaensheimer@micronas.com;;;;;;;Drivers;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+#;;;;;;;;;u_timegen;;;;
+;;Top;Control;clk;std_ulogic;;;S;one_sec_pulse;u_timegen/one_second;control/one_second;;
+;;Top;Control;clk;std_ulogic;;;S;one_minute;u_timegen/%::name%;u_counter/%::name%;;
+;;Top;Control;clk;std_ulogic;;;I;stopwatch;;u_timegen/%::name%;Driven by reset;
+;;;;;;;;;;;;;
+#;;;;;;;;;control / a_fsm;;;;
+;;Top;Control;clk;std_ulogic;;;S;alarm_button;u_keyscan/%::name%;control/%::name%;;
+;;Top;Control;clk;std_ulogic;;;S;time_button;u_keyscan/%::name%;control/%::name%;;
+;;Top;Keys;clk;std_ulogic_vector;3;0;S;key;u_keyscan/key(3:0);control/key(3:0);;
+;;Top;Control;clk;std_ulogic;;;S;load_new_a;control/%::name%;u0_alreg/load_new_a,u1_alreg/load_new_a,u2_alreg/load_new_a,u3_alreg/load_new_a;;
+;;Top;Control;clk;std_ulogic;;;S;show_a;control/show_a;u_ddrv4/show_a;;
+;;Top;Control;clk;std_ulogic;;;S;show_new_time;control/show_new_time;u_ddrv4/show_new_time;;
+;;Top;Control;clk;std_ulogic;;;S;load_new_c;control/load_new_c;u_counter/load_new_c;;
+;;Top;Control;clk;std_ulogic;;;S;shift;control/shift;u_keyscan/shift;;
+;;Top;Control;clk;std_ulogic;;;I;clk;;control/clk;;
+;;Top;Control;clk;std_ulogic;;;I;reset;;control/reset;;
+#ERROR;;Top;Control;clk;std_ulogic;;;S;load_new_a;control/%::name%;u0_alreg/load_new/a,u1_alreg/load_new_a,u2_alreg/load_new_a,u3_alreg/load_new/a;;
+#;;;;;;;;;;;;;
+#;;;;;;;;;u_keyscan;;;;
+;;Top;Keys;clk;std_ulogic_vector;3;0;S;rows;u_keypad/rows(3:0);u_keyscan/rows(3:0);Keypad Output;
+;;Top;Keys;clk;std_ulogic_vector;2;0;S;columns;u_keyscan/columns(2:0);u_keypad/columns(2:0);;
+;;Top;Keys;clk;std_ulogic_vector;3;0;S;key;u_keyscan/key(3:0);control/key(3:0);;
+;;Top;Keybuffer;clk;std_ulogic_vector;3;0;S;key_buffer_0;u_keyscan/key_buffer_0(3:0);u0_alreg/new_alarm_time(3:0),u_ddrv4/key_buffer_0(3:0),u_counter/new_current_time_ls_min(3:0);;
+;;Top;Keybuffer;clk;std_ulogic_vector;3;0;S;key_buffer_1;u_keyscan/key_buffer_1(3:0);u1_alreg/new_alarm_time(3:0),u_ddrv4/key_buffer_1(3:0),u_counter/new_current_time_ms_min(3:0);;
+;;Top;Keybuffer;clk;std_ulogic_vector;3;0;S;key_buffer_2;u_keyscan/key_buffer_2(3:0);u2_alreg/new_alarm_time(3:0),u_ddrv4/key_buffer_2(3:0),u_counter/new_current_time_ls_hr(3:0);;
+;;Top;Keybuffer;clk;std_ulogic_vector;3;0;S;key_buffer_3;u_keyscan/key_buffer_3(3:0);u3_alreg/new_alarm_time(3:0),u_ddrv4/key_buffer_3(3:0),u_counter/new_current_time_ms_hr(3:0);;
+;;Top;Control;clk;std_ulogic;;;S;time_button;u_keyscan/%::name%;control/%::name%;;
+;;;;;;;;;;;;;
+#;;;;;;;;;u_counter;;;;
+;;Top;CountOut;clk;std_ulogic_vector;3;0;S;current_time_ls_min;u_counter/current_time_ls_min(3:0);u_ddrv4/current_time_ls_min(3:0);;
+;;Top;CountOut;clk;std_ulogic_vector;3;0;S;current_time_ms_min;u_counter/current_time_ms_min(3:0);u_ddrv4/current_time_ms_min(3:0);;
+;;Top;CountOut;clk;std_ulogic_vector;3;0;S;current_time_ls_hr;u_counter/current_time_ls_hr(3:0);u_ddrv4/current_time_ls_hr(3:0);;
+;;Top;CountOut;clk;std_ulogic_vector;3;0;S;current_time_ms_hr;u_counter/current_time_ms_hr(3:0);u_ddrv4/current_time_ms_hr(3:0);;
+;;;;;;;;;;;;;
+#;;;;;;;;;uN_alreg;;;;
+;;Top;Counter;clk;std_ulogic_vector;3;0;S;alarm_time_ls_min;u0_alreg/alarm_time(3:0);u_ddrv4/alarm_time_ls_min(3:0);;
+;;Top;Counter;clk;std_ulogic_vector;3;0;S;alarm_time_ms_min;u1_alreg/alarm_time(3:0);u_ddrv4/alarm_time_ms_min(3:0);;
+;;Top;Counter;clk;std_ulogic_vector;3;0;S;alarm_time_ls_hr;u2_alreg/alarm_time(3:0);u_ddrv4/alarm_time_ls_hr(3:0);;
+;;Top;Counter;clk;std_ulogic_vector;3;0;S;alarm_time_ms_hr;u3_alreg/alarm_time(3:0);u_ddrv4/alarm_time_ms_hr(3:0);;
+;;;;;;;;;;;;;
+#;;;;;;;;;u_ddrv;;;;
+#;;Top;Display;clk;std_ulogic;;;O;sound_alarm;u_ddrv4/sound_alarm;;;
+#;;Top;Display;clk;std_ulogic_vector;6;0;O;display_ls_min;u_ddrv4/%::name%;;;
+#;;Top;Display;clk;std_ulogic_vector;6;0;O;display_ms_min;u_ddrv4/%::name%;;;
+#;;Top;Display;clk;std_ulogic_vector;6;0;O; ;u_ddrv4/%::name%;;;
+#;;Top;Display;clk;std_ulogic_vector;6;0;O;display_ms_hr;u_ddrv4/%::name%;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+# Second level;;;;;;;;;ddrv4 block:;;;;
+;;Uddrv4;Display;clk;std_ulogic;;;I;show_a;;d_ls_min/show_a, d_ms_min/show_a, d_ls_hr/show_a, d_ms_hr/show_a;;
+;;Uddrv4;Display;clk;std_ulogic;;;I;show_new_time;;d_ls_min/show_new_time, d_ms_min/show_new_time, d_ls_hr/show_new_time, d_ms_hr/show_new_time;;
+#;;Uddrv4;Display;clk;std_ulogic_vector;3;0;I;alarm_time_ms_hr;;d_ms_hr/alarm_time(3:0);;
+#;;Uddrv4;Display;clk;std_ulogic_vector;3;0;I;alarm_time_ls_hr;;d_ls_hr/alarm_time(3:0);;
+#;;Uddrv4;Display;clk;std_ulogic_vector;3;0;I;alarm_time_ms_min;;d_ms_min/alarm_time(3:0);;
+#;;Uddrv4;Display;clk;std_ulogic_vector;3;0;I;alarm_time_ls_min;;d_ls_min/alarm_time(3:0);;
+#;xxxx;Uddrv4;Display;clk;std_ulogic_vector;3;0;I;alarm_time_ms_hr;;d_ms_hr/alarm_time(3:0);;
+#;;Uddrv4;Display;clk;std_ulogic_vector;3;0;I;alarm_time_ls_hr;;d_ls_hr/alarm_time(3:0);;
+#;;Uddrv4;Display;clk;std_ulogic_vector;3;0;I;alarm_time_ms_min;;d_ms_min/alarm_time(3:0);;
+#;;Uddrv4;Display;clk;std_ulogic_vector;3;0;I;alarm_time_ls_min;;d_ls_min/alarm_time(3:0);;
+#;;Uddrv4;Display;clk;std_ulogic_vector;3;0;I;alarm_time_ms_hr;;d_ms_hr/alarm_time(3:0);;
+#;;Uddrv4;Display;clk;std_ulogic_vector;3;0;I;alarm_time_ls_hr;;d_ls_hr/alarm_time(3:0);;
+#;;Uddrv4;Display;clk;std_ulogic_vector;3;0;I;alarm_time_ms_min;;d_ms_min/alarm_time(3:0);;
+#;;Uddrv4;Display;clk;std_ulogic_vector;3;0;I;alarm_time_ls_min;;d_ls_min/alarm_time(3:0);;
+#;;Uddrv4;Display;clk;std_ulogic_vector;3;0;S;alarm;d_ms_hr/sound_alarm=(3),d_ls_hr/sound_alarm=(2),d_ms_min/sound_alarm=(1),d_ls_min/sound_alarm=(0);u_and_f/y(3:0);;
+;;Uddrv4;Display;clk;std_ulogic;;;O;sound_alarm;u_and_f/out_p;;;
+;;;;;;;;;;;;;
+# MH;;#Kind of abuse!;;;;;;;;;;;
+;MH;$n;$1;$2;$3;$h;$l;;alarm_time_$4_$5;;;;
+;MD;Uddrv_gen_$n;$1;$2;$3;$h;$l;I;alarm_time_$4_$5;;d_$4_$5/alarm_time(3:0);Display storage buffer $n $4_$5;
+;MD;Uddrv_gen_$n;$1;$2;$3;$h;$l;I;current_time_$4_$5;;d_$4_$5/current_time(3:0);Display storage buffer $n $4_$5;
+;MD;Uddrv_gen_$n;$1;$2;$3;$h;$l;I;key_buffer_$n;;d_$4_$5/key_buffer(3:0);Display storage buffer $n $4_$5;
+;MD;Uddrv_gen_$n;$1;$2;$3;6;0;O;display_$4_$5;d_$4_$5/display(6:0);;Display storage buffer $n $4_$5;
+;MD;Uddrv_gen_$n;$1;$2;$3;$h;$l;S;alarm;d_$4_$5/sound_alarm=($n);u_and_f/y($n)=($n);Display storage buffer $n $4_$5;
+;MX;0;Display;clk;std_ulogic_vector;3;0;;alarm_time_ls_min;;;;
+;MX;1;Display;clk;std_ulogic_vector;3;0;;alarm_time_ms_min;;;;
+;MX;2;Display;clk;std_ulogic_vector;3;0;;alarm_time_ls_hr;;;;
+;MX;3;Display;clk;std_ulogic_vector;3;0;;alarm_time_ms_hr;;;;
+#Macro 2: Generate errors;;;;;;;;;;;;;
+#;MH;$n;$1;$2;$3;$h;$l;$m;bad_time_$4_$5;;;Macro redefinition $n $4_$5;
+#;MD;Uddrv_gen_$n;$1;$2;$3;$h;$l;I;alarm_time_$4_$5;;d_$4_$5/alarm_time(3:0);;
+#;MD;$x;;;;;;;;$y;;;two errors
+#;MX;Macro_2;Display_bad;clk;std_ulogic_vector;3;0;;bad_time_ls_min;;;;
+:=:=:=>TMPL_IO
+::ign;::class;::ispin;::pin;::pad;::type;::iocell;::port;::name;::muxopt;::muxopt;::muxopt;::muxopt;::muxopt;::muxopt;::muxopt;::muxopt
+#;;;;Primary;;;;;0;1;2;3;4;5;6;7
+# Pin/Pad example for a_clk.xls;;;;;;;;;;;;;;;;
+;%SEL%;;;;;;sel;pad;iosel_0;iosel_1;iosel_2;iosel_3;iosel_4;iosel_5;iosel_6;iosel_7
+;DATA_I;1;1;1;w_pad_i;ioc_g_i;di;data_i1;data_i1.0;data_i1.1;data_i1.2;data_i1.3;data_i1.4;data_i1.5;data_i1.6;data_i1.7
+;DATA_O;;1;2;w_pad_o;ioc_g_o;do;data_o1;data_o1.0;data_o1.1;data_o1.2;data_o1.3;data_o1.4;data_o1.5;data_o1.6;data_o1.7
+;;;;;;;;;;;;;;;;
+;%SEL%;;;;;;sel;pad;iosel_disp;iosel_ls_min;iosel_ls_hr;iosel_ms_hr;iosel_ms_min;;;
+;DISPLAY;1;12;12;w_disp;ioc_r_io;"di,
+do,
+en";disp_2;"di2.0,
+disp2.0,
+disp2_en.0";",
+display_ls_min.0,
+display_ls_en";",
+display_ls_hr.0,
+display_ls_en";",
+display_ms_hr.0,
+display_ms_en";",
+display_ms_min.0,
+display_ms_en";;;
+;DISPLAY;1;13;13;w_disp;ioc_r_io;"di,
+do,
+en";disp_3;"di2.1,
+disp2.1,
+disp2_en.1";",
+display_ls_min.1,
+display_ls_en";",
+display_ls_hr.1,
+display_ls_en";",
+display_ms_hr.1,
+display_ms_en";",
+display_ms_min.1,
+display_ms_en";;;
+;DISPLAY;1;14;14;w_disp;ioc_r_io;"di,
+do,
+en";disp_4;"di2.3,
+disp2.3,
+disp2_en.3";",
+display_ls_min.2,
+display_ls_en";",
+display_ls_hr.2,
+display_ls_en";",
+display_ms_hr.2,
+display_ms_en";",
+display_ms_min.2,
+display_ms_en";;;
+;DISPLAY;1;15;15;w_disp;ioc_r_io;"di,
+do,
+en";disp_5;"di2.4,
+disp2.4,
+disp2_en.4";",
+display_ls_min.3,
+display_ls_en";",
+display_ls_hr.3,
+display_ls_en";",
+display_ms_hr.3,
+display_ms_en";",
+display_ms_min.3,
+display_ms_en";;;
+;DISPLAY;1;16;16;w_disp;ioc_r_io;"di,
+do,
+en";disp_6;"di2.5,
+disp2.5,
+disp2_en.5";",
+display_ls_min.4,
+display_ls_en";",
+display_ls_hr.4,
+display_ls_en";",
+display_ms_hr.4,
+display_ms_en";",
+display_ms_min.4,
+display_ms_en";;;
+;DISPLAY;1;17;17;w_disp;ioc_r_io;"di,
+do,
+en";disp_7;"di2.6,
+disp2.6,
+disp2_en.6";",
+display_ls_min.5,
+display_ls_en";",
+display_ls_hr.5,
+display_ls_en";",
+display_ms_hr.5,
+display_ms_en";",
+display_ms_min.5,
+display_ms_en";;;
+;DISPLAY;1;18;18;w_disp;ioc_r_io;"di,
+do,
+en";disp_8;"di2.7,
+disp2.7,
+disp2_en.7";",
+display_ls_min.6,
+display_ls_en";",
+display_ls_hr.6,
+display_ls_en";",
+display_ms_hr.6,
+display_ms_en";",
+display_ms_min.6,
+display_ms_en";;;
+# Adjust bound rules in CONN generators statements;;;;;;;;;;;;;;;;
+;%SEL%;;;;;;sel;pad;iosel_nosel;;;;;;;
+;DATA;1;31;31;w_data2;ioc_r_iou;"di,
+do%reg(clk),
+en,
+pu";data_9;"d9_di.0,
+d9_do.0,
+d9_en.0,
+d9_pu.0";;;;;;;
+;%NOSEL%;;;;;;nosel;;;;;;;;;
+;;1;32;32;w_data3;ioc_r_iou;"di,
+do%reg(clk),
+en,
+pu";data_10;"d9_di.1,
+d9_do.1,
+d9_en.1,
+d9_pu.1";;;;;;;
+# Use a bus as select signals and output one bit of di/do from a bus;;;;;;;;;;;;;;;;
+;%SEL%;;;;;;sel;pad;iosel_bus.0;iosel_bus.1;iosel_bus.2;iosel_bus.3;iosel_bus.4;iosel_bus.5;iosel_bus.6;iosel_bus.7
+;DATA_33_I;1;33;33;w_pad_i;ioc_g_i;di;data_i33;data_i33.0;data_i33.1;data_i33.2;data_i33.3;data_i33.4;data_i33.5;data_i33.6;data_i33.7
+;DATA_34_I;1;34;34;w_pad_i;ioc_g_i;di;data_i34;data_i34(0);data_i34(1);data_i34(2);data_i34(3);data_i34(4);data_i34(5);data_i34(6);data_i34(7)
+;DATA_35_O;1;35;35;w_pad_o;ioc_g_o;di;data_o35;data_o35.0;data_o35.1;data_o35.2;data_o35.3;data_o35.4;data_o35.5;data_o35.6;data_o35.7
+;DATA_36_O;1;36;36;w_pad_o;ioc_g_o;di;data_o36;data_o36(0);data_o36(1);data_o36(2);data_o36(3);data_o36(4);data_o36(5);data_o36(6);data_o36(7)
+# Direct connection from pad to core (no ::iocell defined!);;;;;;;;;;;;;;;;
+;%NOSEL%;;;;;;nosel;;;;;;;;;
+;PAD_DIRLI_1;1;37;37;w_pad_dir;;di;pad_dirli;pad_dir_di;;;;;;;
+;PAD_DIRLI_2;1;38;38;w_pad_dire;;"di,
+do,
+en";pad_dire;"pad_dir_di38,
+pad_dir_do38,
+pad_dir_en38";;;;;;;
+# Testing %COMB, %REG and %SEL overides;;;;;;;;;;;;;;;;
+;%SEL%;;;;;;sel;pad;iosel_0;iosel_1;iosel_2;iosel_3;;;;
+;DISPLAY;1;39;39;w_disp;ioc_r_io3;"di,
+do%REG(CLK_B),
+en";disp_9;",
+display_ls.0,
+display_ls_en";",
+display_ls.2%COMB,
+display_ls_en";",
+display_ls.4,
+display_ms_en";",
+display_ls.6,
+display_ms_en";;;;
+;DISPLAY;1;40;40;w_disp;ioc_r_io3;"di,
+do,
+en";disp_10;",
+display_ls.1,
+display_ls_en";",
+display_ls.3%SEL(iosel_0),
+display_ls_en";",
+display_ls.5,
+display_ms_en";",
+display_ls.7,
+display_ms_en";;;;
+# Testing direct pad <-> core connection;;;;;;;;;;;;;;;;
+;OSC;1;41;41;w_osc;;"pd,
+xo";osc_1;"'1',
+clki2c";;;;;;;
+;OSC;1;42;42;w_osc;;"pd,
+xo";osc_2;"%HIGH%,
+clki3c";;;;;;;
+;OSC;1;43;43;w_osc;;"pd,
+xo";osc_3;"'0',
+clki3c";;;;;;;
+:=:=:=>TMPL_CONN_IO
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::out;::in;::descr;::comment
+#;;Bundle Name;Class;Clk Domain;Type;High;Low;;Signal;Outputs;Inputs;Description;
+#;Version 2.0;20030527;wilfried.gaensheimer@micronas.com;;;;;;;Drivers;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+"# Standard Pad Cells wiring: pu, pd, do, en, di; triggered by iocell name which is of the form ioc_UDOI_NR .... e will be derived by the IO ..";;;;;;;;;;;;;
+# IOCELL / Pads:;;;;;;;;;;;;;
+;/ioc_(\w_\w*u\w*)_(\d+)/;PAD_CTRL;IO;multiple;std_ulogic;;;;pad_pu_$2;ioc_$1_$2/p_pu;pad_$2/pu;pull-up control;
+;/ioc_(\w_\w*d\w*)_(\d+)/;PAD_CTRL;IO;multiple;std_ulogic;;;;pad_pd_$2;ioc_$1_$2/p_pd;pad_$2/pd;pull-down control;
+;/ioc_(\w_\w*o\w*)_(\d+)/;PAD_CTRL;IO;multiple;std_ulogic;;;;pad_do_$2;ioc_$1_$2/p_do;pad_$2/do;data out to pad;
+;/ioc_(\w_\w*o\w*)_(\d+)/;PAD_CTRL;IO;multiple;std_ulogic;;;;pad_en_$2;ioc_$1_$2/p_en;pad_$2/en;pad output enable;
+;/ioc_(\w_\w*i\w*)_(\d+)/;PAD_CTRL;IO;multiple;std_ulogic;;;;pad_di_$2;pad_$2/di;ioc_$1_$2/p_di;data in from pad;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+# NAND Tree;;;;;;;;;;;;;
+;/ioc_(\w)_(\w+)_(\d+)/;NAND_TREE;Test;tclk;std_ulogic;;;;nand_en;test_ctrl/nand_en; ;Enable;
+;/ioc_(\w)_(\w+)_(\d+)/;NAND_TREE;Test;tclk;std_ulogic;;;;nand_dir;test_ctrl/nand_dir;ioc_$1_$2_$3/nand_dir;Direction;
+;;NAND_TREE;Test;tclk;std_ulogic;;;;nand_out_0;0;ioc_g_i_1/nand_in;Links ...;
+;;NAND_TREE;Test;tclk;std_ulogic;;;;nand_out_1;ioc_g_i_1/nand_out;ioc_g_o_2/nand_in;Links ...;
+;/(ioc_\w_\w+_12)/;NAND_TREE;Test;tclk;std_ulogic;;;;nand_out_2;ioc_g_o_2/nand_out;$1/nand_in;Links ...;
+;/(ioc_\w_\w+_18)/;NAND_TREE;Test;tclk;std_ulogic;;;;open;$1/nand_out;;Last is open;
+;$i (12..17),/ioc_(\w_\w+)_$i/;NAND_TREE;Test;tclk;std_ulogic;;;;nand_out_$i;ioc_$1_$i/nand_out;ioc_$1_{$i+1}/nand_in;out to in;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+# Need to preset some values for internal busses, connecting core to IO;;;;;;;;;;;;;
+;;IODATA;IO;ioclk;std_ulogic_vector;7;0;;data_i1;;control/data_i1;io data;
+;;IODATA;IO;ioclk;std_ulogic_vector;7;0;;data_o1;control/data_o1;;io data;
+;;IODATA;IO;ioclk;std_ulogic_vector;8;0;;di2;;control/di2;io data;
+;;IODATA;IO;ioclk;std_ulogic_vector;7;0;;disp2;;control/di;io data;
+;;IODATA;IO;ioclk;std_ulogic_vector;7;0;;disp2_en;;control/di2;io data;
+;;;;;;;;;;;;;
+;;IODATA;D9;ioclk;std_ulogic_vector;1;0;;d9_di;;control/d9_core_di;d9io;
+;;IODATA;D9;ioclk;std_ulogic_vector;1;0;;d9_do;control/data_core_do;;d9io;
+;;IODATA;D9;ioclk;std_ulogic_vector;1;0;;d9_en;;control/d9_core_en;d9io;
+;;IODATA;D9;ioclk;std_ulogic_vector;1;0;;d9_pu;;control/d9_core_pu;d9io;
+;;;;;;;;;;;;;
+;;IODATA;IO;ioclk;std_ulogic_vector;7;0;;data_i33;;control/data_core_i33;io data;
+;;IODATA;IO;ioclk;std_ulogic_vector;7;0;;data_i34;;control/data_core_i33;io data;
+;;IODATA;IO;ioclk;std_ulogic_vector;7;0;;data_o35;control/data_core_o35;;io data;
+;;IODATA;IO;ioclk;std_ulogic_vector;7;0;;data_o36;control/data_core_o36;;io data;
+;;IODATA;SEL;ioclk;std_ulogic_vector;7;0;;iosel_bus;control/iosel_bus_port;;io data;
+#TODO: Allow to recognize this bus automatically!;;IODATA;SEL;ioclk;std_ulogic_vector;7;0;;iosel_bus;control/iosel_bus_port;;io data;
+;;IOEN;EN;ioclk;std_ulogic;;;;display_ms_en;control/disp_ms_port;;io_enable;
+;;IOEN;EN;ioclk;std_ulogic;;;;display_ls_en;control/disp_ls_port;;io_enable;
+;;;;;;;;;;;;;
+# Define iosel signals, connected to a bus port.;;;;;;;;;;;;;
+;MH;IO_NR;;;;;;;iosel_$1;;;;
+;MD;IOSEL;IO;ioclk;std_ulogic;;;;iosel_$1;control/iosel_bus($1);;IO_Select;
+;MX;IO_NR;;;;;;;iosel_0;;;;
+;MX;IO_NR;;;;;;;iosel_1;;;;
+;MX;IO_NR;;;;;;;iosel_2;;;;
+;MX;IO_NR;;;;;;;iosel_3;;;;
+;MX;IO_NR;;;;;;;iosel_4;;;;
+;MX;IO_NR;;;;;;;iosel_5;;;;
+;MX;IO_NR;;;;;;;iosel_6;;;;
+;MX;IO_NR;;;;;;;iosel_7;;;;
+# Define iosel_XXXX, single bits, driven by singel bit ports;;;;;;;;;;;;;
+;MH;IO_ALPHA;;;;;;;iosel_$1;;;;
+;MD;IOSEL_M2;IO;ioclk;std_ulogic;;;;iosel_$1;control/iosel_bus_$1;;IO_Select;
+;MX;IO_ALPHA;;;;;;;iosel_disp;;;;
+;MX;IO_ALPHA;;;;;;;iosel_ls_hr;;;;
+;MX;IO_ALPHA;;;;;;;iosel_ls_min;;;;
+;MX;IO_ALPHA;;;;;;;iosel_ms_hr;;;;
+;MX;IO_ALPHA;;;;;;;iosel_ms_min;;;;
+;MX;IO_ALPHA;;;;;;;iosel_nosel;;;;

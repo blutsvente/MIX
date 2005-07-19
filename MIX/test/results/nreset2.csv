@@ -1,0 +1,61 @@
+:=:=:=>CONN
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::out;::in;::descr
+# Bug report 20030424a/ michael pallas, nreset;;;;;;;;;;;;
+;;EMA;;;std_ulogic;;;O;nreset;;ema_i1/nreset;Async. Reset (CGU,PAD)
+;;CPU;;;std_ulogic;;;O;nreset;;cpu_i1/nreset;Async. Reset (CGU,PAD)
+;;GA;;;std_ulogic;;;O;nreset;;ga_i1/reset_n;Async. Reset (CGU,PAD)
+;;VOR;;;std_ulogic;;;O;nreset;;vor_i1/reset_n;Async. Reset (CGU,PAD)
+;;VIP;;;std_ulogic;;;O;nreset;;vip_i1/reset_n ;Async. Reset (CGU,PAD)
+;;VO;;;std_ulogic;;;O;nreset;;vo_i1/reset_n;Async. Reset (CGU,PAD)
+#;;CGU;;;std_ulogic;;;I;si_reset;;cgu_i1/nreset_in;Auxiliary Signals (PAD)
+;;CGU;;;std_ulogic;;;O;nreset;cgu_i1/nreset_out;cgu_i1/nreset;Auxiliary Signals (PAD)
+;;PDU;;;std_ulogic;;;O;nreset;;pdu_i1/nreset;Async. Reset (CGU,PAD)
+;;IFU;;;std_ulogic;;;O;nreset;;ifu_top_i1/nreset;Async. Reset (CGU,PAD)
+;;TSD;;;std_ulogic;;;O;nreset;;tsd_top_i1/nreset;Async. Reset (CGU,PAD)
+;;IO;;;std_ulogic;;;O;nreset;;i58_io_logic_i1/nreset;Async. Reset (CGU,PAD)
+;;AOU;;;std_ulogic;;;O;nreset;;aou_i1/reset_i_n;Async. Reset (CGU,PAD)
+;;;;;;;;;;;;
+#;;AOU;;;std_ulogic;;;O;nreset;"cgu_i1/nreset_out, 
+mdec_core_i1/nreset";"ema_i1/nreset, 
+cpu_i1/nreset, 
+ga_i1/reset_n, 
+vor_i1/reset_n, 
+vip_i1/reset_n, 
+vo_i1/reset_n, 
+cgu_i1/nreset, 
+pdu_i1/nreset, 
+ifu_top_i1/nreset, 
+tsd_top_i1/nreset, 
+i58_io_logic_i1/nreset, 
+aou_i1/reset_i_n";"Async. Reset (CGU,PAD)
+Async. Reset (CGU,PAD)
+Async. Reset (CGU,PAD)
+Async. Reset (CGU,PAD)
+Async. Reset (CGU,PAD)
+Async. Reset (CGU,PAD)
+Auxiliary Signals (PAD)
+Async. Reset (CGU,PAD)
+Async. Reset (CGU,PAD)
+Async. Reset (CGU,PAD)
+Async. Reset (CGU,PAD)
+Async. Reset (CGU,PAD)"
+:=:=:=>HIER
+::ign;::gen;::variants;::parent;::inst;::lang;::entity;::config;::use;::comment;
+;;Default;testbench;mdec_core_i1;VHDL;mdec_core;mdec_core_rtl_conf;;MDE-C Digital Toplevel (CORE);
+;;Default;mdec_core_i1;ema_i1;Verilog;ema;ema_rtl_conf;;External Memory Arbiter (EMA);
+;;Default;mdec_core_i1;cpu_i1;Verilog;cpu;cpu_rtl_conf;;Lexra Processor (CPU);
+;;Default;mdec_core_i1;ga_i1;VHDL;ga;ga_rtl_conf;;Graphics Accelerator (GA);
+;;Default;mdec_core_i1;vor_i1;VHDL;vor;vor_rtl_conf;;Video Output Recording (VOR);
+;;Default;mdec_core_i1;vip_i1;VHDL;vip;vip_rtl_c0;;Video Input Processing (VIP);
+;;Default;mdec_core_i1;vo_i1;VHDL;vo;vo_rtl_conf;;Video Output (VO);
+;;Default;mdec_core_i1;cgu_i1;Verilog;cgu;cgu_rtl_conf;;Clock Generation Unit (CGU);
+;;Default;mdec_core_i1;pdu_i1;Verilog;pdu;pdu_rtl_conf;;Picture Decoding Unit (PDU);
+;;Default;mdec_core_i1;tsd_top_i1;Verilog;tsd_top;tsd_top_rtl_conf;;Transport Stream Demultiplexer (TSD);
+;;Default;mdec_core_i1;ifu_top_i1;Verilog;ifu_top;ifu_top_rtl_conf;;InterFace Unit (IFU);
+;;Default;mdec_core_i1;i58_io_logic_i1;Verilog;i58_io_logic;i58_io_logic_rtl_conf;;IO logic to pads (IO);
+;;Default;mdec_core_i1;aou_i1;Verilog;aou;aou_rtl_conf;;Audio Output Unit (AOU);
+#;$i (1..147), /PAD_$i/;Default;PADS;PAD_$i;VHDL;;%::entity%_structural_conf;;;
+#;$i (1..42), /IOC_(\w_\w+)_$i/;Default;IO_SOUTH;IOC_$1_$i;VHDL;;%::entity%_RTL_CONF;;;
+#;$i (43..84), /IOC_(\w_\w+)_$i/;Default;IO_EAST;IOC_$1_$i;VHDL;;%::entity%_RTL_CONF;;;
+#;$i (85..126), /IOC_(\w_\w+)_$i/;Default;IO_NORTH;IOC_$1_$i;VHDL;;%::entity%_RTL_CONF;;;
+#;$i (127..148), /IOC_(\w_\w+)_$i/;Default;IO_WEST;IOC_$1_$i;VHDL;;%::entity%_RTL_CONF;;;

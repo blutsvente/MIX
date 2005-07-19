@@ -1,0 +1,70 @@
+:=:=:=>HIER
+::ign;::gen;::variants;::parent;::inst;::lang;::entity;::config;::comment
+;;;testbench;inst_t;VHDL;inst_t_e;inst_t_e_rtl_conf;
+;;;inst_t;inst_a;VHDL;inst_a_e;inst_a_e_rtl_conf;
+;;Off;inst_a;inst_aa;VHDL;inst_aa_e;inst_aa_e_rtl_conf;
+;;Off;inst_a;inst_ab;VHDL;inst_ab_e;inst_ab_e_rtl_conf;
+;;Off;inst_a;inst_ac;VHDL;inst_ac_e;inst_ac_e_rtl_conf;
+;;Off;inst_a;inst_ad;VHDL;inst_ad_e;inst_ad_e_rtl_conf;
+;;Off;inst_a;inst_ae;VHDL;inst_ae_e;inst_ae_e_rtl_conf;
+;;;inst_t;inst_b;VHDL;inst_b_e;inst_b_e_rtl_conf;
+;;Off;inst_t;inst_c;VHDL;inst_c_e;inst_c_e_rtl_conf;
+;;Off;inst_t;inst_d;VHDL;inst_d_e;inst_d_e_rtl_conf;
+;;Off;inst_t;inst_e;VHDL;inst_e_e;inst_e_e_rtl_conf;
+;;Off;inst_e;inst_ea;VHDL;inst_ea_e;inst_ea_e_rtl_conf;
+;;Off;inst_e;inst_eb;VHDL;inst_eb_e;inst_eb_e_rtl_conf;
+;;Off;inst_e;inst_ec;VHDL;inst_ec_e;inst_ec_e_rtl_conf;
+;;Off;inst_e;inst_ed;VHDL;inst_ed_e;inst_ed_e_rtl_conf;
+;;Off;inst_e;inst_ee;Verilog;inst_ee_e;inst_ee_e_rtl_conf;
+;;Off;inst_e;inst_ef;Verilog;inst_ef_e;inst_ef_e_rtl_conf;
+;;Off;inst_e;inst_eg;Verilog;inst_eg_e;inst_eg_e_rtl_conf;
+;;Off;inst_ea;inst_eaa;VHDL;inst_eaa_e;inst_eaa_e_rtl_conf;
+;;Off;inst_ea;inst_eab;Verilog;inst_eab_e;inst_eab_e_rtl_conf;
+;;Off;inst_ea;inst_eac;Verilog;inst_eac_e;inst_eac_e_rtl_conf;
+;;Off;inst_eb;inst_eba;VHDL;inst_eba_e;inst_eba_e_rtl_conf;
+;;Off;inst_eb;inst_ebb;VHDL;inst_ebb_e;inst_ebb_e_rtl_conf;
+;;Off;inst_eb;inst_ebc;Verilog;inst_ebc_e;inst_ebc_e_rtl_conf;
+;;Off;inst_ec;inst_eca;Verilog;inst_eca_e;inst_eca_e_rtl_conf;
+;;Off;inst_ec;inst_ecb;Verilog;inst_ecb_e;inst_ecb_e_rtl_conf;
+;;Off;inst_ec;inst_ecc;Verilog;inst_ecc_e;inst_ecc_e_rtl_conf;
+;;Off;inst_ed;inst_eda;Verilog;inst_eda_e;inst_eda_e_rtl_conf;
+;;Off;inst_ed;inst_edb;Verilog;inst_edb_e;inst_edb_e_rtl_conf;
+#;Generate 10 instances;;inst_a;inst_1;Verilog;inst_1_e;inst_1_e_rtl_conf;
+;$i(1..10);;inst_a;inst_$i;VHDL;inst_$i_e;inst_$i_e_rtl_conf;
+# Bad macro: run variable not used;;;;;;;;
+;$i(1..10),/inst_(\w+)/;;inst_t;inst_$1;Mixed;%::inst%_e;%::inst%_rtl_conf;Gives error
+# O.K.;;;;;;;;
+;$i(1..10),/inst_$i/;;inst_t;inst_ok_$i;Mixed;%::inst%_e;%::inst%_rtl_conf;O.K. for me inst_ok_$i
+# Unlimited generator;;;;;;;;
+;/inst_(\w+)/;;inst_t;inst_shadow_$1;vhdl;%::inst%_e;%::inst%_rtl_conf;Generate shadow instances
+;;;;;;;;
+# instance definition for complex macro example;;;;;;;;
+;;;inst_t;inst_k1_k2;vhdl;%::inst%_e;%::inst%_rtl_conf;
+;;;inst_t;inst_k1_k4;vhdl;%::inst%_e;%::inst%_rtl_conf;
+;;;inst_t;inst_k3_k2;vhdl;%::inst%_e;%::inst%_rtl_conf;
+;;;inst_t;inst_k3_k4;vhdl;%::inst%_e;%::inst%_rtl_conf;
+# testing simple macro calculation ... wig20030813;;;;;;;;
+;$i(3..5),/inst_$i/;Calculate;inst_t;inst_$i;changed;;;tag me $i and {$i+1}
+;/inst_(\w+)/;Calculate;;inst_$1;changed_gen;;;tag me again $i and {$i+1}
+:=:=:=>CONN
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::out;::in;::descr;::comment
+#;;Bundle Name;Class;Clk Domain;Type;High;Low;;Signal;Outputs;Inputs;Description;
+# macro.xls, 20030605, wilfried.gaensheimer@micronas.com;;;;;;;;;;;;;
+# Complex signal generator macro with counter $n;;;;;;;;;;;;;
+#;Markers;Define $n;Define $1;Define $2;Define $3;D $h;D $l;Given;Match and def $4, $5;No match;No match;No match;No match
+;MH;$n;$1;$2;$3;$h;$l;;macro_match_$4_$5;;;;
+;MD;Macro_Set_$n;$1;$2;$3;$h;$l;I;macro_sig1_$4_$5;;inst_$4_$5/port1(3:0);Macro test $n $4_$5;
+;MD;Macro_Set_$n;$1;$2;$3;$h;$l;I;macro_sig2_$4_$5;;inst_$4_$5/port2(3:0);Macro test $n $4_$5;
+;MD;Macro_Set_$n;$1;$2;$3;$h;$l;I;macro_sign_$n;;inst_$4_$5/port3(3:0);Macro test $n $4_$5;
+;MD;Macro_Set_$n;$1;$2;$3;6;0;O;macro_sig4_$4_$5;inst_$4_$5/port_mac_c(6:0);;Macro test $n $4_$5;
+;MD;Macro_Set_$n;$1;$2;$3;$h;$l;S;macro_sigc;inst_$4_$5/port_mac=($n);inst_a/port_mac_b($n)=($n);Macro test $n $4_$5;
+# Now compare MX lines vs. MD, retrieve the values and fill in the MD lines matching this;;;;;;;;;;;;;
+;MX;0;MacroClass;clk;std_ulogic_vector;3;0;;macro_match_k1_k2;;;;
+;MX;1;MacroClass;clk;std_ulogic_vector;3;0;;macro_match_k1_k4;;;;
+;MX;2;MacroClass;clk;std_ulogic_vector;3;0;;macro_match_k3_k2;;;;
+;MX;3;MacroClass;clk;std_ulogic_vector;3;0;;macro_match_k3_k4;;;;
+;;;;;;;;;;;;;
+# Generator, linked to $inst of HIER sheet!;;;;;;;;;;;;;
+# Generate 10 data signals:;;;;;;;;;;;;;
+;$i(1..5);data;gen;clk_gen;std_ulogic_vector;7;0;;gensig_$i;inst_a;inst_b;Generated signals, connecting a to b;
+;$i(6..10);data;gen;clk_gen;std_ulogic_vector;7;0;;gensig_$i;inst_b;inst_a;Generated signals, connecting b to a;
