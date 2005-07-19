@@ -146,6 +146,11 @@ my @tests = (
 	  'options' => "",
 	},
 	{
+	  'name' => "highlow",
+	  'path' => "highlow/lownobus",
+	  'options' => "",
+	},
+	{
 	  'name' => "mde_tests",
 	  'path' => "mde_tests/conn_nreset",
 	  'options' => "",
