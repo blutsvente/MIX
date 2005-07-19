@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.24 $                                          |
+# | Revision:   $Revision: 1.25 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/07/18 05:46:54 $                              |
+# | Date:       $Date: 2005/07/19 07:01:44 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.25  2005/07/19 07:01:44  wig
+# | map %LOW% to %LOW_BUS% is user assigns badly
+# |
 # | Revision 1.24  2005/07/18 05:46:54  wig
 # | Update of some tiny fixes (test case related)
 # |
@@ -177,11 +180,11 @@ sub _split_diff2xls ($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.24 2005/07/18 05:46:54 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.25 2005/07/19 07:01:44 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.24 $'; #'  
+my $thisrevision    =      '$Revision: 1.25 $'; #'  
 
-# Revision:   $Revision: 1.24 $
+# Revision:   $Revision: 1.25 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1130,17 +1133,25 @@ sub absolute_path($) {
     # Make filename a absolute one (we are on MS ground)
     # Has to start like N:\bla\blubber or N:/path/....
 
-    if ( $^O =~ m,win32,io ) {
-	if ( $file =~ m,^[\\/], ) {
-	    # Missing the letter for a drive
-	    $file = $EH{'drive'} . $file;
-	} elsif ( $file !~ m,^\w:, ) {
-	    $file = $EH{'cwd'} . "/" . $file;
-	}
+    if ( $EH{'iswin'} ) {
+		if ( $file =~ m,^[\\/], ) {
+	    	# Missing the letter for a drive
+	    	$file = $EH{'drive'} . $file;
+		} elsif ( $file !~ m,^\w:, ) {
+	    	$file = $EH{'cwd'} . "/" . $file;
+		}
 	# $file =~ s,/,\\,go; #
+    # } elsif ( $EH{'iscygwin'} ) {
+    	# Replace /cygdrive/H (HOME) by H:
+    	#
     } elsif ( $file !~ m,^/, ) { # Does not start with /
-	$file = $EH{'cwd'} . "/" . $file;
+		$file = $EH{'cwd'} . "/" . $file;
     }
+
+	# Strip of cygwin home -> homedrive ...
+	if ( $EH{'iscygwin'} ) {
+		$file =~ s/$ENV{'HOME'}/$ENV{'HOMEDRIVE'}/;
+	}
 
     # Now done in different place ...
     # Convert / to \ :-(, otherwise OLE will get confused
@@ -1383,7 +1394,8 @@ sub write_outfile($$$;$$) {
     my $r_c = shift || undef;
     my $newold_flag = shift || undef;
 
-    if( $EH{'format'}{'out'}=~ m/^xls$/ || ($file=~ m/\.xls/ && $EH{'iswin'})) {
+    if( $EH{'format'}{'out'}=~ m/^xls$/ || ($file=~ m/\.xls/ &&
+    	( $EH{'iswin'} or $EH{'iscygwin'} ) )) {
 		write_xls($file, $sheet, $r_a, $r_c, $newold_flag);
     } elsif( $EH{'format'}{'out'}=~ m/^sxc$/ || $file=~ m/\.sxc/) {
 		write_sxc($file, $sheet, $r_a, $r_c);
@@ -1430,7 +1442,7 @@ sub write_xls($$$;$$) {
     my $r_c = shift || undef;
     my $newold_flag = shift || 0;
 
-    if( $EH{'iswin'} || $EH{'format'}{'out'}) {
+    if( $EH{'iswin'} or $EH{'iscygwin'} or $EH{'format'}{'out'} ) {
 
 		my $book;
 		my $newflag = 0;
@@ -1456,8 +1468,9 @@ sub write_xls($$$;$$) {
 		}
 
 		# Write to other directory ...
-		if ( $EH{'intermediate'}{'path'} ne "." and not is_absolute_path( $file ) ) {
-	    	$file = $EH{'intermediate'}{'path'} . "/" . $file;
+		if ( $EH{'intermediate'}{'path'} ne "."
+			 and not is_absolute_path( $file ) ) {
+	    			$file = $EH{'intermediate'}{'path'} . "/" . $file;
 		}
 
 		my $efile = absolute_path( $file );
@@ -1482,6 +1495,7 @@ sub write_xls($$$;$$) {
 		    		$wbpath = $EH{'cwd'} . "/" . $wbpath;
 				}
 
+				$wbpath =~ s/$ENV{HOME}/$ENV{HOMEDRIVE}/ if ( $EH{'iscygwin'} );
 				$wbpath =~ s,/,\\,g; # Replace / -> \
 				#Does our book have the right path?
 				if ( $book->Path ne $wbpath ) {

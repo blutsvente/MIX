@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.67 $                                         |
+# | Revision:   $Revision: 1.68 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/07/15 16:39:38 $                              |
+# | Date:       $Date: 2005/07/19 07:01:44 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.67 2005/07/15 16:39:38 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.68 2005/07/19 07:01:44 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.68  2005/07/19 07:01:44  wig
+# | map %LOW% to %LOW_BUS% is user assigns badly
+# |
 # | Revision 1.67  2005/07/15 16:39:38  wig
 # | Update of some tiny fixes (test case related)
 # |
@@ -319,11 +322,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.67 2005/07/15 16:39:38 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.68 2005/07/19 07:01:44 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.67 $';         #'
+my $thisrevision        =      '$Revision: 1.68 $';         #'
 
-# Revision:   $Revision: 1.67 $   
+# Revision:   $Revision: 1.68 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1588,6 +1591,7 @@ sub mix_init () {
 #
 
     $EH{'iswin'} = $^O =~ m,^mswin,io;
+    $EH{'iscygwin'} = $^O =~ m,^cygwin,io;
 
     $EH{'cwd'} = cwd() || "ERROR_CANNOT_GET_CWD";
     if ( $EH{'iswin'} ) {
@@ -1603,38 +1607,38 @@ sub mix_init () {
     $EH{'macro'}{'%OS%'} = $^O;
     $EH{'macro'}{'%DATE%'} = "" . localtime();
     $EH{'macro'}{'%USER%'} = "W_UNKNOWN_USERNAME";
-    if ( $EH{'iswin'} ) {
-	if ( defined( $ENV{'USERNAME'} ) ) {
+    if ( $EH{'iswin'} or $EH{'iscygwin'} ) {
+		if ( defined( $ENV{'USERNAME'} ) ) {
 	        $EH{'macro'}{'%USER%'} = $ENV{'USERNAME'};
-	}
+		}
     } elsif ( defined( $ENV{'LOGNAME'} ) ) {
-		$EH{'macro'}{'%USER%'} = $ENV{'LOGNAME'};
+		$EH{'macro'}{'%USER%'} = $ENV{'LOGNAME'} || $ENV{'USER'};
     }
 
     #
     # Define HOME:
     #
-    if ( $EH{'iswin'} ) {
-	if ( defined( $ENV{'HOMEDRIVE'} ) and defined( $ENV{'HOMEPATH'} ) ) {
-	    $EH{'macro'}{'%HOME%'} = $ENV{'HOMEDRIVE'} . $ENV{'HOMEPATH'};
-	}elsif ( defined( $ENV{'USERPROFILE'} ) ) {
+    if ( $EH{'iswin'} ) { # not valid for cygwin! -> HOME below ...
+		if ( defined( $ENV{'HOMEDRIVE'} ) and defined( $ENV{'HOMEPATH'} ) ) {
+	    	$EH{'macro'}{'%HOME%'} = $ENV{'HOMEDRIVE'} . $ENV{'HOMEPATH'};
+		}elsif ( defined( $ENV{'USERPROFILE'} ) ) {
             $EH{'macro'}{'%HOME%'} = $ENV{'USERPROFILE'};
-	} else {
-	    $EH{'macro'}{'%HOME%'} = "C:\\"; #TODO: is that a good idea?
-	} 
+		} else {
+	    	$EH{'macro'}{'%HOME%'} = "C:\\"; #TODO: is that a good idea?
+		} 
     } elsif ( defined( $ENV{'HOME'} ) ) {
 		$EH{'macro'}{'%HOME%'} = $ENV{HOME};
     } else {
-	$EH{'macro'}{'%HOME%'} = "/home/" . $ENV{'LOGNAME'};
+		$EH{'macro'}{'%HOME%'} = "/home/" . $ENV{'LOGNAME'};
     }
 
     #
     # Define PROJECT path
     #
     if ( $ENV{'PROJECT'} ) {
-	$EH{'macro'}{'%PROJECT%'} = $ENV{'PROJECT'};
+		$EH{'macro'}{'%PROJECT%'} = $ENV{'PROJECT'};
     } else {
-	$EH{'macro'}{'%PROJECT%'} = "NO_PROJECT_SET";
+		$EH{'macro'}{'%PROJECT%'} = "NO_PROJECT_SET";
     }
 
     #
@@ -1645,7 +1649,7 @@ sub mix_init () {
 
 #
 # If there is a file called mix.cfg, try to read that ....
-# Configuraation parameters have to be written like
+# Configuration parameters have to be written like
 #	MIXCFG key value
 #	key can be key.key.key ... (see %EH structure or use -listconf to dump current values)
 # !!Caveat: there will be no checks whatsoever on the values or keys !!
@@ -3561,36 +3565,36 @@ sub mix_utils_init_file($) {
     }
 
     if ( scalar( @descr ) > 1 ) {
-	logwarn( "WARNING: Ignoring all but last mix input files!" );
-	$output = pop( @descr );
+		logwarn( "WARNING: Ignoring all but last mix input files!" );
+		$output = pop( @descr );
     } elsif ( scalar( @descr ) < 1 ) {
 	# User has not given an output file name -> take directory name
-	if ( defined $OPTVAL{'dir'} and $OPTVAL{'dir'} ne "." ) {
-	    $output = $OPTVAL{'dir'} . "/" . basename( $OPTVAL{'dir'} );
-	} else {
-	    $output = $EH{'cwd'} . "/" . basename( $EH{'cwd'} );
-	}
+		if ( defined $OPTVAL{'dir'} and $OPTVAL{'dir'} ne "." ) {
+	    	$output = $OPTVAL{'dir'} . "/" . basename( $OPTVAL{'dir'} );
+		} else {
+	    	$output = $EH{'cwd'} . "/" . basename( $EH{'cwd'} );
+		}
 
-	# Extension: MS-Win -> xls, else csv
-	if ( $EH{'iswin'} || $EH{'intermediate'}{'ext'}=~ m/^xls$/) {
-	    $output .= ".xls";
-	}
-	elsif( $EH{'intermediate'}{'ext'}=~ m/^sxc$/) {
-	    $output .= ".sxc";
-	}
-	else {
-	    $output .= ".csv";
-	}
-	logwarn( "WARNING: Setting project name to $output" );
-	$EH{'sum'}{'warnings'}++;
+		# Extension: MS-Win -> xls, else csv
+		if ( ( $EH{'iswin'} or $EH{'iscygwin'} ) || $EH{'intermediate'}{'ext'}=~ m/^xls$/) {
+	    	$output .= ".xls";
+		}
+		elsif( $EH{'intermediate'}{'ext'}=~ m/^sxc$/) {
+	    	$output .= ".sxc";
+		}
+		else {
+	    	$output .= ".csv";
+		}
+		logwarn( "WARNING: Setting project name to $output" );
+		$EH{'sum'}{'warnings'}++;
     } else {
-	$output = pop( @descr );
+		$output = pop( @descr );
     }
 
     ( my $ext = $output ) =~ s,.*\.,,;
     unless( $ext ) {
-	logwarn( "FATAL: Cannot detect appropriate extension for output from $output" );
-	exit 1;
+		logwarn( "FATAL: Cannot detect appropriate extension for output from $output" );
+		exit 1;
     }
 
     # Get template and mix.cfg in place if "init"

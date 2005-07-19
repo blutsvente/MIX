@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.53 $                                         |
+# | Revision:   $Revision: 1.54 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/07/13 15:38:34 $                              |
+# | Date:       $Date: 2005/07/19 07:01:44 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.53 2005/07/13 15:38:34 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.54 2005/07/19 07:01:44 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.54  2005/07/19 07:01:44  wig
+# | map %LOW% to %LOW_BUS% is user assigns badly
+# |
 # | Revision 1.53  2005/07/13 15:38:34  wig
 # | Added prototype for simple logic
 # | Added ::udc for HIER
@@ -294,9 +297,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.53 2005/07/13 15:38:34 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.54 2005/07/19 07:01:44 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.53 $';
+my $thisrevision =	'$Revision: 1.54 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -997,6 +1000,18 @@ sub add_conn (%) {
         if ( $name =~ m,^open$,io or $name =~ m,^\s*%OPEN%,o ) {
             $name = "%OPEN_" . $EH{OPEN_NR}++ . "%";
         }
+		#
+		# If user assigns bus to %LOW% and/or %HIGH%
+		#   -> map to LOW|HIGH_BUS
+		#!wig20050719
+		if ( $name =~ m/%(LOW|HIGH)%/ ) {
+			if ( $in{'::high'} ne "" or $in{'::low'} ne "" ) {
+				logwarn("INFO: map assignment from $1 to $1_BUS!");
+				$EH{'sum'}{'warnings'};
+				$name = "%" . $1 . "_BUS%";
+				$in{'::name'} = $name;
+			}
+		} 
 
         $in{'::name'} = $name;
         #
@@ -1647,8 +1662,8 @@ sub merge_conn($%) {
     for my $i ( keys( %data ) ) {
         #TODO: Trigger merge mode for special cases where we want to add
         # up data instead of overwrite
-        if ( $i =~ /^::(in|out)$/ ) { #TODO: should we write ::\s*::(in|out) instead
-            if ( $data{$i} ) {
+        if ( $i =~ /^::(in|out)$/ ) { 
+        	if ( $data{$i} ) {
                 # Add array to in/out field, if the cell contains data
                 push( @{$conndb{$name}{$i}} , @{_create_conn( $1, $data{$i}, %data )});
             }
@@ -1660,7 +1675,7 @@ sub merge_conn($%) {
             if ( $conndb{$name}{$i} and
                  $conndb{$name}{$i} !~ m,%(SIGNAL|BUS_TYPE)%,o and
                  $conndb{$name}{'::name'} !~ m,%OPEN(_\d+)?%, ) {
-                # conndb{$name}{::type} is defined and ne the default
+                 # conndb{$name}{::type} is defined and ne the default
                  if ( $data{$i} and $data{$i} !~ m,%(SIGNAL|BUS_TYPE)%,o ) {
                     my $t_cdb = $conndb{$name}{$i};
                     if ( $data{$i} ne $t_cdb ) { #TODO: and $name !~ m/%(HIGH|LOW)/o ) {
