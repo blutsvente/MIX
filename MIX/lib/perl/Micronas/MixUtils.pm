@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.68 $                                         |
+# | Revision:   $Revision: 1.69 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/07/19 07:01:44 $                              |
+# | Date:       $Date: 2005/09/14 14:40:06 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.68 2005/07/19 07:01:44 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.69 2005/09/14 14:40:06 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.69  2005/09/14 14:40:06  wig
+# | Startet report module (portlist)
+# |
 # | Revision 1.68  2005/07/19 07:01:44  wig
 # | map %LOW% to %LOW_BUS% is user assigns badly
 # |
@@ -322,11 +325,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.68 2005/07/19 07:01:44 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.69 2005/09/14 14:40:06 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.68 $';         #'
+my $thisrevision        =      '$Revision: 1.69 $';         #'
 
-# Revision:   $Revision: 1.68 $   
+# Revision:   $Revision: 1.69 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -356,7 +359,7 @@ sub mix_getopt_header(@) {
     # CONF options set -> overload built-in configuration (needs to be first!!!!)
     #
     if ($OPTVAL{'conf'}) {
-	mix_overload_conf( $OPTVAL{'conf'} );
+		mix_overload_conf( $OPTVAL{'conf'} );
     }
 
     # Evaluate options
@@ -378,51 +381,45 @@ sub mix_getopt_header(@) {
     #
     if ( defined $OPTVAL{'dir'} ) {
         $OPTVAL{'dir'} =~ s,\\,/,g if ( $EH{'iswin'} );
-	unless( -d $OPTVAL{'dir'} ) {
-	    unless( mkdir( $OPTVAL{'dir'} ) ) {
-		logwarn( "ERROR: Cannot create output directory " . $OPTVAL{'dir'} . "!" );
-		exit 1;
-	    }
-	    logwarn( "INFO: Created output directory " . $OPTVAL{'dir'} . "!" );
-	}
-	$EH{'output'}{'path'} = $OPTVAL{'dir'};
-	$EH{'intermediate'}{'path'} = $OPTVAL{'dir'};
-	$EH{'internal'}{'path'} = $OPTVAL{'dir'};
+		unless( -d $OPTVAL{'dir'} ) {
+	    	unless( mkdir( $OPTVAL{'dir'} ) ) {
+				logwarn( "FATAL: Cannot create output directory " . $OPTVAL{'dir'} . "!" );
+				exit 1;
+	    	}
+	    	logwarn( "INFO: Created output directory " . $OPTVAL{'dir'} . "!" );
+		}
+		$EH{'output'}{'path'} = $OPTVAL{'dir'};
+		$EH{'intermediate'}{'path'} = $OPTVAL{'dir'};
+		$EH{'internal'}{'path'} = $OPTVAL{'dir'};
+		$EH{'report'}{'path'} = $OPTVAL{'dir'};
     }
     
-    # if (defined $MACVAL{'M_IGNORE_ERRORS'}) {
-    #     $EH{'ERROR'} = $EH{'error_no_exit'}; # hidden emergency switch
-    # }
     if (defined $OPTVAL{'out'}) {
         $OPTVAL{'out'} =~ s,\\,/,g if ( $EH{'iswin'} );
-	$EH{'out'} = $OPTVAL{'out'};
+		$EH{'out'} = $OPTVAL{'out'};
     } elsif ( exists( $ARGV[$#ARGV] ) )  {
-	# Output file will be written to current directory.
-	# Name will become name of last input file foo-mixed.ext
-	$EH{'out'} = $ARGV[$#ARGV] ;
-	$EH{'out'} =~ s,(\.[^.]+)$,-$EH{'output'}{'ext'}{'intermediate'}$1,;
-	# if ( $EH{'output'}{'path'} eq "." ) {
+		# Output file will be written to current directory.
+		# Name will become name of last input file foo-mixed.ext
+		$EH{'out'} = $ARGV[$#ARGV] ;
+		$EH{'out'} =~ s,(\.[^.]+)$,-$EH{'output'}{'ext'}{'intermediate'}$1,;
 	    $EH{'out'} = basename( $EH{'out'} ); # Strip off pathname
-	# }
     } else {
-	$EH{'out'} = "";
+		$EH{'out'} = "";
     }
 
     # Internal and intermediate data are written to:
     if (defined $OPTVAL{'int'}) {
         $OPTVAL{'int'} =~ s,\\,/,g if ($EH{'iswin'} );
-	$EH{'dump'} = $OPTVAL{'int'};
+		$EH{'dump'} = $OPTVAL{'int'};
     } elsif ( exists( $ARGV[$#ARGV] ) )  {
-	# Output file will be written to current directory.
-	# Name will become name of last input file foo-mixed.ext
-	$EH{'dump'} = $ARGV[$#ARGV];
-	$EH{'dump'} =~ s,\.([^.]+)$,,; # Strip away extension
-	$EH{'dump'} .= "." . $EH{'output'}{'ext'}{'internal'};
-	# if ( $EH{'internal'}{'path'} eq "." ) {
-	$EH{'dump'} = basename( $EH{'dump'} ); # Strip off pathname
-	# }
+		# Output file will be written to current directory.
+		# Name will become name of last input file foo-mixed.ext
+		$EH{'dump'} = $ARGV[$#ARGV];
+		$EH{'dump'} =~ s,\.([^.]+)$,,; # Strip away extension
+		$EH{'dump'} .= "." . $EH{'output'}{'ext'}{'internal'};
+		$EH{'dump'} = basename( $EH{'dump'} ); # Strip off pathname
     } else {
-	$EH{'dump'} = "mix" . "." . $EH{'output'}{'ext'}{'internal'};
+		$EH{'dump'} = "mix" . "." . $EH{'output'}{'ext'}{'internal'};
     }
 	# Is there a *-mixed file in the current directory ?
 	#TODO:
@@ -431,19 +428,17 @@ sub mix_getopt_header(@) {
 
     # Specify top cell on command line or use TESTBENCH as default
     if (defined $OPTVAL{'top'} ) {
-	$EH{'top'} = $OPTVAL{'top'};
+		$EH{'top'} = $OPTVAL{'top'};
     } else {
-	$EH{'top'} = 'TESTBENCH'; #TODO: put into %EH
+		$EH{'top'} = 'TESTBENCH'; #TODO: put into %EH
     }
 
     # Specify variant to be selected in hierachy sheet(s)
     # Default or empty cell will be selected always.
     if (defined $OPTVAL{'variant'} ) {
-	$EH{'variant'} = $OPTVAL{'variant'};
-    } # else {
-	# $EH{'variant'} = 'Default';
-    # }
-
+		$EH{'variant'} = $OPTVAL{'variant'};
+    }
+    
     # remove old and diff sheets when set
     if (defined $OPTVAL{'strip'}) {
         $EH{'intermediate'}{'strip'} = $OPTVAL{'strip'};
@@ -452,20 +447,20 @@ sub mix_getopt_header(@) {
     # Write entities into file
     #TODO: Do we have to fix path for windows?
     if (defined $OPTVAL{'outenty'} ) {
-	$EH{'outenty'} = $OPTVAL{'outenty'};
+		$EH{'outenty'} = $OPTVAL{'outenty'};
     } elsif ( defined( $EH{'outenty'} ) ) {
 	# outenty defined by -conf or config file, do not change
     } elsif ( exists( $ARGV[$#ARGV] ) )  {
 	# Output file will be written to current directory.
 	# Name will become name of last input file foo-e.vhd
-	$EH{'outenty'} = $ARGV[$#ARGV];
-	$EH{'outenty'} =~ s,(\.[^.]+)$,,; # Remove extension
-	$EH{'outenty'} .= $EH{'postfix'}{'POSTFILE_ENTY'} . "." . $EH{'output'}{'ext'}{'vhdl'};
+		$EH{'outenty'} = $ARGV[$#ARGV];
+		$EH{'outenty'} =~ s,(\.[^.]+)$,,; # Remove extension
+		$EH{'outenty'} .= $EH{'postfix'}{'POSTFILE_ENTY'} . "." . $EH{'output'}{'ext'}{'vhdl'};
 	# if ( $EH{'output'}{'path'} eq "." ) {
-	$EH{'outenty'} = basename( $EH{'outenty'} ); # Strip off pathname
+		$EH{'outenty'} = basename( $EH{'outenty'} ); # Strip off pathname
 	# }
     } else {
-	$EH{'outenty'} = "mix" . $EH{'postfix'}{'POSTFILE_ENTY'} . "." . $EH{'output'}{'ext'}{'vhdl'};
+		$EH{'outenty'} = "mix" . $EH{'postfix'}{'POSTFILE_ENTY'} . "." . $EH{'output'}{'ext'}{'vhdl'};
     }
 
     # Write architecture into file
@@ -488,20 +483,20 @@ sub mix_getopt_header(@) {
 
    # Write configuration into file
     if (defined $OPTVAL{'outconf'} ) {
-	$EH{'outconf'} = $OPTVAL{'outconf'};
+		$EH{'outconf'} = $OPTVAL{'outconf'};
     } elsif ( defined( $EH{'outconf'} ) ) {
 	# outconf defined by -conf or config file, do not change
     } elsif ( exists( $ARGV[$#ARGV] ) )  {
 	# Output file will be written to current directory.
 	# Name will become name of last input file foo-c.vhd
-	$EH{'outconf'} = $ARGV[$#ARGV] ;
-	$EH{'outconf'} =~ s,(\.[^.]+)$,,;
-	$EH{'outconf'} .= $EH{'postfix'}{'POSTFILE_CONF'} . "." . $EH{'output'}{'ext'}{'vhdl'};
+		$EH{'outconf'} = $ARGV[$#ARGV] ;
+		$EH{'outconf'} =~ s,(\.[^.]+)$,,;
+		$EH{'outconf'} .= $EH{'postfix'}{'POSTFILE_CONF'} . "." . $EH{'output'}{'ext'}{'vhdl'};
 	# if ( $EH{'output'}{'path'} eq "." ) {
-	$EH{'outconf'} = basename( $EH{'outconf'} ); # Strip off pathname
+		$EH{'outconf'} = basename( $EH{'outconf'} ); # Strip off pathname
 	# }
     } else {
-	$EH{'outconf'} = "mix" . $EH{'postfix'}{'POSTFILE_CONF'} . "." . $EH{'output'}{'ext'}{'vhdl'};
+		$EH{'outconf'} = "mix" . $EH{'postfix'}{'POSTFILE_CONF'} . "." . $EH{'output'}{'ext'}{'vhdl'};
     }
 
     # Compare entities in this PATH[es]...
@@ -532,17 +527,17 @@ sub mix_getopt_header(@) {
     # -combine option -> overwrite outarch/outenty/outconf ...
     #
     if ( defined $OPTVAL{'combine'} ) {
-	$EH{'output'}{'generate'}{'combine'} = $OPTVAL{'combine'};
+		$EH{'output'}{'generate'}{'combine'} = $OPTVAL{'combine'};
     }
     if ( $EH{'output'}{'generate'}{'combine'} ) { # Overload outxxx if combine is active
-	$EH{'outenty'} = $EH{'outarch'} = $EH{'outconf'} = 'COMB';
+		$EH{'outenty'} = $EH{'outarch'} = $EH{'outconf'} = 'COMB';
     }
 
     #
     # SHEET selector -> overload built-in configuration
     #
     if ($OPTVAL{'sheet'}) {
-	mix_overload_sheet( $OPTVAL{'sheet'} );
+		mix_overload_sheet( $OPTVAL{'sheet'} );
     }
 
 
@@ -551,7 +546,7 @@ sub mix_getopt_header(@) {
     # Dump %EH ... and stop
     #
     if ( $OPTVAL{'listconf'} ) {
-	mix_list_conf();
+		mix_list_conf();
     }
 
     #
@@ -620,13 +615,13 @@ sub mix_getopt_header(@) {
     # Create a starting point ...
     #
     if ( $OPTVAL{init} ) {
-	mix_utils_init_file("init");
+		mix_utils_init_file("init");
     }
     #
     # Import some HDL files
     #
     if ( $OPTVAL{import} ) {
-	mix_utils_init_file("import");
+		mix_utils_init_file("import");
     }
 
 }
@@ -771,20 +766,23 @@ sub mix_banner(;$)
     # NON portable !!!
     my $MOD_VERSION = "";
     $MOD_VERSION .= ( "\n#####   MixUtils    " . $Micronas::MixUtils::VERSION )
-	if ( defined( $Micronas::MixUtils::VERSION ) );
+		if ( defined( $Micronas::MixUtils::VERSION ) );
     $MOD_VERSION .= ( "\n#####   MixUtils::IO    " . $Micronas::MixUtils::IO::VERSION )
-	if ( defined( $Micronas::MixUtils::IO::VERSION ) );
+		if ( defined( $Micronas::MixUtils::IO::VERSION ) );
     $MOD_VERSION .= ( "\n#####   MixParser   " . $Micronas::MixParser::VERSION )
-	if ( defined( $Micronas::MixParser::VERSION ) );
+		if ( defined( $Micronas::MixParser::VERSION ) );
     $MOD_VERSION .= ( "\n#####   MixWriter   " . $Micronas::MixWriter::VERSION )
-	if ( defined( $Micronas::MixWriter::VERSION ) );
+		if ( defined( $Micronas::MixWriter::VERSION ) );
     $MOD_VERSION .= ( "\n#####   MixChecker  " . $Micronas::MixChecker::VERSION )
-	if ( defined( $Micronas::MixChecker::VERSION ) );
+		if ( defined( $Micronas::MixChecker::VERSION ) );
     $MOD_VERSION .= ( "\n#####   MixIOParser " . $Micronas::MixIOParser::VERSION )
-	if ( defined( $Micronas::MixIOParser::VERSION ) );
+		if ( defined( $Micronas::MixIOParser::VERSION ) );
     $MOD_VERSION .= ( "\n#####   MixI2CParser " . $Micronas::MixI2CParser::VERSION )
-	if ( defined( $Micronas::MixI2CParser::VERSION ) );
+		if ( defined( $Micronas::MixI2CParser::VERSION ) );
+    $MOD_VERSION .= ( "\n#####   MixReport " . $Micronas::MixReport::VERSION )
+		if ( defined( $Micronas::MixReport::VERSION ) );
     #TODO: add plugin interface, plugin should register it's version here ...
+
 
     select(STDOUT);
     $| = 1;                     # unbuffer STDOUT
@@ -1584,6 +1582,10 @@ sub mix_init () {
        },
        'out' => '',
     },
+	'report' => {
+		'path' => '.',
+	}
+	
 );
 
 #

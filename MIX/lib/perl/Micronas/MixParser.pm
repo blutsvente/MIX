@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.54 $                                         |
+# | Revision:   $Revision: 1.55 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/07/19 07:01:44 $                              |
+# | Date:       $Date: 2005/09/14 14:40:06 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.54 2005/07/19 07:01:44 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.55 2005/09/14 14:40:06 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.55  2005/09/14 14:40:06  wig
+# | Startet report module (portlist)
+# |
 # | Revision 1.54  2005/07/19 07:01:44  wig
 # | map %LOW% to %LOW_BUS% is user assigns badly
 # |
@@ -286,7 +289,7 @@ sub _mix_p_try_merge ($);
 # Our global variables
 #  hierdb <- hierachy
 #  conndb <- connection matrix
-%hierdb       = ();
+%hierdb     = ();
 %conndb     = ();
 
 ####################################################################
@@ -297,9 +300,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.54 2005/07/19 07:01:44 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.55 2005/09/14 14:40:06 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.54 $';
+my $thisrevision =	'$Revision: 1.55 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1006,8 +1009,8 @@ sub add_conn (%) {
 		#!wig20050719
 		if ( $name =~ m/%(LOW|HIGH)%/ ) {
 			if ( $in{'::high'} ne "" or $in{'::low'} ne "" ) {
-				logwarn("INFO: map assignment from $1 to $1_BUS!");
-				$EH{'sum'}{'warnings'};
+				logwarn("WARNING: map assignment from $1 to $1_BUS!");
+				$EH{'sum'}{'warnings'}++;
 				$name = "%" . $1 . "_BUS%";
 				$in{'::name'} = $name;
 			}

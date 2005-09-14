@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.43 2005/06/23 13:14:42 wig Exp $
+# $Id: TODO.txt,v 1.44 2005/09/14 14:40:43 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -19,6 +19,60 @@ Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
 
+>>title: 20050810b/Req: print mif files/tables
+
+	Prio: high
+	Req: gerstenb
+
+>>title: 20050810a/Bug: mix crashes without a mix.cfg file
+
+	Prio: medium
+	Req:
+ 
+>>title: 20050725d/Req: Read in CSV files
+
+	- Allow "real" CSV to be read (e.g. by using the perl module CSV_XS)
+	- Allow to switch off header
+	
+	BTW.: Why is ParseExcel so slow?
+	
+	Req: wig, torsten
+	Prio: medium
+
+>>title: 20050725c/Req: Allow strings in "constant definition" to be used
+	as bus width defintion!
+	
+	Req: torsten
+	Prio: medium
+
+>>title: 20050725b/Check: what happens if only one bit of signal is used
+	-> at least warning!
+	
+	Might be mapped to vector/bit: 
+	
+	check for (0:0) ->
+	
+	testcase:
+	req: wig
+	prio: medium
+	
+>>title: 20050725: CHECK/REDO
+
+	C usage: what is a constant
+	
+	C  C_NAME  DEFINITION(::out)   APPLY(::in)
+		APPLY: to what? -> port
+							%BUS%/....
+							
+	Implicit usage:
+	[IOS] SIGNAL	%CONSTANT%/VALUE	APPLY(::in)
+		APPLY: to port
+	Issues: bit splicing: where to apply if signal is ony partially
+		used: top-level module?
+		
+	Req:wig
+	Prio: medium
+	
 >>title: C should be defined (e.g. if uses as bus-width)
 
 	Add a define statement if needed for a constant
@@ -27,6 +81,7 @@ TODOs:
 	
 	Req: thorsten
 	Prio: wig
+	
 >>title: keep user defined code
 
 	merge created file and user defined code in existing file

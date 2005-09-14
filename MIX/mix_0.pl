@@ -27,12 +27,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.36 2005/07/13 15:41:21 wig Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.37 2005/09/14 14:40:43 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.36 $                                      |
-# | Mod.Date     : $Date: 2005/07/13 15:41:21 $                           |
+# | Version      : $Revision: 1.37 $                                      |
+# | Mod.Date     : $Date: 2005/09/14 14:40:43 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -47,6 +47,9 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.37  2005/09/14 14:40:43  wig
+# | Startet report module (portlist)
+# |
 # | Revision 1.36  2005/07/13 15:41:21  wig
 # | Remove pid from log output
 # |
@@ -194,6 +197,7 @@ use Micronas::MixParser;
 use Micronas::MixIOParser;
 use Micronas::MixI2CParser;
 use Micronas::MixWriter;
+use Micronas::MixReport;
 
 
 ##############################################################################
@@ -205,7 +209,7 @@ use Micronas::MixWriter;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.36 $'; # RCS Id
+$::VERSION = '$Revision: 1.37 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 logconfig(
@@ -285,6 +289,7 @@ mix_getopt_header( qw(
     bak!
     init
     import=s@
+    report=s@
     ));
 
 if ( $#ARGV < 0 ) { # Need  at least one sheet!!
@@ -383,6 +388,8 @@ add_sign2hier();
 #
 generate_entities();
 
+#TODO: write_report(); # Dump list of entities, signals, ...
+
 #
 ##############################################################################
 #
@@ -401,6 +408,8 @@ generate_entities();
 # Write intermediate data ...
 #
 mix_store_db( "out", "auto", {} );
+
+mix_report();
 
 #
 # BACKEND add for debugging:

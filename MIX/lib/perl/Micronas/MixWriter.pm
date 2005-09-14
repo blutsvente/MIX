@@ -2,7 +2,7 @@
 #
 # +-----------------------------------------------------------------------+
 # |                                                                       |
-# |   Copyright Micronas GmbH, Inc. 2002.                                 |
+# |   Copyright Micronas GmbH, Inc. 2002,2005                             |
 # |     All Rights Reserved.                                              |
 # |                                                                       |
 # |                                                                       |
@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.57 $                                         |
+# | Revision:   $Revision: 1.58 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/07/18 08:58:22 $                              |
+# | Date:       $Date: 2005/09/14 14:40:06 $                              |
 # |                                                                       |
-# | Copyright Micronas GmbH, 2003                                         |
+# | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.57 2005/07/18 08:58:22 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.58 2005/09/14 14:40:06 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.58  2005/09/14 14:40:06  wig
+# | Startet report module (portlist)
+# |
 # | Revision 1.57  2005/07/18 08:58:22  wig
 # | do not write config for simple logic
 # |
@@ -253,7 +256,7 @@ use Micronas::MixParser qw( %hierdb %conndb add_conn );
 sub _write_entities ($$$);
 sub compare_merge_entities ($$$$);
 sub mix_wr_fromto ($$$$);
-sub _write_constantn ($$$$$;$);
+sub _write_constant ($$$$$;$);
 sub write_architecture ();
 sub strip_empty ($);
 sub port_map ($$$$$$);
@@ -287,9 +290,9 @@ sub _mix_wr_preset_hooks (); # preset _HOOK_ macros
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.57 2005/07/18 08:58:22 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.58 2005/09/14 14:40:06 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.57 $';
+my $thisrevision   =      '$Revision: 1.58 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -323,7 +326,7 @@ $EH{'template'}{'vhdl'}{'enty'}{'head'} = <<'EOD';
 -- THISID
 --
 -- Generator: %0% Version: %VERSION%, wilfried.gaensheimer@micronas.com
--- (C) 2003 Micronas GmbH
+-- (C) 2003,2005 Micronas GmbH
 --
 -- --------------------------------------------------------------
 %VHDL_USE_ENTY%
@@ -386,7 +389,7 @@ $EH{'template'}{'vhdl'}{'arch'}{'head'} = <<'EOD';
 -- THISID
 --
 -- Generator: %0% %VERSION%, wilfried.gaensheimer@micronas.com
--- (C) 2003 Micronas GmbH
+-- (C) 2003,2005 Micronas GmbH
 --
 -- --------------------------------------------------------------
 %VHDL_USE_ARCH%
@@ -481,7 +484,7 @@ $EH{'template'}{'verilog'}{'arch'}{'head'} = <<'EOD';
 // THISID
 //
 // Generator: %0% %VERSION%, wilfried.gaensheimer@micronas.com
-// (C) 2003 Micronas GmbH
+// (C) 2003,2005 Micronas GmbH
 //
 // --------------------------------------------------------------
 %VERILOG_USE_ARCH%
@@ -558,7 +561,7 @@ $EH{'template'}{'vhdl'}{'conf'}{'head'} = <<'EOD';
 -- THISID
 --
 -- Generator: %0% Version: %VERSION%, wilfried.gaensheimer@micronas.com
--- (C) 2003 Micronas GmbH
+-- (C) 2003,2005 Micronas GmbH
 --
 -- --------------------------------------------------------------
 %VHDL_USE_CONF%
@@ -1495,7 +1498,7 @@ sub _mix_wr_get_ivhdl ($$$) {
         		if ( $pdd->{'high'} == $pdd->{'low'} ) {
             		if ( $pdd->{'high'} == 0 ) {
                 		# Special case: single pin "bus" -> reduce to it ....
-                		logtrc( "INFO:4", "Port $p of entity $ename one bit wide, reduce to signal\n" );
+                		logtrc( "INFO:4", "Port $p of entity $ename one bit wide, reduce to signal" );
                     		$pdd->{'type'} =~ s,_vector,,; # Try to strip away trailing vector!
                     		$pdd->{'low'} = undef;
                     		$pdd->{'high'} = undef;
@@ -3711,17 +3714,18 @@ sub _write_architecture ($$$$) {
 	    # Add constant definitions here to concurrent signals ....
 	    # $dt has full signal width definition ...
 	    #20040730: allow to assign constants to bus splices
-	    if ( $s->{'::mode'} =~ m,C,io ) {
+	    #!wig20050720: if ( $s->{'::mode'} =~ m,C,io ) {
                 my $no = 0;
                 for my $o ( @{$s->{'::out'}} )  {
+
                     my ( $si, $a, $d ) = _write_constant( $no, $o, $s, $type, $dt, $ilang );
                     $signaltext .= $si;                    # add to signal declaration ...
                     $veridefs .= $d;                       # Verilog defines
                     $macros{'%CONCURS%'} .= $a;  # add to signal assignment
-                    $no++;
+                    $no++ if ( $o->{'rvalue'} ); # Increment only if detected an signal ...
                 }
-                next; #TODO: continue here -> ::out has rvalue, ignore below ...
-	    }
+                # next; #TODO: continue here -> ::out has rvalue, ignore below ...
+	    #!wig20050720: }
 
 	    # Generics and parameters: Not needed here
 	    if ( $s->{'::mode'} =~ m,\s*[GP],io ) {
@@ -4018,14 +4022,15 @@ sub mix_wr_getpwidth ($) {
 # Print out constant definitions:
 #
 #  constant NAME : $TYPE := VALUE;
-# Currently we pass through the value nearly literally!
+#  + additional signal assignment
+#  Currently we pass through the value nearly literally!
 #
 # Special cases
 #20030710: adding Verilog support ...
 #20040730: changed interface: add out
 #
 sub _write_constant ($$$$$;$) {
-    my $n = shift;
+    my $n = shift;		  # counter t uniquify the generated constant name
     my $out = shift;      # constant description
     my $s    = shift;     # ref to signal definition
     my $type = shift;     # type of this constant 
@@ -4034,20 +4039,21 @@ sub _write_constant ($$$$$;$) {
 
     my $tcom = $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'default'} || "##";
     
-    my $t = "";         # Signal definitions
-    my $sat = "";      # Signal assignments
-    my $def = "";      # Take `defines
-    my $comm = "";   # Comments
+    my $t = "";       	# Signal definitions
+    my $sat = "";     	# Signal assignments
+    my $def = "";     	# Take `defines
+    my $comm = "";   	# Comments
     my $width = "__E_WIDTH_CONST";
 
     #TODO: remove this dead code?
     unless( exists( $out->{'rvalue'} ) ) {
             if ( $out->{'inst'} =~ m,(__|%)CONST(__|%),io ) {
                 logwarn( "WARNING: Missung value definition for constant $s->{'::name'}" );
+                $EH{'sum'}{'warnings'}++;
                 $t = "\t\t\t" . $tcom .  $s->{'::name'} . " <= __W_MISSING_CONST_VALUE;\n";
             }
     } else {
-	my $value = $out->{'rvalue'};
+		my $value = $out->{'rvalue'};
 
     #
     #TODO: 
@@ -4163,9 +4169,9 @@ sub _write_constant ($$$$$;$) {
 	} elsif ( $type =~ m,_vector,io ) {
             # Replace ' -> "
             $comm = " " . $tcom . " __I_VectorConv";
-            $value =~ s,',",go;
+            $value =~ s,',",go; 		# '
             if ( $lang =~ m,^veri,io) {
-                $value =~ s,['"],,go;
+                $value =~ s,['"],,go; 	# '
                 # $value = "'d" . $value; # Decimal values assumed ...
                 $value = "'b" . $value; # value should be of binary type!!
             }
@@ -4185,27 +4191,30 @@ sub _write_constant ($$$$$;$) {
             $value =~ s,["],,g; # Quick hack ....
             #TODO: rework ident strategy ... e.g. mark with keywords ...
             $def = "`define " . $cname . " " . $value . " " . $comm . "\n";
-            unless( $bref ) {
+            unless( $bref or $n ) {
                 $t .= $EH{'macro'}{'%S%'} x 3 . "wire\t" . $dtsa . "\t" . $sname . ";" . $dtsac . "\n";
             }
             if ( $dtp eq $dtsa ) {
-                $sat = $EH{'macro'}{'%S%'} x 3 . "assign " . $sname . " = `" .
+                $sat = $EH{'macro'}{'%S%'} x 3 . "assign " . $sname . ' = `' .   # `
                         $cname . ";\n";
             } else {
-                $sat = $EH{'macro'}{'%S%'} x 3 . "assign " . $sname . $dts . " = `" .
+                $sat = $EH{'macro'}{'%S%'} x 3 . "assign " . $sname . $dts . " = `" . # `
                         $cname . ";\n";
             }
         } else {
+        	# Print out signal definition ...
+        	#!wig20050720: only the first time ($n == 0)
+            unless( $bref or $n ) {
+                $t .= $EH{'macro'}{'%S%'} x 3
+                   . "signal%S%" . $sname . " : " 
+                   . $type . $dtsa . "; " . $dtsac . "\n";
+            }
             # Reduce type if constant is one-bit wide ...
             if ( $type =~ m/_vector$/o and $out->{'port_f'} eq "0" and $out->{'port_t'} eq "0" ) {
                 $type =~ s/_vector$//;
             }
-            $t = $EH{'macro'}{'%S%'} x 3 . "constant " . $cname .
+            $t .= $EH{'macro'}{'%S%'} x 3 . "constant " . $cname .
                 " : $type$dtp := $value;$comm $dtpc\n";
-            unless( $bref ) {
-                $t .= $EH{'macro'}{'%S%'} x 3 .
-                   $EH{'macro'}{'%S%'} . "signal " . $sname . " : " . $type . $dtsa . "; " . $dtsac . "\n";
-            }
             # Is the constant assigned to all of the signal?
             if ( $dtp eq $dtsa ) {
                 $sat =  $EH{'macro'}{'%S%'} x 3 . "$sname <= $cname" . ";\n";
@@ -5087,16 +5096,13 @@ sub mix_wr_use_udc ($$$) {
 	my $instance = shift;
 	my $macroref = shift;
 
+	#!wig: will not work for __COMMON__
+	return if ( $instance eq "__COMMON__" );
+	
 	# my %modkeys = (
 	# 	'arch' => [ qw( HEAD DECL BODY FOOT ) ],
 	# );
 	my $tagre = '/(%|__?)(' . join( "|", qw( HEAD DECL BODY FOOT ) ) . ')(%|__?)/';
-
-	# unless ( exists( $keep_hooks{'__init__'} ) ) {
-	#	_mix_wr_save_hooks();
-	# } else {
-	# 	_mix_wr_preset_hooks();
-	# }
 
 	my $lang = uc( $hierdb{$instance}{'::lang'} || $EH{'macro'}{'%LANGUAGE%'} );		
 	if ( exists( $hierdb{$instance}{'::udc'} ) and
