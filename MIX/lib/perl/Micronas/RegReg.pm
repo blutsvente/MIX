@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegReg.pm,v 1.1 2005/07/07 12:35:26 lutscher Exp $
+#  RCSId: $Id: RegReg.pm,v 1.2 2005/09/16 13:57:47 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  RegDomain.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegReg.pm,v $
+#  Revision 1.2  2005/09/16 13:57:47  lutscher
+#  added get_reg_init()
+#
 #  Revision 1.1  2005/07/07 12:35:26  lutscher
 #  Reg: register space class; represents register space
 #  of a device and contains register domains; also contains
@@ -132,6 +135,18 @@ sub fields {
 		push @{$this->{fields}}, \%hfield;
 	};
 	return $this->{fields};
+};
+
+# retrieves the init value for a register from its fields
+sub get_reg_init {
+   my $this = shift;
+   my $href;
+   
+   my $res = 0;
+   foreach $href (@{$this->fields}) {
+	   $res |= $href->{'field'}->attribs->{'init'} << $href->{'pos'};
+   };
+   return $res;
 };
 
 # default display method
