@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.2 2005/07/18 08:40:59 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.3 2005/09/16 13:57:27 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.3  2005/09/16 13:57:27  lutscher
+#  added register view E_VR_AD from Emanuel
+#
 #  Revision 1.2  2005/07/18 08:40:59  lutscher
 #  o fixed parser for register-master sheet
 #  o changed global parameter _mult_max_ -> _mult_
@@ -54,6 +57,7 @@ use Micronas::RegDomain;
 use Micronas::RegReg;
 use Micronas::RegField;
 use Micronas::RegViews;
+use Micronas::RegViewsE;
 
 #use FindBin qw($Bin);
 #use lib "$Bin";
@@ -69,13 +73,20 @@ our($VERSION) = '1.1';
 # global constants and defaults; is mapped per reference into Reg objects
 our(%hglobal) = 
   (
-   # supported register-master types
+   # supported register-master types (yes, they are not all the same)
    supported_register_master_type => ["VGCA", "FRCH"], 
+
    # generatable register views 
-   supported_views => ["HDL-vrs"], 
+   supported_views => [
+					   "HDL-vgch-vrs",  # VGCH project video register shell (Thorsten Lutscher)
+					   "E_VR_AD"        # e-language macros (Emanuel Marconetti)
+					  ],
+
    # attributes in register-master that do not belong to a field
+   # note: the field name is retrieved from the ::b entries of the register-master
    non_field_attributes => [qw(::ign ::sub ::interface ::inst ::width ::b:.* ::b ::addr ::dev ::vi2c ::default ::name ::type)],
-   # language for code generation, currently only VHDL supported
+
+   # language for HDL code generation, currently only VHDL supported
    lang => "vhdl",
   );
 
@@ -130,8 +141,10 @@ sub generate_view {
 	my $this = shift;
 	my $view = shift;
 
-	if ($view eq "HDL-vrs") {
+	if ($view eq "HDL-vgch-vrs") {
 		$this->_gen_view_vrs();
+	} elsif ($view eq "E_VR_AD") {
+		$this->_gen_view_vr_ad();
 	} else {
 		die "ERROR: generation of view \'$view\' is not supported";
 	};
