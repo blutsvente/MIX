@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.69 $                                         |
+# | Revision:   $Revision: 1.70 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/09/14 14:40:06 $                              |
+# | Date:       $Date: 2005/09/29 13:45:01 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.69 2005/09/14 14:40:06 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.70 2005/09/29 13:45:01 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.70  2005/09/29 13:45:01  wig
+# | Update with -report
+# |
 # | Revision 1.69  2005/09/14 14:40:06  wig
 # | Startet report module (portlist)
 # |
@@ -325,15 +328,15 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.69 2005/09/14 14:40:06 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.70 2005/09/29 13:45:01 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.69 $';         #'
+my $thisrevision        =      '$Revision: 1.70 $';         #'
 
-# Revision:   $Revision: 1.69 $   
+# Revision:   $Revision: 1.70 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
-( $VERSION = $thisrevision ) =~ s,.*Revision:\s*,,; #TODO: Is that a good idea?
+( $VERSION = $thisrevision ) =~ s,.*Revision:\s*,,; # TODO Is that a good idea?
 
 ##############################################################
 # Basic functions used in MIX ....
@@ -421,16 +424,12 @@ sub mix_getopt_header(@) {
     } else {
 		$EH{'dump'} = "mix" . "." . $EH{'output'}{'ext'}{'internal'};
     }
-	# Is there a *-mixed file in the current directory ?
-	#TODO:
-	# $EH{'dump'} = "NO_DUMP_FILE_DEFINED";
-        # }
 
     # Specify top cell on command line or use TESTBENCH as default
     if (defined $OPTVAL{'top'} ) {
 		$EH{'top'} = $OPTVAL{'top'};
     } else {
-		$EH{'top'} = 'TESTBENCH'; #TODO: put into %EH
+		$EH{'top'} = 'TESTBENCH'; # TODO put into %EH
     }
 
     # Specify variant to be selected in hierachy sheet(s)
@@ -445,7 +444,7 @@ sub mix_getopt_header(@) {
     } 
 
     # Write entities into file
-    #TODO: Do we have to fix path for windows?
+    # TODO Do we have to fix path for windows?
     if (defined $OPTVAL{'outenty'} ) {
 		$EH{'outenty'} = $OPTVAL{'outenty'};
     } elsif ( defined( $EH{'outenty'} ) ) {
@@ -690,7 +689,7 @@ sub mix_usage(@)
 
     #$ENV{PATH} = dirname($^X) . ":$ENV{PATH}";
     $ENV{PATH} = dirname(dirname(dirname($^X))) . "/bin:$ENV{PATH}";
-    #TODO: MSWin32 -> we do not have nroff here :-(
+    # TODO MSWin32 -> we do not have nroff here :-(
     if ( $^O =~ m,mswin,io ) {
 	    open(PIPE, "pod2text --lax $0 |") || die "can't open pipe: $!";
     } else {
@@ -781,7 +780,7 @@ sub mix_banner(;$)
 		if ( defined( $Micronas::MixI2CParser::VERSION ) );
     $MOD_VERSION .= ( "\n#####   MixReport " . $Micronas::MixReport::VERSION )
 		if ( defined( $Micronas::MixReport::VERSION ) );
-    #TODO: add plugin interface, plugin should register it's version here ...
+    # TODO add plugin interface, plugin should register it's version here ...
 
 
     select(STDOUT);
@@ -808,7 +807,7 @@ EOF
 
     if ($EH{'PRINTTIMING}'} ) {
         print "NOTE ($NAME): Execution started " . localtime() . "\n\n";
-        logsay( "NOTE ($NAME): Execution started " . localtime() . "\n" );
+        logsay( "NOTE ($NAME): Execution started " . localtime() );
     }
     1;
 }
@@ -830,7 +829,7 @@ sub mix_help()
 
     #$ENV{PATH} = dirname($^X) . ":$ENV{PATH}";
     $ENV{PATH} = dirname(dirname(dirname($^X))) . "/bin:$ENV{PATH}";
-    #TODO: Win32 ??
+    # TODO Win32 ??
     my $cmd = "";
     if ( $^O =~ m,mswin,io ) {
 	# $cmd = "pod2text --center '$head' --release '$foot' --lax $0 |";
@@ -929,10 +928,12 @@ sub mix_init () {
 		'format' => 'ext',		# Output format derived from filename extension ???
 		'filename' => 'useminus', # Convert _ to - in filenames
 		'generate' =>
-	    	{ 'arch' => 'noleaf',
+	    	{
+	    	'arch' => 'noleaf',
 	      	'enty' => 'noleaf', # no leaf cells: [no]leaf,alt,
-	      	'conf' => 'noleaf', # one of: [leaf|noleaf],verilog no leaf cells, defaults
-				      # is "noleaf". The verilog keyword will add configuration
+	      	'conf' => 'noleaf', # one of: [leaf|noleaf],verilog
+	      			  # create (no) leaf cells, default is "noleaf"
+				      #   The verilog keyword will add configuration
 				      #   records for verilog subblocks (who wants that?)
 	      	'use' => 'enty',     # apply ::use libraries to entity files, if not specified otherwise
 					# values: <enty|conf|arch|all>
@@ -967,7 +968,7 @@ sub mix_init () {
 
 	      	'fold' => 'signal',	# If set to [signal|hier], tries to collect ::comments, ::descr and ::gen
 					# like TEXT_FOO_BAR (X10), if TEXT_FOO_BAR appears several times
-					#TODO: Implement for hier
+					# TODO Implement for hier
           	'verilog' => '', # switches for Verilog generation, off by default, but see %UAMN% tag
                                           #  useconfname := use VHDL config name as verilog module name; works for e.g. NcSim
 	      	'workaround' => {
@@ -1044,7 +1045,7 @@ sub mix_init () {
 		    # t.b.d.: uniq (make sure name apears only once!
 		    #
 		'name' => {
-	    	#TODO: 'all' => '',	# Sets all others .... ->
+	    	# TODO 'all' => '',	# Sets all others .... ->
 	    	'pad' => 'check,lc',
 	    	'conn' => 'check,lc', # check signal names ...
 	    	'enty' => 'check,lc',
@@ -1053,8 +1054,8 @@ sub mix_init () {
 	    	'conf' => 'check,lc',
 		},
 		'keywords' => { #These keywords will trigger warnings and get replaced
-	    	'vhdl'	=> '(open|instance|entity|signal)', #TODO: Give me more keywords
-	    	'verilog' 	=> '(register|net|wire|in|out|inout)', #TODO: give me more
+	    	'vhdl'	=> '(open|instance|entity|signal)', # TODO Give me more keywords
+	    	'verilog' 	=> '(register|net|wire|in|out|inout)', # TODO give me more
 		},
 		'defs' => '',  # 'inst,conn',    # make sure elements are only defined once:
 		    # possilbe values are: inst,conn
@@ -1078,12 +1079,12 @@ sub mix_init () {
             # the path will be available in ...'__path__'{PATH}
 			'delta' => '', # define how the diffs are made, see output.delta for allowed keys
 							# if it's empty, take output.delta contents
-            'filter' => { #TODO: allow to remove less important lines from the diff of template vs. created
+            'filter' => { # TODO allow to remove less important lines from the diff of template vs. created
                 'entity' => '',
                 'arch' => '',
                 'conf' => '',
             },
-            'extmask' => { #TODO: mask HDL files seen by the verify parser ... t.b.d.
+            'extmask' => { # TODO mask HDL files seen by the verify parser ... t.b.d.
                 'entity' => '',
                 'arch' => '',
                 'conf' => '',
@@ -1185,7 +1186,7 @@ sub mix_init () {
 					# const := use %SEL% defined width
 
     },
-    #TODO: add a "register configuration for plugin" interface
+    # TODO add a "register configuration for plugin" interface
     'reg_shell' => {    # default prefixes for register interface units
 	    'type'               => 'ser', # default Register type
 	    '%IIC_SER_REG%'    => 'iic_ser_reg_', # prefix for serial subregister entity
@@ -1391,7 +1392,7 @@ sub mix_init () {
     # ::b	::b	::b	::b	::b	::b	::b	::b	::b	::b	::b
     # ::b	::b	::b	::b	::b	::init	::rec	::range	::view
     # ::vi2c	::name	::comment
-    #TODO: Define default fields:
+    # TODO Define default fields:
     'vi2c' => {
         'xls' => 'VI2C',
 	'req' => 'optional',
@@ -1626,7 +1627,7 @@ sub mix_init () {
 		}elsif ( defined( $ENV{'USERPROFILE'} ) ) {
             $EH{'macro'}{'%HOME%'} = $ENV{'USERPROFILE'};
 		} else {
-	    	$EH{'macro'}{'%HOME%'} = "C:\\"; #TODO: is that a good idea?
+	    	$EH{'macro'}{'%HOME%'} = "C:\\"; # TODO is that a good idea?
 		} 
     } elsif ( defined( $ENV{'HOME'} ) ) {
 		$EH{'macro'}{'%HOME%'} = $ENV{HOME};
@@ -1649,6 +1650,12 @@ sub mix_init () {
         $EH{'macro'}{'%IOCR%'} = "\n";
     }
 
+	# Print out some of the collected data:
+	logsay('#' x 72);
+	logsay("CMDLINE: " . $EH{'macro'}{'%ARGV%'} );
+	# All the rest can be found in the CONF dump section ....
+
+# 
 #
 # If there is a file called mix.cfg, try to read that ....
 # Configuration parameters have to be written like
@@ -1666,6 +1673,7 @@ foreach my $conf (
 
 	unless( open( CFG, "< $conf/mix.cfg" ) ) {
 	    logwarn("Cannot open $conf/mix.cfg for reading: $!\n");
+	    $EH{'sum'}{'warnings'}++;
 	} else {
 		my $prev = "";
 	    while( <CFG> ) {
@@ -1857,7 +1865,7 @@ sub mix_overload_conf ($) {
 	my $loga ='logtrc( "INFO", "Adding configuration ' . $i . '");';
 	my $logo ='logtrc( "INFO", "Overloading configuration ' . $i . '");';
 
-	#TODO: Prevent overloading of non-scalar values!!
+	# TODO Prevent overloading of non-scalar values!!
 	$e = "if ( exists( \$EH" . $k . " ) ) { \$EH" . $k . " = '" . $v . "'; " . $logo .
 	    "} else { \$EH" . $k . " = '" . $v . "'; " . $loga . " }";
 	unless ( eval $e ) {
@@ -1892,7 +1900,7 @@ sub _mix_apply_conf ($$$) {
     my $loga ='logtrc( "INFO", \'Adding ' . $s . ' configuration ' . $ok . "=" . $v . '\');';
     my $logo ='logtrc( "INFO", \'Overloading ' . $s . ' configuration ' . $ok . "=" . $v . '\');';
  
-    #TODO: Prevent overloading of non-scalar values!!
+    # TODO Prevent overloading of non-scalar values!!
     my $e = "if ( exists( \$EH$k ) ) { \$EH$k = '$v'; $logo } else { \$EH$k = '$v'; $loga }";
     unless ( eval $e ) {
 	    if ( $@ ) { # S.th. went wrong??
@@ -2093,7 +2101,7 @@ sub mix_utils_open ($;$){
     }
 
     # Search a file with this name in EH{check}{hdlout} ...
-    # TODO: better algo: preparse check.hdlout.path and keep a list of all entities around ... 
+    # TODO better algo: preparse check.hdlout.path and keep a list of all entities around ... 
     my $mode = O_CREAT|O_WRONLY|O_TRUNC;
     if ( $flags =~ m,COMB, ) {
         $mode = O_CREAT|O_WRONLY|O_APPEND;
@@ -2104,7 +2112,7 @@ sub mix_utils_open ($;$){
         if ( $templ ) { # Got a template file ...
             @ccont = @{mix_utils_open_diff( $templ, "verify" )}; # Get template contents, filtered  ...
 	    @ncont = (); # Reset new contents ...
-            #TODO: combine mode??
+            # TODO combine mode??
 
             $fhstore{"$file"}{'tmpl'} = $templ;
             $fhstore{"$file"}{'tmplmode'} = $leaf_flag;
@@ -2379,7 +2387,7 @@ $c ------------- CHANGES START HERE ------------- --
         my $fh = $fhstore{"$fn"}{'delta'};
 
         # Print header to $fh ... (usual things like options, ....)
-        # TODO: Add that header to header definitions
+        # TODO Add that header to header definitions
 my $head =
 "$c ------------- delta mode for file $file ------------- --
 $c
@@ -2413,7 +2421,7 @@ $c ------------- CHANGES START HERE ------------- --
                     }
                     $fhstore{"$fn"}{'delta'} = 0;
 		# }
-		# $close_flag = 0; #TODO: Why
+		# $close_flag = 0; # TODO Why
 		unlink( $fhstore{"$fn"}{'deltaname'} ) or
 		    logwarn( "WARNING: Cannot remove empty diff file " .
                                  $fhstore{"$fn"}{'deltaname'} . ": " . $! ) and
@@ -2438,7 +2446,7 @@ $c ------------- CHANGES START HERE ------------- --
 
     #
     # Do we need to close the delta file?
-    ##TODO: Close in the delta-if branch above ...
+    # TODO Close in the delta-if branch above ...
     if ( $fhstore{"$fn"}{'tmplout'} ) {
         unless ( $fhstore{"$fn"}{'tmplout'}->close ) {
             logwarn( "ERROR: Cannot close file $fhstore{$fn}{'tmplname'}: $!" );
@@ -2450,7 +2458,7 @@ $c ------------- CHANGES START HERE ------------- --
     }
     #
     # Do we need to close the diff file?
-    ##TODO: Close in the delta-if branch above ...
+    # TODO Close in the delta-if branch above ...
     if ( $fhstore{"$fn"}{'delta'} ) {
         unless ( $fhstore{"$fn"}{'delta'}->close ) {
             logwarn( "ERROR: Cannot close file $fhstore{$fn}{'deltaname'}: $!" );
@@ -2500,7 +2508,7 @@ sub mix_utils_diff ($$$$;$) {
     my $diff = diff( $nc, $oc,
 	    { STYLE => "Table",
 	    # STYLE => "Context",
-	    FILENAME_A => 'NEW', #TODO: get new file name in here!
+	    FILENAME_A => 'NEW', # TODO get new file name in here!
 	    FILENAME_B => "OLD $file",
 	    CONTEXT => 0,
 	    }
@@ -2607,7 +2615,7 @@ sub _mix_utils_loc_templ ($$) {
 #
 sub mix_utils_loc_sum () {
     for my $h ( sort( keys( %loc_files )) ) {
-        #TODO: Apply filter ... (or better upfront ...)
+        # TODO Apply filter ... (or better upfront ...)
         logwarn( "WARNING: unmatched hdl file in verify path: $h!" );
         $EH{'sum'}{'verify_leftover'}++;
         $EH{'DELTA_VER_NR'}++;
@@ -2759,7 +2767,7 @@ sub convert_in ($$) {
 		} else {
 		    $d[$n]{$ii} = "%UNDEF%";
 		}
-	    }#TODO: Set to default ? If field is undefined, set to ""
+	    }# TODO Set to default ? If field is undefined, set to ""
 	}
     }
     unless( $hflag ) {
@@ -2906,11 +2914,6 @@ sub parse_header($$@){
 					#Remember print order no longer is unique
 				}
 				$or{$funique} = $rowh{$i}[$ii];
-				#!wig20050708: removed the 'cols' counter -> now in _mult_
-				# if ($ii > $EH{$kind}{'cols'}) {
-				# 	$EH{$kind}{'cols'} = $ii; #TODO: remove this!
-				# }
-
 			}
 			# Remember number of multiple header columns
 			if ( not exists( $EH{$kind}{'_mult_'}{$i} ) ) {
@@ -2968,7 +2971,7 @@ sub mix_store ($$;$){
 	logwarn("file $predir$file already exists! Will be overwritten!");
     }
 
-    #TODO: would we want to use nstore instead ?
+    # TODO would we want to use nstore instead ?
     unless( store( $r_data, $predir . $file ) ) {
 	logwarn("FATAL: Cannot store date into $predir$file: " . $! . "!\n");
 	exit 1;
@@ -3075,7 +3078,7 @@ sub db2array ($$$) {
     my $commentnr = "";
     
     # Get order for printing fields ...
-    #TODO: check if fields do overlap!
+    # TODO check if fields do overlap!
     for my $ii ( keys( %{$EH{$type}{'field'}} ) ) {
 		next unless ( $ii =~ m/^::/o );
 		# Only print if PrintOrder > 0:
@@ -3299,10 +3302,10 @@ sub inout2array ($;$) {
 	}
 	# Constants are working a different way:
 	#: m,^\s*(__CONST__|%CONST%|__GENERIC__|__PARAMETER__|%GENERIC%|%PARAMETER%),o ) {
-	#TODO: make sure sig_t/sig_f and port_t/port_f are defined in pairs!!
+	# TODO make sure sig_t/sig_f and port_t/port_f are defined in pairs!!
 	if ( $i->{'inst'} =~
 	    m,^\s*(__CONST__|%CONST%),o ) {
-            #!wig20040330: TODO: print out "rvalue" instead of "port"??
+            # TODO !wig20040330: print out "rvalue" instead of "port"??
             #!wig20040817: write back partial asisgnment's, too.
             if ( defined $i->{'sig_t'} and defined $i->{'sig_f'} ) {
                 my $pf = $i->{'port_f'} || "";
@@ -3345,7 +3348,7 @@ sub inout2array ($;$) {
     }
 
     # Do a simple sort on the output date and join
-    #!wig: TODO: sort better: my $s = join( "", sort( @s ) );
+    # TODO sort better: my $s = join( "", sort( @s ) );
     my $s = join( "", @s );
 
     if ( ( $s =~ m,\(:,o ) or ( $s =~ m,\(:,o ) ) {
@@ -3368,6 +3371,7 @@ sub inout2array ($;$) {
 #wig20030716: use first line as header descriptions, field seperator!!
 #wig20040324: if we read in FOO-mixed.xls and are not writing xls (e.g. not on mswin)
 #wig20040628: sort cells that contain ","
+#wig20050926: remove duplicate , ....
 #   -> remove \n in in/out ...
 sub two2one ($) {
     my $ref = shift;
@@ -3376,16 +3380,16 @@ sub two2one ($) {
  
     no warnings; # switch of warnings here, values might be undefined ...
     # Convert two dim. input array into one-dimensional
-    for my $n ( @$ref ) {
-        # @t = map { join( ",", sort( split( /,/ ) ))} @$n;
-            
-	my $l = join( '@@@', map { join( ",", sort( split( /[\s\n]*,[\s\n]*/ ) ))} @$n ); # Use @@@ as field seperator ...
-	$l =~ s/\t+/\t/g;# Remove multiple \t
-	$l =~ s/\t$//; # Convert \t to space ....
-	push( @out, $l );
+    for my $n ( @$ref ) {            
+		my $l = join( '@@@', map { join( ",", sort( split( /[\s\n]*,[\s\n]*/ ) ))} @$n ); # Use @@@ as field seperator ...
+		$l =~ s/\t+/\t/og;	# Remove multiple \t
+		$l =~ s/\t$//o; 	# Convert trailing \t to nothing ....
+		$l =~ s/,\s*,/,/og; # Remove duplicate ,
+		$l =~ s/,\s*$//o;	# Remove trailing ,
+		push( @out, $l );
     }
     if ( $EH{'output'}{'delta'} !~ m/space/ ) {
-	@out = grep( !/^\s*$/ , @out ); # Get rid of "space only" elements
+		@out = grep( !/^\s*$/ , @out ); # Get rid of "space only" elements
     }
     return @out;
 }
@@ -3473,8 +3477,8 @@ write out various summary information like number of changed files, generated wi
 
 sub write_sum () {
 
-    #TODO: use different log**** call !!
-    #TODO: Shift function to other module ... ??
+    # TODO use different log**** call !!
+    # TODO Shift function to other module ... ??
 
     # If we had 'inpath' verify mode, summarize left-over "golden" hdl files.
     if ( $EH{'check'}{'hdlout'}{'path'} and $EH{'check'}{'hdlout'}{'mode'} =~ m,\binpath\b,io ) {

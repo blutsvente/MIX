@@ -14,10 +14,10 @@
 #
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
-# | Modules:    $RCSfile: Mif.pm,v $                                                |
-# | Revision:   $Revision: 1.1 $                                               |
-# | Author:     $Author: wig $                                                 |
-# | Date:       $Date: 2005/09/14 14:40:06 $                                                   |
+# | Modules:    $RCSfile: Mif.pm,v $                                      |
+# | Revision:   $Revision: 1.2 $                                          |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2005/09/29 13:45:02 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,9 +27,12 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.2  2005/09/29 13:45:02  wig
+# | Update with -report
+# |
 # | Revision 1.1  2005/09/14 14:40:06  wig
 # | Startet report module (portlist)
-# |                                                                |
+# |                                                                       |
 # |                                                                       |
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -62,9 +65,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.1 2005/09/14 14:40:06 wig Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.2 2005/09/29 13:45:02 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.1 $'; #'  
+my $thisrevision    =      '$Revision: 1.2 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

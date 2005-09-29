@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.25 $                                          |
+# | Revision:   $Revision: 1.26 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/07/19 07:01:44 $                              |
+# | Date:       $Date: 2005/09/29 13:45:02 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.26  2005/09/29 13:45:02  wig
+# | Update with -report
+# |
 # | Revision 1.25  2005/07/19 07:01:44  wig
 # | map %LOW% to %LOW_BUS% is user assigns badly
 # |
@@ -176,15 +179,16 @@ sub mix_utils_mask_excel ($);
 sub absolute_path ($);
 sub useOoolib ();
 sub _split_diff2xls ($$);
+sub _join_split_lines ($);
 
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.25 2005/07/19 07:01:44 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.26 2005/09/29 13:45:02 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.25 $'; #'  
+my $thisrevision    =      '$Revision: 1.26 $'; #'  
 
-# Revision:   $Revision: 1.25 $
+# Revision:   $Revision: 1.26 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1199,21 +1203,26 @@ sub write_delta_sheet($$$) {
 
     if(!@prev) {
         logwarn "ERROR: reading input for delta mode!";
-	$EH{'sum'}{'errors'}++;
-	return;
+		$EH{'sum'}{'errors'}++;
+		return;
     }
+
+	#!wig20050926: join split lines before diff!
+	_join_split_lines( $r_a );
+	_join_split_lines( $prev[0] );
+
 
     my @prevd = two2one( $prev[0] );
     my @currd = two2one( $r_a );
     if ( not $EH{'iswin'} and $file =~ m,.xls$, ) {
-	# read in previously generated -mixed.xls file
-	# -> map away \n and other whitespace ...
-	#TAG: maybe we need to generalize that ... should be done if we are sure to
-	#   not write xls output
-	map( { s/,\s+/,/g } @prevd ); # Remove \n and such
-	map( { s/,\s+/,/g } @currd );
-	map( { s/@@@\s+/@@@/g } @prevd ); # Remove \n and such
-	map( { s/@@@\s+/@@@/g } @currd );
+		# read in previously generated -mixed.xls file
+		# -> map away \n and other whitespace ...
+		#TAG: maybe we need to generalize that ... should be done if we are sure to
+		#   not write xls output
+		map( { s/,\s+/,/g } @prevd ); # Remove \n and such
+		map( { s/,\s+/,/g } @currd );
+		map( { s/@@@\s+/@@@/g } @prevd ); # Remove \n and such
+		map( { s/@@@\s+/@@@/g } @currd );
     }
     
     my @colnhead = @{$r_a->[0]};
@@ -1328,6 +1337,65 @@ sub write_delta_sheet($$$) {
     }
 }
 
+#
+# Iterate over conn sheets and try to merge back split lines (::in/::out)
+#   This is required for getting correct diffs!
+# Input: ref to array of arrays with data
+#        replaces merged columns inline
+#!wig20050926
+sub _join_split_lines ($) {
+	my $dataref = shift;
+	
+	# Get header to column mappings
+	my $head = $dataref->[0]; # Has to be first row!
+	
+	# Predefine columns of interest:
+	# ::name, ::in, ::out
+	my %cols = (
+		'::name' => -1,
+		'::in'	 => -1,
+		'::out'  => -1,
+	);
+	
+	for my $i ( 0.. (scalar(@$head) - 1 ) ) {
+		if ( exists( $cols{$head->[$i]} ) ) {
+			$cols{$head->[$i]} = $i;
+		}
+	} 	 
+	
+	# do nothing if we could not find the ::name column
+	return if( $cols{'::name'} == -1 );
+	
+	my $lastname = '';
+	my $lastline = 0;
+	my @delete_me = ();
+	# Iterate over all other lines:
+	for my $i ( 1..(scalar( @$dataref ) - 1) ) {
+		next unless exists( $dataref->[$i][$cols{'::name'}] );
+		my $thisname = $dataref->[$i][$cols{'::name'}];
+		if ( $thisname and $thisname eq $lastname ) { # Merge ::in and ::out if available!!
+			for my $io ( qw( ::in ::out ) ) {
+				if ( $cols{$io} > -1 and length( $dataref->[$i][$cols{$io}] ) > 0 ) {
+					$dataref->[$lastline][$cols{$io}] .= ", " . $dataref->[$i][$cols{$io}]; 
+				}
+				# Sort it:
+				$dataref->[$lastline][$cols{$io}] =~ s/,\s*,/, /og; # Remove extra \s
+				$dataref->[$lastline][$cols{$io}] =
+					join( ',', split( /,\s*/, $dataref->[$lastline][$cols{$io}] ) );			
+			}
+			# Remove this line! Simply set it to all empty strings ..
+			push( @delete_me, $i );
+		} else { # Set new start:
+			$lastname = $thisname;
+			$lastline = $i;
+		}
+	}
+	# Finally: remove the unspliced lines:
+	for my $i ( reverse( @delete_me ) ) {
+		splice( @$dataref, $i , 1 );
+	}
+} # End of _join_split_lines
+	
 #
 # Take diff array and convert back to XLS format
 #

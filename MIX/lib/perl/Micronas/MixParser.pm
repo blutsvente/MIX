@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.55 $                                         |
+# | Revision:   $Revision: 1.56 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/09/14 14:40:06 $                              |
+# | Date:       $Date: 2005/09/29 13:45:01 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.55 2005/09/14 14:40:06 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.56 2005/09/29 13:45:01 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.56  2005/09/29 13:45:01  wig
+# | Update with -report
+# |
 # | Revision 1.55  2005/09/14 14:40:06  wig
 # | Startet report module (portlist)
 # |
@@ -300,9 +303,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.55 2005/09/14 14:40:06 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.56 2005/09/29 13:45:01 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.55 $';
+my $thisrevision =	'$Revision: 1.56 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -3549,8 +3552,11 @@ sub generate_port ($$$$$$) {
         }
     }
 
-    if ( $f eq $t ) {
-        $t{'port_t'} = $t{'port_f'} = undef; # Port is only one bit wide ...
+	#!wig20050926: Single bit means -> set to empty string!
+	# will not create problems, because the generated ports are unique
+	#  and bit count starts from zero!
+    if ( defined $f and defined $t and $f eq $t ) {
+         $t{'port_t'} = $t{'port_f'} = ''; #previous set to: undef; # Port is only one bit wide ...
     }
 
     logtrc( "INFO:4", "add_port: signal $signal adds port $t{'port'} to instance $t{'inst'}" );
@@ -4036,7 +4042,7 @@ sub _extend_inout ($$$) {
 			$i->{'port_f'} = $h;
 		}
 		if ( not defined( $i->{'port_t'} ) ) {
-			$i->{'port_t'} = $h;
+			$i->{'port_t'} = $l;
 		}
     }
 #TODO: What if only one of is defined???
