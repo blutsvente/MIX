@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.56 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/09/29 13:45:01 $                              |
+# | Revision:   $Revision: 1.57 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2005/09/29 15:21:42 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.56 2005/09/29 13:45:01 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.57 2005/09/29 15:21:42 lutscher Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.57  2005/09/29 15:21:42  lutscher
+# | modified some warnings to help debugging problems in input
+# |
 # | Revision 1.56  2005/09/29 13:45:01  wig
 # | Update with -report
 # |
@@ -303,9 +306,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.56 2005/09/29 13:45:01 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.57 2005/09/29 15:21:42 lutscher Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.56 $';
+my $thisrevision =	'$Revision: 1.57 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1030,7 +1033,8 @@ sub add_conn (%) {
                 $nameflag = 1;
                 $name = $EH{'postfix'}{'PREFIX_CONST'} . $EH{'CONST_NR'}++;
                 $in{'::name'} = $name;
-                logwarn( "INFO: Creating name $name for constant!" );
+                ##LU commented this out, not very meaningful
+				# logwarn( "INFO: Creating name $name for constant!" );
         }
 
         #
@@ -1091,7 +1095,19 @@ sub add_conn (%) {
             unless( $conndb{$name}{'::out'}[0]{'inst'} eq "%CONST%" ) {
                 # Mark signal .... but add it anyway (user should be able to fix it)
                 #TODO: fix up that code, should not deal with conndb here ....
-                logwarn( "Missing signal name in input. Generated name $name!" );
+				##LU added some hint for user
+				my($hint) = $EH{'macro'}{'%EMPTY%'};
+				if (lc($conndb{$name}{'::mode'}) eq "i") {
+					$hint = $in{'::in'} if (exists $in{'::in'});
+				} elsif (lc($conndb{$name}{'::mode'}) eq "o") {
+					$hint = $in{'::out'} if (exists $in{'::out'});
+				} else {
+					$hint = $in{'::out'} if (exists $in{'::out'});
+					if ($hint eq $EH{'macro'}{'%NULL%'} or $hint eq $EH{'macro'}{'%EMPTY%'}) {
+						$hint = $in{'::in'} if (exists $in{'::in'});;
+					};
+				};
+                logwarn( "Missing signal name in input near \'$hint\'. Generated name $name!" );
                 $conndb{$name}{'::ign'} = "#__E_MISSING_SIGNAL_NAME";
                 $conndb{$name}{'::comment'} = "#__E_MISSING_SIGNAL_NAME" . $conndb{$name}{'::comment'};
                 $conndb{$name}{'::name'} = $name;
