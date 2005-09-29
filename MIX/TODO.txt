@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.44 2005/09/14 14:40:43 wig Exp $
+# $Id: TODO.txt,v 1.45 2005/09/29 13:47:04 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -19,6 +19,60 @@ Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
 
+>>title: 20050929g/Bug: OpenOffice generated XLS does not work
+
+	Req: torsten
+	Prio: low
+	
+>>title: 20050929f/Bug: output.generate.combine appends new HDL data
+	to existing file
+	
+	Explanation: caused by implementation; document it!
+	
+	Req: torsten
+	Prio: low
+	
+>>title: 20050929e/Bug: POSTFIX_PORT_OUT and _IN are obsolete?
+
+	Req: torsten
+	Prio: low
+	
+>>title: 20050929d/Req: generate verilog2001 style module headers
+
+module (
+	input wire [A:B] NAME,
+	output wire [C:D] NAME,
+)
+
+make wire a macro -> e.g. %verilog2001_input%
+		%verilog2001_output% ...
+(like std_ulogic_.... for VHDL)
+
+	Req: torsten
+	Prio: medium
+
+>>title: 20050929c/Req: beautify output
+
+	Create output in nice format (indent constant!)
+	
+	Prio: low
+	Req: oberhof
+	 
+>>title: 20050929b/Req: get ::descr in portmaps, too!
+
+	extend support for comments -> go into portmaps
+	
+	Prio: medium
+	Req: oberhof
+
+>>title: 20050929a/Bug: multi-line ::descr create bad verilog ports
+
+	If the descr. field has multiple lines, the generated output is
+	corrupt!
+	
+	Prio: medium
+	Req: oberhof
+	
 >>title: 20050810b/Req: print mif files/tables
 
 	Prio: high
