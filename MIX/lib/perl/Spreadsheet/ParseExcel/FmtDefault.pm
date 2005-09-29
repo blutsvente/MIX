@@ -65,7 +65,8 @@ sub new($;%) {
 sub TextFmt($$;$) {
     my($oThis, $sTxt, $sCode) =@_;
     return $sTxt if((! defined($sCode)) || ($sCode eq '_native_'));
-    return pack('C*', unpack('n*', $sTxt));
+    #!wig:org: return pack('C*', unpack('n*', $sTxt));
+	return pack('U*', unpack('n*', $sTxt));
 }
 #------------------------------------------------------------------------------
 # FmtStringDef (for Spreadsheet::ParseExcel::FmtDefault)
