@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.70 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/09/29 13:45:01 $                              |
+# | Revision:   $Revision: 1.71 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2005/10/04 16:08:36 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.70 2005/09/29 13:45:01 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.71 2005/10/04 16:08:36 lutscher Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.71  2005/10/04 16:08:36  lutscher
+# | cleaned up EH-reg_shell parameters
+# |
 # | Revision 1.70  2005/09/29 13:45:01  wig
 # | Update with -report
 # |
@@ -328,11 +331,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.70 2005/09/29 13:45:01 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.71 2005/10/04 16:08:36 lutscher Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.70 $';         #'
+my $thisrevision        =      '$Revision: 1.71 $';         #'
 
-# Revision:   $Revision: 1.70 $   
+# Revision:   $Revision: 1.71 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1186,22 +1189,20 @@ sub mix_init () {
 					# const := use %SEL% defined width
 
     },
-    # TODO add a "register configuration for plugin" interface
-    'reg_shell' => {    # default prefixes for register interface units
-	    'type'               => 'ser', # default Register type
+	#
+    # parameters for register-view generation (e.g. for HDL register-shell)
+    #
+	'reg_shell' => {
+	    'type'             => 'HDL-vgch-vrs', # type of register-view to be generated (see Reg.pm)
+		'mode'             => 'lcport', # lcport -> map created port names to lowercase	
+		'addrwidth' => 8,   # Default address bus width
+		'datawidth' => 32,  # Default data bus width
+					# legacy parameters, not needed anymore
+		'regwidth'	=> 32,  # Default register width
+		'top_name'  => '%PREFIX_IIC_GEN%%::interface%%POSTFIX_IIC_GEN%', # Name reg_shell top-level instance 
 	    '%IIC_SER_REG%'    => 'iic_ser_reg_', # prefix for serial subregister entity
 	    '%IIC_PAR_REG%'    => 'iic_par_reg_', # prefix for parallel subregister entity
-	    '%IIC_SYNC%'       => 'sync_iic',  # prefix for sync block
-		'top_name' => '%PREFIX_IIC_GEN%%::interface%%POSTFIX_IIC_GEN%', # Name reg_shell top-level instance 
-		'regwidth'	=> 16, # Default register width (not used for type HDL-vrs)
-		'addrwidth' => 8,  # Default address bus width
-		'datawidth' => 8,  # Default data bus width
-		'mode' => 'lcport', # lcport -> map created port names to lowercase	
-		'reset_active' => 0, # 0 for low-active reset at FFs
-		'syn_reset' => 0,    # 0 for asynchronous reset at FFs
-		'cac_del' => 0,      # 1 for OCP command accept delay
-        'dav_del' => 1,      # 1 for OCP data valid delay
-		'reg_output' => 1,   # 1 for OCP registered outputs (? doubtful)	
+	    '%IIC_SYNC%'       => 'sync_iic'      # prefix for sync block
     },
     #
     # Possibly read configuration details from the CONF sheet, see -conf option
