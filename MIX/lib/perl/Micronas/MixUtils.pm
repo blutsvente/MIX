@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.71 $                                         |
+# | Revision:   $Revision: 1.72 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2005/10/04 16:08:36 $                              |
+# | Date:       $Date: 2005/10/05 09:24:48 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.71 2005/10/04 16:08:36 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.72 2005/10/05 09:24:48 lutscher Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.72  2005/10/05 09:24:48  lutscher
+# | added some reg_shell parameters
+# |
 # | Revision 1.71  2005/10/04 16:08:36  lutscher
 # | cleaned up EH-reg_shell parameters
 # |
@@ -331,11 +334,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.71 2005/10/04 16:08:36 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.72 2005/10/05 09:24:48 lutscher Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.71 $';         #'
+my $thisrevision        =      '$Revision: 1.72 $';         #'
 
-# Revision:   $Revision: 1.71 $   
+# Revision:   $Revision: 1.72 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1195,9 +1198,10 @@ sub mix_init () {
 	'reg_shell' => {
 	    'type'             => 'HDL-vgch-vrs', # type of register-view to be generated (see Reg.pm)
 		'mode'             => 'lcport', # lcport -> map created port names to lowercase	
-		'addrwidth' => 8,   # Default address bus width
-		'datawidth' => 32,  # Default data bus width
-					# legacy parameters, not needed anymore
+		'addrwidth' => 14,            # Default address bus width
+		'bus_clock' => "clk_vrs",     # Default bus clock name
+		'bus_reset' => "rst_vrs_n",   # Default bus reset name
+					# legacy parameters, not needed anymore!
 		'regwidth'	=> 32,  # Default register width
 		'top_name'  => '%PREFIX_IIC_GEN%%::interface%%POSTFIX_IIC_GEN%', # Name reg_shell top-level instance 
 	    '%IIC_SER_REG%'    => 'iic_ser_reg_', # prefix for serial subregister entity
