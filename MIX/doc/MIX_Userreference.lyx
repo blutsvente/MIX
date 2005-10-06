@@ -56,7 +56,7 @@ MIX - Micronas Interconnect Spec expander
 
 Author: Wilfried Gänsheimer
 \newline 
-$Date: 2005/07/18 09:00:25 $
+$Date: 2005/10/06 11:17:28 $
 \newline 
 Version: $Id: MIX_Userreference.lyx,v 1.6 2005/01/26 14:01:59 wig Exp 
 \layout Section
@@ -3439,6 +3439,171 @@ automatically connect to open, if the signal is not used in it's top level
 
 By default all the keys are set.
  Specify a comma seperated list to modify this.
+\layout Subsubsection
+
+check.hdlout: Verify created HDL files with respect to references
+\layout Standard
+
+Use the 
+\begin_inset Quotes eld
+\end_inset 
+
+
+\family typewriter 
+-verifyentity 
+\emph on 
+PATH
+\family default 
+\emph default 
+
+\begin_inset Quotes erd
+\end_inset 
+
+ option or set 
+\family typewriter 
+check.hdlout.path
+\family default 
+ to start verification of the generated HDL files against existing files.
+ There are several ways to achieve a match of the MIX generated files with
+ the existing files, please change the configuration parameters below accordingl
+y.
+ Differences are reported in files with the .ediff extension.
+ A summary will be printed to the log file and on the screen.
+\newline 
+Recommended usage: To check the MIX generated leaf modules, create a verificatio
+n directory (e.g.
+ 
+\family typewriter 
+\shape italic 
+my_entities
+\family default 
+\shape default 
+) and link all leaf entities to that directory.
+ Apply the following set of parameters:
+\newline 
+# Adding path for entity verifications:
+\newline 
+
+\family typewriter 
+MIXCFG check.hdlout.path 
+\shape italic 
+my_entities
+\family default 
+\shape default 
+
+\newline 
+
+\family typewriter 
+MIXCFG check.hdlout.mode entity,leaf,generated,ignorecase
+\newline 
+
+\family default 
+Available keys and values for 
+\family typewriter 
+check.hdlout.KEY
+\family default 
+ are:
+\newline 
+'
+\family typewriter 
+mode
+\family default 
+' => "entity,leaf,generated,ignorecase", 
+\layout Itemize
+
+
+\family typewriter 
+ignorecase|ic
+\family default 
+ : ignore case of filename
+\layout Itemize
+
+
+\family typewriter 
+entity|module|arch[itecture]|conf[iguration]|all
+\family default 
+ : which objects to check
+\layout Itemize
+
+
+\family typewriter 
+generated
+\family default 
+ : compare generated objects, only (ignores other files in path)
+\layout Itemize
+
+
+\family typewriter 
+inpath
+\family default 
+ : report if there are extra modules found in path 
+\layout Itemize
+
+
+\family typewriter 
+leaf
+\family default 
+ : only for leaf cells 
+\layout Itemize
+
+
+\family typewriter 
+nonleaf
+\family default 
+ : only non-leaf cells
+\layout Itemize
+
+
+\family typewriter 
+dcleaf
+\family default 
+ : dont care if leaf (all modules)
+\layout Standard
+
+'
+\family typewriter 
+path
+\family default 
+' => "",
+\layout Standard
+
+if set to 
+\family typewriter 
+PATH[:PATH:...]
+\family default 
+, MIX will check generated entities against entities found there.
+ 
+\newline 
+'
+\family typewriter 
+delta
+\family default 
+' => '',
+\layout Standard
+
+define how the diffs are made, see 
+\family typewriter 
+output.delta
+\family default 
+ for allowed keys.
+ If it's empty, take 
+\family typewriter 
+output.delta
+\family default 
+ contents.
+ 
+\newline 
+'
+\family typewriter 
+filter
+\family default 
+' => (experimental, do not use)
+\newline 
+'
+\family typewriter 
+extmask
+\family default 
+' => (experimental, do not use)
 \layout Section
 
 CONN sheet macros
@@ -6999,18 +7164,18 @@ DIFF_HIER
 \family typewriter 
 FOO.pld
 \family default 
- internal output gets overwritten, though.
+ internal output gets overwritten, though (if created).
  Messages are appended to 
 \family typewriter 
 mix_0.pl.out
 \family default 
 
 \newline 
-If a new HDL-file needs to be created by the changes, the 
+If a new HDL-file needs to be created by the changes, 
 \family typewriter 
 -delta
 \family default 
- mode is not be applied for that file, but it is generated as new.
+ mode is not be applied for that file, but it is generated as a new file.
  If you never have written a 
 \family typewriter 
 FOO-mixed.xls
@@ -7056,9 +7221,46 @@ See the configuration option description for more details.
 \family typewriter 
 -nodelta
 \family default 
- switches delta mode off, then.
+ switches delta mode off.
 \newline 
 
+\newline 
+Possible values for output.delta are (comma seperated list): 
+\layout Itemize
+
+
+\family typewriter 
+space
+\family default 
+: do not consider whitespace
+\layout Itemize
+
+
+\family typewriter 
+sort
+\family default 
+: sort lines before compare (default)
+\layout Itemize
+
+
+\family typewriter 
+comment
+\family default 
+: do not remove all comments before compare
+\layout Itemize
+
+
+\family typewriter 
+remove
+\family default 
+: remove empyt diff files
+\layout Itemize
+
+
+\family typewriter 
+ignorecase|ic
+\family default 
+: ignore case if set
 \layout Subsubsection
 
 Intermediate Excel Sheet
