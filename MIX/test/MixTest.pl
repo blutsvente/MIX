@@ -164,6 +164,7 @@ my @tests = (
 	  'name' => "mde_tests",
 	  'path' => "mde_tests/nreset2",
 	  'options' => "",
+	  'skip'	=> 1, #!wig20050929: has no CONN sheet!!
 	},
 	{
 	  'name' => "constant",
@@ -283,6 +284,7 @@ my @tests = (
 	  'name' => "conf",
 	  'path' => "conf",
 	  'options' => "",
+	  'skip' => 1, #!wig20051004, cannot work with combined output!
 	},
 	{
 	  'name' => "configuration",
@@ -362,6 +364,11 @@ my @tests = (
 	{ # Bug with constant busses ...
 	  'name' => "bugver",
 	  'path' => "bugver/constbug",
+	  'options' => "",
+	},
+	{ # Bug with generics/0 ...
+	  'name' => "bugver",
+	  'path' => "bugver/20051004c",
 	  'options' => "",
 	},
 	{ # Create simple logic ...

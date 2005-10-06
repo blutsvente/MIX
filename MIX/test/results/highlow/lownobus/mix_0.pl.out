@@ -1,4 +1,4 @@
-05/07/19 07:03:43 
+05/07/20 05:59:29 
 #######################################################################
 ##### mix_0.pl (Revision: 1.36 )
 #####
@@ -12,42 +12,42 @@
 #####   MixI2CParser 1.13 $
 ##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
 #######################################################################
-05/07/19 07:03:43 Reading worksheet CONNLOWNOBUS of H:/work/eclipse/mix/test/xls_input/highlow/lownobus/../../highlow.xls
-05/07/19 07:03:44 Reading worksheet HIER of H:/work/eclipse/mix/test/xls_input/highlow/lownobus/../../highlow.xls
-05/07/19 07:03:44 WARNING: Empty header in column 14, sheet-type conn, skipping!
-05/07/19 07:03:44 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
-05/07/19 07:03:44 WARNING: INFO: map assignment from LOW to LOW_BUS!
-05/07/19 07:03:44 WARNING: INFO: map assignment from LOW to LOW_BUS!
-05/07/19 07:03:44 WARNING: INFO: map assignment from LOW to LOW_BUS!
-05/07/19 07:03:44 Autoreducing port type for signal partzero to std_ulogic
-05/07/19 07:03:45 WARNING: File highlow-mixed.xls already exists! Contents will be changed
-05/07/19 07:03:45 WARNING: Rotating 3 old sheets of CONF!
-05/07/19 07:03:47 WARNING: Rotating 3 old sheets of CONN!
-05/07/19 07:03:47 WARNING: Rotating 3 old sheets of HIER!
-05/07/19 07:03:48 WARNING: Removing old and and diff sheets in file: highlow-mixed.xls
-05/07/19 07:03:48 WARNING: ERROR: workbook with different path already opened!
-05/07/19 07:03:49 Port partzero_1 of entity ent_ac one bit wide, reduce to signal
+05/07/20 05:59:30 Reading worksheet CONNLOWNOBUS of H:/work/eclipse/mix/test/xls_input/highlow/lownobus/../../highlow.xls
+05/07/20 05:59:30 Reading worksheet HIER of H:/work/eclipse/mix/test/xls_input/highlow/lownobus/../../highlow.xls
+05/07/20 05:59:30 WARNING: Empty header in column 14, sheet-type conn, skipping!
+05/07/20 05:59:30 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/07/20 05:59:30 WARNING: WARNING: map assignment from LOW to LOW_BUS!
+05/07/20 05:59:30 WARNING: WARNING: map assignment from LOW to LOW_BUS!
+05/07/20 05:59:30 WARNING: WARNING: map assignment from LOW to LOW_BUS!
+05/07/20 05:59:30 Autoreducing port type for signal partzero to std_ulogic
+05/07/20 05:59:32 WARNING: File highlow-mixed.xls already exists! Contents will be changed
+05/07/20 05:59:32 WARNING: Rotating 3 old sheets of CONF!
+05/07/20 05:59:32 WARNING: Rotating 3 old sheets of CONN!
+05/07/20 05:59:33 WARNING: Rotating 3 old sheets of HIER!
+05/07/20 05:59:33 WARNING: Removing old and and diff sheets in file: highlow-mixed.xls
+05/07/20 05:59:33 WARNING: ERROR: workbook with different path already opened!
+05/07/20 05:59:33 Port partzero_1 of entity ent_ac one bit wide, reduce to signal
 
-05/07/19 07:03:50 WARNING: ============= SUMMARY =================
-05/07/19 07:03:50 WARNING: SUM: Summary of checks and created items:
-05/07/19 07:03:50 WARNING: SUM: checkforce 0
-05/07/19 07:03:50 WARNING: SUM: checkunique 0
-05/07/19 07:03:50 WARNING: SUM: checkwarn 0
-05/07/19 07:03:50 WARNING: SUM: cmacros 0
-05/07/19 07:03:50 WARNING: SUM: conn 2
-05/07/19 07:03:50 WARNING: SUM: errors 1
-05/07/19 07:03:50 WARNING: SUM: genport 0
-05/07/19 07:03:50 WARNING: SUM: hdlfiles 7
-05/07/19 07:03:50 WARNING: SUM: inst 16
-05/07/19 07:03:50 WARNING: SUM: multdriver 1
-05/07/19 07:03:50 WARNING: SUM: nodriver 0
-05/07/19 07:03:50 WARNING: SUM: noload 0
-05/07/19 07:03:50 WARNING: SUM: openports 0
-05/07/19 07:03:50 WARNING: SUM: tie_hl 1
-05/07/19 07:03:50 WARNING: SUM: warnings 0
-05/07/19 07:03:50 WARNING: SUM: === Number of parsed input tables: ===
-05/07/19 07:03:50 WARNING: SUM: conf 0
-05/07/19 07:03:50 WARNING: SUM: hier 1
-05/07/19 07:03:51 WARNING: SUM: conn 1
-05/07/19 07:03:51 WARNING: SUM: io 0
-05/07/19 07:03:51 WARNING: SUM: i2c 0
+05/07/20 05:59:33 WARNING: ============= SUMMARY =================
+05/07/20 05:59:33 WARNING: SUM: Summary of checks and created items:
+05/07/20 05:59:33 WARNING: SUM: checkforce 0
+05/07/20 05:59:33 WARNING: SUM: checkunique 0
+05/07/20 05:59:33 WARNING: SUM: checkwarn 0
+05/07/20 05:59:33 WARNING: SUM: cmacros 0
+05/07/20 05:59:33 WARNING: SUM: conn 2
+05/07/20 05:59:33 WARNING: SUM: errors 1
+05/07/20 05:59:33 WARNING: SUM: genport 0
+05/07/20 05:59:33 WARNING: SUM: hdlfiles 7
+05/07/20 05:59:33 WARNING: SUM: inst 16
+05/07/20 05:59:33 WARNING: SUM: multdriver 1
+05/07/20 05:59:33 WARNING: SUM: nodriver 0
+05/07/20 05:59:33 WARNING: SUM: noload 0
+05/07/20 05:59:33 WARNING: SUM: openports 0
+05/07/20 05:59:33 WARNING: SUM: tie_hl 1
+05/07/20 05:59:33 WARNING: SUM: warnings 3
+05/07/20 05:59:33 WARNING: SUM: === Number of parsed input tables: ===
+05/07/20 05:59:33 WARNING: SUM: conf 0
+05/07/20 05:59:33 WARNING: SUM: hier 1
+05/07/20 05:59:33 WARNING: SUM: conn 1
+05/07/20 05:59:33 WARNING: SUM: io 0
+05/07/20 05:59:33 WARNING: SUM: i2c 0

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.57 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2005/09/29 15:21:42 $                              |
+# | Revision:   $Revision: 1.58 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2005/10/06 11:21:44 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.57 2005/09/29 15:21:42 lutscher Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.58 2005/10/06 11:21:44 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.58  2005/10/06 11:21:44  wig
+# | Got testcoverage up, fixed generic problem, prepared report
+# |
 # | Revision 1.57  2005/09/29 15:21:42  lutscher
 # | modified some warnings to help debugging problems in input
 # |
@@ -306,9 +309,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.57 2005/09/29 15:21:42 lutscher Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.58 2005/10/06 11:21:44 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.57 $';
+my $thisrevision =	'$Revision: 1.58 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1225,7 +1228,7 @@ sub _create_conn ($$%) {
     my $l = undef;
     my $hldigitflag = 0; # Assume ::high and ::low are no digits!
 
-    #TODO: check bus definitions better!
+    # TODO: check bus definitions better!
     if ( defined( $data{'::low'} ) and defined ( $data{'::high'} ) ) {
         $data{'::low'} =~ s,^\s+,,; # Remove leading white-space
         $data{'::high'} =~ s,^\s+,,; # Remove leading white-space
@@ -1254,21 +1257,22 @@ sub _create_conn ($$%) {
             $EH{'sum'}{'warnings'}++;
         }
     }
+    # TODO : check bounds here? No, better in MixCheck
     #    else {
     #        logwarn( "ERROR", "Error: wrong bounds on signal $data{::name}!");
     #        return;
     #    }
-    my %co = ();
-    my @co = ();
+    my @co = (); # Collect ports defined here ...
     unless( defined( $instr ) and $instr ne "" ) {
         logwarn("WARNING: Called _create_conn without data for $inout");
         $EH{'sum'}{'warnings'}++;
         return \@co; #Return dummy array, just in case
     }
 
-    # Allow , and ; in in/out columns
+    # TODO : Allow , and ; in in/out columns
     $instr =~ s/\n/,/go;
     for my $d ( split( /[,;]/, $instr ) ) {
+    	my %co = ();
         next if ( $d =~ /^\s*$/o );
             #
             # Recognized signal descriptions:
@@ -1685,7 +1689,7 @@ sub merge_conn($%) {
         #TODO: Trigger merge mode for special cases where we want to add
         # up data instead of overwrite
         if ( $i =~ /^::(in|out)$/ ) { 
-        	if ( $data{$i} ) {
+        	if ( $data{$i} !~ /^\s*$/io ) {
                 # Add array to in/out field, if the cell contains data
                 push( @{$conndb{$name}{$i}} , @{_create_conn( $1, $data{$i}, %data )});
             }

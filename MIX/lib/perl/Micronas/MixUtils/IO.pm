@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.26 $                                          |
+# | Revision:   $Revision: 1.27 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/09/29 13:45:02 $                              |
+# | Date:       $Date: 2005/10/06 11:21:44 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.27  2005/10/06 11:21:44  wig
+# | Got testcoverage up, fixed generic problem, prepared report
+# |
 # | Revision 1.26  2005/09/29 13:45:02  wig
 # | Update with -report
 # |
@@ -180,15 +183,16 @@ sub absolute_path ($);
 sub useOoolib ();
 sub _split_diff2xls ($$);
 sub _join_split_lines ($);
+sub mix_utils_io_check_path ();
 
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.26 2005/09/29 13:45:02 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.27 2005/10/06 11:21:44 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.26 $'; #'  
+my $thisrevision    =      '$Revision: 1.27 $'; #'  
 
-# Revision:   $Revision: 1.26 $
+# Revision:   $Revision: 1.27 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -626,8 +630,64 @@ sub mix_utils_check_input_desc ($) {
 
 	mix_utils_io_del_abook(); # Remove all cached input data (only for excel currently),    
     return( $aconn, $ahier, $aio, $ai2c);
+
+	# Here we do the final setup, all configuration known now.
+	mix_utils_io_create_path(); # Check if all directories exists -> create if not
+	
 }
 
+=head2 mix_utils_io_create_path () {
+
+Check if all required output directories exist.
+Create if not.
+
+Get list from %EH{XXXX}{path}!
+
+Input: -
+Output: -
+
+Global: %EH	
+	output intermediate internal report
+	  ....path
+	output.mkdir
+
+#!wig20051005
+=cut
+
+sub mix_utils_io_create_path () {
+
+	my $select = $EH{'output'}{'mkdir'};
+	
+	for my $i ( qw( output intermediate internal report ) ) {
+		next unless( exists $EH{$i}{'path'} );
+		
+		unless( -d $EH{$i}{'path'} ) {
+			# need to create it ...
+			my $dir = $EH{$i}{'path'};
+			# Does select tell us to create it?
+			if ( $select =~ m/\b(1|all|yes|auto|$i)\b/i ) {
+				unless ( $dir =~ m,^/, ) { # relative path ....
+					$dir = $EH{'cwd'} . "/" . $dir;
+				}
+				# Iterate over path ...
+				my $cur = '';
+				for my $p ( split( /\//, $dir ) ) {
+					$cur .= '/' . $p;
+					next if -d $cur;
+					# Create it
+					unless( mkdir( $cur ) ) {
+						logerr( "FATAL: Cannot create $i directory $cur:" . $! );
+						exit 1;
+	    			}
+				}
+	    		logwarn( "INFO: Created $i directory " . $dir . "!" );
+			} else {
+				logwarn( "ERROR: Missing $i directory " . $dir . " not selected for creation!" );
+				$EH{'sum'}{'errors'}++;
+			}
+		}
+	}
+}
 
 ####################################################################
 ## open_infile

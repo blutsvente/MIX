@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.72 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2005/10/05 09:24:48 $                              |
+# | Revision:   $Revision: 1.73 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2005/10/06 11:21:44 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.72 2005/10/05 09:24:48 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.73 2005/10/06 11:21:44 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.73  2005/10/06 11:21:44  wig
+# | Got testcoverage up, fixed generic problem, prepared report
+# |
 # | Revision 1.72  2005/10/05 09:24:48  lutscher
 # | added some reg_shell parameters
 # |
@@ -334,11 +337,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.72 2005/10/05 09:24:48 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.73 2005/10/06 11:21:44 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.72 $';         #'
+my $thisrevision        =      '$Revision: 1.73 $';         #'
 
-# Revision:   $Revision: 1.72 $   
+# Revision:   $Revision: 1.73 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -387,20 +390,15 @@ sub mix_getopt_header(@) {
     #
     # Change output pathes for internal, intermediate and backend data
     # Create it if needed.
-    #
+    #!wig20051005: Creation now done in IO.pm ....
     if ( defined $OPTVAL{'dir'} ) {
         $OPTVAL{'dir'} =~ s,\\,/,g if ( $EH{'iswin'} );
-		unless( -d $OPTVAL{'dir'} ) {
-	    	unless( mkdir( $OPTVAL{'dir'} ) ) {
-				logwarn( "FATAL: Cannot create output directory " . $OPTVAL{'dir'} . "!" );
-				exit 1;
-	    	}
-	    	logwarn( "INFO: Created output directory " . $OPTVAL{'dir'} . "!" );
-		}
+
 		$EH{'output'}{'path'} = $OPTVAL{'dir'};
 		$EH{'intermediate'}{'path'} = $OPTVAL{'dir'};
 		$EH{'internal'}{'path'} = $OPTVAL{'dir'};
 		$EH{'report'}{'path'} = $OPTVAL{'dir'};
+
     }
     
     if (defined $OPTVAL{'out'}) {
@@ -930,6 +928,13 @@ sub mix_init () {
     },
     'output' => {
 		'path' => ".",		# Path to store backend data. Other values are a path, CWD or INPUT
+		'mkdir'	=> 'auto',	# Should we create directories as needed? Available values
+							#   are: auto|all|yes (do all), no (do not)
+							# output, intermediate, report, internal (comma seperated, only create these)
+		'filter' => {
+			'file' => '',	# Do not print if the instance names matches one of the list (comma seperated)
+							# A prepended (arch|enty|conf): selects only that file from being excluded
+		},
 		'order' => 'input',		# Field order := as in input or predefined
 		'format' => 'ext',		# Output format derived from filename extension ???
 		'filename' => 'useminus', # Convert _ to - in filenames
@@ -1029,7 +1034,7 @@ sub mix_init () {
     'internal' => {
 		'path' => ".",
 		'order' => 'input',		# Field order := as in input or predefined
-		'format' => "perl", 	# Internal intermediate format := perl|xls|csv|xml ...
+		'format' => 'perl', 	# Internal intermediate format := perl|xls|csv|xml ...
     },
     'intermediate' => {
 		'path' => ".",
@@ -1660,45 +1665,45 @@ sub mix_init () {
 	logsay("CMDLINE: " . $EH{'macro'}{'%ARGV%'} );
 	# All the rest can be found in the CONF dump section ....
 
-# 
-#
-# If there is a file called mix.cfg, try to read that ....
-# Configuration parameters have to be written like
-#	MIXCFG key value
-#	key can be key.key.key ... (see %EH structure or use -listconf to dump current values)
-# !!Caveat: there will be no checks whatsoever on the values or keys !!
-# Locations to be checked are:
-# $HOME, $PROJECT, cwd()
-#
-foreach my $conf (
-    $EH{'macro'}{'%HOME%'}, $EH{'macro'}{'%PROJECT%'}, "."
+	# 
+	#
+	# If there is a file called mix.cfg, try to read that ....
+	# Configuration parameters have to be written like
+	#	MIXCFG key value
+	#	key can be key.key.key ... (see %EH structure or use -listconf to dump current values)
+	# !!Caveat: there will be no checks whatsoever on the values or keys !!
+	# Locations to be checked are:
+	# $HOME, $PROJECT, cwd()
+	#
+	foreach my $conf (
+    	$EH{'macro'}{'%HOME%'}, $EH{'macro'}{'%PROJECT%'}, "."
     ) {
-    if ( -r $conf . "/" . "mix.cfg" ) {
-	logtrc( "INFO", "Reading extra configurations from $conf/mix.cfg\n" );
+    	if ( -r $conf . "/" . "mix.cfg" ) {
+			logtrc( "INFO", "Reading extra configurations from $conf/mix.cfg\n" );
 
-	unless( open( CFG, "< $conf/mix.cfg" ) ) {
-	    logwarn("Cannot open $conf/mix.cfg for reading: $!\n");
-	    $EH{'sum'}{'warnings'}++;
-	} else {
-		my $prev = "";
-	    while( <CFG> ) {
-		chomp;
-		$_ =~ s,\r$,,;
-		$_ = $prev . $_; # prepen previous line
-		next if ( m,^\s*#,o );
-		# Add next line if line ends with \
-		if ( $_ =~ s/\\$// ) {
-			$prev = $_ . "\n"; # Add a line break ...
-	    	next;
-	    }
-	    $prev = "";
+			unless( open( CFG, "< $conf/mix.cfg" ) ) {
+	    		logwarn("Cannot open $conf/mix.cfg for reading: $!\n");
+	    		$EH{'sum'}{'warnings'}++;
+			} else {
+			my $prev = "";
+	    	while( <CFG> ) {
+				chomp;
+				$_ =~ s,\r$,,;
+				$_ = $prev . $_; # prepend previous line
+				next if ( m,^\s*#,o );
+				# Add next line if line ends with \
+				if ( $_ =~ s/\\$// ) {
+					$prev = $_ . "\n"; # Add a line break ...
+	    			next;
+	    		}
+	    		$prev = "";
 			
-		if ( m,^\s*MIXCFG\s+(\S+)\s*(.*),s ) { # MIXCFG key.key.key value
-		    _mix_apply_conf( $1, $2, "file:mix.cfg" );
+				if ( m,^\s*MIXCFG\s+(\S+)\s*(.*),s ) { # MIXCFG key.key.key value
+		    		_mix_apply_conf( $1, $2, "file:mix.cfg" );
+				}
+	    	}
+	   		close( CFG );
 		}
-	    }
-	    close( CFG );
-	}
     }
 }
 
@@ -2116,7 +2121,7 @@ sub mix_utils_open ($;$){
         my $templ = mix_utils_loc_templ( "ent", $file );
         if ( $templ ) { # Got a template file ...
             @ccont = @{mix_utils_open_diff( $templ, "verify" )}; # Get template contents, filtered  ...
-	    @ncont = (); # Reset new contents ...
+            @ncont = (); # Reset new contents ...
             # TODO combine mode??
 
             $fhstore{"$file"}{'tmpl'} = $templ;

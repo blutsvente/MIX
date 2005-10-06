@@ -1,0 +1,432 @@
+05/10/05 05:03:36 ########################################################################
+05/10/05 05:03:36 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl ../bitsplice.xls
+05/10/05 05:03:36 
+#######################################################################
+##### mix_0.pl (Revision: 1.37 )
+#####
+##### MIX  
+#####   MixUtils    1.70 $
+#####   MixUtils::IO    1.26 $
+#####   MixParser   1.56 $
+#####   MixWriter   1.58 $
+#####   MixChecker  1.9 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.14 $
+#####   MixReport 1.2 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/10/05 05:03:37 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/bitsplice/../bitsplice.xls
+05/10/05 05:03:37 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/bitsplice/../bitsplice.xls
+05/10/05 05:03:37 Added new column header ::mdeparent
+05/10/05 05:03:37 Added new column header ::mdeinst
+05/10/05 05:03:37 Added new column header ::mdeentity
+05/10/05 05:03:37 Adding port to hierachy module inst_ea for signal widesig_r_17!
+05/10/05 05:03:37 Adding port to hierachy module inst_e for signal widesig_r_17!
+05/10/05 05:03:37 Add_port: signal widesig_r_17 adds port p_mix_widesig_r_17_gi to instance inst_ea
+05/10/05 05:03:37 Add_port: signal widesig_r_17 adds port p_mix_widesig_r_17_gi to instance inst_e
+05/10/05 05:03:37 Adding port to hierachy module inst_ea for signal cp_lcmd_2!
+05/10/05 05:03:37 Add_port: signal cp_lcmd_2 adds port p_mix_cp_lcmd_2_6_0_gi to instance inst_ea
+05/10/05 05:03:37 Adding port to hierachy module inst_ea for signal widesig_r_16!
+05/10/05 05:03:37 Adding port to hierachy module inst_e for signal widesig_r_16!
+05/10/05 05:03:37 Add_port: signal widesig_r_16 adds port p_mix_widesig_r_16_gi to instance inst_ea
+05/10/05 05:03:37 Add_port: signal widesig_r_16 adds port p_mix_widesig_r_16_gi to instance inst_e
+05/10/05 05:03:37 Adding port to hierachy module inst_ea for signal c_bus_in!
+05/10/05 05:03:37 Adding port to hierachy module inst_eb for signal c_bus_in!
+05/10/05 05:03:37 Adding port to hierachy module inst_ea for signal c_bus_in!
+05/10/05 05:03:37 Adding port to hierachy module inst_ec for signal c_bus_in!
+05/10/05 05:03:37 Adding port to hierachy module inst_ec for signal c_bus_in!
+05/10/05 05:03:37 Adding port to hierachy module inst_ed for signal c_bus_in!
+05/10/05 05:03:37 Adding port to hierachy module inst_ec for signal c_bus_in!
+05/10/05 05:03:37 Adding port to hierachy module inst_eb for signal c_bus_in!
+05/10/05 05:03:37 Adding port to hierachy module inst_eb for signal c_bus_in!
+05/10/05 05:03:37 Adding port to hierachy module inst_ea for signal c_bus_in!
+05/10/05 05:03:37 Add_port: signal c_bus_in adds port p_mix_c_bus_in_31_0_gi to instance inst_ea
+05/10/05 05:03:37 Add_port: signal c_bus_in adds port p_mix_c_bus_in_31_0_gi to instance inst_eb
+05/10/05 05:03:37 Add_port: signal c_bus_in adds port p_mix_c_bus_in_31_0_gi to instance inst_ec
+05/10/05 05:03:37 Add_port: signal c_bus_in adds port p_mix_c_bus_in_31_0_gi to instance inst_ed
+05/10/05 05:03:37 Adding port to hierachy module inst_ea for signal widesig_r_3!
+05/10/05 05:03:37 Adding port to hierachy module inst_e for signal widesig_r_3!
+05/10/05 05:03:37 Add_port: signal widesig_r_3 adds port p_mix_widesig_r_3_gi to instance inst_ea
+05/10/05 05:03:37 Add_port: signal widesig_r_3 adds port p_mix_widesig_r_3_gi to instance inst_e
+05/10/05 05:03:37 Adding port to hierachy module inst_ea for signal widesig_r_2!
+05/10/05 05:03:37 Adding port to hierachy module inst_e for signal widesig_r_2!
+05/10/05 05:03:37 Add_port: signal widesig_r_2 adds port p_mix_widesig_r_2_gi to instance inst_ea
+05/10/05 05:03:37 Add_port: signal widesig_r_2 adds port p_mix_widesig_r_2_gi to instance inst_e
+05/10/05 05:03:37 Adding port to hierachy module inst_ea for signal widesig_r_27!
+05/10/05 05:03:37 Adding port to hierachy module inst_e for signal widesig_r_27!
+05/10/05 05:03:37 Add_port: signal widesig_r_27 adds port p_mix_widesig_r_27_gi to instance inst_ea
+05/10/05 05:03:37 Add_port: signal widesig_r_27 adds port p_mix_widesig_r_27_gi to instance inst_e
+05/10/05 05:03:37 Adding port to hierachy module inst_ea for signal widesig!
+05/10/05 05:03:37 Add_port: signal widesig adds port p_mix_widesig_31_0_gi to instance inst_ea
+05/10/05 05:03:37 Adding port to hierachy module inst_ea for signal widesig_r_22!
+05/10/05 05:03:37 Adding port to hierachy module inst_e for signal widesig_r_22!
+05/10/05 05:03:37 Add_port: signal widesig_r_22 adds port p_mix_widesig_r_22_gi to instance inst_ea
+05/10/05 05:03:37 Add_port: signal widesig_r_22 adds port p_mix_widesig_r_22_gi to instance inst_e
+05/10/05 05:03:37 Adding port to hierachy module inst_ea for signal widesig_r_13!
+05/10/05 05:03:37 Adding port to hierachy module inst_e for signal widesig_r_13!
+05/10/05 05:03:38 Add_port: signal widesig_r_13 adds port p_mix_widesig_r_13_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_13 adds port p_mix_widesig_r_13_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_20!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_20!
+05/10/05 05:03:38 Add_port: signal widesig_r_20 adds port p_mix_widesig_r_20_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_20 adds port p_mix_widesig_r_20_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_10!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_10!
+05/10/05 05:03:38 Add_port: signal widesig_r_10 adds port p_mix_widesig_r_10_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_10 adds port p_mix_widesig_r_10_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal v_select!
+05/10/05 05:03:38 Adding port to hierachy module inst_ec for signal v_select!
+05/10/05 05:03:38 Add_port: signal v_select adds port p_mix_v_select_5_5_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal v_select adds port p_mix_v_select_2_2_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal v_select adds port p_mix_v_select_5_5_gi to instance inst_ec
+05/10/05 05:03:38 Add_port: signal v_select adds port p_mix_v_select_2_2_gi to instance inst_ec
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_21!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_21!
+05/10/05 05:03:38 Add_port: signal widesig_r_21 adds port p_mix_widesig_r_21_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_21 adds port p_mix_widesig_r_21_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_0!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_0!
+05/10/05 05:03:38 Add_port: signal widesig_r_0 adds port p_mix_widesig_r_0_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_0 adds port p_mix_widesig_r_0_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_7!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_7!
+05/10/05 05:03:38 Add_port: signal widesig_r_7 adds port p_mix_widesig_r_7_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_7 adds port p_mix_widesig_r_7_gi to instance inst_e
+05/10/05 05:03:38 WARNING: WARNING: Signal tmi_sbist_fail has mixed links into instance inst_eac!
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal tmi_sbist_fail!
+05/10/05 05:03:38 Adding port to hierachy module inst_eb for signal tmi_sbist_fail!
+05/10/05 05:03:38 Adding port to hierachy module inst_eb for signal tmi_sbist_fail!
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal tmi_sbist_fail!
+05/10/05 05:03:38 Add_port: signal tmi_sbist_fail adds port p_mix_tmi_sbist_fail_11_10_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal tmi_sbist_fail adds port p_mix_tmi_sbist_fail_9_0_go to instance inst_ea
+05/10/05 05:03:38 Add_port: signal tmi_sbist_fail adds port p_mix_tmi_sbist_fail_12_10_go to instance inst_eb
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_12!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_12!
+05/10/05 05:03:38 Add_port: signal widesig_r_12 adds port p_mix_widesig_r_12_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_12 adds port p_mix_widesig_r_12_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal unsplice_bad_a!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal unsplice_bad_a!
+05/10/05 05:03:38 Add_port: signal unsplice_bad_a adds port p_mix_unsplice_bad_a_1_1_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal unsplice_bad_a adds port p_mix_unsplice_bad_a_1_1_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal unsplice_a5_midp100!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal unsplice_a5_midp100!
+05/10/05 05:03:38 Add_port: signal unsplice_a5_midp100 adds port p_mix_unsplice_a5_midp100_99_2_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal unsplice_a5_midp100 adds port p_mix_unsplice_a5_midp100_99_2_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_1!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_1!
+05/10/05 05:03:38 Add_port: signal widesig_r_1 adds port p_mix_widesig_r_1_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_1 adds port p_mix_widesig_r_1_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_23!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_23!
+05/10/05 05:03:38 Add_port: signal widesig_r_23 adds port p_mix_widesig_r_23_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_23 adds port p_mix_widesig_r_23_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_15!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_15!
+05/10/05 05:03:38 Add_port: signal widesig_r_15 adds port p_mix_widesig_r_15_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_15 adds port p_mix_widesig_r_15_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widemerge_a1!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widemerge_a1!
+05/10/05 05:03:38 Add_port: signal widemerge_a1 adds port p_mix_widemerge_a1_31_0_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widemerge_a1 adds port p_mix_widemerge_a1_31_0_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_25!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_25!
+05/10/05 05:03:38 Add_port: signal widesig_r_25 adds port p_mix_widesig_r_25_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_25 adds port p_mix_widesig_r_25_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_4!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_4!
+05/10/05 05:03:38 Add_port: signal widesig_r_4 adds port p_mix_widesig_r_4_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_4 adds port p_mix_widesig_r_4_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_6!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_6!
+05/10/05 05:03:38 Add_port: signal widesig_r_6 adds port p_mix_widesig_r_6_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_6 adds port p_mix_widesig_r_6_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_28!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_28!
+05/10/05 05:03:38 Add_port: signal widesig_r_28 adds port p_mix_widesig_r_28_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_28 adds port p_mix_widesig_r_28_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_a for signal test1!
+05/10/05 05:03:38 Adding port to hierachy module inst_a for signal test1!
+05/10/05 05:03:38 Add_port: signal test1 adds port p_mix_test1_go to instance inst_a
+05/10/05 05:03:38 Already connected daughters of inst_ea properly for signal video_i, ignore uppers
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal unsplice_bad_b!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal unsplice_bad_b!
+05/10/05 05:03:38 Add_port: signal unsplice_bad_b adds port p_mix_unsplice_bad_b_1_0_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal unsplice_bad_b adds port p_mix_unsplice_bad_b_1_0_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_29!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_29!
+05/10/05 05:03:38 Add_port: signal widesig_r_29 adds port p_mix_widesig_r_29_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_29 adds port p_mix_widesig_r_29_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_24!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_24!
+05/10/05 05:03:38 Add_port: signal widesig_r_24 adds port p_mix_widesig_r_24_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_24 adds port p_mix_widesig_r_24_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_14!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_14!
+05/10/05 05:03:38 Add_port: signal widesig_r_14 adds port p_mix_widesig_r_14_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_14 adds port p_mix_widesig_r_14_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal unsplice_a2_all128!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal unsplice_a2_all128!
+05/10/05 05:03:38 Add_port: signal unsplice_a2_all128 adds port p_mix_unsplice_a2_all128_127_0_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal unsplice_a2_all128 adds port p_mix_unsplice_a2_all128_127_0_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_5!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_5!
+05/10/05 05:03:38 Add_port: signal widesig_r_5 adds port p_mix_widesig_r_5_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_5 adds port p_mix_widesig_r_5_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_30!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_30!
+05/10/05 05:03:38 Add_port: signal widesig_r_30 adds port p_mix_widesig_r_30_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_30 adds port p_mix_widesig_r_30_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal unsplice_a4_mid100!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal unsplice_a4_mid100!
+05/10/05 05:03:38 Add_port: signal unsplice_a4_mid100 adds port p_mix_unsplice_a4_mid100_99_2_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal unsplice_a4_mid100 adds port p_mix_unsplice_a4_mid100_99_2_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal cp_lcmd!
+05/10/05 05:03:38 Add_port: signal cp_lcmd adds port p_mix_cp_lcmd_6_6_gi to instance inst_ea
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_19!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_19!
+05/10/05 05:03:38 Add_port: signal widesig_r_19 adds port p_mix_widesig_r_19_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_19 adds port p_mix_widesig_r_19_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_11!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_11!
+05/10/05 05:03:38 Add_port: signal widesig_r_11 adds port p_mix_widesig_r_11_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_11 adds port p_mix_widesig_r_11_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal c_addr!
+05/10/05 05:03:38 Adding port to hierachy module inst_eb for signal c_addr!
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal c_addr!
+05/10/05 05:03:38 Adding port to hierachy module inst_ec for signal c_addr!
+05/10/05 05:03:38 Adding port to hierachy module inst_ec for signal c_addr!
+05/10/05 05:03:38 Adding port to hierachy module inst_ed for signal c_addr!
+05/10/05 05:03:38 Adding port to hierachy module inst_ec for signal c_addr!
+05/10/05 05:03:38 Adding port to hierachy module inst_eb for signal c_addr!
+05/10/05 05:03:38 Adding port to hierachy module inst_eb for signal c_addr!
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal c_addr!
+05/10/05 05:03:38 Add_port: signal c_addr adds port p_mix_c_addr_12_0_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal c_addr adds port p_mix_c_addr_12_0_gi to instance inst_eb
+05/10/05 05:03:38 Add_port: signal c_addr adds port p_mix_c_addr_12_0_gi to instance inst_ec
+05/10/05 05:03:38 Add_port: signal c_addr adds port p_mix_c_addr_12_0_gi to instance inst_ed
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal cp_lcmd_3!
+05/10/05 05:03:38 Add_port: signal cp_lcmd_3 adds port p_mix_cp_lcmd_3_6_6_gi to instance inst_ea
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_9!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_9!
+05/10/05 05:03:38 Add_port: signal widesig_r_9 adds port p_mix_widesig_r_9_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_9 adds port p_mix_widesig_r_9_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_8!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_8!
+05/10/05 05:03:38 Add_port: signal widesig_r_8 adds port p_mix_widesig_r_8_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_8 adds port p_mix_widesig_r_8_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal unsplice_a3_up100!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal unsplice_a3_up100!
+05/10/05 05:03:38 Add_port: signal unsplice_a3_up100 adds port p_mix_unsplice_a3_up100_100_0_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal unsplice_a3_up100 adds port p_mix_unsplice_a3_up100_100_0_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_26!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_26!
+05/10/05 05:03:38 Add_port: signal widesig_r_26 adds port p_mix_widesig_r_26_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_26 adds port p_mix_widesig_r_26_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal unsplice_a1_no3!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal unsplice_a1_no3!
+05/10/05 05:03:38 Add_port: signal unsplice_a1_no3 adds port p_mix_unsplice_a1_no3_127_127_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal unsplice_a1_no3 adds port p_mix_unsplice_a1_no3_125_0_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal unsplice_a1_no3 adds port p_mix_unsplice_a1_no3_127_127_gi to instance inst_e
+05/10/05 05:03:38 Add_port: signal unsplice_a1_no3 adds port p_mix_unsplice_a1_no3_125_0_gi to instance inst_e
+05/10/05 05:03:38 Adding port to hierachy module inst_ea for signal widesig_r_18!
+05/10/05 05:03:38 Adding port to hierachy module inst_e for signal widesig_r_18!
+05/10/05 05:03:38 Add_port: signal widesig_r_18 adds port p_mix_widesig_r_18_gi to instance inst_ea
+05/10/05 05:03:38 Add_port: signal widesig_r_18 adds port p_mix_widesig_r_18_gi to instance inst_e
+05/10/05 05:03:38 WARNING: ERROR: mismatch port width vs. signal width forinst_eaa/unsplice_bad_a!
+05/10/05 05:03:38 Autoconnecting bit signal %LOW% to bus port v_select
+05/10/05 05:03:38 Autoreducing port type for signal video_i to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal test3 to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal test2 to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal v_select to std_ulogic
+05/10/05 05:03:38 Autoexpand port widesig_p from std_ulogic to vector type!
+05/10/05 05:03:38 Autoreducing port type for signal widesig to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal video_i to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal tmi_sbist_fail to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal tmi_sbist_fail to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal test3 to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal test2 to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal test3 to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal test2 to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal test3 to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal test2 to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal video_i to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal tmi_sbist_fail to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal tmi_sbist_fail to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal unsplice_bad_a to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal unsplice_a1_no3 to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal v_select to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal unsplice_bad_a to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal cp_lcmd to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal cp_lcmd_3 to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal unsplice_a1_no3 to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal tmi_sbist_fail to std_ulogic
+05/10/05 05:03:38 Autoreducing port type for signal video_i to std_ulogic
+05/10/05 05:03:42 WARNING: File bitsplice-mixed.xls already exists! Contents will be changed
+05/10/05 05:03:42 WARNING: Rotating 3 old sheets of CONF!
+05/10/05 05:03:43 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/bitsplice/bitsplice-mixed.xls
+05/10/05 05:03:43 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/10/05 05:03:43 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/bitsplice/bitsplice-mixed.xls
+05/10/05 05:03:43 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/10/05 05:03:44 Port port_2 of entity ent_aa one bit wide, reduce to signal
+05/10/05 05:03:44 Port port_3 of entity ent_aa one bit wide, reduce to signal
+05/10/05 05:03:44 Port port_2 of entity ent_ab one bit wide, reduce to signal
+05/10/05 05:03:44 Port port_3 of entity ent_ab one bit wide, reduce to signal
+05/10/05 05:03:44 Port port_2 of entity ent_ac one bit wide, reduce to signal
+05/10/05 05:03:44 Port port_3 of entity ent_ac one bit wide, reduce to signal
+05/10/05 05:03:44 Port port_2 of entity ent_ad one bit wide, reduce to signal
+05/10/05 05:03:44 Port port_3 of entity ent_ad one bit wide, reduce to signal
+05/10/05 05:03:44 Info: unchanged file inst_a_e-e.vhd
+05/10/05 05:03:44 Info: unchanged file inst_b_e-e.vhd
+05/10/05 05:03:44 Info: unchanged file inst_e_e-e.vhd
+05/10/05 05:03:45 Info: unchanged file inst_ea_e-e.vhd
+05/10/05 05:03:45 Port mbist_clut_fail_o of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port mbist_fifo_fail_o of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port video_p_0 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_0 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_1 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_10 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_11 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_12 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_13 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_14 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_15 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_16 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_17 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_18 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_19 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_2 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_20 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_21 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_22 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_23 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_24 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_25 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_26 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_27 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_28 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_29 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_3 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_30 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_31 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_4 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_5 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_6 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_7 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_8 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port widesig_p_9 of entity inst_eaa_e one bit wide, reduce to signal
+05/10/05 05:03:45 INFO: Port video_p_1 of entity inst_eab_e one bit wide, reduce to signal
+
+05/10/05 05:03:45 INFO: Port adp_bist_fail of entity inst_eac_e one bit wide, reduce to signal
+
+05/10/05 05:03:45 INFO: Port cpu_bist_fail of entity inst_eac_e one bit wide, reduce to signal
+
+05/10/05 05:03:45 INFO: Port cvi_sbist_fail0 of entity inst_eac_e one bit wide, reduce to signal
+
+05/10/05 05:03:45 INFO: Port cvi_sbist_fail1 of entity inst_eac_e one bit wide, reduce to signal
+
+05/10/05 05:03:45 INFO: Port ema_bist_fail of entity inst_eac_e one bit wide, reduce to signal
+
+05/10/05 05:03:45 INFO: Port ga_sbist_fail0 of entity inst_eac_e one bit wide, reduce to signal
+
+05/10/05 05:03:45 INFO: Port ga_sbist_fail1 of entity inst_eac_e one bit wide, reduce to signal
+
+05/10/05 05:03:45 INFO: Port ifu_bist_fail of entity inst_eac_e one bit wide, reduce to signal
+
+05/10/05 05:03:45 INFO: Port mcu_bist_fail of entity inst_eac_e one bit wide, reduce to signal
+
+05/10/05 05:03:45 INFO: Port pdu_bist_fail0 of entity inst_eac_e one bit wide, reduce to signal
+
+05/10/05 05:03:45 INFO: Port pdu_bist_fail1 of entity inst_eac_e one bit wide, reduce to signal
+
+05/10/05 05:03:45 INFO: Port tsd_bist_fail of entity inst_eac_e one bit wide, reduce to signal
+
+05/10/05 05:03:45 INFO: Port video_p_2 of entity inst_eac_e one bit wide, reduce to signal
+
+05/10/05 05:03:45 INFO: Port video_p_3 of entity inst_ead_e one bit wide, reduce to signal
+
+05/10/05 05:03:45 Info: unchanged file inst_eb_e-e.vhd
+05/10/05 05:03:45 Port mbist_aci_fail_o of entity inst_eba_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port mbist_vcd_fail_o of entity inst_eba_e one bit wide, reduce to signal
+05/10/05 05:03:45 Port mbist_sum_fail_o of entity inst_ebb_e one bit wide, reduce to signal
+05/10/05 05:03:45 Info: unchanged file inst_ec_e-e.vhd
+05/10/05 05:03:45 Info: unchanged file inst_ed_e-e.vhd
+05/10/05 05:03:46 Info: unchanged file inst_t_e-e.vhd
+05/10/05 05:03:46 Warning: Signal widesig_r_17 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_16 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_3 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_2 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_27 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_22 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_13 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_20 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_10 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_0 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_21 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_7 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_12 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal unsplice_bad_a does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal unsplice_a5_midp100 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_1 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_23 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_15 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widemerge_a1 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_25 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_4 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_6 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_28 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal unsplice_bad_b does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_14 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_24 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_29 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal unsplice_a2_all128 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_5 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_30 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal unsplice_a4_mid100 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_19 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_11 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_9 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_8 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal unsplice_a3_up100 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_26 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal unsplice_a1_no3 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Warning: Signal widesig_r_18 does not have a driver in instance inst_a!
+05/10/05 05:03:46 Info: unchanged file inst_a_e-rtl-a.vhd
+05/10/05 05:03:46 Signal test1 does not have a load in instance inst_b!
+05/10/05 05:03:46 Info: unchanged file inst_b_e-rtl-a.vhd
+05/10/05 05:03:46 Warning: Signal v_select does not have a driver in instance inst_e!
+05/10/05 05:03:46 Info: unchanged file inst_e_e-rtl-a.vhd
+05/10/05 05:03:47 WARNING: __E_SLICE_WIDTH_MISMATCH:signal unsplice_bad_a (1 downto 1) to port unsplice_bad_a (1 downto 0)!
+05/10/05 05:03:47 WARNING: __E_SLICE_WIDTH_MISMATCH:signal unsplice_bad_a (1 downto 1) to port unsplice_bad_a (1 downto 0)!
+05/10/05 05:03:47 Info: unchanged file inst_ea_e-rtl-a.vhd
+05/10/05 05:03:47 Info: unchanged file inst_eb_e-rtl-a.vhd
+05/10/05 05:03:47 Info: unchanged file inst_ec_e-rtl-a.vhd
+05/10/05 05:03:47 Info: unchanged file inst_ed_e-rtl-a.vhd
+05/10/05 05:03:47 Warning: Signal video_i does not have a driver in instance inst_t!
+05/10/05 05:03:47 Info: unchanged file inst_t_e-rtl-a.vhd
+05/10/05 05:03:47 Info: unchanged file bitsplice-c.vhd
+05/10/05 05:03:47 WARNING: ============= SUMMARY =================
+05/10/05 05:03:47 WARNING: SUM: Summary of checks and created items:
+05/10/05 05:03:47 WARNING: SUM: checkforce 0
+05/10/05 05:03:47 WARNING: SUM: checkunique 0
+05/10/05 05:03:47 WARNING: SUM: checkwarn 0
+05/10/05 05:03:47 WARNING: SUM: cmacros 0
+05/10/05 05:03:47 WARNING: SUM: conn 56
+05/10/05 05:03:47 WARNING: SUM: errors 1
+05/10/05 05:03:47 WARNING: SUM: genport 100
+05/10/05 05:03:47 WARNING: SUM: hdlfiles 17
+05/10/05 05:03:47 WARNING: SUM: inst 36
+05/10/05 05:03:47 WARNING: SUM: multdriver 9
+05/10/05 05:03:47 WARNING: SUM: nodriver 42
+05/10/05 05:03:47 WARNING: SUM: noload 1
+05/10/05 05:03:47 WARNING: SUM: openports 0
+05/10/05 05:03:47 WARNING: SUM: tie_hl 2
+05/10/05 05:03:47 WARNING: SUM: warnings 1
+05/10/05 05:03:47 WARNING: SUM: === Number of parsed input tables: ===
+05/10/05 05:03:47 WARNING: SUM: conf 0
+05/10/05 05:03:47 WARNING: SUM: hier 1
+05/10/05 05:03:47 WARNING: SUM: conn 1
+05/10/05 05:03:47 WARNING: SUM: io 0
+05/10/05 05:03:47 WARNING: SUM: i2c 0
+05/10/05 05:03:47 WARNING: SUM: Number of changes in intermediate: 0
+05/10/05 05:03:47 WARNING: SUM: Number of changed files: 0
