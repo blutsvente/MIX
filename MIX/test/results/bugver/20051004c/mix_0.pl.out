@@ -1,0 +1,75 @@
+05/10/06 12:55:51 ########################################################################
+05/10/06 12:55:51 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl -strip -nodelta ../../bugver.xls
+05/10/06 12:55:51 
+#######################################################################
+##### mix_0.pl (Revision: 1.37 )
+#####
+##### MIX  
+#####   MixUtils    1.73 $
+#####   MixUtils::IO    1.27 $
+#####   MixParser   1.58 $
+#####   MixWriter   1.59 $
+#####   MixChecker  1.9 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.14 $
+#####   MixReport 1.2 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/10/06 12:55:54 Reading worksheet C_20051004c of H:/work/eclipse/MIX/test/xls_input/bugver/20051004c/../../bugver.xls
+05/10/06 12:55:54 Reading worksheet H_20051004c of H:/work/eclipse/MIX/test/xls_input/bugver/20051004c/../../bugver.xls
+05/10/06 12:55:54 WARNING: INFO: Not all lowercase in new conn element CHROMA_GROUP_DELAY_1_G!
+05/10/06 12:55:55 WARNING: INFO: Not all lowercase in new conn element CHROMA_PIPE_DELAY_1_G!
+05/10/06 12:55:55 WARNING: INFO: Not all lowercase in new conn element CHROMA_LINE_DELAY_1_G!
+05/10/06 12:55:55 WARNING: INFO: Not all lowercase in new conn element CHROMA_GROUP_DELAY_1_P!
+05/10/06 12:55:55 WARNING: INFO: Not all lowercase in new conn element CHROMA_PIPE_DELAY_1_P!
+05/10/06 12:55:55 WARNING: INFO: Not all lowercase in new conn element CHROMA_LINE_DELAY_1_P!
+05/10/06 12:55:55 WARNING: INFO: Not all lowercase in new conn element CHROMA_GROUP_DELAY_2_G!
+05/10/06 12:55:55 WARNING: INFO: Not all lowercase in new conn element CHROMA_PIPE_DELAY_2_G!
+05/10/06 12:55:55 WARNING: INFO: Not all lowercase in new conn element CHROMA_LINE_DELAY_2_G!
+05/10/06 12:55:55 WARNING: INFO: Not all lowercase in new conn element CHROMA_GROUP_DELAY_3_G!
+05/10/06 12:55:55 WARNING: INFO: Not all lowercase in new conn element CHROMA_PIPE_DELAY_3_G!
+05/10/06 12:55:55 WARNING: INFO: Not all lowercase in new conn element CHROMA_LINE_DELAY_3_G!
+05/10/06 12:55:55 WARNING: INFO: Not all lowercase in new conn element CHROMA_GROUP_DELAY_3_P!
+05/10/06 12:55:55 WARNING: INFO: Not all lowercase in new conn element CHROMA_PIPE_DELAY_3_P!
+05/10/06 12:55:55 WARNING: INFO: Not all lowercase in new conn element CHROMA_LINE_DELAY_3_P!
+05/10/06 12:55:55 WARNING: INFO: Not all lowercase in new conn element CHROMA_GROUP_DELAY_3_P2!
+05/10/06 12:55:55 WARNING: INFO: Not all lowercase in new conn element CHROMA_PIPE_DELAY_3_P2!
+05/10/06 12:55:55 WARNING: INFO: Not all lowercase in new conn element CHROMA_LINE_DELAY_3_P2!
+05/10/06 12:55:55 WARNING: INFO: Not all lowercase in new port element CHROMA_LINE_DELAY_G!
+05/10/06 12:55:55 WARNING: INFO: Not all lowercase in new port element CHROMA_PIPE_DELAY_G!
+05/10/06 12:55:56 WARNING: INFO: Not all lowercase in new port element CHROMA_GROUP_DELAY_G!
+05/10/06 12:55:56 WARNING: INFO: Not all lowercase in new port element CHROMA_GROUP_DELAY2_G!
+05/10/06 12:55:56 WARNING: INFO: Not all lowercase in new port element CHROMA_LINE_DELAY2_G!
+05/10/06 12:55:56 WARNING: INFO: Not all lowercase in new port element CHROMA_PIPE_DELAY2_G!
+05/10/06 12:55:56 WARNING: WARNING: Entity port mode mismatch for enitity W_NO_ENTITY (__GENERIC__), port 3: G was P!
+05/10/06 12:55:56 WARNING: WARNING: Entity port mode mismatch for enitity W_NO_ENTITY (__GENERIC__), port 12: G was P!
+05/10/06 12:55:56 WARNING: WARNING: Entity port mode mismatch for enitity W_NO_ENTITY (__GENERIC__), port 1: G was P!
+05/10/06 12:55:56 WARNING: WARNING: Entity port mode mismatch for enitity W_NO_ENTITY (__GENERIC__), port 0: G was P!
+05/10/06 12:56:00 WARNING: File bugver-mixed.xls already exists! Contents will be changed
+05/10/06 12:56:01 WARNING: Rotating 3 old sheets of CONF!
+05/10/06 12:56:01 WARNING: Rotating 3 old sheets of CONN!
+05/10/06 12:56:02 WARNING: Rotating 3 old sheets of HIER!
+05/10/06 12:56:03 WARNING: Removing old and and diff sheets in file: bugver-mixed.xls
+05/10/06 12:56:03 WARNING: ERROR: workbook with different path already opened!
+05/10/06 12:56:05 WARNING: ============= SUMMARY =================
+05/10/06 12:56:06 WARNING: SUM: Summary of checks and created items:
+05/10/06 12:56:06 WARNING: SUM: checkforce 0
+05/10/06 12:56:06 WARNING: SUM: checkunique 0
+05/10/06 12:56:06 WARNING: SUM: checkwarn 0
+05/10/06 12:56:06 WARNING: SUM: cmacros 0
+05/10/06 12:56:06 WARNING: SUM: conn 18
+05/10/06 12:56:06 WARNING: SUM: errors 1
+05/10/06 12:56:06 WARNING: SUM: genport 0
+05/10/06 12:56:06 WARNING: SUM: hdlfiles 4
+05/10/06 12:56:06 WARNING: SUM: inst 9
+05/10/06 12:56:06 WARNING: SUM: multdriver 0
+05/10/06 12:56:06 WARNING: SUM: nodriver 0
+05/10/06 12:56:06 WARNING: SUM: noload 0
+05/10/06 12:56:06 WARNING: SUM: openports 0
+05/10/06 12:56:06 WARNING: SUM: warnings 4
+05/10/06 12:56:06 WARNING: SUM: === Number of parsed input tables: ===
+05/10/06 12:56:06 WARNING: SUM: conf 0
+05/10/06 12:56:06 WARNING: SUM: hier 1
+05/10/06 12:56:06 WARNING: SUM: conn 1
+05/10/06 12:56:07 WARNING: SUM: io 0
+05/10/06 12:56:07 WARNING: SUM: i2c 0
