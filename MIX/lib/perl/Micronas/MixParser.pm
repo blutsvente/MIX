@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.58 $                                         |
+# | Revision:   $Revision: 1.59 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/10/06 11:21:44 $                              |
+# | Date:       $Date: 2005/10/13 09:09:46 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.58 2005/10/06 11:21:44 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.59 2005/10/13 09:09:46 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.59  2005/10/13 09:09:46  wig
+# | Added intermediate CONN sheet split
+# |
 # | Revision 1.58  2005/10/06 11:21:44  wig
 # | Got testcoverage up, fixed generic problem, prepared report
 # |
@@ -273,7 +276,7 @@ use Log::Agent::Priorities qw(:LEVELS);
 use Tree::DAG_Node; # tree base class
 use Regexp::Common; # Needed for import/init functions: parse VHDL ...
 
-use Micronas::MixUtils qw( mix_store db2array mix_list_econf %EH replace_mac );
+use Micronas::MixUtils qw( mix_store db2array db2array_intra mix_list_econf %EH replace_mac );
 use Micronas::MixUtils::IO;
 
 use Micronas::MixChecker;
@@ -309,9 +312,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.58 2005/10/06 11:21:44 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.59 2005/10/13 09:09:46 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.58 $';
+my $thisrevision =	'$Revision: 1.59 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1214,6 +1217,8 @@ Value can just be anything ... will be added literally to the output architectur
 
 Returns mode and a array of hashes.
 
+!wig20051010: create a ::descr field in the port map ...
+
 =cut
 
 sub _create_conn ($$%) {
@@ -1385,7 +1390,11 @@ sub _create_conn ($$%) {
                 }
 
                 $co{'value'} = $const;
-
+				#!wig20051010: adding 'comment' for each port ...
+				if ( exists( $data{'::descr'}) and
+					defined $data{'::descr'} and $data{'::descr'} ne '' ) {
+					$co{'_descr_'} = $data{'::descr'};
+				}
                 push( @co, { %co } );
                 next;
             } #end of constants
@@ -1514,6 +1523,12 @@ sub _create_conn ($$%) {
                 $co{'sig_t'} = $l;
             }
 
+			#!wig20051010: adding 'comment' for each port ...
+			if ( exists( $data{'::descr'}) and
+				defined $data{'::descr'} and $data{'::descr'} ne '' ) {
+				$co{'_descr_'} = $data{'::descr'};
+			}
+			
             check_conn_prop( \%co );
 
             # We have a full description of this port, now add typecast_wrapper
@@ -1860,11 +1875,26 @@ sub mix_store_db ($$$) {
 
     if ( $type eq "xls" || $type eq "sxc" || $type eq "csv") {
         my $aro = mix_list_econf( "xls" ); # Convert %EH to two-dim array
-        my $arc = db2array( \%conndb , "conn", "" );
+
+		# db2array 
+		#!wig20051012: if EH(intermediate.intra) is set,
+		#  arc is done differentely!
+		# ar will get a hash with sheet names, which reference arrays with data
+		#
+		my $arc;
+		if ( $EH{'intermediate'}{'intra'} ) {
+			my @tops = get_top_cell();
+			$arc = db2array_intra( \%conndb, "conn", \@tops, \%hierdb, '' );
+		} else {			       
+        	$arc->{'CONN'} = db2array( \%conndb , "conn", "" );
+		}
         my $arh = db2array( \%hierdb, "hier", "^(%\\w+%|W_NO_PARENT)\$" );
         if ( $EH{'output'}{'generate'}{'delta'} ) {
             my $conf_diffs = write_outfile( $dumpfile, "CONF", $aro ); # Do not generate deltas, just output
-            my $conn_diffs = write_delta_sheet( $dumpfile, "CONN", $arc );
+			my $conn_diffs = 0;
+			for my $conns ( keys( %$arc ) ) {
+            	$conn_diffs += write_delta_sheet( $dumpfile, $conns, $arc->{$conns} );
+			}
             my $hier_diffs = write_delta_sheet( $dumpfile, "HIER", $arh );
             if ( defined( $conn_diffs ) and defined( $hier_diffs ) ) {
                 $EH{'DELTA_INT_NR'} = $conn_diffs + $hier_diffs;
@@ -1873,20 +1903,21 @@ sub mix_store_db ($$$) {
             }
         } else {
             write_outfile( $dumpfile, "CONF", $aro ); #wig20030708: store CONF options ...
-            write_outfile( $dumpfile, "CONN", $arc );
+			for my $conns ( keys( %$arc ) ) {
+            	write_outfile( $dumpfile, $conns, $arc->{$conns} );
+			}
             write_outfile( $dumpfile, "HIER", $arh );
         }
         if($EH{'intermediate'}{'strip'}) {
-	    clean_temp_sheets($EH{'out'});
-	}
-	close_open_workbooks(); # Close everything we opened
+	    	clean_temp_sheets($EH{'out'});
+		}
+		close_open_workbooks(); # Close everything we opened
     } else {
         if ( $type ne "internal" ) {
             $type="intermediate";
         }
-        mix_store( $dumpfile, { 'conn' => \%conndb , 'hier' => \%hierdb,
-                                    %$varh
-                            }, $type);
+        mix_store( $dumpfile,
+        	{ 'conn' => \%conndb , 'hier' => \%hierdb, %$varh }, $type);
     }
 }
 
@@ -1919,7 +1950,7 @@ sub mix_load_db ($$$) {
     }
 
     unless( -r $dumpfile ) {
-        log_error( "Cannot read dump file $dumpfile!\n" );
+        log_error( "ERROR: Cannot read dump file $dumpfile!\n" );
         exit 1;
     }
 
@@ -1932,17 +1963,7 @@ sub mix_load_db ($$$) {
                 $type="internal";
         }
     }
-
-    #TODO: if ( $type eq "xls" ) {
-    #    my $arc = db2array( \%conndb , "conn" );
-    #    my $arh = db2array( \%hierdb, "hier" );
-    #    write_outfile( $dumpfile, "CONN", $arc );
-    #    write_outfile( $dumpfile, "HIER", $arh );
-    #} else {
-        mix_load( $dumpfile,
-            { 'conn' => \%conndb , 'hier' => \%hierdb   }
-                  );
-    # }
+        mix_load( $dumpfile, { 'conn' => \%conndb , 'hier' => \%hierdb });
 }
 
 ####################################################################
@@ -3791,11 +3812,15 @@ sub __parse_inout ($$) {
 #  Will modify contents of first argument directely
 # 
 #!wig20050712: add exceptions for the logic keywords
+#!wig20051011: adding 'postfix' replacements!
+#		see also mix_expand_name (which does early name expansion)
+#
 sub __parse_mac ($$) {
     my $ra = shift;
     my $rb = shift;
 
     my $ehmacs = \%{$EH{'macro'}};
+	my $pfmacs = \%{$EH{'postfix'}};
 
     unless( defined $$ra ) {
         logwarn("WARNING: __parse_mac: trying to match against undef value");
@@ -3804,10 +3829,11 @@ sub __parse_mac ($$) {
     }
 
 	# Iterate through text:
-    while ( $$ra =~ m/(%[\w:]+?%)/g ) {
+    while ( $$ra =~ m/(%([\w:]+?)%)/g ) {
         my $mac = $1;
         my $mackey = $1;
-        # Strip %OPEN_NN% to %OPEN% ..
+        my $pfkey = $2;  # Keys in EH.psotfix do not have the %....%!!
+        # Downgrade %OPEN_NN% to %OPEN% ..
         if ( $mac =~ m/%OPEN_\d+%/ ) {
             $mackey = "%OPEN%";
         }
@@ -3825,8 +3851,11 @@ sub __parse_mac ($$) {
             }
         } elsif( exists( $ehmacs->{$mackey} ) ) {
             $$ra =~ s/$mac/$ehmacs->{$mackey}/;
-        } elsif ( $mackey !~ m/$EH{'output'}{'generate'}{'_logicre_'}/io ) {
-        # } else {
+        } elsif ( $mackey =~ m/$EH{'output'}{'generate'}{'_logicre_'}/io ) {
+        	; # Do nothing here
+        } elsif ( exists( $pfmacs->{$pfkey} ) ) {
+        	$$ra =~ s/$mac/$pfmacs->{$pfkey}/;
+        } else {
             logwarn("WARNING: Cannot locate replacement for $mac in data!");
             $EH{'sum'}{'warnings'}++;
         }
@@ -4065,8 +4094,7 @@ sub _extend_inout ($$$) {
 			$i->{'port_t'} = $l;
 		}
     }
-#TODO: What if only one of is defined???
-}
+} # End of _extend_open
 
 #
 # strip away duplicate entries in ::in and ::out
@@ -4093,7 +4121,12 @@ sub _scan_inout ($) {
                         $rsa->[$iii]{'port'} = mix_check_case( 'port', $rsa->[$iii]{'port'} );
                     }
                 }
-                my $this = join( ',', sort( values( %{$rsa->[$iii]} ) ) );
+                # Mask the _descr_ field :
+                my $this = "";
+                for my $k ( qw( inst port sig_f sig_t port_f port_t ) ) {
+                	$this .= '_' . $rsa->[$iii]{$k};
+            	}
+            	# TODO : Prevent loose of information like _descr_ ...
                 if( $this and not defined( $seen{$this} ) ) {
                     push( @left, $rsa->[$iii] );
                     $seen{$this} = 1;
@@ -4102,8 +4135,6 @@ sub _scan_inout ($) {
         }
         $rsa = _mix_p_unsplice_inout( \@left );
         return $rsa;
-        # print "$rsa" if 0; # DEBUG ...
-        # @$rsa = @left;
 }
 
 #

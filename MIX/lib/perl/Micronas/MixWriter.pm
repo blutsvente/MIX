@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.59 $                                         |
+# | Revision:   $Revision: 1.60 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/10/06 11:21:44 $                              |
+# | Date:       $Date: 2005/10/13 09:09:46 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.59 2005/10/06 11:21:44 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.60 2005/10/13 09:09:46 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.60  2005/10/13 09:09:46  wig
+# | Added intermediate CONN sheet split
+# |
 # | Revision 1.59  2005/10/06 11:21:44  wig
 # | Got testcoverage up, fixed generic problem, prepared report
 # |
@@ -273,7 +276,7 @@ sub count_load_driver ($$$$);
 sub gen_concur_port($$$$$$$$;$$);
 sub mix_wr_get_interface ($$$$);
 sub _mix_wr_get_ivhdl ($$$);
-sub _mix_wr_get_iveri ($$$);
+sub _mix_wr_get_iveri ($$$$);
 sub mix_wr_port_check ($$);
 sub mix_wr_unsplice_port ($$$);
 sub mix_wr_hier2mac ($);
@@ -288,6 +291,7 @@ sub _mix_wr_save_hooks (); # save _HOOK_ macros
 sub _mix_wr_preset_hooks (); # preset _HOOK_ macros
 sub _mix_wr_getfilter ($$);
 sub _mix_wr_descr ($$$$$);
+sub mix_wr_printdescr ($$);
 
 
 # Internal variable
@@ -295,9 +299,9 @@ sub _mix_wr_descr ($$$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.59 2005/10/06 11:21:44 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.60 2005/10/13 09:09:46 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.59 $';
+my $thisrevision   =      '$Revision: 1.60 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -661,6 +665,7 @@ sub merge_entity ($$) {
             'mode' => '',
             'high' => '',
             'low' => '',
+            '_descr_' => '',
         );
     }
 
@@ -673,6 +678,7 @@ sub merge_entity ($$) {
             'mode' => '',
             'high' => '',
             'low' => '',
+            '_descr_' => '',
         );
     }
 
@@ -708,6 +714,7 @@ sub compare_merge_entities ($$$$) {
     #       'low' => '',
     #       'value' => ''  (stores default value for generics)
     #       'cast' => port is of type cast, needs typecast function to match signal type!
+	#		'_descr_'	=> []	array of descriptions (to remove duplicates)
 
     my $eflag = 1; # Is equal
 
@@ -806,6 +813,7 @@ sub create_entity ($$) {
             'mode' => '',
             'high' => '',
             'low' => '',
+            '_descr_' => '',
         );
     }
 
@@ -818,6 +826,7 @@ sub create_entity ($$) {
             'mode' => '',
             'high' => '',
             'low' => '',
+            '_descr_' => '',
         );
     }
 
@@ -834,7 +843,7 @@ sub create_entity ($$) {
         $entities{$ent}{'__LANG__'}{lc($EH{'macro'}{'%LANGUAGE%'})}++;
     }
     
-} # create_entity
+} # End of create_entity
 
 #
 # Take ::in and ::out defined data and generate a port description ...
@@ -872,6 +881,7 @@ sub _create_entity ($$) {
 	    	my $h = -100000; # Absurd value .... just to avoid undef
 	    	my $l = -100000;  # Absurd value ....
 			my $gen = 0;     # Flag for generated port
+			my $descr = '';
 			
 	    	# width definition may differ for this port ....
 	    	for my $ii ( split( ',', $$sport{$port} ) ) {
@@ -939,6 +949,9 @@ sub _create_entity ($$) {
             	#TODO: improve error handling
 				if ( exists( $thissig->{'_gen_'} ) ) {
 					$gen = 1;
+				}
+				if ( exists( $thissig->{'_descr_'} ) ) {
+					$descr = $thissig->{'_descr_'};
 				}
 	    	}
 	    	# Still at the preset value?
@@ -1008,8 +1021,7 @@ sub _create_entity ($$) {
 	    	} else { # if no mode was specified, it defaults to S, which means to autodetecte in/out
 				$mode = $io;
 	    	}
-        #WIGGUESS: removed: }
-        
+    
 	    	#
 	    	# Duplicate signals will be caught by the compare_and_merge_entitiy
 	    	# function
@@ -1036,9 +1048,6 @@ sub _create_entity ($$) {
 					$res{$port}{'__gen__'} = 1;
 				}
 		
-				#!TODO: only one try to define number: if ( $nr ) {
-				#	$res{$port}{'nr'} = $nr;
-				# }
 				# High bound:
 				if ( defined( $h ) ) {
 		    		if ( defined( $res{$port}{'high'} ) ) {
@@ -1104,7 +1113,7 @@ sub _create_entity ($$) {
 			    			}
 		    			}
 					}
-				} #WIGGUESS
+				}
 		
             	# Detect bad typecast requests (differing!!)
     			if ( $cast and exists( $res{$port}{'cast'} ) ) {
@@ -1125,6 +1134,8 @@ sub _create_entity ($$) {
 				if ( $res{$port}{'__nr__'} > $nr ) {
 					$res{$port}{'__nr__'} = $nr;
 				}
+				#!wig20051010: Get descr if available
+				$res{$port}{'__descr__'} .= $descr;
 	    	} else {
 				%{$res{$port}} = (
 		    		'mode' => $mode, #TODO: do some sanity checking! e.g. high, low might be
@@ -1136,6 +1147,7 @@ sub _create_entity ($$) {
         		$res{$port}{'cast'} = $cast if ( $cast ); # Adding a typecast if requested
 				$res{$port}{'__gen__'}  = 1     if ( $gen );
 				$res{$port}{'__nr__'} = $nr   if ( defined( $nr ) );
+				$res{$port}{'__descr__'} = $descr;
 	    	}
 
         	if ( $mode =~ m,^\s*[GP], ) {
@@ -1150,7 +1162,6 @@ sub _create_entity ($$) {
             	}
         	}
         }
-		# $res{'__SIGNAL__'}{$i}=; # Remember signals connected
     }
     return %res;
 } # End of _create_entity
@@ -1457,8 +1468,8 @@ sub mix_wr_get_interface ($$$$) {
 
     if ( $lang =~ m,vhdl,io ) {
         return ( _mix_wr_get_ivhdl( $r_ent, $ename, $tcom ) );
-    }elsif ( $lang =~ m,verilog,io ) {
-        return ( _mix_wr_get_iveri( $r_ent, $ename, $tcom ) );
+    }elsif ( $lang =~ m,verilog,io ) { #Potentially also 2001
+        return ( _mix_wr_get_iveri( $r_ent, $ename, $lang, $tcom ) );
     } else {
         logwarn( "WARNING: unimplemented get_interface for entity $ename, language $lang" );
         $EH{'sum'}{'warnings'}++;
@@ -1470,6 +1481,18 @@ sub mix_wr_get_interface ($$$$) {
 #
 # return VHDL conform interface (port list ....)
 #20050418: adding sort criteria
+#
+# input:
+#	entitiy refernece
+#	entity name
+#	comment chars
+#
+# output:
+#	portdescription (string)
+#	genericsdescription (string)
+#
+# Globals:
+#	<yes>
 #
 sub _mix_wr_get_ivhdl ($$$) {
     my $r_ent = shift;
@@ -1484,14 +1507,22 @@ sub _mix_wr_get_ivhdl ($$$) {
         next if ( $p =~ m,^-- NO, ); # Skip internal data ...
 
 	    my $pdd = $r_ent->{$p};
-
+		my $descr = '';
+			
+	    #!wig20051010: adding description ...
+	    if ( $pdd->{'__descr__'} ne '' ) {
+	    	( my $d = $pdd->{'__descr__'} ) =~ s/\n/%CR%%S%%S%%S%%S%$tcom /g;
+	    	$descr = '%S%' . $tcom . ' ' . $d;
+	    }
 	    if ( $pdd->{'mode'} =~ m,^\s*(generic|G|P),io ) {
 	    	$gent .= mix_wr_mapsort( $ename, $p );
 			if ( exists( $pdd->{'value'} ) ) {
                 # Generic, get default value from conndb ...
-                    $gent .= '%S%' x 3 . $p . "\t: " . $pdd->{'type'} . "\t:= " . $pdd->{'value'} . ";\n";
+                    $gent .= '%S%' x 3 . $p . "%S%: " . $pdd->{'type'} .
+                    	"%S%:= " . $pdd->{'value'} . ';' . $descr . "\n";
 			} else {
-                    $gent .= '%S%' x 3 . $p . "\t: " . $pdd->{'type'} . "; $tcom __W_NODEFAULT\n";
+                    $gent .= '%S%' x 3 . $p . "\t: " . $pdd->{'type'} .
+                    	'; ' . (( $descr ) ? $descr : $tcom ) . " __W_NODEFAULT\n";
 			}
 	    } elsif (	defined( $pdd->{'high'} ) and
 			defined( $pdd->{'low'} ) and
@@ -1518,30 +1549,40 @@ sub _mix_wr_get_ivhdl ($$$) {
                     		$pdd->{'type'} =~ s,_vector,,; # Try to strip away trailing vector!
                     		$pdd->{'low'} = undef;
                     		$pdd->{'high'} = undef;
-                    		$port .= '%S%' x 3 . $p . "\t: " . $mode . "\t" . $pdd->{'type'} .
-                        	  	"; $tcom __I_AUTO_REDUCED_BUS2SIGNAL\n";
+                    		$port .= '%S%' x 3 . $p . '%S%: ' . $mode . '%S%' . $pdd->{'type'} .
+                        	  	'; ' . 
+                        	  	( $descr ? $descr : $tcom ) . " __I_AUTO_REDUCED_BUS2SIGNAL\n";
             		} else {
                 		logwarn( "Warning: Port $p of entity $ename one bit wide, missing lower bits\n" );
                      	$EH{'sum'}{'warnings'}++;
-                     	$port .= '%S%' x 3 . $p . "\t: " . $mode . "\t" . $pdd->{'type'} .
-                        	  "(" . $pdd->{'high'} . "); $tcom __W_SINGLEBITBUS\n";
+                     	$port .= '%S%' x 3 . $p . '%S%: ' . $mode . '%S%' . $pdd->{'type'} .
+                        	  "(" . $pdd->{'high'} . "); " .
+                        	  ( $descr ? $descr : $tcom ) . " __W_SINGLEBITBUS\n";
             		}
         		} elsif ( $pdd->{'high'} > $pdd->{'low'} ) {
-            		$port .= '%S%' x 3 . $p . "\t: " . $mode . "\t" . $pdd->{'type'} .
-                 	 	"(" . $pdd->{'high'} . " downto " . $pdd->{'low'} . ");\n";
+            		$port .= '%S%' x 3 . $p . '%S%: ' . $mode . '%S%' . $pdd->{'type'} .
+                 	 	'(' . $pdd->{'high'} . ' downto ' . $pdd->{'low'} . ');' .
+                 	 	( $descr ? $descr : '' ) .
+                 	 	"\n";
         		} else {
-            		$port .= '%S%' x 3 . $p . "\t: " . $mode. "\t" . $pdd->{'type'} .
-                  	"(" . $pdd->{'high'} . " to " . $pdd->{'low'} . ");\n";
+            		$port .= '%S%' x 3 . $p . '%S%: ' . $mode. '%S%' . $pdd->{'type'} .
+                  	'(' . $pdd->{'high'} . ' to ' . $pdd->{'low'} . ');' .
+                  	( $descr ? $descr : '' ) .
+                  	"\n";
         		}
     		} else {
         		if ( $pdd->{'high'} eq $pdd->{'low'} ) {
                 	# $pdd->{'type'} =~ s,_vector,,; # Try to strip away trailing vector!
-                	$port .= '%S%' x 3 . $p . "\t: " . $mode . "\t" . $pdd->{'type'} .
-                    	"(" . $pdd->{'high'} . ");\n";
+                	$port .= '%S%' x 3 . $p . '%S%: ' . $mode . '%S%' . $pdd->{'type'} .
+                    	'(' . $pdd->{'high'} . ');' . 
+               	 	( $descr ? $descr : '' ) .
+               	 	"\n";
                 	#!wig20030812: adding support for non-numeric signal/port bounds
                 } else {
-                   	$port .= '%S%' x 3 . $p . "\t: " . $mode . "\t" . $pdd->{'type'} .
-                       	"(" . $pdd->{'high'} . " downto " . $pdd->{'low'} . ");\n";
+                   	$port .= '%S%' x 3 . $p . '%S%: ' . $mode . '%S%' . $pdd->{'type'} .
+                       	"(" . $pdd->{'high'} . " downto " . $pdd->{'low'} . ');' .
+                     ( $descr ? $descr : '' ) .
+                     "\n";
                 }
             }
 	    } else {
@@ -1552,17 +1593,23 @@ sub _mix_wr_get_ivhdl ($$$) {
 			} else {
 		   		$mode = $pdd->{'mode'};
 			}
-		   	$port .= '%S%' x 3 . $p . "\t: " . 
-		   		$mode . "\t" . $pdd->{'type'} . ";\n";
+		   	$port .= '%S%' x 3 . $p . '%S%: ' . 
+		   		$mode . '%S%' . $pdd->{'type'} . ';' .
+		   		( $descr ? $descr : '' ) .
+		   		"\n";
 	    }
+	    
+
 	    #TODO: Check all case where only one of high or low is defined or high and/or
 	    # low are not digit!
 	}
 	# Now split -> sort -> remove markers -> join and return:
 	$port = join( "\n", map( { s/%MAPSORT.+?SORTMAP%//; $_; } 
-		sort( split( /\n/, $port ) ) ) ) . "\n";
+				sort( split( /\n/, $port ) ) ) ) . "\n";
 	$gent = join( "\n", map( { s/%MAPSORT.+?SORTMAP%//; $_; } 
-		sort( split( /\n/, $gent ) ) ) ) . "\n";
+				sort( split( /\n/, $gent ) ) ) ) . "\n";
+	$port = '' if ( $port =~ m/^\s*$/ );
+	$gent = '' if ( $gent =~ m/^\s*$/ );
 	return( $port, $gent );
 } # End of _mix_wr_get_ivhdl
 
@@ -1570,11 +1617,53 @@ sub _mix_wr_get_ivhdl ($$$) {
 # return Verilog conform interface (list of ports ....)
 #  borrows a lot from the vhdl code above :-)
 #
-sub _mix_wr_get_iveri ($$$) {
+# Input:
+#	- reference to entity
+#	- entity name
+#	- language (verilog and/or verilog 2001
+#	- comment valid (//)
+#
+# output:
+# 	verilog portmap (string)
+#	verilog generics defintion
+#
+# global:
+#  reads %EH (output.generate.language.verilog)
+#
+#!wig20051007: support verilog2001
+sub _mix_wr_get_iveri ($$$$) {
     my $r_ent = shift;
     my $ename = shift; # Name of entity ...
+    my $lang = shift;
     my $tcom = shift;
 
+	# Verilog 2001 style output definitions ....
+	my %flags = (
+		'2001'		=> 0,
+		'csytle'	=> 0,
+		'iwire'		=> 1,
+		'owire'		=> 1,
+	);
+	
+	if ( $lang =~ m/2001/ or
+		$EH{'output'}{'language'}{'verilog'} =~ m/\b2001\b/ ) {
+		%flags = (
+			'2001'		=> 1,
+			'csytle'	=> 1,
+			'iwire'		=> 0,
+			'owire'		=> 0,
+		);
+	};
+	
+	# TODO : csytle implies noiwire/noowire!
+	for my $i ( qw( cstyle iwire owire ) ) {
+		if ( $EH{'output'}{'generate'}{'verilog'} =~ m/\b$i\b/ ) {
+			$flags{$i} = 1;
+		} elsif ( $EH{'output'}{'generate'}{'verilog'} =~ m/\bno$i\b/ ) {
+			$flags{$i} = 0;
+		}
+	}
+	
     # Possible Verilog modes. Please extend %ioky, %port and %portheader
     my %ioky = (
         'in' => "input",
@@ -1598,13 +1687,13 @@ sub _mix_wr_get_iveri ($$$) {
     );
     my @portorder = qw( parameter in io inout out wire not_valid );
     my %portheader = (
-        'out'   => "\t\t$tcom Generated Module Outputs:\n",
-        'in'    => "\t\t$tcom Generated Module Inputs:\n",
-        'io'    => "\t\t$tcom Generated Module In/Outputs:\n",
-        'inout'    => "\t\t$tcom Generated Module In/Outputs:\n",
-        'not_valid' => "\t\t$tcom __W_NOT_VALID Module In/Outputs:\n",
-        'wire'  => "\t\t$tcom Generated Wires:\n",
-        'parameter' => "\t\t$tcom Module parameters:\n",
+        'out'   => "\t$tcom Generated Module Outputs:\n",
+        'in'    => "\t$tcom Generated Module Inputs:\n",
+        'io'    => "\t$tcom Generated Module In/Outputs:\n",
+        'inout'    => "\t$tcom Generated Module In/Outputs:\n",
+        'not_valid' => "\t$tcom __W_NOT_VALID Module In/Outputs:\n",
+        'wire'  => "\t$tcom Generated Wires:\n",
+        'parameter' => "\t$tcom Module parameters:\n",
     );
 
 	my $portsort = ""; #Contains value if non-default port order is requested
@@ -1614,8 +1703,16 @@ sub _mix_wr_get_iveri ($$$) {
         next if ( $p =~ m,^-- NO, );
 
 		$portsort = mix_wr_mapsort( $ename, $p ); # Put in sort criteria!
-	    my $pdd = $r_ent->{$p};
 
+	    my $pdd = $r_ent->{$p};
+	    #!wig20051010: adding description ...
+	    #!wig20051010: Add descriptions to port map:
+	    my $descr = '';
+	    if ( $pdd->{'__descr__'} ne '' ) {
+	    	# Prevent problems with mulitline comments:
+	    	( my $d = $pdd->{'__descr__'} ) =~ s/\n/%CR%%S%%S%%S%%S%$tcom /g; 
+	    	$descr = '%S%' . $tcom . ' ' . $d;
+	    }
 	    if ( $pdd->{'mode'} =~ m,^\s*(generic|G|P),io ) {
 			if ( exists( $pdd->{'value'} ) ) {
                 #Generic, with default value from conndb ...
@@ -1642,6 +1739,7 @@ sub _mix_wr_get_iveri ($$$) {
                 $valid = $tcom . " __I_PORT_NOT_VALID ";
                 $mode = "not_valid";
             }
+
 			# Numeric bounds:
 			if ( $pdd->{'high'} =~ m/^\s*[+-]?\d+\s*$/o and
                  $pdd->{'low'} =~ m/^\s*[+-]?\d+\s*$/o ) {
@@ -1653,69 +1751,128 @@ sub _mix_wr_get_iveri ($$$) {
                         $pdd->{'low'} = undef;
                         $pdd->{'high'} = undef;
 
-                        $intf .= $portsort . '%S%' x 2 . $valid . $p . ",\n";
-                        $port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} . "\t\t" . $p . ";\t" .
-                             "\t$tcom __I_AUTO_REDUCED_BUS2SIGNAL\n";
-                        $port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire\t\t" . $p . ";\t" .
-                             "\t$tcom __I_AUTO_REDUCED_BUS2SIGNAL\n";
+						if ( $flags{'cstyle'} ) {
+							#!wig20051010
+                        	$intf .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} .
+                        		'%S%' x 2 . $p . "," . '%S%' .
+                        		( $descr ? $descr : $tcom ) .
+                        		" __I_AUTO_REDUCED_BUS2SIGNAL\n";
+						} else {							
+                        	$intf .= $portsort . '%S%' x 2 . $valid . $p . ',' .
+      						( $descr ? $descr : '' ) .
+                        	"\n";
+                        	$port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} . '%S%' x 2 .
+                        	$p . ";" .
+                            "%S%$tcom __I_AUTO_REDUCED_BUS2SIGNAL\n";
+						}
+						#!wig: iwire??
+						if ( $flags{'owire'} ) {
+                        	$port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire\t\t" . $p . ";\t" .
+                            	"\t$tcom __I_AUTO_REDUCED_BUS2SIGNAL\n";
+						}
                     } else {
                         logwarn( "Warning: Port $p of entity $ename one bit wide, missing lower bits\n" );
                         $EH{'sum'}{'warnings'}++;
-                        #OLD my $valid = "";
-                        # unless( exists( $ioky{$mode} ) ) {
-                        #    $valid = $tcom . " __I_PORT_NOT_VALID ";
-                        #    $mode = "not_valid";
-                        # }
-                        $intf .= $portsort . '%S%' x 2 . $valid . $p . ",\n";
-                        $port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} . "\t[" .
-                                $pdd->{'high'} . ":" . $pdd->{'low'} . "]\t" . $p .
+                        if ( $flags{'cstyle'} ) {
+                        	$intf .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} .
+                        		'%S%[' . $pdd->{'high'} . ":" . $pdd->{'low'} . "]%S%" . $p .
+                                ',' .
+                                ( $descr ? $descr : $tcom ) .
+                                " __W_SINGLEBITBUS\n";
+                        } else {
+                        	$intf .= $portsort . '%S%' x 2 . $valid . $p . ',' .
+                        			( $descr ? $descr : '' ) .
+                        	 		"\n";
+                        	$port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} . "%S%[" .
+                                $pdd->{'high'} . ":" . $pdd->{'low'} . "]%S%" . $p .
                                 ";\t$tcom __W_SINGLEBITBUS\n";
-                        $port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire\t[" .
-                                $pdd->{'high'} . ":" . $pdd->{'low'} . "]\t" . $p .
+                        }
+                        if ( $flags{'owire'} ) {
+                        	$port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire%S%[" .
+                                $pdd->{'high'} . ":" . $pdd->{'low'} . "]%S%" . $p .
                                 ";\t$tcom __W_SINGLEBITBUS\n";
+                        }
                     }
                 } elsif ( $pdd->{'high'} > $pdd->{'low'} ) {
-                    #OLD: my $valid = "";
-                    # unless( exists( $ioky{$mode} ) ) {
-                    #    $valid = $tcom . " __I_PORT_NOT_VALID ";
-                    #    $mode = "not_valid";
-                    # }
-                    $intf .= $portsort . '%S%' x 2 . $valid . $p . ",\n";
-                    $port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} . "\t[" .
+                	if ( $flags{'cstyle'} ) {
+                    	$intf .= $portsort . '%S%' x 2 . $valid .
+                     	$ioky{$mode} . "%S%[" .
+                        $pdd->{'high'} . ":" . $pdd->{'low'} . "]%S%" . $p . ',' .
+                        ( $descr ? $descr : '' ) .
+                        "\n";
+                	} else {
+                    	$intf .= $portsort . '%S%' x 2 . $valid . $p . "," . 
+                    	( $descr ? $descr : '' ) .
+                    	"\n";
+                    	$port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} . "\t[" .
                                 $pdd->{'high'} . ":" . $pdd->{'low'} . "]\t" . $p . ";\n";
-                    $port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire\t[" .
+                	}
+                	if ( $flags{'owire'} ) {
+                    	$port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire\t[" .
                                 $pdd->{'high'} . ":" . $pdd->{'low'} . "]\t" . $p . ";\n";
+                	}
                 } else {
                     #TODO: Check if Verilog allows this ...
                     #Couple warning on check flag for desig guide line "downto busses"
                     logwarn( "WARNING: Port $p, entity $ename, high bound < low bound!" );
                     $EH{'sum'}{'warnings'}++;
-                    #OLD: my $valid = "";
-                    # unless( exists( $ioky{$mode} ) ) {
-                    #    $valid = $tcom . " __I_PORT_NOT_VALID ";
-                    #    $mode = "not_valid";
-                    # }
-                    $intf .= $portsort . '%S%' x 3 . $valid . $p . ",\n";
-                    $port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} . "\t[" .
+                    if ( $flags{'cstyle'} ) {
+                    	$intf .= $portsort . '%S%' x 3 . $valid . $p .
+                    	$ioky{$mode} . "%S%[" .
+                        $pdd->{'high'} . ":" . $pdd->{'low'} . "]%S%" . $p . ',' .
+						( $descr ? $descr : '' ) .
+                        "\n";
+                    } else {
+                    	$intf .= $portsort . '%S%' x 3 . $valid . $p . ',' .
+                    	( $descr ? $descr : '' ) .
+                    	 "\n";
+                    	$port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} . "\t[" .
                                 $pdd->{'high'} . ":" . $pdd->{'low'} . "]\t" . $p . ";\n";
-                    $port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire\t[" .
+                    }
+                    if ( $flags{'owire'} ) {
+                    	$port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire\t[" .
                                 $pdd->{'high'} . ":" . $pdd->{'low'} . "]\t" . $p . ";\n";
+                    }
                 }
 			} else {
                 #wig20030812:
                 # Non numeric bounds ...
                 if ( $pdd->{'high'} eq $pdd->{'low'} ) {
-                    $intf .= $portsort . '%S%' x 3 . $valid . $p . ",\n";
-                    $port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} . "\t[" .
-                                $pdd->{'high'} . "]\t" . $p . ";\n";
-                    $port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire\t[" .
-                                $pdd->{'high'} . "]\t" . $p . ";\n";
+                	if ( $flags{'cstyle'} ) {
+                    	$intf .= $portsort . '%S%' x 3 . $valid .
+                    		$ioky{$mode} . "%S%[" .
+                            $pdd->{'high'} . "]%S%" . $p . ',' .
+                            ( $descr ? $descr : '' ) .
+                            "\n";
+                	} else {
+                    	$intf .= $portsort . '%S%' x 3 . $valid . $p . ',' .
+                    	( $descr ? $descr : '' ) .
+                    	"\n";
+                    	$port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} . "\t[" .
+                                $pdd->{'high'} . ']%S%' . $p . ";\n";
+                	}
+					if ( $flags{'owire'} ) {
+                    	$port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire%S%[" .
+                                $pdd->{'high'} . ']%S%' . $p . ";\n";
+                	}
                 } else {
-                    $intf .= $portsort . '%S%' x 3 . $valid . $p . ",\n";
-                    $port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} . "\t[" .
+                	if ( $flags{'cstyle'} ) {
+                    	$intf .= $portsort . '%S%' x 3 . $valid .
+                    		$ioky{$mode} . "%S%[" .
+                                $pdd->{'high'} . ":" . $pdd->{'low'} . ']%S%' . $p . ',' .
+                         	( $descr ? $descr : '' ) .
+                         	"\n";
+                	} else {
+                    	$intf .= $portsort . '%S%' x 3 . $valid . $p . ',' .
+                   		( $descr ? $descr : '' ) .
+                    	"\n";
+                    	$port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} . "\t[" .
+                                $pdd->{'high'} . ":" . $pdd->{'low'} . ']%S%' . $p . ";\n";
+                	}
+                	if ( $flags{'owire'} ) {
+                    	$port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire\t[" .
                                 $pdd->{'high'} . ":" . $pdd->{'low'} . "]\t" . $p . ";\n";
-                    $port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire\t[" .
-                                $pdd->{'high'} . ":" . $pdd->{'low'} . "]\t" . $p . ";\n";
+                	}
                 }
 			}
         } else {
@@ -1729,26 +1886,41 @@ sub _mix_wr_get_iveri ($$$) {
             unless( exists( $ioky{$mode} ) ) {
                 $valid = $tcom . " __I_PORT_NOT_VALID ";
                 $mode = "not_valid";
-            }		
-            $intf .= $portsort . '%S%' x 2 . $valid . $p . ",\n";
-            $port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} .
+            }
+            if ( $flags{'cstyle'} ) {
+            	$intf .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} .
+                	'%S%' x 2 . $p . ',' .
+                	( $descr ? $descr : '' ) .
+                	"\n";
+            } else {
+            	$intf .= $portsort . '%S%' x 2 . $valid . $p . ',' .
+            		( $descr ? $descr : '' ) .
+            		"\n";
+            	$port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} .
+                	'%S%' x 2 . $p . ";\n";
+            }
+            if ( $flags{'owire'} ) {
+            	$port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire" .
                 '%S%' x 2 . $p . ";\n";
-            $port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire" .
-                '%S%' x 2 . $p . ";\n";
+            }
 	    }
     }
     # Finalize intf: add all inputs, outputs and inouts ....
-    #TODO: what about sorting over in/out ...
+    # TODO : what about sorting over in/out ...
 	if ( $portsort ) {
 		$intf = join( "\n", map( { s/%MAPSORT.+?SORTMAP%//; $_; }
 			sort( split( /\n/, $intf ) ) ) ) . "\n";
+		$intf = '' if ( $intf =~ m/^\s*$/o );
 		for my $i ( keys %port ) {
 			$port{$i} = join( "\n", map( { s/%MAPSORT.+?SORTMAP%//; $_; }
 				sort( split( /\n/, $port{$i} ) ) ) ) . "\n";
+			$port{$i} = '' if ( $port{$i} =~ m/^\s*$/o );
 		}
 	}
 	
-	$intf = "\t\t(\n" . $intf;
+	# Prepend  begin now now:
+	$intf = '%S%' x 2 . "(\n" . $intf;
+	$intf =~ s/,((%S%|\t)+$tcom[^\n]*)$/$1/io;
     $intf =~ s/,(\s*)$/$1/io; # Remove trailing , in port map ...
     $intf .= '%S%' x 2 . ");\n";
     # Print out inputs, outputs, inouts and wires ...
@@ -2023,7 +2195,7 @@ sub gen_instmap ($;$$) {
             	$map = '%S%' x 2 . $tcom . " Generated Instance Port Map for $inst\n" .
                     $dum .
                     '%S%' x 2 . $enty . $hashm . $inst . " (" .
-                    _mix_wr_descr( 'hier', $inst, $hierdb{$inst}{'::descr'}, 3, $tcom ) .
+                    _mix_wr_descr( 'hier', $inst, $hierdb{$inst}{'::descr'}, 4, $tcom ) .
                     # (  $hierdb{$inst}{'::descr'} ? ( '%S%' . "// "
                     #        . $hierdb{$inst}{'::descr'} ) : "" ) .
                     "\n" .
@@ -2043,7 +2215,7 @@ sub gen_instmap ($;$$) {
             } else {
             	$map =  '%S%' x 2 . $tcom . " Generated Instance Port Map for $inst\n" .
                    '%S%' x 2 . $inst . ": " . $enty .
-                   _mix_wr_descr( 'hier', $inst, $hierdb{$inst}{'::descr'}, 3, $tcom ) .
+                   _mix_wr_descr( 'hier', $inst, $hierdb{$inst}{'::descr'}, 4, $tcom ) .
                     # OLD : (  $hierdb{$inst}{'::descr'} ? ( '%S%' . $tcom . " " .
                     # OLD :        $hierdb{$inst}{'::descr'} ) : "" ) .
                     "\n" .
@@ -2085,7 +2257,7 @@ sub _mix_wr_descr ($$$$$) {
 	
 	my $pre  = '%S%' x $indent . $comm . ' ';
 	if ( defined $descr and $descr ne '' ) {
-		$descr =~ s/\n/\n$pre/g;
+		$descr =~ s/\n/%CR%$pre/g;
 		$descr = '%S%' . $comm . ' ' . $descr;
 	} else {
 		$descr = '';
@@ -3042,41 +3214,13 @@ sub print_conn_matrix ($$$$$$$$$;$) {
     my $lb = undef;
     my $ub = $#$rcm;
     my $lstart = 0;
-    my $descr = "";
 
 	my $sortcrit = mix_wr_mapsort( $hierdb{$inst}{'::enty'}, $port ); # port map sort order prefix
 
     my $tcom = $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'default'} || "#";
 
-    if ( $EH{'output'}{'generate'}{'portdescr'} ) {
-        # Available fields: %::descr%, %::ininst%, %::outinst%
-        # $descr .= $tcom . " ";
-        my %tm = ();
-        $tm{'%::descr%'} = $conndb{$signal}{'::descr'};
-        $tm{'%::comment%'} = $conndb{$signal}{'::comment'};
-        $tm{'%::ininst%'} = "";
-        $tm{'%::outinst%'} = "";
-        for my $i ( @{$conndb{$signal}{'::in'}} ) {
-            next unless (exists( $i->{'inst'}));
-            $tm{'%::ininst%'} .= " " . $i->{'inst'};
-        }
-        for my $i ( @{$conndb{$signal}{'::out'}} ) {
-            next unless (exists( $i->{'inst'}));
-            $tm{'%::outinst%'} .= " " . $i->{'inst'};
-        }
-        $descr = replace_mac( $EH{'output'}{'generate'}{'portdescr'}, \%tm );
-        if ( $descr and $descr ne '%EMPTY%' ) {
-        	$descr = _mix_wr_descr( 'conn', $conndb{$signal}, $descr, 3, $tcom );
-            # OLD : $descr = " " . $tcom . " " . $descr;
-        }
-        if ( $EH{'output'}{'generate'}{'portdescrlength'} =~ m,^(\d+)$, ) { # Limit lenght
-            if ( length( $descr)  > $1 ) {
-                $descr = substr( $descr, 0, $1 ) . "..."; # Cut
-            }
-        }
-        $descr =~ s,$tcom\s+$tcom,$tcom,; #Remove duplicate comments ...
-    }
-  
+	my $descr = mix_wr_printdescr( $signal, $tcom );
+
     #
     # Non-Numeric bounds:
     #
@@ -3147,7 +3291,7 @@ sub print_conn_matrix ($$$$$$$$$;$) {
 		# One bit of port connected to bit signal
 		if ( $pf eq $pt and defined( $lb ) and $lb eq $ub ) {
 	    	# Single bit port .... connected to bus slice
-	    	# TODO: do more checking ...
+	    	# TODO : do more checking ...
 	    	if ( $pf eq "__UNDEF__" ) {
                 if ( $lang =~ m,^veri,io ) { #Verilog
                     $t .= '%S%' x 3 . "." . $port . "(" . $signal . "[" . $rcm->[$ub] . "]),\n"; #TODO: Check Verilog syntax
@@ -3336,9 +3480,84 @@ sub print_conn_matrix ($$$$$$$$$;$) {
 }
 
 #
+# compose signal description ( to be used in portmaps)
+#
+# input:
+#	signal name
+#	current comment sign
+#
+# output:
+#	text with description
+#
+# global:
+#	%conndb (read)
+#	%EH		(read)
+#
+sub mix_wr_printdescr($$) {
+	my $signal = shift;
+	my $tcom   = shift;
+
+	my $descr = '';	
+    if ( $EH{'output'}{'generate'}{'portdescr'} ) {
+        # Available fields: %::descr%, %::ininst%, %::outinst%
+        # $descr .= $tcom . " ";
+        my %tm = ();
+        $tm{'%::descr%'} = $conndb{$signal}{'::descr'};
+        $tm{'%::comment%'} = $conndb{$signal}{'::comment'};
+        $tm{'%::ininst%'} = "";
+        $tm{'%::outinst%'} = "";
+        for my $i ( @{$conndb{$signal}{'::in'}} ) {
+            next unless (exists( $i->{'inst'}));
+            $tm{'%::ininst%'} .= " " . $i->{'inst'};
+        }
+        for my $i ( @{$conndb{$signal}{'::out'}} ) {
+            next unless (exists( $i->{'inst'}));
+            $tm{'%::outinst%'} .= " " . $i->{'inst'};
+        }
+        $descr = replace_mac( $EH{'output'}{'generate'}{'portdescr'}, \%tm );
+        if ( $descr and $descr ne '%EMPTY%' ) {
+        	$descr = _mix_wr_descr( 'conn', $conndb{$signal}, $descr, 4, $tcom );
+        }
+        if ( $EH{'output'}{'generate'}{'portdescrlength'} =~ m,^(\d+)$, ) { # Limit lenght
+            if ( length( $descr)  > $1 ) {
+                $descr = substr( $descr, 0, $1 ) . "..."; # Cut
+            }
+        }
+        $descr =~ s,$tcom\s+$tcom,$tcom,; #Remove duplicate comments ...
+    }
+
+	return $descr;
+}
+
+#
+# retrieve ::descr field
+#
+# input:
+#	entitiy name
+#	port name
+# output:
+#	description field
+# global:
+#	
+#
+sub _mix_wr_getdescr ($$) {
+	my $e = shift; # entity name 
+	my $p = shift; # port
+
+	return '';
+}
+#
 # create a string to prepend in case user wants unusual sort order
 #  %MAPSORT_KEY_KEY_SORTMAP%
 # see comments below for list of allowed keywords
+#
+# input:
+#	entitiy name
+#	port name
+# output:
+#	key to prepend for ordering
+# global:
+#	%EH (output.generate.portmapsort)
 #
 sub mix_wr_mapsort ($$) {
 	my $e = shift; # entity name 
@@ -3348,7 +3567,8 @@ sub mix_wr_mapsort ($$) {
 	my $so = "%MAPSORT_";
 	
 	return unless ( $order );
-	return "" if ( $order eq "alpha" );
+	#!wig20051007: alpha neede for verilog2001:
+	#!wig20051007: return "" if ( $order eq "alpha" );
 
 	# portmapsort' => 'alpha', # How to sort port map; allowed values are:
 	# alpha := sorted by port name (default)
@@ -3390,12 +3610,12 @@ sub mix_wr_mapsort ($$) {
 			my $format = '_%0' . ( length( $EH{'sum'}{'conn'} ) + 1 ) . 'd_'; # 
 			$so .= 	sprintf( $format, $s );
 		} elsif ( $o =~ m/\balpha\b/io ) {
-			; # Nothing to do ..
+			$so .= "_" . $p . "!_"; # $p is the name of the port ..., ! makes order o.k.
 		} elsif ( $o =~ m/\b(::\w+)\b/io ) {
 			# Take content of column ::
 			if ( exists( $conndb{$1} ) ) {
 				( my $t = $conndb{$1} ) =~ s/\W+//g; # Remove no word chars
-				$so .= "_" . $t  . "_";
+				$so .= "_" . $t  . "!_"; # ! is the first non-whitespace char! 
 			} else {
 				logwarn( "WARNING: Illegal sort column for port maps: $1!" );
 				$EH{'sum'}{'warnings'}++;
@@ -3527,9 +3747,8 @@ sub _write_architecture ($$$$) {
         
 		$macros{'%ENTYNAME%'} = $aent;
 		$macros{'%ARCHNAME%'} = $arch . $EH{'postfix'}{'POSTFIX_ARCH'};
-    	$macros{'%VERILOG_INTF%'} = $EH{'macro'}{'%S%'} . $tcom . "\n" .
-        	$EH{'macro'}{'%S%'} . $tcom . " Generated module "
-        	. $i . "\n" . $EH{'macro'}{'%S%'} . $tcom . "\n"; 
+    	$macros{'%VERILOG_INTF%'} = $tcom . "\n" .
+        	$tcom . " Generated module " . $i . "\n" . $tcom . "\n"; 
 		$macros{'%CONCURS%'} = $EH{'macro'}{'%S%'} . $tcom . " Generated Signal Assignments\n";
 		$macros{'%CONSTANTS%'} = $EH{'macro'}{'%S%'} . $tcom . " Generated Constant Declarations\n";
 		#
@@ -3558,8 +3777,8 @@ sub _write_architecture ($$$$) {
         	my $intf = "";
         	my $generics = "";
         	( $intf, $generics ) = mix_wr_get_interface( $entities{$aent}, $aent, $ilang, $tcom );
-        	$intf = $intf . $EH{'macro'}{'%S%'} x 2 . $tcom .
-            		" End of generated module header\n";
+        	#!wig20051007: do not indent
+        	$intf = $intf . $tcom . " End of generated module header\n";
         	$macros{'%VERILOG_INTF%'} .= $generics . $intf;
     	}
 
@@ -3586,14 +3805,14 @@ sub _write_architecture ($$$$) {
                     $entities{$d_enty}{'__PORTTEXT__'}{$ilang} = $d_port;
                 } else {
                     $d_port = "\t\t" . $tcom . " Generated Port for Entity $d_enty\n" . $d_port;
-                    $d_port =~ s/;(\s*$tcom.*\n)$/$1/io; #TODO ...
+                    $d_port =~ s/;((%S%|\s)*$tcom.*\n)$/$1/io; #TODO ...
                     $d_port =~ s/;\n$/\n/io;
                     $d_port .= "\t\t" . $tcom . " End of Generated Port for Entity $d_enty\n";
                     $entities{$d_enty}{'__PORTTEXT__'}{$ilang} = $d_port;
                 }
                 if ( is_comment( $gt, $ilang ) ) {
                     $gt = "\t\t" . $tcom . " Generated Generics for Entity $d_enty\n" . $gt;            
-                    $gt =~ s/;(\s*$tcom.*\n)$/$1/io; # Remove trailing ; for VHDL
+                    $gt =~ s/;((%S%|\s)*$tcom.*\n)$/$1/io; # Remove trailing ; for VHDL
                     $gt =~ s/;\n$/\n/io;
                     $gt .= "\t\t" . $tcom . " End of Generated Generics for Entity $d_enty\n";
                     # Store ports and generics for later reusal

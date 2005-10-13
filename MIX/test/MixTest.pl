@@ -380,7 +380,17 @@ my @tests = (
 		'name' => 'udc',
 		'path' => 'udc',
 		'options' => '',
-	}
+	},
+	{ # Split intermediate CONN sheet
+		'name' => 'intra',
+		'path' => 'intra',
+		'options' => '',
+	},
+	{ # Split intermediate CONN sheet into one for each instance
+		'name' => 'intra',
+		'path' => 'intra/instance',
+		'options' => '',
+	},
 );
 
 my $numberOfTests = scalar @tests;

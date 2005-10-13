@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Checker
 # | Modules:    $RCSfile: MixChecker.pm,v $
-# | Revision:   $Revision: 1.9 $
+# | Revision:   $Revision: 1.10 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2005/09/14 14:40:06 $
+# | Date:       $Date: 2005/10/13 09:09:46 $
 # |
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.9 2005/09/14 14:40:06 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.10 2005/10/13 09:09:46 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the checking capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixChecker.pm,v $
+# | Revision 1.10  2005/10/13 09:09:46  wig
+# | Added intermediate CONN sheet split
+# |
 # | Revision 1.9  2005/09/14 14:40:06  wig
 # | Startet report module (portlist)
 # |
@@ -100,6 +103,7 @@ use Micronas::MixParser;
 #
 sub mix_check_case($$);
 sub mix_check_wiring($$);
+sub mix_check_initkeyword ();
 
 # Internal variable
 my %mix_check_list = ();
@@ -107,9 +111,9 @@ my %mix_check_list = ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixChecker.pm,v 1.9 2005/09/14 14:40:06 wig Exp $';
+my $thisid		=	'$Id: MixChecker.pm,v 1.10 2005/10/13 09:09:46 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixChecker.pm,v $';
-my $thisrevision   =      '$Revision: 1.9 $';
+my $thisrevision   =      '$Revision: 1.10 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -295,6 +299,174 @@ sub check_n_ports ($$) {
         }
     }
 }
+
+#
+# Create a list of keywords in various languages:
+#
+# VHDL: from http://www.seas.upenn.edu/~ee201/vhdl/keywordlist.html
+# Verilog: 
+sub mix_check_initkeyword () {
+	
+# VHDL:
+# the keywords are not case-sensitive!
+my @keys = qw (
+abs access after alias all and architecture array assert attribute
+begin block body buffer bus
+case component configuration constant
+disconnect downto
+else elsif end entity exit
+file for function
+generate generic group guarded
+if impure in inertial inout is
+label library linkage literal loop
+map mod
+nand new next nor not null
+of on open or others out
+package port postponed procedure process pure
+range record register reject return rol ror
+select severity signal shared sla sli sra srl subtype
+then to transport type
+unaffected units until use
+variable
+wait when while with
+xnor xor
+);
+
+=head 2 list from other place http://opensource.ethz.ch/emacs/vhdl87_syntax.html#keywords
+
+Reserved Words
+
+      abs, access, after, alias, all, and, architecture, array, assert, attribute,
+      begin, block, body, buffer, bus,
+      case, component, configuration, constant,
+      disconnect, downto,
+      else, elsif, end, entity, exit,
+      file, for, function,
+      generate, generic, guarded,
+      if, in, inout, is,
+      label, library, linkage, loop,
+      map, mod,
+      nand, new, next, nor, not, null,
+      of, on, open, or, others, out,
+      package, port, procedure, process,
+      range, record, register, rem, report, return,
+      select, severity, signal, subtype,
+      then, to, transport, type,
+      units, until, use,
+      variable,
+      wait, when, while, with,
+      xor 
+
+=cut
+
+=head 2 the same for Verilog now from http://toolbox.xilinx.com/docsan/xilinx4/data/docs/xst/verilog10.html
+
+always
+and
+assign
+begin
+buf
+bufif0
+bufif1
+case
+casex
+casez
+cmos
+deassign
+default
+defparam
+disable
+edge
+else
+end
+endcase
+endfunction
+endmodule
+endprimitive
+endspecify
+endtable
+endtask
+event
+for
+for
+force
+forever
+function
+highz0
+highz1
+if
+ifnone
+initial
+inout
+input
+integer
+join
+large
+macromodule
+medium
+module
+nand
+negedge
+nmos
+nor
+not
+notif0
+notif1
+or
+output
+parameter
+pmos
+posedge
+primitive
+pull0
+pull1
+pulldown
+pullup
+rcmos
+real
+realtime
+reg
+release
+repeat
+rnmos
+rpmos
+rtran
+rtranif0
+rtranif1
+scalared
+small
+specify
+specparam
+strong0
+strong1
+supply0
+supply1
+table
+task
+time
+tran
+tranif0
+tranif1
+tri
+tri0
+tri1
+triand
+trior
+trireg
+vectored
+wait
+wand
+weak0
+weak1
+while
+wire
+wor
+xnor
+xor
+
+=cut
+
+} # End of mix_check_initkeywords
 
 1;
 

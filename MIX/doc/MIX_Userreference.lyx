@@ -56,7 +56,7 @@ MIX - Micronas Interconnect Spec expander
 
 Author: Wilfried Gänsheimer
 \newline 
-$Date: 2005/10/06 11:17:28 $
+$Date: 2005/10/13 09:09:45 $
 \newline 
 Version: $Id: MIX_Userreference.lyx,v 1.6 2005/01/26 14:01:59 wig Exp 
 \layout Section
@@ -3604,6 +3604,59 @@ filter
 extmask
 \family default 
 ' => (experimental, do not use)
+\layout Subsubsection
+
+output.filter.file: Filter file to be written
+\layout Standard
+
+To suppress the generation of certain files, list the instances in the configura
+tion parameter 
+\family typewriter 
+output.filter.file
+\family default 
+.
+ A trailing modifier like 
+\family typewriter 
+arch:
+\family default 
+, 
+\family typewriter 
+enty:
+\family default 
+, 
+\family typewriter 
+conf:
+\family default 
+ or 
+\family typewriter 
+module:
+\family default 
+ makes the filter apply only to that variant of the instance.
+\newline 
+Example:
+\layout Standard
+
+
+\family typewriter 
+output.filter.file inst_a,conf:inst_b
+\newline 
+
+\family default 
+Remember that the parameters 
+\family typewriter 
+output.generate.(arch|enty|conf)
+\family default 
+ can be used to generate hdl output for leaf cells or not.
+ Default is 
+\family typewriter 
+noleaf
+\family default 
+.
+ Setting to 
+\family typewriter 
+leaf
+\family default 
+ will yield HDL description for leaf cells, too.
 \layout Section
 
 CONN sheet macros
@@ -7263,10 +7316,35 @@ ignorecase|ic
 : ignore case if set
 \layout Subsubsection
 
-Intermediate Excel Sheet
+Intermediate Excel Sheet foo-mixed.xls
 \layout Standard
 
-Format of intermediate xls sheet will be kept as is as long as the number
+MIX creates the 
+\family typewriter 
+foo-mixed.xls
+\family default 
+ intermediate file with the fully evaluated and expanded data from all input
+ sources.
+ The actual output format depends on the platform and kind of input data.
+ An 
+\family typewriter 
+Excel
+\family default 
+ file is created on MS-Windows hosts, while in other cases a 
+\family typewriter 
+csv
+\family default 
+ format will be used.
+\newline 
+The file name name will be derived from the last input file name given on
+ the command line with an inserted 
+\family typewriter 
+-mixed
+\family default 
+ before the file extension.
+ 
+\newline 
+Format of an intermediate xls sheet will be kept as is as long as the number
  and order of columns is unchanged.
 \newline 
 MIX saves three old versions of the generated 
@@ -7287,6 +7365,196 @@ HIER_0
 HIER_1
 \series default 
 , ....
+\newline 
+Three sheets are created by default: 
+\series bold 
+HIER
+\series default 
+, 
+\series bold 
+CONN
+\series default 
+ and 
+\series bold 
+CONF
+\series default 
+.
+\newline 
+By using various configuration parameters you can change that, however:
+ 
+\newline 
+
+\newline 
+'
+\family typewriter 
+intermediate.path
+\family default 
+' defines the storage location.
+ Default is 
+\family typewriter 
+cwd()
+\family default 
+.
+ Will be set by using 
+\family typewriter 
+-dir PATH
+\family default 
+, too.
+\newline 
+'
+\family typewriter 
+intermediate.order
+\family default 
+' defines the output sort order.
+ Default is '
+\family typewriter 
+input
+\family default 
+' (
+\shape italic 
+not implemented
+\shape default 
+)
+\newline 
+'
+\family typewriter 
+intermediate.keep
+\family default 
+' defines the number of old versions of a sheet to keep, default: 3
+\newline 
+'
+\family typewriter 
+intermediate.format
+\family default 
+' is one of: 
+\family typewriter 
+prev(ious)
+\family default 
+, 
+\family typewriter 
+auto
+\family default 
+ or 
+\family typewriter 
+n(o|ew)
+\layout Standard
+
+# If set to 
+\family typewriter 
+prev(ious)
+\family default 
+ uses old sheet format, auto applies auto-format.
+ Others do nothing special.
+ Default:
+\family typewriter 
+ previous
+\family default 
+
+\newline 
+'
+\family typewriter 
+intermediate.strip
+\family default 
+' if set, all old and diff sheets will get removed
+\newline 
+'
+\family typewriter 
+intermediate.ext
+\family default 
+' (unused)
+\newline 
+'
+\family typewriter 
+intermediate.intra
+\family default 
+'
+\layout Standard
+
+if set create seperate conn sheets for instances, Allowed values are 
+\layout Standard
+
+
+\family typewriter 
+INTRA
+\family default 
+ -> CONN and INTRA 
+\layout Standard
+
+
+\family typewriter 
+TOP
+\family default 
+ -> CONN_<TOP> and CONN 
+\layout Standard
+
+
+\family typewriter 
+TOP,INTRA
+\family default 
+ -> CONN_<TOP> and CONN_INTRA 
+\layout Standard
+
+
+\family typewriter 
+INST[ANCE]
+\family default 
+ -> create one conn sheet for each instance, named: 
+\family typewriter 
+CONN_<
+\emph on 
+instance
+\emph default 
+>
+\family default 
+ 
+\newline 
+'
+\family typewriter 
+intermediate.instpre
+\family default 
+' is prepend to CONN sheet names if '
+\family typewriter 
+intra
+\family default 
+' is '
+\family typewriter 
+inst
+\family default 
+' .
+ Default: '
+\family typewriter 
+CONN_
+\family default 
+'
+\newline 
+'
+\family typewriter 
+intermediate.topmap
+\family default 
+' defines mapping of signal modes on sheets keping data of top instances.
+ Default value is '
+\family typewriter 
+ALL
+\family default 
+'.
+ Values are
+\layout Standard
+
+- 
+\family typewriter 
+ALL
+\layout Standard
+
+- list of signals (comma seperated list of regular expressions)
+\newline 
+If a signal is attached to a top cell and the name matches, the signal mode
+ (I,O,IO,C,P,G, ...) is mapped to 
+\family typewriter 
+%TM_(I|O|IO|...)%
+\family default 
+.
+ These macros are predefined to map back to the original mode, if you run
+ the created CONN sheet through MIX again.
 \layout Subsubsection
 
 Output Redirection

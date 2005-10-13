@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.27 $                                          |
+# | Revision:   $Revision: 1.28 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/10/06 11:21:44 $                              |
+# | Date:       $Date: 2005/10/13 09:09:46 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.28  2005/10/13 09:09:46  wig
+# | Added intermediate CONN sheet split
+# |
 # | Revision 1.27  2005/10/06 11:21:44  wig
 # | Got testcoverage up, fixed generic problem, prepared report
 # |
@@ -188,11 +191,11 @@ sub mix_utils_io_check_path ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.27 2005/10/06 11:21:44 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.28 2005/10/13 09:09:46 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.27 $'; #'  
+my $thisrevision    =      '$Revision: 1.28 $'; #'  
 
-# Revision:   $Revision: 1.27 $
+# Revision:   $Revision: 1.28 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -554,57 +557,40 @@ sub mix_utils_open_input(@) {
 
 		# Open connectivity sheet(s)
 		@conn = open_infile( $i, $EH{'conn'}{'xls'}, $EH{'conf'}{'req'} );
-		# check and reset multiple fields ...
-		# mix_utils_check_input_desc('conn');
+
 		# Open hierachy sheets
 		@hier = open_infile( $i, $EH{'hier'}{'xls'}, $EH{'conf'}{'req'} );
-		# check and reset multiple fields ...
-		# mix_utils_check_input_desc('hier');
+
 		# Open IO sheet (if available, not needed!)
 		@io = open_infile( $i, $EH{'io'}{'xls'}, $EH{'conf'}{'req'} );
-		# check and reset multiple fields ...
-		# mix_utils_check_input_desc('io');
+
 		# Open I2C sheet (if available, not needed!)
 		@i2c = open_infile( $i, $EH{'i2c'}{'xls'}, $EH{'conf'}{'req'} );
-		# check and reset multiple fields ...
-		# mix_utils_check_input_desc('i2c');
 
-#
-# reset muliple field counter
-# check if we got the same number of fields as before
-#
-
-=head 2
-
-sub mix_utils_check_input_desc ($) {
-	my $name = shift;
-	
-	if ( $EH{$name}{'fields'}{'_mult_'} ) {
-		# Have been here before!
-		for my $k ( keys( %{$EH{$name}{'fields'}{'_mult_'}} ) ) {
-			
-}	
-
-=cut
-
+		# Did we get enough sheets:
 		if(!@conn && !@conf && !@hier && !@io && !@i2c) {
 	    	logwarn("ERROR: no input found in file $i!\n");
 	    	$EH{'sum'}{'errors'}++;
 	    	next; # -> skip to next
 		}
 
+		# Parse the configuration ....
+		# TODO : Should it be allowed to change the sheet names in the conf files?
+		#		Then we would need to push that function up
 		for my $c ( @conf ) {
 	    	$EH{'conf'}{'parsed'}++;
 	    	# Apply it immediately
 	    	mix_sheet_conf( $c, $EH{'conf'}{'xls'} );
 		}
 
+		# Merge conn sheets:
 		for my $c ( @conn ) {
 	    	$EH{'conn'}{'parsed'}++;
  	    	my @norm_conn = convert_in( "conn", $c ); # Normalize and read in
 	    	push( @$aconn, @norm_conn ); # Append
 		}
 
+		# Merge hier sheets:
 		for my $c ( @hier ) {
 	    	$EH{'hier'}{'parsed'}++;
 	    	my @norm_hier = convert_in( "hier", $c );
@@ -697,10 +683,15 @@ sub mix_utils_io_create_path () {
 
 maps a call to correct open function
 
+input:
 =over 4
 =item $filename name of file
 =item $sheet name of worksheet
 =item $flag flags
+
+output:
+
+global: writes to $EH{'sum'}{'errors'}
 
 =back
 

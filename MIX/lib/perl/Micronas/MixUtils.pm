@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.73 $                                         |
+# | Revision:   $Revision: 1.74 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/10/06 11:21:44 $                              |
+# | Date:       $Date: 2005/10/13 09:09:46 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.73 2005/10/06 11:21:44 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.74 2005/10/13 09:09:46 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.74  2005/10/13 09:09:46  wig
+# | Added intermediate CONN sheet split
+# |
 # | Revision 1.73  2005/10/06 11:21:44  wig
 # | Got testcoverage up, fixed generic problem, prepared report
 # |
@@ -265,6 +268,7 @@ require Exporter;
 	is_absolute_path
 	replace_mac
 	db2array
+	db2array_intra
 	write_sum
 	convert_in
 	select_variant
@@ -290,6 +294,8 @@ use Getopt::Long qw(GetOptions);
 use Cwd;
 use Log::Agent;
 use Log::Agent::Priorities qw(:LEVELS);
+
+use Micronas::MixUtils::InComments; # Some extra for comments in input data
 
 use Storable;
 
@@ -321,6 +327,11 @@ sub mix_utils_loc_sum ();
 sub mix_utils_open_diff ($;$);
 sub mix_utils_diff ($$$$;$);
 sub mix_utils_clean_data ($$;$);
+#!wig20051012:
+sub db2array_intra ($$$$$);
+sub _mix_utils_im_header ($$);
+sub _inoutjoin ($);
+
 
 ##############################################################
 # Global variables
@@ -337,11 +348,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.73 2005/10/06 11:21:44 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.74 2005/10/13 09:09:46 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.73 $';         #'
+my $thisrevision        =      '$Revision: 1.74 $';         #'
 
-# Revision:   $Revision: 1.73 $   
+# Revision:   $Revision: 1.74 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -981,7 +992,7 @@ sub mix_init () {
 					# like TEXT_FOO_BAR (X10), if TEXT_FOO_BAR appears several times
 					# TODO Implement for hier
           	'verilog' => '', # switches for Verilog generation, off by default, but see %UAMN% tag
-                                          #  useconfname := use VHDL config name as verilog module name; works for e.g. NcSim
+                             #  useconfname := use VHDL config name as verilog module name; works for e.g. NcSim
 	      	'workaround' => {
             	'verilog' => 'dummyopen', # dummyopen := create a dummy signal for open port splices 
                     ,
@@ -1000,19 +1011,28 @@ sub mix_init () {
                 'std_log_typecast' => 'ignore', # will ignore typecast's for std_ulogic vs. std_logic ...
 	     	}
        },
-		'ext' =>      {   'vhdl' => 'vhd',
+		'ext' =>
+		{
+			  'vhdl' => 'vhd',
 			  'verilog' => 'v' ,
 			  'intermediate' => 'mixed', # not a real extension!
 			  'internal' => 'pld',
 			  'delta' => '.diff',	  # delta mode
               'verify' => '.ediff',   # verify against template ...
 		},
-		'comment' => {	'vhdl' => '--',
+		'comment' => # Comment char(s) for output
+		{	'vhdl' => '--',
 			'verilog' => '//',
 			'intermediate' => '#',
 			'internal' => '#',
 			'delta' => '#',
 			'default' => '#',
+			# TODO : Allow /* ... */ comments for Verilog to be accepted, too
+		},
+		'language' => # Special switches to control details of the HDL generated
+		{	'vhdl'	=>	'', # Unused 20051007
+			'verilog'	=>	'', # Setting to 2001 will change generation of port and parameters
+								# keys: [no]owire, 2001, [no|old]style, [no|old|2001]params,
 		},
 		# 'warnings' => 'load,drivers',	# Warn about missing loads/drivers
 		'warnings' => '',
@@ -1034,16 +1054,24 @@ sub mix_init () {
     'internal' => {
 		'path' => ".",
 		'order' => 'input',		# Field order := as in input or predefined
-		'format' => 'perl', 	# Internal intermediate format := perl|xls|csv|xml ...
+		'format' => 'perl', 	# Internal format := perl|xls|csv|xml ... (not used!)
     },
     'intermediate' => {
-		'path' => ".",
-		'order' => 'input',
-		'keep' => '3',	# Number of old sheets to keep
-		'format' => 'prev', # One of: prev(ious), auto or n(o|ew)
-		# If set, previous uses old sheet format, auto applies auto-format and the others do nothing.
-		'strip' => '0',   # remove old and diff sheets
-		'ext' => '', # default intermediate-output extension
+		'path'	=> ".",
+		'order'	=> 'input',
+		'keep'	=> '3',	# Number of old sheets to keep
+		'format'	=> 'prev', # One of: prev(ious), auto or n(o|ew)
+			# If set, previous uses old sheet format, auto applies auto-format and the others do nothing.
+		'strip'	=> '0',   # remove old and diff sheets
+		'ext'	=> '', # default intermediate-output extension
+		'intra'	=> '',	# if set create seperate conn sheets for instances:
+			#	INTRA		-> CONN and INTRA
+			#	TOP			-> CONN_<TOP> and CONN
+			#	TOP,INTRA	-> CONN_<TOP> and CONN_INTRA
+			#	INST[ANCE]	-> create one conn sheet for each instance, named: CONN_<instance>
+		'instpre'	=>	'CONN_',	# prepend to CONN sheet name if 'intra' = 'inst'			
+		'topmap' => 'ALL',	# Values: ALL or list of signals (comma seperated)
+			# map (I,O,IO) signal modes of top to %TM_(I|O|IO)%
     },
     'import' => { # import mode control
     	'generate' => 'stripio', # remove trailing _i,_o from generated signal names
@@ -1223,11 +1251,41 @@ sub mix_init () {
 		'field' => {},
     },
 
+	#
+	# Default xls sheet definitions
+	#!wig20051011
+    'default' => {
+		'xls' => '.*',
+		'req' => 'optional',
+		'key' => '::ign', # Primary key to arbitrary data. Has to be set!!!
+		'comments' => 'post',	# Keep comments -> pre|predecessor post|successor
+		'parsed' => 0,
+		'field' => {
+	    	#Name   	=>	  	   		Inherits
+	    	#					    		Multiple
+	    	#						    		Required
+	    	#							  		Defaultvalue
+	    	#								    			PrintOrder
+	    	#                           0   1   2	3       4
+	    	'::ign' 		=> [ qw(	0	0	1	%NULL%	1 ) ],
+	    	'::comment'	    => [ qw(	1	0	2	%EMPTY%	2 )],
+	    	'::default'	    => [ qw(	1	1	0	%NULL%	0 )],
+	    	'::debug'	    => [ qw(	1	0	0	%NULL%	0 )],
+        	'::default'		=> [ qw(	1	1	0	%EMPTY%	0 )],	    
+	    	'::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
+	    	'nr'			=> 3,  # Number of next field to print
+	    	'_mult_'		=> {},  # Internal counter for multiple fields
+   	    	'_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
+	    						# 1 / RL -> left to right decreasing
+	    						# xF -> map the first to ::head:0 (defaults: ::head)
+		},
+    },
     #
     # Definitions regarding the CONN sheets:
     #
     'conn' => {
 		'xls' => 'CONN',
+		'comments' => '',	# Keep comments -> pre|predecessor post|successor
 		'req' => 'mandatory',
 		'parsed' => 0,
 		'key' => '::name', # Primary key to %conndb
@@ -1268,7 +1326,8 @@ sub mix_init () {
     #	 hierachy sheet basic definition
     #
     'hier' => {
-        'xls' => 'HIER',
+        'xls' => 'HIER', 
+		'comments' => '',	# Keep comments -> pre|predecessor post|successor
 		'req' => 'mandatory',
 		'parsed' => 0,
 		'key' => '::inst', # Primary key to %hierdb
@@ -1316,34 +1375,35 @@ sub mix_init () {
     #
     #
     'io' => {
-        'xls' => 'IO',
-	'req' => 'optional',
-	'parsed' => 0,
-	'cols' => 0,
-	'field' => {
-	    #Name   	=>		    	Inherits
-	    #					    		Multiple
-	    #						    		Required
-	    #							   			Defaultvalue
-	    #								    					PrintOrder
-	    #                           0   1   2	3				4
-	    '::ign' 		=>	[ qw(	0	0	1	%EMPTY% 		1 )],
-	    '::class'		=>	[ qw(	1	0	1	WARNING_NOT_SET	2 )],
-	    '::ispin'		=>	[ qw(	0	0	1	%EMPTY%			3 )],
-	    '::pin'			=>	[ qw(	0	0	1	WARNING_PIN_NR	4 )],
-	    '::pad'			=>	[ qw(	0	0	1	WARNING_PAD_NR	5 )],
-	    '::type'		=>	[ qw(	1	0	1	DEFAULT_PIN		6 )],
-	    '::iocell'		=>	[ qw(	1	0	1	DEFAULT_IO		7 )],
-	    '::port'		=>	[ qw(	1	0	1	%EMPTY%			8 )],
-	    '::name'		=>	[ qw(	0	0	1	PAD_NAME		9 )],
-	    '::muxopt'		=>	[ qw(	1	1	1	%EMPTY%	        10 )],
-	    '::comment'		=>	[ qw(	1	0	2	%EMPTY%	        11 )],
-        '::default'		=>	[ qw(	1	1	0	%EMPTY%			0 )],	    
-	    '::debug'		=>	[ qw(	1	0	0	%NULL%	        0 )],
-	    '::skip'		=>	[ qw(	0	1	0	%NULL% 	        0 )],
-	    'nr'			=> 12,  # Number of next field to print
-	    '_mult_'		=> {},  # Internal counter for multiple fields
-	    '_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
+		'xls' => 'IO',
+		'comments' => '',	# Keep comments -> pre|predecessor post|successor
+		'req' => 'optional',
+		'parsed' => 0,
+		'cols' => 0,
+		'field' => {
+	    	#Name   	=>		    	Inherits
+	    	#					    		Multiple
+	    	#						    		Required
+	    	#							   			Defaultvalue
+	    	#								    					PrintOrder
+	    	#                           0   1   2	3				4
+	    	'::ign' 		=>	[ qw(	0	0	1	%EMPTY% 		1 )],
+	    	'::class'		=>	[ qw(	1	0	1	WARNING_NOT_SET	2 )],
+	    	'::ispin'		=>	[ qw(	0	0	1	%EMPTY%			3 )],
+	    	'::pin'			=>	[ qw(	0	0	1	WARNING_PIN_NR	4 )],
+	    	'::pad'			=>	[ qw(	0	0	1	WARNING_PAD_NR	5 )],
+	    	'::type'		=>	[ qw(	1	0	1	DEFAULT_PIN		6 )],
+	    	'::iocell'		=>	[ qw(	1	0	1	DEFAULT_IO		7 )],
+	    	'::port'		=>	[ qw(	1	0	1	%EMPTY%			8 )],
+	    	'::name'		=>	[ qw(	0	0	1	PAD_NAME		9 )],
+	    	'::muxopt'		=>	[ qw(	1	1	1	%EMPTY%	        10 )],
+	    	'::comment'		=>	[ qw(	1	0	2	%EMPTY%	        11 )],
+        	'::default'		=>	[ qw(	1	1	0	%EMPTY%			0 )],	    
+	    	'::debug'		=>	[ qw(	1	0	0	%NULL%	        0 )],
+	    	'::skip'		=>	[ qw(	0	1	0	%NULL% 	        0 )],
+	    	'nr'			=> 12,  # Number of next field to print
+	    	'_mult_'		=> {},  # Internal counter for multiple fields
+	    	'_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
 	    					# 1 / RL -> left to right decreasing
 	    					# xF -> map the first to ::head:0 (defaults: ::head)	    
 		},
@@ -1354,43 +1414,44 @@ sub mix_init () {
     'i2c' => 
 	   {
 		'xls' => 'I2C',
+		'comments' => '',	# Keep comments -> pre|predecessor post|successor
 		'regmas_type' => 'VGCA', # format of register-master, currently either VGCA or FRCH
 		'req' => 'optional',
 		'parsed' => 0,
 		'cols' => 0,
 		'field' => {
-	    #Name   	=>	  	        Inherits
-	    #					            Multiple
-	    #						            Required
-	    #							            Defaultvalue
-	    #								                    PrintOrder
-	    #                           0   1   2	3           4
-	    '::ign' 		=> [ qw(	0	0	1	%EMPTY%     1  )],
-	    '::variants'	=> [ qw(	1	0	0	Default	    2  )],
-	    '::inst'        => [ qw(    0   0   1   W_NO_INST   3  )],
-	    '::width'		=> [ qw(	0	0	0	16          4  )],
-	    '::dev'         => [ qw(    0   0   1   %EMPTY%     5  )],
-	    '::sub'         => [ qw(    0   0   1   %EMPTY%     6  )],
-	    '::interface'   => [ qw(    0   0   1   %EMPTY%     7  )],
-	    '::block'       => [ qw(    0   0   1   %EMPTY%     8  )],
-	    '::dir'         => [ qw(    0   0   1   RW          9  )],
-	    '::spec'        => [ qw(    0   0   0   %EMPTY%     10 )],
-	    '::clock'       => [ qw(    0   0   1   %OPEN%      11 )],
-	    '::reset'       => [ qw(    0   0   1   %OPEN%      12 )],
-	    '::busy'        => [ qw(    0   0   0   %EMPTY%     13 )],
-		'::sync'        => [ qw(    0   0   0   NTO         14 )],
-		'::update'      => [ qw(    0   0   0   %OPEN%      15 )],
-	    '::readDone'    => [ qw(    0   0   0   %EMPTY%     16 )],
-	    '::b'		    => [ qw(	0	1	1	%OPEN%      17 )],
-	    '::init'        => [ qw(    0   0   0   0           18 )],
-	    '::rec'         => [ qw(    0   0   0   0           19 )],
-	    '::range'	    => [ qw(	1	0	0	%EMPTY%     20 )],
-		'::auto'        => [ qw(    0   0   0   0           21 )],
-	    '::comment'	    => [ qw(	1	1	2	%EMPTY%     22 )],
-	    '::default'	    => [ qw(	1	1	0	%EMPTY%     23 )],
-	    'nr'			=> 23,  # Number of next field to print
-	    '_mult_'		=> {},  # Internal counter for multiple fields
-	   	'_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
+	    	#Name   	=>	  	        Inherits
+	    	#					            Multiple
+	    	#						            Required
+	    	#							            Defaultvalue
+	    	#								                    PrintOrder
+	    	#                           0   1   2	3           4
+	    	'::ign' 		=> [ qw(	0	0	1	%EMPTY%     1  )],
+	    	'::variants'	=> [ qw(	1	0	0	Default	    2  )],
+	    	'::inst'        => [ qw(    0   0   1   W_NO_INST   3  )],
+	    	'::width'		=> [ qw(	0	0	0	16          4  )],
+	    	'::dev'         => [ qw(    0   0   1   %EMPTY%     5  )],
+	    	'::sub'         => [ qw(    0   0   1   %EMPTY%     6  )],
+	    	'::interface'   => [ qw(    0   0   1   %EMPTY%     7  )],
+	    	'::block'       => [ qw(    0   0   1   %EMPTY%     8  )],
+	    	'::dir'         => [ qw(    0   0   1   RW          9  )],
+	    	'::spec'        => [ qw(    0   0   0   %EMPTY%     10 )],
+	    	'::clock'       => [ qw(    0   0   1   %OPEN%      11 )],
+	    	'::reset'       => [ qw(    0   0   1   %OPEN%      12 )],
+	    	'::busy'        => [ qw(    0   0   0   %EMPTY%     13 )],
+			'::sync'        => [ qw(    0   0   0   NTO         14 )],
+			'::update'      => [ qw(    0   0   0   %OPEN%      15 )],
+	    	'::readDone'    => [ qw(    0   0   0   %EMPTY%     16 )],
+	    	'::b'		    => [ qw(	0	1	1	%OPEN%      17 )],
+	    	'::init'        => [ qw(    0   0   0   0           18 )],
+	    	'::rec'         => [ qw(    0   0   0   0           19 )],
+	    	'::range'	    => [ qw(	1	0	0	%EMPTY%     20 )],
+			'::auto'        => [ qw(    0   0   0   0           21 )],
+	    	'::comment'	    => [ qw(	1	1	2	%EMPTY%     22 )],
+	    	'::default'	    => [ qw(	1	1	0	%EMPTY%     23 )],
+	    	'nr'			=> 23,  # Number of next field to print
+	    	'_mult_'		=> {},  # Internal counter for multiple fields
+	   		'_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
 	    					# 1 / RL -> left to right decreasing
 	    					# xF -> map the first to ::head:0 (defaults: ::head)
 		},
@@ -1402,58 +1463,58 @@ sub mix_init () {
     # ::b	::b	::b	::b	::b	::b	::b	::b	::b	::b	::b
     # ::b	::b	::b	::b	::b	::init	::rec	::range	::view
     # ::vi2c	::name	::comment
-    # TODO Define default fields:
     'vi2c' => {
-        'xls' => 'VI2C',
-	'req' => 'optional',
-	'parsed' => 0,
-	'field' => {
-	    #Name   	=>	  	   		Inherits
-	    #					    		Multiple
-	    #						    		Required
-	    #							  		Defaultvalue
-	    #								    			PrintOrder
-	    #                           0   1   2	3       4
-	    '::ign' 		=> [ qw(	0	0	1	%NULL%	1 ) ],
-	    '::type'		=> [ qw(	0	0	1	%TBD% 	2 ) ],
-	    '::variants'	=> [ qw(	1	0	0	Default	3 )],
-	    '::inst'		=> [ qw(	0	0	1	W_NO_INST 4 )],
-	    '::comment'	    => [ qw(	1	0	2	%EMPTY%	6 )],
-	    '::shortname'	=> [ qw(	0	0	0	%EMPTY%	5 )],
-	    '::b'			=> [ qw(	0	1	1	%NULL%	7 )],
-	    '::default'	    => [ qw(	1	1	0	%NULL%	0 )],
-	    '::hierachy'	=> [ qw(	1	0	0	%NULL%	0 )],
-	    '::debug'	    => [ qw(	1	0	0	%NULL%	0 )],
-        '::default'		=> [ qw(	1	1	0	%EMPTY%	0 )],	    
-	    '::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
-	    'nr'			=> 8,  # Number of next field to print
-	    '_mult_'		=> {},  # Internal counter for multiple fields
-   	    '_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
-	    					# 1 / RL -> left to right decreasing
-	    					# xF -> map the first to ::head:0 (defaults: ::head)
+		'xls' => 'VI2C',
+		'req' => 'optional',
+		'key' => '::inst',
+		'parsed' => 0,
+		'field' => {
+	    	#Name   	=>	  	   		Inherits
+	    	#					    		Multiple
+	    	#						    		Required
+	    	#							  		Defaultvalue
+	    	#								    			PrintOrder
+	    	#                           0   1   2	3       4
+	    	'::ign' 		=> [ qw(	0	0	1	%NULL%	1 ) ],
+	    	'::type'		=> [ qw(	0	0	1	%TBD% 	2 ) ],
+	    	'::variants'	=> [ qw(	1	0	0	Default	3 )],
+	    	'::inst'		=> [ qw(	0	0	1	W_NO_INST 4 )],
+	    	'::comment'	    => [ qw(	1	0	2	%EMPTY%	6 )],
+	    	'::shortname'	=> [ qw(	0	0	0	%EMPTY%	5 )],
+	    	'::b'			=> [ qw(	0	1	1	%NULL%	7 )],
+	    	'::default'	    => [ qw(	1	1	0	%NULL%	0 )],
+	    	'::hierachy'	=> [ qw(	1	0	0	%NULL%	0 )],
+	    	'::debug'	    => [ qw(	1	0	0	%NULL%	0 )],
+        	'::default'		=> [ qw(	1	1	0	%EMPTY%	0 )],	    
+	    	'::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
+	    	'nr'			=> 8,  # Number of next field to print
+	    	'_mult_'		=> {},  # Internal counter for multiple fields
+   	    	'_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
+	    						# 1 / RL -> left to right decreasing
+	    						# xF -> map the first to ::head:0 (defaults: ::head)
 	    
-	},
+		},
     },
     "macro" => {
-	    "%SPACE%" 	=> " ",
-	    "%EMPTY%"	=> "",
-	    "%NULL%"	=> "0",
+	    "%SPACE%" 	=> ' ',
+	    "%EMPTY%"	=> '',
+	    "%NULL%"	=> '0',
 	    "%TAB%"		=> "\t",
 	    "%CR%"		=> "\n",	# A carriage return
 	    "%S%"		=> "\t",	# Output field ident ....
-	    "%IOCR%"	=> " ",		# Will be set to \n if we are writting ExCEL on MSWin32 ...
-		"%ACOM%"	=> "--",	# comment, automatically set by language currently
-	    "%SIGNAL%"	=> "std_ulogic",
-	    "%BUS_TYPE%"	=> "std_ulogic_vector",
-	    "%PAD_TYPE%"	=> "__E_DEFAULT_PAD__",	# Default pad entity
-	    "%PAD_CLASS%"	=> "PAD",	# Default pad class
-	    "%IOCELL_TYPE%"	=> "__E_DEFAULT_IOCELL__", # Default iocell entity
-	    "%IOCELL_SELECT_PORT%"	=> "__I_default_select", 		# Default iocell port
-	    "%NOSEL%"		=>  "__I_NOSEL__", #internal: no mux select
-	    "%NOSELPORT%"	=>  "__I_NOSELPORT__", #internal: name of not used sel port
-	    "%IOCELL_CLK%"	=>  "CLK", # Default clk for iocells, may be changed by %REG(clkb)
-	    "%DEFAULT_MODE%"	=> "S",
-	    "%LANGUAGE%"	=> lc("VHDL"), # Default language, could be verilog
+	    "%IOCR%"	=> ' ',		# Will be set to \n if we are writting ExCEL on MSWin32 ...
+		"%ACOM%"	=> '--',	# comment, automatically set by language currently
+	    "%SIGNAL%"	=> 'std_ulogic',
+	    "%BUS_TYPE%"	=> 'std_ulogic_vector',
+	    "%PAD_TYPE%"	=> '__E_DEFAULT_PAD__',	# Default pad entity
+	    "%PAD_CLASS%"	=> 'PAD',	# Default pad class
+	    "%IOCELL_TYPE%"	=> '__E_DEFAULT_IOCELL__', # Default iocell entity
+	    "%IOCELL_SELECT_PORT%"	=> '__I_default_select', 		# Default iocell port
+	    "%NOSEL%"		=>  '__I_NOSEL__', #internal: no mux select
+	    "%NOSELPORT%"	=>  '__I_NOSELPORT__', #internal: name of not used sel port
+	    "%IOCELL_CLK%"	=>  'CLK', # Default clk for iocells, may be changed by %REG(clkb)
+	    "%DEFAULT_MODE%"	=> 'S',
+	    "%LANGUAGE%"	=> lc('VHDL'), # Default language, could be verilog
 	    "%DEFAULT_CONFIG%"	=>	"%::entity%_%::arch%_conf",
 	    "%NO_CONFIG%"	=>	"NO_CONFIG", # Set this in ::conf if you want to not
 									    # get configurations for this instance
@@ -1512,8 +1573,8 @@ sub mix_init () {
 	    "%IMPORT_O%"	=> "O", # Meta instance for import mode
 	    "%IMPORT_CLK%"	=> "__IMPORT_CLK__", # import mode, default clk
 	    "%IMPORT_BUNDLE%"   => "__IMPORT_BUNDLE__", #
-	    "%BUFFER%"		=> "buffer",
-        "%TRISTATE%"    => "tristate",
+	    "%BUFFER%"		=> 'buffer',
+        "%TRISTATE%"    => 'tristate',
 	    '%H%'			=> '$',		# 'RCS keyword saver ...
 	    '%IIC_IF%'      => 'iic_if_', # prefix for i2c interface
 	    '%RREG%'        => 'read_reg_', # prefix for i2c read registers
@@ -1526,6 +1587,14 @@ sub mix_init () {
 	    '%POSTFIX_IIC_IN%'  =>  '_iic_i', # DUPLICATE!!
         '%TPYECAST_ENT%' 	=> '__TYPECAST_ENT__', # dummy typecast support entity
         '%TYPECAST_CONF%'	=> '__TYPECAST_CONF__', # dummy for typecast ...
+        '%TM_I%'		=>	'I',	# reverse mappings for seperate intermediate CONN_TOP sheet
+        '%TM_O%'		=>	'O',
+        '%TM_IO%'		=>	'IO',
+        '%TM_B%'		=>	'B',
+        '%TM_T%'		=>	'T',
+        '%TM_C%'		=>	'C',
+        '%TM_G%'		=>	'G',
+        '%TM_P%'		=>	'P',
     },
     # Counters and generic messages
     'ERROR' => '__ERROR__',
@@ -1610,7 +1679,7 @@ sub mix_init () {
     if ( $EH{'iswin'} ) {
         ( $EH{'drive'} = $EH{'cwd'} ) =~ s,(^\w:).*,$1/,;
     } else {
-        $EH{'drive'} = "";
+        $EH{'drive'} = '';
     }
 
     $EH{'macro'}{'%ARGV%'} = "$0 " . join( " ", @ARGV );
@@ -1656,7 +1725,7 @@ sub mix_init () {
 
     #
     # Set %IOCR% to \n if intermediate is xls and we are on Win32
-    if ( $EH{'iswin'} && $EH{'macro'}{'%ARGV%'}=~ m/\.xls$/ ) {
+    if ( ( $EH{'iswin'} or $EH{'iscygwin'} ) and $EH{'macro'}{'%ARGV%'}=~ m/\.xls$/ ) {
         $EH{'macro'}{'%IOCR%'} = "\n";
     }
 
@@ -1744,6 +1813,12 @@ sub mix_init () {
    		$EH{'output'}{'generate'}{'_logic_map_'}{'%' . uc( $log ) . '%'}
    			= $log;
    }
+	if ( $EH{'intermediate'}{'topmap'} ) {
+		my $re = '^(';
+		$re .= join( '|', split( /[\s,]+/, $EH{'intermediate'}{'topmap'} ));
+		$EH{'intermediate'}{'__topmap_re_'} = $re . ')$';
+	}
+		
    # $EH{'macro'}{'%WIRE%'} = "%EMPTY%"; # Wire is replaced by nothing!
 } # End of mix_init
 
@@ -2747,42 +2822,70 @@ sub convert_in ($$) {
     my @order = ();  # Field number to name
     my %order = ();  # Field name to number
     my $hflag = 0;
+    my @holdincom = (); # tmp storage for linked comments
     my $required = $EH{$kind}{'field'}; # Shortcut into EH->fields
 
-    for my $i ( @$r_data ) { # Read each row
-	# my @r = @{$r_data->[$i]};
-	$i = [ map { defined( $_ ) ? $_ : "" } @$i ];		#Fill up undefined fields??
-	my $all = join( '', @$i );
-	next if ( $all =~ m/^\s*$/o ); 			# If a line is totally empty, skip it
-	next if ( $all =~ m,^\s*(#|//), );			# If line starts with comment, skip it
+    for my $i ( @$r_data ) { # Read row by row
+		$i = [ map { defined( $_ ) ? $_ : "" } @$i ];		#Fill up undefined fields??
+		my $all = join( ' ', @$i );
+		next if ( $all =~ m/^\s*$/o ); 			# If a line is totally empty, skip it
+		#!wig20051011: next if ( $all =~ m,^\s*(#|//), );			# If line starts with comment, skip it
 
-	unless ( $hflag ) { # We are still looking for our ::MARKER header line
-	    next unless ( $all =~ m/^\s?::/ );			#Still no header ...
-	    %order = parse_header( $kind, \$EH{$kind}, @$i );		#Check header, return field number to name
-	    $hflag = 1;
-	    next;
-	}
-	# Skip ::ign marked with # or // comments, again ...
-	next if ( defined( $order{'::ign'}) and $i->[$order{'::ign'}] =~ m,^(#|//), );
-
-	# Copy rest to 'another' array ....
-	my $n = $#d + 1;
-	foreach my $ii ( keys( %order ) ) {
-	    if ( defined( $i->[$order{$ii}] ) ) {
-		$d[$n]{$ii} = $i->[$order{$ii}];
-	    } else {
-		# Could be "semi-required" field
-		if ( $required->{$ii}[2] > 1 ) {
-		    $d[$n]{$ii} = $required->{$ii}[3];
-		} else {
-		    $d[$n]{$ii} = "%UNDEF%";
+		# Skip all lines before the ::foo ::bar line!
+		unless ( $hflag ) { # We are still looking for our ::MARKER header line
+	    	next unless ( $all =~ m/^\s?::/ );			#Still no header ...
+	    	%order = parse_header( $kind, \$EH{$kind}, @$i );		#Check header, return field number to name
+	    	$hflag = 1;
+	    	next;
 		}
-	    }# TODO Set to default ? If field is undefined, set to ""
-	}
+	
+		# Skip ::ign marked with # or // comments, again ...
+		#			or if the whole line only has leading # or //
+		if ( defined( $order{'::ign'}) and
+				( $all =~ m,^\s*(#|//),o or
+					$i->[$order{'::ign'}] =~ m,^\s*(#|//),o )
+		) {
+			# Skip only if 'comments' is not set
+			if ( defined( $EH{$kind}{'comments'} ) and $EH{$kind}{'comments'} ) {
+				my $relation = ( $EH{$kind}{'comments'} =~ m/\bpre/io ) ? 'pre' : 'post';
+				# Link the comment to the previous/next line
+				# create a primary key entry (if not set!)
+				my $incom = new Micronas::MixUtils::InComments(
+					{	'text' => join( " ", $all ),
+						'relation' => $relation,
+					 }
+					);
+				if ( $relation eq 'pre' ) { # Attach to predecessor
+					push( @{$d[-1]{'::incom'}}, $incom );
+				} elsif ( $EH{$kind}{'comments'} =~ m/\b(post|succ)/io ) {
+					push( @holdincom, $incom ); # Save until we have another line
+				}					
+			} 
+			next;
+		}
+
+		# Copy rest to 'another' array ....
+		my $n = scalar( @d ); # next row
+		foreach my $ii ( keys( %order ) ) {
+	    	if ( defined( $i->[$order{$ii}] ) ) {
+				$d[$n]{$ii} = $i->[$order{$ii}];
+	    	} else {
+			# Could be "semi-required" field
+				if ( $required->{$ii}[2] > 1 ) {
+		    		$d[$n]{$ii} = $required->{$ii}[3];
+				} else {
+		    		$d[$n]{$ii} = "%UNDEF%";
+				}
+	    	}# TODO Set to default ? If field is undefined, set to ""
+		}
+		if ( scalar( @holdincom ) ) { # Attach post comments ....
+			@{$d[-1]{'::incom'}} = @holdincom;
+			@holdincom = ();
+		}
     }
     unless( $hflag ) {
-	logwarn("WARNING: Failed to detect header in worksheet of type $kind");
-	$EH{'sum'}{'warnings'}++;
+		logwarn("WARNING: Failed to detect header in worksheet of type $kind");
+		$EH{'sum'}{'warnings'}++;
     }
     return @d;
 }
@@ -3067,9 +3170,9 @@ Arguments: 	$ref    := hash reference
 =cut
 
 sub db2array ($$$) {
-    my $ref = shift;
-    my $type = shift;
-    my $filter = shift;
+    my $ref		= shift;
+    my $type	= shift;
+    my $filter	= shift;
 
     unless( $ref ) {
     	logwarn("WARNING: Called db2array without db argument!");
@@ -3105,6 +3208,10 @@ sub db2array ($$$) {
     my @a = ();
     my $n = 0;
 
+	( $n , @a ) = _mix_utils_im_header( uc($type) , \@o );
+	
+=head2 OLD
+
     # Print header
     for my $ii ( 1..(scalar @o - 1) ) {
 		$a[$n][$ii-1] = $o[$ii];
@@ -3118,6 +3225,8 @@ sub db2array ($$$) {
     for my $c ( qw( by on cmd ) ) {
 		$a[$n++][0] = "# $c: " . $EH{'macro'}{$comment{$c}};
     }
+
+=cut
 
     my @keys = ();
     if ( $filter ) { # Filter the keys ....
@@ -3217,6 +3326,351 @@ sub db2array ($$$) {
 
 }
 
+####################################################################
+## db2array
+## convert internal db structure to array
+####################################################################
+
+=head2
+
+db2array_intra ($$$$$) {
+
+convert the datastructure to a hash with flat array
+adds the header line as defined in the $EH{$type}{'field'} ..
+
+Currently for "CONN" sheets, only!
+
+Arguments: 	$ref    := hash reference
+			$type   := (hier|conn)
+			$filter := Perl_RE,if it matches a key of ref, do not print that out
+			    		if $filter is an sub ref, will be used in grep
+
+Global:
+	$EH{'intermediate'}{'intra'}
+		keys for splitting ...
+	# 'intra'	=> '',	# if set create seperate conn sheets for instances:
+	#	INTRA		-> CONN and INTRA_CONN
+	#	TOP			-> CONN_<TOP> and CONN
+	#	TOP,INTRA	-> CONN_<TOP> and CONN_INTRA
+	#	INST[ANCE]	-> create one conn sheet for each instance, named: CONN_<instance>
+
+TODO
+	Merge back with db2array
+				
+=cut
+
+sub db2array_intra ($$$$$) {
+    my $ref		= shift;
+    my $type	= shift;
+    my $tops	= shift; # List ref with top hierdb tree objects
+    my $hierref	= shift;
+    my $filter	= shift;
+
+    unless( $ref ) {
+    	logwarn("WARNING: Called db2array_intra without db argument!");
+	    $EH{'sum'}{'warnings'}++;
+	    return;
+    }
+    unless ( $type =~ m/^(conn)/io ) {
+		logwarn("WARNING: Bad db type $type, ne CONN!");
+		$EH{'sum'}{'warnings'}++;
+		return;
+    }
+    $type = lc($1);
+
+    my @o = ();
+    my $primkeynr = 0; # Primary key identifier
+    my $commentnr = "";
+    
+    # Get order for printing fields ...
+    # TODO check if fields do overlap!
+    for my $ii ( keys( %{$EH{$type}{'field'}} ) ) {
+		next unless ( $ii =~ m/^::/o );
+		# Only print if PrintOrder > 0:
+		if ( $EH{$type}{'field'}{$ii}[4] > 0 ) {
+			$o[$EH{$type}{'field'}{$ii}[4]] = $ii; # Print Order ...
+		}
+		if ( $EH{$type}{'key'} eq $ii ) {
+	    	$primkeynr = $EH{$type}{'field'}{$ii}[4];
+		} elsif ( $ii eq '::comment' ) {
+	    	$commentnr = $EH{$type}{'field'}{$ii}[4];
+		}
+    }
+
+	#
+	# Define split mode:
+	#
+	# 'intra'	=> '',	# if set create seperate conn sheets for instances:
+	#	INTRA		-> CONN and INTRA
+	#	TOP			-> CONN_<TOP> and CONN
+	#	TOP,INTRA	-> CONN_<TOP> and CONN_INTRA
+	#	INST[ANCE]	-> create one conn sheet for each instance, named: CONN_<instance>
+	#					rest goes to CONN_MIX_REST
+	my %names = ();
+	my $intra = $EH{'intermediate'}{'intra'};
+	my $splitmode = 'all';
+
+	my $top = $tops->[0]->name; # Name of top instance
+	my $topre = '^(';			# Regular expression matching all tops (should be one!)
+	for my $t ( @$tops ) {
+		$topre .= $t->name . '|';
+	}
+	$topre =~ s/\|$//;
+	$topre .= ')$';
+	
+	if ( $intra =~ m/\btop\b/io and $intra =~ m/\bintra\b/io ) {
+		$names{'top'} = 'CONN_' . $top;
+		$names{'intra'} = 'CONN_INTRA';
+		$splitmode = 'top';
+	} elsif ( $intra =~ m/\btop\b/io ) {
+		$names{'top'} = 'CONN_' . $top;
+		$names{'intra'} = 'CONN';
+		$splitmode = 'top';
+	} elsif ( $intra =~ m/\bintra\b/io ) {
+		$names{'top'} = 'CONN';
+		$names{'intra'} = 'INTRA';
+		$splitmode = 'top';
+	} else { # Not really needed, go to mode 'all'
+		$names{'top'} = 'CONN_TOP';
+		$names{'intra'} = 'INTRA';
+	}
+	
+    my @keys = ();
+    if ( $filter ) { # Filter the keys ....
+		if ( ref( $filter ) eq "CODE" ) {
+	    	@keys = grep( &$filter, keys( %$ref ) );
+		} else {
+	    	@keys = grep( !/$filter/, keys( %$ref ) );
+		}
+    } else {
+		@keys = keys( %$ref );
+    }
+
+    #WORKAROUND: repace __MAC__ by a %MAC% before writing out and undo after!
+    #wig20040322: adding ugly '::workaround' back to originating column,
+    # if the workaround field is set, push value back into defining column
+    # see below for undo ...
+    my $wa_flag = 0;
+    for my $i ( sort( @keys ) ) {
+        if( $ref->{$i}{'::workaround'} ) {
+            $wa_flag = 1;
+            for my $wa ( split( /,/, $ref->{$i}{'::workaround'} ) ) {
+                my ( $n, $col, $val ) = split( /::/, $wa, 3 ); #  ::col::val,::colb::valb
+                    if ( $val =~ m,__(\w+)__,o ) { # Convert back __KEY__ -> %KEY%
+                        $val = "%" . $1 . "%";
+                    }
+                    $ref->{$i}{"::" . $col} .= $val;
+            }
+        }
+    }
+
+    # Now comes THE data
+    my %a = (); # has with split tables
+    my %n = ();  # lines in split tables
+    
+    for my $i ( sort( @keys ) ) {
+
+		my $apply = inout2intra( $splitmode, $topre, \%names, 
+			$i, $ref->{$i}{'::out'}, $ref->{$i}{'::in'} );
+
+		for my $a ( keys %$apply ) { # Iterate over all tables (instances) ...
+			my $istop = exists( $apply->{$a}->{'istop'} ) ? 1 : 0;
+			unless ( exists $a{$a} ) { # New table
+				my $instances = join( ' ', keys %{$apply->{$a}{'name'}} );
+				my $title = $instances . ' (' . $type . ')';
+				if ( $istop ) {
+					( my $toplist = $topre ) =~ s/\|/ /;
+					$toplist =~ s/^\^\(//;
+					$toplist =~ s/\)\$$//;
+					$title .= ", top: " . $toplist; 
+				}
+				( $n{$a} , @{$a{$a}} ) = _mix_utils_im_header( $title , \@o );
+			}
+
+			my $split_flag = 0; # If split_flag
+			# Read ::in and ::out if available ...
+			
+			for my $ii ( 1..$#o ) { # 0 contains fields to skip
+	    		#wig20031106: split on all non key fields! 
+	    		if ( $o[$ii] =~ m/^::(in|out)\s*$/o ) {
+	    			# use the data from inout2intra
+					$a{$a}[$n{$a}][$ii-1] = defined( $apply->{$a}->{$1} ) ?
+						$apply->{$a}->{$1} : '';
+	    		} else {
+					$a{$a}[$n{$a}][$ii-1] = defined( $ref->{$i}{$o[$ii]} ) ?
+							$ref->{$i}{$o[$ii]} : "%UNDEF_1%";
+					# Map I,O,IO on top sheet to other values
+					if ( $istop and $o[$ii] eq '::mode'
+	    				and $EH{'intermediate'}{'topmap'} ) {
+	    				# Does this signal match the list?
+	    				if ( $EH{'intermediate'}{'topmap'} eq 'ALL' or
+	    					$ref->{$i}{'::name'} =~ m/$EH{'intermediate'}{'__topmap_re__'}/ ) {
+	    						$a{$a}[$n{$a}][$ii-1] =~ s/(\w+)/%TM_$1%/;
+	    				}
+					}
+	    		}
+	    		if ( length( $a{$a}[$n{$a}][$ii-1] ) > $EH{'format'}{'xls'}{'maxcelllength'} ) {
+					# Line too long! Split it!
+					# Assumes that the cell to be split are accumulated when reused later on.
+					if ( $ii - 1 == $primkeynr ) {
+		    			logwarn( "WARNING: Splitting key of table: " .
+		    					substr( $a{$a}[$n{$a}][$ii-1], 0, 32 ) );
+		    			$EH{'sum'}{'warnings'}++;
+					}
+					$split_flag=1;
+					my @splits = mix_utils_split_cell( $a{$a}[$n{$a}][$ii-1] );
+
+					# Prefill the split data .... key will be added later
+					#Caveat: order should not matter!!
+					for my $splitn ( 0..(scalar( @splits ) - 1 )  ) {
+						$a{$a}[$n{$a} + $splitn][$ii-1] = $splits[$splitn];
+					}
+					$split_flag = scalar( @splits ) if ( $split_flag < scalar( @splits ) );	
+	    		}
+			}
+			#This was a split cell?
+			if ( $split_flag > 1 ) {
+	    		# Set primary key in cells, add comments
+	    		for my $sn ( 1..( $split_flag - 1 ) ) {
+					$a{$a}[$n{$a} + $sn][$primkeynr-1] = $a{$a}[$n{$a}][$primkeynr-1];
+					if ( $commentnr ne "" ) { # Add split comment
+		    			$a{$a}[$n{$a} + $sn][$commentnr-1] .= "# __I_SPLIT_CONT_$sn";
+					}
+                	# Make sure all cells are defined
+                	for my $ssn ( 0..(scalar( @{$a{$a}[$n{$a}]} ) - 1) ) {
+                    	$a{$a}[$n{$a} + $sn][$ssn] = "" unless defined( $a{$a}[$n{$a} + $sn][$ssn] );
+                	}                    
+	    		}
+	    		$n{$a} += $split_flag; # Goto next free line ...
+			} else {
+	    		$n{$a}++;
+			}
+    	}
+    }
+    
+    #WORKAROUND:
+    # undo the change above ....
+    #wig20040322:
+    if ( $wa_flag ) {
+        for my $i ( sort( @keys ) ) {
+            if( $ref->{$i}{'::workaround'} ) {
+                for my $wa ( split( /,/, $ref->{$i}{'::workaround'} ) ) {
+                    my ( $n, $col, $val ) = split( /::/, $wa, 3 ); #  ::col::val,::colb::valb
+                        if ( $val =~ m,__(\w+)__,o ) { # Convert back __KEY__ -> %KEY%
+                            $val = "%" . $1 . "%";
+                        }
+                        $ref->{$i}{"::" . $col} =~ s,$val,,; #Remove it ...
+                }
+            }
+        }
+    }
+    
+    return \%a;
+
+}
+
+#
+# inout2intra:
+#  Parse inout and create inout per instance or top/non-top
+#
+# Input:
+#   <see below>
+#
+# Output:
+#	hash with conn names and split ::out/::in fields
+#
+# Global: n/a
+#
+# TODO : handling of generics, parameters and constants
+#		constants -> need to be written on the driver sheet		
+sub inout2intra ($$$$$$) {
+	my $mode	= shift; # top or all ...
+	my $topre	= shift; # if mode is top -> use this to see if instance matches top or not
+	my $namem	= shift; # Name map for top -> top and intra
+	my $signal	= shift; # Signal name here
+	my $r_out	= shift; # 
+	my $r_in	= shift; # 
+
+	my %split = ();
+	my %ssplit = ();
+	# Get
+	my %string = (); 
+	@{$string{'out'}} = inout2array( $r_out, $signal, 1 );
+	@{$string{'in'}}  = inout2array( $r_in,  $signal, 1 );
+	
+	# Split the strings and sort them into the right hash slice:
+	for my $io ( qw( out in )) {
+		for my $ios ( @{$string{$io}} ) {
+			# Get instance:
+			my $inst = "OTHERS";
+			if ( $ios =~ m,^([^/]+)/, ) {
+				$inst = $1;
+			}
+			# TODO : Handle constants!!
+			if ( $mode eq 'top' ) {
+				if ( $inst =~ m/$topre/ ) {
+					push( @{$split{$namem->{'top'}}{$io}}, $ios); # TODO : get correct nl back
+					$ssplit{$namem->{'top'}}{'istop'} = 1;
+					$ssplit{$namem->{'top'}}{'name'}{$inst} = 1;				
+				} else {
+					push( @{$split{$namem->{'intra'}}{$io}}, $ios);
+					$ssplit{$namem->{'intra'}}{'name'}{$inst} = 1;
+				}
+			} elsif ( $mode eq 'all' ) {
+				my $conn_inst = $EH{'intermediate'}{'instpre'} . $inst;
+				push( @{$split{$conn_inst}{$io}}, $ios );
+				$ssplit{$conn_inst}{'name'}{$inst} = 1;
+				if ( $inst =~ m/$topre/ ) {
+					$ssplit{$conn_inst}{'istop'} = 1;
+				}	
+			}
+		}
+	}
+
+	# Rework the stringe and join ...
+	for my $inst ( keys %split ) {
+		for my $io ( qw ( out in ) ) {
+			if ( exists ( $split{$inst}{$io} ) ) {
+				$ssplit{$inst}{$io} = _inoutjoin( $split{$inst}{$io} );
+			}
+		}
+	}
+	return \%ssplit;
+
+}
+#
+# Create an array to be used as table header in intermediate data output
+#
+# Input:
+#	$o	.= ref to ordered input fields ( the ::a ::b header)
+#
+# Output:
+#	$n   number of lines
+#   @a   array(array)
+#
+#!wig20051012
+sub _mix_utils_im_header ($$) {
+	my $title = shift;
+ 	my $o = shift;
+
+	my @a = ();
+	my $n	= 0;
+	    
+    for my $ii ( 1..(scalar @$o - 1) ) {
+		$a[$n][$ii-1] = $o->[$ii];
+    }
+    $n++;
+    # Print comment: generator, args, date
+    # First column is ::ign :-)
+    # As we are lazy, we will leave the rest of the line undefined ...
+    my %comment = ( qw( by %USER% on %DATE% cmd %ARGV% ));
+    $a[$n++][0] = "# Generated Intermediate Data: $title";
+    for my $c ( qw( by on cmd ) ) {
+		$a[$n++][0] = "# $c: " . $EH{'macro'}{$comment{$c}};
+    }
+
+	return $n, @a;
+}
 #####################################################################
 ## Split cells longer than 1024 characters into chunks suitable for excel
 ## to swallow
@@ -3272,17 +3726,23 @@ sub mix_utils_split_cell ($) {
 
 =head2
 
-inout2array ($$) {
+inout2array ($;$$) {
 
-convert the in/out datastructure to a flat array
+convert the in/out datastructure to a string (comma seperated)
 
-Arguments: $ref    := hash reference
-		$type  := (hier|conn)
-
+Input:
+	$ref    := hash reference
+	$type  := (hier|conn)
+	$aflag := if set, return array instead of simple string
+	
+Output:
+	inout_string
+	
 =cut
-sub inout2array ($;$) {
+sub inout2array ($;$$) {
     my $f = shift;
-    my $o = shift || "";
+    my $o = shift || '';
+    my $aflag = shift || 0;
 
     unless( defined( $f ) ) { return "%UNDEF_2%"; };
 
@@ -3302,70 +3762,93 @@ sub inout2array ($;$) {
 
     #!wig20040628: define output sort order
     for my $i ( @$f ) {
-
-	my $cast = "";
-	unless( defined( $i->{'inst'} ) ) {
-	    next;
-	}
-	if ( exists( $i->{'cast'} ) ) {
-	    $cast = "'" . $i->{'cast'};
-	}
-	# Constants are working a different way:
-	#: m,^\s*(__CONST__|%CONST%|__GENERIC__|__PARAMETER__|%GENERIC%|%PARAMETER%),o ) {
-	# TODO make sure sig_t/sig_f and port_t/port_f are defined in pairs!!
-	if ( $i->{'inst'} =~
-	    m,^\s*(__CONST__|%CONST%),o ) {
+		my $cast = "";
+		unless( defined( $i->{'inst'} ) ) {
+	    	next;
+		}
+		if ( exists( $i->{'cast'} ) ) {
+	    	$cast = "'" . $i->{'cast'};
+		}
+		# Constants are working a different way:
+		#: m,^\s*(__CONST__|%CONST%|__GENERIC__|__PARAMETER__|%GENERIC%|%PARAMETER%),o ) {
+		# TODO make sure sig_t/sig_f and port_t/port_f are defined in pairs!!
+		if ( $i->{'inst'} =~ m,^\s*(__CONST__|%CONST%),o ) {
             # TODO !wig20040330: print out "rvalue" instead of "port"??
             #!wig20040817: write back partial asisgnment's, too.
-            if ( defined $i->{'sig_t'} and defined $i->{'sig_f'} ) {
-                my $pf = $i->{'port_f'} || "";
-                my $pt = $i->{'port_t'} || "";
-                my $p = "";
-                if ( $pf ) {
-                    $pt = $pt || 0; # Set to zero!
-                    $p = "(" . $pf . ":" . $pt . ")";
-                }
-                my $s = "=(" . $i->{'sig_f'} . ":" . $i->{'sig_t'} . ")";
-                push( @s,  $i->{'port'} . $cast . $p . $s . ", %IOCR%" );
-            } else {
-                push( @s,  $i->{'port'} . $cast . ", %IOCR%" );
-            }
-	} elsif ( defined $i->{'sig_t'} and $i->{'sig_t'} ne '' ) {
-	# inst/port($port_f:$port_t) = ($sig_f:$sig_t)
-	    if ( defined $i->{'port_t'} and $i->{'port_t'} ne '' ) {
-		push( @s, $i->{'inst'} . "/" . $i->{'port'} . $cast . "(" .
-			$i->{'port_f'} . ":" . $i->{'port_t'} . ")=(" .
-			$i->{'sig_f'} . ":" . $i->{'sig_t'} . "), %IOCR%" );
-	    } else {
-		# TODO inst/port = (sf:st)  vs. inst/port(0:0) = (sf:st)
-		push( @s,  $i->{'inst'} . "/" . $i->{'port'} . $cast . "=(" .
-			$i->{'sig_f'} . ":" . $i->{'sig_t'} . "), %IOCR%" );
-	    }
-	} else {
-	    if ( defined $i->{'port_t'} and $i->{'port_t'} ne '' ) {
-		push( @s,$i->{'inst'} . "/" . $i->{'port'} . $cast . "(" .
-			$i->{'port_f'} . ":" . $i->{'port_t'} . # ")=(" .
-			"), %IOCR%" );
-	    } else {
-		# If this is %OPEN% and neither port nor signal defined -> set to (0)
-		if ( $o =~ m,%OPEN(_\d+)?%,o ) {
-		    push( @s, $i->{'inst'} . "/" . $i->{'port'} . $cast . "(0:0)=(0:0)" . ", %IOCR%" );
+           	if ( defined $i->{'sig_t'} and defined $i->{'sig_f'} ) {
+               	my $pf = $i->{'port_f'} || "";
+               	my $pt = $i->{'port_t'} || "";
+               	my $p = "";
+               	if ( $pf ) {
+                   	$pt = $pt || 0; # Set to zero!
+                   	$p = "(" . $pf . ":" . $pt . ")";
+               	}
+               	my $s = "=(" . $i->{'sig_f'} . ":" . $i->{'sig_t'} . ")";
+               	push( @s,  $i->{'port'} . $cast . $p . $s . ", %IOCR%" );
+           	} else {
+               	push( @s,  $i->{'port'} . $cast . ", %IOCR%" );
+           	}
+		} elsif ( defined $i->{'sig_t'} and $i->{'sig_t'} ne '' ) {
+		# inst/port($port_f:$port_t) = ($sig_f:$sig_t)
+    		if ( defined $i->{'port_t'} and $i->{'port_t'} ne '' ) {
+				push( @s, $i->{'inst'} . "/" . $i->{'port'} . $cast . "(" .
+					$i->{'port_f'} . ":" . $i->{'port_t'} . ")=(" .
+					$i->{'sig_f'} . ":" . $i->{'sig_t'} . "), %IOCR%" );
+    		} else {
+			# TODO inst/port = (sf:st)  vs. inst/port(0:0) = (sf:st)
+				push( @s,  $i->{'inst'} . "/" . $i->{'port'} . $cast . "=(" .
+					$i->{'sig_f'} . ":" . $i->{'sig_t'} . "), %IOCR%" );
+    		}
 		} else {
-		    push( @s,  $i->{'inst'} . "/" . $i->{'port'} . $cast . ", %IOCR%" );
+    		if ( defined $i->{'port_t'} and $i->{'port_t'} ne '' ) {
+				push( @s,$i->{'inst'} . "/" . $i->{'port'} . $cast . "(" .
+					$i->{'port_f'} . ":" . $i->{'port_t'} . # ")=(" .
+					"), %IOCR%" );
+    		} else {
+			# If this is %OPEN% and neither port nor signal defined -> set to (0)
+				if ( $o =~ m,%OPEN(_\d+)?%,o ) {
+	    			push( @s, $i->{'inst'} . "/" . $i->{'port'} . $cast . "(0:0)=(0:0)" . ", %IOCR%" );
+				} else {
+	    			push( @s,  $i->{'inst'} . "/" . $i->{'port'} . $cast . ", %IOCR%" );
+				}
+    		}
 		}
-	    }
-	}
+   	}
+
+    # If called with array_flag -> return array
+    #!wig20051012
+    if ( $aflag ) {
+    	return @s;
     }
 
-    # Do a simple sort on the output date and join
-    # TODO sort better: my $s = join( "", sort( @s ) );
-    my $s = join( "", @s );
+	return( _inoutjoin( \@s ) );
+}
+    
+#
+# Join an array of inout strings and return string
+#
+# Input:
+#	array_ref
+#
+# Output:
+#	joined string
+#
+# Global:
+#	reads/writes %EH (%IOCR%)!
+#	
+sub _inoutjoin ($) {
 
-    if ( ( $s =~ m,\(:,o ) or ( $s =~ m,\(:,o ) ) {
+	my $aref = shift;
+    # Join the data    
+    my $s = join( "", @$aref );
+
+	#  find a single :) or (: and warn
+    if ( ( $s =~ m,\(:,o ) or ( $s =~ m,:\),o ) ) {
 	logwarn( "WARNING: inout2array bad branch (: ! File bug report!" );
         $EH{'sum'}{'warnings'}++;
     }
 
+	# Replace the <cr> if any
     $s =~ s/,\s*%IOCR%\s*$//o; #Remove trailing CR
     # convert macros (parse_mac already done )!!!
     $s =~ s,%IOCR%,$EH{'macro'}{'%IOCR%'},g;
@@ -3659,53 +4142,6 @@ sub mix_utils_init_file($) {
 
 }
 
-=head 1 TODO
-
-#
-# Get a list of ::in/::out port descriptions and try to combine consecutive
-#  signal/port / aka. unsplice it
-#
-# input:  arbitrary in/out ...
-# output: array with unspliced signal/port description
-sub mix_utils_join_port ($$$) {
-	my $pdr = shift;
-	my $from = shift;
-	my $to = shift;
-	
-	my @out = ();
-	my %iport = ();
-	return \@out unless ( ref( $pdr ) eq "ARRAY" );
-	for my $i ( 0..(scalar( @$pdr ) - 1) )  {
-		next if ( exists( $pdr->[$i]{"value"} ) ); # Skip constants
-
-		unless( defined( $pdr->[$i]{"signal"} ) and defined( $pdr->[$i]{"port"} ) {
-			logwarn( "WARNING: detected bad signal/port description" );
-			$EH{'sum'}{'warnings'}++;
-			next;
-		}
-		
-		my $inst = $pdr->[$i]{"inst"};
-		my $port = $pdr->[$i]{"port"};
-		my $sf = $pdr->[$i]{"sig_f"};
-		my $st = $pdr->[$i]{"sig_t"};
-		my $pf = $pdr->[$i]{"port_f"};
-		my $pt = $pdr->[$i]{"port_t"};		
-		$iport{$inst}{$port} = _mix_utils_join_ip( $iport{$inst}{$port}, $i, $sf, $st, $pf, $pt );
-	}
-	
-}
-sub _mix_utils_join_ip ($$$$$) {
-	my $ref = shift;
-	my $i   = shift;
-	my $sf  = shift;
-	my $st  = shift;
-	my $pf  = shift;
-	my $pt  = shift;
-
-	unless 
-}
-
-=cut
 
 #
 # This module returns 1, as any good module does.
