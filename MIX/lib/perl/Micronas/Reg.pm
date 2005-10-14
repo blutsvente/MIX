@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.3 2005/09/16 13:57:27 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.4 2005/10/14 11:30:07 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.4  2005/10/14 11:30:07  lutscher
+#  intermedate checkin (stable, but fully functional)
+#
 #  Revision 1.3  2005/09/16 13:57:27  lutscher
 #  added register view E_VR_AD from Emanuel
 #
@@ -67,8 +70,8 @@ use Micronas::RegViewsE;
 #------------------------------------------------------------------------------
 # Class members
 #------------------------------------------------------------------------------
-our($debug) = 0;
-our($VERSION) = '1.1';
+our($debug) = 1;
+our($VERSION) = '1.2';
 
 # global constants and defaults; is mapped per reference into Reg objects
 our(%hglobal) = 
@@ -78,7 +81,7 @@ our(%hglobal) =
 
    # generatable register views 
    supported_views => [
-					   "HDL-vgch-vrs",  # VGCH project video register shell (Thorsten Lutscher)
+					   "HDL-vgch-rs",   # VGCH project register shell (Thorsten Lutscher)
 					   "E_VR_AD"        # e-language macros (Emanuel Marconetti)
 					  ],
 
@@ -86,8 +89,14 @@ our(%hglobal) =
    # note: the field name is retrieved from the ::b entries of the register-master
    non_field_attributes => [qw(::ign ::sub ::interface ::inst ::width ::b:.* ::b ::addr ::dev ::vi2c ::default ::name ::type)],
 
-   # language for HDL code generation, currently only VHDL supported
-   lang => "vhdl",
+   # language for HDL code generation, currently only Verilog supported
+   lang => "verilog",
+
+   # debug switch
+   debug => $debug,
+
+   # Version of class package
+   version => $VERSION
   );
 
 #------------------------------------------------------------------------------
@@ -141,8 +150,8 @@ sub generate_view {
 	my $this = shift;
 	my $view = shift;
 
-	if ($view eq "HDL-vgch-vrs") {
-		$this->_gen_view_vrs();
+	if ($view eq "HDL-vgch-rs") {
+		$this->_gen_view_vgch_rs();
 	} elsif ($view eq "E_VR_AD") {
 		$this->_gen_view_vr_ad();
 	} else {
@@ -201,7 +210,7 @@ sub find_domain_by_name_first {
 sub display {
 	my $this = shift;
 	my $dump  = Data::Dumper->new([$this]);
-	$dump->Maxdepth(3);
+	$dump->Maxdepth(4);
 	$dump->Sortkeys(1);
 	print $dump->Dump;
 };
@@ -260,7 +269,7 @@ sub _map_register_master {
 			if ($marker eq "::sub") {
 				# every row requires a ::sub entry, so I use it to skip empty lines
 				goto next_row if ($value eq "");
-				$offset = ($value =~ /^0x/ ? hex($value): $value); next;
+				$offset = hex($value); next;
 			};
 			if ($marker eq "::interface") {
 				$domain = $value; next;
@@ -271,7 +280,6 @@ sub _map_register_master {
 			if ($marker eq "::width") {
 				$rsize = $value;
 			};
-			
 			if ($marker =~ m/::b(:(\d+))*$/) {
 				if (defined $2) {
 					$p = $msb_max - $2; # bit column numbering is reversed!
