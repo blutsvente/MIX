@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.76 $                                         |
+# | Revision:   $Revision: 1.77 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/10/18 09:34:36 $                              |
+# | Date:       $Date: 2005/10/18 15:27:52 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.76 2005/10/18 09:34:36 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.77 2005/10/18 15:27:52 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.77  2005/10/18 15:27:52  wig
+# | Primary releaseable vgch_join.pl
+# |
 # | Revision 1.76  2005/10/18 09:34:36  wig
 # | Changes required for vgch_join.pl support (mainly to MixUtils)
 # |
@@ -354,11 +357,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.76 2005/10/18 09:34:36 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.77 2005/10/18 15:27:52 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.76 $';         #'
+my $thisrevision        =      '$Revision: 1.77 $';         #'
 
-# Revision:   $Revision: 1.76 $   
+# Revision:   $Revision: 1.77 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -416,6 +419,7 @@ sub mix_getopt_header(@) {
 		$EH{'internal'}{'path'} = $OPTVAL{'dir'};
 		$EH{'report'}{'path'} = $OPTVAL{'dir'};
 
+		
     }
     
     if (defined $OPTVAL{'out'}) {
@@ -1714,10 +1718,14 @@ sub mix_init () {
                # autoquote: only quote if required (embedded whitespace)
                # wrapnl: wrap embedded new-line to space
                # masknl: replace newline by \\n
-               # maxwidth: make all lines contain maxwidht - 1 seperators
+               # maxwidth: make all lines contain maxwidth - 1 seperators
        },
        'xls' => {
        		'maxcelllength' => 500, # Limit number of characters in ExCEL cells
+ 			'style'	=>	'',		# Format the generated output
+ 				# stripnl:	replace <nl> by <sp> (also known as 'wrapnl')
+ 				# masknl:	replace newline by \\n
+ 				# stripna:	replace all non ASCII-Chars by <sp>
        },
        'out' => '',
     },
@@ -3274,7 +3282,7 @@ sub db2array ($$$) {
     #  and the number of the comment and primary data field
     #  $EH{$type}{'field'} holds headers for all detected columns!
     #
-    # TODO check if fields do overlap!
+    # TODO : check if fields do overlap!
     for my $ii ( keys( %{$EH{$type}{'field'}} ) ) {
 		next unless ( $ii =~ m/^::/o );
 		# Only print if PrintOrder > 0:
@@ -3730,15 +3738,30 @@ sub inout2intra ($$$$$$) {
 #   @a   array(array)
 #
 #!wig20051012
+#!wig20051018: undo the :N extension for multiple fields
 sub _mix_utils_im_header ($$) {
 	my $title = shift;
  	my $o = shift;
 
 	my @a = ();
 	my $n	= 0;
-	    
+
+	my $hasmult = 0;
+	for my $hm ( @$o ) {
+		if ( defined $hm and $hm =~ m/:\d+$/ ) {
+			$hasmult = 1;
+			$n++;	# Switch to next line immediately!
+			last;
+		}
+	}
+	
     for my $ii ( 1..(scalar @$o - 1) ) {
-		$a[$n][$ii-1] = $o->[$ii];
+    	if ( $hasmult ) {
+			( $a[$n-1][$ii-1] = $o->[$ii] ) =~ s/:\d+$//o;
+			$a[$n][$ii-1] = '# ' . $o->[$ii];	
+    	} else {
+    		$a[$n][$ii-1] = $o->[$ii];
+    	}
     }
     $n++;
     # Print comment: generator, args, date
@@ -4221,7 +4244,7 @@ sub mix_utils_init_file($) {
     # Done ...
     exit 0;
 
-}
+} # End of mix_utils_init_file
 
 
 #

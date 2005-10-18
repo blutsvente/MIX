@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.3 $                                               |
+# | Revision:   $Revision: 1.4 $                                               |
 # | Author:     $Author: wig $                                                 |
-# | Date:       $Date: 2005/10/18 09:34:37 $                                                   |
+# | Date:       $Date: 2005/10/18 15:27:53 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.3 2005/10/18 09:34:37 wig Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.4 2005/10/18 15:27:53 wig Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.4  2005/10/18 15:27:53  wig
+# | Primary releaseable vgch_join.pl
+# |
 # | Revision 1.3  2005/10/18 09:34:37  wig
 # | Changes required for vgch_join.pl support (mainly to MixUtils)
 # |
@@ -58,9 +61,9 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.3 2005/10/18 09:34:37 wig Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.4 2005/10/18 15:27:53 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
-my $thisrevision   =      '$Revision: 1.3 $';
+my $thisrevision   =      '$Revision: 1.4 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -214,7 +217,8 @@ sub mix_rep_portlist () {
 			$in = "(NO LOAD)" unless $in;
 			$out = "(NO DRIVER)" unless $out;
 			#TODO: Remember for later usage and sorting
-			
+
+			# MAP SIGNAL NAME TO 			
 			my $line = $mif->td(
 				{ 'PgfTag' => 'CellBodyH9',
 				  'String' => [

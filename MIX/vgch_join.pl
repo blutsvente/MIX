@@ -27,12 +27,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: vgch_join.pl,v 1.1 2005/10/18 09:35:31 wig Exp $  |
+# | Id           : $Id: vgch_join.pl,v 1.2 2005/10/18 15:27:52 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.1 $                                      |
-# | Mod.Date     : $Date: 2005/10/18 09:35:31 $                           |
+# | Version      : $Revision: 1.2 $                                      |
+# | Mod.Date     : $Date: 2005/10/18 15:27:52 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -47,6 +47,9 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: vgch_join.pl,v $
+# | Revision 1.2  2005/10/18 15:27:52  wig
+# | Primary releaseable vgch_join.pl
+# |
 # | Revision 1.1  2005/10/18 09:35:31  wig
 # | Merge register sheets from VGCH project.
 # |                                                                |
@@ -98,7 +101,7 @@ sub replace_macros ($);
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.1 $'; # RCS Id
+$::VERSION = '$Revision: 1.2 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 logconfig(
@@ -119,7 +122,7 @@ logconfig(
 #
 mix_init();               # Presets ....
 
-$EH{'macro'}{'%UNDEF_1%'} = '';
+
 
 ##############################################################################
 #
@@ -144,6 +147,16 @@ $EH{'macro'}{'%UNDEF_1%'} = '';
 #
 
 # -top TOP
+
+my %xls = ();
+my $top = '';
+
+$xls{'top'} = '.*';
+$xls{'top_sheet'} = "Sheet1";
+
+$xls{'others'} = 'peri.*'; # Take the default.xls config key
+$EH{'default'}{'xls'} = '.*';
+$EH{'macro'}{'%UNDEF_1%'} = '';
 
 # Add your options here ....
 mix_getopt_header( qw(
@@ -173,13 +186,8 @@ if ( $#ARGV < 0 ) { # Need  at least one sheet!!
 
 my %sheets = ();
 
-my %xls = ();
-my $top = '';
-$xls{'top'} = '.*';
-$xls{'top_sheet'} = "Sheet1";
+my $outname = $OPTVAL{'out'} || 'vgch_joined_register-master.xls';
 
-$xls{'others'} = 'peri.*'; # Take the default.xls config key
-$EH{'default'}{'xls'} = '.*';
 
 # Assume top is defined as option:
 if ( $OPTVAL{'top'} ) {
@@ -213,8 +221,6 @@ for my $files ( @ARGV ) {
 	my $conn = open_infile( $files,
 			$sel, # Set to the appropriate list ....
 			$EH{$type}{'req'} . ',hash' );
-	#	read in sheets matching default.xls from $files ...
-
 		
 	# Convert to hashes ...
 	for my $sheetname ( keys %$conn ) {
@@ -228,7 +234,7 @@ for my $files ( @ARGV ) {
 		( $sub_order, $sub_addr, $sub_key ) = parse_vgch_top( $sheets{$top}{$xls{top_sheet}} );
 		# sub_order: hash with numbers ...
 		# sub_addr: array with more all infos from top
-		# sub_map: hash of arrays: point definitions to matching instances
+		# sub_key: hash of arrays: point definitions to matching instances
 		next;
 	}
 
@@ -249,7 +255,7 @@ for my $files ( @ARGV ) {
 		
 			my $client	= $sub_addr->[$thisclient];
 			my $def 	= $client->{'definition'};
-			# if ( defined( $s ) ) {	
+			
 			logwarn( "Info: apply sheet $s from file $files to client " .
 					$client->{'client'} . '(' . $def . ')' );
 			push( @all, { '::ign' => '# # # =:=:=:=> Sheet: ' . $s . ' from file '
@@ -257,8 +263,11 @@ for my $files ( @ARGV ) {
 				' for definition of ' . $client->{'client'} . '(' . $def . ')' } );
 			my $data = fix_sheet( $client, $sheets{$files}{$s} );
 			push( @all, @$data );
-			# Remove the tmp. data ....
-
+			
+			# Note this success on the TOP Sheet:
+			my $line = $client->{'inputline'};
+			$sheets{$top}{$xls{top_sheet}}->[$line]{'::comment'} .=
+				'MIX mapped ' . $files . ':' . $s; 
 			
 			# } 
 			# else {
@@ -311,10 +320,11 @@ for my $client ( @$sub_addr ) {
 =cut
 
 # Did we get definitions for all data in top:
-for my $k ( keys( %$sub_order ) ) {
-	if ( $sub_order->{$k} < 2 ) {
+#  Read out the sub_addr->{'used'}
+for my $k ( @$sub_addr ) {
+	if ( not exists $k->{'used'} or $k->{'used'} < 1 ) {
 		# Never got it
-		logwarn("Warning: did not find registermaster for $k");
+		logwarn("WARNING: did not find registermaster for $k->{'client'}");
 	}
 }
 
@@ -324,16 +334,17 @@ for my $k ( keys( %$sub_order ) ) {
 # Print TOP sheet ->
 my $end_table = db2array( $sheets{$top}{$xls{'top_sheet'}}, 'join', '' );
 replace_macros( $end_table );
-write_outfile( "joined.xls" , "VGCH_TOP", $end_table );
+write_outfile( $outname , "VGCH_TOP", $end_table );
 
 $end_table = db2array( \@all, 'default', '' );
 replace_macros( $end_table );
 
 
-write_outfile( "joined.xls" , "JOIN_VGCH", $end_table );
+write_outfile( $outname , "JOIN_VGCH", $end_table );
 
-my $status = ( write_sum() ) ? 1 : 0; # If write_sum returns > 0 -> exit status 1
-
+# TODO : Rewrite write_sum for this ...
+# my $status = ( write_sum() ) ? 1 : 0; # If write_sum returns > 0 -> exit status 1
+my $status = 0;
 exit $status;
 
 #
@@ -362,6 +373,13 @@ sub fix_sheet ($$) {
 	my $base = hex($client->{'sub'}); # Get it hexadecimal ....
 	
 	my @outdata = ();
+	
+	# If 'client' does not match 'definition'
+	my $postblock = '';
+	if ( $client->{'client'} ne $client->{'definition'} ) {
+		# Get diff
+		( $postblock = $client->{'client'} ) =~ s/$client->{'definition'}//;
+	}	
 	for my $i ( @$inref ) {
 		push( @outdata, { %$i } ); # Make sure data gets >copied<
 		my $sub;
@@ -370,11 +388,19 @@ sub fix_sheet ($$) {
 		} else {
 			$sub = $i->{'::sub'};
 		}
+
+		if ( $postblock ne '' ) {
+			if ( exists $outdata[-1]{'::block'} and
+					$outdata[-1]{'::block'} ne '' ) {
+				$outdata[-1]{'::block'} .= $postblock;
+			}
+		} 
+		# Rewrite ::sub : add base to input ::sub
 		if ( $sub =~ m/^\d+$/o ) {# How to test for digits?
 			$sub += $base;
-			$outdata[-1]{'::addr'} = sprintf( '%lx', $sub); # How to protect that against
+			$outdata[-1]{'::sub'} = sprintf( '%lx', $sub); # How to protect that against
 		} else {
-			$outdata[-1]{'::addr'} = $sub . " + $base";
+			$outdata[-1]{'::sub'} = $sub . " + $base";
 		}
 	}
 	
@@ -442,7 +468,9 @@ sub parse_vgch_top ($) {
 	my %map = ();
 	my %defmap = ();
 	my $n = 0;
+	my $l = 0; # Current line
 	for my $i ( @$sheet ) {
+		$l++;
 		next if $i->{'::ign'} =~ m/^\s*#/;
 		
 		# Get client name (primary key!)
@@ -455,6 +483,7 @@ sub parse_vgch_top ($) {
 		$map[$n]{'cpu2'} = $i->{'::cpu2_addr'};
 		$map[$n]{'definition'} = $i->{'::definition'};
 		$map[$n]{'sub'} = $i->{'::sub'};
+		$map[$n]{'inputline'} = $l - 1;
 	
 		push( @{$defmap{$i->{'::definition'}}}, $n );
 				

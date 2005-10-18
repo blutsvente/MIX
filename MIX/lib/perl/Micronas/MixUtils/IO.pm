@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.29 $                                          |
+# | Revision:   $Revision: 1.30 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/10/18 09:34:37 $                              |
+# | Date:       $Date: 2005/10/18 15:27:53 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.30  2005/10/18 15:27:53  wig
+# | Primary releaseable vgch_join.pl
+# |
 # | Revision 1.29  2005/10/18 09:34:37  wig
 # | Changes required for vgch_join.pl support (mainly to MixUtils)
 # |
@@ -194,11 +197,11 @@ sub mix_utils_io_check_path ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.29 2005/10/18 09:34:37 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.30 2005/10/18 15:27:53 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.29 $'; #'  
+my $thisrevision    =      '$Revision: 1.30 $'; #'  
 
-# Revision:   $Revision: 1.29 $
+# Revision:   $Revision: 1.30 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -618,12 +621,12 @@ sub mix_utils_open_input(@) {
     }
 
 	mix_utils_io_del_abook(); # Remove all cached input data (only for excel currently),    
-    return( $aconn, $ahier, $aio, $ai2c);
-
 	# Here we do the final setup, all configuration known now.
-	mix_utils_io_create_path(); # Check if all directories exists -> create if not
+	# Check if all directories exists -> create if not
+	mix_utils_io_create_path();
+	return( $aconn, $ahier, $aio, $ai2c);
 	
-}
+} # End of mix_utils_open_input
 
 =head2 mix_utils_io_create_path () {
 
@@ -662,6 +665,7 @@ sub mix_utils_io_create_path () {
 				my $cur = '';
 				for my $p ( split( /\//, $dir ) ) {
 					$cur .= '/' . $p;
+					$cur =~ s,//,/,og; # Remove multiple / (Cygwin does not like them)
 					next if -d $cur;
 					# Create it
 					unless( mkdir( $cur ) ) {
@@ -2245,21 +2249,21 @@ sub write_csv($$$) {
 
     # Write to other directory ...
     if ( $EH{'intermediate'}{'path'} ne "." and not is_absolute_path( $file ) ) {
- 	$file = $EH{'intermediate'}{'path'} . "/" . $file;
+ 		$file = $EH{'intermediate'}{'path'} . "/" . $file;
     }
 
     my $basename = basename( $file ); # s,.*[/\\],,; #Strip off / and \
 
     if ( -r $file ) {
 
-        my $max = $EH{'intermediate'}{'keep'};
+    my $max = $EH{'intermediate'}{'keep'};
 	my $sheetm = $EH{'format'}{'csv'}{'sheetsep'};
 
 	my $temp;
 	my $osheet = 0;
 
 	# If it exists, it could be open, too?
-        open(FILE, "<$file");
+    open(FILE, "<$file");
 	binmode FILE;
 	@data = <FILE>;
 	close(FILE);
@@ -2511,10 +2515,10 @@ sub clean_sxc_sheets($) {
 
 	# keep start line index of all sheets
 	for(my $i=0; defined $content[$i]; $i++) {
-	    if( !$isheet && $content[$i]=~ m/<table:table table:name=\"/) { # start of sheet
+	    if( !$isheet && $content[$i]=~ m/<table:table table:name=\"/) { #" start of sheet
 		$sheetname = $content[$i];
-		$sheetname =~ s/<table:table table:name=\"//;
-		$sheetname = (split(/\"/,$sheetname))[0];
+		$sheetname =~ s/<table:table table:name=\"//;	#"
+		$sheetname = (split(/\"/,$sheetname))[0];	#"
 		if( $sheetname=~ m/^O_/ || $sheetname=~ m/DIFF_/) {
 		  $isheet = 1;
 		  delete $content[$i];
@@ -2654,27 +2658,40 @@ sub mix_utils_rgb($$$) {
 Mask pure digits (esp. with . and/or , inside) for ExCEL!
 Otherwise these will get converted to dates :-(
 
+Additionally mask <nl> ...
+
 =cut
 
 sub mix_utils_mask_excel($) {
     my $r_a = shift;
 
 	my $maxlength = $EH{'format'}{'xls'}{'maxcelllength'} + 20; # Leave 20bytes extra
+	my $style = $EH{'format'}{'xls'}{'style'} || '';
 	
     for my $i ( @$r_a ) {
 		for my $ii ( @$i ) {
 	    	unless( defined( $ii ) ) {
-				$ii = "";
+				$ii = '';
 				next;
-	    	} elsif ( length( $ii ) > $maxlength )
-	    	{ #!wig20031215: 1200 will be accepted by Excel
+	    	} elsif ( length( $ii ) > $maxlength ) { #!wig20031215: 1200 will be accepted by Excel
 				logwarn( "WARNING: Limit length of cell to save $maxlength characters: " .
 				substr( $ii, 0, 32 ) );
 				$EH{'sum'}{'warnings'}++;
 				$ii = substr( $ii, 0, $maxlength );
 				substr( $ii, $maxlength - 9 , 9 ) = "__ERROR__"; # Attach __ERROR__ to string!
 	    	}
-	    $ii = "'" . $ii if ( $ii =~ m!^\s*[.,='"\d]! ); # Put a 'tick' in front of ExCEL special character  ....
+	    	if ( $style =~ m/\b(wrap|strip)nl\b/o ) {
+	    		# Replace \n by spaces
+	    		$ii =~ s/[\n\r]+/ /go;
+	    	} elsif ( $style =~ m/\b(masknl)\b/o ) {
+	    		$ii =~ s/[\n\r]/\\n/go;
+	    	}
+	    	if ( $style =~ m/\b(stripna)\b/o ) {
+	    		# Replace all non ASCII (non printables!) by spaces
+	    		$ii =~ s/[[:cntrl:]]/ /go;
+	    	}
+	    	
+	    	$ii = "'" . $ii if ( $ii =~ m!^\s*[.,='"\d]! ); # Put a 'tick' in front of ExCEL special character  ....
 		}
     }
 }
