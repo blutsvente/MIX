@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.2 $                                               |
+# | Revision:   $Revision: 1.3 $                                               |
 # | Author:     $Author: wig $                                                 |
-# | Date:       $Date: 2005/09/29 13:45:02 $                                                   |
+# | Date:       $Date: 2005/10/18 09:34:37 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.2 2005/09/29 13:45:02 wig Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.3 2005/10/18 09:34:37 wig Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.3  2005/10/18 09:34:37  wig
+# | Changes required for vgch_join.pl support (mainly to MixUtils)
+# |
 # | Revision 1.2  2005/09/29 13:45:02  wig
 # | Update with -report
 # |
@@ -55,9 +58,9 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.2 2005/09/29 13:45:02 wig Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.3 2005/10/18 09:34:37 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
-my $thisrevision   =      '$Revision: 1.2 $';
+my $thisrevision   =      '$Revision: 1.3 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -118,17 +121,28 @@ sub new {
 # Do the reporting if requested ...
 #
 sub mix_report () {
+
+	return unless ( exists $OPTVAL{'report'} );
 	
-	unless ( exists $OPTVAL{'report'} and ( scalar( @{$OPTVAL{'report'}} ) ) ) {
-		# no update requested ....
-		return;
+	my $reports = join( ',', @{$OPTVAL{'report'}} );
+	
+	# portlist:
+	if ( $reports =~ m/\bportlist\b/io ) {
+		mix_rep_portlist();
 	}
+	if ( $reports =~ m/\breglist\b/io ) {
+		mix_rep_reglist();
+	}
+
+}
+
+#
+# Report register list
+# 
+sub mix_rep_reglist () {
 	
-	# Currently we have a fixed set of reports:
-	#   - portlist (mif)
-	
-	mix_rep_portlist();
-	
+	return;
+
 }
 
 #

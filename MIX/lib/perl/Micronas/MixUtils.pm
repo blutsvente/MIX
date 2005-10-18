@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.75 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2005/10/14 11:29:34 $                              |
+# | Revision:   $Revision: 1.76 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2005/10/18 09:34:36 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.75 2005/10/14 11:29:34 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.76 2005/10/18 09:34:36 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.76  2005/10/18 09:34:36  wig
+# | Changes required for vgch_join.pl support (mainly to MixUtils)
+# |
 # | Revision 1.75  2005/10/14 11:29:34  lutscher
 # | added regshell parameters
 # |
@@ -351,11 +354,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.75 2005/10/14 11:29:34 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.76 2005/10/18 09:34:36 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.75 $';         #'
+my $thisrevision        =      '$Revision: 1.76 $';         #'
 
-# Revision:   $Revision: 1.75 $   
+# Revision:   $Revision: 1.76 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1249,7 +1252,8 @@ sub mix_init () {
     },
     #
     # Possibly read configuration details from the CONF sheet, see -conf option
-    #
+    # 'conf' is a pseudo field, mainly used for dumping the actual configuration
+    # to allow debugging
     'conf' => {
 		'xls' => 'CONF',
 		'req' => 'optional',
@@ -1260,10 +1264,15 @@ sub mix_init () {
 	#
 	# Default xls sheet definitions
 	#!wig20051011
+	# 'default' allows to read in nearly arbitrary data and keep track of it
+	# See below for more sophisticated fields.
+	# The least common denominator is, that a header line ::foo ::bar is required
+	#    and that the ::ign column should be the first
+	#
     'default' => {
 		'xls' => '.*',
 		'req' => 'optional',
-		'key' => '::ign', # Primary key to arbitrary data. Has to be set!!!
+		'key' => '::ign', 		# Primary key to arbitrary data. Has to be set!!!
 		'comments' => 'post',	# Keep comments -> pre|predecessor post|successor
 		'parsed' => 0,
 		'field' => {
@@ -1280,6 +1289,50 @@ sub mix_init () {
         	'::default'		=> [ qw(	1	1	0	%EMPTY%	0 )],	    
 	    	'::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
 	    	'nr'			=> 3,  # Number of next field to print
+	    	'_mult_'		=> {},  # Internal counter for multiple fields
+   	    	'_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
+	    						# 1 / RL -> left to right decreasing
+	    						# xF -> map the first to ::head:0 (defaults: ::head)
+		},
+    },
+    	#
+	# join -> for VGCH join
+	#!wig20051011
+	#
+	# ::ign	::client ::definition ::group ::group_id 
+	# ::grp_awidth ::group_addr	::subwidth
+	# ::sub	::cpu1_addr	::cpu2_addr	::xls_def
+	
+    'join' => {
+		'xls' => '.*',
+		'req' => 'optional',
+		'key' => '::ign', 		# Primary key to arbitrary data. Has to be set!!!
+		'comments' => 'post',	# Keep comments -> pre|predecessor post|successor
+		'parsed' => 0,
+		'field' => {
+	    	#Name   	=>	  	   		Inherits
+	    	#					    		Multiple
+	    	#						    		Required
+	    	#							  		Defaultvalue
+	    	#								    			PrintOrder
+	    	#                           0   1   2	3       4
+	    	'::ign' 		=> [ qw(	0	0	1	%NULL%	1 ) ],
+	    	'::client'		=> [ qw(	0	0	1	%EMPTY%	2 ) ],
+	    	'::definition'		=> [ qw(	0	0	1	%EMPTY%	3 ) ],
+	    	'::group'		=> [ qw(	0	0	1	%EMPTY%	4 ) ],
+	    	'::group_id'		=> [ qw(	0	0	1	%EMPTY%	5 ) ],
+	    	'::grp_awidth'		=> [ qw(	0	0	1	%EMPTY%	6 ) ],
+	    	'::group_addr'		=> [ qw(	0	0	1	%EMPTY%	7 ) ],
+	    	'::subwidth'		=> [ qw(	0	0	1	%EMPTY%	8 ) ],
+	    	'::sub'		=> [ qw(	0	0	1	%EMPTY%	9 ) ],
+	    	'::cpu1_addr'		=> [ qw(	0	0	1	%EMPTY%	10 ) ],	    	
+	    	'::cpu2_addr'		=> [ qw(	0	0	1	%EMPTY%	11 ) ],
+	    	'::comment'	    => [ qw(	1	0	2	%EMPTY%	12 )],
+	    	'::default'	    => [ qw(	1	1	0	%NULL%	0 )],
+	    	'::debug'	    => [ qw(	1	0	0	%NULL%	0 )],
+        	'::default'		=> [ qw(	1	1	0	%EMPTY%	0 )],	    
+	    	'::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
+	    	'nr'			=> 13,  # Number of next field to print
 	    	'_mult_'		=> {},  # Internal counter for multiple fields
    	    	'_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
 	    						# 1 / RL -> left to right decreasing
@@ -1967,22 +2020,35 @@ sub mix_overload_conf ($) {
     }
 }
 
+#
 # Similiar to _mix_overload_conf!!
+# take configuration parameter and overlead with new value
+# 
+# Input:
+#	config key	(e.g.   a.b.c )
+#	value		(anything, does some sanity checks, e.g. foo)
+#
+# Output:
+#	-
+#
+# Global:
+#	writes to %EH	( $EH{a}{b}{c} = "foo" )
+#
 sub _mix_apply_conf ($$$) {
 
     my $k = shift; # Key
     my $v = shift; # Value
     my $s = shift; # Source
 
-    unless( $k and $v ) {
-	    unless( $k ) { $k = ""; }
-	    unless( $v ) { $v = ""; }
-	    logwarn("WARNING: Illegal key or value given in $s: key:$k val:$v\n");
+	$v = '' unless ( defined( $v ) ); # No value -> set to ''
+	#!wig20051014: if $v is 0, this parameter got unset!
+    unless( defined($k) ) {
+	    unless( defined($k) ) { $k = ""; }
+	    logwarn("WARNING: Illegal key given in $s: key:$k val:$v\n");
             $EH{'sum'}{'warnings'}++;
 	    return undef;
     }
 
-    #No longer needed: $v =~ s/"/\\"/g; # Mask " in input!
 	$v =~ s/'/\\'/g; # Mask ' in input!
     $k =~ s,[^.%\w],,g; # Remove all characters not being ., % and \w ...
 	my $ok = $k;
@@ -3025,12 +3091,17 @@ sub parse_header($$@){
 				my $funique = "$i:$ii";
 				unless( defined( $$templ->{'field'}{$funique} ) ) {
 					logtrc(INFO, "Split multiple column header $i to $funique");
-					$$templ->{'field'}{$funique} = $$templ->{'field'}{$i};
+					#!wig20051017: make a copy of the array!
+					@{$$templ->{'field'}{$funique}} = @{$$templ->{'field'}{$i}};
 					#lu20050624 disable required-attribute for the additional
 					# headers because they do not occur in input
 					$$templ->{'field'}{$funique}[2] = 0;
 					#Check: do a real copy ...
 					#Remember print order no longer is unique
+					
+					# Increase print order:
+					$$templ->{'field'}{$funique}[4] = $$templ->{'field'}{'nr'};
+					$$templ->{'field'}{'nr'}++;
 				}
 				$or{$funique} = $rowh{$i}[$ii];
 			}
@@ -3173,6 +3244,8 @@ Arguments: 	$ref    := hash reference
 			$filter := Perl_RE,if it matches a key of ref, do not print that out
 			    		if $filter is an sub ref, will be used in grep
 
+!wig20051014: adding output of array->hash (instead of hash->hash)
+	This allows to print out an arry of hashes
 =cut
 
 sub db2array ($$$) {
@@ -3185,18 +3258,22 @@ sub db2array ($$$) {
 	    $EH{'sum'}{'warnings'}++;
 	    return;
     }
-    unless ( $type =~ m/^(hier|conn)/io ) {
+    $type = lc( $type );
+    unless ( ref( $ref ) eq 'ARRAY' or $type =~ m/^(hier|conn)/io ) {
 		logwarn("WARNING: Bad db type $type, ne HIER or CONN!");
 		$EH{'sum'}{'warnings'}++;
 		return;
     }
-    $type = lc($1);
+    $type = ( defined( $1 ) and $1 ) ? lc($1) : lc( $type );
 
     my @o = ();
     my $primkeynr = 0; # Primary key identifier
     my $commentnr = "";
     
     # Get order for printing fields ...
+    #  and the number of the comment and primary data field
+    #  $EH{$type}{'field'} holds headers for all detected columns!
+    #
     # TODO check if fields do overlap!
     for my $ii ( keys( %{$EH{$type}{'field'}} ) ) {
 		next unless ( $ii =~ m/^::/o );
@@ -3216,33 +3293,18 @@ sub db2array ($$$) {
 
 	( $n , @a ) = _mix_utils_im_header( uc($type) , \@o );
 	
-=head2 OLD
-
-    # Print header
-    for my $ii ( 1..(scalar @o - 1) ) {
-		$a[$n][$ii-1] = $o[$ii];
-    }
-    $n++;
-    # Print comment: generator, args, date
-    # First column is ::ign :-)
-    # As we are lazy, we will leave the rest of the line undefined ...
-    my %comment = ( qw( by %USER% on %DATE% cmd %ARGV% ));
-    $a[$n++][0] = "# Generated Intermediate Conn/Hier Data";
-    for my $c ( qw( by on cmd ) ) {
-		$a[$n++][0] = "# $c: " . $EH{'macro'}{$comment{$c}};
-    }
-
-=cut
-
     my @keys = ();
-    if ( $filter ) { # Filter the keys ....
+    if ( ref( $ref ) eq 'HASH' and $filter ) { # Filter the keys ....
 		if ( ref( $filter ) eq "CODE" ) {
 	    	@keys = grep( &$filter, keys( %$ref ) );
 		} else {
 	    	@keys = grep( !/$filter/, keys( %$ref ) );
 		}
+		@keys = sort( @keys );
+    } elsif ( ref( $ref ) eq 'ARRAY' ) {
+    	@keys = 0..(scalar(@$ref) - 1 ); # array from 0..N
     } else {
-		@keys = keys( %$ref );
+		@keys = sort( keys( %$ref ));
     }
 
     #WORKAROUND
@@ -3250,29 +3312,42 @@ sub db2array ($$$) {
     # if the workaround field is set, push value back into defining column
     # see below for undo ...
     my $wa_flag = 0;
-    for my $i ( sort( @keys ) ) {
-        if( $ref->{$i}{'::workaround'} ) {
-            $wa_flag = 1;
-            for my $wa ( split( /,/, $ref->{$i}{'::workaround'} ) ) {
-                my ( $n, $col, $val ) = split( /::/, $wa, 3 ); #  ::col::val,::colb::valb
-                    if ( $val =~ m,__(\w+)__,o ) { # Convert back __KEY__ -> %KEY%
-                        $val = "%" . $1 . "%";
-                    }
-                    $ref->{$i}{"::" . $col} .= $val;
-            }
-        }
+    unless( ref( $ref ) eq 'ARRAY' ) {
+    	for my $i ( @keys ) { # Skipped if input is array-ref
+        	if( $ref->{$i}{'::workaround'} ) {
+            	$wa_flag = 1;
+            	for my $wa ( split( /,/, $ref->{$i}{'::workaround'} ) ) {
+                	my ( $n, $col, $val ) = split( /::/, $wa, 3 ); #  ::col::val,::colb::valb
+                    	if ( $val =~ m,__(\w+)__,o ) { # Convert back __KEY__ -> %KEY%
+                        	$val = "%" . $1 . "%";
+                    	}
+                    	$ref->{$i}{"::" . $col} .= $val;
+            	}
+        	}
+    	}
     }
 
     # Now comes THE data
-    for my $i ( sort( @keys ) ) {
+    for my $i ( @keys ) {
 		my $split_flag = 0; # If split_flag 
+		my $refdata = "";
+		if ( ref( $ref ) eq 'ARRAY' ) {
+			$refdata = $ref->[$i];
+		} else {
+			$refdata = $ref->{$i};
+		}
 		for my $ii ( 1..$#o ) { # 0 contains fields to skip
-	    	#wig20031106: split on all non key fields!
-	    	if ( $o[$ii] =~ m/^::(in|out)\s*$/o ) { # ::in and ::out are special
-				$a[$n][$ii-1] = inout2array( $ref->{$i}{$o[$ii]}, $i );
+	    	next unless defined( $o[$ii] ); #!wig20051014: Bad field detected
+	    	
+	    	if ( $o[$ii] =~ m/^::(in|out)\s*$/o and
+	    		  ref( $refdata->{$o[$ii]} ) eq 'ARRAY'  ) {
+	    		  # ::in and ::out are special
+	    		  # TODO -> get that into objects
+				$a[$n][$ii-1] = inout2array( $refdata->{$o[$ii]}, $i );
 	    	} else {
-				$a[$n][$ii-1] = defined( $ref->{$i}{$o[$ii]} ) ? $ref->{$i}{$o[$ii]} : "%UNDEF_1%";
+				$a[$n][$ii-1] = defined( $refdata->{$o[$ii]} ) ? $refdata->{$o[$ii]} : "%UNDEF_1%";
 	    	}
+	    	
 	    	if ( length( $a[$n][$ii-1] ) > $EH{'format'}{'xls'}{'maxcelllength'} ) {
 				# Line too long! Split it!
 				# Assumes that the cell to be split are accumulated when reused later on.
@@ -3315,7 +3390,7 @@ sub db2array ($$$) {
     # undo the change above ....
     #wig20040322:
     if ( $wa_flag ) {
-        for my $i ( sort( @keys ) ) {
+        for my $i ( @keys ) {
             if( $ref->{$i}{'::workaround'} ) {
                 for my $wa ( split( /,/, $ref->{$i}{'::workaround'} ) ) {
                     my ( $n, $col, $val ) = split( /::/, $wa, 3 ); #  ::col::val,::colb::valb
@@ -3333,7 +3408,7 @@ sub db2array ($$$) {
 }
 
 ####################################################################
-## db2array
+## db2array_intra
 ## convert internal db structure to array
 ####################################################################
 

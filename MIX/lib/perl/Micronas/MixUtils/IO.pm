@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.28 $                                          |
+# | Revision:   $Revision: 1.29 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/10/13 09:09:46 $                              |
+# | Date:       $Date: 2005/10/18 09:34:37 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.29  2005/10/18 09:34:37  wig
+# | Changes required for vgch_join.pl support (mainly to MixUtils)
+# |
 # | Revision 1.28  2005/10/13 09:09:46  wig
 # | Added intermediate CONN sheet split
 # |
@@ -128,9 +131,9 @@ require Exporter;
 	init_ole
 	close_open_workbooks
 	mix_utils_open_input
-        open_infile
-        open_xls
-        open_sxc
+	open_infile
+    open_xls
+    open_sxc
 	open_csv
 	write_outfile
 	write_xls
@@ -191,11 +194,11 @@ sub mix_utils_io_check_path ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.28 2005/10/13 09:09:46 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.29 2005/10/18 09:34:37 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.28 $'; #'  
+my $thisrevision    =      '$Revision: 1.29 $'; #'  
 
-# Revision:   $Revision: 1.28 $
+# Revision:   $Revision: 1.29 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -556,16 +559,16 @@ sub mix_utils_open_input(@) {
 		@conf = open_infile( $i, $EH{'conf'}{'xls'}, $EH{'conf'}{'req'} );
 
 		# Open connectivity sheet(s)
-		@conn = open_infile( $i, $EH{'conn'}{'xls'}, $EH{'conf'}{'req'} );
+		@conn = open_infile( $i, $EH{'conn'}{'xls'}, $EH{'conn'}{'req'} );
 
 		# Open hierachy sheets
-		@hier = open_infile( $i, $EH{'hier'}{'xls'}, $EH{'conf'}{'req'} );
+		@hier = open_infile( $i, $EH{'hier'}{'xls'}, $EH{'hier'}{'req'} );
 
 		# Open IO sheet (if available, not needed!)
-		@io = open_infile( $i, $EH{'io'}{'xls'}, $EH{'conf'}{'req'} );
+		@io = open_infile( $i, $EH{'io'}{'xls'}, $EH{'io'}{'req'} );
 
 		# Open I2C sheet (if available, not needed!)
-		@i2c = open_infile( $i, $EH{'i2c'}{'xls'}, $EH{'conf'}{'req'} );
+		@i2c = open_infile( $i, $EH{'i2c'}{'xls'}, $EH{'i2c'}{'req'} );
 
 		# Did we get enough sheets:
 		if(!@conn && !@conf && !@hier && !@io && !@i2c) {
@@ -735,6 +738,13 @@ Open a excel file, select the appropriate worksheets and return
 
 =back
 
+flags can be one of:
+	mandatory	:= print warning if no matching sheet is detected
+	optional	:= return silently, even if no matching sheet is available
+	write		:= open for write
+	hash		:= return data in hashref: \%data{sheetname} = [ ... ],
+					otherwise data is returned in array of array
+
 =cut
 
 {   # wrap around $oBook static variable ...
@@ -763,7 +773,7 @@ sub open_xls($$$){
     my $basename = basename( $file );
     my $ro = 1;
     if ( $warn_flag =~ m,write,io or $OPTVAL{'import'} or $OPTVAL{'init'} ) {
-	$ro = 0;
+		$ro = 0;
     }
 
 	unless( exists $aBook{$file} ) {
@@ -786,58 +796,64 @@ sub open_xls($$$){
 
     # return if no sheets where found
     if ( scalar( @sheets ) < 1 ) {
-	if ( $warn_flag =~ m,mandatory,io ) {
-	    logwarn("Cannot locate a worksheet $sheetname in $file");
-	    $EH{'sum'}{'warnings'}++;
-	}
-	return ();
+		if ( $warn_flag =~ m,mandatory,io ) {
+	    	logwarn("Cannot locate a worksheet $sheetname in $file");
+	    	$EH{'sum'}{'warnings'}++;
+		}
+		return ();
     }
 
     my $cell = "";
     my @line = ();
     my @sheet = ();
     my @all = ();
+    my %all = ();
 
     foreach my $sname ( @sheets ) {
 
-	$isheet = $oBook->{Worksheet}[$sname];
-	logtrc( "INFO:4", "Reading worksheet " . $isheet->{Name} . " of $file" );
+		$isheet = $oBook->{Worksheet}[$sname];
+		logtrc( "INFO:4", "Reading worksheet " . $isheet->{Name} . " of $file" );
 
-	for(my $y=$isheet->{MinRow}; defined $isheet->{MaxRow} && $y <= $isheet->{MaxRow}; $y++) {
-		for(my $x =$isheet->{MinCol}; defined $isheet->{MaxCol} && $x <= $isheet->{MaxCol}; $x++) {
-			$cell = $isheet->{Cells}[$y][$x];
-			if(defined $cell) {
-				push(@line, $cell->Value);  # $cell->Value || $cell->{Val} ?
+		for(my $y=$isheet->{MinRow}; defined $isheet->{MaxRow} && $y <= $isheet->{MaxRow}; $y++) {
+			for(my $x =$isheet->{MinCol}; defined $isheet->{MaxCol} && $x <= $isheet->{MaxCol}; $x++) {
+				$cell = $isheet->{Cells}[$y][$x];
+				if(defined $cell) {
+					push(@line, $cell->Value);  # $cell->Value || $cell->{Val} ?
+				}
+				else {
+					push(@line, "");
+				}
 			}
-			else {
-				push(@line, "");
-			}
+	    	push(@sheet, [@line]);
+	    	@line = ();
 		}
-	    push(@sheet, [@line]);
-	    # print "Line ". (scalar(@sheet)-1) . ": ";
-	    # print join(' ; ', @line) ."\n";
-	    @line = ();
-	}
 
-	#!wig20031218: take away trainling empty lines ...
-	if ( scalar( @sheet ) > 0 ) {
-	    while( not join( "", @{$sheet[-1]} ) ) {
-			pop( @sheet );
-	    }
-	}
-	if ( scalar( @sheet ) > 0 ) {
-	    push(@all, [@sheet]);
-	} else {
-	    logwarn( "Sheet $isheet->{Name} holds no content (__FILE__/__LINE__)" );
-	    $EH{'sum'}{'warnings'}++;
-	}
+		#!wig20031218: take away trainling empty lines ...
+		if ( scalar( @sheet ) > 0 ) {
+	    	while( not join( "", @{$sheet[-1]} ) ) {
+				pop( @sheet );
+	    	}
+		}
+		if ( scalar( @sheet ) > 0 ) {
+			if ( $warn_flag =~ m/\bhash\b/io ) {
+				@{$all{$isheet->{Name}}} = @sheet;
+			} else {
+	    		push(@all, [@sheet]);
+			}
+		} else {
+	    	logwarn( "Sheet $isheet->{Name} holds no content (__FILE__/__LINE__)" );
+	    	$EH{'sum'}{'warnings'}++;
+		}
 
-	@sheet = ();
+		@sheet = ();
     }
-
-    return(@all);
-
-}
+    
+	if ( $warn_flag =~ m/\bhash\b/io ) {
+		return \%all;
+	} else {	
+    	return(@all);
+	}
+} # End of open_xls
 
 sub mix_utils_io_del_abook () {
 	%aBook = ();
@@ -860,6 +876,13 @@ worksheets and return
 =item $flag flags
 
 =back
+
+flags can be one of:
+	mandatory	:= print warning if no matching sheet is detected
+	optional	:= return silently, even if no matching sheet is available
+	write		:= open for write
+	hash		:= return data in hash: %data{sheetname} = [ ... ],
+					otherwise data is returned in array of array
 
 =cut
 
@@ -891,6 +914,7 @@ sub open_sxc($$$) {
     }
 
     my @all = ();
+    my %all = ();
     my @sheet = ();
     my @line = ();
     my @cell = ();
@@ -909,15 +933,19 @@ sub open_sxc($$$) {
     }
 
     for(my $i=0; defined $content[$i]; $i++) {
-      if(!$isheet && $content[$i]=~ m/^<table:table.*>/ 
-	 && $content[$i]=~ m/ table:name=\"$sheetname\"/) {
-	    $isheet = 1;  # entering sheet
-	}
-	elsif($isheet) {
+      if( !$isheet && $content[$i]=~ m/^<table:table.*>/ 
+	 		&& $content[$i]=~ m/ table:name=\"$sheetname\"/) { # "
+	 		# TODO : check if the above regular expression is o.k.
+	    	$isheet = 1;  # entering sheet
+	  } elsif($isheet) {
 	    if($content[$i] =~ m/^<\/table:table>/) {
 	        $isheet = 0;  # escape from sheet
-		push(@all, [@sheet]);
-		@sheet = ();
+	        if ( $warn_flag =~ m/\bhash\b/io ) {
+	        	@{$all{$sheetname}} = @sheet;
+	        } else {
+				push(@all, [@sheet]);
+			}
+			@sheet = ();
 	    }
 	    elsif(!$irow && $content[$i] =~ m/^<table:table-row/) {
 		if(!($content[$i]=~ m/\/>$/)) {
@@ -960,8 +988,8 @@ sub open_sxc($$$) {
 		    $icell = 1;    # enter cell
 		    $repeat = 1;   # repeating of cells
 		    my $temp = $content[$i];
-		    if($temp=~ s/^.* table:number-columns-repeated=\"//) {
-			$temp =~ s/\".*//g;
+		    if($temp=~ s/^.* table:number-columns-repeated=\"//) { # "
+			$temp =~ s/\".*//g; # "
 			$repeat = $temp;
 		    }
 		    # empty cell
@@ -1023,15 +1051,18 @@ sub open_sxc($$$) {
 	    }
 	}
     }
-    if ( scalar( @all ) < 1 ) {
-	if ( $warn_flag =~ m,mandatory,io ) {
-	    logwarn("Cannot locate a worksheet $sheetname in $file");
-	    $EH{'sum'}{'warnings'}++;
-	}
-	return ();
+    if ( scalar( @all ) < 1 and scalar( keys %all ) < 1 ) {
+		if ( $warn_flag =~ m,mandatory,io ) {
+	    	logwarn("Cannot locate a worksheet $sheetname in $file");
+	    	$EH{'sum'}{'warnings'}++;
+		}
+		return ();
+    }
+    if ( $warn_flag =~ m/\bhash\b/io ) {
+    	return \%all;
     }
     return @all;
-}
+} # End of open_sxc
 
 
 ####################################################################
@@ -1047,6 +1078,13 @@ Open a csv file, select the appropriate worksheets and return
 =item $sheet name of worksheet
 =item $flag flags
 
+flags can be one of:
+	mandatory	:= print warning if no matching sheet is detected
+	optional	:= return silently, even if no matching sheet is available
+	write		:= open for write
+	hash		:= return data in hash: %data{sheetname} = [ ... ],
+					otherwise data is returned in array of array
+
 =back
 
 =cut
@@ -1057,6 +1095,7 @@ sub open_csv($$$) {
     my $openflag = 0;
 
     my @all = ();
+    my %all = ();
     my @sheet = ();
     my @line = ();
 
@@ -1071,14 +1110,14 @@ sub open_csv($$$) {
     my $entry = "";
 
     unless( -r $file ) {
-        logwarn( "cannot read <$file> in open_csv!" );
-	return undef;
+        logwarn( "Cannot read <$file> in open_csv!" );
+		return undef;
     }
 
     my $ro = 1;
 
-    if ( $warn_flag =~ m,write,io or $OPTVAL{'import'} or $OPTVAL{'init'} ) {
-	$ro = 0;
+    if ( $warn_flag =~ m/\bwrite\b/io or $OPTVAL{'import'} or $OPTVAL{'init'} ) {
+		$ro = 0;
     }
 
     open(FILE, $file);
@@ -1088,12 +1127,11 @@ sub open_csv($$$) {
     # Take all sheets matching the possible reg ex in $sheetname
 
     for(my $i=0; defined $input[$i]; $i++) {
-	if( $input[$i] =~ m/^$sheetsep$sheetname/) {
-
+	if( $input[$i] =~ m/^$sheetsep($sheetname)\s*$/) {
+		my $thissheet = $1;
+		
 	    $i++;
-#	     print "SHEET: $sheetname\n";
-
-            while( defined $input[$i] && not $input[$i]=~ m/^$sheetsep/) {
+        while( defined $input[$i] && not $input[$i]=~ m/^$sheetsep/) {
 
 		for( my $j=0; $j<length($input[$i]); $j++) {
 
@@ -1142,27 +1180,32 @@ sub open_csv($$$) {
 		push(@line, $entry);
 		$entry = "";
 		push(@sheet, [@line]);
-	#	 print join(' ; ', @line) . "\n";
 		@line = ();
 		$i++;    # next line
 	    }
-	    push(@all, [@sheet]);
+	    if ( $warn_flag =~ m/\bhash\b/io ) {
+	    	$all{$thissheet} = \@sheet;
+	    } else {
+	    	push(@all, [@sheet]);
+	    }
 	    @sheet = ();
 	}
     }
 
     # did we get some input?
-    if ( scalar @all < 1 ) {
-	if ( $warn_flag =~ m,mandatory,io ) {
+    if ( scalar @all < 1 and scalar( keys %all ) < 1 ) {
+		if ( $warn_flag =~ m/\bmandatory\b/io ) {
             logwarn("Cannot read input from sheet: $sheetname in $file");
-	    $EH{'sum'}{'warnings'}++;
-	}
-	return ();
+	    	$EH{'sum'}{'warnings'}++;
+		}
+		return ();
     }
-
-    return(@all );
-
-}
+	if ( $warn_flag =~ m/\bhash\b/io ) {
+		return \%all;
+	} else {
+    	return (@all);
+	}
+} # End of open_csv
 
 
 ####################################################################
@@ -1204,14 +1247,12 @@ sub absolute_path($) {
     }
 
 	# Strip of cygwin home -> homedrive ...
+	#  /cygdrive/X  -> X:/ ....
+	#  cygwin can cope with both, while for excel c: is mandatory
 	if ( $EH{'iscygwin'} ) {
 		$file =~ s/$ENV{'HOME'}/$ENV{'HOMEDRIVE'}/;
+		$file =~ s!/cygdrive/(\w)!$1:!;
 	}
-
-    # Now done in different place ...
-    # Convert / to \ :-(, otherwise OLE will get confused
-    # As we will open Excel on MSWin only, there is no need to rethink that.
-    #But: cygwin is different ...
 
     return $file
 }

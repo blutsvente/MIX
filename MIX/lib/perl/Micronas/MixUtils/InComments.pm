@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: InComments.pm,v $                                      |
-# | Revision:   $Revision: 1.1 $                                          |
+# | Revision:   $Revision: 1.2 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/10/13 09:09:46 $                              |
+# | Date:       $Date: 2005/10/18 09:34:37 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: InComments.pm,v $
+# | Revision 1.2  2005/10/18 09:34:37  wig
+# | Changes required for vgch_join.pl support (mainly to MixUtils)
+# |
 # | Revision 1.1  2005/10/13 09:09:46  wig
 # | Added intermediate CONN sheet split
 # |
@@ -54,9 +57,9 @@ use FileHandle;
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: InComments.pm,v 1.1 2005/10/13 09:09:46 wig Exp $';#'  
+my $thisid          =      '$Id: InComments.pm,v 1.2 2005/10/18 09:34:37 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: InComments.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.1 $'; #'  
+my $thisrevision    =      '$Revision: 1.2 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -73,8 +76,12 @@ $thisrevision =~ s,^\$,,go;
 sub new {
 	my $this = shift;
 	my ( $class ) = ref( $this ) || $this;
-	my %params = @_;
-
+	my %params = ();
+	if ( ref( $_[0] ) eq 'HASH' ) {
+		%params = %{$_[0]};
+	} else {
+		%params = @_;
+	}
 	# data member default values
 	my $ref_member  = {
 		'text'	=>	'',

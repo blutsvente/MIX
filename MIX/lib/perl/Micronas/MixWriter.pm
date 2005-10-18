@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.60 $                                         |
+# | Revision:   $Revision: 1.61 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/10/13 09:09:46 $                              |
+# | Date:       $Date: 2005/10/18 09:34:36 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.60 2005/10/13 09:09:46 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.61 2005/10/18 09:34:36 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.61  2005/10/18 09:34:36  wig
+# | Changes required for vgch_join.pl support (mainly to MixUtils)
+# |
 # | Revision 1.60  2005/10/13 09:09:46  wig
 # | Added intermediate CONN sheet split
 # |
@@ -270,8 +273,8 @@ sub generic_map ($$$$;$$);
 sub print_conn_matrix ($$$$$$$$$;$);
 sub signal_port_resolve($$);
 sub use_lib($$);
-sub is_vhdl_comment($); # Should go to MixBase ...
-sub is_comment($$); # Should go to MixBase
+sub is_vhdl_comment($); 	# Should go to MixBase ...
+sub is_comment($$); 		# Should go to MixBase
 sub count_load_driver ($$$$);
 sub gen_concur_port($$$$$$$$;$$);
 sub mix_wr_get_interface ($$$$);
@@ -284,24 +287,24 @@ sub mix_wr_getpwidth ($);
 sub mix_wr_getconstname ($$);
 sub sig_typecast($$);
 sub _mix_wr_isinteger ($$$);
-sub mix_wr_mapsort ($$); # create a "sort" prefix aka. %MAPSORT .... SORTMAP%
+sub mix_wr_mapsort ($$);	# create a "sort" prefix aka. %MAPSORT .... SORTMAP%
 sub _mix_wr_is_modegennr ($$);
-sub mix_wr_use_udc ($$$); # deal with ::udc column in hier sheet
-sub _mix_wr_save_hooks (); # save _HOOK_ macros
-sub _mix_wr_preset_hooks (); # preset _HOOK_ macros
+sub mix_wr_use_udc ($$$);	# deal with ::udc column in hier sheet
+sub _mix_wr_save_hooks ();	# save _HOOK_ macros
+sub _mix_wr_preset_hooks ();	# preset _HOOK_ macros
 sub _mix_wr_getfilter ($$);
 sub _mix_wr_descr ($$$$$);
 sub mix_wr_printdescr ($$);
-
+sub _mix_wr_regorwire($$);
 
 # Internal variable
 
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.60 2005/10/13 09:09:46 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.61 2005/10/18 09:34:36 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.60 $';
+my $thisrevision   =      '$Revision: 1.61 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1656,7 +1659,7 @@ sub _mix_wr_get_iveri ($$$$) {
 	};
 	
 	# TODO : csytle implies noiwire/noowire!
-	for my $i ( qw( cstyle iwire owire ) ) {
+	for my $i ( qw( ansistyle iwire owire ) ) {
 		if ( $EH{'output'}{'generate'}{'verilog'} =~ m/\b$i\b/ ) {
 			$flags{$i} = 1;
 		} elsif ( $EH{'output'}{'generate'}{'verilog'} =~ m/\bno$i\b/ ) {
@@ -1674,8 +1677,8 @@ sub _mix_wr_get_iveri ($$$$) {
         'parameter' => "parameter",
     );
 
-    my $gent = "";
-    my $intf = ""; # "\t\t(\n"; # Module interface ...
+    my $gent = '';
+    my $intf = '';
     my %port = (
         'out'   => "",
         'in'    => "",
@@ -1697,13 +1700,18 @@ sub _mix_wr_get_iveri ($$$$) {
     );
 
 	my $portsort = ""; #Contains value if non-default port order is requested
-	
+
+	# Iterate over all ports at that entity:	
     for my $p ( sort ( keys( %{$r_ent} ) ) ) {
 	    next if ( $p =~ m,^__,o ); #Skip internal data ...
         next if ( $p =~ m,^-- NO, );
 
 		$portsort = mix_wr_mapsort( $ename, $p ); # Put in sort criteria!
 
+		# Should that be a reg or a wire?
+		# Default is wire
+		my $reg_wire = _mix_wr_regorwire( $ename, $p );
+		
 	    my $pdd = $r_ent->{$p};
 	    #!wig20051010: adding description ...
 	    #!wig20051010: Add descriptions to port map:
@@ -1716,6 +1724,7 @@ sub _mix_wr_get_iveri ($$$$) {
 	    if ( $pdd->{'mode'} =~ m,^\s*(generic|G|P),io ) {
 			if ( exists( $pdd->{'value'} ) ) {
                 #Generic, with default value from conndb ...
+                # TODO : is here also ansistyle?
                 $port{'parameter'} .= $portsort . '%S%' x 2 . $ioky{'parameter'} . " " . $p .
                         " = " . $pdd->{'value'} . ";\n";
 			} else {
@@ -1751,31 +1760,36 @@ sub _mix_wr_get_iveri ($$$$) {
                         $pdd->{'low'} = undef;
                         $pdd->{'high'} = undef;
 
-						if ( $flags{'cstyle'} ) {
+						if ( $flags{'ansistyle'} ) {
 							#!wig20051010
                         	$intf .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} .
-                        		'%S%' x 2 . $p . "," . '%S%' .
+                        		'%S%' . $reg_wire . '%S' . $p . "," . '%S%' .
                         		( $descr ? $descr : $tcom ) .
                         		" __I_AUTO_REDUCED_BUS2SIGNAL\n";
-						} else {							
+						} else {	
+							# Add to interface						
                         	$intf .= $portsort . '%S%' x 2 . $valid . $p . ',' .
       						( $descr ? $descr : '' ) .
                         	"\n";
-                        	$port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} . '%S%' x 2 .
-                        	$p . ";" .
-                            "%S%$tcom __I_AUTO_REDUCED_BUS2SIGNAL\n";
+                        	# Add to portlist
+                        	$port{$mode} .= $portsort . '%S%' x 2 . $valid .
+                        			$ioky{$mode} . '%S%' x 2 . $p . ";" .
+                            		'%S%' . $tcom . " __I_AUTO_REDUCED_BUS2SIGNAL\n";
 						}
 						#!wig: iwire??
 						if ( $flags{'owire'} ) {
-                        	$port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire\t\t" . $p . ";\t" .
-                            	"\t$tcom __I_AUTO_REDUCED_BUS2SIGNAL\n";
+                        	$port{'wire'} .= $portsort . '%S%' x 2 . $valid .
+                        		$reg_wire . '%S%' x 2
+                        		. $p . ';%S%' . $tcom . " __I_AUTO_REDUCED_BUS2SIGNAL\n";
 						}
                     } else {
                         logwarn( "Warning: Port $p of entity $ename one bit wide, missing lower bits\n" );
                         $EH{'sum'}{'warnings'}++;
-                        if ( $flags{'cstyle'} ) {
-                        	$intf .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} .
-                        		'%S%[' . $pdd->{'high'} . ":" . $pdd->{'low'} . "]%S%" . $p .
+                        if ( $flags{'ansistyle'} ) {
+                        	$intf .=
+                        		$portsort . '%S%' x 2 . $valid . $ioky{$mode} .
+                        		'%S%' . $reg_wire .
+                        		'%S%[' . $pdd->{'high'} . ']%S%' . $p .
                                 ',' .
                                 ( $descr ? $descr : $tcom ) .
                                 " __W_SINGLEBITBUS\n";
@@ -1783,23 +1797,26 @@ sub _mix_wr_get_iveri ($$$$) {
                         	$intf .= $portsort . '%S%' x 2 . $valid . $p . ',' .
                         			( $descr ? $descr : '' ) .
                         	 		"\n";
-                        	$port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} . "%S%[" .
-                                $pdd->{'high'} . ":" . $pdd->{'low'} . "]%S%" . $p .
+                        	$port{$mode} .=
+                        		$portsort . '%S%' x 2 . $valid . $ioky{$mode} .
+                        		'%S%[' . $pdd->{'high'} . ']%S%' . $p .
                                 ";\t$tcom __W_SINGLEBITBUS\n";
                         }
                         if ( $flags{'owire'} ) {
-                        	$port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire%S%[" .
-                                $pdd->{'high'} . ":" . $pdd->{'low'} . "]%S%" . $p .
+                        	$port{'wire'} .=
+                        		$portsort . '%S%' x 2 . $valid . $reg_wire .
+                        		'%S%[' . $pdd->{'high'} . ']%S%' . $p .
                                 ";\t$tcom __W_SINGLEBITBUS\n";
                         }
                     }
                 } elsif ( $pdd->{'high'} > $pdd->{'low'} ) {
-                	if ( $flags{'cstyle'} ) {
-                    	$intf .= $portsort . '%S%' x 2 . $valid .
-                     	$ioky{$mode} . "%S%[" .
-                        $pdd->{'high'} . ":" . $pdd->{'low'} . "]%S%" . $p . ',' .
-                        ( $descr ? $descr : '' ) .
-                        "\n";
+                	if ( $flags{'ansistyle'} ) {
+                    	$intf .= 
+                    		$portsort . '%S%' x 2 . $valid .
+                     		$ioky{$mode} . '%S%' . $reg_wire . 
+                     		'%S%[' . $pdd->{'high'} . ':' . $pdd->{'low'} . ']%S%' . $p . ',' .
+                        	( $descr ? $descr : '' ) .
+                        	"\n";
                 	} else {
                     	$intf .= $portsort . '%S%' x 2 . $valid . $p . "," . 
                     	( $descr ? $descr : '' ) .
@@ -1808,70 +1825,75 @@ sub _mix_wr_get_iveri ($$$$) {
                                 $pdd->{'high'} . ":" . $pdd->{'low'} . "]\t" . $p . ";\n";
                 	}
                 	if ( $flags{'owire'} ) {
-                    	$port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire\t[" .
-                                $pdd->{'high'} . ":" . $pdd->{'low'} . "]\t" . $p . ";\n";
+                    	$port{'wire'} .= $portsort . '%S%' x 2 . $valid . $reg_wire . 
+                    		'%S%[' . $pdd->{'high'} . ":" . $pdd->{'low'} . "]\t" . $p . ";\n";
                 	}
                 } else {
-                    #TODO: Check if Verilog allows this ...
-                    #Couple warning on check flag for desig guide line "downto busses"
+                    # TODO : Check if Verilog allows this ...
+                    #Couple warning on check flag for design guide line "downto busses"
                     logwarn( "WARNING: Port $p, entity $ename, high bound < low bound!" );
                     $EH{'sum'}{'warnings'}++;
-                    if ( $flags{'cstyle'} ) {
-                    	$intf .= $portsort . '%S%' x 3 . $valid . $p .
-                    	$ioky{$mode} . "%S%[" .
-                        $pdd->{'high'} . ":" . $pdd->{'low'} . "]%S%" . $p . ',' .
+                    if ( $flags{'ansistyle'} ) {
+                    	$intf .= $portsort . '%S%' x 3 . $valid .
+                    	$ioky{$mode} . '%S' . $reg_wire . 
+                    	'%S%[' . $pdd->{'high'} . ':' . $pdd->{'low'} . ']%S%' .
+                    	$p . ',' .
 						( $descr ? $descr : '' ) .
                         "\n";
                     } else {
                     	$intf .= $portsort . '%S%' x 3 . $valid . $p . ',' .
                     	( $descr ? $descr : '' ) .
                     	 "\n";
-                    	$port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} . "\t[" .
-                                $pdd->{'high'} . ":" . $pdd->{'low'} . "]\t" . $p . ";\n";
+                    	$port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} . 
+                    		'%S%[' . $pdd->{'high'} . ':' . $pdd->{'low'} . ']%S%' . $p . ";\n";
                     }
                     if ( $flags{'owire'} ) {
-                    	$port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire\t[" .
-                                $pdd->{'high'} . ":" . $pdd->{'low'} . "]\t" . $p . ";\n";
+                    	$port{'wire'} .= $portsort . '%S%' x 2 . $valid . 
+                    		'%S' . $reg_wire .
+                    		'%S%[' . $pdd->{'high'} . ':' . $pdd->{'low'} . ']%S%' . $p . ";\n";
                     }
                 }
 			} else {
                 #wig20030812:
                 # Non numeric bounds ...
                 if ( $pdd->{'high'} eq $pdd->{'low'} ) {
-                	if ( $flags{'cstyle'} ) {
+                	if ( $flags{'ansistyle'} ) {
                     	$intf .= $portsort . '%S%' x 3 . $valid .
-                    		$ioky{$mode} . "%S%[" .
-                            $pdd->{'high'} . "]%S%" . $p . ',' .
+                    		$ioky{$mode} . '%S' . $reg_wire .
+                    		'%S%[' . $pdd->{'high'} . ']%S%' . $p . ',' .
                             ( $descr ? $descr : '' ) .
                             "\n";
                 	} else {
                     	$intf .= $portsort . '%S%' x 3 . $valid . $p . ',' .
                     	( $descr ? $descr : '' ) .
                     	"\n";
-                    	$port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} . "\t[" .
-                                $pdd->{'high'} . ']%S%' . $p . ";\n";
+                    	$port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} .
+                    		'%S%[' . $pdd->{'high'} . ']%S%' . $p . ";\n";
                 	}
 					if ( $flags{'owire'} ) {
-                    	$port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire%S%[" .
-                                $pdd->{'high'} . ']%S%' . $p . ";\n";
+                    	$port{'wire'} .= $portsort . '%S%' x 2 . $valid . 
+                    		'%S%' . $reg_wire . 
+                    		'%S%[' . $pdd->{'high'} . ']%S%' . $p . ";\n";
                 	}
                 } else {
-                	if ( $flags{'cstyle'} ) {
+                	if ( $flags{'ansistyle'} ) {
                     	$intf .= $portsort . '%S%' x 3 . $valid .
-                    		$ioky{$mode} . "%S%[" .
-                                $pdd->{'high'} . ":" . $pdd->{'low'} . ']%S%' . $p . ',' .
+                    		$ioky{$mode} . '%S%' . $reg_wire .
+                    			'%S%[' . $pdd->{'high'} . ":" . $pdd->{'low'} . ']%S%' .
+                    			$p . ',' .
                          	( $descr ? $descr : '' ) .
                          	"\n";
                 	} else {
                     	$intf .= $portsort . '%S%' x 3 . $valid . $p . ',' .
                    		( $descr ? $descr : '' ) .
                     	"\n";
-                    	$port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} . "\t[" .
-                                $pdd->{'high'} . ":" . $pdd->{'low'} . ']%S%' . $p . ";\n";
+                    	$port{$mode} .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} . 
+                    		'%S%[' . $pdd->{'high'} . ':' . $pdd->{'low'} . ']%S%' .
+                    		$p . ";\n";
                 	}
                 	if ( $flags{'owire'} ) {
-                    	$port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire\t[" .
-                                $pdd->{'high'} . ":" . $pdd->{'low'} . "]\t" . $p . ";\n";
+                    	$port{'wire'} .= $portsort . '%S%' x 2 . $valid . $reg_wire . 
+                    		'%S%[' . $pdd->{'high'} . ':' . $pdd->{'low'} . ']%S%' . $p . ";\n";
                 	}
                 }
 			}
@@ -1887,8 +1909,9 @@ sub _mix_wr_get_iveri ($$$$) {
                 $valid = $tcom . " __I_PORT_NOT_VALID ";
                 $mode = "not_valid";
             }
-            if ( $flags{'cstyle'} ) {
+            if ( $flags{'ansistyle'} ) {
             	$intf .= $portsort . '%S%' x 2 . $valid . $ioky{$mode} .
+            		'%S%' . $reg_wire .
                 	'%S%' x 2 . $p . ',' .
                 	( $descr ? $descr : '' ) .
                 	"\n";
@@ -1900,13 +1923,12 @@ sub _mix_wr_get_iveri ($$$$) {
                 	'%S%' x 2 . $p . ";\n";
             }
             if ( $flags{'owire'} ) {
-            	$port{'wire'} .= $portsort . '%S%' x 2 . $valid . "wire" .
+            	$port{'wire'} .= $portsort . '%S%' x 2 . $valid . $reg_wire .
                 '%S%' x 2 . $p . ";\n";
             }
 	    }
     }
     # Finalize intf: add all inputs, outputs and inouts ....
-    # TODO : what about sorting over in/out ...
 	if ( $portsort ) {
 		$intf = join( "\n", map( { s/%MAPSORT.+?SORTMAP%//; $_; }
 			sort( split( /\n/, $intf ) ) ) ) . "\n";
@@ -1918,7 +1940,7 @@ sub _mix_wr_get_iveri ($$$$) {
 		}
 	}
 	
-	# Prepend  begin now now:
+	# Prepend  begin now:
 	$intf = '%S%' x 2 . "(\n" . $intf;
 	$intf =~ s/,((%S%|\t)+$tcom[^\n]*)$/$1/io;
     $intf =~ s/,(\s*)$/$1/io; # Remove trailing , in port map ...
@@ -1933,6 +1955,29 @@ sub _mix_wr_get_iveri ($$$$) {
     return( $intf, $gent );
 }
 
+#
+# Decide if that prot requires a reg or a wire
+#
+# Input:
+#	Entity name
+#	Port name
+#
+# Output:
+#	"reg" or "wire"
+#
+# Globals:
+#	%entities
+#	%conndb
+#	%EH
+#
+#!wig20051015
+sub _mix_wr_regorwire($$) {
+	my $entity	= shift;
+	my $port	= shift;
+	 
+	return "wire";
+
+}
 ####################################################################
 ## write_architecture
 ## write architecture VHDL files
@@ -2428,8 +2473,8 @@ sub mix_wr_unsplice_port ($$$) {
                 }
             } else {
                 #TODO: Detect HIGH/LOW_BUS and splice these acordingly!!
-                push( @out, '%S%' x 3 . "." . $p . "(" . $t . "), " .
-                      $c . $tcom . " __I_COMBINE_SPLICES" );
+                push( @out, '%S%' x 3 . '.' . $p . '(' . $t . '), ' .
+                      $c . $tcom . ' __I_COMBINE_SPLICES' );
             }
         }
         # Replace the map ....
