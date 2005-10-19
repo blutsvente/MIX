@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.31 $                                          |
+# | Revision:   $Revision: 1.32 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/10/19 15:40:06 $                              |
+# | Date:       $Date: 2005/10/19 15:47:59 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.32  2005/10/19 15:47:59  wig
+# |
+# |  	improve CVS header detection
+# |
 # | Revision 1.31  2005/10/19 15:40:06  wig
 # | Fixed -mixed.xls read problem on UNIX and reworked ::descr split
 # |
@@ -200,11 +204,11 @@ sub mix_utils_io_check_path ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.31 2005/10/19 15:40:06 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.32 2005/10/19 15:47:59 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.31 $'; #'  
+my $thisrevision    =      '$Revision: 1.32 $'; #'  
 
-# Revision:   $Revision: 1.31 $
+# Revision:   $Revision: 1.32 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2288,13 +2292,13 @@ sub write_csv($$$) {
 	close(FILE);
 
 	for(my $i=0; $i<scalar(@data); $i++) {
-	    if($osheet==0 && $data[$i]=~ m/$sheetm$sheet/) {
+	    if($osheet==0 && $data[$i]=~ m/^$sheetm$sheet\s*$/) {
 		$osheet = 1;
 		$start = $i;
 		delete $data[$i];
 	    }
 	    elsif( $osheet==1) {
-		if($data[$i]=~ m/$sheetm/) {
+		if($data[$i]=~ m/^$sheetm/) {
 		    $osheet = 0;
 		    $stop = $i;
 		}
