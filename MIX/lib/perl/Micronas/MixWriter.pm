@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.61 $                                         |
+# | Revision:   $Revision: 1.62 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/10/18 09:34:36 $                              |
+# | Date:       $Date: 2005/10/19 15:40:06 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.61 2005/10/18 09:34:36 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.62 2005/10/19 15:40:06 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.62  2005/10/19 15:40:06  wig
+# | Fixed -mixed.xls read problem on UNIX and reworked ::descr split
+# |
 # | Revision 1.61  2005/10/18 09:34:36  wig
 # | Changes required for vgch_join.pl support (mainly to MixUtils)
 # |
@@ -302,9 +305,9 @@ sub _mix_wr_regorwire($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.61 2005/10/18 09:34:36 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.62 2005/10/19 15:40:06 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.61 $';
+my $thisrevision   =      '$Revision: 1.62 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -3565,14 +3568,51 @@ sub mix_wr_printdescr($$) {
         }
         if ( $EH{'output'}{'generate'}{'portdescrlength'} =~ m,^(\d+)$, ) { # Limit lenght
             if ( length( $descr)  > $1 ) {
-                $descr = substr( $descr, 0, $1 ) . "..."; # Cut
+            	# Consider te description line by line
+            	$descr = _mix_wr_shortendescr( $descr, $1 ); 
+                # $descr = substr( $descr, 0, $1 ) . "..."; # Cut
             }
         }
-        $descr =~ s,$tcom\s+$tcom,$tcom,; #Remove duplicate comments ...
+        $descr =~ s,$tcom[ \t]*$tcom,$tcom,; #Remove duplicate comments ...
     }
 
 	return $descr;
 }
+
+#
+# create ::descr if too long,
+#   but make sure to not hit <cr> or remove %macro%
+#
+sub _mix_wr_shortendescr ($$) {
+	my $descr = shift;
+	my $maxlen = shift;
+
+	my @newdescr = '';
+	
+	# Split into single lines and shorten these!
+	for my $line ( split( /\n/, $descr )) {
+		if ( length( $line ) > $maxlen ) {
+			# Needs to be shortened
+			my $new = '';
+			while( $line =~ m/(.*)(%\w+%)/og ) {
+				my $l = length( $new );
+				if ( $maxlen - $l < 1 ) {
+					last;
+				}
+				if ( $maxlen - $l < length( $1 ) ) {
+					my $a = substr( $1, 0, $maxlen - $l ) . "...";
+					$new .= $a;
+					last;
+				} else {
+					$new .= $1 . $2;
+				}
+			}
+			$line = $new;	
+		}
+		push( @newdescr, $line ); 	
+	}
+	return join( "\n", @newdescr );	
+} # End of _mix_wr_shortdescr
 
 #
 # retrieve ::descr field

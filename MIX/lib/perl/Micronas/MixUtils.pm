@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.79 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2005/10/19 15:00:05 $                              |
+# | Revision:   $Revision: 1.80 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2005/10/19 15:40:06 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.79 2005/10/19 15:00:05 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.80 2005/10/19 15:40:06 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.80  2005/10/19 15:40:06  wig
+# | Fixed -mixed.xls read problem on UNIX and reworked ::descr split
+# |
 # | Revision 1.79  2005/10/19 15:00:05  lutscher
 # | added more reg_shell params
 # |
@@ -363,11 +366,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.79 2005/10/19 15:00:05 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.80 2005/10/19 15:40:06 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.79 $';         #'
+my $thisrevision        =      '$Revision: 1.80 $';         #'
 
-# Revision:   $Revision: 1.79 $   
+# Revision:   $Revision: 1.80 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1804,7 +1807,14 @@ sub mix_init () {
     } else {
 		$EH{'macro'}{'%PROJECT%'} = "NO_PROJECT_SET";
     }
-
+    #
+    # Define WORKAREA path
+    #
+    if ( $ENV{'WORKAREA'} ) {
+		$EH{'macro'}{'%WORKAREA%'} = $ENV{'WORKAREA'};
+    } else {
+		$EH{'macro'}{'%WORKAREA%'} = "NO_WORKAREA_SET";
+    }
     #
     # Set %IOCR% to \n if intermediate is xls and we are on Win32
     if ( ( $EH{'iswin'} or $EH{'iscygwin'} ) and $EH{'macro'}{'%ARGV%'}=~ m/\.xls$/ ) {
@@ -1824,39 +1834,59 @@ sub mix_init () {
 	#	key can be key.key.key ... (see %EH structure or use -listconf to dump current values)
 	# !!Caveat: there will be no checks whatsoever on the values or keys !!
 	# Locations to be checked are:
-	# $HOME, $PROJECT, cwd()
-	#
+	# $HOME, $PROJECT, $WORKAREA, cwd(), -cfg FILE
+	#!wig20051019: adding -cfg FILE
+	my $extracfg = '';
+	if ( exists( $OPTVAL{'cfg'} ) ) {
+		$extracfg = $OPTVAL{'cfg'};
+		unless ( -r $extracfg ) {
+			logwarn( "WARNING: Cannot read cfg file $extracfg! Ignore it!");
+			$EH{'sum'}{'warnings'}++;
+			$extracfg = '';
+		}
+	}
+	
 	foreach my $conf (
-    	$EH{'macro'}{'%HOME%'}, $EH{'macro'}{'%PROJECT%'}, "."
+    	$EH{'macro'}{'%HOME%'}, 
+    	$EH{'macro'}{'%PROJECT%'},
+    	$EH{'macro'}{'%WORKAREA%'},
+    	$EH{'macro'}{'%WORKAREA%'} . '/setup',	# The MSD ...
+    	$EH{'macro'}{'%WORKAREA%'} . '/env',	# The mway ...
+    	'.',
+    	'CMDLINE',
     ) {
-    	if ( -r $conf . "/" . "mix.cfg" ) {
-			logtrc( "INFO", "Reading extra configurations from $conf/mix.cfg\n" );
+   		# If the key is CMDLINE and $extracfg is set
+    	my $cfgfile = ( $conf eq 'CMDLINE' ) ? $extracfg :
+    			$conf . '/' . 'mix.cfg';
+    	next unless $cfgfile;
+    	if ( -r $cfgfile ) {
+			logtrc( "INFO", "Reading extra configurations from $cfgfile\n" );
 
-			unless( open( CFG, "< $conf/mix.cfg" ) ) {
-	    		logwarn("Cannot open $conf/mix.cfg for reading: $!\n");
+			unless( open( CFG, "< $cfgfile" ) ) {
+	    		logwarn("Cannot open $cfgfile for reading: $!\n");
 	    		$EH{'sum'}{'warnings'}++;
 			} else {
-			my $prev = "";
-	    	while( <CFG> ) {
-				chomp;
-				$_ =~ s,\r$,,;
-				$_ = $prev . $_; # prepend previous line
-				next if ( m,^\s*#,o );
-				# Add next line if line ends with \
-				if ( $_ =~ s/\\$// ) {
-					$prev = $_ . "\n"; # Add a line break ...
-	    			next;
-	    		}
-	    		$prev = "";
+				my $prev = "";
+	    		while( <CFG> ) {
+					chomp;
+					$_ =~ s,\r$,,;
+					$_ = $prev . $_; # prepend previous line
+					next if ( m,^\s*#,o );
+					# Add next line if line ends with \
+					if ( $_ =~ s/\\$// ) {
+						$prev = $_ . "\n"; # Add a line break ...
+	    				next;
+	    			}
+	    			$prev = "";
 			
-				if ( m,^\s*MIXCFG\s+(\S+)\s*(.*),s ) { # MIXCFG key.key.key value
-		    		_mix_apply_conf( $1, $2, "file:mix.cfg" );
-				}
-	    	}
-	   		close( CFG );
-		}
-    }
-}
+					if ( m,^\s*MIXCFG\s+(\S+)\s*(.*),s ) { # MIXCFG key.key.key value
+		    			_mix_apply_conf( $1, $2, "file:mix.cfg" );
+					}
+	    		}
+	   			close( CFG );
+			}
+    	}
+	} 
 
 	#
 	# Post configuration processing

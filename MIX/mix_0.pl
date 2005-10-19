@@ -27,12 +27,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.37 2005/09/14 14:40:43 wig Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.38 2005/10/19 15:40:06 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.37 $                                      |
-# | Mod.Date     : $Date: 2005/09/14 14:40:43 $                           |
+# | Version      : $Revision: 1.38 $                                      |
+# | Mod.Date     : $Date: 2005/10/19 15:40:06 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -47,6 +47,9 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.38  2005/10/19 15:40:06  wig
+# | Fixed -mixed.xls read problem on UNIX and reworked ::descr split
+# |
 # | Revision 1.37  2005/09/14 14:40:43  wig
 # | Startet report module (portlist)
 # |
@@ -209,7 +212,7 @@ use Micronas::MixReport;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.37 $'; # RCS Id
+$::VERSION = '$Revision: 1.38 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 logconfig(
@@ -254,6 +257,7 @@ mix_init();               # Presets ....
 # -adump                    dump internal data in ASCII format, too (debugging, use with small data set).
 # -variant
 # -conf key.key.key=value   Overwrite $EH{key}{key}{key} with value
+# -cfg CONF.cfg				Read configuration from file CONF.cfg
 # -listconf                 Print out all available/predefined configurations options
 # -sheet SHEET=MATCH        SHEET can be one of "hier", "conn", "vi2c"
 # -delta                    Enable delta mode: Print diffs instead of full files.
@@ -265,7 +269,7 @@ mix_init();               # Presets ....
 #
 # -init                     Initialize MIX working area
 # -import FILE              Try to import data from HDL files
-# -report HIER|ENTY|SIGN    Report hierachy, entities and/or signals  
+# -report portlist,reglist  Report portlist, register list, (t.b.d.)  
 #
 
 # Add your options here ....
@@ -282,6 +286,7 @@ mix_getopt_header( qw(
     variant=s
     adump!
     conf|config=s@
+    cfg=s
     sheet=s@
     listconf
     delta!

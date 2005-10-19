@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.49 2005/10/19 08:19:19 wig Exp $
+# $Id: TODO.txt,v 1.50 2005/10/19 15:40:06 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -111,7 +111,29 @@ TODOs:
 	Req: thorsten
 	Prio: medium
 	Status: open
-	
+
+>>title: 20051014b/Bug: bad verilog created
+
+Hallo Wilfried,
+
+ich habe jetzt mit der Version 1.3 gemixed. Die Probleme mit den mehrzeiligen ::descr sind jetzt beseitigt. Jetzt habe ich aber an andere Stelle kleine Probleme.
+
+Es werden ... und %... Lines in den Code eingefügt. Das Problem taucht auf bei dem ga_bs.v. Ich habe im Zipfile das orginal generierte File und als Extraattachment das korrigierte File abgelegt. Anhand der Diffs findest du das Problem im Code schnell.
+
+Was kann das sein?
+
+See testcase in bugver/20051014b
+
+Workaround: increase maximum length of port descriptions.
+
+-conf output.generate.portdescrlength=1000
+bzw. in mix.cfg
+MIXCFG output.generate.portdescrlength 1000
+
+
+	Req: oberhoff
+	Prio: high
+	Status: workaround
 
 >>title: 20051014a/Bug: bogus warning if a 0 is read from mix.cfg
 
@@ -349,6 +371,7 @@ make wire a macro -> e.g. %verilog2001_input%
 	
 	Prio: medium
 	Req: oberhof
+	Status: wig/solved with 1.3 release
 
 >>title: 20050929a/Bug: multi-line ::descr create bad verilog ports
 
@@ -357,16 +380,19 @@ make wire a macro -> e.g. %verilog2001_input%
 	
 	Prio: medium
 	Req: oberhof
+	Status: wig20051018/solved with 1.3 release
 	
 >>title: 20050810b/Req: print mif files/tables
 
 	Prio: high
 	Req: gerstenb
+	Status: wig20051018/available for pinlists with 1.3 release
 
 >>title: 20050810a/Bug: mix crashes without a mix.cfg file
 
 	Prio: medium
-	Req:
+	Req: wig
+	Status: wig20051018/solved now
  
 >>title: 20050725d/Req: Read in CSV files
 

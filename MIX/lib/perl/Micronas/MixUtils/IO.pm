@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.30 $                                          |
+# | Revision:   $Revision: 1.31 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/10/18 15:27:53 $                              |
+# | Date:       $Date: 2005/10/19 15:40:06 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.31  2005/10/19 15:40:06  wig
+# | Fixed -mixed.xls read problem on UNIX and reworked ::descr split
+# |
 # | Revision 1.30  2005/10/18 15:27:53  wig
 # | Primary releaseable vgch_join.pl
 # |
@@ -197,11 +200,11 @@ sub mix_utils_io_check_path ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.30 2005/10/18 15:27:53 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.31 2005/10/19 15:40:06 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.30 $'; #'  
+my $thisrevision    =      '$Revision: 1.31 $'; #'  
 
-# Revision:   $Revision: 1.30 $
+# Revision:   $Revision: 1.31 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1294,10 +1297,25 @@ sub write_delta_sheet($$$) {
     }
 
     my @prev;
+
     # Read in intermediate from previous runs ...
+	# map filename from xls -> csv if not on Windows!
+	# TODO : shouldn't we for mapping on non MS-Win anyway?
+	if ( not -r $predir . $file and $file =~ m/\.xls$/ and
+		not ( $EH{'iswin'} or $EH{'iscygwin'} ) ) {
+			# Try with csv intermediate
+			$file =~ s/\.xls/.csv/;	
+	}
+	# If that file does not exist -> create a new one
+	#!wig20051019: use cvs if available
+	unless( -r $predir . $file ) {
+		write_outfile( $file, $sheet, $r_a );
+		return;
+	}
+		
     @prev = open_infile( $predir . $file, $sheet, "mandatory,write");
 
-    if(!@prev) {
+    if(scalar( @prev ) < 1 ) {
         logwarn "ERROR: reading input for delta mode!";
 		$EH{'sum'}{'errors'}++;
 		return;
@@ -1563,7 +1581,8 @@ sub write_outfile($$$;$$) {
 		write_xls($file, $sheet, $r_a, $r_c, $newold_flag);
     } elsif( $EH{'format'}{'out'}=~ m/^sxc$/ || $file=~ m/\.sxc/) {
 		write_sxc($file, $sheet, $r_a, $r_c);
-    } elsif( $EH{'format'}{'out'}=~ m/^csv$/ || $file=~ m/\.csv/ || $file=~ m/\.xls/) {
+    } elsif( $EH{'format'}{'out'}=~ m/^csv$/ || $file=~ m/\.csv/ ||
+    		$file=~ m/\.xls/) {
 		$file=~ s/\.xls$/\.csv/;
 		write_csv($file, $sheet, $r_a, $r_c);
     } else {
