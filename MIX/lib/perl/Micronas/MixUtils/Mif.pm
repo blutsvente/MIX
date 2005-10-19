@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.2 $                                          |
+# | Revision:   $Revision: 1.3 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/09/29 13:45:02 $                              |
+# | Date:       $Date: 2005/10/19 08:19:20 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.3  2005/10/19 08:19:20  wig
+# | Extended portlist writer and Mif module
+# |
 # | Revision 1.2  2005/09/29 13:45:02  wig
 # | Update with -report
 # |
@@ -65,9 +68,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.2 2005/09/29 13:45:02 wig Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.3 2005/10/19 08:19:20 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.2 $'; #'  
+my $thisrevision    =      '$Revision: 1.3 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -90,6 +93,8 @@ sub new {
 		'name'	=>	'',
 		'text'	=>  '', # keep file contents
 		'tables' => [], # keep intermediate data/tables
+		'paraid' => [], # keep paragraph to id refs
+		'_t_ref'	=> {},	# map tableid to tables
 	};
 	
 	# init data members w/ parameters from constructor call
@@ -117,11 +122,17 @@ sub write {
 	# Open file and write contents ...
 	my $fh = new FileHandle "> $this->{'name'}";
     if (defined $fh) {
-    	my $t = "";
+    	my $t = '';
     	for my $i ( @{$this->{'tables'}} ) {
     		$t .= $i;
     	}
+    	
+    	my $p = '';
+    	for my $i ( @{$this->{'paraid'}} ) {
+    		$p .= $i;
+    	}
     	$this->{'text'} =~ s/%MIFTABLES%/$t/;
+    	$this->{'text'} =~ s/%PARAID%/$p/;
     	
         print $fh $this->{'text'} ;
         
@@ -142,18 +153,21 @@ sub template {
 	$self->{'text'} = "<MIFFile 5.50>
 
 <Tbls 
-	%MIFTABLES%
+# Generated table data:
+%MIFTABLES%
 > # end of Tbls
 
 # <TextFlow 
 #   <TFTag `A'>
 #   <TFAutoConnect Yes>
-  <Para
-    <PgfTag `Body'>
-    <ParaLine
-      <ATbl 1>
-    >
-  >
+# Generated Table references:
+%PARAID%
+#  <Para
+#    <PgfTag `Body'>
+#    <ParaLine
+#      <ATbl 1>
+#    >
+#  >
 # > # end of TextFlow
 
 # End of MIFFile
@@ -195,7 +209,7 @@ sub start_table {
 	'TblTag'	=> 'PortList',	#TODO: make more generic!
 	);
 
-  # Title should come from "add_table" ....
+  # Title ....
   if ( ref( $params ) eq "HASH" ) {
 	# Got a hash ...
 	for my $i ( %$params ) {
@@ -204,7 +218,20 @@ sub start_table {
   } else {
 	$table{'Title'} = $params;
   }
-	
+
+  # Check if a table with that Id already exists:
+  while ( exists $self->{'_t_ref'}{$table{'Id'}} ) {
+	logwarn( "WARNING: need to increment TableID to prevent duplicate!" );
+	$EH{'sum'}{'warnings'}++;
+	$table{'Id'}++;
+	# Stop at 10000!
+	if ( $table{'Id'} > 10000 ) {
+		logwarn( 'ERROR: cannot allocate an unused TableID <= 10000! Top here!' );
+		$EH{'sum'}{'errors'}++;
+		return undef();
+	}
+  }
+
   # Create a "table" start...
   my $table = "<Tbl 
   <TblID $table{Id}>
@@ -227,27 +254,60 @@ sub start_table {
   > # end of TblTitle
 ";
 
+my $paraid = "  <Para
+    <PgfTag `Body'>
+    <ParaLine
+      <ATbl $table{'Id'}>
+    >
+  >
+";
+  # Store the new table and a link to it
+  $self->{'_t_ref'}{$table{'Id'}} = scalar ( @{$self->{'tables'}} );
   push( @{$self->{'tables'}}, $table );
+  push( @{$self->{'paraid'}}, $paraid );
 
-  return $table{'ID'};
+  return $table{'Id'};
 	
 }
 
 #
 # Finalize "table"
+# If $id is not set, apply to the last one
 #
 sub end_table {
 	my $self = shift;
-	my $id	= shift || 0;
+	my $id	= shift;
 	
-	# unless ( $id ) {
-	#	$id = scalar ( @{$self->{'tables'}} ) - 1;
-	# }
+	$id = _map_tid( $self, $id );
 	
-	$self->{'tables'}[-1] .=  "> # end of Tbl\n";
+	$self->{'tables'}[$id] .=  "> # end of Tbl\n";
 	
 }
 
+#
+# Return array number of table
+#
+# Input:
+#	MIF object reference
+#	id
+# Output: slice number
+#
+sub _map_tid ($$) {
+	my $self = shift;
+	my $id 	= shift;
+	
+	if ( defined $id ) {
+		if ( exists ( $self->{'_t_ref'}{$id} ) ) {
+			$id = $self->{'_t_ref'}{$id};
+		} else {
+			$id = -1;
+		}
+	} else {  
+		$id = -1;
+	}
+	return $id;
+}
+		
 =head 4 adding a table head
 
 	table_head( $t )
@@ -261,13 +321,15 @@ sub end_table {
 =cut
 
 # Print a table head
+# If a table id is given, taken
 sub table_head {
 	my $self = shift;
 	my $text = shift;
+	my $id	 = shift;
 
-	# my $id = scalar( @{$self->{'tables'}} );
+	$id = _map_tid( $self, $id );
 	
-	$self->{'tables'}[-1] .= "<TblH\n" .
+	$self->{'tables'}[$id] .= "<TblH\n" .
 		$text . "> # end of TblH\n";
 	return;
 
@@ -288,10 +350,11 @@ sub table_head {
 sub table_body {
 	my $self = shift;
 	my $text = shift;
-
-	# my $id = scalar( @{$self->{'tables'}} );
+	my $id	 = shift;
 	
-	$self->{'tables'}[-1] .= "<TblBody\n" .
+	$id = _map_tid( $self, $id );
+	
+	$self->{'tables'}[$id] .= "<TblBody\n" .
 		$text . "> # end of TblBody\n";
 	return;
 
@@ -300,20 +363,22 @@ sub table_body {
 # Start a table body
 sub start_body {
 	my $self = shift;
-
-	# my $id = scalar( @{$self->{'tables'}} );
+	my $id	= shift;
 	
-	$self->{'tables'}[-1] .= "<TblBody\n";
+	$id = _map_tid( $self, $id );
+	
+	$self->{'tables'}[$id] .= "<TblBody\n";
 	return;
 
 }
 # End table body
 sub end_body {
 	my $self = shift;
-
-	# my $id = scalar( @{$self->{'tables'}} );
+	my $id	= shift;
 	
-	$self->{'tables'}[-1] .= "> # end of TblBody\n";
+	$id = _map_tid( $self, $id );
+	
+	$self->{'tables'}[$id] .= "> # end of TblBody\n";
 	return;
 
 }
@@ -324,8 +389,11 @@ sub end_body {
 sub add {
 	my $self = shift;
 	my $text = shift;
+	my $id	= shift;
 	
-	$self->{tables}[-1] .= $text;
+	$id = _map_tid( $self, $id );
+	
+	$self->{tables}[$id] .= $text;
 	return;
 
 }
@@ -359,7 +427,7 @@ sub Tr {
 		'Text'	=> '__E_MISSING_ROWDATA',
 		'Indent'	=> 1,
 	);
-
+	
 	if ( ref( $params ) eq "HASH" ) {
 		# hash with 	-> PgfTag
 		#				-> Row data (array with strings)

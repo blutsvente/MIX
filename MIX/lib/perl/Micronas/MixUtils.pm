@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.77 $                                         |
+# | Revision:   $Revision: 1.78 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/10/18 15:27:52 $                              |
+# | Date:       $Date: 2005/10/19 08:19:19 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.77 2005/10/18 15:27:52 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.78 2005/10/19 08:19:19 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.78  2005/10/19 08:19:19  wig
+# | Extended portlist writer and Mif module
+# |
 # | Revision 1.77  2005/10/18 15:27:52  wig
 # | Primary releaseable vgch_join.pl
 # |
@@ -357,11 +360,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.77 2005/10/18 15:27:52 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.78 2005/10/19 08:19:19 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.77 $';         #'
+my $thisrevision        =      '$Revision: 1.78 $';         #'
 
-# Revision:   $Revision: 1.77 $   
+# Revision:   $Revision: 1.78 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1730,8 +1733,16 @@ sub mix_init () {
        'out' => '',
     },
 	'report' => {
-		'path' => '.',
-	}
+		'path'	=> '.',
+		'portlist'	=> {
+		'name'	=>	'port', # Print out port names, not signal names!
+		'split' =>	'external::extc,instance',
+					# Generate seperate portlist for
+					#	external : if column ::external has content
+					#		external::foo : use column ::foo as trigger
+					#	instance : for each instance
+		},
+	},
 	
 );
 

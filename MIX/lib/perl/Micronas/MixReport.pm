@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.4 $                                               |
+# | Revision:   $Revision: 1.5 $                                               |
 # | Author:     $Author: wig $                                                 |
-# | Date:       $Date: 2005/10/18 15:27:53 $                                                   |
+# | Date:       $Date: 2005/10/19 08:19:19 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.4 2005/10/18 15:27:53 wig Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.5 2005/10/19 08:19:19 wig Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.5  2005/10/19 08:19:19  wig
+# | Extended portlist writer and Mif module
+# |
 # | Revision 1.4  2005/10/18 15:27:53  wig
 # | Primary releaseable vgch_join.pl
 # |
@@ -61,9 +64,9 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.4 2005/10/18 15:27:53 wig Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.5 2005/10/19 08:19:19 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
-my $thisrevision   =      '$Revision: 1.4 $';
+my $thisrevision   =      '$Revision: 1.5 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -90,6 +93,11 @@ use Micronas::MixUtils::Mif;
 #use lib "$Bin";
 #use lib "$Bin/..";
 #use lib "$Bin/lib";
+
+#
+# Prototypes
+#
+sub _mix_report_getport ($$);
 
 #------------------------------------------------------------------------------
 # Class members
@@ -158,11 +166,26 @@ sub mix_rep_portlist () {
 	);
 		
 	$mif->template(); # Initialize it
-	
-	$mif->start_table( 'Portlist' );
 
+	# If ::external column is set, make a seperate table for external
+	my $exttrigger = '';
+	my $elist = '';
+	if ( $EH{'report'}{'portlist'}{'split'} =~ m/\bexternal(::\w+)?/ ) {
+		$exttrigger = "::external";
+		if ( defined $1 ) {
+			$exttrigger = $1;
+		}
+		$elist = $mif->start_table(
+			{	'Title' => 'External Portlist',
+				'TblTag' => 'PortList' }
+		);
+	}
+	
+	my $plist = $mif->start_table( 'Portlist' );
+	
 	#
 	# Prepare tablehead data:
+	#
 	my $headtext = $mif->td(
 		{ 'PgfTag' => 'CellHeadingH9',
 		  'String' => [
@@ -171,9 +194,14 @@ sub mix_rep_portlist () {
 		}
 	);
 
-	$mif->table_head( $mif->Tr($headtext) );
-	$mif->start_body();
-		
+	if ( $elist ne '' ) {
+		$mif->table_head( $mif->Tr($headtext), $elist );
+		$mif->start_body( $elist );
+	}
+	
+	$mif->table_head( $mif->Tr($headtext), $plist );
+	$mif->start_body( $plist );
+	
 	# Iterate over all instances ...
 	my $hierdb = \%Micronas::MixParser::hierdb;
 	my $conndb = \%Micronas::MixParser::conndb;
@@ -187,11 +215,15 @@ sub mix_rep_portlist () {
 		## Instance name:
 		my $line = $mif->td(
 			{ 'PgfTag' => 'CellHeadingH9',
-			  'Columns' => 6,
+			  'Columns' => 6, # Columns Span of all six cells
 			  'String'  => "$link->{'::inst'} ($link->{'::entity'})",
 			}
 		);
-		$mif->add( $mif->Tr($line) );
+		
+		$mif->add( $mif->Tr($line), $plist );
+		if ( $elist ne '' ) {
+			$mif->add( $mif->Tr($line), $elist );
+		}
 		
 		## Signals at that instance
 		##TODO: sort order ..
@@ -218,11 +250,22 @@ sub mix_rep_portlist () {
 			$out = "(NO DRIVER)" unless $out;
 			#TODO: Remember for later usage and sorting
 
-			# MAP SIGNAL NAME TO 			
+			# Map signal name to port name:
+			my $portname = $signalname;
+			if ( $EH{'report'}{'portlist'}{'name'} =~ m/\bport\b/ ) {
+				$portname = _mix_report_getport( $signalname, $link );
+			}
+
+			# If we split into internal/external list, decide which to take:
+			my $tlist = $plist;
+			if ( exists $conndb->{$signalname}{$exttrigger}
+					and $conndb->{$signalname}{$exttrigger} ne '' ) {
+				$tlist = $elist;
+			}
 			my $line = $mif->td(
 				{ 'PgfTag' => 'CellBodyH9',
 				  'String' => [
-				  	$signalname,
+				  	$portname,
 				  	$width,
 				  	$clock,
 				  	$descr,
@@ -230,20 +273,62 @@ sub mix_rep_portlist () {
 				  	$in
 				  ]
 				} );
+			# Is this external?
 			$mif->add( $mif->Tr(
 					{ 'Text' => $line, 'WithPrev' => 0 }
-			) );
+			), $tlist );
 		}
 	}
 	
-	$mif->end_body();
-	$mif->end_table();
+	$mif->end_body( $plist );
+	$mif->end_table( $plist );
+	if ( $elist ne '' ) {
+		$mif->end_body( $elist );
+		$mif->end_table( $elist);
+	}	
 	
 	$mif->write();
 	
 	return;
 
 }
+
+#
+# Map signal name to port name for given instance
+#
+#!wig20051018
+sub _mix_report_getport ($$) {
+	my $signal = shift;
+	my $link   = shift;
+	
+	my @ports = ();
+	# Get portname
+	for my $io ( qw( in out ) ) {
+		if ( exists( $link->{'::conn'}{$io} ) and
+			 exists( $link->{'::conn'}{$io}{$signal} ) ) {
+			push( @ports, keys( %{$link->{'::conn'}{$io}{$signal}} ) );
+		}
+	} 
+	
+	if ( scalar( @ports ) < 1 ) {
+		# Did not get port ???
+		$signal .= ' (S)';
+		logwarn( "__W_MIX_REPORT: Could not map signal " . $signal .
+			" to portname for instance " . $link->{'::inst'} );
+		$EH{'sum'}{'warnings'}++;
+	} elsif ( scalar( @ports ) > 1 ) {
+		# More than one port attached :-(
+		logwarn( "__W_MIX_REPORT: Multiple ports connected to " . $signal .
+			" at instance " . $link->{'::inst'} );
+		$EH{'sum'}{'warnings'}++;
+		$signal = join( ',', @ports );
+	} else {
+		$signal = $ports[0];
+	}
+
+	return $signal;
+
+} # End ox _mix_report_getport
 
 #
 # Get list of connected instances ...

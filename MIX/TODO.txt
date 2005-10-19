@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.48 2005/10/18 15:27:52 wig Exp $
+# $Id: TODO.txt,v 1.49 2005/10/19 08:19:19 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -15,9 +15,103 @@ Doku:
         Describe mix.cfg
         Describe CONF sheet
 
+Doku Links:
+
+CVS:
+Doku:
+  http://www.shaftek.org/publications/drafts/mime-csv/draft-shafranovich-mime-csv-05.txt
+
+Code:
+  http://www.ioplex.com/~miallen/libmba/dl/src/csv.c
+
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+
+>>title: 20051019a/Req: import Verilog files
+
+	Extend -import by a verilog reader
+	
+	Req: wig
+	Prio: low
+	Status: open
+ 
+>>title: 20051018g/Req: split portlist into two seperate tables
+
+	consider the "external" column to seperate the output into
+	two seperate tables ...
+	
+	Req: vgch
+	Prio: medium
+	Status: open
+ 
+>>title: 20051018f/Req: add CSV handling variations
+
+	1. Input: Support more forms of sheet name definitions
+		.csv.   -> Filename based sheet naming
+					FOO-bar.csv
+					FOO (design)name, bar is sheet name
+				-> Sheetseperator based (aka. MIX style)
+					:=:=:=:=> SHEETNAME
+				-> list defined
+						.csv.map foo.csv=SHEET,bar.csv=HIER,...
+				
+	2. Output: 
+			-> Split sheets and print to extension extended files
+				FOO-bar.csv of sheet name is bar
+			-> Sheetseperator based (default)
+			
+	Req: wig
+	Prio: medium
+	Status: open
+
+>>title: 20051018e/Bug: reading back of intermediate csv data fails
+
+	MIX dies with "bad array reference" when using delta mode
+	in Linux/Solaris platform
+	
+	Req: mpit
+	Prio: high
+	Status: open
+
+>>title: 20051018d/Bug: bad wiring for signal mic32_top_ramd_oe
+
+	the above signal should be connected twice to the i_padframe
+	(second is only partially), but does not.
+	
+	Req: mpit
+	Prio: high
+	Status: open
+	
+>>title: 20051018c/Req: remove <cr> from excel sheets
+
+	Req: winking
+	Prio: medium
+	Solution: add format.xls.style parameter, set to "stripnl"
+		even "stripna".
+	Test: manual, o.k.
+	Status: implemented in MixUtils/IO
+	
+	Additional hint: see format.csv.style for the same effect for
+	csv output.
+	
+>>title: 20051018b/Bug: mix/1.3 creates different HDL compared with 1.2
+
+	The vgcb.xls sheets are created, but some signals are missing
+	from the generated output files:
+	
+		CONN_DP, signal dp_r1_dp, dp_g1_dp, ...
+		
+	Req: mpit
+	Prio: high
+	Status: open
+
+>>title: 20051018a/Req: allow to specify a mix.cfg file with different name
+
+	Req: thorsten
+	Prio: medium
+	Status: open
+	
 
 >>title: 20051014a/Bug: bogus warning if a 0 is read from mix.cfg
 
