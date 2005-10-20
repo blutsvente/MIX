@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.80 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/10/19 15:40:06 $                              |
+# | Revision:   $Revision: 1.81 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2005/10/20 17:25:49 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.80 2005/10/19 15:40:06 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.81 2005/10/20 17:25:49 lutscher Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.81  2005/10/20 17:25:49  lutscher
+# | corrected check for invalid -conf options
+# |
 # | Revision 1.80  2005/10/19 15:40:06  wig
 # | Fixed -mixed.xls read problem on UNIX and reworked ::descr split
 # |
@@ -366,11 +369,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.80 2005/10/19 15:40:06 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.81 2005/10/20 17:25:49 lutscher Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.80 $';         #'
+my $thisrevision        =      '$Revision: 1.81 $';         #'
 
-# Revision:   $Revision: 1.80 $   
+# Revision:   $Revision: 1.81 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2047,7 +2050,7 @@ sub mix_overload_conf ($) {
 
     for my $i ( @$confs ) {
 	( $k, $v ) = split( /=/, $i ); # Split key=value
-	unless( $k and $v ) {
+	unless( $k ne "" and $v ne"" ) {
 	    logwarn("WARNING: Illegal key or value given: $i\n");
             $EH{'sum'}{'warnings'}++;
 	    next;
