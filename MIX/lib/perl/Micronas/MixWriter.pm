@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.62 $                                         |
-# | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/10/19 15:40:06 $                              |
+# | Revision:   $Revision: 1.63 $                                         |
+# | Author:     $Author: lutscher $                                         |
+# | Date:       $Date: 2005/10/20 17:26:05 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.62 2005/10/19 15:40:06 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.63 2005/10/20 17:26:05 lutscher Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.63  2005/10/20 17:26:05  lutscher
+# | Reg.pm
+# |
 # | Revision 1.62  2005/10/19 15:40:06  wig
 # | Fixed -mixed.xls read problem on UNIX and reworked ::descr split
 # |
@@ -305,9 +308,9 @@ sub _mix_wr_regorwire($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.62 2005/10/19 15:40:06 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.63 2005/10/20 17:26:05 lutscher Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.62 $';
+my $thisrevision   =      '$Revision: 1.63 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1713,9 +1716,12 @@ sub _mix_wr_get_iveri ($$$$) {
 
 		# Should that be a reg or a wire?
 		# Default is wire
-		my $reg_wire = _mix_wr_regorwire( $ename, $p );
 		
-	    my $pdd = $r_ent->{$p};
+		##LU experimental
+		#my $reg_wire = _mix_wr_regorwire( $ename, $p );
+		my $pdd = $r_ent->{$p};
+		my $reg_wire = ($pdd->{'type'} =~ m/reg/i) ? "reg" : "wire"; 
+
 	    #!wig20051010: adding description ...
 	    #!wig20051010: Add descriptions to port map:
 	    my $descr = '';
