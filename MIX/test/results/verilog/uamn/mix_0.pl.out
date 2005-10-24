@@ -1,137 +1,100 @@
-05/07/18 16:07:55 
+05/10/19 08:55:31 ########################################################################
+05/10/19 08:55:31 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl -sheet HIER=HIER_UAMN -nodelta -strip -nodelta ../../verilog.xls
+05/10/19 08:55:31 
 #######################################################################
-##### mix_0.pl (Revision: 1.36 )
+##### mix_0.pl (Revision: 1.37 )
 #####
 ##### MIX  
-#####   MixUtils    1.67 $
-#####   MixUtils::IO    1.24 $
-#####   MixParser   1.53 $
-#####   MixWriter   1.57 $
-#####   MixChecker  1.8 $
+#####   MixUtils    1.78 $
+#####   MixUtils::IO    1.30 $
+#####   MixParser   1.59 $
+#####   MixWriter   1.61 $
+#####   MixChecker  1.10 $
 #####   MixIOParser 1.17 $
-#####   MixI2CParser 1.13 $
+#####   MixI2CParser 1.14 $
+#####   MixReport 1.5 $
 ##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
 #######################################################################
-05/07/18 16:07:55 Reading worksheet CONN of H:/work/eclipse/mix/test/xls_input/verilog/uamn/../../verilog.xls
-05/07/18 16:07:55 WARNING: WARNING: Could not identify toplevel aka. TESTBENCH
-05/07/18 16:07:55 WARNING: ERROR: Signal sig_i_ae spawns several seperate trees! Will be dropped
+05/10/19 08:55:32 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/verilog/uamn/../../verilog.xls
+05/10/19 08:55:32 Reading worksheet HIER_UAMN of H:/work/eclipse/MIX/test/xls_input/verilog/uamn/../../verilog.xls
+05/10/19 08:55:32 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/10/19 08:55:32 WARNING: Autocreate parent for inst_t: TESTBENCH
+05/10/19 08:55:32 Add_port: signal sig_i_ae adds port sig_i_ae to instance inst_t
+05/10/19 08:55:32 Adding port to hierachy module inst_a for signal sig_i_ae!
+05/10/19 08:55:32 Add_port: signal sig_i_ae adds port p_mix_sig_i_ae_gi to instance inst_a
+05/10/19 08:55:32 Add_port: signal sig_i_a adds port sig_i_a to instance inst_t
+05/10/19 08:55:32 Add_port: signal sig_o_ae adds port sig_o_ae to instance inst_t
+05/10/19 08:55:32 Adding port to hierachy module inst_a for signal sig_o_ae!
+05/10/19 08:55:32 Add_port: signal sig_o_ae adds port p_mix_sig_o_ae_go to instance inst_a
+05/10/19 08:55:32 Adding port to hierachy module inst_a for signal sig_01!
+05/10/19 08:55:32 Adding port to hierachy module inst_a for signal sig_01!
+05/10/19 08:55:32 Add_port: signal sig_01 adds port p_mix_sig_01_go to instance inst_a
+05/10/19 08:55:32 Adding port to hierachy module inst_a for signal sig_06!
+05/10/19 08:55:32 WARNING: WARNING: Signal sig_06 has mixed links into instance inst_b!
+05/10/19 08:55:32 Adding port to hierachy module inst_a for signal sig_06!
+05/10/19 08:55:32 WARNING: WARNING: Possible io mode conflict for sig_06 at inst_a
+05/10/19 08:55:32 Add_port: signal sig_06 adds port p_mix_sig_06_gi to instance inst_a
+05/10/19 08:55:32 Adding port to hierachy module inst_a for signal sig_04!
+05/10/19 08:55:32 Add_port: signal sig_04 adds port p_mix_sig_04_gi to instance inst_a
+05/10/19 08:55:32 Add_port: signal sig_i_a2 adds port sig_i_a2 to instance inst_t
+05/10/19 08:55:32 Adding port to hierachy module inst_a for signal sig_03!
+05/10/19 08:55:32 Add_port: signal sig_03 adds port p_mix_sig_03_go to instance inst_a
+05/10/19 08:55:32 Add_port: signal sig_o_a adds port sig_o_a to instance inst_t
+05/10/19 08:55:32 Adding port to hierachy module inst_a for signal sig_05!
+05/10/19 08:55:32 Adding port to hierachy module inst_a for signal sig_05!
+05/10/19 08:55:32 Add_port: signal sig_05 adds port p_mix_sig_05_2_1_go to instance inst_a
+05/10/19 08:55:32 Add_port: signal sig_o_a2 adds port sig_o_a2 to instance inst_t
+05/10/19 08:55:32 Autoreducing port type for signal sig_02 to std_ulogic
+05/10/19 08:55:32 Autoreducing port type for signal sig_02 to std_ulogic
+05/10/19 08:55:32 Autoreducing port type for signal sig_02 to std_ulogic
+05/10/19 08:55:32 Autoreducing port type for signal sig_02 to std_ulogic
+05/10/19 08:55:32 Autoreducing port type for signal sig_05 to std_ulogic
+05/10/19 08:55:36 WARNING: Rotating 3 old sheets of CONF!
+05/10/19 08:55:39 WARNING: Rotating 3 old sheets of CONN!
+05/10/19 08:55:39 WARNING: Rotating 3 old sheets of HIER!
+05/10/19 08:55:40 WARNING: Removing old and and diff sheets in file: verilog-mixed.xls
+05/10/19 08:55:40 WARNING: ERROR: workbook with different path already opened!
+05/10/19 08:55:41 Port port_aa_2 of entity ent_aa one bit wide, reduce to signal
+05/10/19 08:55:41 Port port_ab_2 of entity ent_ab one bit wide, reduce to signal
+05/10/19 08:55:41 INFO: Port port_ac_2 of entity ent_ac one bit wide, reduce to signal
 
-05/07/18 16:07:55 WARNING: ERROR: Signal sig_08 spawns several seperate trees! Will be dropped
-
-05/07/18 16:07:55 WARNING: WARNING: Could not identify toplevel aka. TESTBENCH
-05/07/18 16:07:55 WARNING: ERROR: Signal sig_i_a spawns several seperate trees! Will be dropped
-
-05/07/18 16:07:55 WARNING: WARNING: Could not identify toplevel aka. TESTBENCH
-05/07/18 16:07:55 WARNING: ERROR: Signal sig_o_ae spawns several seperate trees! Will be dropped
-
-05/07/18 16:07:55 WARNING: ERROR: Signal sig_01 spawns several seperate trees! Will be dropped
-
-05/07/18 16:07:55 WARNING: ERROR: Signal sig_06 spawns several seperate trees! Will be dropped
-
-05/07/18 16:07:55 WARNING: ERROR: Signal sig_04 spawns several seperate trees! Will be dropped
-
-05/07/18 16:07:55 WARNING: ERROR: Signal sig_07 spawns several seperate trees! Will be dropped
-
-05/07/18 16:07:55 WARNING: WARNING: Could not identify toplevel aka. TESTBENCH
-05/07/18 16:07:55 WARNING: ERROR: Signal sig_i_a2 spawns several seperate trees! Will be dropped
-
-05/07/18 16:07:55 WARNING: ERROR: Signal sig_03 spawns several seperate trees! Will be dropped
-
-05/07/18 16:07:55 WARNING: ERROR: Signal sig_13 spawns several seperate trees! Will be dropped
-
-05/07/18 16:07:55 WARNING: WARNING: Could not identify toplevel aka. TESTBENCH
-05/07/18 16:07:55 WARNING: ERROR: Signal sig_o_a spawns several seperate trees! Will be dropped
-
-05/07/18 16:07:55 WARNING: ERROR: Signal sig_05 spawns several seperate trees! Will be dropped
-
-05/07/18 16:07:55 WARNING: WARNING: Could not identify toplevel aka. TESTBENCH
-05/07/18 16:07:55 WARNING: ERROR: Signal sig_o_a2 spawns several seperate trees! Will be dropped
-
-05/07/18 16:07:55 WARNING: ERROR: Signal sig_02 spawns several seperate trees! Will be dropped
-
-05/07/18 16:07:55 WARNING: Skipping connection sig_i_ae to undefined instance inst_ae!
-05/07/18 16:07:55 WARNING: Skipping connection sig_i_ae to undefined instance inst_ae!
-05/07/18 16:07:55 WARNING: Skipping connection sig_08 to undefined instance inst_aa!
-05/07/18 16:07:55 WARNING: Skipping connection sig_08 to undefined instance inst_a!
-05/07/18 16:07:55 WARNING: Skipping connection sig_08 to undefined instance inst_b!
-05/07/18 16:07:55 WARNING: Skipping connection sig_08 to undefined instance inst_ae!
-05/07/18 16:07:55 WARNING: Skipping connection sig_08 to undefined instance inst_b!
-05/07/18 16:07:55 WARNING: Skipping connection sig_08 to undefined instance inst_ae!
-05/07/18 16:07:55 WARNING: Skipping connection sig_i_a to undefined instance inst_a!
-05/07/18 16:07:55 WARNING: Skipping connection sig_i_a to undefined instance inst_a!
-05/07/18 16:07:55 WARNING: Skipping connection sig_o_ae to undefined instance inst_ae!
-05/07/18 16:07:55 WARNING: Skipping connection sig_01 to undefined instance inst_aa!
-05/07/18 16:07:55 WARNING: Skipping connection sig_01 to undefined instance inst_ab!
-05/07/18 16:07:55 WARNING: Skipping connection sig_01 to undefined instance inst_b!
-05/07/18 16:07:55 WARNING: Skipping connection sig_01 to undefined instance inst_ab!
-05/07/18 16:07:55 WARNING: Skipping connection sig_01 to undefined instance inst_b!
-05/07/18 16:07:55 WARNING: Skipping connection sig_06 to undefined instance inst_aa!
-05/07/18 16:07:55 WARNING: Skipping connection sig_06 to undefined instance inst_b!
-05/07/18 16:07:55 WARNING: Skipping connection sig_06 to undefined instance inst_b!
-05/07/18 16:07:55 WARNING: Skipping connection sig_06 to undefined instance inst_ae!
-05/07/18 16:07:55 WARNING: Skipping connection sig_06 to undefined instance inst_b!
-05/07/18 16:07:55 WARNING: Skipping connection sig_06 to undefined instance inst_ae!
-05/07/18 16:07:55 WARNING: Skipping connection sig_04 to undefined instance inst_b!
-05/07/18 16:07:55 WARNING: Skipping connection sig_04 to undefined instance inst_aa!
-05/07/18 16:07:55 WARNING: Skipping connection sig_04 to undefined instance inst_aa!
-05/07/18 16:07:55 WARNING: Skipping connection sig_07 to undefined instance inst_aa!
-05/07/18 16:07:55 WARNING: Skipping connection sig_07 to undefined instance inst_b!
-05/07/18 16:07:55 WARNING: Skipping connection sig_07 to undefined instance inst_ae!
-05/07/18 16:07:55 WARNING: Skipping connection sig_07 to undefined instance inst_a!
-05/07/18 16:07:55 WARNING: Skipping connection sig_07 to undefined instance inst_b!
-05/07/18 16:07:55 WARNING: Skipping connection sig_07 to undefined instance inst_ae!
-05/07/18 16:07:55 WARNING: Skipping connection sig_07 to undefined instance inst_a!
-05/07/18 16:07:55 WARNING: Skipping connection sig_i_a2 to undefined instance inst_a!
-05/07/18 16:07:55 WARNING: Skipping connection sig_i_a2 to undefined instance inst_a!
-05/07/18 16:07:55 WARNING: Skipping connection sig_03 to undefined instance inst_aa!
-05/07/18 16:07:55 WARNING: Skipping connection sig_03 to undefined instance inst_b!
-05/07/18 16:07:55 WARNING: Skipping connection sig_03 to undefined instance inst_b!
-05/07/18 16:07:55 WARNING: Skipping connection sig_13 to undefined instance inst_aa!
-05/07/18 16:07:55 WARNING: Skipping connection sig_13 to undefined instance inst_a!
-05/07/18 16:07:55 WARNING: Skipping connection sig_13 to undefined instance inst_ab!
-05/07/18 16:07:55 WARNING: Skipping connection sig_13 to undefined instance inst_ab!
-05/07/18 16:07:55 WARNING: Skipping connection sig_o_a to undefined instance inst_a!
-05/07/18 16:07:55 WARNING: Skipping connection sig_05 to undefined instance inst_aa!
-05/07/18 16:07:55 WARNING: Skipping connection sig_05 to undefined instance inst_b!
-05/07/18 16:07:55 WARNING: Skipping connection sig_05 to undefined instance inst_b!
-05/07/18 16:07:55 WARNING: Skipping connection sig_05 to undefined instance inst_ae!
-05/07/18 16:07:55 WARNING: Skipping connection sig_05 to undefined instance inst_b!
-05/07/18 16:07:55 WARNING: Skipping connection sig_05 to undefined instance inst_b!
-05/07/18 16:07:55 WARNING: Skipping connection sig_05 to undefined instance inst_ae!
-05/07/18 16:07:55 WARNING: Skipping connection sig_o_a2 to undefined instance inst_a!
-05/07/18 16:07:55 WARNING: Skipping connection sig_02 to undefined instance inst_ad!
-05/07/18 16:07:55 WARNING: Skipping connection sig_02 to undefined instance inst_ab!
-05/07/18 16:07:55 WARNING: Skipping connection sig_02 to undefined instance inst_aa!
-05/07/18 16:07:55 WARNING: Skipping connection sig_02 to undefined instance inst_ac!
-05/07/18 16:07:55 WARNING: Skipping connection sig_02 to undefined instance inst_ae!
-05/07/18 16:07:55 WARNING: Skipping connection sig_02 to undefined instance inst_ae!
-05/07/18 16:07:55 WARNING: Skipping connection sig_02 to undefined instance inst_ae!
-05/07/18 16:07:55 WARNING: Skipping connection sig_02 to undefined instance inst_ae!
-05/07/18 16:07:57 WARNING: File verilog-mixed.xls already exists! Contents will be changed
-05/07/18 16:07:58 WARNING: Rotating 3 old sheets of CONF!
-05/07/18 16:07:58 WARNING: Rotating 3 old sheets of CONN!
-05/07/18 16:07:59 WARNING: Rotating 3 old sheets of HIER!
-05/07/18 16:07:59 WARNING: Removing old and and diff sheets in file: verilog-mixed.xls
-05/07/18 16:07:59 WARNING: ERROR: workbook with different path already opened!
-05/07/18 16:07:59 WARNING: ============= SUMMARY =================
-05/07/18 16:07:59 WARNING: SUM: Summary of checks and created items:
-05/07/18 16:07:59 WARNING: SUM: checkforce 0
-05/07/18 16:07:59 WARNING: SUM: checkunique 0
-05/07/18 16:07:59 WARNING: SUM: checkwarn 0
-05/07/18 16:07:59 WARNING: SUM: cmacros 0
-05/07/18 16:07:59 WARNING: SUM: conn 15
-05/07/18 16:07:59 WARNING: SUM: errors 16
-05/07/18 16:07:59 WARNING: SUM: genport 0
-05/07/18 16:07:59 WARNING: SUM: hdlfiles 0
-05/07/18 16:07:59 WARNING: SUM: inst 6
-05/07/18 16:07:59 WARNING: SUM: multdriver 0
-05/07/18 16:07:59 WARNING: SUM: nodriver 0
-05/07/18 16:07:59 WARNING: SUM: noload 0
-05/07/18 16:07:59 WARNING: SUM: openports 0
-05/07/18 16:07:59 WARNING: SUM: warnings 0
-05/07/18 16:07:59 WARNING: SUM: === Number of parsed input tables: ===
-05/07/18 16:07:59 WARNING: SUM: conf 0
-05/07/18 16:07:59 WARNING: SUM: hier 0
-05/07/18 16:07:59 WARNING: SUM: conn 1
-05/07/18 16:07:59 WARNING: SUM: io 0
-05/07/18 16:07:59 WARNING: SUM: i2c 0
+05/10/19 08:55:41 Port port_ad_2 of entity ent_ad one bit wide, reduce to signal
+05/10/19 08:55:41 Port port_b_5_1 of entity ent_b one bit wide, reduce to signal
+05/10/19 08:55:41 Port port_b_5_2 of entity ent_b one bit wide, reduce to signal
+05/10/19 08:55:41 WARNING: ERROR: Detected missing bits in spliced port port_ae_2!
+05/10/19 08:55:41 Warning: Signal sig_o_a2 does not have a driver in instance inst_a!
+05/10/19 08:55:41 Signal sig_i_a does not have a load in instance inst_a!
+05/10/19 08:55:41 Signal sig_i_a2 does not have a load in instance inst_a!
+05/10/19 08:55:41 Warning: Signal sig_o_a does not have a driver in instance inst_a!
+05/10/19 08:55:42 Signal sig_08 does not have a load in instance inst_b!
+05/10/19 08:55:42 Signal sig_01 does not have a load in instance inst_b!
+05/10/19 08:55:42 Warning: Signal sig_04 does not have a driver in instance inst_b!
+05/10/19 08:55:42 Signal sig_07 does not have a load in instance inst_b!
+05/10/19 08:55:42 Signal sig_03 does not have a load in instance inst_b!
+05/10/19 08:55:42 Signal sig_05 does not have a load in instance inst_b!
+05/10/19 08:55:42 Warning: Signal sig_07 does not have a driver in instance inst_t!
+05/10/19 08:55:42 Signal sig_13 does not have a load in instance inst_t!
+05/10/19 08:55:42 Leave unloaded port sig_13 open at instance inst_t
+05/10/19 08:55:42 WARNING: ============= SUMMARY =================
+05/10/19 08:55:42 WARNING: SUM: Summary of checks and created items:
+05/10/19 08:55:42 WARNING: SUM: checkforce 0
+05/10/19 08:55:42 WARNING: SUM: checkunique 0
+05/10/19 08:55:42 WARNING: SUM: checkwarn 0
+05/10/19 08:55:42 WARNING: SUM: cmacros 0
+05/10/19 08:55:42 WARNING: SUM: conn 16
+05/10/19 08:55:42 WARNING: SUM: error 1
+05/10/19 08:55:42 WARNING: SUM: errors 1
+05/10/19 08:55:42 WARNING: SUM: genport 13
+05/10/19 08:55:42 WARNING: SUM: hdlfiles 7
+05/10/19 08:55:42 WARNING: SUM: inst 15
+05/10/19 08:55:42 WARNING: SUM: multdriver 4
+05/10/19 08:55:42 WARNING: SUM: nodriver 4
+05/10/19 08:55:42 WARNING: SUM: noload 8
+05/10/19 08:55:42 WARNING: SUM: openports 1
+05/10/19 08:55:42 WARNING: SUM: warnings 2
+05/10/19 08:55:42 WARNING: SUM: === Number of parsed input tables: ===
+05/10/19 08:55:42 WARNING: SUM: conf 0
+05/10/19 08:55:42 WARNING: SUM: hier 1
+05/10/19 08:55:42 WARNING: SUM: conn 1
+05/10/19 08:55:42 WARNING: SUM: io 0
+05/10/19 08:55:42 WARNING: SUM: i2c 0

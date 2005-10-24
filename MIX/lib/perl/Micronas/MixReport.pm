@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.5 $                                               |
+# | Revision:   $Revision: 1.6 $                                               |
 # | Author:     $Author: wig $                                                 |
-# | Date:       $Date: 2005/10/19 08:19:19 $                                                   |
+# | Date:       $Date: 2005/10/24 12:10:30 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.5 2005/10/19 08:19:19 wig Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.6 2005/10/24 12:10:30 wig Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.6  2005/10/24 12:10:30  wig
+# | added output.language.verilog = ansistyle,2001param
+# |
 # | Revision 1.5  2005/10/19 08:19:19  wig
 # | Extended portlist writer and Mif module
 # |
@@ -64,9 +67,9 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.5 2005/10/19 08:19:19 wig Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.6 2005/10/24 12:10:30 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
-my $thisrevision   =      '$Revision: 1.5 $';
+my $thisrevision   =      '$Revision: 1.6 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -226,7 +229,7 @@ sub mix_rep_portlist () {
 		}
 		
 		## Signals at that instance
-		##TODO: sort order ..
+		## TODO : sort order ..
 		for my $signal ( sort keys( %{$link->{'::sigbits'}} ) ) {
 			# Iterate over all signals ...
 			my $signalname = $conndb->{$signal}{'::name'};

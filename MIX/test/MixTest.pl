@@ -220,6 +220,11 @@ my @tests = (
 	  'path' => "generic/veriovhd",
 	  'options' => "",
 	},
+	{ # Verilot2001 style (no defparams!)
+	  'name' => "generic",
+	  'path' => "generic/nodefparam",
+	  'options' => "",
+	},
 	{
 	  'name' => "genwidth",
 	  'path' => "genwidth",
@@ -279,6 +284,21 @@ my @tests = (
 	  'name' => "verilog",
 	  'path' => "verilog/useconfname",
 	  'options' => "-sheet HIER=HIER_MIXED",
+	},
+	{
+	  'name' => "verilog",
+	  'path' => "verilog/leaforeg",
+	  'options' => "",
+	},
+	{
+	  'name' => "verilog",
+	  'path' => "verilog/seloreg",
+	  'options' => "",
+	},
+	{ #!wig20051024: adding cstyle header
+	  'name' => "verilog",
+	  'path' => "verilog/v2001",
+	  'options' => "",
 	},
 	{
 	  'name' => "conf",
@@ -369,6 +389,11 @@ my @tests = (
 	{ # Bug with generics/0 ...
 	  'name' => "bugver",
 	  'path' => "bugver/20051004c",
+	  'options' => "",
+	},
+	{ # Bug with generics/0 ...
+	  'name' => "bugver",
+	  'path' => "bugver/20051014b",
 	  'options' => "",
 	},
 	{ # Create simple logic ...

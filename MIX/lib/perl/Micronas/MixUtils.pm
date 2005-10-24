@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.82 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2005/10/21 12:42:23 $                              |
+# | Revision:   $Revision: 1.83 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2005/10/24 12:10:30 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.82 2005/10/21 12:42:23 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.83 2005/10/24 12:10:30 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.83  2005/10/24 12:10:30  wig
+# | added output.language.verilog = ansistyle,2001param
+# |
 # | Revision 1.82  2005/10/21 12:42:23  lutscher
 # | added reg_shell.read_multicycle
 # |
@@ -372,11 +375,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.82 2005/10/21 12:42:23 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.83 2005/10/24 12:10:30 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.82 $';         #'
+my $thisrevision        =      '$Revision: 1.83 $';         #'
 
-# Revision:   $Revision: 1.82 $   
+# Revision:   $Revision: 1.83 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -974,8 +977,7 @@ sub mix_init () {
 		'order' => 'input',		# Field order := as in input or predefined
 		'format' => 'ext',		# Output format derived from filename extension ???
 		'filename' => 'useminus', # Convert _ to - in filenames
-		'generate' =>
-	    	{
+		'generate' => {
 	    	'arch' => 'noleaf',
 	      	'enty' => 'noleaf', # no leaf cells: [no]leaf,alt,
 	      	'conf' => 'noleaf', # one of: [leaf|noleaf],verilog
@@ -1034,48 +1036,47 @@ sub mix_init () {
                 '_magma_uamn_' => '',   # Internal use, storage for generated defines
                 'typecast'  => 'intsig', # 'portmap' would be more native, but does not work for Synopsys
                 'std_log_typecast' => 'ignore', # will ignore typecast's for std_ulogic vs. std_logic ...
-	     	}
-       },
-		'ext' =>
-		{
-			  'vhdl' => 'vhd',
-			  'verilog' => 'v' ,
-			  'intermediate' => 'mixed', # not a real extension!
-			  'internal' => 'pld',
-			  'delta' => '.diff',	  # delta mode
-              'verify' => '.ediff',   # verify against template ...
-		},
-		'comment' => # Comment char(s) for output
-		{	'vhdl' => '--',
-			'verilog' => '//',
-			'intermediate' => '#',
-			'internal' => '#',
-			'delta' => '#',
-			'default' => '#',
-			# TODO : Allow /* ... */ comments for Verilog to be accepted, too
-		},
-		'language' => # Special switches to control details of the HDL generated
-		{	'vhdl'	=>	'', # Unused 20051007
-			'verilog'	=>	'', # Setting to 2001 will change generation of port and parameters
-								# keys: [no]owire, 2001, [no|old]style, [no|old|2001]params,
-		},
-		# 'warnings' => 'load,drivers',	# Warn about missing loads/drivers
-		'warnings' => '',
-		'delta' => 'sort', # Controlling delta output mode:
-				    # space:   not consider whitespace
-				    # sort:    sort lines
-				    # comment: not remove all comments before compare
-				    # remove:  remove empyt diff files
-                    # ignorecase|ic: -> ignore case if set
-                    # mapstd[logic]: -> ignore std_logic s. std_ulogic diffs!
+	   		},
     	},
-    	'input' => {
-			'ext' =>	{
-	    		'excel' =>	"xls",
-	    		'soffice' => "sxc",
-	    		'csv'   =>	"csv",
-			},
-    	},
+	'ext' => {
+		'vhdl' => 'vhd',
+		'verilog' => 'v' ,
+		'intermediate' => 'mixed', # not a real extension!
+		'internal' => 'pld',
+		'delta' => '.diff',	  # delta mode
+		'verify' => '.ediff',   # verify against template ...
+	},
+	'comment' => { # Comment char(s) for output
+		'vhdl' => '--',
+		'verilog' => '//',
+		'intermediate' => '#',
+		'internal' => '#',
+		'delta' => '#',
+		'default' => '#',
+		# TODO : Allow /* ... */ comments for Verilog to be accepted, too
+	},
+	'language' => { # Special switches to control details of the HDL generated
+		'vhdl'	=>	'', # Unused 20051007
+		'verilog'	=>	'', # Setting to 2001 will change generation of port and parameters
+							# keys: [no]owire, 2001, [no|old]style, [no|old|2001]params,
+	},
+	# 'warnings' => 'load,drivers',	# Warn about missing loads/drivers
+	'warnings' => '',
+	'delta' => 'sort', # Controlling delta output mode:
+			    # space:   not consider whitespace
+			    # sort:    sort lines
+			    # comment: not remove all comments before compare
+			    # remove:  remove empyt diff files
+                # ignorecase|ic: -> ignore case if set
+                # mapstd[logic]: -> ignore std_logic s. std_ulogic diffs!
+    },
+    'input' => {
+		'ext' =>	{
+	   		'excel' =>	"xls",
+	   		'soffice' => "sxc",
+	   		'csv'   =>	"csv",
+		},
+    },
     'internal' => {
 		'path' => ".",
 		'order' => 'input',		# Field order := as in input or predefined
@@ -1675,6 +1676,8 @@ sub mix_init () {
         '%TM_C%'		=>	'C',
         '%TM_G%'		=>	'G',
         '%TM_P%'		=>	'P',
+        '%REG%'			=>	'__REG__',	# Internal! Define a verilog reg for leaf output
+        # '%WIRE%'		=>	'__WIRE__',	# Conflicts with simple logic wire!!
     },
     # Counters and generic messages
     'ERROR' => '__ERROR__',

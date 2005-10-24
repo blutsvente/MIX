@@ -1,0 +1,96 @@
+05/10/24 11:25:13 ########################################################################
+05/10/24 11:25:13 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl ../../bugver.xls
+05/10/24 11:25:13 
+#######################################################################
+##### mix_0.pl (Revision: 1.38 )
+#####
+##### MIX  
+#####   MixUtils    1.80 $
+#####   MixUtils::IO    1.32 $
+#####   MixParser   1.59 $
+#####   MixWriter   1.62 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.14 $
+#####   MixReport 1.5 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/10/24 11:25:16 Reading worksheet C_20051014b of H:/work/eclipse/MIX/test/xls_input/bugver/20051014b/../../bugver.xls
+05/10/24 11:25:16 Reading worksheet H_20051014b of H:/work/eclipse/MIX/test/xls_input/bugver/20051014b/../../bugver.xls
+05/10/24 11:25:17 Adding port to hierachy module inst_a for signal a_des_02!
+05/10/24 11:25:17 Add_port: signal a_des_02 adds port p_mix_a_des_02_gi to instance inst_a
+05/10/24 11:25:17 Adding port to hierachy module inst_a for signal b_des_07!
+05/10/24 11:25:17 Add_port: signal b_des_07 adds port p_mix_b_des_07_gi to instance inst_a
+05/10/24 11:25:17 Adding port to hierachy module inst_a for signal x_des_01!
+05/10/24 11:25:17 Add_port: signal x_des_01 adds port p_mix_x_des_01_gi to instance inst_a
+05/10/24 11:25:17 Adding port to hierachy module inst_a for signal t_des_06!
+05/10/24 11:25:17 Add_port: signal t_des_06 adds port p_mix_t_des_06_gi to instance inst_a
+05/10/24 11:25:17 Adding port to hierachy module inst_a for signal c_des__09!
+05/10/24 11:25:17 Add_port: signal c_des__09 adds port p_mix_c_des__09_gi to instance inst_a
+05/10/24 11:25:17 Adding port to hierachy module inst_a for signal v_des_05!
+05/10/24 11:25:17 Add_port: signal v_des_05 adds port p_mix_v_des_05_gi to instance inst_a
+05/10/24 11:25:17 Adding port to hierachy module inst_a for signal c_des_10!
+05/10/24 11:25:17 Add_port: signal c_des_10 adds port p_mix_c_des_10_gi to instance inst_a
+05/10/24 11:25:17 Adding port to hierachy module inst_a for signal c_des_08!
+05/10/24 11:25:17 Add_port: signal c_des_08 adds port p_mix_c_des_08_gi to instance inst_a
+05/10/24 11:25:17 Adding port to hierachy module inst_a for signal d_des_04!
+05/10/24 11:25:17 Add_port: signal d_des_04 adds port p_mix_d_des_04_gi to instance inst_a
+05/10/24 11:25:17 Adding port to hierachy module inst_a for signal k_des_03!
+05/10/24 11:25:17 Add_port: signal k_des_03 adds port p_mix_k_des_03_gi to instance inst_a
+05/10/24 11:25:17 WARNING: WARNING: Missing port p_mix_d_des_04_gi in entity ent_a (inst_t) redeclaration, ignoreing!
+05/10/24 11:25:17 WARNING: WARNING: Missing port p_mix_b_des_07_gi in entity ent_a (inst_t) redeclaration, ignoreing!
+05/10/24 11:25:17 WARNING: WARNING: Missing port p_mix_a_des_02_gi in entity ent_a (inst_t) redeclaration, ignoreing!
+05/10/24 11:25:17 WARNING: WARNING: Missing port p_mix_v_des_05_gi in entity ent_a (inst_t) redeclaration, ignoreing!
+05/10/24 11:25:17 WARNING: WARNING: Missing port p_mix_x_des_01_gi in entity ent_a (inst_t) redeclaration, ignoreing!
+05/10/24 11:25:17 WARNING: WARNING: Missing port p_mix_t_des_06_gi in entity ent_a (inst_t) redeclaration, ignoreing!
+05/10/24 11:25:17 WARNING: WARNING: Missing port p_mix_c_des_10_gi in entity ent_a (inst_t) redeclaration, ignoreing!
+05/10/24 11:25:17 WARNING: WARNING: Missing port p_mix_k_des_03_gi in entity ent_a (inst_t) redeclaration, ignoreing!
+05/10/24 11:25:17 WARNING: WARNING: Missing port p_mix_c_des_08_gi in entity ent_a (inst_t) redeclaration, ignoreing!
+05/10/24 11:25:17 WARNING: WARNING: Missing port p_mix_c_des__09_gi in entity ent_a (inst_t) redeclaration, ignoreing!
+05/10/24 11:25:18 WARNING: File bugver-mixed.xls already exists! Contents will be changed
+05/10/24 11:25:18 WARNING: Rotating 3 old sheets of CONF!
+05/10/24 11:25:19 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/bugver/20051014b/bugver-mixed.xls
+05/10/24 11:25:20 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/10/24 11:25:20 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/bugver/20051014b/bugver-mixed.xls
+05/10/24 11:25:20 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/10/24 11:25:20 WARNING: INFO: Detected 6 changes in intermediate sheet HIER, in file bugver-mixed.xls
+05/10/24 11:25:21 Info: unchanged file ent_a-e.vhd
+05/10/24 11:25:21 Info: unchanged file ent_b-e.vhd
+05/10/24 11:25:21 Info: unchanged file ent_a-struct-a.vhd
+05/10/24 11:25:21 Warning: Signal a_des_02 does not have a driver in instance inst_b!
+05/10/24 11:25:21 Warning: Signal b_des_07 does not have a driver in instance inst_b!
+05/10/24 11:25:21 Warning: Signal x_des_01 does not have a driver in instance inst_b!
+05/10/24 11:25:21 Warning: Signal c_des__09 does not have a driver in instance inst_b!
+05/10/24 11:25:21 Warning: Signal t_des_06 does not have a driver in instance inst_b!
+05/10/24 11:25:21 Warning: Signal v_des_05 does not have a driver in instance inst_b!
+05/10/24 11:25:21 Warning: Signal c_des_10 does not have a driver in instance inst_b!
+05/10/24 11:25:21 Warning: Signal c_des_08 does not have a driver in instance inst_b!
+05/10/24 11:25:21 Warning: Signal d_des_04 does not have a driver in instance inst_b!
+05/10/24 11:25:21 Warning: Signal k_des_03 does not have a driver in instance inst_b!
+05/10/24 11:25:21 Info: unchanged file ent_b-struct-a.vhd
+05/10/24 11:25:22 Info: unchanged file ent_a-struct-conf-c.vhd
+05/10/24 11:25:22 Info: unchanged file ent_b-struct-conf-c.vhd
+05/10/24 11:25:22 WARNING: ============= SUMMARY =================
+05/10/24 11:25:22 WARNING: SUM: Summary of checks and created items:
+05/10/24 11:25:22 WARNING: SUM: checkforce 0
+05/10/24 11:25:22 WARNING: SUM: checkunique 0
+05/10/24 11:25:22 WARNING: SUM: checkwarn 0
+05/10/24 11:25:22 WARNING: SUM: cmacros 0
+05/10/24 11:25:22 WARNING: SUM: conn 10
+05/10/24 11:25:22 WARNING: SUM: errors 0
+05/10/24 11:25:22 WARNING: SUM: genport 10
+05/10/24 11:25:22 WARNING: SUM: hdlfiles 6
+05/10/24 11:25:22 WARNING: SUM: inst 12
+05/10/24 11:25:22 WARNING: SUM: multdriver 0
+05/10/24 11:25:22 WARNING: SUM: nodriver 10
+05/10/24 11:25:22 WARNING: SUM: noload 0
+05/10/24 11:25:22 WARNING: SUM: openports 0
+05/10/24 11:25:22 WARNING: SUM: warnings 11
+05/10/24 11:25:22 WARNING: SUM: === Number of parsed input tables: ===
+05/10/24 11:25:22 WARNING: SUM: conf 0
+05/10/24 11:25:22 WARNING: SUM: hier 1
+05/10/24 11:25:22 WARNING: SUM: conn 1
+05/10/24 11:25:22 WARNING: SUM: io 0
+05/10/24 11:25:22 WARNING: SUM: i2c 0
+05/10/24 11:25:22 WARNING: SUM: Number of changes in intermediate: 6
+05/10/24 11:25:22 WARNING: SUM: Number of changed files: 0

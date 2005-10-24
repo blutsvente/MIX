@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.50 2005/10/19 15:40:06 wig Exp $
+# $Id: TODO.txt,v 1.51 2005/10/24 12:14:03 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -28,10 +28,94 @@ Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
 
+>>title: 20051024a/Req: some improvements for the vgch_join.pl
+
+Sorry, dass ich dich noch einmal mit dem join-Tool belästigen muss. Aber drei wichtige und 2 nicht so wichtige Änderungen wären noch notwendig.
+
+Die wichtigen Änderungen:
+1. Bei der Ausgabe der ::sub Spalte bitte '0x' vor die HexZahlen schreiben.
+Also '0x8800c' an Stelle von '8800c'.
+2. stripnl entfernt zwar NLs, müsste aber bitte auch noch CRs entfernen.
+3. Da ist so ein einzelnes verwaistes ::b für Bit31 recht weit
+am Anfang, und erst später kommen die anderen ::b's. Damit kommen
+manche Tools nicht zurecht. Kann man das direkt vor die anderen
+::b's einfügen.
+
+
+Die unwichtigen Änderungen:
+4. Die Zweite Reihe "Ignore | Register Type | ... |" wird mehrmals ausgegeben (scheinbar für jede Instanz einmal), sollte aber nur einmal unter ::ign erscheinen.
+5. Plus die eine, die ich dir zuletzt geschrieben hatte.
+
+> Hallo Wilfried,
+> 
+> Wenn ich eine .csv Ausgabedatei erzeuge, enthält dieses sowohl das
+> VGCH_TOP als auch dass JOIN_VGCH Sheet.
+> Das erstere brauche ich nicht. Kann ich die Ausgabe des VGCH_TOP Sheets 
+> irgendwie ausschalten ?
+> 
+
+Danke und Gruß Michael
+
+	Req: michael
+	Prio: medium
+	Status: open
+
+
+>>title: 20051021b/Bug: check ' handling in DOS-Cmd prompt
+
+	setting parameters like
+		-conf a.b.c='value is this'
+	does not work in cmd
+	
+	1) mit dem cmd geht's bei mir, da hab ich einen aktuelle Perl Version, activestate v5.8.7. Allerdings finde
+ich es ehe lstig mit dem cmd zu arbeiten, und meiner Meinung nach geht auch die bergabe von Parametern
+wieder ganz anders, also sowas wie 
+
+Z:\tmp\GA>K:\PROJECTS\MIX\PROG\mix_0.pl -report portlist -conf 'macro.%my_inst%=ga_i' -conf
+conn.xls='GA_CONN' -conf out
+put.generate.enty=leaf -conf outarch=ARCH -conf outenty=ENTY -conf outconf=CONF pinlist_generic_hier.xls
+GA-pin-list.xls
+
+String found where operator expected at (eval 101) line 1, near "'ga_i''; logtrc( "INFO", "Overloading
+configuration '"
+        (Missing operator before '; logtrc( "INFO", "Overloading configuration '?)
+Bareword found where operator expected at (eval 101) line 1, near "'; logtrc( "INFO", "Overloading
+configuration 'macro"
+
+        (Missing operator before macro?)
+05/10/20 17:54:28 WARNING: Evaluation of configuration {'macro'}{'y_inst%'}=ga_i' failed: Bad name after
+ga_i' at (eval
+101) line 1.
+
+05/10/20 17:54:28 WARNING: Evaluation of configuration {'conn'}{'xls'}='GA_CONN' failed: Bad name after
+GA_CONN' at (eva
+l 102) line 1.
+
+	
+	Req: oberhoff
+	Prio: low
+	Status: open
+	
+>>title: 20051021a/Req: allow to add parameters via -conf
+
+	-conf a.b.c=val
+		-> sets to new
+	-conf a.b.c-=val
+		-> removes val from a.b.c
+	-conf a.b.c+=val 
+		-> prepends val to a.b.c
+	-conf a.b.c=+val
+		-> appends val to a.b.c
+
+	Req: wig
+	Prio: low
+	Status: open
+
 >>title: 20051019a/Req: import Verilog files
 
 	Extend -import by a verilog reader
-	
+		use the Perl::Verilog module!
+		
 	Req: wig
 	Prio: low
 	Status: open
@@ -43,8 +127,11 @@ TODOs:
 	
 	Req: vgch
 	Prio: medium
-	Status: open
- 
+	Status: !wig20051019 done with release 1.3b
+		(check the report.portlist.split parameter description)
+		but: needs another rework. Try to improve to use a template
+		mechanism.
+		
 >>title: 20051018f/Req: add CSV handling variations
 
 	1. Input: Support more forms of sheet name definitions
@@ -152,11 +239,16 @@ defparam <instance>.<param> = <value>. Den defparam Befehl mögen leider verschie
 Könntest Du das stattdessen Verilog-2001-like generieren ?
  
 bla_i bla #( .param1(0), .param2(1)) (.port1(signal1), .port2(signal2));
+
+Solution: adding configuration
+	$EH{'output'}{'language'}{'verilog'} =~ m/\b2001param\b/io
+
+Check if "veri2001" should imply that!
  
 	Req: Thorsten.
  	Prio: high
  	Status: open
- 	
+ 	Solution: add config parameter
 
 >>title: 20051013a/Req: improve CVS support
 

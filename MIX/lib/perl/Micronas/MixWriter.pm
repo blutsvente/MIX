@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.64 $                                         |
-# | Author:     $Author: lutscher $                                         |
-# | Date:       $Date: 2005/10/20 17:28:26 $                              |
+# | Revision:   $Revision: 1.65 $                                         |
+# | Author:     $Author: wig $                                         |
+# | Date:       $Date: 2005/10/24 12:10:30 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.64 2005/10/20 17:28:26 lutscher Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.65 2005/10/24 12:10:30 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.65  2005/10/24 12:10:30  wig
+# | added output.language.verilog = ansistyle,2001param
+# |
 # | Revision 1.64  2005/10/20 17:28:26  lutscher
 # | corrected accidental check-in
 # |
@@ -282,8 +285,8 @@ sub generic_map ($$$$;$$);
 sub print_conn_matrix ($$$$$$$$$;$);
 sub signal_port_resolve($$);
 sub use_lib($$);
-sub is_vhdl_comment($); 	# Should go to MixBase ...
-sub is_comment($$); 		# Should go to MixBase
+sub is_vhdl_comment($);
+sub is_comment($$);
 sub count_load_driver ($$$$);
 sub gen_concur_port($$$$$$$$;$$);
 sub mix_wr_get_interface ($$$$);
@@ -296,11 +299,11 @@ sub mix_wr_getpwidth ($);
 sub mix_wr_getconstname ($$);
 sub sig_typecast($$);
 sub _mix_wr_isinteger ($$$);
-sub mix_wr_mapsort ($$);	# create a "sort" prefix aka. %MAPSORT .... SORTMAP%
+sub mix_wr_mapsort ($$);
 sub _mix_wr_is_modegennr ($$);
-sub mix_wr_use_udc ($$$);	# deal with ::udc column in hier sheet
-sub _mix_wr_save_hooks ();	# save _HOOK_ macros
-sub _mix_wr_preset_hooks ();	# preset _HOOK_ macros
+sub mix_wr_use_udc ($$$);
+sub _mix_wr_save_hooks ();
+sub _mix_wr_preset_hooks ();
 sub _mix_wr_getfilter ($$);
 sub _mix_wr_descr ($$$$$);
 sub mix_wr_printdescr ($$);
@@ -311,9 +314,9 @@ sub _mix_wr_regorwire($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.64 2005/10/20 17:28:26 lutscher Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.65 2005/10/24 12:10:30 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.64 $';
+my $thisrevision   =      '$Revision: 1.65 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -712,7 +715,23 @@ sub merge_entity ($$) {
     }
 } # End of merge_entity
 
-
+#
+# Overlap the signal and hierachy information to generate a entity
+# 
+# Input:
+#	Entity name
+#	Instance name
+#	Existing  entitiy "object"
+#	New entity "object"
+#
+# Output:
+#	1 if new description matches existing
+#	0 otherwise
+#
+# Global:
+#	writes %entities
+#	writes %EH
+#
 sub compare_merge_entities ($$$$) {
     my $ent = shift;
     my $inst = shift || "__E_INST__";
@@ -730,7 +749,7 @@ sub compare_merge_entities ($$$$) {
 
     my $eflag = 1; # Is equal
 
-    # for all ports:
+    #For all ports:
     for my $p ( keys( %$rent ) ) {
 
 		next if ( $p =~ m,^__, ); # Skip internals like __LEAF__, __LANG__
@@ -748,14 +767,14 @@ sub compare_merge_entities ($$$$) {
             next;
         }
 
-        # type has to match
+        # Type has to match
         if ( $rent->{$p}{'type'} ne $rnew->{$p}{'type'} ) {
             logwarn( "WARNING: Entity port type mismatch for entity $ent ($inst), port $p: ".
                      $rnew->{$p}{'type'} . " was " . $rent->{$p}{'type'} . "!" );
             $EH{'sum'}{'warnings'}++;
             $eflag = 0;
             next; # TODO : How should we handle that properly?
-        	# mode has to match
+        # Mode has to match
         } elsif ( $rent->{$p}{'mode'} ne $rnew->{$p}{'mode'} ) {
             logwarn( "WARNING: Entity port mode mismatch for enitity $ent ($inst), port $p: " .
                      $rnew->{$p}{'mode'} . " was " . $rent->{$p}{'mode'} . "!" );
@@ -843,9 +862,9 @@ sub create_entity ($$) {
     }
 
     if ( $inst->{'::treeobj'}->daughters() ne "0" ) {
-	$entities{$ent}{'__LEAF__'}++;
+		$entities{$ent}{'__LEAF__'}++;
     } else {
-	$entities{$ent}{'__LEAF__'} = 0;
+		$entities{$ent}{'__LEAF__'} = 0;
     }
 
     # Remember language for this entity ... check later on ...    
@@ -987,12 +1006,13 @@ sub _create_entity ($$) {
 
         	# If we connect a single bit to to a bus, we strip of the _vector from
         	# the type of the signal to get correct port type
-        	#TODO: Expand to work for any type ...
+        	# TODO : Expand to work for any type ...
         	#!wig20040330: if port spans from 0:0 remove the _vector, too (?)
         	if ( ( ( not defined( $h ) and not defined( $l )) or
                    ( $h eq "0" and $l eq "0" ) ) and
                   $type =~ m,(.+)_vector, ) {
-				$type = $1;
+				#!wig: remove vector, leave rest as is: $type = $1;
+				$type =~ s/_vector//io;
 				logtrc( "INFO:4", "Autoreducing port type for signal $i to $type" );
 			};
 
@@ -1652,7 +1672,7 @@ sub _mix_wr_get_iveri ($$$$) {
 	# Verilog 2001 style output definitions ....
 	my %flags = (
 		'2001'		=> 0,
-		'csytle'	=> 0,
+		'ansisytle'	=> 0,
 		'iwire'		=> 1,
 		'owire'		=> 1,
 	);
@@ -1661,7 +1681,7 @@ sub _mix_wr_get_iveri ($$$$) {
 		$EH{'output'}{'language'}{'verilog'} =~ m/\b2001\b/ ) {
 		%flags = (
 			'2001'		=> 1,
-			'csytle'	=> 1,
+			'ansisytle'	=> 1,
 			'iwire'		=> 0,
 			'owire'		=> 0,
 		);
@@ -1669,11 +1689,17 @@ sub _mix_wr_get_iveri ($$$$) {
 	
 	# TODO : csytle implies noiwire/noowire!
 	for my $i ( qw( ansistyle iwire owire ) ) {
-		if ( $EH{'output'}{'generate'}{'verilog'} =~ m/\b$i\b/ ) {
+		if ( $EH{'output'}{'language'}{'verilog'} =~ m/\b$i\b/ ) {
 			$flags{$i} = 1;
-		} elsif ( $EH{'output'}{'generate'}{'verilog'} =~ m/\bno$i\b/ ) {
+		} elsif ( $EH{'output'}{'language'}{'verilog'} =~ m/\bno$i\b/ ) {
 			$flags{$i} = 0;
 		}
+	}
+	
+	#!wig: do not print "wire" if ansistyle
+	if ( $flags{'ansistyle'} ) {
+		$flags{'iwire'} = 0;
+		$flags{'owire'} = 0;
 	}
 	
     # Possible Verilog modes. Please extend %ioky, %port and %portheader
@@ -1722,8 +1748,6 @@ sub _mix_wr_get_iveri ($$$$) {
 		
 		my $reg_wire = _mix_wr_regorwire( $ename, $p );
 		my $pdd = $r_ent->{$p};
-		##LU experimental
-		#my $reg_wire = ($pdd->{'type'} =~ m/reg/i) ? "reg" : "wire"; 
 
 	    #!wig20051010: adding description ...
 	    #!wig20051010: Add descriptions to port map:
@@ -1986,10 +2010,81 @@ sub _mix_wr_get_iveri ($$$$) {
 sub _mix_wr_regorwire($$) {
 	my $entity	= shift;
 	my $port	= shift;
-	 
-	return "wire";
 
+	my $rw = "wire";
+
+	
+	my $leafflag =  _mix_wr_isleaf( $entity ) ? 'leaf' : 'hier';
+	my ( $iomode )	 = _mix_wr_is_modegennr( $entity, $port ); # Dump gener
+
+	# TODO : What about other modes like buffer, tristate, ...?
+	my $io = 'i';
+	if ( $iomode =~ m/^out$/io ) {
+		$io = 'o';
+	}
+
+	# Check the global settings:
+	if ( $EH{'output'}{'language'}{'verilog'}	=~ m/\b(no)?($leafflag)($io)(reg|wire)\b/ ) {
+		# <no>leaf[io]<reg|wire>
+		# <no>hier[io]<reg|wire>
+		# only usefull: leaforeg!
+		if ( defined( $1 ) ) {
+			# "no" -> nothing
+			$rw = '';
+		} else {
+			$rw = $4;
+		} 
+	}
+	
+	# Check instance/entity specific settings
+	#	e.g. ::lang = verilog,%REG%
+	# Thorsten thinks that wire or reg shold not be controlled
+	# by the instance, but i had already implemented this switch ... ;-) 
+	my $lang = $entities{$entity}{'__LANG__'};
+	if ( $lang =~ m/\b(reg|wire)/io ) {
+		$rw = $1;
+	}
+	
+	# Check port specific settings
+	# Logic: if the signal type (actually inherited by the
+	#   port type) field has a %REG% or a %WIRE% and
+	# - the mode is out and
+	# - the entity is leaf -> buy it
+	if ( $leafflag eq 'leaf' and
+		 $io eq 'o' and
+		 $entities{$entity}{$port}{'type'} =~ m/(__|%)(REG|WIRE)(__|%)/io ) {
+				$rw = lc( $2 );
+	}
+	
+	return $rw;
+
+} # End of _mix_wr_regorwire
+
+#
+# Input: entity name
+#
+# Return 1 if this is a leaf
+# 		 0 if this is non-leaf
+#		-1 in case of error
+#
+#	available for entities now
+#	should be entitiy object!
+#   !! __LEAF__ counter >= 1 --> no leaf
+#!wig20051021
+sub _mix_wr_isleaf ($) {
+	my $entity = shift;
+
+	if ( exists $entities{$entity} ) {
+		if ( $entities{$entity}{'__LEAF__'} < 1 ) {
+			return 1;
+		} else {
+				return 0;
+		}
+	} else {
+		return -1;
+	}
 }
+
 ####################################################################
 ## write_architecture
 ## write architecture VHDL files
@@ -2165,7 +2260,7 @@ sub gen_instmap ($;$$) {
         $map = join( "\n", sort( split ( /\n/, $map ) ) ) . "\n" unless $simple_flag;
 
         #wig20030808: Adding Verilog port splice collector .. for mpallas
-        #TODO: Shouldn't that be integrated into the print_conn_matrix function?
+        # TODO : Shouldn't that be integrated into the print_conn_matrix function?
         if ( $lang =~ m,^veri,io and $map =~ m,\]\(, ) {
             # Get a better map and a list of dummy signals (if needed for open port splices)
             # Will add dummies to out signals ...
@@ -2214,10 +2309,13 @@ sub gen_instmap ($;$$) {
                 )) . "\n";
             }
 
-            # parent language is verilog -> Different parameter hand-over!
+            # Parent language is verilog -> Different parameter hand-over!
             # format gets prepared in generic_map
+            #    enty #(param) inst (port)
+            #
             my $hashm = " ";
-            if  ( $hierdb{$inst}{'::lang'} =~ m,vhdl,io ) {
+            if  ( $hierdb{$inst}{'::lang'} =~ m,\bvhdl,io or
+            	  $EH{'output'}{'language'}{'verilog'} =~ m/\b2001param/io ) {
                 # Special case: daughter is VHDL-> use config name instead of entity name ...
                 # see 20040209/a req
                 # The "useconfname" option applies globally, while setting %UAMN% in the
@@ -2239,7 +2337,7 @@ sub gen_instmap ($;$$) {
                     }
                 }
                 $hashm = $gmap || " "; #If gmap is empty -> do not replace hashm
-                $gmap = "";            
+                $gmap = '';            
             }
             
             if ( $simple_flag ) {
@@ -2253,8 +2351,6 @@ sub gen_instmap ($;$$) {
                     $dum .
                     '%S%' x 2 . $enty . $hashm . $inst . " (" .
                     _mix_wr_descr( 'hier', $inst, $hierdb{$inst}{'::descr'}, 4, $tcom ) .
-                    # (  $hierdb{$inst}{'::descr'} ? ( '%S%' . "// "
-                    #        . $hierdb{$inst}{'::descr'} ) : "" ) .
                     "\n" .
                     $map .
                     '%S%' x 2 . ");\n" .
@@ -2273,8 +2369,6 @@ sub gen_instmap ($;$$) {
             	$map =  '%S%' x 2 . $tcom . " Generated Instance Port Map for $inst\n" .
                    '%S%' x 2 . $inst . ": " . $enty .
                    _mix_wr_descr( 'hier', $inst, $hierdb{$inst}{'::descr'}, 4, $tcom ) .
-                    # OLD : (  $hierdb{$inst}{'::descr'} ? ( '%S%' . $tcom . " " .
-                    # OLD :        $hierdb{$inst}{'::descr'} ) : "" ) .
                     "\n" .
                     $gmap .
                     $map .
@@ -2289,6 +2383,9 @@ sub gen_instmap ($;$$) {
 
 #
 # Print out the description
+#  Description is shortened to portdescrlength chars (+- some extras
+#    for later replacement) and \n is converted to %S%<comment>%CR% here to
+#    keep comments near the line for portsort
 #
 # Input:
 #	mode (hier, conn, ....; unused now)
@@ -2320,7 +2417,8 @@ sub _mix_wr_descr ($$$$$) {
 		$descr = '';
 	}
 		
-	return $descr;
+	return _mix_wr_shortendescr($descr);
+	
 } # End of _mix_wr_descr
 
 #
@@ -2496,6 +2594,7 @@ sub mix_wr_unsplice_port ($$$) {
 
 #
 # create generic map for component instantiation
+#	aka. this map will be included in a parent module
 #
 # Input:
 #  $io  = 'in' or 'out'
@@ -2503,7 +2602,7 @@ sub mix_wr_unsplice_port ($$$) {
 #  $enty = entityname
 #  $ref = reference to $hierdb{$i}{::conn}{$io}
 #  $lang = language .... of instantiating module!
-# $tcom = this language comment
+#  $tcom = this language comment
 #
 sub generic_map ($$$$;$$) {
     my $io = shift;
@@ -2518,22 +2617,22 @@ sub generic_map ($$$$;$$) {
     if ( $lang =~ m,^veri,io ) {
         #wig20050126: if this instance is VHDL -> do not use defparam, but
         #  enty #( list ) inst ....
+        #!wig20051020: output.language.verilog = 2001param -> use the #() notation
         my $ilang = $hierdb{$inst}{'::lang'};
-        if ( $ilang =~ m,^vhd,io ) {
+        if ( $ilang =~ m,^vhd,io or 
+        	$EH{'output'}{'language'}{'verilog'} =~ m/\b2001param\b/io ) {
             $map = '%S%' x 1 . "#(\n"; # Same line
-            #TODO: Add ::description if available ... -> does not work this way
+            # TODO : Add ::description if available ... -> does not work this way
             #                                                   (lost param name here).
             for my $g ( sort( keys( %$ref ) ) ) {
-                $map .= '%S%' x 3 . "." . $g . "(" . $ref->{$g} . ")," .
-                    # OLD: ( ( $conndb{$g}{'::descr'} ) ?
-                    # OLD:     ( " " . $tcom . " " . $conndb{$g}{'::descr'} ) : "" ) .
+                $map .= '%S%' x 3 . "." . $g . '(' . $ref->{$g} . '),' .
                     (( _mix_wr_isinteger( $inst, $g, $ref->{$g} ) ) ?
-                         " $tcom __W_ILLEGAL_PARAM" : "" ) .
+                         " $tcom __W_ILLEGAL_PARAM" : '' ) .
                     "\n";
             }
             # Remove final ,
             $map =~ s/,(\s*$tcom.+|\s*)\n$/$1\n/;
-            $map .= '%S%' x 2 . ") "; # Indent 2
+            $map .= '%S%' x 2 . ') '; # Indent 2
         } else {
             # Verilog in Verilog uses defparam ....
             for my $g ( sort( keys( %$ref ) ) ) {
@@ -2577,6 +2676,9 @@ Input:
    generic (name of the generic)
    value (parameter value)
 
+Return:
+	1 if problem!
+	
 =cut
 
 sub _mix_wr_isinteger ($$$) {
@@ -3534,7 +3636,7 @@ sub print_conn_matrix ($$$$$$$$$;$) {
 
     $t =~ s,(\n)?$,$descr$1, if $descr; # Add ::descr comments ....
     return ( $sortcrit . $t );
-}
+} # End of print_conn_matrix
 
 #
 # compose signal description ( to be used in portmaps)
@@ -3577,7 +3679,7 @@ sub mix_wr_printdescr($$) {
         }
         if ( $EH{'output'}{'generate'}{'portdescrlength'} =~ m,^(\d+)$, ) { # Limit lenght
             if ( length( $descr)  > $1 ) {
-            	# Consider te description line by line
+            	# Consider the description line by line
             	$descr = _mix_wr_shortendescr( $descr, $1 ); 
                 # $descr = substr( $descr, 0, $1 ) . "..."; # Cut
             }
@@ -3592,29 +3694,37 @@ sub mix_wr_printdescr($$) {
 # create ::descr if too long,
 #   but make sure to not hit <cr> or remove %macro%
 #
-sub _mix_wr_shortendescr ($$) {
+sub _mix_wr_shortendescr ($;$) {
 	my $descr = shift;
 	my $maxlen = shift;
 
-	my @newdescr = '';
+	unless ( defined( $maxlen ) ) {
+		$EH{'output'}{'generate'}{'portdescrlength'} =~ m,^(\d+)$,;
+		$maxlen = $1;
+	}
+	my @newdescr = ();
 	
 	# Split into single lines and shorten these!
 	for my $line ( split( /\n/, $descr )) {
 		if ( length( $line ) > $maxlen ) {
 			# Needs to be shortened
 			my $new = '';
-			while( $line =~ m/(.*)(%\w+%)/og ) {
+			while( $line =~ s/(.*?)(%\w+%)//og ) { # Minimal length match
 				my $l = length( $new );
 				if ( $maxlen - $l < 1 ) {
 					last;
 				}
 				if ( $maxlen - $l < length( $1 ) ) {
-					my $a = substr( $1, 0, $maxlen - $l ) . "...";
+					my $a = substr( $1, 0, $maxlen - $l ) . '...';
 					$new .= $a;
 					last;
-				} else {
-					$new .= $1 . $2;
+				} else { 
+					$new .= $1 . defined( $2 ) ? $2 : '';
 				}
+			}
+			# Consider rest:
+			if ( length( $new ) < $maxlen ) {
+				$new .= substr( $line, 0, $maxlen - length( $new )) . '...';
 			}
 			$line = $new;	
 		}
@@ -3623,23 +3733,6 @@ sub _mix_wr_shortendescr ($$) {
 	return join( "\n", @newdescr );	
 } # End of _mix_wr_shortdescr
 
-#
-# retrieve ::descr field
-#
-# input:
-#	entitiy name
-#	port name
-# output:
-#	description field
-# global:
-#	
-#
-sub _mix_wr_getdescr ($$) {
-	my $e = shift; # entity name 
-	my $p = shift; # port
-
-	return '';
-}
 #
 # create a string to prepend in case user wants unusual sort order
 #  %MAPSORT_KEY_KEY_SORTMAP%
@@ -3732,6 +3825,8 @@ sub mix_wr_mapsort ($$) {
 # find out the mode (i,o,io) of that port; find if that port is generated
 # and also the lowest signal number connected to that port (for sort)
 #
+# return values:
+#	out,in,inout, ....
 sub _mix_wr_is_modegennr ($$) {
 	my $e = shift || "__E_NO_ENTY";
 	my $p = shift;
