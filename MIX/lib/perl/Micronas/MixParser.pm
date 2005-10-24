@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.59 $                                         |
+# | Revision:   $Revision: 1.60 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/10/13 09:09:46 $                              |
+# | Date:       $Date: 2005/10/24 15:43:48 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.59 2005/10/13 09:09:46 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.60 2005/10/24 15:43:48 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.60  2005/10/24 15:43:48  wig
+# | added 'reg detection to ::out column
+# |
 # | Revision 1.59  2005/10/13 09:09:46  wig
 # | Added intermediate CONN sheet split
 # |
@@ -312,9 +315,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.59 2005/10/13 09:09:46 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.60 2005/10/24 15:43:48 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.59 $';
+my $thisrevision =	'$Revision: 1.60 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1409,6 +1412,14 @@ sub _create_conn ($$%) {
             #
             # Normal inst/ports ....
             #
+            
+            #!wig20051024: check for 'reg or 'wire 
+            #  -> will be added to port definition ....
+            if ( $d =~ m,(/?'(reg|wire)), ) { # Define reg or wire for verilog output: inst/port'reg or inst/'wire  # '
+                $co{'rorw'} = $2;
+                $d =~ s,$1,,;
+            }
+            	
             #wig20030801: typecast port'cast_func ...
             #wig20040803: adding advanced typecast function: convert typecast request
             #  into internal instance (%TC_xxxxx%) mapper
@@ -1555,7 +1566,7 @@ sub _create_conn ($$%) {
                               '::parent' => $hierdb{$co{'inst'}}{'::parent'},
                               '::entity' => '%TYPECAST_ENT%', # Just dummies
                               '::config' => '%TYPECAST_CONF%', # Just dummies
-                              '::lang' => 'vhdl',                         # typecast in for VHDL
+                              '::lang' => 'vhdl',              # typecast in for VHDL
                               '::typecast' => \@tcassign , # remember what to typecast
                             );
 
@@ -1582,9 +1593,9 @@ sub _create_conn ($$%) {
                 my %ec = %data;
                 $ec{'::type'} = $tcdo;
                 $ec{'::name'} = $tcsig;
-                $ec{'::high'} = $h;   #TODO: Maybe that is to much? And we could
-                $ec{'::low'} = $l;     # use the port border's, ... obviously noone should typecast
-                                            # just parts of ports
+                $ec{'::high'} = $h;   # TODO : Maybe that is to much? And we could
+                $ec{'::low'} = $l;    # use the port border's, ... obviously noone should typecast
+                                      # just parts of ports
                 $ec{'::mode'} = 'S';
                 $ec{'::comment'} = "__I_TYPECAST_INT" . ( defined( $ec{'::comment'} ) ?
                             ( " " . $ec{'::comment'} ) : "" );

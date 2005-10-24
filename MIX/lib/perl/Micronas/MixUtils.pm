@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.83 $                                         |
+# | Revision:   $Revision: 1.84 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/10/24 12:10:30 $                              |
+# | Date:       $Date: 2005/10/24 15:43:48 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.83 2005/10/24 12:10:30 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.84 2005/10/24 15:43:48 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.84  2005/10/24 15:43:48  wig
+# | added 'reg detection to ::out column
+# |
 # | Revision 1.83  2005/10/24 12:10:30  wig
 # | added output.language.verilog = ansistyle,2001param
 # |
@@ -375,11 +378,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.83 2005/10/24 12:10:30 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.84 2005/10/24 15:43:48 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.83 $';         #'
+my $thisrevision        =      '$Revision: 1.84 $';         #'
 
-# Revision:   $Revision: 1.83 $   
+# Revision:   $Revision: 1.84 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -3916,6 +3919,7 @@ sub inout2array ($;$$) {
 #	               'port_t' => undef,
 #                     'port_f' => undef
 #		    	'cast' => cast_func ....
+#				'rorw' => "reg" or "wire"
 #                   }
 #                 ],
 
@@ -3928,6 +3932,11 @@ sub inout2array ($;$$) {
 		if ( exists( $i->{'cast'} ) ) {
 	    	$cast = "'" . $i->{'cast'};
 		}
+		#!wig20051024: adding 'reg|wire back again:
+		if ( exists( $i->{'rorw'} ) ) {
+			$cast .= "'" . $i->{'rorw'};
+		}
+		
 		# Constants are working a different way:
 		#: m,^\s*(__CONST__|%CONST%|__GENERIC__|__PARAMETER__|%GENERIC%|%PARAMETER%),o ) {
 		# TODO make sure sig_t/sig_f and port_t/port_f are defined in pairs!!

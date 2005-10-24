@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Entity.pm,v $                                      |
-# | Revision:   $Revision: 1.1 $                                          |
+# | Revision:   $Revision: 1.2 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/10/24 12:10:30 $                              |
+# | Date:       $Date: 2005/10/24 15:43:48 $                              |
 # | Description: Contains data structure and methods/functions for Entities |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Entity.pm,v $
+# | Revision 1.2  2005/10/24 15:43:48  wig
+# | added 'reg detection to ::out column
+# |
 # | Revision 1.1  2005/10/24 12:10:30  wig
 # | added output.language.verilog = ansistyle,2001param
 # |
@@ -58,9 +61,9 @@ use FileHandle;
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Entity.pm,v 1.1 2005/10/24 12:10:30 wig Exp $';#'  
+my $thisid          =      '$Id: Entity.pm,v 1.2 2005/10/24 15:43:48 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Entity.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.1 $'; #'  
+my $thisrevision    =      '$Revision: 1.2 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -126,6 +129,8 @@ sub new {
 		'mode'	=>  '', # Port mode (std_ulogic)
 		'high'	=>	'',	# High bound for vectors 
 		'low'	=>	'', # Low bound for vectors
+		'cast'	=>	'', # Typecast
+		'rorw'	=>	'', # Register or wire (usefull for Verilog)
 		'descr'	=>	'',	# Storage for ::description
 		'__nr__' =>	'', # Number for sorting
 		'__gen__' => '', # Flag for generated ports

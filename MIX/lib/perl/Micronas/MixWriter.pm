@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.65 $                                         |
+# | Revision:   $Revision: 1.66 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/10/24 12:10:30 $                              |
+# | Date:       $Date: 2005/10/24 15:43:48 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.65 2005/10/24 12:10:30 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.66 2005/10/24 15:43:48 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,8 +32,8 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
-# | Revision 1.65  2005/10/24 12:10:30  wig
-# | added output.language.verilog = ansistyle,2001param
+# | Revision 1.66  2005/10/24 15:43:48  wig
+# | added 'reg detection to ::out column
 # |
 # | Revision 1.64  2005/10/20 17:28:26  lutscher
 # | corrected accidental check-in
@@ -314,9 +314,9 @@ sub _mix_wr_regorwire($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.65 2005/10/24 12:10:30 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.66 2005/10/24 15:43:48 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.65 $';
+my $thisrevision   =      '$Revision: 1.66 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -745,6 +745,7 @@ sub compare_merge_entities ($$$$) {
     #       'low' => '',
     #       'value' => ''  (stores default value for generics)
     #       'cast' => port is of type cast, needs typecast function to match signal type!
+	#		'rorw' =>	register or wire ....
 	#		'_descr_'	=> []	array of descriptions (to remove duplicates)
 
     my $eflag = 1; # Is equal
@@ -895,7 +896,7 @@ sub _create_entity ($$) {
         }
 
 		my $type = $conndb{$i}{'::type'} || "_E_CONNTYPE"; 
-        my $cast = "";
+        my $cast = '';
         my $nr   = $conndb{$i}{'::connnr'};
         $nr = "_E_CONNNR" unless( defined $nr );
         
@@ -913,6 +914,7 @@ sub _create_entity ($$) {
 	    	my $l = -100000;  # Absurd value ....
 			my $gen = 0;     # Flag for generated port
 			my $descr = '';
+			my $rorw = '';
 			
 	    	# width definition may differ for this port ....
 	    	for my $ii ( split( ',', $$sport{$port} ) ) {
@@ -983,6 +985,9 @@ sub _create_entity ($$) {
 				}
 				if ( exists( $thissig->{'_descr_'} ) ) {
 					$descr = $thissig->{'_descr_'};
+				}
+				if ( exists( $thissig->{'rorw'} ) ) {
+					$rorw = $thissig->{'rorw'};
 				}
 	    	}
 	    	# Still at the preset value?
@@ -1177,7 +1182,8 @@ sub _create_entity ($$) {
 		    		'low'  => $l,   # set default to '' string
 					);
         		$res{$port}{'cast'} = $cast if ( $cast ); # Adding a typecast if requested
-				$res{$port}{'__gen__'}  = 1     if ( $gen );
+        		$res{$port}{'rorw'} = $rorw if ( defined($rorw) and $rorw );
+				$res{$port}{'__gen__'}  = 1 if ( $gen );
 				$res{$port}{'__nr__'} = $nr   if ( defined( $nr ) );
 				$res{$port}{'__descr__'} = $descr;
 	    	}
@@ -2055,7 +2061,12 @@ sub _mix_wr_regorwire($$) {
 		 $entities{$entity}{$port}{'type'} =~ m/(__|%)(REG|WIRE)(__|%)/io ) {
 				$rw = lc( $2 );
 	}
-	
+
+	#!wig20051024: the above methods do not allow fine control
+	if ( exists( $entities{$entity}{$port}{'rorw'} ) and
+			$entities{$entity}{$port}{'rorw'} ) {
+		$rw = $entities{$entity}{$port}{'rorw'};
+	}
 	return $rw;
 
 } # End of _mix_wr_regorwire
