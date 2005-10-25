@@ -57,6 +57,8 @@ my $common_path = getcwd();
 #  will only work if we are in the test directory ... else use the -mix flag ..
 my $mix = dirname( $common_path ) . "/mix_0.pl";
 
+my $cmd_ext = ( $^O =~ m/ms-win/io ) ? '.bat' : '.sh';
+
 my $status = GetOptions( \%opts, qw (
 	update!
 	debug!
@@ -551,91 +553,90 @@ sub runMix($) {
 
     for(my $i=0; $i<$numberOfTests; $i++) {
 
-    	my $command = "";
-    	my $options;
-    	my $path = "";
-    	my $find = "";
+	my $command = '';
+	my $options = '';
+	my $path = '';
+	my $find = '';
 
 	$options = $tests[$i]->{'options'};
-        my $testpath = $tests[$i]->{'path'};
-        $path = $wdir . "/$tests[$i]->{'path'}";
+    my $testpath = $tests[$i]->{'path'};
+    $path = $wdir . "/$tests[$i]->{'path'}";
     
-        my $testname = $tests[$i]->{'name'};
+    my $testname = $tests[$i]->{'name'};
 
-		if ( $testRE and $testpath !~ m/$testRE/io or
+	if ( $testRE and $testpath !~ m/$testRE/io or
 		     exists $tests[$i]->{'skip'} and $tests[$i]->{'skip'} ) {
 			# this test is not selected ...
 			print( "Skipped test $testname ($testpath)\n" );
 			next;
-		}
+	}
 
-		if ( $opts{'list'} ) {
-			print( "Selected test $testname ($testpath)\n" );
-			next;
-		}
+	if ( $opts{'list'} ) {
+		print( "Selected test $testname ($testpath)\n" );
+		next;
+	}
 
-		if ( defined( $opts{'import'} ) ) { # Create test directory from scratch (import directory)
-			doImport( $type, $tests[$i]->{'name'}, $tests[$i]->{'path'} );
-			next;
-		}
+	if ( defined( $opts{'import'} ) ) { # Create test directory from scratch (import directory)
+		doImport( $type, $tests[$i]->{'name'}, $tests[$i]->{'path'} );
+		next;
+	}
 
-    	if( defined( $opts{'update'} ) ) {
-    		$options = "$options -nodelta";
-    	}
+    if( defined( $opts{'update'} ) ) {
+    	$options = "$options -nodelta";
+    }
     
-    	# Purge and strip out all extra sheets from intermediate data
-    	if( defined( $opts{'export'} ) ) {
-    		$options = "$options -strip -nodelta";
+    # Purge and strip out all extra sheets from intermediate data
+    if( defined( $opts{'export'} ) ) {
+    	$options = "$options -strip -nodelta";
+    }
+
+	# Do not use built-in, but external command
+    if( gotScript($path, "$tests[$i]->{'name'}$cmd_ext")==1) {
+    	for my $opt ( qw( export debug purge update ) ) {
+    		if( defined $opts{$opt}) {
+    			$ENV{'MIXTEST_OPT'} .= $opt . ' '; 
+    			if ( -x ( $path . '/' . $tests[$i]->{'name'} . '-' . $opt . $cmd_ext) ) {
+    				$command = $tests[$i]->{'name'}. '-' . $opt . $cmd_ext;
+    			} else {
+    				$command = $tests[$i]->{'name'}. $cmd_ext;
+    			}
+        	}
     	}
-    
-    	if( gotScript($path, "$tests[$i]->{'name'}.bat")==1) {
-    	    if( defined $opts{'export'}) {
-    			$command = $tests[$i]->{'name'}."-export.bat";
-    	    }
-    	    elsif( defined $opts{'debug'}) {
-    			$command = $tests[$i]->{'name'}."-debug.bat";
-    	    }
-    	    elsif( defined $opts{'purge'}) {
-    			$command = $tests[$i]->{'name'}."-purge.bat";
-    	    }
-    	    elsif( defined $opts{'update'}) {
-    			$command = $tests[$i]->{'name'}."-update.bat";
-    	    }
-    	    else {
-    			$command = $tests[$i]->{'name'}.".bat";
-    	    }
-    		unless( -x $path . "/" . $command ) {
-    			print( "Warning: Missing script $command in path $path, use default instead!\n" );
-    			$command = "";
-    		}
+    	unless( -x $path . '/' . $command ) {
+    		print( "Warning: Missing script $command in path $path, use default instead!\n" );
+    		$command = '';
     	}
-    	unless ( $command ) {
-    	    while($tests[$i]->{'path'} =~ /\//g) {
-    			$find = $find . "../";
-    	    }
-	    $mix = $mix || "mix_0.pl"; # Default ...
-	    # Define the mix_0.pl to run
-	    # $command  = "h:/work/mix_new/mix/mix_0.pl $options $find../$tests[$i]->{'name'}.$type";
-    	    $command  = "perl -x " . ( $opts{'debug'} ? "-d " : "" ) .
-		"\"$mix\" $options \"$find../$tests[$i]->{'name'}.$type\"";
+    	# Create some environment variables:
+    	# MIX_CMD, MIX_OPT
+    	$ENV{'MIXTEST_CMD'} = $mix || "mix_0.pl";
+    }
+    unless ( $command ) {
+        while($tests[$i]->{'path'} =~ /\//g) {
+    		$find = $find . "../";
+    	}
+		$mix = $mix || "mix_0.pl"; # Default ...
+		# Define the mix_0.pl to run
+		# $command  = "h:/work/mix_new/mix/mix_0.pl $options $find../$tests[$i]->{'name'}.$type";
+    	$command  = 'perl -x ' . ( $opts{'debug'} ? '-d ' : '' ) .
+			"\"$mix\" $options \"$find../$tests[$i]->{'name'}.$type\"";
     	    # $command  = "perl -d " . $command if ( $opts{'debug'} );
-    	}
-    	chdir( $path) || logwarn("ERROR: Directory <$path> not found!");
+    }
+    chdir( $path ) || logwarn("ERROR: Directory <$path> not found!");
     
-        if ( -r "$testname-t.out" and not $opts{'debug'} ) {
-    	    rename( "$testname-t.out", "$testname-t.out.0" )
-    	      or print "rename of $testname-t.out failed"
-    	        and exit 1;
-        }
+    if ( -r "$testname-t.out" and not $opts{'debug'} ) {
+	    rename( "$testname-t.out", "$testname-t.out.0" )
+	       	      or print "rename of $testname-t.out failed"
+    	          and exit 1;
+    }
 
-    	if ( defined( $opts{'purge'} ) ) {
-    	    unlink <*.diff>;
-    		unlink <*.out.0>;
-    		unlink <*.out>;
-    		unlink <*.pld>; #!wig20031218: no longer created ...
-    		print( "Purged test $testname\n" );
-    		next;
-    	} else {
+    if ( defined( $opts{'purge'} ) ) {
+        unlink <*.diff>;
+    	unlink <*.out.0>;
+    	unlink <*.out>;
+    	unlink <*.pld>; #!wig20031218: no longer created ...
+    	print( "Purged test $testname\n" );
+    	next;
+    } else {
     	    # "export", "update" and non-opt mode will create new output data:
 	    my $status;
 	    my $t0;
