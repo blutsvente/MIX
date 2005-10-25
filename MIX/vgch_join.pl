@@ -27,12 +27,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: vgch_join.pl,v 1.2 2005/10/18 15:27:52 wig Exp $  |
+# | Id           : $Id: vgch_join.pl,v 1.3 2005/10/25 12:14:34 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.2 $                                      |
-# | Mod.Date     : $Date: 2005/10/18 15:27:52 $                           |
+# | Version      : $Revision: 1.3 $                                      |
+# | Mod.Date     : $Date: 2005/10/25 12:14:34 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -47,6 +47,9 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: vgch_join.pl,v $
+# | Revision 1.3  2005/10/25 12:14:34  wig
+# | Implemented RFE 20051024a.
+# |
 # | Revision 1.2  2005/10/18 15:27:52  wig
 # | Primary releaseable vgch_join.pl
 # |
@@ -101,7 +104,7 @@ sub replace_macros ($);
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.2 $'; # RCS Id
+$::VERSION = '$Revision: 1.3 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 logconfig(
@@ -135,6 +138,7 @@ mix_init();               # Presets ....
 #
 #TODO: Add that to application note
 # -dir DIRECTORY            write output data to DIRECTORY (default: cwd())
+# -out FILENAME				print results into FILENAME
 # -conf key.key.key=value   Overwrite $EH{key}{key}{key} with value
 # -listconf                 Print out all available/predefined configurations options
 # -sheet SHEET=MATCH        SHEET can be one of "hier", "conn", "vi2c"
@@ -144,9 +148,8 @@ mix_init();               # Presets ....
 #                                   Please be catious when using that option.
 # -bak                      Shift previous generated output to file.v[hd].bak. When combined
 #                                   with -delta you get both .diff, .bak and new files :-)
-#
-
-# -top TOP
+# -top TOP					top level information from file TOP
+# -[no]listtop				print out reworked top sheet (default: no)
 
 my %xls = ();
 my $top = '';
@@ -157,6 +160,8 @@ $xls{'top_sheet'} = "Sheet1";
 $xls{'others'} = 'peri.*'; # Take the default.xls config key
 $EH{'default'}{'xls'} = '.*';
 $EH{'macro'}{'%UNDEF_1%'} = '';
+# Remove NL and CR
+$EH{'format'}{'csv'}{'style'} = 'stripnl,doublequote,autoquote,maxwidth';
 
 # Add your options here ....
 mix_getopt_header( qw(
@@ -165,16 +170,14 @@ mix_getopt_header( qw(
     conf|config=s@
     sheet=s@
     top=s
+    listtop!
     listconf
     delta!
     strip!
     bak!
-    init
-    import=s@
-    report=s@
     ));
 
-if ( $#ARGV < 0 ) { # Need  at least one sheet!!
+if ( scalar( @ARGV ) < 1 ) { # Need  at least one sheet!!
     logdie("ERROR: No input file specified!\n");
 }
 
@@ -203,6 +206,7 @@ my @all = ();
 my $sub_order = '';
 my $sub_addr = '';
 my $sub_key = '';
+my $ignore_flag = 0; # Set if the Ignore line seen once ..
 
 #
 # open the top file first,
@@ -269,11 +273,6 @@ for my $files ( @ARGV ) {
 			$sheets{$top}{$xls{top_sheet}}->[$line]{'::comment'} .=
 				'MIX mapped ' . $files . ':' . $s; 
 			
-			# } 
-			# else {
-			# 	push( @all, { '::ign' => '# # # =:=:=:=> Sheet: ' . '__MISS__' .
-			# 		' from file ' . '__MISS__' . ' for definition of ' . $def } );
-			# }
 		}
 		delete( $sheets{$files}{$s} );
 	}
@@ -332,13 +331,19 @@ for my $k ( @$sub_addr ) {
 # Convert back to table and print out ...
 
 # Print TOP sheet ->
-my $end_table = db2array( $sheets{$top}{$xls{'top_sheet'}}, 'join', '' );
-replace_macros( $end_table );
-write_outfile( $outname , "VGCH_TOP", $end_table );
+my $end_table = ();
+
+if( $OPTVAL{'listtop'} ) {
+	$end_table = db2array( $sheets{$top}{$xls{'top_sheet'}}, 'join', '' );
+	replace_macros( $end_table );
+	write_outfile( $outname , "VGCH_TOP", $end_table );
+} else {
+	# Remove the sheet seperator head ...
+	$EH{'format'}{'csv'}{'sheetsep'} = '';
+}
 
 $end_table = db2array( \@all, 'default', '' );
 replace_macros( $end_table );
-
 
 write_outfile( $outname , "JOIN_VGCH", $end_table );
 
@@ -381,6 +386,11 @@ sub fix_sheet ($$) {
 		( $postblock = $client->{'client'} ) =~ s/$client->{'definition'}//;
 	}	
 	for my $i ( @$inref ) {
+		
+		#!wig20051025: Special for the "Ignore" line ->
+		next if ( $i->{'::ign'} =~ m/^Ignore/io and $ignore_flag );
+		$ignore_flag++ if ( $i->{'::ign'} =~ m/^Ignore/io );
+		
 		push( @outdata, { %$i } ); # Make sure data gets >copied<
 		my $sub;
 		if ( $i->{'::sub'} =~ m/^[0-9a-f]+$/io ) {
@@ -398,7 +408,7 @@ sub fix_sheet ($$) {
 		# Rewrite ::sub : add base to input ::sub
 		if ( $sub =~ m/^\d+$/o ) {# How to test for digits?
 			$sub += $base;
-			$outdata[-1]{'::sub'} = sprintf( '%lx', $sub); # How to protect that against
+			$outdata[-1]{'::sub'} = sprintf( '0x%lx', $sub); # How to protect that against
 		} else {
 			$outdata[-1]{'::sub'} = $sub . " + $base";
 		}

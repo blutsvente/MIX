@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.51 2005/10/24 12:14:03 wig Exp $
+# $Id: TODO.txt,v 1.52 2005/10/25 12:14:34 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -58,8 +58,13 @@ Danke und Gruﬂ Michael
 
 	Req: michael
 	Prio: medium
-	Status: open
-
+	Status: !wig20051025: solved
+	Solution:	1. add 0x to fix_sheet
+				2. extended csv writer to catch \n and \r!
+				3. add _mix_utils_reorder function (fixes the print order)
+				4. remove repeated ::ign/Ignore lines
+				5. $EH{'format'}{'csv'}{'sheetsep'} = '' in combination with -nolisttop
+			preset $EH{'format'}{'csv'}{'style'} to remove <nl> 
 
 >>title: 20051021b/Bug: check ' handling in DOS-Cmd prompt
 
@@ -106,6 +111,9 @@ l 102) line 1.
 		-> prepends val to a.b.c
 	-conf a.b.c=+val
 		-> appends val to a.b.c
+	-conf a.b.c=/val
+		-> unset/set switch val (e.g. from val to noval)
+	Rethink!
 
 	Req: wig
 	Prio: low
