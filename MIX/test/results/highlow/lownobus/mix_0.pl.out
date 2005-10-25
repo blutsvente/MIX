@@ -1,53 +1,80 @@
-05/07/20 05:59:29 
+05/10/25 11:14:55 ########################################################################
+05/10/25 11:14:55 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl ../../highlow.xls
+05/10/25 11:14:55 
 #######################################################################
-##### mix_0.pl (Revision: 1.36 )
+##### mix_0.pl (Revision: 1.38 )
 #####
 ##### MIX  
-#####   MixUtils    1.68 $
-#####   MixUtils::IO    1.25 $
-#####   MixParser   1.54 $
-#####   MixWriter   1.57 $
-#####   MixChecker  1.8 $
+#####   MixUtils    1.83 $
+#####   MixUtils::IO    1.32 $
+#####   MixParser   1.60 $
+#####   MixWriter   1.66 $
+#####   MixChecker  1.10 $
 #####   MixIOParser 1.17 $
-#####   MixI2CParser 1.13 $
+#####   MixI2CParser 1.14 $
+#####   MixReport 1.6 $
 ##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
 #######################################################################
-05/07/20 05:59:30 Reading worksheet CONNLOWNOBUS of H:/work/eclipse/mix/test/xls_input/highlow/lownobus/../../highlow.xls
-05/07/20 05:59:30 Reading worksheet HIER of H:/work/eclipse/mix/test/xls_input/highlow/lownobus/../../highlow.xls
-05/07/20 05:59:30 WARNING: Empty header in column 14, sheet-type conn, skipping!
-05/07/20 05:59:30 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
-05/07/20 05:59:30 WARNING: WARNING: map assignment from LOW to LOW_BUS!
-05/07/20 05:59:30 WARNING: WARNING: map assignment from LOW to LOW_BUS!
-05/07/20 05:59:30 WARNING: WARNING: map assignment from LOW to LOW_BUS!
-05/07/20 05:59:30 Autoreducing port type for signal partzero to std_ulogic
-05/07/20 05:59:32 WARNING: File highlow-mixed.xls already exists! Contents will be changed
-05/07/20 05:59:32 WARNING: Rotating 3 old sheets of CONF!
-05/07/20 05:59:32 WARNING: Rotating 3 old sheets of CONN!
-05/07/20 05:59:33 WARNING: Rotating 3 old sheets of HIER!
-05/07/20 05:59:33 WARNING: Removing old and and diff sheets in file: highlow-mixed.xls
-05/07/20 05:59:33 WARNING: ERROR: workbook with different path already opened!
-05/07/20 05:59:33 Port partzero_1 of entity ent_ac one bit wide, reduce to signal
-
-05/07/20 05:59:33 WARNING: ============= SUMMARY =================
-05/07/20 05:59:33 WARNING: SUM: Summary of checks and created items:
-05/07/20 05:59:33 WARNING: SUM: checkforce 0
-05/07/20 05:59:33 WARNING: SUM: checkunique 0
-05/07/20 05:59:33 WARNING: SUM: checkwarn 0
-05/07/20 05:59:33 WARNING: SUM: cmacros 0
-05/07/20 05:59:33 WARNING: SUM: conn 2
-05/07/20 05:59:33 WARNING: SUM: errors 1
-05/07/20 05:59:33 WARNING: SUM: genport 0
-05/07/20 05:59:33 WARNING: SUM: hdlfiles 7
-05/07/20 05:59:33 WARNING: SUM: inst 16
-05/07/20 05:59:33 WARNING: SUM: multdriver 1
-05/07/20 05:59:33 WARNING: SUM: nodriver 0
-05/07/20 05:59:33 WARNING: SUM: noload 0
-05/07/20 05:59:33 WARNING: SUM: openports 0
-05/07/20 05:59:33 WARNING: SUM: tie_hl 1
-05/07/20 05:59:33 WARNING: SUM: warnings 3
-05/07/20 05:59:33 WARNING: SUM: === Number of parsed input tables: ===
-05/07/20 05:59:33 WARNING: SUM: conf 0
-05/07/20 05:59:33 WARNING: SUM: hier 1
-05/07/20 05:59:33 WARNING: SUM: conn 1
-05/07/20 05:59:33 WARNING: SUM: io 0
-05/07/20 05:59:33 WARNING: SUM: i2c 0
+05/10/25 11:14:55 Reading worksheet CONNLOWNOBUS of H:/work/eclipse/MIX/test/xls_input/highlow/lownobus/../../highlow.xls
+05/10/25 11:14:56 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/highlow/lownobus/../../highlow.xls
+05/10/25 11:14:56 WARNING: Empty header in column 14, sheet-type conn, skipping!
+05/10/25 11:14:56 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/10/25 11:14:56 WARNING: WARNING: map assignment from LOW to LOW_BUS!
+05/10/25 11:14:56 WARNING: WARNING: map assignment from LOW to LOW_BUS!
+05/10/25 11:14:56 WARNING: WARNING: map assignment from LOW to LOW_BUS!
+05/10/25 11:14:56 Add_port: signal partzero2 adds port partzero2 to instance inst_t
+05/10/25 11:14:56 Adding port to hierachy module inst_a for signal partzero2!
+05/10/25 11:14:56 Adding port to hierachy module inst_a for signal partzero2!
+05/10/25 11:14:56 Adding port to hierachy module inst_a for signal partzero2!
+05/10/25 11:14:56 Add_port: signal partzero2 adds port p_mix_partzero2_15_12_gi to instance inst_a
+05/10/25 11:14:56 Add_port: signal partzero2 adds port p_mix_partzero2_11_11_go to instance inst_a
+05/10/25 11:14:56 Add_port: signal partzero2 adds port p_mix_partzero2_10_9_gi to instance inst_a
+05/10/25 11:14:56 Add_port: signal partzero2 adds port p_mix_partzero2_8_7_go to instance inst_a
+05/10/25 11:14:56 Add_port: signal partzero2 adds port p_mix_partzero2_6_6_gi to instance inst_a
+05/10/25 11:14:56 Add_port: signal partzero2 adds port p_mix_partzero2_5_0_go to instance inst_a
+05/10/25 11:14:56 Autoreducing port type for signal partzero2 to std_ulogic
+05/10/25 11:14:56 Autoconnecting bit signal partzero2 to bus port p_mix_partzero2_15_12_gi
+05/10/25 11:14:56 Autoreducing port type for signal partzero2 to std_ulogic
+05/10/25 11:14:56 Autoconnecting bit signal partzero2 to bus port p_mix_partzero2_8_7_go
+05/10/25 11:14:56 Autoreducing port type for signal partzero to std_ulogic
+05/10/25 11:14:56 Autoreducing port type for signal partzero2 to std_ulogic
+05/10/25 11:14:57 WARNING: File highlow-mixed.xls already exists! Contents will be changed
+05/10/25 11:14:57 WARNING: Rotating 3 old sheets of CONF!
+05/10/25 11:14:59 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/highlow/lownobus/highlow-mixed.xls
+05/10/25 11:15:00 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/10/25 11:15:00 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/highlow/lownobus/highlow-mixed.xls
+05/10/25 11:15:00 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/10/25 11:15:01 Info: unchanged file ent_a-e.vhd
+05/10/25 11:15:01 Port partzero_1 of entity ent_ac one bit wide, reduce to signal
+05/10/25 11:15:02 Info: unchanged file ent_b-e.vhd
+05/10/25 11:15:02 Info: unchanged file ent_t-e.vhd
+05/10/25 11:15:02 WARNING: WARNING: Reconnecting port partzero_1 at instance inst_ac: now: A::, was: A::!
+05/10/25 11:15:02 Info: unchanged file ent_a-rtl-a.vhd
+05/10/25 11:15:03 Info: unchanged file ent_b-rtl-a.vhd
+05/10/25 11:15:03 Info: unchanged file ent_t-rtl-a.vhd
+05/10/25 11:15:03 Info: unchanged file highlow-c.vhd
+05/10/25 11:15:03 WARNING: ============= SUMMARY =================
+05/10/25 11:15:03 WARNING: SUM: Summary of checks and created items:
+05/10/25 11:15:03 WARNING: SUM: checkforce 0
+05/10/25 11:15:03 WARNING: SUM: checkunique 0
+05/10/25 11:15:03 WARNING: SUM: checkwarn 0
+05/10/25 11:15:03 WARNING: SUM: cmacros 0
+05/10/25 11:15:03 WARNING: SUM: conn 3
+05/10/25 11:15:03 WARNING: SUM: errors 0
+05/10/25 11:15:03 WARNING: SUM: genport 7
+05/10/25 11:15:03 WARNING: SUM: hdlfiles 7
+05/10/25 11:15:03 WARNING: SUM: inst 16
+05/10/25 11:15:03 WARNING: SUM: multdriver 2
+05/10/25 11:15:03 WARNING: SUM: nodriver 0
+05/10/25 11:15:03 WARNING: SUM: noload 0
+05/10/25 11:15:03 WARNING: SUM: openports 0
+05/10/25 11:15:03 WARNING: SUM: tie_hl 1
+05/10/25 11:15:03 WARNING: SUM: warnings 4
+05/10/25 11:15:03 WARNING: SUM: === Number of parsed input tables: ===
+05/10/25 11:15:03 WARNING: SUM: conf 0
+05/10/25 11:15:03 WARNING: SUM: hier 1
+05/10/25 11:15:03 WARNING: SUM: conn 1
+05/10/25 11:15:03 WARNING: SUM: io 0
+05/10/25 11:15:03 WARNING: SUM: i2c 0
+05/10/25 11:15:03 WARNING: SUM: Number of changes in intermediate: 0
+05/10/25 11:15:03 WARNING: SUM: Number of changed files: 0
