@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.84 $                                         |
+# | Revision:   $Revision: 1.85 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/10/24 15:43:48 $                              |
+# | Date:       $Date: 2005/10/25 12:08:18 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.84 2005/10/24 15:43:48 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.85 2005/10/25 12:08:18 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,8 +30,8 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
-# | Revision 1.84  2005/10/24 15:43:48  wig
-# | added 'reg detection to ::out column
+# | Revision 1.85  2005/10/25 12:08:18  wig
+# | Minor changes for vgch_join.pl (cvs writer, sort multiple fields)
 # |
 # | Revision 1.83  2005/10/24 12:10:30  wig
 # | added output.language.verilog = ansistyle,2001param
@@ -378,11 +378,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.84 2005/10/24 15:43:48 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.85 2005/10/25 12:08:18 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.84 $';         #'
+my $thisrevision        =      '$Revision: 1.85 $';         #'
 
-# Revision:   $Revision: 1.84 $   
+# Revision:   $Revision: 1.85 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -3050,7 +3050,7 @@ Returns: %order (keys are the ::head items)
 
 20050708wig: add _multorder_ handling
 20050614: remove extra whitespace around the keywords
-
+20051024: make sure multiple fields are printed in one block
 =cut
 
 sub parse_header($$@){
@@ -3114,14 +3114,14 @@ sub parse_header($$@){
 
     #
     # Initialize new fields from ::default
-    # This will catch multiply defined fields, too (together with the split code below)
+    # This will catch multiply defined fields, too
+    #		(together with the split code below)
     #
     for my $i ( 0..$#row ) {
 	    my $head = $row[$i];	
 	    unless ( defined( $$templ->{'field'}{$head} ) ) {
 	        logsay("Added new column header $head");
 	        @{$$templ->{'field'}{$head}} = @{$$templ->{'field'}{'::default'}};
-	        #Check: does this really copy everything
 	        $$templ->{'field'}{$head}[4] = $$templ->{'field'}{'nr'};
 	        $$templ->{'field'}{'nr'}++;
 	    }
@@ -3136,6 +3136,7 @@ sub parse_header($$@){
     # Split/rename muliple headers ::head becomes ::head, ::head:1 ::head:2, ::head:3 ...
     #
     my %or = (); # "flattened" ordering
+    my @resort = ();
     for my $i ( keys( %rowh ) ) { # Iterate through multiple headers ...
 		next if ( $i =~ m/^::skip/ ); #Ignore bad fields
 		if ( $#{$rowh{$i}} > 0 ) { # Multiple field header:
@@ -3148,6 +3149,7 @@ sub parse_header($$@){
 			my @range = 0..$nummultcols;
 			@range = reverse( @range ) if $reverse;
 			unless ( $colorder =~ m/F/o ) { # no F -> do not map first/last to :0!
+				push( @resort, $i );
 				$or{$i} = $rowh{$i}[$range[0]];
 				shift @range;
 			}
@@ -3162,39 +3164,79 @@ sub parse_header($$@){
 					#lu20050624 disable required-attribute for the additional
 					# headers because they do not occur in input
 					$$templ->{'field'}{$funique}[2] = 0;
-					#Check: do a real copy ...
 					#Remember print order no longer is unique
 					
 					# Increase print order:
-					$$templ->{'field'}{$funique}[4] = $$templ->{'field'}{'nr'};
-					$$templ->{'field'}{'nr'}++;
+					#!wig20051025: use same number as templ, will be changed in sort
+					$$templ->{'field'}{$funique}[4] = $$templ->{'field'}{$i}[4];
+					$$templ->{'field'}{'nr'}++
 				}
+				push( @resort, $funique );
 				$or{$funique} = $rowh{$i}[$ii];
 			}
 			# Remember number of multiple header columns
-			if ( not exists( $EH{$kind}{'_mult_'}{$i} ) ) {
-					$EH{$kind}{'_mult_'}{$i} = $nummultcols;
+			if ( not exists( $$templ->{'_mult_'}{$i} ) ) {
+					$$templ->{'_mult_'}{$i} = $nummultcols;
 			} else {
-				if ( $EH{$kind}{'_mult_'}{$i} ne $nummultcols ) {
+				if ( $$templ->{'_mult_'}{$i} ne $nummultcols ) {
 					logwarn("WARNING: Multiple column header $i in $kind count mismatch: " .
-					$nummultcols . " now, " . $EH{$kind}{'_mult_'}{$i} . " previously" );
+					$nummultcols . " now, " . $$templ->{'_mult_'}{$i} . " previously" );
 					$EH{'sum'}{'warnings'}++;
 				}
-				if ( $EH{$kind}{'_mult_'}{$i} < $nummultcols ) {
-					$EH{$kind}{'_mult_'}{$i} = $nummultcols;
+				if ( $$templ->{'_mult_'}{$i} < $nummultcols ) {
+					$$templ->{'_mult_'}{$i} = $nummultcols;
 				}
 			}
 		} else {
 			$or{$i} = $rowh{$i}[0];
+			push( @resort, $i );
 		}
 	}
 	
     $EH{$kind}{'ext'} = scalar(keys(%or));
 	
+	if ( exists $$templ->{'_mult_'} ) {
+		_mix_utils_reorder( $templ, \@resort, \%or );
+	}
+		
     # Finally, got the field name list ... return now
     return %or;
 }
 
+#
+# Multiple header are uniquified now, but print order
+#   needs to be serialized
+#
+# Global:
+#	changes $EH{$type}{'field'} ... print order
+#
+sub _mix_utils_reorder ($$$) {
+	my $templ = shift;
+	my $resortar = shift;
+	my $order = shift;
+	
+	# highest multiple field with
+	#  find conflicting print order the start number 
+	# for my ( keys( %$order ) ) {
+	# }
+	my @atend = ();
+	my $print_start = 1;
+	for my $k ( sort { $$templ->{'field'}{$a}[4] <=> $$templ->{'field'}{$b}[4] or
+				$order->{$a} <=> $order->{$b}; } @$resortar ) {
+		next if ( $$templ->{'field'}{$k}[4] == 0 );
+		if ( $$templ->{'field'}{$k} < 0 ) { # Save for later usage
+			push( @atend , $k );
+		} else {
+			$$templ->{'field'}{$k}[4] = $print_start++;
+		}
+	}
+
+	for my $k ( @atend ) {
+		$$templ->{'field'}{$k}[4] = $print_start++;
+	}
+		
+	return;
+} # End of _mix_utils_reorder
 
 ####################################################################
 ## mix_store

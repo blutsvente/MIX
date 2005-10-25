@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.32 $                                          |
+# | Revision:   $Revision: 1.33 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/10/19 15:47:59 $                              |
+# | Date:       $Date: 2005/10/25 12:08:18 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.33  2005/10/25 12:08:18  wig
+# | Minor changes for vgch_join.pl (cvs writer, sort multiple fields)
+# |
 # | Revision 1.32  2005/10/19 15:47:59  wig
 # |
 # |  	improve CVS header detection
@@ -204,11 +207,11 @@ sub mix_utils_io_check_path ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.32 2005/10/19 15:47:59 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.33 2005/10/25 12:08:18 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.32 $'; #'  
+my $thisrevision    =      '$Revision: 1.33 $'; #'  
 
-# Revision:   $Revision: 1.32 $
+# Revision:   $Revision: 1.33 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2267,7 +2270,8 @@ sub write_csv($$$) {
     my $cellsep = $EH{'format'}{'csv'}{'cellsep'};
     my $quoting = $EH{'format'}{'csv'}{'quoting'};
     my $style = $EH{'format'}{'csv'}{'style'};
-
+	my $sheetm = $EH{'format'}{'csv'}{'sheetsep'};
+	
     my $temp;
 
     # Write to other directory ...
@@ -2279,39 +2283,37 @@ sub write_csv($$$) {
 
     if ( -r $file ) {
 
-    my $max = $EH{'intermediate'}{'keep'};
-	my $sheetm = $EH{'format'}{'csv'}{'sheetsep'};
+    	my $max = $EH{'intermediate'}{'keep'};
+		my $temp;
+		my $osheet = 0;
 
-	my $temp;
-	my $osheet = 0;
+		# If it exist and $sheetm ist set, try to recover original contenst ...
+		if ( $sheetm ) {
+    		open(FILE, "<$file");
+			binmode FILE;
+			@data = <FILE>;
+			close(FILE);
 
-	# If it exists, it could be open, too?
-    open(FILE, "<$file");
-	binmode FILE;
-	@data = <FILE>;
-	close(FILE);
+			for(my $i=0; $i<scalar(@data); $i++) {
+	    		if($osheet==0 && $data[$i]=~ m/^$sheetm$sheet\s*$/) {
+					$osheet = 1;
+					$start = $i;
+					delete $data[$i];
+	    		} elsif( $osheet==1) {
+					if($data[$i]=~ m/^$sheetm/) {
+		    			$osheet = 0;
+		    			$stop = $i;
+					} else {
+		    			delete $data[$i];
+					}
+	    		}
+			}
 
-	for(my $i=0; $i<scalar(@data); $i++) {
-	    if($osheet==0 && $data[$i]=~ m/^$sheetm$sheet\s*$/) {
-		$osheet = 1;
-		$start = $i;
-		delete $data[$i];
-	    }
-	    elsif( $osheet==1) {
-		if($data[$i]=~ m/^$sheetm/) {
-		    $osheet = 0;
-		    $stop = $i;
-		}
-		else {
-		    delete $data[$i];
-		}
-	    }
-	}
-
-	if($stop==0) {
-	    $start = scalar @data;
-	    $stop = $start;
-        }
+			if($stop==0) {
+	    		$start = scalar @data;
+	    		$stop = $start;
+        	}
+    	}
     }
 
     # To support \n without \r on MS-Win, open in binmode
@@ -2323,51 +2325,56 @@ sub write_csv($$$) {
     # Previous data
     for(my $i=0; $i<$start; $i++) {
         if(defined $data[$i]) {
-	    print FILE $data[$i];
-	}
+	    	print FILE $data[$i];
+		}
     }
 
-	if ( $EH{'format'}{'csv'}{'sheetsep'} ) {
-    	print FILE $EH{'format'}{'csv'}{'sheetsep'} . $sheet . "\n";
+	if ( $sheetm ) {
+    	print FILE $sheetm . $sheet . "\n";
 	} else {
 		logsay("INFO: Start printing sheet $sheet, no seperator selected!" );
 	}
 
     for(my $y=0; $y<$ymax; $y++) {
         for(my $x=0; $x<$xmax; $x++) {
-	    if(defined $$r_a[$y][$x] and $$r_a[$y][$x] ne "" ) {
-		# Classic style -> single lines, remove new-lines!
-		#Print non-empty cells:
-		#'style'      => 'doublequote,auto,wrapnl,maxwidth',  # controll the CSV output
-		# doublequote: mask quoting char by duplication! Else mask with \
-		# autoquote: only quote if required (embedded whitespace)
-		# wrapnl: wrap embedded new-line to space
-		# masknl: replace newline by \\n
+	    	if(defined $$r_a[$y][$x] and $$r_a[$y][$x] ne "" ) {
+			# Classic style -> single lines, remove new-lines!
+			#Print non-empty cells:
+			#'style'      => 'doublequote,auto,wrapnl,maxwidth',  # controll the CSV output
+			# doublequote: mask quoting char by duplication! Else mask with \
+			# autoquote: only quote if required (embedded whitespace)
+			# wrapnl: wrap embedded new-line to space
+			# masknl: replace newline by \\n
 	        $temp = $$r_a[$y][$x];
-		if ( $style =~ m/\bclassic\b/io ) {
-		    $temp =~ s/$quoting/\\$quoting/g if $quoting;
-		    $temp =~ s/\S\n/ /g; # remove linefeed
-		    $temp =~ s/\s\n/ /g; # bug here? why should newline always have a leading whitespace?
-		    $temp = $quoting . $temp . $quoting;
-		} else {
-		    if ( $style =~ m/\bwrapnl\b/io ) {
-			$temp =~ s/\s*\n/ /og; # Swallow newlines
-		    } elsif ( $style =~ m/\bmasknl\b/io ) {
-			$temp =~ s/\n/\\n/og; #What to do with leading/trailing tabs?
-		    } # elsif ( $EH{iswin} ) {
-		    # $temp =~ s/\n/\r/g; # Make the internal new-line a simple "nl"
-		    # }
-		    if ( $style =~ m/\bdoublequote\b/io ) {
-			$temp =~ s/$quoting/$quoting$quoting/go;
-		    }
-		    if ( $style =~ m/autoquote/io ) {
-			if ( $temp =~ m/($cellsep|$quoting|\n)/ ) {
-			    $temp = $quoting . $temp . $quoting;
+			if ( $style =~ m/\bclassic\b/io ) {
+		    	$temp =~ s/$quoting/\\$quoting/g if $quoting;
+		    	$temp =~ s/\S\n/ /g; # remove linefeed
+		    	$temp =~ s/\s\n/ /g; # bug here? why should newline always have a leading whitespace?
+		    	$temp = $quoting . $temp . $quoting;
+			} else {
+		    	if ( $style =~ m/\b(wrap|strip)nl\b/io ) {
+					$temp =~ s/\s*[\r\n]/ /og; # Swallow newlines and <cr>
+		    	} elsif ( $style =~ m/\bmasknl\b/io ) {
+					$temp =~ s/\n/\\n/og; #What to do with leading/trailing tabs?
+					$temp =~ s/\r/\\r/og;
+		    	}
+		    	if ( $style =~ m/\b(stripna)\b/o ) {
+	    		# Replace all non ASCII (non printables!) by spaces
+	    			$temp =~ s/[[:cntrl:]]/ /go;
+	    		}
+		    	# elsif ( $EH{iswin} ) {
+		    	# $temp =~ s/\n/\r/g; # Make the internal new-line a simple "nl"
+		    	# }
+		    	if ( $style =~ m/\bdoublequote\b/io ) {
+					$temp =~ s/$quoting/$quoting$quoting/go;
+		    	}
+		    	if ( $style =~ m/autoquote/io ) {
+					if ( $temp =~ m/($cellsep|$quoting|\n)/ ) {
+			    		$temp = $quoting . $temp . $quoting;
+					}
+		    	}
 			}
-		    }
-		}
-		#$temp =~ tr/\n//;
-		print FILE $temp;
+			print FILE $temp;
 	    }
 	    unless($x+1==$xmax) {
 	        print FILE $cellsep;
@@ -2380,8 +2387,8 @@ sub write_csv($$$) {
     # Previous data
     for(my $i=$start; $i<$stop; $i++) {
         if(defined $data[$i]) {
-	    print FILE $data[$i];
-	}
+	    	print FILE $data[$i];
+		}
     }
 
     close(FILE);
@@ -2707,7 +2714,8 @@ sub mix_utils_mask_excel($) {
 	    		# Replace \n by spaces
 	    		$ii =~ s/[\n\r]+/ /go;
 	    	} elsif ( $style =~ m/\b(masknl)\b/o ) {
-	    		$ii =~ s/[\n\r]/\\n/go;
+	    		$ii =~ s/\n/\\n/go;
+	    		$ii =~ s/\r/\\r/go;
 	    	}
 	    	if ( $style =~ m/\b(stripna)\b/o ) {
 	    		# Replace all non ASCII (non printables!) by spaces
@@ -2717,7 +2725,7 @@ sub mix_utils_mask_excel($) {
 	    	$ii = "'" . $ii if ( $ii =~ m!^\s*[.,='"\d]! ); # Put a 'tick' in front of ExCEL special character  ....
 		}
     }
-}
+} # End of mix_utils_mask_excel
 
 
 # return 1
