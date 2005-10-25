@@ -416,6 +416,26 @@ my @tests = (
 		'path' => 'intra/instance',
 		'options' => '',
 	},
+	{ 
+		'name' => 'reg_shell',
+		'path' => 'reg_shell/scd', # single-clock-domain
+		'options' => '',
+	},
+	{ 
+		'name' => 'reg_shell',
+		'path' => 'reg_shell/mcd', # multi-clock-domain
+		'options' => '',
+	},
+	{ 
+		'name' => 'reg_shell',
+		'path' => 'reg_shell/no_clock_gating',
+		'options' => '',
+	},
+	{ 
+		'name' => 'reg_shell',
+		'path' => 'reg_shell/no_multicycle',
+		'options' => '',
+	},
 );
 
 my $numberOfTests = scalar @tests;
