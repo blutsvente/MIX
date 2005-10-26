@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.4 2005/10/14 11:30:07 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.5 2005/10/26 13:57:14 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.5  2005/10/26 13:57:14  lutscher
+#  set debug to 0
+#
 #  Revision 1.4  2005/10/14 11:30:07  lutscher
 #  intermedate checkin (stable, but fully functional)
 #
@@ -70,7 +73,7 @@ use Micronas::RegViewsE;
 #------------------------------------------------------------------------------
 # Class members
 #------------------------------------------------------------------------------
-our($debug) = 1;
+our($debug) = 0;
 our($VERSION) = '1.2';
 
 # global constants and defaults; is mapped per reference into Reg objects
