@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewsE.pm,v 1.1 2005/09/16 13:57:27 lutscher Exp $
+#  RCSId: $Id: RegViewsE.pm,v 1.2 2005/10/28 10:42:01 marema Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewsE.pm,v $
+#  Revision 1.2  2005/10/28 10:42:01  marema
+#  fixed missing colon in printout
+#
 #  Revision 1.1  2005/09/16 13:57:27  lutscher
 #  added register view E_VR_AD from Emanuel
 #
@@ -72,12 +75,12 @@ sub _gen_view_vr_ad {
 
 	# add global class members
 	$this->global('E_FILE'      => {
-									'header' => " created automatically by $0\n\n<\'\n",
-									'footer' => "\'>\n",
-									'prefix' => "regdef_",
-									'suffix' => ".e"
-								   },
-				  'REGISTER'	=>	{ 
+					'header' => " created automatically by $0\n\n<\'\n",
+					'footer' => "\'>\n",
+					'prefix' => "regdef_",
+					'suffix' => ".e"
+					},
+			'REGISTER'	=>	{ 
 									 'size'		=> 32,
 									 'macro_prefix'	=> "reg_def",
 									 'reg_prefix'	=> "MIC",
@@ -176,7 +179,7 @@ sub _gen_view_vr_ad {
 			     $theholes[$ii]{name} = $hole_name;
 			     $theholes[$ii]{pos}  = 0;
 			     $theholes[$ii]{size} = $upper;
-			     $theholes[$ii]{rw}   = "rw";
+			     $theholes[$ii]{rw}   = "RW";
 			     $theholes[$ii]{parent_block}   = "na";
 			     $ii++;
 			} 
@@ -192,7 +195,7 @@ sub _gen_view_vr_ad {
 				}
 				
 format E_FILE =
-    @<<<<<< @<<<<<<<<<<<<<<<<<: uint(bits:@>)  @< : 0 : cov ; -- lsb position @>>
+    @<<<<<< @<<<<<<<<<<<<<<<<<: uint(bits:@>) : @< : 0 : cov ; -- lsb position @>>
 $reg_fld,${$singlefield}{name},${$singlefield}{size},${$singlefield}{rw},${$singlefield}{pos}
 .
       write E_FILE ;
