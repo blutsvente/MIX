@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewsE.pm,v 1.2 2005/10/28 10:42:01 marema Exp $
+#  RCSId: $Id: RegViewsE.pm,v 1.3 2005/10/28 12:30:58 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewsE.pm,v $
+#  Revision 1.3  2005/10/28 12:30:58  lutscher
+#  some more fixes to make direction uppercase; removed an obsolete error message
+#
 #  Revision 1.2  2005/10/28 10:42:01  marema
 #  fixed missing colon in printout
 #
@@ -139,16 +142,12 @@ sub _gen_view_vr_ad {
 				# select type of register
 				if ($reg_access eq "") {
 					$reg_access = lc($o_field->attribs->{'dir'});
-				} else {
-					if (lc($o_field->attribs->{'dir'}) ne $reg_access) {
-						logwarn("ERROR: register \'".$o_reg->name."\': all fields in one register must have same 'dir' attribute\n"); next;
-					};
 				};
 				
 				$thefields[$ii]{name} 		= lc($o_field->name);
 				$thefields[$ii]{pos}  		= $href->{'pos'};
 				$thefields[$ii]{size} 		= $o_field->attribs->{'size'};
-				$thefields[$ii]{rw}   		= $reg_access;
+				$thefields[$ii]{rw}   		= uc($reg_access);
 				$thefields[$ii]{parent_block}   = $o_field->attribs->{'block'};
 				
 				$ii += 1;	
@@ -168,7 +167,7 @@ sub _gen_view_vr_ad {
 					$theholes[$ii]{name} = $hole_name;
 					$theholes[$ii]{pos}  = ${$singlefield}{pos} + ${$singlefield}{size};
                     $theholes[$ii]{size} = $upper - (${$singlefield}{pos} + ${$singlefield}{size});
-                    $theholes[$ii]{rw}   = ${$singlefield}{rw};
+                    $theholes[$ii]{rw}   = uc(${$singlefield}{rw});
 			     $theholes[$ii]{parent_block}   = ${$singlefield}{parent_block};
 			     $ii++;
 			  } 
