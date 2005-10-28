@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.6 2005/10/26 13:58:15 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.7 2005/10/28 12:17:28 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.7  2005/10/28 12:17:28  lutscher
+#  many changes to fix the generated Verilog code
+#
 #  Revision 1.6  2005/10/26 13:58:15  lutscher
 #  added property generation and fixed some code issues
 #
@@ -126,11 +129,6 @@ sub _gen_view_vgch_rs {
 			_error("parameter \'$param\' unknown");
 			if (defined (%EH)) { $EH{'sum'}{'errors'}++;};
 		};
-	};
-
-	# warn if not implemented yet
-	if ($this->global->{'infer_sva'}) {
-		_warning("SystemVerilog assertions not yet supported");
 	};
 
 	# make list of domains for generation
@@ -522,7 +520,7 @@ sub _vgch_rs_code_fwd_process {
 	my @lmap = sort { $a <=> $b } keys %$href_usr;
 	my $nusr = scalar(keys %$href_usr);
 	my ($int_rst_n, $trans_start_p) = $this->_gen_unique_signal_names($clock);
-	my @ltemp;
+	my (@ltemp, @ltemp2, $sig);
 
 	if (scalar(keys %{$href_usr})>0) {
 		# prefix
@@ -565,21 +563,28 @@ sub _vgch_rs_code_fwd_process {
 
 		# read/write pulse generation
 		push @linsert, $ind x $ilvl++ . "if ($trans_start_p) begin";
-		push @ltemp, "fwd_txn <= |fwd_decode_vec;";
+		push @ltemp, "fwd_txn <= 0;";
+		@ltemp2=();
 		for (my $i=0; $i<scalar(@lmap); $i++) {
 			my $o_field = $href_usr->{$lmap[$i]};
 			if ($o_field->attribs->{'dir'} =~ m/r/i) {
-				push @ltemp, $o_field->name . "_rd_p".$this->global->{'POSTFIX_PORT_OUT'} . " <= fwd_decode_vec[".($nusr-$i-1)."] & rd_wr".$this->global->{'POSTFIX_PORT_IN'}.";"; 
+				$sig = $o_field->name . "_rd_p".$this->global->{'POSTFIX_PORT_OUT'};
+				push @ltemp, $sig . " <= fwd_decode_vec[".($nusr-$i-1)."] & rd_wr".$this->global->{'POSTFIX_PORT_IN'}.";"; 
+				push @ltemp2, $sig;
 			};
 			if ($o_field->attribs->{'dir'} =~ m/w/i) {
-				push @ltemp, $o_field->name . "_wr_p".$this->global->{'POSTFIX_PORT_OUT'} . " <= fwd_decode_vec[".($nusr-$i-1)."] & ~rd_wr".$this->global->{'POSTFIX_PORT_IN'}.";"; 
+				$sig = $o_field->name . "_wr_p".$this->global->{'POSTFIX_PORT_OUT'};
+				push @ltemp, $sig . " <= fwd_decode_vec[".($nusr-$i-1)."] & ~rd_wr".$this->global->{'POSTFIX_PORT_IN'}.";"; 
+				push @ltemp2, $sig;
 			};
 		};
 		_pad_column(0, $this->global->{'indent'}, $ilvl, \@ltemp);
 		push @linsert, @ltemp;
 		@ltemp=();
 		$ilvl--;
-		push @linsert, $ind x $ilvl-- . "end";
+		push @linsert, $ind x $ilvl . "end";
+		push @linsert,  $ind x $ilvl++ . "else if (".join(" | ", @ltemp2).")";
+		push @linsert,  $ind x $ilvl-- . "fwd_txn <= 1; // set flag to signal forwarded transaction";
 		push @linsert, $ind x $ilvl-- . "end";
 		push @linsert, $ind x $ilvl-- . "end";
 		push @$lref_usr, @linsert;
@@ -818,11 +823,17 @@ p_fwd_done_onehot: assert property
    $dummy |-> onehot(fwd_done_vec)
 );
 
-function onehot (input [".($nusr-1).":0] vec);
+p_fwd_done_only_when_fwd_txn: assert property
+(
+   @(posedge $clock) disable iff (~$int_rst_n)
+   fwd_done_vec != 0 |-> fwd_txn
+);
+
+function onehot (input [".($nusr-1).":0] vec); // not built-in to SV yet
   integer i,j;
   begin
-	 for (i=0; i<$nusr; i=i+1)
-	   j = j + vec[i];
+     j = 0;
+	 for (i=0; i<$nusr; i=i+1) j = j + vec[i] ? 1 : 0;
 	 onehot = (j==1) ? 1 : 0;
   end
 endfunction
@@ -874,30 +885,36 @@ sub _vgch_rs_write_udc {
 # fills up the global->hclocks hash with data related to clock domains
 sub _vgch_rs_gen_hier {
 	my($this, $o_domain, $nclocks) = @_;
-	my($clock, $bus_clock, $cfg_inst, $sg_inst, $sr_inst, $ocp_sync, $cgw_inst, $cgs_inst);
+	my($clock, $bus_clock, $cfg_inst, $sg_inst, $sr_inst, $ocp_sync, $cgw_inst, $cgs_inst, $n, $sync_clock);
 	my $refclks = $this->global->{'hclocks'};
-	my $infer_cfg = $this->global->{'infer_clock_gating'};
+	my $infer_cg = $this->global->{'infer_clock_gating'};
 	my @lgen_filter = ();
+	my $mcda_inst;
 
 	# instantiate top-level module
 	my $rs_name = $this->global->{'regshell_prefix'}."_".$o_domain->name;
 	my $top_inst = $this->_add_instance($rs_name, "testbench", "Register shell for domain ".$o_domain->name);
 	$this->global('top_inst' => $top_inst);
-  	if ($infer_cfg) {
+  	if ($infer_cg) {
 		_add_generic("cgtransp", 0, $top_inst);
 	};
-
+	_add_generic("P_TOCNT_WIDTH", 10, $top_inst); # timeout counter width
+	
 	# instantiate OCP target
 	my $ocp_inst = $this->_add_instance($this->global->{"ocp_target_name"}, $top_inst, "OCP target module");
 	$this->global('ocp_inst' => $ocp_inst);
 	if (defined (%EH)) {
 		push @{$EH{'output'}{'filter'}{'file'}}, $ocp_inst;
 	};
+	_add_generic("P_DWIDTH", $this->global->{'datawidth'}, $ocp_inst);
+	_add_generic("P_AWIDTH", $this->global->{'addrwidth'}, $ocp_inst);
+	_add_generic("P_TOCNT_WIDTH", 10, $ocp_inst); # timeout counter width
+	
 	$ocp_sync = 0;
 
 	# instantiate MCD adapter (if required)
 	if ($nclocks > 1 and $this->global->{'multi_clock_domains'}) {
-		my $mcda_inst = $this->_add_instance($this->global->{"mcda_name"}, $top_inst, "Multi-clock-domain Adapter");	
+		$mcda_inst = $this->_add_instance($this->global->{"mcda_name"}, $top_inst, "Multi-clock-domain Adapter");	
 		$this->global('mcda_inst' => $mcda_inst);
 		_add_generic("N_DOMAINS", $nclocks, $mcda_inst);
 		_add_generic("P_DWIDTH", $this->global->{'datawidth'}, $mcda_inst);
@@ -905,7 +922,8 @@ sub _vgch_rs_gen_hier {
 	};
 	
 	# instantiate config register module(s) and sub-modules
-	foreach $clock (keys %{$refclks}) {
+	$sync_clock = 31415; # number of synchronous clock, default to invalid
+	foreach $clock (sort keys %{$refclks}) {
 		if ($refclks->{$clock}->{'sync'}) {
 			# asynchronous config register module
 			$cfg_inst = $this->_add_instance(join("_",$this->global->{"cfg_module_prefix"}, $o_domain->name, $clock), $top_inst, "Config register module for clock domain \'$clock\'");
@@ -915,6 +933,10 @@ sub _vgch_rs_gen_hier {
 		} else {
 			# synchronous config register module
 			$cfg_inst = $this->_add_instance(join("_",$this->global->{"cfg_module_prefix"}, $o_domain->name), $top_inst, "Config register module");
+			$sync_clock = $n;
+			if(exists($this->global->{'mcda_inst'})) {
+				_add_generic("N_SYNCDOM", $sync_clock, $mcda_inst);
+			};
 		};
 		# link clock domain to config register module
 		$refclks->{$clock}->{'cfg_inst'} = $cfg_inst; # store in global->hclocks
@@ -935,7 +957,7 @@ sub _vgch_rs_gen_hier {
 		push @lgen_filter, ($sr_inst, $sg_inst);
 
 		# instantiate clock gating cell
-		if ($infer_cfg) {
+		if ($infer_cg) {
 			_add_generic("cgtransp", 0, $cfg_inst);
 			if (exists $refclks->{$clock}->{'has_write'}) {
 				$cgw_inst = $this->_add_instance_unique("ccgc", $cfg_inst, "Clock-gating cell for write-clock");
@@ -950,6 +972,11 @@ sub _vgch_rs_gen_hier {
 				push @lgen_filter, $cgs_inst;
 			};
 		};
+		$n++;
+	};
+	# set N_SYNCDOM parameter for mcda if that did not happen yet
+	if(exists($this->global->{'mcda_inst'}) && $sync_clock == 31415) {
+		_add_generic("N_SYNCDOM", $sync_clock, $mcda_inst);
 	};
 	_add_generic("sync", $ocp_sync, $ocp_inst);
 
@@ -1039,7 +1066,7 @@ sub _vgch_rs_add_static_connections {
 
 	# connections for each config register block
 	$n=0;
-	foreach $clock (keys %{$this->global->{'hclocks'}}) {
+	foreach $clock (sort keys %{$this->global->{'hclocks'}}) {
 		my ($int_rst_n, $trans_start_p, $wr_clk, $wr_clk_en, $shdw_clk, $shdw_clk_en) = $this->_gen_unique_signal_names($clock);
 		$href = $this->global->{'hclocks'}->{$clock};
 		$cfg_i = $href->{'cfg_inst'};
