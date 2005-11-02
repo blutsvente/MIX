@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.52 2005/10/25 12:14:34 wig Exp $
+# $Id: TODO.txt,v 1.53 2005/11/02 12:54:57 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -176,7 +176,8 @@ l 102) line 1.
 	
 	Req: mpit
 	Prio: high
-	Status: open
+	Status: wig20051102 solved
+	Testcase: bugver/20051018d
 	
 >>title: 20051018c/Req: remove <cr> from excel sheets
 
@@ -199,13 +200,15 @@ l 102) line 1.
 		
 	Req: mpit
 	Prio: high
-	Status: open
+	Status: solved20051102 (fixed purge_relicts::_scan_inout)
 
 >>title: 20051018a/Req: allow to specify a mix.cfg file with different name
 
+	-cfg FILE will be read in after all other mix.cfg are read.
+		
 	Req: thorsten
 	Prio: medium
-	Status: open
+	Status: implemented
 
 >>title: 20051014b/Bug: bad verilog created
 
@@ -225,7 +228,8 @@ Workaround: increase maximum length of port descriptions.
 bzw. in mix.cfg
 MIXCFG output.generate.portdescrlength 1000
 
-
+	Solution: can not easily be reproduced, but reworked the "::descr" handling.
+	
 	Req: oberhoff
 	Prio: high
 	Status: workaround
@@ -255,7 +259,7 @@ Check if "veri2001" should imply that!
  
 	Req: Thorsten.
  	Prio: high
- 	Status: open
+ 	Status: implemented
  	Solution: add config parameter
 
 >>title: 20051013a/Req: improve CVS support
@@ -297,7 +301,7 @@ Check if "veri2001" should imply that!
 	  
 	Req: sigi
 	Prio: medium
-	Status: open
+	Status: implemented
 	
 >>title: 20051011a/Req: make wire and/or reg output selectable for verilog generation
 
@@ -336,7 +340,7 @@ Check if "veri2001" should imply that!
 			  
 	Req: torsten
 	Prio: medium
-	Status: open
+	Status: implemented
 
 
 >>title: 20051010b/Req: add ::descr to portmaps

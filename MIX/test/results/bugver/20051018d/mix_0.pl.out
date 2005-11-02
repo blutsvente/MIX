@@ -1,0 +1,61 @@
+05/11/02 12:16:18 ########################################################################
+05/11/02 12:16:18 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl ../../bugver.xls
+05/11/02 12:16:19 
+#######################################################################
+##### mix_0.pl (Revision: 1.38 )
+#####
+##### MIX  
+#####   MixUtils    1.85 $
+#####   MixUtils::IO    1.33 $
+#####   MixParser   1.60 $
+#####   MixWriter   1.66 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.14 $
+#####   MixReport 1.6 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/11/02 12:16:21 Reading worksheet C_20051018d of H:/work/eclipse/MIX/test/xls_input/bugver/20051018d/../../bugver.xls
+05/11/02 12:16:21 Reading worksheet H_20051018d of H:/work/eclipse/MIX/test/xls_input/bugver/20051018d/../../bugver.xls
+05/11/02 12:16:22 Adding port to hierachy module inst_ab for signal sig_20051018d!
+05/11/02 12:16:22 Add_port: signal sig_20051018d adds port p_mix_sig_20051018d_go to instance inst_ab
+05/11/02 12:16:22 Adding port to hierachy module inst_ab for signal sigrev_20051018d!
+05/11/02 12:16:22 Add_port: signal sigrev_20051018d adds port p_mix_sigrev_20051018d_go to instance inst_ab
+05/11/02 12:16:23 WARNING: File bugver-mixed.xls already exists! Contents will be changed
+05/11/02 12:16:23 WARNING: Rotating 3 old sheets of CONF!
+05/11/02 12:16:24 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/bugver/20051018d/bugver-mixed.xls
+05/11/02 12:16:24 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/11/02 12:16:24 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/bugver/20051018d/bugver-mixed.xls
+05/11/02 12:16:24 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/11/02 12:16:25 Info: unchanged file ent_a-e.vhd
+05/11/02 12:16:25 Info: unchanged file ent_aa-e.vhd
+05/11/02 12:16:25 Info: unchanged file ent_ab-e.vhd
+05/11/02 12:16:25 Info: unchanged file ent_aba-e.vhd
+05/11/02 12:16:25 Info: unchanged file ent_a-struct-a.vhd
+05/11/02 12:16:25 Info: unchanged file ent_ab-struct-a.vhd
+05/11/02 12:16:25 Info: unchanged file ent_a-struct-conf-c.vhd
+05/11/02 12:16:25 Info: unchanged file ent_ab-struct-conf-c.vhd
+05/11/02 12:16:26 WARNING: ============= SUMMARY =================
+05/11/02 12:16:26 WARNING: SUM: Summary of checks and created items:
+05/11/02 12:16:26 WARNING: SUM: checkforce 0
+05/11/02 12:16:26 WARNING: SUM: checkunique 0
+05/11/02 12:16:26 WARNING: SUM: checkwarn 0
+05/11/02 12:16:26 WARNING: SUM: cmacros 0
+05/11/02 12:16:26 WARNING: SUM: conn 2
+05/11/02 12:16:26 WARNING: SUM: errors 0
+05/11/02 12:16:26 WARNING: SUM: genport 2
+05/11/02 12:16:26 WARNING: SUM: hdlfiles 8
+05/11/02 12:16:26 WARNING: SUM: inst 11
+05/11/02 12:16:26 WARNING: SUM: multdriver 0
+05/11/02 12:16:26 WARNING: SUM: nodriver 0
+05/11/02 12:16:26 WARNING: SUM: noload 0
+05/11/02 12:16:26 WARNING: SUM: openports 0
+05/11/02 12:16:26 WARNING: SUM: warnings 0
+05/11/02 12:16:26 WARNING: SUM: === Number of parsed input tables: ===
+05/11/02 12:16:26 WARNING: SUM: conf 0
+05/11/02 12:16:26 WARNING: SUM: hier 1
+05/11/02 12:16:26 WARNING: SUM: conn 1
+05/11/02 12:16:26 WARNING: SUM: io 0
+05/11/02 12:16:26 WARNING: SUM: i2c 0
+05/11/02 12:16:26 WARNING: SUM: Number of changes in intermediate: 0
+05/11/02 12:16:26 WARNING: SUM: Number of changed files: 0

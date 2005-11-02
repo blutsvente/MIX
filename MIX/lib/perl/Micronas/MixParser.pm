@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.60 $                                         |
+# | Revision:   $Revision: 1.61 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/10/24 15:43:48 $                              |
+# | Date:       $Date: 2005/11/02 12:54:29 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.60 2005/10/24 15:43:48 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.61 2005/11/02 12:54:29 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.61  2005/11/02 12:54:29  wig
+# | fixed issue 20051018d and more
+# |
 # | Revision 1.60  2005/10/24 15:43:48  wig
 # | added 'reg detection to ::out column
 # |
@@ -315,9 +318,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.60 2005/10/24 15:43:48 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.61 2005/11/02 12:54:29 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.60 $';
+my $thisrevision =	'$Revision: 1.61 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1277,7 +1280,7 @@ sub _create_conn ($$%) {
         return \@co; #Return dummy array, just in case
     }
 
-    # TODO : Allow , and ; in in/out columns
+    # Allowed seperators: , and ; in in/out columns
     $instr =~ s/\n/,/go;
     for my $d ( split( /[,;]/, $instr ) ) {
     	my %co = ();
@@ -2674,7 +2677,7 @@ sub bits_at_inst ($$$) {
     my $h = $conndb{$signal}{'::high'} || 0;
     my $l = $conndb{$signal}{'::low'} || 0;
 
-    my $d = "";
+    my $d = '';
     my %width = (); # F[ull], B[it],
     my %bits = ();
     my %sigw_flag = ();
@@ -2697,7 +2700,7 @@ sub bits_at_inst ($$$) {
             } elsif ( $sigm =~ m,^([btio]),io ) {
                 $d = lc( $1 );
             } else {
-                $d = "e"; #TODO20030723 ..
+                $d = "e"; # TODO 20030723 ..
             }
         } else {
             # Derive -> i/o from in/out
@@ -2743,24 +2746,34 @@ sub bits_at_inst ($$$) {
             # only one link, that's easy and clear
             push( @ret , $width{$i}[0] . ":$i" );
         } else {
-            my $max = $width{$i}[0];
-            if ( $max =~ m,A::, ) {
-                push( @ret, $max . ":$d" ); # One link was ALL
-            } elsif ( not $sigw_flag{$i} ) {
-                push( @ret, "A:::e" ); # Missing direction!
-                # If we do not know, we take full signal
-            } elsif ( $h =~ m,^\s*\d+\s*$,o and $l =~ m,^\s*(\d+)\s*$, ) {
-                my $miss = 0;
-                my $bits = "";
-                #TODO: What if signal does not start at zero?
-                for my $b ( $l..$h ) {
-                    unless( $bits{$i}[$b] ) { $miss = 1; }
-                    $bits = ( ( $bits{$i}[$b] ) ? $bits{$i}[$b] : "0" ) . $bits;
-                }
-                unless ( $miss ) { push( @ret, "A:::$i" ); }
-                else { push ( @ret, "B::$bits" . ":$i" )};
-            } else {
-                push( @ret, "A:::$i" );
+        	#!wig20051102: also consider other entries (could be A::)!
+			my $isa_flag = 0;
+        	for my $ii ( 0..scalar( @{$width{$i}} ) ) {
+            	my $max = $width{$i}[$ii];
+            	if ( $max =~ m,A::, ) {
+                	push( @ret, $max . ":$i" );
+                	# One link was ALL, we can ignore all other cases
+                	$isa_flag = 1;
+                	last;
+            	}
+            }
+            # Not fully connected?
+            unless( $isa_flag ) {
+           		if ( not $sigw_flag{$i} ) {
+                	push( @ret, "A:::e" ); # Missing direction!
+                	# If we do not know, we take full signal
+            	} elsif ( $h =~ m,^\s*\d+\s*$,o and $l =~ m,^\s*(\d+)\s*$, ) {
+                	my $miss = 0;
+                	my $bits = "";
+                	for my $b ( $l..$h ) {
+                   		unless( $bits{$i}[$b] ) { $miss = 1; }
+                   		$bits = ( ( $bits{$i}[$b] ) ? $bits{$i}[$b] : '0' ) . $bits;
+                	}
+                	unless ( $miss ) { push( @ret, "A:::$i" ); }
+                	else { push ( @ret, "B::$bits" . ":$i" )};
+            	} else {
+                	push( @ret, "A:::$i" );
+            	}
             }
         }
     }
@@ -4133,9 +4146,9 @@ sub _scan_inout ($) {
                     }
                 }
                 # Mask the _descr_ field :
-                my $this = "";
+                my $this = '';
                 for my $k ( qw( inst port sig_f sig_t port_f port_t ) ) {
-                	$this .= '_' . $rsa->[$iii]{$k};
+                	$this .= '_$k::_' . $rsa->[$iii]{$k}; # Use specaial seperator
             	}
             	# TODO : Prevent loose of information like _descr_ ...
                 if( $this and not defined( $seen{$this} ) ) {

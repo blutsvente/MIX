@@ -398,6 +398,11 @@ my @tests = (
 	  'path' => "bugver/20051014b",
 	  'options' => "",
 	},
+	{ # Bug with wiring of mic32_top_ramd_oe signal ...
+	  'name' => "bugver",
+	  'path' => "bugver/20051018d",
+	  'options' => "",
+	},
 	{ # Create simple logic ...
 	  'name' => "logic",
 	  'path' => "logic",
