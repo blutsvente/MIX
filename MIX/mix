@@ -3,13 +3,39 @@
 #
 # UNIX wrapper for mix_0.pl ...
 #
+function fix_perl_path {
 
-# Load a perl module ..
+	thisp=`which perl`
+	case "$thisp" in
+	msd*)
+		module unload perl
+		module load perl
+		;;
+	esac
+
+}
+
+#
+# Load a perl module .. (unless done already)
+#   -> see in LOADEDMODULES
+
 if [ -r /tools/Modules/init/sh ]; then
 	. /tools/Modules/init/sh
-	module load perl
+	case "$LOADEDMODULES" in
+	*perl* )
+	;;
+	*)
+		module load perl
+	;;
+	esac
 fi
 
-perl mix_0.pl ${1+"$@"}
+#
+# Make sure we do NOT use MSD perl!
+#
+fix_perl_path
+
+# Find mix_0.pl whereever:
+perl -x -S mix_0.pl ${1+"$@"}
 
 #!End
