@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewsE.pm,v 1.3 2005/10/28 12:30:58 lutscher Exp $
+#  RCSId: $Id: RegViewsE.pm,v 1.4 2005/11/02 14:37:09 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewsE.pm,v $
+#  Revision 1.4  2005/11/02 14:37:09  lutscher
+#  now uses domain name instead of block attribute for code generation
+#
 #  Revision 1.3  2005/10/28 12:30:58  lutscher
 #  some more fixes to make direction uppercase; removed an obsolete error message
 #
@@ -148,7 +151,8 @@ sub _gen_view_vr_ad {
 				$thefields[$ii]{pos}  		= $href->{'pos'};
 				$thefields[$ii]{size} 		= $o_field->attribs->{'size'};
 				$thefields[$ii]{rw}   		= uc($reg_access);
-				$thefields[$ii]{parent_block}   = $o_field->attribs->{'block'};
+				# $thefields[$ii]{parent_block}   = $o_field->attribs->{'block'};
+				$thefields[$ii]{parent_block}   = $o_domain->name;
 				
 				$ii += 1;	
 			};
