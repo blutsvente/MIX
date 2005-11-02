@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.86 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2005/10/26 09:17:36 $                              |
+# | Revision:   $Revision: 1.87 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2005/11/02 13:29:19 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.86 2005/10/26 09:17:36 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.87 2005/11/02 13:29:19 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.87  2005/11/02 13:29:19  wig
+# | Got -help to return some results
+# |
 # | Revision 1.86  2005/10/26 09:17:36  lutscher
 # | changed some defaults
 # |
@@ -381,11 +384,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.86 2005/10/26 09:17:36 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.87 2005/11/02 13:29:19 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.86 $';         #'
+my $thisrevision        =      '$Revision: 1.87 $';         #'
 
-# Revision:   $Revision: 1.86 $   
+# Revision:   $Revision: 1.87 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -874,7 +877,7 @@ Print the script\'s entire POD documentation.
 sub mix_help()
 {
     my $head = "MIX Reference Manual";
-    my $foot = "MIX Release ".($ENV{MWAY_VERSION} || "");
+    my $foot = "MIX Release ".($::VERSION || "");
 
     #$ENV{PATH} = dirname($^X) . ":$ENV{PATH}";
     $ENV{PATH} = dirname(dirname(dirname($^X))) . "/bin:$ENV{PATH}";
@@ -882,17 +885,23 @@ sub mix_help()
     my $cmd = "";
     if ( $^O =~ m,mswin,io ) {
 	# $cmd = "pod2text --center '$head' --release '$foot' --lax $0 |";
-	$cmd = "pod2text $0";
+		$cmd = "pod2text $0";
     } else {
-	$cmd = "pod2man --center '$head' --release '$foot' --lax $0 | nroff -man";
-    }
+		$cmd = "pod2man --center '$head' --release '$foot' --lax $0 | nroff -man";
+    }	
     my $help = `$cmd`;
 
     logtrc($EH{'ERROR'}, "'$cmd' failed.") if $?;
 
     # Save one head and foot line
-    my ($headline) = $help =~ /([^\n]*$head[^\n]*\n)/ || "";
-    my ($footline) = $help =~ /([^\n]*$foot[^\n]*\n)/ || "";
+    my $headline = '';
+    if ( $help =~ /([^\n]*$head[^\n]*\n)/ ) {
+    	$headline = $1;
+    };
+    my $footline = '';
+    if( $help =~ /([^\n]*$foot[^\n]*\n)/ ) {
+    	$footline = $1;
+    }
 
     # Skip head and foot lines
     $help =~ s/^.*($head|$foot)[^\n]*\n//mg;

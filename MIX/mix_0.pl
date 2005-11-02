@@ -27,12 +27,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.38 2005/10/19 15:40:06 wig Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.39 2005/11/02 13:28:05 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.38 $                                      |
-# | Mod.Date     : $Date: 2005/10/19 15:40:06 $                           |
+# | Version      : $Revision: 1.39 $                                      |
+# | Mod.Date     : $Date: 2005/11/02 13:28:05 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -47,6 +47,9 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.39  2005/11/02 13:28:05  wig
+# | Got -help to return some results
+# |
 # | Revision 1.38  2005/10/19 15:40:06  wig
 # | Fixed -mixed.xls read problem on UNIX and reworked ::descr split
 # |
@@ -212,7 +215,7 @@ use Micronas::MixReport;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.38 $'; # RCS Id
+$::VERSION = '$Revision: 1.39 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 logconfig(
@@ -242,35 +245,93 @@ mix_init();               # Presets ....
 # set quiet, verbose
 #
 
-#
-#TODO: Add that to application note
-# -dir DIRECTORY            write output data to DIRECTORY (default: cwd())
-# -out OUTPUTFILE.ext       defines intermediate output filename and type
-# -outenty OUT-e.vhd        filename for entity. If argument is ENTY[NAME], each entity
-#                                   will be written into a file calles entityname-e.vhd
-# -verifyentity PATH[:PATH] compare entities against entities found in PATH
-#                           alias: checkentity | ve
-# -verifyentitymode MODE    define the mode: entity|module|arch[itecture]|conf[iguration]|all,
-#                                    all|inpath,ignorecase
-# -combine                  combine entitiy, architecture and configuration into one file
-# -top TOPCELL              use TOPCELL as top. Default is TESTBENCH or daughter of TESTBENCH
-# -adump                    dump internal data in ASCII format, too (debugging, use with small data set).
-# -variant
-# -conf key.key.key=value   Overwrite $EH{key}{key}{key} with value
-# -cfg CONF.cfg				Read configuration from file CONF.cfg
-# -listconf                 Print out all available/predefined configurations options
-# -sheet SHEET=MATCH        SHEET can be one of "hier", "conn", "vi2c"
-# -delta                    Enable delta mode: Print diffs instead of full files.
-#                                   Maybe we can set a return value of 1 if no changes occured!
-# -strip                    Remove extra worksheets from intermediate output
-#                                   Please be catious when using that option.
-# -bak                      Shift previous generated output to file.v[hd].bak. When combined
-#                                   with -delta you get both .diff, .bak and new files :-)
-#
-# -init                     Initialize MIX working area
-# -import FILE              Try to import data from HDL files
-# -report portlist,reglist  Report portlist, register list, (t.b.d.)  
-#
+=head2 options
+
+=over 4
+
+=item *
+
+-dir DIRECTORY            write output data to DIRECTORY (default: cwd())
+
+=item *
+
+-out OUTPUTFILE.ext       defines intermediate output filename and type
+
+=item *
+
+-outenty OUT-e.vhd        filename for entity. If argument is ENTY[NAME], each entity
+                                  will be written into a file calles entityname-e.vhd
+=item *
+
+-verifyentity PATH[:PATH] compare entities against entities found in PATH
+                          alias: checkentity | ve
+
+=item *
+
+-verifyentitymode MODE    define the mode: entity|module|arch[itecture]|conf[iguration]|all,
+                                   all|inpath,ignorecase
+
+=item *
+
+-combine                  combine entitiy, architecture and configuration into one file
+
+=item *
+
+-top TOPCELL              use TOPCELL as top. Default is TESTBENCH or daughter of TESTBENCH
+
+=item *
+
+-adump                    dump internal data in ASCII format, too (debugging, use with small data set).
+
+=item *
+
+-variant
+
+=item *
+
+-conf key.key.key=value   Overwrite $EH{key}{key}{key} with value
+
+=item *
+
+-cfg CONF.cfg				Read configuration from file CONF.cfg
+
+=item *
+
+-listconf                 Print out all available/predefined configurations options
+
+=item *
+
+-sheet SHEET=MATCH        SHEET can be one of "hier", "conn", "vi2c"
+
+=item *
+
+-delta                    Enable delta mode: Print diffs instead of full files.
+                                  Maybe we can set a return value of 1 if no changes occured!
+
+=item *
+
+-strip                    Remove extra worksheets from intermediate output
+                                  Please be catious when using that option.
+
+=item *
+
+-bak                      Shift previous generated output to file.v[hd].bak. When combined
+                                  with -delta you get both .diff, .bak and new files :-)
+=item *
+
+-init                     Initialize MIX working area
+
+=item *
+
+-import FILE              Try to import data from HDL files
+
+=item *
+
+-report portlist,reglist  Report portlist, register list, (t.b.d.)  
+
+=back
+
+=cut
 
 # Add your options here ....
 mix_getopt_header( qw(
