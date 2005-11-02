@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.66 $                                         |
+# | Revision:   $Revision: 1.67 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/10/24 15:43:48 $                              |
+# | Date:       $Date: 2005/11/02 14:28:45 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.66 2005/10/24 15:43:48 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.67 2005/11/02 14:28:45 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.67  2005/11/02 14:28:45  wig
+# | Remove extra ; from port map if port has comment
+# |
 # | Revision 1.66  2005/10/24 15:43:48  wig
 # | added 'reg detection to ::out column
 # |
@@ -314,9 +317,9 @@ sub _mix_wr_regorwire($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.66 2005/10/24 15:43:48 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.67 2005/11/02 14:28:45 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.66 $';
+my $thisrevision   =      '$Revision: 1.67 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1405,30 +1408,29 @@ sub _write_entities ($$$) {
 		#
         unless ( is_vhdl_comment( $port ) ) { 
             # TODO : %S% use a better mechanism to format output!!
-            $port = "\t" x 2 . $tcom . " Generated Port for Entity $e\n" . $port;
-            $port =~ s/;(\s*$tcom.*\n)$/$1/io;
+            $port = '%S%' x 2 . $tcom . " Generated Port for Entity $e\n" . $port;
+            $port =~ s/;((%S%|\s)*$tcom.*\n)$/$1/io; # Remove trailing ;
             $port =~ s/;\n$/\n/io;
-            # %S%
-            $port .= "\t" x 2 . $tcom . " End of Generated Port for Entity $e\n";
+            $port .= '%S%' x 2 . $tcom . " End of Generated Port for Entity $e\n";
             # Store ports and generics for later reusal
             $entities{$e}{'__PORTTEXT__'}{$lang} = $port;
-            $port = "\t\tport(\n" . $port . "\t\t);";
+            $port = '%S%' x 2 . "port(\n" . $port . '%S%' x 2 . ');';
         } else {
             $entities{$e}{'__PORTTEXT__'}{$lang} = $port;
-            $port = "\t\t" . $tcom . " No Generated Port for Entity $e\n$port";
+            $port = '%S%' x 2 . $tcom . " No Generated Port for Entity $e\n$port";
         }
         # The same for generics
         unless ( is_vhdl_comment( $gent ) ) {
-            $gent = "\t\t" . $tcom . " Generated Generics for Entity $e\n" . $gent;            
-            $gent =~ s/;(\s*$tcom.*\n)$/$1/io;
+            $gent = '%S%' x 2 . $tcom . " Generated Generics for Entity $e\n" . $gent;            
+            $gent =~ s/;((%S%|\s)*$tcom.*\n)$/$1/io;
             $gent =~ s/;\n$/\n/io;
-            $gent .= "\t\t" . $tcom . " End of Generated Generics for Entity $e\n";
+            $gent .= '%S%' x 2 . $tcom . " End of Generated Generics for Entity $e\n";
             # Store ports and generics for later reusal
             $entities{$e}{'__GENERICTEXT__'}{$lang} = $gent;
-            $gent = "\t\tgeneric(\n" . $gent . "\t\t);";
+            $gent = '%S%' x 2 . "generic(\n" . $gent . '%S%' x 2 . ');';
         } else {
             $entities{$e}{'__GENERICTEXT__'}{$lang} = $gent;
-            $gent = "\t\t" . $tcom . " No Generated Generics for Entity $e\n$gent";
+            $gent = '%S%' x 2 . $tcom . " No Generated Generics for Entity $e\n$gent";
         }
 	
 		$macros{'%PORT%'} = $port;
@@ -1442,7 +1444,7 @@ sub _write_entities ($$$) {
             # makes sense only in __COMMON__ case
             #
             if ( $lang ne "vhdl" ) {
-                $et .= "\t\t--\n\t\t-- $lang language choosen for entity $e\n\t\t--\n";
+                $et .= '%S%' x 2 . "--\n" . '%S%' x 2 . "-- $lang language choosen for entity $e\n\t\t--\n";
             } else {
                 $et .= replace_mac( $tpg, \%macros );
             }
