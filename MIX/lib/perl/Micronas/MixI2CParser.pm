@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / I2CParser                                |
 # | Modules:    $RCSfile: MixI2CParser.pm,v $                             |
-# | Revision:   $Revision: 1.14 $                                         |
+# | Revision:   $Revision: 1.15 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2005/07/18 08:41:55 $                              |
+# | Date:       $Date: 2005/11/03 13:21:19 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/Attic/MixI2CParser.pm,v 1.14 2005/07/18 08:41:55 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/Attic/MixI2CParser.pm,v 1.15 2005/11/03 13:21:19 lutscher Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
@@ -87,9 +87,9 @@ sub mix_i2c_init_assign ();
 # RCS Id, to be put into output templates
 #
 
-my $thisid		= 	'$Id: MixI2CParser.pm,v 1.14 2005/07/18 08:41:55 lutscher Exp $';
+my $thisid		= 	'$Id: MixI2CParser.pm,v 1.15 2005/11/03 13:21:19 lutscher Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixI2CParser.pm,v $';
-my $thisrevision        =       '$Revision: 1.14 $'; #'
+my $thisrevision        =       '$Revision: 1.15 $'; #'
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -121,7 +121,7 @@ sub parse_i2c_init($) {
 	if (scalar @$r_i2c) {
 		my($o_space) = Micronas::Reg->new();
 
-		if (grep($_ eq $EH{'reg_shell'}{'type'}, @{$o_space->global->{supported_views}})) {
+		if (grep($EH{'reg_shell'}{'type'} =~ m/$_/i, @{$o_space->global->{supported_views}})) {
 			# init register module for generation of register-shell
 			$o_space->init(	 
 						   inputformat => "register-master", 
