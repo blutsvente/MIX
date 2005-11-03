@@ -1241,3 +1241,214 @@
 05/10/28 14:35:02 WARNING: SUM: conn 0
 05/10/28 14:35:02 WARNING: SUM: io 0
 05/10/28 14:35:02 WARNING: SUM: i2c 1
+05/11/03 14:25:19 ########################################################################
+05/11/03 14:25:19 CMDLINE: /home/lutscher/work/MIX/mix_0.pl -nodelta ../../reg_shell.sxc
+05/11/03 14:25:19 
+#######################################################################
+##### mix_0.pl (Revision: 1.39 )
+#####
+##### MIX  
+#####   MixUtils    1.87 $
+#####   MixUtils::IO    1.33 $
+#####   MixParser   1.61 $
+#####   MixWriter   1.67 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.15 $
+#####   MixReport 1.6 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/11/03 14:25:19 WARNING: Cannot locate a worksheet CONN in ../../reg_shell.sxc
+05/11/03 14:25:19 WARNING: Cannot locate a worksheet HIER in ../../reg_shell.sxc
+05/11/03 14:25:19 WARNING: Empty header in column 15, sheet-type i2c, skipping!
+05/11/03 14:25:19 WARNING: Empty header in column 54, sheet-type i2c, skipping!
+05/11/03 14:25:19 WARNING: Empty header in column 55, sheet-type i2c, skipping!
+05/11/03 14:25:19 WARNING: Empty header in column 56, sheet-type i2c, skipping!
+05/11/03 14:25:19 WARNING: Empty header in column 57, sheet-type i2c, skipping!
+05/11/03 14:25:19 Added new column header ::type
+05/11/03 14:25:19 Added new column header ::addr
+05/11/03 14:25:19 Added new column header ::skip
+05/11/03 14:25:19 Added new column header ::view
+05/11/03 14:25:19 Added new column header ::vi2c
+05/11/03 14:25:19 Added new column header ::name
+05/11/03 14:25:19 Added new column header ::fgroup
+05/11/03 14:25:19 WARNING: Automatically wiring signal bits 63 to 32 of rs_cfg_fe1_i/rd_data_o to bits 31 to 0
+05/11/03 14:25:19 WARNING: INFO: Not all lowercase in new conn element Cvbsdetect_set_p_i!
+05/11/03 14:25:19 WARNING: INFO: Not all lowercase in new port element P_DWIDTH!
+05/11/03 14:25:19 WARNING: INFO: Not all lowercase in new port element N_DOMAINS!
+05/11/03 14:25:19 WARNING: INFO: Not all lowercase in new port element P_TOCNT_WIDTH!
+05/11/03 14:25:19 WARNING: INFO: Not all lowercase in new port element P_AWIDTH!
+05/11/03 14:25:19 WARNING: INFO: Not all lowercase in new port element N_SYNCDOM!
+05/11/03 14:25:20 Add_port: signal upd_rw_i adds port upd_rw_i to instance rs_fe1_i
+05/11/03 14:25:20 Adding port to hierachy module rs_cfg_fe1_i for signal upd_rw_i!
+05/11/03 14:25:20 Add_port: signal upd_rw_i adds port upd_rw_i to instance rs_cfg_fe1_i
+05/11/03 14:25:20 Add_port: signal scmdaccept_o adds port scmdaccept_o to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal clk_f20 adds port clk_f20 to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal res_f20_n_i adds port res_f20_n_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal w_test_o adds port w_test_o to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal upd_r_en_i adds port upd_r_en_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal usr_rw_test_o adds port usr_rw_test_o to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal sdata_o adds port sdata_o to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal wd_16_test2_o adds port wd_16_test2_o to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal usr_w_test_wr_p_o adds port usr_w_test_wr_p_o to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal test_i adds port test_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal dummy_fe_o adds port dummy_fe_o to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal mdata_i adds port mdata_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal r_test_i adds port r_test_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal sresp_o adds port sresp_o to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal mrespaccept_i adds port mrespaccept_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal dgates_o adds port dgates_o to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal mvstop_o adds port mvstop_o to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal usr_w_test_trans_done_p_i adds port usr_w_test_trans_done_p_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal usr_w_test_o adds port usr_w_test_o to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal upd_r_i adds port upd_r_i to instance rs_fe1_i
+05/11/03 14:25:20 Adding port to hierachy module rs_cfg_fe1_i for signal upd_r_i!
+05/11/03 14:25:20 Add_port: signal upd_r_i adds port upd_r_i to instance rs_cfg_fe1_i
+05/11/03 14:25:20 Add_port: signal usr_r_test_rd_p_o adds port usr_r_test_rd_p_o to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal upd_rw_en_i adds port upd_rw_en_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal mreset_n_i adds port mreset_n_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal upd_rw_force_i adds port upd_rw_force_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal usr_r_test_i adds port usr_r_test_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal usr_rw_test_i adds port usr_rw_test_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal Cvbsdetect_set_p_i adds port Cvbsdetect_set_p_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal sha_w_test_o adds port sha_w_test_o to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal ycdetect_i adds port ycdetect_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal upd_r_force_i adds port upd_r_force_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal res_a_n_i adds port res_a_n_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal usr_rw_test_rd_p_o adds port usr_rw_test_rd_p_o to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal upd_w_i adds port upd_w_i to instance rs_fe1_i
+05/11/03 14:25:20 Adding port to hierachy module rs_cfg_fe1_clk_a_i for signal upd_w_i!
+05/11/03 14:25:20 Add_port: signal upd_w_i adds port upd_w_i to instance rs_cfg_fe1_clk_a_i
+05/11/03 14:25:20 Add_port: signal usr_rw_test_wr_p_o adds port usr_rw_test_wr_p_o to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal clk_a adds port clk_a to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal upd_w_en_i adds port upd_w_en_i to instance rs_fe1_i
+05/11/03 14:25:20 Adding port to hierachy module rs_cfg_fe1_i for signal trans_start!
+05/11/03 14:25:20 Adding port to hierachy module rs_cfg_fe1_clk_a_i for signal trans_start!
+05/11/03 14:25:20 Add_port: signal trans_start adds port trans_start to instance rs_cfg_fe1_i
+05/11/03 14:25:20 Add_port: signal trans_start adds port trans_start to instance rs_cfg_fe1_clk_a_i
+05/11/03 14:25:20 Add_port: signal mvstart_o adds port mvstart_o to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal usr_r_test_trans_done_p_i adds port usr_r_test_trans_done_p_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal wd_16_test_o adds port wd_16_test_o to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal dgatel_o adds port dgatel_o to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal sha_rw2_o adds port sha_rw2_o to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal upd_w_force_i adds port upd_w_force_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal mcmd_i adds port mcmd_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal maddr_i adds port maddr_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal sha_r_test_i adds port sha_r_test_i to instance rs_fe1_i
+05/11/03 14:25:20 Add_port: signal usr_rw_test_trans_done_p_i adds port usr_rw_test_trans_done_p_i to instance rs_fe1_i
+05/11/03 14:25:20 WARNING: INFO: Not all lowercase in new port element Cvbsdetect_set_p_i!
+05/11/03 14:25:20 WARNING: WARNING: Entity port mode mismatch for enitity W_NO_ENTITY (__PARAMETER__), port 32: P was G!
+05/11/03 14:25:20 WARNING: WARNING: Entity port mode mismatch for enitity W_NO_ENTITY (__PARAMETER__), port 3: P was G!
+05/11/03 14:25:20 WARNING: WARNING: Entity port mode mismatch for enitity W_NO_ENTITY (__PARAMETER__), port 2: P was G!
+05/11/03 14:25:20 WARNING: WARNING: Entity port mode mismatch for enitity W_NO_ENTITY (__PARAMETER__), port 14: P was G!
+05/11/03 14:25:20 WARNING: WARNING: Entity port mode mismatch for enitity W_NO_ENTITY (__PARAMETER__), port 1: P was G!
+05/11/03 14:25:20 WARNING: WARNING: Entity port mode mismatch for enitity W_NO_ENTITY (__PARAMETER__), port 0: P was G!
+05/11/03 14:25:20 WARNING: WARNING: Entity port mode mismatch for enitity W_NO_ENTITY (__PARAMETER__), port 10: P was G!
+05/11/03 14:25:20 WARNING: File reg_shell-mixed.sxc already exists! Contents will be changed
+05/11/03 14:25:20 WARNING: Rotating 3 old sheets of CONF!
+05/11/03 14:25:20 WARNING: File reg_shell-mixed.sxc already exists! Contents will be changed
+05/11/03 14:25:21 WARNING: Rotating 3 old sheets of CONN!
+05/11/03 14:25:21 WARNING: File reg_shell-mixed.sxc already exists! Contents will be changed
+05/11/03 14:25:21 WARNING: Rotating 3 old sheets of HIER!
+05/11/03 14:25:21 INFO: Port rd_err_o of entity rs_cfg_fe1 one bit wide, reduce to signal
+
+05/11/03 14:25:21 INFO: Port trans_done_o of entity rs_cfg_fe1 one bit wide, reduce to signal
+
+05/11/03 14:25:21 INFO: Port rd_err_o of entity rs_cfg_fe1_clk_a one bit wide, reduce to signal
+
+05/11/03 14:25:21 INFO: Port trans_done_o of entity rs_cfg_fe1_clk_a one bit wide, reduce to signal
+
+05/11/03 14:25:21 Warning: Signal usr_w_test_wr_p_o does not have a driver in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Signal int_upd_w_p does not have a load in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Warning: Signal usr_w_test_o does not have a driver in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Signal upd_w_en_i does not have a load in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Warning: Signal rd_data_vec does not have a driver in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Warning: Signal tie0_1 does not have a driver in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Signal mix_const_31 does not have a load in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Warning: Signal u2_iwr_clk_en does not have a driver in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Warning: Signal dummy_fe_o does not have a driver in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Signal u3_ishdw_clk does not have a load in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Signal wr_data does not have a load in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Warning: Signal dgatel_o does not have a driver in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Signal u0_i_trans_start_p does not have a load in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Signal r_test_i does not have a load in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Signal u2_iwr_clk does not have a load in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Signal upd_w_force_i does not have a load in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Warning: Signal dgates_o does not have a driver in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Signal mix_const_15 does not have a load in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Signal u1_i_int_rst_n does not have a load in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Signal rd_wr does not have a load in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Warning: Signal sha_w_test_o does not have a driver in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Warning: Signal trans_done_vec does not have a driver in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Warning: Signal u3_ishdw_clk_en does not have a driver in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Warning: Signal rd_err_vec does not have a driver in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Warning: Signal w_test_o does not have a driver in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Signal mix_const_14 does not have a load in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Signal usr_w_test_trans_done_p_i does not have a load in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Signal mix_const_30 does not have a load in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:21 Signal addr does not have a load in instance rs_cfg_fe1_clk_a_i!
+05/11/03 14:25:22 Warning: Signal rd_data_vec does not have a driver in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal mix_const_38 does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Warning: Signal tie0_1 does not have a driver in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal mix_const_54 does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Warning: Signal usr_r_test_rd_p_o does not have a driver in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal upd_rw_en_i does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Warning: Signal mvstart_o does not have a driver in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal usr_r_test_trans_done_p_i does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal mix_const_55 does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Warning: Signal wd_16_test_o does not have a driver in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal wr_data does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Warning: Signal sha_rw2_o does not have a driver in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal u7_ishdw_clk does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal u6_iwr_clk does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal upd_rw_force_i does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal u4_i_trans_start_p does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal usr_r_test_i does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal usr_rw_test_i does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal rd_wr does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal Cvbsdetect_set_p_i does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal sha_r_test_i does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal u5_i_int_rst_n does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Warning: Signal mvstop_o does not have a driver in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal ycdetect_i does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Warning: Signal trans_done_vec does not have a driver in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal int_upd_r_p does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal upd_r_force_i does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Warning: Signal u7_ishdw_clk_en does not have a driver in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Warning: Signal usr_rw_test_rd_p_o does not have a driver in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Warning: Signal rd_err_vec does not have a driver in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal int_upd_rw_p does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Warning: Signal usr_rw_test_o does not have a driver in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal mix_const_39 does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal upd_r_en_i does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Warning: Signal usr_rw_test_wr_p_o does not have a driver in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal usr_rw_test_trans_done_p_i does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Warning: Signal u6_iwr_clk_en does not have a driver in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Warning: Signal wd_16_test2_o does not have a driver in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal addr does not have a load in instance rs_cfg_fe1_i!
+05/11/03 14:25:22 Signal mix_const_0 does not have a load in instance rs_fe1_i!
+05/11/03 14:25:22 Signal mix_const_1 does not have a load in instance rs_fe1_i!
+05/11/03 14:25:22 Signal mix_const_3 does not have a load in instance rs_fe1_i!
+05/11/03 14:25:22 Signal mix_const_2 does not have a load in instance rs_fe1_i!
+05/11/03 14:25:22 WARNING: ============= SUMMARY =================
+05/11/03 14:25:22 WARNING: SUM: Summary of checks and created items:
+05/11/03 14:25:22 WARNING: SUM: checkforce 0
+05/11/03 14:25:22 WARNING: SUM: checkunique 0
+05/11/03 14:25:22 WARNING: SUM: checkwarn 0
+05/11/03 14:25:22 WARNING: SUM: cmacros 0
+05/11/03 14:25:22 WARNING: SUM: conn 165
+05/11/03 14:25:22 WARNING: SUM: errors 0
+05/11/03 14:25:22 WARNING: SUM: genport 52
+05/11/03 14:25:22 WARNING: SUM: hdlfiles 3
+05/11/03 14:25:22 WARNING: SUM: inst 22
+05/11/03 14:25:22 WARNING: SUM: multdriver 3
+05/11/03 14:25:22 WARNING: SUM: nodriver 28
+05/11/03 14:25:22 WARNING: SUM: noload 44
+05/11/03 14:25:22 WARNING: SUM: openports 0
+05/11/03 14:25:22 WARNING: SUM: warnings 9
+05/11/03 14:25:22 WARNING: SUM: === Number of parsed input tables: ===
+05/11/03 14:25:22 WARNING: SUM: conf 0
+05/11/03 14:25:22 WARNING: SUM: hier 0
+05/11/03 14:25:22 WARNING: SUM: conn 0
+05/11/03 14:25:22 WARNING: SUM: io 0
+05/11/03 14:25:22 WARNING: SUM: i2c 1
