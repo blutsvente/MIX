@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.53 2005/11/02 12:54:57 wig Exp $
+# $Id: TODO.txt,v 1.54 2005/11/04 11:03:04 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -27,6 +27,100 @@ Code:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+
+>>title: 20051020a/Bug: improve -report portlist (lots of changes)
+
+1. remove info messages
+	-> ???
+	
+2. ::descr leaves a trailing ; under certain conditions
+	-> fixed with 20051018d testcase
+
+3. sort order for FrameMaker table not o.k. (see 20051021c!)
+
+>>title: 20051021c/Req: rework MIF generator
+
+Für die 2. Tabelle würde ich folgendes Layout vorschlagen - siehe attachments.
+(etwas geänderte Spaltenbreiten, Kommentar nach hinten verschoben und Source und
+Destination Spalten zu einer S/D Spalte zusammengefasst, daher wäre eine Spalte
+frei, da hätte ich aber gerne Input oder Output drin: Überschrift "I / O" und
+in den Zeilen dann je nachdem I oder O ;-).)
+
+Mit Signalgruppenkommentar meint Frank die "Trenn"-Zeile in der Tabelle (hier
+"Video ADCs").
+
+Beispiele:  unitsignallist.pdf, FE_demo_unit_signal_list.mif
+
+++++
+
+Hi,
+
+öhm ... noch schnell meine 2 Cents:
+
+1)
+Wir (Bernhard und ich) haben auch noch festgestellt, dass wir eine weitere Spalte
+brauchen, die wir ::sd nennen wollen. Diese Spalte soll dann im Falle 
+
+a) Output: Alle Destinations enthalten
+b) Input:  die Source enthalten
+c) Externer Pin: PAD
+
+::sd muss noch in die Tabellen eingepflegt werden. Diese Spalte ist dann Basis für
+eine Spalte S(ource)/D(estination), die dann die 2 Spalten Source und Destination
+vereinigt. Die Information, die jetzt in Source und Destination enthalten ist,
+hat so wie es jetzt ist keinen Wert.
+
+2)
+Der Signalgruppenkommentar sollte noch in die Tabelle eingetragen werden
+
+3)
+Es gibt einen Offset by One Error bei der Ermittlung von Busbreiten, die sind alle
+um eins zu klein.
+
+4)
+Sortierung, hier haben wir den Eindruck, dass alles ge-mixed wird. Eventuell
+haengt das aber mit mix.cfg zusammen, allerdings bekomme ich die Sortierung nicht
+über MIXCFG output.generate.portmapsort input in den Griff
+
+5)
+Die Fehlermeldungen aus den Perl-Packages sind etwas irritierend.
+
+Gruss,
+Frank
+
+> On Thu, 20 Oct 2005, Gerstenberg Bernhard wrote:
+> Hallo Bernhard,
+> 
+> soweit klar und machbar.
+> 
+> Nur zur Bestätigung:
+> Soll dann die zweite Tabelle alle Ports enthalten (weil in sechs 
+> Spalten ja mehr Information ist als in 3)? Oder wie jetzt 
+> entweder/oder?
+> 
+> Bye
+> Wilfried
+> > Hi Wilfried,
+> > 
+> > ich habe es jetzt unter Unix hinbekommen und es klappt auch
+> schon ganz gut, aber es gibt noch ein paar Kleinigkeiten.
+> > 
+> > Bei der ersten Tabelle hatte ich mich bestimmt unklar ausgedrückt.
+> > Für die Liste mit den external Pin Verbindungen hätte ich
+> gerne eine
+> > Tabelle, die eher so aussieht:
+> >  <<padliste.pdf>>  <<FE_demo_padliste.mif>> 
+> > d.h. nur 3 Spalten (in der Teilung 37mm, 17, 126.,   (siehe 
+> zeile 9-11)
+> > etwas geänderte header Zeile,  (siehe zeile 18--20) 
+> > Tabellenüberschriftentext ,  (siehe zeile 13) und
+> Tabelleneinbindung(s
+> > Zeile 50 und 52 ). )
+> > 
+> > Kannst Du das bitte noch ändern?
+> > 
+	Req: Bernhard
+	Status: !wig20051104 done
 
 >>title: 20051024a/Req: some improvements for the vgch_join.pl
 
