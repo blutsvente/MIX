@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.61 $                                         |
+# | Revision:   $Revision: 1.62 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/11/02 12:54:29 $                              |
+# | Date:       $Date: 2005/11/04 10:44:47 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.61 2005/11/02 12:54:29 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.62 2005/11/04 10:44:47 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.62  2005/11/04 10:44:47  wig
+# | Adding ::incom (keep CONN sheet comments) and improce portlist report format
+# |
 # | Revision 1.61  2005/11/02 12:54:29  wig
 # | fixed issue 20051018d and more
 # |
@@ -318,9 +321,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.61 2005/11/02 12:54:29 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.62 2005/11/04 10:44:47 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.61 $';
+my $thisrevision =	'$Revision: 1.62 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -429,8 +432,14 @@ sub convert_conn_macros ($) {
         my $n = 0;
         my %f = %{$r_m->[$i]{'mh'}};
         for my $ii ( keys( %f ) ) {
-            if ( $f{$ii} !~ m/^$/o and $ii !~ /^::(comment|descr|gen|ign)/io ) {
-                # Only non-empty cells are of interest, and do not match comment, descr, ...
+            if ( $f{$ii} !~ m/^$/o and
+            		# TODO : Skip internally used fields!!
+            		$ii !~ /^::(comment|descr|gen|ign|incom)/io # and
+            		# take only plain text fields!
+            		# ref( $f{$ii} ) eq ''
+            		) {
+                # Only non-empty cells are of interest,
+                # d do not match comment, descr, ...
                 push( @oo, $ii ); #Order preserve
                 $mm .= "${ii}::";
                 @{$vars{$ii}} = ( $f{$ii} =~ m{\$(\w)}xg ); # Give me all variables ....
@@ -2009,6 +2018,7 @@ sub apply_conn_macros ($$) {
                 #
                 my $xre = "";
                 for my $iii ( 0..$#{$r_cm->[$ii]{'mo'}} ) {
+                	# xt if ( ref(
                     $xre .= $r_cm->[$ii]{'mo'}[$iii] . "::";
                     $xre .= $r_in->[$i]{$r_cm->[$ii]{'mo'}[$iii]};
                 }
@@ -2748,7 +2758,7 @@ sub bits_at_inst ($$$) {
         } else {
         	#!wig20051102: also consider other entries (could be A::)!
 			my $isa_flag = 0;
-        	for my $ii ( 0..scalar( @{$width{$i}} ) ) {
+        	for my $ii ( 0..(scalar( @{$width{$i}} ) - 1) ) {
             	my $max = $width{$i}[$ii];
             	if ( $max =~ m,A::, ) {
                 	push( @ret, $max . ":$i" );

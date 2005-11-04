@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.33 $                                          |
+# | Revision:   $Revision: 1.34 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/10/25 12:08:18 $                              |
+# | Date:       $Date: 2005/11/04 10:44:47 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.34  2005/11/04 10:44:47  wig
+# | Adding ::incom (keep CONN sheet comments) and improce portlist report format
+# |
 # | Revision 1.33  2005/10/25 12:08:18  wig
 # | Minor changes for vgch_join.pl (cvs writer, sort multiple fields)
 # |
@@ -207,11 +210,11 @@ sub mix_utils_io_check_path ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.33 2005/10/25 12:08:18 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.34 2005/11/04 10:44:47 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.33 $'; #'  
+my $thisrevision    =      '$Revision: 1.34 $'; #'  
 
-# Revision:   $Revision: 1.33 $
+# Revision:   $Revision: 1.34 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -239,16 +242,13 @@ Remember all Excel or Star(\Open)-Office workbooks we opened
 
 sub init_open_workbooks() {
 
-    # unless( defined $ex ) {
-    #	$ex = init_ole();
-    # }
     if(defined $ex) {
-	foreach my $bk ( in( $ex->{'Workbooks'}) ) {
-	    $workbooks{$bk->{'Name'}} = $bk; # Remember that
-	}
+		foreach my $bk ( in( $ex->{'Workbooks'}) ) {
+	    	$workbooks{$bk->{'Name'}} = $bk; # Remember that
+		}
     } else {
-	logwarn( "ERROR: Uninitialized OLE! Cannot read/write XLS files" );
-	    $EH{'sum'}{'errors'}++;
+		logwarn( "ERROR: Uninitialized OLE! Cannot read/write XLS files" );
+	    	$EH{'sum'}{'errors'}++;
     }
     return;
 }
@@ -368,10 +368,10 @@ sub init_ole () {
         $Win32::OLE::LCID = MAKELCID($lgid);
         $Win32::OLE::Warn = 3;'; #'
 	if ( $@ ) {
-	    logdie "FATAL: eval use Win32 failed: $@";
-        }
-
-	# no strict; # Switch off strict here ...
+	    logwarn "ERROR: eval use Win32 failed: $@";
+	    #Counted in caller! $EH{'sum'}{'errors'}++;
+	    return undef();
+    }
 
 	$ex = undef;
         unless( $ex=Win32::OLE->GetActiveObject('Excel.Application') ) {

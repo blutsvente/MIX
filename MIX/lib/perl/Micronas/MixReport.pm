@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.6 $                                               |
+# | Revision:   $Revision: 1.7 $                                               |
 # | Author:     $Author: wig $                                                 |
-# | Date:       $Date: 2005/10/24 12:10:30 $                                                   |
+# | Date:       $Date: 2005/11/04 10:44:47 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.6 2005/10/24 12:10:30 wig Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.7 2005/11/04 10:44:47 wig Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.7  2005/11/04 10:44:47  wig
+# | Adding ::incom (keep CONN sheet comments) and improce portlist report format
+# |
 # | Revision 1.6  2005/10/24 12:10:30  wig
 # | added output.language.verilog = ansistyle,2001param
 # |
@@ -67,9 +70,9 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.6 2005/10/24 12:10:30 wig Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.7 2005/11/04 10:44:47 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
-my $thisrevision   =      '$Revision: 1.6 $';
+my $thisrevision   =      '$Revision: 1.7 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -160,6 +163,48 @@ sub mix_rep_reglist () {
 }
 
 #
+# return signals in requested order ...
+#
+# config value: $EH{report}{portlist}{sort}
+#
+# alpha := sorted by port name (default)
+# input (ordered as listed in input files)
+# inout | outin: seperate in/out/inout seperately
+#    can be combined with the "input" key
+# ::COL : order as in column ::COL (alphanumeric!)		  			
+sub _mix_report_sigsort {
+
+	# $a and $b hold the respective conndb keys
+	my $key = $EH{'report'}{'portlist'}{'sort'};
+	my $conndb = \%Micronas::MixParser::conndb;
+	
+	my $va = $a;
+	my $vb = $b;
+	
+	if ( exists $conndb->{$a} and exists $conndb->{$b} ) {
+		if ( $key =~ m/\balpha\b/io ) {
+			$va = $conndb->{$a}{'::name'};
+			$vb = $conndb->{$b}{'::name'};
+		} elsif ( $key =~ m/\binput\b/io ) {
+			my $format = '%0' . ( length( $EH{'sum'}{'conn'} ) + 1 ) . 'd'; # 
+			$va = sprintf( $format, $conndb->{$a}{'::connnr'});
+			$vb = sprintf( $format, $conndb->{$b}{'::connnr'});
+		} elsif ( $key =~ m/(\b::\w+)\b/io ) {
+			if ( exists( $conndb->{$a}{$1} ) ) {
+				$va = $conndb->{$a}{$1};
+			}
+			if ( exists( $conndb->{$b}{$1} )) {
+				$vb = $conndb->{$b}{$1}; 
+			}
+		}	
+	}
+
+	# Do the sort here:
+	$va cmp $vb;
+	
+}
+
+#
 # Print a list of all I/O signals ....
 #
 sub mix_rep_portlist () {
@@ -178,13 +223,23 @@ sub mix_rep_portlist () {
 		if ( defined $1 ) {
 			$exttrigger = $1;
 		}
+		#!wig20051103: new format ...
 		$elist = $mif->start_table(
-			{	'Title' => 'External Portlist',
-				'TblTag' => 'PortList' }
+			{	'Title' => 'External Pin List',
+				'TblTag' => 'PortList',
+				'Cols' => 3,
+				'ColumnWidth' => [ qw( 37.0 17.0 126.0 ) ],
+			}
 		);
 	}
 	
-	my $plist = $mif->start_table( 'Portlist' );
+	my $plist = $mif->start_table(
+		{ 'Title' => 'Portlist',
+			'TblTag' => 'PortList',
+			'Cols' => 6,
+		  	'ColumnWidth' => [ qw( 37.0 12.0 16.0 16.0 10.0 89.0 ) ],
+		}
+	 );
 	
 	#
 	# Prepare tablehead data:
@@ -192,7 +247,7 @@ sub mix_rep_portlist () {
 	my $headtext = $mif->td(
 		{ 'PgfTag' => 'CellHeadingH9',
 		  'String' => [
-			  qw( Name Width Clock Description Source Destination )
+			  qw( PAD_Name I/O Description ),
 		  ],
 		}
 	);
@@ -201,7 +256,15 @@ sub mix_rep_portlist () {
 		$mif->table_head( $mif->Tr($headtext), $elist );
 		$mif->start_body( $elist );
 	}
-	
+
+	$headtext = $mif->td(
+		{ 'PgfTag' => 'CellHeadingH9',
+		  'String' => [
+			  # qw( Name Width Clock Description Source Destination ),
+			  "Port" , "Width" , "Clock" , "S / D",  "I / O",  "Description",
+		  ],
+		}
+	);	
 	$mif->table_head( $mif->Tr($headtext), $plist );
 	$mif->start_body( $plist );
 	
@@ -224,13 +287,22 @@ sub mix_rep_portlist () {
 		);
 		
 		$mif->add( $mif->Tr($line), $plist );
+		
+		#!wig20051103: different format for elist ...
 		if ( $elist ne '' ) {
+			$line = $mif->td(
+				{ 'PgfTag' => 'CellHeadingH9',
+			 		'Columns' => 3, # Columns Span of all three cells
+			  		'String'  => "Input/Output PADs $link->{'::inst'} ($link->{'::entity'})",
+				}
+			);
 			$mif->add( $mif->Tr($line), $elist );
 		}
-		
+
+
 		## Signals at that instance
 		## TODO : sort order ..
-		for my $signal ( sort keys( %{$link->{'::sigbits'}} ) ) {
+		for my $signal ( sort _mix_report_sigsort keys( %{$link->{'::sigbits'}} ) ) {
 			# Iterate over all signals ...
 			my $signalname = $conndb->{$signal}{'::name'};
 			my $connect = $link->{'::sigbits'}{$signal};
@@ -238,17 +310,64 @@ sub mix_rep_portlist () {
 			my $low		= $conndb->{$signal}{'::low'};
 			my $clock	= $conndb->{$signal}{'::clock'};
 			my $descr	= $conndb->{$signal}{'::descr'};
+			my $sd		= $conndb->{$signal}{'::sd'} || '';
 			# Check connectivity: in vs. out vs. IO vs ....
 			#   Mark if not fully connected with a footnote -> (*)
-			
+
+			#!wig20051103: if ::incom is set, this line has an attached
+			#  comment. Print it before (post mode) or after (pre mode)	
+			#  Maybe we limit the number of lines ...
+			# my $incom_mode = ''; # pre or post
+			my $incom_lines = $EH{'report'}{'portlist'}{'comments'};
+			if ( $incom_lines <= 0 ) {
+				$incom_lines = 100000; # This is nearly unlimited ....
+			}
+			my $incom_mode = '';
+			my $incom_text = '';
+			# Print up to $incom_lines ....
+			if ( exists $conndb->{$signal}{'::incom'} ) {
+				my $this_count = scalar( @{$conndb->{$signal}{'::incom'}} );
+				my $min = 0;
+				my $max = ( $this_count < $incom_lines ) ? $this_count : $incom_lines;
+				$incom_mode = $conndb->{$signal}{'::incom'}[0]->mode();
+				if ( $incom_mode eq "post" ) { # Take $max starting from last ...
+					$min = $this_count - $max;
+					$max = $this_count;
+				}
+				$max--;
+				for my $com ( @{$conndb->{$signal}{'::incom'}}[$min..$max] ) {
+					# $com is InComment Object ...
+					$incom_text .= $com->print() . "\n";
+				}
+				chomp( $incom_text );
+			}
+				
+			if ( $incom_mode eq 'post' ) {
+				my $line = $mif->td(
+				{ 	'PgfTag' => 'CellHeadingH9',
+			  		'Columns' => 6, # Columns Span of all six cells
+			  		'String'  => $incom_text,
+				} );		
+				$mif->add( $mif->Tr($line), $plist );
+			};
+
 			my $width = _mix_report_width( $high, $low );
 			( my $full, my $mode ) = _mix_report_connect( $connect );
+			$mode = uc( $mode );
 			unless ( $full ) {
-				$width .= "(*)"; # Not fully connected!
+				$width .= '(*)'; # Not fully connected!
 			}
 			my $in = _mix_report_getinst( $conndb->{$signal}{'::in'} );
 			my $out = _mix_report_getinst( $conndb->{$signal}{'::out'} );
 			
+			unless ( $sd ) {
+				# If either I or O is set -> create combination
+				if ( ( $in and not $out ) or ( not $in and $out ) ) {
+					$sd = $in . $out;
+				} elsif ( $in and $out ) {
+					$sd = "I: $in" . "O: $out";
+				}
+			}
 			$in = "(NO LOAD)" unless $in;
 			$out = "(NO DRIVER)" unless $out;
 			#TODO: Remember for later usage and sorting
@@ -261,25 +380,53 @@ sub mix_rep_portlist () {
 
 			# If we split into internal/external list, decide which to take:
 			my $tlist = $plist;
+			my $external_flag = 0;
 			if ( exists $conndb->{$signalname}{$exttrigger}
-					and $conndb->{$signalname}{$exttrigger} ne '' ) {
+					and $conndb->{$signalname}{$exttrigger} !~ m/^\s*$/ ) {
+				$external_flag = 1;
 				$tlist = $elist;
 			}
-			my $line = $mif->td(
-				{ 'PgfTag' => 'CellBodyH9',
-				  'String' => [
-				  	$portname,
-				  	$width,
-				  	$clock,
-				  	$descr,
-				  	$out,
-				  	$in
-				  ]
-				} );
-			# Is this external?
-			$mif->add( $mif->Tr(
+			
+			if ( $external_flag ) {
+				my $line = $mif->td(
+					{ 'PgfTag' => 'CellBodyH9',
+					   'String' => [
+					   		$portname,
+					   		$mode,
+					   		$descr,
+					   	],
+					}
+				);
+				$mif->add( $mif->Tr(
+					{ 'Text' => $line, 'WithPrev' => 0 },
+					), $elist );
+			} else {	
+				my $line = $mif->td(
+					{ 'PgfTag' => 'CellBodyH9',
+				  	'String' => [
+				  		$portname,
+				  		$width,
+				  		$clock,
+				  		$sd,
+				  		$mode,
+				  		$descr,
+				  	]
+					} );
+				$mif->add( $mif->Tr(
 					{ 'Text' => $line, 'WithPrev' => 0 }
-			), $tlist );
+				), $plist );
+
+			}
+			# pre -> print comments after corresponding lines
+			if ( $incom_mode eq 'pre' ) {
+				my $line = $mif->td(
+				{ 	'PgfTag' => 'CellHeadingH9',
+			  		'Columns' => 6, # Columns Span of all six cells
+			  		'String'  => $incom_text,
+				} );		
+				$mif->add( $mif->Tr($line), $plist );
+			};
+
 		}
 	}
 	
@@ -361,15 +508,15 @@ sub _mix_report_width ($$) {
 	
 	my $width = "__W_WIDTH_UNDEFINED";
 	
-	if ( ( not defined( $high ) or $high eq "" ) and
-		 ( not defined( $low ) or $low eq "" ) ) {
+	if ( ( not defined( $high ) or $high eq '' ) and
+		 ( not defined( $low ) or $low eq '' ) ) {
 		 # single bit, no vector
-		 	$width = "1";
-	} elsif ( $low eq "0" ) {
-		# $low is "0" -> width is $high 
-		$width = $high;
+		 	$width = '1';
 	} elsif ( $low =~ m/^\d+$/o and $high =~ m/^\d+$/o ) {
 		$width = $high - $low + 1;
+	} elsif ( $low eq "0" ) {
+		# $low is "0" -> width is $high 
+		$width = $high . ' + 1';
 	} else {
 		$width = "$high - $low + 1";
 	}

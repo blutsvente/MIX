@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.3 $                                          |
+# | Revision:   $Revision: 1.4 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/10/19 08:19:20 $                              |
+# | Date:       $Date: 2005/11/04 10:44:47 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.4  2005/11/04 10:44:47  wig
+# | Adding ::incom (keep CONN sheet comments) and improce portlist report format
+# |
 # | Revision 1.3  2005/10/19 08:19:20  wig
 # | Extended portlist writer and Mif module
 # |
@@ -68,9 +71,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.3 2005/10/19 08:19:20 wig Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.4 2005/11/04 10:44:47 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.3 $'; #'  
+my $thisrevision    =      '$Revision: 1.4 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -493,13 +496,34 @@ sub td {
 	for my $s ( @{$cell{'String'}} ) {
 		#TODO: encode $s for MIF
 		my $cols = ( $cell{'Columns'} ) ? "<CellColumns $cell{'Columns'}> " : "";
+		$s = _td_para( $s, $cell{'Indent'} );
 		$text .= "\t" x $cell{'Indent'} .
 				"<Cell $cols<CellContent <Para <PgfTag `" .
-				$cell{'PgfTag'} . "'> <ParaLine <String `$s'> > > > >\n";
+				$cell{'PgfTag'} . "'> $s > > >\n";
 	}
 	return $text;
 }
 
+#
+# Convert the string that goes into the table cell
+# Esp. mask \n
+#
+sub _td_para {
+	my $string = shift;
+	my $indent = shift;
+
+	my $parapre = '<ParaLine <String `';
+	my $parasep = "'" . '> <Char HardReturn> > #End of ParaLine' . "\n" .
+				  "\t" x $indent . '<ParaLine <String `';
+	my $paraend = "'> >";
+	
+	$string =~ s/\n/$parasep/g;
+	$string = $parapre . $string . $paraend;
+	
+	return $string;
+
+}
+	
 1;
 
 #!End

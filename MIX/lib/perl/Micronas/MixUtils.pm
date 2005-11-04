@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.87 $                                         |
+# | Revision:   $Revision: 1.88 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/11/02 13:29:19 $                              |
+# | Date:       $Date: 2005/11/04 10:44:47 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.87 2005/11/02 13:29:19 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.88 2005/11/04 10:44:47 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.88  2005/11/04 10:44:47  wig
+# | Adding ::incom (keep CONN sheet comments) and improce portlist report format
+# |
 # | Revision 1.87  2005/11/02 13:29:19  wig
 # | Got -help to return some results
 # |
@@ -384,11 +387,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.87 2005/11/02 13:29:19 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.88 2005/11/04 10:44:47 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.87 $';         #'
+my $thisrevision        =      '$Revision: 1.88 $';         #'
 
-# Revision:   $Revision: 1.87 $   
+# Revision:   $Revision: 1.88 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1381,7 +1384,7 @@ sub mix_init () {
     #
     'conn' => {
 		'xls' => 'CONN',
-		'comments' => '',	# Keep comments -> pre|predecessor post|successor
+		'comments' => 'post',	# Keep comments -> pre|predecessor post|successor
 		'req' => 'mandatory',
 		'parsed' => 0,
 		'key' => '::name', # Primary key to %conndb
@@ -1767,12 +1770,16 @@ sub mix_init () {
 	'report' => {
 		'path'	=> '.',
 		'portlist'	=> {
-		'name'	=>	'port', # Print out port names, not signal names!
-		'split' =>	'external::extc,instance',
+			'name'	=>	'port', # Print out port names, not signal names!
+			'split' =>	'external::extc,instance',
 					# Generate seperate portlist for
 					#	external : if column ::external has content
 					#		external::foo : use column ::foo as trigger
 					#	instance : for each instance
+			'sort' =>	'input', # or alpha or ::col ....
+					# pinlist sort order. See portmapsort
+			'comments' => 0,	# Limit the number of comment lines to N; 0 -> unlimited
+					# To switch off all, set conn.comments=''
 		},
 	},
 	
@@ -2998,16 +3005,24 @@ sub convert_in ($$) {
 			# Skip only if 'comments' is not set
 			if ( defined( $EH{$kind}{'comments'} ) and $EH{$kind}{'comments'} ) {
 				my $relation = ( $EH{$kind}{'comments'} =~ m/\bpre/io ) ? 'pre' : 'post';
+				# Other values: post, successor
 				# Link the comment to the previous/next line
 				# create a primary key entry (if not set!)
+				my $comt = join( ' ', $all );
+				$comt =~ s/\s+$//;
+				$comt =~ s/^\s+//;
 				my $incom = new Micronas::MixUtils::InComments(
-					{	'text' => join( " ", $all ),
-						'relation' => $relation,
+					{	'text'		=> $comt,
+						'relation'	=> $relation,
 					 }
 					);
 				if ( $relation eq 'pre' ) { # Attach to predecessor
-					push( @{$d[-1]{'::incom'}}, $incom );
-				} elsif ( $EH{$kind}{'comments'} =~ m/\b(post|succ)/io ) {
+					if ( scalar( @d ) ) {
+						push( @{$d[-1]{'::incom'}}, $incom );
+					} else {
+						push( @{$d[0]{'::incom'}}, $incom );
+					}
+				} elsif ( $relation eq 'post' ) {
 					push( @holdincom, $incom ); # Save until we have another line
 				}					
 			} 
@@ -3028,7 +3043,7 @@ sub convert_in ($$) {
 				}
 	    	}# TODO Set to default ? If field is undefined, set to ""
 		}
-		if ( scalar( @holdincom ) ) { # Attach post comments ....
+		if ( scalar( @holdincom ) ) { # Attach post comments to previous ...
 			@{$d[-1]{'::incom'}} = @holdincom;
 			@holdincom = ();
 		}

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.67 $                                         |
+# | Revision:   $Revision: 1.68 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/11/02 14:28:45 $                              |
+# | Date:       $Date: 2005/11/04 10:44:47 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.67 2005/11/02 14:28:45 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.68 2005/11/04 10:44:47 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.68  2005/11/04 10:44:47  wig
+# | Adding ::incom (keep CONN sheet comments) and improce portlist report format
+# |
 # | Revision 1.67  2005/11/02 14:28:45  wig
 # | Remove extra ; from port map if port has comment
 # |
@@ -317,9 +320,9 @@ sub _mix_wr_regorwire($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.67 2005/11/02 14:28:45 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.68 2005/11/04 10:44:47 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.67 $';
+my $thisrevision   =      '$Revision: 1.68 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1333,7 +1336,7 @@ sub _write_entities ($$$) {
 		$write_flag = "0"; # Do NOT write ...
     }
     #
-    # Do not write, if this entitiy is in the filter list!
+    # Do not write, if this entity is in the filter list!
     #!wig20051005:
     if ( $EH{'output'}{'filter'}{'file'} ) {
 	   	my $filter = _mix_wr_getfilter( 'enty', $EH{'output'}{'filter'}{'file'} );	    	
@@ -2138,7 +2141,8 @@ sub write_architecture () {
 		    		not $hierdb{$i}{'::treeobj'}->daughters ) {
 		    	next;
 			}
-		
+
+			# Skip HDL/arch out if this file name matches the given filter reg-exp.		
 		    if ( $EH{'output'}{'filter'}{'file'} ) {
 		    	my $filter = _mix_wr_getfilter( 'arch', $EH{'output'}{'filter'}{'file'} );	    	
 		    	next if $i =~ m/$filter/;
@@ -5643,8 +5647,9 @@ sub mix_wr_use_udc ($$$) {
 
 #
 # Get a regular expression which contains only filters for this mode
-#   mode := arch|enty|conf ....
+#   mode := arch|enty|conf ...., "all" matches all possible modes
 #   mode will select keys which have "mode:" prepended
+#	e.g. all:.* -> do not print any file
 #
 sub _mix_wr_getfilter ($$) {
 	my $mode = shift;

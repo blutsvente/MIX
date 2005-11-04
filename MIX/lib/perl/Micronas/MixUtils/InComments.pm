@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: InComments.pm,v $                                      |
-# | Revision:   $Revision: 1.2 $                                          |
+# | Revision:   $Revision: 1.3 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/10/18 09:34:37 $                              |
+# | Date:       $Date: 2005/11/04 10:44:47 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: InComments.pm,v $
+# | Revision 1.3  2005/11/04 10:44:47  wig
+# | Adding ::incom (keep CONN sheet comments) and improce portlist report format
+# |
 # | Revision 1.2  2005/10/18 09:34:37  wig
 # | Changes required for vgch_join.pl support (mainly to MixUtils)
 # |
@@ -57,9 +60,9 @@ use FileHandle;
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: InComments.pm,v 1.2 2005/10/18 09:34:37 wig Exp $';#'  
+my $thisid          =      '$Id: InComments.pm,v 1.3 2005/11/04 10:44:47 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: InComments.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.2 $'; #'  
+my $thisrevision    =      '$Revision: 1.3 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -68,9 +71,9 @@ $thisrevision =~ s,^\$,,go;
 
 #
 #  storage for comments (with number before/after)
-#	text -> the text making up the comment (usually the whole line, joined)
-#	type -> conn|hier|...
-#	pre	-> number of predecessor
+#	text	-> the text making up the comment (usually the whole line, joined)
+#	type	-> conn|hier|...
+#	pre		-> number of predecessor
 #	post	-> successor line
 #
 sub new {
@@ -86,6 +89,7 @@ sub new {
 	my $ref_member  = {
 		'text'	=>	'',
 		'type'	=>	'',
+		'relation' => '',
 		'pre'	=>	'',
 		'post'	=>	'',
 	};
@@ -98,9 +102,9 @@ sub new {
 	bless $ref_member, $class;
 };
 
-=head 4 write() write results to file
+=head 4 print() prints the text string
 
-	write() does not take arguments
+	print() does not take arguments
 	
 =cut
 
@@ -111,6 +115,27 @@ sub print {
 	
 }
 
+=head 4 mode returns the pre/post mode valid for this comment
+
+	mode() returns the relation of this comment to the calling object
+
+=cut
+
+sub mode {
+	my $this = shift;
+	
+	if ( $this->{'relation'} ) {
+		return $this->{'relation'};
+	} elsif ( $this->{'pre'} ) {
+		return $this->{'pre'};
+	} elsif ( $this->{'post'} ) {
+		return $this->{'post'};
+	}
+	
+	return undef();
+
+}
+	
 1;
 
 #!End
