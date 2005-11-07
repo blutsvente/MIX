@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.4 $                                          |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/11/04 10:44:47 $                              |
+# | Revision:   $Revision: 1.5 $                                          |
+# | Author:     $Author: mathias $                                            |
+# | Date:       $Date: 2005/11/07 13:18:13 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.5  2005/11/07 13:18:13  mathias
+# | added wrCell function
+# |
 # | Revision 1.4  2005/11/04 10:44:47  wig
 # | Adding ::incom (keep CONN sheet comments) and improce portlist report format
 # |
@@ -71,9 +74,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.4 2005/11/04 10:44:47 wig Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.5 2005/11/07 13:18:13 mathias Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.4 $'; #'  
+my $thisrevision    =      '$Revision: 1.5 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -505,25 +508,47 @@ sub td {
 }
 
 #
-# Convert the string that goes into the table cell
-# Esp. mask \n
+#    <Cell <CellContent <Para <PgfTag `xRegHeading'>	<ParaLine <String `Name'> > > > >
+# Parameters:
+#	PgfTag	(Paragraph format, default: CellBody)
+#	String	(Cell contents)
+#	Columns (If set, this cell spans multiple columns, optional)
+#   Indent  (Default: no indentation)
 #
-sub _td_para {
-	my $string = shift;
-	my $indent = shift;
+sub wrCell($$$)
+{
+    my ($self, $param, $indent) = @_;
+    my $text = "";
 
-	my $parapre = '<ParaLine <String `';
-	my $parasep = "'" . '> <Char HardReturn> > #End of ParaLine' . "\n" .
-				  "\t" x $indent . '<ParaLine <String `';
-	my $paraend = "'> >";
-	
-	$string =~ s/\n/$parasep/g;
-	$string = $parapre . $string . $paraend;
-	
-	return $string;
+    $indent ||= 2;    # Prepend two Tabs
+    my %cell = ('PgfTag'	=> 'CellBody',      # Default FrameMaker Format
+                'String'        => '__E_NO_STRING', # String, Cellname
+                'Columns'       => 0,               # Do not span columns
+                'Rows'          => 0,               # Do not span rows
+                'Fill'          => 0,               # CellFill?
+                'Separation'    => 0,               # CellSeparation?
+                'Color'         => 0,               # background color
+                'Indent'        => 0,               # Prepend <n> Tabs
+               );
 
+    if ( ref( $param ) eq "HASH" ) {
+        $text .= "\t" x $indent if ($indent);
+        $text .=  "<Cell ";
+        $text .= "<CellRows " . $param->{Rows} . "> " if (exists($param->{Rows}));
+        $text .= "<CellColumns " . $param->{Columns} . "> " if (exists($param->{Columns}));
+        $text .= "<CellFill " . $param->{Fill} . '> ' if (exists($param->{Fill}));
+        $text .= "<CellSeparation " . $param->{Separation} . '>' if (exists($param->{Separation}));
+        $text .= "<CellColor `" . $param->{Color} . "'>" if (exists($param->{Color}));
+
+        $text .= "<CellContent <Para <PgfTag `" . $param->{PgfTag} . "'> <ParaLine ";
+        $text .= "<String `" . $param->{String} . "'>" if (exists($param->{String}));
+        $text .= " > > > > # end of Cell\n";
+    } else {
+        $cell{'String'} = $param;
+    }
+    return $text;
 }
-	
+
 1;
 
 #!End
