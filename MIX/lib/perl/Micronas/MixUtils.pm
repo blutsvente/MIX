@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.92 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/11/08 08:06:54 $                              |
+# | Revision:   $Revision: 1.93 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2005/11/08 09:28:26 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.92 2005/11/08 08:06:54 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.93 2005/11/08 09:28:26 lutscher Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.93  2005/11/08 09:28:26  lutscher
+# | corrected default value for reg_shell.type
+# |
 # | Revision 1.92  2005/11/08 08:06:54  wig
 # | Added some documentation and example (register shell)
 # |
@@ -399,11 +402,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.92 2005/11/08 08:06:54 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.93 2005/11/08 09:28:26 lutscher Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.92 $';         #'
+my $thisrevision        =      '$Revision: 1.93 $';         #'
 
-# Revision:   $Revision: 1.92 $   
+# Revision:   $Revision: 1.93 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1285,7 +1288,7 @@ sub mix_init () {
     # parameters for register-view generation (e.g. for HDL register-shell)
     #
 	'reg_shell' => {
-	    'type'             => 'HDL-vgch-vrs', # type of register-view to be generated (see Reg.pm)
+	    'type'             => 'HDL-vgch-rs', # type of register-view to be generated (see Reg.pm)
 		'addrwidth' => 14,            # Default address bus width (byte-addresses)
 		'datawidth' => 32,            # Default data bus width in bits
 		'multi_clock_domains' => 1,   # If 1, generate separate register blocks for all clock domains
