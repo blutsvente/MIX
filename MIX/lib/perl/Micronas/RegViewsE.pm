@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewsE.pm,v 1.4 2005/11/02 14:37:09 lutscher Exp $
+#  RCSId: $Id: RegViewsE.pm,v 1.5 2005/11/08 11:37:06 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,11 @@
 ###############################################################################
 #
 #  $Log: RegViewsE.pm,v $
+#  Revision 1.5  2005/11/08 11:37:06  lutscher
+#  o fixed reg_offset conversion to hex
+#  o added some code to import parameters from MIX
+#  o increased width of field name column in template
+#
 #  Revision 1.4  2005/11/02 14:37:09  lutscher
 #  now uses domain name instead of block attribute for code generation
 #
@@ -79,15 +84,14 @@ sub _gen_view_vr_ad {
 	my $href;
 	my $verbose = 0;
 
-	# add global class members
+	# add global class members for static data
 	$this->global('E_FILE'      => {
-					'header' => " created automatically by $0\n\n<\'\n",
-					'footer' => "\'>\n",
-					'prefix' => "regdef_",
-					'suffix' => ".e"
-					},
-			'REGISTER'	=>	{ 
-									 'size'		=> 32,
+									'header' => " created automatically by $0\n\n<\'\n",
+									'footer' => "\'>\n",
+									'prefix' => "regdef_",
+									'suffix' => ".e"
+								   },
+				  'REGISTER'	=>	{ 
 									 'macro_prefix'	=> "reg_def",
 									 'reg_prefix'	=> "MIC",
 									},
@@ -98,7 +102,26 @@ sub _gen_view_vr_ad {
 									},
 				 );
 
-	my $reg_size   = $this->global->{REGISTER}{size};
+	# import regshell.<par> parameters from MIX package to class data; user can change these parameters in mix.cfg
+	my $param;
+	my @lmixparams = (
+					  'reg_shell.addrwidth', 
+					  'reg_shell.datawidth',
+					 );
+	foreach $param (@lmixparams) {
+		my ($main, $sub) = split(/\./,$param);
+		if (exists($EH{$main}{$sub})) {
+			$this->global->{'REGISTER'}->{$sub} = $EH{$main}{$sub};
+			_info("setting parameter $param = ", $this->global->{'REGISTER'}->{$sub}) ;#if $this->global->{'debug'};
+		} else {
+			_error("parameter \'$param\' unknown");
+			if (defined (%EH)) { $EH{'sum'}{'errors'}++;};
+		};
+	};
+
+
+	my $reg_size   = $this->global->{REGISTER}->{datawidth};
+	my $addr_size  = $this->global->{REGISTER}->{addrwidth};
 	my $reg_def    = $this->global->{REGISTER}{macro_prefix};
 	my $reg_prefix = $this->global->{REGISTER}{reg_prefix};
 	my $hole_name  = $this->global->{FIELD}{hole_name};
@@ -194,11 +217,11 @@ sub _gen_view_vr_ad {
                         $ii =0;
 			foreach $singlefield (@thefields_and_theholes) {
 		                if ($ii == 0) {
-					print E_FILE uc(${$singlefield}{parent_block}), " 0x", $reg_offset, " {\n";
+					print E_FILE uc(${$singlefield}{parent_block}), " 0x", _val2hex($addr_size, $reg_offset), " {\n";
 				}
 				
 format E_FILE =
-    @<<<<<< @<<<<<<<<<<<<<<<<<: uint(bits:@>) : @< : 0 : cov ; -- lsb position @>>
+    @<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<: uint(bits:@>) : @< : 0 : cov ; -- lsb position @>>
 $reg_fld,${$singlefield}{name},${$singlefield}{size},${$singlefield}{rw},${$singlefield}{pos}
 .
       write E_FILE ;
