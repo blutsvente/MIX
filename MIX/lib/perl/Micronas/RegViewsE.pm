@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewsE.pm,v 1.6 2005/11/08 12:27:35 lutscher Exp $
+#  RCSId: $Id: RegViewsE.pm,v 1.7 2005/11/08 14:31:53 marema Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewsE.pm,v $
+#  Revision 1.7  2005/11/08 14:31:53  marema
+#  hole becomes hole_at_lsb
+#
 #  Revision 1.6  2005/11/08 12:27:35  lutscher
 #  added debug flag checking
 #
@@ -99,7 +102,7 @@ sub _gen_view_vr_ad {
 									 'reg_prefix'	=> "MIC",
 									},
 				  'FIELD' 		=>	{ 
-									 'hole_name'	=> "hole",
+									 'hole_name'	=> "hole_at_",
 									 'macro_prefix'	=> "reg_fld",
 									 'lower_case'	=> "true",
 									},
@@ -194,8 +197,8 @@ sub _gen_view_vr_ad {
 				$hole_size = $upper - (${$singlefield}{pos} + ${$singlefield}{size});		
 
                 if ($hole_size != 0) {
-					$theholes[$ii]{name} = $hole_name;
 					$theholes[$ii]{pos}  = ${$singlefield}{pos} + ${$singlefield}{size};
+					$theholes[$ii]{name} = $hole_name . $theholes[$ii]{pos};
                     $theholes[$ii]{size} = $upper - (${$singlefield}{pos} + ${$singlefield}{size});
                     $theholes[$ii]{rw}   = uc(${$singlefield}{rw});
 			     $theholes[$ii]{parent_block}   = ${$singlefield}{parent_block};
@@ -205,8 +208,8 @@ sub _gen_view_vr_ad {
 			}
 			
                         if ($upper != 0) {
-			     $theholes[$ii]{name} = $hole_name;
 			     $theholes[$ii]{pos}  = 0;
+			     $theholes[$ii]{name} = $hole_name . "0";
 			     $theholes[$ii]{size} = $upper;
 			     $theholes[$ii]{rw}   = "RW";
 			     $theholes[$ii]{parent_block}   = "na";
