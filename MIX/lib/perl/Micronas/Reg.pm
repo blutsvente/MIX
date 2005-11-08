@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.5 2005/10/26 13:57:14 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.6 2005/11/08 13:10:38 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.6  2005/11/08 13:10:38  lutscher
+#  added check for overlapping registers
+#
 #  Revision 1.5  2005/10/26 13:57:14  lutscher
 #  set debug to 0
 #
@@ -142,7 +145,7 @@ sub init {
 	if ($hinput{inputformat} eq "register-master") {
 		# call mapping function for register-master array
 		die "ERROR: database_type \'$hinput{database_type}\' not supported" if (!grep ($_ eq $hinput{database_type}, @{$this->global->{supported_register_master_type}}));
-		$this->_map_register_master($hinput{database_type}, $hinput{register_master});
+		$this->_map_register_master($hinput{database_type}, $hinput{register_master}) || die "aborting due to errors\n";
 	} else {
 		die "ERROR: unknown inputformat \'$this->{inputformat}\'";
 	};
@@ -225,6 +228,7 @@ sub display {
 # builds a register space object from a list in register-master format
 # input: 1. string for input database type, accounts for different flavours of the register master
 # 2. list of hashes, one for each row in the source sheet
+# output: 1 if successful, 0 otherwise
 # caveats: 
 # two consecutive registers must have different names (::instance)
 # two consecutive domains must have different names (::interface)
@@ -233,6 +237,7 @@ sub _map_register_master {
 	my($href_row, $marker, $rsize, $reg, $value, $fname, $fpos, $fsize, $domain, $offset, $msb, $msb_max, $lsb, $p, $new_fname, $usedbits, $baseaddr, $col_cnt);
 	my($o_domain, $o_reg, $o_field) = (undef, undef, undef);
 	my($href_marker_types, %hattribs, %hdefault_attribs, $m);
+	my $result = 1;
 
 	# get defaults for field attributes from %EH 
 	$href_marker_types = $EH{'i2c'}{'field'};
@@ -321,6 +326,7 @@ sub _map_register_master {
 		$fsize = $msb - $lsb + 1;
 		if ($fsize != $col_cnt) {
 			print STDERR "WARNING: bad field \'$fname\' in register \'$reg\' in domain \'$domain\', must be continuous bit-slice\n";
+			$result = 0;
 		};
 
 		# do not add "reserved" fields to database (boring)
@@ -340,6 +346,7 @@ sub _map_register_master {
 							$baseaddr = $1 << 8;
 						} else {
 							print STDERR "ERROR: could not extract base address from ::interface value \'$domain\' in register master (database type is \'$database_type\')\n";
+							$result = 0;
 						};
 					};
 					# link domain object into register space object
@@ -368,9 +375,14 @@ sub _map_register_master {
 
 			# compute bit-mask for register
 			for (my $i=$fpos; $i < $fpos+$fsize; $i++) {
+				my $old_usedbits = $usedbits;
 				$usedbits |= 1<<$i;
+				if ($old_usedbits == $usedbits) {
+					print STDERR "ERROR: overlapping fields in register \'$reg\'\n";
+					$result = 0;
+				};
 			}; 
-
+			
 			# create new field object
 			$o_field = Micronas::RegField->new(name => $fname, reg => $o_reg);
 			$o_field->attribs(%hattribs);
@@ -391,6 +403,7 @@ sub _map_register_master {
 	};
 	# free some memory
 	@$lref_rm = ();
+	return $result;											   
 };
 
 1;
