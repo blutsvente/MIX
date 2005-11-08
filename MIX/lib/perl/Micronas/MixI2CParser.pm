@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / I2CParser                                |
 # | Modules:    $RCSfile: MixI2CParser.pm,v $                             |
-# | Revision:   $Revision: 1.15 $                                         |
+# | Revision:   $Revision: 1.16 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2005/11/03 13:21:19 $                              |
+# | Date:       $Date: 2005/11/08 09:28:55 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/Attic/MixI2CParser.pm,v 1.15 2005/11/03 13:21:19 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/Attic/MixI2CParser.pm,v 1.16 2005/11/08 09:28:55 lutscher Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
@@ -87,9 +87,9 @@ sub mix_i2c_init_assign ();
 # RCS Id, to be put into output templates
 #
 
-my $thisid		= 	'$Id: MixI2CParser.pm,v 1.15 2005/11/03 13:21:19 lutscher Exp $';
+my $thisid		= 	'$Id: MixI2CParser.pm,v 1.16 2005/11/08 09:28:55 lutscher Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixI2CParser.pm,v $';
-my $thisrevision        =       '$Revision: 1.15 $'; #'
+my $thisrevision        =       '$Revision: 1.16 $'; #'
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -132,6 +132,7 @@ sub parse_i2c_init($) {
 			$o_space->generate_view($EH{'reg_shell'}{'type'});
 		} else {
 			# use this module for generation of register-shell
+			logwarn("ERROR: this reg_shell.type is no longer supported");
 			my $ehr = $EH{'i2c'}{'field'};
 			
 		foreach my $i (@$r_i2c) {
