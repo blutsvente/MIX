@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewsE.pm,v 1.5 2005/11/08 11:37:06 lutscher Exp $
+#  RCSId: $Id: RegViewsE.pm,v 1.6 2005/11/08 12:27:35 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewsE.pm,v $
+#  Revision 1.6  2005/11/08 12:27:35  lutscher
+#  added debug flag checking
+#
 #  Revision 1.5  2005/11/08 11:37:06  lutscher
 #  o fixed reg_offset conversion to hex
 #  o added some code to import parameters from MIX
@@ -112,7 +115,7 @@ sub _gen_view_vr_ad {
 		my ($main, $sub) = split(/\./,$param);
 		if (exists($EH{$main}{$sub})) {
 			$this->global->{'REGISTER'}->{$sub} = $EH{$main}{$sub};
-			_info("setting parameter $param = ", $this->global->{'REGISTER'}->{$sub}) ;#if $this->global->{'debug'};
+			_info("setting parameter $param = ", $this->global->{'REGISTER'}->{$sub}) if $this->global->{'debug'};
 		} else {
 			_error("parameter \'$param\' unknown");
 			if (defined (%EH)) { $EH{'sum'}{'errors'}++;};
