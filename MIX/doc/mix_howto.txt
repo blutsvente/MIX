@@ -1,5 +1,139 @@
 MIX HOWTO and FAQ
 
+>>title: Using MIX to create register-shell RTL
+
+I have now released the scripts for the register-shell RTL generation;
+they are integrated into MIX  (module load mix - Unix only at the moment).
+ 
+Usage:
+mix <register-master>.xls
+Requires also some parameters which are in the File mix.cfg (see example). Most important is the parameter i2c.xls (which must specify the sheet name).
+Requires module perl/5.8.x
+ 
+To generate e-code:
+mix -conf reg_shell.type=E_VR_AD <register-master>.xls
+ 
+Resources 
+required from MIC32 project:
+<library> MIC32 <version> 0001 </version> <release> ocp_target_initial </release> 
+required from ip_interfaces project:
+<library> ip_interfaces <version> 0101 </version> <release> async_ifs_initial </release>
+ 
+Example files:
+	see contrig/reg_shell
+ 
+Specification of the register-shell:
+file://\\galaxy\PROJECTS\MIC-32\MIC32C\ProjectDocumentation\OCP-config-register-shell\latest\OCP_config_regs.pdf 
+ 
+#!lutscher20051028 / Micronas
+
+>>title: reading sheets with lots of empty cells takes very long
+
+Please make sure you do not have lots of empty cells in your
+excel sheets. They will take very long to parse.
+
+#!wig20051028
+
+>>title: joining ExCEL sheets with vgch_join.xls, update
+
+the mix package now comes with the vgch_join.pl script, which
+is dedicated to read in misc. excel sheets and create a common
+output file.
+
+Usage:
+vgch_join.pl -out vgch_all.csv -top TOP.xls */*register-master.xls
+
+Some Details (see 20051024a/Req):
+
+	1. add 0x to fix_sheet
+	2. extended csv writer to catch \n and \r!
+	3. add _mix_utils_reorder function (fixes the print order)
+	4. remove repeated ::ign/Ignore lines
+	5. $EH{'format'}{'csv'}{'sheetsep'} = '' in combination with -nolisttop
+			preset $EH{'format'}{'csv'}{'style'} to remove <nl> 
+
+#!wig20051025
+
+>>title: joining ExCEL sheets with vgch_join.xls, part I
+
+$ module load perl mix
+$ vgch_join.pl [-out OUTPUT.(xls|csv)] -top vgch_top_address-map.xls
+	[-conf format.xls.style=stripnl]
+	foo_register-master.xls bar_register-master.xls …
+
+will combine all data found in the register master xls sheets and produce a combined xls workbook with
+two sheets:
+	VGCH_TOP	mainly a reprint of the data read from vgch_top_address-map.xls
+			(see ::comments for information about the register master sheets found or not)
+	JOIN_VGCH	combined sheet with fixed ::sub and ::block field
+
+The script relies on an appropriate naming of the input data sheets!
+Names for clients are taken from the top sheet, a leading sci_ is stripped.
+If that name matches an excel sheet name somehow, this sheet will be used as
+register master.
+
+Issues:
+	- the perl xls reader does not cope well with sheets that have lots of trainling empty cells.
+	- in case the above listed name rule is not obeyed, the register master sheet will not be found
+
+#!wig20051018
+
+>>title: using the -report portlist feature, more details
+
+
+Starting the command
+
+$ mix -report portlist -conf macro.%my_inst%=dvp_i \
+	-conf conn.xls=/scr/micmcs1/vgch/mix/dvp-pin-list.xls \
+	output.generate.enty=leaf -conf outarch=ARCH-conf outenty=ENTY  \
+	foo_pinlist.xls -conf outconf=CONF pinlist_hier.xls
+
+yields the following messages:
+
+05/10/19 16:10:46 WARNING: File output.generate.enty=leaf does not exist!
+05/10/19 16:10:46 WARNING: File foo_pinlist.xls does not exist!
+05/10/19 16:10:46 WARNING: File pinlist_hier.xls does not exist!
+
+Reason:
+1. Zeile: missing -conf before the "output.generate.enty" parameter
+2. foo_pinlist.xls has to be replaced by the name of a real pinlist description
+3. pinlist_hier.xls should pinlist_generic_hier.xls ..
+
+#!wig20051019
+
+>>title: using the -report portlist feature
+
+Aufruf:
+
+MS-Win (cmd):
+K:
+cd \PROJECTS\VGCH\ProjectDocumenation\MIX\DVP
+K:\PROJECTS\MIX?PROG\mix_0.pl -report portlist  -conf 'macro.%my_inst%=dvp_i' -conf conn.xls='CONN_.*'  ../pinlist_generic_hier.xls dvp-pin-list.xls 
+
+Cygwin:
+cd /cygdrive/k/PROJECTS/VGCH/ProjectDocumenation/DVP
+/cygdrive/k/PROJECTS/MIX/PROG/mix_0.pl  ..<see above>
+
+UNIX:
+
+$ module load mix
+mix -report portlist  -conf 'macro.%my_inst%=dvp_i' -conf conn.xls='CONN_.*' \
+	../pinlist_generic_hier.xls dvp-pin-list.xls 
+Please replace the pathes to match the real data!
+
+Caveats & Tips:
+	- MIX requires a HIER and CONN worksheet!
+	- Use the generic hierachy description from K:\PROJECTS\VGCH\ProjectDocumentation\MIX\pinlist_generic_hier.xls
+		See the inline documentation
+	- Suppress HDL-Output:
+		-conf output.filter.file=.*   (cygwin/UNIX: ='.*')
+	- signal/port names may not contain special characters like $, %, ...
+	- all -conf parameters may be put into a mix.cfg file like:
+		MIXCFG output.filter.file .*
+		Format: MIXCFG parmameter.name value
+
+#!wig20051108
+
 >>title: Avoid that IO/inout signals get wired to the toplevel
 
 By default MIX wires all I, O and IO signals to the top-level.

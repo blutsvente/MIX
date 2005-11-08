@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.8 $                                               |
-# | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2005/11/07 13:16:28 $                                                   |
+# | Revision:   $Revision: 1.9 $                                               |
+# | Author:     $Author: wig $                                                 |
+# | Date:       $Date: 2005/11/08 08:06:54 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.8 2005/11/07 13:16:28 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.9 2005/11/08 08:06:54 wig Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.9  2005/11/08 08:06:54  wig
+# | Added some documentation and example (register shell)
+# |
 # | Revision 1.8  2005/11/07 13:16:28  mathias
 # | merged and added mix_rep_reglist
 # |
@@ -73,11 +76,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.8 2005/11/07 13:16:28 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.9 2005/11/08 08:06:54 wig Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.8 $';
+my $thisrevision   =      '$Revision: 1.9 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 $thisid =~ s,\$,,go; # Strip away the $
@@ -153,7 +156,7 @@ sub mix_report ()
         mix_rep_portlist();
     }
     if ( $reports =~ m/\breglist\b/io ) {
-        print("~~~~~ Report register list in mif format\n");
+        logsay("~~~~~ Report register list in mif format\n");
         mix_rep_reglist();
     }
 }
@@ -463,8 +466,6 @@ sub mix_rep_portlist () {
 	);
 		
 	$mif->template(); # Initialize it
-	
-	$mif->start_table( 'Portlist' );
 
 	# If ::external column is set, make a seperate table for external
 	my $exttrigger = '';
@@ -569,7 +570,15 @@ sub mix_rep_portlist () {
 			#  comment. Print it before (post mode) or after (pre mode)	
 			#  Maybe we limit the number of lines ...
 			# my $incom_mode = ''; # pre or post
-			my $incom_lines = $EH{'report'}{'portlist'}{'comments'};
+			$EH{'report'}{'portlist'}{'comments'} =~ m/(\d+)/;
+			my $striphash = 0;
+			if ( $EH{'report'}{'portlist'}{'comments'} =~ m/\bstriphash/io ) {
+				$striphash = 1;
+			}
+			my $incom_lines = 0;
+			if ( defined( $1 ) ) {
+				$incom_lines = $1;
+			}
 			if ( $incom_lines <= 0 ) {
 				$incom_lines = 100000; # This is nearly unlimited ....
 			}
@@ -588,7 +597,9 @@ sub mix_rep_portlist () {
 				$max--;
 				for my $com ( @{$conndb->{$signal}{'::incom'}}[$min..$max] ) {
 					# $com is InComment Object ...
-					$incom_text .= $com->print() . "\n";
+					my $t = $com->print() . "\n";
+					$t =~ s/\s*#+// if ( $striphash );
+					$incom_text .= $t;
 				}
 				chomp( $incom_text );
 			}

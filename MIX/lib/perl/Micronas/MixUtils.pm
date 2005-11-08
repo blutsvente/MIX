@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.91 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2005/11/07 10:48:45 $                              |
+# | Revision:   $Revision: 1.92 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2005/11/08 08:06:54 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.91 2005/11/07 10:48:45 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.92 2005/11/08 08:06:54 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.92  2005/11/08 08:06:54  wig
+# | Added some documentation and example (register shell)
+# |
 # | Revision 1.91  2005/11/07 10:48:45  lutscher
 # | changed default for reg_shell param
 # |
@@ -396,11 +399,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.91 2005/11/07 10:48:45 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.92 2005/11/08 08:06:54 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.91 $';         #'
+my $thisrevision        =      '$Revision: 1.92 $';         #'
 
-# Revision:   $Revision: 1.91 $   
+# Revision:   $Revision: 1.92 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1789,8 +1792,10 @@ sub mix_init () {
 					#	instance : for each instance
 			'sort' =>	'input', # or alpha or ::col ....
 					# pinlist sort order. See portmapsort
-			'comments' => 0,	# Limit the number of comment lines to N; 0 -> unlimited
-					# To switch off all, set conn.comments=''
+			'comments' => "0,striphash",
+					# Limit the number of comment lines to N; 0 -> unlimited
+					# To switch off all, set report.portlist.comments=''
+					# striphash  := remove leading # signs from the comments
 		},
 	},
 	
@@ -2996,6 +3001,7 @@ sub convert_in ($$) {
     for my $i ( @$r_data ) { # Read row by row
 		$i = [ map { defined( $_ ) ? $_ : "" } @$i ];		#Fill up undefined fields??
 		my $all = join( ' ', @$i );
+		$all =~ s/\n//g; # Remove extra newlines ..
 		next if ( $all =~ m/^\s*$/o ); 			# If a line is totally empty, skip it
 		#!wig20051011: next if ( $all =~ m,^\s*(#|//), );			# If line starts with comment, skip it
 

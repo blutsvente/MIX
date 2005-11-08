@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: InComments.pm,v $                                      |
-# | Revision:   $Revision: 1.3 $                                          |
+# | Revision:   $Revision: 1.4 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/11/04 10:44:47 $                              |
+# | Date:       $Date: 2005/11/08 08:06:55 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: InComments.pm,v $
+# | Revision 1.4  2005/11/08 08:06:55  wig
+# | Added some documentation and example (register shell)
+# |
 # | Revision 1.3  2005/11/04 10:44:47  wig
 # | Adding ::incom (keep CONN sheet comments) and improce portlist report format
 # |
@@ -60,9 +63,9 @@ use FileHandle;
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: InComments.pm,v 1.3 2005/11/04 10:44:47 wig Exp $';#'  
+my $thisid          =      '$Id: InComments.pm,v 1.4 2005/11/08 08:06:55 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: InComments.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.3 $'; #'  
+my $thisrevision    =      '$Revision: 1.4 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -105,7 +108,7 @@ sub new {
 =head 4 print() prints the text string
 
 	print() does not take arguments
-	
+
 =cut
 
 sub print {

@@ -56,7 +56,7 @@ MIX - Micronas Interconnect Spec expander
 
 Author: Wilfried Gänsheimer
 \newline 
-$Date: 2005/10/13 09:09:45 $
+$Date: 2005/11/08 08:06:54 $
 \newline 
 Version: $Id: MIX_Userreference.lyx,v 1.6 2005/01/26 14:01:59 wig Exp 
 \layout Section
@@ -122,34 +122,33 @@ MICRONAS
 \end_inset 
 
 .
- For UNIX (Solaris/Linux) no user installation is required.
- Everything needed is installed in 
-\family typewriter 
-/tools/mix
-\family default 
-.
+ Alternatively you can use the cygwin environment.
+ Check the software installation hints at the end of this document.
 \newline 
 Start MIX from the network drive like described in the examples below.
  That will also make sure, that you are using the most recent release automatica
 lly.
- After the Perl installation, you can run MIX immediately.
- Open a command shell on your desktop workstation:
-\newline 
-Press 
+ After the Perl installation, you can immediately start MIX:
+\layout Standard
+
+- Open a command shell on your desktop workstation:
+\layout Standard
+
+- Press 
 \family typewriter 
 Start -> Run
 \family default 
  ; type 
 \family typewriter 
 cmd
-\family default 
+\layout Standard
 
-\newline 
-Now change to your working directory and start the generator like
-\newline 
+- Now change to your working directory and start the generator like
+\layout Standard
+
 
 \family typewriter 
-
+- 
 \begin_inset Note
 collapsed true
 
@@ -171,7 +170,44 @@ mix_0.pl foo.xls
 
 
 \family typewriter 
-TODO: Describe MUI (MIX graphical User Interface).
+- TODO: Describe MUI (MIX graphical User Interface).
+\family default 
+
+\newline 
+For UNIX (Solaris/Linux) no user installation is required.
+ Everything needed is installed in 
+\family typewriter 
+/tools/mix
+\family default 
+.
+ Use 
+\begin_inset Quotes eld
+\end_inset 
+
+
+\family typewriter 
+module load mix
+\family default 
+
+\begin_inset Quotes erd
+\end_inset 
+
+ to prepare your environment.
+ You can select a special version, check the output of 
+\begin_inset Quotes eld
+\end_inset 
+
+
+\family typewriter 
+module avail mix
+\family default 
+
+\begin_inset Quotes eld
+\end_inset 
+
+ to see what is available.
+\newline 
+
 \layout Section
 
 Getting Started
@@ -7809,6 +7845,67 @@ Options and syntax are the same as with UNIX/Linux.
 \layout Section
 
 Known Bugs and limitations
+\layout Subsection
+
+Missing perl modules Win32:
+\layout Standard
+
+05/10/21 09:45:05 FATAL: eval use Win32 failed: Can't locate Win32/OLE/Const.pm
+\newline 
+That means, you do not have all required modules installed.
+\newline 
+Fix:
+\layout Standard
+
+For cygwin:
+\layout Standard
+
+S:
+\backslash 
+Cygwin
+\backslash 
+setup.exe
+\layout Standard
+
+-> install from internet
+\layout Standard
+
+-> C:
+\backslash 
+cygwin als Root
+\layout Standard
+
+-> C:
+\backslash 
+cygwin als Local
+\layout Standard
+
+-> use proxy (mucwebproxy:8082)
+\layout Standard
+
+-> choose the german ftp server
+\layout Standard
+
+now the cygwin installer will check the installed and available packages.
+\layout Standard
+
+View by categories, search for perl and select
+\layout Standard
+
+: perl-libwin32
+\layout Standard
+
+: perl-WIN32-GUI
+\layout Standard
+
+-> choose next.
+\layout Standard
+
+Feel free to ignore messages about having a non current cygwin version installed.
+\layout Standard
+
+Alternatively you can choose to write out intermediate data in csv or sxc
+ format.
 \layout Section
 
 Issue tracking: CADNET - Issue tracking - CAD Software - MIX
@@ -7899,6 +7996,12 @@ Used Software
 \layout Subsection
 
 Release Notes
+\layout Subsubsection
+
+20051019
+\layout Standard
+
+see doc/release_20051019.txt
 \layout Subsubsection
 
 20030716

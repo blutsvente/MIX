@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.54 2005/11/04 11:03:04 wig Exp $
+# $Id: TODO.txt,v 1.55 2005/11/08 08:06:54 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -28,6 +28,41 @@ Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
 
+>>title: 20051019b/Bug: do not print No 'defines
+
+im Verilog code steht
+// No 'defines in this module
+auch wenn dort defines stehen, quasi immer 8-)
+
+	Req: thorsten
+	Prio: low
+	Status: open
+	
+>>title: 20051104b/Req: create component declarations ...
+
+	Create a component declarartion for top module(s) ...
+		e.g. in one common file (package)?
+		or embedded into verilog file (inside of comments)
+		
+	Req: wig
+	Prio: low
+	Status: open
+
+>>title: 20051104a/Req: improve -report portlist, II
+
+1. strip off leading # from comments
+
+2. Check line breaks in comments (looks like each cell creates a new
+line.
+
+3. Uniquify the *.mif name, e.g. prepend the top_module name.
+
+4. Add a "-top AUTO" to autoconnect all modules to the TOP level
+
+	Req: wig
+	Prio: medium
+	Status: open
+	
 >>title: 20051020a/Bug: improve -report portlist (lots of changes)
 
 1. remove info messages

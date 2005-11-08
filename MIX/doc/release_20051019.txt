@@ -1,0 +1,33 @@
+Hallo,
+
+habe soeben die erweiterte Version released:
+
+Windows: -default- Version (K:\PROJECTS\MIX\PROG\mix_0.pl)
+
+UNIX:	1.3 (default bei module load mix)
+
+1. es werden die Portnamen ausgegeben (anstelle der Signalnamen)
+2. es werden falls eine Spalte "::extc" existiert, zwei Tabellen angelegt.
+  In die erste werden alle Ports geschrieben, die irgendwas in der ::extc Spalte stehen haben,
+  der Rest kommt in die zweite Tabelle.
+
+Die erzeugte Datei heisst immer mix_portlist.mif und muss per "Import -> Copy into Document"
+in das Design Template eingebunden werden.
+
+
+Zusätzlich gibt es jetzt das Skript
+	vgch_join.pl
+
+Beschreibung dazu auf Anfrage.
+
+Known bugs:
+	- Manfred hat fehlende Signale gefunden (also eigentlich nicht mehr gefunden). Das muss ich noch
+	debuggen.
+	- -delta funktioniert nicht unter UNIX
+
+Weitere Probleme bitte wie gewohnt melden (Wie üblich: je genauer die Fehlerbeschreibung und ein Testcase,
+umso schneller kann ich das Problem finden und beheben).
+
+Bye
+Wilfried
+
