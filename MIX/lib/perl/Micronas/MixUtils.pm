@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.93 $                                         |
+# | Revision:   $Revision: 1.94 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2005/11/08 09:28:26 $                              |
+# | Date:       $Date: 2005/11/09 13:13:52 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.93 2005/11/08 09:28:26 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.94 2005/11/09 13:13:52 lutscher Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.94  2005/11/09 13:13:52  lutscher
+# | changed reg_shell param
+# |
 # | Revision 1.93  2005/11/08 09:28:26  lutscher
 # | corrected default value for reg_shell.type
 # |
@@ -402,11 +405,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.93 2005/11/08 09:28:26 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.94 2005/11/09 13:13:52 lutscher Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.93 $';         #'
+my $thisrevision        =      '$Revision: 1.94 $';         #'
 
-# Revision:   $Revision: 1.93 $   
+# Revision:   $Revision: 1.94 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1294,7 +1297,7 @@ sub mix_init () {
 		'multi_clock_domains' => 1,   # If 1, generate separate register blocks for all clock domains
 		'infer_clock_gating'  => 1,   # If 1, insert extra logic for power-saving
         'infer_sva'           => 1,   # If 1, insert SystemVerilog assertions into HDL-code
-        'read_pipeline_lvl'   => 5,   # Parameter that controls the read-pipelining
+        'read_pipeline_lvl'   => 0,   # Parameter that controls the read-pipelining
                                       # If 0, no read-pipelining will be inserted
 		'read_multicycle'     => 0,   # can be one of [0,1,2,..] to insert delays for read-acknowledge
 		'bus_clock' => "clk",         # Default bus clock name
