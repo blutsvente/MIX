@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.8 2005/11/03 13:22:26 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.9 2005/11/09 12:43:10 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.9  2005/11/09 12:43:10  lutscher
+#  fixed a number of bugs
+#
 #  Revision 1.8  2005/11/03 13:22:26  lutscher
 #  some fixes for code generation for USR registers
 #
@@ -99,15 +102,17 @@ sub _gen_view_vgch_rs {
 
 	# extend class data with data structure needed for code generation
 	$this->global(
-				  'ocp_target_name'    => "ocp_target",
-				  'mcda_name'          => "rs_mcda",
-				  'regshell_prefix'    => "rs",     # register-shell prefix
-				  'cfg_module_prefix'  => "rs_cfg", # prefix for config register block
-				  'int_set_postfix'    => "_set_p", # postfix for interrupt-set input signal
-				  'test_port_name'     => "test",   # name of test input
+				  'ocp_target_name'    => "ocp_target", # library module name
+				  'mcda_name'          => "rs_mcda",    # library module name
+				  'regshell_prefix'    => "rs",         # register-shell prefix
+				  'cfg_module_prefix'  => "rs_cfg",     # prefix for config register block
+				  'int_set_postfix'    => "_set_p",     # postfix for interrupt-set input signal
+				  'test_port_name'     => "test",       # name of test input
 				  'field_spec_values'  => ['sha', 'w1c', 'usr'], # recognized values for spec attribute
-				  'hclocks'            => {},
-				  'indent'             => "    " # indentation character(s)
+				  'hclocks'            => {},           # for storing per-clock-domain information
+				  'indent'             => "    ",       # indentation character(s)
+				  'assert_pragma_start'=> "`ifdef ASSERT_ON",
+				  'assert_pragma_end'  => "`endif"
 				 );
 
 	# import regshell.<par> parameters from MIX package to class data; user can change these parameters in mix.cfg
@@ -120,6 +125,7 @@ sub _gen_view_vgch_rs {
 					  'reg_shell.infer_clock_gating', 
 					  'reg_shell.infer_sva',
 					  'reg_shell.read_multicycle',
+					  'reg_shell.read_pipeline_lvl',
 					  'postfix.POSTFIX_PORT_OUT', 
 					  'postfix.POSTFIX_PORT_IN'
 					 );
@@ -143,6 +149,12 @@ sub _gen_view_vgch_rs {
 		foreach $href (@{$this->domains}) {
 			push @ldomains, $href->{'domain'};
 		};
+	};
+
+	# check parameters
+	if ($this->global->{'read_pipeline_lvl'} > 0 and $this->global->{'read_multicycle'} >0) {
+		$this->global->{'read_multicycle'} = 0;
+		_info("parameter \'read_multicycle\' is ignored because read-pipelining is enabled");
 	};
 
 	# modify MIX config (only where required)
@@ -202,10 +214,11 @@ sub _vgch_rs_gen_cfg_module {
 	my $nusr = 0;
 	my (@lassigns) = ("", "/*","  local wire and output assignments","*/");
 	my (@ldefines) = ("", "/*", "  local definitions","*/");
-	my ($addr_msb, $addr_lsb) = $this->_get_address_msb_lsb($o_domain);
+	my $addr_msb = $this->global->{'addr_msb'};
+	my $addr_lsb = $this->global->{'addr_lsb'};
 	my (@lsp) = ();
 	my (@lrp) = ();
-	my (@lchecks) = ("", "/*","  checking code","*/");
+	my (@lchecks) = ();
 
 	if ($addr_msb >= $this->global->{'addrwidth'}) {
 		_error("register offsets are out-of-bounds (max ",2**$this->global->{'addrwidth'} -1,")");
@@ -239,10 +252,14 @@ sub _vgch_rs_gen_cfg_module {
 			$shdw_sig = "";
 			my $o_field = $href->{'field'};
 			# $o_field->display();
+
 			($fclock, $freset) = $this->_get_field_clock_and_reset($clock, $reset, $fclock, $freset, $o_field);
 			# skip field if not in our clock domain and MCD feature is enabled
 			next if ($this->global->{'multi_clock_domains'} and $fclock ne $clock); 
 			next if $o_field->name =~ m/^UPD[EF]/; # skip legacy UPD* regs
+			if (length($o_field->{'name'}) >32) {
+				_warning("field name \'",$o_field->{'name'},"\' is ridiculously long");
+			};
 
 			# get field attributes
 			my $spec = $o_field->attribs->{'spec'}; # note: spec can contain several attributs
@@ -256,7 +273,7 @@ sub _vgch_rs_gen_cfg_module {
 			if ($spec =~ m/usr/i) {
 				$nusr++; # count number of USR fields
 				if(exists($husr{$reg_name})) {
-					logwarn("register \'",$o_reg->name,"\' has more than one field with USR attribute - will not generate more than one read/write pulse output; try to merge the fields or re-map into several registers"); 
+					_warning("register \'",$o_reg->name,"\' has more than one field with USR attribute - will not generate more than one read/write pulse output; try to merge the fields or re-map into several registers"); 
 				} else {
 					$husr{$reg_offset} = $o_field; # store usr field in hash
 				};
@@ -289,7 +306,13 @@ sub _vgch_rs_gen_cfg_module {
 					_add_primary_input($o_field->name.$this->global->{'int_set_postfix'}, 0, 0, $cfg_i);
 				};
 				if ($spec !~ m/sha/i) {
-					$hassigns{$o_field->name.$this->global->{'POSTFIX_PORT_OUT'}} = $reg_name.$rrange;
+					if ($spec =~ m/usr/i) {
+						# route through, no register generated
+						$hassigns{$o_field->name.$this->global->{'POSTFIX_PORT_OUT'}} = "wr_data_i".$rrange;
+					} else {
+						# drive from register
+						$hassigns{$o_field->name.$this->global->{'POSTFIX_PORT_OUT'}} = $reg_name.$rrange;
+					};
 				} else {
 					$hassigns{$o_field->name."_shdw"} = $reg_name.$rrange;
 					push @ldeclarations,"wire [$msb:$lsb] ".$o_field->name."_shdw;";
@@ -371,7 +394,7 @@ sub _vgch_rs_gen_cfg_module {
 	_pad_column(0, $this->global->{'indent'}, 2, \@ldeclarations); # indent declarations
 	
 	# add assignments
-	push @lassigns, map {"assign $_ = ".$hassigns{$_}.";"} sort keys %hassigns; 
+	push @lassigns, map {"assign $_ = ".$hassigns{$_}.";"} sort {$hassigns{$a} cmp $hassigns{$b}} keys %hassigns; 
 	
 	_pad_column(1, $this->global->{'indent'}, 2, \@lassigns); # indent assignments
 	_pad_column(1, $this->global->{'indent'}, 2, \@ldefines); # indent defines
@@ -382,15 +405,21 @@ sub _vgch_rs_gen_cfg_module {
 	_pad_column(-1, $this->global->{'indent'}, 2, \@lwp); # indent
 
 	# generate code for read mux
-	$this->_vgch_rs_code_read_mux($clock, \%hrp, \%haddr_tokens, \@lrp);
+	$this->_vgch_rs_code_read_mux($clock, \%hrp, \%haddr_tokens, \@lrp, \@ldeclarations);
 	_pad_column(-1, $this->global->{'indent'}, 2, \@lrp); # indent
+	#exit; #BAUSTELLE
 
 	# generate code for forwarded transactions
 	my @lusr;
 	$this->_vgch_rs_code_fwd_process($clock, \%husr, \%haddr_tokens, \@lusr);
 	_pad_column(-1, $this->global->{'indent'}, 2, \@lusr); # indent
-
-	_pad_column(-1, $this->global->{'indent'}, 2, \@lchecks); # indent checking code
+	
+	# add comment and pragmas to checking code and indent it (unless there is no code)
+	if (scalar(@lchecks)) {
+		unshift @lchecks, ("", "/*","  checking code","*/", $this->global->{'assert_pragma_start'});
+		push @lchecks, $this->global->{'assert_pragma_end'};
+		_pad_column(-1, $this->global->{'indent'}, 2, \@lchecks);
+	};
 
 	# insert everything
 	push @$lref_udc, @ldefines, @ldeclarations, @lassigns, @lstatic_logic, @lwp, @lusr, @lsp, @lrp, @lchecks;
@@ -407,48 +436,124 @@ sub _vgch_rs_gen_cfg_module {
 # 
 # RHS = verilog right-hand side assignment
 sub _vgch_rs_code_read_mux {
-	my ($this, $clock, $href_rp, $href_addr_tokens, $lref_rp) = @_;
+	my ($this, $clock, $href_rp, $href_addr_tokens, $lref_rp, $lref_decl) = @_;
 	my  @linsert;
 	my $ind = $this->global->{'indent'};
 	my $ilvl = 0;
-	my %hsens_list = ("iaddr" => "");
 	my ($offs, $href, $sig, $cur_addr);
 	my $n;
+	my $rdpl_stages = $this->global->{'rdpl_stages'};
+	my $rdpl_lvl =  $this->global->{'read_pipeline_lvl'};
+	my ($int_rst_n, $dummy1, $dummy2, $dummy3, $dummy4, $dummy5, $rd_clk) = $this->_gen_unique_signal_names($clock);
+	my $i;
+	my $addr_msb = $this->global->{'addr_msb'};
+	my $addr_lsb = $this->global->{'addr_lsb'};
+	my (%hmux, $offs);
 
 	if (scalar(keys %$href_rp)>0) {
-		# get read-sensitivity list
-		foreach $offs (keys %$href_rp) {
-			foreach $href (@{$href_rp->{$offs}}) {
-				$sig = (values(%{$href}))[0];
-				$sig =~ s/\[.+\]$//;
-				$hsens_list{$sig} = $offs;
-			};
-		};
 		# prefix
 		push @linsert, "", "/*","  read logic and mux process","*/";
 		push @linsert, $ind x $ilvl . "assign rd_data_o = mux_rd_data;";
 		push @linsert, $ind x $ilvl . "assign rd_err_o = mux_rd_err | addr_overshoot;";
-		push @linsert, $ind x $ilvl++ . "always @(".join(" or ", sort {$a cmp $b || $hsens_list{$a} <=> $hsens_list{$b}} keys %hsens_list).") begin";
-		push @linsert, $ind x $ilvl . "mux_rd_err  <= 0;";
-		push @linsert, $ind x $ilvl . "mux_rd_data <= 0;";
-		push @linsert, $ind x $ilvl++ . "case (iaddr)";
+		my %hsens_list = ("iaddr" => "");
 
-		foreach $offs (sort {$a <=> $b} keys %$href_rp) {
-			$cur_addr = $href_addr_tokens->{$offs};
-			push @linsert, $ind x $ilvl . "\`$cur_addr : begin";
-			foreach $href (@{$href_rp->{$offs}}) {
-				push @linsert, $ind x ($ilvl+1) . "mux_rd_data".(keys %{$href})[0] . " <= ".(values %{$href})[0].";";
+		if ($rdpl_stages == 0) { # insert combinatiorial read process
+			# get read-sensitivity list
+			foreach $offs (keys %$href_rp) {
+				foreach $href (@{$href_rp->{$offs}}) {
+					$sig = (values(%{$href}))[0];
+					$sig =~ s/\[.+\]$//;
+					$hsens_list{$sig} = $offs;
+				};
 			};
+			# sensitivity list
+			push @linsert, $ind x $ilvl++ . "always @(".join(" or ", sort {$a cmp $b || $hsens_list{$a} <=> $hsens_list{$b}} keys %hsens_list).") begin";
+			push @linsert, $ind x $ilvl . "mux_rd_err  <= 0;";
+			push @linsert, $ind x $ilvl . "mux_rd_data <= 0;";
+			push @linsert, $ind x $ilvl++ . "case (iaddr)";
+			
+			foreach $offs (sort {$a <=> $b} keys %$href_rp) {
+				$cur_addr = $href_addr_tokens->{$offs};
+				push @linsert, $ind x $ilvl . "\`$cur_addr : begin";
+				foreach $href (@{$href_rp->{$offs}}) {
+					push @linsert, $ind x ($ilvl+1) . "mux_rd_data".(keys %{$href})[0] . " <= ".(values %{$href})[0].";";
+				};
+				push @linsert, $ind x $ilvl . "end";
+				$n++;
+			};
+			push @linsert, $ind x $ilvl . "default: begin";
+			push @linsert, $ind x ($ilvl+1) . "mux_rd_err <= 1; // no decode";
+			push @linsert, $ind x $ilvl-- . "end";
+			push @linsert, $ind x $ilvl-- . "endcase";
 			push @linsert, $ind x $ilvl . "end";
-			$n++;
+		} else {
+			# create process for read-pipelining
+			# this is kind of complicated; first, the mux structure will be generated in a hash where
+			# the keys are the mux select signals prefixed by a number which is the mux select value of the previous stage; 
+			# the values are keys of the next stage;
+			# the leaf keys are mux select values and the values are the register offsets; 
+			# then, the code will be generated from the the mux hash.
+
+# 			foreach $offs (sort {$a <=> $b} keys %$href_rp) {
+# 				$this->_rdmux_iterator($href_rp, \%hmux, $rdpl_stages, $offs, -1);
+# 			};
+# 			my $dump = Data::Dumper->new([\%hmux]);
+# 			print $dump->Dump;
+# 			print join(", ",keys %hmux),"\n";
+# 
+# 			push @linsert, $ind x $ilvl++ . "always @(posedge $rd_clk or negedge $int_rst_n) begin";
+# 			my($key) = (keys %hmux)[0];
+# 			my($next_key, $n, $reg);
+# 			while (%hmux) {
+# 				push @linsert, $ind x $ilvl++ . "case ($key)";
+# 				foreach $next_key (keys $hmux{$key}) {
+# 					if($next_key =~ m/^(\d+)_(.+)$/) {
+# 						$reg = "REG_RDPL$n";
+# 						push @linsert, "$1 : $reg <=  
+# 					} elsif($next_key =~ m/^(\d+)$/) {
+# 						
+# 					} else {
+# 						_error("internal error in _vgch_rs_code_read_mux()");
+# 					};
+# 					
+# 				};
+# 
+# 			};
 		};
-		push @linsert, $ind x $ilvl . "default: begin";
-		push @linsert, $ind x ($ilvl+1) . "mux_rd_err <= 1; // no decode";
-		push @linsert, $ind x $ilvl-- . "end";
-		push @linsert, $ind x $ilvl-- . "endcase";
-		push @linsert, $ind x $ilvl . "end";
 	};
 	push @$lref_rp, @linsert;
+};
+
+sub _rdmux_iterator {
+	my ($this, $href_rp, $href_mux, $rdpl_stages, $offs, $sel) = @_;
+	my $addr_msb = $this->global->{'addr_msb'};
+	my $addr_lsb = $this->global->{'addr_lsb'};
+	my $rdpl_lvl = $this->global->{'read_pipeline_lvl'};
+	my ($range_high, $range_low, $mask, $key, $new_sel);
+
+	if ($rdpl_stages>=0) {
+		$range_low =  $addr_lsb + $rdpl_lvl * $rdpl_stages;
+		$range_high = ($range_low + $rdpl_lvl - 1 > $addr_msb) ? $addr_msb : $range_low + $rdpl_lvl - 1;
+		if ($sel>=0) {
+			$key = "${sel}_iaddr".$this->_gen_vector_range($range_high, $range_low);
+		} else {
+			# root mux
+			$key = "iaddr".$this->_gen_vector_range($range_high, $range_low);
+		};
+		if (!exists($href_mux->{$key})) {
+			$href_mux->{$key} = {};
+		};
+		print "> key $key\n";		
+		$mask = (1<<($range_high-$range_low+1))-1;
+		printf("%d > iaddr[%d : %d] mask %0b\n",$rdpl_stages, $range_high, $range_low, $mask); 
+		$new_sel = ($offs>>$range_low) & $mask;
+
+		$this->_rdmux_iterator($href_rp, $href_mux->{$key}, $rdpl_stages-1, $offs, $new_sel);
+	   
+	} else {
+		print $offs,"\n";
+		$href_mux->{$sel} = "$offs";
+	};
 };
 
 # create code for a shadow process for update signal $sig
@@ -745,17 +850,26 @@ sub _vgch_rs_code_write_processes {
 # performs text indentation/alignment only on udc lists.
 sub _vgch_rs_code_static_logic {
 	my ($this, $o_domain, $clock, $href_usr, $href_shdw, $lref_decl, $lref_udc, $lref_checks) = @_;
-	my ($addr_msb, $addr_lsb) = $this->_get_address_msb_lsb($o_domain);
+	my $addr_msb = $this->global->{'addr_msb'};
+	my $addr_lsb = $this->global->{'addr_lsb'};
 	my ($o_field, $href, $shdw_sig, $nusr, $sig, $dummy);
-	my ($int_rst_n, $trans_start_p, $wr_clk, $wr_clk_en, $shdw_clk, $shdw_clk_en) = $this->_gen_unique_signal_names($clock);
+	my ($int_rst_n, $trans_start_p, $wr_clk, $wr_clk_en, $shdw_clk, $shdw_clk_en, $rd_clk, $rd_clk_en) = $this->_gen_unique_signal_names($clock);
 	my (@ltemp, @ltemp2);
-
+	my $multicyc;
 	my $ind = $this->global->{'indent'};
-	my $multicyc = $this->global->{'read_multicycle'};
+	my $href = $this->global->{'hclocks'}->{$clock};
+
+	# calc new multicycle value in case of pipelining
+	if ($this->global->{'rdpl_stages'}==0) {
+		$multicyc = $this->global->{'read_multicycle'};
+	} else {
+		$multicyc = $this->global->{'rdpl_stages'};
+	};
+
 	$nusr=scalar(keys %$href_usr); # number of USR fields
 	if ($nusr>0 and $multicyc>0) {
 		# if there are USR registers, the read-ack will be delayed by one cycle anyway, so subtract
-		# it from the user"s  multicycle value 
+		# it from the multicycle value 
 		$multicyc--;	
 	};
 	
@@ -804,12 +918,19 @@ assign iaddr = addr_i[$addr_msb:$addr_lsb];");
 	
 	# clock-gating logic
 	if ($this->global->{'infer_clock_gating'}) {
-		if (exists $this->global->{'hclocks'}->{$clock}->{'cg_write_inst'}) {
-			push @ltemp, "", "// write-clock enable", "assign $wr_clk_en = wr_p;"; # | ~$int_rst_n ;";
+		push @ltemp, "", "/*", "  clock enable signals", "*/";
+		if (exists $href->{'cg_write_inst'}) {
+			push @ltemp, "assign $wr_clk_en = wr_p; // write-clock enable"; # | ~$int_rst_n ;";
 		};
-		if (exists $this->global->{'hclocks'}->{$clock}->{'cg_shdw_inst'}) {
-			push @ltemp, "", "// shadow-clock enable", "assign $shdw_clk_en = |{" . join(",",map {"int_".${_}} keys %$href_shdw) . "};";
-	    };
+		if (exists $href->{'cg_shdw_inst'}) {
+			push @ltemp, "assign $shdw_clk_en = " . join(" | ",map {"int_".$_} keys %$href_shdw) . "; // shadow-clock enable";
+		};
+		if (exists $href->{'cg_read_inst'}) {
+			for (my $i=0; $i<= $multicyc; $i++) {
+				push @ltemp2, ($i == 0) ? "rd_done_p" : "rd_delay$i";
+			};
+			push @ltemp, "assign $rd_clk_en = " . join(" | ", @ltemp2) . "; // read-clock enable";
+        };
     };
 
 	push @ltemp, split("\n","
@@ -922,7 +1043,7 @@ sub _vgch_rs_write_udc {
 # fills up the global->hclocks hash with data related to clock domains
 sub _vgch_rs_gen_hier {
 	my($this, $o_domain, $nclocks) = @_;
-	my($clock, $bus_clock, $cfg_inst, $sg_inst, $sr_inst, $ocp_sync, $cgw_inst, $cgs_inst, $n, $sync_clock);
+	my($clock, $bus_clock, $cfg_inst, $sg_inst, $sr_inst, $ocp_sync, $cgw_inst, $cgs_inst, $cgr_inst, $n, $sync_clock);
 	my $refclks = $this->global->{'hclocks'};
 	my $infer_cg = $this->global->{'infer_clock_gating'};
 	my @lgen_filter = ();
@@ -938,20 +1059,20 @@ sub _vgch_rs_gen_hier {
 	_add_generic("P_TOCNT_WIDTH", 10, $top_inst); # timeout counter width
 	
 	# instantiate OCP target
-	my $ocp_inst = $this->_add_instance($this->global->{"ocp_target_name"}, $top_inst, "OCP target module");
+	my $ocp_inst = $this->_add_instance_unique($this->global->{"ocp_target_name"}, $top_inst, "OCP target module");
 	$this->global('ocp_inst' => $ocp_inst);
 	if (defined (%EH)) {
 		push @{$EH{'output'}{'filter'}{'file'}}, $ocp_inst;
 	};
 	_add_generic("P_DWIDTH", $this->global->{'datawidth'}, $ocp_inst);
 	_add_generic("P_AWIDTH", $this->global->{'addrwidth'}, $ocp_inst);
-	_add_generic("P_TOCNT_WIDTH", 10, $ocp_inst); # timeout counter width
+	_add_generic_value("P_TOCNT_WIDTH", 10, "P_TOCNT_WIDTH", $ocp_inst); # timeout counter width
 	
 	$ocp_sync = 0;
 
 	# instantiate MCD adapter (if required)
 	if ($nclocks > 1 and $this->global->{'multi_clock_domains'}) {
-		$mcda_inst = $this->_add_instance($this->global->{"mcda_name"}, $top_inst, "Multi-clock-domain Adapter");	
+		$mcda_inst = $this->_add_instance_unique($this->global->{"mcda_name"}, $top_inst, "Multi-clock-domain Adapter");	
 		$this->global('mcda_inst' => $mcda_inst);
 		_add_generic("N_DOMAINS", $nclocks, $mcda_inst);
 		_add_generic("P_DWIDTH", $this->global->{'datawidth'}, $mcda_inst);
@@ -993,20 +1114,26 @@ sub _vgch_rs_gen_hier {
 		_add_generic("act", 0, $sr_inst);
 		push @lgen_filter, ($sr_inst, $sg_inst);
 
-		# instantiate clock gating cell
+		# instantiate clock gating cells
 		if ($infer_cg) {
-			_add_generic("cgtransp", 0, $cfg_inst);
+			_add_generic_value("cgtransp", 0, "cgtransp", $cfg_inst);
 			if (exists $refclks->{$clock}->{'has_write'}) {
 				$cgw_inst = $this->_add_instance_unique("ccgc", $cfg_inst, "Clock-gating cell for write-clock");
-				_add_generic("cgtransp", 0, $cgw_inst);
+				_add_generic_value("cgtransp", 0, "cgtransp", $cgw_inst);
 				$refclks->{$clock}->{'cg_write_inst'} = $cgw_inst;
 				push @lgen_filter, $cgw_inst;
 			};
 			if (exists $refclks->{$clock}->{'has_shdw'}) {
 				$cgs_inst = $this->_add_instance_unique("ccgc", $cfg_inst, "Clock-gating cell for shadow-clock");
-				_add_generic("cgtransp", 0, $cgs_inst);
+				_add_generic_value("cgtransp", 0, "cgtransp", $cgs_inst);
 				$refclks->{$clock}->{'cg_shdw_inst'} = $cgs_inst;
 				push @lgen_filter, $cgs_inst;
+			};
+			if ($this->global->{'rdpl_stages'}>0 and exists $refclks->{$clock}->{'has_write'}) {
+				$cgr_inst = $this->_add_instance_unique("ccgc", $cfg_inst, "Clock-gating cell for read-clock");
+				_add_generic_value("cgtransp", 0, "cgtransp", $cgr_inst);
+				$refclks->{$clock}->{'cg_read_inst'} = $cgr_inst;
+				push @lgen_filter, $cgr_inst;
 			};
 		};
 		$n++;
@@ -1025,18 +1152,23 @@ sub _vgch_rs_gen_hier {
 };
 
 # searches all clocks used in the register domain and stores the result in global->hclocks depending on 
-# user settings; detects invalid configurations;
+# user settings; detects invalid configurations; collect some statistics per clock-domain
 # returns the number of clocks
 sub _vgch_rs_get_configuration {
 	my $this = shift;
-	my ($o_dom) = @_;
-	my ($n, $o_field, $clock, $reset, %hclocks, %hresult);
+	my ($o_domain) = @_;
+	my ($n, $o_field, $clock, $reset, %hclocks, %hresult, $href);
 	my $bus_clock = $this->global->{'bus_clock'};
+	my $rdpl_lvl = $this->global->{'read_pipeline_lvl'};
+	my ($addr_msb, $addr_lsb) = $this->_get_address_msb_lsb($o_domain);
+
+	$this->global->{'addr_msb'} = $addr_msb;
+	$this->global->{'addr_lsb'} = $addr_lsb;
 
 	$n = 0;
 	$clock = "";
 	# iterate all fields and retrieve clock names
-	foreach $o_field (@{$o_dom->fields}) {
+	foreach $o_field (@{$o_domain->fields}) {
 		$clock = $o_field->attribs->{'clock'};
 		$reset = $o_field->attribs->{'reset'};
 		if ($clock  =~ m/[\%OPEN\%|\%EMPTY\%]/) {
@@ -1057,6 +1189,9 @@ sub _vgch_rs_get_configuration {
 		if ($o_field->attribs->{'dir'} =~ m/w/i) {
 			$hresult{$clock}->{'has_write'} = 1; # store if has writable registers
 		};
+		if ($o_field->attribs->{'dir'} =~ m/r/i) {
+			$hresult{$clock}->{'has_read'} = 1; # store if has readable registers
+		};
 	};
 	# if more than one clocks in the domain but MCD feature is off, delete all clocks other than the bus_clock
 	if ($n>1 and !$this->global->{'multi_clock_domains'}) {
@@ -1072,6 +1207,19 @@ sub _vgch_rs_get_configuration {
 		};
 	};
 	$this->global('hclocks' => \%hresult);
+
+	# check if read-pipelining is required
+	my ($rdpl_stages)=0;
+	if($rdpl_lvl > 0) {
+		my $res_size = $addr_msb-$addr_lsb+1; # usable address width
+		# calculate required number of read-pipeline stages
+		while($res_size > $rdpl_lvl) {
+			$res_size = $res_size -$rdpl_lvl;
+			$rdpl_stages++;
+		};
+	};
+	$this->global('rdpl_stages' => $rdpl_stages); # save for later
+	
 	return $n;
 };
 
@@ -1104,7 +1252,7 @@ sub _vgch_rs_add_static_connections {
 	# connections for each config register block
 	$n=0;
 	foreach $clock (sort keys %{$this->global->{'hclocks'}}) {
-		my ($int_rst_n, $trans_start_p, $wr_clk, $wr_clk_en, $shdw_clk, $shdw_clk_en) = $this->_gen_unique_signal_names($clock);
+		my ($int_rst_n, $trans_start_p, $wr_clk, $wr_clk_en, $shdw_clk, $shdw_clk_en, $rd_clk, $rd_clk_en) = $this->_gen_unique_signal_names($clock);
 		$href = $this->global->{'hclocks'}->{$clock};
 		$cfg_i = $href->{'cfg_inst'};
 		$sg_i = $href->{'sg_inst'};
@@ -1147,6 +1295,12 @@ sub _vgch_rs_add_static_connections {
 			_add_connection($shdw_clk_en, 0, 0, "", $href->{'cg_shdw_inst'}."/enable_i");
 			_add_connection($shdw_clk, 0, 0, $href->{'cg_shdw_inst'}."/clk_o", "");
 		};
+		if (exists $href->{'cg_read_inst'}) {
+			_add_primary_input($this->global->{'test_port_name'}, 0, 0, $href->{'cg_read_inst'});
+			_add_primary_input($clock, 0, 0, $href->{'cg_read_inst'}."/clk_i");
+			_add_connection($rd_clk_en, 0, 0, "", $href->{'cg_read_inst'}."/enable_i");
+			_add_connection($rd_clk, 0, 0, $href->{'cg_read_inst'}."/clk_o", "");
+		};
 		$n++;
 	};
 	
@@ -1184,6 +1338,7 @@ sub _get_address_msb_lsb {
 	return ($msb, $lsb);
 };
 
+# generate a vector range for a field depending on its position in a register
 sub _get_rrange {
 	my ($this, $pos, $o_field) = @_;
 	my $size = $o_field->attribs->{'size'};
@@ -1254,7 +1409,7 @@ sub _add_instance {
 	my($unumber) = 0; # static variable for this method
 	sub _add_instance_unique {
 		my($this, $name, $parent, $comment) = @_;
-		my($uname) = "%PREFIX_INSTANCE%u${unumber}%POSTFIX_INSTANCE%";
+		my($uname) = "%PREFIX_INSTANCE%u${unumber}_${name}%POSTFIX_INSTANCE%";
 		$unumber++;
 		return add_inst
 		  (
@@ -1296,7 +1451,7 @@ sub _gen_unique_signal_names {
 	my $href = $this->global->{'hclocks'}->{$clock};
 
 	if ($this->global->{'multi_clock_domains'} == 0 or scalar(keys %{$this->global->{'hclocks'}})==1) {
-		return ("int_rst_n", "trans_start_p", "wr_clk", "wr_clk_en", "shdw_clk", "shdw_clk_en");
+		return ("int_rst_n", "trans_start_p", "wr_clk", "wr_clk_en", "shdw_clk", "shdw_clk_en", "rd_clk", "rd_clk_en");
 	} else {
 		return (
 				$href->{'sr_inst'}."_int_rst_n",
@@ -1304,7 +1459,9 @@ sub _gen_unique_signal_names {
 				exists $href->{'cg_write_inst'} ? $href->{'cg_write_inst'}."wr_clk" : "wr_clk",
 				exists $href->{'cg_write_inst'} ? $href->{'cg_write_inst'}."wr_clk_en" : "wr_clk_en",
 				exists $href->{'cg_shdw_inst'} ? $href->{'cg_shdw_inst'}."shdw_clk" : "shdw_clk",
-				exists $href->{'cg_shdw_inst'} ? $href->{'cg_shdw_inst'}."shdw_clk_en" : "shdw_clk_en"
+				exists $href->{'cg_shdw_inst'} ? $href->{'cg_shdw_inst'}."shdw_clk_en" : "shdw_clk_en",
+				exists $href->{'cg_read_inst'} ? $href->{'cg_read_inst'}."rd_clk" : "rd_clk",
+				exists $href->{'cg_read_inst'} ? $href->{'cg_read_inst'}."rd_clk_en" : "rd_clk_en"
 			   );
 	};
 };
@@ -1348,7 +1505,8 @@ sub _tie_input_to_constant {
 	add_conn(%hconn);
 };
 
-# function to add an integer generic/parameter
+# function to add an integer generic/parameter where default value and instantiation value are the same
+# note: the name will be generated uniquely by MIX
 sub _add_generic {
 	my($name, $value, $destination) = @_;
 	my %hconn;
@@ -1364,6 +1522,31 @@ sub _add_generic {
 	
 	$hconn{'::out'} = "%GENERIC%/$value";
 	$hconn{'::mode'} = "G";
+	add_conn(%hconn);
+};
+
+# function to add an integer generic/parameter with a default value and a instantiation value
+# note: the name will be generated uniquely by MIX
+sub _add_generic_value {
+	my($name, $default, $value, $destination) = @_;
+	my %hconn;
+
+	%hconn = (
+			  '::name' => "",
+			  '::out'  => "%PARAMETER%/$value",
+			  '::in'   => "$destination/$name",
+			  '::type' => "integer",
+			  '::mode' => "P"
+			 );
+	add_conn(%hconn);
+	
+	%hconn = (
+			  '::name' => "",
+			  '::out'  => "%GENERIC%/$default",
+			  '::in'   => "$destination/$name",
+			  '::type' => "integer",
+			  '::mode' => "G"
+			 );
 	add_conn(%hconn);
 };
 
