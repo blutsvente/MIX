@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.8 2005/11/09 13:00:14 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.9 2005/11/09 13:36:56 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.9  2005/11/09 13:36:56  lutscher
+#  added domain command line parameter
+#
 #  Revision 1.8  2005/11/09 13:00:14  lutscher
 #  fixed Perl warning
 #
@@ -67,7 +70,7 @@ package Micronas::Reg;
 #------------------------------------------------------------------------------
 use strict;
 use Data::Dumper;
-use Micronas::MixUtils qw(%EH);
+use Micronas::MixUtils qw(%EH %OPTVAL);
 use Micronas::RegDomain;
 use Micronas::RegReg;
 use Micronas::RegField;
@@ -163,7 +166,11 @@ sub generate_view {
 	my $view = shift;
 
 	if ($view eq "HDL-vgch-rs") {
-		$this->_gen_view_vgch_rs();
+		my @ldomains = ();
+		if (exists $OPTVAL{'domain'}) {
+			push @ldomains, $OPTVAL{'domain'};
+		}
+		$this->_gen_view_vgch_rs(@ldomains);
 	} elsif ($view eq "E_VR_AD") {
 		$this->_gen_view_vr_ad();
 	} else {

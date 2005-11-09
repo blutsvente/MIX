@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.10 2005/11/09 13:00:24 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.11 2005/11/09 13:36:56 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.11  2005/11/09 13:36:56  lutscher
+#  added domain command line parameter
+#
 #  Revision 1.10  2005/11/09 13:00:24  lutscher
 #  fixed Perl warning
 #
@@ -170,6 +173,7 @@ sub _gen_view_vgch_rs {
 
 	# iterate through all register domains
 	foreach $o_domain (@ldomains) {
+		_info("generating code for domain ",$o_domain->name);
 		# $o_domain->display() if $this->global->{'debug'};
 		# get all clocks of domain and check if we have to infer mcd logic
 		$n_clocks = $this->_vgch_rs_get_configuration($o_domain);
