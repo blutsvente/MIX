@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.6 2005/11/08 13:10:38 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.7 2005/11/09 12:42:49 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.7  2005/11/09 12:42:49  lutscher
+#  added whitespace removal and promoted a warning to error
+#
 #  Revision 1.6  2005/11/08 13:10:38  lutscher
 #  added check for overlapping registers
 #
@@ -296,6 +299,8 @@ sub _map_register_master {
 				};
 				if ($value =~ m/(.+)\.(\d+)/) { # <field_name>.<bit> for mult-bit fields
 					$fname = $1;
+					$fname =~ s/^\s+//; # strip whitespaces
+					$fname =~ s/\s+$//;
 					if ($2 <= $lsb) {
 						$lsb = $2;
 						$fpos = $p;
@@ -325,7 +330,7 @@ sub _map_register_master {
 		};
 		$fsize = $msb - $lsb + 1;
 		if ($fsize != $col_cnt) {
-			print STDERR "WARNING: bad field \'$fname\' in register \'$reg\' in domain \'$domain\', must be continuous bit-slice\n";
+			print STDERR "ERROR: bad field \'$fname\' in register \'$reg\' in domain \'$domain\', must be continuous bit-slice\n";
 			$result = 0;
 		};
 
