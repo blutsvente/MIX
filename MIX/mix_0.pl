@@ -27,13 +27,13 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.39 2005/11/02 13:28:05 wig Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.40 2005/11/09 13:38:30 lutscher Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.39 $                                      |
-# | Mod.Date     : $Date: 2005/11/02 13:28:05 $                           |
-# | Author       : $Author: wig $                                      |
+# | Version      : $Revision: 1.40 $                                      |
+# | Mod.Date     : $Date: 2005/11/09 13:38:30 $                           |
+# | Author       : $Author: lutscher $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
 # | Email        : $Email: wilfried.gaensheimer@micronas.com$             |
@@ -47,6 +47,9 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.40  2005/11/09 13:38:30  lutscher
+# | added option domain
+# |
 # | Revision 1.39  2005/11/02 13:28:05  wig
 # | Got -help to return some results
 # |
@@ -215,7 +218,7 @@ use Micronas::MixReport;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.39 $'; # RCS Id
+$::VERSION = '$Revision: 1.40 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 logconfig(
@@ -329,6 +332,10 @@ mix_init();               # Presets ....
 
 -report portlist,reglist  Report portlist, register list, (t.b.d.)  
 
+=item *
+
+-domain DOMAIN            Domain name for register view generation
+
 =back
 
 =cut
@@ -356,6 +363,7 @@ mix_getopt_header( qw(
     init
     import=s@
     report=s@
+	domain=s
     ));
 
 if ( $#ARGV < 0 ) { # Need  at least one sheet!!
