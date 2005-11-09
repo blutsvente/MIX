@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.68 $                                         |
-# | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/11/04 10:44:47 $                              |
+# | Revision:   $Revision: 1.69 $                                         |
+# | Author:     $Author: lutscher $                                         |
+# | Date:       $Date: 2005/11/09 08:31:06 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.68 2005/11/04 10:44:47 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.69 2005/11/09 08:31:06 lutscher Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.69  2005/11/09 08:31:06  lutscher
+# | changed compare_merge_entities() such that P<->G connections don"t throw a warning
+# |
 # | Revision 1.68  2005/11/04 10:44:47  wig
 # | Adding ::incom (keep CONN sheet comments) and improce portlist report format
 # |
@@ -320,9 +323,9 @@ sub _mix_wr_regorwire($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.68 2005/11/04 10:44:47 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.69 2005/11/09 08:31:06 lutscher Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.68 $';
+my $thisrevision   =      '$Revision: 1.69 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -782,7 +785,7 @@ sub compare_merge_entities ($$$$) {
             $eflag = 0;
             next; # TODO : How should we handle that properly?
         # Mode has to match
-        } elsif ( $rent->{$p}{'mode'} ne $rnew->{$p}{'mode'} ) {
+        } elsif ( ($rent->{$p}{'mode'} !~ m/[pg]/i and $rnew->{$p}{'mode'} !~  m/[pg]/i ) and ($rent->{$p}{'mode'} ne $rnew->{$p}{'mode'}) ) {
             logwarn( "WARNING: Entity port mode mismatch for enitity $ent ($inst), port $p: " .
                      $rnew->{$p}{'mode'} . " was " . $rent->{$p}{'mode'} . "!" );
             $EH{'sum'}{'warnings'}++;
