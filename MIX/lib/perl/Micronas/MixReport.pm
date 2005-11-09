@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.9 $                                               |
-# | Author:     $Author: wig $                                                 |
-# | Date:       $Date: 2005/11/08 08:06:54 $                                                   |
+# | Revision:   $Revision: 1.10 $                                               |
+# | Author:     $Author: lutscher $                                                 |
+# | Date:       $Date: 2005/11/09 13:00:03 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.9 2005/11/08 08:06:54 wig Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.10 2005/11/09 13:00:03 lutscher Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.10  2005/11/09 13:00:03  lutscher
+# | removed doubly defined function
+# |
 # | Revision 1.9  2005/11/08 08:06:54  wig
 # | Added some documentation and example (register shell)
 # |
@@ -76,11 +79,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.9 2005/11/08 08:06:54 wig Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.10 2005/11/09 13:00:03 lutscher Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.9 $';
+my $thisrevision   =      '$Revision: 1.10 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 $thisid =~ s,\$,,go; # Strip away the $
@@ -370,48 +373,6 @@ sub mix_rep_reglist()
     $mif->write();
 
     return;
-}
-
-#
-# return signals in requested order ...
-#
-# config value: $EH{report}{portlist}{sort}
-#
-# alpha := sorted by port name (default)
-# input (ordered as listed in input files)
-# inout | outin: seperate in/out/inout seperately
-#    can be combined with the "input" key
-# ::COL : order as in column ::COL (alphanumeric!)		  			
-sub _mix_report_sigsort {
-
-	# $a and $b hold the respective conndb keys
-	my $key = $EH{'report'}{'portlist'}{'sort'};
-	my $conndb = \%Micronas::MixParser::conndb;
-	
-	my $va = $a;
-	my $vb = $b;
-	
-	if ( exists $conndb->{$a} and exists $conndb->{$b} ) {
-		if ( $key =~ m/\balpha\b/io ) {
-			$va = $conndb->{$a}{'::name'};
-			$vb = $conndb->{$b}{'::name'};
-		} elsif ( $key =~ m/\binput\b/io ) {
-			my $format = '%0' . ( length( $EH{'sum'}{'conn'} ) + 1 ) . 'd'; # 
-			$va = sprintf( $format, $conndb->{$a}{'::connnr'});
-			$vb = sprintf( $format, $conndb->{$b}{'::connnr'});
-		} elsif ( $key =~ m/(\b::\w+)\b/io ) {
-			if ( exists( $conndb->{$a}{$1} ) ) {
-				$va = $conndb->{$a}{$1};
-			}
-			if ( exists( $conndb->{$b}{$1} )) {
-				$vb = $conndb->{$b}{$1}; 
-			}
-		}	
-	}
-
-	# Do the sort here:
-	$va cmp $vb;
-	
 }
 
 #
