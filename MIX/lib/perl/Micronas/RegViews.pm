@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.9 2005/11/09 12:43:10 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.10 2005/11/09 13:00:24 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.10  2005/11/09 13:00:24  lutscher
+#  fixed Perl warning
+#
 #  Revision 1.9  2005/11/09 12:43:10  lutscher
 #  fixed a number of bugs
 #
@@ -448,7 +451,7 @@ sub _vgch_rs_code_read_mux {
 	my $i;
 	my $addr_msb = $this->global->{'addr_msb'};
 	my $addr_lsb = $this->global->{'addr_lsb'};
-	my (%hmux, $offs);
+	my (%hmux);
 
 	if (scalar(keys %$href_rp)>0) {
 		# prefix
@@ -857,7 +860,7 @@ sub _vgch_rs_code_static_logic {
 	my (@ltemp, @ltemp2);
 	my $multicyc;
 	my $ind = $this->global->{'indent'};
-	my $href = $this->global->{'hclocks'}->{$clock};
+	$href = $this->global->{'hclocks'}->{$clock};
 
 	# calc new multicycle value in case of pipelining
 	if ($this->global->{'rdpl_stages'}==0) {

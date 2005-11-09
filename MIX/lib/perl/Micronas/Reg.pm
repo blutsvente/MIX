@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.7 2005/11/09 12:42:49 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.8 2005/11/09 13:00:14 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.8  2005/11/09 13:00:14  lutscher
+#  fixed Perl warning
+#
 #  Revision 1.7  2005/11/09 12:42:49  lutscher
 #  added whitespace removal and promoted a warning to error
 #
@@ -241,6 +244,8 @@ sub _map_register_master {
 	my($o_domain, $o_reg, $o_field) = (undef, undef, undef);
 	my($href_marker_types, %hattribs, %hdefault_attribs, $m);
 	my $result = 1;
+	my ($old_usedbits, $i);
+	$usedbits = 0;
 
 	# get defaults for field attributes from %EH 
 	$href_marker_types = $EH{'i2c'}{'field'};
@@ -379,8 +384,8 @@ sub _map_register_master {
 			};
 
 			# compute bit-mask for register
-			for (my $i=$fpos; $i < $fpos+$fsize; $i++) {
-				my $old_usedbits = $usedbits;
+			for ($i=$fpos; $i < $fpos+$fsize; $i++) {
+				$old_usedbits = $usedbits;
 				$usedbits |= 1<<$i;
 				if ($old_usedbits == $usedbits) {
 					print STDERR "ERROR: overlapping fields in register \'$reg\'\n";
