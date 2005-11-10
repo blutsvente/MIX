@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.94 $                                         |
+# | Revision:   $Revision: 1.95 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2005/11/09 13:13:52 $                              |
+# | Date:       $Date: 2005/11/10 13:03:11 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.94 2005/11/09 13:13:52 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.95 2005/11/10 13:03:11 lutscher Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.95  2005/11/10 13:03:11  lutscher
+# | changed default for VERILOG_TIMESCALE
+# |
 # | Revision 1.94  2005/11/09 13:13:52  lutscher
 # | changed reg_shell param
 # |
@@ -405,11 +408,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.94 2005/11/09 13:13:52 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.95 2005/11/10 13:03:11 lutscher Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.94 $';         #'
+my $thisrevision        =      '$Revision: 1.95 $';         #'
 
-# Revision:   $Revision: 1.94 $   
+# Revision:   $Revision: 1.95 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1662,7 +1665,7 @@ sub mix_init () {
    	    '%BODY%'	=> '__BODY__', # Used internally for ::udc
    	    '%FOOT%'	=> '__FOOT__', # Used internally for ::udc
    	    '%DECL%'	=> '__DECL__', # Used internally for ::udc	
-	    "%VERILOG_TIMESCALE%"	=>	"`timescale 1ns / 1ps",
+	    "%VERILOG_TIMESCALE%"	=>	"`timescale 1ns/10ps",
 	    "%VERILOG_USE_ARCH%"	=>	'%EMPTY%',
 	    "%VERILOG_DEFINES%"	=>	'	// No `defines in this module',  # Want to define s.th. globally?
 		"%VERILOG_HOOK_BODY%"	=>	"",
