@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.11 2005/11/09 13:36:56 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.12 2005/11/10 14:40:52 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,10 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.12  2005/11/10 14:40:52  lutscher
+#  o added postfix for field inputs/outputs
+#  o added read-pipeline generator
+#
 #  Revision 1.11  2005/11/09 13:36:56  lutscher
 #  added domain command line parameter
 #
@@ -105,7 +109,9 @@ sub _gen_view_vgch_rs {
 	my $this = shift;
 	my @ldomains;
 	my $href;
+	my @lfields;
 
+	$this->global->{'debug'} = 1; # BAUSTELLE
 	# extend class data with data structure needed for code generation
 	$this->global(
 				  'ocp_target_name'    => "ocp_target", # library module name
@@ -133,7 +139,9 @@ sub _gen_view_vgch_rs {
 					  'reg_shell.read_multicycle',
 					  'reg_shell.read_pipeline_lvl',
 					  'postfix.POSTFIX_PORT_OUT', 
-					  'postfix.POSTFIX_PORT_IN'
+					  'postfix.POSTFIX_PORT_IN',
+					  'postfix.POSTFIX_FIELD_OUT', 
+					  'postfix.POSTFIX_FIELD_IN'
 					 );
 	foreach $param (@lmixparams) {
 		my ($main, $sub) = split(/\./,$param);
@@ -192,12 +200,13 @@ sub _gen_view_vgch_rs {
 		$this->_vgch_rs_add_static_connections($n_clocks);# add all standard ports and connections 
 		
 		# iterate through all clock domains
+		@lfields = ();
 		foreach $clock (keys %{$this->global->{'hclocks'}}) {
 			my @ludc = ();
 			$href = $this->global->{'hclocks'}->{$clock};
 			$cfg_inst = $href->{'cfg_inst'};
 			# print "> domain ",$o_domain->name,", clock $clock, cfg module $cfg_inst\n";
-			$this->_vgch_rs_gen_cfg_module($o_domain, $clock, \@ludc); # generate config module for clock domain
+			$this->_vgch_rs_gen_cfg_module($o_domain, $clock, \@ludc, \@lfields); # generate config module for clock domain
 			$this->_vgch_rs_write_udc($cfg_inst, \@ludc); # add user-defined-code to config module instantation
 		};
 	};
@@ -210,7 +219,7 @@ sub _gen_view_vgch_rs {
 # clock-name of the domain,
 # reference to list where code lines are added (::udc)
 sub _vgch_rs_gen_cfg_module {
-	my ($this, $o_domain, $clock, $lref_udc) = @_;
+	my ($this, $o_domain, $clock, $lref_udc, $lref_fields) = @_;
 	my($o_reg, $shdw_sig);
 	my $href = $this->global->{'hclocks'}->{$clock};
 	my $cfg_i = $href->{'cfg_inst'};
@@ -239,7 +248,7 @@ sub _vgch_rs_gen_cfg_module {
 		my $reg_name = uc("reg_"._val2hex($addr_msb+1, $reg_offset)); # generate a register name ourselves
 		if (!exists($haddr_tokens{$reg_offset})) {
 			if ($reg_offset % ($this->global->{'datawidth'}/8) != 0) {
-				_error("register offset for \'",$o_reg->name,"\' is not aligned to bus data width - skipped");
+				_error("register offset $reg_offset for \'",$o_reg->name,"\' is not aligned to bus data width - skipped");
 				next;
 			};
 			$haddr_tokens{$reg_offset} = "${reg_name}_OFFS";
@@ -259,11 +268,21 @@ sub _vgch_rs_gen_cfg_module {
 			$shdw_sig = "";
 			my $o_field = $href->{'field'};
 			# $o_field->display();
-
 			($fclock, $freset) = $this->_get_field_clock_and_reset($clock, $reset, $fclock, $freset, $o_field);
+			
 			# skip field if not in our clock domain and MCD feature is enabled
 			next if ($this->global->{'multi_clock_domains'} and $fclock ne $clock); 
 			next if $o_field->name =~ m/^UPD[EF]/; # skip legacy UPD* regs
+			
+			# check doubly defined fields
+			if (grep ($o_field->name eq $_, @$lref_fields)) {
+				_error("field name \'",$o_field->{'name'},"\' is defined more than once");
+				next;
+			} else {
+				push @$lref_fields, $o_field->name;
+			};
+			
+			# check length of field names
 			if (length($o_field->{'name'}) >32) {
 				_warning("field name \'",$o_field->{'name'},"\' is ridiculously long");
 			};
@@ -302,30 +321,30 @@ sub _vgch_rs_gen_cfg_module {
 
 			# add ports, declarations and assignments
 			if ($access =~ m/r/i and $access !~/w/i ) { # read-only
-				_add_primary_input($o_field->name, $msb, $lsb, $cfg_i);
+				_add_primary_input($o_field->name."%POSTFIX_FIELD_IN%", $msb, $lsb, $cfg_i);
 				if ($spec =~ m/sha/i) {
 					push @ldeclarations, "reg [$msb:$lsb] ".$o_field->name."_shdw;";
 				};
 			} elsif ($access =~ m/w/i) { # write
 				if ($spec !~ m/w1c/i) {
-					_add_primary_output($o_field->name, $msb, $lsb, ($spec =~ m/sha/i) ? 1:0, $cfg_i);
+					_add_primary_output($o_field->name."%POSTFIX_FIELD_OUT%", $msb, $lsb, ($spec =~ m/sha/i) ? 1:0, $cfg_i);
 				} else { # w1c
 					_add_primary_input($o_field->name.$this->global->{'int_set_postfix'}, 0, 0, $cfg_i);
 				};
 				if ($spec !~ m/sha/i) {
 					if ($spec =~ m/usr/i) {
 						# route through, no register generated
-						$hassigns{$o_field->name.$this->global->{'POSTFIX_PORT_OUT'}} = "wr_data_i".$rrange;
+						$hassigns{$o_field->name."%POSTFIX_FIELD_OUT%"} = "wr_data_i".$rrange;
 					} else {
 						# drive from register
-						$hassigns{$o_field->name.$this->global->{'POSTFIX_PORT_OUT'}} = $reg_name.$rrange;
+						$hassigns{$o_field->name."%POSTFIX_FIELD_OUT%"} = $reg_name.$rrange;
 					};
 				} else {
 					$hassigns{$o_field->name."_shdw"} = $reg_name.$rrange;
 					push @ldeclarations,"wire [$msb:$lsb] ".$o_field->name."_shdw;";
 				};
 				if($access =~ m/r/i and $spec =~ m/usr/i) { # usr read/write
-					_add_primary_input($o_field->name, $msb, $lsb, $cfg_i);
+					_add_primary_input($o_field->name."%POSTFIX_FIELD_IN%", $msb, $lsb, $cfg_i);
 				};
 			};
 			if ($spec =~ m/usr/i) { # usr read/write
@@ -355,7 +374,7 @@ sub _vgch_rs_gen_cfg_module {
 					if ($spec =~ m/sha/i) {
 						push @{$hrp{$reg_offset}}, {$rrange => $o_field->name."_shdw"};
 					} elsif ($spec =~ m/usr/i) {
-						push @{$hrp{$reg_offset}}, {$rrange => $o_field->name.$this->global->{'POSTFIX_PORT_IN'}};
+						push @{$hrp{$reg_offset}}, {$rrange => $o_field->name."%POSTFIX_FIELD_IN%"};
 					} else {
 						push @{$hrp{$reg_offset}}, {$rrange => $reg_name.$rrange};
 					};
@@ -363,7 +382,7 @@ sub _vgch_rs_gen_cfg_module {
 					if ($spec =~ m/sha/i) {
 						push @{$hrp{$reg_offset}}, {$rrange => $o_field->name."_shdw"};
 					} else {
-						push @{$hrp{$reg_offset}}, {$rrange => $o_field->name.$this->global->{'POSTFIX_PORT_IN'}};
+						push @{$hrp{$reg_offset}}, {$rrange => $o_field->name."%POSTFIX_FIELD_IN%"};
 					};
 				};
 			}; 
@@ -398,7 +417,6 @@ sub _vgch_rs_gen_cfg_module {
 
 	# add glue-logic
 	$this->_vgch_rs_code_static_logic($o_domain, $clock, \%husr, \%hshdw, \@ldeclarations, \@lstatic_logic, \@lchecks);
-	_pad_column(0, $this->global->{'indent'}, 2, \@ldeclarations); # indent declarations
 	
 	# add assignments
 	push @lassigns, map {"assign $_ = ".$hassigns{$_}.";"} sort {$hassigns{$a} cmp $hassigns{$b}} keys %hassigns; 
@@ -427,6 +445,8 @@ sub _vgch_rs_gen_cfg_module {
 		push @lchecks, $this->global->{'assert_pragma_end'};
 		_pad_column(-1, $this->global->{'indent'}, 2, \@lchecks);
 	};
+
+	_pad_column(0, $this->global->{'indent'}, 2, \@ldeclarations); # indent declarations
 
 	# insert everything
 	push @$lref_udc, @ldefines, @ldeclarations, @lassigns, @lstatic_logic, @lwp, @lusr, @lsp, @lrp, @lchecks;
@@ -493,44 +513,124 @@ sub _vgch_rs_code_read_mux {
 			push @linsert, $ind x $ilvl-- . "end";
 			push @linsert, $ind x $ilvl-- . "endcase";
 			push @linsert, $ind x $ilvl . "end";
+			# add intermediate regs
+			push @$lref_decl, "reg [".($this->global->{'datawidth'}-1).":0] mux_rd_data;";
+			push @$lref_decl, "reg mux_rd_err;";
 		} else {
 			# create process for read-pipelining
 			# this is kind of complicated; first, the mux structure will be generated in a hash where
 			# the keys are the mux select signals prefixed by a number which is the mux select value of the previous stage; 
 			# the values are keys of the next stage;
 			# the leaf keys are mux select values and the values are the register offsets; 
-			# then, the code will be generated from the the mux hash.
+			
+			#print "> rdpl_stages $rdpl_stages\n";
+ 			foreach $offs (sort {$a <=> $b} keys %$href_rp) {
+ 				$this->_rdmux_iterator($href_rp, \%hmux, $rdpl_stages, $offs, -1);
+ 			};
+ 			#my $dump = Data::Dumper->new([\%hmux]);
+ 			#print $dump->Dump;
 
-# 			foreach $offs (sort {$a <=> $b} keys %$href_rp) {
-# 				$this->_rdmux_iterator($href_rp, \%hmux, $rdpl_stages, $offs, -1);
-# 			};
-# 			my $dump = Data::Dumper->new([\%hmux]);
-# 			print $dump->Dump;
-# 			print join(", ",keys %hmux),"\n";
-# 
-# 			push @linsert, $ind x $ilvl++ . "always @(posedge $rd_clk or negedge $int_rst_n) begin";
-# 			my($key) = (keys %hmux)[0];
-# 			my($next_key, $n, $reg);
-# 			while (%hmux) {
-# 				push @linsert, $ind x $ilvl++ . "case ($key)";
-# 				foreach $next_key (keys $hmux{$key}) {
-# 					if($next_key =~ m/^(\d+)_(.+)$/) {
-# 						$reg = "REG_RDPL$n";
-# 						push @linsert, "$1 : $reg <=  
-# 					} elsif($next_key =~ m/^(\d+)$/) {
-# 						
-# 					} else {
-# 						_error("internal error in _vgch_rs_code_read_mux()");
-# 					};
-# 					
-# 				};
-# 
-# 			};
+			# then, the code will be generated from the the mux hash.
+			$this->_rdmux_builder($int_rst_n, $rd_clk, $href_rp, \%hmux, \@linsert, $lref_decl, (keys %hmux)[0], $rdpl_stages, 0);
 		};
 	};
 	push @$lref_rp, @linsert;
 };
 
+# recursive function to map the hash representing a mux structur to Verilog case statements
+sub _rdmux_builder {
+	my ($this, $int_rst_n, $rd_clk, $href_rp, $href_mux, $lref_insert, $lref_decl, $prev_key, $prev_lvl, $prev_sel) = @_;
+	my $ind = $this->global->{'indent'};
+	my $rdpl_stages = $this->global->{'rdpl_stages'};
+	my $case = 0;
+	my (@lsens, @ltemp);
+	my ($sel, $select, $lvl, $offs, $key, $href, $out_d, $out_e, $driver, $drv_postfix);
+
+	if(ref $href_mux->{$prev_key}) {
+		$lvl = $prev_lvl - 1;		
+		if ($prev_key =~ m/^iaddr/) {
+			$out_d = "mux_rd_data";
+			$out_e = "mux_rd_err";
+		} else {
+			$out_d = join("_", "mux_rd_data", $prev_lvl);
+			$out_e = join("_", "mux_rd_err", $prev_lvl);
+			if ($prev_lvl != $rdpl_stages) {
+				$out_d .= "_$prev_sel";
+				$out_e .= "_$prev_sel";
+			};
+		};
+		foreach $key (sort keys %{$href_mux->{$prev_key}}) {
+			# print "> prev_key $prev_key key $key\n";
+			$select = $prev_key;
+			$select =~ s/^\d+_//;
+			if (!$case) {         
+				 push @ltemp, $ind x 1 ."case ($select)";
+				 $case = 1;
+			 };
+			if ($key =~ m/^(\d+)_(iaddr.*$)/) {
+				$sel = $1;
+				if ($prev_lvl != $rdpl_stages) {
+					$drv_postfix = join("_", $prev_sel, $sel);
+				} else {
+					$drv_postfix = $sel;
+				}
+				$driver = join("_", "mux_rd_data", $lvl, $drv_postfix);
+				push @ltemp, $ind x 2 ."$sel: begin";
+				push @ltemp, $ind x 3 ."$out_d <= $driver;";
+				push @lsens, $driver;
+				$driver = join("_", "mux_rd_err", $lvl, $drv_postfix);
+				push @ltemp, $ind x 3 ."$out_e  <= $driver;";
+				push @ltemp, $ind x 2 ."end";
+				push @lsens, $driver;
+			} else {
+				if ($case == 1) {
+					unshift @ltemp, $ind x 1 ."$out_e <= 0;";
+					$case ++;
+				};
+				$sel = $key;
+				push @ltemp, $ind x 2 ."$sel: begin";
+				$offs = $href_mux->{$prev_key}->{$key};
+				#print "> offs $offs\n";
+				foreach $href (@{$href_rp->{$offs}}) {
+					push @ltemp, $ind x 3 ."$out_d".(keys %{$href})[0]." <= ".(values %{$href})[0].";";
+				};
+				push @ltemp, $ind x 2 . "end";
+			};
+		 }
+		 if ($case) {
+			 if ($prev_key =~ m/^iaddr/) {
+				 push @$lref_insert, "", "always @(".join(" or ", "iaddr", @lsens).") begin // stage $prev_lvl";
+			 } else {
+				 push @$lref_insert, "", "always @(posedge $rd_clk or negedge $int_rst_n) begin // stage $prev_lvl";
+			 };
+			 push @$lref_insert, @ltemp;
+			 push @$lref_insert, $ind x 2 ."default: begin";
+			 push @$lref_insert, $ind x 3 ."$out_d <= 0;";
+			 push @$lref_insert, $ind x 3 ."$out_e <= 1;";
+			 push @$lref_insert, $ind x 2 ."end";
+			 push @$lref_insert, $ind x 1 ."endcase";
+			 push @$lref_insert, "end";
+			 # add reg to declarations
+			 push @$lref_decl, "reg [".($this->global->{'datawidth'}-1).":0] $out_d;";
+			 push @$lref_decl, "reg $out_e;";
+		 }
+	   	foreach $key (sort keys %{$href_mux->{$prev_key}}) {
+			if ($key =~ m/^(\d+)_(iaddr.*$)/) {
+				$sel = $1;
+			} else {
+				$sel = $key;
+			};
+			if ($prev_lvl != $rdpl_stages) {
+				$drv_postfix = join("_", $prev_sel, $sel);
+			} else {
+				$drv_postfix = $sel;
+			}
+			$this->_rdmux_builder($int_rst_n, $rd_clk, $href_rp, $href_mux->{$prev_key}, $lref_insert, $lref_decl, $key, $lvl, $drv_postfix);
+		};
+	};
+};
+
+# recursive function to build a mux structure from %$href_rp as hash tree
 sub _rdmux_iterator {
 	my ($this, $href_rp, $href_mux, $rdpl_stages, $offs, $sel) = @_;
 	my $addr_msb = $this->global->{'addr_msb'};
@@ -542,23 +642,23 @@ sub _rdmux_iterator {
 		$range_low =  $addr_lsb + $rdpl_lvl * $rdpl_stages;
 		$range_high = ($range_low + $rdpl_lvl - 1 > $addr_msb) ? $addr_msb : $range_low + $rdpl_lvl - 1;
 		if ($sel>=0) {
-			$key = "${sel}_iaddr".$this->_gen_vector_range($range_high, $range_low);
+			$key = "${sel}_iaddr".$this->_gen_vector_range($range_high-$addr_lsb, $range_low-$addr_lsb);
 		} else {
 			# root mux
-			$key = "iaddr".$this->_gen_vector_range($range_high, $range_low);
+			$key = "iaddr".$this->_gen_vector_range($range_high-$addr_lsb, $range_low-$addr_lsb);
 		};
 		if (!exists($href_mux->{$key})) {
 			$href_mux->{$key} = {};
 		};
-		print "> key $key\n";		
+		# print "> key $key\n";		
 		$mask = (1<<($range_high-$range_low+1))-1;
-		printf("%d > iaddr[%d : %d] mask %0b\n",$rdpl_stages, $range_high, $range_low, $mask); 
+		# printf("%d > iaddr[%d : %d] mask %0b\n",$rdpl_stages, $range_high, $range_low, $mask); 
 		$new_sel = ($offs>>$range_low) & $mask;
 
 		$this->_rdmux_iterator($href_rp, $href_mux->{$key}, $rdpl_stages-1, $offs, $new_sel);
 	   
 	} else {
-		print $offs,"\n";
+		# print $offs,"\n";
 		$href_mux->{$sel} = "$offs";
 	};
 };
@@ -603,10 +703,10 @@ sub _vgch_rs_code_shadow_process {
 		#};
 		foreach $o_field (sort @{$href_shdw->{$sig}}) {
 			if ($o_field->attribs->{'dir'} =~ m/w/i) {
-				push @ltemp, $o_field->name . $this->global->{'POSTFIX_PORT_OUT'} ." <= ".$o_field->name."_shdw;";
+				push @ltemp, $o_field->name ."%POSTFIX_FIELD_OUT%"." <= ".$o_field->name."_shdw;";
 			} else {
 				if ($o_field->attribs->{'dir'} =~ m/r/i) {
-					push @ltemp, $o_field->name . "_shdw <= " . $o_field->name . $this->global->{'POSTFIX_PORT_IN'} . ";"; 
+					push @ltemp, $o_field->name . "_shdw <= " . $o_field->name ."%POSTFIX_FIELD_IN%" . ";"; 
 				};
 			};
 		}; 
@@ -886,9 +986,7 @@ sub _vgch_rs_code_static_logic {
 	push @$lref_decl, split("\n","
 wire wr_p;
 wire rd_p;
-reg [".($this->global->{'datawidth'}-1).":0] mux_rd_data;
 reg  int_trans_done;
-reg  mux_rd_err;
 wire [".($addr_msb-$addr_lsb).":0] iaddr;
 wire addr_overshoot;
 wire trans_done_p;
@@ -934,7 +1032,8 @@ assign iaddr = addr_i[$addr_msb:$addr_lsb];");
 		};
 		if (exists $href->{'cg_read_inst'}) {
 			for (my $i=0; $i<= $multicyc; $i++) {
-				push @ltemp2, ($i == 0) ? "rd_done_p" : "rd_delay$i";
+				# push @ltemp2, ($i == 0) ? "rd_done_p" : "rd_delay$i";
+				push @ltemp2, ($i == 0) ? "rd_p" : "rd_delay$i";
 			};
 			push @ltemp, "assign $rd_clk_en = " . join(" | ", @ltemp2) . "; // read-clock enable";
         };
@@ -1576,8 +1675,12 @@ sub _add_primary_input {
 	my ($name, $msb, $lsb, $destination) = @_;
 	my %hconn;
 	my $postfix = ($name =~ m/^clk/) ? "" : "%POSTFIX_PORT_IN%";
-
-	$hconn{'::name'} = "${name}${postfix}";
+	
+	if ($name =~ m/\%POSTFIX_/g) {
+		$hconn{'::name'} = "${name}";
+	} else {
+		$hconn{'::name'} = "${name}${postfix}"; # add postfix only if not already there
+	};
 	$hconn{'::in'} = $destination;
 	$hconn{'::mode'} = "i";
 	_get_signal_type($msb, $lsb, 0, \%hconn);
@@ -1591,7 +1694,11 @@ sub _add_primary_output {
 	my $postfix = ($name =~ m/^clk/) ? "" : "%POSTFIX_PORT_OUT%";
 	my $type = $is_reg ? "'reg":"'wire";
 
-	$hconn{'::name'} = "${name}${postfix}";
+	if ($name =~ m/\%POSTFIX_/g) {
+		$hconn{'::name'} = "${name}";
+	} else {
+		$hconn{'::name'} = "${name}${postfix}"; # add postfix only if not already there
+	};
 	$hconn{'::out'} = $source.$type;
 	$hconn{'::mode'} = "o";
 	_get_signal_type($msb, $lsb, $is_reg, \%hconn);
