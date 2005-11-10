@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.69 $                                         |
+# | Revision:   $Revision: 1.70 $                                         |
 # | Author:     $Author: lutscher $                                         |
-# | Date:       $Date: 2005/11/09 08:31:06 $                              |
+# | Date:       $Date: 2005/11/10 07:55:25 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.69 2005/11/09 08:31:06 lutscher Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.70 2005/11/10 07:55:25 lutscher Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.70  2005/11/10 07:55:25  lutscher
+# | fixed bug in generic_map()
+# |
 # | Revision 1.69  2005/11/09 08:31:06  lutscher
 # | changed compare_merge_entities() such that P<->G connections don"t throw a warning
 # |
@@ -323,9 +326,9 @@ sub _mix_wr_regorwire($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.69 2005/11/09 08:31:06 lutscher Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.70 2005/11/10 07:55:25 lutscher Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.69 $';
+my $thisrevision   =      '$Revision: 1.70 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2661,7 +2664,7 @@ sub generic_map ($$$$;$$) {
                             " $tcom __W_ILLEGAL_PARAM" : "" ) .
                 "\n";
             }
-            $map =~ s#,\n$#;\n#; # Replace the final , by a ;
+			$map =~ s/,(\s$tcom.+|\s*)\n$/;$1\n/; # Replace the final , by a ; ##LU changed 20051110
             $map =~ s,^%S%%S%%S%,%S%%S%defparam ,;
         }
     } else {
