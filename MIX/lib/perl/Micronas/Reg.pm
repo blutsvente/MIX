@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.9 2005/11/09 13:36:56 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.10 2005/11/10 14:40:05 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.10  2005/11/10 14:40:05  lutscher
+#  added setting of definition class member of fields and check for decimal/hexadecimal from ::sub column in register master
+#
 #  Revision 1.9  2005/11/09 13:36:56  lutscher
 #  added domain command line parameter
 #
@@ -247,7 +250,7 @@ sub display {
 # two consecutive domains must have different names (::interface)
 sub _map_register_master {
 	my ($this, $database_type, $lref_rm) = @_;
-	my($href_row, $marker, $rsize, $reg, $value, $fname, $fpos, $fsize, $domain, $offset, $msb, $msb_max, $lsb, $p, $new_fname, $usedbits, $baseaddr, $col_cnt);
+	my($href_row, $marker, $rsize, $reg, $value, $fname, $fpos, $fsize, $domain, $offset, $msb, $msb_max, $lsb, $p, $new_fname, $usedbits, $baseaddr, $col_cnt, $fdefinition);
 	my($o_domain, $o_reg, $o_field) = (undef, undef, undef);
 	my($href_marker_types, %hattribs, %hdefault_attribs, $m);
 	my $result = 1;
@@ -292,7 +295,12 @@ sub _map_register_master {
 			if ($marker eq "::sub") {
 				# every row requires a ::sub entry, so I use it to skip empty lines
 				goto next_row if ($value eq "");
-				$offset = hex($value); next;
+				if ($value =~ m/^0x/i) {
+					$offset = hex($value); 
+				} else {
+					$offset = $value;
+				};
+				next;
 			};
 			if ($marker eq "::interface") {
 				$domain = $value; next;
@@ -302,6 +310,9 @@ sub _map_register_master {
 			};
 			if ($marker eq "::width") {
 				$rsize = $value;
+			};
+			if ($marker =~ m/^::def/) {
+				$fdefinition = $value;
 			};
 			if ($marker =~ m/::b(:(\d+))*$/) {
 				if (defined $2) {
@@ -367,26 +378,26 @@ sub _map_register_master {
 						};
 					};
 					# link domain object into register space object
-					$this->domains(domain => $o_domain, baseaddr => $baseaddr);
+					$this->domains('domain' => $o_domain, 'baseaddr' => $baseaddr);
 				};
 			};
 			
 			if(!ref($o_reg) or $reg ne $o_reg->name) {
 				# add usedbits attribute to last register
 				if (ref($o_reg)) {
-					$o_reg->attribs(usedbits => $usedbits);
+					$o_reg->attribs('usedbits' => $usedbits);
 					$usedbits = 0;
 				};
 
 				# check if register already exists in domain, otherwise create new register object
 				$o_reg = $o_domain->find_reg_by_address_first($offset);
 				if (!ref($o_reg)) {
-					$o_reg = Micronas::RegReg->new(name => $reg);
-					$o_reg->attribs(size => $rsize);
+					$o_reg = Micronas::RegReg->new('name' => $reg);
+					$o_reg->attribs('size' => $rsize);
 
 					# link register object into domain
 					$o_domain->regs($o_reg);
-					$o_domain->addrmap(reg => $o_reg, offset => $offset);
+					$o_domain->addrmap('reg' => $o_reg, 'offset' => $offset);
 				};
 			};
 
@@ -401,9 +412,9 @@ sub _map_register_master {
 			}; 
 			
 			# create new field object
-			$o_field = Micronas::RegField->new(name => $fname, reg => $o_reg);
+			$o_field = Micronas::RegField->new('name' => $fname, 'definition' => $fdefinition, 'reg' => $o_reg);
 			$o_field->attribs(%hattribs);
-			$o_field->attribs(size => $fsize, lsb => $lsb);
+			$o_field->attribs('size' => $fsize, 'lsb' => $lsb);
 			
 			# link field into domain
 			$o_domain->fields($o_field);
