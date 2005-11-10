@@ -1,7 +1,9 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.12 2005/11/10 14:40:52 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.13 2005/11/10 15:04:48 lutscher Exp $
 ###############################################################################
-#                                  
+#
+#  Revision      : $Revision: 1.13 $                                  
+#
 #  Related Files :  Reg.pm
 #
 #  Author(s)     :  Thorsten Lutscher                                      
@@ -14,7 +16,6 @@
 #  Contents      :  Utility functions to create different register space views
 #                   from Reg class object
 #        
-#
 ###############################################################################
 #                               Copyright
 ###############################################################################
@@ -29,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.13  2005/11/10 15:04:48  lutscher
+#  disabled debug
+#
 #  Revision 1.12  2005/11/10 14:40:52  lutscher
 #  o added postfix for field inputs/outputs
 #  o added read-pipeline generator
@@ -111,7 +115,7 @@ sub _gen_view_vgch_rs {
 	my $href;
 	my @lfields;
 
-	$this->global->{'debug'} = 1; # BAUSTELLE
+	$this->global->{'debug'} = 0;
 	# extend class data with data structure needed for code generation
 	$this->global(
 				  'ocp_target_name'    => "ocp_target", # library module name
@@ -432,7 +436,6 @@ sub _vgch_rs_gen_cfg_module {
 	# generate code for read mux
 	$this->_vgch_rs_code_read_mux($clock, \%hrp, \%haddr_tokens, \@lrp, \@ldeclarations);
 	_pad_column(-1, $this->global->{'indent'}, 2, \@lrp); # indent
-	#exit; #BAUSTELLE
 
 	# generate code for forwarded transactions
 	my @lusr;
