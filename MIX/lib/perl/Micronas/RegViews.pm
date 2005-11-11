@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.13 2005/11/10 15:04:48 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.14 2005/11/11 15:28:45 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.13 $                                  
+#  Revision      : $Revision: 1.14 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.14  2005/11/11 15:28:45  lutscher
+#  made a number of improvements in the script and the generated code
+#
 #  Revision 1.13  2005/11/10 15:04:48  lutscher
 #  disabled debug
 #
@@ -113,7 +116,6 @@ sub _gen_view_vgch_rs {
 	my $this = shift;
 	my @ldomains;
 	my $href;
-	my @lfields;
 
 	$this->global->{'debug'} = 0;
 	# extend class data with data structure needed for code generation
@@ -125,10 +127,12 @@ sub _gen_view_vgch_rs {
 				  'int_set_postfix'    => "_set_p",     # postfix for interrupt-set input signal
 				  'test_port_name'     => "test",       # name of test input
 				  'field_spec_values'  => ['sha', 'w1c', 'usr'], # recognized values for spec attribute
-				  'hclocks'            => {},           # for storing per-clock-domain information
 				  'indent'             => "    ",       # indentation character(s)
 				  'assert_pragma_start'=> "`ifdef ASSERT_ON",
-				  'assert_pragma_end'  => "`endif"
+				  'assert_pragma_end'  => "`endif",
+				  # internal static data structs
+				  'hclocks'            => {},           # for storing per-clock-domain information
+				  'hfnames'            => {}            # for storing field names
 				 );
 
 	# import regshell.<par> parameters from MIX package to class data; user can change these parameters in mix.cfg
@@ -188,6 +192,7 @@ sub _gen_view_vgch_rs {
 		_info("generating code for domain ",$o_domain->name);
 		# $o_domain->display() if $this->global->{'debug'};
 		# get all clocks of domain and check if we have to infer mcd logic
+		$this->global('hfnames' => {});
 		$n_clocks = $this->_vgch_rs_get_configuration($o_domain);
 
 		if ($n_clocks > 1) { 
@@ -204,13 +209,12 @@ sub _gen_view_vgch_rs {
 		$this->_vgch_rs_add_static_connections($n_clocks);# add all standard ports and connections 
 		
 		# iterate through all clock domains
-		@lfields = ();
 		foreach $clock (keys %{$this->global->{'hclocks'}}) {
 			my @ludc = ();
 			$href = $this->global->{'hclocks'}->{$clock};
 			$cfg_inst = $href->{'cfg_inst'};
 			# print "> domain ",$o_domain->name,", clock $clock, cfg module $cfg_inst\n";
-			$this->_vgch_rs_gen_cfg_module($o_domain, $clock, \@ludc, \@lfields); # generate config module for clock domain
+			$this->_vgch_rs_gen_cfg_module($o_domain, $clock, \@ludc); # generate config module for clock domain
 			$this->_vgch_rs_write_udc($cfg_inst, \@ludc); # add user-defined-code to config module instantation
 		};
 	};
@@ -223,7 +227,7 @@ sub _gen_view_vgch_rs {
 # clock-name of the domain,
 # reference to list where code lines are added (::udc)
 sub _vgch_rs_gen_cfg_module {
-	my ($this, $o_domain, $clock, $lref_udc, $lref_fields) = @_;
+	my ($this, $o_domain, $clock, $lref_udc) = @_;
 	my($o_reg, $shdw_sig);
 	my $href = $this->global->{'hclocks'}->{$clock};
 	my $cfg_i = $href->{'cfg_inst'};
@@ -239,6 +243,8 @@ sub _vgch_rs_gen_cfg_module {
 	my (@lsp) = ();
 	my (@lrp) = ();
 	my (@lchecks) = ();
+	my ($int_rst_n) = $this->_gen_unique_signal_names($clock);
+	my $p_pos_pulse_check = 0;
 
 	if ($addr_msb >= $this->global->{'addrwidth'}) {
 		_error("register offsets are out-of-bounds (max ",2**$this->global->{'addrwidth'} -1,")");
@@ -277,19 +283,6 @@ sub _vgch_rs_gen_cfg_module {
 			# skip field if not in our clock domain and MCD feature is enabled
 			next if ($this->global->{'multi_clock_domains'} and $fclock ne $clock); 
 			next if $o_field->name =~ m/^UPD[EF]/; # skip legacy UPD* regs
-			
-			# check doubly defined fields
-			if (grep ($o_field->name eq $_, @$lref_fields)) {
-				_error("field name \'",$o_field->{'name'},"\' is defined more than once");
-				next;
-			} else {
-				push @$lref_fields, $o_field->name;
-			};
-			
-			# check length of field names
-			if (length($o_field->{'name'}) >32) {
-				_warning("field name \'",$o_field->{'name'},"\' is ridiculously long");
-			};
 
 			# get field attributes
 			my $spec = $o_field->attribs->{'spec'}; # note: spec can contain several attributs
@@ -325,34 +318,37 @@ sub _vgch_rs_gen_cfg_module {
 
 			# add ports, declarations and assignments
 			if ($access =~ m/r/i and $access !~/w/i ) { # read-only
-				_add_primary_input($o_field->name."%POSTFIX_FIELD_IN%", $msb, $lsb, $cfg_i);
+				_add_primary_input($this->_gen_field_name("in", $o_field), $msb, $lsb, $cfg_i);
 				if ($spec =~ m/sha/i) {
-					push @ldeclarations, "reg [$msb:$lsb] ".$o_field->name."_shdw;";
+					push @ldeclarations, "reg [$msb:$lsb] ".$this->_gen_field_name("shdw", $o_field).";";
 				};
 			} elsif ($access =~ m/w/i) { # write
-				if ($spec !~ m/w1c/i) {
-					_add_primary_output($o_field->name."%POSTFIX_FIELD_OUT%", $msb, $lsb, ($spec =~ m/sha/i) ? 1:0, $cfg_i);
-				} else { # w1c
-					_add_primary_input($o_field->name.$this->global->{'int_set_postfix'}, 0, 0, $cfg_i);
+				_add_primary_output($this->_gen_field_name("out", $o_field), $msb, $lsb, ($spec =~ m/sha/i) ? 1:0, $cfg_i);
+				if ($spec =~ m/w1c/i) { # w1c
+					_add_primary_input($this->_gen_field_name("int_set", $o_field), 0, 0, $cfg_i);
+					$p_pos_pulse_check = 1;
+					push @lchecks, "assert property(p_pos_pulse_check(".$this->_gen_field_name("int_set", $o_field)."));";
 				};
 				if ($spec !~ m/sha/i) {
 					if ($spec =~ m/usr/i) {
 						# route through, no register generated
-						$hassigns{$o_field->name."%POSTFIX_FIELD_OUT%"} = "wr_data_i".$rrange;
+						$hassigns{$this->_gen_field_name("out", $o_field)} = "wr_data_i".$rrange;
 					} else {
 						# drive from register
-						$hassigns{$o_field->name."%POSTFIX_FIELD_OUT%"} = $reg_name.$rrange;
+						$hassigns{$this->_gen_field_name("out", $o_field)} = $reg_name.$rrange;
 					};
 				} else {
-					$hassigns{$o_field->name."_shdw"} = $reg_name.$rrange;
-					push @ldeclarations,"wire [$msb:$lsb] ".$o_field->name."_shdw;";
+					$hassigns{$this->_gen_field_name("shdw", $o_field)} = $reg_name.$rrange;
+					push @ldeclarations,"wire [$msb:$lsb] ".$this->_gen_field_name("shdw", $o_field).";";
 				};
 				if($access =~ m/r/i and $spec =~ m/usr/i) { # usr read/write
-					_add_primary_input($o_field->name."%POSTFIX_FIELD_IN%", $msb, $lsb, $cfg_i);
+					_add_primary_input($this->_gen_field_name("in", $o_field), $msb, $lsb, $cfg_i);
 				};
 			};
 			if ($spec =~ m/usr/i) { # usr read/write
 				_add_primary_input($o_field->name."_trans_done_p", 0, 0, $cfg_i);
+				$p_pos_pulse_check = 1;
+				push @lchecks, "assert property(p_pos_pulse_check(".$o_field->name."_trans_done_p".$this->global->{'POSTFIX_PORT_IN'}."));";
 				if($access =~ m/r/i) {
 					_add_primary_output($o_field->name."_rd_p", 0, 0, 1, $cfg_i);
 				};
@@ -367,7 +363,7 @@ sub _vgch_rs_gen_cfg_module {
 					$hwp{'write'}->{$reg_name.$rrange} = $reg_offset;
 					$hwp{'write_rst'}->{$reg_name.$rrange} = $res_val;
 				} else { # w1c
-					$hwp{'write_sts'}->{$reg_name.$rrange} = $o_field->name.$this->global->{'int_set_postfix'}.$this->global->{POSTFIX_PORT_IN};
+					$hwp{'write_sts'}->{$reg_name.$rrange} = $this->_gen_field_name("int_set", $o_field);
 					$hwp{'write_sts_rst'}->{$reg_name.$rrange} = $res_val;
 				};
 			};
@@ -376,22 +372,32 @@ sub _vgch_rs_gen_cfg_module {
 			if ($access =~ m/r/i) { # read
 				if ($access =~ m/w/i) { # read/write
 					if ($spec =~ m/sha/i) {
-						push @{$hrp{$reg_offset}}, {$rrange => $o_field->name."_shdw"};
+						push @{$hrp{$reg_offset}}, {$rrange => $this->_gen_field_name("shdw", $o_field)};
 					} elsif ($spec =~ m/usr/i) {
-						push @{$hrp{$reg_offset}}, {$rrange => $o_field->name."%POSTFIX_FIELD_IN%"};
+						push @{$hrp{$reg_offset}}, {$rrange => $this->_gen_field_name("in", $o_field)};
 					} else {
 						push @{$hrp{$reg_offset}}, {$rrange => $reg_name.$rrange};
 					};
 				} else { # read-only
 					if ($spec =~ m/sha/i) {
-						push @{$hrp{$reg_offset}}, {$rrange => $o_field->name."_shdw"};
+						push @{$hrp{$reg_offset}}, {$rrange => $this->_gen_field_name("shdw", $o_field)};
 					} else {
-						push @{$hrp{$reg_offset}}, {$rrange => $o_field->name."%POSTFIX_FIELD_IN%"};
+						push @{$hrp{$reg_offset}}, {$rrange => $this->_gen_field_name("in", $o_field)};
 					};
 				};
 			}; 
 		}; # foreach $href
 	}; # foreach $o_reg 
+
+	# add assertions for input pulses
+	if ($p_pos_pulse_check) {
+		unshift @lchecks, split("\n","
+property p_pos_pulse_check (sig); // check for positive pulse
+     @(posedge $clock) disable iff (~$int_rst_n)
+     sig |=> ~sig;
+endproperty
+");
+	};
 
 	# add ports, processes and synchronizer for shadow signals
 	foreach $shdw_sig (keys %hshdw) {
@@ -544,6 +550,7 @@ sub _vgch_rs_code_read_mux {
 sub _rdmux_builder {
 	my ($this, $int_rst_n, $rd_clk, $href_rp, $href_mux, $lref_insert, $lref_decl, $prev_key, $prev_lvl, $prev_sel) = @_;
 	my $ind = $this->global->{'indent'};
+	my $ilvl = 0;
 	my $rdpl_stages = $this->global->{'rdpl_stages'};
 	my $case = 0;
 	my (@lsens, @ltemp);
@@ -567,9 +574,10 @@ sub _rdmux_builder {
 			$select = $prev_key;
 			$select =~ s/^\d+_//;
 			if (!$case) {         
-				 push @ltemp, $ind x 1 ."case ($select)";
-				 $case = 1;
-			 };
+				$ilvl=1;
+				push @ltemp, "case ($select)";
+				$case = 1;
+			};
 			if ($key =~ m/^(\d+)_(iaddr.*$)/) {
 				$sel = $1;
 				if ($prev_lvl != $rdpl_stages) {
@@ -578,40 +586,54 @@ sub _rdmux_builder {
 					$drv_postfix = $sel;
 				}
 				$driver = join("_", "mux_rd_data", $lvl, $drv_postfix);
-				push @ltemp, $ind x 2 ."$sel: begin";
-				push @ltemp, $ind x 3 ."$out_d <= $driver;";
+				push @ltemp, $ind x $ilvl++ ."$sel: begin";
+				push @ltemp, $ind x $ilvl ."$out_d <= $driver;";
 				push @lsens, $driver;
 				$driver = join("_", "mux_rd_err", $lvl, $drv_postfix);
-				push @ltemp, $ind x 3 ."$out_e  <= $driver;";
-				push @ltemp, $ind x 2 ."end";
+				push @ltemp, $ind x $ilvl-- ."$out_e  <= $driver;";
+				push @ltemp, $ind x $ilvl ."end";
 				push @lsens, $driver;
 			} else {
-				if ($case == 1) {
-					unshift @ltemp, $ind x 1 ."$out_e <= 0;";
-					$case ++;
-				};
+				#if ($case == 1) {
+				#	unshift @ltemp, "$out_e <= 0;";
+				#	$case ++;
+				#};
 				$sel = $key;
-				push @ltemp, $ind x 2 ."$sel: begin";
+				push @ltemp, $ind x $ilvl++ ."$sel: begin";
 				$offs = $href_mux->{$prev_key}->{$key};
 				#print "> offs $offs\n";
 				foreach $href (@{$href_rp->{$offs}}) {
-					push @ltemp, $ind x 3 ."$out_d".(keys %{$href})[0]." <= ".(values %{$href})[0].";";
+					push @ltemp, $ind x $ilvl ."$out_d".(keys %{$href})[0]." <= ".(values %{$href})[0].";";
 				};
-				push @ltemp, $ind x 2 . "end";
+				$ilvl--;
+				push @ltemp, $ind x $ilvl . "end";
 			};
 		 }
 		 if ($case) {
+			 $ilvl = 0;
 			 if ($prev_key =~ m/^iaddr/) {
 				 push @$lref_insert, "", "always @(".join(" or ", "iaddr", @lsens).") begin // stage $prev_lvl";
+				 $ilvl++;
 			 } else {
 				 push @$lref_insert, "", "always @(posedge $rd_clk or negedge $int_rst_n) begin // stage $prev_lvl";
+				 $ilvl++;
+				 push @$lref_insert, $ind x $ilvl++ ."if (~$int_rst_n) begin";
+				 push @$lref_insert, $ind x $ilvl ."$out_d <= 0;";
+				 push @$lref_insert, $ind x $ilvl-- ."$out_e <= 0;";
+				 push @$lref_insert, $ind x $ilvl ."end";
+				 push @$lref_insert, $ind x $ilvl++ ."else begin";
+				 push @$lref_insert, $ind x $ilvl ."$out_e <= 0;";
 			 };
-			 push @$lref_insert, @ltemp;
-			 push @$lref_insert, $ind x 2 ."default: begin";
-			 push @$lref_insert, $ind x 3 ."$out_d <= 0;";
-			 push @$lref_insert, $ind x 3 ."$out_e <= 1;";
-			 push @$lref_insert, $ind x 2 ."end";
-			 push @$lref_insert, $ind x 1 ."endcase";
+			 push @$lref_insert, map {$ind x $ilvl . $_} @ltemp;
+			 $ilvl++;
+			 push @$lref_insert, $ind x $ilvl++ ."default: begin";
+			 push @$lref_insert, $ind x $ilvl ."$out_d <= 0;";
+			 push @$lref_insert, $ind x $ilvl-- ."$out_e <= 1;";
+			 push @$lref_insert, $ind x $ilvl-- ."end";
+			 push @$lref_insert, $ind x $ilvl-- ."endcase";
+			 #if (! $prev_key =~ m/^iaddr/) {
+				 push @$lref_insert, $ind x $ilvl ."end" unless $prev_key =~ m/^iaddr/;
+			 #};
 			 push @$lref_insert, "end";
 			 # add reg to declarations
 			 push @$lref_decl, "reg [".($this->global->{'datawidth'}-1).":0] $out_d;";
@@ -706,10 +728,10 @@ sub _vgch_rs_code_shadow_process {
 		#};
 		foreach $o_field (sort @{$href_shdw->{$sig}}) {
 			if ($o_field->attribs->{'dir'} =~ m/w/i) {
-				push @ltemp, $o_field->name ."%POSTFIX_FIELD_OUT%"." <= ".$o_field->name."_shdw;";
+				push @ltemp, $this->_gen_field_name("out", $o_field) ." <= ".$this->_gen_field_name("shdw", $o_field).";";
 			} else {
 				if ($o_field->attribs->{'dir'} =~ m/r/i) {
-					push @ltemp, $o_field->name . "_shdw <= " . $o_field->name ."%POSTFIX_FIELD_IN%" . ";"; 
+					push @ltemp, $this->_gen_field_name("shdw", $o_field) ." <= " . $this->_gen_field_name("in", $o_field) . ";"; 
 				};
 			};
 		}; 
@@ -741,7 +763,7 @@ sub _vgch_rs_code_fwd_process {
 	my (@ltemp, @ltemp2, $sig);
 	my ($sig_read) =  "rd_wr".$this->global->{'POSTFIX_PORT_IN'}; 
 	my ($sig_write) = "~rd_wr".$this->global->{'POSTFIX_PORT_IN'};
-	my ($rw, $dcd);
+	my ($rw, $dcd, $i);
 
 	if (scalar(keys %{$href_usr})>0) {
 		# prefix
@@ -749,7 +771,7 @@ sub _vgch_rs_code_fwd_process {
 
 		# reset logic
 		push @ltemp, "fwd_txn <= 0;";
-		for (my $i=0; $i<scalar(@lmap); $i++) {
+		for ($i=0; $i<scalar(@lmap); $i++) {
 			$rw="";
 			my $o_field = $href_usr->{$lmap[$i]};
 			if ($o_field->attribs->{'dir'} =~ m/r/i) {
@@ -781,7 +803,7 @@ sub _vgch_rs_code_fwd_process {
 		push @linsert, $ind x $ilvl++ . "else begin";
 
 		# default values
-		for (my $i=0; $i<$nusr; $i++) {
+		for ($i=0; $i<$nusr; $i++) {
 			my $o_field = $href_usr->{$lmap[$i]};
 			if ($o_field->attribs->{'dir'} =~ m/r/i) {
 				push @ltemp, $o_field->name . "_rd_p".$this->global->{'POSTFIX_PORT_OUT'} . " <= 0;"; 
@@ -797,7 +819,7 @@ sub _vgch_rs_code_fwd_process {
 		# read/write pulse generation
 		push @linsert, $ind x $ilvl++ . "if ($trans_start_p) begin";
 		push @ltemp, "fwd_txn <= |fwd_decode_vec; // set flag for forwarded txn";
-		for (my $i=0; $i<scalar(@lmap); $i++) {
+		for ($i=0; $i<scalar(@lmap); $i++) {
 			my $o_field = $href_usr->{$lmap[$i]};
 			if ($o_field->attribs->{'dir'} =~ m/r/i) {
 				$sig = $o_field->name . "_rd_p".$this->global->{'POSTFIX_PORT_OUT'};
@@ -905,7 +927,8 @@ sub _vgch_rs_code_write_processes {
 			push @linsert, $ind x $ilvl . "end";
 			@ltemp=();
 		};
-		push @linsert, $ind x $ilvl-- . "default: ;";
+		# push @linsert, $ind x $ilvl-- . "default: ;";
+		$ilvl--;
 		push @linsert, $ind x $ilvl-- . "endcase";
 		if (!$this->global->{'infer_clock_gating'}) { $ilvl--; };
 		push @linsert, $ind x $ilvl-- . "end";
@@ -1301,7 +1324,18 @@ sub _vgch_rs_get_configuration {
 		if ($o_field->attribs->{'dir'} =~ m/r/i) {
 			$hresult{$clock}->{'has_read'} = 1; # store if has readable registers
 		};
+		# check length of field names
+		if (length($o_field->{'name'}) >32) {
+			_warning("field name \'",$o_field->{'name'},"\' is ridiculously long");
+		};
+		# check doubly defined fields
+		if (grep ($_ eq $o_field->name, values(%{$this->global->{'hfnames'}}))) {
+			_error("field name \'",$o_field->{'name'},"\' is defined more than once");
+		};
+		# enter name in new data struct (we do not want to manipulate the objects!)
+		$this->global->{'hfnames'}->{$o_field} = $o_field->name;
 	};
+
 	# if more than one clocks in the domain but MCD feature is off, delete all clocks other than the bus_clock
 	if ($n>1 and !$this->global->{'multi_clock_domains'}) {
 		my @lkeys = keys %hresult;
@@ -1529,6 +1563,34 @@ sub _add_instance {
 		   '::lang'   => $this->global->{'lang'}
 		  );
 	}
+};
+
+# function to generate the name for a field how it appears in the HDL; use only this function
+# to get the name of a field!
+# input: type = [in|out|int_set|shdw]
+# o_field = ref to field object
+sub _gen_field_name {
+	my ($this, $type, $o_field) = @_;
+	my ($name);
+
+	# get field name from global struct
+	if (exists($this->global->{'hfnames'}->{$o_field})) {
+		$name = $this->global->{'hfnames'}->{$o_field};
+	} else {
+		$name = $o_field->name; # take original name
+		_error("internal error: field name \'", $name, "\' not found in global struct");
+	};
+
+	if ($type eq "in") {
+		$name .= "%POSTFIX_FIELD_IN%";
+	} elsif ($type eq "out") {
+		$name .= "%POSTFIX_FIELD_OUT%";
+	} elsif ($type eq "int_set") {
+		$name .= $this->global->{'int_set_postfix'}."%POSTFIX_PORT_IN%";
+	} elsif ($type eq "shdw") {
+		$name .= "_shdw";
+	};
+	return $name;
 };
 
 # function to generate a vector range
