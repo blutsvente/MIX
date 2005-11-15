@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.14 2005/11/11 15:28:45 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.15 2005/11/15 14:00:05 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.14 $                                  
+#  Revision      : $Revision: 1.15 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.15  2005/11/15 14:00:05  lutscher
+#  added capability to use reg names as prefix for file names
+#
 #  Revision 1.14  2005/11/11 15:28:45  lutscher
 #  made a number of improvements in the script and the generated code
 #
@@ -146,6 +149,7 @@ sub _gen_view_vgch_rs {
 					  'reg_shell.infer_sva',
 					  'reg_shell.read_multicycle',
 					  'reg_shell.read_pipeline_lvl',
+					  'reg_shell.use_reg_name_as_prefix',
 					  'postfix.POSTFIX_PORT_OUT', 
 					  'postfix.POSTFIX_PORT_IN',
 					  'postfix.POSTFIX_FIELD_OUT', 
@@ -1589,6 +1593,11 @@ sub _gen_field_name {
 		$name .= $this->global->{'int_set_postfix'}."%POSTFIX_PORT_IN%";
 	} elsif ($type eq "shdw") {
 		$name .= "_shdw";
+	};
+
+	# prefix field name with register name
+	if ($this->global->{'use_reg_name_as_prefix'}) {
+		$name = join("_", $o_field->reg->{'name'}, $name);
 	};
 	return $name;
 };
