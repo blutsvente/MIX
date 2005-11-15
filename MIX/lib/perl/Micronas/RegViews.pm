@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.15 2005/11/15 14:00:05 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.16 2005/11/15 15:59:32 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.15 $                                  
+#  Revision      : $Revision: 1.16 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.16  2005/11/15 15:59:32  lutscher
+#  some fixed regarding the use_reg_name_as_prefix option
+#
 #  Revision 1.15  2005/11/15 14:00:05  lutscher
 #  added capability to use reg names as prefix for file names
 #
@@ -350,9 +353,9 @@ sub _vgch_rs_gen_cfg_module {
 				};
 			};
 			if ($spec =~ m/usr/i) { # usr read/write
-				_add_primary_input($o_field->name."_trans_done_p", 0, 0, $cfg_i);
+				_add_primary_input($this->_gen_field_name("usr_trans_done", $o_field), 0, 0, $cfg_i);
 				$p_pos_pulse_check = 1;
-				push @lchecks, "assert property(p_pos_pulse_check(".$o_field->name."_trans_done_p".$this->global->{'POSTFIX_PORT_IN'}."));";
+				push @lchecks, "assert property(p_pos_pulse_check(".$this->_gen_field_name("usr_trans_done", $o_field)."));";
 				if($access =~ m/r/i) {
 					_add_primary_output($o_field->name."_rd_p", 0, 0, 1, $cfg_i);
 				};
@@ -1085,7 +1088,7 @@ assign rd_p = rd_wr".$this->global->{'POSTFIX_PORT_IN'}." & $trans_start_p;
 		push @ltemp, "assign rd_done_p = " .($multicyc ? "rd_delay$multicyc;" : "rd_p;") . " // ack for local reads";
 		push @ltemp, "assign trans_done_p = wr_done_p | rd_done_p;";
 	} else {
-		@ltemp2 = map {$href_usr->{$_}->{'name'}."_trans_done_p".$this->global->{'POSTFIX_PORT_IN'}} keys %$href_usr;
+		@ltemp2 = map {$this->_gen_field_name("usr_trans_done",$href_usr->{$_})} keys %$href_usr;
 		$dummy = "assign fwd_done_vec = {" . join(", ", @ltemp2) . "}; // ack for forwarded txns";
 		push @ltemp, $dummy;
 		push @ltemp, "assign trans_done_p = ((wr_done_p | rd_done_p) & ~fwd_txn) | ((fwd_done_vec != 0) & fwd_txn);";
@@ -1334,7 +1337,11 @@ sub _vgch_rs_get_configuration {
 		};
 		# check doubly defined fields
 		if (grep ($_ eq $o_field->name, values(%{$this->global->{'hfnames'}}))) {
-			_error("field name \'",$o_field->{'name'},"\' is defined more than once");
+			if ($this->global->{'use_reg_name_as_prefix'}) {
+				_info("field name \'",$o_field->{'name'},"\' is defined more than once");
+			} else {
+				_error("field name \'",$o_field->{'name'},"\' is defined more than once");
+			};
 		};
 		# enter name in new data struct (we do not want to manipulate the objects!)
 		$this->global->{'hfnames'}->{$o_field} = $o_field->name;
@@ -1571,7 +1578,7 @@ sub _add_instance {
 
 # function to generate the name for a field how it appears in the HDL; use only this function
 # to get the name of a field!
-# input: type = [in|out|int_set|shdw]
+# input: type = [in|out|int_set|shdw|usr_trans_done]
 # o_field = ref to field object
 sub _gen_field_name {
 	my ($this, $type, $o_field) = @_;
@@ -1593,6 +1600,8 @@ sub _gen_field_name {
 		$name .= $this->global->{'int_set_postfix'}."%POSTFIX_PORT_IN%";
 	} elsif ($type eq "shdw") {
 		$name .= "_shdw";
+	} elsif ($type eq "usr_trans_done") {
+		$name .= "_trans_done_p"."%POSTFIX_PORT_IN%";
 	};
 
 	# prefix field name with register name
