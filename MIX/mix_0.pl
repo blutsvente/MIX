@@ -27,13 +27,13 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.40 2005/11/09 13:38:30 lutscher Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.41 2005/11/21 14:51:16 mathias Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.40 $                                      |
-# | Mod.Date     : $Date: 2005/11/09 13:38:30 $                           |
-# | Author       : $Author: lutscher $                                      |
+# | Version      : $Revision: 1.41 $                                      |
+# | Mod.Date     : $Date: 2005/11/21 14:51:16 $                           |
+# | Author       : $Author: mathias $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
 # | Email        : $Email: wilfried.gaensheimer@micronas.com$             |
@@ -47,6 +47,9 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.41  2005/11/21 14:51:16  mathias
+# | correct highlighting in Emacs
+# |
 # | Revision 1.40  2005/11/09 13:38:30  lutscher
 # | added option domain
 # |
@@ -218,7 +221,7 @@ use Micronas::MixReport;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.40 $'; # RCS Id
+$::VERSION = '$Revision: 1.41 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 logconfig(
