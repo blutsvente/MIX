@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.70 $                                         |
-# | Author:     $Author: lutscher $                                         |
-# | Date:       $Date: 2005/11/10 07:55:25 $                              |
+# | Revision:   $Revision: 1.71 $                                         |
+# | Author:     $Author: wig $                                         |
+# | Date:       $Date: 2005/11/22 11:00:47 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.70 2005/11/10 07:55:25 lutscher Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.71 2005/11/22 11:00:47 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.71  2005/11/22 11:00:47  wig
+# | Minor fixes in Utils (20051121a, K: mkdir problem)
+# |
 # | Revision 1.70  2005/11/10 07:55:25  lutscher
 # | fixed bug in generic_map()
 # |
@@ -326,9 +329,9 @@ sub _mix_wr_regorwire($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.70 2005/11/10 07:55:25 lutscher Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.71 2005/11/22 11:00:47 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.70 $';
+my $thisrevision   =      '$Revision: 1.71 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1418,8 +1421,8 @@ sub _write_entities ($$$) {
         unless ( is_vhdl_comment( $port ) ) { 
             # TODO : %S% use a better mechanism to format output!!
             $port = '%S%' x 2 . $tcom . " Generated Port for Entity $e\n" . $port;
-            $port =~ s/;((%S%|\s)*$tcom.*\n)$/$1/io; # Remove trailing ;
-            $port =~ s/;\n$/\n/io;
+            $port =~ s/;((%S%|\s)*$tcom.*\n)$/$1/i; # Remove trailing ;
+            $port =~ s/;\n$/\n/i;
             $port .= '%S%' x 2 . $tcom . " End of Generated Port for Entity $e\n";
             # Store ports and generics for later reusal
             $entities{$e}{'__PORTTEXT__'}{$lang} = $port;
@@ -1431,8 +1434,8 @@ sub _write_entities ($$$) {
         # The same for generics
         unless ( is_vhdl_comment( $gent ) ) {
             $gent = '%S%' x 2 . $tcom . " Generated Generics for Entity $e\n" . $gent;            
-            $gent =~ s/;((%S%|\s)*$tcom.*\n)$/$1/io;
-            $gent =~ s/;\n$/\n/io;
+            $gent =~ s/;((%S%|\s)*$tcom.*\n)$/$1/i;
+            $gent =~ s/;\n$/\n/i;
             $gent .= '%S%' x 2 . $tcom . " End of Generated Generics for Entity $e\n";
             # Store ports and generics for later reusal
             $entities{$e}{'__GENERICTEXT__'}{$lang} = $gent;
@@ -2704,6 +2707,7 @@ Return:
 	
 =cut
 
+# TODO : extend checks to string types ...??
 sub _mix_wr_isinteger ($$$) {
     my $inst = shift;
     my $generic = shift;
@@ -2755,8 +2759,19 @@ sub _mix_wr_isinteger ($$$) {
     }
     
     if ( $flag ) {
-        logwarn("WARNING: applied non-integer parameter $val for generic $generic at instance $inst!" );
-        $EH{'sum'}{'warnings'}++;
+    	#!wig20051109: Check if type is string -> allow anything
+    	my $enty = $hierdb{$inst}{'::entity'};
+    	if ( exists( $entities{$enty}{$generic} ) and
+    		  exists( $entities{$enty}{$generic}{'type'} ) ) {
+    		 my $type = $entities{$enty}{$generic}{'type'};
+    		 if ( $type =~ m/string/io ) {
+    		 	$flag = 0;
+    		 }
+    	}
+    	if ( $flag ) {
+        	logwarn("WARNING: applied non-integer parameter $val for generic $generic at instance $inst!" );
+        	$EH{'sum'}{'warnings'}++;
+    	}
     }
     return $flag;
 }

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.62 $                                         |
+# | Revision:   $Revision: 1.63 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/11/04 10:44:47 $                              |
+# | Date:       $Date: 2005/11/22 11:00:47 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.62 2005/11/04 10:44:47 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.63 2005/11/22 11:00:47 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.63  2005/11/22 11:00:47  wig
+# | Minor fixes in Utils (20051121a, K: mkdir problem)
+# |
 # | Revision 1.62  2005/11/04 10:44:47  wig
 # | Adding ::incom (keep CONN sheet comments) and improce portlist report format
 # |
@@ -321,9 +324,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.62 2005/11/04 10:44:47 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.63 2005/11/22 11:00:47 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.62 $';
+my $thisrevision =	'$Revision: 1.63 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1035,7 +1038,7 @@ sub add_conn (%) {
 		#   -> map to LOW|HIGH_BUS
 		#!wig20050719
 		if ( $name =~ m/%(LOW|HIGH)%/ ) {
-			if ( $in{'::high'} ne "" or $in{'::low'} ne "" ) {
+			if ( $in{'::high'} ne '' or $in{'::low'} ne '' ) {
 				logwarn("WARNING: map assignment from $1 to $1_BUS!");
 				$EH{'sum'}{'warnings'}++;
 				$name = "%" . $1 . "_BUS%";

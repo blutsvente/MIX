@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.96 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2005/11/15 13:59:24 $                              |
+# | Revision:   $Revision: 1.97 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2005/11/22 11:00:46 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.96 2005/11/15 13:59:24 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.97 2005/11/22 11:00:46 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.97  2005/11/22 11:00:46  wig
+# | Minor fixes in Utils (20051121a, K: mkdir problem)
+# |
 # | Revision 1.96  2005/11/15 13:59:24  lutscher
 # | added reg_shell param
 # |
@@ -411,11 +414,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.96 2005/11/15 13:59:24 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.97 2005/11/22 11:00:46 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.96 $';         #'
+my $thisrevision        =      '$Revision: 1.97 $';         #'
 
-# Revision:   $Revision: 1.96 $   
+# Revision:   $Revision: 1.97 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -634,24 +637,24 @@ sub mix_getopt_header(@) {
     # like -conf output.generate.delta=1 or enabled in mix.cfg file
     #
     if ( exists( $OPTVAL{delta} ) ) { # -delta |-nodelta
-	if ( $OPTVAL{delta} ) {
-	    $EH{'output'}{'generate'}{'delta'} = 1;
-	} else { # Switch off delta mode
-	    $EH{'output'}{'generate'}{'delta'} = 0;
-	}
+		if ( $OPTVAL{delta} ) {
+	    	$EH{'output'}{'generate'}{'delta'} = 1;
+		} else { # Switch off delta mode
+	    	$EH{'output'}{'generate'}{'delta'} = 0;
+		}
     } else {
-	if ( $EH{'output'}{'generate'}{'delta'} ) { # Delta on by -conf or FILE.cfg
-	    $EH{'output'}{'generate'}{'delta'} = 1;
-	    $OPTVAL{delta} = 1;
-	} else {
-	    $EH{'output'}{'generate'}{'delta'} = 0;
-	}
+		if ( $EH{'output'}{'generate'}{'delta'} ) { # Delta on by -conf or FILE.cfg
+	    	$EH{'output'}{'generate'}{'delta'} = 1;
+	    	$OPTVAL{delta} = 1;
+		} else {
+	    	$EH{'output'}{'generate'}{'delta'} = 0;
+		}
     }
     if ( $EH{'output'}{'generate'}{'delta'} or $EH{'check'}{'hdlout'}{'path'} ) {
 	# Eval use Text::Diff
 	    if ( eval 'use Text::Diff;' ) {
-		logwarn( "FATAL: Cannot load Text::Diff module for -conf *delta* mode: $@" );
-		exit(1);
+			logwarn( "FATAL: Cannot load Text::Diff module for -conf *delta* mode: $@" );
+			exit(1);
 	    }
     }
     
@@ -1104,12 +1107,14 @@ sub mix_init () {
 	},
 	# 'warnings' => 'load,drivers',	# Warn about missing loads/drivers
 	'warnings' => '',
-	'delta' => 'sort', # Controlling delta output mode:
-			    # space:   not consider whitespace
+	'delta' => 'remove,ispace,comment,ihead', # Controlling delta output mode:
+			    # (i|ignore)space:   (not) consider whitespace
 			    # sort:    sort lines
-			    # comment: not remove all comments before compare
+			    # comment: do not remove all comments before compare
+			    # i(gnore)head: ignore file header
 			    # remove:  remove empyt diff files
                 # ignorecase|ic: -> ignore case if set
+                # isc|ignoresemicolon: -> ignore trailing semicolon
                 # mapstd[logic]: -> ignore std_logic s. std_ulogic diffs!
     },
     'input' => {
@@ -1655,23 +1660,23 @@ sub mix_init () {
 	    "%VHDL_USE_ENTY%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
 	    "%VHDL_USE_ARCH%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
 	    "%VHDL_USE_CONF%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
-	    "%VHDL_HOOK_ENTY_HEAD%"	=>	"", # Hooks for user defined text, see ::udc!
-   	    "%VHDL_HOOK_ENTY_BODY%"	=>	"",
-   	    "%VHDL_HOOK_ENTY_FOOT%"	=>	"",
-   	   	"%VHDL_HOOK_ARCH_HEAD%"	=>	"",
-   	   	"%VHDL_HOOK_ARCH_DECL%" =>	"",
-   	    "%VHDL_HOOK_ARCH_BODY%"	=>	"",
-   	    "%VHDL_HOOK_ARCH_FOOT%"	=>	"",
-   	    "%VHDL_HOOK_CONF_HEAD%"	=>	"",
-   	    "%VHDL_HOOK_CONF_BODY%"	=>	"",
-   	    "%VHDL_HOOK_CONF_FOOT%"	=>	"",
+	    "%VHDL_HOOK_ENTY_HEAD%"	=>	'', # Hooks for user defined text, see ::udc!
+   	    "%VHDL_HOOK_ENTY_BODY%"	=>	'',
+   	    "%VHDL_HOOK_ENTY_FOOT%"	=>	'',
+   	   	"%VHDL_HOOK_ARCH_HEAD%"	=>	'',
+   	   	"%VHDL_HOOK_ARCH_DECL%" =>	'',
+   	    "%VHDL_HOOK_ARCH_BODY%"	=>	'',
+   	    "%VHDL_HOOK_ARCH_FOOT%"	=>	'',
+   	    "%VHDL_HOOK_CONF_HEAD%"	=>	'',
+   	    "%VHDL_HOOK_CONF_BODY%"	=>	'',
+   	    "%VHDL_HOOK_CONF_FOOT%"	=>	'',
    	    '%HEAD%'	=> '__HEAD__', # Used internally for ::udc
    	    '%BODY%'	=> '__BODY__', # Used internally for ::udc
    	    '%FOOT%'	=> '__FOOT__', # Used internally for ::udc
    	    '%DECL%'	=> '__DECL__', # Used internally for ::udc	
 	    "%VERILOG_TIMESCALE%"	=>	"`timescale 1ns/10ps",
 	    "%VERILOG_USE_ARCH%"	=>	'%EMPTY%',
-	    "%VERILOG_DEFINES%"	=>	'	// No `defines in this module',  # Want to define s.th. globally?
+	    "%VERILOG_DEFINES%"	=>	'	// No user `defines in this module',  # Want to define s.th. globally?
 		"%VERILOG_HOOK_BODY%"	=>	"",
         "%INT_VERILOG_DEFINES%"     =>    '', # Used internally
         "%INCLUDE%"     =>  '`include',   # Used internally for verilog include files in ::use!
@@ -2257,12 +2262,27 @@ sub mix_utils_clean_data ($$;$) {
     my $conf = shift || $EH{'output'}{'delta'}; # Which rules to apply ...
     
     # remove comments: -- for VHDL, // for Verilog
-    map( { s/\Q$c\E.*//; } @$d ) if ( $conf !~ m/\bcomment\b/io );
+    # 	only if "comment" is not set
+    map( { s/\Q$c\E.*//; } @$d ) if ( $conf !~ m/\bcomment\b/i );
+    
+    #!wig20051121: strip comment head (up to first non-comment line!)
+	if ( $conf =~ m/\b(i|ignore)head\b/io ) { 
+    	for my $dl ( @$d ) {
+    		last if ( $dl !~ m/^$c/i );
+    		$dl = '';
+    	}
+	}
+    
     # condense whitespace, remove empty lines ...
-    #wig20040420: remove \s after ( and before ); remove trailing ";" ??
+    #wig20040420: remove \s after ( and before )
     if ( $conf !~ m,\bspace\b,io ) {
-	map( { s/\s+/ /og; s/^\s+//og; s/\s+$//og; s/\s*([\(\)])\s*/$1/g; s/;$//; } @$d );
-	$d = [ grep( !/^$/, @$d ) ];
+		map( { s/\s+/ /og; s/^\s+//og; s/\s+$//og; s/\s*([\(\)])\s*/$1/g; } @$d );
+		$d = [ grep( !/^$/, @$d ) ];
+    }
+    
+    #  remove trailing ";"
+    if ( $conf =~ m,\bisc|ignoresemicolon\b,io ) {
+    	map( { s/;$//; } @$d );
     }
 
     # ignore case -> make everything lowercase ....
@@ -2527,17 +2547,17 @@ sub mix_utils_print ($@) {
 
     # $fn either is a real file handle (if this_delta is set) or a file name
     # in this_check ....
-    if ( $fhstore{"$fn"}{'delta'} or $fhstore{"$fn"}{'tmpl'} ) {
+    if ( $fhstore{$fn}{'delta'} or $fhstore{$fn}{'tmpl'} ) {
 	push( @ncont, split( /\n/, sprintf( "%s", @args ) ) );
     }
 
-    if ( $fhstore{"$fn"}{'out'} ) {
-        $fhstore{"$fn"}{'out'}->print( join( "\n", @args)  );
+    if ( $fhstore{$fn}{'out'} ) {
+        $fhstore{$fn}{'out'}->print( join( "\n", @args)  );
     }
 
     # Print to file if backup requested ....
-    if ( $fhstore{"$fn"}{'back'} ) {
-	$fhstore{"$fn"}{'back'}->print( join( "\n", @args ) );
+    if ( $fhstore{$fn}{'back'} ) {
+		$fhstore{$fn}{'back'}->print( join( "\n", @args ) );
     }
 }
 
@@ -2550,16 +2570,16 @@ sub mix_utils_printf ($@) {
     my @args = @_;
 
     # if ( $this_delta{"$fh"} ) {
-    if ( $fhstore{"$fn"}{'delta'} or $fhstore{"$fn"}{'tmpl'} ) {
+    if ( $fhstore{$fn}{'delta'} or $fhstore{$fn}{'tmpl'} ) {
 	push( @ncont, split( /\n/, sprintf( @args ) ) );
     }
 
-    if ( $fhstore{"$fn"}{'out'} ) {    
-	$fhstore{"$fn"}{'out'}->print( join( "\n", @args ) );
+    if ( $fhstore{$fn}{'out'} ) {    
+	$fhstore{$fn}{'out'}->print( join( "\n", @args ) );
     }
 
-    if ( $fhstore{"$fn"}{'back'} ) {
-	$fhstore{"$fn"}{'back'}->print( join( "\n", @args ) );
+    if ( $fhstore{$fn}{'back'} ) {
+	$fhstore{$fn}{'back'}->print( join( "\n", @args ) );
     }
 }
 
@@ -2593,7 +2613,7 @@ sub mix_utils_close ($$) {
     # verify mode on
     # Check against existing entity selected ...
     #
-    if ( $fhstore{"$fn"}{'tmplout'}  ) {
+    if ( $fhstore{$fn}{'tmplout'}  ) {
 		# if check.hdlout.delta contents differs from output.delta,
 		# we need to parse @ncont with differentely ...
 		my $switches = ( $EH{'check'}{'hdlout'}{'delta'} ) ?
@@ -2616,7 +2636,7 @@ $c  template file (OLD): $fhstore{$fn}{'tmpl'}
 $c ------------- CHANGES START HERE ------------- --
 ";
 
-    my $fht = $fhstore{"$fn"}{'tmplout'};
+    my $fht = $fhstore{$fn}{'tmplout'};
 	print( $fht &replace_mac( $head, $EH{'macro'} ));
 
     #
@@ -2633,17 +2653,17 @@ $c ------------- CHANGES START HERE ------------- --
 	    if ( $EH{'output'}{'delta'} =~ m,\bremove\b,io ) {
 		# Remove empty diff files, close before remove ...
 		# if ( $close_flag ) {
-                    unless ( $fht->close ) {
-                        logwarn( "ERROR: Cannot close file " . $fhstore{"$fn"}{'tmplname'} . ": $!" );
-                        $EH{'sum'}{'errors'}++;
-                    }
-                    $fhstore{"$fn"}{'tmplout'} = 0;
+			unless ( $fht->close ) {
+                logwarn( "ERROR: Cannot close file " . $fhstore{$fn}{'tmplname'} . ": $!" );
+                $EH{'sum'}{'errors'}++;
+            }
+            $fhstore{$fn}{'tmplout'} = 0;
 		# }
 		# $close_flag = 0;
-		unlink( $fhstore{"$fn"}{'tmplname'} ) or
+		unlink( $fhstore{$fn}{'tmplname'} ) or
 		    logwarn( "WARNING: Cannot remove empty template verify file " .
-                             $fhstore{"$fn"}{'tmplname'} . ": " . $! ) and
-			    $EH{'sum'}{'warnings'}++;
+                             $fhstore{$fn}{'tmplname'} . ": " . $! ) and
+			$EH{'sum'}{'warnings'}++;
 	    }
 	}
     }
@@ -2651,11 +2671,11 @@ $c ------------- CHANGES START HERE ------------- --
     #
     # Delta mode on
     #
-    if ( $fhstore{"$fn"}{'delta'} ) {
+    if ( $fhstore{$fn}{'delta'} ) {
     # Sort/map new content and compare .... print out to $fh
 
         my $diff = mix_utils_diff( \@ncont, \@ocont, $c, $file ); # Compare new content and previous
-        my $fh = $fhstore{"$fn"}{'delta'};
+        my $fh = $fhstore{$fn}{'delta'};
 
         # Print header to $fh ... (usual things like options, ....)
         # TODO Add that header to header definitions
@@ -2686,16 +2706,16 @@ $c ------------- CHANGES START HERE ------------- --
 	    if ( $EH{'output'}{'delta'} =~ m,remove,io ) {
 		# Remove empty diff files (removal before closing ????)
 		# if ( $close_flag ) {
-                    unless( $fhstore{"$fn"}{'delta'}->close ) {
+                    unless( $fhstore{$fn}{'delta'}->close ) {
                         logwarn( "ERROR: Cannot close delta file $fn: $!" );
                         $EH{'sum'}{'errors'}++;
                     }
-                    $fhstore{"$fn"}{'delta'} = 0;
+                    $fhstore{$fn}{'delta'} = 0;
 		# }
 		# $close_flag = 0; # TODO Why
-		unlink( $fhstore{"$fn"}{'deltaname'} ) or
+		unlink( $fhstore{$fn}{'deltaname'} ) or
 		    logwarn( "WARNING: Cannot remove empty diff file " .
-                                 $fhstore{"$fn"}{'deltaname'} . ": " . $! ) and
+                                 $fhstore{$fn}{'deltaname'} . ": " . $! ) and
 			    $EH{'sum'}{'warnings'}++;
 	    }
 	}
@@ -2704,47 +2724,43 @@ $c ------------- CHANGES START HERE ------------- --
     #
     # Do we need to close the output file?
     #
-    # if ( $close_flag and $fhstore{"$fn"}{'out'} ) {
-    if ( $fhstore{"$fn"}{'out'} ) {
-        unless ( $fhstore{"$fn"}{'out'}->close ) {
+    if ( $fhstore{$fn}{'out'} ) {
+        unless ( $fhstore{$fn}{'out'}->close ) {
             logwarn( "ERROR: Cannot close file $fn: $!" );
             $EH{'sum'}{'errors'}++;
-            $fhstore{"$fn"}{'out'} = 0;
+            $fhstore{$fn}{'out'} = 0;
             # return undef;
         }
-        $fhstore{"$fn"}{'out'} = 0;
+        $fhstore{$fn}{'out'} = 0;
     }
 
     #
     # Do we need to close the delta file?
     # TODO Close in the delta-if branch above ...
-    if ( $fhstore{"$fn"}{'tmplout'} ) {
-        unless ( $fhstore{"$fn"}{'tmplout'}->close ) {
+    if ( $fhstore{$fn}{'tmplout'} ) {
+        unless ( $fhstore{$fn}{'tmplout'}->close ) {
             logwarn( "ERROR: Cannot close file $fhstore{$fn}{'tmplname'}: $!" );
             $EH{'sum'}{'errors'}++;
-            # $fhstore{"$fn"}{'tmplout'} = 0;
-            # return undef;
         }
-        $fhstore{"$fn"}{'tmplout'} = 0;
+        $fhstore{$fn}{'tmplout'} = 0;
     }
     #
     # Do we need to close the diff file?
     # TODO Close in the delta-if branch above ...
-    if ( $fhstore{"$fn"}{'delta'} ) {
-        unless ( $fhstore{"$fn"}{'delta'}->close ) {
+    #
+    if ( $fhstore{$fn}{'delta'} ) {
+        unless ( $fhstore{$fn}{'delta'}->close ) {
             logwarn( "ERROR: Cannot close file $fhstore{$fn}{'deltaname'}: $!" );
             $EH{'sum'}{'errors'}++;
-            # $fhstore{"$fn"}{'delta'} = 0;
-            # return undef;
         }
-        $fhstore{"$fn"}{'delta'} = 0;
+        $fhstore{$fn}{'delta'} = 0;
     }
     #
     # Close new file if in -bak mode and close_flag is set ...
     #
-    if ( $fhstore{"$fn"}{'back'} ) {
-	my $bfh = $fhstore{"$fn"}{'back'};
-        $fhstore{"$fn"}{'back'} = 0;
+    if ( $fhstore{$fn}{'back'} ) {
+	my $bfh = $fhstore{$fn}{'back'};
+        $fhstore{$fn}{'back'} = 0;
 	$bfh->close or logwarn( "ERROR: Cannot close file $fn bak: $!" )
 	    and $EH{'sum'}{'errors'}++
 	    and return undef;

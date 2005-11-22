@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.34 $                                          |
+# | Revision:   $Revision: 1.35 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/11/04 10:44:47 $                              |
+# | Date:       $Date: 2005/11/22 11:00:48 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.35  2005/11/22 11:00:48  wig
+# | Minor fixes in Utils (20051121a, K: mkdir problem)
+# |
 # | Revision 1.34  2005/11/04 10:44:47  wig
 # | Adding ::incom (keep CONN sheet comments) and improce portlist report format
 # |
@@ -196,7 +199,7 @@ use Spreadsheet::ParseExcel;
 
 # Prototypes
 sub close_open_workbooks();
-sub write_delta_sheet ($$$);
+sub _sheet ($$$);
 sub _mix_apply_conf ($$$);
 sub mix_utils_open_input(@);
 sub close_open_workbooks ();
@@ -210,11 +213,11 @@ sub mix_utils_io_check_path ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.34 2005/11/04 10:44:47 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.35 2005/11/22 11:00:48 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.34 $'; #'  
+my $thisrevision    =      '$Revision: 1.35 $'; #'  
 
-# Revision:   $Revision: 1.34 $
+# Revision:   $Revision: 1.35 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -674,7 +677,7 @@ sub mix_utils_io_create_path () {
 				# Iterate over path ...
 				my $cur = '';
 				for my $p ( split( /\//, $dir ) ) {
-					$cur .= '/' . $p;
+					$cur .= (( $cur ) ? '/' : '' ) . $p; # Merge path
 					$cur =~ s,//,/,og; # Remove multiple / (Cygwin does not like them)
 					next if -d $cur;
 					# Create it
