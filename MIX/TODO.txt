@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.55 2005/11/08 08:06:54 wig Exp $
+# $Id: TODO.txt,v 1.56 2005/11/22 11:48:35 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -28,6 +28,35 @@ Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
 
+>>title: 20051121b/Bug: unable to create \\K:
+
+	trying to use outdir path fails on Win32.
+	
+	Req: kayss
+	Prio: high
+	Status: solved wig20051121 (no testcase!)
+	Workaround: create output directories manually
+	
+
+>>title: 20051121a/Bug: badly placed trailing ;
+
+> > ich habe gerade Testweise mal eine VHDL-Entity erzeugen lassen.
+> > 
+> > Die ist geringfügig buggy, beim letzten Signal macht er
+> (unzulässigerweise) am Ende ein Semikolon hin. Ich denke das ist ein 
+> Bug. Oder?
+> Stimmt.
+> > 
+> > Bei Bedarf kann ich dir den Testcase schicken (ist aber ein
+> ganz schöne Batzen).
+> > Ich hatte schon mal vorher VHDLs erzeugt (in einem Testprojekt), 
+...
+
+	Req: oberhof
+	Prio: medium
+	Status: solved wig20051121 (testcase bugver/20051121a)
+	Reason: badly used s/.../../o
+	
 >>title: 20051019b/Bug: do not print No 'defines
 
 im Verilog code steht
