@@ -1,0 +1,72 @@
+05/11/22 09:12:38 ########################################################################
+05/11/22 09:12:38 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl -strip -nodelta ../../bugver.xls
+05/11/22 09:12:39 
+#######################################################################
+##### mix_0.pl (Revision: 1.40 )
+#####
+##### MIX  
+#####   MixUtils    1.96 $
+#####   MixUtils::IO    1.34 $
+#####   MixParser   1.62 $
+#####   MixWriter   1.70 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.10 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/11/22 09:12:42 Reading worksheet C_20051121a of H:/work/eclipse/MIX/test/xls_input/bugver/20051121a/../../bugver.xls
+05/11/22 09:12:42 Reading worksheet H_20051121a of H:/work/eclipse/MIX/test/xls_input/bugver/20051121a/../../bugver.xls
+05/11/22 09:12:42 WARNING: WARNING: Found signal of type std_ulogic_vector with undefined bounds!
+05/11/22 09:12:42 Adding port to hierachy module inst_b for signal sc_sig_2!
+05/11/22 09:12:42 Adding port to hierachy module inst_b for signal sc_sig_2!
+05/11/22 09:12:42 Adding port to hierachy module inst_ab for signal sc_sig_2!
+05/11/22 09:12:42 Adding port to hierachy module inst_a for signal sc_sig_2!
+05/11/22 09:12:42 Adding port to hierachy module inst_aa for signal sc_sig_2!
+05/11/22 09:12:42 Adding port to hierachy module inst_a for signal sc_sig_2!
+05/11/22 09:12:42 Add_port: signal sc_sig_2 adds port p_mix_sc_sig_2_go to instance inst_ab
+05/11/22 09:12:42 Add_port: signal sc_sig_2 adds port p_mix_sc_sig_2_go to instance inst_aa
+05/11/22 09:12:42 Add_port: signal sc_sig_2 adds port p_mix_sc_sig_2_gi to instance inst_b
+05/11/22 09:12:42 Add_port: signal sc_sig_2 adds port p_mix_sc_sig_2_go to instance inst_a
+05/11/22 09:12:42 Adding port to hierachy module inst_ab for signal sc_sig_1!
+05/11/22 09:12:42 Adding port to hierachy module inst_a for signal sc_sig_1!
+05/11/22 09:12:42 Adding port to hierachy module inst_b for signal sc_sig_1!
+05/11/22 09:12:42 Add_port: signal sc_sig_1 adds port p_mix_sc_sig_1_go to instance inst_ab
+05/11/22 09:12:42 Add_port: signal sc_sig_1 adds port p_mix_sc_sig_1_go to instance inst_a
+05/11/22 09:12:42 Add_port: signal sc_sig_1 adds port p_mix_sc_sig_1_gi to instance inst_b
+05/11/22 09:12:42 WARNING: WARNING: Found signal of type std_ulogic_vector with undefined bounds!
+05/11/22 09:12:42 Autoreducing port type for signal sc_sig_1 to std_ulogic
+05/11/22 09:12:42 Autoreducing port type for signal sc_sig_1 to std_ulogic
+05/11/22 09:12:42 WARNING: WARNING: Missing port p_mix_sc_sig_1_go in entity ent_a (inst_t) redeclaration, ignoreing!
+05/11/22 09:12:42 WARNING: WARNING: Missing port p_mix_sc_sig_2_go in entity ent_a (inst_t) redeclaration, ignoreing!
+05/11/22 09:12:42 Autoreducing port type for signal sc_sig_1 to std_ulogic
+05/11/22 09:12:42 Autoreducing port type for signal sc_sig_1 to std_ulogic
+05/11/22 09:12:42 Autoreducing port type for signal sc_sig_1 to std_ulogic
+05/11/22 09:13:11 WARNING: File bugver-mixed.xls already exists! Contents will be changed
+05/11/22 09:13:13 WARNING: Rotating 3 old sheets of CONF!
+05/11/22 09:13:15 WARNING: Rotating 3 old sheets of CONN!
+05/11/22 09:13:16 WARNING: Rotating 3 old sheets of HIER!
+05/11/22 09:13:17 WARNING: Removing old and and diff sheets in file: bugver-mixed.xls
+05/11/22 09:13:17 WARNING: ERROR: workbook with different path already opened!
+05/11/22 09:13:20 WARNING: ============= SUMMARY =================
+05/11/22 09:13:20 WARNING: SUM: Summary of checks and created items:
+05/11/22 09:13:20 WARNING: SUM: checkforce 0
+05/11/22 09:13:20 WARNING: SUM: checkunique 0
+05/11/22 09:13:20 WARNING: SUM: checkwarn 0
+05/11/22 09:13:20 WARNING: SUM: cmacros 0
+05/11/22 09:13:20 WARNING: SUM: conn 2
+05/11/22 09:13:20 WARNING: SUM: errors 1
+05/11/22 09:13:20 WARNING: SUM: genport 7
+05/11/22 09:13:20 WARNING: SUM: hdlfiles 9
+05/11/22 09:13:20 WARNING: SUM: inst 15
+05/11/22 09:13:20 WARNING: SUM: multdriver 1
+05/11/22 09:13:20 WARNING: SUM: nodriver 0
+05/11/22 09:13:20 WARNING: SUM: noload 0
+05/11/22 09:13:20 WARNING: SUM: openports 0
+05/11/22 09:13:20 WARNING: SUM: warnings 4
+05/11/22 09:13:20 WARNING: SUM: === Number of parsed input tables: ===
+05/11/22 09:13:20 WARNING: SUM: conf 0
+05/11/22 09:13:20 WARNING: SUM: hier 1
+05/11/22 09:13:20 WARNING: SUM: conn 1
+05/11/22 09:13:20 WARNING: SUM: io 0
+05/11/22 09:13:20 WARNING: SUM: i2c 0
