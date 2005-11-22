@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegReg.pm,v 1.2 2005/09/16 13:57:47 lutscher Exp $
+#  RCSId: $Id: RegReg.pm,v 1.3 2005/11/22 15:10:31 mathias Exp $
 ###############################################################################
 #                                  
 #  Related Files :  RegDomain.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegReg.pm,v $
+#  Revision 1.3  2005/11/22 15:10:31  mathias
+#  added new funcrion get_reg_access_mode()
+#
 #  Revision 1.2  2005/09/16 13:57:47  lutscher
 #  added get_reg_init()
 #
@@ -148,6 +151,23 @@ sub get_reg_init {
    };
    return $res;
 };
+
+# retrieves the acces mode (R, W, RW) for a register from its fields
+sub get_reg_access_mode()
+{
+    my ($this) = @_;
+    my $mode = "";
+
+    foreach my $href (@{$this->fields}) {
+        if ($mode eq "") {
+            $mode = uc($href->{'field'}->attribs->{'dir'});
+        } elsif ($mode ne uc($href->{'field'}->attribs->{'dir'})) {
+            $mode = 'R/W';
+        }
+    }
+    return $mode;
+}
+
 
 # default display method
 sub display {
