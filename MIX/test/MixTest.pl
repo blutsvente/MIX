@@ -403,6 +403,11 @@ my @tests = (
 	  'path' => "bugver/20051018d",
 	  'options' => "",
 	},
+	{ # Trailing ; in entity port map
+	  'name' => "bugver",
+	  'path' => "bugver/20051121a",
+	  'options' => "",
+	},
 	{ # Create simple logic ...
 	  'name' => "logic",
 	  'path' => "logic",
