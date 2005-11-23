@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.10 2005/11/10 14:40:05 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.11 2005/11/23 13:24:32 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.11  2005/11/23 13:24:32  lutscher
+#  some changes for -report, added STL view
+#
 #  Revision 1.10  2005/11/10 14:40:05  lutscher
 #  added setting of definition class member of fields and check for decimal/hexadecimal from ::sub column in register master
 #
@@ -78,7 +81,8 @@ use Micronas::RegDomain;
 use Micronas::RegReg;
 use Micronas::RegField;
 use Micronas::RegViews;
-use Micronas::RegViewsE;
+use Micronas::RegViewE;
+# use Micronas::RegViewSTL;
 
 #use FindBin qw($Bin);
 #use lib "$Bin";
@@ -100,7 +104,8 @@ our(%hglobal) =
    # generatable register views 
    supported_views => [
 					   "HDL-vgch-rs",   # VGCH project register shell (Thorsten Lutscher)
-					   "E_VR_AD"        # e-language macros (Emanuel Marconetti)
+					   "E_VR_AD",       # e-language macros (Emanuel Marconetti)
+					   "STL"            # register test file in Socket Transaction Language format
 					  ],
 
    # attributes in register-master that do not belong to a field
@@ -164,19 +169,22 @@ sub init {
 };
 
 # generate a view of the register space
+# !! this is the HOOK FUNCTION to call view-generating-methods in other packages/modules !!
 sub generate_view {
 	my $this = shift;
 	my $view = shift;
+	my @ldomains = ();
+	if (exists $OPTVAL{'domain'}) {
+		push @ldomains, $OPTVAL{'domain'};
+	}
 
 	if ($view eq "HDL-vgch-rs") {
-		my @ldomains = ();
-		if (exists $OPTVAL{'domain'}) {
-			push @ldomains, $OPTVAL{'domain'};
-		}
-		$this->_gen_view_vgch_rs(@ldomains);
+		$this->_gen_view_vgch_rs(@ldomains); # module RegViews.pm
 	} elsif ($view eq "E_VR_AD") {
-		$this->_gen_view_vr_ad();
-	} else {
+		$this->_gen_view_vr_ad(); # module RegViewE.pm
+	} elsif ($view eq "STL") {
+		$this->_gen_view_stl(@ldomains); # module RegViewSTL.pm
+ 	} else {
 		die "ERROR: generation of view \'$view\' is not supported";
 	};
 };
@@ -430,7 +438,7 @@ sub _map_register_master {
 		$usedbits = 0;
 	};
 	# free some memory
-	@$lref_rm = ();
+	@$lref_rm = () unless (exists $OPTVAL{'report'} &&  $OPTVAL{'report'} =~ m/reglist/);
 	return $result;											   
 };
 
