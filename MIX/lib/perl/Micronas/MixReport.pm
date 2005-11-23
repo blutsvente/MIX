@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.10 $                                               |
-# | Author:     $Author: lutscher $                                                 |
-# | Date:       $Date: 2005/11/09 13:00:03 $                                                   |
+# | Revision:   $Revision: 1.11 $                                               |
+# | Author:     $Author: mathias $                                                 |
+# | Date:       $Date: 2005/11/23 13:28:37 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.10 2005/11/09 13:00:03 lutscher Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.11 2005/11/23 13:28:37 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.11  2005/11/23 13:28:37  mathias
+# | write Rgeister from RegisterMaster into Framemaker tables
+# |
 # | Revision 1.10  2005/11/09 13:00:03  lutscher
 # | removed doubly defined function
 # |
@@ -79,11 +82,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.10 2005/11/09 13:00:03 lutscher Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.11 2005/11/23 13:28:37 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.10 $';
+my $thisrevision   =      '$Revision: 1.11 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 $thisid =~ s,\$,,go; # Strip away the $
@@ -105,6 +108,7 @@ use Log::Agent::Priorities qw(:LEVELS);
 # use Tree::DAG_Node; # tree base class
 
 use Micronas::MixUtils qw(%EH %OPTVAL);
+use Micronas::Reg;
 use Micronas::MixUtils::Mif;
 
 #use FindBin qw($Bin);
@@ -149,8 +153,10 @@ sub new {
 #
 # Do the reporting if requested ...
 #
-sub mix_report ()
+sub mix_report($)
 {
+    my ($r_i2cin) = @_;
+
     return unless ( exists $OPTVAL{'report'} );
 
     my $reports = join( ',', @{$OPTVAL{'report'}} );
@@ -160,23 +166,75 @@ sub mix_report ()
     }
     if ( $reports =~ m/\breglist\b/io ) {
         logsay("~~~~~ Report register list in mif format\n");
-        mix_rep_reglist();
+        mix_rep_reglist($r_i2cin);
     }
 }
 
 #
 # Report register list
 #
-sub mix_rep_reglist()
+sub mix_rep_reglist($)
 {
-    my $mif = new Micronas::MixUtils::Mif('name' => $EH{'report'}{'path'} . '/' . "mix_reglist.mif",
-                                         );
+    my ($regp) = @_;      # Reference to the register object
 
-    my $regp = $::r_i2cin;      # Reference to the register object
-    $mif->template();           # Initialize it
+    if (scalar @$regp) {
+        my($o_space) = Micronas::Reg->new();
 
-    my $regtitle = 'Name of the table (get it from xls file)';
-    my %regtable = ('Title'       => $regtitle,
+        if (grep($EH{'reg_shell'}{'type'} =~ m/$_/i, @{$o_space->global->{supported_views}})) {
+            # init register module for generation of register-shell
+            $o_space->init(inputformat => "register-master",
+                           database_type => $EH{i2c}{regmas_type},
+                           register_master => $regp
+                          );
+            # iterate through all blocks (domains)
+            foreach my $href (@{$o_space->domains}) {
+                my $o_domain = $href->{domain};
+                #$o_domain->display();
+
+                ### open mif file
+                print("~~~~~ Domain name: " . $o_domain->name() . "\n");
+                my $mif = new Micronas::MixUtils::Mif('name' => $EH{'report'}{'path'} . '/' . $o_domain->name() . "_reglist.mif");
+                $mif->template();           # Initialize it
+
+                ### loop over all registers
+                foreach my $o_reg (@{$o_domain->regs()}) {
+                    my $regtitle = $o_domain->name() . ' register: ' . $o_reg->name();
+                    my $address  = $o_domain->get_reg_address($o_reg);
+                    my $init     = $o_reg->get_reg_init();
+                    my $mode     = $o_reg->get_reg_access_mode();
+
+                    my $regtable = mix_rep_reglist_mif_header($mif, $regtitle, $o_reg->name(), $address, $mode, $init);
+                    my $ii =0;
+                    my @thefields;
+                    foreach my $hreff (@{$o_reg->fields}) {
+                        my $o_field = $hreff->{'field'};
+                        # select type of register
+                        $thefields[$ii]{name}    = lc($o_field->name);
+                        $thefields[$ii]{size}    = $o_field->attribs->{'size'};
+                        $thefields[$ii]{pos}     = $hreff->{'pos'};             # LSB position
+                        $thefields[$ii]{lsb}     = $o_field->attribs->{'lsb'};
+                        $thefields[$ii]{mode}    = $o_field->attribs->{'dir'};
+                        $thefields[$ii]{comment} = $o_field->attribs->{'comment'};
+                        $ii += 1;
+                    }
+                    @thefields = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
+
+                    mix_rep_reglist_mif_bitfields($mif, $regtable, \@thefields);
+                }
+
+                ### write and close the file
+                $mif->write();
+            }
+        }
+    }
+    return 0;
+}
+
+# write mif file for register
+sub mix_rep_reglist_mif_header($$$$$ )
+{
+    my ($mif, $title, $regname, $address, $mode, $init) = @_;
+    my %regtable = ('Title'       => $title,
                     'Format'      => 'RegisterTable',
                     'Cols'        => 17,
                     'ColumnWidth' => [ qw(20.0 9.99993 9.99993 9.99993 9.99993 9.99993 9.99993 9.99993
@@ -186,21 +244,21 @@ sub mix_rep_reglist()
                     'TblTag'      => 'PageWidth'
                    );
     my $regtable = $mif->start_table(\%regtable);
+    $mif->start_body($regtable);
 
-    #
     # Prepare tablehead data:
     #
     my $headtext = "";
     # Register name
-    $headtext .= $mif->wrCell({ 'PgfTag' => 'CellHeadingH8',
-                                'String' => 'Register:',
-                                'Fill'   => 0,
+    $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellHeadingH8',
+                                'String'     => 'Register:',
+                                'Fill'       => 0,
                                 'Separation' => 5,
                                 'Color'      => "Gray 6.2"
                               },
                               2);
-    $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH8',
-                                'String' => 'the real name',
+    $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellBodyH8',
+                                'String'     => $regname,
                                 'Columns'    => 3
                               },
                               2);
@@ -222,7 +280,7 @@ sub mix_rep_reglist()
                               },
                               2);
     $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellBodyH8',
-                                'String'     => 'the real address',
+                                'String'     => $address,
                                 'Columns'    => 3
                               },
                               2);
@@ -243,8 +301,8 @@ sub mix_rep_reglist()
                                 'Color'      => "Gray 6.2"
                               },
                               2);
-    $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH8',
-                                'String' => 'Read/Write',
+    $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellBodyH8',
+                                'String'     => $mode,
                                 'Columns'    => 2
                               },
                               2);
@@ -265,19 +323,27 @@ sub mix_rep_reglist()
                               },
                               2);
     $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellBodyH8',
-                                'String'     => 'init',
+                                'String'     => $init,
                                 'Columns'    => 2
                               },
                               2);
     $headtext .= $mif->wrCell({ 'PgfTag' => 'CellHeading' }, 2);
 
     #$mif->table_head($mif->Tr($headtext), $regtable);
-    $mif->start_body($regtable);
     $mif->add($mif->Tr({ 'WithNext' => 'Yes',
                          'WithPrev' => 'Yes',
                          'Text'     => $headtext,
                          'Indent'   => 1
                         }), $regtable);
+
+    return $regtable;
+}
+
+# write mif file for register
+sub mix_rep_reglist_mif_bitfields($$$ )
+{
+    my ($mif, $regtable, $fields) = @_;
+    my $headtext = "";
 
     ############ Row for the bits 31 .. 16
     # empty gray field on the left hand side
@@ -310,19 +376,62 @@ sub mix_rep_reglist()
                                 'Color'      => "Gray 6.2"
                               },
                               2);
-    for (my $i = 31; $i > 15; $i--) {
-        $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellBodyH8Center',
-                                    'Fill'       => 15,
-                                    'String'     => "b$i",
-                                  },
-                                  3);
+    my $continue = 0;                    # 1: bitfield spans the bits 16 and 15
+    my $fi;                              # index of the next element in $fields array
+    my ($tbeg, $tend) = (31, 32);        # indexes of the next table entries to be written
+    my ($size, $string);
+    for ($fi = 0; $tend > 16; $fi++) {
+        my $msbpos = $fields->[$fi]->{pos} + $fields->[$fi]->{size} - 1;
+        # write unnamed bits if needed (including $msbpos + 1)
+        if ($tend > $msbpos) {
+            if ($msbpos > 15) {
+                $tend = $msbpos + 1;
+            } else {
+                $tend = 16;
+            }
+        }
+        for (my $i = $tbeg; $i >= $tend; $i--) {
+            $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellBodyH8Center',
+                                        'Fill'       => 15,
+                                      },
+                                      3);
+        }
+        $tbeg = $msbpos;
+        # write named bits
+        if ($tend > 16) {
+            if ($fields->[$fi]->{pos} >= 16) {
+                $tend = $fields->[$fi]->{pos};
+                $size = $fields->[$fi]->{size};
+                $string = $fields->[$fi]->{name};
+            } else {
+                $tend = 16;
+                $continue = 1;
+                $size = $tbeg - $tend + 1;
+                my $msb = $fields->[$fi]->{size} + $fields->[$fi]->{lsb} - 1;
+                my $lsb = $msb - $size + 1;
+                $string = $fields->[$fi]->{name} . "[$msb-$lsb]";
+            }
+            $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellBodyH8Center',
+                                        'Fill'       => 15,
+                                        'Columns'    => $size,
+                                        'String'     => $string,
+                                      },
+                                      3);
+        }
+        for (my $i = $tbeg - 1; $i >= $tend; $i--) {
+            $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH8' }, 3);
+        }
+        if ($continue) {
+            $fi--;
+        }
+        $tbeg = $tend - 1;
     }
     $mif->add($mif->Tr({ 'WithNext' => 'Yes',
                          'WithPrev' => 'Yes',
                          'Text'     => $headtext,
                          'Indent'   => 0
                        }), $regtable);
-   ############ Row for the bit slices 15 .. 0
+    ############ Row for the bit slices 15 .. 0
     # empty gray field on the left hand side
     $headtext = $mif->wrCell({ 'PgfTag' => 'CellBodyH8',
                                 'Fill'   => 0,
@@ -330,13 +439,55 @@ sub mix_rep_reglist()
                                 'Color'      => "Gray 6.2"
                               },
                               2);
-    for (my $i = 15; $i >= 0; $i--) {
+    for ($tbeg = 15; $fi <= $#{$fields}; $fi++) {
+        my $msbpos = $fields->[$fi]->{pos} + $fields->[$fi]->{size} - 1;
+        if ($msbpos > 15) {       # $continue!!!
+            $msbpos = 15;
+        }
+        # write unnamed bits if needed (including $msbpos + 1)
+        if ($tend > $msbpos) {
+            $tend = $msbpos + 1;
+        }
+        for (my $i = $tbeg; $i >= $tend; $i--) {
+            $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellBodyH8Center',
+                                        'Fill'       => 15,
+                                      },
+                                      3);
+        }
+        $tbeg = $msbpos;
+        # write named bits
+        $tend = $fields->[$fi]->{pos};
+        if ($continue) {
+            $continue = 0;
+            $size = $tbeg - $tend + 1;
+            my $msb = $size + $fields->[$fi]->{lsb} - 1;
+            my $lsb = $fields->[$fi]->{lsb};
+            $string = $fields->[$fi]->{name} . "[$msb-$lsb]";
+        } else {
+            $size = $fields->[$fi]->{size};
+            $string = $fields->[$fi]->{name};
+        }
         $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellBodyH8Center',
                                     'Fill'       => 15,
-                                    'String'     => "b$i",
+                                    'Columns'    => $size,
+                                    'String'     => $string,
                                   },
                                   3);
+        for (my $i = $tbeg - 1; $i >= $tend; $i--) {
+            $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH8' }, 3);
+        }
+        $tbeg = $tend - 1;
     }
+    if ($tend > 0) {                # last unnamed bits
+        $tbeg = $tend - 1;
+        for (my $i = $tbeg; $i >= 0; $i--) {
+            $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellBodyH8Center',
+                                        'Fill'       => 15,
+                                      },
+                                      3);
+        }
+    }
+
     $mif->add($mif->Tr({ 'WithNext' => 'Yes',
                          'WithPrev' => 'Yes',
                          'Text'     => $headtext,
@@ -367,10 +518,95 @@ sub mix_rep_reglist()
                          'Indent'   => 0
                        }), $regtable);
 
+    ##### Header of the bitslice section
+    $headtext = $mif->wrCell({ 'PgfTag'     => 'CellHeadingH8',
+                               'String'     => 'Bit',
+                               'Fill'       => 0,
+                               'Separation' => 5,
+                               'Color'      => "Gray 6.2"
+                             },
+                             2);
+    $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellHeadingH8',
+                                'String'     => 'Name',
+                                'Columns'    => 3,
+                                'Fill'       => 0,
+                                'Separation' => 5,
+                                'Color'      => "Gray 6.2"
+                              },
+                              2);
+    $headtext .= $mif->wrCell({ 'PgfTag' => 'CellHeading' }, 2);
+    $headtext .= $mif->wrCell({ 'PgfTag' => 'CellHeading' }, 2);
+    $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellHeadingH8',
+                                'String'     => 'R/W',
+                                'Columns'    => 2,
+                                'Fill'       => 0,
+                                'Separation' => 5,
+                                'Color'      => "Gray 6.2"
+                              },
+                              2);
+    $headtext .= $mif->wrCell({ 'PgfTag' => 'CellHeading' }, 2);
+    $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellHeadingH8',
+                                'String'     => 'Function',
+                                'Columns'    => 11,
+                                'Fill'       => 0,
+                                'Separation' => 5,
+                                'Color'      => "Gray 6.2"
+                              },
+                              2);
+    for (my $i = 0; $i < 11; $i++) {
+        $headtext .= $mif->wrCell({ 'PgfTag' => 'CellHeading' }, 2);
+    }
+
+    $mif->add($mif->Tr({ 'WithNext' => 'Yes',
+                         'WithPrev' => 'Yes',
+                         'Text'     => $headtext,
+                         'Indent'   => 1
+                        }), $regtable);
+    ##### End header of the bitslice section
+
+    ##### Bitslices description
+    for ($fi = 0; $fi <= $#{$fields}; $fi++) {
+        my $msb = $fields->[$fi]->{pos} + $fields->[$fi]->{size} - 1;
+        my $lsb = $fields->[$fi]->{pos};
+        $headtext = $mif->wrCell({ 'PgfTag'     => 'CellBodyH8',
+                                   'String'     => "[$msb:$lsb]"
+                                 },
+                                 2);
+        $msb = $fields->[$fi]->{size} + $fields->[$fi]->{lsb} - 1;
+        $lsb = $fields->[$fi]->{lsb};
+        $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellBodyH8',
+                                    'String'     => $fields->[$fi]->{name} . "[$msb:$lsb]",
+                                    'Columns'    => 3
+                                  },
+                                  2);
+        $headtext .= $mif->wrCell({ 'PgfTag' => 'CellHeading' }, 2);
+        $headtext .= $mif->wrCell({ 'PgfTag' => 'CellHeading' }, 2);
+        $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellBodyH8',
+                                    'String'     => $fields->[$fi]->{mode},
+                                    'Columns'    => 2
+                                  },
+                                  2);
+        $headtext .= $mif->wrCell({ 'PgfTag' => 'CellHeading' }, 2);
+        $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellBodyH8',
+                                    'String'     => $fields->[$fi]->{comment},
+                                    'Columns'    => 11
+                                  },
+                                  2);
+        for (my $i = 0; $i < 11; $i++) {
+            $headtext .= $mif->wrCell({ 'PgfTag' => 'CellHeading' }, 2);
+            #$headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH8' }, 3);
+        }
+
+        $mif->add($mif->Tr({ 'WithNext' => 'Yes',
+                             'WithPrev' => 'Yes',
+                             'Text'     => $headtext,
+                             'Indent'   => 1
+                           }), $regtable);
+    }
+    ##### End bitslices
+
     $mif->end_body($regtable);
     $mif->end_table($regtable);
-
-    $mif->write();
 
     return;
 }
