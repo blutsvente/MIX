@@ -27,12 +27,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.41 2005/11/21 14:51:16 mathias Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.42 2005/11/23 13:34:53 mathias Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.41 $                                      |
-# | Mod.Date     : $Date: 2005/11/21 14:51:16 $                           |
+# | Version      : $Revision: 1.42 $                                      |
+# | Mod.Date     : $Date: 2005/11/23 13:34:53 $                           |
 # | Author       : $Author: mathias $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -47,6 +47,9 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.42  2005/11/23 13:34:53  mathias
+# | added parameter to mix_report
+# |
 # | Revision 1.41  2005/11/21 14:51:16  mathias
 # | correct highlighting in Emacs
 # |
@@ -221,7 +224,7 @@ use Micronas::MixReport;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.41 $'; # RCS Id
+$::VERSION = '$Revision: 1.42 $'; # RCS Id '
 $::VERSION =~ s,\$,,go;
 
 logconfig(
@@ -486,7 +489,7 @@ generate_entities();
 #
 mix_store_db( "out", "auto", {} );
 
-mix_report();
+mix_report($r_i2cin);
 
 #
 # BACKEND add for debugging:
