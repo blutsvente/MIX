@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.1 2005/11/16 08:59:09 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.2 2005/11/23 13:30:49 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.2  2005/11/23 13:30:49  lutscher
+#  added _get_pragma_pos() and _attach_file_to_list()
+#
 #  Revision 1.1  2005/11/16 08:59:09  lutscher
 #  package with helper functions
 #
@@ -57,6 +60,8 @@ require Exporter;
    _max
    _pad_str
    _val2hex
+   _get_pragma_pos
+   _attach_file_to_list
   );
 use strict;
 use Log::Agent;
@@ -72,7 +77,6 @@ use Micronas::MixUtils qw(%EH);
 #------------------------------------------------------------------------------
 # Global variables
 #------------------------------------------------------------------------------
-
 
 #------------------------------------------------------------------------------
 # non-OO helper functions
@@ -319,6 +323,38 @@ sub _pad_str {
 		};
 		return $result;
 	};
+};
+
+# find the position of a pragma in a list of lines
+sub _get_pragma_pos {
+	my($pragma, $lref) = @_;
+	my($i,$result);
+	
+	$result = -1;
+	for ($i=0; $i < scalar(@$lref); $i++) {
+		if ($lref->[$i] =~ m/$pragma/i) {
+			$result = $i;
+		}
+	}
+	return $result;
+};
+
+# _attach_file_to_list()
+# Attaches lines in a text-file to a given list
+# input: filename
+#        list reference
+# returns 0 if not successful
+sub _attach_file_to_list{
+  my($filename,$lref)=@_;
+  my($line);
+
+  open(INFILE,"$filename") || return 0;
+  while (<INFILE>) {
+    push @$lref,$_;
+  }
+  close(INFILE);
+  chomp @$lref;
+  1;
 };
 
 1;
