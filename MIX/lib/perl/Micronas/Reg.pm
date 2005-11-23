@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.11 2005/11/23 13:24:32 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.12 2005/11/23 13:31:30 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.12  2005/11/23 13:31:30  lutscher
+#  added RegViewSTL.pm
+#
 #  Revision 1.11  2005/11/23 13:24:32  lutscher
 #  some changes for -report, added STL view
 #
@@ -82,7 +85,7 @@ use Micronas::RegReg;
 use Micronas::RegField;
 use Micronas::RegViews;
 use Micronas::RegViewE;
-# use Micronas::RegViewSTL;
+use Micronas::RegViewSTL;
 
 #use FindBin qw($Bin);
 #use lib "$Bin";
