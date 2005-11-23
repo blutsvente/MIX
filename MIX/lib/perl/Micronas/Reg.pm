@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.12 2005/11/23 13:31:30 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.13 2005/11/23 13:58:30 mathias Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.13  2005/11/23 13:58:30  mathias
+#  do not remove data structure when register list should be reported
+#
 #  Revision 1.12  2005/11/23 13:31:30  lutscher
 #  added RegViewSTL.pm
 #
@@ -441,8 +444,10 @@ sub _map_register_master {
 		$usedbits = 0;
 	};
 	# free some memory
-	@$lref_rm = () unless (exists $OPTVAL{'report'} &&  $OPTVAL{'report'} =~ m/reglist/);
-	return $result;											   
+        my $reports = "";
+        $reports = join( ',', @{$OPTVAL{'report'}} ) if (exists($OPTVAL{'report'}));
+	@$lref_rm = () unless ($reports =~ m/\breglist\b/io);
+	return $result;
 };
 
 1;
