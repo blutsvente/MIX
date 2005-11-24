@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.5 $                                          |
+# | Revision:   $Revision: 1.6 $                                          |
 # | Author:     $Author: mathias $                                            |
-# | Date:       $Date: 2005/11/07 13:18:13 $                              |
+# | Date:       $Date: 2005/11/24 10:33:11 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.6  2005/11/24 10:33:11  mathias
+# | added "sub _td_para" again
+# |
 # | Revision 1.5  2005/11/07 13:18:13  mathias
 # | added wrCell function
 # |
@@ -74,9 +77,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.5 2005/11/07 13:18:13 mathias Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.6 2005/11/24 10:33:11 mathias Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.5 $'; #'  
+my $thisrevision    =      '$Revision: 1.6 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -547,6 +550,26 @@ sub wrCell($$$)
         $cell{'String'} = $param;
     }
     return $text;
+}
+
+#
+# Convert the string that goes into the table cell
+# Esp. mask \n
+#
+sub _td_para {
+	my $string = shift;
+	my $indent = shift;
+
+	my $parapre = '<ParaLine <String `';
+	my $parasep = "'" . '> <Char HardReturn> > #End of ParaLine' . "\n" .
+				  "\t" x $indent . '<ParaLine <String `';
+	my $paraend = "'> >";
+	
+	$string =~ s/\n/$parasep/g;
+	$string = $parapre . $string . $paraend;
+	
+	return $string;
+
 }
 
 1;
