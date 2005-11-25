@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.7 $                                          |
+# | Revision:   $Revision: 1.8 $                                          |
 # | Author:     $Author: mathias $                                            |
-# | Date:       $Date: 2005/11/25 13:30:07 $                              |
+# | Date:       $Date: 2005/11/25 16:25:34 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.8  2005/11/25 16:25:34  mathias
+# | fixed _td_para
+# | removed old version of that fuction
+# |
 # | Revision 1.7  2005/11/25 13:30:07  mathias
 # | new routine _td_para implemented
 # | it handles some more formatting directives
@@ -81,9 +85,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.7 2005/11/25 13:30:07 mathias Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.8 2005/11/25 16:25:34 mathias Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.7 $'; #'  
+my $thisrevision    =      '$Revision: 1.8 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -560,25 +564,8 @@ sub wrCell($$$)
     return $text;
 }
 
-#
 # Convert the string that goes into the table cell
 # Esp. mask \n
-#
-sub _td_para_old()
-{
-    my $string = shift;
-    my $indent = shift;
-
-    my $parapre = '<ParaLine <String `';
-    my $parasep = "'" . '> <Char HardReturn> > #End of ParaLine' . "\n" .
-        "\t" x $indent . '<ParaLine <String `';
-    my $paraend = "'> >";
-
-    $string =~ s/\n/$parasep/g;
-    $string = $parapre . $string . $paraend;
-
-    return $string;
-}
 
 sub _td_para()
 {
@@ -630,7 +617,7 @@ sub _td_para()
             }
         }
     }
-    if ($string) {       # rest of the string
+    if ($string or length($string)) {       # rest of the string
         $newstring .= "\t" x $indent . $normal . $string . $paraend;
     }
 
