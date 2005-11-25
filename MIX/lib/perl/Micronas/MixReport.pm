@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.12 $                                               |
+# | Revision:   $Revision: 1.13 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2005/11/24 16:21:16 $                                                   |
+# | Date:       $Date: 2005/11/25 16:23:50 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.12 2005/11/24 16:21:16 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.13 2005/11/25 16:23:50 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.13  2005/11/25 16:23:50  mathias
+# | write only those registers into the mif file that are intended to be documented
+# | fixed writing empty cells
+# |
 # | Revision 1.12  2005/11/24 16:21:16  mathias
 # | report reglist seems to work
 # |
@@ -85,11 +89,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.12 2005/11/24 16:21:16 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.13 2005/11/25 16:23:50 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.12 $';
+my $thisrevision   =      '$Revision: 1.13 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 $thisid =~ s,\$,,go; # Strip away the $
@@ -201,28 +205,31 @@ sub mix_rep_reglist($)
 
                 ### loop over all registers
                 foreach my $o_reg (@{$o_domain->regs()}) {
-                    my $regtitle = $o_domain->name() . ' register: ' . $o_reg->name();
-                    my $address  = sprintf("0x%08X", $o_domain->get_reg_address($o_reg));
-                    my $init     = sprintf("0x%08X", $o_reg->get_reg_init());
-                    my $mode     = $o_reg->get_reg_access_mode();
+                    if ($o_reg->to_document()) {        # should this register be documented
+                        my $regtitle = $o_domain->name() . ' register: ' . $o_reg->name();
+                        my $address  = sprintf("0x%08X", $o_domain->get_reg_address($o_reg));
+                        my $init     = sprintf("0x%08X", $o_reg->get_reg_init());
+                        my $mode     = $o_reg->get_reg_access_mode();
 
-                    my $regtable = mix_rep_reglist_mif_header($mif, $regtitle, $o_reg->name(), $address, $mode, $init);
-                    my $ii =0;
-                    my @thefields;
-                    foreach my $hreff (@{$o_reg->fields}) {
-                        my $o_field = $hreff->{'field'};
-                        # select type of register
-                        $thefields[$ii]{name}    = lc($o_field->name);
-                        $thefields[$ii]{size}    = $o_field->attribs->{'size'};
-                        $thefields[$ii]{pos}     = $hreff->{'pos'};             # LSB position
-                        $thefields[$ii]{lsb}     = $o_field->attribs->{'lsb'};
-                        $thefields[$ii]{mode}    = $o_field->attribs->{'dir'};
-                        $thefields[$ii]{comment} = $o_field->attribs->{'comment'};
-                        $ii += 1;
+                        my $regtable = mix_rep_reglist_mif_header($mif, $regtitle, $o_reg->name(), $address, $mode, $init);
+                        my $ii =0;
+                        my @thefields;
+                        foreach my $hreff (@{$o_reg->fields}) {
+                            my $o_field = $hreff->{'field'};
+                            # select type of register
+                            $thefields[$ii]{name}    = lc($o_field->name);
+                            $thefields[$ii]{size}    = $o_field->attribs->{'size'};
+                            $thefields[$ii]{pos}     = $hreff->{'pos'};             # LSB position
+                            $thefields[$ii]{lsb}     = $o_field->attribs->{'lsb'};
+                            $thefields[$ii]{view}    = $o_field->attribs->{'view'};  # N: no documentation
+                            $thefields[$ii]{mode}    = $o_field->attribs->{'dir'};
+                            $thefields[$ii]{comment} = $o_field->attribs->{'comment'};
+                            $ii += 1;
+                        }
+                        @thefields = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
+
+                        mix_rep_reglist_mif_bitfields($mif, $regtable, \@thefields);
                     }
-                    @thefields = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
-
-                    mix_rep_reglist_mif_bitfields($mif, $regtable, \@thefields);
                 }
 
                 ### write and close the file
@@ -408,7 +415,7 @@ sub mix_rep_reglist_mif_bitfields($$$ )
         for (my $i = $tbeg - 1; $i >= $tend; $i--) {
             $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH8' }, 3);
         }
-        if ($continue or ($tend < 16)) {
+        if ($continue or ($msbpos < 16)) {
             $fi--;
         }
         $tbeg = $tend - 1;
@@ -533,7 +540,7 @@ sub mix_rep_reglist_mif_bitfields($$$ )
                                 'Color'      => "Gray 6.2"
                               },
                               2);
-    for (my $i = 0; $i < 11; $i++) {
+    for (my $i = 0; $i < 10; $i++) {
         $headtext .= $mif->wrCell({ 'PgfTag' => 'CellHeading' }, 2);
     }
 
@@ -572,7 +579,7 @@ sub mix_rep_reglist_mif_bitfields($$$ )
                                     'Columns'    => 11
                                   },
                                   2);
-        for (my $i = 0; $i < 11; $i++) {
+        for (my $i = 0; $i < 10; $i++) {
             $headtext .= $mif->wrCell({ 'PgfTag' => 'CellHeading' }, 2);
             #$headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH8' }, 3);
         }
