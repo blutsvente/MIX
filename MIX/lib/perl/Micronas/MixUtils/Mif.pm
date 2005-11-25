@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.6 $                                          |
+# | Revision:   $Revision: 1.7 $                                          |
 # | Author:     $Author: mathias $                                            |
-# | Date:       $Date: 2005/11/24 10:33:11 $                              |
+# | Date:       $Date: 2005/11/25 13:30:07 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.7  2005/11/25 13:30:07  mathias
+# | new routine _td_para implemented
+# | it handles some more formatting directives
+# |
 # | Revision 1.6  2005/11/24 10:33:11  mathias
 # | added "sub _td_para" again
 # |
@@ -77,9 +81,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.6 2005/11/24 10:33:11 mathias Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.7 2005/11/25 13:30:07 mathias Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.6 $'; #'  
+my $thisrevision    =      '$Revision: 1.7 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -543,10 +547,14 @@ sub wrCell($$$)
         $text .= "<CellSeparation " . $param->{Separation} . '>' if (exists($param->{Separation}));
         $text .= "<CellColor `" . $param->{Color} . "'>" if (exists($param->{Color}));
 
-        $text .= "<CellContent <Para <PgfTag `" . $param->{PgfTag} . "'> <ParaLine ";
-        $text .= "<String `" . $param->{String} . "'>" if (exists($param->{String}));
-        $text .= " > > > > # end of Cell\n";
-    } else {
+        $text .= "<CellContent <Para <PgfTag `" . $param->{PgfTag} . "'> ";
+        if (exists($param->{String})) {
+            $text .= _td_para($param->{String}, $indent);
+        } else {
+            $text .= "<ParaLine >";
+        }
+        $text .= " > > > # end of Cell\n";
+     } else {
         $cell{'String'} = $param;
     }
     return $text;
@@ -556,20 +564,77 @@ sub wrCell($$$)
 # Convert the string that goes into the table cell
 # Esp. mask \n
 #
-sub _td_para {
-	my $string = shift;
-	my $indent = shift;
+sub _td_para_old()
+{
+    my $string = shift;
+    my $indent = shift;
 
-	my $parapre = '<ParaLine <String `';
-	my $parasep = "'" . '> <Char HardReturn> > #End of ParaLine' . "\n" .
-				  "\t" x $indent . '<ParaLine <String `';
-	my $paraend = "'> >";
-	
-	$string =~ s/\n/$parasep/g;
-	$string = $parapre . $string . $paraend;
-	
-	return $string;
+    my $parapre = '<ParaLine <String `';
+    my $parasep = "'" . '> <Char HardReturn> > #End of ParaLine' . "\n" .
+        "\t" x $indent . '<ParaLine <String `';
+    my $paraend = "'> >";
 
+    $string =~ s/\n/$parasep/g;
+    $string = $parapre . $string . $paraend;
+
+    return $string;
+}
+
+sub _td_para()
+{
+    my ($string, $indent) = @_;
+    my $newstring = "";
+
+    my $normal        = '<ParaLine <String `';
+    my $bold          = '<ParaLine <Font <FWeight Bold> > <String `';
+    my $underline     = '<ParaLine <Font <FUnderlining FSingle> > <String `';
+    my $overline      = '<ParaLine <Font <Foverline 1> > <String `';
+    my $strikethrough = '<ParaLine <Font <FStrike 1> > <String `';
+    my $superscript   = '<ParaLine <Font <FPosition FSuperscript > > <String `';
+    my $subscript     = '<ParaLine <Font <FPosition FSubscript > > <String `';
+    my $bullet        = '<ParaLine <Char Bullet> > #End of ParaLine' . "\n";
+    #\t = tab           =  ??? <TabStop ... weiss ich auch nciht.
+    my $parasep       = "'" . '> > #End of ParaLine' . "\n";
+    my $paraend       = "'> >";
+
+    while ($string =~ m/^([^\\]*)\\([nbuoslh\*])(.*)/) {
+        my $beg      = $1;
+        my $modifier = $2;
+        my $end      = $3;
+        if ($modifier eq 'n') {                     # (hard) new line
+            $newstring .= $normal . $beg . "'" . '> <Char HardReturn> > #End of ParaLine' . "\n";
+            $string = $end;
+        } elsif ($modifier =~ m/[*buoslh]/) {                # bold
+            # first "normal" part
+            if ($beg) {
+                $newstring .= "\t" x $indent . $normal . $beg . $parasep;
+            }
+            if ($modifier eq '*') {
+                $string = $end;
+                $newstring .= "\t" x $indent . $bullet;
+            } else {
+                # looking for the end mark (\x) of the special part
+                my $second = "";
+                if ($end =~ m/^([^\\]+)\\x(.*)/) {
+                    $end = $1;
+                    $second = $2;
+                }
+                # special part of $string
+                $newstring .= "\t" x $indent . $bold          . $end . $parasep if ($modifier eq 'b');
+                $newstring .= "\t" x $indent . $underline     . $end . $parasep if ($modifier eq 'u');
+                $newstring .= "\t" x $indent . $overline      . $end . $parasep if ($modifier eq 'o');
+                $newstring .= "\t" x $indent . $strikethrough . $end . $parasep if ($modifier eq 's');
+                $newstring .= "\t" x $indent . $superscript   . $end . $parasep if ($modifier eq 'l');
+                $newstring .= "\t" x $indent . $subscript     . $end . $parasep if ($modifier eq 'h');
+                $string = $second;
+            }
+        }
+    }
+    if ($string) {       # rest of the string
+        $newstring .= "\t" x $indent . $normal . $string . $paraend;
+    }
+
+    return $newstring;
 }
 
 1;
