@@ -1,13 +1,13 @@
 ###############################################################################
-#  RCSId: $Id: RegReg.pm,v 1.3 2005/11/22 15:10:31 mathias Exp $
+#  RCSId: $Id: RegReg.pm,v 1.4 2005/11/25 16:01:48 mathias Exp $
 ###############################################################################
-#                                  
+#
 #  Related Files :  RegDomain.pm
 #
-#  Author(s)     :  Thorsten Lutscher                                      
-#  Email         :  thorsten.lutscher@micronas.com                          
+#  Author(s)     :  Thorsten Lutscher
+#  Email         :  thorsten.lutscher@micronas.com
 #
-#  Project       :  MIX                                                 
+#  Project       :  MIX
 #
 #  Creation Date :  27.06.2005
 #
@@ -28,6 +28,10 @@
 ###############################################################################
 #
 #  $Log: RegReg.pm,v $
+#  Revision 1.4  2005/11/25 16:01:48  mathias
+#  added to_document()
+#  which checks if the register should be visible in the documentation
+#
 #  Revision 1.3  2005/11/22 15:10:31  mathias
 #  added new funcrion get_reg_access_mode()
 #
@@ -168,6 +172,21 @@ sub get_reg_access_mode()
     return $mode;
 }
 
+# checks if framemaker documentation should be generated for this register
+sub to_document()
+{
+    my ($this) = @_;
+    my $mode = "";
+
+    foreach my $href (@{$this->fields}) {
+        if ($mode eq "") {
+            $mode = uc($href->{field}->attribs->{view});
+        } elsif ($mode ne uc($href->{field}->attribs->{view})) {
+            $mode = 'N';
+        }
+    }
+    return ($mode eq 'Y');
+}
 
 # default display method
 sub display {
