@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewSTL.pm,v 1.1 2005/11/23 13:31:17 lutscher Exp $
+#  RCSId: $Id: RegViewSTL.pm,v 1.2 2005/11/25 13:32:22 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.1 $                                  
+#  Revision      : $Revision: 1.2 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViewSTL.pm,v $
+#  Revision 1.2  2005/11/25 13:32:22  lutscher
+#  first functional release
+#
 #  Revision 1.1  2005/11/23 13:31:17  lutscher
 #  initial release, not yet functional
 #
@@ -70,10 +73,10 @@ sub _gen_view_stl {
 	$this->global(
 				  'debug'              => 0,
 				  'indent'             => "    ",       # indentation character(s)
-				  'pragma_head_start'   => "pragma MIX_STL head begin",
-				  'pragma_head_end'     => "pragma MIX_STL head end",
-				  'pragma_body_start'   => "pragma MIX_STL body begin",
-				  'pragma_body_end'     => "pragma MIX_STL body end",
+				  'pragma_head_start'  => "pragma MIX_STL head begin",
+				  'pragma_head_end'    => "pragma MIX_STL head end",
+				  'pragma_body_start'  => "pragma MIX_STL body begin",
+				  'pragma_body_end'    => "pragma MIX_STL body end",
 				  'file_suffix'        => "stl",
 				  'header'             => "
 # Socket Transaction Language file
@@ -84,10 +87,12 @@ version 2.0
 
 ",
 				  # internal static data structs
-				  'hclocks'            => {},           # for storing per-clock-domain information
-				  'hfnames'            => {},           # for storing field names
-				  'lbody'              => [],
-				  'ldomains'           => []
+				  'hclocks'        => {},           # for storing per-clock-domain information
+				  'hfnames'        => {},           # for storing field names
+				  'lbody'          => [],
+				  'ldomains'       => [],
+				  'lexclude_cfg'   => [],
+				  'lexclude_other' => []    
 				 );
 	
 	# import regshell.<par> parameters from MIX package to class data; user can change these parameters in mix.cfg
@@ -97,16 +102,17 @@ version 2.0
 					  'reg_shell.addrwidth', 
 					  'reg_shell.datawidth',
 					  'reg_shell.stl.initial_idle',
-					  'reg_shell.stl.exclude_regs'
+					  'reg_shell.stl.exclude_regs',
+					  'reg_shell.stl.use_base_addr'
 					 );
 	foreach $param (@lmixparams) {
 		my ($main, $sub, $subsub) = split(/\./,$param);
 		if (ref $EH{$main}{$sub}) {
 			$this->global($subsub => $EH{$main}{$sub}{$subsub});
-			_info("setting parameter $param = ", $this->global->{$subsub}) if $this->global->{'debug'};
+			_info("setting parameter $param = ", $this->global->{$subsub});
 		} elsif (exists($EH{$main}{$sub})) {
 			$this->global($sub => $EH{$main}{$sub});
-			_info("setting parameter $param = ", $this->global->{$sub}) if $this->global->{'debug'};
+			_info("setting parameter $param = ", $this->global->{$sub});
 		} else {
 			_error("parameter \'$param\' unknown");
 			if (defined (%EH)) { $EH{'sum'}{'errors'}++;};
@@ -124,12 +130,12 @@ version 2.0
 		};
 	};
 
-	my ($o_domain, $o_field, $o_reg, $usedbits);
+	my ($o_domain, $o_field, $o_reg, $usedbits, $reg, $reg_offset, %hregs, $mask, $dwidth, $val);
 	# list of skipped  registers
 	if (exists($this->global->{'exclude_regs'})) {
-		@lexclude_regs = split(/\s*,\s*/,$this->global->{'exclude_regs'}); 
+		@{$this->global->{'lexclude_cfg'}} = split(/\s*,\s*/,$this->global->{'exclude_regs'}); 
 	};
-	
+	$dwidth = $this->global->{'datawidth'};
 	# iterate through all register domains
 	foreach $o_domain (@{$this->global->{'ldomains'}}) {
 		_info("generating code for domain ", $o_domain->name);
@@ -137,20 +143,139 @@ version 2.0
 		# iterate through all the registers of the domain (sort by address)
 		foreach $o_reg ( sort { $o_domain->get_reg_address($a) <=> $o_domain->get_reg_address($b) } @{$o_domain->regs}) {
 			# $o_reg->display() if $this->global->{'debug'}; # debug
-			my $reg_offset = $o_domain->get_reg_address($o_reg);
-			my $usedbits = $o_reg->attribs->{'usedbits'};
-			# BAUSTELLE
-			$this->_ocp_access("write", $o_reg, $reg_offset, 0, 0);
-			
+			$reg = $o_reg->name;
+			$reg_offset = $o_domain->get_reg_address($o_reg);
+			if (grep($_ eq $reg, @{$this->global->{'lexclude_cfg'}})) {
+				next;
+			};
+			my $has_usr = 0;
 			# iterate through all fields of the register
-			#foreach $href (@{$o_reg->fields}) {
-			#	$o_field = $href->{'field'};
-			#};
+			foreach $href (@{$o_reg->fields}) {
+				$o_field = $href->{'field'};
+				if($o_field->attribs->{'spec'} =~ m/usr/i) {
+					$has_usr = 1;
+					last;
+				};
+			};
+			# exclude USR registers
+			if ($has_usr) {
+				push @{$this->global->{'lexclude_other'}}, $reg;
+				next;
+			};
+			# add base address to register offset if desired
+			if ($this->global->{'use_base_addr'}) {
+				$reg_offset += $o_domain->{'baseaddr'};
+			};
+			$hregs{$reg_offset} = $o_reg;
 		};
+		
+		push @{$this->global->{'lbody'}}, "
+#
+# read back reset values
+#
+";
+		foreach $reg_offset (sort {$a <=> $b} keys %hregs) {
+			$o_reg = $hregs{$reg_offset};
+			$usedbits = $o_reg->attribs->{'usedbits'};
+			$mask = "";
+			$val = $o_reg->get_reg_init;
+			$this->_ocp_access("read", $o_reg, $reg_offset, $val, $mask);
+		};
+
+		push @{$this->global->{'lbody'}}, "
+#
+# write all ones
+#
+";
+		foreach $reg_offset (sort {$a <=> $b} keys %hregs) {
+			$o_reg = $hregs{$reg_offset};
+			$mask = "";
+			$val = (2**$dwidth)-1;
+			$this->_ocp_access("write", $o_reg, $reg_offset, $val, $mask);
+		};
+
+		push @{$this->global->{'lbody'}}, "
+#
+# read all ones
+#
+";
+		foreach $reg_offset (sort {$a <=> $b} keys %hregs) {
+			$o_reg = $hregs{$reg_offset};
+			$val = (2**$dwidth)-1;
+			$mask = $this->_get_read_write_mask($o_reg);
+			$this->_ocp_access("read", $o_reg, $reg_offset, $val, $mask);
+		};
+
+		push @{$this->global->{'lbody'}}, "
+#
+# write all zeros
+#
+";
+		foreach $reg_offset (sort {$a <=> $b} keys %hregs) {
+			$o_reg = $hregs{$reg_offset};
+			$mask = "";
+			$val = 0;
+			$this->_ocp_access("write", $o_reg, $reg_offset, $val, $mask);
+		};
+
+		push @{$this->global->{'lbody'}}, "
+#
+# read all zeros
+#
+";
+		foreach $reg_offset (sort {$a <=> $b} keys %hregs) {
+			$o_reg = $hregs{$reg_offset};
+			$val = 0;
+			$mask = $this->_get_read_write_mask($o_reg) | $this->_get_write_only_mask($o_reg);
+			$this->_ocp_access("read", $o_reg, $reg_offset, $val, $mask);
+		};		
 	};
 	$this->display() if $this->global->{'debug'}; # dump Reg class object
 	$this->_write_stl();
 	1;
+};
+
+# create mask for read-writable bits of a register
+# write-only and W1C fields are read back as 0 or unknown, so read-write mask is 0 for them
+sub _get_read_write_mask {
+	my ($this, $o_reg) = @_;
+	my $result=0;
+	my $href;
+	foreach $href (@{$o_reg->fields}) {
+		my $o_field = $href->{'field'};
+		if ($o_field->attribs->{'dir'} =~ m/rw/i and $o_field->attribs->{'spec'} !~ m/w1c/i) {
+			$result |= ((2**$o_field->attribs->{'size'})-1) << $href->{'pos'};
+		};
+	};
+	return $result;
+};
+
+# create mask for all W1C fields of a register
+sub _get_w1c_mask {
+	my ($this, $o_reg) = @_;
+	my $result=0;
+	my $href;
+	foreach $href (@{$o_reg->fields}) {
+		my $o_field = $href->{'field'};
+		if ($o_field->attribs->{'spec'} =~ m/w1c/i) {
+			$result |= ((2**$o_field->attribs->{'size'})-1) << $href->{'pos'};
+		};
+	};
+	return $result;
+};
+
+# create mask for all write-only fields of a register
+sub _get_write_only_mask {
+	my ($this, $o_reg) = @_;
+	my $result=0;
+	my $href;
+	foreach $href (@{$o_reg->fields}) {
+		my $o_field = $href->{'field'};
+		if ($o_field->attribs->{'spec'} =~ m/w/i and $o_field->attribs->{'spec'} !~ m/r/i) {
+			$result |= ((2**$o_field->attribs->{'size'})-1) << $href->{'pos'};
+		};
+	};
+	return $result;
 };
 
 # generate a line in STL syntax
@@ -162,10 +287,10 @@ sub _ocp_access {
 	my $value_str = "0x"._val2hex($this->global->{'datawidth'}, $value);
 	my $mask_str = "";
 	if ($mask ne "") {
-		$mask_str = "0x"._val2hex($this->global->{'datawidth'}, $mask);
+		$mask_str = "(0x"._val2hex($this->global->{'datawidth'}, $mask) .")";
 	};
 	push @{$this->global->{'lbody'}}, "# register: " . $o_reg->name;
-	push @{$this->global->{'lbody'}}, join(" ", $access, $addr_str, $value_str, "(".$mask_str.")");
+	push @{$this->global->{'lbody'}}, join(" ", $access, $addr_str, $value_str, $mask_str);
 };
 
 # generate STL file
@@ -185,10 +310,10 @@ sub _write_stl {
 	} else {
 		_info("creating new file \'$fname\'");
 		# create an empty file
-		push @lresult, "# ". $this->global->{'pragma_head_start'};
-		push @lresult, "# ". $this->global->{'pragma_head_end'} , "";
-		push @lresult, "# ". $this->global->{'pragma_body_start'};
-		push @lresult, "# ". $this->global->{'pragma_body_end'}, "";
+		push @lresult, "# ---- ". $this->global->{'pragma_head_start'};
+		push @lresult, "# ---- ". $this->global->{'pragma_head_end'} , "";
+		push @lresult, "# ---- ". $this->global->{'pragma_body_start'};
+		push @lresult, "# ---- ". $this->global->{'pragma_body_end'}, "";
 	};
 	
 	# insert a header
@@ -237,7 +362,9 @@ sub _gen_stl_head {
 	};
 	push @ltemp, split("\n", $this->global->{'header'}), "";
 	push @ltemp, "# register test for domain(s) ".join(", ", map { $_->name() } @{$this->global->{'ldomains'}}), "";
-	push @ltemp, "idle ".$this->global->{'initial_idle'};
+	push @ltemp, "# exclude registers via user setting : ". join(", ",@{$this->global->{'lexclude_cfg'}}), "";
+	push @ltemp, "# exclude registers via internal rule: ". join(", ",@{$this->global->{'lexclude_other'}}), "";
+	push @ltemp, "idle ".$this->global->{'initial_idle'},"";
 	splice @$lref, $pragma_start_pos + 1, $pragma_end_pos - $pragma_start_pos - 1, @ltemp;
 	1;
 };
