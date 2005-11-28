@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.13 $                                               |
+# | Revision:   $Revision: 1.14 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2005/11/25 16:23:50 $                                                   |
+# | Date:       $Date: 2005/11/28 13:58:59 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.13 2005/11/25 16:23:50 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.14 2005/11/28 13:58:59 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.14  2005/11/28 13:58:59  mathias
+# | do not write the bits for bitfields with 1 bit width
+# |
 # | Revision 1.13  2005/11/25 16:23:50  mathias
 # | write only those registers into the mif file that are intended to be documented
 # | fixed writing empty cells
@@ -89,11 +92,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.13 2005/11/25 16:23:50 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.14 2005/11/28 13:58:59 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.13 $';
+my $thisrevision   =      '$Revision: 1.14 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 $thisid =~ s,\$,,go; # Strip away the $
@@ -561,8 +564,13 @@ sub mix_rep_reglist_mif_bitfields($$$ )
                                  2);
         $msb = $fields->[$fi]->{size} + $fields->[$fi]->{lsb} - 1;
         $lsb = $fields->[$fi]->{lsb};
+        if ($msb == $lsb) {
+            $string = $fields->[$fi]->{name};
+        } else {
+            $string = $fields->[$fi]->{name} . "[$msb:$lsb]";
+        }
         $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellBodyH8',
-                                    'String'     => $fields->[$fi]->{name} . "[$msb:$lsb]",
+                                    'String'     => $string,
                                     'Columns'    => 3
                                   },
                                   2);
