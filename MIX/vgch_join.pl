@@ -27,12 +27,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: vgch_join.pl,v 1.3 2005/10/25 12:14:34 wig Exp $  |
+# | Id           : $Id: vgch_join.pl,v 1.4 2005/11/28 13:50:04 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.3 $                                      |
-# | Mod.Date     : $Date: 2005/10/25 12:14:34 $                           |
+# | Version      : $Revision: 1.4 $                                      |
+# | Mod.Date     : $Date: 2005/11/28 13:50:04 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -47,6 +47,9 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: vgch_join.pl,v $
+# | Revision 1.4  2005/11/28 13:50:04  wig
+# | Allowed 0x1234 in ::sub address.
+# |
 # | Revision 1.3  2005/10/25 12:14:34  wig
 # | Implemented RFE 20051024a.
 # |
@@ -104,7 +107,7 @@ sub replace_macros ($);
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.3 $'; # RCS Id
+$::VERSION = '$Revision: 1.4 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 logconfig(
@@ -393,10 +396,10 @@ sub fix_sheet ($$) {
 		
 		push( @outdata, { %$i } ); # Make sure data gets >copied<
 		my $sub;
-		if ( $i->{'::sub'} =~ m/^[0-9a-f]+$/io ) {
+		if ( $i->{'::sub'} =~ m/^(0x)?[0-9a-f]+$/io ) { #Data is in HEX format!
 			$sub = hex($i->{'::sub'});
 		} else {
-			$sub = $i->{'::sub'};
+			$sub = $i->{'::sub'}; # 
 		}
 
 		if ( $postblock ne '' ) {
@@ -456,6 +459,7 @@ sub get_client ($$) {
 
 	for my $k ( keys( %$topref ) ) {
 		( my $key = lc($k) ) =~ s/sci_//;
+		# $key =~ s/_[ms]$//; # Another variant: sheetname is i2c, client i2c_m
 		$key =~ s/_shared//; # for mded_peri_shared ...
 		if ( $sheetname =~ m/$key$/i ) {# Match a sheet if the name ends correct!
 			return @{$topref->{$k}};
