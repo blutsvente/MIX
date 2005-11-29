@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.13 2005/11/23 13:58:30 mathias Exp $
+#  RCSId: $Id: Reg.pm,v 1.14 2005/11/29 08:45:45 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.14  2005/11/29 08:45:45  lutscher
+#  added get_domain_baseaddr() and view: none
+#
 #  Revision 1.13  2005/11/23 13:58:30  mathias
 #  do not remove data structure when register list should be reported
 #
@@ -111,7 +114,8 @@ our(%hglobal) =
    supported_views => [
 					   "HDL-vgch-rs",   # VGCH project register shell (Thorsten Lutscher)
 					   "E_VR_AD",       # e-language macros (Emanuel Marconetti)
-					   "STL"            # register test file in Socket Transaction Language format
+					   "STL",           # register test file in Socket Transaction Language format
+					   "none"           # do nothing
 					  ],
 
    # attributes in register-master that do not belong to a field
@@ -184,13 +188,15 @@ sub generate_view {
 		push @ldomains, $OPTVAL{'domain'};
 	}
 
-	if ($view eq "HDL-vgch-rs") {
+	if (lc($view) eq "hdl-vgch-rs") {
 		$this->_gen_view_vgch_rs(@ldomains); # module RegViews.pm
-	} elsif ($view eq "E_VR_AD") {
-		$this->_gen_view_vr_ad(); # module RegViewE.pm
-	} elsif ($view eq "STL") {
-		$this->_gen_view_stl(@ldomains); # module RegViewSTL.pm
- 	} else {
+	} elsif (lc($view) eq "e_vr_ad") {
+		$this->_gen_view_vr_ad(@ldomains);   # module RegViewE.pm
+	} elsif (lc($view) eq "stl") {
+		$this->_gen_view_stl(@ldomains);     # module RegViewSTL.pm
+ 	} elsif ($view =~ m/none/i) {
+		return; # do nothing
+	} else {
 		die "ERROR: generation of view \'$view\' is not supported";
 	};
 };
@@ -237,6 +243,20 @@ sub find_domain_by_name_first {
 	
 	if (ref($result)) {
 		return $result->{domain};
+	} else {
+		return undef;
+	};
+};
+
+# get baseaddr for a given domain name
+# input: domain name
+# output: baseaddr value (or undef)
+sub get_domain_baseaddr {
+	my ($this, $name) = @_;
+
+	my ($result) = (grep ($_->{domain}->{name} eq $name, @{$this->domains}))[0];
+	if (ref($result)) {
+		return $result->{baseaddr};
 	} else {
 		return undef;
 	};
