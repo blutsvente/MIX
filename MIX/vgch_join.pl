@@ -27,12 +27,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: vgch_join.pl,v 1.4 2005/11/28 13:50:04 wig Exp $  |
+# | Id           : $Id: vgch_join.pl,v 1.5 2005/11/29 09:20:31 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.4 $                                      |
-# | Mod.Date     : $Date: 2005/11/28 13:50:04 $                           |
+# | Version      : $Revision: 1.5 $                                      |
+# | Mod.Date     : $Date: 2005/11/29 09:20:31 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -47,8 +47,8 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: vgch_join.pl,v $
-# | Revision 1.4  2005/11/28 13:50:04  wig
-# | Allowed 0x1234 in ::sub address.
+# | Revision 1.5  2005/11/29 09:20:31  wig
+# | Support mulitple domain per input sheet.
 # |
 # | Revision 1.3  2005/10/25 12:14:34  wig
 # | Implemented RFE 20051024a.
@@ -101,13 +101,14 @@ sub get_sheet ($);
 sub get_client ($$);
 sub parse_vgch_top ($);
 sub replace_macros ($);
+sub base_interface ($);
 
 #
 #******************************************************************************
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.4 $'; # RCS Id
+$::VERSION = '$Revision: 1.5 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 logconfig(
@@ -138,21 +139,25 @@ mix_init();               # Presets ....
 # set quiet, verbose
 #
 
-#
-#TODO: Add that to application note
-# -dir DIRECTORY            write output data to DIRECTORY (default: cwd())
-# -out FILENAME				print results into FILENAME
-# -conf key.key.key=value   Overwrite $EH{key}{key}{key} with value
-# -listconf                 Print out all available/predefined configurations options
-# -sheet SHEET=MATCH        SHEET can be one of "hier", "conn", "vi2c"
-# -delta                    Enable delta mode: Print diffs instead of full files.
-#                                   Maybe we can set a return value of 1 if no changes occured!
-# -strip                    Remove extra worksheets from intermediate output
-#                                   Please be catious when using that option.
-# -bak                      Shift previous generated output to file.v[hd].bak. When combined
-#                                   with -delta you get both .diff, .bak and new files :-)
-# -top TOP					top level information from file TOP
-# -[no]listtop				print out reworked top sheet (default: no)
+=head 4 options
+
+Available options for vgch_join.pl
+
+-dir DIRECTORY            write output data to DIRECTORY (default: cwd())
+-out FILENAME				print results into FILENAME
+-conf key.key.key=value   Overwrite $EH{key}{key}{key} with value
+-listconf                 Print out all available/predefined configurations options
+-sheet SHEET=MATCH        SHEET can be one of "hier", "conn", "vi2c"
+-delta                    Enable delta mode: Print diffs instead of full files.
+                                  Maybe we can set a return value of 1 if no changes occured!
+-strip                    Remove extra worksheets from intermediate output
+                                  Please be catious when using that option.
+-bak                      Shift previous generated output to file.v[hd].bak. When combined
+                                  with -delta you get both .diff, .bak and new files :-)
+-top TOP					top level information from file TOP
+-[no]listtop				print out reworked top sheet (default: no)
+
+=cut
 
 my %xls = ();
 my $top = '';
@@ -205,6 +210,7 @@ if ( $OPTVAL{'top'} ) {
 }
 
 # Put everything on one large array ...
+# GLOBAL variables:
 my @all = ();
 my $sub_order = '';
 my $sub_addr = '';
@@ -240,7 +246,7 @@ for my $files ( @ARGV ) {
 		# Parse all addresses from ::client -> ::sub
 		( $sub_order, $sub_addr, $sub_key ) = parse_vgch_top( $sheets{$top}{$xls{top_sheet}} );
 		# sub_order: hash with numbers ...
-		# sub_addr: array with more all infos from top
+		# sub_addr: array with more/all infos from top
 		# sub_key: hash of arrays: point definitions to matching instances
 		next;
 	}
@@ -287,40 +293,9 @@ for my $files ( @ARGV ) {
 # Step 3: Merge the sheets into one,
 #    fix some fields (::sub)
 #
-
-
-# fix all others ....
-
 #
 # Write back the collected data:
 #
-
-
-=head2 OLD
-
-# Iterate over all clients:
-for my $client ( @$sub_addr ) {
-
-# Find filename and sheet for that client
-	my $def = $client->{'definition'};
-	my $cname = $client->{'client'};
-	my ( $f, $s ) = get_sheet( $def );
-	# for my $s ( keys %{$sheets{$f}} ) {
-	# add the sheet name as comment to ::ign
-
-	if ( defined( $s ) ) {	
-		push( @all, { '::ign' => '# # # =:=:=:=> Sheet: ' . $s . ' from file ' . $f .
-			' for definition of ' . $cname . '(' . $def . ')' } );
-		my $data = fix_sheet( $client, $sheets{$f}{$s} );
-		push( @all, @$data );
-	} else {
-		push( @all, { '::ign' => '# # # =:=:=:=> Sheet: ' . '__MISS__' .
-			' from file ' . '__MISS__' . ' for definition of ' . $def } );
-	}
-}
-
-=cut
-
 # Did we get definitions for all data in top:
 #  Read out the sub_addr->{'used'}
 for my $k ( @$sub_addr ) {
@@ -373,7 +348,8 @@ sub replace_macros ($) {
 
 #
 # Sum up hex numbers of adresses ...
-#
+#!wig20051128: use the ::interface column as additional hint to find the
+#		appropriate base address
 sub fix_sheet ($$) {
 	my $client = shift;
 	my $inref = shift;
@@ -393,7 +369,16 @@ sub fix_sheet ($$) {
 		#!wig20051025: Special for the "Ignore" line ->
 		next if ( $i->{'::ign'} =~ m/^Ignore/io and $ignore_flag );
 		$ignore_flag++ if ( $i->{'::ign'} =~ m/^Ignore/io );
-		
+
+		#!wig20051128: if ::interface ne client
+		my @base_this = ();
+		if ( exists( $i->{'::interface'} ) and $i->{'::interface'} and
+			$i->{'::interface'} ne $client->{'definition'} ) {
+				# Search another definition in "sub" list
+				@base_this = base_interface( $i->{'::interface'} );
+		} else {
+			push( @base_this, $base );
+		}		
 		push( @outdata, { %$i } ); # Make sure data gets >copied<
 		my $sub;
 		if ( $i->{'::sub'} =~ m/^(0x)?[0-9a-f]+$/io ) { #Data is in HEX format!
@@ -409,16 +394,53 @@ sub fix_sheet ($$) {
 			}
 		} 
 		# Rewrite ::sub : add base to input ::sub
-		if ( $sub =~ m/^\d+$/o ) {# How to test for digits?
-			$sub += $base;
-			$outdata[-1]{'::sub'} = sprintf( '0x%lx', $sub); # How to protect that against
+		if ( $sub =~ m/^\d+$/o and $base_this[0] =~ m/^\d+$/o ) {
+			$outdata[-1]{'::sub'} = sprintf( '0x%lx', $sub + $base_this[0]);
 		} else {
-			$outdata[-1]{'::sub'} = $sub . " + $base";
+			$outdata[-1]{'::sub'} = $sub . " + " . $base_this[0];
 		}
+		
+		if ( scalar( @base_this ) > 1 ) {
+			# Repeat the last line
+			for my $if ( 1..(scalar(@base_this) - 1) ) {
+				push( @outdata, { %$i } );
+				if ( $sub =~ m/^\d+$/o and $base_this[$if] =~ m/^\d+$/o) {
+					$outdata[-1]{'::sub'} = sprintf( '0x%lx', $sub + $base_this[$if]);
+				} else {
+					$outdata[-1]{'::sub'} = $sub . " + " . $base_this[$if];
+				}
+			}
+		} 
 	}
 	
 	return \@outdata;
 } # End of fix_sheet
+
+#
+# find base address for another interface ...
+# Returns array with potential base addresses.
+#
+#!! Uses global variables :
+#
+sub base_interface ($) {
+	my $interface = shift;
+
+	my @bases = ();
+	if ( exists( $sub_key->{$interface} ) ) {
+		for my $i ( @{$sub_key->{$interface}} ) {
+			my $sa = $sub_addr->[$i];
+			push( @bases, hex($sa->{'sub'}) );
+		}
+	} else {
+		# Print warning:
+		logwarn("ERROR: Cannot locate sub address for interface $interface");
+		$EH{'sum'}{'errors'}++;
+		push( @bases, '__E_MISS_INTERFACEBASE' );
+	}
+	
+	return @bases;
+		
+}
 
 #
 # Get a matching sheet name:
