@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewSTL.pm,v 1.2 2005/11/25 13:32:22 lutscher Exp $
+#  RCSId: $Id: RegViewSTL.pm,v 1.3 2005/11/29 08:45:55 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.2 $                                  
+#  Revision      : $Revision: 1.3 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViewSTL.pm,v $
+#  Revision 1.3  2005/11/29 08:45:55  lutscher
+#  RegViewSTL.pm
+#
 #  Revision 1.2  2005/11/25 13:32:22  lutscher
 #  first functional release
 #
@@ -92,7 +95,7 @@ version 2.0
 				  'lbody'          => [],
 				  'ldomains'       => [],
 				  'lexclude_cfg'   => [],
-				  'lexclude_other' => []    
+				  'lexclude_other' => []
 				 );
 	
 	# import regshell.<par> parameters from MIX package to class data; user can change these parameters in mix.cfg
@@ -140,7 +143,7 @@ version 2.0
 	foreach $o_domain (@{$this->global->{'ldomains'}}) {
 		_info("generating code for domain ", $o_domain->name);
 		
-		# iterate through all the registers of the domain (sort by address)
+		# perform some filtering and pre-processing on the domain registers
 		foreach $o_reg ( sort { $o_domain->get_reg_address($a) <=> $o_domain->get_reg_address($b) } @{$o_domain->regs}) {
 			# $o_reg->display() if $this->global->{'debug'}; # debug
 			$reg = $o_reg->name;
@@ -164,7 +167,7 @@ version 2.0
 			};
 			# add base address to register offset if desired
 			if ($this->global->{'use_base_addr'}) {
-				$reg_offset += $o_domain->{'baseaddr'};
+				$reg_offset += $this->get_domain_baseaddr($o_domain->{'name'});
 			};
 			$hregs{$reg_offset} = $o_reg;
 		};
@@ -177,7 +180,7 @@ version 2.0
 		foreach $reg_offset (sort {$a <=> $b} keys %hregs) {
 			$o_reg = $hregs{$reg_offset};
 			$usedbits = $o_reg->attribs->{'usedbits'};
-			$mask = "";
+			$mask = $mask = $this->_get_read_write_mask($o_reg) | $this->_get_w1c_mask($o_reg);
 			$val = $o_reg->get_reg_init;
 			$this->_ocp_access("read", $o_reg, $reg_offset, $val, $mask);
 		};
@@ -226,12 +229,13 @@ version 2.0
 		foreach $reg_offset (sort {$a <=> $b} keys %hregs) {
 			$o_reg = $hregs{$reg_offset};
 			$val = 0;
-			$mask = $this->_get_read_write_mask($o_reg) | $this->_get_write_only_mask($o_reg);
+			$mask = $this->_get_read_write_mask($o_reg);
 			$this->_ocp_access("read", $o_reg, $reg_offset, $val, $mask);
 		};		
+
+		$this->_write_stl($o_domain);
 	};
 	$this->display() if $this->global->{'debug'}; # dump Reg class object
-	$this->_write_stl();
 	1;
 };
 
@@ -279,8 +283,9 @@ sub _get_write_only_mask {
 };
 
 # generate a line in STL syntax
-# for reads, the value is the expected value
-# mask can be left empty
+# for reads, the value is the expected value;
+# mask (used for reads) can be left empty; if a mask is given, only the bits that are 1 are compared with the expected value;
+# if all bits of the mask are 0, do not execute the read (is probably a write-only register)
 sub _ocp_access {
 	my ($this, $access, $o_reg, $addr, $value, $mask) = @_;
 	my $addr_str = "0x"._val2hex($this->global->{'addrwidth'}, $addr);
@@ -288,18 +293,21 @@ sub _ocp_access {
 	my $mask_str = "";
 	if ($mask ne "") {
 		$mask_str = "(0x"._val2hex($this->global->{'datawidth'}, $mask) .")";
+		if ($access eq "read" and $mask == 0) {
+			return;
+		};
 	};
 	push @{$this->global->{'lbody'}}, "# register: " . $o_reg->name;
 	push @{$this->global->{'lbody'}}, join(" ", $access, $addr_str, $value_str, $mask_str);
 };
 
-# generate STL file
+# generate STL file (for one domain)
 # uses existing file if there is one in the current dir
 sub _write_stl {
-	my ($this) = @_;
+	my ($this, $o_domain) = @_;
 	my (@lresult);
 
-	my $fname = join("_","regtest",map { $_->name() } @{$this->global->{'ldomains'}}) . "." . $this->global->{'file_suffix'};
+	my $fname = "regtest_" . $o_domain->{'name'} . "." . $this->global->{'file_suffix'};
 
 	if (-e "$fname") {
 		_info("reading existing file \'$fname\'");
@@ -317,7 +325,7 @@ sub _write_stl {
 	};
 	
 	# insert a header
-	$this->_gen_stl_head(\@lresult);
+	$this->_gen_stl_head($o_domain, \@lresult);
 
 	# insert the body
 	$this->_gen_stl_body(\@lresult);
@@ -351,7 +359,7 @@ sub _gen_stl_body {
 
 # generate the file header
 sub _gen_stl_head {
-	my($this, $lref) = @_;
+	my($this, $o_domain, $lref) = @_;
 	my @ltemp;
 
 	my $pragma_start_pos = _get_pragma_pos($this->global->{'pragma_head_start'}, $lref);
@@ -361,9 +369,13 @@ sub _gen_stl_head {
 		return 1;
 	};
 	push @ltemp, split("\n", $this->global->{'header'}), "";
-	push @ltemp, "# register test for domain(s) ".join(", ", map { $_->name() } @{$this->global->{'ldomains'}}), "";
-	push @ltemp, "# exclude registers via user setting : ". join(", ",@{$this->global->{'lexclude_cfg'}}), "";
-	push @ltemp, "# exclude registers via internal rule: ". join(", ",@{$this->global->{'lexclude_other'}}), "";
+	push @ltemp, "# register test for domain ". $o_domain->name, "";
+	if(scalar(@{$this->global->{'lexclude_cfg'}})) {
+		push @ltemp, "# exclude registers via user setting : ". join(", ",@{$this->global->{'lexclude_cfg'}}), "";
+	};
+	if(@{$this->global->{'lexclude_other'}}) {
+		push @ltemp, "# exclude registers via internal rule: ". join(", ",@{$this->global->{'lexclude_other'}}), "";
+	};
 	push @ltemp, "idle ".$this->global->{'initial_idle'},"";
 	splice @$lref, $pragma_start_pos + 1, $pragma_end_pos - $pragma_start_pos - 1, @ltemp;
 	1;
