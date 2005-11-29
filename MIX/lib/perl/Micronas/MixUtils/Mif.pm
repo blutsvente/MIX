@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.8 $                                          |
+# | Revision:   $Revision: 1.9 $                                          |
 # | Author:     $Author: mathias $                                            |
-# | Date:       $Date: 2005/11/25 16:25:34 $                              |
+# | Date:       $Date: 2005/11/29 13:11:08 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.9  2005/11/29 13:11:08  mathias
+# | wrcell can write marker and cross reference tags
+# |
 # | Revision 1.8  2005/11/25 16:25:34  mathias
 # | fixed _td_para
 # | removed old version of that fuction
@@ -85,9 +88,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.8 2005/11/25 16:25:34 mathias Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.9 2005/11/29 13:11:08 mathias Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.8 $'; #'  
+my $thisrevision    =      '$Revision: 1.9 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -518,33 +521,36 @@ sub td {
 	return $text;
 }
 
-#
+####################################################################
+# wrCell
+#    write Cell description into string
 #    <Cell <CellContent <Para <PgfTag `xRegHeading'>	<ParaLine <String `Name'> > > > >
 # Parameters:
-#	PgfTag	(Paragraph format, default: CellBody)
-#	String	(Cell contents)
-#	Columns (If set, this cell spans multiple columns, optional)
-#   Indent  (Default: no indentation)
-#
+#    $param   hashref with following keys:
+#                'PgfTag'	  FrameMaker Format
+#                'String'         String, Cellname
+#                'Columns'        (Do not) span columns
+#                'Marker'         set the marker for reference (<number> )
+#                'Xref'           cross reference to a marker
+#                'Rows'           (Do not) span rows
+#                'Angle'          rotate cell (value: degree e.g. 270)
+#                'Fill'           CellFill?
+#                'Separation'     CellSeparation?
+#                'Color'          background color
+#                'Indent'         Prepend <n> Tabs
+#    $indent  Indentation (default: 2 Tabs)
+
 sub wrCell($$$)
 {
     my ($self, $param, $indent) = @_;
     my $text = "";
 
     $indent ||= 2;    # Prepend two Tabs
-    my %cell = ('PgfTag'	=> 'CellBody',      # Default FrameMaker Format
-                'String'        => '__E_NO_STRING', # String, Cellname
-                'Columns'       => 0,               # Do not span columns
-                'Rows'          => 0,               # Do not span rows
-                'Fill'          => 0,               # CellFill?
-                'Separation'    => 0,               # CellSeparation?
-                'Color'         => 0,               # background color
-                'Indent'        => 0,               # Prepend <n> Tabs
-               );
 
     if ( ref( $param ) eq "HASH" ) {
         $text .= "\t" x $indent if ($indent);
         $text .=  "<Cell ";
+        $text .= "<CellAngle " . $param->{Angle} . "> " if (exists($param->{Angle}));
         $text .= "<CellRows " . $param->{Rows} . "> " if (exists($param->{Rows}));
         $text .= "<CellColumns " . $param->{Columns} . "> " if (exists($param->{Columns}));
         $text .= "<CellFill " . $param->{Fill} . '> ' if (exists($param->{Fill}));
@@ -553,13 +559,22 @@ sub wrCell($$$)
 
         $text .= "<CellContent <Para <PgfTag `" . $param->{PgfTag} . "'> ";
         if (exists($param->{String})) {
-            $text .= _td_para($param->{String}, $indent);
+            if (exists($param->{Marker})) {
+                $text .= "<ParaLine <String `" . $param->{String} . "'> ";
+                $text .= "<Marker <MType 9> <MText `" . $param->{Marker};
+                $text .= ': ' . $param->{PgfTag} . ': ' . $param->{String} . "'> > >";
+            } else {
+                $text .= _td_para($param->{String}, $indent);
+            }
         } else {
-            $text .= "<ParaLine >";
+            if (exists($param->{Xref})) {
+                $text .= "<ParaLine <XRef <XRefName `Register'> <XRefSrcText `" . $param->{Xref};
+                $text .= "'> > <XRefEnd> >";
+            } else {
+                $text .= "<ParaLine >";
+            }
         }
         $text .= " > > > # end of Cell\n";
-     } else {
-        $cell{'String'} = $param;
     }
     return $text;
 }
@@ -591,7 +606,7 @@ sub _td_para()
         if ($modifier eq 'n') {                     # (hard) new line
             $newstring .= $normal . $beg . "'" . '> <Char HardReturn> > #End of ParaLine' . "\n";
             $string = $end;
-        } elsif ($modifier =~ m/[*buoslh]/) {                # bold
+        } elsif ($modifier =~ m/[*buoslh]/) {       # bold, underline, overline, ...
             # first "normal" part
             if ($beg) {
                 $newstring .= "\t" x $indent . $normal . $beg . $parasep;
