@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.9 $                                          |
+# | Revision:   $Revision: 1.10 $                                          |
 # | Author:     $Author: mathias $                                            |
-# | Date:       $Date: 2005/11/29 13:11:08 $                              |
+# | Date:       $Date: 2005/11/29 15:35:46 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.10  2005/11/29 15:35:46  mathias
+# | change hard new lines to '/n/' in comments
+# |
 # | Revision 1.9  2005/11/29 13:11:08  mathias
 # | wrcell can write marker and cross reference tags
 # |
@@ -88,9 +91,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.9 2005/11/29 13:11:08 mathias Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.10 2005/11/29 15:35:46 mathias Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.9 $'; #'  
+my $thisrevision    =      '$Revision: 1.10 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -599,6 +602,7 @@ sub _td_para()
     my $parasep       = "'" . '> > #End of ParaLine' . "\n";
     my $paraend       = "'> >";
 
+    $string =~ s/\n/\\n/g;     # change hard new lines to '/n/'
     while ($string =~ m/^([^\\]*)\\([nbuoslh\*])(.*)/) {
         my $beg      = $1;
         my $modifier = $2;
