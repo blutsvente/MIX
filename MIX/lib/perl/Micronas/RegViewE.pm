@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.1 2005/11/23 13:23:17 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.2 2005/11/29 08:41:58 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.2  2005/11/29 08:41:58  lutscher
+#  fixed parsing of domain list
+#
 #  Revision 1.1  2005/11/23 13:23:17  lutscher
 #  renamed from RegViewsE.pm
 #
@@ -92,12 +95,13 @@ sub _gen_view_vr_ad {
 	my @ldomains;
 	my $href;
 	my $verbose = 0;
+	my $o_domain;
 
 	# add global class members for static data
 	$this->global('E_FILE'      => {
 									'header' => " created automatically by $0\n\n<\'\n",
 									'footer' => "\'>\n",
-									'prefix' => "regdef_",
+									'prefix' => "regdef",
 									'suffix' => ".e"
 								   },
 				  'REGISTER'	=>	{ 
@@ -139,19 +143,27 @@ sub _gen_view_vr_ad {
 	# make list of domains for generation
 	if (scalar (@_)) {
 		foreach my $domain (@_) {
-			push @ldomains, $this->find_domain_by_name_first($domain);
+			$o_domain = $this->find_domain_by_name_first($domain);
+			if (ref($o_domain)) {
+				push @ldomains, $this->find_domain_by_name_first($domain);
+			};
 		};
 	} else {
 		foreach $href (@{$this->domains}) {
 			push @ldomains, $href->{'domain'};
 		};
 	};
-	my $e_filename = $this->global->{'E_FILE'}{'prefix'}.join("_",map {$_->{name}} @ldomains).$this->global->{'E_FILE'}{'suffix'};
+	if (!scalar(@ldomains)) { # something to do ?
+		_warning("no domains found to process, exiting");
+	};
+
+	my $e_filename = join("_",$this->global->{'E_FILE'}{'prefix'}, map {$_->{name}} @ldomains).$this->global->{'E_FILE'}{'suffix'};
 	open(E_FILE, ">$e_filename") || logwarn("ERROR: could not open file \'$e_filename\' for writing");
+	_info("generating file \'$e_filename\'");
 	print E_FILE " file: $e_filename\n";
 	print E_FILE $this->global->{'E_FILE'}{'header'};
 
-	my ($top_inst, $o_domain, $o_field, $o_reg);
+	my ($top_inst, $o_field, $o_reg);
 	
 	# iterate through domains
 	foreach $o_domain (@ldomains) {

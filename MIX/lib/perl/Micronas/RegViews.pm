@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.17 2005/11/16 08:58:50 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.18 2005/11/29 08:44:58 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.17 $                                  
+#  Revision      : $Revision: 1.18 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.18  2005/11/29 08:44:58  lutscher
+#  fixed parsing of domain list
+#
 #  Revision 1.17  2005/11/16 08:58:50  lutscher
 #  added use_reg_name_as_prefix feature also for USR registers
 #
@@ -118,6 +121,7 @@ sub _gen_view_vgch_rs {
 	my $this = shift;
 	my @ldomains;
 	my $href;
+	my $o_domain;
 
 	$this->global->{'debug'} = 0;
 	# extend class data with data structure needed for code generation
@@ -168,7 +172,12 @@ sub _gen_view_vgch_rs {
 	# make list of domains for generation
 	if (scalar (@_)) {
 		foreach my $domain (@_) {
-			push @ldomains, $this->find_domain_by_name_first($domain);
+			$o_domain = $this->find_domain_by_name_first($domain);
+			if (ref($o_domain)) {
+				push @ldomains, $this->find_domain_by_name_first($domain);
+			} else {
+				_error("unknown domain \'$domain\'");
+			};
 		};
 	} else {
 		foreach $href (@{$this->domains}) {
@@ -188,7 +197,7 @@ sub _gen_view_vgch_rs {
 		$EH{'output'}{'filter'}{'file'} = [];
 	};
 
-	my ($o_domain, $o_field, $o_reg, $top_inst, $ocp_inst, $n_clocks, $cfg_inst, $clock);
+	my ($o_field, $o_reg, $top_inst, $ocp_inst, $n_clocks, $cfg_inst, $clock);
 
 	# iterate through all register domains
 	foreach $o_domain (@ldomains) {
