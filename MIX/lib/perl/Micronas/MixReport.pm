@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.14 $                                               |
+# | Revision:   $Revision: 1.15 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2005/11/28 13:58:59 $                                                   |
+# | Date:       $Date: 2005/11/29 13:11:42 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.14 2005/11/28 13:58:59 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.15 2005/11/29 13:11:42 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.15  2005/11/29 13:11:42  mathias
+# | writes also a register overview table
+# |
 # | Revision 1.14  2005/11/28 13:58:59  mathias
 # | do not write the bits for bitfields with 1 bit width
 # |
@@ -92,12 +95,15 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.14 2005/11/28 13:58:59 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.15 2005/11/29 13:11:42 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.14 $';
+my $thisrevision   =      '$Revision: 1.15 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
+
+# unique number for Marker in the mif file
+my $marker = 32178;
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -203,8 +209,13 @@ sub mix_rep_reglist($)
 
                 ### open mif file
                 print("~~~~~ Domain name: " . $o_domain->name() . "\n");
-                my $mif = new Micronas::MixUtils::Mif('name' => $EH{'report'}{'path'} . '/' . $o_domain->name() . "_reglist.mif");
+                my $mif = new Micronas::MixUtils::Mif('name' => $EH{'report'}{'path'} . '/' .
+                                                      $o_domain->name() . "_reglist.mif");
                 $mif->template();           # Initialize it
+                my $omif = new Micronas::MixUtils::Mif('name' => $EH{'report'}{'path'} . '/' .
+                                                       $o_domain->name() . "_reg_overview.mif");
+                $omif->template();           # Initialize it
+                my $oview_table = mix_rep_reglist_oview_mif_header($omif);
 
                 ### loop over all registers
                 foreach my $o_reg (@{$o_domain->regs()}) {
@@ -214,7 +225,11 @@ sub mix_rep_reglist($)
                         my $init     = sprintf("0x%08X", $o_reg->get_reg_init());
                         my $mode     = $o_reg->get_reg_access_mode();
 
-                        my $regtable = mix_rep_reglist_mif_header($mif, $regtitle, $o_reg->name(), $address, $mode, $init);
+                        my ($regtable, $ref) = mix_rep_reglist_mif_header($mif, $regtitle, $o_reg->name(),
+                                                                          $address, $mode, $init);
+                        # write row into the overview table
+                        mix_rep_reglist_oview_mif_row($omif, $oview_table, $ref, $address, $mode);
+
                         my $ii =0;
                         my @thefields;
                         foreach my $hreff (@{$o_reg->fields}) {
@@ -235,6 +250,10 @@ sub mix_rep_reglist($)
                     }
                 }
 
+                ### write and close overview table of this domain
+                $omif->end_body($oview_table);
+                $omif->end_table($oview_table);
+                $omif->write();
                 ### write and close the file
                 $mif->write();
             }
@@ -243,8 +262,88 @@ sub mix_rep_reglist($)
     return 0;
 }
 
-# write mif file for register
-sub mix_rep_reglist_mif_header($$$$$ )
+# write mif file header for the register overview table
+sub mix_rep_reglist_oview_mif_header($$ )
+{
+    my ($mif) = @_;
+    my %regtable = ('Title'       => 'Register description list',
+                    'Format'      => 'Register overview',
+                    'Cols'        => 4,
+                    'ColumnWidth' => [ qw(45.0 15.0 27.0 92.0) ],
+                    'TblTag'      => 'PageWidth'
+                   );
+    my $regtable = $mif->start_table(\%regtable);
+    $mif->start_body($regtable);
+
+    my $headtext = $mif->wrCell({ 'PgfTag'     => 'CellHeadingH9',
+                                  'String'     => 'Register',
+                                  'Fill'       => 0,
+                                  'Color'      => "Gray 6.2"
+                                },
+                                2);
+    $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellHeadingH9',
+                                'String'     => 'R/W',
+                                'Fill'       => 0,
+                                'Color'      => "Gray 6.2"
+                              },
+                              2);
+    $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellHeadingH9',
+                                'String'     => 'Address',
+                                'Fill'       => 0,
+                                'Color'      => "Gray 6.2"
+                              },
+                              2);
+    $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellHeadingH9',
+                                'String'     => 'Comment',
+                                'Fill'       => 0,
+                                'Color'      => "Gray 6.2"
+                              },
+                              2);
+    $mif->add($mif->Tr({ 'WithNext' => 'Yes',
+                         'WithPrev' => 'Yes',
+                         'Text'     => $headtext,
+                         'Indent'   => 1
+                        }), $regtable);
+    return $regtable;
+}
+
+# write mif file header for register
+sub mix_rep_reglist_oview_mif_row($$$$$ )
+{
+    my ($mif, $regtable, $regname, $address, $mode) = @_;
+    my $headtext = "";
+
+    # Register name
+    $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH9',
+                                'Xref' => $regname
+                              },
+                              2);
+                                #'String' => $regname
+
+    # Register Mode (R/W)
+    $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH9center', 'String'  => $mode }, 2);
+
+    # Register address
+    $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH9center',
+                                'String' => $address
+                              },
+                              2);
+
+    # Comment (empty)
+    $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH9',
+                                'String' => ' '
+                              },
+                              2);
+
+    $mif->add($mif->Tr({ 'WithNext' => 'Yes',
+                         'WithPrev' => 'Yes',
+                         'Text'     => $headtext,
+                         'Indent'   => 1
+                        }), $regtable);
+}
+
+# write mif file header for register
+sub mix_rep_reglist_mif_header($$$$$$ )
 {
     my ($mif, $title, $regname, $address, $mode, $init) = @_;
     my %regtable = ('Title'       => $title,
@@ -269,11 +368,16 @@ sub mix_rep_reglist_mif_header($$$$$ )
                                 'Color'      => "Gray 6.2"
                               },
                               2);
+    # new marker, cross reference
+    $marker++;
     $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellBodyH8',
                                 'String'     => $regname,
+                                'Marker'     => $marker,
                                 'Columns'    => 4
                               },
                               2);
+    my $crossref = "$marker: CellBodyH8: $regname";
+
     for (my $i = 0; $i < 3; $i++) {
         $headtext .= $mif->wrCell({ 'PgfTag' => 'CellHeading' }, 2);
     }
@@ -337,7 +441,7 @@ sub mix_rep_reglist_mif_header($$$$$ )
                          'Indent'   => 1
                         }), $regtable);
 
-    return $regtable;
+    return ($regtable, $crossref);
 }
 
 # write mif file for register
@@ -413,6 +517,9 @@ sub mix_rep_reglist_mif_bitfields($$$ )
                       'Fill'       => 15,
                       'String'     => $string);
             $hh{Columns} = $size if ($size > 1);
+            if ($size == 1 and length($string) > 11) {
+                $hh{'Angle'} = 270;
+            }
             $headtext .= $mif->wrCell(\%hh, 3);
         }
         for (my $i = $tbeg - 1; $i >= $tend; $i--) {
@@ -468,6 +575,9 @@ sub mix_rep_reglist_mif_bitfields($$$ )
                   'Fill'       => 15,
                   'String'     => $string);
         $hh{'Columns'} = $size if ($size > 1);
+        if ($size == 1 and length($string) > 11) {
+            $hh{'Angle'} = 270;
+        }
         $headtext .= $mif->wrCell(\%hh, 3);
         for (my $i = $tbeg - 1; $i >= $tend; $i--) {
             $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH8' }, 3);
@@ -493,7 +603,6 @@ sub mix_rep_reglist_mif_bitfields($$$ )
     ############ Row for the bits  15.. 0
     # empty gray field on the left hand side
     $headtext = $mif->wrCell({ 'PgfTag' => 'CellHeadingH8',
-                                'Rows'   => 4,
                                 'Fill'   => 0,
                                 'Color'      => "Gray 6.2"
                               },
