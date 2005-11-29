@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewSTL.pm,v 1.3 2005/11/29 08:45:55 lutscher Exp $
+#  RCSId: $Id: RegViewSTL.pm,v 1.4 2005/11/29 15:00:29 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.3 $                                  
+#  Revision      : $Revision: 1.4 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViewSTL.pm,v $
+#  Revision 1.4  2005/11/29 15:00:29  lutscher
+#  added clearing of data between domains
+#
 #  Revision 1.3  2005/11/29 08:45:55  lutscher
 #  RegViewSTL.pm
 #
@@ -143,6 +146,10 @@ version 2.0
 	foreach $o_domain (@{$this->global->{'ldomains'}}) {
 		_info("generating code for domain ", $o_domain->name);
 		
+		%hregs = ();
+		$this->global->{'lexclude_other'} = [];
+		$this->global->{'lbody'} = [];
+
 		# perform some filtering and pre-processing on the domain registers
 		foreach $o_reg ( sort { $o_domain->get_reg_address($a) <=> $o_domain->get_reg_address($b) } @{$o_domain->regs}) {
 			# $o_reg->display() if $this->global->{'debug'}; # debug
