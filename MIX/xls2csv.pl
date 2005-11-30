@@ -10,7 +10,7 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #
 #******************************************************************************
 #
-# $Id: xls2csv.pl,v 1.4 2005/04/14 06:53:00 wig Exp $
+# $Id: xls2csv.pl,v 1.5 2005/11/30 14:05:41 wig Exp $
 #
 # read in XLS file and print out a csv and and a sxc version of all sheets
 #
@@ -30,6 +30,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #  Define seperator:
 #
 # $Log: xls2csv.pl,v $
+# Revision 1.5  2005/11/30 14:05:41  wig
+# Not changed.
+#
 # Revision 1.4  2005/04/14 06:53:00  wig
 # Updates: fixed import errors and adjusted I2C parser
 #
@@ -77,7 +80,7 @@ use Micronas::MixUtils::IO;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.4 $'; # RCS Id
+$::VERSION = '$Revision: 1.5 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 mix_init();
@@ -127,6 +130,8 @@ sub print_usage () {
 	-[no]verbose  Print more messages
 
 EOM
+
+# " for the syntax highlight
 
 	return;
 }
