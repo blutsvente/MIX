@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.98 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2005/11/25 13:32:40 $                              |
+# | Revision:   $Revision: 1.99 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2005/11/30 14:01:21 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.98 2005/11/25 13:32:40 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.99 2005/11/30 14:01:21 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.99  2005/11/30 14:01:21  wig
+# | ::descr handling and trailing ; removal improved
+# |
 # | Revision 1.98  2005/11/25 13:32:40  lutscher
 # | added reg_shell.stl parameters
 # |
@@ -417,11 +420,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.98 2005/11/25 13:32:40 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.99 2005/11/30 14:01:21 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.98 $';         #'
+my $thisrevision        =      '$Revision: 1.99 $';         #'
 
-# Revision:   $Revision: 1.98 $   
+# Revision:   $Revision: 1.99 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1047,6 +1050,7 @@ sub mix_init () {
 		      #   %::descr% (contents of this signal's descr. field, %::ininst% (list of load instances),
 		      #   %::outinst% (list of driving instances), %::comment%
 	      	'portdescrlength' => 100, # Limit length of comment to 100 characters!
+	      	'portdescrlines' => 10,   # Do not print > 10 port comment lines
 		  	'portmapsort' => 'alpha', # How to sort port map; allowed values are:
 		  			# alpha := sorted by port name (default)
 		  			# input (ordered as listed in input files)

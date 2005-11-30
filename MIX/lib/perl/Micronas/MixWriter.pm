@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.71 $                                         |
+# | Revision:   $Revision: 1.72 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/11/22 11:00:47 $                              |
+# | Date:       $Date: 2005/11/30 14:01:21 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.71 2005/11/22 11:00:47 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.72 2005/11/30 14:01:21 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.72  2005/11/30 14:01:21  wig
+# | ::descr handling and trailing ; removal improved
+# |
 # | Revision 1.71  2005/11/22 11:00:47  wig
 # | Minor fixes in Utils (20051121a, K: mkdir problem)
 # |
@@ -329,9 +332,9 @@ sub _mix_wr_regorwire($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.71 2005/11/22 11:00:47 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.72 2005/11/30 14:01:21 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.71 $';
+my $thisrevision   =      '$Revision: 1.72 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -775,7 +778,7 @@ sub compare_merge_entities ($$$$) {
 	    			and $p ne "-- NO IN PORTs"
 	    			and $ent ne "W_NO_ENTITY"
 	    			and $ent ne '%TYPECAST_ENT%'
-	    			and $ent !~ m/$EH{'output'}{'generate'}{'_logicre_'}/io ) {
+	    			and $ent !~ m/$EH{'output'}{'generate'}{'_logicre_'}/i ) {
 				logwarn( "WARNING: Missing port $p in entity $ent ($inst) redeclaration, ignoreing!" );
 				$eflag  = 0;
             	$EH{'sum'}{'warnings'}++;
@@ -836,7 +839,7 @@ sub compare_merge_entities ($$$$) {
 			and $p ne "-- NO IN PORTs"
             and $ent ne "W_NO_ENTITY"
             and $ent ne "%TYPECAST_ENT%"
-            and $ent !~ m/$EH{'output'}{'generate'}{'_logicre_'}/io )
+            and $ent !~ m/$EH{'output'}{'generate'}{'_logicre_'}/i )
         {
 	    	logwarn( "WARNING: Declaration for entity $ent ($inst) extended by $p!" );
             $EH{'sum'}{'warnings'}++;
@@ -1358,7 +1361,7 @@ sub _write_entities ($$$) {
     # another case: if this entity is in the "simple logic" list, do
     # not write ...
     #
-    if ( $ehname =~ m/$EH{'output'}{'generate'}{'_logicre_'}/io ) {
+    if ( $ehname =~ m/$EH{'output'}{'generate'}{'_logicre_'}/i ) {
     	$write_flag = "0";
     }
 
@@ -1565,6 +1568,7 @@ sub _mix_wr_get_ivhdl ($$$) {
 	    if ( $pdd->{'__descr__'} ne '' ) {
 	    	( my $d = $pdd->{'__descr__'} ) =~ s/\n/%CR%%S%%S%%S%%S%$tcom /g;
 	    	$descr = '%S%' . $tcom . ' ' . $d;
+	    	$descr = _mix_wr_shortendescr( $descr ); # Make it fit ...
 	    }
 	    if ( $pdd->{'mode'} =~ m,^\s*(generic|G|P),io ) {
 	    	$gent .= mix_wr_mapsort( $ename, $p );
@@ -1998,8 +2002,8 @@ sub _mix_wr_get_iveri ($$$$) {
 	
 	# Prepend  begin now:
 	$intf = '%S%' x 2 . "(\n" . $intf;
-	$intf =~ s/,((%S%|\t)+$tcom[^\n]*)$/$1/io;
-    $intf =~ s/,(\s*)$/$1/io; # Remove trailing , in port map ...
+	$intf =~ s/,((%S%|\t)+$tcom[^\n]*)$/$1/i;
+    $intf =~ s/,(\s*)$/$1/i; # Remove trailing , in port map ...
     $intf .= '%S%' x 2 . ");\n";
     # Print out inputs, outputs, inouts and wires ...
     for my $i ( @portorder ) {
@@ -2259,7 +2263,7 @@ sub gen_instmap ($;$$) {
     my $rinstc = $hierdb{$inst}{'::conn'};
  	my $simple_flag=0;
  	#!wig20050414: implement simple logic, simple start-up
- 	if ( $enty =~ m/$EH{'output'}{'generate'}{'_logicre_'}/io ) {
+ 	if ( $enty =~ m/$EH{'output'}{'generate'}{'_logicre_'}/i ) {
  		# $gmap gets the output, $map the input(s)
  		( $gmap, $map ) = port_simple( 'outin', $inst, $enty, $lang,
  			$rinstc->{'out'}, $rinstc->{'in'}, \@out, \@in );
@@ -2301,9 +2305,9 @@ sub gen_instmap ($;$$) {
         
         # Remove trailing "," and such (VHDL) and also for Verilog ...    
         $map =~ s/,(\s*$tcom.*)\n?$/$1\n/;
-        $map =~ s/,\s*\n?$/\n/o; 
+        $map =~ s/,\s*\n?$/\n/; 
         $gmap =~ s/,(\s*$tcom.*)\n?$/$1\n/;
-        $gmap =~ s/,\s*\n?$/\n/o;
+        $gmap =~ s/,\s*\n?$/\n/;
 
         # Create VHDL generic map frame
         unless( is_vhdl_comment( $gmap ) or $simple_flag or $lang =~ m,^veri,io ) {
@@ -3697,7 +3701,6 @@ sub mix_wr_printdescr($$) {
 	my $descr = '';	
     if ( $EH{'output'}{'generate'}{'portdescr'} ) {
         # Available fields: %::descr%, %::ininst%, %::outinst%
-        # $descr .= $tcom . " ";
         my %tm = ();
         $tm{'%::descr%'} = $conndb{$signal}{'::descr'};
         $tm{'%::comment%'} = $conndb{$signal}{'::comment'};
@@ -3719,10 +3722,9 @@ sub mix_wr_printdescr($$) {
             if ( length( $descr)  > $1 ) {
             	# Consider the description line by line
             	$descr = _mix_wr_shortendescr( $descr, $1 ); 
-                # $descr = substr( $descr, 0, $1 ) . "..."; # Cut
             }
         }
-        $descr =~ s,$tcom[ \t]*$tcom,$tcom,; #Remove duplicate comments ...
+        $descr =~ s/$tcom[ \t]*$tcom/$tcom/; #Remove duplicate comments ...
     }
 
 	return $descr;
@@ -3740,14 +3742,20 @@ sub _mix_wr_shortendescr ($;$) {
 		$EH{'output'}{'generate'}{'portdescrlength'} =~ m,^(\d+)$,;
 		$maxlen = $1;
 	}
+	my $maxlines = $EH{'output'}{'generate'}{'portdescrlines'};
+	$maxlines =~ s/\s+//g;
+	$maxlines =~ s/\D.*//;
+	
 	my @newdescr = ();
 	
+	$descr =~ s/\n/%CR%/og; # Replace line breaks by %CR%
 	# Split into single lines and shorten these!
-	for my $line ( split( /\n/, $descr )) {
+	for my $line ( split( /%CR%/, $descr )) {
 		if ( length( $line ) > $maxlen ) {
 			# Needs to be shortened
 			my $new = '';
-			while( $line =~ s/(.*?)(%\w+%)//og ) { # Minimal length match
+			# Catch embedded %macro% strings:
+			while( $line =~ s/^(.*?)(%\w+%)// ) { # Minimal length match
 				my $l = length( $new );
 				if ( $maxlen - $l < 1 ) {
 					last;
@@ -3755,20 +3763,25 @@ sub _mix_wr_shortendescr ($;$) {
 				if ( $maxlen - $l < length( $1 ) ) {
 					my $a = substr( $1, 0, $maxlen - $l ) . '...';
 					$new .= $a;
-					last;
+					last; # We have enough now ...
 				} else { 
-					$new .= $1 . defined( $2 ) ? $2 : '';
+					$new .= $1 . ( defined( $2 ) ? $2 : '' );
 				}
 			}
-			# Consider rest:
+			# Consider rest in $line:
 			if ( length( $new ) < $maxlen ) {
 				$new .= substr( $line, 0, $maxlen - length( $new )) . '...';
 			}
 			$line = $new;	
 		}
-		push( @newdescr, $line ); 	
+		push( @newdescr, $line );
+		if ( scalar( @newdescr ) >= $maxlines ) {
+			# Enough lines seen
+			push( @newdescr, "...[cut]..." );
+			last;
+		} 	
 	}
-	return join( "\n", @newdescr );	
+	return join( '%CR%', @newdescr );	
 } # End of _mix_wr_shortdescr
 
 #
@@ -3951,7 +3964,7 @@ sub _write_architecture ($$$$) {
 		}
 
 		# Do not write, if we are a "simple logic" cell
-		if ( $ae->{$i}{'::entity'} =~ m/$EH{'output'}{'generate'}{'_logicre_'}/io ) {
+		if ( $ae->{$i}{'::entity'} =~ m/$EH{'output'}{'generate'}{'_logicre_'}/i ) {
 			next;
 		}
 
@@ -4021,7 +4034,7 @@ sub _write_architecture ($$$$) {
         	#wig20030228: do not add empty generics or port lists
         	#wig20040804: %TYPECAST_N% creates a typecasted signal assignment 
         	
-        	###TODO: INDENT BELOW
+        	### TODO : INDENT BELOW
 	    unless ( exists( $seen{$d_enty} )) {
             unless ( exists( $entities{$d_enty}{'__PORTTEXT__'}{$ilang}  ) and
                 exists( $entities{$d_enty}{'__GENERICTEXT__'}{$ilang} ) ) {
@@ -4032,15 +4045,15 @@ sub _write_architecture ($$$$) {
                     $entities{$d_enty}{'__PORTTEXT__'}{$ilang} = $d_port;
                 } else {
                     $d_port = "\t\t" . $tcom . " Generated Port for Entity $d_enty\n" . $d_port;
-                    $d_port =~ s/;((%S%|\s)*$tcom.*\n)$/$1/io; #TODO ...
-                    $d_port =~ s/;\n$/\n/io;
+                    $d_port =~ s/;((%S%|\s)*$tcom.*\n)$/$1/i; #TODO ...
+                    $d_port =~ s/;\n$/\n/i;
                     $d_port .= "\t\t" . $tcom . " End of Generated Port for Entity $d_enty\n";
                     $entities{$d_enty}{'__PORTTEXT__'}{$ilang} = $d_port;
                 }
                 if ( is_comment( $gt, $ilang ) ) {
                     $gt = "\t\t" . $tcom . " Generated Generics for Entity $d_enty\n" . $gt;            
-                    $gt =~ s/;((%S%|\s)*$tcom.*\n)$/$1/io; # Remove trailing ; for VHDL
-                    $gt =~ s/;\n$/\n/io;
+                    $gt =~ s/;((%S%|\s)*$tcom.*\n)$/$1/i; # Remove trailing ; for VHDL
+                    $gt =~ s/;\n$/\n/i;
                     $gt .= "\t\t" . $tcom . " End of Generated Generics for Entity $d_enty\n";
                     # Store ports and generics for later reusal
                     $entities{$d_enty}{'__GENERICTEXT__'}{$ilang} = $gt;
@@ -4054,7 +4067,7 @@ sub _write_architecture ($$$$) {
                 $hierdb{$d_name}{'::use'} =~ m,(NO_COMP|__NOCOMPDEC__),o ) {
                     $macros{'%COMPONENTS%'} .= "\t\t" . $tcom . "__I_COMPONENT_NOCOMPDEC__ " .
                     $d_name . "\n\n";
-            } elsif ( $d_enty =~ m/$EH{'output'}{'generate'}{'_logicre_'}/io ) {
+            } elsif ( $d_enty =~ m/$EH{'output'}{'generate'}{'_logicre_'}/i ) {
            	#!wig20050414: simple logic -> no component declaration
                    $macros{'%COMPONENTS%'} .= "\t\t" . $tcom . "__I_SIMPLE_LOGIC__ " .
                     $d_name . "\n\n";
@@ -4062,8 +4075,6 @@ sub _write_architecture ($$$$) {
                 $macros{'%COMPONENTS%'} .= $EH{'macro'}{'%S%'} x  1 .
                     "component $d_enty" .
                     _mix_wr_descr( 'hier', $hierdb{$d_name}, $hierdb{$d_name}{'::descr'}, 3, $tcom ) .
-                    # OLD: ( defined( $hierdb{$d_name}{'::descr'} ) ? ( $EH{'macro'}{'%S%'} .
-                    # OLD:         $tcom . " " . $hierdb{$d_name}{'::descr'} ) : "" ) .
                     "\n" .
 		        	( ( not is_vhdl_comment( $entities{$d_enty}{'__GENERICTEXT__'}{$ilang} ) ) ?
                     ( "\t\tgeneric (\n" . $entities{$d_enty}{'__GENERICTEXT__'}{$ilang} .
@@ -4451,7 +4462,7 @@ sub _write_architecture ($$$$) {
     
     # Do not write, if we are a "simple logic" cell
 	if ( $instance ne "__COMMON__" and
-		 $ae->{$instance}{'::entity'} =~ m/$EH{'output'}{'generate'}{'_logicre_'}/io )
+		 $ae->{$instance}{'::entity'} =~ m/$EH{'output'}{'generate'}{'_logicre_'}/i )
 	{
 		$write_flag = 0;
 	}
@@ -5359,7 +5370,7 @@ sub _write_configuration ($$$$) {
     # Another case: if this entity is in the "simple logic" list, do
     # not write ...
     #
-    if ( $entity =~ m/$EH{'output'}{'generate'}{'_logicre_'}/io ) {
+    if ( $entity =~ m/$EH{'output'}{'generate'}{'_logicre_'}/i ) {
     	$write_flag = 0;
     	return; # 
     }
@@ -5459,7 +5470,7 @@ sub _write_configuration ($$$$) {
                 }
             }
             # If this daughter is from the simple logic list -> do not add a configuration
-            if ( $d_enty =~ m/$EH{'output'}{'generate'}{'_logicre_'}/io ) {
+            if ( $d_enty =~ m/$EH{'output'}{'generate'}{'_logicre_'}/i ) {
             	$pre = $tcom . " __I_NO_CONF_LOGIC " . $pre;
             }
             # If this daughter has a NO_CONFIG in it's configuration -> comment it out:
