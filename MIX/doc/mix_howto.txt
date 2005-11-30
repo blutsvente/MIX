@@ -1,5 +1,108 @@
 MIX HOWTO and FAQ
 
+>>title: Another usage example for vgch_join.pl with some background info
+
+ich habe gerade vgch_join.pl in der Version 1.5 verfuegbar gemacht.
+Damit kann man verschiedene Interfaces auf einem Sheet beschreiben/verwenden.
+
++ Trotzdem bleibt das primaere Vorgehen von vgch_join.pl folgendermassen:
+
+1. Einlesen der top sheet -> Ergibt eine Liste von clients (inkl.
+Basisadressen und ::definition).
+Gelesen wird "Sheet1"!
+
+2. Alle anderen XLS-Workbooks werden geoeffnet und alle sheets geoeffnet.
+Wenn der Sheetname sich auf den Clientnamen mappen laesst, wird das Sheet genommen (Mapping: Entferne sci_ am Anfang, entferne _shared am Ende ...).
+
+3. Alle aus 2. uebrigbleibenden Client-Sheets werden zusammen in einer Tabelle ausgegeben, die ::sub Spalte wird korrigiert.
+Falls der ::interface Name nicht mit ::definition aus dem Top-Sheet uebereinstimmt, wird versucht die dazu passende Basis-Adresse zu bekommen und diese dann genommen. Fuer den Fall, dass es zu einem ::interface mehrere clients gibt, werden die betreffenden Zeilen entsprechend oft mit der jeweils aktuellen ::sub-Adresse ausgegeben.
+
+Alle Adressen im top_address_map und ::sub werden als Hexadezimal-Zahlen angenommen.
+
++ Fuer Bernhard sind folgende Schalter interessant, damit das Ergebnis
+wieder in MIX eingelesen werden kann:
+
+Um ein MIX conformes csv zu bekommen, muesste man "-listtop" verwenden sowie "-conf format.csv.style=doublequote,noautoquote,wrapnl,maxwidth"
+oder ev. "-conf format.csv.style=classic":
+
+vgch_join.pl -listtop -conf format.csv.style=classic -top /.../vgch_top_addressmap.xls -out foo.csv /.../bar.xls [/.../bar2.xls]
+
+Das Ergebnis foo.csv enthaelt dann zwei Tabellen, die jeweils VGCH_TOP (ist einfach das TOP) und "JOIN_VGCH" heissen.
+also bitte mix -conf i2c.xls JOIN_VGCH -report reglist ...
+aufrufen.
+
+Das sollte sowohl unter MS-Win als auch unter UNIX/Linux funktionieren.
+Achtung, die Datei foo.csv am besten jedesmal loeschen, sonst kann es sein, dass die Ausgabe dort nur als Inkrement erfolgt.
+
+Falls es nicht klappt, bitte unter Angabe des "wo was wie" melden.
+
+Weitere Kommentare siehe unten ...
+Wuensche/Anregungen/....
+
+...
+On Mon, 28 Nov 2005, Mathias Megyei wrote:
+Hallo,
+
+> On Mon, 2005-11-28 at 16:19 +0100, Gerstenberg Bernhard wrote:
+> > Hintergrund der Frage ist natürlich auch die Expandierung der Addressen und Register für die SCC.
+> > Das geht, glaube ich, immer nur mit dem 2-stufigen Ansatz: 
+> > vgch_join + mix, oder?
+Ja.
+> > 
+> > Bei diesem Ansatz hatte mix aber anscheinend Probleme aus dem .csv file die Daten-Structuren des Excels wieder zu finden.
+> > Vermutlich habe ich mich damit aber nur ungeschickt angestellt:
+> > vgch_join hat mir die Files "vgch_ga_dvp.csv" und das vgch_join.pl.out erzeugt.
+Nein, das war nicht ungeschickt, sondern der Output von vgch_join.pl wird mit Absicht so erstellt, dass das MIX nicht mehr einlesen kann.
+
+#!wig20051130
+
+>>title: Why do i get ERROR: __E_TYPE_MISMATCH messages signal when I wire a vector to single bit ports (faq)
+
+> 05/11/23 11:11:13 WARNING: ERROR: type mismatch for signal 
+> tmp_bidi_out_io: std_ulogic ne std_ulogic_vector!
+> 05/11/23 11:11:13 WARNING: ERROR: type mismatch for signal 
+> tmp_bidi_out_io: __E_TYPE_MISMATCH ne std_ulogic_vector!
+
+You have made conflicting definitions for signal tmp_bidi_out_io like:
+
+::name = tmp_bidi_out_io
+::type = std_ulogic_vector
+::high = 20
+::low = 0
+::in ... ::out ...
+
+Then in another line you wrote
+
+::name = tmp_bidi_out_io
+::type = std_ulogic
+::high = (leer?)
+::low = (leer?)
+::in = tmp_i/i2ccl_o(0)=(0)
+
+This is wrong, the correct description would be:
+
+::name = tmp_bidi_out_io
+::type = <empty>
+::high = <empty>
+::low = <empty>
+::in = tmp_i/i2ccl_o(0)=(0)
+
+or you could always repeat the correct settings like ::type = std_ulogic_vector.
+
+The ::type, ::high, ::low columns refer to the signal "::name".
+The port type and definition gets derived internally by MIX, you
+do not need to specify this (but see the typecast feature).
+
+If you set ::type, ::high or ::low to conflicting values, you will
+get the error messages. The same applies to the ::mode column.
+
+It's sufficient to define the ::type, ::mode and width once.
+
+The result of the MIX compilation with __E_TYPE_MISMATCH error can
+still be valid, e.g. if you are generating verilog code.
+
+#!wig20051124 
+
 >>title: Using MIX to create register-shell RTL
 
 I have now released the scripts for the register-shell RTL generation;
