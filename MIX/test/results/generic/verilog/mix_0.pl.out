@@ -1,0 +1,99 @@
+05/11/30 08:36:24 ########################################################################
+05/11/30 08:36:24 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl ../../generic.xls
+05/11/30 08:36:24 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.98 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.71 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.16 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/11/30 08:36:24 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/generic/verilog/../../generic.xls
+05/11/30 08:36:24 Reading worksheet HIER_VERI of H:/work/eclipse/MIX/test/xls_input/generic/verilog/../../generic.xls
+05/11/30 08:36:24 Added new column header ::result
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element GENERIC_0_AB!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_6!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_10!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_8!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_7!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_9!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element GENERIC_2_6!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element GENERIC_2_7!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_1!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_5!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_4!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_2!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_3!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new port element FOO!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new port element NO_NAME!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new port element PRE_GENERIC!
+05/11/30 08:36:25 WARNING: INFO: Not all lowercase in new port element WIDTH!
+05/11/30 08:36:26 WARNING: File generic-mixed.xls already exists! Contents will be changed
+05/11/30 08:36:26 WARNING: Rotating 3 old sheets of CONF!
+05/11/30 08:36:27 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/generic/verilog/generic-mixed.xls
+05/11/30 08:36:28 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/11/30 08:36:28 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/generic/verilog/generic-mixed.xls
+05/11/30 08:36:28 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/11/30 08:36:29 Info: unchanged file inst_1_e.v
+05/11/30 08:36:29 Info: unchanged file inst_10_e.v
+05/11/30 08:36:29 Info: unchanged file inst_2_e.v
+05/11/30 08:36:29 Info: unchanged file inst_3_e.v
+05/11/30 08:36:29 Info: unchanged file inst_4_e.v
+05/11/30 08:36:29 Info: unchanged file inst_5_e.v
+05/11/30 08:36:29 Info: unchanged file inst_6_e.v
+05/11/30 08:36:30 Info: unchanged file inst_7_e.v
+05/11/30 08:36:30 Info: unchanged file inst_8_e.v
+05/11/30 08:36:30 Info: unchanged file inst_9_e.v
+05/11/30 08:36:30 Info: unchanged file inst_a_e.v
+05/11/30 08:36:30 Info: unchanged file inst_aa_e.v
+05/11/30 08:36:30 Info: unchanged file inst_ab_e.v
+05/11/30 08:36:30 Info: unchanged file inst_ac_e.v
+05/11/30 08:36:30 Info: unchanged file inst_ad_e.v
+05/11/30 08:36:30 Info: unchanged file inst_ae_e.v
+05/11/30 08:36:30 Info: unchanged file inst_e_e.v
+05/11/30 08:36:30 Info: unchanged file inst_ea_e.v
+05/11/30 08:36:31 Info: unchanged file inst_m_e.v
+05/11/30 08:36:31 Info: unchanged file inst_t_e.v
+05/11/30 08:36:31 WARNING: ============= SUMMARY =================
+05/11/30 08:36:31 WARNING: SUM: Summary of checks and created items:
+05/11/30 08:36:31 WARNING: SUM: checkforce 0
+05/11/30 08:36:31 WARNING: SUM: checkunique 0
+05/11/30 08:36:31 WARNING: SUM: checkwarn 0
+05/11/30 08:36:31 WARNING: SUM: cmacros 0
+05/11/30 08:36:31 WARNING: SUM: conn 26
+05/11/30 08:36:31 WARNING: SUM: errors 0
+05/11/30 08:36:31 WARNING: SUM: genport 0
+05/11/30 08:36:31 WARNING: SUM: hdlfiles 20
+05/11/30 08:36:31 WARNING: SUM: inst 35
+05/11/30 08:36:31 WARNING: SUM: multdriver 0
+05/11/30 08:36:31 WARNING: SUM: nodriver 0
+05/11/30 08:36:31 WARNING: SUM: noload 0
+05/11/30 08:36:31 WARNING: SUM: openports 0
+05/11/30 08:36:31 WARNING: SUM: warnings 0
+05/11/30 08:36:31 WARNING: SUM: === Number of parsed input tables: ===
+05/11/30 08:36:31 WARNING: SUM: conf 0
+05/11/30 08:36:31 WARNING: SUM: hier 1
+05/11/30 08:36:31 WARNING: SUM: conn 1
+05/11/30 08:36:31 WARNING: SUM: io 0
+05/11/30 08:36:31 WARNING: SUM: i2c 0
+05/11/30 08:36:31 WARNING: SUM: Number of changes in intermediate: 0
+05/11/30 08:36:31 WARNING: SUM: Number of changed files: 0

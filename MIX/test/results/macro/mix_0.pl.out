@@ -1,102 +1,237 @@
-05/07/15 13:54:31 
+05/11/30 09:22:45 ########################################################################
+05/11/30 09:22:46 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl ../macro.xls
+05/11/30 09:22:46 
 #######################################################################
-##### mix_0.pl (Revision: 1.36 )
+##### mix_0.pl (Revision: 1.42 )
 #####
 ##### MIX  
-#####   MixUtils    1.66 $
-#####   MixUtils::IO    1.22 $
-#####   MixParser   1.53 $
-#####   MixWriter   1.55 $
-#####   MixChecker  1.8 $
+#####   MixUtils    1.98 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.71 $
+#####   MixChecker  1.10 $
 #####   MixIOParser 1.17 $
-#####   MixI2CParser 1.13 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.16 $
 ##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
 #######################################################################
-05/07/15 13:54:31 Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/macro/../macro.xls
-05/07/15 13:54:31 Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/macro/../macro.xls
-05/07/15 13:54:31 WARNING: ERROR: Generator $i(1..10),/inst_(\w+)/ does not define run parameter $i!
-05/07/15 13:54:31 Add_port: signal macro_sign_1 adds port macro_sign_1 to instance inst_t
-05/07/15 13:54:31 Add_port: signal macro_sign_2 adds port macro_sign_2 to instance inst_t
-05/07/15 13:54:31 Add_port: signal macro_sig2_k1_k2 adds port macro_sig2_k1_k2 to instance inst_t
-05/07/15 13:54:31 Add_port: signal macro_sig2_k3_k2 adds port macro_sig2_k3_k2 to instance inst_t
-05/07/15 13:54:31 Add_port: signal macro_sig1_k1_k4 adds port macro_sig1_k1_k4 to instance inst_t
-05/07/15 13:54:31 Add_port: signal macro_sign_0 adds port macro_sign_0 to instance inst_t
-05/07/15 13:54:31 Add_port: signal macro_sig2_k3_k4 adds port macro_sig2_k3_k4 to instance inst_t
-05/07/15 13:54:31 Add_port: signal macro_sig4_k3_k4 adds port macro_sig4_k3_k4 to instance inst_t
-05/07/15 13:54:31 Add_port: signal macro_sig1_k3_k4 adds port macro_sig1_k3_k4 to instance inst_t
-05/07/15 13:54:31 Add_port: signal macro_sign_3 adds port macro_sign_3 to instance inst_t
-05/07/15 13:54:31 Add_port: signal macro_sig1_k1_k2 adds port macro_sig1_k1_k2 to instance inst_t
-05/07/15 13:54:31 Add_port: signal macro_sig2_k1_k4 adds port macro_sig2_k1_k4 to instance inst_t
-05/07/15 13:54:31 Add_port: signal macro_sig4_k3_k2 adds port macro_sig4_k3_k2 to instance inst_t
-05/07/15 13:54:31 Add_port: signal macro_sig4_k1_k2 adds port macro_sig4_k1_k2 to instance inst_t
-05/07/15 13:54:31 Add_port: signal macro_sig4_k1_k4 adds port macro_sig4_k1_k4 to instance inst_t
-05/07/15 13:54:31 Add_port: signal macro_sig1_k3_k2 adds port macro_sig1_k3_k2 to instance inst_t
-05/07/15 13:54:31 Autoreducing port type for signal macro_sigc to std_ulogic
-05/07/15 13:54:31 Autoreducing port type for signal macro_sigc to std_ulogic
-05/07/15 13:54:31 Autoreducing port type for signal macro_sigc to std_ulogic
-05/07/15 13:54:31 Autoreducing port type for signal macro_sigc to std_ulogic
-05/07/15 13:54:31 WARNING: File macro-mixed.xls already exists! Contents will be changed
-05/07/15 13:54:32 WARNING: Rotating 3 old sheets of CONF!
-05/07/15 13:54:32 WARNING: Rotating 3 old sheets of CONN!
-05/07/15 13:54:32 WARNING: Rotating 3 old sheets of HIER!
-05/07/15 13:54:33 Port port_mac of entity inst_k1_k2_e one bit wide, reduce to signal
-
-05/07/15 13:54:33 Port port_mac of entity inst_k1_k4_e one bit wide, reduce to signal
-
-05/07/15 13:54:33 Port port_mac of entity inst_k3_k2_e one bit wide, reduce to signal
-
-05/07/15 13:54:33 Port port_mac of entity inst_k3_k4_e one bit wide, reduce to signal
-
-05/07/15 13:54:35 Warning: Signal gensig_2 does not have a driver in instance inst_a!
-05/07/15 13:54:35 Warning: Signal gensig_1 does not have a driver in instance inst_a!
-05/07/15 13:54:35 Signal gensig_10 does not have a load in instance inst_a!
-05/07/15 13:54:35 Signal gensig_8 does not have a load in instance inst_a!
-05/07/15 13:54:35 Warning: Signal gensig_5 does not have a driver in instance inst_a!
-05/07/15 13:54:35 Warning: Signal gensig_4 does not have a driver in instance inst_a!
-05/07/15 13:54:35 Signal macro_sigc does not have a load in instance inst_a!
-05/07/15 13:54:35 Warning: Signal gensig_3 does not have a driver in instance inst_a!
-05/07/15 13:54:35 Signal gensig_6 does not have a load in instance inst_a!
-05/07/15 13:54:35 Signal gensig_7 does not have a load in instance inst_a!
-05/07/15 13:54:35 Signal gensig_9 does not have a load in instance inst_a!
-05/07/15 13:54:35 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
-05/07/15 13:54:35 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
-05/07/15 13:54:36 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
-05/07/15 13:54:36 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
-05/07/15 13:54:36 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
-05/07/15 13:54:36 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
-05/07/15 13:54:36 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
-05/07/15 13:54:36 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
-05/07/15 13:54:36 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
-05/07/15 13:54:36 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
-05/07/15 13:54:38 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
-05/07/15 13:54:38 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
-05/07/15 13:54:38 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
-05/07/15 13:54:39 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
-05/07/15 13:54:39 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
-05/07/15 13:54:39 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
-05/07/15 13:54:39 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
-05/07/15 13:54:39 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
-05/07/15 13:54:39 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
-05/07/15 13:54:39 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
-05/07/15 13:54:41 WARNING: ============= SUMMARY =================
-05/07/15 13:54:41 WARNING: SUM: Summary of checks and created items:
-05/07/15 13:54:41 WARNING: SUM: checkforce 0
-05/07/15 13:54:41 WARNING: SUM: checkunique 0
-05/07/15 13:54:41 WARNING: SUM: checkwarn 0
-05/07/15 13:54:41 WARNING: SUM: cmacros 4
-05/07/15 13:54:41 WARNING: SUM: conn 27
-05/07/15 13:54:41 WARNING: SUM: errors 1
-05/07/15 13:54:41 WARNING: SUM: genport 16
-05/07/15 13:54:41 WARNING: SUM: hdlfiles 132
-05/07/15 13:54:41 WARNING: SUM: inst 50
-05/07/15 13:54:41 WARNING: SUM: multdriver 1
-05/07/15 13:54:41 WARNING: SUM: nodriver 5
-05/07/15 13:54:41 WARNING: SUM: noload 6
-05/07/15 13:54:41 WARNING: SUM: openports 0
-05/07/15 13:54:41 WARNING: SUM: warnings 0
-05/07/15 13:54:41 WARNING: SUM: === Number of parsed input tables: ===
-05/07/15 13:54:41 WARNING: SUM: conf 0
-05/07/15 13:54:41 WARNING: SUM: hier 1
-05/07/15 13:54:41 WARNING: SUM: conn 1
-05/07/15 13:54:41 WARNING: SUM: io 0
-05/07/15 13:54:41 WARNING: SUM: i2c 0
+05/11/30 09:22:46 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/macro/../macro.xls
+05/11/30 09:22:46 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/macro/../macro.xls
+05/11/30 09:22:46 WARNING: ERROR: Generator $i(1..10),/inst_(\w+)/ does not define run parameter $i!
+05/11/30 09:22:46 Add_port: signal macro_sign_1 adds port macro_sign_1 to instance inst_t
+05/11/30 09:22:46 Add_port: signal macro_sign_2 adds port macro_sign_2 to instance inst_t
+05/11/30 09:22:46 Add_port: signal macro_sig2_k1_k2 adds port macro_sig2_k1_k2 to instance inst_t
+05/11/30 09:22:46 Add_port: signal macro_sig2_k3_k2 adds port macro_sig2_k3_k2 to instance inst_t
+05/11/30 09:22:46 Add_port: signal macro_sig1_k1_k4 adds port macro_sig1_k1_k4 to instance inst_t
+05/11/30 09:22:46 Add_port: signal macro_sign_0 adds port macro_sign_0 to instance inst_t
+05/11/30 09:22:46 Add_port: signal macro_sig2_k3_k4 adds port macro_sig2_k3_k4 to instance inst_t
+05/11/30 09:22:46 Add_port: signal macro_sig4_k3_k4 adds port macro_sig4_k3_k4 to instance inst_t
+05/11/30 09:22:46 Add_port: signal macro_sig1_k3_k4 adds port macro_sig1_k3_k4 to instance inst_t
+05/11/30 09:22:46 Add_port: signal macro_sign_3 adds port macro_sign_3 to instance inst_t
+05/11/30 09:22:47 Add_port: signal macro_sig1_k1_k2 adds port macro_sig1_k1_k2 to instance inst_t
+05/11/30 09:22:47 Add_port: signal macro_sig2_k1_k4 adds port macro_sig2_k1_k4 to instance inst_t
+05/11/30 09:22:47 Add_port: signal macro_sig4_k3_k2 adds port macro_sig4_k3_k2 to instance inst_t
+05/11/30 09:22:47 Add_port: signal macro_sig4_k1_k2 adds port macro_sig4_k1_k2 to instance inst_t
+05/11/30 09:22:47 Add_port: signal macro_sig4_k1_k4 adds port macro_sig4_k1_k4 to instance inst_t
+05/11/30 09:22:47 Add_port: signal macro_sig1_k3_k2 adds port macro_sig1_k3_k2 to instance inst_t
+05/11/30 09:22:47 Autoreducing port type for signal macro_sigc to std_ulogic
+05/11/30 09:22:47 Autoreducing port type for signal macro_sigc to std_ulogic
+05/11/30 09:22:47 Autoreducing port type for signal macro_sigc to std_ulogic
+05/11/30 09:22:47 Autoreducing port type for signal macro_sigc to std_ulogic
+05/11/30 09:22:48 WARNING: File macro-mixed.xls already exists! Contents will be changed
+05/11/30 09:22:48 WARNING: Rotating 3 old sheets of CONF!
+05/11/30 09:22:50 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/macro/macro-mixed.xls
+05/11/30 09:22:50 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/11/30 09:22:52 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/macro/macro-mixed.xls
+05/11/30 09:22:52 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/11/30 09:22:53 Info: unchanged file inst_10_e-e.vhd
+05/11/30 09:22:53 Info: unchanged file inst_1_e-e.vhd
+05/11/30 09:22:53 Info: unchanged file inst_2_e-e.vhd
+05/11/30 09:22:53 Info: unchanged file inst_3_e-e.vhd
+05/11/30 09:22:53 Info: unchanged file inst_4_e-e.vhd
+05/11/30 09:22:53 Info: unchanged file inst_5_e-e.vhd
+05/11/30 09:22:53 Info: unchanged file inst_6_e-e.vhd
+05/11/30 09:22:54 Info: unchanged file inst_7_e-e.vhd
+05/11/30 09:22:54 Info: unchanged file inst_8_e-e.vhd
+05/11/30 09:22:54 Info: unchanged file inst_9_e-e.vhd
+05/11/30 09:22:54 WARNING: Info: Cannot run delta mode vs. inst_a_e-e.vhd. Will create like normal
+05/11/30 09:22:54 WARNING: Info: Cannot run delta mode vs. inst_b_e-e.vhd. Will create like normal
+05/11/30 09:22:54 WARNING: Info: Cannot run delta mode vs. inst_k1_k2_e-e.vhd. Will create like normal
+05/11/30 09:22:54 Port port_mac of entity inst_k1_k2_e one bit wide, reduce to signal
+05/11/30 09:22:54 WARNING: Info: Cannot run delta mode vs. inst_k1_k4_e-e.vhd. Will create like normal
+05/11/30 09:22:55 Port port_mac of entity inst_k1_k4_e one bit wide, reduce to signal
+05/11/30 09:22:55 WARNING: Info: Cannot run delta mode vs. inst_k3_k2_e-e.vhd. Will create like normal
+05/11/30 09:22:55 Port port_mac of entity inst_k3_k2_e one bit wide, reduce to signal
+05/11/30 09:22:55 WARNING: Info: Cannot run delta mode vs. inst_k3_k4_e-e.vhd. Will create like normal
+05/11/30 09:22:55 Port port_mac of entity inst_k3_k4_e one bit wide, reduce to signal
+05/11/30 09:22:55 Info: unchanged file inst_ok_10_e-e.vhd
+05/11/30 09:22:55 Info: unchanged file inst_ok_1_e-e.vhd
+05/11/30 09:22:55 Info: unchanged file inst_ok_2_e-e.vhd
+05/11/30 09:22:56 Info: unchanged file inst_ok_3_e-e.vhd
+05/11/30 09:22:56 Info: unchanged file inst_ok_4_e-e.vhd
+05/11/30 09:22:56 Info: unchanged file inst_ok_5_e-e.vhd
+05/11/30 09:22:56 Info: unchanged file inst_ok_6_e-e.vhd
+05/11/30 09:22:56 Info: unchanged file inst_ok_7_e-e.vhd
+05/11/30 09:22:56 Info: unchanged file inst_ok_8_e-e.vhd
+05/11/30 09:22:56 Info: unchanged file inst_ok_9_e-e.vhd
+05/11/30 09:22:56 Info: unchanged file inst_shadow_10_e-e.vhd
+05/11/30 09:22:57 Info: unchanged file inst_shadow_1_e-e.vhd
+05/11/30 09:22:57 Info: unchanged file inst_shadow_2_e-e.vhd
+05/11/30 09:22:57 Info: unchanged file inst_shadow_3_e-e.vhd
+05/11/30 09:22:57 Info: unchanged file inst_shadow_4_e-e.vhd
+05/11/30 09:22:57 Info: unchanged file inst_shadow_5_e-e.vhd
+05/11/30 09:22:57 Info: unchanged file inst_shadow_6_e-e.vhd
+05/11/30 09:22:57 Info: unchanged file inst_shadow_7_e-e.vhd
+05/11/30 09:22:58 Info: unchanged file inst_shadow_8_e-e.vhd
+05/11/30 09:22:59 Info: unchanged file inst_shadow_9_e-e.vhd
+05/11/30 09:22:59 Info: unchanged file inst_shadow_a_e-e.vhd
+05/11/30 09:22:59 Info: unchanged file inst_shadow_b_e-e.vhd
+05/11/30 09:22:59 Info: unchanged file inst_shadow_k1_k2_e-e.vhd
+05/11/30 09:22:59 Info: unchanged file inst_shadow_k1_k4_e-e.vhd
+05/11/30 09:22:59 Info: unchanged file inst_shadow_k3_k2_e-e.vhd
+05/11/30 09:22:59 Info: unchanged file inst_shadow_k3_k4_e-e.vhd
+05/11/30 09:23:00 Info: unchanged file inst_shadow_t_e-e.vhd
+05/11/30 09:23:00 Info: unchanged file inst_t_e-e.vhd
+05/11/30 09:23:00 Info: unchanged file inst_1_e-rtl-a.vhd
+05/11/30 09:23:00 Info: unchanged file inst_10_e-rtl-a.vhd
+05/11/30 09:23:00 Info: unchanged file inst_2_e-rtl-a.vhd
+05/11/30 09:23:00 Info: unchanged file inst_3_e-rtl-a.vhd
+05/11/30 09:23:01 Info: unchanged file inst_4_e-rtl-a.vhd
+05/11/30 09:23:01 Info: unchanged file inst_5_e-rtl-a.vhd
+05/11/30 09:23:01 Info: unchanged file inst_6_e-rtl-a.vhd
+05/11/30 09:23:01 Info: unchanged file inst_7_e-rtl-a.vhd
+05/11/30 09:23:01 Info: unchanged file inst_8_e-rtl-a.vhd
+05/11/30 09:23:01 Info: unchanged file inst_9_e-rtl-a.vhd
+05/11/30 09:23:01 Warning: Signal gensig_2 does not have a driver in instance inst_a!
+05/11/30 09:23:01 Warning: Signal gensig_1 does not have a driver in instance inst_a!
+05/11/30 09:23:01 Signal gensig_10 does not have a load in instance inst_a!
+05/11/30 09:23:01 Signal gensig_8 does not have a load in instance inst_a!
+05/11/30 09:23:01 Warning: Signal gensig_5 does not have a driver in instance inst_a!
+05/11/30 09:23:02 Warning: Signal gensig_4 does not have a driver in instance inst_a!
+05/11/30 09:23:02 Signal macro_sigc does not have a load in instance inst_a!
+05/11/30 09:23:02 Warning: Signal gensig_3 does not have a driver in instance inst_a!
+05/11/30 09:23:02 Signal gensig_6 does not have a load in instance inst_a!
+05/11/30 09:23:02 Signal gensig_7 does not have a load in instance inst_a!
+05/11/30 09:23:02 Signal gensig_9 does not have a load in instance inst_a!
+05/11/30 09:23:02 WARNING: Info: Cannot run delta mode vs. inst_a_e-rtl-a.vhd. Will create like normal
+05/11/30 09:23:02 Info: unchanged file inst_b_e-rtl-a.vhd
+05/11/30 09:23:02 Info: unchanged file inst_k1_k2_e-rtl-a.vhd
+05/11/30 09:23:02 Info: unchanged file inst_k1_k4_e-rtl-a.vhd
+05/11/30 09:23:03 Info: unchanged file inst_k3_k2_e-rtl-a.vhd
+05/11/30 09:23:03 Info: unchanged file inst_k3_k4_e-rtl-a.vhd
+05/11/30 09:23:03 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/11/30 09:23:03 Info: unchanged file inst_ok_1_e-rtl-a.vhd
+05/11/30 09:23:03 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/11/30 09:23:03 Info: unchanged file inst_ok_10_e-rtl-a.vhd
+05/11/30 09:23:03 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/11/30 09:23:03 Info: unchanged file inst_ok_2_e-rtl-a.vhd
+05/11/30 09:23:03 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/11/30 09:23:03 Info: unchanged file inst_ok_3_e-rtl-a.vhd
+05/11/30 09:23:03 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/11/30 09:23:03 Info: unchanged file inst_ok_4_e-rtl-a.vhd
+05/11/30 09:23:03 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/11/30 09:23:04 Info: unchanged file inst_ok_5_e-rtl-a.vhd
+05/11/30 09:23:04 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/11/30 09:23:04 Info: unchanged file inst_ok_6_e-rtl-a.vhd
+05/11/30 09:23:04 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/11/30 09:23:04 Info: unchanged file inst_ok_7_e-rtl-a.vhd
+05/11/30 09:23:04 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/11/30 09:23:04 Info: unchanged file inst_ok_8_e-rtl-a.vhd
+05/11/30 09:23:04 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/11/30 09:23:04 Info: unchanged file inst_ok_9_e-rtl-a.vhd
+05/11/30 09:23:05 Info: unchanged file inst_shadow_1_e-rtl-a.vhd
+05/11/30 09:23:05 Info: unchanged file inst_shadow_10_e-rtl-a.vhd
+05/11/30 09:23:05 Info: unchanged file inst_shadow_2_e-rtl-a.vhd
+05/11/30 09:23:05 Info: unchanged file inst_shadow_3_e-rtl-a.vhd
+05/11/30 09:23:05 Info: unchanged file inst_shadow_4_e-rtl-a.vhd
+05/11/30 09:23:05 Info: unchanged file inst_shadow_5_e-rtl-a.vhd
+05/11/30 09:23:05 Info: unchanged file inst_shadow_6_e-rtl-a.vhd
+05/11/30 09:23:06 Info: unchanged file inst_shadow_7_e-rtl-a.vhd
+05/11/30 09:23:06 Info: unchanged file inst_shadow_8_e-rtl-a.vhd
+05/11/30 09:23:06 Info: unchanged file inst_shadow_9_e-rtl-a.vhd
+05/11/30 09:23:06 Info: unchanged file inst_shadow_a_e-rtl-a.vhd
+05/11/30 09:23:06 Info: unchanged file inst_shadow_b_e-rtl-a.vhd
+05/11/30 09:23:06 Info: unchanged file inst_shadow_k1_k2_e-rtl-a.vhd
+05/11/30 09:23:07 Info: unchanged file inst_shadow_k1_k4_e-rtl-a.vhd
+05/11/30 09:23:07 Info: unchanged file inst_shadow_k3_k2_e-rtl-a.vhd
+05/11/30 09:23:07 Info: unchanged file inst_shadow_k3_k4_e-rtl-a.vhd
+05/11/30 09:23:07 Info: unchanged file inst_shadow_t_e-rtl-a.vhd
+05/11/30 09:23:07 WARNING: Info: Cannot run delta mode vs. inst_t_e-rtl-a.vhd. Will create like normal
+05/11/30 09:23:09 Info: unchanged file inst_1_e-rtl-conf-c.vhd
+05/11/30 09:23:09 Info: unchanged file inst_10_e-rtl-conf-c.vhd
+05/11/30 09:23:09 Info: unchanged file inst_2_e-rtl-conf-c.vhd
+05/11/30 09:23:09 Info: unchanged file inst_3_e-rtl-conf-c.vhd
+05/11/30 09:23:09 Info: unchanged file inst_4_e-rtl-conf-c.vhd
+05/11/30 09:23:09 Info: unchanged file inst_5_e-rtl-conf-c.vhd
+05/11/30 09:23:09 Info: unchanged file inst_6_e-rtl-conf-c.vhd
+05/11/30 09:23:09 Info: unchanged file inst_7_e-rtl-conf-c.vhd
+05/11/30 09:23:10 Info: unchanged file inst_8_e-rtl-conf-c.vhd
+05/11/30 09:23:10 Info: unchanged file inst_9_e-rtl-conf-c.vhd
+05/11/30 09:23:10 Info: unchanged file inst_a_e-rtl-conf-c.vhd
+05/11/30 09:23:10 Info: unchanged file inst_b_e-rtl-conf-c.vhd
+05/11/30 09:23:10 Info: unchanged file inst_k1_k2_e-c.vhd
+05/11/30 09:23:10 Info: unchanged file inst_k1_k4_e-c.vhd
+05/11/30 09:23:11 Info: unchanged file inst_k3_k2_e-c.vhd
+05/11/30 09:23:11 Info: unchanged file inst_k3_k4_e-c.vhd
+05/11/30 09:23:11 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/11/30 09:23:11 Info: unchanged file inst_ok_1_e-c.vhd
+05/11/30 09:23:11 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/11/30 09:23:11 Info: unchanged file inst_ok_10_e-c.vhd
+05/11/30 09:23:11 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/11/30 09:23:11 Info: unchanged file inst_ok_2_e-c.vhd
+05/11/30 09:23:11 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/11/30 09:23:11 Info: unchanged file inst_ok_3_e-c.vhd
+05/11/30 09:23:11 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/11/30 09:23:12 Info: unchanged file inst_ok_4_e-c.vhd
+05/11/30 09:23:12 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/11/30 09:23:12 Info: unchanged file inst_ok_5_e-c.vhd
+05/11/30 09:23:12 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/11/30 09:23:12 Info: unchanged file inst_ok_6_e-c.vhd
+05/11/30 09:23:12 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/11/30 09:23:12 Info: unchanged file inst_ok_7_e-c.vhd
+05/11/30 09:23:12 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/11/30 09:23:12 Info: unchanged file inst_ok_8_e-c.vhd
+05/11/30 09:23:12 WARNING: WARNING: Illegal language mixed selected. Autoswitch to vhdl!
+05/11/30 09:23:13 Info: unchanged file inst_ok_9_e-c.vhd
+05/11/30 09:23:13 Info: unchanged file inst_shadow_1_e-c.vhd
+05/11/30 09:23:13 Info: unchanged file inst_shadow_10_e-c.vhd
+05/11/30 09:23:13 Info: unchanged file inst_shadow_2_e-c.vhd
+05/11/30 09:23:13 Info: unchanged file inst_shadow_3_e-c.vhd
+05/11/30 09:23:13 Info: unchanged file inst_shadow_4_e-c.vhd
+05/11/30 09:23:14 Info: unchanged file inst_shadow_5_e-c.vhd
+05/11/30 09:23:14 Info: unchanged file inst_shadow_6_e-c.vhd
+05/11/30 09:23:14 Info: unchanged file inst_shadow_7_e-c.vhd
+05/11/30 09:23:14 Info: unchanged file inst_shadow_8_e-c.vhd
+05/11/30 09:23:14 Info: unchanged file inst_shadow_9_e-c.vhd
+05/11/30 09:23:14 Info: unchanged file inst_shadow_a_e-c.vhd
+05/11/30 09:23:14 Info: unchanged file inst_shadow_b_e-c.vhd
+05/11/30 09:23:14 Info: unchanged file inst_shadow_k1_k2_e-c.vhd
+05/11/30 09:23:15 Info: unchanged file inst_shadow_k1_k4_e-c.vhd
+05/11/30 09:23:15 Info: unchanged file inst_shadow_k3_k2_e-c.vhd
+05/11/30 09:23:15 Info: unchanged file inst_shadow_k3_k4_e-c.vhd
+05/11/30 09:23:15 Info: unchanged file inst_shadow_t_e-c.vhd
+05/11/30 09:23:15 Info: unchanged file inst_t_e-rtl-conf-c.vhd
+05/11/30 09:23:15 WARNING: ============= SUMMARY =================
+05/11/30 09:23:15 WARNING: SUM: Summary of checks and created items:
+05/11/30 09:23:15 WARNING: SUM: checkforce 0
+05/11/30 09:23:15 WARNING: SUM: checkunique 0
+05/11/30 09:23:15 WARNING: SUM: checkwarn 0
+05/11/30 09:23:15 WARNING: SUM: cmacros 4
+05/11/30 09:23:15 WARNING: SUM: conn 27
+05/11/30 09:23:15 WARNING: SUM: errors 1
+05/11/30 09:23:15 WARNING: SUM: genport 16
+05/11/30 09:23:15 WARNING: SUM: hdlfiles 132
+05/11/30 09:23:15 WARNING: SUM: inst 50
+05/11/30 09:23:15 WARNING: SUM: multdriver 1
+05/11/30 09:23:15 WARNING: SUM: nodriver 5
+05/11/30 09:23:15 WARNING: SUM: noload 6
+05/11/30 09:23:15 WARNING: SUM: openports 0
+05/11/30 09:23:15 WARNING: SUM: warnings 20
+05/11/30 09:23:15 WARNING: SUM: === Number of parsed input tables: ===
+05/11/30 09:23:15 WARNING: SUM: conf 0
+05/11/30 09:23:15 WARNING: SUM: hier 1
+05/11/30 09:23:15 WARNING: SUM: conn 1
+05/11/30 09:23:15 WARNING: SUM: io 0
+05/11/30 09:23:15 WARNING: SUM: i2c 0
+05/11/30 09:23:15 WARNING: SUM: Number of changes in intermediate: 0
+05/11/30 09:23:15 WARNING: SUM: Number of changed files: 0

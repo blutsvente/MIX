@@ -1,0 +1,114 @@
+05/11/29 17:08:34 ########################################################################
+05/11/29 17:08:34 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl ../../highlow.xls
+05/11/29 17:08:34 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.98 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.71 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.14 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/11/29 17:08:35 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/highlow/verilog/../../highlow.xls
+05/11/29 17:08:35 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/highlow/verilog/../../highlow.xls
+05/11/29 17:08:35 WARNING: Empty header in column 14, sheet-type conn, skipping!
+05/11/29 17:08:35 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/11/29 17:08:35 WARNING: Automatically wiring signal bits 3 to 2 of inst_ab/port_part_zero_u to bits 1 to 0
+05/11/29 17:08:37 WARNING: File highlow-mixed.xls already exists! Contents will be changed
+05/11/29 17:08:37 WARNING: Rotating 3 old sheets of CONF!
+05/11/29 17:08:39 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/highlow/verilog/highlow-mixed.xls
+05/11/29 17:08:39 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/11/29 17:08:40 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/highlow/verilog/highlow-mixed.xls
+05/11/29 17:08:40 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/11/29 17:08:41 WARNING: Info: file ent_a.v has changes!
+05/11/29 17:08:41 WARNING: Info: file ent_b.v has changes!
+05/11/29 17:08:41 WARNING: Info: file ent_t.v has changes!
+05/11/29 17:08:41 Info: unchanged file highlow-c.vhd
+05/11/29 17:08:41 WARNING: ============= SUMMARY =================
+05/11/29 17:08:41 WARNING: SUM: Summary of checks and created items:
+05/11/29 17:08:41 WARNING: SUM: checkforce 0
+05/11/29 17:08:41 WARNING: SUM: checkunique 0
+05/11/29 17:08:41 WARNING: SUM: checkwarn 0
+05/11/29 17:08:41 WARNING: SUM: cmacros 0
+05/11/29 17:08:41 WARNING: SUM: conn 5
+05/11/29 17:08:41 WARNING: SUM: errors 0
+05/11/29 17:08:41 WARNING: SUM: genport 0
+05/11/29 17:08:41 WARNING: SUM: hdlfiles 4
+05/11/29 17:08:41 WARNING: SUM: inst 16
+05/11/29 17:08:41 WARNING: SUM: multdriver 0
+05/11/29 17:08:41 WARNING: SUM: nodriver 0
+05/11/29 17:08:41 WARNING: SUM: noload 0
+05/11/29 17:08:41 WARNING: SUM: openports 0
+05/11/29 17:08:41 WARNING: SUM: tie_hl 4
+05/11/29 17:08:41 WARNING: SUM: warnings 0
+05/11/29 17:08:41 WARNING: SUM: === Number of parsed input tables: ===
+05/11/29 17:08:41 WARNING: SUM: conf 0
+05/11/29 17:08:41 WARNING: SUM: hier 1
+05/11/29 17:08:41 WARNING: SUM: conn 1
+05/11/29 17:08:41 WARNING: SUM: io 0
+05/11/29 17:08:41 WARNING: SUM: i2c 0
+05/11/29 17:08:41 WARNING: SUM: Number of changes in intermediate: 0
+05/11/29 17:08:41 WARNING: SUM: Number of changed files: 3
+05/11/29 17:11:06 ########################################################################
+05/11/29 17:11:06 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl ../../highlow.xls
+05/11/29 17:11:06 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.98 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.71 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.14 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/11/29 17:11:06 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/highlow/verilog/../../highlow.xls
+05/11/29 17:11:06 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/highlow/verilog/../../highlow.xls
+05/11/29 17:11:06 WARNING: Empty header in column 14, sheet-type conn, skipping!
+05/11/29 17:11:07 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/11/29 17:11:07 WARNING: Automatically wiring signal bits 3 to 2 of inst_ab/port_part_zero_u to bits 1 to 0
+05/11/29 17:11:09 WARNING: File highlow-mixed.xls already exists! Contents will be changed
+05/11/29 17:11:09 WARNING: Rotating 3 old sheets of CONF!
+05/11/29 17:11:11 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/highlow/verilog/highlow-mixed.xls
+05/11/29 17:11:11 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/11/29 17:11:12 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/highlow/verilog/highlow-mixed.xls
+05/11/29 17:11:12 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/11/29 17:11:12 WARNING: Info: Cannot run delta mode vs. ent_a.v. Will create like normal
+05/11/29 17:11:12 WARNING: Info: Cannot run delta mode vs. ent_b.v. Will create like normal
+05/11/29 17:11:12 WARNING: Info: Cannot run delta mode vs. ent_t.v. Will create like normal
+05/11/29 17:11:12 Info: unchanged file highlow-c.vhd
+05/11/29 17:11:12 WARNING: ============= SUMMARY =================
+05/11/29 17:11:12 WARNING: SUM: Summary of checks and created items:
+05/11/29 17:11:12 WARNING: SUM: checkforce 0
+05/11/29 17:11:12 WARNING: SUM: checkunique 0
+05/11/29 17:11:12 WARNING: SUM: checkwarn 0
+05/11/29 17:11:12 WARNING: SUM: cmacros 0
+05/11/29 17:11:12 WARNING: SUM: conn 5
+05/11/29 17:11:12 WARNING: SUM: errors 0
+05/11/29 17:11:12 WARNING: SUM: genport 0
+05/11/29 17:11:12 WARNING: SUM: hdlfiles 4
+05/11/29 17:11:12 WARNING: SUM: inst 16
+05/11/29 17:11:12 WARNING: SUM: multdriver 0
+05/11/29 17:11:12 WARNING: SUM: nodriver 0
+05/11/29 17:11:12 WARNING: SUM: noload 0
+05/11/29 17:11:12 WARNING: SUM: openports 0
+05/11/29 17:11:12 WARNING: SUM: tie_hl 4
+05/11/29 17:11:12 WARNING: SUM: warnings 0
+05/11/29 17:11:12 WARNING: SUM: === Number of parsed input tables: ===
+05/11/29 17:11:12 WARNING: SUM: conf 0
+05/11/29 17:11:12 WARNING: SUM: hier 1
+05/11/29 17:11:12 WARNING: SUM: conn 1
+05/11/29 17:11:12 WARNING: SUM: io 0
+05/11/29 17:11:12 WARNING: SUM: i2c 0
+05/11/29 17:11:12 WARNING: SUM: Number of changes in intermediate: 0
+05/11/29 17:11:12 WARNING: SUM: Number of changed files: 0

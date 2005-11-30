@@ -1,0 +1,75 @@
+05/11/30 08:56:02 ########################################################################
+05/11/30 08:56:02 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl ../nreset2.xls
+05/11/30 08:56:02 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.98 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.71 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.16 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/11/30 08:56:02 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/nreset2/../nreset2.xls
+05/11/30 08:56:02 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/nreset2/../nreset2.xls
+05/11/30 08:56:02 WARNING: Empty header in column 10, sheet-type hier, skipping!
+05/11/30 08:56:03 Add_port: signal nreset adds port nreset to instance mdec_core_i1
+05/11/30 08:56:03 WARNING: WARNING: Signal nreset has mixed links into instance cgu_i1!
+05/11/30 08:56:04 WARNING: File nreset2-mixed.xls already exists! Contents will be changed
+05/11/30 08:56:04 WARNING: Rotating 3 old sheets of CONF!
+05/11/30 08:56:06 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/nreset2/nreset2-mixed.xls
+05/11/30 08:56:06 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/11/30 08:56:06 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/nreset2/nreset2-mixed.xls
+05/11/30 08:56:06 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/11/30 08:56:07 WARNING: Info: Cannot run delta mode vs. ga-e.vhd. Will create like normal
+05/11/30 08:56:07 Info: unchanged file mdec_core-e.vhd
+05/11/30 08:56:07 WARNING: Info: Cannot run delta mode vs. vip-e.vhd. Will create like normal
+05/11/30 08:56:07 WARNING: Info: Cannot run delta mode vs. vo-e.vhd. Will create like normal
+05/11/30 08:56:07 WARNING: Info: Cannot run delta mode vs. vor-e.vhd. Will create like normal
+05/11/30 08:56:07 WARNING: Info: Cannot run delta mode vs. aou.v. Will create like normal
+05/11/30 08:56:07 WARNING: Info: Cannot run delta mode vs. cgu.v. Will create like normal
+05/11/30 08:56:08 WARNING: Info: Cannot run delta mode vs. cpu.v. Will create like normal
+05/11/30 08:56:08 WARNING: Info: Cannot run delta mode vs. ema.v. Will create like normal
+05/11/30 08:56:08 Info: unchanged file ga-rtl-a.vhd
+05/11/30 08:56:08 WARNING: Info: Cannot run delta mode vs. i58_io_logic.v. Will create like normal
+05/11/30 08:56:08 WARNING: Info: Cannot run delta mode vs. ifu_top.v. Will create like normal
+05/11/30 08:56:08 WARNING: Info: Cannot run delta mode vs. mdec_core-rtl-a.vhd. Will create like normal
+05/11/30 08:56:08 WARNING: Info: Cannot run delta mode vs. pdu.v. Will create like normal
+05/11/30 08:56:08 WARNING: Info: Cannot run delta mode vs. tsd_top.v. Will create like normal
+05/11/30 08:56:08 Info: unchanged file vip-rtl-a.vhd
+05/11/30 08:56:09 Info: unchanged file vo-rtl-a.vhd
+05/11/30 08:56:09 Info: unchanged file vor-rtl-a.vhd
+05/11/30 08:56:09 Info: unchanged file ga-rtl-conf-c.vhd
+05/11/30 08:56:09 Info: unchanged file mdec_core-rtl-conf-c.vhd
+05/11/30 08:56:09 Info: unchanged file vip-rtl-c0-c.vhd
+05/11/30 08:56:09 Info: unchanged file vo-rtl-conf-c.vhd
+05/11/30 08:56:09 Info: unchanged file vor-rtl-conf-c.vhd
+05/11/30 08:56:09 WARNING: ============= SUMMARY =================
+05/11/30 08:56:09 WARNING: SUM: Summary of checks and created items:
+05/11/30 08:56:09 WARNING: SUM: checkforce 0
+05/11/30 08:56:09 WARNING: SUM: checkunique 0
+05/11/30 08:56:09 WARNING: SUM: checkwarn 0
+05/11/30 08:56:09 WARNING: SUM: cmacros 0
+05/11/30 08:56:09 WARNING: SUM: conn 1
+05/11/30 08:56:09 WARNING: SUM: errors 0
+05/11/30 08:56:09 WARNING: SUM: genport 1
+05/11/30 08:56:09 WARNING: SUM: hdlfiles 23
+05/11/30 08:56:09 WARNING: SUM: inst 19
+05/11/30 08:56:09 WARNING: SUM: multdriver 0
+05/11/30 08:56:09 WARNING: SUM: nodriver 0
+05/11/30 08:56:09 WARNING: SUM: noload 0
+05/11/30 08:56:09 WARNING: SUM: openports 0
+05/11/30 08:56:09 WARNING: SUM: warnings 1
+05/11/30 08:56:09 WARNING: SUM: === Number of parsed input tables: ===
+05/11/30 08:56:09 WARNING: SUM: conf 0
+05/11/30 08:56:09 WARNING: SUM: hier 1
+05/11/30 08:56:09 WARNING: SUM: conn 1
+05/11/30 08:56:09 WARNING: SUM: io 0
+05/11/30 08:56:09 WARNING: SUM: i2c 0
+05/11/30 08:56:09 WARNING: SUM: Number of changes in intermediate: 0
+05/11/30 08:56:09 WARNING: SUM: Number of changed files: 0

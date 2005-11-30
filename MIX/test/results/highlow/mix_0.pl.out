@@ -1,0 +1,60 @@
+05/11/29 17:03:56 ########################################################################
+05/11/29 17:03:56 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl ../highlow.xls
+05/11/29 17:03:56 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.98 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.71 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.14 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/11/29 17:03:57 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/highlow/../highlow.xls
+05/11/29 17:03:57 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/highlow/../highlow.xls
+05/11/29 17:03:57 WARNING: Empty header in column 14, sheet-type conn, skipping!
+05/11/29 17:03:57 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/11/29 17:03:58 WARNING: Automatically wiring signal bits 3 to 2 of inst_ab/port_part_zero_u to bits 1 to 0
+05/11/29 17:03:59 WARNING: File highlow-mixed.xls already exists! Contents will be changed
+05/11/29 17:04:00 WARNING: Rotating 3 old sheets of CONF!
+05/11/29 17:04:02 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/highlow/highlow-mixed.xls
+05/11/29 17:04:03 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/11/29 17:04:04 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/highlow/highlow-mixed.xls
+05/11/29 17:04:04 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/11/29 17:04:04 Info: unchanged file ent_a-e.vhd
+05/11/29 17:04:04 Info: unchanged file ent_b-e.vhd
+05/11/29 17:04:04 Info: unchanged file ent_t-e.vhd
+05/11/29 17:04:05 Info: unchanged file ent_a-rtl-a.vhd
+05/11/29 17:04:05 Info: unchanged file ent_b-rtl-a.vhd
+05/11/29 17:04:05 Info: unchanged file ent_t-rtl-a.vhd
+05/11/29 17:04:05 Info: unchanged file highlow-c.vhd
+05/11/29 17:04:05 WARNING: ============= SUMMARY =================
+05/11/29 17:04:05 WARNING: SUM: Summary of checks and created items:
+05/11/29 17:04:05 WARNING: SUM: checkforce 0
+05/11/29 17:04:05 WARNING: SUM: checkunique 0
+05/11/29 17:04:05 WARNING: SUM: checkwarn 0
+05/11/29 17:04:05 WARNING: SUM: cmacros 0
+05/11/29 17:04:05 WARNING: SUM: conn 5
+05/11/29 17:04:05 WARNING: SUM: errors 0
+05/11/29 17:04:05 WARNING: SUM: genport 0
+05/11/29 17:04:05 WARNING: SUM: hdlfiles 7
+05/11/29 17:04:05 WARNING: SUM: inst 16
+05/11/29 17:04:05 WARNING: SUM: multdriver 0
+05/11/29 17:04:05 WARNING: SUM: nodriver 0
+05/11/29 17:04:05 WARNING: SUM: noload 0
+05/11/29 17:04:05 WARNING: SUM: openports 0
+05/11/29 17:04:05 WARNING: SUM: tie_hl 4
+05/11/29 17:04:05 WARNING: SUM: warnings 0
+05/11/29 17:04:05 WARNING: SUM: === Number of parsed input tables: ===
+05/11/29 17:04:05 WARNING: SUM: conf 0
+05/11/29 17:04:05 WARNING: SUM: hier 1
+05/11/29 17:04:05 WARNING: SUM: conn 1
+05/11/29 17:04:05 WARNING: SUM: io 0
+05/11/29 17:04:05 WARNING: SUM: i2c 0
+05/11/29 17:04:05 WARNING: SUM: Number of changes in intermediate: 0
+05/11/29 17:04:05 WARNING: SUM: Number of changed files: 0

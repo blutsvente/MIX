@@ -1,69 +1,86 @@
-05/07/11 11:36:52 2380: Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/generic/../generic.xls
-05/07/11 11:36:52 2380: Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/generic/../generic.xls
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element GENERIC_0_AB!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
-05/07/11 11:36:52 2380: WARNING: INFO: Creating name mix_const_0 for constant!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_6!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_10!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_8!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_7!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_9!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element GENERIC_2_6!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element GENERIC_2_7!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_1!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_5!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_4!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_2!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_3!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new port element FOO!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new port element NO_NAME!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new port element PRE_GENERIC!
-05/07/11 11:36:52 2380: WARNING: INFO: Not all lowercase in new port element WIDTH!
-05/07/11 11:36:52 2380: WARNING: File generic-mixed.xls already exists! Contents will be changed
-05/07/11 11:36:53 2380: WARNING: Rotating 3 old sheets of CONF!
-05/07/11 11:36:53 2380: WARNING: Rotating 3 old sheets of CONN!
-05/07/11 11:36:54 2380: WARNING: Rotating 3 old sheets of HIER!
-05/07/11 11:36:54 2380: WARNING: Removing old and and diff sheets in file: generic-mixed.xls
-05/07/11 11:36:54 2380: WARNING: ERROR: workbook with different path already opened!
-05/07/11 11:36:58 2380: WARNING: Possibly rewriting configuration for entity inst_m_e, instance inst_m10!
-05/07/11 11:36:58 2380: WARNING: Possibly rewriting configuration for entity inst_m_e, instance inst_m2!
-05/07/11 11:36:58 2380: WARNING: Possibly rewriting configuration for entity inst_m_e, instance inst_m3!
-05/07/11 11:36:58 2380: WARNING: Possibly rewriting configuration for entity inst_m_e, instance inst_m4!
-05/07/11 11:36:58 2380: WARNING: Possibly rewriting configuration for entity inst_m_e, instance inst_m5!
-05/07/11 11:36:58 2380: WARNING: Possibly rewriting configuration for entity inst_m_e, instance inst_m6!
-05/07/11 11:36:58 2380: WARNING: Possibly rewriting configuration for entity inst_m_e, instance inst_m7!
-05/07/11 11:36:58 2380: WARNING: Possibly rewriting configuration for entity inst_m_e, instance inst_m8!
-05/07/11 11:36:58 2380: WARNING: Possibly rewriting configuration for entity inst_m_e, instance inst_m9!
-05/07/11 11:36:58 2380: WARNING: ============= SUMMARY =================
-05/07/11 11:36:58 2380: WARNING: SUM: Summary of checks and created items:
-05/07/11 11:36:58 2380: WARNING: SUM: checkforce 0
-05/07/11 11:36:58 2380: WARNING: SUM: checkunique 0
-05/07/11 11:36:58 2380: WARNING: SUM: checkwarn 0
-05/07/11 11:36:58 2380: WARNING: SUM: cmacros 0
-05/07/11 11:36:58 2380: WARNING: SUM: conn 26
-05/07/11 11:36:58 2380: WARNING: SUM: errors 1
-05/07/11 11:36:58 2380: WARNING: SUM: genport 0
-05/07/11 11:36:58 2380: WARNING: SUM: hdlfiles 41
-05/07/11 11:36:58 2380: WARNING: SUM: inst 35
-05/07/11 11:36:58 2380: WARNING: SUM: multdriver 0
-05/07/11 11:36:59 2380: WARNING: SUM: nodriver 0
-05/07/11 11:36:59 2380: WARNING: SUM: noload 0
-05/07/11 11:36:59 2380: WARNING: SUM: openports 0
-05/07/11 11:36:59 2380: WARNING: SUM: warnings 0
-05/07/11 11:36:59 2380: WARNING: SUM: === Number of parsed input tables: ===
-05/07/11 11:36:59 2380: WARNING: SUM: conf 0
-05/07/11 11:36:59 2380: WARNING: SUM: hier 1
-05/07/11 11:36:59 2380: WARNING: SUM: conn 1
-05/07/11 11:36:59 2380: WARNING: SUM: io 0
-05/07/11 11:36:59 2380: WARNING: SUM: i2c 0
+05/11/30 06:48:18 ########################################################################
+05/11/30 06:48:18 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl -strip -nodelta ../generic.xls
+05/11/30 06:48:18 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.98 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.71 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.14 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/11/30 06:48:19 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/generic/../generic.xls
+05/11/30 06:48:19 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/generic/../generic.xls
+05/11/30 06:48:19 Added new column header ::result
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element GENERIC_0_AB!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_6!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_10!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_8!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_7!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_9!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element GENERIC_2_6!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element GENERIC_2_7!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_1!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_5!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_4!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_2!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_3!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new port element FOO!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new port element NO_NAME!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new port element PRE_GENERIC!
+05/11/30 06:48:19 WARNING: INFO: Not all lowercase in new port element WIDTH!
+05/11/30 06:48:21 WARNING: File generic-mixed.xls already exists! Contents will be changed
+05/11/30 06:48:21 WARNING: Rotating 3 old sheets of CONF!
+05/11/30 06:48:21 WARNING: Rotating 3 old sheets of CONN!
+05/11/30 06:48:22 WARNING: Rotating 3 old sheets of HIER!
+05/11/30 06:48:22 WARNING: Removing old and and diff sheets in file: generic-mixed.xls
+05/11/30 06:48:22 WARNING: ERROR: workbook with different path already opened!
+05/11/30 06:48:25 WARNING: Possibly rewriting configuration for entity inst_m_e, instance inst_m10!
+05/11/30 06:48:25 WARNING: Possibly rewriting configuration for entity inst_m_e, instance inst_m2!
+05/11/30 06:48:25 WARNING: Possibly rewriting configuration for entity inst_m_e, instance inst_m3!
+05/11/30 06:48:25 WARNING: Possibly rewriting configuration for entity inst_m_e, instance inst_m4!
+05/11/30 06:48:25 WARNING: Possibly rewriting configuration for entity inst_m_e, instance inst_m5!
+05/11/30 06:48:25 WARNING: Possibly rewriting configuration for entity inst_m_e, instance inst_m6!
+05/11/30 06:48:25 WARNING: Possibly rewriting configuration for entity inst_m_e, instance inst_m7!
+05/11/30 06:48:25 WARNING: Possibly rewriting configuration for entity inst_m_e, instance inst_m8!
+05/11/30 06:48:25 WARNING: Possibly rewriting configuration for entity inst_m_e, instance inst_m9!
+05/11/30 06:48:25 WARNING: ============= SUMMARY =================
+05/11/30 06:48:25 WARNING: SUM: Summary of checks and created items:
+05/11/30 06:48:25 WARNING: SUM: checkforce 0
+05/11/30 06:48:25 WARNING: SUM: checkunique 0
+05/11/30 06:48:25 WARNING: SUM: checkwarn 0
+05/11/30 06:48:25 WARNING: SUM: cmacros 0
+05/11/30 06:48:25 WARNING: SUM: conn 26
+05/11/30 06:48:25 WARNING: SUM: errors 1
+05/11/30 06:48:25 WARNING: SUM: genport 0
+05/11/30 06:48:25 WARNING: SUM: hdlfiles 41
+05/11/30 06:48:25 WARNING: SUM: inst 35
+05/11/30 06:48:25 WARNING: SUM: multdriver 0
+05/11/30 06:48:25 WARNING: SUM: nodriver 0
+05/11/30 06:48:25 WARNING: SUM: noload 0
+05/11/30 06:48:25 WARNING: SUM: openports 0
+05/11/30 06:48:25 WARNING: SUM: warnings 0
+05/11/30 06:48:25 WARNING: SUM: === Number of parsed input tables: ===
+05/11/30 06:48:25 WARNING: SUM: conf 0
+05/11/30 06:48:25 WARNING: SUM: hier 1
+05/11/30 06:48:25 WARNING: SUM: conn 1
+05/11/30 06:48:25 WARNING: SUM: io 0
+05/11/30 06:48:25 WARNING: SUM: i2c 0

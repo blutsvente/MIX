@@ -1,79 +1,82 @@
-05/10/24 11:02:59 ########################################################################
-05/10/24 11:02:59 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl -strip -nodelta ../../generic.xls
-05/10/24 11:02:59 
+05/11/30 08:45:00 ########################################################################
+05/11/30 08:45:00 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl ../../generic.xls
+05/11/30 08:45:01 
 #######################################################################
-##### mix_0.pl (Revision: 1.38 )
+##### mix_0.pl (Revision: 1.42 )
 #####
 ##### MIX  
-#####   MixUtils    1.80 $
-#####   MixUtils::IO    1.32 $
-#####   MixParser   1.59 $
-#####   MixWriter   1.62 $
+#####   MixUtils    1.98 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.71 $
 #####   MixChecker  1.10 $
 #####   MixIOParser 1.17 $
-#####   MixI2CParser 1.14 $
-#####   MixReport 1.5 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.16 $
 ##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
 #######################################################################
-05/10/24 11:02:59 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/generic/nodefparam/../../generic.xls
-05/10/24 11:02:59 Reading worksheet HIER_VERI of H:/work/eclipse/MIX/test/xls_input/generic/nodefparam/../../generic.xls
-05/10/24 11:02:59 Added new column header ::result
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element GENERIC_0_AB!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_6!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_10!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_8!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_7!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_9!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element GENERIC_2_6!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element GENERIC_2_7!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_1!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_5!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_4!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_2!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_3!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new port element FOO!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new port element NO_NAME!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new port element PRE_GENERIC!
-05/10/24 11:02:59 WARNING: INFO: Not all lowercase in new port element WIDTH!
-05/10/24 11:03:00 WARNING: File generic-mixed.xls already exists! Contents will be changed
-05/10/24 11:03:01 WARNING: Rotating 3 old sheets of CONF!
-05/10/24 11:03:01 WARNING: Rotating 3 old sheets of CONN!
-05/10/24 11:03:01 WARNING: Rotating 3 old sheets of HIER!
-05/10/24 11:03:02 WARNING: Removing old and and diff sheets in file: generic-mixed.xls
-05/10/24 11:03:02 WARNING: ERROR: workbook with different path already opened!
-05/10/24 11:03:02 WARNING: WARNING: applied non-integer parameter "nodefault" for generic NO_DEFAULT at instance inst_aa!
-05/10/24 11:03:02 WARNING: WARNING: applied non-integer parameter "noname" for generic NO_NAME at instance inst_aa!
-05/10/24 11:03:03 WARNING: ============= SUMMARY =================
-05/10/24 11:03:03 WARNING: SUM: Summary of checks and created items:
-05/10/24 11:03:03 WARNING: SUM: checkforce 0
-05/10/24 11:03:03 WARNING: SUM: checkunique 0
-05/10/24 11:03:03 WARNING: SUM: checkwarn 0
-05/10/24 11:03:03 WARNING: SUM: cmacros 0
-05/10/24 11:03:03 WARNING: SUM: conn 26
-05/10/24 11:03:03 WARNING: SUM: errors 1
-05/10/24 11:03:03 WARNING: SUM: genport 0
-05/10/24 11:03:03 WARNING: SUM: hdlfiles 3
-05/10/24 11:03:03 WARNING: SUM: inst 35
-05/10/24 11:03:03 WARNING: SUM: multdriver 0
-05/10/24 11:03:03 WARNING: SUM: nodriver 0
-05/10/24 11:03:03 WARNING: SUM: noload 0
-05/10/24 11:03:03 WARNING: SUM: openports 0
-05/10/24 11:03:03 WARNING: SUM: warnings 2
-05/10/24 11:03:03 WARNING: SUM: === Number of parsed input tables: ===
-05/10/24 11:03:03 WARNING: SUM: conf 0
-05/10/24 11:03:03 WARNING: SUM: hier 1
-05/10/24 11:03:03 WARNING: SUM: conn 1
-05/10/24 11:03:03 WARNING: SUM: io 0
-05/10/24 11:03:03 WARNING: SUM: i2c 0
+05/11/30 08:45:01 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/generic/nodefparam/../../generic.xls
+05/11/30 08:45:01 Reading worksheet HIER_VERI of H:/work/eclipse/MIX/test/xls_input/generic/nodefparam/../../generic.xls
+05/11/30 08:45:01 Added new column header ::result
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element GENERIC_0!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element GENERIC_PAD!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element GENERIC_0_AB!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element PARAMETER_ND!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_1!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_4!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_2!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1_3!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_6!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_10!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_8!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_7!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2M_9!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element GENERIC_2_6!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element GENERIC_2_7!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_10!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_8!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_7!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element PARAMETER_2_9!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_1!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_5!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_4!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_2!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new conn element PARAMETER_1M_3!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new port element FOO!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new port element NO_DEFAULT!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new port element NO_NAME!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new port element PRE_GENERIC!
+05/11/30 08:45:01 WARNING: INFO: Not all lowercase in new port element WIDTH!
+05/11/30 08:45:02 WARNING: File generic-mixed.xls already exists! Contents will be changed
+05/11/30 08:45:03 WARNING: Rotating 3 old sheets of CONF!
+05/11/30 08:45:04 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/generic/nodefparam/generic-mixed.xls
+05/11/30 08:45:04 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/11/30 08:45:05 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/generic/nodefparam/generic-mixed.xls
+05/11/30 08:45:05 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/11/30 08:45:05 Info: unchanged file inst_a_e.v
+05/11/30 08:45:05 Info: unchanged file inst_e_e.v
+05/11/30 08:45:06 Info: unchanged file inst_t_e.v
+05/11/30 08:45:06 WARNING: ============= SUMMARY =================
+05/11/30 08:45:06 WARNING: SUM: Summary of checks and created items:
+05/11/30 08:45:06 WARNING: SUM: checkforce 0
+05/11/30 08:45:06 WARNING: SUM: checkunique 0
+05/11/30 08:45:06 WARNING: SUM: checkwarn 0
+05/11/30 08:45:06 WARNING: SUM: cmacros 0
+05/11/30 08:45:06 WARNING: SUM: conn 26
+05/11/30 08:45:06 WARNING: SUM: errors 0
+05/11/30 08:45:06 WARNING: SUM: genport 0
+05/11/30 08:45:06 WARNING: SUM: hdlfiles 3
+05/11/30 08:45:06 WARNING: SUM: inst 35
+05/11/30 08:45:06 WARNING: SUM: multdriver 0
+05/11/30 08:45:06 WARNING: SUM: nodriver 0
+05/11/30 08:45:06 WARNING: SUM: noload 0
+05/11/30 08:45:06 WARNING: SUM: openports 0
+05/11/30 08:45:06 WARNING: SUM: warnings 0
+05/11/30 08:45:06 WARNING: SUM: === Number of parsed input tables: ===
+05/11/30 08:45:06 WARNING: SUM: conf 0
+05/11/30 08:45:06 WARNING: SUM: hier 1
+05/11/30 08:45:06 WARNING: SUM: conn 1
+05/11/30 08:45:06 WARNING: SUM: io 0
+05/11/30 08:45:06 WARNING: SUM: i2c 0
+05/11/30 08:45:06 WARNING: SUM: Number of changes in intermediate: 0
+05/11/30 08:45:06 WARNING: SUM: Number of changed files: 0
