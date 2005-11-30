@@ -3,7 +3,8 @@
 #
 # UNIX wrapper for mix_0.pl ...
 #
-function fix_perl_path {
+# function fix_perl_path {
+fix_perl_path () {
 
 	thisp=`which perl`
 	case "$thisp" in
