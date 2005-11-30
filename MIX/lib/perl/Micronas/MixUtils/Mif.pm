@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.11 $                                          |
+# | Revision:   $Revision: 1.12 $                                          |
 # | Author:     $Author: mathias $                                            |
-# | Date:       $Date: 2005/11/30 06:53:01 $                              |
+# | Date:       $Date: 2005/11/30 10:22:47 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.12  2005/11/30 10:22:47  mathias
+# | escape '>' characters
+# |
 # | Revision 1.11  2005/11/30 06:53:01  mathias
 # | fixed vertical alignment
 # |
@@ -94,9 +97,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.11 2005/11/30 06:53:01 mathias Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.12 2005/11/30 10:22:47 mathias Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.11 $'; #'  
+my $thisrevision    =      '$Revision: 1.12 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -597,25 +600,27 @@ sub _td_para()
     my ($string, $indent) = @_;
     my $newstring = "";
 
-    my $normal        = '<ParaLine <String `';
-    my $bold          = '<ParaLine <Font <FWeight Bold> > <String `';
-    my $underline     = '<ParaLine <Font <FUnderlining FSingle> > <String `';
-    my $overline      = '<ParaLine <Font <Foverline 1> > <String `';
-    my $strikethrough = '<ParaLine <Font <FStrike 1> > <String `';
-    my $superscript   = '<ParaLine <Font <FPosition FSuperscript > > <String `';
-    my $subscript     = '<ParaLine <Font <FPosition FSubscript > > <String `';
-    my $bullet        = '<ParaLine <Char Bullet> > #End of ParaLine' . "\n";
+    my $normal          = '<ParaLine <String `';
+    my $bold            = '<ParaLine <Font <FWeight Bold> > <String `';
+    my $underline       = '<ParaLine <Font <FUnderlining FSingle> > <String `';
+    my $overline        = '<ParaLine <Font <Foverline 1> > <String `';
+    my $strikethrough   = '<ParaLine <Font <FStrike 1> > <String `';
+    my $superscript     = '<ParaLine <Font <FPosition FSuperscript > > <String `';
+    my $subscript       = '<ParaLine <Font <FPosition FSubscript > > <String `';
+    my $bullet          = '<ParaLine <Char Bullet> > #End of ParaLine' . "\n";
     #\t = tab           =  ??? <TabStop ... weiss ich auch nciht.
-    my $parasep       = "'" . '> > #End of ParaLine' . "\n";
-    my $paraend       = "'> >";
+    my $parasep         = "'" . '> > #End of ParaLine' . "\n";
+    my $parasep_hardret = "'" . '> <Char HardReturn> > #End of ParaLine' . "\n";
+    my $paraend         = "'> >";
 
     $string =~ s/\n/\\n/g;     # change hard new lines to '/n/'
     while ($string =~ m/^([^\\]*)\\([nbuoslh\*])(.*)/) {
         my $beg      = $1;
         my $modifier = $2;
         my $end      = $3;
+        $beg =~ s/>/\\>/g;      # escape '>' characters
         if ($modifier eq 'n') {                     # (hard) new line
-            $newstring .= $normal . $beg . "'" . '> <Char HardReturn> > #End of ParaLine' . "\n";
+            $newstring .= $normal . $beg . $parasep_hardret;
             $string = $end;
         } elsif ($modifier =~ m/[*buoslh]/) {       # bold, underline, overline, ...
             # first "normal" part
@@ -632,13 +637,19 @@ sub _td_para()
                     $end = $1;
                     $second = $2;
                 }
+                my $sep = $parasep;
+                if ($second =~ m/^\s*\\n(.*)/) {     # does '\n' follow \x?
+                    $sep = $parasep_hardret;
+                    $second = $1;
+                }
                 # special part of $string
-                $newstring .= "\t" x $indent . $bold          . $end . $parasep if ($modifier eq 'b');
-                $newstring .= "\t" x $indent . $underline     . $end . $parasep if ($modifier eq 'u');
-                $newstring .= "\t" x $indent . $overline      . $end . $parasep if ($modifier eq 'o');
-                $newstring .= "\t" x $indent . $strikethrough . $end . $parasep if ($modifier eq 's');
-                $newstring .= "\t" x $indent . $superscript   . $end . $parasep if ($modifier eq 'l');
-                $newstring .= "\t" x $indent . $subscript     . $end . $parasep if ($modifier eq 'h');
+                $end =~ s/>/\\>/g;      # escape '>' characters
+                $newstring .= "\t" x $indent . $bold          . $end . $sep if ($modifier eq 'b');
+                $newstring .= "\t" x $indent . $underline     . $end . $sep if ($modifier eq 'u');
+                $newstring .= "\t" x $indent . $overline      . $end . $sep if ($modifier eq 'o');
+                $newstring .= "\t" x $indent . $strikethrough . $end . $sep if ($modifier eq 's');
+                $newstring .= "\t" x $indent . $superscript   . $end . $sep if ($modifier eq 'l');
+                $newstring .= "\t" x $indent . $subscript     . $end . $sep if ($modifier eq 'h');
                 $string = $second;
             }
         }
