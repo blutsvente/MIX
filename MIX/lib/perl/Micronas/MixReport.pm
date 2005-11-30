@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.15 $                                               |
+# | Revision:   $Revision: 1.16 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2005/11/29 13:11:42 $                                                   |
+# | Date:       $Date: 2005/11/30 06:53:11 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.15 2005/11/29 13:11:42 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.16 2005/11/30 06:53:11 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.16  2005/11/30 06:53:11  mathias
+# | fixed vertical alignment
+# |
 # | Revision 1.15  2005/11/29 13:11:42  mathias
 # | writes also a register overview table
 # |
@@ -95,11 +98,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.15 2005/11/29 13:11:42 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.16 2005/11/30 06:53:11 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.15 $';
+my $thisrevision   =      '$Revision: 1.16 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -242,6 +245,7 @@ sub mix_rep_reglist($)
                             $thefields[$ii]{view}    = $o_field->attribs->{'view'};  # N: no documentation
                             $thefields[$ii]{mode}    = $o_field->attribs->{'dir'};
                             $thefields[$ii]{comment} = $o_field->attribs->{'comment'};
+                            $thefields[$ii]{sync}    = $o_field->attribs->{'sync'};
                             $ii += 1;
                         }
                         @thefields = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
@@ -451,11 +455,13 @@ sub mix_rep_reglist_mif_bitfields($$$ )
     my $headtext = "";
 
     ############ Row for the bits 31 .. 16
-    # empty gray field on the left hand side
-    $headtext = $mif->wrCell({ 'PgfTag'      => 'CellHeadingH8',
-                                'Rows'       => 4,
-                                'Fill'       => 0,
-                                'Color'      => "Gray 6.2"
+    # Update signal field on the left hand side
+    $headtext = $mif->wrCell({ 'PgfTag'           => 'CellHeadingH8',
+                               'String'           => 'Update:',
+                               'Rows'             => 4,
+                               'PgfCellAlignment' => "Middle",
+                               'Fill'             => 0,
+                               'Color'            => "Gray 6.2"
                               },
                               2);
     for (my $i = 31; $i > 15; $i--) {
@@ -472,10 +478,12 @@ sub mix_rep_reglist_mif_bitfields($$$ )
                          'Indent'   => 0
                        }), $regtable);
     ############ Row for the bit slices 31 .. 16
-    # empty gray field on the left hand side
+    # Update signal on the left hand side (taken from bitfield 0)
     $headtext = $mif->wrCell({ 'PgfTag' => 'CellBodyH8',
-                                'Fill'   => 0,
-                                'Color'      => "Gray 6.2"
+                               'PgfCellAlignment' => "Middle",
+                               'String' => $fields->[0]->{sync},
+                               'Fill'   => 0,
+                               'Color'  => "Gray 6.2"
                               },
                               2);
     my $continue = 0;                    # 1: bitfield spans the bits 16 and 15
@@ -536,13 +544,9 @@ sub mix_rep_reglist_mif_bitfields($$$ )
                          'Indent'   => 0
                        }), $regtable);
     ############ Row for the bit slices 15 .. 0
-    # empty gray field on the left hand side
-    $headtext = $mif->wrCell({ 'PgfTag' => 'CellBodyH8',
-                                'Fill'   => 0,
-                                'Separation' => 5,
-                                'Color'      => "Gray 6.2"
-                              },
-                              2);
+    # empty field on the left hand side
+    $headtext = $mif->wrCell({ 'PgfTag' => 'CellBodyH8', 'PgfCellAlignment' => "Middle", 'Fill' => 0 }, 2);
+
     for ($tbeg = 15; $fi <= $#{$fields}; $fi++) {
         my $msbpos = $fields->[$fi]->{pos} + $fields->[$fi]->{size} - 1;
         if ($msbpos > 15) {       # $continue!!!
@@ -603,8 +607,9 @@ sub mix_rep_reglist_mif_bitfields($$$ )
     ############ Row for the bits  15.. 0
     # empty gray field on the left hand side
     $headtext = $mif->wrCell({ 'PgfTag' => 'CellHeadingH8',
-                                'Fill'   => 0,
-                                'Color'      => "Gray 6.2"
+                               'PgfCellAlignment' => "Middle",
+                               'Fill'   => 0,
+                               'Color'      => "Gray 6.2"
                               },
                               2);
     for (my $i = 15; $i >= 0; $i--) {
@@ -667,8 +672,13 @@ sub mix_rep_reglist_mif_bitfields($$$ )
     for ($fi = 0; $fi <= $#{$fields}; $fi++) {
         my $msb = $fields->[$fi]->{pos} + $fields->[$fi]->{size} - 1;
         my $lsb = $fields->[$fi]->{pos};
+        if ($msb == $lsb) {
+            $string = $msb;
+        } else {
+            $string = "$msb:$lsb";
+        }
         $headtext = $mif->wrCell({ 'PgfTag'     => 'CellBodyH8',
-                                   'String'     => "[$msb:$lsb]"
+                                   'String'     => "[$string]"
                                  },
                                  2);
         $msb = $fields->[$fi]->{size} + $fields->[$fi]->{lsb} - 1;

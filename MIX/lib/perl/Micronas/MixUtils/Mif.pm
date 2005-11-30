@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.10 $                                          |
+# | Revision:   $Revision: 1.11 $                                          |
 # | Author:     $Author: mathias $                                            |
-# | Date:       $Date: 2005/11/29 15:35:46 $                              |
+# | Date:       $Date: 2005/11/30 06:53:01 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.11  2005/11/30 06:53:01  mathias
+# | fixed vertical alignment
+# |
 # | Revision 1.10  2005/11/29 15:35:46  mathias
 # | change hard new lines to '/n/' in comments
 # |
@@ -91,9 +94,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.10 2005/11/29 15:35:46 mathias Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.11 2005/11/30 06:53:01 mathias Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.10 $'; #'  
+my $thisrevision    =      '$Revision: 1.11 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -530,17 +533,18 @@ sub td {
 #    <Cell <CellContent <Para <PgfTag `xRegHeading'>	<ParaLine <String `Name'> > > > >
 # Parameters:
 #    $param   hashref with following keys:
-#                'PgfTag'	  FrameMaker Format
-#                'String'         String, Cellname
-#                'Columns'        (Do not) span columns
-#                'Marker'         set the marker for reference (<number> )
-#                'Xref'           cross reference to a marker
-#                'Rows'           (Do not) span rows
-#                'Angle'          rotate cell (value: degree e.g. 270)
-#                'Fill'           CellFill?
-#                'Separation'     CellSeparation?
-#                'Color'          background color
-#                'Indent'         Prepend <n> Tabs
+#                'PgfTag'	    FrameMaker Format
+#                'String'           String, Cellname
+#                'Columns'          (Do not) span columns
+#                'Marker'           set the marker for reference (<number> )
+#                'Xref'             cross reference to a marker
+#                'Rows'             (Do not) span rows
+#                'Angle'            rotate cell (value: degree e.g. 270)
+#                'Fill'             CellFill?
+#                'Separation'       CellSeparation?
+#                'Color'            background color
+#                'Indent'           Prepend <n> Tabs
+#                'PgfCellAlignment' vertical alignment of the cell content
 #    $indent  Indentation (default: 2 Tabs)
 
 sub wrCell($$$)
@@ -552,16 +556,19 @@ sub wrCell($$$)
 
     if ( ref( $param ) eq "HASH" ) {
         $text .= "\t" x $indent if ($indent);
-        $text .=  "<Cell ";
-        $text .= "<CellAngle " . $param->{Angle} . "> " if (exists($param->{Angle}));
-        $text .= "<CellRows " . $param->{Rows} . "> " if (exists($param->{Rows}));
-        $text .= "<CellColumns " . $param->{Columns} . "> " if (exists($param->{Columns}));
-        $text .= "<CellFill " . $param->{Fill} . '> ' if (exists($param->{Fill}));
+        $text .= "<Cell ";
+        $text .= "<CellAngle "      . $param->{Angle} . "> "     if (exists($param->{Angle}));
+        $text .= "<CellRows "       . $param->{Rows} . "> "      if (exists($param->{Rows}));
+        $text .= "<CellColumns "    . $param->{Columns} . "> "   if (exists($param->{Columns}));
+        $text .= "<CellFill "       . $param->{Fill} . '> '      if (exists($param->{Fill}));
         $text .= "<CellSeparation " . $param->{Separation} . '>' if (exists($param->{Separation}));
-        $text .= "<CellColor `" . $param->{Color} . "'>" if (exists($param->{Color}));
+        $text .= "<CellColor `"     . $param->{Color} . "'>"     if (exists($param->{Color}));
 
         $text .= "<CellContent <Para <PgfTag `" . $param->{PgfTag} . "'> ";
         if (exists($param->{String})) {
+            if (exists($param->{PgfCellAlignment})) {
+                $text .= "<Pgf <PgfCellAlignment " . $param->{PgfCellAlignment} . "> > ";
+            }
             if (exists($param->{Marker})) {
                 $text .= "<ParaLine <String `" . $param->{String} . "'> ";
                 $text .= "<Marker <MType 9> <MText `" . $param->{Marker};
