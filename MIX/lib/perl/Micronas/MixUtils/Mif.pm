@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.12 $                                          |
+# | Revision:   $Revision: 1.13 $                                          |
 # | Author:     $Author: mathias $                                            |
-# | Date:       $Date: 2005/11/30 10:22:47 $                              |
+# | Date:       $Date: 2005/11/30 12:24:34 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.13  2005/11/30 12:24:34  mathias
+# | escaped more (`') chars
+# |
 # | Revision 1.12  2005/11/30 10:22:47  mathias
 # | escape '>' characters
 # |
@@ -97,9 +100,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.12 2005/11/30 10:22:47 mathias Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.13 2005/11/30 12:24:34 mathias Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.12 $'; #'  
+my $thisrevision    =      '$Revision: 1.13 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -619,6 +622,9 @@ sub _td_para()
         my $modifier = $2;
         my $end      = $3;
         $beg =~ s/>/\\>/g;      # escape '>' characters
+        #$beg =~ s/\\/\\\\/g;    # escape \ characters
+        $beg =~ s/\'/\\q/g;     # escape ` characters
+        $beg =~ s/\`/\\Q/g;     # escape ` characters
         if ($modifier eq 'n') {                     # (hard) new line
             $newstring .= $normal . $beg . $parasep_hardret;
             $string = $end;
@@ -643,6 +649,9 @@ sub _td_para()
                     $second = $1;
                 }
                 # special part of $string
+                #$end =~ s/\\/\\\\/g;    # escape \ characters
+                $end =~ s/\'/\\q/g;     # escape ` characters
+                $end =~ s/\`/\\Q/g;     # escape ` characters
                 $end =~ s/>/\\>/g;      # escape '>' characters
                 $newstring .= "\t" x $indent . $bold          . $end . $sep if ($modifier eq 'b');
                 $newstring .= "\t" x $indent . $underline     . $end . $sep if ($modifier eq 'u');
