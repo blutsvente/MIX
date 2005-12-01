@@ -6,10 +6,10 @@ TEX = pdflatex
 
 ARCHIVER = tar
 
-all: userref develdoc
+all: develdoc
 
-userref: MIX_Userreference.tex
-	$(TEX) $<
+# userref: MIX_Userreference.tex
+# 	$(TEX) $<
 
 develdoc: MIX_Development_doc.tex
 	$(TEX) $<
