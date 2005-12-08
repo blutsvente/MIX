@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.18 $                                               |
-# | Author:     $Author: wig $                                                 |
-# | Date:       $Date: 2005/12/06 16:07:04 $                                                   |
+# | Revision:   $Revision: 1.19 $                                               |
+# | Author:     $Author: mathias $                                                 |
+# | Date:       $Date: 2005/12/08 11:32:49 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.18 2005/12/06 16:07:04 wig Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.19 2005/12/08 11:32:49 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.19  2005/12/08 11:32:49  mathias
+# | long tables now have dedicated header
+# |
 # | Revision 1.18  2005/12/06 16:07:04  wig
 # | Testing watch
 # |
@@ -104,11 +107,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.18 2005/12/06 16:07:04 wig Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.19 2005/12/08 11:32:49 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.18 $';
+my $thisrevision   =      '$Revision: 1.19 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -229,6 +232,7 @@ sub mix_rep_reglist($)
                 my $oview_table = mix_rep_reglist_oview_mif_header($omif);
 
                 ### loop over all registers
+                my @reg_crossrefs;   # cross references will appear in overview table
                 foreach my $o_reg (@{$o_domain->regs()}) {
                     if ($o_reg->to_document()) {        # should this register be documented
                         my $regtitle = $o_domain->name() . ' register: ' . $o_reg->name();
@@ -237,10 +241,13 @@ sub mix_rep_reglist($)
                         my $mode     = $o_reg->get_reg_access_mode();
 
                         my $regtable = mix_rep_reglist_mif_starttable($mif, $regtitle);
+                        $mif->start_body($regtable);
                         my $ref      = mix_rep_reglist_mif_header($mif, $regtable, $o_reg->name(),
                                                                   $address, $mode, $init);
-                        # write row into the overview table
-                        mix_rep_reglist_oview_mif_row($omif, $oview_table, $ref, $address, $mode);
+                        push(@reg_crossrefs, { 'crossref' => $ref,
+                                               'address'  => $address,
+                                               'mode'     => $mode
+                                             });
 
                         my ($ii, $width_1) = (0, 0);
                         my @thefields;
@@ -268,6 +275,10 @@ sub mix_rep_reglist($)
                             $mif->end_table($regtable);
                             $regtitle = $o_domain->name() . ' register: ' . $o_reg->name() . '  Bitfields';
                             $regtable = mix_rep_reglist_mif_starttable($mif, $regtitle);
+                            mix_rep_reglist_mif_bitfield_description_header($mif, $regtable, 'new_table');
+                            $mif->start_body($regtable);
+                        } else {
+                            mix_rep_reglist_mif_bitfield_description_header($mif, $regtable);
                         }
                         mix_rep_reglist_mif_bitfield_description($mif, $regtable, \@thefields);
                         $mif->end_body($regtable);
@@ -275,6 +286,8 @@ sub mix_rep_reglist($)
                     }
                 }
 
+                # write rows into the overview table
+                mix_rep_reglist_oview_mif_row($omif, $oview_table, \@reg_crossrefs);
                 ### write and close overview table of this domain
                 $omif->end_body($oview_table);
                 $omif->end_table($oview_table);
@@ -298,7 +311,6 @@ sub mix_rep_reglist_oview_mif_header($ )
                     'TblTag'      => 'PageWidth'
                    );
     my $regtable = $mif->start_table(\%regtable);
-    $mif->start_body($regtable);
 
     my $headtext = $mif->wrCell({ 'PgfTag'     => 'CellHeadingH9',
                                   'String'     => 'Register',
@@ -324,47 +336,49 @@ sub mix_rep_reglist_oview_mif_header($ )
                                 'Color'      => "Gray 6.2"
                               },
                               2);
-    $mif->add($mif->Tr({ 'WithNext' => 'Yes',
-                         'WithPrev' => 'Yes',
-                         'Text'     => $headtext,
-                         'Indent'   => 1
-                        }), $regtable);
+    #$mif->add( $mif->Tr($headtext), $regtable);
+    $mif->table_head($mif->Tr({ 'WithNext' => 'Yes',
+                                'WithPrev' => 'Yes',
+                                'Text'     => $headtext,
+                                'Indent'   => 1
+                              }), $regtable);
+    $mif->start_body($regtable);
     return $regtable;
 }
 
-# write mif file header for register
-sub mix_rep_reglist_oview_mif_row($$$$$ )
+# write references to register tables into overview table
+sub mix_rep_reglist_oview_mif_row($$$ )
 {
-    my ($mif, $regtable, $regname, $address, $mode) = @_;
-    my $headtext = "";
+    my ($mif, $regtable, $ref_to_crossref) = @_;
 
-    # Register name
-    $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH9',
-                                'Xref' => $regname
-                              },
-                              2);
-                                #'String' => $regname
+    for (my $i = 0; $i <= $#{$ref_to_crossref}; $i++) {
+        my $headtext = "";
+        # Register name
+        $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH9',
+                                    'Xref'   => $ref_to_crossref->[$i]->{crossref}
+                                  }, 2);
 
-    # Register Mode (R/W)
-    $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH9center', 'String'  => $mode }, 2);
+        # Register Mode (R/W)
+        $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH9center',
+                                    'String'  => $ref_to_crossref->[$i]->{mode}
+                                  }, 2);
 
-    # Register address
-    $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH9center',
-                                'String' => $address
-                              },
-                              2);
+        # Register address
+        $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH9center',
+                                    'String' => $ref_to_crossref->[$i]->{address}
+                                  }, 2);
 
-    # Comment (empty)
-    $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH9',
-                                'String' => ' '
-                              },
-                              2);
+        # Comment (empty)
+        $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH9',
+                                    'String' => ' '
+                                  }, 2);
 
-    $mif->add($mif->Tr({ 'WithNext' => 'Yes',
-                         'WithPrev' => 'Yes',
-                         'Text'     => $headtext,
-                         'Indent'   => 1
-                        }), $regtable);
+        my %hh = ('Text'     => $headtext,
+                  'Indent'   => 1
+                 );
+        $hh{WithPrev} = 'Yes' if ($i == $#{$ref_to_crossref} or $i == 0);
+        $mif->add($mif->Tr(\%hh), $regtable);
+    }
 }
 
 # write mif file header for register
@@ -381,7 +395,6 @@ sub mix_rep_reglist_mif_starttable($$ )
                     'TblTag'      => 'PageWidth'
                    );
     my $regtable = $mif->start_table(\%regtable);
-    $mif->start_body($regtable);
     return $regtable;
 }
 
@@ -656,11 +669,11 @@ sub mix_rep_reglist_mif_bitfields($$$ )
     return;
 }
 
-sub mix_rep_reglist_mif_bitfield_description($$$)
+##### Header of the bitslice description section/table
+sub mix_rep_reglist_mif_bitfield_description_header($$$)
 {
-    my ($mif, $regtable, $fields) = @_;
+    my ($mif, $regtable, $newtable) = @_;
 
-    ##### Header of the bitslice section
     my $headtext = $mif->wrCell({ 'PgfTag'     => 'CellHeadingH8',
                                   'String'     => 'Bit',
                                   'Fill'       => 0,
@@ -695,21 +708,31 @@ sub mix_rep_reglist_mif_bitfield_description($$$)
         $headtext .= $mif->wrCell({ 'PgfTag' => 'CellHeading' }, 2);
     }
 
-    $mif->add($mif->Tr({ 'WithNext' => 'Yes',
-                         'Text'     => $headtext,
-                         'Indent'   => 1
-                        }), $regtable);
+    my %hh = ('WithNext' => 'Yes',
+              'Text'     => $headtext,
+              'Indent'   => 1
+              );
+    if ($newtable) {
+        $mif->table_head($mif->Tr(\%hh), $regtable);
+    } else {
+        $mif->add($mif->Tr(\%hh), $regtable);
+    }
     ##### End header of the bitslice section
+}
 
-    ##### Bitslices description
+##### Bitslices description
+sub mix_rep_reglist_mif_bitfield_description($$$)
+{
+    my ($mif, $regtable, $fields) = @_;
+
     for (my $fi = 0; $fi <= $#{$fields}; $fi++) {
         my $msb = $fields->[$fi]->{pos} + $fields->[$fi]->{size} - 1;
         my $lsb = $fields->[$fi]->{pos};
         my $string = ($msb == $lsb) ? $msb : "$msb:$lsb";
-        $headtext = $mif->wrCell({ 'PgfTag'   => 'CellBodyH8',
-                                   'String'   => "[$string]"
-                                 },
-                                 2);
+        my $text = $mif->wrCell({ 'PgfTag'   => 'CellBodyH8',
+                                  'String'   => "[$string]"
+                                },
+                                2);
         $msb = $fields->[$fi]->{size} + $fields->[$fi]->{lsb} - 1;
         $lsb = $fields->[$fi]->{lsb};
         if ($msb == $lsb) {
@@ -717,29 +740,28 @@ sub mix_rep_reglist_mif_bitfield_description($$$)
         } else {
             $string = $fields->[$fi]->{name} . "[$msb:$lsb]";
         }
-        $headtext .= $mif->wrCell({ 'PgfTag'  => 'CellBodyH8',
-                                    'String'  => $string,
-                                    'Columns' => 3
-                                  },
-                                  2);
-        $headtext .= $mif->wrCell({ 'PgfTag'  => 'CellHeading' }, 2);
-        $headtext .= $mif->wrCell({ 'PgfTag'  => 'CellHeading' }, 2);
-        $headtext .= $mif->wrCell({ 'PgfTag'  => 'CellBodyH8',
-                                    'String'  => $fields->[$fi]->{mode},
-                                    'Columns' => 2
-                                  },
-                                  2);
-        $headtext .= $mif->wrCell({ 'PgfTag'  => 'CellHeading' }, 2);
-        $headtext .= $mif->wrCell({ 'PgfTag'  => 'CellBodyH8',
-                                    'String'  => $fields->[$fi]->{comment},
-                                    'Columns' => 11
-                                  },
-                                  2);
+        $text .= $mif->wrCell({ 'PgfTag'  => 'CellBodyH8',
+                                'String'  => $string,
+                                'Columns' => 3
+                              },
+                              2);
+        $text .= $mif->wrCell({ 'PgfTag'  => 'CellHeading' }, 2);
+        $text .= $mif->wrCell({ 'PgfTag'  => 'CellHeading' }, 2);
+        $text .= $mif->wrCell({ 'PgfTag'  => 'CellBodyH8',
+                                'String'  => $fields->[$fi]->{mode},
+                                'Columns' => 2
+                              },
+                              2);
+        $text .= $mif->wrCell({ 'PgfTag'  => 'CellHeading' }, 2);
+        $text .= $mif->wrCell({ 'PgfTag'  => 'CellBodyH8',
+                                'String'  => $fields->[$fi]->{comment},
+                                'Columns' => 11
+                              },
+                              2);
         for (my $i = 0; $i < 10; $i++) {
-            $headtext .= $mif->wrCell({ 'PgfTag' => 'CellHeading' }, 2);
-            #$headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH8' }, 3);
+            $text .= $mif->wrCell({ 'PgfTag' => 'CellHeading' }, 2);
         }
-        my %hh = ('Text' => $headtext, 'Indent' => 1);
+        my %hh = ('Text' => $text, 'Indent' => 1);
         $hh{WithPrev} = 'Yes' if ($fi == $#{$fields} or $fi == 0);
         $mif->add($mif->Tr(\%hh), $regtable);
     }
