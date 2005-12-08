@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.14 $                                          |
+# | Revision:   $Revision: 1.15 $                                          |
 # | Author:     $Author: mathias $                                            |
-# | Date:       $Date: 2005/12/06 15:03:35 $                              |
+# | Date:       $Date: 2005/12/08 11:32:21 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.15  2005/12/08 11:32:21  mathias
+# | beatified indentation
+# |
 # | Revision 1.14  2005/12/06 15:03:35  mathias
 # | fixed dealing with \t (tabs) and other special chars
 # |
@@ -103,9 +106,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.14 2005/12/06 15:03:35 mathias Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.15 2005/12/08 11:32:21 mathias Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.14 $'; #'  
+my $thisrevision    =      '$Revision: 1.15 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -560,6 +563,7 @@ sub wrCell($$$)
 {
     my ($self, $param, $indent) = @_;
     my $text = "";
+    my $indent_endofcell = 0;
 
     $indent ||= 2;    # Prepend two Tabs
 
@@ -588,6 +592,7 @@ sub wrCell($$$)
                 }
                 $text .= "\n";
                 $text .= _td_para($param->{String}, $indent + 1);
+                $indent_endofcell = 1 if $indent;
             }
         } else {
             if (exists($param->{Xref})) {
@@ -597,6 +602,7 @@ sub wrCell($$$)
                 $text .= "<ParaLine >";
             }
         }
+        $text .= "\t" x $indent if ($indent_endofcell);
         $text .= " > > > # end of Cell\n";
     }
     return $text;
