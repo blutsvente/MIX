@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.18 2005/11/29 08:44:58 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.19 2005/12/09 13:14:37 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.18 $                                  
+#  Revision      : $Revision: 1.19 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.19  2005/12/09 13:14:37  lutscher
+#  corrected/added errors/warnings and added comment header for generated code
+#
 #  Revision 1.18  2005/11/29 08:44:58  lutscher
 #  fixed parsing of domain list
 #
@@ -123,7 +126,6 @@ sub _gen_view_vgch_rs {
 	my $href;
 	my $o_domain;
 
-	$this->global->{'debug'} = 0;
 	# extend class data with data structure needed for code generation
 	$this->global(
 				  'ocp_target_name'    => "ocp_target", # library module name
@@ -143,7 +145,8 @@ sub _gen_view_vgch_rs {
 
 	# import regshell.<par> parameters from MIX package to class data; user can change these parameters in mix.cfg
 	my $param;
-	my @lmixparams = ('reg_shell.bus_clock', 
+	my @lmixparams = (
+					  'reg_shell.bus_clock', 
 					  'reg_shell.bus_reset', 
 					  'reg_shell.addrwidth', 
 					  'reg_shell.datawidth',
@@ -255,6 +258,7 @@ sub _vgch_rs_gen_cfg_module {
 	my (@lsp) = ();
 	my (@lrp) = ();
 	my (@lchecks) = ();
+	my (@lheader) = ();
 	my ($int_rst_n) = $this->_gen_unique_signal_names($clock);
 	my $p_pos_pulse_check = 0;
 
@@ -262,6 +266,9 @@ sub _vgch_rs_gen_cfg_module {
 		_error("register offsets are out-of-bounds (max ",2**$this->global->{'addrwidth'} -1,")");
 		return 0;
 	};
+
+	# generate a header for the code
+	$this->_vgch_rs_gen_udc_header(\@lheader);
 
 	# iterate through all registers of the domain and add ports/instantiations
 	foreach $o_reg (@{$o_domain->regs}) {
@@ -306,10 +313,10 @@ sub _vgch_rs_gen_cfg_module {
 
 			# track USR fields
 			if ($spec =~ m/usr/i) {
-				$nusr++; # count number of USR fields
-				if(exists($husr{$reg_name})) {
-					_warning("register \'",$o_reg->name,"\' has more than one field with USR attribute - will not generate more than one read/write pulse output; try to merge the fields or re-map into several registers"); 
+				if(exists($husr{$reg_offset})) {
+					_error("register \'",$o_reg->name,"\' has more than one field with USR attribute - I cannot generate more than one read/write pulse output; try to merge the fields or re-map them into several registers!"); 
 				} else {
+					$nusr++; # count number of USR fields
 					$husr{$reg_offset} = $o_field; # store usr field in hash
 				};
 			};
@@ -327,7 +334,12 @@ sub _vgch_rs_gen_cfg_module {
 					};
 				}; 
 			};
-
+			
+			# warning for w1c fields greater than one bit
+			if ($spec =~ m/w1c/i and $o_field->attribs->{'size'} >1 ) {
+				_warning("field \'",$o_field->name,"\': for fields of type write-one-to-clear, only 1-bit size is currently supported");
+			};
+				
 			# add ports, declarations and assignments
 			if ($access =~ m/r/i and $access !~/w/i ) { # read-only
 				_add_primary_input($this->_gen_field_name("in", $o_field), $msb, $lsb, $cfg_i);
@@ -460,17 +472,37 @@ endproperty
 	$this->_vgch_rs_code_fwd_process($clock, \%husr, \%haddr_tokens, \@lusr);
 	_pad_column(-1, $this->global->{'indent'}, 2, \@lusr); # indent
 	
-	# add comment and pragmas to checking code and indent it (unless there is no code)
+	# add comment and pragmas to checking code and indent it (unless there is no code or not enabled)
 	if (scalar(@lchecks)) {
-		unshift @lchecks, ("", "/*","  checking code","*/", $this->global->{'assert_pragma_start'});
-		push @lchecks, $this->global->{'assert_pragma_end'};
-		_pad_column(-1, $this->global->{'indent'}, 2, \@lchecks);
+		if ($this->global->{'infer_sva'}) {
+			unshift @lchecks, ("", "/*","  checking code","*/", $this->global->{'assert_pragma_start'});
+			push @lchecks, $this->global->{'assert_pragma_end'};
+			_pad_column(-1, $this->global->{'indent'}, 2, \@lchecks);
+		} else {
+			@lchecks=();
+		};
 	};
 
 	_pad_column(0, $this->global->{'indent'}, 2, \@ldeclarations); # indent declarations
 
 	# insert everything
-	push @$lref_udc, @ldefines, @ldeclarations, @lassigns, @lstatic_logic, @lwp, @lusr, @lsp, @lrp, @lchecks;
+	push @$lref_udc, @lheader, @ldefines, @ldeclarations, @lassigns, @lstatic_logic, @lwp, @lusr, @lsp, @lrp, @lchecks;
+};
+
+# create a header for the user-defined-code sections
+# input: ref to result array
+sub _vgch_rs_gen_udc_header {
+	my ($this, $lref_res) = @_;
+	my $pkg_name = $this;
+	$pkg_name =~ s/=.*$//;
+	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
+	my $rev = '  this module is version $Revision: 1.19 $ ';
+	$rev =~ s/\$//g;
+	$rev =~ s/Revision\: //;
+	push @$lref_res, $rev;
+	push @$lref_res, "*/";
+	_pad_column(-1, $this->global->{'indent'}, 2, $lref_res);
+	return;
 };
 
 # create code for read logic from hash database
@@ -485,7 +517,7 @@ endproperty
 # RHS = verilog right-hand side assignment
 sub _vgch_rs_code_read_mux {
 	my ($this, $clock, $href_rp, $href_addr_tokens, $lref_rp, $lref_decl) = @_;
-	my  @linsert;
+	my @linsert;
 	my $ind = $this->global->{'indent'};
 	my $ilvl = 0;
 	my ($offs, $href, $sig, $cur_addr);
@@ -542,11 +574,11 @@ sub _vgch_rs_code_read_mux {
 			# this is kind of complicated; first, the mux structure will be generated in a hash where
 			# the keys are the mux select signals prefixed by a number which is the mux select value of the previous stage; 
 			# the values are keys of the next stage;
-			# the leaf keys are mux select values and the values are the register offsets; 
+			# the leaf keys are mux select values and leaf the values are the register offsets; 
 			
 			#print "> rdpl_stages $rdpl_stages\n";
  			foreach $offs (sort {$a <=> $b} keys %$href_rp) {
- 				$this->_rdmux_iterator($href_rp, \%hmux, $rdpl_stages, $offs, -1);
+ 				$this->_rdmux_iterator(\%hmux, $rdpl_stages, $offs, -1);
  			};
  			#my $dump = Data::Dumper->new([\%hmux]);
  			#print $dump->Dump;
@@ -558,7 +590,8 @@ sub _vgch_rs_code_read_mux {
 	push @$lref_rp, @linsert;
 };
 
-# recursive function to map the hash representing a mux structur to Verilog case statements
+# recursive function to map the hash representing a mux structur to Verilog case statements;
+# it's badly documented.
 sub _rdmux_builder {
 	my ($this, $int_rst_n, $rd_clk, $href_rp, $href_mux, $lref_insert, $lref_decl, $prev_key, $prev_lvl, $prev_sel) = @_;
 	my $ind = $this->global->{'indent'};
@@ -616,6 +649,8 @@ sub _rdmux_builder {
 				#print "> offs $offs\n";
 				foreach $href (@{$href_rp->{$offs}}) {
 					push @ltemp, $ind x $ilvl ."$out_d".(keys %{$href})[0]." <= ".(values %{$href})[0].";";
+					# BAUSTELLE: here, the field size or usedbits mask can be extracted and added up
+					# store in $href, because it is no longer used
 				};
 				$ilvl--;
 				push @ltemp, $ind x $ilvl . "end";
@@ -651,7 +686,7 @@ sub _rdmux_builder {
 			 push @$lref_decl, "reg [".($this->global->{'datawidth'}-1).":0] $out_d;";
 			 push @$lref_decl, "reg $out_e;";
 		 }
-	   	foreach $key (sort keys %{$href_mux->{$prev_key}}) {
+		 foreach $key (sort keys %{$href_mux->{$prev_key}}) {
 			if ($key =~ m/^(\d+)_(iaddr.*$)/) {
 				$sel = $1;
 			} else {
@@ -667,9 +702,10 @@ sub _rdmux_builder {
 	};
 };
 
-# recursive function to build a mux structure from %$href_rp as hash tree
+# recursive function to build a mux structure from %$href_mux as hash tree
+# also badly documented
 sub _rdmux_iterator {
-	my ($this, $href_rp, $href_mux, $rdpl_stages, $offs, $sel) = @_;
+	my ($this, $href_mux, $rdpl_stages, $offs, $sel) = @_;
 	my $addr_msb = $this->global->{'addr_msb'};
 	my $addr_lsb = $this->global->{'addr_lsb'};
 	my $rdpl_lvl = $this->global->{'read_pipeline_lvl'};
@@ -689,10 +725,9 @@ sub _rdmux_iterator {
 		};
 		# print "> key $key\n";		
 		$mask = (1<<($range_high-$range_low+1))-1;
-		# printf("%d > iaddr[%d : %d] mask %0b\n",$rdpl_stages, $range_high, $range_low, $mask); 
 		$new_sel = ($offs>>$range_low) & $mask;
 
-		$this->_rdmux_iterator($href_rp, $href_mux->{$key}, $rdpl_stages-1, $offs, $new_sel);
+		$this->_rdmux_iterator($href_mux->{$key}, $rdpl_stages-1, $offs, $new_sel);
 	   
 	} else {
 		# print $offs,"\n";
@@ -971,7 +1006,7 @@ sub _vgch_rs_code_write_processes {
 		push @linsert, $ind x $ilvl ."end", $ind x $ilvl++ . "else begin";
 		
 		# write logic
-		foreach $key (sort {$href_wp->{'write_sts'}->{$a} <=> $href_wp->{'write_sts'}->{$b}} keys %{$href_wp->{'write_sts'}}) {
+		foreach $key (sort {$href_wp->{'write_sts'}->{$a} cmp $href_wp->{'write_sts'}->{$b}} keys %{$href_wp->{'write_sts'}}) {
 			$reg_name = $key;
 			$rrange = "";
 			if ($reg_name =~ m/(\[.+\])$/) {
@@ -1098,10 +1133,9 @@ assign rd_p = rd_wr".$this->global->{'POSTFIX_PORT_IN'}." & $trans_start_p;
 		push @ltemp, $dummy;
 		push @ltemp, "assign trans_done_p = ((wr_done_p | rd_done_p) & ~fwd_txn) | ((fwd_done_vec != 0) & fwd_txn);";
 		
-		if ($this->global->{'infer_sva'}) {
-			# insert assertions (and onehot function because Cadence has not yet delivered)
-			$dummy = join(" || ", @ltemp2); 
-			push @$lref_checks, split("\n","
+		# insert assertions (and onehot function because Cadence has not yet delivered)
+		$dummy = join(" || ", @ltemp2); 
+		push @$lref_checks, split("\n","
 p_fwd_done_expected: assert property
 (
    @(posedge $clock) disable iff (~$int_rst_n)
@@ -1130,7 +1164,6 @@ function onehot (input [".($nusr-1).":0] vec); // not built-in to SV yet
 endfunction
   
   ");
-};
     };
 
 	push @ltemp, ("",
