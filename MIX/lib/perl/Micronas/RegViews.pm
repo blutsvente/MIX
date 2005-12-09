@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.19 2005/12/09 13:14:37 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.20 2005/12/09 15:03:01 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.19 $                                  
+#  Revision      : $Revision: 1.20 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.20  2005/12/09 15:03:01  lutscher
+#  built in feature to exclude objects from generation
+#
 #  Revision 1.19  2005/12/09 13:14:37  lutscher
 #  corrected/added errors/warnings and added comment header for generated code
 #
@@ -140,7 +143,8 @@ sub _gen_view_vgch_rs {
 				  'assert_pragma_end'  => "`endif",
 				  # internal static data structs
 				  'hclocks'            => {},           # for storing per-clock-domain information
-				  'hfnames'            => {}            # for storing field names
+				  'hfnames'            => {},           # for storing field names
+				  'lexclude_cfg'       => []            # list of registers to exclude from code generation
 				 );
 
 	# import regshell.<par> parameters from MIX package to class data; user can change these parameters in mix.cfg
@@ -156,6 +160,8 @@ sub _gen_view_vgch_rs {
 					  'reg_shell.read_multicycle',
 					  'reg_shell.read_pipeline_lvl',
 					  'reg_shell.use_reg_name_as_prefix',
+					  'reg_shell.exclude_regs',
+					  'reg_shell.exclude_fields',
 					  'postfix.POSTFIX_PORT_OUT', 
 					  'postfix.POSTFIX_PORT_IN',
 					  'postfix.POSTFIX_FIELD_OUT', 
@@ -199,6 +205,14 @@ sub _gen_view_vgch_rs {
 		$EH{'check'}{'signal'} = 'load,driver,check';
 		$EH{'output'}{'filter'}{'file'} = [];
 	};
+	
+	# list of skipped registers and fields (put everything together in one list)
+	if (exists($this->global->{'exclude_regs'})) {
+		@{$this->global->{'lexclude_cfg'}} = split(/\s*,\s*/,$this->global->{'exclude_regs'});
+	};
+	if (exists($this->global->{'exclude_fields'})) {
+		push @{$this->global->{'lexclude_cfg'}}, split(/\s*,\s*/,$this->global->{'exclude_fields'});
+	};
 
 	my ($o_field, $o_reg, $top_inst, $ocp_inst, $n_clocks, $cfg_inst, $clock);
 
@@ -210,12 +224,7 @@ sub _gen_view_vgch_rs {
 		$this->global('hfnames' => {});
 		$n_clocks = $this->_vgch_rs_get_configuration($o_domain);
 
-		if ($n_clocks > 1) { 
-			#if ($this->global->{'multi_clock_domains'}) {
-			#	_error("multi_clock_domains = 1 not supported yet");
-			#	return 0;
-			#};
-		} else {
+		if ($n_clocks == 1 and $this->global->{'multi_clock_domains'}) { 
 			_info("multi_clock_domains = 1 ignored, only one clock ") if $this->global->{'multi_clock_domains'};
 		};
 		
@@ -272,7 +281,12 @@ sub _vgch_rs_gen_cfg_module {
 
 	# iterate through all registers of the domain and add ports/instantiations
 	foreach $o_reg (@{$o_domain->regs}) {
-		# $o_reg->display() if $this->global->{'debug'}; # debug
+		#$o_reg->display(); if $this->global->{'debug'}; # debug
+		# skip register defined by user
+		if (grep ($_ eq $o_reg->name, @{$this->global->{'lexclude_cfg'}})) {
+			_info("skipping register ", $o_reg->name);
+			next;
+		};
 		my $reg_offset = $o_domain->get_reg_address($o_reg);	
 		my $reg_name = uc("reg_"._val2hex($addr_msb+1, $reg_offset)); # generate a register name ourselves
 		if (!exists($haddr_tokens{$reg_offset})) {
@@ -294,14 +308,20 @@ sub _vgch_rs_gen_cfg_module {
 		my $freset = "";
 		# iterate through all fields of the register
 		foreach $href (@{$o_reg->fields}) {
-			$shdw_sig = "";
 			my $o_field = $href->{'field'};
+			$shdw_sig = "";
 			# $o_field->display();
 			($fclock, $freset) = $this->_get_field_clock_and_reset($clock, $reset, $fclock, $freset, $o_field);
 			
 			# skip field if not in our clock domain and MCD feature is enabled
 			next if ($this->global->{'multi_clock_domains'} and $fclock ne $clock); 
 			next if $o_field->name =~ m/^UPD[EF]/; # skip legacy UPD* regs
+
+			# skip fields defined by user
+			if (grep ($_ eq $o_field->name, @{$this->global->{'lexclude_cfg'}})) {
+				_info("skipping field ", $o_field->name);
+				next;
+			};
 
 			# get field attributes
 			my $spec = $o_field->attribs->{'spec'}; # note: spec can contain several attributs
@@ -496,7 +516,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this module is version $Revision: 1.19 $ ';
+	my $rev = '  this module is version $Revision: 1.20 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -1571,17 +1591,6 @@ sub _get_field_clock_and_reset {
 	};
 	return ($fclock, $freset);
 };
-
-#	# add OR instance for data vector reduction
-#	my $or_inst = add_inst
-#	  (
-#	   '::parent' => $inst,
-#	   '::inst' => "sdata_redux",
-#	   '::entity' => "%OR%",
-#	   '::lang' => $this->global->{'lang'},
-#	   '::conf' => "%NO_CONFIG%"
-#	  );
-#	_add_connection("int_sdata", $EH{'reg_shell'}{'datawidth'}-1, 0, $or_inst, "");
 
 # helper function to call add_inst()
 sub _add_instance {
