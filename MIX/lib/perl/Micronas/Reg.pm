@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.14 2005/11/29 08:45:45 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.15 2005/12/09 13:13:48 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.15  2005/12/09 13:13:48  lutscher
+#  moved hook function called by mix_0.pl from MixI2CParser.pm to here; now called parse_register_master()
+#
 #  Revision 1.14  2005/11/29 08:45:45  lutscher
 #  added get_domain_baseaddr() and view: none
 #
@@ -92,6 +95,7 @@ use Micronas::RegField;
 use Micronas::RegViews;
 use Micronas::RegViewE;
 use Micronas::RegViewSTL;
+use Micronas::MixUtils::RegUtils;
 
 #use FindBin qw($Bin);
 #use lib "$Bin";
@@ -99,10 +103,45 @@ use Micronas::RegViewSTL;
 #use lib "$Bin/lib";
 
 #------------------------------------------------------------------------------
+# Hook function to MIX tool. Called by mix main script. Creates a Reg object
+# and calls its init() function
+# Input: reference to register-master data struct
+# Returns 1 (always pass control back to caller)
+# Note: this subroutine is not a class member
+#------------------------------------------------------------------------------
+sub parse_register_master($) {
+	my $r_i2c = shift;
+
+	if (scalar @$r_i2c) {
+		my($o_space) = Micronas::Reg->new();
+		
+		if (grep($EH{'reg_shell'}{'type'} =~ m/$_/i, @{$o_space->global->{supported_views}})) {
+			# init register module for generation of register-shell
+			$o_space->init(	 
+						   inputformat => "register-master", 
+						   database_type => $EH{i2c}{regmas_type},
+						   register_master => $r_i2c
+						  );
+
+			# set debug switch
+			$o_space->global('debug' => exists $OPTVAL{'verbose'} ? 1 : 0);
+			
+			# make it so
+			$o_space->generate_view($EH{'reg_shell'}{'type'});
+		};
+	} else {
+		_warning("register-master file empty or specified sheet \'$EH{'i2c'}{'xls'}\' in file not found");
+	};
+	return 1;
+};
+
+#------------------------------------------------------------------------------
 # Class members
 #------------------------------------------------------------------------------
-our($debug) = 0;
-our($VERSION) = '1.2';
+# this variable is recognized by MIX and will be displayed
+our($VERSION) = '$Revision: 1.15 $ ';  #'
+$VERSION =~ s/\$//g;
+$VERSION =~ s/Revision\: //;
 
 # global constants and defaults; is mapped per reference into Reg objects
 our(%hglobal) = 
@@ -126,7 +165,7 @@ our(%hglobal) =
    lang => "verilog",
 
    # debug switch
-   debug => $debug,
+   debug => 0,
 
    # Version of class package
    version => $VERSION
@@ -158,7 +197,7 @@ sub new {
 };
 
 #------------------------------------------------------------------------------
-# Methods
+# Class Methods
 #------------------------------------------------------------------------------
 
 # initialize object with input; depending on inputformat, calls appropriate
@@ -183,6 +222,7 @@ sub init {
 sub generate_view {
 	my $this = shift;
 	my $view = shift;
+
 	my @ldomains = ();
 	if (exists $OPTVAL{'domain'}) {
 		push @ldomains, $OPTVAL{'domain'};
