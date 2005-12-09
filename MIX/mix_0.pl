@@ -27,13 +27,13 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.42 2005/11/23 13:34:53 mathias Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.43 2005/12/09 13:15:47 lutscher Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.42 $                                      |
-# | Mod.Date     : $Date: 2005/11/23 13:34:53 $                           |
-# | Author       : $Author: mathias $                                      |
+# | Version      : $Revision: 1.43 $                                      |
+# | Mod.Date     : $Date: 2005/12/09 13:15:47 $                           |
+# | Author       : $Author: lutscher $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
 # | Email        : $Email: wilfried.gaensheimer@micronas.com$             |
@@ -47,6 +47,9 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.43  2005/12/09 13:15:47  lutscher
+# | changed parse_i2c_init() to parse_register_master() in package Reg.pm
+# |
 # | Revision 1.42  2005/11/23 13:34:53  mathias
 # | added parameter to mix_report
 # |
@@ -210,7 +213,8 @@ use Micronas::MixUtils qw( mix_init %EH mix_getopt_header);
 use Micronas::MixUtils::IO qw(init_ole mix_utils_open_input write_sum);
 use Micronas::MixParser;
 use Micronas::MixIOParser;
-use Micronas::MixI2CParser;
+# use Micronas::MixI2CParser;
+use Micronas::Reg;
 use Micronas::MixWriter;
 use Micronas::MixReport;
 
@@ -224,7 +228,7 @@ use Micronas::MixReport;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.42 $'; # RCS Id '
+$::VERSION = '$Revision: 1.43 $'; # RCS Id '
 $::VERSION =~ s,\$,,go;
 
 logconfig(
@@ -294,7 +298,11 @@ mix_init();               # Presets ....
 
 =item *
 
--variant
+-debug                    Dump more information for debugging
+
+=item *
+
+-variant                  <to be documented>
 
 =item *
 
@@ -302,7 +310,7 @@ mix_init();               # Presets ....
 
 =item *
 
--cfg CONF.cfg				Read configuration from file CONF.cfg
+-cfg CONF.cfg             Read configuration from file CONF.cfg instead of mix.cfg (default)
 
 =item *
 
@@ -388,7 +396,7 @@ if ( $#ARGV < 0 ) { # Need  at least one sheet!!
 #}
 
 my( $r_connin, $r_hierin, $r_ioin, $r_i2cin);
-( $r_connin, $r_hierin, $r_ioin, $r_i2cin ) = mix_utils_open_input( @ARGV ); #Fetches HIER and CONN sheet(s)
+( $r_connin, $r_hierin, $r_ioin, $r_i2cin ) = mix_utils_open_input( @ARGV ); #Fetches HIER, CONN and register-master sheet(s)
 
 ##############################################################################
 #
@@ -415,8 +423,8 @@ parse_conn_init( $r_connin );
 # Parse IO
 parse_io_init( $r_ioin );
 
-# Parse I2C
-parse_i2c_init( $r_i2cin );
+# Parse Register-master
+Micronas::Reg::parse_register_master( $r_i2cin );
 
 apply_conn_macros( $r_connin, $r_connmacros );
 
