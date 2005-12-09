@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.101 $                                         |
+# | Revision:   $Revision: 1.102 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2005/12/09 13:55:23 $                              |
+# | Date:       $Date: 2005/12/09 14:03:55 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.101 2005/12/09 13:55:23 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.102 2005/12/09 14:03:55 lutscher Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.102  2005/12/09 14:03:55  lutscher
+# | added reg_shell.exclude_fields
+# |
 # | Revision 1.101  2005/12/09 13:55:23  lutscher
 # | added reg_shell.exclude_regs
 # |
@@ -426,11 +429,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.101 2005/12/09 13:55:23 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.102 2005/12/09 14:03:55 lutscher Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.101 $';         #'
+my $thisrevision        =      '$Revision: 1.102 $';         #'
 
-# Revision:   $Revision: 1.101 $   
+# Revision:   $Revision: 1.102 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1327,7 +1330,8 @@ sub mix_init () {
 		'bus_clock' => "clk",          # Default bus clock name
 		'bus_reset' => "rst_n",        # Default bus reset name
         'use_reg_name_as_prefix' => 0, # If 1, prefix field names with register names
-        'exclude_regs' => "",          # comma seperated list of registers to exclude from code generation
+        'exclude_regs' => "",          # comma seperated list of register names to exclude from code generation
+		'exclude_fields' => "",        # comma seperated list of field names to exclude from code generation	
 		'stl' => {
 				  'initial_idle'  => 100,
 				  'exclude_regs'  => "", # comma seperated list of registers to exclude from STL generation
