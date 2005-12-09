@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.2 2005/11/23 13:30:49 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.3 2005/12/09 14:27:26 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.3  2005/12/09 14:27:26  lutscher
+#  reverted change in _add_primary_input()
+#
 #  Revision 1.2  2005/11/23 13:30:49  lutscher
 #  added _get_pragma_pos() and _attach_file_to_list()
 #
@@ -181,7 +184,8 @@ sub _add_primary_input {
 	my ($name, $msb, $lsb, $destination) = @_;
 	my %hconn;
 	my $postfix = ($name =~ m/^clk/) ? "" : "%POSTFIX_PORT_IN%";
-	
+	# my $postfix = "%POSTFIX_PORT_IN%";
+
 	if ($name =~ m/\%POSTFIX_/g) {
 		$hconn{'::name'} = "${name}";
 	} else {
