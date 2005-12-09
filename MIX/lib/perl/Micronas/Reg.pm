@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.15 2005/12/09 13:13:48 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.16 2005/12/09 15:02:15 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.16  2005/12/09 15:02:15  lutscher
+#  small changes
+#
 #  Revision 1.15  2005/12/09 13:13:48  lutscher
 #  moved hook function called by mix_0.pl from MixI2CParser.pm to here; now called parse_register_master()
 #
@@ -118,9 +121,9 @@ sub parse_register_master($) {
 		if (grep($EH{'reg_shell'}{'type'} =~ m/$_/i, @{$o_space->global->{supported_views}})) {
 			# init register module for generation of register-shell
 			$o_space->init(	 
-						   inputformat => "register-master", 
-						   database_type => $EH{i2c}{regmas_type},
-						   register_master => $r_i2c
+						   'inputformat'     => "register-master", 
+						   'database_type'   => $EH{i2c}{regmas_type},
+						   'register_master' => $r_i2c
 						  );
 
 			# set debug switch
@@ -139,7 +142,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.15 $ ';  #'
+our($VERSION) = '$Revision: 1.16 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -157,7 +160,7 @@ our(%hglobal) =
 					   "none"           # do nothing
 					  ],
 
-   # attributes in register-master that do not belong to a field
+   # attributes in register-master that do NOT belong to a field
    # note: the field name is retrieved from the ::b entries of the register-master
    non_field_attributes => [qw(::ign ::sub ::interface ::inst ::width ::b:.* ::b ::addr ::dev ::vi2c ::default ::name ::type)],
 
