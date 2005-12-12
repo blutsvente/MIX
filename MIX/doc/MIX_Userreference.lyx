@@ -56,7 +56,7 @@ MIX - Micronas Interconnect Spec expander
 
 Author: Wilfried Gänsheimer
 \newline 
-$Date: 2005/11/08 08:06:54 $
+$Date: 2005/12/12 14:24:15 $
 \newline 
 Version: $Id: MIX_Userreference.lyx,v 1.6 2005/01/26 14:01:59 wig Exp 
 \layout Section
@@ -5147,531 +5147,33 @@ pad.name
 
 \layout Section
 
-I
-\begin_inset Formula $^{2}$
-\end_inset 
-
-C sheet
+Register-Master Sheet
 \layout Standard
 
-The I
-\begin_inset Formula $^{2}$
-\end_inset 
-
-C sheet is one more category of input specification.
- It's content describes connections from other modules to I
-\begin_inset Formula $^{2}$
-\end_inset 
-
-C registerblocks.
- The hierarchical position of a registerblock can be defined in the 
-\family typewriter 
-HIER
-\family default 
--sheet.
+The Register-master sheet is one more category of input specification.
+ It describes configuration register domains of devices.
+ A register domain contains registers which in turn contain fields.
+ The MIX tool creates 
+\emph on 
+views
+\emph default 
+ of a register domain, which is an implementation.
+ Additionally, it can create 
+\emph on 
+reports
+\emph default 
+ which are used for documentation.
+\newline 
+There are also other in-house tools reading this format, which results in
+ some legacy column data that is not used by MIX.
 \layout Subsection
 
-I
-\begin_inset Formula $^{2}$
-\end_inset 
-
-C Registerblock
-\layout Standard
-
-The I
-\begin_inset Formula $^{2}$
-\end_inset 
-
-C module is split into two seperate untis called I
-\begin_inset Formula $^{2}$
-\end_inset 
-
-C-kernel and I
-\begin_inset Formula $^{2}$
-\end_inset 
-
-C-registerblock.
- Settings made in a MIX-I
-\begin_inset Formula $^{2}$
-\end_inset 
-
-C-sheet only describe registerblock specific Informations.
- Here you can see a serial I
-\begin_inset Formula $^{2}$
-\end_inset 
-
-C-registerblock.
-\newline 
-
-\begin_inset Graphics
-	filename images/serial_iic_reg.png
-	lyxscale 40
-	scale 40
-	keepAspectRatio
-
-\end_inset 
-
-
-\newline 
-A I
-\begin_inset Formula $^{2}$
-\end_inset 
-
-C-registerblock consists of a transceiver, one or more synchronisation blocks
- and some registers (max.
- 255).
- The registers direction, synchronisation, in-/out-connections...
- can be specified in the I
-\begin_inset Formula $^{2}$
-\end_inset 
-
-C sheet.
- The 
-\family typewriter 
-or_block
-\family default 
- is a simple script generated block which connects incoming signals to a
- 
-\family typewriter 
-or
-\family default 
- and outgoing ones to the transceiver.
- This work has to be done by a MIX external script, because MIX is not thought
- for generating logics.
-\layout Subsection
-
-I
-\begin_inset Formula $^{2}$
-\end_inset 
-
-C sheet column header
-\layout Standard
-
-The following section describes the meanings of identifiers used in a MIX
- I
-\begin_inset Formula $^{2}$
-\end_inset 
-
-C sheet.
- Default settings and mendatory/optional specification can be found in the
- table bellow.
-\newline 
-
-\layout Standard
-
-
-\begin_inset  Tabular
-<lyxtabular version="3" rows="18" columns="2">
-<features>
-<column alignment="left" valignment="top" width="0pt">
-<column alignment="block" valignment="top" width="14cm">
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-::ign
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- every columns row, containing # or // is ignored by MIX
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-::variants
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- select a line depending on the -variant command line switch.
- If -variant VAR is set, only lines whose 
-\family typewriter 
-::variant
-\family default 
- cell contains the keyword VAR, default or empty, are selected and read
- in.
- several variants may be given in one cell, separated by ",".
- Without specifying the -variant switch, the "default" and empty 
-\family typewriter 
-::variant
-\family default 
- cells are read in and evaluated.
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-::ign
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- ignore this row if # is detected.
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-::variants
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- select a variant.
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-::type
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- register type; only serial registers implemented yet.
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-::dev
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- specify the device name
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-::sub
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- define registerblock subaddress
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-::interface
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- domain name
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-::block
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- registerblock Name.
- The registerblock name and its sub-address are building the instance-name.
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-::dir
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- defines a registers input/output direction, possible values are: 
-\family typewriter 
-R
-\family default 
-, 
-\family typewriter 
-W
-\family default 
- or 
-\family typewriter 
-RW
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-::spec
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- update signal
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-::clock
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- set a clock domain.
- Every I
-\begin_inset Formula $^{2}$
-\end_inset 
-
-C register may receive it's own clock.
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-::reset
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- specify a Reset signal.
- This signal resets the I
-\begin_inset Formula $^{2}$
-\end_inset 
-
-C registers.
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-::busy
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- busy signal
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-::b
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- specifies a signal which is connected to a registers pin.
- This is a multiple column which can be used to set different signals to
- the same register
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-::init
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- Set initializing value of register connection(s).
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-::rec
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- Set recommended value of a register connection(s).
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-::comment
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- all entries in these cells are threaten as comments.
- MIX will keep comments to put them later into VHDL/Verilog output.
-\newline 
-
-\end_inset 
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset 
-
-
+Register-master Column Header
 \layout Standard
 
 
 \begin_inset Float table
+placement H
 wide false
 collapsed false
 
@@ -5679,7 +5181,7 @@ collapsed false
 
 
 \begin_inset  Tabular
-<lyxtabular version="3" rows="17" columns="5">
+<lyxtabular version="3" rows="27" columns="5">
 <features>
 <column alignment="left" valignment="top" leftline="true" rightline="true" width="0pt">
 <column alignment="block" valignment="top" rightline="true" width="4cm">
@@ -5704,7 +5206,7 @@ Column name
 
 
 \series bold 
-Descriptionend
+Description
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
@@ -5760,15 +5262,6 @@ Example
 
 \layout Standard
 
- 
-\begin_inset Formula $<$
-\end_inset 
-
-empty
-\begin_inset Formula $>$
-\end_inset 
-
-
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -5776,8 +5269,7 @@ empty
 
 \layout Standard
 
- man.
- 
+opt.
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -5796,49 +5288,6 @@ empty
 
 \layout Standard
 
-::variants 
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- Variant selector 
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- Default 
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- opt.
- 
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- Var1 
-\end_inset 
-</cell>
-</row>
-<row bottomline="true">
-<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
 ::type 
 \end_inset 
 </cell>
@@ -5847,7 +5296,7 @@ empty
 
 \layout Standard
 
- Register type 
+Register type; not used by MIX
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -5855,7 +5304,7 @@ empty
 
 \layout Standard
 
- serial 
+I2C
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -5872,7 +5321,7 @@ empty
 
 \layout Standard
 
- serial 
+ I2C
 \end_inset 
 </cell>
 </row>
@@ -5890,7 +5339,7 @@ empty
 
 \layout Standard
 
- Device name 
+Device name for board-level purposes
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -5898,7 +5347,6 @@ empty
 
 \layout Standard
 
- n/a 
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -5906,8 +5354,7 @@ empty
 
 \layout Standard
 
- man.
- 
+ opt.
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -5915,7 +5362,49 @@ empty
 
 \layout Standard
 
- FRCA0 
+ FRCA0
+\end_inset 
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+::width
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Width of register in bits
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+32
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+man.
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+32
 \end_inset 
 </cell>
 </row>
@@ -5933,7 +5422,7 @@ empty
 
 \layout Standard
 
- Sub address 
+Address offset of register in domain
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -5941,7 +5430,7 @@ empty
 
 \layout Standard
 
- VHDL 
+0x0
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -5949,7 +5438,7 @@ empty
 
 \layout Standard
 
- opt.
+ man.
  
 \end_inset 
 </cell>
@@ -5958,7 +5447,49 @@ empty
 
 \layout Standard
 
- 27 
+0x20
+\end_inset 
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+::addr
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Not used by MIX
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+0x0
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+opt.
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+0x1234
 \end_inset 
 </cell>
 </row>
@@ -5976,7 +5507,7 @@ empty
 
 \layout Standard
 
- Domain name 
+Domain name
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -5984,15 +5515,6 @@ empty
 
 \layout Standard
 
- W_NO_CONFIG 
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- man.
  
 \end_inset 
 </cell>
@@ -6001,7 +5523,16 @@ empty
 
 \layout Standard
 
- cc0 
+man.
+ 
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+ sci_fe1
 \end_inset 
 </cell>
 </row>
@@ -6019,22 +5550,13 @@ empty
 
 \layout Standard
 
- Block Name 
+Function block name; not used by MIX 
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \layout Standard
-
- 
-\begin_inset Formula $<$
-\end_inset 
-
-empty
-\begin_inset Formula $>$
-\end_inset 
-
 
 \end_inset 
 </cell>
@@ -6052,7 +5574,48 @@ empty
 
 \layout Standard
 
- mc 
+ fe_ycdet
+\end_inset 
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+::inst
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Register name
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+man.
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+IP_CTRL1
 \end_inset 
 </cell>
 </row>
@@ -6070,7 +5633,7 @@ empty
 
 \layout Standard
 
- Direction 
+Direction; access type of field
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -6078,15 +5641,7 @@ empty
 
 \layout Standard
 
- 
-\begin_inset Formula $<$
-\end_inset 
-
-empty
-\begin_inset Formula $>$
-\end_inset 
-
-
+ RW
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -6113,6 +5668,46 @@ empty
 
 \layout Standard
 
+::auto
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Not used by MIX
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+opt.
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
 ::spec 
 \end_inset 
 </cell>
@@ -6121,7 +5716,7 @@ empty
 
 \layout Standard
 
- Update Signal 
+Additional field access attribute
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -6129,7 +5724,7 @@ empty
 
 \layout Standard
 
- NTO 
+ 
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -6146,7 +5741,90 @@ empty
 
 \layout Standard
 
- takeover_b72 
+W1C
+\end_inset 
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+::update
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Not used by MIX
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+N
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+opt.
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+N
+\end_inset 
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+::sync
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Name of update signal for shadowed fields
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+opt.
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+upd_p12
 \end_inset 
 </cell>
 </row>
@@ -6164,22 +5842,13 @@ empty
 
 \layout Standard
 
- Clock Domain 
+Clock domain of field
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \layout Standard
-
- 
-\begin_inset Formula $<$
-\end_inset 
-
-empty
-\begin_inset Formula $>$
-\end_inset 
-
 
 \end_inset 
 </cell>
@@ -6189,7 +5858,6 @@ empty
 \layout Standard
 
  opt.
- 
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -6197,7 +5865,7 @@ empty
 
 \layout Standard
 
- clkcc81 
+clk_f20
 \end_inset 
 </cell>
 </row>
@@ -6215,22 +5883,13 @@ empty
 
 \layout Standard
 
- Reset Signal 
+Reset signal of field
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \layout Standard
-
- 
-\begin_inset Formula $<$
-\end_inset 
-
-empty
-\begin_inset Formula $>$
-\end_inset 
-
 
 \end_inset 
 </cell>
@@ -6239,8 +5898,7 @@ empty
 
 \layout Standard
 
- opt.
- 
+opt.
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -6258,57 +5916,6 @@ empty
 
 \layout Standard
 
-::busy 
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- Busy Signal 
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- 
-\begin_inset Formula $<$
-\end_inset 
-
-empty
-\begin_inset Formula $>$
-\end_inset 
-
-
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- opt.
- 
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
- b81 
-\end_inset 
-</cell>
-</row>
-<row bottomline="true">
-<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
 ::b 
 \end_inset 
 </cell>
@@ -6317,22 +5924,13 @@ empty
 
 \layout Standard
 
- Bit n 
+Bit n of field (as <field_name>.<n>)
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \layout Standard
-
- 
-\begin_inset Formula $<$
-\end_inset 
-
-empty
-\begin_inset Formula $>$
-\end_inset 
-
 
 \end_inset 
 </cell>
@@ -6368,7 +5966,7 @@ empty
 
 \layout Standard
 
- Reset Value 
+Reset value of field 
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -6376,15 +5974,7 @@ empty
 
 \layout Standard
 
- 
-\begin_inset Formula $<$
-\end_inset 
-
-empty
-\begin_inset Formula $>$
-\end_inset 
-
-
+0
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -6401,7 +5991,7 @@ empty
 
 \layout Standard
 
- 0 
+ 0x0
 \end_inset 
 </cell>
 </row>
@@ -6419,7 +6009,7 @@ empty
 
 \layout Standard
 
- Recommended Value 
+Recommended value of field
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -6427,15 +6017,7 @@ empty
 
 \layout Standard
 
- 
-\begin_inset Formula $<$
-\end_inset 
-
-empty
-\begin_inset Formula $>$
-\end_inset 
-
-
+0
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
@@ -6462,6 +6044,251 @@ empty
 
 \layout Standard
 
+::range
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Value range of field
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+0..1
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+opt.
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+0..15
+\end_inset 
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+::view
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Include in documentation or not
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Y
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+opt.
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Y
+\end_inset 
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+::vi2c
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Register type; not used by MIX
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+opt.
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+GI2C_32Bit-Registger
+\end_inset 
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+::name
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Name of field (like in ::b)
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+opt.
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+ctrl1
+\end_inset 
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+::definition
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Definition of field instance
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+opt.
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+ctrl1
+\end_inset 
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+::fgroup
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
 ::comment 
 \end_inset 
 </cell>
@@ -6470,22 +6297,13 @@ empty
 
 \layout Standard
 
- Comment field 
+Comment field for reports
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \layout Standard
-
- 
-\begin_inset Formula $<$
-\end_inset 
-
-empty
-\begin_inset Formula $>$
-\end_inset 
-
 
 \end_inset 
 </cell>
@@ -6494,7 +6312,7 @@ empty
 
 \layout Standard
 
- opt.
+opt.
  
 \end_inset 
 </cell>
@@ -6503,7 +6321,7 @@ empty
 
 \layout Standard
 
- This is a comment  
+This is a comment  
 \end_inset 
 </cell>
 </row>
@@ -6517,133 +6335,315 @@ empty
 
 \layout Subsection
 
-I
-\begin_inset Formula $^{2}$
-\end_inset 
-
-C Parser global configuration
-\layout Standard
-
-Also here some global configuration are available to tailor the I
-\begin_inset Formula $^{2}$
-\end_inset 
-
-C sheet parser behaviour:
-\newline 
-
+Register Views Global Configuration
 \layout Standard
 
 
 \begin_inset  Tabular
-<lyxtabular version="3" rows="4" columns="2">
+<lyxtabular version="3" rows="9" columns="4">
 <features>
-<column alignment="block" valignment="top" leftline="true" rightline="true" width="4cm">
-<column alignment="block" valignment="top" rightline="true" width="9cm">
+<column alignment="left" valignment="top" leftline="true" width="0">
+<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="left" valignment="top" leftline="true" rightline="true" width="2in">
 <row topline="true" bottomline="true">
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \layout Standard
 
-
-\family typewriter 
-i2c_cell.type
+Key
 \end_inset 
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \layout Standard
 
- specifies the default register type (default: 
-\family typewriter 
-ser
-\family default 
-) 
+Value
 \end_inset 
 </cell>
-</row>
-<row bottomline="true">
-<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \layout Standard
 
-
-\family typewriter 
-i2c_cell.
-\backslash 
-%IIC_SER_REG
-\backslash 
-%
+Default
 \end_inset 
 </cell>
-<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \layout Standard
 
- set prefix for serial subregister entity (default: 
-\family typewriter 
-iic_ser_reg_
-\family default 
-)
+Description
 \end_inset 
 </cell>
 </row>
-<row bottomline="true">
-<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \layout Standard
 
-
-\family typewriter 
-i2c_cell.
-\backslash 
-%IIC_PAR_REG
-\backslash 
-%
+i2c.xls
 \end_inset 
 </cell>
-<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \layout Standard
 
- set prefix for parallel subregister entity (default: 
-\family typewriter 
-iic_par_reg_
-\family default 
-) 
+<name>
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Sheet name in register-master xls/sxc file
 \end_inset 
 </cell>
 </row>
-<row bottomline="true">
-<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \layout Standard
 
-
-\family typewriter 
-i2c_cell.
-\backslash 
-%IIC_SYNC
-\backslash 
-%
+i2c.regmas_type
 \end_inset 
 </cell>
-<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \layout Standard
 
- set prefix for sync-block (default: 
-\family typewriter 
-sync_iic
-\family default 
-)  
+<VGCA|FRCH>
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+VGCA
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+to accommodate different styles of register-master xls/sxc sheets
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reg_shell.type
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+<view>
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+HDL-vgch-rs
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+selects view to be generated
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reg_shell.bus_clock
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+<name>
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+name of config bus clock for domain
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reg_shell.bus_reset
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+<name>
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+name of config bus reset for domain
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reg_shell.addrwidth
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+<value>
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+width in bits of config bus address signal
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reg_shell.datawidth
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+<value>
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+width in bits of config bus data signal (same as register width)
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reg_shell.use_reg_name_as_prefix
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+<0|1>
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+0
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+If 1, prefix field names with register names
 \end_inset 
 </cell>
 </row>
@@ -6654,34 +6654,563 @@ sync_iic
 
 \layout Subsection
 
-I
-\begin_inset Formula $^{2}$
+HDL Register-Shells
+\layout Description
+
+View 
+\begin_inset Quotes eld
 \end_inset 
 
-C Sheet example
+HDL-vgch-rs
+\begin_inset Quotes erd
+\end_inset 
+
+: This generates a Verilog OCP bus register-shell for the register domain.
+ The specification for this can be found in 
+\family typewriter 
+galaxy
+\backslash 
+
+\backslash 
+PROJECTS
+\backslash 
+MIC-32
+\backslash 
+MIC32C
+\backslash 
+ProjectDocumentation
+\backslash 
+OCP-config-register-shell
+\family default 
+.
+\layout Subsubsection
+
+Configuration
+\layout Description
+
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="8" columns="4">
+<features>
+<column alignment="left" valignment="top" leftline="true" width="0">
+<column alignment="block" valignment="top" leftline="true" width="1.2in">
+<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="block" valignment="top" leftline="true" rightline="true" width="2in">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
 \layout Standard
 
-In this section a example will demostrate I
-\begin_inset Formula $^{2}$
+Key
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Value
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Default
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Description
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reg_shell.multi_clock_domains
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+<0|1>
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+1
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+If 1, generate separate register blocks for all clock domains
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reg_shell.infer_clock_gating
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+<0|1>
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+1
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+If 1, insert extra logic for power-saving
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reg_shell.infer_sva
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+<0|1>
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+1
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+If 1, insert SystemVerilog assertions into HDL-code
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reg_shell.read_pipeline_lvl
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+0..<n>
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+0
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Parameter that controls the read-pipelining; If 0, no read-pipelining will
+ be inserted; n<addrwidth
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reg_shell.read_multicycle
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+0..<n>
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+0
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+can be one of [0,1,2,..] to insert delays for read-acknowledge
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reg_shell.exclude_regs
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+<name>[, <name>]*
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Comma-seperated list of register names to be excluded from generation
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reg_shell.exclude_fields
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+<name>[, <name>]*
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Comma-seperated list of field names to be excluded from generation
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
 \end_inset 
 
-C sheet usage, by connecting the 
-\family typewriter 
-a_clk
-\family default 
- example to a registerblock.
- 
-\begin_inset Formula $<$
+
+\layout Subsection
+
+VR_AD Macro
+\layout Description
+
+View 
+\begin_inset Quotes eld
 \end_inset 
+
+e_vr_ad
+\begin_inset Quotes erd
+\end_inset 
+
+: This generates 
+\emph on 
+e
+\emph default 
+-code for the VR_AD eVC used for configuring/monitoring DUT registers in
+ a Specman test environment.
+ It generates the macro calls to define the registers and fields in the
+ specified domain.
+\layout Subsection
+
+STL Stimuli Files
+\layout Description
+
+View 
+\begin_inset Quotes eld
+\end_inset 
+
+STL
+\begin_inset Quotes erd
+\end_inset 
+
+: This generates a 
+\emph on 
+Socket Transaction Language
+\emph default 
+ file for testing DUT registers.
+ The generated file has two sections, 
+\emph on 
+head
+\emph default 
+ and 
+\emph on 
+body
+\emph default 
+ which are enveloped by source-code pragmas (
+\family typewriter 
+//pragma MIX_STL...
+\family default 
+).
+ If the output file is generated for the first time, it will be created
+ from a template.
+ If the output file already exists, it is read and only the head and body
+ sections are replaced.
+ This way, the user can make additions to the stimuli file.
+\layout Subsubsection
+
+Configuration
+\layout Standard
+
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="4" columns="4">
+<features>
+<column alignment="left" valignment="top" leftline="true" width="0">
+<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="block" valignment="top" leftline="true" rightline="true" width="2in">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Key
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Value
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Default
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Description
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reg_shell.stl.initial_idle
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+<value>
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+100
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+number of wait cycles before first transaction
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reg_shell.stl.exclude_regs
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+<name>[, <name>]*
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Comma-seperated list of register names to be excluded from generation
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reg_shell.stl.use_base_addr
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+<0|1>
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+0
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+not yet implemented
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\layout Subsection
+
+MIF Report Files
+\layout Standard
+
+The report can be created with the -report reglist command line option.
+\layout Standard
 
 t.b.d
-\begin_inset Formula $>$
-\end_inset 
+\layout Subsection
 
+Register-Master Sheet Example
+\layout Standard
 
-\layout Section
+An example sheet can be found in 
+\family typewriter 
+galaxy
+\backslash 
 
-VI2C sheet
+\backslash 
+PROJECTS
+\backslash 
+VGCH
+\backslash 
+ProjectDocumentation
+\backslash 
+Registermaster
+\backslash 
+template.
 \layout Section
 
 Alarm clock example
@@ -7088,6 +7617,24 @@ Remove old and diff sheets.
  These sheets are named with "O_" or "DIFF".
 \newline 
 
+\family typewriter 
+- domain DOMAIN
+\family default 
+
+\newline 
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+hspace*{15mm}
+\end_inset 
+
+Restrict register-master view to domain <DOMAIN>
+\newline 
+
 \newline 
 # Add your options here ....
 \newline 
@@ -7183,6 +7730,9 @@ MIX reads in
  configuration files in the following locations: 
 \layout Enumerate
 
+-cfg <config file> command line option
+\layout Enumerate
+
 
 \family typewriter 
 $ENV{HOME}
@@ -7208,8 +7758,6 @@ C:
 
 \newline 
 (only from the first matching location)
-\newline 
-
 \layout Enumerate
 
 
