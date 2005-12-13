@@ -1,0 +1,1411 @@
+#LyX 1.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 221
+\textclass article
+\language english
+\inputencoding auto
+\fontscheme times
+\graphics default
+\paperfontsize 12
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\use_natbib 0
+\use_numerical_citations 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Title
+
+MIX Register-Master Packages
+\newline 
+Developer Reference
+\layout Date
+
+Date: $Date: 2005/12/13 13:21:11 $ Version: $Id: MIX_Reg_Development_doc.lyx,v 1.1 2005/12/13 13:21:11 lutscher Exp $
+\layout Section*
+
+Introduction
+\layout Standard
+
+This document is a brief overview of the packages that have been added to
+ MIX to process configuration register information.
+ It is intended as an introduction to the developer, who wants to add capabiliti
+es to MIX regarding register description input formats, data structures,
+ and output views.
+\layout Standard
+
+The configuration register information is intrinsically hierarchical.
+ Starting from the chip/device (could also start from an SoC or board-level
+ point of view), it contains a register space that contains domains (mapped
+ to base-addresses of the device) that contains registers (mapped to addresses)
+ that contain fields (mapped to bit-positions within registers).
+ An object has a definition and an instance.
+ The definition/object concept is not supported by the register-master sheet
+ but implemented in the data structure defined here to be open for future
+ applications.
+ 
+\layout Standard
+
+
+\begin_inset LatexCommand \tableofcontents{}
+
+\end_inset 
+
+
+\layout Section
+\pagebreak_top 
+Classes
+\layout Standard
+
+In Perl, classes are packages.
+ The configuration register information is stored internally in objects.
+ This data structure is independent of the input format or output view.
+ In fact, it is independent of the other MIX packages and can thus be integrated
+ into another script/tools environment if necessary.
+\layout Subsection
+
+Overview
+\layout Standard
+
+In general, the data members can be accessed by methods that carry the name
+ of the data member.
+ E.g.
+ 
+\family typewriter 
+
+\newline 
+$ref = $o_reg->domains()
+\family default 
+ 
+\newline 
+returns the data member 
+\family typewriter 
+domain
+\family default 
+ of the 
+\family typewriter 
+$o_reg
+\family default 
+ object.
+ For setting a data member, the method can be called with a hash as parameter,
+ e.g.
+ 
+\family typewriter 
+
+\newline 
+$o_reg->device(
+\begin_inset Quotes eld
+\end_inset 
+
+VGCH
+\begin_inset Quotes erd
+\end_inset 
+
+)
+\family default 
+;
+\layout Standard
+
+Every class implements a constructor method
+\family typewriter 
+ new() 
+\family default 
+and a
+\family typewriter 
+ display()
+\family default 
+ method for debugging.
+ The 
+\family typewriter 
+new()
+\family default 
+ method takes a hash as parameter that sets data members (keys of the hash),
+ e.g.
+ 
+\family typewriter 
+
+\newline 
+$o_reg->new(
+\begin_inset Quotes eld
+\end_inset 
+
+device
+\begin_inset Quotes erd
+\end_inset 
+
+ => 
+\begin_inset Quotes eld
+\end_inset 
+
+VGCH
+\begin_inset Quotes erd
+\end_inset 
+
+);
+\family default 
+.
+ 
+\newline 
+The class may also implement a destructor method 
+\family typewriter 
+DESTROY()
+\family default 
+.
+\layout Subsection
+
+Class 
+\family typewriter 
+Micronas::Reg
+\layout Standard
+
+The 
+\family typewriter 
+Reg
+\family default 
+ class contains global information about a configuration register space.
+ Table 
+\begin_inset LatexCommand \ref{cap:Reg-Members}
+
+\end_inset 
+
+ lists the most important class methods and data members.
+\layout Standard
+
+
+\begin_inset Float table
+placement H
+wide false
+collapsed false
+
+\layout Caption
+
+
+\family typewriter 
+
+\begin_inset LatexCommand \label{cap:Reg-Members}
+
+\end_inset 
+
+Reg
+\family default 
+ Members
+\layout Standard
+
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="7" columns="2">
+<features>
+<column alignment="block" valignment="top" leftline="true" width="2in">
+<column alignment="block" valignment="top" leftline="true" rightline="true" width="4in">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Class method or data member
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Description
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+device
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+string: symbolic identifier for chip/device
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+domains
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reference to list of hashes of the form
+\layout Standard
+
+
+\family typewriter 
+(
+\layout Standard
+
+
+\family typewriter 
+'domain' => <Micronas::RegDomain object>,
+\layout Standard
+
+
+\family typewriter 
+'baseaddr' => <baseaddr>
+\layout Standard
+
+
+\family typewriter 
+)
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+global
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reference to hash containing Class data (static data) 
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+init(%hinput)
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+initialize object with input; depending on inputformat defined in %hinput,
+ calls appropriate function to fill register space object; note: NOT automatical
+ly called by constructor; adds to the object, does not clear it; input:
+ hash, depends on inputformat but has at least key "inputformat"
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+generate_view($view)
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+generate a view of the register space: this is the 
+\emph on 
+hook function
+\emph default 
+ to call view-generating-methods in other packages/modules
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+<other>
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+see in files ->chapter 
+\begin_inset LatexCommand \ref{sec:Files}
+
+\end_inset 
+
+
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\end_inset 
+
+
+\layout Subsection
+
+Class 
+\family typewriter 
+Micronas::RegDomain
+\layout Standard
+
+The 
+\family typewriter 
+RegDomain
+\family default 
+ class contains information related to a register domain.
+ Table 
+\begin_inset LatexCommand \ref{cap:RegDomain-Members}
+
+\end_inset 
+
+ lists the most important class methods and data members.
+\layout Standard
+
+
+\begin_inset Float table
+placement H
+wide false
+collapsed false
+
+\layout Caption
+
+
+\family typewriter 
+
+\begin_inset LatexCommand \label{cap:RegDomain-Members}
+
+\end_inset 
+
+RegDomain
+\family default 
+ Members
+\layout Standard
+
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="9" columns="2">
+<features>
+<column alignment="block" valignment="top" leftline="true" width="2in">
+<column alignment="block" valignment="top" leftline="true" rightline="true" width="4in">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Class method or data member
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Description
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+id
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+scalar: incremented with every new object
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+name
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+string: instance name of register domain
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+definition
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+string: definition name of domain
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+addrmap
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reference to list of hashes of the form 
+\family typewriter 
+
+\newline 
+(
+\newline 
+'reg' => <Micronas::RegReg object>, 
+\newline 
+'offset' => <address_offset>
+\newline 
+)
+\layout Standard
+
+This maps the registers into an address map.
+\layout Standard
+
+Currently only one addressmap is supported; If more are needed, the domain
+ object has to be copied.
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+regs
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reference to list of all 
+\family typewriter 
+Micronas::RegReg
+\family default 
+ objects of domain
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+fields
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reference to list of all 
+\family typewriter 
+Micronas::RegField
+\family default 
+ objects of domain
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+find_reg_by_address_first\SpecialChar \-
+($offset)
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+returns the first 
+\family typewriter 
+Micronas::RegReg
+\family default 
+ object (or undef) that is mapped to the given address offset
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+<other>
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+see in file ->chapter 
+\begin_inset LatexCommand \ref{sec:Files}
+
+\end_inset 
+
+
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\end_inset 
+
+
+\layout Subsection
+
+Class 
+\family typewriter 
+Micronas::RegReg
+\layout Standard
+
+The 
+\family typewriter 
+RegReg
+\family default 
+ class contains information related to a hardware register.
+ Table 
+\begin_inset LatexCommand \ref{cap:RegReg-Members}
+
+\end_inset 
+
+ lists the most important class methods and data members.
+\layout Standard
+
+
+\begin_inset Float table
+placement H
+wide false
+collapsed false
+
+\layout Caption
+
+
+\family typewriter 
+
+\begin_inset LatexCommand \label{cap:RegReg-Members}
+
+\end_inset 
+
+RegReg
+\family default 
+ Members
+\layout Standard
+
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="8" columns="2">
+<features>
+<column alignment="block" valignment="top" leftline="true" width="2in">
+<column alignment="block" valignment="top" leftline="true" rightline="true" width="4in">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Class method or data member
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Description
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+id
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+scalar: incremented with every new object
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+name
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+string: instance name of register
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+definition
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+string: definition name of register
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+attribs
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+hash of the form
+\newline 
+
+\family typewriter 
+(
+\newline 
+'<attrib_name>' => <attrib_value>,
+\layout Standard
+
+
+\family typewriter 
+...,
+\layout Standard
+
+
+\family typewriter 
+)
+\layout Standard
+
+Attribute names of registers are e.g.
+ 
+\family typewriter 
+size
+\family default 
+, 
+\family typewriter 
+usedbits
+\family default 
+ etc.
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+fields
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reference to list of hashes of the form
+\newline 
+
+\family typewriter 
+(
+\newline 
+'field' => <Micronas::RegField object>,
+\layout Standard
+
+
+\family typewriter 
+'pos' => <field_position>
+\layout Standard
+
+
+\family typewriter 
+)
+\layout Standard
+
+where 
+\family typewriter 
+<field_position>
+\family default 
+ is the bit position of the field in the register.
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+get_reg_init()
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+returns the init (reset) value of a register computed from all its fields
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+<other>
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+see in file ->chapter 
+\begin_inset LatexCommand \ref{sec:Files}
+
+\end_inset 
+
+
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\end_inset 
+
+
+\layout Subsection
+
+Class 
+\family typewriter 
+Micronas::RegField
+\layout Standard
+
+The RegField class contains information related to a bit-field.
+ Table 
+\begin_inset LatexCommand \ref{cap:RegField-Members}
+
+\end_inset 
+
+ lists the most important class methods and data members.
+\layout Standard
+
+
+\begin_inset Float table
+placement H
+wide false
+collapsed false
+
+\layout Caption
+
+
+\family typewriter 
+
+\begin_inset LatexCommand \label{cap:RegField-Members}
+
+\end_inset 
+
+RegField
+\family default 
+ Members
+\layout Standard
+
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="7" columns="2">
+<features>
+<column alignment="block" valignment="top" leftline="true" width="2in">
+<column alignment="block" valignment="top" leftline="true" rightline="true" width="4in">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Class method or data member
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Description
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+id
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+scalar: incremented with every new object
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+name
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+string: instance name of bit-field
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+definition
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+string: definition name of bit-field
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+attribs
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+hash of the form
+\newline 
+
+\family typewriter 
+(
+\newline 
+'<attrib_name>' => <attrib_value>,
+\layout Standard
+
+
+\family typewriter 
+...,
+\layout Standard
+
+
+\family typewriter 
+)
+\layout Standard
+
+Attribute names of registers are e.g.
+ 
+\family typewriter 
+size
+\family default 
+, 
+\family typewriter 
+usedbits
+\family default 
+ etc.
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+reg
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+parent object
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+<other>
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+see in file ->chapter 
+\begin_inset LatexCommand \ref{sec:Files}
+
+\end_inset 
+
+
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\end_inset 
+
+
+\layout Section
+
+View Concept
+\layout Standard
+
+A 
+\emph on 
+view
+\emph default 
+ is a representation of the register space (or domain) and is the output
+ format of the Register packages.
+ The hook function to implement new views is 
+\family typewriter 
+Micronas::\SpecialChar \-
+Reg::\SpecialChar \-
+generate_view\SpecialChar \-
+($view)
+\family default 
+ whereas
+\family typewriter 
+ Micronas::\SpecialChar \-
+Reg::\SpecialChar \-
+global
+\family default 
+ contains the list of currently supported views.
+\layout Section
+
+Hooks to MIX
+\layout Standard
+
+MIX tries to read a register-master sheet and calls 
+\family typewriter 
+Micronas::\SpecialChar \-
+Reg::\SpecialChar \-
+parse_\SpecialChar \-
+register_\SpecialChar \-
+master()
+\family default 
+.
+ This calls the constructor for a new 
+\family typewriter 
+Reg
+\family default 
+ object, calls the 
+\family typewriter 
+init()
+\family default 
+ method to parse the register-master sheet and fill the data structure,
+ and calls the 
+\family typewriter 
+generate_view()
+\family default 
+ method.
+\layout Standard
+
+MIX provides an API to create a hierarchy of HDL files.
+ If the view is an HDL view (to create register-shells or similar representation
+s), the Reg object calls this API to create the modules.
+ The API has been wrapped by simple methods in 
+\family typewriter 
+RegViews.pm
+\family default 
+.
+\layout Section
+
+
+\begin_inset LatexCommand \label{sec:Files}
+
+\end_inset 
+
+Files
+\layout Standard
+
+All Files are located in the <mix_root>/lib/perl/Micronas directory.
+\begin_inset Float table
+placement H
+wide false
+collapsed false
+
+\layout Caption
+
+Files
+\layout Standard
+
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="11" columns="2">
+<features>
+<column alignment="block" valignment="top" leftline="true" width="2in">
+<column alignment="block" valignment="top" leftline="true" rightline="true" width="4in">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+File
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Description
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+mix_0.pl
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+MIX main program
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+Reg.pm
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Main package containing Reg class, input format reader and hooks to MIX
+ main program
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+RegDomain.pm
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Package containing RegDomain class
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+RegReg.pm
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Package containing RegReg class
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+RegField.pm
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Package containing RegField class
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+RegViews.pm
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Main package containing methods to generate views; in particular HDL views;
+ extends Reg class
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+RegViewE.pm
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Package to generate 
+\family typewriter 
+\emph on 
+e
+\family default 
+\emph default 
+-code view
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+RegViewSTL.pm
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Package to generate STL view
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+MixUtils/\SpecialChar \-
+RegUtils.pm
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Contains non-OO utility methods
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\end_inset 
+
+
+\the_end
