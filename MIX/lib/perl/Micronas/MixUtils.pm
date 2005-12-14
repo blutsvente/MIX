@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.102 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2005/12/09 14:03:55 $                              |
+# | Revision:   $Revision: 1.103 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2005/12/14 12:50:32 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.102 2005/12/09 14:03:55 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.103 2005/12/14 12:50:32 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.103  2005/12/14 12:50:32  wig
+# | Improved external portlist tabe creation, prepared delta mode
+# |
 # | Revision 1.102  2005/12/09 14:03:55  lutscher
 # | added reg_shell.exclude_fields
 # |
@@ -360,6 +363,7 @@ require Exporter;
 @EXPORT_OK = qw(
 	%OPTVAL
     %EH
+    mix_utils_diff
 	);
 
 our $VERSION = '0.01';
@@ -429,11 +433,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.102 2005/12/09 14:03:55 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.103 2005/12/14 12:50:32 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.102 $';         #'
+my $thisrevision        =      '$Revision: 1.103 $';         #'
 
-# Revision:   $Revision: 1.102 $   
+# Revision:   $Revision: 1.103 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -654,8 +658,10 @@ sub mix_getopt_header(@) {
     if ( exists( $OPTVAL{delta} ) ) { # -delta |-nodelta
 		if ( $OPTVAL{delta} ) {
 	    	$EH{'output'}{'generate'}{'delta'} = 1;
+	    	$EH{'report'}{'delta'} = 1;
 		} else { # Switch off delta mode
 	    	$EH{'output'}{'generate'}{'delta'} = 0;
+	    	$EH{'report'}{'delta'} = 0;
 		}
     } else {
 		if ( $EH{'output'}{'generate'}{'delta'} ) { # Delta on by -conf or FILE.cfg
@@ -665,7 +671,9 @@ sub mix_getopt_header(@) {
 	    	$EH{'output'}{'generate'}{'delta'} = 0;
 		}
     }
-    if ( $EH{'output'}{'generate'}{'delta'} or $EH{'check'}{'hdlout'}{'path'} ) {
+    if ( $EH{'output'}{'generate'}{'delta'} or
+    	 $EH{'check'}{'hdlout'}{'path'} or
+    	 $EH{'report'}{'delta'} ) {
 	# Eval use Text::Diff
 	    if ( eval 'use Text::Diff;' ) {
 			logwarn( "FATAL: Cannot load Text::Diff module for -conf *delta* mode: $@" );
@@ -1824,13 +1832,26 @@ sub mix_init () {
     },
 	'report' => {
 		'path'	=> '.',
+		'delta'	=> '',		# If set, create a diff file instead of a new output
 		'portlist'	=> {
-			'name'	=>	'port', # Print out port names, not signal names!
+			'name'	=>	'',	# Define report file name; 
+							# 	if empty take name from $EH{out} ....
+							#   INST := name of last instance + _portlist.mif
+							#	ENTY := name of last entity + _portlist.mif
+			'ext'	=>	'mif',
+			'data'	=>	'port', # Print out port names, not signal names!
 			'split' =>	'external::extc,instance',
 					# Generate seperate portlist for
 					#	external : if column ::external has content
 					#		external::foo : use column ::foo as trigger
-					#	instance : for each instance
+					#	instance : generate a table for each instance
+					#	file[::(INST|ENTY)]
+					#			 : generate a file for each instance(*)/entity
+					#				combine with 'name' = INST or ENTY!!
+			'format' => { # Overwrite the built in format (t.b.d.)
+				'plist' => '',
+				'elist' => '',
+			},
 			'sort' =>	'input', # or alpha or ::col ....
 					# pinlist sort order. See portmapsort
 			'comments' => "0,striphash",
@@ -2592,17 +2613,16 @@ sub mix_utils_printf ($@) {
     my $fn = shift;
     my @args = @_;
 
-    # if ( $this_delta{"$fh"} ) {
     if ( $fhstore{$fn}{'delta'} or $fhstore{$fn}{'tmpl'} ) {
-	push( @ncont, split( /\n/, sprintf( @args ) ) );
+		push( @ncont, split( /\n/, sprintf( @args ) ) );
     }
 
     if ( $fhstore{$fn}{'out'} ) {    
-	$fhstore{$fn}{'out'}->print( join( "\n", @args ) );
+		$fhstore{$fn}{'out'}->print( join( "\n", @args ) );
     }
 
     if ( $fhstore{$fn}{'back'} ) {
-	$fhstore{$fn}{'back'}->print( join( "\n", @args ) );
+		$fhstore{$fn}{'back'}->print( join( "\n", @args ) );
     }
 }
 
@@ -2809,7 +2829,7 @@ sub mix_utils_diff ($$$$;$) {
     my $oc = shift;
     my $c  = shift;
     my $file = shift;
-	my $switches = shift || "";
+	my $switches = shift || '';
 
     # strip off comments and such (from generated data)
     $nc = mix_utils_clean_data( $nc, $c, $switches );
@@ -2817,10 +2837,10 @@ sub mix_utils_diff ($$$$;$) {
     # Diff it ...
     my $diff = diff( $nc, $oc,
 	    { STYLE => "Table",
-	    # STYLE => "Context",
-	    FILENAME_A => 'NEW', # TODO get new file name in here!
-	    FILENAME_B => "OLD $file",
-	    CONTEXT => 0,
+	      # STYLE => "Context",
+	      FILENAME_A => 'NEW',
+	      FILENAME_B => "OLD $file",
+	      CONTEXT => 0,
 	    }
     );
 
@@ -4303,7 +4323,7 @@ sub write_sum () {
         if ( $EH{'check'}{'hdlout'}{'path'} );
     
     # Delta mode: return status equals number of changes
-    if ( $EH{'output'}{'generate'}{'delta'} ) {
+    if ( $EH{'output'}{'delta'} or $EH{'report'}{'delta'} ) {
         logwarn( "SUM: Number of changes in intermediate: $EH{'DELTA_INT_NR'}");
         logwarn( "SUM: Number of changed files: $EH{'DELTA_NR'}");
     }

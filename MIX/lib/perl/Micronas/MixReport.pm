@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.19 $                                               |
-# | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2005/12/08 11:32:49 $                                                   |
+# | Revision:   $Revision: 1.20 $                                               |
+# | Author:     $Author: wig $                                                 |
+# | Date:       $Date: 2005/12/14 12:50:32 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.19 2005/12/08 11:32:49 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.20 2005/12/14 12:50:32 wig Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.20  2005/12/14 12:50:32  wig
+# | Improved external portlist tabe creation, prepared delta mode
+# |
 # | Revision 1.19  2005/12/08 11:32:49  mathias
 # | long tables now have dedicated header
 # |
@@ -107,11 +110,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.19 2005/12/08 11:32:49 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.20 2005/12/14 12:50:32 wig Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.19 $';
+my $thisrevision   =      '$Revision: 1.20 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -130,6 +133,7 @@ $thisrevision =~ s,^\$,,go;
 #------------------------------------------------------------------------------
 use strict;
 # use Data::Dumper;
+use File::Basename;
 
 use Log::Agent;
 use Log::Agent::Priorities qw(:LEVELS);
@@ -814,64 +818,19 @@ sub _mix_report_sigsort {
 #
 sub mix_rep_portlist () {
 
-	my $mif = new Micronas::MixUtils::Mif(
-		'name' => ( $EH{'report'}{'path'} . '/' . "mix_portlist.mif" ),
-	);
-		
-	$mif->template(); # Initialize it
-
-	# If ::external column is set, make a seperate table for external
+	# If ::external column is set, make a seperate table for "externals"
 	my $exttrigger = '';
-	my $elist = '';
 	if ( $EH{'report'}{'portlist'}{'split'} =~ m/\bexternal(::\w+)?/ ) {
 		$exttrigger = "::external";
 		if ( defined $1 ) {
 			$exttrigger = $1;
 		}
-		#!wig20051103: new format ...
-		$elist = $mif->start_table(
-			{	'Title' => 'External Pin List',
-				'TblTag' => 'PortList',
-				'Cols' => 3,
-				'ColumnWidth' => [ qw( 37.0 17.0 126.0 ) ],
-			}
-		);
 	}
-	
-	my $plist = $mif->start_table(
-		{ 'Title' => 'Portlist',
-			'TblTag' => 'PortList',
-			'Cols' => 6,
-		  	'ColumnWidth' => [ qw( 37.0 12.0 16.0 16.0 10.0 89.0 ) ],
-		}
-	 );
-	
-	#
-	# Prepare tablehead data:
-	#
-	my $headtext = $mif->td(
-		{ 'PgfTag' => 'CellHeadingH9',
-		  'String' => [
-			  qw( PAD_Name I/O Description ),
-		  ],
-		}
-	);
+	# Prepare a table object ...
+	my( $mif, $mifname, $plist, $elist ) =
+		_mix_report_portlist_create ( $exttrigger );
 
-	if ( $elist ne '' ) {
-		$mif->table_head( $mif->Tr($headtext), $elist );
-		$mif->start_body( $elist );
-	}
-
-	$headtext = $mif->td(
-		{ 'PgfTag' => 'CellHeadingH9',
-		  'String' => [
-			  # qw( Name Width Clock Description Source Destination ),
-			  "Port" , "Width" , "Clock" , "S / D",  "I / O",  "Description",
-		  ],
-		}
-	);	
-	$mif->table_head( $mif->Tr($headtext), $plist );
-	$mif->start_body( $plist );
+	my %names_used = (); # Remember that name ...
 	
 	# Iterate over all instances ...
 	my $hierdb = \%Micronas::MixParser::hierdb;
@@ -879,7 +838,13 @@ sub mix_rep_portlist () {
 	for my $instance ( sort keys( %$hierdb ) ) {
 		next if ( $hierdb->{$instance}{'::entity'} eq 'W_NO_ENTITY' );
 		next if ( $instance =~ m/^%\w+/ );
-		
+
+		if ( $EH{'report'}{'portlist'}{'split'} =~ m/\bfile/io ) {
+			# Create new file for each instance ...
+			($mif, $mifname, $plist, $elist ) =
+				_mix_report_portlist_create ( $exttrigger );
+				# Check for uniq name near the flush ---
+		}
 		my $link = $hierdb->{$instance};
 		
 		# Create a large table ...
@@ -891,22 +856,29 @@ sub mix_rep_portlist () {
 			}
 		);
 		
+		# Remember name, overwrite output file name:
+		if ( $EH{'report'}{'portlist'}{'name'} =~ m/^INST$/ ) {
+			$mifname = $link->{'::inst'} . '-portlist.' .
+				$EH{'report'}{'portlist'}{'ext'};
+		} elsif ( $EH{'report'}{'portlist'}{'name'} =~ m/^ENTY$/ ) {
+			$mifname = $link->{'::entity'} . '-portlist.' .
+				$EH{'report'}{'portlist'}{'ext'};
+		}
+		
 		$mif->add( $mif->Tr($line), $plist );
 		
 		#!wig20051103: different format for elist ...
 		if ( $elist ne '' ) {
 			$line = $mif->td(
 				{ 'PgfTag' => 'CellHeadingH9',
-			 		'Columns' => 3, # Columns Span of all three cells
+			 		'Columns' => 4, # Columns Span of all three cells
 			  		'String'  => "Input/Output PADs $link->{'::inst'} ($link->{'::entity'})",
 				}
 			);
 			$mif->add( $mif->Tr($line), $elist );
 		}
 
-
 		## Signals at that instance
-		## TODO : sort order ..
 		for my $signal ( sort _mix_report_sigsort keys( %{$link->{'::sigbits'}} ) ) {
 			# Iterate over all signals ...
 			my $signalname = $conndb->{$signal}{'::name'};
@@ -989,7 +961,7 @@ sub mix_rep_portlist () {
 
 			# Map signal name to port name:
 			my $portname = $signalname;
-			if ( $EH{'report'}{'portlist'}{'name'} =~ m/\bport\b/ ) {
+			if ( $EH{'report'}{'portlist'}{'data'} =~ m/\bport\b/ ) {
 				$portname = _mix_report_getport( $signalname, $link );
 			}
 
@@ -1007,6 +979,7 @@ sub mix_rep_portlist () {
 					{ 'PgfTag' => 'CellBodyH9',
 					   'String' => [
 					   		$portname,
+					   		$width,
 					   		$mode,
 					   		$descr,
 					   	],
@@ -1043,8 +1016,41 @@ sub mix_rep_portlist () {
 			};
 
 		}
+
+		# Write one file per instance (entity):
+		if ( $EH{'report'}{'portlist'}{'split'} =~ m/\bfile/io ) {
+			# Flush it now:
+		
+			# Did we write that before?	
+			if ( exists ( $names_used{$mifname} ) ) {
+				logwarn( "ERROR: Reused portlist file name: $mifname!" );
+				$EH{'sum'}{'errors'}++;
+			}
+			$names_used{$mifname} = 1;
+			_mix_report_flushmif($mif, $mifname, $plist, $elist );
+		}
+
 	}
-	
+
+	# Write common file:
+	unless ( $EH{'report'}{'portlist'}{'split'} =~ m/\bfile/io ) {
+		# Flush it now:	
+		_mix_report_flushmif( $mif, $mifname, $plist, $elist );
+	}
+
+	return;
+
+}
+
+#
+# Write prepared data to disk
+#
+sub _mix_report_flushmif ($$$$) {
+	my $mif = shift;
+	my $mifname = shift;
+	my $plist = shift;
+	my $elist = shift;
+	 
 	$mif->end_body( $plist );
 	$mif->end_table( $plist );
 	if ( $elist ne '' ) {
@@ -1052,10 +1058,112 @@ sub mix_rep_portlist () {
 		$mif->end_table( $elist);
 	}	
 	
-	$mif->write();
-	
-	return;
+	# Write ...
+	$mif->write( $EH{'report'}{'path'} . '/' . $mifname );
+}
 
+#
+# Create a new portlist file ...
+#
+# Input:
+#	filename
+# Output:
+#	$mif     object
+#	$mifname filename
+#	$plist   primary table
+#	$elist   external table
+#!wig20051209
+sub _mix_report_portlist_create ($) {
+	my $exttrigger = shift;
+	# my $name = shift;
+	
+	#!wig20051208: change filename algorithm:
+	#  but there is always a chance to change the filename until "write"
+	my $mifname = '';
+	if ( $EH{'report'}{'portlist'}{'name'} ) {
+		$mifname =
+			$EH{'report'}{'portlist'}{'name'} . '.' .
+			$EH{'report'}{'portlist'}{'ext'};
+	} else {
+		# Take top level module name ... (first if several)
+		my $base = '';
+		if ( exists( $Micronas::MixParser::hierdb{$EH{'top'}} )
+			 and exists ( $Micronas::MixParser::hierdb{$EH{'top'}}{'::treeobj'} ) ) {
+			my $topobj = $Micronas::MixParser::hierdb{$EH{'top'}}{'::treeobj'};
+			# Get name ->
+			if ( $topobj->name ne 'TESTBENCH' ) {
+				$base = $topobj->name;
+			} else {
+				# Get daughters ...
+				my @daughters = $topobj->daughters;
+				if ( scalar( @daughters ) ) {
+					$base = $daughters[0]->{name}; # TODO : Get that as object ...
+				}
+			}
+		}
+		$base='mix_portlist' unless $base;
+		
+		# Strip off extension (if any)
+		$base =~ s,(\.[^.]+)$,,;
+		$mifname = $base . '_port.' . $EH{'report'}{'portlist'}{'ext'};
+	}
+		
+	my $mif = new Micronas::MixUtils::Mif(
+		'name' => ( $EH{'report'}{'path'} . '/' . $mifname ),
+	);
+		
+	$mif->template(); # Initialize it
+
+	# If ::external column is set, make a seperate table for "externals"
+	my $elist = '';
+	if ( $exttrigger ) {
+		#!wig20051103: new format ...
+		$elist = $mif->start_table(
+			{	'Title' => 'External Pin List',
+				'TblTag' => 'PortList',
+				'Cols' => 4,
+				'ColumnWidth' => [ qw( 37.0 13.0 13.0 117.0 ) ], 
+			}
+		);
+	}
+	
+	# Portlist
+	my $plist = $mif->start_table(
+		{ 'Title' => 'Portlist',
+			'TblTag' => 'PortList',
+			'Cols' => 6,
+		  	'ColumnWidth' => [ qw( 37.0 12.0 16.0 16.0 10.0 89.0 ) ],
+		}
+	 );
+	
+	#
+	# Prepare tablehead data:
+	#
+	my $headtext;
+	if ( $elist ne '' ) {
+		$headtext = $mif->td(
+			{ 'PgfTag' => 'CellHeadingH9',
+		  	  'String' => [
+			  	qw( PAD_Name Width I/O Description ),
+		  		],
+			}
+		);
+		$mif->table_head( $mif->Tr($headtext), $elist );
+		$mif->start_body( $elist );
+	}
+
+	$headtext = $mif->td(
+		{ 'PgfTag' => 'CellHeadingH9',
+		  'String' => [
+			  # qw( Name Width Clock Description Source Destination ),
+			  "Port" , "Width" , "Clock" , "S / D",  "I / O",  "Description",
+		  ],
+		}
+	);	
+	$mif->table_head( $mif->Tr($headtext), $plist );
+	$mif->start_body( $plist );
+	
+	return( $mif, $mifname, $plist, $elist );
 }
 
 #
