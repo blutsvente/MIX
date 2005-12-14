@@ -440,12 +440,12 @@ my @tests = (
 	},
 	{ 
 		'name' => 'reg_shell',
-		'path' => 'reg_shell/no_clock_gating',
+		'path' => 'reg_shell/no_clock_gating', # with disabled clock-gating
 		'options' => '',
 	},
 	{ 
 		'name' => 'reg_shell',
-		'path' => 'reg_shell/no_multicycle',
+		'path' => 'reg_shell/read_pipeline', # with inferring a read-pipeline
 		'options' => '',
 	},
 );
