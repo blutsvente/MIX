@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.56 2005/11/22 11:48:35 wig Exp $
+# $Id: TODO.txt,v 1.57 2005/12/14 12:51:07 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -28,6 +28,71 @@ Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
 
+>>title: 20051207a/Req: change mix_portlist output
+
+Hallo Wilfried,
+
+vielen Dank für das Einchecken vom mix reglist.
+
+Es gibt jetzt beim mix portlist noch eine Kleinigkeit:
+In der ersten Tabelle mit den PADs gibt es keine Auskunft über die Bitbreite des jeweiligen Signals.
+
+Beispiel:
+
+PAD_Name	         I/O	 Description
+-------------------------------------
+dvp_scc_d_mcmd_o	 O	    OCP command:
+                         000 = IDLE
+                         001 = write command
+                         010 = read command
+                         011 - 111 = not used
+
+-> dies impliziert ein 3 bit Signal, aber besser wäre, 
+wenn die Info auch im Namen drin wäre:
+  a) dvp_scc_d_mcmd_o[2:0] Oder 
+  b) wir machen noch eine Spalte "Width" und das Ganze sieht so aus:
+
+PAD_Name	         Width  I/O	 Description
+-------------------------------------
+dvp_scc_d_mcmd_o	   3    O	 OCP command:
+                               000 = IDLE
+                               001 = write command
+                               010 = read command
+                               011 - 111 = not used
+
+Kannst Du eine von beiden Varianten noch ergänzen?
+Bei b) würde ich dann vorschlagen:
+alt:
+  <TblTag `PortList'>
+  <TblNumColumns 3>
+  <TblColumnWidth 37.0 mm>
+  <TblColumnWidth 17.0 mm>
+  <TblColumnWidth 126.0 mm>
+neu:
+  <TblTag `PortList'>
+  <TblNumColumns 4>
+  <TblColumnWidth 37.0 mm>
+  <TblColumnWidth 13.0 mm>
+  <TblColumnWidth 13.0 mm>
+  <TblColumnWidth 117.0 mm>  #126 -13 + 4 = 117
+
+Offene Frage für mich ist, ob man bidirektionale Signale herausfiltern und bündeln muss
+also anstelle von:
+ - ramdat_o
+ - ramdat_i
+ - ramdat_dir 
+nur eine Zeile mit
+ - ramdat
+Ich weiss aber nicht, ob und wie das gehen könnte?!
+
+
+Gruß, Bernhard 
+
+	Req: gerstenb
+	Prio: medium
+	Status: solved wig20051209 
+	Testcase: t.b.d.
+	
 >>title: 20051121b/Bug: unable to create \\K:
 
 	trying to use outdir path fails on Win32.
