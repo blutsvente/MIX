@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.2 2005/11/29 08:41:58 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.3 2005/12/21 12:03:01 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,10 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.3  2005/12/21 12:03:01  lutscher
+#  o fixed access direction of holes to be R
+#  o added field reset values from database (was set to 0)
+#
 #  Revision 1.2  2005/11/29 08:41:58  lutscher
 #  fixed parsing of domain list
 #
@@ -74,6 +78,7 @@ use Micronas::Reg;
 use Micronas::RegDomain;
 use Micronas::RegReg;
 use Micronas::RegField;
+use Micronas::MixUtils::RegUtils;
 
 #use FindBin qw($Bin);
 #use lib "$Bin";
@@ -186,23 +191,18 @@ sub _gen_view_vr_ad {
 			foreach $href (@{$o_reg->fields}) {
 				$o_field = $href->{'field'};
 				next if $o_field->name =~ m/^UPD[EF]/; # skip UPD* regs
-				# select type of register
-				if ($reg_access eq "") {
-					$reg_access = lc($o_field->attribs->{'dir'});
-				};
 				
-				$thefields[$ii]{name} 		= lc($o_field->name);
-				$thefields[$ii]{pos}  		= $href->{'pos'};
-				$thefields[$ii]{size} 		= $o_field->attribs->{'size'};
-				$thefields[$ii]{rw}   		= uc($reg_access);
-				# $thefields[$ii]{parent_block}   = $o_field->attribs->{'block'};
-				$thefields[$ii]{parent_block}   = $o_domain->name;
+				$thefields[$ii]{name} 		  = lc($o_field->name);
+				$thefields[$ii]{pos}  		  = $href->{'pos'};
+				$thefields[$ii]{size} 		  = $o_field->attribs->{'size'};
+				$thefields[$ii]{rw}   		  = uc($o_field->attribs->{'dir'});
+				$thefields[$ii]{parent_block} = $o_domain->name;
+				$thefields[$ii]{init}         = "0x"._val2hex($o_field->attribs->{'size'}, $o_field->attribs->{'init'});
 				
 				$ii += 1;	
 			};
 			
 			@thefields = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
-	
 	        $upper = $reg_size;    # initial value of the upper limit
 	        @thefields_and_theholes = ();
 	
@@ -215,8 +215,9 @@ sub _gen_view_vr_ad {
 					$theholes[$ii]{pos}  = ${$singlefield}{pos} + ${$singlefield}{size};
 					$theholes[$ii]{name} = $hole_name . $theholes[$ii]{pos};
                     $theholes[$ii]{size} = $upper - (${$singlefield}{pos} + ${$singlefield}{size});
-                    $theholes[$ii]{rw}   = uc(${$singlefield}{rw});
-			     $theholes[$ii]{parent_block}   = ${$singlefield}{parent_block};
+                    $theholes[$ii]{rw}   = "R";
+					$theholes[$ii]{parent_block}   = ${$singlefield}{parent_block};
+				    $theholes[$ii]{init}  = "0x0";
 			     $ii++;
 			  } 
 			  $upper     = ${$singlefield}{pos};
@@ -226,8 +227,9 @@ sub _gen_view_vr_ad {
 			     $theholes[$ii]{pos}  = 0;
 			     $theholes[$ii]{name} = $hole_name . "0";
 			     $theholes[$ii]{size} = $upper;
-			     $theholes[$ii]{rw}   = "RW";
+			     $theholes[$ii]{rw}   = "R";
 			     $theholes[$ii]{parent_block}   = "na";
+				 $theholes[$ii]{init}  = "0x0";
 			     $ii++;
 			} 
 
@@ -242,8 +244,8 @@ sub _gen_view_vr_ad {
 				}
 				
 format E_FILE =
-    @<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<: uint(bits:@>) : @< : 0 : cov ; -- lsb position @>>
-$reg_fld,${$singlefield}{name},${$singlefield}{size},${$singlefield}{rw},${$singlefield}{pos}
+    @<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<: uint(bits:@>) : @< : @<<<<<<<<< : cov ; -- lsb position @>>
+$reg_fld,${$singlefield}{name},${$singlefield}{size},${$singlefield}{rw},${$singlefield}{init},${$singlefield}{pos}
 .
       write E_FILE ;
 			$ii += 1;	
