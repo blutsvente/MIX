@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.3 2005/12/21 12:03:01 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.4 2005/12/21 12:26:23 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.4  2005/12/21 12:26:23  lutscher
+#  changed hole_name
+#
 #  Revision 1.3  2005/12/21 12:03:01  lutscher
 #  o fixed access direction of holes to be R
 #  o added field reset values from database (was set to 0)
@@ -114,7 +117,7 @@ sub _gen_view_vr_ad {
 									 'reg_prefix'	=> "MIC",
 									},
 				  'FIELD' 		=>	{ 
-									 'hole_name'	=> "hole_at_",
+									 'hole_name'	=> "reserved_at_",
 									 'macro_prefix'	=> "reg_fld",
 									 'lower_case'	=> "true",
 									},
