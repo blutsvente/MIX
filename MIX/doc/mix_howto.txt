@@ -1,5 +1,26 @@
 MIX HOWTO and FAQ
 
+>>title: Disable warnings INFO: Not all lowercase in new foo element bar!
+
+To remove the messages, change the configuration keys:
+
+check.name.{inst|conn|port}
+
+Default is 'check,lc' for all.
+
+Recognized configuration values are:
+	check   -> do check
+	force	-> change case to match check rule
+
+	lc      -> check for lowercase
+	uc	-> check for uppercase (not implemented)
+
+For example add the following line to your mix.cfg file:
+
+MIXCFG check.name.conn disable
+
+#!wig20051214
+
 >>title: Another usage example for vgch_join.pl with some background info
 
 ich habe gerade vgch_join.pl in der Version 1.5 verfuegbar gemacht.
