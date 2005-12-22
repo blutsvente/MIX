@@ -1,0 +1,79 @@
+05/12/22 12:54:03 ########################################################################
+05/12/22 12:54:03 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl ../../bugver.xls
+05/12/22 12:54:04 
+#######################################################################
+##### mix_0.pl (Revision: 1.43 )
+#####
+##### MIX  
+#####   MixUtils    1.103 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixReport 1.20 $
+#####   Reg 1.16  
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/22 12:54:06 Reading worksheet C_20051221a of H:/work/eclipse/MIX/test/xls_input/bugver/20051221a/../../bugver.xls
+05/12/22 12:54:06 Reading worksheet H_20051221a of H:/work/eclipse/MIX/test/xls_input/bugver/20051221a/../../bugver.xls
+05/12/22 12:54:07 WARNING: Empty header in column 13, sheet-type conn, skipping!
+05/12/22 12:54:07 WARNING: Empty header in column 14, sheet-type conn, skipping!
+05/12/22 12:54:07 WARNING: Empty header in column 15, sheet-type conn, skipping!
+05/12/22 12:54:07 WARNING: Empty header in column 16, sheet-type conn, skipping!
+05/12/22 12:54:07 WARNING: Empty header in column 17, sheet-type conn, skipping!
+05/12/22 12:54:07 WARNING: Empty header in column 18, sheet-type conn, skipping!
+05/12/22 12:54:07 WARNING: WARNING: register-master file empty or specified sheet 'I2C' in file not found
+05/12/22 12:54:07 Adding port to hierachy module vgch_core_i for signal ebi_cs3_s_io!
+05/12/22 12:54:07 Adding port to hierachy module vgch_core_i for signal ebi_cs3_s_io!
+05/12/22 12:54:07 Add_port: signal ebi_cs3_s_io adds port p_mix_ebi_cs3_s_io_go to instance vgch_core_i
+05/12/22 12:54:07 Adding port to hierachy module vgch_subb_i for signal ebi_cs2_s_io!
+05/12/22 12:54:07 Adding port to hierachy module vgch_core_i for signal ebi_cs2_s_io!
+05/12/22 12:54:07 Add_port: signal ebi_cs2_s_io adds port p_mix_ebi_cs2_s_io_go to instance vgch_subb_i
+05/12/22 12:54:07 Add_port: signal ebi_cs2_s_io adds port p_mix_ebi_cs2_s_io_go to instance vgch_core_i
+05/12/22 12:54:07 Autoexpand port open_t from std_ulogic to vector type!
+05/12/22 12:54:08 WARNING: File bugver-mixed.xls already exists! Contents will be changed
+05/12/22 12:54:08 WARNING: Rotating 3 old sheets of CONF!
+05/12/22 12:54:09 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/bugver/20051221a/bugver-mixed.xls
+05/12/22 12:54:10 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/12/22 12:54:10 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/bugver/20051221a/bugver-mixed.xls
+05/12/22 12:54:10 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/12/22 12:54:11 Skipped writing of entity cgu (inst: cgu_i) due to filter
+05/12/22 12:54:11 Info: unchanged file iocell.v
+05/12/22 12:54:11 Skipped writing of entity WYNA28SGA (inst: ebi_cs2_pad) due to filter
+05/12/22 12:54:11 Skipped writing of entity WYNA28SGA (inst: ebi_cs3_pad) due to filter
+05/12/22 12:54:11 Info: unchanged file ebi.v
+05/12/22 12:54:11 Skipped writing of entity testbench (inst: testbench_i) due to filter
+05/12/22 12:54:11 Skipped writing of entity tmp (inst: tmp_i) due to filter
+05/12/22 12:54:11 Skipped writing of entity tmu (inst: tmu_i) due to filter
+05/12/22 12:54:11 Info: unchanged file vgch_core.v
+05/12/22 12:54:11 Info: unchanged file vgch.v
+05/12/22 12:54:11 Info: unchanged file vgch_io.v
+05/12/22 12:54:11 Info: unchanged file vgch_suba.v
+05/12/22 12:54:11 Info: unchanged file vgch_subb.v
+05/12/22 12:54:11 Skipped writing of configuration testbench_i due to filter
+05/12/22 12:54:11 WARNING: ============= SUMMARY =================
+05/12/22 12:54:11 WARNING: SUM: Summary of checks and created items:
+05/12/22 12:54:11 WARNING: SUM: checkforce 0
+05/12/22 12:54:11 WARNING: SUM: checkunique 0
+05/12/22 12:54:11 WARNING: SUM: checkwarn 0
+05/12/22 12:54:11 WARNING: SUM: cmacros 0
+05/12/22 12:54:11 WARNING: SUM: conn 6
+05/12/22 12:54:11 WARNING: SUM: errors 0
+05/12/22 12:54:11 WARNING: SUM: genport 3
+05/12/22 12:54:11 WARNING: SUM: hdlfiles 7
+05/12/22 12:54:11 WARNING: SUM: inst 20
+05/12/22 12:54:11 WARNING: SUM: multdriver 0
+05/12/22 12:54:11 WARNING: SUM: nodriver 0
+05/12/22 12:54:11 WARNING: SUM: noload 0
+05/12/22 12:54:11 WARNING: SUM: open 4
+05/12/22 12:54:11 WARNING: SUM: openports 0
+05/12/22 12:54:11 WARNING: SUM: warnings 1
+05/12/22 12:54:11 WARNING: SUM: === Number of parsed input tables: ===
+05/12/22 12:54:11 WARNING: SUM: conf 0
+05/12/22 12:54:11 WARNING: SUM: hier 1
+05/12/22 12:54:11 WARNING: SUM: conn 1
+05/12/22 12:54:11 WARNING: SUM: io 0
+05/12/22 12:54:11 WARNING: SUM: i2c 0
+05/12/22 12:54:11 WARNING: SUM: Number of changes in intermediate: 0
+05/12/22 12:54:11 WARNING: SUM: Number of changed files: 0

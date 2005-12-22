@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.63 $                                         |
+# | Revision:   $Revision: 1.64 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/11/22 11:00:47 $                              |
+# | Date:       $Date: 2005/12/22 13:40:56 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.63 2005/11/22 11:00:47 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.64 2005/12/22 13:40:56 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.64  2005/12/22 13:40:56  wig
+# | fixed missing port generation bug 20051221a
+# |
 # | Revision 1.63  2005/11/22 11:00:47  wig
 # | Minor fixes in Utils (20051121a, K: mkdir problem)
 # |
@@ -324,9 +327,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.63 2005/11/22 11:00:47 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.64 2005/12/22 13:40:56 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.63 $';
+my $thisrevision =	'$Revision: 1.64 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2927,7 +2930,8 @@ sub add_port ($$) {
         # $adds[$r][5] = length( $hierdb{$adds[$r][1]}{'::treeobj'}->address );
     }
     my @order = ();
-    for my $l ( reverse( sort( keys( %length ) ) ) ) {
+    for my $l ( reverse( sort( { $a <=> $b } keys( %length ) ) ) ) {
+    	#!wig20051222: numeric sort
         push( @order, @{$length{$l}} );
     }
 

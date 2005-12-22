@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.72 $                                         |
+# | Revision:   $Revision: 1.73 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/11/30 14:01:21 $                              |
+# | Date:       $Date: 2005/12/22 13:40:56 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.72 2005/11/30 14:01:21 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.73 2005/12/22 13:40:56 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -32,6 +32,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.73  2005/12/22 13:40:56  wig
+# | fixed missing port generation bug 20051221a
+# |
 # | Revision 1.72  2005/11/30 14:01:21  wig
 # | ::descr handling and trailing ; removal improved
 # |
@@ -332,9 +335,9 @@ sub _mix_wr_regorwire($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.72 2005/11/30 14:01:21 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.73 2005/12/22 13:40:56 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.72 $';
+my $thisrevision   =      '$Revision: 1.73 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1354,6 +1357,8 @@ sub _write_entities ($$$) {
 	   	my $filter = _mix_wr_getfilter( 'enty', $EH{'output'}{'filter'}{'file'} );	    	
 	    if ( $ehname =~ m/$filter/ ) {
 	    	$write_flag = 0;
+		    logsay( "Skipped writing of entity $ehname due to filter" );    		
+		    
 	    }
 	}
 	
@@ -2157,10 +2162,12 @@ sub write_architecture () {
 
 			# Skip HDL/arch out if this file name matches the given filter reg-exp.		
 		    if ( $EH{'output'}{'filter'}{'file'} ) {
-		    	my $filter = _mix_wr_getfilter( 'arch', $EH{'output'}{'filter'}{'file'} );	    	
-		    	next if $i =~ m/$filter/;
+		    	my $filter = _mix_wr_getfilter( 'arch', $EH{'output'}{'filter'}{'file'} );
+		    	if ( $i =~ m/$filter/ ) {
+		               logsay( "Skipped writing of entity $e (inst: $i) due to filter" );    		
+		               next;
+		    	}
 		    }
-		
             # Prepare for an alternate filename (if entity got instantiated multiple times)
             my $alt = "";
 			if ( exists( $seen{$e} ) ) {
@@ -5284,7 +5291,10 @@ sub write_configuration () {
 		    }
 		    if ( $EH{'output'}{'filter'}{'file'} ) {
 		    	my $filter = _mix_wr_getfilter( 'conf', $EH{'output'}{'filter'}{'file'} );	    	
-		    	next if $i =~ m/$filter/;
+		    	if ( $i =~ m/$filter/ ) {
+		           logsay( "Skipped writing of configuration $i due to filter" );    		
+		           next;
+		    	}
 		    }
 
 			my $e = $hierdb{$i}{'::entity'};

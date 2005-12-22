@@ -408,6 +408,11 @@ my @tests = (
 	  'path' => "bugver/20051121a",
 	  'options' => "",
 	},
+	{ # Fail to create two intermediate ports
+	  'name' => "bugver",
+	  'path' => "bugver/20051221a",
+	  'options' => "",
+	},
 	{ # Create simple logic ...
 	  'name' => "logic",
 	  'path' => "logic",
