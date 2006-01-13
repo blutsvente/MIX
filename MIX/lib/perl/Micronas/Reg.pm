@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.16 2005/12/09 15:02:15 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.17 2006/01/13 13:39:08 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.17  2006/01/13 13:39:08  lutscher
+#  added AVFB register master type
+#
 #  Revision 1.16  2005/12/09 15:02:15  lutscher
 #  small changes
 #
@@ -142,7 +145,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.16 $ ';  #'
+our($VERSION) = '$Revision: 1.17 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -150,7 +153,7 @@ $VERSION =~ s/Revision\: //;
 our(%hglobal) = 
   (
    # supported register-master types (yes, they are not all the same)
-   supported_register_master_type => ["VGCA", "FRCH"], 
+   supported_register_master_type => ["VGCA", "FRCH", "AVFB"], 
 
    # generatable register views 
    supported_views => [
@@ -347,7 +350,7 @@ sub _map_register_master {
 	};
 
 	# highest bit specified in register-master
-	$msb_max = $EH{'i2c'}{'_mult_'}{'::b'} || die "ERROR: internal error";
+	$msb_max = $EH{'i2c'}{'_mult_'}{'::b'} || die "ERROR: internal error (bad!)";
 	
 	# iterate each row
 	foreach $href_row (@$lref_rm) {
@@ -376,6 +379,10 @@ sub _map_register_master {
 					$offset = hex($value); 
 				} else {
 					$offset = $value;
+				};
+				# account for special meaning of sub column in AVFB project
+				if ($database_type eq "AVFB") {
+					$offset = $offset * 2; # transform to byte address
 				};
 				next;
 			};
@@ -442,18 +449,16 @@ sub _map_register_master {
 				if (!ref($o_domain)) {
 					$o_domain = Micronas::RegDomain->new(name => $domain);
 					
-					# get base-address
+					# get base-address, for what it's worth
+					$baseaddr = 0;
 					if ($database_type eq "VGCA") {
 						$baseaddr = hex("0x1ebc0000");
-					} else {
-						if ($database_type eq "FRCH" and $domain =~ m/_(\d+)$/) {
-							# in FRCH, they have pages of up to 256 Words each
-							$baseaddr = $1 << 8;
-						} else {
-							print STDERR "ERROR: could not extract base address from ::interface value \'$domain\' in register master (database type is \'$database_type\')\n";
-							$result = 0;
-						};
+					}; 
+					if ($database_type eq "FRCH" and $domain =~ m/_(\d+)$/) {
+						# in FRCH, they have pages of up to 256 Words each
+						$baseaddr = $1 << 8;
 					};
+					
 					# link domain object into register space object
 					$this->domains('domain' => $o_domain, 'baseaddr' => $baseaddr);
 				};
