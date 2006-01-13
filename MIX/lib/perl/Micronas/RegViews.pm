@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.20 2005/12/09 15:03:01 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.21 2006/01/13 13:40:24 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.20 $                                  
+#  Revision      : $Revision: 1.21 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,11 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.21  2006/01/13 13:40:24  lutscher
+#  o added _get_frange()
+#  o updated sync_rst module (new port)
+#  o used symbolic parameter name for sync instead of numeric in cfg_inst
+#
 #  Revision 1.20  2005/12/09 15:03:01  lutscher
 #  built in feature to exclude objects from generation
 #
@@ -376,13 +381,13 @@ sub _vgch_rs_gen_cfg_module {
 				if ($spec !~ m/sha/i) {
 					if ($spec =~ m/usr/i) {
 						# route through, no register generated
-						$hassigns{$this->_gen_field_name("out", $o_field)} = "wr_data_i".$rrange;
+						$hassigns{$this->_gen_field_name("out", $o_field).$this->_get_frange($o_field)} = "wr_data_i".$rrange;
 					} else {
 						# drive from register
-						$hassigns{$this->_gen_field_name("out", $o_field)} = $reg_name.$rrange;
+						$hassigns{$this->_gen_field_name("out", $o_field).$this->_get_frange($o_field)} = $reg_name.$rrange;
 					};
 				} else {
-					$hassigns{$this->_gen_field_name("shdw", $o_field)} = $reg_name.$rrange;
+					$hassigns{$this->_gen_field_name("shdw", $o_field).$this->_get_frange($o_field)} = $reg_name.$rrange;
 					push @ldeclarations,"wire [$msb:$lsb] ".$this->_gen_field_name("shdw", $o_field).";";
 				};
 				if($access =~ m/r/i and $spec =~ m/usr/i) { # usr read/write
@@ -516,7 +521,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this module is version $Revision: 1.20 $ ';
+	my $rev = '  this module is version $Revision: 1.21 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -1301,13 +1306,15 @@ sub _vgch_rs_gen_hier {
 		$sg_inst = $this->_add_instance_unique("sync_generic", $cfg_inst, "Synchronizer for trans_done signal");
 		$refclks->{$clock}->{'sg_inst'} = $sg_inst; # store in global->hclocks
 		_add_generic("kind", 2, $sg_inst);
-		_add_generic("sync", $refclks->{$clock}->{'sync'}, $sg_inst);
+		# _add_generic("sync", $refclks->{$clock}->{'sync'}, $sg_inst);
+		_add_generic_value("sync", 0, "sync", $sg_inst);
 		_add_generic("act", 1, $sg_inst);
 		_add_generic("rstact", 0, $sg_inst);
 		_add_generic("rstval", 0, $sg_inst);
 		$sr_inst = $this->_add_instance_unique("sync_rst", $cfg_inst, "Reset synchronizer");
 		$refclks->{$clock}->{'sr_inst'} = $sr_inst; # store in global->hclocks
-		_add_generic("sync", $refclks->{$clock}->{'sync'}, $sr_inst);
+		#_add_generic("sync", $refclks->{$clock}->{'sync'}, $sr_inst);
+		_add_generic_value("sync", 0, "sync", $sr_inst);
 		_add_generic("act", 0, $sr_inst);
 		push @lgen_filter, ($sr_inst, $sg_inst);
 
@@ -1401,7 +1408,7 @@ sub _vgch_rs_get_configuration {
 				_error("field name \'",$o_field->{'name'},"\' is defined more than once");
 			};
 		};
-		# enter name in new data struct (we do not want to manipulate the objects!)
+		# enter name in new data struct for checking
 		$this->global->{'hfnames'}->{$o_field} = $o_field->name;
 	};
 
@@ -1475,7 +1482,8 @@ sub _vgch_rs_add_static_connections {
 		_add_primary_input($href->{'reset'}, 0, 0, $cfg_i);
 		_add_primary_input($href->{'reset'}, 0, 0, "${sg_i}/rst_r");
 		_add_primary_input($href->{'reset'}, 0, 0, "${sr_i}/rst_i");
-		_add_primary_input($this->global->{'test_port_name'}, 0, 0, $cfg_i); # scan port, for later use
+		_add_primary_input($this->global->{'test_port_name'}, 0, 0, $cfg_i); # scan port
+		_add_primary_input($this->global->{'test_port_name'}, 0, 0, $sr_i);  # scan port
 		_tie_input_to_constant("${sg_i}/clk_s", 0, 0, 0);
 		_tie_input_to_constant("${sg_i}/rst_s", 0, 0, 0);
 
@@ -1513,7 +1521,7 @@ sub _vgch_rs_add_static_connections {
 			_add_connection($rd_clk_en, 0, 0, "", $href->{'cg_read_inst'}."/enable_i");
 			_add_connection($rd_clk, 0, 0, $href->{'cg_read_inst'}."/clk_o", "");
 		};
-		$n++;
+		$n++; # count the config register blocks
 	};
 	
 	# connect MCDA
@@ -1565,6 +1573,20 @@ sub _get_rrange {
 		return $this->_gen_vector_range($pos + $size - 1, $pos);
 	};
 };
+
+# generate a vector range for a field depending on its size and lsb
+sub _get_frange {
+	my ($this, $o_field) = @_;
+
+	if ($o_field->attribs->{'size'} == 1) {
+		return "";
+	} else {
+		my $lsb = $o_field->attribs->{'lsb'};
+		my $msb = $lsb - 1 + $o_field->attribs->{'size'};
+		return $this->_gen_vector_range($msb, $lsb);
+	};
+};
+
 
 # extract clock and reset names from field, set default values if necessary, and complain when proper
 sub _get_field_clock_and_reset {
