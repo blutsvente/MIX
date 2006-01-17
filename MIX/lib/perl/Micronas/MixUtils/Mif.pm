@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.17 $                                          |
+# | Revision:   $Revision: 1.18 $                                          |
 # | Author:     $Author: mathias $                                            |
-# | Date:       $Date: 2006/01/17 13:42:41 $                              |
+# | Date:       $Date: 2006/01/17 16:29:10 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.18  2006/01/17 16:29:10  mathias
+# | do not write error messages any more in case of missing '\x'
+# |
 # | Revision 1.17  2006/01/17 13:42:41  mathias
 # | attach the whole remaining part of the string to the last modifier in case of missing '\x'
 # |
@@ -113,9 +116,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.17 2006/01/17 13:42:41 mathias Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.18 2006/01/17 16:29:10 mathias Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.17 $'; #'  
+my $thisrevision    =      '$Revision: 1.18 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -660,14 +663,19 @@ sub _td_para()
             push(@string, {'Beginn' => $normal, 'Text' => $beg, 'End' => $strend});
         }
         # looking for the end ('\x') of this segment
-        if ($end =~ m/^([^\\]+)\\x(.*)/) {
+        if ($end =~ m/^(.*?)\\x(.*)/) {
             $text   = $1;
             $string = $2;
         } else {
-            $EH{sum}{errors}++;
-            logwarn('Error (Mif::wrCell): Missing \'\x\' after \'\\' . $modifier . "' in string: " . $string);
-            $text = $end;
-            $string = '';
+            if ($end =~ m/^(.*?)\\[xbuoslh](.*)/) {
+                $text = $1;
+                $string = $2;
+            } else {
+                #$EH{sum}{errors}++;
+                #logwarn('Error (Mif::wrCell): Missing \'\x\' after \'\\' . $modifier . "' in string: " . $string);
+                $text = $end;
+                $string = '';
+            }
         }
         my %hash;
         $hash{Beginn} = $bold          if ($modifier eq 'b');
