@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.16 $                                          |
+# | Revision:   $Revision: 1.17 $                                          |
 # | Author:     $Author: mathias $                                            |
-# | Date:       $Date: 2006/01/17 08:34:45 $                              |
+# | Date:       $Date: 2006/01/17 13:42:41 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.17  2006/01/17 13:42:41  mathias
+# | attach the whole remaining part of the string to the last modifier in case of missing '\x'
+# |
 # | Revision 1.16  2006/01/17 08:34:45  mathias
 # | implemented handling of special characters in _td_para
 # | (£ µ ¬ ® ± ³ ¹)
@@ -110,9 +113,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.16 2006/01/17 08:34:45 mathias Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.17 2006/01/17 13:42:41 mathias Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.16 $'; #'  
+my $thisrevision    =      '$Revision: 1.17 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -652,27 +655,30 @@ sub _td_para()
         my $beg      = $1;
         my $modifier = $2;
         my $end      = $3;
+        my $text;
         if ($beg) {
             push(@string, {'Beginn' => $normal, 'Text' => $beg, 'End' => $strend});
         }
         # looking for the end ('\x') of this segment
         if ($end =~ m/^([^\\]+)\\x(.*)/) {
-            my $text = $1;
-            $string  = $2;
-            my %hash;
-            $hash{Beginn} = $bold          if ($modifier eq 'b');
-            $hash{Beginn} = $underline     if ($modifier eq 'u');
-            $hash{Beginn} = $overline      if ($modifier eq 'o');
-            $hash{Beginn} = $strikethrough if ($modifier eq 's');
-            $hash{Beginn} = $superscript   if ($modifier eq 'l');
-            $hash{Beginn} = $subscript     if ($modifier eq 'h');
-            $hash{Text}   = $text;
-            $hash{End}    = $strend . $fontreset;
-            push(@string, \%hash);
+            $text   = $1;
+            $string = $2;
         } else {
             $EH{sum}{errors}++;
             logwarn('Error (Mif::wrCell): Missing \'\x\' after \'\\' . $modifier . "' in string: " . $string);
+            $text = $end;
+            $string = '';
         }
+        my %hash;
+        $hash{Beginn} = $bold          if ($modifier eq 'b');
+        $hash{Beginn} = $underline     if ($modifier eq 'u');
+        $hash{Beginn} = $overline      if ($modifier eq 'o');
+        $hash{Beginn} = $strikethrough if ($modifier eq 's');
+        $hash{Beginn} = $superscript   if ($modifier eq 'l');
+        $hash{Beginn} = $subscript     if ($modifier eq 'h');
+        $hash{Text}   = $text;
+        $hash{End}    = $strend . $fontreset;
+        push(@string, \%hash);
     }
     if ($string) {                # last "normal" part of $string
         push(@string, {'Beginn' => $normal, 'Text' => $string, 'End' => $strend});
