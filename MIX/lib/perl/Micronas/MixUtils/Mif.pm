@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.15 $                                          |
+# | Revision:   $Revision: 1.16 $                                          |
 # | Author:     $Author: mathias $                                            |
-# | Date:       $Date: 2005/12/08 11:32:21 $                              |
+# | Date:       $Date: 2006/01/17 08:34:45 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.16  2006/01/17 08:34:45  mathias
+# | implemented handling of special characters in _td_para
+# | (£ µ ¬ ® ± ³ ¹)
+# |
 # | Revision 1.15  2005/12/08 11:32:21  mathias
 # | beatified indentation
 # |
@@ -106,9 +110,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.15 2005/12/08 11:32:21 mathias Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.16 2006/01/17 08:34:45 mathias Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.15 $'; #'  
+my $thisrevision    =      '$Revision: 1.16 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -617,6 +621,7 @@ sub _td_para()
     my $newstring = "";
 
     my $normal          = '<String `';
+    my $symbol          = "<Font <FTag `Symbol'> > <String `";
     my $bold            = '<Font <FWeight Bold> > <String `';
     my $underline       = '<Font <FUnderlining FSingle> > <String `';
     my $overline        = '<Font <Foverline 1> > <String `';
@@ -626,104 +631,101 @@ sub _td_para()
     my $bullet          = '<Char Bullet> > #End of ParaLine' . "\n";
     my $tab             = '<Char Tab> ';
     my $fontreset       = "<Font <FTag `'> > ";
-    my $parasep         = "'> > #End of ParaLine\n";
     my $strend          = "'> ";
     my $hardret         = "<Char HardReturn> ";
-    my $paraend         = "> #End of ParaLine\n";
     my $parabeg         = "<ParaLine ";
-    my $insert_tab      = 0;                                 # 1: insert $tab after the next $parabeg
+    my $paraend         = "> #End of ParaLine\n";
+    my @string;                # splitted from $string according the fonts used in different parts
+    my %symchars = ('£' => '\xa3 ',
+                    'µ' => '\x6d ',
+                    '¬' => '\xac ',
+                    '®' => '\xae ',
+                    '±' => '\xb1 ',
+                    '³' => '\xb3 ',
+                    '¹' => '\xb9 ');
 
-    $string =~ s/\n/\\n/g;     # change hard new lines to '/n/'
-    while ($string =~ m/^([^\\]*)\\([nbuoslht\*])(.*)/) {
+    $string =~ s/\n/\\n/g;     # change hard new lines to '\n'
+    ######################## Split $string into segments (@string)
+    # each segment is written with another font than its neighbours
+    # the format directives (eg. '\b') mark the beginning and ('\x') the end of a new segment.
+    while ($string =~ m/^([^\\]*)\\([buoslh])(.*)/) {
         my $beg      = $1;
         my $modifier = $2;
         my $end      = $3;
-        $beg =~ s/>/\\>/g;      # escape '>' characters
-        $beg =~ s/\'/\\q/g;     # escape ` characters
-        $beg =~ s/\`/\\Q/g;     # escape ` characters
-        if ($modifier eq 'n') {                     # (hard) new line
-            $newstring .= $parabeg . $normal . $beg . $strend . $hardret . $paraend;
-            $string = $end;
-        } elsif ($modifier =~ m/[*buoslh]/) {       # bold, underline, overline, ...
-            # first "normal" part
-            if ($beg) {
-                $newstring .= "\t" x $indent . $parabeg . $normal . $beg . $strend . $paraend;
-            }
-            if ($modifier eq '*') {
-                $string = $end;
-                $newstring .= "\t" x $indent . $parabeg . $bullet;
-            } else {
-                # looking for the end mark (\x) of the special part
-                my $second = "";
-                if ($end =~ m/^([^\\]+)\\(.)(.*)/) {
-                    $end = $1;
-                    $second = $3;
-                    if ($2 ne 'x') {
-                        if ($2 eq 'n') {
-                            $second = '\n' . $3;
-                        }
-                        $EH{sum}{errors}++;
-                        logwarn('Error (Mif::wrCell): Missing \'\x\' after \'\\' . $modifier . "' in string: " . $string);
-                    }
-                }
-                # end of the string, reset special font, end of paraline
-                my $sep = $strend . $fontreset;
-                if ($second =~ m/^\s*\\n(.*)/) {     # does '\n' follow \x?
-                    $sep .= $hardret;
-                    $second = $1;
-                }
-                $sep .= $paraend;
-                # special part of $string
-                $end =~ s/\'/\\q/g;     # escape ` characters
-                $end =~ s/\`/\\Q/g;     # escape ` characters
-                $end =~ s/>/\\>/g;      # escape '>' characters
-                $newstring .= "\t" x $indent . $parabeg;
-                if ($insert_tab) {
-                    $newstring .= $tab;
-                    $insert_tab = 0;
-                }
-                $newstring .= $bold          . $end . $sep if ($modifier eq 'b');
-                $newstring .= $underline     . $end . $sep if ($modifier eq 'u');
-                $newstring .= $overline      . $end . $sep if ($modifier eq 'o');
-                $newstring .= $strikethrough . $end . $sep if ($modifier eq 's');
-                $newstring .= $superscript   . $end . $sep if ($modifier eq 'l');
-                $newstring .= $subscript     . $end . $sep if ($modifier eq 'h');
-                $string = $second;
-            }
-        } elsif ($modifier =~ m/[t]/) {             # \t
-            if ($end =~ m/^(\\[nbuoslht\*].*)/) {   # next char is escape sign '\'  --> do nothing
-                $insert_tab = 1;                    # but remember $tab
-                $string = $beg . $end;
-            } else {
-                # first "normal" part
-                if ($beg) {
-                    $newstring .= "\t" x $indent . $parabeg . $normal . $beg . $strend . $tab;
-                } else {
-                    $newstring .= "\t" x $indent . $parabeg . $tab;
-                }
-                # looking for the next special char (\.)
-                my $second = "";
-                if ($end =~ m/^([^\\]+)(\\[nbuoslht\*].*)/) {
-                    $end = $1;
-                    $second = $2;
-                }
-                my $sep = $strend . $paraend;
-                if ($second =~ m/^\\n(.*)/) {     # does '\n' follow \x?
-                    $sep = $strend . $hardret . $paraend;
-                    $second = $1;
-                }
-                # special part of $string
-                #$end =~ s/\\/\\\\/g;    # escape \ characters
-                $end =~ s/\'/\\q/g;     # escape ` characters
-                $end =~ s/\`/\\Q/g;     # escape ` characters
-                $end =~ s/>/\\>/g;      # escape '>' characters
-                $newstring .= $normal . $end . $sep;
-                $string = $second;
-            }
+        if ($beg) {
+            push(@string, {'Beginn' => $normal, 'Text' => $beg, 'End' => $strend});
+        }
+        # looking for the end ('\x') of this segment
+        if ($end =~ m/^([^\\]+)\\x(.*)/) {
+            my $text = $1;
+            $string  = $2;
+            my %hash;
+            $hash{Beginn} = $bold          if ($modifier eq 'b');
+            $hash{Beginn} = $underline     if ($modifier eq 'u');
+            $hash{Beginn} = $overline      if ($modifier eq 'o');
+            $hash{Beginn} = $strikethrough if ($modifier eq 's');
+            $hash{Beginn} = $superscript   if ($modifier eq 'l');
+            $hash{Beginn} = $subscript     if ($modifier eq 'h');
+            $hash{Text}   = $text;
+            $hash{End}    = $strend . $fontreset;
+            push(@string, \%hash);
+        } else {
+            $EH{sum}{errors}++;
+            logwarn('Error (Mif::wrCell): Missing \'\x\' after \'\\' . $modifier . "' in string: " . $string);
         }
     }
-    if ($string or length($string)) {       # rest of the string
-        $newstring .= "\t" x $indent. $parabeg . $normal . $string . $strend . $paraend;
+    if ($string) {                # last "normal" part of $string
+        push(@string, {'Beginn' => $normal, 'Text' => $string, 'End' => $strend});
+    }
+    ########################
+    foreach my $section (@string) {
+        my $str = $section->{Text};
+        $str =~ s/\*/\\*/g;     # change '*' to '\*'
+        $str =~ s/£/\\£/g;      # change '£' to '\£'
+        $str =~ s/µ/\\µ/g;      # change 'µ' to '\µ'
+        $str =~ s/¬/\\¬/g;      # change '¬' to '\¬'
+        $str =~ s/®/\\®/g;      # change '®' to '\®'
+        $str =~ s/±/\\±/g;      # change '±' to '\±'
+        $str =~ s/³/\\³/g;      # change '³' to '\³'
+        $str =~ s/¹/\\¹/g;      # change '¹' to '\¹'
+        #while ($str =~ m/^([^\\£µ®±³¹\*]*)([\n\t\*£µ®±³¹])(.*)/) {
+        while ($str =~ m/^([^\\]*)\\([nt\*£µ¬®±³¹])(.*)/) {
+            my $beg      = $1;
+            my $modifier = $2;
+            my $end      = $3;
+            $newstring .= "\t" x $indent . $parabeg;
+            if ($modifier eq 'n' or $modifier eq 't' or $modifier eq '*') {
+                # first "normal" part
+                if ($beg) {
+                    $beg =~ s/</\\</g;     # escape < characters
+                    $beg =~ s/>/\\>/g;     # escape > characters
+                    $beg =~ s/'/\\q/g;     # escape ' characters
+                    $beg =~ s/`/\\Q/g;     # escape ` characters
+                    $newstring .= $section->{Beginn} . $beg . $section->{End};
+                }
+                $newstring .= $hardret if ($modifier eq 'n');
+                $newstring .= $tab if ($modifier eq 't');
+                $newstring .= $bullet if ($modifier eq '*');
+            } else {
+                if ($beg) {
+                    $beg =~ s/</\\</g;     # escape < characters
+                    $beg =~ s/>/\\>/g;     # escape > characters
+                    $beg =~ s/'/\\q/g;     # escape ' characters
+                    $beg =~ s/`/\\Q/g;     # escape ` characters
+                    $newstring .= $section->{Beginn} . $beg . $section->{End};
+                }
+                $newstring .= $symbol . $symchars{$modifier} . $strend . $fontreset;
+            }
+            $newstring .= $paraend;
+            $str = $end;
+        }
+        if ($str) {
+            $str =~ s/</\\</g;     # escape < characters
+            $str =~ s/>/\\>/g;     # escape > characters
+            $str =~ s/'/\\q/g;     # escape ' characters
+            $str =~ s/`/\\Q/g;     # escape ` characters
+            $newstring .= "\t" x $indent . $parabeg . $section->{Beginn} . $str . $section->{End} . $paraend;
+        }
     }
 
     return $newstring;
