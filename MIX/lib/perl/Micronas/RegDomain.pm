@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegDomain.pm,v 1.1 2005/07/07 12:35:26 lutscher Exp $
+#  RCSId: $Id: RegDomain.pm,v 1.2 2006/01/18 13:05:57 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegDomain.pm,v $
+#  Revision 1.2  2006/01/18 13:05:57  lutscher
+#  added find_reg_by_address_all()
+#
 #  Revision 1.1  2005/07/07 12:35:26  lutscher
 #  Reg: register space class; represents register space
 #  of a device and contains register domains; also contains
@@ -137,7 +140,7 @@ sub fields {
 	return $this->{fields};
 };
 
-# finds first register object in list at given address and returns the object (or undef)
+# finds first register object in address map at given address and returns the object (or undef)
 # input: sub-address in domain
 sub find_reg_by_address_first {
 	my ($this, $offset) = @_;
@@ -147,6 +150,13 @@ sub find_reg_by_address_first {
 	} else {
 		return undef;
 	};
+};
+
+# find all register objects in address map at given address and return the list of found objects
+sub find_reg_by_address_all {
+	my ($this, $offset) = @_;
+	my (@ltemp) = grep ($_->{offset} == $offset, @{$this->addrmap});
+	return map {$_->{reg}} @ltemp;
 };
 
 # finds all field objects in list with given name and returns a list with the found objects
