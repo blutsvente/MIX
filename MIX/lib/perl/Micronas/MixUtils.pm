@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.103 $                                         |
+# | Revision:   $Revision: 1.104 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/12/14 12:50:32 $                              |
+# | Date:       $Date: 2006/01/18 14:04:29 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.103 2005/12/14 12:50:32 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.104 2006/01/18 14:04:29 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.104  2006/01/18 14:04:29  wig
+# | Started verilog module check.
+# |
 # | Revision 1.103  2005/12/14 12:50:32  wig
 # | Improved external portlist tabe creation, prepared delta mode
 # |
@@ -416,7 +419,7 @@ sub mix_utils_clean_data ($$;$);
 sub db2array_intra ($$$$$);
 sub _mix_utils_im_header ($$);
 sub _inoutjoin ($);
-
+sub _mix_utils_extract_verihead ($$$);
 
 ##############################################################
 # Global variables
@@ -433,11 +436,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.103 2005/12/14 12:50:32 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.104 2006/01/18 14:04:29 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.103 $';         #'
+my $thisrevision        =      '$Revision: 1.104 $';         #'
 
-# Revision:   $Revision: 1.103 $   
+# Revision:   $Revision: 1.104 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1200,11 +1203,14 @@ sub mix_init () {
 						# and drivers.
 						# If "top_open" is in this list, will wire unused
 						# signals to open.
+						# TODO: auto_low, auto_high: automatically ground/high undriven signals
+					
 		'inst' => 'nomulti',	# check and mark multiple instantiations
     	'hdlout' => { # act. should be named "hdlout"
             'mode' => "entity,leaf,generated,ignorecase", # check only LEAF cells -> LEAF
-                                                      #  ignore case of filename -> ignorecase
+                        #  ignore case of filename -> ignorecase
                         # which objects: entity|module|arch[itecture]|conf[iguration]|all
+                        #		module -> applies to verilog modules
                         # strategy: generated := compare generated object, only
                         #               inpath := report if there are extra modules found inpath
                         #               leaf := only for leaf cells
@@ -1215,6 +1221,8 @@ sub mix_init () {
             # the path will be available in ...'__path__'{PATH}
 			'delta' => '', # define how the diffs are made, see output.delta for allowed keys
 							# if it's empty, take output.delta contents
+							# Additionl keys:
+							#	mod[ule]head : only parse verilog headers, ignore body
             'filter' => { # TODO allow to remove less important lines from the diff of template vs. created
                 'entity' => '',
                 'arch' => '',
@@ -2294,7 +2302,7 @@ my @ccont = (); # Keep (filtered) contents of template entity for check
 
 my %fhstore = ();   # Store all possiblefilehandles/ names
                             # -> file / delta / check / tmpl / back; prim. key is filename!
-my $loc_flag = 0;
+my $loc_flag  = 0;
 my %loc_files = ();
 
 #
@@ -2317,6 +2325,16 @@ sub mix_utils_clean_data ($$;$) {
     	}
 	}
     
+    #
+    # remove verilog body, only check the module header
+    # 
+    #!wig20060118
+    if ( $c eq '//' and $conf =~ m/\b(veri|mod(ule)?)head\b/io ) {
+    	# module A ( ... ) input bar; inout bar; output foo; wire blub;
+    	# Force pagebreaks for each ';'
+    	$d = _mix_utils_extract_verihead ($d, $c, $conf);
+	}
+
     # condense whitespace, remove empty lines ...
     #wig20040420: remove \s after ( and before )
     if ( $conf !~ m,\bspace\b,io ) {
@@ -2344,6 +2362,52 @@ sub mix_utils_clean_data ($$;$) {
 }
 
 #
+# Strip off all lines but the verilog module header
+# TODO : replace by a CPAN Verilog reader!
+#
+# Input:
+#	$d		array ref with file contents
+#	$c		current comment ( // for verilog
+#	$conf	switches
+#
+# Return:
+#	$d		array ref, verilog header only
+#
+#!wig20060118
+sub _mix_utils_extract_verihead ($$$) {
+	my $d	= shift;
+	my $c	= shift;
+	my $conf = shift;
+	
+	# Join all data into on string, replace ';' by newlines
+	( my $t = join( "\n", @$d ) ) =~ s/;/;\n/g;
+	$t =~ s/^$//mg; # Remove empty lines
+	
+	if ( $t =~ m/(.*)(module\s*\([^\)]*\))(.*)/ ) {
+		my $start = $1 . $2;
+		# Iterate over rest
+		for my $l ( split( /\n/, $3 ) ) {
+			if ( $l =~ m/^\s*(input|output|inout|wire|register)/ ) {
+				$start .= $l . "\n";
+			} elsif ( $l =~ m/^\s*$c/ ) {
+				$start .= $l . "\n";
+			} elsif ( $l =~ m/^\s*$/ ) {
+				next;
+			} else {
+				# Leave it now ...
+				last;
+			}
+		}
+		$t = $start;
+	} else {
+		logwarn( 'WARNING: Cannot detect verilog module, take full content to delta' );
+		$EH{'sum'}{'warnings'}++;
+	}
+	$d = [ split( /\n/, $t ) ];
+	return $d;
+}
+
+#
 # Open a file and read in the contents for comparison ...
 # e.g. in delta mode or for verify purposes ...
 # flag: if set to verify, this will be a verify run;
@@ -2366,29 +2430,29 @@ sub mix_utils_open_diff ($;$) {
 	    }
     }    
     if ( -r $file ) {
-    # read in file
-	my $ofh = new IO::File;
-	unless( $ofh->open($file) ) {
-	    logwarn( "ERROR: Cannot open org $file in $flag mode: $!" );
-		#done upwards: $EH{'sum'}{'warnings'}++;
-	    return undef, undef;
-	}
-	@ocont = <$ofh>; #Slurp in file to compare against
-	chomp( @ocont );
+    	# read in file
+		my $ofh = new IO::File;
+		unless( $ofh->open($file) ) {
+	    	logwarn( "ERROR: Cannot open org $file in $flag mode: $!" );
+			#done upwards: $EH{'sum'}{'warnings'}++;
+	    	return undef, undef;
+		}
+		@ocont = <$ofh>; #Slurp in file to compare against
+		chomp( @ocont );
 
-	my $switches = ( $flag eq "verify" ) ? $EH{'check'}{'hdlout'}{'delta'} :
-		$EH{'output'}{'delta'};
-	$switches = $EH{'output'}{'delta'} unless $switches;
+		my $switches = ( $flag eq "verify" ) ? $EH{'check'}{'hdlout'}{'delta'} :
+			$EH{'output'}{'delta'};
+		$switches = $EH{'output'}{'delta'} unless $switches;
     
-    # Get data in clean format ....
-    $ocontr = mix_utils_clean_data( \@ocont, $c, $switches );
+    	# Get data in clean format ....
+    	$ocontr = mix_utils_clean_data( \@ocont, $c, $switches );
 
-	close( $ofh ) or logwarn( "ERROR: Cannot close org $file in delta mode: $!" )
-	    and $EH{'sum'}{'errors'}++;
+		close( $ofh ) or logwarn( "ERROR: Cannot close org $file in delta mode: $!" )
+	    	and $EH{'sum'}{'errors'}++;
 
     } else {
-	logwarn( "Error: Cannot read $file" );
-        $EH{'sum'}{'errors'}++;
+		logwarn( "Error: Cannot read $file" );
+       	$EH{'sum'}{'errors'}++;
     }
     return $ocontr;
 }

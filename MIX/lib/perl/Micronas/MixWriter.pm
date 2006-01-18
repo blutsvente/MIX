@@ -15,23 +15,26 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.73 $                                         |
+# | Revision:   $Revision: 1.74 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/12/22 13:40:56 $                              |
+# | Date:       $Date: 2006/01/18 14:04:29 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.73 2005/12/22 13:40:56 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.74 2006/01/18 14:04:29 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
-# The functions here provide the parsing capabilites for the MIX project.
-# Take a matrix of information in some well-known format and convert it into
-# intermediate format and/or source code files
+# The functions here provide the backend for the MIX project.
+# HDL output files will get written according to the data found
+# in %hierdb and %conndb
 #
 # +-----------------------------------------------------------------------+
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.74  2006/01/18 14:04:29  wig
+# | Started verilog module check.
+# |
 # | Revision 1.73  2005/12/22 13:40:56  wig
 # | fixed missing port generation bug 20051221a
 # |
@@ -335,9 +338,9 @@ sub _mix_wr_regorwire($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.73 2005/12/22 13:40:56 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.74 2006/01/18 14:04:29 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.73 $';
+my $thisrevision   =      '$Revision: 1.74 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -4457,7 +4460,7 @@ sub _write_architecture ($$$$) {
     # Are we in verify mode?
     # Not possible in __COMMON__ mode
     if ( $instance ne "__COMMON__" and $EH{'check'}{'hdlout'}{'path'} and
-        $EH{'check'}{'hdlout'}{'mode'} =~ m,\b(arch|all),io ) { # Selected ...
+        $EH{'check'}{'hdlout'}{'mode'} =~ m,\b(arch|mod|head|all),io ) { # Selected ...
             # Append check flag ...
         if ( $EH{'check'}{'hdlout'}{'mode'} =~ m,\bleaf,io ) {
                 # __LEAF__ is 1 if this is not a LEAF!
@@ -5599,7 +5602,7 @@ sub use_lib ($$) {
     }
 
     # Verilog: do a simple concatenate!
-    #TODO: replace comment by generic format
+    # TODO : replace comment by generic format
     if ( scalar( @veri ) ) {
         $all = "// Generated include statements\n" .
             join( "\n", @veri ) . "\n";
