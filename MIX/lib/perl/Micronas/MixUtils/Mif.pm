@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.18 $                                          |
+# | Revision:   $Revision: 1.19 $                                          |
 # | Author:     $Author: mathias $                                            |
-# | Date:       $Date: 2006/01/17 16:29:10 $                              |
+# | Date:       $Date: 2006/01/18 09:44:34 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.19  2006/01/18 09:44:34  mathias
+# | replaced '^M' by nothing if appears
+# |
 # | Revision 1.18  2006/01/17 16:29:10  mathias
 # | do not write error messages any more in case of missing '\x'
 # |
@@ -116,9 +119,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.18 2006/01/17 16:29:10 mathias Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.19 2006/01/18 09:44:34 mathias Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.18 $'; #'  
+my $thisrevision    =      '$Revision: 1.19 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -650,7 +653,7 @@ sub _td_para()
                     '³' => '\xb3 ',
                     '¹' => '\xb9 ');
 
-    $string =~ s/\n/\\n/g;     # change hard new lines to '\n'
+    $string =~ s/\r?\n/\\n/g;     # change 'carriage return-line feed' to '\n'
     ######################## Split $string into segments (@string)
     # each segment is written with another font than its neighbours
     # the format directives (eg. '\b') mark the beginning and ('\x') the end of a new segment.
