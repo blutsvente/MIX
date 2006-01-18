@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.20 $                                               |
-# | Author:     $Author: wig $                                                 |
-# | Date:       $Date: 2005/12/14 12:50:32 $                                                   |
+# | Revision:   $Revision: 1.21 $                                               |
+# | Author:     $Author: mathias $                                                 |
+# | Date:       $Date: 2006/01/18 15:28:57 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.20 2005/12/14 12:50:32 wig Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.21 2006/01/18 15:28:57 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.21  2006/01/18 15:28:57  mathias
+# | added debug commands
+# |
 # | Revision 1.20  2005/12/14 12:50:32  wig
 # | Improved external portlist tabe creation, prepared delta mode
 # |
@@ -110,11 +113,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.20 2005/12/14 12:50:32 wig Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.21 2006/01/18 15:28:57 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.20 $';
+my $thisrevision   =      '$Revision: 1.21 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -252,7 +255,9 @@ sub mix_rep_reglist($)
                                                'address'  => $address,
                                                'mode'     => $mode
                                              });
-
+                        if (exists($EH{output}{mif}{debug})) {
+                            print("~~~~~ Register: " . $o_reg->name() . "\n");
+                        }
                         my ($ii, $width_1) = (0, 0);
                         my @thefields;
                         foreach my $hreff (@{$o_reg->fields}) {
@@ -267,6 +272,13 @@ sub mix_rep_reglist($)
                             $thefields[$ii]{mode}    = $o_field->attribs->{'dir'};
                             $thefields[$ii]{comment} = $o_field->attribs->{'comment'};
                             $thefields[$ii]{sync}    = $o_field->attribs->{'sync'};
+                            if (exists($EH{output}{mif}{debug})) {
+                                print("~~~~~    " . $thefields[$ii]{name} . '(' . $thefields[$ii]{size}
+                                      . ')' . '/' . $thefields[$ii]{pos}  . "\n");
+                                if ($EH{output}{mif}{debug} == 2) {
+                                    print("         " . $thefields[$ii]{comment} . "\n");
+                                }
+                            }
                             $ii += 1;
                         }
                         @thefields = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
