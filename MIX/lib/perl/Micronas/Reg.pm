@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.17 2006/01/13 13:39:08 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.18 2006/01/18 13:05:44 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.18  2006/01/18 13:05:44  lutscher
+#  changed handling of different registers at same address
+#
 #  Revision 1.17  2006/01/13 13:39:08  lutscher
 #  added AVFB register master type
 #
@@ -145,7 +148,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.17 $ ';  #'
+our($VERSION) = '$Revision: 1.18 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -330,7 +333,7 @@ sub display {
 # two consecutive domains must have different names (::interface)
 sub _map_register_master {
 	my ($this, $database_type, $lref_rm) = @_;
-	my($href_row, $marker, $rsize, $reg, $value, $fname, $fpos, $fsize, $domain, $offset, $msb, $msb_max, $lsb, $p, $new_fname, $usedbits, $baseaddr, $col_cnt, $fdefinition);
+	my($href_row, $marker, $rsize, $reg, $value, $fname, $fpos, $fsize, $domain, $offset, $msb, $msb_max, $lsb, $p, $new_fname, $usedbits, $baseaddr, $col_cnt, $fdefinition, $o_tmp);
 	my($o_domain, $o_reg, $o_field) = (undef, undef, undef);
 	my($href_marker_types, %hattribs, %hdefault_attribs, $m);
 	my $result = 1;
@@ -472,7 +475,16 @@ sub _map_register_master {
 				};
 
 				# check if register already exists in domain, otherwise create new register object
-				$o_reg = $o_domain->find_reg_by_address_first($offset);
+				$o_reg = undef;
+				foreach $o_tmp ($o_domain->find_reg_by_address_all($offset)) {
+					if ($o_tmp->name eq $reg) {
+						$o_reg = $o_tmp;
+						last;
+					} else {
+						print STDERR "WARNING: registers \'$reg\' and \'".$o_tmp->name."\' are mapped to the same address in domain\n";
+						$o_reg = undef;
+					};
+				};
 				if (!ref($o_reg)) {
 					$o_reg = Micronas::RegReg->new('name' => $reg);
 					$o_reg->attribs('size' => $rsize);
@@ -483,16 +495,18 @@ sub _map_register_master {
 				};
 			};
 
-			# compute bit-mask for register
+			# compute bit-mask for registes
 			for ($i=$fpos; $i < $fpos+$fsize; $i++) {
 				$old_usedbits = $usedbits;
 				$usedbits |= 1<<$i;
+				# check for overlapping fields in same register
 				if ($old_usedbits == $usedbits) {
-					print STDERR "ERROR: overlapping fields in register \'$reg\'\n";
 					$result = 0;
-				};
-			}; 
-			
+					print STDERR "ERROR: overlapping fields in register \'$reg\'\n";
+					last;
+				}; 
+			};
+
 			# create new field object
 			$o_field = Micronas::RegField->new('name' => $fname, 'definition' => $fdefinition, 'reg' => $o_reg);
 			$o_field->attribs(%hattribs);
@@ -506,11 +520,13 @@ sub _map_register_master {
 		};
 	  next_row:
 	};
+
 	# don't forget to add usedbits attribute to last register
 	if (ref($o_reg) and $usedbits != 0) {
 		$o_reg->attribs(usedbits => $usedbits);
 		$usedbits = 0;
 	};
+
 	# free some memory
         my $reports = "";
         $reports = join( ',', @{$OPTVAL{'report'}} ) if (exists($OPTVAL{'report'}));
