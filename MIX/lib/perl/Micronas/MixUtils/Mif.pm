@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.19 $                                          |
+# | Revision:   $Revision: 1.20 $                                          |
 # | Author:     $Author: mathias $                                            |
-# | Date:       $Date: 2006/01/18 09:44:34 $                              |
+# | Date:       $Date: 2006/01/18 16:08:41 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.20  2006/01/18 16:08:41  mathias
+# | fixed new line bug
+# |
 # | Revision 1.19  2006/01/18 09:44:34  mathias
 # | replaced '^M' by nothing if appears
 # |
@@ -119,9 +122,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.19 2006/01/18 09:44:34 mathias Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.20 2006/01/18 16:08:41 mathias Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.19 $'; #'  
+my $thisrevision    =      '$Revision: 1.20 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -637,7 +640,7 @@ sub _td_para()
     my $strikethrough   = '<Font <FStrike 1> > <String `';
     my $superscript     = '<Font <FPosition FSuperscript > > <String `';
     my $subscript       = '<Font <FPosition FSubscript > > <String `';
-    my $bullet          = '<Char Bullet> > #End of ParaLine' . "\n";
+    my $bullet          = '<Char Bullet> ';
     my $tab             = '<Char Tab> ';
     my $fontreset       = "<Font <FTag `'> > ";
     my $strend          = "'> ";
