@@ -1,5 +1,6 @@
 # -*- perl -*---------------------------------------------------------------
 #
+#line 4
 # +-----------------------------------------------------------------------+
 # |                                                                       |
 # |   Copyright Micronas GmbH, Inc. 2002,2005                             |
@@ -15,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.74 $                                         |
+# | Revision:   $Revision: 1.75 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/01/18 14:04:29 $                              |
+# | Date:       $Date: 2006/01/18 16:59:29 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.74 2006/01/18 14:04:29 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.75 2006/01/18 16:59:29 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -32,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.75  2006/01/18 16:59:29  wig
+# |  	MixChecker.pm MixParser.pm MixUtils.pm MixWriter.pm : UNIX tested
+# |
 # | Revision 1.74  2006/01/18 14:04:29  wig
 # | Started verilog module check.
 # |
@@ -338,9 +342,9 @@ sub _mix_wr_regorwire($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.74 2006/01/18 14:04:29 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.75 2006/01/18 16:59:29 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.74 $';
+my $thisrevision   =      '$Revision: 1.75 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1331,7 +1335,7 @@ sub _write_entities ($$$) {
     $macros{'%ENTYNAME%'} = $ehname;
 
     if ( -r $file ) {
-		logtrc(INFO, "Entity declaration file $file will be overwritten!" );
+		logtrc("INFO:4", "Entity declaration file $file will be overwritten!" );
     }
 
     #
@@ -1668,9 +1672,17 @@ sub _mix_wr_get_ivhdl ($$$) {
 	    # low are not digit!
 	}
 	# Now split -> sort -> remove markers -> join and return:
-	$port = join( "\n", map( { s/%MAPSORT.+?SORTMAP%//; $_; } 
+	my $order = $EH{'output'}{'generate'}{'portmapsort'};
+	if ( $order =~ m/\bdebug\b/ ) {
+		$order = 1;
+	} else {
+		$order = 0;
+	}
+	$port = join( "\n", map( { s/%MAPSORT(.+?)SORTMAP%//; $_ . 
+				(( $order ) ? ( ' ' . $tcom . 'SORT: ' . $1 ) : ''); } 
 				sort( split( /\n/, $port ) ) ) ) . "\n";
-	$gent = join( "\n", map( { s/%MAPSORT.+?SORTMAP%//; $_; } 
+	$gent = join( "\n", map( { s/%MAPSORT(.+?)SORTMAP%//; $_ .
+				(( $order ) ? ( ' ' . $tcom . 'SORT: ' . $1 ) : ''); } 
 				sort( split( /\n/, $gent ) ) ) ) . "\n";
 	$port = '' if ( $port =~ m/^\s*$/ );
 	$gent = '' if ( $gent =~ m/^\s*$/ );
@@ -1766,7 +1778,7 @@ sub _mix_wr_get_iveri ($$$$) {
         'parameter' => "\t$tcom Module parameters:\n",
     );
 
-	my $portsort = ""; #Contains value if non-default port order is requested
+	my $portsort = ''; #Contains value if non-default port order is requested
 
 	# Iterate over all ports at that entity:	
     for my $p ( sort ( keys( %{$r_ent} ) ) ) {
@@ -1997,12 +2009,20 @@ sub _mix_wr_get_iveri ($$$$) {
 	    }
     }
     # Finalize intf: add all inputs, outputs and inouts ....
+    my $order = $EH{'output'}{'generate'}{'portmapsort'};
+	if ( $order =~ m/\bdebug\b/ ) {
+		$order = 1;
+	} else {
+		$order = 0;
+	}
 	if ( $portsort ) {
-		$intf = join( "\n", map( { s/%MAPSORT.+?SORTMAP%//; $_; }
+		$intf = join( "\n", map( { s/%MAPSORT(.+?)SORTMAP%//; $_ .
+				(( $order ) ? ( ' ' . $tcom .'SORT:' . $1 ) : ''); }
 			sort( split( /\n/, $intf ) ) ) ) . "\n";
 		$intf = '' if ( $intf =~ m/^\s*$/o );
 		for my $i ( keys %port ) {
-			$port{$i} = join( "\n", map( { s/%MAPSORT.+?SORTMAP%//; $_; }
+			$port{$i} = join( "\n", map( { s/%MAPSORT(.+?)SORTMAP%//; $_ .
+				(( $order ) ? ( ' ' . $tcom .'SORT:' . $1 ) : ''); }
 				sort( split( /\n/, $port{$i} ) ) ) ) . "\n";
 			$port{$i} = '' if ( $port{$i} =~ m/^\s*$/o );
 		}
@@ -2176,7 +2196,7 @@ sub write_architecture () {
 			if ( exists( $seen{$e} ) ) {
                 next unless ( $EH{'output'}{'generate'}{'arch'} =~ m,alt,io );
                 $alt = "-alt" . $seen{$e}++;
-                logtrc( "INFO", "Writing another architecture for $e (inst: $i)" );
+                logtrc( "INFO:4", "Writing another architecture for $e (inst: $i)" );
 			}
 			$seen{$e}++;
             # Generate an output filename
@@ -2977,7 +2997,7 @@ sub port_map ($$$$$$) {
 		    	#  $conn->{port_f}, $conn->{port_t},
 		    	#  $conn->{sig_f}, $conn->{sig_t}		
 		    	#!wig20050518: adding lcm
-		    	#TODO: remove cm (no longer needed!)
+		    	# TODO : remove cm (no longer needed!)
 		    	my @lcm = ();
 		    	my $conn = $conndb{$s}{'::' . $io}[$n];
 		    	my $lret = add_conn_matrix( $p, $s, \@lcm, $conn );
@@ -3005,8 +3025,18 @@ sub port_map ($$$$$$) {
 		push( @$rio, $s );
     }
     return '' if ( scalar @map == 0 ); # No map -> return nothing
-    return join( '', map( { s/%MAPSORT.+?SORTMAP%//; $_; }
-    	sort( @map ) ) ) . "\n"; # Return sorted by port name (comes first)
+
+    my $order = $EH{'output'}{'generate'}{'portmapsort'};
+	if ( $order =~ m/\bdebug\b/ ) {
+		$order = 1;
+	} else {
+		$order = 0;
+	}
+    my $tcom = $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'default'} || "#";
+    return join( '', map( { s/%MAPSORT(.+?)SORTMAP%//; 
+			$_ .
+				(( $order ) ? (' ' . $tcom . 'SORT:' . $1 ) : ''); }
+    		sort( @map ) ) ) . "\n"; # Return sorted by port name (comes first)
 }
 
 
@@ -3500,7 +3530,7 @@ sub print_conn_matrix ($$$$$$$$$;$) {
     if ( $cflag and $fflag == $ub ) {
 		# Full conn matrix port <-> signal  or
 		# One bit of port connected to bit signal
-		if ( $pf eq $pt and defined( $lb ) and $lb eq $ub ) {
+		if ( ( $pf eq $pt ) and defined( $lb ) and ( $lb eq $ub ) ) {
 	    	# Single bit port .... connected to bus slice
 	    	# TODO : do more checking ...
 	    	if ( $pf eq "__UNDEF__" ) {
@@ -3704,6 +3734,8 @@ sub print_conn_matrix ($$$$$$$$$;$) {
 #	%conndb (read)
 #	%EH		(read)
 #
+#!wig20060117: add the connection number for debugging purposes
+#    -> output.generate.portdescr to ... %::connnr% ...
 sub mix_wr_printdescr($$) {
 	my $signal = shift;
 	my $tcom   = shift;
@@ -3714,8 +3746,9 @@ sub mix_wr_printdescr($$) {
         my %tm = ();
         $tm{'%::descr%'} = $conndb{$signal}{'::descr'};
         $tm{'%::comment%'} = $conndb{$signal}{'::comment'};
-        $tm{'%::ininst%'} = "";
-        $tm{'%::outinst%'} = "";
+        $tm{'%::connnr%'} = $conndb{$signal}{'::connnr'};
+        $tm{'%::ininst%'} = '';
+        $tm{'%::outinst%'} = '';
         for my $i ( @{$conndb{$signal}{'::in'}} ) {
             next unless (exists( $i->{'inst'}));
             $tm{'%::ininst%'} .= " " . $i->{'inst'};
@@ -3730,7 +3763,7 @@ sub mix_wr_printdescr($$) {
         }
         if ( $EH{'output'}{'generate'}{'portdescrlength'} =~ m,^(\d+)$, ) { # Limit lenght
             if ( length( $descr)  > $1 ) {
-            	# Consider the description line by line
+            	# Rework the description line by line
             	$descr = _mix_wr_shortendescr( $descr, $1 ); 
             }
         }
@@ -3800,7 +3833,7 @@ sub _mix_wr_shortendescr ($;$) {
 # see comments below for list of allowed keywords
 #
 # input:
-#	entitiy name
+#	entity name
 #	port name
 # output:
 #	key to prepend for ordering
@@ -3940,7 +3973,7 @@ sub _write_architecture ($$$$) {
         # For __COMMON__ header only, see below
     }
     if ( -r $filename and $EH{'outarch'} ne "COMB" ) {
-		logtrc(INFO, "Architecture declaration file $filename will be overwritten!" );
+		logtrc("INFO:4", "Architecture declaration file $filename will be overwritten!" );
     }
 
     # Add header
@@ -5159,7 +5192,7 @@ sub count_load_driver ($$$$) {
                 if ( $EH{'output'}{'warnings'} =~ m/driver/io ) {
                     logwarn( "Warning: Signal $s  has multiple drivers in instance $inst!" );
                 } else {
-                    logtrc( "INFO_4", "Warning: Signal $s  has multiple drivers in instance $inst!" );
+                    logtrc( "INFO:4", "Warning: Signal $s  has multiple drivers in instance $inst!" );
                 }
                 $conndb{$s}{'::comment'} .= "__E_MULTIPLE_DRIVER/$inst,";
                 $error_flag++;
@@ -5402,7 +5435,7 @@ sub _write_configuration ($$$$) {
     }
 
     if ( $write_flag and -r $filename and $EH{'outconf'} ne "COMB" ) {
-		logtrc(INFO, "Configuration definition file $filename will be overwritten!" );
+		logtrc("INFO:4", "Configuration definition file $filename will be overwritten!" );
     }
    
     my $fh = undef;

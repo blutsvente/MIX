@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.64 $                                         |
+# | Revision:   $Revision: 1.65 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/12/22 13:40:56 $                              |
+# | Date:       $Date: 2006/01/18 16:59:28 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.64 2005/12/22 13:40:56 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.65 2006/01/18 16:59:28 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.65  2006/01/18 16:59:28  wig
+# |  	MixChecker.pm MixParser.pm MixUtils.pm MixWriter.pm : UNIX tested
+# |
 # | Revision 1.64  2005/12/22 13:40:56  wig
 # | fixed missing port generation bug 20051221a
 # |
@@ -327,9 +330,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.64 2005/12/22 13:40:56 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.65 2006/01/18 16:59:28 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.64 $';
+my $thisrevision =	'$Revision: 1.65 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -386,7 +389,7 @@ sub parse_conn_macros ($) {
     }
 
     $n++;
-    logtrc( "INFO", "Found $n macro definitions" );
+    logtrc( "INFO:4", "Found $n macro definitions" );
 
     #
     # Check macro definitions
@@ -964,7 +967,7 @@ sub merge_inst ($%) {
             $hierdb{$name}{$i} ne "" ) {
             if ( defined( $EH{'hier'}{'field'}{$i} ) and exists( $EH{'hier'}{'field'}{$i} ) and
 		 ( $hierdb{$name}{$i} ne $EH{'hier'}{'field'}{$i}[3] ) ) { # Leave that value ....
-		logtrc("INFO", "field $i for $name already filled");
+		logtrc("INFO:4", "field $i for $name already filled");
             } else {
 		if ( $data{$i} ne "" ) { $hierdb{$name}{$i} = $data{$i} };
             }
@@ -1041,7 +1044,8 @@ sub add_conn (%) {
 		#   -> map to LOW|HIGH_BUS
 		#!wig20050719
 		if ( $name =~ m/%(LOW|HIGH)%/ ) {
-			if ( $in{'::high'} ne '' or $in{'::low'} ne '' ) {
+			if ( ( defined( $in{'::high'} ) and $in{'::high'} ne '' ) or
+				 ( defined( $in{'::low'} )  and $in{'::low'}  ne '' ) ) {
 				logwarn("WARNING: map assignment from $1 to $1_BUS!");
 				$EH{'sum'}{'warnings'}++;
 				$name = "%" . $1 . "_BUS%";
@@ -1119,9 +1123,10 @@ sub add_conn (%) {
         if ( $nameflag and $conndb{$name}{'::mode'} !~ m/^\s*[CPG]/o ) {
             # Check if this signals ::out has a %CONST% in it:
             # If yes, mark it as C
-            unless( $conndb{$name}{'::out'}[0]{'inst'} eq "%CONST%" ) {
+            unless( exists( $conndb{$name}{'::out'}[0] ) and
+				 $conndb{$name}{'::out'}[0]{'inst'} eq "%CONST%" ) {
                 # Mark signal .... but add it anyway (user should be able to fix it)
-                #TODO: fix up that code, should not deal with conndb here ....
+                # TODO : fix up that code, should not deal with conndb here ....
 				##LU added some hint for user
 				my($hint) = $EH{'macro'}{'%EMPTY%'};
 				if (lc($conndb{$name}{'::mode'}) eq "i") {
@@ -1152,7 +1157,7 @@ sub add_conn (%) {
                     $conndb{$name}{'::comment'} .= "__E_MODE_MISMATCH";
                 } elsif ( not $conndb{$name}{'::mode'} ) {
                     # If this signal mode is not defined, assume C
-                    logtrc( "INFO", "Setting mode to C for signal $name\n" );
+                    logtrc( "INFO:4", "Setting mode to C for signal $name\n" );
                     $conndb{$name}{'::mode'} = "C";
                     $conndb{$name}{'::comment'} .= "__I_SET_MODE_C";
                 }
@@ -1261,7 +1266,7 @@ sub _create_conn ($$%) {
 
         if ( $data{'::high'} ne "" ) {
             unless ( $data{'::high'} =~ /^\d+$/ ) {
-                logtrc( "INFO", "Bus $data{'::name'} upper bound $data{'::high'} not a number!" );
+                logtrc( "INFO:4", "Bus $data{'::name'} upper bound $data{'::high'} not a number!" );
                 $hldigitflag = 0;
             } else {
                 $hldigitflag++;
@@ -1270,7 +1275,7 @@ sub _create_conn ($$%) {
         }
         if ( $data{'::low'} ne "" ) {
             unless ( $data{'::low'} =~ /^\d+$/ ) {
-                logtrc( "INFO", "Bus $data{'::name'} lower bound $data{'::low'} not a number!" );
+                logtrc( "INFO:4", "Bus $data{'::name'} lower bound $data{'::low'} not a number!" );
                 $hldigitflag = 0;
             } else {
                 $hldigitflag++;
@@ -1396,7 +1401,7 @@ sub _create_conn ($$%) {
                             $co{'port_f'} = "$mh - $ml";
                             $co{'sig_f'} = $mh;
                             $co{'sig_t'} = $ml;
-                            logtrc( "INFO", "Textual bounds for constant" );
+                            logtrc( "INFO:4", "Textual bounds for constant" );
                         }
                     } else {
                         logwarn( "Cannot parse constant signal assignment width definition: $cpart" );
@@ -1733,7 +1738,8 @@ sub merge_conn($%) {
         #TODO: Trigger merge mode for special cases where we want to add
         # up data instead of overwrite
         if ( $i =~ /^::(in|out)$/ ) { 
-        	if ( $data{$i} !~ /^\s*$/io ) {
+			#!wig20060116: check if data is defined:
+        	if ( defined( $data{$i} ) and $data{$i} !~ /^\s*$/io ) {
                 # Add array to in/out field, if the cell contains data
                 push( @{$conndb{$name}{$i}} , @{_create_conn( $1, $data{$i}, %data )});
             }
@@ -2030,7 +2036,7 @@ sub apply_conn_macros ($$) {
                 }
                 if ( $xre =~ /$r_cm->[$ii]{'mm'}/ ) {
                     # Got it .... catch matched variables and apply to MX line ...
-                    logtrc("INFO", "Macro $ii matches here");
+                    logtrc("INFO:4", "Macro $ii matches here");
                     $EH{'sum'}{'cmacros'}++;
                     my %mex = ();
                     # Gets matched variables
@@ -2600,7 +2606,7 @@ sub add_portsig () {
                 my $name = $n->name;
                 unless( exists( $connected{$name} ) ) {
                     ## ADD port to that module:
-                    logtrc( "notice:4" , "Adding port to hierachy module $name for signal $signal!" );
+                    logtrc( "NOTICE:4" , "Adding port to hierachy module $name for signal $signal!" );
                     push( @addup, [ $signal, $name, $l, $modes{$l}, $bits ] );
                 } else {
                     # Connected, but not all bits? Or in/out mode differs?
@@ -4057,13 +4063,13 @@ sub purge_relicts () {
 # e.g. open ....
 # Set configuration value postfix.PREFIX_KEYWORD to %NULL% to suppress changes
 #
-# TODO: Shift that routine to MixChecker
+# TODO : Shift that routine to MixChecker
 sub _check_keywords ($$) {
     my $name = shift;
     my $ior = shift;
 
-    #TODO: Run that again in the backend, after everything got evaled
-    #TODO: There is no way to figure out %::cols% conflicts finally :-(
+    # TODO : Run that again in the backend, after everything got evaled
+    # TODO : There is no way to figure out %::cols% conflicts finally :-(
     # at this stage.
     # We will do our best to find open/%::name% (as this is likely to happen)
     #

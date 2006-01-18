@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.104 $                                         |
+# | Revision:   $Revision: 1.105 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/01/18 14:04:29 $                              |
+# | Date:       $Date: 2006/01/18 16:59:29 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.104 2006/01/18 14:04:29 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.105 2006/01/18 16:59:29 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.105  2006/01/18 16:59:29  wig
+# |  	MixChecker.pm MixParser.pm MixUtils.pm MixWriter.pm : UNIX tested
+# |
 # | Revision 1.104  2006/01/18 14:04:29  wig
 # | Started verilog module check.
 # |
@@ -436,11 +439,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.104 2006/01/18 14:04:29 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.105 2006/01/18 16:59:29 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.104 $';         #'
+my $thisrevision        =      '$Revision: 1.105 $';         #'
 
-# Revision:   $Revision: 1.104 $   
+# Revision:   $Revision: 1.105 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1069,6 +1072,7 @@ sub mix_init () {
 	      	'portdescr' => '%::descr%',	# Definitions for port map descriptions:
 		      #   %::descr% (contents of this signal's descr. field, %::ininst% (list of load instances),
 		      #   %::outinst% (list of driving instances), %::comment%
+			  #   %::connnr  (signal number according to order generated/defined by sheets),
 	      	'portdescrlength' => 100, # Limit length of comment to 100 characters!
 	      	'portdescrlines' => 10,   # Do not print > 10 port comment lines
 		  	'portmapsort' => 'alpha', # How to sort port map; allowed values are:
@@ -1077,6 +1081,7 @@ sub mix_init () {
 		  			# inout | outin: seperate in/out/inout seperately
 		  			#    can be combined with the "input" key
 		  			# ::COL : order as in column ::COL (alphanumeric!)
+					# debug	:= print out sort criteria in comments
 		  			
 		  	# List of "logic" entities
 			'logic' => 'wire(1:1),and(1:N),or(1:N),nand(1:N),xor(1:N),nor(1:N),not(1:1)',
@@ -1177,27 +1182,40 @@ sub mix_init () {
     	'generate' => 'stripio', # remove trailing _i,_o from generated signal names
     },
     'check' => { # Checks enable/disable: Usually the keywords to use are
-		    # na (or empty), check (check and warn),
-		    # force (check and force compliance),
-		    # Available (built-in) rules are:
-		    # lc (lower case everything), postfix, prefix,
-		    # t.b.d.: uniq (make sure name apears only once!
+		    # na|disable (or empty) -> do not check
+			# check           -> check and print warnings
+		    # force           -> check and force compliance
+		    # Available (built-in) rules/check targets are:
+		    #   lc (lower case everything), postfix, prefix,
+			#   lc, lcfirst (make first lc), lcfirstuc (uc all but first lc)
+			#   uc, ucfirst (make first uc), ucfirstlc (lc all but first uc)
+		    # t.b.d.: uniq (make sure name apears only once)!
+			# set check.namex.TYPE for selected excludes
 		    #
 		'name' => {
 	    	# TODO 'all' => '',	# Sets all others .... ->
-	    	'pad' => 'check,lc',
+	    	'pad'  => 'check,lc',
 	    	'conn' => 'check,lc', # check signal names ...
 	    	'enty' => 'check,lc',
 	    	'inst' => 'check,lc',   # check instance names ...
 	    	'port' => 'check,lc',
 	    	'conf' => 'check,lc',
 		},
+		'namex' => { # Exclude list for check.name, use only to selectivly disable checks
+			'all'  => '',
+	    	'pad'  => '',
+	    	'conn' => '',
+	    	'enty' => '',
+	    	'inst' => '',
+	    	'port' => '',
+	    	'conf' => '',
+		},
 		'keywords' => { #These keywords will trigger warnings and get replaced
-	    	'vhdl'	=> '(open|instance|entity|signal)', # TODO Give me more keywords
+	    	'vhdl'	=> '(open|instance|entity|signal)',        # TODO Give me more keywords
 	    	'verilog' 	=> '(register|net|wire|in|out|inout)', # TODO give me more
 		},
-		'defs' => '',  # 'inst,conn',    # make sure elements are only defined once:
-		    # possilbe values are: inst,conn
+		'defs' => '',   # 'inst,conn',    # make sure elements are only defined once:
+		    		    # posible values are: inst,conn
 		'signal' => 'load,driver,check,top_open',
 						# reads: checks if all signals have appr. loads
 						# and drivers.
@@ -1206,6 +1224,7 @@ sub mix_init () {
 						# TODO: auto_low, auto_high: automatically ground/high undriven signals
 					
 		'inst' => 'nomulti',	# check and mark multiple instantiations
+		# Verifiy modules against provided modules (mostly for entity checks)
     	'hdlout' => { # act. should be named "hdlout"
             'mode' => "entity,leaf,generated,ignorecase", # check only LEAF cells -> LEAF
                         #  ignore case of filename -> ignorecase
