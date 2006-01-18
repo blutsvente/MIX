@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.57 2005/12/14 12:51:07 wig Exp $
+# $Id: TODO.txt,v 1.58 2006/01/18 14:03:35 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -27,6 +27,14 @@ Code:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+
+>>title: 20060110a/RFE: change the check.hdlout.mode to support Verilog better
+
+Allow to just check the module headers, omitt all data after "begin"
+
+	Req: mpit
+	Status: open
+	Prio: medium
 
 >>title: 20051207a/Req: change mix_portlist output
 
