@@ -1,72 +1,78 @@
-05/07/15 15:04:45 
+06/01/19 08:01:07 ########################################################################
+06/01/19 08:01:07 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl -strip -nodelta ../udc.xls
+06/01/19 08:01:07 
 #######################################################################
-##### mix_0.pl (Revision: 1.36 )
+##### mix_0.pl (Revision: 1.43 )
 #####
 ##### MIX  
-#####   MixUtils    1.66 $
-#####   MixUtils::IO    1.22 $
-#####   MixParser   1.53 $
-#####   MixWriter   1.55 $
-#####   MixChecker  1.8 $
+#####   MixUtils    1.105 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.65 $
+#####   MixWriter   1.75 $
+#####   MixChecker  1.11 $
 #####   MixIOParser 1.17 $
-#####   MixI2CParser 1.13 $
+#####   MixReport 1.21 $
+#####   Reg 1.18  
 ##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
 #######################################################################
-05/07/15 15:04:45 Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/15 15:04:45 Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/15 15:04:45 Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/udc/../udc.xls
-05/07/15 15:04:45 Add_port: signal signal_bb_ab adds port signal_bb_ab to instance inst_t_i
-05/07/15 15:04:45 Adding port to hierachy module inst_a_i for signal signal_bb_ab!
-05/07/15 15:04:45 Adding port to hierachy module inst_b_i for signal signal_bb_ab!
-05/07/15 15:04:45 Add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_gi to instance inst_a_i
-05/07/15 15:04:45 Add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_go to instance inst_b_i
-05/07/15 15:04:45 Adding port to hierachy module inst_b_i for signal signal_aa_ba!
-05/07/15 15:04:45 Adding port to hierachy module inst_a_i for signal signal_aa_ba!
-05/07/15 15:04:45 Add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_gi to instance inst_b_i
-05/07/15 15:04:45 Add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_go to instance inst_a_i
-05/07/15 15:04:47 WARNING: Rotating 3 old sheets of CONF!
-05/07/15 15:04:48 Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/udc/udc-mixed.xls
-05/07/15 15:04:48 WARNING: Rotating 3 old sheets of DIFF_CONN!
-05/07/15 15:04:48 Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/udc/udc-mixed.xls
-05/07/15 15:04:48 WARNING: Rotating 3 old sheets of DIFF_HIER!
-05/07/15 15:04:48 Info: unchanged file inst_a_e-e.vhd
-05/07/15 15:04:48 Info: unchanged file inst_ab_e-e.vhd
-05/07/15 15:04:48 Info: unchanged file inst_b_e-e.vhd
-05/07/15 15:04:49 Info: unchanged file inst_bb_e-e.vhd
-05/07/15 15:04:49 Info: unchanged file inst_t_e-e.vhd
-05/07/15 15:04:49 Info: unchanged file inst_xa_e-e.vhd
-05/07/15 15:04:49 Info: unchanged file inst_a_e-rtl-a.vhd
-05/07/15 15:04:49 Info: unchanged file inst_xa_e-rtl-a.vhd
-05/07/15 15:04:49 Info: unchanged file inst_ab_e-rtl-a.vhd
-05/07/15 15:04:49 Info: unchanged file inst_b_e-rtl-a.vhd
-05/07/15 15:04:49 Info: unchanged file inst_bb_e-rtl-a.vhd
-05/07/15 15:04:49 Info: unchanged file inst_t_e-rtl-a.vhd
-05/07/15 15:04:49 Info: unchanged file inst_a_e-rtl-conf-c.vhd
-05/07/15 15:04:49 Info: unchanged file inst_b_e-rtl-conf-c.vhd
-05/07/15 15:04:49 Info: unchanged file inst_t_e-rtl-conf-c.vhd
-05/07/15 15:04:49 WARNING: ============= SUMMARY =================
-05/07/15 15:04:49 WARNING: SUM: Summary of checks and created items:
-05/07/15 15:04:49 WARNING: SUM: checkforce 0
-05/07/15 15:04:49 WARNING: SUM: checkunique 0
-05/07/15 15:04:49 WARNING: SUM: checkwarn 0
-05/07/15 15:04:49 WARNING: SUM: cmacros 0
-05/07/15 15:04:49 WARNING: SUM: conn 4
-05/07/15 15:04:49 WARNING: SUM: errors 0
-05/07/15 15:04:49 WARNING: SUM: genport 5
-05/07/15 15:04:49 WARNING: SUM: hdlfiles 15
-05/07/15 15:04:49 WARNING: SUM: inst 13
-05/07/15 15:04:49 WARNING: SUM: multdriver 0
-05/07/15 15:04:49 WARNING: SUM: nodriver 0
-05/07/15 15:04:49 WARNING: SUM: noload 0
-05/07/15 15:04:49 WARNING: SUM: open 1
-05/07/15 15:04:49 WARNING: SUM: openports 0
-05/07/15 15:04:49 WARNING: SUM: tie_hl 1
-05/07/15 15:04:49 WARNING: SUM: warnings 0
-05/07/15 15:04:49 WARNING: SUM: === Number of parsed input tables: ===
-05/07/15 15:04:49 WARNING: SUM: conf 0
-05/07/15 15:04:49 WARNING: SUM: hier 1
-05/07/15 15:04:49 WARNING: SUM: conn 1
-05/07/15 15:04:49 WARNING: SUM: io 1
-05/07/15 15:04:49 WARNING: SUM: i2c 0
-05/07/15 15:04:49 WARNING: SUM: Number of changes in intermediate: 0
-05/07/15 15:04:49 WARNING: SUM: Number of changed files: 0
+06/01/19 08:01:08 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/udc/../udc.xls
+06/01/19 08:01:08 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/udc/../udc.xls
+06/01/19 08:01:08 Reading worksheet IO of H:/work/eclipse/MIX/test/xls_input/udc/../udc.xls
+06/01/19 08:01:08 Found 0 macro definitions
+06/01/19 08:01:08 WARNING: WARNING: register-master file empty or specified sheet 'I2C' in file not found
+06/01/19 08:01:08 Add_port: signal signal_bb_ab adds port signal_bb_ab to instance inst_t_i
+06/01/19 08:01:08 Adding port to hierachy module inst_a_i for signal signal_bb_ab!
+06/01/19 08:01:08 Adding port to hierachy module inst_b_i for signal signal_bb_ab!
+06/01/19 08:01:08 Add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_gi to instance inst_a_i
+06/01/19 08:01:08 Add_port: signal signal_bb_ab adds port p_mix_signal_bb_ab_go to instance inst_b_i
+06/01/19 08:01:08 Adding port to hierachy module inst_b_i for signal signal_aa_ba!
+06/01/19 08:01:08 Adding port to hierachy module inst_a_i for signal signal_aa_ba!
+06/01/19 08:01:08 Add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_gi to instance inst_b_i
+06/01/19 08:01:08 Add_port: signal signal_aa_ba adds port p_mix_signal_aa_ba_go to instance inst_a_i
+06/01/19 08:01:10 WARNING: File udc-mixed.xls already exists! Contents will be changed
+06/01/19 08:01:10 WARNING: Rotating 3 old sheets of CONF!
+06/01/19 08:01:11 WARNING: Rotating 3 old sheets of CONN!
+06/01/19 08:01:11 WARNING: Rotating 3 old sheets of HIER!
+06/01/19 08:01:11 WARNING: Removing old and and diff sheets in file: udc-mixed.xls
+06/01/19 08:01:11 WARNING: ERROR: workbook with different path already opened!
+06/01/19 08:01:11 Entity declaration file inst_a_e-e.vhd will be overwritten!
+06/01/19 08:01:11 Entity declaration file inst_ab_e-e.vhd will be overwritten!
+06/01/19 08:01:11 Entity declaration file inst_b_e-e.vhd will be overwritten!
+06/01/19 08:01:11 Entity declaration file inst_bb_e-e.vhd will be overwritten!
+06/01/19 08:01:11 Entity declaration file inst_t_e-e.vhd will be overwritten!
+06/01/19 08:01:11 Entity declaration file inst_xa_e-e.vhd will be overwritten!
+06/01/19 08:01:11 Architecture declaration file inst_a_e-rtl-a.vhd will be overwritten!
+06/01/19 08:01:12 Architecture declaration file inst_xa_e-rtl-a.vhd will be overwritten!
+06/01/19 08:01:12 Architecture declaration file inst_ab_e-rtl-a.vhd will be overwritten!
+06/01/19 08:01:12 Architecture declaration file inst_b_e-rtl-a.vhd will be overwritten!
+06/01/19 08:01:12 Architecture declaration file inst_bb_e-rtl-a.vhd will be overwritten!
+06/01/19 08:01:12 Architecture declaration file inst_t_e-rtl-a.vhd will be overwritten!
+06/01/19 08:01:12 Configuration definition file inst_a_e-rtl-conf-c.vhd will be overwritten!
+06/01/19 08:01:12 Configuration definition file inst_b_e-rtl-conf-c.vhd will be overwritten!
+06/01/19 08:01:12 Configuration definition file inst_t_e-rtl-conf-c.vhd will be overwritten!
+06/01/19 08:01:12 WARNING: ============= SUMMARY =================
+06/01/19 08:01:12 WARNING: SUM: Summary of checks and created items:
+06/01/19 08:01:12 WARNING: SUM: checkforce 0
+06/01/19 08:01:12 WARNING: SUM: checkunique 0
+06/01/19 08:01:12 WARNING: SUM: checkwarn 0
+06/01/19 08:01:12 WARNING: SUM: cmacros 0
+06/01/19 08:01:12 WARNING: SUM: conn 4
+06/01/19 08:01:12 WARNING: SUM: errors 1
+06/01/19 08:01:12 WARNING: SUM: genport 5
+06/01/19 08:01:12 WARNING: SUM: hdlfiles 15
+06/01/19 08:01:12 WARNING: SUM: inst 13
+06/01/19 08:01:12 WARNING: SUM: multdriver 0
+06/01/19 08:01:12 WARNING: SUM: nodriver 0
+06/01/19 08:01:12 WARNING: SUM: noload 0
+06/01/19 08:01:12 WARNING: SUM: open 1
+06/01/19 08:01:12 WARNING: SUM: openports 0
+06/01/19 08:01:12 WARNING: SUM: tie_hl 1
+06/01/19 08:01:12 WARNING: SUM: warnings 1
+06/01/19 08:01:12 WARNING: SUM: === Number of parsed input tables: ===
+06/01/19 08:01:12 WARNING: SUM: conf 0
+06/01/19 08:01:12 WARNING: SUM: hier 1
+06/01/19 08:01:12 WARNING: SUM: conn 1
+06/01/19 08:01:12 WARNING: SUM: io 1
+06/01/19 08:01:12 WARNING: SUM: i2c 0
+06/01/19 08:01:12 WARNING: SUM: Number of changes in intermediate: 0
+06/01/19 08:01:12 WARNING: SUM: Number of changed files: 0

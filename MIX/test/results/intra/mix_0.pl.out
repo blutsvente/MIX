@@ -1,118 +1,130 @@
-05/10/13 05:54:27 ########################################################################
-05/10/13 05:54:27 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl ../intra.xls
-05/10/13 05:54:27 
+06/01/19 08:06:44 ########################################################################
+06/01/19 08:06:44 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl -strip -nodelta ../intra.xls
+06/01/19 08:06:44 
 #######################################################################
-##### mix_0.pl (Revision: 1.37 )
+##### mix_0.pl (Revision: 1.43 )
 #####
 ##### MIX  
-#####   MixUtils    1.73 $
-#####   MixUtils::IO    1.27 $
-#####   MixParser   1.58 $
-#####   MixWriter   1.59 $
-#####   MixChecker  1.9 $
+#####   MixUtils    1.105 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.65 $
+#####   MixWriter   1.75 $
+#####   MixChecker  1.11 $
 #####   MixIOParser 1.17 $
-#####   MixI2CParser 1.14 $
-#####   MixReport 1.2 $
+#####   MixReport 1.21 $
+#####   Reg 1.18  
 ##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
 #######################################################################
-05/10/13 05:54:27 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/intra/../intra.xls
-05/10/13 05:54:27 Reading worksheet HIER_MIXED of H:/work/eclipse/MIX/test/xls_input/intra/../intra.xls
-05/10/13 05:54:27 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
-05/10/13 05:54:27 Add_port: signal sig_i_ae adds port sig_i_ae to instance inst_t
-05/10/13 05:54:27 Adding port to hierachy module inst_a for signal sig_i_ae!
-05/10/13 05:54:27 Add_port: signal sig_i_ae adds port p_mix_sig_i_ae_gi to instance inst_a
-05/10/13 05:54:27 Add_port: signal sig_o_ae adds port sig_o_ae to instance inst_t
-05/10/13 05:54:27 Adding port to hierachy module inst_a for signal sig_o_ae!
-05/10/13 05:54:27 Add_port: signal sig_o_ae adds port p_mix_sig_o_ae_go to instance inst_a
-05/10/13 05:54:27 Adding port to hierachy module inst_a for signal sig_01!
-05/10/13 05:54:27 Adding port to hierachy module inst_a for signal sig_01!
-05/10/13 05:54:27 Add_port: signal sig_01 adds port p_mix_sig_01_go to instance inst_a
-05/10/13 05:54:27 Adding port to hierachy module inst_a for signal sig_06!
-05/10/13 05:54:27 WARNING: WARNING: Signal sig_06 has mixed links into instance inst_b!
-05/10/13 05:54:27 Adding port to hierachy module inst_a for signal sig_06!
-05/10/13 05:54:27 WARNING: WARNING: Possible io mode conflict for sig_06 at inst_a
-05/10/13 05:54:27 Add_port: signal sig_06 adds port p_mix_sig_06_gi to instance inst_a
-05/10/13 05:54:27 Add_port: signal sig_o_a2 adds port sig_o_a2 to instance inst_t
-05/10/13 05:54:27 Add_port: signal sig_i_a adds port sig_i_a to instance inst_t
-05/10/13 05:54:27 Adding port to hierachy module inst_a for signal sig_04!
-05/10/13 05:54:27 Add_port: signal sig_04 adds port p_mix_sig_04_gi to instance inst_a
-05/10/13 05:54:27 Add_port: signal sig_i_a2 adds port sig_i_a2 to instance inst_t
-05/10/13 05:54:27 Adding port to hierachy module inst_a for signal sig_03!
-05/10/13 05:54:27 Add_port: signal sig_03 adds port p_mix_sig_03_go to instance inst_a
-05/10/13 05:54:27 Adding port to hierachy module inst_a for signal sig_05!
-05/10/13 05:54:27 Adding port to hierachy module inst_a for signal sig_05!
-05/10/13 05:54:27 Add_port: signal sig_05 adds port p_mix_sig_05_2_1_go to instance inst_a
-05/10/13 05:54:27 Add_port: signal sig_o_a adds port sig_o_a to instance inst_t
-05/10/13 05:54:27 Autoreducing port type for signal sig_02 to std_ulogic
-05/10/13 05:54:27 Autoreducing port type for signal sig_02 to std_ulogic
-05/10/13 05:54:27 Autoreducing port type for signal sig_02 to std_ulogic
-05/10/13 05:54:27 Autoreducing port type for signal sig_02 to std_ulogic
-05/10/13 05:54:27 Autoreducing port type for signal sig_05 to std_ulogic
-05/10/13 05:54:29 WARNING: Rotating 3 old sheets of CONF!
-05/10/13 05:54:30 Reading worksheet CONN_inst_t of H:/work/eclipse/MIX/test/xls_input/intra/intra-mixed.xls
-05/10/13 05:54:30 WARNING: Rotating 3 old sheets of DIFF_CONN_inst_t!
-05/10/13 05:54:30 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/intra/intra-mixed.xls
-05/10/13 05:54:30 WARNING: Rotating 3 old sheets of DIFF_CONN!
-05/10/13 05:54:30 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/intra/intra-mixed.xls
-05/10/13 05:54:30 WARNING: Rotating 3 old sheets of DIFF_HIER!
-05/10/13 05:54:31 Port port_aa_2 of entity ent_aa one bit wide, reduce to signal
-05/10/13 05:54:31 Port port_ab_2 of entity ent_ab one bit wide, reduce to signal
-05/10/13 05:54:31 INFO: Port port_ac_2 of entity ent_ac one bit wide, reduce to signal
+06/01/19 08:06:45 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/intra/../intra.xls
+06/01/19 08:06:45 Reading worksheet HIER_MIXED of H:/work/eclipse/MIX/test/xls_input/intra/../intra.xls
+06/01/19 08:06:45 Found 0 macro definitions
+06/01/19 08:06:45 WARNING: INFO: Not all chars in correct case in new inst element 'TESTBENCH'!
+06/01/19 08:06:45 Setting mode to C for signal const_17
 
-05/10/13 05:54:31 Port port_ad_2 of entity ent_ad one bit wide, reduce to signal
-05/10/13 05:54:31 Port port_b_5_1 of entity ent_b one bit wide, reduce to signal
-05/10/13 05:54:31 Port port_b_5_2 of entity ent_b one bit wide, reduce to signal
-05/10/13 05:54:31 Info: unchanged file ent_b-e.vhd
-05/10/13 05:54:31 Info: unchanged file ent_t-e.vhd
-05/10/13 05:54:31 WARNING: ERROR: Detected missing bits in spliced port port_ae_2!
-05/10/13 05:54:31 Warning: Signal const_17 does not have a driver in instance inst_a!
-05/10/13 05:54:31 Warning: Signal sig_o_a2 does not have a driver in instance inst_a!
-05/10/13 05:54:31 Signal const_19 does not have a load in instance inst_a!
-05/10/13 05:54:31 Signal parameter_16 does not have a load in instance inst_a!
-05/10/13 05:54:31 Signal generic_15 does not have a load in instance inst_a!
-05/10/13 05:54:31 Signal sig_i_a does not have a load in instance inst_a!
-05/10/13 05:54:31 Signal sig_i_a2 does not have a load in instance inst_a!
-05/10/13 05:54:31 Warning: Signal sig_o_a does not have a driver in instance inst_a!
-05/10/13 05:54:31 Info: unchanged file ent_a.v
-05/10/13 05:54:31 Signal sig_08 does not have a load in instance inst_b!
-05/10/13 05:54:31 Signal sig_01 does not have a load in instance inst_b!
-05/10/13 05:54:31 Warning: Signal sig_04 does not have a driver in instance inst_b!
-05/10/13 05:54:31 Signal sig_07 does not have a load in instance inst_b!
-05/10/13 05:54:31 Signal sig_03 does not have a load in instance inst_b!
-05/10/13 05:54:31 Signal sig_05 does not have a load in instance inst_b!
-05/10/13 05:54:31 Info: unchanged file ent_b-rtl-a.vhd
-05/10/13 05:54:31 Signal generic_20 does not have a load in instance inst_t!
-05/10/13 05:54:31 Warning: Signal const_19 does not have a driver in instance inst_t!
-05/10/13 05:54:31 Signal parameter_21 does not have a load in instance inst_t!
-05/10/13 05:54:31 Warning: Signal sig_07 does not have a driver in instance inst_t!
-05/10/13 05:54:31 Signal const_18 does not have a load in instance inst_t!
-05/10/13 05:54:31 Signal sig_13 does not have a load in instance inst_t!
-05/10/13 05:54:31 Leave unloaded port sig_13 open at instance inst_t
-05/10/13 05:54:31 Info: unchanged file ent_t-rtl-a.vhd
-05/10/13 05:54:31 Info: unchanged file ent_b-rtl-conf-c.vhd
-05/10/13 05:54:32 Info: unchanged file ent_t-rtl-conf-c.vhd
-05/10/13 05:54:32 WARNING: ============= SUMMARY =================
-05/10/13 05:54:32 WARNING: SUM: Summary of checks and created items:
-05/10/13 05:54:32 WARNING: SUM: checkforce 0
-05/10/13 05:54:32 WARNING: SUM: checkunique 0
-05/10/13 05:54:32 WARNING: SUM: checkwarn 0
-05/10/13 05:54:32 WARNING: SUM: cmacros 0
-05/10/13 05:54:32 WARNING: SUM: conn 23
-05/10/13 05:54:32 WARNING: SUM: error 1
-05/10/13 05:54:32 WARNING: SUM: errors 0
-05/10/13 05:54:32 WARNING: SUM: genport 13
-05/10/13 05:54:32 WARNING: SUM: hdlfiles 7
-05/10/13 05:54:32 WARNING: SUM: inst 16
-05/10/13 05:54:32 WARNING: SUM: multdriver 4
-05/10/13 05:54:32 WARNING: SUM: nodriver 6
-05/10/13 05:54:32 WARNING: SUM: noload 14
-05/10/13 05:54:32 WARNING: SUM: openports 1
-05/10/13 05:54:32 WARNING: SUM: warnings 2
-05/10/13 05:54:32 WARNING: SUM: === Number of parsed input tables: ===
-05/10/13 05:54:32 WARNING: SUM: conf 0
-05/10/13 05:54:32 WARNING: SUM: hier 1
-05/10/13 05:54:32 WARNING: SUM: conn 1
-05/10/13 05:54:32 WARNING: SUM: io 0
-05/10/13 05:54:32 WARNING: SUM: i2c 0
-05/10/13 05:54:32 WARNING: SUM: Number of changes in intermediate: 0
-05/10/13 05:54:32 WARNING: SUM: Number of changed files: 0
+06/01/19 08:06:45 Setting mode to C for signal const_18
+
+06/01/19 08:06:45 Setting mode to C for signal const_19
+
+06/01/19 08:06:45 WARNING: WARNING: register-master file empty or specified sheet 'I2C' in file not found
+06/01/19 08:06:45 Add_port: signal sig_i_ae adds port sig_i_ae to instance inst_t
+06/01/19 08:06:45 Adding port to hierachy module inst_a for signal sig_i_ae!
+06/01/19 08:06:45 Add_port: signal sig_i_ae adds port p_mix_sig_i_ae_gi to instance inst_a
+06/01/19 08:06:45 Add_port: signal sig_o_ae adds port sig_o_ae to instance inst_t
+06/01/19 08:06:45 Adding port to hierachy module inst_a for signal sig_o_ae!
+06/01/19 08:06:45 Add_port: signal sig_o_ae adds port p_mix_sig_o_ae_go to instance inst_a
+06/01/19 08:06:45 Adding port to hierachy module inst_a for signal sig_01!
+06/01/19 08:06:45 Adding port to hierachy module inst_a for signal sig_01!
+06/01/19 08:06:45 Add_port: signal sig_01 adds port p_mix_sig_01_go to instance inst_a
+06/01/19 08:06:45 Adding port to hierachy module inst_a for signal sig_06!
+06/01/19 08:06:45 WARNING: WARNING: Signal sig_06 has mixed links into instance inst_b!
+06/01/19 08:06:45 Adding port to hierachy module inst_a for signal sig_06!
+06/01/19 08:06:45 WARNING: WARNING: Possible io mode conflict for sig_06 at inst_a
+06/01/19 08:06:45 Add_port: signal sig_06 adds port p_mix_sig_06_gi to instance inst_a
+06/01/19 08:06:45 Add_port: signal sig_o_a2 adds port sig_o_a2 to instance inst_t
+06/01/19 08:06:45 Add_port: signal sig_i_a adds port sig_i_a to instance inst_t
+06/01/19 08:06:45 Adding port to hierachy module inst_a for signal sig_04!
+06/01/19 08:06:45 Add_port: signal sig_04 adds port p_mix_sig_04_gi to instance inst_a
+06/01/19 08:06:45 Add_port: signal sig_i_a2 adds port sig_i_a2 to instance inst_t
+06/01/19 08:06:45 Adding port to hierachy module inst_a for signal sig_03!
+06/01/19 08:06:45 Add_port: signal sig_03 adds port p_mix_sig_03_go to instance inst_a
+06/01/19 08:06:45 Adding port to hierachy module inst_a for signal sig_05!
+06/01/19 08:06:45 Adding port to hierachy module inst_a for signal sig_05!
+06/01/19 08:06:45 Add_port: signal sig_05 adds port p_mix_sig_05_2_1_go to instance inst_a
+06/01/19 08:06:45 Add_port: signal sig_o_a adds port sig_o_a to instance inst_t
+06/01/19 08:06:45 Autoreducing port type for signal sig_02 to std_ulogic
+06/01/19 08:06:45 Autoreducing port type for signal sig_02 to std_ulogic
+06/01/19 08:06:45 Autoreducing port type for signal sig_02 to std_ulogic
+06/01/19 08:06:45 Autoreducing port type for signal sig_02 to std_ulogic
+06/01/19 08:06:45 Autoreducing port type for signal sig_05 to std_ulogic
+06/01/19 08:06:47 WARNING: File intra-mixed.xls already exists! Contents will be changed
+06/01/19 08:06:47 WARNING: Rotating 3 old sheets of CONF!
+06/01/19 08:06:47 WARNING: Rotating 3 old sheets of CONN_inst_t!
+06/01/19 08:06:48 WARNING: Rotating 3 old sheets of CONN!
+06/01/19 08:06:48 WARNING: Rotating 3 old sheets of HIER!
+06/01/19 08:06:48 WARNING: Removing old and and diff sheets in file: intra-mixed.xls
+06/01/19 08:06:48 WARNING: ERROR: workbook with different path already opened!
+06/01/19 08:06:48 Port port_aa_2 of entity ent_aa one bit wide, reduce to signal
+06/01/19 08:06:48 Port port_ab_2 of entity ent_ab one bit wide, reduce to signal
+06/01/19 08:06:48 INFO: Port port_ac_2 of entity ent_ac one bit wide, reduce to signal
+
+06/01/19 08:06:48 Port port_ad_2 of entity ent_ad one bit wide, reduce to signal
+06/01/19 08:06:48 Entity declaration file ent_b-e.vhd will be overwritten!
+06/01/19 08:06:48 Port port_b_5_1 of entity ent_b one bit wide, reduce to signal
+06/01/19 08:06:48 Port port_b_5_2 of entity ent_b one bit wide, reduce to signal
+06/01/19 08:06:48 Entity declaration file ent_t-e.vhd will be overwritten!
+06/01/19 08:06:48 Architecture declaration file ent_a.v will be overwritten!
+06/01/19 08:06:48 WARNING: ERROR: Detected missing bits in spliced port port_ae_2!
+06/01/19 08:06:48 Warning: Signal sig_06  has multiple drivers in instance inst_a!
+06/01/19 08:06:48 Warning: Signal const_17 does not have a driver in instance inst_a!
+06/01/19 08:06:48 Warning: Signal sig_o_a2 does not have a driver in instance inst_a!
+06/01/19 08:06:48 Signal const_19 does not have a load in instance inst_a!
+06/01/19 08:06:48 Signal parameter_16 does not have a load in instance inst_a!
+06/01/19 08:06:48 Signal generic_15 does not have a load in instance inst_a!
+06/01/19 08:06:48 Signal sig_i_a does not have a load in instance inst_a!
+06/01/19 08:06:48 Warning: Signal sig_07  has multiple drivers in instance inst_a!
+06/01/19 08:06:48 Signal sig_i_a2 does not have a load in instance inst_a!
+06/01/19 08:06:48 Warning: Signal sig_o_a does not have a driver in instance inst_a!
+06/01/19 08:06:48 Warning: Signal sig_02  has multiple drivers in instance inst_a!
+06/01/19 08:06:48 Architecture declaration file ent_b-rtl-a.vhd will be overwritten!
+06/01/19 08:06:48 Signal sig_08 does not have a load in instance inst_b!
+06/01/19 08:06:48 Signal sig_01 does not have a load in instance inst_b!
+06/01/19 08:06:48 Warning: Signal sig_04 does not have a driver in instance inst_b!
+06/01/19 08:06:48 Signal sig_07 does not have a load in instance inst_b!
+06/01/19 08:06:48 Signal sig_03 does not have a load in instance inst_b!
+06/01/19 08:06:48 Signal sig_05 does not have a load in instance inst_b!
+06/01/19 08:06:48 Warning: Signal sig_05  has multiple drivers in instance inst_b!
+06/01/19 08:06:49 Architecture declaration file ent_t-rtl-a.vhd will be overwritten!
+06/01/19 08:06:49 Signal generic_20 does not have a load in instance inst_t!
+06/01/19 08:06:49 Warning: Signal const_19 does not have a driver in instance inst_t!
+06/01/19 08:06:49 Signal parameter_21 does not have a load in instance inst_t!
+06/01/19 08:06:49 Warning: Signal sig_07 does not have a driver in instance inst_t!
+06/01/19 08:06:49 Signal const_18 does not have a load in instance inst_t!
+06/01/19 08:06:49 Signal sig_13 does not have a load in instance inst_t!
+06/01/19 08:06:49 Leave unloaded port sig_13 open at instance inst_t
+06/01/19 08:06:49 Configuration definition file ent_b-rtl-conf-c.vhd will be overwritten!
+06/01/19 08:06:49 Configuration definition file ent_t-rtl-conf-c.vhd will be overwritten!
+06/01/19 08:06:49 WARNING: ============= SUMMARY =================
+06/01/19 08:06:49 WARNING: SUM: Summary of checks and created items:
+06/01/19 08:06:49 WARNING: SUM: checkforce 0
+06/01/19 08:06:49 WARNING: SUM: checkunique 0
+06/01/19 08:06:49 WARNING: SUM: checkwarn 0
+06/01/19 08:06:49 WARNING: SUM: cmacros 0
+06/01/19 08:06:49 WARNING: SUM: conn 23
+06/01/19 08:06:49 WARNING: SUM: error 1
+06/01/19 08:06:49 WARNING: SUM: errors 1
+06/01/19 08:06:49 WARNING: SUM: genport 13
+06/01/19 08:06:49 WARNING: SUM: hdlfiles 7
+06/01/19 08:06:49 WARNING: SUM: inst 16
+06/01/19 08:06:49 WARNING: SUM: multdriver 4
+06/01/19 08:06:49 WARNING: SUM: nodriver 6
+06/01/19 08:06:49 WARNING: SUM: noload 14
+06/01/19 08:06:49 WARNING: SUM: openports 1
+06/01/19 08:06:49 WARNING: SUM: warnings 3
+06/01/19 08:06:49 WARNING: SUM: === Number of parsed input tables: ===
+06/01/19 08:06:49 WARNING: SUM: conf 0
+06/01/19 08:06:49 WARNING: SUM: hier 1
+06/01/19 08:06:49 WARNING: SUM: conn 1
+06/01/19 08:06:49 WARNING: SUM: io 0
+06/01/19 08:06:49 WARNING: SUM: i2c 0
+06/01/19 08:06:49 WARNING: SUM: Number of changes in intermediate: 0
+06/01/19 08:06:49 WARNING: SUM: Number of changed files: 0

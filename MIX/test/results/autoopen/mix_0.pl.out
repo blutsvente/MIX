@@ -1,122 +1,151 @@
-05/07/15 10:27:43 
+06/01/19 07:52:40 ########################################################################
+06/01/19 07:52:40 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl -strip -nodelta ../autoopen.xls
+06/01/19 07:52:40 
 #######################################################################
-##### mix_0.pl (Revision: 1.36 )
+##### mix_0.pl (Revision: 1.43 )
 #####
 ##### MIX  
-#####   MixUtils    1.66 $
-#####   MixUtils::IO    1.22 $
-#####   MixParser   1.53 $
-#####   MixWriter   1.55 $
-#####   MixChecker  1.8 $
+#####   MixUtils    1.105 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.65 $
+#####   MixWriter   1.75 $
+#####   MixChecker  1.11 $
 #####   MixIOParser 1.17 $
-#####   MixI2CParser 1.13 $
+#####   MixReport 1.21 $
+#####   Reg 1.18  
 ##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
 #######################################################################
-05/07/15 10:27:44 Reading worksheet CONN of h:/work/eclipse/mix/test/xls_input/autoopen/../autoopen.xls
-05/07/15 10:27:44 Reading worksheet HIER of h:/work/eclipse/mix/test/xls_input/autoopen/../autoopen.xls
-05/07/15 10:27:44 Reading worksheet IO of h:/work/eclipse/mix/test/xls_input/autoopen/../autoopen.xls
-05/07/15 10:27:44 Add_port: signal s_ai6 adds port s_ai6 to instance inst_t
-05/07/15 10:27:44 Add_port: signal s_ao11 adds port s_ao11 to instance inst_t
-05/07/15 10:27:44 Adding port to hierachy module inst_a for signal s_ao11!
-05/07/15 10:27:44 Add_port: signal s_ao11 adds port p_mix_s_ao11_go to instance inst_a
-05/07/15 10:27:44 Add_port: signal s_eo5 adds port s_eo5 to instance inst_t
-05/07/15 10:27:44 Add_port: signal s_ai16 adds port s_ai16 to instance inst_t
-05/07/15 10:27:44 Add_port: signal s_aio17 adds port s_aio17 to instance inst_t
-05/07/15 10:27:44 Adding port to hierachy module inst_a for signal s_aio17!
-05/07/15 10:27:44 Add_port: signal s_aio17 adds port p_mix_s_aio17_gc to instance inst_a
-05/07/15 10:27:44 Add_port: signal s_eo3 adds port s_eo3 to instance inst_t
-05/07/15 10:27:44 Adding port to hierachy module inst_e for signal s_eo3!
-05/07/15 10:27:44 Add_port: signal s_eo3 adds port p_mix_s_eo3_go to instance inst_e
-05/07/15 10:27:44 Add_port: signal s_ai8 adds port s_ai8 to instance inst_t
-05/07/15 10:27:44 Add_port: signal s_ao5 adds port s_ao5 to instance inst_t
-05/07/15 10:27:44 Add_port: signal s_ao13 adds port s_ao13 to instance inst_t
-05/07/15 10:27:44 Add_port: signal s_ai14 adds port s_ai14 to instance inst_t
-05/07/15 10:27:44 Add_port: signal s_ao3 adds port s_ao3 to instance inst_t
-05/07/15 10:27:44 Adding port to hierachy module inst_a for signal s_ao3!
-05/07/15 10:27:44 Add_port: signal s_ao3 adds port p_mix_s_ao3_go to instance inst_a
-05/07/15 10:27:44 Add_port: signal s_aio18 adds port s_aio18 to instance inst_t
-05/07/15 10:27:44 Add_port: signal s_aio19 adds port s_aio19 to instance inst_t
-05/07/15 10:27:44 WARNING: File autoopen-mixed.xls already exists! Contents will be changed
-05/07/15 10:27:45 WARNING: Rotating 3 old sheets of CONF!
-05/07/15 10:27:45 WARNING: Rotating 3 old sheets of CONN!
-05/07/15 10:27:45 WARNING: Rotating 3 old sheets of HIER!
-05/07/15 10:27:45 WARNING: Removing old and and diff sheets in file: autoopen-mixed.xls
-05/07/15 10:27:45 WARNING: ERROR: workbook with different path already opened!
-05/07/15 10:27:46 WARNING: WARNING: Reconnecting port port_aa at instance inst_aa: now: A::, was: A::!
-05/07/15 10:27:46 Warning: Signal s_ao4 does not have a driver in instance inst_a!
-05/07/15 10:27:46 Signal s_ai6 does not have a load in instance inst_a!
-05/07/15 10:27:46 Warning: Signal s_ao12 does not have a driver in instance inst_a!
-05/07/15 10:27:46 Warning: Signal s_ai16 does not have a driver in instance inst_a!
-05/07/15 10:27:46 Signal s_aio17 does not have a load in instance inst_a!
-05/07/15 10:27:46 Warning: Signal s_ai8 does not have a driver in instance inst_a!
-05/07/15 10:27:46 Signal s_intname does not have a load in instance inst_a!
-05/07/15 10:27:46 Signal s_ao9 does not have a load in instance inst_a!
-05/07/15 10:27:46 Warning: Signal s_ao13 does not have a driver in instance inst_a!
-05/07/15 10:27:46 Signal s_ai14 does not have a load in instance inst_a!
-05/07/15 10:27:46 Signal s_aio18 does not have a load in instance inst_a!
-05/07/15 10:27:46 Warning: Signal s_aio19 does not have a driver in instance inst_a!
-05/07/15 10:27:46 Leave unloaded port s_intname open at instance inst_a
-05/07/15 10:27:46 Warning: Signal s_ai6 does not have a driver in instance inst_aa!
-05/07/15 10:27:46 Warning: Signal s_ao1 does not have a driver in instance inst_aa!
-05/07/15 10:27:46 Signal s_ao4 does not have a load in instance inst_aa!
-05/07/15 10:27:46 Warning: Signal s_ao11 does not have a driver in instance inst_aa!
-05/07/15 10:27:46 Signal s_ai16 does not have a load in instance inst_aa!
-05/07/15 10:27:46 Signal s_ao12 does not have a load in instance inst_aa!
-05/07/15 10:27:46 Warning: Signal s_aio17 does not have a driver in instance inst_aa!
-05/07/15 10:27:46 Warning: Signal s_ao2 does not have a driver in instance inst_aa!
-05/07/15 10:27:46 Signal s_ai8 does not have a load in instance inst_aa!
-05/07/15 10:27:46 Warning: Signal s_ao9 does not have a driver in instance inst_aa!
-05/07/15 10:27:46 Warning: Signal s_ao10 does not have a driver in instance inst_aa!
-05/07/15 10:27:46 Warning: Signal s_ao5 does not have a driver in instance inst_aa!
-05/07/15 10:27:46 Signal s_ao13 does not have a load in instance inst_aa!
-05/07/15 10:27:46 Warning: Signal s_outname does not have a driver in instance inst_aa!
-05/07/15 10:27:46 Warning: Signal s_ai14 does not have a driver in instance inst_aa!
-05/07/15 10:27:46 Warning: Signal s_ao3 does not have a driver in instance inst_aa!
-05/07/15 10:27:46 Warning: Signal s_aio18 does not have a driver in instance inst_aa!
-05/07/15 10:27:46 Signal s_aio19 does not have a load in instance inst_aa!
-05/07/15 10:27:46 Warning: Signal s_eo4 does not have a driver in instance inst_e!
-05/07/15 10:27:46 Signal s_outname does not have a load in instance inst_e!
-05/07/15 10:27:46 Warning: Signal s_eo5 does not have a driver in instance inst_ea!
-05/07/15 10:27:46 Signal s_eo4 does not have a load in instance inst_ea!
-05/07/15 10:27:46 Warning: Signal s_eo2 does not have a driver in instance inst_ea!
-05/07/15 10:27:46 Warning: Signal s_eo3 does not have a driver in instance inst_ea!
-05/07/15 10:27:46 Warning: Signal s_eo1 does not have a driver in instance inst_ea!
-05/07/15 10:27:46 Signal s_eo2 does not have a load in instance inst_eb!
-05/07/15 10:27:46 Signal s_ao4 does not have a load in instance inst_t!
-05/07/15 10:27:46 Signal s_ao1 does not have a load in instance inst_t!
-05/07/15 10:27:46 Signal s_ao12 does not have a load in instance inst_t!
-05/07/15 10:27:46 Signal s_ai16 does not have a load in instance inst_t!
-05/07/15 10:27:46 Signal s_eo4 does not have a load in instance inst_t!
-05/07/15 10:27:46 Signal s_eo2 does not have a load in instance inst_t!
-05/07/15 10:27:46 Signal s_ai8 does not have a load in instance inst_t!
-05/07/15 10:27:46 Warning: Signal s_ao9 does not have a driver in instance inst_t!
-05/07/15 10:27:46 Signal s_eo1 does not have a load in instance inst_t!
-05/07/15 10:27:46 Signal s_aio19 does not have a load in instance inst_t!
-05/07/15 10:27:46 Leave unloaded port s_ao1 open at instance inst_t
-05/07/15 10:27:46 Leave unloaded port s_ao12 open at instance inst_t
-05/07/15 10:27:46 Leave unloaded port s_ao4 open at instance inst_t
-05/07/15 10:27:46 Leave unloaded port s_eo1 open at instance inst_t
-05/07/15 10:27:46 Leave unloaded port s_eo2 open at instance inst_t
-05/07/15 10:27:46 Leave unloaded port s_eo4 open at instance inst_t
-05/07/15 10:27:46 WARNING: ============= SUMMARY =================
-05/07/15 10:27:46 WARNING: SUM: Summary of checks and created items:
-05/07/15 10:27:46 WARNING: SUM: checkforce 0
-05/07/15 10:27:46 WARNING: SUM: checkunique 0
-05/07/15 10:27:46 WARNING: SUM: checkwarn 0
-05/07/15 10:27:46 WARNING: SUM: cmacros 0
-05/07/15 10:27:46 WARNING: SUM: conn 24
-05/07/15 10:27:46 WARNING: SUM: errors 1
-05/07/15 10:27:46 WARNING: SUM: genport 17
-05/07/15 10:27:46 WARNING: SUM: hdlfiles 12
-05/07/15 10:27:46 WARNING: SUM: inst 18
-05/07/15 10:27:46 WARNING: SUM: multdriver 8
-05/07/15 10:27:46 WARNING: SUM: nodriver 24
-05/07/15 10:27:46 WARNING: SUM: noload 24
-05/07/15 10:27:46 WARNING: SUM: openports 7
-05/07/15 10:27:46 WARNING: SUM: warnings 1
-05/07/15 10:27:46 WARNING: SUM: === Number of parsed input tables: ===
-05/07/15 10:27:46 WARNING: SUM: conf 0
-05/07/15 10:27:46 WARNING: SUM: hier 1
-05/07/15 10:27:46 WARNING: SUM: conn 1
-05/07/15 10:27:46 WARNING: SUM: io 1
-05/07/15 10:27:46 WARNING: SUM: i2c 0
+06/01/19 07:52:41 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/autoopen/../autoopen.xls
+06/01/19 07:52:41 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/autoopen/../autoopen.xls
+06/01/19 07:52:41 Reading worksheet IO of H:/work/eclipse/MIX/test/xls_input/autoopen/../autoopen.xls
+06/01/19 07:52:41 Found 0 macro definitions
+06/01/19 07:52:41 WARNING: WARNING: register-master file empty or specified sheet 'I2C' in file not found
+06/01/19 07:52:41 WARNING: WARNING: Cannot locate replacement for %CONN% in data!
+06/01/19 07:52:41 WARNING: WARNING: Cannot locate replacement for %TEMPLATE% in data!
+06/01/19 07:52:41 Add_port: signal s_ai6 adds port s_ai6 to instance inst_t
+06/01/19 07:52:41 Add_port: signal s_ao11 adds port s_ao11 to instance inst_t
+06/01/19 07:52:41 Adding port to hierachy module inst_a for signal s_ao11!
+06/01/19 07:52:41 Add_port: signal s_ao11 adds port p_mix_s_ao11_go to instance inst_a
+06/01/19 07:52:41 Add_port: signal s_eo5 adds port s_eo5 to instance inst_t
+06/01/19 07:52:41 Add_port: signal s_ai16 adds port s_ai16 to instance inst_t
+06/01/19 07:52:41 Add_port: signal s_aio17 adds port s_aio17 to instance inst_t
+06/01/19 07:52:41 Adding port to hierachy module inst_a for signal s_aio17!
+06/01/19 07:52:41 Add_port: signal s_aio17 adds port p_mix_s_aio17_gc to instance inst_a
+06/01/19 07:52:41 Add_port: signal s_eo3 adds port s_eo3 to instance inst_t
+06/01/19 07:52:41 Adding port to hierachy module inst_e for signal s_eo3!
+06/01/19 07:52:41 Add_port: signal s_eo3 adds port p_mix_s_eo3_go to instance inst_e
+06/01/19 07:52:41 Add_port: signal s_ai8 adds port s_ai8 to instance inst_t
+06/01/19 07:52:41 Add_port: signal s_ao5 adds port s_ao5 to instance inst_t
+06/01/19 07:52:41 Add_port: signal s_ao13 adds port s_ao13 to instance inst_t
+06/01/19 07:52:41 Add_port: signal s_ai14 adds port s_ai14 to instance inst_t
+06/01/19 07:52:41 Add_port: signal s_ao3 adds port s_ao3 to instance inst_t
+06/01/19 07:52:41 Adding port to hierachy module inst_a for signal s_ao3!
+06/01/19 07:52:41 Add_port: signal s_ao3 adds port p_mix_s_ao3_go to instance inst_a
+06/01/19 07:52:41 Add_port: signal s_aio18 adds port s_aio18 to instance inst_t
+06/01/19 07:52:41 Add_port: signal s_aio19 adds port s_aio19 to instance inst_t
+06/01/19 07:52:43 WARNING: File autoopen-mixed.xls already exists! Contents will be changed
+06/01/19 07:52:43 WARNING: Rotating 3 old sheets of CONF!
+06/01/19 07:52:43 WARNING: Rotating 3 old sheets of CONN!
+06/01/19 07:52:44 WARNING: Rotating 3 old sheets of HIER!
+06/01/19 07:52:44 WARNING: Removing old and and diff sheets in file: autoopen-mixed.xls
+06/01/19 07:52:44 WARNING: ERROR: workbook with different path already opened!
+06/01/19 07:52:44 Entity declaration file inst_a_e-e.vhd will be overwritten!
+06/01/19 07:52:44 Entity declaration file inst_aa_e-e.vhd will be overwritten!
+06/01/19 07:52:44 Entity declaration file inst_t_e-e.vhd will be overwritten!
+06/01/19 07:52:44 Architecture declaration file inst_a_e-rtl-a.vhd will be overwritten!
+06/01/19 07:52:44 WARNING: WARNING: Reconnecting port port_aa at instance inst_aa: now: A::, was: A::!
+06/01/19 07:52:44 Warning: Signal s_ao4 does not have a driver in instance inst_a!
+06/01/19 07:52:44 Signal s_ai6 does not have a load in instance inst_a!
+06/01/19 07:52:44 Warning: Signal s_ai6  has multiple drivers in instance inst_a!
+06/01/19 07:52:44 Warning: Signal s_ao12 does not have a driver in instance inst_a!
+06/01/19 07:52:44 Warning: Signal s_ai16 does not have a driver in instance inst_a!
+06/01/19 07:52:44 Signal s_aio17 does not have a load in instance inst_a!
+06/01/19 07:52:44 Warning: Signal s_aio17  has multiple drivers in instance inst_a!
+06/01/19 07:52:44 Warning: Signal s_ai8 does not have a driver in instance inst_a!
+06/01/19 07:52:44 Signal s_intname does not have a load in instance inst_a!
+06/01/19 07:52:44 Signal s_ao9 does not have a load in instance inst_a!
+06/01/19 07:52:44 Warning: Signal s_ao9  has multiple drivers in instance inst_a!
+06/01/19 07:52:44 Warning: Signal s_ao13 does not have a driver in instance inst_a!
+06/01/19 07:52:44 Signal s_ai14 does not have a load in instance inst_a!
+06/01/19 07:52:44 Warning: Signal s_ai14  has multiple drivers in instance inst_a!
+06/01/19 07:52:44 Signal s_aio18 does not have a load in instance inst_a!
+06/01/19 07:52:44 Warning: Signal s_aio18  has multiple drivers in instance inst_a!
+06/01/19 07:52:44 Warning: Signal s_aio19 does not have a driver in instance inst_a!
+06/01/19 07:52:44 Leave unloaded port s_intname open at instance inst_a
+06/01/19 07:52:44 Architecture declaration file inst_aa_e-rtl-a.vhd will be overwritten!
+06/01/19 07:52:44 Warning: Signal s_ai6 does not have a driver in instance inst_aa!
+06/01/19 07:52:44 Warning: Signal s_ao1 does not have a driver in instance inst_aa!
+06/01/19 07:52:44 Signal s_ao4 does not have a load in instance inst_aa!
+06/01/19 07:52:44 Warning: Signal s_ao11 does not have a driver in instance inst_aa!
+06/01/19 07:52:44 Signal s_ai16 does not have a load in instance inst_aa!
+06/01/19 07:52:44 Signal s_ao12 does not have a load in instance inst_aa!
+06/01/19 07:52:44 Warning: Signal s_aio17 does not have a driver in instance inst_aa!
+06/01/19 07:52:44 Warning: Signal s_ao2 does not have a driver in instance inst_aa!
+06/01/19 07:52:44 Signal s_ai8 does not have a load in instance inst_aa!
+06/01/19 07:52:44 Warning: Signal s_ao9 does not have a driver in instance inst_aa!
+06/01/19 07:52:44 Warning: Signal s_ao10 does not have a driver in instance inst_aa!
+06/01/19 07:52:44 Warning: Signal s_ao5 does not have a driver in instance inst_aa!
+06/01/19 07:52:44 Signal s_ao13 does not have a load in instance inst_aa!
+06/01/19 07:52:44 Warning: Signal s_outname does not have a driver in instance inst_aa!
+06/01/19 07:52:44 Warning: Signal s_ai14 does not have a driver in instance inst_aa!
+06/01/19 07:52:44 Warning: Signal s_ao3 does not have a driver in instance inst_aa!
+06/01/19 07:52:44 Warning: Signal s_aio18 does not have a driver in instance inst_aa!
+06/01/19 07:52:44 Signal s_aio19 does not have a load in instance inst_aa!
+06/01/19 07:52:45 Architecture declaration file inst_e_e.v will be overwritten!
+06/01/19 07:52:45 Warning: Signal s_eo4 does not have a driver in instance inst_e!
+06/01/19 07:52:45 Signal s_outname does not have a load in instance inst_e!
+06/01/19 07:52:45 Architecture declaration file inst_ea_e.v will be overwritten!
+06/01/19 07:52:45 Warning: Signal s_eo5 does not have a driver in instance inst_ea!
+06/01/19 07:52:45 Signal s_eo4 does not have a load in instance inst_ea!
+06/01/19 07:52:45 Warning: Signal s_eo2 does not have a driver in instance inst_ea!
+06/01/19 07:52:45 Warning: Signal s_eo3 does not have a driver in instance inst_ea!
+06/01/19 07:52:45 Warning: Signal s_eo1 does not have a driver in instance inst_ea!
+06/01/19 07:52:45 Architecture declaration file inst_eb_e.v will be overwritten!
+06/01/19 07:52:45 Signal s_eo2 does not have a load in instance inst_eb!
+06/01/19 07:52:45 Architecture declaration file inst_t_e-rtl-a.vhd will be overwritten!
+06/01/19 07:52:45 Signal s_ao4 does not have a load in instance inst_t!
+06/01/19 07:52:45 Signal s_ao1 does not have a load in instance inst_t!
+06/01/19 07:52:45 Signal s_ao12 does not have a load in instance inst_t!
+06/01/19 07:52:45 Signal s_ai16 does not have a load in instance inst_t!
+06/01/19 07:52:45 Warning: Signal s_ai16  has multiple drivers in instance inst_t!
+06/01/19 07:52:45 Signal s_eo4 does not have a load in instance inst_t!
+06/01/19 07:52:45 Signal s_eo2 does not have a load in instance inst_t!
+06/01/19 07:52:45 Signal s_ai8 does not have a load in instance inst_t!
+06/01/19 07:52:45 Warning: Signal s_ai8  has multiple drivers in instance inst_t!
+06/01/19 07:52:45 Warning: Signal s_ao9 does not have a driver in instance inst_t!
+06/01/19 07:52:45 Signal s_eo1 does not have a load in instance inst_t!
+06/01/19 07:52:45 Signal s_aio19 does not have a load in instance inst_t!
+06/01/19 07:52:45 Warning: Signal s_aio19  has multiple drivers in instance inst_t!
+06/01/19 07:52:45 Leave unloaded port s_ao1 open at instance inst_t
+06/01/19 07:52:45 Leave unloaded port s_ao12 open at instance inst_t
+06/01/19 07:52:45 Leave unloaded port s_ao4 open at instance inst_t
+06/01/19 07:52:45 Leave unloaded port s_eo1 open at instance inst_t
+06/01/19 07:52:45 Leave unloaded port s_eo2 open at instance inst_t
+06/01/19 07:52:45 Leave unloaded port s_eo4 open at instance inst_t
+06/01/19 07:52:45 Configuration definition file inst_a_e-rtl-conf-c.vhd will be overwritten!
+06/01/19 07:52:46 Configuration definition file inst_aa_e-rtl-conf-c.vhd will be overwritten!
+06/01/19 07:52:46 Configuration definition file inst_t_e-rtl-conf-c.vhd will be overwritten!
+06/01/19 07:52:46 WARNING: ============= SUMMARY =================
+06/01/19 07:52:46 WARNING: SUM: Summary of checks and created items:
+06/01/19 07:52:46 WARNING: SUM: checkforce 0
+06/01/19 07:52:46 WARNING: SUM: checkunique 0
+06/01/19 07:52:46 WARNING: SUM: checkwarn 0
+06/01/19 07:52:46 WARNING: SUM: cmacros 0
+06/01/19 07:52:46 WARNING: SUM: conn 24
+06/01/19 07:52:46 WARNING: SUM: errors 1
+06/01/19 07:52:46 WARNING: SUM: genport 17
+06/01/19 07:52:46 WARNING: SUM: hdlfiles 12
+06/01/19 07:52:46 WARNING: SUM: inst 18
+06/01/19 07:52:46 WARNING: SUM: multdriver 8
+06/01/19 07:52:46 WARNING: SUM: nodriver 24
+06/01/19 07:52:46 WARNING: SUM: noload 24
+06/01/19 07:52:46 WARNING: SUM: openports 7
+06/01/19 07:52:46 WARNING: SUM: warnings 4
+06/01/19 07:52:46 WARNING: SUM: === Number of parsed input tables: ===
+06/01/19 07:52:46 WARNING: SUM: conf 0
+06/01/19 07:52:46 WARNING: SUM: hier 1
+06/01/19 07:52:46 WARNING: SUM: conn 1
+06/01/19 07:52:46 WARNING: SUM: io 1
+06/01/19 07:52:46 WARNING: SUM: i2c 0
+06/01/19 07:52:46 WARNING: SUM: Number of changes in intermediate: 0
+06/01/19 07:52:46 WARNING: SUM: Number of changed files: 0
