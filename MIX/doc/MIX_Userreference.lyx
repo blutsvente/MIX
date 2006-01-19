@@ -56,7 +56,7 @@ MIX - Micronas Interconnect Spec expander
 
 Author: Wilfried Gänsheimer
 \newline 
-$Date: 2005/12/12 14:24:15 $
+$Date: 2006/01/19 08:51:48 $
 \newline 
 Version: $Id: MIX_Userreference.lyx,v 1.6 2005/01/26 14:01:59 wig Exp 
 \layout Section
@@ -3693,6 +3693,70 @@ noleaf
 leaf
 \family default 
  will yield HDL description for leaf cells, too.
+\layout Subsection
+
+Writing report for module connectivity
+\layout Standard
+
+Use the option -report portlist to write a report about the module connectivity
+ in MIF format.
+ The following config keys are available to influence the output:
+\newline 
+
+\layout Standard
+
+TODO ich habe -report portlist entsprechend erweitert (Plan b, war einfacher).
+ Ausserdem gibt es jetzt zusätzlich folgende Optionen/Konfigurationen: 
+\layout Standard
+
+-delta -> auch fuer mif wird ein delta zum vorherigen Mif geschrieben (
+ MIXCFG report.delta 1) 
+\newline 
+MIXCFG report.portlist.name 'name' => '',
+\newline 
+# Define report file name, if empty take name of main module
+\newline 
+# INST := name of last instance + _portlist.mif
+\newline 
+# ENTY := name of last entity + _portlist.mif --> die Ausgabedatei heisst
+ nicht mehr mix_portlist.mif, sondern entsprechend dem Top-Modul bzw.
+ der Instanz oder Entity 
+\newline 
+MIXCFG report.portlist.data 'data' => 'port', # Print out port names, not
+ signal names! 
+\newline 
+MIXCFG report.portlist.split 'split' => 'external::extc,instance', 
+\newline 
+# Generate seperate portlist for 
+\newline 
+# external : if column ::external has content 
+\newline 
+# external::foo : use column ::foo as trigger 
+\newline 
+# instance : generate a table for each instance 
+\newline 
+# file[::(INST|ENTY)] 
+\newline 
+# : generate a file for each instance(*)/entity 
+\newline 
+# combine with 'name' = INST or ENTY!! --> z.b.
+ mit file::INST, würde man bei einer Schaltung mit mehreren Blöcken mehrere
+ Dateien bekommen mit je einem Block.
+ Per default gibt es mehrere Tabellen in einer Datei.
+\newline 
+MIXCFG report.portlist.sort 'sort' => 'input', 
+\newline 
+# or alpha or ::col ....
+ 
+\newline 
+# pinlist sort order.
+ See portmapsort 'comments' => "0,striphash", 
+\newline 
+# Limit the number of comment lines to N; 0 -> unlimited 
+\newline 
+# To switch off all, set report.portlist.comments='' 
+\newline 
+# striphash := remove leading signs from the comments 
 \layout Section
 
 CONN sheet macros
@@ -7188,9 +7252,6 @@ MIF Report Files
 \layout Standard
 
 The report can be created with the -report reglist command line option.
-\layout Standard
-
-t.b.d
 \layout Subsection
 
 Register-Master Sheet Example
@@ -7635,6 +7696,20 @@ hspace*{15mm}
 Restrict register-master view to domain <DOMAIN>
 \newline 
 
+\newline 
+-report <portlist|reglist>
+\newline 
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+hspace*{15mm}
+\end_inset 
+
+Write portlist and/or register master reports in MIF format.
 \newline 
 # Add your options here ....
 \newline 
