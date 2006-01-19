@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.105 $                                         |
+# | Revision:   $Revision: 1.106 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/01/18 16:59:29 $                              |
+# | Date:       $Date: 2006/01/19 08:49:31 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.105 2006/01/18 16:59:29 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.106 2006/01/19 08:49:31 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.106  2006/01/19 08:49:31  wig
+# | Minor fixes regarding sort order output (debug parameter added)
+# |
 # | Revision 1.105  2006/01/18 16:59:29  wig
 # |  	MixChecker.pm MixParser.pm MixUtils.pm MixWriter.pm : UNIX tested
 # |
@@ -439,11 +442,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.105 2006/01/18 16:59:29 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.106 2006/01/19 08:49:31 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.105 $';         #'
+my $thisrevision        =      '$Revision: 1.106 $';         #'
 
-# Revision:   $Revision: 1.105 $   
+# Revision:   $Revision: 1.106 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1216,9 +1219,10 @@ sub mix_init () {
 		},
 		'defs' => '',   # 'inst,conn',    # make sure elements are only defined once:
 		    		    # posible values are: inst,conn
-		'signal' => 'load,driver,check,top_open',
+		'signal' => 'load,driver,check,top_open,nanbounds',
 						# reads: checks if all signals have appr. loads
 						# and drivers.
+						#	nanbounds  := print warning of bounds are not numbers
 						# If "top_open" is in this list, will wire unused
 						# signals to open.
 						# TODO: auto_low, auto_high: automatically ground/high undriven signals

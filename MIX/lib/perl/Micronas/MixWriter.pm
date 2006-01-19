@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.75 $                                         |
+# | Revision:   $Revision: 1.76 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/01/18 16:59:29 $                              |
+# | Date:       $Date: 2006/01/19 08:49:31 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.75 2006/01/18 16:59:29 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.76 2006/01/19 08:49:31 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.76  2006/01/19 08:49:31  wig
+# | Minor fixes regarding sort order output (debug parameter added)
+# |
 # | Revision 1.75  2006/01/18 16:59:29  wig
 # |  	MixChecker.pm MixParser.pm MixUtils.pm MixWriter.pm : UNIX tested
 # |
@@ -342,9 +345,9 @@ sub _mix_wr_regorwire($$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.75 2006/01/18 16:59:29 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.76 2006/01/19 08:49:31 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.75 $';
+my $thisrevision   =      '$Revision: 1.76 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -3072,8 +3075,11 @@ sub add_conn_matrix ($$$$) {
         $csf !~ m,^\s*[+-]?\d+\s*$,o or
         $cst !~ m,^\s*[+-]?\d+\s*$,o
          ) {
-        logwarn( "Info: signal $signal bounds $cpf .. $cpt or port $port $cpf .. $cpt not a number!" );
-        # $EH{'sum'}{'warnings'}++;
+         	if ( $EH{'check'}{'signal'} =~ m/\bnanbound/ ) {
+        		logwarn( "WARNING: signal $signal bounds ($cpf:" .
+        			$cpt . ") or port $port ($cpf:$cpt) not a number!" );
+        		$EH{'sum'}{'warnings'}++;
+        	}
         # $cpt and/or $cpf is not a number!!
         # We carry on if cpf equals csf and cpt equals cst ->
         #   otherwise we bail out ...
@@ -3094,7 +3100,7 @@ sub add_conn_matrix ($$$$) {
         }
         
         return 3;
-        #TODO: other cases ...
+        # TODO : other cases ...
     }
     
     my $max = $cpf;
@@ -3115,12 +3121,15 @@ sub add_conn_matrix ($$$$) {
     };
 
     if ( $smax - $smin != $max - $min ) {
-	logwarn("__E_SLICE_WIDTH_MISMATCH:signal $signal ($smax downto $smin) to port $port ($max downto $min)!");
-	return undef;
+		logwarn("__E_SLICE_WIDTH_MISMATCH:signal " .
+			$signal . "($smax downto $smin) to port " .
+			$port . "($max downto $min)!");
+		$EH{'sum'}{'errors'}++;
+		return undef;
 	#TODO:?? return( "\t\t-- __E_SLICE_WIDTH_MISMATCH for signal $signal connected to port $port!" );
     }
 
-    #TODO: Extended testing ....
+    # TODO : Extended testing ....
     if ( $dirf == $sdirf ) {
 	for my $i ( $min .. $max ) {
 	    if ( defined( $matrix->[$i] ) ) { # Seen before ...
@@ -3134,24 +3143,24 @@ sub add_conn_matrix ($$$$) {
 	    }
         }
     } else {
-	for my $i ( $min .. $max ) {
-	    if ( defined( $matrix->[$i] ) ) { # Seen before ...
-		if ( $matrix->[$i] ne $smax - $max - $i ) {
-		    logwarn("__E_PORT_SIGNAL_CONFLICT: $port($i) connecting signal $signal " . ( $smin + $i ) .
-			    " or " . $matrix->[$i] . "!" );
-                    $EH{'sum'}{'errors'}++;
-		}
-	    } else {	    
-		$matrix->[$i] = $smax - $min - $i;
-	    }
+		for my $i ( $min .. $max ) {
+	    	if ( defined( $matrix->[$i] ) ) { # Seen before ...
+				if ( $matrix->[$i] ne $smax - $max - $i ) {
+		    		logwarn("__E_PORT_SIGNAL_CONFLICT: $port($i) connecting signal $signal " . ( $smin + $i ) .
+			    		" or " . $matrix->[$i] . "!" );
+                    	$EH{'sum'}{'errors'}++;
+				}
+	    	} else {	    
+				$matrix->[$i] = $smax - $min - $i;
+	    	}
         }
     }
 
     # Return 1 if signal and port slice are the same !!    
     if ( $cpt eq $cst and $cpf eq $csf ) {
-	return 1;
+		return 1;
     } else {
-	return 0;
+		return 0;
     }
 }
 
