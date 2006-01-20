@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.21 2006/01/13 13:40:24 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.22 2006/01/20 17:28:09 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.21 $                                  
+#  Revision      : $Revision: 1.22 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,10 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.22  2006/01/20 17:28:09  lutscher
+#  o generated code: added 2nd test input to differentiate between test-enable and shift-enable
+#  o generated code: added delay generation for signals sampled in gated clock-domain to fix timing problem in simulation
+#
 #  Revision 1.21  2006/01/13 13:40:24  lutscher
 #  o added _get_frange()
 #  o updated sync_rst module (new port)
@@ -141,7 +145,8 @@ sub _gen_view_vgch_rs {
 				  'regshell_prefix'    => "rs",         # register-shell prefix
 				  'cfg_module_prefix'  => "rs_cfg",     # prefix for config register block
 				  'int_set_postfix'    => "_set_p",     # postfix for interrupt-set input signal
-				  'test_port_name'     => "test",       # name of test input
+				  'scan_en_port_name'  => "test_en",    # name of test-enable input
+				  'clockgate_te_name'  => "scan_shift_enable", # name of input to connect with test-enable port of clock-gating cell
 				  'field_spec_values'  => ['sha', 'w1c', 'usr'], # recognized values for spec attribute
 				  'indent'             => "    ",       # indentation character(s)
 				  'assert_pragma_start'=> "`ifdef ASSERT_ON",
@@ -521,7 +526,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this module is version $Revision: 1.21 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.22 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -789,15 +794,16 @@ sub _vgch_rs_code_shadow_process {
 		push @linsert, $ind x $ilvl . "if (~$int_rst_n)";
 		push @linsert, $ind x ($ilvl+1) . "int_${sig} <= 1;";
 		push @linsert, $ind x $ilvl . "else";
-		push @linsert, $ind x ($ilvl+1) . "int_${sig} <= (int_${sig}_p & ${sig}_en".$this->global->{'POSTFIX_PORT_IN'}.") | ${sig}_force".$this->global->{'POSTFIX_PORT_IN'}.";";
+		push @linsert, $ind x ($ilvl+1) . "int_${sig} <= // synopsys translate_off";
+		push @linsert, $ind x ($ilvl+2) . "#0.1ns";
+		push @linsert, $ind x ($ilvl+2) . "// synopsys translate_on";
+		push @linsert, $ind x ($ilvl+2) . "(int_${sig}_p & ${sig}_en".$this->global->{'POSTFIX_PORT_IN'}.") | ${sig}_force".$this->global->{'POSTFIX_PORT_IN'}.";";
 		$ilvl--;
 		push @linsert, $ind x $ilvl . "end";
 		# assignment block
 		push @linsert, $ind x $ilvl . "// shadow process";
 		push @linsert, $ind x $ilvl++ . "always @(posedge $shadow_clock) begin";
-		#if (!$this->global->{'infer_clock_gating'}) {
 		push @linsert, $ind x $ilvl++ . "if (int_${sig}) begin";
-		#};
 		foreach $o_field (sort @{$href_shdw->{$sig}}) {
 			if ($o_field->attribs->{'dir'} =~ m/w/i) {
 				push @ltemp, $this->_gen_field_name("out", $o_field) ." <= ".$this->_gen_field_name("shdw", $o_field).";";
@@ -810,9 +816,7 @@ sub _vgch_rs_code_shadow_process {
 		_pad_column(0, $this->global->{'indent'}, $ilvl, \@ltemp);
 		push @linsert, @ltemp;
 		$ilvl--;
-		#if (!$this->global->{'infer_clock_gating'}) {
 		push @linsert, $ind x $ilvl-- . "end";
-		#};
 		push @linsert, $ind x $ilvl-- . "end";
 	};
 	push @$lref_sp, @linsert; 
@@ -1482,8 +1486,8 @@ sub _vgch_rs_add_static_connections {
 		_add_primary_input($href->{'reset'}, 0, 0, $cfg_i);
 		_add_primary_input($href->{'reset'}, 0, 0, "${sg_i}/rst_r");
 		_add_primary_input($href->{'reset'}, 0, 0, "${sr_i}/rst_i");
-		_add_primary_input($this->global->{'test_port_name'}, 0, 0, $cfg_i); # scan port
-		_add_primary_input($this->global->{'test_port_name'}, 0, 0, $sr_i);  # scan port
+		# _add_primary_input($this->global->{'scan_en_port_name'}, 0, 0, $cfg_i); # scan port
+		_add_primary_input($this->global->{'scan_en_port_name'}, 0, 0, "$sr_i/test_i");  # scan port
 		_tie_input_to_constant("${sg_i}/clk_s", 0, 0, 0);
 		_tie_input_to_constant("${sg_i}/rst_s", 0, 0, 0);
 
@@ -1504,19 +1508,19 @@ sub _vgch_rs_add_static_connections {
 			_add_connection("trans_done_vec", $nclocks-1, 0, "$cfg_i/trans_done_o=($n)", "$mcda_i/trans_done_vec_i");
 		};
 		if (exists $href->{'cg_write_inst'}) {
-			_add_primary_input($this->global->{'test_port_name'}, 0, 0, $href->{'cg_write_inst'});
+			_add_primary_input($this->global->{'clockgate_te_name'}, 0, 0, $href->{'cg_write_inst'}."/test_i");
 			_add_primary_input($clock, 0, 0, $href->{'cg_write_inst'}."/clk_i");
 			_add_connection($wr_clk_en, 0, 0, "", $href->{'cg_write_inst'}."/enable_i");
 			_add_connection($wr_clk, 0, 0, $href->{'cg_write_inst'}."/clk_o", "");
 		};
 		if (exists $href->{'cg_shdw_inst'}) {
-			_add_primary_input($this->global->{'test_port_name'}, 0, 0, $href->{'cg_shdw_inst'});
+			_add_primary_input($this->global->{'clockgate_te_name'}, 0, 0, $href->{'cg_shdw_inst'}."/test_i");
 			_add_primary_input($clock, 0, 0, $href->{'cg_shdw_inst'}."/clk_i");
 			_add_connection($shdw_clk_en, 0, 0, "", $href->{'cg_shdw_inst'}."/enable_i");
 			_add_connection($shdw_clk, 0, 0, $href->{'cg_shdw_inst'}."/clk_o", "");
 		};
 		if (exists $href->{'cg_read_inst'}) {
-			_add_primary_input($this->global->{'test_port_name'}, 0, 0, $href->{'cg_read_inst'});
+			_add_primary_input($this->global->{'clockgate_te_name'}, 0, 0, $href->{'cg_read_inst'}."/test_i");
 			_add_primary_input($clock, 0, 0, $href->{'cg_read_inst'}."/clk_i");
 			_add_connection($rd_clk_en, 0, 0, "", $href->{'cg_read_inst'}."/enable_i");
 			_add_connection($rd_clk, 0, 0, $href->{'cg_read_inst'}."/clk_o", "");
