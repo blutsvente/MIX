@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.20 $                                          |
+# | Revision:   $Revision: 1.21 $                                          |
 # | Author:     $Author: mathias $                                            |
-# | Date:       $Date: 2006/01/18 16:08:41 $                              |
+# | Date:       $Date: 2006/01/24 09:39:27 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,11 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.21  2006/01/24 09:39:27  mathias
+# | fixed handling of strings containing
+# |  - nothing except '\n'
+# |  - only a single '0'
+# |
 # | Revision 1.20  2006/01/18 16:08:41  mathias
 # | fixed new line bug
 # |
@@ -122,9 +127,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.20 2006/01/18 16:08:41 mathias Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.21 2006/01/24 09:39:27 mathias Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.20 $'; #'  
+my $thisrevision    =      '$Revision: 1.21 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -660,7 +665,8 @@ sub _td_para()
     ######################## Split $string into segments (@string)
     # each segment is written with another font than its neighbours
     # the format directives (eg. '\b') mark the beginning and ('\x') the end of a new segment.
-    while ($string =~ m/^([^\\]*)\\([buoslh])(.*)/) {
+    ###while ($string =~ m/^([^\\]*)\\([buoslh])(.*)/) {
+    while ($string =~ m/^(.*?)\\([buoslh])(.*)/) {
         my $beg      = $1;
         my $modifier = $2;
         my $end      = $3;
@@ -739,7 +745,7 @@ sub _td_para()
             $newstring .= $paraend;
             $str = $end;
         }
-        if ($str) {
+        if (defined($str) and length($str) > 0) {
             $str =~ s/</\\</g;     # escape < characters
             $str =~ s/>/\\>/g;     # escape > characters
             $str =~ s/'/\\q/g;     # escape ' characters
