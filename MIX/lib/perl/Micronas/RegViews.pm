@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.22 2006/01/20 17:28:09 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.23 2006/02/06 08:44:31 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.22 $                                  
+#  Revision      : $Revision: 1.23 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.23  2006/02/06 08:44:31  lutscher
+#  changed delay specification in generated code (was system verilog feature causing problems)
+#
 #  Revision 1.22  2006/01/20 17:28:09  lutscher
 #  o generated code: added 2nd test input to differentiate between test-enable and shift-enable
 #  o generated code: added delay generation for signals sampled in gated clock-domain to fix timing problem in simulation
@@ -526,7 +529,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.22 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.23 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -795,7 +798,7 @@ sub _vgch_rs_code_shadow_process {
 		push @linsert, $ind x ($ilvl+1) . "int_${sig} <= 1;";
 		push @linsert, $ind x $ilvl . "else";
 		push @linsert, $ind x ($ilvl+1) . "int_${sig} <= // synopsys translate_off";
-		push @linsert, $ind x ($ilvl+2) . "#0.1ns";
+		push @linsert, $ind x ($ilvl+2) . "#0.1";
 		push @linsert, $ind x ($ilvl+2) . "// synopsys translate_on";
 		push @linsert, $ind x ($ilvl+2) . "(int_${sig}_p & ${sig}_en".$this->global->{'POSTFIX_PORT_IN'}.") | ${sig}_force".$this->global->{'POSTFIX_PORT_IN'}.";";
 		$ilvl--;
