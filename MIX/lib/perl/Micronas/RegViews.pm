@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.23 2006/02/06 08:44:31 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.24 2006/02/07 17:17:21 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.23 $                                  
+#  Revision      : $Revision: 1.24 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.24  2006/02/07 17:17:21  lutscher
+#  added async reset to shadow process in generated code
+#
 #  Revision 1.23  2006/02/06 08:44:31  lutscher
 #  changed delay specification in generated code (was system verilog feature causing problems)
 #
@@ -529,7 +532,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.23 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.24 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -798,15 +801,33 @@ sub _vgch_rs_code_shadow_process {
 		push @linsert, $ind x ($ilvl+1) . "int_${sig} <= 1;";
 		push @linsert, $ind x $ilvl . "else";
 		push @linsert, $ind x ($ilvl+1) . "int_${sig} <= // synopsys translate_off";
-		push @linsert, $ind x ($ilvl+2) . "#0.1";
+		push @linsert, $ind x ($ilvl+2) . "#0.1"; # note: the 0.1ns notation is SystemVerilog only
 		push @linsert, $ind x ($ilvl+2) . "// synopsys translate_on";
 		push @linsert, $ind x ($ilvl+2) . "(int_${sig}_p & ${sig}_en".$this->global->{'POSTFIX_PORT_IN'}.") | ${sig}_force".$this->global->{'POSTFIX_PORT_IN'}.";";
 		$ilvl--;
 		push @linsert, $ind x $ilvl . "end";
 		# assignment block
 		push @linsert, $ind x $ilvl . "// shadow process";
-		push @linsert, $ind x $ilvl++ . "always @(posedge $shadow_clock) begin";
-		push @linsert, $ind x $ilvl++ . "if (int_${sig}) begin";
+		push @linsert, $ind x $ilvl++ . "always @(posedge $shadow_clock or negedge $int_rst_n) begin";
+		push @linsert, $ind x $ilvl . "if (~$int_rst_n) begin";
+		foreach $o_field (sort @{$href_shdw->{$sig}}) {
+			my $res_val = 0;
+			if (exists($o_field->attribs->{'init'})) {
+				$res_val = sprintf("'h%x", $o_field->attribs->{'init'});
+			};
+			if ($o_field->attribs->{'dir'} =~ m/w/i) {
+				push @ltemp, $this->_gen_field_name("out", $o_field) ." <= ${res_val};";
+			} else {
+				if ($o_field->attribs->{'dir'} =~ m/r/i) {
+					push @ltemp, $this->_gen_field_name("shdw", $o_field) ." <= ${res_val};"; 
+				};
+			};
+		}; 
+		_pad_column(0, $this->global->{'indent'}, $ilvl+1, \@ltemp);
+		push @linsert, @ltemp;
+		@ltemp = ();
+		push @linsert, $ind x $ilvl . "end";
+		push @linsert, $ind x $ilvl++ . "else if (int_${sig}) begin";
 		foreach $o_field (sort @{$href_shdw->{$sig}}) {
 			if ($o_field->attribs->{'dir'} =~ m/w/i) {
 				push @ltemp, $this->_gen_field_name("out", $o_field) ." <= ".$this->_gen_field_name("shdw", $o_field).";";
