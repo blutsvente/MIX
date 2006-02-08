@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.24 2006/02/07 17:17:21 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.25 2006/02/08 16:16:46 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.24 $                                  
+#  Revision      : $Revision: 1.25 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,11 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.25  2006/02/08 16:16:46  lutscher
+#  fixed two bugs in the generated code:
+#  o write process for cgtransp=1 was wrong
+#  o default assignment for read-data for pipelined mux process was missing
+#
 #  Revision 1.24  2006/02/07 17:17:21  lutscher
 #  added async reset to shadow process in generated code
 #
@@ -532,7 +537,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.24 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.25 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -695,9 +700,11 @@ sub _rdmux_builder {
 		 if ($case) {
 			 $ilvl = 0;
 			 if ($prev_key =~ m/^iaddr/) {
+				 # generate the head of the combinatorial process (the final mux stage)
 				 push @$lref_insert, "", "always @(".join(" or ", "iaddr", @lsens).") begin // stage $prev_lvl";
 				 $ilvl++;
 			 } else {
+				 # generate the head of the pipelined mux process
 				 push @$lref_insert, "", "always @(posedge $rd_clk or negedge $int_rst_n) begin // stage $prev_lvl";
 				 $ilvl++;
 				 push @$lref_insert, $ind x $ilvl++ ."if (~$int_rst_n) begin";
@@ -706,9 +713,11 @@ sub _rdmux_builder {
 				 push @$lref_insert, $ind x $ilvl ."end";
 				 push @$lref_insert, $ind x $ilvl++ ."else begin";
 				 push @$lref_insert, $ind x $ilvl ."$out_e <= 0;";
+				 push @$lref_insert, $ind x $ilvl ."$out_d <= 0;";
 			 };
 			 push @$lref_insert, map {$ind x $ilvl . $_} @ltemp;
 			 $ilvl++;
+			 # generate the default clause for the case statement
 			 push @$lref_insert, $ind x $ilvl++ ."default: begin";
 			 push @$lref_insert, $ind x $ilvl ."$out_d <= 0;";
 			 push @$lref_insert, $ind x $ilvl-- ."$out_e <= 1;";
@@ -733,6 +742,7 @@ sub _rdmux_builder {
 			} else {
 				$drv_postfix = $sel;
 			}
+			# call me recursively
 			$this->_rdmux_builder($int_rst_n, $rd_clk, $href_rp, $href_mux->{$prev_key}, $lref_insert, $lref_decl, $key, $lvl, $drv_postfix);
 		};
 	};
@@ -800,10 +810,14 @@ sub _vgch_rs_code_shadow_process {
 		push @linsert, $ind x $ilvl . "if (~$int_rst_n)";
 		push @linsert, $ind x ($ilvl+1) . "int_${sig} <= 1;";
 		push @linsert, $ind x $ilvl . "else";
-		push @linsert, $ind x ($ilvl+1) . "int_${sig} <= // synopsys translate_off";
-		push @linsert, $ind x ($ilvl+2) . "#0.1"; # note: the 0.1ns notation is SystemVerilog only
-		push @linsert, $ind x ($ilvl+2) . "// synopsys translate_on";
-		push @linsert, $ind x ($ilvl+2) . "(int_${sig}_p & ${sig}_en".$this->global->{'POSTFIX_PORT_IN'}.") | ${sig}_force".$this->global->{'POSTFIX_PORT_IN'}.";";
+		if ($this->global->{'infer_clock_gating'}) {
+			push @linsert, $ind x ($ilvl+1) . "int_${sig} <= // synopsys translate_off";
+			push @linsert, $ind x ($ilvl+2) . "#0.1"; # note: the 0.1ns notation is SystemVerilog only
+			push @linsert, $ind x ($ilvl+2) . "// synopsys translate_on";
+			push @linsert, $ind x ($ilvl+2) . "(int_${sig}_p & ${sig}_en".$this->global->{'POSTFIX_PORT_IN'}.") | ${sig}_force".$this->global->{'POSTFIX_PORT_IN'}.";";
+		} else {
+			push @linsert, $ind x ($ilvl+1) . "int_${sig} <= (int_${sig}_p & ${sig}_en".$this->global->{'POSTFIX_PORT_IN'}.") | ${sig}_force".$this->global->{'POSTFIX_PORT_IN'}.";";
+		};
 		$ilvl--;
 		push @linsert, $ind x $ilvl . "end";
 		# assignment block
@@ -990,7 +1004,9 @@ sub _vgch_rs_code_write_processes {
 		
 		# write logic
 		push @linsert, $ind x $ilvl ."end", $ind x $ilvl++ . "else begin";
-		if (!$this->global->{'infer_clock_gating'}) {
+		if ($this->global->{'infer_clock_gating'}) {
+			push @linsert, $ind x $ilvl++ . "if (wr_p || (cgtransp == 0))";
+		} else {
 			push @linsert, $ind x $ilvl++ . "if (wr_p)";
 		};
 		push @linsert, $ind x $ilvl++ . "case (iaddr)";
@@ -1030,7 +1046,8 @@ sub _vgch_rs_code_write_processes {
 		# push @linsert, $ind x $ilvl-- . "default: ;";
 		$ilvl--;
 		push @linsert, $ind x $ilvl-- . "endcase";
-		if (!$this->global->{'infer_clock_gating'}) { $ilvl--; };
+		#if ($this->global->{'infer_clock_gating'}) { $ilvl--; };
+		$ilvl--;
 		push @linsert, $ind x $ilvl-- . "end";
 		push @linsert, $ind x $ilvl . "end";
 		@$lref_wp = @linsert;
