@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.21 $                                          |
+# | Revision:   $Revision: 1.22 $                                          |
 # | Author:     $Author: mathias $                                            |
-# | Date:       $Date: 2006/01/24 09:39:27 $                              |
+# | Date:       $Date: 2006/02/13 10:10:02 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.22  2006/02/13 10:10:02  mathias
+# | delete superfluous '\x' without corresponding previous modifier
+# |
 # | Revision 1.21  2006/01/24 09:39:27  mathias
 # | fixed handling of strings containing
 # |  - nothing except '\n'
@@ -127,9 +130,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.21 2006/01/24 09:39:27 mathias Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.22 2006/02/13 10:10:02 mathias Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.21 $'; #'  
+my $thisrevision    =      '$Revision: 1.22 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -706,6 +709,8 @@ sub _td_para()
     ########################
     foreach my $section (@string) {
         my $str = $section->{Text};
+        # delete superfluous '\x' without corresponding previous modifier
+        $str =~ s/\\x//g;       # delete '\x'
         $str =~ s/\*/\\*/g;     # change '*' to '\*'
         $str =~ s/£/\\£/g;      # change '£' to '\£'
         $str =~ s/µ/\\µ/g;      # change 'µ' to '\µ'
