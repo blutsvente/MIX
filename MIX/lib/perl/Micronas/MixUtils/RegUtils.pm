@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.3 2005/12/09 14:27:26 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.4 2006/02/15 08:44:02 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.4  2006/02/15 08:44:02  lutscher
+#  changed type for add_conn to always be string
+#
 #  Revision 1.3  2005/12/09 14:27:26  lutscher
 #  reverted change in _add_primary_input()
 #
@@ -130,7 +133,7 @@ sub _add_generic {
 			  '::name' => "",
 			  '::out'  => "%PARAMETER%/$value",
 			  '::in'   => "$destination/$name",
-			  '::type' => "integer",
+			  '::type' => "string",
 			  '::mode' => "P"
 			 );
 	add_conn(%hconn);
@@ -150,16 +153,16 @@ sub _add_generic_value {
 			  '::name' => "",
 			  '::out'  => "%PARAMETER%/$value",
 			  '::in'   => "$destination/$name",
-			  '::type' => "integer",
+			  '::type' => "string",
 			  '::mode' => "P"
 			 );
 	add_conn(%hconn);
-	
+
 	%hconn = (
 			  '::name' => "",
 			  '::out'  => "%GENERIC%/$default",
 			  '::in'   => "$destination/$name",
-			  '::type' => "integer",
+			  '::type' => "string",
 			  '::mode' => "G"
 			 );
 	add_conn(%hconn);
