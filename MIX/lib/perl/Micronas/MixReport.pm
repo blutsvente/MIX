@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.21 $                                               |
+# | Revision:   $Revision: 1.22 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2006/01/18 15:28:57 $                                                   |
+# | Date:       $Date: 2006/02/23 12:44:32 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.21 2006/01/18 15:28:57 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.22 2006/02/23 12:44:32 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.22  2006/02/23 12:44:32  mathias
+# | enable register names in the overview table rather than cross refeferences
+# | added API line to the register table if the ::api column exists
+# |
 # | Revision 1.21  2006/01/18 15:28:57  mathias
 # | added debug commands
 # |
@@ -113,11 +117,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.21 2006/01/18 15:28:57 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.22 2006/02/23 12:44:32 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.21 $';
+my $thisrevision   =      '$Revision: 1.22 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -251,21 +255,27 @@ sub mix_rep_reglist($)
                         $mif->start_body($regtable);
                         my $ref      = mix_rep_reglist_mif_header($mif, $regtable, $o_reg->name(),
                                                                   $address, $mode, $init);
-                        push(@reg_crossrefs, { 'crossref' => $ref,
-                                               'address'  => $address,
-                                               'mode'     => $mode
-                                             });
+                        my %href = ( 'crossref' => $ref,
+                                     'address'  => $address,
+                                     'mode'     => $mode);
+                        if ($EH{report}{reglist}{crossref} eq 'no') {
+                            $href{crossref} = $o_reg->name();
+                            #print("~~~~~    printing register name rather than cross-reference\n");
+                        }
+                        push(@reg_crossrefs, \%href);
                         if (exists($EH{output}{mif}{debug})) {
                             print("~~~~~ Register: " . $o_reg->name() . "\n");
                         }
                         my ($ii, $width_1) = (0, 0);
                         my @thefields;
+                        my $api = '';
                         foreach my $hreff (@{$o_reg->fields}) {
                             my $o_field = $hreff->{'field'};
                             # select type of register
                             $thefields[$ii]{name}    = lc($o_field->name);
                             $thefields[$ii]{size}    = $o_field->attribs->{'size'};
                             $width_1++ if ($thefields[$ii]{size} == 1);
+                            $api = $o_field->attribs->{'api'} if (exists($o_field->attribs->{'api'}));
                             $thefields[$ii]{pos}     = $hreff->{'pos'};             # LSB position
                             $thefields[$ii]{lsb}     = $o_field->attribs->{'lsb'};
                             $thefields[$ii]{view}    = $o_field->attribs->{'view'};  # N: no documentation
@@ -284,6 +294,10 @@ sub mix_rep_reglist($)
                         @thefields = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
 
                         mix_rep_reglist_mif_bitfields($mif, $regtable, \@thefields);
+                        # write 'API' row
+                        if ($api) {
+                            mix_rep_reglist_mif_api($mif, $regtable, $api);
+                        }
                         if ($width_1 >= 3 or $#thefields >= 7) {
                             # to many bitfields for one single table
                             # write bitfield descriptions in another table
@@ -370,9 +384,15 @@ sub mix_rep_reglist_oview_mif_row($$$ )
     for (my $i = 0; $i <= $#{$ref_to_crossref}; $i++) {
         my $headtext = "";
         # Register name
-        $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH9',
-                                    'Xref'   => $ref_to_crossref->[$i]->{crossref}
-                                  }, 2);
+        if ($EH{report}{reglist}{crossref} eq 'no') {
+            $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH9',
+                                        'String'   => $ref_to_crossref->[$i]->{crossref}
+                                      }, 2);
+        } else {
+            $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH9',
+                                        'Xref'   => $ref_to_crossref->[$i]->{crossref}
+                                      }, 2);
+        }
 
         # Register Mode (R/W)
         $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH9center',
@@ -678,6 +698,41 @@ sub mix_rep_reglist_mif_bitfields($$$ )
                                   3);
     }
     $mif->add($mif->Tr({ 'WithPrev' => 'Yes',
+                         'Text'     => $headtext,
+                         'Indent'   => 0
+                       }), $regtable);
+
+    return;
+}
+
+
+# write row containing information about API
+sub mix_rep_reglist_mif_api($$$ )
+{
+    my ($mif, $regtable, $api) = @_;
+    my $headtext = "";
+
+    ############ Row for the bits 31 .. 16
+    # Update signal field on the left hand side
+    $headtext = $mif->wrCell({ 'PgfTag'           => 'CellHeadingH8',
+                               'String'           => 'API:',
+                               'Fill'             => 0,
+                               'Color'            => "Gray 6.2"
+                              },
+                              2);
+    $headtext = $mif->wrCell({ 'PgfTag'           => 'CellHeadingH8',
+                               'String'           => $api,
+                               'Fill'             => 0
+                              },
+                              2);
+    for (my $i = 1; $i < 15; $i++) {
+        $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellHeadingH8',
+                                    'Fill'       => 15,
+                                  },
+                                  3);
+    }
+    $mif->add($mif->Tr({ 'WithNext' => 'Yes',
+                         'WithPrev' => 'Yes',
                          'Text'     => $headtext,
                          'Indent'   => 0
                        }), $regtable);
