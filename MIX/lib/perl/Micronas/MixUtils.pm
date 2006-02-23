@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.106 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/01/19 08:49:31 $                              |
+# | Revision:   $Revision: 1.107 $                                         |
+# | Author:     $Author: mathias $                                            |
+# | Date:       $Date: 2006/02/23 10:56:12 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.106 2006/01/19 08:49:31 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.107 2006/02/23 10:56:12 mathias Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.107  2006/02/23 10:56:12  mathias
+# | added 'reglist->crossref' to the configuration tree
+# |
 # | Revision 1.106  2006/01/19 08:49:31  wig
 # | Minor fixes regarding sort order output (debug parameter added)
 # |
@@ -442,11 +445,11 @@ use vars qw(
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.106 2006/01/19 08:49:31 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.107 2006/02/23 10:56:12 mathias Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.106 $';         #'
+my $thisrevision        =      '$Revision: 1.107 $';         #'
 
-# Revision:   $Revision: 1.106 $   
+# Revision:   $Revision: 1.107 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1890,6 +1893,9 @@ sub mix_init () {
 					# To switch off all, set report.portlist.comments=''
 					# striphash  := remove leading # signs from the comments
 		},
+                'reglist' => {
+                              'crossref' => 'yes',
+                             },
 	},
 	
 );
