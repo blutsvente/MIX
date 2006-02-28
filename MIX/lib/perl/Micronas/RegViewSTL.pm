@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewSTL.pm,v 1.4 2005/11/29 15:00:29 lutscher Exp $
+#  RCSId: $Id: RegViewSTL.pm,v 1.5 2006/02/28 11:34:39 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.4 $                                  
+#  Revision      : $Revision: 1.5 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViewSTL.pm,v $
+#  Revision 1.5  2006/02/28 11:34:39  lutscher
+#  no changes
+#
 #  Revision 1.4  2005/11/29 15:00:29  lutscher
 #  added clearing of data between domains
 #
@@ -186,8 +189,8 @@ version 2.0
 ";
 		foreach $reg_offset (sort {$a <=> $b} keys %hregs) {
 			$o_reg = $hregs{$reg_offset};
-			$usedbits = $o_reg->attribs->{'usedbits'};
-			$mask = $mask = $this->_get_read_write_mask($o_reg) | $this->_get_w1c_mask($o_reg);
+			# $usedbits = $o_reg->attribs->{'usedbits'};
+			$mask = $this->_get_read_write_mask($o_reg) | $this->_get_w1c_mask($o_reg);
 			$val = $o_reg->get_reg_init;
 			$this->_ocp_access("read", $o_reg, $reg_offset, $val, $mask);
 		};
