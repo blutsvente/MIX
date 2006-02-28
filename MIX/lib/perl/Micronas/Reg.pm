@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.18 2006/01/18 13:05:44 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.19 2006/02/28 11:33:27 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.19  2006/02/28 11:33:27  lutscher
+#  added view RDL
+#
 #  Revision 1.18  2006/01/18 13:05:44  lutscher
 #  changed handling of different registers at same address
 #
@@ -104,6 +107,7 @@ use Micronas::RegField;
 use Micronas::RegViews;
 use Micronas::RegViewE;
 use Micronas::RegViewSTL;
+use Micronas::RegViewRDL;
 use Micronas::MixUtils::RegUtils;
 
 #use FindBin qw($Bin);
@@ -148,7 +152,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.18 $ ';  #'
+our($VERSION) = '$Revision: 1.19 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -163,6 +167,7 @@ our(%hglobal) =
 					   "HDL-vgch-rs",   # VGCH project register shell (Thorsten Lutscher)
 					   "E_VR_AD",       # e-language macros (Emanuel Marconetti)
 					   "STL",           # register test file in Socket Transaction Language format
+					   "RDL",           # Denali RDL representation of database (experimental)
 					   "none"           # do nothing
 					  ],
 
@@ -243,6 +248,8 @@ sub generate_view {
 		$this->_gen_view_vr_ad(@ldomains);   # module RegViewE.pm
 	} elsif (lc($view) eq "stl") {
 		$this->_gen_view_stl(@ldomains);     # module RegViewSTL.pm
+	} elsif (lc($view) eq "rdl") {
+		$this->_gen_view_rdl(@ldomains);     # module RegViewRDL.pm
  	} elsif ($view =~ m/none/i) {
 		return; # do nothing
 	} else {
@@ -354,7 +361,7 @@ sub _map_register_master {
 
 	# highest bit specified in register-master
 	$msb_max = $EH{'i2c'}{'_mult_'}{'::b'} || die "ERROR: internal error (bad!)";
-	
+
 	# iterate each row
 	foreach $href_row (@$lref_rm) {
 		# skip lines to ignore
