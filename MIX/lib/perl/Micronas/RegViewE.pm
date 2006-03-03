@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.4 2005/12/21 12:26:23 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.5 2006/03/03 10:26:34 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.5  2006/03/03 10:26:34  lutscher
+#  removed coverage for reserved fields
+#
 #  Revision 1.4  2005/12/21 12:26:23  lutscher
 #  changed hole_name
 #
@@ -171,7 +174,7 @@ sub _gen_view_vr_ad {
 	print E_FILE " file: $e_filename\n";
 	print E_FILE $this->global->{'E_FILE'}{'header'};
 
-	my ($top_inst, $o_field, $o_reg);
+	my ($top_inst, $o_field, $o_reg, $cov);
 	
 	# iterate through domains
 	foreach $o_domain (@ldomains) {
@@ -205,58 +208,62 @@ sub _gen_view_vr_ad {
 				$ii += 1;	
 			};
 			
-			@thefields = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
-	        $upper = $reg_size;    # initial value of the upper limit
-	        @thefields_and_theholes = ();
+			@thefields = reverse (sort ({${$a}{pos} <=> ${$b}{pos}} @thefields));
+	$upper = $reg_size;    # initial value of the upper limit
+	@thefields_and_theholes = ();
 	
-	        $ii =0;
-	        foreach $singlefield (@thefields) {
+	$ii =0;
+	foreach $singlefield (@thefields) {
 		
-				$hole_size = $upper - (${$singlefield}{pos} + ${$singlefield}{size});		
+		$hole_size = $upper - (${$singlefield}{pos} + ${$singlefield}{size});		
 
-                if ($hole_size != 0) {
-					$theholes[$ii]{pos}  = ${$singlefield}{pos} + ${$singlefield}{size};
-					$theholes[$ii]{name} = $hole_name . $theholes[$ii]{pos};
-                    $theholes[$ii]{size} = $upper - (${$singlefield}{pos} + ${$singlefield}{size});
-                    $theholes[$ii]{rw}   = "R";
-					$theholes[$ii]{parent_block}   = ${$singlefield}{parent_block};
-				    $theholes[$ii]{init}  = "0x0";
-			     $ii++;
-			  } 
-			  $upper     = ${$singlefield}{pos};
-			}
-			
-                        if ($upper != 0) {
-			     $theholes[$ii]{pos}  = 0;
-			     $theholes[$ii]{name} = $hole_name . "0";
-			     $theholes[$ii]{size} = $upper;
-			     $theholes[$ii]{rw}   = "R";
-			     $theholes[$ii]{parent_block}   = "na";
-				 $theholes[$ii]{init}  = "0x0";
-			     $ii++;
-			} 
+if ($hole_size != 0) {
+	$theholes[$ii]{pos}  = ${$singlefield}{pos} + ${$singlefield}{size};
+$theholes[$ii]{name} = $hole_name . $theholes[$ii]{pos};
+$theholes[$ii]{size} = $upper - (${$singlefield}{pos} + ${$singlefield}{size});
+$theholes[$ii]{rw}   = "R";
+$theholes[$ii]{parent_block}   = ${$singlefield}{parent_block};
+$theholes[$ii]{init}  = "0x0";
+$ii++;
+} 
+$upper     = ${$singlefield}{pos};
+}
 
-                        @thefields_and_theholes = (@thefields,@theholes);
-                        @thefields_and_theholes = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields_and_theholes;
+if ($upper != 0) {
+	$theholes[$ii]{pos}  = 0;
+	$theholes[$ii]{name} = $hole_name . "0";
+	$theholes[$ii]{size} = $upper;
+	$theholes[$ii]{rw}   = "R";
+	$theholes[$ii]{parent_block}   = "na";
+	$theholes[$ii]{init}  = "0x0";
+	$ii++;
+} 
+
+@thefields_and_theholes = (@thefields,@theholes);
+@thefields_and_theholes = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields_and_theholes;
 
 
-                        $ii =0;
-			foreach $singlefield (@thefields_and_theholes) {
-		                if ($ii == 0) {
-					print E_FILE uc(${$singlefield}{parent_block}), " 0x", _val2hex($addr_size, $reg_offset), " {\n";
-				}
-				
+$ii =0;
+foreach $singlefield (@thefields_and_theholes) {
+	if ($ii == 0) {
+		print E_FILE uc(${$singlefield}{parent_block}), " 0x", _val2hex($addr_size, $reg_offset), " {\n";
+}
+if (${$singlefield}{name} =~ m/$hole_name/i) {
+$cov = "";
+} else {
+$cov = " : cov";
+};
 format E_FILE =
-    @<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<: uint(bits:@>) : @< : @<<<<<<<<< : cov ; -- lsb position @>>
-$reg_fld,${$singlefield}{name},${$singlefield}{size},${$singlefield}{rw},${$singlefield}{init},${$singlefield}{pos}
+    @<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<: uint(bits:@>) : @< : @<<<<<<<<< @<<<<<< ; -- lsb position @>>
+$reg_fld,${$singlefield}{name},${$singlefield}{size},${$singlefield}{rw},${$singlefield}{init},$cov, ${$singlefield}{pos}
 .
-      write E_FILE ;
-			$ii += 1;	
-			};
-            print E_FILE "};\n";
-		};  
-	};
-	print E_FILE $this->global->{'E_FILE'}{'footer'};
+write E_FILE ;
+$ii += 1;	
+};
+print E_FILE "};\n";
+};  
+};
+print E_FILE $this->global->{'E_FILE'}{'footer'};
 
 close(E_FILE);
 
