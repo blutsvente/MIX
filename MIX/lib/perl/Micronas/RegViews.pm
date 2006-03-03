@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.25 2006/02/08 16:16:46 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.26 2006/03/03 09:05:44 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.25 $                                  
+#  Revision      : $Revision: 1.26 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.26  2006/03/03 09:05:44  lutscher
+#  added feature for embedded control/status reg in generated Verilog code
+#
 #  Revision 1.25  2006/02/08 16:16:46  lutscher
 #  fixed two bugs in the generated code:
 #  o write process for cgtransp=1 was wrong
@@ -158,6 +161,7 @@ sub _gen_view_vgch_rs {
 				  'int_set_postfix'    => "_set_p",     # postfix for interrupt-set input signal
 				  'scan_en_port_name'  => "test_en",    # name of test-enable input
 				  'clockgate_te_name'  => "scan_shift_enable", # name of input to connect with test-enable port of clock-gating cell
+				  'embedded_reg_name'  => "RS_CTLSTS",  # reserved name of special register embedded in ocp_target
 				  'field_spec_values'  => ['sha', 'w1c', 'usr'], # recognized values for spec attribute
 				  'indent'             => "    ",       # indentation character(s)
 				  'assert_pragma_start'=> "`ifdef ASSERT_ON",
@@ -244,10 +248,6 @@ sub _gen_view_vgch_rs {
 		# get all clocks of domain and check if we have to infer mcd logic
 		$this->global('hfnames' => {});
 		$n_clocks = $this->_vgch_rs_get_configuration($o_domain);
-
-		if ($n_clocks == 1 and $this->global->{'multi_clock_domains'}) { 
-			_info("multi_clock_domains = 1 ignored, only one clock ") if $this->global->{'multi_clock_domains'};
-		};
 		
 		($top_inst, $ocp_inst) = $this->_vgch_rs_gen_hier($o_domain, $n_clocks); # generate module hierarchy
 
@@ -306,6 +306,10 @@ sub _vgch_rs_gen_cfg_module {
 		# skip register defined by user
 		if (grep ($_ eq $o_reg->name, @{$this->global->{'lexclude_cfg'}})) {
 			_info("skipping register ", $o_reg->name);
+			next;
+		};
+		# skip embedded control/status register
+		if ($o_reg->name eq $this->global->{'embedded_reg_name'}) {
 			next;
 		};
 		my $reg_offset = $o_domain->get_reg_address($o_reg);	
@@ -537,7 +541,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.25 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.26 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -1303,7 +1307,7 @@ sub _vgch_rs_gen_hier {
   	if ($infer_cg) {
 		_add_generic("cgtransp", 0, $top_inst);
 	};
-	_add_generic("P_TOCNT_WIDTH", 10, $top_inst); # timeout counter width
+	# _add_generic("P_TOCNT_WIDTH", 10, $top_inst); # timeout counter width
 	
 	# instantiate OCP target
 	my $ocp_inst = $this->_add_instance_unique($this->global->{"ocp_target_name"}, $top_inst, "OCP target module");
@@ -1313,8 +1317,15 @@ sub _vgch_rs_gen_hier {
 	};
 	_add_generic("P_DWIDTH", $this->global->{'datawidth'}, $ocp_inst);
 	_add_generic("P_AWIDTH", $this->global->{'addrwidth'}, $ocp_inst);
-	_add_generic_value("P_TOCNT_WIDTH", 10, "P_TOCNT_WIDTH", $ocp_inst); # timeout counter width
-	
+	# _add_generic_value("P_TOCNT_WIDTH", 10, "P_TOCNT_WIDTH", $ocp_inst); # timeout counter width
+	if(exists($this->global->{'embedded_reg'})) {
+		# enable embedded control/status register in ocp_target; 
+		# the default for has_ecs is 0, so we don't need this param in case there is no reg
+		_add_generic("has_ecs", 1, $ocp_inst);
+		my $ecs_addr = $o_domain->get_reg_address($this->global->{'embedded_reg'});
+		_add_generic("P_ECSADDR", $ecs_addr, $ocp_inst);
+	};
+
 	$ocp_sync = 0;
 
 	# instantiate MCD adapter (if required)
@@ -1406,7 +1417,7 @@ sub _vgch_rs_gen_hier {
 sub _vgch_rs_get_configuration {
 	my $this = shift;
 	my ($o_domain) = @_;
-	my ($n, $o_field, $clock, $reset, %hclocks, %hresult, $href);
+	my ($n, $o_field, $clock, $reset, %hclocks, %hresult, $href, $o_reg);
 	my $bus_clock = $this->global->{'bus_clock'};
 	my $rdpl_lvl = $this->global->{'read_pipeline_lvl'};
 	my ($addr_msb, $addr_lsb) = $this->_get_address_msb_lsb($o_domain);
@@ -1414,10 +1425,22 @@ sub _vgch_rs_get_configuration {
 	$this->global->{'addr_msb'} = $addr_msb;
 	$this->global->{'addr_lsb'} = $addr_lsb;
 
+	# check if embedded register exists
+	foreach $o_reg (@{$o_domain->regs}) {
+		if ($o_reg->name eq $this->global->{'embedded_reg_name'}) {
+			$this->global('embedded_reg' => $o_reg);
+			_info("will infer embedded register \'", $o_reg->name, "\'");
+			last;
+		};
+	};
+
 	$n = 0;
 	$clock = "";
 	# iterate all fields and retrieve clock names
 	foreach $o_field (@{$o_domain->fields}) {
+		if ($this->_skip_field($o_field)) {
+			next;
+		};
 		$clock = $o_field->attribs->{'clock'};
 		$reset = $o_field->attribs->{'reset'};
 		if ($clock  =~ m/[\%OPEN\%|\%EMPTY\%]/) {
@@ -1471,6 +1494,11 @@ sub _vgch_rs_get_configuration {
 		};
 	};
 	$this->global('hclocks' => \%hresult);
+	
+	# tell user if use of multi_clock_domains parameter is useless
+	if ($n == 1 and $this->global->{'multi_clock_domains'}) { 
+		_info("multi_clock_domains = 1 ignored, only one clock") if $this->global->{'multi_clock_domains'};
+	};
 
 	# check if read-pipelining is required
 	my ($rdpl_stages)=0;
@@ -1483,6 +1511,7 @@ sub _vgch_rs_get_configuration {
 		};
 	};
 	$this->global('rdpl_stages' => $rdpl_stages); # save for later
+	_info("will infer $rdpl_stages read-pipeline stages");
 	
 	return $n;
 };
@@ -1512,6 +1541,11 @@ sub _vgch_rs_add_static_connections {
 	_add_primary_output("scmdaccept", 0, 0, 0, $ocp_i);
 	_add_primary_output("sresp", 1, 0, 0, $ocp_i);
 	_add_primary_output("sdata", $dwidth-1, 0, 0, $ocp_i);
+	if(exists($this->global->{'embedded_reg'})) {
+		_add_primary_output("sinterrupt", 0, 0, 0, $ocp_i);
+	} else {
+		_add_connection("%OPEN%", 0, 0, "${ocp_i}/sinterrupt_o", "");
+	};
 
 	# connections for each config register block
 	$n=0;
@@ -1580,6 +1614,22 @@ sub _vgch_rs_add_static_connections {
 		_add_connection("rd_data", $dwidth-1, 0, "${mcda_i}/rd_data_o", "${ocp_i}/rd_data_i");
 	};
 
+};
+
+# function to determine if a field is to be skipped because it is excluded by the user or because it belongs to
+# the embedded control/status register
+sub _skip_field {
+	my($this, $o_field) = @_;
+	if (
+		grep ($_ eq $o_field->name, @{$this->global->{'lexclude_cfg'}}) 
+		or grep ($_ eq $o_field->reg->name,@{$this->global->{'lexclude_cfg'}}) 
+		or $o_field->reg->name eq $this->global->{'embedded_reg_name'}
+	   ) 
+	  {
+		  return 1;
+	  } else {
+		  return 0;
+	  };
 };
 
 sub _get_address_msb_lsb {
