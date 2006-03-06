@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.22 $                                          |
+# | Revision:   $Revision: 1.23 $                                          |
 # | Author:     $Author: mathias $                                            |
-# | Date:       $Date: 2006/02/13 10:10:02 $                              |
+# | Date:       $Date: 2006/03/06 17:35:45 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.23  2006/03/06 17:35:45  mathias
+# | fixed handling of "0" string in _td_para
+# |
 # | Revision 1.22  2006/02/13 10:10:02  mathias
 # | delete superfluous '\x' without corresponding previous modifier
 # |
@@ -130,9 +133,9 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.22 2006/02/13 10:10:02 mathias Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.23 2006/03/06 17:35:45 mathias Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.22 $'; #'  
+my $thisrevision    =      '$Revision: 1.23 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -703,7 +706,7 @@ sub _td_para()
         $hash{End}    = $strend . $fontreset;
         push(@string, \%hash);
     }
-    if ($string) {                # last "normal" part of $string
+    if (defined($str) and length($str) > 0) {                # last "normal" part of $string
         push(@string, {'Beginn' => $normal, 'Text' => $string, 'End' => $strend});
     }
     ########################
