@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.22 $                                               |
+# | Revision:   $Revision: 1.23 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2006/02/23 12:44:32 $                                                   |
+# | Date:       $Date: 2006/03/07 09:04:05 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.22 2006/02/23 12:44:32 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.23 2006/03/07 09:04:05 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.23  2006/03/07 09:04:05  mathias
+# | fixed in writing API function name
+# |
 # | Revision 1.22  2006/02/23 12:44:32  mathias
 # | enable register names in the overview table rather than cross refeferences
 # | added API line to the register table if the ::api column exists
@@ -117,11 +120,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.22 2006/02/23 12:44:32 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.23 2006/03/07 09:04:05 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.22 $';
+my $thisrevision   =      '$Revision: 1.23 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -296,6 +299,11 @@ sub mix_rep_reglist($)
                         mix_rep_reglist_mif_bitfields($mif, $regtable, \@thefields);
                         # write 'API' row
                         if ($api) {
+                            if (exists($EH{output}{mif}{debug})) {
+                                if ($EH{output}{mif}{debug} == 3) {
+                                    print("         api: `$api'\n");
+                                }
+                            }
                             mix_rep_reglist_mif_api($mif, $regtable, $api);
                         }
                         if ($width_1 >= 3 or $#thefields >= 7) {
@@ -712,24 +720,21 @@ sub mix_rep_reglist_mif_api($$$ )
     my ($mif, $regtable, $api) = @_;
     my $headtext = "";
 
-    ############ Row for the bits 31 .. 16
-    # Update signal field on the left hand side
-    $headtext = $mif->wrCell({ 'PgfTag'           => 'CellHeadingH8',
-                               'String'           => 'API:',
-                               'Fill'             => 0,
-                               'Color'            => "Gray 6.2"
+    # API field
+    $headtext = $mif->wrCell({ 'PgfTag'      => 'CellHeadingH8',
+                               'String'      => 'API:',
+                               'Fill'        => 0,
+                               'Color'       => "Gray 6.2"
                               },
                               2);
-    $headtext = $mif->wrCell({ 'PgfTag'           => 'CellHeadingH8',
-                               'String'           => $api,
-                               'Fill'             => 0
+    # api function
+    $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellBodyH8',
+                                'String'     => $api,
+                                'Columns'    => 16
                               },
                               2);
-    for (my $i = 1; $i < 15; $i++) {
-        $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellHeadingH8',
-                                    'Fill'       => 15,
-                                  },
-                                  3);
+    for (my $i = 1; $i <= 15; $i++) {
+        $headtext .= $mif->wrCell({ 'PgfTag' => 'CellHeading' }, 2);
     }
     $mif->add($mif->Tr({ 'WithNext' => 'Yes',
                          'WithPrev' => 'Yes',
