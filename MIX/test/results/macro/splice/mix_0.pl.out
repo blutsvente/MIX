@@ -1,0 +1,293 @@
+06/02/15 09:42:22 ########################################################################
+06/02/15 09:42:22 CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl -sheet HIER=HIER_SPLICE -sheet CONN=CONN_SPLICE -nodelta ../../macro.xls
+06/02/15 09:42:22 
+#######################################################################
+##### mix_0.pl (Revision: 1.43 )
+#####
+##### MIX  
+#####   MixUtils    1.106 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.65 $
+#####   MixWriter   1.76 $
+#####   MixChecker  1.11 $
+#####   MixIOParser 1.17 $
+#####   MixReport 1.21 $
+#####   Reg 1.18  
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+06/02/15 09:42:22 Reading worksheet CONN_SPLICE of H:/work/eclipse/MIX/test/xls_input/macro/splice/../../macro.xls
+06/02/15 09:42:22 Reading worksheet HIER_SPLICE of H:/work/eclipse/MIX/test/xls_input/macro/splice/../../macro.xls
+06/02/15 09:42:23 Found 0 macro definitions
+06/02/15 09:42:23 WARNING: WARNING: register-master file empty or specified sheet 'I2C' in file not found
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3_14!
+06/02/15 09:42:23 Add_port: signal s_splice_3_14 adds port p_mix_s_splice_3_14_go to instance inst_splice
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3_3!
+06/02/15 09:42:23 Add_port: signal s_splice_3_3 adds port p_mix_s_splice_3_3_go to instance inst_splice
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3_6!
+06/02/15 09:42:23 Add_port: signal s_splice_3_6 adds port p_mix_s_splice_3_6_go to instance inst_splice
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3_4!
+06/02/15 09:42:23 Add_port: signal s_splice_3_4 adds port p_mix_s_splice_3_4_go to instance inst_splice
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3_12!
+06/02/15 09:42:23 Add_port: signal s_splice_3_12 adds port p_mix_s_splice_3_12_go to instance inst_splice
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3_5!
+06/02/15 09:42:23 Add_port: signal s_splice_3_5 adds port p_mix_s_splice_3_5_go to instance inst_splice
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3_7!
+06/02/15 09:42:23 Add_port: signal s_splice_3_7 adds port p_mix_s_splice_3_7_go to instance inst_splice
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3_0!
+06/02/15 09:42:23 Add_port: signal s_splice_3_0 adds port p_mix_s_splice_3_0_go to instance inst_splice
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3_15!
+06/02/15 09:42:23 Add_port: signal s_splice_3_15 adds port p_mix_s_splice_3_15_go to instance inst_splice
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3_13!
+06/02/15 09:42:23 Add_port: signal s_splice_3_13 adds port p_mix_s_splice_3_13_go to instance inst_splice
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3_2!
+06/02/15 09:42:23 Add_port: signal s_splice_3_2 adds port p_mix_s_splice_3_2_go to instance inst_splice
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3_9!
+06/02/15 09:42:23 Add_port: signal s_splice_3_9 adds port p_mix_s_splice_3_9_go to instance inst_splice
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_5!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_5!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_5!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_5!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_5!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_5!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_5!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_5!
+06/02/15 09:42:23 Add_port: signal s_splice_5 adds port p_mix_s_splice_5_gi to instance inst_splice
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3_1!
+06/02/15 09:42:23 Add_port: signal s_splice_3_1 adds port p_mix_s_splice_3_1_go to instance inst_splice
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_5!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_5!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_5!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_5!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_5!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_5!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_5!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_5!
+06/02/15 09:42:23 Add_port: signal s_splice_join_5 adds port p_mix_s_splice_join_5_go to instance inst_splice
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_join_4!
+06/02/15 09:42:23 Add_port: signal s_splice_join_4 adds port p_mix_s_splice_join_4_go to instance inst_splice
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3_8!
+06/02/15 09:42:23 Add_port: signal s_splice_3_8 adds port p_mix_s_splice_3_8_go to instance inst_splice
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3!
+06/02/15 09:42:23 Add_port: signal s_splice_3 adds port p_mix_s_splice_3_gi to instance inst_splice
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3_10!
+06/02/15 09:42:23 Add_port: signal s_splice_3_10 adds port p_mix_s_splice_3_10_go to instance inst_splice
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_4!
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_4!
+06/02/15 09:42:23 Add_port: signal s_splice_4 adds port p_mix_s_splice_4_gi to instance inst_splice
+06/02/15 09:42:23 Adding port to hierachy module inst_splice for signal s_splice_3_11!
+06/02/15 09:42:23 Add_port: signal s_splice_3_11 adds port p_mix_s_splice_3_11_go to instance inst_splice
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_2 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_3 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_3 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_5 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_5 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_5 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_5 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_3 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_5 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_5 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_3 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_3 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_3 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_3 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_3 to std_ulogic
+06/02/15 09:42:23 Autoexpand port p_splice_3 from std_ulogic to vector type!
+06/02/15 09:42:23 Autoexpand port p_splice_1 from std_ulogic to vector type!
+06/02/15 09:42:23 Autoexpand port p_splice_2 from std_ulogic to vector type!
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_5 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_5 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_3 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_3 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_3 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_3 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_3 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_3 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_1 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_1 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_5 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_5 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_5 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_5 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_5 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_5 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_2 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_5 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_5 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_3 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_3 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_1 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_2 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_join_4 to std_ulogic
+06/02/15 09:42:23 Autoreducing port type for signal s_splice_1 to std_ulogic
+06/02/15 09:42:23 INFO: Split cell at arbitrary location: G # i = 3 # splice = 0 #$i(1..3)
+06/02/15 09:42:23 INFO: Split cell at arbitrary location: Splice signal connector in: 3, 0
+06/02/15 09:42:23 INFO: Split cell at arbitrary location: G # i = 4 # splice = 0 #$i(4..5)
+06/02/15 09:42:23 INFO: Split cell at arbitrary location: Splice signal connector in 4, 0S
+06/02/15 09:42:23 INFO: Split cell at arbitrary location: G # i = 4 # splice = 0 #$i(4..5)
+06/02/15 09:42:23 INFO: Split cell at arbitrary location: Splice signal connector up, join
+06/02/15 09:42:23 INFO: Split cell at arbitrary location: G # i = 5 # splice = 0 #$i(4..5)
+06/02/15 09:42:24 WARNING: Rotating 3 old sheets of CONF!
+06/02/15 09:42:25 WARNING: Rotating 3 old sheets of CONN!
+06/02/15 09:42:25 WARNING: Rotating 3 old sheets of HIER!
+06/02/15 09:42:26 Port p_splice_o of entity inst_spbit_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_5 of entity inst_spbit_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_1 of entity inst_splice_1_0_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_1 of entity inst_splice_1_1_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_1 of entity inst_splice_1_2_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_1 of entity inst_splice_1_3_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_2 of entity inst_splice_2_0_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_2 of entity inst_splice_2_1_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_2 of entity inst_splice_2_2_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_3 of entity inst_splice_3_0_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_3 of entity inst_splice_3_10_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_3 of entity inst_splice_3_11_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_3 of entity inst_splice_3_12_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_3 of entity inst_splice_3_13_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_3 of entity inst_splice_3_14_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_3 of entity inst_splice_3_15_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_3 of entity inst_splice_3_1_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_3 of entity inst_splice_3_2_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_3 of entity inst_splice_3_3_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_3 of entity inst_splice_3_4_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_3 of entity inst_splice_3_5_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_3 of entity inst_splice_3_6_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_3 of entity inst_splice_3_7_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_3 of entity inst_splice_3_8_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_3 of entity inst_splice_3_9_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port p_splice_o of entity inst_splice_4_0_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_4 of entity inst_splice_4_0_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port p_splice_o of entity inst_splice_4_10_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_4 of entity inst_splice_4_10_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port p_splice_o of entity inst_splice_4_11_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_4 of entity inst_splice_4_11_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port p_splice_o of entity inst_splice_4_12_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_4 of entity inst_splice_4_12_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port p_splice_o of entity inst_splice_4_13_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_4 of entity inst_splice_4_13_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port p_splice_o of entity inst_splice_4_14_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_4 of entity inst_splice_4_14_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port p_splice_o of entity inst_splice_4_15_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_4 of entity inst_splice_4_15_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port p_splice_o of entity inst_splice_4_1_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_4 of entity inst_splice_4_1_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port p_splice_o of entity inst_splice_4_2_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_4 of entity inst_splice_4_2_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port p_splice_o of entity inst_splice_4_3_e_s one bit wide, reduce to signal
+06/02/15 09:42:26 Port s_splice_4 of entity inst_splice_4_3_e_s one bit wide, reduce to signal
+06/02/15 09:42:27 Port p_splice_o of entity inst_splice_4_4_e_s one bit wide, reduce to signal
+06/02/15 09:42:27 Port s_splice_4 of entity inst_splice_4_4_e_s one bit wide, reduce to signal
+06/02/15 09:42:27 Port p_splice_o of entity inst_splice_4_5_e_s one bit wide, reduce to signal
+06/02/15 09:42:27 Port s_splice_4 of entity inst_splice_4_5_e_s one bit wide, reduce to signal
+06/02/15 09:42:27 Port p_splice_o of entity inst_splice_4_6_e_s one bit wide, reduce to signal
+06/02/15 09:42:27 Port s_splice_4 of entity inst_splice_4_6_e_s one bit wide, reduce to signal
+06/02/15 09:42:27 Port p_splice_o of entity inst_splice_4_7_e_s one bit wide, reduce to signal
+06/02/15 09:42:27 Port s_splice_4 of entity inst_splice_4_7_e_s one bit wide, reduce to signal
+06/02/15 09:42:27 Port p_splice_o of entity inst_splice_4_8_e_s one bit wide, reduce to signal
+06/02/15 09:42:27 Port s_splice_4 of entity inst_splice_4_8_e_s one bit wide, reduce to signal
+06/02/15 09:42:27 Port p_splice_o of entity inst_splice_4_9_e_s one bit wide, reduce to signal
+06/02/15 09:42:27 Port s_splice_4 of entity inst_splice_4_9_e_s one bit wide, reduce to signal
+06/02/15 09:42:27 Entity declaration file inst_splice_e_s-e.vhd will be overwritten!
+06/02/15 09:42:27 Entity declaration file inst_t_e-e.vhd will be overwritten!
+06/02/15 09:42:27 Architecture declaration file inst_splice_e_s-rtl-a.vhd will be overwritten!
+06/02/15 09:42:27 Warning: Signal s_splice_join_5  has multiple drivers in instance inst_splice!
+06/02/15 09:42:27 Warning: Signal s_splice_join_4  has multiple drivers in instance inst_splice!
+06/02/15 09:42:28 Architecture declaration file inst_t_e-rtl-a.vhd will be overwritten!
+06/02/15 09:42:28 Configuration definition file inst_splice_e_s-c.vhd will be overwritten!
+06/02/15 09:42:28 Configuration definition file inst_t_e-rtl-conf-c.vhd will be overwritten!
+06/02/15 09:42:28 WARNING: ============= SUMMARY =================
+06/02/15 09:42:28 WARNING: SUM: Summary of checks and created items:
+06/02/15 09:42:28 WARNING: SUM: checkforce 0
+06/02/15 09:42:28 WARNING: SUM: checkunique 0
+06/02/15 09:42:28 WARNING: SUM: checkwarn 0
+06/02/15 09:42:28 WARNING: SUM: cmacros 0
+06/02/15 09:42:28 WARNING: SUM: conn 30
+06/02/15 09:42:28 WARNING: SUM: errors 0
+06/02/15 09:42:28 WARNING: SUM: genport 21
+06/02/15 09:42:28 WARNING: SUM: hdlfiles 6
+06/02/15 09:42:28 WARNING: SUM: inst 57
+06/02/15 09:42:28 WARNING: SUM: multdriver 2
+06/02/15 09:42:28 WARNING: SUM: nodriver 0
+06/02/15 09:42:28 WARNING: SUM: noload 0
+06/02/15 09:42:28 WARNING: SUM: openports 0
+06/02/15 09:42:28 WARNING: SUM: warnings 1
+06/02/15 09:42:28 WARNING: SUM: === Number of parsed input tables: ===
+06/02/15 09:42:28 WARNING: SUM: conf 0
+06/02/15 09:42:28 WARNING: SUM: hier 1
+06/02/15 09:42:28 WARNING: SUM: conn 1
+06/02/15 09:42:28 WARNING: SUM: io 0
+06/02/15 09:42:28 WARNING: SUM: i2c 0
