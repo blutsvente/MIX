@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.107 $                                         |
-# | Author:     $Author: mathias $                                            |
-# | Date:       $Date: 2006/02/23 10:56:12 $                              |
+# | Revision:   $Revision: 1.108 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2006/03/14 08:10:34 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.107 2006/02/23 10:56:12 mathias Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.108 2006/03/14 08:10:34 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.108  2006/03/14 08:10:34  wig
+# | No changes, got deleted accidently
+# |
 # | Revision 1.107  2006/02/23 10:56:12  mathias
 # | added 'reglist->crossref' to the configuration tree
 # |
@@ -39,302 +42,7 @@
 # | Revision 1.105  2006/01/18 16:59:29  wig
 # |  	MixChecker.pm MixParser.pm MixUtils.pm MixWriter.pm : UNIX tested
 # |
-# | Revision 1.104  2006/01/18 14:04:29  wig
-# | Started verilog module check.
-# |
-# | Revision 1.103  2005/12/14 12:50:32  wig
-# | Improved external portlist tabe creation, prepared delta mode
-# |
-# | Revision 1.102  2005/12/09 14:03:55  lutscher
-# | added reg_shell.exclude_fields
-# |
-# | Revision 1.101  2005/12/09 13:55:23  lutscher
-# | added reg_shell.exclude_regs
-# |
-# | Revision 1.100  2005/12/09 13:12:35  lutscher
-# | added Reg.pm to mix_banner()
-# |
-# | Revision 1.99  2005/11/30 14:01:21  wig
-# | ::descr handling and trailing ; removal improved
-# |
-# | Revision 1.98  2005/11/25 13:32:40  lutscher
-# | added reg_shell.stl parameters
-# |
-# | Revision 1.97  2005/11/22 11:00:46  wig
-# | Minor fixes in Utils (20051121a, K: mkdir problem)
-# |
-# | Revision 1.96  2005/11/15 13:59:24  lutscher
-# | added reg_shell param
-# |
-# | Revision 1.95  2005/11/10 13:03:11  lutscher
-# | changed default for VERILOG_TIMESCALE
-# |
-# | Revision 1.94  2005/11/09 13:13:52  lutscher
-# | changed reg_shell param
-# |
-# | Revision 1.93  2005/11/08 09:28:26  lutscher
-# | corrected default value for reg_shell.type
-# |
-# | Revision 1.92  2005/11/08 08:06:54  wig
-# | Added some documentation and example (register shell)
-# |
-# | Revision 1.91  2005/11/07 10:48:45  lutscher
-# | changed default for reg_shell param
-# |
-# | Revision 1.90  2005/11/04 16:47:10  lutscher
-# | changed parameter reg_shell.read_pipeline_lvl
-# |
-# | Revision 1.89  2005/11/04 16:25:43  lutscher
-# | added reg_shell parameter
-# |
-# | Revision 1.88  2005/11/04 10:44:47  wig
-# | Adding ::incom (keep CONN sheet comments) and improce portlist report format
-# |
-# | Revision 1.87  2005/11/02 13:29:19  wig
-# | Got -help to return some results
-# |
-# | Revision 1.86  2005/10/26 09:17:36  lutscher
-# | changed some defaults
-# |
-# | Revision 1.85  2005/10/25 12:08:18  wig
-# | Minor changes for vgch_join.pl (cvs writer, sort multiple fields)
-# |
-# | Revision 1.83  2005/10/24 12:10:30  wig
-# | added output.language.verilog = ansistyle,2001param
-# |
-# | Revision 1.82  2005/10/21 12:42:23  lutscher
-# | added reg_shell.read_multicycle
-# |
-# | Revision 1.81  2005/10/20 17:25:49  lutscher
-# | corrected check for invalid -conf options
-# |
-# | Revision 1.80  2005/10/19 15:40:06  wig
-# | Fixed -mixed.xls read problem on UNIX and reworked ::descr split
-# |
-# | Revision 1.79  2005/10/19 15:00:05  lutscher
-# | added more reg_shell params
-# |
-# | Revision 1.78  2005/10/19 08:19:19  wig
-# | Extended portlist writer and Mif module
-# |
-# | Revision 1.77  2005/10/18 15:27:52  wig
-# | Primary releaseable vgch_join.pl
-# |
-# | Revision 1.76  2005/10/18 09:34:36  wig
-# | Changes required for vgch_join.pl support (mainly to MixUtils)
-# |
-# | Revision 1.75  2005/10/14 11:29:34  lutscher
-# | added regshell parameters
-# |
-# | Revision 1.74  2005/10/13 09:09:46  wig
-# | Added intermediate CONN sheet split
-# |
-# | Revision 1.73  2005/10/06 11:21:44  wig
-# | Got testcoverage up, fixed generic problem, prepared report
-# |
-# | Revision 1.72  2005/10/05 09:24:48  lutscher
-# | added some reg_shell parameters
-# |
-# | Revision 1.71  2005/10/04 16:08:36  lutscher
-# | cleaned up EH-reg_shell parameters
-# |
-# | Revision 1.70  2005/09/29 13:45:01  wig
-# | Update with -report
-# |
-# | Revision 1.69  2005/09/14 14:40:06  wig
-# | Startet report module (portlist)
-# |
-# | Revision 1.68  2005/07/19 07:01:44  wig
-# | map %LOW% to %LOW_BUS% is user assigns badly
-# |
-# | Revision 1.67  2005/07/15 16:39:38  wig
-# | Update of some tiny fixes (test case related)
-# |
-# | Revision 1.66  2005/07/13 15:38:33  wig
-# | Added prototype for simple logic
-# | Added ::udc for HIER
-# | Fixed some nagging bugs
-# |
-# | Revision 1.65  2005/07/07 12:32:50  lutscher
-# | o changed EH->i2c_cell to EH->reg_shell
-# | o made some cleaning-up of EH->reg_shell and EH->hier
-# | o changed parse_header() to disable the 'required' attribute of multiple headers
-# |   (was causing errors when reading multiple xls sheets)
-# |
-# | Revision 1.64  2005/06/23 13:14:42  wig
-# | Update repository, not yet verified
-# |
-# | Revision 1.63  2005/05/11 11:39:02  wig
-# | intermediate update (still working on unsplice)
-# |
-# | Revision 1.62  2005/04/14 06:53:01  wig
-# | Updates: fixed import errors and adjusted I2C parser
-# |
-# | Revision 1.61  2005/03/22 10:00:16  wig
-# | beta version i2c
-# |                                                 |
-# | Revision 1.60  2005/01/31 12:40:13  wig                               |
-# |                                                                       |
-# |  	MixUtils.pm : added manglestd as check.hdlout.delta option        |
-# |                                                                       |
-# | Revision 1.59  2005/01/26 14:01:44  wig                               |
-# | changed %OPEN% and -autoquote for cvs output                          |
-# |                                                                       |
-# | Revision 1.57  2004/08/18 10:45:44  wig                               |
-# | constant handling improved                                            |
-# |                                                                       |
-# | Revision 1.56  2004/08/09 15:48:15  wig                               |
-# | another variant of typecasting: ignore std_(u)logic!                  |
-# |                                                                       |
-# | Revision 1.54  2004/08/04 13:28:46  wig                               |
-# | Updates for TYPECAST                                                  |
-# |                                                                       |
-# | Revision 1.53  2004/08/04 12:16:48  abauer
-# | - added multiple header count
-# |
-# | Revision 1.52  2004/07/22 11:32:18  abauer
-# | - added multiple header counter into EH
-# |
-# | Revision 1.51  2004/06/29 09:13:30  wig
-# | minor fiexes /test mode
-# |
-# | Revision 1.50  2004/06/14 06:38:57  wig
-# | Minor beautification in reg-exp
-# |
-# | Revision 1.49  2004/04/22 14:32:50  wig
-# | fixed minor problems with verify mode
-# |
-# | Revision 1.48  2004/04/20 15:22:46  wig
-# | Improved verify mode
-# |
-# | Revision 1.47  2004/04/15 11:59:40  wig
-# | added ignorecase for delta mode
-# |
-# | Revision 1.46  2004/04/14 11:08:33  wig
-# | minor code clearing
-# |
-# | Revision 1.45  2004/04/07 15:12:24  wig
-# | Modified Files:
-# | 	MixUtils.pm (Solaris port)
-# |
-# | Revision 1.44  2004/03/30 11:05:57  wig
-# | fixed: IOparser handling of bit ports vs. bus signals
-# |
-# | Revision 1.42  2003/12/23 13:25:21  abauer
-# | added i2c parser
-# |
-# | Revision 1.41  2003/12/22 08:33:11  wig
-# | Added output.generate.xinout feature
-# |
-# | Revision 1.40  2003/12/18 16:49:15  wig
-# | added OLE, again
-# | fixed misc. minor issues regarding delta mode
-# |
-# | Revision 1.37  2003/12/10 14:37:17  abauer
-# | *** empty log message ***
-# |
-# | Revision 1.36  2003/12/04 14:56:32  abauer
-# | corrected cvs problems
-# |
-# | Revision 1.35  2003/11/27 13:18:40  abauer
-# | *** empty log message ***
-# |
-# | Revision 1.34  2003/11/27 09:08:56  abauer
-# | *** empty log message ***
-# |
-# | Revision 1.33  2003/11/10 09:30:57  wig
-# | Adding testcase for verilog: create dummy open wires
-# |
-# | Revision 1.32  2003/10/29 13:34:49  abauer
-# | new Documentation
-# |
-# | Revision 1.31  2003/10/23 12:10:54  wig
-# | added counter for macro evaluation cmacros
-# |
-# | Revision 1.30  2003/10/23 11:27:28  abauer
-# | added strip
-# |
-# | Revision 1.29  2003/10/14 10:18:42  wig
-# | Added -bak command line option
-# | Added ::descr to port maps (just a try)
-# |
-# | Revision 1.27  2003/09/08 15:14:23  wig
-# | Fixed Verilog, extended path checking
-# |
-# | Revision 1.24  2003/08/11 07:16:24  wig
-# | Added typecast
-# | Fixed Verilog issues
-# |
-# | Revision 1.23  2003/07/29 15:48:05  wig
-# | Lots of tiny issued fixed:
-# | - Verilog constants
-# | - IO port
-# | - reconnect
-# |
-# | Revision 1.21  2003/07/17 12:10:43  wig
-# | fixed minor bugs:
-# | - Verilog `define before module
-# | - Verilog open
-# | - signals(NN) in IO-Parser failed (bad reg-ex)
-# |
-# | Revision 1.16  2003/06/04 15:52:43  wig
-# | intermediate release, before releasing alpha IOParser
-# |
-# | Revision 1.15  2003/04/29 07:22:36  wig
-# | Fixed %OPEN% bit/bus problem.
-# |
-# | Revision 1.14  2003/04/28 06:40:37  wig
-# | Added %OPEN% (to allow ports without connection, use VHDL open keyword)
-# | Started parseIO (not operational, would be a branch instead)
-# | Fixed nreset2 issue (20030424a bug)
-# |
-# | Revision 1.13  2003/04/01 14:27:59  wig
-# | Added IN/OUT Top Port Generation
-# |
-# | Revision 1.12  2003/03/21 16:59:19  wig
-# | Preliminary working version for bus splices
-# |
-# | Revision 1.11  2003/03/14 14:52:11  wig
-# | Added -delta mode for backend.
-# |
-# | Revision 1.10  2003/03/13 14:05:19  wig
-# | Releasing major reworked version
-# | Now handles bus splices much better
-# |
-# | Revision 1.9  2003/02/28 15:03:44  wig
-# | Intermediate version with lots of fixes.
-# | Signal issue still open.
-# |
-# | Revision 1.8  2003/02/21 16:05:14  wig
-# | Added options:
-# | -conf
-# | -sheet
-# | -listconf
-# | see TODO.txt, 20030220/21
-# |
-# | Revision 1.7  2003/02/20 15:07:13  wig
-# | Fixed: port signal assignment direction bus
-# | Capitalization (folding is still missing)
-# | Added ::arch column and created output
-# |
-# | Revision 1.6  2003/02/19 16:28:00  wig
-# | Added generics.
-# | Renamed generated objects
-# |
-# | Revision 1.5  2003/02/12 15:40:47  wig
-# | Improved handling of bus splicing (but still a way to go)
-# | Added seom meta instances.
-# |
-# | Revision 1.4  2003/02/07 13:18:44  wig
-# | no changes
-# |
-# | Revision 1.3  2003/02/06 15:48:30  wig
-# | added constant handling
-# | rewrote bit splice handling
-# |
-# | Revision 1.2  2003/02/04 07:19:24  wig
-# | Fixed header of modules
-# |
+# | .....
 # |
 # |
 # +-----------------------------------------------------------------------+
@@ -353,6 +61,7 @@ require Exporter;
     mix_getops
     mix_banner
     mix_help
+    mix_get_eh
 	mix_init
 	mix_store
 	mix_load
@@ -375,6 +84,7 @@ require Exporter;
 @EXPORT_OK = qw(
 	%OPTVAL
     %EH
+    $eh
     mix_utils_diff
 	);
 
@@ -389,10 +99,12 @@ use IO::File;
 use Getopt::Long qw(GetOptions);
 
 use Cwd;
-use Log::Agent;
-use Log::Agent::Priorities qw(:LEVELS);
+# use Log::Agent;
+# use Log::Agent::Priorities qw(:LEVELS);
 
+use Log::Log4perl qw(get_logger);
 use Micronas::MixUtils::InComments; # Some extra for comments in input data
+use Micronas::MixUtils::Globals;
 
 use Storable;
 
@@ -403,10 +115,11 @@ use Storable;
 #
 # Prototypes
 #
+sub mix_get_eh ();
 sub select_variant ($);
 sub mix_list_conf ();
 sub mix_list_econf ($);
-sub _mix_list_conf ($$;$);
+# sub _mix_list_conf ($$;$);
 sub _mix_apply_conf ($$$);
 sub mix_store ($$;$);
 sub mix_utils_open($;$);
@@ -429,31 +142,32 @@ sub db2array_intra ($$$$$);
 sub _mix_utils_im_header ($$);
 sub _inoutjoin ($);
 sub _mix_utils_extract_verihead ($$$);
+sub _init_logic_eh ($);
 
 ##############################################################
 # Global variables
 ##############################################################
 
 use vars qw(
-    %OPTVAL %EH %MACVAL
+    %OPTVAL %EH $eh %MACVAL
 );
 
 ####################################################################
 #
 # Our local variables
-
+my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.107 2006/02/23 10:56:12 mathias Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.108 2006/03/14 08:10:34 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.107 $';         #'
+my $thisrevision        =      '$Revision: 1.108 $';         #'
 
-# Revision:   $Revision: 1.107 $   
+# Revision:   $Revision: 1.108 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
-( $VERSION = $thisrevision ) =~ s,.*Revision:\s*,,; # TODO Is that a good idea?
+( $VERSION = $thisrevision ) =~ s,.*Revision:\s*,,;
 
 ##############################################################
 # Basic functions used in MIX ....
@@ -484,14 +198,14 @@ sub mix_getopt_header(@) {
 
     # Evaluate options
     if ($OPTVAL{'quiet'}) {
-        $EH{'NOTE'} = $EH{'quiet'}; # be quiet, suppress printing notes.
-        $EH{'PRINTTIMING'} = 0;
+        $eh->set( 'NOTE', $OPTVAL{'quiet'} ); # be quiet, suppress printing notes.
+        $eh->set('PRINTTIMING', 0 );
     }
     if ($OPTVAL{'verbose'}) {
-        $EH{'VERBOSE'} = $EH{'verbose'}; # be verbose, printing notes.
+        $eh->set( 'VERBOSE', $OPTVAL{'verbose'} ); # be verbose, printing notes.
     }
     if (defined $OPTVAL{'debug'}) {
-        $EH{'DEBUG'} = $EH{'debug'}; # printing debug notes.
+        $eh->set( 'DEBUG', $OPTVAL{'debug'} ); # printing debug notes.
         eval 'package main; use diagnostics;'; # enable perl diagnostics
     }
 
@@ -500,80 +214,82 @@ sub mix_getopt_header(@) {
     # Create it if needed.
     #!wig20051005: Creation now done in IO.pm ....
     if ( defined $OPTVAL{'dir'} ) {
-        $OPTVAL{'dir'} =~ s,\\,/,g if ( $EH{'iswin'} );
-
-		$EH{'output'}{'path'} = $OPTVAL{'dir'};
-		$EH{'intermediate'}{'path'} = $OPTVAL{'dir'};
-		$EH{'internal'}{'path'} = $OPTVAL{'dir'};
-		$EH{'report'}{'path'} = $OPTVAL{'dir'};
-
-		
+        $OPTVAL{'dir'} =~ s,\\,/,g if ( $eh->get('iswin') );
+		$eh->set('output.path' , $OPTVAL{'dir'} );
+		$eh->set('intermediate.path' , $OPTVAL{'dir'} );
+		$eh->set('internal.path', $OPTVAL{'dir'} );
+		$eh->set('report.path' ,$OPTVAL{'dir'} );
     }
     
     if (defined $OPTVAL{'out'}) {
-        $OPTVAL{'out'} =~ s,\\,/,g if ( $EH{'iswin'} );
-		$EH{'out'} = $OPTVAL{'out'};
+        $OPTVAL{'out'} =~ s,\\,/,g if ( $eh->get('iswin') );
+		$eh->set( 'out', $OPTVAL{'out'} );
     } elsif ( exists( $ARGV[$#ARGV] ) )  {
 		# Output file will be written to current directory.
 		# Name will become name of last input file foo-mixed.ext
-		$EH{'out'} = $ARGV[$#ARGV] ;
-		$EH{'out'} =~ s,(\.[^.]+)$,-$EH{'output'}{'ext'}{'intermediate'}$1,;
-	    $EH{'out'} = basename( $EH{'out'} ); # Strip off pathname
+		my $ext = $eh->get( 'output.ext.intermediate' );
+		( my $a = $ARGV[$#ARGV] ) =~ s,(\.[^.]+)$,-$ext$1,;
+		$a = basename( $a );
+		$eh->set( 'out', $a );
     } else {
-		$EH{'out'} = "";
+		$eh->set( 'out', '' );
     }
 
     # Internal and intermediate data are written to:
     if (defined $OPTVAL{'int'}) {
-        $OPTVAL{'int'} =~ s,\\,/,g if ($EH{'iswin'} );
-		$EH{'dump'} = $OPTVAL{'int'};
+        $OPTVAL{'int'} =~ s,\\,/,g if ($eh->get('iswin') );
+		$eh->set('dump', $OPTVAL{'int'});
     } elsif ( exists( $ARGV[$#ARGV] ) )  {
 		# Output file will be written to current directory.
 		# Name will become name of last input file foo-mixed.ext
-		$EH{'dump'} = $ARGV[$#ARGV];
-		$EH{'dump'} =~ s,\.([^.]+)$,,; # Strip away extension
-		$EH{'dump'} .= "." . $EH{'output'}{'ext'}{'internal'};
-		$EH{'dump'} = basename( $EH{'dump'} ); # Strip off pathname
+		my $d = $ARGV[$#ARGV];
+		$d =~ s,\.([^.]+)$,,; # Strip away extension
+		$d .= "." . $eh->get( 'output.ext.internal' );
+		$eh->set( 'dump', basename( $d )); # Strip off pathname
     } else {
-		$EH{'dump'} = "mix" . "." . $EH{'output'}{'ext'}{'internal'};
+		$eh->set( 'dump', 'mix.' . $eh->get( 'output.ext.internal' ) );
     }
 
     # Specify top cell on command line or use TESTBENCH as default
     if (defined $OPTVAL{'top'} ) {
-		$EH{'top'} = $OPTVAL{'top'};
+		$eh->set( 'top', $OPTVAL{'top'} );
     } else {
-		$EH{'top'} = 'TESTBENCH'; # TODO put into %EH
+		$eh->set( 'top', 'TESTBENCH' );
     }
 
     # Specify variant to be selected in hierachy sheet(s)
     # Default or empty cell will be selected always.
     if (defined $OPTVAL{'variant'} ) {
-		$EH{'variant'} = $OPTVAL{'variant'};
+		$eh->set( 'variant', $OPTVAL{'variant'} );
     }
     
     # remove old and diff sheets when set
     if (defined $OPTVAL{'strip'}) {
-        $EH{'intermediate'}{'strip'} = $OPTVAL{'strip'};
+        $eh->( 'intermediate.strip', $OPTVAL{'strip'} );
     } 
 
-    # Write entities into file
-    # TODO Do we have to fix path for windows?
-    if (defined $OPTVAL{'outenty'} ) {
-		$EH{'outenty'} = $OPTVAL{'outenty'};
-    } elsif ( defined( $EH{'outenty'} ) ) {
-	# outenty defined by -conf or config file, do not change
-    } elsif ( exists( $ARGV[$#ARGV] ) )  {
-	# Output file will be written to current directory.
-	# Name will become name of last input file foo-e.vhd
-		$EH{'outenty'} = $ARGV[$#ARGV];
-		$EH{'outenty'} =~ s,(\.[^.]+)$,,; # Remove extension
-		$EH{'outenty'} .= $EH{'postfix'}{'POSTFILE_ENTY'} . "." . $EH{'output'}{'ext'}{'vhdl'};
-	# if ( $EH{'output'}{'path'} eq "." ) {
-		$EH{'outenty'} = basename( $EH{'outenty'} ); # Strip off pathname
-	# }
-    } else {
-		$EH{'outenty'} = "mix" . $EH{'postfix'}{'POSTFILE_ENTY'} . "." . $EH{'output'}{'ext'}{'vhdl'};
-    }
+	for my $t ( qw( enty arch conf ) ) {
+    # Write entities/architecture/configuration into file
+    	if (defined $OPTVAL{'out' . $t} ) {
+			$eh->set( 'out' . $t, $OPTVAL{'out' . $t} );
+    	} elsif ( defined( $eh->get('out' . $t) ) ) {
+			# outxxxx defined by -conf or config file, do not change
+    	} elsif ( exists( $ARGV[$#ARGV] ) )  {
+			# Output file will be written to current directory.
+			# Name will become name of last input file foo-e.vhd 
+			my $e = $ARGV[$#ARGV];
+			$e =~ s,(\.[^.]+)$,,; # Remove extension
+			$eh->set( 'out' . $t, basename( $e .
+								$eh->get( 'postfix.POSTFILE_' . uc( $t) ) .
+								'.' . $eh->get( 'output.ext.vhdl' ) ) );
+    	} else {
+			$eh->set( 'outenty', 'mix' . 
+								$eh->get( 'postfix.POSTFILE_' . uc( $t ) ) .
+								'.' . $eh->get( 'output.ext.vhdl' ) );
+    	}
+	}
+
+=head1 OLD
 
     # Write architecture into file
     if (defined $OPTVAL{'outarch'} ) {
@@ -611,38 +327,43 @@ sub mix_getopt_header(@) {
 		$EH{'outconf'} = "mix" . $EH{'postfix'}{'POSTFILE_CONF'} . "." . $EH{'output'}{'ext'}{'vhdl'};
     }
 
+=cut
+
     # Compare entities in this PATH[es]...
     #!wig20040217
     if ( defined $OPTVAL{'verifyentity'} ) {
-        $EH{'check'}{'hdlout'}{'path'} = join( ":", @{$OPTVAL{'verifyentity'}} );
+        $eh->set( 'check.hdlout.path', join( ":", @{$OPTVAL{'verifyentity'}} ));
     }
-    if ( $EH{'check'}{'hdlout'}{'path'} ) {
+    if ( $eh->get( 'check.hdlout.path' ) ) {
         # check if PATH[:PATH] is readable, get all *.vhd[l] files
-        for my $p ( split( ":", $EH{'check'}{'hdlout'}{'path'} ) ) {
+        for my $p ( split( ":", $eh->get( 'check.hdlout.path' ) ) ) {
             # If on mswin: change \ to /
-            ( $p =~ s,\\,/,g ) if ( $EH{'iswin'} );
+            ( $p =~ s,\\,/,g ) if ( $eh->get('iswin') );
             unless ( -d $p ) {
-                logwarn( "Warning: Cannot search through entity verify path $p, skipped!" );
-                $EH{'sum'}{'warnings'}++;
+            	$logger->warn( "__W_VERIFY_PATH", "\tCannot search through entity verify path $p, skipped!" );
             } else {
-                $EH{'check'}{'hdlout'}{'__path__'}{$p} = ""; # Will get a list of matching file names later on ...
+                $eh->set( 'check.hdlout.__path__.' . $p, '' );
+                # Will get a list of matching file names later on ...
             }
         }
     }
-    # mode: which objects are verified? which strategy?
-    # map to EH key
+    
+    # verify mode: which objects are verified? which strategy?
     if ( defined $OPTVAL{'verifyentitymode'} ) {
-        $EH{'check'}{'hdlout'}{'mode'} = $OPTVAL{'verifyentitymode'};
+        $eh->set( 'check.hdlout.mode', $OPTVAL{'verifyentitymode'} );
     }
 
     #
     # -combine option -> overwrite outarch/outenty/outconf ...
     #
     if ( defined $OPTVAL{'combine'} ) {
-		$EH{'output'}{'generate'}{'combine'} = $OPTVAL{'combine'};
+		$eh->set( 'output.generate.combine' ,$OPTVAL{'combine'} );
     }
-    if ( $EH{'output'}{'generate'}{'combine'} ) { # Overload outxxx if combine is active
-		$EH{'outenty'} = $EH{'outarch'} = $EH{'outconf'} = 'COMB';
+    if ( $eh->get( 'output.generate.combine' ) ) {
+    	# Overload outxxx if combine is active
+		$eh->set( 'outenty', 'COMB' );
+		$eh->set( 'outarch', 'COMB' );
+		$eh->set( 'outconf', 'COMB' );
     }
 
     #
@@ -669,26 +390,28 @@ sub mix_getopt_header(@) {
     #
     if ( exists( $OPTVAL{delta} ) ) { # -delta |-nodelta
 		if ( $OPTVAL{delta} ) {
-	    	$EH{'output'}{'generate'}{'delta'} = 1;
-	    	$EH{'report'}{'delta'} = 1;
+			$eh->set( 'output.generate.delta', 1 );
+	    	$eh->set( 'report.delta', 1 );
 		} else { # Switch off delta mode
-	    	$EH{'output'}{'generate'}{'delta'} = 0;
-	    	$EH{'report'}{'delta'} = 0;
+	    	$eh->set( 'output.generate.delta' , 0 );
+	    	$eh->set( 'report.delta', 0 );
 		}
     } else {
-		if ( $EH{'output'}{'generate'}{'delta'} ) { # Delta on by -conf or FILE.cfg
-	    	$EH{'output'}{'generate'}{'delta'} = 1;
+		if ( $eh->get( 'output.generate.delta' ) ) { # Delta on by -conf or FILE.cfg
+	    	$eh->set( 'output.generate.delta', 1 );
 	    	$OPTVAL{delta} = 1;
 		} else {
-	    	$EH{'output'}{'generate'}{'delta'} = 0;
+	    	$eh->set( 'output.generate.delta', 0 );
 		}
     }
-    if ( $EH{'output'}{'generate'}{'delta'} or
-    	 $EH{'check'}{'hdlout'}{'path'} or
-    	 $EH{'report'}{'delta'} ) {
+    if ( $eh->get( 'output.generate.delta' ) or
+    	 $eh->get( 'check.hdlout.path' ) or
+    	 $eh->get( 'report.delta' ) ) {
 	# Eval use Text::Diff
 	    if ( eval 'use Text::Diff;' ) {
-			logwarn( "FATAL: Cannot load Text::Diff module for -conf *delta* mode: $@" );
+			$logger->fatal( "__F_USE_TEXT_DIFF",
+					"\tCannot load Text::Diff module for -conf *delta* mode: $@" );
+			# $eh->inc( 'sum.errors' );
 			exit(1);
 	    }
     }
@@ -700,18 +423,18 @@ sub mix_getopt_header(@) {
     # like -conf output.generate.bak=1 or enabled in mix.cfg file
     #
     if ( exists( $OPTVAL{bak} ) ) { # -bak |-nobak
-	if ( $OPTVAL{bak} ) {
-	    $EH{'output'}{'generate'}{'bak'} = 1;
-	} else { # Switch off backup mode
-	    $EH{'output'}{'generate'}{'bak'} = 0;
-	}
+		if ( $OPTVAL{bak} ) {
+	    	$eh->set( 'output.generate.bak', 1 );
+		} else { # Switch off backup mode
+	    	$eh->set( 'output.generate.bak', 0 );
+		}
     } else {
-	if ( $EH{'output'}{'generate'}{'bak'} ) { # Backup on by -conf or FILE.cfg
-	    $EH{'output'}{'generate'}{'bak'} = 1;
-	    $OPTVAL{bak} = 1;
-	} else {
-	    $EH{'output'}{'generate'}{'bak'} = 0;
-	}
+		if ( $eh->get( 'output.generate.bak' ) ) { # Backup on by -conf or FILE.cfg
+	    	$eh->set( 'output.generate.bak', 1 );
+	    	$OPTVAL{bak} = 1;
+		} else {
+	    	$eh->set( 'output.generate.bak', 0 );
+		}
     }
 
     # Print banner
@@ -720,10 +443,10 @@ sub mix_getopt_header(@) {
             mix_banner();
         }
         mix_help();
-         if (! $no_exit) {
+        if ( not $no_exit ) {
              exit(0);
          }
-    } elsif (! defined($OPTVAL{quiet}) and ! defined($OPTVAL{nobanner})) {
+    } elsif ( not defined($OPTVAL{quiet}) and not defined($OPTVAL{nobanner})) {
         mix_banner();
     }
 
@@ -731,13 +454,13 @@ sub mix_getopt_header(@) {
     # Create a starting point ...
     #
     if ( $OPTVAL{init} ) {
-		mix_utils_init_file("init");
+		mix_utils_init_file('init');
     }
     #
     # Import some HDL files
     #
     if ( $OPTVAL{import} ) {
-		mix_utils_init_file("import");
+		mix_utils_init_file('import');
     }
 
 }
@@ -835,7 +558,7 @@ sub mix_usage(@)
         }
     }
     close PIPE;
-    $EH{'PRINTTIMING'} = 0;
+    $eh->set('PRINTTIMING') = 0;
     1;
 }
 
@@ -862,8 +585,8 @@ L<mix_getopt_header(@opts)|"mix_getopt_header(@opts)">.
 
 sub mix_banner(;$)
 {
-    if ($_[0] || !defined $EH{'PRINTTIMING'} ) {
-        $EH{'PRINTTIMING'} = 1;
+    if ($_[0] || not defined ( $eh->get('PRINTTIMING') ) ) {
+        $eh->set('PRINTTIMING', 1 );
     }
 
     my $NAME = basename($0);
@@ -903,28 +626,28 @@ sub mix_banner(;$)
     select(STDOUT);
     $| = 1;                     # unbuffer STDOUT
 
-    print <<"EOF";
-#######################################################################
-##### $NAME ($VERSION)
-#####
-##### $FLOW $FLOW_VERSION $MOD_VERSION
-##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
-#######################################################################
-EOF
+#     print <<"EOF";
+# #######################################################################
+# ##### $NAME ($VERSION)
+# #####
+# ##### $FLOW $FLOW_VERSION $MOD_VERSION
+# ##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+# #######################################################################
+# EOF
 
-	# Store the header in the log file, too:
-	logsay(
+	# Store the header the log file, too:
+	$logger->info(
 "
 #######################################################################
 ##### $NAME ($VERSION)
 #####
 ##### $FLOW $FLOW_VERSION $MOD_VERSION
-##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+##### Copyright(c) Micronas GmbH 2002/2006 ALL RIGHTS RESERVED
 #######################################################################" );
 
-    if ($EH{'PRINTTIMING}'} ) {
-        print "NOTE ($NAME): Execution started " . localtime() . "\n\n";
-        logsay( "NOTE ($NAME): Execution started " . localtime() );
+    if ( $eh->get('PRINTTIMING' ) ) {
+        # print "NOTE ($NAME): Execution started " . localtime() . "\n\n";
+        $logger->info( "__I_TIME_START", "\t($NAME): Execution started " . localtime() );
     }
     1;
 }
@@ -956,7 +679,7 @@ sub mix_help()
     }	
     my $help = `$cmd`;
 
-    logtrc($EH{'ERROR'}, "'$cmd' failed.") if $?;
+    $logger->error("__E_CMD_FAILED", "\t'$cmd' failed.") if $?;
 
     # Save one head and foot line
     my $headline = '';
@@ -1009,7 +732,16 @@ sub mix_help()
     1;
 }
 
-# Perform the action
+# Start the show here ...
+
+#
+# Returns the eh handle ...
+#
+sub mix_get_eh () {
+	
+	return $eh;
+
+} # End of mix_get_eh
 
 ##############################################################################
 # Initialize environment, variables, configurations ...
@@ -1029,991 +761,54 @@ No input arguments (today).
 
 sub mix_init () {
 
-%EH = (
-    'template' => {
-		'vhdl' =>{
-	    	# Actual values are set in MixWriter
-	    	'conf' => { 'head' => "## VHDL Configuration Template String t.b.d.", },
-	    	'arch' => { 'head' => "## VHDL Architecture Template String t.b.d.", },
-	    	'enty' => { 'head' => "## VHDL Entity Template String t.b.d.", },
-		},
-		'verilog' =>{
-	    	'conf' => { 'head' => "## Verilog Configuration Template String t.b.d.", },
-	    	'arch' => { 'head' => "## Verilog Architecture Template String t.b.d.", },
-	    	'enty' => { 'head' => "## Verilog Entity Template String t.b.d.", },
-	    	'wrap' => "## Verilog Wrapper Template String t.b.d.",
-	    	'file' => "##Verilog File Template String t.b.d.",
-		},
-    },
-    'output' => {
-		'path' => ".",		# Path to store backend data. Other values are a path, CWD or INPUT
-		'mkdir'	=> 'auto',	# Should we create directories as needed? Available values
-							#   are: auto|all|yes (do all), no (do not)
-							# output, intermediate, report, internal (comma seperated, only create these)
-		'filter' => {
-			'file' => '',	# Do not print if the instance names matches one of the list (comma seperated)
-							# A prepended (arch|enty|conf): selects only that file from being excluded
-		},
-		'order' => 'input',		# Field order := as in input or predefined
-		'format' => 'ext',		# Output format derived from filename extension ???
-		'filename' => 'useminus', # Convert _ to - in filenames
-		'generate' => {
-	    	'arch' => 'noleaf',
-	      	'enty' => 'noleaf', # no leaf cells: [no]leaf,alt,
-	      	'conf' => 'noleaf', # one of: [leaf|noleaf],verilog
-	      			  # create (no) leaf cells, default is "noleaf"
-				      #   The verilog keyword will add configuration
-				      #   records for verilog subblocks (who wants that?)
-	      	'use' => 'enty',     # apply ::use libraries to entity files, if not specified otherwise
-					# values: <enty|conf|arch|all>
-	      	'inout' => 'mode,noxfix',	# Generate IO ports for %TOP% cell (or daughter of testbench)
-					# controlled by ::mode I|O
-					# noxfix: do not attach pre/postfix to signal names at %TOP%
-            'xinout'  => '',       # list of comma seperated signals to exclude from automatic wiring to %TOP%
-            '_re_xinout' => '',   # keeps converted content of xinout (internal use, only)
-	      	# 'port' => 'markgenerated',	# attach a _gIO to generated ports ...
-	      	'delta' => 0,	    	# allows to use mix.cfg to preset delta mode -> 0 is off, 1 is on
-	      	'bak' => 0,		# Create backup of output HDL files
-	      	'combine' => 0,	# Combine enty,arch and conf into one file, -combine switch
-	      	'portdescr' => '%::descr%',	# Definitions for port map descriptions:
-		      #   %::descr% (contents of this signal's descr. field, %::ininst% (list of load instances),
-		      #   %::outinst% (list of driving instances), %::comment%
-			  #   %::connnr  (signal number according to order generated/defined by sheets),
-	      	'portdescrlength' => 100, # Limit length of comment to 100 characters!
-	      	'portdescrlines' => 10,   # Do not print > 10 port comment lines
-		  	'portmapsort' => 'alpha', # How to sort port map; allowed values are:
-		  			# alpha := sorted by port name (default)
-		  			# input (ordered as listed in input files)
-		  			# inout | outin: seperate in/out/inout seperately
-		  			#    can be combined with the "input" key
-		  			# ::COL : order as in column ::COL (alphanumeric!)
-					# debug	:= print out sort criteria in comments
-		  			
-		  	# List of "logic" entities
-			'logic' => 'wire(1:1),and(1:N),or(1:N),nand(1:N),xor(1:N),nor(1:N),not(1:1)',
-			'_logicre_' => '', 		# internal usage!
-			'_logiciocheck_' => {}, # internal usage!
-			'logicmap' => 'uc',
-				# uc|upper[case] -> create uppercase style logic (default)
-				# lc|lower[case] -> create lowercase style logic
-				# review		 -> add "AND 1" or "OR 0" 
-
-	      	'fold' => 'signal',	# If set to [signal|hier], tries to collect ::comments, ::descr and ::gen
-					# like TEXT_FOO_BAR (X10), if TEXT_FOO_BAR appears several times
-					# TODO Implement for hier
-          	'verilog' => '', # switches for Verilog generation, off by default, but see %UAMN% tag
-                             #  useconfname := use VHDL config name as verilog module name; works for e.g. NcSim
-	      	'workaround' => {
-            	'verilog' => 'dummyopen', # dummyopen := create a dummy signal for open port splices 
-                    ,
-                'magma' => 'useasmodulename_define', # If the %UAMN% tag is used, use defines!
-                '_magma_def_' =>
-'
-`ifdef MAGMA
-    `define %::entity%_inst_name %::entity%
-`else
-    `define %::entity%_inst_name %::config%
-`endif
-',   # This gets used by if the magma workaround is set ...
-                '_magma_mod_'   => '`%::entity%_inst_name', # module name
-                '_magma_uamn_' => '',   # Internal use, storage for generated defines
-                'typecast'  => 'intsig', # 'portmap' would be more native, but does not work for Synopsys
-                'std_log_typecast' => 'ignore', # will ignore typecast's for std_ulogic vs. std_logic ...
-	   		},
-    	},
-	'ext' => {
-		'vhdl' => 'vhd',
-		'verilog' => 'v' ,
-		'intermediate' => 'mixed', # not a real extension!
-		'internal' => 'pld',
-		'delta' => '.diff',	  # delta mode
-		'verify' => '.ediff',   # verify against template ...
-	},
-	'comment' => { # Comment char(s) for output
-		'vhdl' => '--',
-		'verilog' => '//',
-		'intermediate' => '#',
-		'internal' => '#',
-		'delta' => '#',
-		'default' => '#',
-		# TODO : Allow /* ... */ comments for Verilog to be accepted, too
-	},
-	'language' => { # Special switches to control details of the HDL generated
-		'vhdl'	=>	'', # Unused 20051007
-		'verilog'	=>	'', # Setting to 2001 will change generation of port and parameters
-							# keys: [no]owire, 2001, [no|old]style, [no|old|2001]params,
-	},
-	# 'warnings' => 'load,drivers',	# Warn about missing loads/drivers
-	'warnings' => '',
-	'delta' => 'remove,ispace,comment,ihead', # Controlling delta output mode:
-			    # (i|ignore)space:   (not) consider whitespace
-			    # sort:    sort lines
-			    # comment: do not remove all comments before compare
-			    # i(gnore)head: ignore file header
-			    # remove:  remove empyt diff files
-                # ignorecase|ic: -> ignore case if set
-                # isc|ignoresemicolon: -> ignore trailing semicolon
-                # mapstd[logic]: -> ignore std_logic s. std_ulogic diffs!
-    },
-    'input' => {
-		'ext' =>	{
-	   		'excel' =>	"xls",
-	   		'soffice' => "sxc",
-	   		'csv'   =>	"csv",
-		},
-    },
-    'internal' => {
-		'path' => ".",
-		'order' => 'input',		# Field order := as in input or predefined
-		'format' => 'perl', 	# Internal format := perl|xls|csv|xml ... (not used!)
-    },
-    'intermediate' => {
-		'path'	=> ".",
-		'order'	=> 'input',
-		'keep'	=> '3',	# Number of old sheets to keep
-		'format'	=> 'prev', # One of: prev(ious), auto or n(o|ew)
-			# If set, previous uses old sheet format, auto applies auto-format and the others do nothing.
-		'strip'	=> '0',   # remove old and diff sheets
-		'ext'	=> '', # default intermediate-output extension
-		'intra'	=> '',	# if set create seperate conn sheets for instances:
-			#	INTRA		-> CONN and INTRA
-			#	TOP			-> CONN_<TOP> and CONN
-			#	TOP,INTRA	-> CONN_<TOP> and CONN_INTRA
-			#	INST[ANCE]	-> create one conn sheet for each instance, named: CONN_<instance>
-		'instpre'	=>	'CONN_',	# prepend to CONN sheet name if 'intra' = 'inst'			
-		'topmap' => 'ALL',	# Values: ALL or list of signals (comma seperated)
-			# map (I,O,IO) signal modes of top to %TM_(I|O|IO)%
-    },
-    'import' => { # import mode control
-    	'generate' => 'stripio', # remove trailing _i,_o from generated signal names
-    },
-    'check' => { # Checks enable/disable: Usually the keywords to use are
-		    # na|disable (or empty) -> do not check
-			# check           -> check and print warnings
-		    # force           -> check and force compliance
-		    # Available (built-in) rules/check targets are:
-		    #   lc (lower case everything), postfix, prefix,
-			#   lc, lcfirst (make first lc), lcfirstuc (uc all but first lc)
-			#   uc, ucfirst (make first uc), ucfirstlc (lc all but first uc)
-		    # t.b.d.: uniq (make sure name apears only once)!
-			# set check.namex.TYPE for selected excludes
-		    #
-		'name' => {
-	    	# TODO 'all' => '',	# Sets all others .... ->
-	    	'pad'  => 'check,lc',
-	    	'conn' => 'check,lc', # check signal names ...
-	    	'enty' => 'check,lc',
-	    	'inst' => 'check,lc',   # check instance names ...
-	    	'port' => 'check,lc',
-	    	'conf' => 'check,lc',
-		},
-		'namex' => { # Exclude list for check.name, use only to selectivly disable checks
-			'all'  => '',
-	    	'pad'  => '',
-	    	'conn' => '',
-	    	'enty' => '',
-	    	'inst' => '',
-	    	'port' => '',
-	    	'conf' => '',
-		},
-		'keywords' => { #These keywords will trigger warnings and get replaced
-	    	'vhdl'	=> '(open|instance|entity|signal)',        # TODO Give me more keywords
-	    	'verilog' 	=> '(register|net|wire|in|out|inout)', # TODO give me more
-		},
-		'defs' => '',   # 'inst,conn',    # make sure elements are only defined once:
-		    		    # posible values are: inst,conn
-		'signal' => 'load,driver,check,top_open,nanbounds',
-						# reads: checks if all signals have appr. loads
-						# and drivers.
-						#	nanbounds  := print warning of bounds are not numbers
-						# If "top_open" is in this list, will wire unused
-						# signals to open.
-						# TODO: auto_low, auto_high: automatically ground/high undriven signals
-					
-		'inst' => 'nomulti',	# check and mark multiple instantiations
-		# Verifiy modules against provided modules (mostly for entity checks)
-    	'hdlout' => { # act. should be named "hdlout"
-            'mode' => "entity,leaf,generated,ignorecase", # check only LEAF cells -> LEAF
-                        #  ignore case of filename -> ignorecase
-                        # which objects: entity|module|arch[itecture]|conf[iguration]|all
-                        #		module -> applies to verilog modules
-                        # strategy: generated := compare generated object, only
-                        #               inpath := report if there are extra modules found inpath
-                        #               leaf := only for leaf cells
-                        #               nonleaf := only non-leaf cells
-                        #               dcleaf := dont care if leaf (all modules)
-                        #               ignorecase|ic := ignore file name capitalization
-            'path' => "", # if set a PATH[:PATH], will check generated entities against entities found there
-            # the path will be available in ...'__path__'{PATH}
-			'delta' => '', # define how the diffs are made, see output.delta for allowed keys
-							# if it's empty, take output.delta contents
-							# Additionl keys:
-							#	mod[ule]head : only parse verilog headers, ignore body
-            'filter' => { # TODO allow to remove less important lines from the diff of template vs. created
-                'entity' => '',
-                'arch' => '',
-                'conf' => '',
-            },
-            'extmask' => { # TODO mask HDL files seen by the verify parser ... t.b.d.
-                'entity' => '',
-                'arch' => '',
-                'conf' => '',
-            },
-        }, 
-    },
-    # Autmatically try conversion to TYPE from TYPE by using function ...
-    'typecast' => { # add typecast functions ...
-	'std_ulogic_vector' => {
-	    'std_logic_vector' => "std_ulogic_vector( %signal% );" ,
-	},
-	'std_logic_vector' => {
-	    'std_ulogic_vector' => "std_logic_vector( %signal% );" ,
-	},
-	'std_ulogic' => {
-	    'std_logic' => 'std_ulogic( %signal% );',
-	},
-	'std_logic' => {
-	    'std_ulogic' => 'std_logic( %signal% );',
-	},
-    },
-    'postfix' => {
-	    qw(
-		    POSTFIX_PORT_OUT	_o
-		    POSTFIX_PORT_IN		_i
-		    POSTFIX_PORT_IO		_io
-		    PREFIX_PORT_GEN		p_mix_
-		    POSTFIX_PORT_GEN	_g%IO%
-		    PREFIX_PAD_GEN		pad_
-		    POSTFIX_PAD_GEN		%EMPTY%
-		    PREFIX_IOC_GEN		ioc_
-		    POSTFIX_IOC_GEN		%EMPTY%
-		    PREFIX_SIG_INT		s_int_
-            PREFIX_TC_INT       s_mix_tc_
-		    POSTFIX_SIGNAL		_s
-		    PREFIX_INSTANCE		i_
-		    POSTFIX_INSTANCE	%EMPTY%
-		    POSTFIX_ARCH		%EMPTY%
-		    POSTFILE_ARCH		-a
-		    POSTFIX_ENTY		%EMPTY%
-		    POSTFILE_ENTY		-e
-		    POSTFIX_CONF		%EMPTY%
-		    POSTFILE_CONF		-c
-		    PREFIX_CONST		mix_const_
-		    PREFIX_GENERIC		mix_generic_
-		    POSTFIX_GENERIC		_g
-		    PREFIX_PARAMETER	mix_parameter_
-		    PREFIX_KEYWORD		mix_key_
-		    POSTFIX_CONSTANT	_c
-		    POSTFIX_PARAMETER	_p
-		    PREFIX_IIC_GEN		iic_if_
-		    POSTFIX_IIC_GEN		_i
-	        POSTFIX_IIC_OUT     _iic_o
-	        POSTFIX_IIC_IN      _iic_i
-		    POSTFIX_FIELD_OUT   _par_o
-            POSTFIX_FIELD_IN    _par_i
-		)
-    },
-    'pad' => {
-		'name' => '%PREFIX_PAD_GEN%%::pad%',  # generated pad with prefix and ::pad
-		    # '%PREFIX_PAD_GEN%%::name%',  # generated pad with prefix and ::name
-		    # '%PREFIX_PAD_GEN%_%::pad%'
-			qw(
-	    	PAD_DEFAULT_DO	0
-	    	PAD_ACTIVE_EN	 	1
-	    	PAD_ACTIVE_PU	 	1
-	    	PAD_ACTIVE_PD	 	1
-			)
-    },
-    'port' => {
-		'generate' => {   # Options related to generated port names. Please see also inout value
-	    	'name' => 'postfix', # Take the postfix definitions: p_mix_SIGNAL_g[io], see descr. there
-				  # signal := take the signal name, not post/prefix!
-	    	'width' => 'auto',    # auto := find out number of required connections and generate that
-				  # full := always generate a port for the full signal width
-		},
-    },
-    'iocell' => {
-        'embedded' => '',       # If set to 'pad', allows to create iocells with embedded pads aka.
-                                # MIX will not try to create a pad.
-		'name' => '%::iocell%_%::pad%',  # generated pad name with prefix and ::pad
-		    # '%PREFIX_IOC_GEN%%::name%',  # generated pad name with prefix and ::name
-		    # '%PREFIX_IOC_GEN%_%::pad%'
-		'auto' => 'bus', 	# Generate busses if required autimatically ...
-		'bus' => '_vector', # auto -> extend signals by _vector if required ....
-		'defaultdir'	=> 'in', 	# Default signal direction to iocell (seen towards chip core!!)
-		'in'	=> 'do,en,pu,pd,xout',	# List of inwards signals (towards chip core!!)
-		'inout' => '__NOINOUT__',	# List of inout ports ...
-		'out'	=> 'di,xin',		# List of outwards ports (towards chip core!!)
-					# di is a chip input, driven by the iocell towards the core.
-		'select' => 'onehot,auto', # Define select lines: onehot vs. bus vs. given
-					# 
-					# bus -> use signal in ::muxopt:0 column (first)
-					# given  -> use signals as defined by the %SEL% lines,
-					#     but calculate width 2^N ... -> 3 signals give a mux width of
-					#  8 ... (alternativ take width argument from signal name
-					# minimum -> wire bits only if used (minimal bus) t.b.d.
-					# auto := choose width accordingly to wired io busses
-					# const := use %SEL% defined width
-
-    },
-	#
-    # parameters for register-view generation (e.g. for HDL register-shell)
-    #
-	'reg_shell' => {
-	    'type'             => 'HDL-vgch-rs', # type of register-view to be generated (see Reg.pm)
-		'addrwidth' => 14,             # Default address bus width (byte-addresses)
-		'datawidth' => 32,             # Default data bus width in bits
-		'multi_clock_domains' => 1,    # If 1, generate separate register blocks for all clock domains
-		'infer_clock_gating'  => 1,    # If 1, insert extra logic for power-saving
-        'infer_sva'           => 1,    # If 1, insert SystemVerilog assertions into HDL-code
-        'read_pipeline_lvl'   => 0,    # Parameter that controls the read-pipelining
-                                       # If 0, no read-pipelining will be inserted
-		'read_multicycle'     => 0,    # can be one of [0,1,2,..] to insert delays for read-acknowledge
-		'bus_clock' => "clk",          # Default bus clock name
-		'bus_reset' => "rst_n",        # Default bus reset name
-        'use_reg_name_as_prefix' => 0, # If 1, prefix field names with register names
-        'exclude_regs' => "",          # comma seperated list of register names to exclude from code generation
-		'exclude_fields' => "",        # comma seperated list of field names to exclude from code generation	
-		'stl' => {
-				  'initial_idle'  => 100,
-				  'exclude_regs'  => "", # comma seperated list of registers to exclude from STL generation
-				  'use_base_addr' => 0
-				 },
-					# legacy parameters, not needed anymore!
-		'mode'             => 'lcport', # lcport -> map created port names to lowercase	
-		'regwidth'	=> 32,  # Default register width
-		'top_name'  => '%PREFIX_IIC_GEN%%::interface%%POSTFIX_IIC_GEN%', # Name reg_shell top-level instance 
-	    '%IIC_SER_REG%'    => 'iic_ser_reg_', # prefix for serial subregister entity
-	    '%IIC_PAR_REG%'    => 'iic_par_reg_', # prefix for parallel subregister entity
-	    '%IIC_SYNC%'       => 'sync_iic'      # prefix for sync block
-    },
-    #
-    # Possibly read configuration details from the CONF sheet, see -conf option
-    # 'conf' is a pseudo field, mainly used for dumping the actual configuration
-    # to allow debugging
-    'conf' => {
-		'xls' => 'CONF',
-		'req' => 'optional',
-		'parsed' => 0,
-		'field' => {},
-    },
-
-	#
-	# Default xls sheet definitions
-	#!wig20051011
-	# 'default' allows to read in nearly arbitrary data and keep track of it
-	# See below for more sophisticated fields.
-	# The least common denominator is, that a header line ::foo ::bar is required
-	#    and that the ::ign column should be the first
-	#
-    'default' => {
-		'xls' => '.*',
-		'req' => 'optional',
-		'key' => '::ign', 		# Primary key to arbitrary data. Has to be set!!!
-		'comments' => 'post',	# Keep comments -> pre|predecessor post|successor
-		'parsed' => 0,
-		'field' => {
-	    	#Name   	=>	  	   		Inherits
-	    	#					    		Multiple
-	    	#						    		Required
-	    	#							  		Defaultvalue
-	    	#								    			PrintOrder
-	    	#                           0   1   2	3       4
-	    	'::ign' 		=> [ qw(	0	0	1	%NULL%	1 ) ],
-	    	'::comment'	    => [ qw(	1	0	2	%EMPTY%	2 )],
-	    	'::default'	    => [ qw(	1	1	0	%NULL%	0 )],
-	    	'::debug'	    => [ qw(	1	0	0	%NULL%	0 )],
-        	'::default'		=> [ qw(	1	1	0	%EMPTY%	0 )],	    
-	    	'::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
-	    	'nr'			=> 3,  # Number of next field to print
-	    	'_mult_'		=> {},  # Internal counter for multiple fields
-   	    	'_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
-	    						# 1 / RL -> left to right decreasing
-	    						# xF -> map the first to ::head:0 (defaults: ::head)
-		},
-    },
-    	#
-	# join -> for VGCH join
-	#!wig20051011
-	#
-	# ::ign	::client ::definition ::group ::group_id 
-	# ::grp_awidth ::group_addr	::subwidth
-	# ::sub	::cpu1_addr	::cpu2_addr	::xls_def
-	
-    'join' => {
-		'xls' => '.*',
-		'req' => 'optional',
-		'key' => '::ign', 		# Primary key to arbitrary data. Has to be set!!!
-		'comments' => 'post',	# Keep comments -> pre|predecessor post|successor
-		'parsed' => 0,
-		'field' => {
-	    	#Name   	=>	  	   		Inherits
-	    	#					    		Multiple
-	    	#						    		Required
-	    	#							  		Defaultvalue
-	    	#								    			PrintOrder
-	    	#                           0   1   2	3       4
-	    	'::ign' 		=> [ qw(	0	0	1	%NULL%	1 ) ],
-	    	'::client'		=> [ qw(	0	0	1	%EMPTY%	2 ) ],
-	    	'::definition'		=> [ qw(	0	0	1	%EMPTY%	3 ) ],
-	    	'::group'		=> [ qw(	0	0	1	%EMPTY%	4 ) ],
-	    	'::group_id'		=> [ qw(	0	0	1	%EMPTY%	5 ) ],
-	    	'::grp_awidth'		=> [ qw(	0	0	1	%EMPTY%	6 ) ],
-	    	'::group_addr'		=> [ qw(	0	0	1	%EMPTY%	7 ) ],
-	    	'::subwidth'		=> [ qw(	0	0	1	%EMPTY%	8 ) ],
-	    	'::sub'		=> [ qw(	0	0	1	%EMPTY%	9 ) ],
-	    	'::cpu1_addr'		=> [ qw(	0	0	1	%EMPTY%	10 ) ],	    	
-	    	'::cpu2_addr'		=> [ qw(	0	0	1	%EMPTY%	11 ) ],
-	    	'::comment'	    => [ qw(	1	0	2	%EMPTY%	12 )],
-	    	'::default'	    => [ qw(	1	1	0	%NULL%	0 )],
-	    	'::debug'	    => [ qw(	1	0	0	%NULL%	0 )],
-        	'::default'		=> [ qw(	1	1	0	%EMPTY%	0 )],	    
-	    	'::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
-	    	'nr'			=> 13,  # Number of next field to print
-	    	'_mult_'		=> {},  # Internal counter for multiple fields
-   	    	'_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
-	    						# 1 / RL -> left to right decreasing
-	    						# xF -> map the first to ::head:0 (defaults: ::head)
-		},
-    },
-    #
-    # Definitions regarding the CONN sheets:
-    #
-    'conn' => {
-		'xls' => 'CONN',
-		'comments' => 'post',	# Keep comments -> pre|predecessor post|successor
-		'req' => 'mandatory',
-		'parsed' => 0,
-		'key' => '::name', # Primary key to %conndb
-		'field' => {
-	    #Name   	=>			Inherits
-	    #							Multiple
-	    #								Required: 0 = no, 1=yes, 2= init to ""
-	    #									Defaultvalue
-	    #													PrintOrder
-	    #                       0   1   2	3           	4
-	    '::ign' 	=> 	[ qw(	0	0	1	%EMPTY% 		1 ) ],
-	    '::gen'		=>	[ qw(	0	0	1	%EMPTY% 		2 ) ],
-	    '::bundle'	=>	[ qw(	1	0	1	WARNING_NOT_SET	3 ) ],
-	    '::class'	=>	[ qw(	1	0	1	WARNING_NOT_SET	4 ) ],
-	    '::clock'	=> 	[ qw(	1	0	1	WARNING_NOT_SET	5 ) ],
-	    '::type'	=> 	[ qw(	1	0	1	%SIGNAL%		6 ) ],
-	    '::high'	=> 	[ qw(	1	0	0	%EMPTY% 		7 ) ],
-	    '::low'		=> 	[ qw(	1	0	0	%EMPTY% 		8 )],
-	    '::mode'	=> 	[ qw(	1	0	1	%DEFAULT_MODE%	9 )],
-	    '::name'	=> 	[ qw(	0	0	1	ERROR_NO_NAME	10 )],
-	    '::shortname'	=> [ qw(	0	0	0	%EMPTY% 	11 )],
-	    '::out'		=> 	[ qw(	1	0	0	%SPACE% 		12 )],
-	    '::in'		=> 	[ qw(	1	0	0	%SPACE% 		13 )],
-	    '::descr'	=> 	[ qw(	1	0	0	%EMPTY% 		14 )],
-	    '::comment'	=>	[ qw(	1	1	2	%EMPTY% 		15 )],
-	    '::default'	=>	[ qw(	1	1	0	%EMPTY% 		0 )],
-	    '::debug'	=>	[ qw(	1	0	0	%NULL%	        0 )],
-	    '::skip'	=>	[ qw(	0	1	0	%NULL% 	        0 )],
-	    'nr'		=>	16, # Number of next field to print
-	    '_mult_'	=> {},  # Internal counter for multiple fields
-	    '_multorder_' => 0, # Sort order for multiple fields -> left to right increases
-	    					# 1 / RL -> left to right decreasing
-	    					# xF -> map the first to ::head:0 (defaults: ::head)	    
-		},
-    },
-
-    #
-    #	 hierachy sheet basic definition
-    #
-    'hier' => {
-        'xls' => 'HIER', 
-		'comments' => '',	# Keep comments -> pre|predecessor post|successor
-		'req' => 'mandatory',
-		'parsed' => 0,
-		'key' => '::inst', # Primary key to %hierdb
-		'field' => {
-	    #Name   	=>				Inherits
-	    #								Multiple
-	    #									Required
-	    #										Defaultvalue
-	    #													PrintOrder
-	    #                           0   1   2	3			 4
-	    '::ign' 		=>	[ qw(	0	0	1	%EMPTY% 	 1 )],
-	    '::gen'			=>	[ qw(	0	0	1	%EMPTY% 	 2 )],
-	    '::variants'	=>	[ qw(	1	0	0	Default	     3 )],
-	    '::parent'	    =>	[ qw(	1	0	1	W_NO_PARENT	 4 )],
-	    '::inst'		=>	[ qw(	0	0	1	W_NO_INST	 5 )],
-	    '::lang'		=>	[ qw(	1	0	0	%LANGUAGE%	 7 )],
-	    '::entity'		=>	[ qw(	1	0	1	W_NO_ENTITY	 8 )],
-	    '::arch'		=>	[ qw(	1	0	0	rtl			 9 )],
-	    '::config'	    =>	[ qw(	1	0	1	%DEFAULT_CONFIG% 11 )],
-	    '::use'			=>	[ qw(	1	0	0	%EMPTY%		10 )],
-	    '::udc'			=>	[ qw(	1	0	0	%EMPTY%		-1 )],
-	    '::comment'	    =>	[ qw(	1	0	2	%EMPTY%	    12 )],
-	    '::descr'	    =>	[ qw(	1	0	0	%EMPTY%	    13 )],
-	    '::shortname'	=>	[ qw(	0	0	0	%EMPTY%	     6 )],
-	    '::default'	    =>	[ qw(	1	1	0	%EMPTY%	     0 )],
-	    '::hierachy'	=>	[ qw(	1	0	0	%EMPTY%	     0 )],
-	    '::debug'	    =>	[ qw(	1	0	0	%NULL%	     0 )],
-	    '::skip'		=>	[ qw(	0	1	0	%NULL% 	     0 )],
-	    'nr'			=> 14,  # Number of next field to print
-	    '_mult_'		=> {},  # Internal counter for multiple fields
-	    '_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
-	    					# 1 / RL -> left to right decreasing
-	    					# xF -> map the first to ::head:0 (defaults: ::head)	    
-
-	    					# Regarding Print order: -1 -> print at end if defined in input!
-							#                         0 -> do not print
-							#                         all newly defined fields will be added at end
-		},	    
-	},
-    'variant' => 'Default', # Select default as default variant :-)
-
-    #
-    # IO sheet basic definitions
-    # PAD is he primary key (but pad names might be added on demand)
-    #
-    #
-    'io' => {
-		'xls' => 'IO',
-		'comments' => '',	# Keep comments -> pre|predecessor post|successor
-		'req' => 'optional',
-		'parsed' => 0,
-		'cols' => 0,
-		'field' => {
-	    	#Name   	=>		    	Inherits
-	    	#					    		Multiple
-	    	#						    		Required
-	    	#							   			Defaultvalue
-	    	#								    					PrintOrder
-	    	#                           0   1   2	3				4
-	    	'::ign' 		=>	[ qw(	0	0	1	%EMPTY% 		1 )],
-	    	'::class'		=>	[ qw(	1	0	1	WARNING_NOT_SET	2 )],
-	    	'::ispin'		=>	[ qw(	0	0	1	%EMPTY%			3 )],
-	    	'::pin'			=>	[ qw(	0	0	1	WARNING_PIN_NR	4 )],
-	    	'::pad'			=>	[ qw(	0	0	1	WARNING_PAD_NR	5 )],
-	    	'::type'		=>	[ qw(	1	0	1	DEFAULT_PIN		6 )],
-	    	'::iocell'		=>	[ qw(	1	0	1	DEFAULT_IO		7 )],
-	    	'::port'		=>	[ qw(	1	0	1	%EMPTY%			8 )],
-	    	'::name'		=>	[ qw(	0	0	1	PAD_NAME		9 )],
-	    	'::muxopt'		=>	[ qw(	1	1	1	%EMPTY%	        10 )],
-	    	'::comment'		=>	[ qw(	1	0	2	%EMPTY%	        11 )],
-        	'::default'		=>	[ qw(	1	1	0	%EMPTY%			0 )],	    
-	    	'::debug'		=>	[ qw(	1	0	0	%NULL%	        0 )],
-	    	'::skip'		=>	[ qw(	0	1	0	%NULL% 	        0 )],
-	    	'nr'			=> 12,  # Number of next field to print
-	    	'_mult_'		=> {},  # Internal counter for multiple fields
-	    	'_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
-	    					# 1 / RL -> left to right decreasing
-	    					# xF -> map the first to ::head:0 (defaults: ::head)	    
-		},
-	},
-    #
-    # I2C sheet basic definitions
-    #
-    'i2c' => 
-	   {
-		'xls' => 'I2C',
-		'comments' => '',	# Keep comments -> pre|predecessor post|successor
-		'regmas_type' => 'VGCA', # format of register-master, currently either VGCA or FRCH
-		'req' => 'optional',
-		'parsed' => 0,
-		'cols' => 0,
-		'field' => {
-	    	#Name   	=>	  	        Inherits
-	    	#					            Multiple
-	    	#						            Required
-	    	#							            Defaultvalue
-	    	#								                    PrintOrder
-	    	#                           0   1   2	3           4
-	    	'::ign' 		=> [ qw(	0	0	1	%EMPTY%     1  )],
-	    	'::variants'	=> [ qw(	1	0	0	Default	    2  )],
-	    	'::inst'        => [ qw(    0   0   1   W_NO_INST   3  )],
-	    	'::width'		=> [ qw(	0	0	0	16          4  )],
-	    	'::dev'         => [ qw(    0   0   1   %EMPTY%     5  )],
-	    	'::sub'         => [ qw(    0   0   1   %EMPTY%     6  )],
-	    	'::interface'   => [ qw(    0   0   1   %EMPTY%     7  )],
-	    	'::block'       => [ qw(    0   0   1   %EMPTY%     8  )],
-	    	'::dir'         => [ qw(    0   0   1   RW          9  )],
-	    	'::spec'        => [ qw(    0   0   0   %EMPTY%     10 )],
-	    	'::clock'       => [ qw(    0   0   1   %OPEN%      11 )],
-	    	'::reset'       => [ qw(    0   0   1   %OPEN%      12 )],
-	    	'::busy'        => [ qw(    0   0   0   %EMPTY%     13 )],
-			'::sync'        => [ qw(    0   0   0   NTO         14 )],
-			'::update'      => [ qw(    0   0   0   %OPEN%      15 )],
-	    	'::readDone'    => [ qw(    0   0   0   %EMPTY%     16 )],
-	    	'::b'		    => [ qw(	0	1	1	%OPEN%      17 )],
-	    	'::init'        => [ qw(    0   0   0   0           18 )],
-	    	'::rec'         => [ qw(    0   0   0   0           19 )],
-	    	'::range'	    => [ qw(	1	0	0	%EMPTY%     20 )],
-			'::auto'        => [ qw(    0   0   0   0           21 )],
-	    	'::comment'	    => [ qw(	1	1	2	%EMPTY%     22 )],
-	    	'::default'	    => [ qw(	1	1	0	%EMPTY%     23 )],
-	    	'nr'			=> 23,  # Number of next field to print
-	    	'_mult_'		=> {},  # Internal counter for multiple fields
-	   		'_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
-	    					# 1 / RL -> left to right decreasing
-	    					# xF -> map the first to ::head:0 (defaults: ::head)
-		},
-    },
-    # VI2C Definitions:
-    # ::ign	::type	::width	::dev	::sub	::addr
-    # ::interface	::block	::inst	::dir	::auto	::sync
-    # ::spec	::clock	::reset	::busy	::readDone	::new
-    # ::b	::b	::b	::b	::b	::b	::b	::b	::b	::b	::b
-    # ::b	::b	::b	::b	::b	::init	::rec	::range	::view
-    # ::vi2c	::name	::comment
-    'vi2c' => {
-		'xls' => 'VI2C',
-		'req' => 'optional',
-		'key' => '::inst',
-		'parsed' => 0,
-		'field' => {
-	    	#Name   	=>	  	   		Inherits
-	    	#					    		Multiple
-	    	#						    		Required
-	    	#							  		Defaultvalue
-	    	#								    			PrintOrder
-	    	#                           0   1   2	3       4
-	    	'::ign' 		=> [ qw(	0	0	1	%NULL%	1 ) ],
-	    	'::type'		=> [ qw(	0	0	1	%TBD% 	2 ) ],
-	    	'::variants'	=> [ qw(	1	0	0	Default	3 )],
-	    	'::inst'		=> [ qw(	0	0	1	W_NO_INST 4 )],
-	    	'::comment'	    => [ qw(	1	0	2	%EMPTY%	6 )],
-	    	'::shortname'	=> [ qw(	0	0	0	%EMPTY%	5 )],
-	    	'::b'			=> [ qw(	0	1	1	%NULL%	7 )],
-	    	'::default'	    => [ qw(	1	1	0	%NULL%	0 )],
-	    	'::hierachy'	=> [ qw(	1	0	0	%NULL%	0 )],
-	    	'::debug'	    => [ qw(	1	0	0	%NULL%	0 )],
-        	'::default'		=> [ qw(	1	1	0	%EMPTY%	0 )],	    
-	    	'::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
-	    	'nr'			=> 8,  # Number of next field to print
-	    	'_mult_'		=> {},  # Internal counter for multiple fields
-   	    	'_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
-	    						# 1 / RL -> left to right decreasing
-	    						# xF -> map the first to ::head:0 (defaults: ::head)
-	    
-		},
-    },
-    "macro" => {
-	    "%SPACE%" 	=> ' ',
-	    "%EMPTY%"	=> '',
-	    "%NULL%"	=> '0',
-	    "%TAB%"		=> "\t",
-	    "%CR%"		=> "\n",	# A carriage return
-	    "%S%"		=> "\t",	# Output field ident ....
-	    "%IOCR%"	=> ' ',		# Will be set to \n if we are writting ExCEL on MSWin32 ...
-		"%ACOM%"	=> '--',	# comment, automatically set by language currently
-	    "%SIGNAL%"	=> 'std_ulogic',
-	    "%BUS_TYPE%"	=> 'std_ulogic_vector',
-	    "%PAD_TYPE%"	=> '__E_DEFAULT_PAD__',	# Default pad entity
-	    "%PAD_CLASS%"	=> 'PAD',	# Default pad class
-	    "%IOCELL_TYPE%"	=> '__E_DEFAULT_IOCELL__', # Default iocell entity
-	    "%IOCELL_SELECT_PORT%"	=> '__I_default_select', 		# Default iocell port
-	    "%NOSEL%"		=>  '__I_NOSEL__', #internal: no mux select
-	    "%NOSELPORT%"	=>  '__I_NOSELPORT__', #internal: name of not used sel port
-	    "%IOCELL_CLK%"	=>  'CLK', # Default clk for iocells, may be changed by %REG(clkb)
-	    "%DEFAULT_MODE%"	=> 'S',
-	    "%LANGUAGE%"	=> lc('VHDL'), # Default language, could be verilog
-	    "%DEFAULT_CONFIG%"	=>	"%::entity%_%::arch%_conf",
-	    "%NO_CONFIG%"	=>	"NO_CONFIG", # Set this in ::conf if you want to not
-									    # get configurations for this instance
-	    "%NO_COMPONENT_DECLARATION%"	=>	"__NOCOMPDEC__",
-	    "%NO_COMP%"		=>	"__NOCOMPDEC__", # If this keyword is found in ::use -> no component decl ..
-	    "%NCD%"			=>	"__NOCOMPDEC__", # dito.
-	    "%VHDL_USE_DEFAULT%"	=>
-			"library IEEE;\nuse IEEE.std_logic_1164.all;\n",
-			# "Library IEEE;\nUse IEEE.std_logic_1164.all;\nUse IEEE.std_logic_arith.all;",
-	    "%VHDL_USE%"	=> "-- No project specific VHDL libraries", #Used internally
-	    "%VHDL_NOPROJ%"	=> "-- No project specific VHDL libraries", # Overwrite this ...
-	    "%VHDL_USE_ENTY%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
-	    "%VHDL_USE_ARCH%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
-	    "%VHDL_USE_CONF%"	=>	"%VHDL_USE_DEFAULT%\n%VHDL_USE%",
-	    "%VHDL_HOOK_ENTY_HEAD%"	=>	'', # Hooks for user defined text, see ::udc!
-   	    "%VHDL_HOOK_ENTY_BODY%"	=>	'',
-   	    "%VHDL_HOOK_ENTY_FOOT%"	=>	'',
-   	   	"%VHDL_HOOK_ARCH_HEAD%"	=>	'',
-   	   	"%VHDL_HOOK_ARCH_DECL%" =>	'',
-   	    "%VHDL_HOOK_ARCH_BODY%"	=>	'',
-   	    "%VHDL_HOOK_ARCH_FOOT%"	=>	'',
-   	    "%VHDL_HOOK_CONF_HEAD%"	=>	'',
-   	    "%VHDL_HOOK_CONF_BODY%"	=>	'',
-   	    "%VHDL_HOOK_CONF_FOOT%"	=>	'',
-   	    '%HEAD%'	=> '__HEAD__', # Used internally for ::udc
-   	    '%BODY%'	=> '__BODY__', # Used internally for ::udc
-   	    '%FOOT%'	=> '__FOOT__', # Used internally for ::udc
-   	    '%DECL%'	=> '__DECL__', # Used internally for ::udc	
-	    "%VERILOG_TIMESCALE%"	=>	"`timescale 1ns/10ps",
-	    "%VERILOG_USE_ARCH%"	=>	'%EMPTY%',
-	    "%VERILOG_DEFINES%"	=>	'	// No user `defines in this module',  # Want to define s.th. globally?
-		"%VERILOG_HOOK_BODY%"	=>	"",
-        "%INT_VERILOG_DEFINES%"     =>    '', # Used internally
-        "%INCLUDE%"     =>  '`include',   # Used internally for verilog include files in ::use!
-        "%DEFINE%"      =>  '`define',     # Used internally for verilog defines in ::use!
-        "%USEASMODULENAME%"  =>    '',  # If set in ::config column and obj. is Verilog -> module name
-        "%UAMN%"     	=> '',                     # dito. but shorter to write !! Internal use only !!
-	    "%OPEN%"		=> "open",			#open signal
-	    "%UNDEF%"		=> "ERROR_UNDEF",	#should be 'undef',  #For debugging??  
-	    "%UNDEF_1%"		=> "ERROR_UNDEF_1",	#should be 'undef',  #For debugging??
-	    "%UNDEF_2%"		=> "ERROR_UNDEF_2",	#should be 'undef',  #For debugging??
-	    "%UNDEF_3%"		=> "ERROR_UNDEF_3",	#should be 'undef',  #For debugging??
-	    "%UNDEF_4%"		=> "ERROR_UNDEF_4",	#should be 'undef',  #For debugging??
-	    "%TBD%"			=> "__W_TO_BE_DEFINED",
-	    "%HIGH%"		=> lc("MIX_LOGIC1"),  # VHDL does not like leading/trailing __
-	    "%LOW%"			=> lc("MIX_LOGIC0"),  # dito.
-	    "%HIGH_BUS%"	=> lc("MIX_LOGIC1_BUS"), # dito.
-	    "%LOW_BUS%"		=> lc("MIX_LOGIC0_BUS"), # dito.
-	    "%CONST%"		=> "__CONST__", # Meta instance, used to apply constant values
-        "%BUS%"         => "__BUS__", # Meta instance for bus connections
-	    "%TOP%"			=> "__TOP__", # Meta instance, TOP cell
-	    "%PARAMETER%"	=> "__PARAMETER__",	# Meta instance: stores paramter
-	    "%GENERIC%"		=> "__GENERIC__", # Meta instance, stores generic default
-	    "%IMPORT%"		=> "__IMPORT__", # Meta instance for import mode
-	    "%IMPORT_I%"	=> "I", # Meta instance for import mode
-	    "%IMPORT_O%"	=> "O", # Meta instance for import mode
-	    "%IMPORT_CLK%"	=> "__IMPORT_CLK__", # import mode, default clk
-	    "%IMPORT_BUNDLE%"   => "__IMPORT_BUNDLE__", #
-	    "%BUFFER%"		=> 'buffer',
-        "%TRISTATE%"    => 'tristate',
-	    '%H%'			=> '$',		# 'RCS keyword saver ...
-	    '%IIC_IF%'      => 'iic_if_', # prefix for i2c interface
-	    '%RREG%'        => 'read_reg_', # prefix for i2c read registers
-	    '%WREG%'        => 'write_reg_', # prefix for i2c write registers
-	    '%RWREG%'       => 'read_write_reg_', # prefix for i2c read-write registers
-	    '%IIC_TRANS%'   => 'transceiver_', # prefix for i2c transceiver
-	    '%IIC_SYNC%'    => 'sync_', # prefix for i2c sync block
-		'%PREFIX_IIC_GEN%'	=> 'iic_if_', # DUPLICATE to postfix!!!
-		'%POSTFIX_IIC_OUT%' =>  '_iic_o', # DUPLICATE!!
-	    '%POSTFIX_IIC_IN%'  =>  '_iic_i', # DUPLICATE!!
-        '%TPYECAST_ENT%' 	=> '__TYPECAST_ENT__', # dummy typecast support entity
-        '%TYPECAST_CONF%'	=> '__TYPECAST_CONF__', # dummy for typecast ...
-        '%TM_I%'		=>	'I',	# reverse mappings for seperate intermediate CONN_TOP sheet
-        '%TM_O%'		=>	'O',
-        '%TM_IO%'		=>	'IO',
-        '%TM_B%'		=>	'B',
-        '%TM_T%'		=>	'T',
-        '%TM_C%'		=>	'C',
-        '%TM_G%'		=>	'G',
-        '%TM_P%'		=>	'P',
-        '%REG%'			=>	'__REG__',	# Internal! Define a verilog reg for leaf output
-        # '%WIRE%'		=>	'__WIRE__',	# Conflicts with simple logic wire!!
-    },
-    # Counters and generic messages
-    'ERROR' => '__ERROR__',
-    'WARN' => '__WARNING__',
-    'CONST_NR' => 0,   # Some global counters
-    'GENERIC_NR' => 0,
-    'TYPECAST_NR' => 0,
-    'HIGH_NR' => 0,
-    'LOW_NR' => 0,
-    'OPEN_NR' => 0, # Count opens ...
-    'DELTA_NR' => 0,
-    'DELTA_INT_NR' => 0,
-    'DELTA_VER_NR' => 0, 
-    'sum' => { # Counters for summary
-		'warnings' => 0,
-		'errors' => 0,
-
-		## Inventory
-		'inst' => 0,		# number of instances
-		'conn' => 0,		# number of connections
-		'genport' => 0, 	# number of generated ports
-
-		'cmacros' => 0,	# Number of matched connection macro's
-
-    	'hdlfiles' => 0,      # Number of output files
-		'noload' => 0,   	# signals with missing loads ...
-		'nodriver' => 0,	# signals without driver
-		'multdriver' => 0,	# signals with multiple drivers
-		'openports' => 0,
-
-		'checkwarn' => 0,
-		'checkforce' => 0,
-		'checkunique' => 0,
-
-        # Others values (e.g. verify_entity ...) will be created as needed.
-
-        # Number of generated IO cells:
-        # see init function in MixIOParser
-        # 'io_cellandpad' => 0,
-        # 'io_cell_single' => 0,
-        # 'io_pad_singe' => 0,
-
-    },
-    'script' => { # Set for pre and post execution script execution
-		'pre' => '',
-		'post' => '',
-		'excel' => {
-	    'alerts' => 'off', # Switch off ExCEL display alerts; could be on, to...
-	},
-    },
-    'format' => { # in - out file settings
-       'csv' => {
-           'cellsep' => ';',        # cell seperator
-           'sheetsep' => ':=:=:=>', # sheet seperator, set to empty string to supress
-           'quoting' => '"',    # quoting character
-           'style'      => 'doublequote,autoquote,nowrapnl,maxwidth',  # controll the CSV output
-               # doublequote: mask quoting char by duplication! Else mask with \
-               # autoquote: only quote if required (embedded whitespace)
-               # wrapnl: wrap embedded new-line to space
-               # masknl: replace newline by \\n
-               # maxwidth: make all lines contain maxwidth - 1 seperators
-       },
-       'xls' => {
-       		'maxcelllength' => 500, # Limit number of characters in ExCEL cells
- 			'style'	=>	'',		# Format the generated output
- 				# stripnl:	replace <nl> by <sp> (also known as 'wrapnl')
- 				# masknl:	replace newline by \\n
- 				# stripna:	replace all non ASCII-Chars by <sp>
-       },
-       'out' => '',
-    },
-	'report' => {
-		'path'	=> '.',
-		'delta'	=> '',		# If set, create a diff file instead of a new output
-		'portlist'	=> {
-			'name'	=>	'',	# Define report file name; 
-							# 	if empty take name from $EH{out} ....
-							#   INST := name of last instance + _portlist.mif
-							#	ENTY := name of last entity + _portlist.mif
-			'ext'	=>	'mif',
-			'data'	=>	'port', # Print out port names, not signal names!
-			'split' =>	'external::extc,instance',
-					# Generate seperate portlist for
-					#	external : if column ::external has content
-					#		external::foo : use column ::foo as trigger
-					#	instance : generate a table for each instance
-					#	file[::(INST|ENTY)]
-					#			 : generate a file for each instance(*)/entity
-					#				combine with 'name' = INST or ENTY!!
-			'format' => { # Overwrite the built in format (t.b.d.)
-				'plist' => '',
-				'elist' => '',
-			},
-			'sort' =>	'input', # or alpha or ::col ....
-					# pinlist sort order. See portmapsort
-			'comments' => "0,striphash",
-					# Limit the number of comment lines to N; 0 -> unlimited
-					# To switch off all, set report.portlist.comments=''
-					# striphash  := remove leading # signs from the comments
-		},
-                'reglist' => {
-                              'crossref' => 'yes',
-                             },
-	},
-	
-);
-
-#
-# Generate some data dynamically
-#
-
-    $EH{'iswin'} = $^O =~ m,^mswin,io;
-    $EH{'iscygwin'} = $^O =~ m,^cygwin,io;
-
-    $EH{'cwd'} = cwd() || "ERROR_CANNOT_GET_CWD";
-    if ( $EH{'iswin'} ) {
-        ( $EH{'drive'} = $EH{'cwd'} ) =~ s,(^\w:).*,$1/,;
-    } else {
-        $EH{'drive'} = '';
-    }
-
-    $EH{'macro'}{'%ARGV%'} = "$0 " . join( " ", @ARGV );
-
-    $EH{'macro'}{'%VERSION%'} = $::VERSION;
-    $EH{'macro'}{'%0%'} = $FindBin::Script;
-    $EH{'macro'}{'%OS%'} = $^O;
-    $EH{'macro'}{'%DATE%'} = "" . localtime();
-    $EH{'macro'}{'%USER%'} = "W_UNKNOWN_USERNAME";
-    if ( $EH{'iswin'} or $EH{'iscygwin'} ) {
-		if ( defined( $ENV{'USERNAME'} ) ) {
-	        $EH{'macro'}{'%USER%'} = $ENV{'USERNAME'};
-		}
-    } elsif ( defined( $ENV{'LOGNAME'} ) ) {
-		$EH{'macro'}{'%USER%'} = $ENV{'LOGNAME'} || $ENV{'USER'};
-    }
-
-    #
-    # Define HOME:
-    #
-    if ( $EH{'iswin'} ) { # not valid for cygwin! -> HOME below ...
-		if ( defined( $ENV{'HOMEDRIVE'} ) and defined( $ENV{'HOMEPATH'} ) ) {
-	    	$EH{'macro'}{'%HOME%'} = $ENV{'HOMEDRIVE'} . $ENV{'HOMEPATH'};
-		}elsif ( defined( $ENV{'USERPROFILE'} ) ) {
-            $EH{'macro'}{'%HOME%'} = $ENV{'USERPROFILE'};
-		} else {
-	    	$EH{'macro'}{'%HOME%'} = "C:\\"; # TODO is that a good idea?
-		} 
-    } elsif ( defined( $ENV{'HOME'} ) ) {
-		$EH{'macro'}{'%HOME%'} = $ENV{HOME};
-    } else {
-		$EH{'macro'}{'%HOME%'} = "/home/" . $ENV{'LOGNAME'};
-    }
-
-    #
-    # Define PROJECT path
-    #
-    if ( $ENV{'PROJECT'} ) {
-		$EH{'macro'}{'%PROJECT%'} = $ENV{'PROJECT'};
-    } else {
-		$EH{'macro'}{'%PROJECT%'} = "NO_PROJECT_SET";
-    }
-    #
-    # Define WORKAREA path
-    #
-    if ( $ENV{'WORKAREA'} ) {
-		$EH{'macro'}{'%WORKAREA%'} = $ENV{'WORKAREA'};
-    } else {
-		$EH{'macro'}{'%WORKAREA%'} = "NO_WORKAREA_SET";
-    }
-    #
-    # Set %IOCR% to \n if intermediate is xls and we are on Win32
-    if ( ( $EH{'iswin'} or $EH{'iscygwin'} ) and $EH{'macro'}{'%ARGV%'}=~ m/\.xls$/ ) {
-        $EH{'macro'}{'%IOCR%'} = "\n";
-    }
+	$eh = new Micronas::MixUtils::Globals;
+	$eh->init();
 
 	# Print out some of the collected data:
-	logsay('#' x 72);
-	logsay("CMDLINE: " . $EH{'macro'}{'%ARGV%'} );
+	$logger->info('#' x 72); # Print to ALL
+	$logger->info("CMDLINE: " . $eh->get('macro.%ARGV%') ); # Print to ALL
 	# All the rest can be found in the CONF dump section ....
 
 	# 
-	#
 	# If there is a file called mix.cfg, try to read that ....
 	# Configuration parameters have to be written like
 	#	MIXCFG key value
-	#	key can be key.key.key ... (see %EH structure or use -listconf to dump current values)
+	#	key can be key.key.key ... (see Globals.pm structure or use -listconf to dump current values)
 	# !!Caveat: there will be no checks whatsoever on the values or keys !!
 	# Locations to be checked are:
 	# $HOME, $PROJECT, $WORKAREA, cwd(), -cfg FILE
-	#!wig20051019: adding -cfg FILE
+	#
 	my $extracfg = '';
 	if ( exists( $OPTVAL{'cfg'} ) ) {
 		$extracfg = $OPTVAL{'cfg'};
 		unless ( -r $extracfg ) {
-			logwarn( "WARNING: Cannot read cfg file $extracfg! Ignore it!");
-			$EH{'sum'}{'warnings'}++;
+			$logger->warn( '__W_CFG_FILE',
+				"\tCannot read cfg file $extracfg! Ignore it!");
 			$extracfg = '';
 		}
 	}
 	
 	foreach my $conf (
-    	$EH{'macro'}{'%HOME%'}, 
-    	$EH{'macro'}{'%PROJECT%'},
-    	$EH{'macro'}{'%WORKAREA%'},
-    	$EH{'macro'}{'%WORKAREA%'} . '/setup',	# The MSD ...
-    	$EH{'macro'}{'%WORKAREA%'} . '/env',	# The mway ...
+    	$eh->get('macro.%HOME%'), 
+    	$eh->get('macro.%PROJECT%'),
+    	$eh->get('macro.%WORKAREA%'),
+    	$eh->get('macro.%WORKAREA%') . '/setup', # The MSD ...
+    	$eh->get('macro.%WORKAREA%') . '/env',	 # The mway ...
     	'.',
-    	'CMDLINE',
+    	'CMDLINE', # SPECIAL: replace the key by the -cfg FILE.cfg name
     ) {
    		# If the key is CMDLINE and $extracfg is set
     	my $cfgfile = ( $conf eq 'CMDLINE' ) ? $extracfg :
     			$conf . '/' . 'mix.cfg';
     	next unless $cfgfile;
     	if ( -r $cfgfile ) {
-			logtrc( "INFO", "Reading extra configurations from $cfgfile\n" );
-
+			$logger->info( "__I_READ_CFG",
+				"\tReading extra configurations from $cfgfile" );
 			unless( open( CFG, "< $cfgfile" ) ) {
-	    		logwarn("Cannot open $cfgfile for reading: $!\n");
-	    		$EH{'sum'}{'warnings'}++;
+	    		$logger->warn('__W_READ_CFG',
+	    			"\tCannot open $cfgfile for reading: $!");
 			} else {
-				my $prev = "";
+				my $prev = '';
 	    		while( <CFG> ) {
 					chomp;
 					$_ =~ s,\r$,,;
@@ -2027,59 +822,84 @@ sub mix_init () {
 	    			$prev = "";
 			
 					if ( m,^\s*MIXCFG\s+(\S+)\s*(.*),s ) { # MIXCFG key.key.key value
-		    			_mix_apply_conf( $1, $2, "file:mix.cfg" );
+		    			_mix_apply_conf( $1, $2, 'file:mix.cfg' );
 					}
+					# Other lines are discarded silently
 	    		}
-	   			close( CFG );
+	   			close( CFG ) or
+	   				$logger->warn('__W_CLOSE_CFG',
+	   					"\tCannot close config file $cfgfile: $!" );
 			}
     	}
-	} 
+	}
 
 	#
 	# Post configuration processing
 	#!wig20031219
-	if ( $EH{'output'}{'generate'}{'xinout'} ) { # Convert comma seperated list into PERL-RE
-    	my @si = split( "," , $EH{'output'}{'generate'}{'xinout'} );
-    	$EH{'output'}{'generate'}{'_re_xinout'} = '^(' . join( "|", @si ) . ')$';
+	#
+	if ( my $t = $eh->get('output.generate.xinout') ) { # Convert comma seperated list into PERL-RE
+    	my @si = split( /,/ , $t );
+    	$eh->set('output.generate._re_xinout', '^(' . join( "|", @si ) . ')$' );
 	} else {
-    	$EH{'output'}{'generate'}{'_re_xinout'} = '^__NOEXCLUDESIGNAL__$';
+    	$eh->set('output.generate._re_xinout', '^__NOEXCLUDESIGNAL__$' );
 	}
 
+	_init_logic_eh( $eh );
+
+	if ( my $t = $eh->get( 'intermediate.topmap' ) ) {
+		my $re = '^(';
+		$re .= join( '|', split( /[\s,]+/, $t ));
+		$eh->set( 'intermediate.__topmap_re_', $re . ')$' );
+	}
+   
+   	#OLD  Compatibility ...
+	#OLD  %EH = $eh->get('');
+	return $eh;	
+} # End of mix_init
+
+=head2 _init_logic_eh ($)
+
+#
+# parse/convert the output.generate.logic configuration into
+#   the internal represenation
+#
+# input: $eh  (Globals object)
+# output: n/a
+#
+
+=cut
+
+sub _init_logic_eh ($) {
+	my $eh = shift; # Environment hash object
     # Get the _logic_ list ...
     #!wig20050519:
     #  split into list and seperate (M:N)
     #    M = number of outputs
     #    N = number of inputs
-    my @logic = split(/[,\s+]/, $EH{'output'}{'generate'}{'logic'} );
+    my @logic = split( /[,\s+]/, $eh->get('output.generate.logic') );
     my @names = ();
     for my $i ( @logic ) {
     	if ( $i =~ m/^(\w+)\(([NM\d]+)(:([NM\d]+))?\)/ ) {
     		my $omax = $4 || "N";
-    		$EH{'output'}{'generate'}{'_logiciocheck_'}{$1}{'omax'} = $omax;
-    		$EH{'output'}{'generate'}{'_logiciocheck_'}{$1}{'imax'} = $2;
+    		$eh->set( 'output.generate._logiciocheck_.' . $1 . '.omax', $omax);
+    		$eh->set( 'output.generate._logiciocheck_.' . $1 .'.imax', $2 );
     		push( @names, $1 );
     	} else {
-    		$EH{'output'}{'generate'}{'_logiciocheck_'}{$i}{'imax'} = "N";
-    		$EH{'output'}{'generate'}{'_logiciocheck_'}{$i}{'omax'} = "N";
+    		$eh->set( 'output.generate._logiciocheck_.' . $i. '.imax', 'N' );
+    		$eh->set( 'output.generate._logiciocheck_.' . $i . '.omax' , 'N' );
     		push( @names, $i );
-    	}
-    }
-    	
-    $EH{'output'}{'generate'}{'_logicre_'} =
-    	'^(__|%)?(' . join( '|', @names ) . ')(__|%)?$';
-   # Create LOGIC macros:
-   for my $log ( split(/[,\s+]/, $EH{'output'}{'generate'}{'logic'} ) ) {
-   		$EH{'output'}{'generate'}{'_logic_map_'}{'%' . uc( $log ) . '%'}
-   			= $log;
-   }
-	if ( $EH{'intermediate'}{'topmap'} ) {
-		my $re = '^(';
-		$re .= join( '|', split( /[\s,]+/, $EH{'intermediate'}{'topmap'} ));
-		$EH{'intermediate'}{'__topmap_re_'} = $re . ')$';
+		}
 	}
-		
-   # $EH{'macro'}{'%WIRE%'} = "%EMPTY%"; # Wire is replaced by nothing!
-} # End of mix_init
+    	
+	$eh->set( 'output.generate._logicre_' ,
+    	'^(__|%)?(' . join( '|', @names ) . ')(__|%)?$' );
+ 
+	# Create LOGIC macros:
+	for my $log ( split(/[,\s+]/, $eh->get( 'output.generate.logic' ) ) ) {
+		$eh->set( 'output.generate._logic_map_.%' . uc( $log ) . '%', $log );
+	}
+	return;
+} # End of _init_logic_eh
 
 #############################################################################
 # mix_list_conf
@@ -2099,14 +919,14 @@ Lines starting with MIXCFG indicate possible configuration parameters.
 
 sub mix_list_conf () {
 
-    my @configs = ();
+    my @configs = $eh->conf2array();
     # (Recursively) retrieve the configuration settings:
-    foreach my $i ( sort ( keys( %EH ) )  ) {
-	push( @configs, _mix_list_conf( "$i", $EH{$i} ));
-    }
+    # foreach my $i ( sort ( keys( %EH ) )  ) {
+	#	push( @configs, _mix_list_conf( "$i", $EH{$i} ));
+    # }
     # Now print the current configuration
     foreach my $i ( @configs ) {
-	print( join( " ", @$i ) . "\n" );
+		print( join( " ", @$i ) . "\n" );
     }
 
     print( "\nCAVEAT: The list here might be different from the final configuration!!\n" );
@@ -2120,21 +940,17 @@ sub mix_list_conf () {
 # Prepare configuration data to be dumped to excel format
 #
 sub mix_list_econf ($) {
-
-    my $format = shift || "xls";
-
-    my @configs = ();
-    
-    foreach my $i ( sort( keys( %EH ) ) ) {
-	push( @configs , _mix_list_conf( "$i", $EH{$i}, $format ) );
-    }
+    my $format = shift || 'xls';
+    my @configs = $eh->conf2array();
 
     return \@configs;
 }
 
+=head4 OBSOLETE
+
 #
 # (recursive) print of configuration options values
-#
+#!wig20060221: obsolete now 
 sub _mix_list_conf ($$;$) {
 
     my $name = shift;
@@ -2157,6 +973,8 @@ sub _mix_list_conf ($$;$) {
     }
     return @conf;
 }
+
+=cut
     
 ##############################################################################
 # mix_overload_conf
@@ -2183,42 +1001,49 @@ configuration by a file "mix.cfg" in the current working directory or by adding
 values in a ExCEL sheet "CONF" in a form of <S MIXCONF key value>.
 Order is built-in, mix.cfg, CONF sheet and command line has highest priority.
 
+TODO shift into globals package!!
+
 =cut
 
 sub mix_overload_conf ($) {
-
     my $confs = shift;
 
-    my $e = "";
+    my $e = '';
     my ( $k, $v );
 
     for my $i ( @$confs ) {
-	( $k, $v ) = split( /=/, $i ); # Split key=value
-	unless( $k ne "" and $v ne"" ) {
-	    logwarn("WARNING: Illegal key or value given: $i\n");
-            $EH{'sum'}{'warnings'}++;
-	    next;
-	}
+		( $k, $v ) = split( /=/, $i ); # Split key=value
+		unless( $k ne '' and $v ne '' ) {
+	    	$logger->warn("__W_CFG_KEY_ILLEGAL", "\tIllegal key or value given: $i\n");
+	    	next;
+		}
 
-        $v =~ s/"/\\"/og;
+    	$v =~ s/"/\\"/og;
         
-	# Mask % and other wildcards:        
-	$k =~ s,[^%.\w],,og; # Remove anything unreasonable from the key ...
-	$k =~ s/\./'}{'/og;
-	$k = '{\'' . $k . '\'}';
-	my $loga ='logtrc( "INFO", "Adding configuration ' . $i . '");';
-	my $logo ='logtrc( "INFO", "Overloading configuration ' . $i . '");';
+		# Mask % and other wildcards:        
+		$k =~ s,[^%.\w],,og; # Remove anything unreasonable from the key ...
+		# $k =~ s/\./'}{'/og;
+		# $k = '{\'' . $k . '\'}';
 
-	# TODO Prevent overloading of non-scalar values!!
-	$e = "if ( exists( \$EH" . $k . " ) ) { \$EH" . $k . " = '" . $v . "'; " . $logo .
-	    "} else { \$EH" . $k . " = '" . $v . "'; " . $loga . " }";
-	unless ( eval $e ) {
-                logwarn("WARNING: Evaluation of configuration $k=$v failed: $@") if ( $@ );
-                $EH{'sum'}{'warnings'}++;
-                next;
-        }
+		# TODO : Prevent overloading of non-scalar values!!
+		if ( my $t = $eh->get( $k ) ) {
+			$eh->set( $k, $v );
+			$logger->info( "__I_CFG_OVL", "\t" . 'Overloading configuration ' . $i );
+		} else {
+			$eh->set( $k, $v );
+			$logger->info( "__I_CFG_ADD", "\t" . 'Adding configuration ' . $i );
+		}
+		#OLD
+		# $e = "if ( my $t = $eh->get( exists( \$EH" . $k . " ) ) { \$EH" . $k
+		# 		. " = '" . $v . "'; " . $logo .
+		#     "} else { \$EH" . $k . " = '" . $v . "'; " . $loga . " }";
+		# unless ( eval $e ) {
+    	#             $logger->warn("__W_CFG_EVAL", "Evaluation of configuration $k=$v failed: $@") if ( $@ );
+    	#
+    	#             next;
+    	#     }
     }
-}
+} # End of mix_overload_conf
 
 #
 # Similiar to _mix_overload_conf!!
@@ -2244,28 +1069,23 @@ sub _mix_apply_conf ($$$) {
 	#!wig20051014: if $v is 0, this parameter got unset!
     unless( defined($k) ) {
 	    unless( defined($k) ) { $k = ""; }
-	    logwarn("WARNING: Illegal key given in $s: key:$k val:$v\n");
-            $EH{'sum'}{'warnings'}++;
+	    $logger->warn('__W_CFG_KEY_ILLEGAL',
+	    	"\tIllegal key given in $s: key:$k val:$v\n");
 	    return undef;
     }
 
 	$v =~ s/'/\\'/g; # Mask ' in input!
     $k =~ s,[^.%\w],,g; # Remove all characters not being ., % and \w ...
 	my $ok = $k;
-    $k =~ s/\./'}{'/og;
-    $k = '{\'' . $k . '\'}';
-    my $loga ='logtrc( "INFO", \'Adding ' . $s . ' configuration ' . $ok . "=" . $v . '\');';
-    my $logo ='logtrc( "INFO", \'Overloading ' . $s . ' configuration ' . $ok . "=" . $v . '\');';
- 
-    # TODO Prevent overloading of non-scalar values!!
-    my $e = "if ( exists( \$EH$k ) ) { \$EH$k = '$v'; $logo } else { \$EH$k = '$v'; $loga }";
-    unless ( eval $e ) {
-	    if ( $@ ) { # S.th. went wrong??
-	        logwarn("WARNING: Eval of configuration overload from $s $k=$v failed: $@");
-                $EH{'sum'}{'warnings'}++;
-	    }
-    }
-}
+	if ( $eh->get( $k ) ) {
+		$eh->set( $k, $v );
+		$logger->info( "__I_CFG_OVL", "\t" . 'Overloading ' . $s . ' configuration ' . $ok . '=' . $v );
+	} else {
+		$eh->set( $k, $v );
+		$logger->info( "__I_CFG_ADD", "\t" . 'Adding ' . $s . ' configuration ' . $ok . '=' . $v );
+	}	
+
+} # End of _mix_apply_conf
 
 ##############################################################################
 # mix_overload_sheet
@@ -2290,10 +1110,9 @@ regular expression.match_op shoud match the sheet names of the design descriptio
 =cut
 
 sub mix_overload_sheet ($) {
-
     my $sheets = shift;
 
-    my $e = "";
+    my $e = '';
     my ( $k, $v );
 
     # %EH = ...
@@ -2301,23 +1120,23 @@ sub mix_overload_sheet ($) {
     #		'xls' => 'VI2C', ...
 
     for my $i ( @$sheets ) {
-	( $k, $v ) = split( /=/, $i ); # Split key=value
-	unless( $k and $v ) {
-	    logwarn("WARNING: Illegal argument for overload sheet given: $i\n");
-            $EH{'sum'}{'warnings'}++;
-	    next;
-	}
+		( $k, $v ) = split( /=/, $i ); # Split key=value
+		unless( $k and $v ) {
+	    	$logger->warn("__W_CFG_SHEET_OVL",
+	    		"\tIllegal argument for overload sheet given: $i\n");
+	    	next;
+		}
 
-	$k = lc( $k ); # $k := conn, hier, vi2c, conf, ...
+		$k = lc( $k ); # $k := conn, hier, vi2c, conf, ...
 
-	if ( exists( $EH{$k}{'xls'} ) ) {
-	    logtrc( "INFO", "Overloading sheet match $i");
-	    $EH{$k}{'xls'} = $v;
-	} else {
-	    logwarn( "Illegal sheet selector $k found in $i\n" );
-	}
+		if ( $eh->get( $k . '.xls' ) ) {
+	    	$logger->info( "__I_CFG_SHEET_MATCH", "\tOverloading sheet match $i");
+	    	$eh->set( $k. '.xls' , $v );
+		} else {
+	    	$logger->warn( "__W_CFG_SHEET_ILLEGAL", "\tIllegal sheet selector $k found in $i\n" );
+		}
     }
-}
+} # End of mix_overload_sheet
 
 
 ####
@@ -2339,8 +1158,8 @@ my %loc_files = ();
 #
 sub mix_utils_clean_data ($$;$) {
     my $d = shift;                              # Data, array ref
-    my $c = shift || "__NO_COMMENT";  # The current comment string
-    my $conf = shift || $EH{'output'}{'delta'}; # Which rules to apply ...
+    my $c = shift || '__NO_COMMENT';  			# The current comment string
+    my $conf = shift || $eh->get( 'output.delta' ); # Which rules to apply ...
     
     # remove comments: -- for VHDL, // for Verilog
     # 	only if "comment" is not set
@@ -2388,7 +1207,7 @@ sub mix_utils_clean_data ($$;$) {
 
     return $d;
 
-}
+} # End of mix_utils_clean_data
 
 #
 # Strip off all lines but the verilog module header
@@ -2429,12 +1248,12 @@ sub _mix_utils_extract_verihead ($$$) {
 		}
 		$t = $start;
 	} else {
-		logwarn( 'WARNING: Cannot detect verilog module, take full content to delta' );
-		$EH{'sum'}{'warnings'}++;
+		$logger->warn( '__W_VERI_HEADDETECT',
+			"\t" . 'Cannot detect verilog module, take full content to delta' );
 	}
 	$d = [ split( /\n/, $t ) ];
 	return $d;
-}
+} # End of _mix_utils_extract_verihead
 
 #
 # Open a file and read in the contents for comparison ...
@@ -2452,9 +1271,10 @@ sub mix_utils_open_diff ($;$) {
     my $ext;
     my $c = "__NOCOMMENT";
     ( $ext = $file ) =~ s/.*\.//;
-    for my $k ( keys ( %{$EH{'output'}{'ext'}} )) {
-	    if ( $EH{'output'}{'ext'}{$k} eq $ext ) {
-		    $c = $EH{'output'}{'comment'}{$k} || "__NOCOMMENT";
+    my $keh = $eh->get( 'output.ext' ); 
+    for my $k ( keys ( %$keh )) {
+	    if ( $keh->{$k} eq $ext ) {
+		    $c = $eh->get( 'output.comment.' . $k ) || "__NO_COMMENT";
 		    last;
 	    }
     }    
@@ -2462,29 +1282,27 @@ sub mix_utils_open_diff ($;$) {
     	# read in file
 		my $ofh = new IO::File;
 		unless( $ofh->open($file) ) {
-	    	logwarn( "ERROR: Cannot open org $file in $flag mode: $!" );
-			#done upwards: $EH{'sum'}{'warnings'}++;
+	    	$logger->error( '__E_FILE_OPEN_ORG',
+	    		"\tCannot open org $file in $flag mode: $!" );
 	    	return undef, undef;
 		}
 		@ocont = <$ofh>; #Slurp in file to compare against
 		chomp( @ocont );
 
-		my $switches = ( $flag eq "verify" ) ? $EH{'check'}{'hdlout'}{'delta'} :
-			$EH{'output'}{'delta'};
-		$switches = $EH{'output'}{'delta'} unless $switches;
+		my $switches = ( $flag eq "verify" ) ? $eh->get( 'check.hdlout.delta' ) :
+			$eh->get( 'output.delta' );
+		$switches = $eh->get( 'output.delta' ) unless $switches;
     
     	# Get data in clean format ....
     	$ocontr = mix_utils_clean_data( \@ocont, $c, $switches );
 
-		close( $ofh ) or logwarn( "ERROR: Cannot close org $file in delta mode: $!" )
-	    	and $EH{'sum'}{'errors'}++;
-
+		close( $ofh ) or $logger->error( '__E_FILE_CLOSE',
+			"\tCannot close org $file in delta mode: $!" );
     } else {
-		logwarn( "Error: Cannot read $file" );
-       	$EH{'sum'}{'errors'}++;
+		$logger->error( '__E_FILE_READ', "\tCannot read $file" );
     }
     return $ocontr;
-}
+} # End of mix_utils_open_diff
 
 ####################################################################
 ## mix_utils_open
@@ -2513,11 +1331,11 @@ sub mix_utils_open ($;$){
     # wig20030703
     #
 
-    if ( $EH{'output'}{'path'} ne "." ) {
-	unless( is_absolute_path( $file ) ) {
-	    $file = $EH{'output'}{'path'} . "/" . $file;
-	}
-    }
+    if ( $eh->get( 'output.path' ) ne "." ) {
+		unless( is_absolute_path( $file ) ) {
+	    	$file = $eh->get( 'output.path' ) . '/' . $file;
+		}
+	}	
 
     my $ofile = $file;
 
@@ -2525,7 +1343,7 @@ sub mix_utils_open ($;$){
     # Did we open that file already?
     #
     unless ( exists( $fhstore{$file} ) ) {
-        $EH{'sum'}{'hdlfiles'}++;
+        $eh->inc( 'sum.hdlfiles' );
     }
 
     # Search a file with this name in EH{check}{hdlout} ...
@@ -2542,32 +1360,31 @@ sub mix_utils_open ($;$){
             @ncont = (); # Reset new contents ...
             # TODO combine mode??
 
-            $fhstore{"$file"}{'tmpl'} = $templ;
-            $fhstore{"$file"}{'tmplmode'} = $leaf_flag;
-        
+            $fhstore{$file}{'tmpl'} = $templ;
+            $fhstore{$file}{'tmplmode'} = $leaf_flag;
 
             # $fh -> keep main file handle
             my $fh = new IO::File;
-            $fhstore{"$file"}{'tmplname'} = $file . $EH{'output'}{'ext'}{'verify'};
-            unless( $fh->open( $fhstore{"$file"}{'tmplname'}, $mode) ) {
-                logwarn( "ERROR: Cannot open " . $fhstore{$file}{'tmplname'} . ": $!" );
-                $EH{'sum'}{'errors'}++;
+            $fhstore{$file}{'tmplname'} = $file . $eh->get( 'output.ext.verify' );
+            unless( $fh->open( $fhstore{$file}{'tmplname'}, $mode) ) {
+                $logger->error( '__E_FILE_OPEN', "\tCannot open " .
+                	$fhstore{$file}{'tmplname'} . ": $!" );
             } else {
-                $fhstore{"$file"}{'tmplout'} = $fh;
+                $fhstore{$file}{'tmplout'} = $fh;
             }
         } else {
             # No template/verification example found ....create a .ediff file ...
-            $fhstore{"$file"}{'tmpl'} = "__E_CANNOT_LOCATE";
+            $fhstore{$file}{'tmpl'} = "__E_CANNOT_LOCATE";
             my $fh = new IO::File;
-            $fhstore{"$file"}{'tmplname'} = $file . $EH{'output'}{'ext'}{'verify'};
-            unless( $fh->open( $fhstore{"$file"}{'tmplname'}, $mode) ) {
-                logwarn( "ERROR: Cannot open " . $fhstore{$file}{'tmplname'} . ": $!" );
-                $EH{'sum'}{'errors'}++;
+            $fhstore{$file}{'tmplname'} = $file . $eh->get( 'output.ext.verify' );
+            unless( $fh->open( $fhstore{$file}{'tmplname'}, $mode) ) {
+                $logger->error( '__E_FILE_OPEN', "\t" . 'Cannot open ' . $fhstore{$file}{'tmplname'} . ": $!" );
             } else {
                 $fh->print( "WARNING: cannot locate $file in template directories\n" );
-                $fh->print( "Template path: " . $EH{'check'}{'hdlout'}{'path'} . "\n" );
+                $fh->print( "Template path: " . $eh->get( 'check.hdlout.path' ) . "\n" );
                 $fh->close() or
-                    logwarn( "ERROR: Cannot close " . $fhstore{$file}{'tmplname'} . ": $!" );
+                    $logger->error( '__E_FILE_CLOSE',
+                    	"\t" . 'Cannot close ' . $fhstore{$file}{'tmplname'} . ": $!" );
             }
         }
     }
@@ -2580,28 +1397,27 @@ sub mix_utils_open ($;$){
     #
     # Prepare for printing out diff's
     #
-    if ( $EH{'output'}{'generate'}{'delta'} ) { # Delta mode!
+    if ( $eh->get( 'output.generate.delta' ) ) { # Delta mode!
         if ( -r $file ) {
             @ocont = @{mix_utils_open_diff( $file )};
-            $ofile .= $EH{'output'}{'ext'}{'delta'}; # Attach a .diff to file name
-	    @ncont = (); # Reset new contents
+            $ofile .= $eh->get( 'output.ext.delta' ); # Attach a .diff to file name
+	    	@ncont = (); # Reset new contents
         } else {
-	    logwarn( "Info: Cannot run delta mode vs. $file. Will create like normal" );
-	    $fhstore{"$file"}{'delta'} = 0; # Key is the "file name" ....
-	}
-        
+	    	$logger->info( '__I_DELTA_FILE', "\tCannot run delta mode vs. $file. Will create like normal" );
+	    	$fhstore{$file}{'delta'} = 0; # Key is the "file name" ....
+		}
     }
 
     #
     # Prepare for one backup
     #
-    if ( $EH{'output'}{'generate'}{'bak'} ) {
-	# Shift previous version to file.bak ....
+    if ( $eh->get( 'output.generate.bak' ) ) {
+		# Shift previous version to file.bak ....
         # Simply overwrite preexisting bak-files ....
-	if ( -r $file ) {
-	    rename( $file, $file . ".bak" ) or
-		logwarn( "ERROR: Cannot rename $file to $file.bak" ) and $EH{'sum'}{'errors'}++;
-	}
+		if ( -r $file ) {
+	    	rename( $file, $file . '.bak' ) or
+			$logger->error( '__E_FILE_RENAME', "\tCannot rename $file to $file.bak" );
+		}
     }
 
     #
@@ -2610,45 +1426,44 @@ sub mix_utils_open ($;$){
     #    
     $mode = O_CREAT|O_WRONLY|O_TRUNC;
     if ( $flags =~ m,COMB, ) {
-	$mode = O_CREAT|O_WRONLY|O_APPEND;
+		$mode = O_CREAT|O_WRONLY|O_APPEND;
     }
     my $fh = new IO::File;
     unless( $fh->open( $ofile, $mode) ) { # Write output to this file, either HDL or HDL.diff
-	logwarn( "ERROR: Cannot open $ofile: $!" );
-	return $file;
+		$logger->error( '__E_FILE_OPEN', "\tCannot open $ofile: $!" );
+		return $file;
     }
 
     #
     # Remember if delta mode is active for this file ...
     #
     if ( $ofile ne $file ) {
-        $fhstore{"$file"}{'delta'} = $fh;
-        $fhstore{"$file"}{'deltaname'} = $ofile;
-        $fhstore{"$file"}{'out'} = 0;
+        $fhstore{$file}{'delta'} = $fh;
+        $fhstore{$file}{'deltaname'} = $ofile;
+        $fhstore{$file}{'out'} = 0;
     } else {
-        $fhstore{"$file"}{'delta'} = 0;
-        $fhstore{"$file"}{'out'} = $fh; # Remember file name and IO handle ...
+        $fhstore{$file}{'delta'} = 0;
+        $fhstore{$file}{'out'} = $fh; # Remember file name and IO handle ...
     }
  
     #
     # If -delta and -bak -> create a new original file ...
     #
-    if ( $EH{'output'}{'generate'}{'bak'} and $EH{'output'}{'generate'}{'delta'} ) {
+    if ( $eh->get( 'output.generate.bak' ) and $eh->get( 'output.generate.delta' ) ) {
 	# Append or create a new file?
 	# $bfh -> backup file handle (will get new data! Named like the real file, the old one got renamed!
-	my $bfh = new IO::File;
-	unless( $bfh->open( $file, $mode) ) {
-	    logwarn( "ERROR: Cannot open $file: $!" );
-		$EH{'sum'}{'errors'}++;
-                    $fhstore{"$file"}{'back'} = undef; # Not possilbe
-	} else {
-            $fhstore{"$file"}{'back'} = $bfh;
-	}
+		my $bfh = new IO::File;
+		unless( $bfh->open( $file, $mode) ) {
+	    	$logger->error( '__E_FILE_OPEN', "\tCannot open $file: $!" );
+			$fhstore{$file}{'back'} = undef(); # Not possilbe
+		} else {
+			$fhstore{$file}{'back'} = $bfh;
+		}
     } else {
-        $fhstore{"$file"}{'back'} = 0; # Not selected ...
+        $fhstore{$file}{'back'} = 0; # Not selected ...
     }
     return $file;
-}
+} # End of mix_utils_open
 
 #
 # is_absolute_path
@@ -2661,19 +1476,19 @@ sub is_absolute_path ($) {
     my $path = shift;
 
     if ( $^O=~/Win32/ ) {
-	if ( $path =~ m,^[/\\], or $path =~ m,^[a-zA-Z]:[/\\], ) {
-	    return 1;
-	} else {
-	    return 0;
-	}
+		if ( $path =~ m,^[/\\], or $path =~ m,^[a-zA-Z]:[/\\], ) {
+	    	return 1;
+		} else {
+	    	return 0;
+		}
     } else {
-	if ( $path =~ m,^/, ) {
-	    return 1;
-	} else {
-	    return 0;
-	}
+		if ( $path =~ m,^/, ) {
+	    	return 1;
+		} else {
+	    	return 0;
+		}
     }
-}
+} # End of is_absolute_path
 
 #
 # print into file handle and/or save for later diff
@@ -2685,7 +1500,7 @@ sub mix_utils_print ($@) {
     # $fn either is a real file handle (if this_delta is set) or a file name
     # in this_check ....
     if ( $fhstore{$fn}{'delta'} or $fhstore{$fn}{'tmpl'} ) {
-	push( @ncont, split( /\n/, sprintf( "%s", @args ) ) );
+		push( @ncont, split( /\n/, sprintf( '%s', @args ) ) );
     }
 
     if ( $fhstore{$fn}{'out'} ) {
@@ -2696,11 +1511,11 @@ sub mix_utils_print ($@) {
     if ( $fhstore{$fn}{'back'} ) {
 		$fhstore{$fn}{'back'}->print( join( "\n", @args ) );
     }
-}
+} # End of mix_utils_print
 
 #
 # printf into file handle or save for later diff
-#first argument has to be format string
+# first argument has to be format string
 #
 sub mix_utils_printf ($@) {
     my $fn = shift;
@@ -2717,7 +1532,7 @@ sub mix_utils_printf ($@) {
     if ( $fhstore{$fn}{'back'} ) {
 		$fhstore{$fn}{'back'}->print( join( "\n", @args ) );
     }
-}
+} # End of mix_utils_printf
 
 #
 # Close that file-handle
@@ -2730,19 +1545,19 @@ sub mix_utils_close ($$) {
     my $close_flag = 1;
 
     # Prepend PATH
-    if ( $EH{'output'}{'path'} ne "." and not is_absolute_path( $file ) ) {
-	$file = $EH{'output'}{'path'} . "/" . $file;
+    if ( $eh->get( 'output.path' ) ne '.' and not is_absolute_path( $file ) ) {
+		$file = $eh->get( 'output.path' ) . '/' . $file;
     }
 
     # Find the actual comment marker ( // vs. -- vs. # )
     my $ext;
     my $c = "__NOCOMMENT";
     ( $ext = $file ) =~ s/.*\.//;
-    for my $k ( keys ( %{$EH{'output'}{'ext'}} )) {
-	if ( $EH{'output'}{'ext'}{$k} eq $ext ) {
-	    $c = $EH{'output'}{'comment'}{$k} || "__NOCOMMENT";
-	    last;
-	}
+    for my $k ( keys ( %{$eh->get( 'output.ext' ) } )) {
+		if ( $eh->get( 'output.ext.' . $k ) eq $ext ) {
+	    	$c = $eh->get( 'output.comment.' .$k ) || "__NO_COMMENT";
+	    	last;
+		}
     }
 
     #
@@ -2752,8 +1567,8 @@ sub mix_utils_close ($$) {
     if ( $fhstore{$fn}{'tmplout'}  ) {
 		# if check.hdlout.delta contents differs from output.delta,
 		# we need to parse @ncont with differentely ...
-		my $switches = ( $EH{'check'}{'hdlout'}{'delta'} ) ?
-			$EH{'check'}{'hdlout'}{'delta'} : $EH{'output'}{'delta'};
+		my $switches = ( $eh->get( 'check.hdlout.delta' ) ) ?
+			$eh->get( 'check.hdlout.delta' ) : $eh->get( 'output.delta' );
 		my @vncont = @ncont; # Copy output data ...
         my $diff = mix_utils_diff( \@vncont, \@ccont, $c, $file, $switches );
 		# Compare new content and template
@@ -2772,44 +1587,39 @@ $c  template file (OLD): $fhstore{$fn}{'tmpl'}
 $c ------------- CHANGES START HERE ------------- --
 ";
 
-    my $fht = $fhstore{$fn}{'tmplout'};
-	print( $fht &replace_mac( $head, $EH{'macro'} ));
+    	my $fht = $fhstore{$fn}{'tmplout'};
+		print( $fht &replace_mac( $head, $eh->get( 'macro' )));
 
-    #
-	# Was there a difference? If yes, report and sum up.
-    #
-	if ( $diff ) {
-	    $fht->print( $diff );
-	    logwarn("WARNING: VEC_Mismatch file $fn vs. template!");
-            $EH{'sum'}{'verify_mismatch'}++; # Count mismatches ..
-            $EH{'DELTA_VER_NR'}++;
-	} else {
-	    logtrc( "INFO:4", "Info: file $fn in sync with template" );
-            $EH{'sum'}{'verify_ok'}++; # Count matches ..
-	    if ( $EH{'output'}{'delta'} =~ m,\bremove\b,io ) {
-		# Remove empty diff files, close before remove ...
-		# if ( $close_flag ) {
-			unless ( $fht->close ) {
-                logwarn( "ERROR: Cannot close file " . $fhstore{$fn}{'tmplname'} . ": $!" );
-                $EH{'sum'}{'errors'}++;
-            }
-            $fhstore{$fn}{'tmplout'} = 0;
-		# }
-		# $close_flag = 0;
-		unlink( $fhstore{$fn}{'tmplname'} ) or
-		    logwarn( "WARNING: Cannot remove empty template verify file " .
-                             $fhstore{$fn}{'tmplname'} . ": " . $! ) and
-			$EH{'sum'}{'warnings'}++;
-	    }
+    	#
+		# Was there a difference? If yes, report and sum up.
+    	#
+		if ( $diff ) {
+	    	$fht->print( $diff );
+	    	$logger->warn('__W_VEC_MISMATCH', "\tMismatch file $fn vs. template!");
+			$eh->inc('sum.verify_mismatch'); # Count mismatches ..
+			$eh->inc('DELTA_VER_NR');
+		} else {
+	    	$logger->info( '__I_VEC_OK', "\tFile $fn in sync with template" );
+        	$eh->inc( 'sum.verify_ok' ); # Count matches ..
+	    	if ( $eh->get( 'output.delta' ) =~ m,\bremove\b,io ) {
+				# Remove empty diff files, close before remove ...
+				unless ( $fht->close ) {
+                	$logger->error( '__E_FILE_CLOSE', "\tCannot close file " . $fhstore{$fn}{'tmplname'} . ": $!" );
+            	}
+            	$fhstore{$fn}{'tmplout'} = 0;
+				unlink( $fhstore{$fn}{'tmplname'} ) or
+		    	$logger->warn( '__F_FILE_RM',
+		    		"\tCannot remove empty template verify file " .
+                	$fhstore{$fn}{'tmplname'} . ": " . $! ); #OLD and
+	    	}
+		}
 	}
-    }
 
-    #
-    # Delta mode on
-    #
+	#
+	# Delta mode on
+	#
     if ( $fhstore{$fn}{'delta'} ) {
     # Sort/map new content and compare .... print out to $fh
-
         my $diff = mix_utils_diff( \@ncont, \@ocont, $c, $file ); # Compare new content and previous
         my $fh = $fhstore{$fn}{'delta'};
 
@@ -2822,39 +1632,36 @@ $c Generated
 $c  by:  %USER%
 $c  on:  %DATE%
 $c  cmd: %ARGV%
-$c  delta mode (comment/space/sort/remove): $EH{'output'}{'delta'}
+$c  delta mode (comment/space/sort/remove): $eh->get( 'output.delta' )
 $c
 $c  to create file (NEW)
 $c  existing  file (OLD): $file
 $c ------------- CHANGES START HERE ------------- --
 ";
 
-	$fh->print( replace_mac( $head, $EH{'macro'} ));
+		$fh->print( replace_mac( $head, $eh->get( 'macro' )));
 
-	# Was there a difference? If yes, report and sum up.
+		# Was there a difference? If yes, report and sum up.
 
-	if ( $diff ) {
-	    $fh->print( $diff );
-	    logwarn("Info: file $file has changes!");
-	    $EH{'DELTA_NR'}++;
-	} else {
-	    logtrc( "INFO:4", "Info: unchanged file $file" );
-	    if ( $EH{'output'}{'delta'} =~ m,remove,io ) {
-		# Remove empty diff files (removal before closing ????)
-		# if ( $close_flag ) {
-                    unless( $fhstore{$fn}{'delta'}->close ) {
-                        logwarn( "ERROR: Cannot close delta file $fn: $!" );
-                        $EH{'sum'}{'errors'}++;
-                    }
-                    $fhstore{$fn}{'delta'} = 0;
-		# }
-		# $close_flag = 0; # TODO Why
-		unlink( $fhstore{$fn}{'deltaname'} ) or
-		    logwarn( "WARNING: Cannot remove empty diff file " .
-                                 $fhstore{$fn}{'deltaname'} . ": " . $! ) and
-			    $EH{'sum'}{'warnings'}++;
-	    }
-	}
+		if ( $diff ) {
+	    	$fh->print( $diff );
+	    	$logger->warn('__W_DIFF_DETECTED', "\tFile $file has changes!");
+	    	$eh->inc( 'DELTA_NR' );
+		} else {
+	    	$logger->info( '__I_DIFF_NOT', "\tUnchanged file $file" );
+	    	if ( $eh->get( 'output.delta' ) =~ m,remove,io ) {
+			# Remove empty diff files (removal before closing ????)
+				unless( $fhstore{$fn}{'delta'}->close ) {
+					$logger->error( '__E_FILE_CLOSE',
+						"\tCannot close delta file $fn: $!" );
+                }
+                $fhstore{$fn}{'delta'} = 0;
+				unlink( $fhstore{$fn}{'deltaname'} ) or
+					$logger->warn( '__W_FILE_RM',
+						"\tCannot remove empty diff file " .
+                        $fhstore{$fn}{'deltaname'} . ": " . $! );
+	    	}
+		}
     }
 
     #
@@ -2862,21 +1669,19 @@ $c ------------- CHANGES START HERE ------------- --
     #
     if ( $fhstore{$fn}{'out'} ) {
         unless ( $fhstore{$fn}{'out'}->close ) {
-            logwarn( "ERROR: Cannot close file $fn: $!" );
-            $EH{'sum'}{'errors'}++;
+            $logger->error( '__E_FILE_CLOSE', "\tCannot close file $fn: $!" );
             $fhstore{$fn}{'out'} = 0;
-            # return undef;
         }
         $fhstore{$fn}{'out'} = 0;
     }
 
     #
     # Do we need to close the delta file?
-    # TODO Close in the delta-if branch above ...
+    #
     if ( $fhstore{$fn}{'tmplout'} ) {
         unless ( $fhstore{$fn}{'tmplout'}->close ) {
-            logwarn( "ERROR: Cannot close file $fhstore{$fn}{'tmplname'}: $!" );
-            $EH{'sum'}{'errors'}++;
+            $logger->error( '__E_FILE_CLOSE',
+            	"\tCannot close file $fhstore{$fn}{'tmplname'}: $!" );
         }
         $fhstore{$fn}{'tmplout'} = 0;
     }
@@ -2886,8 +1691,8 @@ $c ------------- CHANGES START HERE ------------- --
     #
     if ( $fhstore{$fn}{'delta'} ) {
         unless ( $fhstore{$fn}{'delta'}->close ) {
-            logwarn( "ERROR: Cannot close file $fhstore{$fn}{'deltaname'}: $!" );
-            $EH{'sum'}{'errors'}++;
+            $logger->error( '__E_FILE_CLOSE',
+            	"\tCannot close file $fhstore{$fn}{'deltaname'}: $!" );
         }
         $fhstore{$fn}{'delta'} = 0;
     }
@@ -2895,15 +1700,13 @@ $c ------------- CHANGES START HERE ------------- --
     # Close new file if in -bak mode and close_flag is set ...
     #
     if ( $fhstore{$fn}{'back'} ) {
-	my $bfh = $fhstore{$fn}{'back'};
+		my $bfh = $fhstore{$fn}{'back'};
         $fhstore{$fn}{'back'} = 0;
-	$bfh->close or logwarn( "ERROR: Cannot close file $fn bak: $!" )
-	    and $EH{'sum'}{'errors'}++
-	    and return undef;
+		$bfh->close or $logger->error( '__E_FILE_CLOSE', "\tCannot close file $fn bak: $!" )
+	    	and return undef;
     }
-
     return;
-}
+} # End of mix_utils_close
 
 #
 # Compare two array refs
@@ -2938,7 +1741,7 @@ sub mix_utils_diff ($$$$;$) {
     );
 
     return $diff;
-}
+} # End of mix_utils_diff
         
 #
 # Locate a matching *.vhd file in the check.hdlout path
@@ -2959,13 +1762,14 @@ sub mix_utils_loc_templ ($$) {
     my $file = shift;
 
     $file = basename( $file );
-    my $ic = ( $EH{'check'}{'hdlout'}{'mode'} =~ m/\b(ignorecase|ic)\b/ ) ? 1 : 0;
+    my $ic = ( $eh->get( 'check.hdlout.mode' ) =~
+    	m/\b(ignorecase|ic)\b/ ) ? 1 : 0;
     my $dh;
 
     $file = lc( $file ) if $ic;
 
     # Strategy: if "inpath" is set, take all files found in hdlout.path
-    if ( $EH{'check'}{'hdlout'}{'mode'} =~ m/\binpath\b/o ) {
+    if ( $eh->get( 'check.hdlout.mode' ) =~ m/\binpath\b/o ) {
         _mix_utils_loc_templ("__ALL__", $ic) unless $loc_flag; # Scan once
         $loc_flag = 1;
         if ( $loc_files{$file} ) {
@@ -2974,17 +1778,18 @@ sub mix_utils_loc_templ ($$) {
             return $tmpl;
         } else {
             # no match found :-(    
-            logwarn( "WARNING: could not find matching entity file $file!" );
-            $EH{'sum'}{'verify_missing'}++;
-            $EH{'DELTA_VER_NR'}++;
-            $EH{'sum'}{'warnings'}++;
-            return "";
+            $logger->warn( '__W_VEC_MATCH',
+            	"\tCould not find matching entity file $file!" );
+            $eh->inc( 'sum.verify_missing' );
+            $eh->inc( 'DELTA_VER_NR' );
+            return '';
         }
     } else {
         #find the first match
         return( _mix_utils_loc_templ($file, $ic) );
     }
-}
+} # End of mix_utils_loc_templ
+
 #
 # scan check.hdlout.path and store/return matching files
 #if __ALL__ is given, scan all path components and store results ...
@@ -2995,7 +1800,7 @@ sub _mix_utils_loc_templ ($$) {
 
     my $dh;
     
-    my $pref = $EH{'check'}{'hdlout'}{'__path__'};
+    my $pref = $eh->get( 'check.hdlout.__path__' );
     for my $p ( keys( %$pref )  ) {
         if ( $dh = new DirHandle( $p ) ){
             while( defined( $_ = $dh->read ) ) {
@@ -3004,8 +1809,8 @@ sub _mix_utils_loc_templ ($$) {
                     # next unless ( -f $_ ); # Skip all non files ..
                     my $f = ( $ic ) ? lc( $_ ) : $_;
                     if ( defined( $loc_files{$f} ) ) {
-                        logwarn( "WARNING: duplicate tmpl. file: $_ in $p!" );
-                        $EH{'sum'}{'warnings'}++;
+                        $logger->warn( '__W_TMPL_DUPL',
+                        	"\tDuplicate tmplate file: $_ in $p!" );
                     } else {
                         $loc_files{$f} = $p . "/" . $_;
                     }
@@ -3017,21 +1822,19 @@ sub _mix_utils_loc_templ ($$) {
             }
             $dh->close();
         } else {
-            logwarn( "Warning: cannot open $p for reading: $!" );
-            $EH{'sum'}{'warnings'}++;
+            $logger->warn( '__W_FILE_OPEN', "\tCannot open $p for reading: $!" );
         }
     }
     if ( $file eq "__ALL__" ) {
-        return "";
+        return '';
     }
 
     # We are still here -> no match found :-(    
-    logwarn( "WARNING: could not find matching entity file $file!" );
-    $EH{'sum'}{'verify_missing'}++;
-    $EH{'DELTA_VER_NR'}++;
-    $EH{'sum'}{'warnings'}++;
-    return "";
-}
+    $logger->warn( '__W_VEC_FINDMATCH', "\tCould not find matching entity file $file!" );
+    $eh->inc( 'sum.verify_missing' );
+    $eh->inc( 'DELTA_VER_NR' );
+    return '';
+} # End of _mix_utils_loc_templ
 
 #
 # Summarize left-over hdl files in verify path (only for "inpath" mode
@@ -3039,12 +1842,11 @@ sub _mix_utils_loc_templ ($$) {
 sub mix_utils_loc_sum () {
     for my $h ( sort( keys( %loc_files )) ) {
         # TODO Apply filter ... (or better upfront ...)
-        logwarn( "WARNING: unmatched hdl file in verify path: $h!" );
-        $EH{'sum'}{'verify_leftover'}++;
-        $EH{'DELTA_VER_NR'}++;
-        $EH{'sum'}{'warnings'}++;
+        $logger->warn( '__W_VPATH_EXTRA', "\tUnmatched hdl file in verify path: $h!" );
+        $eh->inc( 'sum.verify_leftover' );
+        $eh->inc( 'DELTA_VER_NR' );
     }
-}
+} # End of mix_utils_loc_sum
 
 } # End of mix_util_FILE block ....
 ####
@@ -3066,11 +1868,11 @@ sub replace_mac ($$) {
 	# Do nothing if there are no keys defined ...
         # Strange, why would one call a replace functions without replacement
         # keys ?
-        logtrc( "INFO", "Called replace mac without macros for string " .
+        $logger->info( '__I_REPLACE_MAC', "\tCalled replace mac without macros for string " .
                 substr( $text, 0, 15 ) . " ..." );
     }
     return $text;
-}
+} # End of replace_mac
 
 ####################################################################
 ## select_variant
@@ -3092,25 +1894,23 @@ sub select_variant ($) {
     my $r_data = shift;
 
     unless ( defined $r_data ) {
-	    logwarn("FATAL: select_variant called with bad argument!");
-	    exit 1;
+	    $logger->fatal('__F_BAD_VARIANT', "\tselect_variant called with bad argument!");
+	    die;
     }
 
     for my $i ( 0..$#$r_data ) {
-	if ( exists( $r_data->[$i]{'::variants'} ) ) {
-	    my $var = $r_data->[$i]{'::variants'};	    
-	    # if ( defined( $var ) and $var !~ m/^\s*$/o and $var !~ m/^default/io ) {
-	    if ( defined( $var ) and $var !~ m/^\s*$/o ) {
-		$var =~ s/[ \t,]+/|/g; # Convert into Perl RE (Var1|Var2|Var3)
-		$var = "(" . $var . ")";
-		if ( $EH{'variant'} !~ m/^$var$/i ) {
-		    $r_data->[$i]{'::ign'} = "# Variant not selected!"; # Mark for deletion ...
-		    # delete( $r_data->[$i] ); ### XXXXX remove from array
+		if ( exists( $r_data->[$i]{'::variants'} ) ) {
+	    	my $var = $r_data->[$i]{'::variants'};	    
+	    	if ( defined( $var ) and $var !~ m/^\s*$/o ) {
+				$var =~ s/[ \t,]+/|/g; # Convert into Perl RE (Var1|Var2|Var3)
+				$var = "(" . $var . ")";
+				if ( $eh->get( 'variant' ) !~ m/^$var$/i ) {
+		    		$r_data->[$i]{'::ign'} = "# Variant not selected!"; # Mark for deletion ...
+				}
+	    	}
 		}
-	    }
-	}
     }
-}
+} # End of select_variant
 
 ####################################################################
 ## convert_in
@@ -3151,8 +1951,7 @@ sub convert_in ($$) {
     my $r_data = shift;
 
     unless ( defined $kind and defined $r_data ) {
-	    logwarn("WARNING: skipping convert_in, called with bad arguments!");
-	    $EH{'sum'}{'warnings'}++;
+	    $logger->warn('__W_CONVERT_IN', "\tSkipping convert_in, called with bad arguments!");
 	    return ();
     }
 
@@ -3161,32 +1960,40 @@ sub convert_in ($$) {
     my %order = ();  # Field name to number
     my $hflag = 0;
     my @holdincom = (); # tmp storage for linked comments
-    my $required = $EH{$kind}{'field'}; # Shortcut into EH->fields
+    my $required = $eh->get ( $kind . '.field' ); # Shortcut into EH->fields
 
     for my $i ( @$r_data ) { # Read row by row
 		$i = [ map { defined( $_ ) ? $_ : "" } @$i ];		#Fill up undefined fields??
 		my $all = join( ' ', @$i );
 		$all =~ s/\n//g; # Remove extra newlines ..
 		next if ( $all =~ m/^\s*$/o ); 			# If a line is totally empty, skip it
-		#!wig20051011: next if ( $all =~ m,^\s*(#|//), );			# If line starts with comment, skip it
 
 		# Skip all lines before the ::foo ::bar line!
 		unless ( $hflag ) { # We are still looking for our ::MARKER header line
 	    	next unless ( $all =~ m/^\s?::/ );			#Still no header ...
-	    	%order = parse_header( $kind, \$EH{$kind}, @$i );		#Check header, return field number to name
+	    	#REFACTOR: check this OLD (was \$EH ...)
+	    	%order = parse_header( $kind, $eh->get( $kind ), @$i );		#Check header, return field number to name
 	    	$hflag = 1;
 	    	next;
 		}
 	
 		# Skip ::ign marked with # or // comments, again ...
 		#			or if the whole line only has leading # or //
-		if ( defined( $order{'::ign'}) and
-				( $all =~ m,^\s*(#|//),o or
-					$i->[$order{'::ign'}] =~ m,^\s*(#|//),o )
-		) {
-			# Skip only if 'comments' is not set
-			if ( defined( $EH{$kind}{'comments'} ) and $EH{$kind}{'comments'} ) {
-				my $relation = ( $EH{$kind}{'comments'} =~ m/\bpre/io ) ? 'pre' : 'post';
+		my $ignorelines_match = $eh->get( 'output.input.ignore.lines' ) ||
+				'^\s*(#|//)';
+		my $ignoreignore_match = $eh->get( 'output.input.ignore.comments' ) ||
+				'^\s*(#|//)';
+		if ( $ignoreignore_match =~ m/::ignany\b/ ) {
+			$ignoreignore_match = '\S+';
+		}
+		if ( $all =~ m,$ignorelines_match, or
+			( defined( $order{'::ign'}) and
+				$i->[$order{'::ign'}] =~ m,$ignoreignore_match, ) ) {
+			# Skip only if <kind>.comments is not set
+			if ( defined( $eh->get( $kind . '.comments' ) ) and
+					$eh->get( $kind . '.comments' ) ) {
+				my $relation = ( $eh->get( $kind . '.comments' )
+					=~ m/\bpre/io ) ? 'pre' : 'post';
 				# Other values: post, successor
 				# Link the comment to the previous/next line
 				# create a primary key entry (if not set!)
@@ -3223,7 +2030,7 @@ sub convert_in ($$) {
 				} else {
 		    		$d[$n]{$ii} = "%UNDEF%";
 				}
-	    	}# TODO Set to default ? If field is undefined, set to ""
+	    	}
 		}
 		if ( scalar( @holdincom ) ) { # Attach post comments to previous ...
 			@{$d[-1]{'::incom'}} = @holdincom;
@@ -3231,8 +2038,7 @@ sub convert_in ($$) {
 		}
     }
     unless( $hflag ) {
-		logwarn("WARNING: Failed to detect header in worksheet of type $kind");
-		$EH{'sum'}{'warnings'}++;
+		$logger->warn('__W_DETECT_HEADER', "\tFailed to detect header in worksheet of type $kind");
     }
     return @d;
 }
@@ -3253,7 +2059,7 @@ Convert multiple ::head to ::head, ::head:2, ....
 
 I guess multiple headers are kind of evil (keep an eye on them)
 
-Arguments: $kind, \$eh{$kind}, @header_row
+Arguments: $kind, $eh{$kind}, @header_row
 
 Returns: %order (keys are the ::head items)
 
@@ -3268,16 +2074,16 @@ sub parse_header($$@){
     my @row = @_;
 
     unless( defined $kind and defined $templ and $#row >= 0 ) {
-	logwarn( "ERROR: parse header started with missing arguments!\n" );
-	exit 1;
+		$logger->fatal( '__F_PARSE_HEADER', "\tParsing header started with missing arguments!\n" );
+		die;
     }
 
     my %rowh = ();
 
     for my $i ( 0 .. ( scalar( @row ) - 1 ) ) {
 		unless ( $row[$i] )  {
-	    	logtrc("INFO:4" , "WARNING: Empty header in column $i, sheet-type $kind, skipping!");
-	    	# $EH{'sum'}{'warnings'}++;
+	    	$logger->warn('__I_EMPTY_HEADERC' ,
+	    		"\tEmpty header in column $i, sheet-type $kind, skipping!");
 	    	push( @{$rowh{"::skip"}}, $i);
 	    	$row[$i] = "::skip";
 	    	next;
@@ -3288,8 +2094,7 @@ sub parse_header($$@){
 			$row[$i]  =~ s/\s+$//;  # Remove trailing whitespace
 		}
 		if ( $row[$i] and $row[$i] !~ m/^::/o ) { #Header not starting with ::
-	    	logwarn("WARNING: Bad name in header row: $row[$i] $i, type $kind, skipping!");
-	    	$EH{'sum'}{'warnings'}++;
+	    	$logger->warn('__W_HEADER_NAME', "\tBad name in header row: $row[$i] $i, type $kind, skipping!");
 	    	push( @{$rowh{"::skip"}}, $i);
 	    	next;
 		}
@@ -3299,25 +2104,23 @@ sub parse_header($$@){
     #
     # Are all required fields in @row, multiple rows?
     #
-    for my $i ( keys( %{$$templ->{'field'}} ) ) {
+    for my $i ( keys( %{$templ->{'field'}} ) ) {
 	    next unless( $i =~ m/^::/o );
-	    if( $$templ->{'field'}{$i}[2] > 0 ) { #required field
+	    if( $templ->{'field'}{$i}[2] > 0 ) { #required field
 			if ( not defined( $rowh{$i} ) ) {
-		    	if ( $$templ->{'field'}{$i}[2] > 1 ) { # 2 -> needs to be initialized silently
-					logtrc(INFO, "Info: appended optional data field $i.");
+		    	if ( $templ->{'field'}{$i}[2] > 1 ) { # 2 -> needs to be initialized silently
+					$logger->info('__I_APPEND_FIELD', "\tAppending optional data field $i.");
 					push ( @row, $i );
 					push ( @{$rowh{$i}} ,$#row );
 		    	} else {
 		    		unless ( $i =~ m/:\d+$/ ) { # Ignore ::key:N fields! 
-						logwarn("WARNING: Missing required field $i in input array!");
-						$EH{'sum'}{'warnings'}++;
+						$logger->warn('__W_REQUIRED_HEADER', "\tMissing required field $i in input array!");
 		    		}
 		    	}
 			}
 	    }
-	    if ( defined( $rowh{$i} ) and $#{$rowh{$i}} >= 1 and $$templ->{'field'}{$i}[1] <= 0 ) {
-			logwarn("WARNING: Multiple input header not allowed for $i!");
-			$EH{'sum'}{'warnings'}++;
+	    if ( defined( $rowh{$i} ) and $#{$rowh{$i}} >= 1 and $templ->{'field'}{$i}[1] <= 0 ) {
+			$logger->warn('__W_HEADER_MULT', "\tMultiple input header not allowed for $i!");
 	    }
     }
 
@@ -3328,16 +2131,16 @@ sub parse_header($$@){
     #
     for my $i ( 0..$#row ) {
 	    my $head = $row[$i];	
-	    unless ( defined( $$templ->{'field'}{$head} ) ) {
-	        logsay("Added new column header $head");
-	        @{$$templ->{'field'}{$head}} = @{$$templ->{'field'}{'::default'}};
-	        $$templ->{'field'}{$head}[4] = $$templ->{'field'}{'nr'};
-	        $$templ->{'field'}{'nr'}++;
+	    unless ( defined( $templ->{'field'}{$head} ) ) {
+	        $logger->info('__I_HEAD_NEW', "\tAdded new column header $head");
+	        @{$templ->{'field'}{$head}} = @{$templ->{'field'}{'::default'}};
+	        $templ->{'field'}{$head}[4] = $templ->{'field'}{'nr'};
+	        $templ->{'field'}{'nr'}++;
 	    }
 	    #!wig20050715: map -1 rows to get printed at end ...
-	    if ( $$templ->{'field'}{$head}[4] == "-1" ) {
-	    	$$templ->{'field'}{$head}[4] = $$templ->{'field'}{'nr'};
-	        $$templ->{'field'}{'nr'}++;
+	    if ( $templ->{'field'}{$head}[4] == "-1" ) {
+	    	$templ->{'field'}{$head}[4] = $templ->{'field'}{'nr'};
+	        $templ->{'field'}{'nr'}++;
 	    }
     }
 
@@ -3349,7 +2152,7 @@ sub parse_header($$@){
     for my $i ( keys( %rowh ) ) { # Iterate through multiple headers ...
 		next if ( $i =~ m/^::skip/ ); #Ignore bad fields
 		if ( $#{$rowh{$i}} > 0 ) { # Multiple field header:
-			my $colorder = $$templ->{'field'}{'_multorder_'} || "0";
+			my $colorder = $templ->{'field'}{'_multorder_'} || "0";
 			my $reverse = 0;
 			if ( $colorder =~ m/(1|RL)/o ) { # From right to left
 				$reverse = 1;
@@ -3366,34 +2169,33 @@ sub parse_header($$@){
 	    	# $or{$i} = $rowh{$i}[0]; # Save first field, rest will be seperated by name ...
 	     	for my $ii ( @range ) {
 				my $funique = "$i:$ii";
-				unless( defined( $$templ->{'field'}{$funique} ) ) {
-					logtrc(INFO, "Split multiple column header $i to $funique");
+				unless( defined( $templ->{'field'}{$funique} ) ) {
+					$logger->info('__I_SPLIT_HEAD', "\tSplit multiple column header $i to $funique");
 					#!wig20051017: make a copy of the array!
-					@{$$templ->{'field'}{$funique}} = @{$$templ->{'field'}{$i}};
+					@{$templ->{'field'}{$funique}} = @{$templ->{'field'}{$i}};
 					#lu20050624 disable required-attribute for the additional
 					# headers because they do not occur in input
-					$$templ->{'field'}{$funique}[2] = 0;
+					$templ->{'field'}{$funique}[2] = 0;
 					#Remember print order no longer is unique
 					
 					# Increase print order:
 					#!wig20051025: use same number as templ, will be changed in sort
-					$$templ->{'field'}{$funique}[4] = $$templ->{'field'}{$i}[4];
-					$$templ->{'field'}{'nr'}++
+					$templ->{'field'}{$funique}[4] = $templ->{'field'}{$i}[4];
+					$templ->{'field'}{'nr'}++
 				}
 				push( @resort, $funique );
 				$or{$funique} = $rowh{$i}[$ii];
 			}
 			# Remember number of multiple header columns
-			if ( not exists( $$templ->{'_mult_'}{$i} ) ) {
-					$$templ->{'_mult_'}{$i} = $nummultcols;
+			if ( not exists( $templ->{'_mult_'}{$i} ) ) {
+					$templ->{'_mult_'}{$i} = $nummultcols;
 			} else {
-				if ( $$templ->{'_mult_'}{$i} ne $nummultcols ) {
-					logwarn("WARNING: Multiple column header $i in $kind count mismatch: " .
-					$nummultcols . " now, " . $$templ->{'_mult_'}{$i} . " previously" );
-					$EH{'sum'}{'warnings'}++;
+				if ( $templ->{'_mult_'}{$i} ne $nummultcols ) {
+					$logger->warn('__W_HEAD_MULT_CMISM', "\tMultiple column header $i in $kind count mismatch: " .
+					$nummultcols . " now, " . $templ->{'_mult_'}{$i} . " previously" );
 				}
-				if ( $$templ->{'_mult_'}{$i} < $nummultcols ) {
-					$$templ->{'_mult_'}{$i} = $nummultcols;
+				if ( $templ->{'_mult_'}{$i} < $nummultcols ) {
+					$templ->{'_mult_'}{$i} = $nummultcols;
 				}
 			}
 		} else {
@@ -3402,9 +2204,9 @@ sub parse_header($$@){
 		}
 	}
 	
-    $EH{$kind}{'ext'} = scalar(keys(%or));
+    $eh->set( $kind . '.ext', scalar(keys(%or)) );
 	
-	if ( exists $$templ->{'_mult_'} ) {
+	if ( exists $templ->{'_mult_'} ) {
 		_mix_utils_reorder( $templ, \@resort, \%or );
 	}
 		
@@ -3417,7 +2219,7 @@ sub parse_header($$@){
 #   needs to be serialized
 #
 # Global:
-#	changes $EH{$type}{'field'} ... print order
+#	changes $eh-> ... {$type}{'field'} ... print order
 #
 sub _mix_utils_reorder ($$$) {
 	my $templ = shift;
@@ -3430,18 +2232,18 @@ sub _mix_utils_reorder ($$$) {
 	# }
 	my @atend = ();
 	my $print_start = 1;
-	for my $k ( sort { $$templ->{'field'}{$a}[4] <=> $$templ->{'field'}{$b}[4] or
+	for my $k ( sort { $templ->{'field'}{$a}[4] <=> $templ->{'field'}{$b}[4] or
 				$order->{$a} <=> $order->{$b}; } @$resortar ) {
-		next if ( $$templ->{'field'}{$k}[4] == 0 );
-		if ( $$templ->{'field'}{$k} < 0 ) { # Save for later usage
+		next if ( $templ->{'field'}{$k}[4] == 0 );
+		if ( $templ->{'field'}{$k} < 0 ) { # Save for later usage
 			push( @atend , $k );
 		} else {
-			$$templ->{'field'}{$k}[4] = $print_start++;
+			$templ->{'field'}{$k}[4] = $print_start++;
 		}
 	}
 
 	for my $k ( @atend ) {
-		$$templ->{'field'}{$k}[4] = $print_start++;
+		$templ->{'field'}{$k}[4] = $print_start++;
 	}
 		
 	return;
@@ -3451,7 +2253,7 @@ sub _mix_utils_reorder ($$$) {
 ## mix_store
 ## dump data (hash) on disk
 ##
-## use $EH{'internal'}{'path'} to define a directry != cwd()
+## use $eh->get( 'internal.path' ) to define a directry != cwd()
 ####################################################################
 
 =head2
@@ -3459,7 +2261,7 @@ sub _mix_utils_reorder ($$$) {
 mix_store ($$;$) {
 
 Dump input data into a disk file.
-Set $EH{'internal'}{'path'} to change output directory.
+Set $eh->get( 'internal.path' ) to change output directory.
 
 =cut
 sub mix_store ($$;$){
@@ -3468,20 +2270,20 @@ sub mix_store ($$;$){
     my $flag = shift || "internal";
 
     #
-    # attach $EH{$flag}{'path'} ...
+    # attach $eh->get( $flag . '.path' ) ...
     #
-    my $predir = "";
-    if( $EH{$flag}{'path'} ne "." and not is_absolute_path( $file ) ) {
-	$predir = $EH{$flag}{'path'} . "/";
+    my $predir = '';
+    if( $eh->get( $flag . '.path' ) ne '.' and not is_absolute_path( $file ) ) {
+		$predir = $eh->get( $flag . '.path' ) . '/';
     }
     if ( -r ( $predir . $file ) ) {
-	logwarn("file $predir$file already exists! Will be overwritten!");
+		$logger->warn('__W_FILE_OVERWRITE', "\tFile $predir$file already exists! Will be overwritten!");
     }
 
     # TODO would we want to use nstore instead ?
     unless( store( $r_data, $predir . $file ) ) {
-	logwarn("FATAL: Cannot store date into $predir$file: " . $! . "!\n");
-	exit 1;
+		$logger->fatal('__F_STORE', "\tCannot store date into $predir$file: " . $! . "!\n");
+		exit 1;
     }
 
     #
@@ -3490,24 +2292,22 @@ sub mix_store ($$;$){
     #
 
     if ( $OPTVAL{'adump'} ) {
-	if ( eval 'use Data::Dumper;' ) {
-            logwarn("ERROR: Cannot load Data::Dumper module: $@");
-            $EH{'sum'}{'errors'}++;
+		if ( eval 'use Data::Dumper;' ) {
+            $logger->error('__E_USE_DATADUMPER', "\tCannot load Data::Dumper module: $@");
             $OPTVAL{'adump'} = "";
             return;
-	}
-	$file .= "a";
-	unless( open( DUMP, ">$predir$file" ) ) {
-	    logwarn("FATAL: Cannot open file $predir$file for dumping: $!");
-	    exit 1;
-	}
-	print( DUMP Dumper( $r_data ) );
-	unless( close( DUMP ) ) {
-	    logwarn("FATAL: Cannot close file $predir$file: $!");
-	    exit 1;
-	}
+		}
+		$file .= "a";
+		unless( open( DUMP, ">$predir$file" ) ) {
+	    	$logger->fatal('__F_FILE_OPEN_DUMP', "\tCannot open file $predir$file for dumping: $!");
+	    	exit 1;
+		}
+		print( DUMP Dumper( $r_data ) );
+		unless( close( DUMP ) ) {
+	    	$logger->fatal('__F_FILE_CLOSE_DUMP', "\tCannot close file $predir$file: $!");
+	    	exit 1;
+		}
     }
-
     return;
 }
 
@@ -3532,14 +2332,12 @@ sub mix_load ($%){
     $r_d = retrieve( $file );
 
     foreach my $i ( keys( %$r_data ) ) {
-	if ( exists( $r_d->{$i} ) ) {
-	    $r_data->{$i} = $r_d->{$i};
-	}
-	else {
-	    logwarn( "WARNING: Dumped data does not have $i hash!" );
-	    $EH{'sum'}{'warnings'}++;
-	    $flag = undef;
-	}
+		if ( exists( $r_d->{$i} ) ) {
+	    	$r_data->{$i} = $r_d->{$i};
+		} else {
+	    	$logger->warn( '__W_READ_BADHASH', "\tDumped data does not have $i hash!" );
+	    	$flag = undef;
+		}
     }
     return $flag;
 }
@@ -3554,7 +2352,7 @@ sub mix_load ($%){
 db2array ($$$) {
 
 convert the datastructure to a flat array
-adds the header line as defined in the $EH{$type}{'field'} ..
+adds the header line as defined in the $eh->get( $type . '.field' ) ..
 
 Arguments: 	$ref    := hash reference
 			$type   := (hier|conn)
@@ -3571,14 +2369,12 @@ sub db2array ($$$) {
     my $filter	= shift;
 
     unless( $ref ) {
-    	logwarn("WARNING: Called db2array without db argument!");
-	    $EH{'sum'}{'warnings'}++;
+    	$logger->warn('__W_DB2ARRAY_ARGS', "\tCalled db2array without db argument!");
 	    return;
     }
     $type = lc( $type );
     unless ( ref( $ref ) eq 'ARRAY' or $type =~ m/^(hier|conn)/io ) {
-		logwarn("WARNING: Bad db type $type, ne HIER or CONN!");
-		$EH{'sum'}{'warnings'}++;
+		$logger->warn('__W_BAD_DBTYPE', "\tBad db type $type, ne HIER or CONN!");
 		return;
     }
     $type = ( defined( $1 ) and $1 ) ? lc($1) : lc( $type );
@@ -3589,19 +2385,21 @@ sub db2array ($$$) {
     
     # Get order for printing fields ...
     #  and the number of the comment and primary data field
-    #  $EH{$type}{'field'} holds headers for all detected columns!
+    #  $eh->get( $type . '.field' ) holds headers for all detected columns!
     #
     # TODO : check if fields do overlap!
-    for my $ii ( keys( %{$EH{$type}{'field'}} ) ) {
+    # REFEACTOR: check the returned data (ref to hash!)
+    my $fields = $eh->get( $type . '.field' );
+    for my $ii ( keys( %$fields ) ) {
 		next unless ( $ii =~ m/^::/o );
 		# Only print if PrintOrder > 0:
-		if ( $EH{$type}{'field'}{$ii}[4] > 0 ) {
-			$o[$EH{$type}{'field'}{$ii}[4]] = $ii; # Print Order ...
+		if ( $fields->{$ii}[4] > 0 ) {
+			$o[$fields->{$ii}[4]] = $ii; # Print Order ...
 		}
-		if ( $EH{$type}{'key'} eq $ii ) {
-	    	$primkeynr = $EH{$type}{'field'}{$ii}[4];
+		if ( $eh->get( $type . '.key' ) eq $ii ) {
+	    	$primkeynr = $fields->{$ii}[4];
 		} elsif ( $ii eq '::comment' ) {
-	    	$commentnr = $EH{$type}{'field'}{$ii}[4];
+	    	$commentnr = $fields->{$ii}[4];
 		}
     }
 
@@ -3665,13 +2463,12 @@ sub db2array ($$$) {
 				$a[$n][$ii-1] = defined( $refdata->{$o[$ii]} ) ? $refdata->{$o[$ii]} : "%UNDEF_1%";
 	    	}
 	    	
-	    	if ( length( $a[$n][$ii-1] ) > $EH{'format'}{'xls'}{'maxcelllength'} ) {
+	    	if ( length( $a[$n][$ii-1] ) > $eh->get( 'format.xls.maxcelllength' ) ) {
 				# Line too long! Split it!
 				# Assumes that the cell to be split are accumulated when reused later on.
 				# Will not check if that is not true!
 				if ( $ii - 1 == $primkeynr ) {
-		    		logwarn( "WARNING: Splitting key of table: " . substr( $a[$n][$ii-1], 0, 32 ) );
-		    		$EH{'sum'}{'warnings'}++;
+		    		$logger->warn( '__W_SPLIT_KEY', "\tSplitting key of table: " . substr( $a[$n][$ii-1], 0, 32 ) );
 				}
 				$split_flag=1;
 				my @splits = mix_utils_split_cell( $a[$n][$ii-1] );
@@ -3734,7 +2531,7 @@ sub db2array ($$$) {
 db2array_intra ($$$$$) {
 
 convert the datastructure to a hash with flat array
-adds the header line as defined in the $EH{$type}{'field'} ..
+adds the header line as defined in the $eh->get( $type . '.field' ) ..
 
 Currently for "CONN" sheets, only!
 
@@ -3744,7 +2541,7 @@ Arguments: 	$ref    := hash reference
 			    		if $filter is an sub ref, will be used in grep
 
 Global:
-	$EH{'intermediate'}{'intra'}
+	$eh->get( 'intermediate.intra' )
 		keys for splitting ...
 	# 'intra'	=> '',	# if set create seperate conn sheets for instances:
 	#	INTRA		-> CONN and INTRA_CONN
@@ -3764,14 +2561,12 @@ sub db2array_intra ($$$$$) {
     my $hierref	= shift;
     my $filter	= shift;
 
-    unless( $ref ) {
-    	logwarn("WARNING: Called db2array_intra without db argument!");
-	    $EH{'sum'}{'warnings'}++;
+    unless( $ref and ref( $ref ) ) {
+    	$logger->warn( '__W_FUNC_ARGS', "\tCalled db2array_intra without db argument!");
 	    return;
     }
     unless ( $type =~ m/^(conn)/io ) {
-		logwarn("WARNING: Bad db type $type, ne CONN!");
-		$EH{'sum'}{'warnings'}++;
+		$logger->warn('__W_BADDBTYPE', "\tBad db type $type, ne CONN!");
 		return;
     }
     $type = lc($1);
@@ -3782,16 +2577,17 @@ sub db2array_intra ($$$$$) {
     
     # Get order for printing fields ...
     # TODO check if fields do overlap!
-    for my $ii ( keys( %{$EH{$type}{'field'}} ) ) {
+    my $field = $eh->get( $type . '.field' );
+    for my $ii ( keys( %$field ) ) {
 		next unless ( $ii =~ m/^::/o );
 		# Only print if PrintOrder > 0:
-		if ( $EH{$type}{'field'}{$ii}[4] > 0 ) {
-			$o[$EH{$type}{'field'}{$ii}[4]] = $ii; # Print Order ...
+		if ( $field->{$ii}[4] > 0 ) {
+			$o[$field->{$ii}[4]] = $ii; # Print Order ...
 		}
-		if ( $EH{$type}{'key'} eq $ii ) {
-	    	$primkeynr = $EH{$type}{'field'}{$ii}[4];
+		if ( $eh->get( $type . '.key' ) eq $ii ) {
+	    	$primkeynr = $field->{$ii}[4];
 		} elsif ( $ii eq '::comment' ) {
-	    	$commentnr = $EH{$type}{'field'}{$ii}[4];
+	    	$commentnr = $field->{$ii}[4];
 		}
     }
 
@@ -3805,7 +2601,7 @@ sub db2array_intra ($$$$$) {
 	#	INST[ANCE]	-> create one conn sheet for each instance, named: CONN_<instance>
 	#					rest goes to CONN_MIX_REST
 	my %names = ();
-	my $intra = $EH{'intermediate'}{'intra'};
+	my $intra = $eh->get( 'intermediate.intra' );
 	my $splitmode = 'all';
 
 	my $top = $tops->[0]->name; # Name of top instance
@@ -3899,21 +2695,21 @@ sub db2array_intra ($$$$$) {
 							$ref->{$i}{$o[$ii]} : "%UNDEF_1%";
 					# Map I,O,IO on top sheet to other values
 					if ( $istop and $o[$ii] eq '::mode'
-	    				and $EH{'intermediate'}{'topmap'} ) {
+	    				and $eh->get( 'intermediate.topmap' ) ) {
 	    				# Does this signal match the list?
-	    				if ( $EH{'intermediate'}{'topmap'} eq 'ALL' or
-	    					$ref->{$i}{'::name'} =~ m/$EH{'intermediate'}{'__topmap_re__'}/ ) {
+	    				if ( $eh->get( 'intermediate.topmap' ) eq 'ALL' or
+	    					$ref->{$i}{'::name'} =~ m/$eh->get( 'intermediate.__topmap_re__')/ ) {
 	    						$a{$a}[$n{$a}][$ii-1] =~ s/(\w+)/%TM_$1%/;
 	    				}
 					}
 	    		}
-	    		if ( length( $a{$a}[$n{$a}][$ii-1] ) > $EH{'format'}{'xls'}{'maxcelllength'} ) {
+	    		if ( length( $a{$a}[$n{$a}][$ii-1] ) > $eh->get( 'format.xls.maxcelllength' ) ) {
 					# Line too long! Split it!
 					# Assumes that the cell to be split are accumulated when reused later on.
 					if ( $ii - 1 == $primkeynr ) {
-		    			logwarn( "WARNING: Splitting key of table: " .
+		    			$logger->warn( '__W_SPLIT_KEY',
+		    					"\tSplitting key of table: " .
 		    					substr( $a{$a}[$n{$a}][$ii-1], 0, 32 ) );
-		    			$EH{'sum'}{'warnings'}++;
 					}
 					$split_flag=1;
 					my @splits = mix_utils_split_cell( $a{$a}[$n{$a}][$ii-1] );
@@ -4015,7 +2811,7 @@ sub inout2intra ($$$$$$) {
 					$ssplit{$namem->{'intra'}}{'name'}{$inst} = 1;
 				}
 			} elsif ( $mode eq 'all' ) {
-				my $conn_inst = $EH{'intermediate'}{'instpre'} . $inst;
+				my $conn_inst = $eh->get( 'intermediate.instpre' ) . $inst;
 				push( @{$split{$conn_inst}{$io}}, $ios );
 				$ssplit{$conn_inst}{'name'}{$inst} = 1;
 				if ( $inst =~ m/$topre/ ) {
@@ -4079,7 +2875,7 @@ sub _mix_utils_im_header ($$) {
     my %comment = ( qw( by %USER% on %DATE% cmd %ARGV% ));
     $a[$n++][0] = "# Generated Intermediate Data: $title";
     for my $c ( qw( by on cmd ) ) {
-		$a[$n++][0] = "# $c: " . $EH{'macro'}{$comment{$c}};
+		$a[$n++][0] = "# $c: " . $eh->get( 'macro.' . $comment{$c} );
     }
 
 	return $n, @a;
@@ -4101,9 +2897,9 @@ sub mix_utils_split_cell ($) {
     my $data = shift;
     my $flaga = 0;
 
-	my $maxlengthexcel = $EH{'format'}{'xls'}{'maxcelllength'};
+	my $maxlengthexcel = $eh->get( 'format.xls.maxcelllength' );
     # Get pieces up to 1023/500 characters, seperated by ", %IOCR%"
-    my $iocr = $EH{'macro'}{'%IOCR%'};
+    my $iocr = $eh->get( 'macro.%IOCR%' );
     my @chunks = ();
 
     while( length( $data ) > $maxlengthexcel ) {
@@ -4113,14 +2909,13 @@ sub mix_utils_split_cell ($) {
 		if ( $ri <= 0 ) { # No $iocr in string -> split at arbitrary location ??
 	    	push( @chunks, $tmp );
 	    	substr( $data, 0, $maxlengthexcel ) = "";
-	    	logtrc( "INFO:4",  "INFO: Split cell at arbitrary location: " . substr( $tmp, 0, 32 ) )
+	    	$logger->info( '__I_SPLIT_CELL', "\tSplit cell at arbitrary location: " . substr( $tmp, 0, 32 ) )
 				unless $flaga;
 	    	$flaga = 1;
 		} else {
 	    	if ( $flaga ) {
-				logwarn( "WARNING: Cell split might produce bad results, iocr detection failed: " .
+				$logger->warn( '__W_SPLIT_CELL', "\tCell split might produce bad results, iocr detection failed: " .
 		    		substr( $chunks[0], 0, 32 ) );
-				$EH{'sum'}{'warnings'}++;
 	    	}
 	    	substr( $data, 0, $ri ) = ""; # Take away leading chars
 	    	push ( @chunks,  substr( $tmp, 0, $ri ) ); # Chunk found ...
@@ -4263,14 +3058,15 @@ sub _inoutjoin ($) {
 
 	#  find a single :) or (: and warn
     if ( ( $s =~ m,\(:,o ) or ( $s =~ m,:\),o ) ) {
-	logwarn( "WARNING: inout2array bad branch (: ! File bug report!" );
-        $EH{'sum'}{'warnings'}++;
+		$logger->warn( '__W_INOUT_BAD_BRANCH',
+			"\tinout2array bad branch (: ! File bug report!" );
     }
 
 	# Replace the <cr> if any
     $s =~ s/,\s*%IOCR%\s*$//o; #Remove trailing CR
     # convert macros (parse_mac already done )!!!
-    $s =~ s,%IOCR%,$EH{'macro'}{'%IOCR%'},g;
+    my $iocr = $eh->get( 'macro.%IOCR%' );
+    $s =~ s,%IOCR%,$iocr,g;
 
     return $s;
 }
@@ -4300,7 +3096,7 @@ sub two2one ($) {
 		$l =~ s/,\s*$//o;	# Remove trailing ,
 		push( @out, $l );
     }
-    if ( $EH{'output'}{'delta'} !~ m/space/ ) {
+    if ( $eh->get( 'output.delta' ) !~ m/space/ ) {
 		@out = grep( !/^\s*$/ , @out ); # Get rid of "space only" elements
     }
     return @out;
@@ -4324,17 +3120,17 @@ sub one2two ($) {
 	# @fields has lengthes, now ....
 	unless( $fields[0] ) { shift @fields; }; #Take away the first if empty
 	if ( scalar( @fields ) < 1 or scalar( @fields ) > 4 ) {
-	    logwarn( "WARNING: Bad number of fields found in write_delta_excel!" );
-	    $EH{'sum'}{'warnings'}++;
+	    $logger->warn( '__W_FIELD_NUMBER',
+	    	"\tBad number of fields found in write_delta_excel!" );
 	}
 	my @w = map( { length( $_ ) }@fields );
 	for my $i ( @w ) {
 	    if ( $i > 1024 * 10 ) { # reg expression seems to be limited to 32766 chars ..
-		logwarn( "WARNING: Cannot split field with $i chars in delta mode!\n" );
-		$EH{'sum'}{'warnings'}++;
-		$match .= '[*|]([^*|]+)';
+			$logger->warn( '__W_SPLIT_FIELD',
+				"\tCannot split field with $i chars in delta mode!" );
+			$match .= '[*|]([^*|]+)';
 	    } else {
-		$match .= '[*|](.{' . $i . '})';
+			$match .= '[*|](.{' . $i . '})';
 	    }
 	}
     }
@@ -4393,35 +3189,50 @@ sub write_sum () {
     # TODO Shift function to other module ... ??
 
     # If we had 'inpath' verify mode, summarize left-over "golden" hdl files.
-    if ( $EH{'check'}{'hdlout'}{'path'} and $EH{'check'}{'hdlout'}{'mode'} =~ m,\binpath\b,io ) {
+    if ( $eh->get( 'check.hdlout.path' ) and
+    		$eh->get( 'check.hdlout.mode' ) =~ m,\binpath\b,io ) {
         mix_utils_loc_sum();
     }
 
     # If we scanned an IO sheet -> leave number of generated IO's in ..
 
     # Parsed input sheets:
-    logwarn( "============= SUMMARY =================" );
-    logwarn( "SUM: Summary of checks and created items:" );
-    for my $i ( sort( keys( %{$EH{'sum'}} ) ) ) {
-        logwarn( "SUM: $i $EH{'sum'}{$i}" );
+    $logger->info( "============= SUMMARY =================" );
+    $logger->info( "SUM: Summary of checks and created items:" );
+    my $esum = $eh->get( 'sum' );
+    for my $i ( sort( keys( %$esum ) ) ) {
+        $logger->info( "SUM: $i $esum->{$i}" );
+    }
+    $logger->info( "======== ERRORS and WARNINGS ============" );
+    $logger->info( "SUM: Number of messages logged:" );
+    $esum = $eh->get( 'logs' );
+    for my $i ( sort( keys( %$esum ) ) ) {
+        $logger->info( "SUM: $i $esum->{$i}" );
     }
 
-    logwarn( "SUM: === Number of parsed input tables: ===" );
+	# Overall run-time
+	$logger->info( "SUM: runtime: " . ( time() - $eh->get( 'macro.%STARTTIME%' ) ) .
+			" seconds" );
+
+    $logger->info( "SUM: === Number of parsed input tables: ===" );
     for my $i ( qw( conf hier conn io i2c ) ) {
-        logwarn( "SUM: $i $EH{$i}{'parsed'}" );
+        $logger->info( "SUM: $i " . $eh->get( $i . '.parsed' ) );
     }
 
     # Summarize number of mismatches and not matchable hdl files
-    logwarn( "SUM: Number of verify issues: $EH{'DELTA_VER_NR'}")
-        if ( $EH{'check'}{'hdlout'}{'path'} );
+    $logger->info( "SUM: Number of verify issues: $eh->get( 'DELTA_VER_NR' )")
+        if ( $eh->get( 'check.hdlout.path' ) );
     
     # Delta mode: return status equals number of changes
-    if ( $EH{'output'}{'delta'} or $EH{'report'}{'delta'} ) {
-        logwarn( "SUM: Number of changes in intermediate: $EH{'DELTA_INT_NR'}");
-        logwarn( "SUM: Number of changed files: $EH{'DELTA_NR'}");
+    if ( $eh->get( 'output.generate.delta' ) or $eh->get( 'report.delta' ) ) {
+        $logger->info( "SUM: Number of changes in intermediate: " . 
+        	$eh->get( 'DELTA_INT_NR' ) );
+        $logger->info( "SUM: Number of changed files: " .
+        	$eh->get( 'DELTA_NR' ));
     }
 
-    return $EH{'DELTA_NR'} + $EH{'DELTA_INT_NR'} + $EH{'DELTA_VER_NR'};
+    return $eh->get( 'DELTA_NR' ) + $eh->get( 'DELTA_INT_NR' ) +
+    				$eh->get( 'DELTA_VER_NR' );
 
     return 0;
 
@@ -4461,10 +3272,10 @@ sub mix_utils_init_file($) {
 	push ( @hdlimport,  @{$OPTVAL{'import'}} );
     }
 
-    my $inext = join( "|", values( %{$EH{'input'}{'ext'}} ) );
-    my $outext = join( "|", values( %{$EH{'output'}{'ext'}} ) );
-    my $output = "";
-    my $input = "";
+    my $inext  = join( '|', values( %{$eh->get( 'input.ext'  )} ) );
+    my $outext = join( '|', values( %{$eh->get( 'output.ext' )} ) );
+    my $output = '';
+    my $input  = '';
 
     #
     # Sort remaining file arguments
@@ -4477,41 +3288,41 @@ sub mix_utils_init_file($) {
 	    	push( @descr, $i );
 	    	next;
 		} else {
-	    	logwarn( "INFO: Found file $i not matching my extension set. Skipped!" );
-			$EH{'sum'}{'warnings'}++;
+	    	$logger->warn( '__W_INITFILE', "\tFound file $i not matching my extension set. Skipped!" );
 		}
     }
 
     if ( scalar( @descr ) > 1 ) {
-		logwarn( "WARNING: Ignoring all but last mix input files!" );
+		$logger->warn( '__W_INIT_IGNORE', "\tIgnoring all but last mix input files!" );
 		$output = pop( @descr );
     } elsif ( scalar( @descr ) < 1 ) {
-	# User has not given an output file name -> take directory name
+		# User has not given an output file name -> take directory name
 		if ( defined $OPTVAL{'dir'} and $OPTVAL{'dir'} ne "." ) {
 	    	$output = $OPTVAL{'dir'} . "/" . basename( $OPTVAL{'dir'} );
 		} else {
-	    	$output = $EH{'cwd'} . "/" . basename( $EH{'cwd'} );
+	    	$output = $eh->get( 'cwd' ) . "/" . basename($eh->get( 'cwd' ));
 		}
 
 		# Extension: MS-Win -> xls, else csv
-		if ( ( $EH{'iswin'} or $EH{'iscygwin'} ) || $EH{'intermediate'}{'ext'}=~ m/^xls$/) {
-	    	$output .= ".xls";
+		if ( ( $eh->get( 'iswin' ) or $eh->get( 'iscygwin' ) ) ||
+				$eh->get( 'intermediate.ext' ) =~ m/^xls$/) {
+	    	$output .= '.xls';
 		}
-		elsif( $EH{'intermediate'}{'ext'}=~ m/^sxc$/) {
-	    	$output .= ".sxc";
+		elsif( $eh->get( 'intermediate.ext' )=~ m/^sxc$/) {
+	    	$output .= '.sxc';
 		}
 		else {
-	    	$output .= ".csv";
+	    	$output .= '.csv';
 		}
-		logwarn( "WARNING: Setting project name to $output" );
-		$EH{'sum'}{'warnings'}++;
+		$logger->warn( '__W_PROJECT_SET', "\tSetting project name to $output" );
     } else {
 		$output = pop( @descr );
     }
 
     ( my $ext = $output ) =~ s,.*\.,,;
     unless( $ext ) {
-		logwarn( "FATAL: Cannot detect appropriate extension for output from $output" );
+		$logger->fatal( '__F_BAD_EXTENSION',
+			"\tCannot detect appropriate extension for output from $output" );
 		exit 1;
     }
 
@@ -4520,30 +3331,29 @@ sub mix_utils_init_file($) {
 
     if ( $mode eq "init" ) {
 		if ( -r $output ) {
-	    	logwarn( "FATAL: Output file $output already existing!" );
+	    	$logger->fatal( '__F_OUTPUT_EXIST', "\tOutput file $output already existing!" );
 	    	exit 1;
 		}
 		( $input = $FindBin::Bin ."/template/mix." . $ext ) =~ s,\\,/,g;
 		if ( ! -r $input ) { # Try again for UNIX (search in ../template):
 			( $input = $FindBin::Bin ."/../template/mix." . $ext ) =~ s,\\,/,g;
 			if ( ! -r $input ) {
-	    		logwarn( "FATAL: Cannot init mix from $input" );
+	    		$logger->fatal( '__F_INIT_FAIL', "\tCannot init mix from $input" );
 	    		exit 1;
 			}
 		}
 		# Get mix.cfg template inplace:
 		if ( -r ( dirname( $output ) . "/mix.cfg" ) ) {
-	    	logwarn( "WARNING: Existing config file mix.cfg will not be changed!" );
-	    	$EH{'sum'}{'warnings'}++;
+	    	$logger->warn( '__W_MIXCFG_EXISTS', "\tExisting config file mix.cfg will not be changed!" );
 		} else {
 	    	copy( dirname( $input ) . "/mix.cfg" , dirname( $output ) . "/mix.cfg" )
-				or logwarn( "WARNING: Copying mix.cfg failed: " . $! . "!" )
-				and $EH{'sum'}{'warnings'}++;
+				or $logger->warn( '__W_MIXCFG_CP',
+					"\tCopying mix.cfg failed: " . $! . "!" );
 		}
 
 	# Get template in place ...
 	copy( $input, $output ) or
-	    logwarn( "FATAL: Copying $input to $output failed: " . $! . "!" )
+	    $logger->fatal( '__F_INPUT_CP', "\tCopying $input to $output failed: " . $! . "!" )
 	    and exit 1;
     }
 
@@ -4560,7 +3370,6 @@ sub mix_utils_init_file($) {
     exit 0;
 
 } # End of mix_utils_init_file
-
 
 #
 # This module returns 1, as any good module does.

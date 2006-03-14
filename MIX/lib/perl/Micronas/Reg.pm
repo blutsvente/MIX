@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.19 2006/02/28 11:33:27 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.20 2006/03/14 08:10:35 wig Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.20  2006/03/14 08:10:35  wig
+#  No changes, got deleted accidently
+#
 #  Revision 1.19  2006/02/28 11:33:27  lutscher
 #  added view RDL
 #
@@ -100,7 +103,7 @@ package Micronas::Reg;
 #------------------------------------------------------------------------------
 use strict;
 use Data::Dumper;
-use Micronas::MixUtils qw(%EH %OPTVAL);
+use Micronas::MixUtils qw( $eh %OPTVAL);
 use Micronas::RegDomain;
 use Micronas::RegReg;
 use Micronas::RegField;
@@ -109,6 +112,7 @@ use Micronas::RegViewE;
 use Micronas::RegViewSTL;
 use Micronas::RegViewRDL;
 use Micronas::MixUtils::RegUtils;
+# use Micronas::MixUtils::Globals qw( get_eh );
 
 #use FindBin qw($Bin);
 #use lib "$Bin";
@@ -128,11 +132,11 @@ sub parse_register_master($) {
 	if (scalar @$r_i2c) {
 		my($o_space) = Micronas::Reg->new();
 		
-		if (grep($EH{'reg_shell'}{'type'} =~ m/$_/i, @{$o_space->global->{supported_views}})) {
+		if (grep($eh->get( 'reg_shell.type' ) =~ m/$_/i, @{$o_space->global->{supported_views}})) {
 			# init register module for generation of register-shell
 			$o_space->init(	 
 						   'inputformat'     => "register-master", 
-						   'database_type'   => $EH{i2c}{regmas_type},
+						   'database_type'   => $eh->get( 'i2c.regmas_type' ),
 						   'register_master' => $r_i2c
 						  );
 
@@ -140,10 +144,11 @@ sub parse_register_master($) {
 			$o_space->global('debug' => exists $OPTVAL{'verbose'} ? 1 : 0);
 			
 			# make it so
-			$o_space->generate_view($EH{'reg_shell'}{'type'});
+			$o_space->generate_view($eh->get( 'reg_shell.type' ));
 		};
 	} else {
-		_warning("register-master file empty or specified sheet \'$EH{'i2c'}{'xls'}\' in file not found");
+		_warning("register-master file empty or specified sheet \'" .
+			$eh->get( 'i2c.xls' ) . "\' in file not found");
 	};
 	return 1;
 };
@@ -152,7 +157,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.19 $ ';  #'
+our($VERSION) = '$Revision: 1.20 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -347,8 +352,8 @@ sub _map_register_master {
 	my ($old_usedbits, $i);
 	$usedbits = 0;
 
-	# get defaults for field attributes from %EH 
-	$href_marker_types = $EH{'i2c'}{'field'};
+	# get defaults for field attributes from $eh 
+	$href_marker_types = $eh->get( 'i2c.field' );
 	foreach $m (keys %{$href_marker_types}) {
 		next unless ($m =~ m/^::/); 
 		# filter out everything that is not needed for fields
@@ -360,7 +365,7 @@ sub _map_register_master {
 	};
 
 	# highest bit specified in register-master
-	$msb_max = $EH{'i2c'}{'_mult_'}{'::b'} || die "ERROR: internal error (bad!)";
+	$msb_max = $eh->get( 'i2c._mult_.::b' ) || die "ERROR: internal error (bad!)";
 
 	# iterate each row
 	foreach $href_row (@$lref_rm) {
@@ -374,7 +379,7 @@ sub _map_register_master {
 		$fpos  = 0;
 		$msb   = 0;
 		$lsb   = 99;
-		$rsize = $EH{i2c}{field}{'::width'}[3];		
+		$rsize = $eh->get( 'i2c.field.::width' )->[3];	#REFACTOR: check if dereference is o.k.
 		%hattribs = %hdefault_attribs;
 
 		# parse all columns

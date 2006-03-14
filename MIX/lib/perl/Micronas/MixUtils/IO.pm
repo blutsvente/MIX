@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.35 $                                          |
+# | Revision:   $Revision: 1.36 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2005/11/22 11:00:48 $                              |
+# | Date:       $Date: 2006/03/14 08:10:34 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,115 +28,15 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.36  2006/03/14 08:10:34  wig
+# | No changes, got deleted accidently
+# |
 # | Revision 1.35  2005/11/22 11:00:48  wig
 # | Minor fixes in Utils (20051121a, K: mkdir problem)
 # |
 # | Revision 1.34  2005/11/04 10:44:47  wig
 # | Adding ::incom (keep CONN sheet comments) and improce portlist report format
-# |
-# | Revision 1.33  2005/10/25 12:08:18  wig
-# | Minor changes for vgch_join.pl (cvs writer, sort multiple fields)
-# |
-# | Revision 1.32  2005/10/19 15:47:59  wig
-# |
-# |  	improve CVS header detection
-# |
-# | Revision 1.31  2005/10/19 15:40:06  wig
-# | Fixed -mixed.xls read problem on UNIX and reworked ::descr split
-# |
-# | Revision 1.30  2005/10/18 15:27:53  wig
-# | Primary releaseable vgch_join.pl
-# |
-# | Revision 1.29  2005/10/18 09:34:37  wig
-# | Changes required for vgch_join.pl support (mainly to MixUtils)
-# |
-# | Revision 1.28  2005/10/13 09:09:46  wig
-# | Added intermediate CONN sheet split
-# |
-# | Revision 1.27  2005/10/06 11:21:44  wig
-# | Got testcoverage up, fixed generic problem, prepared report
-# |
-# | Revision 1.26  2005/09/29 13:45:02  wig
-# | Update with -report
-# |
-# | Revision 1.25  2005/07/19 07:01:44  wig
-# | map %LOW% to %LOW_BUS% is user assigns badly
-# |
-# | Revision 1.24  2005/07/18 05:46:54  wig
-# | Update of some tiny fixes (test case related)
-# |
-# | Revision 1.23  2005/07/14 09:04:12  lutscher
-# | minor changes in comments
-# |
-# | Revision 1.22  2005/07/13 15:38:34  wig
-# | Added prototype for simple logic
-# | Added ::udc for HIER
-# | Fixed some nagging bugs
-# |
-# | Revision 1.21  2005/06/23 13:14:42  wig
-# | Update repository, not yet verified
-# |
-# | Revision 1.20  2005/04/14 06:53:01  wig
-# | Updates: fixed import errors and adjusted I2C parser
-# |
-# | Revision 1.19  2005/01/31 12:40:36  wig
-# |
-# |  	IO.pm : minor corrections
-# |
-# | Revision 1.18  2005/01/26 14:01:46  wig
-# | changed %OPEN% and -autoquote for cvs output
-# |
-# | Revision 1.17  2004/08/02 07:16:02  wig
-# | Handle empty sheets ...
-# |
-# | Revision 1.16  2004/06/29 09:13:37  wig
-# | minor fiexes /test mode
-# |
-# | Revision 1.15  2004/04/14 11:08:34  wig
-# | minor code clearing
-# |
-# | Revision 1.14  2004/04/07 15:13:10  wig
-# | Modified Files:
-# | 	IO.pm : fixed delta mode xls on Solaris issue
-# |
-# | Revision 1.13  2004/03/25 11:21:57  wig
-# | Added -verifyentity option
-# |
-# | Revision 1.12  2004/02/16 15:36:09  abauer
-# | *** empty log message ***
-# |
-# | Revision 1.11  2003/12/22 08:33:30  wig
-# | Added output.generate.xinout feature
-# |
-# | Revision 1.10  2003/12/18 16:49:45  wig
-# | added OLE support
-# |
-# | Revision 1.9  2003/12/16 12:36:46  abauer
-# | fixed csv: backslash before quota in cell
-# |
-# | Revision 1.8  2003/12/10 14:37:17  abauer
-# | *** empty log message ***
-# |
-# | Revision 1.7  2003/12/10 10:17:33  abauer
-# | *** empty log message ***
-# |
-# | Revision 1.6  2003/12/04 14:56:37  abauer
-# | *** empty log message ***
-# |
-# | Revision 1.5  2003/12/03 14:14:47  abauer
-# | *** empty log message ***
-# |
-# | Revision 1.4  2003/12/03 14:10:06  abauer
-# | fixed overwrite of old csv-sheets
-# |
-# | Revision 1.3  2003/11/27 13:18:47  abauer
-# | *** empty log message ***
-# |
-# | Revision 1.2  2003/11/27 10:46:56  abauer
-# | *** empty log message ***
-# |
-# | Revision 1.1  2003/11/27 09:20:21  abauer                             |
-# | *** empty log message ***                                             |
+# | ...........                                                           |
 # |                                                                       |
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -161,7 +61,7 @@ require Exporter;
 	write_delta_sheet
 	write_sum
 	clean_temp_sheets
-        );
+);
 
 @EXPORT_OK = qw();
 
@@ -169,27 +69,19 @@ require Exporter;
 our $VERSION = '1.0';
 
 use strict;
-# use vars qw( $ex ); # Gets OLE object
-
-=head 4 old
-
-# Caveat: relies on proper setting of base, pgmpath and dir in main program!
-use lib "$main::base/";
-use lib "$main::base/lib/perl";
-use lib "$main::pgmpath/";
-use lib "$main::pgmpath/lib/perl";
-use lib "$main::dir/lib/perl";
-use lib "$main::dir/../lib/perl";
-
-=cut
-
 use Cwd;
 use File::Basename;
 use Log::Agent;
+
+use Log::Log4perl qw(get_logger);
+
 use Text::Diff;
 use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
-use Micronas::MixUtils qw(:DEFAULT %OPTVAL %EH replace_mac convert_in
+
+use Micronas::MixUtils qw( :DEFAULT %OPTVAL $eh replace_mac convert_in
 			  select_variant two2one one2two);
+use Micronas::MixUtils::InComments;
+use Micronas::MixUtils::Globals;
 
 #TODO: Load these only if required ...
 # use ooolib;   -> Loaded on demand, only!
@@ -213,11 +105,11 @@ sub mix_utils_io_check_path ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.35 2005/11/22 11:00:48 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.36 2006/03/14 08:10:34 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.35 $'; #'  
+my $thisrevision    =      '$Revision: 1.36 $'; #'  
 
-# Revision:   $Revision: 1.35 $
+# Revision:   $Revision: 1.36 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -226,12 +118,14 @@ $thisrevision =~ s,^\$,,go;
 
 my $ex = undef;
 
+my $logger = get_logger( 'MIX::MixUtils::IO' );
+# my $eh;			# imported from MixUtils.pm
+
 ###### extra block
 {   # keep this stuff localy
 
     my %workbooks = ();
     my %newbooks = ();
-
 
 ####################################################################
 ## init_open_workbooks
@@ -250,8 +144,7 @@ sub init_open_workbooks() {
 	    	$workbooks{$bk->{'Name'}} = $bk; # Remember that
 		}
     } else {
-		logwarn( "ERROR: Uninitialized OLE! Cannot read/write XLS files" );
-	    	$EH{'sum'}{'errors'}++;
+		$logger->error( '__E_OLE', "\tUninitialized OLE! Cannot read/write XLS files" );
     }
     return;
 }
@@ -335,10 +228,11 @@ Finally, close all workbooks we opened while running along here
 =cut
 
     sub close_open_workbooks() {
-	if(defined $ex) {
-	    for my $i ( keys( %newbooks ) ) {
-	        $newbooks{$i}->Close or logwarn "ERROR: Cannot close $i workbook";
-	    }
+		if(defined $ex) {
+	    	for my $i ( keys( %newbooks ) ) {
+	        	$newbooks{$i}->Close or
+	        		$logger->error( '__E_FILE_CLOSE', "\tCannot close $i workbook" );
+	    	}
         }
     }
 
@@ -349,7 +243,7 @@ Finally, close all workbooks we opened while running along here
 
 ##############################################################################
 ## init_ole
-## take CONF sheet  contents and transfer that into %EH (overloading values there)
+## take CONF sheet  contents and transfer that into $eh (overloading values there)
 ##############################################################################
 
 =head2 init_ole()
@@ -370,37 +264,37 @@ sub init_ole () {
         my $lgid = MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT);
         $Win32::OLE::LCID = MAKELCID($lgid);
         $Win32::OLE::Warn = 3;'; #'
-	if ( $@ ) {
-	    logwarn "ERROR: eval use Win32 failed: $@";
-	    #Counted in caller! $EH{'sum'}{'errors'}++;
-	    return undef();
-    }
+		if ( $@ ) {
+	    	$logger->error( '__E_USE_WIN32', "\tEval use Win32 failed: $@" );
+	    	return undef();
+    	}
 
-	$ex = undef;
-        unless( $ex=Win32::OLE->GetActiveObject('Excel.Application') ) {
-	# Try to start a new OLE server:
-	    unless ( $ex=Win32::OLE->new('Excel.Application', 'Quit' ) ) {
-		logdie "FATAL: Cannot get excel aplication: $!\n";
-		return undef; # Did not work ...
-	    }
-	}
-	# init_open_workbooks();
-	return $ex;
+		$ex = undef;
+    	unless( $ex=Win32::OLE->GetActiveObject('Excel.Application') ) {
+			# Try to start a new OLE server:
+			unless ( $ex=Win32::OLE->new('Excel.Application', 'Quit' ) ) {
+				$logger->fatal( '__F_OLE_EXCEL', "\tCannot get excel aplication: $!\n" );
+				die; # REFACTOR CHECK
+				return undef; # Did not work ...
+			}
+		}
+		return $ex;
     } else {
-	logdie "FATAL: Cannot fire up OLE server, use Win32::OLE: $@\n";
-	return undef;
+		$logger->fatal( '__F_OLE_SERVER',  "\tCannot fire up OLE server, use Win32::OLE: $@\n" );
+		die; # REFACTOR CHECK
+		return undef;
     }
-}
+} # End of init_ole
 
 ##############################################################################
 ## mix_sheet_conf
-## take CONF sheet  contents and transfer that into %EH (overloading values there)
+## take CONF sheet  contents and transfer that into $eh (overloading values there)
 ##############################################################################
 
 =head2 mix_sheet_conf( $rconf, $source)
 
 Take array provided by the mix_utils_open_input function (excel, soffice or csv), search for
-the MIXCFG tag. If found, convert that into %EH.
+the MIXCFG tag. If found, convert that into $eh.
 
 =over 4
 
@@ -454,22 +348,23 @@ sub _mix_apply_conf($$$) {
     my $source = shift; # Source
 
     unless( $key and $value ) {
-	    unless( $key ) { $key = ""; }
-	    unless( $value ) { $value = ""; }
-	    logwarn("Illegal key or value given in $source: key:$key val:$value\n");
+	    unless( $key ) { $key = ''; }
+	    unless( $value ) { $value = ''; }
+	    $logger->warn("__W_CONF_KEY", "\tIllegal key or value given in $source: key:$key val:$value");
 	    return undef;
     }
-    my $loga ='logtrc( "INFO", "Adding ' . $source . ' configuration ' . $key . "=" . $value . '");';
-    my $logo ='logtrc( "INFO", "Overloading ' . $source . 'configuration ' . $key . "=" . $value . '");';
+    my $loga ='$logger->info( "__I_CONF_ADD", "\tAdding ' . $source . ' configuration ' . $key . "=" . $value . '");';
+    my $logo ='$logger->info( "__I_CONF_OVL", "\tOverloading ' . $source . 'configuration ' . $key . "=" . $value . '");';
     $key =~ s,[^.%\w],,g; # Remove all characters not being ., % and \w ...
-    $key =~ s/\./'}{'/og;
-    $key = '{\'' . $key . '\'}';
+    # $key =~ s/\./'}{'/og;
+    # $key = '{\'' . $key . '\'}';
 
-    #TODO: Prevent overloading of non-scalar values!!
-    my $e = "if ( exists( \$EH$key ) ) { \$EH$key = '$value'; $logo } else { \$EH$key = '$value'; $loga }";
+    # TODO : Prevent overloading of non-scalar values!!
+    my $e = 'if ( defined( $eh->get( ' . $key . ' ) ) ) { $eh->set( ' . $key . ' , \'' . $value . '\' ); $logo }
+    			else { \$eh->set( ' . $key . ' , \'' . $value . '\' ); $loga }';
     unless ( eval $e ) {
 	    if ( $@ ) { # S.th. went wrong??
-	        logwarn("Eval of configuration overload from $source $key=$value failed: $@");
+	        $logger->warn("__E_CONF_EVAL", "\tEval of configuration overload from $source $key=$value failed: $@");
 	    }
     }
 }
@@ -478,7 +373,7 @@ sub _mix_apply_conf($$$) {
 ##############################################################################
 ## mix_overload_sheet
 ##
-## take -sheet SHEET=MATCH_OP and transfer that into %EH (overloading values there)
+## take -sheet SHEET=MATCH_OP and transfer that into $eh (overloading values there)
 ##############################################################################
 =head2 mix_overload_sheet($)
 
@@ -495,7 +390,7 @@ Started if option -sheet SHEET=match_op is given on command line. SHEET can be o
 = item -sheet SHEET=match_op
 
 Replace the default match operator for the sheet type. match_op can be any perl
-regular expression.match_op shoud match the sheet names of the design descriptions.
+regular expression.match_op should match the sheet names of the design descriptions.
 
 =back
 
@@ -507,27 +402,23 @@ sub mix_overload_sheet($) {
     my $e = "";
     my ( $key, $value );
 
-    # %EH = ...
-    #		'vi2c' => {
-    #		'xls' => 'VI2C', ...
-
     for my $i ( @$sheets ) {
-	( $key, $value ) = split( /=/, $i ); # Split key=value
-	unless( $key and $value ) {
-	    logwarn("Illegal argument for overload sheet given: $i\n");
-	    next;
-	}
+		( $key, $value ) = split( /=/, $i ); # Split key=value
+		unless( $key and $value ) {
+	    	$logger->warn('__W_SHEET_MATCH', "\tIllegal argument for overload sheet given: $i");
+	    	next;
+		}
 
-	$key = lc( $key ); # $k := conn, hier, vi2c, conf, ...
+		$key = lc( $key ); # $k := conn, hier, vi2c, conf, ...
 
-	if ( exists( $EH{$key}{'xls'} ) ) {
-	    logtrc( "INFO", "Overloading sheet match $i");
-	    $EH{$key}{'xls'} = $value;
-	} else {
-	    logwarn( "Illegal sheet selector $key found in $i\n" );
-	}
+		if ( defined( $eh->get( $key . '.xls' ) ) ) {
+	    	$logger->info( '__I_SHEET_MATCH', "\tOverloading sheet match $i");
+	    	$eh->set( $key . '.xls', $value );
+		} else {
+	    	$logger->warn( '__W_SHEET_MATCH', "\tIllegal sheet selector $key found in $i" );
+		}
     }
-}
+} # End of mix_overload_sheet
 
 
 ####################################################################
@@ -558,8 +449,7 @@ sub mix_utils_open_input(@) {
 
     for my $i ( @in ) {
 		unless ( -r $i ) {
-	    	logwarn("WARNING: File $i does not exist!");
-	    	$EH{'sum'}{'warnings'}++;
+	    	$logger->warn('__W_FILE_READ', "\tFile $i cannot be read!");
 	    	next;
 		}
 
@@ -572,24 +462,23 @@ sub mix_utils_open_input(@) {
 		# maybe there is a CONF page?
 		# Change CONF accordingly (will not be visible at upper world)
 		#TODO: add plugin interface to read in whatever is needed ...
-		@conf = open_infile( $i, $EH{'conf'}{'xls'}, $EH{'conf'}{'req'} );
+		@conf = open_infile( $i, $eh->get( 'conf.xls' ), $eh->get( 'conf.req' ) );
 
 		# Open connectivity sheet(s)
-		@conn = open_infile( $i, $EH{'conn'}{'xls'}, $EH{'conn'}{'req'} );
+		@conn = open_infile( $i, $eh->get( 'conn.xls' ), $eh->get( 'conn.req' ) );
 
 		# Open hierachy sheets
-		@hier = open_infile( $i, $EH{'hier'}{'xls'}, $EH{'hier'}{'req'} );
+		@hier = open_infile( $i, $eh->get( 'hier.xls' ), $eh->get( 'hier.req' ) );
 
 		# Open IO sheet (if available, not needed!)
-		@io = open_infile( $i, $EH{'io'}{'xls'}, $EH{'io'}{'req'} );
+		@io = open_infile( $i, $eh->get( 'io.xls' ), $eh->get( 'io.req' ) );
 
 		# Open I2C sheet (if available, not needed!)
-		@i2c = open_infile( $i, $EH{'i2c'}{'xls'}, $EH{'i2c'}{'req'} );
+		@i2c = open_infile( $i, $eh->get( 'i2c.xls' ), $eh->get( 'i2c.req' ) );
 
 		# Did we get enough sheets:
 		if(!@conn && !@conf && !@hier && !@io && !@i2c) {
-	    	logwarn("ERROR: no input found in file $i!\n");
-	    	$EH{'sum'}{'errors'}++;
+	    	$logger->error('__E_OPEN_INPUT', "\tNo input found in file $i!\n");
 	    	next; # -> skip to next
 		}
 
@@ -597,22 +486,22 @@ sub mix_utils_open_input(@) {
 		# TODO : Should it be allowed to change the sheet names in the conf files?
 		#		Then we would need to push that function up
 		for my $c ( @conf ) {
-	    	$EH{'conf'}{'parsed'}++;
+	    	$eh->inc( 'conf.parsed' );
 	    	# Apply it immediately
-	    	mix_sheet_conf( $c, $EH{'conf'}{'xls'} );
+	    	mix_sheet_conf( $c, $eh->get( 'conf.xls' ) );
 		}
 
 		# Merge conn sheets:
 		for my $c ( @conn ) {
-	    	$EH{'conn'}{'parsed'}++;
- 	    	my @norm_conn = convert_in( "conn", $c ); # Normalize and read in
+	    	$eh->inc( 'conn.parsed' );
+ 	    	my @norm_conn = convert_in( 'conn', $c ); # Normalize and read in
 	    	push( @$aconn, @norm_conn ); # Append
 		}
 
 		# Merge hier sheets:
 		for my $c ( @hier ) {
-	    	$EH{'hier'}{'parsed'}++;
-	    	my @norm_hier = convert_in( "hier", $c );
+	    	$eh->inc( 'hier.parsed' );
+	    	my @norm_hier = convert_in( 'hier', $c );
  	    	# Remove all lines not selected by our variant
 	    	#TODO: Should we allow variants in the CONN sheet, too??
 	    	select_variant( \@norm_hier );
@@ -620,14 +509,14 @@ sub mix_utils_open_input(@) {
 		}
 
 		for my $c ( @io ) {
-	    	$EH{'io'}{'parsed'}++;
-	    	my @norm_io = convert_in( "io", $c );
-	    	push( @$aio,   @norm_io );   # Append
+	    	$eh->inc( 'io.parsed' );
+	    	my @norm_io = convert_in( 'io', $c );
+	    	push( @$aio, @norm_io );   # Append
 		}
 
 		for my $c ( @i2c ) {
-	    	$EH{'i2c'}{'parsed'}++;
-	    	my @norm_i2c = convert_in( "i2c", $c);
+	    	$eh->( 'i2c.parsed' );
+	    	my @norm_i2c = convert_in( 'i2c', $c);
 	    	select_variant( \@norm_i2c);
 	    	push(@$ai2c, @norm_i2c);
 		}
@@ -646,54 +535,56 @@ sub mix_utils_open_input(@) {
 Check if all required output directories exist.
 Create if not.
 
-Get list from %EH{XXXX}{path}!
+Get list from $eh->get( 'XXXX.path' )!
 
 Input: -
 Output: -
 
-Global: %EH	
+Global: $eh
 	output intermediate internal report
 	  ....path
 	output.mkdir
 
 #!wig20051005
+
 =cut
 
 sub mix_utils_io_create_path () {
 
-	my $select = $EH{'output'}{'mkdir'};
+	my $select = $eh->get( 'output.mkdir' );
 	
 	for my $i ( qw( output intermediate internal report ) ) {
-		next unless( exists $EH{$i}{'path'} );
+		next unless( defined $eh->get( $i . '.path' ) );
 		
-		unless( -d $EH{$i}{'path'} ) {
+		unless( -d $eh->get( $i . '.path' ) ) {
 			# need to create it ...
-			my $dir = $EH{$i}{'path'};
+			my $dir = $eh->get( $i . '.path' );
 			# Does select tell us to create it?
 			if ( $select =~ m/\b(1|all|yes|auto|$i)\b/i ) {
 				unless ( $dir =~ m,^/, ) { # relative path ....
-					$dir = $EH{'cwd'} . "/" . $dir;
+					$dir = $eh->get( 'cwd' ) . '/' . $dir;
 				}
 				# Iterate over path ...
 				my $cur = '';
+				$dir =~ s,//+,/,og;
 				for my $p ( split( /\//, $dir ) ) {
+					$p = '/' unless( length( $p ) );
 					$cur .= (( $cur ) ? '/' : '' ) . $p; # Merge path
-					$cur =~ s,//,/,og; # Remove multiple / (Cygwin does not like them)
+					$cur =~ s,//+,/,og; # Remove multiple / (Cygwin does not like them)
 					next if -d $cur;
 					# Create it
 					unless( mkdir( $cur ) ) {
-						logerr( "FATAL: Cannot create $i directory $cur:" . $! );
+						$logger->fatal( '__F_MKDIR', "\tCannot create $i directory $cur:" . $! );
 						exit 1;
 	    			}
 				}
-	    		logwarn( "INFO: Created $i directory " . $dir . "!" );
+	    		$logger->info( '__I_MKDIR', "\tCreated $i directory " . $dir . "!" );
 			} else {
-				logwarn( "ERROR: Missing $i directory " . $dir . " not selected for creation!" );
-				$EH{'sum'}{'errors'}++;
+				$logger->error( '__E_MKDIR', "\tMissing $i directory " . $dir . " not selected for creation!" );
 			}
 		}
 	}
-}
+} # End of mix_utils_io_create_path
 
 ####################################################################
 ## open_infile
@@ -711,7 +602,7 @@ input:
 
 output:
 
-global: writes to $EH{'sum'}{'errors'}
+global: writes to $eh->set( 'sum.errors' )
 
 =back
 
@@ -723,21 +614,17 @@ sub open_infile($$$){
     my $sheetname = shift;
     my $flags = shift;
 
-    if($file=~ m/\.xls/) { # read excel file
+    if( $file=~ m/\.xls$/) { # read excel file
         return open_xls($file, $sheetname, $flags);
-    }
-    elsif($file=~ m/\.sxc/) { # read soffice file
+    } elsif( $file=~ m/\.sxc$/) { # read soffice file
         return open_sxc($file, $sheetname, $flags);
-    }
-    elsif($file=~ m/\.csv/) { # read comma seperated values
+    } elsif( $file=~ m/\.csv$/) { # read comma seperated values
         return open_csv($file, $sheetname, $flags);
+    } else {
+        $logger->error( '__E_FILE_EXTENSION', "\tUnknown file extension for file $file!" );
+		return undef;
     }
-    else {
-        logwarn "ERROR: Unknown file extension!\n";
-	$EH{'sum'}{'errors'}++;
-	return undef;
-    }
-}
+} # End of open_infile
 
 
 ####################################################################
@@ -777,13 +664,9 @@ sub open_xls($$$){
 
     my @sheets = ();
 
-    #old: logdie "Cannot use Excel OLE interface!" unless($use_csv);
-	#    $ex->{DisplayAlerts}=0 if ( $EH{'script'}{'excel'}{'alerts'} =~ m,off,io );
-
-    unless( -r $file ) {
-      logwarn( "cannot read <$file> in open_xls!" );
-      $EH{'sum'}{'warnings'}++;
-      return undef;
+	unless( -r $file ) {
+		$logger->warn( '__W_FILE_READ', "\tCannot read <$file> in open_xls!" );
+		return undef;
     }
     $file = absolute_path( $file );
 
@@ -799,8 +682,8 @@ sub open_xls($$$){
 	}
 	$oBook = $aBook{$file};
 	
-    if(!defined $oBook) {
-      logwarn("ERROR: opening File $file");
+    unless( defined $oBook ) {
+		$logger->error( '__E_FILE_OPEN', "\tOpening ExCEL File $file");
     }
 
     # Take all sheets matching the possible reg ex in $sheetname
@@ -814,8 +697,7 @@ sub open_xls($$$){
     # return if no sheets where found
     if ( scalar( @sheets ) < 1 ) {
 		if ( $warn_flag =~ m,mandatory,io ) {
-	    	logwarn("Cannot locate a worksheet $sheetname in $file");
-	    	$EH{'sum'}{'warnings'}++;
+	    	$logger->warn('__W_WORKSHEET', "\tCannot locate a worksheet $sheetname in $file");
 		}
 		return ();
     }
@@ -829,7 +711,7 @@ sub open_xls($$$){
     foreach my $sname ( @sheets ) {
 
 		$isheet = $oBook->{Worksheet}[$sname];
-		logtrc( "INFO:4", "Reading worksheet " . $isheet->{Name} . " of $file" );
+		$logger->info( '__I_WORKSHEET', "\tReading worksheet " . $isheet->{Name} . " of $file" );
 
 		for(my $y=$isheet->{MinRow}; defined $isheet->{MaxRow} && $y <= $isheet->{MaxRow}; $y++) {
 			for(my $x =$isheet->{MinCol}; defined $isheet->{MaxCol} && $x <= $isheet->{MaxCol}; $x++) {
@@ -858,8 +740,7 @@ sub open_xls($$$){
 	    		push(@all, [@sheet]);
 			}
 		} else {
-	    	logwarn( "Sheet $isheet->{Name} holds no content (__FILE__/__LINE__)" );
-	    	$EH{'sum'}{'warnings'}++;
+	    	$logger->warn( '__W_WORKSHEET_READ', "\tSheet $isheet->{Name} holds no content" );
 		}
 
 		@sheet = ();
@@ -908,26 +789,26 @@ sub open_sxc($$$) {
     my $openflag = 0;
 
     unless(-r $file) {
-	logwarn "ERROR: file $file not found!\n";
-	return undef;
+		$logger->error( '__E_READ_FILE', "\tCannot read file $file!" );
+		return undef;
     }
     unless(defined $sheetname) {
-        logwarn "ERROR: no sheet defined!\n";
-	return undef;
+        $logger->error( '__E_READ_FILE',  "\tNo sheet defined to read from file $file!" );
+		return undef;
     }
 
     # unzip $file in $path
     my $zip = Archive::Zip->new();
     unless($zip->read($file)==AZ_OK) {
-	logwarn "ERROR: can't open zip file $file!\n";
-	return undef;
+		$logger->error( '__E_UNZIP_SXC', "\tCan't open zip file $file!" );
+		return undef;
     }
     # extract content.xml file from archive
     my @content = readContent($zip);
 
-    if(!defined $content[0]) {
-	logwarn "ERROR: no content found!\n";
-	return undef;
+    unless( defined $content[0]) {
+		$logger->error( '__E_READ_SXC', "\tNo content found in file $file!" );
+		return undef;
     }
 
     my @all = ();
@@ -1070,8 +951,7 @@ sub open_sxc($$$) {
     }
     if ( scalar( @all ) < 1 and scalar( keys %all ) < 1 ) {
 		if ( $warn_flag =~ m,mandatory,io ) {
-	    	logwarn("Cannot locate a worksheet $sheetname in $file");
-	    	$EH{'sum'}{'warnings'}++;
+	    	$logger->warn('__W_LOCATE_SHEET', "\tCannot locate a worksheet $sheetname in $file" );
 		}
 		return ();
     }
@@ -1117,9 +997,9 @@ sub open_csv($$$) {
     my @line = ();
 
     my $sheetCount = 0;
-    my $sheetsep = $EH{'format'}{'csv'}{'sheetsep'};
-    my $cellsep = $EH{'format'}{'csv'}{'cellsep'};
-    my $quoting = $EH{'format'}{'csv'}{'quoting'};
+    my $sheetsep = $eh->get( 'format.csv.sheetsep' );
+    my $cellsep  = $eh->get( 'format.csv.cellsep' );
+    my $quoting  = $eh->get( 'format.csv.quoting' );
 
     my $quoted = 0;
     my $char;
@@ -1127,7 +1007,7 @@ sub open_csv($$$) {
     my $entry = "";
 
     unless( -r $file ) {
-        logwarn( "Cannot read <$file> in open_csv!" );
+        $logger->warn( '__W_READ_CSV', "\tCannot read <$file> in open_csv!" );
 		return undef;
     }
 
@@ -1212,8 +1092,7 @@ sub open_csv($$$) {
     # did we get some input?
     if ( scalar @all < 1 and scalar( keys %all ) < 1 ) {
 		if ( $warn_flag =~ m/\bmandatory\b/io ) {
-            logwarn("Cannot read input from sheet: $sheetname in $file");
-	    	$EH{'sum'}{'warnings'}++;
+            $logger->warn('__W_READ_CSV_SHEET', "\tCannot read input from sheet: $sheetname in $file");
 		}
 		return ();
     }
@@ -1248,25 +1127,21 @@ sub absolute_path($) {
     # Make filename a absolute one (we are on MS ground)
     # Has to start like N:\bla\blubber or N:/path/....
 
-    if ( $EH{'iswin'} ) {
+    if ( $eh->get( 'iswin' ) ) {
 		if ( $file =~ m,^[\\/], ) {
 	    	# Missing the letter for a drive
-	    	$file = $EH{'drive'} . $file;
+	    	$file = $eh->get( 'drive' ) . $file;
 		} elsif ( $file !~ m,^\w:, ) {
-	    	$file = $EH{'cwd'} . "/" . $file;
+	    	$file = $eh->get( 'cwd' ) . '/' . $file;
 		}
-	# $file =~ s,/,\\,go; #
-    # } elsif ( $EH{'iscygwin'} ) {
-    	# Replace /cygdrive/H (HOME) by H:
-    	#
     } elsif ( $file !~ m,^/, ) { # Does not start with /
-		$file = $EH{'cwd'} . "/" . $file;
+		$file = $eh->get( 'cwd' ) . '/' . $file;
     }
 
 	# Strip of cygwin home -> homedrive ...
 	#  /cygdrive/X  -> X:/ ....
 	#  cygwin can cope with both, while for excel c: is mandatory
-	if ( $EH{'iscygwin'} ) {
+	if ( $eh->get( 'iscygwin' ) ) {
 		$file =~ s/$ENV{'HOME'}/$ENV{'HOMEDRIVE'}/;
 		$file =~ s!/cygdrive/(\w)!$1:!;
 	}
@@ -1300,10 +1175,10 @@ sub write_delta_sheet($$$) {
 
     # Fix path
     my $predir = "";
-    if ( $EH{'intermediate'}{'path'} ne "." and not is_absolute_path( $file ) ) {
-	# Prepend a directory name ...
-	$predir = $EH{'intermediate'}{'path'} . "/" ;
-	$predir =~ s,[/\\]+$,/,; # Strip of extra trailing slashes / and \ ...
+    if ( $eh->get( 'intermediate.path' ) ne '.' and not is_absolute_path( $file ) ) {
+		# Prepend a directory name ...
+		$predir = $eh->get( 'intermediate.path' ) . '/' ;
+		$predir =~ s,[/\\]+$,/,; # Strip of extra trailing slashes / and \ ...
     }
 
     my @prev;
@@ -1312,7 +1187,7 @@ sub write_delta_sheet($$$) {
 	# map filename from xls -> csv if not on Windows!
 	# TODO : shouldn't we for mapping on non MS-Win anyway?
 	if ( not -r $predir . $file and $file =~ m/\.xls$/ and
-		not ( $EH{'iswin'} or $EH{'iscygwin'} ) ) {
+		not ( $eh->get( 'iswin' ) or $eh->get( 'iscygwin' ) ) ) {
 			# Try with csv intermediate
 			$file =~ s/\.xls/.csv/;	
 	}
@@ -1326,8 +1201,7 @@ sub write_delta_sheet($$$) {
     @prev = open_infile( $predir . $file, $sheet, "mandatory,write");
 
     if(scalar( @prev ) < 1 ) {
-        logwarn "ERROR: reading input for delta mode!";
-		$EH{'sum'}{'errors'}++;
+        $logger->error( '__E_READ_DELTA',  "\tReading input for delta mode for file $file!" );
 		return;
     }
 
@@ -1338,7 +1212,7 @@ sub write_delta_sheet($$$) {
 
     my @prevd = two2one( $prev[0] );
     my @currd = two2one( $r_a );
-    if ( not $EH{'iswin'} and $file =~ m,.xls$, ) {
+    if ( not $eh->get( 'iswin' ) and $file =~ m,.xls$, ) {
 		# read in previously generated -mixed.xls file
 		# -> map away \n and other whitespace ...
 		#TAG: maybe we need to generalize that ... should be done if we are sure to
@@ -1361,12 +1235,12 @@ sub write_delta_sheet($$$) {
 --  by:  %USER%
 --  on:  %DATE%
 --  cmd: %ARGV%
---  delta mode (comment/space/sort/remove): $EH{'output'}{'delta'}
+--  delta mode (comment/space/sort/remove): $eh->get( 'output.delta' )
 --
 -- ------------------------------------------------- --
 -- ------------- CHANGES START HERE ------------- --
 ";
-    $head = replace_mac( $head, $EH{'macro'} );
+    $head = replace_mac( $head, $eh->get( 'macro' ) );
 
     #!wig20031217: ParseExcel does not deliver the \n (?), so we map those to nothing
     #  shouldn't matter to much ...
@@ -1388,8 +1262,7 @@ sub write_delta_sheet($$$) {
     if ( $diff ) {
 		my $niceform = 1; # Try to write in extended format ...
 		if ( $currd[0] ne $prevd[0] ) { # Column headers have changed!!
-	    	logwarn("WARNING: SHEET_DIFF with different headers useless!");
-	    	$EH{'sum'}{'warnings'}++;
+	    	$logger->warn('__W_DELTA_SHEET', "\tSHEET_DIFF with different headers useless!");
 	    	# Fall back to write delta in old format
 	    	$niceform = 0;
 		}
@@ -1447,19 +1320,17 @@ sub write_delta_sheet($$$) {
 
 		# One line has to differ (date)
 		if ( $difflines > 0 ) {
-	    	logwarn( "INFO: Detected $difflines changes in intermediate sheet $sheet, in file $file");
-	    	$EH{'sum'}{'warnings'}++;
+			# REFACTOR: $logger->all()
+	    	$logger->info( '__I_DELTA_SHEET', "\tDetected $difflines changes in intermediate sheet $sheet, in file $file");
 		} 
 		elsif ( $difflines == -1 ) {
-	    	logwarn( "WARNING: Missing changed date in intermediate sheet $sheet, in file $file");
-	    	$EH{'sum'}{'warnings'}++;
+	    	$logger->warn( '__W_DELTA_SHEET', "\tMissing changed date in intermediate sheet $sheet, in file $file");
 		}
-		#TODO: Do not use logwarn here ...
 		return $difflines;
     } else {
 		return -1;
     }
-}
+} # End of write_delta_sheet
 
 #
 # Iterate over conn sheets and try to merge back split lines (::in/::out)
@@ -1586,21 +1457,22 @@ sub write_outfile($$$;$$) {
     my $r_c = shift || undef;
     my $newold_flag = shift || undef;
 
-    if( $EH{'format'}{'out'}=~ m/^xls$/ || ($file=~ m/\.xls/ &&
-    	( $EH{'iswin'} or $EH{'iscygwin'} ) )) {
+	my $fout = lc( $eh->get( 'format.out' ));
+    if( $fout eq 'xls' or ( $file=~ m/\.xls$/ &&
+    	( $eh->get( 'iswin' ) or $eh->get( 'iscygwin' ) ) )) {
 		write_xls($file, $sheet, $r_a, $r_c, $newold_flag);
-    } elsif( $EH{'format'}{'out'}=~ m/^sxc$/ || $file=~ m/\.sxc/) {
+    } elsif( $fout eq 'sxc' or $file=~ m/\.sxc$/) {
 		write_sxc($file, $sheet, $r_a, $r_c);
-    } elsif( $EH{'format'}{'out'}=~ m/^csv$/ || $file=~ m/\.csv/ ||
-    		$file=~ m/\.xls/) {
+    } elsif( $fout eq 'csv' or $file=~ m/\.csv$/ or
+    		$file=~ m/\.xls$/) {
 		$file=~ s/\.xls$/\.csv/;
 		write_csv($file, $sheet, $r_a, $r_c);
     } else {
-		logwarn "unknown outfile format";
+		$logger->warn( '__W_FILE_WRITE',  "\tUnknown outfile format for file $file" );
 		return;
     }
     return;
-}
+} # End of write_outfile
 
 
 ####################################################################
@@ -1613,7 +1485,7 @@ this subroutine is self explanatory. The only important thing is,
 that it will try to rotate older versions of the generated sheets.
 E.g. sheet CONN will become O0_CONN while O0_CONN was shifted
 to O1_CONN. The maximum number of all versions to keep is
-defined by $EH{'intermediate'}{'keep'}
+defined by $eh->get( 'intermediate.keep' )
 
 =over 4
 
@@ -1635,25 +1507,22 @@ sub write_xls($$$;$$) {
     my $r_c = shift || undef;
     my $newold_flag = shift || 0;
 
-    if( $EH{'iswin'} or $EH{'iscygwin'} or $EH{'format'}{'out'} ) {
-
+    if( $eh->get( 'iswin' ) or $eh->get( 'iscygwin' ) or $eh->get( 'format.out' ) ) {
 		my $book;
 		my $newflag = 0;
 		my $openflag = 0;
 		my $sheetr = undef;
 
-		# Add extension
+		# Add extension automatically
 		unless ( $file =~ m/\.xls$/ ) {
-	    	$file .= ".xls";
+	    	$file .= '.xls';
 		}
 
 		# Was OLE already started?
 		unless( $ex ) {
-		# if( ( $^O=~ m/MSWin/ && join( " ", @ARGV)=~ m/\.xls/) || $EH{'format'}{'out'}=~ m/^xls$/ ) {
 	    	$ex = init_ole();
 	    	unless( $ex ) {
-				logwarn( "ERROR: Cannot initialize OLE, intermediate file $file will written as CSV" );
-				$EH{'sum'}{'errors'}++;
+				$logger->error( '__E_OLE_INIT', "\tCannot initialize OLE, intermediate file $file will be written as CSV" );
 				$file=~ s/\.xls$/\.csv/;
 				return write_csv($file, $sheet, $r_a);
 	    	}
@@ -1661,42 +1530,41 @@ sub write_xls($$$;$$) {
 		}
 
 		# Write to other directory ...
-		if ( $EH{'intermediate'}{'path'} ne "."
+		if ( $eh->get( 'intermediate.path' ) ne '.'
 			 and not is_absolute_path( $file ) ) {
-	    			$file = $EH{'intermediate'}{'path'} . "/" . $file;
+	    			$file = $eh->get( 'intermediate.path' ) . '/' . $file;
 		}
 
 		my $efile = absolute_path( $file );
 		my $basename = basename( $file );
 		( my $wfile = $efile ) =~ s,/,\\,g; # Windows32 ....
 
-		$ex->{DisplayAlerts}=0 if ( $EH{'script'}{'excel'}{'alerts'} =~ m,off,io );
+		$ex->{DisplayAlerts}=0 if ( $eh->get( 'script.excel.alerts' ) =~ m,off,io );
 
 		if ( -r $file ) {
 	    	# If it exists, it could be open, too?
 	    	unless( $book = is_open_workbook( $basename ) ) {
-				# No, not opened so far ....
-				logwarn("File $file already exists! Contents will be changed");
+				# Has not been opened up to now
+				$logger->warn('__I_FILE_OVERWRITE', "\tFile $file already exists! Contents will be changed");
 				$book = $ex->Workbooks->Open($wfile); #Needs correct PATH ... / or \ ...
 				new_workbook( $basename, $book );
 	    	} else {
 				# Is the open thing at the right place?
-				my $wbpath = dirname( $file ) || $EH{'cwd'};
+				my $wbpath = dirname( $file ) || $eh->get( 'cwd' );
 				if ( $wbpath eq "." ) {
-		    		$wbpath = $EH{'cwd'};
+		    		$wbpath = $eh->get( 'cwd' );
 				} elsif ( not is_absolute_path( $wbpath ) ) {
-		    		$wbpath = $EH{'cwd'} . "/" . $wbpath;
+		    		$wbpath = $eh->get( 'cwd' ) . '/' . $wbpath;
 				}
 
-				$wbpath =~ s/$ENV{HOME}/$ENV{HOMEDRIVE}/ if ( $EH{'iscygwin'} );
+				$wbpath =~ s/$ENV{HOME}/$ENV{HOMEDRIVE}/ if ( $eh->get( 'iscygwin' ) );
 				$wbpath =~ s,/,\\,g; # Replace / -> \
 				#Does our book have the right path?
 				if ( $book->Path ne $wbpath ) {
 				# Sometimes (win32 and cygwin) the same path has different cases ->
 					if ( $^O =~ m/mswin/io and lc( $book->Path ) ne lc ( $wbpath ) ) {
-		    			logwarn("ERROR: workbook $basename with different path (" . $book->Path .
+		    			$logger->error('__E_FILE_XLS', "\tWorkbook $basename with different path (" . $book->Path .
 			    			") already opened!");
-		    			$EH{'sum'}{'errors'}++;
 					}
 				}
 			}
@@ -1712,12 +1580,12 @@ sub write_xls($$$;$$) {
 				$sh{$sh->{'Name'}} = $sh; # Keep links
 			}
 
-			if ( $EH{'intermediate'}{'keep'} ) {
+			if ( $eh->get( 'intermediate.keep' ) ) {
 
 				# Rotate sheets ...
 				# Delete eldest one:
-				my $max = $EH{'intermediate'}{'keep'};
-				logwarn("Rotating $max old sheets of $sheet!");
+				my $max = $eh->get( 'intermediate.keep' );
+				$logger->info('__I_WRITE_XLS', "\tRotating $max old sheets of $sheet!");
 				if ( exists( $sh{ "O_" . $max . "_" . $sheet } ) ) {
 		    		$sh{"O_" . $max . "_" . $sheet}->Delete;
 				}
@@ -1735,10 +1603,10 @@ sub write_xls($$$;$$) {
 		    		$sh{$sheet}->{'Name'} = "O_1_" . $sheet;
 				}
 				# Copy previous format ....
-				if ( $EH{'intermediate'}{'format'} =~ m,prev,o and
+				if ( $eh->get( 'intermediate.format' ) =~ m,prev,o and
 		     			defined( $s_previous ) ) {
 		    		unless( $s_previous->Copy($s_previous) ) { # Add in new sheet before
-						logwarn("Cannot copy previous sheet! Create new one.");
+						$logger->info('__I_WRITE_XLS', "\tCannot copy previous sheet for $sheet! Create new one.");
 					} else {
 						$sheetr = $book->ActiveSheet();
 						$sheetr->Unprotect;
@@ -1748,8 +1616,8 @@ sub write_xls($$$;$$) {
 				}
 			} else { # Delete contents or all of sheet ?
 				if ( exists( $sh{ $sheet } ) ) {
-		    		#Keep format if EH.intermediate.format says so
-		    		if ( $EH{'intermediate'}{'format'} =~ m,prev,o ) {
+		    		#Keep format if $eh->intermediate.format says so
+		    		if ( $eh->get( 'intermediate.format' ) =~ m,prev,o ) {
 						$sheetr = $sh{$sheet};
 						$sheetr->Unprotect;
 						$sheetr->UsedRange->{'Value'} = (); # Overwrite all used cells ...
@@ -1762,14 +1630,17 @@ sub write_xls($$$;$$) {
 	    	# Create new workbook
 	    	$book = $ex->Workbooks->Add();
 	    	$book->SaveAs($wfile);
-	    	# new_workbook( $basename, $book );
 	    	$newflag=1;
 		}
 
 		unless( defined( $sheetr ) ) {
 	    	# Create output worksheet:
-	    	$sheetr = $book->Worksheets->Add() || logwarn( "Cannot create worksheet $sheet in $file:$!");
-	    	$sheetr->{'Name'} = $sheet;
+	    	if ( $sheetr = $book->Worksheets->Add() ) {
+	    		$sheetr->{'Name'} = $sheet;
+	    	} else {
+	    		$logger->error( '__E_WRITE_XLS', "\tCannot create worksheet $sheet in $file: $!");
+	    		return; # Leave here ...
+	    	}
 		}
 
 		$sheetr->Activate();
@@ -1786,8 +1657,7 @@ sub write_xls($$$;$$) {
 		#!wig20050713: protect against ExCEL failures:
 		eval '$rng->{Value}=$r_a;';
 		if ( $@ ) {
-	    	logwarn "ERROR: cannot write ExCEL $file:$sheet: $@";
-	    	$EH{'sum'}{'errors'}++;
+	    	$logger->error( '__E_WRITE_XLS', "\tCannot write ExCEL $file:$sheet: $@" );
 	    	$ex->{DisplayAlerts}=1;
 	    	return;
     	}
@@ -1833,7 +1703,7 @@ sub write_xls($$$;$$) {
 	    	}
 		}
 
-		if ( $EH{'intermediate'}{'format'} =~ m,auto, ) {
+		if ( $eh->get( 'intermediate.format' ) =~ m,auto, ) {
 	    	$rng->Columns->AutoFit;
 		}
 
@@ -1859,7 +1729,7 @@ this subroutine is self explanatory. The only important thing is,
 that it will try to rotate older versions of the generated sheets.
 E.g. sheet CONN will become O0_CONN while O0_CONN was shifted
 to O1_CONN. The maximum number of all versions to keep is
-defined by $EH{'intermediate'}{'keep'}
+defined by $eh->get( 'intermediate.keep' )
 
 =over 4
 
@@ -1890,169 +1760,159 @@ sub write_sxc($$$;$) {
     $settings{'newflag'} = 0;
 
     unless( useOoolib() ) {
-	logwarn("ERROR: Cannot initialze oolib to write out intermediate file $file!");
-	$EH{'sum'}{'errors'}++;
-	return;
+		$logger->error( '__E_WRITE_SXC', "\tCannot initialze oolib to write out intermediate file $file!");
+		return;
     }
 
     my $zip = Archive::Zip->new();
 
     # Write to other directory ...
-    if ( $EH{'intermediate'}{'path'} ne "." and not is_absolute_path( $file ) ) {
-	$file = $EH{'intermediate'}{'path'} . "/" . $file;
+    if ( $eh->get( 'intermediate.path' ) ne '.' and not is_absolute_path( $file ) ) {
+		$file = $eh->get( 'intermediate.path' ) . '/' . $file;
     }
 
     my $basename = basename( $file ); # s,.*[/\\],,; #Strip off / and \
 
     if ( -r $file ) {
-	logwarn("File $file already exists! Contents will be changed");
+		$logger->info('__I_WRITE_SXC', "\tFile $file already exists! Contents will be changed");
 
-	# unzip $file in $path
-	unless($zip->read($file)==AZ_OK) {
-	    logwarn "ERROR: can't open zip file $file!\n";
-	    $EH{'sum'}{'errors'}++;
-	    return undef;
-	}
-	# extract content.xml file from archive
-	@content = readContent($zip);
+		# unzip $file in $path
+		unless($zip->read($file)==AZ_OK) {
+	    	$logger->error( '__E_WRITE_SXC', "\tCannot open zip file $file! Skip!" );
+	    	return undef;
+		}
+		# extract content.xml file from archive
+		@content = readContent($zip);
 
     	# rotate old versions of $sheet to O$n_$sheet_O ...
-	my $s_previous = undef;
+		my $s_previous = undef;
 
-	my $isheet = 0;
-	my $sheetname = ();
+		my $isheet = 0;
+		my $sheetname = ();
 
-	# keep start line index of all sheets
-	for(my $i=0; defined $content[$i]; $i++) {
-	    if( !$isheet && $content[$i]=~ m/<table:table table:name=\"/) { # start of sheet
-		$isheet = 1;
-		$sheetname = $content[$i];
-		$sheetname =~ s/<table:table table:name=\"//;
-		$sheetname = (split(/\"/, $sheetname))[0];
-		$settings{"$sheetname"} = $i;
-	    }
-	    elsif( $isheet && $content[$i]=~ m/<\/table:table>/) { # end of sheet
-		$isheet= 0;
-		$settings{$sheetname . "_end"} = $i+1;
-		$sheetname = "";
-	    }
-	}
-	undef $isheet;
-	undef $sheetname;
-
-	if ( $EH{'intermediate'}{'keep'} ) {
-	    # Rotate sheets ...
-	    # Delete eldest one:
-	    my $max = $EH{'intermediate'}{'keep'};
-	    logwarn("Rotating $max old sheets of $sheet!");
-	    if ( exists( $settings{ "O_" . $max . "_" . $sheet } ) ) {
-		# remove sheet 
-		my $length = $settings{"O_".$max."_".$sheet."_end"}-$settings{"O_".$max."_".$sheet};
-		for(my $i=0; $i<$length; $i++) {
-		    delete $content[$settings{"O_".$max."_".$sheet}+$i];
+		# keep start line index of all sheets
+		for(my $i=0; defined $content[$i]; $i++) {
+	    	if( !$isheet && $content[$i]=~ m/<table:table table:name=\"/) { # " start of sheet
+				$isheet = 1;
+				$sheetname = $content[$i];
+				$sheetname =~ s/<table:table table:name=\"//;	# "
+				$sheetname = (split(/\"/, $sheetname))[0];		# "
+				$settings{$sheetname} = $i;
+	    	} elsif( $isheet && $content[$i]=~ m/<\/table:table>/) { # end of sheet
+				$isheet= 0;
+				$settings{$sheetname . '_end'} = $i+1;
+				$sheetname = '';
+	    	}
 		}
-	    }
-	    if ( $max >= 2 ) {
-		for my $n ( reverse( 2..$max ) ) {
-		    if ( exists( $settings{ "O_" . ( $n - 1 ) . "_" . $sheet } ) ) {
-			# set new name
-			my $oldname = "O_".( $n - 1 )."_".$sheet;
-			my $newname = "O_" . $n . "_" . $sheet;
-			$content[$settings{"O_" . ( $n - 1 ) . "_" . $sheet}]=~ s/$oldname/$newname/;
-		    }
+		undef $isheet;
+		undef $sheetname;
+
+		if ( $eh->get( 'intermediate.keep' ) ) {
+	    	# Rotate sheets ...
+	    	# Delete eldest one:
+	    	my $max = $eh->get( 'intermediate.keep' );
+	    	$logger->info( '__I_WRITE_SXC', "\tRotating $max old sheets of $sheet!");
+	    	if ( exists( $settings{ 'O_' . $max . '_' . $sheet } ) ) {
+				# remove sheet 
+				my $length = $settings{"O_".$max."_".$sheet."_end"}-$settings{"O_".$max."_".$sheet};
+				for(my $i=0; $i<$length; $i++) {
+		    		delete $content[$settings{"O_".$max."_".$sheet}+$i];
+				}
+	    	}
+	    	if ( $max >= 2 ) {
+				for my $n ( reverse( 2..$max ) ) {
+		    		if ( exists( $settings{ "O_" . ( $n - 1 ) . "_" . $sheet } ) ) {
+					# set new name
+						my $oldname = "O_".( $n - 1 )."_".$sheet;
+						my $newname = "O_" . $n . "_" . $sheet;
+						$content[$settings{"O_" . ( $n - 1 ) . "_" . $sheet}]=~ s/$oldname/$newname/;
+		    		}
+				}
+	    	}
+
+	    	# Finally: Rename the latest/greatest ...
+	    	if ( exists $settings{$sheet} ) {
+				$s_previous = $settings{$sheet};
+				my $newname = 'O_1_' . $sheet;
+	        	$content[$settings{$sheet}]=~ s/$sheet/$newname/;
+				$settings{'start'} = $s_previous;
+				$settings{'stop'} = $s_previous;
+	    	} else {   # set position of new sheet
+	        	my $end = getDocumentEnd(\@content);
+				$settings{'start'} = $end;
+				$settings{'stop'} = $end;
+	    	}
+
+	    	# keep previous format
+	    	if( $eh->get( 'intermediate.format' )=~ m,prev,o && defined $s_previous) {
+				$settings{'tabStyle'} = getStyle($content[$s_previous]);
+	    	}
+
+		} else { # Delete contents or all of sheet ?
+	    	if ( exists( $settings{ $sheet } ) ) {
+				#Keep format if $eh->intermediate.format says so
+				if ( $eh->get( 'intermediate.format' ) =~ m,prev,o ) {
+		    		# get style -> use same style for new sheet
+		    		$settings{'tabStyle'} = getStyle($content[$settings{$sheet}]);
+				}
+				$settings{'start'} = $settings{$sheet};
+				$settings{'stop'} = $settings{$sheet."_end"};
+	    	} else {
+	        	my $end = getDocumentEnd(\@content);
+				$settings{'start'} = $end;
+				$settings{'stop'} = $end;
+	    	}
 		}
-	    }
+    } else {
+		# Create new workbook
+		# no warnings;
+		$^W = 0;
+		oooInit('sxc');
+		oooSet('builddir', '.');
+		oooSet('author', 'generated by MIX');
+		oooGenerate($file);    # write output
+		# use warnings;
+		$^W = 1;
 
-	    # Finally: Rename the latest/greatest ...
-	    if ( exists $settings{"$sheet"} ) {
-		$s_previous = $settings{"$sheet"};
-		my $newname = "O_1_" . $sheet;
-	        $content[$settings{"$sheet"}]=~ s/$sheet/$newname/;
-		$settings{'start'} = $s_previous;
-		$settings{'stop'} = $s_previous;
-	    }
-	    else {   # set position of new sheet
-	        my $end = getDocumentEnd(\@content);
-		$settings{'start'} = $end;
-		$settings{'stop'} = $end;
-	    }
-
-	    # keep previous format
-	    if( $EH{'intermediate'}{'format'}=~ m,prev,o && defined $s_previous) {
-		$settings{'tabStyle'} = getStyle($content[$s_previous]);
-#		my $start = $settings{$sheet};
-#		my $stop = $settings{$sheet . "_end"};
-#		for my $i ($start..$stop) {
-		    # get column styles
-		    # get row styles
-		    # get cell styles
-#	      }
-	    }
-
-	} else { # Delete contents or all of sheet ?
-	    if ( exists( $settings{ $sheet } ) ) {
-		#Keep format if EH.intermediate.format says so
-		if ( $EH{'intermediate'}{'format'} =~ m,prev,o ) {
-		    # get style -> use same style for new sheet
-		    $settings{'tabStyle'} = getStyle($content[$settings{$sheet}]);
+		rmdir('META-INF');
+		unless($zip->read($file)==AZ_OK) {
+	    	$logger->error( '__E_WRITE_SXC', "\tCreating openoffice calc file $file!" );
+	    	return undef;
 		}
-		$settings{'start'} = $settings{$sheet};
-		$settings{'stop'} = $settings{$sheet."_end"};
-	    }
-	    else {
-	        my $end = getDocumentEnd(\@content);
-		$settings{'start'} = $end;
-		$settings{'stop'} = $end;
-	    }
-	}
-    }
-    else {
-	# Create new workbook
-	# no warnings;
-	$^W = 0;
-	oooInit("sxc");
-	oooSet("builddir", ".");
-	oooSet("author", "generated by MIX");
-	oooGenerate($file);    # write output
-	# use warnings;
-	$^W = 1;
+		@content = readContent($zip);
 
-	rmdir("META-INF");
-	unless($zip->read($file)==AZ_OK) {
-	    logwarn "ERROR: creating star office calculator file $file!\n";
-	    return undef;
-	}
-	@content = readContent($zip);
+		my $ibody = 0;
 
-	my $ibody = 0;
+		# keep position of start and stop tags
+		for(my $i=0; defined $content[$i]; $i++) {
+	    	if(!$ibody && !defined $settings{'start'} && $content[$i]=~ m/^<office:body>$/) {
+				$ibody = 1;
+				$settings{'start'} = $i+1;
+	    	} elsif($ibody && !defined $settings{'stop'} && $content[$i]=~ m/^<\/office:body>$/) {
+				$ibody = 0;
+				$settings{'stop'} = $i;
+	    	}
+		}
+		undef $ibody;
 
-	# keep position of start and stop tags
-	for(my $i=0; defined $content[$i]; $i++) {
-	    if(!$ibody && !defined $settings{'start'} && $content[$i]=~ m/^<office:body>$/) {
-		$ibody = 1;
-		$settings{'start'} = $i+1;
-	    }
-	    elsif($ibody && !defined $settings{'stop'} && $content[$i]=~ m/^<\/office:body>$/) {
-		$ibody = 0;
-		$settings{'stop'} = $i;
-	    }
-	}
-	undef $ibody;
-
-	$settings{'tabStyle'} = getStyle($content[$settings{'start'}]);
-	$settings{'defRowStyle'} = " table:style-name=\"ro1\" ";
-#	$settings{'defCellStyle'} = ;
-	$settings{'newflag'} = 1;
+		$settings{'tabStyle'} = getStyle($content[$settings{'start'}]);
+		$settings{'defRowStyle'} = " table:style-name=\"ro1\" ";
+		#	$settings{'defCellStyle'} = ;
+		$settings{'newflag'} = 1;
     }
 
     # remove old content file from archive
-    $zip->removeMember("content.xml");
+    $zip->removeMember('content.xml');
 
     # Mark cells in that list in background color ..
     # Format: row/col
     if ( defined( $r_c ) ) {
 
-#	$rng->setBackgroundColor( mix_utils_rgb( 255, 255, 255 )); # Set back color to white
+		#	$rng->setBackgroundColor( mix_utils_rgb( 255, 255, 255 )); # Set back color to white
+
+=head1 OLD
+
+# REFACTOR: remove wig20060306
 
 #	for my $cell ( @$r_c ) {
 
@@ -2078,43 +1938,58 @@ sub write_sxc($$$;$) {
 	#	$rng->setBackgroundColor($ocol);
 #	    }
 #	}
+
+=cut
+
     }
 
-    if(!defined $settings{'tabStyle'}) {
-        $settings{'tabStyle'} = "";
+    unless( defined $settings{'tabStyle'}) {
+        $settings{'tabStyle'} = '';
     }
-    if(!defined $settings{'defColStyle'}) {
-        $settings{'defColStyle'} = "";
+    unless ( defined $settings{'defColStyle'}) {
+        $settings{'defColStyle'} = '';
     }
-    if(!defined $settings{'defRowStyle'}) {
-        $settings{'defRowStyle'} = "";
+    unless( defined $settings{'defRowStyle'}) {
+        $settings{'defRowStyle'} = '';
     }
-    if(!defined $settings{'defCellStyle'}) {
-        $settings{'defCellStyle'} = "";
+    unless( defined $settings{'defCellStyle'}) {
+        $settings{'defCellStyle'} = '';
     }
 
     writeContent( $r_a, \%settings, \@content);
 
-    $zip->addFile("content.xml");
+    $zip->addFile('content.xml');
 #    $zip->writeToFileNamed($file);
     $zip->overwriteAs($file);
-    unlink "content.xml";
-    rmdir("META-INF");
+    unlink 'content.xml';
+    rmdir('META-INF');
     return 1;
-}
+} # End of write_sxc
 
 # use ooolib on demand, only!
-{ my $ooo_flag = 0; #static, tells me if we used ooolib already ....
-sub useOoolib () {
+#
+# Load ooolib
+#
+# Returns:
+#	1  		<= o.k.
+#   undef	<= not o.k.
+# Sets $ooo_flag to remember first try outcome
+#
+{ 
+	my $ooo_flag = 0; #static, tells me if we used ooolib already ....
+	sub useOoolib () {
 
-    return 1 if ( $ooo_flag );
-    if ( eval 'use ooolib;' ){
-		logdie "ERROR: Cannot load ooolib module: $@\n";
-		return undef;	
-    }
-    $ooo_flag = 1;
-    return 1;
-}
+    	return 1 if ( $ooo_flag eq 1 );
+    	return undef if ( $ooo_flag eq -1 );
+    	if ( eval 'use ooolib;' ){
+			$logger->fatal( '__F_USE_OOOLIB',  "\tCannot load ooolib module: $@\n" );
+			# REFACTOR : Check if this fatal dies here
+			$ooo_flag = -1;
+			return undef;
+    	}
+    	$ooo_flag = 1;
+    	return 1;
+	} # End of useOoolib
 }
 
 # get document end tags position
@@ -2123,70 +1998,71 @@ sub getDocumentEnd($) {
 
     for my $i (reverse(1..scalar(@$content))) {
         if($$content[$i] && $$content[$i]=~ m/^<\/office:body>$/) {
-	    return $i;
-	}
+        	return $i;
+		}
     }
-}
+} # End of getDocumentEnd
 
 
-# get style from soffice xml tag
+# get style from openoffice xml tag
 sub getStyle($) {
 
     my $style = shift;
 
-    if($style =~ s/^.* table:style-name=\"//) {
-        $style =~ s/\".*>$//;
-	return " table:style-name=\"" . $style . "\" ";
+    if( $style =~ s/^.* table:style-name="// ) {	# "
+		$style =~ s/".*>$//;		# "
+		return ' table:style-name="' . $style . '" ';
     }
-    return "";
-}
+    return '';
+} # End of getStyle
 
 
 sub getDefaultStyle($) {
 
     my $style = shift;
 
-    $style =~ s/^.* table:default-cell-style-name=\"//;
-    $style =~ s/\".*>$//; 
+    $style =~ s/^.* table:default-cell-style-name="//; # "
+    $style =~ s/".*>$//; 	# "
 
     return $style;
-}
+} # End of getDefaultStyle
 
 
 # unzip content.xml and split tags
-sub readContent($) {
+sub readContent ($) {
     my $zip = shift;
     my @content = ();
 
     # extract content.xml file from archive
-    @content = split(/>/, $zip->contents("content.xml"));
-    map ( { $_ .= ">"; } @content );
+    @content = split(/>/, $zip->contents('content.xml'));
+    map ( { $_ .= '>'; } @content );
 
     return @content;
-}
+} # End of readContent
 
 
-sub writeContent($$) {
-
+sub writeContent($$$) {
     my $data = shift;
     my $settings = shift;
     my $content = shift;
 
-    open(DATA, "> content.xml");
+    unless( open(DATA, '> content.xml') ) {
+    	$logger->error( '__E_WRITE_CONTENT', "\tCannot open content.xml" );
+    	return undef();
+    }
 
     # output new style definitions
 
     # output content before sheet
     for(my $i=0; $i<$settings->{'start'}; $i++) {
- 	# Todo: if not newflag count existing sheetstyles & add new one
- 	print DATA @$content[$i];
+ 		# TODO : if not newflag count existing sheetstyles & add new one
+ 		print DATA @$content[$i];
     }
 
     # output new sheet
     print DATA "<table:table table:name=\"" . $settings->{'sheetname'} . "\"" . $settings->{'tabStyle'} . ">";
 
-    # Todo: output column styles
-
+    # TODO : output column styles
     print DATA "<table:table-column" . $settings->{'defColStyle'} . " table:number-columns-repeated=\"3\" table:default-cell-style-name=\"Default\"/>";
 
     my $xmax = $#{$data->[0]}+1;
@@ -2194,23 +2070,22 @@ sub writeContent($$) {
 
     # One row at a time
     for( my $y=0; $y<=$ymax; $y++) {
-	# One cell at a time down the row
-	print DATA "<table:table-row".$settings->{'defRowStyle'}.">";
-	for( my $x=0; $x<=$xmax; $x++) {
-	    if(defined $$data[$y][$x]) {
-	        $$data[$y][$x]=~ s/\&/\&amp;/g;
-		$$data[$y][$x] =~ s/'/\&apos;/g; #'
-		$$data[$y][$x] =~ s/</\&lt;/g;
-		$$data[$y][$x] =~ s/>/\&gt;/g;
-		print DATA "<table:table-cell>";
-		print DATA "<text:p>" . $$data[$y][$x] . "</text:p>";
-		print DATA "</table:table-cell>";
-	    }
-	    else {
-		print DATA "<table:table-cell/>";
-	    }
-	}
-	print DATA "</table:table-row>";
+		# One cell at a time down the row
+		print DATA "<table:table-row".$settings->{'defRowStyle'}.">";
+		for( my $x=0; $x<=$xmax; $x++) {
+	    	if(defined $$data[$y][$x]) {
+	        	$$data[$y][$x]=~ s/\&/\&amp;/g;
+				$$data[$y][$x] =~ s/'/\&apos;/g; #'
+				$$data[$y][$x] =~ s/</\&lt;/g;
+				$$data[$y][$x] =~ s/>/\&gt;/g;
+				print DATA "<table:table-cell>";
+				print DATA "<text:p>" . $$data[$y][$x] . "</text:p>";
+				print DATA "</table:table-cell>";
+	    	} else {
+				print DATA "<table:table-cell/>";
+	    	}
+		}
+		print DATA "</table:table-row>";
     }
 
     # end table
@@ -2220,14 +2095,14 @@ sub writeContent($$) {
     my $clength = scalar(@$content);
     for(my $i=$settings->{'stop'}; $i<$clength; $i++) {
         if(defined @$content[$i]) {
-	    print DATA @$content[$i];
-	}
+	    	print DATA @$content[$i];
+		}
     }
 
     close(DATA);
 
     return;
-}
+} # End of writeContent
 
 
 ####################################################################
@@ -2240,7 +2115,7 @@ this subroutine is self explanatory. The only important thing is,
 that it will try to rotate older versions of the generated sheets.
 E.g. sheet CONN will become O0_CONN while O0_CONN was shifted
 to O1_CONN. The maximum number of all versions to keep is
-defined by $EH{'intermediate'}{'keep'}
+defined by $eh->get( 'intermediate.keep' )
 
 #!wig20050125: adding quoting style "MS-EXCEL":
     -cover newlines
@@ -2257,8 +2132,7 @@ defined by $EH{'intermediate'}{'keep'}
 
 =cut
 
-sub write_csv($$$) {
-
+sub write_csv ($$$) {
     my $file = shift;
     my $sheet = shift;
     my $r_a = shift;
@@ -2270,23 +2144,23 @@ sub write_csv($$$) {
     my $xmax = $#{$r_a->[0]}+1;
     my $ymax = $#{$r_a}+1;
 
-    my $cellsep = $EH{'format'}{'csv'}{'cellsep'};
-    my $quoting = $EH{'format'}{'csv'}{'quoting'};
-    my $style = $EH{'format'}{'csv'}{'style'};
-	my $sheetm = $EH{'format'}{'csv'}{'sheetsep'};
+    my $cellsep = $eh->get( 'format.csv.cellsep' );
+    my $quoting = $eh->get( 'format.csv.quoting' );
+    my $style   = $eh->get( 'format.csv.style' );
+	my $sheetm  = $eh->get( 'format.csv.sheetsep' );
 	
     my $temp;
 
     # Write to other directory ...
-    if ( $EH{'intermediate'}{'path'} ne "." and not is_absolute_path( $file ) ) {
- 		$file = $EH{'intermediate'}{'path'} . "/" . $file;
+    if ( $eh->get( 'intermediate.path' ) ne '.' and not is_absolute_path( $file ) ) {
+ 		$file = $eh->get( 'intermediate.path' ) . '/' . $file;
     }
 
     my $basename = basename( $file ); # s,.*[/\\],,; #Strip off / and \
 
     if ( -r $file ) {
 
-    	my $max = $EH{'intermediate'}{'keep'};
+    	my $max = $eh->get( 'intermediate.keep' );
 		my $temp;
 		my $osheet = 0;
 
@@ -2320,10 +2194,14 @@ sub write_csv($$$) {
     }
 
     # To support \n without \r on MS-Win, open in binmode
-    open(FILE,">$file");
+    unless( open(FILE , "> $file") ) {
+    	$logger->error( '__E_WRITE_CSV', "\tCannot open $file for writting: $!" );
+    	return undef;
+    }
+    
     binmode FILE;
 
-    my $cr = ( $EH{iswin} ? "\r" : "" ) . "\n";
+    my $cr = ( $eh->get( 'iswin' ) ? "\r" : '' ) . "\n";
 
     # Previous data
     for(my $i=0; $i<$start; $i++) {
@@ -2335,7 +2213,7 @@ sub write_csv($$$) {
 	if ( $sheetm ) {
     	print FILE $sheetm . $sheet . "\n";
 	} else {
-		logsay("INFO: Start printing sheet $sheet, no seperator selected!" );
+		$logger->info('__I_WRITE_CSV', "\tStart printing sheet $sheet, no seperator selected!" );
 	}
 
     for(my $y=0; $y<$ymax; $y++) {
@@ -2456,56 +2334,54 @@ sub clean_xls_sheets($) {
     my $file = shift;
     my $book;
 
-    logwarn("Removing old and and diff sheets in file: $file");
+    $logger->info('__I_CLEAN_XLS', "\tRemoving old and and diff sheets in file: $file");
 
     if( -r $file ) {
 
-	my $basename = basename( $file ); # s,.*[/\\],,; #Strip off / and \
+		my $basename = basename( $file ); # s,.*[/\\],,; #Strip off / and \
 
-	# If it exists, it could be open, too?
-	unless( $book = is_open_workbook( $basename ) ) {
-	      # No, not opened so far...
-              if($file =~ m/.xls$/) {
-		  $book = $ex->Workbooks->Open(cwd()."\\".$file);  # TODO !!!
-	      }
-	}
-	else {
-	    # Is the open thing at the right place?
-	    my $wbpath = dirname( $file ) || $EH{'cwd'};
-	    if ( $wbpath eq "." ) {
-	        $wbpath = $EH{'cwd'};
-	    }
-	    $wbpath =~ s,/,\\,g; # Replace / -> \
-	    #Does our book have the right path?
-	    if ( defined $ex && $book->Path ne $wbpath) {
-	        logwarn("ERROR: workbook with different path already opened!");
-		$EH{'sum'}{'errors'}++;
-	    }
-  	}
+		# If it exists, it could be open, too?
+		unless( $book = is_open_workbook( $basename ) ) {
+	    	# No, not opened so far...
+			if($file =~ m/.xls$/) {
+				$book = $ex->Workbooks->Open(cwd() . "\\" . $file);
+			}
+		} else {
+	    	# Is the open thing at the right place?
+	    	my $wbpath = dirname( $file ) || $eh->get( 'cwd' );
+	    	if ( $wbpath eq "." ) {
+	        	$wbpath = $eh->get( 'cwd' );
+	    	}
+	    	$wbpath =~ s,/,\\,g; # Replace / -> \
+	    	#Does our book have the right path?
+	    	if ( defined $ex && $book->Path ne $wbpath) {
+	        	$logger->error('__E_CLEAN_XLS', "\tWorkbook with different path already opened!");
+	    	}
+  		}
 
-	my %sh = ();
+		my %sh = ();
 
-	$ex->{DisplayAlerts}=0 if ( $EH{'script'}{'excel'}{'alerts'} =~ m,off,io );
-	$book->Activate;
+		$ex->{DisplayAlerts}=0 if ( $eh->get( 'script.excel.alerts' ) =~ m,off,io );
+		$book->Activate;
 
-	# search for old sheets end remove them: O_ DIFF_ SheetN
-	foreach my $sh (in( $book->{"Worksheets"} ) ) {
-	    if ( $sh->{'Name'} =~ /^O_/o or
-		$sh->{'Name'} =~ /DIFF_/o or
-		$sh->{'Name'} =~ /^Sheet\d+/o or
-		$sh->{'Name'} =~ /^Tabelle\d+/o ) {
-	        $book->{Worksheets}->{$sh->{'Name'}}->Delete;
-	    }
+		# search for old sheets end remove them: O_ DIFF_ SheetN
+		foreach my $sh (in( $book->{'Worksheets'} ) ) {
+	    	if ( $sh->{'Name'} =~ /^O_/o or
+				$sh->{'Name'} =~ /DIFF_/o or
+				$sh->{'Name'} =~ /^Sheet\d+/o or
+				$sh->{'Name'} =~ /^Tabelle\d+/o ) {
+	        	$book->{Worksheets}->{$sh->{'Name'}}->Delete;
+	    	}
         }
-	$book->Save;
-	$ex->{DisplayAlerts}=1;
+		$book->Save;
+		$ex->{DisplayAlerts}=1;
 
-	return;
+		return;
     }
 
-    logwarn("File $file not found!");
+    $logger->warn('__W_CLEAN_XLS', "\tFile $file not found!");
     return;
-}
+} # End of clean_xls_sheets
 
 
 ####################################################################
@@ -2527,63 +2403,64 @@ subroutine removes old and diff sheets from soffice files
 =cut
 
 sub clean_sxc_sheets($) {
-
     my $file = shift;
 
-    logwarn("Removing old and and diff sheets in file: $file");
+    $logger->info('__I_CLEAN_SXC', "\tRemoving old and and diff sheets in file: $file");
 
     if( -r $file ) {
 
         my $zip = Archive::Zip->new();
-	my $isheet = 0;
-	my $sheetname = ();
+		my $isheet = 0;
+		my $sheetname = ();
 
         # unzip $file in $path
         unless($zip->read($file)==AZ_OK) {
-	    logwarn "ERROR: can't open zip file $file!\n";
-	    return undef;
-	}
-	# extract content.xml file from archive
-	my @content = readContent($zip);
-
-	# keep start line index of all sheets
-	for(my $i=0; defined $content[$i]; $i++) {
-	    if( !$isheet && $content[$i]=~ m/<table:table table:name=\"/) { #" start of sheet
-		$sheetname = $content[$i];
-		$sheetname =~ s/<table:table table:name=\"//;	#"
-		$sheetname = (split(/\"/,$sheetname))[0];	#"
-		if( $sheetname=~ m/^O_/ || $sheetname=~ m/DIFF_/) {
-		  $isheet = 1;
-		  delete $content[$i];
+	    	$logger->error( '__E_CLEAN_SXC', "\tCannot open zip file $file: $!" );
+	    	return undef;
 		}
-	    }
-	    elsif( $isheet) { # end of sheet
-	        if( $content[$i]=~ m/<\/table:table>/) {
-		    $isheet= 0;
+		# extract content.xml file from archive
+		my @content = readContent($zip);
+
+		# keep start line index of all sheets
+		for(my $i=0; defined $content[$i]; $i++) {
+	    	if( not $isheet && $content[$i]=~ m/<table:table table:name=\"/) { #" start of sheet
+				$sheetname = $content[$i];
+				$sheetname =~ s/<table:table table:name=\"//;	#"
+				$sheetname = (split(/\"/,$sheetname))[0];	#"
+				if( $sheetname=~ m/^O_/ || $sheetname=~ m/DIFF_/) {
+		  			$isheet = 1;
+		  			delete $content[$i];
+				}
+	    	} elsif( $isheet) { # end of sheet
+	        	if( $content[$i]=~ m/<\/table:table>/) {
+		    		$isheet= 0;
+				}
+				delete $content[$i];
+	    	}
 		}
-		delete $content[$i];
-	    }
-	}
 
-	open(DATA,">content.xml");
+		unless( open(DATA,'> content.xml') ) {
+			$logger->error('__E_CLEAN_SXC', "\tCannot open content.xml: $!" );
+			return undef();
+		}
 
-	for my $i (0..scalar(@content)-1) {
-	    if(defined $content[$i]) {
-	        print DATA $content[$i];
-	    }
-	}
-	close(DATA);
+		for my $i (0..scalar(@content)-1) {
+	    	if(defined $content[$i]) {
+	        	print DATA $content[$i];
+	    	}
+		}
+		close(DATA) or $logger->error('__E_CLEAN_SXC', "\tCannot close content.xml: $!" );
 
-	$zip->addFile("content.xml");
-	$zip->overwriteAs($file);
-	unlink "content.xml";
+		$zip->addFile('content.xml');
+		$zip->overwriteAs($file);
+		unlink( 'content.xml' ) or $logger->error( '__E_CLEAN_SXC', "\tCannot unling content.xml: $!" );
 
-	return;
+		return;
     }
 
-    logwarn("File $file not found!");
+    $logger->warn('__W_CLEAN_SXC', "\tFile $file not found!");
     return;
-}
+} # End of clean_sxc_sheets
 
 
 ####################################################################
@@ -2605,54 +2482,57 @@ subroutine removes old and diff sheets from csv files
 =cut
 
 sub clean_csv_sheets($) {
-
     my $file = shift;
     my $book;
 
-    logwarn("Removing old and and diff sheets in file: $file");
+    $logger->info( '__I_CLEAN_CSV', "\tRemoving old and and diff sheets in file: $file");
 
     if( -r $file ) {
+		my $basename = basename( $file ); # s,.*[/\\],,; #Strip off / and \
+		my @data;
 
-	my $basename = basename( $file ); # s,.*[/\\],,; #Strip off / and \
-	my @data;
+		my $sheetO = $eh->get( 'format.csv.sheetsep' ) . 'O_';
+		my $sheetDiff = $eh->get( 'format.csv.sheetsep' ) . 'DIFF_';
 
-	my $sheetO = $EH{'format'}{'csv'}{'sheetsep'} . "O_";
-	my $sheetDiff = $EH{'format'}{'csv'}{'sheetsep'} . "DIFF_";
+		my $itable = 1;
 
-	my $itable = 1;
-
-	open(FILE,"<$file");
-	@data = <FILE>;
-	close(FILE);
-
-	open(FILE, ">$file");
-
-	# search for old sheets end remove them
-	my $max = scalar(@data);
-	for(my $i=0; $i<$max; $i++) {
-	    if( $itable==1) {
-	        if( $data[$i] =~ /^$sheetO/ || $data[$i] =~ /^$sheetDiff/) {
-		    $itable = 0;
-	        }
-		else {
-		    print FILE $data[$i];
+		# Read in previous content
+		unless( open(FILE,"< $file") ) {
+			$logger->error( '__E_CLEAN_CSV', "\tCannot open file $file: $!" );
+			return undef();
 		}
-	    }
-	    else {
-	      if( not($data[$i] =~ /^$sheetO/ || $data[$i] =~ /$sheetDiff/)) {
-		  $itable = 1;
-		  print FILE $data[$i];
-	      }
-	    }
-        }
-	close(FILE);
+		@data = <FILE>;
+		close(FILE) or $logger->error( '__E_CLEAN_CSV', "\tCannot close file $file: $!" );
 
-	return;
+		unless( open(FILE, "> $file") ) {
+			$logger->error( '__E_CLEAN_CSV', "\tCannot open file $file for writting: $!" );
+			return undef();
+		}
+
+		# search for old sheets end remove them
+		my $max = scalar(@data);
+		for(my $i=0; $i<$max; $i++) {
+	    	if( $itable==1) {
+	        	if( $data[$i] =~ /^$sheetO/ || $data[$i] =~ /^$sheetDiff/) {
+		    		$itable = 0;
+	        	} else {
+		    		print FILE $data[$i];
+				}
+	    	} else {
+	      		if( not($data[$i] =~ /^$sheetO/ || $data[$i] =~ /$sheetDiff/)) {
+		  			$itable = 1;
+		  			print FILE $data[$i];
+	      		}
+	    	}
+        }
+		close(FILE) or $logger->error( '__E_CLEAN_CSV', "\tCannot close file $file: $!" );
+
+		return;
     }
 
-    logwarn("File $file not found!");
+    $logger->warn('__E_CLEAN_CSV', "\tFile $file not found!");
     return;
-}
+} # End of clean_csv_sheets
 
 
 ####################################################################
@@ -2683,7 +2563,7 @@ sub mix_utils_rgb($$$) {
 ## Mask pure digits (esp. with . and/or , inside) for ExCEL!
 ## Otherwise these will get converted to dates :-(
 ## wig20030716: add a ' before a trailing ' ...
-##!wig20050713: limit length of EXCEL cells to $EH{'format'}{'xls'}{'maxcelllength'}
+##!wig20050713: limit length of EXCEL cells to $eh->get('format.xls.maxcelllength')
 ####################################################################
 
 =head2 mix_utils_mask_excel($)
@@ -2698,8 +2578,8 @@ Additionally mask <nl> ...
 sub mix_utils_mask_excel($) {
     my $r_a = shift;
 
-	my $maxlength = $EH{'format'}{'xls'}{'maxcelllength'} + 20; # Leave 20bytes extra
-	my $style = $EH{'format'}{'xls'}{'style'} || '';
+	my $maxlength = $eh->get( 'format.xls.maxcelllength' ) + 20; # Leave 20bytes extra
+	my $style = $eh->get( 'format.xls.style' ) || '';
 	
     for my $i ( @$r_a ) {
 		for my $ii ( @$i ) {
@@ -2707,9 +2587,8 @@ sub mix_utils_mask_excel($) {
 				$ii = '';
 				next;
 	    	} elsif ( length( $ii ) > $maxlength ) { #!wig20031215: 1200 will be accepted by Excel
-				logwarn( "WARNING: Limit length of cell to save $maxlength characters: " .
+				$logger->warn( '__W_MASK_XLS', "\tLimit length of cell to save $maxlength characters: " .
 				substr( $ii, 0, 32 ) );
-				$EH{'sum'}{'warnings'}++;
 				$ii = substr( $ii, 0, $maxlength );
 				substr( $ii, $maxlength - 9 , 9 ) = "__ERROR__"; # Attach __ERROR__ to string!
 	    	}

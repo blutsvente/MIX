@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.76 $                                         |
+# | Revision:   $Revision: 1.77 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/01/19 08:49:31 $                              |
+# | Date:       $Date: 2006/03/14 08:10:34 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.76 2006/01/19 08:49:31 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.77 2006/03/14 08:10:34 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.77  2006/03/14 08:10:34  wig
+# | No changes, got deleted accidently
+# |
 # | Revision 1.76  2006/01/19 08:49:31  wig
 # | Minor fixes regarding sort order output (debug parameter added)
 # |
@@ -270,90 +273,77 @@ require Exporter;
     write_architecture
     write_configuration
     );            # symbols to export by default
-  @EXPORT_OK = qw(
-    );
+  @EXPORT_OK = qw();
 
 our $VERSION = '0.01';
 
 use strict;
 use vars qw( %entities );
 
-=head 4 old
-
-# Caveat: relies on proper setting of base, pgmpath and dir in main program!
-use lib "$main::base/";
-use lib "$main::base/lib/perl";
-use lib "$main::pgmpath/";
-use lib "$main::pgmpath/lib/perl";
-use lib "$main::dir/lib/perl";
-use lib "$main::dir/../lib/perl";
-
-=cut
-
-use Log::Agent;
-use Log::Agent::Priorities qw(:LEVELS);
+use Log::Log4perl qw(get_logger);
 use Tree::DAG_Node; # tree base class
 use Regexp::Common; # Needed for reading back spliced ports
 
 use Micronas::MixUtils 
-    qw( mix_store db2array mix_utils_open mix_utils_print 
-	mix_utils_printf mix_utils_close replace_mac %EH );
+    qw( $eh mix_store db2array mix_utils_open mix_utils_print 
+	mix_utils_printf mix_utils_close replace_mac );
 use Micronas::MixUtils::IO;
-
 use Micronas::MixParser qw( %hierdb %conndb add_conn );
 
 #
 # Prototypes
 #
-sub _write_entities ($$$);
-sub compare_merge_entities ($$$$);
-sub mix_wr_fromto ($$$$);
-sub _write_constant ($$$$$;$);
-sub write_architecture ();
-sub strip_empty ($);
-sub port_map ($$$$$$);
-sub generic_map ($$$$;$$);
-sub print_conn_matrix ($$$$$$$$$;$);
-sub signal_port_resolve($$);
-sub use_lib($$);
-sub is_vhdl_comment($);
-sub is_comment($$);
-sub count_load_driver ($$$$);
-sub gen_concur_port($$$$$$$$;$$);
-sub mix_wr_get_interface ($$$$);
-sub _mix_wr_get_ivhdl ($$$);
-sub _mix_wr_get_iveri ($$$$);
-sub mix_wr_port_check ($$);
-sub mix_wr_unsplice_port ($$$);
-sub mix_wr_hier2mac ($);
-sub mix_wr_getpwidth ($);
-sub mix_wr_getconstname ($$);
-sub sig_typecast($$);
-sub _mix_wr_isinteger ($$$);
-sub mix_wr_mapsort ($$);
-sub _mix_wr_is_modegennr ($$);
-sub mix_wr_use_udc ($$$);
-sub _mix_wr_save_hooks ();
-sub _mix_wr_preset_hooks ();
-sub _mix_wr_getfilter ($$);
-sub _mix_wr_descr ($$$$$);
-sub mix_wr_printdescr ($$);
-sub _mix_wr_regorwire($$);
+sub _write_entities				($$$);
+sub compare_merge_entities		($$$$);
+sub mix_wr_fromto				($$$$);
+sub _write_constant				($$$$$;$);
+sub write_architecture			();
+sub strip_empty					($);
+sub port_map					($$$$$$);
+sub generic_map					($$$$;$$);
+sub print_conn_matrix			($$$$$$$$$;$);
+sub signal_port_resolve			($$);
+sub use_lib						($$);
+sub is_vhdl_comment				($);
+sub is_comment					($$);
+sub count_load_driver			($$$$);
+sub gen_concur_port				($$$$$$$$;$$);
+sub mix_wr_get_interface		($$$$);
+sub _mix_wr_get_ivhdl			($$$);
+sub _mix_wr_get_iveri			($$$$);
+sub mix_wr_port_check			($$);
+sub mix_wr_unsplice_port		($$$);
+sub mix_wr_hier2mac				($);
+sub mix_wr_getpwidth			($);
+sub mix_wr_getconstname			($$);
+sub sig_typecast				($$);
+sub _mix_wr_isinteger			($$$);
+sub mix_wr_mapsort				($$);
+sub _mix_wr_is_modegennr		($$);
+sub mix_wr_use_udc				($$$);
+sub _mix_wr_save_hooks			();
+sub _mix_wr_preset_hooks		();
+sub _mix_wr_getfilter			($$);
+sub _mix_wr_descr				($$$$$);
+sub mix_wr_printdescr			($$);
+sub _mix_wr_regorwire			($$);
+sub _mix_wr_signum2signam		($);
 
 # Internal variable
 
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.76 2006/01/19 08:49:31 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.77 2006/03/14 08:10:34 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.76 $';
+my $thisrevision   =      '$Revision: 1.77 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
 ( $VERSION = $thisrevision ) =~ s,.*Revision:\s*,,; #TODO: Is that a good idea?
 
+my $logger = get_logger( 'MIX::MixWriter' );
 
 #
 # Templates ...
@@ -361,7 +351,7 @@ $thisrevision =~ s,^\$,,go;
 sub tmpl_enty () {
 
 # TODO: Read that templates in from default location (e.g. a company default)
-$EH{'template'}{'vhdl'}{'enty'}{'head'} = <<'EOD';
+my $tmpl = <<'EOD';
 -- -------------------------------------------------------------
 --
 --  Entity Declaration for %ENTYNAME%
@@ -390,10 +380,11 @@ $EH{'template'}{'vhdl'}{'enty'}{'head'} = <<'EOD';
 
 EOD
 
-$EH{'template'}{'vhdl'}{'enty'}{'head'} =~ s/THISRCSFILE/$thisrcsfile/;
-$EH{'template'}{'vhdl'}{'enty'}{'head'} =~ s/THISID/$thisid/;
+$tmpl =~ s/THISRCSFILE/$thisrcsfile/;
+$tmpl =~ s/THISID/$thisid/;
+$eh->set( 'template.vhdl.enty.head' , $tmpl ),
 
-$EH{'template'}{'vhdl'}{'enty'}{'body'} = <<'EOD';
+$tmpl = <<'EOD';
 --
 -- Start of Generated Entity %ENTYNAME%
 --
@@ -410,21 +401,25 @@ end %ENTYNAME%;
 
 EOD
 
-$EH{'template'}{'vhdl'}{'enty'}{'foot'} = <<'EOD';
+$eh->set( 'template.vhdl.enty.body', $tmpl );
+
+$tmpl = <<'EOD';
 %VHDL_HOOK_ENTY_FOOT%
 --
 --!End of Entity/ies
 -- --------------------------------------------------------------
 EOD
 
-}
+$eh->set( 'template.vhdl.enty.foot', $tmpl );
+
+} # End of tmpl_enty
 
 #
 # Architecture Templates ...
 #
 sub tmpl_arch () {
 
-$EH{'template'}{'vhdl'}{'arch'}{'head'} = <<'EOD';
+my $tmpl = <<'EOD';
 -- -------------------------------------------------------------
 --
 -- Generated Architecture Declaration for %ARCHNAME% of %ENTYNAME%
@@ -452,10 +447,11 @@ $EH{'template'}{'vhdl'}{'arch'}{'head'} = <<'EOD';
 --
 EOD
 
-$EH{'template'}{'vhdl'}{'arch'}{'head'} =~ s/THISRCSFILE/$thisrcsfile/;
-$EH{'template'}{'vhdl'}{'arch'}{'head'} =~ s/THISID/$thisid/;
+$tmpl =~ s/THISRCSFILE/$thisrcsfile/;
+$tmpl =~ s/THISID/$thisid/;
+$eh->set( 'template.vhdl.arch.head', $tmpl );
 
-$EH{'template'}{'vhdl'}{'arch'}{'body'} = <<'EOD';
+$eh->set( 'template.vhdl.arch.body', <<'EOD' );
 --
 -- Start of Generated Architecture %ARCHNAME% of %ENTYNAME%
 --
@@ -498,7 +494,7 @@ EOD
 # Replaced %ARCHNAME% by RTL, requested by Michael P.
 # Replaces end %ARCHNAME% by %ENTYNAME%
 
-$EH{'template'}{'vhdl'}{'arch'}{'foot'} = <<'EOD';
+$eh->set( 'template.vhdl.arch.foot', <<'EOD' );
 %VHDL_HOOK_ARCH_FOOT%
 --
 --!End of Architecture/s
@@ -519,7 +515,7 @@ EOD
 # Verilog: has only a "arch" template ...
 # Use the same schema as for VHDL to make it easier to program ..
 
-$EH{'template'}{'verilog'}{'arch'}{'head'} = <<'EOD';
+$tmpl = <<'EOD';
 // -------------------------------------------------------------
 //
 // Generated Architecture Declaration for %ARCHNAME% of %ENTYNAME%
@@ -549,10 +545,11 @@ $EH{'template'}{'verilog'}{'arch'}{'head'} = <<'EOD';
 //
 EOD
 
-$EH{'template'}{'verilog'}{'arch'}{'head'} =~ s/THISRCSFILE/$thisrcsfile/;
-$EH{'template'}{'verilog'}{'arch'}{'head'} =~ s/THISID/$thisid/;
+$tmpl =~ s/THISRCSFILE/$thisrcsfile/;
+$tmpl =~ s/THISID/$thisid/;
+$eh->set( 'template.verilog.arch.head', $tmpl );
 
-$EH{'template'}{'verilog'}{'arch'}{'body'} = <<'EOD';
+$eh->set( 'template.verilog.arch.body', <<'EOD' );
 //
 // Start of Generated Module %ARCHNAME% of %ENTYNAME%
 //
@@ -585,18 +582,18 @@ endmodule
 //
 EOD
 
-$EH{'template'}{'verilog'}{'arch'}{'foot'} = <<'EOD';
+$eh->set( 'template.verilog.arch.foot', <<'EOD' );
 //
 //!End of Module/s
 // --------------------------------------------------------------
 EOD
 
-}
+} # End of tmpl_arch
 
 sub tmpl_conf () {
 
 # TODO: Read that templates in from default location (e.g. a company default)
-$EH{'template'}{'vhdl'}{'conf'}{'head'} = <<'EOD';
+my $tmpl = <<'EOD';
 -- -------------------------------------------------------------
 --
 -- Generated Configuration for %CONFNAME%
@@ -623,10 +620,11 @@ $EH{'template'}{'vhdl'}{'conf'}{'head'} = <<'EOD';
 %VHDL_HOOK_CONF_HEAD%
 EOD
 
-$EH{'template'}{'vhdl'}{'conf'}{'head'} =~ s/THISRCSFILE/$thisrcsfile/;
-$EH{'template'}{'vhdl'}{'conf'}{'head'} =~ s/THISID/$thisid/;
+$tmpl =~ s/THISRCSFILE/$thisrcsfile/;
+$tmpl =~ s/THISID/$thisid/;
+$eh->set( 'template.vhdl.conf.head', $tmpl );
 
-$EH{'template'}{'vhdl'}{'conf'}{'body'} = <<'EOD';
+$eh->set( 'template.vhdl.conf.body', <<'EOD' );
 --
 -- Start of Generated Configuration %CONFNAME% / %ENTYNAME%
 --
@@ -645,14 +643,14 @@ end %CONFNAME%;
 EOD
 # Replaced %ARCHNAME% by RTL, requested by Michael P. 
 
-$EH{'template'}{'vhdl'}{'conf'}{'foot'} = <<'EOD';
+$eh->set( 'template.vhdl.conf.foot', <<'EOD' );
 %VHDL_HOOK_CONF_FOOT%
 --
 --!End of Configuration/ies
 -- --------------------------------------------------------------
 EOD
 
-}
+} # End of tmpl_conf
 
 ####################################################################
 ## generate_entities
@@ -680,7 +678,7 @@ sub generate_entities () {
 
     for my $i ( keys( %hierdb ) ) {
         unless( exists ( $hierdb{$i}{'::entity'} ) ) {
-            logwarn("Skipping instance $i with undefined entity!");
+            $logger->warn('__W_GENERATE_ENTY', "\tSkipping instance $i with undefined entity!");
             next;
         }
         my $ent = $hierdb{$i}{'::entity'};
@@ -742,7 +740,7 @@ sub merge_entity ($$) {
     if ( exists( $inst->{'::lang'} ) and $inst->{'::lang'} ) {
         $ient{'__LANG__'}{lc($inst->{'::lang'})}++;
     } else {
-        $ient{'__LANG__'}{lc($EH{'macro'}{'%LANGUAGE%'})}++;
+        $ient{'__LANG__'}{lc( $eh->get( 'macro.%LANGUAGE%' )) }++;
     }
 } # End of merge_entity
 
@@ -761,7 +759,7 @@ sub merge_entity ($$) {
 #
 # Global:
 #	writes %entities
-#	writes %EH
+#	writes $eh
 #
 sub compare_merge_entities ($$$$) {
     my $ent = shift;
@@ -791,26 +789,23 @@ sub compare_merge_entities ($$$$) {
 	    			and $p ne "-- NO IN PORTs"
 	    			and $ent ne "W_NO_ENTITY"
 	    			and $ent ne '%TYPECAST_ENT%'
-	    			and $ent !~ m/$EH{'output'}{'generate'}{'_logicre_'}/i ) {
-				logwarn( "WARNING: Missing port $p in entity $ent ($inst) redeclaration, ignoreing!" );
+	    			and $ent !~ m/$eh->get( 'output.generate._logicre_' )/i ) {
+				$logger->warn( '__W_COMP_MERG_ENTY', "Missing port $p in entity $ent ($inst) redeclaration, ignoreing!" );
 				$eflag  = 0;
-            	$EH{'sum'}{'warnings'}++;
 	    	}
             next;
         }
 
         # Type has to match
         if ( $rent->{$p}{'type'} ne $rnew->{$p}{'type'} ) {
-            logwarn( "WARNING: Entity port type mismatch for entity $ent ($inst), port $p: ".
+            $logger->warn( '__W_COMP_MERG_ENTY', "\tEntity port type mismatch for entity $ent ($inst), port $p: ".
                      $rnew->{$p}{'type'} . " was " . $rent->{$p}{'type'} . "!" );
-            $EH{'sum'}{'warnings'}++;
             $eflag = 0;
             next; # TODO : How should we handle that properly?
         # Mode has to match
         } elsif ( ($rent->{$p}{'mode'} !~ m/[pg]/i and $rnew->{$p}{'mode'} !~  m/[pg]/i ) and ($rent->{$p}{'mode'} ne $rnew->{$p}{'mode'}) ) {
-            logwarn( "WARNING: Entity port mode mismatch for enitity $ent ($inst), port $p: " .
+            $logger->warn( '__W_COMP_MERG_ENTY', "\tEntity port mode mismatch for enitity $ent ($inst), port $p: " .
                      $rnew->{$p}{'mode'} . " was " . $rent->{$p}{'mode'} . "!" );
-            $EH{'sum'}{'warnings'}++;
             $eflag = 0;
             next;
         }
@@ -852,16 +847,15 @@ sub compare_merge_entities ($$$$) {
 			and $p ne "-- NO IN PORTs"
             and $ent ne "W_NO_ENTITY"
             and $ent ne "%TYPECAST_ENT%"
-            and $ent !~ m/$EH{'output'}{'generate'}{'_logicre_'}/i )
+            and $ent !~ m/$eh->get( 'output.generate._logicre_' )/i )
         {
-	    	logwarn( "WARNING: Declaration for entity $ent ($inst) extended by $p!" );
-            $EH{'sum'}{'warnings'}++;
+	    	$logger->warn( '__W_COMP_MERG_ENTY', "\tDeclaration for entity $ent ($inst) extended by $p!" );
 	    	$eflag = 0;
     	}
         $rent->{$p} = $rnew->{$p}; # Copy
     }
     return $eflag;
-}
+} # End of compare_merge_entities
 
 sub create_entity ($$) {
     my $ent = shift; # Entity name
@@ -903,7 +897,7 @@ sub create_entity ($$) {
     if ( exists( $inst->{'::lang'} ) and $inst->{'::lang'} ) {
         $entities{$ent}{'__LANG__'}{lc($inst->{'::lang'})}++;
     } else {
-        $entities{$ent}{'__LANG__'}{lc($EH{'macro'}{'%LANGUAGE%'})}++;
+        $entities{$ent}{'__LANG__'}{lc($eh->get( 'macro.%LANGUAGE%'))}++;
     }
     
 } # End of create_entity
@@ -921,8 +915,7 @@ sub _create_entity ($$) {
         my $sport = $ri->{$i};
 	
         unless( defined( $conndb{$i} ) ) {
-            logwarn("ERROR: Illegal signal name $i referenced in _create_entity!");
-            $EH{'sum'}{'errors'}++;
+            $logger->error('__E_CREATE_ENTY', "\tIllegal signal name $i referenced in _create_entity!");
             next;
         }
 
@@ -959,13 +952,13 @@ sub _create_entity ($$) {
                                     $h = $thissig->{'port_f'};
                             }
                         } else { # port_f is non numeric ...
-                            logwarn("WARNING: Non-numeric upper port bound for $thissig->{'inst'}/$thissig->{'port'}!")
+                            $logger->warn('__W_CREATE_ENTY', "\tNonnumeric upper port bound for $thissig->{'inst'}/$thissig->{'port'}!")
                                 unless ( $h == -100000 );
                             $h = $thissig->{'port_f'};
                         }
                     } else {
                         if ( $h ne $thissig->{'port_f'} ) {
-                            logwarn("WARNING: Non-matching non-numeric upper port bound $thissig->{'inst'}/$thissig->{'port'}!");
+                            $logger->warn('__W_CREATE_ENTY', "\tNonmatching nonnumeric upper port bound $thissig->{'inst'}/$thissig->{'port'}!");
                             $h = "__E_NONMATCH_NONNUM_UB";
                         }
                     }
@@ -978,14 +971,13 @@ sub _create_entity ($$) {
                                     $l = $thissig->{'port_t'};
                             }
                         } else { # port_t is non numeric ...
-                            logwarn("WARNING: Non-numeric lower port bound for $thissig->{'inst'}/$thissig->{'port'}!")
+                            $logger->warn('__W_CREATE_ENTY', "\tNonnumeric lower port bound for $thissig->{'inst'}/$thissig->{'port'}!")
                                 unless ( $l == -100000 );
                             $l = $thissig->{'port_t'};
                         }
                     } else {
                         if ( $l ne $thissig->{'port_t'} ) {
-                            logwarn("WARNING: Non-matching non-numeric lower port bound $thissig->{'inst'}/$thissig->{'port'}!");
-                            $EH{'sum'}{'warnings'}++;
+                            $logger->warn('__W_CREATE_ENTY', "\tNon-matching non-numeric lower port bound $thissig->{'inst'}/$thissig->{'port'}!");
                             $h = "__E_NONMATCH_NONNUM_LB";
                         }
                     }
@@ -999,14 +991,14 @@ sub _create_entity ($$) {
             	# $type -> port type;
             	# $cast -> signal type;
             	if ( defined( $thissig->{'cast'} ) ) {    
-                	if ( $EH{'output'}{'generate'}{'workaround'}{'typecast'} =~ m/\bportmap\b/o ) {
+                	if ( $eh->get( 'output.generate.workaround.typecast' ) =~ m/\bportmap\b/o ) {
                     	$cast = $type;
                     	$type = $thissig->{'cast'};
-                    	logtrc ( "INFO:4", "portmap typecast requested for signal $i/$cast, port $port/$type");
-                	} elsif ( $EH{'output'}{'generate'}{'workaround'}{'std_log_typecast'} =~ m/\bignore\b/o ) {
+                    	$logger->debug('__D_CREATE_ENTY', "\tPortmap typecast requested for signal $i/$cast, port $port/$type");
+                	} elsif ( $eh->get( 'output.generate.workaround.std_log_typecast' ) =~ m/\bignore\b/o ) {
                     	$cast = $type;
                     	$type = $thissig->{'cast'};
-                    	logtrc ( "INFO:4", "std_log_ignore typecast for signal $i/$cast, port $port/$type");
+                    	$logger->debug('__D_CREATE_ENTY', "\tstd_log_ignore typecast for signal $i/$cast, port $port/$type");
                 	}
             	}
             	# Remember: was that port generated?
@@ -1030,14 +1022,14 @@ sub _create_entity ($$) {
 	    	}
 
 	    	# If connecting single signals to a bus-port, make type match!
-	    	#TODO SPECIAL trick ???? Check if that is really so clever ....
-	    	#TODO Should be done by just any type ...
+	    	# TODO SPECIAL trick ???? Check if that is really so clever ....
+	    	# TODO Should be done by just any type ...
 	    	if ( ( $type eq "std_logic" or
 		    	$type eq "std_ulogic" ) and
 		    	defined( $h ) and defined( $l ) and
 		    	( $h ne $l ) ) { #!wig20030516 ...
 				$type = $type . "_vector";
-				logtrc( "INFO:4", "Autoconnecting bit signal $i to bus port $port" );
+				$logger->warn('__W_CREATE_ENTY', "\tAutoconnecting bit signal $i to bus port $port" );
 	    	}
 
         	# If we connect a single bit to to a bus, we strip of the _vector from
@@ -1049,7 +1041,7 @@ sub _create_entity ($$) {
                   $type =~ m,(.+)_vector, ) {
 				#!wig: remove vector, leave rest as is: $type = $1;
 				$type =~ s/_vector//io;
-				logtrc( "INFO:4", "Autoreducing port type for signal $i to $type" );
+				$logger->warn('__W_CREATE_ENTY', "\tAutoreducing port type for signal $i to $type" );
 			};
 
     
@@ -1065,25 +1057,24 @@ sub _create_entity ($$) {
                 	$mode = $m;
             	} elsif ( $m =~ m,S,io ) { $mode = $io; }				# signal -> derive from i/o
 				elsif ( $m =~ m,I,io ) {							# warn if mode mismatches
-		    		#TODO: Need to look at all connections ....
+		    		# TODO : Need to look at all connections ....
 		    		if ( $io eq "out" ) {
-						#!wig20030207:off: logwarn( "mode mismatch for signal $i, port $port: $m ne $io" );
-						$conndb{$i}{'::comment'} .= ",__W_MODE_MISMATCH"; #TODO:  __E??
+						$logger->debug('__D_CREATE_ENTY', "\tMode mismatch for signal $i, port $port: $m ne $io" );
+						$conndb{$i}{'::comment'} .= ",__W_MODE_MISMATCH"; # TODO :  __E?? (increase level to error)
 						$mode = $io;
 		    		} else {
-						$mode = "in";
+						$mode = 'in';
 		    		}
 				} elsif ( $m =~ m,O,io ) {					# xls says O!
-		    		if ( $io eq "in" ) {
-						#!wig20030207:off: logwarn( "mode mismatch for signal $i, port $port: $m ne $io" );
-						$conndb{$i}{'::comment'} .= ",__W_MODE_MISMATCH"; #TODO: __E??
+		    		if ( $io eq 'in' ) {
+						$logger->debug('__D_CREATE_ENTY', "\tMode mismatch for signal $i, port $port: $m ne $io" );
+						$conndb{$i}{'::comment'} .= ",__W_MODE_MISMATCH"; # TODO : __E?? (increase errror level)
 						$mode = $io;
 		    		} else {
 						$mode = "out";
 		    		}
 				} else {
-		    		logwarn( "ERROR: signal $i mode $m defaults to bad value, set to $io\n" );
-					$EH{'sum'}{'errors'}++;
+		    		$logger->error('__E_CREATE_ENTY', "\tSignal $i mode $m defaults to bad value, set to $io" );
 		    		$mode = $io;
 				}
 	    	} else { # if no mode was specified, it defaults to S, which means to autodetecte in/out
@@ -1104,14 +1095,13 @@ sub _create_entity ($$) {
                     	$mode = 'P';
                     	$res{$port}{'mode'} = "P";
                 	} elsif ( $res{$port}{'mode'} !~ m,^\s*[GP],io ) {
-                    	logwarn("Warning: port $port redefinition mode mismatch: $mode " .
-			    		$res{$port}{'mode'} );
-			    		$res{$port}{'mode'} = "__W_PORTMODE_MISMATCH"; #TODO ???
+                    	$logger->warn('__W_CREATE_ENTY', "\tPort $port redefinition mode mismatch: $mode " .
+			    					$res{$port}{'mode'} );
+			    		$res{$port}{'mode'} = "__W_PORTMODE_MISMATCH";
                 	}
 				}
-
-				# is that port generated?
-				#  if part is generateg -> set to true!
+				
+				#  if port is generated -> set __gen__ to true!
 				if ( $gen ) {
 					$res{$port}{'__gen__'} = 1;
 				}
@@ -1124,13 +1114,13 @@ sub _create_entity ($$) {
 						}
 		    		} else {
 						if ( $h ) { # Defined, but 0, which is approx. undef.
-			    			logwarn("Warning: port $port high bound redefinition mismatch: $h vs. undef" );
+			    			$logger->warn('__W_CREATE_ENTY', "\tPort $port high bound redefinition mismatch: $h vs. undef" );
 						}
 						$res{$port}{'high'} = $h;
 		    		}
 				} elsif ( defined( $res{$port}{'high'} ) ) {
 		    		if( $res{$port}{'high'} ) { # Suppress message
-						logwarn("Warning: port $port high bound redefinition mismatch: undef  vs. " .
+						$logger->warn('__W_CREATE_ENTY', "\tPort $port high bound redefinition mismatch: undef  vs. " .
 						$res{$port}{'high'} );
 		    		}
 				}
@@ -1142,16 +1132,14 @@ sub _create_entity ($$) {
 						}
 		    		} else {
 						if ( $l ) {
-			    			logwarn("Warning: port $port low bound redefinition mismatch: $l vs. undef" );
-                            $EH{'sum'}{'warnings'}++;
+			    			$logger->warn('__W_CREATE_ENTY', "\tPort $port low bound redefinition mismatch: $l vs. undef" );
 						}
 						$res{$port}{'low'} = $l;
 		    		}
 				} elsif ( defined( $res{$port}{'low'} ) ) {
 		    		if ( $res{$port}{'low'} ) { # Suppress message if 0
-						logwarn("Warning: port $port low bound redefinition mismatch: undef  vs. " .
+						$logger->warn('__W_CREATE_ENTY', "\tPort $port low bound redefinition mismatch: undef  vs. " .
 			    		$res{$port}{'low'} );
-                        $EH{'sum'}{'warnings'}++;
 		    		}
 				}
 				$l = $res{$port}{'low'};
@@ -1159,7 +1147,7 @@ sub _create_entity ($$) {
 
 				if ( defined( $h ) and defined ( $l ) and ( $h != $l ) and $type =~ m,(std_u?logic)\s*$, ) {
                 	if ( ( $type . "_vector" ) ne $res{$port}{'type'} ) {
-                    	logtrc( "INFO:4", "Autoexpand port $port from $type to vector type!");
+                    	$logger->warn('__W_CREATE_ENTY', "\tAutoexpand port $port from $type to vector type!");
                     	$type = $1 . "_vector";
                 	}
 				}
@@ -1168,16 +1156,15 @@ sub _create_entity ($$) {
 				# type mismatch handling:
 				#
             	# Expand port to std_ulogic_type if required ...
-            	#TODO: Why here again? See above		
+            	# TODO : Why here again? See above		
 				if ( $type ne $res{$port}{'type'} ) {
 		    		if ( defined( $l ) and defined( $h ) and ( $h != $l ) ) { #Take _vector ...
 						if ( $res{$port}{'type'} !~ m,_vector,io ) {
 			    			if ( $type =~ m,(std_u?logic),io ) {
 								$res{$port}{'type'} = $type; # Automatically expand to vector type
 			    			} else {
-								logwarn("Warning: port $port redefinition type mismatch: $type vs. " .
-				    			$res{$port}{'type'} );
-                            	$EH{'sum'}{'warnings'}++;
+								$logger->warn('__W_CREATE_ENTY', "\tPort $port redefinition type mismatch: $type vs. " .
+				    				$res{$port}{'type'} );
 			    			}
 		    			}
 					}
@@ -1186,15 +1173,13 @@ sub _create_entity ($$) {
             	# Detect bad typecast requests (differing!!)
     			if ( $cast and exists( $res{$port}{'cast'} ) ) {
                 	if ( $cast ne $res{$port}{'cast'} ) {
-                    	logwarn( "WARNING: port $port typecast mismatch: $cast was $res{$port}{'cast'}" );
-                    	$EH{'sum'}{'warnings'}++;
+                    	$logger->warn('__W_CREATE_ENTY', "\tPort $port typecast mismatch: $cast was $res{$port}{'cast'}" );
                 	}
     			} elsif( $cast or exists( $res{$port}{'cast'} ) ) {
                 	my $c = ( defined( $cast ) ) ? $cast : "NOT_NOW";
                 	my $cp = ( defined( $res{$port}{'cast'} ) ) ?
                          $res{$port}{'cast'} : "NOT_BEFORE";
-                	logwarn( "WARNING: port $port typecast requested: $cp was $cp" );
-                	$EH{'sum'}{'warnings'}++;
+                	$logger->warn('__W_CREATE_ENTY', "\tPort $port typecast requested: $cp was $cp" );
     			}
 
 				# take lowest signal number ...
@@ -1254,7 +1239,7 @@ sub write_entities () {
     tmpl_enty();
     
     # output file name
-    my $efname = $EH{'outenty'};
+    my $efname = $eh->get('outenty');
 
  	
     if ( $efname =~m/^(ENTY|COMB)/o ) {
@@ -1264,7 +1249,7 @@ sub write_entities () {
         # filename is the entity name
         # All other cases -> use efname as entity file name (write all entities into
         # one file of that name)
-        my $entext = $EH{'postfix'}{'POSTFILE_ENTY'};
+        my $entext = $eh->get('postfix.POSTFILE_ENTY');
         if ( $1 eq "COMB" ) {
             $entext = "";
         }
@@ -1275,13 +1260,13 @@ sub write_entities () {
                 
                 my $i_fn = $i;
                 #Changed 20030714a/Bug:
-                $i_fn =~ s,_,-,og if ( $EH{'output'}{'filename'} =~ m,allminus, );
+                $i_fn =~ s,_,-,og if ( $eh->get('output.filename') =~ m,allminus, );
                 # replace _ by - in entity names.
 
                 # In combine mode, choose entity.vhd as filename.
                 # my $lang = "vhdl"; # Filename extension defaults to VHDL
                 my $lang = mix_wr_getlang( $i, $entities{$i}{__LANG__} );
-				my $filename = $i_fn . $entext . "." . $EH{'output'}{'ext'}{$lang};
+				my $filename = $i_fn . $entext . "." . $eh->get( 'output.ext.' . $lang );
 	    	_write_entities( $i, $filename, \%entities )
 		}
     } else {
@@ -1296,7 +1281,7 @@ sub write_entities () {
 # mix_wr_getlang( $i )
 # Retrieve a allowed HDL language for this entity
 # from the __LANG__ hash. Compare against the allowed
-# languages (all the one we have $EH{'template'} for)
+# languages (all the one we have $eh->get('template') for)
 #
 sub mix_wr_getlang ($$) {
     my $enti = shift;
@@ -1305,26 +1290,26 @@ sub mix_wr_getlang ($$) {
     my @langs = keys %$entylangr;
     my $requested = scalar( @langs );
 
-    my $goodlang = "(" . join( "|", keys( %{$EH{'template'}} )) . ")";
+    my $goodlang = "(" . join( "|", keys( %{$eh->get('template')} )) . ")";
     @langs = grep( m/^$goodlang/ , @langs ); # Select available languages    
     if ( scalar( @langs ) > 1 ) {
-        logwarn("WARNING: requesting multiple languages for entity $enti!");
+        $logger->warn('__W_GETLANG', "\tRequesting multiple languages for entity $enti!");
     } elsif ( $requested > 1 ) {
-        logwarn("WARNING: autoresolved multiple language request for entity $enti!");
+        $logger->warn('__W_GETLANG', "\tAutoresolved multiple language request for entity $enti!");
     }
     if ( scalar( @langs ) < 1 ) {
-        return $EH{'macro'}{'%LANGUAGE%'};
+        return $eh->get( 'macro.%LANGUAGE%' );
     } else {
         return $langs[0];
     }
-}
+} # End of mix_wr_getlang
 
 #
 # Do the work: Collect ports and generics from %entities.
 # Print out and also save port and generics for later reusal (e.g. architecture)
 #
 #20030523: add Verilog -> output comment
-#TODO: rework that, split the parts that build internally used information
+# TODO : rework that, split the parts that build internally used information
 # and the pure writer into two. REMOVE SIDEEFFECTS
 #20050414: trial to support very simple logic: AND, OR, WIRE, ...
 #
@@ -1333,12 +1318,12 @@ sub _write_entities ($$$) {
     my $file = shift;
     my $ae = shift;
 
-    my %macros = %{$EH{'macro'}};
+    my %macros = %{$eh->get('macro')};
 
     $macros{'%ENTYNAME%'} = $ehname;
 
     if ( -r $file ) {
-		logtrc("INFO:4", "Entity declaration file $file will be overwritten!" );
+		$logger->warn('__W_WR_ENTY', "\tEntity declaration file $file will be overwritten!" );
     }
 
     #
@@ -1354,7 +1339,7 @@ sub _write_entities ($$$) {
     # or if the "check.entities.path" flag is set ...
     #
     if ( $ehname ne "__COMMON__" and
-            ( $EH{'output'}{'generate'}{'enty'} =~ m,noleaf,io and
+            ( $eh->get( 'output.generate.enty' ) =~ m,\bnoleaf,io and
             $entities{$ehname}{'__LEAF__'} == 0 or
             mix_wr_getlang( $ehname, $ae->{$ehname}{'__LANG__'}) ne "vhdl" )
         ) {
@@ -1363,11 +1348,11 @@ sub _write_entities ($$$) {
     #
     # Do not write, if this entity is in the filter list!
     #!wig20051005:
-    if ( $EH{'output'}{'filter'}{'file'} ) {
-	   	my $filter = _mix_wr_getfilter( 'enty', $EH{'output'}{'filter'}{'file'} );	    	
+    if ( $eh->get( 'output.filter.file' ) ) {
+	   	my $filter = _mix_wr_getfilter( 'enty', $eh->get( 'output.filter.file' ) );	    	
 	    if ( $ehname =~ m/$filter/ ) {
 	    	$write_flag = 0;
-		    logsay( "Skipped writing of entity $ehname due to filter" );    		
+		    $logger->warn( '__W_WR_ENTY', "\tSkipped writing of entity $ehname due to filter" );    		
 		    
 	    }
 	}
@@ -1376,15 +1361,15 @@ sub _write_entities ($$$) {
     # another case: if this entity is in the "simple logic" list, do
     # not write ...
     #
-    if ( $ehname =~ m/$EH{'output'}{'generate'}{'_logicre_'}/i ) {
+    if ( $ehname =~ m/$eh->get( 'output.generate._logicre_')/i ) {
     	$write_flag = "0";
     }
 
     # Are we in verify mode?
-    if ( $EH{'check'}{'hdlout'}{'path'} and
-         $EH{'check'}{'hdlout'}{'mode'} =~ m,\b(ent[iy]|all),io ) { # Selected ...
+    if ( $eh->get( 'check.hdlout.path' ) and
+         $eh->get( 'check.hdlout.mode' ) =~ m,\b(ent[iy]|all),io ) { # Selected ...
         # Append check flag ...
-        if ( $EH{'check'}{'hdlout'}{'mode'} =~ m,\bleaf,io ) { # opposite for nonleaf and dcleaf
+        if ( $eh->get( 'check.hdlout.mode' ) =~ m,\bleaf,io ) { # opposite for nonleaf and dcleaf
             # __LEAF__ is 1 if this is not a LEAF!
             $write_flag .= ( $entities{$ehname}{'__LEAF__'} == 0 ) ? "_CHK_ENT_LEAF" : "";
         } else {
@@ -1395,19 +1380,18 @@ sub _write_entities ($$$) {
     #wig20040218: pot. two files could get opened ....
     if ( $write_flag ) {
         unless ( $fh = mix_utils_open( $file, $write_flag ) ) {
-            logwarn( "Warning: Cannot open file $file to write entity declarations: $!" );
-            $EH{'sum'}{'warnings'}++;
+            $logger->warn( '__W_WR_ENTY', "\tCannot open file $file to write entity declarations: $!" );
             return;
         }
     }
 
     # Add header
-    my $tpg = $EH{'template'}{'vhdl'}{'enty'}{'body'};
+    my $tpg = $eh->get( 'template.vhdl.enty.body' );
 
     # Collect all use libs from all instances here!
     $macros{'%VHDL_USE%'} = use_lib( "enty", $ehname );
 
-    my $et = replace_mac( $EH{'template'}{'vhdl'}{'enty'}{'head'}, \%macros);    
+    my $et = replace_mac( $eh->get( 'template.vhdl.enty.head' ), \%macros );    
 
     #
     # Collect generics and ports ...
@@ -1425,7 +1409,8 @@ sub _write_entities ($$$) {
 		my $pd = $ae->{$e};
         # This language and this comment is
         my $lang = mix_wr_getlang( $e, $pd->{'__LANG__'});
-        my $tcom = $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'vhdl'};
+        my $tcom = $eh->get( 'output.comment.' .$lang ) ||
+        	$eh->get( 'output.comment.vhdl' );
 
         # Get interface description for this instance
         ( $port, $gent ) = mix_wr_get_interface( $pd, $e, $lang, $tcom );
@@ -1466,7 +1451,7 @@ sub _write_entities ($$$) {
 		$macros{'%PORT%'} = $port;
 		$macros{'%GENERIC%'} = $gent;
 
-		unless ( $EH{'output'}{'generate'}{'enty'} =~ m,noleaf,io and
+		unless ( $eh->get( 'output.generate.enty' ) =~ m,noleaf,io and
 		    $ae->{$e}{'__LEAF__'} == 0  ) {
 
             #
@@ -1481,7 +1466,7 @@ sub _write_entities ($$$) {
 		}
     }
     
-    $et .=  $EH{'template'}{'vhdl'}{'enty'}{'foot'};
+    $et .=  $eh->get( 'template.vhdl.enty.foot' );
 
     $et = replace_mac( $et, \%macros );
 
@@ -1541,12 +1526,11 @@ sub mix_wr_get_interface ($$$$) {
     }elsif ( $lang =~ m,verilog,io ) { #Potentially also 2001
         return ( _mix_wr_get_iveri( $r_ent, $ename, $lang, $tcom ) );
     } else {
-        logwarn( "WARNING: unimplemented get_interface for entity $ename, language $lang" );
-        $EH{'sum'}{'warnings'}++;
-        return( '%S%' x 2 . $tcom . " __W_MISSING_GET_INTERFACE for $lang",
-                    '%S%' x 2 . $tcom . " __W_MISSING_GET_INTERFACE for $lang" );
+        $logger->error( '__E_GET_INTERFACE', "\tUnimplemented get_interface for entity $ename, language $lang" );
+        return( '%S%' x 2 . $tcom . " __E_MISSING_GET_INTERFACE for $lang",
+                    '%S%' x 2 . $tcom . " __E_MISSING_GET_INTERFACE for $lang" );
     }
-}
+} # End of mix_wr_get_interface
 
 #
 # return VHDL conform interface (port list ....)
@@ -1616,7 +1600,7 @@ sub _mix_wr_get_ivhdl ($$$) {
         		if ( $pdd->{'high'} == $pdd->{'low'} ) {
             		if ( $pdd->{'high'} == 0 ) {
                 		# Special case: single pin "bus" -> reduce to it ....
-                		logtrc( "INFO:4", "Port $p of entity $ename one bit wide, reduce to signal" );
+                		$logger->warn('__W_GET_IVHDL', "\tPort $p of entity $ename one bit wide, reduce to signal" );
                     		$pdd->{'type'} =~ s,_vector,,; # Try to strip away trailing vector!
                     		$pdd->{'low'} = undef;
                     		$pdd->{'high'} = undef;
@@ -1624,8 +1608,7 @@ sub _mix_wr_get_ivhdl ($$$) {
                         	  	'; ' . 
                         	  	( $descr ? $descr : $tcom ) . " __I_AUTO_REDUCED_BUS2SIGNAL\n";
             		} else {
-                		logwarn( "Warning: Port $p of entity $ename one bit wide, missing lower bits\n" );
-                     	$EH{'sum'}{'warnings'}++;
+                		$logger->warn( '__W_GET_IVHDL', "\tPort $p of entity $ename one bit wide, missing lower bits\n" );
                      	$port .= '%S%' x 3 . $p . '%S%: ' . $mode . '%S%' . $pdd->{'type'} .
                         	  "(" . $pdd->{'high'} . "); " .
                         	  ( $descr ? $descr : $tcom ) . " __W_SINGLEBITBUS\n";
@@ -1675,7 +1658,7 @@ sub _mix_wr_get_ivhdl ($$$) {
 	    # low are not digit!
 	}
 	# Now split -> sort -> remove markers -> join and return:
-	my $order = $EH{'output'}{'generate'}{'portmapsort'};
+	my $order = $eh->get( 'output.generate.portmapsort' );
 	if ( $order =~ m/\bdebug\b/ ) {
 		$order = 1;
 	} else {
@@ -1707,7 +1690,7 @@ sub _mix_wr_get_ivhdl ($$$) {
 #	verilog generics defintion
 #
 # global:
-#  reads %EH (output.generate.language.verilog)
+#  reads $eh (output.generate.language.verilog)
 #
 #!wig20051007: support verilog2001
 sub _mix_wr_get_iveri ($$$$) {
@@ -1725,7 +1708,7 @@ sub _mix_wr_get_iveri ($$$$) {
 	);
 	
 	if ( $lang =~ m/2001/ or
-		$EH{'output'}{'language'}{'verilog'} =~ m/\b2001\b/ ) {
+		$eh->get( 'output.language.verilog' ) =~ m/\b2001\b/ ) {
 		%flags = (
 			'2001'		=> 1,
 			'ansisytle'	=> 1,
@@ -1736,9 +1719,9 @@ sub _mix_wr_get_iveri ($$$$) {
 	
 	# TODO : csytle implies noiwire/noowire!
 	for my $i ( qw( ansistyle iwire owire ) ) {
-		if ( $EH{'output'}{'language'}{'verilog'} =~ m/\b$i\b/ ) {
+		if ( $eh->get( 'output.language.verilog' ) =~ m/\b$i\b/ ) {
 			$flags{$i} = 1;
-		} elsif ( $EH{'output'}{'language'}{'verilog'} =~ m/\bno$i\b/ ) {
+		} elsif ( $eh->get( 'output.language.verilog' ) =~ m/\bno$i\b/ ) {
 			$flags{$i} = 0;
 		}
 	}
@@ -1838,7 +1821,7 @@ sub _mix_wr_get_iveri ($$$$) {
                 if ( $pdd->{'high'} == $pdd->{'low'} ) {
                     if ( $pdd->{'high'} == 0 ) {
                         # Special case: single pin "bus" -> reduce to it ....
-                        logtrc( "INFO:4", "INFO: Port $p of entity $ename one bit wide, reduce to signal\n" );
+                        $logger->warn('__W_GET_IVERI', "\tPort $p of entity $ename one bit wide, reduce to signal\n" );
                         $pdd->{'type'} =~ s,_vector,,; # Try to strip away trailing vector!
                         $pdd->{'low'} = undef;
                         $pdd->{'high'} = undef;
@@ -1866,8 +1849,7 @@ sub _mix_wr_get_iveri ($$$$) {
                         		. $p . ';%S%' . $tcom . " __I_AUTO_REDUCED_BUS2SIGNAL\n";
 						}
                     } else {
-                        logwarn( "Warning: Port $p of entity $ename one bit wide, missing lower bits\n" );
-                        $EH{'sum'}{'warnings'}++;
+                        $logger->warn( '__W_GET_IVERI', "\tPort $p of entity $ename one bit wide, missing lower bits\n" );
                         if ( $flags{'ansistyle'} ) {
                         	$intf .=
                         		$portsort . '%S%' x 2 . $valid . $ioky{$mode} .
@@ -1914,8 +1896,7 @@ sub _mix_wr_get_iveri ($$$$) {
                 } else {
                     # TODO : Check if Verilog allows this ...
                     #Couple warning on check flag for design guide line "downto busses"
-                    logwarn( "WARNING: Port $p, entity $ename, high bound < low bound!" );
-                    $EH{'sum'}{'warnings'}++;
+                    $logger->warn('__W_GET_IVERI', "\tPort $p, entity $ename, high bound < low bound!" );
                     if ( $flags{'ansistyle'} ) {
                     	$intf .= $portsort . '%S%' x 3 . $valid .
                     	$ioky{$mode} . '%S' . $reg_wire . 
@@ -2012,7 +1993,7 @@ sub _mix_wr_get_iveri ($$$$) {
 	    }
     }
     # Finalize intf: add all inputs, outputs and inouts ....
-    my $order = $EH{'output'}{'generate'}{'portmapsort'};
+    my $order = $eh->get( 'output.generate.portmapsort' );
 	if ( $order =~ m/\bdebug\b/ ) {
 		$order = 1;
 	} else {
@@ -2059,7 +2040,7 @@ sub _mix_wr_get_iveri ($$$$) {
 # Globals:
 #	%entities
 #	%conndb
-#	%EH
+#	$eh
 #
 #!wig20051015
 sub _mix_wr_regorwire($$) {
@@ -2079,7 +2060,7 @@ sub _mix_wr_regorwire($$) {
 	}
 
 	# Check the global settings:
-	if ( $EH{'output'}{'language'}{'verilog'}	=~ m/\b(no)?($leafflag)($io)(reg|wire)\b/ ) {
+	if ( $eh->get( 'output.language.verilog' ) =~ m/\b(no)?($leafflag)($io)(reg|wire)\b/ ) {
 		# <no>leaf[io]<reg|wire>
 		# <no>hier[io]<reg|wire>
 		# only usefull: leaforeg!
@@ -2165,9 +2146,9 @@ sub write_architecture () {
 
     # open output file
     my %seen = ();
-    my $efname = $EH{'outarch'};
+    my $efname = $eh->get( 'outarch' );
     if ( $efname =~m/^(ARCH|COMB)/o ) {
-        my $archext = $EH{'postfix'}{'POSTFILE_ARCH'};
+        my $archext = $eh->get( 'postfix.POSTFILE_ARCH' );
         if ( $1 eq "COMB" ) {
             $archext = "";
         }
@@ -2181,57 +2162,56 @@ sub write_architecture () {
 	    	# Should we print it? if the noleaf flag ist set, skip
 			next if ( $e eq "W_NO_ENTITY" );
             next if ( $e =~ m/TYPECAST_/io );
-			if ( $EH{'output'}{'generate'}{'arch'} =~ m,noleaf,io and
+			if ( $eh->get( 'output.generate.arch' ) =~ m,noleaf,io and
 		    		not $hierdb{$i}{'::treeobj'}->daughters ) {
 		    	next;
 			}
 
 			# Skip HDL/arch out if this file name matches the given filter reg-exp.		
-		    if ( $EH{'output'}{'filter'}{'file'} ) {
-		    	my $filter = _mix_wr_getfilter( 'arch', $EH{'output'}{'filter'}{'file'} );
+		    if ( $eh->get( 'output.filter.file' ) ) {
+		    	my $filter = _mix_wr_getfilter( 'arch', $eh->get( 'output.filter.file' ) );
 		    	if ( $i =~ m/$filter/ ) {
-		               logsay( "Skipped writing of entity $e (inst: $i) due to filter" );    		
+		               $logger->warn('__W_WR_ARCH', "\tSkipped writing of architecture $e (inst: $i) due to filter" );    		
 		               next;
 		    	}
 		    }
             # Prepare for an alternate filename (if entity got instantiated multiple times)
-            my $alt = "";
+            my $alt = '';
 			if ( exists( $seen{$e} ) ) {
-                next unless ( $EH{'output'}{'generate'}{'arch'} =~ m,alt,io );
+                next unless ( $eh->get( 'output.generate.arch' ) =~ m,\balt,io );
                 $alt = "-alt" . $seen{$e}++;
-                logtrc( "INFO:4", "Writing another architecture for $e (inst: $i)" );
+                $logger->info('__I_WR_ARCH', "\tWriting another architecture for $e (inst: $i)" );
 			}
 			$seen{$e}++;
             # Generate an output filename
             my $filename;
             my $e_fn = $e;
             #Changed 20030714a/Bug: replace - by _ ...
-            $e_fn =~ s,_,-,go if ( $EH{'output'}{'filename'} =~ m,allminus, );
+            $e_fn =~ s,_,-,go if ( $eh->get( 'output.filename' ) =~ m,\ballminus, );
             # replace _ by - in entity names.
             # In combine mode, choose entity.vhd as filename.
             # Filename extension defaults to VHDL
 
             # Language? vhdl, verilog or what else?
-            my $lang = lc( $hierdb{$i}{'::lang'} ) || $EH{'macro'}{'%LANGUAGE%'};
-            unless ( exists ( $EH{'template'}{$lang} ) ) {
-                logwarn( "WARNING: Illegal language $lang selected. Autoswitch to $EH{'macro'}{'%LANGUAGE%'}!" );
-				$EH{'sum'}{'warnings'}++;
-                $lang = $EH{'macro'}{'%LANGUAGE%'};
+            my $lang = lc( $hierdb{$i}{'::lang'} ) || $eh->get( 'macro.%LANGUAGE%' );
+            unless ( $eh->get( 'template.' . $lang ) ) {
+                $logger->warn( '__W_WR_ARCH', "\tIllegal language $lang selected. Autoswitch to $eh->get( 'macro.%LANGUAGE%' )!" );
+                $lang = $eh->get( 'macro.%LANGUAGE%' );
             }
 
             if ( $lang =~ m,^veri,io ) {
                 # verilog filename:
-                $filename = $e_fn . "." . $EH{'output'}{'ext'}{$lang} . $alt;    
+                $filename = $e_fn . "." . $eh->get( 'output.ext.' . $lang ) . $alt;    
             } elsif ( $efname =~ m/^COMB/o ) {
                 # Combined output
-                $filename = $e_fn . "." . $EH{'output'}{'ext'}{$lang} . $alt;
+                $filename = $e_fn . "." . $eh->get( 'output.ext.' . $lang ) . $alt;
             } elsif ( $hierdb{$i}{'::arch'} ) {
                 $filename = $e_fn . "-" . $hierdb{$i}{'::arch'} .
                         $archext . "." .
-                        $EH{'output'}{'ext'}{$lang} . $alt;
+                        $eh->get( 'output.ext.' . $lang ) . $alt;
             } else {
                 $filename = $e_fn . $archext . "."
-                       . $EH{'output'}{'ext'}{$lang} . $alt;
+                       . $eh->get( 'output.ext.' . $lang ) . $alt;
             }
             _write_architecture( $i, $e, $filename, \%hierdb );
 		}
@@ -2272,15 +2252,16 @@ Return an port map for the instance and a list of in and out signals
 
 Input:
     instancename (instantiated component)
-    language (default: $EH{'macro'}{'%LANGUAGE%'} aka. VHDL)
+    language (default: $eh->get( 'macro.%LANGUAGE%' ) aka. VHDL)
     comment (default to comment string of language or ##)
 
 =cut
 
 sub gen_instmap ($;$$) {
     my $inst = shift;
-    my $lang = shift || lc( $EH{'macro'}{'%LANGUAGE%'} ); # Language of interface to generate ...
-    my $tcom = shift || $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'default'};
+    my $lang = shift || lc( $eh->get( 'macro.%LANGUAGE%' ) ); # Language of interface to generate ...
+    my $tcom = shift || $eh->get( 'output.comment.' . $lang ) ||
+    	$eh->get( 'output.comment.default' );
 
     my $map = "";
     my $gmap = "";
@@ -2296,7 +2277,7 @@ sub gen_instmap ($;$$) {
     my $rinstc = $hierdb{$inst}{'::conn'};
  	my $simple_flag=0;
  	#!wig20050414: implement simple logic, simple start-up
- 	if ( $enty =~ m/$EH{'output'}{'generate'}{'_logicre_'}/i ) {
+ 	if ( $enty =~ m/$eh->get( 'output.generate._logicre_' )/i ) {
  		# $gmap gets the output, $map the input(s)
  		( $gmap, $map ) = port_simple( 'outin', $inst, $enty, $lang,
  			$rinstc->{'out'}, $rinstc->{'in'}, \@out, \@in );
@@ -2331,10 +2312,12 @@ sub gen_instmap ($;$$) {
         }
 
         # Quick hack: Get rid of possible %EMPTY%, which prevents end-of-map detection ...
-        $map =~ s/%EMPTY%/$EH{'macro'}{'%EMPTY%'}/g; # Get rid of %EMPTY% ....
-        $map =~ s/%S%/$EH{'macro'}{'%S%'}/g;
-        $gmap =~ s/%EMPTY%/$EH{'macro'}{'%EMPTY%'}/g; 
-        $gmap =~ s/%S%/$EH{'macro'}{'%S%'}/g;
+        my $empty = $eh->get( 'macro.%EMPTY%' );
+        my $space = $eh->get( 'macro.%S%' );
+        $map =~ s/%EMPTY%/$empty/g; # Get rid of %EMPTY% ....
+        $map =~ s/%S%/$space/g;
+        $gmap =~ s/%EMPTY%/$empty/g; 
+        $gmap =~ s/%S%/$space/g;
         
         # Remove trailing "," and such (VHDL) and also for Verilog ...    
         $map =~ s/,(\s*$tcom.*)\n?$/$1\n/;
@@ -2372,31 +2355,31 @@ sub gen_instmap ($;$$) {
                 )) . "\n";
             }
 
+			#
             # Parent language is verilog -> Different parameter hand-over!
             # format gets prepared in generic_map
             #    enty #(param) inst (port)
             #
             my $hashm = " ";
             if  ( $hierdb{$inst}{'::lang'} =~ m,\bvhdl,io or
-            	  $EH{'output'}{'language'}{'verilog'} =~ m/\b2001param/io ) {
+            	  $eh->get( 'output.language.verilog' ) =~ m/\b2001param/io ) {
                 # Special case: daughter is VHDL-> use config name instead of entity name ...
                 # see 20040209/a req
                 # The "useconfname" option applies globally, while setting %UAMN% in the
                 #  ::config column works for each module individually
 
-                if ( $EH{'output'}{'generate'}{'verilog'} =~ m,useconfname,io or
+                if ( $eh->get( 'output.generate.verilog' ) =~ m,useconfname,io or
                      defined( $hierdb{$inst}{'::workaround'} ) and
                      $hierdb{$inst}{'::workaround'} =~ m,(uamn|useasmodulename),io ) {  
                     $enty = $hierdb{$inst}{'::config'} || $enty;
                     # As this can create problems with certain tools (Magma), use 'define
-                    if ( $EH{'output'}{'generate'}{'workaround'}{'magma'} =~ m,useasmodulename_define,io ) {
+                    if ( $eh->get( 'output.generate.workaround.magma' ) =~ m,useasmodulename_define,io ) {
                         my $tm = mix_wr_hier2mac( $hierdb{$inst} );
                         # Keep the `define in this global variable. This is ugly, but today
                         #  the easiest way.
-                        $EH{'output'}{'generate'}{'workaround'}{'_magma_uamn_'} .=
-                            replace_mac( $EH{'output'}{'generate'}{'workaround'}{'_magma_def_'},
-                                $tm  );
-                        $enty = replace_mac( $EH{'output'}{'generate'}{'workaround'}{'_magma_mod_'}, $tm );
+                        $eh->set( 'output.generate.workaround._magma_uamn_' ,
+                            replace_mac( $eh->get( 'output.generate.workaround._magma_def_' ), $tm  ) );
+                        $enty = replace_mac( $eh->get( 'output.generate.workaround._magma_mod_' ), $tm );
                     }
                 }
                 $hashm = $gmap || " "; #If gmap is empty -> do not replace hashm
@@ -2489,7 +2472,7 @@ sub _mix_wr_descr ($$$$$) {
 #   .port[N:M]( some )
 #   .port[K](more )
 #  -> .port( more & some )
-#TODO: Resolve that and be more clever with writing the map instead
+# TODO : Resolve that and be more clever with writing the map instead
 # of doing it backwards ...
 #
 # Currently only works for Verilog ...
@@ -2532,7 +2515,7 @@ sub mix_wr_unsplice_port ($$$) {
                 if ( $hb =~ m,^\s*\d+\s*$,o and
                      $lb =~ m,^\s*\d+\s*$,o ) {
                     my $w = $hb - $lb + 1;
-                    if ( $EH{'output'}{'generate'}{'workaround'}{'verilog'} =~ m,dummyopen,io ) {
+                    if ( $eh->get( 'output.generate.workaround.verilog' ) =~ m,\bdummyopen,io ) {
                         $s = "mix_dmy_open_" . $dummynr++; # Create a dummy signal and attach this bit to it ...
                         my $wid = ( $w > 1 ) ? ( "[" . $w . ":0] " ) : '%S%';
                         push( @dummies, "wire " . $wid . $s . "; " . $tcom .
@@ -2541,14 +2524,13 @@ sub mix_wr_unsplice_port ($$$) {
                         $s = $w . "'bz"; # Comes from open ports ....
                     }
                 } else {
-                    if ( $EH{'output'}{'generate'}{'workaround'}{'verilog'} =~ m,dummyopen,io ) {
+                    if ( $eh->get( 'output.generate.workaround.verilog' ) =~ m,\bdummyopen,io ) {
                         $s = "mix_dmy_open_" . $dummynr++; # Create a dummy signal and attach this bit to it ...
                         my $wid = "[" . $hb . ":" . $lb . "] ";
                         push( @dummies, "wire " . $wid . $s . "; " . $tcom .
                                   "__I_DUMMY_OPEN, __I_NAN_BOUNDS" ); #   wire [N:0] mix_dmy_open_N; // __I_DUMMY_OPEN
                     } else {
-                        logwarn( "WARNING: Cannot determine width of open port splice! Set marker! Please fix!" );
-                        $EH{'sum'}{'warnings'}++;
+                        $logger->warn('__W_UNSPLICE_PORT', "\tCannot determine width of open port splice! Set marker! Please fix!" );
                         $s = "__W_NANPORTSPLICE_WIDTH[" . $hb . ":" . $lb .
                                 "]" . "'bz"; # Comes from open ports ....
                     }
@@ -2569,8 +2551,7 @@ sub mix_wr_unsplice_port ($$$) {
             # Check bounds for this port
             $nn++;
             if ( $n->[0] < $n->[1] ) {
-                logwarn( "ERROR: Cannot collect spliced port $p, bad bound order!");
-                $EH{'sum'}{'errors'}++;
+                $logger->error('__E_UNSPLICE_PORT', "\tCannot collect spliced port $p, bad bound order!");
                     $flag = 1;
                     # Print out as-is
                     last;
@@ -2578,7 +2559,7 @@ sub mix_wr_unsplice_port ($$$) {
             # Create usage vector ...
             for my $b ( $n->[1] .. $n->[0] ) {
                     if ( defined ( $arr[$b] ) ) {
-                        logwarn( "ERROR: Duplicate connection at spliced port $p!" );
+                        $logger->error('__E_UNSPLICE_PORT', "\tDuplicate connection at spliced port $p!" );
                         $flag = 1;
                         last;
                     } else {
@@ -2607,19 +2588,18 @@ sub mix_wr_unsplice_port ($$$) {
                         push( @c, $data->[4] );
                         $start = $arr[$b];
                     } elsif ( not defined( $arr[$b] ) ) {
-                        logwarn( "ERROR: Detected missing bits in spliced port $p!" );
-                        $EH{'sum'}{'error'}++;
+                        $logger->error('__E_UNSPLICE_PORT', "\tDetected missing bits in spliced port $p!" );
                         $flag = 1;
                         last;
                     }
             }
         }
-            #TODO: How can we check if the port width equals all found bits?
-            # $t =~ s,^ & ,,;
-            $t =~ s#^,##;
-            if ( $t =~ m#,# ) { # enclose signal into {} if > 1 parts found ...
-                $t = "{" . $t . " }";
-            }
+        # TODO : How can we check if the port width equals all found bits?
+        # $t =~ s,^ & ,,;
+        $t =~ s#^,##;
+        if ( $t =~ m#,# ) { # enclose signal into {} if > 1 parts found ...
+            $t = "{" . $t . " }";
+        }
             # Create comment -> remove duplicates ...
             my %c = ();
             my $c = "";
@@ -2645,7 +2625,7 @@ sub mix_wr_unsplice_port ($$$) {
                         $tcom . " __E_CANNOT_COMBINE_SPLICES" );
                 }
             } else {
-                #TODO: Detect HIGH/LOW_BUS and splice these acordingly!!
+                # TODO : Detect HIGH/LOW_BUS and splice these acordingly!!
                 push( @out, '%S%' x 3 . '.' . $p . '(' . $t . '), ' .
                       $c . $tcom . ' __I_COMBINE_SPLICES' );
             }
@@ -2672,10 +2652,10 @@ sub generic_map ($$$$;$$) {
     my $inst = shift;
     my $enty = shift;
     my $ref = shift;
-    my $lang = shift || $EH{'macro'}{'%LANGUAGE%'};
-    my $tcom = shift || $EH{'macro'}{'comment'}{$lang};
+    my $lang = shift || $eh->get( 'macro.%LANGUAGE%' );
+    my $tcom = shift || $eh->get( 'macro.comment.' . $lang );
 
-    my $map = "";
+    my $map = '';
 
     if ( $lang =~ m,^veri,io ) {
         #wig20050126: if this instance is VHDL -> do not use defparam, but
@@ -2683,7 +2663,7 @@ sub generic_map ($$$$;$$) {
         #!wig20051020: output.language.verilog = 2001param -> use the #() notation
         my $ilang = $hierdb{$inst}{'::lang'};
         if ( $ilang =~ m,^vhd,io or 
-        	$EH{'output'}{'language'}{'verilog'} =~ m/\b2001param\b/io ) {
+        	$eh->get( 'output.language.verilog' ) =~ m/\b2001param\b/io ) {
             $map = '%S%' x 1 . "#(\n"; # Same line
             # TODO : Add ::description if available ... -> does not work this way
             #                                                   (lost param name here).
@@ -2749,7 +2729,7 @@ sub _mix_wr_isinteger ($$$) {
     my $inst = shift;
     my $generic = shift;
     my $val = shift;
-    my $lang = shift || $EH{'macro'}{'%LANGUAGE%'};
+    my $lang = shift || $eh->get( 'macro.%LANGUAGE%' );
 
     my %allowed = (
         'b' => '[01_]',
@@ -2806,12 +2786,11 @@ sub _mix_wr_isinteger ($$$) {
     		 }
     	}
     	if ( $flag ) {
-        	logwarn("WARNING: applied non-integer parameter $val for generic $generic at instance $inst!" );
-        	$EH{'sum'}{'warnings'}++;
+        	$logger->warn('__W_ISINTEGER', "\tApplied non-integer parameter $val for generic $generic at instance $inst!" );
     	}
     }
     return $flag;
-}
+} # End of mix_wr_isinteger
 
 #
 # create a "port map" for VHDL logic's like AND, OR, NAND, ...
@@ -2834,13 +2813,12 @@ sub port_simple ($$$$$$) {
 	
 	# Test if we have the right amount if outputs
 	# Currently: only one signal allowed! No bitsplices!
-	my $logiccheck = $EH{'output'}{'generate'}{'_logiciocheck_'};
+	my $logiccheck = $eh->get( 'output.generate._logiciocheck_' );
 	( my $logictype = lc( $enty ) ) =~ s/[%_]//g;
 	if ( exists( $logiccheck->{$logictype}{'omax'} ) and
 		$logiccheck->{$logictype}{'omax'} =~ m/^\d+$/ ) {
 		if ( scalar( keys %$refo ) != $logiccheck->{$logictype}{'omax'} ) {
-			logwarn("ERROR: OUTPUT_COUNT_MISMATCH instance $inst($enty)!" );
-			$EH{'sum'}{'errors'}++;
+			$logger->error('__E_PORT_SIMPLE', "\tOUTPUT_COUNT_MISMATCH instance $inst($enty)!" );
 		}
 	}
 	# Take all keys from %$refo
@@ -2848,7 +2826,7 @@ sub port_simple ($$$$$$) {
 	push( @$ro, $outsig ); # Remember the output signal
 	# }
 	
-	my $tcom = $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'default'} || "#";
+	my $tcom = $eh->get( 'output.comment.' . $lang ) || $eh->get( 'output.comment.default' ) || '#';
 
 	my @sin = ();
 	
@@ -2893,7 +2871,7 @@ sub port_simple ($$$$$$) {
     # }
 	return ( $out, $ins );
 	    
-}
+} # End of port_simple
 
 #
 # print a simple wire (assignment)
@@ -2910,7 +2888,7 @@ sub _mix_simple_wire ($$$) {
 	}
 }
 
-#TODO: add description and bus splice logic ...
+# TODO : add description and bus splice logic ...
 # First try:
 #  data_reg_to_iic <= data_reg70_to_iic OR
 # 		data_reg7f_to_iic OR
@@ -2922,16 +2900,16 @@ sub _mix_simple_logic ($$$) {
 	my $lang = shift;
 
 	( my $op = lc( $enty ) ) =~ s/%//g;
-	if ( $EH{'output'}{'generate'}{'logicmap'} =~ m/\buc|upper/ ) {
+	if ( $eh->get( 'output.generate.logicmap' ) =~ m/\buc|upper/ ) {
 		$op = uc( $op );
 	}
 
 	my $logic = "";
 	# VHDL:
 	$logic .= '%S%' x 3 . join( ( "\n" . '%S%' x 3 . $op . '%S%' ), @$inr );
-	#TODO: Attach a trailing OR "0000" ???
+	# TODO : Attach a trailing OR "0000" ???
 	return $logic;
-}
+} # End of _mix_simple_logic
 
 #
 # do sanity checks on the simple ports ...
@@ -2989,8 +2967,7 @@ sub port_map ($$$$$$) {
 			# typecast in port maps (seems to be problem with synopsys dc, see typecast switch)
         	my $cast = "";
         	if ( exists( $entities{$enty}{$p}{'cast'} ) and
-                 $EH{'output'}{'generate'}{'workaround'}{'typecast'} =~ m/\bportmap\b/ ) {
-            	#TODO: Check $EH{'typecast'}{} ....
+				$eh->get( 'output.generate.workaround.typecast' ) =~ m/\bportmap\b/ ) {
             	$cast = $entities{$enty}{$p}{'cast'};
         	}
 	        for my $n ( split( ',', $ref->{$s}{$p} ) ) {
@@ -3029,13 +3006,13 @@ sub port_map ($$$$$$) {
     }
     return '' if ( scalar @map == 0 ); # No map -> return nothing
 
-    my $order = $EH{'output'}{'generate'}{'portmapsort'};
+    my $order = $eh->get( 'output.generate.portmapsort' );
 	if ( $order =~ m/\bdebug\b/ ) {
 		$order = 1;
 	} else {
 		$order = 0;
 	}
-    my $tcom = $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'default'} || "#";
+    my $tcom = $eh->get( 'output.comment.' . $lang ) || $eh->get( 'output.comment.default' ) || '#';
     return join( '', map( { s/%MAPSORT(.+?)SORTMAP%//; 
 			$_ .
 				(( $order ) ? (' ' . $tcom . 'SORT:' . $1 ) : ''); }
@@ -3075,10 +3052,9 @@ sub add_conn_matrix ($$$$) {
         $csf !~ m,^\s*[+-]?\d+\s*$,o or
         $cst !~ m,^\s*[+-]?\d+\s*$,o
          ) {
-         	if ( $EH{'check'}{'signal'} =~ m/\bnanbound/ ) {
-        		logwarn( "WARNING: signal $signal bounds ($cpf:" .
+         	if ( $eh->get( 'check.signal' ) =~ m/\bnanbound/i ) {
+        		$logger->warn('__W_ADD_CONN_MATRIX', "\tsignal $signal bounds ($cpf:" .
         			$cpt . ") or port $port ($cpf:$cpt) not a number!" );
-        		$EH{'sum'}{'warnings'}++;
         	}
         # $cpt and/or $cpf is not a number!!
         # We carry on if cpf equals csf and cpt equals cst ->
@@ -3086,8 +3062,7 @@ sub add_conn_matrix ($$$$) {
         if ( $csf eq $cpf and $cst eq $cpt ) {
             # Is there already contents in the connection matrix?
             if ( scalar( @$matrix ) ) {
-                logwarn( "WARNING: redefinition of connection matrix for signal $signal, port $port!");
-            	$EH{'sum'}{'warnings'}++;
+                $logger->warn('__W_ADD_CONN_MATRIX', "\tRedefinition of connection matrix for signal $signal, port $port!");
             }
             # Store marker: __NAN__ , From, To
             $matrix->[0] = "__NAN__";
@@ -3095,8 +3070,8 @@ sub add_conn_matrix ($$$$) {
             $matrix->[2] = $cst;
             return 2;
         } else {
-            logwarn( "WARNING: cannot resolve signal/port $signal $port: non numeric and non matching bounds!" );
-            $EH{'sum'}{'warnings'}++;
+            $logger->warn('__W_ADD_CONN_MATRIX', "\tCannot resolve signal/port $signal $port: non numeric and non matching bounds!" );
+
         }
         
         return 3;
@@ -3121,34 +3096,30 @@ sub add_conn_matrix ($$$$) {
     };
 
     if ( $smax - $smin != $max - $min ) {
-		logwarn("__E_SLICE_WIDTH_MISMATCH:signal " .
+		$logger->error('__E_CONN_MATRIX', "\tE_SLICE_WIDTH_MISMATCH:signal " .
 			$signal . "($smax downto $smin) to port " .
 			$port . "($max downto $min)!");
-		$EH{'sum'}{'errors'}++;
 		return undef;
-	#TODO:?? return( "\t\t-- __E_SLICE_WIDTH_MISMATCH for signal $signal connected to port $port!" );
     }
 
     # TODO : Extended testing ....
     if ( $dirf == $sdirf ) {
-	for my $i ( $min .. $max ) {
-	    if ( defined( $matrix->[$i] ) ) { # Seen before ...
-		if ( $matrix->[$i] ne $smin - $min + $i ) {
-		    logwarn("__E_PORT_SIGNAL_CONFLICT: $port($i) connecting signal $signal " . ( $smin + $i ) .
-			    " or " . $matrix->[$i] . "!" );
-                    $EH{'sum'}{'errors'}++;
-		}
-	    } else {
-		 $matrix->[$i] = $smin - $min + $i;
-	    }
+		for my $i ( $min .. $max ) {
+	    	if ( defined( $matrix->[$i] ) ) { # Seen before ...
+				if ( $matrix->[$i] ne $smin - $min + $i ) {
+		    		$logger->error('__E_PORT_SIGNAL_CONFLICT', "\t$port($i) connecting signal $signal " . ( $smin + $i ) .
+			    		" or " . $matrix->[$i] . "!" );
+				}
+	    	} else {
+				$matrix->[$i] = $smin - $min + $i;
+	    	}
         }
     } else {
 		for my $i ( $min .. $max ) {
 	    	if ( defined( $matrix->[$i] ) ) { # Seen before ...
 				if ( $matrix->[$i] ne $smax - $max - $i ) {
-		    		logwarn("__E_PORT_SIGNAL_CONFLICT: $port($i) connecting signal $signal " . ( $smin + $i ) .
+		    		$logger->error('__E_PORT_SIGNAL_CONFLICT', "\t$port($i) connecting signal $signal " . ( $smin + $i ) .
 			    		" or " . $matrix->[$i] . "!" );
-                    	$EH{'sum'}{'errors'}++;
 				}
 	    	} else {	    
 				$matrix->[$i] = $smax - $min - $i;
@@ -3193,8 +3164,7 @@ sub store_conn_matrix ($$$$$$$) {
         if ( defined( $rcm->[0] ) ) {
             $usage = "A::";
         } else {
-            logwarn( "ERROR: bad branch taken $instance, $signal. File bug report!" );
-            $EH{'sum'}{'errors'}++;
+            $logger->error('__E_STORE_CONN_MATRIX', "\tBad branch taken $instance, $signal. File bug report!" );
         }
     } elsif ( not ( $pf =~ m,^[+-]?\d+$,o and $pt =~ m,^\s*[+-]?\d+\s*$,o ) ) {
         $usage = "F::" . $pf . ":T::" . $pt;
@@ -3232,29 +3202,25 @@ sub store_conn_matrix ($$$$$$$) {
         # Compare / add the previously connected bits with the new one's
         if ( $prev->{$port} =~ m,^A::, ) {
             unless( $instance =~ m/^%TYPECAST_/io ) {
-                logwarn( "WARNING: Reconnecting port $port at instance $instance: now: $usage, was: A::!" );
-                $EH{'sum'}{'warnings'}++;
+                $logger->warn('__W_STORE_CONN_MATRIX', "\tReconnecting port $port at instance $instance: now: $usage, was: A::!" );
                 push( @{$hierdb{$instance}{'::reconnections'}{$port}}, $signal ); # Only partial info available!
             }
             return;
         } else {
             my ( $conflict, $result ) = mix_wr_port_check($usage, $prev->{$port});
             if ( $conflict == "1" ) {
-                logwarn( "WARNING: Pot. conflict with reconnection of port $port at instance $instance: $usage was $prev->{$port}!" );
+                $logger->warn('__W_STORE_CONN_MATRIX', "\tPossible conflict with reconnection of port $port at instance $instance: $usage was $prev->{$port}!" );
                 $prev->{$port} = $result;
-                $EH{'sum'}{'warnings'}++;
             } elsif ( $conflict == "-1" ) {
-                logwarn( "ERROR: Mode conflict with reconnection of port $port at instance $instance: $usage was $prev->{$port}!" );
+                $logger->error('__E_STORE_CONN_MATRIX', "\tMode conflict with reconnection of port $port at instance $instance: $usage was $prev->{$port}!" );
                 $prev->{$port} = $result;
-                $EH{'sum'}{'errors'}++;
             } else {
                 # O.K., got s.th. overlapping ...
                 $prev->{$port} = $result;
             }
-        # TODO: Check that better ...
         }
     }
-}
+} # End of store_conn_matrix
 
 #
 # Check if input vector can be overlayed without duplicates ..
@@ -3297,8 +3263,7 @@ sub mix_wr_port_check ($$) {
     }
 
     if ( $np =~ m,^F::, or $op =~ m,^F::, ) {
-        logwarn( "WARNING: Please check overlay of port $np, was $op!" );
-        $EH{'sum'}{'warnings'}++;
+        $logger->warn('__W_PORT_CHECK', "\tPlease check overlay of port $np, was $op!" );
         return( "1", $np . $op );
     }
 
@@ -3323,12 +3288,10 @@ sub mix_wr_port_check ($$) {
         # delete( $mod{'0'} ); # Get rid of '0'
         $mn = join( '', keys( %mod ) );
         if ( length( $mn ) > 1 ) {
-            logwarn( "ERROR: mixed modes in port!!" );
-            $EH{'sum'}{'warnings'}++;
+            $logger->error('__E_PORT_CHECK', "\tMixed modes in port!!" );
             $mn = "1";
         } elsif ( $mn ne $mo ) {
-            logwarn( "ERROR: mode mismatch in port join!" );
-            $EH{'sum'}{'warnings'}++;
+            $logger->error('__E_PORT_CHECK', "\tMode mismatch in port join!" );
             $mn = "1";
         } else {
             return( "1", "A::" . $mn );
@@ -3346,12 +3309,10 @@ sub mix_wr_port_check ($$) {
         # delete( $mod{'0'} ); # Get rid of '0'
         $mo = join( '', keys( %mod ) );
         if ( length( $mo ) > 1 ) {
-            logwarn( "ERROR: mixed modes in port!!" );
-            $EH{'sum'}{'warnings'}++;
+            $logger->error('__E_PORT_CHECK', "\tMixed modes in port!!" );
             $mo = "1";
         } elsif ( $mn ne $mo ) {
-            logwarn( "ERROR: mode mismatch in port join!" );
-            $EH{'sum'}{'warnings'}++;
+            $logger->error('__E_PORT_CHECK', "\tMode mismatch in port join!" );
             $mo = "1";
         } else {
             return( "1", "A::" . $mo );
@@ -3362,8 +3323,7 @@ sub mix_wr_port_check ($$) {
     # O.k., now remains B::.... vs B::....
     $w = $wo;
     if ( $wn ne $wo ) {
-        logwarn( "ERROR: port width mismatch $wn was $wo" );
-        $EH{'sum'}{'errors'}++;
+        $logger->error('__E_PORT_CHECK', "\tPort width mismatch $wn was $wo" );
         # Attach some 0 in front
         if ( $wn > $wo ) {
             $w = $wn;
@@ -3395,23 +3355,20 @@ sub mix_wr_port_check ($$) {
         if ( $bo[$n] eq "0" ) {
             $res .= $bn[$n]; # Covers case 1 and 2
             if ( $bn[$n] and $tm and $bn[$n] ne $tm ) {
-                logwarn( "ERROR: port internal mode change: $bn[$n] was $tm" );
-                $EH{'sum'}{'errors'}++;
+                $logger->error('__E_PORT_CHECK', "Port internal mode change: $bn[$n] was $tm" );
             }
             $hasgap = 1 unless ( $bn[$n] );
             $tm = $bn[$n] if ( $bn[$n] );
         } elsif ( $bn[$n] eq "0" ) {
             $res .= $bo[$n]; # Covers case 3
             if ( $bo[$n] and $tm and $bo[$n] ne $tm ) {
-                logwarn( "ERROR: port internal mode change: $bo[$n] was $tm" );
-                $EH{'sum'}{'errors'}++;
+                $logger->error('__E_PORT_CHECK', "\tPort internal mode change: $bo[$n] was $tm" );
             }
             $hasgap = 1 unless ( $bo[$n] );
             $tm = $bo[$n] if ( $bo[$n] );
         } elsif ( $bn[$n] eq $bo[$n] ) {
             if ( $tm and $tm ne $bo[$n] ) {
-                logwarn( "ERROR: port internal mode change: $bo[$n] was $tm" );
-                $EH{'sum'}{'errors'}++;
+                $logger->error('__E_PORT_CHECK', "\tPort internal mode change: $bo[$n] was $tm" );
             }
             $res .= $bn[$n]; # case 4: matching mode
             $col = 1;
@@ -3442,7 +3399,7 @@ sub mix_wr_port_check ($$) {
 #
 # Adding: __NAN__ support (string aka. generic ::high/::low bounds)
 #
-#!wig20031014: Print out the ::descr field if EH{output}{generate}{portdescr}
+#!wig20031014: Print out the ::descr field if eh->get( output.generate.portdescr )
 #!wig20050418: Adding sort criteria, need to extend interface by instance name
 #
 sub print_conn_matrix ($$$$$$$$$;$) {
@@ -3453,7 +3410,7 @@ sub print_conn_matrix ($$$$$$$$$;$) {
     my $signal = shift;
     my $sf = shift;
     my $st = shift;
-    my $lang = shift || $EH{'macro'}{'%LANGUAGE%'};
+    my $lang = shift || $eh->get( 'macro.%LANGUAGE%' );
     my $rcm = shift;
     my $cast = shift || "";
 
@@ -3467,7 +3424,7 @@ sub print_conn_matrix ($$$$$$$$$;$) {
 
 	my $sortcrit = mix_wr_mapsort( $hierdb{$inst}{'::enty'}, $port ); # port map sort order prefix
 
-    my $tcom = $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'default'} || "#";
+    my $tcom = $eh->get( 'output.comment.' . $lang ) || $eh->get( 'output.comment.default' ) || '#';
 
 	my $descr = mix_wr_printdescr( $signal, $tcom );
 
@@ -3669,8 +3626,7 @@ sub print_conn_matrix ($$$$$$$$$;$) {
                     	$port . "(" . $pf . " downto " . $pt . ")" . " => " .
                     	$signal . "(" . $sf . " downto " . $st . "), \n";
                 }
-	        	logwarn("Warning: unexpected branch in print_conn_matrix, signal $signal, port $port");
-            	$EH{'sum'}{'warnings'}++;
+	        	$logger->error('__E_PRINT_CONN_MATRIX', "\tUnexpected branch in print_conn_matrix, signal $signal, port $port");
 	    	}
         	if ( $signal =~ m,%OPEN(_\d+)?%, ) {
             	if ( $lang =~ m,^veri,io ) {
@@ -3717,7 +3673,7 @@ sub print_conn_matrix ($$$$$$$$$;$) {
 		}
     }
     if ( $signal =~ m,%OPEN(_\d+)?%,o ) {
-        #TODO: Verilog???
+        # TODO : Verilog???
         if ( $lang =~ m,^veri,io ) {
             $t =~ s,%OPEN(_\d+)?%(\s*\[[:\w]+?\])?,,g; # Remove %OPEN%
         } else {
@@ -3741,7 +3697,7 @@ sub print_conn_matrix ($$$$$$$$$;$) {
 #
 # global:
 #	%conndb (read)
-#	%EH		(read)
+#	$eh		(read)
 #
 #!wig20060117: add the connection number for debugging purposes
 #    -> output.generate.portdescr to ... %::connnr% ...
@@ -3750,7 +3706,7 @@ sub mix_wr_printdescr($$) {
 	my $tcom   = shift;
 
 	my $descr = '';	
-    if ( $EH{'output'}{'generate'}{'portdescr'} ) {
+    if ( $eh->get( 'output.generate.portdescr' ) ) {
         # Available fields: %::descr%, %::ininst%, %::outinst%
         my %tm = ();
         $tm{'%::descr%'} = $conndb{$signal}{'::descr'};
@@ -3766,11 +3722,11 @@ sub mix_wr_printdescr($$) {
             next unless (exists( $i->{'inst'}));
             $tm{'%::outinst%'} .= " " . $i->{'inst'};
         }
-        $descr = replace_mac( $EH{'output'}{'generate'}{'portdescr'}, \%tm );
+        $descr = replace_mac( $eh->get( 'output.generate.portdescr' ), \%tm );
         if ( $descr and $descr ne '%EMPTY%' ) {
         	$descr = _mix_wr_descr( 'conn', $conndb{$signal}, $descr, 4, $tcom );
         }
-        if ( $EH{'output'}{'generate'}{'portdescrlength'} =~ m,^(\d+)$, ) { # Limit lenght
+        if ( $eh->get( 'output.generate.portdescrlength' ) =~ m,^(\d+)$, ) { # Limit lenght
             if ( length( $descr)  > $1 ) {
             	# Rework the description line by line
             	$descr = _mix_wr_shortendescr( $descr, $1 ); 
@@ -3791,10 +3747,10 @@ sub _mix_wr_shortendescr ($;$) {
 	my $maxlen = shift;
 
 	unless ( defined( $maxlen ) ) {
-		$EH{'output'}{'generate'}{'portdescrlength'} =~ m,^(\d+)$,;
+		$eh->get( 'output.generate.portdescrlength' ) =~ m,^(\d+)$,;
 		$maxlen = $1;
 	}
-	my $maxlines = $EH{'output'}{'generate'}{'portdescrlines'};
+	my $maxlines = $eh->get( 'output.generate.portdescrlines' );
 	$maxlines =~ s/\s+//g;
 	$maxlines =~ s/\D.*//;
 	
@@ -3837,6 +3793,25 @@ sub _mix_wr_shortendescr ($;$) {
 } # End of _mix_wr_shortdescr
 
 #
+# Retrieve signal name from signal number
+# TODO : increase speed by caching this ...
+#
+# Input: integer signal number
+#
+# Output: signal name
+#!wig20060308, added primary version
+sub _mix_wr_signum2signam ($) {
+	my $nr = shift;
+
+	for my $signal ( keys %conndb ) {
+		return $signal if ( $conndb{$signal}{'::connnr'} == $nr );
+	}
+
+	return undef();
+
+} # End of _mix_wr_signum2signam
+
+#
 # create a string to prepend in case user wants unusual sort order
 #  %MAPSORT_KEY_KEY_SORTMAP%
 # see comments below for list of allowed keywords
@@ -3847,17 +3822,17 @@ sub _mix_wr_shortendescr ($;$) {
 # output:
 #	key to prepend for ordering
 # global:
-#	%EH (output.generate.portmapsort)
+#	$eh (output.generate.portmapsort)
 #
 sub mix_wr_mapsort ($$) {
 	my $e = shift; # entity name 
 	my $p = shift; # port
 
-	my $order = $EH{'output'}{'generate'}{'portmapsort'};
+	my $order = $eh->get( 'output.generate.portmapsort' );
 	my $so = "%MAPSORT_";
 	
 	return unless ( $order );
-	#!wig20051007: alpha neede for verilog2001:
+	#!wig20051007: alpha needed for verilog2001
 	#!wig20051007: return "" if ( $order eq "alpha" );
 
 	# portmapsort' => 'alpha', # How to sort port map; allowed values are:
@@ -3897,18 +3872,19 @@ sub mix_wr_mapsort ($$) {
 			}
 		} elsif ( $o =~ m/\binput\b/io ) {
 			# Get number of signal ...
-			my $format = '_%0' . ( length( $EH{'sum'}{'conn'} ) + 1 ) . 'd_'; # 
+			my $format = '_%0' . ( length( $eh->get( 'sum.conn' ) ) + 1 ) . 'd_'; # 
 			$so .= 	sprintf( $format, $s );
 		} elsif ( $o =~ m/\balpha\b/io ) {
 			$so .= "_" . $p . "!_"; # $p is the name of the port ..., ! makes order o.k.
-		} elsif ( $o =~ m/\b(::\w+)\b/io ) {
-			# Take content of column ::
-			if ( exists( $conndb{$1} ) ) {
-				( my $t = $conndb{$1} ) =~ s/\W+//g; # Remove no word chars
-				$so .= "_" . $t  . "!_"; # ! is the first non-whitespace char! 
+		} elsif ( $o =~ m/(::\w+)\b/io ) {
+			# Take content of column ::foo
+			# Get signal name (from the signal number)
+			my $signal = _mix_wr_signum2signam( $s );
+			if ( defined( $signal ) and exists( $conndb{$signal}{$1} ) ) {
+				( my $t = $conndb{$signal}{$1} ) =~ s/\W+//g; # Remove no word chars
+				$so .= "_" . $t  . "!_"; 					  # ! is the first non-whitespace char! 
 			} else {
-				logwarn( "WARNING: Illegal sort column for port maps: $1!" );
-				$EH{'sum'}{'warnings'}++;
+				$logger->warn('__W_MAPSORT', "\tIllegal sort column for port maps: $1!" );
 			}
 		} elsif ( $o =~ m/\bgen(erated)?(post|pre)\b/ ) {
 			# if generated port
@@ -3964,7 +3940,7 @@ sub _write_architecture ($$$$) {
     my $filename = shift;
     my $ae = shift;
 
-    my %macros = %{$EH{'macro'}}; # Take predefined macro replacement set
+    my %macros = %{$eh->get( 'macro' )}; # Take predefined macro replacement set
     my $lang = lc($macros{'%LANGUAGE%'}); # Set default language
     my $p_lang = "";
     my $daughter_is_top = 0;
@@ -3973,20 +3949,20 @@ sub _write_architecture ($$$$) {
     if ( $instance ne "__COMMON__" and exists ( $hierdb{$instance}{'::arch'}  ) ) {
 	$macros{'%ARCHNAME%'} = $hierdb{$instance}{'::arch'};
 		if ( $hierdb{$instance}{'::lang'} ) {
-	    	if ( exists( $EH{'template'}{lc($hierdb{$instance}{'::lang'})} ) ) {
+	    	if ( $eh->get( 'template.' . lc($hierdb{$instance}{'::lang'}))) {
 				$lang = lc($hierdb{$instance}{'::lang'}); # Change language
 	    	}
 		}
     } else {
-        $macros{'%ARCHNAME%'} = $entity . $EH{'postfix'}{'POSTFIX_ARCH'};
+        $macros{'%ARCHNAME%'} = $entity . $eh->get( 'postfix.POSTFIX_ARCH' );
         # For __COMMON__ header only, see below
     }
-    if ( -r $filename and $EH{'outarch'} ne "COMB" ) {
-		logtrc("INFO:4", "Architecture declaration file $filename will be overwritten!" );
+    if ( -r $filename and $eh->get( 'outarch' ) ne "COMB" ) {
+		$logger->warn('__W_WRITE_ARCH', "\tArchitecture declaration file $filename will be overwritten!" );
     }
 
     # Add header
-    my $tpg = $EH{'template'}{$lang}{'arch'}{'body'};
+    my $tpg = $eh->get( 'template.' . $lang . '.arch.body' );
 
     $macros{'%VHDL_USE%'} = use_lib( "arch", $instance );
     #!wig20041110: add includes and defines from ::use column
@@ -3994,7 +3970,7 @@ sub _write_architecture ($$$$) {
     
     mix_wr_use_udc( "arch", $instance, \%macros );
 
-    my $et = replace_mac( $EH{'template'}{$lang}{'arch'}{'head'}, \%macros);    
+    my $et = replace_mac( $eh->get( 'template.' . $lang . '.arch.head' ), \%macros);    
 
     my %seenthis = ();
 
@@ -4009,14 +3985,14 @@ sub _write_architecture ($$$$) {
     	if ( $i =~ m/^(__|%)TYPECAST_/ ) { next; };  # Ignore typecast architecture
     	#
 		# Do not write architecture for leaf cells ...
-		# can be overwritten by setting $EH... to leaf ...
-		if ( $EH{'output'}{'generate'}{'arch'} =~ m,noleaf,io and
+		# can be overwritten by setting $eh ... to leaf ...
+		if ( $eh->get( 'output.generate.arch' ) =~ m,noleaf,io and
 	    	$#{[ $ae->{$i}{'::treeobj'}->daughters ]} < 0 ) {
 	    	next;
 		}
 
 		# Do not write, if we are a "simple logic" cell
-		if ( $ae->{$i}{'::entity'} =~ m/$EH{'output'}{'generate'}{'_logicre_'}/i ) {
+		if ( $ae->{$i}{'::entity'} =~ m/$eh->get( 'output.generate._logicre_' )/i ) {
 			next;
 		}
 
@@ -4027,27 +4003,26 @@ sub _write_architecture ($$$$) {
 
 		my $arch = $ae->{$i}{'::arch'};	
 
-    	#TODO: what to do if ilang != lang???
-    	#TODO: that will happen only in case one file is written for everything ..
-    	my $ilang = lc( $hierdb{$i}{'::lang'} ||$EH{'macro'}{'%LANUAGE%'} );
+    	# TODO : what to do if ilang != lang???
+    	# TODO : that will happen only in case one file is written for everything ..
+    	my $ilang = lc( $hierdb{$i}{'::lang'} ||$eh->get( 'macro.%LANUAGE%' ) );
     	if ( $p_lang and $p_lang ne $ilang ) {
-        	logwarn( "ERROR: Language mix: $p_lang used, now $ilang" );
-        	$EH{'sum'}{'errors'}++;
+        	$logger->error('__E_WRITE_ARCH', "\tLanguage mix: $p_lang used, now $ilang" );
     	}
     	$p_lang = $ilang;
-    	my $tcom = $EH{'output'}{'comment'}{$ilang} || $EH{'output'}{'comment'}{'default'} || "##" ;
+    	my $tcom = $eh->get( 'output.comment.' . $ilang ) || $eh->get( 'output.comment.default' ) || '##' ;
         
 		$macros{'%ENTYNAME%'} = $aent;
-		$macros{'%ARCHNAME%'} = $arch . $EH{'postfix'}{'POSTFIX_ARCH'};
+		$macros{'%ARCHNAME%'} = $arch . $eh->get( 'postfix.POSTFIX_ARCH' );
     	$macros{'%VERILOG_INTF%'} = $tcom . "\n" .
         	$tcom . " Generated module " . $i . "\n" . $tcom . "\n"; 
-		$macros{'%CONCURS%'} = $EH{'macro'}{'%S%'} . $tcom . " Generated Signal Assignments\n";
-		$macros{'%CONSTANTS%'} = $EH{'macro'}{'%S%'} . $tcom . " Generated Constant Declarations\n";
+		$macros{'%CONCURS%'} = $eh->get( 'macro.%S%' ) . $tcom . " Generated Signal Assignments\n";
+		$macros{'%CONSTANTS%'} = $eh->get( 'macro.%S%' ) . $tcom . " Generated Constant Declarations\n";
 		#
 		# Collect components by looking through all our daughters
 		#
-		$macros{'%COMPONENTS%'} = $EH{'macro'}{'%S%'} . $tcom . " Generated Components\n";
-		$macros{'%INSTANCES%'} = $EH{'macro'}{'%S%'} . $tcom . " Generated Instances and Port Mappings\n";
+		$macros{'%COMPONENTS%'} = $eh->get( 'macro.%S%' ) . $tcom . " Generated Components\n";
+		$macros{'%INSTANCES%'} = $eh->get( 'macro.%S%' ) . $tcom . " Generated Instances and Port Mappings\n";
 
 		my %seen = ( '%TYPECAST_ENT%' => 1 ); # Never use TYPECAST entity ...
     	my %i_macros = ();
@@ -4059,7 +4034,7 @@ sub _write_architecture ($$$$) {
 		# Inform user about rewrite of architecture for this entity ...
 		#
 		if ( exists( $seenthis{$aent} ) ) {
-	    	logtrc( "INFO:4",  "Possibly rewriting architecture for entity $aent, instance $i!" );
+	    	$logger->info('__I_WRITE_ARCH', "\tPossibly rewriting architecture for entity $aent, instance $i!" );
 		} else {
 	    	$seenthis{$aent} = 1;
 		}
@@ -4119,12 +4094,12 @@ sub _write_architecture ($$$$) {
                 $hierdb{$d_name}{'::use'} =~ m,(NO_COMP|__NOCOMPDEC__),o ) {
                     $macros{'%COMPONENTS%'} .= "\t\t" . $tcom . "__I_COMPONENT_NOCOMPDEC__ " .
                     $d_name . "\n\n";
-            } elsif ( $d_enty =~ m/$EH{'output'}{'generate'}{'_logicre_'}/i ) {
+            } elsif ( $d_enty =~ m/$eh->get( 'output.generate._logicre_' )/i ) {
            	#!wig20050414: simple logic -> no component declaration
                    $macros{'%COMPONENTS%'} .= "\t\t" . $tcom . "__I_SIMPLE_LOGIC__ " .
                     $d_name . "\n\n";
             } else {
-                $macros{'%COMPONENTS%'} .= $EH{'macro'}{'%S%'} x  1 .
+                $macros{'%COMPONENTS%'} .= $eh->get( 'macro.%S%' ) x  1 .
                     "component $d_enty" .
                     _mix_wr_descr( 'hier', $hierdb{$d_name}, $hierdb{$d_name}{'::descr'}, 3, $tcom ) .
                     "\n" .
@@ -4149,11 +4124,11 @@ sub _write_architecture ($$$$) {
                 $seen{$d_enty} = 1;
 	    } else {
                 # Is multiple usage of a instance permitted?
-                if ( $d_enty ne '%TYPECAST_ENT' and $EH{'check'}{'inst'} !~ m,\bnomulti\b,io ) {
+                if ( $d_enty ne '%TYPECAST_ENT' and $eh->get( 'check.inst' ) !~ m,\bnomulti\b,io ) {
                     $macros{'%COMPONENTS%'} .=
                        "\t\t" . $tcom . "__I_COMPONENT_REUSE: multiple instantiations of component " .
                         $i . ", declaration for entity " . $d_enty . " already added!\n";
-                    logtrc( "INFO,4", "INFO: multiple instantiations of entity $d_enty");
+                    $logger->warn('__W_WRITE_ARCH', "\tMultiple instantiations of entity $d_enty");
                 }
 	    }
 
@@ -4202,7 +4177,7 @@ sub _write_architecture ($$$$) {
         #
         # Check if a signal here has the same name as a port of our entity
         #
-        #TODO: Do something with the return value of count_load_driver
+        # TODO : Do something with the return value of count_load_driver
         count_load_driver( $i, $aent, $hierdb{$i}{'::conn'}, \%aeport );
         my %sp_conflict = ();
         my %tc_sigs = ();
@@ -4225,8 +4200,7 @@ sub _write_architecture ($$$$) {
         #
         next unless ( exists( $aeport{$ii}{'in'} ) or exists( $aeport{$ii}{'out'} ) );
 		if ( $ii eq '' ) { # ERROR: s.th. bad happened!
-			logwarn( "ERROR: MIX_INTERNAL_ERROR: empty signal in list for instance $i" );
-			$EH{'sum'}{'errors'}++;
+			$logger->error('__E_WRITE_ARCH', "\tMIX_INTERNAL_ERROR: empty signal in list for instance $i" );
 			next;
 		}
 
@@ -4244,20 +4218,20 @@ sub _write_architecture ($$$$) {
 		my $logicv = ( $1 eq 'HIGH' ) ? '1' : '0';
                 if ( $ilang =~ m,^veri,io ) {
                     my $w = $high - $low + 1;
-                    $macros{'%CONCURS%'} .= $EH{'macro'}{'%S%'} x 3 .
-                        "assign " . $EH{'macro'}{$ii} . " = " . $w . "'b" . $logicv . ";\n";
+                    $macros{'%CONCURS%'} .= $eh->get( 'macro.%S%' ) x 3 .
+                        "assign " . $eh->get( 'macro.' . $ii ) . " = " . $w . "'b" . $logicv . ";\n";
                 } else {
-                    $macros{'%CONCURS%'} .= $EH{'macro'}{'%S%'} x 3 .
-                        $EH{'macro'}{$ii} . " <= ( others => '$logicv' );\n";
+                    $macros{'%CONCURS%'} .= $eh->get( 'macro.%S%' ) x 3 .
+                        $eh->get( 'macro.' . $ii ) . " <= ( others => '$logicv' );\n";
                 }
 	    } elsif ( $ii =~ m,^\s*%(HIGH|LOW)%,o ) {
 	    	my $logicv = ( $1 eq 'HIGH' ) ? '1' : '0';
                 if ( $ilang =~ m,^veri,io ) {
-                    $macros{'%CONCURS%'} .= $EH{'macro'}{'%S%'} x 3 .
-                        "assign " . $EH{'macro'}{$ii} . " = 1'b" . $logicv . ";\n";
+                    $macros{'%CONCURS%'} .= $eh->get( 'macro.%S%' ) x 3 .
+                        'assign ' . $eh->get( 'macro.' . $ii ) . " = 1'b" . $logicv . ";\n";
                 } else {
-                    $macros{'%CONCURS%'} .= $EH{'macro'}{'%S%'} x 3 .
-                        $EH{'macro'}{$ii} . " <= '$logicv';\n";
+                    $macros{'%CONCURS%'} .= $eh->get( 'macro.%S%' ) x 3 .
+                        $eh->get( 'macro.' . $ii ) . " <= '$logicv';\n";
                 }
 	    }
 
@@ -4266,15 +4240,15 @@ sub _write_architecture ($$$$) {
             # if ( $dname eq $conndb{$i}{'::topinst'} ) { $daughter_is_top++; }
             #wig20031010
             my $port_open="";
-            if ( $aeport{$ii}{'load'} == 0 and $EH{'check'}{'signal'} =~ m,top_open,io ) {
+            if ( $aeport{$ii}{'load'} == 0 and $eh->get( 'check.signal' ) =~ m,top_open,io ) {
                 unless ( $ii =~ m,^\s*%(HIGH|OPEN|LOW), ) { #Meta signals %HIGH... %LOW, ... %OPEN
                     if ( $node == $hierdb{$conndb{$ii}{'::topinst'}}{'::treeobj'}->mother ) {
-                        logtrc("INFO:4", "Leave unloaded port $ii open at instance $i");
-                        $EH{'sum'}{'openports'}++;
+                        $logger->warn('__W_WRITE_ARCH', "\tLeave unloaded port $ii open at instance $i");
+                        $eh->inc( 'sum.openports' );
                         # Will map to open ...
                         $port_open = $tcom . "  __I_OUT_OPEN ";
                         if ( exists( $sp_conflict{$ii} ) ) {
-                            logwarn("ERROR: BAD_BRANCH for $ii, no load on port! File bug report!");
+                            $logger->error('__WRITE_ARCH', "\tBAD_BRANCH for $ii, no load on port! File bug report!");
                         }
                         $sp_conflict{$ii} = "__open__"; # Map that signal to open ...
                     }
@@ -4475,21 +4449,20 @@ sub _write_architecture ($$$$) {
 	$macros{'%SIGNALS%'} = $signaltext;
 
        #Workaround:  magma and configuration as module names: wig20040322
-        $veridefs .= $EH{'output'}{'generate'}{'workaround'}{'_magma_uamn_'};
+        $veridefs .= $eh->get( 'output.generate.workaround._magma_uamn_' );
         $macros{'%INT_VERILOG_DEFINES%'} .= $veridefs if ( $veridefs );
 
-        $EH{'output'}{'generate'}{'workaround'}{'_magma_uamn_'} = ""; # Reset the define storage
+        $eh->set( 'output.generate.workaround._magma_uamn_', '' ); # Reset the define storage
         
         if ( keys( %i_macros ) > 0 ) {
             $macros{'%INSTANCES%'} = replace_mac( $macros{'%INSTANCES%'}, \%i_macros );
         }
-	$et .= replace_mac( $tpg, \%macros );
-
+		$et .= replace_mac( $tpg, \%macros );
     }
 
     return unless ( $contflag ); #Print only if you found s.th. to print
 
-    $et .=  $EH{'template'}{$lang}{'arch'}{'foot'};
+    $et .=  $eh->get( 'template.' . $lang . '.arch.foot' );
 
     $et = replace_mac( $et, \%macros );
 
@@ -4498,13 +4471,13 @@ sub _write_architecture ($$$$) {
     #
     # Write here
     #
-    my $write_flag = $EH{'outarch'};
+    my $write_flag = $eh->get( 'outarch' );
     # Are we in verify mode?
     # Not possible in __COMMON__ mode
-    if ( $instance ne "__COMMON__" and $EH{'check'}{'hdlout'}{'path'} and
-        $EH{'check'}{'hdlout'}{'mode'} =~ m,\b(arch|mod|head|all),io ) { # Selected ...
+    if ( $instance ne "__COMMON__" and $eh->get( 'check.hdlout.path' ) and
+        $eh->get( 'check.hdlout.mode' ) =~ m,\b(arch|mod|head|all),io ) { # Selected ...
             # Append check flag ...
-        if ( $EH{'check'}{'hdlout'}{'mode'} =~ m,\bleaf,io ) {
+        if ( $eh->get( 'check.hdlout.mode' ) =~ m,\bleaf,io ) {
                 # __LEAF__ is 1 if this is not a LEAF!
                 $write_flag .= ( $entities{$entity}{'__LEAF__'} == 0 ) ? "_CHK_ARCH_LEAF" : "";
         } else {
@@ -4513,15 +4486,14 @@ sub _write_architecture ($$$$) {
     }
     
     # Do not write, if we are a "simple logic" cell
-	if ( $instance ne "__COMMON__" and
-		 $ae->{$instance}{'::entity'} =~ m/$EH{'output'}{'generate'}{'_logicre_'}/i )
-	{
+	if ( $instance ne '__COMMON__' and
+		 $ae->{$instance}{'::entity'} =~ m/$eh->get( 'output.generate._logicre_' )/i ) {
 		$write_flag = 0;
 	}
 
-    my $fh = undef;
-    unless( $fh = mix_utils_open( "$filename", $write_flag ) ) {
-        logwarn( "Cannot open file $filename to write architecture declarations: $!" );
+    my $fh = undef();
+    unless( $fh = mix_utils_open( $filename, $write_flag ) ) {
+        $logger->warn( '__W_WRITE_ARCH', "\tCannot open file $filename to write architecture declarations: $!" );
         return;
     }
 
@@ -4529,7 +4501,7 @@ sub _write_architecture ($$$$) {
 
     mix_utils_close( $fh, $filename );
 
-}
+} # End of _write_architecture
 
 
 #
@@ -4618,9 +4590,10 @@ sub _write_constant ($$$$$;$) {
     my $s    = shift;     # ref to signal definition
     my $type = shift;     # type of this constant 
     my $dt = shift;       # has predefined (F downto T) # unused now ...
-    my $lang = shift || $EH{'macro'}{'%LANGUAGE%'} || "vhdl";
+    my $lang = shift || $eh->get( 'macro.%LANGUAGE%' ) || 'vhdl';
 
-    my $tcom = $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'default'} || "##";
+    my $tcom = $eh->get( 'output.comment.' . $lang ) ||
+    		$eh->get( 'output.comment.default' ) || '##';
     
     my $t = "";       	# Signal definitions
     my $sat = "";     	# Signal assignments
@@ -4631,8 +4604,7 @@ sub _write_constant ($$$$$;$) {
     #TODO: remove this dead code?
     unless( exists( $out->{'rvalue'} ) ) {
             if ( $out->{'inst'} =~ m,(__|%)CONST(__|%),io ) {
-                logwarn( "WARNING: Missung value definition for constant $s->{'::name'}" );
-                $EH{'sum'}{'warnings'}++;
+                $logger->warn('__W_WRITE_CONSTANT', "\tMissung value definition for constant $s->{'::name'}" );
                 $t = "\t\t\t" . $tcom .  $s->{'::name'} . " <= __W_MISSING_CONST_VALUE;\n";
             }
     } else {
@@ -4663,8 +4635,7 @@ sub _write_constant ($$$$$;$) {
                 $value = $1 . " " . $4;
             }
             if ( $lang =~ m,^veri,io ) {
-                logwarn( "WARNING: Cannot handle time constant $value in verilog mode!" );
-                $EH{'sum'}{'warnings'}++;
+                $logger->warn( '__W_WRITE_CONSTANT', "\tCannot handle time constant $value in verilog mode!" );
             }
             #TODO: Check if type is time ...
         } elsif ( $value eq "0" or $value eq "1" ) {
@@ -4703,7 +4674,7 @@ sub _write_constant ($$$$$;$) {
                         } elsif ( $1 == 2 ) {
                             $value = oct( "0b" . $2 );
                         } else {
-                            logwarn( "WARNING: Cannot cope with base $1 for constant $value!" );
+                            $logger->warn( '__W_WRITE_CONSTANT', "\tCannot cope with base $1 for constant $value!" );
                             $w = "";
                         }
                     }
@@ -4714,7 +4685,7 @@ sub _write_constant ($$$$$;$) {
                 if ( $w ) {
                     $value = sprintf( "%0" . $w . "b", $value );
                     if ( length( $value ) > $w +2 ) {
-                        logwarn( "WARNING: Constant value $comm to large for signal $s->{'::name'} of $w bits!" );
+                        $logger->warn('__W_WRITE_CONSTANT', "Constant value $comm to large for signal $s->{'::name'} of $w bits!" );
                         $comm = " " . $tcom . " __E_VECTOR_WIDTH " . $comm;
                     }
                     $width = $w; # Save width ....
@@ -4774,10 +4745,6 @@ sub _write_constant ($$$$$;$) {
             $value =~ s,["],,g; # Quick hack ....
             #TODO: rework ident strategy ... e.g. mark with keywords ...
             $def = "`define " . $cname . " " . $value . " " . $comm . "\n";
-            #!wig20050930: done later:
-            # unless( $bref or $n ) {
-            #    $t .= $EH{'macro'}{'%S%'} x 3 . "wire\t" . $dtsa . "\t" . $sname . ";" . $dtsac . "\n";
-            # }
             if ( $dtp eq $dtsa ) {
                 $sat = '%S%' x 3 . "assign " . $sname . ' = `' .   # `
                         $cname . ";\n";
@@ -4788,12 +4755,6 @@ sub _write_constant ($$$$$;$) {
         } else {
         	# Print out signal definition ...
         	#!wig20050720: only the first time ($n == 0)
-        	#!wig20050929: NEVER ....
-            # unless( $bref or $n ) {
-            # $t .= $EH{'macro'}{'%S%'} x 3
-            #       . "signal%S%" . $sname . " : " 
-            #       . $type . $dtsa . "; " . $dtsac . "\n";
-            # }
             # Reduce type if constant is one-bit wide ...
             if ( $type =~ m/_vector$/o and $out->{'port_f'} eq "0" and $out->{'port_t'} eq "0" ) {
                 $type =~ s/_vector$//;
@@ -4861,10 +4822,10 @@ sub gen_concur_port($$$$$$$$;$$) {
     my $port = shift;
     my $rconn = shift;
     my $aeportii = shift;
-    my $lang = shift || $EH{'macro'}{'%LANGUAGE%'};
-    my $tcom = shift ||$EH{'output'}{'comment'}{$lang} || "##";
+    my $lang = shift || $eh->get( 'macro.%LANGUAGE%' );
+    my $tcom = shift || $eh->get( 'output.comment.' . $lang ) || '##';
 
-    my $concur = "";
+    my $concur = '';
     # Is this a splice?
     # Get bus width for signal and port
     my $sh = $conndb{$signal}{'::high'}; 
@@ -4882,8 +4843,7 @@ sub gen_concur_port($$$$$$$$;$$) {
         next PS if ( scalar( %$ps ) eq "0" ); #Should not happen, empty hash??
         unless( defined( $inst ) and defined( $port ) and
                 defined( $ps->{'port'} ) and defined( $ps->{'inst'} ) ) {
-                    logwarn("ERROR: missing definition $inst/$port, Contact maintainer!");
-                    $EH{'sum'}{'errors'}++;
+                    $logger->error('__E_GEN_CONCUR_PORT', "\tMissing definition $inst/$port, Contact maintainer!");
         }
         if ( $ps->{'port'} eq $port and
             $ps->{'inst'} eq $inst ) {
@@ -4978,10 +4938,9 @@ sub gen_concur_port($$$$$$$$;$$) {
                 }
             }
 
-            #TODO: check this_port vs. this_signal width (if possible)
+            # TODO : check this_port vs. this_signal width (if possible)
             if ( $tswidth >= 0 and $tpwidth >= 0 and $tpwidth != $tswidth ) {
-                logwarn( "WARNING: Connection width mismatch for instance $inst, signal $signal, port $port: $tswidth vs. $tpwidth!");
-                $EH{'sum'}{'warnings'}++;
+                $logger->warn('__W_GEN_CONCUR_PORT', "\tConnection width mismatch for instance $inst, signal $signal, port $port: $tswidth vs. $tpwidth!");
             }
 
             # in:               SIGNAL <= PORT;
@@ -5003,11 +4962,10 @@ sub gen_concur_port($$$$$$$$;$$) {
     }
 
     unless( $concur ) {
-        logwarn( "WARNING: Missing port/signal connection for instance $inst, signal $signal, port $port!" );
-        $EH{'sum'}{'warnings'}++;
+        $logger->warn('__E_GEN_CONCUR_PORT', "\tMissing port/signal connection for instance $inst, signal $signal, port $port!" );
     }
     return $concur;
-}
+} # End of gen_concur_port
 
 #
 # Will return true if the input string is a comment, only
@@ -5023,10 +4981,11 @@ sub is_vhdl_comment ($) {
 #
 sub is_comment ($$) {
     my $text = shift;
-    my $lang = shift || lc( $EH{'macro'}{'%LANGUAGE%'} );
+    my $lang = shift || lc( $eh->get( 'macro.%LANGUAGE%') );
 
     # Retrieve the comment for that language ...
-    my $tcom = $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'default'};
+    my $tcom = $eh->get( 'output.comment.' . $lang ) ||
+    		$eh->get( 'output.comment.default' );
     if( $tcom ) {
         return( $text =~ m,\A(^\s*($tcom.*)?\n)*\Z,om );
     } else {
@@ -5168,50 +5127,47 @@ sub count_load_driver ($$$$) {
             unless( exists( $rinsig->{$s}{'load'} ) ) {
 
                 unless ( $s =~ m/%open(_\d+)?%/io ) {
-                   	if ( $EH{'output'}{'warnings'} =~ m/load/io ) {
-                       	logwarn( "Warning: Signal $s does not have a load in instance $inst!" );
-             			$EH{'sum'}{'warnings'}++;
+                   	if ( $eh->get( 'output.warnings' ) =~ m/load/io ) {
+                       	$logger->warn('__W_COUNT_LDDRVS', "\tSignal $s does not have a load in instance $inst!" );
                    	} else {
-                       	logtrc( "INFO:4", "Signal $s does not have a load in instance $inst!" );
+                       	$logger->debug('__D_COUNT_LDDRVS', "\tSignal $s does not have a load in instance $inst!" );
                    	}
                 	$conndb{$s}{'::comment'} .= "__W_MISSING_LOAD/$inst,";
-                	$EH{'sum'}{'noload'}++;
+                	$eh->inc( 'sum.noload' );
             	} else {
             		$conndb{$s}{'::comment'} .= "__I_OPEN/$inst,";
-            		$EH{'sum'}{'open'}++;
+            		$eh->inc( 'sum.open' );
                 }
                 $rinsig->{$s}{'load'} = 0;
             }
             unless( exists( $rinsig->{$s}{'driver'} ) ) {
             	unless ( $s =~ m/%(HIGH|LOW)(_BUS)?%/ ) {
-                	if ( $EH{'output'}{'warnings'} =~ m/driver/io ) {
-                    	logwarn( "Warning: Signal $s does not have a driver in instance $inst!" );
-                        $EH{'sum'}{'warnings'}++;
+                	if ( $eh->get( 'output.warnings' ) =~ m/driver/io ) {
+                    	$logger->warn('__W_COUNT_LDDRVS', "\tSignal $s does not have a driver in instance $inst!" );  
                 	} else {
-                    	logtrc( "INFO:4", "Warning: Signal $s does not have a driver in instance $inst!" );
+                    	$logger->debug('__D_COUNT_LDDRVS', "\tSignal $s does not have a driver in instance $inst!" );
                 	}
-                	$EH{'sum'}{'nodriver'}++;
+                	$eh->inc( 'sum.nodriver' );
                 	$conndb{$s}{'::comment'} .= "__W_MISSING_DRIVER/$inst,";
             	} else {
             		$conndb{$s}{'::comment'} .= "__I_TIE_HIGHLOW/$inst,";
-            	    $EH{'sum'}{'tie_hl'}++;
+            	    $eh->inc( 'sum.tie_hl' );
             	}
             	$rinsig->{$s}{'driver'} = 0;
             } elsif ( $rinsig->{$s}{'driver'} > 1 ) {
-                if ( $EH{'output'}{'warnings'} =~ m/driver/io ) {
-                    logwarn( "Warning: Signal $s  has multiple drivers in instance $inst!" );
+                if ( $eh->get( 'output.warnings' ) =~ m/driver/io ) {
+                    $logger->warn('__W_COUNT_LDDRVS', "\tSignal $s  has multiple drivers in instance $inst!" );
                 } else {
-                    logtrc( "INFO:4", "Warning: Signal $s  has multiple drivers in instance $inst!" );
+                    $logger->debug('__D_COUNT_LDDRVS', "\tSignal $s  has multiple drivers in instance $inst!" );
                 }
                 $conndb{$s}{'::comment'} .= "__E_MULTIPLE_DRIVER/$inst,";
                 $error_flag++;
-                $EH{'sum'}{'multdriver'}++;
+                $eh->inc( 'sum.multdriver' );
             }
         }
     }
     return $error_flag;
-
-}
+} # End of count_load_drivers
 
 ####################################################################
 ## sig_typecast
@@ -5232,7 +5188,7 @@ sub sig_typecast ($$) {
     my $rinsig = shift;
 
     unless( defined( $entities{$enty} ) ) {
-        logwarn( "Cannot check unknown entity $enty for typecast port mapping!" );
+        $logger->warn('__W_SIG_TYPECASTT', "\tCannot check unknown entity $enty for typecast port mapping!" );
         return;
     }
 
@@ -5245,7 +5201,7 @@ sub sig_typecast ($$) {
         if ( exists( $entities{$enty}{$p} )
             and exists( $entities{$enty}{$p}{'cast'}  ) ) { 
             $map{$p}{'cast'} = $entities{$enty}{$p}{'cast'};
-            $map{$p}{'isig'} = $EH{'postfix'}{'PREFIX_TC_INT'} . $p;
+            $map{$p}{'isig'} = $eh->get( 'postfix.PREFIX_TC_INT' ) . $p;
             $map{$p}{'enty'} = $enty;
         }
     }
@@ -5271,7 +5227,7 @@ sub signal_port_resolve ($$) {
     my $rinsig = shift;
 
     unless( defined( $entities{$enty} ) ) {
-        logwarn( "Cannot check unknown entity $enty signal port mapping!" );
+        $logger->warn('__W_SIGNAL_PORT_RESOLVE', "\tCannot check unknown entity $enty signal port mapping!" );
         return;
     }
 
@@ -5287,7 +5243,7 @@ sub signal_port_resolve ($$) {
             and exists( $rinsig->{$p}{'out'} )  #wig20030325: is that a good idea?
             and exists( $rinsig->{$p}{'in'} ) ) {
                 # if ( $entities{$enty}{$p}{'mode'} eq "out" ) { # Rename the internal signal
-                    $map{$p} = $EH{'postfix'}{'PREFIX_SIG_INT'} . $p;
+                    $map{$p} = $eh->get( 'postfix.PREFIX_SIG_INT' ) . $p;
                 # } else {
                 #    $map{$p} = "__E_CONFLICT_$p";
                 # }
@@ -5319,9 +5275,9 @@ sub write_configuration () {
 
     # open output file
     my %seen = ();
-    my $efname = $EH{'outconf'};
+    my $efname = $eh->get( 'outconf' );
     if ( $efname =~m/^(CONF|COMB)/o ) {
-        my $confext = $EH{'postfix'}{'POSTFILE_CONF'};
+        my $confext = $eh->get( 'postfix.POSTFILE_CONF' );
         if ( $1 eq "COMB" ) {
             $confext = "";
         }
@@ -5330,14 +5286,14 @@ sub write_configuration () {
 			# Skip it if it was seen before
 			# TODO : sort by order of hierachy??
 
-    		if ( $EH{'output'}{'generate'}{'conf'} =~ m,\bnoleaf\b,io and
+    		if ( $eh->get( 'output.generate.conf' ) =~ m,\bnoleaf\b,io and
 		    	not $hierdb{$i}{'::treeobj'}->daughters ) {
 		    		next;
 		    }
-		    if ( $EH{'output'}{'filter'}{'file'} ) {
-		    	my $filter = _mix_wr_getfilter( 'conf', $EH{'output'}{'filter'}{'file'} );	    	
+		    if ( $eh->get( 'output.filter.file' ) ) {
+		    	my $filter = _mix_wr_getfilter( 'conf', $eh->get( 'output.filter.file' ) );	    	
 		    	if ( $i =~ m/$filter/ ) {
-		           logsay( "Skipped writing of configuration $i due to filter" );    		
+		           $logger->warn('__W_WRITE_CONF', "\tSkipped writing of configuration $i due to filter" );    		
 		           next;
 		    	}
 		    }
@@ -5358,10 +5314,10 @@ sub write_configuration () {
                 my $e_fn = $e;
                 my $ce = $hierdb{$i}{'::config'};
                 #Changed 20030714a/Bug: change only trailing _ to - !!
-                if ( $EH{'output'}{'filename'} =~ m,allminus,o ) {
+                if ( $eh->get( 'output.filename' ) =~ m,allminus,o ) {
                     $ce =~ s,_,-,og;
                     $e_fn =~ s,_,-,og;
-                } elsif ( $EH{'output'}{'filename'} =~ m,useminus,i ) {
+                } elsif ( $eh->get( 'output.filename' ) =~ m,useminus,i ) {
                     # Only trailing part gets changed ...
                     # Stip of entity name, replace _ by - and attach ...
                     if ( $ce =~ s,^\Q$e_fn\E,, ) { # entity name in configurartion
@@ -5373,20 +5329,19 @@ sub write_configuration () {
                 }
 
                 # Language? vhdl, verilog or what else?
-                my $lang = lc( $hierdb{$i}{'::lang'} ) || $EH{'macro'}{'%LANGUAGE%'};
-                unless ( exists ( $EH{'template'}{$lang} ) ) {
-                    logwarn( "WARNING: Illegal language $lang selected. Autoswitch to $EH{'macro'}{'%LANGUAGE%'}!" );
-                    $EH{'sum'}{'warnings'}++;
-                    $lang = $EH{'macro'}{'%LANGUAGE%'};
+                my $lang = lc( $hierdb{$i}{'::lang'} ) || $eh->get( 'macro.%LANGUAGE%' );
+                unless ( $eh->get( 'template.' . $lang  ) ) {
+                    $logger->warn('__W_WRITE_CONF', "\tIllegal language $lang selected. Autoswitch to $eh->get( 'macro.%LANGUAGE%' )!" );
+                    $lang = $eh->get( 'macro.%LANGUAGE%' );
                 }
                 next if ( $lang ne "vhdl" ); # No configuration to write if language ne VHDL
 
-                if ( $EH{'outconf'} eq "COMB" ) {
-                    $filename = $e_fn . $confext . "." . $EH{'output'}{'ext'}{$lang};
+                if ( $eh->get( 'outconf' ) eq "COMB" ) {
+                    $filename = $e_fn . $confext . "." . $eh->get( 'output.ext.' . $lang );
                 } elsif ( substr( $ce, 0, length( $e_fn ) ) eq $e_fn ) {
-                    $filename = $ce . $confext  . "." . $EH{'output'}{'ext'}{$lang};
+                    $filename = $ce . $confext  . "." . $eh->get( 'output.ext.' . $lang );
                 } else {
-                    $filename = $e_fn . $confext  . "." . $EH{'output'}{'ext'}{$lang};
+                    $filename = $e_fn . $confext  . "." . $eh->get( 'output.ext.' . $lang );
                 }
 		    	_write_configuration( $i, $e, $filename, \%hierdb );
 			}
@@ -5406,16 +5361,16 @@ sub _write_configuration ($$$$) {
     my $filename = shift;
     my $ae = shift;
 
-    my %macros = %{$EH{'macro'}}; # Take predefined macro replacement set
+    my %macros = %{$eh->get( 'macro' )}; # Take predefined macro replacement set
 
     $macros{'%INSTNAME%'} = $instance;
-    $macros{'%ARCHNAME%'} = $entity . $EH{'postfix'}{'POSTFIX_ARCH'};
-    $macros{'%CONFNAME%'} = $entity . $EH{'postfix'}{'POSTFIX_CONF'};
+    $macros{'%ARCHNAME%'} = $entity . $eh->get( 'postfix.POSTFIX_ARCH' );
+    $macros{'%CONFNAME%'} = $entity . $eh->get( 'postfix.POSTFIX_CONF' );
 
 
-    my $write_flag = $EH{'outconf'};
+    my $write_flag = $eh->get( 'outconf' );
     #!wig20040804: if this is a leaf cell, supress writing!
-    if ( $instance ne "__COMMON__"  and $EH{'output'}{'generate'}{'conf'} =~ m,\bnoleaf\b, and
+    if ( $instance ne "__COMMON__"  and $eh->get( 'output.generate.conf' ) =~ m,\bnoleaf\b, and
             $hierdb{$instance}{'::treeobj'}->daughters == 0  ) {
                 # Leaf ...
             $write_flag = 0;
@@ -5425,17 +5380,17 @@ sub _write_configuration ($$$$) {
     # Another case: if this entity is in the "simple logic" list, do
     # not write ...
     #
-    if ( $entity =~ m/$EH{'output'}{'generate'}{'_logicre_'}/i ) {
+    if ( $entity =~ m/$eh->get( 'output.generate._logicre_' )/i ) {
     	$write_flag = 0;
     	return; # 
     }
     
     # Are we in verify mode?
     # Not possible if in __COMMON__ mode!
-    if ( $instance ne "__COMMON__" and $EH{'check'}{'hdlout'}{'path'} and
-        $EH{'check'}{'hdlout'}{'mode'} =~ m,\b(conf|all),io ) { # Selected ...
+    if ( $instance ne "__COMMON__" and $eh->get( 'check.hdlout.path' ) and
+        $eh->get( 'check.hdlout.mode' ) =~ m,\b(conf|all),io ) { # Selected ...
         # Append check flag ...
-        if ( $EH{'check'}{'hdlout'}{'mode'} =~ m,\bleaf\b,io ) {
+        if ( $eh->get( 'check.hdlout.mode' ) =~ m,\bleaf\b,io ) {
                 # __LEAF__ is 1 if this is not a LEAF!
                 $write_flag .= ( $entities{$entity}{'__LEAF__'} == 0 ) ? "_CHK_CONF_LEAF" : "";
         } else {
@@ -5443,23 +5398,22 @@ sub _write_configuration ($$$$) {
         }
     }
 
-    if ( $write_flag and -r $filename and $EH{'outconf'} ne "COMB" ) {
-		logtrc("INFO:4", "Configuration definition file $filename will be overwritten!" );
+    if ( $write_flag and -r $filename and $eh->get( 'outconf' ) ne "COMB" ) {
+		$logger->warn('__W_WRITE_CONF', "\tConfiguration definition file $filename will be overwritten!" );
     }
    
     my $fh = undef;
     unless( $fh = mix_utils_open( $filename, $write_flag ) ) {
-        logwarn( "WARNING: Cannot open file $filename to write configuration definitions: $!" );
-        $EH{'sum'}{'warnings'}++;
+        $logger->warn( '__W_WRITE_CONF', "\tCannot open file $filename to write configuration definitions: $!" );
         return;
     }
 
     # Add header
-    my $tpg = $EH{'template'}{'vhdl'}{'conf'}{'body'};
+    my $tpg = $eh->get( 'template.vhdl.conf.body' );
 
     $macros{'%VHDL_USE%'} = use_lib( "conf", $instance );
 
-    my $et = replace_mac( $EH{'template'}{'vhdl'}{'conf'}{'head'}, \%macros);
+    my $et = replace_mac( $eh->get( 'template.vhdl.conf.head' ), \%macros);
 
     my %seenthis = ();
 
@@ -5472,7 +5426,7 @@ sub _write_configuration ($$$$) {
 
 	# Do not write configurations for leaf cells ... or dummy/internals
         if ( $i =~ m/TYPECAST_/o ) { next };
-	if ( $EH{'output'}{'generate'}{'conf'} =~ m,noleaf,io and
+	if ( $eh->get( 'output.generate.conf' ) =~ m,noleaf,io and
 	    $hierdb{$i}{'::treeobj'}->daughters == 0  ) {
 		next;
 	}
@@ -5485,8 +5439,8 @@ sub _write_configuration ($$$$) {
 	if ( $aent eq "W_NO_ENTITY" ) { next; }
 
 	$macros{'%ENTYNAME%'} = $aent;
-	$macros{'%CONFNAME%'} = $ae->{$i}{'::config'} . $EH{'postfix'}{'POSTFIX_CONF'};
-	$macros{'%ARCHNAME%'} = $ae->{$i}{'::arch'} . $EH{'postfix'}{'POSTFIX_ARCH'};
+	$macros{'%CONFNAME%'} = $ae->{$i}{'::config'} . $eh->get( 'postfix.POSTFIX_CONF' );
+	$macros{'%ARCHNAME%'} = $ae->{$i}{'::arch'}   . $eh->get( 'postfix.POSTFIX_ARCH' );
 
 	#
 	# Collect components by looking through all our daughters
@@ -5497,13 +5451,13 @@ sub _write_configuration ($$$$) {
 	# Inform user about rewrite of architecture for this entity ...
 	#
 	if ( exists( $seenthis{$aent} ) ) {
-	    logwarn( "Possibly rewriting configuration for entity $aent, instance $i!" );
+	    $logger->warn('__W_WRITE_CONF', "\tPossibly rewriting configuration for entity $aent, instance $i!" );
 	} else {
 	    $seenthis{$aent} = 1;
 	}
 
-	my $lang = lc ( $hierdb{$i}{'::lang'} || $EH{'macro'}{'%LANGUAGE%'} || 'vhdl' ) ;
-        my $tcom = $EH{'output'}{'comment'}{$lang} || $EH{'output'}{'comment'}{'default'} || "##";
+	my $lang = lc ( $hierdb{$i}{'::lang'} || $eh->get( 'macro.%LANGUAGE%' ) || 'vhdl' ) ;
+        my $tcom = $eh->get( 'output.comment.' . $lang ) || $eh->get( 'output.comment.default' ) || '##';
 
 	my $node = $ae->{$i}{'::treeobj'};
 	for my $daughter ( sort( { $a->name cmp $b->name } $node->daughters ) ) {
@@ -5519,13 +5473,13 @@ sub _write_configuration ($$$$) {
             #wig20030711: also if the configuration is W_NO_CONFIG and or %NO_CONFIGURATION%
             #
             my $pre = "";
-            if ( $EH{'output'}{'generate'}{'conf'} !~ m,veri,io ) {
+            if ( $eh->get( 'output.generate.conf' ) !~ m,veri,io ) {
                 if ( $ae->{$d_name}{'::lang'} =~ m,veri,io ) {
                     $pre = $tcom . " __I_NO_CONFIG_VERILOG " . $tcom;
                 }
             }
             # If this daughter is from the simple logic list -> do not add a configuration
-            if ( $d_enty =~ m/$EH{'output'}{'generate'}{'_logicre_'}/i ) {
+            if ( $d_enty =~ m/$eh->get( 'output.generate._logicre_' )/i ) {
             	$pre = $tcom . " __I_NO_CONF_LOGIC " . $pre;
             }
             # If this daughter has a NO_CONFIG in it's configuration -> comment it out:
@@ -5544,7 +5498,7 @@ sub _write_configuration ($$$$) {
 
     }
 
-    $et .=  $EH{'template'}{'vhdl'}{'conf'}{'foot'};
+    $et .=  $eh->get( 'template.vhdl.conf.foot' );
     $et = replace_mac( $et, \%macros );
 
     mix_utils_print( $fh, $et );
@@ -5607,7 +5561,7 @@ sub use_lib ($$) {
                     # $u := SEL:library.component ...
                     next if ( $u =~ m,(%NCD%|%NO_COMPONENT_DECLARATION|NO_COMP|__NOCOMPDEC__),o );
                     # next if ( $u =~ m,(%DEFINE%|%INCLUDE%),o );
-                    my $sel = lc( $EH{'output'}{'generate'}{'use'} );
+                    my $sel = lc( $eh->get( 'output.generate.use' ) );
                     my $pack = '';
                     my $lib = '';
                     if ( $u =~ m,(\S+):(\S+),o ) {
@@ -5640,7 +5594,7 @@ sub use_lib ($$) {
     if ( $all ) {
         $all = "-- Generated use statements\n" . $all;
     } elsif ( $type ne "veri" ) {
-        $all = $EH{'macro'}{'%VHDL_NOPROJ%'} . "/" . $type . "\n";
+        $all = $eh->get( 'macro.%VHDL_NOPROJ%' ) . '/' . $type . "\n";
     }
 
     # Verilog: do a simple concatenate!
@@ -5653,22 +5607,6 @@ sub use_lib ($$) {
     return $all;
 
 }
-# {
-# my %keep_hooks = ();
-# 
-# sub _mix_wr_save_hooks () {
-# 	for my $k ( keys( %{$EH{'macro'}} ) ) {
-# 		$keep_hooks{$k} = $EH{'macro'}{$k} if
-# 			$k =~ m/_hook_/io;
-# 	}
-# 	$keep_hooks{'__init__'} = 1;
-# }
-# sub _mix_wr_preset_hooks () {
-# 	for my $k ( keys( %keep_hooks ) ) {
-# 		next if ( $k eq "__init__" );
-#  		$EH{'macro'}{$k} = $keep_hooks{$k};
-# 	}
-# }
 
 #
 # Set the %*_HOOK_*% macros (globally), possibly with some code from the optional
@@ -5678,8 +5616,8 @@ sub use_lib ($$) {
 #  they are stored in a static internal array the first time this
 #  subroutine is called!
 #
-#TODO: extend MODE for enty and conf and verilog ...
-#TODO: detect "new" hooks and make sure they get reset
+# TODO : extend MODE for enty and conf and verilog ...
+# TODO : detect "new" hooks and make sure they get reset
 #!wig20050711
 sub mix_wr_use_udc ($$$) {
 	my $mode = shift;
@@ -5694,7 +5632,7 @@ sub mix_wr_use_udc ($$$) {
 	# );
 	my $tagre = '/(%|__?)(' . join( "|", qw( HEAD DECL BODY FOOT ) ) . ')(%|__?)/';
 
-	my $lang = uc( $hierdb{$instance}{'::lang'} || $EH{'macro'}{'%LANGUAGE%'} );		
+	my $lang = uc( $hierdb{$instance}{'::lang'} || $eh->get( 'macro.%LANGUAGE%') );		
 	if ( exists( $hierdb{$instance}{'::udc'} ) and
 		$hierdb{$instance}{'::udc'} ) {
 		my $udc = $hierdb{$instance}{'::udc'};
@@ -5726,7 +5664,6 @@ sub mix_wr_use_udc ($$$) {
 		# Create macro hooks from ::udc
 		for my $t ( keys( %udc ) ) {
 			my $h = '%' . uc( $lang . "_hook_" . $mode . $t ) . '%';
-			# $EH{'macro'}{$h} = $udc{$t};
 			$macroref->{$h} = $udc{$t};
 		}			
 	}

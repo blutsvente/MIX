@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Checker
 # | Modules:    $RCSfile: MixChecker.pm,v $
-# | Revision:   $Revision: 1.11 $
+# | Revision:   $Revision: 1.12 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2006/01/18 16:59:28 $
+# | Date:       $Date: 2006/03/14 08:10:35 $
 # |
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.11 2006/01/18 16:59:28 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.12 2006/03/14 08:10:35 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the checking capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixChecker.pm,v $
+# | Revision 1.12  2006/03/14 08:10:35  wig
+# | No changes, got deleted accidently
+# |
 # | Revision 1.11  2006/01/18 16:59:28  wig
 # |  	MixChecker.pm MixParser.pm MixUtils.pm MixWriter.pm : UNIX tested
 # |
@@ -78,28 +81,23 @@ package  Micronas::MixChecker;
 
 require Exporter;
 
-  @ISA = qw(Exporter);
-  @EXPORT = qw(
+@ISA = qw(Exporter);
+@EXPORT = qw(
     mix_check_case
-
-    );            # symbols to export by default
-  @EXPORT_OK = qw(
-    );
+);            # symbols to export by default
+@EXPORT_OK = qw(
+);
 
 our $VERSION = '0.01'; # TODO: use the RCS info
 
 use strict;
-# use vars qw();
 
-use Log::Agent;
-use Log::Agent::Priorities qw(:LEVELS);
+use Log::Log4perl qw(get_logger);
 use Tree::DAG_Node; # tree base class
 
-use Micronas::MixUtils qw( mix_store db2array %EH replace_mac);
+use Micronas::MixUtils qw( $eh mix_store db2array replace_mac);
 use Micronas::MixUtils::IO;
-# use Micronas::MixParser qw( %hierdb %conndb );
-use Micronas::MixParser;
-
+use Micronas::MixParser; # TODO : Remove that recursion!
 
 #
 # Prototypes
@@ -121,14 +119,16 @@ my %mix_check_list = ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixChecker.pm,v 1.11 2006/01/18 16:59:28 wig Exp $';
+my $thisid		=	'$Id: MixChecker.pm,v 1.12 2006/03/14 08:10:35 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixChecker.pm,v $';
-my $thisrevision   =      '$Revision: 1.11 $';
+my $thisrevision   =      '$Revision: 1.12 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
 ( $VERSION = $thisrevision ) =~ s,.*Revision:\s*,,; #TODO: Is that a good idea?
+
+my $logger = get_logger( 'MIX::MixChecker' );
 
 #
 # Start checks
@@ -177,39 +177,38 @@ sub mix_check_case ($$) {
     my $name = shift;
 
     unless( defined( $type ) ) {
-        logwarn( "WARNING: mix_check_name called without appropriate type definition!" );
+        $logger->warn( '__W_CHECK_CASE', "mix_check_name called without appropriate type definition!" );
         return '';
     }
 
     unless( defined( $name ) ) {
-        logwarn( "WARNING: mix_check_name called without appropriate name definition!" );
+        $logger->warn( '__W_CHECK_CASE', "mix_check_name called without appropriate name definition!" );
         return $name;
     }
-
-	# my $oname = $name; # Keep original
 
     # mix internals ....
     # TODO : these have to be all uppercase!!
     if ( $name =~ m,^\s*(__|%)(.*)(__|%)$,o ) {
         if ( uc( $1 ) ne $1 ) {
-            logtrc( "INFO:4", "Info: mix_check_name internal macro $1 not all upper case!" );
+            $logger->info( '__I_CHECK_CASE', "mix_check_name internal macro $1 not all upper case!" );
         }
         return $name;
     }
 
     #!wig20031008: adding macro replacement ...
     if ( $name =~ m,%, ) { # Has a %, maybe can be macro parsed ...
-        $name = replace_mac( $name, $EH{'macro'} )
+        $name = replace_mac( $name, $eh->get( 'macro' ) )
     }
         
-    if ( $type eq "inst" and $name =~ m,^\s*W_NO_(PARENT|ENTITY|CONF),o ) {
+    if ( $type eq 'inst' and $name =~ m,^\s*W_NO_(PARENT|ENTITY|CONF),o ) {
         return $name;
     }
     
 	# Load check mode:
-    my $check = $EH{'check'}{'name'}{$type};
+    my $check = $eh->get( 'check.name.' . $type );
 	# and exception regular expression
-	my $xcheck = $EH{'check'}{'namex'}{$type} . ',' . $EH{'check'}{'namex'}{'all'};
+	my $xcheck = $eh->get( 'check.namex.' . $type ) . ',' .
+					$eh->get( 'check.namex.all' );
 	$xcheck =~ s/[,\s]+$//;
 	$xcheck =~ s/^[,\s]+//;
 
@@ -228,8 +227,9 @@ sub mix_check_case ($$) {
 		$xcheck = '^(' . join( '|', split( /[,\s+]/, $xcheck ) ) . ')$';
 		return $name if ( $name =~ m/$xcheck/ );
 	}
-	
+
 	my $func;
+
 	if ( $check =~ m/\blc\b/ ) {
 		$func = \&_wrap_lc;
 	} elsif ( $check =~ m/\buc\b/ ) {
@@ -244,6 +244,10 @@ sub mix_check_case ($$) {
 		$func = \&_wrap_ucfirstlc;
 	} 
 
+	# TESTBENCH always in capital letters, but allow any spelling
+	if ( $name eq 'TESTBENCH' ) {
+		$func = \&_wrap_ic;
+	}
 	# Check and change ...
 	$name = _mix_check_case_int( $type, $name, $check, $func );
 
@@ -270,6 +274,9 @@ sub _wrap_ucfirstlc ($) {
 sub _wrap_lcfirstuc ($) {
 	return lcfirst( uc( $_[0]) );
 }
+sub _wrap_ic ($) {
+	return( $_[0] );
+}
 
 #
 # Do the real check with one of the functions uc, lc, ucfirst, lcfirst!
@@ -294,36 +301,35 @@ sub _mix_check_case_int ($$$$) {
        $mix_check_list{$type} = {};
     }
 
-    if ( exists( $list->{ &$func( $name ) } ) ) {
-            if ( $list->{ &$func( $name ) } ne $name ) { # Potential problem found ...
-                if ( $check =~ m,\bcheck,o ) {
-                    logwarn( "WARNING: Got new element '$name' conflicting with '" .
-						$list->{&$func($name)} . "'!" );
-                    $EH{'sum'}{'checkwarn'}++;
-                } elsif( $check =~ m,\bforce,o ) {
-                    logwarn( "WARNING: Forcing new element '$name' to correct case '" . &$func($name) . "'!" );
-                    $name = &$func( $name );
-                    $EH{'sum'}{'checkforce'}++;
-                }
-                # else ignore silentely ....
-            }
-            # else "have seen the same before, no issue"
-        } else {
-            if( $name ne &$func( $name ) ) { 
-                if ( $check =~ m,\bforce,o ) {
-                    logwarn( "INFO: Forcing new $type element '$name' to correct case '" . &$func($name) . "'!" );
-                   $EH{'sum'}{'checkforce'}++;
-                    $name = &$func( $name );
-                } elsif ( $check =~ m,\bcheck,o ) {
-                    logwarn( "INFO: Not all chars in correct case in new $type element '$name'!" );
-                }
-            }
-            $list->{ &$func( $name ) } = $name;
-        }
-
+	# $list keeps version of all names, indexed by lc version
+	if ( exists( $list->{lc($name)} ) ) {
+		if ( $list->{lc($name)} ne $name ) { # Potential problem found ...
+			if ( $check =~ m,\bcheck,o ) {
+				$logger->warn( '__W_CHECK_CASE', "Got new element '$name' conflicting with '" .
+					$list->{lc($name)} . "'!" );
+					$eh->inc( 'sum.checkwarn' );
+			} elsif( $check =~ m,\bforce,o ) {
+				$logger->warn( '__W_CHECK_CASE', "Forcing new element '$name' to correct case '" . &$func($name) . "'!" );
+				$name = &$func( $name );
+				$eh->inc( 'sum.checkforce' );
+			}
+		}
+		# else "have seen the same before, no issue"
+	} else {
+		# Something new:
+		if( $name ne &$func( $name ) ) { 
+			if ( $check =~ m,\bforce,o ) {
+				$logger->info( '__I_CHECK_CASE', "Forcing new $type element '$name' to correct case '" . &$func($name) . "'!" );
+				$eh->inc( 'sum.checkforce' );
+				$name = &$func( $name );
+			} elsif ( $check =~ m,\bcheck,o ) {
+				$logger->info( '__I_CHECK_CASE', "Not all chars in correct case in new $type element '$name'!" );
+			}
+		}
+		$list->{ lc( $name ) } = $name;
+	}
 	# Return name, might have been forced to different spelling ..
-    return $name;
-
+    return($name);
 }
 
 ####################################################################
@@ -366,7 +372,7 @@ sub mix_check_wiring ($$) {
             check_n_ports( $s, $conn_r->{$s} );
         }
     }
-}
+} # End of mix_check_wiring
 
 sub check_n_ports ($$) {
     my $s = shift;
@@ -374,19 +380,19 @@ sub check_n_ports ($$) {
 
     my $name = $s_r->{'::name'};
     if ( $name !~ m/_n$/io ) {
-        logwarn( "WARNING: signal internal name $s level mismatch real name $name" );
-        $EH{'sum'}{'checkconn'}++;
+        $logger->warn( '__W_CHECK_NPORT', "signal internal name $s level mismatch real name $name" );
+        $eh->inc( 'sum.checkconn' );
     }
 
     for my $p ( @{$s_r->{'::in'}}, @{$s_r->{'::out'}} ) {
         my $port = $p->{'port'};
         if ( $port !~ m/_n$/io ) {
-            logwarn( "WARNING: signal $s connection mismatch for port $port, instance ".
+            $logger->warn( '__W_CHECK_NPORT', "signal $s connection mismatch for port $port, instance ".
                    $p->{'inst'} );
-            $EH{'sum'}{'checkconn'}++;
+            $eh->inc( 'sum.checkconn' );
         }
     }
-}
+} # End of check_n_ports
 
 #
 # Create a list of keywords in various languages:
@@ -398,26 +404,26 @@ sub mix_check_initkeyword () {
 # VHDL:
 # the keywords are not case-sensitive!
 my @keys = qw (
-abs access after alias all and architecture array assert attribute
-begin block body buffer bus
-case component configuration constant
-disconnect downto
-else elsif end entity exit
-file for function
-generate generic group guarded
-if impure in inertial inout is
-label library linkage literal loop
-map mod
-nand new next nor not null
-of on open or others out
-package port postponed procedure process pure
-range record register reject return rol ror
-select severity signal shared sla sli sra srl subtype
-then to transport type
-unaffected units until use
-variable
-wait when while with
-xnor xor
+	abs access after alias all and architecture array assert attribute
+	begin block body buffer bus
+	case component configuration constant
+	disconnect downto
+	else elsif end entity exit
+	file for function
+	generate generic group guarded
+	if impure in inertial inout is
+	label library linkage literal loop
+	map mod
+	nand new next nor not null
+	of on open or others out
+	package port postponed procedure process pure
+	range record register reject return rol ror
+	select severity signal shared sla sli sra srl subtype
+	then to transport type
+	unaffected units until use
+	variable
+	wait when while with
+	xnor xor
 );
 
 =head 2 list from other place http://opensource.ethz.ch/emacs/vhdl87_syntax.html#keywords

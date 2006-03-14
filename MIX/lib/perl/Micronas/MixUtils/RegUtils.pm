@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.4 2006/02/15 08:44:02 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.5 2006/03/14 08:10:33 wig Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.5  2006/03/14 08:10:33  wig
+#  No changes, got deleted accidently
+#
 #  Revision 1.4  2006/02/15 08:44:02  lutscher
 #  changed type for add_conn to always be string
 #
@@ -70,10 +73,9 @@ require Exporter;
    _attach_file_to_list
   );
 use strict;
-use Log::Agent;
-use Log::Agent::Priorities qw(:LEVELS);
+use Log::Log4perl qw(get_logger);
 use Micronas::MixParser qw( %hierdb %conndb add_inst add_conn);
-use Micronas::MixUtils qw(%EH);
+# use Micronas::MixUtils qw(%EH);
 
 # use FindBin qw($Bin);
 # use lib "$Bin";
@@ -88,22 +90,21 @@ use Micronas::MixUtils qw(%EH);
 # non-OO helper functions
 #------------------------------------------------------------------------------
 
+my $logger = get_logger( 'MIX::MixUtils::RegUtils' );
 # wrap logwarn for errors
 sub _error {
 	my @ltxt = @_;
-	logwarn("ERROR: ".join("",@ltxt));
-	if (defined (%EH)) { $EH{'sum'}{'errors'}++;};				
+	$logger->error('__E_REGUTILS', "ERROR: ".join("",@ltxt));			
 };
 
 sub _warning {
 	my @ltxt = @_;
-	logwarn("WARNING: ".join("",@ltxt));
-	if (defined (%EH)) { $EH{'sum'}{'warnings'}++;};				
+	$logger->warn('__W_REGUTILS', "WARNING: ".join("",@ltxt));			
 };
 
 sub _info {
 	my @ltxt = @_;
-	logwarn("INFO: ".join("",@ltxt));
+	$logger->info('__I_REGUTILS', "INFO: ".join("",@ltxt));
 };
 
 # function to create a constant for tying unused inputs

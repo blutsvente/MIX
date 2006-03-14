@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.24 $                                          |
-# | Author:     $Author: mathias $                                            |
-# | Date:       $Date: 2006/03/07 07:12:08 $                              |
+# | Revision:   $Revision: 1.25 $                                          |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2006/03/14 08:10:34 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.25  2006/03/14 08:10:34  wig
+# | No changes, got deleted accidently
+# |
 # | Revision 1.24  2006/03/07 07:12:08  mathias
 # | fixed variable name
 # |
@@ -123,12 +126,10 @@ use strict;
 
 use Cwd;
 use File::Basename;
-use Log::Agent;
+use Log::Log4perl qw(get_logger);
 use FileHandle;
 
-# use Micronas::MixUtils qw(:DEFAULT %OPTVAL %EH replace_mac convert_in
-# 			  select_variant two2one one2two);
-use Micronas::MixUtils qw(%EH);
+use Micronas::MixUtils qw( mix_utils_diff $eh );
 
 # Prototypes
 # sub write_delta_sheet ($$$);
@@ -136,14 +137,16 @@ use Micronas::MixUtils qw(%EH);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.24 2006/03/07 07:12:08 mathias Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.25 2006/03/14 08:10:34 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.24 $'; #'  
+my $thisrevision    =      '$Revision: 1.25 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
 ( $VERSION = $thisrevision ) =~ s,.*Revision:\s*,,; #TODO: Is that a good idea?
+
+my $logger = get_logger( 'MIX::MixUtils::Mif' );
 
 #
 # Create a new MIF file
@@ -187,28 +190,117 @@ sub write {
 		$this->{'name'} = $name;
 	}
 
+	my $text = '';
+	# !wig20051212: adding delta mode
+	if ( $eh->get( 'report.delta' ) ) {
+		if ( -r $this->{'name'} ) {
+			# Create a diff file ...
+			$text = $this->_write_diff();
+			# Increase delta counter
+			# Add .diff to filename
+			$this->{'name'} .= $eh->get( 'output.ext.delta' );
+			if ( not $text and -e $this->{'name'} ) {
+				unlink( $this->{'name'} ) or
+					$logger->error( '__E_MIF_WRITE'.  "Cannot remove " . $this->{'name'} .
+							": " . $! );
+			}
+			if ( $text ) {
+				$logger->info('__I_MIF_WRITE', "File " . $this->{'name'} . " has changes!");	
+				$eh->inc( 'DELTA_NR' );
+			}
+		} else {
+			$logger->warn( '__W_MIF_WRITE', "Previous version of MIF File " . $this->{'name'} .
+				" not readable" );
+			$this->_finalize_mif();
+			$text = $this->{'text'};
+		}
+	} else {
+		$this->_finalize_mif();
+		$text = $this->{'text'};		
+	}
+	
 	# Open file and write contents ...
-	my $fh = new FileHandle "> $this->{'name'}";
-    if (defined $fh) {
-    	my $t = '';
-    	for my $i ( @{$this->{'tables'}} ) {
-    		$t .= $i;
-    	}
-    	
-    	my $p = '';
-    	for my $i ( @{$this->{'paraid'}} ) {
-    		$p .= $i;
-    	}
-    	$this->{'text'} =~ s/%MIFTABLES%/$t/;
-    	$this->{'text'} =~ s/%PARAID%/$p/;
-    	
-        print $fh $this->{'text'} ;
-        
-        $fh->close;
-    } else { # Print Error messages!
-    	logwarn("ERROR: Cannot write report file $this->{'name'}: $!");
-    	$EH{'sum'}{'errors'}++;
-    }
+	if ( $text ) {
+		my $fh = new FileHandle "> $this->{'name'}";
+		if (defined $fh) {
+			# Replace and finalize mif		    	
+		    print $fh $text;
+		    $fh->close or
+		    	$logger->error('__E_MIF_WRITE', "Cannot close report file $this->{'name'}: $!");;
+		} else { # Print Error messages!
+		  	$logger->error('__E_MIF_WRITE', "Cannot write report file $this->{'name'}: $!");
+		}
+	}
+}
+
+
+#
+# Replace and finalize mif
+# 
+sub _finalize_mif () {
+	my $this = shift;
+	
+	my $t = '';
+	for my $i ( @{$this->{'tables'}} ) {
+		$t .= $i;
+	}
+	    	
+	my $p = '';
+	for my $i ( @{$this->{'paraid'}} ) {
+		$p .= $i;
+	}
+	$this->{'text'} =~ s/%MIFTABLES%/$t/;
+	$this->{'text'} =~ s/%PARAID%/$p/;
+	
+	return;
+}
+
+#
+# Write the difference and count the lines ...
+#
+sub _write_diff () {
+	my $this = shift;
+	# my $switches = shift || "";
+
+    # strip off comments and such (from generated data)
+    # $nc = mix_utils_clean_data( $nc, $c, $switches );
+	$this->_finalize_mif(); # $this->{text} ...
+	
+	my @oc = ();
+
+	# Read in previous data:
+	my $fh = new FileHandle;
+	if ( $fh->open( "< $this->{'name'}" ) ) {
+		# Get all lines into string ...
+		@oc = <$fh>;
+		chomp( @oc );
+		map( { $_ =~ s/\n//g; } @oc );
+	} else {
+		$logger->error( '__E_MIF_DELTA', "Cannot read previous version of " .
+				$this->{name} . ':' . $! );
+	}
+	
+    # Diff it ...
+    # use Text::Diff;
+    # sub mix_utils_diff ($$$$;$) {
+    # my $nc = shift;
+    # my $oc = shift;
+    # my $c  = shift;
+    # my $file = shift;
+	# my $switches = shift || "";
+    my @nt = split( /\n/, $this->{text} );
+    my $diff = mix_utils_diff( \@nt, \@oc, '#', $this->{'name'}, 'comment,space');
+    # Keep comments and spaces ...
+    
+	#     { STYLE => "Table",
+	#    # STYLE => "Context",
+	#    FILENAME_A => 'NEW',
+	#    FILENAME_B => "OLD " . $this->{'name'},
+	#    CONTEXT => 0,
+	#    }
+    # );
+    
+    return $diff;
 }
 
 #
@@ -263,7 +355,7 @@ sub start_table {
 	my $self = shift;
 	my $params = shift; # All arguments
 
-#TODO: Add this to EH ...
+#TODO: Add this to $eh ...
   my %table = (
 	'Title' => '__E_MISSING_TITLE',
 	'Id' => scalar ( @{$self->{'tables'}} ) + 1,	# Automatically increase ID counter
@@ -289,13 +381,11 @@ sub start_table {
 
   # Check if a table with that Id already exists:
   while ( exists $self->{'_t_ref'}{$table{'Id'}} ) {
-	logwarn( "WARNING: need to increment TableID to prevent duplicate!" );
-	$EH{'sum'}{'warnings'}++;
+	$logger->warn( '__W_MIF_TABLE', "Need to increment TableID to prevent duplicate!" );
 	$table{'Id'}++;
 	# Stop at 10000!
 	if ( $table{'Id'} > 10000 ) {
-		logwarn( 'ERROR: cannot allocate an unused TableID <= 10000! Top here!' );
-		$EH{'sum'}{'errors'}++;
+		$logger->error( '__E_MIF_TABLE', 'Cannot allocate an unused TableID <= 10000! Top here!' );
 		return undef();
 	}
   }
@@ -692,8 +782,6 @@ sub _td_para()
                 $text = $1;
                 $string = $2;
             } else {
-                #$EH{sum}{errors}++;
-                #logwarn('Error (Mif::wrCell): Missing \'\x\' after \'\\' . $modifier . "' in string: " . $string);
                 $text = $end;
                 $string = '';
             }
