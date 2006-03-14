@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.1 $                                          |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/03/14 08:10:33 $                              |
+# | Revision:   $Revision: 1.2 $                                          |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2006/03/14 14:17:59 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.2  2006/03/14 14:17:59  lutscher
+# | added cappend
+# |
 # | Revision 1.1  2006/03/14 08:10:33  wig
 # | No changes, got deleted accidently
 # |
@@ -55,9 +58,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.1 2006/03/14 08:10:33 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.2 2006/03/14 14:17:59 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.1 $';  
+my $thisrevision    =      '$Revision: 1.2 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -189,6 +192,24 @@ sub inc {
 	my $r = eval $e;
 	if ( $@ ) {
 		$logger->error('__E_INC_CFGKEY', "\tIncrement for $key failed: $@");
+		return undef();
+	}
+	return $r;
+}
+
+#
+# comma-append to string and return result
+sub cappend {
+	my $this = shift;
+	my $key  = shift;
+	my $val  = shift;
+
+	my $k = $this->_key_hash( $key );
+	
+	my $e = '$this->{cfg}' . $k . ' .= ",' . $val . '";';
+	my $r = eval $e;
+	if ( $@ ) {
+		$logger->error('__E_CAP_CFGKEY', "\tcappend for $key failed: $@");
 		return undef();
 	}
 	return $r;
