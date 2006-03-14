@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.108 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/03/14 08:10:34 $                              |
+# | Revision:   $Revision: 1.109 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2006/03/14 14:20:49 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.108 2006/03/14 08:10:34 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.109 2006/03/14 14:20:49 lutscher Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.109  2006/03/14 14:20:49  lutscher
+# | changed __I_SPLIT_HEAD to __D_SPLIT_HEAD
+# |
 # | Revision 1.108  2006/03/14 08:10:34  wig
 # | No changes, got deleted accidently
 # |
@@ -159,11 +162,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.108 2006/03/14 08:10:34 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.109 2006/03/14 14:20:49 lutscher Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.108 $';         #'
+my $thisrevision        =      '$Revision: 1.109 $';         #'
 
-# Revision:   $Revision: 1.108 $   
+# Revision:   $Revision: 1.109 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2170,7 +2173,7 @@ sub parse_header($$@){
 	     	for my $ii ( @range ) {
 				my $funique = "$i:$ii";
 				unless( defined( $templ->{'field'}{$funique} ) ) {
-					$logger->info('__I_SPLIT_HEAD', "\tSplit multiple column header $i to $funique");
+					$logger->debug('__D_SPLIT_HEAD', "\tSplit multiple column header $i to $funique");
 					#!wig20051017: make a copy of the array!
 					@{$templ->{'field'}{$funique}} = @{$templ->{'field'}{$i}};
 					#lu20050624 disable required-attribute for the additional
