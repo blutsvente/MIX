@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.2 $                                          |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2006/03/14 14:17:59 $                              |
+# | Revision:   $Revision: 1.3 $                                          |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2006/03/14 16:33:12 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.3  2006/03/14 16:33:12  wig
+# |  	MIXFilter.pm : extended filter based on tag names and occurance
+# |  	Globals.pm : added global config for logger limits
+# |
 # | Revision 1.2  2006/03/14 14:17:59  lutscher
 # | added cappend
 # |
@@ -58,9 +62,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.2 2006/03/14 14:17:59 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.3 2006/03/14 16:33:12 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.2 $';  
+my $thisrevision    =      '$Revision: 1.3 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1030,27 +1034,44 @@ sub init {
     $this->{'cfg'}{'DELTA_VER_NR'} = 0;
  
 	# Count number of messages logged in the fatal/error/warn/... category
-   	$this->{'logs'}	= {
+   	$this->{'cfg'}{'logs'}	= {
    			'info'	=> 0,
    			'debug'	=> 0,
-			# 'warnings' => 0,
 			'warn'	=>  0,
-			# 'errors' => 0,
 			'error'  => 0,
 			'fatal'	 => 0,
-    	},
+	}
+	# Limit number of logged messages ...
+	$this->{'cfg'}{'loglimit'} = {
+			'maxalllevel' => 100,  # Stop after N messages per level. 0 -> no logging, -1 -> no limit
+			'maxalltag' =>    50,  # Stop after N messages per tag. 0 -> no logging, -1 -> no limit
+   			'level'	=> {
+				'info'	=> -1,		# Stop after N messages in info level
+   				'debug'	=> -1,
+				'warn'	=>  -1,
+				'error'  => -1,
+				'fatal'	 => -1,
+			},
+			'hittag' => {},
+			'_omit_'	=> {		# Will contain number of not-printed messages for levels and tags
+				'level'	=> {},
+				'tagmax' => {},
+			},
+			'tagmax' => '',		# __TAG=N  limit tag matching __TAG (perl regex) to N, comma seperated list
+			'_tagmax_' => {},	# Internal representation of the above
+    };
 
     $this->{'cfg'}{'sum'} = { # Counters for summary
  
 		## Inventory
-		'inst' => 0,		# number of instances
-		'conn' => 0,		# number of connections
-		'genport' => 0, 	# number of generated ports
+		'inst'     => 0,	# number of instances
+		'conn'     => 0,	# number of connections
+		'genport'  => 0, 	# number of generated ports
 
-		'cmacros' => 0,	# Number of matched connection macro's
+		'cmacros'  => 0,	# number of matched connection macro's
 
-    	'hdlfiles' => 0,      # Number of output files
-		'noload' => 0,   	# signals with missing loads ...
+    	'hdlfiles' => 0,    # number of output files
+		'noload'   => 0,   	# signals with missing loads ...
 		'nodriver' => 0,	# signals without driver
 		'multdriver' => 0,	# signals with multiple drivers
 		'openports' => 0,
@@ -1063,11 +1084,12 @@ sub init {
 
         # Number of generated IO cells:
         # see init function in MixIOParser
-        # 'io_cellandpad' => 0,
+        # 'io_cellandpad'  => 0,
         # 'io_cell_single' => 0,
-        # 'io_pad_singe' => 0,
+        # 'io_pad_single'  => 0,
 
     };
+
     $this->{'cfg'}{'script'} = { # Set for pre and post execution script execution
 		'pre' => '',
 		'post' => '',
