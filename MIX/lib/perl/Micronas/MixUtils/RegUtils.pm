@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.5 2006/03/14 08:10:33 wig Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.6 2006/03/14 14:19:30 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.6  2006/03/14 14:19:30  lutscher
+#  changed logger wrap methods
+#
 #  Revision 1.5  2006/03/14 08:10:33  wig
 #  No changes, got deleted accidently
 #
@@ -58,6 +61,8 @@ require Exporter;
    _error
    _warning
    _info
+   _fatal
+   _debug
    _tie_input_to_constant
    _add_generic
    _add_generic_value
@@ -94,17 +99,27 @@ my $logger = get_logger( 'MIX::MixUtils::RegUtils' );
 # wrap logwarn for errors
 sub _error {
 	my @ltxt = @_;
-	$logger->error('__E_REGUTILS', "ERROR: ".join("",@ltxt));			
+	$logger->error('__E_REG ', join("",@ltxt));			
 };
 
 sub _warning {
 	my @ltxt = @_;
-	$logger->warn('__W_REGUTILS', "WARNING: ".join("",@ltxt));			
+	$logger->warn('__W_REG ', join("",@ltxt));			
 };
 
 sub _info {
 	my @ltxt = @_;
-	$logger->info('__I_REGUTILS', "INFO: ".join("",@ltxt));
+	$logger->info('__I_REG ', join("",@ltxt));
+};
+
+sub _fatal {
+	my @ltxt = @_;
+	$logger->fatal('__F_REG ', join("",@ltxt));
+};
+
+sub _debug {
+	my @ltxt = @_;
+	$logger->debug('__D_REG ', join("",@ltxt));
 };
 
 # function to create a constant for tying unused inputs
