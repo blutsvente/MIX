@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MIXFilter.pm,v $                                      |
-# | Revision:   $Revision: 1.1 $                                          |
+# | Revision:   $Revision: 1.2 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/03/14 08:10:27 $                              |
+# | Date:       $Date: 2006/03/14 16:32:59 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MIXFilter.pm,v $
+# | Revision 1.2  2006/03/14 16:32:59  wig
+# |  	MIXFilter.pm : extended filter based on tag names and occurance
+# |
 # | Revision 1.1  2006/03/14 08:10:27  wig
 # | No changes, got deleted accidently
 # |
@@ -55,9 +58,9 @@ use Micronas::MixUtils::Globals qw( get_eh );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: MIXFilter.pm,v 1.1 2006/03/14 08:10:27 wig Exp $'; 
+my $thisid          =      '$Id: MIXFilter.pm,v 1.2 2006/03/14 16:32:59 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: MIXFilter.pm,v $';
-my $thisrevision    =      '$Revision: 1.1 $';  
+my $thisrevision    =      '$Revision: 1.2 $';  
 
 # Keep logger objects ...
 my %logger = ();
@@ -71,7 +74,7 @@ sub new {
 	my ( $class, %options ) = @_;
 	
 	my $self = { 
-		'maxcount' => 100, # Cut off if > 100 messages are reached for a given tag
+		'maxcount' => -1, # Cut off if > 100 messages are reached for a given tag
 		'_tagc_' => {},
 		'_levelmap_' => {
 			'FATAL' => 'fatals',
@@ -100,18 +103,39 @@ sub ok {
 	my ( $self, %p ) = @_;
 
 	# Count the level messages
-	my $eh = get_eh();
-	if ( $eh ) {
-		$eh->inc( 'logs.' . lc($p{log4p_level}) );
-	}
-	$self->{'_levelhit_'}{lc($p{log4p_level})}++;
-
+	my $l = lc($p{log4p_level});
 	# Count the tag, take everything up to first whitespace
 	( my $tag = ($p{'message'})[0] ) =~s /\S\s.*//;
+
+	my $eh = get_eh();
+	if ( $eh ) {
+		# Count number of hits
+		$eh->inc( 'logs.' . $l );
+
+
+=head1 TODO
+
+		# If tag is listed in limit list:
+		for my $t ( split( /,/, $eh->get( 'loglimit.tagmax' )) {
+			my ( $tm, $lim ) = split( /=/, $t );
+			next unless $tm;
+			if ( $tag =~ m/$tm/ ) {
+				my $th = $eh->get( 'loglimit.hittag.' . $tm );
+				$th = 0 unless( defined $th );
+				$eh->inc( 'loglimit.omit
+			}
+		}
+
+=cut
+
+	}
+	$self->{'_levelhit_'}{$l}++;
+
 	my $cur = $self->{'_tagc_'}{$tag}++;
 
 	# If number of max message repeats < current count
-	if ( $cur > $self->{'maxcount'} ) {
+	if ( $self->{'maxcount'} > -1 and $cur > $self->{'maxcount'} ) {
+		$self->{'_levellimit_'}{$l}++;
 		return 0;
 	}
 	return 1;
