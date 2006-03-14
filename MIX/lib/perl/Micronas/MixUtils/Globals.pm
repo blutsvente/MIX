@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.3 $                                          |
+# | Revision:   $Revision: 1.4 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/03/14 16:33:12 $                              |
+# | Date:       $Date: 2006/03/14 16:37:34 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.4  2006/03/14 16:37:34  wig
+# | Syntax typo fixed
+# |
 # | Revision 1.3  2006/03/14 16:33:12  wig
 # |  	MIXFilter.pm : extended filter based on tag names and occurance
 # |  	Globals.pm : added global config for logger limits
@@ -62,9 +65,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.3 2006/03/14 16:33:12 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.4 2006/03/14 16:37:34 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.3 $';  
+my $thisrevision    =      '$Revision: 1.4 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1040,7 +1043,7 @@ sub init {
 			'warn'	=>  0,
 			'error'  => 0,
 			'fatal'	 => 0,
-	}
+	};
 	# Limit number of logged messages ...
 	$this->{'cfg'}{'loglimit'} = {
 			'maxalllevel' => 100,  # Stop after N messages per level. 0 -> no logging, -1 -> no limit
