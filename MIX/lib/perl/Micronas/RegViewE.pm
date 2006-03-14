@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.5 2006/03/03 10:26:34 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.6 2006/03/14 14:21:19 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.6  2006/03/14 14:21:19  lutscher
+#  made changes for new eh access and logger functions
+#
 #  Revision 1.5  2006/03/03 10:26:34  lutscher
 #  removed coverage for reserved fields
 #
@@ -78,7 +81,7 @@ package Micronas::Reg;
 #------------------------------------------------------------------------------
 use strict;
 use Data::Dumper;
-use Micronas::MixUtils qw(%EH);
+use Micronas::MixUtils qw($eh);
 use Micronas::MixParser qw( %hierdb %conndb add_inst add_conn );
 use Micronas::Reg;
 use Micronas::RegDomain;
@@ -134,12 +137,11 @@ sub _gen_view_vr_ad {
 					 );
 	foreach $param (@lmixparams) {
 		my ($main, $sub) = split(/\./,$param);
-		if (exists($EH{$main}{$sub})) {
-			$this->global->{'REGISTER'}->{$sub} = $EH{$main}{$sub};
+		if ($eh->get("${main}.${sub}")) {
+			$this->global->{'REGISTER'}->{$sub} = $eh->get("${main}.${sub}");
 			_info("setting parameter $param = ", $this->global->{'REGISTER'}->{$sub}) if $this->global->{'debug'};
 		} else {
 			_error("parameter \'$param\' unknown");
-			if (defined (%EH)) { $EH{'sum'}{'errors'}++;};
 		};
 	};
 

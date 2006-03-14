@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.26 2006/03/03 09:05:44 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.27 2006/03/14 14:21:19 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.26 $                                  
+#  Revision      : $Revision: 1.27 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.27  2006/03/14 14:21:19  lutscher
+#  made changes for new eh access and logger functions
+#
 #  Revision 1.26  2006/03/03 09:05:44  lutscher
 #  added feature for embedded control/status reg in generated Verilog code
 #
@@ -127,7 +130,7 @@ package Micronas::Reg;
 #------------------------------------------------------------------------------
 use strict;
 use Data::Dumper;
-use Micronas::MixUtils qw(%EH);
+use Micronas::MixUtils qw($eh);
 use Micronas::Reg;
 use Micronas::RegDomain;
 use Micronas::RegReg;
@@ -193,13 +196,12 @@ sub _gen_view_vgch_rs {
 					  'postfix.POSTFIX_FIELD_IN'
 					 );
 	foreach $param (@lmixparams) {
-		my ($main, $sub) = split(/\./,$param);
-		if (exists($EH{$main}{$sub})) {
-			$this->global($sub => $EH{$main}{$sub});
+		if (defined $eh->get("$param")) {
+			my ($main, $sub) = split(/\./,$param);
+			$this->global($sub => $eh->get("${param}"));
 			_info("setting parameter $param = ", $this->global->{$sub}) if $this->global->{'debug'};
 		} else {
 			_error("parameter \'$param\' unknown");
-			if (defined (%EH)) { $EH{'sum'}{'errors'}++;};
 		};
 	};
 
@@ -226,10 +228,9 @@ sub _gen_view_vgch_rs {
 	};
 
 	# modify MIX config (only where required)
-	if (defined (%EH)) {
-		$EH{'check'}{'signal'} = 'load,driver,check';
-		$EH{'output'}{'filter'}{'file'} = [];
-	};
+	
+	$eh->set('check.signal', 'load,driver,check');
+	$eh->set('output.filter.file', []);
 	
 	# list of skipped registers and fields (put everything together in one list)
 	if (exists($this->global->{'exclude_regs'})) {
@@ -541,7 +542,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.26 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.27 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -1312,9 +1313,8 @@ sub _vgch_rs_gen_hier {
 	# instantiate OCP target
 	my $ocp_inst = $this->_add_instance_unique($this->global->{"ocp_target_name"}, $top_inst, "OCP target module");
 	$this->global('ocp_inst' => $ocp_inst);
-	if (defined (%EH)) {
-		push @{$EH{'output'}{'filter'}{'file'}}, $ocp_inst;
-	};
+	$eh->cappend('output.filter.file', $ocp_inst);
+	
 	_add_generic("P_DWIDTH", $this->global->{'datawidth'}, $ocp_inst);
 	_add_generic("P_AWIDTH", $this->global->{'addrwidth'}, $ocp_inst);
 	# _add_generic_value("P_TOCNT_WIDTH", 10, "P_TOCNT_WIDTH", $ocp_inst); # timeout counter width
@@ -1405,9 +1405,8 @@ sub _vgch_rs_gen_hier {
 	_add_generic("sync", $ocp_sync, $ocp_inst);
 
 	# do not generate library modules
-	if (defined (%EH)) {
-		push @{$EH{'output'}{'filter'}{'file'}}, @lgen_filter;
-	};
+	$eh->cappend('output.filter.file', join(",",@lgen_filter));
+
 	return ($top_inst, $ocp_inst);
 };
 

@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.20 2006/03/14 08:10:35 wig Exp $
+#  RCSId: $Id: Reg.pm,v 1.21 2006/03/14 14:21:19 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.21  2006/03/14 14:21:19  lutscher
+#  made changes for new eh access and logger functions
+#
 #  Revision 1.20  2006/03/14 08:10:35  wig
 #  No changes, got deleted accidently
 #
@@ -157,7 +160,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.20 $ ';  #'
+our($VERSION) = '$Revision: 1.21 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -452,7 +455,7 @@ sub _map_register_master {
 		};
 		$fsize = $msb - $lsb + 1;
 		if ($fsize != $col_cnt) {
-			print STDERR "ERROR: bad field \'$fname\' in register \'$reg\' in domain \'$domain\', must be continuous bit-slice\n";
+			_error("bad field \'$fname\' in register \'$reg\' in domain \'$domain\', must be continuous bit-slice");
 			$result = 0;
 		};
 
@@ -493,7 +496,7 @@ sub _map_register_master {
 						$o_reg = $o_tmp;
 						last;
 					} else {
-						print STDERR "WARNING: registers \'$reg\' and \'".$o_tmp->name."\' are mapped to the same address in domain\n";
+						_warning("registers \'$reg\' and \'".$o_tmp->name."\' are mapped to the same address in domain");
 						$o_reg = undef;
 					};
 				};
@@ -514,7 +517,7 @@ sub _map_register_master {
 				# check for overlapping fields in same register
 				if ($old_usedbits == $usedbits) {
 					$result = 0;
-					print STDERR "ERROR: overlapping fields in register \'$reg\'\n";
+					_error("overlapping fields in register \'$reg\'");
 					last;
 				}; 
 			};

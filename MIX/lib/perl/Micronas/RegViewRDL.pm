@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewRDL.pm,v 1.1 2006/02/28 11:33:59 lutscher Exp $
+#  RCSId: $Id: RegViewRDL.pm,v 1.2 2006/03/14 14:21:19 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.1 $                                  
+#  Revision      : $Revision: 1.2 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViewRDL.pm,v $
+#  Revision 1.2  2006/03/14 14:21:19  lutscher
+#  made changes for new eh access and logger functions
+#
 #  Revision 1.1  2006/02/28 11:33:59  lutscher
 #  initial release (experimental)
 #
@@ -43,7 +46,7 @@ package Micronas::Reg;
 #------------------------------------------------------------------------------
 use strict;
 use Data::Dumper;
-use Micronas::MixUtils qw(%EH);
+use Micronas::MixUtils qw($eh);
 use Micronas::Reg;
 use Micronas::RegDomain;
 use Micronas::RegReg;
@@ -95,15 +98,14 @@ sub _gen_view_rdl {
 					 );
 	foreach $param (@lmixparams) {
 		my ($main, $sub, $subsub) = split(/\./,$param);
-		if (ref $EH{$main}{$sub}) {
-			$this->global($subsub => $EH{$main}{$sub}{$subsub});
+		if (ref $eh->get("${main}.${sub}")) {
+			$this->global($subsub => $eh->get("${main}.${sub}.${subsub}"));
 			_info("setting parameter $param = ", $this->global->{$subsub});
-		} elsif (exists($EH{$main}{$sub})) {
-			$this->global($sub => $EH{$main}{$sub});
+		} elsif (defined $eh->get("${main}.${sub}")) {
+			$this->global($sub => $eh->get("${main}.${sub}"));
 			_info("setting parameter $param = ", $this->global->{$sub});
 		} else {
 			_error("parameter \'$param\' unknown");
-			if (defined (%EH)) { $EH{'sum'}{'errors'}++;};
 		};
 	};
 
