@@ -8628,3 +8628,581 @@
 06/01/19 08:43:00 4600: SUM: Minimum run time: 53964.78s
 06/01/19 08:43:00 4600: SUM: Maximum run time: 53964.78s
 06/01/19 08:43:00 4600: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/09 06:55:13 2612: macro.xls in directory macro failed!
+06/02/09 06:55:13 2612: SUM: Sucessfully timed tests: 0
+06/02/09 06:55:13 2612: SUM: Overall run time: 0.00s
+06/02/09 06:55:13 2612: SUM: Average run time: n/a
+06/02/09 06:55:13 2612: SUM: Minimum run time: n/a
+06/02/09 06:55:13 2612: SUM: Maximum run time: n/a
+06/02/09 06:55:13 2612: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/09 06:57:37 4000: macro.xls in directory macro failed!
+06/02/09 06:57:37 4000: SUM: Sucessfully timed tests: 0
+06/02/09 06:57:37 4000: SUM: Overall run time: 0.00s
+06/02/09 06:57:37 4000: SUM: Average run time: n/a
+06/02/09 06:57:37 4000: SUM: Minimum run time: n/a
+06/02/09 06:57:37 4000: SUM: Maximum run time: n/a
+06/02/09 06:57:37 4000: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/09 07:31:18 2208: macro.xls in directory macro, time : 1973.38s
+06/02/09 07:31:18 2208: SUM: Sucessfully timed tests: 1
+06/02/09 07:31:18 2208: SUM: Overall run time: 1973.38s
+06/02/09 07:31:18 2208: SUM: Average run time: 1973.38s
+06/02/09 07:31:18 2208: SUM: Minimum run time: 1973.38s
+06/02/09 07:31:18 2208: SUM: Maximum run time: 1973.38s
+06/02/09 07:31:19 2208: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/09 09:52:41 3764: bitsplice.xls in directory bitsplice, time : 41.09s
+06/02/09 09:53:03 3764: bitsplice.xls in directory bitsplice/verilog, time : 21.92s
+06/02/09 09:53:30 3764: bitsplice.xls in directory bitsplice/vhdportsort failed!
+06/02/09 09:53:57 3764: bitsplice.xls in directory bitsplice/verportsort failed!
+06/02/09 09:54:35 3764: bitsplice.xls in directory bitsplice/connport failed!
+06/02/09 09:54:58 3764: sigport.xls in directory sigport, time : 22.55s
+06/02/09 09:55:19 3764: sigport.xls in directory sigport/use, time : 21.12s
+06/02/09 09:55:39 3764: sigport.xls in directory sigport/verilog, time : 19.96s
+06/02/09 09:55:58 3764: highlow.xls in directory highlow, time : 18.07s
+06/02/09 09:56:17 3764: highlow.xls in directory highlow/verilog, time : 18.73s
+06/02/09 09:56:35 3764: highlow.xls in directory highlow/lownobus, time : 18.33s
+06/02/09 09:57:03 3764: mde_tests.xls in directory mde_tests/conn_nreset, time : 27.10s
+06/02/09 09:57:33 3764: mde_tests.xls in directory mde_tests/conn_nr_vhdl, time : 30.47s
+06/02/09 09:58:00 3764: constant.xls in directory constant failed!
+06/02/09 09:58:21 3764: constant.xls in directory constant/verilog failed!
+06/02/09 09:58:42 3764: io.xls in directory io, time : 21.09s
+06/02/09 09:59:03 3764: io.xls in directory io/verilog, time : 20.65s
+06/02/09 09:59:32 3764: generic.xls in directory generic, time : 28.31s
+06/02/09 09:59:55 3764: generic.xls in directory generic/verilog, time : 23.38s
+06/02/09 10:00:18 3764: generic.xls in directory generic/veriovhd, time : 21.84s
+06/02/09 10:00:34 3764: generic.xls in directory generic/nodefparam, time : 16.47s
+06/02/09 10:00:51 3764: genwidth.xls in directory genwidth, time : 16.89s
+06/02/09 10:01:09 3764: genwidth.xls in directory genwidth/verilog, time : 17.48s
+06/02/09 10:01:30 3764: nreset2.xls in directory nreset2, time : 20.53s
+06/02/09 10:01:47 3764: open.xls in directory open, time : 17.35s
+06/02/09 10:02:04 3764: open.xls in directory open/verilog, time : 16.06s
+06/02/09 10:02:23 3764: open.xls in directory open/verilog_ndmy, time : 18.52s
+06/02/09 10:03:15 3764: macro.xls in directory macro, time : 51.43s
+06/02/09 10:03:37 3764: verilog.xls in directory verilog, time : 21.64s
+06/02/09 10:04:00 3764: verilog.xls in directory verilog/vhdl, time : 22.69s
+06/02/09 10:04:23 3764: verilog.xls in directory verilog/mixed, time : 22.19s
+06/02/09 10:04:42 3764: verilog.xls in directory verilog/uamn, time : 18.93s
+06/02/09 10:05:05 3764: verilog.xls in directory verilog/useconfname, time : 22.88s
+06/02/09 10:05:31 3764: verilog.xls in directory verilog/leaforeg, time : 25.14s
+06/02/09 10:05:56 3764: verilog.xls in directory verilog/seloreg, time : 24.68s
+06/02/09 10:06:23 3764: verilog.xls in directory verilog/v2001, time : 26.81s
+06/02/09 10:06:45 3764: configuration.xls in directory configuration, time : 21.89s
+06/02/09 10:07:14 3764: padio.xls in directory padio failed!
+06/02/09 10:07:43 3764: padio.xls in directory padio/names failed!
+06/02/09 10:08:08 3764: padio.xls in directory padio/bus failed!
+06/02/09 10:08:34 3764: padio.xls in directory padio/given failed!
+06/02/09 10:09:00 3764: padio2.xls in directory padio2 failed!
+06/02/09 10:09:19 3764: typecast.xls in directory typecast, time : 18.67s
+06/02/09 10:09:39 3764: typecast.xls in directory typecast/intsig, time : 19.63s
+06/02/09 10:09:57 3764: typecast.xls in directory typecast/intbus, time : 17.89s
+06/02/09 10:10:10 3764: init.xls in directory init, time : 12.86s
+06/02/09 10:10:29 3764: autoopen.xls in directory autoopen, time : 18.06s
+06/02/09 10:10:50 3764: autoopen.xls in directory autoopen/aaa, time : 20.45s
+06/02/09 10:11:07 3764: autoopen.xls in directory autoopen/simple, time : 17.33s
+06/02/09 10:11:25 3764: autoopen.xls in directory autoopen/noaopen, time : 17.48s
+06/02/09 10:11:53 3764: bugver.xls in directory bugver/ramd, time : 28.14s
+06/02/09 10:12:14 3764: bugver.xls in directory bugver/constbug, time : 20.05s
+06/02/09 10:12:35 3764: bugver.xls in directory bugver/20051004c, time : 20.83s
+06/02/09 10:12:55 3764: bugver.xls in directory bugver/20051014b, time : 19.64s
+06/02/09 10:13:16 3764: bugver.xls in directory bugver/20051018d, time : 21.10s
+06/02/09 10:13:36 3764: bugver.xls in directory bugver/20051121a, time : 19.33s
+06/02/09 10:13:56 3764: bugver.xls in directory bugver/20051221a, time : 20.58s
+06/02/09 10:14:14 3764: logic.xls in directory logic, time : 17.69s
+06/02/09 10:14:34 3764: udc.xls in directory udc, time : 19.38s
+06/02/09 10:14:52 3764: intra.xls in directory intra, time : 17.55s
+06/02/09 10:15:20 3764: intra.xls in directory intra/instance, time : 27.72s
+06/02/09 10:15:20 3764: WARNING: WARNING, Cannot open directory /cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/scd: No such file or directory
+06/02/09 10:15:20 3764: WARNING: ERROR: Directory </cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/scd> not found!
+06/02/09 10:15:32 3764: reg_shell.xls in directory reg_shell/scd, time : 11.70s
+06/02/09 10:15:32 3764: WARNING: WARNING, Cannot open directory /cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/mcd: No such file or directory
+06/02/09 10:15:32 3764: WARNING: ERROR: Directory </cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/mcd> not found!
+06/02/09 10:15:44 3764: reg_shell.xls in directory reg_shell/mcd, time : 11.55s
+06/02/09 10:15:44 3764: WARNING: WARNING, Cannot open directory /cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/no_clock_gating: No such file or directory
+06/02/09 10:15:44 3764: WARNING: ERROR: Directory </cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/no_clock_gating> not found!
+06/02/09 10:15:56 3764: reg_shell.xls in directory reg_shell/no_clock_gating, time : 12.08s
+06/02/09 10:15:56 3764: WARNING: WARNING, Cannot open directory /cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/read_pipeline: No such file or directory
+06/02/09 10:15:56 3764: WARNING: ERROR: Directory </cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/read_pipeline> not found!
+06/02/09 10:16:09 3764: reg_shell.xls in directory reg_shell/read_pipeline, time : 12.58s
+06/02/09 10:16:09 3764: SUM: Sucessfully timed tests: 55
+06/02/09 10:16:09 3764: SUM: Overall run time: 1158.48s
+06/02/09 10:16:09 3764: SUM: Average run time: 21.06s
+06/02/09 10:16:09 3764: SUM: Minimum run time: 11.55s
+06/02/09 10:16:09 3764: SUM: Maximum run time: 51.43s
+06/02/09 10:16:09 3764: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/09 10:20:21 2416: SUM: Sucessfully timed tests: 0
+06/02/09 10:20:21 2416: SUM: Overall run time: 0.00s
+06/02/09 10:20:21 2416: SUM: Average run time: n/a
+06/02/09 10:20:21 2416: SUM: Minimum run time: n/a
+06/02/09 10:20:21 2416: SUM: Maximum run time: n/a
+06/02/09 10:20:21 2416: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/14 18:12:06 3060: macro.xls in directory macro/splice, time : 429.86s
+06/02/14 18:12:06 3060: SUM: Sucessfully timed tests: 1
+06/02/14 18:12:06 3060: SUM: Overall run time: 429.86s
+06/02/14 18:12:06 3060: SUM: Average run time: 429.86s
+06/02/14 18:12:06 3060: SUM: Minimum run time: 429.86s
+06/02/14 18:12:06 3060: SUM: Maximum run time: 429.86s
+06/02/14 18:12:06 3060: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 06:36:08 468: macro.xls in directory macro/splice, time : 1787.06s
+06/02/15 06:36:09 468: SUM: Sucessfully timed tests: 1
+06/02/15 06:36:09 468: SUM: Overall run time: 1787.06s
+06/02/15 06:36:09 468: SUM: Average run time: 1787.06s
+06/02/15 06:36:09 468: SUM: Minimum run time: 1787.06s
+06/02/15 06:36:09 468: SUM: Maximum run time: 1787.06s
+06/02/15 06:36:09 468: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 06:44:15 3312: macro.xls in directory macro/splice, time : 415.57s
+06/02/15 06:44:15 3312: SUM: Sucessfully timed tests: 1
+06/02/15 06:44:15 3312: SUM: Overall run time: 415.57s
+06/02/15 06:44:15 3312: SUM: Average run time: 415.57s
+06/02/15 06:44:15 3312: SUM: Minimum run time: 415.57s
+06/02/15 06:44:15 3312: SUM: Maximum run time: 415.57s
+06/02/15 06:44:15 3312: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 06:49:21 3624: macro.xls in directory macro/splice, time : 301.49s
+06/02/15 06:49:21 3624: SUM: Sucessfully timed tests: 1
+06/02/15 06:49:21 3624: SUM: Overall run time: 301.49s
+06/02/15 06:49:21 3624: SUM: Average run time: 301.49s
+06/02/15 06:49:21 3624: SUM: Minimum run time: 301.49s
+06/02/15 06:49:21 3624: SUM: Maximum run time: 301.49s
+06/02/15 06:49:21 3624: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 06:51:50 2640: macro.xls in directory macro/splice, time : 144.90s
+06/02/15 06:51:50 2640: SUM: Sucessfully timed tests: 1
+06/02/15 06:51:50 2640: SUM: Overall run time: 144.90s
+06/02/15 06:51:50 2640: SUM: Average run time: 144.90s
+06/02/15 06:51:50 2640: SUM: Minimum run time: 144.90s
+06/02/15 06:51:50 2640: SUM: Maximum run time: 144.90s
+06/02/15 06:51:51 2640: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 07:50:43 2504: macro.xls in directory macro/splice, time : 32.92s
+06/02/15 07:50:43 2504: SUM: Sucessfully timed tests: 1
+06/02/15 07:50:43 2504: SUM: Overall run time: 32.92s
+06/02/15 07:50:43 2504: SUM: Average run time: 32.92s
+06/02/15 07:50:43 2504: SUM: Minimum run time: 32.92s
+06/02/15 07:50:43 2504: SUM: Maximum run time: 32.92s
+06/02/15 07:50:43 2504: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 08:24:59 1816: macro.xls in directory macro/splice, time : 23.43s
+06/02/15 08:24:59 1816: SUM: Sucessfully timed tests: 1
+06/02/15 08:24:59 1816: SUM: Overall run time: 23.43s
+06/02/15 08:24:59 1816: SUM: Average run time: 23.43s
+06/02/15 08:24:59 1816: SUM: Minimum run time: 23.43s
+06/02/15 08:24:59 1816: SUM: Maximum run time: 23.43s
+06/02/15 08:25:00 1816: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 08:35:11 2244: macro.xls in directory macro/splice, time : 18.80s
+06/02/15 08:35:11 2244: SUM: Sucessfully timed tests: 1
+06/02/15 08:35:11 2244: SUM: Overall run time: 18.80s
+06/02/15 08:35:11 2244: SUM: Average run time: 18.80s
+06/02/15 08:35:11 2244: SUM: Minimum run time: 18.80s
+06/02/15 08:35:11 2244: SUM: Maximum run time: 18.80s
+06/02/15 08:35:11 2244: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 08:40:36 1756: macro.xls in directory macro/splice, time : 15.17s
+06/02/15 08:40:36 1756: SUM: Sucessfully timed tests: 1
+06/02/15 08:40:36 1756: SUM: Overall run time: 15.17s
+06/02/15 08:40:36 1756: SUM: Average run time: 15.17s
+06/02/15 08:40:36 1756: SUM: Minimum run time: 15.17s
+06/02/15 08:40:36 1756: SUM: Maximum run time: 15.17s
+06/02/15 08:40:36 1756: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 08:53:49 920: macro.xls in directory macro/splice, time : 677.08s
+06/02/15 08:53:49 920: SUM: Sucessfully timed tests: 1
+06/02/15 08:53:49 920: SUM: Overall run time: 677.08s
+06/02/15 08:53:49 920: SUM: Average run time: 677.08s
+06/02/15 08:53:49 920: SUM: Minimum run time: 677.08s
+06/02/15 08:53:49 920: SUM: Maximum run time: 677.08s
+06/02/15 08:53:49 920: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 09:19:57 2768: macro.xls in directory macro/splice, time : 1564.40s
+06/02/15 09:19:57 2768: SUM: Sucessfully timed tests: 1
+06/02/15 09:19:57 2768: SUM: Overall run time: 1564.40s
+06/02/15 09:19:57 2768: SUM: Average run time: 1564.40s
+06/02/15 09:19:57 2768: SUM: Minimum run time: 1564.40s
+06/02/15 09:19:57 2768: SUM: Maximum run time: 1564.40s
+06/02/15 09:19:57 2768: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 09:33:47 3836: macro.xls in directory macro/splice, time : 640.03s
+06/02/15 09:33:47 3836: SUM: Sucessfully timed tests: 1
+06/02/15 09:33:47 3836: SUM: Overall run time: 640.03s
+06/02/15 09:33:47 3836: SUM: Average run time: 640.03s
+06/02/15 09:33:47 3836: SUM: Minimum run time: 640.03s
+06/02/15 09:33:47 3836: SUM: Maximum run time: 640.03s
+06/02/15 09:33:47 3836: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 09:34:11 1900: macro.xls in directory macro/splice, time : 18.62s
+06/02/15 09:34:11 1900: SUM: Sucessfully timed tests: 1
+06/02/15 09:34:11 1900: SUM: Overall run time: 18.62s
+06/02/15 09:34:11 1900: SUM: Average run time: 18.62s
+06/02/15 09:34:11 1900: SUM: Minimum run time: 18.62s
+06/02/15 09:34:11 1900: SUM: Maximum run time: 18.62s
+06/02/15 09:34:11 1900: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 09:36:24 1444: macro.xls in directory macro/splice failed!
+06/02/15 09:36:24 1444: SUM: Sucessfully timed tests: 0
+06/02/15 09:36:24 1444: SUM: Overall run time: 0.00s
+06/02/15 09:36:24 1444: SUM: Average run time: n/a
+06/02/15 09:36:24 1444: SUM: Minimum run time: n/a
+06/02/15 09:36:24 1444: SUM: Maximum run time: n/a
+06/02/15 09:36:24 1444: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 09:39:54 2032: macro.xls in directory macro/splice failed!
+06/02/15 09:39:54 2032: SUM: Sucessfully timed tests: 0
+06/02/15 09:39:54 2032: SUM: Overall run time: 0.00s
+06/02/15 09:39:54 2032: SUM: Average run time: n/a
+06/02/15 09:39:54 2032: SUM: Minimum run time: n/a
+06/02/15 09:39:54 2032: SUM: Maximum run time: n/a
+06/02/15 09:39:54 2032: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 09:42:29 3124: macro.xls in directory macro/splice, time : 16.42s
+06/02/15 09:42:29 3124: SUM: Sucessfully timed tests: 1
+06/02/15 09:42:29 3124: SUM: Overall run time: 16.42s
+06/02/15 09:42:29 3124: SUM: Average run time: 16.42s
+06/02/15 09:42:29 3124: SUM: Minimum run time: 16.42s
+06/02/15 09:42:29 3124: SUM: Maximum run time: 16.42s
+06/02/15 09:42:29 3124: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 10:12:02 3028: bitsplice.xls in directory bitsplice, time : 43.05s
+06/02/15 10:12:26 3028: bitsplice.xls in directory bitsplice/verilog, time : 23.65s
+06/02/15 10:12:51 3028: bitsplice.xls in directory bitsplice/vhdportsort failed!
+06/02/15 10:13:16 3028: bitsplice.xls in directory bitsplice/verportsort failed!
+06/02/15 10:13:54 3028: bitsplice.xls in directory bitsplice/connport failed!
+06/02/15 10:14:17 3028: sigport.xls in directory sigport, time : 22.14s
+06/02/15 10:14:37 3028: sigport.xls in directory sigport/use, time : 19.88s
+06/02/15 10:14:58 3028: sigport.xls in directory sigport/verilog, time : 20.84s
+06/02/15 10:15:16 3028: highlow.xls in directory highlow, time : 17.17s
+06/02/15 10:15:33 3028: highlow.xls in directory highlow/verilog, time : 17.32s
+06/02/15 10:15:52 3028: highlow.xls in directory highlow/lownobus, time : 18.17s
+06/02/15 10:16:19 3028: mde_tests.xls in directory mde_tests/conn_nreset, time : 27.04s
+06/02/15 10:16:48 3028: mde_tests.xls in directory mde_tests/conn_nr_vhdl, time : 28.61s
+06/02/15 10:17:09 3028: constant.xls in directory constant failed!
+06/02/15 10:17:31 3028: constant.xls in directory constant/verilog failed!
+06/02/15 10:17:53 3028: io.xls in directory io, time : 22.01s
+06/02/15 10:18:11 3028: io.xls in directory io/verilog, time : 17.83s
+06/02/15 10:18:40 3028: generic.xls in directory generic, time : 28.71s
+06/02/15 10:19:02 3028: generic.xls in directory generic/verilog, time : 21.35s
+06/02/15 10:19:25 3028: generic.xls in directory generic/veriovhd, time : 23.22s
+06/02/15 10:19:44 3028: generic.xls in directory generic/nodefparam, time : 18.00s
+06/02/15 10:20:02 3028: genwidth.xls in directory genwidth, time : 18.01s
+06/02/15 10:20:21 3028: genwidth.xls in directory genwidth/verilog, time : 18.77s
+06/02/15 10:20:47 3028: nreset2.xls in directory nreset2, time : 25.83s
+06/02/15 10:21:09 3028: open.xls in directory open, time : 21.46s
+06/02/15 10:21:29 3028: open.xls in directory open/verilog, time : 19.62s
+06/02/15 10:21:47 3028: open.xls in directory open/verilog_ndmy, time : 17.64s
+06/02/15 10:22:33 3028: macro.xls in directory macro failed!
+06/02/15 10:22:52 3028: macro.xls in directory macro/splice, time : 19.32s
+06/02/15 10:23:11 3028: verilog.xls in directory verilog, time : 18.32s
+06/02/15 10:23:35 3028: verilog.xls in directory verilog/vhdl, time : 23.78s
+06/02/15 10:24:01 3028: verilog.xls in directory verilog/mixed, time : 25.44s
+06/02/15 10:24:20 3028: verilog.xls in directory verilog/uamn, time : 18.47s
+06/02/15 10:24:40 3028: verilog.xls in directory verilog/useconfname, time : 19.69s
+06/02/15 10:25:04 3028: verilog.xls in directory verilog/leaforeg, time : 24.26s
+06/02/15 10:25:33 3028: verilog.xls in directory verilog/seloreg, time : 28.05s
+06/02/15 10:26:00 3028: verilog.xls in directory verilog/v2001, time : 26.83s
+06/02/15 10:26:24 3028: configuration.xls in directory configuration, time : 23.57s
+06/02/15 10:26:50 3028: padio.xls in directory padio, time : 26.53s
+06/02/15 10:27:22 3028: padio.xls in directory padio/names, time : 31.42s
+06/02/15 10:28:02 3028: padio.xls in directory padio/bus, time : 39.44s
+06/02/15 10:28:42 3028: padio.xls in directory padio/given, time : 39.63s
+06/02/15 10:29:13 3028: padio2.xls in directory padio2, time : 29.77s
+06/02/15 10:29:32 3028: typecast.xls in directory typecast, time : 18.74s
+06/02/15 10:29:53 3028: typecast.xls in directory typecast/intsig, time : 20.89s
+06/02/15 10:30:12 3028: typecast.xls in directory typecast/intbus, time : 18.38s
+06/02/15 10:30:25 3028: init.xls in directory init, time : 12.99s
+06/02/15 10:30:45 3028: autoopen.xls in directory autoopen, time : 19.56s
+06/02/15 10:31:06 3028: autoopen.xls in directory autoopen/aaa, time : 20.87s
+06/02/15 10:31:26 3028: autoopen.xls in directory autoopen/simple, time : 19.95s
+06/02/15 10:31:46 3028: autoopen.xls in directory autoopen/noaopen, time : 19.21s
+06/02/15 10:32:17 3028: bugver.xls in directory bugver/ramd, time : 31.14s
+06/02/15 10:32:39 3028: bugver.xls in directory bugver/constbug, time : 21.91s
+06/02/15 10:32:59 3028: bugver.xls in directory bugver/20051004c, time : 19.71s
+06/02/15 10:33:21 3028: bugver.xls in directory bugver/20051014b, time : 21.36s
+06/02/15 10:33:43 3028: bugver.xls in directory bugver/20051018d, time : 22.42s
+06/02/15 10:34:05 3028: bugver.xls in directory bugver/20051121a, time : 21.58s
+06/02/15 10:34:27 3028: bugver.xls in directory bugver/20051221a, time : 21.30s
+06/02/15 10:34:46 3028: logic.xls in directory logic, time : 19.35s
+06/02/15 10:35:07 3028: udc.xls in directory udc, time : 20.53s
+06/02/15 10:35:28 3028: intra.xls in directory intra, time : 20.70s
+06/02/15 10:35:59 3028: intra.xls in directory intra/instance, time : 30.49s
+06/02/15 10:35:59 3028: WARNING: WARNING, Cannot open directory /cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/scd: No such file or directory
+06/02/15 10:35:59 3028: WARNING: ERROR: Directory </cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/scd> not found!
+06/02/15 10:36:14 3028: reg_shell.xls in directory reg_shell/scd, time : 14.27s
+06/02/15 10:36:14 3028: WARNING: WARNING, Cannot open directory /cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/mcd: No such file or directory
+06/02/15 10:36:14 3028: WARNING: ERROR: Directory </cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/mcd> not found!
+06/02/15 10:36:30 3028: reg_shell.xls in directory reg_shell/mcd, time : 15.77s
+06/02/15 10:36:30 3028: WARNING: WARNING, Cannot open directory /cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/no_clock_gating: No such file or directory
+06/02/15 10:36:30 3028: WARNING: ERROR: Directory </cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/no_clock_gating> not found!
+06/02/15 10:36:43 3028: reg_shell.xls in directory reg_shell/no_clock_gating, time : 13.43s
+06/02/15 10:36:43 3028: WARNING: WARNING, Cannot open directory /cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/read_pipeline: No such file or directory
+06/02/15 10:36:43 3028: WARNING: ERROR: Directory </cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/read_pipeline> not found!
+06/02/15 10:36:56 3028: reg_shell.xls in directory reg_shell/read_pipeline, time : 13.00s
+06/02/15 10:36:56 3028: SUM: Sucessfully timed tests: 60
+06/02/15 10:36:56 3028: SUM: Overall run time: 1342.39s
+06/02/15 10:36:56 3028: SUM: Average run time: 22.37s
+06/02/15 10:36:56 3028: SUM: Minimum run time: 12.99s
+06/02/15 10:36:56 3028: SUM: Maximum run time: 43.05s
+06/02/15 10:36:57 3028: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 17:42:02 952: macro.xls in directory macro failed!
+06/02/15 17:42:02 952: SUM: Sucessfully timed tests: 0
+06/02/15 17:42:02 952: SUM: Overall run time: 0.00s
+06/02/15 17:42:02 952: SUM: Average run time: n/a
+06/02/15 17:42:02 952: SUM: Minimum run time: n/a
+06/02/15 17:42:02 952: SUM: Maximum run time: n/a
+06/02/15 17:42:02 952: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 17:49:11 3332: macro.xls in directory macro failed!
+06/02/15 17:49:11 3332: SUM: Sucessfully timed tests: 0
+06/02/15 17:49:11 3332: SUM: Overall run time: 0.00s
+06/02/15 17:49:11 3332: SUM: Average run time: n/a
+06/02/15 17:49:11 3332: SUM: Minimum run time: n/a
+06/02/15 17:49:11 3332: SUM: Maximum run time: n/a
+06/02/15 17:49:11 3332: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 17:52:21 2120: macro.xls in directory macro failed!
+06/02/15 17:52:21 2120: SUM: Sucessfully timed tests: 0
+06/02/15 17:52:21 2120: SUM: Overall run time: 0.00s
+06/02/15 17:52:21 2120: SUM: Average run time: n/a
+06/02/15 17:52:21 2120: SUM: Minimum run time: n/a
+06/02/15 17:52:21 2120: SUM: Maximum run time: n/a
+06/02/15 17:52:21 2120: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 17:59:12 3856: macro.xls in directory macro failed!
+06/02/15 17:59:12 3856: SUM: Sucessfully timed tests: 0
+06/02/15 17:59:12 3856: SUM: Overall run time: 0.00s
+06/02/15 17:59:12 3856: SUM: Average run time: n/a
+06/02/15 17:59:12 3856: SUM: Minimum run time: n/a
+06/02/15 17:59:12 3856: SUM: Maximum run time: n/a
+06/02/15 17:59:12 3856: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 23:11:28 2088: macro.xls in directory macro failed!
+06/02/15 23:11:28 2088: SUM: Sucessfully timed tests: 0
+06/02/15 23:11:28 2088: SUM: Overall run time: 0.00s
+06/02/15 23:11:28 2088: SUM: Average run time: n/a
+06/02/15 23:11:28 2088: SUM: Minimum run time: n/a
+06/02/15 23:11:28 2088: SUM: Maximum run time: n/a
+06/02/15 23:11:28 2088: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 23:16:58 3172: macro.xls in directory macro failed!
+06/02/15 23:16:58 3172: SUM: Sucessfully timed tests: 0
+06/02/15 23:16:58 3172: SUM: Overall run time: 0.00s
+06/02/15 23:16:58 3172: SUM: Average run time: n/a
+06/02/15 23:16:58 3172: SUM: Minimum run time: n/a
+06/02/15 23:16:58 3172: SUM: Maximum run time: n/a
+06/02/15 23:16:58 3172: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 23:19:36 648: macro.xls in directory macro failed!
+06/02/15 23:20:02 648: macro.xls in directory macro/splice, time : 25.74s
+06/02/15 23:20:02 648: SUM: Sucessfully timed tests: 1
+06/02/15 23:20:02 648: SUM: Overall run time: 25.74s
+06/02/15 23:20:02 648: SUM: Average run time: 25.74s
+06/02/15 23:20:02 648: SUM: Minimum run time: 25.74s
+06/02/15 23:20:02 648: SUM: Maximum run time: 25.74s
+06/02/15 23:20:02 648: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 23:23:45 3916: macro.xls in directory macro, time : 36.72s
+06/02/15 23:23:45 3916: SUM: Sucessfully timed tests: 1
+06/02/15 23:23:45 3916: SUM: Overall run time: 36.72s
+06/02/15 23:23:45 3916: SUM: Average run time: 36.72s
+06/02/15 23:23:45 3916: SUM: Minimum run time: 36.72s
+06/02/15 23:23:45 3916: SUM: Maximum run time: 36.72s
+06/02/15 23:23:45 3916: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 23:25:15 4016: macro.xls in directory macro/splice failed!
+06/02/15 23:25:15 4016: SUM: Sucessfully timed tests: 0
+06/02/15 23:25:15 4016: SUM: Overall run time: 0.00s
+06/02/15 23:25:15 4016: SUM: Average run time: n/a
+06/02/15 23:25:15 4016: SUM: Minimum run time: n/a
+06/02/15 23:25:15 4016: SUM: Maximum run time: n/a
+06/02/15 23:25:15 4016: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/15 23:27:22 620: macro.xls in directory macro/splice failed!
+06/02/15 23:27:22 620: SUM: Sucessfully timed tests: 0
+06/02/15 23:27:22 620: SUM: Overall run time: 0.00s
+06/02/15 23:27:22 620: SUM: Average run time: n/a
+06/02/15 23:27:22 620: SUM: Minimum run time: n/a
+06/02/15 23:27:22 620: SUM: Maximum run time: n/a
+06/02/15 23:27:22 620: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/02/16 18:07:53 976: bitsplice.xls in directory bitsplice/vhdportsort, time : 38.50s
+06/02/16 18:07:53 976: SUM: Sucessfully timed tests: 1
+06/02/16 18:07:53 976: SUM: Overall run time: 38.50s
+06/02/16 18:07:53 976: SUM: Average run time: 38.50s
+06/02/16 18:07:53 976: SUM: Minimum run time: 38.50s
+06/02/16 18:07:53 976: SUM: Maximum run time: 38.50s
+06/02/16 18:07:53 976: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/03/13 06:09:08 4852: bitsplice.xls in directory bitsplice failed!
+06/03/13 06:09:08 4852: SUM: Sucessfully timed tests: 0
+06/03/13 06:09:08 4852: SUM: Overall run time: 0.00s
+06/03/13 06:09:08 4852: SUM: Average run time: n/a
+06/03/13 06:09:08 4852: SUM: Minimum run time: n/a
+06/03/13 06:09:08 4852: SUM: Maximum run time: n/a
+06/03/13 06:09:08 4852: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/03/13 06:16:43 3656: bitsplice.xls in directory bitsplice, time : 327.47s
+06/03/13 06:16:43 3656: SUM: Sucessfully timed tests: 1
+06/03/13 06:16:43 3656: SUM: Overall run time: 327.47s
+06/03/13 06:16:43 3656: SUM: Average run time: 327.47s
+06/03/13 06:16:43 3656: SUM: Minimum run time: 327.47s
+06/03/13 06:16:43 3656: SUM: Maximum run time: 327.47s
+06/03/13 06:16:43 3656: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/03/13 06:18:55 2152: bitsplice.xls in directory bitsplice failed!
+06/03/13 06:18:55 2152: SUM: Sucessfully timed tests: 0
+06/03/13 06:18:55 2152: SUM: Overall run time: 0.00s
+06/03/13 06:18:55 2152: SUM: Average run time: n/a
+06/03/13 06:18:55 2152: SUM: Minimum run time: n/a
+06/03/13 06:18:55 2152: SUM: Maximum run time: n/a
+06/03/13 06:18:55 2152: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/03/13 06:33:24 2464: bitsplice.xls in directory bitsplice, time : 863.69s
+06/03/13 06:33:24 2464: SUM: Sucessfully timed tests: 1
+06/03/13 06:33:24 2464: SUM: Overall run time: 863.69s
+06/03/13 06:33:24 2464: SUM: Average run time: 863.69s
+06/03/13 06:33:24 2464: SUM: Minimum run time: 863.69s
+06/03/13 06:33:24 2464: SUM: Maximum run time: 863.69s
+06/03/13 06:33:24 2464: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/03/13 06:38:00 2912: bitsplice.xls in directory bitsplice failed!
+06/03/13 06:38:00 2912: SUM: Sucessfully timed tests: 0
+06/03/13 06:38:00 2912: SUM: Overall run time: 0.00s
+06/03/13 06:38:00 2912: SUM: Average run time: n/a
+06/03/13 06:38:00 2912: SUM: Minimum run time: n/a
+06/03/13 06:38:00 2912: SUM: Maximum run time: n/a
+06/03/13 06:38:00 2912: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/03/13 06:44:31 5840: bitsplice.xls in directory bitsplice, time : 379.33s
+06/03/13 06:44:31 5840: SUM: Sucessfully timed tests: 1
+06/03/13 06:44:31 5840: SUM: Overall run time: 379.33s
+06/03/13 06:44:31 5840: SUM: Average run time: 379.33s
+06/03/13 06:44:31 5840: SUM: Minimum run time: 379.33s
+06/03/13 06:44:31 5840: SUM: Maximum run time: 379.33s
+06/03/13 06:44:31 5840: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/03/13 06:52:14 2828: bitsplice.xls in directory bitsplice failed!
+06/03/13 06:52:14 2828: SUM: Sucessfully timed tests: 0
+06/03/13 06:52:14 2828: SUM: Overall run time: 0.00s
+06/03/13 06:52:14 2828: SUM: Average run time: n/a
+06/03/13 06:52:14 2828: SUM: Minimum run time: n/a
+06/03/13 06:52:14 2828: SUM: Maximum run time: n/a
+06/03/13 06:52:14 2828: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/03/13 17:38:15 3420: bitsplice.xls in directory bitsplice failed!
+06/03/13 17:38:15 3420: SUM: Sucessfully timed tests: 0
+06/03/13 17:38:15 3420: SUM: Overall run time: 0.00s
+06/03/13 17:38:15 3420: SUM: Average run time: n/a
+06/03/13 17:38:15 3420: SUM: Minimum run time: n/a
+06/03/13 17:38:15 3420: SUM: Maximum run time: n/a
+06/03/13 17:38:15 3420: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/03/13 17:39:47 896: bitsplice.xls in directory bitsplice failed!
+06/03/13 17:39:47 896: SUM: Sucessfully timed tests: 0
+06/03/13 17:39:47 896: SUM: Overall run time: 0.00s
+06/03/13 17:39:47 896: SUM: Average run time: n/a
+06/03/13 17:39:47 896: SUM: Minimum run time: n/a
+06/03/13 17:39:47 896: SUM: Maximum run time: n/a
+06/03/13 17:39:47 896: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/03/13 17:41:56 4768: bitsplice.xls in directory bitsplice failed!
+06/03/13 17:41:57 4768: SUM: Sucessfully timed tests: 0
+06/03/13 17:41:57 4768: SUM: Overall run time: 0.00s
+06/03/13 17:41:57 4768: SUM: Average run time: n/a
+06/03/13 17:41:57 4768: SUM: Minimum run time: n/a
+06/03/13 17:41:57 4768: SUM: Maximum run time: n/a
+06/03/13 17:41:57 4768: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/03/13 17:55:45 3396: bitsplice.xls in directory bitsplice, time : 788.42s
+06/03/13 17:55:45 3396: SUM: Sucessfully timed tests: 1
+06/03/13 17:55:45 3396: SUM: Overall run time: 788.42s
+06/03/13 17:55:45 3396: SUM: Average run time: 788.42s
+06/03/13 17:55:45 3396: SUM: Minimum run time: 788.42s
+06/03/13 17:55:45 3396: SUM: Maximum run time: 788.42s
+06/03/13 17:55:45 3396: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/03/13 18:02:14 5704: bitsplice.xls in directory bitsplice failed!
+06/03/13 18:02:14 5704: SUM: Sucessfully timed tests: 0
+06/03/13 18:02:14 5704: SUM: Overall run time: 0.00s
+06/03/13 18:02:14 5704: SUM: Average run time: n/a
+06/03/13 18:02:14 5704: SUM: Minimum run time: n/a
+06/03/13 18:02:14 5704: SUM: Maximum run time: n/a
+06/03/13 18:02:14 5704: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/03/13 18:05:40 5236: padio.xls in directory padio, time : 33.35s
+06/03/13 18:05:40 5236: SUM: Sucessfully timed tests: 1
+06/03/13 18:05:40 5236: SUM: Overall run time: 33.35s
+06/03/13 18:05:40 5236: SUM: Average run time: 33.35s
+06/03/13 18:05:40 5236: SUM: Minimum run time: 33.35s
+06/03/13 18:05:40 5236: SUM: Maximum run time: 33.35s
+06/03/13 18:05:40 5236: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/03/13 18:11:53 2176: padio.xls in directory padio/names, time : 132.26s
+06/03/13 18:11:53 2176: SUM: Sucessfully timed tests: 1
+06/03/13 18:11:53 2176: SUM: Overall run time: 132.26s
+06/03/13 18:11:53 2176: SUM: Average run time: 132.26s
+06/03/13 18:11:53 2176: SUM: Minimum run time: 132.26s
+06/03/13 18:11:53 2176: SUM: Maximum run time: 132.26s
+06/03/13 18:11:53 2176: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/03/14 06:15:20 688: padio.xls in directory padio/names, time : 43401.06s
+06/03/14 06:15:20 688: SUM: Sucessfully timed tests: 1
+06/03/14 06:15:20 688: SUM: Overall run time: 43401.06s
+06/03/14 06:15:20 688: SUM: Average run time: 43401.06s
+06/03/14 06:15:20 688: SUM: Minimum run time: 43401.06s
+06/03/14 06:15:20 688: SUM: Maximum run time: 43401.06s
+06/03/14 06:15:20 688: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/03/14 06:16:27 5024: padio.xls in directory padio, time : 57.48s
+06/03/14 06:16:27 5024: SUM: Sucessfully timed tests: 1
+06/03/14 06:16:27 5024: SUM: Overall run time: 57.48s
+06/03/14 06:16:27 5024: SUM: Average run time: 57.48s
+06/03/14 06:16:27 5024: SUM: Minimum run time: 57.48s
+06/03/14 06:16:27 5024: SUM: Maximum run time: 57.48s
+06/03/14 06:16:27 5024: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/03/14 06:17:22 996: padio.xls in directory padio, time : 35.11s
+06/03/14 06:17:58 996: padio.xls in directory padio/names, time : 35.33s
+06/03/14 06:18:36 996: padio.xls in directory padio/bus, time : 37.51s
+06/03/14 06:19:16 996: padio.xls in directory padio/given, time : 39.88s
+06/03/14 06:19:16 996: SUM: Sucessfully timed tests: 4
+06/03/14 06:19:16 996: SUM: Overall run time: 147.83s
+06/03/14 06:19:16 996: SUM: Average run time: 36.96s
+06/03/14 06:19:16 996: SUM: Minimum run time: 35.11s
+06/03/14 06:19:16 996: SUM: Maximum run time: 39.88s
+06/03/14 06:19:16 996: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/03/14 06:20:09 5784: bitsplice.xls in directory bitsplice failed!
+06/03/14 06:20:44 5784: bitsplice.xls in directory bitsplice/verilog, time : 34.38s
+06/03/14 06:21:23 5784: bitsplice.xls in directory bitsplice/vhdportsort, time : 38.35s
+06/03/14 06:21:58 5784: bitsplice.xls in directory bitsplice/verportsort failed!
+06/03/14 06:22:40 5784: bitsplice.xls in directory bitsplice/connport failed!
+06/03/14 06:23:10 5784: sigport.xls in directory sigport, time : 29.91s
+06/03/14 06:23:39 5784: sigport.xls in directory sigport/use, time : 27.84s
+06/03/14 06:24:08 5784: sigport.xls in directory sigport/verilog, time : 29.01s
+06/03/14 06:24:36 5784: highlow.xls in directory highlow, time : 27.48s
+06/03/14 06:25:04 5784: highlow.xls in directory highlow/verilog, time : 27.98s
+06/03/14 06:25:31 5784: highlow.xls in directory highlow/lownobus, time : 27.28s
+06/03/14 06:26:04 5784: mde_tests.xls in directory mde_tests/conn_nreset, time : 32.14s
+06/03/14 06:26:49 5784: mde_tests.xls in directory mde_tests/conn_nr_vhdl, time : 44.76s
+06/03/14 06:27:21 5784: constant.xls in directory constant failed!
+06/03/14 06:28:01 5784: constant.xls in directory constant/verilog failed!
+06/03/14 06:28:35 5784: io.xls in directory io, time : 33.83s
+06/03/14 06:29:07 5784: io.xls in directory io/verilog, time : 32.64s
+06/03/14 06:29:41 5784: generic.xls in directory generic, time : 32.98s
+06/03/14 06:30:13 5784: generic.xls in directory generic/verilog, time : 31.50s
+06/03/14 06:30:41 5784: generic.xls in directory generic/veriovhd, time : 28.11s
+06/03/14 06:31:08 5784: generic.xls in directory generic/nodefparam, time : 26.68s
+06/03/14 06:31:34 5784: genwidth.xls in directory genwidth, time : 25.53s
+06/03/14 06:32:00 5784: genwidth.xls in directory genwidth/verilog, time : 25.33s
+06/03/14 06:32:29 5784: nreset2.xls in directory nreset2, time : 29.45s
+06/03/14 06:32:56 5784: open.xls in directory open, time : 26.85s
+06/03/14 06:33:22 5784: open.xls in directory open/verilog, time : 24.96s
+06/03/14 06:33:47 5784: open.xls in directory open/verilog_ndmy, time : 24.94s
+06/03/14 06:34:28 5784: macro.xls in directory macro, time : 41.17s
+06/03/14 06:34:58 5784: macro.xls in directory macro/splice, time : 29.36s
+06/03/14 06:35:25 5784: verilog.xls in directory verilog, time : 26.74s
+06/03/14 06:35:56 5784: verilog.xls in directory verilog/vhdl, time : 30.35s
+06/03/14 06:36:25 5784: verilog.xls in directory verilog/mixed, time : 28.27s
+06/03/14 06:36:51 5784: verilog.xls in directory verilog/uamn failed!
+06/03/14 06:37:19 5784: verilog.xls in directory verilog/useconfname failed!
+06/03/14 06:37:48 5784: verilog.xls in directory verilog/leaforeg, time : 28.25s
+06/03/14 06:38:16 5784: verilog.xls in directory verilog/seloreg, time : 27.86s
+06/03/14 06:38:43 5784: verilog.xls in directory verilog/v2001, time : 26.98s
+06/03/14 06:39:10 5784: configuration.xls in directory configuration failed!
+06/03/14 06:39:47 5784: padio.xls in directory padio, time : 36.86s
+06/03/14 06:40:25 5784: padio.xls in directory padio/names, time : 38.07s
+06/03/14 06:41:02 5784: padio.xls in directory padio/bus, time : 36.43s
+06/03/14 06:41:39 5784: padio.xls in directory padio/given, time : 37.05s
+06/03/14 06:42:18 5784: padio2.xls in directory padio2, time : 38.53s
+06/03/14 06:42:45 5784: typecast.xls in directory typecast, time : 25.94s
+06/03/14 06:43:12 5784: typecast.xls in directory typecast/intsig failed!
+06/03/14 06:43:40 5784: typecast.xls in directory typecast/intbus failed!
+06/03/14 06:44:03 5784: init.xls in directory init, time : 22.37s
+06/03/14 06:44:30 5784: autoopen.xls in directory autoopen, time : 27.09s
+06/03/14 06:44:58 5784: autoopen.xls in directory autoopen/aaa, time : 28.09s
+06/03/14 06:45:25 5784: autoopen.xls in directory autoopen/simple, time : 26.72s
+06/03/14 06:45:52 5784: autoopen.xls in directory autoopen/noaopen, time : 26.31s
+06/03/14 06:46:27 5784: bugver.xls in directory bugver/ramd, time : 34.96s
+06/03/14 06:46:57 5784: bugver.xls in directory bugver/constbug, time : 29.51s
+06/03/14 06:47:25 5784: bugver.xls in directory bugver/20051004c, time : 27.94s
+06/03/14 06:47:53 5784: bugver.xls in directory bugver/20051014b, time : 28.29s
+06/03/14 06:48:22 5784: bugver.xls in directory bugver/20051018d, time : 28.63s
+06/03/14 06:48:51 5784: bugver.xls in directory bugver/20051121a, time : 28.87s
+06/03/14 06:49:21 5784: bugver.xls in directory bugver/20051221a, time : 29.64s
+06/03/14 06:49:49 5784: logic.xls in directory logic failed!
+06/03/14 06:50:18 5784: udc.xls in directory udc, time : 27.87s
+06/03/14 06:50:48 5784: intra.xls in directory intra, time : 29.59s
+06/03/14 07:30:41 5784: intra.xls in directory intra/instance, time : 2393.11s
+06/03/14 07:30:41 5784: WARNING: WARNING, Cannot open directory /cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/scd: No such file or directory
+06/03/14 07:30:42 5784: WARNING: ERROR: Directory </cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/scd> not found!
+06/03/14 07:32:08 5784: reg_shell.xls in directory reg_shell/scd, time : 85.98s
+06/03/14 07:32:08 5784: WARNING: WARNING, Cannot open directory /cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/mcd: No such file or directory
+06/03/14 07:32:08 5784: WARNING: ERROR: Directory </cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/mcd> not found!
+06/03/14 07:32:35 5784: reg_shell.xls in directory reg_shell/mcd, time : 26.11s
+06/03/14 07:32:35 5784: WARNING: WARNING, Cannot open directory /cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/no_clock_gating: No such file or directory
+06/03/14 07:32:35 5784: WARNING: ERROR: Directory </cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/no_clock_gating> not found!
+06/03/14 07:33:00 5784: reg_shell.xls in directory reg_shell/no_clock_gating, time : 24.99s
+06/03/14 07:33:00 5784: WARNING: WARNING, Cannot open directory /cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/read_pipeline: No such file or directory
+06/03/14 07:33:00 5784: WARNING: ERROR: Directory </cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/read_pipeline> not found!
+06/03/14 07:33:37 5784: reg_shell.xls in directory reg_shell/read_pipeline, time : 36.10s
+06/03/14 07:33:37 5784: SUM: Sucessfully timed tests: 55
+06/03/14 07:33:37 5784: SUM: Overall run time: 4075.94s
+06/03/14 07:33:37 5784: SUM: Average run time: 74.11s
+06/03/14 07:33:37 5784: SUM: Minimum run time: 22.37s
+06/03/14 07:33:37 5784: SUM: Maximum run time: 2393.11s
+06/03/14 07:33:37 5784: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin

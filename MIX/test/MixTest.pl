@@ -61,6 +61,7 @@ my $cmd_ext = ( $^O =~ m/ms-win/io ) ? '.bat' : '.sh';
 
 my $status = GetOptions( \%opts, qw (
 	update!
+	bak!
 	debug!
 	release!
 	purge!
@@ -261,6 +262,11 @@ my @tests = (
 	  'name' => "macro",
 	  'path' => "macro",
 	  'options' => "",
+	},
+	{
+	  'name' => "macro",
+	  'path' => "macro/splice",
+	  'options' => "-sheet HIER=HIER_SPLICE -sheet CONN=CONN_SPLICE",
 	},
 	{
 	  'name' => "verilog",
@@ -484,17 +490,17 @@ sub init() {
     if(defined( $opts{'sxc'})) {
       print " sxc,";
       $numTests += $numberOfTests;
-      push(@inType, "sxc");
+      push(@inType, 'sxc');
     }
     if(defined( $opts{'xls'})) {
       print " xls,";
       $numTests += $numberOfTests;
-      push(@inType, "xls");
+      push(@inType, 'xls');
     }
     if(defined( $opts{'csv'})) {
       print " csv,";
       $numTests += $numberOfTests;
-      push(@inType, "csv");
+      push(@inType, 'csv');
     }
 
     if ( scalar( @ARGV ) ) {
@@ -503,11 +509,10 @@ sub init() {
     }
 
     if(scalar(@inType)==0) {
-	print " ALL\n";
-	@inType = ("sxc", "xls", "csv");
-	$numTests = $numberOfTests * 3;
-    }
-    else {
+		print " ALL\n";
+		@inType = ('sxc', 'xls', 'csv');
+		$numTests = $numberOfTests * 3;
+    } else {
       print "\n";
     }
 
@@ -597,12 +602,16 @@ sub runMix($) {
 	}
 
     if( defined( $opts{'update'} ) ) {
-    	$options = "$options -nodelta";
+    	$options .= ' -nodelta';
+    	#!wig20060216: combine with bak
+    	if( defined( $opts{'bak'} ) ) {
+    		$options .= ' -bak';
+    	}
     }
     
     # Purge and strip out all extra sheets from intermediate data
     if( defined( $opts{'export'} ) ) {
-    	$options = "$options -strip -nodelta";
+    	$options .= ' -strip -nodelta';
     }
 
 	# Do not use built-in, but external command
