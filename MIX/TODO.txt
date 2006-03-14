@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.58 2006/01/18 14:03:35 wig Exp $
+# $Id: TODO.txt,v 1.59 2006/03/14 08:15:28 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -27,6 +27,84 @@ Code:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+
+>>title: 20060202a/Req: -import do not sort, but stick to input order
+
+Also read in comments from the HDL files into the ::descr column
+
+	Req: oberhoff
+	Prio: medium
+	Status: open
+
+>>title: 20060216a/Bug: Fix bad wiring for partial signale
+
+Example: bitsplice
+	cp_lcmd_2 in module inst_ae_e is 6bits internally, but
+	only 1 bit is required!
+
+	Seems only to happen for signals, which get constants assigned
+	somewhere.
+	
+	Req: wig
+	Prio: medium
+	Solution: done after major fix-up!
+	
+>>title: 20060214b/Bug: Remove false error "missing bits in port"
+
+06/02/14 16:49:19 WARNING: ERROR: Detected missing bits in spliced port scan_out_i!
+but port is used from 1..34 deliberatetely!
+
+	Req: mpit
+	Prio: medium
+	Solution:
+	
+>>title: 20060214a/Req: Allow [] in conn sheets/port maps
+
+accept signal   instance/port[a:b]=[c:d]
+
+	Req: mpit
+	Prio: low
+	Solution: check the regular expressions (preconvert !)
+
+>>title: 20060118a/Bug: MIX dies when -report portlist finds comments in macro definitions
+
+Hi Willi,
+
+> das sieht aber nach altem MIX aus?
+> ( mix 1.42 ist nur die Version vom Hauptprogramm ...) Probier das doch 
+> bitte nochmal mit "module load mix"  -> module list sollte mix/1.4 
+> ausgeben (der Default ist erst heute umgestellt worden.
+
+sehr interessant. Ok, ich hab die aktuelle Version mit 'module show' ermitteln wollen. Mit 'module list' bekomm ich dann Version 1.3!
+
+> Wie sehen die Zeilen vor/nach dem MD aus? Die Fehlermeldung kommt aus 
+> dem Report-Module, hast Du -report reglist oder -report portlist 
+> aufgerufen?
+
+Ja, ich hatte '-report portlist' an (obwohl ich nicht weiss für was, ich hab mir das Kommando vom Frank kopiert :))
+
+Hier der vollständige Aufruf:
+$ mix -nodelta -report portlist -conf 'macro.%my_inst%='mm  MM-pin-list.xls pinlist_generic_hier_verilog.xls
+
+Hier die umliegenden Zeilen:
+	MH	$n	mciprt				
+	MD	mm		clk_mm	std_ulogic		
+#	MD	mm		clk_mm	std_ulogic_vector	P_MCI_TAGID_WIDTH-1	0
+	MD	mm		clk_mm	std_ulogic_vector	2	                  0
+
+Hab gerade noch mit mix/1.4 ausprobiert, aber das Problem bleibt. Wenn ich den -report switch weg lasse geht es allerdings!
+
+Gruß und Danke!
+Daniel
+
+-- 
+Daniel Pörsch                     daniel.poersch@micronas.com
+Design Engineer                   Tel: +49 89 - 54845 7303
+Semi Custom Design Center         Fax: +49 89 - 54845 7900
+
+	Req: daniel
+	Prio: low
+	Status: open
 
 >>title: 20060110a/RFE: change the check.hdlout.mode to support Verilog better
 

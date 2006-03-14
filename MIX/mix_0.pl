@@ -4,21 +4,12 @@
 #! -- # -*- perl -*- -w
 eval 'exec ${PERL:-`[ ! -d "$HOME/bin/perl" -a -x "$HOME/bin/perl" ] && echo "$HOME/bin/perl" || { [ -x /usr/bin/perl ] && echo /usr/bin/perl || echo /usr/local/bin/perl ; } `} -x -S $0 ${1+"$@"} ;'
 if 0; # dynamic perl startup; suppress preceding line in perl
-
-use strict;
-use warnings;
-use Cwd;
-use File::Basename;
-use Getopt::Long qw(GetOptions);
-use Pod::Text;
-# use diagnostics; # -> will be set by -debug option
-# use English;       # -> not need this, just consumes performance
+#line 8
 
 # +-----------------------------------------------------------------------+
 # |                                                                       |
-# |   Copyright Micronas GmbH, Inc. 2002.                                 |
+# |   Copyright Micronas GmbH, Munich 2002/2003/2004/2005/2006            |
 # |     All Rights Reserved.                                              |
-# |                                                                       |
 # |                                                                       |
 # | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH          |
 # | The copyright notice above does not evidence any actual or intended   |
@@ -27,13 +18,13 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.43 2005/12/09 13:15:47 lutscher Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.44 2006/03/14 08:15:27 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.43 $                                      |
-# | Mod.Date     : $Date: 2005/12/09 13:15:47 $                           |
-# | Author       : $Author: lutscher $                                      |
+# | Version      : $Revision: 1.44 $                                      |
+# | Mod.Date     : $Date: 2006/03/14 08:15:27 $                           |
+# | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
 # | Email        : $Email: wilfried.gaensheimer@micronas.com$             |
@@ -47,6 +38,9 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.44  2006/03/14 08:15:27  wig
+# | Change to Log::Log4perl and replaces %EH by MixUtils::Globals.pm
+# |
 # | Revision 1.43  2005/12/09 13:15:47  lutscher
 # | changed parse_i2c_init() to parse_register_master() in package Reg.pm
 # |
@@ -55,137 +49,9 @@ use Pod::Text;
 # |
 # | Revision 1.41  2005/11/21 14:51:16  mathias
 # | correct highlighting in Emacs
-# |
-# | Revision 1.40  2005/11/09 13:38:30  lutscher
-# | added option domain
-# |
-# | Revision 1.39  2005/11/02 13:28:05  wig
-# | Got -help to return some results
-# |
-# | Revision 1.38  2005/10/19 15:40:06  wig
-# | Fixed -mixed.xls read problem on UNIX and reworked ::descr split
-# |
-# | Revision 1.37  2005/09/14 14:40:43  wig
-# | Startet report module (portlist)
-# |
-# | Revision 1.36  2005/07/13 15:41:21  wig
-# | Remove pid from log output
-# |
-# | Revision 1.35  2005/06/23 13:14:42  wig
-# | Update repository, not yet verified
-# |
-# | Revision 1.34  2005/04/14 06:53:00  wig
-# | Updates: fixed import errors and adjusted I2C parser
-# |                                                    |
-# | Revision 1.33  2004/11/10 09:46:20  wig                               |
-# | added verilog includes                                                |
 # |                                                                       |
-# | Revision 1.32  2004/06/16 08:36:45  wig                               |
-# | Removed comments.                                                     |
+# | ........                                                              |
 # |                                                                       |
-# | Revision 1.30  2004/04/14 11:08:55  wig
-# | minor code clearing
-# |
-# | Revision 1.29  2004/04/07 15:11:40  wig
-# | Modified Files:
-# | 	mix_0.pl
-# |
-# | Revision 1.28  2004/03/25 11:21:11  wig
-# | Added -verifyentity option
-# |
-# | Revision 1.26  2003/12/22 08:22:44  wig
-# | Added output.generate.xinout feature
-# |
-# | Revision 1.25  2003/12/18 16:48:14  wig
-# | removed init_ole
-# |
-# | Revision 1.24  2003/12/10 15:00:48  abauer
-# | *** empty log message ***
-# |
-# | Revision 1.23  2003/12/10 10:17:32  abauer
-# | *** empty log message ***
-# |
-# | Revision 1.22  2003/12/04 14:39:20  abauer
-# | *** empty log message ***
-# |
-# | Revision 1.21  2003/12/04 14:39:10  abauer
-# | *** empty log message ***
-# |                                                                       |
-# | Revision 1.20  2003/11/27 13:18:33  abauer                            |
-# | *** empty log message ***                                             |
-# |                                                                       |
-# | Revision 1.19  2003/11/27 10:24:29  abauer                            |
-# | added i2c a_clk spreadsheet                                           |
-# |                                                                       |
-# | Revision 1.18  2003/11/27 09:08:25  abauer                            |
-# | moved sheet handling into extra package                               |
-# | added StarOffice Spreadsheet reader/writer                            |
-# | added comma seperated value reader/writer                             |
-# | removed OLE sheet handling                                            |
-# | added native perl Excel-sheet reader                                  |
-# | converted test cases                                                  |
-# | moved documentation mix_doc -> doc                                    |
-# |                                                                       |
-# | Revision 1.17  2003/10/23 11:59:37  abauer                            |
-# | .                                                                     |
-# |                                                                       |
-# | Revision 1.16  2003/10/14 10:18:41  wig                               |
-# | Added -bak command line option                                        |
-# | Added ::descr to port maps (just a try)                               |
-# |                                                                       |
-# | Revision 1.14  2003/07/29 15:48:03  wig                               |
-# | Lots of tiny issued fixed:                                            |
-# | - Verilog constants                                                   |
-# | - IO port                                                             |
-# | - reconnect                                                           |
-# |                                                                       |
-# | Revision 1.13  2003/07/09 07:52:43  wig                               |
-# | Adding first version of Verilog support.                              |
-# | Fixing lots of tiny issues (see TODO).                                |
-# | Adding first release of documentation.                                |
-# |                                                                       |
-# | Revision 1.12  2003/06/04 15:52:42  wig                               |
-# | intermediate release, before releasing alpha IOParser                 |
-# |                                                                       |
-# | Revision 1.11  2003/04/29 08:27:02  wig                               |
-# | Minor issue: Revision ID in mix_0.pl                                  |
-# |                                                                       |
-# | Revision 1.10  2003/04/29 07:22:35  wig                               |
-# | Fixed %OPEN% bit/bus problem.                                         |
-# |                                                                       |
-# | Revision 1.9  2003/04/01 14:27:58  wig                                |
-# | Added IN/OUT Top Port Generation                                      |
-# |                                                                       |
-# | Revision 1.8  2003/03/21 17:00:08  wig                                |
-# | Preliminary working version for bus splices                           |
-# |                                                                       |
-# | Revision 1.7  2003/03/14 14:51:58  wig                                |
-# | Added -delta mode for backend.                                        |
-# |                                                                       |
-# | Revision 1.6  2003/03/13 14:05:04  wig                                |
-# | Releasing major reworked version                                      |
-# | Now handles bus splices much better                                   |
-# |                                                                       |
-# | Revision 1.5  2003/02/28 15:04:14  wig                                |
-# | Intermediate version with lots of fixes.                              |
-# | Signal issue still open.                                              |
-# | Saved because of pending holiday.                                     |
-# |                                                                       |
-# | Revision 1.4  2003/02/21 16:05:27  wig                                |
-# | Added options:                                                        |
-# | -conf                                                                 |
-# | -sheet                                                                |
-# | -listconf                                                             |
-# | see TODO.txt, 20030220/21                                             |
-# |                                                                       |
-# | Revision 1.3  2003/02/20 15:05:42  wig                                |
-# | Extended TODO list                                                    |
-# |                                                                       |
-# | Revision 1.2  2003/02/04 07:28:44  wig                                |
-# | Fixed header of modules                                               |
-# |                                                                       |
-# | Revision 1.1.1.1  2003/02/03 12:56:44  wig                            |
-# | Importing pilot release of MIX tools                                  |
 # |                                                                       |
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -196,8 +62,16 @@ use Pod::Text;
 # Other required packages
 #******************************************************************************
 
-use FindBin;
+# regular perl modules
+use strict;
+use warnings;
+use Cwd;
+use File::Basename;
+use Getopt::Long qw(GetOptions);
+use Pod::Text;
+# use diagnostics; # -> will be set by -debug option
 
+use FindBin;
 use lib "$FindBin::Bin/..";
 use lib "$FindBin::Bin/../lib/perl";
 use lib "$FindBin::Bin";
@@ -205,15 +79,29 @@ use lib "$FindBin::Bin/lib/perl";
 use lib getcwd() . "/lib/perl";
 use lib getcwd() . "/../lib/perl";
 
-use Log::Agent;
-use Log::Agent::Priorities qw(:LEVELS);
-use Log::Agent::Driver::File;
+#!wig20060223: logging made easy -> replacing Log::Agent!
+use Log::Log4perl qw(:easy get_logger :levels);
 
-use Micronas::MixUtils qw( mix_init %EH mix_getopt_header);
-use Micronas::MixUtils::IO qw(init_ole mix_utils_open_input write_sum);
+
+# log4perl.logger                    = DEBUG, FileApp, ScreenApp
+
+#    log4perl.appender.FileApp          = Log::Log4perl::Appender::File
+#    log4perl.appender.FileApp.filename = test.log
+#    log4perl.appender.FileApp.layout   = PatternLayout
+#    log4perl.appender.FileApp.layout.ConversionPattern = %d> %m%n
+
+#    log4perl.appender.ScreenApp          = Log::Log4perl::Appender::Screen
+#    log4perl.appender.ScreenApp.stderr   = 0
+#    log4perl.appender.ScreenApp.layout   = PatternLayout
+#    log4perl.appender.ScreenApp.layout.ConversionPattern = %d> %m%n
+
+# our own modules
+use Micronas::MixUtils qw( $eh mix_init mix_getopt_header );
+use Micronas::MixUtils::IO qw(init_ole mix_utils_open_input write_sum );
+use Micronas::MixUtils::Globals;
 use Micronas::MixParser;
 use Micronas::MixIOParser;
-# use Micronas::MixI2CParser;
+# use Micronas::MixI2CParser; # replaced by Micronas::Reg
 use Micronas::Reg;
 use Micronas::MixWriter;
 use Micronas::MixReport;
@@ -222,33 +110,44 @@ use Micronas::MixReport;
 ##############################################################################
 # Prototypes (generated by "grep ^sub PROG | sed -e 's/$/;/'")
 
-#t.b.d...
-
 #******************************************************************************
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.43 $'; # RCS Id '
+$::VERSION = '$Revision: 1.44 $'; # RCS Id '
 $::VERSION =~ s,\$,,go;
 
-logconfig(
-        -driver => Log::Agent::Driver::File->make(
-        # -prefix      => $0,
-        -showpid       => 0,
-        -duperr        => 1,   #Send errors to OUTPUT and ERROR channel ...
-        -channels    => {
-        # 'error'  => "$0.err",
-            'output' => $FindBin::Script . ".out",
-            'debug'  => $FindBin::Script . ".dbg",
-            },
-        )
-);
+#
+# Global access to logging and environment
+#
+if ( -r $FindBin::Bin . '/mixlog.conf' ) {
+	Log::Log4perl->init( $FindBin::Bin . '/mixlog.conf' );
+}
+# Local overload:
+if ( -r getcwd() . '/mixlog.conf' ) {
+	Log::Log4perl->init( getcwd() . '/mixlog.conf' );
+}
+
+my $logger = get_logger('MIX'); # Start with MIX namespace
 
 #
-# Step 0: Init $0
+# Step 0: Init the global $eh (not visible here, stays in MixUtils namespace)
 #
-mix_init();               # Presets ....
+mix_init();               # Presets ...
 
+=head1 DEBUG
+# Testing the loggers:
+$logger->all('__A_TAG', 'We want to ALL');
+$logger->fatal('__F_TAG', 'This tests fatal');
+
+$logger->error('__E_TAG', 'This is an error message level');
+$logger->warn('__W_TAG', 'And an warn level message');
+$logger->info('__I_TAG', 'info is sufficient');
+$logger->debug('__D_TAG', 'debugging made easy');
+
+$logger->fatal('no tag for this fatal');
+
+=cut
 
 ##############################################################################
 #
@@ -381,7 +280,8 @@ mix_getopt_header( qw(
     ));
 
 if ( $#ARGV < 0 ) { # Need  at least one sheet!!
-    logdie("ERROR: No input file specified!\n");
+    $logger->fatal('__F_MISSARG', 'No input file specified!');
+    exit 1;
 }
 
 ##############################################################################
@@ -389,12 +289,6 @@ if ( $#ARGV < 0 ) { # Need  at least one sheet!!
 # Step 2: Open input files one by one and retrieve the tables
 # Do a first simple conversion from Excel arrays into array of hashes
 #
-
-#!wig20031217: now in write_xls (only used there) 
-# if( ( $^O=~ m/MSWin/ && join( " ", @ARGV)=~ m/\.xls/) || $EH{'format'}{'out'}=~ m/^xls$/ ) {
-#    init_ole();
-#}
-
 my( $r_connin, $r_hierin, $r_ioin, $r_i2cin);
 ( $r_connin, $r_hierin, $r_ioin, $r_i2cin ) = mix_utils_open_input( @ARGV ); #Fetches HIER, CONN and register-master sheet(s)
 
@@ -405,7 +299,6 @@ my( $r_connin, $r_hierin, $r_ioin, $r_i2cin);
 # 
 my $r_connmacros = parse_conn_macros( $r_connin );
 my $r_conngen = parse_conn_gen( $r_connin );
-# my $r_hiergen = parse_hier_gen( $r_hierin );
 my $r_hiergen = parse_conn_gen( $r_hierin );
 
 ##############################################################################
@@ -450,11 +343,6 @@ parse_mac();
 add_portsig();
 
 #
-# Replace %MAC% before output
-#
-#!do before signal expansion ..... parse_mac();
-
-#
 # Get rid of some "artefacts", again (add_portsig and add_sign2hier might have
 # added something ....
 #
@@ -476,9 +364,6 @@ add_sign2hier();
 #
 generate_entities();
 
-#TODO: write_report(); # Dump list of entities, signals, ...
-
-#
 ##############################################################################
 #
 # Step LAST: Dump intermediate data

@@ -4,6 +4,7 @@
 #! -- # -*- perl -*- -w
 eval 'exec ${PERL:-`[ ! -d "$HOME/bin/perl" -a -x "$HOME/bin/perl" ] && echo "$HOME/bin/perl" || { [ -x /usr/bin/perl ] && echo /usr/bin/perl || echo /usr/local/bin/perl ; } `} -x -S $0 ${1+"$@"} ;'
 if 0; # dynamic perl startup; suppress preceding line in perl
+#line 8
 
 use strict;
 use warnings;
@@ -27,12 +28,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: vgch_join.pl,v 1.5 2005/11/29 09:20:31 wig Exp $  |
+# | Id           : $Id: vgch_join.pl,v 1.6 2006/03/14 08:15:27 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.5 $                                      |
-# | Mod.Date     : $Date: 2005/11/29 09:20:31 $                           |
+# | Version      : $Revision: 1.6 $                                      |
+# | Mod.Date     : $Date: 2006/03/14 08:15:27 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -47,6 +48,9 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: vgch_join.pl,v $
+# | Revision 1.6  2006/03/14 08:15:27  wig
+# | Change to Log::Log4perl and replaces %EH by MixUtils::Globals.pm
+# |
 # | Revision 1.5  2005/11/29 09:20:31  wig
 # | Support mulitple domain per input sheet.
 # |
@@ -77,11 +81,9 @@ use lib "$FindBin::Bin/lib/perl";
 use lib getcwd() . "/lib/perl";
 use lib getcwd() . "/../lib/perl";
 
-use Log::Agent;
-use Log::Agent::Priorities qw(:LEVELS);
-use Log::Agent::Driver::File;
+use Log::Log4perl qw(:easy get_logger :levels);
 
-use Micronas::MixUtils qw( mix_init %EH %OPTVAL mix_getopt_header
+use Micronas::MixUtils qw( mix_init $eh %OPTVAL mix_getopt_header
 	convert_in db2array replace_mac);
 use Micronas::MixUtils::IO qw(init_ole open_infile write_sum
 	write_outfile);
@@ -108,21 +110,23 @@ sub base_interface ($);
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.5 $'; # RCS Id
+$::VERSION = '$Revision: 1.6 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
-logconfig(
-        -driver => Log::Agent::Driver::File->make(
-        # -prefix      => $0,
-        -showpid       => 0,
-        -duperr        => 1,   #Send errors to OUTPUT and ERROR channel ...
-        -channels    => {
-        # 'error'  => "$0.err",
-            'output' => $FindBin::Script . ".out",
-            'debug'  => $FindBin::Script . ".dbg",
-            },
-        )
-);
+# Our local variables
+
+#
+# Global access to logging and environment
+#
+if ( -r $FindBin::Bin . '/joinlog.conf' ) {
+	Log::Log4perl->init( $FindBin::Bin . '/mixjoin.conf' );
+}
+# Local overload:
+if ( -r getcwd() . '/joinlog.conf' ) {
+	Log::Log4perl->init( getcwd() . '/joinlog.conf' );
+}
+
+my $logger = get_logger( 'MIX_JOIN' );
 
 #
 # Step 0: Init $0
@@ -145,9 +149,9 @@ Available options for vgch_join.pl
 
 -dir DIRECTORY            write output data to DIRECTORY (default: cwd())
 -out FILENAME				print results into FILENAME
--conf key.key.key=value   Overwrite $EH{key}{key}{key} with value
+-conf key.key.key=value   Overwrite $EH->{key}{key}{key} with value
 -listconf                 Print out all available/predefined configurations options
--sheet SHEET=MATCH        SHEET can be one of "hier", "conn", "vi2c"
+-sheet SHEET_RE			  Alternative: select all sheets matching SHEET_RE
 -delta                    Enable delta mode: Print diffs instead of full files.
                                   Maybe we can set a return value of 1 if no changes occured!
 -strip                    Remove extra worksheets from intermediate output
@@ -165,11 +169,13 @@ my $top = '';
 $xls{'top'} = '.*';
 $xls{'top_sheet'} = "Sheet1";
 
+# TODO : promote that settings to some other place ...
 $xls{'others'} = 'peri.*'; # Take the default.xls config key
-$EH{'default'}{'xls'} = '.*';
-$EH{'macro'}{'%UNDEF_1%'} = '';
+$eh->set( 'default.xls', '.*' ); # Read in all sheets ....
+$eh->set( 'macro.%UNDEF_1%', '' );
 # Remove NL and CR
-$EH{'format'}{'csv'}{'style'} = 'stripnl,doublequote,autoquote,maxwidth';
+$eh->set( 'format.csv.style', 'stripnl,doublequote,autoquote,maxwidth' );
+$eh->set( 'output.input.ignore.comments', '::ignany' ); # Skip all lines with s.th. \S in ::ign
 
 # Add your options here ....
 mix_getopt_header( qw(
@@ -186,7 +192,8 @@ mix_getopt_header( qw(
     ));
 
 if ( scalar( @ARGV ) < 1 ) { # Need  at least one sheet!!
-    logdie("ERROR: No input file specified!\n");
+    $logger->fatal('__F_INPUT_MISS', "\tNo input file specified!\n");
+    die();
 }
 
 ##############################################################################
@@ -209,7 +216,6 @@ if ( $OPTVAL{'top'} ) {
 	$top = $ARGV[0];
 }
 
-# Put everything on one large array ...
 # GLOBAL variables:
 my @all = ();
 my $sub_order = '';
@@ -223,17 +229,16 @@ my $ignore_flag = 0; # Set if the Ignore line seen once ..
 #
 for my $files ( @ARGV ) {
 	# Open all files and retrieve sheet(s)
-	my $sel = $EH{'default'}{'xls'};
+	my $sel = $eh->get( 'default.xls' );
 	my $type = 'default';
-
 	
 	if ( $files eq $top ) {
 		$sel = $xls{'top'};
 		$type = 'join';
 	}
 	my $conn = open_infile( $files,
-			$sel, # Set to the appropriate list ....
-			$EH{$type}{'req'} . ',hash' );
+			$sel, # Select sheets ... default: .* (all)
+			$eh->get( $type . '.req' ) . ',hash' );
 		
 	# Convert to hashes ...
 	for my $sheetname ( keys %$conn ) {
@@ -254,9 +259,23 @@ for my $files ( @ARGV ) {
 	# If the sheets matches a client from the top, print out ...
 	for my $s ( keys( %{$sheets{$files}} )) {
 		
-		my @topclient = get_client( $s, $sub_key );
+		# If $optctl{'sheet'} -> try this
+		my @topclient = ();
+		if ( scalar ( @{$OPTVAL{'sheet'}} ) ) {
+			# Is this sheetname matched:
+			for my $ms ( @{$OPTVAL{'sheet'}} ) {
+				if ( $s =~ m/^$ms$/ ) {
+					# Hit!
+					@topclient = ( -1 );
+					last;
+				}
+			}
+			next unless ( scalar( @topclient ) );
+		} else {
+			@topclient = get_client( $s, $sub_key );
+		}
 		if ( scalar( @topclient ) < 1 ) {
-			logwarn( "Warning: sheet $s from file $files does not match any client!" );
+			$logger->warn( '__W_SHEET_EXTRA', "\tSheet name $s from file $files does not match any client!" );
 			push( @all, { '::ign' => '# # # =:=:=:=> Sheet: ' . $s .
 				' from file ' . $files . ' does not match any client !!!' } );
 			next;
@@ -264,13 +283,22 @@ for my $files ( @ARGV ) {
 
 		# @topclient -> convert into client list
 		for my $thisclient ( @topclient ) {
-			$sub_addr->[$thisclient]{'used'}++; # Increase it ...
-		
-			my $client	= $sub_addr->[$thisclient];
-			my $def 	= $client->{'definition'};
-			
-			logwarn( "Info: apply sheet $s from file $files to client " .
+			my $client;
+			my $def;
+			if ( $thisclient != -1 ) {
+				$sub_addr->[$thisclient]{'used'}++; # Increase it ...
+				$client	= $sub_addr->[$thisclient];
+				$def 	= $client->{'definition'};
+				$logger->info( '__I_APPLY_SHEET', "\tApply sheet $s from file $files to client " .
 					$client->{'client'} . '(' . $def . ')' );
+			} else {
+				$client = $sub_addr->[0]; # Has to be defined anyway!!
+				$def	= $client->{'definition'};
+				# Create dummy client, will be handeled by fix_sheet
+				$logger->info( '__I_SHEET_PROCESS', "\tProcess sheet $s from file $files" );
+			}
+			
+
 			push( @all, { '::ign' => '# # # =:=:=:=> Sheet: ' . $s . ' from file '
 				. $files .
 				' for definition of ' . $client->{'client'} . '(' . $def . ')' } );
@@ -283,9 +311,10 @@ for my $files ( @ARGV ) {
 				'MIX mapped ' . $files . ':' . $s; 
 			
 		}
-		delete( $sheets{$files}{$s} );
+		delete( $sheets{$files}{$s} ); # Get rid of this sheet now
 	}
-	Micronas::MixUtils::IO::mix_utils_io_del_abook (); # Remove cached data ....
+	Micronas::MixUtils::IO::mix_utils_io_del_abook ();	# Remove cached data ....
+	Micronas::MixUtils::IO::mix_utils_io_create_path();		# create directories
 }
 
 ##############################################################################
@@ -301,7 +330,7 @@ for my $files ( @ARGV ) {
 for my $k ( @$sub_addr ) {
 	if ( not exists $k->{'used'} or $k->{'used'} < 1 ) {
 		# Never got it
-		logwarn("WARNING: did not find registermaster for $k->{'client'}");
+		$logger->warn('__W_MASTER_MISSING', "\tDid not find registermaster for $k->{'client'}");
 	}
 }
 
@@ -317,7 +346,7 @@ if( $OPTVAL{'listtop'} ) {
 	write_outfile( $outname , "VGCH_TOP", $end_table );
 } else {
 	# Remove the sheet seperator head ...
-	$EH{'format'}{'csv'}{'sheetsep'} = '';
+	$eh->set( 'format.csv.sheetsep', '' );
 }
 
 $end_table = db2array( \@all, 'default', '' );
@@ -340,7 +369,7 @@ sub replace_macros ($) {
 	for my $i ( @$dref ) {
 		for my $ii ( @$i ) {
 			if ( defined ( $ii ) ) {
-				$ii = replace_mac( $ii, $EH{'macro'} );
+				$ii = replace_mac( $ii, $eh->get( 'macro' ) );
 			}
 		}
 	}
@@ -433,8 +462,8 @@ sub base_interface ($) {
 		}
 	} else {
 		# Print warning:
-		logwarn("ERROR: Cannot locate sub address for interface $interface");
-		$EH{'sum'}{'errors'}++;
+		$logger->error('__E_SUB_ADDRESS',
+			"\tCannot locate sub address for interface $interface");
 		push( @bases, '__E_MISS_INTERFACEBASE' );
 	}
 	
@@ -453,14 +482,14 @@ sub get_sheet ($) {
 	for my $f ( keys %sheets ) {
 		for my $s ( keys %{$sheets{$f}} ) {
 			if ( $s =~ m/$client/i ) {
-				logsay( "INFO: found sheet $s in file $f for client $client" );
+				$logger->info( '__I_SHEET_MATCH', "\tFound sheet $s in file $f for client $client" );
 				return ($f, $s);
 			}
 			# add the sheet name as comment to ::ign
 
 		}
 	}
-	logwarn("WARNING: Cannot allocate matching sheet for client $client!");
+	$logger->warn('__W_SHEET_MATCH', "\tCannot allocate matching sheet for client $client!");
 } # End of get_sheet
 
 #
