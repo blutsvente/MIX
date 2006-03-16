@@ -1,0 +1,15 @@
+# Testpurpose: check overload from command line
+#   -conf and verify appropriate order of configuration
+#   evaluation.
+#
+# This testcase equals it's parent, but one macro
+#  gets overloaded from cmdline and one additional set.
+#
+
+macro.%VHDL_USE_ENTY%
+	-> will stick to value given in ExCEL sheet
+
+macro.%HDDL_HOOK_ARCH_BODY%
+	-> will show up in all VHD files
+
+MIXCFG	macro.%ADD_MY_OWN%	overloading my own macro

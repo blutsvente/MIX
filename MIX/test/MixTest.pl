@@ -319,6 +319,12 @@ my @tests = (
 	  'path' => "configuration",
 	  'options' => "",
 	},
+	{	# Repeat configuration, but set two macros from cmd line
+		# Added by wig 20060316
+		'name' => "configuration",
+		'path' => "configuration/cmdline",
+		'options' => "-conf 'macro.%VHDL_USE_ENTY%=Overwritten vhdl_enty from cmdline' -conf macro.%VHDL_HOOK_ARCH_BODY%='Use macro vhdl_hook_arch_body' -conf macro.%ADD_MY_OWN%='overloading my own macro'",
+	},
 	{
 	  'name' => "padio",
 	  'path' => "padio",
