@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.37 $                                          |
-# | Author:     $Author: lutscher $                                         |
-# | Date:       $Date: 2006/03/14 14:18:13 $                              |
+# | Revision:   $Revision: 1.38 $                                          |
+# | Author:     $Author: wig $                                         |
+# | Date:       $Date: 2006/03/16 14:10:34 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.38  2006/03/16 14:10:34  wig
+# | Fixed messages and [cut] problem 20060315a
+# |
 # | Revision 1.37  2006/03/14 14:18:13  lutscher
 # | fixed bug
 # |
@@ -108,11 +111,11 @@ sub mix_utils_io_check_path ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.37 2006/03/14 14:18:13 lutscher Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.38 2006/03/16 14:10:34 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.37 $'; #'  
+my $thisrevision    =      '$Revision: 1.38 $'; #'  
 
-# Revision:   $Revision: 1.37 $
+# Revision:   $Revision: 1.38 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -313,17 +316,17 @@ sub mix_sheet_conf($$) {
     my $s = shift;        # Source
 
     ROW: for my $i ( @$rconf ) {
-	for my $j ( 0..(scalar ( @$i ) - 3 ) ) {
-	    next unless ( $i->[$j] ); # Skip empty cells in this row
-	    if ( $i->[$j] eq "MIXCFG" ) { #Try to read $ii+1 and $ii+2
-		my $key = $i->[$j+1] || '__E_ERROR.EXCEL_CONF.KEY';
-		my $val = $i->[$j+2] || '__E_ERROR.EXCEL_CONF.VALUE';
-		_mix_apply_conf( $key, $val, "EXCEL:$s" ); #Apply key/value
-		next ROW;
-	    } else { # If row does not have MIXCFG in first cell, skip it.
-		next ROW;
-	    }
-	}
+		for my $j ( 0..(scalar ( @$i ) - 3 ) ) {
+	    	next unless ( $i->[$j] ); # Skip empty cells in this row
+	    	if ( $i->[$j] eq "MIXCFG" ) { #Try to read $ii+1 and $ii+2
+				my $key = $i->[$j+1] || '__E_EXCEL.CONF.KEY';
+				my $val = $i->[$j+2] || '__E_EXCEL.CONF.VALUE';
+				_mix_apply_conf( $key, $val, "EXCEL:$s" ); #Apply key/value
+				next ROW;
+	    	} else { # If row does not have MIXCFG in first cell, skip it.
+				next ROW;
+	    	}
+		}
     }
 }
 
@@ -356,19 +359,9 @@ sub _mix_apply_conf($$$) {
 	    $logger->warn("__W_CONF_KEY", "\tIllegal key or value given in $source: key:$key val:$value");
 	    return undef;
     }
-    my $loga ='$logger->info( "__I_CONF_ADD", "\tAdding ' . $source . ' configuration ' . $key . "=" . $value . '");';
-    my $logo ='$logger->info( "__I_CONF_OVL", "\tOverloading ' . $source . 'configuration ' . $key . "=" . $value . '");';
-    $key =~ s,[^.%\w],,g; # Remove all characters not being ., % and \w ...
-    # $key =~ s/\./'}{'/og;
-    # $key = '{\'' . $key . '\'}';
-
-    # TODO : Prevent overloading of non-scalar values!!
-    my $e = 'if ( defined( $eh->get( ' . $key . ' ) ) ) { $eh->set( ' . $key . ' , \'' . $value . '\' ); $logo }
-    			else { \$eh->set( ' . $key . ' , \'' . $value . '\' ); $loga }';
-    unless ( eval $e ) {
-	    if ( $@ ) { # S.th. went wrong??
-	        $logger->warn("__E_CONF_EVAL", "\tEval of configuration overload from $source $key=$value failed: $@");
-	    }
+    
+    unless( defined( $eh->set( $key, $value ) ) ) {
+    	$logger->error('__E_CONF_KEY', "\tApplying key $key from source $source failed" );
     }
 }
 
@@ -711,6 +704,7 @@ sub open_xls($$$){
     my @all = ();
     my %all = ();
 
+	my $xls_warns = $eh->get( 'check.keywords.xlscell' ) || 0; #
     foreach my $sname ( @sheets ) {
 
 		$isheet = $oBook->{Worksheet}[$sname];
@@ -720,10 +714,15 @@ sub open_xls($$$){
 			for(my $x =$isheet->{MinCol}; defined $isheet->{MaxCol} && $x <= $isheet->{MaxCol}; $x++) {
 				$cell = $isheet->{Cells}[$y][$x];
 				if(defined $cell) {
+					# Check Value: if cell contains #VALUE!, #NAME? or #NUM! alert user ...
+					if ( $xls_warns and $cell->Value =~ m/$xls_warns/ ) {
+						$logger->error( '__E_XLS_REFS', "\tXLS cell $x/$y (sheet " .
+								$isheet->{Name} . ") bad reference: " . $cell->Value );
+					}
 					push(@line, $cell->Value);  # $cell->Value || $cell->{Val} ?
 				}
 				else {
-					push(@line, "");
+					push(@line, '');
 				}
 			}
 	    	push(@sheet, [@line]);

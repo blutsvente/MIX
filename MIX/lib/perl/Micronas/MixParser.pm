@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.66 $                                         |
+# | Revision:   $Revision: 1.67 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/03/14 08:10:34 $                              |
+# | Date:       $Date: 2006/03/16 14:10:34 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.66 2006/03/14 08:10:34 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.67 2006/03/16 14:10:34 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.67  2006/03/16 14:10:34  wig
+# | Fixed messages and [cut] problem 20060315a
+# |
 # | Revision 1.66  2006/03/14 08:10:34  wig
 # | No changes, got deleted accidently
 # |
@@ -127,9 +130,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.66 2006/03/14 08:10:34 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.67 2006/03/16 14:10:34 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.66 $';
+my $thisrevision =	'$Revision: 1.67 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -162,7 +165,7 @@ sub parse_conn_macros ($) {
     my $rin = shift;
 
     unless( defined( $rin ) and $rin ) {
-        $logger->fatal( '__F_PARSER_CONN_MACRO',  "Undefined or empty input argument for parse_conn_macros!" );
+        $logger->fatal( '__F_PARSER_CONN_MACRO',  "\tUndefined or empty input argument for parse_conn_macros!" );
         die;
     }
     my $mflag = 0;
@@ -230,7 +233,7 @@ sub convert_conn_macros ($) {
     my $r_m = shift;
 
     unless( defined $r_m ) {
-        $logger->fatal( '__F_PARSER_CONN_MACROS', "Bad input argument for check_conn_macros\n");
+        $logger->fatal( '__F_PARSER_CONN_MACROS', "\tBad input argument for check_conn_macros\n");
         die;
     }
 
@@ -324,17 +327,17 @@ sub check_conn_macros ($) {
 
     my @m = ();
     unless( defined $r_m ) {
-        $logger->fatal( '__F_PARSER_CONN_MACROS', "Bad input argument for check_conn_macros\n");
+        $logger->fatal( '__F_PARSER_CONN_MACROS', "\tBad input argument for check_conn_macros\n");
         die;
     }
 
     for my $i ( 0..$#{$r_m} ) {
         unless ( defined( $r_m->[$i]{'mh'} )  ) {
-            $logger->error( '__E_PARSER_CONN_MACROS', "Macro header missing $i");
+            $logger->error( '__E_PARSER_CONN_MACROS', "\tMacro header missing $i");
             next;
         }
         unless ( defined( $r_m->[$i]{'md'} ) and $#{$r_m->[$i]{'md'}} >= 0 ) {
-            $logger->error( '__E_PARSER_CONN_MACROS', "Macro definition missing $i");
+            $logger->error( '__E_PARSER_CONN_MACROS', "\tMacro definition missing $i");
             next;
         }
         push( @m, $r_m->[$i] );
@@ -414,7 +417,7 @@ sub parse_conn_gen ($) {
 
     my $gi = 0;
     unless( defined $rin ) {
-        $logger->fatal( '__F_PARSER_CONN_GEN',  "parse_conn_gen called with bad argument\n" );
+        $logger->fatal( '__F_PARSER_CONN_GEN',  "\tparse_conn_gen called with bad argument\n" );
         die;
     }
 
@@ -436,7 +439,7 @@ sub parse_conn_gen ($) {
         if ( $rin->[$i]{'::gen'} =~ m!^\s*\$(\w)\s*\((\d+)\.\.(\d+)\)\s*,\s*/(.*)/! ) {
             my $pre = $4 . "_$2_$3";
             if ( $2 > $3 ) {
-                $logger->error('__E_PARSER_BAD_BOUNDS', "$2 .. $3 in generator definition!");
+                $logger->error('__E_PARSER_BAD_BOUNDS', "\t$2 .. $3 in generator definition!");
                 next;
             }
             if ( exists( $g{$pre} ) ) { # Redefinition of this macro ...make name unique
@@ -510,7 +513,7 @@ sub parse_hier_init ($) {
 
     # unless ( defined $r_hier or defined $r_conmac or defined $r_congen or defined $r_hiergen ) {
     unless( defined $r_hier ) {
-        $logger->fatal( '__F_PARSER_HIER_INIT', "parse_hier called with bad arguments!" );
+        $logger->fatal( '__F_PARSER_HIER_INIT', "\tparse_hier called with bad arguments!" );
         die;
     }
 
@@ -535,7 +538,7 @@ sub parse_hier_init ($) {
                 #    and it will not work recursive !!
                 $r_hier->[$i]{'::inst'} = $name;
             } elsif ( $name !~ m/$eh->get('output.generate._logicre_')/io ) {
-                $logger->error( '__E_PARSER_HIER_INIT', "Cannot replace %::inst% for $name!" );
+                $logger->error( '__E_PARSER_HIER_INIT', "\tCannot replace %::inst% for $name!" );
             }
         }
         add_inst( %{$r_hier->[$i]} );
@@ -575,7 +578,7 @@ sub add_inst (%) {
     unless ( exists( $in{'::inst'} ) and
     		 defined( $in{'::inst'} ) and
     		 $in{'::inst'} ) {
-        $logger->warn( '__W_ADD_INST', "Try to create instance without name:" .
+        $logger->error( '__E_ADD_INST', "\tTry to create instance without name:" .
         	join( " ", %in ) );
         return;
     }
@@ -587,7 +590,7 @@ sub add_inst (%) {
     if ( defined( $hierdb{$name} ) ) {
         # Alert user if this connection already got defined somewhere ....
         if ( $eh->get( 'check.defs' ) =~ m,\binst, ) {# Warning, another line adding to this inst.
-            $logger->warn( '__W_ADD_INST', "Redefinition of instance $name!" );
+            $logger->warn( '__W_ADD_INST', "\tRedefinition of instance $name!" );
             $eh->inc( 'sum.uniq' );
         }
         merge_inst( $name, %in );
@@ -626,7 +629,7 @@ sub mix_expand_name ($$) {
         } elsif ( defined( my $pmk = $eh->get( 'macro.%' . $key . '%' ) ) ) {
             $n =~ s/%$key%/$pmk/g; # replace %::key% -> $eh->get( 'macro' ...)
         }else {
-                $logger->error( '__E_EXPAND_NAME', "Cannot replace %$key% in name $n!" );
+                $logger->error( '__E_EXPAND_NAME', "\tCannot replace %$key% in name $n!" );
         }
     }
     $rdata->{'::' . $toex} = $n;
@@ -694,7 +697,7 @@ sub add_tree_node ($$) {
 
     # Prevent redefinition!
     if ( defined( $r_h->{'::treeobj'} ) ) {
-        $logger->warn('__W_ADD_TREE_NODE', "Tree node for element $name already created!");
+        $logger->warn('__W_ADD_TREE_NODE', "\tTree node for element $name already created!");
         return;
     }
 
@@ -762,12 +765,12 @@ sub merge_inst ($%) {
         if (
             $parent ne ($eh->get( 'hier.field.::parent'))->[3] and
             $parent ne $hierdb{$name}{'::parent'} ) {
-                $logger->debug( '__D_MERGE_INST', "Change parent for cell $name to $parent from $hierdb{$name}{'::parent'}" )
+                $logger->debug( '__D_MERGE_INST', "\tChange parent for cell $name to $parent from $hierdb{$name}{'::parent'}" )
                     unless( $hierdb{$name}{'::parent'} eq ($eh->get( 'hier.field.::parent'))->[3] );
                 my $node = $hierdb{$name}{'::treeobj'};
                 # If parent is already defined -> change it ...
                 unless ( exists( $hierdb{$data{'::parent'}} ) ) {
-                    $logger->info( '__I_MERGE_INST', "Autocreate parent for $name: $parent" );
+                    $logger->info( '__I_MERGE_INST', "\tAutocreate parent for $name: $parent" );
                     create_inst( $parent, () );
                 }
                 my $pnode = $hierdb{$parent}{'::treeobj'};
@@ -822,7 +825,7 @@ sub parse_conn_init ($) {
     my $r_conn = shift;
 
     unless( defined $r_conn ) {
-        $logger->fatal( '__F_PARSER_CONN_INIT', "parse_conn_init called with bad arguments!" );
+        $logger->fatal( '__F_PARSER_CONN_INIT', "\tparse_conn_init called with bad arguments!" );
         die;
     }
 
@@ -871,7 +874,7 @@ sub add_conn (%) {
 		if ( $name =~ m/%(LOW|HIGH)%/ ) {
 			if ( ( defined( $in{'::high'} ) and $in{'::high'} ne '' ) or
 				 ( defined( $in{'::low'} )  and $in{'::low'}  ne '' ) ) {
-				$logger->warn('__W_ADD_CONN', "Map assignment from $1 to $1_BUS!");
+				$logger->warn('__W_ADD_CONN', "\tMap assignment from $1 to $1_BUS!");
 				$name = "%" . $1 . "_BUS%";
 				$in{'::name'} = $name;
 			}
@@ -890,7 +893,7 @@ sub add_conn (%) {
                 	$eh->get( 'CONST_NR' );
                 $eh->inc( 'CONST_NR' );
                 $in{'::name'} = $name;
-				$logger->debug( '__D_ADD_CONN', "Creating name $name for constant!" );
+				$logger->debug( '__D_ADD_CONN', "\tCreating name $name for constant!" );
         }
 
         #
@@ -910,7 +913,7 @@ sub add_conn (%) {
         #
         if ( $name =~ m/[^0-9A-Za-z_%:]/ ) {
             # Mark signal .... but add it anyway (user should be able to fix it)
-            $logger->error( '__E_ADD_CONN', "Illegal signal name $name. Will be ignored!" );
+            $logger->error( '__E_ADD_CONN', "\tIllegal signal name $name. Will be ignored!" );
             $in{'::ign'} = "#ERROR_ILLEGAL_SIGNAL_NAME";
             $in{'::comment'} = "#ERROR_ILLEGAL_SIGNAL_NAME $name" . $in{'::comment'};
             $name = "ERROR_ILLEGAL_SIGNAL_NAME";
@@ -927,14 +930,14 @@ sub add_conn (%) {
                 #
                 $in{'::name'} = $name;
             } else {
-                $logger->warn( '__W_ADD_CONN', "Cannot replace ::name for $name!" );
+                $logger->warn( '__W_ADD_CONN', "\tCannot replace ::name for $name!" );
             }
         }
 
         if ( defined( $conndb{$name}  ) ) {
             # Alert user if this connection already got defined somewhere ....
             if ( $eh->get( 'check.defs' ) =~ m,conn, ) {
-                $logger->warn( '__W_ADD_CONN', "Redefinition of conection $name!" );
+                $logger->warn( '__W_ADD_CONN', "\tRedefinition of conection $name!" );
                 $eh->inc( 'sum.uniq' ); # Not uniq warning!!
             }
             merge_conn( $name, %in );
@@ -963,7 +966,7 @@ sub add_conn (%) {
 						$hint = $in{'::in'} if (exists $in{'::in'});;
 					};
 				};
-                $logger->error( '__E_ADD_CONN', "Missing signal name in input near \'$hint\'. Generated name $name!" );
+                $logger->error( '__E_ADD_CONN', "\tMissing signal name in input near \'$hint\'. Generated name $name!" );
                 $conndb{$name}{'::ign'} = "#__E_MISSING_SIGNAL_NAME";
                 $conndb{$name}{'::comment'} = "#__E_MISSING_SIGNAL_NAME" . $conndb{$name}{'::comment'};
                 $conndb{$name}{'::name'} = $name;
@@ -975,7 +978,7 @@ sub add_conn (%) {
             $conndb{$name}{'::out'}[0]{'inst'} eq "%CONST%" ) {
                 # If we found a constant, change the ::mode bit to be constant ...
                 if ( $conndb{$name}{'::mode'} and $conndb{$name}{'::mode'} !~ m,^\s*[CPG],io ) {
-                    $logger->error('__E_ADD_CONN', "Signal $name mode expected to be C, G or P but is " .
+                    $logger->error('__E_ADD_CONN', "\tSignal $name mode expected to be C, G or P but is " .
                             $conndb{$name}{'::mode'} ."!" );
                     $conndb{$name}{'::mode'} = "C";
                     $conndb{$name}{'::comment'} .= "__E_MODE_MISMATCH";
@@ -1086,14 +1089,14 @@ sub _create_conn ($$%) {
     my $l = undef;
     my $hldigitflag = 0; # Assume ::high and ::low are no digits!
 
-    # TODO: check bus definitions better!
+    # TODO : check bus definitions better!
     if ( defined( $data{'::low'} ) and defined ( $data{'::high'} ) ) {
         $data{'::low'} =~ s,^\s+,,; # Remove leading white-space
         $data{'::high'} =~ s,^\s+,,; # Remove leading white-space
 
-        if ( $data{'::high'} ne "" ) {
+        if ( $data{'::high'} ne '' ) {
             unless ( $data{'::high'} =~ /^\d+$/ ) {
-                $logger->info( '__I_CREATE_CONN', "Bus $data{'::name'} upper bound $data{'::high'} not a number!" );
+                $logger->info( '__I_CREATE_CONN', "\tBus $data{'::name'} upper bound $data{'::high'} not a number!" );
                 $hldigitflag = 0;
             } else {
                 $hldigitflag++;
@@ -1102,7 +1105,7 @@ sub _create_conn ($$%) {
         }
         if ( $data{'::low'} ne "" ) {
             unless ( $data{'::low'} =~ /^\d+$/ ) {
-                $logger->info( '__I_CREATE_CONN', "Bus $data{'::name'} lower bound $data{'::low'} not a number!" );
+                $logger->info( '__I_CREATE_CONN', "\tBus $data{'::name'} lower bound $data{'::low'} not a number!" );
                 $hldigitflag = 0;
             } else {
                 $hldigitflag++;
@@ -1110,13 +1113,13 @@ sub _create_conn ($$%) {
             $l = $data{'::low'};
         }
         if ( defined( $h ) and defined( $l ) and $hldigitflag == 2 and $h < $l ) {
-            $logger->warn( '__W_CREATE_CONN', "_create_conn for " . $data{'::name'} .
+            $logger->warn( '__I_CREATE_CONN', "\tHINT for " . $data{'::name'} .
                      ": unusual bus ordering $h downto $l" );
         }
     }
     my @co = (); # Collect ports defined here ...
     unless( defined( $instr ) and $instr ne "" ) {
-        $logger->warn( '__W_CREATE_CONN', "Called _create_conn without data for $inout");
+        $logger->warn( '__W_CREATE_CONN', "\tCalled _create_conn without data for $inout");
         return \@co; #Return dummy array, just in case
     }
 
@@ -1174,7 +1177,7 @@ sub _create_conn ($$%) {
                 $co{'rvalue'} = $const; # Save raw value!!
                 my $t = $2;
                 if ( $inout =~ m,in, ) {
-                    $logger->error('__E_CREATE_CONN', "Illegal constant value for signal in ::in " . $data{'::name'} . "!");
+                    $logger->error('__E_CREATE_CONN', "\tIllegal constant value for signal in ::in " . $data{'::name'} . "!");
                     $data{'::comment'} .= "__E_BAD_CONSTANT_DEFINED";
                 }
                 if ( defined( $t ) ) {
@@ -1225,10 +1228,10 @@ sub _create_conn ($$%) {
                             $co{'port_f'} = "$mh - $ml";
                             $co{'sig_f'} = $mh;
                             $co{'sig_t'} = $ml;
-                            $logger->debug( '__D_CREATE_CONN', "Textual bounds for constant" );
+                            $logger->debug( '__D_CREATE_CONN', "\tTextual bounds for constant" );
                         }
                     } else {
-                        $logger->warn( '__W_CREATE_CONN', "Cannot parse constant signal assignment width definition: $cpart" );
+                        $logger->warn( '__W_CREATE_CONN', "\tCannot parse constant signal assignment width definition: $cpart" );
                         $co{'port_f'} = $co{'sig_f'} = $h;
                         $co{'port_t'} = $co{'sig_t'} = $l;
                     }
@@ -1320,7 +1323,7 @@ sub _create_conn ($$%) {
                     if ( $4 ne "0" ) {
                         # Wire port of width
                         $logger->warn('__W_CREATE_CONN',
-                        	"Automatically wiring signal bits $3 to $4 of $1/$2 to bits " . ( $3 - $4 ) . " to 0");
+                        	"\tAutomatically wiring signal bits $3 to $4 of $1/$2 to bits " . ( $3 - $4 ) . " to 0");
                         my $f = $3;
                         my $t = $4;
                         if ( $f =~ m,^(\d+)$,o and $t =~ m,^(\d+)$,o ) {
@@ -1472,7 +1475,7 @@ sub mix_p_co2str ($$) {
         $portdef = "(" . $f . ")";
     } elsif ( defined $t ) {
         $portdef = "(:" . $t . ")";
-        $logger->warn( '__W_CO2STR', "Bad port description in co2str input def: <UNDEF>/$t" );
+        $logger->warn( '__W_CO2STR', "\tBad port description in co2str input def: <UNDEF>/$t" );
     }
     return $portdef;
 }
@@ -1489,10 +1492,10 @@ sub check_conn_prop ($) {
     }
 
     if ( $ref->{'inst'} !~ m,^[:%\w]+$,o ) {
-        $logger->warn( '__W_CONN_PROP', "Unusual character in signal name: $ref->{'inst'}/$ref->{'port'}!" );
+        $logger->warn( '__W_CONN_PROP', "\tUnusual character in signal name: $ref->{'inst'}/$ref->{'port'}!" );
     }
     if ( $ref->{'port'} !~ m,^[:%\w]+$,o ) {
-        $logger->warn( '__W_CONN_PROP', "Unusual character in port name: $ref->{'inst'}/$ref->{'port'}!" );
+        $logger->warn( '__W_CONN_PROP', "\tUnusual character in port name: $ref->{'inst'}/$ref->{'port'}!" );
     }
 
 }
@@ -1536,7 +1539,7 @@ sub mix_p_updateconn ($$) {
     my %data = ();
 
     unless( exists( $conndb{$name} ) ) {
-        $logger->error( '__E_UPDATECONN', "Cannot update connection $name!" );
+        $logger->error( '__E_UPDATECONN', "\tCannot update connection $name!" );
     } else {
         for my $i ( keys( %$props ) ) {
             $conndb{$name}{$i} = $props->{$i};
@@ -1578,7 +1581,7 @@ sub merge_conn($%) {
                     my $t_cdb = $conndb{$name}{$i};
                     if ( $data{$i} ne $t_cdb ) { #TODO: and $name !~ m/%(HIGH|LOW)/o ) {
                         # %HIGH% and %LOW% signal will get type assigned
-                        $logger->error( '__E_MERGE_CONN', "Type mismatch for signal $name: $t_cdb ne $data{$i}!" );
+                        $logger->error( '__E_MERGE_CONN', "\tType mismatch for signal $name: $t_cdb ne $data{$i}!" );
                         $conndb{$name}{$i} = "__E_TYPE_MISMATCH";
                         $conndb{$name}{'::comment'} .= "#__E_TYPE: $t_cdb ne $data{$i} ";
                     }
@@ -1605,7 +1608,7 @@ sub merge_conn($%) {
                             # Do nothing here ...
                             ;
                         } elsif ( not ( $data{$i} eq 'S' and $t_cdb =~ m/^(I|O|IO)/o ) ) {
-                            $logger->error( '__E_MERG_CONN', "Mode mismatch for signal $name: $t_cdb ne $data{$i}!" );
+                            $logger->error( '__E_MERGE_CONN', "\tMode mismatch for signal $name: $t_cdb ne $data{$i}!" );
                             $conndb{$name}{$i} = "__E_MODE_MISMATCH";
                             $conndb{$name}{'::comment'} .= "#__E_MODE: $t_cdb ne $data{$i} ";
                         }
@@ -1644,7 +1647,7 @@ sub merge_conn($%) {
                             }
                         }
                     } else {
-                        $logger->error( '__E_MERGE_CONN', "Bound mismatch for signal $name: $conndb{$name}{$i} ne $data{$i}!");
+                        $logger->error( '__E_MERGE_CONN', "\tBound mismatch for signal $name: $conndb{$name}{$i} ne $data{$i}!");
                         $conndb{$name}{$i} = "__E_BOUND_MISMATCH";
                     }
                 }
@@ -1804,7 +1807,7 @@ sub mix_load_db ($$$) {
     }
 
     unless( -r $dumpfile ) {
-        $logger->error( '__E_LOAD_DB', "Cannot read dump file $dumpfile!\n" );
+        $logger->error( '__E_LOAD_DB', "\tCannot read dump file $dumpfile!\n" );
         exit 1;
     }
 
@@ -1855,13 +1858,13 @@ sub apply_conn_macros ($$) {
                 }
                 if ( $xre =~ /$r_cm->[$ii]{'mm'}/ ) {
                     # Got it .... catch matched variables and apply to MX line ...
-                    $logger->debug( '__I_APPLY_MACRO', "Macro $ii matches here");
+                    $logger->debug( '__I_APPLY_MACRO', "\tMacro $ii matches here");
                     $eh->inc( 'sum.cmacros' );
                     my %mex = ();
                     # Gets matched variables
                     unless ( eval $r_cm->[$ii]{'me'} ) {
                         if ( $@ ) {
-                            $logger->error('__E_APPLY_MACRO', "Evaluation of macro $ii for macro expansion in line $i failed: $@");
+                            $logger->error('__E_APPLY_MACRO', "\tEvaluation of macro $ii for macro expansion in line $i failed: $@");
                             next;
                         }
                     }
@@ -2063,7 +2066,7 @@ sub apply_x_gen ($$) {
                     ( $matcher = $re ) =~ s,[()],,g; # Remove all parens
 
                     if ( $matcher =~ s/{.+?}/\\d+/g ) {
-                        $logger->error( '__E_APPLY_GEN', "Illegal arithmetic expression in $matcher. Will be ignored!" );     # postpone that ....
+                        $logger->error( '__E_APPLY_GEN', "\tIllegal arithmetic expression in $matcher. Will be ignored!" );     # postpone that ....
                     }
                     $matcher =~ s/\$$rv/(\\d+)/g;   # Replace $rv by (\d+)
 
@@ -2073,14 +2076,14 @@ sub apply_x_gen ($$) {
                         } else {
                             $mres{$rv} = "__UNDEF__"; # No run variable in matcher! This is an error!
                             unless( exists( $r_hg->{$cg}{'error'} ) ) {
-                                $logger->error( '__E_APPLY_GEN', "Generator " . $r_hg->{$cg}{'field'}{'::gen'} .
+                                $logger->error( '__E_APPLY_GEN', "\tGenerator " . $r_hg->{$cg}{'field'}{'::gen'} .
                                         " does not define run parameter \$$rv!");
                             }
                             $r_hg->{$cg}{'error'}++;
                             last; # Leave loop here .... TODO: should we alert user?
                         }
                     } else { #Error, this has to match!
-                        $logger->fatal( '__F_APPLY_GEN', "Matching failed for $cg! File bug report!" );
+                        $logger->fatal( '__F_APPLY_GEN', "\tMatching failed for $cg! File bug report!" );
                         die;
                     }
                     # Check bounds:
@@ -2123,7 +2126,7 @@ sub _mix_p_get_reparmatch ($$) {
     	my $e = "\$mres{$ii} = \$$ii if defined( \$$ii );"; # Keep $1 ...
     	unless ( eval $e ) {
 			if ( $@ ) {
-				$logger->error( '__E_REPARMATCH', "BAD_EVAL $mres{\$$ii}: $@" );
+				$logger->error( '__E_REPARMATCH', "\tBAD_EVAL $mres{\$$ii}: $@" );
 				last;
 			}
 		}
@@ -2193,7 +2196,7 @@ sub _mix_p_dogen2 ($$$$$$$$) {
 		unless ( eval $e ) {
 			if ( $@ ) {
 				$in{$iii} = "E_BAD_EVAL";
-				$logger->error( '__E_DOGEN2', "Eval of $e failed while processing $cg" );
+				$logger->error( '__E_DOGEN2', "\tEval of $e failed while processing $cg" );
 			}
 		}
 	}
@@ -2246,7 +2249,7 @@ sub _mix_p_dogen ($$$$$$) {
 			unless( eval $e ) {
 				if ( $@ ) {
 					$in{$ii} = "__E_BAD_EVAL";
-					$logger->error( '__E_DOGEN', "BAD_EVAL match for $i, match $cg: $@");
+					$logger->error( '__E_DOGEN', "\tBAD_EVAL match for $i, match $cg: $@");
 				}
 			}
 		} else {
@@ -2254,7 +2257,7 @@ sub _mix_p_dogen ($$$$$$) {
 		# ::in and ::out will be merged by create conn anyway!
 			unless( $ii =~ m/^::(in|out)$/ ) {
 				if ( ref( $ky->{$i}{$ii} ) ) {
-					$logger->error( '__E_DOGEN', "Bad usage of macro $cg for key $i, object $ii!");
+					$logger->error( '__E_DOGEN', "\tBad usage of macro $cg for key $i, object $ii!");
 				}
 				$in{$ii} = $ky->{$i}{$ii}; # Apply defaults from input line ...
 			}
@@ -2441,7 +2444,7 @@ sub get_top_cell () {
         }
     }
     if ( scalar( @tops ) < 1 ) { # Did not find testbench ???
-        $logger->warn( '__W_GET_TOP', "Could not identify toplevel aka. $eh->get( 'top' )" );
+        $logger->warn( '__W_GET_TOP', "\tCould not identify toplevel aka. $eh->get( 'top' )" );
     }
 
     return @tops;
@@ -2487,7 +2490,7 @@ sub add_portsig () {
         my @addup = ();
 
         if ( $signal eq '' ) { #Fatal error!
-            $logger->fatal( '__F_ADD_PORTSIG', "Detecting signal without name in add_portsig! Check CONN sheet!");
+            $logger->fatal( '__F_ADD_PORTSIG', "\tDetecting signal without name in add_portsig! Check CONN sheet!");
             die;
         }
 
@@ -2576,7 +2579,7 @@ sub add_portsig () {
         my $commonpar = my_common( values( %connected ) );
 
         unless ( defined( $commonpar ) ) {
-            $logger->error( '__E_ADD_PORTSIG', "Signal $signal spawns several seperate trees! Will be dropped\n" );
+            $logger->error( '__E_ADD_PORTSIG', "\tSignal $signal spawns several seperate trees! Will be dropped\n" );
             next;
         }
 
@@ -2617,7 +2620,7 @@ sub add_portsig () {
                 }
                 $n = $n->mother;
                 unless( defined( $n ) ) {
-                    $logger->error( '__E_ADD_PORTSIG', "Climbing up tree failed for signal $signal!" );
+                    $logger->error( '__E_ADD_PORTSIG', "\tClimbing up tree failed for signal $signal!" );
                     last;
                 }
             }
@@ -2663,7 +2666,7 @@ sub _mix_p_getconnected ($$$$;$) {
         }
         return( $n );
     } else {
-        $logger->warn( '__W_GETCONNECTED', "Bad branch in _mix_p_getconnected! File bug report!");
+        $logger->error( '__E_GETCONNECTED', "\tBad branch in _mix_p_getconnected! File bug report!");
     }
     return -1; # Indicate error condition ...
 } # end of _mix_p_get_connected
@@ -2733,14 +2736,14 @@ sub bits_at_inst ($$$) {
                     for my $b ( $1..$2 ) { $bits{$d}[$b] = $d; };
                 }
             } else {
-                $logger->warn( '__W_BITS_AT_INST', "Signal $signal width unknown at instance $inst!" );
+                $logger->warn( '__W_BITS_AT_INST', "\tSignal $signal width unknown at instance $inst!" );
                 $sigw_flag{$d} = 0;
             }
         }
     }
 
     if ( scalar( keys( %width ) ) > 1 ) {
-        $logger->warn( '__W_BITS_AT_INST', "Signal $signal has mixed links into instance $inst!" );
+        $logger->warn( '__W_BITS_AT_INST', "\tSignal $signal has mixed links into instance $inst!" );
     }
 
     # Combine the output:
@@ -2802,11 +2805,11 @@ sub overlay_bits($$) {
     my $bv2 = shift;
 
     unless( $bv1 ) {
-        $logger->warn('__W_OVERLAY_BITS', "Feed empty bitvector 1 to overlay_bits");
+        $logger->warn('__W_OVERLAY_BITS', "\tFeed empty bitvector 1 to overlay_bits");
         return $bv2;
     }
     unless ( $bv2 ) {
-        $logger->warn('__W_OVERLAY_BITS', "Feed empty bitvector 2 to overlay_bits");
+        $logger->warn('__W_OVERLAY_BITS', "\tFeed empty bitvector 2 to overlay_bits");
         return $bv1;
     }
 
@@ -2825,7 +2828,7 @@ sub overlay_bits($$) {
     if ( $bits1 ne "" and $bv2 =~ m,^B::(.+), ) {
         my $bits2 = $1;
         if ( length( $bits1 ) != length( $bits2 ) ) {
-            $logger->warn( '__W_OVERLAY_BITS', "Bitvector length mismatch: $bits1 vs. $bits2" );
+            $logger->warn( '__W_OVERLAY_BITS', "\tBitvector length mismatch: $bits1 vs. $bits2" );
         }
         my $ub = length( $bits1 ) - 1;
         my $out = "";
@@ -2837,7 +2840,7 @@ sub overlay_bits($$) {
             my $c2 = substr( $bits2, $i, 1 ) || "0";
             if ( $c1 and $c2 ) {
                 if ( $c1 ne $c2 ) {
-                        $logger->warn( '__W_OVERLAY_BITS', "Mixing wrong mode: $bits1 vs. $bits2" );
+                        $logger->warn( '__W_OVERLAY_BITS', "\tMixing wrong mode: $bits1 vs. $bits2" );
                         substr( $out, $i, 1 ) = 'e';
                         $miss = 1;
                 } else {
@@ -2858,7 +2861,7 @@ sub overlay_bits($$) {
         return $bv1;
     }
 
-    $logger->error( '__E_OVERLAY_BITS', "Cannot overlay bitvectors $bv1 vs. $bv2" );
+    $logger->error( '__E_OVERLAY_BITS', "\tCannot overlay bitvectors $bv1 vs. $bv2" );
 
     return( 'E::' );
 } # End of overlay_bits
@@ -2904,7 +2907,7 @@ sub add_port ($$) {
             }
         }
         unless( defined ( $d_mode{$r} ) ) {
-            $logger->error( '__E_ADD_PORT', "Missing sigbits/mode definition for signal $signal, instance $r in add_port");
+            $logger->error( '__E_ADD_PORT', "\tMissing sigbits/mode definition for signal $signal, instance $r in add_port");
         }
     }
 
@@ -2950,7 +2953,7 @@ sub add_port ($$) {
             my $name = $d->name;
             next unless( exists( $r_connected->{$name} ) ); # This daughter has no link.
             unless( exists( $d_mode{$name} ) ) {
-                $logger->error( '__E_ADD_PORT', "Signal mode not defined internally ($name). File bug report!" );
+                $logger->error( '__E_ADD_PORT', "\tSignal mode not defined internally ($name). File bug report!" );
             }
             for my $dd ( keys( %{$d_mode{$name}} ) ) {
                 if ( $dd =~ m,(i|o|e|b|m|c), ) {
@@ -3003,7 +3006,7 @@ sub add_port ($$) {
                 $up_flag = 1;
             }
             if( not exists( $d_mode{$d} ) ) {
-                $logger->error( '__E_ADD_PORT', "Signal mode not defined internally ($d). File bug report!" );
+                $logger->error( '__E_ADD_PORT', "\tSignal mode not defined internally ($d). File bug report!" );
             } else {
                 for my $dd ( keys( %{$d_mode{$d}} ) ) {
                     my $ddr = $dd;
@@ -3113,7 +3116,7 @@ sub add_top_port ($$) {
                 }
         }
         unless( defined ( $d_mode{$r} ) ) {
-           $logger->error( '__E_ADD_TOP_PORT', "Missing sigbits/mode definition for instance $r in add_top_port");
+           $logger->error( '__E_ADD_TOP_PORT', "\tMissing sigbits/mode definition for instance $r in add_top_port");
         }
     }
     for my $r ( @adds ) {
@@ -3203,7 +3206,7 @@ sub _add_port ($$$$$$$$) {
 
     my $uk = join( "", sort ( keys ( %$um ) ) ); # bceimo
     if ( $uk =~ m,e, ) { # Error
-		$logger->error( '__E_ADD_PORT_', "Bad mode detected for signal $signal generating port at instance $inst" );
+		$logger->error( '__E_ADD_PORT_', "\tBad mode detected for signal $signal generating port at instance $inst" );
     }
     my $do = 'e';
     my $dir = "::err";
@@ -3211,7 +3214,7 @@ sub _add_port ($$$$$$$$) {
     # Try to define a base direction to head for ...
     my $simple = 0;
     if ( length( $uk ) > 1 and $uk ne "io" ) { #
-        $logger->error( '__E_ADD_PORT_', "Mixed mode $uk connection for instance $inst cannot be resolved for signal $signal!");
+        $logger->error( '__E_ADD_PORT_', "\tMixed mode $uk connection for instance $inst cannot be resolved for signal $signal!");
         return; #TODO: Set to mode io and continue with that?
     }
 
@@ -3221,7 +3224,7 @@ sub _add_port ($$$$$$$$) {
         if ( $uw->{'i'} eq 'A::' and $uw->{'o'} eq 'A::' ) {
             if ( scalar( keys( %$dw ) ) > 1 ) { # Possible Conflict!!
                 $simple = 2;
-                $logger->warn( '__W_ADD_PORT_', "Possible io mode conflict for $signal at $inst" );
+                $logger->warn( '__W_ADD_PORT_', "\tPossible io mode conflict for $signal at $inst" );
             } else {
                 if ( ( exists $dw->{'i'} ) and ( $dw->{'i'} eq 'A::' ) ) {
                     $simple = 1;
@@ -3258,7 +3261,7 @@ sub _add_port ($$$$$$$$) {
         }
     } else {
     # Other cases are mixes or new ...
-        $logger->warn( '__W_ADD_PORT_', "Cannot resolve connection request $uk for $inst, signal $signal" );
+        $logger->warn( '__W_ADD_PORT_', "\tCannot resolve connection request $uk for $inst, signal $signal" );
     }
 
     #
@@ -3291,23 +3294,23 @@ sub _add_port ($$$$$$$$) {
         # Case one: There is already a (partial) connection to this_instance ...
         if ( $tm ) {
             # Delete the corresponding bits
-            #TODO: Catch further cases ....
+            # TODO : Catch further cases ....
             #!wig20031008: Another case: $tw equals $dw (only one mode!!) ... ignore $do then ....
-            if ( join( "", keys( %$dw ) ) eq $tm ) {
+            if ( join( '', keys( %$dw ) ) eq $tm ) {
                 if ( $dw->{$tm} eq $tw ) {
-                    $logger->info('__I_ADD_PORT_', "Already connected daughters of $inst properly for signal $signal, ignore uppers");
+                    $logger->info('__I_ADD_PORT_', "\tAlready connected daughters of $inst properly for signal $signal, ignore uppers");
                     return( {$tm => $tw}, $tm );
                 }
             }
             elsif ( $tm eq $do ) { # Maybe this is a stupid try to reconnect ....
                 if ( $tw =~ m,^A::, ) { # Already connected fully .... hmm, simply return ..
-                    $logger->info('__I_ADD_PORT_', "Trying to reconnect $signal to $inst.");
+                    $logger->info('__I_ADD_PORT_', "\tTrying to reconnect $signal to $inst.");
                     return( { $tm => $tw} , $tm );
                 } elsif ( defined( $dw->{$do} ) and $dw->{$do} eq $tw )  {
-                    $logger->info('__I_ADD_PORT_', "Trying to reconnect $signal to $inst partially.");
+                    $logger->info('__I_ADD_PORT_', "\tTrying to reconnect $signal to $inst partially.");
                     return( { $tm => $tw} , $tm );
                 } else {
-                    $logger->warn( '__W_ADD_PORT_', "Instance $inst partially connected to $signal. File bug report!" );
+                    $logger->warn( '__W_ADD_PORT_', "\tInstance $inst partially connected to $signal. File bug report!" );
                 }
             }
         }
@@ -3325,7 +3328,7 @@ sub _add_port ($$$$$$$$) {
             } elsif ( not $mode ) { # Mode not set up to now
                 $mode = $nm;
             } elsif ( $mode ne $nm ) { # Upps, conflict
-                $logger->error( '__E_ADD_PORT_', "Cannot resolve mode requests $signal at $inst!" );
+                $logger->error( '__E_ADD_PORT_', "\tCannot resolve mode requests $signal at $inst!" );
                 $mode = "E";
             }
         }
@@ -3339,7 +3342,7 @@ sub _add_port ($$$$$$$$) {
             } elsif ( not $mode ) { # Mode not set up to now
                 $mode = $nm;
             } elsif ( $mode ne $nm ) { # Upps, conflict
-                $logger->error( '__E_ADD_PORT_', "Cannot resolve conflicting mode requests $signal at $inst!" );
+                $logger->error( '__E_ADD_PORT_', "\tCannot resolve conflicting mode requests $signal at $inst!" );
                 $mode = "E";
             }
         }
@@ -3347,7 +3350,7 @@ sub _add_port ($$$$$$$$) {
             $mode = "B";
         }
         if ( $mode eq "E" ) {
-            $logger->error( '__E_ADD_PORT_', "Cannot resolve mode request for $signal at $inst finally!" );
+            $logger->error( '__E_ADD_PORT_', "\tCannot resolve mode request for $signal at $inst finally!" );
         } elsif ( $mode eq "B" ) {
             my $sf = $conndb{$signal}{'::high'};
             my $st = $conndb{$signal}{'::low'};
@@ -3478,12 +3481,12 @@ sub _add_port ($$$$$$$$) {
                 }
                 $tw = \%bv;
             } else {
-                $logger->error( '__E_ADD_PORT_', "Cannot read t/f for signal $signal, inst $inst!" );
+                $logger->error( '__E_ADD_PORT_', "\tCannot read t/f for signal $signal, inst $inst!" );
                 $tw = {};
                 $tm = 'e';
             }
         } else { # F::STR...T::STR
-            $logger->error( '__E_ADD_PORT', "Need programming for F::foo:T::bar, signal $signal, inst $inst!" );
+            $logger->error( '__E_ADD_PORT', "\tNeed programming for F::foo:T::bar, signal $signal, inst $inst!" );
         }
     }
     return( $tw, $tm );
@@ -3522,24 +3525,24 @@ sub generate_port ($$$$$$) {
         if ( $f =~ m,^\d+$,o and $f ) { # $f is digit and > 0!
             if ( $conndb{$signal}{'::high'} =~ m,^\s*\d+\s*$,o ) {
                 if ( $f > $h ) {
-                    $logger->warn( '__W_GENERATE_PORT', "Upper bound $f of generated port for signal $signal at instance $inst greater then signal upper bound!" );
+                    $logger->warn( '__W_GENERATE_PORT', "\tUpper bound $f of generated port for signal $signal at instance $inst greater then signal upper bound!" );
                 }
             } elsif ( $h =~ m,\s*$^,o ) { # Signal has no width
-                    $logger->warn( '__W_GENERATE_PORT', "Upper bound $f of generated port for signal $signal at instance $inst greater then signal upper bound!" );
+                    $logger->warn( '__W_GENERATE_PORT', "\tUpper bound $f of generated port for signal $signal at instance $inst greater then signal upper bound!" );
             }
         } elsif ( $f =~ m,\S+,o and $f ne $h ) {
-            $logger->warn( '__W_GENERATE_PORT', "Upper bound $f of generated port for signal $signal at instance $inst not matching signal definition!" );
+            $logger->warn( '__W_GENERATE_PORT', "\tUpper bound $f of generated port for signal $signal at instance $inst not matching signal definition!" );
         }
         if ( $t =~ m,^\d+$,o and $t ) { # $f is digit and > 0!
             if ( $l =~ m,^\s*\d+\s*$,o ) {
                 if ( $f < $l ) {
-                    $logger->warn( '__W_GENERATE_PORT', "Lower bound $t of generated port for signal $signal at instance $inst smaller then signal lower bound!" );
+                    $logger->warn( '__W_GENERATE_PORT', "\tLower bound $t of generated port for signal $signal at instance $inst smaller then signal lower bound!" );
                 }
             } elsif ( $l =~ m,\s*$^,o ) { # Signal has no width
-                    $logger->warn( '__W_GENERATE_PORT', "Lower bound $t of generated port for signal $signal at instance $inst smaller then signal lower bound!" );
+                    $logger->warn( '__W_GENERATE_PORT', "\tLower bound $t of generated port for signal $signal at instance $inst smaller then signal lower bound!" );
             }
         } elsif ( $t =~ m,\S+,o and $t ne $l ) {
-            $logger->warn( '__W_GENERATE_PORT', "Lower bound $t of generated port for signal $signal at instance $inst not matching signal definition!" );
+            $logger->warn( '__W_GENERATE_PORT', "\tLower bound $t of generated port for signal $signal at instance $inst not matching signal definition!" );
         }
         # Simply take signal width as port width:
         $f = $h;
@@ -3597,7 +3600,7 @@ sub generate_port ($$$$$$) {
         if ( $t eq "0" or $t eq "" or $t !~ m,^\d+$, ) {
             $t{'port_f'} = $f;
         } else {
-            $logger->warn( '__W_GENERATE_PORT', "Need to create port, but cannot calculate width: $f .. $t for instance $inst/$t{port}!" );            
+            $logger->warn( '__W_GENERATE_PORT', "\tNeed to create port, but cannot calculate width: $f .. $t for instance $inst/$t{port}!" );            
             $t{'port_f'} = "$f - $t"; # Try a simple " FROM - TO ";
         }
     }
@@ -3672,9 +3675,9 @@ sub check_b_vec ($$$) {
 
     for my $i ( keys( %$r ) ) {
         if ( $r->{$i} !~ m,B::, ) {
-            $logger->warn( '__W_CHECK_B_VEC', "Bad value in bit vector $i: $r->{$i}" );
+            $logger->warn( '__W_CHECK_B_VEC', "\tBad value in bit vector $i: $r->{$i}" );
         } elsif ( length( $r->{$i} ) - 3 != $max - $min + 1 ) {
-            $logger->warn( '__W_CHECK_B_VEC', "Bad length of bit vector $i: $r->{$i}" );
+            $logger->warn( '__W_CHECK_B_VEC', "\tBad length of bit vector $i: $r->{$i}" );
             substr( $r->{$i} , 3, 0 ) = "0" x ( $max - $min + 1 - length( $r->{$i} ) + 3 ) 
         }
     }
@@ -3691,7 +3694,7 @@ sub my_common (@) {
 	#
 	unless( defined $root and $root ) { return undef; };
         unless( Tree::DAG_Node::is_node( $root ) ) {
-            $logger->error( '__E_PARSER_TREE_COMMON', "Input of my_common $root is no Tree::DAG_Node node!" );
+            $logger->error( '__E_PARSER_TREE_COMMON', "\tInput of my_common $root is no Tree::DAG_Node node!" );
             return undef;
         }
 
@@ -3700,7 +3703,7 @@ sub my_common (@) {
 	} else {
             for my $n ( @nodes ) {
                 unless( Tree::DAG_Node::is_node( $n ) ) {
-                    $logger->error( '__E_PARSER_TREE_COMMON', "Input of my_common  nodes array is no Tree::DAG_Node node!" );
+                    $logger->error( '__E_PARSER_TREE_COMMON', "\tInput of my_common  nodes array is no Tree::DAG_Node node!" );
                     return undef;
                 }
             }
@@ -3792,7 +3795,7 @@ sub _parse_mac ($) {
             } elsif ( ref($rf) eq "SCALAR" ) {
                 __parse_mac( $rf, $rh->{$h} );
             } else {
-                $logger->error( '__E_PARSE_MAC_', "TODO: Implement recursive parse_mac for $h $f");
+                $logger->error( '__E_PARSE_MAC_', "\tTODO: Implement recursive parse_mac for $h $f");
                 next;
             }
         }
@@ -3831,7 +3834,7 @@ sub __parse_mac ($$) {
 	my $pfmacs = \%{$eh->get( 'postfix' )};
 
     unless( defined $$ra ) {
-        $logger->warn( '__W_PARSE_MAC__', "Trying to match against undef value");
+        $logger->warn( '__W_PARSE_MAC__', "\tTrying to match against undef value");
         $rb->{'::comment'} .= "#WARNING: undef value somewhere";
         return;
     }
@@ -3854,7 +3857,7 @@ sub __parse_mac ($$) {
                 my $r = $rb->{$1};
                 $$ra =~ s/%[\w:]+?%/$r/;
             } else {
-                $logger->warn( '__W_PARSE_MAC__', "Cannot find macro $1 to replace!");
+                $logger->warn( '__W_PARSE_MAC__', "\tCannot find macro $1 to replace!");
             }
         } elsif( exists( $ehmacs->{$mackey} ) ) {
             $$ra =~ s/$mac/$ehmacs->{$mackey}/;
@@ -3863,7 +3866,7 @@ sub __parse_mac ($$) {
         } elsif ( exists( $pfmacs->{$pfkey} ) ) {
         	$$ra =~ s/$mac/$pfmacs->{$pfkey}/;
         } else {
-            $logger->warn( '__W_PARSE_MAC__', "Cannot locate replacement for $mac in data!");
+            $logger->warn( '__W_PARSE_MAC__', "\tCannot locate replacement for $mac in data!");
         }
     }
     return;
@@ -3890,11 +3893,11 @@ sub purge_relicts () {
     #
     for my $i ( keys( %hierdb ) ) {
         unless ( $i ) {
-            $logger->warn( '__W_PURGE_RELICTS', "Removing empty instance! Check input sheets!");
+            $logger->warn( '__W_PURGE_RELICTS', "\tRemoving empty instance! Check input sheets!");
             delete( $hierdb{$i} );
         }
         #wig20040322: detect and remove %UAMN% keyword -> set ::workaround
-        if ( $hierdb{$i}{'::config'} =~ s,%(UAMN|USEASMODULENAME)%,,io ) {
+        if ( $hierdb{$i}{'::config'} =~ s,%(UAMN|USEASMODULENAME)%,,i ) {
             $hierdb{$i}{'::workaround'} = "::config::__" . $1 . "__"; #Workaround: %UAMN% -> __UAMN__
         }
     }
@@ -3972,7 +3975,7 @@ sub purge_relicts () {
         # Does a _vector type have bounds defined?
         if ( ( $conndb{$i}{'::high'} eq "" or $conndb{$i}{'::low'} eq "" ) and
             $conndb{$i}{'::type'} =~ m,(.*_vector$), ) {
-                $logger->warn( '__W_PURGE_RELICTS', "Found signal ($i) of type $1 with undefined bounds!" );
+                $logger->warn( '__W_PURGE_RELICTS', "\tFound signal ($i) of type $1 with undefined bounds!" );
         }
 
         #!wig20030516: auto reducing single width busses to signals ...
@@ -3981,7 +3984,7 @@ sub purge_relicts () {
                 $conndb{$i}{'::high'} = '';
                 $conndb{$i}{'::low'} = '';
             } elsif ( $conndb{$i}{'::type'} =~ m,(std_u?logic)_vector\s*$,io ) {
-                $logger->warn( '__W_PURGE_RELICTS', "Reducing signal $i from type $conndb{$i}{'::type'} to $1!");
+                $logger->warn( '__W_PURGE_RELICTS', "\tReducing signal $i from type $conndb{$i}{'::type'} to $1!");
                 $conndb{$i}{'::high'} = '';
                 $conndb{$i}{'::low'} = '';
                 $conndb{$i}{'::type'} = $1;
@@ -4012,7 +4015,7 @@ sub purge_relicts () {
                 $conndb{$i}{'::high'} = $conndb{$b}{'::high'};
                 $conndb{$i}{'::type'} = $conndb{$b}{'::type'};
             } else {
-                $logger->warn( '__W_PURGE_RELICTS', "Unknown bus $b referenced in constant $i" );
+                $logger->warn( '__W_PURGE_RELICTS', "\tUnknown bus $b referenced in constant $i" );
             }
         }
     }
@@ -4039,13 +4042,13 @@ sub _check_keywords ($$) {
             for my $ii ( qw( inst port ) ) {
             	#!wig20050713: Found ports defined without "inst" and "port"!
             	if( not exists( $i->{$ii} ) or not defined( $i->{$ii} ) ) {
-            		$logger->error( '__E_CHECK_KEYWORDS', "Missing key $ii in structure $name! Contact MIX maintainer" );
+            		$logger->error( '__E_CHECK_KEYWORDS', "\tMissing key $ii in structure $name! Contact MIX maintainer" );
             	} elsif ( $i->{$ii} =~ m,^$ehkw->{$l}$, ) {
                     $i->{$ii} = $eh->get( 'postfix.PREFIX_KEYWORD' ) . $1;
-                    $logger->warn( '__W_CHECK_KEYWORDS', "Detected keyword $1 in $ii got replaced!" );
+                    $logger->warn( '__W_CHECK_KEYWORDS', "\tDetected keyword $1 in $ii got replaced!" );
                 } elsif ( $name =~ m,%OPEN(_\d+)%,o and $i->{$ii} eq '%::name%' ) {
                     $i->{$ii} = $eh->get( 'postfix.PREFIX_KEYWORD' ) . $i->{$ii};
-                    $logger->warn( '__W_CHECK_KEYWORDS', "WARNING: Detected keyword $name in $ii got extended!" );
+                    $logger->warn( '__W_CHECK_KEYWORDS', "\tWARNING: Detected keyword $name in $ii got extended!" );
                 }
             }
         }
@@ -4071,7 +4074,7 @@ sub _extend_inout ($$$) {
         } elsif ( not defined( $i->{'sig_f'} ) # or
                 # not defined( $i->{'port_f'} )
                 ) {
-            $logger->warn( '__W_EXTEND_INOUT', "Unusual upper bound definitions for $i->{'inst'} / $i->{'port'}" );
+            $logger->warn( '__W_EXTEND_INOUT', "\tUnusual upper bound definitions for $i->{'inst'} / $i->{'port'}" );
         }
         if ( not defined( $i->{'sig_t'} ) and
             not defined( $i->{'port_t'} ) ) {
@@ -4080,7 +4083,7 @@ sub _extend_inout ($$$) {
         } elsif ( not defined( $i->{'sig_t'} ) # or
                 # not defined( $i->{'port_t'} )
                   ) {
-            $logger->warn( '__W_EXTEND_INOUT', "Unusual lower bound definitions for $i->{'inst'} / $i->{'port'}" );
+            $logger->warn( '__W_EXTEND_INOUT', "\tUnusual lower bound definitions for $i->{'inst'} / $i->{'port'}" );
         }
         #!wig50050511: port bounds get derived from signal bounds (if unset).
 		if ( not defined( $i->{'port_f'} ) ) {
@@ -4164,13 +4167,13 @@ sub _mix_p_unsplice_inout ($) {
 			# somewhere else ...
 			if( $i->{'sig_f'} !~ m/^\d+/ or
 				$i->{'sig_t'} !~ m/^\d+/ ) {
-				$logger->error( '__E_UNSPLICE_INOUT', "Mismatch port vs. signal borders for" .
+				$logger->error( '__E_UNSPLICE_INOUT', "\tMismatch port vs. signal borders for " .
 					$i->{'inst'} . "/" . $i->{'port'} . "!" );
 				$h2{$i->{'inst'}}{$i->{'port'}} = 1; # Not combinable ...
 				push( @ho, $i );
 			} elsif ( $i->{'port_f'} - $i->{'port_t'} !=
 				 	  $i->{'sig_f'} - $i->{'sig_t'} ) {
-				 $logger->error('__E_UNSPLICE_INOUT', "ERROR: mismatch port width vs. signal width for" .
+				 $logger->error('__E_UNSPLICE_INOUT', "\tMismatch port width vs. signal width for " .
 					$i->{'inst'} . "/" . $i->{'port'} . "!" );
 				$h2{$i->{'inst'}}{$i->{'port'}} = 1; # Not combinable ...
 				push( @ho, $i );
@@ -4328,7 +4331,7 @@ sub _add_sign2hier ($$$) {
         unless ( exists ( $hierdb{$inst} ) )  {
                 unless ( $conndb{$conn}{'::mode'} =~ m,^\s*[CPG],o ) {
                     # Complain if signal does connect to unknown instance
-                    $logger->warn('__W_SIGN2HIER', "Skipping connection $conn to undefined instance $inst!");
+                    $logger->error('__E_SIGN2HIER', "\tSkipping connection $conn to undefined instance $inst!");
                 }
                 next; # TODO : Should we try to add that instance?
         }
@@ -4336,7 +4339,7 @@ sub _add_sign2hier ($$$) {
         # Skip meta instance %CONST%
         my $port = $rsa->[$iii]{'port'};
         unless ( defined( $port ) ) {
-                $logger->error('__E_SIGN2HIER', "Undefined port for connection $conn, instance $inst!");
+                $logger->error('__E_SIGN2HIER', "\tUndefined port for connection $conn, instance $inst!");
                 $port = "__E_UNDEF_PORT";
         }
         #
@@ -4392,10 +4395,10 @@ sub mix_parser_importhdl ($$) {
     # create HIER and CONN data
     for my $f ( @$r_hdl ) {
 		if ( -r $f ) {
-	    	$logger->info( '__I_IMPORTHDL', "Importing $f now!" );
+	    	$logger->info( '__I_IMPORTHDL', "\tImporting $f now!" );
 	    	_mix_parser_parsehdl( $f ); # Will create a dummy hier and conn file
 		} else {
-	    	$logger->warn( '__W_IMPORTHDL', "Cannot read HDL $f for import" );
+	    	$logger->error( '__E_IMPORTHDL', "\tCannot read HDL $f for import" );
 		}
     }
 
@@ -4451,7 +4454,7 @@ sub _mix_parser_parsehdl ($) {
     # Open ... 
     my $fh = new IO::File;
     unless( $fh->open($file) ) {
-		$logger->error( '__E_PARSEHDL', "Cannot open import file $file: $!" );
+		$logger->error( '__E_PARSEHDL', "\tCannot open import file $file: $!" );
 		return undef;
     }
 
@@ -4582,7 +4585,7 @@ sub _mix_parser_parsehdl ($) {
 		    		} elsif ( lc( $mode ) eq "buffer" ) {
 						$d{'::mode'} = "B";
 		    		} else {
-						$logger->warn( '__W_PARSEHDL', "Unknown mode $mode in import" );
+						$logger->warn( '__W_PARSEHDL', "\tUnknown mode $mode in import" );
 						$d{'::mode'} = "S";
 		    		}
 
@@ -4626,7 +4629,7 @@ sub _mix_parser_parsehdl ($) {
 		    		} elsif ( lc( $mode ) eq "buffer" ) {
 						$d{'::mode'} = "B";
 		    		} else {
-						$logger->warn( '__W_PARSEHDL', "Unknown mode $mode in import" );
+						$logger->warn( '__W_PARSEHDL', "\tUnknown mode $mode in import" );
 						$d{'::mode'} = "S";
 		    		}
 		    		$d{$col} = $inst . "/" . $1;
@@ -4646,10 +4649,10 @@ sub _mix_parser_parsehdl ($) {
 		}
     } elsif ( $file =~ m,\.v$, ) {
 		# Verilog ...
-		$logger->error( '__E_PARSEHDL', "Master Wilfried has not taught me to read in Verilog :-(" );
+		$logger->error( '__E_PARSEHDL', "\tMaster Wilfried has not taught me to read in Verilog :-(" );
     } else {
 		# What's that ?
-		$logger->error( '__E_PARSEHDL', "Cannot import file $file, unknown type!" );
+		$logger->error( '__E_PARSEHDL', "\tCannot import file $file, unknown type!" );
     }
 
     return;

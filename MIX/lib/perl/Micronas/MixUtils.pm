@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.109 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2006/03/14 14:20:49 $                              |
+# | Revision:   $Revision: 1.110 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2006/03/16 14:10:34 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.109 2006/03/14 14:20:49 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.110 2006/03/16 14:10:34 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.110  2006/03/16 14:10:34  wig
+# | Fixed messages and [cut] problem 20060315a
+# |
 # | Revision 1.109  2006/03/14 14:20:49  lutscher
 # | changed __I_SPLIT_HEAD to __D_SPLIT_HEAD
 # |
@@ -162,11 +165,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.109 2006/03/14 14:20:49 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.110 2006/03/16 14:10:34 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.109 $';         #'
+my $thisrevision        =      '$Revision: 1.110 $';         #'
 
-# Revision:   $Revision: 1.109 $   
+# Revision:   $Revision: 1.110 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -292,46 +295,6 @@ sub mix_getopt_header(@) {
     	}
 	}
 
-=head1 OLD
-
-    # Write architecture into file
-    if (defined $OPTVAL{'outarch'} ) {
-	$EH{'outarch'} = $OPTVAL{'outarch'};
-    } elsif ( defined( $EH{'outarch'} ) ) {
-	# outarch defined by -conf or config file, do not change
-    } elsif ( exists( $ARGV[$#ARGV] ) )  {
-	# Output file will be written to current directory.
-	# Name will become name of last input file foo-a.vhd
-	$EH{'outarch'} = $ARGV[$#ARGV] ;
-	$EH{'outarch'} =~ s,(\.[^.]+)$,,;
-	$EH{'outarch'} .= $EH{'postfix'}{'POSTFILE_ARCH'} . "." . $EH{'output'}{'ext'}{'vhdl'};
-	# if ( $EH{'output'}{'path'} eq "." ) {
-	$EH{'outarch'} = basename( $EH{'outarch'} ); # Strip off pathname
-	# }
-    } else {
-	$EH{'outarch'} = "mix" . $EH{'postfix'}{'POSTFILE_ARCH'} . "." . $EH{'output'}{'ext'}{'vhdl'};
-    }
-
-   # Write configuration into file
-    if (defined $OPTVAL{'outconf'} ) {
-		$EH{'outconf'} = $OPTVAL{'outconf'};
-    } elsif ( defined( $EH{'outconf'} ) ) {
-	# outconf defined by -conf or config file, do not change
-    } elsif ( exists( $ARGV[$#ARGV] ) )  {
-	# Output file will be written to current directory.
-	# Name will become name of last input file foo-c.vhd
-		$EH{'outconf'} = $ARGV[$#ARGV] ;
-		$EH{'outconf'} =~ s,(\.[^.]+)$,,;
-		$EH{'outconf'} .= $EH{'postfix'}{'POSTFILE_CONF'} . "." . $EH{'output'}{'ext'}{'vhdl'};
-	# if ( $EH{'output'}{'path'} eq "." ) {
-		$EH{'outconf'} = basename( $EH{'outconf'} ); # Strip off pathname
-	# }
-    } else {
-		$EH{'outconf'} = "mix" . $EH{'postfix'}{'POSTFILE_CONF'} . "." . $EH{'output'}{'ext'}{'vhdl'};
-    }
-
-=cut
-
     # Compare entities in this PATH[es]...
     #!wig20040217
     if ( defined $OPTVAL{'verifyentity'} ) {
@@ -379,7 +342,7 @@ sub mix_getopt_header(@) {
 
     #
     # -listconf
-    # Dump %EH ... and stop
+    # Dump $eh ... and stop
     #
     if ( $OPTVAL{'listconf'} ) {
 		mix_list_conf();
@@ -414,7 +377,6 @@ sub mix_getopt_header(@) {
 	    if ( eval 'use Text::Diff;' ) {
 			$logger->fatal( "__F_USE_TEXT_DIFF",
 					"\tCannot load Text::Diff module for -conf *delta* mode: $@" );
-			# $eh->inc( 'sum.errors' );
 			exit(1);
 	    }
     }
@@ -754,9 +716,9 @@ sub mix_get_eh () {
 #
 =head2 mix_init()
 
-Initialize the %EH variable with all the configuration we have/need
+Initialize the $eh variable with all the configuration we have/need
 
-  %EH = ( ..... );
+  $eh->set ( ..... );
 
 No input arguments (today).
 
@@ -898,9 +860,10 @@ sub _init_logic_eh ($) {
     	'^(__|%)?(' . join( '|', @names ) . ')(__|%)?$' );
  
 	# Create LOGIC macros:
-	for my $log ( split(/[,\s+]/, $eh->get( 'output.generate.logic' ) ) ) {
-		$eh->set( 'output.generate._logic_map_.%' . uc( $log ) . '%', $log );
-	}
+	# for my $log ( split(/[,\s+]/, $eh->get( 'output.generate.logic' ) ) ) {
+	# 	$log =~ s/^(\w+).*/$1/; # Take real part, strip off (x:y) ...
+	# 	$eh->set( 'output.generate._logic_map_.%' . uc( $log ) . '%', $log );
+	# }
 	return;
 } # End of _init_logic_eh
 
@@ -913,7 +876,7 @@ sub _init_logic_eh ($) {
 =head2 mix_list_conf()
 
 Triggered by -listconf command line switch. Print out current contents of
-%EH configuration hash and exit. Format is suitable to be dumped into a
+$eh configuration object and exit. Format is suitable to be dumped into a
 file mix.cfg and reread after edit.
 
 Lines starting with MIXCFG indicate possible configuration parameters.
@@ -923,10 +886,6 @@ Lines starting with MIXCFG indicate possible configuration parameters.
 sub mix_list_conf () {
 
     my @configs = $eh->conf2array();
-    # (Recursively) retrieve the configuration settings:
-    # foreach my $i ( sort ( keys( %EH ) )  ) {
-	#	push( @configs, _mix_list_conf( "$i", $EH{$i} ));
-    # }
     # Now print the current configuration
     foreach my $i ( @configs ) {
 		print( join( " ", @$i ) . "\n" );
@@ -948,37 +907,7 @@ sub mix_list_econf ($) {
 
     return \@configs;
 }
-
-=head4 OBSOLETE
-
-#
-# (recursive) print of configuration options values
-#!wig20060221: obsolete now 
-sub _mix_list_conf ($$;$) {
-
-    my $name = shift;
-    my $ref = shift;
-    my $out = shift || "STDOUT";
-
-    my @conf = ();
-    if ( ref( $ref ) eq "HASH" ) {
-	foreach my $i ( sort( keys %$ref )  ) {
-	    push( @conf, _mix_list_conf( "$name.$i", $ref->{$i}, $out ) );
-	}
-    } elsif ( ref( $ref ) eq "ARRAY" ) {
-	return ( [ "MIXNOCFG", $name, "ARRAY" ] );
-    } elsif ( ref( $ref ) )  {
-	return ( [ "MIXNOCFG", $name, "REF" ] );
-    } else {
-	$ref =~ s,\n,\\n,go;
-	$ref =~ s,\t,\\t,go;
-	return ( [ "MIXCFG", $name, $ref ] );
-    }
-    return @conf;
-}
-
-=cut
-    
+   
 ##############################################################################
 # mix_overload_conf
 #
@@ -1004,8 +933,6 @@ configuration by a file "mix.cfg" in the current working directory or by adding
 values in a ExCEL sheet "CONF" in a form of <S MIXCONF key value>.
 Order is built-in, mix.cfg, CONF sheet and command line has highest priority.
 
-TODO shift into globals package!!
-
 =cut
 
 sub mix_overload_conf ($) {
@@ -1017,40 +944,18 @@ sub mix_overload_conf ($) {
     for my $i ( @$confs ) {
 		( $k, $v ) = split( /=/, $i ); # Split key=value
 		unless( $k ne '' and $v ne '' ) {
-	    	$logger->warn("__W_CFG_KEY_ILLEGAL", "\tIllegal key or value given: $i\n");
+	    	$logger->error("__E_CFG_KEY_ILLEGAL", "\tIllegal key or value given: $i\n");
 	    	next;
 		}
+     
+		$eh->set( $k, $v );
 
-    	$v =~ s/"/\\"/og;
-        
-		# Mask % and other wildcards:        
-		$k =~ s,[^%.\w],,og; # Remove anything unreasonable from the key ...
-		# $k =~ s/\./'}{'/og;
-		# $k = '{\'' . $k . '\'}';
-
-		# TODO : Prevent overloading of non-scalar values!!
-		if ( my $t = $eh->get( $k ) ) {
-			$eh->set( $k, $v );
-			$logger->info( "__I_CFG_OVL", "\t" . 'Overloading configuration ' . $i );
-		} else {
-			$eh->set( $k, $v );
-			$logger->info( "__I_CFG_ADD", "\t" . 'Adding configuration ' . $i );
-		}
-		#OLD
-		# $e = "if ( my $t = $eh->get( exists( \$EH" . $k . " ) ) { \$EH" . $k
-		# 		. " = '" . $v . "'; " . $logo .
-		#     "} else { \$EH" . $k . " = '" . $v . "'; " . $loga . " }";
-		# unless ( eval $e ) {
-    	#             $logger->warn("__W_CFG_EVAL", "Evaluation of configuration $k=$v failed: $@") if ( $@ );
-    	#
-    	#             next;
-    	#     }
     }
 } # End of mix_overload_conf
 
 #
 # Similiar to _mix_overload_conf!!
-# take configuration parameter and overlead with new value
+# take configuration parameter and overload with new value
 # 
 # Input:
 #	config key	(e.g.   a.b.c )
@@ -1063,7 +968,6 @@ sub mix_overload_conf ($) {
 #	writes to %EH	( $EH{a}{b}{c} = "foo" )
 #
 sub _mix_apply_conf ($$$) {
-
     my $k = shift; # Key
     my $v = shift; # Value
     my $s = shift; # Source
@@ -1072,21 +976,12 @@ sub _mix_apply_conf ($$$) {
 	#!wig20051014: if $v is 0, this parameter got unset!
     unless( defined($k) ) {
 	    unless( defined($k) ) { $k = ""; }
-	    $logger->warn('__W_CFG_KEY_ILLEGAL',
-	    	"\tIllegal key given in $s: key:$k val:$v\n");
+	    $logger->error('__E_CFG_KEY_ILLEGAL',
+	    	"\tIllegal key given in $s: key:$k val:$v. Dropped.");
 	    return undef;
     }
 
-	$v =~ s/'/\\'/g; # Mask ' in input!
-    $k =~ s,[^.%\w],,g; # Remove all characters not being ., % and \w ...
-	my $ok = $k;
-	if ( $eh->get( $k ) ) {
-		$eh->set( $k, $v );
-		$logger->info( "__I_CFG_OVL", "\t" . 'Overloading ' . $s . ' configuration ' . $ok . '=' . $v );
-	} else {
-		$eh->set( $k, $v );
-		$logger->info( "__I_CFG_ADD", "\t" . 'Adding ' . $s . ' configuration ' . $ok . '=' . $v );
-	}	
+	$eh->set( $k, $v );
 
 } # End of _mix_apply_conf
 
@@ -1190,8 +1085,9 @@ sub mix_utils_clean_data ($$;$) {
     #wig20040420: remove \s after ( and before )
     if ( $conf !~ m,\bspace\b,io ) {
 		map( { s/\s+/ /og; s/^\s+//og; s/\s+$//og; s/\s*([\(\)])\s*/$1/g; } @$d );
-		$d = [ grep( !/^$/, @$d ) ];
     }
+	#!wig20060314: Ignore empty lines always!
+	$d = [ grep( !/^$/, @$d ) ];
     
     #  remove trailing ";"
     if ( $conf =~ m,\bisc|ignoresemicolon\b,io ) {
@@ -1635,8 +1531,8 @@ $c Generated
 $c  by:  %USER%
 $c  on:  %DATE%
 $c  cmd: %ARGV%
-$c  delta mode (comment/space/sort/remove): $eh->get( 'output.delta' )
-$c
+$c  delta mode (comment/space/sort/remove): " . $eh->get( 'output.delta' ) .
+"$c
 $c  to create file (NEW)
 $c  existing  file (OLD): $file
 $c ------------- CHANGES START HERE ------------- --

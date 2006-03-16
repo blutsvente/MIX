@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.4 $                                          |
+# | Revision:   $Revision: 1.5 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/03/14 16:37:34 $                              |
+# | Date:       $Date: 2006/03/16 14:10:34 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.5  2006/03/16 14:10:34  wig
+# | Fixed messages and [cut] problem 20060315a
+# |
 # | Revision 1.4  2006/03/14 16:37:34  wig
 # | Syntax typo fixed
 # |
@@ -65,9 +68,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.4 2006/03/14 16:37:34 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.5 2006/03/16 14:10:34 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.4 $';  
+my $thisrevision    =      '$Revision: 1.5 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -153,42 +156,59 @@ sub get {
 #
 # Convert a.b.c to {a}{b}{c}
 #
+# Currently only \w, %, : and '.' are allowed chars in such a key
+#
 sub _key_hash {
 	my $this	= shift;
 	my $key		= shift;
-	
+
+	my $okey = $key;
+	if ( $key =~ s,[^%:.\w],,og ) {
+		# Warn user:
+		$logger->warn( '__W_KEY2HASH', "\tIllegal character removed from eh key:" . $okey );
+	}
 	( my $k = ( '{\'' . $key . '\'}' )) =~ s/\./'}{'/g;
-	
 	return $k;
 }
-	
+
+#
+# accept a key ( a.b.c )
+#    and stores $val under that key
+# returns the stored value
+#
 sub set {
 	my $this	= shift;
 	my $key		= shift;
 	my $val		= shift;
 
 	my $k = $this->_key_hash( $key );
-	( my $logval = substr( $val, 0, 30 ) ) =~ s/\n/ /g; 
-	my $loga ='$logger->warn( "__W_CFG_ADD", \'' . "\t" .
-			'Adding configuration ' . $key . '=' . $logval . '\');'; # Add new
-	my $logo ='$logger->warn( "__W_CFG_OVL", \'' . "\t" .
-			'Overloading configuration ' . $key . '=' . $logval . '\');'; # Overload
+
+	my $r = undef();	
+	$key =~ s/'/\\'/g; # Mask '
 	
-	my $e = 'if ( exists( $this->{cfg}' . $k . ' ) ) { $this->{cfg}' . $k . " = '" .
-			$val . "'; " . $logo .
-	    '} else { $this->{cfg}' . $k . " = '" . $val . "'; " . $loga . ' }';
+	( my $logval = $val ) =~ s/\n/ /g; ;
+	if ( length( $logval ) > 30 ) {
+		$logval = substr( $val, 0, 30 ) . ' ...';
+	} 
+	my $loga ='$logger->debug( "__D_CFG_ADD", \'' . "\t" .
+			'Adding configuration ' . $key . '=\' . $logval );'; # Add new
+	my $logo ='$logger->debug( "__D_CFG_OVL", \'' . "\t" .
+			'Overloading configuration ' . $key . '=\' . $logval );'; # Overload
+	
+	my $e = 'if ( exists( $this->{cfg}' . $k . ' ) ) { $r = $this->{cfg}' . $k . ' = $val; ' . $logo .
+	    '} else { $r = $this->{cfg}' . $k . ' = $val; ' . $loga . ' }';
 	eval $e;
 	if ( $@ ) {
         $logger->error('__E_EVAL_CFG',
         	"\tE_MIX_GLOBALS: Evaluation of configuration $key=$val failed: $@") if ( $@ );
 		return undef();
     }
-	return;
-}
+	return $r;
+} # End of set
 
 #
 # autoincrement and return result after increment
-# TODO
+#
 sub inc {
 	my $this = shift;
 	my $key  = shift;
@@ -202,25 +222,58 @@ sub inc {
 		return undef();
 	}
 	return $r;
-}
+} # End of inc
 
 #
+# append to string and return result
+#
+# Input:
+#	$key	config key
+#	$val	value to append
+#	$sep	seperator (opt.)
+#
+# Caveat: if this configuration did not exist or was empty,
+#   you will see a leading $sep (if set)
+# 
+sub append {
+	my $this = shift;
+	my $key  = shift;
+	my $val  = shift;
+	my $sep  = shift; # Use this character as seperator
+
+	return undef unless( defined( $val ) );
+
+	my $k = $this->_key_hash( $key );
+	return undef unless( defined( $k ) );
+
+	# Was a seperator char/string set?	
+	$sep = '' unless( defined ( $sep ) );
+	$sep =~ s/"/\\"/g; # Mask 
+	$val =~ s/"/\\"/g; # Mask "
+	
+	my $e = '$this->{cfg}' . $k . ' .= "'. $sep . $val . '";';
+	my $r = eval $e;
+	if ( $@ ) {
+		$logger->error('__E_APP_CFGKEY', "\tappend for $key failed: $@");
+		return undef();
+	}
+	return $r;
+} # End of append
+	
+#
 # comma-append to string and return result
+#
+# Caveat: if this configuration did not exist or was empty,
+#   you will see a leading ,
+# 
 sub cappend {
 	my $this = shift;
 	my $key  = shift;
 	my $val  = shift;
 
-	my $k = $this->_key_hash( $key );
-	
-	my $e = '$this->{cfg}' . $k . ' .= ",' . $val . '";';
-	my $r = eval $e;
-	if ( $@ ) {
-		$logger->error('__E_CAP_CFGKEY', "\tcappend for $key failed: $@");
-		return undef();
-	}
-	return $r;
-}
+	return $this->append( $key, $val, ',' );
+
+} # End of cappend
 	
 #
 # Init the EH field ..
@@ -277,12 +330,19 @@ sub init {
 	      	'delta' => 0,	    	# allows to use mix.cfg to preset delta mode -> 0 is off, 1 is on
 	      	'bak' => 0,		# Create backup of output HDL files
 	      	'combine' => 0,	# Combine enty,arch and conf into one file, -combine switch
-	      	'portdescr' => '%::descr%',	# Definitions for port map descriptions:
-		      #   %::descr% (contents of this signal's descr. field, %::ininst% (list of load instances),
-		      #   %::outinst% (list of driving instances), %::comment%
-			  #   %::connnr  (signal number according to order generated/defined by sheets),
+	      	'portdescr' => '%::descr%',
+	      		# Definitions for port map descriptions:
+		      	#   %::descr% (contents of this signal's descr. field
+		      	#	%::ininst% (list of load instances),
+		      	#   %::outinst% (list of driving instances),
+		      	#	%::inport%, %::outport%		list of in/out ports at this signal
+		      	#	%::ininpo%, %::outinpo%		list of inst/port pairs
+		      	#	%::comment%
+			  	#   %::connnr  (signal number according to order generated/defined by sheets),
+			  	#   ... all plain fields from conndb ( ::bundle, ::type, ...
 	      	'portdescrlength' => 100, # Limit length of comment to 100 characters!
 	      	'portdescrlines' => 10,   # Do not print > 10 port comment lines
+	      	'portdescrindent' => '%CR%%S%%S%%S%%S%%S%',
 		  	'portmapsort' => 'alpha', # How to sort port map; allowed values are:
 		  			# alpha := sorted by port name (default)
 		  			# input (ordered as listed in input files)
@@ -437,6 +497,8 @@ sub init {
 		'keywords' => { #These keywords will trigger warnings and get replaced
     		'vhdl'	=> '(open|instance|entity|signal)',        # TODO Give me more keywords
     		'verilog' 	=> '(register|net|wire|in|out|inout)', # TODO give me more
+    		'xlscell'	=> '#(VALUE|NAME|NUM)[!?]',		# Indicates a problem with XLS macros/formulas
+    					# Format is perl regular expression, should not be modified by user
 		},
 		'defs' => '',   # 'inst,conn',    # make sure elements are only defined once:
 	    		    # posible values are: inst,conn
@@ -1119,6 +1181,7 @@ sub init {
  				# stripnl:	replace <nl> by <sp> (also known as 'wrapnl')
  				# masknl:	replace newline by \\n
  				# stripna:	replace all non ASCII-Chars by <sp>
+ 			
        },
        'out' => '',
     };
@@ -1172,7 +1235,11 @@ sub init {
         $this->{'cfg'}{'drive'} = '';
     }
 
+	# Store commandline
 	$this->{'cfg'}{'macro'}{'%ARGV%'} = "$0 " . join( " ", @ARGV );
+	# Make commented version (replace % -> __ )
+	( $this->{'cfg'}{'macro'}{'%CARGV%'} = $this->{'cfg'}{'macro'}{'%ARGV%'} ) =~
+			s/%/_MP_/g; # Remove % to prevent expansion ...
 
     $this->{'cfg'}{'macro'}{'%VERSION%'} = $::VERSION;
     $this->{'cfg'}{'macro'}{'%0%'} = $FindBin::Script;
