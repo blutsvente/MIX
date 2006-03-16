@@ -1,5 +1,31 @@
 MIX HOWTO and FAQ
 
+>>title: Why are my comments shortened in the generated ExCEL sheet?
+
+If you look into an EcXEL sheet generated with MIX, you will find, that
+MIX restricts a single cell to keep less then 500 characters.
+
+The amount is controlled by the configuration parameter 
+$EH{'format'}{'xls'}{'maxcelllength'}, default is 500.
+
+The reason is, that ExCEL will `die' if you write more chars
+through OLE.
+Der Grund warum es den gibt ist allerdings, dass es nicht
+zuverlässig funktioniert mehr als 500 Zeichen
+per OLE in eine ExCEL-Zelle zu schreiben. Das kann u.U. ExCEL zum Absturz bringen. Sobald man über 1024 rauskommt, ist es dann ganz aus. Der fehlende Text ist in der nächsten Reihe zu finden (Suche nach __I_SPLIT_CONT ). Das passiert bei einer ganzen Reihe von Zellen.
+
+To avoid that, MIX splits larger cells. Usually mix can recombine such
+cells. A message like 
+...
+06/01/18 13:33:34 WARNING: WARNING: Splitting key of table: foo bar
+...
+indicates, that mix was not able to split in a recoverable way.
+
+You can also try different intermediate data format like csv or sxc (OpenOffice)
+to overcome this limit.
+
+#!wig20060118
+
 >>title: Disable warnings INFO: Not all lowercase in new foo element bar!
 
 To remove the messages, change the configuration keys:
@@ -295,3 +321,44 @@ See the test case files "constant.xls" and "generics.xls" for examples for gener
 and constants.
 
 #!wig20050216
+
+>>title: Details about pad naming if IO sheet is used
+
+The names of the generated pad and io cells is freely programable: 
+
+Default Rules (built into MixUtils.pm):
+    'pad' => {
+		'name' => '%PREFIX_PAD_GEN%%::name%',
+				# generate pad names like, derive name from ::name column
+		  		# alternativ: '%PREFIX_PAD_GEN%_%::pad%'
+		  		# PREFIX_PAD_GEN is set to 'pad_' by default.
+    },
+    'iocell' => {
+		'name' => '%PREFIX_IOC_GEN%%::name%',
+				# generate iocell names like, derive name from ::name column
+				# PREFIX_IOC_GEN is set to 'ioc_' by default.
+
+Example:
+An IO sheet with two pad rows defined, have the values
+"mypadname1" and "mypadname2" set in the ::name column, will yield
+
+pads:
+	pad_mypadname1
+	pad_mypadname2
+IO-cells:
+	ioc_mypadname1
+	ioc_mypadname2
+
+When you set
+# set rules for io and pad naming:
+MIXCFG pad.name %PREFIX_PAD_GEN%%::pad%
+MIXCFG iocell.name %::iocell%_%::pad%
+e.g. in your mix.cfg, the names will become
+(::pad has the pad numbers assigned):
+
+	pad_1
+	pad_2
+	ioc_type_foo_1
+	ioc_type_bar_2
+
+#!20030800

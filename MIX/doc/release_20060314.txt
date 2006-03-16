@@ -1,0 +1,75 @@
+>>title: MIX development doc, major rework of MIX basic modules: Logging and Global Configurations
+Hallo,
+
+please be informed about the availability of two new modules for the MIX tool:
+
+1. Global configuration options now handled in Micronas::MixUtils::Globals.pm
+
+In order to access configuration options (from command line switches or mix.cfg files), use the following methods now:
+
+use Micronas::MixUtils qw($eh)
+
+$confval = $eh->get( 'some.config.key' );  # Returns string
+$confref = $eh->get( 'some' );             # Returns reference to config hash or array ref
+	$confval = $confref->{'key'};
+
+$eh->set( 'some.config.key', 'value' );    # Set/add key
+
+$eh->inc( 'some.counter' );			 # increment "some.counter"
+
+…
+The user interface has not changed.
+
+2. Logging reworked
+
+MIX now uses the Log::Log4perl module from CPAN for logging.
+The configuration of the logger is done in the file mixlog.conf, which is either read from cwd() or the MIX installation path.
+
+Log::Log4perl provides logging levels like:
+
+LEVEL		   default message handling
+FATAL		-> to logfile and screen
+ERROR		-> to logfile and screen
+WARN(ING)	-> to logfile
+INFO		-> to logfile and screen
+DEBUG		-> discarded
+
+Logging can be configured individually per module. Please check the Log::Log4perl documentation.
+
+Use it this way:
+
+use Log::Log4perl qw(get_logger);
+my $logger = get_logger( 'MIX::MixUtils' ); (replace MIX::MixUtils by your current modules namespace tag.)
+
+$logger->fatal( '__F_SOME_TAG', "\tFatal error happened"); $logger->error('__E_SOME_ERROR', "\tError message to print to screen and file"); $logger->warn('__W_SOME_WARNING', "\tWarning go to logfile only"); $logger->info('__I_INFO_MESSAGE', "\tInformation displayed on screen and in logfile"); $logger->debug('__D_DEBUG_TAG', "\tDebugging" );
+
+None of theses methods will stop your program, in case of fatal you might use die() afterwards.
+Please stick to that format ( TAG + Extra text, TAG starts by __X_), to allow MIX to limit the number of repetitions of a given tag to a sane value. The number of occurences of each message tag is counted internally and will be cut off at a certain level. The number of messages in a given level is counted and displayed after MIX is done.
+
+By adding a mixlog.conf file in cwd() you can modify the logging for individual modules.
+
+I have reworked and checked in the following modules now.
+
+Micronas::
+	MixUtils.pm
+	MixUtils/IO.pm
+	MixUtils/Globals.pm (new)
+	MixUtils/Mif.pm (needs some extra testing!)
+	MixUtils/InComments.pm
+	MixWriter.pm
+	MixIOParser.pm
+	MixParser.pm
+	MixChecker.pm
+	Reg.pm
+
+Log::Log4perl* (from CPAN)
+Log::Log4perl::Filter/MIXFilter.pm (new!)
+
+mix_0.pl
+vgch_join.pl
+mixlog.conf
+
+There are still some testcases not working (but the majority seems to be o.k.) and I have no verification about the functions not covered by testcases.
+Expect some updates soon.
+
+I will release the new code as mix/1.5 (in preparation of mix/2.0) under UNIX and find some place for a separate installation in MS-Windows.
