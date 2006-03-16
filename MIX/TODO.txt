@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.59 2006/03/14 08:15:28 wig Exp $
+# $Id: TODO.txt,v 1.60 2006/03/16 14:14:07 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -27,6 +27,38 @@ Code:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+
+>>title: 20060314a/RFE: reduce verbosity of MIX, filter certain messages
+
+egrep -v "<list>" from mix_0.pl
+	Cannot locate a worksheet
+	Empty header in column
+	Missing signal name in input
+	Not all chars in correct case
+	Adding port
+	Add_port
+	Autoexp
+	Autored
+	Autocon
+	does not have a load
+	does not have a driver
+	Leave unloaded port
+	
+	Req: oberhoff
+	Prio: medium
+	
+>>title: 20060316a/RFE: allow to postprocess signals and join/merge bits to vectors
+
+Combine single bit signals into an vector, e.g. for
+
+addr0
+addr1
+addr2
+  -> addr[2:0]
+  
+	Req: wig, gay
+	Prio: medium
+	Status: open
 
 >>title: 20060202a/Req: -import do not sort, but stick to input order
 
