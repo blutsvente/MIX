@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.78 $                                         |
+# | Revision:   $Revision: 1.79 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/03/16 14:10:34 $                              |
+# | Date:       $Date: 2006/03/17 09:18:31 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.78 2006/03/16 14:10:34 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.79 2006/03/17 09:18:31 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,8 +33,8 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
-# | Revision 1.78  2006/03/16 14:10:34  wig
-# | Fixed messages and [cut] problem 20060315a
+# | Revision 1.79  2006/03/17 09:18:31  wig
+# | Fixed bad usage of $eh inside m/../ and print "..."
 # |
 # | Revision 1.77  2006/03/14 08:10:34  wig
 # | No changes, got deleted accidently
@@ -337,9 +337,9 @@ sub _mix_wr_signum2signam		($);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.78 2006/03/16 14:10:34 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.79 2006/03/17 09:18:31 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.78 $';
+my $thisrevision   =      '$Revision: 1.79 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -783,16 +783,17 @@ sub compare_merge_entities ($$$$) {
     my $eflag = 1; # Is equal
 
     #For all ports:
+    my $simple_re = $eh->get( 'output.generate._logicre_' );
     for my $p ( keys( %$rent ) ) {
 
 		next if ( $p =~ m,^__, ); # Skip internals like __LEAF__, __LANG__
     	# Skip that if it does not exist in the new port map
 		unless( exists( $rnew->{$p} ) ) {
-	    	if (    $p ne "-- NO OUT PORTs" 
-	    			and $p ne "-- NO IN PORTs"
-	    			and $ent ne "W_NO_ENTITY"
+	    	if (    $p ne '-- NO OUT PORTs' 
+	    			and $p ne '-- NO IN PORTs'
+	    			and $ent ne 'W_NO_ENTITY'
 	    			and $ent ne '%TYPECAST_ENT%'
-	    			and $ent !~ m/$eh->get( 'output.generate._logicre_' )/i ) {
+	    			and $ent !~ m/$simple_re/i ) {
 				$logger->warn( '__W_COMP_MERG_ENTY', "Missing port $p in entity $ent ($inst) redeclaration, ignoreing!" );
 				$eflag  = 0;
 	    	}
@@ -844,13 +845,13 @@ sub compare_merge_entities ($$$$) {
     }
 
     # Now we add up the rest of $rnew ...
+    $simple_re = $eh->get( 'output.generate._logicre_' );
     for my $p ( keys( %$rnew ) ) {
-        #
-	if (    $p ne "-- NO OUT PORTs"
-			and $p ne "-- NO IN PORTs"
-            and $ent ne "W_NO_ENTITY"
-            and $ent ne "%TYPECAST_ENT%"
-            and $ent !~ m/$eh->get( 'output.generate._logicre_' )/i )
+		if (    $p ne '-- NO OUT PORTs'
+			and $p ne '-- NO IN PORTs'
+            and $ent ne 'W_NO_ENTITY'
+            and $ent ne '%TYPECAST_ENT%'
+            and $ent !~ m/$simple_re/i )
         {
 	    	$logger->warn( '__W_COMP_MERG_ENTY', "\tDeclaration for entity $ent ($inst) extended by $p!" );
 	    	$eflag = 0;
@@ -1269,7 +1270,7 @@ sub write_entities () {
                 # In combine mode, choose entity.vhd as filename.
                 # my $lang = "vhdl"; # Filename extension defaults to VHDL
                 my $lang = mix_wr_getlang( $i, $entities{$i}{__LANG__} );
-				my $filename = $i_fn . $entext . "." . $eh->get( 'output.ext.' . $lang );
+				my $filename = $i_fn . $entext . '.' . $eh->get( 'output.ext.' . $lang );
 	    	_write_entities( $i, $filename, \%entities )
 		}
     } else {
@@ -1293,7 +1294,7 @@ sub mix_wr_getlang ($$) {
     my @langs = keys %$entylangr;
     my $requested = scalar( @langs );
 
-    my $goodlang = "(" . join( "|", keys( %{$eh->get('template')} )) . ")";
+    my $goodlang = '(' . join( '|', keys( %{$eh->get('template')} )) . ')';
     @langs = grep( m/^$goodlang/ , @langs ); # Select available languages    
     if ( scalar( @langs ) > 1 ) {
         $logger->warn('__W_GETLANG', "\tRequesting multiple languages for entity $enti!");
@@ -1364,7 +1365,8 @@ sub _write_entities ($$$) {
     # another case: if this entity is in the "simple logic" list, do
     # not write ...
     #
-    if ( $ehname =~ m/$eh->get( 'output.generate._logicre_')/i ) {
+    my $simple_re = $eh->get( 'output.generate._logicre_');
+    if ( $ehname =~ m/$simple_re/i ) {
     	$write_flag = "0";
     }
 
@@ -2200,22 +2202,23 @@ sub write_architecture () {
             # Language? vhdl, verilog or what else?
             my $lang = lc( $hierdb{$i}{'::lang'} ) || $eh->get( 'macro.%LANGUAGE%' );
             unless ( $eh->get( 'template.' . $lang ) ) {
-                $logger->warn( '__W_WR_ARCH', "\tIllegal language $lang selected. Autoswitch to $eh->get( 'macro.%LANGUAGE%' )!" );
+                $logger->warn( '__W_WR_ARCH', "\tIllegal language $lang selected. Autoswitch to " .
+                	$eh->get( 'macro.%LANGUAGE%' ) . '!' );
                 $lang = $eh->get( 'macro.%LANGUAGE%' );
             }
 
             if ( $lang =~ m,^veri,io ) {
                 # verilog filename:
-                $filename = $e_fn . "." . $eh->get( 'output.ext.' . $lang ) . $alt;    
+                $filename = $e_fn . '.' . $eh->get( 'output.ext.' . $lang ) . $alt;    
             } elsif ( $efname =~ m/^COMB/o ) {
                 # Combined output
-                $filename = $e_fn . "." . $eh->get( 'output.ext.' . $lang ) . $alt;
+                $filename = $e_fn . '.' . $eh->get( 'output.ext.' . $lang ) . $alt;
             } elsif ( $hierdb{$i}{'::arch'} ) {
-                $filename = $e_fn . "-" . $hierdb{$i}{'::arch'} .
-                        $archext . "." .
+                $filename = $e_fn . '-' . $hierdb{$i}{'::arch'} .
+                        $archext . '.' .
                         $eh->get( 'output.ext.' . $lang ) . $alt;
             } else {
-                $filename = $e_fn . $archext . "."
+                $filename = $e_fn . $archext . '.'
                        . $eh->get( 'output.ext.' . $lang ) . $alt;
             }
             _write_architecture( $i, $e, $filename, \%hierdb );
@@ -2281,8 +2284,9 @@ sub gen_instmap ($;$$) {
     #
     my $rinstc = $hierdb{$inst}{'::conn'};
  	my $simple_flag=0;
+ 	my $simple_re = $eh->get( 'output.generate._logicre_' );
  	#!wig20050414: implement simple logic, simple start-up
- 	if ( $enty =~ m/$eh->get( 'output.generate._logicre_' )/i ) {
+ 	if ( $enty =~ m/$simple_re/i ) {
  		# $gmap gets the output, $map the input(s)
  		( $gmap, $map ) = port_simple( 'outin', $inst, $enty, $lang,
  			$rinstc->{'out'}, $rinstc->{'in'}, \@out, \@in );
@@ -4016,7 +4020,8 @@ sub _write_architecture ($$$$) {
 		}
 
 		# Do not write, if we are a "simple logic" cell
-		if ( $ae->{$i}{'::entity'} =~ m/$eh->get( 'output.generate._logicre_' )/i ) {
+		my $simple_re = $eh->get('output.generate._logicre_');
+		if ( $ae->{$i}{'::entity'} =~ m/$simple_re/i ) {
 			next;
 		}
 
@@ -4114,11 +4119,12 @@ sub _write_architecture ($$$$) {
             }
             # %COMPONENTS% are VHDL entities ..
             #wig20030711: do not print component if user sets %NO_COMP% flag in ::use
+            my $simple_re = $eh->get('output.generate._logicre_');
             if ( defined( $hierdb{$d_name}{'::use'}) and
                 $hierdb{$d_name}{'::use'} =~ m,(NO_COMP|__NOCOMPDEC__),o ) {
                     $macros{'%COMPONENTS%'} .= "\t\t" . $tcom . "__I_COMPONENT_NOCOMPDEC__ " .
                     $d_name . "\n\n";
-            } elsif ( $d_enty =~ m/$eh->get( 'output.generate._logicre_' )/i ) {
+            } elsif ( $d_enty =~ m/$simple_re/i ) {
            	#!wig20050414: simple logic -> no component declaration
                    $macros{'%COMPONENTS%'} .= "\t\t" . $tcom . "__I_SIMPLE_LOGIC__ " .
                     $d_name . "\n\n";
@@ -4243,7 +4249,8 @@ sub _write_architecture ($$$$) {
                 if ( $ilang =~ m,^veri,io ) {
                     my $w = $high - $low + 1;
                     $macros{'%CONCURS%'} .= $eh->get( 'macro.%S%' ) x 3 .
-                        "assign " . $eh->get( 'macro.' . $ii ) . " = " . $w . "'b" . $logicv . ";\n";
+                        'assign ' . $eh->get( 'macro.' . $ii ) . ' = ' .
+                        $w . "'b" . $logicv . ";\n";
                 } else {
                     $macros{'%CONCURS%'} .= $eh->get( 'macro.%S%' ) x 3 .
                         $eh->get( 'macro.' . $ii ) . " <= ( others => '$logicv' );\n";
@@ -4498,20 +4505,21 @@ sub _write_architecture ($$$$) {
     my $write_flag = $eh->get( 'outarch' );
     # Are we in verify mode?
     # Not possible in __COMMON__ mode
-    if ( $instance ne "__COMMON__" and $eh->get( 'check.hdlout.path' ) and
+    if ( $instance ne '__COMMON__' and $eh->get( 'check.hdlout.path' ) and
         $eh->get( 'check.hdlout.mode' ) =~ m,\b(arch|mod|head|all),io ) { # Selected ...
             # Append check flag ...
         if ( $eh->get( 'check.hdlout.mode' ) =~ m,\bleaf,io ) {
                 # __LEAF__ is 1 if this is not a LEAF!
-                $write_flag .= ( $entities{$entity}{'__LEAF__'} == 0 ) ? "_CHK_ARCH_LEAF" : "";
+                $write_flag .= ( $entities{$entity}{'__LEAF__'} == 0 ) ? '_CHK_ARCH_LEAF' : '';
         } else {
-                $write_flag .= ( $entities{$entity}{'__LEAF__'} == 0 ) ? "_CHK_ARCH_LEAF" : "_CHK_ARCH";
+                $write_flag .= ( $entities{$entity}{'__LEAF__'} == 0 ) ? '_CHK_ARCH_LEAF' : '_CHK_ARCH';
         }
     }
     
     # Do not write, if we are a "simple logic" cell
+    my $simple_re = $eh->get('output.generate._logicre_');
 	if ( $instance ne '__COMMON__' and
-		 $ae->{$instance}{'::entity'} =~ m/$eh->get( 'output.generate._logicre_' )/i ) {
+		 $ae->{$instance}{'::entity'} =~ m/$simple_re/i ) {
 		$write_flag = 0;
 	}
 
@@ -5355,17 +5363,18 @@ sub write_configuration () {
                 # Language? vhdl, verilog or what else?
                 my $lang = lc( $hierdb{$i}{'::lang'} ) || $eh->get( 'macro.%LANGUAGE%' );
                 unless ( $eh->get( 'template.' . $lang  ) ) {
-                    $logger->warn('__W_WRITE_CONF', "\tIllegal language $lang selected. Autoswitch to $eh->get( 'macro.%LANGUAGE%' )!" );
+                    $logger->warn('__W_WRITE_CONF', "\tIllegal language $lang selected. Autoswitch to " .
+                    		$eh->get( 'macro.%LANGUAGE%' ) . '!' );
                     $lang = $eh->get( 'macro.%LANGUAGE%' );
                 }
                 next if ( $lang ne "vhdl" ); # No configuration to write if language ne VHDL
 
                 if ( $eh->get( 'outconf' ) eq "COMB" ) {
-                    $filename = $e_fn . $confext . "." . $eh->get( 'output.ext.' . $lang );
+                    $filename = $e_fn . $confext . '.' . $eh->get( 'output.ext.' . $lang );
                 } elsif ( substr( $ce, 0, length( $e_fn ) ) eq $e_fn ) {
-                    $filename = $ce . $confext  . "." . $eh->get( 'output.ext.' . $lang );
+                    $filename = $ce . $confext  . '.' . $eh->get( 'output.ext.' . $lang );
                 } else {
-                    $filename = $e_fn . $confext  . "." . $eh->get( 'output.ext.' . $lang );
+                    $filename = $e_fn . $confext  . '.' . $eh->get( 'output.ext.' . $lang );
                 }
 		    	_write_configuration( $i, $e, $filename, \%hierdb );
 			}
@@ -5394,7 +5403,7 @@ sub _write_configuration ($$$$) {
 
     my $write_flag = $eh->get( 'outconf' );
     #!wig20040804: if this is a leaf cell, supress writing!
-    if ( $instance ne "__COMMON__"  and $eh->get( 'output.generate.conf' ) =~ m,\bnoleaf\b, and
+    if ( $instance ne '__COMMON__'  and $eh->get( 'output.generate.conf' ) =~ m,\bnoleaf\b, and
             $hierdb{$instance}{'::treeobj'}->daughters == 0  ) {
                 # Leaf ...
             $write_flag = 0;
@@ -5404,14 +5413,15 @@ sub _write_configuration ($$$$) {
     # Another case: if this entity is in the "simple logic" list, do
     # not write ...
     #
-    if ( $entity =~ m/$eh->get( 'output.generate._logicre_' )/i ) {
+    my $simple_re = $eh->get('output.generate._logicre_');
+    if ( $entity =~ m/$simple_re/i ) {
     	$write_flag = 0;
     	return; # 
     }
     
     # Are we in verify mode?
     # Not possible if in __COMMON__ mode!
-    if ( $instance ne "__COMMON__" and $eh->get( 'check.hdlout.path' ) and
+    if ( $instance ne '__COMMON__' and $eh->get( 'check.hdlout.path' ) and
         $eh->get( 'check.hdlout.mode' ) =~ m,\b(conf|all),io ) { # Selected ...
         # Append check flag ...
         if ( $eh->get( 'check.hdlout.mode' ) =~ m,\bleaf\b,io ) {
@@ -5503,7 +5513,8 @@ sub _write_configuration ($$$$) {
                 }
             }
             # If this daughter is from the simple logic list -> do not add a configuration
-            if ( $d_enty =~ m/$eh->get( 'output.generate._logicre_' )/i ) {
+            my $simple_re = $eh->get( 'output.generate._logicre_' );
+            if ( $d_enty =~ m/$simple_re/i ) {
             	$pre = $tcom . " __I_NO_CONF_LOGIC " . $pre;
             }
             # If this daughter has a NO_CONFIG in it's configuration -> comment it out:

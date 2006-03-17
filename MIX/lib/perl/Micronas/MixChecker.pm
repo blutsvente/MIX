@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Checker
 # | Modules:    $RCSfile: MixChecker.pm,v $
-# | Revision:   $Revision: 1.12 $
+# | Revision:   $Revision: 1.13 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2006/03/14 08:10:35 $
+# | Date:       $Date: 2006/03/17 09:18:31 $
 # |
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.12 2006/03/14 08:10:35 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.13 2006/03/17 09:18:31 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the checking capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixChecker.pm,v $
+# | Revision 1.13  2006/03/17 09:18:31  wig
+# | Fixed bad usage of $eh inside m/../ and print "..."
+# |
 # | Revision 1.12  2006/03/14 08:10:35  wig
 # | No changes, got deleted accidently
 # |
@@ -98,7 +101,6 @@ use Tree::DAG_Node; # tree base class
 use Micronas::MixUtils qw( $eh mix_store db2array replace_mac);
 use Micronas::MixUtils::IO;
 use Micronas::MixParser; # TODO : Remove that recursion!
-
 #
 # Prototypes
 #
@@ -119,9 +121,9 @@ my %mix_check_list = ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixChecker.pm,v 1.12 2006/03/14 08:10:35 wig Exp $';
+my $thisid		=	'$Id: MixChecker.pm,v 1.13 2006/03/17 09:18:31 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixChecker.pm,v $';
-my $thisrevision   =      '$Revision: 1.12 $';
+my $thisrevision   =      '$Revision: 1.13 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

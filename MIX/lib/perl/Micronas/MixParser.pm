@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.67 $                                         |
+# | Revision:   $Revision: 1.68 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/03/16 14:10:34 $                              |
+# | Date:       $Date: 2006/03/17 09:18:31 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.67 2006/03/16 14:10:34 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.68 2006/03/17 09:18:31 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,8 +33,8 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
-# | Revision 1.67  2006/03/16 14:10:34  wig
-# | Fixed messages and [cut] problem 20060315a
+# | Revision 1.68  2006/03/17 09:18:31  wig
+# | Fixed bad usage of $eh inside m/../ and print "..."
 # |
 # | Revision 1.66  2006/03/14 08:10:34  wig
 # | No changes, got deleted accidently
@@ -130,9 +130,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.67 2006/03/16 14:10:34 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.68 2006/03/17 09:18:31 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.67 $';
+my $thisrevision =	'$Revision: 1.68 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -529,6 +529,7 @@ sub parse_hier_init ($) {
         #
         # Early name expansion required for primary key ::inst
         #!wig: this is a sepcial case of replace_mac!
+        my $meh = $eh->get('output.generate._logicre_');
         if ( $r_hier->[$i]{'::inst'} =~ m/^\s*%(::\w+?)%/o ) {
             my $name = $r_hier->[$i]{'::inst'};
             if ( defined( $r_hier->[$i]{$1} ) ) {
@@ -537,7 +538,7 @@ sub parse_hier_init ($) {
                 #TODO: multiple replacements could lead to troubles!
                 #    and it will not work recursive !!
                 $r_hier->[$i]{'::inst'} = $name;
-            } elsif ( $name !~ m/$eh->get('output.generate._logicre_')/io ) {
+            } elsif ( $name !~ m/$meh/io ) {
                 $logger->error( '__E_PARSER_HIER_INIT', "\tCannot replace %::inst% for $name!" );
             }
         }
@@ -864,7 +865,7 @@ sub add_conn (%) {
         #
         # Special handling: open -> %OPEN%
         if ( $name =~ m,^open$,io or $name =~ m,^\s*%OPEN%,o ) {
-            $name = "%OPEN_" . $eh->get( 'OPEN_NR' ) . "%";
+            $name = '%OPEN_' . $eh->get( 'OPEN_NR' ) . '%';
             $eh->inc( 'OPEN_NR' );
         }
 		#
@@ -1403,7 +1404,7 @@ sub _create_conn ($$%) {
                 }
             }
             if ( $tcdo ) { 
-                my $tcwr = '%TYPECAST_' . $eh->inc( 'TYPECAST_NR' ) . '%' ;
+                my $tcwr = '%TYPECAST_' . $eh->postinc( 'TYPECAST_NR' ) . '%' ;
                 my $tcsig = $eh->get( 'postfix.PREFIX_TC_INT' ) .
                 	$eh->get( 'TYPECAST_NR' ) . "_" . $data{'::name'};
                 my @tcassign = ();
@@ -2436,15 +2437,17 @@ sub get_top_cell () {
             }
         }
     } else {
+    	my $meh = $eh->get( 'top' );
         for my $i ( keys( %hierdb ) ) {
-            if ( $i =~ m,$eh->get( 'top' ),io ) { # TODO : What about case sensitive?
+            if ( $i =~ m,$meh,io ) { # TODO : What about case sensitive?
                 @tops = ( $hierdb{$eh->get( $i )}{'::treeobj'} );
                 last;
             }
         }
     }
     if ( scalar( @tops ) < 1 ) { # Did not find testbench ???
-        $logger->warn( '__W_GET_TOP', "\tCould not identify toplevel aka. $eh->get( 'top' )" );
+        $logger->warn( '__W_GET_TOP', "\tCould not identify toplevel aka. " .
+        	$eh->get( 'top' ) );
     }
 
     return @tops;
@@ -2514,9 +2517,10 @@ sub add_portsig () {
         # top level
         # Add IO-port if not connected already ....
         #
+        my $meh = $eh->get( 'output.generate._re_xinout');
         if ( $eh->get( 'output.generate.inout' ) =~ m,mode,io and
             	( $mode =~ m,[IO],io or $mode =~ m,IO,i ) and
-            	$signal !~ m/$eh->get( 'output.generate._re_xinout')/
+            	$signal !~ m/$meh/
             ) {
             #wig20030625: adding IO switch ...
             #TODO: what about buffers and tristate? So far noone requested this ...
@@ -3852,6 +3856,7 @@ sub __parse_mac ($$) {
         if ( $mac =~ m/^%TYPECAST_/ ) {
             return;
         }
+        my $meh = $eh->get( 'output.generate._logicre_' );
         if ( $mackey =~ m/^%(::\w+)%/ ) {
             if ( exists( $rb->{$1} ) ) {
                 my $r = $rb->{$1};
@@ -3861,7 +3866,7 @@ sub __parse_mac ($$) {
             }
         } elsif( exists( $ehmacs->{$mackey} ) ) {
             $$ra =~ s/$mac/$ehmacs->{$mackey}/;
-        } elsif ( $mackey =~ m/$eh->get( 'output.generate._logicre_' )/i ) {
+        } elsif ( $mackey =~ m/$meh/i ) {
         	; # Do nothing here
         } elsif ( exists( $pfmacs->{$pfkey} ) ) {
         	$$ra =~ s/$mac/$pfmacs->{$pfkey}/;

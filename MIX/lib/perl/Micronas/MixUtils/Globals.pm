@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.5 $                                          |
+# | Revision:   $Revision: 1.6 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/03/16 14:10:34 $                              |
+# | Date:       $Date: 2006/03/17 09:18:31 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,8 +26,8 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
-# | Revision 1.5  2006/03/16 14:10:34  wig
-# | Fixed messages and [cut] problem 20060315a
+# | Revision 1.6  2006/03/17 09:18:31  wig
+# | Fixed bad usage of $eh inside m/../ and print "..."
 # |
 # | Revision 1.4  2006/03/14 16:37:34  wig
 # | Syntax typo fixed
@@ -68,9 +68,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.5 2006/03/16 14:10:34 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.6 2006/03/17 09:18:31 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.5 $';  
+my $thisrevision    =      '$Revision: 1.6 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -122,14 +122,7 @@ sub get_eh () {
 	
 } # End of get_eh
 
-
-=head 4 print() prints the text string
-
-	print() does not take arguments
-
-=cut
-
-=head 4 get() get
+=head3 get(key)
 
 get the config key value (or reference) for a given key
 
@@ -206,16 +199,22 @@ sub set {
 	return $r;
 } # End of set
 
-#
-# autoincrement and return result after increment
-#
+=head3 inc(key)
+
+increment a given config counter and return the new value
+
+=cut
+
 sub inc {
 	my $this = shift;
 	my $key  = shift;
+	my $flag = shift || 0; # If set, do postincrement
 	
 	my $k = $this->_key_hash( $key );
 	
-	my $e = '++$this->{cfg}' . $k . ';';
+	my $pre  = ( $flag ) ? '' : '++';
+	my $post = ( $flag ) ? '++' : '';
+	my $e = $pre . '$this->{cfg}' . $k . $post . ';';
 	my $r = eval $e;
 	if ( $@ ) {
 		$logger->error('__E_INC_CFGKEY', "\tIncrement for $key failed: $@");
@@ -223,6 +222,21 @@ sub inc {
 	}
 	return $r;
 } # End of inc
+
+=head3 postinc(key)
+
+increment a given config counter and return the value set before
+(post increment)
+
+=cut
+
+sub postinc {
+	my $self = shift;
+	my $key  = shift;
+	
+	$self->inc( $key, 1 ); # Run inc in post mode
+
+} # End of postinc
 
 #
 # append to string and return result
@@ -1296,7 +1310,15 @@ sub init {
     }
 
 } # End of init
-	
+
+=head3 print(key) prints the text string
+
+	print out the contents of a given key
+	will print the reference if the referenced
+	value is not a string. 
+
+=cut
+
 sub print {
 	my $self = shift;
 	my $key	 = shift;

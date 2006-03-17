@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.23 $                                               |
-# | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2006/03/07 09:04:05 $                                                   |
+# | Revision:   $Revision: 1.24 $                                               |
+# | Author:     $Author: wig $                                                 |
+# | Date:       $Date: 2006/03/17 09:18:32 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.23 2006/03/07 09:04:05 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.24 2006/03/17 09:18:32 wig Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.24  2006/03/17 09:18:32  wig
+# | Fixed bad usage of $eh inside m/../ and print "..."
+# |
 # | Revision 1.23  2006/03/07 09:04:05  mathias
 # | fixed in writing API function name
 # |
@@ -120,11 +123,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.23 2006/03/07 09:04:05 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.24 2006/03/17 09:18:32 wig Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.23 $';
+my $thisrevision   =      '$Revision: 1.24 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -142,21 +145,14 @@ $thisrevision =~ s,^\$,,go;
 # Used packages
 #------------------------------------------------------------------------------
 use strict;
-# use Data::Dumper;
 use File::Basename;
 
 use Log::Agent;
 use Log::Agent::Priorities qw(:LEVELS);
-# use Tree::DAG_Node; # tree base class
 
 use Micronas::MixUtils qw(%EH %OPTVAL);
 use Micronas::Reg;
 use Micronas::MixUtils::Mif;
-
-#use FindBin qw($Bin);
-#use lib "$Bin";
-#use lib "$Bin/..";
-#use lib "$Bin/lib";
 
 #
 # Prototypes

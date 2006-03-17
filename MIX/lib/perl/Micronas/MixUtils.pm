@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.110 $                                         |
+# | Revision:   $Revision: 1.111 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/03/16 14:10:34 $                              |
+# | Date:       $Date: 2006/03/17 09:18:31 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.110 2006/03/16 14:10:34 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.111 2006/03/17 09:18:31 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,8 +30,8 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
-# | Revision 1.110  2006/03/16 14:10:34  wig
-# | Fixed messages and [cut] problem 20060315a
+# | Revision 1.111  2006/03/17 09:18:31  wig
+# | Fixed bad usage of $eh inside m/../ and print "..."
 # |
 # | Revision 1.109  2006/03/14 14:20:49  lutscher
 # | changed __I_SPLIT_HEAD to __D_SPLIT_HEAD
@@ -165,11 +165,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.110 2006/03/16 14:10:34 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.111 2006/03/17 09:18:31 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.110 $';         #'
+my $thisrevision        =      '$Revision: 1.111 $';         #'
 
-# Revision:   $Revision: 1.110 $   
+# Revision:   $Revision: 1.111 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -250,7 +250,7 @@ sub mix_getopt_header(@) {
 		# Name will become name of last input file foo-mixed.ext
 		my $d = $ARGV[$#ARGV];
 		$d =~ s,\.([^.]+)$,,; # Strip away extension
-		$d .= "." . $eh->get( 'output.ext.internal' );
+		$d .= '.' . $eh->get( 'output.ext.internal' );
 		$eh->set( 'dump', basename( $d )); # Strip off pathname
     } else {
 		$eh->set( 'dump', 'mix.' . $eh->get( 'output.ext.internal' ) );
@@ -302,7 +302,7 @@ sub mix_getopt_header(@) {
     }
     if ( $eh->get( 'check.hdlout.path' ) ) {
         # check if PATH[:PATH] is readable, get all *.vhd[l] files
-        for my $p ( split( ":", $eh->get( 'check.hdlout.path' ) ) ) {
+        for my $p ( split( ':', $eh->get( 'check.hdlout.path' ) ) ) {
             # If on mswin: change \ to /
             ( $p =~ s,\\,/,g ) if ( $eh->get('iswin') );
             unless ( -d $p ) {
@@ -731,7 +731,7 @@ sub mix_init () {
 
 	# Print out some of the collected data:
 	$logger->info('#' x 72); # Print to ALL
-	$logger->info("CMDLINE: " . $eh->get('macro.%ARGV%') ); # Print to ALL
+	$logger->info('CMDLINE: ' . $eh->get('macro.%ARGV%') ); # Print to ALL
 	# All the rest can be found in the CONF dump section ....
 
 	# 
@@ -1188,7 +1188,7 @@ sub mix_utils_open_diff ($;$) {
 		@ocont = <$ofh>; #Slurp in file to compare against
 		chomp( @ocont );
 
-		my $switches = ( $flag eq "verify" ) ? $eh->get( 'check.hdlout.delta' ) :
+		my $switches = ( $flag eq 'verify' ) ? $eh->get( 'check.hdlout.delta' ) :
 			$eh->get( 'output.delta' );
 		$switches = $eh->get( 'output.delta' ) unless $switches;
     
@@ -1280,7 +1280,7 @@ sub mix_utils_open ($;$){
                 $logger->error( '__E_FILE_OPEN', "\t" . 'Cannot open ' . $fhstore{$file}{'tmplname'} . ": $!" );
             } else {
                 $fh->print( "WARNING: cannot locate $file in template directories\n" );
-                $fh->print( "Template path: " . $eh->get( 'check.hdlout.path' ) . "\n" );
+                $fh->print( 'Template path: ' . $eh->get( 'check.hdlout.path' ) . "\n" );
                 $fh->close() or
                     $logger->error( '__E_FILE_CLOSE',
                     	"\t" . 'Cannot close ' . $fhstore{$file}{'tmplname'} . ": $!" );
@@ -2596,8 +2596,9 @@ sub db2array_intra ($$$$$) {
 					if ( $istop and $o[$ii] eq '::mode'
 	    				and $eh->get( 'intermediate.topmap' ) ) {
 	    				# Does this signal match the list?
+	    				my $meh = $eh->get( 'intermediate.__topmap_re__');
 	    				if ( $eh->get( 'intermediate.topmap' ) eq 'ALL' or
-	    					$ref->{$i}{'::name'} =~ m/$eh->get( 'intermediate.__topmap_re__')/ ) {
+	    					$ref->{$i}{'::name'} =~ m/$meh/ ) {
 	    						$a{$a}[$n{$a}][$ii-1] =~ s/(\w+)/%TM_$1%/;
 	    				}
 					}
@@ -3110,8 +3111,8 @@ sub write_sum () {
     }
 
 	# Overall run-time
-	$logger->info( "SUM: runtime: " . ( time() - $eh->get( 'macro.%STARTTIME%' ) ) .
-			" seconds" );
+	$logger->info( 'SUM: runtime: ' . ( time() - $eh->get( 'macro.%STARTTIME%' ) ) .
+			' seconds' );
 
     $logger->info( "SUM: === Number of parsed input tables: ===" );
     for my $i ( qw( conf hier conn io i2c ) ) {
@@ -3119,7 +3120,7 @@ sub write_sum () {
     }
 
     # Summarize number of mismatches and not matchable hdl files
-    $logger->info( "SUM: Number of verify issues: $eh->get( 'DELTA_VER_NR' )")
+    $logger->info( "SUM: Number of verify issues: " . $eh->get( 'DELTA_VER_NR' ))
         if ( $eh->get( 'check.hdlout.path' ) );
     
     # Delta mode: return status equals number of changes
@@ -3197,9 +3198,9 @@ sub mix_utils_init_file($) {
     } elsif ( scalar( @descr ) < 1 ) {
 		# User has not given an output file name -> take directory name
 		if ( defined $OPTVAL{'dir'} and $OPTVAL{'dir'} ne "." ) {
-	    	$output = $OPTVAL{'dir'} . "/" . basename( $OPTVAL{'dir'} );
+	    	$output = $OPTVAL{'dir'} . '/' . basename( $OPTVAL{'dir'} );
 		} else {
-	    	$output = $eh->get( 'cwd' ) . "/" . basename($eh->get( 'cwd' ));
+	    	$output = $eh->get( 'cwd' ) . '/' . basename($eh->get( 'cwd' ));
 		}
 
 		# Extension: MS-Win -> xls, else csv
