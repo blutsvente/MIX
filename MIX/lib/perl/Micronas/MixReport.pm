@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.25 $                                               |
+# | Revision:   $Revision: 1.26 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2006/03/24 14:07:11 $                                                   |
+# | Date:       $Date: 2006/03/27 13:17:31 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.25 2006/03/24 14:07:11 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.26 2006/03/27 13:17:31 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.26  2006/03/27 13:17:31  mathias
+# | start with a random number for unique number for marker in the mif file
+# |
 # | Revision 1.25  2006/03/24 14:07:11  mathias
 # | write a message when documentation of a register is disabled
 # |
@@ -126,15 +129,16 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.25 2006/03/24 14:07:11 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.26 2006/03/27 13:17:31 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.25 $';
+my $thisrevision   =      '$Revision: 1.26 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
-my $marker = 32178;
+#my $marker = 32178;
+my $marker = int(rand(100000));
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
