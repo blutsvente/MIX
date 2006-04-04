@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.6 $                                          |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/03/17 09:18:31 $                              |
+# | Revision:   $Revision: 1.7 $                                          |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2006/04/04 09:25:06 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.7  2006/04/04 09:25:06  lutscher
+# | added reg_shell parameter
+# |
 # | Revision 1.6  2006/03/17 09:18:31  wig
 # | Fixed bad usage of $eh inside m/../ and print "..."
 # |
@@ -68,9 +71,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.6 2006/03/17 09:18:31 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.7 2006/04/04 09:25:06 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.6 $';  
+my $thisrevision    =      '$Revision: 1.7 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -674,6 +677,8 @@ sub init {
         'use_reg_name_as_prefix' => 0, # If 1, prefix field names with register names
         'exclude_regs' => "",          # comma seperated list of register names to exclude from code generation
 		'exclude_fields' => "",        # comma seperated list of field names to exclude from code generation	
+		'add_takeover_signals' => 0,   # If 1, internal update signals are also routed to top-level ports
+					# parameters for STL view 
 		'stl' => {
 				  'initial_idle'  => 100,
 				  'exclude_regs'  => "", # comma seperated list of registers to exclude from STL generation
