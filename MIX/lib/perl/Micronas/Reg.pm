@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.21 2006/03/14 14:21:19 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.22 2006/04/04 16:34:19 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.22  2006/04/04 16:34:19  lutscher
+#  changed regmaster parser for
+#
 #  Revision 1.21  2006/03/14 14:21:19  lutscher
 #  made changes for new eh access and logger functions
 #
@@ -160,7 +163,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.21 $ ';  #'
+our($VERSION) = '$Revision: 1.22 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -415,6 +418,12 @@ sub _map_register_master {
 			};
 			if ($marker =~ m/^::def/) {
 				$fdefinition = $value;
+			};
+			if ($marker =~ m/^::init/) {
+				if ($value =~ m/^0x/i) {
+					$value = hex($value); 
+				};
+				$hattribs{$marker} = $value;
 			};
 			if ($marker =~ m/::b(:(\d+))*$/) {
 				if (defined $2) {
