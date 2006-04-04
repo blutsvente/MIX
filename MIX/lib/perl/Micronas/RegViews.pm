@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.27 2006/03/14 14:21:19 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.28 2006/04/04 16:34:57 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.27 $                                  
+#  Revision      : $Revision: 1.28 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.28  2006/04/04 16:34:57  lutscher
+#  added add_takeover_signals feature for code generation
+#
 #  Revision 1.27  2006/03/14 14:21:19  lutscher
 #  made changes for new eh access and logger functions
 #
@@ -190,6 +193,7 @@ sub _gen_view_vgch_rs {
 					  'reg_shell.use_reg_name_as_prefix',
 					  'reg_shell.exclude_regs',
 					  'reg_shell.exclude_fields',
+					  'reg_shell.add_takeover_signals',
 					  'postfix.POSTFIX_PORT_OUT', 
 					  'postfix.POSTFIX_PORT_IN',
 					  'postfix.POSTFIX_FIELD_OUT', 
@@ -302,7 +306,7 @@ sub _vgch_rs_gen_cfg_module {
 	$this->_vgch_rs_gen_udc_header(\@lheader);
 
 	# iterate through all registers of the domain and add ports/instantiations
-	foreach $o_reg (@{$o_domain->regs}) {
+	foreach $o_reg (sort {$o_domain->get_reg_address($a) <=> $o_domain->get_reg_address($b)} @{$o_domain->regs}) {
 		#$o_reg->display(); if $this->global->{'debug'}; # debug
 		# skip register defined by user
 		if (grep ($_ eq $o_reg->name, @{$this->global->{'lexclude_cfg'}})) {
@@ -333,7 +337,7 @@ sub _vgch_rs_gen_cfg_module {
 		my $fclock = "";
 		my $freset = "";
 		# iterate through all fields of the register
-		foreach $href (@{$o_reg->fields}) {
+		foreach $href (sort {$a cmp $b} @{$o_reg->fields}) {
 			my $o_field = $href->{'field'};
 			$shdw_sig = "";
 			# $o_field->display();
@@ -475,8 +479,9 @@ endproperty
 		_add_primary_input("${shdw_sig}_en", 0, 0, $cfg_i);
 		_add_primary_input("${shdw_sig}_force", 0, 0, $cfg_i);
 		push @ldeclarations, split("\n","reg int_${shdw_sig};");
+		push @ldeclarations, split("\n","reg int_${shdw_sig}_en;");
 
-		# add synchronizer module (need unique instance names because MIX has flat namespace)
+		# add synchronizer module for update signal (need unique instance names because MIX has flat namespace)
 		my $s_inst = $this->_add_instance_unique("sync_generic", $cfg_i, "Synchronizer for update-signal $shdw_sig");
 		_add_generic("kind", 3, $s_inst);
 		_add_generic("sync", 1, $s_inst);
@@ -489,6 +494,28 @@ endproperty
 		_add_connection("int_${shdw_sig}_p", 0, 0, "${s_inst}/rcv_o", "");
 		_tie_input_to_constant("${s_inst}/clk_s", 0, 0, 0);
 		_tie_input_to_constant("${s_inst}/rst_s", 0, 0, 0);
+
+		# add synchronizer module for update enable signal
+		$s_inst = $this->_add_instance_unique("sync_generic", $cfg_i, "Synchronizer for update-enable signal ${shdw_sig}_en");
+		_add_generic("kind", 3, $s_inst);
+		_add_generic("sync", 1, $s_inst);
+		_add_generic("act", 1, $s_inst);
+		_add_generic("rstact", 0, $s_inst);
+		_add_generic("rstval", 0, $s_inst);
+		_add_primary_input("${shdw_sig}_en", 0, 0, "${s_inst}/snd_i");
+		_add_primary_input($clock, 0, 0, "${s_inst}/clk_r");
+		_add_primary_input($reset, 0, 0, "${s_inst}/rst_r");
+		_add_connection("int_${shdw_sig}_arm_p", 0, 0, "${s_inst}/rcv_o", "");
+		_tie_input_to_constant("${s_inst}/clk_s", 0, 0, 0);
+		_tie_input_to_constant("${s_inst}/rst_s", 0, 0, 0);
+
+		# if requested, route the update signal to top
+		if ($this->global->{'add_takeover_signals'}) { 
+			my $to_sig = "to_${shdw_sig}_${clock}";
+			_info("adding takeover output \'$to_sig\'");
+			_add_primary_output("$to_sig", 0, 0, 0, $cfg_i);
+			push @lassigns, "", "assign $to_sig".($this->global->{'POSTFIX_PORT_OUT'})." = int_${shdw_sig};";
+		};
 
 		# generate shadow process
 		$this->_vgch_rs_code_shadow_process($clock, $shdw_sig, \%hshdw, \@lsp);
@@ -542,7 +569,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.27 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.28 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -812,17 +839,24 @@ sub _vgch_rs_code_shadow_process {
 		# shadow signal
 		push @linsert, $ind x $ilvl . "// generate internal update signal";
 		push @linsert, $ind x $ilvl++ . "always @(posedge $clock or negedge $int_rst_n) begin";
-		push @linsert, $ind x $ilvl . "if (~$int_rst_n)";
+		push @linsert, $ind x $ilvl . "if (~$int_rst_n) begin";
 		push @linsert, $ind x ($ilvl+1) . "int_${sig} <= 1;";
-		push @linsert, $ind x $ilvl . "else";
+		push @linsert, $ind x ($ilvl+1) . "int_${sig}_en <= 0;";
+		push @linsert, $ind x $ilvl . "end";
+		push @linsert, $ind x $ilvl . "else begin";
 		if ($this->global->{'infer_clock_gating'}) {
 			push @linsert, $ind x ($ilvl+1) . "int_${sig} <= // synopsys translate_off";
 			push @linsert, $ind x ($ilvl+2) . "#0.1"; # note: the 0.1ns notation is SystemVerilog only
 			push @linsert, $ind x ($ilvl+2) . "// synopsys translate_on";
-			push @linsert, $ind x ($ilvl+2) . "(int_${sig}_p & ${sig}_en".$this->global->{'POSTFIX_PORT_IN'}.") | ${sig}_force".$this->global->{'POSTFIX_PORT_IN'}.";";
+			push @linsert, $ind x ($ilvl+2) . "(int_${sig}_p & int_${sig}_en) | ${sig}_force".$this->global->{'POSTFIX_PORT_IN'}.";";
 		} else {
-			push @linsert, $ind x ($ilvl+1) . "int_${sig} <= (int_${sig}_p & ${sig}_en".$this->global->{'POSTFIX_PORT_IN'}.") | ${sig}_force".$this->global->{'POSTFIX_PORT_IN'}.";";
+			push @linsert, $ind x ($ilvl+1) . "int_${sig} <= (int_${sig}_p & int_${sig}_en) | ${sig}_force".$this->global->{'POSTFIX_PORT_IN'}.";";
 		};
+		push @linsert, $ind x ($ilvl+1) . "if (int_${sig}_arm_p)";
+		push @linsert, $ind x ($ilvl+2) . "int_${sig}_en <= 1; // arm enable signal";
+		push @linsert, $ind x ($ilvl+1) . "else if(int_${sig}_p)";
+		push @linsert, $ind x ($ilvl+2) . "int_${sig}_en <= 0; // reset enable signal after update-event";
+		push @linsert, $ind x $ilvl . "end";
 		$ilvl--;
 		push @linsert, $ind x $ilvl . "end";
 		# assignment block
@@ -860,7 +894,7 @@ sub _vgch_rs_code_shadow_process {
 		push @linsert, @ltemp;
 		$ilvl--;
 		push @linsert, $ind x $ilvl-- . "end";
-		push @linsert, $ind x $ilvl-- . "end";
+		push @linsert, $ind x $ilvl . "end";
 	};
 	push @$lref_sp, @linsert; 
 };
