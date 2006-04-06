@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.22 2006/04/04 16:34:19 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.23 2006/04/06 12:10:09 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.23  2006/04/06 12:10:09  lutscher
+#  added support for hex values in register-master parser
+#
 #  Revision 1.22  2006/04/04 16:34:19  lutscher
 #  changed regmaster parser for
 #
@@ -163,7 +166,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.22 $ ';  #'
+our($VERSION) = '$Revision: 1.23 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -393,14 +396,13 @@ sub _map_register_master {
 			$value = $href_row->{$marker};
 			$value =~ s/^\s+//; # strip whitespaces
 			$value =~ s/\s+$//;
+			if ($value =~ m/^0x[a-f0-9]+/i) { # convert from hex if necessary
+				$value = hex($value);
+			};
 			if ($marker eq "::sub") {
 				# every row requires a ::sub entry, so I use it to skip empty lines
 				goto next_row if ($value eq "");
-				if ($value =~ m/^0x/i) {
-					$offset = hex($value); 
-				} else {
-					$offset = $value;
-				};
+				$offset = $value;
 				# account for special meaning of sub column in AVFB project
 				if ($database_type eq "AVFB") {
 					$offset = $offset * 2; # transform to byte address
@@ -418,12 +420,6 @@ sub _map_register_master {
 			};
 			if ($marker =~ m/^::def/) {
 				$fdefinition = $value;
-			};
-			if ($marker =~ m/^::init/) {
-				if ($value =~ m/^0x/i) {
-					$value = hex($value); 
-				};
-				$hattribs{$marker} = $value;
 			};
 			if ($marker =~ m/::b(:(\d+))*$/) {
 				if (defined $2) {
