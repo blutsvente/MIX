@@ -1,0 +1,58 @@
+[32mINFO - ########################################################################
+[0m[32mINFO - CMDLINE: /cygdrive/h/work/eclipse/MIX/mix_0.pl -nodelta ../../udc.xls
+[0m[32mINFO - __I_READ_CFG	Reading extra configurations from ./mix.cfg
+[0m[32mINFO - 
+#######################################################################
+##### mix_0.pl (Revision: 1.44 )
+#####
+##### MIX  
+#####   MixUtils    1.111 $
+#####   MixUtils::IO    1.38 $
+#####   MixParser   1.68 $
+#####   MixWriter   1.79 $
+#####   MixChecker  1.13 $
+#####   MixIOParser 1.18 $
+#####   MixReport 1.24 $
+#####   Reg 1.21  
+##### Copyright(c) Micronas GmbH 2002/2006 ALL RIGHTS RESERVED
+#######################################################################
+[0m[32mINFO - __I_TIME_START	(mix_0.pl): Execution started Wed Apr  5 12:47:41 2006
+[0m[32mINFO - __I_WORKSHEET	Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/udc/verilog/../../udc.xls
+[0m[32mINFO - __I_WORKSHEET	Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/udc/verilog/../../udc.xls
+[0m[32mINFO - __I_WORKSHEET	Reading worksheet HIER_VERI of H:/work/eclipse/MIX/test/xls_input/udc/verilog/../../udc.xls
+[0m[32mINFO - __I_WRITE_XLS	Rotating 3 old sheets of CONN!
+[0m[32mINFO - __I_WRITE_XLS	Rotating 3 old sheets of HIER!
+[0m[32mINFO - ============= SUMMARY =================
+[0m[32mINFO - SUM: Summary of checks and created items:
+[0m[32mINFO - SUM: checkforce 0
+[0m[32mINFO - SUM: checkunique 0
+[0m[32mINFO - SUM: checkwarn 0
+[0m[32mINFO - SUM: cmacros 0
+[0m[32mINFO - SUM: conn 4
+[0m[32mINFO - SUM: genport 6
+[0m[32mINFO - SUM: hdlfiles 17
+[0m[32mINFO - SUM: inst 15
+[0m[32mINFO - SUM: io_cell_single 0
+[0m[32mINFO - SUM: io_cellandpad 0
+[0m[32mINFO - SUM: io_pad_single 0
+[0m[32mINFO - SUM: multdriver 0
+[0m[32mINFO - SUM: nodriver 0
+[0m[32mINFO - SUM: noload 0
+[0m[32mINFO - SUM: open 1
+[0m[32mINFO - SUM: openports 0
+[0m[32mINFO - SUM: tie_hl 1
+[0m[32mINFO - ======== ERRORS and WARNINGS ============
+[0m[32mINFO - SUM: Number of messages logged:
+[0m[32mINFO - SUM: debug 0
+[0m[32mINFO - SUM: error 0
+[0m[32mINFO - SUM: fatal 0
+[0m[32mINFO - SUM: info 34
+[0m[32mINFO - SUM: warn 10
+[0m[32mINFO - SUM: runtime: 10 seconds
+[0m[32mINFO - SUM: === Number of parsed input tables: ===
+[0m[32mINFO - SUM: conf 0
+[0m[32mINFO - SUM: hier 2
+[0m[32mINFO - SUM: conn 1
+[0m[32mINFO - SUM: io 0
+[0m[32mINFO - SUM: i2c 0
+[0m
