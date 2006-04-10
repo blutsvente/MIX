@@ -390,6 +390,21 @@ my @tests = (
 	  'path' => "autoopen/noaopen",
 	  'options' => "",
 	},
+	{ #!wig20060329: adding auto hierachy feature:
+		'name' => 'hier',
+		'path' => 'hier/auto',
+		'options' => '',
+	},
+	{ #!wig20060410: adding portlist:
+		'name' => 'portlist',
+		'path' => 'portlist',
+		'options' => '-report portlist',
+	},
+	{ #!wig20060410: adding portlist:
+		'name' => 'portlist',
+		'path' => 'portlist/low',
+		'options' => '-report portlist',
+	},
 	{
 	  'name' => "bugver",
 	  'path' => "bugver/ramd",
@@ -433,6 +448,11 @@ my @tests = (
 	{ # Add arbitrary text in hooks: ::udc
 		'name' => 'udc',
 		'path' => 'udc',
+		'options' => '',
+	},
+	{ # Add arbitrary text in hooks: ::udc + verilog code
+		'name' => 'udc',
+		'path' => 'udc/verilog',
 		'options' => '',
 	},
 	{ # Split intermediate CONN sheet
