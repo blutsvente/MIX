@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.28 2006/04/04 16:34:57 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.29 2006/04/10 08:15:22 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.28 $                                  
+#  Revision      : $Revision: 1.29 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.29  2006/04/10 08:15:22  lutscher
+#  added spec=TRG feature
+#
 #  Revision 1.28  2006/04/04 16:34:57  lutscher
 #  added add_takeover_signals feature for code generation
 #
@@ -284,7 +287,7 @@ sub _vgch_rs_gen_cfg_module {
 	my (@ldeclarations) = ("", "/*","  local wire or register declarations","*/");
 	my (@lstatic_logic) = ();
 	my $reset = $href->{'reset'};
-	my (%husr, %hshdw, %hassigns, %hwp, %haddr_tokens, %hrp);
+	my (%husr, %hshdw, %hassigns, %hwp, %haddr_tokens, %hrp, %hrp_trg);
 	my $nusr = 0;
 	my (@lassigns) = ("", "/*","  local wire and output assignments","*/");
 	my (@ldefines) = ("", "/*", "  local definitions","*/");
@@ -296,6 +299,7 @@ sub _vgch_rs_gen_cfg_module {
 	my (@lheader) = ();
 	my ($int_rst_n) = $this->_gen_unique_signal_names($clock);
 	my $p_pos_pulse_check = 0;
+	my $o_field;
 
 	if ($addr_msb >= $this->global->{'addrwidth'}) {
 		_error("register offsets are out-of-bounds (max ",2**$this->global->{'addrwidth'} -1,")");
@@ -338,7 +342,7 @@ sub _vgch_rs_gen_cfg_module {
 		my $freset = "";
 		# iterate through all fields of the register
 		foreach $href (sort {$a cmp $b} @{$o_reg->fields}) {
-			my $o_field = $href->{'field'};
+			$o_field = $href->{'field'};
 			$shdw_sig = "";
 			# $o_field->display();
 			($fclock, $freset) = $this->_get_field_clock_and_reset($clock, $reset, $fclock, $freset, $o_field);
@@ -369,6 +373,9 @@ sub _vgch_rs_gen_cfg_module {
 					$nusr++; # count number of USR fields
 					$husr{$reg_offset} = $o_field; # store usr field in hash
 				};
+				if ($spec =~ m/trg/i) {
+					_warning("attribute TRG ignored because cannot be mixed with attribute USR (here: field ", $o_field->name, ")");
+				};
 			};
 
 			# track shadow signals
@@ -378,9 +385,9 @@ sub _vgch_rs_gen_cfg_module {
 					_error("field \'",$o_field->name,"\' is shadowed but has no shadow signal defined");
 				} else {
 					if($spec =~ m/w1c/i or $spec =~ m/usr/i) {
-						_error("a shadowed field can not have w1c or usr attributes (here: ", $o_field->name, ")");
+						_error("a shadowed field can not have W1C or usr attributes (here: field ", $o_field->name, ")");
 					} else {
-						push @{$hshdw{$o_field->attribs->{'sync'}}}, $o_field;
+						push @{$hshdw{$shdw_sig}}, $o_field;
 					};
 				}; 
 			};
@@ -395,6 +402,9 @@ sub _vgch_rs_gen_cfg_module {
 				_add_primary_input($this->_gen_field_name("in", $o_field), $msb, $lsb, $cfg_i);
 				if ($spec =~ m/sha/i) {
 					push @ldeclarations, "reg [$msb:$lsb] ".$this->_gen_field_name("shdw", $o_field).";";
+				};
+				if ($spec =~ m/trg/i and $spec !~ m/usr/i) { # new: add write trigger output
+					_add_primary_output($this->_gen_field_name("trg", $o_field), 0, 0, 1, $cfg_i);
 				};
 			} elsif ($access =~ m/w/i) { # write
 				_add_primary_output($this->_gen_field_name("out", $o_field), $msb, $lsb, ($spec =~ m/sha/i) ? 1:0, $cfg_i);
@@ -418,6 +428,9 @@ sub _vgch_rs_gen_cfg_module {
 				if($access =~ m/r/i and $spec =~ m/usr/i) { # usr read/write
 					_add_primary_input($this->_gen_field_name("in", $o_field), $msb, $lsb, $cfg_i);
 				};
+				if ($spec =~ m/trg/i and $spec !~ m/usr/i) { # new: add write trigger output
+					_add_primary_output($this->_gen_field_name("trg", $o_field), 0, 0, 1, $cfg_i);
+				};
 			};
 			if ($spec =~ m/usr/i) { # usr read/write
 				_add_primary_input($this->_gen_field_name("usr_trans_done", $o_field), 0, 0, $cfg_i);
@@ -436,9 +449,17 @@ sub _vgch_rs_gen_cfg_module {
 				if ($spec !~ m/w1c/i) { # read/write
 					$hwp{'write'}->{$reg_name.$rrange} = $reg_offset;
 					$hwp{'write_rst'}->{$reg_name.$rrange} = $res_val;
+					if ($spec =~ m/trg/i and $spec !~ m/sha/i) {
+						$hwp{'write_rst'}->{$this->_gen_field_name("trg", $o_field)} = 0;
+						$hwp{'write_trg'}->{$this->_gen_field_name("trg", $o_field)} = $reg_offset;
+					};
 				} else { # w1c
 					$hwp{'write_sts'}->{$reg_name.$rrange} = $this->_gen_field_name("int_set", $o_field);
 					$hwp{'write_sts_rst'}->{$reg_name.$rrange} = $res_val;
+					if ($spec =~ m/trg/i) {
+						$hwp{'write_sts_rst'}->{$this->_gen_field_name("trg", $o_field)} = 0;
+						$hwp{'write_sts_trg'}->{$this->_gen_field_name("trg", $o_field)} = $reg_name.$rrange;
+					};
 				};
 			};
 			
@@ -457,12 +478,15 @@ sub _vgch_rs_gen_cfg_module {
 						push @{$hrp{$reg_offset}}, {$rrange => $this->_gen_field_name("shdw", $o_field)};
 					} else {
 						push @{$hrp{$reg_offset}}, {$rrange => $this->_gen_field_name("in", $o_field)};
+						if ($spec =~ m/trg/i) {
+							push @{$hrp_trg{$reg_offset}}, $this->_gen_field_name("trg", $o_field);
+						};
 					};
 				};
 			}; 
 		}; # foreach $href
 	}; # foreach $o_reg 
-
+	
 	# add assertions for input pulses
 	if ($p_pos_pulse_check) {
 		unshift @lchecks, split("\n","
@@ -537,7 +561,7 @@ endproperty
 	_pad_column(-1, $this->global->{'indent'}, 2, \@lwp); # indent
 
 	# generate code for read mux
-	$this->_vgch_rs_code_read_mux($clock, \%hrp, \%haddr_tokens, \@lrp, \@ldeclarations);
+	$this->_vgch_rs_code_read_mux($clock, \%hrp, \%hrp_trg, \%haddr_tokens, \@lrp, \@ldeclarations);
 	_pad_column(-1, $this->global->{'indent'}, 2, \@lrp); # indent
 
 	# generate code for forwarded transactions
@@ -569,7 +593,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.28 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.29 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -589,8 +613,8 @@ sub _vgch_rs_gen_udc_header {
 # 
 # RHS = verilog right-hand side assignment
 sub _vgch_rs_code_read_mux {
-	my ($this, $clock, $href_rp, $href_addr_tokens, $lref_rp, $lref_decl) = @_;
-	my @linsert;
+	my ($this, $clock, $href_rp, $href_rp_trg, $href_addr_tokens, $lref_rp, $lref_decl) = @_;
+	my (@linsert, @ltemp);
 	my $ind = $this->global->{'indent'};
 	my $ilvl = 0;
 	my ($offs, $href, $sig, $cur_addr);
@@ -598,7 +622,7 @@ sub _vgch_rs_code_read_mux {
 	my $rdpl_stages = $this->global->{'rdpl_stages'};
 	my $rdpl_lvl =  $this->global->{'read_pipeline_lvl'};
 	my ($int_rst_n, $dummy1, $dummy2, $dummy3, $dummy4, $dummy5, $rd_clk) = $this->_gen_unique_signal_names($clock);
-	my $i;
+	my ($i, $field);
 	my $addr_msb = $this->global->{'addr_msb'};
 	my $addr_lsb = $this->global->{'addr_lsb'};
 	my (%hmux);
@@ -619,10 +643,18 @@ sub _vgch_rs_code_read_mux {
 					$hsens_list{$sig} = $offs;
 				};
 			};
-			# sensitivity list
+		
+			push @ltemp, "mux_rd_err <= 0;";
+			push @ltemp, "mux_rd_data <= 0;";
+#			foreach $offs (sort {$a <=> $b} keys %$href_rp_trg) {
+#				foreach $field (@{$href_rp_trg->{$offs}}) {
+#					push @ltemp, "$field <= 0;";
+#					$hsens_list{'rd_p'} = "";
+#				}; 
+#			};
+			_pad_column(0, $ind, $ilvl + 1, \@ltemp);
 			push @linsert, $ind x $ilvl++ . "always @(".join(" or ", sort {$a cmp $b || $hsens_list{$a} <=> $hsens_list{$b}} keys %hsens_list).") begin";
-			push @linsert, $ind x $ilvl . "mux_rd_err  <= 0;";
-			push @linsert, $ind x $ilvl . "mux_rd_data <= 0;";
+			push @linsert, @ltemp;
 			push @linsert, $ind x $ilvl++ . "case (iaddr)";
 			
 			foreach $offs (sort {$a <=> $b} keys %$href_rp) {
@@ -631,6 +663,9 @@ sub _vgch_rs_code_read_mux {
 				foreach $href (@{$href_rp->{$offs}}) {
 					push @linsert, $ind x ($ilvl+1) . "mux_rd_data".(keys %{$href})[0] . " <= ".(values %{$href})[0].";";
 				};
+#				foreach $field (@{$href_rp_trg->{$offs}}) {
+#					push @linsert, $ind x ($ilvl+1) ."$field <= rd_p;";
+#				}; 
 				push @linsert, $ind x $ilvl . "end";
 				$n++;
 			};
@@ -658,6 +693,31 @@ sub _vgch_rs_code_read_mux {
 
 			# then, the code will be generated from the the mux hash.
 			$this->_rdmux_builder($int_rst_n, $rd_clk, $href_rp, \%hmux, \@linsert, $lref_decl, (keys %hmux)[0], $rdpl_stages, 0);
+		};
+
+		# build combinatorial mux for trigger signals
+		if (scalar ($href_rp_trg) > 0) {
+			@ltemp = ();
+			# prefix
+			push @linsert, "", "// generate read-notify trigger (combinatorial)";
+			push @linsert, $ind x $ilvl++ . "always @(iaddr or rd_p) begin";
+			push @linsert, $ind x $ilvl++ . "case (iaddr)";
+			foreach $offs (sort {$a <=> $b} keys %$href_rp_trg) {
+				push @linsert, $ind x $ilvl . "\`" . $href_addr_tokens->{$offs} . ": begin";
+				foreach $field (@{$href_rp_trg->{$offs}}) {
+					push @linsert, $ind x ($ilvl+1) ."$field <= rd_p;";
+				};
+				push @linsert, $ind x $ilvl . "end";
+			}; 
+			push @linsert, $ind x $ilvl . "default: begin";
+			foreach $offs (sort {$a <=> $b} keys %$href_rp_trg) {
+				foreach $field (@{$href_rp_trg->{$offs}}) {
+					push @linsert, $ind x ($ilvl+1) . "$field <= 0;";
+				}; 
+			};
+			push @linsert, $ind x $ilvl-- . "end";
+			push @linsert, $ind x $ilvl-- . "endcase";
+			push @linsert, $ind x $ilvl-- . "end";
 		};
 	};
 	push @$lref_rp, @linsert;
@@ -712,10 +772,6 @@ sub _rdmux_builder {
 				push @ltemp, $ind x $ilvl ."end";
 				push @lsens, $driver;
 			} else {
-				#if ($case == 1) {
-				#	unshift @ltemp, "$out_e <= 0;";
-				#	$case ++;
-				#};
 				$sel = $key;
 				push @ltemp, $ind x $ilvl++ ."$sel: begin";
 				$offs = $href_mux->{$prev_key}->{$key};
@@ -755,9 +811,7 @@ sub _rdmux_builder {
 			 push @$lref_insert, $ind x $ilvl-- ."$out_e <= 1;";
 			 push @$lref_insert, $ind x $ilvl-- ."end";
 			 push @$lref_insert, $ind x $ilvl-- ."endcase";
-			 #if (! $prev_key =~ m/^iaddr/) {
-				 push @$lref_insert, $ind x $ilvl ."end" unless $prev_key =~ m/^iaddr/;
-			 #};
+			 push @$lref_insert, $ind x $ilvl ."end" unless $prev_key =~ m/^iaddr/;
 			 push @$lref_insert, "end";
 			 # add reg to declarations
 			 push @$lref_decl, "reg [".($this->global->{'datawidth'}-1).":0] $out_d;";
@@ -875,12 +929,15 @@ sub _vgch_rs_code_shadow_process {
 					push @ltemp, $this->_gen_field_name("shdw", $o_field) ." <= ${res_val};"; 
 				};
 			};
+			if ($o_field->attribs->{'spec'} =~ m/trg/i) { # add trigger signal
+				push @ltemp, $this->_gen_field_name("trg", $o_field) . " <= 0;";
+			};
 		}; 
 		_pad_column(0, $this->global->{'indent'}, $ilvl+1, \@ltemp);
 		push @linsert, @ltemp;
 		@ltemp = ();
 		push @linsert, $ind x $ilvl . "end";
-		push @linsert, $ind x $ilvl++ . "else if (int_${sig}) begin";
+		push @linsert, $ind x $ilvl++ . "else begin";
 		foreach $o_field (sort @{$href_shdw->{$sig}}) {
 			if ($o_field->attribs->{'dir'} =~ m/w/i) {
 				push @ltemp, $this->_gen_field_name("out", $o_field) ." <= ".$this->_gen_field_name("shdw", $o_field).";";
@@ -889,10 +946,17 @@ sub _vgch_rs_code_shadow_process {
 					push @ltemp, $this->_gen_field_name("shdw", $o_field) ." <= " . $this->_gen_field_name("in", $o_field) . ";"; 
 				};
 			};
+			# add trigger signal
+			if ($o_field->attribs->{'spec'} =~ m/trg/i) {
+				push @ltemp, $this->_gen_field_name("trg", $o_field) . " <= 1;";
+				push @linsert, $ind x $ilvl . $this->_gen_field_name("trg", $o_field) . " <= 0;";
+			};
 		}; 
-		_pad_column(0, $this->global->{'indent'}, $ilvl, \@ltemp);
+		_pad_column(0, $this->global->{'indent'}, $ilvl+1, \@ltemp);
+	   
+		push @linsert, $ind x $ilvl . "if (int_${sig}) begin";
 		push @linsert, @ltemp;
-		$ilvl--;
+		push @linsert, $ind x $ilvl-- . "end";
 		push @linsert, $ind x $ilvl-- . "end";
 		push @linsert, $ind x $ilvl . "end";
 	};
@@ -1001,8 +1065,10 @@ sub _vgch_rs_code_fwd_process {
 # $clock clock name for processes
 # %hwp ( write => (LHS => RHS)),
 #        write_rst => (LHS => RHS),
+#        write_trg => (field => reg_offset),
 #        write_sts => (LHS => RHS),
-#        write_sts_rst => (LHS => RHS),)
+#        write_sts_rst => (LHS => RHS),
+#        write_sts_trg => (field => reg_name))
 # hash with register-offset tokens (offset => token)
 # ref. to list where code is added
 #
@@ -1014,7 +1080,7 @@ sub _vgch_rs_code_write_processes {
 	my $ind = $this->global->{'indent'};
 	my $ilvl = 0;
 	my (@linsert, @ltemp, $last_addr, $cur_addr, $reg_name, $reg_addr, $rrange);
-	my $key;
+	my ($key, $key2);
 	my $offs;
 	my ($int_rst_n, $trans_start_p, $wr_clk) = $this->_gen_unique_signal_names($clock);
 
@@ -1043,6 +1109,9 @@ sub _vgch_rs_code_write_processes {
 		
 		# write logic
 		push @linsert, $ind x $ilvl ."end", $ind x $ilvl++ . "else begin";
+		foreach $key (sort {$href_wp->{'write_trg'}->{$a} <=> $href_wp->{'write_trg'}->{$b}} keys %{$href_wp->{'write_trg'}}) {
+			push @linsert, $ind x $ilvl . $key . " <= 0;";
+		};
 		if ($this->global->{'infer_clock_gating'}) {
 			push @linsert, $ind x $ilvl++ . "if (wr_p || (cgtransp == 0))";
 		} else {
@@ -1064,6 +1133,11 @@ sub _vgch_rs_code_write_processes {
 				if(scalar(@ltemp) > 0) {
 					$reg_addr = $last_addr;
 					push @linsert, $ind x $ilvl . "\`$reg_addr: begin";
+					foreach $key2 (keys %{$href_wp->{'write_trg'}}) {
+						if ($href_addr_tokens->{$href_wp->{'write_trg'}->{$key2}} eq $reg_addr) {
+							push @ltemp, "$key2 <= 1;";
+					 	};
+					};
 					_pad_column(0, $ind, $ilvl+1, \@ltemp);
 					push @linsert, sort @ltemp;
 					push @linsert, $ind x $ilvl . "end";
@@ -1076,9 +1150,14 @@ sub _vgch_rs_code_write_processes {
 		# push last entries to list
 		if (scalar(@ltemp) > 0) {
 			$reg_addr = $cur_addr;
+			foreach $key2 (keys %{$href_wp->{'write_trg'}}) {
+				if ($href_addr_tokens->{$href_wp->{'write_trg'}->{$key2}} eq $reg_addr) {
+					push @ltemp, "$key2 <= 1;";
+				};
+			};
 			push @linsert, $ind x $ilvl . "\`$reg_addr: begin";
 			_pad_column(0, $ind, $ilvl+1, \@ltemp);
-			push @linsert, @ltemp;
+			push @linsert, sort @ltemp;
 			push @linsert, $ind x $ilvl . "end";
 			@ltemp=();
 		};
@@ -1106,13 +1185,21 @@ sub _vgch_rs_code_write_processes {
 		$ilvl = $ilvl+2;
 		@ltemp=();
 		foreach $key (sort keys %{$href_wp->{'write_sts_rst'}}) {
-			push @ltemp, "$key <= $href_wp->{'write_sts_rst'}->{$key};";
+			push @ltemp, "$key <= " . $href_wp->{'write_sts_rst'}->{$key} . ";";
 		};
 		
 		_pad_column(0, $ind, $ilvl, \@ltemp);
 		push @linsert, @ltemp;
 		$ilvl--;
-		push @linsert, $ind x $ilvl ."end", $ind x $ilvl++ . "else begin";
+		push @linsert, $ind x $ilvl . "end", $ind x $ilvl++ . "else begin";
+		
+		# reset trigger signals
+		@ltemp=();
+		foreach $key2 (keys %{$href_wp->{'write_sts_trg'}}) {
+			push @ltemp, "$key2 <= 0;";
+		};
+		_pad_column(0, $ind, $ilvl, \@ltemp);
+		push @linsert, @ltemp;
 		
 		# write logic
 		foreach $key (sort {$href_wp->{'write_sts'}->{$a} cmp $href_wp->{'write_sts'}->{$b}} keys %{$href_wp->{'write_sts'}}) {
@@ -1125,10 +1212,17 @@ sub _vgch_rs_code_write_processes {
 			$offs = uc($reg_name . "_offs");
 			push @linsert, $ind x $ilvl++ ."if ($href_wp->{'write_sts'}->{$key})";
 			push @linsert, $ind x $ilvl-- ."$key <= 1;";
-			push @linsert, $ind x $ilvl++ ."else if (wr_p && iaddr == \`".$offs.")";
-			push @linsert, $ind x $ilvl-- ."$key <= $key & ~wr_data".$this->global->{POSTFIX_PORT_IN}."$rrange;";
+			push @linsert, $ind x $ilvl++ ."else if (wr_p && iaddr == \`".$offs.") begin";
+			push @linsert, $ind x $ilvl ."$key <= $key & ~wr_data".$this->global->{POSTFIX_PORT_IN}."$rrange;";
+			foreach $key2 (keys %{$href_wp->{'write_sts_trg'}}) {
+				if ($href_wp->{'write_sts_trg'}->{$key2} eq $key) {
+					push @linsert, $ind x $ilvl . "$key2 <= 1;"; 
+				};
+			};
+			$ilvl--;
+			push @linsert, $ind x $ilvl ."end";
 		};
-		$ilvl--;
+		$ilvl --;
 		push @linsert, $ind x $ilvl-- ."end";
 		push @linsert, $ind x $ilvl-- ."end";
 		push @$lref_wp, @linsert;
@@ -1358,6 +1452,9 @@ sub _vgch_rs_gen_hier {
 		_add_generic("has_ecs", 1, $ocp_inst);
 		my $ecs_addr = $o_domain->get_reg_address($this->global->{'embedded_reg'});
 		_add_generic("P_ECSADDR", $ecs_addr, $ocp_inst);
+		_add_generic("def_val_p", $this->global->{'ecs_def_val'}, $ocp_inst);
+		_add_generic("def_rerr_en_p", $this->global->{'ecs_def_rerr_en'}, $ocp_inst);
+		_add_generic("def_ien_p", $this->global->{'ecs_def_ien'}, $ocp_inst);
 	};
 
 	$ocp_sync = 0;
@@ -1445,8 +1542,8 @@ sub _vgch_rs_gen_hier {
 };
 
 # searches all clocks used in the register domain and stores the result in global->hclocks depending on 
-# user settings; detects invalid configurations; collect some statistics per clock-domain
-# returns the number of clocks
+# user settings; detects invalid configurations; collect some statistics per clock-domain;
+# gets reset values for embedded control/status register;# returns the number of clocks
 sub _vgch_rs_get_configuration {
 	my $this = shift;
 	my ($o_domain) = @_;
@@ -1469,8 +1566,20 @@ sub _vgch_rs_get_configuration {
 
 	$n = 0;
 	$clock = "";
-	# iterate all fields and retrieve clock names
+	my ($rerr_en, $ien, $val) = (0,0,7);
+	# iterate all fields and retrieve clock names and other stuff
 	foreach $o_field (@{$o_domain->fields}) {
+		# get default values of embedded reg
+		if ($o_field->name eq "rs_to_ien") {
+			$ien = $o_field->attribs->{'init'};
+		};
+		if ($o_field->name eq "rs_to_rerr_en") {
+			$rerr_en = $o_field->attribs->{'init'};
+		};
+		if ($o_field->name eq "rs_to_val") {
+			$val = $o_field->attribs->{'init'};
+		};  
+
 		if ($this->_skip_field($o_field)) {
 			next;
 		};
@@ -1512,6 +1621,11 @@ sub _vgch_rs_get_configuration {
 		# enter name in new data struct for checking
 		$this->global->{'hfnames'}->{$o_field} = $o_field->name;
 	};
+
+	# store def. values of embedded reg in global
+	$this->global('ecs_def_val' => $val,
+				  'ecs_def_ien' => $ien,
+				  'ecs_def_rerr_en' => $rerr_en);
 
 	# if more than one clocks in the domain but MCD feature is off, delete all clocks other than the bus_clock
 	if ($n>1 and !$this->global->{'multi_clock_domains'}) {
@@ -1773,9 +1887,9 @@ sub _add_instance {
 	}
 };
 
-# function to generate the name for a field how it appears in the HDL; use only this function
+# function to generate the name for a field how it appears in the HDL; use this function ONLY
 # to get the name of a field!
-# input: type = [in|out|int_set|shdw|usr_trans_done]
+# input: type = [in|out|int_set|shdw|usr_trans_done|trg]
 # o_field = ref to field object
 sub _gen_field_name {
 	my ($this, $type, $o_field) = @_;
@@ -1803,6 +1917,8 @@ sub _gen_field_name {
 		$name .= "_rd_p"."%POSTFIX_PORT_OUT%";
 	} elsif ($type eq "usr_wr") {
 		$name .= "_wr_p"."%POSTFIX_PORT_OUT%";
+	} elsif ($type eq "trg") {
+		$name .= "_trg_p"."%POSTFIX_PORT_OUT%";
 	} else {
 		_error("internal error undefined signal type \'$type\' in _gen_field_name()");
 	};
