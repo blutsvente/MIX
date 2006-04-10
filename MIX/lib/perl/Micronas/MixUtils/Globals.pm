@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.7 $                                          |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2006/04/04 09:25:06 $                              |
+# | Revision:   $Revision: 1.8 $                                          |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2006/04/10 15:50:08 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.8  2006/04/10 15:50:08  wig
+# | Fixed various issues with logging and global, added mif test case (report portlist)
+# |
 # | Revision 1.7  2006/04/04 09:25:06  lutscher
 # | added reg_shell parameter
 # |
@@ -71,9 +74,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.7 2006/04/04 09:25:06 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.8 2006/04/10 15:50:08 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.7 $';  
+my $thisrevision    =      '$Revision: 1.8 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -338,6 +341,10 @@ sub init {
 				      #   records for verilog subblocks (who wants that?)
 	      	'use' => 'enty',     # apply ::use libraries to entity files, if not specified otherwise
 					# values: <enty|conf|arch|all>
+			'top' => 'auto',	# Do not print out our top level (usually is TESTBENCH)
+					# Allowed keys are: auto  -> print if TOP != %TESTBENCH% or if auto hierachy is enabled
+					#					disable | no
+					#					yes
 	      	'inout' => 'mode,noxfix',	# Generate IO ports for %TOP% cell (or daughter of testbench)
 					# controlled by ::mode I|O
 					# noxfix: do not attach pre/postfix to signal names at %TOP%
@@ -831,7 +838,11 @@ sub init {
     $this->{'cfg'}{'hier'} = {
         'xls' => 'HIER', 
 		'comments' => '',	# Keep comments -> pre|predecessor post|successor
-		'req' => 'mandatory',
+		'req' => 'mandatory', # Default: mandatory -> has to read HIER sheet
+							# Other valid keys: "optional"
+							# If set to "auto(_flat)", MIX will inherit
+							# all instance names from the ::in/::out conn sheet and
+							# map them to be daughter of "testbench" ....
 		'parsed' => 0,
 		'key' => '::inst', # Primary key to %hierdb
 		'field' => {
@@ -1047,38 +1058,46 @@ sub init {
    	    '%BODY%'	=> '__BODY__', # Used internally for ::udc
    	    '%FOOT%'	=> '__FOOT__', # Used internally for ::udc
    	    '%DECL%'	=> '__DECL__', # Used internally for ::udc	
-	    "%VERILOG_TIMESCALE%"	=>	"`timescale 1ns/10ps",
-	    "%VERILOG_USE_ARCH%"	=>	'%EMPTY%',
-	    "%VERILOG_DEFINES%"	=>	'	// No user `defines in this module',  # Want to define s.th. globally?
-		"%VERILOG_HOOK_BODY%"	=>	"",
-        "%INT_VERILOG_DEFINES%"     =>    '', # Used internally
-        "%INCLUDE%"     =>  '`include',   # Used internally for verilog include files in ::use!
-        "%DEFINE%"      =>  '`define',     # Used internally for verilog defines in ::use!
-        "%USEASMODULENAME%"  =>    '',  # If set in ::config column and obj. is Verilog -> module name
-        "%UAMN%"     	=> '',                     # dito. but shorter to write !! Internal use only !!
-	    "%OPEN%"		=> "open",			#open signal
-	    "%UNDEF%"		=> "ERROR_UNDEF",	#should be 'undef',  #For debugging??  
-	    "%UNDEF_1%"		=> "ERROR_UNDEF_1",	#should be 'undef',  #For debugging??
-	    "%UNDEF_2%"		=> "ERROR_UNDEF_2",	#should be 'undef',  #For debugging??
-	    "%UNDEF_3%"		=> "ERROR_UNDEF_3",	#should be 'undef',  #For debugging??
-	    "%UNDEF_4%"		=> "ERROR_UNDEF_4",	#should be 'undef',  #For debugging??
-	    "%TBD%"			=> "__W_TO_BE_DEFINED",
-	    "%HIGH%"		=> lc("MIX_LOGIC1"),  # VHDL does not like leading/trailing __
-	    "%LOW%"			=> lc("MIX_LOGIC0"),  # dito.
-	    "%HIGH_BUS%"	=> lc("MIX_LOGIC1_BUS"), # dito.
-	    "%LOW_BUS%"		=> lc("MIX_LOGIC0_BUS"), # dito.
-	    "%CONST%"		=> "__CONST__", # Meta instance, used to apply constant values
-        "%BUS%"         => "__BUS__", # Meta instance for bus connections
-	    "%TOP%"			=> "__TOP__", # Meta instance, TOP cell
-	    "%PARAMETER%"	=> "__PARAMETER__",	# Meta instance: stores paramter
-	    "%GENERIC%"		=> "__GENERIC__", # Meta instance, stores generic default
-	    "%IMPORT%"		=> "__IMPORT__", # Meta instance for import mode
-	    "%IMPORT_I%"	=> "I", # Meta instance for import mode
-	    "%IMPORT_O%"	=> "O", # Meta instance for import mode
-	    "%IMPORT_CLK%"	=> "__IMPORT_CLK__", # import mode, default clk
-	    "%IMPORT_BUNDLE%"   => "__IMPORT_BUNDLE__", #
-	    "%BUFFER%"		=> 'buffer',
-        "%TRISTATE%"    => 'tristate',
+	    '%VERILOG_TIMESCALE%'	=>	'`timescale 1ns/10ps',
+	    '%VERILOG_USE_ARCH%'	=>	'%EMPTY%',
+	    '%VERILOG_DEFINES%'	=>	'	// No user `defines in this module',  # Want to define s.th. globally?
+		'%VERILOG_HOOK_HEAD%'	=>	'',
+		'%VERILOG_HOOK_BODY%'	=>	'',
+		'%VERILOG_HOOK_PARA%'	=>	'',
+		'%VERILOG_HOOK_FOOT%'	=>	'',		
+        '%INT_VERILOG_DEFINES%'     =>    '', # Used internally
+        '%INCLUDE%'     =>  '`include',   # Used internally for verilog include files in ::use!
+        '%DEFINE%'      =>  '`define',     # Used internally for verilog defines in ::use!
+        '%USEASMODULENAME%'  =>    '',  # If set in ::config column and obj. is Verilog -> module name
+        '%UAMN%'     	=> '',                     # dito. but shorter to write !! Internal use only !!
+	    '%OPEN%'		=> 'open',			#open signal
+	    '%UNDEF%'		=> 'ERROR_UNDEF',	#should be 'undef',  #For debugging??  
+	    '%UNDEF_1%'		=> 'ERROR_UNDEF_1',	#should be 'undef',  #For debugging??
+	    '%UNDEF_2%'		=> 'ERROR_UNDEF_2',	#should be 'undef',  #For debugging??
+	    '%UNDEF_3%'		=> 'ERROR_UNDEF_3',	#should be 'undef',  #For debugging??
+	    '%UNDEF_4%'		=> 'ERROR_UNDEF_4',	#should be 'undef',  #For debugging??
+	    '%TBD%'			=> '__W_TO_BE_DEFINED',
+	    '%HIGH%'		=> lc('MIX_LOGIC1'),  # VHDL does not like leading/trailing __
+	    '%LOW%'			=> lc('MIX_LOGIC0'),  # dito.
+	    '%HIGH_BUS%'	=> lc('MIX_LOGIC1_BUS'), # dito.
+	    '%LOW_BUS%'		=> lc('MIX_LOGIC0_BUS'), # dito.
+	    '%CONST%'		=> '__CONST__', # Meta instance, used to apply constant values
+        '%BUS%'         => '__BUS__', # Meta instance for bus connections
+	    '%TOP%'			=> '__TOP__',	# Meta instance, TOP cell
+	    '%TOP_ENTY%'	=> 'W_NO_ENTITY', # Please redefine that if you want to use TOP_ENTY
+	    '%TOP_CONF%'	=> 'mixtop_conf',
+	    '%AUTOENTY%'	=> '_e',	# Extension for automatically created entities
+	    '%AUTOCONF%'	=> '_struct_conf',	# Extension or automatically created configs
+	    '%TESTBENCH%'	=> 'TESTBENCH', # Default name for testbench
+	    '%PARAMETER%'	=> '__PARAMETER__',	# Meta instance: stores paramter
+	    '%GENERIC%'		=> '__GENERIC__', # Meta instance, stores generic default
+	    '%IMPORT%'		=> '__IMPORT__', # Meta instance for import mode
+	    '%IMPORT_I%'	=> 'I', # Meta instance for import mode
+	    '%IMPORT_O%'	=> 'O', # Meta instance for import mode
+	    '%IMPORT_CLK%'	=> '__IMPORT_CLK__', # import mode, default clk
+	    '%IMPORT_BUNDLE%'   => '__IMPORT_BUNDLE__', #
+	    '%BUFFER%'		=> 'buffer',
+        '%TRISTATE%'    => 'tristate',
 	    '%H%'			=> '$',		# 'RCS keyword saver ...
 	    '%IIC_IF%'      => 'iic_if_', # prefix for i2c interface
 	    '%RREG%'        => 'read_reg_', # prefix for i2c read registers
@@ -1178,7 +1197,7 @@ sub init {
 		'pre' => '',
 		'post' => '',
 		'excel' => {
-			'alerts' => 'off', # Switch off ExCEL display alerts; could be on, to...
+			'alerts' => 'off', # Switch off ExCEL display alerts; could be on, too...
 		},
     };
     # Definitions for file formats

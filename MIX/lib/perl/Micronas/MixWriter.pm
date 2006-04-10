@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.79 $                                         |
+# | Revision:   $Revision: 1.80 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/03/17 09:18:31 $                              |
+# | Date:       $Date: 2006/04/10 15:50:09 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.79 2006/03/17 09:18:31 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.80 2006/04/10 15:50:09 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.80  2006/04/10 15:50:09  wig
+# | Fixed various issues with logging and global, added mif test case (report portlist)
+# |
 # | Revision 1.79  2006/03/17 09:18:31  wig
 # | Fixed bad usage of $eh inside m/../ and print "..."
 # |
@@ -337,9 +340,9 @@ sub _mix_wr_signum2signam		($);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.79 2006/03/17 09:18:31 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.80 2006/04/10 15:50:09 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.79 $';
+my $thisrevision   =      '$Revision: 1.80 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -545,6 +548,8 @@ $tmpl = <<'EOD';
 
 %VERILOG_TIMESCALE%
 
+%VERILOG_HOOK_HEAD%
+
 //
 EOD
 
@@ -562,6 +567,8 @@ $eh->set( 'template.verilog.arch.body', <<'EOD' );
 
 module %ENTYNAME%
 %VERILOG_INTF%
+
+%VERILOG_HOOK_PARA%
 
 %S%// Internal signals
 
@@ -586,6 +593,7 @@ endmodule
 EOD
 
 $eh->set( 'template.verilog.arch.foot', <<'EOD' );
+%VERILOG_HOOK_FOOT%
 //
 //!End of Module/s
 // --------------------------------------------------------------
@@ -685,6 +693,7 @@ sub generate_entities () {
             next;
         }
         my $ent = $hierdb{$i}{'::entity'};
+
         if ( defined( $entities{$ent} ) ) {
             merge_entity( $ent, $hierdb{$i} );
         } else {
@@ -1226,7 +1235,6 @@ sub _create_entity ($$) {
 
 ####################################################################
 ## write_entities
-## write entities
 ####################################################################
 
 =head2
@@ -1254,14 +1262,13 @@ sub write_entities () {
         # All other cases -> use efname as entity file name (write all entities into
         # one file of that name)
         my $entext = $eh->get('postfix.POSTFILE_ENTY');
-        if ( $1 eq "COMB" ) {
-            $entext = "";
+        if ( $1 eq 'COMB' ) {
+            $entext = '';
         }
 		for my $i ( sort( keys( %entities ) ) ) {
             
-            next if ( $i eq "W_NO_ENTITY" );
-            next if ( $i eq "%TYPECAST_ENT%" );
-                
+            next if ( $i eq 'W_NO_ENTITY' );
+            next if ( $i eq '%TYPECAST_ENT%' );
                 my $i_fn = $i;
                 #Changed 20030714a/Bug:
                 $i_fn =~ s,_,-,og if ( $eh->get('output.filename') =~ m,allminus, );
@@ -2169,6 +2176,7 @@ sub write_architecture () {
 	    	# Should we print it? if the noleaf flag ist set, skip
 			next if ( $e eq "W_NO_ENTITY" );
             next if ( $e =~ m/TYPECAST_/io );
+            
 			if ( $eh->get( 'output.generate.arch' ) =~ m,noleaf,io and
 		    		not $hierdb{$i}{'::treeobj'}->daughters ) {
 		    	next;
@@ -2578,8 +2586,8 @@ sub mix_wr_unsplice_port ($$$) {
             }
         }
         # Finally: build port string, right to left
-        my $t = "";
-        my @c = "";
+        my $t = '';
+        my @c = '';
         unless( $flag ) {
             my $start = -1;
             for my $b ( 0..(scalar(@arr) - 1) ) {
@@ -2588,13 +2596,13 @@ sub mix_wr_unsplice_port ($$$) {
                         my $es = $data->[3];
                         if ( $es =~ m,^%(HIGH|LOW),o ) {
                             # Replace HIGH/LOW immediately!!
-                            my $v = ( $1 eq "HIGH" ) ? "1" : "0";
+                            my $v = ( $1 eq 'HIGH' ) ? '1' : '0';
                             my $w = $data->[0] - $data->[1] + 1;
                             $es = $w . "'b" . $v x $w; #Verilog, only!
                         }  
                         #!wig20030812: create { a , b, c } format
                         # $t = " & " . $es . $t;
-                        $t = ", " . $es . $t;
+                        $t = ', ' . $es . $t;
                         push( @c, $data->[4] );
                         $start = $arr[$b];
                     } elsif ( not defined( $arr[$b] ) ) {
@@ -4245,16 +4253,16 @@ sub _write_architecture ($$$$) {
 
         # Using %HIGH%, %LOW%, %HIGH_BUS%, %LOW_BUS%
         if ( $ii =~ m,^\s*%(HIGH|LOW)_BUS,o ) {
-		my $logicv = ( $1 eq 'HIGH' ) ? '1' : '0';
-                if ( $ilang =~ m,^veri,io ) {
-                    my $w = $high - $low + 1;
-                    $macros{'%CONCURS%'} .= $eh->get( 'macro.%S%' ) x 3 .
-                        'assign ' . $eh->get( 'macro.' . $ii ) . ' = ' .
-                        $w . "'b" . $logicv . ";\n";
-                } else {
-                    $macros{'%CONCURS%'} .= $eh->get( 'macro.%S%' ) x 3 .
-                        $eh->get( 'macro.' . $ii ) . " <= ( others => '$logicv' );\n";
-                }
+			my $logicv = ( $1 eq 'HIGH' ) ? '1' : '0';
+            if ( $ilang =~ m,^veri,io ) {
+                my $w = $high - $low + 1;
+                $macros{'%CONCURS%'} .= $eh->get( 'macro.%S%' ) x 3 .
+                    'assign ' . $eh->get( 'macro.' . $ii ) . ' = ' .
+                    $w . "'b" . $logicv x $w . ";\n"; # Added repeat for Verilog
+            } else {
+                $macros{'%CONCURS%'} .= $eh->get( 'macro.%S%' ) x 3 .
+                    $eh->get( 'macro.' . $ii ) . " <= ( others => '$logicv' );\n";
+            }
 	    } elsif ( $ii =~ m,^\s*%(HIGH|LOW)%,o ) {
 	    	my $logicv = ( $1 eq 'HIGH' ) ? '1' : '0';
                 if ( $ilang =~ m,^veri,io ) {
@@ -4395,27 +4403,27 @@ sub _write_architecture ($$$$) {
         # TODO What if both in and out exists?
         #   What if signal is connected to multiple ports:
 	    # if ( exists( $aeport{$ii}{'in'} ) ) { # IN
-            unless( $ii =~ m/%(HIGH|LOW|OPEN)(_BUS)?%/o ) {
-		if ( exists( $iconn->{'in'}{$ii} ) ) {
-		    foreach my $port ( keys( %{$iconn->{'in'}{$ii}} ) ) {
-			if ( $usesig ne $port ) {
-			    $pre = "";
-			    $post = "$tcom __W_PORT_SIGNAL_MAP_REQ";
-                            my $concurs = gen_concur_port( 'in', $i, $aent, $ii, $usesig, $port, $iconn, $aeport{$ii}, $ilang, $tcom );
-			    $macros{'%CONCURS%'} .= $concurs;
-			}
+        unless( $ii =~ m/%(HIGH|LOW|OPEN)(_BUS)?%/o ) {
+			if ( exists( $iconn->{'in'}{$ii} ) ) {
+		    	foreach my $port ( keys( %{$iconn->{'in'}{$ii}} ) ) {
+					if ( $usesig ne $port ) {
+			    		$pre = '';
+			    		$post = "$tcom __W_PORT_SIGNAL_MAP_REQ";
+                        my $concurs = gen_concur_port( 'in', $i, $aent, $ii, $usesig, $port, $iconn, $aeport{$ii}, $ilang, $tcom );
+			    		$macros{'%CONCURS%'} .= $concurs;
+					}
     		    }
-		}
-		if ( exists( $iconn->{'out'}{$ii} ) ) {
-		    foreach my $port ( keys( %{$iconn->{'out'}{$ii}} ) ) {
-			if ( $usesig ne $port ) {		    
-			    $pre = "";
-			    $post = "$tcom __W_PORT_SIGNAL_MAP_REQ";
-                            my $concurs = gen_concur_port( 'out', $i, $aent, $ii, $usesig, $port, $iconn, $aeport{$ii}, $ilang, $tcom );
-			    $macros{'%CONCURS%'} .= $concurs;
 			}
-		    }
-		}
+			if ( exists( $iconn->{'out'}{$ii} ) ) {
+		    	foreach my $port ( keys( %{$iconn->{'out'}{$ii}} ) ) {
+					if ( $usesig ne $port ) {		    
+			    		$pre = '';
+			    		$post = "$tcom __W_PORT_SIGNAL_MAP_REQ";
+                    	my $concurs = gen_concur_port( 'out', $i, $aent, $ii, $usesig, $port, $iconn, $aeport{$ii}, $ilang, $tcom );
+			    		$macros{'%CONCURS%'} .= $concurs;
+					}
+		    	}
+			}
 	    }
 
 	    # Add signal definition if required:
@@ -4541,57 +4549,57 @@ sub _write_architecture ($$$$) {
 #   a second return value could be a comment in case some unusual things happen
 #
 sub mix_wr_fromto ($$$$) {
-            my $high = shift;
-            my $low = shift;
-            my $ilang = shift;
-            my $tcom = shift;
+    my $high = shift;
+    my $low = shift;
+    my $ilang = shift;
+    my $tcom = shift;
 
-            my $dt = "";
-            my $dc = "";
+    my $dt = "";
+    my $dc = "";
 
-	    if ( defined( $high ) and defined( $low ) ) {
-                if ( $ilang =~ m,^veri,io ) {
-                    if ( $high =~ m/^\d+$/o and $low =~ m/^\d+$/o ) {
-                        # if ( $low < $high ) {
-                            $dt = "[" . $high . ":" . $low . "]"; #TODO: Consider all case in Verilog
-                        # } elsif ( $low > $high ) {
-                        #    $dt = "($high to $low . "]";
-                        # } else {
-                        #    $dt = " -- __W_SINGLE_BIT_BUS";
-                        # }
-                    } elsif ( $high ne '' ) {
-                        if ( $high ne $low ) {
-                            $dt = "[" . $high .":" . $low . "]"; # String used as high/low bound
-                        } else {
-                            $dt = "[" . $high . "] ";
-                            $dc = " " . $tcom . " __W_HIGHLOW_EQUAL";
-                        }
-                    }
+	if ( defined( $high ) and defined( $low ) ) {
+        if ( $ilang =~ m,^veri,io ) {
+            if ( $high =~ m/^\d+$/o and $low =~ m/^\d+$/o ) {
+                # if ( $low < $high ) {
+                $dt = '[' . $high . ':' . $low . ']'; # TODO : Consider all case in Verilog
+                # } elsif ( $low > $high ) {
+                #    $dt = "($high to $low . "]";
+                # } else {
+                #    $dt = " -- __W_SINGLE_BIT_BUS";
+                # }
+            } elsif ( $high ne '' ) {
+                if ( $high ne $low ) {
+                    $dt = '[' . $high . ':' . $low . ']'; # String used as high/low bound
                 } else {
-                    if ( $high =~ m/^\d+$/o and $low =~ m/^\d+$/o ) {
-                        if ( $low < $high ) {
-                            $dt = "($high downto $low)";
-                        } elsif ( $low > $high ) {
-                            $dt = "($high to $low)";
-                        } elsif ( $high > 0 ) {
-                            $dt = "($high)";
-                            $dc = " " . $tcom . " __W_SINGLE_BIT_BUS";
-                        } else {
-                            $dt = "";
-                            $dc = " " . $tcom . " __W_SINGLE_BIT_BUS";
-                        }
-                    } elsif ( $high ne '' ) {
-                        if ( $high ne $low ) {
-                            $dt = "($high downto $low)"; # String used as high/low bound
-                        } else {
-                            $dt = "($high) ";
-                            $dc = " " . $tcom . " __W_HIGHLOW_EQUAL";
-                        }
-                    }
+                    $dt = '[' . $high . '] ';
+                    $dc = ' ' . $tcom . ' __W_HIGHLOW_EQUAL';
                 }
-	    }
+            }
+        } else {
+            if ( $high =~ m/^\d+$/o and $low =~ m/^\d+$/o ) {
+               if ( $low < $high ) {
+                    $dt = "($high downto $low)";
+               } elsif ( $low > $high ) {
+                    $dt = "($high to $low)";
+               } elsif ( $high > 0 ) {
+                    $dt = "($high)";
+                    $dc = ' ' . $tcom . ' __W_SINGLE_BIT_BUS';
+               } else {
+                    $dt = '';
+                    $dc = ' ' . $tcom . ' __W_SINGLE_BIT_BUS';
+               }
+            } elsif ( $high ne '' ) {
+                if ( $high ne $low ) {
+                    $dt = "($high downto $low)"; # String used as high/low bound
+                } else {
+                    $dt = "($high) ";
+                    $dc = ' ' . $tcom . ' __W_HIGHLOW_EQUAL';
+                }
+            }
+        }
+	}
 
-            return $dt, $dc;
+	return $dt, $dc;
 }
 
 #
@@ -5331,8 +5339,8 @@ sub write_configuration () {
 		    }
 
 			my $e = $hierdb{$i}{'::entity'};
-            next if ( $e eq "W_NO_ENTITY" );
-            next if ( $e eq "%TYPECAST_ENT%" );
+            next if ( $e eq 'W_NO_ENTITY' );
+            next if ( $e eq '%TYPECAST_ENT%' );
 
 			unless ( exists( $seen{$e} ) ) {
 		    	$seen{$e} = 1;
@@ -5651,6 +5659,8 @@ sub use_lib ($$) {
 #  they are stored in a static internal array the first time this
 #  subroutine is called!
 #
+#!wig20060405: Added PARA (allow Verilog parameters to be set)
+#
 # TODO : extend MODE for enty and conf and verilog ...
 # TODO : detect "new" hooks and make sure they get reset
 #!wig20050711
@@ -5660,12 +5670,12 @@ sub mix_wr_use_udc ($$$) {
 	my $macroref = shift;
 
 	#!wig: will not work for __COMMON__
-	return if ( $instance eq "__COMMON__" );
+	return if ( $instance eq '__COMMON__' );
 	
 	# my %modkeys = (
 	# 	'arch' => [ qw( HEAD DECL BODY FOOT ) ],
 	# );
-	my $tagre = '/(%|__?)(' . join( "|", qw( HEAD DECL BODY FOOT ) ) . ')(%|__?)/';
+	my $tagre = '/(%|__?)(' . join( "|", qw( HEAD DECL PARA BODY FOOT ) ) . ')(%|__?)/';
 
 	my $lang = uc( $hierdb{$instance}{'::lang'} || $eh->get( 'macro.%LANGUAGE%') );		
 	if ( exists( $hierdb{$instance}{'::udc'} ) and

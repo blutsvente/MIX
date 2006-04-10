@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.38 $                                          |
+# | Revision:   $Revision: 1.39 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/03/16 14:10:34 $                              |
+# | Date:       $Date: 2006/04/10 15:50:08 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.39  2006/04/10 15:50:08  wig
+# | Fixed various issues with logging and global, added mif test case (report portlist)
+# |
 # | Revision 1.38  2006/03/16 14:10:34  wig
 # | Fixed messages and [cut] problem 20060315a
 # |
@@ -111,11 +114,11 @@ sub mix_utils_io_check_path ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.38 2006/03/16 14:10:34 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.39 2006/04/10 15:50:08 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.38 $'; #'  
+my $thisrevision    =      '$Revision: 1.39 $'; #'  
 
-# Revision:   $Revision: 1.38 $
+# Revision:   $Revision: 1.39 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1237,7 +1240,7 @@ sub write_delta_sheet($$$) {
 --  by:  %USER%
 --  on:  %DATE%
 --  cmd: %ARGV%
---  delta mode (comment/space/sort/remove): $eh->get( 'output.delta' )
+--  delta mode (comment/space/sort/remove): " . $eh->get( 'output.delta' ) . "
 --
 -- ------------------------------------------------- --
 -- ------------- CHANGES START HERE ------------- --

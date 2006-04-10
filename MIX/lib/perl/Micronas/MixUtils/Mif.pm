@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.25 $                                          |
+# | Revision:   $Revision: 1.26 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/03/14 08:10:34 $                              |
+# | Date:       $Date: 2006/04/10 15:50:08 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.26  2006/04/10 15:50:08  wig
+# | Fixed various issues with logging and global, added mif test case (report portlist)
+# |
 # | Revision 1.25  2006/03/14 08:10:34  wig
 # | No changes, got deleted accidently
 # |
@@ -129,7 +132,7 @@ use File::Basename;
 use Log::Log4perl qw(get_logger);
 use FileHandle;
 
-use Micronas::MixUtils qw( mix_utils_diff $eh );
+use Micronas::MixUtils qw( mix_utils_diff mix_utils_clean_data $eh );
 
 # Prototypes
 # sub write_delta_sheet ($$$);
@@ -137,9 +140,9 @@ use Micronas::MixUtils qw( mix_utils_diff $eh );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.25 2006/03/14 08:10:34 wig Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.26 2006/04/10 15:50:08 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.25 $'; #'  
+my $thisrevision    =      '$Revision: 1.26 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -262,9 +265,7 @@ sub _write_diff () {
 	my $this = shift;
 	# my $switches = shift || "";
 
-    # strip off comments and such (from generated data)
-    # $nc = mix_utils_clean_data( $nc, $c, $switches );
-	$this->_finalize_mif(); # $this->{text} ...
+	$this->_finalize_mif();
 	
 	my @oc = ();
 
@@ -280,28 +281,13 @@ sub _write_diff () {
 				$this->{name} . ':' . $! );
 	}
 	
-    # Diff it ...
-    # use Text::Diff;
-    # sub mix_utils_diff ($$$$;$) {
-    # my $nc = shift;
-    # my $oc = shift;
-    # my $c  = shift;
-    # my $file = shift;
-	# my $switches = shift || "";
     my @nt = split( /\n/, $this->{text} );
-    my $diff = mix_utils_diff( \@nt, \@oc, '#', $this->{'name'}, 'comment,space');
+    
+    # Hard coded set of diff criteria:
     # Keep comments and spaces ...
-    
-	#     { STYLE => "Table",
-	#    # STYLE => "Context",
-	#    FILENAME_A => 'NEW',
-	#    FILENAME_B => "OLD " . $this->{'name'},
-	#    CONTEXT => 0,
-	#    }
-    # );
-    
+    my $diff = mix_utils_diff( \@nt, \@oc, '#', $this->{'name'}, 'comment,space');
     return $diff;
-}
+} # End of _write_diff
 
 #
 # Initialize MIF file text:

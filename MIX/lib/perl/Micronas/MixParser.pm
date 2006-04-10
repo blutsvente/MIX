@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.68 $                                         |
+# | Revision:   $Revision: 1.69 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/03/17 09:18:31 $                              |
+# | Date:       $Date: 2006/04/10 15:50:09 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.68 2006/03/17 09:18:31 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.69 2006/04/10 15:50:09 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.69  2006/04/10 15:50:09  wig
+# | Fixed various issues with logging and global, added mif test case (report portlist)
+# |
 # | Revision 1.68  2006/03/17 09:18:31  wig
 # | Fixed bad usage of $eh inside m/../ and print "..."
 # |
@@ -113,6 +116,10 @@ sub _mix_p_try_merge ($);
 sub _mix_p_getsplicerange ($$$);
 sub _mix_p_dogen ($$$$$$);
 sub _mix_p_get_reparmatch ($$);
+sub _add_inst_auto ($);
+sub init_pseudo_inst ();
+sub bits_at_inst ($$$);
+sub bits_at_inst_hl ($$$);
 
 ####################################################################
 #
@@ -130,9 +137,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.68 2006/03/17 09:18:31 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.69 2006/04/10 15:50:09 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.68 $';
+my $thisrevision =	'$Revision: 1.69 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -517,6 +524,8 @@ sub parse_hier_init ($) {
         die;
     }
 
+	init_pseudo_inst();
+	
     #
     # Add all instances left in the input data
     #
@@ -542,9 +551,17 @@ sub parse_hier_init ($) {
                 $logger->error( '__E_PARSER_HIER_INIT', "\tCannot replace %::inst% for $name!" );
             }
         }
+        $r_hier->[$i]{'::__source__'} = 'hier'; # Mark these to be from HIER sheet
         add_inst( %{$r_hier->[$i]} );
     }
 
+}
+
+#
+# Create some pseudo instances up-front
+#
+sub init_pseudo_inst () {
+	
     #
     # Add some meta instances: %TOP%, %CONST%, %OPEN%
     # These are needed for proper program flow.
@@ -553,10 +570,12 @@ sub parse_hier_init ($) {
     add_inst( '::inst' => "%GENERIC%", );
     add_inst( '::inst' => "%PARAMETER%", );
 
-    add_inst( '::inst' => "%TOP%", );
+    add_inst( '::inst' => "%TOP%",
+    		  '::entity' => '%TOP_ENTY%',
+    		  '::config' => '%TOP_CONF%',
+    );
     add_inst( '::inst' => "%OPEN%", );
     add_inst( '::inst' => "%BUS%", );  # Meta instance for %BUS% connections ...
-
 }
 
 ####################################################################
@@ -585,7 +604,6 @@ sub add_inst (%) {
     }
 
     my $name = mix_expand_name( 'inst', \%in ); # Expand names with %foobar% inside ..
-
     $name = mix_check_case( 'inst', $in{'::inst'} ); # Get appropriate name and fix it if flag is set
 
     if ( defined( $hierdb{$name} ) ) {
@@ -612,6 +630,11 @@ sub mix_expand_name ($$) {
     my $rdata = shift;
 
     my $n = $rdata->{'::' . $toex};
+    #!wig20060405: redo that, TESTBENCH should be daughter of %TOP%!
+    #!wig20060403: TOP is named TESTBENCH (mostly for compatability resaons):
+    # if ( $n =~ m/^testbench/i and $eh->get('top') =~ m/^%?testbench\b/i ) {
+    #	$n = "%TOP%";
+    # }
     #
     # Early name expansion required for primary keys (like ::inst)
     #
@@ -690,7 +713,6 @@ if needed creates parent node, too. Links element to parent.
 =cut
 
 sub add_tree_node ($$) {
-
     my $name = shift;
     my $r_h = shift;
 
@@ -705,23 +727,36 @@ sub add_tree_node ($$) {
     #
     # Build tree
     # we can rely on the fact that this hierachy element was never seen before ...
-    #TODO: store all attributes in tree object, instead of hierdb ...
+    # TODO : store all attributes in tree object, instead of hierdb ...
     my $node = Tree::DAG_Node -> new;
     $node->name($name);
     $r_h->{'::treeobj'} = $node; # store object reference!
 
-    my $parent = "W_NO_PARENT";
+	# Default parent:
+    my $parent = 'W_NO_PARENT';
+	# TESTBENCH: if no parent set, link it to %TOP%
+	my $auto_top = 0;
+	if ( $name =~ m/^%?testbench\b/i ) {
+		unless( defined( $r_h->{'::parent'} ) ) {
+			$r_h->{'::parent'} = '%TOP%';
+			$auto_top = 1;
+		}
+	}
+
+	# Parent:	
     if ( defined( $r_h->{'::parent'} ) and $r_h->{'::parent'} ) {
         # If the parent is already defined, link this instance to the parent, else create a parent node
         $parent = $r_h->{'::parent'};
     }
 
     #!wig20030404: Caseing ...
-    $parent = mix_check_case( "inst", $parent);
+	$parent = mix_expand_name( 'inst', { '::inst' => $parent } ); # Caveat: Cannot do full expansion
+    $parent = mix_check_case( 'inst', $parent);
 
     if ( defined( $hierdb{$parent} ) and $hierdb{$parent} ) {
             $hierdb{$parent}{'::treeobj'}->add_daughter( $node);
     } else {
+    		# Create "default" parent
             my $parnode = Tree::DAG_Node -> new;
             $parnode->name($parent);
             $hierdb{$parent}{'::treeobj'} = $parnode;
@@ -733,10 +768,15 @@ sub add_tree_node ($$) {
                     #TODO: Initialize fields to empty / Marker, set DEFAULT if still empty at end 
                     $hierdb{$parent}{$i} =~ s/%NULL%//g; # Just to make sure fields are initialized
             }
+            # Force TESTBENCH (auto) to be daughter of %TOP%
+            if ( $parent =~ m/^%?testbench/i ) { # Autolink testbench to TOP ...
+            	$hierdb{$parent}{'::parent'} = '%TOP%';
+            	$hierdb{'%TOP%'}{'::treeobj'}->add_daughter( $parnode );
+            }
             $hierdb{$parent}{'::inst'} = $parent; # Set parent name
             $hierdb{$name}{'::parent'} = $parent; # Set name for parent of this
     }
-}
+} # End of add_tree_node
 
 sub merge_inst ($%) {
 
@@ -1003,7 +1043,7 @@ sub create_conn ($%) {
         next unless ( $i =~ m/^::/ );
         # ::in and ::out are special case; split if it contains s.th.
         if ( $i =~ m/^::(in|out)$/o ) {
-            if ( defined( $data{$i} ) and $data{$i} ne "" ) {#Bugfix20030212: create_conn if field defined ...
+            if ( defined( $data{$i} ) and $data{$i} ne '' ) {#Bugfix20030212: create_conn if field defined ...
                 $conndb{$name}{$i} = _create_conn( $1, $data{$i}, %data );
             } else {
                 $conndb{$name}{$i} = []; #Initialize empty array. Will be removed later on
@@ -1012,7 +1052,7 @@ sub create_conn ($%) {
             $conndb{$name}{$i} = $data{$i};
         } else {
             $conndb{$name}{$i} = $ehr->{$i}[3]; # Set to DEFAULT Value
-            #TODO: Initialize fields to empty / Marker, set DEFAULT if still empty at end 
+            # TODO : Initialize fields to empty / Marker, set DEFAULT if still empty at end 
         }
         #wig20030801/20050713: remove %NULL% and %EMPTY% on the fly ...
         unless( ref( $conndb{$name}{$i} ) ) {
@@ -1393,6 +1433,11 @@ sub _create_conn ($$%) {
 			
             check_conn_prop( \%co );
 
+			#!wig20060329: adding hierachy automatically if needed
+			if ( $eh->get( 'hier.req' ) =~ m/\bauto/ ) {
+				_add_inst_auto( $co{'inst'} );
+			}
+
             # We have a full description of this port, now add typecast_wrapper
             #wig20040803, typecast wrapper
 
@@ -1461,6 +1506,37 @@ sub _create_conn ($$%) {
     }
     return ( \@co );
 }
+
+#
+# Automatically create "flat" hierachy if needed ...
+#
+sub _add_inst_auto ($) {			 
+	my $inst = shift;
+
+	return if ( exists $hierdb{$inst} );
+		
+	# add to "testbench", define level of warning
+	#   by number of parsed hier sheets ...
+	# Warn user if hier.parsed > 0	
+
+	add_inst(
+		'::inst' => $inst,
+		'::entity' => ( $inst . '%AUTOENTY%' ),
+		'::config' => ( $inst . '%AUTOCONF%' ),
+		'::parent' => '%TESTBENCH%',
+		'::comment' => '__W_AUTOHIER: automatic hierachy created',
+		'::descr'	=> '__I_AUTOHIER: Automatically created and linked to %TESTBENCH%',
+		'::__source__' => 'auto',
+	);
+	if ( $eh->get( 'hier.parsed' ) > 0 ) {
+		$logger->error( '__E_AUTOHIER', "\tAutomatically created hierachy for instance " .
+			$inst );
+	} else {
+		$logger->info( '__I_AUTOHIER', "\tAutomatically created hierachy for instance " .
+			$inst );
+	}
+
+} # End of _add_inst_auto
 
 #
 # convert given boundaries to (F:T) description
@@ -1967,6 +2043,7 @@ sub apply_hier_gen ($) {
                         ( $g{$k} = $in{$k} ) =~ s,\$$var,$i,g;
                     }
                 }
+                $g{'::__source__'} = 'hier_gen';
                 # eval ....
                 add_inst( %g );
             }
@@ -2422,36 +2499,55 @@ sub mix_p_prep_match ($$$$) {
 #
 # Return list of top cell(s)
 #
+# TODO : Rewrite that:
+#    Search for TOP node of created tree, no need to know if it's testbench ...
 
 =cut
 
 sub get_top_cell () {
-
     my @tops = ();
-    if ( $eh->get( 'top' ) =~ m,\btestbench,io ) {
-    # Find testbench in hierdb, take daughters
-        for my $i ( keys( %hierdb ) ) {
-            if ( $i =~ m,testbench,io ) {
-                @tops = $hierdb{$i}{'::treeobj'}->daughters;
-                last;
-            }
-        }
-    } else {
-    	my $meh = $eh->get( 'top' );
-        for my $i ( keys( %hierdb ) ) {
-            if ( $i =~ m,$meh,io ) { # TODO : What about case sensitive?
-                @tops = ( $hierdb{$eh->get( $i )}{'::treeobj'} );
-                last;
-            }
-        }
+	my @etops = ();
+    my $topname = $eh->get( 'top' ); # By default $topname is %TOP%
+    
+    if ( exists( $hierdb{$topname} ) ) {
+    	if ( $topname eq '%TOP%' ) {
+    	# Default is %TOP% -> take daughter or daughter(s) of TESTBENCH
+    		@tops = ( $hierdb{$topname}{'::treeobj'}->daughters() );
+    		# If the @tops is "TESTBENCH" and that was automatically generated
+    		#	-> go one level down
+    		for my $t ( @tops ) {
+    			if ( $t->name() =~ m,^%?TESTBENCH,i ) {
+    				if ( $hierdb{$t->name()}{'::entity'} eq 'W_NO_ENTITY' ) {
+    					push( @etops, $t->daughters() );
+    					if ( scalar( @tops ) != 1 ) { # Unusual setup
+    						$logger->error( '__E_GET_TOP',
+    							"\tHierachy top " . $t->name() . " has sisters. Check hierachy!" );
+    					}
+    				} else {
+    					push( @etops, $t );
+    				}
+    			} else {
+    				push ( @etops, $t );
+    			}
+    		}
+    	} else {
+    	# Take user defined TOP
+    		if ( exists( $hierdb{$topname} ) and
+    			 exists( $hierdb{$topname}{'::treeobj'} ) ) {
+    			push( @etops, $hierdb{$topname}{'::treeobj'} );
+    		} else {
+    			$logger->error( '__E_GET_TOP', "\tCould not find hierachy object for $topname" );
+    		}
+    	}
     }
-    if ( scalar( @tops ) < 1 ) { # Did not find testbench ???
-        $logger->warn( '__W_GET_TOP', "\tCould not identify toplevel aka. " .
-        	$eh->get( 'top' ) );
+    
+    if ( scalar( @etops ) < 1 ) { # Did not find testbench ...
+        $logger->error( '__E_GET_TOP', "\tCould not identify toplevel aka. " .
+        	$topname );
     }
 
-    return @tops;
-}
+    return @etops;
+} # End of get_top_cell
 
 ####################################################################
 ## add_portsig
@@ -2483,6 +2579,9 @@ Alternative implementation:
 
 Will remember the top cell for each signal in $conndb{$signal}{'::topinst'}
 
+Side effects:
+	Store connectivity information in hierdb{X}{::sigbits}
+	
 =cut
 
 sub add_portsig () {
@@ -2497,14 +2596,31 @@ sub add_portsig () {
             die;
         }
 
-        # Skip HIGH/LOW/OPEN
-        if ( $signal =~ m/^\s*%(HIGH|LOW|OPEN)/o ) { next; }
         #
         # Skip if signal mode equals Constant or Generic
         # Constant and Generics will not extend port map!
         #
         my $mode = $conndb{$signal}{'::mode'};
-
+        
+        # add %LOW%, %HIGH%, ... to ::sigbits ..., will be reused by MixReport later on
+		#!wig 20060406: get info for ::sigbits ....
+        # Skip HIGH/LOW/OPEN (but add to ::sigbits)
+        if ( $signal =~ m/^\s*%(HIGH|LOW|OPEN)/o ) {
+			_mix_p_getconnected( $signal, '::in', $mode, \%modes, \%connected );
+			_mix_p_getconnected( $signal, '::out', $mode, \%modes, \%connected );
+			# Iterate over all modules connected here
+			for my $i ( keys ( %connected ) ) {
+				if ( exists( $hierdb{$i} ) ) {
+					my $name = $hierdb{$i}{'::inst'};
+					# Let "bits_at_inst" do the work
+            		my $tbits = bits_at_inst_hl( $signal, $name, $modes{$name} );
+				} else {
+					$logger->error( '__E_PORTSIG', "\tCannot find module $i in hierdb!" );
+				}
+			}
+ 			next;
+		}
+		#!wig 20060406: get info for ::sigbits .... / END
         if ( $mode and ( $mode =~ m,^\s*[CGP],o ) ) { #wig20040802: should C be removed?
             next;
         }
@@ -2523,16 +2639,16 @@ sub add_portsig () {
             	$signal !~ m/$meh/
             ) {
             #wig20030625: adding IO switch ...
-            #TODO: what about buffers and tristate? So far noone requested this ...
-            #TODO: make "inout" more flexible, e.g. replace by io,o,i, ...
+            # TODO : what about buffers and tristate? So far noone requested this ...
+            # TODO : make "inout" more flexible, e.g. replace by io,o,i, ...
                 my @tops = get_top_cell();
                 my @addtop = ();
                 my @addtopn = ();
                 my $atp_flag = 0;
-                my $dir = ( $mode =~ m,io,io ) ? "inout" :
-                    ( ( $mode =~ m,i,io, ) ? "in" :
-                    ( ( $mode =~ m,o,io, ) ? "out" :
-                    ( ( $mode =~ m,b,io, ) ? "buffer" :"error" )));
+                my $dir = ( $mode =~ m,io,io ) ? 'inout' :
+                    ( ( $mode =~ m,i,io, ) ? 'in' :
+                    ( ( $mode =~ m,o,io, ) ? 'out' :
+                    ( ( $mode =~ m,b,io, ) ? 'buffer' : 'error' )));
                 for my $t ( @tops ) {
                     # Is this signal already connected here?
                     if ( exists( $connected{$t->name} ) ) {
@@ -2562,7 +2678,7 @@ sub add_portsig () {
                             # Force mode to ::mode -> :out:0 or :inout:0 or :in:0 or :buffer:0
                             #!wig push( @addtopn, [ $signal, $t->name, $one_leaf, $modes{$one_leaf}, 'A::' ] );
                             push( @addtopn, [ $signal, $t->name, $one_leaf, ':' . $dir . ':0' , 'A::' ] );
-                            # set ierdb{inst}{'::sigbits'} ...
+                            # set hierdb{inst}{'::sigbits'} ...
                             my $bits = bits_at_inst( $signal, $one_leaf, $modes{$one_leaf} );
                             push( @addtop, $t->name );
                         }
@@ -2795,7 +2911,62 @@ sub bits_at_inst ($$$) {
     #TODO: delete sigbits entry first?
     push( @{$hierdb{$inst}{'::sigbits'}{$signal}}, @ret );
     return \@ret;
-}
+} # End of bits_at_inst
+
+# Variant of the above for %LOW|HIGH|OPEN(_BUS)% ...
+# only purpose: extend ::sigbits ...
+#  no overlay (?)
+# 20060406: function needs more testing!!
+#
+#!wig20060406 
+sub bits_at_inst_hl ($$$) {
+    my $signal = shift;
+    my $inst = shift;
+    my $modes = shift;
+
+    # my $name = $node->name;
+	# You can savely ignore h an l here, %LOW_BUS% has autowidth
+	# %OPEN% might be different (testcase please!)
+    # my $h = $conndb{$signal}{'::high'} || 0;
+    # my $l = $conndb{$signal}{'::low'} || 0;
+
+    my $d = '';
+    # my %width = (); # F[ull], B[it],
+    my %bits = ();
+    my %sigw_flag = ();
+    # Scan through modes: ::DIR[/MODE]:N
+	# TODO : protect against duplicate
+    while ( $modes =~ m#::(in|out)(/(\w+))?:(\d+)#g ) {
+        my $io = $1;
+        my $sigm = $3;
+        my $n = $4;
+
+        my $cell = $conndb{$signal}{'::' . $io}[$n];
+        my $sig_f = $cell->{'sig_f'} || 0; # Changed wig20030605
+        my $sig_t = $cell->{'sig_t'} || 0; # Changed wig20030605
+
+        $sigm = '' if ( lc( $sigm ) eq 's' );
+        if ( $sigm ) {
+            if ( $sigm =~ m,^io,io ) {
+                $d = "c";
+            } elsif ( $sigm =~ m,^([btio]),io ) {
+                $d = lc( $1 );
+            } else {
+                $d = "e"; # TODO 20030723 ..
+            }
+        } else {
+            # Derive -> i/o from in/out
+            $d = lc( substr( $io, 0, 1 ) ); #TODO: extend for buffer and inout pins
+        }
+        unless( defined( $sigw_flag{$d} ) ) { $sigw_flag{$d} = 1; } # First time
+
+		# push( @{$width{$d}}, 'A::' );
+
+		# Add to ::sigbits
+    	push( @{$hierdb{$inst}{'::sigbits'}{$signal}}, ( 'A:::' . $d ) );
+    }
+
+} # End of bits_at_inst_hl
 
 #
 # Take input like:
@@ -3074,7 +3245,7 @@ sub add_port ($$) {
         # Replace the signal/port/hierachy data structure
         @{$hierdb{$inst}{'::sigbits'}{$signal}} = @nb;
     }
-}
+} # End of add_port
 
 #
 # add_top_port: add IO ports if defined by ::mode to top cells
@@ -3162,7 +3333,7 @@ sub add_top_port ($$) {
         @{$hierdb{$r->[1]}{'::sigbits'}{$signal}} = @nb;
     }
 
-}
+} # End of add_top_port
 
 #
 # Take added port description and join
@@ -3907,6 +4078,12 @@ sub purge_relicts () {
         }
     }
 
+	# No connection defined here:
+	if ( scalar( keys( %conndb ) ) <= 0 ) {
+		$logger->error( '__E_CONN_EMPTY', "\tNo connections defined here!" );
+		return;
+	}
+	
     #
     # If ::high and ::low is defined, extend ::in and ::out definitions
     #
@@ -3962,7 +4139,7 @@ sub purge_relicts () {
                     $conndb{$i}{'::low'} = "0";
                 }
             }
-            #TODO: Is "type" set correctely
+            # TODO : Is "type" set correctely
             unless( $conndb{$i}{'::type'} ) {
                 if ( $conndb{$i}{'::high'} ) {
                     $conndb{$i}{'::type'} = "%BUS_TYPE%";
@@ -4334,11 +4511,11 @@ sub _add_sign2hier ($$$) {
         next unless ( defined( $inst ) ); # Skip undefined instance names ....
         $inst =~ s,^__(\w+)__$,%$1%,; # Get back %NAME% from __NAME__
         unless ( exists ( $hierdb{$inst} ) )  {
-                unless ( $conndb{$conn}{'::mode'} =~ m,^\s*[CPG],o ) {
-                    # Complain if signal does connect to unknown instance
-                    $logger->error('__E_SIGN2HIER', "\tSkipping connection $conn to undefined instance $inst!");
-                }
-                next; # TODO : Should we try to add that instance?
+			if ( $conndb{$conn}{'::mode'} !~ m,^\s*[CPG],o ) {
+               	# Complain if signal does connect to unknown instance
+               	$logger->error('__E_SIGN2HIER', "\tSkipping connection $conn to undefined instance $inst!");
+            }
+            next;
         }
         next if ( $inst eq "%CONST%" );
         # Skip meta instance %CONST%
@@ -4475,7 +4652,8 @@ sub _mix_parser_parsehdl ($) {
 	    my $inst = add_inst(
 			'::inst' => "%PREFIX_INSTANCE%" . $enty . "%POSTFIX_INSTANCE%",
 			'::entity' => $enty,
-			'::parent' => "%IMPORT%"
+			'::parent' => "%IMPORT%",
+			'::__source__' => 'hier',
 		);
 	    my $body = $2;
 

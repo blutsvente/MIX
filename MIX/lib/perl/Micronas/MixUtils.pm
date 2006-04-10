@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.111 $                                         |
+# | Revision:   $Revision: 1.112 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/03/17 09:18:31 $                              |
+# | Date:       $Date: 2006/04/10 15:50:09 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.111 2006/03/17 09:18:31 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.112 2006/04/10 15:50:09 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.112  2006/04/10 15:50:09  wig
+# | Fixed various issues with logging and global, added mif test case (report portlist)
+# |
 # | Revision 1.111  2006/03/17 09:18:31  wig
 # | Fixed bad usage of $eh inside m/../ and print "..."
 # |
@@ -92,6 +95,7 @@ require Exporter;
     %EH
     $eh
     mix_utils_diff
+    mix_utils_clean_data
 	);
 
 our $VERSION = '0.01';
@@ -165,11 +169,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.111 2006/03/17 09:18:31 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.112 2006/04/10 15:50:09 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.111 $';         #'
+my $thisrevision        =      '$Revision: 1.112 $';         #'
 
-# Revision:   $Revision: 1.111 $   
+# Revision:   $Revision: 1.112 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -256,11 +260,11 @@ sub mix_getopt_header(@) {
 		$eh->set( 'dump', 'mix.' . $eh->get( 'output.ext.internal' ) );
     }
 
-    # Specify top cell on command line or use TESTBENCH as default
+    # Specify top cell on command line or use %TOP% as default
     if (defined $OPTVAL{'top'} ) {
 		$eh->set( 'top', $OPTVAL{'top'} );
     } else {
-		$eh->set( 'top', 'TESTBENCH' );
+		$eh->set( 'top', '%TOP%' );
     }
 
     # Specify variant to be selected in hierachy sheet(s)
@@ -1165,10 +1169,10 @@ sub mix_utils_open_diff ($;$) {
     my $flag = shift || "delta";
 
     my @ocont = ();
-    my $ocontr = "";
+    my $ocontr = '';
 
     my $ext;
-    my $c = "__NOCOMMENT";
+    my $c = '__NOCOMMENT';
     ( $ext = $file ) =~ s/.*\.//;
     my $keh = $eh->get( 'output.ext' ); 
     for my $k ( keys ( %$keh )) {
@@ -1188,6 +1192,8 @@ sub mix_utils_open_diff ($;$) {
 		@ocont = <$ofh>; #Slurp in file to compare against
 		chomp( @ocont );
 
+=head1 OLD
+
 		my $switches = ( $flag eq 'verify' ) ? $eh->get( 'check.hdlout.delta' ) :
 			$eh->get( 'output.delta' );
 		$switches = $eh->get( 'output.delta' ) unless $switches;
@@ -1195,12 +1201,14 @@ sub mix_utils_open_diff ($;$) {
     	# Get data in clean format ....
     	$ocontr = mix_utils_clean_data( \@ocont, $c, $switches );
 
+=cut
+
 		close( $ofh ) or $logger->error( '__E_FILE_CLOSE',
 			"\tCannot close org $file in delta mode: $!" );
     } else {
 		$logger->error( '__E_FILE_READ', "\tCannot read $file" );
     }
-    return $ocontr;
+    return \@ocont;
 } # End of mix_utils_open_diff
 
 ####################################################################
@@ -1223,14 +1231,14 @@ The first argument is the file to open, the second contains flags like:
 
 sub mix_utils_open ($;$){
     my $file= shift;
-    my $flags = shift || ""; # Could be "COMB" for combined mode or ..._CHK_(ENT|LEAF)
+    my $flags = shift || ''; # Could be "COMB" for combined mode or ..._CHK_(ENT|LEAF)
 
     #
     # if output.path is set, write to this path (unless file name is absolute path)
     # wig20030703
     #
 
-    if ( $eh->get( 'output.path' ) ne "." ) {
+    if ( $eh->get( 'output.path' ) ne '.' ) {
 		unless( is_absolute_path( $file ) ) {
 	    	$file = $eh->get( 'output.path' ) . '/' . $file;
 		}
@@ -1253,11 +1261,10 @@ sub mix_utils_open ($;$){
     }
     if ( $flags =~ m/_CHK_(\w+)/io ) {
         my $leaf_flag = $1; #
-        my $templ = mix_utils_loc_templ( "ent", $file );
+        my $templ = mix_utils_loc_templ( 'ent', $file );
         if ( $templ ) { # Got a template file ...
-            @ccont = @{mix_utils_open_diff( $templ, "verify" )}; # Get template contents, filtered  ...
+            @ccont = @{mix_utils_open_diff( $templ, 'verify' )}; # Get template contents, filtered  ...
             @ncont = (); # Reset new contents ...
-            # TODO combine mode??
 
             $fhstore{$file}{'tmpl'} = $templ;
             $fhstore{$file}{'tmplmode'} = $leaf_flag;
@@ -1627,6 +1634,7 @@ sub mix_utils_diff ($$$$;$) {
 	my $switches = shift || '';
 
     # strip off comments and such (from generated data)
+    $oc = mix_utils_clean_data( $oc, $c, $switches );    
     $nc = mix_utils_clean_data( $nc, $c, $switches );
 
     # Diff it ...

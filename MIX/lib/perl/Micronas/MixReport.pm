@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.26 $                                               |
-# | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2006/03/27 13:17:31 $                                                   |
+# | Revision:   $Revision: 1.27 $                                               |
+# | Author:     $Author: wig $                                                 |
+# | Date:       $Date: 2006/04/10 15:50:09 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.26 2006/03/27 13:17:31 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.27 2006/04/10 15:50:09 wig Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.27  2006/04/10 15:50:09  wig
+# | Fixed various issues with logging and global, added mif test case (report portlist)
+# |
 # | Revision 1.26  2006/03/27 13:17:31  mathias
 # | start with a random number for unique number for marker in the mif file
 # |
@@ -129,11 +132,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.26 2006/03/27 13:17:31 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.27 2006/04/10 15:50:09 wig Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.26 $';
+my $thisrevision   =      '$Revision: 1.27 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -154,10 +157,8 @@ $thisrevision =~ s,^\$,,go;
 use strict;
 use File::Basename;
 
-use Log::Agent;
-use Log::Agent::Priorities qw(:LEVELS);
-
-use Micronas::MixUtils qw(%EH %OPTVAL);
+use Log::Log4perl qw(get_logger);
+use Micronas::MixUtils qw($eh %OPTVAL);
 use Micronas::Reg;
 use Micronas::MixUtils::Mif;
 
@@ -165,8 +166,9 @@ use Micronas::MixUtils::Mif;
 # Prototypes
 #
 sub _mix_report_getport ($$);
+sub _mix_report_conn2sp ($);
 
-# Comment field:
+my $logger = get_logger( 'MIX::MixReport' );
 
 #------------------------------------------------------------------------------
 # Class members
@@ -212,7 +214,7 @@ sub mix_report($)
         mix_rep_portlist();
     }
     if ( $reports =~ m/\breglist\b/io ) {
-        logsay("~~~~~ Report register list in mif format\n");
+        $logger->info('__I_REPORT', "\tReport register list in mif format\n");
         mix_rep_reglist($r_i2cin);
     }
 }
@@ -227,10 +229,10 @@ sub mix_rep_reglist($)
     if (scalar @$regp) {
         my($o_space) = Micronas::Reg->new();
 
-        if (grep($EH{'reg_shell'}{'type'} =~ m/$_/i, @{$o_space->global->{supported_views}})) {
+        if (grep($eh->get( 'reg_shell.type' ) =~ m/$_/i, @{$o_space->global->{supported_views}})) {
             # init register module for generation of register-shell
             $o_space->init(inputformat => "register-master",
-                           database_type => $EH{i2c}{regmas_type},
+                           database_type => $eh->get( 'i2c.regmas_type' ),
                            register_master => $regp
                           );
             # iterate through all blocks (domains)
@@ -240,10 +242,10 @@ sub mix_rep_reglist($)
 
                 ### open mif file
                 print("~~~~~ Domain name: " . $o_domain->name() . "\n");
-                my $mif = new Micronas::MixUtils::Mif('name' => $EH{'report'}{'path'} . '/' .
+                my $mif = new Micronas::MixUtils::Mif('name' => $eh->get( 'report.path' ) . '/' .
                                                       $o_domain->name() . "_reglist.mif");
                 $mif->template();           # Initialize it
-                my $omif = new Micronas::MixUtils::Mif('name' => $EH{'report'}{'path'} . '/' .
+                my $omif = new Micronas::MixUtils::Mif('name' => $eh->get( 'report.path' ) . '/' .
                                                        $o_domain->name() . "_reg_overview.mif");
                 $omif->template();           # Initialize it
                 my $oview_table = mix_rep_reglist_oview_mif_header($omif);
@@ -264,12 +266,12 @@ sub mix_rep_reglist($)
                         my %href = ( 'crossref' => $ref,
                                      'address'  => $address,
                                      'mode'     => $mode);
-                        if ($EH{report}{reglist}{crossref} eq 'no') {
+                        if ($eh->get( 'report.reglist.crossref' ) eq 'no') {
                             $href{crossref} = $o_reg->name();
                             #print("~~~~~    printing register name rather than cross-reference\n");
                         }
                         push(@reg_crossrefs, \%href);
-                        if (exists($EH{output}{mif}{debug})) {
+                        if ( $eh->get( 'output.mif.debug' ) ) {
                             print("~~~~~ Register: " . $o_reg->name() . "\n");
                         }
                         my ($ii, $width_1) = (0, 0);
@@ -288,10 +290,10 @@ sub mix_rep_reglist($)
                             $thefields[$ii]{mode}    = $o_field->attribs->{'dir'};
                             $thefields[$ii]{comment} = $o_field->attribs->{'comment'};
                             $thefields[$ii]{sync}    = $o_field->attribs->{'sync'};
-                            if (exists($EH{output}{mif}{debug})) {
+                            if ( $eh->get( 'output.mif.debug' ) ) {
                                 print("~~~~~    " . $thefields[$ii]{name} . '(' . $thefields[$ii]{size}
                                       . ')' . '/' . $thefields[$ii]{pos}  . "\n");
-                                if ($EH{output}{mif}{debug} == 2) {
+                                if ($eh->get( 'output.mif.debug' ) == 2) {
                                     print("         " . $thefields[$ii]{comment} . "\n");
                                 }
                             }
@@ -302,8 +304,8 @@ sub mix_rep_reglist($)
                         mix_rep_reglist_mif_bitfields($mif, $regtable, \@thefields);
                         # write 'API' row
                         if ($api) {
-                            if (exists($EH{output}{mif}{debug})) {
-                                if ($EH{output}{mif}{debug} == 3) {
+                            if ( $eh->get( 'output.mif.debug' ) ) {
+                                if ( $eh->get( 'output.mif.debug' ) == 3) {
                                     print("         api: `$api'\n");
                                 }
                             }
@@ -325,7 +327,7 @@ sub mix_rep_reglist($)
                         $mif->end_body($regtable);
                         $mif->end_table($regtable);
                     } else {
-                        if (exists($EH{output}{mif}{debug})) {
+                        if ( $eh->get( 'output.mif.debug' ) ) {
                             print("!!!!! Register: " . $o_reg->name() . " will not be documented\n");
                         }
                     }
@@ -399,7 +401,7 @@ sub mix_rep_reglist_oview_mif_row($$$ )
     for (my $i = 0; $i <= $#{$ref_to_crossref}; $i++) {
         my $headtext = "";
         # Register name
-        if ($EH{report}{reglist}{crossref} eq 'no') {
+        if ($eh->get( 'report.reglist.crossref' ) eq 'no' ) {
             $headtext .= $mif->wrCell({ 'PgfTag' => 'CellBodyH9',
                                         'String'   => $ref_to_crossref->[$i]->{crossref}
                                       }, 2);
@@ -853,44 +855,64 @@ sub mix_rep_reglist_mif_bitfield_description($$$)
 #
 # return signals in requested order ...
 #
-# config value: $EH{report}{portlist}{sort}
+# config value: $eh->{report}{portlist}{sort}
 #
 # alpha := sorted by port name (default)
-# input (ordered as listed in input files)
-# inout | outin: seperate in/out/inout seperately
-#    can be combined with the "input" key
-# ::COL : order as in column ::COL (alphanumeric!)		  			
+# input (ordered as listed in input files) 			
 sub _mix_report_sigsort {
+	my $splist = shift;
 
+	my $pos = ( $eh->get( 'report.portlist.data' ) =~ m/\bport\b/ );
 	# $a and $b hold the respective conndb keys
-	my $key = $EH{'report'}{'portlist'}{'sort'};
+	my $key = $eh->get( 'report.portlist.sort' );
 	my $conndb = \%Micronas::MixParser::conndb;
 	
-	my $va = $a;
-	my $vb = $b;
-	
-	if ( exists $conndb->{$a} and exists $conndb->{$b} ) {
-		if ( $key =~ m/\balpha\b/io ) {
-			$va = $conndb->{$a}{'::name'};
-			$vb = $conndb->{$b}{'::name'};
-		} elsif ( $key =~ m/\binput\b/io ) {
-			my $format = '%0' . ( length( $EH{'sum'}{'conn'} ) + 1 ) . 'd'; # 
-			$va = sprintf( $format, $conndb->{$a}{'::connnr'});
-			$vb = sprintf( $format, $conndb->{$b}{'::connnr'});
-		} elsif ( $key =~ m/(\b::\w+)\b/io ) {
-			if ( exists( $conndb->{$a}{$1} ) ) {
-				$va = $conndb->{$a}{$1};
-			}
-			if ( exists( $conndb->{$b}{$1} )) {
-				$vb = $conndb->{$b}{$1}; 
-			}
-		}	
+#	my $va = $a;
+#	my $vb = $b;
+	my %spo = ();
+	# Iterate over signals
+	for my $s ( keys( %$splist ) ) {
+		# Iterate over ports
+		for my $p ( keys( %{$splist->{$s}} ) ) {
+			my $va = '';
+			if ( $key =~ m/\balpha\b/io ) {
+				if ( $pos ) {
+					$va = $p;
+				} else {
+					$va = $conndb->{$s}{'::name'};
+				}
+			} elsif ( $key =~ m/\binput\b/io ) {
+				my $format = '%0' . ( length( $eh->get( 'sum.conn' ) ) + 1 ) . 'd'; # 
+				$va = sprintf( $format, $conndb->{$s}{'::connnr'});
+			} # elsif ( $key =~ m/(\b::\w+)\b/io ) {
+			$spo{$va . '!###!' . $s . '!###!' . $p } = 1;
+		}
 	}
 
 	# Do the sort here:
-	$va cmp $vb;
-	
-}
+	# $va cmp $vb;
+	my @sorted = ();
+	for my $i ( sort( keys %spo ) ) {
+		push( @sorted, [ (split( /!###!/, $i ))[1..2] ] );
+	}
+	return @sorted;
+} # End of _mix_report_sigsort
+
+#
+# combine ::conn data structure into one hash
+#
+sub _mix_report_conn2sp ($) {
+	my $conn = shift;
+
+	my %sp = ();
+	for my $m ( qw( in out ) ) {
+		for my $s ( keys( %{$conn->{$m}} ) ) {
+			$sp{$s} = $conn->{$m}->{$s};
+		}
+	}
+	return \%sp;
+} # End of _mix_report_conn2sp
+
 
 #
 # Print a list of all I/O signals ....
@@ -899,7 +921,7 @@ sub mix_rep_portlist () {
 
 	# If ::external column is set, make a seperate table for "externals"
 	my $exttrigger = '';
-	if ( $EH{'report'}{'portlist'}{'split'} =~ m/\bexternal(::\w+)?/ ) {
+	if ( $eh->get( 'report.portlist.split' ) =~ m/\bexternal(::\w+)?/ ) {
 		$exttrigger = "::external";
 		if ( defined $1 ) {
 			$exttrigger = $1;
@@ -918,7 +940,7 @@ sub mix_rep_portlist () {
 		next if ( $hierdb->{$instance}{'::entity'} eq 'W_NO_ENTITY' );
 		next if ( $instance =~ m/^%\w+/ );
 
-		if ( $EH{'report'}{'portlist'}{'split'} =~ m/\bfile/io ) {
+		if ( $eh->get( 'report.portlist.split' ) =~ m/\bfile/io ) {
 			# Create new file for each instance ...
 			($mif, $mifname, $plist, $elist ) =
 				_mix_report_portlist_create ( $exttrigger );
@@ -936,12 +958,12 @@ sub mix_rep_portlist () {
 		);
 		
 		# Remember name, overwrite output file name:
-		if ( $EH{'report'}{'portlist'}{'name'} =~ m/^INST$/ ) {
+		if ( $eh->get( 'report.portlist.name' ) =~ m/^INST$/ ) {
 			$mifname = $link->{'::inst'} . '-portlist.' .
-				$EH{'report'}{'portlist'}{'ext'};
-		} elsif ( $EH{'report'}{'portlist'}{'name'} =~ m/^ENTY$/ ) {
+				$eh->get( 'report.portlist.ext' );
+		} elsif ( $eh->get( 'report.portlist.name' ) =~ m/^ENTY$/ ) {
 			$mifname = $link->{'::entity'} . '-portlist.' .
-				$EH{'report'}{'portlist'}{'ext'};
+				$eh->get( 'report.portlist.ext' );
 		}
 		
 		$mif->add( $mif->Tr($line), $plist );
@@ -958,10 +980,18 @@ sub mix_rep_portlist () {
 		}
 
 		## Signals at that instance
-		for my $signal ( sort _mix_report_sigsort keys( %{$link->{'::sigbits'}} ) ) {
-			# Iterate over all signals ...
+		#OLD for my $signal ( sort _mix_report_sigsort keys( %{$link->{'::sigbits'}} ) ) {}
+		#!wig20060406: use the ::conn data instead ..
+		my $sigandport = _mix_report_conn2sp( $link->{'::conn'} );
+
+		for my $sigport ( _mix_report_sigsort( $sigandport ) ) {
+			# Iterate over all signals ... (and ports)
+			my $signal = $sigport->[0];
+			my $port   = $sigport->[1];
+
 			my $signalname = $conndb->{$signal}{'::name'};
-			my $connect = $link->{'::sigbits'}{$signal};
+			# my $connect = $link->{'::sigbits'}{$signal};
+			my $connect = $link->{'::sigbits'}{$signal}; # new20060406
 			my $high	= $conndb->{$signal}{'::high'};
 			my $low		= $conndb->{$signal}{'::low'};
 			my $clock	= $conndb->{$signal}{'::clock'};
@@ -974,9 +1004,10 @@ sub mix_rep_portlist () {
 			#  comment. Print it before (post mode) or after (pre mode)	
 			#  Maybe we limit the number of lines ...
 			# my $incom_mode = ''; # pre or post
-			$EH{'report'}{'portlist'}{'comments'} =~ m/(\d+)/;
+			my $rpc = $eh->get( 'report.portlist.comments' );
+			$rpc =~ m/(\d+)/;
 			my $striphash = 0;
-			if ( $EH{'report'}{'portlist'}{'comments'} =~ m/\bstriphash/io ) {
+			if ( $rpc =~ m/\bstriphash/io ) {
 				$striphash = 1;
 			}
 			my $incom_lines = 0;
@@ -1017,6 +1048,15 @@ sub mix_rep_portlist () {
 				$mif->add( $mif->Tr($line), $plist );
 			};
 
+			if ( $signal =~ m/%(HIGH|LOW)_BUS%/ ) {
+				# Get width from ::conn ...
+				my $co = $hierdb->{$instance}->{'::conn'}->{'in'}->{$signal}->{$port};
+				$high	= $conndb->{$signal}->{'::in'}->[$co]->{'sig_f'} || 0;
+				$low	= $conndb->{$signal}->{'::in'}->[$co]->{'sig_t'} || 0;
+			} elsif ( $signal =~ m/%(HIGH|LOW)%/ ) {
+				$high = '';
+				$low  = ''; 
+			}
 			my $width = _mix_report_width( $high, $low );
 			( my $full, my $mode ) = _mix_report_connect( $connect );
 			$mode = uc( $mode );
@@ -1038,10 +1078,11 @@ sub mix_rep_portlist () {
 			$out = "(NO DRIVER)" unless $out;
 			#TODO: Remember for later usage and sorting
 
-			# Map signal name to port name:
-			my $portname = $signalname;
-			if ( $EH{'report'}{'portlist'}{'data'} =~ m/\bport\b/ ) {
-				$portname = _mix_report_getport( $signalname, $link );
+			#  What to print: port or signal
+			my $name = $signalname;
+			if ( $eh->get( 'report.portlist.data' ) =~ m/\bport\b/ ) {
+				$name = $port;
+				# $name = _mix_report_getport( $signalname, $link );
 			}
 
 			# If we split into internal/external list, decide which to take:
@@ -1057,7 +1098,7 @@ sub mix_rep_portlist () {
 				my $line = $mif->td(
 					{ 'PgfTag' => 'CellBodyH9',
 					   'String' => [
-					   		$portname,
+					   		$name,
 					   		$width,
 					   		$mode,
 					   		$descr,
@@ -1071,7 +1112,7 @@ sub mix_rep_portlist () {
 				my $line = $mif->td(
 					{ 'PgfTag' => 'CellBodyH9',
 				  	'String' => [
-				  		$portname,
+				  		$name,
 				  		$width,
 				  		$clock,
 				  		$sd,
@@ -1097,13 +1138,12 @@ sub mix_rep_portlist () {
 		}
 
 		# Write one file per instance (entity):
-		if ( $EH{'report'}{'portlist'}{'split'} =~ m/\bfile/io ) {
+		if ( $eh->get( 'report.portlist.split' ) =~ m/\bfile/io ) {
 			# Flush it now:
 		
 			# Did we write that before?	
 			if ( exists ( $names_used{$mifname} ) ) {
-				logwarn( "ERROR: Reused portlist file name: $mifname!" );
-				$EH{'sum'}{'errors'}++;
+				$logger->error( '__E_REPORT_FILE', "\tReused portlist file name: $mifname!" );
 			}
 			$names_used{$mifname} = 1;
 			_mix_report_flushmif($mif, $mifname, $plist, $elist );
@@ -1112,7 +1152,7 @@ sub mix_rep_portlist () {
 	}
 
 	# Write common file:
-	unless ( $EH{'report'}{'portlist'}{'split'} =~ m/\bfile/io ) {
+	unless ( $eh->get( 'report.portlist.split' ) =~ m/\bfile/io ) {
 		# Flush it now:	
 		_mix_report_flushmif( $mif, $mifname, $plist, $elist );
 	}
@@ -1138,7 +1178,7 @@ sub _mix_report_flushmif ($$$$) {
 	}	
 	
 	# Write ...
-	$mif->write( $EH{'report'}{'path'} . '/' . $mifname );
+	$mif->write( $eh->get( 'report.path' ) . '/' . $mifname );
 }
 
 #
@@ -1151,25 +1191,47 @@ sub _mix_report_flushmif ($$$$) {
 #	$mifname filename
 #	$plist   primary table
 #	$elist   external table
+#
+# Global:
+#	$eh
+#	%hierdb
+#
 #!wig20051209
 sub _mix_report_portlist_create ($) {
 	my $exttrigger = shift;
-	# my $name = shift;
 	
-	#!wig20051208: change filename algorithm:
-	#  but there is always a chance to change the filename until "write"
+	#!wig20051208: derive portlist filename from name
+	# (there is always a chance to change the filename until "write")
 	my $mifname = '';
-	if ( $EH{'report'}{'portlist'}{'name'} ) {
+
+	my $hierdb = \%Micronas::MixParser::hierdb;
+	
+	if ( $eh->get( 'report.portlist.name' ) ) {
 		$mifname =
-			$EH{'report'}{'portlist'}{'name'} . '.' .
-			$EH{'report'}{'portlist'}{'ext'};
+			$eh->get( 'report.portlist.name' ) . '.' .
+				$eh->get( 'report.portlist.ext' );
 	} else {
 		# Take top level module name ... (first if several)
 		my $base = '';
-		if ( exists( $Micronas::MixParser::hierdb{$EH{'top'}} )
-			 and exists ( $Micronas::MixParser::hierdb{$EH{'top'}}{'::treeobj'} ) ) {
-			my $topobj = $Micronas::MixParser::hierdb{$EH{'top'}}{'::treeobj'};
-			# Get name ->
+		if ( exists( $hierdb->{$eh->get('top')} )
+			 and exists ( $hierdb->{$eh->get('top')}{'::treeobj'} ) ) {
+			my $topobj = $hierdb->{$eh->get('top')}{'::treeobj'};
+			# Take daughter of top (first one!)
+			for ( $topobj->daughters() ) {
+				if ( exists( $hierdb->{$_->name()} ) ) {
+					# check if that module is not W_NO_ENTITIY
+					if ( $_->name() =~ m/testbench/i ) {
+						$topobj = $_;
+						next;
+					}
+					if ( $hierdb->{$_->name()}{'::entity'} ne 'W_NO_ENTITY' ) {
+						$topobj = $_;
+						last;
+					}
+				}
+			}
+			
+			# Get name -> ...
 			if ( $topobj->name ne 'TESTBENCH' ) {
 				$base = $topobj->name;
 			} else {
@@ -1184,11 +1246,11 @@ sub _mix_report_portlist_create ($) {
 		
 		# Strip off extension (if any)
 		$base =~ s,(\.[^.]+)$,,;
-		$mifname = $base . '_port.' . $EH{'report'}{'portlist'}{'ext'};
+		$mifname = $base . '_port.' . $eh->get( 'report.portlist.ext' );
 	}
 		
 	my $mif = new Micronas::MixUtils::Mif(
-		'name' => ( $EH{'report'}{'path'} . '/' . $mifname ),
+		'name' => ( $eh->get( 'report.path' ) . '/' . $mifname ),
 	);
 		
 	$mif->template(); # Initialize it
@@ -1243,7 +1305,7 @@ sub _mix_report_portlist_create ($) {
 	$mif->start_body( $plist );
 	
 	return( $mif, $mifname, $plist, $elist );
-}
+} # End of _mix_report_portlist_create
 
 #
 # Map signal name to port name for given instance
@@ -1265,14 +1327,12 @@ sub _mix_report_getport ($$) {
 	if ( scalar( @ports ) < 1 ) {
 		# Did not get port ???
 		$signal .= ' (S)';
-		logwarn( "__W_MIX_REPORT: Could not map signal " . $signal .
+		$logger->warn( '__W_MIX_REPORT', "\tCould not map signal " . $signal .
 			" to portname for instance " . $link->{'::inst'} );
-		$EH{'sum'}{'warnings'}++;
 	} elsif ( scalar( @ports ) > 1 ) {
 		# More than one port attached :-(
-		logwarn( "__W_MIX_REPORT: Multiple ports connected to " . $signal .
+		$logger->warn( '__W_MIX_REPORT', "\tMultiple ports connected to " . $signal .
 			" at instance " . $link->{'::inst'} );
-		$EH{'sum'}{'warnings'}++;
 		$signal = join( ',', @ports );
 	} else {
 		$signal = $ports[0];
@@ -1284,19 +1344,19 @@ sub _mix_report_getport ($$) {
 
 #
 # Get list of connected instances ...
-#TODO: Do not print constants and other pseudo instances
+# TODO : Do not print constants and other pseudo instances
 sub _mix_report_getinst ($) {
 	my $ref = shift;
 	
-	my $instances = "";
+	my %ins = ();
 	for my $i ( @$ref ) {
-		$instances .= ", " . $i->{'inst'};
+		if ( exists( $i->{'inst'} ) ) {
+			$ins{$i->{'inst'}} = 1;
+		}
 	}
 
-	$instances =~ s/^, //;
-	
-	return $instances;
-}
+	return join( ',', keys %ins );
+} # End of _mix_report_getinst
 
 #
 # Create width string
@@ -1335,8 +1395,8 @@ sub _mix_report_width ($$) {
 sub _mix_report_connect ($) {
 	my $connect = shift;
 	
-	my $sfull = "";
-	my $smode = "";
+	my $sfull = '';
+	my $smode = '';
 	
 	for my $c ( @$connect ) {
 		my $full = -1;
@@ -1359,7 +1419,8 @@ sub _mix_report_connect ($) {
 			$mode = "__W_OTHER";
 		}
 		if( $sfull eq "" ) {
-			$sfull = $full; $smode = $mode;
+			$sfull = $full;
+			$smode = $mode;
 		}
 		if ( $sfull ne "" and $full ne $sfull ) {
 			$sfull = 2;
