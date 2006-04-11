@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.8 $                                          |
+# | Revision:   $Revision: 1.9 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/04/10 15:50:08 $                              |
+# | Date:       $Date: 2006/04/11 13:38:01 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.9  2006/04/11 13:38:01  wig
+# | Added verimap config: wrap verilog module header into ifdef/else/endif
+# |
 # | Revision 1.8  2006/04/10 15:50:08  wig
 # | Fixed various issues with logging and global, added mif test case (report portlist)
 # |
@@ -74,9 +77,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.8 2006/04/10 15:50:08 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.9 2006/04/11 13:38:01 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.8 $';  
+my $thisrevision    =      '$Revision: 1.9 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -389,6 +392,12 @@ sub init {
 					# TODO Implement for hier
           	'verilog' => '', # switches for Verilog generation, off by default, but see %UAMN% tag
                              #  useconfname := use VHDL config name as verilog module name; works for e.g. NcSim
+            'verimap' => {
+            	'modules'	=> '', # Set to perl-re matching the modules to warp within `define ....
+            	'sigvalue'	=> 'ALL=0', # Default for signal values, format: module_re/port_re = val, ....
+            	'select'	=> 'exclude_%::inst%', # Use this value as switch name
+            	'options'	=> '',		# values: incfile (write alternative signal map into include file,
+            },
 	      	'workaround' => {
             	'verilog' => 'dummyopen', # dummyopen := create a dummy signal for open port splices 
                     ,

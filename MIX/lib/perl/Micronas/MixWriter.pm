@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.80 $                                         |
+# | Revision:   $Revision: 1.81 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/04/10 15:50:09 $                              |
+# | Date:       $Date: 2006/04/11 13:38:01 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.80 2006/04/10 15:50:09 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.81 2006/04/11 13:38:01 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.81  2006/04/11 13:38:01  wig
+# | Added verimap config: wrap verilog module header into ifdef/else/endif
+# |
 # | Revision 1.80  2006/04/10 15:50:09  wig
 # | Fixed various issues with logging and global, added mif test case (report portlist)
 # |
@@ -334,15 +337,16 @@ sub _mix_wr_descr				($$$$$);
 sub mix_wr_printdescr			($$);
 sub _mix_wr_regorwire			($$);
 sub _mix_wr_signum2signam		($);
+sub _mix_wr_map_veri			($$$$$);
 
 # Internal variable
 
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.80 2006/04/10 15:50:09 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.81 2006/04/11 13:38:01 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.80 $';
+my $thisrevision   =      '$Revision: 1.81 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2279,8 +2283,8 @@ sub gen_instmap ($;$$) {
     my $tcom = shift || $eh->get( 'output.comment.' . $lang ) ||
     	$eh->get( 'output.comment.default' );
 
-    my $map = "";
-    my $gmap = "";
+    my $map = '';
+    my $gmap = '';
     my $dummies = []; # Reference 
 
     my @in = ();
@@ -2314,8 +2318,8 @@ sub gen_instmap ($;$$) {
     if ( $inst =~ m/^(__|%)TYPECAST_/io ) {
         # Read $hierdb{$inst}{'::typecast'}  -> SIGNAME, TYPECAST, INTNAME
         my ( $orgsig, $tcf, $intsig ) = @{$hierdb{$inst}{'::typecast'}}; 
-	    $map = '%S%' x 2 . $orgsig . " <= " . $tcf . "( " . $intsig . " ) "
-            . "; " . $tcom . " __I_TYPECAST\n";
+	    $map = '%S%' x 2 . $orgsig . ' <= ' . $tcf . '( ' . $intsig . ' ) '
+            . '; ' . $tcom . " __I_TYPECAST\n";
     } else {
         # Sort map ...
         $map = join( "\n", sort( split ( /\n/, $map ) ) ) . "\n" unless $simple_flag;
@@ -2364,7 +2368,7 @@ sub gen_instmap ($;$$) {
 
         if ( $lang =~ m,^veri,io ) {
             #!wig20031107: Add dummy signals here (temp.)
-            my $dum = "";
+            my $dum = '';
             if ( scalar( @$dummies ) ) {
                 $dum = join( "\n", map(
                     ( '%S%' x 2 .  $_ ),
@@ -2377,7 +2381,7 @@ sub gen_instmap ($;$$) {
             # format gets prepared in generic_map
             #    enty #(param) inst (port)
             #
-            my $hashm = " ";
+            my $hashm = ' ';
             if  ( $hierdb{$inst}{'::lang'} =~ m,\bvhdl,io or
             	  $eh->get( 'output.language.verilog' ) =~ m/\b2001param/io ) {
                 # Special case: daughter is VHDL-> use config name instead of entity name ...
@@ -2439,8 +2443,156 @@ sub gen_instmap ($;$$) {
            	}
         }
     }
+    
+    #!wig20060411: wrap verilog module into ifdef ....
+    if ( $lang =~ m,^veri,io and $eh->get( 'output.generate.verimap.modules' ) ) {
+    	$map = _mix_wr_map_veri( $inst, $map, \@in, \@out, $tcom );
+    }
+    
     return( $map, \@in, \@out);
-}
+} # End of gen_instmap
+
+
+#
+# wrap a verilog module header in
+#
+#   `ifdef exclude_module_1
+#		assign sig_1 = 1'b0;
+#		...
+#	`else
+#		<real port map>
+#	`endif
+#
+# Globals:	$eh
+#
+# TODO: Handle partial port assignments
+#       Sort order for signal list
+sub _mix_wr_map_veri ($$$$$) {
+	my $inst = shift;
+	my $map  = shift;
+	my $inr  = shift;
+	my $outr = shift;
+	my $tcom = shift;
+
+	my $vm = $eh->get( 'output.generate.verimap' );
+	
+	# Will module be mapped? vm->{modules} has comma seperated list of perl re
+	my $match = 0;
+	for my $re ( split( /[,\s]+/, $vm->{'modules'} ) ) {
+		if ( $inst =~ m/^$re$/ ) {
+			$match = 1;
+			last;
+		}
+		if ( $re =~ m/^all$/io ) {
+			$match = 1;
+			last;
+		}
+	}
+
+	# No match -> no wrap	
+	return $map unless $match;
+	
+	# Needs wrap ...
+	my $wmap = '`ifdef ' . $vm->{'select'} . "\n";
+	
+	# Iterate over all in and out signals
+	for my $i ( @$inr ) {
+		$wmap .= '%S%' x 3 . $tcom . ' assign ' .
+			$i . " = open;\n";
+	}
+
+	for my $o ( @$outr ) {
+		# Get signal value (generic format)
+		my $force = _mix_wr_getmapval( $inst, $o, $vm->{'sigvalue'} ); 
+		my $connect = $hierdb{$inst}{'::sigbits'}{$o}; # Width, usually A:::<d>
+		
+		my $width = 1;
+
+		# TODO : Handle multiple connections ....
+		if ( scalar( @$connect ) > 1 ) {
+			$logger->error( '__E_MAPVERI', "\tCannot handle multiple connections for signal $o at instance $inst!" );
+		}
+		if ( $connect->[0] =~ m/^A::/ ) {
+			$width = 1;
+
+			if ( $conndb{$o}{'::high'} =~ m/^(\d+)$/ and
+				 $conndb{$o}{'::low'} =~ m/^(\d+)$/ ) { 
+				$width = $conndb{$o}{'::high'} - $conndb{$o}{'::low'} + 1;
+			}
+		} else {
+			$logger->error( '__E_MAPVERI', "\tCannot handle partial port assignment for signal $o at instance $inst!" );
+		}		
+		my $vval = $force;
+		# Expand key to appropriate format:
+		#	0 -> <w>'b0
+		#	1 -> <w>'b1111
+		#
+		if ( $force eq '0' or $force eq '1' ) {
+			$vval = $width . "'b" . $force x $width;
+		}
+
+
+		$wmap .= '%S%' x 3 . "assign " .
+			$o . " = " . $vval . ";\n";		
+	}
+
+	
+	$wmap .= "`else\n" . $map . "`endif\n";
+	
+	# Evaluate some macros: %::inst%
+	$wmap =~ s/%::inst%/$inst/g;
+	
+	return $wmap;
+
+} # End of _mix_wr_map_veri
+
+
+#
+# Get default value for verilog exclude map
+#		Possible values for the valuemap are:
+#		INSTANCE_RE/SIGNAL_RE=VAL
+#		SIGNAL_RE=VAL
+#		VAL
+#  Caveat: apecify signal names, not port names!
+#
+sub _mix_wr_getmapval ($$$) {
+	my $inst   = shift;
+	my $signal = shift;
+	my $valmap = shift;
+	
+	my $force = ''; # Default
+	for my $sv ( split( /[,\s]+/, $valmap ) ) {
+		#  inst_re/signal_re=val
+		if ( $sv =~ m,(.+)/(.+)=(.+), ) {
+			my $inre = $1;
+			my $snre = $2;
+			my $snvl = $3;
+			if ( $inst =~ m/^$inre$/ and $signal =~ m/^$snre$/ ) {
+				$force = $snvl;
+				last;
+			}
+			next;
+		}
+		# Value is s.th. like RE=VAL
+		if ( $sv =~ m/(.+)=(.+)/ ) {
+			my $snre = $1;
+			my $snvl = $2;
+			if ( $signal =~ m/^$snre$/ ) {
+				$force = $snvl;
+				last;
+			}
+			next;
+		}
+		$force = $sv;
+		last;
+	}
+	
+	# Using  '0' as default:
+	if ( $force eq '' ) {
+		$force = 0;
+	}
+	return $force;
+} # End of _mix_wr_getmapval
 
 =head2 _mix_wr_descr
 
@@ -2756,11 +2908,11 @@ sub _mix_wr_isinteger ($$$) {
         'h' => '[0-9a-fA-F_]',
     );
 
-    my $set = "ILLEGAL";    
+    my $set = 'ILLEGAL';    
 
-    my $base = "d";
-    my $width = "";
-    my $number = "";
+    my $base = 'd';
+    my $width = '';
+    my $number = '';
     my $flag = 0;
 
     # Split input string
@@ -3003,7 +3155,7 @@ sub port_map ($$$$$$) {
             	#!wig20030908: very special trick to get constants for nan bounds:
             	if ( $ret and $ret eq 2 ) { # nan bounds, matching .... store for later
                 	$hierdb{$inst}{'::nanbounds'}{$s} = \@cm;
-                	#TODO: check if that happened already ...
+                	# TODO : check if that happened already ...
             	}
 			
 				push( @map , print_conn_matrix( $inst, $p, $pf, $pt, $s, $sf, $st, $lang, \@lcm, $cast ));
@@ -3014,11 +3166,6 @@ sub port_map ($$$$$$) {
 				
 	    	}
 
-	    	#OLD: push( @map , print_conn_matrix( $inst, $p, $pf, $pt, $s, $sf, $st, $lang, \@cm, $cast ));
-	    	# Remember if a port got used ....
-	    	# if ( store_conn_matrix( \%{$hierdb{$inst}{'::portbits'}}, $inst, $p, $pf, $pt, $s, \@cm ) ) {
-            #    #DONE: Do something against duplicate connections ... -> handeled by purge_relicts
-	    	# }
 		}
 		push( @$rio, $s );
     }
@@ -3035,7 +3182,7 @@ sub port_map ($$$$$$) {
 			$_ .
 				(( $order ) ? (' ' . $tcom . 'SORT:' . $1 ) : ''); }
     		sort( @map ) ) ) . "\n"; # Return sorted by port name (comes first)
-}
+} # End of port_map
 
 
 #
@@ -3151,7 +3298,7 @@ sub add_conn_matrix ($$$$) {
     } else {
 		return 0;
     }
-}
+} # End of add_conn_matrix
 
 #
 # Remember that this port got already connected
@@ -4009,7 +4156,6 @@ sub _write_architecture ($$$$) {
     my $et = replace_mac( $eh->get( 'template.' . $lang . '.arch.head' ), \%macros);    
 
     my %seenthis = ();
-
     my $contflag = 0;
     #
     # Go through all instances and generate a architecture for each !entity!
@@ -4635,11 +4781,11 @@ sub _write_constant ($$$$$;$) {
     my $tcom = $eh->get( 'output.comment.' . $lang ) ||
     		$eh->get( 'output.comment.default' ) || '##';
     
-    my $t = "";       	# Signal definitions
-    my $sat = "";     	# Signal assignments
-    my $def = "";     	# Take `defines
-    my $comm = "";   	# Comments
-    my $width = "__E_WIDTH_CONST";
+    my $t     = '';     # Signal definitions
+    my $sat   = '';     # Signal assignments
+    my $def   = '';     # Take `defines
+    my $comm  = '';   	# Comments
+    my $width = '__E_WIDTH_CONST';
 
     #TODO: remove this dead code?
     unless( exists( $out->{'rvalue'} ) ) {
@@ -4730,7 +4876,7 @@ sub _write_constant ($$$$$;$) {
                     }
                     $width = $w; # Save width ....
                     if ( $lang =~ m,^veri,io ) {
-                        $value = $w . "'b" . $value; ##TODO: Streamline that !!
+                        $value = $w . "'b" . $value; ## TODO : Streamline that !!
                     } else {
                         $value = '"' . $value . '"';
                     }
@@ -4872,10 +5018,10 @@ sub gen_concur_port($$$$$$$$;$$) {
     my $sl = $conndb{$signal}{'::low'};
     my $ph = $entities{$enty}{$port}{'high'};
     my $pl = $entities{$enty}{$port}{'low'};
-    unless( defined( $sh ) ) { $sh = ""; };
-    unless( defined( $sl ) ) { $sl = ""; };
-    unless( defined( $ph ) ) { $ph = ""; };
-    unless( defined( $pl ) ) { $pl = ""; };
+    unless( defined( $sh ) ) { $sh = ''; };
+    unless( defined( $sl ) ) { $sl = ''; };
+    unless( defined( $ph ) ) { $ph = ''; };
+    unless( defined( $pl ) ) { $pl = ''; };
 
     # Get width for the connection in this instance:
     PS: for my $ps ( @{$conndb{$signal}{'::' . $mode}} ) {
