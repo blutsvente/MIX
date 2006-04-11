@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.29 2006/04/10 08:15:22 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.30 2006/04/11 14:24:44 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.29 $                                  
+#  Revision      : $Revision: 1.30 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.30  2006/04/11 14:24:44  lutscher
+#  fixed small bug
+#
 #  Revision 1.29  2006/04/10 08:15:22  lutscher
 #  added spec=TRG feature
 #
@@ -593,7 +596,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.29 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.30 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -646,12 +649,6 @@ sub _vgch_rs_code_read_mux {
 		
 			push @ltemp, "mux_rd_err <= 0;";
 			push @ltemp, "mux_rd_data <= 0;";
-#			foreach $offs (sort {$a <=> $b} keys %$href_rp_trg) {
-#				foreach $field (@{$href_rp_trg->{$offs}}) {
-#					push @ltemp, "$field <= 0;";
-#					$hsens_list{'rd_p'} = "";
-#				}; 
-#			};
 			_pad_column(0, $ind, $ilvl + 1, \@ltemp);
 			push @linsert, $ind x $ilvl++ . "always @(".join(" or ", sort {$a cmp $b || $hsens_list{$a} <=> $hsens_list{$b}} keys %hsens_list).") begin";
 			push @linsert, @ltemp;
@@ -663,9 +660,6 @@ sub _vgch_rs_code_read_mux {
 				foreach $href (@{$href_rp->{$offs}}) {
 					push @linsert, $ind x ($ilvl+1) . "mux_rd_data".(keys %{$href})[0] . " <= ".(values %{$href})[0].";";
 				};
-#				foreach $field (@{$href_rp_trg->{$offs}}) {
-#					push @linsert, $ind x ($ilvl+1) ."$field <= rd_p;";
-#				}; 
 				push @linsert, $ind x $ilvl . "end";
 				$n++;
 			};
@@ -696,7 +690,7 @@ sub _vgch_rs_code_read_mux {
 		};
 
 		# build combinatorial mux for trigger signals
-		if (scalar ($href_rp_trg) > 0) {
+		if (scalar (keys %{$href_rp_trg}) > 0) {
 			@ltemp = ();
 			# prefix
 			push @linsert, "", "// generate read-notify trigger (combinatorial)";
@@ -1490,7 +1484,7 @@ sub _vgch_rs_gen_hier {
 		_add_generic("sync", $refclks->{$clock}->{'sync'}, $cfg_inst);
 
 		# instantiate synchronizer modules (need unique instance names because MIX has flat namespace)
-		$sg_inst = $this->_add_instance_unique("sync_generic", $cfg_inst, "Synchronizer for trans_done signal");
+		$sg_inst = $this->_add_instance_unique("sync_generic", $cfg_inst, "Synchronizer for trans_start signal");
 		$refclks->{$clock}->{'sg_inst'} = $sg_inst; # store in global->hclocks
 		_add_generic("kind", 2, $sg_inst);
 		# _add_generic("sync", $refclks->{$clock}->{'sync'}, $sg_inst);
