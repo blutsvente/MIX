@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.60 2006/03/16 14:14:07 wig Exp $
+# $Id: TODO.txt,v 1.61 2006/04/11 14:00:43 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -28,6 +28,104 @@ Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
 
+>>title: 20060411a/RFE: xls write: split large cells into several, combine with concatenate()
+
+	Instead of simply chopping of or splitting cells, use
+		=concatente( .... , .... ) to not hit the 512 byte limit in Excel
+		
+	Req: wig
+	Prio: low
+	Status: open
+
+>>title: 20060324a/RFE: add test switches for verilog modules
+
+`ifdef exclude_module_1   // instantiate dummy module 
+	assign sig1_s = 1'b0;
+	....
+	assign sign_s = 1'b0;
+`else
+	module_1 (
+		   .sig1_o (sig1_s);
+		   ...
+		   .sign_o (sign_s)
+		   );
+`endif
+-----------------------------------------------------------------------------------------
+
+Die exclude-Anweisung müßte man für jedes Modul vorsehen (in vgch.v und vgch_core.v)
+Ausnahme: TMU, CGU, VGCH_CORE und die Peripherals könnten zudem mit einer Anweisung abgedeckt werden
+Default-Wert für die Signalwerte bei "excludierten" Module sollte '0' sein; es muß aber auch ein selektives
+Setzen auf '1' möglich sein
+
+Und jetzt die alles entscheidene Frage: könntest Du vielleicht sowas in MIX vorsehen?
+
+Und dann wäre da auch noch die bereits diskutierte Sache mit der Zuweisung der Port-Signale auf Busse ...
+
+	Req: gay
+	Prio: medium
+	Status: first prototyp implemented
+	Testcase: verilog/verimap
+	 
+>>title: 20060315a/Bug: %LOW%, %LOW_BUS% signals are not propagated into portlist
+
+
+Usage of %LOW% and %LOW_BUS% (dito. %HIGH...%) creates false portlists.
+
+> From: Kirchenbaur Markus
+> Sent: 03 March 2006 09:01
+> To: Oberhoff Frank
+> Cc: Kirchenbaur Markus
+> Subject: %LOW%, %HIGH% ,...--> LOW, HIGH
+> 
+> Hallo Frank,
+> 
+>  %LOW%, %HIGH% ,...--> LOW, HIGH
+> 
+> die Anderung mußte ich in den MIX listen vom I2C vollziehen, da die 
+> mif Generierung sonst scheitert.
+> Bitte um verständnis. Falls Du die % Zeichen benötigst - bitte mit den 
+> Verantwortliche script schreibern für automatic mif generation 
+> sprechen.
+> 
+
+Testcase from Frank Oberhoff
+
+	Req: kirchenb
+	Prio: high
+	Status: first fix available 20060406
+	Solution: fix ::sigbits, use different iterator in MixReport.pm
+	Owner: wig
+	Testcase: portlist, portlist/low
+	Done: 20060411
+	
+>>title: 20060405a/Bug: MIX removes _i from port name
+
+	see test case in 
+		C:\Documents and Settings\wig\My Documents\work\mix_new\MIX\import\bugver_20060405a
+	problem occurs e.g. with the signal itm_srst_b in the mm_ctrl and mm_phy
+	instance.
+	
+	Start it with
+		mix_0.pl mm-pin.xls
+		
+	Req: poersch
+	Prio: high
+	Status: open
+	
+>>title: 20060405b/RFE: Add %VERILOG_HOOK_PARA% for verilog parameter defs.
+
+	Usage:
+	
+	define a ::udc column in your HIER sheet.
+	/%PARA%/ this goes to begin of verilog module
+	
+	Additionally defined
+	%VERILOG_HOOK_HEAD% and %VERILOG_HOOK_FOOT%
+	
+	Req: poersch
+	Status: done, wig20060405
+	Testcase: udc/verilog
+	
 >>title: 20060314a/RFE: reduce verbosity of MIX, filter certain messages
 
 egrep -v "<list>" from mix_0.pl
@@ -46,7 +144,62 @@ egrep -v "<list>" from mix_0.pl
 	
 	Req: oberhoff
 	Prio: medium
+
+>>title: 20060404a/Bug: 1'b1 assignment for HIGH_BUS in Verilog is wrong
+
+The correct expression is 1'b1111 (Verilog expands with 0!!).
+
+	Req: schneid
+	Prio: medium
+	Solution: simple fix in MixWriter (several locations)
+	Testcase: fixed highlow/verilog
+	Status: done20060405
+
+>>title: 20060404c/Bug: extra port created for paritally used busses
+
+	Example:
 	
+		"i_avfb_top_rs/%::oname%_par_o,
+i_rs_i2c_dcs/%::oname%_par_o(3:0)=(3:0)"
+		
+	 gives:
+	 
+	 			.selclk_mem_par_o(top_rs_selclk_mem_par),
+			.selclk_out1_par_o(top_rs_selclk_out1_par),
+			.selclk_out2_par_o(top_rs_selclk_out2_par),
+			.selclk_ovs_1_par_o(top_rs_selclk_ovs_1_par),
+			.selclk_ovs_2_par_o(top_rs_selclk_ovs_2_par),
+			.selclk_slicer1_par_o(top_rs_selclk_slicer1_par),
+			.selclk_slicer2_par_o(top_rs_selclk_slicer2_par),
+			.selclk_xdfp1_par_o(top_rs_selclk_xdfp1_par),
+			.selclk_xdfp2_par_o(top_rs_selclk_xdfp2_par),
+			.selclk_xfp1_par_o(top_rs_selclk_xfp1_par),
+			.selclk_xfp2_par_o(top_rs_selclk_xfp2_par),
+			.soft_reset_8051_par_o(top_rs_soft_reset_8051_par),
+			.soft_reset_xdfp_1_par_o(top_rs_soft_reset_xdfp_1_par),
+			.soft_reset_xdfp_2_par_o(top_rs_soft_reset_xdfp_2_par),
+			.soft_reset_xfp_1_par_o(top_rs_soft_reset_xfp_1_par),
+			.soft_reset_xfp_2_par_o(top_rs_soft_reset_xfp_2_par),
+			.sresp_o(top_rs_sresp),
+			.top_rs_selclk_out2_par_3_0_go(top_rs_selclk_out2_par[3:0])
+		);
+	
+	Testcase: c:avfb_20060404
+	Req: mpit
+	Prio: high
+	 
+>>title: 20060404b/RFE: allow to select certain columns/rows from XSL sheets
+
+	extend xls2csv:
+	
+		-range A:B,C   select columns (by EXCEL numbering ....)
+		-rrange N:M		select rows
+		-rangere "REG_matching header"
+		
+		
+	Req: mboos
+	Prio: low
+
 >>title: 20060316a/RFE: allow to postprocess signals and join/merge bits to vectors
 
 Combine single bit signals into an vector, e.g. for
