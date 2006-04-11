@@ -308,6 +308,11 @@ my @tests = (
 	  'path' => "verilog/v2001",
 	  'options' => "",
 	},
+	{ #!wig20060411: adding verilog module head ifdef exclude feature
+	  'name' => "verilog",
+	  'path' => "verilog/verimap",
+	  'options' => "",
+	},
 	{
 	  'name' => "conf",
 	  'path' => "conf",

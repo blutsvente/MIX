@@ -1,0 +1,586 @@
+<MIFFile 5.50>
+
+<Tbls 
+# Generated table data:
+<Tbl 
+  <TblID 1>
+  # <TblFormat
+  #   <TblTag `PortList'>
+  # >
+  <TblTag `PortList'>
+  <TblNumColumns 4>
+  <TblColumnWidth 37.0 mm>
+  <TblColumnWidth 13.0 mm>
+  <TblColumnWidth 13.0 mm>
+  <TblColumnWidth 117.0 mm>
+  <TblTitle 
+    <TblTitleContent
+      <Para
+        <PgfTag `TableTitle'>
+        <ParaLine
+          <String `External Pin List'>
+        >
+      >
+    > 
+  > # end of TblTitle
+<TblH
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `PAD_Name'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `Width'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `I/O'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `Description'> > #End of ParaLine
+ > > >
+	> # end of Row
+> # end of TblH
+<TblBody
+	<Row 
+		<Cell <CellColumns 4> <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `Input/Output PADs PORTLIST_i (PORTLIST_i_e)'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `sda_in_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 14 ::out:  ::in: PORTLIST_i/sda_in_i'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `scl_in_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 15 ::out:  ::in: PORTLIST_i/scl_in_i'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `sda_out_o'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `O'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 31 ::out: PORTLIST_i/sda_out_o ::in: '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `scl_out_o'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `O'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 32 ::out: PORTLIST_i/scl_out_o ::in: '> > #End of ParaLine
+ > > >
+	> # end of Row
+> # end of TblBody
+> # end of Tbl
+<Tbl 
+  <TblID 2>
+  # <TblFormat
+  #   <TblTag `PortList'>
+  # >
+  <TblTag `PortList'>
+  <TblNumColumns 6>
+  <TblColumnWidth 37.0 mm>
+  <TblColumnWidth 12.0 mm>
+  <TblColumnWidth 16.0 mm>
+  <TblColumnWidth 16.0 mm>
+  <TblColumnWidth 10.0 mm>
+  <TblColumnWidth 89.0 mm>
+  <TblTitle 
+    <TblTitleContent
+      <Para
+        <PgfTag `TableTitle'>
+        <ParaLine
+          <String `Portlist'>
+        >
+      >
+    > 
+  > # end of TblTitle
+<TblH
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `Port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `Width'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `Clock'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `S / D'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `I / O'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `Description'> > #End of ParaLine
+ > > >
+	> # end of Row
+> # end of TblH
+<TblBody
+	<Row 
+		<Cell <CellColumns 6> <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `PORTLIST_i (PORTLIST_i_e)'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellColumns 6> <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `  BundleName Class ClkDomain Type (generated) High Low  name the input name the output External?your choice Source or Destination  Signal(partly generated) Outputs(generated) Inputs(generated) Description'> <Char HardReturn> > #End of ParaLine
+		<ParaLine <String ` inputs'> <Char HardReturn> > #End of ParaLine
+		<ParaLine <String ` General signals'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `hclk_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 1 ::out:  ::in: PORTLIST_i/hclk_i'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `hresetn_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 2 ::out:  ::in: PORTLIST_i/hresetn_i'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_1_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 3 ::out:  ::in: PORTLIST_i/clk_1_i'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `rpm_en_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 4 ::out:  ::in: PORTLIST_i/rpm_en_i'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellColumns 6> <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String ` first comment interface signals             4'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `hsel_i2c_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 5 ::out:  ::in: PORTLIST_i/hsel_i2c_i'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `haddr_s_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `32'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 6 ::out:  ::in: PORTLIST_i/haddr_s_i'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `htrans_s_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `2'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 7 ::out:  ::in: PORTLIST_i/htrans_s_i'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `hwrite_s_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 8 ::out:  ::in: PORTLIST_i/hwrite_s_i'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `hwdata_s_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `32'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 9 ::out:  ::in: PORTLIST_i/hwdata_s_i'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `gb_hready_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 10 ::out:  ::in: PORTLIST_i/gb_hready_i'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellColumns 6> <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String ` second comments interface signals             10'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `hresp_m_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `2'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 11 ::out:  ::in: PORTLIST_i/hresp_m_i'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `hgrant_m_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 12 ::out:  ::in: PORTLIST_i/hgrant_m_i'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `hrdata_m_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `32'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 13 ::out:  ::in: PORTLIST_i/hrdata_m_i'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellColumns 6> <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String ` i²c interface signals (i2c)             13'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellColumns 6> <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String ` inputs             15'> <Char HardReturn> > #End of ParaLine
+		<ParaLine <String ` General signals             15'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `scan_test_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 16 ::out:  ::in: PORTLIST_i/scan_test_i'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `i2c_mux_o'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `EIC'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `O'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 17 ::out: PORTLIST_i/i2c_mux_o ::in: '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `irq_o'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `EIC'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `O'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 18 ::out: PORTLIST_i/irq_o ::in: '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellColumns 6> <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String ` fourth comment interface signals             18'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `hready_resp_i2c_s_o'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `O'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 19 ::out: PORTLIST_i/hready_resp_i2c_s_o ::in: '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `hresp_i2c_s_o'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `2'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `O'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 20 ::out: PORTLIST_i/hresp_i2c_s_o ::in: '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `hrdata_i2c_s_o'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `32'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `O'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 21 ::out: PORTLIST_i/hrdata_i2c_s_o ::in: '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellColumns 6> <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String ` fivest comment interface signals             21'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `haddr_m_o'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `32'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `O'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 22 ::out: PORTLIST_i/haddr_m_o ::in: '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `hwrite_m_o'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `O'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 23 ::out: PORTLIST_i/hwrite_m_o ::in: '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `hsize_m_o'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `3'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `O'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 24 ::out: PORTLIST_i/hsize_m_o ::in: '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `htrans_m_o'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `2'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `O'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 25 ::out: PORTLIST_i/htrans_m_o ::in: '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `hburst_m_o'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `3'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `O'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 26 ::out: PORTLIST_i/hburst_m_o ::in: '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `hprot_m_o'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `4'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `O'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 27 ::out: PORTLIST_i/hprot_m_o ::in: '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `hwdata_m_o'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `32'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `O'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 28 ::out: PORTLIST_i/hwdata_m_o ::in: '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `hbusreq_m_o'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `O'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 29 ::out: PORTLIST_i/hbusreq_m_o ::in: '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `hlock_m_o'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PORTLIST_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `O'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `num 30 ::out: PORTLIST_i/hlock_m_o ::in: '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellColumns 6> <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String ` i²c interface signals (again i2c)             30'> > #End of ParaLine
+ > > >
+	> # end of Row
+> # end of TblBody
+> # end of Tbl
+
+> # end of Tbls
+
+# <TextFlow 
+#   <TFTag `A'>
+#   <TFAutoConnect Yes>
+# Generated Table references:
+  <Para
+    <PgfTag `Body'>
+    <ParaLine
+      <ATbl 1>
+    >
+  >
+  <Para
+    <PgfTag `Body'>
+    <ParaLine
+      <ATbl 2>
+    >
+  >
+
+#  <Para
+#    <PgfTag `Body'>
+#    <ParaLine
+#      <ATbl 1>
+#    >
+#  >
+# > # end of TextFlow
+
+# End of MIFFile

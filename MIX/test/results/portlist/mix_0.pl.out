@@ -1,0 +1,2031 @@
+05/12/07 11:35:04 ########################################################################
+05/12/07 11:35:04 CMDLINE: /tools/mix/1.3/bin/mix_0.pl -report portlist -conf macro.Inappropriate ioctl for devicey_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/07 11:35:04 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.16 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/07 11:35:04 Reading worksheet CONN_PERI_I2C_AHB_OCP of /proot/vgch/0001/workareas/chen/units/peri_i2c_ahb/misc/mixtool/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/07 11:35:04 WARNING: Cannot locate a worksheet HIER in /proot/vgch/0001/workareas/chen/units/peri_i2c_ahb/misc/mixtool/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/07 11:35:04 Added new column header ::inc
+05/12/07 11:35:04 Added new column header ::outc
+05/12/07 11:35:04 Added new column header ::extc
+05/12/07 11:35:04 Added new column header ::sd
+05/12/07 11:35:05 WARNING: Cannot locate a worksheet CONN_.* in /proot/vgch/0001/workareas/chen/units/peri_i2c_ahb/misc/mixtool/pinlist_generic_hier_verilog.xls
+05/12/07 11:35:05 Reading worksheet HIER of /proot/vgch/0001/workareas/chen/units/peri_i2c_ahb/misc/mixtool/pinlist_generic_hier_verilog.xls
+05/12/07 11:35:05 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/07 11:35:05 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/07 11:35:05 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/07 11:35:05 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/07 11:35:05 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/07 11:35:05 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/07 11:35:05 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/07 11:35:05 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/07 11:35:05 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/07 11:35:05 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/07 11:35:05 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/07 11:35:05 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/07 11:35:05 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/07 11:35:05 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/07 11:35:05 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/07 11:35:05 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/07 11:35:05 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/07 11:35:05 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/07 11:35:05 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/07 11:35:05 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/07 11:35:05 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/07 11:35:05 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/07 11:35:05 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/07 11:35:05 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/07 11:35:05 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/07 11:35:05 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/07 11:35:05 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/07 11:35:05 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/07 11:35:05 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/07 11:35:05 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/07 11:35:05 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/07 11:35:05 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/07 11:35:05 WARNING: Cannot read input from sheet: CONN in pinlist_generic_hier_verilog-mixed.csv
+05/12/07 11:35:05 WARNING: ERROR: reading input for delta mode!
+05/12/07 11:35:05 WARNING: Cannot read input from sheet: HIER in pinlist_generic_hier_verilog-mixed.csv
+05/12/07 11:35:05 WARNING: ERROR: reading input for delta mode!
+05/12/07 11:35:05 WARNING: Info: Cannot run delta mode vs. PERI_I2C_AHB_OCP_i_e.v. Will create like normal
+05/12/07 11:35:05 WARNING: ============= SUMMARY =================
+05/12/07 11:35:05 WARNING: SUM: Summary of checks and created items:
+05/12/07 11:35:05 WARNING: SUM: checkforce 0
+05/12/07 11:35:05 WARNING: SUM: checkunique 0
+05/12/07 11:35:05 WARNING: SUM: checkwarn 0
+05/12/07 11:35:05 WARNING: SUM: cmacros 0
+05/12/07 11:35:05 WARNING: SUM: conn 30
+05/12/07 11:35:05 WARNING: SUM: errors 2
+05/12/07 11:35:05 WARNING: SUM: genport 0
+05/12/07 11:35:05 WARNING: SUM: hdlfiles 1
+05/12/07 11:35:05 WARNING: SUM: inst 7
+05/12/07 11:35:05 WARNING: SUM: multdriver 0
+05/12/07 11:35:05 WARNING: SUM: nodriver 0
+05/12/07 11:35:05 WARNING: SUM: noload 0
+05/12/07 11:35:05 WARNING: SUM: openports 0
+05/12/07 11:35:05 WARNING: SUM: warnings 5
+05/12/07 11:35:05 WARNING: SUM: === Number of parsed input tables: ===
+05/12/07 11:35:05 WARNING: SUM: conf 0
+05/12/07 11:35:05 WARNING: SUM: hier 1
+05/12/07 11:35:05 WARNING: SUM: conn 1
+05/12/07 11:35:05 WARNING: SUM: io 0
+05/12/07 11:35:05 WARNING: SUM: i2c 0
+05/12/07 11:35:05 WARNING: SUM: Number of changes in intermediate: -1
+05/12/07 11:35:05 WARNING: SUM: Number of changed files: 0
+05/12/13 08:42:11 ########################################################################
+05/12/13 08:42:11 CMDLINE: ../../../mix_0.pl -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/13 08:42:12 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/13 08:42:12 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 08:42:12 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 08:42:13 Added new column header ::inc
+05/12/13 08:42:13 Added new column header ::outc
+05/12/13 08:42:13 Added new column header ::extc
+05/12/13 08:42:13 Added new column header ::sd
+05/12/13 08:42:14 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 08:42:14 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 08:42:14 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/13 08:42:14 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/13 08:42:14 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/13 08:42:14 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/13 08:42:14 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/13 08:42:14 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/13 08:42:14 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/13 08:42:14 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/13 08:42:14 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/13 08:42:14 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/13 08:42:14 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/13 08:42:14 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/13 08:42:14 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/13 08:42:14 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/13 08:42:14 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/13 08:42:14 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/13 08:42:14 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/13 08:42:14 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/13 08:42:14 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/13 08:42:14 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/13 08:42:14 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/13 08:42:14 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/13 08:42:14 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/13 08:42:14 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/13 08:42:14 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/13 08:42:14 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/13 08:42:14 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/13 08:42:14 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/13 08:42:14 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/13 08:42:14 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/13 08:42:14 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/13 08:42:14 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/13 08:42:14 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/13 08:42:14 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/13 08:42:22 WARNING: Cannot locate a worksheet CONN in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 08:42:24 WARNING: ERROR: reading input for delta mode!
+05/12/13 08:42:24 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 08:42:24 WARNING: ERROR: reading input for delta mode!
+05/12/13 15:35:23 ########################################################################
+05/12/13 15:35:23 CMDLINE: ../../../mix_0.pl -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/13 15:35:23 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/13 15:35:24 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 15:35:24 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 15:35:24 Added new column header ::inc
+05/12/13 15:35:24 Added new column header ::outc
+05/12/13 15:35:24 Added new column header ::extc
+05/12/13 15:35:24 Added new column header ::sd
+05/12/13 15:35:25 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 15:35:25 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 15:35:25 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/13 15:35:25 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/13 15:35:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/13 15:35:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/13 15:35:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/13 15:35:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/13 15:35:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/13 15:35:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/13 15:35:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/13 15:35:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/13 15:35:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/13 15:35:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/13 15:35:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/13 15:35:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/13 15:35:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/13 15:35:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/13 15:35:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/13 15:35:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/13 15:35:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/13 15:35:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/13 15:35:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/13 15:35:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/13 15:35:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/13 15:35:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/13 15:35:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/13 15:35:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/13 15:35:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/13 15:35:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/13 15:35:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/13 15:35:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/13 15:35:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/13 15:35:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/13 15:35:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/13 15:35:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/13 15:35:32 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/13 15:35:34 WARNING: Rotating 3 old sheets of CONF!
+05/12/13 15:35:37 WARNING: Cannot locate a worksheet CONN in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 15:35:37 WARNING: ERROR: reading input for delta mode!
+05/12/13 15:35:37 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 15:35:37 WARNING: ERROR: reading input for delta mode!
+05/12/13 15:50:50 ########################################################################
+05/12/13 15:50:50 CMDLINE: ../../../mix_0.pl -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/13 15:50:50 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/13 15:50:51 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 15:50:51 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 15:50:51 Added new column header ::inc
+05/12/13 15:50:51 Added new column header ::outc
+05/12/13 15:50:51 Added new column header ::extc
+05/12/13 15:50:51 Added new column header ::sd
+05/12/13 15:50:51 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 15:50:51 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 15:50:52 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/13 15:50:52 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/13 15:50:52 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/13 15:50:52 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/13 15:50:52 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/13 15:50:52 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/13 15:50:52 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/13 15:50:52 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/13 15:50:52 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/13 15:50:52 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/13 15:50:52 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/13 15:50:52 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/13 15:50:52 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/13 15:50:52 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/13 15:50:52 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/13 15:50:52 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/13 15:50:52 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/13 15:50:52 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/13 15:50:52 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/13 15:50:52 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/13 15:50:52 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/13 15:50:52 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/13 15:50:52 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/13 15:50:52 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/13 15:50:52 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/13 15:50:52 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/13 15:50:52 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/13 15:50:52 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/13 15:50:52 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/13 15:50:52 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/13 15:50:52 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/13 15:50:52 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/13 15:50:52 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/13 15:50:52 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/13 15:50:52 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/13 15:50:53 WARNING: Rotating 3 old sheets of CONF!
+05/12/13 15:50:54 WARNING: Cannot locate a worksheet CONN in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 15:50:54 WARNING: ERROR: reading input for delta mode!
+05/12/13 15:50:55 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 15:50:55 WARNING: ERROR: reading input for delta mode!
+05/12/13 15:52:05 ########################################################################
+05/12/13 15:52:05 CMDLINE: ../../../mix_0.pl -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/13 15:52:05 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/13 15:52:06 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 15:52:06 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 15:52:06 Added new column header ::inc
+05/12/13 15:52:06 Added new column header ::outc
+05/12/13 15:52:06 Added new column header ::extc
+05/12/13 15:52:06 Added new column header ::sd
+05/12/13 15:52:07 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 15:52:07 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 15:52:07 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/13 15:52:07 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/13 15:52:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/13 15:52:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/13 15:52:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/13 15:52:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/13 15:52:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/13 15:52:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/13 15:52:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/13 15:52:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/13 15:52:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/13 15:52:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/13 15:52:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/13 15:52:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/13 15:52:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/13 15:52:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/13 15:52:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/13 15:52:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/13 15:52:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/13 15:52:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/13 15:52:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/13 15:52:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/13 15:52:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/13 15:52:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/13 15:52:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/13 15:52:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/13 15:52:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/13 15:52:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/13 15:52:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/13 15:52:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/13 15:52:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/13 15:52:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/13 15:52:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/13 15:52:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/13 15:52:08 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/13 15:52:08 WARNING: Rotating 3 old sheets of CONF!
+05/12/13 15:52:10 WARNING: Cannot locate a worksheet CONN in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 15:52:10 WARNING: ERROR: reading input for delta mode!
+05/12/13 15:52:10 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 15:52:10 WARNING: ERROR: reading input for delta mode!
+05/12/13 16:05:07 ########################################################################
+05/12/13 16:05:07 CMDLINE: ../../../mix_0.pl -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/13 16:05:07 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/13 16:05:08 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 16:05:08 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 16:05:08 Added new column header ::inc
+05/12/13 16:05:08 Added new column header ::outc
+05/12/13 16:05:08 Added new column header ::extc
+05/12/13 16:05:08 Added new column header ::sd
+05/12/13 16:05:09 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 16:05:09 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 16:05:10 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/13 16:05:10 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/13 16:05:10 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/13 16:05:10 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/13 16:05:10 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/13 16:05:10 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/13 16:05:10 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/13 16:05:10 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/13 16:05:10 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/13 16:05:10 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/13 16:05:10 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/13 16:05:10 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/13 16:05:10 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/13 16:05:10 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/13 16:05:10 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/13 16:05:10 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/13 16:05:10 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/13 16:05:10 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/13 16:05:10 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/13 16:05:10 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/13 16:05:10 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/13 16:05:10 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/13 16:05:10 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/13 16:05:10 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/13 16:05:10 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/13 16:05:10 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/13 16:05:10 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/13 16:05:10 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/13 16:05:10 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/13 16:05:10 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/13 16:05:10 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/13 16:05:10 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/13 16:05:10 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/13 16:05:10 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/13 16:05:12 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/13 16:05:13 WARNING: Rotating 3 old sheets of CONF!
+05/12/13 16:05:15 WARNING: Cannot locate a worksheet CONN in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:05:15 WARNING: ERROR: reading input for delta mode!
+05/12/13 16:05:15 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:05:15 WARNING: ERROR: reading input for delta mode!
+05/12/13 16:07:31 WARNING: Info: file PERI_I2C_AHB_OCP_i_e.v has changes!
+05/12/13 16:07:31 WARNING: ============= SUMMARY =================
+05/12/13 16:07:31 WARNING: SUM: Summary of checks and created items:
+05/12/13 16:07:31 WARNING: SUM: checkforce 0
+05/12/13 16:07:31 WARNING: SUM: checkunique 0
+05/12/13 16:07:31 WARNING: SUM: checkwarn 0
+05/12/13 16:07:31 WARNING: SUM: cmacros 0
+05/12/13 16:07:31 WARNING: SUM: conn 32
+05/12/13 16:07:31 WARNING: SUM: errors 2
+05/12/13 16:07:31 WARNING: SUM: genport 0
+05/12/13 16:07:31 WARNING: SUM: hdlfiles 1
+05/12/13 16:07:31 WARNING: SUM: inst 7
+05/12/13 16:07:31 WARNING: SUM: multdriver 0
+05/12/13 16:07:31 WARNING: SUM: nodriver 0
+05/12/13 16:07:31 WARNING: SUM: noload 0
+05/12/13 16:07:31 WARNING: SUM: openports 0
+05/12/13 16:07:31 WARNING: SUM: warnings 5
+05/12/13 16:07:31 WARNING: SUM: === Number of parsed input tables: ===
+05/12/13 16:07:31 WARNING: SUM: conf 0
+05/12/13 16:07:31 WARNING: SUM: hier 1
+05/12/13 16:07:31 WARNING: SUM: conn 1
+05/12/13 16:07:31 WARNING: SUM: io 0
+05/12/13 16:07:31 WARNING: SUM: i2c 0
+05/12/13 16:18:14 ########################################################################
+05/12/13 16:18:14 CMDLINE: ../../../mix_0.pl -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/13 16:18:14 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/13 16:18:15 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 16:18:15 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 16:18:15 Added new column header ::inc
+05/12/13 16:18:15 Added new column header ::outc
+05/12/13 16:18:15 Added new column header ::extc
+05/12/13 16:18:15 Added new column header ::sd
+05/12/13 16:18:16 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 16:18:16 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 16:18:16 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/13 16:18:16 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/13 16:18:16 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/13 16:18:16 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/13 16:18:16 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/13 16:18:16 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/13 16:18:16 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/13 16:18:16 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/13 16:18:16 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/13 16:18:16 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/13 16:18:16 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/13 16:18:16 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/13 16:18:16 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/13 16:18:16 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/13 16:18:16 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/13 16:18:16 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/13 16:18:16 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/13 16:18:16 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/13 16:18:16 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/13 16:18:16 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/13 16:18:16 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/13 16:18:16 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/13 16:18:16 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/13 16:18:16 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/13 16:18:16 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/13 16:18:16 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/13 16:18:16 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/13 16:18:16 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/13 16:18:16 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/13 16:18:16 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/13 16:18:16 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/13 16:18:16 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/13 16:18:16 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/13 16:18:16 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/13 16:18:18 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/13 16:18:18 WARNING: Rotating 3 old sheets of CONF!
+05/12/13 16:18:20 WARNING: Cannot locate a worksheet CONN in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:18:20 WARNING: ERROR: reading input for delta mode!
+05/12/13 16:18:20 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:18:20 WARNING: ERROR: reading input for delta mode!
+05/12/13 16:18:22 WARNING: Info: file PERI_I2C_AHB_OCP_i_e.v has changes!
+05/12/13 16:18:22 WARNING: ============= SUMMARY =================
+05/12/13 16:18:22 WARNING: SUM: Summary of checks and created items:
+05/12/13 16:18:22 WARNING: SUM: checkforce 0
+05/12/13 16:18:22 WARNING: SUM: checkunique 0
+05/12/13 16:18:22 WARNING: SUM: checkwarn 0
+05/12/13 16:18:22 WARNING: SUM: cmacros 0
+05/12/13 16:18:22 WARNING: SUM: conn 32
+05/12/13 16:18:22 WARNING: SUM: errors 2
+05/12/13 16:18:22 WARNING: SUM: genport 0
+05/12/13 16:18:22 WARNING: SUM: hdlfiles 1
+05/12/13 16:18:22 WARNING: SUM: inst 7
+05/12/13 16:18:22 WARNING: SUM: multdriver 0
+05/12/13 16:18:22 WARNING: SUM: nodriver 0
+05/12/13 16:18:22 WARNING: SUM: noload 0
+05/12/13 16:18:22 WARNING: SUM: openports 0
+05/12/13 16:18:22 WARNING: SUM: warnings 5
+05/12/13 16:18:22 WARNING: SUM: === Number of parsed input tables: ===
+05/12/13 16:18:22 WARNING: SUM: conf 0
+05/12/13 16:18:22 WARNING: SUM: hier 1
+05/12/13 16:18:22 WARNING: SUM: conn 1
+05/12/13 16:18:22 WARNING: SUM: io 0
+05/12/13 16:18:22 WARNING: SUM: i2c 0
+05/12/13 16:24:34 ########################################################################
+05/12/13 16:24:34 CMDLINE: ../../../mix_0.pl -nodelta -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/13 16:24:35 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/13 16:24:35 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 16:24:35 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 16:24:35 Added new column header ::inc
+05/12/13 16:24:35 Added new column header ::outc
+05/12/13 16:24:35 Added new column header ::extc
+05/12/13 16:24:35 Added new column header ::sd
+05/12/13 16:24:36 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 16:24:36 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 16:24:36 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/13 16:24:36 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/13 16:24:36 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/13 16:24:36 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/13 16:24:36 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/13 16:24:36 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/13 16:24:36 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/13 16:24:36 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/13 16:24:36 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/13 16:24:36 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/13 16:24:36 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/13 16:24:36 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/13 16:24:36 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/13 16:24:36 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/13 16:24:36 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/13 16:24:36 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/13 16:24:36 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/13 16:24:36 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/13 16:24:36 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/13 16:24:36 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/13 16:24:36 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/13 16:24:36 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/13 16:24:36 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/13 16:24:36 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/13 16:24:36 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/13 16:24:36 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/13 16:24:36 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/13 16:24:36 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/13 16:24:36 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/13 16:24:36 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/13 16:24:36 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/13 16:24:36 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/13 16:24:36 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/13 16:24:36 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/13 16:24:37 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/13 16:24:37 WARNING: Rotating 3 old sheets of CONF!
+05/12/13 16:24:38 WARNING: Rotating 3 old sheets of CONN!
+05/12/13 16:24:38 WARNING: Rotating 3 old sheets of HIER!
+05/12/13 16:24:53 WARNING: ============= SUMMARY =================
+05/12/13 16:24:53 WARNING: SUM: Summary of checks and created items:
+05/12/13 16:24:53 WARNING: SUM: checkforce 0
+05/12/13 16:24:53 WARNING: SUM: checkunique 0
+05/12/13 16:24:53 WARNING: SUM: checkwarn 0
+05/12/13 16:24:53 WARNING: SUM: cmacros 0
+05/12/13 16:24:53 WARNING: SUM: conn 32
+05/12/13 16:24:53 WARNING: SUM: errors 0
+05/12/13 16:24:53 WARNING: SUM: genport 0
+05/12/13 16:24:53 WARNING: SUM: hdlfiles 1
+05/12/13 16:24:53 WARNING: SUM: inst 7
+05/12/13 16:24:53 WARNING: SUM: multdriver 0
+05/12/13 16:24:53 WARNING: SUM: nodriver 0
+05/12/13 16:24:53 WARNING: SUM: noload 0
+05/12/13 16:24:53 WARNING: SUM: openports 0
+05/12/13 16:24:53 WARNING: SUM: warnings 3
+05/12/13 16:24:53 WARNING: SUM: === Number of parsed input tables: ===
+05/12/13 16:24:53 WARNING: SUM: conf 0
+05/12/13 16:24:53 WARNING: SUM: hier 1
+05/12/13 16:24:53 WARNING: SUM: conn 1
+05/12/13 16:24:53 WARNING: SUM: io 0
+05/12/13 16:24:53 WARNING: SUM: i2c 0
+05/12/13 16:26:16 ########################################################################
+05/12/13 16:26:16 CMDLINE: ../../../mix_0.pl -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/13 16:26:16 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/13 16:26:17 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 16:26:17 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 16:26:17 Added new column header ::inc
+05/12/13 16:26:17 Added new column header ::outc
+05/12/13 16:26:17 Added new column header ::extc
+05/12/13 16:26:17 Added new column header ::sd
+05/12/13 16:26:18 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 16:26:18 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 16:26:18 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/13 16:26:18 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/13 16:26:18 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/13 16:26:18 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/13 16:26:18 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/13 16:26:18 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/13 16:26:18 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/13 16:26:18 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/13 16:26:18 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/13 16:26:18 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/13 16:26:18 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/13 16:26:18 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/13 16:26:18 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/13 16:26:18 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/13 16:26:18 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/13 16:26:18 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/13 16:26:18 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/13 16:26:18 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/13 16:26:18 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/13 16:26:18 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/13 16:26:18 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/13 16:26:18 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/13 16:26:18 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/13 16:26:18 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/13 16:26:18 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/13 16:26:18 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/13 16:26:18 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/13 16:26:18 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/13 16:26:18 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/13 16:26:18 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/13 16:26:18 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/13 16:26:18 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/13 16:26:18 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/13 16:26:18 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/13 16:26:19 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/13 16:26:19 WARNING: Rotating 3 old sheets of CONF!
+05/12/13 16:26:21 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:26:22 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/12/13 16:26:22 WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:26:22 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:26:22 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/12/13 16:26:47 Info: unchanged file PERI_I2C_AHB_OCP_i_e.v
+05/12/13 16:26:48 WARNING: ============= SUMMARY =================
+05/12/13 16:26:48 WARNING: SUM: Summary of checks and created items:
+05/12/13 16:26:48 WARNING: SUM: checkforce 0
+05/12/13 16:26:48 WARNING: SUM: checkunique 0
+05/12/13 16:26:48 WARNING: SUM: checkwarn 0
+05/12/13 16:26:48 WARNING: SUM: cmacros 0
+05/12/13 16:26:48 WARNING: SUM: conn 32
+05/12/13 16:26:48 WARNING: SUM: errors 0
+05/12/13 16:26:48 WARNING: SUM: genport 0
+05/12/13 16:26:48 WARNING: SUM: hdlfiles 1
+05/12/13 16:26:48 WARNING: SUM: inst 7
+05/12/13 16:26:48 WARNING: SUM: multdriver 0
+05/12/13 16:26:48 WARNING: SUM: nodriver 0
+05/12/13 16:26:48 WARNING: SUM: noload 0
+05/12/13 16:26:48 WARNING: SUM: openports 0
+05/12/13 16:26:48 WARNING: SUM: warnings 4
+05/12/13 16:26:48 WARNING: SUM: === Number of parsed input tables: ===
+05/12/13 16:26:48 WARNING: SUM: conf 0
+05/12/13 16:26:48 WARNING: SUM: hier 1
+05/12/13 16:26:48 WARNING: SUM: conn 1
+05/12/13 16:26:48 WARNING: SUM: io 0
+05/12/13 16:26:48 WARNING: SUM: i2c 0
+05/12/13 16:27:23 ########################################################################
+05/12/13 16:27:23 CMDLINE: ../../../mix_0.pl -delta -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/13 16:27:23 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/13 16:27:24 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 16:27:24 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 16:27:24 Added new column header ::inc
+05/12/13 16:27:24 Added new column header ::outc
+05/12/13 16:27:24 Added new column header ::extc
+05/12/13 16:27:24 Added new column header ::sd
+05/12/13 16:27:25 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 16:27:25 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 16:27:25 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/13 16:27:25 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/13 16:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/13 16:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/13 16:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/13 16:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/13 16:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/13 16:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/13 16:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/13 16:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/13 16:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/13 16:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/13 16:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/13 16:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/13 16:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/13 16:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/13 16:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/13 16:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/13 16:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/13 16:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/13 16:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/13 16:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/13 16:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/13 16:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/13 16:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/13 16:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/13 16:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/13 16:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/13 16:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/13 16:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/13 16:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/13 16:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/13 16:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/13 16:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/13 16:27:26 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/13 16:27:27 WARNING: Rotating 3 old sheets of CONF!
+05/12/13 16:27:29 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:27:30 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/12/13 16:27:30 WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:27:30 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:27:30 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/12/13 16:41:00 ########################################################################
+05/12/13 16:41:00 CMDLINE: ../../../mix_0.pl -delta -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/13 16:41:00 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/13 16:41:01 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 16:41:01 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 16:41:01 Added new column header ::inc
+05/12/13 16:41:01 Added new column header ::outc
+05/12/13 16:41:01 Added new column header ::extc
+05/12/13 16:41:01 Added new column header ::sd
+05/12/13 16:41:02 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 16:41:02 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 16:41:02 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/13 16:41:02 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/13 16:41:02 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/13 16:41:02 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/13 16:41:02 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/13 16:41:02 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/13 16:41:02 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/13 16:41:02 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/13 16:41:02 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/13 16:41:02 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/13 16:41:02 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/13 16:41:02 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/13 16:41:02 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/13 16:41:02 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/13 16:41:02 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/13 16:41:02 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/13 16:41:02 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/13 16:41:02 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/13 16:41:02 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/13 16:41:02 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/13 16:41:02 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/13 16:41:02 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/13 16:41:02 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/13 16:41:02 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/13 16:41:02 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/13 16:41:02 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/13 16:41:02 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/13 16:41:02 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/13 16:41:02 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/13 16:41:02 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/13 16:41:02 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/13 16:41:02 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/13 16:41:02 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/13 16:41:02 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/13 16:41:11 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/13 16:41:12 WARNING: Rotating 3 old sheets of CONF!
+05/12/13 16:41:16 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:41:16 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/12/13 16:41:17 WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:41:17 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:41:17 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/12/13 16:44:22 ########################################################################
+05/12/13 16:44:22 CMDLINE: ../../../mix_0.pl -delta -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/13 16:44:22 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/13 16:44:23 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 16:44:23 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 16:44:23 Added new column header ::inc
+05/12/13 16:44:23 Added new column header ::outc
+05/12/13 16:44:23 Added new column header ::extc
+05/12/13 16:44:23 Added new column header ::sd
+05/12/13 16:44:24 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 16:44:24 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 16:44:24 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/13 16:44:24 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/13 16:44:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/13 16:44:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/13 16:44:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/13 16:44:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/13 16:44:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/13 16:44:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/13 16:44:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/13 16:44:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/13 16:44:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/13 16:44:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/13 16:44:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/13 16:44:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/13 16:44:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/13 16:44:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/13 16:44:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/13 16:44:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/13 16:44:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/13 16:44:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/13 16:44:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/13 16:44:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/13 16:44:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/13 16:44:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/13 16:44:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/13 16:44:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/13 16:44:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/13 16:44:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/13 16:44:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/13 16:44:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/13 16:44:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/13 16:44:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/13 16:44:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/13 16:44:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/13 16:44:25 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/13 16:44:25 WARNING: Rotating 3 old sheets of CONF!
+05/12/13 16:44:28 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:44:29 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/12/13 16:44:29 WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:44:29 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:44:29 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/12/13 16:45:27 ########################################################################
+05/12/13 16:45:27 CMDLINE: ../../../mix_0.pl -delta -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/13 16:45:27 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/13 16:45:28 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 16:45:28 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 16:45:28 Added new column header ::inc
+05/12/13 16:45:28 Added new column header ::outc
+05/12/13 16:45:28 Added new column header ::extc
+05/12/13 16:45:28 Added new column header ::sd
+05/12/13 16:45:28 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 16:45:28 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 16:45:28 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/13 16:45:28 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/13 16:45:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/13 16:45:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/13 16:45:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/13 16:45:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/13 16:45:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/13 16:45:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/13 16:45:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/13 16:45:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/13 16:45:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/13 16:45:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/13 16:45:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/13 16:45:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/13 16:45:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/13 16:45:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/13 16:45:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/13 16:45:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/13 16:45:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/13 16:45:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/13 16:45:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/13 16:45:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/13 16:45:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/13 16:45:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/13 16:45:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/13 16:45:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/13 16:45:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/13 16:45:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/13 16:45:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/13 16:45:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/13 16:45:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/13 16:45:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/13 16:45:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/13 16:45:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/13 16:45:29 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/13 16:45:30 WARNING: Rotating 3 old sheets of CONF!
+05/12/13 16:45:31 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:45:31 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/12/13 16:45:32 WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:45:32 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:45:32 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/12/13 16:45:36 WARNING: ERROR: Cannot remove ./PERI_I2C_AHB_OCP_i_port.mif.diff: No such file or directory
+05/12/13 16:45:36 Info: unchanged file PERI_I2C_AHB_OCP_i_e.v
+05/12/13 16:45:37 WARNING: ============= SUMMARY =================
+05/12/13 16:45:37 WARNING: SUM: Summary of checks and created items:
+05/12/13 16:45:37 WARNING: SUM: checkforce 0
+05/12/13 16:45:37 WARNING: SUM: checkunique 0
+05/12/13 16:45:37 WARNING: SUM: checkwarn 0
+05/12/13 16:45:37 WARNING: SUM: cmacros 0
+05/12/13 16:45:37 WARNING: SUM: conn 32
+05/12/13 16:45:37 WARNING: SUM: errors 1
+05/12/13 16:45:37 WARNING: SUM: genport 0
+05/12/13 16:45:37 WARNING: SUM: hdlfiles 1
+05/12/13 16:45:37 WARNING: SUM: inst 7
+05/12/13 16:45:37 WARNING: SUM: multdriver 0
+05/12/13 16:45:37 WARNING: SUM: nodriver 0
+05/12/13 16:45:37 WARNING: SUM: noload 0
+05/12/13 16:45:37 WARNING: SUM: openports 0
+05/12/13 16:45:37 WARNING: SUM: warnings 4
+05/12/13 16:45:37 WARNING: SUM: === Number of parsed input tables: ===
+05/12/13 16:45:37 WARNING: SUM: conf 0
+05/12/13 16:45:37 WARNING: SUM: hier 1
+05/12/13 16:45:37 WARNING: SUM: conn 1
+05/12/13 16:45:37 WARNING: SUM: io 0
+05/12/13 16:45:37 WARNING: SUM: i2c 0
+05/12/13 16:48:05 ########################################################################
+05/12/13 16:48:05 CMDLINE: ../../../mix_0.pl -delta -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/13 16:48:05 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/13 16:48:06 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 16:48:06 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 16:48:06 Added new column header ::inc
+05/12/13 16:48:06 Added new column header ::outc
+05/12/13 16:48:06 Added new column header ::extc
+05/12/13 16:48:06 Added new column header ::sd
+05/12/13 16:48:07 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 16:48:07 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 16:48:07 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/13 16:48:07 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/13 16:48:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/13 16:48:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/13 16:48:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/13 16:48:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/13 16:48:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/13 16:48:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/13 16:48:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/13 16:48:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/13 16:48:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/13 16:48:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/13 16:48:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/13 16:48:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/13 16:48:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/13 16:48:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/13 16:48:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/13 16:48:07 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/13 16:48:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/13 16:48:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/13 16:48:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/13 16:48:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/13 16:48:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/13 16:48:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/13 16:48:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/13 16:48:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/13 16:48:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/13 16:48:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/13 16:48:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/13 16:48:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/13 16:48:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/13 16:48:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/13 16:48:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/13 16:48:07 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/13 16:48:08 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/13 16:48:08 WARNING: Rotating 3 old sheets of CONF!
+05/12/13 16:48:11 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:48:12 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/12/13 16:48:12 WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:48:12 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 16:48:12 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/12/13 16:50:30 WARNING: ERROR: Cannot remove ./PERI_I2C_AHB_OCP_i_port.mif.diff: No such file or directory
+05/12/13 16:50:31 Info: unchanged file PERI_I2C_AHB_OCP_i_e.v
+05/12/13 16:50:31 WARNING: ============= SUMMARY =================
+05/12/13 16:50:31 WARNING: SUM: Summary of checks and created items:
+05/12/13 16:50:31 WARNING: SUM: checkforce 0
+05/12/13 16:50:31 WARNING: SUM: checkunique 0
+05/12/13 16:50:31 WARNING: SUM: checkwarn 0
+05/12/13 16:50:31 WARNING: SUM: cmacros 0
+05/12/13 16:50:31 WARNING: SUM: conn 32
+05/12/13 16:50:31 WARNING: SUM: errors 1
+05/12/13 16:50:31 WARNING: SUM: genport 0
+05/12/13 16:50:31 WARNING: SUM: hdlfiles 1
+05/12/13 16:50:31 WARNING: SUM: inst 7
+05/12/13 16:50:31 WARNING: SUM: multdriver 0
+05/12/13 16:50:31 WARNING: SUM: nodriver 0
+05/12/13 16:50:31 WARNING: SUM: noload 0
+05/12/13 16:50:31 WARNING: SUM: openports 0
+05/12/13 16:50:31 WARNING: SUM: warnings 4
+05/12/13 16:50:31 WARNING: SUM: === Number of parsed input tables: ===
+05/12/13 16:50:31 WARNING: SUM: conf 0
+05/12/13 16:50:31 WARNING: SUM: hier 1
+05/12/13 16:50:31 WARNING: SUM: conn 1
+05/12/13 16:50:31 WARNING: SUM: io 0
+05/12/13 16:50:31 WARNING: SUM: i2c 0
+05/12/13 17:30:09 ########################################################################
+05/12/13 17:30:09 CMDLINE: ../../../mix_0.pl -delta -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/13 17:30:09 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/13 17:30:10 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 17:30:10 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 17:30:10 Added new column header ::inc
+05/12/13 17:30:10 Added new column header ::outc
+05/12/13 17:30:10 Added new column header ::extc
+05/12/13 17:30:10 Added new column header ::sd
+05/12/13 17:30:12 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 17:30:12 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 17:30:12 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/13 17:30:12 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/13 17:30:12 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/13 17:30:12 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/13 17:30:12 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/13 17:30:12 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/13 17:30:12 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/13 17:30:12 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/13 17:30:12 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/13 17:30:12 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/13 17:30:12 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/13 17:30:12 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/13 17:30:12 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/13 17:30:12 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/13 17:30:12 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/13 17:30:12 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/13 17:30:12 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/13 17:30:12 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/13 17:30:12 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/13 17:30:12 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/13 17:30:12 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/13 17:30:12 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/13 17:30:12 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/13 17:30:12 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/13 17:30:12 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/13 17:30:12 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/13 17:30:12 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/13 17:30:12 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/13 17:30:12 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/13 17:30:12 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/13 17:30:12 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/13 17:30:12 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/13 17:30:12 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/13 17:30:12 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/13 17:30:18 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/13 17:30:19 WARNING: Rotating 3 old sheets of CONF!
+05/12/13 17:30:23 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 17:30:24 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/12/13 17:30:25 WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file pinlist_generic_hier_verilog-mixed.xls
+05/12/13 17:30:25 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 17:30:25 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/12/13 17:33:41 WARNING: ERROR: Cannot remove ./PERI_I2C_AHB_OCP_i_port.mif.diff: No such file or directory
+05/12/13 17:38:42 ########################################################################
+05/12/13 17:38:42 CMDLINE: ../../../mix_0.pl -delta -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/13 17:38:42 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/13 17:38:43 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 17:38:43 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 17:38:43 Added new column header ::inc
+05/12/13 17:38:43 Added new column header ::outc
+05/12/13 17:38:43 Added new column header ::extc
+05/12/13 17:38:43 Added new column header ::sd
+05/12/13 17:38:44 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 17:38:44 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 17:38:44 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/13 17:38:44 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/13 17:38:44 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/13 17:38:44 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/13 17:38:44 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/13 17:38:44 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/13 17:38:44 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/13 17:38:44 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/13 17:38:44 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/13 17:38:44 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/13 17:38:44 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/13 17:38:44 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/13 17:38:44 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/13 17:38:44 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/13 17:38:44 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/13 17:38:44 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/13 17:38:44 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/13 17:38:44 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/13 17:38:44 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/13 17:38:44 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/13 17:38:44 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/13 17:38:44 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/13 17:38:44 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/13 17:38:44 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/13 17:38:44 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/13 17:38:44 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/13 17:38:44 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/13 17:38:44 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/13 17:38:44 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/13 17:38:44 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/13 17:38:44 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/13 17:38:44 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/13 17:38:44 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/13 17:38:44 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/13 17:38:46 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/13 17:38:46 WARNING: Rotating 3 old sheets of CONF!
+05/12/13 17:38:48 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 17:38:48 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/12/13 17:38:49 WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file pinlist_generic_hier_verilog-mixed.xls
+05/12/13 17:38:49 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 17:38:49 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/12/13 17:38:54 Info: unchanged file PERI_I2C_AHB_OCP_i_e.v
+05/12/13 17:38:54 WARNING: ============= SUMMARY =================
+05/12/13 17:38:54 WARNING: SUM: Summary of checks and created items:
+05/12/13 17:38:54 WARNING: SUM: checkforce 0
+05/12/13 17:38:54 WARNING: SUM: checkunique 0
+05/12/13 17:38:54 WARNING: SUM: checkwarn 0
+05/12/13 17:38:54 WARNING: SUM: cmacros 0
+05/12/13 17:38:54 WARNING: SUM: conn 32
+05/12/13 17:38:54 WARNING: SUM: errors 0
+05/12/13 17:38:54 WARNING: SUM: genport 0
+05/12/13 17:38:54 WARNING: SUM: hdlfiles 1
+05/12/13 17:38:54 WARNING: SUM: inst 7
+05/12/13 17:38:54 WARNING: SUM: multdriver 0
+05/12/13 17:38:54 WARNING: SUM: nodriver 0
+05/12/13 17:38:54 WARNING: SUM: noload 0
+05/12/13 17:38:54 WARNING: SUM: openports 0
+05/12/13 17:38:54 WARNING: SUM: warnings 4
+05/12/13 17:38:54 WARNING: SUM: === Number of parsed input tables: ===
+05/12/13 17:38:54 WARNING: SUM: conf 0
+05/12/13 17:38:54 WARNING: SUM: hier 1
+05/12/13 17:38:54 WARNING: SUM: conn 1
+05/12/13 17:38:54 WARNING: SUM: io 0
+05/12/13 17:38:54 WARNING: SUM: i2c 0
+05/12/13 17:42:19 ########################################################################
+05/12/13 17:42:19 CMDLINE: ../../../mix_0.pl -delta -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/13 17:42:19 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/13 17:42:19 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 17:42:19 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 17:42:20 Added new column header ::inc
+05/12/13 17:42:20 Added new column header ::outc
+05/12/13 17:42:20 Added new column header ::extc
+05/12/13 17:42:20 Added new column header ::sd
+05/12/13 17:42:20 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 17:42:20 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 17:42:21 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/13 17:42:21 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/13 17:42:21 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/13 17:42:21 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/13 17:42:21 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/13 17:42:21 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/13 17:42:21 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/13 17:42:21 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/13 17:42:21 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/13 17:42:21 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/13 17:42:21 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/13 17:42:21 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/13 17:42:21 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/13 17:42:21 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/13 17:42:21 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/13 17:42:21 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/13 17:42:21 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/13 17:42:21 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/13 17:42:21 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/13 17:42:21 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/13 17:42:21 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/13 17:42:21 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/13 17:42:21 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/13 17:42:21 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/13 17:42:21 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/13 17:42:21 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/13 17:42:21 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/13 17:42:21 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/13 17:42:21 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/13 17:42:21 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/13 17:42:21 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/13 17:42:21 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/13 17:42:21 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/13 17:42:21 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/13 17:42:23 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/13 17:42:23 WARNING: Rotating 3 old sheets of CONF!
+05/12/13 17:42:24 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 17:42:25 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/12/13 17:42:25 WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file pinlist_generic_hier_verilog-mixed.xls
+05/12/13 17:42:25 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 17:42:25 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/12/13 17:42:30 Info: unchanged file PERI_I2C_AHB_OCP_i_e.v
+05/12/13 17:42:30 WARNING: ============= SUMMARY =================
+05/12/13 17:42:30 WARNING: SUM: Summary of checks and created items:
+05/12/13 17:42:30 WARNING: SUM: checkforce 0
+05/12/13 17:42:30 WARNING: SUM: checkunique 0
+05/12/13 17:42:30 WARNING: SUM: checkwarn 0
+05/12/13 17:42:30 WARNING: SUM: cmacros 0
+05/12/13 17:42:30 WARNING: SUM: conn 32
+05/12/13 17:42:30 WARNING: SUM: errors 0
+05/12/13 17:42:30 WARNING: SUM: genport 0
+05/12/13 17:42:30 WARNING: SUM: hdlfiles 1
+05/12/13 17:42:30 WARNING: SUM: inst 7
+05/12/13 17:42:30 WARNING: SUM: multdriver 0
+05/12/13 17:42:30 WARNING: SUM: nodriver 0
+05/12/13 17:42:30 WARNING: SUM: noload 0
+05/12/13 17:42:30 WARNING: SUM: openports 0
+05/12/13 17:42:30 WARNING: SUM: warnings 4
+05/12/13 17:42:30 WARNING: SUM: === Number of parsed input tables: ===
+05/12/13 17:42:30 WARNING: SUM: conf 0
+05/12/13 17:42:30 WARNING: SUM: hier 1
+05/12/13 17:42:30 WARNING: SUM: conn 1
+05/12/13 17:42:30 WARNING: SUM: io 0
+05/12/13 17:42:30 WARNING: SUM: i2c 0
+05/12/13 17:45:29 ########################################################################
+05/12/13 17:45:29 CMDLINE: ../../../mix_0.pl -delta -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/13 17:45:29 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/13 17:45:29 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 17:45:29 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 17:45:30 Added new column header ::inc
+05/12/13 17:45:30 Added new column header ::outc
+05/12/13 17:45:30 Added new column header ::extc
+05/12/13 17:45:30 Added new column header ::sd
+05/12/13 17:45:31 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 17:45:31 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 17:45:31 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/13 17:45:31 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/13 17:45:31 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/13 17:45:31 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/13 17:45:31 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/13 17:45:31 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/13 17:45:31 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/13 17:45:31 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/13 17:45:31 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/13 17:45:31 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/13 17:45:31 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/13 17:45:31 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/13 17:45:31 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/13 17:45:31 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/13 17:45:31 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/13 17:45:31 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/13 17:45:31 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/13 17:45:31 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/13 17:45:31 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/13 17:45:31 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/13 17:45:31 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/13 17:45:31 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/13 17:45:31 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/13 17:45:31 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/13 17:45:31 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/13 17:45:31 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/13 17:45:31 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/13 17:45:31 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/13 17:45:31 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/13 17:45:31 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/13 17:45:31 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/13 17:45:31 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/13 17:45:31 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/13 17:45:31 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/13 17:45:33 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/13 17:45:33 WARNING: Rotating 3 old sheets of CONF!
+05/12/13 17:45:35 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 17:45:35 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/12/13 17:45:35 WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file pinlist_generic_hier_verilog-mixed.xls
+05/12/13 17:45:35 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 17:45:35 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/12/13 17:45:40 Info: unchanged file PERI_I2C_AHB_OCP_i_e.v
+05/12/13 17:45:40 WARNING: ============= SUMMARY =================
+05/12/13 17:45:40 WARNING: SUM: Summary of checks and created items:
+05/12/13 17:45:40 WARNING: SUM: checkforce 0
+05/12/13 17:45:40 WARNING: SUM: checkunique 0
+05/12/13 17:45:40 WARNING: SUM: checkwarn 0
+05/12/13 17:45:40 WARNING: SUM: cmacros 0
+05/12/13 17:45:40 WARNING: SUM: conn 32
+05/12/13 17:45:40 WARNING: SUM: errors 0
+05/12/13 17:45:40 WARNING: SUM: genport 0
+05/12/13 17:45:40 WARNING: SUM: hdlfiles 1
+05/12/13 17:45:40 WARNING: SUM: inst 7
+05/12/13 17:45:40 WARNING: SUM: multdriver 0
+05/12/13 17:45:40 WARNING: SUM: nodriver 0
+05/12/13 17:45:40 WARNING: SUM: noload 0
+05/12/13 17:45:40 WARNING: SUM: openports 0
+05/12/13 17:45:40 WARNING: SUM: warnings 4
+05/12/13 17:45:40 WARNING: SUM: === Number of parsed input tables: ===
+05/12/13 17:45:40 WARNING: SUM: conf 0
+05/12/13 17:45:40 WARNING: SUM: hier 1
+05/12/13 17:45:40 WARNING: SUM: conn 1
+05/12/13 17:45:40 WARNING: SUM: io 0
+05/12/13 17:45:40 WARNING: SUM: i2c 0
+05/12/13 17:46:09 ########################################################################
+05/12/13 17:46:09 CMDLINE: ../../../mix_0.pl -delta -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/13 17:46:09 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/13 17:46:09 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 17:46:09 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/13 17:46:10 Added new column header ::inc
+05/12/13 17:46:10 Added new column header ::outc
+05/12/13 17:46:10 Added new column header ::extc
+05/12/13 17:46:10 Added new column header ::sd
+05/12/13 17:46:11 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 17:46:11 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/13 17:46:11 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/13 17:46:11 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/13 17:46:11 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/13 17:46:11 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/13 17:46:11 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/13 17:46:11 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/13 17:46:11 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/13 17:46:11 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/13 17:46:11 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/13 17:46:11 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/13 17:46:11 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/13 17:46:11 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/13 17:46:11 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/13 17:46:11 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/13 17:46:11 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/13 17:46:11 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/13 17:46:11 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/13 17:46:11 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/13 17:46:11 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/13 17:46:11 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/13 17:46:11 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/13 17:46:11 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/13 17:46:11 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/13 17:46:11 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/13 17:46:11 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/13 17:46:11 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/13 17:46:11 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/13 17:46:11 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/13 17:46:11 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/13 17:46:11 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/13 17:46:11 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/13 17:46:11 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/13 17:46:11 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/13 17:46:11 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/13 17:46:13 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/13 17:46:13 WARNING: Rotating 3 old sheets of CONF!
+05/12/13 17:46:14 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 17:46:15 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/12/13 17:46:15 WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file pinlist_generic_hier_verilog-mixed.xls
+05/12/13 17:46:15 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/13 17:46:15 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/12/14 06:11:21 ########################################################################
+05/12/14 06:11:21 CMDLINE: ../../../mix_0.pl -delta -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/14 06:11:22 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/14 06:11:23 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/14 06:11:23 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/14 06:11:23 Added new column header ::inc
+05/12/14 06:11:23 Added new column header ::outc
+05/12/14 06:11:23 Added new column header ::extc
+05/12/14 06:11:23 Added new column header ::sd
+05/12/14 06:11:24 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/14 06:11:24 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/14 06:11:24 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/14 06:11:24 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/14 06:11:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/14 06:11:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/14 06:11:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/14 06:11:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/14 06:11:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/14 06:11:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/14 06:11:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/14 06:11:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/14 06:11:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/14 06:11:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/14 06:11:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/14 06:11:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/14 06:11:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/14 06:11:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/14 06:11:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/14 06:11:24 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/14 06:11:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/14 06:11:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/14 06:11:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/14 06:11:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/14 06:11:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/14 06:11:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/14 06:11:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/14 06:11:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/14 06:11:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/14 06:11:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/14 06:11:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/14 06:11:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/14 06:11:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/14 06:11:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/14 06:11:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/14 06:11:24 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/14 06:11:32 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/14 06:11:33 WARNING: Rotating 3 old sheets of CONF!
+05/12/14 06:11:35 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/14 06:11:35 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/12/14 06:11:35 WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file pinlist_generic_hier_verilog-mixed.xls
+05/12/14 06:11:36 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/14 06:11:36 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/12/14 06:15:40 ########################################################################
+05/12/14 06:15:40 CMDLINE: ../../../mix_0.pl -delta -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/14 06:15:40 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/14 06:15:40 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/14 06:15:40 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/14 06:15:40 Added new column header ::inc
+05/12/14 06:15:40 Added new column header ::outc
+05/12/14 06:15:40 Added new column header ::extc
+05/12/14 06:15:40 Added new column header ::sd
+05/12/14 06:15:41 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/14 06:15:41 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/14 06:15:41 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/14 06:15:41 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/14 06:15:41 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/14 06:15:41 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/14 06:15:41 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/14 06:15:41 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/14 06:15:41 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/14 06:15:41 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/14 06:15:41 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/14 06:15:41 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/14 06:15:41 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/14 06:15:41 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/14 06:15:41 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/14 06:15:41 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/14 06:15:41 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/14 06:15:41 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/14 06:15:41 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/14 06:15:41 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/14 06:15:41 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/14 06:15:41 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/14 06:15:41 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/14 06:15:41 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/14 06:15:41 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/14 06:15:41 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/14 06:15:41 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/14 06:15:41 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/14 06:15:41 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/14 06:15:41 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/14 06:15:41 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/14 06:15:41 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/14 06:15:41 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/14 06:15:41 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/14 06:15:41 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/14 06:15:41 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/14 06:15:43 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/14 06:15:44 WARNING: Rotating 3 old sheets of CONF!
+05/12/14 06:15:45 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/14 06:15:45 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/12/14 06:15:46 WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file pinlist_generic_hier_verilog-mixed.xls
+05/12/14 06:15:46 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/14 06:15:46 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/12/14 06:15:47 WARNING: Info: file ./PERI_I2C_AHB_OCP_i_port.mif.diff has changes!
+05/12/14 06:15:47 Info: unchanged file PERI_I2C_AHB_OCP_i_e.v
+05/12/14 06:15:47 WARNING: ============= SUMMARY =================
+05/12/14 06:15:47 WARNING: SUM: Summary of checks and created items:
+05/12/14 06:15:47 WARNING: SUM: checkforce 0
+05/12/14 06:15:47 WARNING: SUM: checkunique 0
+05/12/14 06:15:47 WARNING: SUM: checkwarn 0
+05/12/14 06:15:47 WARNING: SUM: cmacros 0
+05/12/14 06:15:47 WARNING: SUM: conn 32
+05/12/14 06:15:47 WARNING: SUM: errors 0
+05/12/14 06:15:47 WARNING: SUM: genport 0
+05/12/14 06:15:47 WARNING: SUM: hdlfiles 1
+05/12/14 06:15:47 WARNING: SUM: inst 7
+05/12/14 06:15:47 WARNING: SUM: multdriver 0
+05/12/14 06:15:47 WARNING: SUM: nodriver 0
+05/12/14 06:15:47 WARNING: SUM: noload 0
+05/12/14 06:15:47 WARNING: SUM: openports 0
+05/12/14 06:15:47 WARNING: SUM: warnings 4
+05/12/14 06:15:47 WARNING: SUM: === Number of parsed input tables: ===
+05/12/14 06:15:47 WARNING: SUM: conf 0
+05/12/14 06:15:47 WARNING: SUM: hier 1
+05/12/14 06:15:47 WARNING: SUM: conn 1
+05/12/14 06:15:47 WARNING: SUM: io 0
+05/12/14 06:15:47 WARNING: SUM: i2c 0
+05/12/14 06:22:48 ########################################################################
+05/12/14 06:22:48 CMDLINE: ../../../mix_0.pl -delta -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/14 06:22:49 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/14 06:22:49 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/14 06:22:49 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/14 06:22:49 Added new column header ::inc
+05/12/14 06:22:49 Added new column header ::outc
+05/12/14 06:22:49 Added new column header ::extc
+05/12/14 06:22:49 Added new column header ::sd
+05/12/14 06:22:51 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/14 06:22:51 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/14 06:22:51 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/14 06:22:51 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/14 06:22:51 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/14 06:22:51 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/14 06:22:51 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/14 06:22:51 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/14 06:22:51 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/14 06:22:51 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/14 06:22:51 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/14 06:22:51 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/14 06:22:51 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/14 06:22:51 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/14 06:22:51 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/14 06:22:51 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/14 06:22:51 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/14 06:22:51 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/14 06:22:51 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/14 06:22:51 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/14 06:22:51 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/14 06:22:51 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/14 06:22:51 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/14 06:22:51 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/14 06:22:51 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/14 06:22:51 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/14 06:22:51 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/14 06:22:51 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/14 06:22:51 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/14 06:22:51 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/14 06:22:51 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/14 06:22:51 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/14 06:22:51 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/14 06:22:51 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/14 06:22:51 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/14 06:22:51 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/14 06:22:53 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/14 06:22:53 WARNING: Rotating 3 old sheets of CONF!
+05/12/14 06:22:56 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/14 06:22:56 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/12/14 06:22:57 WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file pinlist_generic_hier_verilog-mixed.xls
+05/12/14 06:22:57 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/14 06:22:57 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/12/14 06:27:23 ########################################################################
+05/12/14 06:27:23 CMDLINE: ../../../mix_0.pl -delta -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/14 06:27:23 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/14 06:27:24 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/14 06:27:24 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/14 06:27:24 Added new column header ::inc
+05/12/14 06:27:24 Added new column header ::outc
+05/12/14 06:27:24 Added new column header ::extc
+05/12/14 06:27:24 Added new column header ::sd
+05/12/14 06:27:25 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/14 06:27:25 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/14 06:27:25 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/14 06:27:25 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/14 06:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/14 06:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/14 06:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/14 06:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/14 06:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/14 06:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/14 06:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/14 06:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/14 06:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/14 06:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/14 06:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/14 06:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/14 06:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/14 06:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/14 06:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/14 06:27:25 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/14 06:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/14 06:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/14 06:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/14 06:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/14 06:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/14 06:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/14 06:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/14 06:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/14 06:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/14 06:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/14 06:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/14 06:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/14 06:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/14 06:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/14 06:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/14 06:27:25 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/14 06:27:27 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/14 06:27:28 WARNING: Rotating 3 old sheets of CONF!
+05/12/14 06:27:31 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/14 06:27:31 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/12/14 06:27:31 WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file pinlist_generic_hier_verilog-mixed.xls
+05/12/14 06:27:31 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/14 06:27:32 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/12/14 06:36:24 ########################################################################
+05/12/14 06:36:24 CMDLINE: ../../../mix_0.pl -delta -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/14 06:36:24 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/14 06:36:24 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/14 06:36:25 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/14 06:36:25 Added new column header ::inc
+05/12/14 06:36:25 Added new column header ::outc
+05/12/14 06:36:25 Added new column header ::extc
+05/12/14 06:36:25 Added new column header ::sd
+05/12/14 06:36:26 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/14 06:36:26 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/14 06:36:26 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/14 06:36:26 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/14 06:36:26 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/14 06:36:26 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/14 06:36:26 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/14 06:36:26 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/14 06:36:26 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/14 06:36:26 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/14 06:36:26 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/14 06:36:26 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/14 06:36:26 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/14 06:36:26 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/14 06:36:26 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/14 06:36:26 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/14 06:36:26 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/14 06:36:26 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/14 06:36:26 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/14 06:36:26 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/14 06:36:26 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/14 06:36:26 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/14 06:36:26 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/14 06:36:26 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/14 06:36:26 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/14 06:36:26 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/14 06:36:26 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/14 06:36:26 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/14 06:36:26 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/14 06:36:26 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/14 06:36:26 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/14 06:36:26 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/14 06:36:26 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/14 06:36:26 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/14 06:36:26 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/14 06:36:26 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/14 06:36:28 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/14 06:36:28 WARNING: Rotating 3 old sheets of CONF!
+05/12/14 06:36:31 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/14 06:36:32 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/12/14 06:36:32 WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file pinlist_generic_hier_verilog-mixed.xls
+05/12/14 06:36:32 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/14 06:36:32 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/12/14 06:39:45 WARNING: Info: file ./PERI_I2C_AHB_OCP_i_port.mif.diff has changes!
+05/12/14 06:40:02 Info: unchanged file PERI_I2C_AHB_OCP_i_e.v
+05/12/14 06:40:02 WARNING: ============= SUMMARY =================
+05/12/14 06:40:02 WARNING: SUM: Summary of checks and created items:
+05/12/14 06:40:02 WARNING: SUM: checkforce 0
+05/12/14 06:40:02 WARNING: SUM: checkunique 0
+05/12/14 06:40:02 WARNING: SUM: checkwarn 0
+05/12/14 06:40:02 WARNING: SUM: cmacros 0
+05/12/14 06:40:02 WARNING: SUM: conn 32
+05/12/14 06:40:02 WARNING: SUM: errors 0
+05/12/14 06:40:02 WARNING: SUM: genport 0
+05/12/14 06:40:02 WARNING: SUM: hdlfiles 1
+05/12/14 06:40:02 WARNING: SUM: inst 7
+05/12/14 06:40:02 WARNING: SUM: multdriver 0
+05/12/14 06:40:02 WARNING: SUM: nodriver 0
+05/12/14 06:40:02 WARNING: SUM: noload 0
+05/12/14 06:40:02 WARNING: SUM: openports 0
+05/12/14 06:40:02 WARNING: SUM: warnings 4
+05/12/14 06:40:02 WARNING: SUM: === Number of parsed input tables: ===
+05/12/14 06:40:02 WARNING: SUM: conf 0
+05/12/14 06:40:02 WARNING: SUM: hier 1
+05/12/14 06:40:02 WARNING: SUM: conn 1
+05/12/14 06:40:02 WARNING: SUM: io 0
+05/12/14 06:40:02 WARNING: SUM: i2c 0
+05/12/14 06:40:02 WARNING: SUM: Number of changes in intermediate: 1
+05/12/14 06:40:02 WARNING: SUM: Number of changed files: 1
+05/12/14 06:43:26 ########################################################################
+05/12/14 06:43:26 CMDLINE: ../../../mix_0.pl -nodelta -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/14 06:43:27 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/14 06:43:27 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/14 06:43:27 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/14 06:43:27 Added new column header ::inc
+05/12/14 06:43:27 Added new column header ::outc
+05/12/14 06:43:27 Added new column header ::extc
+05/12/14 06:43:27 Added new column header ::sd
+05/12/14 06:43:28 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/14 06:43:28 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/14 06:43:28 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/14 06:43:28 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/14 06:43:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/14 06:43:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/14 06:43:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/14 06:43:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/14 06:43:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/14 06:43:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/14 06:43:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/14 06:43:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/14 06:43:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/14 06:43:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/14 06:43:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/14 06:43:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/14 06:43:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/14 06:43:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/14 06:43:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/14 06:43:28 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/14 06:43:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/14 06:43:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/14 06:43:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/14 06:43:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/14 06:43:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/14 06:43:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/14 06:43:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/14 06:43:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/14 06:43:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/14 06:43:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/14 06:43:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/14 06:43:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/14 06:43:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/14 06:43:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/14 06:43:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/14 06:43:28 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/14 06:43:30 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/14 06:43:30 WARNING: Rotating 3 old sheets of CONF!
+05/12/14 06:43:31 WARNING: Rotating 3 old sheets of CONN!
+05/12/14 06:43:31 WARNING: Rotating 3 old sheets of HIER!
+05/12/14 06:43:32 WARNING: ============= SUMMARY =================
+05/12/14 06:43:32 WARNING: SUM: Summary of checks and created items:
+05/12/14 06:43:32 WARNING: SUM: checkforce 0
+05/12/14 06:43:32 WARNING: SUM: checkunique 0
+05/12/14 06:43:32 WARNING: SUM: checkwarn 0
+05/12/14 06:43:32 WARNING: SUM: cmacros 0
+05/12/14 06:43:32 WARNING: SUM: conn 32
+05/12/14 06:43:32 WARNING: SUM: errors 0
+05/12/14 06:43:32 WARNING: SUM: genport 0
+05/12/14 06:43:32 WARNING: SUM: hdlfiles 1
+05/12/14 06:43:32 WARNING: SUM: inst 7
+05/12/14 06:43:32 WARNING: SUM: multdriver 0
+05/12/14 06:43:32 WARNING: SUM: nodriver 0
+05/12/14 06:43:32 WARNING: SUM: noload 0
+05/12/14 06:43:32 WARNING: SUM: openports 0
+05/12/14 06:43:32 WARNING: SUM: warnings 3
+05/12/14 06:43:32 WARNING: SUM: === Number of parsed input tables: ===
+05/12/14 06:43:32 WARNING: SUM: conf 0
+05/12/14 06:43:32 WARNING: SUM: hier 1
+05/12/14 06:43:32 WARNING: SUM: conn 1
+05/12/14 06:43:32 WARNING: SUM: io 0
+05/12/14 06:43:32 WARNING: SUM: i2c 0
+05/12/14 06:43:32 WARNING: SUM: Number of changes in intermediate: 0
+05/12/14 06:43:32 WARNING: SUM: Number of changed files: 0
+05/12/14 06:44:02 ########################################################################
+05/12/14 06:44:02 CMDLINE: ../../../mix_0.pl -delta -report portlist -conf macro.y_inst%=PERI_I2C_AHB_OCP_i PERI_I2C_AHB_OCP-pin-list.xls pinlist_generic_hier_verilog.xls
+05/12/14 06:44:02 
+#######################################################################
+##### mix_0.pl (Revision: 1.42 )
+#####
+##### MIX  
+#####   MixUtils    1.99 $
+#####   MixUtils::IO    1.35 $
+#####   MixParser   1.63 $
+#####   MixWriter   1.72 $
+#####   MixChecker  1.10 $
+#####   MixIOParser 1.17 $
+#####   MixI2CParser 1.16 $
+#####   MixReport 1.19 $
+##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+#######################################################################
+05/12/14 06:44:03 Reading worksheet CONN_PERI_I2C_AHB_OCP of H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/14 06:44:03 WARNING: Cannot locate a worksheet HIER in H:/work/eclipse/MIX/test/xls_input/portlist/PERI_I2C_AHB_OCP-pin-list.xls
+05/12/14 06:44:03 Added new column header ::inc
+05/12/14 06:44:03 Added new column header ::outc
+05/12/14 06:44:03 Added new column header ::extc
+05/12/14 06:44:03 Added new column header ::sd
+05/12/14 06:44:04 WARNING: Cannot locate a worksheet CONN_.* in H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/14 06:44:04 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog.xls
+05/12/14 06:44:04 WARNING: INFO: Not all lowercase in new inst element PERI_I2C_AHB_OCP_i!
+05/12/14 06:44:04 WARNING: INFO: Not all lowercase in new inst element TESTBENCH!
+05/12/14 06:44:04 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hclk_i'. Generated name mix_const_0!
+05/12/14 06:44:04 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresetn_i'. Generated name mix_const_1!
+05/12/14 06:44:04 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/clk_p20_i'. Generated name mix_const_2!
+05/12/14 06:44:04 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/rcm_en_i'. Generated name mix_const_3!
+05/12/14 06:44:04 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hsel_i2c_i'. Generated name mix_const_4!
+05/12/14 06:44:04 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/haddr_s_i'. Generated name mix_const_5!
+05/12/14 06:44:04 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/htrans_s_i'. Generated name mix_const_6!
+05/12/14 06:44:04 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwrite_s_i'. Generated name mix_const_7!
+05/12/14 06:44:04 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hwdata_s_i'. Generated name mix_const_8!
+05/12/14 06:44:04 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/gb_hready_i'. Generated name mix_const_9!
+05/12/14 06:44:04 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hresp_m_i'. Generated name mix_const_10!
+05/12/14 06:44:04 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hgrant_m_i'. Generated name mix_const_11!
+05/12/14 06:44:04 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/hrdata_m_i'. Generated name mix_const_12!
+05/12/14 06:44:04 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/sda_in_i'. Generated name mix_const_13!
+05/12/14 06:44:04 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scl_in_i'. Generated name mix_const_14!
+05/12/14 06:44:04 WARNING: Missing signal name in input near 'PERI_I2C_AHB_OCP_i/scan_test_i'. Generated name mix_const_15!
+05/12/14 06:44:04 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_i2c_mux_s!
+05/12/14 06:44:04 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_irq_s!
+05/12/14 06:44:04 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hready_resp_i2c_s_s!
+05/12/14 06:44:04 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hresp_i2c_s_s!
+05/12/14 06:44:04 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hrdata_i2c_s_s!
+05/12/14 06:44:04 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_haddr_m_s!
+05/12/14 06:44:04 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwrite_m_s!
+05/12/14 06:44:04 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hsize_m_s!
+05/12/14 06:44:04 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_htrans_m_s!
+05/12/14 06:44:04 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hburst_m_s!
+05/12/14 06:44:04 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hprot_m_s!
+05/12/14 06:44:04 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hwdata_m_s!
+05/12/14 06:44:04 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hbusreq_m_s!
+05/12/14 06:44:04 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_hlock_m_s!
+05/12/14 06:44:04 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_sda_out_s!
+05/12/14 06:44:04 WARNING: INFO: Not all lowercase in new conn element PERI_I2C_AHB_OCP_scl_out_s!
+05/12/14 06:44:06 WARNING: File pinlist_generic_hier_verilog-mixed.xls already exists! Contents will be changed
+05/12/14 06:44:06 WARNING: Rotating 3 old sheets of CONF!
+05/12/14 06:44:08 Reading worksheet CONN of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/14 06:44:08 WARNING: Rotating 3 old sheets of DIFF_CONN!
+05/12/14 06:44:08 WARNING: INFO: Detected 1 changes in intermediate sheet CONN, in file pinlist_generic_hier_verilog-mixed.xls
+05/12/14 06:44:08 Reading worksheet HIER of H:/work/eclipse/MIX/test/xls_input/portlist/pinlist_generic_hier_verilog-mixed.xls
+05/12/14 06:44:08 WARNING: Rotating 3 old sheets of DIFF_HIER!
+05/12/14 06:44:09 WARNING: Info: file ./PERI_I2C_AHB_OCP_i_port.mif.diff has changes!
+05/12/14 06:44:09 Info: unchanged file PERI_I2C_AHB_OCP_i_e.v
+05/12/14 06:44:09 WARNING: ============= SUMMARY =================
+05/12/14 06:44:09 WARNING: SUM: Summary of checks and created items:
+05/12/14 06:44:09 WARNING: SUM: checkforce 0
+05/12/14 06:44:09 WARNING: SUM: checkunique 0
+05/12/14 06:44:09 WARNING: SUM: checkwarn 0
+05/12/14 06:44:09 WARNING: SUM: cmacros 0
+05/12/14 06:44:09 WARNING: SUM: conn 32
+05/12/14 06:44:09 WARNING: SUM: errors 0
+05/12/14 06:44:09 WARNING: SUM: genport 0
+05/12/14 06:44:09 WARNING: SUM: hdlfiles 1
+05/12/14 06:44:09 WARNING: SUM: inst 7
+05/12/14 06:44:09 WARNING: SUM: multdriver 0
+05/12/14 06:44:09 WARNING: SUM: nodriver 0
+05/12/14 06:44:09 WARNING: SUM: noload 0
+05/12/14 06:44:09 WARNING: SUM: openports 0
+05/12/14 06:44:09 WARNING: SUM: warnings 4
+05/12/14 06:44:09 WARNING: SUM: === Number of parsed input tables: ===
+05/12/14 06:44:09 WARNING: SUM: conf 0
+05/12/14 06:44:09 WARNING: SUM: hier 1
+05/12/14 06:44:09 WARNING: SUM: conn 1
+05/12/14 06:44:09 WARNING: SUM: io 0
+05/12/14 06:44:09 WARNING: SUM: i2c 0
+05/12/14 06:44:09 WARNING: SUM: Number of changes in intermediate: 1
+05/12/14 06:44:09 WARNING: SUM: Number of changed files: 1
