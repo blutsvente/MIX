@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.112 $                                         |
+# | Revision:   $Revision: 1.113 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/04/10 15:50:09 $                              |
+# | Date:       $Date: 2006/04/12 15:36:36 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.112 2006/04/10 15:50:09 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.113 2006/04/12 15:36:36 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.113  2006/04/12 15:36:36  wig
+# | Updates for xls2csv added, new ooolib
+# |
 # | Revision 1.112  2006/04/10 15:50:09  wig
 # | Fixed various issues with logging and global, added mif test case (report portlist)
 # |
@@ -169,11 +172,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.112 2006/04/10 15:50:09 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.113 2006/04/12 15:36:36 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.112 $';         #'
+my $thisrevision        =      '$Revision: 1.113 $';         #'
 
-# Revision:   $Revision: 1.112 $   
+# Revision:   $Revision: 1.113 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1191,18 +1194,6 @@ sub mix_utils_open_diff ($;$) {
 		}
 		@ocont = <$ofh>; #Slurp in file to compare against
 		chomp( @ocont );
-
-=head1 OLD
-
-		my $switches = ( $flag eq 'verify' ) ? $eh->get( 'check.hdlout.delta' ) :
-			$eh->get( 'output.delta' );
-		$switches = $eh->get( 'output.delta' ) unless $switches;
-    
-    	# Get data in clean format ....
-    	$ocontr = mix_utils_clean_data( \@ocont, $c, $switches );
-
-=cut
-
 		close( $ofh ) or $logger->error( '__E_FILE_CLOSE',
 			"\tCannot close org $file in delta mode: $!" );
     } else {
@@ -3205,7 +3196,7 @@ sub mix_utils_init_file($) {
 		$output = pop( @descr );
     } elsif ( scalar( @descr ) < 1 ) {
 		# User has not given an output file name -> take directory name
-		if ( defined $OPTVAL{'dir'} and $OPTVAL{'dir'} ne "." ) {
+		if ( defined $OPTVAL{'dir'} and $OPTVAL{'dir'} ne '.' ) {
 	    	$output = $OPTVAL{'dir'} . '/' . basename( $OPTVAL{'dir'} );
 		} else {
 	    	$output = $eh->get( 'cwd' ) . '/' . basename($eh->get( 'cwd' ));

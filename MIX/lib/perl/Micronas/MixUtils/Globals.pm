@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.9 $                                          |
+# | Revision:   $Revision: 1.10 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/04/11 13:38:01 $                              |
+# | Date:       $Date: 2006/04/12 15:36:36 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.10  2006/04/12 15:36:36  wig
+# | Updates for xls2csv added, new ooolib
+# |
 # | Revision 1.9  2006/04/11 13:38:01  wig
 # | Added verimap config: wrap verilog module header into ifdef/else/endif
 # |
@@ -77,9 +80,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.9 2006/04/11 13:38:01 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.10 2006/04/12 15:36:36 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.9 $';  
+my $thisrevision    =      '$Revision: 1.10 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1221,6 +1224,7 @@ sub init {
                # wrapnl: wrap embedded new-line to space
                # masknl: replace newline by \\n
                # maxwidth: make all lines contain maxwidth - 1 seperators
+           'delta'   => 'DIFF:', # Value to prepend in CSV file to changed cell
        },
        'xls' => {
        		'maxcelllength' => 500, # Limit number of characters in ExCEL cells
@@ -1266,8 +1270,7 @@ sub init {
 			'crossref' => 'yes',	# Print crossrefs, set to "no"
 		}, 				
 	};
-	
-#OLD: );
+
 	#
 	# Generate some data dynamically
 	#

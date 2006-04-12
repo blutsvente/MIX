@@ -17,24 +17,11 @@
 
 # You can contact me by email at joseph@colton.byuh.edu.
 package ooolib;
-use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
-
-require Exporter;
-
-@ISA=qw(Exporter);
-
-@EXPORT  = qw(
-	      oooData
-	      oooSpecial
-	      oooInit
-	      oooSet
-	      oooGenerate
-	      oooError);
+use Carp;
 
 # API Function Calls
 sub oooData;          # Formats input with current options
 sub oooSpecial;       # Adds special data to the document: brakes, tables?
-sub oooInit;          # Takes type as arg and clears out data
 sub oooSet;           # arg1 variable name, arg2 value/data
 sub oooGenerate;      # arg1 filename|null returns filename
 sub oooError;         # returns last error message
@@ -57,24 +44,102 @@ sub oooStyleName;     # Returns the name of the style to use
 my($MINX, $MINY, $MAXX, $MAXY);
 $MINX = $MINY = 1;
 $MAXX = $MAXY = 32000;
-my ($version, %options, %cellhash, @documenttext, @keywords);
-$version="0.1.5";
+my($version, %options, %cellhash, @documenttext, @keywords, @fontdecls);
+$version="0.1.7";
 
 ##################
 # Function Calls #
 ##################
+sub new {
+    my($type);
+    my($package, $newtype, $opt) = @_;
+    $type = $newtype;
+    $type = "sxw" unless ($type);
+
+    if ($opt) {if ($opt =~ /debug/) {$options{debug} = 1;}}
+    if ($opt) {if ($opt =~ /zip/) {$options{zip} = 1;}}
+
+    # Set default values
+    $cellhash{x} = 1;
+    $cellhash{y} = 1;
+    $cellhash{xmax} = 1;
+    $cellhash{ymax} = 1;
+
+    # Formatting
+    $options{"nextstyle"} = 1;
+    $options{"nextstyle table-column"} = 2;
+    $options{"nextstyle table-cell"} = 1;
+    $options{nextlist} = 1;
+    $options{justify} = "left";
+    $options{bold} = "off";
+    $options{italic} = "off";
+    $options{underline} = "off";
+    $options{textcolor} = "000000";
+    $options{textbgcolor} = "FFFFFF";
+    $options{textsize} = "12";
+    $options{textsize_default} = "12";
+    $options{textsize_min} = "6";
+    $options{textsize_max} = "96";
+
+    # Default Font
+    push(@fontdecls, "<style:font-decl style:name=\"Times\" fo:font-family=\"Times\" style:font-family-generic=\"roman\" style:font-pitch=\"variable\"/>");
+    $options{fontname} = "Times";
+    $options{"font-decl Times"} = $options{fontname};
+
+    # Used for auto-incrementing cells after giving values
+    $cellhash{xauto} = 0;
+    $cellhash{yauto} = 0;
+
+    # User defined meta variables
+    $options{"info1 name"} = "Info 1";
+    $options{"info2 name"} = "Info 2";
+    $options{"info3 name"} = "Info 3";
+    $options{"info4 name"} = "Info 4";
+
+    # Set all knowns
+    $options{type} = $type;
+    $options{time} = time;
+    $options{pid} = $$;
+
+    bless \$package;
+}
+
+sub ooolib_sxc_cell_StyleName {
+    # Uses these numbers to keep track of which styles have been created
+    my(@prop);
+
+    # Default style
+    if ($options{bold} ne "on" &&
+	$options{italic} ne "on" &&
+	$options{textcolor} eq "000000") {return "ro1";}
+
+    if ($options{bold} eq "on") {push(@prop, "fo:font-weight=\"bold\"");}
+    if ($options{italic} eq "on") {push(@prop, "fo:font-style=\"italic\"");}
+    if ($options{textcolor} ne "000000") {push(@prop, "fo:color=\"#$options{textcolor}\"");}
+
+    my($propline) = join(" ", @prop);
+
+    if ($option{"cell-style $propline"}) {return $option{"cell-style $propline"};}
+    my($num) = $options{"nextstyle table-cell"};
+    $options{"nextstyle table-cell"}++;
+    my($style) = "ce$num";
+
+    push(@ooolib_sxc_cell_styles, "<style:style style:name=\"$style\" style:family=\"table-cell\" style:parent-style-name=\"Default\">");
+    push(@ooolib_sxc_cell_styles, "<style:properties $propline/>");
+    push(@ooolib_sxc_cell_styles, "</style:style>");
+
+    return $style;
+}
+
 sub oooStyleName {
     # Returns the name of the style to use
+    my($self) = shift(@_);
     my($style) = @_;
     my($i, $b, $u, $j, $idx, $stylenum);
     my($it, $bt, $ut, $jt, $prop);
     my($tc, $tb, $tct, $tbt); # Text color/background
     my($ts, $tst); # text size tag
-
-    unless($options{init}) {
-	$errormessage = "Please run oooInit first";
-	return "error";
-    }
+    my($fn, $fnt); # font name tag
 
     # Uses these numbers to keep track of which styles have been created
     $j = $options{justify};
@@ -84,6 +149,8 @@ sub oooStyleName {
     $tc = $options{textcolor};
     $tb = $options{textbgcolor};
     $ts = $options{textsize};
+    $fn = $options{fontname};
+
 
     if ($style =~ /^h/ && $j eq "left") {
 	return $style;
@@ -91,13 +158,14 @@ sub oooStyleName {
     if ($j eq "left" && $b eq "off" &&
 	$i eq "off" && $u eq "off" &&
 	$tc eq "000000" && $tb eq "FFFFFF" &&
-	$ts eq $options{textsize_default}) {
+	$ts eq $options{textsize_default} &&
+	$fn eq "Times") {
 	# Nothing special needs to be done
 	return $style;
     }
 
     # A style needs to be looked up or created
-    $idx = "$style $j $b $i $u $tc $tb $ts";
+    $idx = "$style $j $b $i $u $tc $tb $ts $fn";
     if ($style =~ /^h/) {$idx = "$style $j";}
     if ($options{$idx}) {return $options{$idx};}
 
@@ -105,10 +173,10 @@ sub oooStyleName {
     $options{nextstyle}++;
     $options{$idx} = $stylenum;
 
-    if ($options{justify} eq "left") {$jt = "fo:text-align=\"start\" style:justify-single-word=\"false\" ";}
-    if ($options{justify} eq "right") {$jt = "fo:text-align=\"end\" style:justify-single-word=\"false\" ";}
-    if ($options{justify} eq "center") {$jt = "fo:text-align=\"center\" style:justify-single-word=\"false\" ";}
-    if ($options{justify} eq "block") {$jt = "fo:text-align=\"justify\" style:justify-single-word=\"false\" ";}
+    if ($j eq "left") {$jt = "fo:text-align=\"start\" style:justify-single-word=\"false\" ";}
+    if ($j eq "right") {$jt = "fo:text-align=\"end\" style:justify-single-word=\"false\" ";}
+    if ($j eq "center") {$jt = "fo:text-align=\"center\" style:justify-single-word=\"false\" ";}
+    if ($j eq "block") {$jt = "fo:text-align=\"justify\" style:justify-single-word=\"false\" ";}
 
     if ($options{bold} eq "on") {
 	$bt = "fo:font-weight=\"bold\" style:font-weight-asian=\"bold\" style:font-weight-complex=\"bold\" ";	
@@ -146,13 +214,16 @@ sub oooStyleName {
 	$tst = "";
     }
 
+    $fnt = "";
+    if ($fn) {$fnt = "style:font-name=\"${fn}\" ";}
+
     if ($style =~ /^h/) {
 	push(@autostyles, "<style:style style:name=\"$stylenum\" style:family=\"paragraph\" style:parent-style-name=\"$style\">");
 	push(@autostyles, "<style:properties ${jt}/>");
 	push(@autostyles, "</style:style>");
     } else {
 	push(@autostyles, "<style:style style:name=\"$stylenum\" style:family=\"paragraph\" style:parent-style-name=\"$style\">");
-	push(@autostyles, "<style:properties ${tct}${tbt}${tst}${bt}${it}${ut}${jt}/>");
+	push(@autostyles, "<style:properties ${tct}${tbt}${tst}${bt}${it}${ut}${jt}${fnt}/>");
 	push(@autostyles, "</style:style>");
     }
 
@@ -161,11 +232,8 @@ sub oooStyleName {
 
 sub oooSpecial {
     # Adds special data to the document: brakes, tables?
+    my($self) = shift(@_);
     my($style) = shift(@_);
-    unless($options{init}) {
-	$errormessage = "Please run oooInit first";
-	return "error";
-    }
     unless($style) {
 	$errormessage = "This function requires at least one argument";
 	return "error";
@@ -265,13 +333,10 @@ sub oooSpecial {
 }
 
 sub oooData {
+    my($self) = shift(@_);
     my($style, $origtext) = @_;
     my($text, $stylename);
 
-    unless($options{init}) {
-	$errormessage = "Please run oooInit first";
-	return "error";
-    }
     unless($style) {
 	$errormessage = "This function requires at least two arguments";
 	return "error";
@@ -327,6 +392,7 @@ sub oooData {
 	$cellhash{"$x $y type"} = "float";
 	$cellhash{"$x $y value"} = $text;
 	$cellhash{"$x $y format"} = "";
+	$cellhash{"$x $y style"} = &ooolib_sxc_cell_StyleName;
 
 	&oooCellUpdate;
     } elsif ($style eq "cell-text") {
@@ -337,6 +403,18 @@ sub oooData {
 	$cellhash{"$x $y type"} = "text";
 	$cellhash{"$x $y value"} = $text;
 	$cellhash{"$x $y format"} = "";
+	$cellhash{"$x $y style"} = &ooolib_sxc_cell_StyleName;
+
+	&oooCellUpdate;
+    } elsif ($style eq "cell-formula") {
+	# cell-formula code from Vladimir Vuksan
+        my($x, $y);
+        $x = $cellhash{x};
+	$y = $cellhash{y};
+	$cellhash{"$x $y type"} = "formula";
+	$cellhash{"$x $y value"} = $text;
+	$cellhash{"$x $y format"} = "";
+	$cellhash{"$x $y style"} = &ooolib_sxc_cell_StyleName;
 
 	&oooCellUpdate;
     } elsif ($style eq "cell-skip") {
@@ -382,83 +460,19 @@ sub oooCleanText {
     my($text) = @_;
     $text =~ s/\&/\&amp;/g;
     $text =~ s/'/\&apos;/g;
+    $text =~ s/\"/\&quot;/g; # Path from Vladimir Vuksan
     $text =~ s/</\&lt;/g;
     $text =~ s/>/\&gt;/g;
+    $text =~ s/\t/<text:tab-stop\/>/g;
+    $text =~ s/([^\x20-\x7F])/'&#' . ord($1) . ';'/gse; # from http://perl-xml.sourceforge.net/faq/#encoding_conversion
     return $text;
-}
-
-sub oooInit {
-    # Initialize data and clean out variables
-    my($type, $opt) = @_;
-    unless($type) {
-	$errormessage = "You must select the document type: sxw | sxc";
-	return "error";
-    }
-    if ($type ne "sxw" && $type ne "sxc") {
-	$errormessage = "Invalid type \"$type\", valid types: sxw | sxc";
-	return "error";
-    }
-
-    # Clean out data variables
-    undef(%options);
-    undef(@documenttext);
-    undef(@keywords);
-    undef(%cellhash);
-    undef($errormessage);
-    undef(@autostyles);
-    undef(@autolists);
-
-    if ($opt) {
-	if ($opt eq "debug") {$options{debug} = 1;}
-    }
-
-    # Set default values
-    $cellhash{x} = 1;
-    $cellhash{y} = 1;
-    $cellhash{xmax} = 1;
-    $cellhash{ymax} = 1;
-
-    # Formatting
-    $options{nextstyle} = 1;
-    $options{nextlist} = 1;
-    $options{justify} = "left";
-    $options{bold} = "off";
-    $options{italic} = "off";
-    $options{underline} = "off";
-    $options{textcolor} = "000000";
-    $options{textbgcolor} = "FFFFFF";
-    $options{textsize} = "12";
-    $options{textsize_default} = "12";
-    $options{textsize_min} = "6";
-    $options{textsize_max} = "96";
-
-    # Used for auto-incrementing cells after giving values
-    $cellhash{xauto} = 0;
-    $cellhash{yauto} = 0;
-
-    # User defined meta variables
-    $options{"info1 name"} = "Info 1";
-    $options{"info2 name"} = "Info 2";
-    $options{"info3 name"} = "Info 3";
-    $options{"info4 name"} = "Info 4";
-
-    # Set all knowns
-    $options{init} = "init";
-    $options{type} = $type;
-    $options{time} = time;
-    $options{pid} = $$;
-
-    return "ok";
 }
 
 sub oooSet {
     # Set variables in the options hash
+    $self = shift(@_);
     my($name) = shift(@_);
     
-    unless($options{init}) {
-	$errormessage = "Please run oooInit first";
-	return "error";
-    }
     unless($name) {
 	$errormessage = "Usage: \&oooSet(\"name\", arg2, arg3, etc.);";
 	return "error";
@@ -475,7 +489,7 @@ sub oooSet {
 	$options{subject} = &oooCleanText($value);
     } elsif ($name eq "comments") {
 	my($value) = shift(@_);
-        $options{comments} = &oooCleanText($value);
+	$options{comments} = &oooCleanText($value);
     } elsif ($name eq "builddir") {
 	my($value) = shift(@_);
 	$options{builddir} = $value;
@@ -494,9 +508,19 @@ sub oooSet {
     } elsif ($name eq "cell-loc") {
         # Set the writing cell
 	my($x, $y) = @_;
+
+	if ($x =~ /[a-zA-Z]/) {
+	    ($x, $y) = &ooosxcCellLocConv($x);
+	}
+
 	$cellhash{x} = $x;
 	$cellhash{y} = $y;
 	&oooCellCheck;
+    } elsif ($name eq "column-width") {
+	# Set width of column
+	my($col) = shift(@_);
+	my($width) = shift(@_);
+	$cellhash{"column $col width"} = $width;
     } elsif ($name eq "cell-left") {
 	# Subtract 1 from x
 	$cellhash{x}--;
@@ -625,6 +649,117 @@ sub oooSet {
 		return "error";
 	    }
 	}
+    } elsif ($name eq "text-font") {
+	my($value) = @_;
+	if ($options{"font-decl $value"}) {
+	    $options{fontname} = $options{"font-decl $value"};
+	} else {
+	    if ($value eq "Arial") {
+		push(@fontdecls, "<style:font-decl style:name=\"Arial\" fo:font-family=\"Arial\" style:font-family-generic=\"swiss\" style:font-pitch=\"variable\"/>");
+		$options{fontname} = "Arial";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	    if ($value eq "Bitstream Vera Sans") {
+		push(@fontdecls, "<style:font-decl style:name=\"Bitstream Vera Sans\" fo:font-family=\"\&apos;Bitstream Vera Sans\&apos;\" style:font-pitch=\"variable\"/>");
+		$options{fontname} = "Bitstream Vera Sans";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	    if ($value eq "Bitstream Vera Serif") {
+		push(@fontdecls, "<style:font-decl style:name=\"Bitstream Vera Serif\" fo:font-family=\"\&apos;Bitstream Vera Serif\&apos;\" style:font-family-generic=\"roman\" style:font-pitch=\"variable\"/>");
+		$options{fontname} = "Bitstream Vera Serif";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	    if ($value eq "Bookman") {
+		push(@fontdecls, "<style:font-decl style:name=\"Bookman\" fo:font-family=\"Bookman\" style:font-pitch=\"variable\"/>");
+		$options{fontname} = "Bookman";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	    if ($value eq "Courier") {
+		push(@fontdecls, "<style:font-decl style:name=\"Courier\" fo:font-family=\"Courier\" style:font-family-generic=\"modern\" style:font-pitch=\"fixed\"/>");
+		$options{fontname} = "Courier";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	    if ($value eq "Courier 10 Pitch") {
+		push(@fontdecls, "<style:font-decl style:name=\"Courier 10 Pitch\" fo:font-family=\"\&apos;Courier 10 Pitch\&apos;\" style:font-pitch=\"fixed\"/>");
+		$options{fontname} = "Courier 10 Pitch";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	    if ($value eq "Helvetica") {
+		push(@fontdecls, "<style:font-decl style:name=\"Helvetica\" fo:font-family=\"Helvetica\" style:font-family-generic=\"swiss\" style:font-pitch=\"variable\"/>");
+		$options{fontname} = "Helvetica";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	    if ($value eq "Lucidabright") {
+		push(@fontdecls, "<style:font-decl style:name=\"Lucidabright\" fo:font-family=\"Lucidabright\" style:font-pitch=\"variable\"/>");
+		$options{fontname} = "Lucidabright";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	    if ($value eq "Lucidasans") {
+		push(@fontdecls, "<style:font-decl style:name=\"Lucidasans\" fo:font-family=\"Lucidasans\" style:font-pitch=\"variable\"/>");
+		$options{fontname} = "Lucidasans";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	    if ($value eq "Lucida Sans Unicode") {
+		push(@fontdecls, "<style:font-decl style:name=\"Lucida Sans Unicode\" fo:font-family=\"\&apos;Lucida Sans Unicode\&apos;\" style:font-pitch=\"variable\"/>");
+		$options{fontname} = "Lucida Sans Unicode";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	    if ($value eq "Lucidatypewriter") {
+		push(@fontdecls, "<style:font-decl style:name=\"Lucidatypewriter\" fo:font-family=\"Lucidatypewriter\" style:font-pitch=\"fixed\"/>");
+		$options{fontname} = "Lucidatypewriter";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	    if ($value eq "Luxi Mono") {
+		push(@fontdecls, "<style:font-decl style:name=\"Luxi Mono\" fo:font-family=\"\&apos;Luxi Mono\&apos;\" style:font-pitch=\"fixed\" style:font-charset=\"x-symbol\"/>");
+		$options{fontname} = "Luxi Mono";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	    if ($value eq "Luxi Sans") {
+		push(@fontdecls, "<style:font-decl style:name=\"Luxi Sans\" fo:font-family=\"\&apos;Luxi Sans\&apos;\" style:font-pitch=\"variable\" style:font-charset=\"x-symbol\"/>");
+		$options{fontname} = "Luxi Sans";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	    if ($value eq "Luxi Serif") {
+		push(@fontdecls, "<style:font-decl style:name=\"Luxi Serif\" fo:font-family=\"\&apos;Luxi Serif\&apos;\" style:font-pitch=\"variable\" style:font-charset=\"x-symbol\"/>");
+		$options{fontname} = "Luxi Serif";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	    if ($value eq "Symbol") {
+		push(@fontdecls, "<style:font-decl style:name=\"Symbol\" fo:font-family=\"Symbol\" style:font-pitch=\"variable\" style:font-charset=\"x-symbol\"/>");
+		$options{fontname} = "Symbol";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	    if ($value eq "Tahoma") {
+		push(@fontdecls, "<style:font-decl style:name=\"Tahoma\" fo:font-family=\"Tahoma\" style:font-pitch=\"variable\"/>");
+		$options{fontname} = "Tahoma";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	    if ($value eq "Times") {
+		push(@fontdecls, "<style:font-decl style:name=\"Times\" fo:font-family=\"Times\" style:font-family-generic=\"roman\" style:font-pitch=\"variable\"/>");
+		$options{fontname} = "Times";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	    if ($value eq "Times New Roman") {
+		push(@fontdecls, "<style:font-decl style:name=\"Times New Roman\" fo:font-family=\"\&apos;Times New Roman\&apos;\" style:font-family-generic=\"roman\" style:font-pitch=\"variable\"/>");
+		$options{fontname} = "Times New Roman";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	    if ($value eq "Utopia") {
+		push(@fontdecls, "<style:font-decl style:name=\"Utopia\" fo:font-family=\"Utopia\" style:font-family-generic=\"roman\" style:font-pitch=\"variable\"/>");
+		$options{fontname} = "Utopia";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	    if ($value eq "Zapf Chancery") {
+		push(@fontdecls, "<style:font-decl style:name=\"Zapf Chancery\" fo:font-family=\"\&apos;Zapf Chancery\&apos;\" style:font-pitch=\"variable\"/>");
+		$options{fontname} = "Zapf Chancery";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	    if ($value eq "Zapf Dingbats") {
+		push(@fontdecls, "<style:font-decl style:name=\"Zapf Dingbats\" fo:font-family=\"\&apos;Zapf Dingbats\&apos;\" style:font-pitch=\"variable\" style:font-charset=\"x-symbol\"/>");
+		$options{fontname} = "Zapf Dingbats";
+		$options{"font-decl $value"} = $options{fontname};
+	    }
+	}
     }
     return "ok";
     
@@ -632,11 +767,8 @@ sub oooSet {
 
 sub oooGenerate {
     # Create the document and return a filename
+    my($self) = shift(@_);
     my($filename) = @_;
-    unless($options{init}) {
-	$errormessage = "Please run oooInit first";
-	return "error";
-    }
 
     my($cdloc, $builddir, $type);
     $builddir = $options{builddir};
@@ -665,32 +797,45 @@ sub oooGenerate {
     }
 
     # Create the files
-    if ($options{debug}) {print "Writing XML\n";}
+    if ($options{debug}) {
+	print "Writing XML files in \"$builddir\"\n";
+    }
     &oooWriteMimetype($builddir, $type);
     &oooWriteContent($builddir, $type);
     &oooWriteStyles($builddir, $type);
     &oooWriteMeta($builddir, $type);
     &oooWriteSettings($builddir, $type);
     &oooWriteManifest($builddir, $type);
-
+    
     $cdloc = "cd $builddir";
 
-    if ($options{debug}) {print "Writing $type\n";}
+    if ($options{debug}) {print "Building $type file from XML\n";}
 
-    my $zip = Archive::Zip->new();
-    $zip->addFile("mimetype");
-    $zip->addFile("content.xml");
-    $zip->addFile("styles.xml");
-    $zip->addFile("meta.xml");
-    $zip->addFile("settings.xml");
-    $zip->addDirectory("MIME-INF");
-    $zip->addFile("manifest.xml");
-    die 'write error' unless $zip->writeToFileNamed( $filename) == AZ_OK;
-    undef $zip;
+    # Decide which method to use.  zip command or Perl Module.
+    if ($options{zip}) {
+	# You will be required to pass the option zip to use the zip command
+	system("$cdloc; zip -r '$filename' mimetype > /dev/null 2> /dev/null");
+	system("$cdloc; zip -r '$filename' content.xml > /dev/null 2> /dev/null");
+	system("$cdloc; zip -r '$filename' styles.xml > /dev/null 2> /dev/null");
+	system("$cdloc; zip -r '$filename' meta.xml > /dev/null 2> /dev/null");
+	system("$cdloc; zip -r '$filename' settings.xml > /dev/null 2> /dev/null");
+	system("$cdloc; zip -r '$filename' META-INF/manifest.xml > /dev/null 2> /dev/null");
+    } else {
+	# The Archive::Zip perl module is now the default
+	use Archive::Zip;
+	my $zip = Archive::Zip->new();
+	$zip->addFile("$builddir/mimetype", 'mimetype');
+	$zip->addFile("$builddir/content.xml", 'content.xml');
+	$zip->addFile("$builddir/styles.xml", 'styles.xml');
+	$zip->addFile("$builddir/meta.xml", 'meta.xml');
+	$zip->addFile("$builddir/settings.xml", 'settings.xml');
+	$zip->addFile("$builddir/META-INF/manifest.xml", 'META-INF/manifest.xml');
+	$zip->writeToFileNamed("$builddir/$filename");
+    }
 
     # Clean up
     if ($options{debug}) {
-	print "Halting Clean-up\n";
+	print "Skipping Clean-up\n";
     } else {
 	unlink("$builddir/mimetype");
 	unlink("$builddir/content.xml");
@@ -699,7 +844,6 @@ sub oooGenerate {
 	unlink("$builddir/settings.xml");
 	unlink("$builddir/META-INF/manifest.xml");
 	rmdir("$builddir/META-INF");
-	rmdir("$builddir/MIME-INF");
     }
 
     # Return the filename
@@ -707,8 +851,63 @@ sub oooGenerate {
 }
 
 # SXC specific function calls
+sub ooosxcCellLocConv {
+    # Convert A1 to 1,1
+    my($id) = @_;
+    my($xstr, $ystr, @xarray);
+    my($x, $y, $ch);
+
+    $id =~ tr/[a-z]/[A-Z]/;
+    $x = 0;
+
+    if($id =~ /([A-Z]+)([0-9]+)/) {
+	$xstr = $1;
+	$ystr = $2;
+
+	@xarray = split(//, $xstr);
+	while (@xarray) {
+	    $ch = shift(@xarray);
+
+	    # I forgot how to do this in one line.
+	    if ($ch eq "A") {$x += 1;}
+	    if ($ch eq "B") {$x += 2;}
+	    if ($ch eq "C") {$x += 3;}
+	    if ($ch eq "D") {$x += 4;}
+	    if ($ch eq "E") {$x += 5;}
+	    if ($ch eq "F") {$x += 6;}
+	    if ($ch eq "G") {$x += 7;}
+	    if ($ch eq "H") {$x += 8;}
+	    if ($ch eq "I") {$x += 9;}
+	    if ($ch eq "J") {$x += 10;}
+	    if ($ch eq "K") {$x += 11;}
+	    if ($ch eq "L") {$x += 12;}
+	    if ($ch eq "M") {$x += 13;}
+	    if ($ch eq "N") {$x += 14;}
+	    if ($ch eq "O") {$x += 15;}
+	    if ($ch eq "P") {$x += 16;}
+	    if ($ch eq "Q") {$x += 17;}
+	    if ($ch eq "R") {$x += 18;}
+	    if ($ch eq "S") {$x += 19;}
+	    if ($ch eq "T") {$x += 20;}
+	    if ($ch eq "U") {$x += 21;}
+	    if ($ch eq "V") {$x += 22;}
+	    if ($ch eq "W") {$x += 23;}
+	    if ($ch eq "X") {$x += 24;}
+	    if ($ch eq "Y") {$x += 25;}
+	    if ($ch eq "Z") {$x += 26;}
+
+	    # Increment the log
+	    if (@xarray) {$x *= 26;}
+	}
+
+	$y = $ystr+0;
+    }
+    return ($x, $y);
+}
+
 sub ooosxcCellLocation {
     # Set the writing cell
+    my($self) = shift(@_);
     my($x, $y) = @_;
     $cellx=$x;
     $celly=$y;
@@ -747,6 +946,7 @@ sub oooWriteMimetype {
     unless($builddir) {return;}
 
     $mimefile = "$builddir/mimetype";
+    if ($options{debug}) {print "  $mimefile\n";}
 
     # Open file for writing
     open(DATA, "> $mimefile");
@@ -765,6 +965,7 @@ sub oooWriteContent {
     unless($builddir) {return;}
 
     $contentfile = "$builddir/content.xml";
+    if ($options{debug}) {print "  $contentfile\n";}
 
     # Open file for writing
     open(DATA, "> $contentfile");
@@ -783,12 +984,19 @@ sub oooWriteContent {
 	print DATA "<office:script/>";
 	
 	# Fonts
-	print DATA "<office:font-decls>";
-	print DATA "<style:font-decl style:name=\"Tahoma\" fo:font-family=\"Tahoma\"/>";
-	print DATA "<style:font-decl style:name=\"Tahoma1\" fo:font-family=\"Tahoma\" style:font-pitch=\"variable\"/>";
-	print DATA "<style:font-decl style:name=\"Times New Roman\" fo:font-family=\"&apos;Times New Roman&apos;\" style:font-family-generic=\"roman\" style:font-pitch=\"variable\"/>";
-	print DATA "</office:font-decls>";
-	
+	if (@fontdecls) {
+	    print DATA "<office:font-decls>";
+	    foreach $line (@fontdecls) {
+		if ($options{debug}) {
+		    print DATA "$line\n";
+		} else {
+		    print DATA "$line";
+		}
+	    }
+
+	    print DATA "</office:font-decls>";
+	}
+
 	# Styles line bold, center, etc.
 	if (@autostyles) {
 	    my($autostyle);
@@ -852,52 +1060,103 @@ sub oooWriteContent {
 	print DATA "<office:script/>";
 	
 	# Fonts
-	print DATA "<office:font-decls>";
-	
-	print DATA "<style:font-decl style:name=\"Tahoma\" fo:font-family=\"Tahoma\" style:font-pitch=\"variable\"/>";
-	print DATA "<style:font-decl style:name=\"Arial\" fo:font-family=\"Arial\" style:font-family-generic=\"swiss\" style:font-pitch=\"variable\"/>";
-	
-	print DATA "</office:font-decls>";
+	if (@fontdecls) {
+	    print DATA "<office:font-decls>";
+	    foreach $line (@fontdecls) {
+		if ($options{debug}) {
+		    print DATA "$line\n";
+		} else {
+		    print DATA "$line";
+		}
+	    }
+
+	    print DATA "</office:font-decls>";
+	}
 	
 	# Styles
 	print DATA "<office:automatic-styles>";
 	
-	# Resize on column width
+	my($x, $y);
+	# table-column styles
+
 	print DATA "<style:style style:name=\"co1\" style:family=\"table-column\">";
 	print DATA "<style:properties fo:break-before=\"auto\" style:column-width=\"2.267cm\"/>";
 	print DATA "</style:style>";
+
+	# Default values
+	my($columnwidth) = "2.267";
+
+	for($x=1;$x<=$cellhash{xmax};$x++) {
+	    my($width) = $cellhash{"column $x width"};
+	    unless($width) {$width = $columnwidth;}
+	    if ($width ne $columnwidth) {
+		# Create a new style
+		my($num) = $options{"nextstyle table-column"};
+		$options{"nextstyle table-column"}++;
+		my($width) = sprintf("%5.3f",$width);
+		print DATA "<style:style style:name=\"co$num\" style:family=\"table-column\">";
+		print DATA "<style:properties fo:break-before=\"auto\" style:column-width=\"${width}cm\"/>";
+		print DATA "</style:style>";
+		$cellhash{"column $x style"} = "co$num";
+	    } else {
+		$cellhash{"column $x style"} = "co1";
+	    }
+	}
 	
+	# table-row styles
 	print DATA "<style:style style:name=\"ro1\" style:family=\"table-row\">";
 	print DATA "<style:properties fo:break-before=\"auto\"/>";
 	print DATA "</style:style>";
 	
+	# table styles
 	print DATA "<style:style style:name=\"ta1\" style:family=\"table\" style:master-page-name=\"Default\">";
 	print DATA "<style:properties table:display=\"true\"/>";
 	print DATA "</style:style>";
-	
+
+	# table-cell styles
+	if (@ooolib_sxc_cell_styles) {
+	    foreach $line (@ooolib_sxc_cell_styles) {
+		print DATA $line;
+	    }
+	}
+
 	print DATA "</office:automatic-styles>";
 	
 	# Beginning of document content
 	print DATA "<office:body>";
 	
 	print DATA "<table:table table:name=\"Sheet1\" table:style-name=\"ta1\">";
-	print DATA "<table:table-column table:style-name=\"co1\" table:number-columns-repeated=\"3\" table:default-cell-style-name=\"Default\"/>";
-	
-	my($x, $y);
-	# One row at a time
+
+	# First tell the document what each of the column style codes are.
+	for($x=1;$x<=$cellhash{xmax};$x++) {
+	    # Each Column
+	    my($style) = $cellhash{"column $x style"};
+	    print DATA "<table:table-column table:style-name=\"$style\" table:number-columns-repeated=\"1\" table:default-cell-style-name=\"Default\"/>";
+	}
+
+	# Row by row print the cells
 	for($y=1;$y<=$cellhash{ymax};$y++) {
-	    # One cell at a time down the row
+	    # One column cell at a time down the row
 	    print DATA "<table:table-row table:style-name=\"ro1\">";
 	    for($x=1;$x<=$cellhash{xmax};$x++) {
-		$celltype = $cellhash{"$x $y type"};
-		$value = $cellhash{"$x $y value"};
+		# Load information about the cell
+		my($celltype) = $cellhash{"$x $y type"};
+		my($value) = $cellhash{"$x $y value"};
+		my($style) = $cellhash{"$x $y style"};
+		unless($style) {$style = "ro1";}
+		
 		if ($celltype eq "text") {
-		    print DATA "<table:table-cell>";
+		    print DATA "<table:table-cell table:style-name=\"$style\">";
 		    print DATA "<text:p>$value</text:p>";
 		    print DATA "</table:table-cell>";
 		} elsif ($celltype eq "float") {
-		    print DATA "<table:table-cell table:value-type=\"float\" table:value=\"$value\">";
+		    print DATA "<table:table-cell table:value-type=\"float\" table:value=\"$value\" table:style-name=\"$style\">";
 		    print DATA "<text:p>$value</text:p>";
+		    print DATA "</table:table-cell>";
+		} elsif ($celltype eq "formula") {
+		    # cell-formula code from Vladimir Vuksan
+		    print DATA "<table:table-cell table:value-type=\"float\" table:formula=\"$value\" table:value=\"\" table:style-name=\"$style\">";
+		    print DATA "<text:p></text:p>";
 		    print DATA "</table:table-cell>";
 		} else {
 		    print DATA "<table:table-cell/>";
@@ -905,8 +1164,7 @@ sub oooWriteContent {
 	    }
 	    print DATA "</table:table-row>";
 	}
-	
-	
+
 	# Closing document
 	print DATA "</table:table>";
 	print DATA "</office:body>";
@@ -922,6 +1180,8 @@ sub oooWriteMeta {
     unless($builddir) {return;}
 
     $metafile = "$builddir/meta.xml";
+    if ($options{debug}) {print "  $metafile\n";}
+
     $metadate = &oooTimeStamp;
     
     open(DATA, "> $metafile");
@@ -945,6 +1205,7 @@ sub oooWriteMeta {
     $comments = $options{comments};
     $subject = $options{subject};
     $author = $options{author};
+    $type = $options{type};
 
     print DATA "<dc:title>$title</dc:title>";
     print DATA "<dc:description>$comments</dc:description>";
@@ -1003,7 +1264,8 @@ sub oooWriteStyles {
     unless($builddir) {return;}
 
     $stylefile = "$builddir/styles.xml";
-    
+    if ($options{debug}) {print "  $stylefile\n";}
+
     open(DATA, "> $stylefile");
 
     if ($type eq "sxw") {
@@ -1011,32 +1273,40 @@ sub oooWriteStyles {
 	
 	print DATA "<!DOCTYPE office:document-styles PUBLIC \"-//OpenOffice.org//DTD OfficeDocument 1.0//EN\" \"office.dtd\">";
 	print DATA "<office:document-styles xmlns:office=\"http://openoffice.org/2000/office\" xmlns:style=\"http://openoffice.org/2000/style\" xmlns:text=\"http://openoffice.org/2000/text\" xmlns:table=\"http://openoffice.org/2000/table\" xmlns:draw=\"http://openoffice.org/2000/drawing\" xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:number=\"http://openoffice.org/2000/datastyle\" xmlns:svg=\"http://www.w3.org/2000/svg\" xmlns:chart=\"http://openoffice.org/2000/chart\" xmlns:dr3d=\"http://openoffice.org/2000/dr3d\" xmlns:math=\"http://www.w3.org/1998/Math/MathML\" xmlns:form=\"http://openoffice.org/2000/form\" xmlns:script=\"http://openoffice.org/2000/script\" office:version=\"1.0\">";
-	print DATA "<office:font-decls>";
-	print DATA "<style:font-decl style:name=\"Tahoma\" fo:font-family=\"Tahoma\"/>";
-	print DATA "<style:font-decl style:name=\"Tahoma1\" fo:font-family=\"Tahoma\" style:font-pitch=\"variable\"/>";
-	print DATA "<style:font-decl style:name=\"Times New Roman\" fo:font-family=\"&apos;Times New Roman&apos;\" style:font-family-generic=\"roman\" style:font-pitch=\"variable\"/>";
-	print DATA "</office:font-decls>";
+
+	if (@fontdecls) {
+	    print DATA "<office:font-decls>";
+	    foreach $line (@fontdecls) {
+		if ($options{debug}) {
+		    print DATA "$line\n";
+		} else {
+		    print DATA "$line";
+		}
+	    }
+
+	    print DATA "</office:font-decls>";
+	}
 	print DATA "<office:styles>";
 	print DATA "<style:default-style style:family=\"graphics\">";
-	print DATA "<style:properties draw:start-line-spacing-horizontal=\"0.283cm\" draw:start-line-spacing-vertical=\"0.283cm\" draw:end-line-spacing-horizontal=\"0.283cm\" draw:end-line-spacing-vertical=\"0.283cm\" style:use-window-font-color=\"true\" style:font-name=\"Times New Roman\" fo:font-size=\"12pt\" fo:language=\"en\" fo:country=\"US\" style:font-name-asian=\"Tahoma\" style:font-size-asian=\"12pt\" style:language-asian=\"ja\" style:country-asian=\"JP\" style:font-name-complex=\"Tahoma1\" style:font-size-complex=\"12pt\" style:language-complex=\"none\" style:country-complex=\"none\" style:text-autospace=\"ideograph-alpha\" style:line-break=\"strict\" style:writing-mode=\"lr-tb\">";
+	print DATA "<style:properties draw:start-line-spacing-horizontal=\"0.283cm\" draw:start-line-spacing-vertical=\"0.283cm\" draw:end-line-spacing-horizontal=\"0.283cm\" draw:end-line-spacing-vertical=\"0.283cm\" style:use-window-font-color=\"true\" style:font-name=\"Times New Roman\" fo:font-size=\"12pt\" fo:language=\"en\" fo:country=\"US\" style:font-name-asian=\"Times\" style:font-size-asian=\"12pt\" style:language-asian=\"ja\" style:country-asian=\"JP\" style:font-name-complex=\"Times\" style:font-size-complex=\"12pt\" style:language-complex=\"none\" style:country-complex=\"none\" style:text-autospace=\"ideograph-alpha\" style:line-break=\"strict\" style:writing-mode=\"lr-tb\">";
 	print DATA "<style:tab-stops/>";
 	print DATA "</style:properties>";
 	print DATA "</style:default-style>";
 	print DATA "<style:default-style style:family=\"paragraph\">";
-	print DATA "<style:properties style:use-window-font-color=\"true\" style:font-name=\"Times New Roman\" fo:font-size=\"12pt\" fo:language=\"en\" fo:country=\"US\" style:font-name-asian=\"Tahoma\" style:font-size-asian=\"12pt\" style:language-asian=\"ja\" style:country-asian=\"JP\" style:font-name-complex=\"Tahoma1\" style:font-size-complex=\"12pt\" style:language-complex=\"none\" style:country-complex=\"none\" fo:hyphenate=\"false\" fo:hyphenation-remain-char-count=\"2\" fo:hyphenation-push-char-count=\"2\" fo:hyphenation-ladder-count=\"no-limit\" style:text-autospace=\"ideograph-alpha\" style:punctuation-wrap=\"hanging\" style:line-break=\"strict\" style:tab-stop-distance=\"1.251cm\" style:writing-mode=\"page\"/>";
+	print DATA "<style:properties style:use-window-font-color=\"true\" style:font-name=\"Times New Roman\" fo:font-size=\"12pt\" fo:language=\"en\" fo:country=\"US\" style:font-name-asian=\"Times\" style:font-size-asian=\"12pt\" style:language-asian=\"ja\" style:country-asian=\"JP\" style:font-name-complex=\"Times\" style:font-size-complex=\"12pt\" style:language-complex=\"none\" style:country-complex=\"none\" fo:hyphenate=\"false\" fo:hyphenation-remain-char-count=\"2\" fo:hyphenation-push-char-count=\"2\" fo:hyphenation-ladder-count=\"no-limit\" style:text-autospace=\"ideograph-alpha\" style:punctuation-wrap=\"hanging\" style:line-break=\"strict\" style:tab-stop-distance=\"1.251cm\" style:writing-mode=\"page\"/>";
 	print DATA "</style:default-style>";
 	print DATA "<style:style style:name=\"Standard\" style:family=\"paragraph\" style:class=\"text\"/>";
 	print DATA "<style:style style:name=\"Text body\" style:family=\"paragraph\" style:parent-style-name=\"Standard\" style:class=\"text\">";
 	print DATA "<style:properties fo:margin-top=\"0cm\" fo:margin-bottom=\"0.212cm\"/>";
 	print DATA "</style:style>";
 	print DATA "<style:style style:name=\"List\" style:family=\"paragraph\" style:parent-style-name=\"Text body\" style:class=\"list\">";
-	print DATA "<style:properties style:font-name-asian=\"Tahoma\"/>";
+	print DATA "<style:properties style:font-name-asian=\"Times\"/>";
 	print DATA "</style:style>";
 	print DATA "<style:style style:name=\"Caption\" style:family=\"paragraph\" style:parent-style-name=\"Standard\" style:class=\"extra\">";
-	print DATA "<style:properties fo:margin-top=\"0.212cm\" fo:margin-bottom=\"0.212cm\" fo:font-size=\"10pt\" fo:font-style=\"italic\" style:font-name-asian=\"Tahoma\" style:font-size-asian=\"10pt\" style:font-style-asian=\"italic\" style:font-size-complex=\"10pt\" style:font-style-complex=\"italic\" text:number-lines=\"false\" text:line-number=\"0\"/>";
+	print DATA "<style:properties fo:margin-top=\"0.212cm\" fo:margin-bottom=\"0.212cm\" fo:font-size=\"10pt\" fo:font-style=\"italic\" style:font-name-asian=\"Times\" style:font-size-asian=\"10pt\" style:font-style-asian=\"italic\" style:font-size-complex=\"10pt\" style:font-style-complex=\"italic\" text:number-lines=\"false\" text:line-number=\"0\"/>";
 	print DATA "</style:style>";
 	print DATA "<style:style style:name=\"Index\" style:family=\"paragraph\" style:parent-style-name=\"Standard\" style:class=\"index\">";
-	print DATA "<style:properties style:font-name-asian=\"Tahoma\" text:number-lines=\"false\" text:line-number=\"0\"/>";
+	print DATA "<style:properties style:font-name-asian=\"Times\" text:number-lines=\"false\" text:line-number=\"0\"/>";
 	print DATA "</style:style>";
 	print DATA "<text:outline-style>";
 	print DATA "<text:outline-level-style text:level=\"1\" style:num-format=\"\"/>";
@@ -1073,16 +1343,23 @@ sub oooWriteStyles {
 	
 	print DATA "<!DOCTYPE office:document-styles PUBLIC \"-//OpenOffice.org//DTD OfficeDocument 1.0//EN\" \"office.dtd\">";
 	print DATA "<office:document-styles xmlns:office=\"http://openoffice.org/2000/office\" xmlns:style=\"http://openoffice.org/2000/style\" xmlns:text=\"http://openoffice.org/2000/text\" xmlns:table=\"http://openoffice.org/2000/table\" xmlns:draw=\"http://openoffice.org/2000/drawing\" xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:number=\"http://openoffice.org/2000/datastyle\" xmlns:svg=\"http://www.w3.org/2000/svg\" xmlns:chart=\"http://openoffice.org/2000/chart\" xmlns:dr3d=\"http://openoffice.org/2000/dr3d\" xmlns:math=\"http://www.w3.org/1998/Math/MathML\" xmlns:form=\"http://openoffice.org/2000/form\" xmlns:script=\"http://openoffice.org/2000/script\" office:version=\"1.0\">";
-	print DATA "<office:font-decls>";
-	print DATA "<style:font-decl style:name=\"Lucida Sans Unicode\" fo:font-family=\"&apos;Lucida Sans Unicode&apos;\" style:font-pitch=\"variable\"/>";
-	print DATA "<style:font-decl style:name=\"MS P ゴシック\" fo:font-family=\"&apos;MS P ゴシック&apos;\" style:font-pitch=\"variable\"/>";
-	print DATA "<style:font-decl style:name=\"Tahoma\" fo:font-family=\"Tahoma\" style:font-pitch=\"variable\"/>";
-	print DATA "<style:font-decl style:name=\"Arial\" fo:font-family=\"Arial\" style:font-family-generic=\"swiss\" style:font-pitch=\"variable\"/>";
-	print DATA "</office:font-decls>";
+
+	if (@fontdecls) {
+	    print DATA "<office:font-decls>";
+	    foreach $line (@fontdecls) {
+		if ($options{debug}) {
+		    print DATA "$line\n";
+		} else {
+		    print DATA "$line";
+		}
+	    }
+
+	    print DATA "</office:font-decls>";
+	}
 	
 	print DATA "<office:styles>";
 	print DATA "<style:default-style style:family=\"table-cell\">";
-	print DATA "<style:properties style:decimal-places=\"2\" style:font-name=\"Arial\" fo:language=\"en\" fo:country=\"US\" style:font-name-asian=\"Lucida Sans Unicode\" style:language-asian=\"ja\" style:country-asian=\"JP\" style:font-name-complex=\"Tahoma\" style:language-complex=\"none\" style:country-complex=\"none\" style:tab-stop-distance=\"0.5inch\"/>";
+	print DATA "<style:properties style:decimal-places=\"2\" style:font-name=\"Times\" fo:language=\"en\" fo:country=\"US\" style:font-name-asian=\"Lucida Sans Unicode\" style:language-asian=\"ja\" style:country-asian=\"JP\" style:font-name-complex=\"Times\" style:language-complex=\"none\" style:country-complex=\"none\" style:tab-stop-distance=\"0.5inch\"/>";
 	print DATA "</style:default-style>";
 	print DATA "<number:number-style style:name=\"N0\" style:family=\"data-style\">";
 	print DATA "<number:number number:min-integer-digits=\"1\"/>";
@@ -1099,7 +1376,7 @@ sub oooWriteStyles {
 	print DATA "<style:map style:condition=\"value()&gt;=0\" style:apply-style-name=\"N104P0\"/>";
 	print DATA "</number:currency-style>";
 print DATA "<style:style style:name=\"Default\" style:family=\"table-cell\">";
-	print DATA "<style:properties style:font-name-asian=\"MS P ゴシック\"/>";
+	print DATA "<style:properties style:font-name-asian=\"Times\"/>";
 	print DATA "</style:style>";
 	print DATA "<style:style style:name=\"Result\" style:family=\"table-cell\" style:parent-style-name=\"Default\">";
 	print DATA "<style:properties fo:font-style=\"italic\" style:text-underline=\"single\" style:text-underline-color=\"font-color\" fo:font-weight=\"bold\"/>";
@@ -1186,7 +1463,8 @@ sub oooWriteSettings {
     unless($builddir) {return;}
 
     $setfile = "$builddir/settings.xml";
-    
+    if ($options{debug}) {print "  $setfile\n";}
+
     open(DATA, "> $setfile");
 
     if ($type eq "sxw") {
@@ -1355,7 +1633,8 @@ sub oooWriteManifest {
 	mkdir("$builddir/META-INF");
     }
     $manfile = "$builddir/META-INF/manifest.xml";
-    
+    if ($options{debug}) {print "  $manfile\n";}
+
     open(DATA, "> $manfile");
 
     print DATA "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
@@ -1390,6 +1669,10 @@ sub oooWriteManifest {
     
     # End of file
     print DATA "</manifest:manifest>\n";
+
+    # Forgotten close pointed out by Tom Dierickx
+    # http://www.data-for-all.com/blog/index.php?p=51
+    close(DATA);
 }
 
 sub oooTimeStamp {
