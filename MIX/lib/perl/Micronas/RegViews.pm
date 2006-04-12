@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.30 2006/04/11 14:24:44 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.31 2006/04/12 07:44:27 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.30 $                                  
+#  Revision      : $Revision: 1.31 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.31  2006/04/12 07:44:27  lutscher
+#  some improvements for generating trigger signals
+#
 #  Revision 1.30  2006/04/11 14:24:44  lutscher
 #  fixed small bug
 #
@@ -432,7 +435,7 @@ sub _vgch_rs_gen_cfg_module {
 					_add_primary_input($this->_gen_field_name("in", $o_field), $msb, $lsb, $cfg_i);
 				};
 				if ($spec =~ m/trg/i and $spec !~ m/usr/i) { # new: add write trigger output
-					_add_primary_output($this->_gen_field_name("trg", $o_field), 0, 0, 1, $cfg_i);
+					_add_primary_output($this->_gen_field_name("trg", $o_field), 0, 0, ($spec =~ m/sha|w1c/i) ? 1:0, $cfg_i);
 				};
 			};
 			if ($spec =~ m/usr/i) { # usr read/write
@@ -453,13 +456,22 @@ sub _vgch_rs_gen_cfg_module {
 					$hwp{'write'}->{$reg_name.$rrange} = $reg_offset;
 					$hwp{'write_rst'}->{$reg_name.$rrange} = $res_val;
 					if ($spec =~ m/trg/i and $spec !~ m/sha/i) {
-						$hwp{'write_rst'}->{$this->_gen_field_name("trg", $o_field)} = 0;
-						$hwp{'write_trg'}->{$this->_gen_field_name("trg", $o_field)} = $reg_offset;
+						# add only one trigger signal per register and assign individual trigger signals
+						my $trg = "int_${reg_name}_trg_p";
+						if (!exists($hwp{'write_trg'}->{$trg})) {
+							$hwp{'write_rst'}->{$trg} = 0;
+							$hwp{'write_trg'}->{$trg} = $reg_offset;
+							push @ldeclarations,"reg $trg;"
+						};
+						$hassigns{$this->_gen_field_name("trg", $o_field)} = $trg;
+						#$hwp{'write_rst'}->{$this->_gen_field_name("trg", $o_field)} = 0;
+						#$hwp{'write_trg'}->{$this->_gen_field_name("trg", $o_field)} = $reg_offset;
 					};
 				} else { # w1c
 					$hwp{'write_sts'}->{$reg_name.$rrange} = $this->_gen_field_name("int_set", $o_field);
 					$hwp{'write_sts_rst'}->{$reg_name.$rrange} = $res_val;
 					if ($spec =~ m/trg/i) {
+						# add dedicated trigger signal per field
 						$hwp{'write_sts_rst'}->{$this->_gen_field_name("trg", $o_field)} = 0;
 						$hwp{'write_sts_trg'}->{$this->_gen_field_name("trg", $o_field)} = $reg_name.$rrange;
 					};
@@ -541,7 +553,7 @@ endproperty
 			my $to_sig = "to_${shdw_sig}_${clock}";
 			_info("adding takeover output \'$to_sig\'");
 			_add_primary_output("$to_sig", 0, 0, 0, $cfg_i);
-			push @lassigns, "", "assign $to_sig".($this->global->{'POSTFIX_PORT_OUT'})." = int_${shdw_sig};";
+			push @lassigns, "assign $to_sig".($this->global->{'POSTFIX_PORT_OUT'})." = int_${shdw_sig};";
 		};
 
 		# generate shadow process
@@ -596,7 +608,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.30 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.31 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -1153,6 +1165,7 @@ sub _vgch_rs_code_write_processes {
 			_pad_column(0, $ind, $ilvl+1, \@ltemp);
 			push @linsert, sort @ltemp;
 			push @linsert, $ind x $ilvl . "end";
+			push @linsert, $ind x $ilvl . "default: ;";
 			@ltemp=();
 		};
 		# push @linsert, $ind x $ilvl-- . "default: ;";
