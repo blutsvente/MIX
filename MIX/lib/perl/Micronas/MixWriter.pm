@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.81 $                                         |
+# | Revision:   $Revision: 1.82 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/04/11 13:38:01 $                              |
+# | Date:       $Date: 2006/04/13 13:31:52 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.81 2006/04/11 13:38:01 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.82 2006/04/13 13:31:52 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.82  2006/04/13 13:31:52  wig
+# | Changed possition of VERILOG_HOOK_PARA, detect illegal stuff in ::in/out description
+# |
 # | Revision 1.81  2006/04/11 13:38:01  wig
 # | Added verimap config: wrap verilog module header into ifdef/else/endif
 # |
@@ -344,9 +347,9 @@ sub _mix_wr_map_veri			($$$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.81 2006/04/11 13:38:01 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.82 2006/04/13 13:31:52 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.81 $';
+my $thisrevision   =      '$Revision: 1.82 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -571,8 +574,6 @@ $eh->set( 'template.verilog.arch.body', <<'EOD' );
 
 module %ENTYNAME%
 %VERILOG_INTF%
-
-%VERILOG_HOOK_PARA%
 
 %S%// Internal signals
 
@@ -2035,6 +2036,8 @@ sub _mix_wr_get_iveri ($$$$) {
 	$intf =~ s/,((%S%|\t)+$tcom[^\n]*)$/$1/i;
     $intf =~ s/,(\s*)$/$1/i; # Remove trailing , in port map ...
     $intf .= '%S%' x 2 . ");\n";
+    #!wig20060413: adding another HOOK for poersch
+    $intf .= "%VERILOG_HOOK_PARA%\n";
     # Print out inputs, outputs, inouts and wires ...
     for my $i ( @portorder ) {
        	if ( $port{$i} ) {

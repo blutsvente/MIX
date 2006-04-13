@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.113 $                                         |
+# | Revision:   $Revision: 1.114 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/04/12 15:36:36 $                              |
+# | Date:       $Date: 2006/04/13 13:31:52 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.113 2006/04/12 15:36:36 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.114 2006/04/13 13:31:52 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.114  2006/04/13 13:31:52  wig
+# | Changed possition of VERILOG_HOOK_PARA, detect illegal stuff in ::in/out description
+# |
 # | Revision 1.113  2006/04/12 15:36:36  wig
 # | Updates for xls2csv added, new ooolib
 # |
@@ -172,11 +175,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.113 2006/04/12 15:36:36 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.114 2006/04/13 13:31:52 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.113 $';         #'
+my $thisrevision        =      '$Revision: 1.114 $';         #'
 
-# Revision:   $Revision: 1.113 $   
+# Revision:   $Revision: 1.114 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -823,7 +826,19 @@ sub mix_init () {
 		$re .= join( '|', split( /[\s,]+/, $t ));
 		$eh->set( 'intermediate.__topmap_re_', $re . ')$' );
 	}
-   
+
+	#!wig: expand check.name.all to all other checks ...
+ 	if ( my $allchk = $eh->get( 'check.name.all' ) ) {
+ 		# Overwrite all others!
+ 		my $chk = $eh->get( 'check.name' );
+ 		for my $k ( keys %$chk ) {
+ 			next if ( $k eq 'all' );
+ 			if ( $chk->{$k} =~ m/__default__/ ) {
+ 				$chk->{$k} = $allchk;
+ 			}
+ 		} 
+ 	}
+ 	  
    	#OLD  Compatibility ...
 	#OLD  %EH = $eh->get('');
 	return $eh;	

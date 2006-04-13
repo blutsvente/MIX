@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.69 $                                         |
+# | Revision:   $Revision: 1.70 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/04/10 15:50:09 $                              |
+# | Date:       $Date: 2006/04/13 13:31:52 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.69 2006/04/10 15:50:09 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.70 2006/04/13 13:31:52 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.70  2006/04/13 13:31:52  wig
+# | Changed possition of VERILOG_HOOK_PARA, detect illegal stuff in ::in/out description
+# |
 # | Revision 1.69  2006/04/10 15:50:09  wig
 # | Fixed various issues with logging and global, added mif test case (report portlist)
 # |
@@ -120,6 +123,7 @@ sub _add_inst_auto ($);
 sub init_pseudo_inst ();
 sub bits_at_inst ($$$);
 sub bits_at_inst_hl ($$$);
+sub _check_portspecm ($$$); #!wig20060413
 
 ####################################################################
 #
@@ -137,9 +141,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.69 2006/04/10 15:50:09 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.70 2006/04/13 13:31:52 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.69 $';
+my $thisrevision =	'$Revision: 1.70 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1114,7 +1118,7 @@ Value can just be anything ... will be added literally to the output architectur
 Returns mode and a array of hashes.
 
 !wig20051010: create a ::descr field in the port map ...
-
+!wig20060413: detect whitespace and alert user ...
 =cut
 
 sub _create_conn ($$%) {
@@ -1187,6 +1191,7 @@ sub _create_conn ($$%) {
             $d =~ s,\s+$,,o; # Remove trailing whitespace
             $d =~ s,%::,%##,og; # Mask %:: ... vs. N:N
 
+			# Alert user if there is still whitespace in 
             #
             # Recognize 0xHEX, 0OCT, 0bBIN and DECIMAL values in ::out
             # Also: 10.2, 1_000_000, 16#hex#, 2#binary_binary#, 2.2e-6 10ns 2.27[mnfpu]s
@@ -1302,7 +1307,18 @@ sub _create_conn ($$%) {
             #
             # Normal inst/ports ....
             #
-            
+
+			# Remove embedded whitespace, detect remaining whitespace
+			#!wig20060413
+			if ( $d =~ m/\s/ ) {
+				# Remove allowed whitespace around  =
+				$d =~ s/\s+=/=/;
+				$d =~ s/=\s+/=/;
+				if ( $d =~ m/\s/ ) {
+					$logger->error( '__E_CONN_PORTWS', "\tPort description '$d' has embededded whitespace! Fix input!" );
+				}
+			}
+				            
             #!wig20051024: check for 'reg or 'wire 
             #  -> will be added to port definition ....
             if ( $d =~ m,(/?'(reg|wire)), ) { # Define reg or wire for verilog output: inst/port'reg or inst/'wire  # '
@@ -1313,7 +1329,7 @@ sub _create_conn ($$%) {
             #wig20030801: typecast port'cast_func ...
             #wig20040803: adding advanced typecast function: convert typecast request
             #  into internal instance (%TC_xxxxx%) mapper
-            my $tcdo = "";
+            my $tcdo = '';
             if ( $d =~ m,(/?'(\w+)), ) { # Get typecast   inst/port'cast or inst/'cast  # '
                 if ( $tcmethod ) {
                     # Create a mapper instance and attach the signal the following way
@@ -1336,19 +1352,22 @@ sub _create_conn ($$%) {
             if ( $d !~ m,/,o ) { # Add signal name as port name by default
                 $d =~ s,([\w%:#]+),$1/%::name%,;
             }
-            
-           if ( $d =~ m,([\w%#]+)/(\S+)\(([\w%#]+):([\w%#]+)\)\s*=\s*\(([\w%#]+):([\w%#]+), ) {
+
+
+           if ( $d =~ m,([\w%#]+)/(\S+)\(([\w%#]+):([\w%#]+)\)=\(([\w%#]+):([\w%#]+)\), ) {
                 # INST/PORTS(pf:pt)=(sf:st)
+                _check_portspecm( $d, $-[0], $+[0] );
                 $co{'inst'} = $1;
                 $co{'port'} = $2;
                 $co{'port_f'} = $3;
                 $co{'port_t'} = $4;
                 $co{'sig_f'} = $5;
                 $co{'sig_t'} = $6;
-            } elsif ( $d =~ m,([\w%#]+)/(\S+)=\(([\w%#]+):([\w%#]+)\)\s*, ) {
+            } elsif ( $d =~ m,([\w%#]+)/(\S+)=\(([\w%#]+):([\w%#]+)\), ) {
                 # INST/PORTS=(f:t) Port-Bit to Bus-Bit f = t; expand to pseudo bus?
                 #TODO: Implement better solution (e.g. if Port is bus slice, not bit?
                 #wig20030207: handle single bit port connections ....
+                _check_portspecm( $d, $-[0], $+[0] );
                 if ( $3 eq $4 ) {
                     $co{'inst'} = $1;
                     $co{'port'} = $2;
@@ -1361,7 +1380,7 @@ sub _create_conn ($$%) {
                     $co{'port'} = $2;
                     $co{'sig_f'} = $3;
                     $co{'sig_t'} = $4;
-                    if ( $4 ne "0" ) {
+                    if ( $4 ne '0' ) {
                         # Wire port of width
                         $logger->warn('__W_CREATE_CONN',
                         	"\tAutomatically wiring signal bits $3 to $4 of $1/$2 to bits " . ( $3 - $4 ) . " to 0");
@@ -1371,7 +1390,7 @@ sub _create_conn ($$%) {
                             $co{'port_f'} = $f - $t;
                             $co{'port_t'} = 0;
                         } else {
-                            #TODO: Needs to be checked ... autowiring does not work here!
+                            # TODO : Needs to be checked ... autowiring does not work here!
                             $co{'port_f'} = "$f - $t";
                             $co{'port_t'} = 0;
                         }
@@ -1380,7 +1399,8 @@ sub _create_conn ($$%) {
                         $co{'port_t'} = 0;
                     }
                 }
-            } elsif ( $d =~ m,([\w%#]+)/(\S+)\(([\w%#]+):([\w%#]+)\)\s*, ) {
+            } elsif ( $d =~ m,([\w%#]+)/(\S+)\(([\w%#]+):([\w%#]+)\), ) {
+            	_check_portspecm( $d, $-[0], $+[0] );
                 # INST/PORTS(f:t)
                 $co{'inst'} = $1;
                 $co{'port'} = $2;
@@ -1393,15 +1413,16 @@ sub _create_conn ($$%) {
                         $co{'sig_f'} = $f - $t;
                         $co{'sig_t'} = 0;
                     } else {
-                        $co{'sig_f'} = "$f - $t"; #TODO: Is that a good idea?
+                        $co{'sig_f'} = "$f - $t"; # TODO : Is that a good idea?
                         $co{'sig_t'} = 0;
                     }
                 } else {
                     $co{'sig_f'} = $3;
                     $co{'sig_t'} = 0;
                 }
-            } elsif ( $d =~ m,([\w%#]+)/(\S+)\s*, ) {
+            } elsif ( $d =~ m,([\w%#]+)/(\S+), ) {
                 # INST/PORTS
+                _check_portspecm( $d, $-[0], $+[0] );
                 $co{'inst'} = $1;
                 $co{'port'} = $2;
                 $co{'port_f'} = $h;
@@ -1409,6 +1430,7 @@ sub _create_conn ($$%) {
                 $co{'sig_f'} = $h;
                 $co{'sig_t'} = $l;
             } elsif ( $d =~ m,([\w%#]+), ) {
+            	_check_portspecm( $d, $-[0], $+[0] );
                 $co{'inst'} = $d;
                 $co{'port'} = $data{'::name'}; #Port name equals signal name
                 $co{'port_f'} = $h;
@@ -1507,6 +1529,20 @@ sub _create_conn ($$%) {
     return ( \@co );
 }
 
+#
+# See if port spec matched whole input string
+#
+sub _check_portspecm ($$$) {
+	my $string = shift;
+	my $start  = shift;
+	my $end    = shift;
+	
+	if ( $start > 0 or $end < length( $string ) ) {
+		$logger->error('__E_CONN_PORTSPEC', "\tinst/port spec '$string' has leading/trailing junk! Ignored! Fix input data!" );
+	}
+	return;
+} # End of _check_portspecm
+		            
 #
 # Automatically create "flat" hierachy if needed ...
 #

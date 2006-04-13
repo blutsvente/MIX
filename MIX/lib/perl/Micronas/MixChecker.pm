@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Checker
 # | Modules:    $RCSfile: MixChecker.pm,v $
-# | Revision:   $Revision: 1.13 $
+# | Revision:   $Revision: 1.14 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2006/03/17 09:18:31 $
+# | Date:       $Date: 2006/04/13 13:31:52 $
 # |
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.13 2006/03/17 09:18:31 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.14 2006/04/13 13:31:52 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the checking capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixChecker.pm,v $
+# | Revision 1.14  2006/04/13 13:31:52  wig
+# | Changed possition of VERILOG_HOOK_PARA, detect illegal stuff in ::in/out description
+# |
 # | Revision 1.13  2006/03/17 09:18:31  wig
 # | Fixed bad usage of $eh inside m/../ and print "..."
 # |
@@ -121,9 +124,9 @@ my %mix_check_list = ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixChecker.pm,v 1.13 2006/03/17 09:18:31 wig Exp $';
+my $thisid		=	'$Id: MixChecker.pm,v 1.14 2006/04/13 13:31:52 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixChecker.pm,v $';
-my $thisrevision   =      '$Revision: 1.13 $';
+my $thisrevision   =      '$Revision: 1.14 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -179,12 +182,12 @@ sub mix_check_case ($$) {
     my $name = shift;
 
     unless( defined( $type ) ) {
-        $logger->warn( '__W_CHECK_CASE', "mix_check_name called without appropriate type definition!" );
+        $logger->warn( '__W_CHECK_CASE_IN', "\tmix_check_name called without appropriate type definition!" );
         return '';
     }
 
     unless( defined( $name ) ) {
-        $logger->warn( '__W_CHECK_CASE', "mix_check_name called without appropriate name definition!" );
+        $logger->warn( '__W_CHECK_CASE_ARG', "\tmix_check_name called without appropriate name definition!" );
         return $name;
     }
 
@@ -192,7 +195,7 @@ sub mix_check_case ($$) {
     # TODO : these have to be all uppercase!!
     if ( $name =~ m,^\s*(__|%)(.*)(__|%)$,o ) {
         if ( uc( $1 ) ne $1 ) {
-            $logger->info( '__I_CHECK_CASE', "mix_check_name internal macro $1 not all upper case!" );
+            $logger->info( '__I_CHECK_CASE_MAC', "\tmix_check_name internal macro $1 not all upper case!" );
         }
         return $name;
     }
@@ -206,7 +209,7 @@ sub mix_check_case ($$) {
         return $name;
     }
     
-	# Load check mode:
+	# Load check mode and settings:
     my $check = $eh->get( 'check.name.' . $type );
 	# and exception regular expression
 	my $xcheck = $eh->get( 'check.namex.' . $type ) . ',' .
@@ -307,11 +310,11 @@ sub _mix_check_case_int ($$$$) {
 	if ( exists( $list->{lc($name)} ) ) {
 		if ( $list->{lc($name)} ne $name ) { # Potential problem found ...
 			if ( $check =~ m,\bcheck,o ) {
-				$logger->warn( '__W_CHECK_CASE', "Got new element '$name' conflicting with '" .
+				$logger->warn( '__W_CHECK_CASE_N', "\tGot new element '$name' conflicting with '" .
 					$list->{lc($name)} . "'!" );
 					$eh->inc( 'sum.checkwarn' );
 			} elsif( $check =~ m,\bforce,o ) {
-				$logger->warn( '__W_CHECK_CASE', "Forcing new element '$name' to correct case '" . &$func($name) . "'!" );
+				$logger->warn( '__W_CHECK_CASE_F', "\tForcing new element '$name' to correct case '" . &$func($name) . "'!" );
 				$name = &$func( $name );
 				$eh->inc( 'sum.checkforce' );
 			}
@@ -321,11 +324,11 @@ sub _mix_check_case_int ($$$$) {
 		# Something new:
 		if( $name ne &$func( $name ) ) { 
 			if ( $check =~ m,\bforce,o ) {
-				$logger->info( '__I_CHECK_CASE', "Forcing new $type element '$name' to correct case '" . &$func($name) . "'!" );
+				$logger->info( '__I_CHECK_CASE_F', "\tForcing new $type element '$name' to correct case '" . &$func($name) . "'!" );
 				$eh->inc( 'sum.checkforce' );
 				$name = &$func( $name );
 			} elsif ( $check =~ m,\bcheck,o ) {
-				$logger->info( '__I_CHECK_CASE', "Not all chars in correct case in new $type element '$name'!" );
+				$logger->info( '__I_CHECK_CASE', "\tNot all chars in correct case in new $type element '$name'!" );
 			}
 		}
 		$list->{ lc( $name ) } = $name;
@@ -382,14 +385,14 @@ sub check_n_ports ($$) {
 
     my $name = $s_r->{'::name'};
     if ( $name !~ m/_n$/io ) {
-        $logger->warn( '__W_CHECK_NPORT', "signal internal name $s level mismatch real name $name" );
+        $logger->warn( '__W_CHECK_NPORT1', "\tsignal internal name $s level mismatch real name $name" );
         $eh->inc( 'sum.checkconn' );
     }
 
     for my $p ( @{$s_r->{'::in'}}, @{$s_r->{'::out'}} ) {
         my $port = $p->{'port'};
         if ( $port !~ m/_n$/io ) {
-            $logger->warn( '__W_CHECK_NPORT', "signal $s connection mismatch for port $port, instance ".
+            $logger->warn( '__W_CHECK_NPORT2', "\tsignal $s connection mismatch for port $port, instance ".
                    $p->{'inst'} );
             $eh->inc( 'sum.checkconn' );
         }

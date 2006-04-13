@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.10 $                                          |
+# | Revision:   $Revision: 1.11 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/04/12 15:36:36 $                              |
+# | Date:       $Date: 2006/04/13 13:31:52 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.11  2006/04/13 13:31:52  wig
+# | Changed possition of VERILOG_HOOK_PARA, detect illegal stuff in ::in/out description
+# |
 # | Revision 1.10  2006/04/12 15:36:36  wig
 # | Updates for xls2csv added, new ooolib
 # |
@@ -80,9 +83,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.10 2006/04/12 15:36:36 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.11 2006/04/13 13:31:52 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.10 $';  
+my $thisrevision    =      '$Revision: 1.11 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -458,9 +461,9 @@ sub init {
 
 	$this->{'cfg'}{'input'} = {
 		'ext' =>	{
-			'excel' =>	"xls",
-	   		'soffice' => "sxc",
-	   		'csv'   =>	"csv",
+			'excel' =>	'xls',
+	   		'soffice' => 'sxc',
+	   		'csv'   =>	'csv',
 		},
 		'ignore' => {
 			'comments' =>
@@ -479,7 +482,7 @@ sub init {
 		'format' => 'perl', 	# Internal format := perl|xls|csv|xml ... (not used!)
     };
 	$this->{'cfg'}{'intermediate'} = {
-		'path'	=> ".",
+		'path'	=> '.',
 		'order'	=> 'input',
 		'keep'	=> '3',	# Number of old sheets to keep
 		'format'	=> 'prev', # One of: prev(ious), auto or n(o|ew)
@@ -513,13 +516,13 @@ sub init {
 		# set check.namex.TYPE for selected excludes
 	    #
 		'name' => {
-    		# TODO 'all' => '',	# Sets all others .... ->
-    		'pad'  => 'check,lc',
-    		'conn' => 'check,lc', # check signal names ...
-    		'enty' => 'check,lc',
-    		'inst' => 'check,lc',   # check instance names ...
-    		'port' => 'check,lc',
-    		'conf' => 'check,lc',
+    		'all' => '',		  # Sets all others (if __default__ still in)
+    		'pad'  => 'check,lc,__default__',
+    		'conn' => 'check,lc,__default__', # check signal names ...
+    		'enty' => 'check,lc,__default__',
+    		'inst' => 'check,lc,__default__', # check instance names ...
+    		'port' => 'check,lc,__default__',
+    		'conf' => 'check,lc,__default__',
 		},
 		'namex' => { # Exclude list for check.name, use only to selectivly disable checks
 			'all'  => '',
@@ -1225,6 +1228,7 @@ sub init {
                # masknl: replace newline by \\n
                # maxwidth: make all lines contain maxwidth - 1 seperators
            'delta'   => 'DIFF:', # Value to prepend in CSV file to changed cell
+           'sortrange' => 1,	# If set to 0, do not sort range selectors.
        },
        'xls' => {
        		'maxcelllength' => 500, # Limit number of characters in ExCEL cells
