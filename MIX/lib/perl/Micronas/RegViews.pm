@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.31 2006/04/12 07:44:27 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.32 2006/04/18 09:48:18 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.31 $                                  
+#  Revision      : $Revision: 1.32 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.32  2006/04/18 09:48:18  lutscher
+#  fixed bug in _vgch_rs_gen_hier()
+#
 #  Revision 1.31  2006/04/12 07:44:27  lutscher
 #  some improvements for generating trigger signals
 #
@@ -608,7 +611,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.31 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.32 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -1477,6 +1480,7 @@ sub _vgch_rs_gen_hier {
 	
 	# instantiate config register module(s) and sub-modules
 	$sync_clock = 31415; # number of synchronous clock, default to invalid
+	$n=0;
 	foreach $clock (sort keys %{$refclks}) {
 		if ($refclks->{$clock}->{'sync'}) {
 			# asynchronous config register module
