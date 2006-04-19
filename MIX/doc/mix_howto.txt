@@ -1,5 +1,9 @@
 MIX HOWTO and FAQ
 
+>>head: MIX HOWTO and FAQ
+
+>>keywords: MIX, top level generator, FAQ, HOWTO, register master
+
 >>title: Using generics and parameter
 
 In order to create parameters and generics, use "P" and "G" in the ::mode
