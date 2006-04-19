@@ -56,7 +56,7 @@ MIX - Micronas Interconnect Spec expander
 
 Author: Wilfried Gänsheimer
 \newline 
-$Date: 2006/01/19 08:51:48 $
+$Date: 2006/04/19 07:31:05 $
 \newline 
 Version: $Id: MIX_Userreference.lyx,v 1.6 2005/01/26 14:01:59 wig Exp 
 \layout Section
@@ -3693,6 +3693,90 @@ noleaf
 leaf
 \family default 
  will yield HDL description for leaf cells, too.
+\layout Subsubsection
+
+output.generate.verimap.modules: Mapping verilog modules for testing purposes.
+\layout Standard
+
+When the 
+\family typewriter 
+output.generate.verimap.modules
+\family default 
+ paramter is set to a perl regular expression, MIX will create an ifdef
+ wrapper around verilog modules instantiations matching the expression.
+\layout Standard
+
+Example:
+\newline 
+
+\family typewriter 
+`ifdef exclude_module_1
+\newline 
+// instantiate dummy module
+\newline 
+assign sig1_s = 1'b0;
+\newline 
+assign sign_s = 1'b0;
+\newline 
+`else
+\newline 
+module_1 ( .sig1_o (sig1_s); .sign_o (sign_s) );
+\newline 
+`endif 
+\layout Standard
+
+The module mapping is controlled by the config keys output.generate.verilog.verimap.
+*
+\newline 
+
+\family typewriter 
+# Enable the default wrapper: fixed values:
+\newline 
+MIXCFG output.generate.verimap.modules ALL
+\newline 
+MIXCFG output.generate.verimap.sigvalue sig_08=1,inst_a[ab]/sig_0.?=some_val,0
+\family default 
+
+\newline 
+ALL is an other way of saying ".*".
+\layout Standard
+
+modules and sigvalue take a comma or whitespace seperated list of perl regular
+ expressions.
+ modules: If a module name matches one of the re's from modules, this module
+ will be mapped.
+ "ALL" is another way of saying ".*".
+\newline 
+sigvalue: Specify the value to be assigned to in the from of "
+\family typewriter 
+inst_re/signal_re=value
+\family default 
+" or "
+\family typewriter 
+signal_re=value
+\family default 
+" or "
+\family typewriter 
+value
+\family default 
+".
+ Default is "
+\family typewriter 
+0
+\family default 
+".
+ In case the value is "1" or "0", it will be automatically extended to W'b1(xW)
+ to match the width of busses.
+ All other values will be used literally.
+ 
+\layout Standard
+
+This function is very limited currently, please report problems (e.g.
+ it will not cope well with partial bus assignments and multiply connected
+ signals).
+\layout Standard
+
+This function is available since mix/1.5 (20060411).
 \layout Subsection
 
 Writing report for module connectivity
@@ -8347,62 +8431,53 @@ This will convert all sheets in foo.xls to foo.csv, bar.xls to bar.csv and so
  on.
  As cvs only has one sheet, the different input sheets will be seperated
  by ":=:=:=>" followed by the ExCEL sheet name.
- Even the first sheet will be marked by such a line.
+ Even the first and maybe only sheet will be marked by such a line.
+ Now supports the selection of rows and/or columns (see -column / -row option)
 \layout Standard
-\noindent 
-xls2csv.pl options:
+
+Options:
 \layout List
 \labelwidthstring 00.00.0000
-\noindent 
+
 
 \family typewriter 
--csv
+-[no]csv
 \family default 
- create csv formatted output
+ Don/t generate CSV formatter file (on by default)
 \layout List
 \labelwidthstring 00.00.0000
-\noindent 
+
 
 \family typewriter 
--sxc
+-[no]sxc
 \family default 
- create OpenOffice (sxc) formatted output.
- By default both formate will be created.
+ Don/t generate sxc formatted output file (on by default)
 \layout List
 \labelwidthstring 00.00.0000
-\noindent 
+
+
+\family typewriter 
+-autoq[uote]
+\family default 
+ Do quoting the ExCEL style
+\layout List
+\labelwidthstring 00.00.0000
+
+
+\family typewriter 
+-q[uote]\SpecialChar ~
+X
+\family default 
+ Use X as quoting char (default: ")
+\layout List
+\labelwidthstring 00.00.0000
+
 
 \family typewriter 
 -sep\SpecialChar ~
 X
 \family default 
- take 
-\family typewriter 
-X
-\family default 
- as field delimiter.
- Default is 
-\begin_inset Quotes eld
-\end_inset 
-
-
-\family typewriter 
-;
-\family default 
-
-\begin_inset Quotes erd
-\end_inset 
-
-.
-\layout List
-\labelwidthstring 00.00.0000
-
-
-\family typewriter 
--[no]head
-\family default 
- do [not] seperate sheets with a special marker line (=:=:=:> SHEETNAME).
- On by default.
+ Use X as column seperator (default: ;)
 \layout List
 \labelwidthstring 00.00.0000
 
@@ -8410,26 +8485,7 @@ X
 \family typewriter 
 -noquote
 \family default 
- do not quote the csv cells.
- Quotes are on by default.
-\layout List
-\labelwidthstring 00.00.0000
-
-
-\family typewriter 
--quote\SpecialChar ~
-X
-\family default 
- use 
-\family typewriter 
-X
-\family default 
- as quoting character.
- Default are double-quotes (
-\begin_inset Quotes eld
-\end_inset 
-
-).
+ Do not quote the output
 \layout List
 \labelwidthstring 00.00.0000
 
@@ -8438,12 +8494,147 @@ X
 -sheet\SpecialChar ~
 RE
 \family default 
- select only sheets which names match the regular expression 
+ Select only sheets matching the RE
+\layout List
+\labelwidthstring 00.00.0000
+
+
 \family typewriter 
-RE.
+-[no]single
+\family default 
+ Write each sheet into a seperate output csv; extend name by sheet name.
+ Default is to write a single csv and/or sxc file per input excel file with
+ seperating the sheets by the sheet header (see 
+\family typewriter 
+-[no]head
+\family default 
+).
+ With 
+\family typewriter 
+-single
+\family default 
+ no sheet seperator head will be printed.
+\layout List
+\labelwidthstring 00.00.0000
+
+
+\family typewriter 
+-[no]accu[mulate]
+\family default 
+ Combine all excel files into a sinlge output csv or sxc file.
+ Default is to convert a single csv and/or sxc file per input excel file.
+ Basename is taken from the first excel file name.
+ 
+\layout List
+\labelwidthstring 00.00.0000
+
+
+\family typewriter 
+-[no]head
+\family default 
+ Do not print sheet seperator head (
+\backslash 
+"=:=:=:=> SHEETNAME
+\backslash 
+" by default)
+\layout List
+\labelwidthstring 00.00.0000
+
+
+\family typewriter 
+-[no]verbose
+\family default 
+ Print more messages
+\layout List
+\labelwidthstring 00.00.0000
+
+
+\family typewriter 
+-column|(c)range\SpecialChar ~
+A:B,C
+\family default 
+ select columns numbered like in EXCEL or as digit.
+ Ranges start from 1.
+\layout List
+\labelwidthstring 00.00.0000
+
+
+\family typewriter 
+-row|rrange\SpecialChar ~
+N:M
+\family default 
+ select rows
+\layout List
+\labelwidthstring 00.00.0000
+
+
+\family typewriter 
+-matchc
+\family default 
+ 
+\backslash 
+"REG_matching header
+\backslash 
+"
+\layout List
+\labelwidthstring 00.00.0000
+
+
+\family typewriter 
+-matchr
+\family default 
+ 
+\backslash 
+"RE_matching first cell contents in row
+\backslash 
+"
+\layout Standard
+
+Possible ranges are: A..C,EE-FA,G:I,14,16-70,II- (alpha only for column headers)
+ Repeated options are logically ored (tried one after the other).
+ If column or row selector options are set, only matching data will be printed
+\layout Standard
+
+Example:
+\layout Standard
+
+
+\family typewriter 
+$ xls2csv -csv -single -sheet my_data -autoq -nohead my_excel.xls
+\layout Standard
+
+will retrieve the sheet "my_data" from the excel document my_excel.xls and
+ store it's contentin the file my_excel--my_data.csv in a format very, very
+ near the one you would get when using "Save As" in ExCEL and store the
+ worksheet in CSV format.
+\layout Standard
+
+
+\family typewriter 
+$ xls2csv -csv -row 1-10,1-10 -single my_excel.xls
+\layout Standard
+
+will print the first ten rows two times into the csv file(s) 
+\family typewriter 
+my_excel--<sheet names>.csv
+\family default 
+ of each sheet in the excel document.
+ Please consider, that overlapping selections will print the data selected
+ multiple time.
+ xls2csv will sort the selectors in numeric start order unless you set 
+\family typewriter 
+format.csv.sortrange
+\family default 
+ to 
+\family typewriter 
+0
+\family default 
+.
 \layout Standard
 \noindent 
-Please remove the created files before updating.
+Please remove the created files before updating, otherwise new sheets are
+ added to the existing files, while older version stay with renamed sheet
+ names.
 \layout Standard
 \noindent 
 For MS-Win workstations, use
@@ -8457,7 +8648,7 @@ Projects
 \backslash 
 MIX
 \backslash 
-PROG
+<version>
 \backslash 
 xls2csv.pl
 \family default 
@@ -8619,6 +8810,24 @@ Used Software
 \layout Subsection
 
 Release Notes
+\layout Subsubsection
+
+20060411
+\layout Standard
+
+released mix/1.5, see doc/release20060411.txt
+\layout Subsubsection
+
+20060314
+\layout Standard
+
+development release, updated logging, see doc/release20060314.txt
+\layout Subsubsection
+
+20060119
+\layout Standard
+
+released mix/1.4, see doc/release_20060119.txt
 \layout Subsubsection
 
 20051019

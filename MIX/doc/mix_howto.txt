@@ -1,5 +1,179 @@
 MIX HOWTO and FAQ
 
+>>title: Using generics and parameter
+
+In order to create parameters and generics, use "P" and "G" in the ::mode
+column of your conn-sheet.
+
+E.g. :
+- define a generic (to assign a default value on the VHDL entity)
+::mode G
+::type string
+::name generic_1
+::in   vgch_dir_c/generic_name
+::out  'some default value'
+
+- set a parameter for the instance vgch_dir_c
+::mode P
+::type string
+::name parameter_1
+::in	vgch_dir_c/generic_name
+::out	'some value'
+
+Caveat: Make sure the names set by ::name of generic and parameter are unique
+and not the same!
+
+#!wig20060415
+
+>>title: Adding user defined code (udc)
+
+MIX provides a set of hooks, which can be used to insert custom
+code (any kind of text) into the generated HDL files.
+
+The hooks are
+%VHDL_HOOK_(ENTY|ARCH|CONF)_(HEAD|BODY|FOOT)%
+%VHDL_HOOK_ARCH_DECL%
+%VERILOG_HOOK_(HEAD|BODY|PARA|FOOT)%
+
+Setting the hooks globally (e.g. the mix.cfg file or via the -conf
+option) will add that text in every generated file. If you need more specific
+control, add a new column ::udc to your hier description.
+
+Write
+/%<KEY>%/ TEXT
+/%<KEY2>%/ TEXT2
+to define your udc.
+
+Possible keys are:
+HEAD -> Add to header (beginning) 
+DECL -> VHDL Declaration (direcly before "begin")
+BODY -> In VHDL/Verilog body of a Module (This is the default if /%<KEY>%/ is omitted.)
+FOOT -> Bottom
+
+If MIX detects several /%<KEY>%/ in one column, the text following each key up to the
+next KEY or end of text will be printed for this hook. 
+
+::udc text is overloaded if you defined global hooks.
+
+Example:
+MIXCFG macro.%VERILOG_HOOK_HEAD% HOOK: global verilog head hook text
+
+Example for ::udc
+
+/%DECL%/udc: THIS GOES TO DECL of inst_b_i
+/%BODY%/udc: THIS ARE TWO LINES in BODY of inst_b_i
+SECOND LINE	   
+
+udc: AUTOBODY SELECTED inst_ab_i
+/%DECL%/udc: DECLARATION SELECTED inst_ab_i	   
+	   
+/%HEAD%/udc: HEAD HOOK inst_bb_i
+/%FOOT%/udc: FOOT HOOK two lines inst_bb_i
+second line inst_bb_i, config here %::config% and description %::descr%
+/%DECL%/udc: DECL HOOK VHDL inst_bb_i
+/%BODY%/udc: BODY BOOK VHDL inst_bb_i	 
+
+#!wig20060418
+
+>>title: sorting ports via the output.generate.portmapsort config key
+
+You can set output.generate.portmapsort to following values:
+
+	# portmapsort' => 'alpha', # How to sort port map; allowed values are:
+	# alpha := sorted by port name (default)
+	# input (ordered as listed in input files)
+
+	# inout | outin: seperate in/out/inout seperately; inout will always be in between
+	#    can be combined with the "input" key
+
+	# genpost | genpre: generated ports post/pre
+	# ::COL : order as in column ::COL (alphanumeric!)
+
+several values can be added by comma. The second, third... key defines a
+second, third,... sort criteria.
+
+Example:
+
+MIXCFG output.generate.portmapsort ::bundle,alpha
+
+or
+
+MIXCFG output.generate.portmapsort ::bundle,inout,alpha
+
+will sort by the value of the ::bundle column, then all input keys, then
+all output.
+
+genpre/genpost bewirkt, dass generierte Ports will be listed seperatelty.
+
+#!wig20060308
+
+>>title: Remove trailing empty cells from XLS sheets to speed up MIX
+
+If you suffer from very long run-times with MIX or the other register master
+tools, maybe the following description from andreas.hils can help:
+
+Basically do this:
+
+- use scrollbar and scroll to the end of the sheet.
+- mark all empty rows from end upwards (not the other way round!)
+- use "delete" from the edit menu
+- "save" your excel workbook
+  -> now excel removes the empty cells.
+
+Some more details:
+
+Hallo, 
+ich bin's nochmal.
+Der Trick bei dem beschriebenem "Verfahren" ist das markieren der Zellen von unten nach oben.
+Sonst wird's nicht funktionieren, da Excel automatisch neue Zellen mit der letzten gültigen Formatvorlage (von oben) bis zur aktuellen Cursor Position wieder einfügt.
+ 
+Das ist meines Erachtens auch der Grund dafür, dass sich die Excel Sheets aufblähen. 
+Wir löschen meistens von oben nach unten und Excel fügt zunächst leere Zellen ein, und übernimmt dabei aber die letzte Formatvorlage. Die Zellen sind nicht mehr wirklich leer.
+ 
+Gruss
+Andreas
+--------------------------------------------------------------------------------
+From: Hils Andreas 
+Sent: Donnerstag, 16. Februar 2006 16:47
+Subject: RE: Register Master aufräumen
+
+Hallo alle,
+ 
+das geht auch ein bisschen einfacher:
+ 
+Mit dem Scrollbar ganz runter fahren. Von unten her alle Zellen markieren die nicht
+benötigt werden.
+-> Delete drücken
+-> Danach Save drücken, denn Excel räumt beim saven alle "echt leeren" Zellen auf.
+ 
+Gruss
+Andreas
+
+--------------------------------------------------------------------------------
+From: Brett Maik 
+Sent: Donnerstag, 16. Februar 2006 16:12
+Subject: Register Master
+
+Hi,
+ 
+wenn der Skript Lauf vom Register Master zum Desaster wird, also alle 
+PC Resourcen bindet und ewig dauert, kann es daran liegen, daß EXCEL die 
+Tabelle wesentlich größer gemacht hat, als eigentlich Zeilen mit Inhalt
+sind. Das erkennt man daran, das der rechte Scrollbar recht klein ausfällt.
+Excel stört das nicht sonderlich, das Excel-Perl Skript übersetzt aber auch die 
+Leerzeilen. 
+Lösung: gibt es eigentlich keine, "edit/delete" fügt die gelöschten Zeilen wieder
+hinten an, "shrink table" habe ich noch nicht gefunden.
+Da hilft nur die Holzhammer-Methode: Aktive Zellen markieren, copy, neues
+File erstellen, paste
+ 
+Vielleicht passiert ja nur mir sowas
+ 
+Gruß,
+Maik
+
+#!wig20060217
+ 
 >>title: Why are my comments shortened in the generated ExCEL sheet?
 
 If you look into an EcXEL sheet generated with MIX, you will find, that
