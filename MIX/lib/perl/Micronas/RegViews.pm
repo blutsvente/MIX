@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.32 2006/04/18 09:48:18 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.33 2006/04/19 12:58:30 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.32 $                                  
+#  Revision      : $Revision: 1.33 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.33  2006/04/19 12:58:30  lutscher
+#  fixed bug in trans_done generation in Verilog code
+#
 #  Revision 1.32  2006/04/18 09:48:18  lutscher
 #  fixed bug in _vgch_rs_gen_hier()
 #
@@ -611,7 +614,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.32 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.33 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -1252,7 +1255,7 @@ sub _vgch_rs_code_static_logic {
 	my $ind = $this->global->{'indent'};
 	$href = $this->global->{'hclocks'}->{$clock};
 
-	# calc new multicycle value in case of pipelining
+	# calc new read-multicycle value in case of pipelining
 	if ($this->global->{'rdpl_stages'}==0) {
 		$multicyc = $this->global->{'read_multicycle'};
 	} else {
@@ -1260,12 +1263,12 @@ sub _vgch_rs_code_static_logic {
 	};
 
 	$nusr=scalar(keys %$href_usr); # number of USR fields
-	if ($nusr>0 and $multicyc>0) {
-		# if there are USR registers, the read-ack will be delayed by one cycle anyway, so subtract
+	if ($multicyc>0) {
+		# the read-ack will be delayed by one cycle anyway, so subtract
 		# it from the multicycle value 
 		$multicyc--;	
 	};
-	
+
 	#
 	# insert wire/reg declarations
 	#
@@ -1276,19 +1279,13 @@ reg  int_trans_done;
 wire [".($addr_msb-$addr_lsb).":0] iaddr;
 wire addr_overshoot;
 wire trans_done_p;
+reg  rd_wr_done_p;
 ");
 	if ($nusr>0) { # if there are USR fields
 		push @$lref_decl, split("\n","
-reg rd_done_p;
-reg wr_done_p;
 reg  fwd_txn;
 wire [".($nusr-1).":0] fwd_decode_vec;
 wire [".($nusr-1).":0] fwd_done_vec;
-");
-	} else {
-		push @$lref_decl, split("\n","
-wire rd_done_p;
-wire wr_done_p;
 ");
 	};
 	for (my $i=1; $i<= $multicyc; $i++) {
@@ -1337,15 +1334,13 @@ assign rd_p = rd_wr".$this->global->{'POSTFIX_PORT_IN'}." & $trans_start_p;
 */
 ");
 	if ($nusr==0) {
-		push @ltemp, split("\n","assign wr_done_p = wr_p; // immediate ack for posted writes");
-		push @ltemp, "assign rd_done_p = " .($multicyc ? "rd_delay$multicyc;" : "rd_p;") . " // ack for local reads";
-		push @ltemp, "assign trans_done_p = wr_done_p | rd_done_p;";
+		push @ltemp, "assign trans_done_p = rd_wr_done_p;";
 	} else {
 		@ltemp2 = map {$this->_gen_field_name("usr_trans_done",$href_usr->{$_})} keys %$href_usr;
 		$dummy = "assign fwd_done_vec = {" . join(", ", @ltemp2) . "}; // ack for forwarded txns";
 		push @ltemp, $dummy;
-		push @ltemp, "assign trans_done_p = ((wr_done_p | rd_done_p) & ~fwd_txn) | ((fwd_done_vec != 0) & fwd_txn);";
-		
+		push @ltemp, "assign trans_done_p = (rd_wr_done_p & ~fwd_txn) | ((fwd_done_vec != 0) & fwd_txn);";
+
 		# insert assertions (and onehot function because Cadence has not yet delivered)
 		$dummy = join(" || ", @ltemp2); 
 		push @$lref_checks, split("\n","
@@ -1382,27 +1377,17 @@ endfunction
 	push @ltemp, ("",
 				 "always @(posedge $clock or negedge $int_rst_n) begin",
 				 $ind."if (~$int_rst_n) begin", 
-				 $ind x 2 ."int_trans_done <= 0;"
+				 $ind x 2 ."int_trans_done <= 0;",
+				 $ind x 2 ."rd_wr_done_p   <= 0;"
 				);
 	for (my $i=1; $i<= $multicyc; $i++) {
 		push @ltemp, $ind x 2 ."rd_delay$i <= 0;";
 	};
-    if ($nusr>0) {
-        push @ltemp, (
-                      $ind x 2 ."wr_done_p <= 0;",
-                      $ind x 2 ."rd_done_p <= 0;"
-                     );
-    }; 
 	push @ltemp, (
 				  $ind."end",
-				  $ind."else begin"
+				  $ind."else begin",
+                  $ind x 2 . "rd_wr_done_p <= wr_p | " . ($multicyc ? "rd_delay$multicyc;" : "rd_p;")
 				 );
-    if ($nusr>0) {
-        push @ltemp, (
-                      $ind x 2 ."wr_done_p <= wr_p;",
-                      $ind x 2 ."rd_done_p <= " . ($multicyc ? "rd_delay$multicyc;" : "rd_p;")
-                   );
-    }
 	for (my $i=1; $i<= $multicyc; $i++) {
 		push @ltemp, ($i == 1) ? ($ind x 2 ."rd_delay$i \<= rd_p;") : ($ind x 2 ."rd_delay$i \<= rd_delay".($i-1).";");
 	};
