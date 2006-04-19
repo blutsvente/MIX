@@ -1,10 +1,8 @@
-# -*-* perl -*- -w
-#  header for MS-Win! Remove for UNIX ...
 #!/bin/sh --
-#! -- # -*- perl -*- -w
+#!/bin/sh -- # -*- perl -*- -w
 eval 'exec ${PERL:-`[ ! -d "$HOME/bin/perl" -a -x "$HOME/bin/perl" ] && echo "$HOME/bin/perl" || { [ -x /usr/bin/perl ] && echo /usr/bin/perl || echo /usr/local/bin/perl ; } `} -x -S $0 ${1+"$@"} ;'
 if 0; # dynamic perl startup; suppress preceding line in perl
-#line 8
+#line 6
 
 use strict;
 use warnings;
@@ -28,12 +26,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: vgch_join.pl,v 1.6 2006/03/14 08:15:27 wig Exp $  |
+# | Id           : $Id: vgch_join.pl,v 1.7 2006/04/19 07:39:55 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.6 $                                      |
-# | Mod.Date     : $Date: 2006/03/14 08:15:27 $                           |
+# | Version      : $Revision: 1.7 $                                      |
+# | Mod.Date     : $Date: 2006/04/19 07:39:55 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -48,6 +46,9 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: vgch_join.pl,v $
+# | Revision 1.7  2006/04/19 07:39:55  wig
+# | 	vgch_join.pl : fixed problem with -sheet option
+# |
 # | Revision 1.6  2006/03/14 08:15:27  wig
 # | Change to Log::Log4perl and replaces %EH by MixUtils::Globals.pm
 # |
@@ -110,7 +111,7 @@ sub base_interface ($);
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.6 $'; # RCS Id
+$::VERSION = '$Revision: 1.7 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # Our local variables
@@ -119,11 +120,15 @@ $::VERSION =~ s,\$,,go;
 # Global access to logging and environment
 #
 if ( -r $FindBin::Bin . '/joinlog.conf' ) {
-	Log::Log4perl->init( $FindBin::Bin . '/mixjoin.conf' );
+	Log::Log4perl->init( $FindBin::Bin . '/joinlog.conf' );
+} elsif ( -r $FindBin::Bin . '/mixlog.conf' ) {
+	Log::Log4perl->init( $FindBin::Bin . '/mixlog.conf' );
 }
 # Local overload:
 if ( -r getcwd() . '/joinlog.conf' ) {
 	Log::Log4perl->init( getcwd() . '/joinlog.conf' );
+} elsif ( -r getcwd() . '/mixlog.conf' ) {
+	Log::Log4perl->init( getcwd() . '/mixlog.conf' );
 }
 
 my $logger = get_logger( 'MIX_JOIN' );
@@ -261,7 +266,7 @@ for my $files ( @ARGV ) {
 		
 		# If $optctl{'sheet'} -> try this
 		my @topclient = ();
-		if ( scalar ( @{$OPTVAL{'sheet'}} ) ) {
+		if ( exists $OPTVAL{'sheet'} and scalar ( @{$OPTVAL{'sheet'}} ) ) {
 			# Is this sheetname matched:
 			for my $ms ( @{$OPTVAL{'sheet'}} ) {
 				if ( $s =~ m/^$ms$/ ) {
@@ -355,7 +360,12 @@ replace_macros( $end_table );
 write_outfile( $outname , "JOIN_VGCH", $end_table );
 
 # TODO : Rewrite write_sum for this ...
-# my $status = ( write_sum() ) ? 1 : 0; # If write_sum returns > 0 -> exit status 1
+#n my $status = ( write_sum() ) ? 1 : 0; # If write_sum returns > 0 -> exit status 1
+
+# Overall run-time
+$logger->info( 'SUM: runtime: ' . ( time() - $eh->get( 'macro.%STARTTIME%' ) ) .
+              ' seconds' );
+
 my $status = 0;
 exit $status;
 
