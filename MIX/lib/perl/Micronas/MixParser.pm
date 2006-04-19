@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.70 $                                         |
+# | Revision:   $Revision: 1.71 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/04/13 13:31:52 $                              |
+# | Date:       $Date: 2006/04/19 07:32:08 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.70 2006/04/13 13:31:52 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.71 2006/04/19 07:32:08 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.71  2006/04/19 07:32:08  wig
+# | Fix issue 20060404c (duplicate output ports)
+# |
 # | Revision 1.70  2006/04/13 13:31:52  wig
 # | Changed possition of VERILOG_HOOK_PARA, detect illegal stuff in ::in/out description
 # |
@@ -141,9 +144,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.70 2006/04/13 13:31:52 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.71 2006/04/19 07:32:08 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.70 $';
+my $thisrevision =	'$Revision: 1.71 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2767,9 +2770,25 @@ sub add_portsig () {
                     for my $t ( @$tbits ) {
                         for my $lb ( @$bits ) {
                             if ( substr( $t, -1, 1 ) eq substr( $lb, -1, 1 ) ) { #Same i/o
-                                if ( $lb !~ m,A::, and $t ne $lb ) {
-                                    push( @addup, [ $signal, $name, $l, $modes{$l}, $t ] );
+                            	my $m = substr( $t, -1, 1 );
+                                if ( $m eq 'i' and $lb !~ m,A::, and $t ne $lb ) {
+                                	# $t -> what parent has
+                                	# $lb -> what current has
+                                	#!wig20060413: check if $lb is somwhow contained in $t
+                                	#  e.g. if $t is A:::x and $lb has some bits 
+                                	#	added brackets around [$t] and [$lb]
+                                    push( @addup, [ $signal, $name, $l, $modes{$l}, [ $t ], [ $lb ] ] );
+                                } elsif ( $m eq 'o' and $t !~ m,A::, and $t ne $lb ) {
+                                	#!wig20060418: added
+                                	# $t -> what parent has
+                                	# $lb -> what current has
+                                	#!wig20060413: check if $lb is somwhow contained in $t
+                                	#  e.g. if $t is A:::x and $lb has some bits 
+                                	#	added brackets around [$t] and [$lb]
+                                    push( @addup, [ $signal, $name, $l, $modes{$l}, [ $t ], [ $lb ] ] );
                                 }
+                            } else {
+                            	$logger->error( '__E_ADD_PORTSIG_BRANCH', "\tBad branch in add_portsig for signal $signal" );
                             }
                         }
                     }
@@ -3339,7 +3358,7 @@ sub add_top_port ($$) {
                     ( ( $m eq "buffer" ) ? "b" : "e" )
                 )
             );
-        #TODO: Remove reverse logic for ndw in _add_port!!!
+        # TODO : Remove reverse logic for ndw in _add_port!!!
         my $mr = ( $mi eq "i" ) ? "o" :
             ( ( $mi eq "o" ) ? "i" : $mi);
 

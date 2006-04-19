@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.82 $                                         |
+# | Revision:   $Revision: 1.83 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/04/13 13:31:52 $                              |
+# | Date:       $Date: 2006/04/19 07:32:08 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.82 2006/04/13 13:31:52 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.83 2006/04/19 07:32:08 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.83  2006/04/19 07:32:08  wig
+# | Fix issue 20060404c (duplicate output ports)
+# |
 # | Revision 1.82  2006/04/13 13:31:52  wig
 # | Changed possition of VERILOG_HOOK_PARA, detect illegal stuff in ::in/out description
 # |
@@ -347,9 +350,9 @@ sub _mix_wr_map_veri			($$$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.82 2006/04/13 13:31:52 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.83 2006/04/19 07:32:08 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.82 $';
+my $thisrevision   =      '$Revision: 1.83 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -4487,7 +4490,7 @@ sub _write_architecture ($$$$) {
             $usesig = $sp_conflict{$ii};
             # Redo all generated maps of my subblocks to use the internal signal name ....
             for my $insts ( @{$sig2inst{$ii}} ) {
-                #TODO: is that the final idea? Maybe splitting gen_map
+                # TODO : is that the final idea? Maybe splitting gen_map
                 # in two parts makes it better
                 # Port name might be not equal signal name here (generated port!)
                 my $pm = $i_macros{'%INST_' . $insts . '%'};
