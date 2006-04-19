@@ -445,6 +445,11 @@ my @tests = (
 	  'path' => "bugver/20051221a",
 	  'options' => "",
 	},
+	{ # Create duplicate port for partially connected signals
+	  'name' => "bugver",
+	  'path' => "bugver/20060404c",
+	  'options' => '',
+	},
 	{ # Create simple logic ...
 	  'name' => "logic",
 	  'path' => "logic",

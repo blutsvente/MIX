@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.61 2006/04/11 14:00:43 wig Exp $
+# $Id: TODO.txt,v 1.62 2006/04/19 07:34:15 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -63,7 +63,8 @@ Und dann wäre da auch noch die bereits diskutierte Sache mit der Zuweisung der P
 
 	Req: gay
 	Prio: medium
-	Status: first prototyp implemented
+	Status: first prototyp implemented (does not consider partial connections or
+		multiple connections)
 	Testcase: verilog/verimap
 	 
 >>title: 20060315a/Bug: %LOW%, %LOW_BUS% signals are not propagated into portlist
@@ -160,11 +161,11 @@ The correct expression is 1'b1111 (Verilog expands with 0!!).
 	Example:
 	
 		"i_avfb_top_rs/%::oname%_par_o,
-i_rs_i2c_dcs/%::oname%_par_o(3:0)=(3:0)"
+		 i_rs_i2c_dcs/%::oname%_par_o(3:0)=(3:0)"
 		
 	 gives:
 	 
-	 			.selclk_mem_par_o(top_rs_selclk_mem_par),
+	 		.selclk_mem_par_o(top_rs_selclk_mem_par),
 			.selclk_out1_par_o(top_rs_selclk_out1_par),
 			.selclk_out2_par_o(top_rs_selclk_out2_par),
 			.selclk_ovs_1_par_o(top_rs_selclk_ovs_1_par),

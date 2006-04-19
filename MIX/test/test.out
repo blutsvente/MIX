@@ -10620,3 +10620,184 @@
 06/04/11 13:31:34 3932: SUM: Minimum run time: 21.48s
 06/04/11 13:31:34 3932: SUM: Maximum run time: 21.48s
 06/04/11 13:31:34 3932: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/04/12 15:38:14 1340: bitsplice.xls in directory bitsplice, time : 48.13s
+06/04/12 15:38:43 1340: bitsplice.xls in directory bitsplice/verilog, time : 27.93s
+06/04/12 15:39:13 1340: bitsplice.xls in directory bitsplice/vhdportsort, time : 30.02s
+06/04/12 15:39:41 1340: bitsplice.xls in directory bitsplice/verportsort, time : 27.35s
+06/04/12 15:40:19 1340: bitsplice.xls in directory bitsplice/connport, time : 38.10s
+06/04/12 15:40:45 1340: sigport.xls in directory sigport, time : 25.35s
+06/04/12 15:41:08 1340: sigport.xls in directory sigport/use, time : 22.79s
+06/04/12 15:41:32 1340: sigport.xls in directory sigport/verilog, time : 23.81s
+06/04/12 15:41:56 1340: highlow.xls in directory highlow, time : 23.72s
+06/04/12 15:42:20 1340: highlow.xls in directory highlow/verilog, time : 23.24s
+06/04/12 15:42:40 1340: highlow.xls in directory highlow/lownobus, time : 19.59s
+06/04/12 15:43:11 1340: mde_tests.xls in directory mde_tests/conn_nreset, time : 30.56s
+06/04/12 15:43:44 1340: mde_tests.xls in directory mde_tests/conn_nr_vhdl, time : 32.20s
+06/04/12 15:44:12 1340: constant.xls in directory constant failed!
+06/04/12 15:44:38 1340: constant.xls in directory constant/verilog failed!
+06/04/12 15:45:02 1340: io.xls in directory io, time : 23.73s
+06/04/12 15:45:25 1340: io.xls in directory io/verilog, time : 22.33s
+06/04/12 15:45:54 1340: generic.xls in directory generic, time : 29.54s
+06/04/12 15:46:19 1340: generic.xls in directory generic/verilog, time : 24.36s
+06/04/12 15:46:46 1340: generic.xls in directory generic/veriovhd, time : 26.34s
+06/04/12 15:47:07 1340: generic.xls in directory generic/nodefparam, time : 20.67s
+06/04/12 15:47:27 1340: genwidth.xls in directory genwidth, time : 19.39s
+06/04/12 15:47:45 1340: genwidth.xls in directory genwidth/verilog, time : 17.94s
+06/04/12 15:48:09 1340: nreset2.xls in directory nreset2, time : 23.64s
+06/04/12 15:48:29 1340: open.xls in directory open, time : 20.34s
+06/04/12 15:48:48 1340: open.xls in directory open/verilog, time : 18.48s
+06/04/12 15:49:07 1340: open.xls in directory open/verilog_ndmy, time : 18.29s
+06/04/12 15:49:58 1340: macro.xls in directory macro, time : 50.48s
+06/04/12 15:50:20 1340: macro.xls in directory macro/splice, time : 22.26s
+06/04/12 15:50:42 1340: verilog.xls in directory verilog, time : 20.72s
+06/04/12 15:51:08 1340: verilog.xls in directory verilog/vhdl, time : 25.62s
+06/04/12 15:51:33 1340: verilog.xls in directory verilog/mixed, time : 24.85s
+06/04/12 15:51:55 1340: verilog.xls in directory verilog/uamn failed!
+06/04/12 15:52:16 1340: verilog.xls in directory verilog/useconfname, time : 20.48s
+06/04/12 15:52:39 1340: verilog.xls in directory verilog/leaforeg, time : 22.21s
+06/04/12 15:53:03 1340: verilog.xls in directory verilog/seloreg, time : 23.86s
+06/04/12 15:53:26 1340: verilog.xls in directory verilog/v2001, time : 22.66s
+06/04/12 15:53:46 1340: verilog.xls in directory verilog/verimap, time : 19.80s
+06/04/12 15:54:11 1340: configuration.xls in directory configuration, time : 24.61s
+06/04/12 15:54:33 1340: configuration.xls in directory configuration/cmdline, time : 22.08s
+06/04/12 15:55:06 1340: padio.xls in directory padio, time : 32.37s
+06/04/12 15:55:42 1340: padio.xls in directory padio/names, time : 35.17s
+06/04/12 15:56:18 1340: padio.xls in directory padio/bus, time : 35.66s
+06/04/12 15:56:54 1340: padio.xls in directory padio/given, time : 35.72s
+06/04/12 15:57:40 1340: padio2.xls in directory padio2, time : 45.42s
+06/04/18 05:38:52 2584: bugver.xls in directory bugver/20060404c, time : 942.48s
+06/04/18 05:38:52 2584: SUM: Sucessfully timed tests: 1
+06/04/18 05:38:52 2584: SUM: Overall run time: 942.48s
+06/04/18 05:38:52 2584: SUM: Average run time: 942.48s
+06/04/18 05:38:52 2584: SUM: Minimum run time: 942.48s
+06/04/18 05:38:52 2584: SUM: Maximum run time: 942.48s
+06/04/18 05:38:52 2584: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/04/18 05:47:32 3856: bugver.xls in directory bugver/20060404c, time : 509.54s
+06/04/18 05:47:32 3856: SUM: Sucessfully timed tests: 1
+06/04/18 05:47:32 3856: SUM: Overall run time: 509.54s
+06/04/18 05:47:32 3856: SUM: Average run time: 509.54s
+06/04/18 05:47:32 3856: SUM: Minimum run time: 509.54s
+06/04/18 05:47:32 3856: SUM: Maximum run time: 509.54s
+06/04/18 05:47:32 3856: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/04/18 07:36:20 2240: bugver.xls in directory bugver/20060404c failed!
+06/04/18 07:36:20 2240: SUM: Sucessfully timed tests: 0
+06/04/18 07:36:20 2240: SUM: Overall run time: 0.00s
+06/04/18 07:36:20 2240: SUM: Average run time: n/a
+06/04/18 07:36:20 2240: SUM: Minimum run time: n/a
+06/04/18 07:36:20 2240: SUM: Maximum run time: n/a
+06/04/18 07:36:20 2240: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/04/18 07:47:00 4092: bugver.xls in directory bugver/20060404c, time : 48.49s
+06/04/18 07:47:00 4092: SUM: Sucessfully timed tests: 1
+06/04/18 07:47:00 4092: SUM: Overall run time: 48.49s
+06/04/18 07:47:00 4092: SUM: Average run time: 48.49s
+06/04/18 07:47:00 4092: SUM: Minimum run time: 48.49s
+06/04/18 07:47:00 4092: SUM: Maximum run time: 48.49s
+06/04/18 07:47:00 4092: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/04/18 11:47:11 932: bugver.xls in directory bugver/20060404c, time : 14220.39s
+06/04/18 11:47:11 932: SUM: Sucessfully timed tests: 1
+06/04/18 11:47:11 932: SUM: Overall run time: 14220.39s
+06/04/18 11:47:11 932: SUM: Average run time: 14220.39s
+06/04/18 11:47:11 932: SUM: Minimum run time: 14220.39s
+06/04/18 11:47:11 932: SUM: Maximum run time: 14220.39s
+06/04/18 11:47:11 932: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/04/18 11:49:22 3200: bitsplice.xls in directory bitsplice, time : 47.64s
+06/04/18 11:49:50 3200: bitsplice.xls in directory bitsplice/verilog, time : 27.78s
+06/04/18 11:50:19 3200: bitsplice.xls in directory bitsplice/vhdportsort, time : 28.83s
+06/04/18 11:50:47 3200: bitsplice.xls in directory bitsplice/verportsort, time : 27.58s
+06/04/18 11:51:27 3200: bitsplice.xls in directory bitsplice/connport, time : 39.61s
+06/04/18 11:51:54 3200: sigport.xls in directory sigport, time : 26.46s
+06/04/18 11:52:19 3200: sigport.xls in directory sigport/use, time : 24.77s
+06/04/18 11:52:44 3200: sigport.xls in directory sigport/verilog, time : 24.13s
+06/04/18 11:53:05 3200: highlow.xls in directory highlow, time : 20.46s
+06/04/18 11:53:25 3200: highlow.xls in directory highlow/verilog, time : 20.63s
+06/04/18 11:53:48 3200: highlow.xls in directory highlow/lownobus, time : 21.93s
+06/04/18 11:54:19 3200: mde_tests.xls in directory mde_tests/conn_nreset, time : 31.28s
+06/04/18 11:54:53 3200: mde_tests.xls in directory mde_tests/conn_nr_vhdl, time : 33.65s
+06/04/18 11:55:19 3200: constant.xls in directory constant failed!
+06/04/18 11:55:46 3200: constant.xls in directory constant/verilog failed!
+06/04/18 11:56:10 3200: io.xls in directory io, time : 23.48s
+06/04/18 11:56:32 3200: io.xls in directory io/verilog, time : 21.59s
+06/04/18 11:57:03 3200: generic.xls in directory generic, time : 30.50s
+06/04/18 11:57:30 3200: generic.xls in directory generic/verilog, time : 26.25s
+06/04/18 11:57:55 3200: generic.xls in directory generic/veriovhd, time : 25.08s
+06/04/18 11:58:16 3200: generic.xls in directory generic/nodefparam, time : 20.35s
+06/04/18 11:58:37 3200: genwidth.xls in directory genwidth, time : 21.49s
+06/04/18 11:58:56 3200: genwidth.xls in directory genwidth/verilog, time : 18.21s
+06/04/18 11:59:22 3200: nreset2.xls in directory nreset2, time : 25.52s
+06/04/18 11:59:42 3200: open.xls in directory open, time : 19.71s
+06/04/18 12:00:01 3200: open.xls in directory open/verilog, time : 18.84s
+06/04/18 12:00:19 3200: open.xls in directory open/verilog_ndmy, time : 18.07s
+06/04/18 12:01:13 3200: macro.xls in directory macro, time : 53.14s
+06/04/18 12:01:38 3200: macro.xls in directory macro/splice, time : 24.76s
+06/04/18 12:02:00 3200: verilog.xls in directory verilog, time : 21.45s
+06/04/18 12:02:28 3200: verilog.xls in directory verilog/vhdl, time : 27.82s
+06/04/18 12:02:54 3200: verilog.xls in directory verilog/mixed, time : 24.85s
+06/04/18 12:03:16 3200: verilog.xls in directory verilog/uamn failed!
+06/04/18 12:03:39 3200: verilog.xls in directory verilog/useconfname, time : 22.96s
+06/04/18 12:04:02 3200: verilog.xls in directory verilog/leaforeg, time : 22.06s
+06/04/18 12:04:24 3200: verilog.xls in directory verilog/seloreg, time : 21.68s
+06/04/18 12:04:46 3200: verilog.xls in directory verilog/v2001, time : 22.16s
+06/04/18 12:05:07 3200: verilog.xls in directory verilog/verimap, time : 20.64s
+06/04/18 12:05:30 3200: configuration.xls in directory configuration, time : 22.45s
+06/04/18 12:05:52 3200: configuration.xls in directory configuration/cmdline, time : 21.73s
+06/04/18 12:06:24 3200: padio.xls in directory padio, time : 31.60s
+06/04/18 12:06:58 3200: padio.xls in directory padio/names, time : 33.86s
+06/04/18 12:07:32 3200: padio.xls in directory padio/bus, time : 33.00s
+06/04/18 12:08:07 3200: padio.xls in directory padio/given, time : 35.44s
+06/04/18 12:08:45 3200: padio2.xls in directory padio2, time : 37.46s
+06/04/18 12:09:05 3200: typecast.xls in directory typecast, time : 19.07s
+06/04/18 12:09:26 3200: typecast.xls in directory typecast/intsig, time : 20.82s
+06/04/18 12:09:47 3200: typecast.xls in directory typecast/intbus, time : 20.41s
+06/04/18 12:10:04 3200: init.xls in directory init, time : 16.31s
+06/04/18 12:10:27 3200: autoopen.xls in directory autoopen, time : 22.71s
+06/04/18 12:10:50 3200: autoopen.xls in directory autoopen/aaa, time : 23.44s
+06/04/18 12:11:11 3200: autoopen.xls in directory autoopen/simple, time : 20.27s
+06/04/18 12:11:31 3200: autoopen.xls in directory autoopen/noaopen, time : 20.17s
+06/04/18 12:11:52 3200: hier.xls in directory hier/auto, time : 20.54s
+06/04/18 12:12:12 3200: portlist.xls in directory portlist, time : 19.31s
+06/04/18 12:12:34 3200: portlist.xls in directory portlist/low, time : 21.65s
+06/04/18 12:13:09 3200: bugver.xls in directory bugver/ramd, time : 34.88s
+06/04/18 12:13:34 3200: bugver.xls in directory bugver/constbug, time : 24.99s
+06/04/18 12:13:57 3200: bugver.xls in directory bugver/20051004c, time : 22.52s
+06/04/18 12:14:20 3200: bugver.xls in directory bugver/20051014b, time : 22.79s
+06/04/18 12:14:43 3200: bugver.xls in directory bugver/20051018d, time : 23.06s
+06/04/18 12:15:08 3200: bugver.xls in directory bugver/20051121a, time : 24.37s
+06/04/18 12:15:33 3200: bugver.xls in directory bugver/20051221a, time : 25.05s
+06/04/18 12:16:00 3200: bugver.xls in directory bugver/20060404c, time : 26.09s
+06/04/18 12:16:23 3200: logic.xls in directory logic, time : 23.04s
+06/04/18 12:16:45 3200: udc.xls in directory udc, time : 22.07s
+06/04/18 12:17:09 3200: udc.xls in directory udc/verilog failed!
+06/04/18 12:17:34 3200: intra.xls in directory intra, time : 24.41s
+06/04/18 12:18:04 3200: intra.xls in directory intra/instance, time : 30.49s
+06/04/18 12:18:04 3200: WARNING: WARNING, Cannot open directory /cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/scd: No such file or directory
+06/04/18 12:18:05 3200: WARNING: ERROR: Directory </cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/scd> not found!
+06/04/18 12:18:20 3200: reg_shell.xls in directory reg_shell/scd, time : 15.40s
+06/04/18 12:18:20 3200: WARNING: WARNING, Cannot open directory /cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/mcd: No such file or directory
+06/04/18 12:18:20 3200: WARNING: ERROR: Directory </cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/mcd> not found!
+06/04/18 12:18:39 3200: reg_shell.xls in directory reg_shell/mcd, time : 18.75s
+06/04/18 12:18:39 3200: WARNING: WARNING, Cannot open directory /cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/no_clock_gating: No such file or directory
+06/04/18 12:18:39 3200: WARNING: ERROR: Directory </cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/no_clock_gating> not found!
+06/04/18 12:18:55 3200: reg_shell.xls in directory reg_shell/no_clock_gating, time : 15.70s
+06/04/18 12:18:55 3200: WARNING: WARNING, Cannot open directory /cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/read_pipeline: No such file or directory
+06/04/18 12:18:55 3200: WARNING: ERROR: Directory </cygdrive/h/work/eclipse/MIX/test/xls_input/reg_shell/read_pipeline> not found!
+06/04/18 12:19:11 3200: reg_shell.xls in directory reg_shell/read_pipeline, time : 16.24s
+06/04/18 12:19:12 3200: SUM: Sucessfully timed tests: 69
+06/04/18 12:19:12 3200: SUM: Overall run time: 1715.42s
+06/04/18 12:19:12 3200: SUM: Average run time: 24.86s
+06/04/18 12:19:12 3200: SUM: Minimum run time: 15.40s
+06/04/18 12:19:12 3200: SUM: Maximum run time: 53.14s
+06/04/18 12:19:12 3200: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/04/18 12:35:59 608: udc.xls in directory udc/verilog failed!
+06/04/18 12:35:59 608: SUM: Sucessfully timed tests: 0
+06/04/18 12:35:59 608: SUM: Overall run time: 0.00s
+06/04/18 12:35:59 608: SUM: Average run time: n/a
+06/04/18 12:35:59 608: SUM: Minimum run time: n/a
+06/04/18 12:35:59 608: SUM: Maximum run time: n/a
+06/04/18 12:35:59 608: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+06/04/18 12:37:23 2140: udc.xls in directory udc/verilog, time : 21.42s
+06/04/18 12:37:23 2140: SUM: Sucessfully timed tests: 1
+06/04/18 12:37:23 2140: SUM: Overall run time: 21.42s
+06/04/18 12:37:23 2140: SUM: Average run time: 21.42s
+06/04/18 12:37:23 2140: SUM: Minimum run time: 21.42s
+06/04/18 12:37:23 2140: SUM: Maximum run time: 21.42s
+06/04/18 12:37:23 2140: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
