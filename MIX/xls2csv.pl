@@ -10,7 +10,7 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #
 #******************************************************************************
 #
-# $Id: xls2csv.pl,v 1.6 2006/04/12 15:37:35 wig Exp $
+# $Id: xls2csv.pl,v 1.7 2006/04/19 07:35:27 wig Exp $
 #
 # read in XLS file and print out a csv and and a sxc version of all sheets
 #
@@ -38,6 +38,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #  Define seperator:
 #
 # $Log: xls2csv.pl,v $
+# Revision 1.7  2006/04/19 07:35:27  wig
+# Added formet.csv.sortrange config parameter.
+#
 # Revision 1.6  2006/04/12 15:37:35  wig
 # Use new Mix core, added colum and row select options.
 #
@@ -94,7 +97,7 @@ sub set_filenames		($);
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.6 $'; # RCS Id
+$::VERSION = '$Revision: 1.7 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 #
@@ -478,7 +481,9 @@ sub convert_selcolumn ($) {
 		}
 	}
 	# Sort by start number
-	@ranges = sort( { ( my $c = $a ) =~ s/:.*//; ( my $d = $b ) =~ s/:.*//; $c <=> $d; } @ranges );
+	if ( $eh->get( 'format.csv.sortrange' ) ) {
+		@ranges = sort( { ( my $c = $a ) =~ s/:.*//; ( my $d = $b ) =~ s/:.*//; $c <=> $d; } @ranges );
+	}
 	
 	return \@ranges;
 } # End of convert_selcolumn
