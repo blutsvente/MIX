@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.62 2006/04/19 07:34:15 wig Exp $
+# $Id: TODO.txt,v 1.63 2006/04/24 12:42:32 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -27,6 +27,15 @@ Code:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+
+>>title: 20060224a/RFE: Allow signal to have both Parameter and Numbers as width
+
+	Situaation: Signal from IP needs Parameter as width. Top level has String
+	width.
+	
+	Req: tschneid
+	Prio: medium
+	Status: open
 
 >>title: 20060411a/RFE: xls write: split large cells into several, combine with concatenate()
 
@@ -109,9 +118,14 @@ Testcase from Frank Oberhoff
 	Start it with
 		mix_0.pl mm-pin.xls
 		
+	Solution: user had whitespace in port description, which war overseen.
+		To better find such situations an error message will be produced whenever
+		there are characters left over in the port description after matching.
+		Embedded whitespace will be removed.
+		
 	Req: poersch
 	Prio: high
-	Status: open
+	Status: closed
 	
 >>title: 20060405b/RFE: Add %VERILOG_HOOK_PARA% for verilog parameter defs.
 
@@ -143,6 +157,53 @@ egrep -v "<list>" from mix_0.pl
 	does not have a driver
 	Leave unloaded port
 	
+	Solution Part1: filter messages by tag:
+		
+		A. Tag filter:
+		MIXCFG log.limit.re.TAG_RE <count>
+			<count> :=  0 -> do not print
+					  > 0 -> print a maximum of <count> occurences
+					  		print number of suppressed messages
+					  -1  (or na): do not limit.
+		
+		These filter are not set by default. If you set limits here,
+		matches will not be counted in the following categories, regardless
+		if the limit is exceeded or not.
+		
+		B. Tag default filter:
+		MIXCFG log.limit.tag.<F|E|W|I|D|A> <count>
+		
+			is somehow equivilant to log.limit.__<L>.* <count>
+			and used to limit the occurence of a given tag to below
+			<count> times. Default is 100 for all levels.
+			Tags matching this limits will be counted by the level
+			limits until the limit.tag is exceeded.
+			
+		C. Level filter:
+		MIXCFG log.limit.level.F|E|W|I|D|A... <count>
+		
+							make sure sum of all tags from given level does not exceed <count> 
+			A(ll) counts all tags and can be set as a last resort.
+			Every tag from any level will also increase the A count.
+			
+		Tags matched under the A. category are not counted.
+		To disable a given level all together, modify mixlog.conf!
+		
+		Default: -1 for F and E, 100 for W, 200 for I, 500 for A.
+			D is not limited, because debug messages are not logged
+			anyway.
+		
+		D. For testing purposes you can set
+		MIXCFG log.limit.test.TAG_RE  <test_count>
+			All tags matching TAG_RE will be counted. In -delta mode an
+			exit status not equal 0 will indicate a mismatch of the expected and
+			the real tag count. There is no default here.
+
+	Additional: set seperate limits for screen output:
+		log.limitstdout.<all_of_above>
+		(will not be reported, just a short ...[cut]... will indicate messages have
+		been limited.
+				 
 	Req: oberhoff
 	Prio: medium
 

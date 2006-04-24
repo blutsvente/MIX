@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.40 $                                          |
+# | Revision:   $Revision: 1.41 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/04/12 15:36:36 $                              |
+# | Date:       $Date: 2006/04/24 12:41:52 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.41  2006/04/24 12:41:52  wig
+# | Imporved log message filter
+# |
 # | Revision 1.40  2006/04/12 15:36:36  wig
 # | Updates for xls2csv added, new ooolib
 # |
@@ -118,11 +121,11 @@ sub mix_utils_io_check_path ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.40 2006/04/12 15:36:36 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.41 2006/04/24 12:41:52 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.40 $'; #'  
+my $thisrevision    =      '$Revision: 1.41 $'; #'  
 
-# Revision:   $Revision: 1.40 $
+# Revision:   $Revision: 1.41 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -325,7 +328,7 @@ sub mix_sheet_conf($$) {
     ROW: for my $i ( @$rconf ) {
 		for my $j ( 0..(scalar ( @$i ) - 3 ) ) {
 	    	next unless ( $i->[$j] ); # Skip empty cells in this row
-	    	if ( $i->[$j] eq "MIXCFG" ) { #Try to read $ii+1 and $ii+2
+	    	if ( $i->[$j] eq 'MIXCFG' ) { #Try to read $ii+1 and $ii+2
 				my $key = $i->[$j+1] || '__E_EXCEL.CONF.KEY';
 				my $val = $i->[$j+2] || '__E_EXCEL.CONF.VALUE';
 				_mix_apply_conf( $key, $val, "EXCEL:$s" ); #Apply key/value

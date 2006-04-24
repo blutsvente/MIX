@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.114 $                                         |
+# | Revision:   $Revision: 1.115 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/04/13 13:31:52 $                              |
+# | Date:       $Date: 2006/04/24 12:41:52 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.114 2006/04/13 13:31:52 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.115 2006/04/24 12:41:52 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.115  2006/04/24 12:41:52  wig
+# | Imporved log message filter
+# |
 # | Revision 1.114  2006/04/13 13:31:52  wig
 # | Changed possition of VERILOG_HOOK_PARA, detect illegal stuff in ::in/out description
 # |
@@ -159,6 +162,8 @@ sub _mix_utils_im_header ($$);
 sub _inoutjoin ($);
 sub _mix_utils_extract_verihead ($$$);
 sub _init_logic_eh ($);
+sub _init_loglimit_eh ($);
+sub _sum_loglimit_eh ($);
 
 ##############################################################
 # Global variables
@@ -175,11 +180,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.114 2006/04/13 13:31:52 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.115 2006/04/24 12:41:52 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.114 $';         #'
+my $thisrevision        =      '$Revision: 1.115 $';         #'
 
-# Revision:   $Revision: 1.114 $   
+# Revision:   $Revision: 1.115 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -438,6 +443,9 @@ sub mix_getopt_header(@) {
 		mix_utils_init_file('import');
     }
 
+	# Redo some configs: delete unneeded log limit values:
+	_init_loglimit_eh($eh);
+	
 }
 
 ##############################################################################
@@ -838,11 +846,26 @@ sub mix_init () {
  			}
  		} 
  	}
- 	  
-   	#OLD  Compatibility ...
-	#OLD  %EH = $eh->get('');
+
+	_init_loglimit_eh( $eh );
 	return $eh;	
 } # End of mix_init
+
+#
+# Remove all limits set to -1
+#
+sub _init_loglimit_eh ($) {
+	my $eh = shift;
+	
+	my $loglimit = $eh->get( 'log.limit' );
+	for my $category ( qw( re tag level ) ) {
+		for my $k ( keys %{$loglimit->{$category}} ) {
+			if ( $loglimit->{$category}->{$k} == -1 ) {
+				delete $loglimit->{$category}->{$k};
+			}
+		}
+	}
+} # End of _init_loglimit_eh
 
 =head2 _init_logic_eh ($)
 
@@ -997,7 +1020,7 @@ sub _mix_apply_conf ($$$) {
 	$v = '' unless ( defined( $v ) ); # No value -> set to ''
 	#!wig20051014: if $v is 0, this parameter got unset!
     unless( defined($k) ) {
-	    unless( defined($k) ) { $k = ""; }
+	    unless( defined($k) ) { $k = ''; }
 	    $logger->error('__E_CFG_KEY_ILLEGAL',
 	    	"\tIllegal key given in $s: key:$k val:$v. Dropped.");
 	    return undef;
@@ -3083,6 +3106,31 @@ sub one2two ($) {
     return $difflines, @out;
 }
 
+#
+# Print out message limits hit
+#
+sub _sum_loglimit_eh ($) {
+	my $eh = shift;
+	
+	my $loglimit = $eh->get( 'log.limit' );
+	my $logcount = $eh->get( 'log.count' );
+	for my $category ( qw( re tag limit ) ) {
+		next unless exists ( $logcount->{$category} );
+		for my $k ( sort( %{$logcount->{$category}} ) ) {
+			# In tag category the key to limit is just the trailing part ...
+			my $kl = $k;
+			if ( $category eq 'tag' ) { # TODO : check if that catches all messages
+				( $kl = $k ) =~ s/^__(\w)_.*/$1/;
+			}
+			if ( $logcount->{$category}{$k} > $loglimit->{$category}{$kl} ) {
+				$logger->info( "SUM: Loglimit for $category/$k:\t" .
+					( $logcount->{$category}{$k} - $loglimit->{$category}{$kl} ) .
+					"\n" );
+			}
+		}
+	}
+} # End of _sum_loglimit_eh
+
 
 ####################################################################
 ## write_sum
@@ -3098,8 +3146,6 @@ write out various summary information like number of changed files, generated wi
 =cut
 
 sub write_sum () {
-
-    # TODO use different log**** call !!
     # TODO Shift function to other module ... ??
 
     # If we had 'inpath' verify mode, summarize left-over "golden" hdl files.
@@ -3124,6 +3170,9 @@ sub write_sum () {
         $logger->info( "SUM: $i $esum->{$i}" );
     }
 
+	# Log messages limited:
+	_sum_loglimit_eh( $eh );
+	
 	# Overall run-time
 	$logger->info( 'SUM: runtime: ' . ( time() - $eh->get( 'macro.%STARTTIME%' ) ) .
 			' seconds' );

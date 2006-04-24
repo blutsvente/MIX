@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.11 $                                          |
+# | Revision:   $Revision: 1.12 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/04/13 13:31:52 $                              |
+# | Date:       $Date: 2006/04/24 12:41:52 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.12  2006/04/24 12:41:52  wig
+# | Imporved log message filter
+# |
 # | Revision 1.11  2006/04/13 13:31:52  wig
 # | Changed possition of VERILOG_HOOK_PARA, detect illegal stuff in ::in/out description
 # |
@@ -83,9 +86,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.11 2006/04/13 13:31:52 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.12 2006/04/24 12:41:52 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.11 $';  
+my $thisrevision    =      '$Revision: 1.12 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1136,9 +1139,35 @@ sub init {
         '%REG%'			=>	'__REG__',	# Internal! Define a verilog reg for leaf output
         # '%WIRE%'		=>	'__WIRE__',	# Conflicts with simple logic wire!!
     };
+
+	#!wig20060424: adding limits for log messages:
+    $this->{'cfg'}{'log'}{'limit'} = {
+    	're'	=> {},	# A. tags match RE here, no defaults, user defined
+    	'tag'	=> {	# B. Tag default filter
+    		'F'	=> 100,
+    		'E'	=> 100,
+    		'W'	=> 100,
+    		'I'	=> 100,
+    		'D'	=> 100,
+    		'A'	=> 100,
+    	},
+    	'level' => {	# C. Level filter:
+						# MIXCFG log.limit.level.F|E|W|I|D|A... <count>
+						# Default: -1 for F and E, 100 for W, 200 for I, 500 for A.
+						# D is not limited, because debug messages are not logged anyway.
+    		'F'	=>  -1,
+    		'E'	=>  -1,
+    		'W'	=> 100,
+    		'I'	=> 200,
+    		'D'	=>  -1,
+    		'A'	=> 500,
+    	},
+    	'test' => {
+    	},
+    };
     
-    # Counters and generic messages
-    
+
+    # Counters and generic messages    
     $this->{'cfg'}{'ERROR'} = '__ERROR__';
     $this->{'cfg'}{'WARN'} = '__WARNING__';
     $this->{'cfg'}{'CONST_NR'} = 0;   # Some global counters

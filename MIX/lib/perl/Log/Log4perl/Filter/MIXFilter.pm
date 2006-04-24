@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MIXFilter.pm,v $                                      |
-# | Revision:   $Revision: 1.2 $                                          |
+# | Revision:   $Revision: 1.3 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/03/14 16:32:59 $                              |
+# | Date:       $Date: 2006/04/24 12:41:52 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MIXFilter.pm,v $
+# | Revision 1.3  2006/04/24 12:41:52  wig
+# | Imporved log message filter
+# |
 # | Revision 1.2  2006/03/14 16:32:59  wig
 # |  	MIXFilter.pm : extended filter based on tag names and occurance
 # |
@@ -43,14 +46,6 @@ use strict;
 use vars qw();
 use Cwd;
 
-# use FindBin;
-# use lib "$FindBin::Bin/..";
-# use lib "$FindBin::Bin/../lib/perl";
-# use lib "$FindBin::Bin";
-# use lib "$FindBin::Bin/lib/perl";
-# use lib getcwd() . "/lib/perl";
-# use lib getcwd() . "/../lib/perl";
-
 use base qw( Log::Log4perl::Filter );
 # use Micronas::MixUtils qw( mix_get_eh );
 use Micronas::MixUtils::Globals qw( get_eh );
@@ -58,9 +53,9 @@ use Micronas::MixUtils::Globals qw( get_eh );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: MIXFilter.pm,v 1.2 2006/03/14 16:32:59 wig Exp $'; 
+my $thisid          =      '$Id: MIXFilter.pm,v 1.3 2006/04/24 12:41:52 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: MIXFilter.pm,v $';
-my $thisrevision    =      '$Revision: 1.2 $';  
+my $thisrevision    =      '$Revision: 1.3 $';  
 
 # Keep logger objects ...
 my %logger = ();
@@ -104,31 +99,91 @@ sub ok {
 
 	# Count the level messages
 	my $l = lc($p{log4p_level});
-	# Count the tag, take everything up to first whitespace
-	( my $tag = ($p{'message'})[0] ) =~s /\S\s.*//;
+	# For tag: take everything up to first whitespace
+	my $tag = '__GENERIC_TAG';
+	if ( ref( $p{'message'} ) eq 'ARRAY' ) {
+		( $tag = $p{'message'}->[0] ) =~ s/(\S)\s.*/$1/;
+	} else {
+		( $tag = $p{'message'} ) =~ s/(\S)\s.*/$1/;
+	}
+	$tag =~ s/\n+$//;
 
 	my $eh = get_eh();
-	if ( $eh ) {
-		# Count number of hits
-		$eh->inc( 'logs.' . $l );
-
-
-=head1 TODO
-
-		# If tag is listed in limit list:
-		for my $t ( split( /,/, $eh->get( 'loglimit.tagmax' )) {
-			my ( $tm, $lim ) = split( /=/, $t );
-			next unless $tm;
-			if ( $tag =~ m/$tm/ ) {
-				my $th = $eh->get( 'loglimit.hittag.' . $tm );
-				$th = 0 unless( defined $th );
-				$eh->inc( 'loglimit.omit
+	if ( $eh and $tag !~ m/^SUM:/ ) {
+		# Count number of hits in various categories ...
+		my $loglimits = $eh->get('log.limit');
+		# A. MIXCFG log.limit.re.TAG_RE <count>
+		if ( exists $loglimits->{'re'} ) {
+			for my $res ( keys( %{$loglimits->{'re'}} ) ) {
+				next if $loglimits->{'re'}{$res} < 0;
+				if ( $tag =~ m/^$res/ ) { # Got a match
+					my $c = $eh->inc( 'log.count.re.' . $res );
+					if ( $c > $loglimits->{'re'}{$res} ) {
+						# Skip it!
+						return 0;
+					}
+				}
 			}
+		} # End of A.
+
+		# B. Tag default filter:
+		# MIXCFG log.limit.tag.<F|E|W|I|D|A> <count>
+		#
+		#	is somehow equivilant to log.limit.__<L>.* <count>
+		# Count individual tags:
+		my $skip = 0;
+		if ( exists $loglimits->{'tag'} ) {
+			for my $res ( keys( %{$loglimits->{'tag'}} ) ) {
+				next if $loglimits->{'tag'}{$res} < 0;
+				my $r = '__' . $res . '_'; # All level tags 
+				if ( $tag =~ m/^$r/ ) { # Got a match
+					my $c = $eh->inc( 'log.count.tag.' . $tag );
+					if ( $c > $loglimits->{'tag'}{$res} ) {
+						$skip = 1;
+						# Skip it!
+					}
+				}
+			}
+		} # End of B.
+
+		# C. Level filter:
+		# MIXCFG log.limit.level.F|E|W|I|D|A... <count>
+		#
+		# make sure sum of all tags from given level does not exceed <count> 
+		# Count individual tags:
+		if ( exists $loglimits->{'level'} ) {
+			for my $res ( keys( %{$loglimits->{'level'}} ) ) {
+				next if $loglimits->{'level'}{$res} < 0;
+				my $r = '__' . $res . '_'; # All level tags 
+				if ( $tag =~ m/^$r/ ) { # Got a match
+					my $c = $eh->inc( 'log.count.level.' . $res );
+					if ( $c > $loglimits->{'level'}{$res} ) {
+						$skip = 1;
+						# Skip it!
+					}
+				}
+			}
+		} # End of C.
+
+		# D. For testing purposes you can set
+		# MIXCFG log.limit.test.TAG_RE  <test_count>
+		#	All tags matching TAG_RE will be counted. In -delta mode an
+		#	exit status not equal 0 will indicate a mismatch of the expected and
+		#	the real tag count. There is no default here.
+
+		if ( exists $loglimits->{'test'} ) {
+			for my $res ( keys( %{$loglimits->{'test'}} ) ) { 
+				if ( $tag =~ m/^$res/ ) { # Got a match
+					$eh->inc( 'log.count.test' . $res );
+				}
+			}
+		} # End of D.
+		
+		if ( $skip ) {
+			return 0;
 		}
-
-=cut
-
 	}
+	
 	$self->{'_levelhit_'}{$l}++;
 
 	my $cur = $self->{'_tagc_'}{$tag}++;
