@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.34 2006/04/19 13:47:20 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.35 2006/04/27 16:47:01 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.34 $                                  
+#  Revision      : $Revision: 1.35 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.35  2006/04/27 16:47:01  lutscher
+#  corrected MSD pragmas
+#
 #  Revision 1.34  2006/04/19 13:47:20  lutscher
 #  added MSD parse on/off pragma for SVA in generated Verilog code
 #
@@ -189,8 +192,8 @@ sub _gen_view_vgch_rs {
 				  'field_spec_values'  => ['sha', 'w1c', 'usr'], # recognized values for spec attribute
 				  'indent'             => "    ",       # indentation character(s)
 				  'assert_pragma_start'=> "`ifdef ASSERT_ON
-// pragma msd parse off",
-				  'assert_pragma_end'  => "// pragma msd parse on
+// msd parse off",
+				  'assert_pragma_end'  => "// msd parse on
 `endif",
 				  # internal static data structs
 				  'hclocks'            => {},           # for storing per-clock-domain information
@@ -619,7 +622,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.34 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.35 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
