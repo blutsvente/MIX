@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.35 2006/04/27 16:47:01 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.36 2006/05/02 14:14:21 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.35 $                                  
+#  Revision      : $Revision: 1.36 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.36  2006/05/02 14:14:21  lutscher
+#  added feature for conditional FFs (reg-master column ::cond)
+#
 #  Revision 1.35  2006/04/27 16:47:01  lutscher
 #  corrected MSD pragmas
 #
@@ -301,13 +304,13 @@ sub _gen_view_vgch_rs {
 # reference to list where code lines are added (::udc)
 sub _vgch_rs_gen_cfg_module {
 	my ($this, $o_domain, $clock, $lref_udc) = @_;
-	my($o_reg, $shdw_sig);
+	my($o_reg, $shdw_sig, $par);
 	my $href = $this->global->{'hclocks'}->{$clock};
 	my $cfg_i = $href->{'cfg_inst'};
 	my (@ldeclarations) = ("", "/*","  local wire or register declarations","*/");
 	my (@lstatic_logic) = ();
 	my $reset = $href->{'reset'};
-	my (%husr, %hshdw, %hassigns, %hwp, %haddr_tokens, %hrp, %hrp_trg);
+	my (%husr, %hshdw, %hassigns, %hwp, %haddr_tokens, %hrp, %hrp_trg, %hparams);
 	my $nusr = 0;
 	my (@lassigns) = ("", "/*","  local wire and output assignments","*/");
 	my (@ldefines) = ("", "/*", "  local definitions","*/");
@@ -439,10 +442,13 @@ sub _vgch_rs_gen_cfg_module {
 						$hassigns{$this->_gen_field_name("out", $o_field).$this->_get_frange($o_field)} = "wr_data_i".$rrange;
 					} else {
 						# drive from register
-						$hassigns{$this->_gen_field_name("out", $o_field).$this->_get_frange($o_field)} = $reg_name.$rrange;
+						#$hassigns{$this->_gen_field_name("out", $o_field).$this->_get_frange($o_field)} = $reg_name.$rrange;
+						$hassigns{$this->_gen_field_name("out", $o_field).$this->_get_frange($o_field)} = $this->_gen_cond_rhs(\%hparams, $o_field, $reg_name.$rrange);
 					};
 				} else {
-					$hassigns{$this->_gen_field_name("shdw", $o_field).$this->_get_frange($o_field)} = $reg_name.$rrange;
+					# drive from register
+					#$hassigns{$this->_gen_field_name("shdw", $o_field).$this->_get_frange($o_field)} = $reg_name.$rrange;
+					$hassigns{$this->_gen_field_name("shdw", $o_field).$this->_get_frange($o_field)} = $this->_gen_cond_rhs(\%hparams, $o_field, $reg_name.$rrange);
 					push @ldeclarations,"wire [$msb:$lsb] ".$this->_gen_field_name("shdw", $o_field).";";
 				};
 				if($access =~ m/r/i and $spec =~ m/usr/i) { # usr read/write
@@ -500,8 +506,9 @@ sub _vgch_rs_gen_cfg_module {
 					} elsif ($spec =~ m/usr/i) {
 						push @{$hrp{$reg_offset}}, {$rrange => $this->_gen_field_name("in", $o_field)};
 					} else {
-						push @{$hrp{$reg_offset}}, {$rrange => $reg_name.$rrange};
-					};
+						#push @{$hrp{$reg_offset}}, {$rrange => $reg_name.$rrange};
+						push @{$hrp{$reg_offset}}, {$rrange => $this->_gen_cond_rhs(\%hparams, $o_field, $reg_name.$rrange)};
+};
 				} else { # read-only
 					if ($spec =~ m/sha/i) {
 						push @{$hrp{$reg_offset}}, {$rrange => $this->_gen_field_name("shdw", $o_field)};
@@ -516,6 +523,12 @@ sub _vgch_rs_gen_cfg_module {
 		}; # foreach $href
 	}; # foreach $o_reg 
 	
+	# add additional top-level parameters
+	foreach $par (keys %hparams) {
+		_add_generic($par, $hparams{$par}, $this->global->{'top_inst'});
+		_add_generic_value($par, $hparams{$par}, $par, $cfg_i);
+	};
+
 	# add assertions for input pulses
 	if ($p_pos_pulse_check) {
 		unshift @lchecks, split("\n","
@@ -622,7 +635,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.35 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.36 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -1407,6 +1420,20 @@ endfunction
 				  "end",
 				  "assign trans_done_o = int_trans_done;"
 				 );
+	 
+    # function for conditional instantiation of Flip-Flops
+	if (exists($href->{'has_cond_fields'})) {
+        my $fullrange = $this->_gen_vector_range($this->global->{'datawidth'}-1,0);
+		push @ltemp, (
+		              "", "/*", "  helper function for conditional FFs", "*/",
+                      "function $fullrange cond_slice(input enable, input $fullrange vec);",
+                      $ind . "begin",
+                      $ind x 2 . "cond_slice = enable ? vec : 0;",
+                      $ind . "end",
+                      "endfunction"
+                     ); 
+	};
+
 	_pad_column(-1, $this->global->{'indent'}, 2, \@ltemp);
 
 	push @$lref_udc, @ltemp;
@@ -1609,6 +1636,12 @@ sub _vgch_rs_get_configuration {
 		};
 		if ($o_field->attribs->{'dir'} =~ m/r/i) {
 			$hresult{$clock}->{'has_read'} = 1; # store if has readable registers
+		};
+		if (exists ($o_field->attribs->{'cond'}) and ($o_field->attribs->{'cond'} != 0)) {
+			$hresult{$clock}->{'has_cond_fields'} = 1;
+			if ($o_field->attribs->{'spec'} =~ m/usr/i) {
+				_warning("field \'",$o_field->{'name'},"\' is of type USR, conditional attribute makes no sense here");
+			};
 		};
 		# check length of field names
 		if (length($o_field->{'name'}) >32) {
@@ -1976,5 +2009,21 @@ sub _gen_unique_signal_names {
 				exists $href->{'cg_read_inst'} ? $href->{'cg_read_inst'}."rd_clk_en" : "rd_clk_en"
 			   );
 	};
+};
+
+# function to generate the right-hand-side statement (RHS) for an assignment that used the cond_slice() function;
+# value is a string with the original RHS which will be wrapped in the function call
+sub _gen_cond_rhs {
+	my ($this, $href_params, $o_field, $value) = @_;
+	my $res_val = $value;
+
+	# if (exists ($href_clkinfo->{'has_cond_fields'})) {
+	my $parname = "P__".uc($o_field->name);
+	if(exists ($o_field->attribs->{'cond'}) and $o_field->attribs->{'cond'} == 1) {
+		$res_val = "cond_slice($parname, $value)";
+		$href_params->{$parname} = 1;
+	};
+	#};
+	return $res_val;
 };
 1;
