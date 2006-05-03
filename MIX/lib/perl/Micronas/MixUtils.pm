@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.116 $                                         |
+# | Revision:   $Revision: 1.117 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/05/03 12:03:15 $                              |
+# | Date:       $Date: 2006/05/03 14:46:53 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.116 2006/05/03 12:03:15 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.117 2006/05/03 14:46:53 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.117  2006/05/03 14:46:53  wig
+# |  	MixUtils.pm : add &nil, &nl as allowed encodings in MIXCFG
+# |
 # | Revision 1.116  2006/05/03 12:03:15  wig
 # | Improved top handling, fixed generated format
 # |
@@ -183,11 +186,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.116 2006/05/03 12:03:15 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.117 2006/05/03 14:46:53 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.116 $';         #'
+my $thisrevision        =      '$Revision: 1.117 $';         #'
 
-# Revision:   $Revision: 1.116 $   
+# Revision:   $Revision: 1.117 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1028,7 +1031,8 @@ apply configuration
 
 =back
 
-#!wig20060424: map  &sp; or <SP> to a space, <TAB> or &tab; to \t
+#!wig20060424: map  &sp; or <SP> to a space, <TAB> or &tab; to \t, &nl; or <NL> to newline,
+	&nil; or <NIL> to an empty string
 
 =cut
 
@@ -1045,11 +1049,15 @@ sub mix_apply_conf($$$) {
 	    return undef;
     }
 
+	# Whitespace encoded:
 	if ( $value eq '&sp;' or $value eq '<SP>' ) {
 		$value = ' ';
-	}
-	if ( $value eq '&tab;' or $value eq '<TAB>' ) {
+	} elsif ( $value eq '&tab;' or $value eq '<TAB>' ) {
 		$value = "\t";
+	} elsif ( $value eq '&nl;' or $value eq '<NL>' ) {
+		$value = "\n";
+	} elsif ( $value eq '&nil;' or $value eq '<NIL>' ) {
+		$value = '';
 	}
     unless( defined( $eh->set( $key, $value ) ) ) {
     	$logger->error('__E_CONF_KEY', "\tApplying key $key from source $source failed" );
