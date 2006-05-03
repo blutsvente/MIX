@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MIXFilter.pm,v $                                      |
-# | Revision:   $Revision: 1.3 $                                          |
+# | Revision:   $Revision: 1.4 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/04/24 12:41:52 $                              |
+# | Date:       $Date: 2006/05/03 12:03:15 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MIXFilter.pm,v $
+# | Revision 1.4  2006/05/03 12:03:15  wig
+# | Improved top handling, fixed generated format
+# |
 # | Revision 1.3  2006/04/24 12:41:52  wig
 # | Imporved log message filter
 # |
@@ -53,9 +56,9 @@ use Micronas::MixUtils::Globals qw( get_eh );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: MIXFilter.pm,v 1.3 2006/04/24 12:41:52 wig Exp $'; 
+my $thisid          =      '$Id: MIXFilter.pm,v 1.4 2006/05/03 12:03:15 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: MIXFilter.pm,v $';
-my $thisrevision    =      '$Revision: 1.3 $';  
+my $thisrevision    =      '$Revision: 1.4 $';  
 
 # Keep logger objects ...
 my %logger = ();
@@ -151,18 +154,21 @@ sub ok {
 		#
 		# make sure sum of all tags from given level does not exceed <count> 
 		# Count individual tags:
-		if ( exists $loglimits->{'level'} ) {
-			for my $res ( keys( %{$loglimits->{'level'}} ) ) {
-				next if $loglimits->{'level'}{$res} < 0;
-				my $r = '__' . $res . '_'; # All level tags 
-				if ( $tag =~ m/^$r/ ) { # Got a match
-					my $c = $eh->inc( 'log.count.level.' . $res );
-					if ( $c > $loglimits->{'level'}{$res} ) {
+		my $mylevel = uc(substr( $l, 0, 1)); 
+		my $mytag = '__' . $mylevel . '_'; 
+		if ( exists $loglimits->{'level'}->{$mylevel} ) {
+			# for my $res ( keys( %{$loglimits->{'level'}} ) ) {
+				next if $loglimits->{'level'}{$mylevel} < 0;
+				# my $r = '__' . $res . '_'; # All level tags 
+				if ( substr( $tag, 0, 4 ) eq $mytag ) { # Got a match
+					my $c = $eh->inc( 'log.count.level.' . $mylevel ); # Count it
+					# Speed it up here (do not use inc, but increase counter!)
+					if ( $c > $loglimits->{'level'}{$mylevel} ) {
 						$skip = 1;
 						# Skip it!
 					}
 				}
-			}
+			# }
 		} # End of C.
 
 		# D. For testing purposes you can set

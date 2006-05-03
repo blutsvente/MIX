@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.12 $                                          |
+# | Revision:   $Revision: 1.13 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/04/24 12:41:52 $                              |
+# | Date:       $Date: 2006/05/03 12:03:15 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.13  2006/05/03 12:03:15  wig
+# | Improved top handling, fixed generated format
+# |
 # | Revision 1.12  2006/04/24 12:41:52  wig
 # | Imporved log message filter
 # |
@@ -86,9 +89,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.12 2006/04/24 12:41:52 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.13 2006/05/03 12:03:15 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.12 $';  
+my $thisrevision    =      '$Revision: 1.13 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -544,12 +547,14 @@ sub init {
 		},
 		'defs' => '',   # 'inst,conn',    # make sure elements are only defined once:
 	    		    # posible values are: inst,conn
-		'signal' => 'load,driver,check,top_open,nanbounds',
+		'signal' => 'load,driver,check,top_open,top_nodriver,nanbounds',
 					# reads: checks if all signals have appr. loads
 					# and drivers.
 					#	nanbounds  := print warning of bounds are not numbers
 					# If "top_open" is in this list, will wire unused
 					# signals to open.
+					# If "top_nodriver" is set, will leave undriven ports open
+					#	(required if you want to attach another signal to this port)
 					# TODO: auto_low, auto_high: automatically ground/high undriven signals
 				
 		'inst' => 'nomulti',	# check and mark multiple instantiations
@@ -723,6 +728,7 @@ sub init {
     # to allow debugging
 	$this->{'cfg'}{'conf'} = {
 		'xls' => 'CONF',
+		'xxls'	=> '',
 		'req' => 'optional',
 		'parsed' => 0,
 		'field' => {},
@@ -772,7 +778,8 @@ sub init {
 	# ::sub	::cpu1_addr	::cpu2_addr	::xls_def
 	
     $this->{'cfg'}{'join'} = {
-		'xls' => '.*',
+		'xls' => '.*',			# Include sheets listed here (after exclude got applied)
+		'xxls'	=> '',			# Exclude sheets here (before include is applied)
 		'req' => 'optional',
 		'key' => '::ign', 		# Primary key to arbitrary data. Has to be set!!!
 		'comments' => 'post',	# Keep comments -> pre|predecessor post|successor
@@ -812,7 +819,8 @@ sub init {
     # Definitions regarding the CONN sheets:
     #
     $this->{'cfg'}{'conn'} = {
-		'xls' => 'CONN',
+		'xls'	=> 'CONN',		# Include only/all sheets matching this expression (after xxls exclude)
+		'xxls'	=> '',			# Exclude sheets matching this regular expression (before include)
 		'comments' => 'post',	# Keep comments -> pre|predecessor post|successor
 		'req' => 'mandatory',
 		'parsed' => 0,
@@ -854,7 +862,8 @@ sub init {
     #	 hierachy sheet basic definition
     #
     $this->{'cfg'}{'hier'} = {
-        'xls' => 'HIER', 
+        'xls' => 'HIER', 	# Include all sheets matching this regular expression (after exclude)
+		'xxls'	=> '',		# Exclude sheets matching this regular expression (before include)
 		'comments' => '',	# Keep comments -> pre|predecessor post|successor
 		'req' => 'mandatory', # Default: mandatory -> has to read HIER sheet
 							# Other valid keys: "optional"
@@ -908,7 +917,8 @@ sub init {
     #
     #
     $this->{'cfg'}{'io'} = {
-		'xls' => 'IO',
+		'xls' => 'IO',		# Include sheets (after exclude)
+		'xxls'	=> '',		# Exclude sheets (before include)
 		'comments' => '',	# Keep comments -> pre|predecessor post|successor
 		'req' => 'optional',
 		'parsed' => 0,
@@ -946,7 +956,8 @@ sub init {
     # I2C sheet basic definitions
     #
     $this->{'cfg'}{'i2c'} = {
-		'xls' => 'I2C',
+		'xls' => 'I2C',		# Include sheets
+		'xxls' => '',	# Exclude sheets
 		'comments' => '',	# Keep comments -> pre|predecessor post|successor
 		'regmas_type' => 'VGCA', # format of register-master, currently either VGCA or FRCH
 		'req' => 'optional',
@@ -997,7 +1008,8 @@ sub init {
     # ::b	::b	::b	::b	::b	::init	::rec	::range	::view
     # ::vi2c	::name	::comment
     $this->{'cfg'}{'vi2c'} = {
-		'xls' => 'VI2C',
+		'xls' => 'VI2C',	# Include sheets
+		'xxls' => '',		# Exclude sheets
 		'req' => 'optional',
 		'key' => '::inst',
 		'parsed' => 0,
@@ -1078,7 +1090,7 @@ sub init {
    	    '%DECL%'	=> '__DECL__', # Used internally for ::udc	
 	    '%VERILOG_TIMESCALE%'	=>	'`timescale 1ns/10ps',
 	    '%VERILOG_USE_ARCH%'	=>	'%EMPTY%',
-	    '%VERILOG_DEFINES%'	=>	'	// No user `defines in this module',  # Want to define s.th. globally?
+	    '%VERILOG_DEFINES%'	=>	'// No user `defines in this module',  # Want to define s.th. globally?
 		'%VERILOG_HOOK_HEAD%'	=>	'',
 		'%VERILOG_HOOK_BODY%'	=>	'',
 		'%VERILOG_HOOK_PARA%'	=>	'',

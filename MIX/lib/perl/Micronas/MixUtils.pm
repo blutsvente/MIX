@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.115 $                                         |
+# | Revision:   $Revision: 1.116 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/04/24 12:41:52 $                              |
+# | Date:       $Date: 2006/05/03 12:03:15 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.115 2006/04/24 12:41:52 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.116 2006/05/03 12:03:15 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.116  2006/05/03 12:03:15  wig
+# | Improved top handling, fixed generated format
+# |
 # | Revision 1.115  2006/04/24 12:41:52  wig
 # | Imporved log message filter
 # |
@@ -97,31 +100,31 @@ require Exporter;
 	select_variant
 	two2one
 	one2two
+	mix_apply_conf
+    mix_overload_sheet
     );
 # @Micronas::MixUtils::EXPORT_OK=qw(
 @EXPORT_OK = qw(
 	%OPTVAL
-    %EH
     $eh
     mix_utils_diff
     mix_utils_clean_data
-	);
+);
 
 our $VERSION = '0.01';
 
 use strict;
 
+use Cwd;
 use File::Basename;
 use File::Copy;
 use DirHandle;
 use IO::File;
 use Getopt::Long qw(GetOptions);
 
-use Cwd;
-# use Log::Agent;
-# use Log::Agent::Priorities qw(:LEVELS);
-
 use Log::Log4perl qw(get_logger);
+# Directely access mix_utils_open_input
+# use Micronas::MixUtils::IO qw();
 use Micronas::MixUtils::InComments; # Some extra for comments in input data
 use Micronas::MixUtils::Globals;
 
@@ -138,8 +141,8 @@ sub mix_get_eh ();
 sub select_variant ($);
 sub mix_list_conf ();
 sub mix_list_econf ($);
+sub mix_apply_conf($$$);
 # sub _mix_list_conf ($$;$);
-sub _mix_apply_conf ($$$);
 sub mix_store ($$;$);
 sub mix_utils_open($;$);
 sub mix_utils_print($@);
@@ -180,11 +183,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.115 2006/04/24 12:41:52 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.116 2006/05/03 12:03:15 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.115 $';         #'
+my $thisrevision        =      '$Revision: 1.116 $';         #'
 
-# Revision:   $Revision: 1.115 $   
+# Revision:   $Revision: 1.116 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -805,7 +808,7 @@ sub mix_init () {
 	    			$prev = "";
 			
 					if ( m,^\s*MIXCFG\s+(\S+)\s*(.*),s ) { # MIXCFG key.key.key value
-		    			_mix_apply_conf( $1, $2, 'file:mix.cfg' );
+		    			mix_apply_conf( $1, $2, 'file:mix.cfg' );
 					}
 					# Other lines are discarded silently
 	    		}
@@ -816,6 +819,18 @@ sub mix_init () {
     	}
 	}
 
+	post_configset( $eh );
+
+	return $eh;	
+} # End of mix_init
+
+#
+# set config options and $eh derived from config settings
+# Obviously some parameters cannot be set a second time
+#   (e.g. PROJECT derived mix.cfg location
+#
+sub post_configset ($) {
+	my $eh = shift;
 	#
 	# Post configuration processing
 	#!wig20031219
@@ -848,8 +863,8 @@ sub mix_init () {
  	}
 
 	_init_loglimit_eh( $eh );
-	return $eh;	
-} # End of mix_init
+
+} # End of post_configset
 
 #
 # Remove all limits set to -1
@@ -998,55 +1013,70 @@ sub mix_overload_conf ($) {
     }
 } # End of mix_overload_conf
 
-#
-# Similiar to _mix_overload_conf!!
-# take configuration parameter and overload with new value
-# 
-# Input:
-#	config key	(e.g.   a.b.c )
-#	value		(anything, does some sanity checks, e.g. foo)
-#
-# Output:
-#	-
-#
-# Global:
-#	writes to %EH	( $EH{a}{b}{c} = "foo" )
-#
-sub _mix_apply_conf ($$$) {
-    my $k = shift; # Key
-    my $v = shift; # Value
-    my $s = shift; # Source
+#############################################################################
+## mix_apply_conf
+## Similiar to MixUtils::mix_overload_conf!!
+#############################################################################
+=head2 mix_apply_conf($$$)
 
-	$v = '' unless ( defined( $v ) ); # No value -> set to ''
-	#!wig20051014: if $v is 0, this parameter got unset!
-    unless( defined($k) ) {
-	    unless( defined($k) ) { $k = ''; }
-	    $logger->error('__E_CFG_KEY_ILLEGAL',
-	    	"\tIllegal key given in $s: key:$k val:$v. Dropped.");
+apply configuration
+
+=over 4
+=item $key Key
+=item $value Value
+=item $source Source
+
+=back
+
+#!wig20060424: map  &sp; or <SP> to a space, <TAB> or &tab; to \t
+
+=cut
+
+sub mix_apply_conf($$$) {
+    my $key		= shift; # Key
+    my $value	= shift; # Value
+    my $source	= shift; # Source
+
+    unless( $key and defined($value) ) {
+	    unless( $key ) { $key = ''; }
+	    unless( defined( $value ) ) { $value = ''; }
+	    $logger->warn('__W_CONF_KEY',
+	    	"\tIllegal key or value given in $source: key:$key val:$value");
 	    return undef;
     }
 
-	$eh->set( $k, $v );
-
-} # End of _mix_apply_conf
+	if ( $value eq '&sp;' or $value eq '<SP>' ) {
+		$value = ' ';
+	}
+	if ( $value eq '&tab;' or $value eq '<TAB>' ) {
+		$value = "\t";
+	}
+    unless( defined( $eh->set( $key, $value ) ) ) {
+    	$logger->error('__E_CONF_KEY', "\tApplying key $key from source $source failed" );
+    }
+} # End of mix_apply_conf
 
 ##############################################################################
-# mix_overload_sheet
-#
-# take -sheet SHEET=MATCH_OP and transfer that into %EH (overloading values there)
+## mix_overload_sheet
+##
+## take -sheet SHEET=MATCH_OP and transfer that into $eh (overloading values there)
 ##############################################################################
-
-=head2 mix_overload_sheet($OPTVAL{'sheet'})
+=head2 mix_overload_sheet($)
 
 Started if option -sheet SHEET=match_op is given on command line. SHEET can be one of
-<I hier>, <I conn>, <I vi2c>, <I conf> or <I i2c>
+<I hier>, <I conn>, <I vi2c> or <I conf>
 
 =over 4
+
+=item $sheets worksheets to process
+
+=back
+=over2
 
 = item -sheet SHEET=match_op
 
 Replace the default match operator for the sheet type. match_op can be any perl
-regular expression.match_op shoud match the sheet names of the design descriptions.
+regular expression. match_op should match the sheet names of the design descriptions.
 
 =back
 
@@ -1072,7 +1102,7 @@ sub mix_overload_sheet ($) {
 
 		$k = lc( $k ); # $k := conn, hier, vi2c, conf, ...
 
-		if ( $eh->get( $k . '.xls' ) ) {
+		if ( defined( $eh->get( $k . '.xls' ) ) ) {
 	    	$logger->info( "__I_CFG_SHEET_MATCH", "\tOverloading sheet match $i");
 	    	$eh->set( $k. '.xls' , $v );
 		} else {
@@ -1080,7 +1110,6 @@ sub mix_overload_sheet ($) {
 		}
     }
 } # End of mix_overload_sheet
-
 
 ####
 # extra block starts here
@@ -3114,7 +3143,7 @@ sub _sum_loglimit_eh ($) {
 	
 	my $loglimit = $eh->get( 'log.limit' );
 	my $logcount = $eh->get( 'log.count' );
-	for my $category ( qw( re tag limit ) ) {
+	for my $category ( qw( re tag level ) ) {
 		next unless exists ( $logcount->{$category} );
 		for my $k ( sort( %{$logcount->{$category}} ) ) {
 			# In tag category the key to limit is just the trailing part ...
@@ -3122,7 +3151,8 @@ sub _sum_loglimit_eh ($) {
 			if ( $category eq 'tag' ) { # TODO : check if that catches all messages
 				( $kl = $k ) =~ s/^__(\w)_.*/$1/;
 			}
-			if ( $logcount->{$category}{$k} > $loglimit->{$category}{$kl} ) {
+			if ( exists $loglimit->{$category}->{$kl} and
+				$logcount->{$category}{$k} > $loglimit->{$category}{$kl} ) {
 				$logger->info( "SUM: Loglimit for $category/$k:\t" .
 					( $logcount->{$category}{$k} - $loglimit->{$category}{$kl} ) .
 					"\n" );

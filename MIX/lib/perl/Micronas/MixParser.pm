@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.71 $                                         |
+# | Revision:   $Revision: 1.72 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/04/19 07:32:08 $                              |
+# | Date:       $Date: 2006/05/03 12:03:15 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.71 2006/04/19 07:32:08 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.72 2006/05/03 12:03:15 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.72  2006/05/03 12:03:15  wig
+# | Improved top handling, fixed generated format
+# |
 # | Revision 1.71  2006/04/19 07:32:08  wig
 # | Fix issue 20060404c (duplicate output ports)
 # |
@@ -144,9 +147,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.71 2006/04/19 07:32:08 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.72 2006/05/03 12:03:15 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.71 $';
+my $thisrevision =	'$Revision: 1.72 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -735,6 +738,7 @@ sub add_tree_node ($$) {
     # Build tree
     # we can rely on the fact that this hierachy element was never seen before ...
     # TODO : store all attributes in tree object, instead of hierdb ...
+    #
     my $node = Tree::DAG_Node -> new;
     $node->name($name);
     $r_h->{'::treeobj'} = $node; # store object reference!
@@ -743,8 +747,9 @@ sub add_tree_node ($$) {
     my $parent = 'W_NO_PARENT';
 	# TESTBENCH: if no parent set, link it to %TOP%
 	my $auto_top = 0;
-	if ( $name =~ m/^%?testbench\b/i ) {
+	if ( $name =~ m/^%?testbench/i ) {
 		unless( defined( $r_h->{'::parent'} ) ) {
+			$logger->info( '__I_SELECTTOP', "\tUse built-in top %TOP%" );
 			$r_h->{'::parent'} = '%TOP%';
 			$auto_top = 1;
 		}
@@ -760,9 +765,8 @@ sub add_tree_node ($$) {
 	$parent = mix_expand_name( 'inst', { '::inst' => $parent } ); # Caveat: Cannot do full expansion
     $parent = mix_check_case( 'inst', $parent);
 
-    if ( defined( $hierdb{$parent} ) and $hierdb{$parent} ) {
-            $hierdb{$parent}{'::treeobj'}->add_daughter( $node);
-    } else {
+	#!wig20060503: If parent does not exist -> create it
+    unless ( defined( $hierdb{$parent} ) and $hierdb{$parent} ) {
     		# Create "default" parent
             my $parnode = Tree::DAG_Node -> new;
             $parnode->name($parent);
@@ -772,7 +776,7 @@ sub add_tree_node ($$) {
             for my $i ( keys %$ehr ) {
                     next unless ( $i =~ m/^::/ );
                     $hierdb{$parent}{$i} = $ehr->{$i}[3]; # Set to DEFAULT Value
-                    #TODO: Initialize fields to empty / Marker, set DEFAULT if still empty at end 
+                    # TODO : Initialize fields to empty / Marker, set DEFAULT if still empty at end 
                     $hierdb{$parent}{$i} =~ s/%NULL%//g; # Just to make sure fields are initialized
             }
             # Force TESTBENCH (auto) to be daughter of %TOP%
@@ -783,6 +787,7 @@ sub add_tree_node ($$) {
             $hierdb{$parent}{'::inst'} = $parent; # Set parent name
             $hierdb{$name}{'::parent'} = $parent; # Set name for parent of this
     }
+    $hierdb{$parent}{'::treeobj'}->add_daughter( $node);
 } # End of add_tree_node
 
 sub merge_inst ($%) {
@@ -854,7 +859,7 @@ sub merge_inst ($%) {
         }
     }
     return;
-}
+} # End of merge_inst
 
 ####################################################################
 ## parse_conn_init
@@ -2624,7 +2629,6 @@ Side effects:
 =cut
 
 sub add_portsig () {
-
     for my $signal ( keys( %conndb ) ) {
         my %connected = (); # List of connected instance nodes
         my %modes = ();
@@ -3917,34 +3921,53 @@ sub check_b_vec ($$$) {
 # Tree::DAG_Node::common is buggy -> use my_common instead
 #
 sub my_common (@) {
-	my ( $root, @nodes ) = @_;
+	my ( @nodes ) = @_;
 
 	#
 	# return undef if called without arguments
 	#
-	unless( defined $root and $root ) { return undef; };
-        unless( Tree::DAG_Node::is_node( $root ) ) {
-            $logger->error( '__E_PARSER_TREE_COMMON', "\tInput of my_common $root is no Tree::DAG_Node node!" );
-            return undef;
-        }
+	return unless( scalar( @nodes) >= 1 );
 
-	if ( $#nodes < 0 ) {
-             return $root;
+	#!wig20060503: make root the node with the shortest address:
+	my $root = $nodes[0];
+	my $is_root = 0;
+	if ( scalar( @nodes ) == 1 and Tree::DAG_Node::is_node( $root )) {
+        return $root;
 	} else {
-            for my $n ( @nodes ) {
-                unless( Tree::DAG_Node::is_node( $n ) ) {
-                    $logger->error( '__E_PARSER_TREE_COMMON', "\tInput of my_common  nodes array is no Tree::DAG_Node node!" );
-                    return undef;
-                }
+		my $l = 100;
+        for my $n ( @nodes ) {
+            if( Tree::DAG_Node::is_node( $n ) ) {
+            	my $thisa = $n->address;
+            	if( length( $thisa ) < $l ) {
+            		$root = $n;
+            		$l = length( $thisa );
+            	}
+            	$is_root++ if ( $thisa eq '0' );
+            } else {
+                $logger->error( '__E_PARSER_TREE_COMMON',
+                	"\tInput of my_common nodes array is no Tree::DAG_Node node!" );
+                return undef;
             }
         }
+    }
 
+	# If we have to many roots -> warn!
+	if( $is_root > 1 ) {
+		$logger->error('__E_DUPLICATE_TREEROOT', "\tFound $is_root root hierachy nodes" );
+		return undef();
+	}
+ 
+	# If we have the root in here -> return immediately
+	# Otherwise common( @nodes ) has problems!
+	if ( $root->address eq '0' ) {
+		return $root;
+	}
 	#
 	# or if the nodes are not part of the same tree
 	#
 	unless( defined( $root->common( @nodes ) ) ) { return undef; };
 
-	my $ar = $root->address . ":";
+	my $ar = $root->address . ':';
 
 	for my $n ( 0..$#nodes ) {
 		my $an = $nodes[$n]->address . ":";
@@ -3971,7 +3994,7 @@ sub my_common (@) {
 		}
 	}
 	return $root;
-}
+} # End of my_common
 
 ####################################################################
 ## parse_mac

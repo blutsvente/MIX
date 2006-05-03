@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.41 $                                          |
+# | Revision:   $Revision: 1.42 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/04/24 12:41:52 $                              |
+# | Date:       $Date: 2006/05/03 12:03:15 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.42  2006/05/03 12:03:15  wig
+# | Improved top handling, fixed generated format
+# |
 # | Revision 1.41  2006/04/24 12:41:52  wig
 # | Imporved log message filter
 # |
@@ -58,7 +61,6 @@
 package  Micronas::MixUtils::IO;
 require Exporter;
 
-
 @ISA=qw(Exporter);
 
 @EXPORT  = qw(
@@ -74,7 +76,6 @@ require Exporter;
 	write_sxc
 	write_csv
 	write_delta_sheet
-	write_sum
 	clean_temp_sheets
 	mix_utils_io_create_path
 );
@@ -87,7 +88,6 @@ our $VERSION = '1.0';
 use strict;
 use Cwd;
 use File::Basename;
-use Log::Agent;
 
 use Log::Log4perl qw(get_logger);
 
@@ -99,16 +99,14 @@ use Micronas::MixUtils qw( :DEFAULT %OPTVAL $eh replace_mac convert_in
 use Micronas::MixUtils::InComments;
 use Micronas::MixUtils::Globals;
 
-#TODO: Load these only if required ...
 # use ooolib;   -> Loaded on demand, only!
 use Spreadsheet::ParseExcel;
 #use Spreadsheet::WriteExcel;
 
-
 # Prototypes
 sub close_open_workbooks();
-sub _sheet ($$$);
-sub _mix_apply_conf ($$$);
+# sub _sheet ($$$);
+# migrated to MixUtils.pm: sub mix_apply_conf ($$$);
 sub mix_utils_open_input(@);
 sub close_open_workbooks ();
 sub mix_utils_mask_excel ($);
@@ -117,15 +115,19 @@ sub useOoolib ();
 sub _split_diff2xls ($$);
 sub _join_split_lines ($);
 sub mix_utils_io_check_path ();
+sub open_infile		($$$$);
+sub open_xls		($$$$);
+sub open_sxc		($$$$);
+sub open_csv		($$$$);
 
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.41 2006/04/24 12:41:52 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.42 2006/05/03 12:03:15 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.41 $'; #'  
+my $thisrevision    =      '$Revision: 1.42 $'; #'  
 
-# Revision:   $Revision: 1.41 $
+# Revision:   $Revision: 1.42 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -331,7 +333,7 @@ sub mix_sheet_conf($$) {
 	    	if ( $i->[$j] eq 'MIXCFG' ) { #Try to read $ii+1 and $ii+2
 				my $key = $i->[$j+1] || '__E_EXCEL.CONF.KEY';
 				my $val = $i->[$j+2] || '__E_EXCEL.CONF.VALUE';
-				_mix_apply_conf( $key, $val, "EXCEL:$s" ); #Apply key/value
+				mix_apply_conf( $key, $val, "EXCEL:$s" ); #Apply key/value
 				next ROW;
 	    	} else { # If row does not have MIXCFG in first cell, skip it.
 				next ROW;
@@ -339,92 +341,6 @@ sub mix_sheet_conf($$) {
 		}
     }
 }
-
-
-#############################################################################
-## _mix_apply_conf
-## Similiar to MixUtils::mix_overload_conf!!
-#############################################################################
-=head2 _mix_apply_conf($$$)
-
-apply configuration
-
-=over 4
-=item $key Key
-=item $value Value
-=item $source Source
-
-=back
-
-=cut
-
-sub _mix_apply_conf($$$) {
-    my $key = shift; # Key
-    my $value = shift; # Value
-    my $source = shift; # Source
-
-    unless( $key and $value ) {
-	    unless( $key ) { $key = ''; }
-	    unless( $value ) { $value = ''; }
-	    $logger->warn("__W_CONF_KEY", "\tIllegal key or value given in $source: key:$key val:$value");
-	    return undef;
-    }
-    
-    unless( defined( $eh->set( $key, $value ) ) ) {
-    	$logger->error('__E_CONF_KEY', "\tApplying key $key from source $source failed" );
-    }
-}
-
-
-##############################################################################
-## mix_overload_sheet
-##
-## take -sheet SHEET=MATCH_OP and transfer that into $eh (overloading values there)
-##############################################################################
-=head2 mix_overload_sheet($)
-
-Started if option -sheet SHEET=match_op is given on command line. SHEET can be one of
-<I hier>, <I conn>, <I vi2c> or <I conf>
-
-=over 4
-
-=item $sheets worksheets to process
-
-=back
-=over2
-
-= item -sheet SHEET=match_op
-
-Replace the default match operator for the sheet type. match_op can be any perl
-regular expression.match_op should match the sheet names of the design descriptions.
-
-=back
-
-=cut
-
-sub mix_overload_sheet($) {
-    my $sheets = shift;
-
-    my $e = "";
-    my ( $key, $value );
-
-    for my $i ( @$sheets ) {
-		( $key, $value ) = split( /=/, $i ); # Split key=value
-		unless( $key and $value ) {
-	    	$logger->warn('__W_SHEET_MATCH', "\tIllegal argument for overload sheet given: $i");
-	    	next;
-		}
-
-		$key = lc( $key ); # $k := conn, hier, vi2c, conf, ...
-
-		if ( defined( $eh->get( $key . '.xls' ) ) ) {
-	    	$logger->info( '__I_SHEET_MATCH', "\tOverloading sheet match $i");
-	    	$eh->set( $key . '.xls', $value );
-		} else {
-	    	$logger->warn( '__W_SHEET_MATCH', "\tIllegal sheet selector $key found in $i" );
-		}
-    }
-} # End of mix_overload_sheet
 
 
 ####################################################################
@@ -468,19 +384,19 @@ sub mix_utils_open_input(@) {
 		# maybe there is a CONF page?
 		# Change CONF accordingly (will not be visible at upper world)
 		#TODO: add plugin interface to read in whatever is needed ...
-		@conf = open_infile( $i, $eh->get( 'conf.xls' ), $eh->get( 'conf.req' ) );
+		@conf = open_infile( $i, $eh->get( 'conf.xls' ), $eh->get( 'conf.xxls' ), $eh->get( 'conf.req' ) );
 
 		# Open connectivity sheet(s)
-		@conn = open_infile( $i, $eh->get( 'conn.xls' ), $eh->get( 'conn.req' ) );
+		@conn = open_infile( $i, $eh->get( 'conn.xls' ), $eh->get( 'conn.xxls' ), $eh->get( 'conn.req' ) );
 
 		# Open hierachy sheets
-		@hier = open_infile( $i, $eh->get( 'hier.xls' ), $eh->get( 'hier.req' ) );
+		@hier = open_infile( $i, $eh->get( 'hier.xls' ), $eh->get( 'hier.xxls' ), $eh->get( 'hier.req' ) );
 
 		# Open IO sheet (if available, not needed!)
-		@io = open_infile( $i, $eh->get( 'io.xls' ), $eh->get( 'io.req' ) );
+		@io = open_infile( $i, $eh->get( 'io.xls' ), $eh->get( 'io.xxls'), $eh->get( 'io.req' ) );
 
 		# Open I2C sheet (if available, not needed!)
-		@i2c = open_infile( $i, $eh->get( 'i2c.xls' ), $eh->get( 'i2c.req' ) );
+		@i2c = open_infile( $i, $eh->get( 'i2c.xls' ), $eh->get( 'i2c.xxls' ), $eh->get( 'i2c.req' ) );
 
 		# Did we get enough sheets:
 		if(!@conn && !@conf && !@hier && !@io && !@i2c) {
@@ -596,15 +512,16 @@ sub mix_utils_io_create_path () {
 ## open_infile
 ## maps call to correct open function
 ####################################################################
-=head2 open_infile($$$)
+=head2 open_infile($$$$)
 
 maps a call to correct open function
 
 input:
 =over 4
 =item $filename name of file
-=item $sheet name of worksheet
-=item $flag flags
+=item $sheetname of worksheet (regular expression possible)
+=item $xsheetname optional: ignore sheet matching thir expression
+=item $flag flags (like mandatory, optional, ...)
 
 output:
 
@@ -614,18 +531,18 @@ global: writes to $eh->set( 'sum.errors' )
 
 =cut
 
-sub open_infile($$$){
-
+sub open_infile($$$$){
     my $file = shift;
     my $sheetname = shift;
+    my $xsheetname = shift;
     my $flags = shift;
 
     if( $file=~ m/\.xls$/) { # read excel file
-        return open_xls($file, $sheetname, $flags);
+        return open_xls($file, $sheetname, $xsheetname, $flags);
     } elsif( $file=~ m/\.sxc$/) { # read soffice file
-        return open_sxc($file, $sheetname, $flags);
+        return open_sxc($file, $sheetname, $xsheetname, $flags);
     } elsif( $file=~ m/\.csv$/) { # read comma seperated values
-        return open_csv($file, $sheetname, $flags);
+        return open_csv($file, $xsheetname, $sheetname, $flags);
     } else {
         $logger->error( '__E_FILE_EXTENSION', "\tUnknown file extension for file $file!" );
 		return undef;
@@ -637,13 +554,14 @@ sub open_infile($$$){
 ## open_xls
 ## open excel file and get contents
 ####################################################################
-=head2 open_xls($$$)
+=head2 open_xls($$$$)
 
 Open a excel file, select the appropriate worksheets and return
 
 =over 4
 =item $filename name of file
 =item $sheet name of worksheet
+=item $xsheet name of worksheets to exclude
 =item $flag flags
 
 =back
@@ -661,8 +579,8 @@ flags can be one of:
 	# Cache openeded xls-file
 	my %aBook        = (); # xls-content
 	
-sub open_xls($$$){
-    my ($file, $sheetname, $warn_flag)=@_;
+sub open_xls($$$$){
+    my ($file, $sheetname, $xsheetname, $warn_flag)=@_;
 
     my $openflag = 0;
     my $isheet;
@@ -695,15 +613,16 @@ sub open_xls($$$){
     # Take all sheets matching the possible reg ex in $sheetname
     for(my $i=0; $i < $oBook->{SheetCount} ; $i++) {
         $isheet = $oBook->{Worksheet}[$i];
-	if ( $isheet->{Name} =~ m/^$sheetname$/ ) {
-		push( @sheets, $i );
-        }
+        next if ( $xsheetname and $isheet->{Name} =~ m/^$xsheetname$/ );
+		if ( $isheet->{Name} =~ m/^$sheetname$/ ) {
+			push( @sheets, $i );
+        	}
     }
 
     # return if no sheets where found
     if ( scalar( @sheets ) < 1 ) {
 		if ( $warn_flag =~ m,mandatory,io ) {
-	    	$logger->warn('__W_WORKSHEET', "\tCannot locate a worksheet $sheetname in $file");
+	    	$logger->warn('__W_WORKSHEET', "\tCannot locate a worksheet matching $sheetname in $file");
 		}
 		return ();
     }
@@ -775,14 +694,15 @@ sub mix_utils_io_del_abook () {
 ## open_sxc
 ## open star(/open) office file, parse content and return it
 ####################################################################
-=head2 open_sxc($$$)
+=head2 open_sxc($$$$)
 
 Open a Star-Office calculator file, select the appropriate
 worksheets and return
 
 =over 4
 =item $filename name of file
-=item $sheet name of worksheet_
+=item $sheet name of worksheet
+=item $xsheetname ignore sheets matching this regular expression
 =item $flag flags
 
 =back
@@ -796,8 +716,8 @@ flags can be one of:
 
 =cut
 
-sub open_sxc($$$) {
-    my ($file, $sheetname, $warn_flag)=@_;
+sub open_sxc($$$$) {
+    my ($file, $sheetname, $xsheetname, $warn_flag)=@_;
     my $openflag = 0;
 
     unless(-r $file) {
@@ -843,56 +763,54 @@ sub open_sxc($$$) {
     }
 
     for(my $i=0; defined $content[$i]; $i++) {
-      if( !$isheet && $content[$i]=~ m/^<table:table.*>/ 
-	 		&& $content[$i]=~ m/ table:name=\"$sheetname\"/) { # "
+    	if( !$isheet && $content[$i]=~ m/^<table:table.*>/ 
+	 		&& $content[$i]=~ m/ table:name=\"($sheetname)\"/) { # "
 	 		# TODO : check if the above regular expression is o.k.
-	    	$isheet = 1;  # entering sheet
-	  } elsif($isheet) {
-	    if($content[$i] =~ m/^<\/table:table>/) {
-	        $isheet = 0;  # escape from sheet
-	        if ( $warn_flag =~ m/\bhash\b/io ) {
-	        	@{$all{$sheetname}} = @sheet;
-	        } else {
-				push(@all, [@sheet]);
+	 		unless ( $xsheetname and $1 =~ m/^$xsheetname$/ ) {
+	    		$isheet = 1;  # entering sheet (only if not matching exclude)
+	 		}
+	  	} elsif($isheet) {
+	    	if($content[$i] =~ m/^<\/table:table>/) {
+	        	$isheet = 0;  # escape from sheet
+	        	if ( $warn_flag =~ m/\bhash\b/io ) {
+	        		@{$all{$sheetname}} = @sheet;
+	        	} else {
+					push(@all, [@sheet]);
+				}
+				@sheet = ();
+	    	} elsif(!$irow && $content[$i] =~ m/^<table:table-row/) {
+			if(!($content[$i]=~ m/\/>$/)) {
+		    	$irow = 1;  # entering row
 			}
-			@sheet = ();
-	    }
-	    elsif(!$irow && $content[$i] =~ m/^<table:table-row/) {
-		if(!($content[$i]=~ m/\/>$/)) {
-		    $irow = 1;  # entering row
-		}
-	    }
-	    elsif($irow) {
+	    } elsif($irow) {
 	        if($content[$i]=~ m/^<\/table:table-row>/) {
 		    $irow = 0;       # escape row
 		    # strip empty cells from row
 		    if( $maxcells < scalar(@line)) {
-			if(join(" ", @line)=~ m/^::.*/) {
-			    while( !($line[-1]=~ m/^::.*$/)) {
-				pop @line;
-			    }
-			    $maxcells = scalar(@line);
-			}
-			else {
-			    while($maxcells < scalar(@line)) {
-				pop @line;
-			    }
-			}
+				if(join(" ", @line)=~ m/^::.*/) {
+			    	while( !($line[-1]=~ m/^::.*$/)) {
+						pop @line;
+			    	}
+			    	$maxcells = scalar(@line);
+				} else {
+			    	while($maxcells < scalar(@line)) {
+						pop @line;
+			    	}
+				}
 		    }
-
 		    while( $maxcells > scalar(@line)) {
-			push(@line, "");
-		    }
+				push(@line, "");
+			}
 
 		    if(!$emptyLine) {
-			push(@sheet, [@line]);
-			# uncomment for debug output
-			# print "Line ". (scalar(@sheet)-1) . ": ";
-			# print join(' ; ', @line) ."\n";
+				push(@sheet, [@line]);
+				# uncomment for debug output
+				# print "Line ". (scalar(@sheet)-1) . ": ";
+				# print join(' ; ', @line) ."\n";
 		    }
 		    @line = ();
 		    $emptyLine = 1;
-	        }
+	    }
 		# begin of new cell
 		elsif(!$icell && $content[$i]=~ m/<table:table-cell/) {
 		    $icell = 1;    # enter cell
@@ -909,53 +827,49 @@ sub open_sxc($$$) {
 			    push(@line, "");
 			}
 		    }
-		}
-		elsif($icell) {
+		} elsif($icell) {
 		    # text entry
 		    if($content[$i]=~ m/<\/table:table-cell>/) {
-			$icell = 0;
-			my $temp = join(" ", @cell);
-			for my $j (0..$repeat-1) {
-			    push(@line, $temp);
-			}
-			@cell = ();
-		    }
-		    elsif($content[$i]=~ m/<office:annotation.*/) {
+				$icell = 0;
+				my $temp = join(" ", @cell);
+				for my $j (0..$repeat-1) {
+			    	push(@line, $temp);
+				}
+				@cell = ();
+		    } elsif($content[$i]=~ m/<office:annotation.*/) {
 			# skip annotation (not of interrest)
-			do{
-			    $i++;
-			} while(not $content[$i]=~ m/<\/office:annotation>/);
-		    }
-		    elsif(!$itext && $content[$i]=~ m/<text:p>/) {
+				do{
+			    	$i++;
+				} while(not $content[$i]=~ m/<\/office:annotation>/);
+		    } elsif(!$itext && $content[$i]=~ m/<text:p>/) {
 			# beginning of text entry
-			$itext = 1;
-		    }
-		    elsif($itext) {
-			while($content[$i]=~ s/<text:s.*>/ /) {
-			    if(defined $content[$i+1]) {
-				$i++;
-				$content[$i] = $content[$i-1] . $content[$i];
-			    }
-			}
-			if($content[$i]=~ m/<text:a .*>/) {
-			    do {
-				my $temp = $content[$i];
-				$temp=~ s/<.*>//;
-				$i++;
-				$content[$i] = $temp . $content[$i];
-			    } while($content[$i]=~ s/<\/text:a>//);
-			}
-			if($content[$i] =~ s/<\/text:p>//) {
-			    $itext = 0;
-			    $content[$i] =~ s/\&amp;/\&/g;
-			    $content[$i] =~ s/\&apos;/'/g; #'
-			    $content[$i] =~ s/\&lt;/</g;
-			    $content[$i] =~ s/\&gt/>/g;
-			    push(@cell, $content[$i]);
-			    if( defined $content[$i]) { 
-				$emptyLine = 0;
-			    }
-			}
+				$itext = 1;
+		    } elsif($itext) {
+				while($content[$i]=~ s/<text:s.*>/ /) {
+			    	if(defined $content[$i+1]) {
+						$i++;
+						$content[$i] = $content[$i-1] . $content[$i];
+			    	}
+				}
+				if($content[$i]=~ m/<text:a .*>/) {
+			    	do {
+						my $temp = $content[$i];
+						$temp=~ s/<.*>//;
+						$i++;
+						$content[$i] = $temp . $content[$i];
+			    	} while($content[$i]=~ s/<\/text:a>//);
+				}
+				if($content[$i] =~ s/<\/text:p>//) {
+			    	$itext = 0;
+			    	$content[$i] =~ s/\&amp;/\&/g;
+			    	$content[$i] =~ s/\&apos;/'/g; #'
+			    	$content[$i] =~ s/\&lt;/</g;
+			    	$content[$i] =~ s/\&gt/>/g;
+			    	push(@cell, $content[$i]);
+			    	if( defined $content[$i]) { 
+						$emptyLine = 0;
+			    	}
+				}
 		    }
 		}
 	    }
@@ -978,13 +892,14 @@ sub open_sxc($$$) {
 ## open_csv
 ## open csv file and get contents
 ####################################################################
-=head2 open_csv($$$)
+=head2 open_csv($$$$)
 
 Open a csv file, select the appropriate worksheets and return
 
 =over 4
 =item $filename name of file
 =item $sheet name of worksheet
+=item $xsheetname  ignore sheets matching this regular expression
 =item $flag flags
 
 flags can be one of:
@@ -998,9 +913,9 @@ flags can be one of:
 
 =cut
 
-sub open_csv($$$) {
+sub open_csv($$$$) {
 
-    my ($file, $sheetname, $warn_flag)=@_;
+    my ($file, $sheetname, $xsheetname, $warn_flag)=@_;
     my $openflag = 0;
 
     my @all = ();
@@ -1034,63 +949,58 @@ sub open_csv($$$) {
     close(FILE);
 
     # Take all sheets matching the possible reg ex in $sheetname
-
     for(my $i=0; defined $input[$i]; $i++) {
-	if( $input[$i] =~ m/^$sheetsep($sheetname)\s*$/) {
-		my $thissheet = $1;
+    	next if ( $xsheetname and $input[$i] =~ m/^$sheetsep($xsheetname)\s*$/);
+		if( $input[$i] =~ m/^$sheetsep($sheetname)\s*$/) {
+			my $thissheet = $1;
 		
-	    $i++;
-        while( defined $input[$i] && not $input[$i]=~ m/^$sheetsep/) {
+	    	$i++;
+        	while( defined $input[$i] && not $input[$i]=~ m/^$sheetsep/) {
 
-		for( my $j=0; $j<length($input[$i]); $j++) {
+				for( my $j=0; $j<length($input[$i]); $j++) {
 
-		    $char=substr($input[$i], $j, 1);
+		    		$char=substr($input[$i], $j, 1);
 
-		    if( $quoted) {
-		      # inside quotas
-		        if( $char=~ m/^$quoting$/) {
-			    if( $lastchar=~ m/^\\$/) {
-			      # quoting character isn't a control sequence
-				$entry = $entry . $char;
-			    }
-			    else {
-			      # leave quoting
-			        $quoted = 0;
-			    }
-		        }
-			else {
-			  # character inside quotas
-			    if($char=~ m/^\n$/) { 
-				$entry = $entry . " ";
-			    }
-			    elsif($char!~ m/^\\$/) {
-				if($lastchar eq "\\") {
-				    $entry = $entry . "\\";
-				}
-				$entry = $entry . $char;
-			    }
+		    		if( $quoted) {
+		      		# inside quotas
+		        		if( $char=~ m/^$quoting$/) {
+			    			if( $lastchar=~ m/^\\$/) {
+			      			# quoting character isn't a control sequence
+								$entry = $entry . $char;
+			    			} else {
+			      			# leave quoting
+			        			$quoted = 0;
+			    			}
+		        		} else {
+			  			# character inside quotas
+			    			if($char=~ m/^\n$/) { 
+								$entry = $entry . " ";
+			    			} elsif($char!~ m/^\\$/) {
+								if($lastchar eq "\\") {
+				    				$entry = $entry . "\\";
+								}
+								$entry = $entry . $char;
+			    			}
+						}
+		    		} else {
+		      		# outside quotas
+		        		if( $char=~ m/^$cellsep$/) {
+			  			# entry complete
+			    			push(@line, $entry);
+			    			$entry = '';
+						} elsif( $char=~ m/^$quoting$/) {
+			  			# enter quotas
+			    		$quoted = 1;
+					}
+		    	}
+		    	$lastchar = $char;
 			}
-		    }
-		    else {
-		      # outside quotas
-		        if( $char=~ m/^$cellsep$/) {
-			  # entry complete
-			    push(@line, $entry);
-			    $entry = "";
-			}
-			elsif( $char=~ m/^$quoting$/) {
-			  # enter quotas
-			    $quoted = 1;
-			}
-		    }
-		    $lastchar = $char;
-		}
-		# push last entry and push whole line
-		push(@line, $entry);
-		$entry = "";
-		push(@sheet, [@line]);
-		@line = ();
-		$i++;    # next line
+			# push last entry and push whole line
+			push(@line, $entry);
+			$entry = '';
+			push(@sheet, [@line]);
+			@line = ();
+			$i++;    # next line
 	    }
 	    if ( $warn_flag =~ m/\bhash\b/io ) {
 	    	$all{$thissheet} = \@sheet;
@@ -1210,7 +1120,7 @@ sub write_delta_sheet($$$) {
 		return;
 	}
 		
-    @prev = open_infile( $predir . $file, $sheet, "mandatory,write");
+    @prev = open_infile( $predir . $file, $sheet, '', 'mandatory,write');
 
     if(scalar( @prev ) < 1 ) {
         $logger->error( '__E_READ_DELTA',  "\tReading input for delta mode for file $file!" );
