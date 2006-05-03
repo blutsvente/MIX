@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.36 2006/05/02 14:14:21 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.37 2006/05/03 08:23:34 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.36 $                                  
+#  Revision      : $Revision: 1.37 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.37  2006/05/03 08:23:34  lutscher
+#  changed cond feature a little bit
+#
 #  Revision 1.36  2006/05/02 14:14:21  lutscher
 #  added feature for conditional FFs (reg-master column ::cond)
 #
@@ -635,7 +638,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.36 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.37 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -1426,12 +1429,13 @@ endfunction
         my $fullrange = $this->_gen_vector_range($this->global->{'datawidth'}-1,0);
 		push @ltemp, (
 		              "", "/*", "  helper function for conditional FFs", "*/",
-                      "function $fullrange cond_slice(input enable, input $fullrange vec);",
+                      "function $fullrange cond_slice(input integer enable, input $fullrange vec);",
                       $ind . "begin",
-                      $ind x 2 . "cond_slice = enable ? vec : 0;",
+                      $ind x 2 . "cond_slice = (enable < 0) ? vec : enable;",
                       $ind . "end",
                       "endfunction"
                      ); 
+        _info("clock domain \'$clock\' has conditionally instantiated FFs");
 	};
 
 	_pad_column(-1, $this->global->{'indent'}, 2, \@ltemp);
@@ -2012,18 +2016,18 @@ sub _gen_unique_signal_names {
 };
 
 # function to generate the right-hand-side statement (RHS) for an assignment that used the cond_slice() function;
-# value is a string with the original RHS which will be wrapped in the function call
+# value is a string with the original RHS which will be wrapped in the function call;
+# the first argument to cond_slice() is an integer parameter; if the parameter is < 0, the function returns the
+# 2nd parameter. If the parameter is >=0, the function returns the parameter itself
 sub _gen_cond_rhs {
 	my ($this, $href_params, $o_field, $value) = @_;
 	my $res_val = $value;
 
-	# if (exists ($href_clkinfo->{'has_cond_fields'})) {
 	my $parname = "P__".uc($o_field->name);
 	if(exists ($o_field->attribs->{'cond'}) and $o_field->attribs->{'cond'} == 1) {
 		$res_val = "cond_slice($parname, $value)";
-		$href_params->{$parname} = 1;
+		$href_params->{$parname} = -1; # default value -1
 	};
-	#};
 	return $res_val;
 };
 1;
