@@ -26,12 +26,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: vgch_join.pl,v 1.7 2006/04/19 07:39:55 wig Exp $  |
+# | Id           : $Id: vgch_join.pl,v 1.8 2006/05/03 12:10:33 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.7 $                                      |
-# | Mod.Date     : $Date: 2006/04/19 07:39:55 $                           |
+# | Version      : $Revision: 1.8 $                                      |
+# | Mod.Date     : $Date: 2006/05/03 12:10:33 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -46,6 +46,9 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: vgch_join.pl,v $
+# | Revision 1.8  2006/05/03 12:10:33  wig
+# | Improved top handling, fixed generated format
+# |
 # | Revision 1.7  2006/04/19 07:39:55  wig
 # | 	vgch_join.pl : fixed problem with -sheet option
 # |
@@ -86,8 +89,7 @@ use Log::Log4perl qw(:easy get_logger :levels);
 
 use Micronas::MixUtils qw( mix_init $eh %OPTVAL mix_getopt_header
 	convert_in db2array replace_mac);
-use Micronas::MixUtils::IO qw(init_ole open_infile write_sum
-	write_outfile);
+use Micronas::MixUtils::IO qw(init_ole open_infile write_outfile);
 # use Micronas::MixParser;
 # use Micronas::MixIOParser;
 # use Micronas::MixI2CParser;
@@ -111,7 +113,7 @@ sub base_interface ($);
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.7 $'; # RCS Id
+$::VERSION = '$Revision: 1.8 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # Our local variables
@@ -235,14 +237,17 @@ my $ignore_flag = 0; # Set if the Ignore line seen once ..
 for my $files ( @ARGV ) {
 	# Open all files and retrieve sheet(s)
 	my $sel = $eh->get( 'default.xls' );
+	my $nosel = $eh->get( 'default.xxls' );
 	my $type = 'default';
 	
 	if ( $files eq $top ) {
 		$sel = $xls{'top'};
+		$nosel = '';
 		$type = 'join';
 	}
 	my $conn = open_infile( $files,
 			$sel, # Select sheets ... default: .* (all)
+			$nosel, # Ignore sheets matching $nosel (if set)
 			$eh->get( $type . '.req' ) . ',hash' );
 		
 	# Convert to hashes ...

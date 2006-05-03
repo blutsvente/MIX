@@ -18,12 +18,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.44 2006/03/14 08:15:27 wig Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.45 2006/05/03 12:10:33 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.44 $                                      |
-# | Mod.Date     : $Date: 2006/03/14 08:15:27 $                           |
+# | Version      : $Revision: 1.45 $                                      |
+# | Mod.Date     : $Date: 2006/05/03 12:10:33 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -38,6 +38,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.45  2006/05/03 12:10:33  wig
+# | Improved top handling, fixed generated format
+# |
 # | Revision 1.44  2006/03/14 08:15:27  wig
 # | Change to Log::Log4perl and replaces %EH by MixUtils::Globals.pm
 # |
@@ -96,8 +99,8 @@ use Log::Log4perl qw(:easy get_logger :levels);
 #    log4perl.appender.ScreenApp.layout.ConversionPattern = %d> %m%n
 
 # our own modules
-use Micronas::MixUtils qw( $eh mix_init mix_getopt_header );
-use Micronas::MixUtils::IO qw(init_ole mix_utils_open_input write_sum );
+use Micronas::MixUtils qw( $eh mix_init mix_getopt_header write_sum );
+use Micronas::MixUtils::IO qw( init_ole mix_utils_open_input );
 use Micronas::MixUtils::Globals;
 use Micronas::MixParser;
 use Micronas::MixIOParser;
@@ -114,7 +117,7 @@ use Micronas::MixReport;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.44 $'; # RCS Id '
+$::VERSION = '$Revision: 1.45 $'; # RCS Id '
 $::VERSION =~ s,\$,,go;
 
 #

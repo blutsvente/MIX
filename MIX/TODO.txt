@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.63 2006/04/24 12:42:32 wig Exp $
+# $Id: TODO.txt,v 1.64 2006/05/03 12:10:33 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -28,7 +28,22 @@ Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
 
->>title: 20060224a/RFE: Allow signal to have both Parameter and Numbers as width
+>>title: 20060424a/Bug: MIX creates duplicate connection to port
+
+Beispiel aus vgcb_top
+instance i_avfb_pad_mux
+
+			.BC_RA_02_fail_i(BC_RA_02_fail),
+			.BC_RA_02_fail_i(tc_BC_RA_02_fail),
+
+Gruss
+Manfred
+
+	Req: mpit
+	Status: in work
+	Prio: high
+	
+>>title: 20060224a/RFE: Allow signal to have both Parameter and NumbOers as width
 
 	Situaation: Signal from IP needs Parameter as width. Top level has String
 	width.
@@ -118,7 +133,7 @@ Testcase from Frank Oberhoff
 	Start it with
 		mix_0.pl mm-pin.xls
 		
-	Solution: user had whitespace in port description, which war overseen.
+	Solution: user had whitespace in port description, which was overseen.
 		To better find such situations an error message will be produced whenever
 		there are characters left over in the port description after matching.
 		Embedded whitespace will be removed.
@@ -246,6 +261,7 @@ The correct expression is 1'b1111 (Verilog expands with 0!!).
 			.top_rs_selclk_out2_par_3_0_go(top_rs_selclk_out2_par[3:0])
 		);
 	
+	Status: done (partially)
 	Testcase: c:avfb_20060404
 	Req: mpit
 	Prio: high
@@ -1524,8 +1540,8 @@ Wilfried
 
     Req: mpit
     Prio: medium
-    Solved:
-    Testcase:
+    Solved: yes
+    Testcase: n/a
 
 >>title: 20040728a/Req: Improve handling of constants
 
