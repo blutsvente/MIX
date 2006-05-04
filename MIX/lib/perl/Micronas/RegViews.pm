@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.37 2006/05/03 08:23:34 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.38 2006/05/04 14:43:36 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.37 $                                  
+#  Revision      : $Revision: 1.38 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.38  2006/05/04 14:43:36  lutscher
+#  added _vgch_rs_write_defines() and fixed an initialisation bug
+#
 #  Revision 1.37  2006/05/03 08:23:34  lutscher
 #  changed cond feature a little bit
 #
@@ -204,7 +207,8 @@ sub _gen_view_vgch_rs {
 				  # internal static data structs
 				  'hclocks'            => {},           # for storing per-clock-domain information
 				  'hfnames'            => {},           # for storing field names
-				  'lexclude_cfg'       => []            # list of registers to exclude from code generation
+				  'lexclude_cfg'       => [],           # list of registers to exclude from code generation
+				  'hhdlconsts'             => {}            # hash with HDL constants
 				 );
 
 	# import regshell.<par> parameters from MIX package to class data; user can change these parameters in mix.cfg
@@ -226,7 +230,8 @@ sub _gen_view_vgch_rs {
 					  'postfix.POSTFIX_PORT_OUT', 
 					  'postfix.POSTFIX_PORT_IN',
 					  'postfix.POSTFIX_FIELD_OUT', 
-					  'postfix.POSTFIX_FIELD_IN'
+					  'postfix.POSTFIX_FIELD_IN',
+					  'output.path'
 					 );
 	foreach $param (@lmixparams) {
 		if (defined $eh->get("$param")) {
@@ -279,10 +284,13 @@ sub _gen_view_vgch_rs {
 	foreach $o_domain (@ldomains) {
 		_info("generating code for domain ",$o_domain->name);
 		# $o_domain->display() if $this->global->{'debug'};
-		# get all clocks of domain and check if we have to infer mcd logic
+		# reset per-domain data structures
 		$this->global('hfnames' => {});
-		$n_clocks = $this->_vgch_rs_get_configuration($o_domain);
+		$this->global('hhdlconsts' => {});
+		$this->global('hclocks' => {});
 		
+		$n_clocks = $this->_vgch_rs_get_configuration($o_domain); # get some general information
+
 		($top_inst, $ocp_inst) = $this->_vgch_rs_gen_hier($o_domain, $n_clocks); # generate module hierarchy
 
 		$this->_vgch_rs_add_static_connections($n_clocks);# add all standard ports and connections 
@@ -296,6 +304,8 @@ sub _gen_view_vgch_rs {
 			$this->_vgch_rs_gen_cfg_module($o_domain, $clock, \@ludc); # generate config module for clock domain
 			$this->_vgch_rs_write_udc($cfg_inst, \@ludc); # add user-defined-code to config module instantation
 		};
+		# try to write out a Verilog file with defines
+		$this->_vgch_rs_write_defines($o_domain);
 	};
 	$this->display() if $this->global->{'debug'}; # dump Reg class object
 	1;
@@ -348,6 +358,10 @@ sub _vgch_rs_gen_cfg_module {
 			next;
 		};
 		my $reg_offset = $o_domain->get_reg_address($o_reg);	
+
+		# store address for later
+		$this->global->{'hhdlconsts'}->{$o_reg->name . "_offs_c"} = "'h"._val2hex($this->global->{'addrwidth'}, $reg_offset);
+
 		my $reg_name = uc("reg_"._val2hex($addr_msb+1, $reg_offset)); # generate a register name ourselves
 		if (!exists($haddr_tokens{$reg_offset})) {
 			if ($reg_offset % ($this->global->{'datawidth'}/8) != 0) {
@@ -390,6 +404,12 @@ sub _vgch_rs_gen_cfg_module {
 			my $lsb = $o_field->attribs->{'lsb'};
 			my $msb = $lsb - 1 + $o_field->attribs->{'size'};
 			my $res_val = sprintf("'h%x", $o_field->attribs->{'init'});
+
+			# store MSBs for later
+			# the LSBs are not stored, they are usually 0; if not, the MSB information alone does not help
+			if ($o_field->attribs->{'size'} >1) {
+				$this->global->{'hhdlconsts'}->{$o_field->name . "_msb_c"} = "'h"._val2hex($this->global->{'datawidth'}/4, $msb);
+			};
 
 			# track USR fields
 			if ($spec =~ m/usr/i) {
@@ -638,7 +658,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.37 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.38 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -1802,6 +1822,34 @@ sub _vgch_rs_add_static_connections {
 		_add_connection("rd_data", $dwidth-1, 0, "${mcda_i}/rd_data_o", "${ocp_i}/rd_data_i");
 	};
 
+};
+
+# Write out a Verilog file with defines
+sub _vgch_rs_write_defines {
+	my ($this, $o_domain) = @_;
+	
+	my $rs_name = $this->global->{'regshell_prefix'}."_".$o_domain->name;
+	my $key;
+	my $fname = $this->global->{'path'} . "/${rs_name}.vh";
+	my @ltemp;
+
+	if (!open(DHANDLE,">$fname")) {
+		_warn("could not open file \'$fname\' for writing");
+		return;
+	};
+	$this->_vgch_rs_gen_udc_header(\@ltemp);
+	print DHANDLE join("\n", @ltemp);
+	print DHANDLE "\n\n";
+	print DHANDLE "// useful defines for domain ".$o_domain->name."\n";
+	@ltemp=();
+	foreach $key (sort keys %{$this->global->{'hhdlconsts'}}) {
+		push @ltemp,"\`define ${key} ".$this->global->{'hhdlconsts'}->{$key};
+	};
+	_pad_column(1, $this->global->{'indent'}, 0, \@ltemp);
+	print DHANDLE join("\n", @ltemp);
+	print DHANDLE "\n// end\n";
+	close(DHANDLE);
+	_info("generated file \'$fname\'");
 };
 
 # function to determine if a field is to be skipped because it is excluded by the user or because it belongs to
