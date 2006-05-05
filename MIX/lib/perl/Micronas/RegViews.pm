@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.39 2006/05/05 09:14:11 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.40 2006/05/05 10:59:25 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.39 $                                  
+#  Revision      : $Revision: 1.40 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.40  2006/05/05 10:59:25  lutscher
+#  some fixes for the ::cond register-master feature
+#
 #  Revision 1.39  2006/05/05 09:14:11  lutscher
 #  fixed Verilog generation: read sensitivity list and function cond_slice
 #
@@ -92,63 +95,7 @@
 #  o updated sync_rst module (new port)
 #  o used symbolic parameter name for sync instead of numeric in cfg_inst
 #
-#  Revision 1.20  2005/12/09 15:03:01  lutscher
-#  built in feature to exclude objects from generation
-#
-#  Revision 1.19  2005/12/09 13:14:37  lutscher
-#  corrected/added errors/warnings and added comment header for generated code
-#
-#  Revision 1.18  2005/11/29 08:44:58  lutscher
-#  fixed parsing of domain list
-#
-#  Revision 1.17  2005/11/16 08:58:50  lutscher
-#  added use_reg_name_as_prefix feature also for USR registers
-#
-#  Revision 1.16  2005/11/15 15:59:32  lutscher
-#  some fixed regarding the use_reg_name_as_prefix option
-#
-#  Revision 1.15  2005/11/15 14:00:05  lutscher
-#  added capability to use reg names as prefix for file names
-#
-#  Revision 1.14  2005/11/11 15:28:45  lutscher
-#  made a number of improvements in the script and the generated code
-#
-#  Revision 1.13  2005/11/10 15:04:48  lutscher
-#  disabled debug
-#
-#  Revision 1.12  2005/11/10 14:40:52  lutscher
-#  o added postfix for field inputs/outputs
-#  o added read-pipeline generator
-#
-#  Revision 1.11  2005/11/09 13:36:56  lutscher
-#  added domain command line parameter
-#
-#  Revision 1.10  2005/11/09 13:00:24  lutscher
-#  fixed Perl warning
-#
-#  Revision 1.9  2005/11/09 12:43:10  lutscher
-#  fixed a number of bugs
-#
-#  Revision 1.8  2005/11/03 13:22:26  lutscher
-#  some fixes for code generation for USR registers
-#
-#  Revision 1.7  2005/10/28 12:17:28  lutscher
-#  many changes to fix the generated Verilog code
-#
-#  Revision 1.6  2005/10/26 13:58:15  lutscher
-#  added property generation and fixed some code issues
-#
-#  Revision 1.5  2005/10/20 17:26:05  lutscher
-#  Reg.pm
-#
-#  Revision 1.4  2005/10/18 16:29:29  lutscher
-#  intermedate checkin (stable and almost fully functional)
-#
-#  Revision 1.3  2005/10/14 11:30:07  lutscher
-#  intermedate checkin (stable, but fully functional)
-#
-#  Revision 1.2  2005/09/16 13:57:27  lutscher
-#  added register view E_VR_AD from Emanuel
+#  [history deleted]
 #
 #  Revision 1.1  2005/07/07 12:35:26  lutscher
 #  Reg: register space class; represents register space
@@ -411,7 +358,7 @@ sub _vgch_rs_gen_cfg_module {
 			# store MSBs for later
 			# the LSBs are not stored, they are usually 0; if not, the MSB information alone does not help
 			if ($o_field->attribs->{'size'} >1) {
-				$this->global->{'hhdlconsts'}->{$o_field->name . "_msb_c"} = "'h"._val2hex($this->global->{'datawidth'}/4, $msb);
+				$this->global->{'hhdlconsts'}->{$this->_gen_field_name("", $o_field) . "_msb_c"} = "'h"._val2hex($this->global->{'datawidth'}/4, $msb);
 			};
 
 			# track USR fields
@@ -661,7 +608,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.39 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.40 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -1455,13 +1402,13 @@ endfunction
         my $fullrange = $this->_gen_vector_range($this->global->{'datawidth'}-1,0);
 		push @ltemp, (
 		              "", "/*", "  helper function for conditional FFs", "*/",
-                      "function $fullrange cond_slice;",
-                      $ind . "input integer enable;",
-                      $ind . "input $fullrange vec;",
+                      "// msd parse off",
+                      "function $fullrange cond_slice(input integer enable, input $fullrange vec);",
                       $ind . "begin",
                       $ind x 2 . "cond_slice = (enable < 0) ? vec : enable;",
                       $ind . "end",
-                      "endfunction"
+                      "endfunction",
+                      "// msd parse on"
                      ); 
         _info("clock domain \'$clock\' has conditionally instantiated FFs");
 	};
@@ -2016,8 +1963,6 @@ sub _gen_field_name {
 		$name .= "_wr_p"."%POSTFIX_PORT_OUT%";
 	} elsif ($type eq "trg") {
 		$name .= "_trg_p"."%POSTFIX_PORT_OUT%";
-	} else {
-		_error("internal error undefined signal type \'$type\' in _gen_field_name()");
 	};
 
 	# prefix field name with register name
@@ -2079,7 +2024,7 @@ sub _gen_cond_rhs {
 	my ($this, $href_params, $o_field, $value) = @_;
 	my $res_val = $value;
 
-	my $parname = "P__".uc($o_field->name);
+	my $parname = "P__".uc($this->_gen_field_name("",$o_field));
 	if(exists ($o_field->attribs->{'cond'}) and $o_field->attribs->{'cond'} == 1) {
 		$res_val = "cond_slice($parname, $value)";
 		$href_params->{$parname} = -1; # default value -1
