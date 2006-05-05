@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.38 2006/05/04 14:43:36 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.39 2006/05/05 09:14:11 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.38 $                                  
+#  Revision      : $Revision: 1.39 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.39  2006/05/05 09:14:11  lutscher
+#  fixed Verilog generation: read sensitivity list and function cond_slice
+#
 #  Revision 1.38  2006/05/04 14:43:36  lutscher
 #  added _vgch_rs_write_defines() and fixed an initialisation bug
 #
@@ -658,7 +661,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.38 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.39 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -704,6 +707,9 @@ sub _vgch_rs_code_read_mux {
 			foreach $offs (keys %$href_rp) {
 				foreach $href (@{$href_rp->{$offs}}) {
 					$sig = (values(%{$href}))[0];
+					if ($sig =~ m/\(.*,(.*)\)/) { # strip function call cond_slice() so it does not appear in sens. list
+						$sig = $1;
+					};
 					$sig =~ s/\[.+\]$//;
 					$hsens_list{$sig} = $offs;
 				};
@@ -1449,7 +1455,9 @@ endfunction
         my $fullrange = $this->_gen_vector_range($this->global->{'datawidth'}-1,0);
 		push @ltemp, (
 		              "", "/*", "  helper function for conditional FFs", "*/",
-                      "function $fullrange cond_slice(input integer enable, input $fullrange vec);",
+                      "function $fullrange cond_slice;",
+                      $ind . "input integer enable;",
+                      $ind . "input $fullrange vec;",
                       $ind . "begin",
                       $ind x 2 . "cond_slice = (enable < 0) ? vec : enable;",
                       $ind . "end",
