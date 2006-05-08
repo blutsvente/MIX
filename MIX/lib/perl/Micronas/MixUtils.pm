@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.117 $                                         |
+# | Revision:   $Revision: 1.118 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/05/03 14:46:53 $                              |
+# | Date:       $Date: 2006/05/08 15:20:04 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.117 2006/05/03 14:46:53 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.118 2006/05/08 15:20:04 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.118  2006/05/08 15:20:04  wig
+# | Implement mix_use_on_demand
+# |
 # | Revision 1.117  2006/05/03 14:46:53  wig
 # |  	MixUtils.pm : add &nil, &nl as allowed encodings in MIXCFG
 # |
@@ -105,6 +108,7 @@ require Exporter;
 	one2two
 	mix_apply_conf
     mix_overload_sheet
+    mix_use_on_demand
     );
 # @Micronas::MixUtils::EXPORT_OK=qw(
 @EXPORT_OK = qw(
@@ -130,7 +134,6 @@ use Log::Log4perl qw(get_logger);
 # use Micronas::MixUtils::IO qw();
 use Micronas::MixUtils::InComments; # Some extra for comments in input data
 use Micronas::MixUtils::Globals;
-
 use Storable;
 
 # use Data::Dumper; # Will be evaled if -adump option is on
@@ -140,36 +143,37 @@ use Storable;
 #
 # Prototypes
 #
-sub mix_get_eh ();
-sub select_variant ($);
-sub mix_list_conf ();
-sub mix_list_econf ($);
-sub mix_apply_conf($$$);
+sub mix_get_eh			();
+sub select_variant		($);
+sub mix_list_conf		();
+sub mix_list_econf		($);
+sub mix_apply_conf		($$$);
 # sub _mix_list_conf ($$;$);
-sub mix_store ($$;$);
-sub mix_utils_open($;$);
-sub mix_utils_print($@);
-sub mix_utils_printf($@);
-sub mix_utils_close($$);
-sub replace_mac ($$);
-sub one2two ($);
-sub two2one ($);
-sub is_absolute_path ($);
-sub mix_utils_split_cell ($);
-sub mix_utils_loc_templ ($$);
-sub _mix_utils_loc_templ ($$);
-sub mix_utils_loc_sum ();
-sub mix_utils_open_diff ($;$);
-sub mix_utils_diff ($$$$;$);
-sub mix_utils_clean_data ($$;$);
+sub mix_store			($$;$);
+sub mix_utils_open		($;$);
+sub mix_utils_print		($@);
+sub mix_utils_printf	($@);
+sub mix_utils_close		($$);
+sub replace_mac			($$);
+sub one2two				($);
+sub two2one 			($);
+sub is_absolute_path	($);
+sub mix_utils_split_cell	($);
+sub mix_utils_loc_templ	($$);
+sub _mix_utils_loc_templ	($$);
+sub mix_utils_loc_sum	();
+sub mix_utils_open_diff	($;$);
+sub mix_utils_diff		($$$$;$);
+sub mix_utils_clean_data	($$;$);
 #!wig20051012:
-sub db2array_intra ($$$$$);
-sub _mix_utils_im_header ($$);
-sub _inoutjoin ($);
+sub db2array_intra		($$$$$);
+sub _mix_utils_im_header	($$);
+sub _inoutjoin			($);
 sub _mix_utils_extract_verihead ($$$);
-sub _init_logic_eh ($);
-sub _init_loglimit_eh ($);
-sub _sum_loglimit_eh ($);
+sub _init_logic_eh		($);
+sub _init_loglimit_eh	($);
+sub _sum_loglimit_eh	($);
+sub mix_use_on_demand	($);
 
 ##############################################################
 # Global variables
@@ -186,11 +190,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.117 2006/05/03 14:46:53 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.118 2006/05/08 15:20:04 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.117 $';         #'
+my $thisrevision        =      '$Revision: 1.118 $';         #'
 
-# Revision:   $Revision: 1.117 $   
+# Revision:   $Revision: 1.118 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -395,7 +399,7 @@ sub mix_getopt_header(@) {
     	 $eh->get( 'check.hdlout.path' ) or
     	 $eh->get( 'report.delta' ) ) {
 	# Eval use Text::Diff
-	    if ( eval 'use Text::Diff;' ) {
+		unless( mix_use_on_demand( 'use Text::Diff;' ) ) {
 			$logger->fatal( "__F_USE_TEXT_DIFF",
 					"\tCannot load Text::Diff module for -conf *delta* mode: $@" );
 			exit(1);
@@ -2253,8 +2257,8 @@ sub mix_store ($$;$){
 		$logger->warn('__W_FILE_OVERWRITE', "\tFile $predir$file already exists! Will be overwritten!");
     }
 
-    # TODO would we want to use nstore instead ?
-    unless( store( $r_data, $predir . $file ) ) {
+    # Dump the data here:
+    unless( nstore( $r_data, $predir . $file ) ) {
 		$logger->fatal('__F_STORE', "\tCannot store date into $predir$file: " . $! . "!\n");
 		exit 1;
     }
@@ -2263,14 +2267,13 @@ sub mix_store ($$;$){
     # Use Data::Dumper while debugging ...
     #    output is man-readable ....
     #
-
     if ( $OPTVAL{'adump'} ) {
-		if ( eval 'use Data::Dumper;' ) {
+		unless ( mix_use_on_demand( 'use Data::Dumper;' ) ) {
             $logger->error('__E_USE_DATADUMPER', "\tCannot load Data::Dumper module: $@");
-            $OPTVAL{'adump'} = "";
+            $OPTVAL{'adump'} = '';
             return;
 		}
-		$file .= "a";
+		$file .= 'a';
 		unless( open( DUMP, ">$predir$file" ) ) {
 	    	$logger->fatal('__F_FILE_OPEN_DUMP', "\tCannot open file $predir$file for dumping: $!");
 	    	exit 1;
@@ -2284,6 +2287,25 @@ sub mix_store ($$;$){
     return;
 }
 
+#############################################################################
+##
+## load perl modules in demand ....
+##
+## Input: string (usually "use some::modules; use foo::bar;")
+##
+## Output:	0	-> failure  
+##			1	-> o.k.
+##
+sub mix_use_on_demand ($) {
+	my $module = shift;
+
+	if ( eval $module ) {
+            $logger->error('__E_USE_ONDEMAND', "\tCannot load module: $@");
+            return 0;
+	}
+	return 1;
+} # End of use_on_demand
+	
 ####################################################################
 ## mix_load
 ## load data (hash) from disk

@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.23 2006/04/06 12:10:09 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.24 2006/05/08 15:20:05 wig Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.24  2006/05/08 15:20:05  wig
+#  Implement mix_use_on_demand
+#
 #  Revision 1.23  2006/04/06 12:10:09  lutscher
 #  added support for hex values in register-master parser
 #
@@ -111,16 +114,11 @@ package Micronas::Reg;
 # Used packages
 #------------------------------------------------------------------------------
 use strict;
-use Data::Dumper;
+
+use Log::Log4perl qw(get_logger);
 use Micronas::MixUtils qw( $eh %OPTVAL);
-use Micronas::RegDomain;
-use Micronas::RegReg;
-use Micronas::RegField;
-use Micronas::RegViews;
-use Micronas::RegViewE;
-use Micronas::RegViewSTL;
-use Micronas::RegViewRDL;
-use Micronas::MixUtils::RegUtils;
+# rest gets loaded on demand ...
+
 # use Micronas::MixUtils::Globals qw( get_eh );
 
 #use FindBin qw($Bin);
@@ -128,6 +126,7 @@ use Micronas::MixUtils::RegUtils;
 #use lib "$Bin/..";
 #use lib "$Bin/lib";
 
+my $logger = get_logger( 'MIX::Reg' );
 #------------------------------------------------------------------------------
 # Hook function to MIX tool. Called by mix main script. Creates a Reg object
 # and calls its init() function
@@ -139,6 +138,24 @@ sub parse_register_master($) {
 	my $r_i2c = shift;
 
 	if (scalar @$r_i2c) {
+
+	# Load modules on demand ...
+	unless( use_on_demand(
+	' use Data::Dumper;
+	  use Micronas::RegDomain;
+	  use Micronas::RegReg;
+	  use Micronas::RegField;
+	  use Micronas::RegViews;
+	  use Micronas::RegViewE;
+	  use Micronas::RegViewSTL;
+	  use Micronas::RegViewRDL;
+	  use Micronas::MixUtils::RegUtils;
+	'	
+	) ) {
+			$logger->fatal( '__F_LOADREGMD', "\tFailed to load required modules for register_master: $@" );
+			exit 1;
+		}
+	
 		my($o_space) = Micronas::Reg->new();
 		
 		if (grep($eh->get( 'reg_shell.type' ) =~ m/$_/i, @{$o_space->global->{supported_views}})) {
@@ -156,7 +173,7 @@ sub parse_register_master($) {
 			$o_space->generate_view($eh->get( 'reg_shell.type' ));
 		};
 	} else {
-		_warning("register-master file empty or specified sheet \'" .
+		$logger->info('__I_REG_INIT', "\tRegister-master file empty or specified sheet \'" .
 			$eh->get( 'i2c.xls' ) . "\' in file not found");
 	};
 	return 1;
@@ -166,7 +183,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.23 $ ';  #'
+our($VERSION) = '$Revision: 1.24 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
