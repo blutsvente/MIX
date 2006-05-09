@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.84 $                                         |
+# | Revision:   $Revision: 1.85 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/05/03 12:03:15 $                              |
+# | Date:       $Date: 2006/05/09 14:38:51 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.84 2006/05/03 12:03:15 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.85 2006/05/09 14:38:51 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.85  2006/05/09 14:38:51  wig
+# |  	MixParser.pm MixUtils.pm MixWriter.pm : improved constant assignments
+# |
 # | Revision 1.84  2006/05/03 12:03:15  wig
 # | Improved top handling, fixed generated format
 # |
@@ -355,9 +358,9 @@ sub _mix_wr_nice_comment		($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.84 2006/05/03 12:03:15 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.85 2006/05/09 14:38:51 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.84 $';
+my $thisrevision   =      '$Revision: 1.85 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1119,8 +1122,19 @@ sub _create_entity ($$) {
 				# High bound:
 				if ( defined( $h ) ) {
 		    		if ( defined( $res{$port}{'high'} ) ) {
-						if ( $h > $res{$port}{'high'} ) {
-			    			$res{$port}{'high'} = $h;
+						# check borders:
+						my $s_h = $res{$port}{'high'};
+						if ( $h ne $s_h ) {
+							if ( $h =~ m/^\d+$/ and $s_h =~ m/^\d+$/ ) {
+								# Increase if $h > stored value:
+								if ( $h > $s_h ) {
+			    					$res{$port}{'high'} = $h;
+								}
+							} else {
+			    				$logger->warn('__W_CREATE_ENTY_NAN',
+									"\tPort $port high bound redefinition mismatch/nan: $h vs. " .
+									$s_h );
+							}
 						}
 		    		} else {
 						if ( $h ) { # Defined, but 0, which is approx. undef.
@@ -1137,8 +1151,17 @@ sub _create_entity ($$) {
 				# Low bound:
 				if ( defined( $l ) ) {
 		    		if ( defined( $res{$port}{'low'} ) ) {
-						if ( $l < $res{$port}{'low'} ) {
-			    			$res{$port}{'low'} = $l;
+						my $s_l = $res{$port}{'low'};
+						if ( $l ne $s_l ) {
+							if ( $l =~ m/^\d+$/ and $s_l ) {
+								if ( $l < $s_l ) {
+			    					$res{$port}{'low'} = $l;
+								}
+							} else {
+			    				$logger->warn('__W_CREATE_ENTY_NAN',
+								"\tPort $port low bound redefinition mismatch/nan: $l vs. " .
+									$s_l );
+							}
 						}
 		    		} else {
 						if ( $l ) {
@@ -1155,7 +1178,7 @@ sub _create_entity ($$) {
 				$l = $res{$port}{'low'};
 				$h = $res{$port}{'high'};
 
-				if ( defined( $h ) and defined ( $l ) and ( $h != $l ) and $type =~ m,(std_u?logic)\s*$, ) {
+				if ( defined( $h ) and defined ( $l ) and ( $h ne $l ) and $type =~ m,(std_u?logic)\s*$, ) {
                 	if ( ( $type . "_vector" ) ne $res{$port}{'type'} ) {
                     	$logger->warn('__W_CREATE_ENTY', "\tAutoexpand port $port from $type to vector type!");
                     	$type = $1 . "_vector";
@@ -1168,7 +1191,7 @@ sub _create_entity ($$) {
             	# Expand port to std_ulogic_type if required ...
             	# TODO : Why here again? See above		
 				if ( $type ne $res{$port}{'type'} ) {
-		    		if ( defined( $l ) and defined( $h ) and ( $h != $l ) ) { #Take _vector ...
+		    		if ( defined( $l ) and defined( $h ) and ( $h ne $l ) ) { #Take _vector ...
 						if ( $res{$port}{'type'} !~ m,_vector,io ) {
 			    			if ( $type =~ m,(std_u?logic),io ) {
 								$res{$port}{'type'} = $type; # Automatically expand to vector type
@@ -3592,7 +3615,7 @@ sub print_conn_matrix ($$$$$$$$$;$) {
     my $lstart = 0;
 
 
-	my $sortcrit = mix_wr_mapsort( $hierdb{$inst}{'::enty'}, $port ); # port map sort order prefix
+	my $sortcrit = mix_wr_mapsort( $hierdb{$inst}{'::entity'}, $port ); # port map sort order prefix
 
     my $tcom = $eh->get( 'output.comment.' . $lang ) || $eh->get( 'output.comment.default' ) || '#';
 
@@ -3702,7 +3725,7 @@ sub print_conn_matrix ($$$$$$$$$;$) {
 		} elsif ( $sf eq "__UNDEF__" and $st eq "__UNDEF__" ) {
             # Single bit of signal connected to bus port ...
            if ( $lang =~ m,^veri,io ) { #Verilog
-                $t .= "\t\t\t." . $port . "[" . $ub . "](" . $signal . "), " . $tcom . " __I_BIT_TO_BUSPORT\n"; #
+                $t .= '%S%' x 3 . '.' . $port . "[" . $ub . "](" . $signal . "), " . $tcom . " __I_BIT_TO_BUSPORT\n"; #
             } else {
                 if ( $cast ) {
                     $t .= '%S%' x 3 . $cast . "(" . $port . "(" . $ub . ")) => " .
@@ -4171,33 +4194,33 @@ sub _write_architecture ($$$$) {
     my $contflag = 0;
     #
     # Go through all instances and generate a architecture for each !entity!
-    # $i <- the instance done now
+    # $t_inst <- the instance done now
     my @keys = ( $instance eq "__COMMON__" ) ? keys( %$ae ) : ( $instance );
-    for my $i ( sort( @keys ) ) {
-		# $i is the actual instance name ...
-		if ( $i eq "W_NO_ENTITY" ) { next; }; # Should read __W_NO_INSTANCE !
-    	if ( $i =~ m/^(__|%)TYPECAST_/ ) { next; };  # Ignore typecast architecture
+    for my $t_inst ( sort( @keys ) ) {
+		# $t_inst is the actual instance name ...
+		if ( $t_inst eq "W_NO_ENTITY" ) { next; }; # Should read __W_NO_INSTANCE !
+    	if ( $t_inst =~ m/^(__|%)TYPECAST_/ ) { next; };  # Ignore typecast architecture
     	#
 		# Do not write architecture for leaf cells ...
 		# can be overwritten by setting $eh ... to leaf ...
 		if ( $eh->get( 'output.generate.arch' ) =~ m,noleaf,io and
-	    	$#{[ $ae->{$i}{'::treeobj'}->daughters ]} < 0 ) {
+	    	$#{[ $ae->{$t_inst}{'::treeobj'}->daughters ]} < 0 ) {
 	    	next;
 		}
 
 		# Do not write, if we are a "simple logic" cell
 		my $simple_re = $eh->get('output.generate._logicre_');
-		if ( $ae->{$i}{'::entity'} =~ m/$simple_re/i ) {
+		if ( $ae->{$t_inst}{'::entity'} =~ m/$simple_re/i ) {
 			next;
 		}
 		$contflag = 1;
-		my $aent = $ae->{$i}{'::entity'};
+		my $aent = $ae->{$t_inst}{'::entity'};
 		if ( $aent =~ m,W_NO_ENTITY,io ) { next; };
-		my $arch = $ae->{$i}{'::arch'};	
+		my $arch = $ae->{$t_inst}{'::arch'};	
 
     	# TODO : what to do if ilang != lang???
     	# TODO : that will happen only in case one file is written for everything ..
-    	my $ilang = lc( $hierdb{$i}{'::lang'} ||$eh->get( 'macro.%LANUAGE%' ) );
+    	my $ilang = lc( $hierdb{$t_inst}{'::lang'} ||$eh->get( 'macro.%LANUAGE%' ) );
     	if ( $p_lang and $p_lang ne $ilang ) {
         	$logger->error('__E_WRITE_ARCH', "\tLanguage mix: $p_lang used, now $ilang" );
     	}
@@ -4206,7 +4229,7 @@ sub _write_architecture ($$$$) {
 		$macros{'%ENTYNAME%'}	= $aent;
 		$macros{'%ARCHNAME%'}	= $arch . $eh->get( 'postfix.POSTFIX_ARCH' );
     	$macros{'%VERILOG_INTF%'} = $tcom . "\n" .
-        	$tcom . " Generated Module " . $i . "\n" . $tcom . "\n"; 
+        	$tcom . " Generated Module " . $t_inst . "\n" . $tcom . "\n"; 
 		$macros{'%CONCURS%'}	= _mix_wr_nice_comment( $tcom, 1, 'Generated Signal Assignments' );
 		$macros{'%CONSTANTS%'}	= _mix_wr_nice_comment( $tcom, 1, 'Generated Constant Declarations' );
 		#
@@ -4225,7 +4248,7 @@ sub _write_architecture ($$$$) {
 		# Inform user about rewrite of architecture for this entity ...
 		#
 		if ( exists( $seenthis{$aent} ) ) {
-	    	$logger->info('__I_WRITE_ARCH', "\tPossibly rewriting architecture for entity $aent, instance $i!" );
+	    	$logger->info('__I_WRITE_ARCH', "\tPossibly rewriting architecture for entity $aent, instance $t_inst!" );
 		} else {
 	    	$seenthis{$aent} = 1;
 		}
@@ -4240,10 +4263,10 @@ sub _write_architecture ($$$$) {
         	$macros{'%VERILOG_INTF%'} .= $generics . $intf;
     	}
 
-		my $node = $ae->{$i}{'::treeobj'};
+		my $node = $ae->{$t_inst}{'::treeobj'};
 
 		#!wig20060425: get signals and all components of this instance:
-		my ( $in, $out ) = _mix_wr_get_components( $i, $node, $lang, $ilang, $tcom,
+		my ( $in, $out ) = _mix_wr_get_components( $t_inst, $node, $lang, $ilang, $tcom,
 				\%seen, \%macros, \%i_macros, \%sig2inst, \%nanbounds );
 
 		push( @out, @$out);
@@ -4256,9 +4279,13 @@ sub _write_architecture ($$$$) {
         	my $ins = $hierdb{'%BUS%'}{'::conn'}{'in'};
         	for my $c ( keys( %$ins ) ) {
             	for my $bus ( keys( %{$ins->{$c}} ) ) {
-                	if ( $conndb{$bus}{'::topinst'} eq $i ) {
+					# Apply to mother of this instance!
+                	if ( $hierdb{$conndb{$bus}{'::topinst'}}{'::treeobj'}->mother eq $node ) {
                     	push( @in, $c );
                 	}
+                	# if ( $conndb{$bus}{'::topinst'} eq $t_inst ) {
+                    #	push( @in, $c );
+                	# }
             	}
         	}
     	}
@@ -4275,7 +4302,7 @@ sub _write_architecture ($$$$) {
         # Check if a signal here has the same name as a port of our entity
         #
         # TODO : Do something with the return value of count_load_driver
-        count_load_driver( $i, $aent, $hierdb{$i}{'::conn'}, \%aeport );
+        count_load_driver( $t_inst, $aent, $hierdb{$t_inst}{'::conn'}, \%aeport );
         my %sp_conflict = ();
         my %tc_sigs = ();
         if ( $ilang =~ m,^vhdl,io ) { # Make VHDL internal signal ...
@@ -4286,84 +4313,84 @@ sub _write_architecture ($$$$) {
 		my $veridefs = '';
 		$signaltext = _mix_wr_nice_comment( $tcom, 1, 'Generated Signal List' );
 
-		for my $ii ( sort( keys( %aeport ) ) ) {
-	    # $ii is signal name
+		for my $t_signal ( sort( keys( %aeport ) ) ) {
+	    # $t_signal is signal name
 
         #
         # If there is no in or out, do nothing here ....
         #
-        next unless ( exists( $aeport{$ii}{'in'} ) or exists( $aeport{$ii}{'out'} ) );
-		if ( $ii eq '' ) { # ERROR: s.th. bad happened!
-			$logger->error('__E_WRITE_ARCH', "\tMIX_INTERNAL_ERROR: empty signal in list for instance $i" );
+        next unless ( exists( $aeport{$t_signal}{'in'} ) or exists( $aeport{$t_signal}{'out'} ) );
+		if ( $t_signal eq '' ) { # ERROR: s.th. bad happened!
+			$logger->error('__E_WRITE_ARCH', "\tMIX_INTERNAL_ERROR: empty signal in list for instance $t_inst" );
 			next;
 		}
 
         # Skip "open" pseudo-signal
-        next if ( $ii =~ m,%OPEN(_\d+)?%, );
+        next if ( $t_signal =~ m,%OPEN(_\d+)?%, );
             
-	    my $s = $conndb{$ii};
+	    my $s = $conndb{$t_signal};
 	    my $type = $s->{'::type'};
 	    my $high = $s->{'::high'};
 	    my $low = $s->{'::low'};
 	    # The signal definition should be consistent here!
 
         # Using %HIGH%, %LOW%, %HIGH_BUS%, %LOW_BUS%
-        if ( $ii =~ m,^\s*%(HIGH|LOW)_BUS,o ) {
+        if ( $t_signal =~ m,^\s*%(HIGH|LOW)_BUS,o ) {
 			my $logicv = ( $1 eq 'HIGH' ) ? '1' : '0';
             if ( $ilang =~ m,^veri,io ) {
                 my $w = $high - $low + 1;
                 $macros{'%CONCURS%'} .= '%S%' x 2 .
-                    'assign ' . $eh->get( 'macro.' . $ii ) . ' = ' .
+                    'assign ' . $eh->get( 'macro.' . $t_signal ) . ' = ' .
                     $w . "'b" . $logicv x $w . ";\n"; # Added width for Verilog
             } else {
                 $macros{'%CONCURS%'} .= '%S%' x 2 .
-                    $eh->get( 'macro.' . $ii ) . " <= ( others => '$logicv' );\n";
+                    $eh->get( 'macro.' . $t_signal ) . " <= ( others => '$logicv' );\n";
             }
-	    } elsif ( $ii =~ m,^\s*%(HIGH|LOW)%,o ) {
+	    } elsif ( $t_signal =~ m,^\s*%(HIGH|LOW)%,o ) {
 	    	my $logicv = ( $1 eq 'HIGH' ) ? '1' : '0';
                 if ( $ilang =~ m,^veri,io ) {
                     $macros{'%CONCURS%'} .= '%S%' x 2 .
-                        'assign ' . $eh->get( 'macro.' . $ii ) . " = 1'b" . $logicv . ";\n";
+                        'assign ' . $eh->get( 'macro.' . $t_signal ) . " = 1'b" . $logicv . ";\n";
                 } else {
                     $macros{'%CONCURS%'} .= '%S%' x 2 .
-                        $eh->get( 'macro.' . $ii ) . " <= '$logicv';\n";
+                        $eh->get( 'macro.' . $t_signal ) . " <= '$logicv';\n";
                 }
 	    }
 
-            # If signal $ii  has no load here and it's top level module (::topinst) is
+            # If signal $t_signal  has no load here and it's top level module (::topinst) is
             # one of our daughter's, leave it open...
-            # if ( $dname eq $conndb{$i}{'::topinst'} ) { $daughter_is_top++; }
+            # if ( $dname eq $conndb{$t_inst}{'::topinst'} ) { $daughter_is_top++; }
             #!wig20031010
             my $port_open='';
-            if ( $aeport{$ii}{'load'} == 0 and $eh->get( 'check.signal' ) =~ m,top_open,io ) {
-                unless ( $ii =~ m,^\s*%(HIGH|OPEN|LOW), ) { #Meta signals %HIGH... %LOW, ... %OPEN
-                    if ( exists $conndb{$ii}{'::topinst'} and $conndb{$ii}{'::topinst'} and
-                    	 $node == $hierdb{$conndb{$ii}{'::topinst'}}{'::treeobj'}->mother ) {
-                        $logger->warn('__W_WRITE_ARCH', "\tLeave unloaded port $ii open at instance $i");
+            if ( $aeport{$t_signal}{'load'} == 0 and $eh->get( 'check.signal' ) =~ m/\btop_open/io ) {
+                unless ( $t_signal =~ m,^\s*%(HIGH|OPEN|LOW), ) { #Meta signals %HIGH... %LOW, ... %OPEN
+                    if ( exists $conndb{$t_signal}{'::topinst'} and $conndb{$t_signal}{'::topinst'} and
+                    	 $node == $hierdb{$conndb{$t_signal}{'::topinst'}}{'::treeobj'}->mother ) {
+                        $logger->warn('__W_WRITE_ARCH', "\tLeave unloaded port $t_signal open at instance $t_inst");
                         $eh->inc( 'sum.openports' );
                         # Will map to open ...
                         $port_open = $tcom . "  __I_OUT_OPEN ";
-                        if ( exists( $sp_conflict{$ii} ) ) {
-                            $logger->error('__WRITE_ARCH', "\tBAD_BRANCH for $ii, no load on port! File bug report!");
+                        if ( exists( $sp_conflict{$t_signal} ) ) {
+                            $logger->error('__WRITE_ARCH', "\tBAD_BRANCH for $t_signal, no load on port! File bug report!");
                         }
-                        $sp_conflict{$ii} = "__open__"; # Map that signal to open ...
+                        $sp_conflict{$t_signal} = "__open__"; # Map that signal to open ...
                     }
                 }
             }
             #!wig20060425: leave undriven ports open, too ...
-            if ( $aeport{$ii}{'driver'} == 0 and $eh->get( 'check.signal' ) =~ m/\btop_nodriver/io ){
-            	unless ( $ii =~ m,^\s*%(HIGH|OPEN|LOW), ) { #Meta signals %HIGH... %LOW, ... %OPEN
+            if ( $aeport{$t_signal}{'driver'} == 0 and $eh->get( 'check.signal' ) =~ m/\btop_nodriver/io ){
+            	unless ( $t_signal =~ m,^\s*%(HIGH|OPEN|LOW), ) { #Meta signals %HIGH... %LOW, ... %OPEN
 					# CONST currently have not ::topinst!
-                    if ( exists $conndb{$ii}{'::topinst'} and $conndb{$ii}{'::topinst'} and
-                    	 $node == $hierdb{$conndb{$ii}{'::topinst'}}{'::treeobj'}->mother ) {
-                        $logger->warn('__W_WRITE_ARCH', "\tLeave undriven port $ii open at instance $i");
+                    if ( exists $conndb{$t_signal}{'::topinst'} and $conndb{$t_signal}{'::topinst'} and
+                    	 $node == $hierdb{$conndb{$t_signal}{'::topinst'}}{'::treeobj'}->mother ) {
+                        $logger->warn('__W_WRITE_ARCH', "\tLeave undriven port $t_signal open at instance $t_inst");
                         $eh->inc( 'sum.nodrivers' );
                         # Will map to open ...
                         $port_open = $tcom . ' __I_NODRV_I ';
-                        if ( exists( $sp_conflict{$ii} ) ) {
-                            $logger->error('__WRITE_ARCH', "\tBAD_BRANCH for $ii, no driver on port! File bug report!");
+                        if ( exists( $sp_conflict{$t_signal} ) ) {
+                            $logger->error('__WRITE_ARCH', "\tBAD_BRANCH for $t_signal, no driver on port! File bug report!");
                         }
-                        $sp_conflict{$ii} = '__nodrv__'; # Map that signal to be undriven ...
+                        $sp_conflict{$t_signal} = '__nodrv__'; # Map that signal to be undriven ...
                     }
                 }
             }
@@ -4403,21 +4430,21 @@ sub _write_architecture ($$$$) {
     	# Now deal with the ports, that are read internally, too:
         # Or output ports, that are left open here ... (if value is open)
 	    # Generate intermediate signal
-	    #Caveat: $ii is a signal name, while sp_conflict references a port name,
+	    #Caveat: $t_signal is a signal name, while sp_conflict references a port name,
 	    #   which could happen to be the same thing ...
-        my $usesig = $ii; 
-	    if ( exists( $sp_conflict{$ii} ) ) {
-            $usesig = $sp_conflict{$ii};
+        my $usesig = $t_signal; 
+	    if ( exists( $sp_conflict{$t_signal} ) ) {
+            $usesig = $sp_conflict{$t_signal};
             # Redo all generated maps of my subblocks to use the internal signal name ....
-            for my $insts ( @{$sig2inst{$ii}} ) {
+            for my $insts ( @{$sig2inst{$t_signal}} ) {
                 # TODO : is that the final idea? Maybe splitting gen_map
                 # in two parts makes it better
                 # Port name might be not equal signal name here (generated port!)
                 my $pm = $i_macros{'%INST_' . $insts . '%'};
                 if ( $ilang =~ m,^veri,io ) {
-                    # Strip away the signal $ii
+                    # Strip away the signal $t_signal
                     if ( $usesig eq '__open__' ) {
-                        $pm =~ s!(\.\w+?)\(\s*$ii\s*(\[.+?\])?\s*\)!$1()!g;
+                        $pm =~ s!(\.\w+?)\(\s*$t_signal\s*(\[.+?\])?\s*\)!$1()!g;
                         if ( exists( $hierdb{$insts}{'::reconnections'} ) ) {
                             # Maybe name will be changed here ... comment out port => open
                             for my $pstr ( keys( %{$hierdb{$insts}{'::reconnections'}} ) ) {
@@ -4427,8 +4454,8 @@ sub _write_architecture ($$$$) {
                     } elsif ( $usesig eq '__nodrv__' ) {
                     	#!wig20060426: handle undriven ports ....
                     	#  prepend __I_NODRV_I
-                    	# $pm =~ s!(\.\w+?)\(\s*$ii\s*(\[.+?\])?\s*\)!$tcom __I_NODRV_I $1()!g;
-                    	$pm =~ s!(\.\w+?)!$tcom __I_NODRV_I $1 __nodrv__/$ii!g;
+                    	# $pm =~ s!(\.\w+?)\(\s*$t_signal\s*(\[.+?\])?\s*\)!$tcom __I_NODRV_I $1()!g;
+                    	$pm =~ s!(\.\w+?)!$tcom __I_NODRV_I $1 __nodrv__/$t_signal!g;
                         if ( exists( $hierdb{$insts}{'::reconnections'} ) ) {
                             # Maybe name will be changed here ... comment out port => open
                             for my $pstr ( keys( %{$hierdb{$insts}{'::reconnections'}} ) ) {
@@ -4436,7 +4463,7 @@ sub _write_architecture ($$$$) {
                             }
                         }
                     }else {
-                        $pm =~ s!(\.\w+?)\(\s*$ii(\s*\[.+?\])?\s*\)!$1($usesig$2)!g;
+                        $pm =~ s!(\.\w+?)\(\s*$t_signal(\s*\[.+?\])?\s*\)!$1($usesig$2)!g;
                     }
                 } else {
                 #!wig20031014: add -- as allowed continuation after the signal name!
@@ -4444,7 +4471,7 @@ sub _write_architecture ($$$$) {
                 #   port => signal, -- comment
                 #   port => signal( ....
                 #   port => signal\n
-                    $pm =~ s!(\w*)(\s+=>\s+)$ii(\s*(\(|,|\n|--))!$1$2$usesig$3!g; 
+                    $pm =~ s!(\w*)(\s+=>\s+)$t_signal(\s*(\(|,|\n|--))!$1$2$usesig$3!g; 
                     if ( $usesig eq '__open__' ) {
                         $pm =~ s!(\s+=>\s+)__open__    # Has __open__ in it
                             (\s*$RE{balanced}{-parens=>'()'})?
@@ -4462,7 +4489,7 @@ sub _write_architecture ($$$$) {
                         $pm =~ s!(\S+)(\s+=>\s+)__nodrv__    # Has __nodrv__ in it
                             ((\s*$RE{balanced}{-parens=>'()'})?)
                             (.*)                                        # Rest of line
-                           !$tcom __I_NODRV_I $1$2 __nodrv__/$ii $3$5!gx;
+                           !$tcom __I_NODRV_I $1$2 __nodrv__/$t_signal $3$5!gx;
                         # TODO: simplify this: Strip out ( N downto M )
                         # $pm =~ s!__open__!open!g;
                         if ( exists( $hierdb{$insts}{'::reconnections'} ) ) {
@@ -4484,7 +4511,7 @@ sub _write_architecture ($$$$) {
 	    # TODO Handle bit slices!!! Bring that to subroutine!!!
 	    my $pre = '';
 	    my $post = '';
-	    my $iconn = $hierdb{$i}{'::conn'};
+	    my $iconn = $hierdb{$t_inst}{'::conn'};
 
         # Iterate through all signals connected here ...
         # Generate an assignment if
@@ -4494,28 +4521,26 @@ sub _write_architecture ($$$$) {
         #   port hooked to that signal
         #
         # Iterate through all ports connected to this signal
-        # if ( exists( $iconn->{'in'}{$ii} ) ) { # Bingo, signal is connected to port
-        # In has precedence:
+        # In has precedence.
         # TODO What if both in and out exists?
         #   What if signal is connected to multiple ports:
-	    # if ( exists( $aeport{$ii}{'in'} ) ) { # IN
-        unless( $ii =~ m/%(HIGH|LOW|OPEN)(_BUS)?%/o ) {
-			if ( exists( $iconn->{'in'}{$ii} ) ) {
-		    	foreach my $port ( keys( %{$iconn->{'in'}{$ii}} ) ) {
+        unless( $t_signal =~ m/%(HIGH|LOW|OPEN)(_BUS)?%/o ) {
+			if ( exists( $iconn->{'in'}{$t_signal} ) ) {
+		    	foreach my $port ( keys( %{$iconn->{'in'}{$t_signal}} ) ) {
 					if ( $usesig ne $port ) {
 			    		$pre = '';
 			    		$post = "$tcom __W_PORT_SIGNAL_MAP_REQ";
-                        my $concurs = gen_concur_port( 'in', $i, $aent, $ii, $usesig, $port, $iconn, $aeport{$ii}, $ilang, $tcom );
+                        my $concurs = gen_concur_port( 'in', $t_inst, $aent, $t_signal, $usesig, $port, $iconn, $aeport{$t_signal}, $ilang, $tcom );
 			    		$macros{'%CONCURS%'} .= $concurs;
 					}
     		    }
 			}
-			if ( exists( $iconn->{'out'}{$ii} ) ) {
-		    	foreach my $port ( keys( %{$iconn->{'out'}{$ii}} ) ) {
+			if ( exists( $iconn->{'out'}{$t_signal} ) ) {
+		    	foreach my $port ( keys( %{$iconn->{'out'}{$t_signal}} ) ) {
 					if ( $usesig ne $port ) {		    
 			    		$pre = '';
 			    		$post = "$tcom __W_PORT_SIGNAL_MAP_REQ";
-                    	my $concurs = gen_concur_port( 'out', $i, $aent, $ii, $usesig, $port, $iconn, $aeport{$ii}, $ilang, $tcom );
+                    	my $concurs = gen_concur_port( 'out', $t_inst, $aent, $t_signal, $usesig, $port, $iconn, $aeport{$t_signal}, $ilang, $tcom );
 			    		$macros{'%CONCURS%'} .= $concurs;
 					}
 		    	}
@@ -4524,15 +4549,15 @@ sub _write_architecture ($$$$) {
 
 	    # Add signal definition if required:
         my $tmp_sig = '';
-        if ( $usesig ne $ii ) {
-                $usesig = $ii if ( $usesig eq '__open__' or $usesig eq '__nodrv__' );
+        if ( $usesig ne $t_signal ) {
+                $usesig = $t_signal if ( $usesig eq '__open__' or $usesig eq '__nodrv__' );
                 # Use internally generated signalname ....
                 $tmp_sig .= ( $ilang =~ m,^veri,io ) ?
                 ( $pre . "wire\t$dt\t$usesig\t; $post $tcom __W_BAD_BRANCH\n" ) :
                 ( $pre . "signal\t" . $usesig . "\t: " . $type . $dt . "; " . $post . "\n" );
-        } elsif ( exists( $iconn->{'out'}{$ii} ) or
-                                exists( $iconn->{'in'}{$ii} ) ) {
-                unless( exists( $entities{$aent}{$ii} ) ) {
+        } elsif ( exists( $iconn->{'out'}{$t_signal} ) or
+                                exists( $iconn->{'in'}{$t_signal} ) ) {
+                unless( exists( $entities{$aent}{$t_signal} ) ) {
                     $tmp_sig .= ( $ilang =~ m,^veri,io ) ?
                         ( $pre . "wire " . $dt . " " . $usesig . "; " . $post . "\n" ) :
                         ( $pre . "signal\t" . $usesig . "\t: " . $type . $dt . "; " . $post . "\n" );
@@ -4547,7 +4572,7 @@ sub _write_architecture ($$$$) {
         }
         $signaltext .= '%S%' x 1 . $port_open . $tmp_sig if ( $tmp_sig );
 
-	} # End for $ii / signal
+	} # End for $t_signal / signal
 
 	#
 	# Adding constant definitions for nan bounds signals ...
@@ -5026,10 +5051,10 @@ sub _write_constant ($$$$$;$) {
             #TODO: rework ident strategy ... e.g. mark with keywords ...
             $def = "`define " . $cname . " " . $value . " " . $comm . "\n";
             if ( $dtp eq $dtsa ) {
-                $sat = '%S%' x 3 . "assign " . $sname . ' = `' .   # `
+                $sat = '%S%' x 2 . "assign " . $sname . ' = `' .   # `
                         $cname . ";\n";
             } else {
-                $sat = '%S%' x 3 . "assign " . $sname . $dts . " = `" . # `
+                $sat = '%S%' x 2 . "assign " . $sname . $dts . " = `" . # `
                         $cname . ";\n";
             }
         } else {
@@ -5227,15 +5252,15 @@ sub gen_concur_port($$$$$$$$;$$) {
             # out (et al.)   PORT <= SIGNAL;
             if ( $lang =~ m,^veri,io ) {
                 if ( $mode eq 'in' ) {
-                    $concur .= '%S%' x 1 . "assign\t" . $signal_n . $sslice . '%S%=%S%' . $port . $pslice . '; ' . $type . "\n";
+                    $concur .= '%S%' x 2 . "assign\t" . $signal_n . $sslice . '%S%=%S%' . $port . $pslice . '; ' . $type . "\n";
                 } else {
-                    $concur .= '%S%' x 1 . "assign\t" . $port . $pslice . '%S%=%S%' . $signal_n . $sslice . '; ' . $type . "\n";
+                    $concur .= '%S%' x 2 . "assign\t" . $port . $pslice . '%S%=%S%' . $signal_n . $sslice . '; ' . $type . "\n";
                 }
             } else {
                 if ( $mode eq 'in' ) {
-                    $concur .= '%S%' x 1 . $signal_n . $sslice . '%S%<=%S%' . $port . $pslice . '; ' . $type . "\n";
+                    $concur .= '%S%' x 2 . $signal_n . $sslice . '%S%<=%S%' . $port . $pslice . '; ' . $type . "\n";
                 } else {
-                    $concur .= '%S%' x 1 . $port . $pslice . '%S%<=%S%' . $signal_n . $sslice . '; ' . $type . "\n";
+                    $concur .= '%S%' x 2 . $port . $pslice . '%S%<=%S%' . $signal_n . $sslice . '; ' . $type . "\n";
                 }
             }
         }

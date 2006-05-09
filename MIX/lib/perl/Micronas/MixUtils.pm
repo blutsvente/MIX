@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.118 $                                         |
+# | Revision:   $Revision: 1.119 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/05/08 15:20:04 $                              |
+# | Date:       $Date: 2006/05/09 14:38:51 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.118 2006/05/08 15:20:04 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.119 2006/05/09 14:38:51 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.119  2006/05/09 14:38:51  wig
+# |  	MixParser.pm MixUtils.pm MixWriter.pm : improved constant assignments
+# |
 # | Revision 1.118  2006/05/08 15:20:04  wig
 # | Implement mix_use_on_demand
 # |
@@ -190,11 +193,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.118 2006/05/08 15:20:04 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.119 2006/05/09 14:38:51 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.118 $';         #'
+my $thisrevision        =      '$Revision: 1.119 $';         #'
 
-# Revision:   $Revision: 1.118 $   
+# Revision:   $Revision: 1.119 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -3184,8 +3187,7 @@ sub _sum_loglimit_eh ($) {
 			if ( exists $loglimit->{$category}->{$kl} and
 				$logcount->{$category}{$k} > $loglimit->{$category}{$kl} ) {
 				$logger->info( "SUM: Loglimit for $category/$k:\t" .
-					( $logcount->{$category}{$k} - $loglimit->{$category}{$kl} ) .
-					"\n" );
+					( $logcount->{$category}{$k} - $loglimit->{$category}{$kl} ) );
 			}
 		}
 	}

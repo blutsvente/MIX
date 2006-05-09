@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.72 $                                         |
+# | Revision:   $Revision: 1.73 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/05/03 12:03:15 $                              |
+# | Date:       $Date: 2006/05/09 14:38:51 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.72 2006/05/03 12:03:15 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.73 2006/05/09 14:38:51 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.73  2006/05/09 14:38:51  wig
+# |  	MixParser.pm MixUtils.pm MixWriter.pm : improved constant assignments
+# |
 # | Revision 1.72  2006/05/03 12:03:15  wig
 # | Improved top handling, fixed generated format
 # |
@@ -147,9 +150,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.72 2006/05/03 12:03:15 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.73 2006/05/09 14:38:51 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.72 $';
+my $thisrevision =	'$Revision: 1.73 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1149,7 +1152,7 @@ sub _create_conn ($$%) {
 
         if ( $data{'::high'} ne '' ) {
             unless ( $data{'::high'} =~ /^\d+$/ ) {
-                $logger->info( '__I_CREATE_CONN', "\tBus $data{'::name'} upper bound $data{'::high'} not a number!" );
+                $logger->info( '__I_CREATE_CONN_H_NAN', "\tBus $data{'::name'} upper bound $data{'::high'} not a number!" );
                 $hldigitflag = 0;
             } else {
                 $hldigitflag++;
@@ -1158,7 +1161,7 @@ sub _create_conn ($$%) {
         }
         if ( $data{'::low'} ne "" ) {
             unless ( $data{'::low'} =~ /^\d+$/ ) {
-                $logger->info( '__I_CREATE_CONN', "\tBus $data{'::name'} lower bound $data{'::low'} not a number!" );
+                $logger->info( '__I_CREATE_CONN_L_NAN', "\tBus $data{'::name'} lower bound $data{'::low'} not a number!" );
                 $hldigitflag = 0;
             } else {
                 $hldigitflag++;
@@ -1166,7 +1169,7 @@ sub _create_conn ($$%) {
             $l = $data{'::low'};
         }
         if ( defined( $h ) and defined( $l ) and $hldigitflag == 2 and $h < $l ) {
-            $logger->warn( '__I_CREATE_CONN', "\tHINT for " . $data{'::name'} .
+            $logger->warn( '__I_CREATE_CONN_ORDER', "\tHINT for " . $data{'::name'} .
                      ": unusual bus ordering $h downto $l" );
         }
     }
@@ -1747,11 +1750,15 @@ sub merge_conn($%) {
                 if ( defined( $data{$i} ) and $data{$i} ne '' and $conndb{$name}{$i} ne $data{$i} ) {
                     # LOW and HIGH "signals" are special.
                     if ( $name =~ m,^\s*%(LOW|HIGH)_BUS%,o ) { # Accept larger value for upper bound
-                        if ( $i =~ m,^\s*::high,o ) {
-                            $conndb{$name}{$i} = $data{$i} if ( $data{$i} > $conndb{$name}{$i} );
-                        } elsif ( $i =~ m,^\s*::low,o ) {
-                            $conndb{$name}{$i} = $data{$i} if ( $data{$i} < $conndb{$name}{$i} );
-                        }
+						if ( $data{$i} =~ m/^\d+/ ) {
+                        	if ( $i =~ m,^\s*::high,o ) {
+                            	$conndb{$name}{$i} = $data{$i} if ( $data{$i} > $conndb{$name}{$i} );
+                        	} elsif ( $i =~ m,^\s*::low,o ) {
+                            	$conndb{$name}{$i} = $data{$i} if ( $data{$i} < $conndb{$name}{$i} );
+                        	}
+						} else {
+                        	$logger->warn( '__W_MERGE_HIGHLOW', "\tconflicting width values for $name($i): $conndb{$name}{$i} ne $data{$i}!");
+						}
                     } elsif ( $name =~ m,^\s*%OPEN(_\d+)?%,o ) {
                         if ( not defined( $conndb{$name}{$i} ) or $conndb{$name}{$i} eq ""
                              or $conndb{$name}{$i} eq "%NULL%" ) {
@@ -2742,7 +2749,7 @@ sub add_portsig () {
         my $commonpar = my_common( values( %connected ) );
 
         unless ( defined( $commonpar ) ) {
-            $logger->error( '__E_ADD_PORTSIG', "\tSignal $signal spawns several seperate trees! Will be dropped\n" );
+            $logger->error( '__E_ADD_PORTSIG', "\tSignal $signal spawns several seperate trees! Will be dropped!" );
             next;
         }
 
