@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.42 $                                          |
+# | Revision:   $Revision: 1.43 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/05/03 12:03:15 $                              |
+# | Date:       $Date: 2006/05/09 14:39:17 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.43  2006/05/09 14:39:17  wig
+# |  	MixParser.pm MixUtils.pm MixWriter.pm : improved constant assignments
+# | 	Globals.pm IO.pm : improved limits, return value of write_delta_sheet
+# |
 # | Revision 1.42  2006/05/03 12:03:15  wig
 # | Improved top handling, fixed generated format
 # |
@@ -123,11 +127,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.42 2006/05/03 12:03:15 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.43 2006/05/09 14:39:17 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.42 $'; #'  
+my $thisrevision    =      '$Revision: 1.43 $'; #'  
 
-# Revision:   $Revision: 1.42 $
+# Revision:   $Revision: 1.43 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1117,14 +1121,14 @@ sub write_delta_sheet($$$) {
 	#!wig20051019: use cvs if available
 	unless( -r $predir . $file ) {
 		write_outfile( $file, $sheet, $r_a );
-		return;
+		return 0;
 	}
 		
     @prev = open_infile( $predir . $file, $sheet, '', 'mandatory,write');
 
     if(scalar( @prev ) < 1 ) {
-        $logger->error( '__E_READ_DELTA',  "\tReading input for delta mode for file $file!" );
-		return;
+        $logger->error( '__E_READ_DELTA',  "\tUnable to read input for delta mode from file $file!" );
+		return 1;
     }
 
 	#!wig20050926: join split lines before diff!

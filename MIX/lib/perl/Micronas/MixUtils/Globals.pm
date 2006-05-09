@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.13 $                                          |
+# | Revision:   $Revision: 1.14 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/05/03 12:03:15 $                              |
+# | Date:       $Date: 2006/05/09 14:39:16 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.14  2006/05/09 14:39:16  wig
+# |  	MixParser.pm MixUtils.pm MixWriter.pm : improved constant assignments
+# | 	Globals.pm IO.pm : improved limits, return value of write_delta_sheet
+# |
 # | Revision 1.13  2006/05/03 12:03:15  wig
 # | Improved top handling, fixed generated format
 # |
@@ -89,9 +93,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.13 2006/05/03 12:03:15 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.14 2006/05/09 14:39:16 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.13 $';  
+my $thisrevision    =      '$Revision: 1.14 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1155,7 +1159,7 @@ sub init {
 	#!wig20060424: adding limits for log messages:
     $this->{'cfg'}{'log'}{'limit'} = {
     	're'	=> {},	# A. tags match RE here, no defaults, user defined
-    	'tag'	=> {	# B. Tag default filter
+    	'tag'	=> {	# B. Tag default filter (individual tags)
     		'F'	=> 100,
     		'E'	=> 100,
     		'W'	=> 100,
@@ -1163,16 +1167,16 @@ sub init {
     		'D'	=> 100,
     		'A'	=> 100,
     	},
-    	'level' => {	# C. Level filter:
+    	'level' => {	# C. Level filter (all messages in this level)
 						# MIXCFG log.limit.level.F|E|W|I|D|A... <count>
 						# Default: -1 for F and E, 100 for W, 200 for I, 500 for A.
 						# D is not limited, because debug messages are not logged anyway.
-    		'F'	=>  -1,
-    		'E'	=>  -1,
-    		'W'	=> 100,
-    		'I'	=> 200,
-    		'D'	=>  -1,
-    		'A'	=> 500,
+    		'F'	=>   -1,
+    		'E'	=>   -1,
+    		'W'	=>  500,
+    		'I'	=> 1000,
+    		'D'	=>   -1,
+    		'A'	=> 2000,
     	},
     	'test' => {
     	},
