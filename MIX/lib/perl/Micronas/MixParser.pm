@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.73 $                                         |
+# | Revision:   $Revision: 1.74 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/05/09 14:38:51 $                              |
+# | Date:       $Date: 2006/05/10 08:26:59 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.73 2006/05/09 14:38:51 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.74 2006/05/10 08:26:59 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.74  2006/05/10 08:26:59  wig
+# | __NODRV__ improvements
+# |
 # | Revision 1.73  2006/05/09 14:38:51  wig
 # |  	MixParser.pm MixUtils.pm MixWriter.pm : improved constant assignments
 # |
@@ -150,9 +153,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.73 2006/05/09 14:38:51 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.74 2006/05/10 08:26:59 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.73 $';
+my $thisrevision =	'$Revision: 1.74 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -579,16 +582,16 @@ sub init_pseudo_inst () {
     # Add some meta instances: %TOP%, %CONST%, %OPEN%
     # These are needed for proper program flow.
     #
-    add_inst( '::inst' => "%CONST%", );
-    add_inst( '::inst' => "%GENERIC%", );
-    add_inst( '::inst' => "%PARAMETER%", );
+    add_inst( '::inst' => '%CONST%', );
+    add_inst( '::inst' => '%GENERIC%', );
+    add_inst( '::inst' => '%PARAMETER%', );
 
-    add_inst( '::inst' => "%TOP%",
+    add_inst( '::inst' => '%TOP%',
     		  '::entity' => '%TOP_ENTY%',
     		  '::config' => '%TOP_CONF%',
     );
-    add_inst( '::inst' => "%OPEN%", );
-    add_inst( '::inst' => "%BUS%", );  # Meta instance for %BUS% connections ...
+    add_inst( '::inst' => '%OPEN%', );
+    add_inst( '::inst' => '%BUS%', );  # Meta instance for %BUS% connections ...
 }
 
 ####################################################################
@@ -1006,7 +1009,7 @@ sub add_conn (%) {
             # Check if this signals ::out has a %CONST% in it:
             # If yes, mark it as C
             unless( exists( $conndb{$name}{'::out'}[0] ) and
-				 $conndb{$name}{'::out'}[0]{'inst'} eq "%CONST%" ) {
+				 $conndb{$name}{'::out'}[0]{'inst'} eq '%CONST%' ) {
                 # Mark signal .... but add it anyway (user should be able to fix it)
                 # TODO : fix up that code, should not deal with conndb here ....
 				##LU added some hint for user
@@ -4602,7 +4605,7 @@ sub _add_sign2hier ($$$) {
             }
             next;
         }
-        next if ( $inst eq "%CONST%" );
+        next if ( $inst eq '%CONST%' );
         # Skip meta instance %CONST%
         my $port = $rsa->[$iii]{'port'};
         unless ( defined( $port ) ) {

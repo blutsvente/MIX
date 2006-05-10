@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.86 $                                         |
+# | Revision:   $Revision: 1.87 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/05/10 07:15:52 $                              |
+# | Date:       $Date: 2006/05/10 08:26:59 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.86 2006/05/10 07:15:52 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.87 2006/05/10 08:26:59 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.87  2006/05/10 08:26:59  wig
+# | __NODRV__ improvements
+# |
 # | Revision 1.86  2006/05/10 07:15:52  wig
 # |  	MixWriter.pm : fix NODRV bad regular expression
 # |
@@ -361,9 +364,9 @@ sub _mix_wr_nice_comment		($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.86 2006/05/10 07:15:52 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.87 2006/05/10 08:26:59 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.86 $';
+my $thisrevision   =      '$Revision: 1.87 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -4387,8 +4390,8 @@ sub _write_architecture ($$$$) {
                     if ( exists $conndb{$t_signal}{'::topinst'} and $conndb{$t_signal}{'::topinst'} and
                     	 $node == $hierdb{$conndb{$t_signal}{'::topinst'}}{'::treeobj'}->mother ) {
                         $logger->warn('__W_WRITE_ARCH', "\tLeave undriven port $t_signal open at instance $t_inst");
-                        $eh->inc( 'sum.nodrivers' );
-                        # Will map to open ...
+                        $eh->inc( 'sum.nodriverport' );
+                        # Will map to __nodrv__ ...
                         $port_open = $tcom . ' __I_NODRV_I ';
                         if ( exists( $sp_conflict{$t_signal} ) ) {
                             $logger->error('__WRITE_ARCH', "\tBAD_BRANCH for $t_signal, no driver on port! File bug report!");
@@ -4458,7 +4461,7 @@ sub _write_architecture ($$$$) {
                     	#!wig20060426: handle undriven ports ....
                     	#  prepend __I_NODRV_I
                     	# $pm =~ s!(\.\w+?)\(\s*$t_signal\s*(\[.+?\])?\s*\)!$tcom __I_NODRV_I $1()!g;
-                    	$pm =~ s!(\.\w+?\(\s*$t_signal\s*)!$tcom __I_NODRV_I $1!g;
+                    	$pm =~ s!(\.\w+?\(\s*$t_signal\s*)!$tcom __I_NODRV_I $1/__nodrv__!g;
                         if ( exists( $hierdb{$insts}{'::reconnections'} ) ) {
                             # Maybe name will be changed here ... comment out port => open
                             for my $pstr ( keys( %{$hierdb{$insts}{'::reconnections'}} ) ) {
@@ -5087,14 +5090,14 @@ sub _write_constant ($$$$$;$) {
 #
 sub mix_wr_getconstname ($$) {
     my $sref = shift;
-    my $n = shift || "";
+    my $n = shift || '';
 
     my $busref = 0;
     # Return name for signal and name for constant ...
     my $sn = $sref->{'::name'};
-    my $cn = $sn . ( $n ? ( "_" . $n . "c" ) : "_c" );
+    my $cn = $sn . ( $n ? ( '_' . $n . 'c' ) : '_c' );
 
-    my $nt = $n || "0";
+    my $nt = $n || '0';
 
     #Caveat: will only work if the constant has only >one< %BUS% reference!!
     #    and this reference has to be first!
@@ -5103,10 +5106,10 @@ sub mix_wr_getconstname ($$) {
         $sref->{'::out'}[$nt]{'inst'} =~ m/(__|%)CONST(__|%)/io and
         $sref->{'::in'}[0]{'inst'} =~ m/(__|%)BUS(__|%)/io ) {
             $busref = 1;
-            $cn = $sn . ( $n ? ( "_" . $n . "c" ) : "" ); # Signalname taken from ::in
+            $cn = $sn . ( $n ? ( '_' . $n . 'c' ) : '' ); # Signalname taken from ::in
                 # constant name as defined or attach a _Nc if N > 0 
-            $sn = $sref->{'::in'}[0]{'port'} || "__W_UNKNOWN_CONST_BUS";
-            if ( $cn eq $sn ) { $cn = $sn . ( $n ? ( "_" . $n . "c" ) : "_c" ); }
+            $sn = $sref->{'::in'}[0]{'port'} || '__W_UNKNOWN_CONST_BUS';
+            if ( $cn eq $sn ) { $cn = $sn . ( $n ? ( '_' . $n . 'c' ) : '_c' ); }
     }        
 
     return $sn, $cn, $busref;
