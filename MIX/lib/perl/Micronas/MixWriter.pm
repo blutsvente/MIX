@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.85 $                                         |
+# | Revision:   $Revision: 1.86 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/05/09 14:38:51 $                              |
+# | Date:       $Date: 2006/05/10 07:15:52 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.85 2006/05/09 14:38:51 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.86 2006/05/10 07:15:52 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.86  2006/05/10 07:15:52  wig
+# |  	MixWriter.pm : fix NODRV bad regular expression
+# |
 # | Revision 1.85  2006/05/09 14:38:51  wig
 # |  	MixParser.pm MixUtils.pm MixWriter.pm : improved constant assignments
 # |
@@ -358,9 +361,9 @@ sub _mix_wr_nice_comment		($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.85 2006/05/09 14:38:51 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.86 2006/05/10 07:15:52 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.85 $';
+my $thisrevision   =      '$Revision: 1.86 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -4455,7 +4458,7 @@ sub _write_architecture ($$$$) {
                     	#!wig20060426: handle undriven ports ....
                     	#  prepend __I_NODRV_I
                     	# $pm =~ s!(\.\w+?)\(\s*$t_signal\s*(\[.+?\])?\s*\)!$tcom __I_NODRV_I $1()!g;
-                    	$pm =~ s!(\.\w+?)!$tcom __I_NODRV_I $1 __nodrv__/$t_signal!g;
+                    	$pm =~ s!(\.\w+?\(\s*$t_signal\s*)!$tcom __I_NODRV_I $1!g;
                         if ( exists( $hierdb{$insts}{'::reconnections'} ) ) {
                             # Maybe name will be changed here ... comment out port => open
                             for my $pstr ( keys( %{$hierdb{$insts}{'::reconnections'}} ) ) {
