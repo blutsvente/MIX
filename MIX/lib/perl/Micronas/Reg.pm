@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.24 2006/05/08 15:20:05 wig Exp $
+#  RCSId: $Id: Reg.pm,v 1.25 2006/05/10 12:21:33 wig Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.25  2006/05/10 12:21:33  wig
+#   	Reg.pm : import mix_use_on_demand function
+#
 #  Revision 1.24  2006/05/08 15:20:05  wig
 #  Implement mix_use_on_demand
 #
@@ -116,7 +119,7 @@ package Micronas::Reg;
 use strict;
 
 use Log::Log4perl qw(get_logger);
-use Micronas::MixUtils qw( $eh %OPTVAL);
+use Micronas::MixUtils qw( mix_use_on_demand $eh %OPTVAL );
 # rest gets loaded on demand ...
 
 # use Micronas::MixUtils::Globals qw( get_eh );
@@ -140,7 +143,7 @@ sub parse_register_master($) {
 	if (scalar @$r_i2c) {
 
 	# Load modules on demand ...
-	unless( use_on_demand(
+	unless( mix_use_on_demand(
 	' use Data::Dumper;
 	  use Micronas::RegDomain;
 	  use Micronas::RegReg;
@@ -183,7 +186,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.24 $ ';  #'
+our($VERSION) = '$Revision: 1.25 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
