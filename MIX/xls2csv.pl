@@ -10,7 +10,7 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #
 #******************************************************************************
 #
-# $Id: xls2csv.pl,v 1.7 2006/04/19 07:35:27 wig Exp $
+# $Id: xls2csv.pl,v 1.8 2006/05/16 12:02:13 wig Exp $
 #
 # read in XLS file and print out a csv and and a sxc version of all sheets
 #
@@ -20,6 +20,7 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # Primitive option parsing added: -[no]sxc, -[no]csv
 #                    -sep ,  (default: ;)
 #                    -sheet 'PERL-RE'
+#					 -xsheet 'RE'
 #					 -[no]verbose
 #					 -[no]head
 #					 -noquotes
@@ -38,6 +39,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #  Define seperator:
 #
 # $Log: xls2csv.pl,v $
+# Revision 1.8  2006/05/16 12:02:13  wig
+# Added -xsheet <exclude_re>
+#
 # Revision 1.7  2006/04/19 07:35:27  wig
 # Added formet.csv.sortrange config parameter.
 #
@@ -97,7 +101,7 @@ sub set_filenames		($);
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.7 $'; # RCS Id
+$::VERSION = '$Revision: 1.8 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 #
@@ -127,6 +131,7 @@ my %opts = (
 	# 'verbose' => 1,
 	'sep'	=> ';',
 	'sheet' => [],
+	'xsheet' => [],
 );
 # Get our defaults into OPTVAL ...
 for my $o ( keys %opts ) {
@@ -148,6 +153,7 @@ qw(
 	single!
 	accumulate|accu!
 	sheet=s@
+	xsheet=s@
 	column|col|columns|crange|range=s@
 	row|rows|rrange=s@
 	matchc=s@
@@ -163,7 +169,7 @@ qw(
     ));
 
 sub print_usage () {
-	print "Usage: $0 <-[no]csv|-[no]sxc> <-sep SEP> <-sheet REGEX> <excel-file> <excel-file2 ...>\n";
+	print "Usage: $0 <-[no]csv|-[no]sxc> <-sep SEP> <-sheet REGEX> <-xsheet REGEX> <excel-file> <excel-file2 ...>\n";
 	print <<EOM;
 	
 	Convert ExCEL sheets to csv and/or sxc format.
@@ -175,7 +181,8 @@ sub print_usage () {
 	-q[uote] X    Use X as quoting char (default: ")
 	-sep X        Use X as column seperator (default: ;)
 	-noquote      Do not quote the output
-	-sheet RE     Select only sheets matching the RE
+	-sheet RE     Select only sheets matching the RE (default: select all sheets)
+	-xsheet RE	  Exclude sheets matching RE (default: no sheet excluded)
 	-[no]single   Write each sheet into a seperate output csv; extend name by sheet name.
                   Default is to write a single csv and/or sxc file per input excel file with
                   seperating the sheets by the sheet header (see -[no]head). With -single
@@ -243,8 +250,12 @@ for my $o ( qw( column row matchc matchr ) ) {
 
 # Take Perl-Regex to match against sheetnames ...
 my $sel = '';
+my $xsel = '';
 if ( scalar( @{$OPTVAL{sheet}} ) ) {
 	$sel = '^(' . join( '|', @{$OPTVAL{sheet}} ) . ')$';
+}
+if ( scalar( @{$OPTVAL{xsheet}} ) ) {
+	$xsel = '^(' . join( '|', @{$OPTVAL{xsheet}} ) . ')$';
 }
 
 if ( exists( $OPTVAL{sep} ) ) {
@@ -307,9 +318,13 @@ for my $file ( @ARGV ) {
 			$logger->info('__I_SHEET_NONSEL', "\tSheet " . $file . "::" . $sname . " not selected for conversion" ) if ( $OPTVAL{'verbose'} );
 			next;
 	    }
+	    if ( $xsel and $sname =~ m/$xsel/ ) {
+	    	$logger->info('__I_SHEET_XSEL', "\tSheet " . $file . "::" . $sname . " excluded" ) if ( $OPTVAL{'verbose'} );
+			next;
+	    }
 	
-		# Get all data from that file:
-	    @data = open_xls($file, $sname, 0);
+		# Get all data from that sheet:
+	    @data = open_xls($file, $sname, '', 0);
 	    $ref = pop(@data);       # get the first sheet of the name $sname which was found
 
 	    # Filter referenced data:
