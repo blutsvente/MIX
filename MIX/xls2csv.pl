@@ -10,7 +10,7 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #
 #******************************************************************************
 #
-# $Id: xls2csv.pl,v 1.8 2006/05/16 12:02:13 wig Exp $
+# $Id: xls2csv.pl,v 1.9 2006/05/16 12:13:11 wig Exp $
 #
 # read in XLS file and print out a csv and and a sxc version of all sheets
 #
@@ -39,6 +39,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #  Define seperator:
 #
 # $Log: xls2csv.pl,v $
+# Revision 1.9  2006/05/16 12:13:11  wig
+# Added documentation.
+#
 # Revision 1.8  2006/05/16 12:02:13  wig
 # Added -xsheet <exclude_re>
 #
@@ -101,7 +104,7 @@ sub set_filenames		($);
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.8 $'; # RCS Id
+$::VERSION = '$Revision: 1.9 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 #
@@ -168,9 +171,10 @@ qw(
     bak!
     ));
 
-sub print_usage () {
-	print "Usage: $0 <-[no]csv|-[no]sxc> <-sep SEP> <-sheet REGEX> <-xsheet REGEX> <excel-file> <excel-file2 ...>\n";
-	print <<EOM;
+=head1 XLS2CSV XLS to CSV/SXC CONVERTER
+
+    Usage: xls2csv.pl B<-[no]csv|-[no]sxc> B<-sep SEP> B<-sheet REGEX>
+    	<-xsheet REGEX> <excel-file> <excel-file2 ...>\n
 	
 	Convert ExCEL sheets to csv and/or sxc format.
 
@@ -206,17 +210,8 @@ sub print_usage () {
 	        for a detailed list.
 
 	-delta		Do not overwrite output files, just create the a diff.
-EOM
 
-# " for the syntax highlight
-
-	return;
-}
-
-if ( $OPTVAL{'help'} ) {
-	print_usage;
-	exit 0;
-}
+=cut
 
 if ( scalar(@ARGV) < 1 ) {
     $logger->fatal( '__F_BAD_USAGE', "\tUsage: $0 <-[no]csv|-[no]sxc> <-[auto|no]quote>  <-quote X> <-sep SEP> <-nohead> <-[no]verbose> <-sheet REGEX> -single -accu[mulate] <excel-file> ..." );
