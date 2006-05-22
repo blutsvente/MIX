@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MIXFilter.pm,v $                                      |
-# | Revision:   $Revision: 1.4 $                                          |
+# | Revision:   $Revision: 1.5 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/05/03 12:03:15 $                              |
+# | Date:       $Date: 2006/05/22 14:05:15 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MIXFilter.pm,v $
+# | Revision 1.5  2006/05/22 14:05:15  wig
+# | Put logmessage counter in place (again).
+# |
 # | Revision 1.4  2006/05/03 12:03:15  wig
 # | Improved top handling, fixed generated format
 # |
@@ -56,9 +59,9 @@ use Micronas::MixUtils::Globals qw( get_eh );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: MIXFilter.pm,v 1.4 2006/05/03 12:03:15 wig Exp $'; 
+my $thisid          =      '$Id: MIXFilter.pm,v 1.5 2006/05/22 14:05:15 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: MIXFilter.pm,v $';
-my $thisrevision    =      '$Revision: 1.4 $';  
+my $thisrevision    =      '$Revision: 1.5 $';  
 
 # Keep logger objects ...
 my %logger = ();
@@ -102,6 +105,7 @@ sub ok {
 
 	# Count the level messages
 	my $l = lc($p{log4p_level});
+	
 	# For tag: take everything up to first whitespace
 	my $tag = '__GENERIC_TAG';
 	if ( ref( $p{'message'} ) eq 'ARRAY' ) {
@@ -114,6 +118,8 @@ sub ok {
 	my $eh = get_eh();
 	if ( $eh and $tag !~ m/^SUM:/ ) {
 		# Count number of hits in various categories ...
+		$eh->inc('logs.' . lc($l) );
+		 
 		my $loglimits = $eh->get('log.limit');
 		# A. MIXCFG log.limit.re.TAG_RE <count>
 		if ( exists $loglimits->{'re'} ) {
