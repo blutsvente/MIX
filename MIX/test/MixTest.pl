@@ -72,6 +72,7 @@ my $status = GetOptions( \%opts, qw (
 	sxc!
 	csv!
 	mix=s
+	options=s@
     )
 );
 
@@ -450,6 +451,11 @@ my @tests = (
 	  'path' => "bugver/20060404c",
 	  'options' => '',
 	},
+	{ # Create duplicate port for partially connected signals
+	  'name' => "bugver",
+	  'path' => "bugver/20060424a",
+	  'options' => '',
+	},
 	{ # Create simple logic ...
 	  'name' => "logic",
 	  'path' => "logic",
@@ -615,6 +621,9 @@ sub runMix($) {
 	my $find = '';
 
 	$options = $tests[$i]->{'options'};
+	if ( $opts{'options'} ) {
+		$options .= join( ' ', @{$opts{'options'}});
+	}
     my $testpath = $tests[$i]->{'path'};
     $path = $wdir . "/$tests[$i]->{'path'}";
     
@@ -697,7 +706,7 @@ sub runMix($) {
     	print( "Purged test $testname\n" );
     	next;
     } else {
-    	    # "export", "update" and non-opt mode will create new output data:
+        # "export", "update" and non-opt mode will create new output data:
 	    my $status;
 	    my $t0;
 
@@ -706,46 +715,51 @@ sub runMix($) {
 	    
 	    if ( $opts{'debug'} ) {
      		    $status = system( "$command" );
-			} else {
-		$status = system( "$command >$testname-t.out 2>&1" );
-	    }
+		} else {
+				$status = system( "$command >$testname-t.out 2>&1" );
+	   	}
+		my $cf = 0; # Number of differing files
+		my $ci = 0; # Number of diffs in intermediate
+		my $ce = 0; # Number of error code diffs
 	    my $elapsed = tv_interval ($t0, [gettimeofday]);
 	    if ( $status / 256 != 0 ) {
-		my $cf = 0;
-    		my $ci = 0;
+	    	$cf = $ci = $ce = -2;
     		# 03/07/15 17:02:49 140: WARNING: SUM: Number of changes in intermediate: 1
     		# 03/07/15 17:02:49 140: WARNING: SUM: Number of changed files: 0
     		if ( open( LOG, "< $testname-t.out" ) ) {
       		    while ( <LOG> ) {
     		        chomp;
-    			if( m/SUM:\s+Number\s+of\s+changed\s+files:\s*(\d+)/i ) {
-    			    $cf = $1;
-    			}
-    			if( m/SUM:\s+Number\s+of\s+changes.*intermediate:\s*(\d+)/i ) {
-    			    $ci = $1;
-    			}
+    				if( m/SUM:\s+Number\s+of\s+changed\s+files:\s*(\d+)/i ) {
+    			    	$cf = $1;
+    			    	next;
+    				}
+    				if( m/SUM:\s+Number\s+of\s+changes.*intermediate:\s*(\d+)/i ) {
+    			    	$ci = $1;
+    				}
+    				if( m/SUM:\s+Number\s+of\s+unexpected\s+errors.*:\s*(\d+)/i ) {
+    			    	$ce = $1;
+    				}
     		    }
     		    close( LOG);
-    		}
-    		else {
-    		    $cf = -1;
-    		    $ci = -1;
+    		} else {
+    		    $cf = $ci = $ce = -1;
     		}
     		$failsum++;
-    		logtrc( "WARNING", "$testname.$type in directory $tests[$i]->{'path'} failed!" );
-    	    } else {
-		# Timers average / min / max ..
-		$elapsed_sum += $elapsed;
-		$elapsed_cnt++;
-		$elapsed_min = $elapsed if ( $elapsed < $elapsed_min );
-		$elapsed_max = $elapsed if ( $elapsed > $elapsed_max );
-		logsay( "$testname.$type in directory $tests[$i]->{'path'}, time : " .
-			sprintf( "%.2fs", $elapsed ) );
+    		logtrc( "WARNING", "$testname.$type in directory $tests[$i]->{'path'} failed, time: " .
+    			sprintf( "%.2fs changes: i/f/e %s/%s/%s", $elapsed, $ci, $cf, $ce  ) );
+    	} else {
+			# Timers average / min / max ..
+			$elapsed_sum += $elapsed;
+			$elapsed_cnt++;
+			$elapsed_min = $elapsed if ( $elapsed < $elapsed_min );
+			$elapsed_max = $elapsed if ( $elapsed > $elapsed_max );
+			logsay( "$testname.$type in directory $tests[$i]->{'path'}, time : " .
+				sprintf( "%.2fs", $elapsed ) );
 	    }
-    	    ok( $status/256 == 0, "$testname.$type in directory $tests[$i]->{'path'}, time: " .
-		    sprintf( "%.2fs", $elapsed ) );
-    	    chdir( $wdir );
-    	}
+    	ok( $status/256 == 0, "$testname.$type in directory $tests[$i]->{'path'}, time: " .
+		    		sprintf( "%.2fs changes: i/f/e %s/%s/%s", $elapsed, $ci, $cf, $ce  ) );
+    	chdir( $wdir );
+    }
 	}
     $failstat{$type} = $failsum;
 }
