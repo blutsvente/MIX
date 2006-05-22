@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Checker
 # | Modules:    $RCSfile: MixChecker.pm,v $
-# | Revision:   $Revision: 1.14 $
+# | Revision:   $Revision: 1.15 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2006/04/13 13:31:52 $
+# | Date:       $Date: 2006/05/22 14:02:21 $
 # |
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.14 2006/04/13 13:31:52 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.15 2006/05/22 14:02:21 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the checking capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixChecker.pm,v $
+# | Revision 1.15  2006/05/22 14:02:21  wig
+# | Fix avfb issues with high/low connections
+# |
 # | Revision 1.14  2006/04/13 13:31:52  wig
 # | Changed possition of VERILOG_HOOK_PARA, detect illegal stuff in ::in/out description
 # |
@@ -45,42 +48,7 @@
 # | Revision 1.11  2006/01/18 16:59:28  wig
 # |  	MixChecker.pm MixParser.pm MixUtils.pm MixWriter.pm : UNIX tested
 # |
-# | Revision 1.10  2005/10/13 09:09:46  wig
-# | Added intermediate CONN sheet split
-# |
-# | Revision 1.9  2005/09/14 14:40:06  wig
-# | Startet report module (portlist)
-# |
-# | Revision 1.8  2005/04/18 07:13:36  wig
-# | *** empty log message ***
-# |
-# | Revision 1.7  2005/01/26 14:01:41  wig
-# | changed %OPEN% and -autoquote for cvs output
-# |
-# | Revision 1.6  2004/04/14 11:08:32  wig
-# | minor code clearing
-# |
-# | Revision 1.5  2003/11/27 09:08:56  abauer
-# | *** empty log message ***
-# |
-# | Revision 1.4  2003/10/13 09:03:10  wig
-# | Fixed misc. requests and bugs:
-# | - do not wire open signals
-# | - do not recreate ports alredy partially connected
-# | - ExCEL cells kept unter 1024 characters, will be split if needed
-# | ...
-# |
-# | Revision 1.3  2003/04/28 06:40:37  wig
-# | Added %OPEN% (to allow ports without connection, use VHDL open keyword)
-# | Started parseIO (not operational, would be a branch instead)
-# | Fixed nreset2 issue (20030424a bug)
-# |
-# | Revision 1.2  2003/04/01 14:27:59  wig
-# | Added IN/OUT Top Port Generation
-# |
-# | Revision 1.1  2003/02/25 08:06:52  wig
-# | Checks are located here.
-# |
+# | ...[cut]...
 # |
 # +-----------------------------------------------------------------------+
 package  Micronas::MixChecker;
@@ -124,9 +92,9 @@ my %mix_check_list = ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixChecker.pm,v 1.14 2006/04/13 13:31:52 wig Exp $';
+my $thisid		=	'$Id: MixChecker.pm,v 1.15 2006/05/22 14:02:21 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixChecker.pm,v $';
-my $thisrevision   =      '$Revision: 1.14 $';
+my $thisrevision   =      '$Revision: 1.15 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

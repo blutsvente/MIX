@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.119 $                                         |
+# | Revision:   $Revision: 1.120 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/05/09 14:38:51 $                              |
+# | Date:       $Date: 2006/05/22 14:02:20 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.119 2006/05/09 14:38:51 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.120 2006/05/22 14:02:20 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.120  2006/05/22 14:02:20  wig
+# | Fix avfb issues with high/low connections
+# |
 # | Revision 1.119  2006/05/09 14:38:51  wig
 # |  	MixParser.pm MixUtils.pm MixWriter.pm : improved constant assignments
 # |
@@ -101,6 +104,8 @@ require Exporter;
 	mix_utils_close
 	mix_list_econf
 	is_absolute_path
+	is_integer
+	is_integer2
 	replace_mac
 	db2array
 	db2array_intra
@@ -177,6 +182,8 @@ sub _init_logic_eh		($);
 sub _init_loglimit_eh	($);
 sub _sum_loglimit_eh	($);
 sub mix_use_on_demand	($);
+sub mix_is_integer		($);
+sub mix_is_integer2		($$);
 
 ##############################################################
 # Global variables
@@ -193,11 +200,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.119 2006/05/09 14:38:51 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.120 2006/05/22 14:02:20 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.119 $';         #'
+my $thisrevision        =      '$Revision: 1.120 $';         #'
 
-# Revision:   $Revision: 1.119 $   
+# Revision:   $Revision: 1.120 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1470,6 +1477,34 @@ sub is_absolute_path ($) {
 } # End of is_absolute_path
 
 #
+# Look at input value and return a 1 if it's an
+# integer only
+#
+#!wig20060517
+sub is_integer ($) {
+	my $value = shift;
+	
+	if ( $value =~ m/^\d+$/o ) {
+		return 1;
+	}
+	return 0;
+} # End of is_integer
+#
+# Look at input values and return a 1 if it's an
+# integer only
+#
+#!wig20060517
+sub is_integer2 ($$) {
+	my $value = shift;
+	my $valu2 = shift;
+	
+	if ( $value =~ m/^\d+$/o and $valu2 =~ m/^\d+$/o ) {
+		return 1;
+	}
+	return 0;
+} # End of is_integer2
+
+#
 # print into file handle and/or save for later diff
 #
 sub mix_utils_print ($@) {
@@ -1838,9 +1873,19 @@ sub replace_mac ($$) {
     my $text = shift;
     my $rmac = shift;
 
-   #!wig20050111: %OPEN_NN% could be around ... -> hard coded to %OPEN%
+	#!wig20050111: %OPEN_NN% could be around ... -> hard coded to %OPEN%
     $text =~ s/%OPEN_\d+%/%OPEN%/gio;
 
+	#!wig20060617: create seperate high/low signals for high/low
+	while ( $text =~ m/%(HIGH|LOW)(_BUS)?(_\d+)?%/g ) {
+		my $hl  = $1;
+		my $bus = ( $2 ) ? $2 : '';
+		my $n   = ( $3 ) ? $3 : '';
+		if ( $rmac->{'%' . $hl . $bus . '%'} ) { # Convert high/low bus, keep number
+			$text =~ s/%(HIGH|LOW)(_BUS)?(_\d+)?%/$rmac->{'%' . $hl . $bus . '%'}$n/;
+		}
+	}
+		
     if ( keys( %$rmac ) > 0 ) {
         my $mkeys = "(" . join( '|', keys( %$rmac ) ) . ")";
         $text =~ s/$mkeys/$rmac->{$1}/mg;

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.74 $                                         |
+# | Revision:   $Revision: 1.75 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/05/10 08:26:59 $                              |
+# | Date:       $Date: 2006/05/22 14:02:22 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.74 2006/05/10 08:26:59 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.75 2006/05/22 14:02:22 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.75  2006/05/22 14:02:22  wig
+# | Fix avfb issues with high/low connections
+# |
 # | Revision 1.74  2006/05/10 08:26:59  wig
 # | __NODRV__ improvements
 # |
@@ -63,7 +66,7 @@
 # | Revision 1.64  2005/12/22 13:40:56  wig
 # | fixed missing port generation bug 20051221a
 # |
-# | ....
+# | ...[cut]...
 # |
 # +-----------------------------------------------------------------------+
 
@@ -153,9 +156,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.74 2006/05/10 08:26:59 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.75 2006/05/22 14:02:22 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.74 $';
+my $thisrevision =	'$Revision: 1.75 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -656,7 +659,7 @@ sub mix_expand_name ($$) {
     #
     while ( $n =~ m/%((::)?\w+?)%/g ) {
         my $key = $1;
-        next if $key =~ m,^(TOP|PARAMETER|OPEN(_\d+)?|GENERIC|CONST|LOW|HIGH|LOW_BUS|HIGH_BUS|BUS)$,o;
+        next if $key =~ m,^(TOP|PARAMETER|GENERIC|CONST|(OPEN|LOW|HIGH|LOW_BUS|HIGH_BUS)(_\d+)?|BUS)$,o;
         next if $key =~ m,^(TYPECAST_),;
         if ( defined( $rdata->{$key} ) ) {
                 $n =~ s/%$key%/$rdata->{$key}/g; # replace %::key% ...
@@ -892,7 +895,7 @@ sub parse_conn_init ($) {
 
     for my $i ( 0..$#{$r_conn} ) {
         # Skip comment lines
-        #TODO: allow to pass such lines through ..
+        # TODO : allow to pass such lines through ..
         next if ( $r_conn->[$i]{'::ign'} =~ m,^\s*(#|//),o );
         # Skip generator lines
         next if ( $r_conn->[$i]{'::gen'} !~ m,^\s*$,o ); #Is that really true
@@ -923,34 +926,47 @@ sub add_conn (%) {
         #
         # Special handling: open -> %OPEN%
         if ( $name =~ m,^open$,io or $name =~ m,^\s*%OPEN%,o ) {
-            $name = '%OPEN_' . $eh->get( 'OPEN_NR' ) . '%';
-            $eh->inc( 'OPEN_NR' );
+            $name = '%OPEN_' . $eh->postinc( 'OPEN_NR' ) . '%';
         }
 		#
 		# If user assigns bus to %LOW% and/or %HIGH%
-		#   -> map to LOW|HIGH_BUS
+		#   -> map to LOW_BUS|HIGH_BUS
 		#!wig20050719
-		if ( $name =~ m/%(LOW|HIGH)%/ ) {
-			if ( ( defined( $in{'::high'} ) and $in{'::high'} ne '' ) or
-				 ( defined( $in{'::low'} )  and $in{'::low'}  ne '' ) ) {
-				$logger->warn('__W_ADD_CONN', "\tMap assignment from $1 to $1_BUS!");
-				$name = "%" . $1 . "_BUS%";
-				$in{'::name'} = $name;
+		#!wig20060516 and vice versa
+		if ( $name =~ m/%(LOW|HIGH)(_BUS)?(_\d+)?%/o ) {
+			my $hl  = $1;
+			my $bus = ( $2 ) ? $2 : '';
+			my $n   = ( $3 ) ? $3 : '';
+			# Map non-bus to BUS
+			if ( not $bus and
+			     ( ( defined( $in{'::high'} ) and $in{'::high'} ne '' ) or
+				   ( defined( $in{'::low'} )  and $in{'::low'}  ne '' ) ) ) {
+				$logger->warn('__W_ADD_CONN', "\tExtend assignment from $1 to $1_BUS!");
 			}
-		} 
+			# Map bus to non-bus (if no borders given)
+			if ( $bus and 
+					( ( not defined( $in{'::high'} ) or $in{'::high'} eq '' ) and
+				      ( not defined( $in{'::low'} )  or $in{'::low'}  eq '' ) ) ) {
+				$logger->warn('__W_ADD_CONN', "\tRemove _BUS from $1 !");
+			}	
+			if( $n eq '' ) { # Get a new number for high/low
+				$n = '_' . $eh->postinc( $hl . '_NR' );
+			}
+			$name = '%' . $hl . $bus . $n . '%';
+			$in{'::name'} = $name;
+		}
 
         $in{'::name'} = $name;
         #
         # name must be defined:
         # if not, assume that could be a generated name, check later on
         #
-        if ( $name eq "" ) {
+        if ( $name eq '' ) {
             # Handle CONSTANTS ..either set in input or derived by detecting constants in ::out
             # Generate a name
                 $nameflag = 1;
                 $name = $eh->get( 'postfix.PREFIX_CONST' ) .
-                	$eh->get( 'CONST_NR' );
-                $eh->inc( 'CONST_NR' );
+                	$eh->postinc( 'CONST_NR' );
                 $in{'::name'} = $name;
 				$logger->debug( '__D_ADD_CONN', "\tCreating name $name for constant!" );
         }
@@ -1706,8 +1722,7 @@ sub merge_conn($%) {
                  # conndb{$name}{::type} is defined and ne the default
                  if ( $data{$i} and $data{$i} !~ m,%(SIGNAL|BUS_TYPE)%,o ) {
                     my $t_cdb = $conndb{$name}{$i};
-                    if ( $data{$i} ne $t_cdb ) { #TODO: and $name !~ m/%(HIGH|LOW)/o ) {
-                        # %HIGH% and %LOW% signal will get type assigned
+                    if ( $data{$i} ne $t_cdb ) {
                         $logger->error( '__E_MERGE_CONN', "\tType mismatch for signal $name: $t_cdb ne $data{$i}!" );
                         $conndb{$name}{$i} = "__E_TYPE_MISMATCH";
                         $conndb{$name}{'::comment'} .= "#__E_TYPE: $t_cdb ne $data{$i} ";
@@ -1752,7 +1767,7 @@ sub merge_conn($%) {
                 # There was already s.th. defined for this bus
                 if ( defined( $data{$i} ) and $data{$i} ne '' and $conndb{$name}{$i} ne $data{$i} ) {
                     # LOW and HIGH "signals" are special.
-                    if ( $name =~ m,^\s*%(LOW|HIGH)_BUS%,o ) { # Accept larger value for upper bound
+                    if ( $name =~ m,^\s*%(LOW|HIGH)_BUS(_\d+)?%,o ) { # Accept larger value for upper bound
 						if ( $data{$i} =~ m/^\d+/ ) {
                         	if ( $i =~ m,^\s*::high,o ) {
                             	$conndb{$name}{$i} = $data{$i} if ( $data{$i} > $conndb{$name}{$i} );
@@ -2657,7 +2672,6 @@ sub add_portsig () {
         
         # add %LOW%, %HIGH%, ... to ::sigbits ..., will be reused by MixReport later on
 		#!wig 20060406: get info for ::sigbits ....
-        # Skip HIGH/LOW/OPEN (but add to ::sigbits)
         if ( $signal =~ m/^\s*%(HIGH|LOW|OPEN)/o ) {
 			_mix_p_getconnected( $signal, '::in', $mode, \%modes, \%connected );
 			_mix_p_getconnected( $signal, '::out', $mode, \%modes, \%connected );
@@ -4051,7 +4065,7 @@ sub _parse_mac ($) {
             my $rf = \$rh->{$h}{$f};
 
             # If $rf is not of type ref(scaler) -> go deeper into it
-            if ( ref($rf) eq "REF" and ref( $$rf ) eq "ARRAY" ) { # ::in and ::out
+            if ( ref($rf) eq 'REF' and ref( $$rf ) eq 'ARRAY' ) { # ::in and ::out
                 for my $e ( 0..$#{$$rf} ) {
                     __parse_inout( $$rf->[$e], $rh->{$h} ); #TODO ...
                 }
@@ -4088,7 +4102,7 @@ sub __parse_inout ($$) {
 #!wig20050712: add exceptions for the logic keywords
 #!wig20051011: adding 'postfix' replacements!
 #		see also mix_expand_name (which does early name expansion)
-#
+#!wig20060517: support %HIGH|LOW(_BUS)_NN%
 sub __parse_mac ($$) {
     my $ra = shift;
     my $rb = shift;
@@ -4106,13 +4120,21 @@ sub __parse_mac ($$) {
     while ( $$ra =~ m/(%([\w:]+?)%)/g ) {
         my $mac = $1;
         my $mackey = $1;
+        my $hln    = '';
         my $pfkey = $2;  # Keys in eh.postfix do not have the %....%!!
         # Downgrade %OPEN_NN% to %OPEN% ..
-        if ( $mac =~ m/%OPEN_\d+%/ ) {
-            $mackey = "%OPEN%";
+        if ( $mac =~ m/^%OPEN_\d+%/o ) {
+            $mackey = '%OPEN%';
         }
+        # Be prepared for %HIGH|LOW(_BUS)_NN% to %HIGH|LOW(_BUS)%
+        if ( $mac =~ m/^%(HIGH|LOW)(_BUS)?(_\d+)%/o ) {
+        	$mackey = '%' . $1 .
+        		( ( $2 ) ? $2 : '' ) . '%';
+        	$hln = $3; # Forward number to replacer below
+        }
+        
         # O.K., ignore TYPECAST generated modules ...
-        if ( $mac =~ m/^%TYPECAST_/ ) {
+        if ( $mac =~ m/^%TYPECAST_/o ) {
             return;
         }
         my $meh = $eh->get( 'output.generate._logicre_' );
@@ -4124,7 +4146,7 @@ sub __parse_mac ($$) {
                 $logger->warn( '__W_PARSE_MAC__', "\tCannot find macro $1 to replace!");
             }
         } elsif( exists( $ehmacs->{$mackey} ) ) {
-            $$ra =~ s/$mac/$ehmacs->{$mackey}/;
+            $$ra =~ s/$mac/$ehmacs->{$mackey}$hln/;
         } elsif ( $mackey =~ m/$meh/i ) {
         	; # Do nothing here
         } elsif ( exists( $pfmacs->{$pfkey} ) ) {
@@ -4199,7 +4221,7 @@ sub purge_relicts () {
         }
 
         #!wig20030731: make sure high/low_bus has width!
-        if ( $i =~ m,^%(LOW|HIGH)_BUS%$,o ) {
+        if ( $i =~ m,^%(LOW|HIGH)_BUS(_\d+)?%$,o ) {
             # If high or low bus does not have ::high or ::low defined, set it ...
             if ( $conndb{$i}{'::high'} eq '' or $conndb{$i}{'::low'} eq '' ) {
                 my $max = 1; # Minimal assign a 1 to the high/low bus width
@@ -4209,7 +4231,7 @@ sub purge_relicts () {
                     }
                 }
                 $conndb{$i}{'::high'} = $max;
-                $conndb{$i}{'::low'} = "0";
+                $conndb{$i}{'::low'} = '0';
             }
         }
 

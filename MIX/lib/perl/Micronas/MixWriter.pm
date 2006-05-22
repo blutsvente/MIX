@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.87 $                                         |
+# | Revision:   $Revision: 1.88 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/05/10 08:26:59 $                              |
+# | Date:       $Date: 2006/05/22 14:02:21 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.87 2006/05/10 08:26:59 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.88 2006/05/22 14:02:21 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.88  2006/05/22 14:02:21  wig
+# | Fix avfb issues with high/low connections
+# |
 # | Revision 1.87  2006/05/10 08:26:59  wig
 # | __NODRV__ improvements
 # |
@@ -45,248 +48,7 @@
 # | Revision 1.84  2006/05/03 12:03:15  wig
 # | Improved top handling, fixed generated format
 # |
-# | Revision 1.83  2006/04/19 07:32:08  wig
-# | Fix issue 20060404c (duplicate output ports)
-# |
-# | Revision 1.82  2006/04/13 13:31:52  wig
-# | Changed possition of VERILOG_HOOK_PARA, detect illegal stuff in ::in/out description
-# |
-# | Revision 1.81  2006/04/11 13:38:01  wig
-# | Added verimap config: wrap verilog module header into ifdef/else/endif
-# |
-# | Revision 1.80  2006/04/10 15:50:09  wig
-# | Fixed various issues with logging and global, added mif test case (report portlist)
-# |
-# | Revision 1.79  2006/03/17 09:18:31  wig
-# | Fixed bad usage of $eh inside m/../ and print "..."
-# |
-# | Revision 1.77  2006/03/14 08:10:34  wig
-# | No changes, got deleted accidently
-# |
-# | Revision 1.76  2006/01/19 08:49:31  wig
-# | Minor fixes regarding sort order output (debug parameter added)
-# |
-# | Revision 1.75  2006/01/18 16:59:29  wig
-# |  	MixChecker.pm MixParser.pm MixUtils.pm MixWriter.pm : UNIX tested
-# |
-# | Revision 1.74  2006/01/18 14:04:29  wig
-# | Started verilog module check.
-# |
-# | Revision 1.73  2005/12/22 13:40:56  wig
-# | fixed missing port generation bug 20051221a
-# |
-# | Revision 1.72  2005/11/30 14:01:21  wig
-# | ::descr handling and trailing ; removal improved
-# |
-# | Revision 1.71  2005/11/22 11:00:47  wig
-# | Minor fixes in Utils (20051121a, K: mkdir problem)
-# |
-# | Revision 1.70  2005/11/10 07:55:25  lutscher
-# | fixed bug in generic_map()
-# |
-# | Revision 1.69  2005/11/09 08:31:06  lutscher
-# | changed compare_merge_entities() such that P<->G connections don"t throw a warning
-# |
-# | Revision 1.68  2005/11/04 10:44:47  wig
-# | Adding ::incom (keep CONN sheet comments) and improce portlist report format
-# |
-# | Revision 1.67  2005/11/02 14:28:45  wig
-# | Remove extra ; from port map if port has comment
-# |
-# | Revision 1.66  2005/10/24 15:43:48  wig
-# | added 'reg detection to ::out column
-# |
-# | Revision 1.64  2005/10/20 17:28:26  lutscher
-# | corrected accidental check-in
-# |
-# | Revision 1.63  2005/10/20 17:26:05  lutscher
-# | Reg.pm
-# |
-# | Revision 1.62  2005/10/19 15:40:06  wig
-# | Fixed -mixed.xls read problem on UNIX and reworked ::descr split
-# |
-# | Revision 1.61  2005/10/18 09:34:36  wig
-# | Changes required for vgch_join.pl support (mainly to MixUtils)
-# |
-# | Revision 1.60  2005/10/13 09:09:46  wig
-# | Added intermediate CONN sheet split
-# |
-# | Revision 1.59  2005/10/06 11:21:44  wig
-# | Got testcoverage up, fixed generic problem, prepared report
-# |
-# | Revision 1.58  2005/09/14 14:40:06  wig
-# | Startet report module (portlist)
-# |
-# | Revision 1.57  2005/07/18 08:58:22  wig
-# | do not write config for simple logic
-# |
-# | Revision 1.56  2005/07/15 16:39:38  wig
-# | Update of some tiny fixes (test case related)
-# |
-# | Revision 1.55  2005/07/13 15:38:34  wig
-# | Added prototype for simple logic
-# | Added ::udc for HIER
-# | Fixed some nagging bugs
-# |
-# | Revision 1.54  2005/06/23 13:14:42  wig
-# | Update repository, not yet verified
-# |
-# | Revision 1.53  2005/05/18 13:42:07  wig
-# | changes add_port after purge_relicts got the join_port function
-# |
-# | Revision 1.52  2005/05/11 11:39:15  wig
-# | intermediate update (still working on unsplice)
-# |
-# | Revision 1.51  2005/04/14 06:53:01  wig
-# | Updates: fixed import errors and adjusted I2C parser
-# |
-# | Revision 1.50  2005/03/01 11:58:42  wig
-# | Fixed _MODE_MISMATCH problem with mixed /signal ports.
-# |
-# | Revision 1.49  2005/01/27 08:20:30  wig
-# | verilog/vhdl parameters
-# |
-# | Revision 1.48  2005/01/26 14:01:45  wig
-# | changed %OPEN% and -autoquote for cvs output
-# |
-# | Revision 1.47  2004/11/10 09:46:58  wig
-# | added verilog includes
-# |
-# | Revision 1.46  2004/08/18 10:45:45  wig
-# | constant handling improved
-# |
-# | Revision 1.45  2004/08/09 15:48:14  wig
-# | another variant of typecasting: ignore std_(u)logic!
-# |
-# | Revision 1.43  2004/08/04 12:49:37  wig
-# | Added typecast and partial constant assignments
-# |
-# | Revision 1.42  2004/08/02 07:13:40  wig
-# | Improve constant support
-# |
-# | Revision 1.41  2004/06/29 14:53:42  wig
-# | fixed remove-the-comma-bug (too many /o)
-# |
-# | Revision 1.40  2004/04/14 11:08:34  wig
-# | minor code clearing
-# |
-# | Revision 1.39  2004/03/30 11:05:58  wig
-# | fixed: IOparser handling of bit ports vs. bus signals
-# |
-# | Revision 1.38  2004/03/25 11:21:34  wig
-# | Added -verifyentity option
-# |
-# | Revision 1.37  2003/12/23 13:25:21  abauer
-# | added i2c parser
-# |
-# | Revision 1.36  2003/12/05 14:59:29  abauer
-# | *** empty log message ***
-# |
-# | Revision 1.35  2003/12/04 14:56:32  abauer
-# | corrected cvs problems
-# |
-# | Revision 1.34  2003/11/27 09:08:56  abauer
-# | *** empty log message ***
-# |
-# | Revision 1.33  2003/11/25 12:40:26  wig
-# | Fixed VHDL trailing , issue (%EMPTY% removal)
-# |
-# | Revision 1.32  2003/11/10 09:30:58  wig
-# | Adding testcase for verilog: create dummy open wires
-# |
-# | Revision 1.31  2003/10/23 12:13:17  wig
-# | minor modifications (typos ...)
-# |
-# | Revision 1.27  2003/09/08 15:14:24  wig
-# | Fixed Verilog, extended path checking
-# |
-# | Revision 1.26  2003/08/13 09:09:21  wig
-# | Minor bug fixes
-# | Added -given mode for iocell.select (MDE-D)
-# |
-# | Revision 1.24  2003/08/11 07:16:25  wig
-# | Added typecast
-# | Fixed Verilog issues
-# |
-# | Revision 1.22  2003/07/23 13:34:40  wig
-# | Fixed minor bugs:
-# | - open(N) removed
-# | - overlay bitvector fixed
-# |
-# | Revision 1.21  2003/07/17 12:10:43  wig
-# | fixed minor bugs:
-# | - Verilog `define before module
-# | - Verilog open
-# | - signals(NN) in IO-Parser failed (bad reg-ex)
-# |
-# | Revision 1.19  2003/07/09 07:52:44  wig
-# | Adding first version of Verilog support.
-# | Fixing lots of tiny issues (see TODO).
-# | Adding first release of documentation.
-# |
-# | Revision 1.18  2003/06/05 14:48:01  wig
-# | Releasing alpha IO-Parser
-# |
-# | Revision 1.17  2003/06/04 15:52:43  wig
-# | intermediate release, before releasing alpha IOParser
-# |
-# | Revision 1.16  2003/04/28 06:40:37  wig
-# | Added %OPEN% (to allow ports without connection, use VHDL open keyword)
-# | Started parseIO (not operational, would be a branch instead)
-# | Fixed nreset2 issue (20030424a bug)
-# |
-# | Revision 1.15  2003/04/01 14:28:00  wig
-# | Added IN/OUT Top Port Generation
-# |
-# | Revision 1.14  2003/03/24 13:04:45  wig
-# | Extensively tested version, fixed lot's of issues (still with busses and bus splices).
-# |
-# | Revision 1.12  2003/03/14 14:52:11  wig
-# | Added -delta mode for backend.
-# |
-# | Revision 1.11  2003/03/13 14:05:19  wig
-# | Releasing major reworked version
-# | Now handles bus splices much better
-# |
-# | Revision 1.10  2003/02/28 15:03:44  wig
-# | Intermediate version with lots of fixes.
-# | Signal issue still open.
-# |
-# | Revision 1.9  2003/02/21 16:05:14  wig
-# | Added options:
-# | -conf
-# | -sheet
-# | -listconf
-# | see TODO.txt, 20030220/21
-# |
-# | Revision 1.8  2003/02/20 15:07:13  wig
-# | Fixed: port signal assignment direction bus
-# | Capitalization (folding is still missing)
-# | Added ::arch column and created output
-# |
-# | Revision 1.7  2003/02/19 16:27:59  wig
-# | Added generics.
-# | Renamed generated objects
-# |
-# | Revision 1.6  2003/02/14 14:06:42  wig
-# | Improved add port handling, consider in/out/... cases
-# | Entitiy port/signals redeclaration prevented
-# |
-# | Revision 1.5  2003/02/12 15:40:47  wig
-# | Improved handling of bus splicing (but still a way to go)
-# | Added seom meta instances.
-# |
-# | Revision 1.4  2003/02/07 13:18:44  wig
-# | no changes
-# |
-# | Revision 1.3  2003/02/06 15:47:46  wig
-# | added constant handling
-# | rewrote bit splice handling
-# |
-# | Revision 1.2  2003/02/04 07:18:13  wig
-# | Fixed header of modules
-# |
-# |
+# | ...[cut]...
 # |
 # +-----------------------------------------------------------------------+
 package  Micronas::MixWriter;
@@ -313,7 +75,8 @@ use Regexp::Common; # Needed for reading back spliced ports
 
 use Micronas::MixUtils 
     qw( $eh mix_store db2array mix_utils_open mix_utils_print 
-	mix_utils_printf mix_utils_close replace_mac );
+	mix_utils_printf mix_utils_close replace_mac
+	is_integer is_integer2 );
 use Micronas::MixUtils::IO;
 use Micronas::MixParser qw( %hierdb %conndb add_conn );
 
@@ -364,9 +127,9 @@ sub _mix_wr_nice_comment		($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.87 2006/05/10 08:26:59 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.88 2006/05/22 14:02:21 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.87 $';
+my $thisrevision   =      '$Revision: 1.88 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2318,7 +2081,8 @@ sub gen_instmap ($;$$) {
 
     my $map = '';
     my $gmap = '';
-    my $dummies = []; # Reference 
+    my $dummies = []; # Reference to dummy signals needed to open ports(splices)
+    my %expanded = (); # Reference to HASH holding HIGH/LOW signals expandede in mix_wr_unsplice_port
 
     my @in = ();
     my @out = ();
@@ -2362,7 +2126,11 @@ sub gen_instmap ($;$$) {
         if ( $lang =~ m,^veri,io and $map =~ m,\]\(, ) {
             # Get a better map and a list of dummy signals (if needed for open port splices)
             # Will add dummies to out signals ...
-            ($map, $dummies) = mix_wr_unsplice_port( $map, $lang, $tcom );
+            my $e = ();
+            ($map, $dummies, $e) = mix_wr_unsplice_port( $map, $lang, $tcom );
+          	for ( keys %$e ) {
+          		$expanded{$_} = 1;
+          	}
         }
 
         # Quick hack: Get rid of possible %EMPTY%, which prevents end-of-map detection ...
@@ -2480,6 +2248,15 @@ sub gen_instmap ($;$$) {
     #!wig20060411: wrap verilog module into ifdef ....
     if ( $lang =~ m,^veri,io and $eh->get( 'output.generate.verimap.modules' ) ) {
     	$map = _mix_wr_map_veri( $inst, $map, \@in, \@out, $tcom );
+    }
+    
+    #!wig20060522: remove internally expanded signals (e.g. unsplice port)
+    if ( scalar( keys %expanded ) ) {
+    	my @i = @in;
+    	@in = ();
+    	for my $i ( @i ) {
+    		push( @in, $i ) unless( exists( $expanded{$i} ));
+    	}
     }
     
     return( $map, \@in, \@out);
@@ -2679,6 +2456,7 @@ sub _mix_wr_descr ($$$$$) {
 # of doing it backwards ...
 #
 # Currently only works for Verilog ...
+#!wig20060522: return list of here expanded HIGH/LOW signals
 my $dummynr = 0; # Count dummy ports ....
 sub mix_wr_unsplice_port ($$$) {
     my $map = shift;
@@ -2688,6 +2466,7 @@ sub mix_wr_unsplice_port ($$$) {
     my @out = ();
     my %col = ();
     my @dummies = ();
+    my %expanded = (); # Hold expanded HIGH/LOW busses
     # Read in spliced port maps ...
     for my $l ( split( "\n", $map ) ) {
     	next if $l =~ m/^\s*$/io; #20051006: Skip empty lines!
@@ -2719,9 +2498,9 @@ sub mix_wr_unsplice_port ($$$) {
                      $lb =~ m,^\s*\d+\s*$,o ) {
                     my $w = $hb - $lb + 1;
                     if ( $eh->get( 'output.generate.workaround.verilog' ) =~ m,\bdummyopen,io ) {
-                        $s = "mix_dmy_open_" . $dummynr++; # Create a dummy signal and attach this bit to it ...
-                        my $wid = ( $w > 1 ) ? ( "[" . $w . ":0] " ) : '%S%';
-                        push( @dummies, "wire " . $wid . $s . "; " . $tcom .
+                        $s = 'mix_dmy_open_' . $dummynr++; # Create a dummy signal and attach this bit to it ...
+                        my $wid = ( $w > 1 ) ? ( '[' . $w . ':0] ' ) : '%S%';
+                        push( @dummies, 'wire ' . $wid . $s . '; ' . $tcom .
                                   "__I_OPEN_DUMMY" ); #   wire [N:0] mix_dmy_open_N; // __I_DUMMY_OPEN
                     } else {
                         $s = $w . "'bz"; # Comes from open ports ....
@@ -2779,11 +2558,27 @@ sub mix_wr_unsplice_port ($$$) {
                     if ( defined( $arr[$b] ) and $arr[$b] ne $start ) {
                         my $data = $col{$p}[$arr[$b]];
                         my $es = $data->[3];
-                        if ( $es =~ m,^%(HIGH|LOW),o ) {
-                            # Replace HIGH/LOW immediately!!
-                            my $v = ( $1 eq 'HIGH' ) ? '1' : '0';
-                            my $w = $data->[0] - $data->[1] + 1;
-                            $es = $w . "'b" . $v x $w; #Verilog, only!
+                        if ( $es =~ m,^%((HIGH|LOW)(_BUS)?(_\d+)?),o ) {
+                            # Replace HIGH/LOW immediately!!  
+                            $expanded{'%' . $1 . '%'} = 1;
+                            my $v = ( $2 eq 'HIGH' ) ? '1' : '0';
+                            if ( is_integer2( $data->[0], $data->[1] ) ) {
+                            	my $w = $data->[0] - $data->[1] + 1;
+                            	$es = $w . "'b" . $v x $w; #Verilog, only!
+                            } else { # nan-borders
+                            	if ( $v eq '0' ) {
+                            		$es = "1'b0"; # Verilog automatically extends 0
+                            	} else {
+                            		# Generate s.th. like {from-to{1}}
+                            		if ( $data->[1] eq '0' ) {
+                            			$es = '{' . $data->[0] . '{1}}';
+                            		} else {
+
+                            			$es = '{' . $data->[0] . ' - ' . $data->[1] .
+                            				'{1}}';
+                            		} 
+                            	}
+                            }
                         }  
                         #!wig20030812: create { a , b, c } format
                         # $t = " & " . $es . $t;
@@ -2801,11 +2596,11 @@ sub mix_wr_unsplice_port ($$$) {
         # $t =~ s,^ & ,,;
         $t =~ s#^,##;
         if ( $t =~ m#,# ) { # enclose signal into {} if > 1 parts found ...
-            $t = "{" . $t . " }";
+            $t = '{' . $t . ' }';
         }
             # Create comment -> remove duplicates ...
             my %c = ();
-            my $c = "";
+            my $c = '';
             for my $n ( @c ) {
                 # Remove trailing \s and $tcom
                 $n =~ s,^\s*$tcom\s*,,;
@@ -2813,30 +2608,30 @@ sub mix_wr_unsplice_port ($$$) {
             }
             for my $n ( keys( %c ) ) {
                 if ( $c{$n} > 1 ) {                    
-                    $c .= $tcom . " " . $n . " (x" . $c{$n} . ") ";
+                    $c .= $tcom . ' ' . $n . ' (x' . $c{$n} . ') ';
                 } else {
-                    $c .= $tcom . " " . $n . " ";
+                    $c .= $tcom . ' ' . $n . ' ';
                 }
             }
             
-            if ( $flag ) {
-                for my $n ( @{$col{$p}} ) {
-                    push( @out, $n->[2] . "." . $p . "[" . $n->[0] .
-                        ( ( $n->[0] ne $n->[1] ) ? ( ":" . $n->[1] ) : "" ) .
-                            "](" . $n->[3] . "), " .
-                        ( ( $n->[4] ) ? $n->[4] : "" ) .
-                        $tcom . " __E_CANNOT_COMBINE_SPLICES" );
-                }
-            } else {
-                # TODO : Detect HIGH/LOW_BUS and splice these acordingly!!
-                push( @out, '%S%' x 3 . '.' . $p . '(' . $t . '), ' .
-                      $c . $tcom . ' __I_COMBINE_SPLICES' );
+        if ( $flag ) {
+            for my $n ( @{$col{$p}} ) {
+                    push( @out, $n->[2] . '.' . $p . '[' . $n->[0] .
+                        ( ( $n->[0] ne $n->[1] ) ? ( ':' . $n->[1] ) : '' ) .
+                            '](' . $n->[3] . '), ' .
+                        ( ( $n->[4] ) ? $n->[4] : '' ) .
+                        $tcom . ' __E_CANNOT_COMBINE_SPLICES' );
             }
+        } else {
+            # TODO : Detect HIGH/LOW_BUS and splice these acordingly!!
+            push( @out, '%S%' x 3 . '.' . $p . '(' . $t . '), ' .
+                  $c . $tcom . ' __I_COMBINE_SPLICES' );
         }
-        # Replace the map ....
-        $map = join( "\n", sort( @out ) ) . "\n";
-        return $map, \@dummies;
-}
+    }
+    # Replace the map ....
+    $map = join( "\n", sort( @out ) ) . "\n";
+    return $map, \@dummies, \%expanded;
+} # End of mix_wr_unsplice_port
 
 #
 # create generic map for component instantiation
@@ -3640,12 +3435,13 @@ sub print_conn_matrix ($$$$$$$$$;$) {
     if ( defined( $rcm->[0] ) and $rcm->[0] eq '__NAN__' ) {
         if ( $lang =~ m,^veri,io ) { # Verilog
             $signal = '' if ( $signal =~ m/^%OPEN(_\d+)?%/io ); # For Verilog: let %OPEN% disappear
-            $t .= '%S%' . "." . $port . "(" . $signal . ")," . $descr . "\n"; #TODO, check Verilog syntax
+            $t .= '%S%' . "." . $port . '(' . $signal . '),' . $descr . "\n"; #TODO, check Verilog syntax
         } else {
             if ( $cast ) {
-                $t .= '%S%' x 3 . $cast . "(" . $port . ") => " . $signal . "," . $descr . "\n";
+                $t .= '%S%' x 3 . $cast . '(' . $port . ') => ' .
+                	$signal . ',' . $descr . "\n";
             } else {
-                $t .= '%S%' x 3 . $port . " => " . $signal . "," . $descr . "\n";
+                $t .= '%S%' x 3 . $port . ' => ' . $signal . ',' . $descr . "\n";
             }
         }
         #!wig20050418: prepend sort criteria
@@ -3659,13 +3455,13 @@ sub print_conn_matrix ($$$$$$$$$;$) {
 	 $sf eq '__UNDEF__' and $st eq '__UNDEF__' and
 	 $rcm->[0] == 0 ) {
             if ( $lang =~ m,^veri,io ) { # Verilog
-                $signal = "" if ( $signal =~ m/^%OPEN(_\d+)?%/io ); # For Verilog: let %OPEN% disappear
-                $t .= '%S%' x 3 . "." . $port . "(" . $signal . ")," . $descr . "\n";
+                $signal = '' if ( $signal =~ m/^%OPEN(_\d+)?%/io ); # For Verilog: let %OPEN% disappear
+                $t .= '%S%' x 3 . '.' . $port . '(' . $signal . '),' . $descr . "\n";
             } else {
                 if ( $cast ) {
-                    $t .= '%S%' x 3 . $cast . "(" . $port . ") => " . $signal . "," . $descr . "\n";
+                    $t .= '%S%' x 3 . $cast . '(' . $port . ') => ' . $signal . ',' . $descr . "\n";
                 } else {
-                    $t .= '%S%' x 3 . $port . " => " . $signal . "," . $descr . "\n";
+                    $t .= '%S%' x 3 . $port . ' => ' . $signal . ',' . $descr . "\n";
                 }
             }
 	    return ( $sortcrit . $t );
@@ -4271,7 +4067,7 @@ sub _write_architecture ($$$$) {
 
 		my $node = $ae->{$t_inst}{'::treeobj'};
 
-		#!wig20060425: get signals and all components of this instance:
+		#!wig20060425: get signals and all components used in this instance:
 		my ( $in, $out ) = _mix_wr_get_components( $t_inst, $node, $lang, $ilang, $tcom,
 				\%seen, \%macros, \%i_macros, \%sig2inst, \%nanbounds );
 
@@ -4344,22 +4140,43 @@ sub _write_architecture ($$$$) {
         if ( $t_signal =~ m,^\s*%(HIGH|LOW)_BUS,o ) {
 			my $logicv = ( $1 eq 'HIGH' ) ? '1' : '0';
             if ( $ilang =~ m,^veri,io ) {
-                my $w = $high - $low + 1;
-                $macros{'%CONCURS%'} .= '%S%' x 2 .
-                    'assign ' . $eh->get( 'macro.' . $t_signal ) . ' = ' .
-                    $w . "'b" . $logicv x $w . ";\n"; # Added width for Verilog
+            	if ( is_integer2( $high, $low ) ) {
+            	# TODO : check if $high/low is integer ....
+                	my $w = $high - $low + 1;
+                	$macros{'%CONCURS%'} .= '%S%' x 2 .
+                    	'assign' . '%S%' . $t_signal . ' = ' .
+                    	$w . "'b" . $logicv x $w . ";\n"; # Added width for Verilog
+            	} else {
+            		if ( $logicv eq '0' ) {
+            			$macros{'%CONCURS%'} .= '%S%' x 2 .
+                    		'assign' . '%S%' . $t_signal . ' = ' .
+                    			"1'b" . $logicv . ";\n";
+            		} else {
+            			if ( $low eq '0' ) {
+            				$macros{'%CONCURS%'} .= '%S%' x 2 .
+                    			'assign' . '%S%' . $t_signal . ' = ' .
+                    			'{' . $high . '{1}}' . ";\n";
+            			} else {
+            				 $macros{'%CONCURS%'} .= '%S%' x 2 .
+                    			'assign' . '%S%' . $t_signal . ' = ' .
+                    			'{' . $high . ' - ' . $low . '{1}}' . ";\n";
+            			}
+            		}
+            	}
             } else {
+            	# VHDL is more easy her
                 $macros{'%CONCURS%'} .= '%S%' x 2 .
-                    $eh->get( 'macro.' . $t_signal ) . " <= ( others => '$logicv' );\n";
+                    $t_signal . '%S%' . '<=' . '%S%' . "( others => '$logicv' );\n";
             }
-	    } elsif ( $t_signal =~ m,^\s*%(HIGH|LOW)%,o ) {
+	    } elsif ( $t_signal =~ m,^\s*%(HIGH|LOW)(_\d+)?%,o ) {
+	    	#TODO: %HIGH% and %LOW% will be mapped to a single value
 	    	my $logicv = ( $1 eq 'HIGH' ) ? '1' : '0';
                 if ( $ilang =~ m,^veri,io ) {
                     $macros{'%CONCURS%'} .= '%S%' x 2 .
-                        'assign ' . $eh->get( 'macro.' . $t_signal ) . " = 1'b" . $logicv . ";\n";
-                } else {
+                        'assign' . '%S%' . $t_signal . " = 1'b" . $logicv . ";\n";
+                } else { # VHDL
                     $macros{'%CONCURS%'} .= '%S%' x 2 .
-                        $eh->get( 'macro.' . $t_signal ) . " <= '$logicv';\n";
+                         $t_signal . '%S' . '<=' . '%S%' . "'$logicv';\n";
                 }
 	    }
 
@@ -4559,24 +4376,30 @@ sub _write_architecture ($$$$) {
                 $usesig = $t_signal if ( $usesig eq '__open__' or $usesig eq '__nodrv__' );
                 # Use internally generated signalname ....
                 $tmp_sig .= ( $ilang =~ m,^veri,io ) ?
-                ( $pre . "wire\t$dt\t$usesig\t; $post $tcom __W_BAD_BRANCH\n" ) :
-                ( $pre . "signal\t" . $usesig . "\t: " . $type . $dt . "; " . $post . "\n" );
+                ( $pre . 'wire' . '%S%' . $dt . '%S%' . $usesig .
+                		"; $post $tcom __W_BAD_BRANCH\n" ) :
+                ( $pre . 'signal' . '%S%' . $usesig . '%S%' . ': '
+                	. $type . $dt . '; ' . $post . "\n" );
         } elsif ( exists( $iconn->{'out'}{$t_signal} ) or
                                 exists( $iconn->{'in'}{$t_signal} ) ) {
                 unless( exists( $entities{$aent}{$t_signal} ) ) {
                     $tmp_sig .= ( $ilang =~ m,^veri,io ) ?
-                        ( $pre . "wire " . $dt . " " . $usesig . "; " . $post . "\n" ) :
-                        ( $pre . "signal\t" . $usesig . "\t: " . $type . $dt . "; " . $post . "\n" );
+                        ( $pre . 'wire' . '%S%' . $dt . '%S%' . $usesig . 
+                        	'; ' . $post . "\n" ) :
+                        ( $pre . 'signal' . '%S%' . $usesig . '%S%' . ': '
+                        	. $type . $dt . "; " . $post . "\n" );
                 }
         } else {
                 # Not connected to upside world (needs wire/signal definition ...
                 if ( $ilang =~ m,^veri,io ) {
-                    $tmp_sig .= $pre . "wire\t" . $dt . "\t" . $usesig . "; " . $post . "\n";
+                    $tmp_sig .= $pre . 'wire' . '%S%' . $dt . '%S%' . $usesig .
+                    	'; ' . $post . "\n";
                 } else {
-                    $tmp_sig .=$pre . "signal\t" . $usesig . "\t: " . $type. $dt . "; " . $post . "\n";
+                    $tmp_sig .= $pre . 'signal' . '%S%' . $usesig . '%S%' .
+                    	': ' . $type. $dt . '; ' . $post . "\n";
                 }
         }
-        $signaltext .= '%S%' x 1 . $port_open . $tmp_sig if ( $tmp_sig );
+        $signaltext .= '%S%' x 2 . $port_open . $tmp_sig if ( $tmp_sig );
 
 	} # End for $t_signal / signal
 
@@ -5009,7 +4832,7 @@ sub _write_constant ($$$$$;$) {
             
         } elsif ( $value =~ m,^\s*0x([0-9a-f]),io ) {
             # Convert 0xHEXV to 16#HEXV# (VHDL) or 'hHEXV (Verilog)
-            $comm = " " . $tcom . " __I_ConvConstant2:" . $value;
+            $comm = ' ' . $tcom . " __I_ConvConstant2:" . $value;
                 if ( $lang =~ m,^veri,io ) {
                     #!wig20040329: Add width of constant:
                     $value =~ s,^\s*0x,'h,; # syntax highlight colors with a '
@@ -5055,34 +4878,35 @@ sub _write_constant ($$$$$;$) {
         if ( $lang =~ m,^veri,io ) {
             $value =~ s,["],,g; # Quick hack ....
             #TODO: rework ident strategy ... e.g. mark with keywords ...
-            $def = "`define " . $cname . " " . $value . " " . $comm . "\n";
+            $def = '`define' . '%S%' . $cname . '%S%' . $value . '%S%' . $comm . "\n";
             if ( $dtp eq $dtsa ) {
-                $sat = '%S%' x 2 . "assign " . $sname . ' = `' .   # `
+                $sat = '%S%' x 2 . 'assign' . '%S%' . $sname . '%S%' . '= `' .   # `
                         $cname . ";\n";
             } else {
-                $sat = '%S%' x 2 . "assign " . $sname . $dts . " = `" . # `
+                $sat = '%S%' x 2 . 'assign' . '%S%' . $sname . $dts . '%S%' . '= `' . # `
                         $cname . ";\n";
             }
         } else {
         	# Print out signal definition ...
         	#!wig20050720: only the first time ($n == 0)
             # Reduce type if constant is one-bit wide ...
-            if ( $type =~ m/_vector$/o and $out->{'port_f'} eq "0" and $out->{'port_t'} eq "0" ) {
+            if ( $type =~ m/_vector$/o and $out->{'port_f'} eq '0' and $out->{'port_t'} eq "0" ) {
                 $type =~ s/_vector$//;
             }
-            $t .= '%S%' x 3 . "constant " . $cname .
-                " : $type$dtp := $value;$comm $dtpc\n";
+            $t .= '%S%' x 3 . 'constant' . '%S%' . $cname .
+                '%S%' . ": $type$dtp := $value;$comm $dtpc\n";
             # Is the constant assigned to all of the signal?
             if ( $dtp eq $dtsa ) {
                 $sat =  '%S%' x 3 . "$sname <= $cname" . ";\n";
             } else {
-                $sat =  '%S%' x 3 . $sname . $dts . " <= " . $cname . ";" . $dtpc . $dtsc . "\n";
+                $sat =  '%S%' x 3 . $sname . $dts . '%S%' . '<=' . '%S%' .
+                	$cname . ';' . $dtpc . $dtsc . "\n";
             }
         }
     }
 
     return $t, $sat, $def;
-}    
+} # End of _write_constant
 
 #
 # Create an unique constant name,
