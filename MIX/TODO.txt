@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.64 2006/05/03 12:10:33 wig Exp $
+# $Id: TODO.txt,v 1.65 2006/05/22 14:06:01 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -27,6 +27,19 @@ Code:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+
+>>title: 20060516a/RFE: Allow variable width assignements to %LOWBUS%
+
+Wire port with variable width (parameter xyz) to either high/low:
+
+Verilog:   1'b0  -> expands to 0000.00000.
+Verilog:   {xyz{1'b1}} is a xyz wide signal.
+
+VHDL:   use "others"
+
+	Req: wig
+	Prio: medium
+	Status: open
 
 >>title: 20060424a/Bug: MIX creates duplicate connection to port
 
