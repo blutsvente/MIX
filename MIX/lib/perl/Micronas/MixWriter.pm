@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.88 $                                         |
+# | Revision:   $Revision: 1.89 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/05/22 14:02:21 $                              |
+# | Date:       $Date: 2006/05/23 06:48:05 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.88 2006/05/22 14:02:21 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.89 2006/05/23 06:48:05 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.89  2006/05/23 06:48:05  wig
+# | Fixed typo %S
+# |
 # | Revision 1.88  2006/05/22 14:02:21  wig
 # | Fix avfb issues with high/low connections
 # |
@@ -127,9 +130,9 @@ sub _mix_wr_nice_comment		($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.88 2006/05/22 14:02:21 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.89 2006/05/23 06:48:05 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.88 $';
+my $thisrevision   =      '$Revision: 1.89 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1711,7 +1714,7 @@ sub _mix_wr_get_iveri ($$$$;$) {
                     $logger->warn('__W_GET_IVERI', "\tPort $p, entity $ename, high bound < low bound!" );
                     if ( $flags{'ansistyle'} ) {
                     	$intf .= $portsort . '%S%' x $indent2 . $valid .
-                    	$ioky{$mode} . '%S' . $reg_wire . 
+                    	$ioky{$mode} . '%S%' . $reg_wire . 
                     	'%S%[' . $pdd->{'high'} . ':' . $pdd->{'low'} . ']%S%' .
                     	$p . ',' .
 						( $descr ? $descr : '' ) .
@@ -1725,7 +1728,7 @@ sub _mix_wr_get_iveri ($$$$;$) {
                     }
                     if ( $flags{'owire'} ) {
                     	$port{'wire'} .= $portsort . '%S%' x $indent2 . $valid . 
-                    		'%S' . $reg_wire .
+                    		'%S%' . $reg_wire .
                     		'%S%[' . $pdd->{'high'} . ':' . $pdd->{'low'} . ']%S%' . $p . ";\n";
                     }
                 }
@@ -1735,7 +1738,7 @@ sub _mix_wr_get_iveri ($$$$;$) {
                 if ( $pdd->{'high'} eq $pdd->{'low'} ) {
                 	if ( $flags{'ansistyle'} ) {
                     	$intf .= $portsort . '%S%' x $indent2 . $valid .
-                    		$ioky{$mode} . '%S' . $reg_wire .
+                    		$ioky{$mode} . '%S%' . $reg_wire .
                     		'%S%[' . $pdd->{'high'} . ']%S%' . $p . ',' .
                             ( $descr ? $descr : '' ) .
                             "\n";
@@ -4176,7 +4179,7 @@ sub _write_architecture ($$$$) {
                         'assign' . '%S%' . $t_signal . " = 1'b" . $logicv . ";\n";
                 } else { # VHDL
                     $macros{'%CONCURS%'} .= '%S%' x 2 .
-                         $t_signal . '%S' . '<=' . '%S%' . "'$logicv';\n";
+                         $t_signal . '%S%' . '<=' . '%S%' . "'$logicv';\n";
                 }
 	    }
 
