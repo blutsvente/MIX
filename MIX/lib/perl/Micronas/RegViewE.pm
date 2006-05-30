@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.6 2006/03/14 14:21:19 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.7 2006/05/30 15:00:49 roettger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.7  2006/05/30 15:00:49  roettger
+#  fixed acess attribute for holes to prevent false coverage holes
+#
 #  Revision 1.6  2006/03/14 14:21:19  lutscher
 #  made changes for new eh access and logger functions
 #
@@ -104,13 +107,13 @@ use Micronas::MixUtils::RegUtils;
 # Generate e-language macros containing bit-field declarations;
 # input: domain name(s) for which the code is generated; if omitted, 
 # one output is generated containing all register space domains in the Reg object
+
 sub _gen_view_vr_ad {
 	my $this = shift;
 	my @ldomains;
 	my $href;
 	my $verbose = 0;
 	my $o_domain;
-
 	# add global class members for static data
 	$this->global('E_FILE'      => {
 									'header' => " created automatically by $0\n\n<\'\n",
@@ -173,7 +176,7 @@ sub _gen_view_vr_ad {
 	my $e_filename = join("_",$this->global->{'E_FILE'}{'prefix'}, map {$_->{name}} @ldomains).$this->global->{'E_FILE'}{'suffix'};
 	open(E_FILE, ">$e_filename") || logwarn("ERROR: could not open file \'$e_filename\' for writing");
 	_info("generating file \'$e_filename\'");
-	print E_FILE " file: $e_filename\n";
+	print E_FILE "\n\n\n file: $e_filename\n\n\n\n";
 	print E_FILE $this->global->{'E_FILE'}{'header'};
 
 	my ($top_inst, $o_field, $o_reg, $cov);
@@ -191,7 +194,16 @@ sub _gen_view_vr_ad {
 			my $singlefield;
 			my $upper;
 			my $hole_size;
-						
+
+			my %permission = ();
+			my $perm;
+			my $value;
+
+			$permission{"RW"} = 0;
+			$permission{"R"} = 0;
+			$permission{"W"} = 0;
+
+
 			print E_FILE $reg_def, " ", uc($o_reg->name);
 			print E_FILE " ", $reg_prefix, "_";
 			
@@ -206,68 +218,72 @@ sub _gen_view_vr_ad {
 				$thefields[$ii]{rw}   		  = uc($o_field->attribs->{'dir'});
 				$thefields[$ii]{parent_block} = $o_domain->name;
 				$thefields[$ii]{init}         = "0x"._val2hex($o_field->attribs->{'size'}, $o_field->attribs->{'init'});
-				
-				$ii += 1;	
+				$permission{$thefields[$ii]{rw}}++;
+				$ii += 1;
 			};
 			
 			@thefields = reverse (sort ({${$a}{pos} <=> ${$b}{pos}} @thefields));
-	$upper = $reg_size;    # initial value of the upper limit
-	@thefields_and_theholes = ();
-	
-	$ii =0;
-	foreach $singlefield (@thefields) {
-		
-		$hole_size = $upper - (${$singlefield}{pos} + ${$singlefield}{size});		
+			$upper = $reg_size;    # initial value of the upper limit
+			@thefields_and_theholes = ();
 
-if ($hole_size != 0) {
-	$theholes[$ii]{pos}  = ${$singlefield}{pos} + ${$singlefield}{size};
-$theholes[$ii]{name} = $hole_name . $theholes[$ii]{pos};
-$theholes[$ii]{size} = $upper - (${$singlefield}{pos} + ${$singlefield}{size});
-$theholes[$ii]{rw}   = "R";
-$theholes[$ii]{parent_block}   = ${$singlefield}{parent_block};
-$theholes[$ii]{init}  = "0x0";
-$ii++;
-} 
-$upper     = ${$singlefield}{pos};
-}
+			foreach $value (sort {$permission{$a} cmp $permission{$b} }keys %permission){
+			    $perm = $value;
+			};
 
-if ($upper != 0) {
-	$theholes[$ii]{pos}  = 0;
-	$theholes[$ii]{name} = $hole_name . "0";
-	$theholes[$ii]{size} = $upper;
-	$theholes[$ii]{rw}   = "R";
-	$theholes[$ii]{parent_block}   = "na";
-	$theholes[$ii]{init}  = "0x0";
-	$ii++;
-} 
-
-@thefields_and_theholes = (@thefields,@theholes);
-@thefields_and_theholes = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields_and_theholes;
-
-
-$ii =0;
-foreach $singlefield (@thefields_and_theholes) {
-	if ($ii == 0) {
-		print E_FILE uc(${$singlefield}{parent_block}), " 0x", _val2hex($addr_size, $reg_offset), " {\n";
-}
-if (${$singlefield}{name} =~ m/$hole_name/i) {
-$cov = "";
-} else {
-$cov = " : cov";
-};
-format E_FILE =
-    @<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<: uint(bits:@>) : @< : @<<<<<<<<< @<<<<<< ; -- lsb position @>>
+			$ii =0;
+			foreach $singlefield (@thefields) {
+			    
+			    $hole_size = $upper - (${$singlefield}{pos} + ${$singlefield}{size});		
+			    
+			    if ($hole_size != 0) {
+				$theholes[$ii]{pos}  = ${$singlefield}{pos} + ${$singlefield}{size};
+				$theholes[$ii]{name} = $hole_name . $theholes[$ii]{pos};
+				$theholes[$ii]{size} = $upper - (${$singlefield}{pos} + ${$singlefield}{size});
+				$theholes[$ii]{rw}   = $perm;
+				$theholes[$ii]{parent_block}   = ${$singlefield}{parent_block};
+				$theholes[$ii]{init}  = "0x0";
+				$ii++;
+			    } 
+			    $upper     = ${$singlefield}{pos};
+			}
+			
+			if ($upper != 0) {
+			    $theholes[$ii]{pos}  = 0;
+			    $theholes[$ii]{name} = $hole_name . "0";
+			    $theholes[$ii]{size} = $upper;
+			    $theholes[$ii]{rw}   = $perm;
+			    $theholes[$ii]{parent_block}   = "na";
+			    $theholes[$ii]{init}  = "0x0";
+			    $ii++;
+			} 
+			
+			@thefields_and_theholes = (@thefields,@theholes);
+			@thefields_and_theholes = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields_and_theholes;
+			
+			
+			$ii =0;
+			foreach $singlefield (@thefields_and_theholes) {
+			    if ($ii == 0) {
+				print E_FILE uc(${$singlefield}{parent_block}), " 0x", _val2hex($addr_size, $reg_offset), " {\n";
+			    }
+			    if (${$singlefield}{name} =~ m/$hole_name/i) {
+				$cov = "";
+			    } else {
+				$cov = " : cov";
+			    };
+			    format E_FILE = 
+      @<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<: uint(bits:@>) : @< : @<<<<<<<<< @<<<<<< ; -- lsb position @>>
 $reg_fld,${$singlefield}{name},${$singlefield}{size},${$singlefield}{rw},${$singlefield}{init},$cov, ${$singlefield}{pos}
 .
-write E_FILE ;
-$ii += 1;	
-};
-print E_FILE "};\n";
-};  
-};
-print E_FILE $this->global->{'E_FILE'}{'footer'};
+                            write E_FILE ;
+                            $ii += 1;	
+                        };
+                        print E_FILE "};\n";
+                    };  
+                 };
+        print E_FILE $this->global->{'E_FILE'}{'footer'};
 
-close(E_FILE);
+     close(E_FILE);
 
 };
 
