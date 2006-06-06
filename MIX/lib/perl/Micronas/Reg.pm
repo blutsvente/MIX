@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.25 2006/05/10 12:21:33 wig Exp $
+#  RCSId: $Id: Reg.pm,v 1.26 2006/06/06 08:13:52 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.26  2006/06/06 08:13:52  lutscher
+#  moved register-master definition attribute from field to register
+#
 #  Revision 1.25  2006/05/10 12:21:33  wig
 #   	Reg.pm : import mix_use_on_demand function
 #
@@ -186,7 +189,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.25 $ ';  #'
+our($VERSION) = '$Revision: 1.26 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -374,7 +377,7 @@ sub display {
 # two consecutive domains must have different names (::interface)
 sub _map_register_master {
 	my ($this, $database_type, $lref_rm) = @_;
-	my($href_row, $marker, $rsize, $reg, $value, $fname, $fpos, $fsize, $domain, $offset, $msb, $msb_max, $lsb, $p, $new_fname, $usedbits, $baseaddr, $col_cnt, $fdefinition, $o_tmp);
+	my($href_row, $marker, $rsize, $reg, $value, $fname, $fpos, $fsize, $domain, $offset, $msb, $msb_max, $lsb, $p, $new_fname, $usedbits, $baseaddr, $col_cnt, $definition, $o_tmp);
 	my($o_domain, $o_reg, $o_field) = (undef, undef, undef);
 	my($href_marker_types, %hattribs, %hdefault_attribs, $m);
 	my $result = 1;
@@ -439,7 +442,10 @@ sub _map_register_master {
 				$rsize = $value;
 			};
 			if ($marker =~ m/^::def/) {
-				$fdefinition = $value;
+				# note: in the register-master, the definition column is intended as an identifier to handle
+				# multiple instances of a register; at the moment there is no way to handle multiple instances
+				# of a field
+				$definition = $value;
 			};
 			if ($marker =~ m/::b(:(\d+))*$/) {
 				if (defined $2) {
@@ -485,7 +491,7 @@ sub _map_register_master {
 		};
 
 		# do not add "reserved" fields to database (boring)
-		if ($fname !~ /reserved/i) {
+		if (lc($fname) eq "reserved") {
 			if (!ref($o_domain) or $domain ne $o_domain->name) {
 				# check if domain already exists, otherwise create new domain
 				$o_domain = $this->find_domain_by_name_first($domain);
@@ -548,7 +554,7 @@ sub _map_register_master {
 			};
 
 			# create new field object
-			$o_field = Micronas::RegField->new('name' => $fname, 'definition' => $fdefinition, 'reg' => $o_reg);
+			$o_field = Micronas::RegField->new('name' => $fname, 'definition' => $definition, 'reg' => $o_reg);
 			$o_field->attribs(%hattribs);
 			$o_field->attribs('size' => $fsize, 'lsb' => $lsb);
 			
