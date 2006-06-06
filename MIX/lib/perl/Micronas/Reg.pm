@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.26 2006/06/06 08:13:52 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.27 2006/06/06 11:15:25 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.27  2006/06/06 11:15:25  lutscher
+#  fixed typo
+#
 #  Revision 1.26  2006/06/06 08:13:52  lutscher
 #  moved register-master definition attribute from field to register
 #
@@ -189,7 +192,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.26 $ ';  #'
+our($VERSION) = '$Revision: 1.27 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -210,7 +213,7 @@ our(%hglobal) =
 
    # attributes in register-master that do NOT belong to a field
    # note: the field name is retrieved from the ::b entries of the register-master
-   non_field_attributes => [qw(::ign ::sub ::interface ::inst ::width ::b:.* ::b ::addr ::dev ::vi2c ::default ::name ::type)],
+   non_field_attributes => [qw(::ign ::sub ::interface ::inst ::width ::b:.* ::b ::addr ::dev ::vi2c ::default ::name ::type ::definition)],
 
    # language for HDL code generation, currently only Verilog supported
    lang => "verilog",
@@ -377,7 +380,7 @@ sub display {
 # two consecutive domains must have different names (::interface)
 sub _map_register_master {
 	my ($this, $database_type, $lref_rm) = @_;
-	my($href_row, $marker, $rsize, $reg, $value, $fname, $fpos, $fsize, $domain, $offset, $msb, $msb_max, $lsb, $p, $new_fname, $usedbits, $baseaddr, $col_cnt, $definition, $o_tmp);
+	my($href_row, $marker, $rsize, $reg, $value, $fname, $fpos, $fsize, $domain, $offset, $msb, $msb_max, $lsb, $p, $new_fname, $usedbits, $baseaddr, $col_cnt, $rdefinition, $o_tmp);
 	my($o_domain, $o_reg, $o_field) = (undef, undef, undef);
 	my($href_marker_types, %hattribs, %hdefault_attribs, $m);
 	my $result = 1;
@@ -412,6 +415,7 @@ sub _map_register_master {
 		$msb   = 0;
 		$lsb   = 99;
 		$rsize = $eh->get( 'i2c.field.::width' )->[3];	#REFACTOR: check if dereference is o.k.
+		$rdefinition = "";																		
 		%hattribs = %hdefault_attribs;
 
 		# parse all columns
@@ -445,7 +449,7 @@ sub _map_register_master {
 				# note: in the register-master, the definition column is intended as an identifier to handle
 				# multiple instances of a register; at the moment there is no way to handle multiple instances
 				# of a field
-				$definition = $value;
+				$rdefinition = $value;
 			};
 			if ($marker =~ m/::b(:(\d+))*$/) {
 				if (defined $2) {
@@ -491,7 +495,7 @@ sub _map_register_master {
 		};
 
 		# do not add "reserved" fields to database (boring)
-		if (lc($fname) eq "reserved") {
+		if (lc($fname) ne "reserved") {
 			if (!ref($o_domain) or $domain ne $o_domain->name) {
 				# check if domain already exists, otherwise create new domain
 				$o_domain = $this->find_domain_by_name_first($domain);
@@ -532,7 +536,7 @@ sub _map_register_master {
 					};
 				};
 				if (!ref($o_reg)) {
-					$o_reg = Micronas::RegReg->new('name' => $reg);
+					$o_reg = Micronas::RegReg->new('name' => $reg, 'definition' => $rdefinition);
 					$o_reg->attribs('size' => $rsize);
 
 					# link register object into domain
@@ -554,7 +558,7 @@ sub _map_register_master {
 			};
 
 			# create new field object
-			$o_field = Micronas::RegField->new('name' => $fname, 'definition' => $definition, 'reg' => $o_reg);
+			$o_field = Micronas::RegField->new('name' => $fname, 'reg' => $o_reg);
 			$o_field->attribs(%hattribs);
 			$o_field->attribs('size' => $fsize, 'lsb' => $lsb);
 			
@@ -572,7 +576,7 @@ sub _map_register_master {
 		$o_reg->attribs(usedbits => $usedbits);
 		$usedbits = 0;
 	};
-
+													
 	# free some memory
         my $reports = "";
         $reports = join( ',', @{$OPTVAL{'report'}} ) if (exists($OPTVAL{'report'}));
