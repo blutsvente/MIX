@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.27 2006/06/06 11:15:25 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.28 2006/06/12 13:42:17 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.28  2006/06/12 13:42:17  lutscher
+#  parse_register_master() now returns a Reg object
+#
 #  Revision 1.27  2006/06/06 11:15:25  lutscher
 #  fixed typo
 #
@@ -140,15 +143,15 @@ my $logger = get_logger( 'MIX::Reg' );
 # Hook function to MIX tool. Called by mix main script. Creates a Reg object
 # and calls its init() function
 # Input: reference to register-master data struct
-# Returns 1 (always pass control back to caller)
+# Returns undef or a reference to the Reg object
 # Note: this subroutine is not a class member
 #------------------------------------------------------------------------------
 sub parse_register_master($) {
 	my $r_i2c = shift;
 
 	if (scalar @$r_i2c) {
-
-	# Load modules on demand ...
+		
+		# Load modules on demand ...
 	unless( mix_use_on_demand(
 	' use Data::Dumper;
 	  use Micronas::RegDomain;
@@ -180,19 +183,20 @@ sub parse_register_master($) {
 			
 			# make it so
 			$o_space->generate_view($eh->get( 'reg_shell.type' ));
+			return $o_space;
 		};
 	} else {
 		$logger->info('__I_REG_INIT', "\tRegister-master file empty or specified sheet \'" .
 			$eh->get( 'i2c.xls' ) . "\' in file not found");
 	};
-	return 1;
+	return undef;
 };
 
 #------------------------------------------------------------------------------
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.27 $ ';  #'
+our($VERSION) = '$Revision: 1.28 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
