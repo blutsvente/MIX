@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.7 2006/05/30 15:00:49 roettger Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.8 2006/06/12 10:05:01 roettger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.8  2006/06/12 10:05:01  roettger
+#  added, output with definition in register list
+#
 #  Revision 1.7  2006/05/30 15:00:49  roettger
 #  fixed acess attribute for holes to prevent false coverage holes
 #
@@ -182,9 +185,23 @@ sub _gen_view_vr_ad {
 	my ($top_inst, $o_field, $o_reg, $cov);
 	
 	# iterate through domains
+
+	my %def = ();
+	my $aa;
+	my $bb;
+	my $ee;
+   
 	foreach $o_domain (@ldomains) {
+	    foreach $o_reg (@{$o_domain->regs}) {
+		$def{$o_reg->{'definition'}}{definition} ='';	
+	    };
+	};
+        
+	foreach $o_domain (@ldomains) {
+               
 		# iterate through all registers of the domain and add ports/instantiations
 		foreach $o_reg (@{$o_domain->regs}) {
+                		    
 			my $reg_access = "";
 			my $reg_offset = $o_domain->get_reg_address($o_reg);
 			my @thefields = ();
@@ -194,7 +211,7 @@ sub _gen_view_vr_ad {
 			my $singlefield;
 			my $upper;
 			my $hole_size;
-
+			
 			my %permission = ();
 			my $perm;
 			my $value;
@@ -202,34 +219,38 @@ sub _gen_view_vr_ad {
 			$permission{"RW"} = 0;
 			$permission{"R"} = 0;
 			$permission{"W"} = 0;
-
-
-			print E_FILE $reg_def, " ", uc($o_reg->name);
-			print E_FILE " ", $reg_prefix, "_";
-			
+		
+			if ($o_reg->{'definition'} eq '') {
+			    print E_FILE $reg_def, " ", uc($o_reg->name);
+			    print E_FILE " ", $reg_prefix, "_";
+			};
 			$ii =0;
+			
+		    
+			
 			foreach $href (@{$o_reg->fields}) {
-				$o_field = $href->{'field'};
-				next if $o_field->name =~ m/^UPD[EF]/; # skip UPD* regs
-				
-				$thefields[$ii]{name} 		  = lc($o_field->name);
-				$thefields[$ii]{pos}  		  = $href->{'pos'};
-				$thefields[$ii]{size} 		  = $o_field->attribs->{'size'};
-				$thefields[$ii]{rw}   		  = uc($o_field->attribs->{'dir'});
-				$thefields[$ii]{parent_block} = $o_domain->name;
-				$thefields[$ii]{init}         = "0x"._val2hex($o_field->attribs->{'size'}, $o_field->attribs->{'init'});
-				$permission{$thefields[$ii]{rw}}++;
-				$ii += 1;
+			    $o_field = $href->{'field'};
+			    next if $o_field->name =~ m/^UPD[EF]/; # skip UPD* regs
+			    
+			    $thefields[$ii]{name} 		  = lc($o_field->name);
+			    $thefields[$ii]{pos}  		  = $href->{'pos'};
+			    $thefields[$ii]{size} 		  = $o_field->attribs->{'size'};
+			    $thefields[$ii]{rw}   		  = uc($o_field->attribs->{'dir'});
+			    $thefields[$ii]{parent_block} = $o_domain->name;
+			    $thefields[$ii]{init}         = "0x"._val2hex($o_field->attribs->{'size'}, $o_field->attribs->{'init'});
+			    $permission{$thefields[$ii]{rw}}++;
+			    $ii += 1;
+			  
 			};
 			
 			@thefields = reverse (sort ({${$a}{pos} <=> ${$b}{pos}} @thefields));
 			$upper = $reg_size;    # initial value of the upper limit
 			@thefields_and_theholes = ();
-
+			
 			foreach $value (sort {$permission{$a} cmp $permission{$b} }keys %permission){
 			    $perm = $value;
 			};
-
+			
 			$ii =0;
 			foreach $singlefield (@thefields) {
 			    
@@ -245,7 +266,7 @@ sub _gen_view_vr_ad {
 				$ii++;
 			    } 
 			    $upper     = ${$singlefield}{pos};
-			}
+			};
 			
 			if ($upper != 0) {
 			    $theholes[$ii]{pos}  = 0;
@@ -260,31 +281,98 @@ sub _gen_view_vr_ad {
 			@thefields_and_theholes = (@thefields,@theholes);
 			@thefields_and_theholes = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields_and_theholes;
 			
-			
+		
 			$ii =0;
+			$bb =0;
+			$aa = 0;
 			foreach $singlefield (@thefields_and_theholes) {
-			    if ($ii == 0) {
-				print E_FILE uc(${$singlefield}{parent_block}), " 0x", _val2hex($addr_size, $reg_offset), " {\n";
-			    }
-			    if (${$singlefield}{name} =~ m/$hole_name/i) {
-				$cov = "";
-			    } else {
-				$cov = " : cov";
-			    };
-			    format E_FILE = 
-      @<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<: uint(bits:@>) : @< : @<<<<<<<<< @<<<<<< ; -- lsb position @>>
-$reg_fld,${$singlefield}{name},${$singlefield}{size},${$singlefield}{rw},${$singlefield}{init},$cov, ${$singlefield}{pos}
+			    if ($o_reg->{'definition'} eq '') {
+				if ($ii == 0) {
+				    print E_FILE uc(${$singlefield}{parent_block}), " 0x", _val2hex($addr_size, $reg_offset), " {\n";
+				};
+				if (${$singlefield}{name} =~ m/$hole_name/i) {
+				    $cov = "";
+				} else {
+				    $cov = " : cov";
+				};
+				format E_FILE = 
+@<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<: uint(bits:@>) : @< : @<<<<<<<<< @<<<<<< ; -- lsb position @>> 
+$reg_fld,${$singlefield}{name},${$singlefield}{size},${$singlefield}{rw},${$singlefield}{init},$cov, ${$singlefield}{pos} 
 .
-                            write E_FILE ;
-                            $ii += 1;	
+                                write E_FILE ;
+                                $ii += 1;	
+                              }else{  
+                                  if ($def{$o_reg->{'definition'}}{definition} eq '') {
+                                    if (${$singlefield}{name} =~ m/$hole_name/i) {
+				       $cov = "";
+      				    } else {
+				        $cov = " : cov";
+				    };
+                                    # reg - save
+                                    $def{$o_reg->{'definition'}}{fields}[$bb]{name} = ${$singlefield}{name};
+                                    $def{$o_reg->{'definition'}}{fields}[$bb]{size} = ${$singlefield}{size};
+                                    $def{$o_reg->{'definition'}}{fields}[$bb]{rw} = ${$singlefield}{rw};
+                                    $def{$o_reg->{'definition'}}{fields}[$bb]{init} = ${$singlefield}{init};
+                                    $def{$o_reg->{'definition'}}{fields}[$bb]{cov} = $cov;
+                                    $def{$o_reg->{'definition'}}{fields}[$bb]{pos} = ${$singlefield}{pos};
+                                    $bb += 1;    
+                                  };
+                                  if (${$singlefield}{pos} == 0){
+                                    # save every instance of reg with address
+                                    foreach $ee(0..$#{ $def{$o_reg->{'definition'}}{list} }){
+                                       $aa = $ee + 1;
+                                    };
+                                    $def{$o_reg->{'definition'}}{definition} = $o_reg->{'definition'};
+                                    $def{$o_reg->{'definition'}}{list}[$aa]{MY_REG} = $o_reg->{'definition'};
+                                    $def{$o_reg->{'definition'}}{list}[$aa]{MY_REG_FILE} =  $reg_prefix . "_" . uc(${$singlefield}{parent_block});
+                                    $def{$o_reg->{'definition'}}{list}[$aa]{address} = "0x" . _val2hex($addr_size, $reg_offset);
+                                  };
+                              }; 
                         };
-                        print E_FILE "};\n";
-                    };  
-                 };
-        print E_FILE $this->global->{'E_FILE'}{'footer'};
+                        if ($o_reg->{'definition'} eq '') {
+                            print E_FILE "};\n"; 
+                        };
+                };
+        };
+        
+        my $cc;
+        my $dd;
+        my $valus;
+        
+        
+
+        foreach $cc (keys %def){
+          if ($cc ne ''){
+            # output: regdef
+            print E_FILE $reg_def, " ", $def{$cc}{list}[0]{MY_REG}, " {\n";
+            for $dd(0..$#{ $def{$cc}{fields} } ) {
+               printf E_FILE ("%-7s %-33s : uint(bits:%2s) ", $reg_fld,$def{$cc}{fields}[$dd]{name}, $def{$cc}{fields}[$dd]{size});
+               printf E_FILE (": %-2s : %-10s %-7s ;", $def{$cc}{fields}[$dd]{rw}, $def{$cc}{fields}[$dd]{init},$def{$cc}{fields}[$dd]{cov});
+               printf E_FILE (" -- lsb position %3s\n", $def{$cc}{fields}[$dd]{pos});
+            };
+            print E_FILE "}; \n";
+            # output: list of regs instances
+            printf  E_FILE ("extend %s vr_ad_reg_file {\n",$def{$cc}{list}[0]{MY_REG_FILE}); 
+            foreach $ee(0..$#{ $def{$cc}{list} } ){
+                $valus = $ee;
+            };  
+            printf E_FILE ("  %%%s_list[%s]:list of %s vr_ad_reg;\n",$def{$cc}{list}[0]{MY_REG},($valus+1),$def{$cc}{list}[0]{MY_REG});
+            printf E_FILE ("  post_generate() is also {\n");
+            for $dd(0..$#{ $def{$cc}{list} } ) {
+               printf E_FILE ("    add_with_offset(%s,%s_list[%s]);\n",$def{$cc}{list}[$dd]{address},$def{$cc}{list}[0]{MY_REG},$dd);
+            };
+            _info("Generated a list of ", $def{$cc}{list}[0]{MY_REG}, " with ", ($valus+1), " items");
+            printf E_FILE ("  };\n");
+            printf E_FILE ("};\n");
+          };
+    
+        };
+
+
+      
+      print E_FILE $this->global->{'E_FILE'}{'footer'};
 
      close(E_FILE);
-
 };
 
 # end view: E_VR_AD
