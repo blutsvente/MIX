@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.28 2006/06/12 13:42:17 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.29 2006/06/16 07:47:06 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.29  2006/06/16 07:47:06  lutscher
+#  exchanged some die() calls with proper logger function
+#
 #  Revision 1.28  2006/06/12 13:42:17  lutscher
 #  parse_register_master() now returns a Reg object
 #
@@ -184,6 +187,9 @@ sub parse_register_master($) {
 			# make it so
 			$o_space->generate_view($eh->get( 'reg_shell.type' ));
 			return $o_space;
+		} else {
+			_fatal("generation of view \'",$eh->get( 'reg_shell.type' ),"\' is not supported");
+			exit 1;
 		};
 	} else {
 		$logger->info('__I_REG_INIT', "\tRegister-master file empty or specified sheet \'" .
@@ -196,7 +202,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.28 $ ';  #'
+our($VERSION) = '$Revision: 1.29 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -268,10 +274,17 @@ sub init {
 
 	if ($hinput{inputformat} eq "register-master") {
 		# call mapping function for register-master array
-		die "ERROR: database_type \'$hinput{database_type}\' not supported" if (!grep ($_ eq $hinput{database_type}, @{$this->global->{supported_register_master_type}}));
-		$this->_map_register_master($hinput{database_type}, $hinput{register_master}) || die "aborting due to errors\n";
+		if (!grep ($_ eq $hinput{database_type}, @{$this->global->{supported_register_master_type}})) {
+			_fatal("database_type \'",$hinput{database_type},"\' not supported");
+			exit 1;
+		};
+		if (!$this->_map_register_master($hinput{database_type}, $hinput{register_master})) {
+			_fatal("aborting due to errors");
+			exit 1;
+		};
 	} else {
-		die "ERROR: unknown inputformat \'$this->{inputformat}\'";
+		_fatal("unknown inputformat \'",$hinput{inputformat},"\'");
+		exit 1;
 	};
 };
 
@@ -297,7 +310,7 @@ sub generate_view {
  	} elsif ($view =~ m/none/i) {
 		return; # do nothing
 	} else {
-		die "ERROR: generation of view \'$view\' is not supported";
+		_error("generation of view \'$view\' is not supported");
 	};
 };
 
@@ -404,7 +417,7 @@ sub _map_register_master {
 	};
 
 	# highest bit specified in register-master
-	$msb_max = $eh->get( 'i2c._mult_.::b' ) || die "ERROR: internal error (bad!)";
+	$msb_max = $eh->get( 'i2c._mult_.::b' ) || _fatal("internal error (bad!)");
 
 	# iterate each row
 	foreach $href_row (@$lref_rm) {
