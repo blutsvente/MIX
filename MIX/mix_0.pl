@@ -18,13 +18,13 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.45 2006/05/03 12:10:33 wig Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.46 2006/06/16 07:47:41 lutscher Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.45 $                                      |
-# | Mod.Date     : $Date: 2006/05/03 12:10:33 $                           |
-# | Author       : $Author: wig $                                      |
+# | Version      : $Revision: 1.46 $                                      |
+# | Mod.Date     : $Date: 2006/06/16 07:47:41 $                           |
+# | Author       : $Author: lutscher $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
 # | Email        : $Email: wilfried.gaensheimer@micronas.com$             |
@@ -38,6 +38,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.46  2006/06/16 07:47:41  lutscher
+# | changed parameter to mix_report() call
+# |
 # | Revision 1.45  2006/05/03 12:10:33  wig
 # | Improved top handling, fixed generated format
 # |
@@ -117,7 +120,7 @@ use Micronas::MixReport;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.45 $'; # RCS Id '
+$::VERSION = '$Revision: 1.46 $'; # RCS Id '
 $::VERSION =~ s,\$,,go;
 
 #
@@ -320,7 +323,7 @@ parse_conn_init( $r_connin );
 parse_io_init( $r_ioin );
 
 # Parse Register-master
-Micronas::Reg::parse_register_master( $r_i2cin );
+my $o_space = Micronas::Reg::parse_register_master( $r_i2cin );
 
 apply_conn_macros( $r_connin, $r_connmacros );
 
@@ -385,7 +388,8 @@ generate_entities();
 #
 mix_store_db( "out", "auto", {} );
 
-mix_report($r_i2cin);
+# mix_report($r_i2cin);
+mix_report($o_space);
 
 #
 # BACKEND add for debugging:
