@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.40 2006/05/05 10:59:25 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.41 2006/06/22 11:45:09 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.40 $                                  
+#  Revision      : $Revision: 1.41 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.41  2006/06/22 11:45:09  lutscher
+#  removed an info message
+#
 #  Revision 1.40  2006/05/05 10:59:25  lutscher
 #  some fixes for the ::cond register-master feature
 #
@@ -608,7 +611,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.40 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.41 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -1628,9 +1631,7 @@ sub _vgch_rs_get_configuration {
 		};
 		# check doubly defined fields
 		if (grep ($_ eq $o_field->name, values(%{$this->global->{'hfnames'}}))) {
-			if ($this->global->{'use_reg_name_as_prefix'}) {
-				_info("field name \'",$o_field->{'name'},"\' is defined more than once");
-			} else {
+			if (!$this->global->{'use_reg_name_as_prefix'}) {
 				_error("field name \'",$o_field->{'name'},"\' is defined more than once");
 			};
 		};
