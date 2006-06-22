@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MIXFilter.pm,v $                                      |
-# | Revision:   $Revision: 1.5 $                                          |
+# | Revision:   $Revision: 1.6 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/05/22 14:05:15 $                              |
+# | Date:       $Date: 2006/06/22 07:08:53 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MIXFilter.pm,v $
+# | Revision 1.6  2006/06/22 07:08:53  wig
+# | Fixed bug in module with log.limit.test (missing .)
+# |
 # | Revision 1.5  2006/05/22 14:05:15  wig
 # | Put logmessage counter in place (again).
 # |
@@ -59,9 +62,9 @@ use Micronas::MixUtils::Globals qw( get_eh );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: MIXFilter.pm,v 1.5 2006/05/22 14:05:15 wig Exp $'; 
+my $thisid          =      '$Id: MIXFilter.pm,v 1.6 2006/06/22 07:08:53 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: MIXFilter.pm,v $';
-my $thisrevision    =      '$Revision: 1.5 $';  
+my $thisrevision    =      '$Revision: 1.6 $';  
 
 # Keep logger objects ...
 my %logger = ();
@@ -186,7 +189,7 @@ sub ok {
 		if ( exists $loglimits->{'test'} ) {
 			for my $res ( keys( %{$loglimits->{'test'}} ) ) { 
 				if ( $tag =~ m/^$res/ ) { # Got a match
-					$eh->inc( 'log.count.test' . $res );
+					$eh->inc( 'log.count.test.' . $res );
 				}
 			}
 		} # End of D.
