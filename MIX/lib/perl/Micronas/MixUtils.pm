@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.120 $                                         |
+# | Revision:   $Revision: 1.121 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/05/22 14:02:20 $                              |
+# | Date:       $Date: 2006/06/22 07:13:21 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.120 2006/05/22 14:02:20 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.121 2006/06/22 07:13:21 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.121  2006/06/22 07:13:21  wig
+# | Updated HIGH/LOW parsing, extended report.portlist.comments
+# |
 # | Revision 1.120  2006/05/22 14:02:20  wig
 # | Fix avfb issues with high/low connections
 # |
@@ -184,6 +187,11 @@ sub _sum_loglimit_eh	($);
 sub mix_use_on_demand	($);
 sub mix_is_integer		($);
 sub mix_is_integer2		($$);
+sub mix_utils_report_hdlfiles ();
+sub _get_deltalist 		();
+sub _sum_filediff		();
+sub _sum_errdiff 		();
+sub _mix_special_input ($);
 
 ##############################################################
 # Global variables
@@ -200,11 +208,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.120 2006/05/22 14:02:20 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.121 2006/06/22 07:13:21 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.120 $';         #'
+my $thisrevision        =      '$Revision: 1.121 $';         #'
 
-# Revision:   $Revision: 1.120 $   
+# Revision:   $Revision: 1.121 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -414,8 +422,17 @@ sub mix_getopt_header(@) {
 					"\tCannot load Text::Diff module for -conf *delta* mode: $@" );
 			exit(1);
 	    }
+
     }
-    
+
+	# Preload list of files if in delta mode:
+	# Either use list of hdl files (as defined by output.generate.deltadesc) or read
+	#   filelist "mixfiles.delta"
+	#   file=foo.list
+    if ( $eh->get( 'output.generate.delta' ) ) {
+    	_get_deltalist();
+    }
+
     #
     # -bak
     # Shift previously generated files to FILE.V.bak
@@ -468,6 +485,57 @@ sub mix_getopt_header(@) {
 	
 }
 
+#
+# Read in list of files, which later is used to compare against the list of created
+# files
+#!wig20060523    
+sub _get_deltalist () {
+    my $filedesc = $eh->get( 'output.generate.deltadesc' );
+    my $outdir   = $eh->get( 'output.path' );
+    # Read in file list from file:
+    if ( $filedesc =~ m/file=(.+)/ ) {
+    	# Read in filelist
+    	my $filelist = $1;
+    	my $f = ( $filelist =~ m,^/, ) ? $filelist : ( $outdir . '/' . $filelist );
+    	if ( -r $f ) {
+    		my $fh = new FileHandle;
+    		if ( open( $fh, "< $f" ) ) {
+    			my @list = grep( !/^\s*#/, <$fh> );
+    			# Remove leading/trailing whitespace
+    			chomp @list;
+    			map( { s/^\s+//; s/\s+$//; } @list );
+    			$fh->close();
+    			$eh->set( 'output.generate.deltafiles', \@list );
+    		} else {
+    			$logger->error( "__E_READ_DELTAFILELIST", "Cannot open $f: $!" );
+    		}
+    	} else {
+    		$logger->error( "__E_MISSING_DELTAFILELIST", "No such file: $f" );
+    	}
+    } elsif ( $filedesc =~ m/(glob=)(.+)/ ) {
+    	# Glob (shell like expression)
+    	my @list = ();  
+    } elsif ( $filedesc =~ m/(re=)?(.+)/ ) {
+    	my $dirre = $2;
+    	# Apply regular expression to all files in output directory
+    	my $dirlist = new DirHandle "$outdir";
+    	if ( defined $dirlist ) {
+    		my @list = ();
+    		while( defined( $_ = $dirlist->read() )) {
+    			next if ( $_ eq '.' or $_ eq '..' );
+    			next if ( -d ( $outdir . '/' . $_ ) );
+    			if ( $_ =~ m/^$dirre$/ ) {
+    				push( @list, $_ );
+    			}
+    		}
+    		$dirlist->close();
+    		$eh->set( 'output.generate.deltafiles', \@list );
+    	} else {
+    		$logger->error( '__E_OPENOUTDIR', "Cannot open $outdir: $!" );
+    	}
+    }
+} # End of _get_deltalist
+    	
 ##############################################################################
 # Option parsing
 ##############################################################################
@@ -1020,11 +1088,12 @@ sub mix_overload_conf ($) {
 
     for my $i ( @$confs ) {
 		( $k, $v ) = split( /=/, $i ); # Split key=value
-		unless( $k ne '' and $v ne '' ) {
+		if ( $k eq '' or $v eq '' ) {
 	    	$logger->error("__E_CFG_KEY_ILLEGAL", "\tIllegal key or value given: $i\n");
 	    	next;
 		}
-     
+ 
+     	$v = _mix_special_input($v);
 		$eh->set( $k, $v );
 
     }
@@ -1063,20 +1132,54 @@ sub mix_apply_conf($$$) {
 	    return undef;
     }
 
-	# Whitespace encoded:
-	if ( $value eq '&sp;' or $value eq '<SP>' ) {
-		$value = ' ';
-	} elsif ( $value eq '&tab;' or $value eq '<TAB>' ) {
-		$value = "\t";
-	} elsif ( $value eq '&nl;' or $value eq '<NL>' ) {
-		$value = "\n";
-	} elsif ( $value eq '&nil;' or $value eq '<NIL>' ) {
-		$value = '';
-	}
+	$value = _mix_special_input( $value );
+
     unless( defined( $eh->set( $key, $value ) ) ) {
     	$logger->error('__E_CONF_KEY', "\tApplying key $key from source $source failed" );
     }
 } # End of mix_apply_conf
+
+##############################################################################
+## _mix_special_input ($)
+##############################################################################
+=head2 _mix_special_input($)
+
+Convert specially encoding input data to real representation.
+
+#
+# _mix_special_input: Convert special encodings for whitespace
+#  <SP> &sp; , <TAB> &tab; , <NL> &nl; , <NIL> &nil;
+#
+
+=over 4
+
+=item <TAB> &tab; converted to tab
+
+=item <SP> &sp;  gives space character
+
+=item <NL> &nl;  converted to newline
+
+=item <NIL> &nil; converted to null (empty string)
+
+=back
+
+=cut
+
+sub _mix_special_input ($) {
+	my $value = shift;
+	
+	my %msi = (
+		'sp' => ' ',
+		'tab' => "\t",
+		'nl'  => "\n",
+		'nil' => '',
+	);
+	
+	$value =~ s/&(sp|tab|nl|nil);/$msi{lc($1)}/ig;
+	$value =~ s/<(SP|TAB|NL|NIL)>/$msi{lc($1)}/ig;
+
+	return $value;
+} # End of _mix_special_input
 
 ##############################################################################
 ## mix_overload_sheet
@@ -1146,6 +1249,15 @@ my %fhstore = ();   # Store all possiblefilehandles/ names
                             # -> file / delta / check / tmpl / back; prim. key is filename!
 my $loc_flag  = 0;
 my %loc_files = ();
+
+#
+# Return name of all created HDLfiles
+#
+sub mix_utils_report_hdlfiles () {
+
+	my @list = keys %fhstore;
+	return \@list;
+}
 
 #
 # Streamline data for delta/diff purposes ...
@@ -3292,21 +3404,94 @@ sub write_sum () {
     # Summarize number of mismatches and not matchable hdl files
     $logger->info( "SUM: Number of verify issues: " . $eh->get( 'DELTA_VER_NR' ))
         if ( $eh->get( 'check.hdlout.path' ) );
-    
+
+    my $fdiff = 0;
+    my $ldiff = 0;
     # Delta mode: return status equals number of changes
     if ( $eh->get( 'output.generate.delta' ) or $eh->get( 'report.delta' ) ) {
         $logger->info( "SUM: Number of changes in intermediate: " . 
         	$eh->get( 'DELTA_INT_NR' ) );
         $logger->info( "SUM: Number of changed files: " .
         	$eh->get( 'DELTA_NR' ));
+		#!wig20060522: report added/removed files
+		$fdiff = _sum_filediff();
+		$logger->info( "SUM: Filelist compare result: " . $fdiff );
+		$ldiff = _sum_errdiff();
+		$logger->info( "SUM: Number of unexpected errors: " . $ldiff );
     }
-
+    
     return $eh->get( 'DELTA_NR' ) + $eh->get( 'DELTA_INT_NR' ) +
-    				$eh->get( 'DELTA_VER_NR' );
-
-    return 0;
+    				$eh->get( 'DELTA_VER_NR' ) + $fdiff + $ldiff;
 
 }
+
+#
+# Count differences of log.limit.test.RE (soll) vs.
+# number of yielded messages log.count.test.RE (ist)
+#
+sub _sum_errdiff () {
+	
+	my $llt = $eh->get( 'log.limit.test' );
+	my $llc = $eh->get( 'log.count.test' );
+	my $diff = 0;
+	
+	if ( scalar( keys( %$llt ) ) == 0 ) {
+		$logger->info( '__I_NO_LOGDIFFTEST', "\tChecks for error/warnings not applied" );
+	} else {
+		$logger->info( '__I_LOGDIFFTEST', "\tChecking selected log messages occurance" );
+	}
+	
+	for my $res ( keys( %$llt ) ) { 
+		my $soll = $llt->{$res};
+		my $ist  = ( exists( $llc->{$res} ) ) ? $llc->{$res} : 0;
+		# If $soll == 0 -> $llc does not to have exist! 
+		if ( $soll != $ist ) {
+			# Found a diff: wrong message count
+			$logger->error( '__E_LOGDIFFTEST', "\tCount for message $res is " .
+				$ist . ", differs from expected " . $soll );
+				$diff++;
+		}
+	}
+	
+	return $diff;
+}
+
+#
+# Compare my created list with the expected filelist
+# Print out in case it differs
+#!wig20060523	
+sub _sum_filediff () {
+	
+	my $soll = $eh->get( 'output.generate.deltafiles' );
+	my $ist  = mix_utils_report_hdlfiles(); 
+
+	my $delta = 0;
+	# Compare $soll and $ist
+	if ( scalar( @$soll ) ) {
+		my %soll = ();
+		for my $s ( @$soll ) {
+			$soll{$s} = 1;
+		}
+		for my $i ( @$ist ) {
+			if ( exists( $soll{$i} ) ) {
+				delete $soll{$i};
+			} else {
+				# Found a diff: created file not expected
+				$logger->error( '__E_DELTAFILE', "\tUnexpected file created: $i" );
+				$delta++;
+			}
+		}
+		# Is there anything left over:
+		for my $s ( keys %soll ) {
+			$delta++;
+			$logger->error( '__E_DELTAFILE', "\tExpected file not created: $s" );
+		}
+	} else {
+		$logger->error( '__E_DELTAFILE', "\tDid not get list of files to expect" );
+		$delta = -1;
+	}
+	return $delta;
+} # End of _sum_filediff
 
 ##############################################################################
 # mix_utils_init_file($)

@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.14 $                                          |
+# | Revision:   $Revision: 1.15 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/05/09 14:39:16 $                              |
+# | Date:       $Date: 2006/06/22 07:13:21 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.15  2006/06/22 07:13:21  wig
+# | Updated HIGH/LOW parsing, extended report.portlist.comments
+# |
 # | Revision 1.14  2006/05/09 14:39:16  wig
 # |  	MixParser.pm MixUtils.pm MixWriter.pm : improved constant assignments
 # | 	Globals.pm IO.pm : improved limits, return value of write_delta_sheet
@@ -93,9 +96,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.14 2006/05/09 14:39:16 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.15 2006/06/22 07:13:21 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.14 $';  
+my $thisrevision    =      '$Revision: 1.15 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -320,7 +323,6 @@ sub cappend {
 sub init {
 	my $this = shift;
 	
-	# %EH = (
 	# HDL template (only placeholders here!)
 	$this->{'cfg'}{'template'} = {
 		'vhdl' =>{
@@ -371,6 +373,8 @@ sub init {
             '_re_xinout' => '',   # keeps converted content of xinout (internal use, only)
 	      	# 'port' => 'markgenerated',	# attach a _gIO to generated ports ...
 	      	'delta' => 0,	    	# allows to use mix.cfg to preset delta mode -> 0 is off, 1 is on
+			'deltadesc' => 're=.*\.(v|vhd)',	# Regular expression for delta mode compare list
+			'deltafiles' => [],	# Holds file list address 
 	      	'bak' => 0,		# Create backup of output HDL files
 	      	'combine' => 0,	# Combine enty,arch and conf into one file, -combine switch
 	      	'portdescr' => '%::descr%',
@@ -459,13 +463,12 @@ sub init {
 		'delta' => 'remove,ispace,comment,ihead', # Controlling delta output mode:
 			    # (i|ignore)space:   (not) consider whitespace
 			    # sort:    sort lines
-			    # comment: do not remove all comments before compare
-			    # i(gnore)head: ignore file header
+			    # [i(gnore)]comment: do not remove all comments before compare
+			    # [i(gnore)]head: ignore file header
 			    # remove:  remove empyt diff files
                 # ignorecase|ic: -> ignore case if set
                 # isc|ignoresemicolon: -> ignore trailing semicolon
                 # mapstd[logic]: -> ignore std_logic s. std_ulogic diffs!
-    	#BUG },
     	# TODO -> set this to it's own key, not as part of output
 	};
 
@@ -487,7 +490,7 @@ sub init {
 		}
     };
 	$this->{'cfg'}{'internal'} = {
-		'path' => ".",
+		'path' => '.',
 		'order' => 'input',		# Field order := as in input or predefined
 		'format' => 'perl', 	# Internal format := perl|xls|csv|xml ... (not used!)
     };
@@ -574,7 +577,7 @@ sub init {
                       #               nonleaf := only non-leaf cells
                       #               dcleaf := dont care if leaf (all modules)
                       #               ignorecase|ic := ignore file name capitalization
-           	'path' => "", # if set a PATH[:PATH], will check generated entities against entities found there
+           	'path' => '', # if set a PATH[:PATH], will check generated entities against entities found there
            	# the path will be available in ...'__path__'{PATH}
 			'delta' => '', # define how the diffs are made, see output.delta for allowed keys
 					# if it's empty, take output.delta contents
@@ -596,10 +599,10 @@ sub init {
     # Autmatically try conversion to TYPE from TYPE by using function ...
 	$this->{'cfg'}{'typecast'} = { # add typecast functions ...
 		'std_ulogic_vector' => {
-	    	'std_logic_vector' => "std_ulogic_vector( %signal% );" ,
+	    	'std_logic_vector' => 'std_ulogic_vector( %signal% );' ,
 		},
 		'std_logic_vector' => {
-	    	'std_ulogic_vector' => "std_logic_vector( %signal% );" ,
+	    	'std_ulogic_vector' => 'std_logic_vector( %signal% );' ,
 		},
 		'std_ulogic' => {
 	    	'std_logic' => 'std_ulogic( %signal% );',
@@ -1162,8 +1165,8 @@ sub init {
     	'tag'	=> {	# B. Tag default filter (individual tags)
     		'F'	=> 100,
     		'E'	=> 100,
-    		'W'	=> 100,
-    		'I'	=> 100,
+    		'W'	=> 200,
+    		'I'	=> 200,
     		'D'	=> 100,
     		'A'	=> 100,
     	},
@@ -1182,6 +1185,8 @@ sub init {
     	},
     };
     
+	# Misc. settings:
+	$this->{'cfg'}{'top'} = '%TOP%';	# Define top cell for hierachy
 
     # Counters and generic messages    
     $this->{'cfg'}{'ERROR'} = '__ERROR__';

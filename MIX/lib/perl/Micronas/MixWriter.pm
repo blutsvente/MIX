@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.89 $                                         |
+# | Revision:   $Revision: 1.90 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/05/23 06:48:05 $                              |
+# | Date:       $Date: 2006/06/22 07:13:21 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.89 2006/05/23 06:48:05 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.90 2006/06/22 07:13:21 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.90  2006/06/22 07:13:21  wig
+# | Updated HIGH/LOW parsing, extended report.portlist.comments
+# |
 # | Revision 1.89  2006/05/23 06:48:05  wig
 # | Fixed typo %S
 # |
@@ -130,9 +133,9 @@ sub _mix_wr_nice_comment		($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.89 2006/05/23 06:48:05 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.90 2006/06/22 07:13:21 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.89 $';
+my $thisrevision   =      '$Revision: 1.90 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -4315,7 +4318,7 @@ sub _write_architecture ($$$$) {
                         $pm =~ s!(\S+)(\s+=>\s+)__nodrv__    # Has __nodrv__ in it
                             ((\s*$RE{balanced}{-parens=>'()'})?)
                             (.*)                                        # Rest of line
-                           !$tcom __I_NODRV_I $1$2 __nodrv__/$t_signal $3$5!gx;
+                           !$tcom __I_NODRV_I $1$2 __nodrv__/$t_signal$3$5!gx;
                         # TODO: simplify this: Strip out ( N downto M )
                         # $pm =~ s!__open__!open!g;
                         if ( exists( $hierdb{$insts}{'::reconnections'} ) ) {

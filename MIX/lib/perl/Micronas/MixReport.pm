@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.28 $                                               |
-# | Author:     $Author: lutscher $                                                 |
-# | Date:       $Date: 2006/06/16 07:43:32 $                                                   |
+# | Revision:   $Revision: 1.29 $                                               |
+# | Author:     $Author: wig $                                                 |
+# | Date:       $Date: 2006/06/22 07:13:21 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.28 2006/06/16 07:43:32 lutscher Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.29 2006/06/22 07:13:21 wig Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.29  2006/06/22 07:13:21  wig
+# | Updated HIGH/LOW parsing, extended report.portlist.comments
+# |
 # | Revision 1.28  2006/06/16 07:43:32  lutscher
 # | changed input to mix_rep_reglist() to take a Reg object
 # |
@@ -136,11 +139,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.28 2006/06/16 07:43:32 lutscher Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.29 2006/06/22 07:13:21 wig Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.28 $';
+my $thisrevision   =      '$Revision: 1.29 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -1000,27 +1003,49 @@ sub mix_rep_portlist () {
 			#  Maybe we limit the number of lines ...
 			# my $incom_mode = ''; # pre or post
 			my $rpc = $eh->get( 'report.portlist.comments' );
-			$rpc =~ m/(\d+)/;
+
 			my $striphash = 0;
-			if ( $rpc =~ m/\bstriphash/io ) {
+			if ( $rpc =~ m/\bstrip(hash|all)/io ) {
 				$striphash = 1;
 			}
+			my $stripdblslash = 0;
+			if ( $rpc =~ m/\bstrip(dblslash|all)/io ) {
+				$stripdblslash = 1;
+			}
+			# Parse for number of lines to print out:
+			#	-1 or less -> do not print!
+			#	0  -> unlimited
+			#	N  -> print N consecutive lines
 			my $incom_lines = 0;
+			$rpc =~ m/(-?\d+)/;
 			if ( defined( $1 ) ) {
 				$incom_lines = $1;
 			}
-			if ( $incom_lines <= 0 ) {
+			if ( $incom_lines == 0 ) {
 				$incom_lines = 100000; # This is nearly unlimited ....
+			} elsif ( $incom_lines < 0 ) {
+				$incom_lines = 0;
 			}
+			# Skip print if config is "naportlist"
+			if ( $rpc =~ m/\bnaportlist\b/ ) {
+				$incom_lines = 0;
+			}
+			# Only select lines with matchin tag:
+			#	tag:portlist -> #portlist\s*
+			my $select_tag = '';
+			if ( $rpc =~ m/\btag:(\w+)/ ) {
+				$select_tag = $1;
+			}
+			
 			my $incom_mode = '';
 			my $incom_text = '';
 			# Print up to $incom_lines ....
-			if ( exists $conndb->{$signal}{'::incom'} ) {
+			if ( $incom_lines and exists $conndb->{$signal}{'::incom'} ) {
 				my $this_count = scalar( @{$conndb->{$signal}{'::incom'}} );
 				my $min = 0;
 				my $max = ( $this_count < $incom_lines ) ? $this_count : $incom_lines;
 				$incom_mode = $conndb->{$signal}{'::incom'}[0]->mode();
-				if ( $incom_mode eq "post" ) { # Take $max starting from last ...
+				if ( $incom_mode eq 'post' ) { # Take $max starting from last ...
 					$min = $this_count - $max;
 					$max = $this_count;
 				}
@@ -1028,12 +1053,22 @@ sub mix_rep_portlist () {
 				for my $com ( @{$conndb->{$signal}{'::incom'}}[$min..$max] ) {
 					# $com is InComment Object ...
 					my $t = $com->print() . "\n";
-					$t =~ s/\s*#+// if ( $striphash );
+					# Only choose comments with matching tag:
+					if ( $select_tag ) {
+						if ( $t =~ m/\s*#$select_tag\s+(.*)/ ) {
+							$t = $1;
+						} else {
+							$t = '';
+						}
+					}
+					$t =~ s,^\s*#+,, if ( $striphash );
+					$t =~ s,^\s*//,, if ( $stripdblslash );
 					$incom_text .= $t;
 				}
 				chomp( $incom_text );
 			}
-				
+			
+			# Add comment line (mode = post -> print before!)		
 			if ( $incom_mode eq 'post' ) {
 				my $line = $mif->td(
 				{ 	'PgfTag' => 'CellHeadingH9',
@@ -1043,12 +1078,12 @@ sub mix_rep_portlist () {
 				$mif->add( $mif->Tr($line), $plist );
 			};
 
-			if ( $signal =~ m/%(HIGH|LOW)_BUS%/ ) {
+			if ( $signal =~ m/%(HIGH|LOW)_BUS(_\d+)?%/ ) {
 				# Get width from ::conn ...
 				my $co = $hierdb->{$instance}->{'::conn'}->{'in'}->{$signal}->{$port};
 				$high	= $conndb->{$signal}->{'::in'}->[$co]->{'sig_f'} || 0;
 				$low	= $conndb->{$signal}->{'::in'}->[$co]->{'sig_t'} || 0;
-			} elsif ( $signal =~ m/%(HIGH|LOW)%/ ) {
+			} elsif ( $signal =~ m/%(HIGH|LOW)(_\d+)?%/ ) {
 				$high = '';
 				$low  = ''; 
 			}
@@ -1120,7 +1155,7 @@ sub mix_rep_portlist () {
 				), $plist );
 
 			}
-			# pre -> print comments after corresponding lines
+			# pre -> print comments >after< corresponding lines
 			if ( $incom_mode eq 'pre' ) {
 				my $line = $mif->td(
 				{ 	'PgfTag' => 'CellHeadingH9',
@@ -1128,8 +1163,7 @@ sub mix_rep_portlist () {
 			  		'String'  => $incom_text,
 				} );		
 				$mif->add( $mif->Tr($line), $plist );
-			};
-
+			}
 		}
 
 		# Write one file per instance (entity):

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.75 $                                         |
+# | Revision:   $Revision: 1.76 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/05/22 14:02:22 $                              |
+# | Date:       $Date: 2006/06/22 07:13:21 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.75 2006/05/22 14:02:22 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.76 2006/06/22 07:13:21 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.76  2006/06/22 07:13:21  wig
+# | Updated HIGH/LOW parsing, extended report.portlist.comments
+# |
 # | Revision 1.75  2006/05/22 14:02:22  wig
 # | Fix avfb issues with high/low connections
 # |
@@ -113,7 +116,8 @@ use Log::Log4perl qw(get_logger);
 use Tree::DAG_Node; # tree base class
 use Regexp::Common; # Needed for import/init functions: parse VHDL ...
 
-use Micronas::MixUtils qw( $eh mix_store db2array db2array_intra mix_list_econf replace_mac );
+use Micronas::MixUtils qw( $eh mix_store db2array db2array_intra mix_list_econf
+						replace_mac is_integer is_integer2 );
 use Micronas::MixUtils::IO;
 use Micronas::MixChecker;
 
@@ -139,6 +143,9 @@ sub init_pseudo_inst ();
 sub bits_at_inst ($$$);
 sub bits_at_inst_hl ($$$);
 sub _check_portspecm ($$$); #!wig20060413
+sub map2bus ($$); #!wig20060609
+sub map2signal ($$); #!wig20060609
+sub require_bus_port ($); #!wig20060620
 
 ####################################################################
 #
@@ -156,9 +163,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.75 2006/05/22 14:02:22 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.76 2006/06/22 07:13:21 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.75 $';
+my $thisrevision =	'$Revision: 1.76 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -912,160 +919,278 @@ sub parse_conn_init ($) {
 }
 
 sub add_conn (%) {
-        my %in = @_;
+    my %in = @_;
 
-        my $name = $in{'::name'};
-        my $nameflag = 0;
+    my $name = $in{'::name'};
+    my $nameflag = 0;
 
-        #
-        # strip of leading and trailing whitespace
-        #
-        $name =~ s/^\s+//o;
-        $name =~ s/\s+$//o;
+    #
+    # strip of leading and trailing whitespace
+    #
+    $name =~ s/^\s+//o;
+    $name =~ s/\s+$//o;
 
-        #
-        # Special handling: open -> %OPEN%
-        if ( $name =~ m,^open$,io or $name =~ m,^\s*%OPEN%,o ) {
-            $name = '%OPEN_' . $eh->postinc( 'OPEN_NR' ) . '%';
-        }
-		#
-		# If user assigns bus to %LOW% and/or %HIGH%
-		#   -> map to LOW_BUS|HIGH_BUS
-		#!wig20050719
-		#!wig20060516 and vice versa
-		if ( $name =~ m/%(LOW|HIGH)(_BUS)?(_\d+)?%/o ) {
-			my $hl  = $1;
-			my $bus = ( $2 ) ? $2 : '';
-			my $n   = ( $3 ) ? $3 : '';
-			# Map non-bus to BUS
-			if ( not $bus and
-			     ( ( defined( $in{'::high'} ) and $in{'::high'} ne '' ) or
-				   ( defined( $in{'::low'} )  and $in{'::low'}  ne '' ) ) ) {
-				$logger->warn('__W_ADD_CONN', "\tExtend assignment from $1 to $1_BUS!");
+    #
+    # Special handling: open -> %OPEN%
+    if ( $name =~ m,^open$,io or $name =~ m,^\s*%OPEN%,o ) {
+        $name = '%OPEN_' . $eh->postinc( 'OPEN_NR' ) . '%';
+    }
+	#
+	# If user assigns bus to %LOW% and/or %HIGH%
+	#   -> map to LOW_BUS|HIGH_BUS
+	#!wig20050719
+	#!wig20060516 and vice versa
+	if ( $name =~ m/%(LOW|HIGH)(_BUS)?(_\d+)?%/o ) {
+		my $hl  = $1;
+		my $bus = ( $2 ) ? $2 : '';
+		my $n   = ( $3 ) ? $3 : '';
+		# Map non-bus to BUS
+		if ( not $bus and
+		     ( ( defined( $in{'::high'} ) and $in{'::high'} ne '' ) or
+			   ( defined( $in{'::low'} )  and $in{'::low'}  ne '' ) ) ) {
+			$logger->warn('__W_ADD_CONN', "\tExtend assignment from $1 to $1_BUS!");
+			$bus = '_BUS';
+			# Care about the ::type -> add a _vector
+			$in{'::type'} = map2bus( 'HL_BUS', $in{'::type'} );
+
 			}
-			# Map bus to non-bus (if no borders given)
-			if ( $bus and 
-					( ( not defined( $in{'::high'} ) or $in{'::high'} eq '' ) and
-				      ( not defined( $in{'::low'} )  or $in{'::low'}  eq '' ) ) ) {
+		
+		# Map bus to non-bus (if no borders given)
+		if ( $bus and 
+				( ( not defined( $in{'::high'} ) or $in{'::high'} eq '' ) and
+			      ( not defined( $in{'::low'} )  or $in{'::low'}  eq '' ) ) ) {
+			#!wig20060619: check port assignment
+			my $width = '';
+			if( $width = require_bus_port( $in{'::in'} ) ) {
+				$logger->warn('__W_ADD_CONN', "\tDetected width for $name automatically: $width:0" );
+				$in{'::high'} = $width;
+				$in{'::low'} = 0;
+			} else {
 				$logger->warn('__W_ADD_CONN', "\tRemove _BUS from $1 !");
-			}	
-			if( $n eq '' ) { # Get a new number for high/low
-				$n = '_' . $eh->postinc( $hl . '_NR' );
-			}
-			$name = '%' . $hl . $bus . $n . '%';
-			$in{'::name'} = $name;
+				$bus = '';
+				$in{'::type'} = map2signal( 'HL_BUS', $in{'::type'} );
+			} 
+		}	
+		if( $n eq '' ) { # Get a new number for high/low
+			$n = '_' . $eh->postinc( $hl . '_NR' );
 		}
-
-        $in{'::name'} = $name;
-        #
-        # name must be defined:
-        # if not, assume that could be a generated name, check later on
-        #
-        if ( $name eq '' ) {
-            # Handle CONSTANTS ..either set in input or derived by detecting constants in ::out
-            # Generate a name
-                $nameflag = 1;
-                $name = $eh->get( 'postfix.PREFIX_CONST' ) .
-                	$eh->postinc( 'CONST_NR' );
-                $in{'::name'} = $name;
-				$logger->debug( '__D_ADD_CONN', "\tCreating name $name for constant!" );
-        }
-
-        #
-        # Get expanded signal name
-        #
-        if ( $in{'::name'} =~ m,%,o ) { $name = mix_expand_name( 'name', \%in ) };
-
-        #
-        # Check case ...
-        #
-        $name = mix_check_case( 'conn', $name );
-
-        #
-        # check name: only [a-z_A-Z0-9%:] allowed ..
-        # strip of leading and trailing whitespace
-        # TODO : allow %macro% and ::macro, only!
-        #
-        if ( $name =~ m/[^0-9A-Za-z_%:]/ ) {
-            # Mark signal .... but add it anyway (user should be able to fix it)
-            $logger->error( '__E_ADD_CONN', "\tIllegal signal name $name. Will be ignored!" );
-            $in{'::ign'} = "#ERROR_ILLEGAL_SIGNAL_NAME";
-            $in{'::comment'} = "#ERROR_ILLEGAL_SIGNAL_NAME $name" . $in{'::comment'};
-            $name = "ERROR_ILLEGAL_SIGNAL_NAME";
-            $in{'::name'} = $name;
-        }
-        #
-        # Early name expansion required ...
-        #
-        if ( $name =~ m/^\s*%(::\w+)%/o ) {
-            if ( defined( $in{$1} ) ) {
-                $name =~ s/%(::\w+?)%/$in{$1}/g; # replace %::key% ...
-                #
-                #TODO: multiple replacements could lead to troubles!
-                #
-                $in{'::name'} = $name;
-            } else {
-                $logger->warn( '__W_ADD_CONN', "\tCannot replace ::name for $name!" );
-            }
-        }
-
-        if ( defined( $conndb{$name}  ) ) {
-            # Alert user if this connection already got defined somewhere ....
-            if ( $eh->get( 'check.defs' ) =~ m,conn, ) {
-                $logger->warn( '__W_ADD_CONN', "\tRedefinition of conection $name!" );
-                $eh->inc( 'sum.uniq' ); # Not uniq warning!!
-            }
-            merge_conn( $name, %in );
-        } else {
-            create_conn( $name, %in);
-        }
-
-        # If name was not given, complain ...
-        if ( $nameflag and $conndb{$name}{'::mode'} !~ m/^\s*[CPG]/o ) {
-            # Check if this signals ::out has a %CONST% in it:
-            # If yes, mark it as C
-            unless( exists( $conndb{$name}{'::out'}[0] ) and
-				 $conndb{$name}{'::out'}[0]{'inst'} eq '%CONST%' ) {
-                # Mark signal .... but add it anyway (user should be able to fix it)
-                # TODO : fix up that code, should not deal with conndb here ....
-				##LU added some hint for user
-				my($hint) = $eh->get( 'macro.%EMPTY%' );
-				if (lc($conndb{$name}{'::mode'}) eq "i") {
-					$hint = $in{'::in'} if (exists $in{'::in'});
-				} elsif (lc($conndb{$name}{'::mode'}) eq "o") {
-					$hint = $in{'::out'} if (exists $in{'::out'});
-				} else {
-					$hint = $in{'::out'} if (exists $in{'::out'});
-					if ($hint eq $eh->get( 'macro.%NULL%' ) or
-						$hint eq $eh->get( 'macro.%EMPTY%' ) ) {
-						$hint = $in{'::in'} if (exists $in{'::in'});;
-					};
-				};
-                $logger->error( '__E_ADD_CONN', "\tMissing signal name in input near \'$hint\'. Generated name $name!" );
-                $conndb{$name}{'::ign'} = "#__E_MISSING_SIGNAL_NAME";
-                $conndb{$name}{'::comment'} = "#__E_MISSING_SIGNAL_NAME" . $conndb{$name}{'::comment'};
-                $conndb{$name}{'::name'} = $name;
-            } else {
-                $conndb{$name}{'::mode'} = 'C';
-            }
-        # Is it linked to %CONST% instance ...
-        } elsif ( defined( $conndb{$name}{'::out'}[0]{'inst'} ) and
-            $conndb{$name}{'::out'}[0]{'inst'} eq "%CONST%" ) {
-                # If we found a constant, change the ::mode bit to be constant ...
-                if ( $conndb{$name}{'::mode'} and $conndb{$name}{'::mode'} !~ m,^\s*[CPG],io ) {
-                    $logger->error('__E_ADD_CONN', "\tSignal $name mode expected to be C, G or P but is " .
-                            $conndb{$name}{'::mode'} ."!" );
-                    $conndb{$name}{'::mode'} = "C";
-                    $conndb{$name}{'::comment'} .= "__E_MODE_MISMATCH";
-                } elsif ( not $conndb{$name}{'::mode'} ) {
-                    # If this signal mode is not defined, assume C
-                    $logger->warn( '__I_ADD_CONN', "\tSetting mode to C for signal $name\n" );
-                    $conndb{$name}{'::mode'} = "C";
-                    $conndb{$name}{'::comment'} .= "__I_SET_MODE_C";
-    	}
+		$name = '%' . $hl . $bus . $n . '%';
+		$in{'::name'} = $name;
 	}
+
+    $in{'::name'} = $name;
+    #
+    # name must be defined:
+    # if not, assume that could be a generated name, check later on
+    #
+    if ( $name eq '' ) {
+        # Handle CONSTANTS ..either set in input or derived by detecting constants in ::out
+        # Generate a name
+        $nameflag = 1;
+        $name = $eh->get( 'postfix.PREFIX_CONST' ) .
+              	$eh->postinc( 'CONST_NR' );
+        $in{'::name'} = $name;
+		$logger->debug( '__D_ADD_CONN', "\tCreating name $name for constant!" );
+    }
+
+    #
+    # Get expanded signal name
+    #
+    if ( $in{'::name'} =~ m,%,o ) { $name = mix_expand_name( 'name', \%in ) };
+
+    #
+    # Check case ...
+    #
+    $name = mix_check_case( 'conn', $name );
+
+    #
+    # check name: only [a-z_A-Z0-9%:] allowed ..
+    # strip of leading and trailing whitespace
+    # TODO : allow %macro% and ::macro, only!
+    #
+    if ( $name =~ m/[^0-9A-Za-z_%:]/ ) {
+        # Mark signal .... but add it anyway (user should be able to fix it)
+        $logger->error( '__E_ADD_CONN', "\tIllegal signal name $name. Will be ignored!" );
+        $in{'::ign'} = "#ERROR_ILLEGAL_SIGNAL_NAME";
+        $in{'::comment'} = "#ERROR_ILLEGAL_SIGNAL_NAME $name" . $in{'::comment'};
+        $name = "ERROR_ILLEGAL_SIGNAL_NAME";
+        $in{'::name'} = $name;
+    }
+    #
+    # Early name expansion required ...
+    #
+    if ( $name =~ m/^\s*%(::\w+)%/o ) {
+        if ( defined( $in{$1} ) ) {
+            $name =~ s/%(::\w+?)%/$in{$1}/g; # replace %::key% ...
+            #
+            # TODO : multiple replacements could lead to troubles!
+            #
+            $in{'::name'} = $name;
+        } else {
+            $logger->warn( '__W_ADD_CONN', "\tCannot replace ::name for $name!" );
+        }
+    }
+
+    if ( defined( $conndb{$name}  ) ) {
+        # Alert user if this connection already got defined somewhere ....
+        if ( $eh->get( 'check.defs' ) =~ m,conn, ) {
+            $logger->warn( '__W_ADD_CONN', "\tRedefinition of conection $name!" );
+            $eh->inc( 'sum.uniq' ); # Not uniq warning!!
+        }
+        merge_conn( $name, %in );
+    } else {
+        create_conn( $name, %in);
+    }
+
+    # If name was not given, complain ...
+    if ( $nameflag and $conndb{$name}{'::mode'} !~ m/^\s*[CPG]/o ) {
+        # Check if this signals ::out has a %CONST% in it:
+        # If yes, mark it as C
+        unless( exists( $conndb{$name}{'::out'}[0] ) and
+				$conndb{$name}{'::out'}[0]{'inst'} eq '%CONST%' ) {
+            # Mark signal .... but add it anyway (user should be able to fix it)
+            # TODO : fix up that code, should not deal with conndb here ....
+			##LU added some hint for user
+			my($hint) = $eh->get( 'macro.%EMPTY%' );
+			if (lc($conndb{$name}{'::mode'}) eq 'i' ) {
+				$hint = $in{'::in'} if (exists $in{'::in'});
+			} elsif (lc($conndb{$name}{'::mode'}) eq 'o' ) {
+				$hint = $in{'::out'} if (exists $in{'::out'});
+			} else {
+				$hint = $in{'::out'} if (exists $in{'::out'});
+				if ($hint eq $eh->get( 'macro.%NULL%' ) or
+					$hint eq $eh->get( 'macro.%EMPTY%' ) ) {
+					$hint = $in{'::in'} if (exists $in{'::in'});;
+				};
+			};
+            $logger->error( '__E_ADD_CONN', "\tMissing signal name in input near \'$hint\'. Generated name $name!" );
+            $conndb{$name}{'::ign'} = "#__E_MISSING_SIGNAL_NAME";
+            $conndb{$name}{'::comment'} = "#__E_MISSING_SIGNAL_NAME" . $conndb{$name}{'::comment'};
+            $conndb{$name}{'::name'} = $name;
+        } else {
+            $conndb{$name}{'::mode'} = 'C';
+        }
+        # Is it linked to %CONST% instance ...
+    } elsif ( defined( $conndb{$name}{'::out'}[0]{'inst'} ) and
+        $conndb{$name}{'::out'}[0]{'inst'} eq "%CONST%" ) {
+        # If we found a constant, change the ::mode bit to be constant ...
+        if ( $conndb{$name}{'::mode'} and $conndb{$name}{'::mode'} !~ m,^\s*[CPG],io ) {
+            $logger->error('__E_ADD_CONN', "\tSignal $name mode expected to be C, G or P but is " .
+                        $conndb{$name}{'::mode'} ."!" );
+            $conndb{$name}{'::mode'} = 'C';
+            $conndb{$name}{'::comment'} .= '__E_MODE_MISMATCH';
+        } elsif ( not $conndb{$name}{'::mode'} ) {
+            # If this signal mode is not defined, assume C
+            $logger->warn( '__I_ADD_CONN', "\tSetting mode to C for signal $name\n" );
+            $conndb{$name}{'::mode'} = 'C';
+            $conndb{$name}{'::comment'} .= '__I_SET_MODE_C';
+        }
+    }
 } # End of add_conn
 
+#
+# check if the assigned too values are bus or single bit
+#    inst/port(F:T)=(F:T)
+# only done if no ::high/::low was defined
+#
+# In: ::in description
+# Out: max. width of connection in ::in
+#
+sub require_bus_port ($) {
+	my $instr = shift;
+	
+	my $high = 0;
+	for my $d ( split( /[,;]/, $instr ) ) {
+        next if ( $d =~ /^\s*$/o );
+        # Need to have () or []!
+        if ( $d =~ m/[\[\(]/ ) {
+        	$d =~ tr/\[\]/()/;
+        	my $port = '';
+        	my $signal = '';
+        	if ( $d =~ m/\((.+)\)\s*=\s*\((.+)\)/ ) {
+        		$port = $1;
+        	} elsif ( $d =~ m/=\s*\((.+)\)/ ) {
+        		$port = $1;
+        	} elsif ( $d =~ m/\((.+)\)/ ) {
+        		$port = $1;
+        	} else {
+        		# No () -> next!
+        		next;
+        	}
+        	
+        	# Look into $port and $signal
+        	if ( $port =~ m/(.+):(.+)/ ) {
+        		my $ph = $1;
+        		my $pl = $2;
+        		if ( $ph ne $pl ) {
+        			my $newmax = '';
+        			# Differing borders -> is bus!
+        			if ( $pl eq '0' ) {
+        				$newmax = $ph;
+        			} elsif ( is_integer2( $ph, $pl ) ) {
+        				$newmax = $ph - $pl;
+        			} else {
+        				$newmax = $ph . ' - ' . $pl;
+        			}
+        			if ( is_integer2( $newmax, $high ) ) {
+        				$high = ( $newmax > $high ) ? $newmax : $high;
+        			} elsif ( $newmax and $high == '0' ) {
+        				$high = $newmax;
+        			} else {
+        				$logger->error( '__E_PARSE_HIGHLOW', "\tBad borders to compare: $newmax found now, but $high before!");
+        				$high = $newmax; # TODO : Make that wide enough!
+        			}
+        		}
+        	}
+        }			       
+	}
+	return $high; # Returns buswidth - 1!
+} # End of require_bus_port
+	 
+#
+# map2bus: usually appends a "_vector"
+#
+# Input:
+#		key  := HL_BUS, ....
+#       type := current setting of type
+#
+# Output:
+#		expanded bus type
+#
+# Global: -
+sub map2bus ($$) {
+	my $key  = shift;
+	my $type = shift;
+	
+	if ( $type eq '' or $type eq '%SIGNAL%' ) {
+		$type = '%BUS_TYPE%';
+	} elsif( $type !~ m/_vector$/ ) {
+		$type .= '_vector';
+	}
+	return $type;
+} # End of map2bus
+
+#
+# map2signal: remove "_vector" or map %BUS_TYPE% to %SIGNAL%
+#
+# Input:
+#		key  := HL_BUS, ....
+#       type := current setting of type
+#
+# Output:
+#		mapped type with removed _vector
+#
+# Global: -
+sub map2signal ($$) {
+	my $key  = shift;
+	my $type = shift;
+	
+	if ( $type eq '' or $type eq '%BUS_TYPE%' ) {
+		$type = '%SIGNAL%';
+	}
+	$type =~ s/_vector$//;
+	return $type;
+} # End of map2signal
 
 sub create_conn ($%) {
     my $name = shift;
