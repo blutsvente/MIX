@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.29 2006/06/16 07:47:06 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.30 2006/06/22 11:45:43 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.30  2006/06/22 11:45:43  lutscher
+#  added new view HDL-vgch-rs-clone and package RegViewClone
+#
 #  Revision 1.29  2006/06/16 07:47:06  lutscher
 #  exchanged some die() calls with proper logger function
 #
@@ -164,6 +167,7 @@ sub parse_register_master($) {
 	  use Micronas::RegViewE;
 	  use Micronas::RegViewSTL;
 	  use Micronas::RegViewRDL;
+      use Micronas::RegViewClone;
 	  use Micronas::MixUtils::RegUtils;
 	'	
 	) ) {
@@ -202,7 +206,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.29 $ ';  #'
+our($VERSION) = '$Revision: 1.30 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -213,12 +217,14 @@ our(%hglobal) =
    supported_register_master_type => ["VGCA", "FRCH", "AVFB"], 
 
    # generatable register views 
-   supported_views => [
-					   "HDL-vgch-rs",   # VGCH project register shell (Thorsten Lutscher)
-					   "E_VR_AD",       # e-language macros (Emanuel Marconetti)
-					   "STL",           # register test file in Socket Transaction Language format
-					   "RDL",           # Denali RDL representation of database (experimental)
-					   "none"           # do nothing
+   supported_views => 
+   [
+	"HDL-vgch-rs",       # VGCH project register shell (Thorsten Lutscher)
+	"E_VR_AD",           # e-language macros (Emanuel Marconetti)
+	"STL",               # register test file in Socket Transaction Language format
+	"RDL",               # Denali RDL representation of database (experimental)
+	"HDL-vgch-rs-clone", # like HDL-vgch-rs, but takes a register-master as template to clone it n times
+	"none"               # generate nothing (useful for e.g. -report reglist option)
 					  ],
 
    # attributes in register-master that do NOT belong to a field
@@ -309,6 +315,8 @@ sub generate_view {
 		$this->_gen_view_rdl(@ldomains);     # module RegViewRDL.pm
  	} elsif ($view =~ m/none/i) {
 		return; # do nothing
+	} elsif (lc($view) eq "hdl-vgch-rs-clone") {
+		$this->_gen_view_vgch_rs_clone(@ldomains); # module RegViewClone.pm 
 	} else {
 		_error("generation of view \'$view\' is not supported");
 	};
