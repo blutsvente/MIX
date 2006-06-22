@@ -11,7 +11,7 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #######################################################################
 #                                                                     #
 #    MixTest should make it a little more easy to debug Mix. For      #
-#    verification of result, some Perl Test:: package has been used   #
+#    verification of result, some Perl Test:: packages are used       #
 #                                                                     #
 #######################################################################
 
@@ -78,15 +78,15 @@ my $status = GetOptions( \%opts, qw (
 
 if ( $opts{'mix'} ) {
     if ( -x $opts{'mix'} ) {
-	$mix = $opts{'mix'};
+		$mix = $opts{'mix'};
     } else {
-	logwarn("WARNING: mix option does not point to executable! Ignored!");
+		logwarn("WARNING: mix option does not point to executable! Ignored!");
     }
 }
 
 my $numTests = 0;
 my @inType;
-my $testRE = "";
+my $testRE = '';
 
 my %failstat = ();
 
@@ -102,167 +102,167 @@ my @tests = (
 	{
 	  'name' => "bitsplice",
 	  'path' => "bitsplice",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "bitsplice",
 	  'path' => "bitsplice/verilog",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "bitsplice",
 	  'path' => "bitsplice/vhdportsort",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "bitsplice",
 	  'path' => "bitsplice/verportsort",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "bitsplice",
 	  'path' => "bitsplice/connport",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "sigport",
 	  'path' => "sigport",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "sigport",
 	  'path' => "sigport/use",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "sigport",
 	  'path' => "sigport/verilog",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "highlow",
 	  'path' => "highlow",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "highlow",
 	  'path' => "highlow/verilog",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "highlow",
 	  'path' => "highlow/lownobus",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "mde_tests",
 	  'path' => "mde_tests/conn_nreset",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "mde_tests",
 	  'path' => "mde_tests/conn_nr_vhdl",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "mde_tests",
 	  'path' => "mde_tests/nreset2",
-	  'options' => "",
+	  'options' => '',
 	  'skip'	=> 1, #!wig20050929: has no CONN sheet!!
 	},
 	{
 	  'name' => "constant",
 	  'path' => "constant",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "constant",
 	  'path' => "constant/verilog",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "case",
 	  'path' => "case",
-	  'options' => "",
+	  'options' => '',
 	  'skip' => 1,
 	},
 		{
 	  'name' => "case",
 	  'path' => "case/check",
-	  'options' => "",
+	  'options' => '',
 	  'skip' => 1,
 	},
 	{
 	  'name' => "case",
 	  'path' => "case/force",
-	  'options' => "",
+	  'options' => '',
 	  'skip' => 1,
 	},
 
 	{
 	  'name' => "io",
 	  'path' => "io",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "io",
 	  'path' => "io/verilog",
-	  'options' => "",
+	  'options' => '',
 	},
 	{ # VHDL Generics/Parameters
 	  'name' => "generic",
 	  'path' => "generic",
-	  'options' => "",
+	  'options' => '',
 	},
 	{ # Verilog Parameters
 	  'name' => "generic",
 	  'path' => "generic/verilog",
-	  'options' => "",
+	  'options' => '',
 	},
 	{ # Verilog over VHD with Parameters
 	  'name' => "generic",
 	  'path' => "generic/veriovhd",
-	  'options' => "",
+	  'options' => '',
 	},
 	{ # Verilot2001 style (no defparams!)
 	  'name' => "generic",
 	  'path' => "generic/nodefparam",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "genwidth",
 	  'path' => "genwidth",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "genwidth",
 	  'path' => "genwidth/verilog",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "nreset2",
 	  'path' => "nreset2",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "open",
 	  'path' => "open",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "open",
 	  'path' => "open/verilog",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "open",
 	  'path' => "open/verilog_ndmy",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "macro",
 	  'path' => "macro",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "macro",
@@ -272,7 +272,7 @@ my @tests = (
 	{
 	  'name' => "verilog",
 	  'path' => "verilog",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "verilog",
@@ -297,33 +297,33 @@ my @tests = (
 	{
 	  'name' => "verilog",
 	  'path' => "verilog/leaforeg",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "verilog",
 	  'path' => "verilog/seloreg",
-	  'options' => "",
+	  'options' => '',
 	},
 	{ #!wig20051024: adding cstyle header
 	  'name' => "verilog",
 	  'path' => "verilog/v2001",
-	  'options' => "",
+	  'options' => '',
 	},
 	{ #!wig20060411: adding verilog module head ifdef exclude feature
 	  'name' => "verilog",
 	  'path' => "verilog/verimap",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "conf",
 	  'path' => "conf",
-	  'options' => "",
+	  'options' => '',
 	  'skip' => 1, #!wig20051004, cannot work with combined output!
 	},
 	{
 	  'name' => "configuration",
 	  'path' => "configuration",
-	  'options' => "",
+	  'options' => '',
 	},
 	{	# Repeat configuration, but set two macros from cmd line
 		# Added by wig 20060316
@@ -334,42 +334,42 @@ my @tests = (
 	{
 	  'name' => "padio",
 	  'path' => "padio",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "padio",
 	  'path' => "padio/names",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "padio",
 	  'path' => "padio/bus",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "padio",
 	  'path' => "padio/given",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "padio2",
 	  'path' => "padio2",
-	  'options' => "",
+	  'options' => '',
 	},
 	{ # Typecast in port maps (old default)
 	  'name' => "typecast",
 	  'path' => "typecast",
-	  'options' => "",
+	  'options' => '',
 	},
 	{ # Typecast via intermediate signales
 	  'name' => "typecast",
 	  'path' => "typecast/intsig",
-	  'options' => "",
+	  'options' => '',
 	},
 	{ # tyepcast for busses, only ...
 	  'name' => "typecast",
 	  'path' => "typecast/intbus",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "init",
@@ -379,22 +379,22 @@ my @tests = (
 	{
 	  'name' => "autoopen",
 	  'path' => "autoopen",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "autoopen",
 	  'path' => "autoopen/aaa",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "autoopen",
 	  'path' => "autoopen/simple",
-	  'options' => "",
+	  'options' => '',
 	},
 	{
 	  'name' => "autoopen",
 	  'path' => "autoopen/noaopen",
-	  'options' => "",
+	  'options' => '',
 	},
 	{ #!wig20060329: adding auto hierachy feature:
 		'name' => 'hier',
@@ -414,37 +414,37 @@ my @tests = (
 	{
 	  'name' => "bugver",
 	  'path' => "bugver/ramd",
-	  'options' => "",
+	  'options' => '',
 	},
 	{ # Bug with constant busses ...
 	  'name' => "bugver",
 	  'path' => "bugver/constbug",
-	  'options' => "",
+	  'options' => '',
 	},
 	{ # Bug with generics/0 ...
 	  'name' => "bugver",
 	  'path' => "bugver/20051004c",
-	  'options' => "",
+	  'options' => '',
 	},
 	{ # Bug with generics/0 ...
 	  'name' => "bugver",
 	  'path' => "bugver/20051014b",
-	  'options' => "",
+	  'options' => '',
 	},
 	{ # Bug with wiring of mic32_top_ramd_oe signal ...
 	  'name' => "bugver",
 	  'path' => "bugver/20051018d",
-	  'options' => "",
+	  'options' => '',
 	},
 	{ # Trailing ; in entity port map
 	  'name' => "bugver",
 	  'path' => "bugver/20051121a",
-	  'options' => "",
+	  'options' => '',
 	},
 	{ # Fail to create two intermediate ports
 	  'name' => "bugver",
 	  'path' => "bugver/20051221a",
-	  'options' => "",
+	  'options' => '',
 	},
 	{ # Create duplicate port for partially connected signals
 	  'name' => "bugver",
@@ -459,7 +459,7 @@ my @tests = (
 	{ # Create simple logic ...
 	  'name' => "logic",
 	  'path' => "logic",
-	  'options' => "",
+	  'options' => '',
 	},
 	{ # Add arbitrary text in hooks: ::udc
 		'name' => 'udc',
@@ -615,154 +615,161 @@ sub runMix($) {
 
     for(my $i=0; $i<$numberOfTests; $i++) {
 
-	my $command = '';
-	my $options = '';
-	my $path = '';
-	my $find = '';
-
-	$options = $tests[$i]->{'options'};
-	if ( $opts{'options'} ) {
-		$options .= join( ' ', @{$opts{'options'}});
-	}
-    my $testpath = $tests[$i]->{'path'};
-    $path = $wdir . "/$tests[$i]->{'path'}";
-    
-    my $testname = $tests[$i]->{'name'};
-
-	if ( $testRE and $testpath !~ m/$testRE/io or
-		     exists $tests[$i]->{'skip'} and $tests[$i]->{'skip'} ) {
-			# this test is not selected ...
-			print( "Skipped test $testname ($testpath)\n" );
-			next;
-	}
-
-	if ( $opts{'list'} ) {
-		print( "Selected test $testname ($testpath)\n" );
-		next;
-	}
-
-	if ( defined( $opts{'import'} ) ) { # Create test directory from scratch (import directory)
-		doImport( $type, $tests[$i]->{'name'}, $tests[$i]->{'path'} );
-		next;
-	}
-
-    if( defined( $opts{'update'} ) ) {
-    	$options .= ' -nodelta';
-    	#!wig20060216: combine with bak
-    	if( defined( $opts{'bak'} ) ) {
-    		$options .= ' -bak';
-    	}
-    }
-    
-    # Purge and strip out all extra sheets from intermediate data
-    if( defined( $opts{'export'} ) ) {
-    	$options .= ' -strip -nodelta';
-    }
-
-	# Do not use built-in, but external command
-    if( gotScript($path, "$tests[$i]->{'name'}$cmd_ext")==1) {
-    	for my $opt ( qw( export debug purge update ) ) {
-    		if( defined $opts{$opt}) {
-    			$ENV{'MIXTEST_OPT'} .= $opt . ' '; 
-    			if ( -x ( $path . '/' . $tests[$i]->{'name'} . '-' . $opt . $cmd_ext) ) {
-    				$command = $tests[$i]->{'name'}. '-' . $opt . $cmd_ext;
-    			} else {
-    				$command = $tests[$i]->{'name'}. $cmd_ext;
-    			}
-        	}
-    	}
-    	unless( -x $path . '/' . $command ) {
-    		print( "Warning: Missing script $command in path $path, use default instead!\n" );
-    		$command = '';
-    	}
-    	# Create some environment variables:
-    	# MIX_CMD, MIX_OPT
-    	$ENV{'MIXTEST_CMD'} = $mix || "mix_0.pl";
-    }
-    unless ( $command ) {
-        while($tests[$i]->{'path'} =~ /\//g) {
-    		$find = $find . "../";
-    	}
-		$mix = $mix || "mix_0.pl"; # Default ...
-		# Define the mix_0.pl to run
-		# $command  = "h:/work/mix_new/mix/mix_0.pl $options $find../$tests[$i]->{'name'}.$type";
-    	$command  = 'perl -x ' . ( $opts{'debug'} ? '-d ' : '' ) .
-			"\"$mix\" $options \"$find../$tests[$i]->{'name'}.$type\"";
-    	    # $command  = "perl -d " . $command if ( $opts{'debug'} );
-    }
-    chdir( $path ) || logwarn("ERROR: Directory <$path> not found!");
-    
-    if ( -r "$testname-t.out" and not $opts{'debug'} ) {
-	    rename( "$testname-t.out", "$testname-t.out.0" )
-	       	      or print "rename of $testname-t.out failed"
-    	          and exit 1;
-    }
-
-    if ( defined( $opts{'purge'} ) ) {
-        unlink <*.diff>;
-    	unlink <*.out.0>;
-    	unlink <*.out>;
-    	unlink <*.pld>; #!wig20031218: no longer created ...
-    	print( "Purged test $testname\n" );
-    	next;
-    } else {
-        # "export", "update" and non-opt mode will create new output data:
-	    my $status;
-	    my $t0;
-
-	    # measure elapsed time 
-	    $t0 = [gettimeofday];
+		my $command = '';
+		my $options = '';
+		my $path = '';
+		my $find = '';
+	
+		$options = $tests[$i]->{'options'};
+		if ( $opts{'options'} ) {
+			$options .= join( ' ', @{$opts{'options'}});
+		}
+	    my $testpath = $tests[$i]->{'path'};
+	    $path = $wdir . "/$tests[$i]->{'path'}";
 	    
-	    if ( $opts{'debug'} ) {
-     		    $status = system( "$command" );
-		} else {
-				$status = system( "$command >$testname-t.out 2>&1" );
-	   	}
-		my $cf = 0; # Number of differing files
-		my $ci = 0; # Number of diffs in intermediate
-		my $ce = 0; # Number of error code diffs
-	    my $elapsed = tv_interval ($t0, [gettimeofday]);
-	    if ( $status / 256 != 0 ) {
-	    	$cf = $ci = $ce = -2;
-    		# 03/07/15 17:02:49 140: WARNING: SUM: Number of changes in intermediate: 1
-    		# 03/07/15 17:02:49 140: WARNING: SUM: Number of changed files: 0
-    		if ( open( LOG, "< $testname-t.out" ) ) {
-      		    while ( <LOG> ) {
-    		        chomp;
-    				if( m/SUM:\s+Number\s+of\s+changed\s+files:\s*(\d+)/i ) {
-    			    	$cf = $1;
-    			    	next;
-    				}
-    				if( m/SUM:\s+Number\s+of\s+changes.*intermediate:\s*(\d+)/i ) {
-    			    	$ci = $1;
-    				}
-    				if( m/SUM:\s+Number\s+of\s+unexpected\s+errors.*:\s*(\d+)/i ) {
-    			    	$ce = $1;
-    				}
-    		    }
-    		    close( LOG);
-    		} else {
-    		    $cf = $ci = $ce = -1;
-    		}
-    		$failsum++;
-    		logtrc( "WARNING", "$testname.$type in directory $tests[$i]->{'path'} failed, time: " .
-    			sprintf( "%.2fs changes: i/f/e %s/%s/%s", $elapsed, $ci, $cf, $ce  ) );
-    	} else {
-			# Timers average / min / max ..
-			$elapsed_sum += $elapsed;
-			$elapsed_cnt++;
-			$elapsed_min = $elapsed if ( $elapsed < $elapsed_min );
-			$elapsed_max = $elapsed if ( $elapsed > $elapsed_max );
-			logsay( "$testname.$type in directory $tests[$i]->{'path'}, time : " .
-				sprintf( "%.2fs", $elapsed ) );
+	    my $testname = $tests[$i]->{'name'};
+	
+		if ( $testRE and $testpath !~ m/$testRE/io or
+			     exists $tests[$i]->{'skip'} and $tests[$i]->{'skip'} ) {
+				# this test is not selected ...
+				print( "Skipped test $testname ($testpath)\n" );
+				next;
+		}
+	
+		if ( $opts{'list'} ) {
+			print( "Selected test $testname ($testpath)\n" );
+			next;
+		}
+	
+		if ( defined( $opts{'import'} ) ) { # Create test directory from scratch (import directory)
+			doImport( $type, $tests[$i]->{'name'}, $tests[$i]->{'path'} );
+			next;
+		}
+	
+	    if( defined( $opts{'update'} ) ) {
+	    	$options .= ' -nodelta';
+	    	#!wig20060216: combine with bak
+	    	if( defined( $opts{'bak'} ) ) {
+	    		$options .= ' -bak';
+	    	}
 	    }
-    	ok( $status/256 == 0, "$testname.$type in directory $tests[$i]->{'path'}, time: " .
-		    		sprintf( "%.2fs changes: i/f/e %s/%s/%s", $elapsed, $ci, $cf, $ce  ) );
-    	chdir( $wdir );
-    }
+	    
+	    # Purge and strip out all extra sheets from intermediate data
+	    if( defined( $opts{'export'} ) ) {
+	    	$options .= ' -strip -nodelta';
+	    }
+	
+		# Do not use built-in, but external command
+	    if( gotScript($path, "$tests[$i]->{'name'}$cmd_ext") == 1 ) {
+	    	for my $opt ( qw( export debug purge update ) ) {
+	    		if( defined $opts{$opt}) {
+	    			$ENV{'MIXTEST_OPT'} .= $opt . ' '; 
+	    			if ( -x ( $path . '/' . $tests[$i]->{'name'} . '-' . $opt . $cmd_ext) ) {
+	    				$command = $tests[$i]->{'name'}. '-' . $opt . $cmd_ext;
+	    			} else {
+	    				$command = $tests[$i]->{'name'}. $cmd_ext;
+	    			}
+	        	}
+	    	}
+	    	unless( -x $path . '/' . $command ) {
+	    		print( "Warning: Missing script $command in path $path, use default instead!\n" );
+	    		$command = '';
+	    	}
+	    	# Create some environment variables:
+	    	# MIX_CMD, MIX_OPT
+	    	$ENV{'MIXTEST_CMD'} = $mix || 'mix_0.pl';
+	    }
+	    unless ( $command ) {
+	        while($tests[$i]->{'path'} =~ /\//g) {
+	    		$find = $find . "../";
+	    	}
+			$mix = $mix || 'mix_0.pl'; # Default ...
+			# Define the mix_0.pl to run
+			# $command  = "h:/work/mix_new/mix/mix_0.pl $options $find../$tests[$i]->{'name'}.$type";
+	    	$command  = 'perl -x ' . ( $opts{'debug'} ? '-d ' : '' ) .
+				"\"$mix\" $options \"$find../$tests[$i]->{'name'}.$type\"" ;
+	    }
+	    chdir( $path ) || logwarn("ERROR: Directory <$path> not found!");
+	    
+	    if ( -r "$testname-t.out" and not $opts{'debug'} ) {
+		    rename( "$testname-t.out", "$testname-t.out.0" )
+		       	      or print "rename of $testname-t.out failed"
+	    	          and exit 1;
+	    }
+	
+	    if ( defined( $opts{'purge'} ) ) {
+	        unlink <*.diff>;
+	    	unlink <*.out.0>;
+	    	unlink <*.out>;
+	    	unlink <*.pld>; #!wig20031218: no longer created ...
+	    	print( "Purged test $testname\n" );
+	    	next;
+	    } else {
+	        # "export", "update" and non-opt mode will create new output data:
+		    my $status;
+		    my $t0;
+	
+		    # measure elapsed time 
+		    $t0 = [gettimeofday];
+		    
+		    if ( $opts{'debug'} ) {
+	     		    $status = system( "$command" );
+			} else {
+					$status = system( "$command >$testname-t.out 2>&1" );
+		   	}
+			my $cf = 1; # Number of differing files
+			my $ci = 1; # Number of diffs in intermediate
+			my $cl = 1; # Number of missing/added files
+			my $ce = 1; # Number of error code diffs
+		    my $elapsed = tv_interval ($t0, [gettimeofday]);
+		    if ( $status / 256 != 0 ) {
+		    	$cf = $ci = $ce = -2;
+	    		# 03/07/15 17:02:49 140: WARNING: SUM: Number of changes in intermediate: 1
+	    		# 03/07/15 17:02:49 140: WARNING: SUM: Number of changed files: 0
+	 
+	    		$failsum++;
+	    		logtrc( "WARNING", "$testname.$type in directory $tests[$i]->{'path'} failed, time: " .
+	    			sprintf( "%.2fs changes: i/l/f/e %s/%s/%s/%s", $elapsed, $ci, $cl, $cf, $ce  ) );
+	    	} else {
+				# Timers average / min / max ..
+				$elapsed_sum += $elapsed;
+				$elapsed_cnt++;
+				$elapsed_min = $elapsed if ( $elapsed < $elapsed_min );
+				$elapsed_max = $elapsed if ( $elapsed > $elapsed_max );
+				logsay( "$testname.$type in directory $tests[$i]->{'path'}, time : " .
+					sprintf( "%.2fs", $elapsed ) );
+		    }
+	   		if ( not $opts{debug} and open( LOG, "< $testname-t.out" ) ) {
+	   		    while ( <LOG> ) {
+	  		        chomp;
+	   				if( m/SUM:\s+Number\s+of\s+changed\s+files:\s*(\d+)/i ) {
+	   			    	$cf = $1;
+	   			    	next;
+	   				}
+	   				if( m/SUM:\s+Number\s+of\s+changes.*intermediate:\s*(\d+)/i ) {
+	   			    	$ci = $1;
+	   				}
+	   				if( m/SUM:\s+Number\s+of\s+unexpected\s+errors.*:\s*(\d+)/i ) {
+	   			    	$ce = $1;
+	   				}
+	   				if( m/SUM:\s+Filelist\s+compare\s+result:\s*(\d+)/i ) {
+	   			    	$cl = $1;
+	   				}
+	   		    }
+	   		    close( LOG);
+	   		} else {
+	   		    $cf = $ci = $ce = $cl = -1;
+	   		}
+	   		if ( $opts{debug} ) {
+	   			$cf = $ci = $ce = $cl = 0;
+	   		}
+	    	ok( $status/256 == 0, "$testname.$type in directory $tests[$i]->{'path'}, time: " .
+			    		sprintf( "%.2fs changes: i/l/f/e %s/%s/%s/%s", $elapsed, $ci, $cl, $cf, $ce  ) );
+	    	chdir( $wdir );
+	    }
 	}
     $failstat{$type} = $failsum;
-}
+} # End of runMix
 
 #######################################################################
 #                         mkdirRec - function                         #
