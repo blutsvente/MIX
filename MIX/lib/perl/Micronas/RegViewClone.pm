@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewClone.pm,v 1.1 2006/06/22 11:45:43 lutscher Exp $
+#  RCSId: $Id: RegViewClone.pm,v 1.2 2006/06/22 12:20:14 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.1 $                                  
+#  Revision      : $Revision: 1.2 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -31,6 +31,9 @@
 ###############################################################################
 #
 #  $Log: RegViewClone.pm,v $
+#  Revision 1.2  2006/06/22 12:20:14  lutscher
+#  fixed a typo
+#
 #  Revision 1.1  2006/06/22 11:45:43  lutscher
 #  added new view HDL-vgch-rs-clone and package RegViewClone
 #
@@ -120,7 +123,7 @@ sub _gen_view_vgch_rs_clone {
 		my $o_new_space = $this->_clone_regspace($o_domain);
 		
 		# for debug only
-		$o_new_space->display() if ($this->global-{'debug'});
+		$o_new_space->display() if ($this->global->{'debug'});
 		
 		# generate Verilog register-shell
 		$o_new_space->_gen_view_vgch_rs($domain);
