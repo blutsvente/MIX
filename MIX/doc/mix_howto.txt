@@ -4,6 +4,69 @@ MIX HOWTO and FAQ
 
 >>keywords: MIX, top level generator, FAQ, HOWTO, register master
 
+>>title: Using tag:my_tag to mark comment lines to be printed (new in MixResport > 1.27)
+
+Since this new version of MixReport a new control value for the config
+key 'report.portlist.comments' allows to very selectively choose which
+input comment lines to print and which not:
+
+Mark the comments to be added to the output report with some text (tag)
+like '#portlist' in the ::ign column. Set
+
+  MIXCFG report.portlist.comments tag:portlist
+
+Now all comment lines not starting with '#portlist ' will be ignored.
+
+#!wig20060622
+
+>>title: Special characters in config file mix.cfg and with -conf option
+
+To allow setting of whitespace and empty string, mix accepts the
+following encodings:
+
+&sp;   <SP>    -> space
+&tab;  <TAB>   -> tab \t
+&nl;   <NL>    -> newline \n
+&nil;  <NIL>   -> empty string
+
+Using -conf a.b.c="" will not work, use -conf a.b.c='<NIL>'.
+Make sure that & ; < > are not evaluated by the shell (e.g. by
+enclosing the whole string into single quotes).
+
+#!wig20060621
+
+>>title: Comment lines in input sheets handling via mix -report portlist
+
+Comments in input sheets are marked by a leading # or // in the ::ign column.
+Any other text in ::ign is not considered as comment, the processing by mix
+is undefined.
+
+To stop the parsing of comment lines, set
+  MIXCFG conn.comments <NIL>
+  MIXCFG TYPE.comments <NIL>
+
+TYPE is one of "conn", "hier", "i2c", "default" ... (all sheet types known be mix).
+"<NIL>" is meant literally and is replaced by a empty string.
+
+If you set TYPE.comments to either "post" or "pre" (default: post", mix will
+bind the comments either to the following data (non-comment) line or to the
+line before the comment block started. Several lines of comments are attached
+to the same data line in order of appearance.
+
+By default all comment lines are printed in the table. Use
+MIXCFG report.portlist.comments striphash,N
+to limit the number of consecutive lines to print to N.
+If "striphash" is set, leading "#" will get removed.
+N is 0 by default, which means unlimited.
+
+Update 20060621 (MixReport version > 1.27): 
+"naportlist" can be used to suppress printing of comments in portlists.
+A value of -1 for N will have the same effect.
+Set "stripdblslash" to remove leading // comments.
+Use "stripall" to remove both "#" and "//".  
+
+#!wig20060620
+
 >>title: Using generics and parameter
 
 In order to create parameters and generics, use "P" and "G" in the ::mode
@@ -60,7 +123,7 @@ next KEY or end of text will be printed for this hook.
 ::udc text is overloaded if you defined global hooks.
 
 Example:
-MIXCFG macro.%VERILOG_HOOK_HEAD% HOOK: global verilog head hook text
+  MIXCFG macro.%VERILOG_HOOK_HEAD% HOOK: global verilog head hook text
 
 Example for ::udc
 
@@ -98,11 +161,11 @@ second, third,... sort criteria.
 
 Example:
 
-MIXCFG output.generate.portmapsort ::bundle,alpha
+  MIXCFG output.generate.portmapsort ::bundle,alpha
 
 or
 
-MIXCFG output.generate.portmapsort ::bundle,inout,alpha
+  MIXCFG output.generate.portmapsort ::bundle,inout,alpha
 
 will sort by the value of the ::bundle column, then all input keys, then
 all output.
