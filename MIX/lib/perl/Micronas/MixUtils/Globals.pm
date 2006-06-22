@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.15 $                                          |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/06/22 07:13:21 $                              |
+# | Revision:   $Revision: 1.16 $                                          |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2006/06/22 09:01:00 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.16  2006/06/22 09:01:00  lutscher
+# | added reg_shell params
+# |
 # | Revision 1.15  2006/06/22 07:13:21  wig
 # | Updated HIGH/LOW parsing, extended report.portlist.comments
 # |
@@ -96,9 +99,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.15 2006/06/22 07:13:21 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.16 2006/06/22 09:01:00 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.15 $';  
+my $thisrevision    =      '$Revision: 1.16 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -721,6 +724,20 @@ sub init {
 				  'exclude_regs'  => "", # comma seperated list of registers to exclude from STL generation
 				  'use_base_addr' => 0
 				 },
+					# parameters for cloning register object
+                    # the naming goes according to placeholders:
+                    # %D domain name
+                    # %R original name of register
+                    # %F original name of field (only availabe in field_naming)
+                    # %N decimal number
+                    # e.g. 'scc_%N_%R' creates name scc_06_reg_x from original name reg_x
+		'clone' => {
+					'number'       => 1,          # number of clones
+					'addr_spacing' => 10,         # number of address bits reserved for every clone
+					'reg_naming'   => '%R_%N%N',  # naming scheme for cloned register
+					'field_naming' => '%F',       # naming scheme for cloned field
+					'unique_clocks'=> 1           # if 1, uniquify clock names of clones
+				   },
 					# legacy parameters, not needed anymore!
 		'mode'             => 'lcport', # lcport -> map created port names to lowercase	
 		'regwidth'	=> 32,  # Default register width
