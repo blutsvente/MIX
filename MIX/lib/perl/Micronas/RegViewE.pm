@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.8 2006/06/12 10:05:01 roettger Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.9 2006/06/23 12:46:47 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.9  2006/06/23 12:46:47  lutscher
+#  small change
+#
 #  Revision 1.8  2006/06/12 10:05:01  roettger
 #  added, output with definition in register list
 #
@@ -356,10 +359,10 @@ $reg_fld,${$singlefield}{name},${$singlefield}{size},${$singlefield}{rw},${$sing
             foreach $ee(0..$#{ $def{$cc}{list} } ){
                 $valus = $ee;
             };  
-            printf E_FILE ("  %%%s_list[%s]:list of %s vr_ad_reg;\n",$def{$cc}{list}[0]{MY_REG},($valus+1),$def{$cc}{list}[0]{MY_REG});
+            printf E_FILE ("  %%%s_n[%s]:list of %s vr_ad_reg;\n",$def{$cc}{list}[0]{MY_REG},($valus+1),$def{$cc}{list}[0]{MY_REG});
             printf E_FILE ("  post_generate() is also {\n");
             for $dd(0..$#{ $def{$cc}{list} } ) {
-               printf E_FILE ("    add_with_offset(%s,%s_list[%s]);\n",$def{$cc}{list}[$dd]{address},$def{$cc}{list}[0]{MY_REG},$dd);
+               printf E_FILE ("    add_with_offset(%s,%s_n[%s]);\n",$def{$cc}{list}[$dd]{address},$def{$cc}{list}[0]{MY_REG},$dd);
             };
             _info("Generated a list of ", $def{$cc}{list}[0]{MY_REG}, " with ", ($valus+1), " items");
             printf E_FILE ("  };\n");
