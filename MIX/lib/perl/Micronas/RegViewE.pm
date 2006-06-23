@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.9 2006/06/23 12:46:47 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.10 2006/06/23 14:15:43 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.10  2006/06/23 14:15:43  lutscher
+#  convert names to lowercase
+#
 #  Revision 1.9  2006/06/23 12:46:47  lutscher
 #  small change
 #
@@ -224,7 +227,8 @@ sub _gen_view_vr_ad {
 			$permission{"W"} = 0;
 		
 			if ($o_reg->{'definition'} eq '') {
-			    print E_FILE $reg_def, " ", uc($o_reg->name);
+                // convert register name to lower-case because the vr_ad macro is also doing it
+			    print E_FILE $reg_def, " ", lc($o_reg->name);
 			    print E_FILE " ", $reg_prefix, "_";
 			};
 			$ii =0;
