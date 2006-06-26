@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.11 2006/06/23 14:44:41 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.12 2006/06/26 13:48:47 roettger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.12  2006/06/26 13:48:47  roettger
+#  added config
+#
 #  Revision 1.11  2006/06/23 14:44:41  lutscher
 #  fixed typo
 #
@@ -184,6 +187,7 @@ sub _gen_view_vr_ad {
 	if (!scalar(@ldomains)) { # something to do ?
 		_warning("no domains found to process, exiting");
 	};
+	my $my_reg_file_name = uc(join("_",$reg_prefix, map {$_->{name}} @ldomains));
 
 	my $e_filename = join("_",$this->global->{'E_FILE'}{'prefix'}, map {$_->{name}} @ldomains).$this->global->{'E_FILE'}{'suffix'};
 	open(E_FILE, ">$e_filename") || logwarn("ERROR: could not open file \'$e_filename\' for writing");
@@ -379,7 +383,7 @@ $reg_fld,${$singlefield}{name},${$singlefield}{size},${$singlefield}{rw},${$sing
         };
 
 
-      
+      printf E_FILE ("\n\nextend vr_ad_reg_file_kind : [%s];\n", $my_reg_file_name );
       print E_FILE $this->global->{'E_FILE'}{'footer'};
 
      close(E_FILE);
