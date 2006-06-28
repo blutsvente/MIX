@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.16 $                                          |
+# | Revision:   $Revision: 1.17 $                                          |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2006/06/22 09:01:00 $                              |
+# | Date:       $Date: 2006/06/28 09:16:02 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.17  2006/06/28 09:16:02  lutscher
+# | moved two reg_shell parameters to Globals.pm
+# |
 # | Revision 1.16  2006/06/22 09:01:00  lutscher
 # | added reg_shell params
 # |
@@ -99,9 +102,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.16 2006/06/22 09:01:00 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.17 2006/06/28 09:16:02 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.16 $';  
+my $thisrevision    =      '$Revision: 1.17 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -718,12 +721,16 @@ sub init {
         'exclude_regs' => "",          # comma seperated list of register names to exclude from code generation
 		'exclude_fields' => "",        # comma seperated list of field names to exclude from code generation	
 		'add_takeover_signals' => 0,   # If 1, internal update signals are also routed to top-level ports
+        'regshell_prefix'    => "rs",     # register-shell prefix
+		'cfg_module_prefix'  => "rs_cfg", # prefix for config register block
+
 					# parameters for STL view 
 		'stl' => {
 				  'initial_idle'  => 100,
 				  'exclude_regs'  => "", # comma seperated list of registers to exclude from STL generation
 				  'use_base_addr' => 0
 				 },
+
 					# parameters for cloning register object
                     # the naming goes according to placeholders:
                     # %D domain name

@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.41 2006/06/22 11:45:09 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.42 2006/06/28 09:16:02 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.41 $                                  
+#  Revision      : $Revision: 1.42 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.42  2006/06/28 09:16:02  lutscher
+#  moved two reg_shell parameters to Globals.pm
+#
 #  Revision 1.41  2006/06/22 11:45:09  lutscher
 #  removed an info message
 #
@@ -145,8 +148,6 @@ sub _gen_view_vgch_rs {
 	$this->global(
 				  'ocp_target_name'    => "ocp_target", # library module name
 				  'mcda_name'          => "rs_mcda",    # library module name
-				  'regshell_prefix'    => "rs",         # register-shell prefix
-				  'cfg_module_prefix'  => "rs_cfg",     # prefix for config register block
 				  'int_set_postfix'    => "_set_p",     # postfix for interrupt-set input signal
 				  'scan_en_port_name'  => "test_en",    # name of test-enable input
 				  'clockgate_te_name'  => "scan_shift_enable", # name of input to connect with test-enable port of clock-gating cell
@@ -180,6 +181,8 @@ sub _gen_view_vgch_rs {
 					  'reg_shell.exclude_regs',
 					  'reg_shell.exclude_fields',
 					  'reg_shell.add_takeover_signals',
+                      'reg_shell.regshell_prefix',  
+                      'reg_shell.cfg_module_prefix',
 					  'postfix.POSTFIX_PORT_OUT', 
 					  'postfix.POSTFIX_PORT_IN',
 					  'postfix.POSTFIX_FIELD_OUT', 
@@ -611,7 +614,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.41 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.42 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
