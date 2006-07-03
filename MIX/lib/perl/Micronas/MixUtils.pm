@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.121 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/06/22 07:13:21 $                              |
+# | Revision:   $Revision: 1.122 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2006/07/03 15:34:37 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.121 2006/06/22 07:13:21 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.122 2006/07/03 15:34:37 lutscher Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.122  2006/07/03 15:34:37  lutscher
+# | fixed mix_use_on_demand()
+# |
 # | Revision 1.121  2006/06/22 07:13:21  wig
 # | Updated HIGH/LOW parsing, extended report.portlist.comments
 # |
@@ -208,11 +211,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.121 2006/06/22 07:13:21 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.122 2006/07/03 15:34:37 lutscher Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.121 $';         #'
+my $thisrevision        =      '$Revision: 1.122 $';         #'
 
-# Revision:   $Revision: 1.121 $   
+# Revision:   $Revision: 1.122 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2459,11 +2462,13 @@ sub mix_store ($$;$){
 sub mix_use_on_demand ($) {
 	my $module = shift;
 
-	if ( eval $module ) {
-            $logger->error('__E_USE_ONDEMAND', "\tCannot load module: $@");
-            return 0;
-	}
-	return 1;
+    eval $module;
+    if ($@) {
+        $logger->error('__E_USE_ONDEMAND', "\tCannot load module $module; reason:\n$@");
+        return 0;
+	} else { 
+        return 1;
+    };
 } # End of use_on_demand
 	
 ####################################################################
