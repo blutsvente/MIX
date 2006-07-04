@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.13 2006/07/04 08:49:56 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.14 2006/07/04 12:57:51 roettger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.14  2006/07/04 12:57:51  roettger
+#  fixed access attribute for holes to 'R'
+#
 #  Revision 1.13  2006/07/04 08:49:56  lutscher
 #  changed the upper/lower-case conversions as before
 #
@@ -127,6 +130,8 @@ use Micronas::MixUtils::RegUtils;
 # one output is generated containing all register space domains in the Reg object
 
 sub _gen_view_vr_ad {
+        my $holes_permission = "STANDARD";        # "STANDARD" or "AUTO" || STANDARD permission of holes = "R", 
+	                                          # "AUTO"  permission of holes like the most in the register
 	my $this = shift;
 	my @ldomains;
 	my $href;
@@ -277,7 +282,11 @@ sub _gen_view_vr_ad {
 				$theholes[$ii]{pos}  = ${$singlefield}{pos} + ${$singlefield}{size};
 				$theholes[$ii]{name} = $hole_name . $theholes[$ii]{pos};
 				$theholes[$ii]{size} = $upper - (${$singlefield}{pos} + ${$singlefield}{size});
-				$theholes[$ii]{rw}   = $perm;
+				if ($holes_permission eq "STANDARD"){
+				    $theholes[$ii]{rw}   = "R";
+				}else{
+				    $theholes[$ii]{rw}   = $perm;
+				};
 				$theholes[$ii]{parent_block}   = ${$singlefield}{parent_block};
 				$theholes[$ii]{init}  = "0x0";
 				$ii++;
@@ -289,7 +298,11 @@ sub _gen_view_vr_ad {
 			    $theholes[$ii]{pos}  = 0;
 			    $theholes[$ii]{name} = $hole_name . "0";
 			    $theholes[$ii]{size} = $upper;
-			    $theholes[$ii]{rw}   = $perm;
+			    if ($holes_permission eq "STANDARD"){
+				$theholes[$ii]{rw}   = "R";
+			    }else{
+				$theholes[$ii]{rw}   = $perm;
+			    };
 			    $theholes[$ii]{parent_block}   = "na";
 			    $theholes[$ii]{init}  = "0x0";
 			    $ii++;
