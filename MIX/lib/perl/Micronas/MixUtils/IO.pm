@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.44 $                                          |
+# | Revision:   $Revision: 1.45 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/07/04 12:22:35 $                              |
+# | Date:       $Date: 2006/07/04 13:13:49 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.45  2006/07/04 13:13:49  wig
+# |  	IO.pm : fixed convert_in call for i2c sheets
+# |
 # | Revision 1.44  2006/07/04 12:22:35  wig
 # | Fixed TOP handling, -cfg FILE issue, ...
 # |
@@ -130,11 +133,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.44 2006/07/04 12:22:35 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.45 2006/07/04 13:13:49 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.44 $'; #'  
+my $thisrevision    =      '$Revision: 1.45 $'; #'  
 
-# Revision:   $Revision: 1.44 $
+# Revision:   $Revision: 1.45 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -450,8 +453,8 @@ sub mix_utils_open_input(@) {
 
 		for my $c ( keys %$i2c ) {
 	    	$eh->inc( 'i2c.parsed' );
-	    	my @norm_i2c = convert_in( 'i2c', $c);
-	    	select_variant( \@norm_i2c, 'I2C' );
+	    	my @norm_i2c = convert_in( 'i2c', $i2c->{$c});
+	    	select_variant( \@norm_i2c, 'I2C' . $c );
 	    	push(@$ai2c, @norm_i2c);
 		}
     }
