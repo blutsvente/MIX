@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.122 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2006/07/03 15:34:37 $                              |
+# | Revision:   $Revision: 1.123 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2006/07/04 12:22:35 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.122 2006/07/03 15:34:37 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.123 2006/07/04 12:22:35 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.123  2006/07/04 12:22:35  wig
+# | Fixed TOP handling, -cfg FILE issue, ...
+# |
 # | Revision 1.122  2006/07/03 15:34:37  lutscher
 # | fixed mix_use_on_demand()
 # |
@@ -158,7 +161,7 @@ use Storable;
 # Prototypes
 #
 sub mix_get_eh			();
-sub select_variant		($);
+sub select_variant		($;$);
 sub mix_list_conf		();
 sub mix_list_econf		($);
 sub mix_apply_conf		($$$);
@@ -194,7 +197,8 @@ sub mix_utils_report_hdlfiles ();
 sub _get_deltalist 		();
 sub _sum_filediff		();
 sub _sum_errdiff 		();
-sub _mix_special_input ($);
+sub _mix_special_input	($);
+sub _mix_utils_readcfg	($);
 
 ##############################################################
 # Global variables
@@ -211,11 +215,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.122 2006/07/03 15:34:37 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.123 2006/07/04 12:22:35 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.122 $';         #'
+my $thisrevision        =      '$Revision: 1.123 $';         #'
 
-# Revision:   $Revision: 1.122 $   
+# Revision:   $Revision: 1.123 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -240,6 +244,15 @@ sub mix_getopt_header(@) {
         mix_usage();
         exit 1;
     }
+
+	#
+	#	CFG -> read in before doing anything else
+	#
+	if ( $OPTVAL{'cfg'} ) {
+		_mix_utils_readcfg( 'CMDLINE' );
+		# Redo that:
+		post_configset( $eh );
+	}
 
     #
     # CONF options set -> overload built-in configuration (needs to be first!!!!)
@@ -850,18 +863,8 @@ sub mix_init () {
 	#	key can be key.key.key ... (see Globals.pm structure or use -listconf to dump current values)
 	# !!Caveat: there will be no checks whatsoever on the values or keys !!
 	# Locations to be checked are:
-	# $HOME, $PROJECT, $WORKAREA, cwd(), -cfg FILE
-	#
-	my $extracfg = '';
-	if ( exists( $OPTVAL{'cfg'} ) ) {
-		$extracfg = $OPTVAL{'cfg'};
-		unless ( -r $extracfg ) {
-			$logger->warn( '__W_CFG_FILE',
-				"\tCannot read cfg file $extracfg! Ignore it!");
-			$extracfg = '';
-		}
-	}
-	
+	# $HOME, $PROJECT, $WORKAREA, cwd(), -cfg FILE (LATER!)
+	#	
 	foreach my $conf (
     	$eh->get('macro.%HOME%'), 
     	$eh->get('macro.%PROJECT%'),
@@ -871,46 +874,63 @@ sub mix_init () {
     	'.',
     	'CMDLINE', # SPECIAL: replace the key by the -cfg FILE.cfg name
     ) {
-   		# If the key is CMDLINE and $extracfg is set
-    	my $cfgfile = ( $conf eq 'CMDLINE' ) ? $extracfg :
-    			$conf . '/' . 'mix.cfg';
-    	next unless $cfgfile;
-    	if ( -r $cfgfile ) {
-			$logger->info( "__I_READ_CFG",
-				"\tReading extra configurations from $cfgfile" );
-			unless( open( CFG, "< $cfgfile" ) ) {
-	    		$logger->warn('__W_READ_CFG',
-	    			"\tCannot open $cfgfile for reading: $!");
-			} else {
-				my $prev = '';
-	    		while( <CFG> ) {
-					chomp;
-					$_ =~ s,\r$,,;
-					$_ = $prev . $_; # prepend previous line
-					next if ( m,^\s*#,o );
-					# Add next line if line ends with \
-					if ( $_ =~ s/\\$// ) {
-						$prev = $_ . "\n"; # Add a line break ...
-	    				next;
-	    			}
-	    			$prev = "";
-			
-					if ( m,^\s*MIXCFG\s+(\S+)\s*(.*),s ) { # MIXCFG key.key.key value
-		    			mix_apply_conf( $1, $2, 'file:mix.cfg' );
-					}
-					# Other lines are discarded silently
-	    		}
-	   			close( CFG ) or
-	   				$logger->warn('__W_CLOSE_CFG',
-	   					"\tCannot close config file $cfgfile: $!" );
-			}
-    	}
-	}
+		_mix_utils_readcfg( $conf );
+    }
 
 	post_configset( $eh );
 
 	return $eh;	
 } # End of mix_init
+
+#
+# Read mix.cfg file
+#    
+sub _mix_utils_readcfg ($) {
+	my $conf = shift;
+   	# If the key is CMDLINE and $extracfg is set
+   	my $cfgfile = $conf . '/' . 'mix.cfg';
+   	if ( $conf eq 'CMDLINE' ) {
+		if ( exists( $OPTVAL{'cfg'} ) ) {
+			$cfgfile = $OPTVAL{'cfg'};
+			unless ( -r $cfgfile ) {
+				$logger->warn( '__W_CFG_FILE',
+					"\tCannot read cfg file $cfgfile! Ignore it!");
+				$cfgfile = '__E_NOCFG_FILE';
+			}
+		}
+   	}
+    next unless $cfgfile;
+    if ( -r $cfgfile ) {
+		$logger->info( "__I_READ_CFG",
+			"\tReading extra configurations from $cfgfile" );
+		unless( open( CFG, "< $cfgfile" ) ) {
+	   		$logger->warn('__W_READ_CFG',
+	   			"\tCannot open $cfgfile for reading: $!");
+		} else {
+			my $prev = '';
+	   		while( <CFG> ) {
+				chomp;
+				$_ =~ s,\r$,,;
+				$_ = $prev . $_; # prepend previous line
+				next if ( m,^\s*#,o );
+				# Add next line if line ends with \
+				if ( $_ =~ s/\\$// ) {
+					$prev = $_ . "\n"; # Add a line break ...
+    				next;
+    			}
+    			$prev = '';
+		
+				if ( m,^\s*MIXCFG\s+(\S+)\s*(.*),s ) { # MIXCFG key.key.key value
+	    			mix_apply_conf( $1, $2, 'file:mix.cfg' );
+				}
+				# Other lines are discarded silently
+    		}
+   			close( CFG ) or
+   				$logger->warn('__W_CLOSE_CFG',
+   					"\tCannot close config file $cfgfile: $!" );
+		}
+	}
+} # End of _mix_utils_readcfg
 
 #
 # set config options and $eh derived from config settings
@@ -2028,27 +2048,48 @@ if ::variants is not defined, this row is always selected. If a row is marked as
 is will be selected only if no variant is choosen.
 Matching is done case insensitive!
 
+Several variants can be selected by adding the appropriate variant names
+to the ::variants columns, seperated by space or ,. 
+
+The lines not selected by a variant will be marked by
+adding a "# ..." to the	::ign column. A later parser run removes
+that lines then (see parse_*_init)
+
+Input
+	excel sheet converted into array of hashes
+	type string (hier, conn, ...; optional)
+
+Returns
+	- (works on input array ref)
 =cut
 
-sub select_variant ($) {
-    my $r_data = shift;
+sub select_variant ($;$) {
+    my $r_data	= shift;
+	my $type	= shift || "default";
 
     unless ( defined $r_data ) {
 	    $logger->fatal('__F_BAD_VARIANT', "\tselect_variant called with bad argument!");
 	    die;
     }
 
+	my $n = 0;
+	my $variant = $eh->get( 'variant' );
     for my $i ( 0..$#$r_data ) {
 		if ( exists( $r_data->[$i]{'::variants'} ) ) {
 	    	my $var = $r_data->[$i]{'::variants'};	    
 	    	if ( defined( $var ) and $var !~ m/^\s*$/o ) {
 				$var =~ s/[ \t,]+/|/g; # Convert into Perl RE (Var1|Var2|Var3)
-				$var = "(" . $var . ")";
-				if ( $eh->get( 'variant' ) !~ m/^$var$/i ) {
-		    		$r_data->[$i]{'::ign'} = "# Variant not selected!"; # Mark for deletion ...
+				$var = '(' . $var . ')';
+				if ( $variant !~ m/^$var$/i ) {
+		    		$r_data->[$i]{'::ign'} = '# Variant not selected!'; # Mark for deletion ...
+		    		$n++;
 				}
 	    	}
 		}
+    }
+    if ( $variant ne 'Default' or $n ) {
+    	$logger->info( '__I_VARIANT',
+    		"\tRemoved $n lines from input sheet $type for variant $variant" );
     }
 } # End of select_variant
 

@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.90 $                                         |
+# | Revision:   $Revision: 1.91 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/06/22 07:13:21 $                              |
+# | Date:       $Date: 2006/07/04 12:22:35 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.90 2006/06/22 07:13:21 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.91 2006/07/04 12:22:35 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.91  2006/07/04 12:22:35  wig
+# | Fixed TOP handling, -cfg FILE issue, ...
+# |
 # | Revision 1.90  2006/06/22 07:13:21  wig
 # | Updated HIGH/LOW parsing, extended report.portlist.comments
 # |
@@ -133,9 +136,9 @@ sub _mix_wr_nice_comment		($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.90 2006/06/22 07:13:21 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.91 2006/07/04 12:22:35 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.90 $';
+my $thisrevision   =      '$Revision: 1.91 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -710,29 +713,23 @@ sub _create_entity ($$) {
 		my $type = $conndb{$i}{'::type'} || "_E_CONNTYPE"; 
         my $cast = '';
         my $nr   = $conndb{$i}{'::connnr'};
-        $nr = "_E_CONNNR" unless( defined $nr );
+        $nr = '__E_CONNNR' unless( defined $nr );
         
 		#
 		# Iterate through all inst/ports ...
 		#
         for my $port ( keys( %$sport ) ) {
-            # my $index = $signal->{$port};
-            # for my $ii ( split( ',', $index ) ) {
-            #    #mode = in
-
-	    	#TODO: Catch all bad cases before in seperate check stage!
-	    
-	    	my $h = -100000; # Absurd value .... just to avoid undef
-	    	my $l = -100000;  # Absurd value ....
-			my $gen = 0;     # Flag for generated port
-			my $descr = '';
-			my $rorw = '';
+	    	my $h = -100000;	# Absurd value .... just to avoid undef
+	    	my $l = -100000;	# Absurd value ....
+			my $gen = 0;		# Flag for generated port
+			my $descr = '';		# Keep description
+			my $rorw = '';		# Storage for special "rorw" (reg or wire switch)
 			
 	    	# width definition may differ for this port ....
 	    	for my $ii ( split( ',', $$sport{$port} ) ) {
 				my $thissig = $conndb{$i}{'::' . $io}[$ii]; # Get this signal ...
 				# Find max/min port bounds ....
-				#TODO: What if there are holes? Sanity checks need to be done before ...
+				# TODO : What if there are holes? Sanity checks need to be done before ...
 				if ( defined $thissig->{'port_f'} and $thissig->{'port_f'} ne '' ) { # This is a bus ...
                     if ( $h =~ m,^-?\d+$,o ) {
                         if ( $thissig->{'port_f'} =~ m,^\d+$,o ) {
@@ -790,7 +787,7 @@ sub _create_entity ($$) {
                 	}
             	}
             	# Remember: was that port generated?
-            	#TODO: improve error handling
+            	# TODO : improve error handling
 				if ( exists( $thissig->{'_gen_'} ) ) {
 					$gen = 1;
 				}
@@ -825,7 +822,7 @@ sub _create_entity ($$) {
         	# TODO : Expand to work for any type ...
         	#!wig20040330: if port spans from 0:0 remove the _vector, too (?)
         	if ( ( ( not defined( $h ) and not defined( $l )) or
-                   ( $h eq "0" and $l eq "0" ) ) and
+                   ( $h eq '0' and $l eq '0' ) ) and
                   $type =~ m,(.+)_vector, ) {
 				#!wig: remove vector, leave rest as is: $type = $1;
 				$type =~ s/_vector//io;

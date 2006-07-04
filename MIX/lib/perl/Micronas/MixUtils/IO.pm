@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.43 $                                          |
+# | Revision:   $Revision: 1.44 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/05/09 14:39:17 $                              |
+# | Date:       $Date: 2006/07/04 12:22:35 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.44  2006/07/04 12:22:35  wig
+# | Fixed TOP handling, -cfg FILE issue, ...
+# |
 # | Revision 1.43  2006/05/09 14:39:17  wig
 # |  	MixParser.pm MixUtils.pm MixWriter.pm : improved constant assignments
 # | 	Globals.pm IO.pm : improved limits, return value of write_delta_sheet
@@ -127,11 +130,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.43 2006/05/09 14:39:17 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.44 2006/07/04 12:22:35 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.43 $'; #'  
+my $thisrevision    =      '$Revision: 1.44 $'; #'  
 
-# Revision:   $Revision: 1.43 $
+# Revision:   $Revision: 1.44 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -380,30 +383,34 @@ sub mix_utils_open_input(@) {
 		}
 
 		my @conf;
-		my @conn;
-		my @hier;
-		my @io;
-		my @i2c;
+		my $conn;
+		my $hier;
+		my $io;
+		my $i2c;
 
 		# maybe there is a CONF page?
 		# Change CONF accordingly (will not be visible at upper world)
-		#TODO: add plugin interface to read in whatever is needed ...
+		# TODO : add plugin interface to read in whatever is needed ...
 		@conf = open_infile( $i, $eh->get( 'conf.xls' ), $eh->get( 'conf.xxls' ), $eh->get( 'conf.req' ) );
 
 		# Open connectivity sheet(s)
-		@conn = open_infile( $i, $eh->get( 'conn.xls' ), $eh->get( 'conn.xxls' ), $eh->get( 'conn.req' ) );
+		$conn = open_infile( $i, $eh->get( 'conn.xls' ), $eh->get( 'conn.xxls' ),
+			$eh->get( 'conn.req' ) . ',hash' );
 
 		# Open hierachy sheets
-		@hier = open_infile( $i, $eh->get( 'hier.xls' ), $eh->get( 'hier.xxls' ), $eh->get( 'hier.req' ) );
+		$hier = open_infile( $i, $eh->get( 'hier.xls' ), $eh->get( 'hier.xxls' ),
+			$eh->get( 'hier.req' ) . ',hash' );
 
 		# Open IO sheet (if available, not needed!)
-		@io = open_infile( $i, $eh->get( 'io.xls' ), $eh->get( 'io.xxls'), $eh->get( 'io.req' ) );
+		$io = open_infile( $i, $eh->get( 'io.xls' ), $eh->get( 'io.xxls'),
+			$eh->get( 'io.req' ) . ',hash' );
 
 		# Open I2C sheet (if available, not needed!)
-		@i2c = open_infile( $i, $eh->get( 'i2c.xls' ), $eh->get( 'i2c.xxls' ), $eh->get( 'i2c.req' ) );
+		$i2c = open_infile( $i, $eh->get( 'i2c.xls' ), $eh->get( 'i2c.xxls' ),
+			$eh->get( 'i2c.req' ) . ',hash' );
 
 		# Did we get enough sheets:
-		if(!@conn && !@conf && !@hier && !@io && !@i2c) {
+		unless( $conn or @conf or $hier or $io or $i2c ) {
 	    	$logger->error('__E_OPEN_INPUT', "\tNo input found in file $i!\n");
 	    	next; # -> skip to next
 		}
@@ -418,32 +425,33 @@ sub mix_utils_open_input(@) {
 		}
 
 		# Merge conn sheets:
-		for my $c ( @conn ) {
+		for my $c ( keys %$conn ) {
 	    	$eh->inc( 'conn.parsed' );
- 	    	my @norm_conn = convert_in( 'conn', $c ); # Normalize and read in
+ 	    	my @norm_conn = convert_in( 'conn', $conn->{$c} ); # Normalize and read in
+ 	    	select_variant( \@norm_conn, 'CONN ' . $c );
 	    	push( @$aconn, @norm_conn ); # Append
 		}
 
 		# Merge hier sheets:
-		for my $c ( @hier ) {
+		for my $c ( keys %$hier ) {
 	    	$eh->inc( 'hier.parsed' );
-	    	my @norm_hier = convert_in( 'hier', $c );
+	    	my @norm_hier = convert_in( 'hier', $hier->{$c} );
  	    	# Remove all lines not selected by our variant
-	    	#TODO: Should we allow variants in the CONN sheet, too??
-	    	select_variant( \@norm_hier );
+	    	select_variant( \@norm_hier, 'HIER ' . $c );
 	    	push( @$ahier,   @norm_hier );	# Append
 		}
 
-		for my $c ( @io ) {
+		for my $c ( keys %$io ) {
 	    	$eh->inc( 'io.parsed' );
-	    	my @norm_io = convert_in( 'io', $c );
+	    	my @norm_io = convert_in( 'io', $io->{$c} );
+	    	select_variant( \@norm_io, 'IO ' . $c );
 	    	push( @$aio, @norm_io );   # Append
 		}
 
-		for my $c ( @i2c ) {
+		for my $c ( keys %$i2c ) {
 	    	$eh->inc( 'i2c.parsed' );
 	    	my @norm_i2c = convert_in( 'i2c', $c);
-	    	select_variant( \@norm_i2c);
+	    	select_variant( \@norm_i2c, 'I2C' );
 	    	push(@$ai2c, @norm_i2c);
 		}
     }
@@ -631,7 +639,7 @@ sub open_xls($$$$){
 		return ();
     }
 
-    my $cell = "";
+    my $cell = '';
     my @line = ();
     my @sheet = ();
     my @all = ();
@@ -664,7 +672,7 @@ sub open_xls($$$$){
 
 		#!wig20031218: take away trainling empty lines ...
 		if ( scalar( @sheet ) > 0 ) {
-	    	while( not join( "", @{$sheet[-1]} ) ) {
+	    	while( not join( '', @{$sheet[-1]} ) ) {
 				pop( @sheet );
 	    	}
 		}

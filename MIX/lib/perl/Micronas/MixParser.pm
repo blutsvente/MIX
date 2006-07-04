@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.76 $                                         |
+# | Revision:   $Revision: 1.77 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/06/22 07:13:21 $                              |
+# | Date:       $Date: 2006/07/04 12:22:36 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.76 2006/06/22 07:13:21 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.77 2006/07/04 12:22:36 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.77  2006/07/04 12:22:36  wig
+# | Fixed TOP handling, -cfg FILE issue, ...
+# |
 # | Revision 1.76  2006/06/22 07:13:21  wig
 # | Updated HIGH/LOW parsing, extended report.portlist.comments
 # |
@@ -163,9 +166,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.76 2006/06/22 07:13:21 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.77 2006/07/04 12:22:36 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.76 $';
+my $thisrevision =	'$Revision: 1.77 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -840,7 +843,13 @@ sub merge_inst ($%) {
                 # If parent is already defined -> change it ...
                 unless ( exists( $hierdb{$data{'::parent'}} ) ) {
                     $logger->info( '__I_MERGE_INST', "\tAutocreate parent for $name: $parent" );
-                    create_inst( $parent, () );
+                    my %info = ();
+                    if ( $parent =~ m/^\s*%?testbench/i ) {
+                    	# Automatically link to %TOP%!
+                    	# TODO : Check if that is o.k. always (what if user defines his own testbench?
+                    	$info{'::parent'} = '%TOP%';
+                    }
+                    create_inst( $parent, %info );
                 }
                 my $pnode = $hierdb{$parent}{'::treeobj'};
                 $pnode->add_daughter( $node );
@@ -2707,6 +2716,15 @@ sub get_top_cell () {
     	if ( $topname eq '%TOP%' ) {
     	# Default is %TOP% -> take daughter or daughter(s) of TESTBENCH
     		@tops = ( $hierdb{$topname}{'::treeobj'}->daughters() );
+    		if ( scalar( @tops ) == 0 ) { # %TOP% has no daughters ->
+    			# Try TESTBENCH
+    			if ( exists( $hierdb{'TESTBENCH'} ) ) {
+    				$logger->info( '__I_GET_TOP', "\tFall back to TESTBENCH for %TOP%" );
+    				$eh->set( 'top', 'TESTBENCH' );
+    				$topname = 'TESTBENCH';
+    				@tops = ( $hierdb{'TESTBENCH'}{'::treeobj'}->daughters() );
+    			}
+    		}
     		# If the @tops is "TESTBENCH" and that was automatically generated
     		#	-> go one level down
     		for my $t ( @tops ) {

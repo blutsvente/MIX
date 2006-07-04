@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.17 $                                          |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2006/06/28 09:16:02 $                              |
+# | Revision:   $Revision: 1.18 $                                          |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2006/07/04 12:22:35 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.18  2006/07/04 12:22:35  wig
+# | Fixed TOP handling, -cfg FILE issue, ...
+# |
 # | Revision 1.17  2006/06/28 09:16:02  lutscher
 # | moved two reg_shell parameters to Globals.pm
 # |
@@ -102,9 +105,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.17 2006/06/28 09:16:02 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.18 2006/07/04 12:22:35 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.17 $';  
+my $thisrevision    =      '$Revision: 1.18 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1233,25 +1236,6 @@ sub init {
 			'error'  => 0,
 			'fatal'	 => 0,
 	};
-	# Limit number of logged messages ...
-	$this->{'cfg'}{'loglimit'} = {
-			'maxalllevel' => 100,  # Stop after N messages per level. 0 -> no logging, -1 -> no limit
-			'maxalltag' =>    50,  # Stop after N messages per tag. 0 -> no logging, -1 -> no limit
-   			'level'	=> {
-				'info'	=> -1,		# Stop after N messages in info level
-   				'debug'	=> -1,
-				'warn'	=>  -1,
-				'error'  => -1,
-				'fatal'	 => -1,
-			},
-			'hittag' => {},
-			'_omit_'	=> {		# Will contain number of not-printed messages for levels and tags
-				'level'	=> {},
-				'tagmax' => {},
-			},
-			'tagmax' => '',		# __TAG=N  limit tag matching __TAG (perl regex) to N, comma seperated list
-			'_tagmax_' => {},	# Internal representation of the above
-    };
 
     $this->{'cfg'}{'sum'} = { # Counters for summary
  

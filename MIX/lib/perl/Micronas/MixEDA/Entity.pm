@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Entity.pm,v $                                      |
-# | Revision:   $Revision: 1.2 $                                          |
+# | Revision:   $Revision: 1.3 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/10/24 15:43:48 $                              |
+# | Date:       $Date: 2006/07/04 12:22:36 $                              |
 # | Description: Contains data structure and methods/functions for Entities |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Entity.pm,v $
+# | Revision 1.3  2006/07/04 12:22:36  wig
+# | Fixed TOP handling, -cfg FILE issue, ...
+# |
 # | Revision 1.2  2005/10/24 15:43:48  wig
 # | added 'reg detection to ::out column
 # |
@@ -61,9 +64,9 @@ use FileHandle;
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Entity.pm,v 1.2 2005/10/24 15:43:48 wig Exp $';#'  
+my $thisid          =      '$Id: Entity.pm,v 1.3 2006/07/04 12:22:36 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Entity.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.2 $'; #'  
+my $thisrevision    =      '$Revision: 1.3 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -149,6 +152,7 @@ sub new {
 #	N -> if high/low are digits
 # 	1 -> single bits
 #   F+1  -> if low is 0
+#	F	 -> if low is 0 and high is 'F-1'
 #   F:T  -> if one or both bounds are not digits
 #
 sub portwidth () {
