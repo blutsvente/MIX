@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.12 2006/06/26 13:48:47 roettger Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.13 2006/07/04 08:49:56 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.13  2006/07/04 08:49:56  lutscher
+#  changed the upper/lower-case conversions as before
+#
 #  Revision 1.12  2006/06/26 13:48:47  roettger
 #  added config
 #
@@ -234,8 +237,8 @@ sub _gen_view_vr_ad {
 			$permission{"W"} = 0;
 		
 			if ($o_reg->{'definition'} eq '') {
-                # convert register name to lower-case because the vr_ad macro is also doing it
-			    print E_FILE $reg_def, " ", lc($o_reg->name);
+                # convert register name to upper case because it is an enum type in e
+			    print E_FILE $reg_def, " ", uc($o_reg->name);
 			    print E_FILE " ", $reg_prefix, "_";
 			};
 			$ii =0;
@@ -370,10 +373,10 @@ $reg_fld,${$singlefield}{name},${$singlefield}{size},${$singlefield}{rw},${$sing
             foreach $ee(0..$#{ $def{$cc}{list} } ){
                 $valus = $ee;
             };  
-            printf E_FILE ("  %%%s_n[%s]:list of %s vr_ad_reg;\n",$def{$cc}{list}[0]{MY_REG},($valus+1),$def{$cc}{list}[0]{MY_REG});
+            printf E_FILE ("  %%%s_n[%s]:list of %s vr_ad_reg;\n",lc($def{$cc}{list}[0]{MY_REG}),($valus+1),$def{$cc}{list}[0]{MY_REG});
             printf E_FILE ("  post_generate() is also {\n");
             for $dd(0..$#{ $def{$cc}{list} } ) {
-               printf E_FILE ("    add_with_offset(%s,%s_n[%s]);\n",$def{$cc}{list}[$dd]{address},$def{$cc}{list}[0]{MY_REG},$dd);
+               printf E_FILE ("    add_with_offset(%s,%s_n[%s]);\n",$def{$cc}{list}[$dd]{address},lc($def{$cc}{list}[0]{MY_REG}),$dd);
             };
             _info("Generated a list of ", $def{$cc}{list}[0]{MY_REG}, " with ", ($valus+1), " items");
             printf E_FILE ("  };\n");
