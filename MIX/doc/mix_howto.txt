@@ -4,6 +4,59 @@ MIX HOWTO and FAQ
 
 >>keywords: MIX, top level generator, FAQ, HOWTO, register master
 
+>>title: 20060629a Using the -variant switch to dynamically select different configurations
+
+If you want to select variying parts of an input data, use the -variant MY_VAR switch
+together with an appropriate set ::variants column. The contents of ::variants
+can be a list of variant keys (or regular expressions), seperated by whitespace
+or comma.
+
+If you do not use "-variant MY_VAR" on the command line or
+MIXCFG variant MY_VAR in the mix.cfg file, the "Default" variant
+will be used.
+
+mix selects or deselects lines in the input data in the following way
+(after dropping comments lines, see the ::ign description):
+
+1. Lines with empty ::variant cell are always passed through.
+
+2. Otherwise the contents of the ::variant cell will be converted to
+a perl regular expression (space and , are used as seperators) and
+match that againt the value specified.
+
+Example:  input sheet contains
+::variants	::name			::line_number
+A			only_in_a		1
+A,B			only_a_b		2
+Default		default			3
+Default,A	default_or_a	4
+<space>		always			5
+
+mix (no variant switch)		selects lines: 		3,4,5
+mix -variant Default		selects lines:		3,4,5
+mix -variant A				selects lines:		1,2,4,5
+mix -variant B				selects lines:		2,5
+mix -variant C				selects lines:		5
+
+The second variant A,B could also be written [AB]. Any perl regular
+expression is a valid match.
+Case is ignored (-variant a is the same as -variant A).
+
+Update: -variants for CONN or IO sheets are available with IO.pm > 1.43,
+release end of June 2006.
+
+#!wig20060629
+
+>>title: 20060629b: mix ignores rows of data starting with a # or //
+
+mix will ignore any line that starts with a # or // (even prepended
+by whitespace). That means even with empty ::ign column, lines can
+be dropped if the first non white space character is a '#'.
+
+Usually the beginning column has to be ::ign, though.
+
+#!wig20060629
+
 >>title: Using tag:my_tag to mark comment lines to be printed (new in MixResport > 1.27)
 
 Since this new version of MixReport a new control value for the config
