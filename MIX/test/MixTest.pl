@@ -184,19 +184,19 @@ my @tests = (
 	  'name' => "case",
 	  'path' => "case",
 	  'options' => '',
-	  'skip' => 1,
+	  # 'skip' => 1,
 	},
 		{
 	  'name' => "case",
 	  'path' => "case/check",
 	  'options' => '',
-	  'skip' => 1,
+	  # 'skip' => 1,
 	},
 	{
 	  'name' => "case",
 	  'path' => "case/force",
 	  'options' => '',
-	  'skip' => 1,
+	  # 'skip' => 1,
 	},
 
 	{
@@ -330,6 +330,12 @@ my @tests = (
 		'name' => "configuration",
 		'path' => "configuration/cmdline",
 		'options' => "-conf 'macro.%VHDL_USE_ENTY%=Overwritten vhdl_enty from cmdline' -conf macro.%VHDL_HOOK_ARCH_BODY%='Use macro vhdl_hook_arch_body' -conf macro.%ADD_MY_OWN%='overloading my own macro'",
+	},
+	{	# Repeat configuration, but use extra.cfg file to read data
+		# Added by wig 20060316
+		'name' => "configuration",
+		'path' => "configuration/cfgfile",
+		'options' => "-cfg extra.cfg",
 	},
 	{
 	  'name' => "padio",
@@ -499,6 +505,11 @@ my @tests = (
 	{ 
 		'name' => 'reg_shell',
 		'path' => 'reg_shell/read_pipeline', # with inferring a read-pipeline
+		'options' => '',
+	},
+	{ 
+		'name' => 'duplicate',
+		'path' => 'duplicate', # try various duplicate wireing tricks
 		'options' => '',
 	},
 );
