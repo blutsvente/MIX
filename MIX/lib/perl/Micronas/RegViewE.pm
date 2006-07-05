@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.14 2006/07/04 12:57:51 roettger Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.15 2006/07/05 13:24:22 roettger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.15  2006/07/05 13:24:22  roettger
+#  small change
+#
 #  Revision 1.14  2006/07/04 12:57:51  roettger
 #  fixed access attribute for holes to 'R'
 #
@@ -326,7 +329,7 @@ sub _gen_view_vr_ad {
 				    $cov = " : cov";
 				};
 				format E_FILE = 
-@<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<: uint(bits:@>) : @< : @<<<<<<<<< @<<<<<< ; -- lsb position @>> 
+   @<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<: uint(bits:@>) : @< : @<<<<<<<<< @<<<<<< ; -- lsb position @>> 
 $reg_fld,${$singlefield}{name},${$singlefield}{size},${$singlefield}{rw},${$singlefield}{init},$cov, ${$singlefield}{pos} 
 .
                                 write E_FILE ;
@@ -376,7 +379,7 @@ $reg_fld,${$singlefield}{name},${$singlefield}{size},${$singlefield}{rw},${$sing
             # output: regdef
             print E_FILE $reg_def, " ", $def{$cc}{list}[0]{MY_REG}, " {\n";
             for $dd(0..$#{ $def{$cc}{fields} } ) {
-               printf E_FILE ("%-7s %-33s : uint(bits:%2s) ", $reg_fld,$def{$cc}{fields}[$dd]{name}, $def{$cc}{fields}[$dd]{size});
+               printf E_FILE ("   %-7s %-33s : uint(bits:%2s) ", $reg_fld,$def{$cc}{fields}[$dd]{name}, $def{$cc}{fields}[$dd]{size});
                printf E_FILE (": %-2s : %-10s %-7s ;", $def{$cc}{fields}[$dd]{rw}, $def{$cc}{fields}[$dd]{init},$def{$cc}{fields}[$dd]{cov});
                printf E_FILE (" -- lsb position %3s\n", $def{$cc}{fields}[$dd]{pos});
             };
