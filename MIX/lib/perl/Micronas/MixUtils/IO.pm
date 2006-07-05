@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.45 $                                          |
+# | Revision:   $Revision: 1.46 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/07/04 13:13:49 $                              |
+# | Date:       $Date: 2006/07/05 09:58:28 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.46  2006/07/05 09:58:28  wig
+# | Added -variants to conn and io sheet parsing, rewrote open_infile interface (ordered)
+# |
 # | Revision 1.45  2006/07/04 13:13:49  wig
 # |  	IO.pm : fixed convert_in call for i2c sheets
 # |
@@ -133,11 +136,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.45 2006/07/04 13:13:49 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.46 2006/07/05 09:58:28 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.45 $'; #'  
+my $thisrevision    =      '$Revision: 1.46 $'; #'  
 
-# Revision:   $Revision: 1.45 $
+# Revision:   $Revision: 1.46 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -398,19 +401,19 @@ sub mix_utils_open_input(@) {
 
 		# Open connectivity sheet(s)
 		$conn = open_infile( $i, $eh->get( 'conn.xls' ), $eh->get( 'conn.xxls' ),
-			$eh->get( 'conn.req' ) . ',hash' );
+			$eh->get( 'conn.req' ) . ',order,hash' );
 
 		# Open hierachy sheets
 		$hier = open_infile( $i, $eh->get( 'hier.xls' ), $eh->get( 'hier.xxls' ),
-			$eh->get( 'hier.req' ) . ',hash' );
+			$eh->get( 'hier.req' ) . ',order,hash' );
 
 		# Open IO sheet (if available, not needed!)
 		$io = open_infile( $i, $eh->get( 'io.xls' ), $eh->get( 'io.xxls'),
-			$eh->get( 'io.req' ) . ',hash' );
+			$eh->get( 'io.req' ) . ',order,hash' );
 
 		# Open I2C sheet (if available, not needed!)
 		$i2c = open_infile( $i, $eh->get( 'i2c.xls' ), $eh->get( 'i2c.xxls' ),
-			$eh->get( 'i2c.req' ) . ',hash' );
+			$eh->get( 'i2c.req' ) . ',order,hash' );
 
 		# Did we get enough sheets:
 		unless( $conn or @conf or $hier or $io or $i2c ) {
@@ -428,33 +431,33 @@ sub mix_utils_open_input(@) {
 		}
 
 		# Merge conn sheets:
-		for my $c ( keys %$conn ) {
+		for my $c ( @$conn ) {
 	    	$eh->inc( 'conn.parsed' );
- 	    	my @norm_conn = convert_in( 'conn', $conn->{$c} ); # Normalize and read in
- 	    	select_variant( \@norm_conn, 'CONN ' . $c );
+ 	    	my @norm_conn = convert_in( 'conn', $c->[1] ); # Normalize and read in
+ 	    	select_variant( \@norm_conn, 'CONN ' . $c->[0] );
 	    	push( @$aconn, @norm_conn ); # Append
 		}
 
 		# Merge hier sheets:
-		for my $c ( keys %$hier ) {
+		for my $c ( @$hier ) {
 	    	$eh->inc( 'hier.parsed' );
-	    	my @norm_hier = convert_in( 'hier', $hier->{$c} );
+	    	my @norm_hier = convert_in( 'hier', $c->[1] );
  	    	# Remove all lines not selected by our variant
-	    	select_variant( \@norm_hier, 'HIER ' . $c );
+	    	select_variant( \@norm_hier, 'HIER ' . $c->[0] );
 	    	push( @$ahier,   @norm_hier );	# Append
 		}
 
-		for my $c ( keys %$io ) {
+		for my $c ( @$io ) {
 	    	$eh->inc( 'io.parsed' );
-	    	my @norm_io = convert_in( 'io', $io->{$c} );
-	    	select_variant( \@norm_io, 'IO ' . $c );
+	    	my @norm_io = convert_in( 'io', $c->[1] );
+	    	select_variant( \@norm_io, 'IO ' . $c->[0] );
 	    	push( @$aio, @norm_io );   # Append
 		}
 
-		for my $c ( keys %$i2c ) {
+		for my $c ( @$i2c ) {
 	    	$eh->inc( 'i2c.parsed' );
-	    	my @norm_i2c = convert_in( 'i2c', $i2c->{$c});
-	    	select_variant( \@norm_i2c, 'I2C' . $c );
+	    	my @norm_i2c = convert_in( 'i2c', $c->[1] );
+	    	select_variant( \@norm_i2c, 'I2C ' . $c->[0] );
 	    	push(@$ai2c, @norm_i2c);
 		}
     }
@@ -587,7 +590,8 @@ flags can be one of:
 	write		:= open for write
 	hash		:= return data in hashref: \%data{sheetname} = [ ... ],
 					otherwise data is returned in array of array
-
+	order		:= in combination with hash: return array of hash ordered
+					by appearance
 =cut
 
 {   # wrap around $oBook static variable ...
@@ -680,7 +684,9 @@ sub open_xls($$$$){
 	    	}
 		}
 		if ( scalar( @sheet ) > 0 ) {
-			if ( $warn_flag =~ m/\bhash\b/io ) {
+			if ( $warn_flag =~ m/\border\b/i ) {
+				push( @all, [$isheet->{Name}, [ @sheet ]] );
+			} elsif ( $warn_flag =~ m/\bhash\b/i ) {
 				@{$all{$isheet->{Name}}} = @sheet;
 			} else {
 	    		push(@all, [@sheet]);
@@ -692,7 +698,9 @@ sub open_xls($$$$){
 		@sheet = ();
     }
     
-	if ( $warn_flag =~ m/\bhash\b/io ) {
+	if ( $warn_flag =~ m/\border\b/ ) {
+		return \@all ;
+	} elsif ( $warn_flag =~ m/\bhash\b/i ) {
 		return \%all;
 	} else {	
     	return(@all);
@@ -787,7 +795,9 @@ sub open_sxc($$$$) {
 	  	} elsif($isheet) {
 	    	if($content[$i] =~ m/^<\/table:table>/) {
 	        	$isheet = 0;  # escape from sheet
-	        	if ( $warn_flag =~ m/\bhash\b/io ) {
+	        	if ( $warn_flag =~ m/\border\b/i ) {
+					push( @all, [$sheetname, [ @sheet ]] );
+				} elsif ( $warn_flag =~ m/\bhash\b/i ) {
 	        		@{$all{$sheetname}} = @sheet;
 	        	} else {
 					push(@all, [@sheet]);
@@ -896,7 +906,9 @@ sub open_sxc($$$$) {
 		}
 		return ();
     }
-    if ( $warn_flag =~ m/\bhash\b/io ) {
+    if ( $warn_flag =~ m/\border\b/i ) {
+    	return \@all;
+    } elsif ( $warn_flag =~ m/\bhash\b/i ) {
     	return \%all;
     }
     return @all;
@@ -955,7 +967,7 @@ sub open_csv($$$$) {
 
     my $ro = 1;
 
-    if ( $warn_flag =~ m/\bwrite\b/io or $OPTVAL{'import'} or $OPTVAL{'init'} ) {
+    if ( $warn_flag =~ m/\bwrite\b/i or $OPTVAL{'import'} or $OPTVAL{'init'} ) {
 		$ro = 0;
     }
 
@@ -1017,7 +1029,9 @@ sub open_csv($$$$) {
 			@line = ();
 			$i++;    # next line
 	    }
-	    if ( $warn_flag =~ m/\bhash\b/io ) {
+	   	if ( $warn_flag =~ m/\border\b/i ) {
+			push( @all, [$thissheet, [ @sheet ]] );
+	   	} elsif ( $warn_flag =~ m/\bhash\b/i ) {
 	    	$all{$thissheet} = \@sheet;
 	    } else {
 	    	push(@all, [@sheet]);
@@ -1028,12 +1042,14 @@ sub open_csv($$$$) {
 
     # did we get some input?
     if ( scalar @all < 1 and scalar( keys %all ) < 1 ) {
-		if ( $warn_flag =~ m/\bmandatory\b/io ) {
+		if ( $warn_flag =~ m/\bmandatory\b/i ) {
             $logger->warn('__W_READ_CSV_SHEET', "\tCannot read input from sheet: $sheetname in $file");
 		}
 		return ();
     }
-	if ( $warn_flag =~ m/\bhash\b/io ) {
+    if ( $warn_flag =~ m/\border\b/i ) {
+    	return \@all;
+    } elsif ( $warn_flag =~ m/\bhash\b/i ) {
 		return \%all;
 	} else {
     	return (@all);
@@ -2175,15 +2191,15 @@ sub write_csv ($$$;$) {
 			# wrapnl: wrap embedded new-line to space
 			# masknl: replace newline by \\n
 	        $temp = $$r_a[$y][$x];
-			if ( $style =~ m/\bclassic\b/io ) {
+			if ( $style =~ m/\bclassic\b/i ) {
 		    	$temp =~ s/$quoting/\\$quoting/g if $quoting;
 		    	$temp =~ s/\S\n/ /g; # remove linefeed
 		    	$temp =~ s/\s\n/ /g; # bug here? why should newline always have a leading whitespace?
 		    	$temp = $quoting . $temp . $quoting;
 			} else {
-		    	if ( $style =~ m/\b(wrap|strip)nl\b/io ) {
+		    	if ( $style =~ m/\b(wrap|strip)nl\b/i ) {
 					$temp =~ s/\s*[\r\n]/ /og; # Swallow newlines and <cr>
-		    	} elsif ( $style =~ m/\bmasknl\b/io ) {
+		    	} elsif ( $style =~ m/\bmasknl\b/i ) {
 					$temp =~ s/\n/\\n/og; #What to do with leading/trailing tabs?
 					$temp =~ s/\r/\\r/og;
 		    	}
@@ -2194,10 +2210,10 @@ sub write_csv ($$$;$) {
 		    	# elsif ( $EH{iswin} ) {
 		    	# $temp =~ s/\n/\r/g; # Make the internal new-line a simple "nl"
 		    	# }
-		    	if ( $style =~ m/\bdoublequote\b/io ) {
+		    	if ( $style =~ m/\bdoublequote\b/i ) {
 					$temp =~ s/$quoting/$quoting$quoting/go;
 		    	}
-		    	if ( $style =~ m/autoquote/io ) {
+		    	if ( $style =~ m/autoquote/i ) {
 					if ( $temp =~ m/($cellsep|$quoting|\n)/ ) {
 			    		$temp = $quoting . $temp . $quoting;
 					}

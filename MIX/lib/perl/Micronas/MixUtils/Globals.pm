@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.18 $                                          |
+# | Revision:   $Revision: 1.19 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/07/04 12:22:35 $                              |
+# | Date:       $Date: 2006/07/05 09:58:28 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.19  2006/07/05 09:58:28  wig
+# | Added -variants to conn and io sheet parsing, rewrote open_infile interface (ordered)
+# |
 # | Revision 1.18  2006/07/04 12:22:35  wig
 # | Fixed TOP handling, -cfg FILE issue, ...
 # |
@@ -105,9 +108,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.18 2006/07/04 12:22:35 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.19 2006/07/05 09:58:28 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.18 $';  
+my $thisrevision    =      '$Revision: 1.19 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -165,7 +168,7 @@ get the config key value (or reference) for a given key
 
 =cut
 
-sub get {
+sub get ($$) {
 	my $this	= shift;
 	my $key		= shift;
 
@@ -188,7 +191,7 @@ sub get {
 #
 # Currently only \w, %, : and '.' are allowed chars in such a key
 #
-sub _key_hash {
+sub _key_hash ($$) {
 	my $this	= shift;
 	my $key		= shift;
 
@@ -197,22 +200,77 @@ sub _key_hash {
 		# Warn user:
 		$logger->warn( '__W_KEY2HASH', "\tIllegal character removed from eh key:" . $okey );
 	}
-	( my $k = ( '{\'' . $key . '\'}' )) =~ s/\./'}{'/g;
+	( my $k = ( "{'" . $key . "'}" )) =~ s/\./'}{'/g;
 	return $k;
 }
+
+#
+# Convert a.b.c..*d to {a}{b}{c.*d}
+# Special: handle double dots and allow nearly any usable
+#  character. Purpose is to allow usage of regular expressions
+#  as keys.
+# Mask metacharacters: {}
+#
+sub _key_hashre ($$) {
+	my $this	= shift;
+	my $key		= shift;
+
+	my $okey = $key;
+	# Find .. and mark
+	$key =~ s/\.\./#DOTDOT#/g;
+	$key =~ s/([{}])/\\$1/g; # Mask {}
+
+	( my $k = ( "{'" . $key . "'}" )) =~ s/\./'}{'/g;
+	$k =~ s/#DOTDOT#/./g;
+	return $k;
+} # End of _key_hashre
 
 #
 # accept a key ( a.b.c )
 #    and stores $val under that key
 # returns the stored value
 #
-sub set {
+sub set ($$$) {
 	my $this	= shift;
 	my $key		= shift;
 	my $val		= shift;
 
 	my $k = $this->_key_hash( $key );
 
+	return $this->_set( $k, $key, $val );
+
+} # End of set
+
+#
+# accept a regular expression as last part of key ( a.b.the[ab]..*end )
+#   a single dot seperates the key parts, while a double dot is mapped
+#   to a single dot in the regular expression.
+#   The above key will yield $eh..{a}{b}{the[ab].*end} = <value>
+#   To read back the re keys, use $eh->get{a}{b} and iterate over
+#
+# function returns the stored value
+#
+sub setre ($$$) {
+	my $this	= shift;
+	my $key		= shift;
+	my $val		= shift;
+
+	my $k = $this->_key_hashre( $key );
+
+	return $this->_set( $k, $key, $val );
+
+} # End of setre
+
+#
+# Common part of the set and setre functions
+# Gets the converted key and assigns the value
+#
+sub _set ($$$$) {
+	my $this	= shift;
+	my $k		= shift;
+	my $key		= shift;
+	my $val		= shift;
+	
 	my $r = undef();	
 	$key =~ s/'/\\'/g; # Mask '
 	
@@ -242,7 +300,7 @@ increment a given config counter and return the new value
 
 =cut
 
-sub inc {
+sub inc ($$$) {
 	my $this = shift;
 	my $key  = shift;
 	my $flag = shift || 0; # If set, do postincrement
@@ -267,7 +325,7 @@ increment a given config counter and return the value set before
 
 =cut
 
-sub postinc {
+sub postinc ($$) {
 	my $self = shift;
 	my $key  = shift;
 	
@@ -286,7 +344,7 @@ sub postinc {
 # Caveat: if this configuration did not exist or was empty,
 #   you will see a leading $sep (if set)
 # 
-sub append {
+sub append ($$$$) {
 	my $this = shift;
 	my $key  = shift;
 	my $val  = shift;
@@ -317,7 +375,7 @@ sub append {
 # Caveat: if this configuration did not exist or was empty,
 #   you will see a leading ,
 # 
-sub cappend {
+sub cappend ($$$) {
 	my $this = shift;
 	my $key  = shift;
 	my $val  = shift;
@@ -329,7 +387,7 @@ sub cappend {
 #
 # Init the EH field ..
 #
-sub init {
+sub init ($) {
 	my $this = shift;
 	
 	# HDL template (only placeholders here!)
@@ -1417,7 +1475,7 @@ sub init {
 
 =cut
 
-sub print {
+sub print ($$) {
 	my $self = shift;
 	my $key	 = shift;
 	
@@ -1457,7 +1515,7 @@ sub _return_conf ($$$) {
 #
 # Recursively return all configuration parameters ....
 #
-sub conf2array {
+sub conf2array ($) {
 	my $self = shift;
 		
     my @configs = ();

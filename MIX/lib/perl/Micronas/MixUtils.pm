@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.123 $                                         |
+# | Revision:   $Revision: 1.124 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/07/04 12:22:35 $                              |
+# | Date:       $Date: 2006/07/05 09:58:28 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.123 2006/07/04 12:22:35 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.124 2006/07/05 09:58:28 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.124  2006/07/05 09:58:28  wig
+# | Added -variants to conn and io sheet parsing, rewrote open_infile interface (ordered)
+# |
 # | Revision 1.123  2006/07/04 12:22:35  wig
 # | Fixed TOP handling, -cfg FILE issue, ...
 # |
@@ -215,11 +218,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.123 2006/07/04 12:22:35 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.124 2006/07/05 09:58:28 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.123 $';         #'
+my $thisrevision        =      '$Revision: 1.124 $';         #'
 
-# Revision:   $Revision: 1.123 $   
+# Revision:   $Revision: 1.124 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -922,7 +925,9 @@ sub _mix_utils_readcfg ($) {
 		
 				if ( m,^\s*MIXCFG\s+(\S+)\s*(.*),s ) { # MIXCFG key.key.key value
 	    			mix_apply_conf( $1, $2, 'file:mix.cfg' );
-				}
+				} elsif ( m,^\s*MIXCFGRE\s+(\S+)\s*(.*),s ) { # MIXCFGRE key.key.key value
+	    			mix_apply_confre( $1, $2, 'file:mix.cfg' );
+				} 
 				# Other lines are discarded silently
     		}
    			close( CFG ) or
@@ -1161,6 +1166,43 @@ sub mix_apply_conf($$$) {
     	$logger->error('__E_CONF_KEY', "\tApplying key $key from source $source failed" );
     }
 } # End of mix_apply_conf
+
+#############################################################################
+## mix_apply_confre
+## derived from mix_apply_conf; supports regular expressions as keys!!
+#############################################################################
+=head2 mix_apply_confre($$$)
+
+apply configuration
+
+=over 4
+=item $key Key
+=item $value Value
+=item $source Source
+
+=back
+
+=cut
+
+sub mix_apply_confre($$$) {
+    my $key		= shift; # Key
+    my $value	= shift; # Value
+    my $source	= shift; # Source
+
+    unless( $key and defined($value) ) {
+	    unless( $key ) { $key = ''; }
+	    unless( defined( $value ) ) { $value = ''; }
+	    $logger->warn('__W_CONF_KEY',
+	    	"\tIllegal key or value given in $source: key:$key val:$value");
+	    return undef;
+    }
+
+	$value = _mix_special_input( $value );
+
+    unless( defined( $eh->setre( $key, $value ) ) ) {
+    	$logger->error('__E_CONF_KEYRE', "\tApplying key $key from source $source failed" );
+    }
+} # End of mix_apply_confre
 
 ##############################################################################
 ## _mix_special_input ($)

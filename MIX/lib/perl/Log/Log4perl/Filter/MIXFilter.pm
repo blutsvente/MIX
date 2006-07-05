@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MIXFilter.pm,v $                                      |
-# | Revision:   $Revision: 1.7 $                                          |
+# | Revision:   $Revision: 1.8 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/07/04 12:22:36 $                              |
+# | Date:       $Date: 2006/07/05 09:58:28 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MIXFilter.pm,v $
+# | Revision 1.8  2006/07/05 09:58:28  wig
+# | Added -variants to conn and io sheet parsing, rewrote open_infile interface (ordered)
+# |
 # | Revision 1.7  2006/07/04 12:22:36  wig
 # | Fixed TOP handling, -cfg FILE issue, ...
 # |
@@ -65,9 +68,9 @@ use Micronas::MixUtils::Globals qw( get_eh );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: MIXFilter.pm,v 1.7 2006/07/04 12:22:36 wig Exp $'; 
+my $thisid          =      '$Id: MIXFilter.pm,v 1.8 2006/07/05 09:58:28 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: MIXFilter.pm,v $';
-my $thisrevision    =      '$Revision: 1.7 $';  
+my $thisrevision    =      '$Revision: 1.8 $';  
 
 # Keep logger objects ...
 my %logger = ();
@@ -105,6 +108,8 @@ sub new {
 #
 #   count number of errors, warnings, ....
 #   refuse to print out if messages count
+#
+# If used in MIX, reads limits and other config from $eh
 #
 sub ok {
 	my ( $self, %p ) = @_;
@@ -215,165 +220,4 @@ sub ok {
 }
 
 1;
-
-__DATA__
-
-#
-#  storage for global configuration parameters
-#	read in from mix.cfg or through command line
-#
-sub new {
-	my $this = shift;
-	my ( $class ) = ref( $this ) || $this;
-	my %params = ();
-	if ( ref( $_[0] ) eq 'HASH' ) {
-		%params = %{$_[0]};
-	} else {
-		%params = @_;
-	}
-	# data member default values
-	my $ref_member  = {
-		'map' => {
-			'D' => 'debug',		# Debugging -> to log file (if -debug set)
-			'I' => 'info',		# Info level -> print to screen and log file
-			'W' => 'warnings',	# Warnings -> to log file
-			'E' => 'errors',	# Errors -> to log file and screen
-			'F' => 'fatals',	# Fatal error -> to log file and screen, end
-			'M' => 'message',	# Message -> see info
-		},
-		'max' => {				# Limit number of messages to max ...
-			'ALL' => '10',
-		},
-		'count' => {			# Keep message tag counts
-		},
-		'limit' => {			# Keep info about reached limits
-		}
-	};
-	
-	# init data members w/ parameters from constructor call
-	foreach (keys %params) {
-		$ref_member->{$_} = $params{$_};
-	};
-
-	bless $ref_member, $class;
-};
-#
-# Increase counter for given tag and return current value
-#
-sub inccount {
-	my $self = shift;
-	my $tag  = shift;
-	
-	$self->{'count'}{$tag}++;
-
-	return $self->{'count'}{$tag};
-	
-}
-
-sub getcount {
-	my $self = shift;
-	my $tag  = shift;
-	
-	if ( exists( $self->{'count'}{$tag} ) ) {
-		return $self->{'count'}{$tag};
-	} else {
-		return 0;
-	}
-}
-
-#
-# Return number of message tag max ...
-#
-sub getmax {
-	my $self = shift;
-	my $tag  = shift;
-	
-	if ( exists( $self->{'max'}{$tag} ) ) {
-		return $self->{'max'}{$tag};
-	} else {
-		return $self->{'max'}{'ALL'};
-	}
-}
-
-sub setlimit {
-	my $self = shift;
-	my $tag  = shift;
-	
-	$self->{'limit'}{$tag}++;
-	return;
-}
-
-sub getlimit {
-	my $self = shift;
-	my $tag  = shift;
-	
-	if ( exists( $self->{'limit'}{$tag} ) ) {
-		return $self->{'limit'}{$tag};
-	} else {
-		return 0;
-	}
-}
-
-#
-# Increase counter, limit number of logged lines for a 'tag'
-# Meant for all kind of messages
-#
-sub mlogwarn {
-	my $self = shift;
-	my $tag  = shift;
-	my $text = shift || '';
-
-	if ( $tag =~ m/^__([DIWEFM])/ ) {
-		# Increase message counters (via global call!)
-		$::eh->inc( 'sum.' . $self->{map}{$1} );
-	}
-
-	my $ntag = $self->inccount( $tag ); # Increase and get number
-	my $max	 = $self->getmax( $tag );
-	
-	if ( $ntag > $max ) {
-		# Do not print, but increase limit counter ...
-		$self->setlimit( $tag );
-	} else {
-		logwarn( $tag . ' ' . $text ); # Forward to logger module
-	}
-}
-
-#
-# Errors
-#
-sub mlogerror {
-	my $self = shift;
-	my $tag  = shift;
-	my $text = shift;
-	
-	# normalize tag
-	if ( $tag =~ m/^ERROR/i ) {
-		$tag = '__E_' . $tag;
-	}
-	unless( $tag =~ m/^__E/ ) {
-		$tag = '__E_' . $tag;
-	}
-	$self->mlogwarn( $tag, $text );
-}
-
-#
-# returns logger object
-#
-sub get_mixlogger {
-	my $self = shift;
-	my $ltag = shift || '';
-	
-	unless ( ref( $self ) ) {
-		$ltag = $self;
-	}
-	# Find logger object for certain tag
-	if ( exists( $logger{$ltag} ) ) {
-		return $logger{$ltag};
-	} else {
-		# Create new and return
-		my $l = new('OpenDist::MixUtils::Log');  # OpenDist::MixUtils::Log;
-		$logger{$ltag} = $l;
-		return $l;
-	}
-}
+#!End
