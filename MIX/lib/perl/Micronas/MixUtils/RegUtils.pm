@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.6 2006/03/14 14:19:30 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.7 2006/07/06 14:43:53 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.7  2006/07/06 14:43:53  lutscher
+#  added _nxt_pow2() and _ld()
+#
 #  Revision 1.6  2006/03/14 14:19:30  lutscher
 #  changed logger wrap methods
 #
@@ -76,10 +79,13 @@ require Exporter;
    _val2hex
    _get_pragma_pos
    _attach_file_to_list
+   _ld
+   _nxt_pow2
   );
 use strict;
 use Log::Log4perl qw(get_logger);
 use Micronas::MixParser qw( %hierdb %conndb add_inst add_conn);
+# use Micronas::MixChecker qw(mix_check_case);
 # use Micronas::MixUtils qw(%EH);
 
 # use FindBin qw($Bin);
@@ -210,6 +216,7 @@ sub _add_primary_input {
 	} else {
 		$hconn{'::name'} = "${name}${postfix}"; # add postfix only if not already there
 	};
+    # $name = mix_check_case("port", $name);
 	$hconn{'::in'} = $destination;
 	$hconn{'::mode'} = "i";
 	_get_signal_type($msb, $lsb, 0, \%hconn);
@@ -228,6 +235,7 @@ sub _add_primary_output {
 	} else {
 		$hconn{'::name'} = "${name}${postfix}"; # add postfix only if not already there
 	};
+    # $name = mix_check_case("port", $name);
 	$hconn{'::out'} = $source.$type;
 	$hconn{'::mode'} = "o";
 	_get_signal_type($msb, $lsb, $is_reg, \%hconn);
@@ -246,6 +254,7 @@ sub _get_signal_type {
 		} else {
 			$href->{'::high'} = $msb;
 			$href->{'::low'} = $lsb;
+            $href->{'::type'} = "std_logic_vector";
 		};
 	} else {
 		if ($msb == $lsb) { # numeric range
@@ -254,6 +263,7 @@ sub _get_signal_type {
 		} else {
 			$href->{'::high'} = $msb;
 			$href->{'::low'} = $lsb;
+            $href->{'::type'} = "std_logic_vector";
 		};
 	};
 };
@@ -379,5 +389,31 @@ sub _attach_file_to_list{
   chomp @$lref;
   1;
 };
+
+# performs int(ld(n))
+sub _ld {
+  my($n)= @_;
+  my($result)=-1;
+
+  if (int($n/2) > 0) {
+    $result = _ld(int($n/2));
+  }
+  return $result + 1;
+}
+
+# gets the next higher number which is a power of 2 (useful for binary encoding)
+sub _nxt_pow2 {
+  my($n) = @_;
+  my($i) = 1;
+  while (1) {
+    if ($i >= $n) {
+      last;
+    }
+    else {
+      $i = $i * 2;
+    }
+  }
+  return $i;
+}
 
 1;
