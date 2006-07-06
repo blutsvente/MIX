@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewClone.pm,v 1.2 2006/06/22 12:20:14 lutscher Exp $
+#  RCSId: $Id: RegViewClone.pm,v 1.3 2006/07/06 09:56:29 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.2 $                                  
+#  Revision      : $Revision: 1.3 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -31,6 +31,9 @@
 ###############################################################################
 #
 #  $Log: RegViewClone.pm,v $
+#  Revision 1.3  2006/07/06 09:56:29  lutscher
+#  changed how to deal with embedded_reg
+#
 #  Revision 1.2  2006/06/22 12:20:14  lutscher
 #  fixed a typo
 #
@@ -75,7 +78,8 @@ sub _gen_view_vgch_rs_clone {
 	# extend class data with data structure needed for code generation
 	$this->global(
 				  'debug'              => 0,
-				  'indent'             => "    "       # indentation character(s)
+				  'indent'             => "    ",      # indentation character(s)
+                  'embedded_reg_name'  => "RS_CTLSTS"  # reserved name of special register embedded in ocp_target
 				 );
 	
 	# import regshell.<par> parameters from MIX package to class data; user can change these parameters in mix.cfg
@@ -138,6 +142,7 @@ sub _clone_regspace {
 	my ($n, $reg_offset, $fclock, $freset, $baseaddr);
 	my ($last_addr) = -1;
 	my ($domain) = $o_domain0->name;
+    my $cloned_embedded_reg = 0;
 
 	_info("cloning domain $domain ", $this->global->{'number'}, " times");
 	# create a new register space
@@ -160,8 +165,18 @@ sub _clone_regspace {
 			$reg_offset = $baseaddr + $o_domain0->get_reg_address($o_reg0);	
 			%hrattribs = %{$o_reg0->attribs};
 			
-			# create new register object
-			my $reg_name = $this->_clone_name($this->global->{'reg_naming'}, $n, $domain, $o_reg0->name, "");
+            my $reg_name;
+            if ($o_reg0->name eq $this->global->{'embedded_reg_name'}) {
+                # clone embedded reg only once, because it is located in the ocp target module
+                if (!$cloned_embedded_reg) {
+                    # embedded register is cloned unchanged
+                    $reg_name = $o_reg0->name;
+                    $cloned_embedded_reg = 1;
+                };
+            } else {
+                $reg_name = $this->_clone_name($this->global->{'reg_naming'}, $n, $domain, $o_reg0->name, "");
+            };
+            # create new register object
 			$o_reg1 = Micronas::RegReg->new('name' => $reg_name, 'definition' => $o_reg0->definition);
 			$o_reg1->attribs(%hrattribs);
 			
