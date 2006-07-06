@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewClone.pm,v 1.3 2006/07/06 09:56:29 lutscher Exp $
+#  RCSId: $Id: RegViewClone.pm,v 1.4 2006/07/06 11:59:56 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.3 $                                  
+#  Revision      : $Revision: 1.4 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -31,6 +31,9 @@
 ###############################################################################
 #
 #  $Log: RegViewClone.pm,v $
+#  Revision 1.4  2006/07/06 11:59:56  lutscher
+#  fixed _clone_regspace()
+#
 #  Revision 1.3  2006/07/06 09:56:29  lutscher
 #  changed how to deal with embedded_reg
 #
@@ -172,6 +175,8 @@ sub _clone_regspace {
                     # embedded register is cloned unchanged
                     $reg_name = $o_reg0->name;
                     $cloned_embedded_reg = 1;
+                } else {
+                    next;
                 };
             } else {
                 $reg_name = $this->_clone_name($this->global->{'reg_naming'}, $n, $domain, $o_reg0->name, "");
@@ -187,7 +192,11 @@ sub _clone_regspace {
 			# iterate through all fields of the register
 			foreach $href (sort {$a cmp $b} @{$o_reg0->fields}) {
 				$o_field0 = $href->{'field'}; # reference to field object in register
-				my $field_name = $this->_clone_name($this->global->{'field_naming'}, $n, $domain, $o_reg0->name, $o_field0->name);
+                
+                my $field_name;
+                # if field is part of embedded_reg, use unchanged name 
+                $field_name = ($o_reg0->name eq $this->global->{'embedded_reg_name'}) ? $o_field0->name : $this->_clone_name($this->global->{'field_naming'}, $n, $domain, $o_reg0->name, $o_field0->name);
+ 
 				$fpos = $href->{'pos'};       # lsb position of field in register
 				%hfattribs = %{$o_field0->attribs};
 				
