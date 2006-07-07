@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.29 $                                               |
-# | Author:     $Author: wig $                                                 |
-# | Date:       $Date: 2006/06/22 07:13:21 $                                                   |
+# | Revision:   $Revision: 1.30 $                                               |
+# | Author:     $Author: mathias $                                                 |
+# | Date:       $Date: 2006/07/07 11:58:37 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.29 2006/06/22 07:13:21 wig Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.30 2006/07/07 11:58:37 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,7 +31,11 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
-# | Revision 1.29  2006/06/22 07:13:21  wig
+# | Revision 1.30  2006/07/07 11:58:37  mathias
+# | fixed writing extra line into bit description table
+# | when no bitfield was defined in the lower 16 bits of the register
+# |
+# | Revision 1.29  2006-06-22 07:13:21  wig
 # | Updated HIGH/LOW parsing, extended report.portlist.comments
 # |
 # | Revision 1.28  2006/06/16 07:43:32  lutscher
@@ -139,11 +143,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.29 2006/06/22 07:13:21 wig Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.30 2006/07/07 11:58:37 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.29 $';
+my $thisrevision   =      '$Revision: 1.30 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -583,6 +587,10 @@ sub mix_rep_reglist_mif_bitfields($$$ )
     my ($tbeg, $tend) = (31, 32);        # indexes of the next table entries to be written
     my ($size, $string);
     for ($fi = 0; $tend > 16; $fi++) {
+        if ($fi > $#{$fields}) {         # No bitslices defined in lower 16 bits of the register
+            $tend = 16;
+            last;
+        }
         my $msbpos = $fields->[$fi]->{pos} + $fields->[$fi]->{size} - 1;
         # write unnamed bits if needed (including $msbpos + 1)
         if ($tend > $msbpos) {
