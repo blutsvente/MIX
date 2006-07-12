@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.30 2006/06/22 11:45:43 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.31 2006/07/12 14:43:13 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.31  2006/07/12 14:43:13  lutscher
+#  changed _map_register_master
+#
 #  Revision 1.30  2006/06/22 11:45:43  lutscher
 #  added new view HDL-vgch-rs-clone and package RegViewClone
 #
@@ -206,7 +209,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.30 $ ';  #'
+our($VERSION) = '$Revision: 1.31 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -410,6 +413,8 @@ sub _map_register_master {
 	my($href_marker_types, %hattribs, %hdefault_attribs, $m);
 	my $result = 1;
 	my ($old_usedbits, $i);
+    my ($ivariant, $icomment);
+
 	$usedbits = 0;
 
 	# get defaults for field attributes from $eh 
@@ -423,15 +428,23 @@ sub _map_register_master {
 			$hdefault_attribs{$m_new} = $href_marker_types->{$m}[3];
 		};
 	};
-
+    
+    # get comment and variant patterns
+    $ivariant = $eh->get('input.ignore.comments');
+    $icomment = $eh->get('input.ignore.variant') || '#__I_VARIANT';
+    
 	# highest bit specified in register-master
 	$msb_max = $eh->get( 'i2c._mult_.::b' ) || _fatal("internal error (bad!)");
 
 	# iterate each row
 	foreach $href_row (@$lref_rm) {
 		# skip lines to ignore
-		next if (exists ($href_row->{"::ign"}) and ($href_row->{"::ign"} =~ m,^(#|//|\w+),));
-		next if (!scalar(%$href_row));
+	
+        next if (
+                 exists ($href_row->{"::ign"}) 
+                 and ($href_row->{"::ign"} =~ m/${icomment}/ or $href_row->{"::ign"} =~ m/${ivariant}/o )
+        );
+        next if (!scalar(%$href_row));
 
 		$col_cnt = 0;
 		$msb   = 0;
