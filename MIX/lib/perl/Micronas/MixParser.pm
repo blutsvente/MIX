@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.77 $                                         |
+# | Revision:   $Revision: 1.78 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/07/04 12:22:36 $                              |
+# | Date:       $Date: 2006/07/12 15:23:40 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.77 2006/07/04 12:22:36 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.78 2006/07/12 15:23:40 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.78  2006/07/12 15:23:40  wig
+# | Added [no]sel[ect]head switch to xls2csv to support selection based on headers and variants.
+# |
 # | Revision 1.77  2006/07/04 12:22:36  wig
 # | Fixed TOP handling, -cfg FILE issue, ...
 # |
@@ -166,9 +169,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.77 2006/07/04 12:22:36 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.78 2006/07/12 15:23:40 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.77 $';
+my $thisrevision =	'$Revision: 1.78 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -558,9 +561,14 @@ sub parse_hier_init ($) {
     #
     # Add all instances left in the input data
     #
+    #!wig20060712: removing comments:
+	my $icomms	= $eh->get( 'input.ignore.comments' );
+	my $ivar	= $eh->get( 'input.ignore.variant' ) || '#__I_VARIANT';   
     for my $i ( 0..$#{$r_hier} ) {
         next unless ( $r_hier->[$i] ); # Skip if input field is empty
-        next if ( $r_hier->[$i]{'::ign'} =~ m,^(#|//),o );
+        next if ( $r_hier->[$i]{'::ign'} =~ m,$icomms,o );
+        next if ( $r_hier->[$i]{'::ign'} =~ m,$ivar,o );
+        # Skip lines with data in the ::gen column:
         next if ( $r_hier->[$i]{'::gen'} !~ m,^\s*$,o );
         # Add more "go away" here if needed
 
@@ -908,13 +916,15 @@ sub parse_conn_init ($) {
     }
 
     my $ehr = $eh->get( 'conn.field' );
-
+	my $icomms	= $eh->get( 'input.ignore.comments' );
+	my $ivar	= $eh->get( 'input.ignore.variant' ) || '#__I_VARIANT';  	
     for my $i ( 0..$#{$r_conn} ) {
         # Skip comment lines
         # TODO : allow to pass such lines through ..
-        next if ( $r_conn->[$i]{'::ign'} =~ m,^\s*(#|//),o );
+        next if ( $r_conn->[$i]{'::ign'} =~ m,$icomms,o );
+        next if ( $r_conn->[$i]{'::ign'} =~ m,$ivar,o );
         # Skip generator lines
-        next if ( $r_conn->[$i]{'::gen'} !~ m,^\s*$,o ); #Is that really true
+        next if ( $r_conn->[$i]{'::gen'} !~ m,^\s*$,o );
 
         add_conn( %{$r_conn->[$i]} );
     }
@@ -2002,7 +2012,7 @@ sub mix_store_db ($$$) {
 
     if ( $type eq "auto" ) {
         # Derive output format from output name extension
-        if ( $dumpfile =~ m,\.(xls|sxc|csv)$, ) {
+        if ( $dumpfile =~ m,\.(xls|sxc|csv|ods)$, ) {
                 $type=$1;
         } else {
         # Default to "internal" format
@@ -2010,8 +2020,8 @@ sub mix_store_db ($$$) {
         }
     }
 
-    if ( $type eq "xls" || $type eq "sxc" || $type eq "csv") {
-        my $aro = mix_list_econf( "xls" ); # Convert $eh to two-dim array
+    if ( $type eq 'xls' || $type eq 'sxc' || $type eq 'csv' || $type eq 'ods' ) {
+        my $aro = mix_list_econf( 'xls' ); # Convert $eh to two-dim array
 
 		# db2array 
 		#!wig20051012: if eh(intermediate.intra) is set,
@@ -2021,11 +2031,11 @@ sub mix_store_db ($$$) {
 		my $arc;
 		if ( $eh->get( 'intermediate.intra' ) ) {
 			my @tops = get_top_cell();
-			$arc = db2array_intra( \%conndb, "conn", \@tops, \%hierdb, '' );
+			$arc = db2array_intra( \%conndb, 'conn', \@tops, \%hierdb, '' );
 		} else {			       
-        	$arc->{'CONN'} = db2array( \%conndb , "conn", "" );
+        	$arc->{'CONN'} = db2array( \%conndb , 'conn', $type, '' );
 		}
-        my $arh = db2array( \%hierdb, "hier", "^(%\\w+%|W_NO_PARENT)\$" );
+        my $arh = db2array( \%hierdb, 'hier', $type, "^(%\\w+%|W_NO_PARENT)\$" );
         if ( $eh->get( 'output.generate.delta' ) ) {
             my $conf_diffs = write_outfile( $dumpfile, "CONF", $aro ); # Do not generate deltas, just output
 			my $conn_diffs = 0;
@@ -2310,7 +2320,7 @@ sub apply_x_gen ($$) {
                 if ( $text =~ m,^$re$, ) { # $text matches $re ... possibly setting $1 ...
                     # Apply all fields defined in generator:
                     #!wig20060125: if namespace contains :splice, iterate over all bit splices!
-                    #				$s gets the current value of the bis splice ...
+                    #				$s gets the current value of the bit splice ...
                     my @splice_range = _mix_p_getsplicerange( $i, $r_hg->{$cg}, $ky );
 
 					if ( scalar( @splice_range ) ) {
@@ -4837,14 +4847,19 @@ sub mix_parser_importhdl ($$) {
 		}
     }
 
+	# detect extension:
+	my $ext = 'xls';
+	if ( $file =~ m/\.(xls|csv|sxc|ods)$/ ) {
+		$ext = $1;
+	}
     # prepare to dump the data now ..
     parse_mac();
-    my $arc = db2array( \%conndb , "conn", "" );
-    my $arh = db2array( \%hierdb, "hier", "^(%\\w+%|W_NO_PARENT)\$" );
+    my $arc = db2array( \%conndb , 'conn', $ext, '' );
+    my $arh = db2array( \%hierdb, 'hier', $ext, "^(%\\w+%|W_NO_PARENT)\$" );
 
     # write_outfile( $dumpfile, "CONF", $aro ); #wig20030708: store CONF options ...
-    write_outfile( $file, "IMP_CONN", $arc );
-    write_outfile( $file, "IMP_HIER", $arh );
+    write_outfile( $file, 'IMP_CONN', $arc );
+    write_outfile( $file, 'IMP_HIER', $arh );
 
 }
 

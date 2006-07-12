@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.124 $                                         |
+# | Revision:   $Revision: 1.125 $                                        |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/07/05 09:58:28 $                              |
+# | Date:       $Date: 2006/07/12 15:23:40 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.124 2006/07/05 09:58:28 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.125 2006/07/12 15:23:40 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.125  2006/07/12 15:23:40  wig
+# | Added [no]sel[ect]head switch to xls2csv to support selection based on headers and variants.
+# |
 # | Revision 1.124  2006/07/05 09:58:28  wig
 # | Added -variants to conn and io sheet parsing, rewrote open_infile interface (ordered)
 # |
@@ -185,7 +188,9 @@ sub mix_utils_loc_sum	();
 sub mix_utils_open_diff	($;$);
 sub mix_utils_diff		($$$$;$);
 sub mix_utils_clean_data	($$;$);
-#!wig20051012:
+#!wig20060712: changed interface!
+sub db2array			($$$$;$$);
+sub _filter_sheets		($$);
 sub db2array_intra		($$$$$);
 sub _mix_utils_im_header	($$);
 sub _inoutjoin			($);
@@ -218,11 +223,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.124 2006/07/05 09:58:28 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.125 2006/07/12 15:23:40 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.124 $';         #'
+my $thisrevision        =      '$Revision: 1.125 $';         #'
 
-# Revision:   $Revision: 1.124 $   
+# Revision:   $Revision: 1.125 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -986,10 +991,17 @@ sub _init_loglimit_eh ($) {
 	my $eh = shift;
 	
 	my $loglimit = $eh->get( 'log.limit' );
-	for my $category ( qw( re tag level ) ) {
-		for my $k ( keys %{$loglimit->{$category}} ) {
-			if ( $loglimit->{$category}->{$k} == -1 ) {
-				delete $loglimit->{$category}->{$k};
+	for my $category ( qw( re tag level test ) ) {
+		next unless( exists $loglimit->{$category} );
+		if ( ref( $loglimit->{$category} ) ne 'HASH' ) {
+			delete $loglimit->{$category}; # Crashes later!
+			$logger->error( '__E_INIT_LOGLIMIT', "\tIllegal usage of log.limit." .
+					$category . ". Not a hash!" );
+		} else {
+			for my $k ( keys %{$loglimit->{$category}} ) {
+				if ( $loglimit->{$category}->{$k} == -1 ) {
+					delete $loglimit->{$category}->{$k};
+				}
 			}
 		}
 	}
@@ -2094,7 +2106,7 @@ Several variants can be selected by adding the appropriate variant names
 to the ::variants columns, seperated by space or ,. 
 
 The lines not selected by a variant will be marked by
-adding a "# ..." to the	::ign column. A later parser run removes
+adding a "#__I_VARIANT ..." to the ::ign column. A later parser run removes
 that lines then (see parse_*_init)
 
 Input
@@ -2107,7 +2119,7 @@ Returns
 
 sub select_variant ($;$) {
     my $r_data	= shift;
-	my $type	= shift || "default";
+	my $type	= shift || 'default';
 
     unless ( defined $r_data ) {
 	    $logger->fatal('__F_BAD_VARIANT', "\tselect_variant called with bad argument!");
@@ -2123,7 +2135,7 @@ sub select_variant ($;$) {
 				$var =~ s/[ \t,]+/|/g; # Convert into Perl RE (Var1|Var2|Var3)
 				$var = '(' . $var . ')';
 				if ( $variant !~ m/^$var$/i ) {
-		    		$r_data->[$i]{'::ign'} = '# Variant not selected!'; # Mark for deletion ...
+		    		$r_data->[$i]{'::ign'} = '#__I_VARIANT Variant not selected!'; # Mark for deletion ...
 		    		$n++;
 				}
 	    	}
@@ -2174,7 +2186,7 @@ sub convert_in ($$) {
     my $r_data = shift;
 
     unless ( defined $kind and defined $r_data ) {
-	    $logger->warn('__W_CONVERT_IN', "\tSkipping convert_in, called with bad arguments!");
+	    $logger->error('__E_CONVERT_IN', "\tSkipping convert_in, called with bad arguments!");
 	    return ();
     }
 
@@ -2183,40 +2195,48 @@ sub convert_in ($$) {
     my %order = ();  # Field name to number
     my $hflag = 0;
     my @holdincom = (); # tmp storage for linked comments
-    my $required = $eh->get ( $kind . '.field' ); # Shortcut into EH->fields
+    my $required = $eh->get( $kind . '.field' ); # Shortcut into EH->fields
 
+	#
+	# Skip ::ign marked with # or // comments, again ...
+	#			or if the whole line only has leading # or //
+	#!wig20060706: acccept # as first char on line if followed by ::
+	my $mapign = $eh->get( 'input.ignore.map' ) =~ m/\bhashtoign/;
+	my $ignorelines_match = $eh->get( 'input.ignore.lines' ) ||
+			'^\s*(#|//)';
+	my $ignoreignore_match = $eh->get( 'input.ignore.comments' ) ||
+			'^\s*(#|//)';
+	if ( $ignoreignore_match =~ m/::ignany\b/ ) {
+		$ignoreignore_match = '\S+';
+	}
+	my $kindcomment = $eh->get( $kind . '.comments' ) || '';
+	
     for my $i ( @$r_data ) { # Read row by row
-		$i = [ map { defined( $_ ) ? $_ : "" } @$i ];		#Fill up undefined fields??
+		$i = [ map { defined( $_ ) ? $_ : '' } @$i ];		#Fill up undefined fields??
 		my $all = join( ' ', @$i );
 		$all =~ s/\n//g; # Remove extra newlines ..
-		next if ( $all =~ m/^\s*$/o ); 			# If a line is totally empty, skip it
+		next if ( $all =~ m/^\s*$/o ); 	# If a line is totally empty, skip it
 
+		#
 		# Skip all lines before the ::foo ::bar line!
+		#
 		unless ( $hflag ) { # We are still looking for our ::MARKER header line
+			
+			if ( $mapign ) { $all =~ s/^\s*#\s+::/::ign ::/; };
+					
 	    	next unless ( $all =~ m/^\s?::/ );			#Still no header ...
-	    	#REFACTOR: check this OLD (was \$EH ...)
 	    	%order = parse_header( $kind, $eh->get( $kind ), @$i );		#Check header, return field number to name
 	    	$hflag = 1;
 	    	next;
 		}
 	
-		# Skip ::ign marked with # or // comments, again ...
-		#			or if the whole line only has leading # or //
-		my $ignorelines_match = $eh->get( 'output.input.ignore.lines' ) ||
-				'^\s*(#|//)';
-		my $ignoreignore_match = $eh->get( 'output.input.ignore.comments' ) ||
-				'^\s*(#|//)';
-		if ( $ignoreignore_match =~ m/::ignany\b/ ) {
-			$ignoreignore_match = '\S+';
-		}
+
 		if ( $all =~ m,$ignorelines_match, or
 			( defined( $order{'::ign'}) and
 				$i->[$order{'::ign'}] =~ m,$ignoreignore_match, ) ) {
 			# Skip only if <kind>.comments is not set
-			if ( defined( $eh->get( $kind . '.comments' ) ) and
-					$eh->get( $kind . '.comments' ) ) {
-				my $relation = ( $eh->get( $kind . '.comments' )
-					=~ m/\bpre/io ) ? 'pre' : 'post';
+			if ( $kindcomment ) {
+				my $relation = ( $kindcomment =~ m/\bpre/io ) ? 'pre' : 'post';
 				# Other values: post, successor
 				# Link the comment to the previous/next line
 				# create a primary key entry (if not set!)
@@ -2289,6 +2309,8 @@ Returns: %order (keys are the ::head items)
 20050708wig: add _multorder_ handling
 20050614: remove extra whitespace around the keywords
 20051024: make sure multiple fields are printed in one block
+20060706: consider $eh->get('input.ignore.columns')
+
 =cut
 
 sub parse_header($$@){
@@ -2435,7 +2457,7 @@ sub parse_header($$@){
 		
     # Finally, got the field name list ... return now
     return %or;
-}
+} # End of parse_header
 
 #
 # Multiple header are uniquified now, but print order
@@ -2592,39 +2614,50 @@ sub mix_load ($%){
 
 =head2
 
-db2array ($$$) {
+db2array ($$$$;S$) {
 
 convert the datastructure to a flat array
 adds the header line as defined in the $eh->get( $type . '.field' ) ..
 
-Arguments: 	$ref    := hash reference
-			$type   := (hier|conn)
-			$filter := Perl_RE,if it matches a key of ref, do not print that out
-			    		if $filter is an sub ref, will be used in grep
-
+Arguments: 	$ref		:= hash reference
+							-> keys are the sheet names
+			$type		:= (hier|conn) sheet type
+			$otype		:= output file type (xls|csv|sxc|ods)
+			$filter		:= Perl_RE,if it matches a key of ref, do not print that out
+			    			if $filter is an sub ref, will be used in grep
+			    			e.g. used to supress printing of internal instances
+			$sfilter	:= Perl_RE matching column headers to select
+			$ifilter	:= Perl_RE matching column headers to remove
+							Please make sure $s|ifilter also accepts trailing :N extensions
+							for multiply defined columns (see xls2csv re constructor)!
+			
 !wig20051014: adding output of array->hash (instead of hash->hash)
 	This allows to print out an arry of hashes
 =cut
 
-sub db2array ($$$) {
+sub db2array ($$$$;$$) {
     my $ref		= shift;
     my $type	= shift;
-    my $filter	= shift;
+    my $otype	= shift || 'xls';
+    my $filter	= shift	|| '';
+    my $sfilter = shift || '';
+    my $ifilter = shift || '';
 
     unless( $ref ) {
-    	$logger->warn('__W_DB2ARRAY_ARGS', "\tCalled db2array without db argument!");
+    	$logger->error('__E_DB2ARRAY_ARGS', "\tCalled db2array without db argument!");
 	    return;
     }
     $type = lc( $type );
     unless ( ref( $ref ) eq 'ARRAY' or $type =~ m/^(hier|conn)/io ) {
-		$logger->warn('__W_BAD_DBTYPE', "\tBad db type $type, ne HIER or CONN!");
+		$logger->error('__E_BAD_DBTYPE', "\tBad db type $type, ne HIER or CONN!");
 		return;
     }
+    
     $type = ( defined( $1 ) and $1 ) ? lc($1) : lc( $type );
 
     my @o = ();
-    my $primkeynr = 0; # Primary key identifier
-    my $commentnr = "";
+    my $primkeynr = 0; # Primary key identifier; defaults to ::ign 
+    my $commentnr = ''; # which column has the ::comments line?
     
     # Get order for printing fields ...
     #  and the number of the comment and primary data field
@@ -2635,6 +2668,9 @@ sub db2array ($$$) {
     my $fields = $eh->get( $type . '.field' );
     for my $ii ( keys( %$fields ) ) {
 		next unless ( $ii =~ m/^::/o );
+		# If hfilter is set -> Skip if $ii matches
+		next if ( $sfilter and $ii !~ m/$sfilter/ );
+		next if ( $ifilter and $ii =~ m/$ifilter/ );
 		# Only print if PrintOrder > 0:
 		if ( $fields->{$ii}[4] > 0 ) {
 			$o[$fields->{$ii}[4]] = $ii; # Print Order ...
@@ -2645,25 +2681,20 @@ sub db2array ($$$) {
 	    	$commentnr = $fields->{$ii}[4];
 		}
     }
+	
+	#!wig20060712: remove empty/filtered columns
+	my @oo = ( undef() );
+	for my $o ( @o ) {
+	 	push( @oo, $o ) if ( defined( $o ) );
+	}
+	@o = @oo;
 
     my @a = ();
     my $n = 0;
 
 	( $n , @a ) = _mix_utils_im_header( uc($type) , \@o );
-	
-    my @keys = ();
-    if ( ref( $ref ) eq 'HASH' and $filter ) { # Filter the keys ....
-		if ( ref( $filter ) eq "CODE" ) {
-	    	@keys = grep( &$filter, keys( %$ref ) );
-		} else {
-	    	@keys = grep( !/$filter/, keys( %$ref ) );
-		}
-		@keys = sort( @keys );
-    } elsif ( ref( $ref ) eq 'ARRAY' ) {
-    	@keys = 0..(scalar(@$ref) - 1 ); # array from 0..N
-    } else {
-		@keys = sort( keys( %$ref ));
-    }
+
+	my @keys = _filter_sheets ( $ref, $filter );
 
     #WORKAROUND
     #wig20040322: adding ugly ::workaround back to originating column,
@@ -2685,16 +2716,21 @@ sub db2array ($$$) {
     	}
     }
 
+    # Maximum cell length:
+    my $maxlength = $eh->get( 'format.' . $otype . '.maxcelllength' ); # 0 -> unlimited
+    unless( defined( $maxlength ) ) {
+    	$maxlength = $eh->get( 'format.xls.maxcellllength' );
+    }
     # Now comes THE data
     for my $i ( @keys ) {
 		my $split_flag = 0; # If split_flag 
-		my $refdata = "";
+		my $refdata = '';
 		if ( ref( $ref ) eq 'ARRAY' ) {
 			$refdata = $ref->[$i];
 		} else {
 			$refdata = $ref->{$i};
 		}
-		for my $ii ( 1..$#o ) { # 0 contains fields to skip
+		for my $ii ( 1..(scalar( @o ) - 1 ) ) { # 0 contains fields to skip
 	    	next unless defined( $o[$ii] ); #!wig20051014: Bad field detected
 	    	
 	    	if ( $o[$ii] =~ m/^::(in|out)\s*$/o and
@@ -2706,12 +2742,13 @@ sub db2array ($$$) {
 				$a[$n][$ii-1] = defined( $refdata->{$o[$ii]} ) ? $refdata->{$o[$ii]} : "%UNDEF_1%";
 	    	}
 	    	
-	    	if ( length( $a[$n][$ii-1] ) > $eh->get( 'format.xls.maxcelllength' ) ) {
+	    	if ( $maxlength and ( length( $a[$n][$ii-1] ) > $maxlength ) ) {
 				# Line too long! Split it!
 				# Assumes that the cell to be split are accumulated when reused later on.
 				# Will not check if that is not true!
 				if ( $ii - 1 == $primkeynr ) {
-		    		$logger->warn( '__W_SPLIT_KEY', "\tSplitting key of table: " . substr( $a[$n][$ii-1], 0, 32 ) );
+		    		$logger->warn( '__W_SPLIT_KEY', "\tSplitting key of table: " .
+		    			substr( $a[$n][$ii-1], 0, 32 ) );
 				}
 				$split_flag=1;
 				my @splits = mix_utils_split_cell( $a[$n][$ii-1] );
@@ -2728,13 +2765,15 @@ sub db2array ($$$) {
 		if ( $split_flag > 1 ) {
 	    	# Set primary key in cells, add comments
 	    	for my $sn ( 1..( $split_flag - 1 ) ) {
-				$a[$n + $sn][$primkeynr-1] = $a[$n][$primkeynr-1];
-				if ( $commentnr ne "" ) { # Add split comment
+	    		if ( $primkeynr ) {
+					$a[$n + $sn][$primkeynr-1] = $a[$n][$primkeynr-1];
+	    		}
+				if ( $commentnr ne '' ) { # Add split comment
 		    		$a[$n + $sn][$commentnr-1] .= "# __I_SPLIT_CONT_$sn";
 				}
                 # Make sure all cells are defined
                 for my $ssn ( 0..(scalar( @{$a[$n]} ) - 1) ) {
-                    $a[$n + $sn][$ssn] = "" unless defined( $a[$n + $sn][$ssn] );
+                    $a[$n + $sn][$ssn] = '' unless defined( $a[$n + $sn][$ssn] );
                 }                    
 	    	}
 	    	$n += $split_flag; # Goto next free line ...
@@ -2743,7 +2782,7 @@ sub db2array ($$$) {
 		}
     }
 
-    #WORKAROUND:
+    # WORKAROUND :
     # undo the change above ....
     #wig20040322:
     if ( $wa_flag ) {
@@ -2762,7 +2801,31 @@ sub db2array ($$$) {
     
     return \@a;
 
-}
+} # End of db2array
+ 
+#
+# Select sheets to print based on $filter
+#!wig20060712	
+sub _filter_sheets ($$) {
+	my $ref		= shift;
+	my $filter	= shift;
+		
+	# Prepare keys (if $ref is HASH ref)
+    my @keys = ();
+    if ( ref( $ref ) eq 'HASH' and $filter ) { # Filter the keys ....
+		if ( ref( $filter ) eq "CODE" ) {
+	    	@keys = grep( &$filter, keys( %$ref ) );
+		} else {
+	    	@keys = grep( !/$filter/, keys( %$ref ) );
+		}
+		@keys = sort( @keys );
+    } elsif ( ref( $ref ) eq 'ARRAY' ) {
+    	@keys = 0..(scalar(@$ref) - 1 ); # array from 0..N
+    } else {
+		@keys = sort( keys( %$ref ));
+    }
+    return @keys;
+} # End of _filter_sheets
 
 ####################################################################
 ## db2array_intra
@@ -2805,18 +2868,18 @@ sub db2array_intra ($$$$$) {
     my $filter	= shift;
 
     unless( $ref and ref( $ref ) ) {
-    	$logger->warn( '__W_FUNC_ARGS', "\tCalled db2array_intra without db argument!");
+    	$logger->error( '__E_FUNC_ARGS', "\tCalled db2array_intra without db argument!");
 	    return;
     }
     unless ( $type =~ m/^(conn)/io ) {
-		$logger->warn('__W_BADDBTYPE', "\tBad db type $type, ne CONN!");
+		$logger->error('__E_BADDBTYPE', "\tBad db type $type, ne CONN!");
 		return;
     }
     $type = lc($1);
 
     my @o = ();
     my $primkeynr = 0; # Primary key identifier
-    my $commentnr = "";
+    my $commentnr = '';
     
     # Get order for printing fields ...
     # TODO check if fields do overlap!
@@ -2971,12 +3034,12 @@ sub db2array_intra ($$$$$) {
 	    		# Set primary key in cells, add comments
 	    		for my $sn ( 1..( $split_flag - 1 ) ) {
 					$a{$a}[$n{$a} + $sn][$primkeynr-1] = $a{$a}[$n{$a}][$primkeynr-1];
-					if ( $commentnr ne "" ) { # Add split comment
+					if ( $commentnr ne '' ) { # Add split comment
 		    			$a{$a}[$n{$a} + $sn][$commentnr-1] .= "# __I_SPLIT_CONT_$sn";
 					}
                 	# Make sure all cells are defined
                 	for my $ssn ( 0..(scalar( @{$a{$a}[$n{$a}]} ) - 1) ) {
-                    	$a{$a}[$n{$a} + $sn][$ssn] = "" unless defined( $a{$a}[$n{$a} + $sn][$ssn] );
+                    	$a{$a}[$n{$a} + $sn][$ssn] = '' unless defined( $a{$a}[$n{$a} + $sn][$ssn] );
                 	}                    
 	    		}
 	    		$n{$a} += $split_flag; # Goto next free line ...
@@ -3095,6 +3158,7 @@ sub _mix_utils_im_header ($$) {
 	my @a = ();
 	my $n	= 0;
 
+	# Check if there is one multiple header ( ::HEAD:\d )
 	my $hasmult = 0;
 	for my $hm ( @$o ) {
 		if ( defined $hm and $hm =~ m/:\d+$/ ) {
@@ -3104,6 +3168,7 @@ sub _mix_utils_im_header ($$) {
 		}
 	}
 	
+	# Print duplicate header line:
     for my $ii ( 1..(scalar @$o - 1) ) {
     	if ( $hasmult ) {
 			( $a[$n-1][$ii-1] = $o->[$ii] ) =~ s/:\d+$//o;
@@ -3114,7 +3179,7 @@ sub _mix_utils_im_header ($$) {
     }
     $n++;
     # Print comment: generator, args, date
-    # First column is ::ign :-)
+    # Assume: first column is ::ign :-)
     # As we are lazy, we will leave the rest of the line undefined ...
     my %comment = ( qw( by %USER% on %DATE% cmd %ARGV% ));
     $a[$n++][0] = "# Generated Intermediate Data: $title";
@@ -3123,7 +3188,8 @@ sub _mix_utils_im_header ($$) {
     }
 
 	return $n, @a;
-}
+} # End of _mix_utils_im_header
+
 #####################################################################
 ## Split cells longer than 1024 characters into chunks suitable for excel
 ## to swallow
@@ -3298,11 +3364,11 @@ sub _inoutjoin ($) {
 
 	my $aref = shift;
     # Join the data    
-    my $s = join( "", @$aref );
+    my $s = join( '', @$aref );
 
 	#  find a single :) or (: and warn
     if ( ( $s =~ m,\(:,o ) or ( $s =~ m,:\),o ) ) {
-		$logger->warn( '__W_INOUT_BAD_BRANCH',
+		$logger->error( '__E_INOUT_BAD_BRANCH',
 			"\tinout2array bad branch (: ! File bug report!" );
     }
 

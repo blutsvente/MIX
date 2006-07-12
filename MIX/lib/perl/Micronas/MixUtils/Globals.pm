@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.19 $                                          |
+# | Revision:   $Revision: 1.20 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/07/05 09:58:28 $                              |
+# | Date:       $Date: 2006/07/12 15:23:40 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.20  2006/07/12 15:23:40  wig
+# | Added [no]sel[ect]head switch to xls2csv to support selection based on headers and variants.
+# |
 # | Revision 1.19  2006/07/05 09:58:28  wig
 # | Added -variants to conn and io sheet parsing, rewrote open_infile interface (ordered)
 # |
@@ -108,9 +111,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.19 2006/07/05 09:58:28 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.20 2006/07/12 15:23:40 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.19 $';  
+my $thisrevision    =      '$Revision: 1.20 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -536,13 +539,13 @@ sub init ($) {
                 # ignorecase|ic: -> ignore case if set
                 # isc|ignoresemicolon: -> ignore trailing semicolon
                 # mapstd[logic]: -> ignore std_logic s. std_ulogic diffs!
-    	# TODO -> set this to it's own key, not as part of output
 	};
 
 	$this->{'cfg'}{'input'} = {
 		'ext' =>	{
 			'excel' =>	'xls',
 	   		'soffice' => 'sxc',
+	   		'oofice' => 'ods',
 	   		'csv'   =>	'csv',
 		},
 		'ignore' => {
@@ -551,9 +554,18 @@ sub init ($) {
 							# character is set in the ::ign column
 			'lines' =>		# Ignore lines starting with # or // or --
 				'^\s*(#|//|--)', # Define lines to remove
-			# TODO :
+			'map'	=>		# Allow mappings: # -> ::ign if followed by another ::
+				'hashtoign',
+			'columns'	=>	'nohead', # Defines handling of columns with no headerline
+							#	nohead	:= ignore them (default)
+							#	
+							#	join	:= join all headless together into one ::extra
+							#	extran	:= create a new header ::extra_N for each headless column
+							#	::FOO	:= ignore columns with that header 
+			# TODO : define pragmas for controlled usage of comments:
 			'pragma' => '', # comments will be printed/removed selectively
 							# e.g.  __HDL__, __MIF__ 
+			'variant' => '#__I_VARIANT', # Internally used to mark lines deselected by -variant
 		}
     };
 	$this->{'cfg'}{'internal'} = {
@@ -1333,27 +1345,36 @@ sub init ($) {
     };
     # Definitions for file formats
     $this->{'cfg'}{'format'} = { # in - out file settings
-       'csv' => {
-           'cellsep' => ';',        # cell seperator
-           'sheetsep' => ':=:=:=>', # sheet seperator, set to empty string to supress
-           'quoting' => '"',    # quoting character
-           'style'   => 'doublequote,autoquote,nowrapnl,maxwidth',  # controll the CSV output
+		'csv' => {
+        	'cellsep' => ';',        # cell seperator
+        	'sheetsep' => ':=:=:=>', # sheet seperator, set to empty string to supress
+        	'quoting' => '"',    # quoting character
+        	'style'   => 'doublequote,autoquote,nowrapnl,maxwidth',  # controll the CSV output
                # doublequote: mask quoting char by duplication! Else mask with \
                # autoquote: only quote if required (embedded whitespace)
                # wrapnl: wrap embedded new-line to space
                # masknl: replace newline by \\n
                # maxwidth: make all lines contain maxwidth - 1 seperators
-           'delta'   => 'DIFF:', # Value to prepend in CSV file to changed cell
-           'sortrange' => 1,	# If set to 0, do not sort range selectors.
-       },
-       'xls' => {
+			'delta'   => 'DIFF:', # Value to prepend in CSV file to changed cell
+			'sortrange' => 1,	# If set to 0, do not sort range selectors.
+			'maxcelllength' => 0,
+		},
+		'xls' => {
        		'maxcelllength' => 500, # Limit number of characters in ExCEL cells
  			'style'	=>	'',		# Format the generated output
  				# stripnl:	replace <nl> by <sp> (also known as 'wrapnl')
  				# masknl:	replace newline by \\n
  				# stripna:	replace all non ASCII-Chars by <sp>
  			
-       },
+		},
+		'sxc' => {
+       	    'maxcelllength' => 500, # Limit number of characters in sxc cells
+ 			'style'	=>	'',		# Format the generated output
+		},
+		'ods' => {
+			'maxcelllength' => 500, # Limit number of characters in sxc cells
+			'style'	=>	'',		# Format the generated output
+		},
        'out' => '',
     };
     

@@ -1,3 +1,5 @@
+# -*-* perl -*- -w
+#  header for MS-Win! Remove for UNIX ...
 #!/bin/sh --
 #!/bin/sh -- # -*- perl -*- -w
 eval 'exec ${PERL:-`[ ! -d "$HOME/bin/perl" -a -x "$HOME/bin/perl" ] && echo "$HOME/bin/perl" || { [ -x /usr/bin/perl ] && echo /usr/bin/perl || echo /usr/local/bin/perl ; } `} -x -S $0 ${1+"$@"} ;'
@@ -26,12 +28,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: vgch_join.pl,v 1.8 2006/05/03 12:10:33 wig Exp $  |
+# | Id           : $Id: vgch_join.pl,v 1.9 2006/07/12 15:23:40 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.8 $                                      |
-# | Mod.Date     : $Date: 2006/05/03 12:10:33 $                           |
+# | Version      : $Revision: 1.9 $                                      |
+# | Mod.Date     : $Date: 2006/07/12 15:23:40 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -46,6 +48,9 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: vgch_join.pl,v $
+# | Revision 1.9  2006/07/12 15:23:40  wig
+# | Added [no]sel[ect]head switch to xls2csv to support selection based on headers and variants.
+# |
 # | Revision 1.8  2006/05/03 12:10:33  wig
 # | Improved top handling, fixed generated format
 # |
@@ -113,7 +118,7 @@ sub base_interface ($);
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.8 $'; # RCS Id
+$::VERSION = '$Revision: 1.9 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # Our local variables
@@ -182,7 +187,7 @@ $eh->set( 'default.xls', '.*' ); # Read in all sheets ....
 $eh->set( 'macro.%UNDEF_1%', '' );
 # Remove NL and CR
 $eh->set( 'format.csv.style', 'stripnl,doublequote,autoquote,maxwidth' );
-$eh->set( 'output.input.ignore.comments', '::ignany' ); # Skip all lines with s.th. \S in ::ign
+$eh->set( 'input.ignore.comments', '::ignany' ); # Skip all lines with s.th. \S in ::ign
 
 # Add your options here ....
 mix_getopt_header( qw(

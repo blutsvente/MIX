@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.91 $                                         |
+# | Revision:   $Revision: 1.92 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/07/04 12:22:35 $                              |
+# | Date:       $Date: 2006/07/12 15:23:40 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.91 2006/07/04 12:22:35 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.92 2006/07/12 15:23:40 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.92  2006/07/12 15:23:40  wig
+# | Added [no]sel[ect]head switch to xls2csv to support selection based on headers and variants.
+# |
 # | Revision 1.91  2006/07/04 12:22:35  wig
 # | Fixed TOP handling, -cfg FILE issue, ...
 # |
@@ -83,7 +86,7 @@ use Tree::DAG_Node; # tree base class
 use Regexp::Common; # Needed for reading back spliced ports
 
 use Micronas::MixUtils 
-    qw( $eh mix_store db2array mix_utils_open mix_utils_print 
+    qw( $eh mix_store mix_utils_open mix_utils_print 
 	mix_utils_printf mix_utils_close replace_mac
 	is_integer is_integer2 );
 use Micronas::MixUtils::IO;
@@ -136,9 +139,9 @@ sub _mix_wr_nice_comment		($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.91 2006/07/04 12:22:35 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.92 2006/07/12 15:23:40 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.91 $';
+my $thisrevision   =      '$Revision: 1.92 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -4080,17 +4083,20 @@ sub _write_architecture ($$$$) {
     	# Add constants if defined via %BUS%
     	# Caveat: there should be a one:one mapping of busses and constants here
 		# TODO : check this ...
+		#!wig20060711: check if signal was defined before
     	if ( exists( $hierdb{'%BUS%'}{'::conn'}{'in'} ) ) {
         	my $ins = $hierdb{'%BUS%'}{'::conn'}{'in'};
         	for my $c ( keys( %$ins ) ) {
             	for my $bus ( keys( %{$ins->{$c}} ) ) {
 					# Apply to mother of this instance!
+					#!wig20060711: check if this signal exists:
+					unless ( exists( $conndb{$bus} ) and exists( $conndb{$bus}{'::topinst'} ) ) {
+						$logger->error( '__E_', "\tMISSING signal definition for $bus to be used in %BUS% skipped!" );
+						next;
+					}
                 	if ( $hierdb{$conndb{$bus}{'::topinst'}}{'::treeobj'}->mother eq $node ) {
                     	push( @in, $c );
                 	}
-                	# if ( $conndb{$bus}{'::topinst'} eq $t_inst ) {
-                    #	push( @in, $c );
-                	# }
             	}
         	}
     	}

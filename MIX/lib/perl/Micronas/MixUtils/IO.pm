@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.46 $                                          |
+# | Revision:   $Revision: 1.47 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/07/05 09:58:28 $                              |
+# | Date:       $Date: 2006/07/12 15:23:40 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.47  2006/07/12 15:23:40  wig
+# | Added [no]sel[ect]head switch to xls2csv to support selection based on headers and variants.
+# |
 # | Revision 1.46  2006/07/05 09:58:28  wig
 # | Added -variants to conn and io sheet parsing, rewrote open_infile interface (ordered)
 # |
@@ -136,11 +139,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.46 2006/07/05 09:58:28 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.47 2006/07/12 15:23:40 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.46 $'; #'  
+my $thisrevision    =      '$Revision: 1.47 $'; #'  
 
-# Revision:   $Revision: 1.46 $
+# Revision:   $Revision: 1.47 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -608,7 +611,7 @@ sub open_xls($$$$){
     my @sheets = ();
 
 	unless( -r $file ) {
-		$logger->warn( '__W_FILE_READ', "\tCannot read <$file> in open_xls!" );
+		$logger->error( '__E_FILE_READ', "\tCannot read <$file> in open_xls!" );
 		return undef;
     }
     $file = absolute_path( $file );
@@ -664,7 +667,8 @@ sub open_xls($$$$){
 				if(defined $cell) {
 					# Check Value: if cell contains #VALUE!, #NAME? or #NUM! alert user ...
 					if ( $xls_warns and $cell->Value =~ m/$xls_warns/ ) {
-						$logger->error( '__E_XLS_REFS', "\tXLS cell $x/$y (sheet " .
+						$logger->error( '__E_XLS_REFS', "\tXLS cell R" . $y + 1 .
+								"C" . $x + 1 . " (sheet " .
 								$isheet->{Name} . ") bad reference: " . $cell->Value );
 					}
 					push(@line, $cell->Value);  # $cell->Value || $cell->{Val} ?
@@ -961,7 +965,7 @@ sub open_csv($$$$) {
     my $entry = "";
 
     unless( -r $file ) {
-        $logger->warn( '__W_READ_CSV', "\tCannot read <$file> in open_csv!" );
+        $logger->error( '__E_READ_CSV', "\tCannot read <$file> in open_csv!" );
 		return undef;
     }
 

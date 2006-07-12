@@ -10,7 +10,7 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #
 #******************************************************************************
 #
-# $Id: xls2csv.pl,v 1.9 2006/05/16 12:13:11 wig Exp $
+# $Id: xls2csv.pl,v 1.10 2006/07/12 15:23:41 wig Exp $
 #
 # read in XLS file and print out a csv and and a sxc version of all sheets
 #
@@ -27,6 +27,8 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #					 -quote X
 #                    -[no]single
 #                    -[no]accumulate
+#					 -sel[ect]head [::]A,[::B.*]
+#							select columns based on MIX header ::names matching ::A or ::B.*
 #					 -column|(c)range A:B,C   select columns (by EXCEL numbering or digit)
 #					 -row|rrange N:M		select rows
 #					 -matchc "REG_matching header"
@@ -39,6 +41,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #  Define seperator:
 #
 # $Log: xls2csv.pl,v $
+# Revision 1.10  2006/07/12 15:23:41  wig
+# Added [no]sel[ect]head switch to xls2csv to support selection based on headers and variants.
+#
 # Revision 1.9  2006/05/16 12:13:11  wig
 # Added documentation.
 #
@@ -92,19 +97,22 @@ use lib './../lib/perl';
 #!wig20060223: logging made easy -> replacing Log::Agent!
 use Log::Log4perl qw(:easy get_logger :levels);
 
-use Micronas::MixUtils qw( $eh %OPTVAL mix_init mix_getopt_header );
+use Micronas::MixUtils qw( $eh %OPTVAL mix_init mix_getopt_header
+		convert_in db2array select_variant);
 use Micronas::MixUtils::IO;
 
 sub convert_selcolumn	($);
 sub filter_sheet 		($);
+sub filter_col			($);
 sub set_filenames		($);
-
+sub parse_selheadopt	($);
+sub selbyhead				($$);
 
 #******************************************************************************
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.9 $'; # RCS Id
+$::VERSION = '$Revision: 1.10 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 #
@@ -161,7 +169,9 @@ qw(
 	row|rows|rrange=s@
 	matchc=s@
 	matchr=s@
-	
+	selhead|colhead|selecthead=s@
+	noselhead|nocolhead|noselecthead=s@
+	variant=s
     dir=s
     out=s
     conf|config=s@
@@ -205,7 +215,14 @@ qw(
 			(alpha only for column headers)
 			Repeated options are ORed (tried one after the other)
 			If column or row selector options are set, only matching data will be printed
+			The column and row selectors will be sorted unless format.csv.sortrange is set
+			to 0 on the commandline.
 
+	-sel[ect]head [::]A,[::]B.*
+						select columns based on MIX header ::names matching ::A or ::B.*
+	-nosel[ect]head [::]C,[::]D.*
+						remove columns matching the arguments here
+	-variant A		select only rows, which ::variants column matches "A"
 	-conf mix.conf.key=val  Set the global configuration to \"val\". See the mix documentation
 	        for a detailed list.
 
@@ -232,9 +249,6 @@ if ( $OPTVAL{sxc} == -1 ) {
 
 # Did the user specify a filter?
 my $filter_flag = 0;
-
-
-
 for my $o ( qw( column row matchc matchr ) ) {
 	if ( $OPTVAL{$o} ) {
 		# Need to normalize the column specific options A:C -> 0..2
@@ -276,15 +290,11 @@ mix_utils_io_create_path();
 
 #
 # main loop: convert all xls files from input
-#
+# Currently: handle each sheet on it's own seperate!
 for my $file ( @ARGV ) {
 
 	if( $file !~ m/\.xls/) {
 	    $file = $file . '.xls';
-	}
-	unless( -r $file ) {
-		print "WARNING: Cannot read file $file\n";
-		next;
 	}
 
 	unless( -r $file ) {
@@ -296,6 +306,7 @@ for my $file ( @ARGV ) {
 	
 	unless( $oBook ) {
 	    $logger->fatal('__F_FILEPARSE', "File <$file> not parsed by ParseExcel");
+	    exit 1;
 	}
 	
 	my $sheet;
@@ -323,9 +334,15 @@ for my $file ( @ARGV ) {
 	    $ref = pop(@data);       # get the first sheet of the name $sname which was found
 
 	    # Filter referenced data:
+	    # Apply column and row filter first
 	    if ( $filter_flag ) {
 	    	$ref = filter_sheet( $ref );
 	    }
+
+		# If -selhead is active, convert input data to arrayhash format,
+		#   do the filtering and print out the rest
+		$ref = selbyhead( $ref, $sname );
+			
 		if ( $OPTVAL{single} ) { # Make unique filename (could be combined with -nohead!)
 			( my $snamean = $sname ) =~ s/\W+/_/g; #
 			$snamean =~ s/:/_/g;
@@ -353,6 +370,52 @@ for my $file ( @ARGV ) {
 		}
 	}
 } # End of main while loop
+
+#
+# select/deselect lines based on ::header lines
+#  and -variants switch
+#
+# TODO :
+#   - columns ::ign and ::comment are getting added by the "default" template
+#		should they be removed later on?
+#	- what about extra colmns? Skip or add/print?
+#	- if multiple sheets are renedered, new columns on previous sheets are printed
+#   out on following sheets, too (reset the template? Or accumulate?)
+#   - columns with missing headers are ignored now; maybe they should get
+#     a usefull name (make a switch).
+sub selbyhead ($$) {
+		my $ref = shift;
+		my $sname = shift;
+		if ( $OPTVAL{selhead} or $OPTVAL{noselhead} or $OPTVAL{variant} ) {
+			# Select columns based on ::head:
+			
+	    	$eh->inc( 'default.parsed' );
+	    	my $icomms	= $eh->get( 'input.ignore.comments' );
+			my $ivar	= $eh->get( 'input.ignore.variant' ) || '#__I_VARIANT';   	    	
+ 	    	my @ahashd = convert_in( 'default', $ref ); # Normalize and read in
+ 	    	if ( $OPTVAL{variant} ) {
+ 	    		select_variant( \@ahashd, 'DEFAULT ' . $sname );
+ 	    		# Get rid of variant #__I_VARIANTS tagged lines
+ 	    		my @rest = ();
+ 	    		for my $d ( @ahashd ) {
+ 	    			unless ( ref( $d ) eq 'HASH' and $d->{'::ign'} and
+ 	    				( $d->{'::ign'} =~ m/$icomms/ or $d->{'::ign'} =~ m/$ivar/ ) ) {
+ 	    				push( @rest, $d );
+ 	    			}
+ 	    		} 
+ 	    		@ahashd = @rest;
+ 	    	}
+ 	    	
+ 	    	my $selhead = parse_selheadopt( $OPTVAL{selhead} );
+ 	    	my $noselhead = parse_selheadopt( $OPTVAL{noselhead} );
+
+ 	    	# Convert back to arrayarray format:
+ 	    	# Attention: useing 'csv' format, might be problematic with sxc files (large cells)!
+ 	    	my $fref = db2array( \@ahashd, 'default', 'csv', '' ,$selhead, $noselhead );
+ 	    	return $fref;
+		}
+		return $ref;
+} # End of selbyhead
 
 sub filter_col ($) {
 	my $datar = shift;
@@ -450,7 +513,8 @@ sub filter_sheet ($) {
 # Read in range selector arguments and convert into
 # a unique format -> N:M ...
 #
-# TODO : should we detect overlapping sections? Overlap allows for duplication
+# Overlapping sections are allowed for duplication
+#  but by default output order is sorted 
 #   (It's not a bug, it's a feature :-)
 sub convert_selcolumn ($) {
 	my $optref = shift;
@@ -527,5 +591,20 @@ sub set_filenames ($) {
 
 	return( $cfile, $sfile )
 }
+
+#
+# Combine the -selhead options:
+# 	    	
+sub parse_selheadopt ($) {
+	my $opt = shift;
+	
+	if ( defined( $opt ) ) {
+		# Attach (:\d+)? to each selector:
+		my $select = '^((' . join( '|', @$opt ) . ')(:\d+)?)$';
+		return $select;
+	} else {
+		return '';
+	}
+} #End of parse_selheadopt
 
 #!End

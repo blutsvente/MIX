@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / IOParser
 # | Modules:    $RCSfile: MixIOParser.pm,v $ 
-# | Revision:   $Revision: 1.18 $
+# | Revision:   $Revision: 1.19 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2006/03/14 08:10:34 $
+# | Date:       $Date: 2006/07/12 15:23:40 $
 # | 
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.18 2006/03/14 08:10:34 wig Exp $
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.19 2006/07/12 15:23:40 wig Exp $
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -36,6 +36,9 @@
 # |
 # | Changes:
 # | $Log: MixIOParser.pm,v $
+# | Revision 1.19  2006/07/12 15:23:40  wig
+# | Added [no]sel[ect]head switch to xls2csv to support selection based on headers and variants.
+# |
 # | Revision 1.18  2006/03/14 08:10:34  wig
 # | No changes, got deleted accidently
 # |
@@ -129,9 +132,9 @@ sub _mix_iop_init();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixIOParser.pm,v 1.18 2006/03/14 08:10:34 wig Exp $';
+my $thisid		=	'$Id: MixIOParser.pm,v 1.19 2006/07/12 15:23:40 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixIOParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.18 $';
+my $thisrevision   =      '$Revision: 1.19 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -163,10 +166,12 @@ sub parse_io_init ($) {
 
     _mix_iop_init(); # initialize some configuration variables ...
 
-    # my $linenum = 0;    
+    my $icomms	= $eh->get( 'input.ignore.comments' );
+	my $ivar	= $eh->get( 'input.ignore.variant' ) || '#__I_VARIANT';   
     foreach my $i ( @$ref ) {
-        # $linenum++;
-        next if ( $i->{'::ign'} =~ m,^\s*(#|\\), ); # Skip comments, just in case they sneak in
+       	# next unless ( $i->[$i] ); # Skip if input field is empty
+        next if ( $i->{'::ign'} =~ m,$icomms,o );
+        next if ( $i->{'::ign'} =~ m,$ivar,o );
 
         if ( $i->{'::class'} =~ m,%SEL%,o ) { # Got a selector definition line ...
             # Retrieve selector signal names from the ::muxopt columns
@@ -200,12 +205,12 @@ sub parse_io_init ($) {
             } else {
                 # Upps, empty line???
                 # At least ::pad HAS TO BE DEFINED!
-                #TODO: linenum does not reflect excel line number!
+                # TODO : linenum does not reflect excel line number!
                 # Should get a counter in the input data aka _l_ _n_ ...
-                $logger->warn( '__W_PARSE_IO', "Neither ::pad nor ::iocell defined in IO input sheet, skipped!" );
+                $logger->error( '__E_PARSE_IO', "Neither ::pad nor ::iocell defined in IO input sheet, skipped!" );
             }
         } else { # We need selsignals ...
-            $logger->warn( '__W_PARSE_IO', "Missing SEL line in input for parse_io_init, skipped!" );
+            $logger->error( '__E_PARSE_IO', "Missing SEL line in input for parse_io_init, skipped!" );
         }
     }
     return 0;
