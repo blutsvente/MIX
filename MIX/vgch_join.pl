@@ -28,12 +28,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: vgch_join.pl,v 1.9 2006/07/12 15:23:40 wig Exp $  |
+# | Id           : $Id: vgch_join.pl,v 1.10 2006/07/12 15:28:51 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.9 $                                      |
-# | Mod.Date     : $Date: 2006/07/12 15:23:40 $                           |
+# | Version      : $Revision: 1.10 $                                      |
+# | Mod.Date     : $Date: 2006/07/12 15:28:51 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -48,6 +48,9 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: vgch_join.pl,v $
+# | Revision 1.10  2006/07/12 15:28:51  wig
+# | Updates to reflect changes of db2array interface.
+# |
 # | Revision 1.9  2006/07/12 15:23:40  wig
 # | Added [no]sel[ect]head switch to xls2csv to support selection based on headers and variants.
 # |
@@ -118,7 +121,7 @@ sub base_interface ($);
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.9 $'; # RCS Id
+$::VERSION = '$Revision: 1.10 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # Our local variables
@@ -217,7 +220,12 @@ if ( scalar( @ARGV ) < 1 ) { # Need  at least one sheet!!
 my %sheets = ();
 
 my $outname = $OPTVAL{'out'} || 'vgch_joined_register-master.xls';
-
+my $outtype;
+if ( $outname =~ m/\.(xls|sxc|ods|csv)/ ) {
+	$outtype = $1;
+} else {
+	$outtype = 'xls';
+}
 
 # Assume top is defined as option:
 if ( $OPTVAL{'top'} ) {
@@ -356,7 +364,7 @@ for my $k ( @$sub_addr ) {
 my $end_table = ();
 
 if( $OPTVAL{'listtop'} ) {
-	$end_table = db2array( $sheets{$top}{$xls{'top_sheet'}}, 'join', '' );
+	$end_table = db2array( $sheets{$top}{$xls{'top_sheet'}}, 'join', $outtype, '' );
 	replace_macros( $end_table );
 	write_outfile( $outname , "VGCH_TOP", $end_table );
 } else {
@@ -364,7 +372,7 @@ if( $OPTVAL{'listtop'} ) {
 	$eh->set( 'format.csv.sheetsep', '' );
 }
 
-$end_table = db2array( \@all, 'default', '' );
+$end_table = db2array( \@all, 'default', $outtype, '' );
 replace_macros( $end_table );
 
 write_outfile( $outname , "JOIN_VGCH", $end_table );
