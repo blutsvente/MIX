@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.125 $                                        |
+# | Revision:   $Revision: 1.126 $                                        |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/07/12 15:23:40 $                              |
+# | Date:       $Date: 2006/07/13 12:21:52 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.125 2006/07/12 15:23:40 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.126 2006/07/13 12:21:52 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.126  2006/07/13 12:21:52  wig
+# | Fixed bad if in db2array ($type got wrong value).
+# |
 # | Revision 1.125  2006/07/12 15:23:40  wig
 # | Added [no]sel[ect]head switch to xls2csv to support selection based on headers and variants.
 # |
@@ -223,11 +226,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.125 2006/07/12 15:23:40 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.126 2006/07/13 12:21:52 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.125 $';         #'
+my $thisrevision        =      '$Revision: 1.126 $';         #'
 
-# Revision:   $Revision: 1.125 $   
+# Revision:   $Revision: 1.126 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2134,7 +2137,7 @@ sub select_variant ($;$) {
 	    	if ( defined( $var ) and $var !~ m/^\s*$/o ) {
 				$var =~ s/[ \t,]+/|/g; # Convert into Perl RE (Var1|Var2|Var3)
 				$var = '(' . $var . ')';
-				if ( $variant !~ m/^$var$/i ) {
+				if ( $variant !~ m/^$var$/i ) { # Match variant (case insensitive).
 		    		$r_data->[$i]{'::ign'} = '#__I_VARIANT Variant not selected!'; # Mark for deletion ...
 		    		$n++;
 				}
@@ -2143,7 +2146,7 @@ sub select_variant ($;$) {
     }
     if ( $variant ne 'Default' or $n ) {
     	$logger->info( '__I_VARIANT',
-    		"\tRemoved $n lines from input sheet $type for variant $variant" );
+    		"\tTagged $n lines for removal in input sheet $type for variant $variant" );
     }
 } # End of select_variant
 
@@ -2648,12 +2651,13 @@ sub db2array ($$$$;$$) {
 	    return;
     }
     $type = lc( $type );
-    unless ( ref( $ref ) eq 'ARRAY' or $type =~ m/^(hier|conn)/io ) {
-		$logger->error('__E_BAD_DBTYPE', "\tBad db type $type, ne HIER or CONN!");
-		return;
+    unless ( ref( $ref ) eq 'ARRAY' ) {
+    	unless ( $type =~ m/^(hier|conn)/io ) {
+			$logger->error('__E_BAD_DBTYPE', "\tBad db type $type, ne HIER or CONN!");
+			return;
+    	}
+    	$type = ( defined( $1 ) and $1 ) ? lc($1) : lc( $type );
     }
-    
-    $type = ( defined( $1 ) and $1 ) ? lc($1) : lc( $type );
 
     my @o = ();
     my $primkeynr = 0; # Primary key identifier; defaults to ::ign 

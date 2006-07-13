@@ -10,7 +10,7 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #
 #******************************************************************************
 #
-# $Id: xls2csv.pl,v 1.10 2006/07/12 15:23:41 wig Exp $
+# $Id: xls2csv.pl,v 1.11 2006/07/13 12:21:52 wig Exp $
 #
 # read in XLS file and print out a csv and and a sxc version of all sheets
 #
@@ -41,6 +41,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #  Define seperator:
 #
 # $Log: xls2csv.pl,v $
+# Revision 1.11  2006/07/13 12:21:52  wig
+# Fixed bad if in db2array ($type got wrong value).
+#
 # Revision 1.10  2006/07/12 15:23:41  wig
 # Added [no]sel[ect]head switch to xls2csv to support selection based on headers and variants.
 #
@@ -112,7 +115,7 @@ sub selbyhead				($$);
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.10 $'; # RCS Id
+$::VERSION = '$Revision: 1.11 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 #
@@ -394,7 +397,7 @@ sub selbyhead ($$) {
 			my $ivar	= $eh->get( 'input.ignore.variant' ) || '#__I_VARIANT';   	    	
  	    	my @ahashd = convert_in( 'default', $ref ); # Normalize and read in
  	    	if ( $OPTVAL{variant} ) {
- 	    		select_variant( \@ahashd, 'DEFAULT ' . $sname );
+ 	    		select_variant( \@ahashd, $sname );
  	    		# Get rid of variant #__I_VARIANTS tagged lines
  	    		my @rest = ();
  	    		for my $d ( @ahashd ) {
@@ -410,7 +413,7 @@ sub selbyhead ($$) {
  	    	my $noselhead = parse_selheadopt( $OPTVAL{noselhead} );
 
  	    	# Convert back to arrayarray format:
- 	    	# Attention: useing 'csv' format, might be problematic with sxc files (large cells)!
+ 	    	# Attention: using 'csv' format, might be problematic with sxc files (large cells)!
  	    	my $fref = db2array( \@ahashd, 'default', 'csv', '' ,$selhead, $noselhead );
  	    	return $fref;
 		}
