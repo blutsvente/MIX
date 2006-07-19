@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.20 $                                          |
+# | Revision:   $Revision: 1.21 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/07/12 15:23:40 $                              |
+# | Date:       $Date: 2006/07/19 07:38:16 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.21  2006/07/19 07:38:16  wig
+# | Updates made for xls2csv
+# |
 # | Revision 1.20  2006/07/12 15:23:40  wig
 # | Added [no]sel[ect]head switch to xls2csv to support selection based on headers and variants.
 # |
@@ -111,9 +114,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.20 2006/07/12 15:23:40 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.21 2006/07/19 07:38:16 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.20 $';  
+my $thisrevision    =      '$Revision: 1.21 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -548,6 +551,10 @@ sub init ($) {
 	   		'oofice' => 'ods',
 	   		'csv'   =>	'csv',
 		},
+		'header' => 'mix', # Recognize headers:
+					#   mix -> take first line starting with ::col ::col2 ::ign
+					#   any -> take first non comment line
+					#	strict -> can be combined with mix, only ::COL allowed!
 		'ignore' => {
 			'comments' =>
 				'^\s*(#|//|--)', #  if set to '::ignany', ignore row if any non white-space
@@ -575,10 +582,12 @@ sub init ($) {
     };
 	$this->{'cfg'}{'intermediate'} = {
 		'path'	=> '.',
-		'order'	=> 'input',
+		'order'	=> 'template', #!wig20060717: either "input" or "template"
+				# template -> sort by order defined in input sheets (default)
+				# input    -> print out in order column occur in input
 		'keep'	=> '3',	# Number of old sheets to keep
 		'format'	=> 'prev', # One of: prev(ious), auto or n(o|ew)
-		# If set, previous uses old sheet format, auto applies auto-format and the others do nothing.
+			# If set, previous uses old sheet format, auto applies auto-format and the others do nothing.
 		'strip'	=> '0',   # remove old and diff sheets
 		'ext'	=> '', # default intermediate-output extension
 		'intra'	=> '',	# if set create seperate conn sheets for instances:
@@ -606,7 +615,6 @@ sub init ($) {
 		#   uc, ucfirst (make first uc), ucfirstlc (lc all but first uc)
 	    # t.b.d.: uniq (make sure name apears only once)!
 		# set check.namex.TYPE for selected excludes
-	    #
 		'name' => {
     		'all' => '',		  # Sets all others (if __default__ still in)
     		'pad'  => 'check,lc,__default__',
@@ -1358,6 +1366,9 @@ sub init ($) {
 			'delta'   => 'DIFF:', # Value to prepend in CSV file to changed cell
 			'sortrange' => 1,	# If set to 0, do not sort range selectors.
 			'maxcelllength' => 0,
+			'mixhead' => 1, # Print MIX header (date, who did it, ...)
+				# Possible values: 1 | 0 -> print head or not
+				#		extra: nomulthead  -> do not print secondary header line for multiple columns
 		},
 		'xls' => {
        		'maxcelllength' => 500, # Limit number of characters in ExCEL cells
@@ -1365,15 +1376,17 @@ sub init ($) {
  				# stripnl:	replace <nl> by <sp> (also known as 'wrapnl')
  				# masknl:	replace newline by \\n
  				# stripna:	replace all non ASCII-Chars by <sp>
- 			
+ 			'mixhead' => 1, # Print MIX header (date, who did it, ...)
 		},
 		'sxc' => {
        	    'maxcelllength' => 500, # Limit number of characters in sxc cells
  			'style'	=>	'',		# Format the generated output
+ 			'mixhead' => 1,  # Print MIX header (date, who did it, ...)
 		},
 		'ods' => {
 			'maxcelllength' => 500, # Limit number of characters in sxc cells
 			'style'	=>	'',		# Format the generated output
+			'mixhead' => 1,	# Print MIX header (date, who did it, ...)
 		},
        'out' => '',
     };

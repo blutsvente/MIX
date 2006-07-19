@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.126 $                                        |
+# | Revision:   $Revision: 1.127 $                                        |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/07/13 12:21:52 $                              |
+# | Date:       $Date: 2006/07/19 07:38:16 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.126 2006/07/13 12:21:52 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.127 2006/07/19 07:38:16 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.127  2006/07/19 07:38:16  wig
+# | Updates made for xls2csv
+# |
 # | Revision 1.126  2006/07/13 12:21:52  wig
 # | Fixed bad if in db2array ($type got wrong value).
 # |
@@ -195,7 +198,7 @@ sub mix_utils_clean_data	($$;$);
 sub db2array			($$$$;$$);
 sub _filter_sheets		($$);
 sub db2array_intra		($$$$$);
-sub _mix_utils_im_header	($$);
+sub _mix_utils_im_header	($$$);
 sub _inoutjoin			($);
 sub _mix_utils_extract_verihead ($$$);
 sub _init_logic_eh		($);
@@ -226,11 +229,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.126 2006/07/13 12:21:52 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.127 2006/07/19 07:38:16 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.126 $';         #'
+my $thisrevision        =      '$Revision: 1.127 $';         #'
 
-# Revision:   $Revision: 1.126 $   
+# Revision:   $Revision: 1.127 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2213,6 +2216,7 @@ sub convert_in ($$) {
 		$ignoreignore_match = '\S+';
 	}
 	my $kindcomment = $eh->get( $kind . '.comments' ) || '';
+	my $header_type = $eh->get( 'input.header' ) || 'mix';
 	
     for my $i ( @$r_data ) { # Read row by row
 		$i = [ map { defined( $_ ) ? $_ : '' } @$i ];		#Fill up undefined fields??
@@ -2226,14 +2230,17 @@ sub convert_in ($$) {
 		unless ( $hflag ) { # We are still looking for our ::MARKER header line
 			
 			if ( $mapign ) { $all =~ s/^\s*#\s+::/::ign ::/; };
-					
-	    	next unless ( $all =~ m/^\s?::/ );			#Still no header ...
+			
+			# Skip if it's a comment:
+			next if ( $all =~ m,$ignorelines_match, );
+			
+			# Skip if we need "MIX" type header and it's not starting with ::					
+	    	next unless ( $header_type =~ m/mix/ and $all =~ m/^\s?::/ ); #Still no header ...
 	    	%order = parse_header( $kind, $eh->get( $kind ), @$i );		#Check header, return field number to name
 	    	$hflag = 1;
 	    	next;
 		}
-	
-
+		# Store comments into ::incom
 		if ( $all =~ m,$ignorelines_match, or
 			( defined( $order{'::ign'}) and
 				$i->[$order{'::ign'}] =~ m,$ignoreignore_match, ) ) {
@@ -2313,7 +2320,7 @@ Returns: %order (keys are the ::head items)
 20050614: remove extra whitespace around the keywords
 20051024: make sure multiple fields are printed in one block
 20060706: consider $eh->get('input.ignore.columns')
-
+20060717: keep order of occurance ($eh->get('intermediate.order'))
 =cut
 
 sub parse_header($$@){
@@ -2328,13 +2335,25 @@ sub parse_header($$@){
 
     my %rowh = ();
 
+	my $extran = 0;
+	my $skip_empty = $eh->get( 'input.ignore.columns' );
+	# Possible values: 		#	nohead	:= ignore them (default)	
+							#	join	:= join all headless together into one ::extra
+							#	extran	:= create a column for each 
+	
     for my $i ( 0 .. ( scalar( @row ) - 1 ) ) {
 		unless ( $row[$i] )  {
 	    	$logger->warn('__I_EMPTY_HEADERC' ,
-	    		"\tEmpty header in column $i, sheet-type $kind, skipping!");
-	    	push( @{$rowh{"::skip"}}, $i);
-	    	$row[$i] = "::skip";
-	    	next;
+	    		"\tEmpty header in column $i, sheet-type $kind (strategy: $skip_empty)!");
+	    	if ( $skip_empty =~ m/\bnohead/ ) {
+	    		push( @{$rowh{"::skip"}}, $i);
+	    		$row[$i] = "::skip";
+	    		next;
+	    	} elsif ( $skip_empty =~ m/\bextran/ ) {
+	    		$row[$i] = '::EXTRA:' . sprintf( "%04d", $extran++);
+	    	} else { # join!
+	    		$row[$i] = '::EXTRA';
+	    	}
 		}
 		#!wig20050614: get rid of extra whitespace
 		$row[$i] =~ s/^\s+(::)/::/; # Remove leading whitespace
@@ -2377,7 +2396,7 @@ sub parse_header($$@){
     # This will catch multiply defined fields, too
     #		(together with the split code below)
     #
-    for my $i ( 0..$#row ) {
+    for my $i ( 0..(scalar( @row ) - 1 ) ) {
 	    my $head = $row[$i];	
 	    unless ( defined( $templ->{'field'}{$head} ) ) {
 	        $logger->info('__I_HEAD_NEW', "\tAdded new column header $head");
@@ -2386,10 +2405,11 @@ sub parse_header($$@){
 	        $templ->{'field'}{'nr'}++;
 	    }
 	    #!wig20050715: map -1 rows to get printed at end ...
-	    if ( $templ->{'field'}{$head}[4] == "-1" ) {
+	    if ( $templ->{'field'}{$head}[4] == -1 ) {
 	    	$templ->{'field'}{$head}[4] = $templ->{'field'}{'nr'};
 	        $templ->{'field'}{'nr'}++;
 	    }
+	    $templ->{'field'}{$head}[5] =$i; #!wig20060717: sort by input order ...
     }
 
     #
@@ -2399,19 +2419,22 @@ sub parse_header($$@){
     my @resort = ();
     for my $i ( keys( %rowh ) ) { # Iterate through multiple headers ...
 		next if ( $i =~ m/^::skip/ ); #Ignore bad fields
-		if ( $#{$rowh{$i}} > 0 ) { # Multiple field header:
-			my $colorder = $templ->{'field'}{'_multorder_'} || "0";
+		if ( scalar( @{$rowh{$i}} ) > 1 ) { # Multiple field header:
+			my $colorder = $templ->{'field'}{'_multorder_'} || '0';
 			my $reverse = 0;
 			if ( $colorder =~ m/(1|RL)/o ) { # From right to left
 				$reverse = 1;
 			}
-			my $nummultcols = $#{$rowh{$i}};
+			my $nummultcols = scalar( @{$rowh{$i}} ) - 1;
 			my @range = 0..$nummultcols;
 			@range = reverse( @range ) if $reverse;
-			unless ( $colorder =~ m/F/o ) { # no F -> do not map first/last to :0!
+			
+			# do not uniquify the first/last occurance:
+			unless ( $colorder =~ m/F/o ) { #
 				push( @resort, $i );
 				$or{$i} = $rowh{$i}[$range[0]];
 				shift @range;
+				$templ->{'field'}{$i}[5] = $rowh{$i}[$range[0]];
 			}
 				
 	    	# $or{$i} = $rowh{$i}[0]; # Save first field, rest will be seperated by name ...
@@ -2424,8 +2447,7 @@ sub parse_header($$@){
 					#lu20050624 disable required-attribute for the additional
 					# headers because they do not occur in input
 					$templ->{'field'}{$funique}[2] = 0;
-					#Remember print order no longer is unique
-					
+					# Remember print order no longer is unique
 					# Increase print order:
 					#!wig20051025: use same number as templ, will be changed in sort
 					$templ->{'field'}{$funique}[4] = $templ->{'field'}{$i}[4];
@@ -2433,6 +2455,9 @@ sub parse_header($$@){
 				}
 				push( @resort, $funique );
 				$or{$funique} = $rowh{$i}[$ii];
+				
+				#!wig20060718: getting input order:
+				$templ->{'field'}{$funique}[5] = $rowh{$i}[$ii];
 			}
 			# Remember number of multiple header columns
 			if ( not exists( $templ->{'_mult_'}{$i} ) ) {
@@ -2634,8 +2659,9 @@ Arguments: 	$ref		:= hash reference
 							Please make sure $s|ifilter also accepts trailing :N extensions
 							for multiply defined columns (see xls2csv re constructor)!
 			
-!wig20051014: adding output of array->hash (instead of hash->hash)
+#!wig20051014: adding output of array->hash (instead of hash->hash)
 	This allows to print out an arry of hashes
+#!wig20060717: sort columns by input order
 =cut
 
 sub db2array ($$$$;$$) {
@@ -2668,22 +2694,44 @@ sub db2array ($$$$;$$) {
     #  $eh->get( $type . '.field' ) holds headers for all detected columns!
     #
     # TODO : check if fields do overlap!
-    # REFEACTOR: check the returned data (ref to hash!)
+    # REFACTOR: check the returned data (ref to hash!)
     my $fields = $eh->get( $type . '.field' );
+    my $printorder = $eh->get( 'intermediate.order' );
+    my $mixheader  = $eh->get( 'input.header' );
+    
     for my $ii ( keys( %$fields ) ) {
-		next unless ( $ii =~ m/^::/o );
+    	# Ignore non mix-headers if it does not start with ::
+		next if ( $mixheader =~ m/\bstrict/ and $ii !~ m/^::/o );
+		next unless ( ref( $fields->{$ii} ) eq 'ARRAY' ); # Skip if not a field template
 		# If hfilter is set -> Skip if $ii matches
 		next if ( $sfilter and $ii !~ m/$sfilter/ );
 		next if ( $ifilter and $ii =~ m/$ifilter/ );
-		# Only print if PrintOrder > 0:
-		if ( $fields->{$ii}[4] > 0 ) {
-			$o[$fields->{$ii}[4]] = $ii; # Print Order ...
-		}
-		if ( $eh->get( $type . '.key' ) eq $ii ) {
-	    	$primkeynr = $fields->{$ii}[4];
-		} elsif ( $ii eq '::comment' ) {
-	    	$commentnr = $fields->{$ii}[4];
-		}
+
+		if ( $printorder =~ m/\btemplate/ ) {		
+			# Sort by template order
+			if ( $fields->{$ii}[4] > 0 ) {
+				$o[$fields->{$ii}[4]] = $ii; # Print Order ...
+			}
+			if ( $eh->get( $type . '.key' ) eq $ii ) {
+	    		$primkeynr = $fields->{$ii}[4];
+			} elsif ( $ii eq '::comment' ) {
+	    		$commentnr = $fields->{$ii}[4];
+			}
+		} else {
+			# Sort by input order (saved in [5])
+			if ( exists( $fields->{$ii} ) and ref( $fields->{$ii} ) eq 'ARRAY' ) {
+				if ( defined( $fields->{$ii}[5] ) ) {
+					$o[$fields->{$ii}[5]] = $ii;
+					if ( $eh->get( $type . '.key' ) eq $ii ) {
+	    				$primkeynr = $fields->{$ii}[5];
+					} elsif ( $ii eq '::comment' ) {
+	    				$commentnr = $fields->{$ii}[5];
+					}
+				} else {
+					$logger->info( '__I_DBARRAY_ORDER', "\tWill not print column: $ii" );
+				}
+			}
+		}	
     }
 	
 	#!wig20060712: remove empty/filtered columns
@@ -2696,7 +2744,7 @@ sub db2array ($$$$;$$) {
     my @a = ();
     my $n = 0;
 
-	( $n , @a ) = _mix_utils_im_header( uc($type) , \@o );
+	( $n , @a ) = _mix_utils_im_header( uc($type) , $otype, \@o );
 
 	my @keys = _filter_sheets ( $ref, $filter );
 
@@ -2988,7 +3036,7 @@ sub db2array_intra ($$$$$) {
 					$toplist =~ s/\)\$$//;
 					$title .= ", top: " . $toplist; 
 				}
-				( $n{$a} , @{$a{$a}} ) = _mix_utils_im_header( $title , \@o );
+				( $n{$a} , @{$a{$a}} ) = _mix_utils_im_header( $title , 'xls', \@o );
 			}
 
 			my $split_flag = 0; # If split_flag
@@ -3143,6 +3191,7 @@ sub inout2intra ($$$$$$) {
 	return \%ssplit;
 
 }
+
 #
 # Create an array to be used as table header in intermediate data output
 #
@@ -3155,13 +3204,21 @@ sub inout2intra ($$$$$$) {
 #
 #!wig20051012
 #!wig20051018: undo the :N extension for multiple fields
-sub _mix_utils_im_header ($$) {
+#!wig20060717: skip MIX header if format.$outtype.mixhead is not set
+sub _mix_utils_im_header ($$$) {
 	my $title = shift;
+	my $outtype = shift || 'xls';
  	my $o = shift;
 
 	my @a = ();
 	my $n	= 0;
 
+	my $headon = 1;
+	if ( $outtype =~ m/^(xls|csv|ods|sxc)$/ ) {
+		$headon = $eh->get( 'format.' . $1 . '.mixhead' );
+	}
+	$headon = 0 if ( $headon =~ m/\b(0|no|false|off)\b/ );
+	 
 	# Check if there is one multiple header ( ::HEAD:\d )
 	my $hasmult = 0;
 	for my $hm ( @$o ) {
@@ -3182,15 +3239,27 @@ sub _mix_utils_im_header ($$) {
     	}
     }
     $n++;
+
     # Print comment: generator, args, date
     # Assume: first column is ::ign :-)
     # As we are lazy, we will leave the rest of the line undefined ...
-    my %comment = ( qw( by %USER% on %DATE% cmd %ARGV% ));
-    $a[$n++][0] = "# Generated Intermediate Data: $title";
-    for my $c ( qw( by on cmd ) ) {
-		$a[$n++][0] = "# $c: " . $eh->get( 'macro.' . $comment{$c} );
-    }
+	if ( $headon =~ m/\b(1|yes|on|true)\b/ ) {
+    	my %comment = ( qw( by %USER% on %DATE% cmd %ARGV% ));
+    	$a[$n++][0] = "# Generated Intermediate Data: $title";
+    	for my $c ( qw( by on cmd ) ) {
+			$a[$n++][0] = "# $c: " . $eh->get( 'macro.' . $comment{$c} );
+    	}
+	}
 
+	# Even remove duplicate header if $headon eq nomulthead!
+	#!wig20060718
+	if ( $hasmult == 1 and $headon =~ m/\bnomulthead/ ) {
+		$n = 1;
+		$logger->info( '__I_WRITE_HEADER', "\tRemoving explanatory header: " .
+			join( ' ', @{$a[1]} ) );
+		delete( $a[1] );
+	}
+	
 	return $n, @a;
 } # End of _mix_utils_im_header
 
