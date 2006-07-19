@@ -10,7 +10,7 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #
 #******************************************************************************
 #
-# $Id: xls2csv.pl,v 1.11 2006/07/13 12:21:52 wig Exp $
+# $Id: xls2csv.pl,v 1.12 2006/07/19 07:34:08 wig Exp $
 #
 # read in XLS file and print out a csv and and a sxc version of all sheets
 #
@@ -41,8 +41,8 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #  Define seperator:
 #
 # $Log: xls2csv.pl,v $
-# Revision 1.11  2006/07/13 12:21:52  wig
-# Fixed bad if in db2array ($type got wrong value).
+# Revision 1.12  2006/07/19 07:34:08  wig
+# Added new output sort order.
 #
 # Revision 1.10  2006/07/12 15:23:41  wig
 # Added [no]sel[ect]head switch to xls2csv to support selection based on headers and variants.
@@ -115,7 +115,7 @@ sub selbyhead				($$);
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.11 $'; # RCS Id
+$::VERSION = '$Revision: 1.12 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 #
@@ -274,8 +274,21 @@ if ( exists( $OPTVAL{sep} ) ) {
 	$eh->set( 'format.csv.cellsep', $OPTVAL{'sep'} ); 
 }
 
-unless ( $OPTVAL{head} or not $OPTVAL{single} ) {
-	$eh->set( 'format.csv.sheetsep', '' );
+if ( $OPTVAL{single} ) {
+	if ( not $OPTVAL{head} ) {
+		$eh->set( 'format.csv.sheetsep', '' );
+		$eh->set( 'format.csv.mixhead', 0 );
+		$eh->set( 'format.sxc.mixhead', 0 );
+		$eh->set( 'format.ods.mixhead', 0 );
+	}
+} else {
+	if ( not $OPTVAL{head} ) {
+		$eh->set( 'format.csv.sheetsep', '' );
+				$logger->info( '__I_', "Multiple sheets will not be seperated in CVS files by MIX header!" );
+		$eh->set( 'format.csv.mixhead', 0 );
+		$eh->set( 'format.sxc.mixhead', 0 );
+		$eh->set( 'format.ods.mixhead', 0 );
+	}
 }
 
 #
@@ -324,11 +337,11 @@ for my $file ( @ARGV ) {
 		my ( $cfile, $sfile ) = set_filenames( $file );	
 	
 	    if ( $sel and $sname !~ m/$sel/ ){
-			$logger->info('__I_SHEET_NONSEL', "\tSheet " . $file . "::" . $sname . " not selected for conversion" ) if ( $OPTVAL{'verbose'} );
+			$logger->info('__I_SHEET_NONSEL', "\tSheet " . $file . '::' . $sname . ' not selected for conversion' ) if ( $OPTVAL{'verbose'} );
 			next;
 	    }
 	    if ( $xsel and $sname =~ m/$xsel/ ) {
-	    	$logger->info('__I_SHEET_XSEL', "\tSheet " . $file . "::" . $sname . " excluded" ) if ( $OPTVAL{'verbose'} );
+	    	$logger->info('__I_SHEET_XSEL', "\tSheet " . $file . '::' . $sname . ' excluded' ) if ( $OPTVAL{'verbose'} );
 			next;
 	    }
 	
@@ -354,20 +367,20 @@ for my $file ( @ARGV ) {
 		}
 		if ( $eh->get( 'output.generate.delta' ) ) {
 			if ( $OPTVAL{csv} ) {
-	    		$logger->info('__I_SHEET_DPRINT', "\tPrint out sheet " . $cfile . "::" . $sname );
+	    		$logger->info('__I_SHEET_DPRINT', "\tPrint out sheet " . $cfile . '::' . $sname );
 				write_delta_sheet( $cfile, $sname, $ref );
 			}
 			if ( $OPTVAL{sxc} ) {
-	    		$logger->info('__I_SHEET_DPRINT', "\tPrint out sheet " . $sfile . "::" . $sname );
+	    		$logger->info('__I_SHEET_DPRINT', "\tPrint out sheet " . $sfile . '::' . $sname );
 				write_delta_sheet( $sfile, $sname, $ref );
 			}
 		} else {
 			if ( $OPTVAL{csv} ) {
-				$logger->info('__I_SHEET_PRINT', "\tPrint out sheet " . $cfile . "::" . $sname );
+				$logger->info('__I_SHEET_PRINT', "\tPrint out sheet " . $cfile . '::' . $sname );
 				write_csv($cfile, $sname, $ref);
 			}
 			if ( $OPTVAL{sxc} ) {
-				$logger->info('__I_SHEET_PRINT', "\tPrint out sheet " . $sfile . "::" . $sname );
+				$logger->info('__I_SHEET_PRINT', "\tPrint out sheet " . $sfile . '::' . $sname );
 				write_sxc($sfile, $sname, $ref);
 			}
 		}
@@ -381,11 +394,14 @@ for my $file ( @ARGV ) {
 # TODO :
 #   - columns ::ign and ::comment are getting added by the "default" template
 #		should they be removed later on?
+#		-> if you select "input" as print order, everything is o.k.
 #	- what about extra colmns? Skip or add/print?
+#		-> can be configured by the input.<type>.columns (???) -> see Globals.pm
 #	- if multiple sheets are renedered, new columns on previous sheets are printed
 #   out on following sheets, too (reset the template? Or accumulate?)
 #   - columns with missing headers are ignored now; maybe they should get
-#     a usefull name (make a switch).
+#     a usefull name (make a switch) -> see Globals.pm confg section for input.format (?)
+#		or format.<type>.mixhead (???)
 sub selbyhead ($$) {
 		my $ref = shift;
 		my $sname = shift;
@@ -415,10 +431,25 @@ sub selbyhead ($$) {
  	    	# Convert back to arrayarray format:
  	    	# Attention: using 'csv' format, might be problematic with sxc files (large cells)!
  	    	my $fref = db2array( \@ahashd, 'default', 'csv', '' ,$selhead, $noselhead );
+ 	    	# Last but not least: replace macros %UNDEF_\d%
+ 	    	replace_simple_mac( $fref );
  	    	return $fref;
 		}
 		return $ref;
 } # End of selbyhead
+
+#
+# Do some simple macro replacement
+# TODO : use the MixUtils macro parser!
+sub replace_simple_mac ($) {
+	my $ref = shift;
+	
+	for my $i ( @$ref ) {
+		for my $ii ( @$i ) {
+			$ii =~ s/%UNDEF_\d%//;
+		}
+	}
+} # End of replace_simple_mac
 
 sub filter_col ($) {
 	my $datar = shift;
