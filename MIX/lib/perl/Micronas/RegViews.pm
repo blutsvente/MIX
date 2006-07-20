@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.42 2006/06/28 09:16:02 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.43 2006/07/20 10:57:40 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.42 $                                  
+#  Revision      : $Revision: 1.43 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.43  2006/07/20 10:57:40  lutscher
+#  changed code generation for MCD configurations
+#
 #  Revision 1.42  2006/06/28 09:16:02  lutscher
 #  moved two reg_shell parameters to Globals.pm
 #
@@ -54,53 +57,6 @@
 #  Revision 1.35  2006/04/27 16:47:01  lutscher
 #  corrected MSD pragmas
 #
-#  Revision 1.34  2006/04/19 13:47:20  lutscher
-#  added MSD parse on/off pragma for SVA in generated Verilog code
-#
-#  Revision 1.33  2006/04/19 12:58:30  lutscher
-#  fixed bug in trans_done generation in Verilog code
-#
-#  Revision 1.32  2006/04/18 09:48:18  lutscher
-#  fixed bug in _vgch_rs_gen_hier()
-#
-#  Revision 1.31  2006/04/12 07:44:27  lutscher
-#  some improvements for generating trigger signals
-#
-#  Revision 1.30  2006/04/11 14:24:44  lutscher
-#  fixed small bug
-#
-#  Revision 1.29  2006/04/10 08:15:22  lutscher
-#  added spec=TRG feature
-#
-#  Revision 1.28  2006/04/04 16:34:57  lutscher
-#  added add_takeover_signals feature for code generation
-#
-#  Revision 1.27  2006/03/14 14:21:19  lutscher
-#  made changes for new eh access and logger functions
-#
-#  Revision 1.26  2006/03/03 09:05:44  lutscher
-#  added feature for embedded control/status reg in generated Verilog code
-#
-#  Revision 1.25  2006/02/08 16:16:46  lutscher
-#  fixed two bugs in the generated code:
-#  o write process for cgtransp=1 was wrong
-#  o default assignment for read-data for pipelined mux process was missing
-#
-#  Revision 1.24  2006/02/07 17:17:21  lutscher
-#  added async reset to shadow process in generated code
-#
-#  Revision 1.23  2006/02/06 08:44:31  lutscher
-#  changed delay specification in generated code (was system verilog feature causing problems)
-#
-#  Revision 1.22  2006/01/20 17:28:09  lutscher
-#  o generated code: added 2nd test input to differentiate between test-enable and shift-enable
-#  o generated code: added delay generation for signals sampled in gated clock-domain to fix timing problem in simulation
-#
-#  Revision 1.21  2006/01/13 13:40:24  lutscher
-#  o added _get_frange()
-#  o updated sync_rst module (new port)
-#  o used symbolic parameter name for sync instead of numeric in cfg_inst
-#
 #  [history deleted]
 #
 #  Revision 1.1  2005/07/07 12:35:26  lutscher
@@ -120,6 +76,7 @@ package Micronas::Reg;
 use strict;
 use Data::Dumper;
 use Micronas::MixUtils qw($eh);
+# use Micronas::MixChecker qw(mix_check_case);
 use Micronas::Reg;
 use Micronas::RegDomain;
 use Micronas::RegReg;
@@ -143,61 +100,9 @@ sub _gen_view_vgch_rs {
 	my @ldomains;
 	my $href;
 	my $o_domain;
-
-	# extend class data with data structure needed for code generation
-	$this->global(
-				  'ocp_target_name'    => "ocp_target", # library module name
-				  'mcda_name'          => "rs_mcda",    # library module name
-				  'int_set_postfix'    => "_set_p",     # postfix for interrupt-set input signal
-				  'scan_en_port_name'  => "test_en",    # name of test-enable input
-				  'clockgate_te_name'  => "scan_shift_enable", # name of input to connect with test-enable port of clock-gating cell
-				  'embedded_reg_name'  => "RS_CTLSTS",  # reserved name of special register embedded in ocp_target
-				  'field_spec_values'  => ['sha', 'w1c', 'usr'], # recognized values for spec attribute
-				  'indent'             => "    ",       # indentation character(s)
-				  'assert_pragma_start'=> "`ifdef ASSERT_ON
-// msd parse off",
-				  'assert_pragma_end'  => "// msd parse on
-`endif",
-				  # internal static data structs
-				  'hclocks'            => {},           # for storing per-clock-domain information
-				  'hfnames'            => {},           # for storing field names
-				  'lexclude_cfg'       => [],           # list of registers to exclude from code generation
-				  'hhdlconsts'             => {}            # hash with HDL constants
-				 );
-
-	# import regshell.<par> parameters from MIX package to class data; user can change these parameters in mix.cfg
-	my $param;
-	my @lmixparams = (
-					  'reg_shell.bus_clock', 
-					  'reg_shell.bus_reset', 
-					  'reg_shell.addrwidth', 
-					  'reg_shell.datawidth',
-					  'reg_shell.multi_clock_domains', 
-					  'reg_shell.infer_clock_gating', 
-					  'reg_shell.infer_sva',
-					  'reg_shell.read_multicycle',
-					  'reg_shell.read_pipeline_lvl',
-					  'reg_shell.use_reg_name_as_prefix',
-					  'reg_shell.exclude_regs',
-					  'reg_shell.exclude_fields',
-					  'reg_shell.add_takeover_signals',
-                      'reg_shell.regshell_prefix',  
-                      'reg_shell.cfg_module_prefix',
-					  'postfix.POSTFIX_PORT_OUT', 
-					  'postfix.POSTFIX_PORT_IN',
-					  'postfix.POSTFIX_FIELD_OUT', 
-					  'postfix.POSTFIX_FIELD_IN',
-					  'output.path'
-					 );
-	foreach $param (@lmixparams) {
-		if (defined $eh->get("$param")) {
-			my ($main, $sub) = split(/\./,$param);
-			$this->global($sub => $eh->get("${param}"));
-			_info("setting parameter $param = ", $this->global->{$sub}) if $this->global->{'debug'};
-		} else {
-			_error("parameter \'$param\' unknown");
-		};
-	};
+    
+    # initialise some config variables
+    $this->_vgch_rs_init();
 
 	# make list of domains for generation
 	if (scalar (@_)) {
@@ -221,11 +126,14 @@ sub _gen_view_vgch_rs {
 		_info("parameter \'read_multicycle\' is ignored because read-pipelining is enabled");
 	};
 
-	# modify MIX config (only where required)
-	
+	# modify MIX config parameters (only where required)
 	$eh->set('check.signal', 'load,driver,check');
-	$eh->set('output.filter.file', []);
-	
+    $eh->set('output.filter.file', "");
+    $eh->set('output.generate.arch', "");
+    $eh->set('check.name.port', 'na');
+    $eh->set('log.limit.re.__I_CHECK_CASE', 1);
+    $eh->set('log.limit.re.__W_CHECK_CASE', 1);
+
 	# list of skipped registers and fields (put everything together in one list)
 	if (exists($this->global->{'exclude_regs'})) {
 		@{$this->global->{'lexclude_cfg'}} = split(/\s*,\s*/,$this->global->{'exclude_regs'});
@@ -267,6 +175,69 @@ sub _gen_view_vgch_rs {
 	1;
 };
 
+
+# init global parameters and import mix.cfg parameters
+sub _vgch_rs_init {
+    my $this =  shift;
+
+   	# extend class data with data structure needed for code generation
+	$this->global(
+				  'ocp_target_name'    => "ocp_target", # library module name
+				  'mcda_name'          => "rs_mcda",    # library module name
+				  'int_set_postfix'    => "_set_p",     # postfix for interrupt-set input signal
+				  'scan_en_port_name'  => "test_en",    # name of test-enable input
+				  'clockgate_te_name'  => "scan_shift_enable", # name of input to connect with test-enable port of clock-gating cell
+				  'embedded_reg_name'  => "RS_CTLSTS",  # reserved name of special register embedded in ocp_target
+				  'field_spec_values'  => ['sha', 'w1c', 'usr'], # recognized values for spec attribute
+				  'indent'             => "    ",       # indentation character(s)
+				  'assert_pragma_start'=> "`ifdef ASSERT_ON
+// msd parse off",
+				  'assert_pragma_end'  => "// msd parse on
+`endif",
+				  # internal static data structs
+				  'hclocks'            => {},           # for storing per-clock-domain information
+				  'hfnames'            => {},           # for storing field names
+				  'lexclude_cfg'       => [],           # list of registers to exclude from code generation
+				  'hhdlconsts'         => {}            # hash with HDL constants
+				 );
+
+	# import regshell.<par> parameters from MIX package to class data; user can change these parameters in mix.cfg
+	my $param;
+	my @lmixparams = (
+					  'reg_shell.bus_clock', 
+					  'reg_shell.bus_reset', 
+					  'reg_shell.addrwidth', 
+					  'reg_shell.datawidth',
+					  'reg_shell.multi_clock_domains', 
+					  'reg_shell.infer_clock_gating', 
+					  'reg_shell.infer_sva',
+					  'reg_shell.read_multicycle',
+					  'reg_shell.read_pipeline_lvl',
+					  'reg_shell.use_reg_name_as_prefix',
+					  'reg_shell.exclude_regs',
+					  'reg_shell.exclude_fields',
+					  'reg_shell.add_takeover_signals',
+                      'reg_shell.regshell_prefix',  
+                      'reg_shell.cfg_module_prefix',
+					  'postfix.POSTFIX_PORT_OUT', 
+					  'postfix.POSTFIX_PORT_IN',
+					  'postfix.POSTFIX_FIELD_OUT', 
+					  'postfix.POSTFIX_FIELD_IN',
+					  'output.path'
+					 );
+    
+	foreach $param (@lmixparams) {
+		if (defined $eh->get("$param")) {
+			my ($main, $sub) = split(/\./,$param);
+			$this->global($sub => $eh->get("${param}"));
+			_info("setting parameter $param = ", $this->global->{$sub}) if $this->global->{'debug'};
+		} else {
+			_error("parameter \'$param\' unknown");
+		};
+	}; 
+};
+
+
 # main method to generate config module for a clock domain
 # input: domain object, 
 # clock-name of the domain,
@@ -292,6 +263,7 @@ sub _vgch_rs_gen_cfg_module {
 	my ($int_rst_n) = $this->_gen_unique_signal_names($clock);
 	my $p_pos_pulse_check = 0;
 	my $o_field;
+    my @lgen_filter = ();
 
 	if ($addr_msb >= $this->global->{'addrwidth'}) {
 		_error("register offsets are out-of-bounds (max ",2**$this->global->{'addrwidth'} -1,")");
@@ -539,6 +511,7 @@ endproperty
 		_add_connection("int_${shdw_sig}_p", 0, 0, "${s_inst}/rcv_o", "");
 		_tie_input_to_constant("${s_inst}/clk_s", 0, 0, 0);
 		_tie_input_to_constant("${s_inst}/rst_s", 0, 0, 0);
+        push @lgen_filter, $s_inst;
 
 		# add synchronizer module for update enable signal
 		$s_inst = $this->_add_instance_unique("sync_generic", $cfg_i, "Synchronizer for update-enable signal ${shdw_sig}_en");
@@ -553,11 +526,13 @@ endproperty
 		_add_connection("int_${shdw_sig}_arm_p", 0, 0, "${s_inst}/rcv_o", "");
 		_tie_input_to_constant("${s_inst}/clk_s", 0, 0, 0);
 		_tie_input_to_constant("${s_inst}/rst_s", 0, 0, 0);
+        push @lgen_filter, $s_inst;
 
 		# if requested, route the update signal to top
 		if ($this->global->{'add_takeover_signals'}) { 
+			#my $to_sig = mix_check_case("port", "to_${shdw_sig}_${clock}");
 			my $to_sig = "to_${shdw_sig}_${clock}";
-			_info("adding takeover output \'$to_sig\'");
+            _info("adding takeover output \'$to_sig\'");
 			_add_primary_output("$to_sig", 0, 0, 0, $cfg_i);
 			push @lassigns, "assign $to_sig".($this->global->{'POSTFIX_PORT_OUT'})." = int_${shdw_sig};";
 		};
@@ -605,6 +580,9 @@ endproperty
 
 	# insert everything
 	push @$lref_udc, @lheader, @ldefines, @ldeclarations, @lassigns, @lstatic_logic, @lwp, @lusr, @lsp, @lrp, @lchecks;
+
+	# do not generate library modules
+	$eh->cappend('output.filter.file', join(",",@lgen_filter));
 };
 
 # create a header for the user-defined-code sections
@@ -614,7 +592,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.42 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.43 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -1442,7 +1420,7 @@ sub _vgch_rs_gen_hier {
 	my $refclks = $this->global->{'hclocks'};
 	my $infer_cg = $this->global->{'infer_clock_gating'};
 	my @lgen_filter = ();
-	my $mcda_inst;
+	my ($mcda_inst, $predec_inst);
 
 	# instantiate top-level module
 	my $rs_name = $this->global->{'regshell_prefix'}."_".$o_domain->name;
@@ -1476,11 +1454,17 @@ sub _vgch_rs_gen_hier {
 
 	# instantiate MCD adapter (if required)
 	if ($nclocks > 1 and $this->global->{'multi_clock_domains'}) {
-		$mcda_inst = $this->_add_instance_unique($this->global->{"mcda_name"}, $top_inst, "Multi-clock-domain Adapter");	
-		$this->global('mcda_inst' => $mcda_inst);
+		$mcda_inst = $this->_add_instance_unique($this->global->{"mcda_name"}, $top_inst, "Multi-clock-domain Adapter");
+        $this->global('mcda_inst' => $mcda_inst);
 		_add_generic("N_DOMAINS", $nclocks, $mcda_inst);
 		_add_generic("P_DWIDTH", $this->global->{'datawidth'}, $mcda_inst);
+        _add_generic("P_PRDWIDTH", _nxt_pow2(_ld($nclocks)), $mcda_inst);
 		push @lgen_filter, $mcda_inst;
+
+        # instantiate pre-decoder
+        $predec_inst = $this->_add_instance(join("_", $rs_name, "pre_dec"), $top_inst, "Multi-clock-domain Pre-decoder");
+        $this->global('predec_inst' => $predec_inst);
+		_add_generic("N_DOMAINS", $nclocks, $predec_inst);
 	};
 	
 	# instantiate config register module(s) and sub-modules
@@ -1519,7 +1503,7 @@ sub _vgch_rs_gen_hier {
 		#_add_generic("sync", $refclks->{$clock}->{'sync'}, $sr_inst);
 		_add_generic_value("sync", 0, "sync", $sr_inst);
 		_add_generic("act", 0, $sr_inst);
-		push @lgen_filter, ($sr_inst, $sg_inst);
+		push @lgen_filter, ($sr_inst, $sg_inst); #("sync_generic.*", "sync_rst.*");
 
 		# instantiate clock gating cells
 		if ($infer_cg) {
@@ -1551,10 +1535,62 @@ sub _vgch_rs_gen_hier {
 	};
 	_add_generic("sync", $ocp_sync, $ocp_inst);
 
+    # add logic to pre_dec module (it is only a big address decoder which is hopefully reduced by synthesis tool) 
+    if(exists($this->global->{'mcda_inst'})) {
+        $this->_vgch_rs_gen_pre_dec_logic($predec_inst);
+    };
+
 	# do not generate library modules
 	$eh->cappend('output.filter.file', join(",",@lgen_filter));
 
 	return ($top_inst, $ocp_inst);
+};
+
+# add logic to pre_dec module (it is only a big address decoder which is hopefully reduced by synthesis tool) 
+sub _vgch_rs_gen_pre_dec_logic {
+    my ($this, $predec_inst) = @_;
+    my $refclks = $this->global->{'hclocks'};
+    my @ludc;
+    my ($n, $select, $clock);
+    my @ltemp;
+    my $indent = $this->global->{'indent'};
+    
+    # get used bits of address to optimize the address decoder
+	my $addr_msb = $this->global->{'addr_msb'};
+	my $addr_lsb = $this->global->{'addr_lsb'};
+    
+    # the pre-decoder output holds the number of the clock-domain, so the range is ld(n-domains)
+    my $ld_nclocks = _nxt_pow2(_ld(scalar(keys %{$refclks})));
+    my $range;
+    if ($ld_nclocks == 1) {
+        $range = "";
+    } else {
+        $range = $this->_gen_vector_range($ld_nclocks-1,0);
+    };
+
+    $this->_vgch_rs_gen_udc_header(\@ludc);
+    push @ludc, "// pre-address decoder (per clock-domain)";
+    push @ludc, "reg $range pre_dec;";
+    push @ludc, "assign pre_dec_o = pre_dec;";
+    push @ludc, "", "always @(addr_i) begin";
+    push @ludc, $indent . "pre_dec <= 0;";
+    push @ludc, $indent . "case (addr_i[$addr_msb:$addr_lsb]) // synopsys infer_mux";
+    $n = 0;
+    # iterate all clock domains
+    foreach $clock (sort keys %{$refclks}) {
+        # make a comma-seperated list of all addresses of a clock-domain; clip the address to the used
+        # range and convert it to hex
+        $select = join(", ", map {"'h"._val2hex($addr_msb-$addr_lsb+1, $_ >> $addr_lsb)} sort keys %{$refclks->{$clock}->{'offset'}});
+        push @ltemp, $indent x 2 . "// clock-domain $n $clock";
+        push @ltemp, $indent x 2 . "$select". ": pre_dec <= $n;";
+        $n++;
+    };
+    push @ludc, @ltemp;
+    push @ludc, $indent x 2 . "default: pre_dec <= 0;";
+    push @ludc, $indent . "endcase";
+    push @ludc, "end";
+    _pad_column(-1, $indent, 1, \@ludc);
+    $this->_vgch_rs_write_udc($predec_inst, \@ludc);
 };
 
 # searches all clocks used in the register domain and stores the result in global->hclocks depending on 
@@ -1563,7 +1599,7 @@ sub _vgch_rs_gen_hier {
 sub _vgch_rs_get_configuration {
 	my $this = shift;
 	my ($o_domain) = @_;
-	my ($n, $o_field, $clock, $reset, %hclocks, %hresult, $href, $o_reg);
+	my ($n, $o_field, $clock, $reset, %hclocks, %hresult, $href, $o_reg, $offset);
 	my $bus_clock = $this->global->{'bus_clock'};
 	my $rdpl_lvl = $this->global->{'read_pipeline_lvl'};
 	my ($addr_msb, $addr_lsb) = $this->_get_address_msb_lsb($o_domain);
@@ -1573,7 +1609,7 @@ sub _vgch_rs_get_configuration {
 
 	# check if embedded register exists
 	foreach $o_reg (@{$o_domain->regs}) {
-		if ($o_reg->name eq $this->global->{'embedded_reg_name'}) {
+		if ($o_reg->name eq $this->global->{'embedded_reg_name'} and !exists($this->global->{'embedded_reg'})) {
 			$this->global('embedded_reg' => $o_reg);
 			_info("will infer embedded register \'", $o_reg->name, "\'");
 			last;
@@ -1595,7 +1631,6 @@ sub _vgch_rs_get_configuration {
 		if ($o_field->name eq "rs_to_val") {
 			$val = $o_field->attribs->{'init'};
 		};  
-
 		if ($this->_skip_field($o_field)) {
 			next;
 		};
@@ -1628,6 +1663,12 @@ sub _vgch_rs_get_configuration {
 				_warning("field \'",$o_field->{'name'},"\' is of type USR, conditional attribute makes no sense here");
 			};
 		};
+        # save register address of field per clock-domain
+        $offset = $o_domain->get_reg_address($o_field->reg);
+        if (defined $offset) {
+            $hresult{$clock}->{'offset'}->{$offset} = "";
+        };
+
 		# check length of field names
 		if (length($o_field->{'name'}) >32) {
 			_warning("field name \'",$o_field->{'name'},"\' is ridiculously long");
@@ -1687,7 +1728,7 @@ sub _vgch_rs_get_configuration {
 sub _vgch_rs_add_static_connections {
 	my ($this, $nclocks) = @_;
 	my $ocp_i = $this->global->{'ocp_inst'};
-	my ($mcda_i, $cfg_i, $sg_i, $sr_i, $clock, $is_async, $href, $n);
+	my ($mcda_i, $cfg_i, $sg_i, $sr_i, $predec_i, $clock, $is_async, $href, $n);
 	my $bus_clock = $this->global->{'bus_clock'};
 	my $bus_reset = $this->global->{'bus_reset'};
 	my $dwidth = $this->global->{'datawidth'};
@@ -1696,6 +1737,7 @@ sub _vgch_rs_add_static_connections {
 	$mcda_i = undef;
 	if (exists($this->global->{'mcda_inst'})) {
 		$mcda_i = $this->global->{'mcda_inst'};
+        $predec_i = $this->global->{'predec_inst'};
 	};
 
 	_add_primary_input($bus_clock, 0, 0, "${ocp_i}/clk_i");
@@ -1732,19 +1774,21 @@ sub _vgch_rs_add_static_connections {
 		_add_primary_input($this->global->{'scan_en_port_name'}, 0, 0, "$sr_i/test_i");  # scan port
 		_tie_input_to_constant("${sg_i}/clk_s", 0, 0, 0);
 		_tie_input_to_constant("${sg_i}/rst_s", 0, 0, 0);
-
 		_add_connection("addr",  $awidth-1, 0, "${ocp_i}/addr_o", "${cfg_i}/addr_i");
-		_add_connection("trans_start", 0, 0, "${ocp_i}/trans_start_o", "$sg_i/snd_i");
 		_add_connection("wr_data", $dwidth-1, 0, "${ocp_i}/wr_data_o", "${cfg_i}/wr_data_i");
 		_add_connection("rd_wr", 0, 0, "${ocp_i}/rd_wr_o", "${cfg_i}/rd_wr_i");
 		_add_connection($int_rst_n, 0, 0, "${sr_i}/rst_o", "");
 		_add_connection($trans_start_p, 0, 0, "${sg_i}/rcv_o", "");
 		if (!defined $mcda_i) {
+            _add_connection("trans_start", 0, 0, "${ocp_i}/trans_start_o", "$sg_i/snd_i");
 			_add_connection("rd_err", 0, 0, "${cfg_i}/rd_err_o", "${ocp_i}/rd_err_i");
 			_add_connection("trans_done", 0, 0, "${cfg_i}/trans_done_o", "${ocp_i}/trans_done_i");
 			_add_connection("rd_data", $dwidth-1, 0, "${cfg_i}/rd_data_o", "${ocp_i}/rd_data_i");
 		} else {
 			# connect config register block to MCDA
+            _add_connection("trans_start_$n", 0, 0, "${mcda_i}/trans_start_vec_o($n)=(0)", "$sg_i/snd_i");
+            # workaround, intermediate signal to connect bus to single bit inputs
+            #_add_connection("int_trans_start_$n", 0, 0, "", "$sg_i/snd_i, ${cfg_i}/trans_start_i");
 			_add_connection("rd_data_vec", $dwidth*$nclocks-1, 0, "$cfg_i/rd_data_o=(".(($n+1)*$dwidth-1).":".($n*$dwidth).")", "$mcda_i/rd_data_vec_i");
 			_add_connection("rd_err_vec",  $nclocks-1, 0, "$cfg_i/rd_err_o=($n)", "$mcda_i/rd_err_vec_i");
 			_add_connection("trans_done_vec", $nclocks-1, 0, "$cfg_i/trans_done_o=($n)", "$mcda_i/trans_done_vec_i");
@@ -1779,6 +1823,10 @@ sub _vgch_rs_add_static_connections {
 		_add_connection("trans_done", 0, 0, "$mcda_i/trans_done_o", "${ocp_i}/trans_done_i");
 		_add_connection("rd_err", 0, 0, "${mcda_i}/rd_err_o", "${ocp_i}/rd_err_i");
 		_add_connection("rd_data", $dwidth-1, 0, "${mcda_i}/rd_data_o", "${ocp_i}/rd_data_i");
+        # connect pre-decoder
+        _add_connection("addr",  $awidth-1, 0, "${ocp_i}/addr_o", "${predec_i}/addr_i");
+        # connect MCDA and pre-decoder
+        _add_connection("pre_dec", _nxt_pow2(_ld($nclocks))-1, 0, "${predec_i}/pre_dec_o", "$mcda_i/pre_dec_i");
 	};
 
 };
@@ -1973,6 +2021,9 @@ sub _gen_field_name {
 	if ($this->global->{'use_reg_name_as_prefix'}) {
 		$name = join("_", $o_field->reg->{'name'}, $name);
 	};
+
+    # apply MIX naming rules
+    #$name = mix_check_case("port", $name);
 	return $name;
 };
 
