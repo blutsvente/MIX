@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.66 2006/07/12 15:23:40 wig Exp $
+# $Id: TODO.txt,v 1.67 2006/07/20 09:41:22 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -56,21 +56,19 @@ TODOs:
 
 	Select data by -variant
 	
-	Spec:
-	
 	Req:	poersch
 	Prio:	medium
-	Status:	open
+	Status:	done (xls2csv release/version 1.13 from 20060720)
 
 >>title: 20060706b/RFE: Extend xls2csv to allow selection by MIX header
 
 	Allow to read, select and join by ::<HEAD> name
 	
-	Spec:
+	Spec: -selcol -selnocol ....
 	
 	Req:	poersch
 	Prio:	medium
-	Status:	open
+	Status:	done (xls2csv release/version 1.13 from 20060720)
 
 >>title: 20060706a/RFE: Extend xls2csv to read in csv and sxc, too
 
@@ -105,11 +103,12 @@ instance i_avfb_pad_mux
 Gruss
 Manfred
 
+	workaround: set check.signal to ...,no_topdriver
 	Req: mpit
-	Status: in work
+	Status: workaround available
 	Prio: high
 	
->>title: 20060224a/RFE: Allow signal to have both Parameter and NumbOers as width
+>>title: 20060224a/RFE: Allow signal to have both Parameter and Numbers as width
 
 	Situaation: Signal from IP needs Parameter as width. Top level has String
 	width.

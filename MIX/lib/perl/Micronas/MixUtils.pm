@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.128 $                                        |
+# | Revision:   $Revision: 1.129 $                                        |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/07/19 08:58:51 $                              |
+# | Date:       $Date: 2006/07/20 09:41:55 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.128 2006/07/19 08:58:51 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.129 2006/07/20 09:41:55 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,8 +30,8 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
-# | Revision 1.128  2006/07/19 08:58:51  wig
-# | Updates made for xls2csv
+# | Revision 1.129  2006/07/20 09:41:55  wig
+# | Debugged -variant/-sel in combination with non mix-headers
 # |
 # | Revision 1.126  2006/07/13 12:21:52  wig
 # | Fixed bad if in db2array ($type got wrong value).
@@ -229,11 +229,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.128 2006/07/19 08:58:51 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.129 2006/07/20 09:41:55 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.128 $';         #'
+my $thisrevision        =      '$Revision: 1.129 $';         #'
 
-# Revision:   $Revision: 1.128 $   
+# Revision:   $Revision: 1.129 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2302,7 +2302,7 @@ sub convert_in ($$) {
 ####################################################################
 =head2
 
-parse_header ($$@) {
+parse_header ($$@)
 
 See if the header line is complete, check if we all required fields and if we have extra fields
 Convert multiple ::head to ::head, ::head:2, ....
@@ -2337,22 +2337,24 @@ sub parse_header($$@){
 
 	my $extran = 0;
 	my $skip_empty = $eh->get( 'input.ignore.columns' );
-	# Possible values: 		#	nohead	:= ignore them (default)	
+	# Possible values: 		#	nohead	:= ignore empty (default)	
 							#	join	:= join all headless together into one ::extra
 							#	extran	:= create a column for each 
+	my $mixheader  = $eh->get( 'input.header' );
+	# can be "mix", "mix,strict" and "any"
 	
     for my $i ( 0 .. ( scalar( @row ) - 1 ) ) {
-		unless ( $row[$i] )  {
+		if ( not defined( $row[$i] ) or $row[$i] =~ /^\s*$/ ) {
 	    	$logger->warn('__I_EMPTY_HEADERC' ,
 	    		"\tEmpty header in column $i, sheet-type $kind (strategy: $skip_empty)!");
 	    	if ( $skip_empty =~ m/\bnohead/ ) {
-	    		push( @{$rowh{"::skip"}}, $i);
-	    		$row[$i] = "::skip";
+	    		push( @{$rowh{'::skip'}}, $i);
+	    		$row[$i] = '::skip';
 	    		next;
 	    	} elsif ( $skip_empty =~ m/\bextran/ ) {
-	    		$row[$i] = '::EXTRA:' . sprintf( "%04d", $extran++);
+	    		$row[$i] = '::__MIX_EMPTY__:' . sprintf( '%04d', $extran++);
 	    	} else { # join!
-	    		$row[$i] = '::EXTRA';
+	    		$row[$i] = '::__MIX_EMPTY__';
 	    	}
 		}
 		#!wig20050614: get rid of extra whitespace
@@ -2360,9 +2362,9 @@ sub parse_header($$@){
 		if ( defined( $1 ) ) {
 			$row[$i]  =~ s/\s+$//;  # Remove trailing whitespace
 		}
-		if ( $row[$i] and $row[$i] !~ m/^::/o ) { #Header not starting with ::
+		if ( $mixheader =~ m/strict/ and $row[$i] and $row[$i] !~ m/^::/o ) { #Header not starting with ::
 	    	$logger->warn('__W_HEADER_NAME', "\tBad name in header row: $row[$i] $i, type $kind, skipping!");
-	    	push( @{$rowh{"::skip"}}, $i);
+	    	push( @{$rowh{'::skip'}}, $i);
 	    	next;
 		}
 		# Get multiple columns and such ... in %rowh
@@ -2372,7 +2374,8 @@ sub parse_header($$@){
     # Are all required fields in @row, multiple rows?
     #
     for my $i ( keys( %{$templ->{'field'}} ) ) {
-	    next unless( $i =~ m/^::/o );
+	    next if ( $mixheader =~ m/\bstrict/ and $i !~ m/^::/o );
+		next unless ( ref( $templ->{'field'}{$i} ) eq 'ARRAY' ); # Skip if not a field template
 	    if( $templ->{'field'}{$i}[2] > 0 ) { #required field
 			if ( not defined( $rowh{$i} ) ) {
 		    	if ( $templ->{'field'}{$i}[2] > 1 ) { # 2 -> needs to be initialized silently
@@ -2418,7 +2421,7 @@ sub parse_header($$@){
     my %or = (); # "flattened" ordering
     my @resort = ();
     for my $i ( keys( %rowh ) ) { # Iterate through multiple headers ...
-		next if ( $i =~ m/^::skip/ ); #Ignore bad fields
+		next if ( $mixheader =~ m/\bstrict/ and $i =~ m/^::skip/ ); #Ignore bad fields
 		if ( scalar( @{$rowh{$i}} ) > 1 ) { # Multiple field header:
 			my $colorder = $templ->{'field'}{'_multorder_'} || '0';
 			my $reverse = 0;
@@ -2437,12 +2440,10 @@ sub parse_header($$@){
 				$templ->{'field'}{$i}[5] = $rowh{$i}[$range[0]];
 			}
 				
-	    	# $or{$i} = $rowh{$i}[0]; # Save first field, rest will be seperated by name ...
-	     	for my $ii ( @range ) {
+	    	for my $ii ( @range ) {
 				my $funique = "$i:$ii";
 				unless( defined( $templ->{'field'}{$funique} ) ) {
 					$logger->debug('__D_SPLIT_HEAD', "\tSplit multiple column header $i to $funique");
-					#!wig20051017: make a copy of the array!
 					@{$templ->{'field'}{$funique}} = @{$templ->{'field'}{$i}};
 					#lu20050624 disable required-attribute for the additional
 					# headers because they do not occur in input

@@ -10,7 +10,7 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #
 #******************************************************************************
 #
-# $Id: xls2csv.pl,v 1.12 2006/07/19 07:34:08 wig Exp $
+# $Id: xls2csv.pl,v 1.13 2006/07/20 09:41:22 wig Exp $
 #
 # read in XLS file and print out a csv and and a sxc version of all sheets
 #
@@ -41,8 +41,8 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #  Define seperator:
 #
 # $Log: xls2csv.pl,v $
-# Revision 1.12  2006/07/19 07:34:08  wig
-# Added new output sort order.
+# Revision 1.13  2006/07/20 09:41:22  wig
+# Debugged -variant/-sel in combination with non mix-headers
 #
 # Revision 1.10  2006/07/12 15:23:41  wig
 # Added [no]sel[ect]head switch to xls2csv to support selection based on headers and variants.
@@ -115,7 +115,7 @@ sub selbyhead				($$);
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.12 $'; # RCS Id
+$::VERSION = '$Revision: 1.13 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 #
@@ -318,22 +318,23 @@ for my $file ( @ARGV ) {
 	    next;
 	}
 
-	my $oBook = Spreadsheet::ParseExcel::Workbook->Parse($file);
-	
+	# my $oBook = Spreadsheet::ParseExcel::Workbook->Parse($file);
+	# TODO : maybe it's o.k. to use $sel / $xsel here
+	my $oBook = open_infile( $file, '.*' , '' , 'hash' );
 	unless( $oBook ) {
 	    $logger->fatal('__F_FILEPARSE', "File <$file> not parsed by ParseExcel");
 	    exit 1;
 	}
 	
-	my $sheet;
-	my $sname = '';
-	my @data = ();
+	#OLD my $sheet;
+	#OLD my $sname = '';
+	#OLD my @data = ();
 	my $ref;
 	
-	for(my $i=0; $i<$oBook->{SheetCount}; $i++) {
+	for my $sname ( keys( %$oBook ) ) {
 	
-	    $sheet = $oBook->{Worksheet}[$i];
-	    $sname = $sheet->{Name};
+	    #OLD: $sheet = $oBook->{Worksheet}[$i];
+	    #OLD: $sname = $sheet->{Name};
 		my ( $cfile, $sfile ) = set_filenames( $file );	
 	
 	    if ( $sel and $sname !~ m/$sel/ ){
@@ -346,8 +347,8 @@ for my $file ( @ARGV ) {
 	    }
 	
 		# Get all data from that sheet:
-	    @data = open_xls($file, $sname, '', 0);
-	    $ref = pop(@data);       # get the first sheet of the name $sname which was found
+	    # @data = open_xls($file, $sname, '', 0);
+	    $ref = $oBook->{$sname};
 
 	    # Filter referenced data:
 	    # Apply column and row filter first

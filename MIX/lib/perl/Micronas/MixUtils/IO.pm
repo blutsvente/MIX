@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.47 $                                          |
+# | Revision:   $Revision: 1.48 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/07/12 15:23:40 $                              |
+# | Date:       $Date: 2006/07/20 09:41:55 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.48  2006/07/20 09:41:55  wig
+# | Debugged -variant/-sel in combination with non mix-headers
+# |
 # | Revision 1.47  2006/07/12 15:23:40  wig
 # | Added [no]sel[ect]head switch to xls2csv to support selection based on headers and variants.
 # |
@@ -139,11 +142,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.47 2006/07/12 15:23:40 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.48 2006/07/20 09:41:55 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.47 $'; #'  
+my $thisrevision    =      '$Revision: 1.48 $'; #'  
 
-# Revision:   $Revision: 1.47 $
+# Revision:   $Revision: 1.48 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -598,7 +601,7 @@ flags can be one of:
 =cut
 
 {   # wrap around $oBook static variable ...
-	# Cache openeded xls-file
+	# Cache opened xls-file
 	my %aBook        = (); # xls-content
 	
 sub open_xls($$$$){
