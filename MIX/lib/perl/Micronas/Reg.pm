@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.31 2006/07/12 14:43:13 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.32 2006/07/20 10:56:20 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.32  2006/07/20 10:56:20  lutscher
+#  added cloning feature
+#
 #  Revision 1.31  2006/07/12 14:43:13  lutscher
 #  changed _map_register_master
 #
@@ -181,7 +184,7 @@ sub parse_register_master($) {
 		my($o_space) = Micronas::Reg->new();
 		
 		if (grep($eh->get( 'reg_shell.type' ) =~ m/$_/i, @{$o_space->global->{supported_views}})) {
-			# init register module for generation of register-shell
+			# init register object for generation of register-shell
 			$o_space->init(	 
 						   'inputformat'     => "register-master", 
 						   'database_type'   => $eh->get( 'i2c.regmas_type' ),
@@ -191,16 +194,23 @@ sub parse_register_master($) {
 			# set debug switch
 			$o_space->global('debug' => exists $OPTVAL{'verbose'} ? 1 : 0);
 			
+            # check if register object should be cloned first
+            if ($eh->get('reg_shell.clone.number') > 1) {
+                my $o_new_space = $o_space->_clone(); # module RegViewClone.pm 
+                $o_space = $o_new_space;
+            };
+            
 			# make it so
-			$o_space->generate_view($eh->get( 'reg_shell.type' ));
+			$o_space->generate_view($eh->get('reg_shell.type'));
 			return $o_space;
+
 		} else {
-			_fatal("generation of view \'",$eh->get( 'reg_shell.type' ),"\' is not supported");
+			_fatal("generation of view \'",$eh->get('reg_shell.type'),"\' is not supported");
 			exit 1;
 		};
 	} else {
 		$logger->info('__I_REG_INIT', "\tRegister-master file empty or specified sheet \'" .
-			$eh->get( 'i2c.xls' ) . "\' in file not found");
+			$eh->get('i2c.xls') . "\' in file not found");
 	};
 	return undef;
 };
@@ -209,7 +219,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.31 $ ';  #'
+our($VERSION) = '$Revision: 1.32 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -226,7 +236,6 @@ our(%hglobal) =
 	"E_VR_AD",           # e-language macros (Emanuel Marconetti)
 	"STL",               # register test file in Socket Transaction Language format
 	"RDL",               # Denali RDL representation of database (experimental)
-	"HDL-vgch-rs-clone", # like HDL-vgch-rs, but takes a register-master as template to clone it n times
 	"none"               # generate nothing (useful for e.g. -report reglist option)
 					  ],
 
@@ -318,8 +327,6 @@ sub generate_view {
 		$this->_gen_view_rdl(@ldomains);     # module RegViewRDL.pm
  	} elsif ($view =~ m/none/i) {
 		return; # do nothing
-	} elsif (lc($view) eq "hdl-vgch-rs-clone") {
-		$this->_gen_view_vgch_rs_clone(@ldomains); # module RegViewClone.pm 
 	} else {
 		_error("generation of view \'$view\' is not supported");
 	};
