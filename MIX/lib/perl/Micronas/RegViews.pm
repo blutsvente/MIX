@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.43 2006/07/20 10:57:40 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.44 2006/07/21 10:09:44 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.43 $                                  
+#  Revision      : $Revision: 1.44 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.44  2006/07/21 10:09:44  lutscher
+#  fixed trg_p generation in Verilog code
+#
 #  Revision 1.43  2006/07/20 10:57:40  lutscher
 #  changed code generation for MCD configurations
 #
@@ -378,7 +381,7 @@ sub _vgch_rs_gen_cfg_module {
 					push @ldeclarations, "reg [$msb:$lsb] ".$this->_gen_field_name("shdw", $o_field).";";
 				};
 				if ($spec =~ m/trg/i and $spec !~ m/usr/i) { # new: add write trigger output
-					_add_primary_output($this->_gen_field_name("trg", $o_field), 0, 0, 1, $cfg_i);
+					_add_primary_output($this->_gen_field_name("trg", $o_field), 0, 0, $spec =~ m/sha/i ? 0 : 1, $cfg_i);
 				};
 			} elsif ($access =~ m/w/i) { # write
 				_add_primary_output($this->_gen_field_name("out", $o_field), $msb, $lsb, ($spec =~ m/sha/i) ? 1:0, $cfg_i);
@@ -393,12 +396,10 @@ sub _vgch_rs_gen_cfg_module {
 						$hassigns{$this->_gen_field_name("out", $o_field).$this->_get_frange($o_field)} = "wr_data_i".$rrange;
 					} else {
 						# drive from register
-						#$hassigns{$this->_gen_field_name("out", $o_field).$this->_get_frange($o_field)} = $reg_name.$rrange;
 						$hassigns{$this->_gen_field_name("out", $o_field).$this->_get_frange($o_field)} = $this->_gen_cond_rhs(\%hparams, $o_field, $reg_name.$rrange);
 					};
 				} else {
 					# drive from register
-					#$hassigns{$this->_gen_field_name("shdw", $o_field).$this->_get_frange($o_field)} = $reg_name.$rrange;
 					$hassigns{$this->_gen_field_name("shdw", $o_field).$this->_get_frange($o_field)} = $this->_gen_cond_rhs(\%hparams, $o_field, $reg_name.$rrange);
 					push @ldeclarations,"wire [$msb:$lsb] ".$this->_gen_field_name("shdw", $o_field).";";
 				};
@@ -406,7 +407,7 @@ sub _vgch_rs_gen_cfg_module {
 					_add_primary_input($this->_gen_field_name("in", $o_field), $msb, $lsb, $cfg_i);
 				};
 				if ($spec =~ m/trg/i and $spec !~ m/usr/i) { # new: add write trigger output
-					_add_primary_output($this->_gen_field_name("trg", $o_field), 0, 0, ($spec =~ m/sha|w1c/i) ? 1:0, $cfg_i);
+					_add_primary_output($this->_gen_field_name("trg", $o_field), 0, 0, ($spec =~ m/w1c/i) ? 1:0, $cfg_i);
 				};
 			};
 			if ($spec =~ m/usr/i) { # usr read/write
@@ -430,13 +431,11 @@ sub _vgch_rs_gen_cfg_module {
 						# add only one trigger signal per register and assign individual trigger signals
 						my $trg = "int_${reg_name}_trg_p";
 						if (!exists($hwp{'write_trg'}->{$trg})) {
-							$hwp{'write_rst'}->{$trg} = 0;
+							$hwp{'write_trg_rst'}->{$trg} = 0;
 							$hwp{'write_trg'}->{$trg} = $reg_offset;
 							push @ldeclarations,"reg $trg;"
 						};
 						$hassigns{$this->_gen_field_name("trg", $o_field)} = $trg;
-						#$hwp{'write_rst'}->{$this->_gen_field_name("trg", $o_field)} = 0;
-						#$hwp{'write_trg'}->{$this->_gen_field_name("trg", $o_field)} = $reg_offset;
 					};
 				} else { # w1c
 					$hwp{'write_sts'}->{$reg_name.$rrange} = $this->_gen_field_name("int_set", $o_field);
@@ -538,7 +537,7 @@ endproperty
 		};
 
 		# generate shadow process
-		$this->_vgch_rs_code_shadow_process($clock, $shdw_sig, \%hshdw, \@lsp);
+		$this->_vgch_rs_code_shadow_process($clock, $shdw_sig, \%hshdw, \%hassigns, \@lsp);
 	};
 	_pad_column(-1, $this->global->{'indent'}, 2, \@lsp); # indent
 
@@ -592,7 +591,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.43 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.44 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -868,7 +867,7 @@ sub _rdmux_iterator {
 # hash with shadow signals and fields-array (shadow-signal => (list of fields))
 # ref. to list where code is added
 sub _vgch_rs_code_shadow_process {
-	my ($this, $clock, $sig, $href_shdw, $lref_sp) = @_;
+	my ($this, $clock, $sig, $href_shdw, $href_assigns, $lref_sp) = @_;
 	my @linsert;
 	my $ind = $this->global->{'indent'};
 	my $ilvl = 0;
@@ -922,9 +921,6 @@ sub _vgch_rs_code_shadow_process {
 					push @ltemp, $this->_gen_field_name("shdw", $o_field) ." <= ${res_val};"; 
 				};
 			};
-			if ($o_field->attribs->{'spec'} =~ m/trg/i) { # add trigger signal
-				push @ltemp, $this->_gen_field_name("trg", $o_field) . " <= 0;";
-			};
 		}; 
 		_pad_column(0, $this->global->{'indent'}, $ilvl+1, \@ltemp);
 		push @linsert, @ltemp;
@@ -939,10 +935,9 @@ sub _vgch_rs_code_shadow_process {
 					push @ltemp, $this->_gen_field_name("shdw", $o_field) ." <= " . $this->_gen_field_name("in", $o_field) . ";"; 
 				};
 			};
-			# add trigger signal
-			if ($o_field->attribs->{'spec'} =~ m/trg/i) {
-				push @ltemp, $this->_gen_field_name("trg", $o_field) . " <= 1;";
-				push @linsert, $ind x $ilvl . $this->_gen_field_name("trg", $o_field) . " <= 0;";
+			# add assignment for trigger signal
+			if ($o_field->attribs->{'spec'} =~ m/trg/i) { # add trigger signal
+				$href_assigns->{$this->_gen_field_name("trg", $o_field)} = "int_${sig}";
 			};
 		}; 
 		_pad_column(0, $this->global->{'indent'}, $ilvl+1, \@ltemp);
@@ -1102,9 +1097,6 @@ sub _vgch_rs_code_write_processes {
 		
 		# write logic
 		push @linsert, $ind x $ilvl ."end", $ind x $ilvl++ . "else begin";
-		foreach $key (sort {$href_wp->{'write_trg'}->{$a} <=> $href_wp->{'write_trg'}->{$b}} keys %{$href_wp->{'write_trg'}}) {
-			push @linsert, $ind x $ilvl . $key . " <= 0;";
-		};
 		if ($this->global->{'infer_clock_gating'}) {
 			push @linsert, $ind x $ilvl++ . "if (wr_p || (cgtransp == 0))";
 		} else {
@@ -1126,11 +1118,6 @@ sub _vgch_rs_code_write_processes {
 				if(scalar(@ltemp) > 0) {
 					$reg_addr = $last_addr;
 					push @linsert, $ind x $ilvl . "\`$reg_addr: begin";
-					foreach $key2 (keys %{$href_wp->{'write_trg'}}) {
-						if ($href_addr_tokens->{$href_wp->{'write_trg'}->{$key2}} eq $reg_addr) {
-							push @ltemp, "$key2 <= 1;";
-					 	};
-					};
 					_pad_column(0, $ind, $ilvl+1, \@ltemp);
 					push @linsert, sort @ltemp;
 					push @linsert, $ind x $ilvl . "end";
@@ -1143,11 +1130,6 @@ sub _vgch_rs_code_write_processes {
 		# push last entries to list
 		if (scalar(@ltemp) > 0) {
 			$reg_addr = $cur_addr;
-			foreach $key2 (keys %{$href_wp->{'write_trg'}}) {
-				if ($href_addr_tokens->{$href_wp->{'write_trg'}->{$key2}} eq $reg_addr) {
-					push @ltemp, "$key2 <= 1;";
-				};
-			};
 			push @linsert, $ind x $ilvl . "\`$reg_addr: begin";
 			_pad_column(0, $ind, $ilvl+1, \@ltemp);
 			push @linsert, sort @ltemp;
@@ -1155,15 +1137,61 @@ sub _vgch_rs_code_write_processes {
 			push @linsert, $ind x $ilvl . "default: ;";
 			@ltemp=();
 		};
-		# push @linsert, $ind x $ilvl-- . "default: ;";
 		$ilvl--;
 		push @linsert, $ind x $ilvl-- . "endcase";
-		#if ($this->global->{'infer_clock_gating'}) { $ilvl--; };
 		$ilvl--;
 		push @linsert, $ind x $ilvl-- . "end";
 		push @linsert, $ind x $ilvl . "end";
 		@$lref_wp = @linsert;
 	};
+
+	#
+	#  write block for write trigger pulses
+	#
+	@linsert = ();
+	if (scalar(keys %{$href_wp->{'write_trg'}})>0) {
+        $write_clock = $clock; # use gated clock
+        
+        # prefix
+		push @linsert, "", "/*","  write trigger process","*/";
+		push @linsert, $ind x $ilvl++ . "always @(posedge $clock or negedge $int_rst_n) begin";
+
+		# reset logic
+		push @linsert, $ind x $ilvl++ . "if (~$int_rst_n) begin";
+		@ltemp=();
+		foreach $key (sort keys %{$href_wp->{'write_trg_rst'}}) {
+			push @ltemp, "$key <= $href_wp->{'write_trg_rst'}->{$key};";
+		};	
+		_pad_column(0, $ind, $ilvl, \@ltemp);
+		push @linsert, @ltemp;
+		$ilvl--;
+		
+		# write logic
+		push @linsert, $ind x $ilvl ."end", $ind x $ilvl++ . "else begin";
+		foreach $key (sort {$href_wp->{'write_trg'}->{$a} <=> $href_wp->{'write_trg'}->{$b}} keys %{$href_wp->{'write_trg'}}) {
+			push @linsert, $ind x $ilvl . $key . " <= 0;";
+		};
+   
+		push @linsert, $ind x $ilvl++ . "case (iaddr)";
+		@ltemp=();
+		foreach $key (sort {$href_wp->{'write_trg'}->{$a} <=> $href_wp->{'write_trg'}->{$b}} keys %{$href_wp->{'write_trg'}}) {
+			$reg_name = $key;
+			$offs = $href_wp->{'write_trg'}->{$key};
+			$rrange = "";
+			if ($reg_name =~ m/(\[.+\])$/) {
+				$reg_name = $`;
+				$rrange = $1;
+			};
+			$reg_addr = $href_addr_tokens->{$offs}; # use tokenized address instead of number
+            push @linsert, $ind x $ilvl . "\`$reg_addr: $key <= wr_p;";
+        };
+        push @linsert, $ind x $ilvl . "default: ;";
+		$ilvl--;
+		push @linsert, $ind x $ilvl-- . "endcase";
+		push @linsert, $ind x $ilvl-- . "end";
+		push @linsert, $ind x $ilvl . "end";
+		push @$lref_wp, @linsert;    
+    };
 
 	#
 	#  write block for status registers
