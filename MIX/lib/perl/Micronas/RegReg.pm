@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegReg.pm,v 1.5 2006/07/25 12:51:45 lutscher Exp $
+#  RCSId: $Id: RegReg.pm,v 1.6 2006/07/25 13:21:28 mathias Exp $
 ###############################################################################
 #
 #  Related Files :  RegDomain.pm
@@ -28,7 +28,10 @@
 ###############################################################################
 #
 #  $Log: RegReg.pm,v $
-#  Revision 1.5  2006/07/25 12:51:45  lutscher
+#  Revision 1.6  2006/07/25 13:21:28  mathias
+#  fixed copy&paste bug in get_reg_init
+#
+#  Revision 1.5  2006-07-25 12:51:45  lutscher
 #  fixed get_reg_init()
 #
 #  Revision 1.4  2005/11/25 16:01:48  mathias
@@ -156,7 +159,7 @@ sub get_reg_init {
    my $init;
    foreach $href (@{$this->fields}) {
 	   $init = $href->{'field'}->attribs->{'init'} & ((2** ($href->{'field'}->attribs->{'size'})) - 1);
-       $res |= $href->{'field'}->attribs->{'init'} << $href->{'pos'};
+       $res |= $init << $href->{'pos'};
    };
    return $res;
 };
