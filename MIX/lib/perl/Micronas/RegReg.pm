@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegReg.pm,v 1.4 2005/11/25 16:01:48 mathias Exp $
+#  RCSId: $Id: RegReg.pm,v 1.5 2006/07/25 12:51:45 lutscher Exp $
 ###############################################################################
 #
 #  Related Files :  RegDomain.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegReg.pm,v $
+#  Revision 1.5  2006/07/25 12:51:45  lutscher
+#  fixed get_reg_init()
+#
 #  Revision 1.4  2005/11/25 16:01:48  mathias
 #  added to_document()
 #  which checks if the register should be visible in the documentation
@@ -150,8 +153,10 @@ sub get_reg_init {
    my $href;
    
    my $res = 0;
+   my $init;
    foreach $href (@{$this->fields}) {
-	   $res |= $href->{'field'}->attribs->{'init'} << $href->{'pos'};
+	   $init = $href->{'field'}->attribs->{'init'} & ((2** ($href->{'field'}->attribs->{'size'})) - 1);
+       $res |= $href->{'field'}->attribs->{'init'} << $href->{'pos'};
    };
    return $res;
 };
