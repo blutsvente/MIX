@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.44 2006/07/21 10:09:44 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.45 2006/08/04 11:37:56 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.44 $                                  
+#  Revision      : $Revision: 1.45 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.45  2006/08/04 11:37:56  lutscher
+#  fixed order of adding ports, order should now be more stable
+#
 #  Revision 1.44  2006/07/21 10:09:44  lutscher
 #  fixed trg_p generation in Verilog code
 #
@@ -276,7 +279,7 @@ sub _vgch_rs_gen_cfg_module {
 	# generate a header for the code
 	$this->_vgch_rs_gen_udc_header(\@lheader);
 
-	# iterate through all registers of the domain and add ports/instantiations
+	# iterate through all registers of the domain and add ports/instantiations (sort by address)
 	foreach $o_reg (sort {$o_domain->get_reg_address($a) <=> $o_domain->get_reg_address($b)} @{$o_domain->regs}) {
 		#$o_reg->display(); if $this->global->{'debug'}; # debug
 		# skip register defined by user
@@ -311,8 +314,8 @@ sub _vgch_rs_gen_cfg_module {
 
 		my $fclock = "";
 		my $freset = "";
-		# iterate through all fields of the register
-		foreach $href (sort {$a cmp $b} @{$o_reg->fields}) {
+		# iterate through all fields of the register (sort by name)
+		foreach $href (sort {$a->{'field'}->name cmp $b->{'field'}->name} @{$o_reg->fields}) {
 			$o_field = $href->{'field'};
 			$shdw_sig = "";
 			# $o_field->display();
@@ -591,7 +594,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.44 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.45 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
