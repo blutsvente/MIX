@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.45 2006/08/04 11:37:56 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.46 2006/08/16 08:05:32 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.45 $                                  
+#  Revision      : $Revision: 1.46 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.46  2006/08/16 08:05:32  lutscher
+#  fixed _gen_view_vgch_rs(), deletion of some per-domain global parameters was missing
+#
 #  Revision 1.45  2006/08/04 11:37:56  lutscher
 #  fixed order of adding ports, order should now be more stable
 #
@@ -154,11 +157,13 @@ sub _gen_view_vgch_rs {
 	foreach $o_domain (@ldomains) {
 		_info("generating code for domain ",$o_domain->name);
 		# $o_domain->display() if $this->global->{'debug'};
+
 		# reset per-domain data structures
 		$this->global('hfnames' => {});
 		$this->global('hhdlconsts' => {});
 		$this->global('hclocks' => {});
-		
+		map {delete $this->global->{$_}} grep $_ =~ m/_inst$/i,keys %{$this->global};
+
 		$n_clocks = $this->_vgch_rs_get_configuration($o_domain); # get some general information
 
 		($top_inst, $ocp_inst) = $this->_vgch_rs_gen_hier($o_domain, $n_clocks); # generate module hierarchy
@@ -594,7 +599,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.45 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.46 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
