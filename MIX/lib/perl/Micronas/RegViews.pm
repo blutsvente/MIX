@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.47 2006/08/24 09:23:00 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.48 2006/08/24 09:45:37 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.47 $                                  
+#  Revision      : $Revision: 1.48 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.48  2006/08/24 09:45:37  lutscher
+#  more fixes to the last issue
+#
 #  Revision 1.47  2006/08/24 09:23:00  lutscher
 #  fixed problem with name-clashes for internal signals in generated code
 #
@@ -606,7 +609,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.47 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.48 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -894,6 +897,8 @@ sub _vgch_rs_code_shadow_process {
 
 	my $int_rst_n = $this->_gen_unique_signal_name("int_rst_n", $clock, "sr_inst");
     my $shdw_clk = $this->_gen_unique_signal_name("shdw_clk", $clock, "cg_shdw_inst");
+    my $shdw_upd = $this->_gen_unique_signal_name("int_${sig}_p", $clock, "su_inst");
+    my $shdw_arm = $this->_gen_unique_signal_name("int_${sig}_arm_p", $clock, "sa_inst");
 
 	if (scalar(@{$href_shdw->{$sig}})>0) {
 		if ($this->global->{'infer_clock_gating'}) {
@@ -913,13 +918,13 @@ sub _vgch_rs_code_shadow_process {
 			push @linsert, $ind x ($ilvl+1) . "int_${sig} <= // synopsys translate_off";
 			push @linsert, $ind x ($ilvl+2) . "#0.1"; # note: the 0.1ns notation is SystemVerilog only
 			push @linsert, $ind x ($ilvl+2) . "// synopsys translate_on";
-			push @linsert, $ind x ($ilvl+2) . "(int_${sig}_p & int_${sig}_en) | ${sig}_force".$this->global->{'POSTFIX_PORT_IN'}.";";
+			push @linsert, $ind x ($ilvl+2) . "($shdw_upd & int_${sig}_en) | ${sig}_force".$this->global->{'POSTFIX_PORT_IN'}.";";
 		} else {
-			push @linsert, $ind x ($ilvl+1) . "int_${sig} <= (int_${sig}_p & int_${sig}_en) | ${sig}_force".$this->global->{'POSTFIX_PORT_IN'}.";";
+			push @linsert, $ind x ($ilvl+1) . "int_${sig} <= ($shdw_upd & int_${sig}_en) | ${sig}_force".$this->global->{'POSTFIX_PORT_IN'}.";";
 		};
-		push @linsert, $ind x ($ilvl+1) . "if (int_${sig}_arm_p)";
+		push @linsert, $ind x ($ilvl+1) . "if ($shdw_arm)";
 		push @linsert, $ind x ($ilvl+2) . "int_${sig}_en <= 1; // arm enable signal";
-		push @linsert, $ind x ($ilvl+1) . "else if(int_${sig}_p)";
+		push @linsert, $ind x ($ilvl+1) . "else if($shdw_upd)";
 		push @linsert, $ind x ($ilvl+2) . "int_${sig}_en <= 0; // reset enable signal after update-event";
 		push @linsert, $ind x $ilvl . "end";
 		$ilvl--;
