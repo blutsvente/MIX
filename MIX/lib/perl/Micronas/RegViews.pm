@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.46 2006/08/16 08:05:32 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.47 2006/08/24 09:23:00 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.46 $                                  
+#  Revision      : $Revision: 1.47 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.47  2006/08/24 09:23:00  lutscher
+#  fixed problem with name-clashes for internal signals in generated code
+#
 #  Revision 1.46  2006/08/16 08:05:32  lutscher
 #  fixed _gen_view_vgch_rs(), deletion of some per-domain global parameters was missing
 #
@@ -271,7 +274,7 @@ sub _vgch_rs_gen_cfg_module {
 	my (@lrp) = ();
 	my (@lchecks) = ();
 	my (@lheader) = ();
-	my ($int_rst_n) = $this->_gen_unique_signal_names($clock);
+	my ($int_rst_n) = $this->_gen_unique_signal_name("int_rst_n", $clock, "sr_inst");
 	my $p_pos_pulse_check = 0;
 	my $o_field;
     my @lgen_filter = ();
@@ -506,34 +509,38 @@ endproperty
 		push @ldeclarations, split("\n","reg int_${shdw_sig}_en;");
 
 		# add synchronizer module for update signal (need unique instance names because MIX has flat namespace)
-		my $s_inst = $this->_add_instance_unique("sync_generic", $cfg_i, "Synchronizer for update-signal $shdw_sig");
-		_add_generic("kind", 3, $s_inst);
-		_add_generic("sync", 1, $s_inst);
-		_add_generic("act", 1, $s_inst);
-		_add_generic("rstact", 0, $s_inst);
-		_add_generic("rstval", 0, $s_inst);
-		_add_primary_input($shdw_sig, 0, 0, "${s_inst}/snd_i");
-		_add_primary_input($clock, 0, 0, "${s_inst}/clk_r");
-		_add_primary_input($reset, 0, 0, "${s_inst}/rst_r");
-		_add_connection("int_${shdw_sig}_p", 0, 0, "${s_inst}/rcv_o", "");
-		_tie_input_to_constant("${s_inst}/clk_s", 0, 0, 0);
-		_tie_input_to_constant("${s_inst}/rst_s", 0, 0, 0);
-        push @lgen_filter, $s_inst;
-
+		my $su_inst = $this->_add_instance_unique("sync_generic", $cfg_i, "Synchronizer for update-signal $shdw_sig");
+        $this->global->{'hclocks'}->{$clock}->{'su_inst'} = $su_inst;
+		_add_generic("kind", 3, $su_inst);
+		_add_generic("sync", 1, $su_inst);
+		_add_generic("act", 1, $su_inst);
+		_add_generic("rstact", 0, $su_inst);
+		_add_generic("rstval", 0, $su_inst);
+		_add_primary_input($shdw_sig, 0, 0, "${su_inst}/snd_i");
+		_add_primary_input($clock, 0, 0, "${su_inst}/clk_r");
+		_add_primary_input($reset, 0, 0, "${su_inst}/rst_r");
+        my $conn = $this->_gen_unique_signal_name("int_${shdw_sig}_p", $clock, "su_inst");
+        _add_connection($conn, 0, 0, "${su_inst}/rcv_o", "");
+		_tie_input_to_constant("${su_inst}/clk_s", 0, 0, 0);
+		_tie_input_to_constant("${su_inst}/rst_s", 0, 0, 0);
+        push @lgen_filter, $su_inst;
+        
 		# add synchronizer module for update enable signal
-		$s_inst = $this->_add_instance_unique("sync_generic", $cfg_i, "Synchronizer for update-enable signal ${shdw_sig}_en");
-		_add_generic("kind", 3, $s_inst);
-		_add_generic("sync", 1, $s_inst);
-		_add_generic("act", 1, $s_inst);
-		_add_generic("rstact", 0, $s_inst);
-		_add_generic("rstval", 0, $s_inst);
-		_add_primary_input("${shdw_sig}_en", 0, 0, "${s_inst}/snd_i");
-		_add_primary_input($clock, 0, 0, "${s_inst}/clk_r");
-		_add_primary_input($reset, 0, 0, "${s_inst}/rst_r");
-		_add_connection("int_${shdw_sig}_arm_p", 0, 0, "${s_inst}/rcv_o", "");
-		_tie_input_to_constant("${s_inst}/clk_s", 0, 0, 0);
-		_tie_input_to_constant("${s_inst}/rst_s", 0, 0, 0);
-        push @lgen_filter, $s_inst;
+		my($sa_inst) = $this->_add_instance_unique("sync_generic", $cfg_i, "Synchronizer for update-enable signal ${shdw_sig}_en");
+        $this->global->{'hclocks'}->{$clock}->{'sa_inst'} = $sa_inst;
+		_add_generic("kind", 3, $sa_inst);
+		_add_generic("sync", 1, $sa_inst);
+		_add_generic("act", 1, $sa_inst);
+		_add_generic("rstact", 0, $sa_inst);
+		_add_generic("rstval", 0, $sa_inst);
+		_add_primary_input("${shdw_sig}_en", 0, 0, "${sa_inst}/snd_i");
+		_add_primary_input($clock, 0, 0, "${sa_inst}/clk_r");
+		_add_primary_input($reset, 0, 0, "${sa_inst}/rst_r");
+        $conn = $this->_gen_unique_signal_name("int_${shdw_sig}_arm_p", $clock, "sa_inst");
+		_add_connection($conn, 0, 0, "${sa_inst}/rcv_o", "");
+		_tie_input_to_constant("${sa_inst}/clk_s", 0, 0, 0);
+		_tie_input_to_constant("${sa_inst}/rst_s", 0, 0, 0);
+        push @lgen_filter, $sa_inst;
 
 		# if requested, route the update signal to top
 		if ($this->global->{'add_takeover_signals'}) { 
@@ -599,7 +606,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.46 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.47 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -627,11 +634,13 @@ sub _vgch_rs_code_read_mux {
 	my $n;
 	my $rdpl_stages = $this->global->{'rdpl_stages'};
 	my $rdpl_lvl =  $this->global->{'read_pipeline_lvl'};
-	my ($int_rst_n, $dummy1, $dummy2, $dummy3, $dummy4, $dummy5, $rd_clk) = $this->_gen_unique_signal_names($clock);
 	my ($i, $field);
 	my $addr_msb = $this->global->{'addr_msb'};
 	my $addr_lsb = $this->global->{'addr_lsb'};
 	my (%hmux);
+
+	my ($int_rst_n) = $this->_gen_unique_signal_name("int_rst_n", $clock, "sr_inst");
+    my ($rd_clk) = $this->_gen_unique_signal_name("rd_clk", $clock, "cg_read_inst");
 
 	if (scalar(keys %$href_rp)>0) {
 		# prefix
@@ -880,9 +889,11 @@ sub _vgch_rs_code_shadow_process {
 	my $ind = $this->global->{'indent'};
 	my $ilvl = 0;
 	my $o_field;
-	my ($int_rst_n, $dummy1, $dummy2, $dummy3, $shdw_clk) = $this->_gen_unique_signal_names($clock);
 	my ($shadow_clock) = $clock;
 	my @ltemp;
+
+	my $int_rst_n = $this->_gen_unique_signal_name("int_rst_n", $clock, "sr_inst");
+    my $shdw_clk = $this->_gen_unique_signal_name("shdw_clk", $clock, "cg_shdw_inst");
 
 	if (scalar(@{$href_shdw->{$sig}})>0) {
 		if ($this->global->{'infer_clock_gating'}) {
@@ -972,11 +983,13 @@ sub _vgch_rs_code_fwd_process {
 	my $ilvl = 0;
 	my @lmap = sort { $a <=> $b } keys %$href_usr;
 	my $nusr = scalar(keys %$href_usr);
-	my ($int_rst_n, $trans_start_p) = $this->_gen_unique_signal_names($clock);
 	my (@ltemp, @ltemp2, $sig);
 	my ($sig_read) =  "rd_wr".$this->global->{'POSTFIX_PORT_IN'}; 
 	my ($sig_write) = "~rd_wr".$this->global->{'POSTFIX_PORT_IN'};
 	my ($rw, $dcd, $i);
+
+    my $int_rst_n = $this->_gen_unique_signal_name("int_rst_n", $clock, "sr_inst");
+    my $trans_start_p = $this->_gen_unique_signal_name("trans_start_p", $clock, "sg_inst");
 
 	if (scalar(keys %{$href_usr})>0) {
 		# prefix
@@ -1078,7 +1091,10 @@ sub _vgch_rs_code_write_processes {
 	my (@linsert, @ltemp, $last_addr, $cur_addr, $reg_name, $reg_addr, $rrange);
 	my ($key, $key2);
 	my $offs;
-	my ($int_rst_n, $trans_start_p, $wr_clk) = $this->_gen_unique_signal_names($clock);
+
+    my $int_rst_n = $this->_gen_unique_signal_name("int_rst_n", $clock, "sr_inst");
+    my $trans_start_p = $this->_gen_unique_signal_name("trans_start_p", $clock, "sg_inst");
+    my $wr_clk = $this->_gen_unique_signal_name("wr_clk", $clock, "cg_write_inst");
 
 	#
 	#  write block for normal registers
@@ -1266,11 +1282,19 @@ sub _vgch_rs_code_static_logic {
 	my $addr_msb = $this->global->{'addr_msb'};
 	my $addr_lsb = $this->global->{'addr_lsb'};
 	my ($o_field, $href, $shdw_sig, $nusr, $sig, $dummy);
-	my ($int_rst_n, $trans_start_p, $wr_clk, $wr_clk_en, $shdw_clk, $shdw_clk_en, $rd_clk, $rd_clk_en) = $this->_gen_unique_signal_names($clock);
 	my (@ltemp, @ltemp2);
 	my $multicyc;
 	my $ind = $this->global->{'indent'};
 	$href = $this->global->{'hclocks'}->{$clock};
+
+    my $int_rst_n = $this->_gen_unique_signal_name("int_rst_n", $clock, "sr_inst");
+    my $trans_start_p = $this->_gen_unique_signal_name("trans_start_p", $clock, "sg_inst");
+    my $wr_clk = $this->_gen_unique_signal_name("wr_clk", $clock, "cg_write_inst");
+    my $wr_clk_en = $this->_gen_unique_signal_name("wr_clk_en", $clock, "cg_write_inst");
+    my $shdw_clk = $this->_gen_unique_signal_name("shdw_clk", $clock, "cg_shdw_inst");
+    my $shdw_clk_en = $this->_gen_unique_signal_name("shdw_clk_en", $clock, "cg_shdw_inst");
+    my $rd_clk = $this->_gen_unique_signal_name("rd_clk", $clock, "cg_read_inst");
+    my $rd_clk_en = $this->_gen_unique_signal_name("rd_clk_en", $clock, "cg_read_inst");
 
 	# calc new read-multicycle value in case of pipelining
 	if ($this->global->{'rdpl_stages'}==0) {
@@ -1795,7 +1819,15 @@ sub _vgch_rs_add_static_connections {
 	# connections for each config register block
 	$n=0;
 	foreach $clock (sort keys %{$this->global->{'hclocks'}}) {
-		my ($int_rst_n, $trans_start_p, $wr_clk, $wr_clk_en, $shdw_clk, $shdw_clk_en, $rd_clk, $rd_clk_en) = $this->_gen_unique_signal_names($clock);
+        my $int_rst_n = $this->_gen_unique_signal_name("int_rst_n", $clock, "sr_inst");
+        my $trans_start_p = $this->_gen_unique_signal_name("trans_start_p", $clock, "sg_inst");
+        my $wr_clk = $this->_gen_unique_signal_name("wr_clk", $clock, "cg_write_inst");
+        my $wr_clk_en = $this->_gen_unique_signal_name("wr_clk_en", $clock, "cg_write_inst");
+        my $shdw_clk = $this->_gen_unique_signal_name("shdw_clk", $clock, "cg_shdw_inst");
+        my $shdw_clk_en = $this->_gen_unique_signal_name("shdw_clk_en", $clock, "cg_shdw_inst");
+        my $rd_clk = $this->_gen_unique_signal_name("rd_clk", $clock, "cg_read_inst");
+        my $rd_clk_en = $this->_gen_unique_signal_name("rd_clk_en", $clock, "cg_read_inst");
+
 		$href = $this->global->{'hclocks'}->{$clock};
 		$cfg_i = $href->{'cfg_inst'};
 		$sg_i = $href->{'sg_inst'};
@@ -2087,24 +2119,16 @@ sub _gen_vector_range {
 
 # generate unique names for some signals depending on clock domain in case of multi_clock_domains = 1;
 # needed because MIX has flat namespace for signal names
-sub _gen_unique_signal_names {
-	my ($this, $clock) = @_;
+# note: parameter inst_key is key name in global hclocks hash
+sub _gen_unique_signal_name {
+	my ($this, $signal_name, $clock, $inst_key) = @_;
 	my $href = $this->global->{'hclocks'}->{$clock};
 
 	if ($this->global->{'multi_clock_domains'} == 0 or scalar(keys %{$this->global->{'hclocks'}})==1) {
-		return ("int_rst_n", "trans_start_p", "wr_clk", "wr_clk_en", "shdw_clk", "shdw_clk_en", "rd_clk", "rd_clk_en");
-	} else {
-		return (
-				$href->{'sr_inst'}."_int_rst_n",
-				$href->{'sg_inst'}."_trans_start_p",
-				exists $href->{'cg_write_inst'} ? $href->{'cg_write_inst'}."wr_clk" : "wr_clk",
-				exists $href->{'cg_write_inst'} ? $href->{'cg_write_inst'}."wr_clk_en" : "wr_clk_en",
-				exists $href->{'cg_shdw_inst'} ? $href->{'cg_shdw_inst'}."shdw_clk" : "shdw_clk",
-				exists $href->{'cg_shdw_inst'} ? $href->{'cg_shdw_inst'}."shdw_clk_en" : "shdw_clk_en",
-				exists $href->{'cg_read_inst'} ? $href->{'cg_read_inst'}."rd_clk" : "rd_clk",
-				exists $href->{'cg_read_inst'} ? $href->{'cg_read_inst'}."rd_clk_en" : "rd_clk_en"
-			   );
-	};
+        return $signal_name;
+    } else {
+        return (exists($href->{$inst_key}) ? $href->{$inst_key} . "_" . $signal_name : $signal_name);
+    };
 };
 
 # function to generate the right-hand-side statement (RHS) for an assignment that used the cond_slice() function;
