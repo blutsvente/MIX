@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewClone.pm,v 1.5 2006/07/20 10:57:03 lutscher Exp $
+#  RCSId: $Id: RegViewClone.pm,v 1.6 2006/08/28 14:09:15 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.5 $                                  
+#  Revision      : $Revision: 1.6 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -32,6 +32,9 @@
 ###############################################################################
 #
 #  $Log: RegViewClone.pm,v $
+#  Revision 1.6  2006/08/28 14:09:15  lutscher
+#  added cloning of update signals
+#
 #  Revision 1.5  2006/07/20 10:57:03  lutscher
 #  major changes, renamed methods and regrouped code
 #
@@ -201,6 +204,11 @@ sub _clone_regspace {
                     if ($this->global->{'unique_clocks'}) {
                         $hfattribs{'clock'} = $hfattribs{'clock'} . $this->_clone_name("_%N", $n);
                         $hfattribs{'reset'} = $hfattribs{'reset'} . $this->_clone_name("_%N", $n);
+                    };
+
+                    # uniquify update signal
+                    if (lc($hfattribs{'sync'}) ne "nto" and $hfattribs{'sync'} !~ m/[\%OPEN\%|\%EMPTY\%]/) {
+                        $hfattribs{'sync'} = $hfattribs{'sync'} . $this->_clone_name("_%N", $n);
                     };
                     
                     # create new field object
