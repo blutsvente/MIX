@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.48 2006/08/24 09:45:37 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.49 2006/08/30 08:02:49 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.48 $                                  
+#  Revision      : $Revision: 1.49 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.49  2006/08/30 08:02:49  lutscher
+#  fixed bitwidth calculations
+#
 #  Revision 1.48  2006/08/24 09:45:37  lutscher
 #  more fixes to the last issue
 #
@@ -609,7 +612,7 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.48 $ ';
+	my $rev = '  this package RegViews.pm is version $Revision: 1.49 $ ';
 	$rev =~ s/\$//g;
 	$rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
@@ -1523,7 +1526,7 @@ sub _vgch_rs_gen_hier {
         $this->global('mcda_inst' => $mcda_inst);
 		_add_generic("N_DOMAINS", $nclocks, $mcda_inst);
 		_add_generic("P_DWIDTH", $this->global->{'datawidth'}, $mcda_inst);
-        _add_generic("P_PRDWIDTH", _nxt_pow2(_ld($nclocks)), $mcda_inst);
+        _add_generic("P_PRDWIDTH", _bitwidth($nclocks), $mcda_inst);
 		push @lgen_filter, $mcda_inst;
 
         # instantiate pre-decoder
@@ -1624,8 +1627,8 @@ sub _vgch_rs_gen_pre_dec_logic {
 	my $addr_msb = $this->global->{'addr_msb'};
 	my $addr_lsb = $this->global->{'addr_lsb'};
     
-    # the pre-decoder output holds the number of the clock-domain, so the range is ld(n-domains)
-    my $ld_nclocks = _nxt_pow2(_ld(scalar(keys %{$refclks})));
+    # the pre-decoder output holds the number of the clock-domain, so the range is ceil(ld(n-domains))
+    my $ld_nclocks = _bitwidth(scalar(keys %{$refclks}));
     my $range;
     if ($ld_nclocks == 1) {
         $range = "";
@@ -1899,7 +1902,7 @@ sub _vgch_rs_add_static_connections {
         # connect pre-decoder
         _add_connection("addr",  $awidth-1, 0, "${ocp_i}/addr_o", "${predec_i}/addr_i");
         # connect MCDA and pre-decoder
-        _add_connection("pre_dec", _nxt_pow2(_ld($nclocks))-1, 0, "${predec_i}/pre_dec_o", "$mcda_i/pre_dec_i");
+        _add_connection("pre_dec", _bitwidth($nclocks)-1, 0, "${predec_i}/pre_dec_o", "$mcda_i/pre_dec_i");
 	};
 
 };

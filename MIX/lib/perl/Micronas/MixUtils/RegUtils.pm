@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.7 2006/07/06 14:43:53 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.8 2006/08/30 08:02:49 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.8  2006/08/30 08:02:49  lutscher
+#  fixed bitwidth calculations
+#
 #  Revision 1.7  2006/07/06 14:43:53  lutscher
 #  added _nxt_pow2() and _ld()
 #
@@ -79,8 +82,7 @@ require Exporter;
    _val2hex
    _get_pragma_pos
    _attach_file_to_list
-   _ld
-   _nxt_pow2
+   _bitwidth
   );
 use strict;
 use Log::Log4perl qw(get_logger);
@@ -390,30 +392,23 @@ sub _attach_file_to_list{
   1;
 };
 
-# performs int(ld(n))
+# returns the number of bits needed to encode <n> values
+sub _bitwidth {
+    my $n = _ld(shift(@_));
+    if ($n<1.0) {
+        return 1;
+    } else {
+        if ($n > int($n)) {
+            return int($n+1);
+        } else {
+            return $n;
+        };
+    };
+};
+
 sub _ld {
-  my($n)= @_;
-  my($result)=-1;
-
-  if (int($n/2) > 0) {
-    $result = _ld(int($n/2));
-  }
-  return $result + 1;
-}
-
-# gets the next higher number which is a power of 2 (useful for binary encoding)
-sub _nxt_pow2 {
-  my($n) = @_;
-  my($i) = 1;
-  while (1) {
-    if ($i >= $n) {
-      last;
-    }
-    else {
-      $i = $i * 2;
-    }
-  }
-  return $i;
-}
+	my ($n) = shift(@_);
+	return log($n)/log(2);
+};
 
 1;
