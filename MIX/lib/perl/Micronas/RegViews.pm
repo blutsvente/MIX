@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.49 2006/08/30 08:02:49 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.50 2006/09/01 15:20:38 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.49 $                                  
+#  Revision      : $Revision: 1.50 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.50  2006/09/01 15:20:38  lutscher
+#  using Perl registration functions; added Verilog assertions in generated code
+#
 #  Revision 1.49  2006/08/30 08:02:49  lutscher
 #  fixed bitwidth calculations
 #
@@ -255,6 +258,11 @@ sub _vgch_rs_init {
 			_error("parameter \'$param\' unknown");
 		};
 	}; 
+
+    # register Perl module with mix
+    if (defined $eh) {
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.50 $ ', "Utility functions to create different register space views from Reg class object");
+    };
 };
 
 
@@ -403,9 +411,10 @@ sub _vgch_rs_gen_cfg_module {
 			} elsif ($access =~ m/w/i) { # write
 				_add_primary_output($this->_gen_field_name("out", $o_field), $msb, $lsb, ($spec =~ m/sha/i) ? 1:0, $cfg_i);
 				if ($spec =~ m/w1c/i) { # w1c
-					_add_primary_input($this->_gen_field_name("int_set", $o_field), 0, 0, $cfg_i);
+                    my $ftemp = $this->_gen_field_name("int_set", $o_field);
+					_add_primary_input($ftemp, 0, 0, $cfg_i);
 					$p_pos_pulse_check = 1;
-					push @lchecks, "assert property(p_pos_pulse_check(".$this->_gen_field_name("int_set", $o_field)."));";
+					push @lchecks, "assert_${ftemp}_is_a_pulse: assert property(p_pos_pulse_check($ftemp));";
 				};
 				if ($spec !~ m/sha/i) {
 					if ($spec =~ m/usr/i) {
@@ -428,9 +437,10 @@ sub _vgch_rs_gen_cfg_module {
 				};
 			};
 			if ($spec =~ m/usr/i) { # usr read/write
-				_add_primary_input($this->_gen_field_name("usr_trans_done", $o_field), 0, 0, $cfg_i);
+                my $ftemp = $this->_gen_field_name("usr_trans_done", $o_field);
+				_add_primary_input($ftemp, 0, 0, $cfg_i);
 				$p_pos_pulse_check = 1;
-				push @lchecks, "assert property(p_pos_pulse_check(".$this->_gen_field_name("usr_trans_done", $o_field)."));";
+				push @lchecks, "assert_${ftemp}_is_a_pulse: assert property(p_pos_pulse_check($ftemp));";
 				if($access =~ m/r/i) {
 					_add_primary_output($this->_gen_field_name("usr_rd", $o_field), 0, 0, 1, $cfg_i);
 				};
@@ -585,16 +595,7 @@ endproperty
 	$this->_vgch_rs_code_fwd_process($clock, \%husr, \%haddr_tokens, \@lusr);
 	_pad_column(-1, $this->global->{'indent'}, 2, \@lusr); # indent
 	
-	# add comment and pragmas to checking code and indent it (unless there is no code or not enabled)
-	if (scalar(@lchecks)) {
-		if ($this->global->{'infer_sva'}) {
-			unshift @lchecks, ("", "/*","  checking code","*/", split("\n",$this->global->{'assert_pragma_start'}));
-			push @lchecks, split("\n",$this->global->{'assert_pragma_end'});
-			_pad_column(-1, $this->global->{'indent'}, 2, \@lchecks);
-		} else {
-			@lchecks=();
-		};
-	};
+    $this->_indent_and_prune_sva(\@lchecks);
 
 	_pad_column(0, $this->global->{'indent'}, 2, \@ldeclarations); # indent declarations
 
@@ -612,9 +613,10 @@ sub _vgch_rs_gen_udc_header {
 	my $pkg_name = $this;
 	$pkg_name =~ s/=.*$//;
 	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
-	my $rev = '  this package RegViews.pm is version $Revision: 1.49 $ ';
-	$rev =~ s/\$//g;
-	$rev =~ s/Revision\: //;
+    my $href_info = $eh->mix_get_module_info("RegViews.pm");
+	my $rev = "  this package RegViews.pm is version ".$href_info->{'version'};
+	# $rev =~ s/\$//g;
+	# $rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
 	push @$lref_res, "*/";
 	_pad_column(-1, $this->global->{'indent'}, 2, $lref_res);
@@ -1489,12 +1491,14 @@ sub _vgch_rs_gen_hier {
 	my $infer_cg = $this->global->{'infer_clock_gating'};
 	my @lgen_filter = ();
 	my ($mcda_inst, $predec_inst);
+    my @lchecks = ();
 
 	# instantiate top-level module
 	my $rs_name = $this->global->{'regshell_prefix'}."_".$o_domain->name;
 	my $top_inst = $this->_add_instance($rs_name, "testbench", "Register shell for domain ".$o_domain->name);
 	$this->global('top_inst' => $top_inst);
-  	if ($infer_cg) {
+ 
+    if ($infer_cg) {
 		_add_generic("cgtransp", 0, $top_inst);
 	};
 	# _add_generic("P_TOCNT_WIDTH", 10, $top_inst); # timeout counter width
@@ -1801,6 +1805,7 @@ sub _vgch_rs_add_static_connections {
 	my $bus_reset = $this->global->{'bus_reset'};
 	my $dwidth = $this->global->{'datawidth'};
 	my $awidth = $this->global->{'addrwidth'};
+    my $top_inst = $this->global->{'top_inst'};
 
 	$mcda_i = undef;
 	if (exists($this->global->{'mcda_inst'})) {
@@ -1905,6 +1910,24 @@ sub _vgch_rs_add_static_connections {
         _add_connection("pre_dec", _bitwidth($nclocks)-1, 0, "${predec_i}/pre_dec_o", "$mcda_i/pre_dec_i");
 	};
 
+    # add some checking code for input ports to top-level module
+    my @lchecks = ();
+    my $dft;
+    my @ltemp;
+    $this->_vgch_rs_gen_udc_header(\@lchecks);
+    push @lchecks, 'parameter P_WAIT_IS_DRIVEN = 256;',
+'property is_driven(clk, rst_n, sig);',
+'  @(posedge clk) $rose(rst_n) |=> ##P_WAIT_IS_DRIVEN !$isunknown(sig);',
+'endproperty';
+    @ltemp = ($this->global->{'scan_en_port_name'});
+    if ($this->global->{'infer_clock_gating'}) {
+        push @ltemp, $this->global->{'clockgate_te_name'};
+    };
+    foreach $dft (@ltemp) {
+        push @lchecks, "assert_${dft}_driven: assert property(is_driven($bus_clock, $bus_reset".$this->global->{'POSTFIX_PORT_IN'}.", ". $dft . $this->global->{'POSTFIX_PORT_IN'}.")) else \$error(\"ERROR: input port $dft is undriven after reset\");";
+    };
+    $this->_indent_and_prune_sva(\@lchecks);
+    $this->_vgch_rs_write_udc($top_inst, \@lchecks);
 };
 
 # Write out a Verilog file with defines
@@ -1933,6 +1956,21 @@ sub _vgch_rs_write_defines {
 	print DHANDLE "\n// end\n";
 	close(DHANDLE);
 	_info("generated file \'$fname\'");
+};
+
+# helper method to prepare SVA to be inserted into module
+sub _indent_and_prune_sva {
+    my ($this, $lref_checks) = @_;
+	# add comment and pragmas to checking code and indent it (unless there is no code or not enabled)
+	if (scalar(@$lref_checks)) {
+		if ($this->global->{'infer_sva'}) {
+			unshift @$lref_checks, ("", "/*","  checking code","*/", split("\n",$this->global->{'assert_pragma_start'}));
+			push @$lref_checks, split("\n",$this->global->{'assert_pragma_end'});
+			_pad_column(-1, $this->global->{'indent'}, 2, $lref_checks);
+		} else {
+			@$lref_checks=();
+		};
+	};
 };
 
 # function to determine if a field is to be skipped because it is excluded by the user or because it belongs to
