@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.21 $                                          |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/07/19 07:38:16 $                              |
+# | Revision:   $Revision: 1.22 $                                          |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2006/09/01 15:19:27 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.22  2006/09/01 15:19:27  lutscher
+# | added module registration functions
+# |
 # | Revision 1.21  2006/07/19 07:38:16  wig
 # | Updates made for xls2csv
 # |
@@ -114,9 +117,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.21 2006/07/19 07:38:16 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.22 2006/09/01 15:19:27 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.21 $';  
+my $thisrevision    =      '$Revision: 1.22 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -339,6 +342,7 @@ sub postinc ($$) {
 
 } # End of postinc
 
+
 #
 # append to string and return result
 #
@@ -390,6 +394,59 @@ sub cappend ($$$) {
 
 } # End of cappend
 	
+# Perl module registration functions
+# ---------------------------------------------------------------------------------------
+# method to register a MIX module (package) into the Class Globals object;
+# if 'version' is a RCS-style macro, the version number is automatically extracted;
+# 'name' is stripped of any file extension and converted to lower case
+sub mix_add_module_info {
+    my ($this, $name, $version, $text) = @_;
+    my $ref = $this->{'cfg'}->{'internal'};
+
+    if ($version =~ /\$Revision\:/) {
+        $version =~ s/\s*\$\s*//g;
+        $version =~ s/Revision\:\s+//;
+    };
+    $name =~ s/\..*$//;
+    if (!defined $text) { $text = "Mix module $name"; };
+
+    if (exists ($ref->{lc($name)})) {
+        $logger->warn("__W_PCKG","\tModule $name is already registered");
+    };
+    $name = lc($name);
+    $ref->{$name} = { 
+                     'version' => $version,
+                     'text' => $text
+                    };
+};
+
+# retrieve registered package information for module 'name'
+# returns a hash reference or undef if the module does not exist
+sub mix_get_module_info ($$) {
+    my ($this, $name) = @_;
+    my $ref = undef;
+    $name = lc($name);
+    $name =~ s/\..*$//;
+    if (exists($this->{'cfg'}->{'internal'}->{$name})) {
+        $ref = $this->{'cfg'}->{'internal'}->{$name};
+    };
+};
+
+# returns a hash reference with all module info or undef if there is no module info
+# the hash has the form of:
+# ( <module1> => ( version => <version>, text => <text> ),
+#   <module2> => ( ... ),
+#   ...)
+sub mix_get_module_info_all ($) {
+    my $this = @_;
+    if (exists($this->{'cfg'}->{'internal'})) {
+        return $this->{'cfg'}->{'internal'};
+    } else {
+        return undef;
+    };
+};
+# ---------------------------------------------------------------------------------------
+
 #
 # Init the EH field ..
 #
