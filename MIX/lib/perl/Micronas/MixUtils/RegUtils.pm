@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.8 2006/08/30 08:02:49 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.9 2006/09/01 15:21:15 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.9  2006/09/01 15:21:15  lutscher
+#  added return value for _add* functions
+#
 #  Revision 1.8  2006/08/30 08:02:49  lutscher
 #  fixed bitwidth calculations
 #
@@ -192,7 +195,7 @@ sub _add_generic_value {
 	add_conn(%hconn);
 };
 
-# function to add a connection
+# function to add a connection, returns signal name
 sub _add_connection {
 	my($name, $msb, $lsb, $source, $destination) = @_;
 	my (%hconn, $src, $dest);	
@@ -204,9 +207,10 @@ sub _add_connection {
 	#$hconn{'::out'} = $src;
 	_get_signal_type($msb, $lsb, 0, \%hconn);
 	add_conn(%hconn);
+    return $name;
 };
 
-# function to add top-level input
+# function to add top-level input, returns port name
 sub _add_primary_input {
 	my ($name, $msb, $lsb, $destination) = @_;
 	my %hconn;
@@ -223,9 +227,10 @@ sub _add_primary_input {
 	$hconn{'::mode'} = "i";
 	_get_signal_type($msb, $lsb, 0, \%hconn);
 	add_conn(%hconn);
+    return $hconn{'::name'};
 };
 
-# function to add output to top-level
+# function to add output to top-level, returns port name
 sub _add_primary_output {
 	my ($name, $msb, $lsb, $is_reg, $source) = @_;
 	my %hconn;
@@ -242,6 +247,7 @@ sub _add_primary_output {
 	$hconn{'::mode'} = "o";
 	_get_signal_type($msb, $lsb, $is_reg, \%hconn);
 	add_conn(%hconn);
+    return $hconn{'::name'};
 };
 
 # function to set ::type, ::high, ::low for add_conn()
