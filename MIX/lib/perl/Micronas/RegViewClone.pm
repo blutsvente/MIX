@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewClone.pm,v 1.6 2006/08/28 14:09:15 lutscher Exp $
+#  RCSId: $Id: RegViewClone.pm,v 1.7 2006/09/11 06:33:20 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.6 $                                  
+#  Revision      : $Revision: 1.7 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -32,6 +32,9 @@
 ###############################################################################
 #
 #  $Log: RegViewClone.pm,v $
+#  Revision 1.7  2006/09/11 06:33:20  lutscher
+#  changed debug output
+#
 #  Revision 1.6  2006/08/28 14:09:15  lutscher
 #  added cloning of update signals
 #
@@ -85,10 +88,10 @@ sub _clone {
     $this->_vgch_rs_init();
 
 	# extend class data with data structure needed for code generation
-	$this->global(
-				  'debug'              => 0,
-				  'indent'             => "    "       # indentation character(s)
-				 );
+	#$this->global(
+	#			  'debug'              => 0,
+	#			  'indent'             => "    "       # indentation character(s)
+	#			 );
 	
 	# import regshell.<par> parameters from MIX package to class data; user can change these parameters in mix.cfg
 	my $param;
@@ -103,10 +106,10 @@ sub _clone {
 		my ($main, $sub, $subsub) = split(/\./,$param);
 		if (ref $eh->get("${main}.${sub}")) {
 			$this->global($subsub => $eh->get("${main}.${sub}.${subsub}"));
-			_info("setting parameter $param = ", $this->global->{$subsub});
+			_info("setting parameter $param = ", $this->global->{$subsub}) if $this->global->{'debug'};
 		} elsif (defined $eh->get("${main}.${sub}")) {
 			$this->global($sub => $eh->get("${main}.${sub}"));
-			_info("setting parameter $param = ", $this->global->{$sub});
+			_info("setting parameter $param = ", $this->global->{$sub}) if $this->global->{'debug'};
 		} else {
 			_error("parameter \'$param\' unknown");
 		};
