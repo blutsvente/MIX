@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.50 2006/09/01 15:20:38 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.51 2006/09/11 06:32:46 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.50 $                                  
+#  Revision      : $Revision: 1.51 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.51  2006/09/11 06:32:46  lutscher
+#  no changes
+#
 #  Revision 1.50  2006/09/01 15:20:38  lutscher
 #  using Perl registration functions; added Verilog assertions in generated code
 #
@@ -168,11 +171,10 @@ sub _gen_view_vgch_rs {
 	# iterate through all register domains
 	foreach $o_domain (@ldomains) {
 		_info("generating code for domain ",$o_domain->name);
-		# $o_domain->display() if $this->global->{'debug'};
+		$o_domain->display() if $this->global->{'debug'};
 
 		# reset per-domain data structures
 		$this->global('hfnames' => {});
-		$this->global('hhdlconsts' => {});
 		$this->global('hclocks' => {});
 		map {delete $this->global->{$_}} grep $_ =~ m/_inst$/i,keys %{$this->global};
 
@@ -185,6 +187,7 @@ sub _gen_view_vgch_rs {
 		# iterate through all clock domains
 		foreach $clock (keys %{$this->global->{'hclocks'}}) {
 			my @ludc = ();
+            $this->global('hhdlconsts' => {});
 			$href = $this->global->{'hclocks'}->{$clock};
 			$cfg_inst = $href->{'cfg_inst'};
 			# print "> domain ",$o_domain->name,", clock $clock, cfg module $cfg_inst\n";
@@ -261,7 +264,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (defined $eh) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.50 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.51 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -303,7 +306,7 @@ sub _vgch_rs_gen_cfg_module {
 
 	# iterate through all registers of the domain and add ports/instantiations (sort by address)
 	foreach $o_reg (sort {$o_domain->get_reg_address($a) <=> $o_domain->get_reg_address($b)} @{$o_domain->regs}) {
-		#$o_reg->display(); if $this->global->{'debug'}; # debug
+		# $o_reg->display() if $this->global->{'debug'}; # debug
 		# skip register defined by user
 		if (grep ($_ eq $o_reg->name, @{$this->global->{'lexclude_cfg'}})) {
 			_info("skipping register ", $o_reg->name);
@@ -314,6 +317,7 @@ sub _vgch_rs_gen_cfg_module {
 			next;
 		};
 		my $reg_offset = $o_domain->get_reg_address($o_reg);	
+        # print "reg : ",$o_reg->name,", offset : ",$reg_offset, " 0x",_val2hex($addr_msb+1, $reg_offset),"\n";
 
 		# store address for later
 		$this->global->{'hhdlconsts'}->{$o_reg->name . "_offs_c"} = "'h"._val2hex($this->global->{'addrwidth'}, $reg_offset);
