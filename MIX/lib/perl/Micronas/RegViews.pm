@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.51 2006/09/11 06:32:46 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.52 2006/09/22 09:18:23 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.51 $                                  
+#  Revision      : $Revision: 1.52 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.52  2006/09/22 09:18:23  lutscher
+#  improved _vgch_rs_write_defines() and added P_MIX_SIG parameter to instantiations
+#
 #  Revision 1.51  2006/09/11 06:32:46  lutscher
 #  no changes
 #
@@ -208,6 +211,7 @@ sub _vgch_rs_init {
 
    	# extend class data with data structure needed for code generation
 	$this->global(
+                  'mix_signature'      => "\"M0\"",     # signature for cross-checking MIX software version and IP version
 				  'ocp_target_name'    => "ocp_target", # library module name
 				  'mcda_name'          => "rs_mcda",    # library module name
 				  'int_set_postfix'    => "_set_p",     # postfix for interrupt-set input signal
@@ -249,23 +253,29 @@ sub _vgch_rs_init {
 					  'postfix.POSTFIX_PORT_IN',
 					  'postfix.POSTFIX_FIELD_OUT', 
 					  'postfix.POSTFIX_FIELD_IN',
-					  'output.path'
+                      'output.path_include',
+                      'output.mkdir',
+                      'output.ext.verilog_def',
 					 );
     
 	foreach $param (@lmixparams) {
 		if (defined $eh->get("$param")) {
-			my ($main, $sub) = split(/\./,$param);
-			$this->global($sub => $eh->get("${param}"));
-			_info("setting parameter $param = ", $this->global->{$sub}) if $this->global->{'debug'};
+            my $key;
+			my ($main, $sub, $subsub) = split(/\./,$param);
+            if (defined ($subsub) and $subsub ne "") {
+                $key = $subsub;
+            } else {
+                $key = $sub;
+            };
+            $this->global($key => $eh->get("${param}"));
+			_info("setting parameter $param = ", $this->global->{$key}) if $this->global->{'debug'};
 		} else {
 			_error("parameter \'$param\' unknown");
 		};
 	}; 
 
     # register Perl module with mix
-    if (defined $eh) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.51 $ ', "Utility functions to create different register space views from Reg class object");
-    };
+    $eh->mix_add_module_info("RegViews", '$Revision: 1.52 $ ', "Utility functions to create different register space views from Reg class object");
 };
 
 
@@ -306,7 +316,7 @@ sub _vgch_rs_gen_cfg_module {
 
 	# iterate through all registers of the domain and add ports/instantiations (sort by address)
 	foreach $o_reg (sort {$o_domain->get_reg_address($a) <=> $o_domain->get_reg_address($b)} @{$o_domain->regs}) {
-		# $o_reg->display() if $this->global->{'debug'}; # debug
+	    $o_reg->display() if $this->global->{'debug'}; # debug
 		# skip register defined by user
 		if (grep ($_ eq $o_reg->name, @{$this->global->{'lexclude_cfg'}})) {
 			_info("skipping register ", $o_reg->name);
@@ -1514,6 +1524,8 @@ sub _vgch_rs_gen_hier {
 	
 	_add_generic("P_DWIDTH", $this->global->{'datawidth'}, $ocp_inst);
 	_add_generic("P_AWIDTH", $this->global->{'addrwidth'}, $ocp_inst);
+    _add_generic("P_MIX_SIG", $this->global->{'mix_signature'}, $ocp_inst);
+
 	# _add_generic_value("P_TOCNT_WIDTH", 10, "P_TOCNT_WIDTH", $ocp_inst); # timeout counter width
 	if(exists($this->global->{'embedded_reg'})) {
 		# enable embedded control/status register in ocp_target; 
@@ -1535,6 +1547,8 @@ sub _vgch_rs_gen_hier {
 		_add_generic("N_DOMAINS", $nclocks, $mcda_inst);
 		_add_generic("P_DWIDTH", $this->global->{'datawidth'}, $mcda_inst);
         _add_generic("P_PRDWIDTH", _bitwidth($nclocks), $mcda_inst);
+        _add_generic("P_MIX_SIG", $this->global->{'mix_signature'}, $mcda_inst);
+
 		push @lgen_filter, $mcda_inst;
 
         # instantiate pre-decoder
@@ -1656,7 +1670,7 @@ sub _vgch_rs_gen_pre_dec_logic {
     foreach $clock (sort keys %{$refclks}) {
         # make a comma-seperated list of all addresses of a clock-domain; clip the address to the used
         # range and convert it to hex
-        $select = join(", ", map {"'h"._val2hex($addr_msb-$addr_lsb+1, $_ >> $addr_lsb)} sort keys %{$refclks->{$clock}->{'offset'}});
+        $select = join(", ", map {"'h"._val2hex($addr_msb-$addr_lsb+1, $_ >> $addr_lsb)} sort {$a <=> $b} keys %{$refclks->{$clock}->{'offset'}});
         push @ltemp, $indent x 2 . "// clock-domain $n $clock";
         push @ltemp, $indent x 2 . "$select". ": pre_dec <= $n;";
         $n++;
@@ -1940,11 +1954,18 @@ sub _vgch_rs_write_defines {
 	
 	my $rs_name = $this->global->{'regshell_prefix'}."_".$o_domain->name;
 	my $key;
-	my $fname = $this->global->{'path'} . "/${rs_name}.vh";
+	my $fname = $this->global->{'path_include'} . "/${rs_name}.".$this->global->{'verilog_def'};
 	my @ltemp;
 
+    if (! -d $this->global->{'path_include'}) {
+        if ($this->global->{'mkdir'} =~ m/auto|all|yes/) {
+            mkdir($this->global->{'path_include'})
+        } else {
+            _warning("directory \'",$this->global->{'path_include'},"\' does not exist and I am not allowed to create it (mkdir parameter)");
+        };
+    };
 	if (!open(DHANDLE,">$fname")) {
-		_warn("could not open file \'$fname\' for writing");
+		_warning("could not open file \'$fname\' for writing");
 		return;
 	};
 	$this->_vgch_rs_gen_udc_header(\@ltemp);
@@ -1959,7 +1980,11 @@ sub _vgch_rs_write_defines {
 	print DHANDLE join("\n", @ltemp);
 	print DHANDLE "\n// end\n";
 	close(DHANDLE);
+
+    # update statistics
+    $eh->inc("sum.hdlfiles");
 	_info("generated file \'$fname\'");
+    
 };
 
 # helper method to prepare SVA to be inserted into module
