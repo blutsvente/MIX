@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewClone.pm,v 1.7 2006/09/11 06:33:20 lutscher Exp $
+#  RCSId: $Id: RegViewClone.pm,v 1.8 2006/09/22 09:17:07 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.7 $                                  
+#  Revision      : $Revision: 1.8 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -32,6 +32,9 @@
 ###############################################################################
 #
 #  $Log: RegViewClone.pm,v $
+#  Revision 1.8  2006/09/22 09:17:07  lutscher
+#  added clone attribute handling to exempt registers from cloning
+#
 #  Revision 1.7  2006/09/11 06:33:20  lutscher
 #  changed debug output
 #
@@ -76,8 +79,7 @@ use Micronas::MixUtils::RegUtils;
 
 # Main entry function of this module;
 # Creates a new Reg object that contains clones of the original Reg object, whereby Fields and Registers
-# get new names according to user-defined naming schemes. Domains are not changed.
-# The special embedded register is cloned only once. 
+# get new names according to user-defined naming schemes. Domains are not changed. 
 # output: object of class Reg
 sub _clone {
 	my $this = shift;
@@ -141,14 +143,14 @@ sub _clone_regspace {
 	my ($n, $reg_offset, $fclock, $freset, $baseaddr);
 	my ($last_addr) = -1;
     my ($o_domain0);
-
+    
     # create a new register space
     my ($o_space) = Micronas::Reg->new;		
     
     # iterate through all domains
     foreach $o_domain0 (@{$lref_domains}) {
         my ($domain) = $o_domain0->name;
-        my $cloned_embedded_reg = 0;
+        my %hclone_once = ();
         
         _info("cloning domain $domain ", $this->global->{'number'}, " times");
      
@@ -170,12 +172,13 @@ sub _clone_regspace {
                 %hrattribs = %{$o_reg0->attribs};
                 
                 my $reg_name;
-                if ($o_reg0->name eq $this->global->{'embedded_reg_name'}) {
-                    # clone embedded reg only once, because it is located in the ocp target module
-                    if (!$cloned_embedded_reg) {
-                        # embedded register is cloned unchanged
+                # check if cloning is enabled; if not, clone only once (copy of original)
+                if ($o_reg0->attribs->{'clone'}==0) {
+                    # clone reg only once if attribute is 0
+                    if (!exists($hclone_once{$o_reg0->name})) {
+                        # register is cloned unchanged
                         $reg_name = $o_reg0->name;
-                        $cloned_embedded_reg = 1;
+                        $hclone_once{$o_reg0->name} = 1;
                     } else {
                         next;
                     };
@@ -197,8 +200,8 @@ sub _clone_regspace {
                     $o_field0 = $href->{'field'}; # reference to field object in register
                     
                     my $field_name;
-                    # if field is part of embedded_reg, use unchanged name 
-                    $field_name = ($o_reg0->name eq $this->global->{'embedded_reg_name'}) ? $o_field0->name : $this->_clone_name($this->global->{'field_naming'}, $n, $domain, $o_reg0->name, $o_field0->name);
+                    # if field is part of a non-cloned register, use unchanged name 
+                    $field_name = $o_reg0->attribs->{'clone'} == 0 ? $o_field0->name : $this->_clone_name($this->global->{'field_naming'}, $n, $domain, $o_reg0->name, $o_field0->name);
                     
                     $fpos = $href->{'pos'};       # lsb position of field in register
                     %hfattribs = %{$o_field0->attribs};
