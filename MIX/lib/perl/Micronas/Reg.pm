@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.32 2006/07/20 10:56:20 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.33 2006/09/22 09:08:06 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.33  2006/09/22 09:08:06  lutscher
+#  added register attribute clone
+#
 #  Revision 1.32  2006/07/20 10:56:20  lutscher
 #  added cloning feature
 #
@@ -219,7 +222,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.32 $ ';  #'
+our($VERSION) = '$Revision: 1.33 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -241,8 +244,8 @@ our(%hglobal) =
 
    # attributes in register-master that do NOT belong to a field
    # note: the field name is retrieved from the ::b entries of the register-master
-   non_field_attributes => [qw(::ign ::sub ::interface ::inst ::width ::b:.* ::b ::addr ::dev ::vi2c ::default ::name ::type ::definition)],
-
+   non_field_attributes => [qw(::ign ::sub ::interface ::inst ::width ::b:.* ::b ::addr ::dev ::vi2c ::default ::name ::type ::definition ::clone)],
+   
    # language for HDL code generation, currently only Verilog supported
    lang => "verilog",
 
@@ -415,7 +418,7 @@ sub display {
 # two consecutive domains must have different names (::interface)
 sub _map_register_master {
 	my ($this, $database_type, $lref_rm) = @_;
-	my($href_row, $marker, $rsize, $reg, $value, $fname, $fpos, $fsize, $domain, $offset, $msb, $msb_max, $lsb, $p, $new_fname, $usedbits, $baseaddr, $col_cnt, $rdefinition, $o_tmp);
+	my($href_row, $marker, $rsize, $reg, $value, $fname, $fpos, $fsize, $domain, $offset, $msb, $msb_max, $lsb, $p, $new_fname, $usedbits, $baseaddr, $col_cnt, $rdefinition, $rclone, $o_tmp);
 	my($o_domain, $o_reg, $o_field) = (undef, undef, undef);
 	my($href_marker_types, %hattribs, %hdefault_attribs, $m);
 	my $result = 1;
@@ -442,11 +445,11 @@ sub _map_register_master {
     
 	# highest bit specified in register-master
 	$msb_max = $eh->get( 'i2c._mult_.::b' ) || _fatal("internal error (bad!)");
-
+    
 	# iterate each row
 	foreach $href_row (@$lref_rm) {
 		# skip lines to ignore
-	
+        
         next if (
                  exists ($href_row->{"::ign"}) 
                  and ($href_row->{"::ign"} =~ m/${icomment}/ or $href_row->{"::ign"} =~ m/${ivariant}/o )
@@ -459,9 +462,10 @@ sub _map_register_master {
 		$fpos  = 0;
 		$msb   = 0;
 		$lsb   = 99;
-		$rsize = $eh->get( 'i2c.field.::width' )->[3];	#REFACTOR: check if dereference is o.k.
+		$rsize = $eh->get('i2c.field.::width')->[3];
 		$rdefinition = "";																		
 		%hattribs = %hdefault_attribs;
+        $rclone = $eh->get('i2c.field.::clone')->[3];
 
 		# parse all columns
 		foreach $marker (keys %$href_row) {
@@ -488,14 +492,17 @@ sub _map_register_master {
 				$reg = $value; next;
 			};
 			if ($marker eq "::width") {
-				$rsize = $value;
+				$rsize = $value; next;
 			};
 			if ($marker =~ m/^::def/) {
 				# note: in the register-master, the definition column is intended as an identifier to handle
 				# multiple instances of a register; at the moment there is no way to handle multiple instances
 				# of a field
-				$rdefinition = $value;
+				$rdefinition = $value; next;
 			};
+            if ($marker =~ m/^::clone/) {
+                $rclone = $value; next;
+            };
 			if ($marker =~ m/::b(:(\d+))*$/) {
 				if (defined $2) {
 					$p = $msb_max - $2; # bit column numbering is reversed!
@@ -582,7 +589,7 @@ sub _map_register_master {
 				};
 				if (!ref($o_reg)) {
 					$o_reg = Micronas::RegReg->new('name' => $reg, 'definition' => $rdefinition);
-					$o_reg->attribs('size' => $rsize);
+					$o_reg->attribs('size' => $rsize, 'clone' => $rclone);
 
 					# link register object into domain
 					$o_domain->regs($o_reg);
