@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.22 $                                          |
+# | Revision:   $Revision: 1.23 $                                          |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2006/09/01 15:19:27 $                              |
+# | Date:       $Date: 2006/09/22 09:07:24 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.23  2006/09/22 09:07:24  lutscher
+# | added output.path_include and output.verilog_def, and ::clone for I2C sheet
+# |
 # | Revision 1.22  2006/09/01 15:19:27  lutscher
 # | added module registration functions
 # |
@@ -117,9 +120,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.22 2006/09/01 15:19:27 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.23 2006/09/22 09:07:24 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.22 $';  
+my $thisrevision    =      '$Revision: 1.23 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -472,7 +475,8 @@ sub init ($) {
 
 	# HDL output creation config
 	$this->{'cfg'}{'output'} = {
-		'path' => '.',		# Path to store backend data. Other values are a path, CWD or INPUT
+        'path' => '.',		   # Path to store backend data. Other values are a path, CWD or INPUT
+        'path_include' => '.', # 2nd path for backend data (VHDL/Verilog include files)
 		'mkdir'	=> 'auto',	# Should we create directories as needed? Available values
 							#   are: auto|all|yes (do all), no (do not)
 							# output, intermediate, report, internal (comma seperated, only create these)
@@ -568,7 +572,8 @@ sub init ($) {
     	},
 		'ext' => {
 			'vhdl' => 'vhd',
-			'verilog' => 'v' ,
+			'verilog' => 'v',
+            'verilog_def' => 'vh', # Verilog include files (macros, parameters, etc.)
 			'intermediate' => 'mixed', # not a real extension!
 			'internal' => 'pld',
 			'delta' => '.diff',	  # delta mode
@@ -1162,7 +1167,8 @@ sub init ($) {
 			'::auto'        => [ qw(    0   0   0   0           21 )],
 	    	'::comment'	    => [ qw(	1	1	2	%EMPTY%     22 )],
 	    	'::default'	    => [ qw(	1	1	0	%EMPTY%     23 )],
-	    	'nr'			=> 23,  # Number of next field to print
+	    	'::clone'	    => [ qw(	1	0	0	1           24 )],
+	    	'nr'			=> 24,  # Number of next field to print
 	    	'_mult_'		=> {},  # Internal counter for multiple fields
 	   		'_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
 	    					# 1 / RL -> left to right decreasing
