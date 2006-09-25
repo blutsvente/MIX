@@ -121,6 +121,11 @@ my @tests = (
 	},
 	{
 	  'name' => "bitsplice",
+	  'path' => "bitsplice/rfe20060904a",
+	  'options' => '',
+	},
+	{
+	  'name' => "bitsplice",
 	  'path' => "bitsplice/connport",
 	  'options' => '',
 	},
@@ -314,6 +319,11 @@ my @tests = (
 	  'path' => "verilog/verimap",
 	  'options' => '',
 	},
+	{ #!wig20060922: adding axismux feature
+	  'name' => "verilog",
+	  'path' => "verilog/emumuxall",
+	  'options' => '',
+	},
 	{
 	  'name' => "conf",
 	  'path' => "conf",
@@ -462,6 +472,21 @@ my @tests = (
 	  'path' => "bugver/20060424a",
 	  'options' => '',
 	},
+	{ # recognize that DATA9 and data9 are the same (in verilog!)
+	  'name' => "bugver2006",
+	  'path' => "bugver2006/20060522a",
+	  'options' => '',
+	},
+	{ # port gets assigned a constant value and a signal!
+	  'name' => "bugver2006",
+	  'path' => "bugver2006/20060522b",
+	  'options' => '',
+	},
+	#{ # port gets assigned a constant value and a signal!
+	#  'name' => "bugver2006",
+	#  'path' => "bugver2006/20060522b",
+	#  'options' => '',
+	#},
 	{ # Create simple logic ...
 	  'name' => "logic",
 	  'path' => "logic",
