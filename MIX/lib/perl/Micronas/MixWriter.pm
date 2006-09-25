@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.92 $                                         |
+# | Revision:   $Revision: 1.93 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/07/12 15:23:40 $                              |
+# | Date:       $Date: 2006/09/25 08:24:10 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.92 2006/07/12 15:23:40 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.93 2006/09/25 08:24:10 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.93  2006/09/25 08:24:10  wig
+# | Prepared emumux and `define
+# |
 # | Revision 1.92  2006/07/12 15:23:40  wig
 # | Added [no]sel[ect]head switch to xls2csv to support selection based on headers and variants.
 # |
@@ -139,9 +142,9 @@ sub _mix_wr_nice_comment		($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.92 2006/07/12 15:23:40 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.93 2006/09/25 08:24:10 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.92 $';
+my $thisrevision   =      '$Revision: 1.93 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -802,21 +805,21 @@ sub _create_entity ($$) {
 				}
 	    	}
 	    	# Still at the preset value?
-	    	if ( $l eq "-100000" ) {
+	    	if ( $l eq '-100000' ) {
 				$l = undef;
 	    	}
-	    	if ( $h eq "-100000" ) {
+	    	if ( $h eq '-100000' ) {
 				$h = undef;
 	    	}
 
 	    	# If connecting single signals to a bus-port, make type match!
 	    	# TODO SPECIAL trick ???? Check if that is really so clever ....
 	    	# TODO Should be done by just any type ...
-	    	if ( ( $type eq "std_logic" or
-		    	$type eq "std_ulogic" ) and
+	    	if ( ( $type eq 'std_logic' or
+		    	$type eq 'std_ulogic' ) and
 		    	defined( $h ) and defined( $l ) and
 		    	( $h ne $l ) ) { #!wig20030516 ...
-				$type = $type . "_vector";
+				$type = $type . '_vector';
 				$logger->warn('__W_CREATE_ENTY', "\tAutoconnecting bit signal $i to bus port $port" );
 	    	}
 
@@ -834,7 +837,7 @@ sub _create_entity ($$) {
 
     
 			my $m = $conndb{$i}{'::mode'};
-	    	my $mode = "__E_MODE_DEFAULT_ERROR__";
+	    	my $mode = '__E_MODE_DEFAULT_ERROR__';
 	    	if ( $m ) { # not empty
 				if ( $m =~ m,IO,io )   { $mode = "inout"; } 	 # inout mode!
 				elsif ( $m =~ m,B,io ) { $mode = "%BUFFER%"; }	 # buffer
@@ -1203,16 +1206,16 @@ sub _write_entities ($$$) {
     #
     # Collect generics and ports ...
     #
-    my @keys = ( $ehname eq "__COMMON__" ) ? keys( %$ae ) : ( $ehname );
+    my @keys = ( $ehname eq '__COMMON__' ) ? keys( %$ae ) : ( $ehname );
     for my $e ( sort( @keys ) ) {
 
-		if ( $e eq "W_NO_ENTITY" ) { next; };
-		if ( $e eq "__COMMON__" ) { next; };
-        if ( $e eq "%TYPECASTENT%" ) { next; };
+		if ( $e eq 'W_NO_ENTITY' ) { next; };
+		if ( $e eq '__COMMON__' ) { next; };
+        if ( $e eq '%TYPECASTENT%' ) { next; };
 
 		$macros{'%ENTYNAME%'} = $e;
-		my $gent = "";
-		my $port = "";
+		my $gent = '';
+		my $port = '';
 		my $pd = $ae->{$e};
         # This language and this comment is
         my $lang = mix_wr_getlang( $e, $pd->{'__LANG__'});
@@ -1629,8 +1632,8 @@ sub _mix_wr_get_iveri ($$$$;$) {
 			}
             my $valid = '';
             unless( exists( $ioky{$mode} ) ) {
-                $valid = $tcom . ' __I_PORT_NOT_VALID ';
-                $mode = 'not_valid';
+                $valid = $tcom . '__I_PORT_NOT_VALID%S%';
+                $mode  = 'not_valid';
             }
 
 			# Numeric bounds:
@@ -1730,8 +1733,7 @@ sub _mix_wr_get_iveri ($$$$;$) {
                     		'%S%[' . $pdd->{'high'} . ':' . $pdd->{'low'} . ']%S%' . $p . ";\n";
                     }
                     if ( $flags{'owire'} ) {
-                    	$port{'wire'} .= $portsort . '%S%' x $indent2 . $valid . 
-                    		'%S%' . $reg_wire .
+                    	$port{'wire'} .= $portsort . '%S%' x $indent2 . $valid . $reg_wire .
                     		'%S%[' . $pdd->{'high'} . ':' . $pdd->{'low'} . ']%S%' . $p . ";\n";
                     }
                 }
@@ -1753,8 +1755,7 @@ sub _mix_wr_get_iveri ($$$$;$) {
                     		'%S%[' . $pdd->{'high'} . ']%S%' . $p . ";\n";
                 	}
 					if ( $flags{'owire'} ) {
-                    	$port{'wire'} .= $portsort . '%S%' x $indent2 . $valid . 
-                    		'%S%' . $reg_wire . 
+                    	$port{'wire'} .= $portsort . '%S%' x $indent2 . $valid . $reg_wire . 
                     		'%S%[' . $pdd->{'high'} . ']%S%' . $p . ";\n";
                 	}
                 } else {
@@ -2490,6 +2491,10 @@ sub mix_wr_unsplice_port ($$$) {
             if ( $hl =~ m,\[(\d+)(:(\d+))?\], ) {
                     $hb = $1;
                     $lb = ( defined( $3 ) ? $3 : $hb );
+            } else {
+            	# NAN hl | hb
+            	push( @out, $l );
+            	next;
             }
             # Catch connected signal(s)
             if ( $s =~ m,\((.+)\), ) {
@@ -2603,22 +2608,24 @@ sub mix_wr_unsplice_port ($$$) {
         $t =~ s#^,##;
         if ( $t =~ m#,# ) { # enclose signal into {} if > 1 parts found ...
             $t = '{' . $t . ' }';
+        } else {
+        	$t =~ s#^\s+##;
         }
-            # Create comment -> remove duplicates ...
-            my %c = ();
-            my $c = '';
-            for my $n ( @c ) {
-                # Remove trailing \s and $tcom
-                $n =~ s,^\s*$tcom\s*,,;
-                $c{$n}++ if ( $n );
+        # Create comment -> remove duplicates ...
+        my %c = ();
+        my $c = '';
+        for my $n ( @c ) {
+            # Remove trailing \s and $tcom
+            $n =~ s,^\s*$tcom\s*,,;
+            $c{$n}++ if ( $n );
+        }
+        for my $n ( keys( %c ) ) {
+            if ( $c{$n} > 1 ) {                    
+                $c .= $tcom . ' ' . $n . ' (x' . $c{$n} . ') ';
+            } else {
+                $c .= $tcom . ' ' . $n . ' ';
             }
-            for my $n ( keys( %c ) ) {
-                if ( $c{$n} > 1 ) {                    
-                    $c .= $tcom . ' ' . $n . ' (x' . $c{$n} . ') ';
-                } else {
-                    $c .= $tcom . ' ' . $n . ' ';
-                }
-            }
+        }
             
         if ( $flag ) {
             for my $n ( @{$col{$p}} ) {
@@ -2969,7 +2976,7 @@ sub port_map ($$$$$$) {
 	        unless( defined( $pt ) and $pt ne '' ) { $pt = '__UNDEF__'; }
 
 			# typecast in port maps (seems to be problem with synopsys dc, see typecast switch)
-        	my $cast = "";
+        	my $cast = '';
         	if ( exists( $entities{$enty}{$p}{'cast'} ) and
 				$eh->get( 'output.generate.workaround.typecast' ) =~ m/\bportmap\b/ ) {
             	$cast = $entities{$enty}{$p}{'cast'};
@@ -2982,12 +2989,12 @@ sub port_map ($$$$$$) {
 		    	#  $conn->{sig_f}, $conn->{sig_t}		
 		    	#!wig20050518: adding lcm
 		    	# TODO : remove cm (no longer needed!)
-		    	my @lcm = ();
+		    	my @lcm = (); # Local connection matrix
 		    	my $conn = $conndb{$s}{'::' . $io}[$n];
 		    	my $lret = add_conn_matrix( $p, $s, \@lcm, $conn );
 		    	my $ret = add_conn_matrix( $p, $s, \@cm, $conn ); #Overlaps connection matrix
             	#!wig20030908: very special trick to get constants for nan bounds:
-            	if ( $ret and $ret eq 2 ) { # nan bounds, matching .... store for later
+            	if ( $ret and ( $ret eq 2 or $ret eq 3 ) ) { # nan bounds, matching .... store for later
                 	$hierdb{$inst}{'::nanbounds'}{$s} = \@cm;
                 	# TODO : check if that happened already ...
             	}
@@ -3025,12 +3032,13 @@ sub port_map ($$$$$$) {
 # Handle duplicate connection of one signal to several pins ...
 # Returns:
 #   - modified connection matrix in $matrix
-#  - return value:
+#   - return value:
 #     undef = s.th. went wrong
 #    0 = everything fine, signal and port slice are equal
 #    1 = non-matching signal/port slice ...
 #    2 = detected nan bounds, matching
-#    3 = detected nan bounds, non-matching
+#    3 = detected nan bounds for single bit
+#	 4 = detected nan bounds, non-matching
 #
 sub add_conn_matrix ($$$$) {
     my $port = shift;
@@ -3045,7 +3053,7 @@ sub add_conn_matrix ($$$$) {
     my $cst = $conn->{sig_t} || '0';  # undef -> 0
 
     #!wig20030812: catch non-numeric bounds ....
-    #TODO: is this the only cases?
+    # TODO : is this the only cases?
     if ( $cpf !~ m,^\s*[+-]?\d+\s*$,o or
         $cpt !~ m,^\s*[+-]?\d+\s*$,o or
         $csf !~ m,^\s*[+-]?\d+\s*$,o or
@@ -3064,16 +3072,28 @@ sub add_conn_matrix ($$$$) {
                 $logger->warn('__W_ADD_CONN_MATRIX', "\tRedefinition of connection matrix for signal $signal, port $port!");
             }
             # Store marker: __NAN__ , From, To
-            $matrix->[0] = "__NAN__";
+            $matrix->[0] = '__NAN__';
             $matrix->[1] = $csf;
             $matrix->[2] = $cst;
             return 2;
+        } elsif ( $csf eq $cst and $cpf eq $cpt ) {
+        	#!wig20060906: Single bit connected (from equals to ...)
+        	# Store marker: __NAN__ , From, To
+            $matrix->[0] = '__NAN_SB__';
+            $matrix->[1] = $csf; # Bit in signal
+            $matrix->[2] = $cpf; # Bit in port
+            return 3;
         } else {
-            $logger->warn('__W_ADD_CONN_MATRIX', "\tCannot resolve signal/port $signal $port: non numeric and non matching bounds!" );
-
+            $logger->warn('__W_ADD_CONN_MATRIX', "\tCheck resolved signal/port $signal ($csf:$cst) $port ($cpf:$cpt): non numeric and non matching bounds!" );
+			$matrix->[0] = '__NAN_EX__';
+			$matrix->[1] = $csf;
+			$matrix->[2] = $cst;
+			$matrix->[3] = $cpf;
+			$matrix->[4] = $cpt;
+			return 3;
         }
         
-        return 3;
+        return 4;
         # TODO : other cases ...
     }
     
@@ -3438,10 +3458,11 @@ sub print_conn_matrix ($$$$$$$$$;$) {
     #
     # __NAN__ , From:, To: ..
     # __NAN__ works for full connections, only (today)
+    #!wig: extend __NAN_SB__ (single bit) + __NAN_EX__ (extended)
     if ( defined( $rcm->[0] ) and $rcm->[0] eq '__NAN__' ) {
         if ( $lang =~ m,^veri,io ) { # Verilog
             $signal = '' if ( $signal =~ m/^%OPEN(_\d+)?%/io ); # For Verilog: let %OPEN% disappear
-            $t .= '%S%' . "." . $port . '(' . $signal . '),' . $descr . "\n"; #TODO, check Verilog syntax
+            $t .= '%S%' x 3 . '.' . $port . '(' . $signal . '),' . $descr . "\n";
         } else {
             if ( $cast ) {
                 $t .= '%S%' x 3 . $cast . '(' . $port . ') => ' .
@@ -3453,7 +3474,56 @@ sub print_conn_matrix ($$$$$$$$$;$) {
         #!wig20050418: prepend sort criteria
         return ( $sortcrit . $t );
     }
+    
+    # not a full connection, but a single bit, only
+    if ( defined( $rcm->[0] ) and $rcm->[0] eq '__NAN_SB__' ) {
+        if ( $lang =~ m,^veri,io ) { # Verilog
+            $signal = '' if ( $signal =~ m/^%OPEN(_\d+)?%/io );
+            # For Verilog: let %OPEN% disappear
+            $t .= '%S%' x 3 . '.' . $port . '[' . $rcm->[2] . ']' .
+            	'(' . $signal . '[' . $rcm->[1] . ']),' . $descr . "\n";
+            #TODO, check Verilog syntax
+        } else {
+            if ( $cast ) {
+                $t .= '%S%' x 3 . $cast . '(' . $port . '(' . $rcm->[2] . ')' . ') => ' .
+                	$signal . '(' . $rcm->[1] . ')' . ',' . $descr . "\n";
+            } else {
+                $t .= '%S%' x 3 . $port . '(' . $rcm->[2] . ')' .
+                	' => ' . $signal . '(' . $rcm->[1] . ')' . ',' . $descr . "\n";
+            }
+        }
+        #!wig20050418: prepend sort criteria
+        return ( $sortcrit . $t );
+    }
 
+	# Partial signal to NAN port bounds
+	if ( defined( $rcm->[0] ) and $rcm->[0] eq '__NAN_EX__' ) {
+        if ( $lang =~ m,^veri,io ) { # Verilog
+            $signal = '' if ( $signal =~ m/^%OPEN(_\d+)?%/io );
+            # For Verilog: let %OPEN% disappear
+            $t .= '%S%' x 3 . '.' . $port .
+            	'[' . $rcm->[3] . ':' . $rcm->[4] . ']' .
+            	'(' . $signal .
+            	'[' . $rcm->[1] . ':' . $rcm->[2] . ']),' . $descr . "\n";
+            # TODO : check Verilog syntax
+        } else {
+            if ( $cast ) {
+                $t .= '%S%' x 3 . $cast . '(' . $port .
+                	'(' . $rcm->[3] . ':' . $rcm->[4] . ')' .
+                	') => ' . $signal .
+                	'(' . $rcm->[1] . ':' . $rcm->[2] . ')' . 
+                	 ',' . $descr . "\n";
+            } else {
+                $t .= '%S%' x 3 . $port . 
+                	'(' . $rcm->[3] . ':' . $rcm->[4] . ')' .
+                	' => ' . $signal . 
+               		'(' . $rcm->[1] . ':' . $rcm->[2] . ')' .
+                	',' . $descr . "\n";
+            }
+        }
+        #!wig20050418: prepend sort criteria
+        return ( $sortcrit . $t );
+    }
     # $ub = 0 and $p[f|t] = __UNDEF__ and $s[f|t] = __UNDEF__
     # and $rcm->[0] = 0  -> single pin assignment
     if ( $ub == 0 and
@@ -3506,20 +3576,21 @@ sub print_conn_matrix ($$$$$$$$$;$) {
 	    	# Single bit port .... connected to bus slice
 	    	# TODO : do more checking ...
 	    	if ( $pf eq '__UNDEF__' ) {
-                if ( $lang =~ m,^veri,io ) { #Verilog
-                    $t .= '%S%' x 3 . "." . $port . "(" . $signal . "[" . $rcm->[$ub] . "]),\n"; #TODO: Check Verilog syntax
+                if ( $lang =~ m,^veri,io ) { # Verilog
+                    $t .= '%S%' x 3 . '.' . $port . '(' . $signal . '[' .
+                    	$rcm->[$ub] . "]),\n"; #TODO: Check Verilog syntax
                 } else {
                     if ( $cast ) {
-                        $t .= '%S%' x 3 . $cast . "(" . $port . ") => " .
-                            $signal . "(" . $rcm->[$ub] . "),\n";
+                        $t .= '%S%' x 3 . $cast . '(' . $port . ') => ' .
+                            $signal . '(' . $rcm->[$ub] . "),\n";
                     } else {
-                        $t .= '%S%' x 3 . $port . " => " .
-                            $signal . "(" . $rcm->[$ub] . "),\n";
+                        $t .= '%S%' x 3 . $port . ' => ' .
+                            $signal . '(' . $rcm->[$ub] . "),\n";
                     }
                 }
 	    	} else {
-                if ( $lang =~ m,^veri,io ) { #Verilog
-                    $t .= '%S%' x 3 . "." . $port . "[" . $pf . "](" . $signal . "[" . $rcm->[$ub] . "]),\n"; #TODO: is this legal?
+                if ( $lang =~ m,^veri,io ) { # Verilog
+                    $t .= '%S%' x 3 . '.' . $port . '[' . $pf . '](' . $signal . '[' . $rcm->[$ub] . "]),\n"; #TODO: is this legal?
                 } else {
                     if ( $cast ) {
                         $t .= '%S%' x 3 . $cast . "(" . $port . "(" . $pf . ")) => " .
@@ -4354,27 +4425,55 @@ sub _write_architecture ($$$$) {
         #
         # Iterate through all ports connected to this signal
         # In has precedence.
-        # TODO What if both in and out exists?
+        # TODO : What if both in and out exists?
         #   What if signal is connected to multiple ports:
+        my $match_port_signal = 0; # Remember port and signal even with different cases (Verilog)
         unless( $t_signal =~ m/%(HIGH|LOW|OPEN)(_BUS)?%/o ) {
 			if ( exists( $iconn->{'in'}{$t_signal} ) ) {
-		    	foreach my $port ( keys( %{$iconn->{'in'}{$t_signal}} ) ) {
-					if ( $usesig ne $port ) {
-			    		$pre = '';
+				# Special case: 1:1 connection, but different cases in Verilog
+				if ( $ilang =~ m/^veri/io and
+						scalar( keys( %{$iconn->{'in'}{$t_signal}} ) ) == 1 ) {
+					my $port = (keys( %{$iconn->{'in'}{$t_signal}} ))[0];
+					if ( lc( $usesig ) ne lc ( $port ) ) {
+						$pre = '';
 			    		$post = "$tcom __W_PORT_SIGNAL_MAP_REQ";
-                        my $concurs = gen_concur_port( 'in', $t_inst, $aent, $t_signal, $usesig, $port, $iconn, $aeport{$t_signal}, $ilang, $tcom );
+                       	my $concurs = gen_concur_port( 'in', $t_inst, $aent, $t_signal, $usesig, $port, $iconn, $aeport{$t_signal}, $ilang, $tcom );
 			    		$macros{'%CONCURS%'} .= $concurs;
+					} else {
+						$match_port_signal = 1;
+					}
+				} else { 
+		    		foreach my $port ( keys( %{$iconn->{'in'}{$t_signal}} ) ) {
+						if ( $usesig ne $port ) {
+			    			$pre = '';
+			    			$post = "$tcom __W_PORT_SIGNAL_MAP_REQ";
+                        	my $concurs = gen_concur_port( 'in', $t_inst, $aent, $t_signal, $usesig, $port, $iconn, $aeport{$t_signal}, $ilang, $tcom );
+			    			$macros{'%CONCURS%'} .= $concurs;
+						}
 					}
     		    }
 			}
 			if ( exists( $iconn->{'out'}{$t_signal} ) ) {
-		    	foreach my $port ( keys( %{$iconn->{'out'}{$t_signal}} ) ) {
-					if ( $usesig ne $port ) {		    
-			    		$pre = '';
+				if ( $ilang =~ m/^veri/io and
+						scalar( keys( %{$iconn->{'out'}{$t_signal}} ) ) == 1 ) {
+					my $port = (keys( %{$iconn->{'out'}{$t_signal}} ))[0];
+					if ( lc( $usesig ) ne lc ( $port ) ) {
+						$pre = '';
 			    		$post = "$tcom __W_PORT_SIGNAL_MAP_REQ";
                     	my $concurs = gen_concur_port( 'out', $t_inst, $aent, $t_signal, $usesig, $port, $iconn, $aeport{$t_signal}, $ilang, $tcom );
 			    		$macros{'%CONCURS%'} .= $concurs;
+					} else {
+						$match_port_signal = 1;
 					}
+				} else { 
+		    		foreach my $port ( keys( %{$iconn->{'out'}{$t_signal}} ) ) {
+						if ( $usesig ne $port ) {		    
+			    			$pre = '';
+			    			$post = "$tcom __W_PORT_SIGNAL_MAP_REQ";
+                    		my $concurs = gen_concur_port( 'out', $t_inst, $aent, $t_signal, $usesig, $port, $iconn, $aeport{$t_signal}, $ilang, $tcom );
+			    			$macros{'%CONCURS%'} .= $concurs;
+						}
+		    		}
 		    	}
 			}
 	    }
@@ -4382,22 +4481,22 @@ sub _write_architecture ($$$$) {
 	    # Add signal definition if required:
         my $tmp_sig = '';
         if ( $usesig ne $t_signal ) {
-                $usesig = $t_signal if ( $usesig eq '__open__' or $usesig eq '__nodrv__' );
-                # Use internally generated signalname ....
-                $tmp_sig .= ( $ilang =~ m,^veri,io ) ?
+			$usesig = $t_signal if ( $usesig eq '__open__' or $usesig eq '__nodrv__' );
+            # Use internally generated signalname ....
+            $tmp_sig .= ( $ilang =~ m,^veri,io ) ?
                 ( $pre . 'wire' . '%S%' . $dt . '%S%' . $usesig .
-                		"; $post $tcom __W_BAD_BRANCH\n" ) :
+            	"; $post $tcom __W_BAD_BRANCH\n" ) :
                 ( $pre . 'signal' . '%S%' . $usesig . '%S%' . ': '
-                	. $type . $dt . '; ' . $post . "\n" );
+               	. $type . $dt . '; ' . $post . "\n" );
         } elsif ( exists( $iconn->{'out'}{$t_signal} ) or
-                                exists( $iconn->{'in'}{$t_signal} ) ) {
-                unless( exists( $entities{$aent}{$t_signal} ) ) {
-                    $tmp_sig .= ( $ilang =~ m,^veri,io ) ?
-                        ( $pre . 'wire' . '%S%' . $dt . '%S%' . $usesig . 
-                        	'; ' . $post . "\n" ) :
-                        ( $pre . 'signal' . '%S%' . $usesig . '%S%' . ': '
-                        	. $type . $dt . "; " . $post . "\n" );
-                }
+                  exists( $iconn->{'in'}{$t_signal} ) ) {
+            unless( $match_port_signal or exists( $entities{$aent}{$t_signal} ) ) {
+                $tmp_sig .= ( $ilang =~ m,^veri,io ) ?
+                    ( $pre . 'wire' . '%S%' . $dt . '%S%' . $usesig . 
+                   	'; ' . $post . "\n" ) :
+                    ( $pre . 'signal' . '%S%' . $usesig . '%S%' . ': '
+                   	. $type . $dt . "; " . $post . "\n" );
+            }
         } else {
                 # Not connected to upside world (needs wire/signal definition ...
                 if ( $ilang =~ m,^veri,io ) {

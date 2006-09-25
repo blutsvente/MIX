@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.78 $                                         |
+# | Revision:   $Revision: 1.79 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/07/12 15:23:40 $                              |
+# | Date:       $Date: 2006/09/25 08:24:10 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.78 2006/07/12 15:23:40 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.79 2006/09/25 08:24:10 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.79  2006/09/25 08:24:10  wig
+# | Prepared emumux and `define
+# |
 # | Revision 1.78  2006/07/12 15:23:40  wig
 # | Added [no]sel[ect]head switch to xls2csv to support selection based on headers and variants.
 # |
@@ -148,10 +151,10 @@ sub _add_inst_auto ($);
 sub init_pseudo_inst ();
 sub bits_at_inst ($$$);
 sub bits_at_inst_hl ($$$);
-sub _check_portspecm ($$$); #!wig20060413
-sub map2bus ($$); #!wig20060609
-sub map2signal ($$); #!wig20060609
-sub require_bus_port ($); #!wig20060620
+sub _check_portspecm ($$$);
+sub map2bus ($$);
+sub map2signal ($$);
+sub require_bus_port ($);
 
 ####################################################################
 #
@@ -169,9 +172,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.78 2006/07/12 15:23:40 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.79 2006/09/25 08:24:10 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.78 $';
+my $thisrevision =	'$Revision: 1.79 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1337,7 +1340,7 @@ sub _create_conn ($$%) {
         }
     }
     my @co = (); # Collect ports defined here ...
-    unless( defined( $instr ) and $instr ne "" ) {
+    unless( defined( $instr ) and $instr ne '' ) {
         $logger->warn( '__W_CREATE_CONN', "\tCalled _create_conn without data for $inout");
         return \@co; #Return dummy array, just in case
     }
@@ -1359,6 +1362,8 @@ sub _create_conn ($$%) {
             #   MOD/SIG                 take SF:ST and PF,PT from ::high and ::low
             #!wig20050519:
             #   MOD/%LOG(_N)%/SIG(PF:PT)    <- convert to MOD_%LOG(_N)% instance name
+            #!wig20060905:
+            #	MOD/PORT[(PF:PT)] = (`USER_DEFINE)
             #
 
             $d =~ s,^\s+,,o; # Remove leading whitespace
@@ -1476,7 +1481,7 @@ sub _create_conn ($$%) {
             # \w   alphanumeric and _
             # %   marker for macros
             # :    part of macro like %::name% (converted to # here)
-            #
+            # `user_define
 
             #
             # Normal inst/ports ....
@@ -1513,7 +1518,14 @@ sub _create_conn ($$%) {
                 $d =~ s,$1,,;
             }
 
-            $d =~ s/\(([\w%#]+)\)/($1:$1)/g; # Extend (N) to (N:N)
+			#!wig20060921: `defines are handeled specially in (...), when there
+			#		is no :
+			# use "magic" %TICK_DEFINE_<define>% key, which will get replaced
+			#  later on.
+			while ( $d =~ m/\((\s*`[\w%#]+)\)/g ) {
+				$d =~ s/\(\s*`([\w%#]+)\)/(`$1:%TICK_DEFINE_$1%)/;
+			}
+            $d =~ s/\(([\w%#`]+)\)/($1:$1)/g; # Extend (N) to (N:N)
 
             # Detect MOD/%LOGIC(_N)% -> MOD_%LOGIC(_N)%/....
             # if( $d =~ m,^(.+)/(%\w+((_)?\d+)?%)(/(.+))?, ) {
@@ -1528,7 +1540,7 @@ sub _create_conn ($$%) {
             }
 
 
-           if ( $d =~ m,([\w%#]+)/(\S+)\(([\w%#]+):([\w%#]+)\)=\(([\w%#]+):([\w%#]+)\), ) {
+           if ( $d =~ m,([\w%#]+)/(\S+)\(([\w%#`]+):([\w%#`]+)\)=\(([\w%#`]+):([\w%#`]+)\), ) {
                 # INST/PORTS(pf:pt)=(sf:st)
                 _check_portspecm( $d, $-[0], $+[0] );
                 $co{'inst'} = $1;
@@ -1537,7 +1549,7 @@ sub _create_conn ($$%) {
                 $co{'port_t'} = $4;
                 $co{'sig_f'} = $5;
                 $co{'sig_t'} = $6;
-            } elsif ( $d =~ m,([\w%#]+)/(\S+)=\(([\w%#]+):([\w%#]+)\), ) {
+            } elsif ( $d =~ m,([\w%#]+)/(\S+)=\(([\w%#`]+):([\w%#`]+)\), ) {
                 # INST/PORTS=(f:t) Port-Bit to Bus-Bit f = t; expand to pseudo bus?
                 #TODO: Implement better solution (e.g. if Port is bus slice, not bit?
                 #wig20030207: handle single bit port connections ....
@@ -1556,15 +1568,26 @@ sub _create_conn ($$%) {
                     $co{'sig_t'} = $4;
                     if ( $4 ne '0' ) {
                         # Wire port of width
-                        $logger->warn('__W_CREATE_CONN',
-                        	"\tAutomatically wiring signal bits $3 to $4 of $1/$2 to bits " . ( $3 - $4 ) . " to 0");
                         my $f = $3;
                         my $t = $4;
+                        my $inst = $1;
+                        my $port = $2;
                         if ( $f =~ m,^(\d+)$,o and $t =~ m,^(\d+)$,o ) {
+                      		$logger->warn('__W_CREATE_CONN',
+                        		"\tAutomatically wiring signal bits $f to $t of $inst/$port to bits " .
+                        			( $f - $t ) . " to 0");
                             $co{'port_f'} = $f - $t;
+                            $co{'port_t'} = 0;
+                        } elsif ( $f eq $t ) {
+                        	# Another special case: single bit
+                        	$logger->warn('__W_CREATE_CONN',
+                        		"\tAutomatically wiring signal bit $f of $inst/$port to bit 0");
+                            $co{'port_f'} = 0;
                             $co{'port_t'} = 0;
                         } else {
                             # TODO : Needs to be checked ... autowiring does not work here!
+                      		$logger->warn('__W_CREATE_CONN',
+                        		"\tAutomatically wiring signal bits $f to $t of $inst/$port to bits '$f - $t' to 0");
                             $co{'port_f'} = "$f - $t";
                             $co{'port_t'} = 0;
                         }
@@ -1573,14 +1596,14 @@ sub _create_conn ($$%) {
                         $co{'port_t'} = 0;
                     }
                 }
-            } elsif ( $d =~ m,([\w%#]+)/(\S+)\(([\w%#]+):([\w%#]+)\), ) {
+            } elsif ( $d =~ m,([\w%#]+)/(\S+)\(([\w%#`]+):([\w%#`]+)\), ) {
             	_check_portspecm( $d, $-[0], $+[0] );
                 # INST/PORTS(f:t)
                 $co{'inst'} = $1;
                 $co{'port'} = $2;
                 $co{'port_f'} = $3;
                 $co{'port_t'} = $4;
-                if ( $4 ne "0" ) {
+                if ( $4 ne '0' ) {
                     my $f = $3;
                     my $t = $4;
                     if ( $t =~ m,^(\d+)$,o and $f =~ m,^(\d+)$,o ) {
@@ -1674,9 +1697,9 @@ sub _create_conn ($$%) {
                 my $oecon = $tcwr . "/" . $co{'port'} . mix_p_co2str( $co{'port_f'}, $co{'port_t'} ) .
                         "=" . mix_p_co2str( $co{'sig_f'}, $co{'sig_t'} );
  
-                #TODO: will we need more expansion? Maybe the intermediate signal should inherite
+                # TODO : will we need more expansion? Maybe the intermediate signal should inherite
                 #   all features from the originating signal ...
-                my $oeicon = $co{'inst'} . "/" . $co{'port'} . mix_p_co2str( $co{'port_f'}, $co{'port_t'} ) .
+                my $oeicon = $co{'inst'} . '/' . $co{'port'} . mix_p_co2str( $co{'port_f'}, $co{'port_t'} ) .
                         "=" . mix_p_co2str( $co{'sig_f'}, $co{'sig_t'} );
                 $oecon =~ s/=$//;
                 $oeicon =~ s/=$//;
@@ -1689,7 +1712,7 @@ sub _create_conn ($$%) {
                 $ec{'::low'} = $l;    # use the port border's, ... obviously noone should typecast
                                       # just parts of ports
                 $ec{'::mode'} = 'S';
-                $ec{'::comment'} = "__I_TYPECAST_INT" . ( defined( $ec{'::comment'} ) ?
+                $ec{'::comment'} = '__I_TYPECAST_INT' . ( defined( $ec{'::comment'} ) ?
                             ( " " . $ec{'::comment'} ) : "" );
                 $ec{'::' . $inout} = $oeicon;
                 $ec{$oe} = $oecon;
@@ -1701,7 +1724,7 @@ sub _create_conn ($$%) {
             push( @co, { %co } );
     }
     return ( \@co );
-}
+} # End of _create_conn
 
 #
 # See if port spec matched whole input string

@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.23 $                                          |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2006/09/22 09:07:24 $                              |
+# | Revision:   $Revision: 1.24 $                                          |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2006/09/25 08:24:10 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.24  2006/09/25 08:24:10  wig
+# | Prepared emumux and `define
+# |
 # | Revision 1.23  2006/09/22 09:07:24  lutscher
 # | added output.path_include and output.verilog_def, and ::clone for I2C sheet
 # |
@@ -120,9 +123,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.23 2006/09/22 09:07:24 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.24 2006/09/25 08:24:10 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.23 $';  
+my $thisrevision    =      '$Revision: 1.24 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -552,6 +555,21 @@ sub init ($) {
             	'select'	=> 'exclude_%::inst%', # Use this value as switch name
             	'options'	=> '',		# values: incfile (write alternative signal map into include file,
             },
+            'emumux' => { # Insert muxes for the listed modules
+            	# Alternative way is by using a "::emumux" column
+            	# If ::emumux is defined, the values defined there are applied
+            	#	if ::emumux is defined, but empty, take the definitions here
+            	#	
+            	#!wig20060907: currently only implemented for Verilog
+            	'modules'	=> '', # Set to regular expression or comma seperated list to matching modules, setting this activates
+            					   # the whole thing! A ! makes this module not matching.
+            	'sigselect' => '', # Only signals matching this list are muxed, if empty defaults to .*
+            	'select'    => 'emu_mux_%::inst%', # Use this value as select signal name
+            	'define'	=> 'insert_emu_mux_%::inst%', # defined the name of the `define ...
+            	'muxsnameo'	=> '%::name%_emux_s',	# multiplexer out signal name, from mux to port
+            	'muxsnamei' => '%::name%_vc_s', 	# multiplexer in signal name (you access here!)
+            	'options'	=> 'in',	# define extra (global) options like in | out | inout | leaf | nonleaf
+            },
 	      	'workaround' => {
             	'verilog' => 'dummyopen', # dummyopen := create a dummy signal for open port splices 
                     ,
@@ -623,14 +641,18 @@ sub init ($) {
 							# character is set in the ::ign column
 			'lines' =>		# Ignore lines starting with # or // or --
 				'^\s*(#|//|--)', # Define lines to remove
+			# TODO : move this to header.map
 			'map'	=>		# Allow mappings: # -> ::ign if followed by another ::
 				'hashtoign',
+			# TODO : merge that with input.header!!!
 			'columns'	=>	'nohead', # Defines handling of columns with no headerline
-							#	nohead	:= ignore them (default)
-							#	
+							#	nohead	:= ignore columns with empty header (default)
+							#   mix		:= take first line starting with :: as header (default)
+							#		,strict := only read in columns with ::FOO header (not default)
+							#	any		:= take first non comment line as header line
 							#	join	:= join all headless together into one ::extra
 							#	extran	:= create a new header ::extra_N for each headless column
-							#	::FOO	:= ignore columns with that header 
+							#	skip::FOO	:= ignore columns with that header FOO 
 			# TODO : define pragmas for controlled usage of comments:
 			'pragma' => '', # comments will be printed/removed selectively
 							# e.g.  __HDL__, __MIF__ 
