@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.79 $                                         |
+# | Revision:   $Revision: 1.80 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/09/25 08:24:10 $                              |
+# | Date:       $Date: 2006/09/25 15:15:44 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.79 2006/09/25 08:24:10 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.80 2006/09/25 15:15:44 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.80  2006/09/25 15:15:44  wig
+# | Adding `foo support (rfe20060904a)
+# |
 # | Revision 1.79  2006/09/25 08:24:10  wig
 # | Prepared emumux and `define
 # |
@@ -172,9 +175,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.79 2006/09/25 08:24:10 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.80 2006/09/25 15:15:44 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.79 $';
+my $thisrevision =	'$Revision: 1.80 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1305,6 +1308,9 @@ sub _create_conn ($$%) {
 
     my $tcmethod = ( $eh->get( 'output.generate.workaround.typecast' )
     	=~m/\bintsig\b/ );
+    	
+    # Inform user if upper/lower bounds is not-a-number
+    my $naninfo  = ( $eh->get( 'check.signal' ) =~ m/\bnanbounds\b/io );
     
     #A bus with ::low and ::high
     my $h = undef;
@@ -1318,16 +1324,18 @@ sub _create_conn ($$%) {
 
         if ( $data{'::high'} ne '' ) {
             unless ( $data{'::high'} =~ /^\d+$/ ) {
-                $logger->info( '__I_CREATE_CONN_H_NAN', "\tBus $data{'::name'} upper bound $data{'::high'} not a number!" );
+                $logger->info( '__I_CREATE_CONN_H_NAN', "\tBus $data{'::name'} upper bound $data{'::high'} not a number!" )
+                	if ( $naninfo );
                 $hldigitflag = 0;
             } else {
                 $hldigitflag++;
             }
             $h = $data{'::high'}; # ::high can be string, too ...
         }
-        if ( $data{'::low'} ne "" ) {
+        if ( $data{'::low'} ne '' ) {
             unless ( $data{'::low'} =~ /^\d+$/ ) {
-                $logger->info( '__I_CREATE_CONN_L_NAN', "\tBus $data{'::name'} lower bound $data{'::low'} not a number!" );
+                $logger->info( '__I_CREATE_CONN_L_NAN', "\tBus $data{'::name'} lower bound $data{'::low'} not a number!" )
+                	if ( $naninfo );
                 $hldigitflag = 0;
             } else {
                 $hldigitflag++;
@@ -1335,7 +1343,7 @@ sub _create_conn ($$%) {
             $l = $data{'::low'};
         }
         if ( defined( $h ) and defined( $l ) and $hldigitflag == 2 and $h < $l ) {
-            $logger->warn( '__I_CREATE_CONN_ORDER', "\tHINT for " . $data{'::name'} .
+            $logger->info( '__I_CREATE_CONN_ORDER', "\tHINT for " . $data{'::name'} .
                      ": unusual bus ordering $h downto $l" );
         }
     }
@@ -3115,7 +3123,7 @@ sub bits_at_inst ($$$) {
                     for my $b ( $1..$2 ) { $bits{$d}[$b] = $d; };
                 }
             } else {
-                $logger->warn( '__W_BITS_AT_INST', "\tSignal $signal width unknown at instance $inst!" );
+                $logger->warn( '__W_BITS_AT_INST', "\tSignal $signal width unknown at instance $inst: " . $width{$d}[-1] );
                 $sigw_flag{$d} = 0;
             }
         }
@@ -4309,8 +4317,8 @@ sub __parse_mac ($$) {
         	$hln = $3; # Forward number to replacer below
         }
         
-        # O.K., ignore TYPECAST generated modules ...
-        if ( $mac =~ m/^%TYPECAST_/o ) {
+        # O.K., ignore TYPECAST and TICK_DEFINE_ dummy generated modules ...
+        if ( $mac =~ m/^%(TYPECAST_|TICK_DEFINE_)/o ) {
             return;
         }
         my $meh = $eh->get( 'output.generate._logicre_' );
@@ -4319,6 +4327,7 @@ sub __parse_mac ($$) {
                 my $r = $rb->{$1};
                 $$ra =~ s/%[\w:]+?%/$r/;
             } else {
+            	# Skip some 
                 $logger->warn( '__W_PARSE_MAC__', "\tCannot find macro $1 to replace!");
             }
         } elsif( exists( $ehmacs->{$mackey} ) ) {

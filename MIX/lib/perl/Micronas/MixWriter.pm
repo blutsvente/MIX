@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.93 $                                         |
+# | Revision:   $Revision: 1.94 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/09/25 08:24:10 $                              |
+# | Date:       $Date: 2006/09/25 15:15:44 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.93 2006/09/25 08:24:10 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.94 2006/09/25 15:15:44 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.94  2006/09/25 15:15:44  wig
+# | Adding `foo support (rfe20060904a)
+# |
 # | Revision 1.93  2006/09/25 08:24:10  wig
 # | Prepared emumux and `define
 # |
@@ -142,9 +145,9 @@ sub _mix_wr_nice_comment		($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.93 2006/09/25 08:24:10 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.94 2006/09/25 15:15:44 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.93 $';
+my $thisrevision   =      '$Revision: 1.94 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1740,7 +1743,8 @@ sub _mix_wr_get_iveri ($$$$;$) {
 			} else {
                 #wig20030812:
                 # Non numeric bounds ...
-                if ( $pdd->{'high'} eq $pdd->{'low'} ) {
+                if ( $pdd->{'high'} eq $pdd->{'low'} or $pdd->{'low'} =~ m/^%TICK_DEFINE_/  ) {
+                	# high == low or low is defined by a `foo                	
                 	if ( $flags{'ansistyle'} ) {
                     	$intf .= $portsort . '%S%' x $indent2 . $valid .
                     		$ioky{$mode} . '%S%' . $reg_wire .
@@ -1762,7 +1766,7 @@ sub _mix_wr_get_iveri ($$$$;$) {
                 	if ( $flags{'ansistyle'} ) {
                     	$intf .= $portsort . '%S%' x $indent2 . $valid .
                     		$ioky{$mode} . '%S%' . $reg_wire .
-                    			'%S%[' . $pdd->{'high'} . ":" . $pdd->{'low'} . ']%S%' .
+                    			'%S%[' . $pdd->{'high'} . ':' . $pdd->{'low'} . ']%S%' .
                     			$p . ',' .
                          	( $descr ? $descr : '' ) .
                          	"\n";
@@ -3084,7 +3088,10 @@ sub add_conn_matrix ($$$$) {
             $matrix->[2] = $cpf; # Bit in port
             return 3;
         } else {
-            $logger->warn('__W_ADD_CONN_MATRIX', "\tCheck resolved signal/port $signal ($csf:$cst) $port ($cpf:$cpt): non numeric and non matching bounds!" );
+        	# Allowed for `foo, else warn:
+        	unless ( $csf =~ m/^\s*`/ or $cpf =~ m/^\s*`/ ) {
+            	$logger->warn('__W_ADD_CONN_MATRIX', "\tCheck resolved signal/port $signal ($csf:$cst) $port ($cpf:$cpt): non numeric and non matching bounds!" );
+        	}
 			$matrix->[0] = '__NAN_EX__';
 			$matrix->[1] = $csf;
 			$matrix->[2] = $cst;
@@ -3497,16 +3504,24 @@ sub print_conn_matrix ($$$$$$$$$;$) {
     }
 
 	# Partial signal to NAN port bounds
+	#	marker __NAN_EX__ in rcm->[0]
+	#	signal from/to in rcm->[1]/[2]
+	#	port   from/to in rcm->[3]/[4]
 	if ( defined( $rcm->[0] ) and $rcm->[0] eq '__NAN_EX__' ) {
         if ( $lang =~ m,^veri,io ) { # Verilog
             $signal = '' if ( $signal =~ m/^%OPEN(_\d+)?%/io );
             # For Verilog: let %OPEN% disappear
+            #!wig: another special case: `foo ....
+            my $p_to = ( $rcm->[4] =~ m/^%TICK_DEFINE_/ ) ? '' : ( ':' . $rcm->[4] );
+            my $s_to = ( $rcm->[2] =~ m/^%TICK_DEFINE_/ ) ? '' : ( ':' . $rcm->[2] );
+            $p_to    = '' if ( $rcm->[3] eq $rcm->[4] );
+            $s_to    = '' if ( $rcm->[1] eq $rcm->[2] ); 
             $t .= '%S%' x 3 . '.' . $port .
-            	'[' . $rcm->[3] . ':' . $rcm->[4] . ']' .
-            	'(' . $signal .
-            	'[' . $rcm->[1] . ':' . $rcm->[2] . ']),' . $descr . "\n";
-            # TODO : check Verilog syntax
+            		'[' . $rcm->[3] . $p_to . ']' .
+            		'(' . $signal .
+            		'[' . $rcm->[1] . $s_to . ']),' . $descr . "\n";
         } else {
+        	# TODO : How should we handle the `foo cases from above?
             if ( $cast ) {
                 $t .= '%S%' x 3 . $cast . '(' . $port .
                 	'(' . $rcm->[3] . ':' . $rcm->[4] . ')' .

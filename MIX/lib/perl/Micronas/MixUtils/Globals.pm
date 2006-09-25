@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.24 $                                          |
+# | Revision:   $Revision: 1.25 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/09/25 08:24:10 $                              |
+# | Date:       $Date: 2006/09/25 15:15:44 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.25  2006/09/25 15:15:44  wig
+# | Adding `foo support (rfe20060904a)
+# |
 # | Revision 1.24  2006/09/25 08:24:10  wig
 # | Prepared emumux and `define
 # |
@@ -123,9 +126,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.24 2006/09/25 08:24:10 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.25 2006/09/25 15:15:44 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.24 $';  
+my $thisrevision    =      '$Revision: 1.25 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -725,10 +728,11 @@ sub init ($) {
 		},
 		'defs' => '',   # 'inst,conn',    # make sure elements are only defined once:
 	    		    # posible values are: inst,conn
-		'signal' => 'load,driver,check,top_open,top_nodriver,nanbounds',
+		'signal' => 'load,driver,check,top_open,top_nodriver,nonanbounds',
 					# reads: checks if all signals have appr. loads
 					# and drivers.
-					#	nanbounds  := print warning of bounds are not numbers
+					#	nanbounds  := print warning if bounds are not numbers
+					#!wig20060925: changed default to nonanbounds!
 					# If "top_open" is in this list, will wire unused
 					# signals to open.
 					# If "top_nodriver" is set, will leave undriven ports open
