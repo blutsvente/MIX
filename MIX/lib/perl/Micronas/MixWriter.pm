@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.94 $                                         |
+# | Revision:   $Revision: 1.95 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/09/25 15:15:44 $                              |
+# | Date:       $Date: 2006/09/25 15:18:20 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.94 2006/09/25 15:15:44 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.95 2006/09/25 15:18:20 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.95  2006/09/25 15:18:20  wig
+# |  	MixWriter.pm : another undefined if check
+# |
 # | Revision 1.94  2006/09/25 15:15:44  wig
 # | Adding `foo support (rfe20060904a)
 # |
@@ -145,9 +148,9 @@ sub _mix_wr_nice_comment		($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.94 2006/09/25 15:15:44 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.95 2006/09/25 15:18:20 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.94 $';
+my $thisrevision   =      '$Revision: 1.95 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2326,9 +2329,12 @@ sub _mix_wr_map_veri ($$$$$) {
 		# Get signal value (generic format)
 		my $force = _mix_wr_getmapval( $inst, $o, $vm->{'sigvalue'} ); 
 		my $connect = $hierdb{$inst}{'::sigbits'}{$o}; # Width, usually A:::<d>
-		
 		my $width = 1;
 
+		unless( defined( $connect ) ) {
+			$logger->error( '__E_MAPVERI', "\tMissing connection matrix for signal $o at instance $inst!" );
+			next;
+		}
 		# TODO : Handle multiple connections ....
 		if ( scalar( @$connect ) > 1 ) {
 			$logger->error( '__E_MAPVERI', "\tCannot handle multiple connections for signal $o at instance $inst!" );
