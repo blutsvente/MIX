@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.52 2006/09/22 09:18:23 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.53 2006/09/28 10:29:26 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.52 $                                  
+#  Revision      : $Revision: 1.53 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.53  2006/09/28 10:29:26  lutscher
+#  changed generation of pre_dec module
+#
 #  Revision 1.52  2006/09/22 09:18:23  lutscher
 #  improved _vgch_rs_write_defines() and added P_MIX_SIG parameter to instantiations
 #
@@ -275,7 +278,7 @@ sub _vgch_rs_init {
 	}; 
 
     # register Perl module with mix
-    $eh->mix_add_module_info("RegViews", '$Revision: 1.52 $ ', "Utility functions to create different register space views from Reg class object");
+    $eh->mix_add_module_info("RegViews", '$Revision: 1.53 $ ', "Utility functions to create different register space views from Reg class object");
 };
 
 
@@ -1627,7 +1630,7 @@ sub _vgch_rs_gen_hier {
 
     # add logic to pre_dec module (it is only a big address decoder which is hopefully reduced by synthesis tool) 
     if(exists($this->global->{'mcda_inst'})) {
-        $this->_vgch_rs_gen_pre_dec_logic($predec_inst);
+        $this->_vgch_rs_gen_pre_dec_logic($o_domain, $predec_inst);
     };
 
 	# do not generate library modules
@@ -1638,10 +1641,10 @@ sub _vgch_rs_gen_hier {
 
 # add logic to pre_dec module (it is only a big address decoder which is hopefully reduced by synthesis tool) 
 sub _vgch_rs_gen_pre_dec_logic {
-    my ($this, $predec_inst) = @_;
+    my ($this, $o_domain, $predec_inst) = @_;
     my $refclks = $this->global->{'hclocks'};
     my @ludc;
-    my ($n, $select, $clock);
+    my ($n, $select, $clock, $offset, $o_reg);
     my @ltemp;
     my $indent = $this->global->{'indent'};
     
@@ -1661,22 +1664,36 @@ sub _vgch_rs_gen_pre_dec_logic {
     $this->_vgch_rs_gen_udc_header(\@ludc);
     push @ludc, "// pre-address decoder (per clock-domain)";
     push @ludc, "reg $range pre_dec;";
-    push @ludc, "assign pre_dec_o = pre_dec;";
+    push @ludc, "reg pre_dec_err;";
+    push @ludc, "assign pre_dec_o     = pre_dec;";
+    push @ludc, "assign pre_dec_err_o = pre_dec_err;";
     push @ludc, "", "always @(addr_i) begin";
-    push @ludc, $indent . "pre_dec <= 0;";
+    push @ludc, $indent . "pre_dec     = 0;";
+    push @ludc, $indent . "pre_dec_err = 0;";
     push @ludc, $indent . "case (addr_i[$addr_msb:$addr_lsb]) // synopsys infer_mux";
     $n = 0;
     # iterate all clock domains
     foreach $clock (sort keys %{$refclks}) {
-        # make a comma-seperated list of all addresses of a clock-domain; clip the address to the used
+        my @loffsets = sort {$a <=> $b} keys %{$refclks->{$clock}->{'offset'}};
+        # foreach $offset (keys %{$refclks->{$clock}->{'offset'}}) {
+        #     # find all readable register addresses in the clock-domain
+        #     $o_reg = $o_domain->find_reg_by_address_first($offset);
+        #     if (defined($o_reg) and $o_reg->get_reg_access_mode() ne "W") { 
+        #         push @loffsets, $offset;
+        #     };
+        # };
+        # make a comma-seperated list of all addresses of the clock-domain; clip the address to the used
         # range and convert it to hex
-        $select = join(", ", map {"'h"._val2hex($addr_msb-$addr_lsb+1, $_ >> $addr_lsb)} sort {$a <=> $b} keys %{$refclks->{$clock}->{'offset'}});
-        push @ltemp, $indent x 2 . "// clock-domain $n $clock";
-        push @ltemp, $indent x 2 . "$select". ": pre_dec <= $n;";
+        $select = join(", ", map {"'h"._val2hex($addr_msb-$addr_lsb+1, $_ >> $addr_lsb)} @loffsets);
+        push @ltemp, $indent x 2 . "// clock-domain #$n --> $clock";
+        push @ltemp, $indent x 2 . "$select". ": pre_dec = $n;";
         $n++;
     };
     push @ludc, @ltemp;
-    push @ludc, $indent x 2 . "default: pre_dec <= 0;";
+    push @ludc, $indent x 2 . "default: begin ";
+    push @ludc, $indent x 3 . "pre_dec     = 0;";
+    push @ludc, $indent x 3 . "pre_dec_err = 1;";
+    push @ludc, $indent x 2 . "end";
     push @ludc, $indent . "endcase";
     push @ludc, "end";
     _pad_column(-1, $indent, 1, \@ludc);
@@ -1890,7 +1907,8 @@ sub _vgch_rs_add_static_connections {
             #_add_connection("int_trans_start_$n", 0, 0, "", "$sg_i/snd_i, ${cfg_i}/trans_start_i");
 			_add_connection("rd_data_vec", $dwidth*$nclocks-1, 0, "$cfg_i/rd_data_o=(".(($n+1)*$dwidth-1).":".($n*$dwidth).")", "$mcda_i/rd_data_vec_i");
 			_add_connection("rd_err_vec",  $nclocks-1, 0, "$cfg_i/rd_err_o=($n)", "$mcda_i/rd_err_vec_i");
-			_add_connection("trans_done_vec", $nclocks-1, 0, "$cfg_i/trans_done_o=($n)", "$mcda_i/trans_done_vec_i");
+			# _add_connection("%OPEN%", 0, 0, "${cfg_i}/rd_err_o", ""); # rd_err now driven by pre-decoder module
+            _add_connection("trans_done_vec", $nclocks-1, 0, "$cfg_i/trans_done_o=($n)", "$mcda_i/trans_done_vec_i");
 		};
 		if (exists $href->{'cg_write_inst'}) {
 			_add_primary_input($this->global->{'clockgate_te_name'}, 0, 0, $href->{'cg_write_inst'}."/test_i");
@@ -1925,7 +1943,9 @@ sub _vgch_rs_add_static_connections {
         # connect pre-decoder
         _add_connection("addr",  $awidth-1, 0, "${ocp_i}/addr_o", "${predec_i}/addr_i");
         # connect MCDA and pre-decoder
-        _add_connection("pre_dec", _bitwidth($nclocks)-1, 0, "${predec_i}/pre_dec_o", "$mcda_i/pre_dec_i");
+        _add_connection("pre_dec", _bitwidth($nclocks)-1, 0, "${predec_i}/pre_dec_o", "${mcda_i}/pre_dec_i");
+        _add_connection("pre_dec_err", 0, 0, "${predec_i}/pre_dec_err_o", "${mcda_i}/pre_dec_err_i");
+        
 	};
 
     # add some checking code for input ports to top-level module
