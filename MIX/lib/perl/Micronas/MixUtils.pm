@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.129 $                                        |
+# | Revision:   $Revision: 1.130 $                                        |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/07/20 09:41:55 $                              |
+# | Date:       $Date: 2006/10/17 09:26:34 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.129 2006/07/20 09:41:55 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.130 2006/10/17 09:26:34 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.130  2006/10/17 09:26:34  wig
+# |  	MixUtils.pm : fixed $eh->() code reference
+# |
 # | Revision 1.129  2006/07/20 09:41:55  wig
 # | Debugged -variant/-sel in combination with non mix-headers
 # |
@@ -229,11 +232,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.129 2006/07/20 09:41:55 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.130 2006/10/17 09:26:34 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.129 $';         #'
+my $thisrevision        =      '$Revision: 1.130 $';         #'
 
-# Revision:   $Revision: 1.129 $   
+# Revision:   $Revision: 1.130 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -344,7 +347,7 @@ sub mix_getopt_header(@) {
     
     # remove old and diff sheets when set
     if (defined $OPTVAL{'strip'}) {
-        $eh->( 'intermediate.strip', $OPTVAL{'strip'} );
+        $eh->set( 'intermediate.strip', $OPTVAL{'strip'} );
     } 
 
 	for my $t ( qw( enty arch conf ) ) {
