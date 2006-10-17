@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / IOParser
 # | Modules:    $RCSfile: MixIOParser.pm,v $ 
-# | Revision:   $Revision: 1.19 $
+# | Revision:   $Revision: 1.20 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2006/07/12 15:23:40 $
+# | Date:       $Date: 2006/10/17 09:25:52 $
 # | 
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.19 2006/07/12 15:23:40 wig Exp $
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.20 2006/10/17 09:25:52 wig Exp $
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -36,6 +36,9 @@
 # |
 # | Changes:
 # | $Log: MixIOParser.pm,v $
+# | Revision 1.20  2006/10/17 09:25:52  wig
+# |  	MixIOParser.pm : fixed $eh-> code reference problem
+# |
 # | Revision 1.19  2006/07/12 15:23:40  wig
 # | Added [no]sel[ect]head switch to xls2csv to support selection based on headers and variants.
 # |
@@ -132,9 +135,9 @@ sub _mix_iop_init();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixIOParser.pm,v 1.19 2006/07/12 15:23:40 wig Exp $';
+my $thisid		=	'$Id: MixIOParser.pm,v 1.20 2006/10/17 09:25:52 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixIOParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.19 $';
+my $thisrevision   =      '$Revision: 1.20 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -192,7 +195,7 @@ sub parse_io_init ($) {
                 } else {
                     # only an iocell -> ignore pad ...
                     unless ( $eh->get( 'iocell.embedded' ) =~ m,\bpad\b,io ) {
-                        $logger->warn( '__W_PARSE_IO', "Missing pad cell type for iocell " . $i->{'::iocell'} .
+                        $logger->warn( '__W_PARSE_IO', "\tMissing pad cell type for iocell " . $i->{'::iocell'} .
                              ", creating single iocell!" );
                     }
                     $eh->inc( 'sum.io_cell_single' );
@@ -207,10 +210,10 @@ sub parse_io_init ($) {
                 # At least ::pad HAS TO BE DEFINED!
                 # TODO : linenum does not reflect excel line number!
                 # Should get a counter in the input data aka _l_ _n_ ...
-                $logger->error( '__E_PARSE_IO', "Neither ::pad nor ::iocell defined in IO input sheet, skipped!" );
+                $logger->error( '__E_PARSE_IO', "\tNeither ::pad nor ::iocell defined in IO input sheet, skipped!" );
             }
         } else { # We need selsignals ...
-            $logger->error( '__E_PARSE_IO', "Missing SEL line in input for parse_io_init, skipped!" );
+            $logger->error( '__E_PARSE_IO', "\tMissing SEL line in input for parse_io_init, skipped!" );
         }
     }
     return 0;
@@ -228,7 +231,7 @@ sub mix_iop_iocell ($$) {
     my %d = %$r_h; # Copy input data ...
 
     if ( $r_h->{'::pad'} !~ m,^\s*(\d+)\s*$, ) {
-        $logger->warn( '__W_IOCELL', "Bad ::pad entry $r_h->{'::pad'}, only digits allowed!" );
+        $logger->warn( '__W_IOCELL', "\tBad ::pad entry $r_h->{'::pad'}, only digits allowed!" );
         return 1;
     }
     $d{'::inst'} = $eh->get( 'iocell.name' ); # Name is defined by rule configured in $eh
@@ -385,12 +388,12 @@ sub mix_iop_connioc ($$$) {
                 $tsel{'__NR__'}--;
                 next;
             } else {
-                $logger->error( '__E_CONNIOC', "Missing muxopt definition for $s, pad nr. $r_h->{'::pad'}!" );
+                $logger->error( '__E_CONNIOC', "\tMissing muxopt definition for $s, pad nr. $r_h->{'::pad'}!" );
                 next;
             }
         }
         if ( $r_h->{$s} =~ m,^\s*$, ) {
-            if ( $eh->( 'iocell.select' ) =~ m,auto,io ) {
+            if ( $eh->get( 'iocell.select' ) =~ m,auto,io ) {
                 delete( $tsel{$s} );
                 $tsel{'__NR__'}--;
                 next;
@@ -409,10 +412,10 @@ sub mix_iop_connioc ($$$) {
         map( { s,\s+,,g }  @c ); # Get rid of all kind of whitespace
 
         if ( scalar( @c ) > scalar( @pins ) ) {
-            $logger->warn( '__W_CONNIOC', "::muxopt $s has too many signals defined. Pad $r_h->{'::pad'} has " .
+            $logger->warn( '__W_CONNIOC', "\t::muxopt $s has too many signals defined. Pad $r_h->{'::pad'} has " .
                          scalar( @pins ) . "!" );
         } elsif ( scalar( @c ) < scalar( @pins ) ) {
-            $logger->info( '__I_CONNIOC', "Muxopt $s not completely defined for pad $r_h->{'::pad'}!" );
+            $logger->info( '__I_CONNIOC', "\tMuxopt $s not completely defined for pad $r_h->{'::pad'}!" );
         }
 
         # Connect pin with signal ....
@@ -429,13 +432,13 @@ sub mix_iop_connioc ($$$) {
             #  output/do -> don't connect ...?? wire to high/low ??
             # Also addextra input mux if signal comes from several iocells!!
             unless ( $c[$c] ) { # Empty cell
-                $logger->warn( '__W_CONNIOC', "Empty ::muxopt cell line not implemented!" );
+                $logger->warn( '__W_CONNIOC', "\tEmpty ::muxopt cell line not implemented!" );
                 next;
             }
 
             # Strip off %COMB ...
             if ( $c[$c] =~ s,%comb\s*$,,io ) {
-                $logger->warn( '__W_CONNIOC', "%comb not implemented now by MIX!");
+                $logger->warn( '__W_CONNIOC', "\t%comb not implemented now by MIX!");
             }
 
             # Get clk for this signal
@@ -468,7 +471,7 @@ sub mix_iop_connioc ($$$) {
                 $name = $c[$c];
                 $num = undef;
             } else {
-                $logger->warn( '__W_CONNIOC', "Empty ::muxopt cell contents " . $c[$c] . " not matching MIX rules!" );
+                $logger->warn( '__W_CONNIOC', "\tEmpty ::muxopt cell contents " . $c[$c] . " not matching MIX rules!" );
                 next;  # Empty input line
             }
                 
@@ -607,7 +610,7 @@ sub mix_iop_getdir ($$) {
     }
 
     # Still here ?
-    $logger->warn( '__W_IOP_GETDIR', "Port $name in iocell $inst has undefined direction, applied default!" );
+    $logger->warn( '__W_IOP_GETDIR', "\tPort $name in iocell $inst has undefined direction, applied default!" );
     
     return( $eh->get( 'iocell.defaultdir' ) || 'in' );
 
@@ -629,7 +632,7 @@ sub mix_iop_padioc ($) {
     
     # Pad name
     if ( $r_h->{'::pad'} !~ m,^\s*(\d+)\s*$, ) {
-        $logger->warn( '__W_PADIOC', "Bad ::pad entry $r_h->{'::pad'}, only digits allowed!" );
+        $logger->warn( '__W_PADIOC', "\tBad ::pad entry $r_h->{'::pad'}, only digits allowed!" );
         return 1;
     }
     # Define name of this pad:
@@ -642,7 +645,7 @@ sub mix_iop_padioc ($) {
         $r_h->{'::__padtype__'} = $r_h->{'::type'};
         delete $r_h->{'::type'};
     } else {
-        $logger->warn( '__W_PADIOC', "Missing ::type entry for pad $r_h->{'::pad'}!" );
+        $logger->warn( '__W_PADIOC', "\tMissing ::type entry for pad $r_h->{'::pad'}!" );
         $d{'::entity'} = '%PAD_TYPE%';
     }
 
