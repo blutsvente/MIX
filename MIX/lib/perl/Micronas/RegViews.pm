@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.54 2006/10/18 08:16:36 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.55 2006/10/18 08:31:45 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.54 $                                  
+#  Revision      : $Revision: 1.55 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.55  2006/10/18 08:31:45  lutscher
+#  renamed SV assertions according to naming rules
+#
 #  Revision 1.54  2006/10/18 08:16:36  lutscher
 #  added field function is_cond()
 #
@@ -281,7 +284,7 @@ sub _vgch_rs_init {
 	}; 
 
     # register Perl module with mix
-    $eh->mix_add_module_info("RegViews", '$Revision: 1.54 $ ', "Utility functions to create different register space views from Reg class object");
+    $eh->mix_add_module_info("RegViews", '$Revision: 1.55 $ ', "Utility functions to create different register space views from Reg class object");
 };
 
 
@@ -1415,19 +1418,19 @@ assign rd_p = rd_wr".$this->global->{'POSTFIX_PORT_IN'}." & $trans_start_p;
 		# insert assertions (and onehot function because Cadence has not yet delivered)
 		$dummy = join(" || ", @ltemp2); 
 		push @$lref_checks, split("\n","
-p_fwd_done_expected: assert property
+assert_fwd_done_expected: assert property
 (
    @(posedge $clock) disable iff (~$int_rst_n)
    $dummy |-> fwd_txn
 );
 
-p_fwd_done_onehot: assert property
+assert_fwd_done_onehot: assert property
 (
    @(posedge $clock) disable iff (~$int_rst_n)
    $dummy |-> onehot(fwd_done_vec)
 );
 
-p_fwd_done_only_when_fwd_txn: assert property
+assert_fwd_done_only_when_fwd_txn: assert property
 (
    @(posedge $clock) disable iff (~$int_rst_n)
    fwd_done_vec != 0 |-> fwd_txn
