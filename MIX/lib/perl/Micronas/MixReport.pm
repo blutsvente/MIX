@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.31 $                                               |
+# | Revision:   $Revision: 1.32 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2006/10/12 11:26:59 $                                                   |
+# | Date:       $Date: 2006/10/18 08:09:03 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.31 2006/10/12 11:26:59 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.32 2006/10/18 08:09:03 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,7 +31,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
-# | Revision 1.31  2006/10/12 11:26:59  mathias
+# | Revision 1.32  2006/10/18 08:09:03  mathias
+# | fixed handling of multiple instances in report header files
+# |
+# | Revision 1.31  2006-10-12 11:26:59  mathias
 # | implemented writing c-header files for the software delopment
 # |
 # | Revision 1.30  2006-07-07 11:58:37  mathias
@@ -146,11 +149,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.31 2006/10/12 11:26:59 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.32 2006/10/18 08:09:03 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.31 $';
+my $thisrevision   =      '$Revision: 1.32 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -290,9 +293,11 @@ sub mix_rep_header_read_top_address_map()
             } elsif (exists($chref_inst->{lc($block->{'::client'})})) {
                 push(@{$blocks{$name}->{base_addr}}, hex('0x' . $block->{'::sub'}));
                 push(@{$blocks{$name}->{clients}}, $chref_inst->{lc($block->{'::client'})});
+                $blocks{$name}->{reg_clones} = scalar(@{$blocks{$name}->{clients}});
             } else {
                 push(@{$blocks{$name}->{base_addr}}, hex('0x' . $block->{'::sub'}));
                 push(@{$blocks{$name}->{clients}},   $block->{'::client'});
+                $blocks{$name}->{reg_clones} = scalar(@{$blocks{$name}->{clients}});
             }
         }
     }
@@ -343,10 +348,14 @@ sub mix_rep_header_open_files($$)
         print("Error: Couldn't open file `$file'!");
         exit(2);
     }
-    $fh->print("/* Base address */\n");
+    if ($blocks->{$name}->{reg_clones} > 1) {
+        $fh->print("/* Base addresses */\n");
+    } else {
+        $fh->print("/* Base address */\n");
+    }
 
     for (my $i = 0; $i < $blocks->{$name}->{reg_clones}; $i++) {
-        $fh->printf("#define %-48s 0x%08x\n", $blocks->{$name}->{clients}->[$i],
+        $fh->printf("#define %-48s 0x%08x\n", $blocks->{$name}->{clients}->[$i] . '_BASE',
                     $blocks->{$name}->{base_addr}->[$i]);
     }
     $fh->print("\n");
@@ -448,7 +457,7 @@ sub mix_rep_header_print($$$$)
     foreach my $addr (sort keys %{$rBlock}) {
         print("!!!!! '$domain_name' ... '$rBlock->{$addr}->{regname}' ... '$rTypes'\n");
         $rBlock->{$addr}->{regname} = mix_rep_header_check_name(uc($domain_name) . '_' . $rBlock->{$addr}->{regname}, $rTypes);
-        $fh->printf("#define %-48s %s\n", $rBlock->{$addr}->{regname} . '_OFFS', $addr);
+        $fh->printf("#define %-48s %s\n", $rBlock->{$addr}->{regname}, $addr);
     }
     $fh->write("\n/* C structure bitfields */\n");
     foreach my $addr (sort keys %{$rBlock}) {
