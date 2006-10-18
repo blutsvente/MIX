@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegField.pm,v 1.1 2005/07/07 12:35:26 lutscher Exp $
+#  RCSId: $Id: RegField.pm,v 1.2 2006/10/18 08:16:36 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  RegReg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegField.pm,v $
+#  Revision 1.2  2006/10/18 08:16:36  lutscher
+#  added field function is_cond()
+#
 #  Revision 1.1  2005/07/07 12:35:26  lutscher
 #  Reg: register space class; represents register space
 #  of a device and contains register domains; also contains
@@ -143,6 +146,16 @@ sub display {
 	$dump->Maxdepth(3);
 	$dump->Sortkeys(1);
 	print $dump->Dump;
+};
+
+# query function for conditional attribute of a field
+sub is_cond {
+    my ($this) = @_;
+    my ($result) = 0;
+    if(exists ($this->attribs->{'cond'}) and $this->attribs->{'cond'} == 1) {
+        $result = 1;
+    };
+    return $result;
 };
 
 1;

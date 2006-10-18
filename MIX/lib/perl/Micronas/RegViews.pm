@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.53 2006/09/28 10:29:26 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.54 2006/10/18 08:16:36 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.53 $                                  
+#  Revision      : $Revision: 1.54 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.54  2006/10/18 08:16:36  lutscher
+#  added field function is_cond()
+#
 #  Revision 1.53  2006/09/28 10:29:26  lutscher
 #  changed generation of pre_dec module
 #
@@ -278,7 +281,7 @@ sub _vgch_rs_init {
 	}; 
 
     # register Perl module with mix
-    $eh->mix_add_module_info("RegViews", '$Revision: 1.53 $ ', "Utility functions to create different register space views from Reg class object");
+    $eh->mix_add_module_info("RegViews", '$Revision: 1.54 $ ', "Utility functions to create different register space views from Reg class object");
 };
 
 
@@ -484,7 +487,7 @@ sub _vgch_rs_gen_cfg_module {
 				} else { # w1c
 					$hwp{'write_sts'}->{$reg_name.$rrange} = $this->_gen_field_name("int_set", $o_field);
 					$hwp{'write_sts_rst'}->{$reg_name.$rrange} = $res_val;
-					if ($spec =~ m/trg/i) {
+					if ($spec =~ m/trg/i and $spec !~ m/usr/i) {
 						# add dedicated trigger signal per field
 						$hwp{'write_sts_rst'}->{$this->_gen_field_name("trg", $o_field)} = 0;
 						$hwp{'write_sts_trg'}->{$this->_gen_field_name("trg", $o_field)} = $reg_name.$rrange;
@@ -508,7 +511,7 @@ sub _vgch_rs_gen_cfg_module {
 						push @{$hrp{$reg_offset}}, {$rrange => $this->_gen_field_name("shdw", $o_field)};
 					} else {
 						push @{$hrp{$reg_offset}}, {$rrange => $this->_gen_field_name("in", $o_field)};
-						if ($spec =~ m/trg/i) {
+						if ($spec =~ m/trg/i and $spec !~ m/usr/i) {
 							push @{$hrp_trg{$reg_offset}}, $this->_gen_field_name("trg", $o_field);
 						};
 					};
@@ -1764,7 +1767,7 @@ sub _vgch_rs_get_configuration {
 		if ($o_field->attribs->{'dir'} =~ m/r/i) {
 			$hresult{$clock}->{'has_read'} = 1; # store if has readable registers
 		};
-		if (exists ($o_field->attribs->{'cond'}) and ($o_field->attribs->{'cond'} != 0)) {
+		if ($o_field->is_cond()) {
 			$hresult{$clock}->{'has_cond_fields'} = 1;
 			if ($o_field->attribs->{'spec'} =~ m/usr/i) {
 				_warning("field \'",$o_field->{'name'},"\' is of type USR, conditional attribute makes no sense here");
@@ -2235,7 +2238,7 @@ sub _gen_cond_rhs {
 	my $res_val = $value;
 
 	my $parname = "P__".uc($this->_gen_field_name("",$o_field));
-	if(exists ($o_field->attribs->{'cond'}) and $o_field->attribs->{'cond'} == 1) {
+	if($o_field->is_cond()) {
 		$res_val = "cond_slice($parname, $value)";
 		$href_params->{$parname} = -1; # default value -1
 	};
