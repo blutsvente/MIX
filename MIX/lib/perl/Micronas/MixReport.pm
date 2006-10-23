@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.32 $                                               |
+# | Revision:   $Revision: 1.33 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2006/10/18 08:09:03 $                                                   |
+# | Date:       $Date: 2006/10/23 12:12:27 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.32 2006/10/18 08:09:03 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.33 2006/10/23 12:12:27 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,7 +31,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
-# | Revision 1.32  2006/10/18 08:09:03  mathias
+# | Revision 1.33  2006/10/23 12:12:27  mathias
+# | allow description (definition) of more than 1 register for the same address
+# |
+# | Revision 1.32  2006-10-18 08:09:03  mathias
 # | fixed handling of multiple instances in report header files
 # |
 # | Revision 1.31  2006-10-12 11:26:59  mathias
@@ -149,11 +152,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.32 2006/10/18 08:09:03 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.33 2006/10/23 12:12:27 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.32 $';
+my $thisrevision   =      '$Revision: 1.33 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -399,9 +402,12 @@ sub mix_rep_header($)
                     my $init     = sprintf("0x%08X", $o_reg->get_reg_init());
                     my $mode     = $o_reg->get_reg_access_mode();
 
+                    while (exists($theBlock{$address})) {
+                        $address .= "_1";
+                    }
                     $theBlock{$address}->{regname} = $o_reg->name();
                     $theBlock{$address}->{init}    = $init;
-                    if ( $eh->get( 'report.cheader.debug' ) ) {
+                    if ($eh->get('report.cheader.debug')) {
                         print("~~~~~ Register: " . $o_reg->name() . "     $theBlock{$address}->{regname}\n");
                     }
                     my $ii = 0;
@@ -457,7 +463,7 @@ sub mix_rep_header_print($$$$)
     foreach my $addr (sort keys %{$rBlock}) {
         print("!!!!! '$domain_name' ... '$rBlock->{$addr}->{regname}' ... '$rTypes'\n");
         $rBlock->{$addr}->{regname} = mix_rep_header_check_name(uc($domain_name) . '_' . $rBlock->{$addr}->{regname}, $rTypes);
-        $fh->printf("#define %-48s %s\n", $rBlock->{$addr}->{regname}, $addr);
+        $fh->printf("#define %-48s %s\n", $rBlock->{$addr}->{regname}, (split(/_/, $addr))[0]);
     }
     $fh->write("\n/* C structure bitfields */\n");
     foreach my $addr (sort keys %{$rBlock}) {
