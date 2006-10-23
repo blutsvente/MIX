@@ -22,12 +22,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: bads.pl,v 1.1 2006/10/23 08:24:59 mathias Exp $  |
+# | Id           : $Id: bads.pl,v 1.2 2006/10/23 11:31:59 mathias Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      |
-# | Version      : $Revision: 1.1 $                                       |
-# | Mod.Date     : $Date: 2006/10/23 08:24:59 $                           |
+# | Version      : $Revision: 1.2 $                                       |
+# | Mod.Date     : $Date: 2006/10/23 11:31:59 $                           |
 # | Author       : $Author: mathias $                                         |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -74,7 +74,7 @@ sub bads_mif_row($$$$$$$$$);
 # Global Variables
 ##############################################################################
 
-$::VERSION = '$Revision: 1.1 $'; # RCS Id
+$::VERSION = '$Revision: 1.2 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # Our local variables
@@ -180,10 +180,11 @@ foreach my $pad_ball (@{$aref}) {
         #}
         print("!!!!! $pin1     $ball\n");
         push(@{$power{$ball}->{pins}}, $pin1);
-        $power{$ball}->{desc}    = $desc1   ? $desc1   : " ";
-        $power{$ball}->{typ}     = $typ1    ? $typ1    : " ";
-        $power{$ball}->{connect} = $connect ? $connect : " ";
-        $power{$ball}->{reset}   = $reset   ? $reset   : " ";
+        $power{$ball}->{ballname} = $ballname;
+        $power{$ball}->{desc}     = $desc1   ? $desc1   : " ";
+        $power{$ball}->{typ}      = $typ1    ? $typ1    : " ";
+        $power{$ball}->{connect}  = $connect ? $connect : " ";
+        $power{$ball}->{reset}    = $reset   ? $reset   : " ";
         next;
     }
     # alternate 1 (one table row for all pins belonging to the same ball)
@@ -218,7 +219,7 @@ foreach my $ball (keys %power) {
         $pin .=  '\n' . $p;
     }
     $pin =~ s/\\n//;    # delete first '\n'
-    bads_mif_row($mif, $miftable, $ball, $ballname, $pin, $power{$ball}->{typ},
+    bads_mif_row($mif, $miftable, $ball, $power{$ball}->{ballname}, $pin, $power{$ball}->{typ},
                  $power{$ball}->{connect}, $power{$ball}->{reset}, $power{$ball}->{desc});
 }
 
