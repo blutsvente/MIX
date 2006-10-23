@@ -1,16 +1,14 @@
-# -*-* perl -*- -w
-#  header for MS-Win! Remove for UNIX ...
 #!/bin/sh --
 #!/bin/sh -- # -*- perl -*- -w
 eval 'exec ${PERL:-`[ ! -d "$HOME/bin/perl" -a -x "$HOME/bin/perl" ] && echo "$HOME/bin/perl" || { [ -x /usr/bin/perl ] && echo /usr/bin/perl || echo /usr/local/bin/perl ; } `} -x -S $0 ${1+"$@"} ;'
 if 0; # dynamic perl startup; suppress preceding line in perl
-#line 8
+#line 6
 #!/usr/bin/perl -w
 
 #
 #******************************************************************************
 #
-# $Id: xls2csv.pl,v 1.13 2006/07/20 09:41:22 wig Exp $
+# $Id: xls2csv.pl,v 1.14 2006/10/23 09:25:15 wig Exp $
 #
 # read in XLS file and print out a csv and and a sxc version of all sheets
 #
@@ -41,6 +39,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 #  Define seperator:
 #
 # $Log: xls2csv.pl,v $
+# Revision 1.14  2006/10/23 09:25:15  wig
+# 	xls2csv.pl
+#
 # Revision 1.13  2006/07/20 09:41:22  wig
 # Debugged -variant/-sel in combination with non mix-headers
 #
@@ -115,7 +116,7 @@ sub selbyhead				($$);
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.13 $'; # RCS Id
+$::VERSION = '$Revision: 1.14 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 #
