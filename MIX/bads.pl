@@ -22,12 +22,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: bads.pl,v 1.2 2006/10/23 11:31:59 mathias Exp $  |
+# | Id           : $Id: bads.pl,v 1.3 2006/10/23 12:18:06 mathias Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      |
-# | Version      : $Revision: 1.2 $                                       |
-# | Mod.Date     : $Date: 2006/10/23 11:31:59 $                           |
+# | Version      : $Revision: 1.3 $                                       |
+# | Mod.Date     : $Date: 2006/10/23 12:18:06 $                           |
 # | Author       : $Author: mathias $                                         |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -74,7 +74,7 @@ sub bads_mif_row($$$$$$$$$);
 # Global Variables
 ##############################################################################
 
-$::VERSION = '$Revision: 1.2 $'; # RCS Id
+$::VERSION = '$Revision: 1.3 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # Our local variables
@@ -104,7 +104,7 @@ mix_getopt_header(qw(out=s
                      sheet=s
                      dir=s
                      conf|config=s@
-                     #sheet=s@
+                     sheet=s@
                      listconf
                     ));
 
