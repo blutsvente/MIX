@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.130 $                                        |
+# | Revision:   $Revision: 1.131 $                                        |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/10/17 09:26:34 $                              |
+# | Date:       $Date: 2006/10/23 08:31:06 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.130 2006/10/17 09:26:34 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.131 2006/10/23 08:31:06 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.131  2006/10/23 08:31:06  wig
+# | Fixed problem with ::b ::b:1 output / missing ::b:1
+# |
 # | Revision 1.130  2006/10/17 09:26:34  wig
 # |  	MixUtils.pm : fixed $eh->() code reference
 # |
@@ -232,11 +235,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.130 2006/10/17 09:26:34 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.131 2006/10/23 08:31:06 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.130 $';         #'
+my $thisrevision        =      '$Revision: 1.131 $';         #'
 
-# Revision:   $Revision: 1.130 $   
+# Revision:   $Revision: 1.131 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2439,8 +2442,8 @@ sub parse_header($$@){
 			unless ( $colorder =~ m/F/o ) { #
 				push( @resort, $i );
 				$or{$i} = $rowh{$i}[$range[0]];
-				shift @range;
 				$templ->{'field'}{$i}[5] = $rowh{$i}[$range[0]];
+				shift @range;
 			}
 				
 	    	for my $ii ( @range ) {

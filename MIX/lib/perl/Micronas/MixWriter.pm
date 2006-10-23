@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.95 $                                         |
+# | Revision:   $Revision: 1.96 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/09/25 15:18:20 $                              |
+# | Date:       $Date: 2006/10/23 08:31:06 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.95 2006/09/25 15:18:20 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.96 2006/10/23 08:31:06 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.96  2006/10/23 08:31:06  wig
+# | Fixed problem with ::b ::b:1 output / missing ::b:1
+# |
 # | Revision 1.95  2006/09/25 15:18:20  wig
 # |  	MixWriter.pm : another undefined if check
 # |
@@ -148,9 +151,9 @@ sub _mix_wr_nice_comment		($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.95 2006/09/25 15:18:20 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.96 2006/10/23 08:31:06 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.95 $';
+my $thisrevision   =      '$Revision: 1.96 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1518,6 +1521,7 @@ sub _mix_wr_get_ivhdl ($$$;$) {
 #  reads $eh (output.generate.language.verilog)
 #
 #!wig20051007: support verilog2001
+#!wig20060925: support insertion of emumux
 sub _mix_wr_get_iveri ($$$$;$) {
     my $r_ent	= shift;
     my $ename	= shift; # Name of entity ...
@@ -1544,7 +1548,6 @@ sub _mix_wr_get_iveri ($$$$;$) {
 		);
 	};
 	
-	# TODO : csytle implies noiwire/noowire!
 	for my $i ( qw( ansistyle iwire owire ) ) {
 		if ( $eh->get( 'output.language.verilog' ) =~ m/\b$i\b/ ) {
 			$flags{$i} = 1;
@@ -4118,11 +4121,9 @@ sub _write_architecture ($$$$) {
 		if ( $aent =~ m,W_NO_ENTITY,io ) { next; };
 		my $arch = $ae->{$t_inst}{'::arch'};	
 
-    	# TODO : what to do if ilang != lang???
-    	# TODO : that will happen only in case one file is written for everything ..
     	my $ilang = lc( $hierdb{$t_inst}{'::lang'} ||$eh->get( 'macro.%LANUAGE%' ) );
     	if ( $p_lang and $p_lang ne $ilang ) {
-        	$logger->error('__E_WRITE_ARCH', "\tLanguage mix: $p_lang used, now $ilang" );
+        	$logger->error('__E_WRITE_ARCH', "\tLanguage mix: $p_lang requeste, but module $t_inst is defined $ilang" );
     	}
     	$p_lang = $ilang;
     	my $tcom = $eh->get( 'output.comment.' . $ilang ) || $eh->get( 'output.comment.default' ) || '##' ;
@@ -4242,7 +4243,6 @@ sub _write_architecture ($$$$) {
 			my $logicv = ( $1 eq 'HIGH' ) ? '1' : '0';
             if ( $ilang =~ m,^veri,io ) {
             	if ( is_integer2( $high, $low ) ) {
-            	# TODO : check if $high/low is integer ....
                 	my $w = $high - $low + 1;
                 	$macros{'%CONCURS%'} .= '%S%' x 2 .
                     	'assign' . '%S%' . $t_signal . ' = ' .
@@ -5153,7 +5153,7 @@ sub gen_concur_port($$$$$$$$;$$) {
                                 ( "[" . $tsh . ":" . $tsl . "]" ) :
                                 ( "(" . $tsh . " to " . $tsl . ")" );
                         }
-                    } else { #Strings or any other nonsense, order is up to user!
+                    } else { # Strings or any other nonsense, order is up to user!
                         $sslice = ( $lang =~ m,^veri,io ) ?
                             ( "[" . $tsh . ":" . $tsl . "]" ) :
                             ( "(" . $tsh . " downto " . $tsl . ")" );
@@ -5208,7 +5208,7 @@ sub gen_concur_port($$$$$$$$;$$) {
             }
 
             # in:               SIGNAL <= PORT;
-            # out (et al.)   PORT <= SIGNAL;
+            # out (et al.):   PORT <= SIGNAL;
             if ( $lang =~ m,^veri,io ) {
                 if ( $mode eq 'in' ) {
                     $concur .= '%S%' x 2 . "assign\t" . $signal_n . $sslice . '%S%=%S%' . $port . $pslice . '; ' . $type . "\n";
