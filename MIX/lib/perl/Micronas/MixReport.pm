@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.33 $                                               |
+# | Revision:   $Revision: 1.34 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2006/10/23 12:12:27 $                                                   |
+# | Date:       $Date: 2006/10/26 06:37:38 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.33 2006/10/23 12:12:27 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.34 2006/10/26 06:37:38 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,7 +31,12 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
-# | Revision 1.33  2006/10/23 12:12:27  mathias
+# | Revision 1.34  2006/10/26 06:37:38  mathias
+# | report c header files:
+# | - fixed issue with endianness
+# | - write macro to get real (base + offset) address
+# |
+# | Revision 1.33  2006-10-23 12:12:27  mathias
 # | allow description (definition) of more than 1 register for the same address
 # |
 # | Revision 1.32  2006-10-18 08:09:03  mathias
@@ -152,11 +157,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.33 2006/10/23 12:12:27 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.34 2006/10/26 06:37:38 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.33 $';
+my $thisrevision   =      '$Revision: 1.34 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -325,9 +330,9 @@ sub mix_rep_header_check_name($$)
     foreach my $key (sort keys %$rTypes) {
         my ($from, $to) = split(/,/, $rTypes->{$key});
         if ($regname =~ m/$from/) {
-            print("##### Name: $regname    From: $from     To: $to\n");
+            #print("##### Name: $regname    From: $from     To: $to\n");
             $regname =~ s/$from/$to/;
-            print("            $regname\n");
+            #print("            $regname\n");
         }
     }
     return $regname;
@@ -461,9 +466,17 @@ sub mix_rep_header_print($$$$)
 
     $fh->write("\n/*  Relative offsets of the register adresses */\n\n");
     foreach my $addr (sort keys %{$rBlock}) {
-        print("!!!!! '$domain_name' ... '$rBlock->{$addr}->{regname}' ... '$rTypes'\n");
+        if ( $eh->get( 'report.cheader.debug' ) ) {
+            print("!!!!! processing domain: '$domain_name' ... register: '$rBlock->{$addr}->{regname}'\n");
+        }
         $rBlock->{$addr}->{regname} = mix_rep_header_check_name(uc($domain_name) . '_' . $rBlock->{$addr}->{regname}, $rTypes);
-        $fh->printf("#define %-48s %s\n", $rBlock->{$addr}->{regname}, (split(/_/, $addr))[0]);
+        # relative address of the register in this domain
+        $fh->printf("#define %-48s %s\n", $rBlock->{$addr}->{regname} . '_OFFS', (split(/_/, $addr))[0]);
+        # macro to get real address for this register
+        my $name = $rBlock->{$addr}->{regname};
+        my $spaces = 41 - length($name);
+        $fh->print("#define ${name}(base) " . ' ' x $spaces . " (base + ${name}_OFFS)\n");
+        #$fh->printf("#define %-s(base) %20s (base + %s_OFFS)\n", $rBlock->{$addr}->{regname}, ' ', $rBlock->{$addr}->{regname});
     }
     $fh->write("\n/* C structure bitfields */\n");
     foreach my $addr (sort keys %{$rBlock}) {
@@ -493,12 +506,12 @@ sub mix_rep_header_print($$$$)
         }
         ### for little endian
         $fh->write("   #if defined(_LITTLE_ENDIAN) || defined(__LITTLE_ENDIAN)\n");
-        for (my $i = $#slicearr; $i >= 0; $i--) {
+        for (my $i = 0; $i < scalar(@slicearr); $i++) {
             $fh->write($slicearr[$i]);
         }
         $fh->write("   #else\n");
         ### for big endian
-        for (my $i = 0; $i <= $#slicearr; $i++) {
+        for (my $i = scalar(@slicearr) - 1; $i >= 0; $i--) {
             $fh->write($slicearr[$i]);
         }
         $fh->write("   #endif\n");
@@ -508,9 +521,8 @@ sub mix_rep_header_print($$$$)
     # Write pseudo comments with string and reset values
     # Those values will be extracted and written into a separate file by a Perl script
     foreach my $addr (sort keys %{$rBlock}) {
-        $fh->write("\n/*  Name as string and init value */\n");
-        $fh->printf("// Init   %12s %12s\n", $addr, $rBlock->{$addr}->{init});
-        $fh->printf("// String %12s   %s\n", $addr, $rBlock->{$addr}->{regname});
+        $fh->write("\n// Register name and init value; read by another script\n");
+        $fh->printf("// Init   %-40s %12s\n", $rBlock->{$addr}->{regname}, $rBlock->{$addr}->{init});
     }
 }
 
