@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.80 $                                         |
+# | Revision:   $Revision: 1.81 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/09/25 15:15:44 $                              |
+# | Date:       $Date: 2006/10/30 15:35:00 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.80 2006/09/25 15:15:44 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.81 2006/10/30 15:35:00 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.81  2006/10/30 15:35:00  wig
+# | extended handling of `define port/signal definitions
+# |
 # | Revision 1.80  2006/09/25 15:15:44  wig
 # | Adding `foo support (rfe20060904a)
 # |
@@ -175,9 +178,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.80 2006/09/25 15:15:44 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.81 2006/10/30 15:35:00 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.80 $';
+my $thisrevision =	'$Revision: 1.81 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1592,6 +1595,10 @@ sub _create_conn ($$%) {
                         		"\tAutomatically wiring signal bit $f of $inst/$port to bit 0");
                             $co{'port_f'} = 0;
                             $co{'port_t'} = 0;
+                        #!wig20061030a: get port_width from `define signal assignment
+                        } elsif ( $f =~ m/^`(\w+)/ and $t =~ m/%TICK_DEFINE_$1%/ ) {
+                        	$co{'port_f'} = $f;
+                        	$co{'port_t'} = $t;
                         } else {
                             # TODO : Needs to be checked ... autowiring does not work here!
                       		$logger->warn('__W_CREATE_CONN',
@@ -1937,7 +1944,7 @@ sub merge_conn($%) {
                     $conndb{$name}{$i} = $data{$i};
                 }
             }
-        } elsif ( $i =~ /^\s*::(high|low)/o ) {
+        } elsif ( $i =~ /^\s*::(high|low)\b/o ) {
             if ( defined($conndb{$name}{$i}) and $conndb{$name}{$i} ne '' ) {
                 # There was already s.th. defined for this bus
                 if ( defined( $data{$i} ) and $data{$i} ne '' and $conndb{$name}{$i} ne $data{$i} ) {

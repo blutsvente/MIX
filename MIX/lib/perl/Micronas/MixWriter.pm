@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.96 $                                         |
+# | Revision:   $Revision: 1.97 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/10/23 08:31:06 $                              |
+# | Date:       $Date: 2006/10/30 15:34:59 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.96 2006/10/23 08:31:06 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.97 2006/10/30 15:34:59 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.97  2006/10/30 15:34:59  wig
+# | extended handling of `define port/signal definitions
+# |
 # | Revision 1.96  2006/10/23 08:31:06  wig
 # | Fixed problem with ::b ::b:1 output / missing ::b:1
 # |
@@ -151,9 +154,9 @@ sub _mix_wr_nice_comment		($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.96 2006/10/23 08:31:06 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.97 2006/10/30 15:34:59 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.96 $';
+my $thisrevision   =      '$Revision: 1.97 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -837,7 +840,7 @@ sub _create_entity ($$) {
         	# TODO : Expand to work for any type ...
         	#!wig20040330: if port spans from 0:0 remove the _vector, too (?)
         	if ( ( ( not defined( $h ) and not defined( $l )) or
-                   ( $h eq '0' and $l eq '0' ) ) and
+                   ( defined( $h ) and $h eq '0' and defined( $l ) and $l eq '0' ) ) and
                   $type =~ m,(.+)_vector, ) {
 				#!wig: remove vector, leave rest as is: $type = $1;
 				$type =~ s/_vector//io;
@@ -1747,9 +1750,30 @@ sub _mix_wr_get_iveri ($$$$;$) {
                     }
                 }
 			} else {
-                #wig20030812:
-                # Non numeric bounds ...
-                if ( $pdd->{'high'} eq $pdd->{'low'} or $pdd->{'low'} =~ m/^%TICK_DEFINE_/  ) {
+                #New 20061030a: find `define - %TICK_DEFINE_define : 0
+                if ( $pdd->{'high'} =~ m/^`(\w+)\s*-\s*%TICK_DEFINE_\1%/
+                	 and $pdd->{'low'} eq '0' ) {
+                	      	# high == low or low is defined by a `foo                	
+                	if ( $flags{'ansistyle'} ) {
+                    	$intf .= $portsort . '%S%' x $indent2 . $valid .
+                    		$ioky{$mode} . '%S%' . $reg_wire .
+                    		'%S%[' . '`' . $1 . ']%S%' . $p . ',' .
+                            ( $descr ? $descr : '' ) .
+                            "\n";
+                	} else {
+                    	$intf .= $portsort . '%S%' x $indent2 . $valid . $p . ',' .
+                    	( $descr ? $descr : '' ) .
+                    	"\n";
+                    	$port{$mode} .= $portsort . '%S%' x $indent2 . $valid . $ioky{$mode} .
+                    		'%S%[' . '`' . $1 . ']%S%' . $p . ";\n";
+                	}
+					if ( $flags{'owire'} ) {
+                    	$port{'wire'} .= $portsort . '%S%' x $indent2 . $valid . $reg_wire . 
+                    		'%S%[' . '`' . $1 . ']%S%' . $p . ";\n";
+                	}
+                # Non numeric bounds (non-numeric or lower bound is a TICK_DEFINE)
+                } elsif ( $pdd->{'high'} eq $pdd->{'low'} or
+                	 $pdd->{'low'} =~ m/^%TICK_DEFINE_/ ) {
                 	# high == low or low is defined by a `foo                	
                 	if ( $flags{'ansistyle'} ) {
                     	$intf .= $portsort . '%S%' x $indent2 . $valid .
@@ -2485,6 +2509,7 @@ sub mix_wr_unsplice_port ($$$) {
 
     my @out = ();
     my %col = ();
+    my %l = (); # Last line for port
     my @dummies = ();
     my %expanded = (); # Hold expanded HIGH/LOW busses
     # Read in spliced port maps ...
@@ -2509,6 +2534,7 @@ sub mix_wr_unsplice_port ($$$) {
             	push( @out, $l );
             	next;
             }
+
             # Catch connected signal(s)
             if ( $s =~ m,\((.+)\), ) {
                     $s = $1;
@@ -2543,10 +2569,20 @@ sub mix_wr_unsplice_port ($$$) {
                 }
             }
             push( @{$col{$p}}, [ $hb, $lb , $pre, $s, $c ] );
+            $l{$p} = $l;
         } else {
             push( @out, $l );
         }
     }
+    
+    #!wig20061030: If port mentioned only once -> take literally
+    for my $p ( keys( %col ) ) {
+    	if ( scalar( @{$col{$p}} ) == 1 ) {
+    		push( @out, $l{$p} );
+    		delete $col{$p};
+    	}
+    }	
+    
     # We found collectable ports -> scan through them top-down and
     # write out better format
     my $flag = 0;
@@ -2554,6 +2590,7 @@ sub mix_wr_unsplice_port ($$$) {
         my @arr=();
         my $nn = -1;
         for my $n ( @{$col{$p}} ) {
+        	#!wig20061030: if scalar( @$n ) == 1 -> do not combi
             # Check bounds for this port
             $nn++;
             if ( $n->[0] < $n->[1] ) {
@@ -3476,17 +3513,40 @@ sub print_conn_matrix ($$$$$$$$$;$) {
     # __NAN__ works for full connections, only (today)
     #!wig: extend __NAN_SB__ (single bit) + __NAN_EX__ (extended)
     if ( defined( $rcm->[0] ) and $rcm->[0] eq '__NAN__' ) {
-        if ( $lang =~ m,^veri,io ) { # Verilog
-            $signal = '' if ( $signal =~ m/^%OPEN(_\d+)?%/io ); # For Verilog: let %OPEN% disappear
-            $t .= '%S%' x 3 . '.' . $port . '(' . $signal . '),' . $descr . "\n";
-        } else {
-            if ( $cast ) {
-                $t .= '%S%' x 3 . $cast . '(' . $port . ') => ' .
-                	$signal . ',' . $descr . "\n";
-            } else {
-                $t .= '%S%' x 3 . $port . ' => ' . $signal . ',' . $descr . "\n";
-            }
-        }
+    	if ( $sf eq $rcm->[1] and $st eq $rcm->[2] ) {
+    		# Full connect!!
+    		if ( $lang =~ m,^veri,io ) { # Verilog
+            	$signal = '' if ( $signal =~ m/^%OPEN(_\d+)?%/io ); # For Verilog: let %OPEN% disappear
+            	$t .= '%S%' x 3 . '.' . $port . '(' . $signal . '),' . $descr . "\n";
+        	} else {
+            	if ( $cast ) {
+                	$t .= '%S%' x 3 . $cast . '(' . $port . ') => ' .
+                		$signal . ',' . $descr . "\n";
+            	} else {
+                	$t .= '%S%' x 3 . $port . ' => ' . $signal . ',' . $descr . "\n";
+            	}
+        	}
+    	} else {
+    		# Only part of signal gets connected
+    		my $sft = $rcm->[1] . ':' . $rcm->[2];
+    		if ( $rcm->[2] =~ m/%TICK_DEFINE_(\w+)%/ ) {
+    			$sft = $rcm->[1];
+    		}
+    		if ( $lang =~ m,^veri,io ) { # Verilog
+            	$signal = '' if ( $signal =~ m/^%OPEN(_\d+)?%/io ); # For Verilog: let %OPEN% disappear
+            	$t .= '%S%' x 3 . '.' . $port . '(' . $signal . 
+            		'[' . $sft . ']),' . $descr . "\n";
+        	} else {
+            	if ( $cast ) {
+                	$t .= '%S%' x 3 . $cast . '(' . $port . ') => ' .
+                		$signal . '(' . $sft . ')' . ',' . $descr . "\n";
+            	} else {
+                	$t .= '%S%' x 3 . $port . ' => ' . $signal .
+                	'(' . $sft . ')' . ',' .
+                	$descr . "\n";
+            	}
+        	}
+    	}
         #!wig20050418: prepend sort criteria
         return ( $sortcrit . $t );
     }

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.131 $                                        |
+# | Revision:   $Revision: 1.132 $                                        |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/10/23 08:31:06 $                              |
+# | Date:       $Date: 2006/10/30 15:34:59 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.131 2006/10/23 08:31:06 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.132 2006/10/30 15:34:59 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.132  2006/10/30 15:34:59  wig
+# | extended handling of `define port/signal definitions
+# |
 # | Revision 1.131  2006/10/23 08:31:06  wig
 # | Fixed problem with ::b ::b:1 output / missing ::b:1
 # |
@@ -235,11 +238,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.131 2006/10/23 08:31:06 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.132 2006/10/30 15:34:59 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.131 $';         #'
+my $thisrevision        =      '$Revision: 1.132 $';         #'
 
-# Revision:   $Revision: 1.131 $   
+# Revision:   $Revision: 1.132 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -3445,10 +3448,10 @@ sub _inoutjoin ($) {
     # Join the data    
     my $s = join( '', @$aref );
 
-	#  find a single :) or (: and warn
+	#  find a single :) or (: and error
     if ( ( $s =~ m,\(:,o ) or ( $s =~ m,:\),o ) ) {
 		$logger->error( '__E_INOUT_BAD_BRANCH',
-			"\tinout2array bad branch (: ! File bug report!" );
+			"\tinout2array missing ::high or ::low definition: " . $s );
     }
 
 	# Replace the <cr> if any
