@@ -482,6 +482,11 @@ my @tests = (
 	  'path' => "bugver2006/20060522b",
 	  'options' => '',
 	},
+	{ # signal with ::low only defintion!
+	  'name' => "bugver2006",
+	  'path' => "bugver2006/20061017a",
+	  'options' => '',
+	},
 	#{ # port gets assigned a constant value and a signal!
 	#  'name' => "bugver2006",
 	#  'path' => "bugver2006/20060522b",
