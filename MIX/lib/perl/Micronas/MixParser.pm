@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.81 $                                         |
+# | Revision:   $Revision: 1.82 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/10/30 15:35:00 $                              |
+# | Date:       $Date: 2006/10/30 15:45:25 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.81 2006/10/30 15:35:00 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.82 2006/10/30 15:45:25 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.82  2006/10/30 15:45:25  wig
+# |  	MixParser.pm MixWriter.pm : renamed variable, fixed typo
+# |
 # | Revision 1.81  2006/10/30 15:35:00  wig
 # | extended handling of `define port/signal definitions
 # |
@@ -178,9 +181,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.81 2006/10/30 15:35:00 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.82 2006/10/30 15:45:25 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.81 $';
+my $thisrevision =	'$Revision: 1.82 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2484,7 +2487,7 @@ sub _mix_p_get_reparmatch ($$) {
 #		-
 #
 # Global:
-#		$eh->( 'sum' )
+#		$eh->get( 'sum' )
 #		changes %conndb or %hierdb
 #
 sub _mix_p_dogen2 ($$$$$$$$) {
@@ -2548,7 +2551,7 @@ sub _mix_p_dogen2 ($$$$$$$$) {
 #		-
 #
 # Global:
-#		$eh->( 'sum' )
+#		$eh->get( 'sum' )
 #		changes %conndb or %hierdb
 #
 sub _mix_p_dogen ($$$$$$) {
@@ -2686,7 +2689,7 @@ sub mix_p_genexp ($$) {
 ## Do the match for generators
 ## if the match operator contains ::name=/RE/, use the value of ::name to
 ## match against.
-## ::name defaults to $eh->( $type . '.key' ) ...
+## ::name defaults to $eh->get( $type . '.key' ) ...
 ##
 ## Returns: $content, $re
 ##

@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.97 $                                         |
+# | Revision:   $Revision: 1.98 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/10/30 15:34:59 $                              |
+# | Date:       $Date: 2006/10/30 15:45:25 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.97 2006/10/30 15:34:59 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.98 2006/10/30 15:45:25 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.98  2006/10/30 15:45:25  wig
+# |  	MixParser.pm MixWriter.pm : renamed variable, fixed typo
+# |
 # | Revision 1.97  2006/10/30 15:34:59  wig
 # | extended handling of `define port/signal definitions
 # |
@@ -154,9 +157,9 @@ sub _mix_wr_nice_comment		($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.97 2006/10/30 15:34:59 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.98 2006/10/30 15:45:25 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.97 $';
+my $thisrevision   =      '$Revision: 1.98 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -720,17 +723,17 @@ sub _create_entity ($$) {
     my $ri = shift;
 
     my %res = ();
-    for my $i ( keys( %$ri ) ) { # iterate over all signals
-        my $sport = $ri->{$i};
+    for my $signal ( keys( %$ri ) ) { # iterate over all signals
+        my $sport = $ri->{$signal};
 	
-        unless( defined( $conndb{$i} ) ) {
-            $logger->error('__E_CREATE_ENTY', "\tIllegal signal name $i referenced in _create_entity!");
+        unless( defined( $conndb{$signal} ) ) {
+            $logger->error('__E_CREATE_ENTY', "\tIllegal signal name $signal referenced in _create_entity!");
             next;
         }
 
-		my $type = $conndb{$i}{'::type'} || "_E_CONNTYPE"; 
+		my $type = $conndb{$signal}{'::type'} || "_E_CONNTYPE"; 
         my $cast = '';
-        my $nr   = $conndb{$i}{'::connnr'};
+        my $nr   = $conndb{$signal}{'::connnr'};
         $nr = '__E_CONNNR' unless( defined $nr );
         
 		#
@@ -745,7 +748,7 @@ sub _create_entity ($$) {
 			
 	    	# width definition may differ for this port ....
 	    	for my $ii ( split( ',', $$sport{$port} ) ) {
-				my $thissig = $conndb{$i}{'::' . $io}[$ii]; # Get this signal ...
+				my $thissig = $conndb{$signal}{'::' . $io}[$ii]; # Get this signal ...
 				# Find max/min port bounds ....
 				# TODO : What if there are holes? Sanity checks need to be done before ...
 				if ( defined $thissig->{'port_f'} and $thissig->{'port_f'} ne '' ) { # This is a bus ...
@@ -797,11 +800,11 @@ sub _create_entity ($$) {
                 	if ( $eh->get( 'output.generate.workaround.typecast' ) =~ m/\bportmap\b/o ) {
                     	$cast = $type;
                     	$type = $thissig->{'cast'};
-                    	$logger->debug('__D_CREATE_ENTY', "\tPortmap typecast requested for signal $i/$cast, port $port/$type");
+                    	$logger->debug('__D_CREATE_ENTY', "\tPortmap typecast requested for signal $signal/$cast, port $port/$type");
                 	} elsif ( $eh->get( 'output.generate.workaround.std_log_typecast' ) =~ m/\bignore\b/o ) {
                     	$cast = $type;
                     	$type = $thissig->{'cast'};
-                    	$logger->debug('__D_CREATE_ENTY', "\tstd_log_ignore typecast for signal $i/$cast, port $port/$type");
+                    	$logger->debug('__D_CREATE_ENTY', "\tstd_log_ignore typecast for signal $signal/$cast, port $port/$type");
                 	}
             	}
             	# Remember: was that port generated?
@@ -832,7 +835,7 @@ sub _create_entity ($$) {
 		    	defined( $h ) and defined( $l ) and
 		    	( $h ne $l ) ) { #!wig20030516 ...
 				$type = $type . '_vector';
-				$logger->warn('__W_CREATE_ENTY', "\tAutoconnecting bit signal $i to bus port $port" );
+				$logger->warn('__W_CREATE_ENTY', "\tAutoconnecting bit signal $signal to bus port $port" );
 	    	}
 
         	# If we connect a single bit to to a bus, we strip of the _vector from
@@ -844,11 +847,11 @@ sub _create_entity ($$) {
                   $type =~ m,(.+)_vector, ) {
 				#!wig: remove vector, leave rest as is: $type = $1;
 				$type =~ s/_vector//io;
-				$logger->warn('__W_CREATE_ENTY', "\tAutoreducing port type for signal $i to $type" );
+				$logger->warn('__W_CREATE_ENTY', "\tAutoreducing port type for signal $signal to $type" );
 			};
 
     
-			my $m = $conndb{$i}{'::mode'};
+			my $m = $conndb{$signal}{'::mode'};
 	    	my $mode = '__E_MODE_DEFAULT_ERROR__';
 	    	if ( $m ) { # not empty
 				if ( $m =~ m,IO,io )   { $mode = "inout"; } 	 # inout mode!
@@ -862,22 +865,22 @@ sub _create_entity ($$) {
 				elsif ( $m =~ m,I,io ) {							# warn if mode mismatches
 		    		# TODO : Need to look at all connections ....
 		    		if ( $io eq "out" ) {
-						$logger->debug('__D_CREATE_ENTY', "\tMode mismatch for signal $i, port $port: $m ne $io" );
-						$conndb{$i}{'::comment'} .= ",__W_MODE_MISMATCH"; # TODO :  __E?? (increase level to error)
+						$logger->debug('__D_CREATE_ENTY', "\tMode mismatch for signal $signal, port $port: $m ne $io" );
+						$conndb{$signal}{'::comment'} .= ",__W_MODE_MISMATCH"; # TODO :  __E?? (increase level to error)
 						$mode = $io;
 		    		} else {
 						$mode = 'in';
 		    		}
 				} elsif ( $m =~ m,O,io ) {					# xls says O!
 		    		if ( $io eq 'in' ) {
-						$logger->debug('__D_CREATE_ENTY', "\tMode mismatch for signal $i, port $port: $m ne $io" );
-						$conndb{$i}{'::comment'} .= ",__W_MODE_MISMATCH"; # TODO : __E?? (increase errror level)
+						$logger->debug('__D_CREATE_ENTY', "\tMode mismatch for signal $signal, port $port: $m ne $io" );
+						$conndb{$signal}{'::comment'} .= ",__W_MODE_MISMATCH"; # TODO : __E?? (increase errror level)
 						$mode = $io;
 		    		} else {
 						$mode = "out";
 		    		}
 				} else {
-		    		$logger->error('__E_CREATE_ENTY', "\tSignal $i mode $m defaults to bad value, set to $io" );
+		    		$logger->error('__E_CREATE_ENTY', "\tSignal $signal mode $m defaults to bad value, set to $io" );
 		    		$mode = $io;
 				}
 	    	} else { # if no mode was specified, it defaults to S, which means to autodetecte in/out
@@ -1029,7 +1032,7 @@ sub _create_entity ($$) {
 
         	if ( $mode =~ m,^\s*[GP], ) {
             	# Set 'default' value from '::out' field (if defined)
-            	my @vals = @{$conndb{$i}{'::out'}};
+            	my @vals = @{$conndb{$signal}{'::out'}};
             	for my $v ( 0..$#vals ) {
                 	if ( exists( $vals[$v]{'inst'} ) and
                      	$vals[$v]{'inst'} =~ m,(%|__)GENERIC(%|__),o ) {
