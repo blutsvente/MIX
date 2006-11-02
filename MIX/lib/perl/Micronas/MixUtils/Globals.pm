@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.25 $                                          |
+# | Revision:   $Revision: 1.26 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/09/25 15:15:44 $                              |
+# | Date:       $Date: 2006/11/02 15:37:29 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Globals.pm,v $
+# | Revision 1.26  2006/11/02 15:37:29  wig
+# |  	Globals.pm : added basic caching to Globals.pm get/set/....
+# |
 # | Revision 1.25  2006/09/25 15:15:44  wig
 # | Adding `foo support (rfe20060904a)
 # |
@@ -126,9 +129,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.25 2006/09/25 15:15:44 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.26 2006/11/02 15:37:29 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.25 $';  
+my $thisrevision    =      '$Revision: 1.26 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -157,6 +160,8 @@ sub new {
 	foreach (keys %params) {
 		$ref_member->{$_} = $params{$_};
 	};
+
+	$ref_member->{'_get_cache_'} = (); # Initialize cache
 
 	bless $ref_member, $class;
 	$ehstore = $ref_member; # Save in global context ...
@@ -190,6 +195,11 @@ sub get ($$) {
 	my $this	= shift;
 	my $key		= shift;
 
+	# Returned cached object ...
+	if ( exists( $this->{'_get_cache_'}{$key} ) ) {
+		return $this->{'_get_cache_'}{$key};
+	}
+
 	# Map key to hash keys a.b.c -> {a}{b}{c}
 	my $e = $this->_key_hash($key); 
 	my $ref = undef();
@@ -200,6 +210,9 @@ sub get ($$) {
 		$ref = undef();
 	}
 	
+	# Put result into cache ...
+	$this->{'_get_cache_'}{$key} = $ref;
+
 	return $ref;
 	
 } # End of get
@@ -220,13 +233,14 @@ sub _key_hash ($$) {
 	}
 	( my $k = ( "{'" . $key . "'}" )) =~ s/\./'}{'/g;
 	return $k;
-}
+} # End of _key_hash
 
 #
 # Convert a.b.c..*d to {a}{b}{c.*d}
 # Special: handle double dots and allow nearly any usable
 #  character. Purpose is to allow usage of regular expressions
 #  as keys.
+# double will put a real dot into the key
 # Mask metacharacters: {}
 #
 sub _key_hashre ($$) {
@@ -292,6 +306,9 @@ sub _set ($$$$) {
 	my $r = undef();	
 	$key =~ s/'/\\'/g; # Mask '
 	
+	# Invalidate the cache! Currently do all of the cache!
+	$this->{'_get_cache_'} = ();
+
 	( my $logval = $val ) =~ s/\n/ /g; ;
 	if ( length( $logval ) > 30 ) {
 		$logval = substr( $val, 0, 30 ) . ' ...';
@@ -309,6 +326,7 @@ sub _set ($$$$) {
         	"\tE_MIX_GLOBALS: Evaluation of configuration $key=$val failed: $@") if ( $@ );
 		return undef();
     }
+
 	return $r;
 } # End of set
 
@@ -323,6 +341,9 @@ sub inc ($$$) {
 	my $key  = shift;
 	my $flag = shift || 0; # If set, do postincrement
 	
+	# Invalidate this cache line:
+	delete $this->{'_get_cache_'}{$key};
+
 	my $k = $this->_key_hash( $key );
 	
 	my $pre  = ( $flag ) ? '' : '++';
@@ -333,6 +354,7 @@ sub inc ($$$) {
 		$logger->error('__E_INC_CFGKEY', "\tIncrement for $key failed: $@");
 		return undef();
 	}
+
 	return $r;
 } # End of inc
 
@@ -371,6 +393,9 @@ sub append ($$$$) {
 
 	return undef unless( defined( $val ) );
 
+	# Invalidate this cache line:
+	delete $this->{'_get_cache_'}{$key};
+
 	my $k = $this->_key_hash( $key );
 	return undef unless( defined( $k ) );
 
@@ -385,6 +410,7 @@ sub append ($$$$) {
 		$logger->error('__E_APP_CFGKEY', "\tappend for $key failed: $@");
 		return undef();
 	}
+
 	return $r;
 } # End of append
 	
