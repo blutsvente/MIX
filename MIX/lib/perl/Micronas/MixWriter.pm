@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.98 $                                         |
+# | Revision:   $Revision: 1.99 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/10/30 15:45:25 $                              |
+# | Date:       $Date: 2006/11/02 15:37:48 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.98 2006/10/30 15:45:25 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.99 2006/11/02 15:37:48 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.99  2006/11/02 15:37:48  wig
+# |  	MixChecker.pm MixUtils.pm MixWriter.pm : added basic caching, improved performance
+# |
 # | Revision 1.98  2006/10/30 15:45:25  wig
 # |  	MixParser.pm MixWriter.pm : renamed variable, fixed typo
 # |
@@ -157,9 +160,9 @@ sub _mix_wr_nice_comment		($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.98 2006/10/30 15:45:25 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.99 2006/11/02 15:37:48 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.98 $';
+my $thisrevision   =      '$Revision: 1.99 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -4333,7 +4336,6 @@ sub _write_architecture ($$$$) {
                     $t_signal . '%S%' . '<=' . '%S%' . "( others => '$logicv' );\n";
             }
 	    } elsif ( $t_signal =~ m,^\s*%(HIGH|LOW)(_\d+)?%,o ) {
-	    	#TODO: %HIGH% and %LOW% will be mapped to a single value
 	    	my $logicv = ( $1 eq 'HIGH' ) ? '1' : '0';
                 if ( $ilang =~ m,^veri,io ) {
                     $macros{'%CONCURS%'} .= '%S%' x 2 .
@@ -4350,7 +4352,7 @@ sub _write_architecture ($$$$) {
             #!wig20031010
             my $port_open='';
             if ( $aeport{$t_signal}{'load'} == 0 and $eh->get( 'check.signal' ) =~ m/\btop_open/io ) {
-                unless ( $t_signal =~ m,^\s*%(HIGH|OPEN|LOW), ) { #Meta signals %HIGH... %LOW, ... %OPEN
+                unless ( $t_signal =~ m,^\s*%(HIGH|OPEN|LOW),o ) { #Meta signals %HIGH... %LOW, ... %OPEN
                     if ( exists $conndb{$t_signal}{'::topinst'} and $conndb{$t_signal}{'::topinst'} and
                     	 $node == $hierdb{$conndb{$t_signal}{'::topinst'}}{'::treeobj'}->mother ) {
                         $logger->warn('__W_WRITE_ARCH', "\tLeave unloaded port $t_signal open at instance $t_inst");
@@ -4366,7 +4368,7 @@ sub _write_architecture ($$$$) {
             }
             #!wig20060425: leave undriven ports open, too ...
             if ( $aeport{$t_signal}{'driver'} == 0 and $eh->get( 'check.signal' ) =~ m/\btop_nodriver/io ){
-            	unless ( $t_signal =~ m,^\s*%(HIGH|OPEN|LOW), ) { #Meta signals %HIGH... %LOW, ... %OPEN
+            	unless ( $t_signal =~ m,^\s*%(HIGH|OPEN|LOW),o ) { #Meta signals %HIGH... %LOW, ... %OPEN
 					# CONST currently have not ::topinst!
                     if ( exists $conndb{$t_signal}{'::topinst'} and $conndb{$t_signal}{'::topinst'} and
                     	 $node == $hierdb{$conndb{$t_signal}{'::topinst'}}{'::treeobj'}->mother ) {
@@ -4512,7 +4514,7 @@ sub _write_architecture ($$$$) {
         # TODO : What if both in and out exists?
         #   What if signal is connected to multiple ports:
         my $match_port_signal = 0; # Remember port and signal even with different cases (Verilog)
-        unless( $t_signal =~ m/%(HIGH|LOW|OPEN)(_BUS)?%/o ) {
+        unless( $t_signal =~ m/%(HIGH|LOW|OPEN)(_BUS)?(_\d+)?%/o ) {
 			if ( exists( $iconn->{'in'}{$t_signal} ) ) {
 				# Special case: 1:1 connection, but different cases in Verilog
 				if ( $ilang =~ m/^veri/io and
@@ -5468,7 +5470,7 @@ sub count_load_driver ($$$$) {
                 $rinsig->{$s}{'load'} = 0;
             }
             unless( exists( $rinsig->{$s}{'driver'} ) ) {
-            	unless ( $s =~ m/%(HIGH|LOW)(_BUS)?%/ ) {
+            	unless ( $s =~ m/%(HIGH|LOW)(_BUS)?(_\d+)?%/o ) {
                 	if ( $eh->get( 'output.warnings' ) =~ m/driver/io ) {
                     	$logger->warn('__W_COUNT_LDDRVS', "\tSignal $s does not have a driver in instance $inst!" );  
                 	} else {

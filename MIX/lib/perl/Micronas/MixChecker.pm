@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Checker
 # | Modules:    $RCSfile: MixChecker.pm,v $
-# | Revision:   $Revision: 1.15 $
+# | Revision:   $Revision: 1.16 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2006/05/22 14:02:21 $
+# | Date:       $Date: 2006/11/02 15:37:48 $
 # |
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.15 2006/05/22 14:02:21 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.16 2006/11/02 15:37:48 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the checking capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixChecker.pm,v $
+# | Revision 1.16  2006/11/02 15:37:48  wig
+# |  	MixChecker.pm MixUtils.pm MixWriter.pm : added basic caching, improved performance
+# |
 # | Revision 1.15  2006/05/22 14:02:21  wig
 # | Fix avfb issues with high/low connections
 # |
@@ -92,9 +95,9 @@ my %mix_check_list = ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixChecker.pm,v 1.15 2006/05/22 14:02:21 wig Exp $';
+my $thisid		=	'$Id: MixChecker.pm,v 1.16 2006/11/02 15:37:48 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixChecker.pm,v $';
-my $thisrevision   =      '$Revision: 1.15 $';
+my $thisrevision   =      '$Revision: 1.16 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -187,9 +190,9 @@ sub mix_check_case ($$) {
 
 	# return if check is disabled
 	#  or $name matches the exception list
-	if ( $check =~ m/^\s*$/ or
-		 $check =~ m/\bdisable/ or
-		 $check =~ m/\bna\b/ ) {
+	if ( $check =~ m/^\s*$/o or
+		 $check =~ m/\bdisable/io or
+		 $check =~ m/\b(na|off)\b/io ) {
 		return $name;
 	}
 

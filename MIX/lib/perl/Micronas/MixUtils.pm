@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.132 $                                        |
+# | Revision:   $Revision: 1.133 $                                        |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/10/30 15:34:59 $                              |
+# | Date:       $Date: 2006/11/02 15:37:48 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.132 2006/10/30 15:34:59 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.133 2006/11/02 15:37:48 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixUtils.pm,v $
+# | Revision 1.133  2006/11/02 15:37:48  wig
+# |  	MixChecker.pm MixUtils.pm MixWriter.pm : added basic caching, improved performance
+# |
 # | Revision 1.132  2006/10/30 15:34:59  wig
 # | extended handling of `define port/signal definitions
 # |
@@ -238,11 +241,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.132 2006/10/30 15:34:59 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.133 2006/11/02 15:37:48 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.132 $';         #'
+my $thisrevision        =      '$Revision: 1.133 $';         #'
 
-# Revision:   $Revision: 1.132 $   
+# Revision:   $Revision: 1.133 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2081,7 +2084,7 @@ sub replace_mac ($$) {
     $text =~ s/%OPEN_\d+%/%OPEN%/gio;
 
 	#!wig20060617: create seperate high/low signals for high/low
-	while ( $text =~ m/%(HIGH|LOW)(_BUS)?(_\d+)?%/g ) {
+	while ( $text =~ m/%(HIGH|LOW)(_BUS)?(_\d+)?%/og ) {
 		my $hl  = $1;
 		my $bus = ( $2 ) ? $2 : '';
 		my $n   = ( $3 ) ? $3 : '';
