@@ -15,21 +15,24 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.133 $                                        |
+# | Revision:   $Revision: 1.134 $                                        |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/02 15:37:48 $                              |
+# | Date:       $Date: 2006/11/09 11:12:35 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.133 2006/11/02 15:37:48 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.134 2006/11/09 11:12:35 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
 #
 # +-----------------------------------------------------------------------+
-# |                                                                       |
-# | Changes:                                                              |
+# |
+# | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.134  2006/11/09 11:12:35  wig
+# | 	MixUtils.pm : speedup in replace_mac
+# |
 # | Revision 1.133  2006/11/02 15:37:48  wig
 # |  	MixChecker.pm MixUtils.pm MixWriter.pm : added basic caching, improved performance
 # |
@@ -39,77 +42,7 @@
 # | Revision 1.131  2006/10/23 08:31:06  wig
 # | Fixed problem with ::b ::b:1 output / missing ::b:1
 # |
-# | Revision 1.130  2006/10/17 09:26:34  wig
-# |  	MixUtils.pm : fixed $eh->() code reference
-# |
-# | Revision 1.129  2006/07/20 09:41:55  wig
-# | Debugged -variant/-sel in combination with non mix-headers
-# |
-# | Revision 1.126  2006/07/13 12:21:52  wig
-# | Fixed bad if in db2array ($type got wrong value).
-# |
-# | Revision 1.125  2006/07/12 15:23:40  wig
-# | Added [no]sel[ect]head switch to xls2csv to support selection based on headers and variants.
-# |
-# | Revision 1.124  2006/07/05 09:58:28  wig
-# | Added -variants to conn and io sheet parsing, rewrote open_infile interface (ordered)
-# |
-# | Revision 1.123  2006/07/04 12:22:35  wig
-# | Fixed TOP handling, -cfg FILE issue, ...
-# |
-# | Revision 1.122  2006/07/03 15:34:37  lutscher
-# | fixed mix_use_on_demand()
-# |
-# | Revision 1.121  2006/06/22 07:13:21  wig
-# | Updated HIGH/LOW parsing, extended report.portlist.comments
-# |
-# | Revision 1.120  2006/05/22 14:02:20  wig
-# | Fix avfb issues with high/low connections
-# |
-# | Revision 1.119  2006/05/09 14:38:51  wig
-# |  	MixParser.pm MixUtils.pm MixWriter.pm : improved constant assignments
-# |
-# | Revision 1.118  2006/05/08 15:20:04  wig
-# | Implement mix_use_on_demand
-# |
-# | Revision 1.117  2006/05/03 14:46:53  wig
-# |  	MixUtils.pm : add &nil, &nl as allowed encodings in MIXCFG
-# |
-# | Revision 1.116  2006/05/03 12:03:15  wig
-# | Improved top handling, fixed generated format
-# |
-# | Revision 1.115  2006/04/24 12:41:52  wig
-# | Imporved log message filter
-# |
-# | Revision 1.114  2006/04/13 13:31:52  wig
-# | Changed possition of VERILOG_HOOK_PARA, detect illegal stuff in ::in/out description
-# |
-# | Revision 1.113  2006/04/12 15:36:36  wig
-# | Updates for xls2csv added, new ooolib
-# |
-# | Revision 1.112  2006/04/10 15:50:09  wig
-# | Fixed various issues with logging and global, added mif test case (report portlist)
-# |
-# | Revision 1.111  2006/03/17 09:18:31  wig
-# | Fixed bad usage of $eh inside m/../ and print "..."
-# |
-# | Revision 1.109  2006/03/14 14:20:49  lutscher
-# | changed __I_SPLIT_HEAD to __D_SPLIT_HEAD
-# |
-# | Revision 1.108  2006/03/14 08:10:34  wig
-# | No changes, got deleted accidently
-# |
-# | Revision 1.107  2006/02/23 10:56:12  mathias
-# | added 'reglist->crossref' to the configuration tree
-# |
-# | Revision 1.106  2006/01/19 08:49:31  wig
-# | Minor fixes regarding sort order output (debug parameter added)
-# |
-# | Revision 1.105  2006/01/18 16:59:29  wig
-# |  	MixChecker.pm MixParser.pm MixUtils.pm MixWriter.pm : UNIX tested
-# |
 # | .....
-# |
 # |
 # +-----------------------------------------------------------------------+
 package  Micronas::MixUtils;
@@ -241,11 +174,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.133 2006/11/02 15:37:48 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.134 2006/11/09 11:12:35 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.133 $';         #'
+my $thisrevision        =      '$Revision: 1.134 $';         #'
 
-# Revision:   $Revision: 1.133 $   
+# Revision:   $Revision: 1.134 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2076,9 +2009,14 @@ sub mix_utils_loc_sum () {
 #
 # Do some text replacements
 #
+#wig20061102: performance tuning ...
 sub replace_mac ($$) {
     my $text = shift;
     my $rmac = shift;
+
+	# Shortcut: if there is no %...% in text -> return immediatley
+	# but a replacement without %...% could happen, too
+	# return $text unless ( $text =~ m/%/o );
 
 	#!wig20050111: %OPEN_NN% could be around ... -> hard coded to %OPEN%
     $text =~ s/%OPEN_\d+%/%OPEN%/gio;
@@ -2089,13 +2027,19 @@ sub replace_mac ($$) {
 		my $bus = ( $2 ) ? $2 : '';
 		my $n   = ( $3 ) ? $3 : '';
 		if ( $rmac->{'%' . $hl . $bus . '%'} ) { # Convert high/low bus, keep number
-			$text =~ s/%(HIGH|LOW)(_BUS)?(_\d+)?%/$rmac->{'%' . $hl . $bus . '%'}$n/;
+			#!wig20061102: Optimze this replacement:
+			$text =~ s/%$hl$bus$n%/$rmac->{'%' . $hl . $bus . '%'}$n/g;
 		}
 	}
 		
     if ( keys( %$rmac ) > 0 ) {
-        my $mkeys = "(" . join( '|', keys( %$rmac ) ) . ")";
-        $text =~ s/$mkeys/$rmac->{$1}/mg;
+        #ORG: my $mkeys = "(" . join( '|', keys( %$rmac ) ) . ")";
+        #ORG: $text =~ s/$mkeys/$rmac->{$1}/mg;
+		#!wig20061102: Would that be faster?
+		for my $r ( keys( %$rmac ) ) {
+			my $replace = $rmac->{$r};
+			$text =~ s/$r/$replace/mg;
+		}
     } else {
 	# Do nothing if there are no keys defined ...
         # Strange, why would one call a replace functions without replacement
