@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.34 $                                               |
+# | Revision:   $Revision: 1.35 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2006/10/26 06:37:38 $                                                   |
+# | Date:       $Date: 2006/11/09 13:35:00 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.34 2006/10/26 06:37:38 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.35 2006/11/09 13:35:00 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,7 +31,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
-# | Revision 1.34  2006/10/26 06:37:38  mathias
+# | Revision 1.35  2006/11/09 13:35:00  mathias
+# | added '#ifdef' to the written header files to prevent multiple includes
+# |
+# | Revision 1.34  2006-10-26 06:37:38  mathias
 # | report c header files:
 # | - fixed issue with endianness
 # | - write macro to get real (base + offset) address
@@ -157,11 +160,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.34 2006/10/26 06:37:38 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.35 2006/11/09 13:35:00 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.34 $';
+my $thisrevision   =      '$Revision: 1.35 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -356,6 +359,13 @@ sub mix_rep_header_open_files($$)
         print("Error: Couldn't open file `$file'!");
         exit(2);
     }
+    # prevent multiple includes
+    my $newf = $file;
+    $newf =~ s/\./_/g;
+    $fh->print("#ifndef _" . uc($newf) . "_\n");
+    $fh->print("#define _" . uc($newf) . "_\n");
+
+    # write base address(es)
     if ($blocks->{$name}->{reg_clones} > 1) {
         $fh->print("/* Base addresses */\n");
     } else {
@@ -450,6 +460,7 @@ sub mix_rep_header($)
             mix_rep_header_print($fh, $domain_name, \%theBlock, $rTypes);
 
             # close the header file
+            $fh->print("#endif\n");
             $fh->close();
         }
     }
@@ -500,8 +511,8 @@ sub mix_rep_header_print($$$$)
             $high += $slice->{size};
         }
         # remaining bits
-        if ($high < 31) {
-            my $width = 31 - $high;
+        if ($high < 32) {
+            my $width = 32 - $high;
             push(@slicearr, sprintf("%5s uint32_t %-44s : %2d;   /* reserved */\n", ' ', ' ', $width));
         }
         ### for little endian
