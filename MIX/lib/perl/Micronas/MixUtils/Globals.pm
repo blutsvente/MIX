@@ -14,18 +14,21 @@
 #
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
-# | Modules:    $RCSfile: Globals.pm,v $                                      |
-# | Revision:   $Revision: 1.26 $                                          |
+# | Modules:    $RCSfile: Globals.pm,v $                                  |
+# | Revision:   $Revision: 1.27 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/02 15:37:29 $                              |
+# | Date:       $Date: 2006/11/09 11:12:53 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
-# |                                                                       |
-# | Changes:                                                              |
+# |
+# | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.27  2006/11/09 11:12:53  wig
+# |  	Globals.pm : delete some old lines
+# |
 # | Revision 1.26  2006/11/02 15:37:29  wig
 # |  	Globals.pm : added basic caching to Globals.pm get/set/....
 # |
@@ -35,75 +38,8 @@
 # | Revision 1.24  2006/09/25 08:24:10  wig
 # | Prepared emumux and `define
 # |
-# | Revision 1.23  2006/09/22 09:07:24  lutscher
-# | added output.path_include and output.verilog_def, and ::clone for I2C sheet
+# | ....
 # |
-# | Revision 1.22  2006/09/01 15:19:27  lutscher
-# | added module registration functions
-# |
-# | Revision 1.21  2006/07/19 07:38:16  wig
-# | Updates made for xls2csv
-# |
-# | Revision 1.20  2006/07/12 15:23:40  wig
-# | Added [no]sel[ect]head switch to xls2csv to support selection based on headers and variants.
-# |
-# | Revision 1.19  2006/07/05 09:58:28  wig
-# | Added -variants to conn and io sheet parsing, rewrote open_infile interface (ordered)
-# |
-# | Revision 1.18  2006/07/04 12:22:35  wig
-# | Fixed TOP handling, -cfg FILE issue, ...
-# |
-# | Revision 1.17  2006/06/28 09:16:02  lutscher
-# | moved two reg_shell parameters to Globals.pm
-# |
-# | Revision 1.16  2006/06/22 09:01:00  lutscher
-# | added reg_shell params
-# |
-# | Revision 1.15  2006/06/22 07:13:21  wig
-# | Updated HIGH/LOW parsing, extended report.portlist.comments
-# |
-# | Revision 1.14  2006/05/09 14:39:16  wig
-# |  	MixParser.pm MixUtils.pm MixWriter.pm : improved constant assignments
-# | 	Globals.pm IO.pm : improved limits, return value of write_delta_sheet
-# |
-# | Revision 1.13  2006/05/03 12:03:15  wig
-# | Improved top handling, fixed generated format
-# |
-# | Revision 1.12  2006/04/24 12:41:52  wig
-# | Imporved log message filter
-# |
-# | Revision 1.11  2006/04/13 13:31:52  wig
-# | Changed possition of VERILOG_HOOK_PARA, detect illegal stuff in ::in/out description
-# |
-# | Revision 1.10  2006/04/12 15:36:36  wig
-# | Updates for xls2csv added, new ooolib
-# |
-# | Revision 1.9  2006/04/11 13:38:01  wig
-# | Added verimap config: wrap verilog module header into ifdef/else/endif
-# |
-# | Revision 1.8  2006/04/10 15:50:08  wig
-# | Fixed various issues with logging and global, added mif test case (report portlist)
-# |
-# | Revision 1.7  2006/04/04 09:25:06  lutscher
-# | added reg_shell parameter
-# |
-# | Revision 1.6  2006/03/17 09:18:31  wig
-# | Fixed bad usage of $eh inside m/../ and print "..."
-# |
-# | Revision 1.4  2006/03/14 16:37:34  wig
-# | Syntax typo fixed
-# |
-# | Revision 1.3  2006/03/14 16:33:12  wig
-# |  	MIXFilter.pm : extended filter based on tag names and occurance
-# |  	Globals.pm : added global config for logger limits
-# |
-# | Revision 1.2  2006/03/14 14:17:59  lutscher
-# | added cappend
-# |
-# | Revision 1.1  2006/03/14 08:10:33  wig
-# | No changes, got deleted accidently
-# |
-# |                                                                       |
 # +-----------------------------------------------------------------------+
 package  Micronas::MixUtils::Globals;
 require Exporter;
@@ -129,9 +65,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.26 2006/11/02 15:37:29 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.27 2006/11/09 11:12:53 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.26 $';  
+my $thisrevision    =      '$Revision: 1.27 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
