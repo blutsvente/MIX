@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.27 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/09 11:12:53 $                              |
+# | Revision:   $Revision: 1.28 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2006/11/13 17:24:43 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.28  2006/11/13 17:24:43  lutscher
+# | added reg_shell.e_vr_ad parameters
+# |
 # | Revision 1.27  2006/11/09 11:12:53  wig
 # |  	Globals.pm : delete some old lines
 # |
@@ -65,9 +68,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.27 2006/11/09 11:12:53 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.28 2006/11/13 17:24:43 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.27 $';  
+my $thisrevision    =      '$Revision: 1.28 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -855,6 +858,12 @@ sub init ($) {
         'regshell_prefix'    => "rs",     # register-shell prefix
 		'cfg_module_prefix'  => "rs_cfg", # prefix for config register block
 
+                    # parameters for e_vr_ad view
+        'e_vr_ad' => {
+                      'regfile_prefix'   => 'MIC',
+                      'file_prefix'  => 'regdef',
+                      'vplan_ref'    => '%EMPTY%'
+                     },
 					# parameters for STL view 
 		'stl' => {
 				  'initial_idle'  => 100,
