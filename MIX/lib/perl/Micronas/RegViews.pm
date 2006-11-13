@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.55 2006/10/18 08:31:45 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.56 2006/11/13 11:31:49 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.55 $                                  
+#  Revision      : $Revision: 1.56 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.56  2006/11/13 11:31:49  lutscher
+#  fixed _vgch_rs_code_read_mux in case there are no readable registers
+#
 #  Revision 1.55  2006/10/18 08:31:45  lutscher
 #  renamed SV assertions according to naming rules
 #
@@ -284,7 +287,7 @@ sub _vgch_rs_init {
 	}; 
 
     # register Perl module with mix
-    $eh->mix_add_module_info("RegViews", '$Revision: 1.55 $ ', "Utility functions to create different register space views from Reg class object");
+    $eh->mix_add_module_info("RegViews", '$Revision: 1.56 $ ', "Utility functions to create different register space views from Reg class object");
 };
 
 
@@ -677,7 +680,7 @@ sub _vgch_rs_code_read_mux {
 		# prefix
 		push @linsert, "", "/*","  read logic and mux process","*/";
 		push @linsert, $ind x $ilvl . "assign rd_data_o = mux_rd_data;";
-		push @linsert, $ind x $ilvl . "assign rd_err_o = mux_rd_err | addr_overshoot;";
+		push @linsert, $ind x $ilvl . "assign rd_err_o  = mux_rd_err | addr_overshoot;";
 		my %hsens_list = ("iaddr" => "");
 
 		if ($rdpl_stages == 0) { # insert combinatiorial read process
@@ -759,7 +762,11 @@ sub _vgch_rs_code_read_mux {
 			push @linsert, $ind x $ilvl-- . "endcase";
 			push @linsert, $ind x $ilvl-- . "end";
 		};
-	};
+	} else { # no read-registers
+        push @linsert, "", "/*","  no readable registers inferred","*/";
+		push @linsert, $ind x $ilvl . "assign rd_data_o = 'hdeadbeef;";
+		push @linsert, $ind x $ilvl . "assign rd_err_o  = 1;";
+    };
 	push @$lref_rp, @linsert;
 };
 
