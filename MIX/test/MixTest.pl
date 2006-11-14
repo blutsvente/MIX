@@ -473,18 +473,23 @@ my @tests = (
 	  'options' => '',
 	},
 	{ # recognize that DATA9 and data9 are the same (in verilog!)
-	  'name' => "bugver2006",
-	  'path' => "bugver2006/20060522a",
+	  'name' => 'bugver2006',
+	  'path' => 'bugver2006/20060522a',
 	  'options' => '',
 	},
 	{ # port gets assigned a constant value and a signal!
-	  'name' => "bugver2006",
-	  'path' => "bugver2006/20060522b",
+	  'name' => 'bugver2006',
+	  'path' => 'bugver2006/20060522b',
 	  'options' => '',
 	},
 	{ # signal with ::low only defintion!
-	  'name' => "bugver2006",
-	  'path' => "bugver2006/20061017a",
+	  'name' => 'bugver2006',
+	  'path' => 'bugver2006/20061017a',
+	  'options' => '',
+	},
+	{ # missing ::out column in output
+	  'name' => 'bugver2006',
+	  'path' => 'bugver2006/20061113a',
 	  'options' => '',
 	},
 	#{ # port gets assigned a constant value and a signal!
@@ -493,8 +498,8 @@ my @tests = (
 	#  'options' => '',
 	#},
 	{ # Create simple logic ...
-	  'name' => "logic",
-	  'path' => "logic",
+	  'name' => 'logic',
+	  'path' => 'logic',
 	  'options' => '',
 	},
 	{ # Add arbitrary text in hooks: ::udc
