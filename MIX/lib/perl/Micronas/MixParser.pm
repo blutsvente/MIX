@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.82 $                                         |
+# | Revision:   $Revision: 1.83 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/10/30 15:45:25 $                              |
+# | Date:       $Date: 2006/11/14 16:48:59 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.82 2006/10/30 15:45:25 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.83 2006/11/14 16:48:59 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.83  2006/11/14 16:48:59  wig
+# | extended add_ports to handle `define ports!
+# |
 # | Revision 1.82  2006/10/30 15:45:25  wig
 # |  	MixParser.pm MixWriter.pm : renamed variable, fixed typo
 # |
@@ -181,9 +184,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.82 2006/10/30 15:45:25 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.83 2006/11/14 16:48:59 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.82 $';
+my $thisrevision =	'$Revision: 1.83 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -3082,6 +3085,9 @@ sub _mix_p_getconnected ($$$$;$) {
 #
 #TODO: what if in/out mode conflicts? Do not want to think about that ...
 # Need to extend conndb{}{::sigbits} then.
+#
+#!wig20061114: If signal width == digits and all connections are with `define
+#   then do a full connect!!
 sub bits_at_inst ($$$) {
     my $signal = shift;
     my $inst = shift;
@@ -3104,17 +3110,15 @@ sub bits_at_inst ($$$) {
         my $cell = $conndb{$signal}{'::' . $io}[$n];
         my $sig_f = $cell->{'sig_f'} || 0; # Changed wig20030605
         my $sig_t = $cell->{'sig_t'} || 0; # Changed wig20030605
-        # unless( defined( $sig_f ) ) { $sig_f = "0"; };
-        # unless( defined( $sig_t ) ) { $sig_t = "0"; };
 
-        $sigm = "" if ( lc( $sigm ) eq "s" );
+        $sigm = '' if ( lc( $sigm ) eq 's' );
         if ( $sigm ) {
             if ( $sigm =~ m,^io,io ) {
-                $d = "c";
+                $d = 'c';
             } elsif ( $sigm =~ m,^([btio]),io ) {
                 $d = lc( $1 );
             } else {
-                $d = "e"; # TODO 20030723 ..
+                $d = 'e'; # TODO 20030723 ..
             }
         } else {
             # Derive -> i/o from in/out
@@ -3126,13 +3130,17 @@ sub bits_at_inst ($$$) {
             push( @{$width{$d}}, "A::" );
         } else {
             push( @{$width{$d}}, "F::$sig_f:T::$sig_t" );
-            if ( "$sig_f --- $sig_t" =~ m,(\d+) --- (\d+),o ) {
-                if ( $1 >= $2 ) {
+            #OLD: if ( "$sig_f --- $sig_t" =~ m,(\d+) --- (\d+),o ) {}
+			# Port has integer bounds
+			if ( is_integer2( $sig_f, $sig_t ) ) {
+                if ( $sig_f >= $sig_t ) {
                     for my $b ( $2..$1 ) { $bits{$d}[$b] = $d; };
                 } else {
                     for my $b ( $1..$2 ) { $bits{$d}[$b] = $d; };
                 }
-            } else {
+            } elsif ( 0 ) { # Handle 
+				;
+			} else {
                 $logger->warn( '__W_BITS_AT_INST', "\tSignal $signal width unknown at instance $inst: " . $width{$d}[-1] );
                 $sigw_flag{$d} = 0;
             }
@@ -3147,7 +3155,7 @@ sub bits_at_inst ($$$) {
     my @ret = (); # Preset to Error
     for my $i ( keys( %width ) ) {
         #
-        #TODO: Iterate through $width!!!!
+        # TODO : Iterate through $width!!!!
         if ( scalar( @{$width{$i}} ) == 1 and $width{$i}[0] eq "A::" ) {
             # only one link, that's easy and clear
             push( @ret , $width{$i}[0] . ":$i" );
@@ -3166,11 +3174,11 @@ sub bits_at_inst ($$$) {
             # Not fully connected?
             unless( $isa_flag ) {
            		if ( not $sigw_flag{$i} ) {
-                	push( @ret, "A:::e" ); # Missing direction!
+                	push( @ret, "A:::e$i" ); # Missing direction!
                 	# If we do not know, we take full signal
-            	} elsif ( $h =~ m,^\s*\d+\s*$,o and $l =~ m,^\s*(\d+)\s*$, ) {
+            	} elsif ( is_integer2( $h, $l ) ) {
                 	my $miss = 0;
-                	my $bits = "";
+                	my $bits = '';
                 	for my $b ( $l..$h ) {
                    		unless( $bits{$i}[$b] ) { $miss = 1; }
                    		$bits = ( ( $bits{$i}[$b] ) ? $bits{$i}[$b] : '0' ) . $bits;
@@ -3333,6 +3341,7 @@ sub overlay_bits($$) {
 #
 # add bit number to avoid collision in case of busses
 #
+#!wig20061114: extend A:::e[io]
 sub add_port ($$) {
     my $r_adds = shift;
     my $r_connected = shift;
@@ -3353,8 +3362,10 @@ sub add_port ($$) {
 
         # Retrieve modes and width from sigbits data structure
         for my $sb ( @{$hierdb{$r}{'::sigbits'}{$signal}} ) {
-            if ( $sb =~ m,(.*):(.)$, ) {
-                # $d_wid{$r} = $1;
+			#!wig20061114: allow A::e[io]
+            if ( $sb =~ m,(.*):(e.)$, ) {
+                $d_mode{$r}{$2} = $1; # eo = A:: ....
+            } elsif ( $sb =~ m,(.*):(.)$, ) {
                 $d_mode{$r}{$2} = $1; # o = A:: ....
             }
         }
@@ -3814,7 +3825,7 @@ sub _add_port ($$$$$$$$) {
                 $sf = 0; # hmmm, hope that will do the trick
                 $st = 0;
             }
-            if ( $sf =~ m,^\d+$, and $st =~ m,^\d+$, ) {
+            if ( is_integer2( $sf, $st ) ) {
                 if ( $sf > $st ) { # Run from $st to $sf ....
                     $ub = $sf;
                     $lb = $st;
@@ -3826,6 +3837,19 @@ sub _add_port ($$$$$$$$) {
                 expand_a_vec( $uw, $lb, $ub );
                 check_b_vec( $dw, $lb, $ub ); # Are these the right size?
                 check_b_vec( $uw, $lb, $ub );
+				# ! forward 'ei' / 'eo' to 'i' / 'o'
+				if ( exists( $uw->{'ei'} ) ) {
+					$uw->{'i'} = $uw->{'ei'};
+				}
+				if ( exists( $uw->{'eo'} ) ) {
+					$uw->{'o'} = $uw->{'eo'};
+				}
+				if ( exists( $dw->{'ei'} ) ) {
+					$dw->{'i'} = $dw->{'ei'};
+				}
+				if ( exists( $dw->{'eo'} ) ) {
+					$dw->{'o'} = $dw->{'eo'};
+				}
                 strip_b_vec( $dw , "ioc", $lb, $ub );
                 strip_b_vec( $uw, "ioc", $lb, $ub );
 
@@ -4110,8 +4134,9 @@ sub expand_a_vec ($$$) {
     my $max = shift;
 
     for my $i ( keys( %$r ) ) {
+		( my $tag = $i ) =~ s/^e([io])/$1/;
         if ( $r->{$i} =~ m,A::, ) {
-            $r->{$i} = "B::" . $i x ( $max - $min + 1);
+            $r->{$i} = "B::" . $tag x ( $max - $min + 1);
         }
     }
 }

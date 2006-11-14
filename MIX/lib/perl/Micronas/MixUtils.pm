@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.134 $                                        |
+# | Revision:   $Revision: 1.135 $                                        |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/09 11:12:35 $                              |
+# | Date:       $Date: 2006/11/14 16:49:00 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.134 2006/11/09 11:12:35 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.135 2006/11/14 16:49:00 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.135  2006/11/14 16:49:00  wig
+# | extended add_ports to handle `define ports!
+# |
 # | Revision 1.134  2006/11/09 11:12:35  wig
 # | 	MixUtils.pm : speedup in replace_mac
 # |
@@ -174,11 +177,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.134 2006/11/09 11:12:35 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.135 2006/11/14 16:49:00 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.134 $';         #'
+my $thisrevision        =      '$Revision: 1.135 $';         #'
 
-# Revision:   $Revision: 1.134 $   
+# Revision:   $Revision: 1.135 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2277,6 +2280,7 @@ Returns: %order (keys are the ::head items)
 20051024: make sure multiple fields are printed in one block
 20060706: consider $eh->get('input.ignore.columns')
 20060717: keep order of occurance ($eh->get('intermediate.order'))
+20061114: TODO : make sure predefined headers are in taken into account (::shortname!)
 =cut
 
 sub parse_header($$@){
@@ -2451,6 +2455,8 @@ sub parse_header($$@){
 # Global:
 #	changes $eh-> ... {$type}{'field'} ... print order
 #
+#!wig20061114: make sure all default fields are on-board
+#  (see bug20061113a)
 sub _mix_utils_reorder ($$$) {
 	my $templ = shift;
 	my $resortar = shift;
@@ -2666,7 +2672,8 @@ sub db2array ($$$$;$$) {
 
 		if ( $printorder =~ m/\btemplate/ ) {		
 			# Sort by template order
-			if ( $fields->{$ii}[4] > 0 ) {
+			if ( $fields->{$ii}[4] > 0 and exists( $fields->{$ii}[5] ) ) {
+				# Take print order for all fields used ...
 				$o[$fields->{$ii}[4]] = $ii; # Print Order ...
 			}
 			if ( $eh->get( $type . '.key' ) eq $ii ) {
