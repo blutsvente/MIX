@@ -324,6 +324,11 @@ my @tests = (
 	  'path' => "verilog/emumuxall",
 	  'options' => '',
 	},
+	{ #!wig20061115: adding verilog include file import
+	  'name' => "verilog",
+	  'path' => "verilog/vinc",
+	  'options' => '',
+	},
 	{
 	  'name' => "conf",
 	  'path' => "conf",
@@ -526,21 +531,25 @@ my @tests = (
 		'name' => 'reg_shell',
 		'path' => 'reg_shell/scd', # single-clock-domain
 		'options' => '',
+	    'skip' => 1,
 	},
 	{ 
 		'name' => 'reg_shell',
 		'path' => 'reg_shell/mcd', # multi-clock-domain
 		'options' => '',
+	    'skip' => 1,
 	},
 	{ 
 		'name' => 'reg_shell',
 		'path' => 'reg_shell/no_clock_gating', # with disabled clock-gating
 		'options' => '',
+	    'skip' => 1,
 	},
 	{ 
 		'name' => 'reg_shell',
 		'path' => 'reg_shell/read_pipeline', # with inferring a read-pipeline
 		'options' => '',
+	    'skip' => 1,
 	},
 	{ 
 		'name' => 'duplicate',
