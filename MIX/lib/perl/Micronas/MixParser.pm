@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.83 $                                         |
+# | Revision:   $Revision: 1.84 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/14 16:48:59 $                              |
+# | Date:       $Date: 2006/11/15 16:24:37 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.83 2006/11/14 16:48:59 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.84 2006/11/15 16:24:37 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.84  2006/11/15 16:24:37  wig
+# | 	MixParser.pm : minor fix to get verilog include import working
+# |
 # | Revision 1.83  2006/11/14 16:48:59  wig
 # | extended add_ports to handle `define ports!
 # |
@@ -184,9 +187,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.83 2006/11/14 16:48:59 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.84 2006/11/15 16:24:37 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.83 $';
+my $thisrevision =	'$Revision: 1.84 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -3134,11 +3137,11 @@ sub bits_at_inst ($$$) {
 			# Port has integer bounds
 			if ( is_integer2( $sig_f, $sig_t ) ) {
                 if ( $sig_f >= $sig_t ) {
-                    for my $b ( $2..$1 ) { $bits{$d}[$b] = $d; };
+                    for my $b ( $sig_t..$sig_f ) { $bits{$d}[$b] = $d; };
                 } else {
-                    for my $b ( $1..$2 ) { $bits{$d}[$b] = $d; };
+                    for my $b ( $sig_f..$sig_t ) { $bits{$d}[$b] = $d; };
                 }
-            } elsif ( 0 ) { # Handle 
+            } elsif ( 0 ) { # Handle cases with unknown/unresolvable signal width
 				;
 			} else {
                 $logger->warn( '__W_BITS_AT_INST', "\tSignal $signal width unknown at instance $inst: " . $width{$d}[-1] );
@@ -3174,7 +3177,8 @@ sub bits_at_inst ($$$) {
             # Not fully connected?
             unless( $isa_flag ) {
            		if ( not $sigw_flag{$i} ) {
-                	push( @ret, "A:::e$i" ); # Missing direction!
+                	# TODO : !wig20061114a: keep direction push( @ret, "A:::e$i" ); # Error + in/out indication ...
+                	push( @ret, "A:::e" ); # Error + in/out indication ...
                 	# If we do not know, we take full signal
             	} elsif ( is_integer2( $h, $l ) ) {
                 	my $miss = 0;
@@ -3362,10 +3366,12 @@ sub add_port ($$) {
 
         # Retrieve modes and width from sigbits data structure
         for my $sb ( @{$hierdb{$r}{'::sigbits'}{$signal}} ) {
-			#!wig20061114: allow A::e[io]
-            if ( $sb =~ m,(.*):(e.)$, ) {
-                $d_mode{$r}{$2} = $1; # eo = A:: ....
-            } elsif ( $sb =~ m,(.*):(.)$, ) {
+			#!wig20061114: TODO allow A::e[io] (for case where port width cannot be resolved.
+			# TODO : Create a full signal connect if the current inst. has no connection!
+            # TODO : if ( $sb =~ m,(.*):(e.)$, ) {
+            # TODO :     $d_mode{$r}{$2} = $1; # eo = A:: ....
+            # TODO : } elsif ( $sb =~ m,(.*):(.)$, ) {
+			if ( $sb =~ m,(.*):(.)$, ) {
                 $d_mode{$r}{$2} = $1; # o = A:: ....
             }
         }
@@ -3667,7 +3673,7 @@ sub _add_port ($$$$$$$$) {
     my $signal = $r->[0];
     my $inst = $r->[1];
 
-    my $uk = join( "", sort ( keys ( %$um ) ) ); # bceimo
+    my $uk = join( '', sort ( keys ( %$um ) ) ); # bceimo
     if ( $uk =~ m,e, ) { # Error
 		$logger->error( '__E_ADD_PORT_', "\tBad mode detected for signal $signal generating port at instance $inst" );
     }
@@ -3838,18 +3844,18 @@ sub _add_port ($$$$$$$$) {
                 check_b_vec( $dw, $lb, $ub ); # Are these the right size?
                 check_b_vec( $uw, $lb, $ub );
 				# ! forward 'ei' / 'eo' to 'i' / 'o'
-				if ( exists( $uw->{'ei'} ) ) {
-					$uw->{'i'} = $uw->{'ei'};
-				}
-				if ( exists( $uw->{'eo'} ) ) {
-					$uw->{'o'} = $uw->{'eo'};
-				}
-				if ( exists( $dw->{'ei'} ) ) {
-					$dw->{'i'} = $dw->{'ei'};
-				}
-				if ( exists( $dw->{'eo'} ) ) {
-					$dw->{'o'} = $dw->{'eo'};
-				}
+				# TODO : if ( exists( $uw->{'ei'} ) ) {
+				# TODO: 	$uw->{'i'} = $uw->{'ei'};
+				# TODO: }
+				# TODO: if ( exists( $uw->{'eo'} ) ) {
+				# TODO: 	$uw->{'o'} = $uw->{'eo'};
+				# TODO: }
+				# TODO: if ( exists( $dw->{'ei'} ) ) {
+				# TODO: 	$dw->{'i'} = $dw->{'ei'};
+				# TODO: }
+				# TODO: if ( exists( $dw->{'eo'} ) ) {
+				# TODO: 	$dw->{'o'} = $dw->{'eo'};
+				# TODO: }
                 strip_b_vec( $dw , "ioc", $lb, $ub );
                 strip_b_vec( $uw, "ioc", $lb, $ub );
 
