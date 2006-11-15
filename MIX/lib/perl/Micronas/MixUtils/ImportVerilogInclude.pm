@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: ImportVerilogInclude.pm,v $                     |
-# | Revision:   $Revision: 1.1 $                                          |
+# | Revision:   $Revision: 1.2 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/15 09:54:28 $                              |
+# | Date:       $Date: 2006/11/15 16:25:02 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005/2006                                    |
 # |                                                                       |
@@ -27,6 +27,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # # $Log: ImportVerilogInclude.pm,v $
+# # Revision 1.2  2006/11/15 16:25:02  wig
+# # 	MixParser.pm : minor fix to get verilog include import working
+# # 	ImportVerilogInclude.pm : minor fixes for various smaller issues
+# #
 # # Revision 1.1  2006/11/15 09:54:28  wig
 # # Added ImportVerilogInclude module: read defines and replace in input data.
 # #
@@ -34,11 +38,11 @@
 # +-----------------------------------------------------------------------+
 package  Micronas::MixUtils::ImportVerilogInclude;
 
-# @ISA=qw();
+@ISA=qw(Exporter);
 #
-# @EXPORT  = qw();
+@EXPORT  = qw();
 # 
-# @EXPORT_OK = qw();
+@EXPORT_OK = qw();
 #
 our $VERSION = '1.0';
 
@@ -54,9 +58,9 @@ use Log::Log4perl qw(get_logger);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: ImportVerilogInclude.pm,v 1.1 2006/11/15 09:54:28 wig Exp $';#'  
+my $thisid          =      '$Id: ImportVerilogInclude.pm,v 1.2 2006/11/15 16:25:02 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: ImportVerilogInclude.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.1 $'; #'  
+my $thisrevision    =      '$Revision: 1.2 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -82,8 +86,8 @@ sub new {
 	}
 	# data member default values
 	my $ref_member  = {
-		'defines'	=>	'',
-		'files'		=>  '',
+		'defines'	=>	{},
+		'files'		=>  {},
 	};
 	
 	# init data members w/ parameters from constructor call
@@ -123,8 +127,20 @@ sub import {
 					# Read in line by line ...
 					$self->{'files'}{$ff} = 1;
 					while( <$fh> ) {
+						# Remove verilog comments:
+						chomp;
+						$_ =~ s,//.*$,,;
+						$_ =~ s/\s+$//;
+						# Ignore all lines but `define ...
 						if ( m/^\s*`define \s+ (\w+) \s+ (.+)/x ) {
-							$self->{'defines'}{$1} = $2;
+							if ( exists( $self->{'defines'}{$1} ) ) {
+								$logger->error('__E_VINCLUDE_REDEF',
+								"\tRedefinition of $1 from '" .
+								$self->{'defines'}{$1} . "' to '" .
+								$2 . "' attempted! Ignored." );
+							} else {
+								$self->{'defines'}{$1} = $2;
+							}
 						}
 					}
 				} else {
@@ -152,29 +168,29 @@ sub apply($$) {
 	# Is $data a ref -> resolve
 	if ( ref( $data ) eq 'ARRAY' ) {
 		for my $d ( @$data ) {
-			$self->apply( $d );
+			$self->apply( \$d );
 		}
 	} elsif ( ref( $data ) eq 'HASH' ) {
 		for my $d ( keys( %$data ) ) {
-			$self->apply( $data->{$d} );
+			$self->apply( \$data->{$d} );
 		}
-	} elsif ( ref( $data ) ) {
-		$logger->error('__E_VINCLUDE_APPLY', "\tCannot handle data type " .
-			ref( $data ) . "!");
-	} else {
+	} elsif ( ref( $data ) eq 'SCALAR' ) {
 		# Try to find `foo and replace it by the defines value
-		if ( $data =~ m/`/ ) {
-			while ( $data =~ m/`(\w+)/g ) {
+		if ( $$data =~ m/`/ ) {
+			while ( $$data =~ m/`(\w+)/g ) {
 				if ( exists $self->{'defines'}{$1} ) {
 					my $define  = $1;
 					my $replace = $self->{'defines'}{$1};
-					$data =~ s/`$define/$replace/g;
+					$$data =~ s/`$define/$replace/g;
 				} else {
 					$logger->warn( '__W_VINCLUDE_UKDEF',
 						"\tunknown verilog define `$1, will not be resolved" );
 				}
 			}
 		}
+	} else { # ( ref( $data ) )
+		$logger->error('__E_VINCLUDE_APPLY', "\tCannot handle data type " .
+			ref( $data ) . "!");
 	}
 	return;
 } # End of apply
@@ -239,6 +255,8 @@ sub toconf ($) {
 	for my $d ( keys %$defines ) {
 		push( @defines, [ 'MIXVINC', $d, $defines->{$d} ]);
 	}
+
+	return @defines;
 } # End of vin2conf
 		
 1;
