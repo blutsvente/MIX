@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.48 $                                          |
+# | Revision:   $Revision: 1.49 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/07/20 09:41:55 $                              |
+# | Date:       $Date: 2006/11/15 16:25:09 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.49  2006/11/15 16:25:09  wig
+# | Upgraded __W_FILE_READ to __E_INFILE_READ
+# |
 # | Revision 1.48  2006/07/20 09:41:55  wig
 # | Debugged -variant/-sel in combination with non mix-headers
 # |
@@ -142,11 +145,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.48 2006/07/20 09:41:55 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.49 2006/11/15 16:25:09 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.48 $'; #'  
+my $thisrevision    =      '$Revision: 1.49 $'; #'  
 
-# Revision:   $Revision: 1.48 $
+# Revision:   $Revision: 1.49 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -390,7 +393,7 @@ sub mix_utils_open_input(@) {
 
     for my $i ( @in ) {
 		unless ( -r $i ) {
-	    	$logger->warn('__W_FILE_READ', "\tFile $i cannot be read!");
+	    	$logger->error('__E_INFILE_READ', "\tFile $i cannot be read!");
 	    	next;
 		}
 
