@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.67 2006/07/20 09:41:22 wig Exp $
+# $Id: TODO.txt,v 1.68 2006/11/15 09:58:09 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -27,6 +27,289 @@ Code:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+
+>>title: MIX/RFE20061114a: import verilog include and parse `defines
+
+	Read `define definitions from a verilog include file.
+	Replace the defines in the input data.
+	
+	Req: oberhoff
+	Prio: high
+	Status: started 20061115a: ImportVerilogInclude
+	Testcase: 
+	ModuleTest:
+	Assigned: wig	
+		
+>>title: MIX/BUG20061113a: missing ::out column in -mixed output
+
+	The mixed sheet does not have the ::out column.
+	(might get overwritten by ::shortname, which is not in input).
+	
+	Testcase: bugver2006/20061113a
+	Req: oberhoff
+	Prio: high
+	Status: started
+	
+>>title: MIX/BUG20061030a: Bad verilog port map for `define values for bus connections
+
+
+Es sollte so aussehen:
+			.CEQ_i(vstby_flash_if_o_s[`FIFW_CEN]),
+....
+From: 	Herberg Christian  
+Sent:	30 October 2006 09:00
+To:	Gänsheimer Wilfried
+Subject:	Busanschlüsse mit defines
+
+Hallo Wilfried,
+
+es funktioniert nicht. Aus
+...
+	::name vstby_flash_if_o_s
+	::out
+	::in   fwsram/CEQ_i=(`FIFW_CEN)
+...
+wird
+
+		fwsram fwsram_i (
+			.ADM_i(vstby_flash_if_o_s[18:0]),
+			.ADM_o(),
+			.CEQ_i[`FIFW_CEN - %TICK_DEFINE_FIFW_CEN%:0](vstby_flash_if_o_s[`FIFW_CEN]),
+			.CEQ_o(),	// FWSRAM-Flash IF:chip select
+
+	Req: herberg
+	Status: fixed 20061030
+	Prio: high
+	Testcase: bitsplice/rfe20060904a s20061030a_7
+
+>>title: MIX/RFE20060725a: Apply signed to verilog output
+
+module test (
+  input [7:0] a,
+  input signed [7:0] b, c, d, // multiple ports that share all
+// attributes can be declared together
+  output [7:0] e, // every attribute of the declaration
+// must be in the one declaration
+  output signed reg [7:0] f, g,
+  output signed [7:0] h) ;
+// It is illegal to redeclare any ports of the module in the
+body
+// of the module.
+
+…….
+
+endmodule
+ 
+
+Das Beispiel ist aus dem Verilog 2001 Standart Seite 200
+
+Gruss Martin Wendt 
+
+	Req: Martin Wendt
+	Prio: medium
+	Status: open
+	Testcase:
+	
+>>title: MIX/Bug20061017a: MIX Problem with badly defined signal bounds (typo).
+Hallo,
+
+soweit ich das soeben gesehen habe, ist das Problem ein Port, dessen ::high leer ist, waehrend in ::low ein "c"
+steht: bc_ra_03_fail_0_656x36_2dcomb_0_i Das betreffende Signal ist BC_RA_03_fail_0_656x36_2dc_0
+
+Die ganze Datenstruktur sieht so aus:
+
+0  HASH(0xe0f3a6c)
+    '::bundle' => ''
+    '::class' => 'ITUE'
+    '::clock' => 'CLK'
+    '::comment' => '__IO_MuxedPort  (X2)'
+    '::connnr' => 242
+    '::debug' => 0
+    '::default' => ''
+    '::descr' => ''
+    '::gen' => ''
+    '::high' => ''
+    '::ign' => ''
+    '::in' => ARRAY(0xe693054)
+       0  HASH(0xe0f43d8)
+          'inst' => 'i_avfb_pad_mux'
+          'port' => 'bc_ra_03_fail_0_656x36_2dcomb_0_i'
+          'port_f' => ''
+          'port_t' => 'c'
+          'sig_f' => ''
+          'sig_t' => 'c'
+       1  HASH(0xe5290f0)
+          'inst' => 'iom_itue_128_clk'
+          'port' => 'dot_i'
+          'port_f' => 3
+          'port_t' => 3
+          'sig_f' => 0
+          'sig_t' => 0
+       2  HASH(0xebc97a4)
+          'inst' => 'iom_itue_clk'
+          'port' => 'dot_i'
+          'port_f' => 3
+          'port_t' => 3
+          'sig_f' => 0
+          'sig_t' => 0
+    '::low' => 'c'
+    '::mode' => ''
+    '::name' => 'BC_RA_03_fail_0_656x36_2dc_0'
+    '::oname' => ''
+    '::out' => ARRAY(0xe5b6ef0)
+         empty array
+    '::padnum' => ''
+    '::padtype' => ''
+    '::shortname' => ''
+    '::skip' => 0
+    '::skip:1' => 0
+    '::skip:2' => 0
+    '::skip:3' => 0
+    '::skip:4' => 0
+    '::topinst' => 'i_avfb_pad_mux'
+    '::type' => 'std_ulogic'
+    DB<21>
+
+
+	Status: open
+	Prio: high
+	Testcase:
+	Req: mpit
+
+>>title: 20060725a/RFE: module header mux insertion
+...
+wir benötigen eine wichtige Erweiterung im MIX Tool, die uns bei der VGCH-Verifikation sehr weiterhelfen würde.
+
+In der Bring-Up Phase der Verifikation werden wir nicht in der Lage sein, einen kompletten Datenpfad über mehrere 
+Module aufzusetzen. Wir müssen uns da herantasten und dafür ist es erforderlich, an VGCH internen Schnittstellen 
+Daten einspeisen. Das geht für NCsim über Forces, nicht aber für Axis, weil das die Performance unakzeptabel 
+reduzieren würde. Und Axis wird unser wichtigstes Vehikel für die Verifikation sein.
+Wir beabsichtigen daher, an DUT internen Interfaces Multiplexer einbauen, die es erlauben entweder den normalen 
+Signalpfad zu nutzen oder die externen Stimuli-Daten einzuspeisen.
+Der Einbau der Multiplexer müßte automatisiert sein, nur das erlaubt uns einen flexiblen und fehlerfreien Ein- und 
+auch wieder Ausbau der Multiplexer. MIX bietet sich geradezu an, diese Funktion bereitzustellen.
+
+Daher die Frage an Dich: könnte Willi diese Aufgabe übernehmen?
+
+Danke & Gruß
+Klaus-Peter
+
+Example:
+
+
+`ifdef insert_si_mux_fe1
+
+	wire sel_mux_fe1 = 1'b0;
+	wire vgch_dvp_itue_af_p_vc_s, vgch_dvp_itue_af_p_mux_s;
+	wire vgch_dvp_itue_al_p_vc_s, vgch_dvp_itue_al_p_mux_s;
+	wire vgch_dvp_itue_ap_p_vc_s, vgch_dvp_itue_ap_p_mux_s;
+	wire vgch_dvp_itue_field_p_vc_s, vgch_dvp_itue_field_p_mux_s;
+	wire vgch_dvp_itue_hsync_p_vc_s, vgch_dvp_itue_hsync_p_mux_s;
+	wire vgch_dvp_itue_uen_p_vc_s, vgch_dvp_itue_uen_p_mux_s;
+	wire vgch_dvp_itue_vsync_p_vc_s, vgch_dvp_itue_vsync_p_mux_s;
+	wire [9:0] vgch_dvp_itue_cb_p_vc_s, vgch_dvp_itue_cb_p_mux_s;
+	wire [9:0] vgch_dvp_itue_cr_p_vc_s, vgch_dvp_itue_cr_p_mux_s;
+	wire [9:0] vgch_dvp_itue_y_p_vc_s, vgch_dvp_itue_y_p_mux_s;
+
+	assign vgch_dvp_itue_af_p_mux_s    = sel_mux_fe1 ? vgch_dvp_itue_af_p_vc_s    : vgch_dvp_itue_af_p_s;
+	assign vgch_dvp_itue_al_p_mux_s    = sel_mux_fe1 ? vgch_dvp_itue_al_p_vc_s    : vgch_dvp_itue_al_p_s;
+	assign vgch_dvp_itue_ap_p_mux_s    = sel_mux_fe1 ? vgch_dvp_itue_ap_p_vc_s    : vgch_dvp_itue_ap_p_s;
+	assign vgch_dvp_itue_field_p_mux_s = sel_mux_fe1 ? vgch_dvp_itue_field_p_vc_s : vgch_dvp_itue_field_p_s;
+	assign vgch_dvp_itue_hsync_p_mux_s = sel_mux_fe1 ? vgch_dvp_itue_hsync_p_vc_s : vgch_dvp_itue_hsync_p_s;
+	assign vgch_dvp_itue_cb_p_mux_s    = sel_mux_fe1 ? vgch_dvp_itue_cb_p_vc_s    : vgch_dvp_itue_cb_p_s;
+	assign vgch_dvp_itue_uen_p_mux_s   = sel_mux_fe1 ? vgch_dvp_itue_uen_p_vc_s   : vgch_dvp_itue_uen_p_s;
+	assign vgch_dvp_itue_cr_p_mux_s    = sel_mux_fe1 ? vgch_dvp_itue_cr_p_vc_s    : vgch_dvp_itue_cr_p_s;
+	assign vgch_dvp_itue_vsync_p_mux_s = sel_mux_fe1 ? vgch_dvp_itue_vsync_p_vc_s : vgch_dvp_itue_vsync_p_s;
+	assign vgch_dvp_itue_y_p_mux_s     = sel_mux_fe1 ? vgch_dvp_itue_y_p_vc_s     : vgch_dvp_itue_y_p_s;
+
+`endif
+
+
+		// Generated Instance Port Map for vgch_fe_i
+		vgch_fe vgch_fe_i (
+                       
+		        ...
+			
+`ifdef insert_si_mux_fe1
+	                .dvp_af_p_i(vgch_dvp_itue_af_p_mux_s),	// active field (X2) from DVP input
+			.dvp_al_p_i(vgch_dvp_itue_al_p_mux_s),	// active line (X2) from DVP input
+			.dvp_ap_p_i(vgch_dvp_itue_ap_p_mux_s),	// active pixel (X2) from DVP input
+			.dvp_field_p_i(vgch_dvp_itue_field_p_mux_s),	// field from DVP inputtop or bottom field for an interlaced signal
+			.dvp_hsync_p_i(vgch_dvp_itue_hsync_p_mux_s),	// hsync from DVP inputhorizontal sync pulse
+			.dvp_u_p_i(vgch_dvp_itue_cb_p_mux_s),	// U from DVP inputchrominance data cb
+			.dvp_uen_p_i(vgch_dvp_itue_uen_p_mux_s),	// U enable from DVP inputu enable
+			.dvp_v_p_i(vgch_dvp_itue_cr_p_mux_s),	// V from DVP inputchrominance data cr
+			.dvp_vsync_p_i(vgch_dvp_itue_vsync_p_mux_s),	// vsync from DVP inputvertical sync pulse
+			.dvp_y_p_i(vgch_dvp_itue_y_p_mux_s),	// Y from DVP inputluminance data
+                        
+`else
+	                .dvp_af_p_i(vgch_dvp_itue_af_p_s),	// active field (X2) from DVP input
+			.dvp_al_p_i(vgch_dvp_itue_al_p_s),	// active line (X2) from DVP input
+			.dvp_ap_p_i(vgch_dvp_itue_ap_p_s),	// active pixel (X2) from DVP input
+			.dvp_field_p_i(vgch_dvp_itue_field_p_s),	// field from DVP inputtop or bottom field for an interlaced signal
+			.dvp_hsync_p_i(vgch_dvp_itue_hsync_p_s),	// hsync from DVP inputhorizontal sync pulse
+			.dvp_u_p_i(vgch_dvp_itue_cb_p_s),	// U from DVP inputchrominance data cb
+			.dvp_uen_p_i(vgch_dvp_itue_uen_p_s),	// U enable from DVP inputu enable
+			.dvp_v_p_i(vgch_dvp_itue_cr_p_s),	// V from DVP inputchrominance data cr
+			.dvp_vsync_p_i(vgch_dvp_itue_vsync_p_s),	// vsync from DVP inputvertical sync pulse
+			.dvp_y_p_i(vgch_dvp_itue_y_p_s),	// Y from DVP inputluminance data
+`endif
+			 ...
+			
+		         );
+		// End of Generated Instance Port Map for vgch_fe_i
+		
+Spec:
+	- global switch: output.generate.emumux -> Globals.pm
+
+Added to Globals.pm
+
+          'emumux' => { # Insert muxes for the listed modules
+            	# Alternative way is by using a "::emumux" column
+            	# If ::emumux is defined, the values defined there are applied
+            	#	if ::emumux is defined, but empty, take the definitions here
+            	#	
+            	#!wig20060907: currently only implemented for Verilog
+            	'modules'	=> '', # Set to regular expression matching modules, setting this activates
+            						# the whole thing!
+            	'sigselect' => '', # Only signals matching this list are muxed, if empty defaults to .*
+            	'select'    => 'emu_mux_%::inst%', # Use this value as select signal name
+            	'define'	=> 'insert_emu_mux_%::inst%', # defined the name of the `define ...
+            	'muxsnameo'	=> '%::name%_emux_s',	# multiplexer out signal name, from mux to port
+            	'muxsnamei' => '%::name%_vc_s', 	# multiplexer in signal name (you access here!)
+            	'options'	=> '',	# define extra (global) options like in | out | inout | leaf | nonleaf
+            },
+
+	Req: gay
+	Prio: high
+	Status: confirmed by uli 20060800
+	Testcase: verilog/axismux
+	
+>>title: 20060904a/RFE: allow to use a define as a signal slice
+
+	was geht in mix:
+
+   23:0      signal_s       inst_i/porta(3:0)=(3:0)
+   23:0      signal_s       inst_i/portb(3:0)=(7:4)
+
+	was nicht geht:
+
+   23:0      signal_s       inst_i/portc(3:0)=(`slice_define)
+
+	(`define slice_define 11:0)
+
+
+Nachtrag:
+
+test_i/test(3:0) = (`NAME)
+
+in include file:
+	define NAME 23:20
+	
+	Req: oberhoff
+	Prio: medium
+	Status: started testcase
+	Testcase: bitsplice/20060904a
 
 >>title: 20060706e/RFE: extend convert_in function: select header and handling of extra rows
 
@@ -79,6 +362,69 @@ Also add OpenOffice odx
 	Req:	wig
 	Prio:	low
 
+>>title: 20060522b/Bug: duplicate assignment for ports if constant gets assigned to
+
+wenn ich einen Eingang, der hierachisch nach unten Verdrahtet ist auf Ground setze,
+dann wird erstens der Draht vom toplevel zu Subhierarchie verdrahtet und dazu noch dieser
+Draht auf Ground gesetzt.
+
+Signal         Output           Input
+xyz                     0           i_bb/aa,
+                                       I_cc/dd
+
+
+Ergebnis
+
+Def xyz_c 1’b0
+Assign xyz = xyz_c;
+Assign xyz = aa
+
+.dd(xyz),
+
+with best regards/mit freundlichen Grüssen
+
+Manfred Pitscheider
+Semi Custom Design
+Tel. +49 89 54845 7245
+Fax +49 89 54845 7900
+mailto:Manfred.Pitscheider@micronas.com
+
+	Req: mpit
+	Prio: high
+	Status: open
+	Workaround:
+	Testcase: 20060522b
+
+>>title: 20060522a/Bug: verilog assign if case mismatch in port/signal name
+
+Hallo Willy,
+
+Problem Mapping eines inout ports:
+
+dut (avfb_chip)
+		assign	data9	=	DATA9;  // __I_I_BIT_PORT
+
+
+with best regards/mit freundlichen Grüssen
+
+Manfred Pitscheider
+Semi Custom Design
+Tel. +49 89 54845 7245
+Fax +49 89 54845 7900
+mailto:Manfred.Pitscheider@micronas.com
+
+Micronas GmbH
+Frankenthalerstr. 2
+D-81539 München
+Germany
+www.micronas.com
+
+
+	Req: mpit
+	Prio: high
+	Status: open20060706
+	Testcase: bugver2006/20060522a (derived from avfb_hdl code)
+	
 >>title: 20060516a/RFE: Allow variable width assignements to %LOWBUS%
 
 Wire port with variable width (parameter xyz) to either high/low:

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.135 $                                        |
+# | Revision:   $Revision: 1.136 $                                        |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/14 16:49:00 $                              |
+# | Date:       $Date: 2006/11/15 09:54:28 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.135 2006/11/14 16:49:00 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.136 2006/11/15 09:54:28 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.136  2006/11/15 09:54:28  wig
+# | Added ImportVerilogInclude module: read defines and replace in input data.
+# |
 # | Revision 1.135  2006/11/14 16:49:00  wig
 # | extended add_ports to handle `define ports!
 # |
@@ -177,11 +180,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.135 2006/11/14 16:49:00 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.136 2006/11/15 09:54:28 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.135 $';         #'
+my $thisrevision        =      '$Revision: 1.136 $';         #'
 
-# Revision:   $Revision: 1.135 $   
+# Revision:   $Revision: 1.136 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -458,10 +461,37 @@ sub mix_getopt_header(@) {
 		mix_utils_init_file('import');
     }
 
+	#
+	# Read in verilog defines
+	# -vinc foo -vinc bar ...
+	if ($OPTVAL{'vinc'} ) {
+		$eh->set( 'import.vinc', $OPTVAL{'vinc'} );
+	}
+	mix_read_vinc( $eh->get( 'import.vinc') );
+	
 	# Redo some configs: delete unneeded log limit values:
 	_init_loglimit_eh($eh);
 	
 }
+
+sub mix_read_vinc ($) {
+	my $optref = shift;
+	
+	return unless $optref;
+	# Create a verilog include container and store it in the globals:
+	unless ( mix_use_on_demand( 'use Micronas::MixUtils::ImportVerilogInclude;' ) ) {
+            $logger->error('__E_USE_IMPORTVERIINC',
+            	"\tCannot load Micronas::MixUtils::ImportVerilogInclude module: $@");
+            return;
+	}
+	
+	my $vinc = new Micronas::MixUtils::ImportVerilogInclude;
+	$vinc->import( $optref );
+	
+	# Store for later usage ...
+	$eh->set( 'import._vincref', $vinc );
+	
+} # End of mix_read_vinc
 
 #
 # Read in list of files, which later is used to compare against the list of created
@@ -2122,7 +2152,8 @@ sub select_variant ($;$) {
 
 convert_in ($$) {
 
-Do basic conversion:
+Do basic conversion for input tabular (excel) data:
+Find :: header and then convert array/array to array/hash. 
 
 =over 4
 
@@ -2161,6 +2192,7 @@ sub convert_in ($$) {
     my $hflag = 0;
     my @holdincom = (); # tmp storage for linked comments
     my $required = $eh->get( $kind . '.field' ); # Shortcut into EH->fields
+	my $vinc = $eh->get( 'import._vincref' );
 
 	#
 	# Skip ::ign marked with # or // comments, again ...
@@ -2199,6 +2231,7 @@ sub convert_in ($$) {
 	    	$hflag = 1;
 	    	next;
 		}
+		
 		# Store comments into ::incom
 		if ( $all =~ m,$ignorelines_match, or
 			( defined( $order{'::ign'}) and
@@ -2230,7 +2263,7 @@ sub convert_in ($$) {
 			next;
 		}
 
-		# Copy rest to 'another' array ....
+		# Copy rest to 'another' array (indexed by ::headers ..)
 		my $n = scalar( @d ); # next row
 		foreach my $ii ( keys( %order ) ) {
 	    	if ( defined( $i->[$order{$ii}] ) ) {
@@ -2244,8 +2277,23 @@ sub convert_in ($$) {
 				}
 	    	}
 		}
+		# Replace verilog defines
+		if ( $vinc ) {
+			my $cl = $d[-1];
+			$vinc->apply( $cl );
+			# Check if ::high has a A:B --> split to ::high/::low
+			if ( exists( $cl->{'::high'} ) and
+				$cl->{'::high'} =~ m/(.+):(.+)/ ) {
+				if ( not defined $cl->{'::low'} or
+					$cl->{'::low'} eq '' or
+					$cl->{'::low'} eq $cl->{'::high'} ) {
+						  $cl->{'::low'} = $2;
+						  $cl->{'::high'} = $1;
+				}
+			}
+		}
 		if ( scalar( @holdincom ) ) { # Attach post comments to previous ...
-			@{$d[-1]{'::incom'}} = @holdincom;
+			@{$d[$n]{'::incom'}} = @holdincom;
 			@holdincom = ();
 		}
     }

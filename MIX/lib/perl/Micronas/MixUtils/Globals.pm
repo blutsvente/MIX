@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.28 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2006/11/13 17:24:43 $                              |
+# | Revision:   $Revision: 1.29 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2006/11/15 09:54:28 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.29  2006/11/15 09:54:28  wig
+# | Added ImportVerilogInclude module: read defines and replace in input data.
+# |
 # | Revision 1.28  2006/11/13 17:24:43  lutscher
 # | added reg_shell.e_vr_ad parameters
 # |
@@ -68,9 +71,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.28 2006/11/13 17:24:43 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.29 2006/11/15 09:54:28 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.28 $';  
+my $thisrevision    =      '$Revision: 1.29 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -654,6 +657,7 @@ sub init ($) {
 	$this->{'cfg'}{'import'} = { # import mode control
    		'generate' => 'stripio', # remove trailing _i,_o from generated signal names
    		'order'	   => 'sort',	 # 'sort' (do sort) or 'input' (by input order)
+   		'vinc'	   => '',		 # Reference to verilog import module
 	};
     	
 	$this->{'cfg'}{'check'} = {
@@ -1595,8 +1599,11 @@ sub _return_conf ($$$) {
 		}
     } elsif ( ref( $ref ) eq "ARRAY" ) {
 		return ( [ "MIXNOCFG", $name, "ARRAY" ] );
+    } elsif ( ref( $ref ) eq "Micronas::MixUtils::ImportVerilogInclude" ) {
+    	push( @conf, $ref->toconf() );
     } elsif ( ref( $ref ) )  {
-		return ( [ "MIXNOCFG", $name, "REF" ] );
+    	#!wig20061115: return configuration ...
+		return ( [ "MIXNOCFG", $name, ( "REF: " . ref( $ref ))  ] );
     } else {
     	# No HASH or ARRAY -> remove \t and \n and return
 		$ref =~ s,\n,\\n,go;

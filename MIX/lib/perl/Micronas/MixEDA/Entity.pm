@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Entity.pm,v $                                      |
-# | Revision:   $Revision: 1.3 $                                          |
+# | Revision:   $Revision: 1.4 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/07/04 12:22:36 $                              |
+# | Date:       $Date: 2006/11/15 09:54:28 $                              |
 # | Description: Contains data structure and methods/functions for Entities |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Entity.pm,v $
+# | Revision 1.4  2006/11/15 09:54:28  wig
+# | Added ImportVerilogInclude module: read defines and replace in input data.
+# |
 # | Revision 1.3  2006/07/04 12:22:36  wig
 # | Fixed TOP handling, -cfg FILE issue, ...
 # |
@@ -64,9 +67,9 @@ use FileHandle;
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Entity.pm,v 1.3 2006/07/04 12:22:36 wig Exp $';#'  
+my $thisid          =      '$Id: Entity.pm,v 1.4 2006/11/15 09:54:28 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Entity.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.3 $'; #'  
+my $thisrevision    =      '$Revision: 1.4 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -87,9 +90,9 @@ sub new {
 		'leaf'	=>	'', # If set -> is a leaf enty
 		'name'	=>	'',	# Name of this entity
 		'lang'	=>  '', # Language like VHDL, Verilog, ...
-		'port'	=> [],	# Ports
+		'port'	=> {},	# Ports list (hash -> port objects)
 		'port_cache' => '', # Cache for port map 
-		'gen_cache'	=> '',	# Cachee for generic map 
+		'gen_cache'	=> '',	# Cache for generic map 
 	};
 	
 	# init data members w/ parameters from constructor call
@@ -118,7 +121,7 @@ require Exporter;
 
 #
 # Create a new Entity
-#  as usual that is a hash
+#  as usual it is a hash
 #
 sub new {
 	my $this = shift;
@@ -148,16 +151,31 @@ sub new {
 };
 
 #
-# Print portwidth
+# Print width
 #	N -> if high/low are digits
 # 	1 -> single bits
-#   F+1  -> if low is 0
 #	F	 -> if low is 0 and high is 'F-1'
+#   F+1  -> if low is 0
 #   F:T  -> if one or both bounds are not digits
 #
-sub portwidth () {
-	return;
-}
+sub width () {
+	my $this = shift;
+	my $h = $this->{high};
+	my $l = $this->{low};
+	if ( $h eq '' and $l eq '' ) {
+		return 1;
+	} elsif ( is_integer2( $h, $l ) ) {
+		return $h - $l + 1;
+	} elsif ( $h ne '0' and $l eq '0' ) {
+		if ( $h =~ m/(.*) \s* - \s* 1 \s*$/x ) {
+			return $h;
+		} else {
+			return "$h + 1";
+		}
+	} else {
+		return "$h - $l + 1";
+	}
+} # End of portwidth
 
 1;
 
@@ -202,5 +220,75 @@ sub value () {
 	return;
 }
 1;
+
+__END__
+
+Interface:
+
+Port::
+	->name
+	->width
+	->from
+	->to
+	->join (-->)
+	->purge (function to iterate over all ports, remove duplicates)
+	->is_connected
+	->print / stringify
+	? ->sort
+	->type (in/out/inout/buffer/tristate/constant/...)
+
+Generic::
+	s/a
+	->parameter
+	->default
+
+Constant::
+
+PortSlice:  connection between entity::port and signals
+	->name
+	->width
+	->from
+	->to
+	->fromto
+	->signal
+	->type
+	->stringify
+	->portmap
+	->genericmap
+
+PortSliceDescr::  instance specific ::descr and ::comment field and ...
+	->descr()  -> set and return
+	->comment() -> set and return
+
+Signal::
+	->add
+	->create
+	->merge
+	->name
+	->start
+	->end
+	->width
+	->slices
+	->top
+	->split(...)
+	->join(...)
+	->splice(...)
+	->check
+	->generateports()
+
+InOut::
+	->open
+	->convert
+	->write
+	->dump
+		
+Instance::  extended class of TreeObject	
+	->new
+	->add
+	->parent
+	->print
+	->dump
+	->
+Collection::
 
 #!End

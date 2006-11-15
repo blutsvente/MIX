@@ -18,13 +18,13 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.46 2006/06/16 07:47:41 lutscher Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.47 2006/11/15 09:55:05 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.46 $                                      |
-# | Mod.Date     : $Date: 2006/06/16 07:47:41 $                           |
-# | Author       : $Author: lutscher $                                      |
+# | Version      : $Revision: 1.47 $                                      |
+# | Mod.Date     : $Date: 2006/11/15 09:55:05 $                           |
+# | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
 # | Email        : $Email: wilfried.gaensheimer@micronas.com$             |
@@ -38,6 +38,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.47  2006/11/15 09:55:05  wig
+# | Added ImportVerilogInclude module: read defines and replace in input data.
+# |
 # | Revision 1.46  2006/06/16 07:47:41  lutscher
 # | changed parameter to mix_report() call
 # |
@@ -120,7 +123,7 @@ use Micronas::MixReport;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.46 $'; # RCS Id '
+$::VERSION = '$Revision: 1.47 $'; # RCS Id '
 $::VERSION =~ s,\$,,go;
 
 #
@@ -211,6 +214,10 @@ $logger->fatal('no tag for this fatal');
 
 =item *
 
+-vinc VERILOG_INCLUDE_FILE    import verilog defines from this file and resolve all occurences
+
+=item *
+
 -conf key.key.key=value   Overwrite $EH{key}{key}{key} with value
 
 =item *
@@ -271,6 +278,7 @@ mix_getopt_header( qw(
     combine!
     top=s
     variant=s
+	vinc|veriloginc=s@
     adump!
     conf|config=s@
     cfg=s
