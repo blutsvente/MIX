@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.68 2006/11/15 09:58:09 wig Exp $
+# $Id: TODO.txt,v 1.69 2006/11/16 15:23:37 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -27,8 +27,26 @@ Code:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+>>title: 20060509b/RFE: collect signals to busses
+
+	Go through list of signals and unsplice if the match some perl regular expression.
+
+	Req: gay
+	Prio: low
+	Status: open
+
+>>title: 20060509a/RFE: add -isolate feature
+
+	isolate all of a instance in/out by isolate cells
+
+	Workaround: use macros
+
+	Req: oberhoff
+	Prio: low
+	Status: open
 
 >>title: MIX/RFE20061114a: import verilog include and parse `defines
+	Duplicate of 20061108a
 
 	Read `define definitions from a verilog include file.
 	Replace the defines in the input data.
@@ -40,6 +58,19 @@ TODOs:
 	ModuleTest:
 	Assigned: wig	
 		
+>>title: 20061108a/RFE: read in Verilog include files and extend `define as needed
+
+Example:
+
+~/work/MIX/import/vcth_test_20061108
+  -> LP-blue-pin-list.xls
+    blue.v
+    lp_stdby.v
+
+	Req: oberhoff
+	Prio: high
+	Status: open
+
 >>title: MIX/BUG20061113a: missing ::out column in -mixed output
 
 	The mixed sheet does not have the ::out column.
@@ -51,7 +82,6 @@ TODOs:
 	Status: started
 	
 >>title: MIX/BUG20061030a: Bad verilog port map for `define values for bus connections
-
 
 Es sollte so aussehen:
 			.CEQ_i(vstby_flash_if_o_s[`FIFW_CEN]),
