@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.29 $                                         |
+# | Revision:   $Revision: 1.30 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/15 09:54:28 $                              |
+# | Date:       $Date: 2006/11/16 15:22:50 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.30  2006/11/16 15:22:50  wig
+# | 	Globals.pm : added vinc_skip keyword
+# |
 # | Revision 1.29  2006/11/15 09:54:28  wig
 # | Added ImportVerilogInclude module: read defines and replace in input data.
 # |
@@ -71,9 +74,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.29 2006/11/15 09:54:28 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.30 2006/11/16 15:22:50 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.29 $';  
+my $thisrevision    =      '$Revision: 1.30 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -658,6 +661,7 @@ sub init ($) {
    		'generate' => 'stripio', # remove trailing _i,_o from generated signal names
    		'order'	   => 'sort',	 # 'sort' (do sort) or 'input' (by input order)
    		'vinc'	   => '',		 # Reference to verilog import module
+   		'vinc_skip' => 'include,define', # Words matching will not be replaced
 	};
     	
 	$this->{'cfg'}{'check'} = {
