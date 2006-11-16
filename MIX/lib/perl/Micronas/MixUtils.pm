@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.136 $                                        |
+# | Revision:   $Revision: 1.137 $                                        |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/15 09:54:28 $                              |
+# | Date:       $Date: 2006/11/16 15:21:44 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.136 2006/11/15 09:54:28 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.137 2006/11/16 15:21:44 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.137  2006/11/16 15:21:44  wig
+# |  	MixUtils.pm : do not use import, but init()
+# |
 # | Revision 1.136  2006/11/15 09:54:28  wig
 # | Added ImportVerilogInclude module: read defines and replace in input data.
 # |
@@ -180,11 +183,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.136 2006/11/15 09:54:28 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.137 2006/11/16 15:21:44 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.136 $';         #'
+my $thisrevision        =      '$Revision: 1.137 $';         #'
 
-# Revision:   $Revision: 1.136 $   
+# Revision:   $Revision: 1.137 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -486,7 +489,7 @@ sub mix_read_vinc ($) {
 	}
 	
 	my $vinc = new Micronas::MixUtils::ImportVerilogInclude;
-	$vinc->import( $optref );
+	$vinc->init( $optref );
 	
 	# Store for later usage ...
 	$eh->set( 'import._vincref', $vinc );
