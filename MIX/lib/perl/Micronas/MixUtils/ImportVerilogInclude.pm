@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: ImportVerilogInclude.pm,v $                     |
-# | Revision:   $Revision: 1.2 $                                          |
+# | Revision:   $Revision: 1.3 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/15 16:25:02 $                              |
+# | Date:       $Date: 2006/11/16 15:22:01 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005/2006                                    |
 # |                                                                       |
@@ -27,6 +27,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # # $Log: ImportVerilogInclude.pm,v $
+# # Revision 1.3  2006/11/16 15:22:01  wig
+# #  	MixUtils.pm : do not use import, but init()
+# #  	ImportVerilogInclude.pm : rename import to init()
+# #
 # # Revision 1.2  2006/11/15 16:25:02  wig
 # # 	MixParser.pm : minor fix to get verilog include import working
 # # 	ImportVerilogInclude.pm : minor fixes for various smaller issues
@@ -58,9 +62,9 @@ use Log::Log4perl qw(get_logger);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: ImportVerilogInclude.pm,v 1.2 2006/11/15 16:25:02 wig Exp $';#'  
+my $thisid          =      '$Id: ImportVerilogInclude.pm,v 1.3 2006/11/16 15:22:01 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: ImportVerilogInclude.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.2 $'; #'  
+my $thisrevision    =      '$Revision: 1.3 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -88,6 +92,7 @@ sub new {
 	my $ref_member  = {
 		'defines'	=>	{},
 		'files'		=>  {},
+		'skip_re'	=>  '',
 	};
 	
 	# init data members w/ parameters from constructor call
@@ -98,27 +103,32 @@ sub new {
 	bless $ref_member, $class;
 };
 
-=head 4 import() import a list of verilog include files
+=head 4 init() init a list of verilog include files
 
-	import verilog defines from file
+	init verilog defines from file
+
+	Input: array ref or list of files, might be comma seperated
+	Issues: will not handle multi-line comments correctly
 
 =cut
 
-sub import {
+sub init {
 	my $self = shift;
-	my $fref = shift;
+	my $fref = shift || ''; # List/Array of files 
 
 	my @files = ();
 	if ( ref( $fref ) eq 'ARRAY' ) {
 		@files = @$fref;
 	} else {
 		$files[0] = $fref;
-		push( @files, @_ );
+		if ( scalar( @_ ) ) {
+			push( @files, @_ );
+		}
 	}
 	
 	# Iterate over all files:
 	for my $f ( @files ) {
-		chomp $f;
+		$f =~ s/\s+$//;
 		# Split comma seperated
 		for my $ff ( split( /,/, $f ) ) {
 			if ( -r $ff ) {
@@ -128,7 +138,6 @@ sub import {
 					$self->{'files'}{$ff} = 1;
 					while( <$fh> ) {
 						# Remove verilog comments:
-						chomp;
 						$_ =~ s,//.*$,,;
 						$_ =~ s/\s+$//;
 						# Ignore all lines but `define ...
@@ -153,11 +162,18 @@ sub import {
 			}
 		}	 
 	}	
-} # End of import
+
+	# Initialze skip_re
+	$self->{'skip_re'} = '^(' . join( '|', qw( include define ) ) . ')$';
+
+} # End of init
 
 =head 4 apply() find `<key> and replace by defined value
 
 	apply()  Replace `foo if set
+
+    Specials: do not try to replace special verilog keywords like `include,
+    `define, ...
 
 =cut
 
@@ -178,13 +194,15 @@ sub apply($$) {
 		# Try to find `foo and replace it by the defines value
 		if ( $$data =~ m/`/ ) {
 			while ( $$data =~ m/`(\w+)/g ) {
-				if ( exists $self->{'defines'}{$1} ) {
-					my $define  = $1;
-					my $replace = $self->{'defines'}{$1};
+				my $define = $1;
+				# Skip verilog defines:
+				next if ( $define =~ m/$self->{'skip_re'}/ );
+				if ( exists $self->{'defines'}{$define} ) {
+					my $replace = $self->{'defines'}{$define};
 					$$data =~ s/`$define/$replace/g;
 				} else {
 					$logger->warn( '__W_VINCLUDE_UKDEF',
-						"\tunknown verilog define `$1, will not be resolved" );
+						"\tunknown verilog define `$define, will not be resolved" );
 				}
 			}
 		}
