@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.30 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/16 15:22:50 $                              |
+# | Revision:   $Revision: 1.31 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2006/11/20 17:10:11 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.31  2006/11/20 17:10:11  lutscher
+# | added e_vr_ad parameters
+# |
 # | Revision 1.30  2006/11/16 15:22:50  wig
 # | 	Globals.pm : added vinc_skip keyword
 # |
@@ -74,9 +77,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.30 2006/11/16 15:22:50 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.31 2006/11/20 17:10:11 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.30 $';  
+my $thisrevision    =      '$Revision: 1.31 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -869,8 +872,10 @@ sub init ($) {
                     # parameters for e_vr_ad view
         'e_vr_ad' => {
                       'regfile_prefix'   => 'MIC',
-                      'file_prefix'  => 'regdef',
-                      'vplan_ref'    => '%EMPTY%'
+                      'file_prefix'      => 'regdef',
+                      'vplan_ref'        => '%EMPTY%', 
+                      'field_naming'     => '%lF',  # see 'clone'
+                      'reg_naming'       => '%uR'   # see 'clone'
                      },
 					# parameters for STL view 
 		'stl' => {
@@ -881,11 +886,13 @@ sub init ($) {
 
 					# parameters for cloning register object
                     # the naming goes according to placeholders:
-                    # %D domain name
-                    # %R original name of register
-                    # %F original name of field (only availabe in field_naming)
-                    # %N decimal number
-                    # e.g. 'scc_%N_%R' creates name scc_06_reg_x from original name reg_x
+                    # %[<u|l>]<D|R|F|N>
+                    # D domain name
+                    # R original name of register
+                    # F original name of field (only availabe in field_naming)
+                    # N decimal number
+                    # u or l force upper/lowercase (optional)
+                    # e.g. 'scc_%N_%uR' creates name scc_06_REG_X from original name reg_x
 		'clone' => {
 					'number'       => 1,          # number of clones
 					'addr_spacing' => 10,         # number of address bits reserved for every clone
