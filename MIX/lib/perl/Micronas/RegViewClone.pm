@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewClone.pm,v 1.8 2006/09/22 09:17:07 lutscher Exp $
+#  RCSId: $Id: RegViewClone.pm,v 1.9 2006/11/20 17:09:13 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.8 $                                  
+#  Revision      : $Revision: 1.9 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -32,6 +32,9 @@
 ###############################################################################
 #
 #  $Log: RegViewClone.pm,v $
+#  Revision 1.9  2006/11/20 17:09:13  lutscher
+#  moved _clone_name() to RegUtils.pm
+#
 #  Revision 1.8  2006/09/22 09:17:07  lutscher
 #  added clone attribute handling to exempt registers from cloning
 #
@@ -183,7 +186,7 @@ sub _clone_regspace {
                         next;
                     };
                 } else {
-                    $reg_name = $this->_clone_name($this->global->{'reg_naming'}, $n, $domain, $o_reg0->name, "");
+                    $reg_name = _clone_name($this->global->{'reg_naming'}, $this->global->{'number'}, $n, $domain, $o_reg0->name, "");
                 };
                 # create new register object
                 $o_reg1 = Micronas::RegReg->new('name' => $reg_name, 'definition' => $o_reg0->definition);
@@ -201,20 +204,20 @@ sub _clone_regspace {
                     
                     my $field_name;
                     # if field is part of a non-cloned register, use unchanged name 
-                    $field_name = $o_reg0->attribs->{'clone'} == 0 ? $o_field0->name : $this->_clone_name($this->global->{'field_naming'}, $n, $domain, $o_reg0->name, $o_field0->name);
+                    $field_name = $o_reg0->attribs->{'clone'} == 0 ? $o_field0->name : _clone_name($this->global->{'field_naming'}, $this->global->{'number'}, $n, $domain, $o_reg0->name, $o_field0->name);
                     
                     $fpos = $href->{'pos'};       # lsb position of field in register
                     %hfattribs = %{$o_field0->attribs};
                     
                     # uniquify clock and reset names if desired
                     if ($this->global->{'unique_clocks'}) {
-                        $hfattribs{'clock'} = $hfattribs{'clock'} . $this->_clone_name("_%N", $n);
-                        $hfattribs{'reset'} = $hfattribs{'reset'} . $this->_clone_name("_%N", $n);
+                        $hfattribs{'clock'} = $hfattribs{'clock'} . _clone_name("_%N", $this->global->{'number'}, $n);
+                        $hfattribs{'reset'} = $hfattribs{'reset'} . _clone_name("_%N", $this->global->{'number'}, $n);
                     };
 
                     # uniquify update signal
                     if (lc($hfattribs{'sync'}) ne "nto" and $hfattribs{'sync'} !~ m/[\%OPEN\%|\%EMPTY\%]/) {
-                        $hfattribs{'sync'} = $hfattribs{'sync'} . $this->_clone_name("_%N", $n);
+                        $hfattribs{'sync'} = $hfattribs{'sync'} . _clone_name("_%N", $this->global->{'number'}, $n);
                     };
                     
                     # create new field object
@@ -235,25 +238,6 @@ sub _clone_regspace {
         };
     };
     return $o_space;
-};
-
-# create a new name according to $pattern (see Globals.pm)
-sub _clone_name {
-	my ($this, $pattern, $n, $domain, $reg, $field) = @_;
-	
-	$pattern =~ s/[\'\"]//g; # strip quotes from pattern
-
-    # create a number padded with leading zeros
-	my($digits) = $this->global->{'number'} < 10 ? 1 : ($this->global->{'number'} < 100 ? 2 : ($this->global->{'number'} < 1000 ? 3 : 4)); # max 4 digits, should be enough (or we would never have had the Millenium Bug)
-	$digits = sprintf("%0${digits}d", $n);
-
-    # take the pattern and fill in the passed object names
-	my($name) = $pattern;
-	$name =~ s/%D/$domain/g;
-	$name =~ s/%R/$reg/g;
-	$name =~ s/%F/$field/g;
-	$name =~ s/%N/$digits/g;
-	return $name;
 };
 
 1;
