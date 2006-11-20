@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegReg.pm,v 1.6 2006/07/25 13:21:28 mathias Exp $
+#  RCSId: $Id: RegReg.pm,v 1.7 2006/11/20 17:08:49 lutscher Exp $
 ###############################################################################
 #
 #  Related Files :  RegDomain.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegReg.pm,v $
+#  Revision 1.7  2006/11/20 17:08:49  lutscher
+#  changed get_reg_access_mode() to be consistent with register-master cell values
+#
 #  Revision 1.6  2006/07/25 13:21:28  mathias
 #  fixed copy&paste bug in get_reg_init
 #
@@ -164,7 +167,7 @@ sub get_reg_init {
    return $res;
 };
 
-# retrieves the acces mode (R, W, RW) for a register from its fields
+# retrieves the access mode (R, W, RW) for a register from its fields
 sub get_reg_access_mode()
 {
     my ($this) = @_;
@@ -174,7 +177,7 @@ sub get_reg_access_mode()
         if ($mode eq "") {
             $mode = uc($href->{'field'}->attribs->{'dir'});
         } elsif ($mode ne uc($href->{'field'}->attribs->{'dir'})) {
-            $mode = 'R/W';
+            $mode = 'RW';
         }
     }
     return $mode;
