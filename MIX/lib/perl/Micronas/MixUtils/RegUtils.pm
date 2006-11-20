@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.9 2006/09/01 15:21:15 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.10 2006/11/20 17:08:12 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.10  2006/11/20 17:08:12  lutscher
+#  added parameters for vr_ad_reg
+#
 #  Revision 1.9  2006/09/01 15:21:15  lutscher
 #  added return value for _add* functions
 #
@@ -86,6 +89,7 @@ require Exporter;
    _get_pragma_pos
    _attach_file_to_list
    _bitwidth
+   _clone_name
   );
 use strict;
 use Log::Log4perl qw(get_logger);
@@ -415,6 +419,42 @@ sub _bitwidth {
 sub _ld {
 	my ($n) = shift(@_);
 	return log($n)/log(2);
+};
+
+# create a new name according to $pattern
+# $pattern - see Globals.pm
+# $n_max, $n - maximum number and current number used for replacing %N in pattern
+# $domain - string for replacing %D in pattern
+# $reg    - string for replacing %R in pattern
+# $field  - string for replacing %F in pattern
+sub _clone_name {
+	my ($pattern, $n_max, $n, $domain, $reg, $field) = @_;
+	
+	$pattern =~ s/[\'\"]//g; # strip quotes from pattern
+
+    # create a number padded with leading zeros
+	my($digits) = $n_max < 10 ? 1 : ($n_max < 100 ? 2 : ($n_max < 1000 ? 3 : 4)); # max 4 digits, should be enough (or we would never have had the Millenium Bug)
+	$digits = sprintf("%0${digits}d", $n);
+
+    # take the pattern and fill in the passed object names
+	my($name) = $pattern;
+    my $uc_domain = uc($domain);
+    my $uc_reg= uc($reg);
+    my $uc_field = uc($field);
+    my $lc_domain= lc($domain);
+    my $lc_reg   = lc($reg);  
+    my $lc_field = lc($field);
+	$name =~ s/%uD/$uc_domain/g;
+	$name =~ s/%uR/$uc_reg/g;
+	$name =~ s/%uF/$uc_field/g;
+	$name =~ s/%lD/$lc_domain/g;
+	$name =~ s/%lR/$lc_reg/g;
+	$name =~ s/%lF/$lc_field/g;
+	$name =~ s/%D/$domain/g;
+	$name =~ s/%R/$reg/g;
+	$name =~ s/%F/$field/g;
+	$name =~ s/%[u|l]*N/$digits/g;
+	return $name;
 };
 
 1;
