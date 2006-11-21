@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.85 $                                         |
+# | Revision:   $Revision: 1.86 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/21 09:03:30 $                              |
+# | Date:       $Date: 2006/11/21 16:51:10 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.85 2006/11/21 09:03:30 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.86 2006/11/21 16:51:10 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.86  2006/11/21 16:51:10  wig
+# | Improved generator execution (now in order!)
+# |
 # | Revision 1.85  2006/11/21 09:03:30  wig
 # |  	MixParser.pm : variant filtering for generators fixed
 # |
@@ -190,9 +193,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.85 2006/11/21 09:03:30 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.86 2006/11/21 16:51:10 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.85 $';
+my $thisrevision =	'$Revision: 1.86 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -470,6 +473,8 @@ Examples:
 It returns a hash, key is the instance name perl regular expression match.
 Right now this function can be used for both CONN and HIER matrix.
 
+!wig20061121: make sure generators and macros get executed in order of occurance (adds 'n')
+
 =cut
 
 sub parse_conn_gen ($) {
@@ -482,16 +487,17 @@ sub parse_conn_gen ($) {
     }
 
     my %g = ();
+	my $n = 0; # Generator counter
 	my $icomms	= $eh->get( 'input.ignore.comments' );
 	my $ivar	= $eh->get( 'input.ignore.variant' ) || '#__I_VARIANT';   
     for my $i ( 0..$#{$rin} ) {
 
         next unless ( $rin->[$i] ); # Holes in the array?
-        next if ( $rin->[$i]{'::ign'} =~ m,$icomms,o );    # Skip fields commented out
-        next if ( $rin->[$i]{'::ign'} =~ m,$ivar,o );
-        next if ( $rin->[$i]{'::comment'} =~ m,#macro,o ); # No generator, but a macro!
+        next if ( $rin->[$i]{'::ign'} =~ m,$icomms,o );		# Skip fields commented out
+        next if ( $rin->[$i]{'::ign'} =~ m,$ivar,o );		# Skip variants not selected
+        next if ( $rin->[$i]{'::comment'} =~ m,#macro,o );	# No generator, but a macro!
 
-        next if ( $rin->[$i]{'::gen'} =~ m,^\s*$, );      # Empty
+        next if ( $rin->[$i]{'::gen'} =~ m,^\s*(M)?$, );      # Empty or M(acro)
 
         # CONN vs. HIER: Strip and remember leading CONN .
         #wig20030715
@@ -502,9 +508,10 @@ sub parse_conn_gen ($) {
 
         # iterator based generator: $i(1..10), /PERL_RE/
         if ( $rin->[$i]{'::gen'} =~ m!^\s*\$(\w)\s*\((\d+)\.\.(\d+)\)\s*,\s*/(.*)/! ) {
-            my $pre = $4 . "_$2_$3";
+            my $pre = $4 . "_$2_$3";	# Generator unique name
             if ( $2 > $3 ) {
-                $logger->error('__E_PARSER_BAD_BOUNDS', "\t$2 .. $3 in generator definition!");
+                $logger->error('__E_PARSER_BAD_BOUNDS', "\t$2..$3 in generator definition '" .
+                	$rin->[$i]{'::gen'} . "', skipped!");
                 next;
             }
             if ( exists( $g{$pre} ) ) { # Redefinition of this macro ...make name unique
@@ -513,10 +520,11 @@ sub parse_conn_gen ($) {
             }
             $g{$pre}{'pre'} = $4;
             $g{$pre}{'var'} = $1;
-            $g{$pre}{'lb'}   = $2;
+            $g{$pre}{'lb'}  = $2;
             $g{$pre}{'ub'}  = $3;
             $g{$pre}{'field'} = $rin->[$i];
-            $g{$pre}{'ns'} = $namesp;
+            $g{$pre}{'ns'}  = $namesp;
+            $g{$pre}{'n'}   = $n++;
             $rin->[$i]{'::comment'} = "# Generator parsed /" . $rin->[$i]{'::comment'};
         }
         # plain generator: /PERL_RE/
@@ -527,11 +535,12 @@ sub parse_conn_gen ($) {
                 $tag .= "__DUPL__" . $gi++;
             }
             $g{$tag}{'var'} = undef;
-            $g{$tag}{'lb'}   = undef;
+            $g{$tag}{'lb'}  = undef;
             $g{$tag}{'ub'}  = undef;
             $g{$tag}{'pre'} = $1;
             $g{$tag}{'field'} = $rin->[$i];
-            $g{$tag}{'ns'} = $namesp;
+            $g{$tag}{'ns'}  = $namesp;
+            $g{$tag}{'n'}   = $n++;
             $rin->[$i]{'::comment'} = "# Generator parsed /" . $rin->[$i]{'::comment'};
         }
         # parameter generator: $i (1..10)
@@ -539,11 +548,12 @@ sub parse_conn_gen ($) {
         elsif ( $rin->[$i]{'::gen'} =~ m!^\s*\$(\w)\s*\((\d+)\.\.(\d+)\)!o ) {
             my $gname = "__MIX_ITERATOR_" . $gi++;
             $g{$gname}{'var'} = $1;
-            $g{$gname}{'lb'} = $2;
-            $g{$gname}{'ub'} = $3;
+            $g{$gname}{'lb'}  = $2;
+            $g{$gname}{'ub'}  = $3;
             $g{$gname}{'field'} = $rin->[$i];
             $g{$gname}{'pre'} = $gname;
-            $g{$gname}{'ns'} = $namesp;
+            $g{$gname}{'ns'}  = $namesp;
+            $g{$gname}{'n'}   = $n++;
             $rin->[$i]{'::comment'} = "# Generator parsed /" . $rin->[$i]{'::comment'};
         }
     }
@@ -856,7 +866,7 @@ sub merge_inst ($%) {
     #
     # Get my parent name
     #
-    my $parent = ""; # Start with empty parent name
+    my $parent = ''; # Start with empty parent name
     if ( defined( $data{'::parent'} ) ) {
         $parent = mix_check_case( 'inst', $data{'::parent'} );
         $data{'::parent'} = $parent; # Rewrite input data ...
@@ -893,8 +903,9 @@ sub merge_inst ($%) {
     # Overwrite hierdb if fields are zero or space ....
     #
     # TODO : Check if order matters here ..
+	my $overload = ( $eh->get('hier.options') =~ m/\boverload\b/io );
     for my $i ( keys( %data ) ) {
-        #TODO: Trigger merge mode for special cases where we want to add
+        # TODO : Trigger merge mode for special cases where we want to add
         # up data instead of overwrite
         # e.g. add a filed defining concatenate/overwrite/array/noover/... mode
         # Here we implement:
@@ -902,16 +913,19 @@ sub merge_inst ($%) {
         # AND $eh has a value for that field AND
         # the field differs from the default value, do nothing.
         # Else fill in the field with the input data
-        if ( defined( $hierdb{$name}{$i} ) and
-            $hierdb{$name}{$i} ne "" ) {
-            if ( defined( $eh->get( 'hier.field.' . $i ) ) and
-		 			( $hierdb{$name}{$i} ne ($eh->get( 'hier.field.' . $i ))->[3] ) ) { # Leave that value ....
-				$logger->warn( '__I_MERGE_INST', "\tField $i for $name already filled");
+
+        if ( defined( $hierdb{$name}{$i} ) and $hierdb{$name}{$i} ne '' ) {
+            if ( not $overload and
+            		defined( $eh->get( 'hier.field.' . $i ) ) and
+		 			( $hierdb{$name}{$i} ne
+		 				($eh->get( 'hier.field.' . $i ))->[3] ) ) {
+		 			# Leave that value ....
+					$logger->warn( '__I_MERGE_INST', "\tField $i for $name already filled");
             } else {
-				if ( $data{$i} ne "" ) { $hierdb{$name}{$i} = $data{$i} };
+				if ( $data{$i} ne '' ) { $hierdb{$name}{$i} = $data{$i} };
             }
         } else {
-        	# Overwrite data ??? Is that always the rigth way to go
+        	# Take this new value
             if ( $data{$i} ) {
                 $hierdb{$name}{$i} = $data{$i};
             }
@@ -1910,7 +1924,7 @@ sub merge_conn($%) {
                 # Add array to in/out field, if the cell contains data
                 push( @{$conndb{$name}{$i}} , @{_create_conn( $1, $data{$i}, %data )});
             }
-        } elsif ( $i =~ /^::type/ ) {
+        } elsif ( $i =~ /^::type\b/ ) {
             #
             # ::type requires special handling
             # Complain if ::type does not match
@@ -1933,7 +1947,7 @@ sub merge_conn($%) {
                     $conndb{$name}{$i} = $data{$i};
                 }
             }
-        } elsif ( $i =~ /^\s*::mode/o ) {
+        } elsif ( $i =~ /^\s*::mode\b/o ) {
             #
             # Mode has to match!
             # I, O and IO have precedene over %SIGNAL% and "S"
@@ -1999,10 +2013,11 @@ sub merge_conn($%) {
             } else {
                 $conndb{$name}{$i} = $data{$i};
             }
-        } elsif ( $i =~ /^\s*::(gen|comment|descr)/o ) {
+        } elsif ( $i =~ /^\s*::(gen|comment|descr)\b/o ) {
             # Accumulate generator infos, comments and description
             if ( $data{$i} and $data{$i} ne '%EMPTY%' ) {
                 #wig20031106: try to keep comments short ....
+                #   replace "text text" by "text X2" 
                 #   check if $data{$i} is part of $conndb{$name}{$i}
                 my $pos = rindex( $conndb{$name}{$i}, $data{$i} );
                 if ( $pos >= 0 and $eh->get( 'output.generate.fold' ) =~ m,signal,io ) {
@@ -2252,15 +2267,15 @@ sub apply_conn_gen ($) {
 
     my $f = \&add_conn;
 
-    # Expand iterators ...
+    # 1. Expand iterators ...
     # TODO : shift that into the apply_x_gen subroutine?
-    foreach my $g ( keys( %$r_cg ) ) {
+    foreach my $g ( sort( { $r_cg->{$a}->{'n'} <=> $r_cg->{$b}->{'n'} }
+    		keys( %$r_cg ) ) ) {
         if ( $g =~ m,^__MIX_ITERATOR_,io ) {
             my $var = $r_cg->{$g}{'var'};
             foreach my $i ( $r_cg->{$g}{'lb'} .. $r_cg->{$g}{'ub'} ) {
                 my %in = %{$r_cg->{$g}{'field'}};
                 my %g = ();
-                # my $e = '$' . $var . " = $i; ";
                 foreach my $k ( keys( %in ) ) {
                     if ( $k eq '::gen' ) {
                         $g{$k} = "GIC # \$$var = $i # " . $in{$k};
@@ -2273,11 +2288,11 @@ sub apply_conn_gen ($) {
             }
         }
     }
-    #TODO: We could remove the iterators from the generator data, now
+    # We could remove the iterators from the generator data, now
 
     apply_x_gen( $r_cg, $f );
 
-}
+} # End of apply_conn_gen
 
 ####################################################################
 ## apply_hier_gen
@@ -2297,7 +2312,8 @@ sub apply_hier_gen ($) {
     my $f = \&add_inst;
 
     # Expand iterators ...
-    foreach my $g ( keys( %$r_hg ) ) {
+    foreach my $g ( sort( { $r_hg->{$a}->{'n'} <=> $r_hg->{$b}->{'n'} }
+    			keys( %$r_hg ) ) ) {
         if ( $g =~ m,^__MIX_ITERATOR_,io ) {
             my $var = $r_hg->{$g}{'var'};
             foreach my $i ( $r_hg->{$g}{'lb'} .. $r_hg->{$g}{'ub'} ) {
@@ -2317,12 +2333,13 @@ sub apply_hier_gen ($) {
             }
         }
     }
-    #TODO: We could remove the iterators from the generator data, now
+    
+    # We could remove the iterators from the generator data, now
 
     # Do the rest ...
     apply_x_gen( $r_hg, $f );
 
-}
+} # End of apply_hier_gen
 
 ####################################################################
 ## apply_x_gen
@@ -2349,15 +2366,21 @@ Intermediate data is kept in:
 #            $g{$1}{'ub'}  = undef;
 #            # $g{$pre}{'pre'} = $4;
 #            $g{$1}{'field'} = $rin->[$i];
+#			 $g{$1}{'n'}
 #            $rin->[$i]{'::comment'} = "# Generator parsed /" . $rin->[$i]{'::comment'};
+
 
 =cut
 sub apply_x_gen ($$) {
-    my $r_hg = shift;       # connection gen data
-    my $func = shift;   # which function to call ...
+    my $r_hg = shift;   # connection generator data
+    my $func = shift;	# which function to call ...
 
-    for my $cg ( keys( %$r_hg ) ) { # Iterate through all known generators ...
+    for my $cg ( sort( { $r_hg->{$a}->{'n'} <=> $r_hg->{$b}->{'n'} }
+    		keys( %$r_hg ) ) ) { # Iterate through all known generators ...
 
+		# Skip __MIX_ITERATOR_ ...
+		next if ( $cg =~ m,^__MIX_ITERATOR_,io );
+		
         # Iterate over CONN or HIER, defined by ...{'ns'} namespace ...
         my $ky = ( $r_hg->{$cg}{'ns'} =~ m,^conn, ) ? \%conndb : \%hierdb ;
 

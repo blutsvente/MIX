@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.31 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2006/11/20 17:10:11 $                              |
+# | Revision:   $Revision: 1.32 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2006/11/21 16:51:09 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.32  2006/11/21 16:51:09  wig
+# | Improved generator execution (now in order!)
+# |
 # | Revision 1.31  2006/11/20 17:10:11  lutscher
 # | added e_vr_ad parameters
 # |
@@ -77,9 +80,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.31 2006/11/20 17:10:11 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.32 2006/11/21 16:51:09 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.31 $';  
+my $thisrevision    =      '$Revision: 1.32 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -598,7 +601,7 @@ sub init ($) {
 			    # remove:  remove empyt diff files
                 # ignorecase|ic: -> ignore case if set
                 # isc|ignoresemicolon: -> ignore trailing semicolon
-                # mapstd[logic]: -> ignore std_logic s. std_ulogic diffs!
+                # mapstd[logic]: -> ignore std_logic s. std_ulogic diffs! 
 	};
 
 	$this->{'cfg'}{'input'} = {
@@ -647,6 +650,7 @@ sub init ($) {
 				# template -> sort by order defined in input sheets (default)
 				# input    -> print out in order column occur in input
 		'keep'	=> '3',	# Number of old sheets to keep
+		'delta' => 'purgetable', # Remove empty columns before applying diff
 		'format'	=> 'prev', # One of: prev(ious), auto or n(o|ew)
 			# If set, previous uses old sheet format, auto applies auto-format and the others do nothing.
 		'strip'	=> '0',   # remove old and diff sheets
@@ -1012,7 +1016,7 @@ sub init ($) {
 		'parsed' => 0,
 		'key' => '::name', # Primary key to %conndb
 		'field' => {
-	    #Name   	=>			Inherits
+	    #Name   	=>			Inherits from template
 	    #							Multiple
 	    #								Required: 0 = no, 1=yes, 2= init to ""
 	    #									Defaultvalue
@@ -1058,8 +1062,11 @@ sub init ($) {
 							# map them to be daughter of "testbench" ....
 		'parsed' => 0,
 		'key' => '::inst', # Primary key to %hierdb
+		'options' => 'overload', # Options for parsing this type
+							#   [no]overload: allow to redefine values (e.g.
+							#	for redefinition of ::lang through macros)
 		'field' => {
-	    #Name   	=>				Inherits
+	    #Name   	=>				Inherits from template
 	    #								Multiple
 	    #									Required
 	    #										Defaultvalue

@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.49 $                                          |
+# | Revision:   $Revision: 1.50 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/11/15 16:25:09 $                              |
+# | Date:       $Date: 2006/11/21 16:51:09 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,8 +28,8 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
-# | Revision 1.49  2006/11/15 16:25:09  wig
-# | Upgraded __W_FILE_READ to __E_INFILE_READ
+# | Revision 1.50  2006/11/21 16:51:09  wig
+# | Improved generator execution (now in order!)
 # |
 # | Revision 1.48  2006/07/20 09:41:55  wig
 # | Debugged -variant/-sel in combination with non mix-headers
@@ -136,6 +136,7 @@ sub absolute_path ($);
 sub useOoolib ();
 sub _split_diff2xls ($$);
 sub _join_split_lines ($);
+sub _remove_empty_cols ($);
 sub mix_utils_io_check_path ();
 sub open_infile		($$$$);
 sub open_xls		($$$$);
@@ -145,11 +146,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.49 2006/11/15 16:25:09 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.50 2006/11/21 16:51:09 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.49 $'; #'  
+my $thisrevision    =      '$Revision: 1.50 $'; #'  
 
-# Revision:   $Revision: 1.49 $
+# Revision:   $Revision: 1.50 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1137,7 +1138,7 @@ sub write_delta_sheet($$$) {
     my $r_a = shift;
 
     # Fix path
-    my $predir = "";
+    my $predir = '';
     if ( $eh->get( 'intermediate.path' ) ne '.' and not is_absolute_path( $file ) ) {
 		# Prepend a directory name ...
 		$predir = $eh->get( 'intermediate.path' ) . '/' ;
@@ -1172,7 +1173,13 @@ sub write_delta_sheet($$$) {
 	_join_split_lines( $r_a );
 	_join_split_lines( $prev[0] );
 
-
+	#!wig20061115: remove all empty columns
+	#	the '::shortname' syndrom
+	if ( $eh->get( 'intermediate.delta' ) =~ m/\bpurgetable/ ) {
+		_remove_empty_cols( $r_a );
+		_remove_empty_cols( $prev[0] );
+	}
+	
     my @prevd = two2one( $prev[0] );
     my @currd = two2one( $r_a );
     if ( not $eh->get( 'iswin' ) and $file =~ m,.xls$, ) {
@@ -1353,7 +1360,58 @@ sub _join_split_lines ($) {
 		splice( @$dataref, $i , 1 );
 	}
 } # End of _join_split_lines
+
+#
+# Iterate over sheets and remove all empty colums
+#
+# Input: ref to array of arrays with data
+#        remove empty columns "inline" (no return)
+#!wig20050926
+sub _remove_empty_cols ($) {
+	my $dataref = shift;
 	
+	# Get header to column mappings
+	my $head = $dataref->[0]; # Has to be first row!
+
+	# Delete all cols without contents
+	my @empty = ( 0..(scalar( @$head ) - 1 ) ); 
+	# Iterate over all other lines:
+	my @left = ();
+	for my $i ( 1..(scalar( @$dataref ) - 1) ) {
+		for my $examine ( @empty ) {
+			unless ( defined( $dataref->[$i]->[$examine] )
+				and $dataref->[$i]->[$examine] ne ''  ) {
+				# Cell is empty:
+				push( @left, $examine );
+			}
+		}
+		@empty = @left; # Hand over left columns
+		last unless( scalar( @empty ) ); # Stop here, no empty cols.
+		@left = ();
+	}
+	
+	# Is there anything left
+	if ( scalar( @empty ) ) {
+		# Remove these columns (from higher to lower)
+		for my $n ( reverse( @empty ) ) {
+			$logger->warn( '__W_EMPTYCOLS', "\tRemove all empty column " .
+				$dataref->[0]->[$n] );
+			my $mindex = scalar( @{$dataref->[0]} ) - 1;
+			for my $i ( 0..(scalar( @$dataref ) - 1 ) ) {
+				my $dr = $dataref->[$i];
+				# if $n is $width -> remove last element
+				if ( $n == $mindex ) {
+					@$dr = @$dr[0..($mindex-1)];
+				} elsif ( $n == 0 and $mindex > 0 ) {
+					@$dr = @$dr[1..$mindex];
+				} else {
+					@$dr = @$dr[0..($n-1),($n+1)..$mindex];
+				}
+			}
+		}
+	}
+} # End of _remove_empty_cols	
+
 #
 # Take diff array and convert back to XLS format
 #

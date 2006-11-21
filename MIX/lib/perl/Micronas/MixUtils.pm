@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.137 $                                        |
+# | Revision:   $Revision: 1.138 $                                        |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/16 15:21:44 $                              |
+# | Date:       $Date: 2006/11/21 16:51:10 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.137 2006/11/16 15:21:44 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.138 2006/11/21 16:51:10 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.138  2006/11/21 16:51:10  wig
+# | Improved generator execution (now in order!)
+# |
 # | Revision 1.137  2006/11/16 15:21:44  wig
 # |  	MixUtils.pm : do not use import, but init()
 # |
@@ -183,11 +186,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.137 2006/11/16 15:21:44 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.138 2006/11/21 16:51:10 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.137 $';         #'
+my $thisrevision        =      '$Revision: 1.138 $';         #'
 
-# Revision:   $Revision: 1.137 $   
+# Revision:   $Revision: 1.138 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2492,7 +2495,7 @@ sub parse_header($$@){
     $eh->set( $kind . '.ext', scalar(keys(%or)) );
 	
 	if ( exists $templ->{'_mult_'} ) {
-		_mix_utils_reorder( $templ, \@resort, \%or );
+ 		_mix_utils_reorder( $templ, \@resort, \%or );
 	}
 		
     # Finally, got the field name list ... return now
@@ -2512,6 +2515,24 @@ sub _mix_utils_reorder ($$$) {
 	my $templ = shift;
 	my $resortar = shift;
 	my $order = shift;
+
+	# Make sure all default fields are listed (esp. if not in input,
+	# but predefined (::shortname, ::arch, ...)
+	my %inlist = ();
+	for my $i ( %{$templ->{'field'}} ) {
+		next unless ( $i =~ m/^::/ );
+		next unless ( ref( $templ->{field}{$i} ) eq 'ARRAY' );
+		$inlist{$i} = 1 if ( $templ->{field}{$i}[4] > 0 and
+			not $templ->{field}{$i}[5] );
+	}
+	for my $i ( @$resortar ) {
+		delete $inlist{$i} if exists $inlist{$i};
+	}
+	
+	# Left over in inlist -> push on $resortar
+	for my $i ( keys %inlist ) {
+		push( @$resortar, $i );
+	}
 	
 	# highest multiple field with
 	#  find conflicting print order the start number 
@@ -2700,6 +2721,7 @@ sub db2array ($$$$;$$) {
     }
 
     my @o = ();
+    my %o = (); # Check for overlap ...
     my $primkeynr = 0; # Primary key identifier; defaults to ::ign 
     my $commentnr = ''; # which column has the ::comments line?
     
@@ -2723,7 +2745,12 @@ sub db2array ($$$$;$$) {
 
 		if ( $printorder =~ m/\btemplate/ ) {		
 			# Sort by template order
-			if ( $fields->{$ii}[4] > 0 and exists( $fields->{$ii}[5] ) ) {
+			if ( $fields->{$ii}[4] > 0 ) { # and exists( $fields->{$ii}[5] ) )
+				if ( exists( $o{$fields->{$ii}[4]} ) ) {
+					$logger->warn('__W_', "\tintermediate output column conflict!");
+				} else {
+					$o{$fields->{$ii}[4]} = $ii;
+				}
 				# Take print order for all fields used ...
 				$o[$fields->{$ii}[4]] = $ii; # Print Order ...
 			}

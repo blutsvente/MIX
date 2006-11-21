@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.99 $                                         |
+# | Revision:   $Revision: 1.100 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/11/02 15:37:48 $                              |
+# | Date:       $Date: 2006/11/21 16:51:10 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.99 2006/11/02 15:37:48 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.100 2006/11/21 16:51:10 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.100  2006/11/21 16:51:10  wig
+# | Improved generator execution (now in order!)
+# |
 # | Revision 1.99  2006/11/02 15:37:48  wig
 # |  	MixChecker.pm MixUtils.pm MixWriter.pm : added basic caching, improved performance
 # |
@@ -160,9 +163,9 @@ sub _mix_wr_nice_comment		($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.99 2006/11/02 15:37:48 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.100 2006/11/21 16:51:10 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.99 $';
+my $thisrevision   =      '$Revision: 1.100 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2211,7 +2214,11 @@ sub gen_instmap ($;$$) {
         		} else {
                 	$map .= '%S%' x 2 . ";\n"; # Get a trailing ;
         		}
-            }
+            } else { # Verilog
+            	if ( $simple_flag ) {
+        			$map .= ";\n";
+        		} 
+        	}
         }
 
         if ( $lang =~ m,^veri,io ) {
@@ -2929,7 +2936,7 @@ sub port_simple ($$$$$$) {
 
 		# %WIRE%  -> one in / same out!
 		#
-		if ( $enty eq "%WIRE%" ) {
+		if ( $enty eq '%WIRE%' ) {
 			$ins .= _mix_simple_wire( $sin[0], $lang);
 		} else {
 			$ins .= _mix_simple_logic( $enty, \@sin, $lang );
