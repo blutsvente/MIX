@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.84 $                                         |
+# | Revision:   $Revision: 1.85 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/15 16:24:37 $                              |
+# | Date:       $Date: 2006/11/21 09:03:30 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.84 2006/11/15 16:24:37 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.85 2006/11/21 09:03:30 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.85  2006/11/21 09:03:30  wig
+# |  	MixParser.pm : variant filtering for generators fixed
+# |
 # | Revision 1.84  2006/11/15 16:24:37  wig
 # | 	MixParser.pm : minor fix to get verilog include import working
 # |
@@ -187,9 +190,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.84 2006/11/15 16:24:37 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.85 2006/11/21 09:03:30 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.84 $';
+my $thisrevision =	'$Revision: 1.85 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -479,15 +482,20 @@ sub parse_conn_gen ($) {
     }
 
     my %g = ();
+	my $icomms	= $eh->get( 'input.ignore.comments' );
+	my $ivar	= $eh->get( 'input.ignore.variant' ) || '#__I_VARIANT';   
     for my $i ( 0..$#{$rin} ) {
 
         next unless ( $rin->[$i] ); # Holes in the array?
-        next if ( $rin->[$i]{'::comment'} =~ m,\s*(#|//),o );   # Commented out
-        next if ( $rin->[$i]{'::gen'} =~ m,^\s*$, );                # Empty
+        next if ( $rin->[$i]{'::ign'} =~ m,$icomms,o );    # Skip fields commented out
+        next if ( $rin->[$i]{'::ign'} =~ m,$ivar,o );
+        next if ( $rin->[$i]{'::comment'} =~ m,#macro,o ); # No generator, but a macro!
+
+        next if ( $rin->[$i]{'::gen'} =~ m,^\s*$, );      # Empty
 
         # CONN vs. HIER: Strip and remember leading CONN .
         #wig20030715
-        my $namesp = "hier";
+        my $namesp = 'hier';
         if ( $rin->[$i]{'::gen'} =~ s!^\s*(HIER|CONN(:SPLICE)?)[\s,]*!!io ) {
             $namesp = lc( $1 );
         }
