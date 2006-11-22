@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: ImportVerilogInclude.pm,v $                     |
-# | Revision:   $Revision: 1.3 $                                          |
+# | Revision:   $Revision: 1.4 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/16 15:22:01 $                              |
+# | Date:       $Date: 2006/11/22 16:10:12 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005/2006                                    |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # # $Log: ImportVerilogInclude.pm,v $
+# # Revision 1.4  2006/11/22 16:10:12  wig
+# #  	ImportVerilogInclude.pm : tiny change to log message
+# #
 # # Revision 1.3  2006/11/16 15:22:01  wig
 # #  	MixUtils.pm : do not use import, but init()
 # #  	ImportVerilogInclude.pm : rename import to init()
@@ -62,9 +65,9 @@ use Log::Log4perl qw(get_logger);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: ImportVerilogInclude.pm,v 1.3 2006/11/16 15:22:01 wig Exp $';#'  
+my $thisid          =      '$Id: ImportVerilogInclude.pm,v 1.4 2006/11/22 16:10:12 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: ImportVerilogInclude.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.3 $'; #'  
+my $thisrevision    =      '$Revision: 1.4 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -143,10 +146,12 @@ sub init {
 						# Ignore all lines but `define ...
 						if ( m/^\s*`define \s+ (\w+) \s+ (.+)/x ) {
 							if ( exists( $self->{'defines'}{$1} ) ) {
-								$logger->error('__E_VINCLUDE_REDEF',
-								"\tRedefinition of $1 from '" .
-								$self->{'defines'}{$1} . "' to '" .
-								$2 . "' attempted! Ignored." );
+								if ( $self->{'defines'}{$1} ne $2 ) {
+									$logger->error('__E_VINCLUDE_REDEF',
+									"\tRedefinition of $1 from '" .
+									$self->{'defines'}{$1} . "' to '" .
+									$2 . "' attempted! Ignored." );
+								}
 							} else {
 								$self->{'defines'}{$1} = $2;
 							}
