@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.86 $                                         |
+# | Revision:   $Revision: 1.87 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/21 16:51:10 $                              |
+# | Date:       $Date: 2006/11/22 10:37:15 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.86 2006/11/21 16:51:10 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.87 2006/11/22 10:37:15 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,8 +33,8 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
-# | Revision 1.86  2006/11/21 16:51:10  wig
-# | Improved generator execution (now in order!)
+# | Revision 1.87  2006/11/22 10:37:15  wig
+# | Reworked hier overlay mode (data redefinition!)
 # |
 # | Revision 1.85  2006/11/21 09:03:30  wig
 # |  	MixParser.pm : variant filtering for generators fixed
@@ -193,9 +193,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.86 2006/11/21 16:51:10 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.87 2006/11/22 10:37:15 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.86 $';
+my $thisrevision =	'$Revision: 1.87 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -922,7 +922,13 @@ sub merge_inst ($%) {
 		 			# Leave that value ....
 					$logger->warn( '__I_MERGE_INST', "\tField $i for $name already filled");
             } else {
-				if ( $data{$i} ne '' ) { $hierdb{$name}{$i} = $data{$i} };
+            	if ( $data{$i} ne '' ) {
+            		if ( $i eq '::comments' ) {
+            			$hierdb{$name}{$i} .= ' ' . $data{$i};
+            		} else {
+						$hierdb{$name}{$i} = $data{$i};
+            		}
+            	}
             }
         } else {
         	# Take this new value
@@ -5017,59 +5023,59 @@ sub _mix_parser_parsehdl ($) {
 
     # Look for entities in case of vhdl ...
     if ( $file =~ m,\.vhd(l)?$,io ) {
-	# Look for all entities ....
-	while( $hdl =~ m,entity\s+(\w+)\s+is\s+(.*?)end\s+\1,imsg ) {
-	    # Has entity body ...
-	    my $enty = $1; # Will use entity name as instance??
-	    my $inst = add_inst(
-			'::inst' => "%PREFIX_INSTANCE%" . $enty . "%POSTFIX_INSTANCE%",
-			'::entity' => $enty,
-			'::parent' => "%IMPORT%",
-			'::__source__' => 'hier',
-		);
-	    my $body = $2;
+		# Look for all entities ....
+		while( $hdl =~ m,entity\s+(\w+)\s+is\s+(.*?)end\s+\1,imsg ) {
+	    	# Has entity body ...
+	    	my $enty = $1; # Will use entity name as instance??
+	    	my $inst = add_inst(
+				'::inst' => "%PREFIX_INSTANCE%" . $enty . "%POSTFIX_INSTANCE%",
+				'::entity' => $enty,
+				'::parent' => "%IMPORT%",
+				'::__source__' => 'hier',
+			);
+	    	my $body = $2;
 
-	    my $paren_in_comment_flag = 0;
-	    if ( $body =~ m,--.*[\(\)], ) { # $generic has a -- ( .. ) in it ...
-		# Mask these parens ...
-			while ( $body =~ m/(--.*?)\(/ ) {
-		    	$body =~ s,(--.*?)\(,$1___LEFTPAR___,;  # Will that work properly?
-			}
-			while ( $body =~ m/(--.*?)\)/ ) {
-		    	$body =~ s,(--.*?)\),$1___RIGHTPAR___,; # Will that work properly?
-			}
-			$paren_in_comment_flag = 1;
-	   	}
+	    	my $paren_in_comment_flag = 0;
+	    	if ( $body =~ m,--.*[\(\)], ) { # $generic has a -- ( .. ) in it ...
+			# Mask these parens ...
+				while ( $body =~ m/(--.*?)\(/ ) {
+		    		$body =~ s,(--.*?)\(,$1___LEFTPAR___,;  # Will that work properly?
+				}
+				while ( $body =~ m/(--.*?)\)/ ) {
+		    		$body =~ s,(--.*?)\),$1___RIGHTPAR___,; # Will that work properly?
+				}
+				$paren_in_comment_flag = 1;
+	   		}
 
-	    if ( $body =~  m,^\s*generic\s*($RE{balanced}{-parens=>'()'});,im ) {
-        # Got generic 
-			my $generic = $1;
+	    	if ( $body =~  m,^\s*generic\s*($RE{balanced}{-parens=>'()'});,im ) {
+        	# Got generic 
+				my $generic = $1;
 
-            # NO_DEFAULT	: string; -- __W_NODEFAULT
-            # NO_NAME	: string; -- __W_NODEFAULT
-            # WIDTH	: integer	:= 7
-            while( $generic =~ s/^\s*(\w+)\s*:\s*(\w+)\s*
+            	# NO_DEFAULT	: string; -- __W_NODEFAULT
+            	# NO_NAME	: string; -- __W_NODEFAULT
+            	# WIDTH	: integer	:= 7
+            	while( $generic =~ s/^\s*(\w+)\s*:\s*(\w+)\s*
                        (:=\s*([-\.,\w\d]+?))?
 				       ;
 				       ([ \t]*--.*)?//xm
-		       ) {
+		       	) {
 		   		# $1 = genericname
 		   		# $2 = generic type
 		   		# $4 = default value (if set)
 		   		# $5 = comments ...
 		   		# push( @generics, [ $1, $2, $4, $5 ] );
-		    	my %d = ( '::name' => $1,
-				    '::mode' => 'G',
-				    '::type' => $2,
-				    '::in' =>	$inst . "/" . $1,
-                                    '::high' => "",
-                                    '::low' => "",
-                                    '::bundle'  => "%IMPORT_BUNDLE%" . uc($inst) ,
-                                    '::class' => "%IMPORT%" . uc($inst),
-                                    '::clock' => "%IMPORT_CLK%" . uc($inst),
-			    );
-		    	$d{'::out'} = ( "'" . $4 ) if ( defined( $4 ) );
-		    	$d{'::comment'} = $5 if ( defined( $5 ));
+		    		my %d = ( '::name' => $1,
+				    	'::mode' => 'G',
+				    	'::type' => $2,
+				    	'::in' =>	$inst . "/" . $1,
+                                    '::high' => '',
+                                    '::low' => '',
+                                    '::bundle'  => '%IMPORT_BUNDLE%' . uc($inst) ,
+                                    '::class' => '%IMPORT%' . uc($inst),
+                                    '::clock' => '%IMPORT_CLK%' . uc($inst),
+			    	);
+		    		$d{'::out'} = ( "'" . $4 ) if ( defined( $4 ) );
+		    		$d{'::comment'} = $5 if ( defined( $5 ));
                     add_conn( %d );
                 }
 				if ( $generic =~ s/^\s*(\w+)\s*:\s*(\w+)\s*
@@ -5096,8 +5102,7 @@ sub _mix_parser_parsehdl ($) {
 	    	# line begins with \s*port( .... ) ..
 	    	if ( $body =~ m,^\s*port\s*($RE{balanced}{-parens=>'()'});,im ) {
                 my $ports = $1;
-
-                #OLD: if ( $body =~ m,port\s*\((.+?)\);,ims ) {
+                
                 # alarm_time_ms_min	: in	std_ulogic_vector(3 downto 0);
                 # clk	: in	std_ulogic;
                 
@@ -5196,8 +5201,8 @@ sub _mix_parser_parsehdl ($) {
 		    		if ( $eh->get( 'import.generate' ) =~ m/\bstripio\b/io ) {
 		    			$d{'::name'} =~ s/_(i|o|io)$//i;
 		    		}
-		    		printf ( "#### Found port in instance $inst:\n" );
-		    		printf ( "\t%s %s\n" x scalar( keys( %d ) ), %d );
+		    		# printf ( "#### Found port in instance $inst:\n" );
+		    		# printf ( "\t%s %s\n" x scalar( keys( %d ) ), %d );
             		add_conn( %d );
             	}
 	    	}
@@ -5214,6 +5219,265 @@ sub _mix_parser_parsehdl ($) {
 
 } # End of _mix_parser_parsehdl
 
+=head 4 verilog connectivity import module
+
+#
+# Parse verilog files (read module header only!)
+#
+# Two styles supported:
+#	module something ( signal, signal, signal );
+#		input [6:0] signal;
+#		input signal, signal;
+#		inout signal;
+#  ...
+#  endmodule
+
+module ent_t
+//
+// Generated Module inst_t
+//
+	(
+		sig_i_a,
+		sig_i_a2,
+		sig_i_ae,
+		sig_o_a,
+		sig_o_a2,
+		sig_o_ae
+	);
+
+	// Generated Module Inputs:
+		input		sig_i_a;
+		input		sig_i_a2;
+		input	[6:0]	sig_i_ae;
+	// Generated Module Outputs:
+		output		sig_o_a;
+		output		sig_o_a2;
+		output	[7:0]	sig_o_ae;
+	// Generated Wires:
+		wire		sig_i_a;
+		wire		sig_i_a2;
+		wire	[6:0]	sig_i_ae;
+		wire		sig_o_a;
+		wire		sig_o_a2;
+		wire	[7:0]	sig_o_ae;
+// End of generated module header
+
+		// Generated Instance Port Map for inst_a
+		ent_a inst_a (
+
+			.p_mix_sig_01_go(sig_01),	// Use internally test1Will create p_mix_sig_1_go port
+			.p_mix_sig_03_go(sig_03),	// Interhierachy link, will create p_mix_sig_3_go
+			.p_mix_sig_04_gi(sig_04),	// Interhierachy link, will create p_mix_sig_4_gi
+			.p_mix_sig_05_2_1_go(sig_05[2:1]),	// Bus, single bits go to outsideBus, single bits go to outside, will create p_mix_sig_5_2_2_goBu...
+			.p_mix_sig_06_gi(sig_06),	// Conflicting definition (X2)
+			.p_mix_sig_i_ae_gi(sig_i_ae),	// Input Bus
+			.p_mix_sig_o_ae_go(sig_o_ae),	// Output Bus
+			.port_i_a(sig_i_a),	// Input Port
+			.port_o_a(sig_o_a),	// Output Port
+			.sig_07(sig_07),	// Conflicting definition, IN false!
+			.sig_08(sig_08),	// VHDL intermediate needed (port name)
+			.sig_13(),	// Create internal signal name
+			.sig_i_a2(sig_i_a2),	// Input Port
+			.sig_o_a2(sig_o_a2)	// Output Port
+		);
+		// End of Generated Instance Port Map for inst_a
+
+endmodule
+
+
+
+=cut
+		 
+sub _mix_parser_parseverilog ($) {
+	my $hdl = shift;
+	
+	# Look for all modules ....
+	while( $hdl =~ m,module \s+ (\w+) \s+ \((.*?)\); (.*?) \s+ endmodule\s+\1,ximsg ) {
+	    	# Has entity body ...
+			######## REWORK ###########
+	    	my $enty = $1; # Will use entity name as instance??
+	    	my $inst = add_inst(
+				'::inst' => "%PREFIX_INSTANCE%" . $enty . "%POSTFIX_INSTANCE%",
+				'::entity' => $enty,
+				'::parent' => "%IMPORT%",
+				'::__source__' => 'hier',
+			);
+	    	my $body = $2;
+
+	    	my $paren_in_comment_flag = 0;
+	    	if ( $body =~ m,--.*[\(\)], ) { # $generic has a -- ( .. ) in it ...
+			# Mask these parens ...
+				while ( $body =~ m/(--.*?)\(/ ) {
+		    		$body =~ s,(--.*?)\(,$1___LEFTPAR___,;  # Will that work properly?
+				}
+				while ( $body =~ m/(--.*?)\)/ ) {
+		    		$body =~ s,(--.*?)\),$1___RIGHTPAR___,; # Will that work properly?
+				}
+				$paren_in_comment_flag = 1;
+	   		}
+
+	    	if ( $body =~  m,^\s*generic\s*($RE{balanced}{-parens=>'()'});,im ) {
+        	# Got generic 
+				my $generic = $1;
+
+            	# NO_DEFAULT	: string; -- __W_NODEFAULT
+            	# NO_NAME	: string; -- __W_NODEFAULT
+            	# WIDTH	: integer	:= 7
+            	while( $generic =~ s/^\s*(\w+)\s*:\s*(\w+)\s*
+                       (:=\s*([-\.,\w\d]+?))?
+				       ;
+				       ([ \t]*--.*)?//xm
+		       	) {
+		   		# $1 = genericname
+		   		# $2 = generic type
+		   		# $4 = default value (if set)
+		   		# $5 = comments ...
+		   		# push( @generics, [ $1, $2, $4, $5 ] );
+		    		my %d = ( '::name' => $1,
+				    	'::mode' => 'G',
+				    	'::type' => $2,
+				    	'::in' =>	$inst . "/" . $1,
+                                    '::high' => '',
+                                    '::low' => '',
+                                    '::bundle'  => '%IMPORT_BUNDLE%' . uc($inst) ,
+                                    '::class' => '%IMPORT%' . uc($inst),
+                                    '::clock' => '%IMPORT_CLK%' . uc($inst),
+			    	);
+		    		$d{'::out'} = ( "'" . $4 ) if ( defined( $4 ) );
+		    		$d{'::comment'} = $5 if ( defined( $5 ));
+                    add_conn( %d );
+                }
+				if ( $generic =~ s/^\s*(\w+)\s*:\s*(\w+)\s*
+                                       (:=\s*([-\.,\w\d]+?))?
+				       ([ \t]*--.*)?//xm
+		   		) {
+		    		my %d = ( '::name' => $1,
+				    	'::mode' => 'G',
+				    	'::type' => $2,
+				    	'::in' =>	$inst . "/" . $1,
+                                    '::high' => "",
+                                    '::low' => "",
+                                    '::bundle'  => "%IMPORT_BUNDLE%" . uc($inst) ,
+                                    '::class' => "%IMPORT%" . uc($inst),
+                                    '::clock' => "%IMPORT_CLK%" .uc($inst),
+			    	);
+		    		$d{'::out'} = ( "'" . $4 ) if ( defined( $4 ) );
+		    		$d{'::comment'} = $5 if ( defined( $5 ));
+		    		# printf ( "#### Found generic in instance $inst:\n" );
+		    		# printf ( "\t%s %s\n" x scalar( keys( %d ) ), %d );
+                    add_conn( %d );
+				}
+	    	}
+	    	# line begins with \s*port( .... ) ..
+	    	if ( $body =~ m,^\s*port\s*($RE{balanced}{-parens=>'()'});,im ) {
+                my $ports = $1;
+                
+                # alarm_time_ms_min	: in	std_ulogic_vector(3 downto 0);
+                # clk	: in	std_ulogic;
+                
+                $ports =~ s/^\s*\(//;
+                $ports =~ s/\s*\)$//;
+                
+                while( $ports =~ s/^\s*(\w+)\s*:\s*(\w+)\s*(\w+)\s*
+                               (\(\s*(\d+)(\s+(down)?to\s+(\d+))?\s*\))?   # Optional (N downto M)
+                               ;                                                   # ; or end of line
+                               ([ \t]*--.*)?//ixm ) {
+                    # Will catch e.th. but the last line ...
+                    # $1 = portname
+                    # $2 = port mode
+                    # $3 = port type
+                    # $4 contains ( N [down]to M )
+                    # $5 = N
+                    # $6 = downto M
+                    # $7 = down | <empty>
+                    # $8 = M
+                    # $9 = comment
+                    #TODO: check if M <= N for 
+                    # push( @ports, [ $1, $2, $3, $5, $8, $9 ] );
+		    		my $mode = $2;
+                    my $col = "::in";
+		    		my %d = ( '::name' => $1,
+				    # '::mode' => $2,
+				    	'::type' => $3,
+                        '::high' => "",
+                        '::low' => "",
+                        '::class' => "%IMPORT%" . uc($inst),
+                        '::clock' => "%IMPORT_CLK%" . uc($inst),
+                        '::bundle'  => "%IMPORT_BUNDLE%" . uc($inst) ,
+			    	);
+		    		if ( lc( $mode ) eq "in" ) {
+						$d{'::mode'} = "%IMPORT_I%"; #TODO
+		    		} elsif ( lc( $mode ) eq "out" ) {
+						$col = "::out"; $d{'::mode'} = "%IMPORT_O%";
+		    		} elsif ( lc( $mode ) eq "inout" ) {
+						$d{'::mode'} = "IO";
+		    		} elsif ( lc( $mode ) eq "buffer" ) {
+						$d{'::mode'} = "B";
+		    		} else {
+						$logger->warn( '__W_PARSEHDL', "\tUnknown mode $mode in import" );
+						$d{'::mode'} = "S";
+		    		}
+
+		    		$d{$col} = $inst . "/" . $1;
+		    		$d{'::high'} = $5 if ( defined( $5 ) );
+		    		$d{'::low'} = $8 if ( defined( $8 ) );
+		    		if ( defined( $9 )){
+		    			( $d{'::comment'} = $9 ) =~ s/^\s+//;
+		    		}
+		    		if ( $eh->get( 'import.generate' ) =~ m/\bstripio\b/io ) {
+		    			$d{'::name'} =~ s/_(i|o|io)$//i;
+		    		}		    		
+		    		add_conn( %d );
+		    		# printf ( "#### Found port in instance $inst:\n" );
+		    		# printf ( "\t%s %s\n" x scalar( keys( %d ) ), %d ); 
+                }
+                # catch last signal
+                if( $ports =~ m/\n\s*(\w+)\s*:\s*(\w+)\s*(\w+)
+                            	(\(\s*(\d+)(\s+(down)?to\s+(\d+))?[ \t]*\))?   # Optional (N downto M)
+								([ \t]*--.*)?/ixm ) {
+		    		#TODO: check if M <= N for 
+		    		my $mode = $2;
+                    my $col = "::in";
+		    		my %d = ( '::name' => $1,
+				    # '::mode' => $2,
+				    '::type' => $3,
+                                   '::ign' => "",
+                                    '::gen' => "",
+                                    '::high' => "",
+                                    '::low' => "",
+                                    '::class' => "%IMPORT%" . uc( $inst ),
+                                    '::clock' => "%IMPORT_CLK%" . uc( $inst ),
+                                    '::bundle'  => "%IMPORT_BUNDLE%" . uc($inst) ,
+			    	);
+		    		if ( lc( $mode ) eq "in" ) {
+						$d{'::mode'} = "%IMPORT_I%"; #TODO
+		    		} elsif ( lc( $mode ) eq "out" ) {
+						$col = "::out"; $d{'::mode'} = "%IMPORT_O%";
+		    		} elsif ( lc( $mode ) eq "inout" ) {
+						$d{'::mode'} = "IO";
+		    		} elsif ( lc( $mode ) eq "buffer" ) {
+						$d{'::mode'} = "B";
+		    		} else {
+						$logger->warn( '__W_PARSEHDL', "\tUnknown mode $mode in import" );
+						$d{'::mode'} = "S";
+		    		}
+		    		$d{$col} = $inst . "/" . $1;
+		    		$d{'::high'} = $5 if ( defined( $5 ) );
+		    		$d{'::low'} = $8 if ( defined( $8 ) );
+		    		if ( defined( $9 )){
+		    			( $d{'::comment'} = $9 ) =~ s/^\s+//;
+		    		}
+		    		if ( $eh->get( 'import.generate' ) =~ m/\bstripio\b/io ) {
+		    			$d{'::name'} =~ s/_(i|o|io)$//i;
+		    		}
+		    		# printf ( "#### Found port in instance $inst:\n" );
+		    		# printf ( "\t%s %s\n" x scalar( keys( %d ) ), %d );
+            		add_conn( %d );
+            	}
+	    	}
+		}
+		############## END of REWORK ################
+} # End of _mix_parser_parseverilog
 1;
 
 #!End
