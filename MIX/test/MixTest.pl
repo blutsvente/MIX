@@ -274,6 +274,11 @@ my @tests = (
 	  'path' => "macro/splice",
 	  'options' => "-sheet HIER=HIER_SPLICE -sheet CONN=CONN_SPLICE",
 	},
+	{ # macro/generator enable/disable with ::variant
+	  'name' => "macro",
+	  'path' => "macro/variant",
+	  'options' => "-variant Calculate",
+	},
 	{
 	  'name' => "verilog",
 	  'path' => "verilog",
@@ -507,6 +512,11 @@ my @tests = (
 	  'path' => 'logic',
 	  'options' => '',
 	},
+	{ # Create simple logic/verilog ...
+	  'name' => 'logic',
+	  'path' => 'logic/verilog',
+	  'options' => '',
+	},
 	{ # Add arbitrary text in hooks: ::udc
 		'name' => 'udc',
 		'path' => 'udc',
@@ -641,17 +651,17 @@ sub gotScript($$) {
     my $name = shift;
 
     if ( opendir(DIR, $dir) ) {
-	while( defined( $_ = readdir(DIR ) ) ) {
-	    if ( $_ =~ m/^$name$/ ) {
-		close( DIR );
-		return 1;
-	    }
-	}
+		while( defined( $_ = readdir(DIR ) ) ) {
+	    	if ( $_ =~ m/^$name$/ ) {
+				close( DIR );
+				return 1;
+	    	}
+		}
     } else {
-	logwarn( "WARNING, Cannot open directory $dir: $!" );
+		logwarn( "WARNING, Cannot open directory $dir: $!" );
     }
     return 0;
-}
+} # End of gotScript
 
 #######################################################################
 #                         runMix - function                           #
@@ -744,84 +754,93 @@ sub runMix($) {
 	    	$command  = 'perl -x ' . ( $opts{'debug'} ? '-d ' : '' ) .
 				"\"$mix\" $options \"$find../$tests[$i]->{'name'}.$type\"" ;
 	    }
-	    chdir( $path ) || logwarn("ERROR: Directory <$path> not found!");
-	    
-	    if ( -r "$testname-t.out" and not $opts{'debug'} ) {
-		    rename( "$testname-t.out", "$testname-t.out.0" )
+
+		# chdir to work directory and run:	    
+		my $cf = 1; # Number of differing files
+		my $ci = 1; # Number of diffs in intermediate
+		my $cl = 1; # Number of missing/added files
+		my $ce = 1; # Number of error code diffs
+		my $elapsed = -1;
+	    if ( chdir( $path ) ) {
+	    	# Start testcase
+	    	if ( -r "$testname-t.out" and not $opts{'debug'} ) {
+		    	rename( "$testname-t.out", "$testname-t.out.0" )
 		       	      or print "rename of $testname-t.out failed"
 	    	          and exit 1;
-	    }
+	    	}
 	
-	    if ( defined( $opts{'purge'} ) ) {
-	        unlink <*.diff>;
-	    	unlink <*.out.0>;
-	    	unlink <*.out>;
-	    	unlink <*.pld>; #!wig20031218: no longer created ...
-	    	print( "Purged test $testname\n" );
-	    	next;
-	    } else {
-	        # "export", "update" and non-opt mode will create new output data:
-		    my $status;
-		    my $t0;
-	
-		    # measure elapsed time 
-		    $t0 = [gettimeofday];
-		    
-		    if ( $opts{'debug'} ) {
-	     		    $status = system( "$command" );
-			} else {
-					$status = system( "$command >$testname-t.out 2>&1" );
-		   	}
-			my $cf = 1; # Number of differing files
-			my $ci = 1; # Number of diffs in intermediate
-			my $cl = 1; # Number of missing/added files
-			my $ce = 1; # Number of error code diffs
-		    my $elapsed = tv_interval ($t0, [gettimeofday]);
-		    if ( $status / 256 != 0 ) {
-		    	$cf = $ci = $ce = -2;
-	    		# 03/07/15 17:02:49 140: WARNING: SUM: Number of changes in intermediate: 1
-	    		# 03/07/15 17:02:49 140: WARNING: SUM: Number of changed files: 0
-	 
-	    		$failsum++;
-	    		logtrc( "WARNING", "$testname.$type in directory $tests[$i]->{'path'} failed, time: " .
-	    			sprintf( "%.2fs changes: i/l/f/e %s/%s/%s/%s", $elapsed, $ci, $cl, $cf, $ce  ) );
+	    	if ( defined( $opts{'purge'} ) ) {
+	        	unlink <*.diff>;
+	    		unlink <*.out.0>;
+	    		unlink <*.out>;
+	    		unlink <*.pld>; #!wig20031218: no longer created ...
+	    		print( "Purged test $testname\n" );
+	    		next;
 	    	} else {
-				# Timers average / min / max ..
-				$elapsed_sum += $elapsed;
-				$elapsed_cnt++;
-				$elapsed_min = $elapsed if ( $elapsed < $elapsed_min );
-				$elapsed_max = $elapsed if ( $elapsed > $elapsed_max );
-				logsay( "$testname.$type in directory $tests[$i]->{'path'}, time : " .
-					sprintf( "%.2fs", $elapsed ) );
-		    }
-	   		if ( not $opts{debug} and open( LOG, "< $testname-t.out" ) ) {
-	   		    while ( <LOG> ) {
-	  		        chomp;
-	   				if( m/SUM:\s+Number\s+of\s+changed\s+files:\s*(\d+)/i ) {
-	   			    	$cf = $1;
-	   			    	next;
-	   				}
-	   				if( m/SUM:\s+Number\s+of\s+changes.*intermediate:\s*(\d+)/i ) {
-	   			    	$ci = $1;
-	   				}
-	   				if( m/SUM:\s+Number\s+of\s+unexpected\s+errors.*:\s*(\d+)/i ) {
-	   			    	$ce = $1;
-	   				}
-	   				if( m/SUM:\s+Filelist\s+compare\s+result:\s*(\d+)/i ) {
-	   			    	$cl = $1;
-	   				}
-	   		    }
-	   		    close( LOG);
-	   		} else {
-	   		    $cf = $ci = $ce = $cl = -1;
-	   		}
+	        	# "export", "update" and non-opt mode will create new output data:
+		    	my $status;
+		    	my $t0;
+	
+		    	# measure elapsed time 
+		    	$t0 = [gettimeofday];
+		    
+		 		if ( $opts{'debug'} ) {
+	     		    $status = system( "$command" );
+				} else {
+					$status = system( "$command >$testname-t.out 2>&1" );
+		   		}
+
+		    	$elapsed = tv_interval ($t0, [gettimeofday]);
+		    	if ( $status / 256 != 0 ) {
+		    		$cf = $ci = $ce = -2;
+	    			# 03/07/15 17:02:49 140: WARNING: SUM: Number of changes in intermediate: 1
+	    			# 03/07/15 17:02:49 140: WARNING: SUM: Number of changed files: 0
+	 
+	    			$failsum++;
+	    			logtrc( "WARNING", "$testname.$type in directory $tests[$i]->{'path'} failed, time: " .
+	    				sprintf( "%.2fs changes: i/l/f/e %s/%s/%s/%s", $elapsed, $ci, $cl, $cf, $ce  ) );
+	    		} else {
+					# Timers average / min / max ..
+					$elapsed_sum += $elapsed;
+					$elapsed_cnt++;
+					$elapsed_min = $elapsed if ( $elapsed < $elapsed_min );
+					$elapsed_max = $elapsed if ( $elapsed > $elapsed_max );
+					logsay( "$testname.$type in directory $tests[$i]->{'path'}, time : " .
+						sprintf( "%.2fs", $elapsed ) );
+		    	}
+	   			if ( not $opts{debug} and open( LOG, "< $testname-t.out" ) ) {
+	   		    	while ( <LOG> ) {
+	  		        	chomp;
+	   					if( m/SUM:\s+Number\s+of\s+changed\s+files:\s*(\d+)/i ) {
+	   			    		$cf = $1;
+	   			    		next;
+	   					}
+	   					if( m/SUM:\s+Number\s+of\s+changes.*intermediate:\s*(\d+)/i ) {
+	   			    		$ci = $1;
+	   					}
+	   					if( m/SUM:\s+Number\s+of\s+unexpected\s+errors.*:\s*(\d+)/i ) {
+	   			    		$ce = $1;
+	   					}
+	   					if( m/SUM:\s+Filelist\s+compare\s+result:\s*(\d+)/i ) {
+	   			    		$cl = $1;
+	   					}
+	   		    	}
+	   		    	close( LOG);
+	   			} else {
+	   		    	$cf = $ci = $ce = $cl = -1;
+	   			}
+	    	}
 	   		if ( $opts{debug} ) {
 	   			$cf = $ci = $ce = $cl = 0;
 	   		}
-	    	ok( $status/256 == 0, "$testname.$type in directory $tests[$i]->{'path'}, time: " .
-			    		sprintf( "%.2fs changes: i/l/f/e %s/%s/%s/%s", $elapsed, $ci, $cl, $cf, $ce  ) );
-	    	chdir( $wdir );
+	    } else {
+	    	logwarn("ERROR: Directory <$path> not found!");
+	    	$cf = $ci = $ce = $cl = -2;
+	    	$status = 256;
 	    }
+	    ok( $status/256 == 0, "$testname.$type in directory $tests[$i]->{'path'}, time: " .
+		    		sprintf( "%.2fs changes: i/l/f/e %s/%s/%s/%s", $elapsed, $ci, $cl, $cf, $ce  ) );
+	    chdir( $wdir );
 	}
     $failstat{$type} = $failsum;
 } # End of runMix
@@ -846,8 +865,8 @@ sub mkdirRec ($) {
 	}
     }
     unless( $uppath ) {
-	print( "ERROR: No start path found for $path! Cannot create!\n" );
-	return undef;
+		print( "ERROR: No start path found for $path! Cannot create!\n" );
+		return undef;
     }
 
     my $pp = "/";
