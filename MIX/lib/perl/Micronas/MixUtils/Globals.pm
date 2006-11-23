@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.32 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/21 16:51:09 $                              |
+# | Revision:   $Revision: 1.33 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2006/11/23 15:11:31 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.33  2006/11/23 15:11:31  lutscher
+# | changed coverage generation
+# |
 # | Revision 1.32  2006/11/21 16:51:09  wig
 # | Improved generator execution (now in order!)
 # |
@@ -80,9 +83,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.32 2006/11/21 16:51:09 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.33 2006/11/23 15:11:31 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.32 $';  
+my $thisrevision    =      '$Revision: 1.33 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -877,9 +880,11 @@ sub init ($) {
         'e_vr_ad' => {
                       'regfile_prefix'   => 'MIC',
                       'file_prefix'      => 'regdef',
-                      'vplan_ref'        => '%EMPTY%', 
+                      'vplan_ref'        => '%EMPTY%', # for automatic coverage generation
                       'field_naming'     => '%lF',  # see 'clone'
-                      'reg_naming'       => '%uR'   # see 'clone'
+                      'reg_naming'       => '%uR',  # see 'clone'
+                      'cover_ign_read_to_write_only' => 0, # for automatic coverage generation
+                      'cover_ign_write_to_read_only' => 1  # for automatic coverage generation
                      },
 					# parameters for STL view 
 		'stl' => {

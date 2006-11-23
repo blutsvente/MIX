@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.17 2006/11/20 17:12:19 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.18 2006/11/23 15:11:31 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.18  2006/11/23 15:11:31  lutscher
+#  changed coverage generation
+#
 #  Revision 1.17  2006/11/20 17:12:19  lutscher
 #  major changes
 #
@@ -162,6 +165,8 @@ sub _gen_view_vr_ad {
                       'reg_shell.e_vr_ad.regfile_prefix',
                       'reg_shell.e_vr_ad.file_prefix',
                       'reg_shell.e_vr_ad.vplan_ref',    # if not %EMPTY%, will add coverage group with vplan_ref attribute
+                      'reg_shell.e_vr_ad.cover_ign_read_to_write_only',
+                      'reg_shell.e_vr_ad.cover_ign_write_to_read_only',
                       'reg_shell.e_vr_ad.field_naming', # see Globals.pm
                       'reg_shell.e_vr_ad.reg_naming'    # see Globals.pm
 					 );
@@ -352,22 +357,27 @@ $this->global->{field_macro},$singlefield->{name},$singlefield->{size},$singlefi
 
 sub write_extend_coverage {
     my ($this, $reg_name, $reg_access_mode) = @_;
-    my $ignore;
+    my $ignore = "";
     if ($this->global->{'vplan_ref'} !~ m/%empty%/i) {
         print E_FILE "extend $reg_name vr_ad_reg {\n";
         print E_FILE "  cover reg_access (kind == $reg_name) using also vplan_ref = \"", $this->global->{'vplan_ref'},"\";\n";
         print E_FILE "};\n";
         if ($reg_access_mode ne "RW") {
-            if ($reg_access_mode eq "W") {
+            # create cover ignores for direction if enabled by the user
+            if ($reg_access_mode eq "W" and $this->global->{'cover_ign_read_to_write_only'} ) {
                 $ignore = "READ";
             } else {
-                $ignore = "WRITE";
+                if ($reg_access_mode eq "R" and $this->global->{'cover_ign_write_to_read_only'} ) {
+                    $ignore = "WRITE";
+                };
             };
-            print E_FILE "extend vr_ad_reg {\n";
-            print E_FILE "  cover reg_access (kind == $reg_name) is also {\n";
-            print E_FILE "    item direction using also ignore = direction == ${ignore};\n";
-            print E_FILE "  };\n";
-            print E_FILE "};\n";
+            if ($ignore ne "") {
+                print E_FILE "extend vr_ad_reg {\n";
+                print E_FILE "  cover reg_access (kind == $reg_name) is also {\n";
+                print E_FILE "    item direction using also ignore = direction == ${ignore};\n";
+                print E_FILE "  };\n";
+                print E_FILE "};\n";
+            };
         };
         print E_FILE "\n";
     };
