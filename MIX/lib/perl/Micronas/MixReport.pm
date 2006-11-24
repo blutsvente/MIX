@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.35 $                                               |
+# | Revision:   $Revision: 1.36 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2006/11/09 13:35:00 $                                                   |
+# | Date:       $Date: 2006/11/24 13:42:17 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.35 2006/11/09 13:35:00 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.36 2006/11/24 13:42:17 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,7 +31,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
-# | Revision 1.35  2006/11/09 13:35:00  mathias
+# | Revision 1.36  2006/11/24 13:42:17  mathias
+# | write info for doxygen
+# |
+# | Revision 1.35  2006-11-09 13:35:00  mathias
 # | added '#ifdef' to the written header files to prevent multiple includes
 # |
 # | Revision 1.34  2006-10-26 06:37:38  mathias
@@ -160,11 +163,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.35 2006/11/09 13:35:00 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.36 2006/11/24 13:42:17 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.35 $';
+my $thisrevision   =      '$Revision: 1.36 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -363,7 +366,9 @@ sub mix_rep_header_open_files($$)
     my $newf = $file;
     $newf =~ s/\./_/g;
     $fh->print("#ifndef _" . uc($newf) . "_\n");
-    $fh->print("#define _" . uc($newf) . "_\n");
+    $fh->print("#define _" . uc($newf) . "_\n\n");
+    $fh->print('/** @addtogroup ' . uc($newf) . "*/\n");
+    $fh->print('/* @{  */' . "\n");
 
     # write base address(es)
     if ($blocks->{$name}->{reg_clones} > 1) {
@@ -460,6 +465,7 @@ sub mix_rep_header($)
             mix_rep_header_print($fh, $domain_name, \%theBlock, $rTypes);
 
             # close the header file
+            $fh->print('/* \@} */' . "\n");    # doxygen
             $fh->print("#endif\n");
             $fh->close();
         }
