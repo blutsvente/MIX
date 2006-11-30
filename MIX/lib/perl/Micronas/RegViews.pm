@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.56 2006/11/13 11:31:49 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.57 2006/11/30 15:23:41 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.56 $                                  
+#  Revision      : $Revision: 1.57 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.57  2006/11/30 15:23:41  lutscher
+#  fixed bug in code generation for USR registers and made improvements in generated write process
+#
 #  Revision 1.56  2006/11/13 11:31:49  lutscher
 #  fixed _vgch_rs_code_read_mux in case there are no readable registers
 #
@@ -287,7 +290,7 @@ sub _vgch_rs_init {
 	}; 
 
     # register Perl module with mix
-    $eh->mix_add_module_info("RegViews", '$Revision: 1.56 $ ', "Utility functions to create different register space views from Reg class object");
+    $eh->mix_add_module_info("RegViews", '$Revision: 1.57 $ ', "Utility functions to create different register space views from Reg class object");
 };
 
 
@@ -700,7 +703,8 @@ sub _vgch_rs_code_read_mux {
 			push @ltemp, "mux_rd_data <= 0;";
 			_pad_column(0, $ind, $ilvl + 1, \@ltemp);
 			push @linsert, $ind x $ilvl++ . "always @(".join(" or ", sort {$a cmp $b || $hsens_list{$a} <=> $hsens_list{$b}} keys %hsens_list).") begin";
-			push @linsert, @ltemp;
+			#push @linsert, $ind x $ilvl++ . "always @(*) begin";
+            push @linsert, @ltemp;
 			push @linsert, $ind x $ilvl++ . "case (iaddr)";
 			
 			foreach $offs (sort {$a <=> $b} keys %$href_rp) {
@@ -1161,11 +1165,11 @@ sub _vgch_rs_code_write_processes {
 		
 		# write logic
 		push @linsert, $ind x $ilvl ."end", $ind x $ilvl++ . "else begin";
-		if ($this->global->{'infer_clock_gating'}) {
-			push @linsert, $ind x $ilvl++ . "if (wr_p || (cgtransp == 0))";
-		} else {
-			push @linsert, $ind x $ilvl++ . "if (wr_p)";
-		};
+		#if ($this->global->{'infer_clock_gating'}) {
+		#	push @linsert, $ind x $ilvl++ . "if (wr_p || (cgtransp == 0))";
+		#} else {
+        push @linsert, $ind x $ilvl++ . "if (wr_p)";
+		#};
 		push @linsert, $ind x $ilvl++ . "case (iaddr)";
 		@ltemp=();
 		$last_addr = "-1";
@@ -1321,7 +1325,7 @@ sub _vgch_rs_code_static_logic {
 	my ($this, $o_domain, $clock, $href_usr, $href_shdw, $lref_decl, $lref_udc, $lref_checks) = @_;
 	my $addr_msb = $this->global->{'addr_msb'};
 	my $addr_lsb = $this->global->{'addr_lsb'};
-	my ($o_field, $href, $shdw_sig, $nusr, $sig, $dummy);
+	my ($o_field, $href, $shdw_sig, $nusr, $sig, $dummy, $fwd_rd_done, $fwd_wr_done);
 	my (@ltemp, @ltemp2);
 	my $multicyc;
 	my $ind = $this->global->{'indent'};
@@ -1335,6 +1339,8 @@ sub _vgch_rs_code_static_logic {
     my $shdw_clk_en = $this->_gen_unique_signal_name("shdw_clk_en", $clock, "cg_shdw_inst");
     my $rd_clk = $this->_gen_unique_signal_name("rd_clk", $clock, "cg_read_inst");
     my $rd_clk_en = $this->_gen_unique_signal_name("rd_clk_en", $clock, "cg_read_inst");
+	my $sig_read =  "rd_wr".$this->global->{'POSTFIX_PORT_IN'}; 
+	my $sig_write = "~rd_wr".$this->global->{'POSTFIX_PORT_IN'};
 
 	# calc new read-multicycle value in case of pipelining
 	if ($this->global->{'rdpl_stages'}==0) {
@@ -1343,10 +1349,19 @@ sub _vgch_rs_code_static_logic {
 		$multicyc = $this->global->{'rdpl_stages'};
 	};
 
-	$nusr=scalar(keys %$href_usr); # number of USR fields
+    # number of USR fields
+	$nusr=scalar(keys %$href_usr);
+
+    # get read and write USR fields
+    my @lusr_rd = grep {$href_usr->{$_}->attribs->{'dir'} =~ m/r/i} keys %$href_usr;
+    my @lusr_wr = grep {$href_usr->{$_}->attribs->{'dir'} =~ m/w/i} keys %$href_usr;
+    #print join(",", keys %$href_usr),"\n";
+    #print scalar(@lusr_rd), ":",join(",",@lusr_rd),"\n";
+    #print scalar(@lusr_wr), ":",join(",",@lusr_wr),"\n";
+
 	if ($multicyc>0) {
 		# the read-ack will be delayed by one cycle anyway, so subtract
-		# it from the multicycle value 
+		# it from the multicycle value which is a measure for delaying it
 		$multicyc--;	
 	};
 
@@ -1355,23 +1370,26 @@ sub _vgch_rs_code_static_logic {
 	#
 	push @$lref_decl, split("\n","
 wire wr_p;
+wire wr_done_p;
 wire rd_p;
+wire rd_done_p;
 reg  int_trans_done;
 wire [".($addr_msb-$addr_lsb).":0] iaddr;
 wire addr_overshoot;
 wire trans_done_p;
-reg  rd_wr_done_p;
+reg  ts_del_p;
 ");
 	if ($nusr>0) { # if there are USR fields
 		push @$lref_decl, split("\n","
 reg  fwd_txn;
 wire [".($nusr-1).":0] fwd_decode_vec;
-wire [".($nusr-1).":0] fwd_done_vec;
+wire fwd_rd_done_p;
+wire fwd_wr_done_p;
 ");
 	};
-	for (my $i=1; $i<= $multicyc; $i++) {
-		push @$lref_decl, "reg rd_delay$i;"; # define registers for delaying rd_done_p
-	};
+    if ($multicyc > 0) {
+        push @$lref_decl, "reg [".($multicyc-1).":0] rd_del;"; # define registers for delaying rd_done_p
+    };
 	
 	#
 	# insert static logic
@@ -1396,45 +1414,58 @@ assign iaddr = addr_i[$addr_msb:$addr_lsb];");
 		};
 		if (exists $href->{'cg_read_inst'}) {
 			for (my $i=0; $i<= $multicyc; $i++) {
-				# push @ltemp2, ($i == 0) ? "rd_done_p" : "rd_delay$i";
-				push @ltemp2, ($i == 0) ? "rd_p" : "rd_delay$i";
+				push @ltemp2, ($i == 0) ? "rd_p" : "rd_del[".($i-1)."]";
 			};
 			push @ltemp, "assign $rd_clk_en = " . join(" | ", @ltemp2) . "; // read-clock enable";
         };
     };
 
 	push @ltemp, split("\n","
-// write txn start pulse
-assign wr_p = ~rd_wr".$this->global->{'POSTFIX_PORT_IN'}." & $trans_start_p;
-
-// read txn start pulse
-assign rd_p = rd_wr".$this->global->{'POSTFIX_PORT_IN'}." & $trans_start_p;
-
 /* 
-  generate txn done signals
+  generate transaction-handling signals
 */
-");
-	if ($nusr==0) {
-		push @ltemp, "assign trans_done_p = rd_wr_done_p;";
-	} else {
-		@ltemp2 = map {$this->_gen_field_name("usr_trans_done",$href_usr->{$_})} keys %$href_usr;
-		$dummy = "assign fwd_done_vec = {" . join(", ", @ltemp2) . "}; // ack for forwarded txns";
-		push @ltemp, $dummy;
-		push @ltemp, "assign trans_done_p = (rd_wr_done_p & ~fwd_txn) | ((fwd_done_vec != 0) & fwd_txn);";
 
-		# insert assertions (and onehot function because Cadence has not yet delivered)
-		$dummy = join(" || ", @ltemp2); 
+assign trans_done_p = rd_done_p | wr_done_p;
+
+// write txn start pulse
+assign 
+// synopsys translate_off
+#0.1
+// synopsys translate_on 
+wr_p = $sig_write & $trans_start_p;
+
+// read done pulse
+");
+    push @ltemp, "assign rd_done_p = ".($multicyc ? "rd_del[".($multicyc-1)."];" : "rd_p;");
+
+    if ($nusr==0) {
+        # has no USR registers
+        push @ltemp, split("\n","
+assign rd_p      = $sig_read & ts_del_p; // read txn start pulse
+assign wr_done_p = $sig_write & ts_del_p; // write done pulse
+");
+        
+	} else {
+        # has USR registers
+        $fwd_rd_done = scalar(@lusr_rd) > 0 ? join(" | ",  map {$this->_gen_field_name("usr_trans_done",$href_usr->{$_})} @lusr_rd) : "0";
+        $fwd_wr_done = scalar(@lusr_wr) > 0 ? join(" | ",  map {$this->_gen_field_name("usr_trans_done",$href_usr->{$_})} @lusr_wr) : "0";  
+        push @ltemp, split("\n","
+assign fwd_rd_done_p = ${fwd_rd_done};
+assign fwd_wr_done_p = ${fwd_wr_done};
+assign rd_p          = $sig_read & ((ts_del_p & ~fwd_txn) | (fwd_rd_done_p & fwd_txn)); // read txn start pulse
+assign wr_done_p     = $sig_write & ((ts_del_p & ~fwd_txn) | (fwd_wr_done_p & fwd_txn)); // write done pulse
+");
+		$dummy = join(", ", map {$this->_gen_field_name("usr_trans_done",$href_usr->{$_})} keys %$href_usr);
+
 		push @$lref_checks, split("\n","
-assert_fwd_done_expected: assert property
-(
-   @(posedge $clock) disable iff (~$int_rst_n)
-   $dummy |-> fwd_txn
-);
+// all acks for forwarded txns
+wire [".($nusr-1).":0] fwd_done_vec;
+assign fwd_done_vec = {${dummy}};
 
 assert_fwd_done_onehot: assert property
 (
    @(posedge $clock) disable iff (~$int_rst_n)
-   $dummy |-> onehot(fwd_done_vec)
+   fwd_done_vec != 0 |-> onehot(fwd_done_vec)
 );
 
 assert_fwd_done_only_when_fwd_txn: assert property
@@ -1443,7 +1474,7 @@ assert_fwd_done_only_when_fwd_txn: assert property
    fwd_done_vec != 0 |-> fwd_txn
 );
 
-function onehot (input [".($nusr-1).":0] vec); // not built-in to SV yet
+function onehot (input [".($nusr-1).":0] vec);
   integer i,j;
   begin
      j = 0;
@@ -1459,18 +1490,18 @@ endfunction
 				 "always @(posedge $clock or negedge $int_rst_n) begin",
 				 $ind."if (~$int_rst_n) begin", 
 				 $ind x 2 ."int_trans_done <= 0;",
-				 $ind x 2 ."rd_wr_done_p   <= 0;"
+				 $ind x 2 ."ts_del_p       <= 0;"
 				);
-	for (my $i=1; $i<= $multicyc; $i++) {
-		push @ltemp, $ind x 2 ."rd_delay$i <= 0;";
-	};
+    if ($multicyc>0) {
+       push @ltemp, $ind x 2 ."rd_del         <= 0;"
+    };
 	push @ltemp, (
 				  $ind."end",
 				  $ind."else begin",
-                  $ind x 2 . "rd_wr_done_p <= wr_p | " . ($multicyc ? "rd_delay$multicyc;" : "rd_p;")
+                  $ind x 2 . "ts_del_p <= $trans_start_p;"
 				 );
-	for (my $i=1; $i<= $multicyc; $i++) {
-		push @ltemp, ($i == 1) ? ($ind x 2 ."rd_delay$i \<= rd_p;") : ($ind x 2 ."rd_delay$i \<= rd_delay".($i-1).";");
+	for (my $i=0; $i< $multicyc; $i++) {
+		push @ltemp, ($i == 0) ? ($ind x 2 ."rd_del[$i] \<= rd_p;") : ($ind x 2 ."rd_del[$i] \<= rd_del[".($i-1)."];");
 	};
 
     push @ltemp, (
@@ -1971,7 +2002,7 @@ sub _vgch_rs_add_static_connections {
 '  @(posedge clk) $rose(rst_n) |=> ##P_WAIT_IS_DRIVEN !$isunknown(sig);',
 'endproperty';
     @ltemp = ($this->global->{'scan_en_port_name'});
-    if ($this->global->{'infer_clock_gating'}) {
+    if ($this->global->{'infer_clock_gating'} and (exists $href->{'cg_write_inst'} or exists $href->{'cg_shdw_inst'} or exists $href->{'cg_read_inst'})) {
         push @ltemp, $this->global->{'clockgate_te_name'};
     };
     foreach $dft (@ltemp) {
