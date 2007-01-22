@@ -59,7 +59,7 @@ my $mix = dirname( $common_path ) . "/mix_0.pl";
 
 my $cmd_ext = ( $^O =~ m/ms-win/io ) ? '.bat' : '.sh';
 
-my $status = GetOptions( \%opts, qw (
+my $ostatus = GetOptions( \%opts, qw (
 	update!
 	bak!
 	debug!
@@ -502,6 +502,11 @@ my @tests = (
 	  'path' => 'bugver2006/20061113a',
 	  'options' => '',
 	},
+	{ # missing ::out column in output
+	  'name' => 'bugver2006',
+	  'path' => 'bugver2006/20061214a',
+	  'options' => '-report portlist -top opm_i',
+	},
 	#{ # port gets assigned a constant value and a signal!
 	#  'name' => "bugver2006",
 	#  'path' => "bugver2006/20060522b",
@@ -761,6 +766,7 @@ sub runMix($) {
 		my $cl = 1; # Number of missing/added files
 		my $ce = 1; # Number of error code diffs
 		my $elapsed = -1;
+		my $status;
 	    if ( chdir( $path ) ) {
 	    	# Start testcase
 	    	if ( -r "$testname-t.out" and not $opts{'debug'} ) {
@@ -778,7 +784,6 @@ sub runMix($) {
 	    		next;
 	    	} else {
 	        	# "export", "update" and non-opt mode will create new output data:
-		    	my $status;
 		    	my $t0;
 	
 		    	# measure elapsed time 
