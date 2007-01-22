@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.87 $                                         |
+# | Revision:   $Revision: 1.88 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/22 10:37:15 $                              |
+# | Date:       $Date: 2007/01/22 17:31:50 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.87 2006/11/22 10:37:15 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.88 2007/01/22 17:31:50 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.88  2007/01/22 17:31:50  wig
+# |  	MixParser.pm MixReport.pm : update -report portlist (seperate ports)
+# |
 # | Revision 1.87  2006/11/22 10:37:15  wig
 # | Reworked hier overlay mode (data redefinition!)
 # |
@@ -193,9 +196,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.87 2006/11/22 10:37:15 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.88 2007/01/22 17:31:50 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.87 $';
+my $thisrevision =	'$Revision: 1.88 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1394,10 +1397,12 @@ sub _create_conn ($$%) {
     }
 
     # Allowed seperators: , and ; in in/out columns
+	#!wig20070122: remember creation order -> _nr_
     $instr =~ s/\n/,/go;
     for my $d ( split( /[,;]/, $instr ) ) {
     	my %co = ();
         next if ( $d =~ /^\s*$/o );
+		$co{'_nr_'} = $eh->postinc('sum.port');
             #
             # Recognized signal descriptions:
             #

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.39 $                                               |
-# | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2006/12/22 14:20:42 $                                                   |
+# | Revision:   $Revision: 1.40 $                                               |
+# | Author:     $Author: wig $                                                 |
+# | Date:       $Date: 2007/01/22 17:31:50 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.39 2006/12/22 14:20:42 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.40 2007/01/22 17:31:50 wig Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.40  2007/01/22 17:31:50  wig
+# |  	MixParser.pm MixReport.pm : update -report portlist (seperate ports)
+# |
 # | Revision 1.39  2006/12/22 14:20:42  mathias
 # | write hidden registers to perl package
 # |
@@ -172,11 +175,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.39 2006/12/22 14:20:42 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.40 2007/01/22 17:31:50 wig Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.39 $';
+my $thisrevision   =      '$Revision: 1.40 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -1562,17 +1565,15 @@ sub _mix_report_sigsort {
 	my $splist = shift;
 
 	my $pos = ( $eh->get( 'report.portlist.data' ) =~ m/\bport\b/ );
-	# $a and $b hold the respective conndb keys
 	my $key = $eh->get( 'report.portlist.sort' );
 	my $conndb = \%Micronas::MixParser::conndb;
 	
-#	my $va = $a;
-#	my $vb = $b;
 	my %spo = ();
 	# Iterate over signals
 	for my $s ( keys( %$splist ) ) {
 		# Iterate over ports
 		for my $p ( keys( %{$splist->{$s}} ) ) {
+			my ( $n, $d ) = split( /\s+/, $splist->{$s}->{$p} );
 			my $va = '';
 			if ( $key =~ m/\balpha\b/io ) {
 				if ( $pos ) {
@@ -1583,30 +1584,46 @@ sub _mix_report_sigsort {
 			} elsif ( $key =~ m/\binput\b/io ) {
 				my $format = '%0' . ( length( $eh->get( 'sum.conn' ) ) + 1 ) . 'd'; # 
 				$va = sprintf( $format, $conndb->{$s}{'::connnr'});
-			} # elsif ( $key =~ m/(\b::\w+)\b/io ) {
-			$spo{$va . '!###!' . $s . '!###!' . $p } = 1;
+				# Keep port order in signals:
+				# TODO : Check is port input order goes before signal input order
+				if ( $pos ) {
+					my $mp = $eh->get('sum.port');
+					$format = '%0' . ( length( $mp ) + 1 ) . 'd';
+					if ( exists( $conndb->{$s}{'::' . $d}[$n]{'_nr_'} ) ) {
+						$va = sprintf( $format, $conndb->{$s}{'::' . $d }[$n]{'_nr_'} );
+					}
+				}
+				# Add port number
+			} # elsif ( $key =~ m/(\b::\w+)\b/io ) { }
+			$spo{$va . '!###!' . $s . '!###!' . $p . '!###!' . $n . '!###!' . $d } = 1;
 		}
 	}
 
 	# Do the sort here:
 	# $va cmp $vb;
+	# Array has:
+	#	$signal / $port / $sigportnr / $dir (in|out)
 	my @sorted = ();
 	for my $i ( sort( keys %spo ) ) {
-		push( @sorted, [ (split( /!###!/, $i ))[1..2] ] );
+		push( @sorted, [ (split( /!###!/, $i ))[1..4] ] ); #!wig20070122: adding number of in/out field
 	}
 	return @sorted;
 } # End of _mix_report_sigsort
 
 #
 # combine ::conn data structure into one hash
-#
+#!wig20070122: keep in/out, too.
+#!wig20070122: remember max. number of ports
 sub _mix_report_conn2sp ($) {
 	my $conn = shift;
 
 	my %sp = ();
 	for my $m ( qw( in out ) ) {
 		for my $s ( keys( %{$conn->{$m}} ) ) {
-			$sp{$s} = $conn->{$m}->{$s};
+			my $pr = $conn->{$m}->{$s};
+			for my $p ( keys %$pr ) {
+				$sp{$s}{$p} = $pr->{$p} . " $m" ;
+			}
 		}
 	}
 	return \%sp;
@@ -1615,6 +1632,7 @@ sub _mix_report_conn2sp ($) {
 
 #
 # Print a list of all I/O signals ....
+#   or ports (see report.portlist config parameters)
 #
 sub mix_rep_portlist () {
 
@@ -1682,27 +1700,56 @@ sub mix_rep_portlist () {
 		#OLD for my $signal ( sort _mix_report_sigsort keys( %{$link->{'::sigbits'}} ) ) {}
 		#!wig20060406: use the ::conn data instead ..
 		my $sigandport = _mix_report_conn2sp( $link->{'::conn'} );
+		my $incom_last = ''; # Remeber last printed comment, do not redo!
 
 		for my $sigport ( _mix_report_sigsort( $sigandport ) ) {
 			# Iterate over all signals ... (and ports)
-			my $signal = $sigport->[0];
-			my $port   = $sigport->[1];
+			my $signal     = $sigport->[0];
+			my $port       = $sigport->[1];
+			my $sigportnr  = $sigport->[2];
+			my $sigportdir = $sigport->[3];
 
 			my $signalname = $conndb->{$signal}{'::name'};
 			# my $connect = $link->{'::sigbits'}{$signal};
 			my $connect = $link->{'::sigbits'}{$signal}; # new20060406
-			my $high	= $conndb->{$signal}{'::high'};
-			my $low		= $conndb->{$signal}{'::low'};
-			my $clock	= $conndb->{$signal}{'::clock'};
-			my $descr	= $conndb->{$signal}{'::descr'};
-			my $sd		= $conndb->{$signal}{'::sd'} || '';
+
+			# use port bounds if 
+			my $high	= '';
+			my $low		= '';
+			my $clock	= '';
+			my $descr	= '';
+			my $sd		= '';
+			if ( $eh->get( 'report.portlist.data' ) =~ m/\bport\b/ ) {
+				my $sigportds = undef();
+				if ( exists( $conndb->{$signal}{'::' . $sigportdir}[$sigportnr] ) ) {
+					$sigportds = $conndb->{$signal}{'::' . $sigportdir}[$sigportnr];
+				}
+				# Find port description:
+				if ( defined( $sigportds ) ) {
+					if ( exists( $sigportds->{'_descr_'} ) ) {
+						$descr = $sigportds->{'_descr_'}
+					} else {
+						$descr	= $conndb->{$signal}{'::descr'};
+					}
+				}
+				# Find port width:
+				#	if ( is_interger2( $sigportds->{'port_f'}, $sigportds->{'port_t'} ) ) { }
+				$high = $sigportds->{'port_f'};
+				$low  = $sigportds->{'port_t'};
+			} else {
+				$high	= $conndb->{$signal}{'::high'};
+				$low	= $conndb->{$signal}{'::low'};
+				$descr	= $conndb->{$signal}{'::descr'};
+			}
+			$sd		= $conndb->{$signal}{'::sd'} || '';
+			$clock	= $conndb->{$signal}{'::clock'};
+
 			# Check connectivity: in vs. out vs. IO vs ....
 			#   Mark if not fully connected with a footnote -> (*)
 
 			#!wig20051103: if ::incom is set, this line has an attached
 			#  comment. Print it before (post mode) or after (pre mode)	
 			#  Maybe we limit the number of lines ...
-			# my $incom_mode = ''; # pre or post
 			my $rpc = $eh->get( 'report.portlist.comments' );
 
 			my $striphash = 0;
@@ -1767,10 +1814,17 @@ sub mix_rep_portlist () {
 					$incom_text .= $t;
 				}
 				chomp( $incom_text );
+				# Do not print if the previous header was the same:
+				if ( $incom_text eq $incom_last ) {
+					$incom_text = '';
+				} else {
+					# Remember for next round:
+					$incom_last = $incom_text;
+				}
 			}
 			
 			# Add comment line (mode = post -> print before!)		
-			if ( $incom_mode eq 'post' ) {
+			if ( $incom_mode eq 'post' and $incom_text ) {
 				my $line = $mif->td(
 				{ 	'PgfTag' => 'CellHeadingH9',
 			  		'Columns' => 6, # Columns Span of all six cells
@@ -1857,7 +1911,7 @@ sub mix_rep_portlist () {
 
 			}
 			# pre -> print comments >after< corresponding lines
-			if ( $incom_mode eq 'pre' ) {
+			if ( $incom_mode eq 'pre' and $incom_text ) {
 				my $line = $mif->td(
 				{ 	'PgfTag' => 'CellHeadingH9',
 			  		'Columns' => 6, # Columns Span of all six cells
@@ -1889,7 +1943,7 @@ sub mix_rep_portlist () {
 
 	return;
 
-}
+} # End of mix_rep_portlist
 
 #
 # Write prepared data to disk
