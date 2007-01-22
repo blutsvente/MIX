@@ -1,0 +1,486 @@
+<MIFFile 5.50>
+
+<Tbls 
+# Generated table data:
+<Tbl 
+  <TblID 1>
+  # <TblFormat
+  #   <TblTag `PortList'>
+  # >
+  <TblTag `PortList'>
+  <TblNumColumns 4>
+  <TblColumnWidth 37.0 mm>
+  <TblColumnWidth 13.0 mm>
+  <TblColumnWidth 13.0 mm>
+  <TblColumnWidth 117.0 mm>
+  <TblTitle 
+    <TblTitleContent
+      <Para
+        <PgfTag `TableTitle'>
+        <ParaLine
+          <String `External Pin List'>
+        >
+      >
+    > 
+  > # end of TblTitle
+<TblH
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `PAD_Name'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `Width'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `I/O'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `Description'> > #End of ParaLine
+ > > >
+	> # end of Row
+> # end of TblH
+<TblBody
+	<Row 
+		<Cell <CellColumns 4> <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `Input/Output PADs opm_i (opm)'> > #End of ParaLine
+ > > >
+	> # end of Row
+> # end of TblBody
+> # end of Tbl
+<Tbl 
+  <TblID 2>
+  # <TblFormat
+  #   <TblTag `PortList'>
+  # >
+  <TblTag `PortList'>
+  <TblNumColumns 6>
+  <TblColumnWidth 37.0 mm>
+  <TblColumnWidth 12.0 mm>
+  <TblColumnWidth 16.0 mm>
+  <TblColumnWidth 16.0 mm>
+  <TblColumnWidth 10.0 mm>
+  <TblColumnWidth 89.0 mm>
+  <TblTitle 
+    <TblTitleContent
+      <Para
+        <PgfTag `TableTitle'>
+        <ParaLine
+          <String `Portlist'>
+        >
+      >
+    > 
+  > # end of TblTitle
+<TblH
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `Port'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `Width'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `Clock'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `S / D'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `I / O'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `Description'> > #End of ParaLine
+ > > >
+	> # end of Row
+> # end of TblH
+<TblBody
+	<Row 
+		<Cell <CellColumns 6> <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `opm_i (opm)'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellColumns 6> <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String `  BundleName Class ClkDomain Type (generated) High Low  name the input name the output External?your choice Source or Destination Enter name after changes Signal(partly generated) Outputs(generated) Inputs(generated) Description'> <Char HardReturn> > #End of ParaLine
+		<ParaLine <String ` DP Video & Panel Control'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `r1_dp_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `12'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_bm'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `DP'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PIF r1 '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `g1_dp_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `12'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_bm'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `DP'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PIF g1 '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `b1_dp_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `12'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_bm'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `DP'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PIF b1 '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `pcs1_dp_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_bm'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `DP'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PIF pcs1 '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `pcs2_dp_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_bm'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `DP'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PIF pcs2 '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `pcs3_dp_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_bm'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `DP'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PIF pcs3 '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `pcs4_dp_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_bm'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `DP'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PIF pcs4 '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `pcs5_dp_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_bm'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `DP'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PIF pcs5 '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `pcs6_dp_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_bm'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `DP'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PIF pcs6 '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `rev_dp_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_bm'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `DP'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PIF rev '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `pwm1_dp_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_bm'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `DP'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PIF pwm1 '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `pwm2_dp_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_bm'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `DP'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PIF pwm2 '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `pwm3_dp_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_bm'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `DP'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `PIF pwm3 '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellColumns 6> <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String ` DP ITUE'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `y_itue_dp_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `10'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_bm'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `DP'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `ITU 656, ITU601 Y'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `uv_itue_dp_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `10'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_bm'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `DP'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `ITU 601 C'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellColumns 6> <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String ` DP Sync'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `hsync_dp_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_bm'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `DP'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `OSC hsync '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `vsync_dp_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_bm'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `DP'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `OSC vsync '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `blank_dp_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_bm'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `DP'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `OSC blank '> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellColumns 6> <CellContent <Para <PgfTag `CellHeadingH9'> 		<ParaLine <String ` AGPU Graphics'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `osd_d_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `16'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_osd'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `AGPU'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `OSD Data'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `osd_al_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_osd'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `AGPU'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `OSD active line'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `osd_af_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_osd'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `AGPU'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `OSD active field'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `osd_h_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_osd'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `AGPU'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `OSD hsync'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `osd_v_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_osd'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `AGPU'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `OSD vsync'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `osd_fs_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `1'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_osd'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `AGPU'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `OSD fast switch'> > #End of ParaLine
+ > > >
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `osd_hc_i'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `2'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `clk_osd'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `AGPU'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `I'> > #End of ParaLine
+ > > >
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 		<ParaLine <String `OSD half contrast'> > #End of ParaLine
+ > > >
+	> # end of Row
+> # end of TblBody
+> # end of Tbl
+
+> # end of Tbls
+
+# <TextFlow 
+#   <TFTag `A'>
+#   <TFAutoConnect Yes>
+# Generated Table references:
+  <Para
+    <PgfTag `Body'>
+    <ParaLine
+      <ATbl 1>
+    >
+  >
+  <Para
+    <PgfTag `Body'>
+    <ParaLine
+      <ATbl 2>
+    >
+  >
+
+#  <Para
+#    <PgfTag `Body'>
+#    <ParaLine
+#      <ATbl 1>
+#    >
+#  >
+# > # end of TextFlow
+
+# End of MIFFile
