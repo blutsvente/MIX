@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.33 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2006/11/23 15:11:31 $                              |
+# | Revision:   $Revision: 1.34 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2007/01/22 17:26:53 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.34  2007/01/22 17:26:53  wig
+# | Prepare GLOBAL detection (ooffice created xls) and fixed numbering of i2c extra columns.
+# |
 # | Revision 1.33  2006/11/23 15:11:31  lutscher
 # | changed coverage generation
 # |
@@ -83,9 +86,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.33 2006/11/23 15:11:31 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.34 2007/01/22 17:26:53 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.33 $';  
+my $thisrevision    =      '$Revision: 1.34 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -706,7 +709,7 @@ sub init ($) {
 		'keywords' => { #These keywords will trigger warnings and get replaced
     		'vhdl'	=> '(open|instance|entity|signal)',        # TODO Give me more keywords
     		'verilog' 	=> '(register|net|wire|in|out|inout)', # TODO give me more
-    		'xlscell'	=> '#(VALUE|NAME|NUM)[!?]',		# Indicates a problem with XLS macros/formulas
+    		'xlscell'	=> '^(#(VALUE|NAME|NUM)[!?]|GENERAL)$',		# Indicates a problem with XLS macros/formulas
     					# Format is perl regular expression, should not be modified by user
 		},
 		'defs' => '',   # 'inst,conn',    # make sure elements are only defined once:
@@ -1192,7 +1195,7 @@ sub init ($) {
 	    	'::comment'	    => [ qw(	1	1	2	%EMPTY%     22 )],
 	    	'::default'	    => [ qw(	1	1	0	%EMPTY%     23 )],
 	    	'::clone'	    => [ qw(	1	0	0	1           24 )],
-	    	'nr'			=> 24,  # Number of next field to print
+	    	'nr'			=> 25,  # Number of next field to print
 	    	'_mult_'		=> {},  # Internal counter for multiple fields
 	   		'_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
 	    					# 1 / RL -> left to right decreasing
