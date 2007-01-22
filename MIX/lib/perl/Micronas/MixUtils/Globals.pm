@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.34 $                                         |
+# | Revision:   $Revision: 1.35 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/01/22 17:26:53 $                              |
+# | Date:       $Date: 2007/01/22 17:32:07 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,10 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.35  2007/01/22 17:32:07  wig
+# |  	MixParser.pm MixReport.pm : update -report portlist (seperate ports)
+# | 	Globals.pm Mif.pm : updated -report portlist
+# |
 # | Revision 1.34  2007/01/22 17:26:53  wig
 # | Prepare GLOBAL detection (ooffice created xls) and fixed numbering of i2c extra columns.
 # |
@@ -86,9 +90,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.34 2007/01/22 17:26:53 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.35 2007/01/22 17:32:07 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.34 $';  
+my $thisrevision    =      '$Revision: 1.35 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1410,6 +1414,7 @@ sub init ($) {
 		## Inventory
 		'inst'     => 0,	# number of instances
 		'conn'     => 0,	# number of connections
+		'port'     => 0,	# number of ports
 		'genport'  => 0, 	# number of generated ports
 
 		'cmacros'  => 0,	# number of matched connection macro's

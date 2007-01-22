@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.26 $                                          |
+# | Revision:   $Revision: 1.27 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/04/10 15:50:08 $                              |
+# | Date:       $Date: 2007/01/22 17:32:07 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.27  2007/01/22 17:32:07  wig
+# |  	MixParser.pm MixReport.pm : update -report portlist (seperate ports)
+# | 	Globals.pm Mif.pm : updated -report portlist
+# |
 # | Revision 1.26  2006/04/10 15:50:08  wig
 # | Fixed various issues with logging and global, added mif test case (report portlist)
 # |
@@ -140,9 +144,9 @@ use Micronas::MixUtils qw( mix_utils_diff mix_utils_clean_data $eh );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.26 2006/04/10 15:50:08 wig Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.27 2007/01/22 17:32:07 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.26 $'; #'  
+my $thisrevision    =      '$Revision: 1.27 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -204,15 +208,15 @@ sub write {
 			$this->{'name'} .= $eh->get( 'output.ext.delta' );
 			if ( not $text and -e $this->{'name'} ) {
 				unlink( $this->{'name'} ) or
-					$logger->error( '__E_MIF_WRITE'.  "Cannot remove " . $this->{'name'} .
+					$logger->error( '__E_MIF_WRITE'.  "\tCannot remove " . $this->{'name'} .
 							": " . $! );
 			}
 			if ( $text ) {
-				$logger->info('__I_MIF_WRITE', "File " . $this->{'name'} . " has changes!");	
+				$logger->info('__I_MIF_WRITE', "\tFile " . $this->{'name'} . " has changes!");	
 				$eh->inc( 'DELTA_NR' );
 			}
 		} else {
-			$logger->warn( '__W_MIF_WRITE', "Previous version of MIF File " . $this->{'name'} .
+			$logger->warn( '__W_MIF_WRITE', "\tPrevious version of MIF File " . $this->{'name'} .
 				" not readable" );
 			$this->_finalize_mif();
 			$text = $this->{'text'};
@@ -229,9 +233,9 @@ sub write {
 			# Replace and finalize mif		    	
 		    print $fh $text;
 		    $fh->close or
-		    	$logger->error('__E_MIF_WRITE', "Cannot close report file $this->{'name'}: $!");;
+		    	$logger->error('__E_MIF_WRITE', "\tCannot close report file $this->{'name'}: $!");;
 		} else { # Print Error messages!
-		  	$logger->error('__E_MIF_WRITE', "Cannot write report file $this->{'name'}: $!");
+		  	$logger->error('__E_MIF_WRITE', "\tCannot write report file $this->{'name'}: $!");
 		}
 	}
 }
@@ -277,7 +281,7 @@ sub _write_diff () {
 		chomp( @oc );
 		map( { $_ =~ s/\n//g; } @oc );
 	} else {
-		$logger->error( '__E_MIF_DELTA', "Cannot read previous version of " .
+		$logger->error( '__E_MIF_DELTA', "\tCannot read previous version of " .
 				$this->{name} . ':' . $! );
 	}
 	
@@ -367,11 +371,11 @@ sub start_table {
 
   # Check if a table with that Id already exists:
   while ( exists $self->{'_t_ref'}{$table{'Id'}} ) {
-	$logger->warn( '__W_MIF_TABLE', "Need to increment TableID to prevent duplicate!" );
+	$logger->warn( '__W_MIF_TABLE', "\tNeed to increment TableID to prevent duplicate!" );
 	$table{'Id'}++;
 	# Stop at 10000!
 	if ( $table{'Id'} > 10000 ) {
-		$logger->error( '__E_MIF_TABLE', 'Cannot allocate an unused TableID <= 10000! Top here!' );
+		$logger->error( '__E_MIF_TABLE', '\tCannot allocate an unused TableID <= 10000! Top here!' );
 		return undef();
 	}
   }
