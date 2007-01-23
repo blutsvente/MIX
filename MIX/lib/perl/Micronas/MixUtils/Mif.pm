@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.27 $                                          |
+# | Revision:   $Revision: 1.28 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/01/22 17:32:07 $                              |
+# | Date:       $Date: 2007/01/23 09:33:34 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.28  2007/01/23 09:33:34  wig
+# | Support delta mode for MIF files
+# |
 # | Revision 1.27  2007/01/22 17:32:07  wig
 # |  	MixParser.pm MixReport.pm : update -report portlist (seperate ports)
 # | 	Globals.pm Mif.pm : updated -report portlist
@@ -144,9 +147,9 @@ use Micronas::MixUtils qw( mix_utils_diff mix_utils_clean_data $eh );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.27 2007/01/22 17:32:07 wig Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.28 2007/01/23 09:33:34 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.27 $'; #'  
+my $thisrevision    =      '$Revision: 1.28 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -201,6 +204,7 @@ sub write {
 	# !wig20051212: adding delta mode
 	if ( $eh->get( 'report.delta' ) ) {
 		if ( -r $this->{'name'} ) {
+			my $orgname = $this->{'name'};
 			# Create a diff file ...
 			$text = $this->_write_diff();
 			# Increase delta counter
@@ -212,8 +216,10 @@ sub write {
 							": " . $! );
 			}
 			if ( $text ) {
-				$logger->info('__I_MIF_WRITE', "\tFile " . $this->{'name'} . " has changes!");	
+				$logger->error('__E_MIF_WRITE', "\tFile " . $orgname . " has changes!");	
 				$eh->inc( 'DELTA_NR' );
+			} else {
+				$logger->info('__I_MIF_WRITE', "\tUnchanged file " . $orgname );
 			}
 		} else {
 			$logger->warn( '__W_MIF_WRITE', "\tPrevious version of MIF File " . $this->{'name'} .
@@ -238,7 +244,7 @@ sub write {
 		  	$logger->error('__E_MIF_WRITE', "\tCannot write report file $this->{'name'}: $!");
 		}
 	}
-}
+} # End of _write_diff
 
 
 #
@@ -279,7 +285,7 @@ sub _write_diff () {
 		# Get all lines into string ...
 		@oc = <$fh>;
 		chomp( @oc );
-		map( { $_ =~ s/\n//g; } @oc );
+		map( { $_ =~ s/[\r\n]+$//g; } @oc ); # Remove trailing newline
 	} else {
 		$logger->error( '__E_MIF_DELTA', "\tCannot read previous version of " .
 				$this->{name} . ':' . $! );

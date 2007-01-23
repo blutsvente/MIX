@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.50 $                                          |
+# | Revision:   $Revision: 1.51 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/11/21 16:51:09 $                              |
+# | Date:       $Date: 2007/01/23 09:33:34 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.51  2007/01/23 09:33:34  wig
+# | Support delta mode for MIF files
+# |
 # | Revision 1.50  2006/11/21 16:51:09  wig
 # | Improved generator execution (now in order!)
 # |
@@ -146,11 +149,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.50 2006/11/21 16:51:09 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.51 2007/01/23 09:33:34 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.50 $'; #'  
+my $thisrevision    =      '$Revision: 1.51 $'; #'  
 
-# Revision:   $Revision: 1.50 $
+# Revision:   $Revision: 1.51 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -667,20 +670,32 @@ sub open_xls($$$$){
 
 		$isheet = $oBook->{Worksheet}[$sname];
 		$logger->info( '__I_WORKSHEET', "\tReading worksheet " . $isheet->{Name} . " of $file" );
+		my $maxdef_x = 0;
 
 		for(my $y=$isheet->{MinRow}; defined $isheet->{MaxRow} && $y <= $isheet->{MaxRow}; $y++) {
 			for(my $x =$isheet->{MinCol}; defined $isheet->{MaxCol} && $x <= $isheet->{MaxCol}; $x++) {
 				$cell = $isheet->{Cells}[$y][$x];
 				if(defined $cell) {
+					my $v = $cell->Value;
 					# Check Value: if cell contains #VALUE!, #NAME? or #NUM! alert user ...
-					if ( $xls_warns and $cell->Value =~ m/$xls_warns/ ) {
-						$logger->error( '__E_XLS_REFS', "\tXLS cell R" . $y + 1 .
-								"C" . $x + 1 . " (sheet " .
-								$isheet->{Name} . ") bad reference: " . $cell->Value );
+					if ( $xls_warns and $v =~ m/$xls_warns/ ) {
+						if ( $v eq 'GENERAL' ) {
+							$logger->warn( '__W_XLS_REFS', "\tXLS cell R" . ( $y + 1 ) .
+								"C" . ( $x + 1 ) . " (sheet " .
+								$isheet->{Name} . ") bad reference: " . $v ) .
+								" using: " . $cell->{'Val'};
+							$v = $cell->{'Val'};
+						} else {
+							$logger->error( '__E_XLS_REFS', "\tXLS cell R" . ( $y + 1 ) .
+								"C" . ( $x + 1 ) . " (sheet " .
+								$isheet->{Name} . ") bad reference: " . $v );
+						}
 					}
-					push(@line, $cell->Value);  # $cell->Value || $cell->{Val} ?
-				}
-				else {
+					push(@line, $v);
+					if ( defined( $v ) and $x > $maxdef_x ) {
+						$maxdef_x = $x;
+					}
+				} else {
 					push(@line, '');
 				}
 			}
@@ -694,6 +709,14 @@ sub open_xls($$$$){
 				pop( @sheet );
 	    	}
 		}
+		# Remove trailing empty cells
+		for my $l ( @sheet ) {
+			my $len = scalar( @$l );
+			if ( $maxdef_x < $len - 1 ) {
+				delete( @$l[($maxdef_x+1)..($len-1)] );
+			}
+		}
+		
 		if ( scalar( @sheet ) > 0 ) {
 			if ( $warn_flag =~ m/\border\b/i ) {
 				push( @all, [$isheet->{Name}, [ @sheet ]] );
