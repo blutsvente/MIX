@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.34 2007/01/25 10:24:56 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.35 2007/01/26 08:13:59 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.35  2007/01/26 08:13:59  lutscher
+#  removed debug print
+#
 #  Revision 1.34  2007/01/25 10:24:56  lutscher
 #  added clipping of ::init value to field size
 #
@@ -225,7 +228,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.34 $ ';  #'
+our($VERSION) = '$Revision: 1.35 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -614,9 +617,7 @@ sub _map_register_master {
 
             # clip init value to field size
             if (exists $hattribs{'init'}) {
-                print "$fsize > $hattribs{'init'} ->";
                 $hattribs{'init'} = $hattribs{'init'} & ((1<<$fsize)-1);
-                print "$hattribs{'init'}\n";
             };
 			# create new field object
 			$o_field = Micronas::RegField->new('name' => $fname, 'reg' => $o_reg);
