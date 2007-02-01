@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.40 $                                               |
-# | Author:     $Author: wig $                                                 |
-# | Date:       $Date: 2007/01/22 17:31:50 $                                                   |
+# | Revision:   $Revision: 1.41 $                                               |
+# | Author:     $Author: mathias $                                                 |
+# | Date:       $Date: 2007/02/01 07:28:42 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.40 2007/01/22 17:31:50 wig Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.41 2007/02/01 07:28:42 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.41  2007/02/01 07:28:42  mathias
+# | generate c structures for all registers unless _every_ bitfield
+# | of a register is marked as not visible (view == 'N')
+# |
 # | Revision 1.40  2007/01/22 17:31:50  wig
 # |  	MixParser.pm MixReport.pm : update -report portlist (seperate ports)
 # |
@@ -175,11 +179,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.40 2007/01/22 17:31:50 wig Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.41 2007/02/01 07:28:42 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.40 $';
+my $thisrevision   =      '$Revision: 1.41 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -441,49 +445,50 @@ sub mix_rep_header($)
             my %theBlock;
             #$o_domain->display();
             foreach my $o_reg (@{$o_domain->regs()}) {
-                if ($o_reg->to_document()) { # should this register be documented
-                    my $address  = sprintf("0x%08X", $o_domain->get_reg_address($o_reg));
-                    my $init     = sprintf("0x%08X", $o_reg->get_reg_init());
-                    my $mode     = $o_reg->get_reg_access_mode();
+                my $address  = sprintf("0x%08X", $o_domain->get_reg_address($o_reg));
+                my $init     = sprintf("0x%08X", $o_reg->get_reg_init());
+                my $mode     = $o_reg->get_reg_access_mode();
 
-                    while (exists($theBlock{$address})) {
-                        $address .= "_1";
-                    }
-                    $theBlock{$address}->{regname} = uc($o_reg->name());
-                    $theBlock{$address}->{init}    = $init;
-                    if ($eh->get('report.cheader.debug')) {
-                        print("~~~~~ Register: " . $o_reg->name() . "     $theBlock{$address}->{regname}\n");
-                    }
-                    my $ii = 0;
-                    my @thefields;
-                    foreach my $hreff (@{$o_reg->fields}) {
-                        my $o_field = $hreff->{'field'};
-                        # select type of register
-                        $thefields[$ii]{name}    = lc($o_field->name);
-                        $thefields[$ii]{size}    = $o_field->attribs->{'size'};
-                        $thefields[$ii]{pos}     = $hreff->{'pos'}; # LSB position
-                        $thefields[$ii]{lsb}     = $o_field->attribs->{'lsb'};
-                        $thefields[$ii]{view}    = $o_field->attribs->{'view'}; # N: no documentation
-                        $thefields[$ii]{mode}    = $o_field->attribs->{'dir'};
-                        $thefields[$ii]{comment} = $o_field->attribs->{'comment'};
-                        $thefields[$ii]{comment} =~ s/\\.//g;
-                        $thefields[$ii]{sync}    = $o_field->attribs->{'sync'};
-                        if ($eh->get('report.cheader.debug')) {
-                            print("~~~~~    " . $thefields[$ii]{name} . '(' . $thefields[$ii]{size}
-                                  . ')' . '/' . $thefields[$ii]{pos}  . "\n");
-                        }
-                        $ii += 1;
-                    }
-                    # sort the fields (probably reserved?)
-                    #@thefields = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
-                    @thefields = sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
-
-                    $theBlock{$address}->{fields} = \@thefields;
-                } else {
-                    if ( $eh->get( 'report.cheader.debug' ) ) {
-                        print("!!!!! Register: " . $o_reg->name() . " will not be documented\n");
-                    }
+                while (exists($theBlock{$address})) {
+                    $address .= "_1";
                 }
+                $theBlock{$address}->{regname} = uc($o_reg->name());
+                $theBlock{$address}->{init}    = $init;
+                if ($eh->get('report.cheader.debug')) {
+                    print("~~~~~ Register: " . $o_reg->name() . "     $theBlock{$address}->{regname}\n");
+                }
+                my $ii = 0;
+                my @thefields;
+                foreach my $hreff (@{$o_reg->fields}) {
+                    my $o_field = $hreff->{'field'};
+                    # select type of register
+                    $thefields[$ii]{name}    = lc($o_field->name);
+                    $thefields[$ii]{size}    = $o_field->attribs->{'size'};
+                    $thefields[$ii]{pos}     = $hreff->{'pos'}; # LSB position
+                    $thefields[$ii]{lsb}     = $o_field->attribs->{'lsb'};
+                    $thefields[$ii]{view}    = $o_field->attribs->{'view'}; # N: no documentation  Y: bitfield to document
+                    # ignore this bitfield
+                    next if $thefields[$ii]{view} ne 'Y';
+                    $thefields[$ii]{mode}    = $o_field->attribs->{'dir'};
+                    $thefields[$ii]{comment} = $o_field->attribs->{'comment'};
+                    $thefields[$ii]{comment} =~ s/\\.//g;
+                    $thefields[$ii]{sync}    = $o_field->attribs->{'sync'};
+                    if ($eh->get('report.cheader.debug')) {
+                        print("~~~~~    " . $thefields[$ii]{name} . '(' . $thefields[$ii]{size}
+                              . ')' . '/' . $thefields[$ii]{pos}  . "\n");
+                    }
+                    $ii += 1;
+                }
+                if ($ii == 0) {
+                    # no visible bitfield exists, ignore the whole register
+                    delete $theBlock{$address};
+                    next;
+                }
+                # sort the fields (probably reserved?)
+                #@thefields = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
+                @thefields = sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
+
+                $theBlock{$address}->{fields} = \@thefields;
             }
             # All register were read in, write the header file
             mix_rep_header_print($fh, $domain_name, \%theBlock, $rTypes);
@@ -667,56 +672,57 @@ sub mix_rep_per($)
             my %theBlock;
             #$o_domain->display();
             foreach my $o_reg (@{$o_domain->regs()}) {
-                if ($o_reg->to_document()) { # should this register be documented
-                    my $address  = sprintf("0x%08X", $o_domain->get_reg_address($o_reg));
-                    my $init     = sprintf("0x%08X", $o_reg->get_reg_init());
-                    my $mode     = $o_reg->get_reg_access_mode();
+                my $address  = sprintf("0x%08X", $o_domain->get_reg_address($o_reg));
+                my $init     = sprintf("0x%08X", $o_reg->get_reg_init());
+                my $mode     = $o_reg->get_reg_access_mode();
 
-                    while (exists($theBlock{$address})) {
-                        $address .= "_1";
-                    }
-                    $theBlock{$address}->{regname} = $o_reg->name();
-                    $theBlock{$address}->{regname} = mix_rep_header_check_name(uc($domain_name) . '_' . $theBlock{$address}->{regname}, $rTypes);
-                    if (length($theBlock{$address}->{regname}) > $maxwidth) {
-                        $maxwidth = length($theBlock{$address}->{regname});
-                    }
-                    $theBlock{$address}->{init}    = $init;
-                    if ($eh->get('report.per.debug')) {
-                        print("~~~~~ Register: " . $o_reg->name() . "     $theBlock{$address}->{regname}\n");
-                    }
-                    my $ii = 0;
-                    my @thefields;
-                    foreach my $hreff (@{$o_reg->fields}) {
-                        my $o_field = $hreff->{'field'};
-                        # select type of register
-                        $thefields[$ii]{name}    = lc($o_field->name);
-                        if (length($thefields[$ii]{name}) > $maxwidth) {
-                            $maxwidth = length($thefields[$ii]{name});
-                        }
-                        $thefields[$ii]{size}    = $o_field->attribs->{'size'};
-                        $thefields[$ii]{pos}     = $hreff->{'pos'}; # LSB position
-                        $thefields[$ii]{lsb}     = $o_field->attribs->{'lsb'};
-                        $thefields[$ii]{view}    = $o_field->attribs->{'view'}; # N: no documentation
-                        $thefields[$ii]{mode}    = $o_field->attribs->{'dir'};
-                        $thefields[$ii]{comment} = $o_field->attribs->{'comment'};
-                        $thefields[$ii]{comment} =~ s/\\.//g;
-                        $thefields[$ii]{sync}    = $o_field->attribs->{'sync'};
-                        if ($eh->get('report.per.debug')) {
-                            print("~~~~~    " . $thefields[$ii]{name} . '(' . $thefields[$ii]{size}
-                                  . ')' . '/' . $thefields[$ii]{pos}  . "\n");
-                        }
-                        $ii += 1;
-                    }
-                    # sort the fields (probably reserved?)
-                    #@thefields = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
-                    @thefields = sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
-
-                    $theBlock{$address}->{fields} = \@thefields;
-                } else {
-                    if ( $eh->get( 'report.per.debug' ) ) {
-                        print("!!!!! Register: " . $o_reg->name() . " will not be documented\n");
-                    }
+                while (exists($theBlock{$address})) {
+                    $address .= "_1";
                 }
+                $theBlock{$address}->{regname} = $o_reg->name();
+                $theBlock{$address}->{regname} = mix_rep_header_check_name(uc($domain_name) . '_' . $theBlock{$address}->{regname}, $rTypes);
+                if (length($theBlock{$address}->{regname}) > $maxwidth) {
+                    $maxwidth = length($theBlock{$address}->{regname});
+                }
+                $theBlock{$address}->{init}    = $init;
+                if ($eh->get('report.per.debug')) {
+                    print("~~~~~ Register: " . $o_reg->name() . "     $theBlock{$address}->{regname}\n");
+                }
+                my $ii = 0;
+                my @thefields;
+                foreach my $hreff (@{$o_reg->fields}) {
+                    my $o_field = $hreff->{'field'};
+                    # select type of register
+                    $thefields[$ii]{name}    = lc($o_field->name);
+                    if (length($thefields[$ii]{name}) > $maxwidth) {
+                        $maxwidth = length($thefields[$ii]{name});
+                    }
+                    $thefields[$ii]{size}    = $o_field->attribs->{'size'};
+                    $thefields[$ii]{pos}     = $hreff->{'pos'}; # LSB position
+                    $thefields[$ii]{lsb}     = $o_field->attribs->{'lsb'};
+                    $thefields[$ii]{view}    = $o_field->attribs->{'view'}; # N: no documentation  Y: bitfield to document
+                    # ignore this bitfield
+                    next if $thefields[$ii]{view} ne 'Y';
+                    $thefields[$ii]{mode}    = $o_field->attribs->{'dir'};
+                    $thefields[$ii]{comment} = $o_field->attribs->{'comment'};
+                    $thefields[$ii]{comment} =~ s/\\.//g;
+                    $thefields[$ii]{sync}    = $o_field->attribs->{'sync'};
+                    if ($eh->get('report.per.debug')) {
+                        print("~~~~~    " . $thefields[$ii]{name} . '(' . $thefields[$ii]{size}
+                              . ')' . '/' . $thefields[$ii]{pos}  . "\n");
+                    }
+                    $ii += 1;
+                }
+                if ($ii == 0) {
+                    # no visible bitfield exists, ignore the whole register
+                    delete $theBlock{$address};
+                    next;
+                }
+                # sort the fields (probably reserved?)
+                #@thefields = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
+                @thefields = sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
+
+                $theBlock{$address}->{fields} = \@thefields;
             }
             # All register were read in, write the header file
             mix_rep_per_print($fh, $domain_name, \%theBlock, $rTypes, $blocks, $maxwidth, $global_base_address);
