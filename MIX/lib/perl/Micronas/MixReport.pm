@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.41 $                                               |
+# | Revision:   $Revision: 1.42 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2007/02/01 07:28:42 $                                                   |
+# | Date:       $Date: 2007/02/07 15:35:57 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.41 2007/02/01 07:28:42 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.42 2007/02/07 15:35:57 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.42  2007/02/07 15:35:57  mathias
+# | write vcty header files
+# |
 # | Revision 1.41  2007/02/01 07:28:42  mathias
 # | generate c structures for all registers unless _every_ bitfield
 # | of a register is marked as not visible (view == 'N')
@@ -179,11 +182,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.41 2007/02/01 07:28:42 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.42 2007/02/07 15:35:57 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.41 $';
+my $thisrevision   =      '$Revision: 1.42 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -269,6 +272,10 @@ sub mix_report($)
         $logger->info('__I_REPORT', "\tReport c header files");
         mix_rep_header($r_i2cin);
     }
+    if ( $reports =~ m/\bvctyheader\b/io ) {
+        $logger->info('__I_REPORT', "\tReport c header files for vcty");
+        mix_rep_vctyheader($r_i2cin);
+    }
     if ( $reports =~ m/\bper\b/io ) {
         $logger->info('__I_REPORT', "\tReport Lauterbach peripheral files");
         mix_rep_per($r_i2cin);
@@ -279,6 +286,8 @@ sub mix_report($)
     }
 }
 
+##############################################################################
+##############################################################################
 #####################################################################
 # Read the top address map in
 # Return:
@@ -345,6 +354,43 @@ sub mix_rep_header_read_top_address_map()
 }
 
 #####################################################################
+# Read the device.ini file
+# Parameter:
+#          $old_blocks   Reference to the hash created from top address sheet
+# Return:
+#          $blocks       Reference to a hash containing the blocks
+#                        from device.ini
+#####################################################################
+
+sub mix_rep_vcty_read_device_ini($)
+{
+    my ($old_blocks) = @_;
+    my $file = $eh->get('report.cheader.device.ini');
+     my %blocks;
+    my $BaseAddress = $old_blocks->{sci_vcty_core}->{base_addr}->[0];
+
+    # Open device.ini file
+    my $fh = new FileHandle $file, 'r';
+    if (! defined($fh)) {
+        $logger->error( '__E_REPORT_FILE', "Cannot open file: $file!" );
+        exit(2);
+    }
+    while (my $line = $fh->getline()) {
+        chomp($line);
+        if ($line =~ m/\s*device\s+([^\s]+)\s+=\s+7'h([^\s]+);/) {
+            my $name = $1;
+            $blocks{$name}->{name} = $name;
+            $blocks{$name}->{reg_clones} = 1;
+            push(@{$blocks{$name}->{clients}}, $name);
+            $blocks{$name}->{base_addr}->[0] = (hex($2) << 10) + $BaseAddress;
+            #$blocks{$1} = hex($2) * 1024;
+        }
+    }
+
+    return(\%blocks);
+}
+
+#####################################################################
 # mix_rep_header_check_name
 #          apply possibly string replacement to $regname
 # Parameter:
@@ -384,6 +430,7 @@ sub mix_rep_header_open_files($$)
 {
     my ($name, $blocks) = @_;
     my $newname = $eh->get("report.cheader.definition." . lc($name));
+    $newname = $name if (! defined($newname));
     my $file = "reg_" . lc($newname) . ".h";
     my $fh = new FileHandle $file, "w";
 
@@ -422,15 +469,87 @@ sub mix_rep_header_open_files($$)
 }
 
 #####################################################################
+# Print type definiotions for the registers of the current domain
+#####################################################################
+
+sub mix_rep_header_print($$$$)
+{
+    my ($fh, $domain_name, $rBlock, $rTypes) = @_;
+
+    $fh->write("\n/*  Relative offsets of the register adresses */\n\n");
+    foreach my $addr (sort keys %{$rBlock}) {
+        if ($eh->get('report.cheader.debug')) {
+            print("!!!!! processing domain: '$domain_name' ... register: '$rBlock->{$addr}->{regname}'\n");
+        }
+        $rBlock->{$addr}->{regname} = mix_rep_header_check_name(uc($domain_name) . '_' . $rBlock->{$addr}->{regname}, $rTypes);
+        # relative address of the register in this domain
+        $fh->printf("#define %-48s %s\n", $rBlock->{$addr}->{regname} . '_OFFS', (split(/_/, $addr))[0]);
+        # macro to get real address for this register
+        my $name = $rBlock->{$addr}->{regname};
+        my $spaces = 41 - length($name);
+        $fh->print("#define ${name}(base) " . ' ' x $spaces . " (base + ${name}_OFFS)\n");
+        #$fh->printf("#define %-s(base) %20s (base + %s_OFFS)\n", $rBlock->{$addr}->{regname}, ' ', $rBlock->{$addr}->{regname});
+    }
+    $fh->write("\n/* C structure bitfields */\n");
+    foreach my $addr (sort keys %{$rBlock}) {
+        $fh->write("\n");
+        $fh->write("typedef union _" . $rBlock->{$addr}->{regname} . "_t\n");
+        $fh->write("{\n");
+        $fh->write("   uint32_t Reg;\n");
+        $fh->write("   struct\n");
+        $fh->write("   {\n");
+        #### prepapare bitfields (extended by empty ("reserved") fields
+        my $high = 0;
+        my @slicearr = ();
+        for (my $i = 0; $i <= $#{$rBlock->{$addr}->{fields}}; $i++) {
+            my $slice = $rBlock->{$addr}->{fields}->[$i];
+            if ($slice->{pos} > $high) {
+                my $width = $slice->{pos} - $high;
+                push(@slicearr, sprintf("%5s uint32_t %-44s : %2d;   /* reserved */\n", ' ', ' ', $width));
+                $high += $width;
+            }
+            push(@slicearr, sprintf("%5s uint32_t %-44s : %2d;   /**< %s (#)*/\n", ' ', $slice->{name}, $slice->{size}, $slice->{comment} ? $slice->{comment} :''));
+            $high += $slice->{size};
+        }
+        # remaining bits
+        if ($high < 32) {
+            my $width = 32 - $high;
+            push(@slicearr, sprintf("%5s uint32_t %-44s : %2d;   /* reserved */\n", ' ', ' ', $width));
+        }
+        ### for little endian
+        $fh->write("   #if defined(_LITTLE_ENDIAN) || defined(__LITTLE_ENDIAN)\n");
+        for (my $i = 0; $i < scalar(@slicearr); $i++) {
+            $fh->write($slicearr[$i]);
+        }
+        $fh->write("   #else\n");
+        ### for big endian
+        for (my $i = scalar(@slicearr) - 1; $i >= 0; $i--) {
+            $fh->write($slicearr[$i]);
+        }
+        $fh->write("   #endif\n");
+        $fh->write("   } Bits;\n");
+        $fh->write("} $rBlock->{$addr}->{regname}_t;\n");
+    }
+    # Write pseudo comments with string and reset values
+    # Those values will be extracted and written into a separate file by a Perl script
+    foreach my $addr (sort keys %{$rBlock}) {
+        $fh->write("\n// Register name and init value; read by another script\n");
+        $fh->printf("// Init   %-40s %12s\n", $rBlock->{$addr}->{regname}, $rBlock->{$addr}->{init});
+    }
+}
+
+#####################################################################
 # Report header files
 #####################################################################
 
-sub mix_rep_header($)
+sub mix_rep_header($;$)
 {
-    my ($o_space) = shift @_;   # Reference to the register object
+    my ($o_space, $vcty) = @_;        # Reference to the register object
 
     if (defined $o_space) {
         my ($blocks, $rTypes) = mix_rep_header_read_top_address_map();
+        # re-create $blocks when processing vcty sheets
+        $blocks = mix_rep_vcty_read_device_ini($blocks) if $vcty;
 
         # iterate through all blocks (domains)
         foreach my $href (@{$o_space->domains}) {
@@ -445,7 +564,9 @@ sub mix_rep_header($)
             my %theBlock;
             #$o_domain->display();
             foreach my $o_reg (@{$o_domain->regs()}) {
-                my $address  = sprintf("0x%08X", $o_domain->get_reg_address($o_reg));
+                my $addr_1   = $o_domain->get_reg_address($o_reg);
+                $addr_1 *= 4 if $vcty;
+                my $address  = sprintf("0x%08X", $addr_1);
                 my $init     = sprintf("0x%08X", $o_reg->get_reg_init());
                 my $mode     = $o_reg->get_reg_access_mode();
 
@@ -502,75 +623,24 @@ sub mix_rep_header($)
     return 0;
 }
 
+##############################################################################
+##############################################################################
+
 #####################################################################
-# Print type definiotions for the registers of the current domain
+# Report header files created from vcty sheets
 #####################################################################
 
-sub mix_rep_header_print($$$$)
+sub mix_rep_vctyheader($)
 {
-    my ($fh, $domain_name, $rBlock, $rTypes) = @_;
+    my ($o_space) = shift @_;   # Reference to the register object
 
-    $fh->write("\n/*  Relative offsets of the register adresses */\n\n");
-    foreach my $addr (sort keys %{$rBlock}) {
-        if ( $eh->get( 'report.cheader.debug' ) ) {
-            print("!!!!! processing domain: '$domain_name' ... register: '$rBlock->{$addr}->{regname}'\n");
-        }
-        $rBlock->{$addr}->{regname} = mix_rep_header_check_name(uc($domain_name) . '_' . $rBlock->{$addr}->{regname}, $rTypes);
-        # relative address of the register in this domain
-        $fh->printf("#define %-48s %s\n", $rBlock->{$addr}->{regname} . '_OFFS', (split(/_/, $addr))[0]);
-        # macro to get real address for this register
-        my $name = $rBlock->{$addr}->{regname};
-        my $spaces = 41 - length($name);
-        $fh->print("#define ${name}(base) " . ' ' x $spaces . " (base + ${name}_OFFS)\n");
-        #$fh->printf("#define %-s(base) %20s (base + %s_OFFS)\n", $rBlock->{$addr}->{regname}, ' ', $rBlock->{$addr}->{regname});
-    }
-    $fh->write("\n/* C structure bitfields */\n");
-    foreach my $addr (sort keys %{$rBlock}) {
-        $fh->write("\n");
-        $fh->write("typedef union _" . $rBlock->{$addr}->{regname} . "_t\n");
-        $fh->write("{\n");
-        $fh->write("   uint32_t Reg;\n");
-        $fh->write("   struct\n");
-        $fh->write("   {\n");
-        #### prepapare bitfields (extended by empty ("reserved") fields
-        my $high = 0;
-        my @slicearr = ();
-        for (my $i = 0; $i <= $#{$rBlock->{$addr}->{fields}}; $i++) {
-            my $slice = $rBlock->{$addr}->{fields}->[$i];
-            if ($slice->{pos} > $high) {
-                my $width = $slice->{pos} - $high;
-                push(@slicearr, sprintf("%5s uint32_t %-44s : %2d;   /* reserved */\n", ' ', ' ', $width));
-                $high += $width;
-            }
-            push(@slicearr, sprintf("%5s uint32_t %-44s : %2d;   /**< %s (#)*/\n", ' ', $slice->{name}, $slice->{size}, $slice->{comment}));
-            $high += $slice->{size};
-        }
-        # remaining bits
-        if ($high < 32) {
-            my $width = 32 - $high;
-            push(@slicearr, sprintf("%5s uint32_t %-44s : %2d;   /* reserved */\n", ' ', ' ', $width));
-        }
-        ### for little endian
-        $fh->write("   #if defined(_LITTLE_ENDIAN) || defined(__LITTLE_ENDIAN)\n");
-        for (my $i = 0; $i < scalar(@slicearr); $i++) {
-            $fh->write($slicearr[$i]);
-        }
-        $fh->write("   #else\n");
-        ### for big endian
-        for (my $i = scalar(@slicearr) - 1; $i >= 0; $i--) {
-            $fh->write($slicearr[$i]);
-        }
-        $fh->write("   #endif\n");
-        $fh->write("   } Bits;\n");
-        $fh->write("} $rBlock->{$addr}->{regname}_t;\n");
-    }
-    # Write pseudo comments with string and reset values
-    # Those values will be extracted and written into a separate file by a Perl script
-    foreach my $addr (sort keys %{$rBlock}) {
-        $fh->write("\n// Register name and init value; read by another script\n");
-        $fh->printf("// Init   %-40s %12s\n", $rBlock->{$addr}->{regname}, $rBlock->{$addr}->{init});
-    }
+    mix_rep_header($o_space, 1);
+
+    return 0;
 }
+
+##############################################################################
+##############################################################################
 
 #####################################################################
 # Open the per file for one register
@@ -594,7 +664,7 @@ sub mix_rep_per_open_files($$$)
     # Write base address
     my $ad = hex($global_base_address) + $blocks->{$name}->{base_addr}->[0];
     $fh->printf("base d:0x%08X\n", $ad);
-    $fh->printf("tree.open \"%s\"\n", $blocks->{$name}->{clients}->[0]);
+    $fh->printf("tree \"%s\"\n", $blocks->{$name}->{clients}->[0]);
 
     return $fh;
 }
@@ -608,7 +678,7 @@ sub mix_rep_per_print($$$$$$$)
     my ($fh, $name, $rBlock, $rTypes, $blocks, $maxwidth, $global_base_address) = @_;
     my $group_length;
 
-    $fh->write("\nwidth $maxwidth\n\n");
+    $fh->write("\nwidth $maxwidth.\n\n");
     foreach my $addr (reverse sort keys %{$rBlock}) {
         if ( $eh->get( 'report.per.debug' ) ) {
             print("!!!!! processing domain: '$name' ... register: '$rBlock->{$addr}->{regname}'\n");
@@ -628,7 +698,7 @@ sub mix_rep_per_print($$$$$$$)
                 $slice->{comment} =~ s/[\n\r]+/ /g;
                 $slice->{comment} =~ s/"//g;
                 $fh->write("      bitfld.long  " . (split(/_/, $addr))[0] . " " .
-                           $slice->{pos} . ".--" . ($slice->{pos} + $slice->{size}) . ".   \"" .
+                           $slice->{pos} . ".--" . ($slice->{pos} + $slice->{size} - 1) . ".   \"" .
                            $slice->{name} . "  , " . $slice->{comment} . "\" \" \"\n");
             }
         }
@@ -638,7 +708,7 @@ sub mix_rep_per_print($$$$$$$)
     # write clones (copy construct)
     for (my $i = 1; $i < $blocks->{$name}->{reg_clones}; $i++) {
         my $ad = hex($global_base_address) + $blocks->{$name}->{base_addr}->[$i];
-        $fh->printf("tree.open \"%s\"\n", $blocks->{$name}->{clients}->[$i]);
+        $fh->printf("tree \"%s\"\n", $blocks->{$name}->{clients}->[$i]);
         $fh->printf("   base d:0x%08X\n", $ad);
         $fh->printf("   group.long 0X00--%s\n", $group_length);
         $fh->printf("   copy\n");
@@ -679,7 +749,7 @@ sub mix_rep_per($)
                 while (exists($theBlock{$address})) {
                     $address .= "_1";
                 }
-                $theBlock{$address}->{regname} = $o_reg->name();
+                $theBlock{$address}->{regname} = uc($o_reg->name());
                 $theBlock{$address}->{regname} = mix_rep_header_check_name(uc($domain_name) . '_' . $theBlock{$address}->{regname}, $rTypes);
                 if (length($theBlock{$address}->{regname}) > $maxwidth) {
                     $maxwidth = length($theBlock{$address}->{regname});
@@ -733,6 +803,9 @@ sub mix_rep_per($)
     }
     return 0;
 }
+
+##############################################################################
+##############################################################################
 
 #####################################################################
 # Open the perl file for one register
@@ -930,9 +1003,12 @@ sub mix_rep_perl($)
     return 0;
 }
 
+##############################################################################
+##############################################################################
+
 ######################################################################
 # mix_rep_reglist
-#       Report register list
+#       Report register list as mif file
 #####################################################################
 
 sub mix_rep_reglist($)
@@ -1559,6 +1635,9 @@ sub mix_rep_reglist_mif_bitfield_description($$$)
         $mif->add($mif->Tr(\%hh), $regtable);
     }
 }
+
+##############################################################################
+##############################################################################
 
 #
 # return signals in requested order ...
