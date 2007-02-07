@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.35 2007/01/26 08:13:59 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.36 2007/02/07 15:37:50 mathias Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,10 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.36  2007/02/07 15:37:50  mathias
+#  domain information is read in from '::dev' column when
+#  the config entry 'input.domain.dev' is set to 1
+#
 #  Revision 1.35  2007/01/26 08:13:59  lutscher
 #  removed debug print
 #
@@ -228,7 +232,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.35 $ ';  #'
+our($VERSION) = '$Revision: 1.36 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -423,215 +427,251 @@ sub display {
 # two consecutive registers must have different names (::instance)
 # two consecutive domains must have different names (::interface)
 sub _map_register_master {
-	my ($this, $database_type, $lref_rm) = @_;
-	my($href_row, $marker, $rsize, $reg, $value, $fname, $fpos, $fsize, $domain, $offset, $msb, $msb_max, $lsb, $p, $new_fname, $usedbits, $baseaddr, $col_cnt, $rdefinition, $rclone, $o_tmp);
-	my($o_domain, $o_reg, $o_field) = (undef, undef, undef);
-	my($href_marker_types, %hattribs, %hdefault_attribs, $m);
-	my $result = 1;
-	my ($old_usedbits, $i);
+    my ($this, $database_type, $lref_rm) = @_;
+    my($href_row, $marker, $rsize, $reg, $value, $fname, $fpos, $fsize, $domain, $offset, $msb, $msb_max, $lsb, $p, $new_fname, $usedbits, $baseaddr, $col_cnt, $rdefinition, $rclone, $o_tmp);
+    my($o_domain, $o_reg, $o_field) = (undef, undef, undef);
+    my($href_marker_types, %hattribs, %hdefault_attribs, $m);
+    my $result = 1;
+    my ($old_usedbits, $i);
     my ($ivariant, $icomment);
 
-	$usedbits = 0;
+    $usedbits = 0;
 
-	# get defaults for field attributes from $eh 
-	$href_marker_types = $eh->get( 'i2c.field' );
-	foreach $m (keys %{$href_marker_types}) {
-		next unless ($m =~ m/^::/); 
-		# filter out everything that is not needed for fields
-		if (!grep ($m =~ /^$_$/, @{$this->global->{non_field_attributes}})) { 
-			my $m_new = $m;
-			$m_new =~ s/^:://; # get rid of the leading ::
-			$hdefault_attribs{$m_new} = $href_marker_types->{$m}[3];
-		};
-	};
-    
+    # get defaults for field attributes from $eh 
+    $href_marker_types = $eh->get( 'i2c.field' );
+    foreach $m (keys %{$href_marker_types}) {
+        next unless ($m =~ m/^::/); 
+        # filter out everything that is not needed for fields
+        if (!grep ($m =~ /^$_$/, @{$this->global->{non_field_attributes}})) { 
+            my $m_new = $m;
+            $m_new =~ s/^:://;  # get rid of the leading ::
+            $hdefault_attribs{$m_new} = $href_marker_types->{$m}[3];
+        }
+        ;
+    }
+    ;
+
     # get comment and variant patterns
     $ivariant = $eh->get('input.ignore.comments');
     $icomment = $eh->get('input.ignore.variant') || '#__I_VARIANT';
-    
-	# highest bit specified in register-master
-	$msb_max = $eh->get( 'i2c._mult_.::b' ) || _fatal("internal error (bad!)");
-    
-	# iterate each row
-	foreach $href_row (@$lref_rm) {
-		# skip lines to ignore
-        
+
+    # check whether domain information should be taken from '::dev' column
+    # default: domain information is taken from '::interface' column
+    my $domain_column = defined($eh->get('input.domain.dev')) ? '::dev' : '::interface';
+
+    # highest bit specified in register-master
+    $msb_max = $eh->get( 'i2c._mult_.::b' ) || _fatal("internal error (bad!)");
+
+    # iterate each row
+    foreach $href_row (@$lref_rm) {
+        # skip lines to ignore
+
         next if (
                  exists ($href_row->{"::ign"}) 
                  and ($href_row->{"::ign"} =~ m/${icomment}/ or $href_row->{"::ign"} =~ m/${ivariant}/o )
-        );
+                );
         next if (!scalar(%$href_row));
 
-		$col_cnt = 0;
-		$msb   = 0;
-		$fname = "";
-		$fpos  = 0;
-		$msb   = 0;
-		$lsb   = 99;
-		$rsize = $eh->get('i2c.field.::width')->[3];
-		$rdefinition = "";																		
-		%hattribs = %hdefault_attribs;
+        $col_cnt = 0;
+        $msb   = 0;
+        $fname = "";
+        $fpos  = 0;
+        $msb   = 0;
+        $lsb   = 99;
+        $rsize = $eh->get('i2c.field.::width')->[3];
+        $rdefinition = "";
+        %hattribs = %hdefault_attribs;
         $rclone = $eh->get('i2c.field.::clone')->[3];
 
-		# parse all columns
-		foreach $marker (keys %$href_row) {
-			$value = $href_row->{$marker};
-			$value =~ s/^\s+//; # strip whitespaces
-			$value =~ s/\s+$//;
-			if ($value =~ m/^0x[a-f0-9]+/i) { # convert from hex if necessary
-				$value = hex($value);
-			};
-			if ($marker eq "::sub") {
+        # parse all columns
+        foreach $marker (keys %$href_row) {
+            $value = $href_row->{$marker};
+            $value =~ s/^\s+//; # strip whitespaces
+            $value =~ s/\s+$//;
+            if ($value =~ m/^0x[a-f0-9]+/i) { # convert from hex if necessary
+                $value = hex($value);
+            }
+            ;
+            if ($marker eq "::sub") {
 				# every row requires a ::sub entry, so I use it to skip empty lines
-				goto next_row if ($value eq "");
-				$offset = $value;
+                goto next_row if ($value eq "");
+                $offset = $value;
 				# account for special meaning of sub column in AVFB project
-				if ($database_type eq "AVFB") {
-					$offset = $offset * 2; # transform to byte address
-				};
-				next;
-			};
-			if ($marker eq "::interface") {
-				$domain = $value; next;
-			} 
-			if ($marker eq "::inst") {
-				$reg = $value; next;
-			};
-			if ($marker eq "::width") {
-				$rsize = $value; next;
-			};
-			if ($marker =~ m/^::def/) {
-				# note: in the register-master, the definition column is intended as an identifier to handle
-				# multiple instances of a register; at the moment there is no way to handle multiple instances
-				# of a field
-				$rdefinition = $value; next;
-			};
+                if ($database_type eq "AVFB") {
+                    $offset = $offset * 2; # transform to byte address
+                }
+                ;
+                next;
+            }
+            ;
+            # domain is taken from "::interface" or "::dev" column
+            if ($marker eq $domain_column) {
+                $domain = $value; next;
+            }
+            if ($marker eq "::inst") {
+                $reg = $value; next;
+            }
+            ;
+            if ($marker eq "::width") {
+                $rsize = $value; next;
+            }
+            ;
+            if ($marker =~ m/^::def/) {
+                # note: in the register-master, the definition column is intended as an identifier to handle
+                # multiple instances of a register; at the moment there is no way to handle multiple instances
+                # of a field
+                $rdefinition = $value; next;
+            }
+            ;
             if ($marker =~ m/^::clone/) {
                 $rclone = $value; next;
-            };
-			if ($marker =~ m/::b(:(\d+))*$/) {
-				if (defined $2) {
-					$p = $msb_max - $2; # bit column numbering is reversed!
-				} else {
-					$p = $msb_max;
-				};
-				if ($value =~ m/(.+)\.(\d+)/) { # <field_name>.<bit> for mult-bit fields
-					$fname = $1;
-					$fname =~ s/^\s+//; # strip whitespaces
-					$fname =~ s/\s+$//;
-					if ($2 <= $lsb) {
-						$lsb = $2;
-						$fpos = $p;
-					}
-					if ($2 > $msb) {
-						$msb = $2;
-					};
-					$col_cnt++;
-				} else {
-					if ($value ne "") { # <field_name> for 1-bit fields
-						$fname = $value;
-						$fpos = $p;
-						$lsb = 0;
-						$msb = 0;
-						$col_cnt++;
-					};
-				};
+            }
+            ;
+            if ($marker =~ m/::b(:(\d+))*$/) {
+                if (defined $2) {
+                    $p = $msb_max - $2; # bit column numbering is reversed!
+                } else {
+                    $p = $msb_max;
+                }
+                ;
+                if ($value =~ m/(.+)\.(\d+)/) { # <field_name>.<bit> for mult-bit fields
+                    $fname = $1;
+                    $fname =~ s/^\s+//; # strip whitespaces
+                    $fname =~ s/\s+$//;
+                    if ($2 <= $lsb) {
+                        $lsb = $2;
+                        $fpos = $p;
+                    }
+                    if ($2 > $msb) {
+                        $msb = $2;
+                    }
+                    ;
+                    $col_cnt++;
+                } else {
+                    if ($value ne "") { # <field_name> for 1-bit fields
+                        $fname = $value;
+                        $fpos = $p;
+                        $lsb = 0;
+                        $msb = 0;
+                        $col_cnt++;
+                    }
+                    ;
+                }
+                ;
 				# print "$marker $value [$msb:$lsb] fpos $fpos p $p\n";
-				next;
-			};
+                next;
+            }
+            ;
 
-			# remaining markers can be processed anonymously
-			$marker =~ s/^:://;
-			if (exists ($hattribs{$marker}) and $value ne "") {
-				$hattribs{$marker} = $value;
-			};
-		};
-		$fsize = $msb - $lsb + 1;
-		if ($fsize != $col_cnt) {
-			_error("bad field \'$fname\' in register \'$reg\' in domain \'$domain\', must be continuous bit-slice");
-			$result = 0;
-		};
+            # remaining markers can be processed anonymously
+            $marker =~ s/^:://;
+            if (exists ($hattribs{$marker}) and $value ne "") {
+                $hattribs{$marker} = $value;
+            }
+            ;
+        }
+        ;
+        $fsize = $msb - $lsb + 1;
+        if ($fsize != $col_cnt) {
+            _error("bad field \'$fname\' in register \'$reg\' in domain \'$domain\', must be continuous bit-slice");
+            $result = 0;
+        }
+        ;
 
-		# do not add "reserved" fields to database (boring)
-		if (lc($fname) ne "reserved") {
-			if (!ref($o_domain) or $domain ne $o_domain->name) {
+        # do not add "reserved" fields to database (boring)
+        if (lc($fname) ne "reserved") {
+            if (!ref($o_domain) or $domain ne $o_domain->name) {
 				# check if domain already exists, otherwise create new domain
-				$o_domain = $this->find_domain_by_name_first($domain);
-				if (!ref($o_domain)) {
-					$o_domain = Micronas::RegDomain->new(name => $domain);
+                $o_domain = $this->find_domain_by_name_first($domain);
+                if (!ref($o_domain)) {
+                    $o_domain = Micronas::RegDomain->new(name => $domain);
 					
-					# get base-address, for what it's worth
-					$baseaddr = 0;
-					if ($database_type eq "VGCA") {
-						$baseaddr = hex("0x1ebc0000");
-					}; 
-					if ($database_type eq "FRCH" and $domain =~ m/_(\d+)$/) {
-						# in FRCH, they have pages of up to 256 Words each
-						$baseaddr = $1 << 8;
-					};
+                    # get base-address, for what it's worth
+                    $baseaddr = 0;
+                    if ($database_type eq "VGCA") {
+                        $baseaddr = hex("0x1ebc0000");
+                    }
+                    ; 
+                    if ($database_type eq "FRCH" and $domain =~ m/_(\d+)$/) {
+                        # in FRCH, they have pages of up to 256 Words each
+                        $baseaddr = $1 << 8;
+                    }
+                    ;
 					
-					# link domain object into register space object
-					$this->domains('domain' => $o_domain, 'baseaddr' => $baseaddr);
-				};
-			};
+                    # link domain object into register space object
+                    $this->domains('domain' => $o_domain, 'baseaddr' => $baseaddr);
+                }
+                ;
+            }
+            ;
 			
-			if(!ref($o_reg) or $reg ne $o_reg->name) {
+            if (!ref($o_reg) or $reg ne $o_reg->name) {
 				# add usedbits attribute to last register
-				if (ref($o_reg)) {
-					$o_reg->attribs('usedbits' => $usedbits);
-					$usedbits = 0;
-				};
+                if (ref($o_reg)) {
+                    $o_reg->attribs('usedbits' => $usedbits);
+                    $usedbits = 0;
+                }
+                ;
 
 				# check if register already exists in domain, otherwise create new register object
-				$o_reg = undef;
-				foreach $o_tmp ($o_domain->find_reg_by_address_all($offset)) {
-					if ($o_tmp->name eq $reg) {
-						$o_reg = $o_tmp;
-						last;
-					} else {
-						_warning("registers \'$reg\' and \'".$o_tmp->name."\' are mapped to the same address in domain");
-						$o_reg = undef;
-					};
-				};
-				if (!ref($o_reg)) {
-					$o_reg = Micronas::RegReg->new('name' => $reg, 'definition' => $rdefinition);
-					$o_reg->attribs('size' => $rsize, 'clone' => $rclone);
+                $o_reg = undef;
+                foreach $o_tmp ($o_domain->find_reg_by_address_all($offset)) {
+                    if ($o_tmp->name eq $reg) {
+                        $o_reg = $o_tmp;
+                        last;
+                    } else {
+                        _warning("registers \'$reg\' and \'".$o_tmp->name."\' are mapped to the same address in domain");
+                        $o_reg = undef;
+                    }
+                    ;
+                }
+                ;
+                if (!ref($o_reg)) {
+                    $o_reg = Micronas::RegReg->new('name' => $reg, 'definition' => $rdefinition);
+                    $o_reg->attribs('size' => $rsize, 'clone' => $rclone);
 
-					# link register object into domain
-					$o_domain->regs($o_reg);
-					$o_domain->addrmap('reg' => $o_reg, 'offset' => $offset);
-				};
-			};
+                    # link register object into domain
+                    $o_domain->regs($o_reg);
+                    $o_domain->addrmap('reg' => $o_reg, 'offset' => $offset);
+                }
+                ;
+            }
+            ;
 
-			# compute bit-mask for registes
-			for ($i=$fpos; $i < $fpos+$fsize; $i++) {
-				$old_usedbits = $usedbits;
-				$usedbits |= 1<<$i;
+            # compute bit-mask for registes
+            for ($i=$fpos; $i < $fpos+$fsize; $i++) {
+                $old_usedbits = $usedbits;
+                $usedbits |= 1<<$i;
 				# check for overlapping fields in same register
-				if ($old_usedbits == $usedbits) {
-					$result = 0;
-					_error("overlapping fields in register \'$reg\'");
-					last;
-				}; 
-			};
+                if ($old_usedbits == $usedbits) {
+                    $result = 0;
+                    _error("overlapping fields in register \'$reg\'");
+                    last;
+                }
+                ; 
+            }
+            ;
 
             # clip init value to field size
             if (exists $hattribs{'init'}) {
                 $hattribs{'init'} = $hattribs{'init'} & ((1<<$fsize)-1);
-            };
-			# create new field object
-			$o_field = Micronas::RegField->new('name' => $fname, 'reg' => $o_reg);
-			$o_field->attribs(%hattribs);
-			$o_field->attribs('size' => $fsize, 'lsb' => $lsb);
+            }
+            ;
+            # create new field object
+            $o_field = Micronas::RegField->new('name' => $fname, 'reg' => $o_reg);
+            $o_field->attribs(%hattribs);
+            $o_field->attribs('size' => $fsize, 'lsb' => $lsb);
 			
-			# link field into domain
-			$o_domain->fields($o_field);
+            # link field into domain
+            $o_domain->fields($o_field);
 			
-			# link field into register
-			$o_reg->fields(field => $o_field, pos => $fpos);
-		};
-	  next_row:
-	};
+            # link field into register
+            $o_reg->fields(field => $o_field, pos => $fpos);
+        }
+        ;
+      next_row:
+    }
+    ;
 
 	# don't forget to add usedbits attribute to last register
 	if (ref($o_reg) and $usedbits != 0) {
