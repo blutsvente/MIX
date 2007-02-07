@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.35 $                                         |
+# | Revision:   $Revision: 1.36 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/01/22 17:32:07 $                              |
+# | Date:       $Date: 2007/02/07 15:11:15 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,10 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.36  2007/02/07 15:11:15  wig
+# | fixed typo
+# |  	Globals.pm
+# |
 # | Revision 1.35  2007/01/22 17:32:07  wig
 # |  	MixParser.pm MixReport.pm : update -report portlist (seperate ports)
 # | 	Globals.pm Mif.pm : updated -report portlist
@@ -90,9 +94,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.35 2007/01/22 17:32:07 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.36 2007/02/07 15:11:15 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.35 $';  
+my $thisrevision    =      '$Revision: 1.36 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -599,7 +603,7 @@ sub init ($) {
 		'language' => { # Special switches to control details of the HDL generated
 			'vhdl'	=>	'', # Unused 20051007
 			'verilog'	=>	'', # Setting to 2001 will change generation of port and parameters
-							# keys: [no]owire, 2001, [no|old]style, [no|old|2001]params,
+							# keys: [no]owire, 2001, [no|old]style, [no|old|2001]param,
 		},
 		# 'warnings' => 'load,drivers',	# Warn about missing loads/drivers
 		'warnings' => '',
