@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.42 $                                               |
+# | Revision:   $Revision: 1.43 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2007/02/07 15:35:57 $                                                   |
+# | Date:       $Date: 2007/02/13 11:34:04 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.42 2007/02/07 15:35:57 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.43 2007/02/13 11:34:04 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,7 +31,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
-# | Revision 1.42  2007/02/07 15:35:57  mathias
+# | Revision 1.43  2007/02/13 11:34:04  mathias
+# | fixes in generating per files for Lauterbach debugger
+# |
+# | Revision 1.42  2007-02-07 15:35:57  mathias
 # | write vcty header files
 # |
 # | Revision 1.41  2007/02/01 07:28:42  mathias
@@ -182,11 +185,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.42 2007/02/07 15:35:57 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.43 2007/02/13 11:34:04 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.42 $';
+my $thisrevision   =      '$Revision: 1.43 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -274,7 +277,7 @@ sub mix_report($)
     }
     if ( $reports =~ m/\bvctyheader\b/io ) {
         $logger->info('__I_REPORT', "\tReport c header files for vcty");
-        mix_rep_vctyheader($r_i2cin);
+        mix_rep_header($r_i2cin, 'vcty');
     }
     if ( $reports =~ m/\bper\b/io ) {
         $logger->info('__I_REPORT', "\tReport Lauterbach peripheral files");
@@ -282,7 +285,10 @@ sub mix_report($)
     }
     if ( $reports =~ m/\bperl\b/io ) {
         $logger->info('__I_REPORT', "\tReport Perl package files");
-        mix_rep_perl($r_i2cin);
+    }
+    if ( $reports =~ m/\bvctyperl\b/io ) {
+        $logger->info('__I_REPORT', "\tReport c header files for vcty");
+        mix_rep_perl($r_i2cin, 'vcty');
     }
 }
 
@@ -601,7 +607,7 @@ sub mix_rep_header($;$)
                     $ii += 1;
                 }
                 if ($ii == 0) {
-                    # no visible bitfield exists, ignore the whole register
+                    # no visible bitfield found, ignore the whole register
                     delete $theBlock{$address};
                     next;
                 }
@@ -627,22 +633,6 @@ sub mix_rep_header($;$)
 ##############################################################################
 
 #####################################################################
-# Report header files created from vcty sheets
-#####################################################################
-
-sub mix_rep_vctyheader($)
-{
-    my ($o_space) = shift @_;   # Reference to the register object
-
-    mix_rep_header($o_space, 1);
-
-    return 0;
-}
-
-##############################################################################
-##############################################################################
-
-#####################################################################
 # Open the per file for one register
 # Write global address(es) into the file
 # Return:
@@ -661,11 +651,6 @@ sub mix_rep_per_open_files($$$)
         exit(2);
     }
 
-    # Write base address
-    my $ad = hex($global_base_address) + $blocks->{$name}->{base_addr}->[0];
-    $fh->printf("base d:0x%08X\n", $ad);
-    $fh->printf("tree \"%s\"\n", $blocks->{$name}->{clients}->[0]);
-
     return $fh;
 }
 
@@ -677,42 +662,38 @@ sub mix_rep_per_print($$$$$$$)
 {
     my ($fh, $name, $rBlock, $rTypes, $blocks, $maxwidth, $global_base_address) = @_;
     my $group_length;
+    my @groups;
 
-    $fh->write("\nwidth $maxwidth.\n\n");
-    foreach my $addr (reverse sort keys %{$rBlock}) {
-        if ( $eh->get( 'report.per.debug' ) ) {
-            print("!!!!! processing domain: '$name' ... register: '$rBlock->{$addr}->{regname}'\n");
-        }
-        # print highest address for "group.long"
-        $group_length = (split(/_/, $addr))[0];
-        $fh->printf("   group.long 0x00--%s\n", $group_length);
-        last;
-    }
-    foreach my $addr (sort keys %{$rBlock}) {
-        $fh->write("   line.long  " . (split(/_/, $addr))[0] . "  \"$rBlock->{$addr}->{regname}\"\n");
-        if (scalar(@{$rBlock->{$addr}->{fields}}) > 1) {
-            #### write bitfields (there are more than one)
-            for (my $i = 0; $i <= $#{$rBlock->{$addr}->{fields}}; $i++) {
-                my $slice = $rBlock->{$addr}->{fields}->[$i];
-                $fh->write("      textline \"   \"\n");
-                $slice->{comment} =~ s/[\n\r]+/ /g;
-                $slice->{comment} =~ s/"//g;
-                $fh->write("      bitfld.long  " . (split(/_/, $addr))[0] . " " .
-                           $slice->{pos} . ".--" . ($slice->{pos} + $slice->{size} - 1) . ".   \"" .
-                           $slice->{name} . "  , " . $slice->{comment} . "\" \" \"\n");
+    $fh->write("width $maxwidth.\n\n");
+    for (my $i = 0; $i < $blocks->{$name}->{reg_clones}; $i++) {
+        # Write base address
+        my $ad = hex($global_base_address) + $blocks->{$name}->{base_addr}->[$i];
+        $fh->printf("base d:0x%08X\n", $ad);
+        $fh->printf("tree \"%s\"\n", $blocks->{$name}->{clients}->[$i]);
+
+        foreach my $addr (sort keys %{$rBlock}) {
+            $addr = (split(/_/, $addr))[0];
+            $group_length = hex($addr) + 3;
+            my $reladdr  = '0x00';
+            my $groupstr = ($rBlock->{$addr}->{mode} eq 'R') ? 'rgroup' :
+                ($rBlock->{$addr}->{mode} eq 'W') ? 'wgroup' : 'group';
+            $fh->printf("   $groupstr.long $addr--0x%06X\n", $group_length);
+            push(@groups, sprintf("   $groupstr.long $addr--0x%06X\n", $group_length));
+            $fh->write("   line.long  " . $reladdr . "  \"$rBlock->{$addr}->{regname}\"\n");
+            if (scalar(@{$rBlock->{$addr}->{fields}}) > 1) {
+                #### write bitfields (there are more than one)
+                for (my $i = 0; $i <= $#{$rBlock->{$addr}->{fields}}; $i++) {
+                    my $slice = $rBlock->{$addr}->{fields}->[$i];
+                    $fh->write("      textline \"   \"\n");
+                    $slice->{comment} =~ s/[\n\r]+/ /g;
+                    $slice->{comment} =~ s/"//g;
+                    $fh->write("      bitfld.long  " . $reladdr . " " .
+                               $slice->{pos} . ".--" . ($slice->{pos} + $slice->{size} - 1) . ".   \"" .
+                               $slice->{name} . "  , " . $slice->{comment} . "\" \" \"\n");
+                }
             }
         }
-    }
-    $fh->write("\ntree.end\n\n");
-
-    # write clones (copy construct)
-    for (my $i = 1; $i < $blocks->{$name}->{reg_clones}; $i++) {
-        my $ad = hex($global_base_address) + $blocks->{$name}->{base_addr}->[$i];
-        $fh->printf("tree \"%s\"\n", $blocks->{$name}->{clients}->[$i]);
-        $fh->printf("   base d:0x%08X\n", $ad);
-        $fh->printf("   group.long 0X00--%s\n", $group_length);
-        $fh->printf("   copy\n");
-        $fh->printf("tree.end\n");
+        $fh->write("tree.end\n\n");
     }
 }
 
@@ -722,7 +703,7 @@ sub mix_rep_per_print($$$$$$$)
 
 sub mix_rep_per($)
 {
-    my ($o_space) = shift @_;   # Reference to the register object
+    my ($o_space) = @_;   # Reference to the register object
 
     my $maxwidth = 0;   # max length of register or bitslice names
     my $global_base_address = $eh->get("report.lauterbach.base_address");
@@ -754,7 +735,8 @@ sub mix_rep_per($)
                 if (length($theBlock{$address}->{regname}) > $maxwidth) {
                     $maxwidth = length($theBlock{$address}->{regname});
                 }
-                $theBlock{$address}->{init}    = $init;
+                $theBlock{$address}->{mode} = $mode;
+                $theBlock{$address}->{init} = $init;
                 if ($eh->get('report.per.debug')) {
                     print("~~~~~ Register: " . $o_reg->name() . "     $theBlock{$address}->{regname}\n");
                 }
@@ -817,7 +799,8 @@ sub mix_rep_per($)
 sub mix_rep_perl_open_files($$)
 {
     my ($name, $blocks) = @_;
-    my $newname = uc($eh->get("report.cheader.definition." . lc($name)));
+    my $newname = $eh->get("report.cheader.definition." . lc($name));
+    $newname = $name if (! defined($newname));
     my $file = uc($newname) . ".pm";
     my $fh = new FileHandle $file, "w";
 
@@ -920,13 +903,15 @@ sub mix_rep_perl_print($$$$$$)
 # Report Registermaster definition as Perlpackage
 #####################################################################
 
-sub mix_rep_perl($)
+sub mix_rep_perl($;$)
 {
-    my ($o_space) = shift @_;   # Reference to the register object
+    my ($o_space, $vcty) = @_;   # Reference to the register object
 
     my $maxwidth = 0;   # max length of register or bitslice names
     if (defined $o_space) {
         my ($blocks, $rTypes) = mix_rep_header_read_top_address_map();
+        # re-create $blocks when processing vcty sheets
+        $blocks = mix_rep_vcty_read_device_ini($blocks) if $vcty;
 
         # iterate through all blocks (domains)
         foreach my $href (@{$o_space->domains}) {
@@ -941,57 +926,53 @@ sub mix_rep_perl($)
             my %theBlock;
             #$o_domain->display();
             foreach my $o_reg (@{$o_domain->regs()}) {
-                #if ($o_reg->to_document()) { # should this register be documented
-                    my $address  = sprintf("0x%08X", $o_domain->get_reg_address($o_reg));
-                    my $init     = sprintf("0x%08X", $o_reg->get_reg_init());
-                    my $width    = $o_reg->attribs->{'size'};
-                    my $mode     = $o_reg->get_reg_access_mode();
+                my $addr_1   = $o_domain->get_reg_address($o_reg);
+                $addr_1 *= 4 if $vcty;
+                my $address  = sprintf("0x%08X", $addr_1);
+                my $init     = sprintf("0x%08X", $o_reg->get_reg_init());
+                my $width    = $o_reg->attribs->{'size'};
+                my $mode     = $o_reg->get_reg_access_mode();
 
-                    while (exists($theBlock{$address})) {
-                        $address .= "_1";
+                while (exists($theBlock{$address})) {
+                    $address .= "_1";
+                }
+                $theBlock{$address}->{regname} = $o_reg->name();
+                $theBlock{$address}->{width}   = $width;
+                $theBlock{$address}->{regname} = mix_rep_header_check_name(uc($domain_name) . '_' . $theBlock{$address}->{regname}, $rTypes);
+                $theBlock{$address}->{init}    = $init;
+                if ($eh->get('report.perl.debug')) {
+                    print("~~~~~ Register: " . $o_reg->name() . "     $theBlock{$address}->{regname}\n");
+                }
+                if (length($theBlock{$address}->{regname}) > $maxwidth) {
+                    $maxwidth = length($theBlock{$address}->{regname});
+                }
+                my $ii = 0;
+                my @thefields;
+                foreach my $hreff (@{$o_reg->fields}) {
+                    my $o_field = $hreff->{'field'};
+                    # select type of register
+                    $thefields[$ii]{name} = lc($o_field->name);
+                    if (length($thefields[$ii]{name}) + 4 > $maxwidth) {
+                        $maxwidth = length($thefields[$ii]{name}) + 4;
                     }
-                    $theBlock{$address}->{regname} = $o_reg->name();
-                    $theBlock{$address}->{width}   = $width;
-                    $theBlock{$address}->{regname} = mix_rep_header_check_name(uc($domain_name) . '_' . $theBlock{$address}->{regname}, $rTypes);
-                    $theBlock{$address}->{init}    = $init;
+                    $thefields[$ii]{size} = $o_field->attribs->{'size'};
+                    $thefields[$ii]{pos}  = $hreff->{'pos'}; # LSB position
+                    $thefields[$ii]{lsb}  = $o_field->attribs->{'lsb'};
+                    $thefields[$ii]{view} = $o_field->attribs->{'view'}; # N: no documentation
+                    $thefields[$ii]{mode} = $o_field->attribs->{'dir'};
+                    $thefields[$ii]{init} = $o_field->attribs->{'init'} & ((2** ($o_field->attribs->{'size'})) - 1);
+                    #print("!!!!! init: !" . $o_field->attribs->{'init'} . "!   &&   !" . ((2** ($o_field->attribs->{'size'})) - 1) . "!\n");
                     if ($eh->get('report.perl.debug')) {
-                        print("~~~~~ Register: " . $o_reg->name() . "     $theBlock{$address}->{regname}\n");
+                        print("~~~~~    " . $thefields[$ii]{name} . '(' . $thefields[$ii]{size}
+                              . ')' . '/' . $thefields[$ii]{pos}  . "\n");
                     }
-                    if (length($theBlock{$address}->{regname}) > $maxwidth) {
-                            $maxwidth = length($theBlock{$address}->{regname});
-                        }
-                    my $ii = 0;
-                    my @thefields;
-                    foreach my $hreff (@{$o_reg->fields}) {
-                        my $o_field = $hreff->{'field'};
-                        # select type of register
-                        $thefields[$ii]{name} = lc($o_field->name);
-                        if (length($thefields[$ii]{name}) + 4 > $maxwidth) {
-                            $maxwidth = length($thefields[$ii]{name}) + 4;
-                        }
-                        $thefields[$ii]{size} = $o_field->attribs->{'size'};
-                        $thefields[$ii]{pos}  = $hreff->{'pos'}; # LSB position
-                        $thefields[$ii]{lsb}  = $o_field->attribs->{'lsb'};
-                        $thefields[$ii]{view} = $o_field->attribs->{'view'}; # N: no documentation
-                        $thefields[$ii]{mode} = $o_field->attribs->{'dir'};
-                        $thefields[$ii]{init} = $o_field->attribs->{'init'} & ((2** ($o_field->attribs->{'size'})) - 1);
-                        #print("!!!!! init: !" . $o_field->attribs->{'init'} . "!   &&   !" . ((2** ($o_field->attribs->{'size'})) - 1) . "!\n");
-                        if ($eh->get('report.perl.debug')) {
-                            print("~~~~~    " . $thefields[$ii]{name} . '(' . $thefields[$ii]{size}
-                                  . ')' . '/' . $thefields[$ii]{pos}  . "\n");
-                        }
-                        $ii += 1;
-                    }
-                    # sort the fields (probably reserved?)
-                    #@thefields = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
-                    @thefields = sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
+                    $ii += 1;
+                }
+                # sort the fields (probably reserved?)
+                #@thefields = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
+                @thefields = sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
 
-                    $theBlock{$address}->{fields} = \@thefields;
-                #} else {
-                #    if ( $eh->get( 'report.perl.debug' ) ) {
-                #        print("!!!!! Register: " . $o_reg->name() . " will not be documented\n");
-                #    }
-                #}
+                $theBlock{$address}->{fields} = \@thefields;
             }
             # All register were read in, write the header file
             mix_rep_perl_print($fh, $domain_name, \%theBlock, $rTypes, $blocks, $maxwidth);
@@ -1217,7 +1198,7 @@ sub mix_rep_reglist_oview_mif_row($$$ )
 # write mif file header for register
 sub mix_rep_reglist_mif_starttable($$ )
 {
-    my ($mif, $title, $regname, $address, $mode, $init) = @_;
+    my ($mif, $title) = @_;
     my %regtable = ('Title'       => $title,
                     'Format'      => 'RegisterTable',
                     'Cols'        => 17,
