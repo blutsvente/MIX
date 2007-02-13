@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.44 $                                               |
+# | Revision:   $Revision: 1.45 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2007/02/13 12:36:08 $                                                   |
+# | Date:       $Date: 2007/02/13 14:25:30 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.44 2007/02/13 12:36:08 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.45 2007/02/13 14:25:30 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,7 +31,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
-# | Revision 1.44  2007/02/13 12:36:08  mathias
+# | Revision 1.45  2007/02/13 14:25:30  mathias
+# | fix
+# |
+# | Revision 1.44  2007-02-13 12:36:08  mathias
 # | encapsulate the c typedefs with '#ifndef LANGUAGE_ASSEMBLY'
 # |
 # | Revision 1.43  2007-02-13 11:34:04  mathias
@@ -188,11 +191,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.44 2007/02/13 12:36:08 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.45 2007/02/13 14:25:30 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.44 $';
+my $thisrevision   =      '$Revision: 1.45 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -288,6 +291,7 @@ sub mix_report($)
     }
     if ( $reports =~ m/\bperl\b/io ) {
         $logger->info('__I_REPORT', "\tReport Perl package files");
+        mix_rep_perl($r_i2cin);
     }
     if ( $reports =~ m/\bvctyperl\b/io ) {
         $logger->info('__I_REPORT', "\tReport c header files for vcty");
