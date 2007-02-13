@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.43 $                                               |
+# | Revision:   $Revision: 1.44 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2007/02/13 11:34:04 $                                                   |
+# | Date:       $Date: 2007/02/13 12:36:08 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.43 2007/02/13 11:34:04 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.44 2007/02/13 12:36:08 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,7 +31,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
-# | Revision 1.43  2007/02/13 11:34:04  mathias
+# | Revision 1.44  2007/02/13 12:36:08  mathias
+# | encapsulate the c typedefs with '#ifndef LANGUAGE_ASSEMBLY'
+# |
+# | Revision 1.43  2007-02-13 11:34:04  mathias
 # | fixes in generating per files for Lauterbach debugger
 # |
 # | Revision 1.42  2007-02-07 15:35:57  mathias
@@ -185,11 +188,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.43 2007/02/13 11:34:04 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.44 2007/02/13 12:36:08 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.43 $';
+my $thisrevision   =      '$Revision: 1.44 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -496,6 +499,7 @@ sub mix_rep_header_print($$$$)
         $fh->print("#define ${name}(base) " . ' ' x $spaces . " (base + ${name}_OFFS)\n");
         #$fh->printf("#define %-s(base) %20s (base + %s_OFFS)\n", $rBlock->{$addr}->{regname}, ' ', $rBlock->{$addr}->{regname});
     }
+    $fh->write("\n#ifndef LANGUAGE_ASSEMBLY\n");
     $fh->write("\n/* C structure bitfields */\n");
     foreach my $addr (sort keys %{$rBlock}) {
         $fh->write("\n");
@@ -622,6 +626,7 @@ sub mix_rep_header($;$)
 
             # close the header file
             $fh->print('/* \@} */' . "\n");    # doxygen
+            $fh->print("#endif\n");            # end of LANGUAGE_ASSEMBLY
             $fh->print("#endif\n");
             $fh->close();
         }
