@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.45 $                                               |
+# | Revision:   $Revision: 1.46 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2007/02/13 14:25:30 $                                                   |
+# | Date:       $Date: 2007/02/14 08:32:00 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.45 2007/02/13 14:25:30 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.46 2007/02/14 08:32:00 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,7 +31,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
-# | Revision 1.45  2007/02/13 14:25:30  mathias
+# | Revision 1.46  2007/02/14 08:32:00  mathias
+# | perl package name should be in upper case
+# |
+# | Revision 1.45  2007-02-13 14:25:30  mathias
 # | fix
 # |
 # | Revision 1.44  2007-02-13 12:36:08  mathias
@@ -191,11 +194,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.45 2007/02/13 14:25:30 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.46 2007/02/14 08:32:00 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.45 $';
+my $thisrevision   =      '$Revision: 1.46 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -810,7 +813,8 @@ sub mix_rep_perl_open_files($$)
     my ($name, $blocks) = @_;
     my $newname = $eh->get("report.cheader.definition." . lc($name));
     $newname = $name if (! defined($newname));
-    my $file = uc($newname) . ".pm";
+    $newname = uc($newname);
+    my $file = $newname . ".pm";
     my $fh = new FileHandle $file, "w";
 
     if (! defined($fh)) {
