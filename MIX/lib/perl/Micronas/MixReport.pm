@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.46 $                                               |
+# | Revision:   $Revision: 1.47 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2007/02/14 08:32:00 $                                                   |
+# | Date:       $Date: 2007/02/20 15:46:45 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.46 2007/02/14 08:32:00 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.47 2007/02/20 15:46:45 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,7 +31,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
-# | Revision 1.46  2007/02/14 08:32:00  mathias
+# | Revision 1.47  2007/02/20 15:46:45  mathias
+# | fixed something
+# |
+# | Revision 1.46  2007-02-14 08:32:00  mathias
 # | perl package name should be in upper case
 # |
 # | Revision 1.45  2007-02-13 14:25:30  mathias
@@ -194,11 +197,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.46 2007/02/14 08:32:00 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.47 2007/02/20 15:46:45 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.46 $';
+my $thisrevision   =      '$Revision: 1.47 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -442,9 +445,9 @@ sub mix_rep_header_check_name($$)
 #          $fh       FileHandle
 #####################################################################
 
-sub mix_rep_header_open_files($$)
+sub mix_rep_header_open_files($$$$)
 {
-    my ($name, $blocks) = @_;
+    my ($name, $blocks, $rTypes, $vcty) = @_;
     my $newname = $eh->get("report.cheader.definition." . lc($name));
     $newname = $name if (! defined($newname));
     my $file = "reg_" . lc($newname) . ".h";
@@ -470,8 +473,11 @@ sub mix_rep_header_open_files($$)
     }
 
     for (my $i = 0; $i < $blocks->{$name}->{reg_clones}; $i++) {
-        $fh->printf("#define %-48s 0x%08x\n", $blocks->{$name}->{clients}->[$i] . '_BASE',
-                    $blocks->{$name}->{base_addr}->[$i]);
+        my $basename =  $blocks->{$name}->{clients}->[$i] . '_BASE';
+        if ($vcty) {
+            $basename = mix_rep_header_check_name($blocks->{$name}->{clients}->[$i], $rTypes) . '_BASE';
+        }
+        $fh->printf("#define %-48s 0x%08x\n", $basename, $blocks->{$name}->{base_addr}->[$i]);
     }
     $fh->print("\n");
     if ($blocks->{$name}->{reg_clones} > 1) {
@@ -576,7 +582,7 @@ sub mix_rep_header($;$)
                 print("Error: Couldn't find `$domain_name' in the top address map!");
                 next;
             }
-            my $fh = mix_rep_header_open_files($domain_name, $blocks);
+            my $fh = mix_rep_header_open_files($domain_name, $blocks, $rTypes, $vcty);
             # collect all information to the registers in a hash with the address as the key
             my %theBlock;
             #$o_domain->display();
