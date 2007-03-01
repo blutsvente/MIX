@@ -502,6 +502,11 @@ my @tests = (
 	  'path' => 'bugver2006/20061113a',
 	  'options' => '',
 	},
+	{ # bad verilog port maps
+	  'name' => 'bugver2006',
+	  'path' => 'bugver2006/20061127a',
+	  'options' => '',
+	},
 	{ # missing ::out column in output
 	  'name' => 'bugver2006',
 	  'path' => 'bugver2006/20061214a',
@@ -730,14 +735,15 @@ sub runMix($) {
 	    }
 	
 		# Do not use built-in, but external command
+		#  either   test-mode.sh or test.sh -mode mode
 	    if( gotScript($path, "$tests[$i]->{'name'}$cmd_ext") == 1 ) {
-	    	for my $opt ( qw( export debug purge update ) ) {
+	    	for my $opt ( qw( export debug purge update import ) ) {
 	    		if( defined $opts{$opt}) {
 	    			$ENV{'MIXTEST_OPT'} .= $opt . ' '; 
 	    			if ( -x ( $path . '/' . $tests[$i]->{'name'} . '-' . $opt . $cmd_ext) ) {
 	    				$command = $tests[$i]->{'name'}. '-' . $opt . $cmd_ext;
 	    			} else {
-	    				$command = $tests[$i]->{'name'}. $cmd_ext;
+	    				$command = $tests[$i]->{'name'}. $cmd_ext . ' -mode ' . $opt ;
 	    			}
 	        	}
 	    	}
@@ -986,6 +992,7 @@ sub doImport ($$$) {
 		# Use *.bat on MS
 		for my $f ( glob( $import_path . "/*.v" ),
 					glob( $import_path . "/*.vhd*" ),
+					glob( $import_path . "/*.mif" ),
 					glob( $import_path . "/*mixed*.$type" ),
 					glob( $import_path . "/*.bat" ),
 					glob( $import_path . "/*.sh" ),
@@ -995,7 +1002,7 @@ sub doImport ($$$) {
 		}
 	}
     chdir( $store_cwd ) or print( "ERROR: Cannot chdir to $store_cwd: $!\n" );
-}
+} # End of doImport
 
 
 #######################################################################
