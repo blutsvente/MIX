@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.138 $                                        |
+# | Revision:   $Revision: 1.139 $                                        |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/21 16:51:10 $                              |
+# | Date:       $Date: 2007/03/01 16:28:37 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.138 2006/11/21 16:51:10 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.139 2007/03/01 16:28:37 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.139  2007/03/01 16:28:37  wig
+# | Implemented emulation mux insertion
+# |
 # | Revision 1.138  2006/11/21 16:51:10  wig
 # | Improved generator execution (now in order!)
 # |
@@ -140,7 +143,7 @@ sub mix_utils_open		($;$);
 sub mix_utils_print		($@);
 sub mix_utils_printf	($@);
 sub mix_utils_close		($$);
-sub replace_mac			($$);
+sub replace_mac			($$;$);
 sub one2two				($);
 sub two2one 			($);
 sub is_absolute_path	($);
@@ -186,11 +189,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.138 2006/11/21 16:51:10 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.139 2007/03/01 16:28:37 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.138 $';         #'
+my $thisrevision        =      '$Revision: 1.139 $';         #'
 
-# Revision:   $Revision: 1.138 $   
+# Revision:   $Revision: 1.139 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2049,9 +2052,10 @@ sub mix_utils_loc_sum () {
 # Do some text replacements
 #
 #wig20061102: performance tuning ...
-sub replace_mac ($$) {
+sub replace_mac ($$;$) {
     my $text = shift;
     my $rmac = shift;
+    my $emac = shift; # Extra macro definitions
 
 	# Shortcut: if there is no %...% in text -> return immediatley
 	# but a replacement without %...% could happen, too
@@ -2065,19 +2069,22 @@ sub replace_mac ($$) {
 		my $hl  = $1;
 		my $bus = ( $2 ) ? $2 : '';
 		my $n   = ( $3 ) ? $3 : '';
-		if ( $rmac->{'%' . $hl . $bus . '%'} ) { # Convert high/low bus, keep number
+		if ( exists( $rmac->{'%' . $hl . $bus . '%'} ) ) { # Convert high/low bus, keep number
 			#!wig20061102: Optimze this replacement:
 			$text =~ s/%$hl$bus$n%/$rmac->{'%' . $hl . $bus . '%'}$n/g;
 		}
 	}
 		
-    if ( keys( %$rmac ) > 0 ) {
+    if ( ( keys( %$rmac ) + keys( %$emac ) ) > 0 ) {
         #ORG: my $mkeys = "(" . join( '|', keys( %$rmac ) ) . ")";
         #ORG: $text =~ s/$mkeys/$rmac->{$1}/mg;
 		#!wig20061102: Would that be faster?
 		for my $r ( keys( %$rmac ) ) {
 			my $replace = $rmac->{$r};
 			$text =~ s/$r/$replace/mg;
+		}
+		for my $r ( keys( %$emac ) ) {
+			$text =~ s/$r/$emac->{$r}/mg;
 		}
     } else {
 	# Do nothing if there are no keys defined ...

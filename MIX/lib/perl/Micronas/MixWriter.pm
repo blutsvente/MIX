@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.100 $                                         |
+# | Revision:   $Revision: 1.101 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2006/11/21 16:51:10 $                              |
+# | Date:       $Date: 2007/03/01 16:28:38 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.100 2006/11/21 16:51:10 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.101 2007/03/01 16:28:38 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.101  2007/03/01 16:28:38  wig
+# | Implemented emulation mux insertion
+# |
 # | Revision 1.100  2006/11/21 16:51:10  wig
 # | Improved generator execution (now in order!)
 # |
@@ -115,6 +118,7 @@ use Micronas::MixUtils
 	is_integer is_integer2 );
 use Micronas::MixUtils::IO;
 use Micronas::MixParser qw( %hierdb %conndb add_conn );
+use Micronas::MixEDA::Base; # objects for standard checks
 
 #
 # Prototypes
@@ -143,7 +147,9 @@ sub mix_wr_hier2mac				($);
 sub mix_wr_getpwidth			($);
 sub mix_wr_getconstname			($$);
 sub sig_typecast				($$);
-sub _mix_wr_isinteger			($$$);
+sub _mix_wr_isinteger			($$$;$);
+sub _mix_wr_isreal				($$$;$);
+sub _mix_wr_param				($$$;$);
 sub mix_wr_mapsort				($$);
 sub _mix_wr_is_modegennr		($$);
 sub mix_wr_use_udc				($$$);
@@ -163,9 +169,9 @@ sub _mix_wr_nice_comment		($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.100 2006/11/21 16:51:10 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.101 2007/03/01 16:28:38 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.100 $';
+my $thisrevision   =      '$Revision: 1.101 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -408,7 +414,7 @@ EOD
 
 sub tmpl_conf () {
 
-# TODO: Read that templates in from default location (e.g. a company default)
+# TODO : Read that templates in from default location (e.g. a company default)
 my $tmpl = <<'EOD';
 -- -------------------------------------------------------------
 --
@@ -2097,7 +2103,7 @@ sub mix_wr_hier2mac ($) {
 
     my %mac = ();
     for my $i ( keys( %$rhdb ) ) {
-        if ( ref( $rhdb->{$i} ) eq "" ) {
+        if ( ref( $rhdb->{$i} ) eq '' ) {
             $mac{'%' . $i . '%' } = $rhdb->{$i};
         }
     }
@@ -2298,7 +2304,13 @@ sub gen_instmap ($;$$) {
            	}
         }
     }
-    
+   
+    #!wig20070227: insert emulation muxes into map ...
+    if ( $lang =~ m,^veri,io and $eh->get( 'output.generate.emumux.modules' ) ) {
+    	my ( $nmap, $emumux ) = _mix_wr_insert_emumux( $inst, $map, \@in, \@out, $tcom );
+    	$map = $emumux . $nmap;
+    }
+
     #!wig20060411: wrap verilog module into ifdef ....
     if ( $lang =~ m,^veri,io and $eh->get( 'output.generate.verimap.modules' ) ) {
     	$map = _mix_wr_map_veri( $inst, $map, \@in, \@out, $tcom );
@@ -2316,7 +2328,236 @@ sub gen_instmap ($;$$) {
     return( $map, \@in, \@out);
 } # End of gen_instmap
 
+#
+# insert muxes for emulation purposes
+# e.g. to inject input through forces   
+# see issue 20060725a/RFE
+# Input:	$inst   instance name
+#			$map	port map
+#			$inr	signals going into this instance (::in)
+#			$outr	signals going out from this instance (::out)
+#			$tcom	the comment string
+#
+# Output:
+#			$map	reworked port_map
+#
+# Globals:
+#			$eh
+#
+sub _mix_wr_insert_emumux ($$$$$) {
+	my $inst = shift;
+	my $map  = shift;
+	my $inr  = shift;
+	my $outr = shift;
+	my $tcom = shift;
 
+	my $emudefs = $eh->get( 'output.generate.emumux' );
+	$emudefs = _mix_wr_overloademudefs( $inst, $emudefs );
+
+	my $reworked = '';
+	my $muxblock = '';
+	my $muxassign = '';
+	
+	my $matchmodules = '(' . join( '|', split( /,/, $emudefs->{'modules'} ) ) . ')';
+	# Does $inst have an ::emumux column?
+	my $matchsignals = 'NO_MATCH'; # Regular expression
+	# TODO : exclude/include if option has leaf/no[n]leaf
+	# unless( $emudefs->{'_hiersheet_'} ) {
+		# does this module match
+		# if ( $inst =~ m/^$matchmodules$/ ) {
+		#	# leaf/noleaf/nonleaf
+		#	if ( $emudefs->{'options'} =~ m/\bleaf\b/ ) {
+		#		
+		#	}
+		#}
+	# }
+	if ( $emudefs->{'_hiersheet_'} or $inst =~ m/^$matchmodules$/ ) {
+		# Calculate matching signal names
+		if ( $emudefs->{sigselect} ) { # Take only these signals
+			$matchsignals = '(' . join( '|', split( /,/, $emudefs->{'modules'} ) ) . ')';
+		} else {
+			# Derive list from 'options'
+			my @signals = ();
+			if ( $emudefs->{'options'} =~ m/\bin\b/ ) {
+				@signals = @$inr;
+			}
+			if ( $emudefs->{'options'} =~ m/\bout\b/ ) {
+				push( @signals, @$inr );
+			}
+			$matchsignals = '(' . join ( '|', @signals ) . ')';
+		}
+	
+		my $muxnameo = '';
+		my $muxnamei = '';
+		my $eh_macros = $eh->get( 'macro' );
+		my $e_macros  = { '%::inst%' => $inst };
+			# TODO : Other macros to follow! e.g. all definitons from hierdb
+			# TODO : Use parse_mac instead of replace_mac
+		my $definetag   = replace_mac( $emudefs->{'define'}, $eh->get( 'macro' ), $e_macros );
+		my $selectsig	= replace_mac( $emudefs->{'select'}, $eh->get( 'macro' ), $e_macros );
+
+		# Prepare the extra defines
+		$muxblock =  '%S%' x 1 . '`define ' . $definetag . "\n";
+		$muxblock .= '%S%' x 2 . $tcom . ' Emulator Data Injection Path, generated by MIX' . "\n";
+		$muxblock .= '%S%' x 2 . 'wire ' . $selectsig . " = 1'b0;\n";
+
+		# Go through map and rework all matching signal names
+		for my $l ( split( /\n/, $map ) ) {
+			# Get this signal[splice]:
+			#   .port[a:b](signal[a:b] & signal[c:d]),
+			if ( $l =~ m/^ (.+\() ([^\)]+) (\).*)$/ox ) {
+				# Have got an port(signal) line
+				my $pre 	= $1;
+				my $sigpart = $2;
+				my $post 	= $3;
+				my $have_replaced = 0;
+				my $sr		= '';
+				for my $s ( split( /&/, $sigpart ) ) {
+					# Got signalname from or signal[...]
+					my $from 	= '';
+					my $to		= '';
+					my $signame = '';
+					if ( $s =~ m/\[/ and $s =~ /^\s*(.+) (\[(.+?)(:(.+))?\])/xo ) {
+						$signame = $1;
+						$from 	 = $3;
+						$to		 = ( defined $5 ) ? $5 : '';
+					} else {
+						$signame = $s;
+					}
+					if ( $signame =~ m/$matchsignals/ ) {
+						my ( $portline, $ew, $ea ) =
+								_insert_emumux_signal( $signame, $from, $to, $emudefs, $selectsig, $tcom );
+						if ( $portline ) { # Rewired
+							$sr .= $portline;
+							$muxblock .= $ew;
+							$muxassign .= $ea;
+						} else { # Somthing went wrong
+							$sr .= $s;
+							$muxblock .= $ew; # Error code
+						}
+						$have_replaced = 1;
+					} else {
+						$sr .= $s;
+					}	
+				}
+				if ( $have_replaced ) { # Rework the current line
+					$reworked .= '%S%' x 2 . '`ifdef ' . $definetag . "\n" .
+							$pre . $sr . $post . "\n" . '%S%' x 2 . '`else' . "\n" .
+							$l . "\n" . '%S%' x 2 . '`endif' . "\n";
+				} else {
+					$reworked .= $l . "\n";
+				} 	
+			} else {
+				# No replacement at all
+				$reworked .= $l . "\n";
+			}
+		}
+		
+		# Join wire and assigns
+		$muxblock .= "\n" . $muxassign . "\n" . '%S%' x 1 . '`endif' . "\n";
+		 
+		# $reworked is the rewritten portmap
+		return $reworked, $muxblock;
+	}
+	# No replacement, return the original data
+	return $map, '';
+} # End of _mix_wr_insert_emumux
+
+#
+# Create the required extra wires and assigns, modify the signal assignment
+#
+# Output:
+#	$s_mux2inst, $extrawire, $extraassign;
+sub _insert_emumux_signal ($$$$$$) {
+	my $signalname	= shift;
+	my $from		= shift;
+	my $to			= shift;
+	my $emudefs		= shift;
+	my $selectname	= shift;
+	my $tcom		= shift;
+	
+	my $sh = '';
+	my $sl = '';
+	my $extrawire = '';
+	my $extraassign = '';
+	my $portline = '';
+	if ( not exists ( $conndb{$signalname} ) ) {
+		$logger->error( '__E_INSERT_EMUMUX', "\tCannot find definition for signal $signalname" );
+		return '', '%S%' x 2 . $tcom . '__E_INSERT_EMUMUX: Unknown signal ' . $signalname, '';
+	}
+	
+	# Get the signal basename (strip off _s, _i, _o and such)
+	my $sigbase = $signalname;
+	# my $sigtail = '';
+	$sigbase =~ s/(_[sgio]{1,2})//o;
+	# $sigtail = $1;
+
+	my $e_macros = { '%::name%' => $sigbase };
+	my $s_mux2inst = replace_mac( ( $emudefs->{'muxsnameo'} || '%::name%_emux' ),
+		$eh->get( 'macro' ), $e_macros );
+	my $s_ext2mux = replace_mac( ( $emudefs->{'muxsnamei'} || '%::name%_vc' ) ,
+		$eh->get( 'macro' ), $e_macros );
+	my $s_muxwidth  = '';
+	my $s_sigsplice = '';
+	# simple part: $from and $to are empty
+	if ( $from eq '' and $to eq '' ) {
+		# Get signal width from $conndb
+		my $sf = $conndb{$signalname}{'::high'};
+		my $st = $conndb{$signalname}{'::low'};
+
+		if ( $sf ne '' or $st ne '' ) {
+			if ( $st ne '' ) {
+				$s_muxwidth = '[' . $sf . ':' . $st . ']';
+			} else {
+				$s_muxwidth = '[' . $sf . ']';
+			}
+		}	
+	} else {
+		# Handle port splices
+		# TODO : handle splices with non-zero $to
+		if ( $to ne '' ) {
+			$s_muxwidth  = '[' . $from . ':' . $to . ']';
+			$s_sigsplice = $s_muxwidth;
+		} else {
+			$s_sigsplice = '[' . $from . ']';
+		}
+	}
+
+	# Build extra wire and assign lines ...
+	$extrawire =  '%S%' x 2 . 'wire' . '%S%' . $s_muxwidth . '%S%' .
+			$s_mux2inst . ';' . "\n";
+	$extrawire .= '%S%' x 2 . 'wire' . '%S%' . $s_muxwidth . '%S%' .
+			$s_ext2mux . ';' . "\n";	
+	$extraassign = '%S%' x 2 . 'assign ' . $s_mux2inst . '%S%= ' . $selectname . ' ? ' .
+		$s_ext2mux . '%S%: '. $signalname . $s_sigsplice . ';' . "\n";
+
+	return $s_mux2inst, $extrawire, $extraassign;
+} # End of _insert_emumux_signal
+
+#
+# Overload emudefs with instance specific definitions ...
+# there could be a instance specific ::emumux column
+#	sigselect=.... , select=..., define=...., muxsnameo=....
+#
+# Split by whitespace and/or comma and assume first word is key name
+#
+sub _mix_wr_overloademudefs ($$) {
+	my $inst = shift;
+	my $emudefs = shift;
+
+	if ( exists( $hierdb{$inst}{'::emumux'} ) ) {
+		$emudefs->{'modules'} = $inst;
+		$emudefs->{'_hiersheet_'} = 1;
+		for my $def ( split( /[\s,]+/, $hierdb{$inst}{'::emumux'} ) ) {
+			next if ( $def =~ m/^\s*$/ );
+			my ( $key, $val ) = split( /=/, $def, 2 );
+			if ( $key and $val ) {
+				$emudefs->{$key} = $val;
+			}
+		}
+	}
+	return $emudefs;
+} # End of _mix_wr_overloademudefs
 #
 # wrap a verilog module header in
 #
@@ -2743,7 +2984,7 @@ sub generic_map ($$$$;$$) {
             #                                                   (lost param name here).
             for my $g ( sort( keys( %$ref ) ) ) {
                 $map .= '%S%' x 3 . "." . $g . '(' . $ref->{$g} . '),' .
-                    (( _mix_wr_isinteger( $inst, $g, $ref->{$g} ) ) ?
+                    (( _mix_wr_isparam( $inst, $g, $ref->{$g} ) ) ?
                          " $tcom __W_ILLEGAL_PARAM" : '' ) .
                     "\n";
             }
@@ -2754,7 +2995,7 @@ sub generic_map ($$$$;$$) {
             # Verilog in Verilog uses defparam ....
             for my $g ( sort( keys( %$ref ) ) ) {
                 $map .=  '%S%' x 3 . $inst . "." . $g . " = " . $ref->{$g} . "," .
-                        (( _mix_wr_isinteger( $inst, $g, $ref->{$g} ) ) ?
+                        (( _mix_wr_isparam( $inst, $g, $ref->{$g} ) ) ?
                             " $tcom __W_ILLEGAL_PARAM" : "" ) .
                 "\n";
             }
@@ -2770,13 +3011,48 @@ sub generic_map ($$$$;$$) {
 }
 
 ####################################################################
+## _mix_wr_isparam
+##  see if param is of defined type 
+####################################################################
+
+=head2
+
+_mix_wr_isparam ($$$;$) {
+
+=cut
+
+# TODO : extend checks to string types ...??
+sub _mix_wr_isparam ($$$;$) {
+    my $inst = shift;
+    my $generic = shift;
+    my $val = shift;
+    my $lang = shift || $eh->get( 'macro.%LANGUAGE%' );
+
+	my $enty = $hierdb{$inst}{'::entity'};
+	if ( exists( $entities{$enty}{$generic} ) and
+		 exists( $entities{$enty}{$generic}{'type'} ) ) {
+		 my $type = $entities{$enty}{$generic}{'type'};
+		 if ( $type =~ m/string/io ) {
+		 	return 0;
+		 } elsif ( $type =~ m/int(eger)?/ ) {
+		 	return _mix_wr_isinteger( $inst, $generic, $val, $lang );
+		 } elsif ( $type =~ m/float|real/ ) {
+		 	return _mix_wr_isreal( $inst, $generic, $val, $lang );
+		 }
+	}
+	$logger->warn('__W_ISPARAM', "\tparameter $generic value " .
+		"($val) in instance $inst cannot be verified, unknown type!" );
+	return 0;
+} # End of _mix_wr_isinteger
+
+####################################################################
 ## _mix_wr_isinteger
 ##  check if input is integer 
 ####################################################################
 
 =head2
 
-_mix_wr_isinteger ($$$) {
+_mix_wr_isinteger ($$$;$) {
 
 Finds out if input is valid integer. Print warning if not.
 
@@ -2799,72 +3075,59 @@ Return:
 =cut
 
 # TODO : extend checks to string types ...??
-sub _mix_wr_isinteger ($$$) {
+sub _mix_wr_isinteger ($$$;$) {
     my $inst = shift;
     my $generic = shift;
     my $val = shift;
     my $lang = shift || $eh->get( 'macro.%LANGUAGE%' );
 
-    my %allowed = (
-        'b' => '[01_]',
-        'o' => '[0-7_]',
-        'd' => '[0-9_]',
-        'h' => '[0-9a-fA-F_]',
-    );
+	my $isintcheck = new Micronas::MixEDA::Base;
+	my $entyref = $entities{$hierdb{$inst}{'::entity'}}{$generic};
+	return $isintcheck->isinteger( $inst, $entyref, $generic, $val, $lang );
 
-    my $set = 'ILLEGAL';    
+} # End of _mix_wr_isinteger
 
-    my $base = 'd';
-    my $width = '';
-    my $number = '';
-    my $flag = 0;
+####################################################################
+## _mix_wr_isreal
+##  check if input is a real 
+####################################################################
 
-    # Split input string
-    if ( $val =~ m/(.*)'(\w)(.*)/ ) {    # ' just for eclipse syntax higlighting
-        $base = $2;
-        $width = $1;
-        $number = $3;
-    } else {
-        $number = $val;
-    }
+=head2
 
-    # base defined?
-     if ( $base !~ m/[bohd]/ ) {
-        $flag = 1;
-    } else {
-        $set = $allowed{$base};
-    }
-    # width defined?
-    if ( $width ) { # Has to be real number
-        unless( $width =~ m/^\d+$/o ) {
-            $flag = 1;
-        }
-    }
-    # check number:
-    if ( $number ne "" ) {
-        unless ( $number =~ m/^$set+$/ ) {
-            $flag = 1;
-        }
-    } else {
-        $flag = 1;
-    }
-    
-    if ( $flag ) {
-    	#!wig20051109: Check if type is string -> allow anything
-    	my $enty = $hierdb{$inst}{'::entity'};
-    	if ( exists( $entities{$enty}{$generic} ) and
-    		  exists( $entities{$enty}{$generic}{'type'} ) ) {
-    		 my $type = $entities{$enty}{$generic}{'type'};
-    		 if ( $type =~ m/string/io ) {
-    		 	$flag = 0;
-    		 }
-    	}
-    	if ( $flag ) {
-        	$logger->warn('__W_ISINTEGER', "\tApplied non-integer parameter $val for generic $generic at instance $inst!" );
-    	}
-    }
-    return $flag;
-} # End of mix_wr_isinteger
+_mix_wr_isreal ($$$;$) {
+
+Finds out if input is valid real. Print warning if not.
+
+First try for integer:
+	+-N.N
+	+-N.NeE
+	
+	and all valid integers!
+    (_mix_wr_isinteger)
+
+TODO: migrate to MixChecker or MixBase
+
+Input:
+   instancename (instantiated component)
+   generic (name of the generic)
+   value (parameter value)
+
+Return:
+	1 if problem!
+	
+=cut
+
+sub _mix_wr_isreal ($$$;$) {
+    my $inst = shift;
+    my $generic = shift;
+    my $val = shift;
+    my $lang = shift || $eh->get( 'macro.%LANGUAGE%' );
+
+	my $isintcheck = new Micronas::MixEDA::Base;
+	my $entyref = $entities{$hierdb{$inst}{'::entity'}}{$generic};
+	return $isintcheck->isreal( $inst, $entyref, $generic, $val, $lang );
+
+} # End of _mix_wr_isreal
 
 #
 # create a "port map" for VHDL logic's like AND, OR, NAND, ...
