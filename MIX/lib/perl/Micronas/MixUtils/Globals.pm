@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.36 $                                         |
+# | Revision:   $Revision: 1.37 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/02/07 15:11:15 $                              |
+# | Date:       $Date: 2007/03/02 14:56:14 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.37  2007/03/02 14:56:14  wig
+# | Adding instantiations specific ::udc: %AINS% and %PINS%
+# |
 # | Revision 1.36  2007/02/07 15:11:15  wig
 # | fixed typo
 # |  	Globals.pm
@@ -94,9 +97,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.36 2007/02/07 15:11:15 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.37 2007/03/02 14:56:14 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.36 $';  
+my $thisrevision    =      '$Revision: 1.37 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1294,6 +1297,8 @@ sub init ($) {
    	    "%VHDL_HOOK_CONF_HEAD%"	=>	'',
    	    "%VHDL_HOOK_CONF_BODY%"	=>	'',
    	    "%VHDL_HOOK_CONF_FOOT%"	=>	'',
+   	    '%VHDL_HOOK_INST_PRE%'	=>	'',
+   	    '%VHDL_HOOK_INST_APP%'	=>	'',
    	    '%HEAD%'	=> '__HEAD__', # Used internally for ::udc
    	    '%BODY%'	=> '__BODY__', # Used internally for ::udc
    	    '%FOOT%'	=> '__FOOT__', # Used internally for ::udc
@@ -1304,7 +1309,9 @@ sub init ($) {
 		'%VERILOG_HOOK_HEAD%'	=>	'',
 		'%VERILOG_HOOK_BODY%'	=>	'',
 		'%VERILOG_HOOK_PARA%'	=>	'',
-		'%VERILOG_HOOK_FOOT%'	=>	'',		
+		'%VERILOG_HOOK_FOOT%'	=>	'',
+		'%VERILOG_HOOK_INST_PRE%' =>	'',
+		'%VERILOG_HOOK_INST_APP%' =>	'',		
         '%INT_VERILOG_DEFINES%'     =>    '', # Used internally
         '%INCLUDE%'     =>  '`include',   # Used internally for verilog include files in ::use!
         '%DEFINE%'      =>  '`define',     # Used internally for verilog defines in ::use!

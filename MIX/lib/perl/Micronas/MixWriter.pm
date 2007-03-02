@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.101 $                                         |
+# | Revision:   $Revision: 1.102 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2007/03/01 16:28:38 $                              |
+# | Date:       $Date: 2007/03/02 14:56:14 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.101 2007/03/01 16:28:38 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.102 2007/03/02 14:56:14 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.102  2007/03/02 14:56:14  wig
+# | Adding instantiations specific ::udc: %AINS% and %PINS%
+# |
 # | Revision 1.101  2007/03/01 16:28:38  wig
 # | Implemented emulation mux insertion
 # |
@@ -163,15 +166,16 @@ sub _mix_wr_signum2signam		($);
 sub _mix_wr_map_veri			($$$$$);
 sub _mix_wr_get_components		($$$$$$$$$$);
 sub _mix_wr_nice_comment		($$$);
+sub _mix_wr_inst_udc			($$$);
 
 # Internal variable
 
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.101 2007/03/01 16:28:38 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.102 2007/03/02 14:56:14 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.101 $';
+my $thisrevision   =      '$Revision: 1.102 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2311,6 +2315,16 @@ sub gen_instmap ($;$$) {
     	$map = $emumux . $nmap;
     }
 
+	#!wig20070302: add %<LANG>_HOOK_INST_[PRE|APP]% hooks
+	my ( $pre, $app ) = _mix_wr_inst_udc( $inst, $lang, $tcom );
+	if ( $pre ) {
+		$map = $pre . "\n" . $map;
+	}
+	if ( $app ) {
+		$map .= "\n" . $app
+	}
+
+
     #!wig20060411: wrap verilog module into ifdef ....
     if ( $lang =~ m,^veri,io and $eh->get( 'output.generate.verimap.modules' ) ) {
     	$map = _mix_wr_map_veri( $inst, $map, \@in, \@out, $tcom );
@@ -2327,6 +2341,31 @@ sub gen_instmap ($;$$) {
     
     return( $map, \@in, \@out);
 } # End of gen_instmap
+
+#
+# ::udc code for instantiations is handled directly here
+# I guess we do not have the full range of replacements of macros
+# in case that's required a call to replace_mac needs to be made here
+#
+sub _mix_wr_inst_udc ($$$) {
+	my $inst = shift;
+	my $lang = shift;
+	my $tcom = shift;
+	
+	# See if we have ::udc for this instance
+	my %instmac = ();
+	
+	# Get instance specific hook settings
+	mix_wr_use_udc( 'inst', $inst, \%instmac );
+	my $ltag = 'VHDL';
+	if ( $lang =~ m/\bveri/oi ) {
+		$ltag = 'VERILOG';
+	}
+	
+	my $pre = $instmac{'%' . $ltag . '_HOOK_INST_PRE%'} || '';
+	my $app = $instmac{'%' . $ltag . '_HOOK_INST_APP%'} || '';
+	return $pre, $app;
+} # End of _mix_wr_inst_udc
 
 #
 # insert muxes for emulation purposes
@@ -4412,7 +4451,7 @@ sub _write_architecture ($$$$) {
         $macros{'%ARCHNAME%'} = $entity . $eh->get( 'postfix.POSTFIX_ARCH' );
         # For __COMMON__ header only, see below
     }
-    if ( -r $filename and $eh->get( 'outarch' ) ne "COMB" ) {
+    if ( -r $filename and $eh->get( 'outarch' ) ne 'COMB' ) {
 		$logger->warn('__W_WRITE_ARCH', "\tArchitecture declaration file $filename will be overwritten!" );
     }
 
@@ -4422,7 +4461,8 @@ sub _write_architecture ($$$$) {
 	# Prepare macros:
     $macros{'%VHDL_USE%'} = use_lib( 'arch', $instance );
     #!wig20041110: add includes and defines from ::use column
-    $macros{'%INT_VERILOG_DEFINES%'} = use_lib( "veri", $instance );
+    $macros{'%INT_VERILOG_DEFINES%'} = use_lib( 'veri', $instance );
+
     # prepare user defined code
     mix_wr_use_udc( 'arch', $instance, \%macros );
 
@@ -4434,7 +4474,7 @@ sub _write_architecture ($$$$) {
     #
     # Go through all instances and generate a architecture for each !entity!
     # $t_inst <- the instance done now
-    my @keys = ( $instance eq "__COMMON__" ) ? keys( %$ae ) : ( $instance );
+    my @keys = ( $instance eq '__COMMON__' ) ? keys( %$ae ) : ( $instance );
     for my $t_inst ( sort( @keys ) ) {
 		# $t_inst is the actual instance name ...
 		if ( $t_inst eq "W_NO_ENTITY" ) { next; }; # Should read __W_NO_INSTANCE !
@@ -6223,6 +6263,9 @@ sub use_lib ($$) {
 # TODO : extend MODE for enty and conf and verilog ...
 # TODO : detect "new" hooks and make sure they get reset
 #!wig20050711
+#!wig20070301: adding ::udc to component instantiations (20070220a/RFE)
+#	keywords:	PINS -> <LANG>_HOOK_INST_PRE (prepend instantiation)
+#				AINS -> <LANG>_HOOK_INST_APP (append instantiation)
 sub mix_wr_use_udc ($$$) {
 	my $mode = shift;
 	my $instance = shift;
@@ -6234,7 +6277,7 @@ sub mix_wr_use_udc ($$$) {
 	# my %modkeys = (
 	# 	'arch' => [ qw( HEAD DECL BODY FOOT ) ],
 	# );
-	my $tagre = '/(%|__?)(' . join( "|", qw( HEAD DECL PARA BODY FOOT ) ) . ')(%|__?)/';
+	my $tagre = '/(%|__?)(' . join( "|", qw( HEAD DECL PARA BODY FOOT PINS AINS ) ) . ')(%|__?)/';
 
 	my $lang = uc( $hierdb{$instance}{'::lang'} || $eh->get( 'macro.%LANGUAGE%') );		
 	if ( exists( $hierdb{$instance}{'::udc'} ) and
@@ -6259,19 +6302,25 @@ sub mix_wr_use_udc ($$$) {
 		}
 		
 		if ( $lang =~ m/veri/io ) {
-			$mode = "";
-			$lang = "verilog";
+			$mode = '';
+			$lang = 'verilog';
 		} else {
-			$mode .= "_";
+			$mode .= '_';
 		}
 		
 		# Create macro hooks from ::udc
 		for my $t ( keys( %udc ) ) {
-			my $h = '%' . uc( $lang . "_hook_" . $mode . $t ) . '%';
-			$macroref->{$h} = $udc{$t};
+			my $thook = $mode . $t;
+			if ( $t eq 'AINS' ) {
+				$thook = 'INST_APP';
+			} elsif ( $t eq 'PINS' ) {
+				$thook = 'INST_PRE';
+			}
+			my $h = '%' . uc( $lang . '_hook_' . $thook ) . '%';
+			( $macroref->{$h} = $udc{$t} ) =~ s/\n$//; # Remove trailing \n
 		}			
 	}
-}
+} # End of mix_wr_use_udc
 
 #
 # Get a regular expression which contains only filters for this mode
