@@ -4,6 +4,245 @@ MIX HOWTO and FAQ
 
 >>keywords: MIX, top level generator, FAQ, HOWTO, register master
 
+>>title: MIX warns about non-integer parmeters
+wig issue 20070113a
+
+....
+im XLS steht das mit den Parametern und in dem Verilog steht aber ein:
+
+		defparam xtal_i.Tin = 12345.67890, // __W_ILLEGAL_PARAM
+			xtal_i.transparent = 0;
+
+Bisher war da nur ein Parameter (Tin), nun sind es 2, was läuft falsch?
+...
+
+You will get this warning if you use non-integer parameters in MIX versions
+including 1.6. If you set the parameter '::type' to 'string', no check will
+be made on the parameter value and no warning will be thrown. 
+
+In MIX newer then 1.6, you can make use of the parameter types "integer" and
+"real", which will be checked against known definitions of integer and real
+represenatations in HDL, while "string" and all other types remain unchecked.
+
+#!wig20070228
+
+>>title: 20070228a: MIX does not connect an input and output port directely 
+[Bugzilla Issue 7130]  New: input-to-output port wiring does not work
+
+> if I specify an input port and an output port in a MIX connectivity 
+> sheet and connect both directly with each other, with NO other 
+> connections to anywhere, the ports are generated but not wired.
+> 
+> I expect MIX to wire the input port directly to the output port.
+
+MIX actually will create this wire, but from the outside of the module,
+you would see that if you check your modules parent.
+
+To force creation of an internal wire, please make use of the %WIRE% macro:
+
+1. Create a %WIRE% module in your hierachy sheet:
+::inst   inst_wire_1
+::parent my_module
+::entity %WIRE%
+
+2. Force the connection to be made internally in the CONN sheet by creating two connections:
+::name wire_in
+::out  
+::in   inst_wire_1,my_module/my_input_port
+
+::name wire_out
+::out  inst_wire_1,my_module/my_output_port
+::in
+
+I guess you could use "my_output_port" instead of "wire_out" and "my_input_port" instead of "wire_in".
+
+MIX will internally create a wire module, which gets replaced by the appropriate HDL code in the output stage.
+
+#!wig20070228
+
+>>title: 20060719a: Convert ExCEL/xls file to csv
+
+The MIX tool package comes with the "xls2csv.pl" tool:
+
+Usage:
+$ module load perl mix
+xls2csv.pl <options> foo.xls
+
+Options are:
+
+-h		Print help message
+
+-variant A
+
+   -> filtert nur Zeilen aus, die in ::variants A stehen haben.
+      in der ::variants Spalte koennen mehrere Varianten mit , oder <space>
+      getrennt aufgefuehrt sein; Erlaubt sind auch Perl Regular
+      Expressions (also A*,B,Y)
+
+-selhead ::<HEAD> [-selhead ::<HEAD2>]
+ 
+   -> gibt nur Spalten aus, die als header das o.a. haben.
+      die Options kann auch mehrmals angegeben werden.
+      <HEAD> kann auch eine regular expression sein.
+ 
+-noselhead ::<HEAD> [....]
+   -> die betreffenden Spalten werden nicht mir ausgegeben.
+
+-conf intermediate.order=input
+	-> Ausgabe in der Reihenfolge, in der eingelesen wurde
+       damit sind auch ev. zusaetzliche Spalten (::debug?)
+	   verschwunden.
+	Default ist "template", d.h. die Reihenfolge wird von
+	MIX vorgegeben.
+ 
+-conf format.csv.mixhead=0,nomulthead
+    -> die Kommentare am Anfang fallen weg.
+    -> default ist "1", d.h. am Anfang der Sheets schreibt MIX Kommentare
+	-> nomulthead unterdrueckt die Zeile, in der die Header nochmal
+	   durchnummeriert ausgegeben werden (also ::b:0 ::b:1 ::b:2 ....)
+
+-conf input.header=mix,strict
+	-> "strict" bewirkt, dass nur Spalten ausgegeben werden, die im
+	   header ein :: haben.
+	-> "mix" bewirkt, dass nur eine Zeile in der was mit :: 
+		startet, als Header genommen wird. Zeilen davor werden ignoriert.
+		Default ist "mix".
+
+-conf format.csv.style="....."
+
+was machen. Der Default ist
+ 
+         	'style'   => 'doublequote,autoquote,nowrapnl,maxwidth',
+         	 # control the CSV output
+             # doublequote: mask quoting char by duplication! Else mask with \
+             # autoquote: only quote if required (embedded whitespace)
+             # wrapnl: wrap embedded new-line to space
+             # masknl: replace newline by \\n
+             # maxwidth: make all lines contain maxwidth -1 seperators
+
+Example:
+	man koennte das "nowrapnl" ersetzen durch "wrapnl" (also:
+	-cconf format.csv.style="doublequote,qutoquote,wrapnl,maxwidth")
+Dann muss aber der "-autoq" Schalter weg (der ist sowieso nutzlos habe
+ich gerade gesehen ...) 
+
+Beispiel:
+
+
+$ xls2csv.pl -csv -autoq -sheet MM
+	-conf "format.csv.sheetsep=<NIL>"  -conf format.csv.mixhead=0,nomulthead
+	-conf intermediate.order=input -sep \; -variant DEFAULT 
+	VGCH-MM-register_master.xls
+ 
+Die -conf kann man natuerlich auch in ein mix.cfg File packen.
+
+#!wig20061024
+
+>>title: 20060904a: Using `define in signal/port definitions
+
+If you generate verilog, you now can use `define for the sigal
+width.
+
+Example: see testcase bitsplice/20060904a
+
+#!wig20060904a
+
+>>title: 20060725a Defining reg or wire for verilog module
+
+> Wenn ich das richtig verstehe, dann kann man mit dem MIX Tool aus dem 
+> Excel entweder Verilog oder VHDL erzeugen.
+Ja.
+ 
+> Könnt Ihr bitte möglichst bald eine Version von MIX für Verilog 
+> machen ,die Verilog 2K Port Style unterstützt.
+> 
+> Port Style und always @(*) sind für mich erst mal das wichtigste.
+Das mit dem Port Style geht sofort:
+in mix.cfg:
+ MIXCFG output.language.verilog ansistyle
+
+Ob es "reg" oder "wire" wird kannst Du beeinflussen mittels der Spalte 
+"::type". "wire" ist default, wenn Du in ::type ein "%REG%" schreibst, 
+wird das zu "reg" generiert.
+
+Using
+
+ MIXCFG output.language.verilog leaforeg,ansistyle
+
+every leaf output will be a "reg".
+
+#!wig20060725
+
+>>title:  What does "__W_PORT_SIGNAL_MAP_REQ" mean?
+
+das passiert immer dann, wenn ein Signal anders heisst als der Port
+an den es angeschlossen wird.
+
+> was genau bedeutet den die Warnung:
+> __W_PORT_SIGNAL_MAP_REQ ?!
+> 
+> Sind diese ganzen "tags" die in den Code eingefügt werden, irgendwo 
+> dokumentiert?
+Nur im Perl-Code selber. Das sind meistens irgendwelhe Debugging-Kommentare
+von mir (sollte ich mal abschaltbar machen ...)
+
+grep "W_PORT_SIGNAL_MAP" /tools/mix/1.6/lib/perl/Micronas/*.pm
+/tools/mix/1.6/lib/perl/Micronas/*/*.pm
+
+#!wig20061024
+
+>>title: 20060706 Using generators example
+
+To iterate over a list of signals, use the following expression in the ::gen
+column of a CONN sheet.
+
+CONN:splice $i(4..5),/s_splice_$i::high=(\d+)::::low=(\d+)/
+
+The CONN keywork makes the generator run through the signal namespace.
+:splice will call the generator for each bit of a signal, setting $s to the
+bitnumber.
+
+The $i(4..5) expression limits the range $i can be set for the regular expression
+to match (here only signals s_splice_4 and s_splice_5 will match). An alternative
+regular expression would be /s_splice_[45]/ in this case.
+
+Additionally this generator only is applied if ::high and ::low both contain
+a valid integer.
+You can add other header to the regular expression by appending
+ ::<HEAD>=<some_perl_reg_ex>::
+A trailing :: can be omitted.
+
+#!wig20060706
+
+>>title: 20060705 Change the way MIX logs output in colors
+
+Emacs users see strange control characters with the default MIX logging settings.
+
+Use
+
+1. Kopiere /tools/mix/<VERSION>/mixlog.conf to the working directory
+2. Change this line
+from
+  Log::Log4perl::Appender::ScreenColoredLevels
+
+to
+  Log::Log4perl::Appender::Screen
+
+#!wig20060705
+
+>>title: 20060704 Change upper/lower case
+
+Using the
+
+MIXCFG check.name.<conn|port|conf|enty|inst|pad>  <value>
+
+<value> is a list of:
+	force		check and change names not matching the rule
+	lc, uc, lcfirst, ucfirst, lcfirstuc, ucfirstlc
+				apply this check (all lower case, all upper  case, ...)
+
+#!wig20060704
+ 
 >>title: 20060629a Using the -variant switch to dynamically select different configurations
 
 If you want to select variying parts of an input data, use the -variant MY_VAR switch
