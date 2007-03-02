@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.18 2006/11/23 15:11:31 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.19 2007/03/02 14:35:52 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.19  2007/03/02 14:35:52  lutscher
+#  fixed bug in write_extend_coverage()
+#
 #  Revision 1.18  2006/11/23 15:11:31  lutscher
 #  changed coverage generation
 #
@@ -362,25 +365,25 @@ sub write_extend_coverage {
         print E_FILE "extend $reg_name vr_ad_reg {\n";
         print E_FILE "  cover reg_access (kind == $reg_name) using also vplan_ref = \"", $this->global->{'vplan_ref'},"\";\n";
         print E_FILE "};\n";
-        if ($reg_access_mode ne "RW") {
-            # create cover ignores for direction if enabled by the user
-            if ($reg_access_mode eq "W" and $this->global->{'cover_ign_read_to_write_only'} ) {
-                $ignore = "READ";
-            } else {
-                if ($reg_access_mode eq "R" and $this->global->{'cover_ign_write_to_read_only'} ) {
-                    $ignore = "WRITE";
-                };
-            };
-            if ($ignore ne "") {
-                print E_FILE "extend vr_ad_reg {\n";
-                print E_FILE "  cover reg_access (kind == $reg_name) is also {\n";
-                print E_FILE "    item direction using also ignore = direction == ${ignore};\n";
-                print E_FILE "  };\n";
-                print E_FILE "};\n";
+    };
+    if ($reg_access_mode ne "RW") {
+        # create cover ignores for direction if enabled by the user
+        if ($reg_access_mode eq "W" and $this->global->{'cover_ign_read_to_write_only'} ) {
+            $ignore = "READ";
+        } else {
+            if ($reg_access_mode eq "R" and $this->global->{'cover_ign_write_to_read_only'} ) {
+                $ignore = "WRITE";
             };
         };
-        print E_FILE "\n";
+        if ($ignore ne "") {
+            print E_FILE "extend vr_ad_reg {\n";
+            print E_FILE "  cover reg_access (kind == $reg_name) is also {\n";
+            print E_FILE "    item direction using also ignore = direction == ${ignore};\n";
+            print E_FILE "  };\n";
+            print E_FILE "};\n";
+        };
     };
+    print E_FILE "\n";
 };
 
 # end view: E_VR_AD
