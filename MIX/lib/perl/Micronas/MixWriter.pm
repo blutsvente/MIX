@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.102 $                                         |
+# | Revision:   $Revision: 1.103 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2007/03/02 14:56:14 $                              |
+# | Date:       $Date: 2007/03/03 11:17:34 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.102 2007/03/02 14:56:14 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.103 2007/03/03 11:17:34 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,8 +33,8 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
-# | Revision 1.102  2007/03/02 14:56:14  wig
-# | Adding instantiations specific ::udc: %AINS% and %PINS%
+# | Revision 1.103  2007/03/03 11:17:34  wig
+# | Extended ::udc: language dependent %AINS% and %PINS%: e.g. <VHDL>...</VHDL>
 # |
 # | Revision 1.101  2007/03/01 16:28:38  wig
 # | Implemented emulation mux insertion
@@ -173,9 +173,9 @@ sub _mix_wr_inst_udc			($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.102 2007/03/02 14:56:14 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.103 2007/03/03 11:17:34 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.102 $';
+my $thisrevision   =      '$Revision: 1.103 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2357,13 +2357,43 @@ sub _mix_wr_inst_udc ($$$) {
 	
 	# Get instance specific hook settings
 	mix_wr_use_udc( 'inst', $inst, \%instmac );
+	# The instance parents language is in $lang!
 	my $ltag = 'VHDL';
 	if ( $lang =~ m/\bveri/oi ) {
 		$ltag = 'VERILOG';
+	} elsif ( $ltag =~ m/\bvhdl/oi ) {
+		$ltag = 'VHDL';
+	} else {
+		$logger->warn('__INST_UDC', "\tfound unusual language $lang, inst_udc might fail!" );
+		$ltag = uc($ltag);
 	}
 	
-	my $pre = $instmac{'%' . $ltag . '_HOOK_INST_PRE%'} || '';
-	my $app = $instmac{'%' . $ltag . '_HOOK_INST_APP%'} || '';
+	# The ::udc definition could have a enclosing <LANG> marker </LANG>
+	#  (or %LANG% ..... %/LANG%) to allow
+	#   inclusion in various languages; the actual HOOK is defined by the
+	# instantiated modules's language
+	# Rip out just the _HOOK_INST_ and convert into appropriate namespace
+	my %hook = ();
+	for my $hook ( keys( %instmac ) ) {
+		if ( $hook =~ m/(%(\w+))_HOOK_INST_(\w+)%/ ) {
+			# Convert from daughters LANGUAGE to current language
+			my $daughterlang = $1;
+			my $preapp = $3;
+			if ( $instmac{$hook} =~ m/<$ltag>/i ) {
+				$instmac{$hook} =~ m,<$ltag>(.*)(</$ltag>),ims;
+				$hook{'%' . $ltag . '_HOOK_INST_' . $preapp . '%'} = $1;
+			} elsif ( $instmac{$hook} =~ m/%$ltag%/i ) { # Has language selector
+					# Find part selected by ltag
+				$instmac{$hook} =~ m,%$ltag%(.*)(%/$ltag%),ims;
+				$hook{'%' . $ltag . '_HOOK_INST_' . $preapp . '%'} = $1;	
+			} else {
+				$hook{'%' . $ltag . '_HOOK_INST_' . $preapp . '%'} = $instmac{$hook};
+			}
+		}
+	}		
+	my $pre = $hook{'%' . $ltag . '_HOOK_INST_PRE%'} || '';
+	my $app = $hook{'%' . $ltag . '_HOOK_INST_APP%'} || '';
+	# Future extension: more HOOK_INST
 	return $pre, $app;
 } # End of _mix_wr_inst_udc
 

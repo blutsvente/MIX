@@ -537,6 +537,16 @@ my @tests = (
 		'path' => 'udc/verilog',
 		'options' => '',
 	},
+	{ # Add arbitrary text in hooks: around instantiation
+		'name' => 'udc',
+		'path' => 'udc/inst',
+		'options' => '',
+	},
+	{ # Add arbitrary text in hooks around instantiation, check VHDL/Verilog
+		'name' => 'udc',
+		'path' => 'udc/mix',
+		'options' => '',
+	},
 	{ # Split intermediate CONN sheet
 		'name' => 'intra',
 		'path' => 'intra',
