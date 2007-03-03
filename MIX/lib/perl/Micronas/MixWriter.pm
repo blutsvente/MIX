@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.103 $                                         |
+# | Revision:   $Revision: 1.104 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2007/03/03 11:17:34 $                              |
+# | Date:       $Date: 2007/03/03 17:24:06 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.103 2007/03/03 11:17:34 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.104 2007/03/03 17:24:06 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,8 +33,8 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
-# | Revision 1.103  2007/03/03 11:17:34  wig
-# | Extended ::udc: language dependent %AINS% and %PINS%: e.g. <VHDL>...</VHDL>
+# | Revision 1.104  2007/03/03 17:24:06  wig
+# | Updated testcase for case matches. Added filename serialization.
 # |
 # | Revision 1.101  2007/03/01 16:28:38  wig
 # | Implemented emulation mux insertion
@@ -173,9 +173,9 @@ sub _mix_wr_inst_udc			($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.103 2007/03/03 11:17:34 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.104 2007/03/03 17:24:06 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.103 $';
+my $thisrevision   =      '$Revision: 1.104 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1203,7 +1203,7 @@ sub _write_entities ($$$) {
     #
     my $simple_re = $eh->get( 'output.generate._logicre_');
     if ( $ehname =~ m/$simple_re/i ) {
-    	$write_flag = "0";
+    	$write_flag = '0';
     }
 
     # Are we in verify mode?
@@ -5983,10 +5983,10 @@ sub write_configuration () {
                 my $e_fn = $e;
                 my $ce = $hierdb{$i}{'::config'};
                 #Changed 20030714a/Bug: change only trailing _ to - !!
-                if ( $eh->get( 'output.filename' ) =~ m,allminus,o ) {
+                if ( $eh->get( 'output.filename' ) =~ m,\ballminus,o ) {
                     $ce =~ s,_,-,og;
                     $e_fn =~ s,_,-,og;
-                } elsif ( $eh->get( 'output.filename' ) =~ m,useminus,i ) {
+                } elsif ( $eh->get( 'output.filename' ) =~ m,\buseminus,i ) {
                     # Only trailing part gets changed ...
                     # Stip of entity name, replace _ by - and attach ...
                     if ( $ce =~ s,^\Q$e_fn\E,, ) { # entity name in configurartion

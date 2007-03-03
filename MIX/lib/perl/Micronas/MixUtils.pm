@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.139 $                                        |
+# | Revision:   $Revision: 1.140 $                                        |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/03/01 16:28:37 $                              |
+# | Date:       $Date: 2007/03/03 17:24:06 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.139 2007/03/01 16:28:37 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.140 2007/03/03 17:24:06 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.140  2007/03/03 17:24:06  wig
+# | Updated testcase for case matches. Added filename serialization.
+# |
 # | Revision 1.139  2007/03/01 16:28:37  wig
 # | Implemented emulation mux insertion
 # |
@@ -189,11 +192,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.139 2007/03/01 16:28:37 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.140 2007/03/03 17:24:06 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.139 $';         #'
+my $thisrevision        =      '$Revision: 1.140 $';         #'
 
-# Revision:   $Revision: 1.139 $   
+# Revision:   $Revision: 1.140 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1315,6 +1318,7 @@ my @ocont = (); # Keep (filtered) contents of original file
 my @ncont = (); # Keep (filtered) contents of new file to feed into diff
 my @ccont = (); # Keep (filtered) contents of template entity for check
 
+my %fhcasemap = ();
 my %fhstore = ();   # Store all possiblefilehandles/ names
                             # -> file / delta / check / tmpl / back; prim. key is filename!
 my $loc_flag  = 0;
@@ -1489,11 +1493,17 @@ instead of a full file!
 The first argument is the file to open, the second contains flags like:
     COMB (combine mode)
 
+#!wig20070303: map filenames to lc() in all cases, because some filesystems
+do not distinguish case! In case a second file gets opened with the same
+name, but different case, create a different name, e.g. by adding a number!
+	this gets controlled by the output.casefilename (which is set to lc on MS-Win and
+	to ic (ignorecase) on UNIX-like systems. The real name is kept in $fhstore{$file}{'casename'}
+	
 =cut
 
 sub mix_utils_open ($;$){
-    my $file= shift;
-    my $flags = shift || ''; # Could be "COMB" for combined mode or ..._CHK_(ENT|LEAF)
+    my $file	= shift;
+    my $flags	= shift || ''; # Could be "COMB" for combined mode or ..._CHK_(ENT|LEAF)
 
     #
     # if output.path is set, write to this path (unless file name is absolute path)
@@ -1508,6 +1518,33 @@ sub mix_utils_open ($;$){
 
     my $ofile = $file;
 
+	#
+	# Check for case conflicts
+	# (if $eh->get('output.casefilename')
+	if ( $eh->get('output.casefilename') =~ m/\blc/ ) {
+		$file  = lc( $file );
+		if ( exists( $fhstore{$file} ) ) {
+			if ( $file ne $fhstore{$file}{'casename'} ) {
+				# Conflict, file with different case already in place
+				$logger->error('__E_OPEN_HDL', "\tFilename $file conflicts with previously written $ofile! Number will be injected!" );
+				# Update filename ... e.g. by adding a number
+				my ( $base, $ext ) = $file =~ m/(.+)(\..+)$/;
+				my $n = 0;
+				while ( 1 ) {
+					if ( $n > 9 ) {
+						$logger->error('__F_OPEN_HDL', "\tToo many file names with case conflicts! Die here!" );
+						die;
+					}
+					next if ( exists( $fhstore{$base . '_' . ++$n . $ext} ) );
+					# Found a available name
+					$file = $base . '_' . $n . $ext;
+					$logger->info('__I_OPEN_HDL', "\tWrite contens of $ofile into $file to have unique name!" );
+					last;
+				}	
+			}
+		}
+	}
+	
     #
     # Did we open that file already?
     #
@@ -1515,6 +1552,10 @@ sub mix_utils_open ($;$){
         $eh->inc( 'sum.hdlfiles' );
     }
 
+	$fhcasemap{$ofile} = $file;
+	$fhstore{$file}{'casename'} = $ofile; # Remember original case
+	$ofile = $file;
+	
     # Search a file with this name in EH{check}{hdlout} ...
     # TODO better algo: preparse check.hdlout.path and keep a list of all entities around ... 
     my $mode = O_CREAT|O_WRONLY|O_TRUNC;
@@ -1695,6 +1736,7 @@ sub mix_utils_print ($@) {
 
     # $fn either is a real file handle (if this_delta is set) or a file name
     # in this_check ....
+    #WRONG $fn = $fhcasemap{$fn}; # Run through casemap!
     if ( $fhstore{$fn}{'delta'} or $fhstore{$fn}{'tmpl'} ) {
 		push( @ncont, split( /\n/, sprintf( '%s', @args ) ) );
     }
@@ -1717,6 +1759,7 @@ sub mix_utils_printf ($@) {
     my $fn = shift;
     my @args = @_;
 
+	#WRONG: $fn = $fhcasemap{$fn}; # Run through casemap!
     if ( $fhstore{$fn}{'delta'} or $fhstore{$fn}{'tmpl'} ) {
 		push( @ncont, split( /\n/, sprintf( @args ) ) );
     }
@@ -1733,13 +1776,14 @@ sub mix_utils_printf ($@) {
 #
 # Close that file-handle
 # If in delta mode, run the diff and print before closing!
+# In reality MIX writes the files here, up to now everything happened in memory
 #
 sub mix_utils_close ($$) {
     my $fn = shift;
     my $file = shift;
 
     my $close_flag = 1;
-
+	#WRONG: $fn = $fhcasemap{$fn}; # Run through casemap
     # Prepend PATH
     if ( $eh->get( 'output.path' ) ne '.' and not is_absolute_path( $file ) ) {
 		$file = $eh->get( 'output.path' ) . '/' . $file;
@@ -3698,7 +3742,7 @@ sub write_sum () {
     return $eh->get( 'DELTA_NR' ) + $eh->get( 'DELTA_INT_NR' ) +
     				$eh->get( 'DELTA_VER_NR' ) + $fdiff + $ldiff;
 
-}
+} # End of write_sum
 
 #
 # Count differences of log.limit.test.RE (soll) vs.

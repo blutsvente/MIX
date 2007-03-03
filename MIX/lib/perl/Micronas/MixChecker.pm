@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Checker
 # | Modules:    $RCSfile: MixChecker.pm,v $
-# | Revision:   $Revision: 1.16 $
+# | Revision:   $Revision: 1.17 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2006/11/02 15:37:48 $
+# | Date:       $Date: 2007/03/03 17:24:06 $
 # |
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.16 2006/11/02 15:37:48 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.17 2007/03/03 17:24:06 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the checking capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixChecker.pm,v $
+# | Revision 1.17  2007/03/03 17:24:06  wig
+# | Updated testcase for case matches. Added filename serialization.
+# |
 # | Revision 1.16  2006/11/02 15:37:48  wig
 # |  	MixChecker.pm MixUtils.pm MixWriter.pm : added basic caching, improved performance
 # |
@@ -95,9 +98,9 @@ my %mix_check_list = ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixChecker.pm,v 1.16 2006/11/02 15:37:48 wig Exp $';
+my $thisid		=	'$Id: MixChecker.pm,v 1.17 2007/03/03 17:24:06 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixChecker.pm,v $';
-my $thisrevision   =      '$Revision: 1.16 $';
+my $thisrevision   =      '$Revision: 1.17 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -192,7 +195,7 @@ sub mix_check_case ($$) {
 	#  or $name matches the exception list
 	if ( $check =~ m/^\s*$/o or
 		 $check =~ m/\bdisable/io or
-		 $check =~ m/\b(na|off)\b/io ) {
+		 $check =~ m/\b(na|off|no)\b/io ) {
 		return $name;
 	}
 
@@ -218,7 +221,13 @@ sub mix_check_case ($$) {
 		$func = \&_wrap_lcfirstuc;
 	} elsif ( $check =~ m/\bucfirstlc\b/ ) {
 		$func = \&_wrap_ucfirstlc;
-	} 
+	}
+	
+	# If user has set check to unknown value -> use default which is
+	# _wrap_lc
+	unless( $func ) {
+		$func = \&_wrap_lc;
+	}
 
 	# TESTBENCH always in capital letters, but allow any spelling
 	if ( $name eq 'TESTBENCH' ) {
@@ -226,8 +235,9 @@ sub mix_check_case ($$) {
 	}
 	# Check and change ...
 	$name = _mix_check_case_int( $type, $name, $check, $func );
+	return $name;
 
-}
+} # End of mix_check_case
 
 #
 # Required wrappers for lc/uc/lcfirst/ucfirst ...
@@ -272,10 +282,10 @@ sub _mix_check_case_int ($$$$) {
     # TODO : save all variants of spelling in mix_check_list?
     #
     
-    my $list = $mix_check_list{$type}; # Reference to this type's list of names
     unless( exists( $mix_check_list{$type} ) ) {
        $mix_check_list{$type} = {};
     }
+    my $list = $mix_check_list{$type}; # Reference to this type's list of names
 
 	# $list keeps version of all names, indexed by lc version
 	if ( exists( $list->{lc($name)} ) ) {

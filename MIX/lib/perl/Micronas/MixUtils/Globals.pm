@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.37 $                                         |
+# | Revision:   $Revision: 1.38 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/03/02 14:56:14 $                              |
+# | Date:       $Date: 2007/03/03 17:24:06 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,8 +26,8 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
-# | Revision 1.37  2007/03/02 14:56:14  wig
-# | Adding instantiations specific ::udc: %AINS% and %PINS%
+# | Revision 1.38  2007/03/03 17:24:06  wig
+# | Updated testcase for case matches. Added filename serialization.
 # |
 # | Revision 1.36  2007/02/07 15:11:15  wig
 # | fixed typo
@@ -97,9 +97,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.37 2007/03/02 14:56:14 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.38 2007/03/03 17:24:06 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.37 $';  
+my $thisrevision    =      '$Revision: 1.38 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -487,6 +487,7 @@ sub init ($) {
 		'order' => 'input',		# Field order := as in input or predefined
 		'format' => 'ext',		# Output format derived from filename extension ???
 		'filename' => 'useminus', # Convert _ to - in filenames
+		'casefilename'	=> 'lc',  # Map all output filenames to lowercase
 		'generate' => {
 	    	'arch' => 'noleaf', # allowed keys: alt, [no]leaf, ...
 	      	'enty' => 'noleaf', # no leaf cells: [no]leaf,alt,
