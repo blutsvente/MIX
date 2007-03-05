@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.69 2006/11/16 15:23:37 wig Exp $
+# $Id: TODO.txt,v 1.70 2007/03/05 09:00:04 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -27,6 +27,123 @@ Code:
 Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
+
+>>title: 20070220a/RFE: allow udc at component instantiations
+
+::udc                       ::inst
+/%INST_HEAD%/
+`define bla test before     test_i
+/%INST_FOOT%/
+`define bla test after
+
+
+sollte im Code sein:
+
+
+`define bla test before
+test_i test (
+             .a(testin1),
+             .b(testin2),
+             .x(testout)
+             );
+`define bla test after
+
+	Req: oberhoff
+	Prio: medium
+	Status: started
+	Testcase: udc/instant
+	
+>>title: 20070113a/RFE: detect verilog parameters , accept also non-integer digits / FW: xtal-pin-list.xls
+
+in MixWriter.pm:
+
+           for my $g ( sort( keys( %$ref ) ) ) {
+                $map .= '%S%' x 3 . "." . $g . '(' . $ref->{$g} . '),' .
+                    (( _mix_wr_isinteger( $inst, $g, $ref->{$g} ) ) ?
+                         " $tcom __W_ILLEGAL_PARAM" : '' ) .
+                    "\n";
+            } 
+
+
+--> mix_wr_isreal ( ... )
+  accept any real numbers at this place.
+ 
+Original request:
+From: Oberhoff Frank
+Sent: 13 January 2007 10:05
+To: Gänsheimer Wilfried
+Subject: xtal-pin-list.xls
+
+Hallo Willi,
+
+im XLS steht das mit den Parametern und in dem Verilog steht aber ein:
+
+		defparam xtal_i.Tin = 18518.518518, // __W_ILLEGAL_PARAM
+			xtal_i.transparent = 0;
+
+Bisher war da nur ein Parameter (Tin), nun sind es 2, was läuft falsch?
+
+Gruß,
+Frank
+
+	Req: oberhof
+	Prio: medium
+	Status: done, but needs verification!!
+
+>>title: 20061230a/RFE: embedded signals in ifdef (verilog)	
+
+	embedd a signal into 'ifdef 'endif at all occurances
+	
+	Req: sluethin
+	Prio: medium to low
+	Status: open
+	
+>>title: 20061127b/Bug: Splitting of busses on the formal port doesn't work
+MIX Port-Slices assignen (war VCTH [Issue 5562] 
+New: Splitting of busses on the formal port doesn't work)
+
+MIX creates the following output:
+see bugver2006/20061127b for details
+
+	Req: krophi
+	Prio: medium
+	Status: not to be fixed
+	
+>>title: 20061214a/Bug: Comments, ports, signals and -portlist Re: Mix Trouble
+
+-report portlist with MIXCFG report.portlist.name port
+creates bad output for signals, which bundle several ports together.
+
++++ Original request+++
+Hallo Maik und Bernhard,
+
+ich habe das "-report portlist" Problem gefunden und behoben.
+
+Jetzt wird (bei entsprechend gesetzten Configurations) die Kommentare fuer die ports einzeln ausgegeben, die Bitbreite der Ports (und nicht mehr die Breite der angeschlossenen Signale).
+
+Die Sortierreihenfolge der ports ist entweder "alpha"(betisch) oder "input" (wie Inputreihenfolge, ist der default) -> 
+
+MIXCFG report.portlist.sort input
+
+IMHO sollte der Default das richtige fuer Euch erzeugen.
+
+Bitte testen und feedback falls noetig.
+Die neuen Module sind unter MS-Windows sowie unter UNIX (mix/1.6) verfuegbar.
+
+Gibt es sonst noch jmd., dem man diese gute Nachricht mitteilen sollte?
+
+Danke, bye
+Wilfried
+Example provided: VGCH_OPM-pin-list.xls
+
+	Solution: use port splices to create table lines
+	Byproduct:	portsplice now has counter _nr_, which gets
+		incremented for each port splice read.
+	
+	Req: gerstenb, brett
+	Status: solved
+	Testcase: bugver2006/20061214a
+	
 >>title: 20060509b/RFE: collect signals to busses
 
 	Go through list of signals and unsplice if the match some perl regular expression.
@@ -79,7 +196,7 @@ Example:
 	Testcase: bugver2006/20061113a
 	Req: oberhoff
 	Prio: high
-	Status: started
+	Status: fixed
 	
 >>title: MIX/BUG20061030a: Bad verilog port map for `define values for bus connections
 
