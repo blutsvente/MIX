@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.10 2006/11/20 17:08:12 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.11 2007/03/05 18:29:35 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.11  2007/03/05 18:29:35  lutscher
+#  fixed bug in _val2hex, it could not handle negative values
+#
 #  Revision 1.10  2006/11/20 17:08:12  lutscher
 #  added parameters for vr_ad_reg
 #
@@ -363,8 +366,8 @@ sub _pad_str {
 		$size = ($size < 4) ? 4 : $size;
 		my($hsize) = (($size+3) >> 2) - 1;
 		for ($i=0; $i<=$hsize; $i++) {
-			$result = "$ch[$val%16]${result}";
-			$val/=16;
+			$result = "$ch[$val & 0xf]${result}";
+			$val = $val>>4;
 		};
 		return $result;
 	};
