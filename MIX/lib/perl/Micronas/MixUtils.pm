@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.140 $                                        |
+# | Revision:   $Revision: 1.141 $                                        |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/03/03 17:24:06 $                              |
+# | Date:       $Date: 2007/03/05 12:54:06 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.140 2007/03/03 17:24:06 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.141 2007/03/05 12:54:06 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.141  2007/03/05 12:54:06  wig
+# | Fixed split_flag bad preset in MixUtils::db2array
+# |
 # | Revision 1.140  2007/03/03 17:24:06  wig
 # | Updated testcase for case matches. Added filename serialization.
 # |
@@ -192,11 +195,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.140 2007/03/03 17:24:06 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.141 2007/03/05 12:54:06 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.140 $';         #'
+my $thisrevision        =      '$Revision: 1.141 $';         #'
 
-# Revision:   $Revision: 1.140 $   
+# Revision:   $Revision: 1.141 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2895,7 +2898,7 @@ sub db2array ($$$$;$$) {
 		    		$logger->warn( '__W_SPLIT_KEY', "\tSplitting key of table: " .
 		    			substr( $a[$n][$ii-1], 0, 32 ) );
 				}
-				$split_flag=1;
+				#BAD: $split_flag=1;
 				my @splits = mix_utils_split_cell( $a[$n][$ii-1] );
 
 				# Prefill the split data .... key will be added later
@@ -3392,7 +3395,7 @@ sub mix_utils_split_cell ($) {
 				$logger->warn( '__W_SPLIT_CELL', "\tCell split might produce bad results, iocr detection failed: " .
 		    		substr( $chunks[0], 0, 32 ) );
 	    	}
-	    	substr( $data, 0, $ri ) = ""; # Take away leading chars
+	    	substr( $data, 0, $ri ) = ''; # Take away leading chars
 	    	push ( @chunks,  substr( $tmp, 0, $ri ) ); # Chunk found ...
 		}
     }
