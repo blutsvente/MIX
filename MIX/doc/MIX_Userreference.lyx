@@ -56,7 +56,7 @@ MIX - Micronas Interconnect Spec expander
 
 Author: Wilfried Gänsheimer
 \newline 
-$Date: 2007/03/02 06:51:55 $
+$Date: 2007/03/05 09:00:37 $
 \newline 
 Version: $Id: MIX_Userreference.lyx,v 1.6 2005/01/26 14:01:59 wig Exp 
 \layout Section
@@ -2271,6 +2271,29 @@ enty
 conf
 \emph default 
 , though.
+\layout Standard
+
+If the 
+\family typewriter 
+::udc
+\family default 
+ contains the tags 
+\family typewriter 
+%PINS
+\family default 
+% and/or 
+\family typewriter 
+%AINS%
+\family default 
+, the text following is 
+\family typewriter 
+p
+\family default 
+re- or 
+\family typewriter 
+a
+\family default 
+ppened to this components instantiation.
 \layout Subsection
 
 Special HIER sheet properties
