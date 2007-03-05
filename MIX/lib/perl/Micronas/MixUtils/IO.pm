@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.51 $                                          |
+# | Revision:   $Revision: 1.52 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2007/01/23 09:33:34 $                              |
+# | Date:       $Date: 2007/03/05 12:58:38 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.52  2007/03/05 12:58:38  wig
+# | added ::descr and ::gen for -delta mode join cell
+# |
 # | Revision 1.51  2007/01/23 09:33:34  wig
 # | Support delta mode for MIF files
 # |
@@ -149,11 +152,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.51 2007/01/23 09:33:34 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.52 2007/03/05 12:58:38 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.51 $'; #'  
+my $thisrevision    =      '$Revision: 1.52 $'; #'  
 
-# Revision:   $Revision: 1.51 $
+# Revision:   $Revision: 1.52 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -1331,6 +1334,7 @@ sub write_delta_sheet($$$) {
 # Input: ref to array of arrays with data
 #        replaces merged columns inline
 #!wig20050926
+#!wig20070305: join ::generate und ::descr, too
 sub _join_split_lines ($) {
 	my $dataref = shift;
 	
@@ -1343,6 +1347,8 @@ sub _join_split_lines ($) {
 		'::name' => -1,
 		'::in'	 => -1,
 		'::out'  => -1,
+		'::gen'  => -1,
+		'::descr'=> -1,
 	);
 	
 	for my $i ( 0.. (scalar(@$head) - 1 ) ) {
@@ -1371,7 +1377,14 @@ sub _join_split_lines ($) {
 				$dataref->[$lastline][$cols{$io}] =
 					join( ',', split( /,\s*/, $dataref->[$lastline][$cols{$io}] ) );			
 			}
-			# Remove this line! Simply set it to all empty strings ..
+			# Simply append other columns:
+			for my $others ( qw( ::gen ::descr ) ) {
+				if ( $cols{$others} > -1 and length( $dataref->[$i][$cols{$others}] ) > 0 ) {
+					$dataref->[$lastline][$cols{$others}] .= $dataref->[$i][$cols{$others}]; 
+				}
+			}
+
+			# Remove this line now! Set it to all empty strings ..
 			push( @delete_me, $i );
 		} else { # Set new start:
 			$lastname = $thisname;
