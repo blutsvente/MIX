@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewSTL.pm,v 1.6 2006/03/14 14:21:19 lutscher Exp $
+#  RCSId: $Id: RegViewSTL.pm,v 1.7 2007/03/05 18:28:30 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.6 $                                  
+#  Revision      : $Revision: 1.7 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViewSTL.pm,v $
+#  Revision 1.7  2007/03/05 18:28:30  lutscher
+#  no changes
+#
 #  Revision 1.6  2006/03/14 14:21:19  lutscher
 #  made changes for new eh access and logger functions
 #
@@ -248,6 +251,10 @@ version 2.0
 		$this->_write_stl($o_domain);
 	};
 	$this->display() if $this->global->{'debug'}; # dump Reg class object
+
+    # disable mix error message
+
+    # return to mix
 	1;
 };
 
