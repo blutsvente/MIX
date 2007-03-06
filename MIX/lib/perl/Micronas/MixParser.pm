@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.88 $                                         |
+# | Revision:   $Revision: 1.89 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/01/22 17:31:50 $                              |
+# | Date:       $Date: 2007/03/06 12:44:33 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.88 2007/01/22 17:31:50 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.89 2007/03/06 12:44:33 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.89  2007/03/06 12:44:33  wig
+# | Adding IF/ELSIF/ELSE for generators and testcase.
+# |
 # | Revision 1.88  2007/01/22 17:31:50  wig
 # |  	MixParser.pm MixReport.pm : update -report portlist (seperate ports)
 # |
@@ -196,9 +199,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.88 2007/01/22 17:31:50 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.89 2007/03/06 12:44:33 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.88 $';
+my $thisrevision =	'$Revision: 1.89 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -477,6 +480,7 @@ It returns a hash, key is the instance name perl regular expression match.
 Right now this function can be used for both CONN and HIER matrix.
 
 !wig20061121: make sure generators and macros get executed in order of occurance (adds 'n')
+!wig20070305: add IF/.../ ELSIF/.../ ELSE keywords
 
 =cut
 
@@ -502,6 +506,11 @@ sub parse_conn_gen ($) {
 
         next if ( $rin->[$i]{'::gen'} =~ m,^\s*(M)?$, );      # Empty or M(acro)
 
+		#!wig20070305: Catch IF / ELSIF / ELSE
+		my $ifelse = '';
+		if ( $rin->[$i]{'::gen'} =~ s!^\s*(IF|ELSIF|ELSE)\s*!!io ) {
+			$ifelse = lc($1); # Remember the link to previous genertors
+		}
         # CONN vs. HIER: Strip and remember leading CONN .
         #wig20030715
         my $namesp = 'hier';
@@ -519,7 +528,7 @@ sub parse_conn_gen ($) {
             }
             if ( exists( $g{$pre} ) ) { # Redefinition of this macro ...make name unique
                 $g{$pre}{'rep'}++;
-                $pre .= "__DUPL__" . $gi++;
+                $pre .= '__DUPL__' . $gi++;
             }
             $g{$pre}{'pre'} = $4;
             $g{$pre}{'var'} = $1;
@@ -528,14 +537,15 @@ sub parse_conn_gen ($) {
             $g{$pre}{'field'} = $rin->[$i];
             $g{$pre}{'ns'}  = $namesp;
             $g{$pre}{'n'}   = $n++;
-            $rin->[$i]{'::comment'} = "# Generator parsed /" . $rin->[$i]{'::comment'};
+            $g{$pre}{'link'} = $ifelse;
+            $rin->[$i]{'::comment'} = '# Generator parsed /' . $rin->[$i]{'::comment'};
         }
         # plain generator: /PERL_RE/
         elsif ( $rin->[$i]{'::gen'} =~ m!^\s*/(.*)/! ) {
             my $tag = $1;
             if ( exists( $g{$tag} ) ) { # Redefinition of this macro ... make name unique
                 $g{$tag}{'rep'}++;
-                $tag .= "__DUPL__" . $gi++;
+                $tag .= '__DUPL__' . $gi++;
             }
             $g{$tag}{'var'} = undef;
             $g{$tag}{'lb'}  = undef;
@@ -544,12 +554,16 @@ sub parse_conn_gen ($) {
             $g{$tag}{'field'} = $rin->[$i];
             $g{$tag}{'ns'}  = $namesp;
             $g{$tag}{'n'}   = $n++;
+            $g{$tag}{'link'} = $ifelse;	# Hmmm, a link does not make to much sense here
             $rin->[$i]{'::comment'} = "# Generator parsed /" . $rin->[$i]{'::comment'};
         }
         # parameter generator: $i (1..10)
         # no /match/ .....
         elsif ( $rin->[$i]{'::gen'} =~ m!^\s*\$(\w)\s*\((\d+)\.\.(\d+)\)!o ) {
-            my $gname = "__MIX_ITERATOR_" . $gi++;
+            my $gname = '__MIX_ITERATOR_' . $gi++;
+            if ( $ifelse ) { # An ELSE or whatever
+            	$gname = '__MIX_ITERATOR_ELSE_' . $gi++;
+            }
             $g{$gname}{'var'} = $1;
             $g{$gname}{'lb'}  = $2;
             $g{$gname}{'ub'}  = $3;
@@ -557,8 +571,20 @@ sub parse_conn_gen ($) {
             $g{$gname}{'pre'} = $gname;
             $g{$gname}{'ns'}  = $namesp;
             $g{$gname}{'n'}   = $n++;
+            $g{$gname}{'link'} = $ifelse;
             $rin->[$i]{'::comment'} = "# Generator parsed /" . $rin->[$i]{'::comment'};
-        }
+        } else { # TODO : Check if that makes sense (maybe we abov expression has to be repeated ...)
+            my $gname = '__MIX_ELSE_' . $gi++;
+            $g{$gname}{'var'} = '';
+            $g{$gname}{'lb'}  = '';
+            $g{$gname}{'ub'}  = '';
+            $g{$gname}{'field'} = $rin->[$i];
+            $g{$gname}{'pre'} = $gname;
+            $g{$gname}{'ns'}  = $namesp;
+            $g{$gname}{'n'}   = $n++;
+            $g{$gname}{'link'} = $ifelse;
+            $rin->[$i]{'::comment'} = "# Generator parsed /" . $rin->[$i]{'::comment'};
+		}
     }
 
     #
@@ -567,7 +593,7 @@ sub parse_conn_gen ($) {
     #
     return \%g;
 
-}
+} # End of parse_conn_gen
 
 ####################################################################
 ## parse_hier_init
@@ -2271,6 +2297,9 @@ apply_conn_gen ($)
 
 Scan through all instances and add to connectivity db if matched
 
+Caveat: All generators are executed in order of appearance.
+But the plain iterators will be executed up-front (here)!
+
 =cut
 
 sub apply_conn_gen ($) {
@@ -2380,23 +2409,37 @@ Intermediate data is kept in:
 #			 $g{$1}{'n'}
 #            $rin->[$i]{'::comment'} = "# Generator parsed /" . $rin->[$i]{'::comment'};
 
-
+#!wig20070305: adding IF/ELSIF/ELSE feature
+			 $rin->[$i]{'link'} = 'if' or 'elsif' or 'else' 
+			 
 =cut
 sub apply_x_gen ($$) {
     my $r_hg = shift;   # connection generator data
     my $func = shift;	# which function to call ...
-
+    
+	# Sort generators by number of appearance:
+	my %lasthit = (); # Track if/elsif/else
     for my $cg ( sort( { $r_hg->{$a}->{'n'} <=> $r_hg->{$b}->{'n'} }
     		keys( %$r_hg ) ) ) { # Iterate through all known generators ...
 
 		# Skip __MIX_ITERATOR_ ...
 		next if ( $cg =~ m,^__MIX_ITERATOR_,io );
-		
+
+		my $ifelslink= $r_hg->{$cg}{'link'};				
         # Iterate over CONN or HIER, defined by ...{'ns'} namespace ...
         my $ky = ( $r_hg->{$cg}{'ns'} =~ m,^conn, ) ? \%conndb : \%hierdb ;
 
         for my $i ( keys( %$ky ) ) { #See if the ::gen matches one of the instances already known
             next if $ky->{$i}{'::ign'} =~ m,^\s*(#|//),o;
+
+			# Skip if we are part of if/elsif/else and last time was a match
+			if ( $lasthit{$i} and $ifelslink and $ifelslink ne 'if' ) {
+				if ( $ifelslink eq 'else' ) {
+					$lasthit{$i} = '';
+				}
+				next;
+			}
+			$lasthit{$i} = '';
 
             unless( $r_hg->{$cg}{'var'} ) {
             # Plain match, no run parameter
@@ -2410,6 +2453,7 @@ sub apply_x_gen ($$) {
                     # Apply all fields defined in generator:
                     #!wig20060125: if namespace contains :splice, iterate over all bit splices!
                     #				$s gets the current value of the bit splice ...
+                    $lasthit{$i} = 1;
                     my @splice_range = _mix_p_getsplicerange( $i, $r_hg->{$cg}, $ky );
 
 					if ( scalar( @splice_range ) ) {
@@ -2419,7 +2463,8 @@ sub apply_x_gen ($$) {
 					} else {
 						_mix_p_dogen( $r_hg->{$cg}, $ky, '', $cg, $i, $func );
 					}
-
+                } else {
+                	$lasthit{$i} = '';
                 }
             } else {
             # There is an additional run parameter involved: $r_hg{$cg}{'var'}
@@ -2439,7 +2484,6 @@ sub apply_x_gen ($$) {
                 $matcher =~ s/\$$rv/\\d+/g; #Replace $i by \\d+
                 if ( $text =~ m/^$matcher$/ ) {
                 	%mres = _mix_p_get_reparmatch( $text, $matcher );
-
                     #
                     # We found all $N; now let's deal with {EXPR} and $V
                     #
@@ -2475,6 +2519,7 @@ sub apply_x_gen ($$) {
                         # Basic idea:fetch {...} and evaluate with results known so far
                         # Apply the results to the matcher string and do a last check ...
                         #
+                    	$lasthit{$i} = 1;
                         my @splice_range = _mix_p_getsplicerange( $i, $r_hg->{$cg}, $ky );
                         
                      	if ( scalar( @splice_range ) ) {
@@ -2484,10 +2529,12 @@ sub apply_x_gen ($$) {
 						} else {
 							_mix_p_dogen2( $r_hg->{$cg}, $ky, $rv, \%mres, '', $cg, $i, $func );
 						}
-                        
-                        
 
-                    }
+                    } else {
+                		$lasthit{$i} = '';
+                	} 
+                } else {
+                	$lasthit{$i} = '';
                 }
             }
         }

@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Checker
 # | Modules:    $RCSfile: MixChecker.pm,v $
-# | Revision:   $Revision: 1.17 $
+# | Revision:   $Revision: 1.18 $
 # | Author:     $Author: wig $
-# | Date:       $Date: 2007/03/03 17:24:06 $
+# | Date:       $Date: 2007/03/06 12:44:33 $
 # |
 # | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.17 2007/03/03 17:24:06 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.18 2007/03/06 12:44:33 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the checking capabilites for the MIX project.
@@ -33,26 +33,14 @@
 # |
 # | Changes:
 # | $Log: MixChecker.pm,v $
+# | Revision 1.18  2007/03/06 12:44:33  wig
+# | Adding IF/ELSIF/ELSE for generators and testcase.
+# |
 # | Revision 1.17  2007/03/03 17:24:06  wig
 # | Updated testcase for case matches. Added filename serialization.
 # |
 # | Revision 1.16  2006/11/02 15:37:48  wig
 # |  	MixChecker.pm MixUtils.pm MixWriter.pm : added basic caching, improved performance
-# |
-# | Revision 1.15  2006/05/22 14:02:21  wig
-# | Fix avfb issues with high/low connections
-# |
-# | Revision 1.14  2006/04/13 13:31:52  wig
-# | Changed possition of VERILOG_HOOK_PARA, detect illegal stuff in ::in/out description
-# |
-# | Revision 1.13  2006/03/17 09:18:31  wig
-# | Fixed bad usage of $eh inside m/../ and print "..."
-# |
-# | Revision 1.12  2006/03/14 08:10:35  wig
-# | No changes, got deleted accidently
-# |
-# | Revision 1.11  2006/01/18 16:59:28  wig
-# |  	MixChecker.pm MixParser.pm MixUtils.pm MixWriter.pm : UNIX tested
 # |
 # | ...[cut]...
 # |
@@ -98,9 +86,9 @@ my %mix_check_list = ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixChecker.pm,v 1.17 2007/03/03 17:24:06 wig Exp $';
+my $thisid		=	'$Id: MixChecker.pm,v 1.18 2007/03/06 12:44:33 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixChecker.pm,v $';
-my $thisrevision   =      '$Revision: 1.17 $';
+my $thisrevision   =      '$Revision: 1.18 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

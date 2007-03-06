@@ -279,6 +279,11 @@ my @tests = (
 	  'path' => "macro/variant",
 	  'options' => "-variant Calculate",
 	},
+	{ # macro/generator enable/disable with IF/ELSIF/ELSE
+	  'name' => 'macro',
+	  'path' => 'macro/ifelsif',
+	  'options' => '-variant Ifelsif',
+	},
 	{
 	  'name' => "verilog",
 	  'path' => "verilog",
