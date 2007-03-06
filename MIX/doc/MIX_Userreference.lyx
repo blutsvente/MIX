@@ -56,7 +56,7 @@ MIX - Micronas Interconnect Spec expander
 
 Author: Wilfried Gänsheimer
 \newline 
-$Date: 2007/03/05 09:00:37 $
+$Date: 2007/03/06 13:44:24 $
 \newline 
 Version: $Id: MIX_Userreference.lyx,v 1.6 2005/01/26 14:01:59 wig Exp 
 \layout Section
@@ -880,8 +880,6 @@ MIX reads the cell values.
 A lot of predefined text macros are understood and converted by MIX.
  A text macro is made up by a name surrounded by 
 \family typewriter 
-
-\backslash 
 %
 \family default 
  signs.
@@ -893,11 +891,7 @@ MIXCFG macro
 ".
  The table 
 \family typewriter 
-
-\backslash 
-%macro
-\backslash 
-%
+%macro%
 \family default 
  gives a list of predefined macros, their default settings and wether this
  macro can be used by the user.
@@ -917,11 +911,7 @@ MIXCFG macro
  A second type of macros are available to reference other columns of a like
  through 
 \family typewriter 
-
-\backslash 
-%::NAME
-\backslash 
-%
+%::NAME%
 \family default 
 .
  This will be replaced by the contents of the 
@@ -936,11 +926,7 @@ MIXCFG macro
  has to be defined for the current worksheet, obviously.
  In the above example 
 \family typewriter 
-
-\backslash 
-%::inst
-\backslash 
-%_e
+%::inst%_e
 \family default 
  will evaluate to 
 \family typewriter 
@@ -957,11 +943,7 @@ b_e
  accordingly.
  
 \family typewriter 
-
-\backslash 
-%LANGUAGE
-\backslash 
-%
+%LANGUAGE%
 \family default 
  becomes vhdl.
  Macro expansion happens just before the intermediate design data is written
@@ -1608,11 +1590,7 @@ Internally the kewords
  Apart from that you are free to add columns of your own.
  User defined columns are usable in 
 \family typewriter 
-
-\backslash 
-%::NAME
-\backslash 
-%
+%::NAME%
 \family default 
  macro expansion and are listed in the intermediate design data output.
 \newline 
@@ -1622,11 +1600,7 @@ Only the
 \family default 
  column has to contain a value in each row (which could be a 
 \family typewriter 
-
-\backslash 
-%::NAME
-\backslash 
-%
+%::NAME%
 \family default 
  macro, though).
  All other columns will receive more or less reasonable default values in
@@ -1684,7 +1658,7 @@ Select a line depending on the -variant command line switch.
 \newline 
 
 \begin_inset ERT
-status Collapsed
+status Open
 
 \layout Standard
 
@@ -2126,21 +2100,13 @@ use IEEE.std_logic_1164.all;
 \newline 
 modify macro 
 \family typewriter 
-
-\backslash 
-%VHDL_USE_DEFAULT
-\backslash 
-%
+%VHDL_USE_DEFAULT%
 \family default 
 .
 \newline 
 To add a library globally, add the appropriate text to the macro.
 \family typewriter 
-
-\backslash 
-%VHDL_NOPROJ
-\backslash 
-%
+%VHDL_NOPROJ%
 \family default 
  configuration, which will be used if no library is defined in the 
 \family typewriter 
@@ -2150,21 +2116,11 @@ To add a library globally, add the appropriate text to the macro.
 \newline 
 A second usage is to suppress the component declaration output by the 
 \family typewriter 
-
-\backslash 
-%NDC
-\backslash 
-%
+%NDC%
 \family default 
  or 
-\newline 
-
 \family typewriter 
-
-\backslash 
-%NO_COMPONENT_DECLARATION
-\backslash 
-%
+%NO_COMPONENT_DECLARATION%
 \family default 
  keyword.
  This is useful for instances, whose entities are taken from libraries.
@@ -2293,7 +2249,7 @@ re- or
 \family typewriter 
 a
 \family default 
-ppened to this components instantiation.
+ppended to this components instantiation.
 \layout Subsection
 
 Special HIER sheet properties
@@ -2308,7 +2264,11 @@ Pseudo Instances %TOP% et al.
 \family default 
  is a pseudo instance and used for internal purposes, only.
  Please use testbench as the top level of your description.
- Another internally used instance is %TYPECAST% ...
+ Another internally used instance is 
+\family typewriter 
+%TYPECAST%
+\family default 
+ .
 \layout Subsubsection
 
 Simple logic creation
@@ -2323,8 +2283,12 @@ MIX will support simple logic creation when you use one of the following
 %AND%, %OR%, %NAND%, %NOR%, %XOR%, %NOT%, %WIRE%
 \layout Standard
 
-%WIRE% will be handeled as connection (assignment), while the logic will
- be created with HDL logic description.
+
+\family typewriter 
+%WIRE%
+\family default 
+ will be handeled as connection (assignment), while the logic will be created
+ with HDL logic description.
  Currently no bit-splicing is supported and appropriate bit width of busse
  will not be checked.
  Make sure only one output signal gets connected.
@@ -2332,7 +2296,11 @@ MIX will support simple logic creation when you use one of the following
 \begin_inset Quotes eld
 \end_inset 
 
+
+\family typewriter 
 logic
+\family default 
+
 \begin_inset Quotes erd
 \end_inset 
 
@@ -3107,11 +3075,7 @@ hspace*{20mm}
 
 
 \family typewriter 
--conf macro.
-\backslash 
-%THIS_MACRO
-\backslash 
-%=my_value
+-conf macro.%THIS_MACRO%=my_value
 \family default 
 
 \newline 
@@ -3132,11 +3096,7 @@ hspace*{20mm}
 
 
 \family typewriter 
-MIXCFG macro.
-\backslash 
-%THIS_MACRO
-\backslash 
-% my_value
+MIXCFG macro.%THIS_MACRO% my_value
 \family default 
 
 \newline 
@@ -3167,8 +3127,8 @@ The output.generate.portmapsort configuation defines the sort order for portmaps
 \begin_inset  Tabular
 <lyxtabular version="3" rows="8" columns="2">
 <features>
-<column alignment="center" valignment="top" leftline="true" width="0">
-<column alignment="center" valignment="top" leftline="true" rightline="true" width="0">
+<column alignment="center" valignment="top" leftline="true" width="0sp">
+<column alignment="center" valignment="top" leftline="true" rightline="true" width="0sp">
 <row topline="true" bottomline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -3904,46 +3864,70 @@ output.generate.emumux
 \layout List
 \labelwidthstring 00.00.0000
 
-'modules' Modules matching this regular expression are subject to emumux
- insertion.
+
+\family typewriter 
+'modules'
+\family default 
+ Modules matching this regular expression are subject to emumux insertion.
  This parameter takes a list of comma seperated module names and/or perl
  regular expressions.
 \layout List
 \labelwidthstring 00.00.0000
 
-'sigselect' Only signals matching this list or regex are muxed, if left
- empty it defaults to '.*' for input signals.
+
+\family typewriter 
+'sigselect'
+\family default 
+ Only signals matching this list or regex are muxed, if left empty it defaults
+ to '.*' for input signals.
  See also the 'options' parameter
 \layout List
 \labelwidthstring 00.00.0000
 
-'select' preset to 'emu_mux_%::inst%', MIX uses this value as mux select
- signal name.
+
+\family typewriter 
+'select'
+\family default 
+ preset to 'emu_mux_%::inst%', MIX uses this value as mux select signal
+ name.
  The name will be macro expanded.
  %::inst% is set to the current module name.
 \layout List
 \labelwidthstring 00.00.0000
 
-'define' preset to 'insert_emu_mux_%::inst%', MIX uses this value as `define
- selector.
+
+\family typewriter 
+'define'
+\family default 
+ preset to 'insert_emu_mux_%::inst%', MIX uses this value as `define selector.
  The name will be macro expandend.
 \layout List
 \labelwidthstring 00.00.0000
 
-'muxsnameo' preset to '%::name%_emux_s', naming for generated signal from
- mux to port.
+
+\family typewriter 
+'muxsnameo'
+\family default 
+ preset to '%::name%_emux_s', naming for generated signal from mux to port.
  %::name% gets expanded to the current signal name by the macro expansion.
 \layout List
 \labelwidthstring 00.00.0000
 
-'muxsnamei' preset to '%::name%_vc_s', naming for generated signal, insertion
- signal.
+
+\family typewriter 
+'muxsnamei'
+\family default 
+ preset to '%::name%_vc_s', naming for generated signal, insertion signal.
  Subject to macro expansion.
 \layout List
 \labelwidthstring 00.00.0000
 
-'options' defaults to 'in', defines extra (global) options like in | out
- | inout | leaf | nonleaf.
+
+\family typewriter 
+'options'
+\family default 
+ defaults to 'in', defines extra (global) options like in | out | inout
+ | leaf | nonleaf.
  MIX internal usage, only.
 \layout Standard
 
@@ -3975,16 +3959,19 @@ key=value, key2=value
 \layout Standard
 
 The emumux expansion is available for verilog modules, only.
- Please be aware, that special cases of port and signal splicing might wired
- incorrectly.
+ Please be aware, that special cases of port and signal splicing might be
+ wired incorrectly.
  
 \layout Subsection
 
 Writing report for module connectivity
 \layout Standard
 
-Use the option -report portlist to write a report about the module connectivity
- in MIF format.
+Use the option 
+\family typewriter 
+-report portlist
+\family default 
+ to write a report about the module connectivity in MIF format.
  The following config keys are available to influence the output:
 \newline 
 
@@ -4288,10 +4275,12 @@ Hierachy Generator Operators
 \layout Standard
 
 Another powerfull feature of MIX are the generator statements.
- The generators are applied after initial tool setup and connection macro
- evaluation, first the hierachy generators, then the connection generators.
+ The generators are applied after initial tool setup and after the connection
+ macro evaluation was done.
+ First all generators from hierachy get applied, then those from connectivity
+ sheets.
 \newline 
-
+ 
 \newline 
 Generators are defined in the ::gen column.
  Basically three types are available:
@@ -4299,17 +4288,29 @@ Generators are defined in the ::gen column.
 
 \layout Itemize
 
-Constructor generators: $i(N..M)
+Constructor generators: 
+\family typewriter 
+$i(N..M)
 \layout Itemize
 
-Match generator: /match_expression/
+Match generator: 
+\family typewriter 
+/match_expression/
 \layout Itemize
 
-Bounded match generator: $i(N..M),/match_expression/
+Bounded match generator: 
+\family typewriter 
+$i(N..M),/match_expression/
 \layout Standard
 
-match_expression is like perl(1) regular expressions, but with some extensions
- and specials.
+
+\family typewriter 
+match_expression
+\family default 
+ is a perl(1) regular expressions, but with some extensions and specials.
+ If not defined otherwise, the generator match expression is evaluated against
+ all instance names known at the time of evaluation.
+ Special keywords allow to change to the signal namespace.
 \newline 
 
 \layout Subsubsection
@@ -4317,10 +4318,17 @@ match_expression is like perl(1) regular expressions, but with some extensions
 Constructor Generator statement
 \layout Standard
 
-MIX takes the variable and the range definied in ::gen and evaluates the
- rest of the row for each value in the range.
+MIX takes the variable and the range definied in 
+\family typewriter 
+::gen
+\family default 
+ and evaluates the rest of the row for each value in the range.
  Currently only one variable is allowed and the range has to be of form
- (N..M).
+ 
+\family typewriter 
+(N..M)
+\family default 
+.
 \newline 
 
 \newline 
@@ -4337,14 +4345,41 @@ A simple example illustrates the usage:
 
 
 \newline 
- will give ten instances from inst_1 to inst_10, each being a submodule
- of inst_a with each having a entity inst_1_e to inst_10_e, dito.
+ will give ten instances from 
+\family typewriter 
+inst_1
+\family default 
+ to 
+\family typewriter 
+inst_10
+\family default 
+, each being a submodule of 
+\family typewriter 
+inst_a
+\family default 
+ with each having a entity 
+\family typewriter 
+inst_1_e
+\family default 
+ to 
+\family typewriter 
+inst_10_e
+\family default 
+, dito.
  for the configuration.
  Simple arithmetic can be applied to derive values from the run time parameter
- $i.
+ 
+\family typewriter 
+$i
+\family default 
+.
 \newline 
 Constructor's will yield new instances.
- An instance name has to be given in the ::inst column.
+ An instance name has to be given in the 
+\family typewriter 
+::inst
+\family default 
+ column.
 \newline 
 
 \layout Subsubsection
@@ -4352,18 +4387,41 @@ Constructor's will yield new instances.
 Match generator
 \layout Standard
 
-For each instance defined up to now, match_expression is evaluated.
- If this yields true, the line is executed.
- Parts of the expression in parantheses are used to set the variables $1,
- $2, ...
- accordingly.
+
+\family typewriter 
+match_expression
+\family default 
+ is evaluated against each instance name defined at that time.
+ If this yields true, the line gets executed.
+ Parts of the expression in parantheses are used to set the variables 
+\family typewriter 
+$1
+\family default 
+, 
+\family typewriter 
+$2
+\family default 
+, ...
+ as you would expect this in perl regular expressions.
  See the perl regular expression man page perlre(1) for more details.
  This variables can be used in the other cells.
  Simple arithmetic is possible, e.g.
- $i + 1 or $1 * 2.
+ 
+\family typewriter 
+$i + 1
+\family default 
+ or 
+\family typewriter 
+$1 * 2
+\family default 
+.
 \newline 
-A match generator will yield new instances only if the name in the ::inst
- column is set to a value different from the matching instance.
+A match generator will yield new instances only if the name in the 
+\family typewriter 
+::inst
+\family default 
+ column is set to a value different from the matching instance, otherwise
+ the current instance definition gets overloaded.
 \newline 
 
 \newline 
@@ -4371,7 +4429,15 @@ Example:
 \newline 
 
 \newline 
-XXX t.b.d.
+see 
+\begin_inset Quotes eld
+\end_inset 
+
+macro.xls
+\begin_inset Quotes erd
+\end_inset 
+
+
 \newline 
 
 \layout Subsubsection
@@ -4379,14 +4445,38 @@ XXX t.b.d.
 Bounded match generator
 \layout Standard
 
-By adding a run variable and a range $i(N..M), match generators can be restricted
- to only apply if the variable $i is within the range.
- $i has to be defined in match_expression and will match any number.
+By adding a run variable and a range 
+\family typewriter 
+$i(N..M)
+\family default 
+, a match generators can be restricted to only apply if the variable 
+\family typewriter 
+$i
+\family default 
+ is within the range.
+ 
+\family typewriter 
+$i
+\family default 
+ has to be defined in 
+\family typewriter 
+match_expression
+\family default 
+ and will match any number.
 \newline 
 
 \newline 
 In opposite to the constructor generator, MIX will not evaluate all possible
- values for $i, but only make sure $i stays within the bounds of the range.
+ values for 
+\family typewriter 
+$i
+\family default 
+, but only make sure 
+\family typewriter 
+$i
+\family default 
+ stays within the bounds of the range.
+ Only already exsisting instance names can successfully match thist expression.
 \newline 
 
 \newline 
@@ -4394,7 +4484,15 @@ Example:
 \newline 
 
 \newline 
-XXX t.b.d.
+see 
+\begin_inset Quotes eld
+\end_inset 
+
+macro.xls
+\begin_inset Quotes erd
+\end_inset 
+
+
 \newline 
 
 \layout Subsubsection
@@ -4402,10 +4500,14 @@ XXX t.b.d.
 Advanced features of the match generators
 \layout Standard
 
-The match expression can contain references to all fields of the to match
+The match expression can contain references to all fields of the matched
  object with the
 \newline 
-::NAME_OF_COL=string(match):: reference.
+
+\family typewriter 
+::NAME_OF_COL=string(match)::
+\family default 
+ reference.
 \newline 
 
 \newline 
@@ -4423,11 +4525,30 @@ E.g.
 
 
 \newline 
- will wire all instances iom_.* having a property ::pin in the given range
- with a newly defined signal i_N_N+1.
- iom_foo with ::pin = 270 port serial_o will drive the signal i_270_271,
- the instance iom_bar with ::pin = 271 is connected to the signal i_270_271
- to it's port serial_i by the next line.
+ will wire all instances iom_.* having a property 
+\family typewriter 
+::pin
+\family default 
+ in the given range with a newly defined signal 
+\family typewriter 
+i_N_N+1
+\family default 
+.
+ 
+\family typewriter 
+iom_foo
+\family default 
+ with 
+\family typewriter 
+::pin
+\family default 
+ = 270 port 
+\family typewriter 
+serial_o
+\family default 
+ will drive the signal i_270_271, the instance iom_bar with ::pin = 271
+ is connected to the signal i_270_271 to it's port serial_i by the next
+ line.
  for instance iom_foo only the first line matches, thus that module will
  net get a connection to serial_i by these generator lines.
 \newline 
@@ -4452,17 +4573,72 @@ hspace*{10mm}
 Additional Information
 \layout Standard
 
-Match generators work the same way on the CONN sheets.
+Match generators work for signals and instances the same way on the CONN
+ sheets.
  By default the match expression will match against all defined instances,
  not connections.
 \newline 
-To make a match expression iterate over all connection, prefix the whole
- expression by the CONN: keyword.
+To make a match expression iterate over all known signal names, prefix the
+ whole expression by the 
+\family typewriter 
+CONN
+\family default 
+ keyword.
 \newline 
+To access single bits from signals, mark the generator with the 
+\family typewriter 
+CONN:SPLICE
+\family default 
+ keyword.
+ These generator will be executed for each signal bit, the variable 
+\family typewriter 
+$s
+\family default 
+ will provide the bit number.
+\layout Subsubsection
 
-\newline 
-Please have a look into the distributed howto.xls and the macro.xls in the
- test case directory t to see more examples.
+IF/ELSIF/ELSE
+\layout Standard
+
+Since the release from 2007-03-06 you can apply the keywords 
+\family typewriter 
+IF
+\family default 
+, 
+\family typewriter 
+ELSIF
+\family default 
+ and 
+\family typewriter 
+ELSE
+\family default 
+ to bind consecutive generator lines together.
+ 
+\family typewriter 
+IF
+\family default 
+ is optional.
+ The keyword 
+\family typewriter 
+ELSIF
+\family default 
+ and 
+\family typewriter 
+ELSE
+\family default 
+ at the beginning of the 
+\family typewriter 
+::gen
+\family default 
+ cell will make sure the generator line gets executed only in case the predecess
+or line did not match.
+\layout Standard
+
+Please have a look into the distributed howto.xls and the 
+\family typewriter 
+macro.xls
+\family default 
+ in the test case directory to see more examples.
 \layout Section
 
 IO sheet
@@ -4995,11 +5171,7 @@ IO sheet %SEL% rows
 
 The rows with the key 
 \family typewriter 
-
-\backslash 
-%SEL
-\backslash 
-%
+%SEL%
 \family default 
  in the 
 \family typewriter 
@@ -5044,32 +5216,20 @@ core_cel(N)
  fields also define the width of the multiplexer.
  The actual multiplexer width is stored in the 
 \family typewriter 
-
-\backslash 
-%::_muxwidth_
-\backslash 
-%
+%::_muxwidth_%
 \family default 
  field.
 \newline 
 The given values for the select lines are valid until the last row or another
  
 \family typewriter 
-
-\backslash 
-%SEL
-\backslash 
-%
+%SEL%
 \family default 
  line is found.
 \newline 
 
 \family typewriter 
-
-\backslash 
-%NOSEL
-\backslash 
-%
+%NOSEL%
 \family default 
  will stop usage of in/out multiplexer and select lines.
 \newline 
@@ -5139,15 +5299,7 @@ hspace*{20mm}
 
 
 \family typewriter 
-pad.name = 
-\backslash 
-%PREFIX_PAD_GEN
-\backslash 
-%
-\backslash 
-%::pad
-\backslash 
-%
+pad.name = %PREFIX_PAD_GEN%%::pad%
 \family default 
 
 \newline 
@@ -5163,15 +5315,7 @@ hspace*{20mm}
 
 
 \family typewriter 
-iocell.name = 
-\backslash 
-%::iocell
-\backslash 
-%_
-\backslash 
-%::pad
-\backslash 
-%
+iocell.name = %::iocell%_%::pad%
 \family default 
 
 \newline 
@@ -5268,13 +5412,7 @@ iocell.name
  Rule determines naming of the io cell instances.
  Default "
 \family typewriter 
-
-\backslash 
-%::iocell_
-\backslash 
-%::pad
-\backslash 
-%
+%::iocell%%::pad%
 \family default 
 " 
 \end_inset 
@@ -5444,11 +5582,7 @@ auto
 
  calculate width of select bus or one-hot based on 
 \family typewriter 
-
-\backslash 
-%SEL
-\backslash 
-%
+%SEL%
 \family default 
  width; Default: 
 \family typewriter 
@@ -5475,15 +5609,7 @@ pad.name
  Rule determines the naming of the pad instances.
  Default: "
 \family typewriter 
-
-\backslash 
-%PREFIX_PAD_GEN
-\backslash 
-%
-\backslash 
-%::pad
-\backslash 
-%
+%PREFIX_PAD_GEN%%::pad%
 \family default 
 "  
 \end_inset 
@@ -6691,9 +6817,9 @@ Register Views Global Configuration
 \begin_inset  Tabular
 <lyxtabular version="3" rows="9" columns="4">
 <features>
-<column alignment="left" valignment="top" leftline="true" width="0">
-<column alignment="center" valignment="top" leftline="true" width="0">
-<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="left" valignment="top" leftline="true" width="0sp">
+<column alignment="center" valignment="top" leftline="true" width="0sp">
+<column alignment="center" valignment="top" leftline="true" width="0sp">
 <column alignment="left" valignment="top" leftline="true" rightline="true" width="2in">
 <row topline="true" bottomline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
@@ -7041,9 +7167,9 @@ Configuration
 \begin_inset  Tabular
 <lyxtabular version="3" rows="8" columns="4">
 <features>
-<column alignment="left" valignment="top" leftline="true" width="0">
+<column alignment="left" valignment="top" leftline="true" width="0sp">
 <column alignment="block" valignment="top" leftline="true" width="1.2in">
-<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="center" valignment="top" leftline="true" width="0sp">
 <column alignment="block" valignment="top" leftline="true" rightline="true" width="2in">
 <row topline="true" bottomline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
@@ -7387,9 +7513,9 @@ Configuration
 \begin_inset  Tabular
 <lyxtabular version="3" rows="4" columns="4">
 <features>
-<column alignment="left" valignment="top" leftline="true" width="0">
-<column alignment="center" valignment="top" leftline="true" width="0">
-<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="left" valignment="top" leftline="true" width="0sp">
+<column alignment="center" valignment="top" leftline="true" width="0sp">
+<column alignment="center" valignment="top" leftline="true" width="0sp">
 <column alignment="block" valignment="top" leftline="true" rightline="true" width="2in">
 <row topline="true" bottomline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
