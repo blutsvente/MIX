@@ -19506,3 +19506,317 @@ ipeline> not found!
 07/03/06 12:39:40 2072: SUM: Minimum run time: n/a
 07/03/06 12:39:40 2072: SUM: Maximum run time: n/a
 07/03/06 12:39:40 2072: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/06 17:28:22 1856: bitsplice.xls in directory bitsplice, time : 34.42s
+07/03/06 17:28:31 1856: bitsplice.xls in directory bitsplice/verilog, time : 8.75s
+07/03/06 17:28:39 1856: bitsplice.xls in directory bitsplice/vhdportsort, time : 8.51s
+07/03/06 17:28:47 1856: bitsplice.xls in directory bitsplice/verportsort, time : 7.83s
+07/03/06 17:28:53 1856: bitsplice.xls in directory bitsplice/rfe20060904a, time : 6.42s
+07/03/06 17:29:02 1856: bitsplice.xls in directory bitsplice/connport failed, time: 8.66s changes: i/l/f/e -2/1/-2/-2
+07/03/06 17:29:11 1856: sigport.xls in directory sigport failed, time: 8.61s changes: i/l/f/e -2/1/-2/-2
+07/03/06 17:29:19 1856: sigport.xls in directory sigport/use, time : 8.62s
+07/03/06 17:29:26 1856: sigport.xls in directory sigport/verilog, time : 6.51s
+07/03/06 17:29:33 1856: highlow.xls in directory highlow, time : 7.22s
+07/03/06 17:29:40 1856: highlow.xls in directory highlow/verilog, time : 6.26s
+07/03/06 17:29:46 1856: highlow.xls in directory highlow/lownobus, time : 6.49s
+07/03/06 17:29:55 1856: mde_tests.xls in directory mde_tests/conn_nreset, time : 8.69s
+07/03/06 17:30:04 1856: mde_tests.xls in directory mde_tests/conn_nr_vhdl, time : 8.74s
+07/03/06 17:30:11 1856: constant.xls in directory constant failed, time: 7.40s changes: i/l/f/e -2/1/-2/-2
+07/03/06 17:30:18 1856: constant.xls in directory constant/verilog failed, time: 6.61s changes: i/l/f/e -2/1/-2/-2
+07/03/06 17:30:24 1856: case.xls in directory case, time : 6.28s
+07/03/06 17:30:32 1856: case.xls in directory case/check, time : 7.58s
+07/03/06 17:30:38 1856: case.xls in directory case/force, time : 5.68s
+07/03/06 17:30:44 1856: io.xls in directory io, time : 6.33s
+07/03/06 17:30:50 1856: io.xls in directory io/verilog, time : 5.74s
+07/03/06 17:30:58 1856: generic.xls in directory generic, time : 7.47s
+07/03/06 17:31:04 1856: generic.xls in directory generic/verilog, time : 6.55s
+07/03/06 17:31:11 1856: generic.xls in directory generic/veriovhd, time : 6.67s
+07/03/06 17:31:17 1856: generic.xls in directory generic/nodefparam, time : 6.07s
+07/03/06 17:31:22 1856: genwidth.xls in directory genwidth, time : 5.44s
+07/03/06 17:31:28 1856: genwidth.xls in directory genwidth/verilog, time : 5.58s
+07/03/06 17:31:34 1856: nreset2.xls in directory nreset2, time : 6.35s
+07/03/06 17:31:40 1856: open.xls in directory open, time : 5.38s
+07/03/06 17:31:46 1856: open.xls in directory open/verilog, time : 6.00s
+07/03/06 17:31:51 1856: open.xls in directory open/verilog_ndmy, time : 5.43s
+07/03/06 17:32:05 1856: macro.xls in directory macro, time : 13.81s
+07/03/06 17:32:12 1856: macro.xls in directory macro/splice, time : 6.32s
+07/03/06 17:32:18 1856: macro.xls in directory macro/variant, time : 6.64s
+07/03/06 17:32:24 1856: macro.xls in directory macro/ifelsif, time : 5.99s
+07/03/06 17:32:31 1856: verilog.xls in directory verilog, time : 6.79s
+07/03/06 17:32:38 1856: verilog.xls in directory verilog/vhdl, time : 6.50s
+07/03/06 17:32:45 1856: verilog.xls in directory verilog/mixed, time : 6.83s
+07/03/06 17:32:50 1856: verilog.xls in directory verilog/uamn, time : 5.63s
+07/03/06 17:32:56 1856: verilog.xls in directory verilog/useconfname, time : 5.89s
+07/03/06 17:33:02 1856: verilog.xls in directory verilog/leaforeg, time : 5.81s
+07/03/06 17:33:08 1856: verilog.xls in directory verilog/seloreg, time : 5.84s
+07/03/06 17:33:14 1856: verilog.xls in directory verilog/v2001, time : 6.30s
+07/03/06 17:33:20 1856: verilog.xls in directory verilog/verimap, time : 5.93s
+07/03/06 17:33:27 1856: verilog.xls in directory verilog/emumuxall, time : 6.43s
+07/03/06 17:33:33 1856: verilog.xls in directory verilog/vinc, time : 5.88s
+07/03/06 17:33:39 1856: configuration.xls in directory configuration, time : 6.67s
+07/03/06 17:33:46 1856: configuration.xls in directory configuration/cmdline, time : 6.30s
+07/03/06 17:33:52 1856: configuration.xls in directory configuration/cfgfile, time : 6.00s
+07/03/06 17:34:03 1856: padio.xls in directory padio, time : 11.54s
+07/03/06 17:34:14 1856: padio.xls in directory padio/names, time : 10.25s
+07/03/06 17:34:23 1856: padio.xls in directory padio/bus, time : 9.18s
+07/03/06 17:34:33 1856: padio.xls in directory padio/given, time : 9.99s
+07/03/06 17:34:46 1856: padio2.xls in directory padio2, time : 12.64s
+07/03/06 17:34:52 1856: typecast.xls in directory typecast, time : 5.91s
+07/03/06 17:34:58 1856: typecast.xls in directory typecast/intsig, time : 6.11s
+07/03/06 17:35:03 1856: typecast.xls in directory typecast/intbus, time : 5.60s
+07/03/06 17:35:07 1856: init.xls in directory init, time : 3.15s
+07/03/06 17:35:14 1856: autoopen.xls in directory autoopen, time : 6.90s
+07/03/06 17:35:20 1856: autoopen.xls in directory autoopen/aaa, time : 6.65s
+07/03/06 17:35:26 1856: autoopen.xls in directory autoopen/simple, time : 5.90s
+07/03/06 17:35:32 1856: autoopen.xls in directory autoopen/noaopen, time : 6.05s
+07/03/06 17:35:38 1856: hier.xls in directory hier/auto, time : 5.19s
+07/03/06 17:35:43 1856: portlist.xls in directory portlist failed, time: 5.72s changes: i/l/f/e -2/1/-2/-2
+07/03/06 17:35:50 1856: portlist.xls in directory portlist/low failed, time: 6.23s changes: i/l/f/e -2/1/-2/-2
+07/03/06 17:36:01 1856: bugver.xls in directory bugver/ramd failed, time: 11.17s changes: i/l/f/e -2/1/-2/-2
+07/03/06 17:36:10 1856: bugver.xls in directory bugver/constbug failed, time: 9.32s changes: i/l/f/e -2/1/-2/-2
+07/03/06 17:36:19 1856: bugver.xls in directory bugver/20051004c, time : 9.06s
+07/03/06 17:36:29 1856: bugver.xls in directory bugver/20051014b, time : 9.58s
+07/03/06 17:36:38 1856: bugver.xls in directory bugver/20051018d, time : 9.10s
+07/03/06 17:36:48 1856: bugver.xls in directory bugver/20051121a, time : 9.83s
+07/03/06 17:36:57 1856: bugver.xls in directory bugver/20051221a, time : 9.02s
+07/03/06 17:37:06 1856: bugver.xls in directory bugver/20060404c, time : 9.02s
+07/03/06 17:37:15 1856: bugver.xls in directory bugver/20060424a, time : 9.03s
+07/03/06 17:37:22 1856: bugver2006.xls in directory bugver2006/20060522a failed, time: 6.67s changes: i/l/f/e -2/1/-2/-2
+07/03/06 17:37:29 1856: bugver2006.xls in directory bugver2006/20060522b failed, time: 6.70s changes: i/l/f/e -2/1/-2/-2
+07/03/06 17:37:35 1856: bugver2006.xls in directory bugver2006/20061017a, time : 6.22s
+07/03/06 17:37:42 1856: bugver2006.xls in directory bugver2006/20061113a failed, time: 6.38s changes: i/l/f/e -2/1/-2/-2
+07/03/06 17:37:47 1856: bugver2006.xls in directory bugver2006/20061127a, time : 5.52s
+07/03/06 17:37:54 1856: bugver2006.xls in directory bugver2006/20061214a, time : 6.44s
+07/03/06 17:38:00 1856: logic.xls in directory logic, time : 6.53s
+07/03/06 17:38:06 1856: logic.xls in directory logic/verilog failed, time: 6.07s changes: i/l/f/e -2/1/-2/-2
+07/03/06 17:38:13 1856: udc.xls in directory udc, time : 6.56s
+07/03/06 17:38:19 1856: udc.xls in directory udc/verilog, time : 6.03s
+07/03/06 17:38:25 1856: udc.xls in directory udc/inst, time : 6.17s
+07/03/06 17:38:31 1856: udc.xls in directory udc/mix, time : 6.11s
+07/03/06 17:38:38 1856: intra.xls in directory intra, time : 6.22s
+07/03/06 17:38:51 1856: intra.xls in directory intra/instance, time : 13.43s
+07/03/06 17:38:56 1856: duplicate.xls in directory duplicate failed, time: 5.27s changes: i/l/f/e -2/1/-2/-2
+07/03/06 17:38:56 1856: SUM: Sucessfully timed tests: 76
+07/03/06 17:38:56 1856: SUM: Overall run time: 569.51s
+07/03/06 17:38:56 1856: SUM: Average run time: 7.49s
+07/03/06 17:38:56 1856: SUM: Minimum run time: 3.15s
+07/03/06 17:38:56 1856: SUM: Maximum run time: 34.42s
+07/03/06 17:38:57 1856: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/07 06:03:18 3136: SUM: Sucessfully timed tests: 0
+07/03/07 06:03:18 3136: SUM: Overall run time: 0.00s
+07/03/07 06:03:18 3136: SUM: Average run time: n/a
+07/03/07 06:03:18 3136: SUM: Minimum run time: n/a
+07/03/07 06:03:18 3136: SUM: Maximum run time: n/a
+07/03/07 06:03:18 3136: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/07 06:03:55 3392: bitsplice.xls in directory bitsplice/connport, time : 23.29s
+07/03/07 06:03:55 3392: SUM: Sucessfully timed tests: 1
+07/03/07 06:03:55 3392: SUM: Overall run time: 23.29s
+07/03/07 06:03:55 3392: SUM: Average run time: 23.29s
+07/03/07 06:03:55 3392: SUM: Minimum run time: 23.29s
+07/03/07 06:03:55 3392: SUM: Maximum run time: 23.29s
+07/03/07 06:03:55 3392: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/07 06:04:19 1964: SUM: Sucessfully timed tests: 0
+07/03/07 06:04:19 1964: SUM: Overall run time: 0.00s
+07/03/07 06:04:19 1964: SUM: Average run time: n/a
+07/03/07 06:04:19 1964: SUM: Minimum run time: n/a
+07/03/07 06:04:19 1964: SUM: Maximum run time: n/a
+07/03/07 06:04:19 1964: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/07 06:04:30 352: sigport.xls in directory sigport, time : 5.01s
+07/03/07 06:04:30 352: SUM: Sucessfully timed tests: 1
+07/03/07 06:04:30 352: SUM: Overall run time: 5.01s
+07/03/07 06:04:30 352: SUM: Average run time: 5.01s
+07/03/07 06:04:30 352: SUM: Minimum run time: 5.01s
+07/03/07 06:04:30 352: SUM: Maximum run time: 5.01s
+07/03/07 06:04:30 352: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/07 06:19:47 3724: SUM: Sucessfully timed tests: 0
+07/03/07 06:19:47 3724: SUM: Overall run time: 0.00s
+07/03/07 06:19:47 3724: SUM: Average run time: n/a
+07/03/07 06:19:47 3724: SUM: Minimum run time: n/a
+07/03/07 06:19:47 3724: SUM: Maximum run time: n/a
+07/03/07 06:19:47 3724: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/07 06:22:05 1504: SUM: Sucessfully timed tests: 0
+07/03/07 06:22:05 1504: SUM: Overall run time: 0.00s
+07/03/07 06:22:05 1504: SUM: Average run time: n/a
+07/03/07 06:22:05 1504: SUM: Minimum run time: n/a
+07/03/07 06:22:05 1504: SUM: Maximum run time: n/a
+07/03/07 06:22:05 1504: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/07 06:25:29 628: SUM: Sucessfully timed tests: 0
+07/03/07 06:25:29 628: SUM: Overall run time: 0.00s
+07/03/07 06:25:29 628: SUM: Average run time: n/a
+07/03/07 06:25:29 628: SUM: Minimum run time: n/a
+07/03/07 06:25:29 628: SUM: Maximum run time: n/a
+07/03/07 06:25:29 628: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/07 06:26:32 3500: portlist.xls in directory portlist, time : 4.32s
+07/03/07 06:26:32 3500: SUM: Sucessfully timed tests: 1
+07/03/07 06:26:32 3500: SUM: Overall run time: 4.32s
+07/03/07 06:26:32 3500: SUM: Average run time: 4.32s
+07/03/07 06:26:32 3500: SUM: Minimum run time: 4.32s
+07/03/07 06:26:32 3500: SUM: Maximum run time: 4.32s
+07/03/07 06:26:32 3500: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/07 06:27:08 460: SUM: Sucessfully timed tests: 0
+07/03/07 06:27:08 460: SUM: Overall run time: 0.00s
+07/03/07 06:27:08 460: SUM: Average run time: n/a
+07/03/07 06:27:08 460: SUM: Minimum run time: n/a
+07/03/07 06:27:08 460: SUM: Maximum run time: n/a
+07/03/07 06:27:08 460: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/07 06:27:17 652: portlist.xls in directory portlist/low, time : 4.30s
+07/03/07 06:27:17 652: SUM: Sucessfully timed tests: 1
+07/03/07 06:27:17 652: SUM: Overall run time: 4.30s
+07/03/07 06:27:17 652: SUM: Average run time: 4.30s
+07/03/07 06:27:17 652: SUM: Minimum run time: 4.30s
+07/03/07 06:27:17 652: SUM: Maximum run time: 4.30s
+07/03/07 06:27:17 652: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/07 06:29:57 4060: bugver.xls in directory bugver/ramd, time : 11.30s
+07/03/07 06:29:57 4060: SUM: Sucessfully timed tests: 1
+07/03/07 06:29:57 4060: SUM: Overall run time: 11.30s
+07/03/07 06:29:57 4060: SUM: Average run time: 11.30s
+07/03/07 06:29:57 4060: SUM: Minimum run time: 11.30s
+07/03/07 06:29:57 4060: SUM: Maximum run time: 11.30s
+07/03/07 06:29:57 4060: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/07 06:30:16 1000: SUM: Sucessfully timed tests: 0
+07/03/07 06:30:16 1000: SUM: Overall run time: 0.00s
+07/03/07 06:30:16 1000: SUM: Average run time: n/a
+07/03/07 06:30:16 1000: SUM: Minimum run time: n/a
+07/03/07 06:30:16 1000: SUM: Maximum run time: n/a
+07/03/07 06:30:16 1000: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/07 06:30:27 2644: bugver.xls in directory bugver/ramd, time : 9.01s
+07/03/07 06:30:27 2644: SUM: Sucessfully timed tests: 1
+07/03/07 06:30:27 2644: SUM: Overall run time: 9.01s
+07/03/07 06:30:27 2644: SUM: Average run time: 9.01s
+07/03/07 06:30:27 2644: SUM: Minimum run time: 9.01s
+07/03/07 06:30:27 2644: SUM: Maximum run time: 9.01s
+07/03/07 06:30:27 2644: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/07 06:35:05 1352: SUM: Sucessfully timed tests: 0
+07/03/07 06:35:05 1352: SUM: Overall run time: 0.00s
+07/03/07 06:35:05 1352: SUM: Average run time: n/a
+07/03/07 06:35:05 1352: SUM: Minimum run time: n/a
+07/03/07 06:35:05 1352: SUM: Maximum run time: n/a
+07/03/07 06:35:05 1352: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/07 06:35:19 896: SUM: Sucessfully timed tests: 0
+07/03/07 06:35:19 896: SUM: Overall run time: 0.00s
+07/03/07 06:35:19 896: SUM: Average run time: n/a
+07/03/07 06:35:19 896: SUM: Minimum run time: n/a
+07/03/07 06:35:19 896: SUM: Maximum run time: n/a
+07/03/07 06:35:19 896: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/07 06:35:31 3668: bugver2006.xls in directory bugver2006/20060522a failed, time: 5.29s changes: i/l/f/e -2/1/-2/-2
+07/03/07 06:35:31 3668: SUM: Sucessfully timed tests: 0
+07/03/07 06:35:31 3668: SUM: Overall run time: 0.00s
+07/03/07 06:35:31 3668: SUM: Average run time: n/a
+07/03/07 06:35:31 3668: SUM: Minimum run time: n/a
+07/03/07 06:35:31 3668: SUM: Maximum run time: n/a
+07/03/07 06:35:31 3668: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/07 06:37:39 3424: bugver2006.xls in directory bugver2006/20060522a failed, time: 5.32s changes: i/l/f/e -2/1/-2/-2
+07/03/07 06:37:39 3424: SUM: Sucessfully timed tests: 0
+07/03/07 06:37:39 3424: SUM: Overall run time: 0.00s
+07/03/07 06:37:39 3424: SUM: Average run time: n/a
+07/03/07 06:37:39 3424: SUM: Minimum run time: n/a
+07/03/07 06:37:39 3424: SUM: Maximum run time: n/a
+07/03/07 06:37:39 3424: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/07 09:23:30 3740: bitsplice.xls in directory bitsplice, time : 18.83s
+07/03/07 09:23:40 3740: bitsplice.xls in directory bitsplice/verilog, time : 10.51s
+07/03/07 09:23:50 3740: bitsplice.xls in directory bitsplice/vhdportsort, time : 9.41s
+07/03/07 09:23:58 3740: bitsplice.xls in directory bitsplice/verportsort, time : 8.42s
+07/03/07 09:24:05 3740: bitsplice.xls in directory bitsplice/rfe20060904a, time : 6.59s
+07/03/07 09:24:14 3740: bitsplice.xls in directory bitsplice/connport, time : 9.33s
+07/03/07 09:24:22 3740: sigport.xls in directory sigport, time : 7.13s
+07/03/07 09:24:30 3740: sigport.xls in directory sigport/use, time : 8.65s
+07/03/07 09:24:37 3740: sigport.xls in directory sigport/verilog, time : 6.46s
+07/03/07 09:24:43 3740: highlow.xls in directory highlow, time : 5.89s
+07/03/07 09:24:49 3740: highlow.xls in directory highlow/verilog, time : 5.97s
+07/03/07 09:24:56 3740: highlow.xls in directory highlow/lownobus, time : 7.22s
+07/03/07 09:25:05 3740: mde_tests.xls in directory mde_tests/conn_nreset, time : 8.95s
+07/03/07 09:25:17 3740: mde_tests.xls in directory mde_tests/conn_nr_vhdl, time : 11.96s
+07/03/07 09:25:27 3740: constant.xls in directory constant failed, time: 9.44s changes: i/l/f/e -2/1/-2/-2
+07/03/07 09:25:35 3740: constant.xls in directory constant/verilog failed, time: 8.20s changes: i/l/f/e -2/1/-2/-2
+07/03/07 09:25:43 3740: case.xls in directory case, time : 7.89s
+07/03/07 09:25:51 3740: case.xls in directory case/check, time : 7.45s
+07/03/07 09:26:01 3740: case.xls in directory case/force, time : 10.48s
+07/03/07 09:26:07 3740: io.xls in directory io, time : 6.05s
+07/03/07 09:26:13 3740: io.xls in directory io/verilog, time : 5.41s
+07/03/07 09:26:20 3740: generic.xls in directory generic, time : 7.29s
+07/03/07 09:26:27 3740: generic.xls in directory generic/verilog, time : 6.76s
+07/03/07 09:26:34 3740: generic.xls in directory generic/veriovhd, time : 6.56s
+07/03/07 09:26:43 3740: generic.xls in directory generic/nodefparam, time : 9.12s
+07/03/07 09:26:50 3740: genwidth.xls in directory genwidth, time : 7.03s
+07/03/07 09:26:55 3740: genwidth.xls in directory genwidth/verilog, time : 5.35s
+07/03/07 09:27:02 3740: nreset2.xls in directory nreset2, time : 6.38s
+07/03/07 09:27:07 3740: open.xls in directory open, time : 5.35s
+07/03/07 09:27:13 3740: open.xls in directory open/verilog, time : 5.54s
+07/03/07 09:27:18 3740: open.xls in directory open/verilog_ndmy, time : 4.98s
+07/03/07 09:27:32 3740: macro.xls in directory macro, time : 13.99s
+07/03/07 09:27:38 3740: macro.xls in directory macro/splice, time : 6.35s
+07/03/07 09:27:44 3740: macro.xls in directory macro/variant, time : 6.27s
+07/03/07 09:27:50 3740: macro.xls in directory macro/ifelsif, time : 5.34s
+07/03/07 09:27:56 3740: verilog.xls in directory verilog, time : 6.11s
+07/03/07 09:28:03 3740: verilog.xls in directory verilog/vhdl, time : 6.49s
+07/03/07 09:28:09 3740: verilog.xls in directory verilog/mixed, time : 6.14s
+07/03/07 09:28:14 3740: verilog.xls in directory verilog/uamn, time : 5.74s
+07/03/07 09:28:20 3740: verilog.xls in directory verilog/useconfname, time : 5.69s
+07/03/07 09:28:26 3740: verilog.xls in directory verilog/leaforeg, time : 5.70s
+07/03/07 09:28:31 3740: verilog.xls in directory verilog/seloreg, time : 5.59s
+07/03/07 09:28:37 3740: verilog.xls in directory verilog/v2001, time : 5.64s
+07/03/07 09:28:42 3740: verilog.xls in directory verilog/verimap, time : 5.29s
+07/03/07 09:28:48 3740: verilog.xls in directory verilog/emumuxall, time : 6.01s
+07/03/07 09:28:55 3740: verilog.xls in directory verilog/vinc, time : 6.04s
+07/03/07 09:29:01 3740: configuration.xls in directory configuration, time : 5.98s
+07/03/07 09:29:06 3740: configuration.xls in directory configuration/cmdline, time : 5.51s
+07/03/07 09:29:12 3740: configuration.xls in directory configuration/cfgfile, time : 5.73s
+07/03/07 09:29:22 3740: padio.xls in directory padio, time : 9.85s
+07/03/07 09:29:31 3740: padio.xls in directory padio/names, time : 9.34s
+07/03/07 09:29:40 3740: padio.xls in directory padio/bus, time : 9.16s
+07/03/07 09:29:51 3740: padio.xls in directory padio/given, time : 10.39s
+07/03/07 09:30:03 3740: padio2.xls in directory padio2, time : 12.15s
+07/03/07 09:30:09 3740: typecast.xls in directory typecast, time : 5.43s
+07/03/07 09:30:14 3740: typecast.xls in directory typecast/intsig, time : 5.23s
+07/03/07 09:30:20 3740: typecast.xls in directory typecast/intbus, time : 6.17s
+07/03/07 09:30:23 3740: init.xls in directory init, time : 2.77s
+07/03/07 09:30:29 3740: autoopen.xls in directory autoopen, time : 6.49s
+07/03/07 09:30:36 3740: autoopen.xls in directory autoopen/aaa, time : 6.13s
+07/03/07 09:30:41 3740: autoopen.xls in directory autoopen/simple, time : 5.79s
+07/03/07 09:30:47 3740: autoopen.xls in directory autoopen/noaopen, time : 5.70s
+07/03/07 09:30:52 3740: hier.xls in directory hier/auto, time : 4.92s
+07/03/07 09:30:57 3740: portlist.xls in directory portlist, time : 5.06s
+07/03/07 09:31:02 3740: portlist.xls in directory portlist/low, time : 4.76s
+07/03/07 09:31:13 3740: bugver.xls in directory bugver/ramd, time : 10.52s
+07/03/07 09:31:22 3740: bugver.xls in directory bugver/constbug failed, time: 8.99s changes: i/l/f/e -2/1/-2/-2
+07/03/07 09:31:30 3740: bugver.xls in directory bugver/20051004c, time : 8.69s
+07/03/07 09:31:40 3740: bugver.xls in directory bugver/20051014b, time : 9.16s
+07/03/07 09:31:49 3740: bugver.xls in directory bugver/20051018d, time : 8.84s
+07/03/07 09:31:58 3740: bugver.xls in directory bugver/20051121a, time : 9.37s
+07/03/07 09:32:07 3740: bugver.xls in directory bugver/20051221a, time : 8.77s
+07/03/07 09:32:15 3740: bugver.xls in directory bugver/20060404c, time : 8.68s
+07/03/07 09:32:25 3740: bugver.xls in directory bugver/20060424a, time : 9.38s
+07/03/07 09:32:31 3740: bugver2006.xls in directory bugver2006/20060522a failed, time: 6.07s changes: i/l/f/e -2/1/-2/-2
+07/03/07 09:32:37 3740: bugver2006.xls in directory bugver2006/20060522b failed, time: 5.92s changes: i/l/f/e -2/1/-2/-2
+07/03/07 09:32:43 3740: bugver2006.xls in directory bugver2006/20061017a, time : 6.26s
+07/03/07 09:32:49 3740: bugver2006.xls in directory bugver2006/20061113a failed, time: 5.78s changes: i/l/f/e -2/1/-2/-2
+07/03/07 09:32:55 3740: bugver2006.xls in directory bugver2006/20061127a, time : 5.34s
+07/03/07 09:33:01 3740: bugver2006.xls in directory bugver2006/20061214a, time : 6.24s
+07/03/07 09:33:07 3740: logic.xls in directory logic, time : 5.88s
+07/03/07 09:33:12 3740: logic.xls in directory logic/verilog failed, time: 5.53s changes: i/l/f/e -2/1/-2/-2
+07/03/07 09:33:18 3740: udc.xls in directory udc, time : 5.80s
+07/03/07 09:33:24 3740: udc.xls in directory udc/verilog, time : 5.83s
+07/03/07 09:33:31 3740: udc.xls in directory udc/inst, time : 6.40s
+07/03/07 09:33:37 3740: udc.xls in directory udc/mix, time : 6.10s
+07/03/07 09:33:44 3740: intra.xls in directory intra, time : 7.31s
+07/03/07 09:34:01 3740: intra.xls in directory intra/instance, time : 17.09s
+07/03/07 09:34:06 3740: duplicate.xls in directory duplicate failed, time: 5.01s changes: i/l/f/e -2/1/-2/-2
+07/03/07 09:34:06 3740: SUM: Sucessfully timed tests: 81
+07/03/07 09:34:06 3740: SUM: Overall run time: 595.56s
+07/03/07 09:34:06 3740: SUM: Average run time: 7.35s
+07/03/07 09:34:06 3740: SUM: Minimum run time: 2.77s
+07/03/07 09:34:06 3740: SUM: Maximum run time: 18.83s
+07/03/07 09:34:06 3740: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/07 17:42:47 1720: bugver2006.xls in directory bugver2006/20060522a failed, time: 18.95s changes: i/l/f/e -2/1/-2/-2
+07/03/07 17:42:47 1720: SUM: Sucessfully timed tests: 0
+07/03/07 17:42:47 1720: SUM: Overall run time: 0.00s
+07/03/07 17:42:47 1720: SUM: Average run time: n/a
+07/03/07 17:42:47 1720: SUM: Minimum run time: n/a
+07/03/07 17:42:47 1720: SUM: Maximum run time: n/a
+07/03/07 17:42:47 1720: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin
+07/03/07 17:42:58 2568: bugver2006.xls in directory bugver2006/20060522a, time : 6.17s
+07/03/07 17:42:58 2568: SUM: Sucessfully timed tests: 1
+07/03/07 17:42:58 2568: SUM: Overall run time: 6.17s
+07/03/07 17:42:58 2568: SUM: Average run time: 6.17s
+07/03/07 17:42:58 2568: SUM: Minimum run time: 6.17s
+07/03/07 17:42:58 2568: SUM: Maximum run time: 6.17s
+07/03/07 17:42:58 2568: SUM: host: N-WGaensheimer2; arch: ARCH; clock: CLOCK; os: cygwin

@@ -22,6 +22,7 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 use strict;
 use warnings;
 use Cwd;
+use FileHandle;
 use DirHandle;
 use File::Basename;
 use File::Copy;
@@ -751,7 +752,7 @@ sub runMix($) {
 	
 		# Do not use built-in, but external command
 		#  either   test-mode.sh or test.sh -mode mode
-	    if( gotScript($path, "$tests[$i]->{'name'}$cmd_ext") == 1 ) {
+	    if( gotScript($path, $tests[$i]->{'name'} . $cmd_ext ) == 1 ) {
 	    	for my $opt ( qw( export debug purge update import ) ) {
 	    		if( defined $opts{$opt}) {
 	    			$ENV{'MIXTEST_OPT'} .= $opt . ' '; 
@@ -975,8 +976,8 @@ sub doImport ($$$) {
 	}
 
 	# Copy input file:
-	if ( -r dirname( $store_cwd ) . "/results/" . $test . "." . $type ) {
-		copy( dirname( $store_cwd ) . "/results/" . $test . "." . $type, $test . "." . $type )
+	if ( -r dirname( $store_cwd ) . '/results/' . $test . '.' . $type ) {
+		copy( dirname( $store_cwd ) . '/results/' . $test . '.' . $type, $test . '.' . $type )
 			or print( "ERROR: Cannot copy $test.$type to target $store_cwd: $!\n" );
 	} else {
 		print( "ERROR: Missing input file $test.$type, skipped!\n" );
@@ -990,7 +991,7 @@ sub doImport ($$$) {
 
 	# Remove all files in $path (!! Has no backup !!)
 	if ( chdir( $path ) ) {
-		my $d = new DirHandle ".";
+		my $d = new DirHandle '.';
 		if ( defined $d ) {
 		    while (defined($_ = $d->read)) {
 				next if ( -d $_ );
@@ -999,22 +1000,40 @@ sub doImport ($$$) {
 		    }
 		} else {
 			print ( "ERROR: Cannot open directory $path\n" );
-			return;ed fil
+			return;
 		}
 
 		# Copy over all needed parts from import ...
 		# *.vhd[l], *.v, *-mixed.(csv|xls|sxc), *.bat
 		# Use *.bat on MS
-		for my $f ( glob( $import_path . "/*.v" ),
-					glob( $import_path . "/*.vhd*" ),
-					glob( $import_path . "/*.mif" ),
-					glob( $import_path . "/*mixed*.$type" ),
-					glob( $import_path . "/*.bat" ),
-					glob( $import_path . "/*.sh" ),
-					glob( $import_path . "/mix.cfg" ),
+		( my $import_pathq = $import_path ) =~ s/ /\\ /g; # Quote whitespace
+		$import_pathq =~ s/\t/\\\t/g;
+		for my $f ( glob( $import_pathq . "/*.v" ),
+					glob( $import_pathq . "/*.vhd*" ),
+					glob( $import_pathq . "/*.mif" ),
+					glob( $import_pathq . "/*mixed*.$type" ),
+					glob( $import_pathq . "/*.bat" ),
+					glob( $import_pathq . "/*.sh" ),
+					glob( $import_pathq . "/mix.cfg" ),
 				) {
 			copy ( $f, basename( $f ) ) or print( "ERROR: Cannot import $f: $!\n" );
 		}
+		# Copy some extra files not covered by the above globs
+		if ( -r $import_path . "/import.extra" ) {
+			my $ifh = new FileHandle "< $import_path/import.extra";
+			while( <$ifh> ) {
+				chomp;
+				$_ =~ s/[\n\r]+$//;
+				next if $_ =~ m/^\s*$/;
+				next if $_ =~ m/^\s*#/;
+				if ( -r $import_path . '/' . $_ ) {
+					copy( $import_path . '/' . $_, $_ ) or print( "ERROR: Cannot import extra $import_path/$_: $!\n" );
+				} else {
+					print( "ERROR: Cannot read extra $import_path/$_\n" );
+				}
+			}
+			$ifh->close();
+		} 
 	}
     chdir( $store_cwd ) or print( "ERROR: Cannot chdir to $store_cwd: $!\n" );
 } # End of doImport
