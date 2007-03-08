@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.104 $                                         |
+# | Revision:   $Revision: 1.105 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2007/03/03 17:24:06 $                              |
+# | Date:       $Date: 2007/03/08 09:24:31 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.104 2007/03/03 17:24:06 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.105 2007/03/08 09:24:31 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.105  2007/03/08 09:24:31  wig
+# | Minor update for Base.pm (renamed subs).
+# |
 # | Revision 1.104  2007/03/03 17:24:06  wig
 # | Updated testcase for case matches. Added filename serialization.
 # |
@@ -173,9 +176,9 @@ sub _mix_wr_inst_udc			($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.104 2007/03/03 17:24:06 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.105 2007/03/08 09:24:31 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.104 $';
+my $thisrevision   =      '$Revision: 1.105 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -3152,7 +3155,7 @@ sub _mix_wr_isinteger ($$$;$) {
 
 	my $isintcheck = new Micronas::MixEDA::Base;
 	my $entyref = $entities{$hierdb{$inst}{'::entity'}}{$generic};
-	return $isintcheck->isinteger( $inst, $entyref, $generic, $val, $lang );
+	return $isintcheck->hdl_isinteger( $inst, $entyref, $generic, $val, $lang );
 
 } # End of _mix_wr_isinteger
 
@@ -3194,7 +3197,7 @@ sub _mix_wr_isreal ($$$;$) {
 
 	my $isintcheck = new Micronas::MixEDA::Base;
 	my $entyref = $entities{$hierdb{$inst}{'::entity'}}{$generic};
-	return $isintcheck->isreal( $inst, $entyref, $generic, $val, $lang );
+	return $isintcheck->hdl_isreal( $inst, $entyref, $generic, $val, $lang );
 
 } # End of _mix_wr_isreal
 

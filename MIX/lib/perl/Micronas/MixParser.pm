@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.89 $                                         |
+# | Revision:   $Revision: 1.90 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/03/06 12:44:33 $                              |
+# | Date:       $Date: 2007/03/08 09:24:31 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.89 2007/03/06 12:44:33 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.90 2007/03/08 09:24:31 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.90  2007/03/08 09:24:31  wig
+# | Minor update for Base.pm (renamed subs).
+# |
 # | Revision 1.89  2007/03/06 12:44:33  wig
 # | Adding IF/ELSIF/ELSE for generators and testcase.
 # |
@@ -199,9 +202,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.89 2007/03/06 12:44:33 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.90 2007/03/08 09:24:31 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.89 $';
+my $thisrevision =	'$Revision: 1.90 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2514,8 +2517,8 @@ sub apply_x_gen ($$) {
                     if ( $r_hg->{$cg}{'lb'} <= $mres{$rv} and
                             $r_hg->{$cg}{'ub'} >= $mres{$rv} ) {
                         # bingo ... this instance matches
-                         #
-                        # TODO: Handle arith. {$V + N} {$N +N} ...
+                        #
+                        # TODO : Handle arith. {$V + N} {$N +N} ...
                         # Basic idea:fetch {...} and evaluate with results known so far
                         # Apply the results to the matcher string and do a last check ...
                         #

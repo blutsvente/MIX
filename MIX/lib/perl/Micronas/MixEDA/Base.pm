@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Base.pm,v $                                  |
-# | Revision:   $Revision: 1.1 $                                         |
+# | Revision:   $Revision: 1.2 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/03/01 16:28:38 $                              |
+# | Date:       $Date: 2007/03/08 09:24:31 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Base.pm,v $
+# | Revision 1.2  2007/03/08 09:24:31  wig
+# | Minor update for Base.pm (renamed subs).
+# |
 # | Revision 1.1  2007/03/01 16:28:38  wig
 # | Implemented emulation mux insertion
 # |
@@ -41,11 +44,11 @@ require Exporter;
 @EXPORT_OK = qw();
 
 ### ID block
-our $VERSION = '$Revision: 1.1 $ $Date: 2007/03/01 16:28:38 $ wilfried.gaensheimer@gaensheimer.de'; # VCS Id
+our $VERSION = '$Revision: 1.2 $ $Date: 2007/03/08 09:24:31 $ wilfried.gaensheimer@gaensheimer.de'; # VCS Id
 $VERSION =~ s,\$,,go;
 ( our $VERSION_NR = $VERSION ) =~ s/(LastChanged)?(Revision|Date):\s+//g;
 $VERSION_NR =~ s/\s+.*//;
-our $ID = '$Id: Base.pm,v 1.1 2007/03/01 16:28:38 wig Exp $'; # VCS Id
+our $ID = '$Id: Base.pm,v 1.2 2007/03/08 09:24:31 wig Exp $'; # VCS Id
 $ID =~ s,\$,,go;
 
 use strict;
@@ -60,9 +63,9 @@ my $logger = get_logger('MIX::MixEDA::Base');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Base.pm,v 1.1 2007/03/01 16:28:38 wig Exp $'; 
+my $thisid          =      '$Id: Base.pm,v 1.2 2007/03/08 09:24:31 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Base.pm,v $';
-my $thisrevision    =      '$Revision: 1.1 $';  
+my $thisrevision    =      '$Revision: 1.2 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -97,37 +100,33 @@ sub new {
 };
 
 ####################################################################
-## isinteger
-##  check if input is integer 
+## hdl_isinteger
+##  check if input is integer in HDL allowed syntax
 ####################################################################
 
 =head2
 
-isinteger ($$$) {
+hdl_isinteger ($$$) {
 
 Finds out if input is valid integer. Print warning if not.
 
 First try for integer:
-    [W['B]]NN_NNN
-    B: b o h d
-    W: NN
-    NN_NNN: depends on B
-
-TODO: migrate to MixChecker or MixBase
+	[W['B]]NN_NNN
+	B := b o h d
+	W := NN
+	NN_NNN := depends on B
 
 Input:
-    instancename (instantiated component)
-   generic (name of the generic)
-   value (parameter value)
+	instancename (instantiated component)
+	generic (name of the generic)
+	value (parameter value)
 
 Return:
 	1 if problem!
 	
 =cut
 
-# TODO : extend checks to string types ...??
-# TODO: This functions should be part of the MixEDA::Generic package?
-sub isinteger ($$$;$$) {
+sub hdl_isinteger ($$$;$$) {
 	my $self 	= shift;
 	my $inst	= shift;
     my $entyref	= shift;
@@ -178,7 +177,8 @@ sub isinteger ($$$;$$) {
     } else {
         $flag = 1;
     }
-    
+
+	# TODO : Handle this at upper level    
     if ( $flag ) {
     	#!wig20051109: Check if type is string -> allow anything
     	if ( defined( $entyref ) and
@@ -188,31 +188,29 @@ sub isinteger ($$$;$$) {
     		 }
     	}
     	if ( $flag ) {
-        	$logger->warn('__W_ISINTEGER', "\tApplied non-integer parameter $val for generic $generic at instance $inst!" );
+        	$logger->warn('__W_HDL_ISINTEGER', "\tApplied non-integer parameter $val for generic $generic at instance $inst!" );
     	}
     }
     return $flag;
-} # End of mix_wr_isinteger
+} # End of hdl_isinteger
 
 ####################################################################
-##  isreal
-##  check if input is a real 
+##  hdl_isreal
+##  check if input is a real written in HDL
 ####################################################################
 
 =head2
 
-isreal ($$$$) {
+hdl_isreal ($$$$) {
 
 Finds out if input is a valid real. Print warning if not.
 
-First try for integer:
+First try for reals in form:
 	+-N.N
 	+-N.NeE
 	
-	and all valid integers!
+	and then all valid integers!
     (_mix_wr_isinteger)
-
-TODO: migrate to MixChecker or MixBase
 
 Input:
    instancename (instantiated component)
@@ -224,7 +222,7 @@ Return:
 	
 =cut
 
-sub isreal ($$$$) {
+sub hdl_isreal ($$$$) {
 	my $self 	= shift;
 	my $inst	= shift;
     my $entyref	= shift;
@@ -238,6 +236,11 @@ sub isreal ($$$$) {
 		$flag = 0;		
 	}
     
+    # Try if this is an integer
+    if ( $flag ) {
+    	$flag = $self->hdl_isinteger( $inst, $entyref, $generic, $val, $lang );
+    }
+    
     if ( $flag ) {
     	#!wig20051109: Check if type is string -> allow anything
     	if ( defined( $entyref ) and
@@ -247,11 +250,11 @@ sub isreal ($$$$) {
     		 }
     	}
     	if ( $flag ) {
-        	$logger->warn('__W_ISREAL', "\tApplied non-real parameter $val for generic $generic at instance $inst!" );
+        	$logger->warn('__W_HDL_ISREAL', "\tApplied non-real parameter $val for generic $generic at instance $inst!" );
     	}
     }
     return $flag;
-} # End of mix_wr_isinteger
+} # End of hdl_isreal
 
 ############################### sub libversion ######################
 #
