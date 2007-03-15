@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.38 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/03/03 17:24:06 $                              |
+# | Revision:   $Revision: 1.39 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2007/03/15 13:30:16 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.39  2007/03/15 13:30:16  lutscher
+# | added reg_shell parameter
+# |
 # | Revision 1.38  2007/03/03 17:24:06  wig
 # | Updated testcase for case matches. Added filename serialization.
 # |
@@ -97,9 +100,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.38 2007/03/03 17:24:06 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.39 2007/03/15 13:30:16 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.38 $';  
+my $thisrevision    =      '$Revision: 1.39 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -873,24 +876,24 @@ sub init ($) {
     #
     
 	$this->{'cfg'}{'reg_shell'} = {
-	    'type'             => 'HDL-vgch-rs', # type of register-view to be generated (see Reg.pm)
-		'addrwidth' => 14,             # Default address bus width (byte-addresses)
-		'datawidth' => 32,             # Default data bus width in bits
-		'multi_clock_domains' => 1,    # If 1, generate separate register blocks for all clock domains
-		'infer_clock_gating'  => 1,    # If 1, insert extra logic for power-saving
-        'infer_sva'           => 1,    # If 1, insert SystemVerilog assertions into HDL-code
-        'read_pipeline_lvl'   => 0,    # Parameter that controls the read-pipelining
-                                       # If 0, no read-pipelining will be inserted
-		'read_multicycle'     => 0,    # can be one of [0,1,2,..] to insert delays for read-acknowledge
-		'bus_clock' => "clk",          # Default bus clock name
-		'bus_reset' => "rst_n",        # Default bus reset name
-        'use_reg_name_as_prefix' => 0, # If 1, prefix field names with register names
-        'exclude_regs' => "",          # comma seperated list of register names to exclude from code generation
-		'exclude_fields' => "",        # comma seperated list of field names to exclude from code generation	
-		'add_takeover_signals' => 0,   # If 1, internal update signals are also routed to top-level ports
-        'regshell_prefix'    => "rs",     # register-shell prefix
-		'cfg_module_prefix'  => "rs_cfg", # prefix for config register block
-
+	    'type'      => 'HDL-vgch-rs',       # type of register-view to be generated (see Reg.pm)
+		'addrwidth' => 14,                  # Default address bus width (byte-addresses)
+		'datawidth' => 32,                  # Default data bus width in bits
+		'multi_clock_domains' => 1,         # If 1, generate separate register blocks for all clock domains
+		'infer_clock_gating'  => 1,         # If 1, insert extra logic for power-saving
+        'infer_sva'           => 1,         # If 1, insert SystemVerilog assertions into HDL-code
+        'read_pipeline_lvl'   => 0,         # Parameter that controls the read-pipelining
+                                            # If 0, no read-pipelining will be inserted
+		'read_multicycle'     => 0,         # can be one of [0,1,2,..] to insert delays for read-acknowledge
+		'bus_clock' => "clk",               # Default bus clock name
+		'bus_reset' => "rst_n",             # Default bus reset name
+        'use_reg_name_as_prefix' => 0,      # If 1, prefix field names with register names
+        'exclude_regs' => "",               # comma seperated list of register names to exclude from code generation
+		'exclude_fields' => "",             # comma seperated list of field names to exclude from code generation	
+		'add_takeover_signals' => 0,        # If 1, internal update signals are also routed to top-level ports
+        'regshell_prefix'      => "rs",     # register-shell prefix
+		'cfg_module_prefix'    => "rs_cfg", # prefix for config register block
+        'enforce_unique_addr'  => 1,        # If 1, allow only one register per address
                     # parameters for e_vr_ad view
         'e_vr_ad' => {
                       'regfile_prefix'   => 'MIC',
