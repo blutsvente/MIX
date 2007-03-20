@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.90 $                                         |
+# | Revision:   $Revision: 1.91 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/03/08 09:24:31 $                              |
+# | Date:       $Date: 2007/03/20 14:52:24 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.90 2007/03/08 09:24:31 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.91 2007/03/20 14:52:24 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.91  2007/03/20 14:52:24  wig
+# | Added %PURGE% into merge_inst and merge_conn
+# |
 # | Revision 1.90  2007/03/08 09:24:31  wig
 # | Minor update for Base.pm (renamed subs).
 # |
@@ -202,9 +205,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.90 2007/03/08 09:24:31 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.91 2007/03/20 14:52:24 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.90 $';
+my $thisrevision =	'$Revision: 1.91 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -946,6 +949,11 @@ sub merge_inst ($%) {
         # the field differs from the default value, do nothing.
         # Else fill in the field with the input data
 
+		if ( defined( $data{$i} ) and $data{$i} eq '%PURGE%' ) {
+			$hierdb{$name}{$i} = '';
+			next;
+		}
+
         if ( defined( $hierdb{$name}{$i} ) and $hierdb{$name}{$i} ne '' ) {
             if ( not $overload and
             		defined( $eh->get( 'hier.field.' . $i ) ) and
@@ -1018,7 +1026,7 @@ sub parse_conn_init ($) {
 sub add_conn (%) {
     my %in = @_;
 
-    my $name = $in{'::name'};
+    my $name = $in{'::name'} || '';
     my $nameflag = 0;
 
     #
@@ -1169,11 +1177,11 @@ sub add_conn (%) {
         }
         # Is it linked to %CONST% instance ...
     } elsif ( defined( $conndb{$name}{'::out'}[0]{'inst'} ) and
-        $conndb{$name}{'::out'}[0]{'inst'} eq "%CONST%" ) {
+        $conndb{$name}{'::out'}[0]{'inst'} eq '%CONST%' ) {
         # If we found a constant, change the ::mode bit to be constant ...
         if ( $conndb{$name}{'::mode'} and $conndb{$name}{'::mode'} !~ m,^\s*[CPG],io ) {
             $logger->error('__E_ADD_CONN', "\tSignal $name mode expected to be C, G or P but is " .
-                        $conndb{$name}{'::mode'} ."!" );
+                        $conndb{$name}{'::mode'} . '!' );
             $conndb{$name}{'::mode'} = 'C';
             $conndb{$name}{'::comment'} .= '__E_MODE_MISMATCH';
         } elsif ( not $conndb{$name}{'::mode'} ) {
@@ -1335,7 +1343,7 @@ sub create_conn ($%) {
 
     # Give each signal a unique number: starting from 0 ...
     $conndb{$name}{'::connnr'} = $eh->inc( 'sum.conn' );
-}
+} # End of create_conn
 
 ####################################################################
 ## _create_conn
@@ -1371,6 +1379,7 @@ Returns mode and a array of hashes.
 
 !wig20051010: create a ::descr field in the port map ...
 !wig20060413: detect whitespace and alert user ...
+
 =cut
 
 sub _create_conn ($$%) {
@@ -1948,6 +1957,7 @@ sub mix_p_updateconn ($$) {
 #
 # merge more data into an already existing connection
 #
+#!wig20070320: special key %PURGE% will remove all previously defined data for that cell
 sub merge_conn($%) {
     my $name = shift;
     my %data = @_;
@@ -1956,8 +1966,19 @@ sub merge_conn($%) {
     # Overwrite conndb if fields are zero or space ....
     #    
     for my $i ( keys( %data ) ) {
-        #TODO: Trigger merge mode for special cases where we want to add
+        # TODO : Trigger merge mode for special cases where we want to add
         # up data instead of overwrite
+
+		#!wig20070320: experimental: remove all previously defined data:
+		if ( defined( $data{$i} ) and $data{$i} eq '%PURGE%' ) {
+			if ( $i =~ /^::(in|out)$/ ) {
+				$conndb{$name}{$i} = [];
+			} else {
+				$conndb{$name}{$i} = '';
+			}
+			next;
+		}
+
         if ( $i =~ /^::(in|out)$/ ) { 
 			#!wig20060116: check if data is defined:
         	if ( defined( $data{$i} ) and $data{$i} !~ /^\s*$/io ) {

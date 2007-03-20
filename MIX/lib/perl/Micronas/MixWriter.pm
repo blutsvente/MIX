@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.106 $                                         |
+# | Revision:   $Revision: 1.107 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2007/03/20 13:05:48 $                              |
+# | Date:       $Date: 2007/03/20 14:52:24 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.106 2007/03/20 13:05:48 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.107 2007/03/20 14:52:24 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.107  2007/03/20 14:52:24  wig
+# | Added %PURGE% into merge_inst and merge_conn
+# |
 # | Revision 1.106  2007/03/20 13:05:48  wig
 # | Fixed sigselect and in/out option for emumux
 # |
@@ -179,9 +182,9 @@ sub _mix_wr_inst_udc			($$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.106 2007/03/20 13:05:48 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.107 2007/03/20 14:52:24 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.106 $';
+my $thisrevision   =      '$Revision: 1.107 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2576,15 +2579,8 @@ sub _insert_emumux_signal ($$$$$$) {
 	
 	# Get the signal basename (strip off _s, _i, _o and such)
 	my $sigbase = $signalname;
-	# my $sigtail = '';
 	$sigbase =~ s/(_[sgio]{1,2})$//o;
-	# $sigtail = $1;
 
-	my $e_macros = { '%::name%' => $sigbase };
-	my $s_mux2inst = replace_mac( ( $emudefs->{'muxsnameo'} || '%::name%_emux' ),
-		$eh->get( 'macro' ), $e_macros );
-	my $s_ext2mux = replace_mac( ( $emudefs->{'muxsnamei'} || '%::name%_vc' ) ,
-		$eh->get( 'macro' ), $e_macros );
 	my $s_muxwidth  = '';
 	my $s_sigsplice = '';
 	# simple part: $from and $to are empty
@@ -2606,10 +2602,18 @@ sub _insert_emumux_signal ($$$$$$) {
 		if ( $to ne '' ) {
 			$s_muxwidth  = '[' . $from . ':' . $to . ']';
 			$s_sigsplice = $s_muxwidth;
+			$sigbase     .= '_' . $from . '_' . $to;
 		} else {
 			$s_sigsplice = '[' . $from . ']';
+			$sigbase     .= '_' . $from;
 		}
 	}
+
+	my $e_macros = { '%::name%' => $sigbase };
+	my $s_mux2inst = replace_mac( ( $emudefs->{'muxsnameo'} || '%::name%_emux' ),
+		$eh->get( 'macro' ), $e_macros );
+	my $s_ext2mux = replace_mac( ( $emudefs->{'muxsnamei'} || '%::name%_vc' ) ,
+		$eh->get( 'macro' ), $e_macros );
 
 	# Build extra wire and assign lines ...
 	$extrawire =  '%S%' x 2 . 'wire' . '%S%' . $s_muxwidth . '%S%' .
