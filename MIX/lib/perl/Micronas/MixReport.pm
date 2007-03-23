@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.47 $                                               |
+# | Revision:   $Revision: 1.48 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2007/02/20 15:46:45 $                                                   |
+# | Date:       $Date: 2007/03/23 08:41:11 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.47 2007/02/20 15:46:45 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.48 2007/03/23 08:41:11 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,7 +31,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
-# | Revision 1.47  2007/02/20 15:46:45  mathias
+# | Revision 1.48  2007/03/23 08:41:11  mathias
+# | mix_rep_reglist_mif_header: removed ':' after Init in the table header
+# |
+# | Revision 1.47  2007-02-20 15:46:45  mathias
 # | fixed something
 # |
 # | Revision 1.46  2007-02-14 08:32:00  mathias
@@ -197,11 +200,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.47 2007/02/20 15:46:45 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.48 2007/03/23 08:41:11 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.47 $';
+my $thisrevision   =      '$Revision: 1.48 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -1298,7 +1301,7 @@ sub mix_rep_reglist_mif_header($$$$$$ )
 
     # Register init value
     $headtext .= $mif->wrCell({ 'PgfTag'     => 'CellHeadingH8',
-                                'String'     => 'Init:',
+                                'String'     => 'Init',
                                 'Fill'       => 0,
                                 'Separation' => 2,
                                 'Color'      => "Gray 6.2"
