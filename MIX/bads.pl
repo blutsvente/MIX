@@ -22,12 +22,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: bads.pl,v 1.3 2006/10/23 12:18:06 mathias Exp $  |
+# | Id           : $Id: bads.pl,v 1.4 2007/03/27 06:24:11 mathias Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      |
-# | Version      : $Revision: 1.3 $                                       |
-# | Mod.Date     : $Date: 2006/10/23 12:18:06 $                           |
+# | Version      : $Revision: 1.4 $                                       |
+# | Mod.Date     : $Date: 2007/03/27 06:24:11 $                           |
 # | Author       : $Author: mathias $                                         |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -74,7 +74,7 @@ sub bads_mif_row($$$$$$$$$);
 # Global Variables
 ##############################################################################
 
-$::VERSION = '$Revision: 1.3 $'; # RCS Id
+$::VERSION = '$Revision: 1.4 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # Our local variables
@@ -167,11 +167,15 @@ foreach my $pad_ball (@{$aref}) {
     my $typ2     = $pad_ball->{'::type2'};
     my $typ3     = $pad_ball->{'::type3'};
     my $connect  = $pad_ball->{'::connections'} ? $pad_ball->{'::connections'} : ' ';
-    my $reset    = $pad_ball->{'::reset'} ? $pad_ball->{'::reset'} : ' ';
+    my $reset    = $pad_ball->{'::push'} ? $pad_ball->{'::push'} : ' ';
     my $desc1    = $pad_ball->{'::desc1'};
     my $desc2    = $pad_ball->{'::desc2'};
     my $desc3    = $pad_ball->{'::desc3'};
 
+    ## correct reset if not all lines contain a proper value in that column
+    if ($reset ne 'U' and $reset ne 'D') {
+        $reset = 'Z';
+    }
     # Collect information to power supply pads
     # That lines will be written at the end of the table
     if (defined($pin1) and $pin1 and ($pin1 =~ m/^\s*(VDD|VSS)/)) {
@@ -184,7 +188,8 @@ foreach my $pad_ball (@{$aref}) {
         $power{$ball}->{desc}     = $desc1   ? $desc1   : " ";
         $power{$ball}->{typ}      = $typ1    ? $typ1    : " ";
         $power{$ball}->{connect}  = $connect ? $connect : " ";
-        $power{$ball}->{reset}    = $reset   ? $reset   : " ";
+        #### No reset value for power pads!
+        $power{$ball}->{reset}    = " ";
         next;
     }
     # alternate 1 (one table row for all pins belonging to the same ball)
