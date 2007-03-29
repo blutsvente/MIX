@@ -22,12 +22,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: tcs,v 1.1 2007/03/29 08:53:31 mathias Exp $  |
+# | Id           : $Id: tcs,v 1.2 2007/03/29 08:56:55 mathias Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      |
-# | Version      : $Revision: 1.1 $                                       |
-# | Mod.Date     : $Date: 2007/03/29 08:53:31 $                           |
+# | Version      : $Revision: 1.2 $                                       |
+# | Mod.Date     : $Date: 2007/03/29 08:56:55 $                           |
 # | Author       : $Author: mathias $                                         |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -65,7 +65,7 @@ use Micronas::MixUtils::IO qw(init_ole
 # Global Variables
 ##############################################################################
 
-$::VERSION = '$Revision: 1.1 $'; # RCS Id
+$::VERSION = '$Revision: 1.2 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # Our local variables
@@ -225,6 +225,6 @@ The following call will create the files
  F<testcase_62.ini> and F<testcase_62.h>
 
  module load mix/1.7
- tcs -out testcase -col 62 VCTH_pads_n_pins.xls>
+ tcs -out testcase -col 62 VCTH_pads_n_pins.xls
 
 =cut
