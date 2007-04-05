@@ -22,12 +22,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: tcs,v 1.3 2007/04/05 07:56:32 mathias Exp $  |
+# | Id           : $Id: tcs,v 1.4 2007/04/05 09:38:58 mathias Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      |
-# | Version      : $Revision: 1.3 $                                       |
-# | Mod.Date     : $Date: 2007/04/05 07:56:32 $                           |
+# | Version      : $Revision: 1.4 $                                       |
+# | Mod.Date     : $Date: 2007/04/05 09:38:58 $                           |
 # | Author       : $Author: mathias $                                         |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -65,7 +65,7 @@ use Micronas::MixUtils::IO qw(init_ole
 # Global Variables
 ##############################################################################
 
-$::VERSION = '$Revision: 1.3 $'; # RCS Id
+$::VERSION = '$Revision: 1.4 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # Our local variables
@@ -169,7 +169,7 @@ foreach my $excel (@{$aref}) {
     }
     if ($ign and $ign eq '%EMPTY%') {
         foreach my $v (($s1, $s2, $s3, $s3append, $t1, $t2)) {
-            $c =~ s/^\s+//;
+            $v =~ s/^\s+//;
         }
     }
 
