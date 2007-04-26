@@ -56,7 +56,7 @@ MIX - Micronas Interconnect Spec expander
 
 Author: Wilfried Gänsheimer
 \newline 
-$Date: 2007/03/06 13:44:24 $
+$Date: 2007/04/26 06:35:17 $
 \newline 
 Version: $Id: MIX_Userreference.lyx,v 1.6 2005/01/26 14:01:59 wig Exp 
 \layout Section
@@ -8126,8 +8126,14 @@ Write portlist and/or register master reports in MIF format.
 \newline 
 
 \newline 
+-vinc <globals.i>
+\layout Standard
 
+import verilog defines from this file and resolve all occurences
 \newline 
+
+\layout Standard
+
 "Standard" options:
 \newline 
 
@@ -9137,6 +9143,12 @@ Used Software
 \layout Subsection
 
 Release Notes
+\layout Subsubsection
+
+20070316
+\layout Standard
+
+release mail for mix/1.7 pilot usage, see doc/release20070316.txt
 \layout Subsubsection
 
 20060411

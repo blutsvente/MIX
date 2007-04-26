@@ -1,4 +1,4 @@
->>title: MIX/Release 20060411: updated xls2csv, imporved logging and configuration
+>>title: MIX/Release 20060411: updated xls2csv, improved logging and configuration
 
 xls2csv update:
 

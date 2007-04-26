@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.39 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2007/03/15 13:30:16 $                              |
+# | Revision:   $Revision: 1.40 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2007/04/26 06:35:17 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.40  2007/04/26 06:35:17  wig
+# | Create emumux outside of module ifdef excludes
+# |
 # | Revision 1.39  2007/03/15 13:30:16  lutscher
 # | added reg_shell parameter
 # |
@@ -100,9 +103,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.39 2007/03/15 13:30:16 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.40 2007/04/26 06:35:17 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.39 $';  
+my $thisrevision    =      '$Revision: 1.40 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -570,6 +573,7 @@ sub init ($) {
             	'muxsnameo'	=> '%::name%_emux_s',	# multiplexer out signal name, from mux to port
             	'muxsnamei' => '%::name%_vc_s', 	# multiplexer in signal name (you access here!)
             	'options'	=> 'in',	# define extra (global) options like in | out | inout | leaf | nonleaf
+            							# select=high, select=low, select=open (default for select signal)
             },
 	      	'workaround' => {
             	'verilog' => 'dummyopen', # dummyopen := create a dummy signal for open port splices 
