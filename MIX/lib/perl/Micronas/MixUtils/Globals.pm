@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.40 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/04/26 06:35:17 $                              |
+# | Revision:   $Revision: 1.41 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2007/05/03 11:47:06 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.41  2007/05/03 11:47:06  lutscher
+# | added reg_shell parameter
+# |
 # | Revision 1.40  2007/04/26 06:35:17  wig
 # | Create emumux outside of module ifdef excludes
 # |
@@ -103,9 +106,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.40 2007/04/26 06:35:17 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.41 2007/05/03 11:47:06 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.40 $';  
+my $thisrevision    =      '$Revision: 1.41 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -898,6 +901,7 @@ sub init ($) {
         'regshell_prefix'      => "rs",     # register-shell prefix
 		'cfg_module_prefix'    => "rs_cfg", # prefix for config register block
         'enforce_unique_addr'  => 1,        # If 1, allow only one register per address
+        'infer_reset_syncer'   => 1,        # If 1, instantiates a reset synchronizer for asynchronous reset
                     # parameters for e_vr_ad view
         'e_vr_ad' => {
                       'regfile_prefix'   => 'MIC',
