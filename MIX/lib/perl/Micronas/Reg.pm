@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.37 2007/03/05 18:29:08 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.38 2007/05/07 07:10:20 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.38  2007/05/07 07:10:20  lutscher
+#  small changes
+#
 #  Revision 1.37  2007/03/05 18:29:08  lutscher
 #  fixed bug in _map_register_master() where the clipping of values may not be done for 32-bit fields
 #
@@ -235,7 +238,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.37 $ ';  #'
+our($VERSION) = '$Revision: 1.38 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -601,7 +604,7 @@ sub _map_register_master {
                         $o_reg = $o_tmp;
                         last;
                     } else {
-                        _warning("registers \'$reg\' and \'".$o_tmp->name."\' are mapped to the same address in domain");
+                        _warning("registers \'$reg\' and \'".$o_tmp->name."\' are mapped to the same address \'$offset\' in domain");
                         $o_reg = undef;
                     };
                 };

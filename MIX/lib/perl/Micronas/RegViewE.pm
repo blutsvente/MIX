@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.19 2007/03/02 14:35:52 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.20 2007/05/07 07:09:58 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.20  2007/05/07 07:09:58  lutscher
+#  small changes
+#
 #  Revision 1.19  2007/03/02 14:35:52  lutscher
 #  fixed bug in write_extend_coverage()
 #
@@ -159,7 +162,8 @@ sub _gen_view_vr_ad {
                   'reg_macro'	=> "reg_def",
                   'field_macro'	=> "reg_fld",
                   'hole_name'	=> "reserved_at_",
-                  'hole_access' => "STANDARD" # "STANDARD" or "AUTO" || STANDARD permission of holes = "R", "AUTO"  permission of holes like the most in the register
+                  'hole_access' => "STANDARD", # "STANDARD" or "AUTO" || STANDARD permission of holes = "R", "AUTO"  permission of holes like the most in the register
+				  'lexclude_cfg' => [],           # list of registers to exclude from code generation
 				 );
     
     # import regshell.<par> parameters from MIX package to class data; user can change these parameters in mix.cfg
@@ -171,7 +175,9 @@ sub _gen_view_vr_ad {
                       'reg_shell.e_vr_ad.cover_ign_read_to_write_only',
                       'reg_shell.e_vr_ad.cover_ign_write_to_read_only',
                       'reg_shell.e_vr_ad.field_naming', # see Globals.pm
-                      'reg_shell.e_vr_ad.reg_naming'    # see Globals.pm
+                      'reg_shell.e_vr_ad.reg_naming',   # see Globals.pm
+                      'reg_shell.exclude_regs',
+					  'reg_shell.exclude_fields'
 					 );
     
     # make shortcuts for parameters
@@ -207,6 +213,14 @@ sub _gen_view_vr_ad {
 		_warning("no domains found to process, exiting");
 	};
     
+	# list of skipped registers and fields (put everything together in one list)
+	if (exists($this->global->{'exclude_regs'})) {
+		@{$this->global->{'lexclude_cfg'}} = split(/\s*,\s*/,$this->global->{'exclude_regs'});
+	};
+	if (exists($this->global->{'exclude_fields'})) {
+		push @{$this->global->{'lexclude_cfg'}}, split(/\s*,\s*/,$this->global->{'exclude_fields'});
+	};
+
 	my $e_filename = join("_",$this->global->{'file_prefix'}, map {$_->{name}} @ldomains).$this->global->{'suffix'};
 	open(E_FILE, ">$e_filename") || logwarn("ERROR: could not open file \'$e_filename\' for writing");
 	_info("generating file \'$e_filename\'");
@@ -238,6 +252,12 @@ sub _gen_view_vr_ad {
 			my %permission = ();
 			my $perm;
 			my $value;
+            # skip register defined by user
+            if (grep ($_ eq $o_reg->name, @{$this->global->{'lexclude_cfg'}})) {
+                _info("skipping register ", $o_reg->name);
+                next;
+            };
+
             my $reg_access_mode = $o_reg->get_reg_access_mode(); # W, R or RW
 			$permission{"RW"} = 0;
 			$permission{"R"} = 0;
@@ -254,7 +274,12 @@ sub _gen_view_vr_ad {
             
 			foreach $href (@{$o_reg->fields}) {
 			    $o_field = $href->{'field'};
-			    next if $o_field->name =~ m/^UPD[EF]/; # skip UPD* regs		    
+			    #next if $o_field->name =~ m/^UPD[EF]/; # skip UPD* regs		 
+                # skip fields defined by user
+                if (grep ($_ eq $o_field->name, @{$this->global->{'lexclude_cfg'}})) {
+                    _info("skipping field ", $o_field->name);
+                    next;
+                };
 			    $thefields[$ii]{name} 		  = _clone_name($this->global->{'field_naming'}, 0, 0, $domain, $reg_name, $o_field->name);
 			    $thefields[$ii]{pos}  		  = $href->{'pos'};
 			    $thefields[$ii]{size} 		  = $o_field->attribs->{'size'};
