@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.57 2006/11/30 15:23:41 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.58 2007/05/07 07:11:14 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.57 $                                  
+#  Revision      : $Revision: 1.58 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.58  2007/05/07 07:11:14  lutscher
+#  added features infer_reset_syncer and enforce_unique_addr
+#
 #  Revision 1.57  2006/11/30 15:23:41  lutscher
 #  fixed bug in code generation for USR registers and made improvements in generated write process
 #
@@ -172,7 +175,7 @@ sub _gen_view_vgch_rs {
 	$eh->set('check.signal', 'load,driver,check');
     $eh->set('output.filter.file', "");
     $eh->set('output.generate.arch', "");
-    $eh->set('check.name.port', 'na');
+    $eh->set('check.name.all', 'na');
     $eh->set('log.limit.re.__I_CHECK_CASE', 1);
     $eh->set('log.limit.re.__W_CHECK_CASE', 1);
 
@@ -264,6 +267,8 @@ sub _vgch_rs_init {
 					  'reg_shell.add_takeover_signals',
                       'reg_shell.regshell_prefix',  
                       'reg_shell.cfg_module_prefix',
+                      'reg_shell.enforce_unique_addr',
+                      'reg_shell.infer_reset_syncer',
 					  'postfix.POSTFIX_PORT_OUT', 
 					  'postfix.POSTFIX_PORT_IN',
 					  'postfix.POSTFIX_FIELD_OUT', 
@@ -290,7 +295,7 @@ sub _vgch_rs_init {
 	}; 
 
     # register Perl module with mix
-    $eh->mix_add_module_info("RegViews", '$Revision: 1.57 $ ', "Utility functions to create different register space views from Reg class object");
+    $eh->mix_add_module_info("RegViews", '$Revision: 1.58 $ ', "Utility functions to create different register space views from Reg class object");
 };
 
 
@@ -359,10 +364,13 @@ sub _vgch_rs_gen_cfg_module {
 			# declare register
 			push @ldeclarations, "reg [".($this->global->{'datawidth'}-1).":0] $reg_name;";
 		} else {
-			_error("register offset $reg_offset for register \'", $o_reg->name, "\' already defined - skipped");
-			next;
-		};
+            if ($this->global->{'enforce_unique_addr'}) {
+                _error("register offset $reg_offset for register \'", $o_reg->name, "\' already used");
+                next;
+            };
+        };
 
+        my $rclock = "";
 		my $fclock = "";
 		my $freset = "";
 		# iterate through all fields of the register (sort by name)
@@ -371,10 +379,20 @@ sub _vgch_rs_gen_cfg_module {
 			$shdw_sig = "";
 			# $o_field->display();
 			($fclock, $freset) = $this->_get_field_clock_and_reset($clock, $reset, $fclock, $freset, $o_field);
-			
+
+            # check if all fields in a register have the same clock-domain
+            if ($rclock eq "") {
+                $rclock = $fclock;
+            } else {
+              if ($fclock ne $rclock and $this->global->{'multi_clock_domains'}) {
+                  _error("register \'",$o_reg->name,"\' has fields in different clock domains (\'$rclock\' and \'$fclock\'); not supported anymore");
+                  last;
+              };  
+            };
+
 			# skip field if not in our clock domain and MCD feature is enabled
 			next if ($this->global->{'multi_clock_domains'} and $fclock ne $clock); 
-			next if $o_field->name =~ m/^UPD[EF]/; # skip legacy UPD* regs
+			# next if $o_field->name =~ m/^UPD[EF]/; # skip legacy UPD* regs
 
 			# skip fields defined by user
 			if (grep ($_ eq $o_field->name, @{$this->global->{'lexclude_cfg'}})) {
@@ -1635,12 +1653,16 @@ sub _vgch_rs_gen_hier {
 		_add_generic("act", 1, $sg_inst);
 		_add_generic("rstact", 0, $sg_inst);
 		_add_generic("rstval", 0, $sg_inst);
-		$sr_inst = $this->_add_instance_unique("sync_rst", $cfg_inst, "Reset synchronizer");
-		$refclks->{$clock}->{'sr_inst'} = $sr_inst; # store in global->hclocks
-		#_add_generic("sync", $refclks->{$clock}->{'sync'}, $sr_inst);
-		_add_generic_value("sync", 0, "sync", $sr_inst);
-		_add_generic("act", 0, $sr_inst);
-		push @lgen_filter, ($sr_inst, $sg_inst); #("sync_generic.*", "sync_rst.*");
+        $sr_inst = $this->_add_instance_unique("sync_rst", $cfg_inst, "Reset synchronizer");
+        $refclks->{$clock}->{'sr_inst'} = $sr_inst; # store in global->hclocks
+        #_add_generic("sync", $refclks->{$clock}->{'sync'}, $sr_inst);
+        if ($this->global->{'infer_reset_syncer'}) {                
+            _add_generic_value("sync", 0, "sync", $sr_inst);
+        } else {
+            _add_generic("sync", 0, $sr_inst); # set  reset synchronizer to bypass mode
+        };
+        _add_generic("act", 0, $sr_inst);
+        push @lgen_filter, ($sr_inst, $sg_inst);
 
 		# instantiate clock gating cells
 		if ($infer_cg) {
@@ -2087,6 +2109,7 @@ sub _get_address_msb_lsb {
 	my($msb, $lsb, $href, $i);
 	
 	$msb = 0;
+    $lsb = 0;
 	foreach $href (@{$o_domain->addrmap}) {
 		while($href->{'offset'} > 2**($msb+1)-1) {
 			$msb++;
@@ -2095,7 +2118,7 @@ sub _get_address_msb_lsb {
 
 	# determine lsb of address
 	for ($i=0; $i<=4; $i++) {
-		if($this->global->{'datawidth'} == (8,16,32,64)[$i]) {
+		if($this->global->{'datawidth'} <= (8,16,32,64,128)[$i]) {
 		   $lsb = $i;
 		   last;
 	   };
