@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.58 2007/05/07 07:11:14 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.59 2007/05/23 14:46:33 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.58 $                                  
+#  Revision      : $Revision: 1.59 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.59  2007/05/23 14:46:33  lutscher
+#  added wr_err_i pin of new ocp_target module
+#
 #  Revision 1.58  2007/05/07 07:11:14  lutscher
 #  added features infer_reset_syncer and enforce_unique_addr
 #
@@ -83,24 +86,6 @@
 #
 #  Revision 1.41  2006/06/22 11:45:09  lutscher
 #  removed an info message
-#
-#  Revision 1.40  2006/05/05 10:59:25  lutscher
-#  some fixes for the ::cond register-master feature
-#
-#  Revision 1.39  2006/05/05 09:14:11  lutscher
-#  fixed Verilog generation: read sensitivity list and function cond_slice
-#
-#  Revision 1.38  2006/05/04 14:43:36  lutscher
-#  added _vgch_rs_write_defines() and fixed an initialisation bug
-#
-#  Revision 1.37  2006/05/03 08:23:34  lutscher
-#  changed cond feature a little bit
-#
-#  Revision 1.36  2006/05/02 14:14:21  lutscher
-#  added feature for conditional FFs (reg-master column ::cond)
-#
-#  Revision 1.35  2006/04/27 16:47:01  lutscher
-#  corrected MSD pragmas
 #
 #  [history deleted]
 #
@@ -229,7 +214,7 @@ sub _vgch_rs_init {
 
    	# extend class data with data structure needed for code generation
 	$this->global(
-                  'mix_signature'      => "\"M0\"",     # signature for cross-checking MIX software version and IP version
+                  'mix_signature'      => "\"M1\"",     # signature for cross-checking MIX software version and IP version
 				  'ocp_target_name'    => "ocp_target", # library module name
 				  'mcda_name'          => "rs_mcda",    # library module name
 				  'int_set_postfix'    => "_set_p",     # postfix for interrupt-set input signal
@@ -295,7 +280,7 @@ sub _vgch_rs_init {
 	}; 
 
     # register Perl module with mix
-    $eh->mix_add_module_info("RegViews", '$Revision: 1.58 $ ', "Utility functions to create different register space views from Reg class object");
+    $eh->mix_add_module_info("RegViews", '$Revision: 1.59 $ ', "Utility functions to create different register space views from Reg class object");
 };
 
 
@@ -1929,6 +1914,7 @@ sub _vgch_rs_add_static_connections {
 	} else {
 		_add_connection("%OPEN%", 0, 0, "${ocp_i}/sinterrupt_o", "");
 	};
+    _add_connection("%OPEN%", 0, 0, "", "${ocp_i}/wr_err_i"); # NEW wr_err input not used
 
 	# connections for each config register block
 	$n=0;
