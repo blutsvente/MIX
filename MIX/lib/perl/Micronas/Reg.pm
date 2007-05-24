@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.38 2007/05/07 07:10:20 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.39 2007/05/24 09:30:21 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.39  2007/05/24 09:30:21  lutscher
+#  added hxxx number format to parser
+#
 #  Revision 1.38  2007/05/07 07:10:20  lutscher
 #  small changes
 #
@@ -238,7 +241,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.38 $ ';  #'
+our($VERSION) = '$Revision: 1.39 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -494,6 +497,12 @@ sub _map_register_master {
             $value =~ s/\s+$//;
             if ($value =~ m/^0x[a-f0-9]+/i) { # convert from hex if necessary
                 $value = hex($value);
+            };
+            if ($value =~ m/^h[a-f0-9]+/i and $marker eq "::sub" or $marker eq "::init" or $marker eq "::rec" or $marker eq "::width") {
+                # account for hex number format hxx
+                if ($value =~ m/^h[a-f0-9]+/i) {
+                    $value = hex(substr $value, 1, length($value)-1);
+                };
             };
             if ($marker eq "::sub") {
 				# every row requires a ::sub entry, so I use it to skip empty lines
