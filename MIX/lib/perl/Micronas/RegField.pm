@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegField.pm,v 1.2 2006/10/18 08:16:36 lutscher Exp $
+#  RCSId: $Id: RegField.pm,v 1.3 2007/06/18 12:01:56 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  RegReg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegField.pm,v $
+#  Revision 1.3  2007/06/18 12:01:56  lutscher
+#  added access method for id
+#
 #  Revision 1.2  2006/10/18 08:16:36  lutscher
 #  added field function is_cond()
 #
@@ -109,6 +112,12 @@ sub name {
 	my $this = shift;
 	if (@_) { $this->{name} = shift @_; };
 	return $this->{name};
+};
+# scalar object data access method
+sub id {
+	my $this = shift;
+	if (@_) { $this->{id} = shift @_; };
+	return $this->{id};
 };
 # scalar object data access method
 sub definition {

@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegReg.pm,v 1.7 2006/11/20 17:08:49 lutscher Exp $
+#  RCSId: $Id: RegReg.pm,v 1.8 2007/06/18 12:01:56 lutscher Exp $
 ###############################################################################
 #
 #  Related Files :  RegDomain.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegReg.pm,v $
+#  Revision 1.8  2007/06/18 12:01:56  lutscher
+#  added access method for id
+#
 #  Revision 1.7  2006/11/20 17:08:49  lutscher
 #  changed get_reg_access_mode() to be consistent with register-master cell values
 #
@@ -120,6 +123,12 @@ sub name {
 	my $this = shift;
 	if (@_) { $this->{name} = shift @_; };
 	return $this->{name};
+};
+# scalar object data access method
+sub id {
+	my $this = shift;
+	if (@_) { $this->{id} = shift @_; };
+	return $this->{id};
 };
 # scalar object data access method
 sub definition {
