@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.59 2007/05/23 14:46:33 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.60 2007/06/18 12:43:26 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.59 $                                  
+#  Revision      : $Revision: 1.60 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -15,7 +15,38 @@
 #
 #  Contents      :  Utility functions to create different register space views
 #                   from Reg class object
-#        
+#   Functions:
+#   sub _gen_view_vgch_rs 
+#   sub _vgch_rs_init
+#   sub _vgch_rs_gen_cfg_module 
+#   sub _vgch_rs_gen_udc_header
+#   sub _vgch_rs_code_read_mux
+#   sub _rdmux_builder
+#   sub _rdmux_iterator
+#   sub _vgch_rs_code_shadow_process
+#   sub _vgch_rs_code_fwd_process
+#   sub _vgch_rs_code_write_processes 
+#   sub _vgch_rs_code_static_logic
+#   sub _vgch_rs_write_udc
+#   sub _vgch_rs_gen_hier 
+#   sub _vgch_rs_gen_pre_dec_logic
+#   sub _vgch_rs_get_configuration
+#   sub _vgch_rs_add_static_connections 
+#   sub _vgch_rs_write_defines
+#   sub _vgch_rs_write_msd_setup
+#   sub _indent_and_prune_sva 
+#   sub _skip_field
+#   sub _get_address_msb_lsb
+#   sub _get_rrange
+#   sub _get_frange
+#   sub _get_field_clock_and_reset 
+#   sub _add_instance
+#   sub _add_instance_unique 
+#   sub _gen_field_name
+#   sub _gen_vector_range
+#   sub _gen_unique_signal_name 
+#   sub _gen_cond_rhs 
+#
 ###############################################################################
 #                               Copyright
 ###############################################################################
@@ -30,6 +61,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.60  2007/06/18 12:43:26  lutscher
+#  added reg_shell.field_naming feature and instantiation of ocp checker module
+#
 #  Revision 1.59  2007/05/23 14:46:33  lutscher
 #  added wr_err_i pin of new ocp_target module
 #
@@ -178,6 +212,7 @@ sub _gen_view_vgch_rs {
 	foreach $o_domain (@ldomains) {
 		_info("generating code for domain ",$o_domain->name);
 		$o_domain->display() if $this->global->{'debug'};
+        $this->global('current_domain' => $o_domain);
 
 		# reset per-domain data structures
 		$this->global('hfnames' => {});
@@ -203,6 +238,8 @@ sub _gen_view_vgch_rs {
 		# try to write out a Verilog file with defines
 		$this->_vgch_rs_write_defines($o_domain);
 	};
+    # write a file with MSD setup
+    $this->_vgch_rs_write_msd_setup();
 	$this->display() if $this->global->{'debug'}; # dump Reg class object
 	1;
 };
@@ -216,8 +253,20 @@ sub _vgch_rs_init {
 	$this->global(
                   'mix_signature'      => "\"M1\"",     # signature for cross-checking MIX software version and IP version
 				  'ocp_target_name'    => "ocp_target", # library module name
+                  'ocp_checker_name'   => "ocp_target_m_checker", # library module name
 				  'mcda_name'          => "rs_mcda",    # library module name
-				  'int_set_postfix'    => "_set_p",     # postfix for interrupt-set input signal
+                  'rtl_libs'           => [{            # required MSD RTL libraries
+                                            "project" => "ip_ocp",
+                                            "version" => "0001",
+                                            "release" => "ip_ocp_003_18Jun2007" #ip_ocp_002_14May2007
+                                           },
+                                           {
+                                            "project" => "ip_sync",
+                                            "version" => "0001",
+                                            "release" => "ip_sync_004_05apr2007"
+                                           }
+                                          ],  
+                  'int_set_postfix'    => "_set_p",     # postfix for interrupt-set input signal
 				  'scan_en_port_name'  => "test_en",    # name of test-enable input
 				  'clockgate_te_name'  => "scan_shift_enable", # name of input to connect with test-enable port of clock-gating cell
 				  'embedded_reg_name'  => "RS_CTLSTS",  # reserved name of special register embedded in ocp_target
@@ -231,7 +280,8 @@ sub _vgch_rs_init {
 				  'hclocks'            => {},           # for storing per-clock-domain information
 				  'hfnames'            => {},           # for storing field names
 				  'lexclude_cfg'       => [],           # list of registers to exclude from code generation
-				  'hhdlconsts'         => {}            # hash with HDL constants
+				  'hhdlconsts'         => {},           # hash with HDL constants
+                  'current_domain'     => {}            # store currently processed domain object
 				 );
 
 	# import regshell.<par> parameters from MIX package to class data; user can change these parameters in mix.cfg
@@ -254,6 +304,7 @@ sub _vgch_rs_init {
                       'reg_shell.cfg_module_prefix',
                       'reg_shell.enforce_unique_addr',
                       'reg_shell.infer_reset_syncer',
+                      'reg_shell.field_naming',
 					  'postfix.POSTFIX_PORT_OUT', 
 					  'postfix.POSTFIX_PORT_IN',
 					  'postfix.POSTFIX_FIELD_OUT', 
@@ -280,7 +331,7 @@ sub _vgch_rs_init {
 	}; 
 
     # register Perl module with mix
-    $eh->mix_add_module_info("RegViews", '$Revision: 1.59 $ ', "Utility functions to create different register space views from Reg class object");
+    $eh->mix_add_module_info("RegViews", '$Revision: 1.60 $ ', "Utility functions to create different register space views from Reg class object");
 };
 
 
@@ -426,9 +477,15 @@ sub _vgch_rs_gen_cfg_module {
 				}; 
 			};
 			
-			# warning for w1c fields greater than one bit
+			# warnings/errors for w1c fields 
 			if ($spec =~ m/w1c/i and $o_field->attribs->{'size'} >1 ) {
-				_warning("field \'",$o_field->name,"\': for fields of type write-one-to-clear, only 1-bit size is currently supported");
+                # greater than one bit
+                if ($o_field->attribs->{'size'} >1) {
+                    _warning("field \'",$o_field->name,"\': for fields of type write-one-to-clear, only 1-bit size is currently supported");
+                };
+                if ($access !~ m/w/ or $access !~ m/r/) {
+                    _error("field \'",$o_field->name,"\': attribute W1C can only be combined with RW access");
+                }; 
 			};
 				
 			# add ports, declarations and assignments
@@ -437,7 +494,7 @@ sub _vgch_rs_gen_cfg_module {
 				if ($spec =~ m/sha/i) {
 					push @ldeclarations, "reg [$msb:$lsb] ".$this->_gen_field_name("shdw", $o_field).";";
 				};
-				if ($spec =~ m/trg/i and $spec !~ m/usr/i) { # new: add write trigger output
+				if ($spec =~ m/trg/i and $spec !~ m/usr/i) { # add write trigger output
 					_add_primary_output($this->_gen_field_name("trg", $o_field), 0, 0, $spec =~ m/sha/i ? 0 : 1, $cfg_i);
 				};
 			} elsif ($access =~ m/w/i) { # write
@@ -464,7 +521,7 @@ sub _vgch_rs_gen_cfg_module {
 				if($access =~ m/r/i and $spec =~ m/usr/i) { # usr read/write
 					_add_primary_input($this->_gen_field_name("in", $o_field), $msb, $lsb, $cfg_i);
 				};
-				if ($spec =~ m/trg/i and $spec !~ m/usr/i) { # new: add write trigger output
+				if ($spec =~ m/trg/i and $spec !~ m/usr/i) { # add write trigger output
 					_add_primary_output($this->_gen_field_name("trg", $o_field), 0, 0, ($spec =~ m/w1c/i) ? 1:0, $cfg_i);
 				};
 			};
@@ -1586,9 +1643,20 @@ sub _vgch_rs_gen_hier {
 		_add_generic("def_val_p", $this->global->{'ecs_def_val'}, $ocp_inst);
 		_add_generic("def_rerr_en_p", $this->global->{'ecs_def_rerr_en'}, $ocp_inst);
 		_add_generic("def_ien_p", $this->global->{'ecs_def_ien'}, $ocp_inst);
+        _add_generic("ecs_writable_p", $this->global->{'ecs_writable'}, $ocp_inst); # NEW
 	};
 
 	$ocp_sync = 0;
+
+    # instantitate OCP master checker if configured
+    my $ocp_checker_inst;
+    if ($this->global->{'infer_sva'}) {
+        $ocp_checker_inst = $this->_add_instance_unique($this->global->{"ocp_checker_name"}, $top_inst, "OCP master checker module");
+        $this->global('ocp_checker_inst' => $ocp_checker_inst);
+        _add_generic("P_DWIDTH", $this->global->{'datawidth'}, $ocp_checker_inst);
+        _add_generic("P_AWIDTH", $this->global->{'addrwidth'}, $ocp_checker_inst);
+        _add_generic("P_WRITERESP_ENABLE", 0, $ocp_checker_inst);
+    };
 
 	# instantiate MCD adapter (if required)
 	if ($nclocks > 1 and $this->global->{'multi_clock_domains'}) {
@@ -1769,26 +1837,35 @@ sub _vgch_rs_get_configuration {
 	foreach $o_reg (@{$o_domain->regs}) {
 		if ($o_reg->name eq $this->global->{'embedded_reg_name'} and !exists($this->global->{'embedded_reg'})) {
 			$this->global('embedded_reg' => $o_reg);
-			_info("will infer embedded register \'", $o_reg->name, "\'");
+            _info("will infer embedded register \'", $o_reg->name, "\'");
 			last;
 		};
 	};
 
 	$n = 0;
 	$clock = "";
-	my ($rerr_en, $ien, $val) = (0,0,7);
+	my ($rerr_en, $ien, $val, $ecs_writable) = (0,0,7,1); # ecs parameter default values
 	# iterate all fields and retrieve clock names and other stuff
 	foreach $o_field (@{$o_domain->fields}) {
 		# get default values of embedded reg
 		if ($o_field->name eq "rs_to_ien") {
 			$ien = $o_field->attribs->{'init'};
+            if ($o_field->attribs->{'dir'} !~ m/w/i) {
+                $ecs_writable = 0;
+            };
 		};
 		if ($o_field->name eq "rs_to_rerr_en") {
 			$rerr_en = $o_field->attribs->{'init'};
-		};
+            if ($o_field->attribs->{'dir'} !~ m/w/i) {
+                $ecs_writable = 0;
+            };
+        };
 		if ($o_field->name eq "rs_to_val") {
 			$val = $o_field->attribs->{'init'};
-		};  
+            if ($o_field->attribs->{'dir'} !~ m/w/i) {
+                $ecs_writable = 0;
+            };  
+        };
 		if ($this->_skip_field($o_field)) {
 			next;
 		};
@@ -1831,10 +1908,10 @@ sub _vgch_rs_get_configuration {
 		if (length($o_field->{'name'}) >32) {
 			_warning("field name \'",$o_field->{'name'},"\' is ridiculously long");
 		};
-		# check doubly defined fields
+		# check doubly defined fields, allowed only if there is a naming scheme in place which uniquifies the name
 		if (grep ($_ eq $o_field->name, values(%{$this->global->{'hfnames'}}))) {
-			if (!$this->global->{'use_reg_name_as_prefix'}) {
-				_error("field name \'",$o_field->{'name'},"\' is defined more than once");
+			if ($this->global->{'field_naming'} !~ m/[RN]/) {
+				_error("field name \'",$o_field->{'name'},"\' is defined more than once; correct this or use a naming scheme to differentiate (parameter reg_shell.field_naming)");
 			};
 		};
 		# enter name in new data struct for checking
@@ -1844,7 +1921,8 @@ sub _vgch_rs_get_configuration {
 	# store def. values of embedded reg in global
 	$this->global('ecs_def_val' => $val,
 				  'ecs_def_ien' => $ien,
-				  'ecs_def_rerr_en' => $rerr_en);
+				  'ecs_def_rerr_en' => $rerr_en,
+                  'ecs_writable' => $ecs_writable);
 
 	# if more than one clocks in the domain but MCD feature is off, delete all clocks other than the bus_clock
 	if ($n>1 and !$this->global->{'multi_clock_domains'}) {
@@ -1916,6 +1994,19 @@ sub _vgch_rs_add_static_connections {
 	};
     _add_connection("%OPEN%", 0, 0, "", "${ocp_i}/wr_err_i"); # NEW wr_err input not used
 
+    if (exists ($this->global->{'ocp_checker_inst'})) {
+        my $ocpc_i = $this->global->{'ocp_checker_inst'};
+        _add_primary_input($bus_clock, 0, 0, "${ocpc_i}/clk_i");
+        _add_primary_input($bus_reset, 0, 0, "${ocpc_i}/reset_n_i");
+        _add_primary_input("mreset_n", 0, 0, $ocpc_i);
+        _add_primary_input("mcmd", 2, 0, $ocpc_i);
+        _add_primary_input("maddr", $awidth-1, 0, $ocpc_i);
+        _add_primary_input("mdata", $dwidth-1, 0, $ocpc_i);
+        _add_primary_input("mrespaccept", 0, 0, $ocpc_i);
+        _add_connection("scmdaccept_o", 0, 0, $ocp_i, "$ocpc_i/scmdaccept_i");
+        _add_connection("sresp_o", 1, 0, $ocp_i, "$ocpc_i/sresp_i");
+    };
+    
 	# connections for each config register block
 	$n=0;
 	foreach $clock (sort keys %{$this->global->{'hclocks'}}) {
@@ -2059,6 +2150,35 @@ sub _vgch_rs_write_defines {
     
 };
 
+# write a file in XML syntax listing the required RTL libraries
+sub _vgch_rs_write_msd_setup {
+    my ($this) = @_;
+    my $fname = "rtl_libs.xml";
+    my @ludc;
+    my $ref;
+    
+    if (!open(DHANDLE,">$fname")) {
+		_warning("could not open file \'$fname\' for writing");
+		return;
+	};
+    print DHANDLE "<!--\n";
+    $this->_vgch_rs_gen_udc_header(\@ludc);
+    print DHANDLE join("\n", @ludc);
+	print DHANDLE "\n-->\n";
+    print DHANDLE "<resources>\n";
+    foreach $ref (@{$this->global->{'rtl_libs'}}) {
+        print DHANDLE $this->global->{'indent'} . "<library>\n";
+        print DHANDLE $this->global->{'indent'}x2 . $ref->{'project'}, "\n";
+        print DHANDLE $this->global->{'indent'}x2 . "<version> " .  $ref->{'version'} . " </version>\n";
+        print DHANDLE $this->global->{'indent'}x2 . "<release> " .  $ref->{'release'} . " </release>\n";
+        print DHANDLE $this->global->{'indent'} . "</library>\n";  
+    };
+    print DHANDLE "</resources>\n";
+    # update statistics
+    $eh->inc("sum.hdlfiles");
+	_info("generated file \'$fname\'");
+};
+
 # helper method to prepare SVA to be inserted into module
 sub _indent_and_prune_sva {
     my ($this, $lref_checks) = @_;
@@ -2199,7 +2319,7 @@ sub _add_instance {
 	}
 };
 
-# function to generate the name for a field how it appears in the HDL; use this function ONLY
+# function to generate the name for a field how it appears in the HDL; solely use this function
 # to get the name of a field!
 # input: type = [in|out|int_set|shdw|usr_trans_done|trg]
 # o_field = ref to field object
@@ -2233,13 +2353,15 @@ sub _gen_field_name {
 		$name .= "_trg_p"."%POSTFIX_PORT_OUT%";
 	};
 
+    my $naming_scheme = $this->global->{'field_naming'};
 	# prefix field name with register name
 	if ($this->global->{'use_reg_name_as_prefix'}) {
-		$name = join("_", $o_field->reg->{'name'}, $name);
+        _warning("use of parameter \'reg_shell.use_reg_name_as_prefix\' is deprecated, use \'reg_shell.field_naming\' instead");
+        $naming_scheme = "%R_" . $naming_scheme;
 	};
-
-    # apply MIX naming rules
-    #$name = mix_check_case("port", $name);
+    # apply naming scheme
+    $name = _clone_name($naming_scheme, 99, $o_field->id, $this->global->{'current_domain'}->name, $o_field->reg->name, $name);
+    
 	return $name;
 };
 
