@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.42 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2007/06/18 12:03:13 $                              |
+# | Revision:   $Revision: 1.43 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2007/06/19 14:47:31 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.43  2007/06/19 14:47:31  wig
+# | Improved CVS writter, added #REF! error message.
+# |
 # | Revision 1.42  2007/06/18 12:03:13  lutscher
 # | added reg_shell.field_naming
 # |
@@ -109,9 +112,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.42 2007/06/18 12:03:13 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.43 2007/06/19 14:47:31 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.42 $';  
+my $thisrevision    =      '$Revision: 1.43 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -734,7 +737,7 @@ sub init ($) {
 		'keywords' => { #These keywords will trigger warnings and get replaced
     		'vhdl'	=> '(open|instance|entity|signal)',        # TODO Give me more keywords
     		'verilog' 	=> '(register|net|wire|in|out|inout)', # TODO give me more
-    		'xlscell'	=> '^(#(VALUE|NAME|NUM)[!?]|GENERAL)$',		# Indicates a problem with XLS macros/formulas
+    		'xlscell'	=> '^(#(VALUE|NAME|NUM|REF)[!?]|GENERAL)$',		# Indicates a problem with XLS macros/formulas
     					# Format is perl regular expression, should not be modified by user
 		},
 		'defs' => '',   # 'inst,conn',    # make sure elements are only defined once:

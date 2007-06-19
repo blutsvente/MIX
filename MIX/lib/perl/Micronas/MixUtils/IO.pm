@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.52 $                                          |
+# | Revision:   $Revision: 1.53 $                                          |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2007/03/05 12:58:38 $                              |
+# | Date:       $Date: 2007/06/19 14:47:31 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.53  2007/06/19 14:47:31  wig
+# | Improved CVS writter, added #REF! error message.
+# |
 # | Revision 1.52  2007/03/05 12:58:38  wig
 # | added ::descr and ::gen for -delta mode join cell
 # |
@@ -152,11 +155,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.52 2007/03/05 12:58:38 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.53 2007/06/19 14:47:31 wig Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.52 $'; #'  
+my $thisrevision    =      '$Revision: 1.53 $'; #'  
 
-# Revision:   $Revision: 1.52 $
+# Revision:   $Revision: 1.53 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -683,15 +686,17 @@ sub open_xls($$$$){
 					# Check Value: if cell contains #VALUE!, #NAME? or #NUM! alert user ...
 					if ( $xls_warns and $v =~ m/$xls_warns/ ) {
 						if ( $v eq 'GENERAL' ) {
-							$logger->warn( '__W_XLS_REFS', "\tXLS cell R" . ( $y + 1 ) .
-								"C" . ( $x + 1 ) . " (sheet " .
-								$isheet->{Name} . ") bad reference: " . $v ) .
+							$logger->warn( '__W_XLS_REFS', "\tXLS cell " .
+								Spreadsheet::ParseExcel::Utility::int2col( $x ) . ( $y + 1 ) . 
+								" (R" . ( $y + 1 ) . "C" . ( $x + 1 ) . ", sheet " .
+								$isheet->{Name} . ") dubious cell content: " . $v ) .
 								" using: " . $cell->{'Val'};
 							$v = $cell->{'Val'};
 						} else {
-							$logger->error( '__E_XLS_REFS', "\tXLS cell R" . ( $y + 1 ) .
-								"C" . ( $x + 1 ) . " (sheet " .
-								$isheet->{Name} . ") bad reference: " . $v );
+							$logger->error( '__E_XLS_REFS', "\tXLS cell " .
+								Spreadsheet::ParseExcel::Utility::int2col( $x ) . ( $y + 1 ) . 
+								" (R" . ( $y + 1 ) . "C" . ( $x + 1 ) . ", sheet " .
+								$isheet->{Name} . ") dubious cell content: " . $v );
 						}
 					}
 					push(@line, $v);
@@ -2236,6 +2241,7 @@ sub write_csv ($$$;$) {
 		if ( $sheetm ) {
     		open(FILE, "<$file");
 			binmode FILE;
+			# binmode(FILE, ":utf8");
 			@data = <FILE>;
 			close(FILE);
 
@@ -2268,6 +2274,7 @@ sub write_csv ($$$;$) {
     }
     
     binmode FILE;
+	#!wig: enable UFT8: binmode(FILE, ":utf8");
 
     my $cr = ( $eh->get( 'iswin' ) ? "\r" : '' ) . "\n";
 
@@ -2297,12 +2304,12 @@ sub write_csv ($$$;$) {
 	        $temp = $$r_a[$y][$x];
 			if ( $style =~ m/\bclassic\b/i ) {
 		    	$temp =~ s/$quoting/\\$quoting/g if $quoting;
-		    	$temp =~ s/\S\n/ /g; # remove linefeed
-		    	$temp =~ s/\s\n/ /g; # bug here? why should newline always have a leading whitespace?
+				$temp =~ s/^\n+//;	# remove leading newline
+		    	$temp =~ s/.\n+/ /sg; # replace linefeed by space
 		    	$temp = $quoting . $temp . $quoting;
 			} else {
 		    	if ( $style =~ m/\b(wrap|strip)nl\b/i ) {
-					$temp =~ s/\s*[\r\n]/ /og; # Swallow newlines and <cr>
+					$temp =~ s/\s*[\r\n]/ /og; # Shwallow newlines and <cr>
 		    	} elsif ( $style =~ m/\bmasknl\b/i ) {
 					$temp =~ s/\n/\\n/og; #What to do with leading/trailing tabs?
 					$temp =~ s/\r/\\r/og;
