@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.60 2007/06/18 12:43:26 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.61 2007/06/19 08:20:34 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.60 $                                  
+#  Revision      : $Revision: 1.61 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -61,6 +61,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.61  2007/06/19 08:20:34  lutscher
+#  added ocp_checker instance to output.filter.file
+#
 #  Revision 1.60  2007/06/18 12:43:26  lutscher
 #  added reg_shell.field_naming feature and instantiation of ocp checker module
 #
@@ -331,7 +334,7 @@ sub _vgch_rs_init {
 	}; 
 
     # register Perl module with mix
-    $eh->mix_add_module_info("RegViews", '$Revision: 1.60 $ ', "Utility functions to create different register space views from Reg class object");
+    $eh->mix_add_module_info("RegViews", '$Revision: 1.61 $ ', "Utility functions to create different register space views from Reg class object");
 };
 
 
@@ -1656,6 +1659,7 @@ sub _vgch_rs_gen_hier {
         _add_generic("P_DWIDTH", $this->global->{'datawidth'}, $ocp_checker_inst);
         _add_generic("P_AWIDTH", $this->global->{'addrwidth'}, $ocp_checker_inst);
         _add_generic("P_WRITERESP_ENABLE", 0, $ocp_checker_inst);
+        $eh->cappend('output.filter.file', $ocp_checker_inst);
     };
 
 	# instantiate MCD adapter (if required)
