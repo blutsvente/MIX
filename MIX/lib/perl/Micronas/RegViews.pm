@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.61 2007/06/19 08:20:34 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.62 2007/06/20 07:32:07 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.61 $                                  
+#  Revision      : $Revision: 1.62 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -61,6 +61,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.62  2007/06/20 07:32:07  lutscher
+#  fixed bug in _get_address_msb_lsb()
+#
 #  Revision 1.61  2007/06/19 08:20:34  lutscher
 #  added ocp_checker instance to output.filter.file
 #
@@ -334,7 +337,7 @@ sub _vgch_rs_init {
 	}; 
 
     # register Perl module with mix
-    $eh->mix_add_module_info("RegViews", '$Revision: 1.61 $ ', "Utility functions to create different register space views from Reg class object");
+    $eh->mix_add_module_info("RegViews", '$Revision: 1.62 $ ', "Utility functions to create different register space views from Reg class object");
 };
 
 
@@ -2214,17 +2217,12 @@ sub _skip_field {
 	  };
 };
 
+# calcute the effectively used range of the address
 sub _get_address_msb_lsb {
 	my($this, $o_domain) = @_;
 	my($msb, $lsb, $href, $i);
-	
-	$msb = 0;
+   
     $lsb = 0;
-	foreach $href (@{$o_domain->addrmap}) {
-		while($href->{'offset'} > 2**($msb+1)-1) {
-			$msb++;
-		}; 
-	};
 
 	# determine lsb of address
 	for ($i=0; $i<=4; $i++) {
@@ -2232,6 +2230,14 @@ sub _get_address_msb_lsb {
 		   $lsb = $i;
 		   last;
 	   };
+	};
+
+    # determine msb of address
+	$msb = $lsb;
+	foreach $href (@{$o_domain->addrmap}) {
+		while($href->{'offset'} > 2**($msb+1)-1) {
+			$msb++;
+		}; 
 	};
 	return ($msb, $lsb);
 };
