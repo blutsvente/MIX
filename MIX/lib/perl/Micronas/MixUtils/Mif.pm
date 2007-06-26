@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.28 $                                          |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/01/23 09:33:34 $                              |
+# | Revision:   $Revision: 1.29 $                                          |
+# | Author:     $Author: mathias $                                            |
+# | Date:       $Date: 2007/06/26 13:56:11 $                              |
 # |                                                                       | 
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
@@ -27,6 +27,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.29  2007/06/26 13:56:11  mathias
+# | write footnote when some bitfields have 'W1C', 'W0C' or 'WC' in the column '::spec'
+# |
 # | Revision 1.28  2007/01/23 09:33:34  wig
 # | Support delta mode for MIF files
 # |
@@ -147,9 +150,9 @@ use Micronas::MixUtils qw( mix_utils_diff mix_utils_clean_data $eh );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.28 2007/01/23 09:33:34 wig Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.29 2007/06/26 13:56:11 mathias Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.28 $'; #'  
+my $thisrevision    =      '$Revision: 1.29 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -698,7 +701,11 @@ sub wrCell($$$)
             if (exists($param->{PgfCellAlignment})) {
                 $text .= "<Pgf <PgfCellAlignment " . $param->{PgfCellAlignment} . "> > ";
             }
-            if (exists($param->{Marker})) {
+            if (exists($param->{Footnotenr})) {
+                $text .= "<ParaLine <String `" . $param->{String} . "'> ";
+                $text .= "<Font <FTag `Superscript'> <FLocked No> > <String `" . $param->{Footnotenr} . ")'";
+                $text .= "> >";
+            } elsif (exists($param->{Marker})) {
                 $text .= "<ParaLine <String `" . $param->{String} . "'> ";
                 $text .= "<Marker <MType 9> <MText `" . $param->{Marker};
                 $text .= ': ' . $param->{PgfTag} . ': ' . $param->{String} . "'> > >";
