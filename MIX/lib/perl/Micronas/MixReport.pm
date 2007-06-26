@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.48 $                                               |
+# | Revision:   $Revision: 1.49 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2007/03/23 08:41:11 $                                                   |
+# | Date:       $Date: 2007/06/26 13:49:05 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.48 2007/03/23 08:41:11 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.49 2007/06/26 13:49:05 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,7 +31,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
-# | Revision 1.48  2007/03/23 08:41:11  mathias
+# | Revision 1.49  2007/06/26 13:49:05  mathias
+# | write footnote when some bitfields have 'W1C', 'W0C' or 'WC' in the column '::spec'
+# |
+# | Revision 1.48  2007-03-23 08:41:11  mathias
 # | mix_rep_reglist_mif_header: removed ':' after Init in the table header
 # |
 # | Revision 1.47  2007-02-20 15:46:45  mathias
@@ -200,11 +203,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.48 2007/03/23 08:41:11 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.49 2007/06/26 13:49:05 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.48 $';
+my $thisrevision   =      '$Revision: 1.49 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -1073,6 +1076,11 @@ sub mix_rep_reglist($)
                         $thefields[$ii]{view}    = $o_field->attribs->{'view'}; # N: no documentation
                         $thefields[$ii]{mode}    = $o_field->attribs->{'dir'};
                         $thefields[$ii]{comment} = $o_field->attribs->{'comment'};
+                        $thefields[$ii]{spec}    = $o_field->attribs->{'spec'}; # WC, W1C or W0C (reset the interrupt)
+                        if ($thefields[$ii]->{spec} ne 'W1C' and $thefields[$ii]->{spec} ne 'W0C' and
+                            $thefields[$ii]->{spec} ne 'WC') {
+                            delete($thefields[$ii]->{spec});
+                        }
                         $thefields[$ii]{sync}    = $o_field->attribs->{'sync'};
                         if ( $eh->get( 'output.mif.debug' ) ) {
                             print("~~~~~    " . $thefields[$ii]{name} . '(' . $thefields[$ii]{size}
@@ -1596,6 +1604,13 @@ sub mix_rep_reglist_mif_bitfield_description_header($$$)
 sub mix_rep_reglist_mif_bitfield_description($$$)
 {
     my ($mif, $regtable, $fields) = @_;
+    my $fncnt = 0;
+    # footnote hash
+    # key: 'W1C', 'W0C', or 'WC'
+    # value: ref to a hash
+    #        key: 'fnnr'    value: footnote number
+    #        key: 'fnstr'   value: footnote string
+    my %fnh;
 
     for (my $fi = 0; $fi <= $#{$fields}; $fi++) {
         my $msb = $fields->[$fi]->{pos} + $fields->[$fi]->{size} - 1;
@@ -1619,15 +1634,42 @@ sub mix_rep_reglist_mif_bitfield_description($$$)
                               2);
         $text .= $mif->wrCell({ 'PgfTag'  => 'CellHeading' }, 2);
         $text .= $mif->wrCell({ 'PgfTag'  => 'CellHeading' }, 2);
-        $text .= $mif->wrCell({ 'PgfTag'  => 'CellBodyH8',
-                                'String'  => $fields->[$fi]->{mode},
-                                'Columns' => 2
-                              },
-                              2);
-        $text .= $mif->wrCell({ 'PgfTag'  => 'CellHeading' }, 2);
-        $text .= $mif->wrCell({ 'PgfTag'  => 'CellBodyH8',
-                                'String'  => $fields->[$fi]->{comment},
-                                'Columns' => 11
+        if (exists($fields->[$fi]->{spec})) {
+            my ($fnstr, $fnnr);
+            if (exists($fnh{$fields->[$fi]->{spec}})) {
+                $fnnr = $fnh{$fields->[$fi]->{spec}}->{fnnr};
+            } else {
+                $fnnr = ++$fncnt;
+                $fnh{$fields->[$fi]->{spec}}->{fnnr} = $fnnr;
+                if ($fields->[$fi]->{spec} eq 'W1C') {
+                    $fnh{$fields->[$fi]->{spec}}->{fnstr} =
+                        ") Note: A write access to this bit will clear the dedicated interrupt status if the corresponding bit is set to 1. If it is set to 0 the dedicated interrupt status remains active.";
+                } elsif ($fields->[$fi]->{spec} eq 'W0C') {
+                    $fnh{$fields->[$fi]->{spec}}->{fnstr} =
+                        ") Note: A write access to this bit will clear the dedicated interrupt status if the corresponding bit is set to 0. If it is set to 1 the dedicated interrupt status remains active.";
+                } elsif ($fields->[$fi]->{spec} eq 'WC') {
+                    $fnh{$fields->[$fi]->{spec}}->{fnstr} = 
+                        ") Note: A write access to this bit will clear the dedicated interrupt status if the corresponding bit is set to 0 or 1.";
+                }
+            }
+            $text .= $mif->wrCell({'PgfTag'      => 'CellBodyH8',
+                                   'String'      => $fields->[$fi]->{mode},
+                                   'Footnotenr'  => $fnnr,
+#                                  'Footnotestr' => $fnstr,
+                                   'Columns'     => 2
+                                  },
+                                  2);
+        } else {
+            $text .= $mif->wrCell({'PgfTag'  => 'CellBodyH8',
+                                   'String'  => $fields->[$fi]->{mode},
+                                   'Columns' => 2
+                                  },
+                                  2);
+        }
+        $text .= $mif->wrCell({'PgfTag'  => 'CellHeading' }, 2);
+        $text .= $mif->wrCell({'PgfTag'  => 'CellBodyH8',
+                               'String'  => $fields->[$fi]->{comment},
+                               'Columns' => 11
                               },
                               2);
         for (my $i = 0; $i < 10; $i++) {
@@ -1635,6 +1677,21 @@ sub mix_rep_reglist_mif_bitfield_description($$$)
         }
         my %hh = ('Text' => $text, 'Indent' => 1);
         $hh{WithPrev} = 'Yes' if ($fi == $#{$fields} or $fi == 0);
+        $mif->add($mif->Tr(\%hh), $regtable);
+    }
+    # write footnote at the end of (but inside) the table
+    foreach my $wc (keys %fnh) {
+        #print("fnnr: $fnh{$wc}->{fnnr}    string: $fnh{$wc}->{fnstr}\n");
+        my $text = $mif->wrCell({'PgfTag'   => 'CellBodyH8',
+                                 'String'   => $fnh{$wc}->{fnnr} . $fnh{$wc}->{fnstr},
+                                 'Columns'  => 17
+                                },
+                                2);
+        for (my $i = 0; $i < 16; $i++) {
+            $text .= $mif->wrCell({ 'PgfTag' => 'CellHeading' }, 2);
+        }
+        my %hh = ('Text' => $text, 'Indent' => 1);
+        $hh{WithPrev} = 'Yes';
         $mif->add($mif->Tr(\%hh), $regtable);
     }
 }
