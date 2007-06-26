@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.11 2007/03/05 18:29:35 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.12 2007/06/26 13:02:20 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.12  2007/06/26 13:02:20  lutscher
+#  removed exception for clock ports, postfix is now attached
+#
 #  Revision 1.11  2007/03/05 18:29:35  lutscher
 #  fixed bug in _val2hex, it could not handle negative values
 #
@@ -221,8 +224,8 @@ sub _add_connection {
 sub _add_primary_input {
 	my ($name, $msb, $lsb, $destination) = @_;
 	my %hconn;
-	my $postfix = ($name =~ m/^clk/) ? "" : "%POSTFIX_PORT_IN%";
-	# my $postfix = "%POSTFIX_PORT_IN%";
+	#my $postfix = ($name =~ m/^clk/) ? "" : "%POSTFIX_PORT_IN%";
+	my $postfix = "%POSTFIX_PORT_IN%";
 
 	if ($name =~ m/\%POSTFIX_/g) {
 		$hconn{'::name'} = "${name}";
@@ -241,8 +244,9 @@ sub _add_primary_input {
 sub _add_primary_output {
 	my ($name, $msb, $lsb, $is_reg, $source) = @_;
 	my %hconn;
-	my $postfix = ($name =~ m/^clk/) ? "" : "%POSTFIX_PORT_OUT%";
-	my $type = $is_reg ? "'reg":"'wire";
+	#my $postfix = ($name =~ m/^clk/) ? "" : "%POSTFIX_PORT_OUT%";
+	my $postfix = "%POSTFIX_PORT_OUT%";
+    my $type = $is_reg ? "'reg":"'wire";
 
 	if ($name =~ m/\%POSTFIX_/g) {
 		$hconn{'::name'} = "${name}";
