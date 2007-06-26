@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.62 2007/06/20 07:32:07 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.63 2007/06/26 13:02:54 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.62 $                                  
+#  Revision      : $Revision: 1.63 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -61,6 +61,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.63  2007/06/26 13:02:54  lutscher
+#  removed exception for clock ports, postfix is now attached; fixed bug in read-pipeline generation for clock-gating disabled
+#
 #  Revision 1.62  2007/06/20 07:32:07  lutscher
 #  fixed bug in _get_address_msb_lsb()
 #
@@ -337,7 +340,7 @@ sub _vgch_rs_init {
 	}; 
 
     # register Perl module with mix
-    $eh->mix_add_module_info("RegViews", '$Revision: 1.62 $ ', "Utility functions to create different register space views from Reg class object");
+    $eh->mix_add_module_info("RegViews", '$Revision: 1.63 $ ', "Utility functions to create different register space views from Reg class object");
 };
 
 
@@ -605,7 +608,7 @@ sub _vgch_rs_gen_cfg_module {
 	if ($p_pos_pulse_check) {
 		unshift @lchecks, split("\n","
 property p_pos_pulse_check (sig); // check for positive pulse
-     @(posedge $clock) disable iff (~$int_rst_n)
+     @(posedge ". $this->_gen_clock_name($clock).") disable iff (~$int_rst_n)
      sig |=> ~sig;
 endproperty
 ");
@@ -733,7 +736,7 @@ sub _vgch_rs_code_read_mux {
 	my (@linsert, @ltemp);
 	my $ind = $this->global->{'indent'};
 	my $ilvl = 0;
-	my ($offs, $href, $sig, $cur_addr);
+	my ($offs, $href, $sig, $cur_addr, $rd_clk, $int_rst_n);
 	my $n;
 	my $rdpl_stages = $this->global->{'rdpl_stages'};
 	my $rdpl_lvl =  $this->global->{'read_pipeline_lvl'};
@@ -742,8 +745,12 @@ sub _vgch_rs_code_read_mux {
 	my $addr_lsb = $this->global->{'addr_lsb'};
 	my (%hmux);
 
-	my ($int_rst_n) = $this->_gen_unique_signal_name("int_rst_n", $clock, "sr_inst");
-    my ($rd_clk) = $this->_gen_unique_signal_name("rd_clk", $clock, "cg_read_inst");
+	$int_rst_n = $this->_gen_unique_signal_name("int_rst_n", $clock, "sr_inst");
+    $rd_clk = $clock;
+    $href = $this->global->{'hclocks'}->{$clock};
+    if (exists $href->{'cg_read_inst'}) {
+        $rd_clk = $this->_gen_unique_signal_name("rd_clk", $clock, "cg_read_inst");
+    };
 
 	if (scalar(keys %$href_rp)>0) {
 		# prefix
@@ -910,7 +917,7 @@ sub _rdmux_builder {
 				 $ilvl++;
 			 } else {
 				 # generate the head of the pipelined mux process
-				 push @$lref_insert, "", "always @(posedge $rd_clk or negedge $int_rst_n) begin // stage $prev_lvl";
+				 push @$lref_insert, "", "always @(posedge ". $this->_gen_clock_name($rd_clk)." or negedge $int_rst_n) begin // stage $prev_lvl";
 				 $ilvl++;
 				 push @$lref_insert, $ind x $ilvl++ ."if (~$int_rst_n) begin";
 				 push @$lref_insert, $ind x $ilvl ."$out_d <= 0;";
@@ -1013,7 +1020,7 @@ sub _vgch_rs_code_shadow_process {
 		push @linsert, "", "/*","  shadowing for update signal \'$sig\'","*/";
 		# shadow signal
 		push @linsert, $ind x $ilvl . "// generate internal update signal";
-		push @linsert, $ind x $ilvl++ . "always @(posedge $clock or negedge $int_rst_n) begin";
+		push @linsert, $ind x $ilvl++ . "always @(posedge ". $this->_gen_clock_name($clock) ." or negedge $int_rst_n) begin";
 		push @linsert, $ind x $ilvl . "if (~$int_rst_n) begin";
 		push @linsert, $ind x ($ilvl+1) . "int_${sig} <= 1;";
 		push @linsert, $ind x ($ilvl+1) . "int_${sig}_en <= 0;";
@@ -1036,7 +1043,7 @@ sub _vgch_rs_code_shadow_process {
 		push @linsert, $ind x $ilvl . "end";
 		# assignment block
 		push @linsert, $ind x $ilvl . "// shadow process";
-		push @linsert, $ind x $ilvl++ . "always @(posedge $shadow_clock or negedge $int_rst_n) begin";
+		push @linsert, $ind x $ilvl++ . "always @(posedge ". $this->_gen_clock_name($shadow_clock) . " or negedge $int_rst_n) begin";
 		push @linsert, $ind x $ilvl . "if (~$int_rst_n) begin";
 		foreach $o_field (sort @{$href_shdw->{$sig}}) {
 			my $res_val = 0;
@@ -1129,7 +1136,7 @@ sub _vgch_rs_code_fwd_process {
 		};
 		push @linsert, "// decode addresses of USR registers and read/write";
 		push @linsert, "assign fwd_decode_vec = {".join(", ",@ltemp2)."};", "";
-		push @linsert, $ind x $ilvl++ . "always @(posedge $clock or negedge $int_rst_n) begin";
+		push @linsert, $ind x $ilvl++ . "always @(posedge ". $this->_gen_clock_name($clock)." or negedge $int_rst_n) begin";
 		push @linsert, $ind x $ilvl++ . "if (~$int_rst_n) begin";
 		_pad_column(0, $this->global->{'indent'}, $ilvl, \@ltemp);
 		push @linsert, @ltemp;
@@ -1216,7 +1223,7 @@ sub _vgch_rs_code_write_processes {
 		};
 		# prefix
 		push @linsert, "", "/*","  write process","*/";
-		push @linsert, $ind x $ilvl++ . "always @(posedge $write_clock or negedge $int_rst_n) begin";
+		push @linsert, $ind x $ilvl++ . "always @(posedge ". $this->_gen_clock_name($write_clock)." or negedge $int_rst_n) begin";
 
 		# reset logic
 		push @linsert, $ind x $ilvl++ . "if (~$int_rst_n) begin";
@@ -1288,7 +1295,7 @@ sub _vgch_rs_code_write_processes {
         
         # prefix
 		push @linsert, "", "/*","  write trigger process","*/";
-		push @linsert, $ind x $ilvl++ . "always @(posedge $clock or negedge $int_rst_n) begin";
+		push @linsert, $ind x $ilvl++ . "always @(posedge ". $this->_gen_clock_name($clock)." or negedge $int_rst_n) begin";
 
 		# reset logic
 		push @linsert, $ind x $ilvl++ . "if (~$int_rst_n) begin";
@@ -1334,7 +1341,7 @@ sub _vgch_rs_code_write_processes {
 	if (scalar(keys %{$href_wp->{'write_sts'}})>0) {
 		# prefix
 		push @linsert, "", "/*","  write process for status registers","*/";
-		push @linsert, $ind x $ilvl . "always @(posedge $write_sts_clock or negedge $int_rst_n) begin";
+		push @linsert, $ind x $ilvl . "always @(posedge ". $this->_gen_clock_name($write_sts_clock)." or negedge $int_rst_n) begin";
 		
 		# reset logic
 		push @linsert, $ind x ($ilvl+1) . "if (~$int_rst_n) begin";
@@ -1530,13 +1537,13 @@ assign fwd_done_vec = {${dummy}};
 
 assert_fwd_done_onehot: assert property
 (
-   @(posedge $clock) disable iff (~$int_rst_n)
+   @(posedge ". $this->_gen_clock_name($clock).") disable iff (~$int_rst_n)
    fwd_done_vec != 0 |-> onehot(fwd_done_vec)
 );
 
 assert_fwd_done_only_when_fwd_txn: assert property
 (
-   @(posedge $clock) disable iff (~$int_rst_n)
+   @(posedge ". $this->_gen_clock_name($clock).") disable iff (~$int_rst_n)
    fwd_done_vec != 0 |-> fwd_txn
 );
 
@@ -1553,7 +1560,7 @@ endfunction
     };
 
 	push @ltemp, ("",
-				 "always @(posedge $clock or negedge $int_rst_n) begin",
+				 "always @(posedge ". $this->_gen_clock_name($clock)." or negedge $int_rst_n) begin",
 				 $ind."if (~$int_rst_n) begin", 
 				 $ind x 2 ."int_trans_done <= 0;",
 				 $ind x 2 ."ts_del_p       <= 0;"
@@ -1881,7 +1888,7 @@ sub _vgch_rs_get_configuration {
 		if ($clock  =~ m/[\%OPEN\%|\%EMPTY\%]/) {
 			$clock = $bus_clock; # use default clock
 		};
-		if (!exists($hresult{$clock})) {
+		if (!exists($hresult{$clock})) { # baustelle
 			$hresult{$clock} = {'reset' => $reset }; # store clock name as key in hash
 			if ($clock eq $bus_clock) {
 				$hresult{$clock}->{'sync'} = 0;
@@ -2112,7 +2119,7 @@ sub _vgch_rs_add_static_connections {
         push @ltemp, $this->global->{'clockgate_te_name'};
     };
     foreach $dft (@ltemp) {
-        push @lchecks, "assert_${dft}_driven: assert property(is_driven($bus_clock, $bus_reset".$this->global->{'POSTFIX_PORT_IN'}.", ". $dft . $this->global->{'POSTFIX_PORT_IN'}.")) else \$error(\"ERROR: input port $dft is undriven after reset\");";
+        push @lchecks, "assert_${dft}_driven: assert property(is_driven(". $this->_gen_clock_name($bus_clock).", $bus_reset".$this->global->{'POSTFIX_PORT_IN'}.", ". $dft . $this->global->{'POSTFIX_PORT_IN'}.")) else \$error(\"ERROR: input port $dft is undriven after reset\");";
     };
     $this->_indent_and_prune_sva(\@lchecks);
     $this->_vgch_rs_write_udc($top_inst, \@lchecks);
@@ -2327,6 +2334,17 @@ sub _add_instance {
 		   '::lang'   => $this->global->{'lang'}
 		  );
 	}
+};
+
+# function to add a postfix to a clock name if it is a primary input
+sub _gen_clock_name {
+	my ($this, $clock) = @_;
+    my $result = $clock;
+
+    if ($clock eq $this->global->{'bus_clock'} or grep ($clock eq $_, keys %{$this->global->{'hclocks'}})) {
+        $result .= $this->global->{'POSTFIX_PORT_IN'};
+    };
+    return $result;
 };
 
 # function to generate the name for a field how it appears in the HDL; solely use this function
