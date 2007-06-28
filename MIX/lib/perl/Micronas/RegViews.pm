@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.63 2007/06/26 13:02:54 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.64 2007/06/28 07:57:02 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.63 $                                  
+#  Revision      : $Revision: 1.64 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -61,6 +61,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.64  2007/06/28 07:57:02  lutscher
+#  added translate_on/off for behavioural Verilog instances
+#
 #  Revision 1.63  2007/06/26 13:02:54  lutscher
 #  removed exception for clock ports, postfix is now attached; fixed bug in read-pipeline generation for clock-gating disabled
 #
@@ -340,7 +343,7 @@ sub _vgch_rs_init {
 	}; 
 
     # register Perl module with mix
-    $eh->mix_add_module_info("RegViews", '$Revision: 1.63 $ ', "Utility functions to create different register space views from Reg class object");
+    $eh->mix_add_module_info("RegViews", '$Revision: 1.64 $ ', "Utility functions to create different register space views from Reg class object");
 };
 
 
@@ -709,14 +712,19 @@ endproperty
 sub _vgch_rs_gen_udc_header {
 	my ($this, $lref_res) = @_;
 	my $pkg_name = $this;
+    my $ref;
 	$pkg_name =~ s/=.*$//;
-	push @$lref_res, ("/*", "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
+	push @$lref_res, ("/* ". "-" x 60, "  Generator information:", "  used package $pkg_name is version " . $this->global->{'version'});
     my $href_info = $eh->mix_get_module_info("RegViews.pm");
 	my $rev = "  this package RegViews.pm is version ".$href_info->{'version'};
 	# $rev =~ s/\$//g;
 	# $rev =~ s/Revision\: //;
 	push @$lref_res, $rev;
-	push @$lref_res, "*/";
+    push @$lref_res, "  use with RTL libraries:";
+    foreach $ref (@{$this->global->{'rtl_libs'}}) {
+        push @$lref_res, "  " . $ref->{'project'} . "/" . $ref->{'version'} . "/" . $ref->{'release'};
+    };
+	push @$lref_res, "-" x 60 . " */";
 	_pad_column(-1, $this->global->{'indent'}, 2, $lref_res);
 	return;
 };
@@ -1664,7 +1672,11 @@ sub _vgch_rs_gen_hier {
     # instantitate OCP master checker if configured
     my $ocp_checker_inst;
     if ($this->global->{'infer_sva'}) {
-        $ocp_checker_inst = $this->_add_instance_unique($this->global->{"ocp_checker_name"}, $top_inst, "OCP master checker module");
+        my $udc="/%PINS%/\`ifdef ASSERT_ON
+// synopsys translate_off
+/%AINS%/ // synopsys translate_on
+\`endif";
+        $ocp_checker_inst = $this->_add_instance_unique($this->global->{"ocp_checker_name"}, $top_inst, "OCP master checker module", $udc);
         $this->global('ocp_checker_inst' => $ocp_checker_inst);
         _add_generic("P_DWIDTH", $this->global->{'datawidth'}, $ocp_checker_inst);
         _add_generic("P_AWIDTH", $this->global->{'addrwidth'}, $ocp_checker_inst);
@@ -2307,14 +2319,15 @@ sub _get_field_clock_and_reset {
 
 # helper function to call add_inst()
 sub _add_instance {
-	my($this, $name, $parent, $comment) = @_;
+	my($this, $name, $parent, $comment, $udc) = @_;
 	return add_inst
 	  (
 	   '::entity' => $name,
 	   '::inst'   => '%PREFIX_INSTANCE%%::entity%%POSTFIX_INSTANCE%',
 	   '::descr'  => $comment,
 	   '::parent' => $parent,
-	   '::lang'   => $this->global->{'lang'}
+	   '::lang'   => $this->global->{'lang'},
+       '::udc'    => $udc
 	  );
 };
 
@@ -2322,7 +2335,7 @@ sub _add_instance {
 {
 	my($unumber) = 0; # static variable for this method
 	sub _add_instance_unique {
-		my($this, $name, $parent, $comment) = @_;
+		my($this, $name, $parent, $comment, $udc) = @_;
 		my($uname) = "%PREFIX_INSTANCE%u${unumber}_${name}%POSTFIX_INSTANCE%";
 		$unumber++;
 		return add_inst
@@ -2331,7 +2344,8 @@ sub _add_instance {
 		   '::inst'   => $uname,
 		   '::descr'  => $comment,
 		   '::parent' => $parent,
-		   '::lang'   => $this->global->{'lang'}
+		   '::lang'   => $this->global->{'lang'},
+           '::udc'    => $udc
 		  );
 	}
 };
