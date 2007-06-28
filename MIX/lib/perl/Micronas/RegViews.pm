@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.64 2007/06/28 07:57:02 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.65 2007/06/28 09:06:33 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.64 $                                  
+#  Revision      : $Revision: 1.65 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -61,6 +61,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.65  2007/06/28 09:06:33  lutscher
+#  suppress adding of scan-enable input if no reset-synchronizer is inferred
+#
 #  Revision 1.64  2007/06/28 07:57:02  lutscher
 #  added translate_on/off for behavioural Verilog instances
 #
@@ -343,7 +346,7 @@ sub _vgch_rs_init {
 	}; 
 
     # register Perl module with mix
-    $eh->mix_add_module_info("RegViews", '$Revision: 1.64 $ ', "Utility functions to create different register space views from Reg class object");
+    $eh->mix_add_module_info("RegViews", '$Revision: 1.65 $ ', "Utility functions to create different register space views from Reg class object");
 };
 
 
@@ -1727,14 +1730,12 @@ sub _vgch_rs_gen_hier {
 		$sg_inst = $this->_add_instance_unique("sync_generic", $cfg_inst, "Synchronizer for trans_start signal");
 		$refclks->{$clock}->{'sg_inst'} = $sg_inst; # store in global->hclocks
 		_add_generic("kind", 2, $sg_inst);
-		# _add_generic("sync", $refclks->{$clock}->{'sync'}, $sg_inst);
 		_add_generic_value("sync", 0, "sync", $sg_inst);
 		_add_generic("act", 1, $sg_inst);
 		_add_generic("rstact", 0, $sg_inst);
 		_add_generic("rstval", 0, $sg_inst);
-        $sr_inst = $this->_add_instance_unique("sync_rst", $cfg_inst, "Reset synchronizer");
+        $sr_inst = $this->_add_instance_unique("sync_rst", $cfg_inst, "Reset synchronizer".($this->global->{'infer_reset_syncer'} ? "" : " (in bypass-mode)"));
         $refclks->{$clock}->{'sr_inst'} = $sr_inst; # store in global->hclocks
-        #_add_generic("sync", $refclks->{$clock}->{'sync'}, $sr_inst);
         if ($this->global->{'infer_reset_syncer'}) {                
             _add_generic_value("sync", 0, "sync", $sr_inst);
         } else {
@@ -2055,8 +2056,12 @@ sub _vgch_rs_add_static_connections {
 		_add_primary_input($href->{'reset'}, 0, 0, $cfg_i);
 		_add_primary_input($href->{'reset'}, 0, 0, "${sg_i}/rst_r");
 		_add_primary_input($href->{'reset'}, 0, 0, "${sr_i}/rst_i");
-		# _add_primary_input($this->global->{'scan_en_port_name'}, 0, 0, $cfg_i); # scan port
-		_add_primary_input($this->global->{'scan_en_port_name'}, 0, 0, "$sr_i/test_i");  # scan port
+        # the scan-enable input is only needed for the reset-synchronizer
+		if ($this->global->{'infer_reset_syncer'}) { 
+            _add_primary_input($this->global->{'scan_en_port_name'}, 0, 0, "$sr_i/test_i");
+        } else {
+            _tie_input_to_constant("${sr_i}/test_i", 0, 0, 0);
+        };
 		_tie_input_to_constant("${sg_i}/clk_s", 0, 0, 0);
 		_tie_input_to_constant("${sg_i}/rst_s", 0, 0, 0);
 		_add_connection("addr",  $awidth-1, 0, "${ocp_i}/addr_o", "${cfg_i}/addr_i");
@@ -2121,20 +2126,24 @@ sub _vgch_rs_add_static_connections {
     my @lchecks = ();
     my $dft;
     my @ltemp;
-    $this->_vgch_rs_gen_udc_header(\@lchecks);
-    push @lchecks, 'parameter P_WAIT_IS_DRIVEN = 256;',
-'property is_driven(clk, rst_n, sig);',
-'  @(posedge clk) $rose(rst_n) |=> ##P_WAIT_IS_DRIVEN !$isunknown(sig);',
-'endproperty';
-    @ltemp = ($this->global->{'scan_en_port_name'});
+    if ($this->global->{'infer_reset_syncer'}) { 
+        push @ltemp, $this->global->{'scan_en_port_name'};
+    };
     if ($this->global->{'infer_clock_gating'} and (exists $href->{'cg_write_inst'} or exists $href->{'cg_shdw_inst'} or exists $href->{'cg_read_inst'})) {
         push @ltemp, $this->global->{'clockgate_te_name'};
     };
-    foreach $dft (@ltemp) {
-        push @lchecks, "assert_${dft}_driven: assert property(is_driven(". $this->_gen_clock_name($bus_clock).", $bus_reset".$this->global->{'POSTFIX_PORT_IN'}.", ". $dft . $this->global->{'POSTFIX_PORT_IN'}.")) else \$error(\"ERROR: input port $dft is undriven after reset\");";
+    if (scalar(@ltemp)>0) {
+        $this->_vgch_rs_gen_udc_header(\@lchecks);
+        push @lchecks, 'parameter P_WAIT_IS_DRIVEN = 256;',
+        'property is_driven(clk, rst_n, sig);',
+        '  @(posedge clk) $rose(rst_n) |=> ##P_WAIT_IS_DRIVEN !$isunknown(sig);',
+        'endproperty';
+        foreach $dft (@ltemp) {
+            push @lchecks, "assert_${dft}_driven: assert property(is_driven(". $this->_gen_clock_name($bus_clock).", $bus_reset".$this->global->{'POSTFIX_PORT_IN'}.", ". $dft . $this->global->{'POSTFIX_PORT_IN'}.")) else \$error(\"ERROR: input port $dft is undriven after reset\");";
+        };
+        $this->_indent_and_prune_sva(\@lchecks);
+        $this->_vgch_rs_write_udc($top_inst, \@lchecks);
     };
-    $this->_indent_and_prune_sva(\@lchecks);
-    $this->_vgch_rs_write_udc($top_inst, \@lchecks);
 };
 
 # Write out a Verilog file with defines
