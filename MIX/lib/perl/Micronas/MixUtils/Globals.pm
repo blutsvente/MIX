@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.43 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/06/19 14:47:31 $                              |
+# | Revision:   $Revision: 1.44 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2007/07/17 09:49:30 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.44  2007/07/17 09:49:30  lutscher
+# | added reg_shell parameter
+# |
 # | Revision 1.43  2007/06/19 14:47:31  wig
 # | Improved CVS writter, added #REF! error message.
 # |
@@ -112,9 +115,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.43 2007/06/19 14:47:31 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.44 2007/07/17 09:49:30 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.43 $';  
+my $thisrevision    =      '$Revision: 1.44 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -909,6 +912,7 @@ sub init ($) {
         'enforce_unique_addr'  => 1,        # if 1, allow only one register per address
         'infer_reset_syncer'   => 0,        # if 1, instantiates a reset synchronizer for asynchronous reset
         'field_naming'         => '%F',     # naming scheme for fields, see 'clone'
+        'virtual_top_instance' => "testbench", # name of top-level instance where register-shell is instantiated (usually not used)
                     # parameters for e_vr_ad view
         'e_vr_ad' => {
                       'regfile_prefix'   => 'MIC',
