@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.53 $                                          |
-# | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2007/06/19 14:47:31 $                              |
+# | Revision:   $Revision: 1.54 $                                          |
+# | Author:     $Author: lutscher $                                         |
+# | Date:       $Date: 2007/07/17 11:40:47 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.54  2007/07/17 11:40:47  lutscher
+# | changed open_xls() to also take comma-separated list as sheetname argument
+# |
 # | Revision 1.53  2007/06/19 14:47:31  wig
 # | Improved CVS writter, added #REF! error message.
 # |
@@ -155,11 +158,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.53 2007/06/19 14:47:31 wig Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.54 2007/07/17 11:40:47 lutscher Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.53 $'; #'  
+my $thisrevision    =      '$Revision: 1.54 $'; #'  
 
-# Revision:   $Revision: 1.53 $
+# Revision:   $Revision: 1.54 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -597,7 +600,7 @@ Open a excel file, select the appropriate worksheets and return
 
 =over 4
 =item $filename name of file
-=item $sheet name of worksheet
+=item $sheet name of worksheet (can be comma-separated list)
 =item $xsheet name of worksheets to exclude
 =item $flag flags
 
@@ -648,14 +651,17 @@ sub open_xls($$$$){
 		$logger->error( '__E_FILE_OPEN', "\tOpening ExCEL File $file");
     }
 
-    # Take all sheets matching the possible reg ex in $sheetname
-    for(my $i=0; $i < $oBook->{SheetCount} ; $i++) {
-        $isheet = $oBook->{Worksheet}[$i];
-        next if ( $xsheetname and $isheet->{Name} =~ m/^$xsheetname$/ );
-		if ( $isheet->{Name} =~ m/^$sheetname$/ ) {
-			push( @sheets, $i );
+    # Take all sheets matching the possible reg ex (or comma-seperated list) in $sheetname
+    my @lsheetnames = split(/\,\s*/, $sheetname);
+    foreach my $_sheetname (@lsheetnames) {
+        for(my $i=0; $i < $oBook->{SheetCount} ; $i++) {
+            $isheet = $oBook->{Worksheet}[$i];
+            next if ( $xsheetname and $isheet->{Name} =~ m/^$xsheetname$/ );
+            if ( $isheet->{Name} =~ m/^$_sheetname$/ ) {
+                push( @sheets, $i );
         	}
-    }
+        }
+    };
 
     # return if no sheets where found
     if ( scalar( @sheets ) < 1 ) {
