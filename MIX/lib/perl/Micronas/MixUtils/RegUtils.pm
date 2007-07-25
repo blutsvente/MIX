@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.12 2007/06/26 13:02:20 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.13 2007/07/25 07:56:25 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.13  2007/07/25 07:56:25  lutscher
+#  added _add_instance_verilog
+#
 #  Revision 1.12  2007/06/26 13:02:20  lutscher
 #  removed exception for clock ports, postfix is now attached
 #
@@ -88,6 +91,7 @@ require Exporter;
    _add_primary_input
    _add_primary_output
    _get_signal_type
+   _add_instance_verilog
    _pad_column
    _max
    _pad_str
@@ -213,8 +217,6 @@ sub _add_connection {
 	$hconn{'::name'} = $name;
 	$hconn{'::in'} = $destination;
 	$hconn{'::out'} = $source;
-	#$hconn{'::in'} = $dest;
-	#$hconn{'::out'} = $src;
 	_get_signal_type($msb, $lsb, 0, \%hconn);
 	add_conn(%hconn);
     return $name;
@@ -224,7 +226,6 @@ sub _add_connection {
 sub _add_primary_input {
 	my ($name, $msb, $lsb, $destination) = @_;
 	my %hconn;
-	#my $postfix = ($name =~ m/^clk/) ? "" : "%POSTFIX_PORT_IN%";
 	my $postfix = "%POSTFIX_PORT_IN%";
 
 	if ($name =~ m/\%POSTFIX_/g) {
@@ -244,7 +245,6 @@ sub _add_primary_input {
 sub _add_primary_output {
 	my ($name, $msb, $lsb, $is_reg, $source) = @_;
 	my %hconn;
-	#my $postfix = ($name =~ m/^clk/) ? "" : "%POSTFIX_PORT_OUT%";
 	my $postfix = "%POSTFIX_PORT_OUT%";
     my $type = $is_reg ? "'reg":"'wire";
 
@@ -285,6 +285,20 @@ sub _get_signal_type {
             $href->{'::type'} = "std_logic_vector";
 		};
 	};
+};
+
+# helper function to call add_inst() - note: there is also a member function of Micronas::Reg of the same name
+sub _add_instance_verilog {
+	my($name, $parent, $comment, $udc) = @_;
+	return add_inst
+	  (
+	   '::entity' => $name,
+	   '::inst'   => '%PREFIX_INSTANCE%%::entity%%POSTFIX_INSTANCE%',
+	   '::descr'  => $comment,
+	   '::parent' => $parent,
+	   '::lang'   => "verilog",
+       '::udc'    => $udc
+	  );
 };
 
 #------------------------------------------------------------------------------
