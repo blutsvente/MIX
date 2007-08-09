@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.44 $                                         |
+# | Revision:   $Revision: 1.45 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2007/07/17 09:49:30 $                              |
+# | Date:       $Date: 2007/08/09 09:56:54 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.45  2007/08/09 09:56:54  lutscher
+# | some reg_shell parameter updates
+# |
 # | Revision 1.44  2007/07/17 09:49:30  lutscher
 # | added reg_shell parameter
 # |
@@ -115,9 +118,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.44 2007/07/17 09:49:30 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.45 2007/08/09 09:56:54 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.44 $';  
+my $thisrevision    =      '$Revision: 1.45 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -908,7 +911,6 @@ sub init ($) {
 		'exclude_fields' => "",             # comma seperated list of field names to exclude from code generation	
 		'add_takeover_signals' => 0,        # if 1, internal update signals are also routed to top-level ports
         'regshell_prefix'      => "rs",     # register-shell prefix
-		'cfg_module_prefix'    => "rs_cfg", # prefix for config register block
         'enforce_unique_addr'  => 1,        # if 1, allow only one register per address
         'infer_reset_syncer'   => 0,        # if 1, instantiates a reset synchronizer for asynchronous reset
         'field_naming'         => '%F',     # naming scheme for fields, see 'clone'
@@ -947,12 +949,9 @@ sub init ($) {
 					'unique_clocks'=> 1           # if 1, uniquify clock names of clones
 				   },
 					# legacy parameters, not needed anymore!
+		'cfg_module_prefix'    => "rs_cfg", # prefix for config register block
 		'mode'             => 'lcport', # lcport -> map created port names to lowercase	
-		'regwidth'	=> 32,  # Default register width
-		'top_name'  => '%PREFIX_IIC_GEN%%::interface%%POSTFIX_IIC_GEN%', # Name reg_shell top-level instance 
-	    '%IIC_SER_REG%'    => 'iic_ser_reg_', # prefix for serial subregister entity
-	    '%IIC_PAR_REG%'    => 'iic_par_reg_', # prefix for parallel subregister entity
-	    '%IIC_SYNC%'       => 'sync_iic'      # prefix for sync block
+		'regwidth'	=> 32  # Default register width
 	};
 	#
     # Possibly read configuration details from the CONF sheet, see -conf option
