@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.39 2007/05/24 09:30:21 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.40 2007/08/10 08:39:52 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.40  2007/08/10 08:39:52  lutscher
+#  little changes
+#
 #  Revision 1.39  2007/05/24 09:30:21  lutscher
 #  added hxxx number format to parser
 #
@@ -55,101 +58,6 @@
 #  added cloning feature
 #
 #  Revision 1.31  2006/07/12 14:43:13  lutscher
-#  changed _map_register_master
-#
-#  Revision 1.30  2006/06/22 11:45:43  lutscher
-#  added new view HDL-vgch-rs-clone and package RegViewClone
-#
-#  Revision 1.29  2006/06/16 07:47:06  lutscher
-#  exchanged some die() calls with proper logger function
-#
-#  Revision 1.28  2006/06/12 13:42:17  lutscher
-#  parse_register_master() now returns a Reg object
-#
-#  Revision 1.27  2006/06/06 11:15:25  lutscher
-#  fixed typo
-#
-#  Revision 1.26  2006/06/06 08:13:52  lutscher
-#  moved register-master definition attribute from field to register
-#
-#  Revision 1.25  2006/05/10 12:21:33  wig
-#   	Reg.pm : import mix_use_on_demand function
-#
-#  Revision 1.24  2006/05/08 15:20:05  wig
-#  Implement mix_use_on_demand
-#
-#  Revision 1.23  2006/04/06 12:10:09  lutscher
-#  added support for hex values in register-master parser
-#
-#  Revision 1.22  2006/04/04 16:34:19  lutscher
-#  changed regmaster parser for
-#
-#  Revision 1.21  2006/03/14 14:21:19  lutscher
-#  made changes for new eh access and logger functions
-#
-#  Revision 1.20  2006/03/14 08:10:35  wig
-#  No changes, got deleted accidently
-#
-#  Revision 1.19  2006/02/28 11:33:27  lutscher
-#  added view RDL
-#
-#  Revision 1.18  2006/01/18 13:05:44  lutscher
-#  changed handling of different registers at same address
-#
-#  Revision 1.17  2006/01/13 13:39:08  lutscher
-#  added AVFB register master type
-#
-#  Revision 1.16  2005/12/09 15:02:15  lutscher
-#  small changes
-#
-#  Revision 1.15  2005/12/09 13:13:48  lutscher
-#  moved hook function called by mix_0.pl from MixI2CParser.pm to here; now called parse_register_master()
-#
-#  Revision 1.14  2005/11/29 08:45:45  lutscher
-#  added get_domain_baseaddr() and view: none
-#
-#  Revision 1.13  2005/11/23 13:58:30  mathias
-#  do not remove data structure when register list should be reported
-#
-#  Revision 1.12  2005/11/23 13:31:30  lutscher
-#  added RegViewSTL.pm
-#
-#  Revision 1.11  2005/11/23 13:24:32  lutscher
-#  some changes for -report, added STL view
-#
-#  Revision 1.10  2005/11/10 14:40:05  lutscher
-#  added setting of definition class member of fields and check for decimal/hexadecimal from ::sub column in register master
-#
-#  Revision 1.9  2005/11/09 13:36:56  lutscher
-#  added domain command line parameter
-#
-#  Revision 1.8  2005/11/09 13:00:14  lutscher
-#  fixed Perl warning
-#
-#  Revision 1.7  2005/11/09 12:42:49  lutscher
-#  added whitespace removal and promoted a warning to error
-#
-#  Revision 1.6  2005/11/08 13:10:38  lutscher
-#  added check for overlapping registers
-#
-#  Revision 1.5  2005/10/26 13:57:14  lutscher
-#  set debug to 0
-#
-#  Revision 1.4  2005/10/14 11:30:07  lutscher
-#  intermedate checkin (stable, but fully functional)
-#
-#  Revision 1.3  2005/09/16 13:57:27  lutscher
-#  added register view E_VR_AD from Emanuel
-#
-#  Revision 1.2  2005/07/18 08:40:59  lutscher
-#  o fixed parser for register-master sheet
-#  o changed global parameter _mult_max_ -> _mult_
-#
-#  Revision 1.1  2005/07/07 12:35:26  lutscher
-#  Reg: register space class; represents register space
-#  of a device and contains register domains; also contains
-#  most of the user API for dealing with register spaces.
-#  Contains subclasses (see Reg.pm).
 #
 #  
 ###############################################################################
@@ -241,7 +149,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.39 $ ';  #'
+our($VERSION) = '$Revision: 1.40 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -259,7 +167,8 @@ our(%hglobal) =
 	"STL",               # register test file in Socket Transaction Language format
 	"RDL",               # Denali RDL representation of database (experimental)
 	"none"               # generate nothing (useful for e.g. -report reglist option)
-					  ],
+    #"check"
+   ],
 
    # attributes in register-master that do NOT belong to a field
    # note: the field name is retrieved from the ::b entries of the register-master
@@ -347,12 +256,41 @@ sub generate_view {
 		$this->_gen_view_stl(@ldomains);     # module RegViewSTL.pm
 	} elsif (lc($view) eq "rdl") {
 		$this->_gen_view_rdl(@ldomains);     # module RegViewRDL.pm
+ 	#} elsif (lc($view) eq "check") {
+	#	$this->_check(); # temp usage
  	} elsif ($view =~ m/none/i) {
 		return; # do nothing
 	} else {
 		_error("generation of view \'$view\' is not supported");
 	};
 };
+
+# temp. function
+#sub _check {
+#    my ($this) = @_;
+#    my (@ldomains);
+#    my ($o_domain, $o_reg, $o_field, $href);
+#    
+#	foreach $href (@{$this->domains}) {
+#        push @ldomains, $href->{'domain'};
+#    };
+#    foreach $o_domain (@ldomains) {
+#        my $domain = $o_domain->name;
+#        open(LOG, ">check_$domain.log") || die;    
+#        foreach $o_reg (@{$o_domain->regs}) {
+#            foreach $href (@{$o_reg->fields}) {
+#                $o_field = $href->{'field'};
+#                if ($o_field->attribs->{'spec'} =~ m/w1c/i and $o_field->attribs->{'dir'} !~ m/rw/i) {
+#                    print LOG "ATT (w1c not rw) ", $o_field->name, "\n";
+#                };
+#                if ($o_field->attribs->{'spec'} =~ m/w1c/i and $o_field->attribs->{'size'} != 1) {
+#                    print LOG "ATT (w1c > 1 bit)", $o_field->name, "\n";
+#                };
+#            };
+#        };      
+#        close LOG;
+#    };
+#};
 
 # scalar object data access method
 sub device {
@@ -663,10 +601,6 @@ sub _map_register_master {
 		$usedbits = 0;
 	};
 													
-	# free some memory
-        my $reports = "";
-        $reports = join( ',', @{$OPTVAL{'report'}} ) if (exists($OPTVAL{'report'}));
-	@$lref_rm = () unless ($reports =~ m/\breglist\b/io);
 	return $result;
 };
 
