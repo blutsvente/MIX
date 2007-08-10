@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.46 $                                         |
+# | Revision:   $Revision: 1.47 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2007/08/10 08:53:24 $                              |
+# | Date:       $Date: 2007/08/10 09:00:15 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.47  2007/08/10 09:00:15  lutscher
+# | fixed default of clone.field_naming
+# |
 # | Revision 1.46  2007/08/10 08:53:24  lutscher
 # | updated comments
 # |
@@ -121,9 +124,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.46 2007/08/10 08:53:24 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.47 2007/08/10 09:00:15 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.46 $';  
+my $thisrevision    =      '$Revision: 1.47 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -948,7 +951,7 @@ sub init ($) {
 					'number'       => 1,          # number of clones
 					'addr_spacing' => 10,         # number of address bits reserved for every clone
 					'reg_naming'   => '%R_%N',    # naming scheme for cloned register
-					'field_naming' => '%F',       # naming scheme for cloned field
+					'field_naming' => '%F_%N',    # naming scheme for cloned field
 					'unique_clocks'=> 1           # if 1, uniquify clock names of clones
 				   },
 					# legacy parameters, not needed anymore!
