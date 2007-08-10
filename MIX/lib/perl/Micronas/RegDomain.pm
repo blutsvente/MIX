@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegDomain.pm,v 1.2 2006/01/18 13:05:57 lutscher Exp $
+#  RCSId: $Id: RegDomain.pm,v 1.3 2007/08/10 08:41:21 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,10 @@
 ###############################################################################
 #
 #  $Log: RegDomain.pm,v $
+#  Revision 1.3  2007/08/10 08:41:21  lutscher
+#  o some fixes for the case that the register space contains more than one domain
+#  o store some cloning information in the domain and the cloned fields
+#
 #  Revision 1.2  2006/01/18 13:05:57  lutscher
 #  added find_reg_by_address_all()
 #
@@ -48,6 +52,8 @@ package Micronas::RegDomain;
 #------------------------------------------------------------------------------
 use strict;
 use Data::Dumper;
+use Micronas::MixUtils::RegUtils;
+
 #use FindBin qw($Bin);
 #use lib "$Bin";
 #use lib "$Bin/..";
@@ -80,7 +86,10 @@ sub new {
 					   definition => "",
 					   addrmap => [],                    # ref. to list of hashes
 					   regs => [],
-					   fields => []
+					   fields => [],
+                       clone => {
+                                 'number' => 0
+                                }                      # cloning information
 					  };
 
 	# init data members w/ parameters from constructor call
@@ -139,6 +148,14 @@ sub fields {
 	};
 	return $this->{fields};
 };
+# ref. object data access method
+sub clone {
+	my $this = shift;
+	if (@_) { 
+		%{$this->{clone}} = @_;
+	};
+	return $this->{clone};
+};
 
 # finds first register object in address map at given address and returns the object (or undef)
 # input: sub-address in domain
@@ -168,6 +185,56 @@ sub find_field_by_name {
 	} else {
 		return undef;
 	};
+};
+
+# finds all field objects with given base-name (exact match) and clone-number (is irrelevant if domain wasn't cloned) 
+# and returns a list with the found object(s)
+sub find_cloned_field_by_name {
+    my ($this, $name, $n) = @_;
+    my $o_field = undef;
+    my @lresult;
+
+    if ($this->clone->{'number'}>1) {
+        # cloned domain
+        if ($n>= $this->clone->{'number'}) {
+            _error("internal error: specified clone-number $n is greater than total number of clones ", $this->{'clone'}->{'clone_number'});
+        };
+        foreach $o_field (@{$this->fields}) {
+            if (exists $o_field->{'org_name'}) {
+                # cloned field
+                if ($o_field->{'org_name'} eq $name and $o_field->{'inst_n'} == $n) {
+                    push @lresult, $o_field;
+                };
+            } else { 
+                # domain cloned but the field was not cloned
+                if ($o_field->name eq $name) {
+                    push @lresult, $o_field;
+                };
+            };
+        };
+    } else {
+        # domain not cloned
+        foreach $o_field (@{$this->fields}) {
+            if ($o_field->name eq $name) {
+                push @lresult, $o_field;
+            };
+        };
+    };
+    if (!scalar(@lresult)) {
+        _error("field \'$name\' from clone $n not found in domain \'".$this->name."\'");
+    };
+    return @lresult;
+};
+
+# takes a field object and returns the first register object the field is instantiated in
+sub find_reg_by_field {
+    my ($this, $o_field) = @_;
+    my ($o_reg);
+    foreach $o_reg (@{$this->regs}) {
+        if (grep ($o_field->name eq $_->name, $o_reg->fields)) {
+            return $o_reg;
+        };
+    };
 };
 
 # takes a register object and returns a register offset or undef
