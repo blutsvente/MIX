@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.13 2007/07/25 07:56:25 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.14 2007/08/10 08:39:17 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.14  2007/08/10 08:39:17  lutscher
+#  added _add_numbered_instance_verilog() and added %<d>N feature to _cone_name()
+#
 #  Revision 1.13  2007/07/25 07:56:25  lutscher
 #  added _add_instance_verilog
 #
@@ -92,6 +95,7 @@ require Exporter;
    _add_primary_output
    _get_signal_type
    _add_instance_verilog
+   _add_numbered_instance_verilog
    _pad_column
    _max
    _pad_str
@@ -287,13 +291,27 @@ sub _get_signal_type {
 	};
 };
 
-# helper function to call add_inst() - note: there is also a member function of Micronas::Reg of the same name
+# helper function to call add_inst() 
 sub _add_instance_verilog {
 	my($name, $parent, $comment, $udc) = @_;
 	return add_inst
 	  (
 	   '::entity' => $name,
 	   '::inst'   => '%PREFIX_INSTANCE%%::entity%%POSTFIX_INSTANCE%',
+	   '::descr'  => $comment,
+	   '::parent' => $parent,
+	   '::lang'   => "verilog",
+       '::udc'    => $udc
+	  );
+};
+
+# helper function to call add_inst() 
+sub _add_numbered_instance_verilog {
+	my($name, $n, $parent, $comment, $udc) = @_;
+	return add_inst
+	  (
+	   '::entity' => $name,
+	   '::inst'   => '%PREFIX_INSTANCE%'.join("_", $name, $n).'%POSTFIX_INSTANCE%',
 	   '::descr'  => $comment,
 	   '::parent' => $parent,
 	   '::lang'   => "verilog",
@@ -444,7 +462,8 @@ sub _ld {
 
 # create a new name according to $pattern
 # $pattern - see Globals.pm
-# $n_max, $n - maximum number and current number used for replacing %N in pattern
+# $n_max, $n - maximum number and current number used for replacing %N in pattern; 
+# n_max not used if the pattern is %<d>N with d a decimal number
 # $domain - string for replacing %D in pattern
 # $reg    - string for replacing %R in pattern
 # $field  - string for replacing %F in pattern
@@ -454,9 +473,21 @@ sub _clone_name {
 	$pattern =~ s/[\'\"]//g; # strip quotes from pattern
 
     # create a number padded with leading zeros
-	my($digits) = $n_max < 10 ? 1 : ($n_max < 100 ? 2 : ($n_max < 1000 ? 3 : 4)); # max 4 digits, should be enough (or we would never have had the Millenium Bug)
-	$digits = sprintf("%0${digits}d", $n);
+	my $digits = "";
 
+    if ($pattern =~ m/%(\d)N/g) {
+        # the pattern is \dN -> use the leading number for the number of digits
+        if($1 == 0) {
+            $digits = $n; # pass through $n
+        } else {
+            $digits = $1;
+            $digits = sprintf("%0${digits}d", $n);
+        };
+    } elsif ($n_max > 0) {
+        $digits = $n_max < 10 ? 1 : ($n_max < 100 ? 2 : ($n_max < 1000 ? 3 : 4)); # max 4 digits, should be enough (or we would never have had the Millenium Bug)
+        $digits = sprintf("%0${digits}d", $n);    
+    };
+    
     # take the pattern and fill in the passed object names
 	my($name) = $pattern;
     my $uc_domain = uc($domain);
@@ -474,7 +505,7 @@ sub _clone_name {
 	$name =~ s/%D/$domain/g;
 	$name =~ s/%R/$reg/g;
 	$name =~ s/%F/$field/g;
-	$name =~ s/%[u|l]*N/$digits/g;
+	$name =~ s/%\d?N/$digits/g;
 	return $name;
 };
 
