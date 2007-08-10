@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.45 $                                         |
+# | Revision:   $Revision: 1.46 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2007/08/09 09:56:54 $                              |
+# | Date:       $Date: 2007/08/10 08:53:24 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.46  2007/08/10 08:53:24  lutscher
+# | updated comments
+# |
 # | Revision 1.45  2007/08/09 09:56:54  lutscher
 # | some reg_shell parameter updates
 # |
@@ -118,9 +121,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.45 2007/08/09 09:56:54 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.46 2007/08/10 08:53:24 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.45 $';  
+my $thisrevision    =      '$Revision: 1.46 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -934,13 +937,13 @@ sub init ($) {
 
 					# parameters for cloning register object
                     # the naming goes according to placeholders:
-                    # %[<u|l>]<D|R|F|N>
+                    # %[<u|l>]<D|R|F|[<d>]N>
                     # D domain name
                     # R original name of register
                     # F original name of field (only availabe in field_naming)
-                    # N decimal number
+                    # N decimal number; can be preceded by a number to fix the number of digits used in representation
                     # u or l force upper/lowercase (optional)
-                    # e.g. 'scc_%N_%uR' creates name scc_06_REG_X from original name reg_x
+                    # e.g. 'scc_%2N_%uR' creates name scc_06_REG_X from original name reg_x in the 7th clone
 		'clone' => {
 					'number'       => 1,          # number of clones
 					'addr_spacing' => 10,         # number of address bits reserved for every clone
