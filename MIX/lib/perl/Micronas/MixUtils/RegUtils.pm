@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.14 2007/08/10 08:39:17 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.15 2007/08/23 13:32:55 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.15  2007/08/23 13:32:55  lutscher
+#  changed wrapper functions for add_conn()
+#
 #  Revision 1.14  2007/08/10 08:39:17  lutscher
 #  added _add_numbered_instance_verilog() and added %<d>N feature to _cone_name()
 #
@@ -103,6 +106,7 @@ require Exporter;
    _get_pragma_pos
    _attach_file_to_list
    _bitwidth
+   _ld
    _clone_name
   );
 use strict;
@@ -160,11 +164,9 @@ sub _tie_input_to_constant {
 			  '::name' => "tie${value}_".($msb - $lsb + 1),
 			  '::out' => "$value",
 			  '::in'  => "$name",
-			  '::type' => "integer",
-			  '::mode' => "C",
-			  '::msb' => $msb,
-			  '::lsb' => $lsb
+			  '::mode' => "C"
 			 );
+    _get_signal_type($msb, $lsb, 0, \%hconn);
 	add_conn(%hconn);
 };
 
@@ -226,40 +228,59 @@ sub _add_connection {
     return $name;
 };
 
-# function to add top-level input, returns port name
+# function to add top-level input, returns signal name
 sub _add_primary_input {
 	my ($name, $msb, $lsb, $destination) = @_;
-	my %hconn;
+	my (%hconn, $dest, @ldest);
 	my $postfix = "%POSTFIX_PORT_IN%";
 
-	if ($name =~ m/\%POSTFIX_/g) {
-		$hconn{'::name'} = "${name}";
-	} else {
-		$hconn{'::name'} = "${name}${postfix}"; # add postfix only if not already there
-	};
-    # $name = mix_check_case("port", $name);
-	$hconn{'::in'} = $destination;
+	#if ($name =~ m/\%POSTFIX_/g) {
+	#	$hconn{'::name'} = "${name}";
+	#} else {
+	#	$hconn{'::name'} = "${name}${postfix}"; # add postfix only if not already there
+	#};
+
+    $hconn{'::name'} = $name;
+    @ldest = ();
+    foreach $dest (split(/,\s*/, $destination)) {
+        if ($dest !~ m/\//) {
+            push @ldest, $dest."/".$name.$postfix; # add portname+postfix if destination port is not specified
+        } else {
+            push @ldest, $dest;
+        };
+    }
+	$hconn{'::in'} = join(",", @ldest);
 	$hconn{'::mode'} = "i";
 	_get_signal_type($msb, $lsb, 0, \%hconn);
 	add_conn(%hconn);
     return $hconn{'::name'};
 };
 
-# function to add output to top-level, returns port name
+# function to add output to top-level, returns signal name
 sub _add_primary_output {
 	my ($name, $msb, $lsb, $is_reg, $source) = @_;
-	my %hconn;
+	my (%hconn, $src, @lsrc);
 	my $postfix = "%POSTFIX_PORT_OUT%";
     my $type = $is_reg ? "'reg":"'wire";
 
-	if ($name =~ m/\%POSTFIX_/g) {
-		$hconn{'::name'} = "${name}";
-	} else {
-		$hconn{'::name'} = "${name}${postfix}"; # add postfix only if not already there
-	};
-    # $name = mix_check_case("port", $name);
-	$hconn{'::out'} = $source.$type;
-	$hconn{'::mode'} = "o";
+	#if ($name =~ m/\%POSTFIX_/g) {
+	#	$hconn{'::name'} = "${name}";
+	#} else {
+	#	$hconn{'::name'} = "${name}${postfix}"; # add postfix only if not already there
+	#};
+	#
+	
+    $hconn{'::name'} = $name;
+    @lsrc = ();
+    foreach $src (split(/,\s*/, $source)) {
+        if ($source !~ m/\//) {
+            push @lsrc, $source."/".$name.$postfix; # add portname+postfix if source port is not specified
+        } else {
+            push @lsrc, $source;
+        };
+    }
+    $hconn{'::out'} = join(",", map {$_ .= $type} @lsrc);
+    $hconn{'::mode'} = "o";
 	_get_signal_type($msb, $lsb, $is_reg, \%hconn);
 	add_conn(%hconn);
     return $hconn{'::name'};
