@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewClone.pm,v 1.10 2007/08/10 08:42:18 lutscher Exp $
+#  RCSId: $Id: RegViewClone.pm,v 1.11 2007/08/23 13:32:23 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.10 $                                  
+#  Revision      : $Revision: 1.11 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -32,6 +32,9 @@
 ###############################################################################
 #
 #  $Log: RegViewClone.pm,v $
+#  Revision 1.11  2007/08/23 13:32:23  lutscher
+#  commented out a logfilter, not needed anymore
+#
 #  Revision 1.10  2007/08/10 08:42:18  lutscher
 #  o some fixes for the case that the register space contains more than one domain
 #  o store some cloning information in the domain and the cloned fields
@@ -133,7 +136,7 @@ sub _clone {
 
 	# changes logger settings
 	#$eh->set('log.limit.re.__I_CHECK_CASE',1);
-	$eh->set('log.limit.re.__I_REG\sfield\sname ', 1);
+	#$eh->set('log.limit.re.__I_REG\sfield\sname ', 1);
 
 	# make list of domain names for generation if not passed as parameter
     if (!scalar(@ldomain_names)) {
