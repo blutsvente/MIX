@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.47 $                                         |
+# | Revision:   $Revision: 1.48 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2007/08/10 09:00:15 $                              |
+# | Date:       $Date: 2007/08/23 08:42:33 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.48  2007/08/23 08:42:33  lutscher
+# | added return statement to mix_get_module_info()
+# |
 # | Revision 1.47  2007/08/10 09:00:15  lutscher
 # | fixed default of clone.field_naming
 # |
@@ -124,9 +127,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.47 2007/08/10 09:00:15 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.48 2007/08/23 08:42:33 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.47 $';  
+my $thisrevision    =      '$Revision: 1.48 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -460,6 +463,7 @@ sub mix_get_module_info ($$) {
     if (exists($this->{'cfg'}->{'internal'}->{$name})) {
         $ref = $this->{'cfg'}->{'internal'}->{$name};
     };
+    return $ref;
 };
 
 # returns a hash reference with all module info or undef if there is no module info
