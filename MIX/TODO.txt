@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.70 2007/03/05 09:00:04 wig Exp $
+# $Id: TODO.txt,v 1.71 2007/09/04 07:33:22 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -50,7 +50,7 @@ test_i test (
 
 	Req: oberhoff
 	Prio: medium
-	Status: started
+	Status: done 20070306
 	Testcase: udc/instant
 	
 >>title: 20070113a/RFE: detect verilog parameters , accept also non-integer digits / FW: xtal-pin-list.xls
@@ -65,8 +65,8 @@ in MixWriter.pm:
             } 
 
 
---> mix_wr_isreal ( ... )
-  accept any real numbers at this place.
+now done in Micronas::MixEDA::Base
+	type of parameter is checked and message gets printed if contents is not in allowed format.
  
 Original request:
 From: Oberhoff Frank
@@ -88,7 +88,7 @@ Frank
 
 	Req: oberhof
 	Prio: medium
-	Status: done, but needs verification!!
+	Status: done, but needs testcase
 
 >>title: 20061230a/RFE: embedded signals in ifdef (verilog)	
 
@@ -146,7 +146,7 @@ Example provided: VGCH_OPM-pin-list.xls
 	
 >>title: 20060509b/RFE: collect signals to busses
 
-	Go through list of signals and unsplice if the match some perl regular expression.
+	Go through list of signals and unsplice if they match some perl regular expression.
 
 	Req: gay
 	Prio: low
@@ -170,9 +170,9 @@ Example provided: VGCH_OPM-pin-list.xls
 	
 	Req: oberhoff
 	Prio: high
-	Status: started 20061115a: ImportVerilogInclude
-	Testcase: 
-	ModuleTest:
+	Status: done / started 20061115a: ImportVerilogInclude
+	Testcase: verilog/vinc
+	ModuleTest: not done :-(
 	Assigned: wig	
 		
 >>title: 20061108a/RFE: read in Verilog include files and extend `define as needed
@@ -186,7 +186,8 @@ Example:
 
 	Req: oberhoff
 	Prio: high
-	Status: open
+	Status: done
+	Testcase: verilog/vinc
 
 >>title: MIX/BUG20061113a: missing ::out column in -mixed output
 
@@ -429,8 +430,8 @@ Added to Globals.pm
 
 	Req: gay
 	Prio: high
-	Status: confirmed by uli 20060800
-	Testcase: verilog/axismux
+	Status: done 20070306 / confirmed by uli 20060800
+	Testcase: verilog/emumux
 	
 >>title: 20060904a/RFE: allow to use a define as a signal slice
 
@@ -455,7 +456,7 @@ in include file:
 	
 	Req: oberhoff
 	Prio: medium
-	Status: started testcase
+	Status: done / started testcase
 	Testcase: bitsplice/20060904a
 
 >>title: 20060706e/RFE: extend convert_in function: select header and handling of extra rows
@@ -467,8 +468,8 @@ in include file:
 		
 	Prio: medium
 	Req: wig
-	Status: started
-	Testcase:
+	Status: done / started
+	Testcase: -
 	
 >>title: 20060706d/RFE: mix -explain __X_TAG
 
@@ -569,7 +570,7 @@ www.micronas.com
 
 	Req: mpit
 	Prio: high
-	Status: open20060706
+	Status: done20070306 (how?) open20060706
 	Testcase: bugver2006/20060522a (derived from avfb_hdl code)
 	
 >>title: 20060516a/RFE: Allow variable width assignements to %LOWBUS%
@@ -583,7 +584,7 @@ VHDL:   use "others"
 
 	Req: wig
 	Prio: medium
-	Status: open
+	Status: not fixed because each %LOWUS% has a unique number now, no more variable width
 
 >>title: 20060424a/Bug: MIX creates duplicate connection to port
 
@@ -645,7 +646,7 @@ Und dann wäre da auch noch die bereits diskutierte Sache mit der Zuweisung der P
 
 	Req: gay
 	Prio: medium
-	Status: first prototyp implemented (does not consider partial connections or
+	Status: done / first prototyp implemented (does not consider partial connections or
 		multiple connections)
 	Testcase: verilog/verimap
 	 
@@ -779,6 +780,7 @@ egrep -v "<list>" from mix_0.pl
 				 
 	Req: oberhoff
 	Prio: medium
+	Status: done with Log4Perl module
 
 >>title: 20060404a/Bug: 1'b1 assignment for HIGH_BUS in Verilog is wrong
 
@@ -790,7 +792,7 @@ The correct expression is 1'b1111 (Verilog expands with 0!!).
 	Testcase: fixed highlow/verilog
 	Status: done20060405
 
->>title: 20060404c/Bug: extra port created for paritally used busses
+>>title: 20060404c/Bug: extra port created for partially used busses
 
 	Example:
 	
@@ -835,6 +837,7 @@ The correct expression is 1'b1111 (Verilog expands with 0!!).
 		
 	Req: mboos
 	Prio: low
+	Status: done
 
 >>title: 20060316a/RFE: allow to postprocess signals and join/merge bits to vectors
 
