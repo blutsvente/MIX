@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.67 2007/08/23 14:40:52 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.68 2007/09/05 10:56:23 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.67 $                                  
+#  Revision      : $Revision: 1.68 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -66,6 +66,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.68  2007/09/05 10:56:23  lutscher
+#  set default clone.number to 0 because 1 will now force 1 clone
+#
 #  Revision 1.67  2007/08/23 14:40:52  lutscher
 #  a lot of changes in interfacing MIX
 #
@@ -370,7 +373,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.67 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.68 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -2458,21 +2461,30 @@ sub _gen_clock_name {
 # function to generate the name for a field how it appears in the HDL; solely use this function
 # to get the name of a field!
 # input: type = [in|in_usr|out|s|set|shdw|usr_trans_done|trg]
-# o_field = ref to field object
+# o_field = ref to field object or string (taken as name);
 # no_postfix = if 1, do not add postfix macro (default is 0); use this to create signal names
 sub _gen_fname {
 	my ($this, $type, $o_field, $no_postfix);
     $no_postfix = 0;
     ($this, $type, $o_field, $no_postfix) = @_;
-	my ($name);
+	my ($name, $reg_name, $id);
 
-	# get field name from global struct
-	if (exists($this->global->{'hfnames'}->{$o_field})) {
-		$name = $this->global->{'hfnames'}->{$o_field};
-	} else {
-		$name = $o_field->name; # take original name
-		# _info("internal info: field name \'", $name, "\' not found in global struct");
-	};
+    if (ref($o_field) =~ m/RegField$/) {
+        # get field name from global struct
+        if (exists($this->global->{'hfnames'}->{$o_field})) {
+            $name = $this->global->{'hfnames'}->{$o_field};
+        } else {
+            $name = $o_field->name; # take original name
+            # _info("internal info: field name \'", $name, "\' not found in global struct");
+        }
+        $id = $o_field->id;
+        $reg_name =  $o_field->reg->name;
+    } else {
+        # if the passed parameter is not an object
+        $name = $o_field;
+        $id = "";
+        $reg_name = "";
+    };
 
     my $naming_scheme = $this->global->{'field_naming'};
 	# prefix field name with register name
@@ -2481,7 +2493,7 @@ sub _gen_fname {
         $naming_scheme = "%R_" . $naming_scheme;
 	};
     # apply naming scheme
-    $name = _clone_name($naming_scheme, 99, $o_field->id, $this->global->{'current_domain'}->name, $o_field->reg->name, $name);
+    $name = _clone_name($naming_scheme, 99, $id, $this->global->{'current_domain'}->name, $reg_name, $name);
 
     # attach postfixes/macros according to type of field
 	if ($type eq "in") {

@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.40 2007/08/10 08:39:52 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.41 2007/09/05 10:56:23 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.41  2007/09/05 10:56:23  lutscher
+#  set default clone.number to 0 because 1 will now force 1 clone
+#
 #  Revision 1.40  2007/08/10 08:39:52  lutscher
 #  little changes
 #
@@ -125,7 +128,7 @@ sub parse_register_master($) {
 			$o_space->global('debug' => exists $OPTVAL{'verbose'} ? 1 : 0);
 			
             # check if register object should be cloned first
-            if ($eh->get('reg_shell.clone.number') > 1) {
+            if ($eh->get('reg_shell.clone.number') > 0) {
                 my $o_new_space = $o_space->_clone(); # module RegViewClone.pm 
                 $o_space = $o_new_space;
             };
@@ -149,7 +152,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.40 $ ';  #'
+our($VERSION) = '$Revision: 1.41 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 

@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.15 2007/08/23 13:32:55 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.16 2007/09/05 10:56:23 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.16  2007/09/05 10:56:23  lutscher
+#  set default clone.number to 0 because 1 will now force 1 clone
+#
 #  Revision 1.15  2007/08/23 13:32:55  lutscher
 #  changed wrapper functions for add_conn()
 #
@@ -504,9 +507,9 @@ sub _clone_name {
             $digits = $1;
             $digits = sprintf("%0${digits}d", $n);
         };
-    } elsif ($n_max > 0) {
+    } elsif ($n_max >= 0) {
         $digits = $n_max < 10 ? 1 : ($n_max < 100 ? 2 : ($n_max < 1000 ? 3 : 4)); # max 4 digits, should be enough (or we would never have had the Millenium Bug)
-        $digits = sprintf("%0${digits}d", $n);    
+        $digits = sprintf("%0${digits}d", $n);
     };
     
     # take the pattern and fill in the passed object names

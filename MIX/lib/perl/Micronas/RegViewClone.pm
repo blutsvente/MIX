@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewClone.pm,v 1.11 2007/08/23 13:32:23 lutscher Exp $
+#  RCSId: $Id: RegViewClone.pm,v 1.12 2007/09/05 10:56:23 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.11 $                                  
+#  Revision      : $Revision: 1.12 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -32,6 +32,9 @@
 ###############################################################################
 #
 #  $Log: RegViewClone.pm,v $
+#  Revision 1.12  2007/09/05 10:56:23  lutscher
+#  set default clone.number to 0 because 1 will now force 1 clone
+#
 #  Revision 1.11  2007/08/23 13:32:23  lutscher
 #  commented out a logfilter, not needed anymore
 #
@@ -178,7 +181,9 @@ sub _clone_regspace {
         
         if (grep($domain eq $_, @{$lref_domain_names})) { 
             _info("cloning domain $domain ", $this->global->{'number'}, " times");
-     
+            if ($this->global->{'number'} eq 1) {
+                _warning("number of clones is 1, applying naming scheme - make sure this is what you intended");
+            };
             # create a new domain, storing some cloning information
             $o_domain1 = Micronas::RegDomain->new('name' => $domain, 
                                                   'clone' => {'number' => $this->global->{'number'}, 

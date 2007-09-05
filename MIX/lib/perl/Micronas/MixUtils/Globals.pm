@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.48 $                                         |
+# | Revision:   $Revision: 1.49 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2007/08/23 08:42:33 $                              |
+# | Date:       $Date: 2007/09/05 10:56:23 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.49  2007/09/05 10:56:23  lutscher
+# | set default clone.number to 0 because 1 will now force 1 clone
+# |
 # | Revision 1.48  2007/08/23 08:42:33  lutscher
 # | added return statement to mix_get_module_info()
 # |
@@ -127,9 +130,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.48 2007/08/23 08:42:33 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.49 2007/09/05 10:56:23 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.48 $';  
+my $thisrevision    =      '$Revision: 1.49 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -952,7 +955,7 @@ sub init ($) {
                     # u or l force upper/lowercase (optional)
                     # e.g. 'scc_%2N_%uR' creates name scc_06_REG_X from original name reg_x in the 7th clone
 		'clone' => {
-					'number'       => 1,          # number of clones
+					'number'       => 0,          # number of clones
 					'addr_spacing' => 10,         # number of address bits reserved for every clone
 					'reg_naming'   => '%R_%N',    # naming scheme for cloned register
 					'field_naming' => '%F_%N',    # naming scheme for cloned field
