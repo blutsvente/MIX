@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.54 $                                          |
+# | Revision:   $Revision: 1.55 $                                          |
 # | Author:     $Author: lutscher $                                         |
-# | Date:       $Date: 2007/07/17 11:40:47 $                              |
+# | Date:       $Date: 2007/09/14 13:31:44 $                              |
 # |                                         
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.55  2007/09/14 13:31:44  lutscher
+# | added e-path to mix_utils_io_create_path()
+# |
 # | Revision 1.54  2007/07/17 11:40:47  lutscher
 # | changed open_xls() to also take comma-separated list as sheetname argument
 # |
@@ -158,11 +161,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.54 2007/07/17 11:40:47 lutscher Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.55 2007/09/14 13:31:44 lutscher Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.54 $'; #'  
+my $thisrevision    =      '$Revision: 1.55 $'; #'  
 
-# Revision:   $Revision: 1.54 $
+# Revision:   $Revision: 1.55 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -515,7 +518,7 @@ sub mix_utils_io_create_path () {
 
 	my $select = $eh->get( 'output.mkdir' );
 	
-	for my $i ( qw( output intermediate internal report ) ) {
+	for my $i ( qw( output intermediate internal report reg_shell.e_vr_ad) ) {
 		next unless( defined $eh->get( $i . '.path' ) );
 		
 		unless( -d $eh->get( $i . '.path' ) ) {
