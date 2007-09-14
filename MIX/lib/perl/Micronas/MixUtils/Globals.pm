@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.49 $                                         |
+# | Revision:   $Revision: 1.50 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2007/09/05 10:56:23 $                              |
+# | Date:       $Date: 2007/09/14 13:29:45 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.50  2007/09/14 13:29:45  lutscher
+# | added e_vr_ad.path
+# |
 # | Revision 1.49  2007/09/05 10:56:23  lutscher
 # | set default clone.number to 0 because 1 will now force 1 clone
 # |
@@ -130,9 +133,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.49 2007/09/05 10:56:23 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.50 2007/09/14 13:29:45 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.49 $';  
+my $thisrevision    =      '$Revision: 1.50 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -930,6 +933,7 @@ sub init ($) {
         'virtual_top_instance' => "testbench", # name of top-level instance where register-shell is instantiated (usually not used)
                     # parameters for e_vr_ad view
         'e_vr_ad' => {
+                      'path'             => "./e", # output dir for e-code
                       'regfile_prefix'   => 'MIC',
                       'file_prefix'      => 'regdef',
                       'vplan_ref'        => '%EMPTY%', # for automatic coverage generation
