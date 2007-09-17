@@ -28,12 +28,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: address_join.pl,v 1.2 2007/09/17 12:42:50 wig Exp $  |
+# | Id           : $Id: address_join.pl,v 1.3 2007/09/17 13:11:02 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.2 $                                      |
-# | Mod.Date     : $Date: 2007/09/17 12:42:50 $                           |
+# | Version      : $Revision: 1.3 $                                      |
+# | Mod.Date     : $Date: 2007/09/17 13:11:02 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -48,6 +48,9 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: address_join.pl,v $
+# | Revision 1.3  2007/09/17 13:11:02  wig
+# | Allow anything to be a address map (previously only Sheet1 was allowed).
+# |
 # | Revision 1.2  2007/09/17 12:42:50  wig
 # | Allow multiple -map files to be read; support ::reg_clone and -outname ...%::client% split.
 # |
@@ -128,7 +131,7 @@ sub blocksplit($$$$);
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.2 $'; # RCS Id
+$::VERSION = '$Revision: 1.3 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # Our local variables
@@ -184,8 +187,9 @@ Available options for address_join.pl
 -bak                   		Shift previous generated output to file.v[hd].bak. When combined
                                   with -delta you get both .diff, .bak and new files :-)
 -top TOP					<B deprecated!> see -map option
--map ADDRESS_MAP			read top level address information from file <b ADDRESS_MAP>
-								(previously 
+-map ADDRESS_MAP,MAP2, ..	read top level address information from file <b ADDRESS_MAP>
+								and <b MAP2>. Multiple calls of -map and a comma seperated list
+								are allowed for the -map option.
 -[no]listmap				print out used address map top sheet (default: no)
 
 =cut
@@ -193,7 +197,7 @@ Available options for address_join.pl
 my %xls = ();
 
 $xls{'map'} = '.*';
-$xls{'map_sheet'} = "Sheet1";
+$xls{'map_sheet'} = 'DEFAULT'; # No longer used now!
 
 # TODO : promote that settings to some other place ...
 $xls{'others'} = 'peri.*'; # Take the default.xls config key
@@ -333,7 +337,10 @@ for my $ofiles ( @{$OPTVAL{'map'}} ) {
 		#!wig20070917: allow several address maps to be read in
 		# Find the map sheet -> address_map.xls -> Sheet1
 		# Parse all addresses from ::client -> ::sub
-		parse_address_map( $sheets{$files}{$xls{map_sheet}}, $sub_order, $sub_addr, $sub_key );
+		for my $ms ( keys( %{$sheets{$files}} ) ) {
+			parse_address_map( $sheets{$files}{$ms}, $sub_order, $sub_addr, $sub_key );
+			$xls{'map_sheet'} = $ms;
+		}
 		# sub_order: hash with numbers ...
 		# sub_addr: array with more/all infos from map
 		# sub_key: hash of arrays: point definitions to matching instances
@@ -418,9 +425,9 @@ for my $files ( @ARGV ) {
 			}
 			
 			# Note this success on the TOP Sheet:
-			my $line = $client->{'inputline'};
-				$sheets{$map}{$xls{map_sheet}}->[$line]{'::comment'} .=
-			 	'MIX mapped ' . $files . ':' . $s; 
+			# my $line = $client->{'inputline'};
+			# $sheets{$map}{$xls{map_sheet}}->[$line]{'::comment'} .=
+			#  	'MIX mapped ' . $files . ':' . $s; 
 
 		}
 		delete( $sheets{$files}{$s} ); # Get rid of this sheet now
@@ -481,13 +488,16 @@ if ( $OPTVAL{'listtop'} ) {
 	$logger->error('__E_DEPRECATED', "Use -listmap instead of the deprecated -listtop option!" );
 }
 if( $OPTVAL{'listmap'} ) {
-	$end_table = db2array( $sheets{$map}{$xls{'map_sheet'}}, 'join', $outtype, '' );
-	replace_macros( $end_table );
-	my $ton = $outname;
-	if ( scalar(@blocksplit) ) {
-		$ton =~ s/%::\w+%/_ADDRESS_MAP_/g;
-	}
-	write_outfile( $ton , 'ADDRESS_MAP', $end_table );
+	# Need to iterate over all maps:
+	$logger->error( '__E_NOT_IMPLEMENTED', "listmap currently not available, please request update!" );
+	
+	# $end_table = db2array( $sheets{$map}{$xls{'map_sheet'}}, 'join', $outtype, '' );
+	# replace_macros( $end_table );
+	# my $ton = $outname;
+	# if ( scalar(@blocksplit) ) {
+	# 	$ton =~ s/%::\w+%/_ADDRESS_MAP_/g;
+	# }
+	# write_outfile( $ton , 'ADDRESS_MAP', $end_table );
 } else {
 	# Remove the sheet seperator head ...
 	$eh->set( 'format.csv.sheetsep', '' );
