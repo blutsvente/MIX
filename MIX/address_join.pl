@@ -4,7 +4,7 @@
 #!/bin/sh -- # -*- perl -*- -w
 eval 'exec ${PERL:-`[ ! -d "$HOME/bin/perl" -a -x "$HOME/bin/perl" ] && echo "$HOME/bin/perl" || { [ -x /usr/bin/perl ] && echo /usr/bin/perl || echo /usr/local/bin/perl ; } `} -x -S $0 ${1+"$@"} ;'
 if 0; # dynamic perl startup; suppress preceding line in perl
-#line 6
+#line 8
 
 use strict;
 use warnings;
@@ -28,12 +28,12 @@ use Pod::Text;
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: address_join.pl,v 1.1 2007/09/04 07:31:30 wig Exp $  |
+# | Id           : $Id: address_join.pl,v 1.2 2007/09/17 12:42:50 wig Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.1 $                                      |
-# | Mod.Date     : $Date: 2007/09/04 07:31:30 $                           |
+# | Version      : $Revision: 1.2 $                                      |
+# | Mod.Date     : $Date: 2007/09/17 12:42:50 $                           |
 # | Author       : $Author: wig $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
@@ -48,6 +48,9 @@ use Pod::Text;
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: address_join.pl,v $
+# | Revision 1.2  2007/09/17 12:42:50  wig
+# | Allow multiple -map files to be read; support ::reg_clone and -outname ...%::client% split.
+# |
 # | Revision 1.1  2007/09/04 07:31:30  wig
 # | Added %::COL% feature to -outname option. Renamed from vgch_join.
 # |
@@ -115,17 +118,17 @@ use Micronas::MixUtils::IO qw(init_ole open_infile write_outfile);
 sub fix_sheet ($$);
 sub get_sheet ($);
 sub get_client ($$);
-sub parse_address_top ($);
+sub parse_address_map ($$$$);
 sub replace_macros ($);
 sub base_interface ($);
-sub blocksplit($$$);
+sub blocksplit($$$$);
 
 #
 #******************************************************************************
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.1 $'; # RCS Id
+$::VERSION = '$Revision: 1.2 $'; # RCS Id
 $::VERSION =~ s,\$,,go;
 
 # Our local variables
@@ -176,20 +179,21 @@ Available options for address_join.pl
 -sheet SHEET_RE			  Alternative: select all sheets matching SHEET_RE
 -delta                    Enable delta mode: Print diffs instead of full files.
                                   Maybe we can set a return value of 1 if no changes occured!
--strip                    Remove extra worksheets from intermediate output
-                                  Please be catious when using that option.
--bak                      Shift previous generated output to file.v[hd].bak. When combined
+-strip                  	Remove extra worksheets from intermediate output
+                                  Please be cautious when using that option.
+-bak                   		Shift previous generated output to file.v[hd].bak. When combined
                                   with -delta you get both .diff, .bak and new files :-)
--top TOP					read top level address information from file TOP
--[no]listtop				print out reworked top sheet (default: no)
+-top TOP					<B deprecated!> see -map option
+-map ADDRESS_MAP			read top level address information from file <b ADDRESS_MAP>
+								(previously 
+-[no]listmap				print out used address map top sheet (default: no)
 
 =cut
 
 my %xls = ();
-my $top = '';
 
-$xls{'top'} = '.*';
-$xls{'top_sheet'} = "Sheet1";
+$xls{'map'} = '.*';
+$xls{'map_sheet'} = "Sheet1";
 
 # TODO : promote that settings to some other place ...
 $xls{'others'} = 'peri.*'; # Take the default.xls config key
@@ -199,13 +203,48 @@ $eh->set( 'macro.%UNDEF_1%', '' );
 $eh->set( 'format.csv.style', 'stripnl,doublequote,autoquote,maxwidth' );
 $eh->set( 'input.ignore.comments', '::ignany' ); # Skip all lines with s.th. \S in ::ign
 
+$eh->set( 'report.join.address.option',
+	'addclient,nomatchblock,cloneblock,cloneinst,usedefinition' );
+		# addclient: add ::client column to created register master
+		# matchblock: rewrite ::block name if ::definition does not match ::client
+		# cloneblock: if ::reg_clones is > 1, uniquify block names by appending an increasing to the blockname
+		# cloneinst: if ::reg_clones is > 1, uniquify instance names by appending an increasing number 
+		# usedefinition: derive address from mapping of client <-> definintion, even if
+		#		name for definition == client
+$eh->set( 'report.join.address.map', '' ); # Gets address map file name (reserverd for future usage)
+		# See also report.cheader in MixReport.pm
+
+#
+# Add the ::client column to the default input field ..
+#
+#		'field' => {
+#	    	#Name   	=>	  	   		Inherits
+#	    	#					    		Multiple
+#	    	#						    		Required
+#	    	#							  		Defaultvalue
+#	    	#								    			PrintOrder
+#	    	#                           0   1   2	3       4
+#	    	'::ign' 		=> [ qw(	0	0	1	%NULL%	1 ) ],
+#	    	'::comment'	    => [ qw(	1	0	2	%EMPTY%	2 )],
+#	    	'::default'	    => [ qw(	1	1	0	%NULL%	0 )],
+#	    	'::debug'	    => [ qw(	1	0	0	%NULL%	0 )],
+#       	'::default'		=> [ qw(	1	1	0	%EMPTY%	0 )],	    	
+#    	    '::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
+my $default_head = $eh->get('default.field');
+my @clienthead = ( qw( 0 1 0 %EMPTY% ), $default_head->{'nr'} );
+$default_head->{'::client'} = \@clienthead;
+$default_head->{nr}++;
+$eh->set('default.field', $default_head );
+
 # Add your options here ....
 mix_getopt_header( qw(
     dir=s
     out=s
     conf|config=s@
     sheet=s@
+    map=s@
     top=s
+    listmap!
     listtop!
     listconf
     delta!
@@ -226,11 +265,21 @@ if ( scalar( @ARGV ) < 1 ) { # Need  at least one sheet!!
 
 my %sheets = ();
 
-my $outname = $OPTVAL{'out'} || 'address_joined_register-master.xls';
+# Create an outname and detect the outname type (xls, ...)
+my $outname;
+if ( $OPTVAL{'out'} ) {
+	$outname = $OPTVAL{'out'};
+} else {
+	( $outname = $ARGV[-1] ) =~ s/(\.[^.])$/-joined$1/;
+	if ( $outname eq $ARGV[-1] ) {
+		$outname = 'joined_' . $outname;
+	}
+}
+
 my $outtype;
-my $blocksplit = 0;
-if ( $outname =~ m/%(::\w+)%/ ) { # Use this column name to split output
-	$blocksplit = $1;
+my @blocksplit = ();
+while ( $outname =~ m/%(::\w+)%/g ) { # Use these column names to split output
+	push( @blocksplit, $1);
 }
 if ( $outname =~ m/\.(xls|sxc|ods|csv)/ ) {
 	$outtype = $1;
@@ -238,24 +287,61 @@ if ( $outname =~ m/\.(xls|sxc|ods|csv)/ ) {
 	$outtype = 'xls';
 }
 
-# Assume top is defined as option:
+# Handle deprecated -top:
 if ( $OPTVAL{'top'} ) {
-	$top = $OPTVAL{'top'};
-	unshift( @ARGV, $top );
-} else {
-	# Else it has to be the first argument ... (or the first??)
-	$top = $ARGV[0];
+	if ( $OPTVAL{'map'} ) {
+		$logger->error( '__E_DEPRECATED', "Ignoring deprectad option -top in favour of -map!" );
+	} else {	
+		$logger->warn( '__W_DEPRECATED', "Use -map instead of the deprecated -top!" );
+		$OPTVAL{'map'}[0] = $OPTVAL{'top'};
+	}
 }
+
+if ( scalar( $OPTVAL{'map'} ) < 1 ) {
+	$OPTVAL{'map'}[0] = shift @ARGV;
+}
+my $map = $OPTVAL{'map'}[-1]; # Use last map name as default output
 
 # GLOBAL variables:
 my %all = ( '_COMMON_' => [] );
-my $sub_order = '';
-my $sub_addr = '';
-my $sub_key = '';
+my $sub_order = {};
+my $sub_addr = [];
+my $sub_key = {};
+
 my $ignore_flag = 0; # Set if the Ignore line seen once ..
 
 #
-# open the top file first,
+# Iterate over map names (comma seperated list or -map a -map b list ...
+#
+for my $ofiles ( @{$OPTVAL{'map'}} ) {
+	for my $files( split( /,+/, $ofiles ) ) {
+		my $sel = $xls{'map'};
+		my $nosel = '';
+		my $type = 'join';
+	
+		my $conn = open_infile( $files,
+			$sel, # Select sheets ... default: .* (all)
+			$nosel, # Ignore sheets matching $nosel (if set)
+			$eh->get( $type . '.req' ) . ',hash' );
+		
+		# Convert to hashes ...
+		for my $sheetname ( keys %$conn ) {
+			my @arrayhash = convert_in ($type, $conn->{$sheetname} );
+			$sheets{$files}{$sheetname} = \@arrayhash;
+		}
+
+		#!wig20070917: allow several address maps to be read in
+		# Find the map sheet -> address_map.xls -> Sheet1
+		# Parse all addresses from ::client -> ::sub
+		parse_address_map( $sheets{$files}{$xls{map_sheet}}, $sub_order, $sub_addr, $sub_key );
+		# sub_order: hash with numbers ...
+		# sub_addr: array with more/all infos from map
+		# sub_key: hash of arrays: point definitions to matching instances
+	}
+}
+	
+#
+# open the map file first,
 #   then one after next one ...
 #
 for my $files ( @ARGV ) {
@@ -264,11 +350,6 @@ for my $files ( @ARGV ) {
 	my $nosel = $eh->get( 'default.xxls' );
 	my $type = 'default';
 	
-	if ( $files eq $top ) {
-		$sel = $xls{'top'};
-		$nosel = '';
-		$type = 'join';
-	}
 	my $conn = open_infile( $files,
 			$sel, # Select sheets ... default: .* (all)
 			$nosel, # Ignore sheets matching $nosel (if set)
@@ -281,17 +362,7 @@ for my $files ( @ARGV ) {
 		$sheets{$files}{$sheetname} = \@arrayhash;
 	}
 
-	if ( $files eq $top ) {
-		# Find the top sheet -> address_top.xls -> Sheet1
-		# Parse all addresses from ::client -> ::sub
-		( $sub_order, $sub_addr, $sub_key ) = parse_address_top( $sheets{$top}{$xls{top_sheet}} );
-		# sub_order: hash with numbers ...
-		# sub_addr: array with more/all infos from top
-		# sub_key: hash of arrays: point definitions to matching instances
-		next;
-	}
-
-	# If the sheets matches a client from the top, print out ...
+	# If the sheets matches a client from the map, print out ...
 	for my $s ( keys( %{$sheets{$files}} )) {
 		
 		# If $optctl{'sheet'} -> try this
@@ -340,17 +411,17 @@ for my $files ( @ARGV ) {
 			my $data = fix_sheet( $client, $sheets{$files}{$s} );
 			# if $out has a ::<column>, split $data according to that column
 			# push( @all, @$data );
-			if ( $blocksplit ) {
-				blocksplit( $blocksplit, \%all, $data );
+			if ( scalar( @blocksplit ) ) {
+				blocksplit( \@blocksplit, $outname, \%all, $data );
 			} else {
 				push( @{$all{'_COMMON_'}}, @$data );
 			}
 			
 			# Note this success on the TOP Sheet:
 			my $line = $client->{'inputline'};
-			$sheets{$top}{$xls{top_sheet}}->[$line]{'::comment'} .=
-				'MIX mapped ' . $files . ':' . $s; 
-			
+				$sheets{$map}{$xls{map_sheet}}->[$line]{'::comment'} .=
+			 	'MIX mapped ' . $files . ':' . $s; 
+
 		}
 		delete( $sheets{$files}{$s} ); # Get rid of this sheet now
 	}
@@ -361,18 +432,25 @@ for my $files ( @ARGV ) {
 #
 # Split data into seperate sheets, based on the contents of the $split column
 #
-sub blocksplit ($$$) {
+sub blocksplit ($$$$) {
 	my $split	= shift;
+	my $outname = shift;
 	my $allref	= shift;
 	my $data	= shift;
 
-	# See if $data->[N]->{$split} exists 
+	# See if $data->[N]->{$split} exists
+	my $spname = '';
+	my $thisout = $outname;
 	for my $i ( 0 .. scalar( @$data ) - 1 ) {
-		if ( exists( $data->[$i]->{$split} ) ) {
-			push( @{$all{$data->[$i]->{$split}}}, $data->[$i] );
-		} else {
-			push( @{$all{'_REST_BLOCKSPLIT_'}}, $data->[$i] );
+		$thisout = $outname;
+		for my $splitcol ( @$split ) {
+			if ( exists( $data->[$i]->{$splitcol} ) ) {
+				$thisout =~ s/%$splitcol%/$data->[$i]->{$splitcol}/;
+			} else {
+				$thisout =~ s/%$splitcol%/_REST_BLOCKSPLIT_/;
+			}
 		}
+		push( @{$all{$thisout}}, $data->[$i] );
 	}
 }# End of blocksplit
 
@@ -384,7 +462,7 @@ sub blocksplit ($$$) {
 #
 # Write back the collected data:
 #
-# Did we get definitions for all data in top:
+# Did we get definitions for all data in map sheet:
 #  Read out the sub_addr->{'used'}
 for my $k ( @$sub_addr ) {
 	if ( not exists $k->{'used'} or $k->{'used'} < 1 ) {
@@ -399,25 +477,30 @@ for my $k ( @$sub_addr ) {
 # Print TOP sheet ->
 my $end_table = ();
 
-if( $OPTVAL{'listtop'} ) {
-	$end_table = db2array( $sheets{$top}{$xls{'top_sheet'}}, 'join', $outtype, '' );
+if ( $OPTVAL{'listtop'} ) {
+	$logger->error('__E_DEPRECATED', "Use -listmap instead of the deprecated -listtop option!" );
+}
+if( $OPTVAL{'listmap'} ) {
+	$end_table = db2array( $sheets{$map}{$xls{'map_sheet'}}, 'join', $outtype, '' );
 	replace_macros( $end_table );
 	my $ton = $outname;
-	if ( $blocksplit ) {
-		$ton =~ s/%::\w+%/_COMMON_/;
+	if ( scalar(@blocksplit) ) {
+		$ton =~ s/%::\w+%/_ADDRESS_MAP_/g;
 	}
-	write_outfile( $ton , 'ADDRESS_TOP', $end_table );
+	write_outfile( $ton , 'ADDRESS_MAP', $end_table );
 } else {
 	# Remove the sheet seperator head ...
 	$eh->set( 'format.csv.sheetsep', '' );
 }
 
-if ( $blocksplit ) {
-	for my $block ( keys %all ) {
+if ( scalar( @blocksplit ) ) {
+	for my $block ( sort( keys %all ) ) {
 		$end_table = db2array( $all{$block}, 'default', $outtype, '');
 		replace_macros( $end_table );
-		( my $ton = $outname ) =~ s/%::\w+%/$block/;
-		write_outfile( $ton, "ADDRESS_TOP $block", $end_table );
+		if ( $block eq '_COMMON_' ) {
+			( $block = $outname ) =~ s/%::\w+%/_COMMON_/g;
+		}
+		write_outfile( $block, "ADDRESS_TOP $block", $end_table );
 	}
 } else {
 	$end_table = db2array( $all{'_COMMON_'}, 'default', $outtype, '' );
@@ -455,6 +538,8 @@ sub replace_macros ($) {
 # Sum up hex numbers of adresses ...
 #!wig20051128: use the ::interface column as additional hint to find the
 #		appropriate base address
+#!wig20070913: handle ::reg_clones and ::clone_spacing
+#
 sub fix_sheet ($$) {
 	my $client = shift;
 	my $inref = shift;
@@ -462,62 +547,109 @@ sub fix_sheet ($$) {
 	my $base = hex($client->{'sub'}); # Get it hexadecimal ....
 	
 	my @outdata = ();
+	my $cache;
 	
 	# If 'client' does not match 'definition'
 	my $postblock = '';
-	if ( $client->{'client'} ne $client->{'definition'} ) {
+	my $fixblock =
+		( $eh->get( 'report.join.address.option' ) =~ m/\bmatchblock\b/i ) ? 1 : 0;
+	my $addclient =
+		( $eh->get( 'report.join.address.option' ) =~ m/\baddclient\b/i ) ? 1 : 0;
+	if ( $fixblock and $client->{'client'} ne $client->{'definition'} ) {
 		# Get diff
 		( $postblock = $client->{'client'} ) =~ s/$client->{'definition'}//;
-	}	
-	for my $i ( @$inref ) {
-		
+	}
+	my $cloneblock =
+		( $eh->get( 'report.join.address.option' ) =~ m/\bcloneblock\b/i ) ? 1 : 0;
+	my $cloneinst =
+		( $eh->get( 'report.join.address.option' ) =~ m/\bcloneinst\b/i ) ? 1 : 0;
+	my $usedefinition =
+		( $eh->get( 'report.join.address.option' ) =~ m/\busedef/i ) ? 1 : 0;		
+	for my $i ( @$inref ) {		
 		#!wig20051025: Special for the "Ignore" line ->
 		next if ( $i->{'::ign'} =~ m/^Ignore/io and $ignore_flag );
 		$ignore_flag++ if ( $i->{'::ign'} =~ m/^Ignore/io );
 
-		#!wig20051128: if ::interface ne client
+		#!wig20051128: if ::interface ne ::client (aka. 
 		my @base_this = ();
-		if ( exists( $i->{'::interface'} ) and $i->{'::interface'} and
-			$i->{'::interface'} ne $client->{'definition'} ) {
+		my $match_clients;
+		# Just in case someone uses ::definition in the register_master sheet:
+		if ( $usedefinition and exists $i->{'::definition'} ) {
+				# Search definition in "sub" list
+				$logger->warn('__W_USE_DEFINITION', "Using ::definition column from register_master sheet!" ),
+				( $match_clients, @base_this ) = base_interface( $i->{'::definition'} );
+		} elsif ( exists( $i->{'::interface'} ) and $i->{'::interface'} and
+			( $usedefinition or ( $i->{'::interface'} ne $client->{'definition'} ) ) ) {
 				# Search another definition in "sub" list
-				@base_this = base_interface( $i->{'::interface'} );
+				( $match_clients, @base_this ) = base_interface( $i->{'::interface'} );
 		} else {
+			# Match ::client against the same ::interface!
+			$match_clients->[0] = $client;
 			push( @base_this, $base );
-		}		
-		push( @outdata, { %$i } ); # Make sure data gets >copied<
-		my $sub;
-		if ( $i->{'::sub'} =~ m/^(0x)?[0-9a-f]+$/io ) { #Data is in HEX format!
-			$sub = hex($i->{'::sub'});
-		} else {
-			$sub = $i->{'::sub'}; # 
 		}
 
-		if ( $postblock ne '' ) {
-			if ( exists $outdata[-1]{'::block'} and
-					$outdata[-1]{'::block'} ne '' ) {
-				$outdata[-1]{'::block'} .= $postblock;
+		for my $cn ( 0..( scalar( @$match_clients ) - 1 ) ) {		
+			push( @outdata, { %$i } ); # Make sure data gets >copied<
+			my $sub;
+			if ( $i->{'::sub'} =~ m/^\s*(0x)?[0-9a-f]+\s*$/io ) { #Data is in HEX format!
+				$sub = hex($i->{'::sub'});
+			} else {
+				$sub = $i->{'::sub'};
 			}
-		} 
-		# Rewrite ::sub : add base to input ::sub
-		if ( $sub =~ m/^\d+$/o and $base_this[0] =~ m/^\d+$/o ) {
-			$outdata[-1]{'::sub'} = sprintf( '0x%lx', $sub + $base_this[0]);
-		} else {
-			$outdata[-1]{'::sub'} = $sub . " + " . $base_this[0];
-		}
-		
-		if ( scalar( @base_this ) > 1 ) {
-			# Repeat the last line
-			for my $if ( 1..(scalar(@base_this) - 1) ) {
-				push( @outdata, { %$i } );
-				if ( $sub =~ m/^\d+$/o and $base_this[$if] =~ m/^\d+$/o) {
-					$outdata[-1]{'::sub'} = sprintf( '0x%lx', $sub + $base_this[$if]);
-				} else {
-					$outdata[-1]{'::sub'} = $sub . " + " . $base_this[$if];
+
+			if ( $postblock ne '' ) {
+				if ( exists $outdata[-1]{'::block'} and
+						$outdata[-1]{'::block'} ne '' ) {
+					$outdata[-1]{'::block'} .= $postblock;
 				}
 			}
-		} 
-	}
+			
+			# Rewrite ::sub : add base to input ::sub
+			if ( $sub =~ m/^\d+$/o and $base_this[$cn] =~ m/^\d+$/o ) {
+				$outdata[-1]{'::sub'} = sprintf( '0x%lx', $sub + $base_this[$cn]);
+			} else {
+				$logger->warn( '__W_NOT_A_NUMBER', "value not a number: $sub" );
+				$outdata[-1]{'::sub'} = $sub . ' + ' . $base_this[$cn];
+			}
 	
+			$client = $match_clients->[$cn];
+			# Add the client name (client from $client) here:
+			if( $addclient ) {
+				$outdata[-1]{'::client'} = $client->{'client'};
+			}
+		
+			# Is ::reg_clones set -> repeat that ...			
+			if ( $client->{'reg_clones'} and $client->{'reg_clones'} > 1 ) {
+				# Repeat last line and sum up clone_spacing ....
+				my $clonen = scalar( @outdata ) - 1;
+				for my $c ( 1..($client->{'reg_clones'}-1) ) {
+					push( @outdata, { $outdata[$clonen] } );
+					# Fix address
+					$outdata[-1]{'::sub'} = sprintf( '0x%lx', $outdata[$clonen] +
+						$client->{'clone_spacing'} * $c );
+					if( $addclient ) {
+						$outdata[-1]{'::client'} .= $c;
+					}
+					if ( $cloneblock and exists( $outdata[-1]{'::block'} ) ) {
+						$outdata[-1]{'::block'} .= $c;
+					}
+					if ( $cloneinst and exists( $outdata[-1]{'::inst'} ) ) {
+						$outdata[-1]{'::inst'} .= $c;
+					}
+				}
+				# Fix name for first occurance
+				if( $addclient ) {
+					$outdata[$clonen]{'::client'} .= 0;
+				}
+				if ( $cloneblock and exists( $outdata[$clonen]{'::block'} ) ) {
+					$outdata[$clonen]{'::block'} .= 0;
+				}
+				if ( $cloneinst and exists( $outdata[$clonen]{'::inst'} ) ) {
+					$outdata[$clonen]{'::inst'} .= 0;
+				}
+			}
+		}
+	}
 	return \@outdata;
 } # End of fix_sheet
 
@@ -531,9 +663,11 @@ sub base_interface ($) {
 	my $interface = shift;
 
 	my @bases = ();
+	my @clients = ();
 	if ( exists( $sub_key->{$interface} ) ) {
 		for my $i ( @{$sub_key->{$interface}} ) {
 			my $sa = $sub_addr->[$i];
+			push( @clients, $sa );
 			push( @bases, hex($sa->{'sub'}) );
 		}
 	} else {
@@ -543,13 +677,13 @@ sub base_interface ($) {
 		push( @bases, '__E_MISS_INTERFACEBASE' );
 	}
 	
-	return @bases;
+	return \@clients, @bases;
 		
 }
 
 #
 # Get a matching sheet name:
-#
+#!wig20070907: Obsolete!!
 sub get_sheet ($) {
 	my $client = shift;
 
@@ -569,7 +703,7 @@ sub get_sheet ($) {
 } # End of get_sheet
 
 #
-# Get matching top description for a given sheet name
+# Get matching map description for a given sheet name
 # Key 
 # 
 # Input:
@@ -581,58 +715,78 @@ sub get_sheet ($) {
 #
 sub get_client ($$) {
 	my $sheetname	= shift;
-	my $topref		= shift;
-	# my $topaddr		= shift;
+	my $mapref		= shift;
 
-	for my $k ( keys( %$topref ) ) {
+	for my $k ( keys( %$mapref ) ) {
 		( my $key = lc($k) ) =~ s/sci_//;
 		# $key =~ s/_[ms]$//; # Another variant: sheetname is i2c, client i2c_m
 		$key =~ s/_shared//; # for mded_peri_shared ...
 		if ( $sheetname =~ m/$key$/i ) {# Match a sheet if the name ends correct!
-			return @{$topref->{$k}};
+			return @{$mapref->{$k}};
 		}
 	}
 	return ();	
 }
 
-	
+#
 # ::ign	::client ::definition ::group ::group_id ::grp_awidth ::group_addr
 #		::subwidth ::sub ::cpu1_addr ::cpu2_addr ::xls_def
 # Ignore	Group Description		Instance Name	Definition	Group	ID in Group	Group Address Width	Client Addr Space [kB]	Group Address [hex]	Physical Interconnect Address width	Physical Interconnect  Address [hex]	CPU1 Address [hex]	CPU2 Address [hex]	Contact	Client Definition Xls - Path
-
-sub parse_address_top ($) {
+#
+sub parse_address_map ($$$$) {
 	my $sheet = shift;
+	my $suborder = shift;
+	my $submap = shift;
+	my $subdef = shift;
 	
 	# Use array to keep order
 	# Additional hash to reference ...
-	my @map = ();
-	my %map = ();
-	my %defmap = ();
-	my $n = 0;
-	my $l = 0; # Current line
+	return if ( ref( $sheet ) ne 'ARRAY' );
+	return if ( ref( $sheet->[0] ) ne 'HASH' );
+	my @tags = keys( %{$sheet->[0]} );
+	return if ( scalar( @tags ) < 1 );
+
+	my $l = 0; # Current line, is not used today!!
 	for my $i ( @$sheet ) {
 		$l++;
+		my %map = ();
+
+		next if ref( $i ) ne 'HASH';
 		next if $i->{'::ign'} =~ m/^\s*#/;
 		
 		# Get client name (primary key!)
 		my $client = $i->{'::client'};
 		next if $client =~ m/^\W+$/;
+
+		$map{'client'} = $client;
+		$map{'definition'} = $i->{'::definition'};
+		$map{'sub'} = $i->{'::sub'};
+		$map{'inputline'} = $l - 1;
 		
-		$map{$client} = $n;
-		$map[$n]{'client'} = $client;
-		$map[$n]{'cpu1'} = $i->{'::cpu1_addr'};
-		$map[$n]{'cpu2'} = $i->{'::cpu2_addr'};
-		$map[$n]{'definition'} = $i->{'::definition'};
-		$map[$n]{'sub'} = $i->{'::sub'};
-		$map[$n]{'inputline'} = $l - 1;
-	
-		push( @{$defmap{$i->{'::definition'}}}, $n );
-				
-		$n++;
+		# Assume all lines have the same set of headers!
+		# Iterate over all cpu\d+_addr fields (wig20070912)
+		#OLD: $map[$n]{'cpu1'} = $i->{'::cpu1_addr'};
+		#OLD: $map[$n]{'cpu2'} = $i->{'::cpu2_addr'};
+		for my $tag ( @tags ) {
+			if ( $tag =~ m/^::cpu(\d+)_addr$/ ) {
+				$map{'cpu' . $1} = $i->{$tag};
+			}
+		}
+
+		#!wig20070913: handle ::reg_clones and ::reg_spacing
+		for my $key( qw( reg_clones clone_spacing ) ) {
+			if ( exists( $i->{'::' . $key} ) ) {
+				$map{$key} = $i->{'::' . $key};
+			}
+		}
+
+		# Global list of known definitions pointing to data:	
+		push( @{$subdef->{$i->{'::definition'}}}, scalar( @$submap ) );
+		$suborder->{$client} = scalar( @$submap );
+		push( @{$submap}, \%map );
 	}
 
-	
-	return \%map, \@map, \%defmap;
-} # End of parse_address_top
+	return;
+} # End of parse_address_map
 				
 #!End
