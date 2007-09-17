@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.50 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2007/09/14 13:29:45 $                              |
+# | Revision:   $Revision: 1.51 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2007/09/17 12:40:13 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.51  2007/09/17 12:40:13  wig
+# | Started MixUtils/Header.pm, to be used for the ::col handling in future
+# |
 # | Revision 1.50  2007/09/14 13:29:45  lutscher
 # | added e_vr_ad.path
 # |
@@ -133,9 +136,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.50 2007/09/14 13:29:45 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.51 2007/09/17 12:40:13 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.50 $';  
+my $thisrevision    =      '$Revision: 1.51 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1018,13 +1021,13 @@ sub init ($) {
     };
 
     #
-	# join -> for VGCH join
+	# join -> for address_join.pl
 	#!wig20051011
 	#
 	# ::ign	::client ::definition ::group ::group_id 
 	# ::grp_awidth ::group_addr	::subwidth
 	# ::sub	::cpu1_addr	::cpu2_addr	::xls_def
-	
+	#!wig20070913: adding ::client column	
     $this->{'cfg'}{'join'} = {
 		'xls' => '.*',			# Include sheets listed here (after exclude got applied)
 		'xxls'	=> '',			# Exclude sheets here (before include is applied)
