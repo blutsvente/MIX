@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.20 2007/05/07 07:09:58 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.21 2007/09/20 08:59:18 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.21  2007/09/20 08:59:18  lutscher
+#  add some more code for vr_ad
+#
 #  Revision 1.20  2007/05/07 07:09:58  lutscher
 #  small changes
 #
@@ -151,12 +154,11 @@ sub _gen_view_vr_ad {
 	my $this = shift;
 	my @ldomains;
 	my $href;
-	my $verbose = 0;
 	my $o_domain;
     
 	# add global class members for static data
 	$this->global(
-                  'header'      => " created automatically by $0\n\n<\'\n",
+                  'header'      => "  created automatically by $0\n  do not edit manually!!!\n\n<\'\n",
                   'footer'      => "\'>\n",
                   'suffix'      => ".e",
                   'reg_macro'	=> "reg_def",
@@ -169,6 +171,7 @@ sub _gen_view_vr_ad {
     # import regshell.<par> parameters from MIX package to class data; user can change these parameters in mix.cfg
     my $param;
 	my @lmixparams = (
+                      'reg_shell.datawidth',
                       'reg_shell.e_vr_ad.regfile_prefix',
                       'reg_shell.e_vr_ad.file_prefix',
                       'reg_shell.e_vr_ad.vplan_ref',    # if not %EMPTY%, will add coverage group with vplan_ref attribute
@@ -176,6 +179,7 @@ sub _gen_view_vr_ad {
                       'reg_shell.e_vr_ad.cover_ign_write_to_read_only',
                       'reg_shell.e_vr_ad.field_naming', # see Globals.pm
                       'reg_shell.e_vr_ad.reg_naming',   # see Globals.pm
+                      'reg_shell.e_vr_ad.path',         # output path
                       'reg_shell.exclude_regs',
 					  'reg_shell.exclude_fields'
 					 );
@@ -221,18 +225,21 @@ sub _gen_view_vr_ad {
 		push @{$this->global->{'lexclude_cfg'}}, split(/\s*,\s*/,$this->global->{'exclude_fields'});
 	};
 
+    my $e_path = $this->global->{'path'};
 	my $e_filename = join("_",$this->global->{'file_prefix'}, map {$_->{name}} @ldomains).$this->global->{'suffix'};
-	open(E_FILE, ">$e_filename") || logwarn("ERROR: could not open file \'$e_filename\' for writing");
+	open(E_FILE, ">${e_path}/${e_filename}") || logwarn("ERROR: could not open file \'${e_path}/$e_filename\' for writing");
 	_info("generating file \'$e_filename\'");
-	print E_FILE "\n\n\n file: $e_filename\n\n\n\n";
+	print E_FILE "\$Id: RegViewE.pm,v 1.21 2007/09/20 08:59:18 lutscher Exp $\n\nfile: $e_filename\n\n";
 	print E_FILE $this->global->{'header'};
     
 	my ($top_inst, $o_field, $o_reg, $cov);
-	
+	# $this->display();
+
 	# iterate through domains   
 	foreach $o_domain (@ldomains) {
         my $domain = $o_domain->name;
         my $domain_str = $this->global->{regfile_prefix}. "_". uc($domain);
+        my $domain_max_offset = 4;
         my %hdef = ();
         my $reg_name;   
         my $reg_addr_str; 
@@ -241,6 +248,9 @@ sub _gen_view_vr_ad {
 		foreach $o_reg (@{$o_domain->regs}) {            
 			my $reg_access = "";
 			my $reg_offset = $o_domain->get_reg_address($o_reg);
+            if ($reg_offset > $domain_max_offset) {
+                $domain_max_offset = $reg_offset;
+            };
 			my @thefields = ();
 			my @theholes = ();
 			my @thefields_and_theholes = ();
@@ -365,14 +375,22 @@ $this->global->{field_macro},$singlefield->{name},$singlefield->{size},$singlefi
             printf E_FILE ("  post_generate() is also {\n");
             $index = 0;
             foreach $reg_addr_str (@{$hdef{$reg_name}}) {
-                printf E_FILE ("    add_with_offset(%s,%s_n[%s]);\n",$reg_addr_str,lc($reg_name),$index);
-                $index++;
+                printf E_FILE ("    add_with_offset(%s,%s_n[%s]);\n",$reg_addr_str,lc($reg_name),$index++);
             };
             _info("generated a list of \'$reg_name\' vr_ad_reg with $n items");
             printf E_FILE ("  };\n");
             printf E_FILE ("};\n");
         };
-        printf E_FILE ("\n\nextend vr_ad_reg_file_kind : [%s];\n", $domain_str );
+        printf E_FILE ("\n\nextend vr_ad_reg_file_kind : [%s];\n\n", $domain_str );
+        printf E_FILE ("extend $domain_str vr_ad_reg_file {\n");
+        printf E_FILE ("  default_reset: bool;\n");
+        printf E_FILE ("  keep soft default_reset;\n");
+        printf E_FILE ("  post_generate() is also {\n");
+        printf E_FILE ("    if default_reset { reset(); }\n  };\n");
+        # note: the size of the reg_file is determined by the highest address; possibly also by addressing_width_in_bytes
+        # but the current formula is pessimistic and should work, though wastes some space
+        printf E_FILE ("  keep soft size == ".(${domain_max_offset} + $this->global->{'datawidth'}/8).";\n};\n");
+        
     };
     
     print E_FILE $this->global->{'footer'};
