@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.68 2007/09/05 10:56:23 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.69 2007/09/20 08:59:49 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.68 $                                  
+#  Revision      : $Revision: 1.69 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -66,6 +66,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.69  2007/09/20 08:59:49  lutscher
+#  fixed bug in read-trigger verilog
+#
 #  Revision 1.68  2007/09/05 10:56:23  lutscher
 #  set default clone.number to 0 because 1 will now force 1 clone
 #
@@ -373,7 +376,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.68 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.69 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -863,19 +866,24 @@ sub _vgch_rs_code_read_mux {
 			@ltemp = ();
 			# prefix
 			push @linsert, "", "// generate read-notify trigger (combinatorial)";
-			push @linsert, $ind x $ilvl++ . "always @(iaddr or rd_p) begin";
+			push @linsert, $ind x $ilvl++ . "always @(*) begin";
+			foreach $offs (sort {$a <=> $b} keys %$href_rp_trg) {
+				foreach $field (@{$href_rp_trg->{$offs}}) {
+					push @linsert, $ind x $ilvl . "$field = 0;";
+				}; 
+			};
 			push @linsert, $ind x $ilvl++ . "case (iaddr)";
 			foreach $offs (sort {$a <=> $b} keys %$href_rp_trg) {
 				push @linsert, $ind x $ilvl . "\`" . $href_addr_tokens->{$offs} . ": begin";
 				foreach $field (@{$href_rp_trg->{$offs}}) {
-					push @linsert, $ind x ($ilvl+1) ."$field <= rd_p;";
+					push @linsert, $ind x ($ilvl+1) ."$field = rd_p;";
 				};
 				push @linsert, $ind x $ilvl . "end";
 			}; 
 			push @linsert, $ind x $ilvl . "default: begin";
 			foreach $offs (sort {$a <=> $b} keys %$href_rp_trg) {
 				foreach $field (@{$href_rp_trg->{$offs}}) {
-					push @linsert, $ind x ($ilvl+1) . "$field <= 0;";
+					push @linsert, $ind x ($ilvl+1) . "$field = 0;";
 				}; 
 			};
 			push @linsert, $ind x $ilvl-- . "end";
