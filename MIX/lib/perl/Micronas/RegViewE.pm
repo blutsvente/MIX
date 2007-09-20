@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.21 2007/09/20 08:59:18 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.22 2007/09/20 13:11:17 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.22  2007/09/20 13:11:17  lutscher
+#  fixed code header
+#
 #  Revision 1.21  2007/09/20 08:59:18  lutscher
 #  add some more code for vr_ad
 #
@@ -229,7 +232,8 @@ sub _gen_view_vr_ad {
 	my $e_filename = join("_",$this->global->{'file_prefix'}, map {$_->{name}} @ldomains).$this->global->{'suffix'};
 	open(E_FILE, ">${e_path}/${e_filename}") || logwarn("ERROR: could not open file \'${e_path}/$e_filename\' for writing");
 	_info("generating file \'$e_filename\'");
-	print E_FILE "\$Id: RegViewE.pm,v 1.21 2007/09/20 08:59:18 lutscher Exp $\n\nfile: $e_filename\n\n";
+	print E_FILE "\$Id:" . 
+    "\$\n\nfile: $e_filename\n\n";
 	print E_FILE $this->global->{'header'};
     
 	my ($top_inst, $o_field, $o_reg, $cov);
