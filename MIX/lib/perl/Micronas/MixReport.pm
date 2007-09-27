@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.50 $                                               |
+# | Revision:   $Revision: 1.51 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2007/09/27 07:39:25 $                                                   |
+# | Date:       $Date: 2007/09/27 13:23:30 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.50 2007/09/27 07:39:25 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.51 2007/09/27 13:23:30 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,7 +31,12 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
-# | Revision 1.50  2007/09/27 07:39:25  mathias
+# | Revision 1.51  2007/09/27 13:23:30  mathias
+# | mix_rep_header_read_top_address_map:
+# | client names are numbered consecutively according to the
+# | accumulated number of clones
+# |
+# | Revision 1.50  2007-09-27 07:39:25  mathias
 # | mix_rep_header_read_top_address_map: hierachical address map
 # | multiple instantiated blocks can contain sub-blocks that are also multiple instantiated
 # | The instance name (::client) is used in order to generate unique names
@@ -209,11 +214,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.50 2007/09/27 07:39:25 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.51 2007/09/27 13:23:30 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.50 $';
+my $thisrevision   =      '$Revision: 1.51 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -375,13 +380,13 @@ sub mix_rep_header_read_top_address_map()
             ###!!!! replace client names from the sheet by the ones from mix config file
             if ($blocks{$name}->{reg_clones} > 1) {
                 for (my $i = 0; $i < $blocks{$name}->{reg_clones}; $i++) {
-                    # change client names not definition because of reuse of the block
-                    my $client = lc($block->{'::client'});
-                    #my $client = $name;
+                    my $client = $name;
                     if (exists($chref_inst->{lc($client)})) {
                         $client = $chref_inst->{lc($client)};
                     }
-                    push(@{$blocks{$name}->{clients}}, $client . $i);
+                    # client names are numbered consecutively according to the
+                    # accumulated number of clones
+                    push(@{$blocks{$name}->{clients}}, $client . ($clone_start + $i));
                     push(@{$blocks{$name}->{base_addr}}, hex('0x' . $block->{'::sub'}) + $i * $blocks{$name}->{size});
                 }
             } elsif (exists($chref_inst->{lc($block->{'::client'})})) {
