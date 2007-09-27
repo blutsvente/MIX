@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.49 $                                               |
+# | Revision:   $Revision: 1.50 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2007/06/26 13:49:05 $                                                   |
+# | Date:       $Date: 2007/09/27 07:39:25 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.49 2007/06/26 13:49:05 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.50 2007/09/27 07:39:25 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,7 +31,13 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
-# | Revision 1.49  2007/06/26 13:49:05  mathias
+# | Revision 1.50  2007/09/27 07:39:25  mathias
+# | mix_rep_header_read_top_address_map: hierachical address map
+# | multiple instantiated blocks can contain sub-blocks that are also multiple instantiated
+# | The instance name (::client) is used in order to generate unique names
+# | in the header structure.
+# |
+# | Revision 1.49  2007-06-26 13:49:05  mathias
 # | write footnote when some bitfields have 'W1C', 'W0C' or 'WC' in the column '::spec'
 # |
 # | Revision 1.48  2007-03-23 08:41:11  mathias
@@ -203,11 +209,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.49 2007/06/26 13:49:05 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.50 2007/09/27 07:39:25 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.49 $';
+my $thisrevision   =      '$Revision: 1.50 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -347,16 +353,31 @@ sub mix_rep_header_read_top_address_map()
     }
     # relevant informations from top address sheet
     my %blocks;
+    my $clone_start;  # when one '::definition' has clones, first one begins at this position
     foreach my $block (@arrayhash) {
         my $name = $block->{'::definition'};
         if ($name ne 'Definition') {
-            $blocks{$name}->{name} = $name;        # remember the name also in the hash
-            $blocks{$name}->{reg_clones} = $block->{'::reg_clones'};
-            $blocks{$name}->{size}       = hex('0x' . $block->{'::clone_spacing'});
+            if (! exists($blocks{$name})) {            # first occurence of $name
+                $blocks{$name}->{name} = $name;        # remember the name also in the hash
+                $blocks{$name}->{reg_clones} = $block->{'::reg_clones'};
+                $clone_start = 0;
+                $blocks{$name}->{size}       = hex('0x' . $block->{'::clone_spacing'});
+            } else {                                   # more instances of $name
+                $clone_start = $blocks{$name}->{reg_clones};
+                $blocks{$name}->{reg_clones} += $block->{'::reg_clones'};
+                # check whether the sam size is defined as in previous occurence of $name
+                if ($blocks{$name}->{size} != hex('0x' . $block->{'::clone_spacing'})) {
+                    my $msg = "For $name different size (::clone_spacing " . $block->{'::clone_spacing'};
+                    $msg .= ") defined as for previous occurence (" . $blocks{$name}->{size} . ")!";
+                    $logger->error('__E_REPORT_FILE', $msg);
+                }
+            }
             ###!!!! replace client names from the sheet by the ones from mix config file
             if ($blocks{$name}->{reg_clones} > 1) {
                 for (my $i = 0; $i < $blocks{$name}->{reg_clones}; $i++) {
-                    my $client = $name;
+                    # change client names not definition because of reuse of the block
+                    my $client = lc($block->{'::client'});
+                    #my $client = $name;
                     if (exists($chref_inst->{lc($client)})) {
                         $client = $chref_inst->{lc($client)};
                     }
@@ -497,7 +518,7 @@ sub mix_rep_header_open_files($$$$)
 }
 
 #####################################################################
-# Print type definiotions for the registers of the current domain
+# Print type definitions for the registers of the current domain
 #####################################################################
 
 sub mix_rep_header_print($$$$)
