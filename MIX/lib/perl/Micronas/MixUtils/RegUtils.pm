@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.16 2007/09/05 10:56:23 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.17 2007/09/28 12:27:04 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.17  2007/09/28 12:27:04  lutscher
+#  added _add_udc()
+#
 #  Revision 1.16  2007/09/05 10:56:23  lutscher
 #  set default clone.number to 0 because 1 will now force 1 clone
 #
@@ -102,6 +105,7 @@ require Exporter;
    _get_signal_type
    _add_instance_verilog
    _add_numbered_instance_verilog
+   _add_udc
    _pad_column
    _max
    _pad_str
@@ -339,6 +343,16 @@ sub _add_numbered_instance_verilog {
 	   '::descr'  => $comment,
 	   '::parent' => $parent,
 	   '::lang'   => "verilog",
+       '::udc'    => $udc
+	  );
+};
+
+# helper function to call add_inst() 
+sub _add_udc {
+    my ($inst, $udc) = @_;
+    return add_inst
+	  (
+	   '::inst'   => $inst,
        '::udc'    => $udc
 	  );
 };
