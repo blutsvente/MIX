@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.51 $                                               |
+# | Revision:   $Revision: 1.52 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2007/09/27 13:23:30 $                                                   |
+# | Date:       $Date: 2007/09/28 14:04:37 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.51 2007/09/27 13:23:30 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.52 2007/09/28 14:04:37 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,7 +31,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
-# | Revision 1.51  2007/09/27 13:23:30  mathias
+# | Revision 1.52  2007/09/28 14:04:37  mathias
+# | bugfix
+# |
+# | Revision 1.51  2007-09-27 13:23:30  mathias
 # | mix_rep_header_read_top_address_map:
 # | client names are numbered consecutively according to the
 # | accumulated number of clones
@@ -214,11 +217,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.51 2007/09/27 13:23:30 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.52 2007/09/28 14:04:37 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.51 $';
+my $thisrevision   =      '$Revision: 1.52 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -379,15 +382,15 @@ sub mix_rep_header_read_top_address_map()
             }
             ###!!!! replace client names from the sheet by the ones from mix config file
             if ($blocks{$name}->{reg_clones} > 1) {
-                for (my $i = 0; $i < $blocks{$name}->{reg_clones}; $i++) {
+                for (my $i = $clone_start; $i < $blocks{$name}->{reg_clones}; $i++) {
                     my $client = $name;
                     if (exists($chref_inst->{lc($client)})) {
                         $client = $chref_inst->{lc($client)};
                     }
                     # client names are numbered consecutively according to the
                     # accumulated number of clones
-                    push(@{$blocks{$name}->{clients}}, $client . ($clone_start + $i));
-                    push(@{$blocks{$name}->{base_addr}}, hex('0x' . $block->{'::sub'}) + $i * $blocks{$name}->{size});
+                    push(@{$blocks{$name}->{clients}}, $client . $i);
+                    push(@{$blocks{$name}->{base_addr}}, hex('0x' . $block->{'::sub'}) + ($i - $clone_start) * $blocks{$name}->{size});
                 }
             } elsif (exists($chref_inst->{lc($block->{'::client'})})) {
                 push(@{$blocks{$name}->{base_addr}}, hex('0x' . $block->{'::sub'}));
