@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.91 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/03/20 14:52:24 $                              |
+# | Revision:   $Revision: 1.92 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2007/09/28 12:26:34 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.91 2007/03/20 14:52:24 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.92 2007/09/28 12:26:34 lutscher Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.92  2007/09/28 12:26:34  lutscher
+# | change merge_inst() to also concatenate ::udc data
+# |
 # | Revision 1.91  2007/03/20 14:52:24  wig
 # | Added %PURGE% into merge_inst and merge_conn
 # |
@@ -205,9 +208,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.91 2007/03/20 14:52:24 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.92 2007/09/28 12:26:34 lutscher Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.91 $';
+my $thisrevision =	'$Revision: 1.92 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -963,8 +966,8 @@ sub merge_inst ($%) {
 					$logger->warn( '__I_MERGE_INST', "\tField $i for $name already filled");
             } else {
             	if ( $data{$i} ne '' ) {
-            		if ( $i eq '::comments' ) {
-            			$hierdb{$name}{$i} .= ' ' . $data{$i};
+            		if ( $i eq '::comments' or $i eq '::udc') {
+            			$hierdb{$name}{$i} .= ' ' . $data{$i}; # concatenate
             		} else {
 						$hierdb{$name}{$i} = $data{$i};
             		}
