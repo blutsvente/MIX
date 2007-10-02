@@ -1,12 +1,12 @@
 #!/bin/sh --
-eval 'exec $M_PERL -S -w -x -- "$0" ${1+"$@"}' # -*- perl -*-
-if 0;
-#! perl script header  ## this line is important; don't (re)move it!
+#!/bin/sh -- # -*- perl -*- -w
+eval 'exec ${PERL:-`[ ! -d "$HOME/bin/perl" -a -x "$HOME/bin/perl" ] && echo "$HOME/bin/perl" || { [ -x /usr/bin/perl ] && echo /usr/bin/perl || echo /usr/local/bin/perl ; } `} -x -S $0 ${1+"$@"} ;'
+if 0; # dynamic perl startup; suppress preceding line in perl
 #line 6
 
 #-----------------------------------------------------------------------------
 #-- Name     : mkswstub
-#-- $Revision: 1.1 $
+#-- $Revision: 1.2 $
 #-- $Date    : 2006/03/09 13:52:02 $
 #-- $Author  : mathias $
 #-----------------------------------------------------------------------------
