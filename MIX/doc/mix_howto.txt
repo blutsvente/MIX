@@ -895,3 +895,85 @@ e.g. in your mix.cfg, the names will become
 	ioc_type_bar_2
 
 #!20030800
+
+>>title: Mix' report function
+
+Mix' report function can be used to generate files in different formats
+from the Registermaster sheets.
+
+Currently the following output formats are supported.
+
+- Framemaker output (.mif files)
+- c header files
+- Perl packages
+- Register descriptions for the Lauterbach debugger
+
+Start of Mix
+============
+
+module load mix/1.7
+mix_0.pl <path to registermaster file> \
+         -report header \
+         -conf i2c,xls=<sheetname> \
+         -cfg <mix.cfg file>
+
+I've attached a script we have used to generate c header files
+for the video subsystem.
+
+Files
+=====
+
+<registermaster file>
+   Excel file containing a sheet that describes the
+   registerdefinitions of one hardware block.
+   This information is also used to generate the hdl code.
+   (The format is described in the Mix documentation
+   'MIX_Userreference.pdf'.)
+
+<sheetname>
+   Name of the sheet mentioned above
+
+<mix.cfg file>
+   This file contains some or more settings for the Mix tool.
+   The most important one defines the path to the top address
+   sheet.
+
+   MIXCFG report.cheader.address.map ./j2DP_top_addressmap.xls
+
+   All entries that are relevant for the generation of the header
+   file have the prefix 'report.cheader.'.
+
+   Other entries allow to change the names of the generated
+   structs. (The registermaster files contain sometimes long and
+   unexpected names. Software engineers in Munich preferred
+   shorter names, that are independent of the current hardware.)
+
+j2DP_top_addressmap.xls
+   Top Address Sheet, contains the base addresses of all units in
+   the SoC
+
+   I attach this file too. There are tooltipps associated with
+   the column headers with short descriptions.
+
+reg_<name>.h
+   Mix generates one header file for each domain <name> in the
+   registermaster sheet.
+
+
+Access methods
+==============
+
+An additional script 'mkswstub' was developed for the Monterey
+project to generate basic access functions to the registers
+(REG_WriteStub, REG_ReadStub, REG_GetRegName_Generic,
+REG_GetRegAddr_Generic ...).
+
+Besause 'mkswstub' seems to be useful for other projects too,
+I've installed it now into Mix 1.7.
+
+'mkswstub' takes all generated *.h files as arguments and writes
+three files
+  reg_string.c
+  reg_swstub.c
+  reg_reset.c
+
