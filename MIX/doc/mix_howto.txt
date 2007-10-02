@@ -978,3 +978,13 @@ three files
   reg_reset.c
 
 #!Mg20071002
+
+>>title: RTL libraries for MIX generated register-shells
+
+The generated Verilog of a particular MIX version requires matching RTL libraries.
+
+mix (version >= 1.7) generates a file rtl_libs.xml which contains
+the library references in MSD XML format; the content of this file
+can be copied to the project's default.xml file (<resources> section).
+
+#!LU20071002
