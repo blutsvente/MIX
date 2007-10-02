@@ -977,3 +977,4 @@ three files
   reg_swstub.c
   reg_reset.c
 
+#!Mg20071002
