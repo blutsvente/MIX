@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.22 2007/09/20 13:11:17 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.23 2007/10/15 08:50:25 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.23  2007/10/15 08:50:25  lutscher
+#  changed the generated e-code for reglists
+#
 #  Revision 1.22  2007/09/20 13:11:17  lutscher
 #  fixed code header
 #
@@ -375,7 +378,8 @@ $this->global->{field_macro},$singlefield->{name},$singlefield->{size},$singlefi
             $n = scalar(@{$hdef{$reg_name}});
             # output: list of regs instances
             printf E_FILE ("extend $domain_str vr_ad_reg_file {\n"); 
-            printf E_FILE ("  %%%s_n[$n]:list of $reg_name vr_ad_reg;\n",lc($reg_name));
+            printf E_FILE ("  %s_n:list of $reg_name vr_ad_reg;\n",lc($reg_name));
+            printf E_FILE ("  keep soft %s_n.size() == $n;\n", lc($reg_name));
             printf E_FILE ("  post_generate() is also {\n");
             $index = 0;
             foreach $reg_addr_str (@{$hdef{$reg_name}}) {
@@ -402,7 +406,7 @@ $this->global->{field_macro},$singlefield->{name},$singlefield->{size},$singlefi
     close(E_FILE);
     
     # disable mix error message
-    # $eh->set('log.limit.re.__E_CONN_EMPTY', 0);
+    $eh->set('conn.req', "optional");
 };
 
 sub write_extend_coverage {
