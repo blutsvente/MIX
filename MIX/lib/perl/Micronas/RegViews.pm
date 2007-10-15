@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.69 2007/09/20 08:59:49 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.70 2007/10/15 08:50:01 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.69 $                                  
+#  Revision      : $Revision: 1.70 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -66,6 +66,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.70  2007/10/15 08:50:01  lutscher
+#  added w1c multi-bit feature
+#
 #  Revision 1.69  2007/09/20 08:59:49  lutscher
 #  fixed bug in read-trigger verilog
 #
@@ -300,7 +303,7 @@ sub _vgch_rs_init {
                   'rtl_libs'           => [{            # required MSD RTL libraries
                                             "project" => "ip_ocp",
                                             "version" => "0001",
-                                            "release" => "ip_ocp_003_18Jun2007" #ip_ocp_002_14May2007
+                                            "release" => "ip_ocp_005_20Sep2007"
                                            },
                                            {
                                             "project" => "ip_sync",
@@ -376,7 +379,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.69 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.70 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -523,11 +526,11 @@ sub _vgch_rs_gen_cfg_module {
 			};
 			
 			# warnings/errors for w1c fields 
-			if ($spec =~ m/w1c/i and $o_field->attribs->{'size'} >1 ) {
+			if ($spec =~ m/w1c/i) {
                 # greater than one bit
-                if ($o_field->attribs->{'size'} >1) {
-                    _warning("field \'",$o_field->name,"\': for fields of type write-one-to-clear, only 1-bit size is currently supported");
-                };
+                #if ($o_field->attribs->{'size'} >1) {
+                #    _warning("field \'",$o_field->name,"\': for fields of type write-one-to-clear, only 1-bit size is currently supported");
+                #};
                 if ($access !~ m/w/ or $access !~ m/r/) {
                     _error("field \'",$o_field->name,"\': attribute W1C can only be combined with RW access");
                 }; 
@@ -546,9 +549,15 @@ sub _vgch_rs_gen_cfg_module {
 				$this->_add_output($this->_gen_fname("out", $o_field, 1), $msb, $lsb, ($spec =~ m/sha/i) ? 1:0, $cfg_i."/".$this->_gen_fname("out", $o_field));
 				if ($spec =~ m/w1c/i) { # w1c
                     my $ftemp = $this->_gen_fname("set", $o_field);
-					$this->_add_input($this->_gen_fname("set", $o_field, 1), 0, 0, $cfg_i."/".$ftemp);
+					$this->_add_input($this->_gen_fname("set", $o_field, 1), $msb, $lsb, $cfg_i."/".$ftemp);
 					$p_pos_pulse_check = 1;
-					push @lchecks, "assert_${ftemp}_is_a_pulse: assert property(p_pos_pulse_check($ftemp));";
+                    if ($o_field->attribs->{'size'}>1) {
+                        for (my $i=$lsb; $i<=$msb; $i++) {
+                            push @lchecks, "assert_${ftemp}${i}_is_a_pulse: assert property(p_pos_pulse_check(${ftemp}[$i\]));";
+                        };
+                    } else {
+                         push @lchecks, "assert_${ftemp}_is_a_pulse: assert property(p_pos_pulse_check(${ftemp}));";
+                    };
 				};
 				if ($spec !~ m/sha/i) {
 					if ($spec =~ m/usr/i) {
@@ -599,12 +608,26 @@ sub _vgch_rs_gen_cfg_module {
 						$hassigns{$this->_gen_fname("trg", $o_field)} = $trg;
 					};
 				} else { # w1c
-					$hwp{'write_sts'}->{$reg_name.$rrange} = $this->_gen_fname("set", $o_field);
+                    my $pos = $href->{'pos'};
+                    if ($o_field->attribs->{'size'} == 1) {
+                        $hwp{'write_sts'}->{$reg_name.$rrange} = $this->_gen_fname("set", $o_field);
+                    } else {
+                        # multi-bit w1c fields
+                        for (my $i=0; $i<$o_field->attribs->{'size'}; $i++) {
+                            $hwp{'write_sts'}->{$reg_name.($this->_gen_vector_range($pos+$i, $pos+$i))} = $this->_gen_fname("set", $o_field).($this->_gen_vector_range($lsb+$i, $lsb+$i));
+                        };
+                    };
 					$hwp{'write_sts_rst'}->{$reg_name.$rrange} = $res_val;
 					if ($spec =~ m/trg/i and $spec !~ m/usr/i) {
 						# add dedicated trigger signal per field
 						$hwp{'write_sts_rst'}->{$this->_gen_fname("trg", $o_field)} = 0;
-						$hwp{'write_sts_trg'}->{$this->_gen_fname("trg", $o_field)} = $reg_name.$rrange;
+                        # BAUSTELLE
+                        if ($o_field->attribs->{'size'} == 1) {
+                            $hwp{'write_sts_trg'}->{$this->_gen_fname("trg", $o_field)} = $reg_name.$rrange;
+                        } else {
+                            # the trigger signal will only be generated for the first bit of the multi-bit field
+                            $hwp{'write_sts_trg'}->{$this->_gen_fname("trg", $o_field)} = $reg_name.($this->_gen_vector_range($pos,$pos));
+                        };
 					};
 				};
 			};
@@ -1408,33 +1431,45 @@ sub _vgch_rs_code_write_processes {
 		push @linsert, $ind x $ilvl . "end", $ind x $ilvl++ . "else begin";
 		
 		# reset trigger signals
-		@ltemp=();
-		foreach $key2 (keys %{$href_wp->{'write_sts_trg'}}) {
-			push @ltemp, "$key2 <= 0;";
-		};
-		_pad_column(0, $ind, $ilvl, \@ltemp);
-		push @linsert, @ltemp;
+		#@ltemp=();
+		#foreach $key2 (keys %{$href_wp->{'write_sts_trg'}}) {
+		#	push @ltemp, "$key2 <= 0;";
+		#};
+		#_pad_column(0, $ind, $ilvl, \@ltemp);
+		#push @linsert, @ltemp;
 		
 		# write logic
+        @ltemp = ();
 		foreach $key (sort {$href_wp->{'write_sts'}->{$a} cmp $href_wp->{'write_sts'}->{$b}} keys %{$href_wp->{'write_sts'}}) {
 			$reg_name = $key;
 			$rrange = "";
 			if ($reg_name =~ m/(\[.+\])$/) {
 				$reg_name = $`;
 				$rrange = $1;
-			};
+            };
 			$offs = uc($reg_name . "_offs");
-			push @linsert, $ind x $ilvl++ ."if ($href_wp->{'write_sts'}->{$key})";
-			push @linsert, $ind x $ilvl-- ."$key <= 1;";
+            push @linsert, $ind x $ilvl++ ."if ($href_wp->{'write_sts'}->{$key})";
+            push @linsert, $ind x $ilvl-- ."$key <= 1;";
+            
 			push @linsert, $ind x $ilvl++ ."else if (wr_p && iaddr == \`".$offs.") begin";
 			push @linsert, $ind x $ilvl ."$key <= $key & ~wr_data".$this->global->{POSTFIX_PORT_IN}."$rrange;";
 			foreach $key2 (keys %{$href_wp->{'write_sts_trg'}}) {
+                # search for write trigger signal associated with status signal
 				if ($href_wp->{'write_sts_trg'}->{$key2} eq $key) {
-					push @linsert, $ind x $ilvl . "$key2 <= 1;"; 
+                    push @ltemp, $ind x ($ilvl-1) . "if (wr_p && iaddr == \`".$offs.") begin // write trigger for address $offs";
+					push @ltemp, $ind x $ilvl . "$key2 <= 1;";
+                    push @ltemp, $ind x ($ilvl-1) . "end";
+                    push @ltemp, $ind x ($ilvl-1) . "else begin";
+                    push @ltemp, $ind x $ilvl . "$key2 <= 0;";
+                    push @ltemp, $ind x ($ilvl-1) . "end";
 				};
 			};
 			$ilvl--;
 			push @linsert, $ind x $ilvl ."end";
+            if (scalar(@ltemp)>0) {
+                push @linsert, @ltemp;
+                @ltemp = ();
+            };
 		};
 		$ilvl --;
 		push @linsert, $ind x $ilvl-- ."end";
@@ -2243,7 +2278,7 @@ sub _vgch_rs_write_msd_setup {
     $this->_vgch_rs_gen_udc_header(\@ludc);
     print DHANDLE join("\n", @ludc);
 	print DHANDLE "\n-->\n";
-    print DHANDLE "<resources>\n";
+    print DHANDLE "<resources> <!-- copy these lines to the resource section in the MSD setup -->\n";
     foreach $ref (@{$this->global->{'rtl_libs'}}) {
         print DHANDLE $this->global->{'indent'} . "<library>\n";
         print DHANDLE $this->global->{'indent'}x2 . $ref->{'project'}, "\n";
