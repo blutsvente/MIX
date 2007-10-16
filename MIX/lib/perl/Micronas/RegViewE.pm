@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.23 2007/10/15 08:50:25 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.24 2007/10/16 08:27:33 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.24  2007/10/16 08:27:33  lutscher
+#  added mic_extensions for generated code
+#
 #  Revision 1.23  2007/10/15 08:50:25  lutscher
 #  changed the generated e-code for reglists
 #
@@ -164,14 +167,15 @@ sub _gen_view_vr_ad {
     
 	# add global class members for static data
 	$this->global(
-                  'header'      => "  created automatically by $0\n  do not edit manually!!!\n\n<\'\n",
-                  'footer'      => "\'>\n",
-                  'suffix'      => ".e",
-                  'reg_macro'	=> "reg_def",
-                  'field_macro'	=> "reg_fld",
-                  'hole_name'	=> "reserved_at_",
-                  'hole_access' => "STANDARD", # "STANDARD" or "AUTO" || STANDARD permission of holes = "R", "AUTO"  permission of holes like the most in the register
-				  'lexclude_cfg' => [],           # list of registers to exclude from code generation
+                  'header'         => "  created automatically by $0\n  do not edit manually!!!\n\n<\'\n",
+                  'footer'         => "\'>\n",
+                  'suffix'         => ".e",
+                  'reg_macro'	   => "reg_def",
+                  'field_macro'	   => "reg_fld",
+                  'hole_name'	   => "reserved_at_",
+                  'mic_extensions' => "_MIC_VR_AD_EXTENSIONS_", # e-code macro to check if micronas extensions to vr_ad are present
+                  'hole_access'    => "STANDARD", # "STANDARD" or "AUTO" || STANDARD permission of holes = "R", "AUTO"  permission of holes like the most in the register
+				  'lexclude_cfg'   => [],           # list of registers to exclude from code generation
 				 );
     
     # import regshell.<par> parameters from MIX package to class data; user can change these parameters in mix.cfg
@@ -250,6 +254,12 @@ sub _gen_view_vr_ad {
         my %hdef = ();
         my $reg_name;   
         my $reg_addr_str; 
+
+        my $clone_number = $o_domain->clone->{'number'};
+        my $clone_addr_spacing = 0;
+        if ($clone_number > 0) {
+            $clone_addr_spacing = 2**$o_domain->clone->{'addr_spacing'}; # convert from address-bits to bytes
+        };
         #print E_FILE "\n-- domain $domain_str\n\n";
 		# iterate through all registers of the domain
 		foreach $o_reg (@{$o_domain->regs}) {            
@@ -369,7 +379,11 @@ $this->global->{field_macro},$singlefield->{name},$singlefield->{size},$singlefi
                     write E_FILE;
                 };
                 print E_FILE "};\n";
-                $this->write_extend_coverage($reg_name, $reg_access_mode); 
+                my $is_cloned = 0;
+                if (exists $o_reg->{'inst_n'}) {
+                    $is_cloned = 1;
+                };
+                $this->write_extend_reg($reg_name, $reg_access_mode, $is_cloned); 
             };
         };
         
@@ -378,7 +392,7 @@ $this->global->{field_macro},$singlefield->{name},$singlefield->{size},$singlefi
             $n = scalar(@{$hdef{$reg_name}});
             # output: list of regs instances
             printf E_FILE ("extend $domain_str vr_ad_reg_file {\n"); 
-            printf E_FILE ("  %s_n:list of $reg_name vr_ad_reg;\n",lc($reg_name));
+            printf E_FILE ("  %%%s_n:list of $reg_name vr_ad_reg;\n",lc($reg_name));
             printf E_FILE ("  keep soft %s_n.size() == $n;\n", lc($reg_name));
             printf E_FILE ("  post_generate() is also {\n");
             $index = 0;
@@ -397,9 +411,15 @@ $this->global->{field_macro},$singlefield->{name},$singlefield->{size},$singlefi
         printf E_FILE ("    if default_reset { reset(); }\n  };\n");
         # note: the size of the reg_file is determined by the highest address; possibly also by addressing_width_in_bytes
         # but the current formula is pessimistic and should work, though wastes some space
-        printf E_FILE ("  keep soft size == ".(${domain_max_offset} + $this->global->{'datawidth'}/8).";\n};\n");
+        printf E_FILE ("  keep soft size == ".(${domain_max_offset} + $this->global->{'datawidth'}/8).";\n");
+        printf E_FILE ("#ifdef ".$this->global->{'mic_extensions'}." then {\n");
+        printf E_FILE ("  keep is_cloned == ".($clone_number > 0 ? "TRUE":"FALSE").";\n");
+        printf E_FILE ("  keep soft n_instances == ${clone_number};\n");
+        printf E_FILE ("  keep soft inst_addr_spacing == ${clone_addr_spacing};\n");
+        printf E_FILE ("};\n"); 
+        printf E_FILE ("};\n");
         
-    };
+    }; # foreach $o_domain (@ldomains)
     
     print E_FILE $this->global->{'footer'};
     
@@ -409,12 +429,20 @@ $this->global->{field_macro},$singlefield->{name},$singlefield->{size},$singlefi
     $eh->set('conn.req', "optional");
 };
 
-sub write_extend_coverage {
-    my ($this, $reg_name, $reg_access_mode) = @_;
+# write e-code that extends the vr_ad_reg struct 
+sub write_extend_reg {
+    my ($this, $reg_name, $reg_access_mode, $is_cloned) = @_;
     my $ignore = "";
     if ($this->global->{'vplan_ref'} !~ m/%empty%/i) {
         print E_FILE "extend $reg_name vr_ad_reg {\n";
         print E_FILE "  cover reg_access (kind == $reg_name) using also vplan_ref = \"", $this->global->{'vplan_ref'},"\";\n";
+        print E_FILE "};\n";
+    };
+    if ($is_cloned) {
+        print E_FILE "#ifdef ".$this->global->{'mic_extensions'}." then {\n";
+        print E_FILE "extend $reg_name vr_ad_reg {\n";
+        print E_FILE "  keep is_cloned == ".($is_cloned ? "TRUE":"FALSE").";\n";
+        print E_FILE "};\n";
         print E_FILE "};\n";
     };
     if ($reg_access_mode ne "RW") {
