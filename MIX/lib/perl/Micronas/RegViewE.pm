@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.24 2007/10/16 08:27:33 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.25 2007/10/24 07:29:53 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.25  2007/10/24 07:29:53  lutscher
+#  added reset for register-lists in e-code
+#
 #  Revision 1.24  2007/10/16 08:27:33  lutscher
 #  added mic_extensions for generated code
 #
@@ -408,7 +411,11 @@ $this->global->{field_macro},$singlefield->{name},$singlefield->{size},$singlefi
         printf E_FILE ("  default_reset: bool;\n");
         printf E_FILE ("  keep soft default_reset;\n");
         printf E_FILE ("  post_generate() is also {\n");
-        printf E_FILE ("    if default_reset { reset(); }\n  };\n");
+        printf E_FILE ("    if default_reset {\n      reset();\n");
+        foreach $reg_name (keys %hdef){
+            printf E_FILE ("      for each (reg) in %s_n do { reg.reset(); };\n",  lc($reg_name));
+        };
+        printf E_FILE ("    };\n  };\n");
         # note: the size of the reg_file is determined by the highest address; possibly also by addressing_width_in_bytes
         # but the current formula is pessimistic and should work, though wastes some space
         printf E_FILE ("  keep soft size == ".(${domain_max_offset} + $this->global->{'datawidth'}/8).";\n");
