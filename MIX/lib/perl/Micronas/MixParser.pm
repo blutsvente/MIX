@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.92 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2007/09/28 12:26:34 $                              |
+# | Revision:   $Revision: 1.93 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2007/10/30 15:54:46 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.92 2007/09/28 12:26:34 lutscher Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.93 2007/10/30 15:54:46 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.93  2007/10/30 15:54:46  wig
+# | Added a if defined( ... ) ...
+# |
 # | Revision 1.92  2007/09/28 12:26:34  lutscher
 # | change merge_inst() to also concatenate ::udc data
 # |
@@ -208,9 +211,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.92 2007/09/28 12:26:34 lutscher Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.93 2007/10/30 15:54:46 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.92 $';
+my $thisrevision =	'$Revision: 1.93 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2278,7 +2281,8 @@ sub apply_conn_macros ($$) {
                 for my $iii ( 0..$#{$r_cm->[$ii]{'mo'}} ) {
                 	# xt if ( ref(
                     $xre .= $r_cm->[$ii]{'mo'}[$iii] . "::";
-                    $xre .= $r_in->[$i]{$r_cm->[$ii]{'mo'}[$iii]};
+                    $xre .= defined( $r_in->[$i]{$r_cm->[$ii]{'mo'}[$iii]} ) ?
+                    		$r_in->[$i]{$r_cm->[$ii]{'mo'}[$iii]} : '';
                 }
                 if ( $xre =~ /$r_cm->[$ii]{'mm'}/ ) {
                     # Got it .... catch matched variables and apply to MX line ...
