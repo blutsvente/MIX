@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.52 $                                               |
+# | Revision:   $Revision: 1.53 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2007/09/28 14:04:37 $                                                   |
+# | Date:       $Date: 2007/11/02 13:42:14 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.52 2007/09/28 14:04:37 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.53 2007/11/02 13:42:14 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,14 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.53  2007/11/02 13:42:14  mathias
+# | mix_rep_header_read_top_address_map:
+# |  fix: when assigning the client name take into account only the number of clones in the current line
+# |
+# | mix_rep_per_print:
+# |  the printed 'width' has to be 1 higher than the longest name in order to reserve space
+# |  for the closing '0' in the Lauterbach debugger
+# |
 # | Revision 1.52  2007/09/28 14:04:37  mathias
 # | bugfix
 # |
@@ -217,11 +225,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.52 2007/09/28 14:04:37 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.53 2007/11/02 13:42:14 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.52 $';
+my $thisrevision   =      '$Revision: 1.53 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -373,7 +381,7 @@ sub mix_rep_header_read_top_address_map()
             } else {                                   # more instances of $name
                 $clone_start = $blocks{$name}->{reg_clones};
                 $blocks{$name}->{reg_clones} += $block->{'::reg_clones'};
-                # check whether the sam size is defined as in previous occurence of $name
+                # check whether the same size is defined as in previous occurence of $name
                 if ($blocks{$name}->{size} != hex('0x' . $block->{'::clone_spacing'})) {
                     my $msg = "For $name different size (::clone_spacing " . $block->{'::clone_spacing'};
                     $msg .= ") defined as for previous occurence (" . $blocks{$name}->{size} . ")!";
@@ -381,7 +389,7 @@ sub mix_rep_header_read_top_address_map()
                 }
             }
             ###!!!! replace client names from the sheet by the ones from mix config file
-            if ($blocks{$name}->{reg_clones} > 1) {
+            if ($block->{'::reg_clones'} > 1) {
                 for (my $i = $clone_start; $i < $blocks{$name}->{reg_clones}; $i++) {
                     my $client = $name;
                     if (exists($chref_inst->{lc($client)})) {
@@ -708,7 +716,7 @@ sub mix_rep_per_open_files($$$)
 }
 
 #####################################################################
-# Print type definiotions for the registers of the current domain
+# Print type definitions for the registers of the current domain
 #####################################################################
 
 sub mix_rep_per_print($$$$$$$)
@@ -717,7 +725,8 @@ sub mix_rep_per_print($$$$$$$)
     my $group_length;
     my @groups;
 
-    $fh->write("width $maxwidth.\n\n");
+    # write width; increment $maxwidth by 1 to let space for a terminating '0' in Lauterbach system
+    $fh->write("width " . ($maxwidth + 1) . ".\n\n");
     for (my $i = 0; $i < $blocks->{$name}->{reg_clones}; $i++) {
         # Write base address
         my $ad = hex($global_base_address) + $blocks->{$name}->{base_addr}->[$i];
@@ -878,7 +887,7 @@ PMHEADER
 }
 
 #####################################################################
-# Print type definiotions for the registers of the current domain
+# Print type definitions for the registers of the current domain
 #####################################################################
 
 sub mix_rep_perl_print($$$$$$)
