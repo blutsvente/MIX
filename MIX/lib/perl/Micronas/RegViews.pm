@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.70 2007/10/15 08:50:01 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.71 2007/11/06 08:01:07 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.70 $                                  
+#  Revision      : $Revision: 1.71 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -33,6 +33,7 @@
 #   sub _vgch_rs_get_configuration
 #   sub _vgch_rs_add_static_connections 
 #   sub _vgch_rs_write_defines
+#   sub _vgch_rs_write_backdoor_paths
 #   sub _vgch_rs_write_msd_setup
 #   sub _indent_and_prune_sva 
 #   sub _skip_field
@@ -66,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.71  2007/11/06 08:01:07  lutscher
+#  added _vgch_rs_write_backdoor_paths()
+#
 #  Revision 1.70  2007/10/15 08:50:01  lutscher
 #  added w1c multi-bit feature
 #
@@ -114,51 +118,6 @@
 #
 #  Revision 1.56  2006/11/13 11:31:49  lutscher
 #  fixed _vgch_rs_code_read_mux in case there are no readable registers
-#
-#  Revision 1.55  2006/10/18 08:31:45  lutscher
-#  renamed SV assertions according to naming rules
-#
-#  Revision 1.54  2006/10/18 08:16:36  lutscher
-#  added field function is_cond()
-#
-#  Revision 1.53  2006/09/28 10:29:26  lutscher
-#  changed generation of pre_dec module
-#
-#  Revision 1.52  2006/09/22 09:18:23  lutscher
-#  improved _vgch_rs_write_defines() and added P_MIX_SIG parameter to instantiations
-#
-#  Revision 1.51  2006/09/11 06:32:46  lutscher
-#  no changes
-#
-#  Revision 1.50  2006/09/01 15:20:38  lutscher
-#  using Perl registration functions; added Verilog assertions in generated code
-#
-#  Revision 1.49  2006/08/30 08:02:49  lutscher
-#  fixed bitwidth calculations
-#
-#  Revision 1.48  2006/08/24 09:45:37  lutscher
-#  more fixes to the last issue
-#
-#  Revision 1.47  2006/08/24 09:23:00  lutscher
-#  fixed problem with name-clashes for internal signals in generated code
-#
-#  Revision 1.46  2006/08/16 08:05:32  lutscher
-#  fixed _gen_view_vgch_rs(), deletion of some per-domain global parameters was missing
-#
-#  Revision 1.45  2006/08/04 11:37:56  lutscher
-#  fixed order of adding ports, order should now be more stable
-#
-#  Revision 1.44  2006/07/21 10:09:44  lutscher
-#  fixed trg_p generation in Verilog code
-#
-#  Revision 1.43  2006/07/20 10:57:40  lutscher
-#  changed code generation for MCD configurations
-#
-#  Revision 1.42  2006/06/28 09:16:02  lutscher
-#  moved two reg_shell parameters to Globals.pm
-#
-#  Revision 1.41  2006/06/22 11:45:09  lutscher
-#  removed an info message
 #
 #  [history deleted]
 #
@@ -260,8 +219,8 @@ sub _gen_view_vgch_rs {
         $this->global('current_domain' => $o_domain);
 
 		# reset per-domain data structures
-		$this->global('hfnames' => {});
-		$this->global('hclocks' => {});
+        $this->global('hfnames' => {}, 'hclocks' => {}, 'hhdlconsts' => {}, 'hbackdoorpaths' => {});
+
 		map {delete $this->global->{$_}} grep $_ =~ m/_inst$/i,keys %{$this->global};
 
 		$n_clocks = $this->_vgch_rs_get_configuration($o_domain); # get some general information
@@ -272,16 +231,15 @@ sub _gen_view_vgch_rs {
 		
 		# iterate through all clock domains
 		foreach $clock (keys %{$this->global->{'hclocks'}}) {
-			my @ludc = ();
-            $this->global('hhdlconsts' => {});
-			$href = $this->global->{'hclocks'}->{$clock};
+			my @ludc  = ();
+			$href     = $this->global->{'hclocks'}->{$clock};
 			$cfg_inst = $href->{'cfg_inst'};
-			# print "> domain ",$o_domain->name,", clock $clock, cfg module $cfg_inst\n";
 			$this->_vgch_rs_gen_cfg_module($o_domain, $clock, \@ludc); # generate config module for clock domain
 			$this->_vgch_rs_write_udc($cfg_inst, \@ludc); # add user-defined-code to config module instantation
 		};
-		# try to write out a Verilog file with defines
+		# write out auxiliary files (per domain)
 		$this->_vgch_rs_write_defines($o_domain);
+        $this->_vgch_rs_write_backdoor_paths($o_domain);
 	};
     # write a file with MSD setup
     $this->_vgch_rs_write_msd_setup();
@@ -327,6 +285,7 @@ sub _vgch_rs_init {
 				  'hfnames'            => {},           # for storing field names
 				  'lexclude_cfg'       => [],           # list of registers to exclude from code generation
 				  'hhdlconsts'         => {},           # hash with HDL constants
+                  'hbackdoorpaths'     => {},           # hash with backdoor path to registers (key is reg-offset)
                   'current_domain'     => {},           # store currently processed domain object
                   'hparams'            => {}            # top-level parameters, needed if reg-shell is embedded in bigger hierarchy
 				 );
@@ -379,7 +338,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.70 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.71 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -483,6 +442,11 @@ sub _vgch_rs_gen_cfg_module {
 				_info("skipping field ", $o_field->name);
 				next;
 			};
+
+            # store address/backdoor path to register if not already stored
+            if ($o_reg->get_reg_access_mode() =~ m/w/gi and not exists($this->global->{'hbackdoorpaths'}->{$reg_offset})) {
+                $this->global->{'hbackdoorpaths'}->{$reg_offset} = join(".", $o_domain->{'top_inst'}, $this->global->{'hclocks'}->{$clock}->{'cfg_inst'}, $reg_name);
+            };
 
 			# get field attributes
 			my $spec = $o_field->attribs->{'spec'}; # note: spec can contain several attributs
@@ -2259,8 +2223,39 @@ sub _vgch_rs_write_defines {
 
     # update statistics
     $eh->inc("sum.hdlfiles");
+	_info("generated file \'$fname\'");   
+};
+
+# write a file containg backdoor-paths for writable registers
+sub _vgch_rs_write_backdoor_paths {
+	my ($this, $o_domain) = @_;
+	
+	my $rs_name = $this->global->{'regshell_prefix'}."_".$o_domain->name;
+	my $key;
+	my $fname = ${rs_name}."_backdoor_paths.dat";
+	my @ltemp;
+    my $addr_msb = $this->global->{'addr_msb'};
+
+	if (!open(DHANDLE,">$fname")) {
+		_warning("could not open file \'$fname\' for writing");
+		return;
+	};
+	$this->_vgch_rs_gen_udc_header(\@ltemp);
+	print DHANDLE join("\n", @ltemp);
+	print DHANDLE "\n\n";
+	print DHANDLE "// backdoor-paths for writable registers for domain ".$o_domain->name."\n";
+	@ltemp=();
+	foreach $key (sort {$a <=> $b} keys %{$this->global->{'hbackdoorpaths'}}) {
+		push @ltemp, "'h"._val2hex($addr_msb+1, $key)." ".$this->global->{'hbackdoorpaths'}->{$key};
+	};
+	_pad_column(0, $this->global->{'indent'}, 0, \@ltemp);
+	print DHANDLE join("\n", @ltemp);
+	print DHANDLE "\n// end\n";
+	close(DHANDLE);
+
+    # update statistics
+    $eh->inc("sum.hdlfiles");
 	_info("generated file \'$fname\'");
-    
 };
 
 # write a file in XML syntax listing the required RTL libraries
