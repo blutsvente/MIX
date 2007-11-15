@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.93 $                                         |
+# | Revision:   $Revision: 1.94 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/10/30 15:54:46 $                              |
+# | Date:       $Date: 2007/11/15 13:07:00 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.93 2007/10/30 15:54:46 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.94 2007/11/15 13:07:00 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,11 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.94  2007/11/15 13:07:00  wig
+# | Improved HDL import:
+# | 	- Handle parantheses in VHDL comments
+# | 	- Extend intermdiate.order: row:(alpha|input),col:(alpha,input,template)
+# |
 # | Revision 1.93  2007/10/30 15:54:46  wig
 # | Added a if defined( ... ) ...
 # |
@@ -211,9 +216,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.93 2007/10/30 15:54:46 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.94 2007/11/15 13:07:00 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.93 $';
+my $thisrevision =	'$Revision: 1.94 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -5054,7 +5059,7 @@ sub mix_parser_importhdl ($$) {
     write_outfile( $file, 'IMP_CONN', $arc );
     write_outfile( $file, 'IMP_HIER', $arh );
 
-}
+} # End of mix_parser_importhdl
 
 =head2 Example for entity to parse
 
@@ -5159,6 +5164,9 @@ sub _mix_parser_parsehdl ($) {
 			    	);
 		    		$d{'::out'} = ( "'" . $4 ) if ( defined( $4 ) );
 		    		$d{'::comment'} = $5 if ( defined( $5 ));
+		    		$d{'::comment'} =~ s/^\s*(--)?\s*//;
+					$d{'::comment'} =~ s/__LEFTPAR__/(/g;
+					$d{'::comment'} =~ s/__RIGHTPAR__/)/g;
                     add_conn( %d );
                 }
 				if ( $generic =~ s/^\s*(\w+)\s*:\s*(\w+)\s*
@@ -5177,6 +5185,9 @@ sub _mix_parser_parsehdl ($) {
 			    	);
 		    		$d{'::out'} = ( "'" . $4 ) if ( defined( $4 ) );
 		    		$d{'::comment'} = $5 if ( defined( $5 ));
+		    		$d{'::comment'} =~ s/^\s*(--)?\s*//;
+					$d{'::comment'} =~ s/__LEFTPAR__/(/g;
+					$d{'::comment'} =~ s/__RIGHTPAR__/)/g;
 		    		# printf ( "#### Found generic in instance $inst:\n" );
 		    		# printf ( "\t%s %s\n" x scalar( keys( %d ) ), %d );
                     add_conn( %d );
@@ -5236,7 +5247,9 @@ sub _mix_parser_parsehdl ($) {
 		    		$d{'::high'} = $5 if ( defined( $5 ) );
 		    		$d{'::low'} = $8 if ( defined( $8 ) );
 		    		if ( defined( $9 )){
-		    			( $d{'::comment'} = $9 ) =~ s/^\s+//;
+		    			( $d{'::comment'} = $9 ) =~ s/^\s*(--)?\s*//;
+						$d{'::comment'} =~ s/__LEFTPAR__/(/g;
+						$d{'::comment'} =~ s/__RIGHTPAR__/)/g;
 		    		}
 		    		if ( $eh->get( 'import.generate' ) =~ m/\bstripio\b/io ) {
 		    			$d{'::name'} =~ s/_(i|o|io)$//i;
@@ -5279,7 +5292,10 @@ sub _mix_parser_parsehdl ($) {
 		    		$d{'::high'} = $5 if ( defined( $5 ) );
 		    		$d{'::low'} = $8 if ( defined( $8 ) );
 		    		if ( defined( $9 )){
-		    			( $d{'::comment'} = $9 ) =~ s/^\s+//;
+		    			( $d{'::comment'} = $9 ) =~ s/^\s*(--)?\s*//;
+						$d{'::comment'} =~ s/__LEFTPAR__/(/g;
+						$d{'::comment'} =~ s/__RIGHTPAR__/)/g;
+						$d{'::comment'} =~ s/^--\s*//;
 		    		}
 		    		if ( $eh->get( 'import.generate' ) =~ m/\bstripio\b/io ) {
 		    			$d{'::name'} =~ s/_(i|o|io)$//i;

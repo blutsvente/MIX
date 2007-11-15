@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.141 $                                        |
+# | Revision:   $Revision: 1.142 $                                        |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/03/05 12:54:06 $                              |
+# | Date:       $Date: 2007/11/15 13:07:01 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.141 2007/03/05 12:54:06 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.142 2007/11/15 13:07:01 wig Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,11 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.142  2007/11/15 13:07:01  wig
+# | Improved HDL import:
+# | 	- Handle parantheses in VHDL comments
+# | 	- Extend intermdiate.order: row:(alpha|input),col:(alpha,input,template)
+# |
 # | Revision 1.141  2007/03/05 12:54:06  wig
 # | Fixed split_flag bad preset in MixUtils::db2array
 # |
@@ -162,7 +167,7 @@ sub mix_utils_diff		($$$$;$);
 sub mix_utils_clean_data	($$;$);
 #!wig20060712: changed interface!
 sub db2array			($$$$;$$);
-sub _filter_sheets		($$);
+sub _filter_sheets		($$;$);
 sub db2array_intra		($$$$$);
 sub _mix_utils_im_header	($$$);
 sub _inoutjoin			($);
@@ -195,11 +200,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.141 2007/03/05 12:54:06 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.142 2007/11/15 13:07:01 wig Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.141 $';         #'
+my $thisrevision        =      '$Revision: 1.142 $';         #'
 
-# Revision:   $Revision: 1.141 $   
+# Revision:   $Revision: 1.142 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2750,7 +2755,9 @@ Arguments: 	$ref		:= hash reference
 			
 #!wig20051014: adding output of array->hash (instead of hash->hash)
 	This allows to print out an arry of hashes
-#!wig20060717: sort columns by input order
+#!wig20060717: sort columns by input sheet column order
+#!wig20071115: sort columns by char and sort rows by alpha or input order
+
 =cut
 
 sub db2array ($$$$;$$) {
@@ -2789,7 +2796,9 @@ sub db2array ($$$$;$$) {
     my $printorder = $eh->get( 'intermediate.order' );
     my $mixheader  = $eh->get( 'input.header' );
     
-    for my $ii ( keys( %$fields ) ) {
+	# Warning: we assume that $eh{$type.field} matches the incoming data hash
+	# There will be no checks to prevent mismatch!
+    for my $ii ( sort( keys( %$fields ) ) ) {
     	# Ignore non mix-headers if it does not start with ::
 		next if ( $mixheader =~ m/\bstrict/ and $ii !~ m/^::/o );
 		next unless ( ref( $fields->{$ii} ) eq 'ARRAY' ); # Skip if not a field template
@@ -2797,7 +2806,7 @@ sub db2array ($$$$;$$) {
 		next if ( $sfilter and $ii !~ m/$sfilter/ );
 		next if ( $ifilter and $ii =~ m/$ifilter/ );
 
-		if ( $printorder =~ m/\btemplate/ ) {		
+		if ( $printorder =~ m/\b(col:)?template/ ) {		
 			# Sort by template order
 			if ( $fields->{$ii}[4] > 0 ) { # and exists( $fields->{$ii}[5] ) )
 				if ( exists( $o{$fields->{$ii}[4]} ) ) {
@@ -2812,6 +2821,14 @@ sub db2array ($$$$;$$) {
 	    		$primkeynr = $fields->{$ii}[4];
 			} elsif ( $ii eq '::comment' ) {
 	    		$commentnr = $fields->{$ii}[4];
+			}
+		} elsif ( $printorder =~ m/\b(col:)?alpha/ ) {
+			#!wig20071115: sort columns by char:
+			push( @o, $ii );
+			if ( $eh->get( $type . '.key' ) eq $ii ) {
+	    		$primkeynr = scalar( @o ) - 1;
+			} elsif ( $ii eq '::comment' ) {
+	    		$commentnr = scalar( @o ) - 1;
 			}
 		} else {
 			# Sort by input order (saved in [5])
@@ -2842,7 +2859,7 @@ sub db2array ($$$$;$$) {
 
 	( $n , @a ) = _mix_utils_im_header( uc($type) , $otype, \@o );
 
-	my @keys = _filter_sheets ( $ref, $filter );
+	my @keys = _filter_sheets ( $ref, $filter, ( $type eq 'conn' ) ? $printorder : '' );
 
     #WORKAROUND
     #wig20040322: adding ugly ::workaround back to originating column,
@@ -2954,24 +2971,42 @@ sub db2array ($$$$;$$) {
 #
 # Select sheets to print based on $filter
 #!wig20060712	
-sub _filter_sheets ($$) {
+#!wig20071115: add row sort order switch row:alpha (default) or row:input
+#		for CONN sheets, only
+#
+sub _filter_sheets ($$;$) {
 	my $ref		= shift;
 	my $filter	= shift;
+	my $order	= shift || '';
 		
 	# Prepare keys (if $ref is HASH ref)
     my @keys = ();
-    if ( ref( $ref ) eq 'HASH' and $filter ) { # Filter the keys ....
-		if ( ref( $filter ) eq "CODE" ) {
-	    	@keys = grep( &$filter, keys( %$ref ) );
+    if ( ref( $ref ) eq 'HASH' ) {
+		if ( $filter ) { # Filter the keys ....
+			if ( ref( $filter ) eq "CODE" ) {
+	    		@keys = grep( &$filter, keys( %$ref ) );
+			} else {
+	    		@keys = grep( !/$filter/, keys( %$ref ) );
+			}
 		} else {
-	    	@keys = grep( !/$filter/, keys( %$ref ) );
+			@keys = keys( %$ref );
 		}
-		@keys = sort( @keys );
+		# Define output sort order:
+		if ( $order =~ m/\brow:input/ ) {
+			# sort by ::connnr (if type == CONN)
+			@keys = sort( { $ref->{$a}{'::connnr'} <=> $ref->{$b}{'::connnr'} } @keys );
+		} else { # row:alpha
+			@keys = sort( @keys );
+		}
     } elsif ( ref( $ref ) eq 'ARRAY' ) {
     	@keys = 0..(scalar(@$ref) - 1 ); # array from 0..N
     } else {
-		@keys = sort( keys( %$ref ));
-    }
+		# CANNOT continue here
+		$logger->fatal( '__F_BAD_REF',
+			"\tincoming data \$ref is neither ref to HASH nor ARRAY, but:" .
+				( ref($ref) || '' ) );
+		exit 1;
+	}
     return @keys;
 } # End of _filter_sheets
 
