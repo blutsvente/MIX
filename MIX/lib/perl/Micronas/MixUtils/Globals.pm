@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.51 $                                         |
+# | Revision:   $Revision: 1.52 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/09/17 12:40:13 $                              |
+# | Date:       $Date: 2007/11/15 13:09:20 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.52  2007/11/15 13:09:20  wig
+# | Extend intermediate.order description
+# |
 # | Revision 1.51  2007/09/17 12:40:13  wig
 # | Started MixUtils/Header.pm, to be used for the ::col handling in future
 # |
@@ -136,9 +139,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.51 2007/09/17 12:40:13 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.52 2007/11/15 13:09:20 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.51 $';  
+my $thisrevision    =      '$Revision: 1.52 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -706,8 +709,11 @@ sub init ($) {
 	$this->{'cfg'}{'intermediate'} = {
 		'path'	=> '.',
 		'order'	=> 'template', #!wig20060717: either "input" or "template"
+				# Define order of columns for intermediate sheets!
 				# template -> sort by order defined in input sheets (default)
 				# input    -> print out in order column occur in input
+				#!wig20071115: adding 'alpha' and the col:xxx or row:xxx
+				# Default: col:template,row:alpha
 		'keep'	=> '3',	# Number of old sheets to keep
 		'delta' => 'purgetable', # Remove empty columns before applying diff
 		'format'	=> 'prev', # One of: prev(ious), auto or n(o|ew)
