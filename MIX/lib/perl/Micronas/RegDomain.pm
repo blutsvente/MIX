@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegDomain.pm,v 1.3 2007/08/10 08:41:21 lutscher Exp $
+#  RCSId: $Id: RegDomain.pm,v 1.4 2007/11/20 10:01:14 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegDomain.pm,v $
+#  Revision 1.4  2007/11/20 10:01:14  lutscher
+#  changed a find function
+#
 #  Revision 1.3  2007/08/10 08:41:21  lutscher
 #  o some fixes for the case that the register space contains more than one domain
 #  o store some cloning information in the domain and the cloned fields
@@ -194,7 +197,7 @@ sub find_cloned_field_by_name {
     my $o_field = undef;
     my @lresult;
 
-    if ($this->clone->{'number'}>1) {
+    if ($this->clone->{'number'}>0) {
         # cloned domain
         if ($n>= $this->clone->{'number'}) {
             _error("internal error: specified clone-number $n is greater than total number of clones ", $this->{'clone'}->{'clone_number'});
@@ -214,11 +217,7 @@ sub find_cloned_field_by_name {
         };
     } else {
         # domain not cloned
-        foreach $o_field (@{$this->fields}) {
-            if ($o_field->name eq $name) {
-                push @lresult, $o_field;
-            };
-        };
+        @lresult = $this->find_field_by_name($name);
     };
     if (!scalar(@lresult)) {
         _error("field \'$name\' from clone $n not found in domain \'".$this->name."\'");
