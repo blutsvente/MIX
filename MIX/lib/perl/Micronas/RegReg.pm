@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegReg.pm,v 1.8 2007/06/18 12:01:56 lutscher Exp $
+#  RCSId: $Id: RegReg.pm,v 1.9 2007/11/22 09:36:07 mathias Exp $
 ###############################################################################
 #
 #  Related Files :  RegDomain.pm
@@ -28,7 +28,10 @@
 ###############################################################################
 #
 #  $Log: RegReg.pm,v $
-#  Revision 1.8  2007/06/18 12:01:56  lutscher
+#  Revision 1.9  2007/11/22 09:36:07  mathias
+#  Registers are now documented in the mif file when at least ome bitfield has to be visible.
+#
+#  Revision 1.8  2007-06-18 12:01:56  lutscher
 #  added access method for id
 #
 #  Revision 1.7  2006/11/20 17:08:49  lutscher
@@ -193,16 +196,16 @@ sub get_reg_access_mode()
 }
 
 # checks if framemaker documentation should be generated for this register
+# returns true when at least one bitfield should be documented (view == 'Y')
 sub to_document()
 {
     my ($this) = @_;
-    my $mode = "";
+    my $mode = "N";
 
     foreach my $href (@{$this->fields}) {
-        if ($mode eq "") {
-            $mode = uc($href->{field}->attribs->{view});
-        } elsif ($mode ne uc($href->{field}->attribs->{view})) {
-            $mode = 'N';
+        if (uc($href->{field}->attribs->{view}) eq 'Y') {
+            $mode = 'Y';
+            last;
         }
     }
     return ($mode eq 'Y');

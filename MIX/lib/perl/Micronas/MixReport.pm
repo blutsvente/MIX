@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.53 $                                               |
+# | Revision:   $Revision: 1.54 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2007/11/02 13:42:14 $                                                   |
+# | Date:       $Date: 2007/11/22 09:36:06 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.53 2007/11/02 13:42:14 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.54 2007/11/22 09:36:06 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,7 +31,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
-# | Revision 1.53  2007/11/02 13:42:14  mathias
+# | Revision 1.54  2007/11/22 09:36:06  mathias
+# | Registers are now documented in the mif file when at least ome bitfield has to be visible.
+# |
+# | Revision 1.53  2007-11-02 13:42:14  mathias
 # | mix_rep_header_read_top_address_map:
 # |  fix: when assigning the client name take into account only the number of clones in the current line
 # |
@@ -225,11 +228,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.53 2007/11/02 13:42:14 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.54 2007/11/22 09:36:06 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.53 $';
+my $thisrevision   =      '$Revision: 1.54 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -1112,6 +1115,8 @@ sub mix_rep_reglist($)
                         $thefields[$ii]{pos}     = $hreff->{'pos'}; # LSB position
                         $thefields[$ii]{lsb}     = $o_field->attribs->{'lsb'};
                         $thefields[$ii]{view}    = $o_field->attribs->{'view'}; # N: no documentation
+                        # ignore this bitfield if it shouldn't be documented
+                        next if $thefields[$ii]{view} ne 'Y';
                         $thefields[$ii]{mode}    = $o_field->attribs->{'dir'};
                         $thefields[$ii]{comment} = $o_field->attribs->{'comment'};
                         $thefields[$ii]{spec}    = $o_field->attribs->{'spec'}; # WC, W1C or W0C (reset the interrupt)
