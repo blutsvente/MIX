@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.94 $                                         |
+# | Revision:   $Revision: 1.95 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/11/15 13:07:00 $                              |
+# | Date:       $Date: 2007/11/26 23:00:49 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.94 2007/11/15 13:07:00 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.95 2007/11/26 23:00:49 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.95  2007/11/26 23:00:49  wig
+# | Handle import with spaces between bus definition and ;
+# |
 # | Revision 1.94  2007/11/15 13:07:00  wig
 # | Improved HDL import:
 # | 	- Handle parantheses in VHDL comments
@@ -216,9 +219,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.94 2007/11/15 13:07:00 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.95 2007/11/26 23:00:49 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.94 $';
+my $thisrevision =	'$Revision: 1.95 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -5204,7 +5207,7 @@ sub _mix_parser_parsehdl ($) {
                 $ports =~ s/\s*\)$//;
                 
                 while( $ports =~ s/^\s*(\w+)\s*:\s*(\w+)\s*(\w+)\s*
-                               (\(\s*(\d+)(\s+(down)?to\s+(\d+))?\s*\))?   # Optional (N downto M)
+                               (\(\s*(\d+)(\s+(down)?to\s+(\d+))?\s*\)\s*)?   # Optional (N downto M)
                                ;                                                   # ; or end of line
                                ([ \t]*--.*)?//ixm ) {
                     # Will catch e.th. but the last line ...
@@ -5260,7 +5263,7 @@ sub _mix_parser_parsehdl ($) {
                 }
                 # catch last signal
                 if( $ports =~ m/\n\s*(\w+)\s*:\s*(\w+)\s*(\w+)
-                            	(\(\s*(\d+)(\s+(down)?to\s+(\d+))?[ \t]*\))?   # Optional (N downto M)
+                            	(\(\s*(\d+)(\s+(down)?to\s+(\d+))?[ \t]*\)\s*)?   # Optional (N downto M)
 								([ \t]*--.*)?/ixm ) {
 		    		#TODO: check if M <= N for 
 		    		my $mode = $2;
