@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.52 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/11/15 13:09:20 $                              |
+# | Revision:   $Revision: 1.53 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2007/12/14 12:00:26 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.53  2007/12/14 12:00:26  lutscher
+# | added reg_shell.workaround parameter
+# |
 # | Revision 1.52  2007/11/15 13:09:20  wig
 # | Extend intermediate.order description
 # |
@@ -139,9 +142,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.52 2007/11/15 13:09:20 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.53 2007/12/14 12:00:26 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.52 $';  
+my $thisrevision    =      '$Revision: 1.53 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -974,10 +977,13 @@ sub init ($) {
 					'field_naming' => '%F_%N',    # naming scheme for cloned field
 					'unique_clocks'=> 1           # if 1, uniquify clock names of clones
 				   },
+        'workaround' => "",                       # string parameter to specify workarounds, currently:
+                                                  # platinumd
+
 					# legacy parameters, not needed anymore!
 		'cfg_module_prefix'    => "rs_cfg", # prefix for config register block
 		'mode'             => 'lcport', # lcport -> map created port names to lowercase	
-		'regwidth'	=> 32  # Default register width
+		'regwidth' => 32  # Default register width
 	};
 	#
     # Possibly read configuration details from the CONF sheet, see -conf option

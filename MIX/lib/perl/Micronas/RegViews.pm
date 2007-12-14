@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.71 2007/11/06 08:01:07 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.72 2007/12/14 12:00:26 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.71 $                                  
+#  Revision      : $Revision: 1.72 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.72  2007/12/14 12:00:26  lutscher
+#  added reg_shell.workaround parameter
+#
 #  Revision 1.71  2007/11/06 08:01:07  lutscher
 #  added _vgch_rs_write_backdoor_paths()
 #
@@ -188,6 +191,18 @@ sub _gen_view_vgch_rs {
 		_info("parameter \'read_multicycle\' is ignored because read-pipelining is enabled");
 	};
 
+    # change RTL libs if workaround is used
+    if ($this->global->{'workaround'} =~ m/platinumd/gi) {
+        _info("using workaround for PlatinumD project -> using old RTL libs");
+        shift @{$this->global->{'rtl_libs'}};
+        push @{$this->global->{'rtl_libs'}}, {           # required MSD RTL libraries
+                                              "project" => "ip_interfaces",
+                                              "version" => "0101",
+                                              "release" => "ocp_target_2_7"
+                                             };
+        $this->global('mix_signature' =>  "\"M0\""); 
+    };
+
 	# modify MIX config parameters (only where required)
 	$eh->set('check.signal', 'load,driver,check');
     #$eh->set('port.generate.name',  'signal');
@@ -291,6 +306,7 @@ sub _vgch_rs_init {
 				 );
 
 	# import regshell.<par> parameters from MIX package to class data; user can change these parameters in mix.cfg
+    # see also Globals.pm
 	my $param;
 	my @lmixparams = (
 					  'reg_shell.bus_clock', 
@@ -311,6 +327,7 @@ sub _vgch_rs_init {
                       'reg_shell.infer_reset_syncer',
                       'reg_shell.field_naming',
                       'reg_shell.virtual_top_instance',
+                      'reg_shell.workaround',
 					  'postfix.POSTFIX_PORT_OUT', 
 					  'postfix.POSTFIX_PORT_IN',
 					  'postfix.POSTFIX_FIELD_OUT', 
@@ -338,7 +355,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.71 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.72 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -1714,9 +1731,9 @@ sub _vgch_rs_gen_hier {
 
 	$ocp_sync = 0;
 
-    # instantitate OCP master checker if configured
+    # instantiate OCP master checker if configured
     my $ocp_checker_inst;
-    if ($this->global->{'infer_sva'}) {
+    if ($this->global->{'infer_sva'} and ($this->global->{'mix_signature'} !~ m/M0/)) {
         my $udc="/%PINS%/\`ifdef ASSERT_ON
 // synopsys translate_off
 /%AINS%/ // synopsys translate_on
@@ -2061,7 +2078,9 @@ sub _vgch_rs_add_static_connections {
 	} else {
 		$this->_add_conn("%OPEN%", 0, 0, "${ocp_i}/sinterrupt_o", "");
 	};
-    $this->_add_conn("%OPEN%", 0, 0, "", "${ocp_i}/wr_err_i"); # NEW wr_err input not used
+    if ($this->global->{'mix_signature'} !~ m/M0/) {
+        $this->_add_conn("%OPEN%", 0, 0, "", "${ocp_i}/wr_err_i"); # NEW wr_err input not used
+    };
 
     if (exists ($this->global->{'ocp_checker_inst'})) {
         my $ocpc_i = $this->global->{'ocp_checker_inst'};
