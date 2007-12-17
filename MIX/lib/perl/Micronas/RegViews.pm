@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.72 2007/12/14 12:00:26 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.73 2007/12/17 13:38:06 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.72 $                                  
+#  Revision      : $Revision: 1.73 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.73  2007/12/17 13:38:06  lutscher
+#  incremented rtl_libs/ip_sync version
+#
 #  Revision 1.72  2007/12/14 12:00:26  lutscher
 #  added reg_shell.workaround parameter
 #
@@ -281,7 +284,7 @@ sub _vgch_rs_init {
                                            {
                                             "project" => "ip_sync",
                                             "version" => "0001",
-                                            "release" => "ip_sync_004_05apr2007"
+                                            "release" => "ip_sync_005_17dec2007"
                                            }
                                           ],  
                   'set_postfix'        => "_set_p",     # postfix for interrupt-set input signal
@@ -355,7 +358,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.72 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.73 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
