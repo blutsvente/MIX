@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.54 $                                               |
+# | Revision:   $Revision: 1.55 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2007/11/22 09:36:06 $                                                   |
+# | Date:       $Date: 2007/12/19 13:52:45 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.54 2007/11/22 09:36:06 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.55 2007/12/19 13:52:45 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,7 +31,11 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
-# | Revision 1.54  2007/11/22 09:36:06  mathias
+# | Revision 1.55  2007/12/19 13:52:45  mathias
+# | put parenthesis around the parameter 'base' in the macro that computes
+# | the real base address of a block
+# |
+# | Revision 1.54  2007-11-22 09:36:06  mathias
 # | Registers are now documented in the mif file when at least ome bitfield has to be visible.
 # |
 # | Revision 1.53  2007-11-02 13:42:14  mathias
@@ -228,11 +232,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.54 2007/11/22 09:36:06 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.55 2007/12/19 13:52:45 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.54 $';
+my $thisrevision   =      '$Revision: 1.55 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -555,8 +559,8 @@ sub mix_rep_header_print($$$$)
         # macro to get real address for this register
         my $name = $rBlock->{$addr}->{regname};
         my $spaces = 41 - length($name);
-        $fh->print("#define ${name}(base) " . ' ' x $spaces . " (base + ${name}_OFFS)\n");
-        #$fh->printf("#define %-s(base) %20s (base + %s_OFFS)\n", $rBlock->{$addr}->{regname}, ' ', $rBlock->{$addr}->{regname});
+        $fh->print("#define ${name}(base) " . ' ' x $spaces . " ((base) + ${name}_OFFS)\n");
+        #$fh->printf("#define %-s(base) %20s ((base) + %s_OFFS)\n", $rBlock->{$addr}->{regname}, ' ', $rBlock->{$addr}->{regname});
     }
     $fh->write("\n#ifndef LANGUAGE_ASSEMBLY\n");
     $fh->write("\n/* C structure bitfields */\n");
