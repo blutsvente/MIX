@@ -6,7 +6,7 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 
 #-----------------------------------------------------------------------------
 #-- Name     : mkswstub
-#-- $Revision: 1.2 $
+#-- $Revision: 1.3 $
 #-- $Date    : 2006/03/09 13:52:02 $
 #-- $Author  : mathias $
 #-----------------------------------------------------------------------------
@@ -104,8 +104,28 @@ $fhr->print("      default:  return 0xdeadbeef;\n");
 $fhr->print("   }\n");
 $fhr->print("}\n\n\n");
 
+############################################## write 'set reset values' function
+$fhr->print("\n\n");
+$fhr->print("void REG_SetAllResetValues (void)\n");
+$fhr->print("{\n");
+foreach my $file (sort keys %{$refDomain}) {
+    my $refNames = $refDomain->{$file}->{names};
+    foreach my $inst (@{$refDomain->{$file}->{instances}}) {
+        foreach my $name (sort keys %{$refNames}) {
+            $fhr->print(' ' x 6 . "REG_Write( " . uc($inst) . '+' .  uc($name) . '_OFFS,' .
+                        ' ' x (45 - length($name) - length($inst)) .
+                        $refNames->{$name} . ");\n");
+        }
+        # write 'REG_SetAllResetValues' lines for each instance when the INSTANCE_SIZE is missing in $file
+        last if (exists($refDomain->{$file}->{instance_size}));
+    }
+}
+$fhr->print("}\n\n\n");
+
 ############################################## write 'getRegname' function
 $fhs->print("#include \"reg_utils.h\"");
+$fhs->print("\n");
+$fhs->print("#include \<string.h\>");
 $fhs->print("\n\n");
 $fhs->print("const char * REG_GetRegName_Generic (uint32_t regAddr)\n");
 $fhs->print("{\n");
@@ -139,21 +159,21 @@ $fhs->print("{\n");
 foreach my $file (sort keys %{$refDomain}) {
     my $refNames = $refDomain->{$file}->{names};
     foreach my $name (sort keys %{$refNames}) {
-        $fhs->print(' ' x 8 . "\"" . uc($name) . "\"," . ' ' x (45 - length($name)) .
-                    uc($name) . "_OFFS,\n");
+        $fhs->print(' ' x 8 . "{\"" . uc($name) . "\"," . ' ' x (45 - length($name)) .
+                    uc($name) . "_OFFS},\n");
     }
 }
-$fhs->print(' ' x 8 . "\"END_OF_REG_STRING_LIST\"," . ' ' x 23 . "END_OF_REG_STRING_LIST\n");
+$fhs->print(' ' x 8 . "{\"END_OF_REG_STRING_LIST\"," . ' ' x 23 . "END_OF_REG_STRING_LIST}\n");
 $fhs->print("};\n\n");
 
-$fhs->print("const char * REG_GetRegAddr_Generic (const char * regString)\n");
+$fhs->print("uint32_t REG_GetRegAddr_Generic (const int8_t * regString)\n");
 $fhs->print("{\n");
 $fhs->print("  uint32_t regAddr = 0;\n");
 $fhs->print("  uint32_t cnt = 0;\n");
 $fhs->print("\n");
 $fhs->print("  while(regAddr != END_OF_REG_STRING_LIST)\n");
 $fhs->print("  {\n");
-$fhs->print("  	if ( strcmp(regString2Address[cnt].regName, regString) == 0)\n");
+$fhs->print("  	if ( strcasecmp(regString2Address[cnt].regName, regString) == 0)\n");
 $fhs->print("  	{\n");
 $fhs->print("  		/* register name found */\n");
 $fhs->print("  		regAddr = regString2Address[cnt].regAddr;\n");
