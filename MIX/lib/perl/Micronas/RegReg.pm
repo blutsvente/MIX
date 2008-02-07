@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegReg.pm,v 1.9 2007/11/22 09:36:07 mathias Exp $
+#  RCSId: $Id: RegReg.pm,v 1.10 2008/02/07 10:45:04 lutscher Exp $
 ###############################################################################
 #
 #  Related Files :  RegDomain.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegReg.pm,v $
+#  Revision 1.10  2008/02/07 10:45:04  lutscher
+#  some extensions for generated e-code
+#
 #  Revision 1.9  2007/11/22 09:36:07  mathias
 #  Registers are now documented in the mif file when at least ome bitfield has to be visible.
 #
@@ -194,6 +197,35 @@ sub get_reg_access_mode()
     }
     return $mode;
 }
+
+# create mask for all W1C fields of a register
+sub _get_w1c_mask {
+	my ($this) = @_;
+	my $result=0;
+	my $href;
+	foreach $href (@{$this->fields}) {
+		my $o_field = $href->{'field'};
+		if ($o_field->attribs->{'spec'} =~ m/w1c/i) {
+			$result |= ((2**$o_field->attribs->{'size'})-1) << $href->{'pos'};
+		};
+	};
+	return $result;
+};
+
+# create mask for read-only bits of a register
+sub _get_read_only_mask {
+	my ($this) = @_;
+	my $result=0;
+	my $href;
+	foreach $href (@{$this->fields}) {
+		my $o_field = $href->{'field'};
+		if (lc($o_field->attribs->{'dir'}) eq "r")  {
+			$result |= ((2**$o_field->attribs->{'size'})-1) << $href->{'pos'};
+		};
+	};
+	return $result;
+};
+
 
 # checks if framemaker documentation should be generated for this register
 # returns true when at least one bitfield should be documented (view == 'Y')

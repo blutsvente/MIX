@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.25 2007/10/24 07:29:53 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.26 2008/02/07 10:45:04 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.26  2008/02/07 10:45:04  lutscher
+#  some extensions for generated e-code
+#
 #  Revision 1.25  2007/10/24 07:29:53  lutscher
 #  added reset for register-lists in e-code
 #
@@ -80,54 +83,7 @@
 #  Revision 1.9  2006/06/23 12:46:47  lutscher
 #  small change
 #
-#  Revision 1.8  2006/06/12 10:05:01  roettger
-#  added, output with definition in register list
-#
-#  Revision 1.7  2006/05/30 15:00:49  roettger
-#  fixed acess attribute for holes to prevent false coverage holes
-#
-#  Revision 1.6  2006/03/14 14:21:19  lutscher
-#  made changes for new eh access and logger functions
-#
-#  Revision 1.5  2006/03/03 10:26:34  lutscher
-#  removed coverage for reserved fields
-#
-#  Revision 1.4  2005/12/21 12:26:23  lutscher
-#  changed hole_name
-#
-#  Revision 1.3  2005/12/21 12:03:01  lutscher
-#  o fixed access direction of holes to be R
-#  o added field reset values from database (was set to 0)
-#
-#  Revision 1.2  2005/11/29 08:41:58  lutscher
-#  fixed parsing of domain list
-#
-#  Revision 1.1  2005/11/23 13:23:17  lutscher
-#  renamed from RegViewsE.pm
-#
-#  Revision 1.7  2005/11/08 14:31:53  marema
-#  hole becomes hole_at_lsb
-#
-#  Revision 1.6  2005/11/08 12:27:35  lutscher
-#  added debug flag checking
-#
-#  Revision 1.5  2005/11/08 11:37:06  lutscher
-#  o fixed reg_offset conversion to hex
-#  o added some code to import parameters from MIX
-#  o increased width of field name column in template
-#
-#  Revision 1.4  2005/11/02 14:37:09  lutscher
-#  now uses domain name instead of block attribute for code generation
-#
-#  Revision 1.3  2005/10/28 12:30:58  lutscher
-#  some more fixes to make direction uppercase; removed an obsolete error message
-#
-#  Revision 1.2  2005/10/28 10:42:01  marema
-#  fixed missing colon in printout
-#
-#  Revision 1.1  2005/09/16 13:57:27  lutscher
-#  added register view E_VR_AD from Emanuel
-#
+#  [history deleted] 
 #  
 ###############################################################################
 
@@ -288,7 +244,6 @@ sub _gen_view_vr_ad {
                 next;
             };
 
-            my $reg_access_mode = $o_reg->get_reg_access_mode(); # W, R or RW
 			$permission{"RW"} = 0;
 			$permission{"R"} = 0;
 			$permission{"W"} = 0;
@@ -382,11 +337,7 @@ $this->global->{field_macro},$singlefield->{name},$singlefield->{size},$singlefi
                     write E_FILE;
                 };
                 print E_FILE "};\n";
-                my $is_cloned = 0;
-                if (exists $o_reg->{'inst_n'}) {
-                    $is_cloned = 1;
-                };
-                $this->write_extend_reg($reg_name, $reg_access_mode, $is_cloned); 
+                $this->write_extend_reg($o_reg, $reg_name); 
             };
         };
         
@@ -438,23 +389,37 @@ $this->global->{field_macro},$singlefield->{name},$singlefield->{size},$singlefi
 
 # write e-code that extends the vr_ad_reg struct 
 sub write_extend_reg {
-    my ($this, $reg_name, $reg_access_mode, $is_cloned) = @_;
+    my ($this, $o_reg, $reg_name) = @_;
+    my $reg_access_mode = $o_reg->get_reg_access_mode(); # W, R or RW
+    my $is_cloned = 0;
+    if (exists $o_reg->{'inst_n'}) {
+        $is_cloned = 1;
+    };
+
     my $ignore = "";
     if ($this->global->{'vplan_ref'} !~ m/%empty%/i) {
         print E_FILE "extend $reg_name vr_ad_reg {\n";
         print E_FILE "  cover reg_access (kind == $reg_name) using also vplan_ref = \"", $this->global->{'vplan_ref'},"\";\n";
         print E_FILE "};\n";
     };
+    # special Micronas extensions
+    print E_FILE "#ifdef ".$this->global->{'mic_extensions'}." then {\n";
+    print E_FILE "extend $reg_name vr_ad_reg {\n";
     if ($is_cloned) {
-        print E_FILE "#ifdef ".$this->global->{'mic_extensions'}." then {\n";
-        print E_FILE "extend $reg_name vr_ad_reg {\n";
         print E_FILE "  keep is_cloned == ".($is_cloned ? "TRUE":"FALSE").";\n";
-        print E_FILE "};\n";
-        print E_FILE "};\n";
     };
+    my $reserved_bits = ~$o_reg->attribs->{'usedbits'};
+    my $w1c_mask = $o_reg->_get_w1c_mask;
+    print E_FILE "  keep reserved_mask == 0x",_val2hex($this->global->{'datawidth'}, $reserved_bits),";\n";
+    if ($w1c_mask != 0) {
+        print E_FILE "  keep w1c_mask ==  0x",_val2hex($this->global->{'datawidth'}, $w1c_mask),";\n";
+    };
+    print E_FILE "};\n";
+    
+    print E_FILE "};\n";
     if ($reg_access_mode ne "RW") {
         # create cover ignores for direction if enabled by the user
-        if ($reg_access_mode eq "W" and $this->global->{'cover_ign_read_to_write_only'} ) {
+        if ($reg_access_mode eq "W" and $this->global->{'cover_ign_raed_to_write_only'} ) {
             $ignore = "READ";
         } else {
             if ($reg_access_mode eq "R" and $this->global->{'cover_ign_write_to_read_only'} ) {

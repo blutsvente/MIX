@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewSTL.pm,v 1.10 2008/01/23 14:54:33 lutscher Exp $
+#  RCSId: $Id: RegViewSTL.pm,v 1.11 2008/02/07 10:45:04 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.10 $                                  
+#  Revision      : $Revision: 1.11 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViewSTL.pm,v $
+#  Revision 1.11  2008/02/07 10:45:04  lutscher
+#  some extensions for generated e-code
+#
 #  Revision 1.10  2008/01/23 14:54:33  lutscher
 #  fixed a bug in read-all-ones
 #
@@ -204,7 +207,7 @@ version 2.0
 		foreach $reg_offset (sort {$a <=> $b} keys %hregs) {
 			$o_reg = $hregs{$reg_offset};
 			# $usedbits = $o_reg->attribs->{'usedbits'};
-			$mask = $this->_get_read_write_mask($o_reg) | $this->_get_w1c_mask($o_reg);
+			$mask = $this->_get_read_write_mask($o_reg) | $o_reg->_get_w1c_mask();
 			$def_val = $o_reg->get_reg_init;
 			$this->_ocp_access("read", $o_reg, $reg_offset, $def_val, $mask);
 		};
@@ -228,8 +231,8 @@ version 2.0
 ";
 		foreach $reg_offset (sort {$a <=> $b} keys %hregs) {
 			$o_reg = $hregs{$reg_offset};
-            $def_val = $o_reg->get_reg_init & $this->_get_read_only_mask($o_reg);
-			$val = ((2**$dwidth)-1) & ~$this->_get_read_only_mask($o_reg);
+            $def_val = $o_reg->get_reg_init & $o_reg->_get_read_only_mask;
+			$val = ((2**$dwidth)-1) & ~$o_reg->_get_read_only_mask();
 			$mask = $this->_get_read_write_mask($o_reg);
 			$this->_ocp_access("read", $o_reg, $reg_offset, $val | $def_val, $mask);
 		};
@@ -253,7 +256,7 @@ version 2.0
 ";
 		foreach $reg_offset (sort {$a <=> $b} keys %hregs) {
 			$o_reg = $hregs{$reg_offset};
-            $def_val = $o_reg->get_reg_init & $this->_get_read_only_mask($o_reg);
+            $def_val = $o_reg->get_reg_init & $o_reg->_get_read_only_mask();
 			$val = 0;
 			$mask = $this->_get_read_write_mask($o_reg);
 			$this->_ocp_access("read", $o_reg, $reg_offset, $val | $def_val, $mask);
@@ -284,33 +287,6 @@ sub _get_read_write_mask {
 	return $result;
 };
 
-# create mask for read-only bits of a register
-sub _get_read_only_mask {
-	my ($this, $o_reg) = @_;
-	my $result=0;
-	my $href;
-	foreach $href (@{$o_reg->fields}) {
-		my $o_field = $href->{'field'};
-		if (lc($o_field->attribs->{'dir'}) eq "r")  {
-			$result |= ((2**$o_field->attribs->{'size'})-1) << $href->{'pos'};
-		};
-	};
-	return $result;
-};
-
-# create mask for all W1C fields of a register
-sub _get_w1c_mask {
-	my ($this, $o_reg) = @_;
-	my $result=0;
-	my $href;
-	foreach $href (@{$o_reg->fields}) {
-		my $o_field = $href->{'field'};
-		if ($o_field->attribs->{'spec'} =~ m/w1c/i) {
-			$result |= ((2**$o_field->attribs->{'size'})-1) << $href->{'pos'};
-		};
-	};
-	return $result;
-};
 
 # create mask for all write-only fields of a register
 sub _get_write_only_mask {

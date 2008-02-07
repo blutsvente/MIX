@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.73 2007/12/17 13:38:06 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.74 2008/02/07 10:45:04 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.73 $                                  
+#  Revision      : $Revision: 1.74 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.74  2008/02/07 10:45:04  lutscher
+#  some extensions for generated e-code
+#
 #  Revision 1.73  2007/12/17 13:38:06  lutscher
 #  incremented rtl_libs/ip_sync version
 #
@@ -358,7 +361,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.73 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.74 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -765,7 +768,7 @@ sub _vgch_rs_gen_udc_header {
     my $href_info = $eh->mix_get_module_info("RegViews");
 	my $rev = "  this package RegViews.pm is version ".$href_info->{'version'};
 	push @$lref_res, $rev;
-    push @$lref_res, "  use with RTL libraries:";
+    push @$lref_res, "  use with RTL libraries (this release or higher):";
     foreach $ref (@{$this->global->{'rtl_libs'}}) {
         push @$lref_res, "  " . $ref->{'project'} . "/" . $ref->{'version'} . "/" . $ref->{'release'};
     };
@@ -2300,7 +2303,7 @@ sub _vgch_rs_write_msd_setup {
         print DHANDLE $this->global->{'indent'} . "<library>\n";
         print DHANDLE $this->global->{'indent'}x2 . $ref->{'project'}, "\n";
         print DHANDLE $this->global->{'indent'}x2 . "<version> " .  $ref->{'version'} . " </version>\n";
-        print DHANDLE $this->global->{'indent'}x2 . "<release> " .  $ref->{'release'} . " </release>\n";
+        print DHANDLE $this->global->{'indent'}x2 . "<release> " .  $ref->{'release'} . " </release> <!-- this release or higher -->\n";
         print DHANDLE $this->global->{'indent'} . "</library>\n";  
     };
     print DHANDLE "</resources>\n";
