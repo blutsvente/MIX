@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.26 2008/02/07 10:45:04 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.27 2008/02/07 11:05:45 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.27  2008/02/07 11:05:45  lutscher
+#  changed name of mic_extensions value
+#
 #  Revision 1.26  2008/02/07 10:45:04  lutscher
 #  some extensions for generated e-code
 #
@@ -132,7 +135,7 @@ sub _gen_view_vr_ad {
                   'reg_macro'	   => "reg_def",
                   'field_macro'	   => "reg_fld",
                   'hole_name'	   => "reserved_at_",
-                  'mic_extensions' => "_MIC_VR_AD_EXTENSIONS_", # e-code macro to check if micronas extensions to vr_ad are present
+                  'mic_extensions' => "MIC_VR_AD_EXTENSIONS", # e-code macro to check if micronas extensions to vr_ad are present
                   'hole_access'    => "STANDARD", # "STANDARD" or "AUTO" || STANDARD permission of holes = "R", "AUTO"  permission of holes like the most in the register
 				  'lexclude_cfg'   => [],           # list of registers to exclude from code generation
 				 );
