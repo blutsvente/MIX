@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.55 $                                               |
+# | Revision:   $Revision: 1.56 $                                               |
 # | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2007/12/19 13:52:45 $                                                   |
+# | Date:       $Date: 2008/02/18 11:54:18 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.55 2007/12/19 13:52:45 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.56 2008/02/18 11:54:18 mathias Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,7 +31,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
-# | Revision 1.55  2007/12/19 13:52:45  mathias
+# | Revision 1.56  2008/02/18 11:54:18  mathias
+# | Use default value for the .per file name
+# |
+# | Revision 1.55  2007-12-19 13:52:45  mathias
 # | put parenthesis around the parameter 'base' in the macro that computes
 # | the real base address of a block
 # |
@@ -232,11 +235,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.55 2007/12/19 13:52:45 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.56 2008/02/18 11:54:18 mathias Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.55 $';
+my $thisrevision   =      '$Revision: 1.56 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -711,6 +714,7 @@ sub mix_rep_per_open_files($$$)
 {
     my ($name, $blocks, $global_base_address) = @_;
     my $newname = $eh->get("report.cheader.definition." . lc($name));
+    $newname = $name if (! defined($newname));
     my $file = lc($newname) . ".per";
     my $fh = new FileHandle $file, "w";
 
