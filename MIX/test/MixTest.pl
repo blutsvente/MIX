@@ -592,6 +592,16 @@ my @tests = (
 		'path' => 'duplicate', # try various duplicate wireing tricks
 		'options' => '',
 	},
+	{ # missing ::out column in output
+	  'name' => 'bugver2007',
+	  'path' => 'bugver2007/macro_20070919a',
+	  'options' => '',
+	},
+	{ # rfe20080325: avoid assign, use port name instead of signal name
+	  'name' => 'noassign',
+	  'path' => 'noassign',
+	  'options' => '',
+	},
 );
 
 my $numberOfTests = scalar @tests;
