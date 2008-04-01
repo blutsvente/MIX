@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.41 2007/09/05 10:56:23 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.42 2008/04/01 09:20:13 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.42  2008/04/01 09:20:13  lutscher
+#  changed generate_view() to use dispatch-table
+#
 #  Revision 1.41  2007/09/05 10:56:23  lutscher
 #  set default clone.number to 0 because 1 will now force 1 clone
 #
@@ -97,35 +100,43 @@ sub parse_register_master($) {
 	if (scalar @$r_i2c) {
 		
 		# Load modules on demand ...
-	unless( mix_use_on_demand(
-	' use Data::Dumper;
-	  use Micronas::RegDomain;
-	  use Micronas::RegReg;
-	  use Micronas::RegField;
-	  use Micronas::RegViews;
-	  use Micronas::RegViewE;
-	  use Micronas::RegViewSTL;
-	  use Micronas::RegViewRDL;
-      use Micronas::RegViewClone;
-	  use Micronas::MixUtils::RegUtils;
-	'	
-	) ) {
+        unless( mix_use_on_demand('
+                                  use Data::Dumper;
+                                  use Micronas::RegDomain;
+                                  use Micronas::RegReg;
+                                  use Micronas::RegField;
+                                  use Micronas::RegViews;
+                                  use Micronas::RegViewE;
+                                  use Micronas::RegViewSTL;
+                                  use Micronas::RegViewRDL;
+                                  use Micronas::RegViewClone;
+                                  use Micronas::MixUtils::RegUtils;
+                                  '	
+                                 ) ) {
 			$logger->fatal( '__F_LOADREGMD', "\tFailed to load required modules for register_master: $@" );
 			exit 1;
 		}
-	
-		my($o_space) = Micronas::Reg->new();
-		
-		if (grep($eh->get( 'reg_shell.type' ) =~ m/$_/i, @{$o_space->global->{supported_views}})) {
-			# init register object for generation of register-shell
-			$o_space->init(	 
-						   'inputformat'     => "register-master", 
-						   'database_type'   => $eh->get( 'i2c.regmas_type' ),
-						   'register_master' => $r_i2c
-						  );
-
-			# set debug switch
-			$o_space->global('debug' => exists $OPTVAL{'verbose'} ? 1 : 0);
+        
+        # get user-supplied list of domains
+        my @ldomains = ();
+        if (exists $OPTVAL{'domain'}) {
+            push @ldomains, $OPTVAL{'domain'};
+        }
+             
+        my ($view, $o_space);
+        foreach $view (split(/,\s*/, $eh->get('reg_shell.type'))) {
+            # get handle to new register object
+            $o_space = Micronas::Reg->new();
+   
+            # init register object
+            $o_space->init(	 
+                           'inputformat'     => "register-master", 
+                           'database_type'   => $eh->get( 'i2c.regmas_type' ),
+                           'register_master' => $r_i2c
+                          );
+            
+            # set debug switch
+            $o_space->global('debug' => exists $OPTVAL{'verbose'} ? 1 : 0);
 			
             # check if register object should be cloned first
             if ($eh->get('reg_shell.clone.number') > 0) {
@@ -133,17 +144,13 @@ sub parse_register_master($) {
                 $o_space = $o_new_space;
             };
             
-			# make it so
-			$o_space->generate_view($eh->get('reg_shell.type'));
-			return $o_space;
-
-		} else {
-			_fatal("generation of view \'",$eh->get('reg_shell.type'),"\' is not supported");
-			exit 1;
-		};
-	} else {
+            # make it so 
+            $o_space->generate_view($view, $o_space->global->{supported_views}, \@ldomains);
+        };
+        return $o_space;
+    } else {
 		$logger->info('__I_REG_INIT', "\tRegister-master file empty or specified sheet \'" .
-			$eh->get('i2c.xls') . "\' in file not found");
+                      $eh->get('i2c.xls') . "\' in file not found");
 	};
 	return undef;
 };
@@ -152,7 +159,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.41 $ ';  #'
+our($VERSION) = '$Revision: 1.42 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -162,16 +169,15 @@ our(%hglobal) =
    # supported register-master types (yes, they are not all the same)
    supported_register_master_type => ["VGCA", "FRCH", "AVFB"], 
 
-   # generatable register views 
+   # generatable register views (dispatch table)
    supported_views => 
-   [
-	"HDL-vgch-rs",       # VGCH project register shell (Thorsten Lutscher)
-	"E_VR_AD",           # e-language macros (Emanuel Marconetti)
-	"STL",               # register test file in Socket Transaction Language format
-	"RDL",               # Denali RDL representation of database (experimental)
-	"none"               # generate nothing (useful for e.g. -report reglist option)
-    #"check"
-   ],
+   {
+	"hdl-vgch-rs" => \&_gen_view_vgch_rs,      # VGCH project register shell (owner: Thorsten Lutscher)
+	"e_vr_ad"     => \&_gen_view_vr_ad,        # e-language macros (owner: Thorsten Lutscher)
+	"stl"         => \&_gen_view_stl,          # register test file in Socket Transaction Language format (owner: Thorsten Lutscher)
+	"rdl"         => \&_gen_view_rdl,          # Denali RDL representation of database (experimental)
+	"none"        => sub {}                    # generate nothing (useful for bypassing the dispatcher)
+   },
 
    # attributes in register-master that do NOT belong to a field
    # note: the field name is retrieved from the ::b entries of the register-master
@@ -242,30 +248,16 @@ sub init {
 
 # generate a view of the register space
 # !! this is the HOOK FUNCTION to call view-generating-methods in other packages/modules !!
+# it uses a reference to a dispatch table to make the method calls;
 sub generate_view {
 	my $this = shift;
-	my $view = shift;
-
-	my @ldomains = ();
-	if (exists $OPTVAL{'domain'}) {
-		push @ldomains, $OPTVAL{'domain'};
-	}
-
-	if (lc($view) eq "hdl-vgch-rs") {
-		$this->_gen_view_vgch_rs(@ldomains); # module RegViews.pm
-	} elsif (lc($view) eq "e_vr_ad") {
-		$this->_gen_view_vr_ad(@ldomains);   # module RegViewE.pm
-	} elsif (lc($view) eq "stl") {
-		$this->_gen_view_stl(@ldomains);     # module RegViewSTL.pm
-	} elsif (lc($view) eq "rdl") {
-		$this->_gen_view_rdl(@ldomains);     # module RegViewRDL.pm
- 	#} elsif (lc($view) eq "check") {
-	#	$this->_check(); # temp usage
- 	} elsif ($view =~ m/none/i) {
-		return; # do nothing
-	} else {
-		_error("generation of view \'$view\' is not supported");
-	};
+	my ($view_name, $href_dispatch_table, $lref_domains) = @_;
+    my $action = $href_dispatch_table->{lc($view_name)};
+    if (ref($action) eq "CODE") {
+        $this->$action($view_name, $lref_domains); 
+    } else {
+        _error("unrecognized view name \'$view_name'\ (mix parameter reg_shell.type)");
+    };
 };
 
 # temp. function
