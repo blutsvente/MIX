@@ -15,10 +15,10 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.55 $                                          |
-# | Author:     $Author: lutscher $                                         |
-# | Date:       $Date: 2007/09/14 13:31:44 $                              |
-# |                                         
+# | Revision:   $Revision: 1.56 $                                          |
+# | Author:     $Author: wig $                                         |
+# | Date:       $Date: 2008/04/01 12:48:34 $                              |
+# |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
 # |                                                                       |
@@ -28,6 +28,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.56  2008/04/01 12:48:34  wig
+# | Added: optimizeportassign feature to avoid extra assign commands
+# | added protoype for collapse_conn function allowing to merge signals
+# |
 # | Revision 1.55  2007/09/14 13:31:44  lutscher
 # | added e-path to mix_utils_io_create_path()
 # |
@@ -161,11 +165,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.55 2007/09/14 13:31:44 lutscher Exp $';#'  
+my $thisid          =      '$Id: IO.pm,v 1.56 2008/04/01 12:48:34 wig Exp $';#'
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.55 $'; #'  
+my $thisrevision    =      '$Revision: 1.56 $'; #'
 
-# Revision:   $Revision: 1.55 $
+# Revision:   $Revision: 1.56 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -246,11 +250,11 @@ sub is_open_workbook($) {
 
 ####################################################################
 ## new_workbook
-## Remember all workbooks we made 
+## Remember all workbooks we made
 ####################################################################
 =head2 new_workbook($$)
 
-Remember all workbooks we made 
+Remember all workbooks we made
 
 =over4
 
@@ -384,7 +388,7 @@ sub mix_sheet_conf($$) {
 ####################################################################
 ## mix_utils_open_input
 ## open all input files and read in the worksheets needed
-## do basic checks and conversion 
+## do basic checks and conversion
 ####################################################################
 =head2 mix_utils_open_input(@)
 
@@ -487,12 +491,12 @@ sub mix_utils_open_input(@) {
 		}
     }
 
-	mix_utils_io_del_abook(); # Remove all cached input data (only for excel currently),    
+	mix_utils_io_del_abook(); # Remove all cached input data (only for excel currently),
 	# Here we do the final setup, all configuration known now.
 	# Check if all directories exists -> create if not
 	mix_utils_io_create_path();
 	return( $aconn, $ahier, $aio, $ai2c);
-	
+
 } # End of mix_utils_open_input
 
 =head2 mix_utils_io_create_path () {
@@ -517,10 +521,10 @@ Global: $eh
 sub mix_utils_io_create_path () {
 
 	my $select = $eh->get( 'output.mkdir' );
-	
+
 	for my $i ( qw( output intermediate internal report reg_shell.e_vr_ad) ) {
 		next unless( defined $eh->get( $i . '.path' ) );
-		
+
 		unless( -d $eh->get( $i . '.path' ) ) {
 			# need to create it ...
 			my $dir = $eh->get( $i . '.path' );
@@ -622,7 +626,7 @@ flags can be one of:
 {   # wrap around $oBook static variable ...
 	# Cache opened xls-file
 	my %aBook        = (); # xls-content
-	
+
 sub open_xls($$$$){
     my ($file, $sheetname, $xsheetname, $warn_flag)=@_;
 
@@ -649,7 +653,7 @@ sub open_xls($$$$){
 		$aBook{$file} = Spreadsheet::ParseExcel::Workbook->Parse($file);
 	}
 	$oBook = $aBook{$file};
-	
+
     unless( defined $oBook ) {
 		$logger->error( '__E_FILE_OPEN', "\tOpening ExCEL File $file");
     }
@@ -696,14 +700,14 @@ sub open_xls($$$$){
 					if ( $xls_warns and $v =~ m/$xls_warns/ ) {
 						if ( $v eq 'GENERAL' ) {
 							$logger->warn( '__W_XLS_REFS', "\tXLS cell " .
-								Spreadsheet::ParseExcel::Utility::int2col( $x ) . ( $y + 1 ) . 
+								Spreadsheet::ParseExcel::Utility::int2col( $x ) . ( $y + 1 ) .
 								" (R" . ( $y + 1 ) . "C" . ( $x + 1 ) . ", sheet " .
 								$isheet->{Name} . ") dubious cell content: " . $v ) .
 								" using: " . $cell->{'Val'};
 							$v = $cell->{'Val'};
 						} else {
 							$logger->error( '__E_XLS_REFS', "\tXLS cell " .
-								Spreadsheet::ParseExcel::Utility::int2col( $x ) . ( $y + 1 ) . 
+								Spreadsheet::ParseExcel::Utility::int2col( $x ) . ( $y + 1 ) .
 								" (R" . ( $y + 1 ) . "C" . ( $x + 1 ) . ", sheet " .
 								$isheet->{Name} . ") dubious cell content: " . $v );
 						}
@@ -733,7 +737,7 @@ sub open_xls($$$$){
 				delete( @$l[($maxdef_x+1)..($len-1)] );
 			}
 		}
-		
+
 		if ( scalar( @sheet ) > 0 ) {
 			if ( $warn_flag =~ m/\border\b/i ) {
 				push( @all, [$isheet->{Name}, [ @sheet ]] );
@@ -748,19 +752,19 @@ sub open_xls($$$$){
 
 		@sheet = ();
     }
-    
+
 	if ( $warn_flag =~ m/\border\b/ ) {
 		return \@all ;
 	} elsif ( $warn_flag =~ m/\bhash\b/i ) {
 		return \%all;
-	} else {	
+	} else {
     	return(@all);
 	}
 } # End of open_xls
 
 sub mix_utils_io_del_abook () {
 	%aBook = ();
-} 
+}
 
 } # wrap around $aBook, static variable
 
@@ -826,7 +830,7 @@ sub open_sxc($$$$) {
     my $isheet = 0;  # defined if we are "inside" a sheet
     my $irow = 0;    # defined if we are "inside" a row
     my $icell = 0;   # defined if inside a cell
-    my $itext = 0;   # defined inside a text 
+    my $itext = 0;   # defined inside a text
 
     my $repeat = 0;    # number of cell repeatings
     my $emptyLine = 1; # defined if a line is empty
@@ -837,7 +841,7 @@ sub open_sxc($$$$) {
     }
 
     for(my $i=0; defined $content[$i]; $i++) {
-    	if( !$isheet && $content[$i]=~ m/^<table:table.*>/ 
+    	if( !$isheet && $content[$i]=~ m/^<table:table.*>/
 	 		&& $content[$i]=~ m/ table:name=\"($sheetname)\"/) { # "
 	 		# TODO : check if the above regular expression is o.k.
 	 		unless ( $xsheetname and $1 =~ m/^$xsheetname$/ ) {
@@ -942,7 +946,7 @@ sub open_sxc($$$$) {
 			    	$content[$i] =~ s/\&lt;/</g;
 			    	$content[$i] =~ s/\&gt/>/g;
 			    	push(@cell, $content[$i]);
-			    	if( defined $content[$i]) { 
+			    	if( defined $content[$i]) {
 						$emptyLine = 0;
 			    	}
 				}
@@ -1031,7 +1035,7 @@ sub open_csv($$$$) {
     	next if ( $xsheetname and $input[$i] =~ m/^$sheetsep($xsheetname)\s*$/);
 		if( $input[$i] =~ m/^$sheetsep($sheetname)\s*$/) {
 			my $thissheet = $1;
-		
+
 	    	$i++;
         	while( defined $input[$i] && not $input[$i]=~ m/^$sheetsep/) {
 
@@ -1051,7 +1055,7 @@ sub open_csv($$$$) {
 			    			}
 		        		} else {
 			  			# character inside quotas
-			    			if($char=~ m/^\n$/) { 
+			    			if($char=~ m/^\n$/) {
 								$entry = $entry . " ";
 			    			} elsif($char!~ m/^\\$/) {
 								if($lastchar eq "\\") {
@@ -1193,7 +1197,7 @@ sub write_delta_sheet($$$) {
 	if ( not -r $predir . $file and $file =~ m/\.xls$/ and
 		not ( $eh->get( 'iswin' ) or $eh->get( 'iscygwin' ) ) ) {
 			# Try with csv intermediate
-			$file =~ s/\.xls/.csv/;	
+			$file =~ s/\.xls/.csv/;
 	}
 	# If that file does not exist -> create a new one
 	#!wig20051019: use cvs if available
@@ -1201,7 +1205,7 @@ sub write_delta_sheet($$$) {
 		write_outfile( $file, $sheet, $r_a );
 		return 0;
 	}
-		
+
     @prev = open_infile( $predir . $file, $sheet, '', 'mandatory,write');
 
     if(scalar( @prev ) < 1 ) {
@@ -1219,7 +1223,7 @@ sub write_delta_sheet($$$) {
 		_remove_empty_cols( $r_a );
 		_remove_empty_cols( $prev[0] );
 	}
-	
+
     my @prevd = two2one( $prev[0] );
     my @currd = two2one( $r_a );
     if ( not $eh->get( 'iswin' ) and $file =~ m,.xls$, ) {
@@ -1232,7 +1236,7 @@ sub write_delta_sheet($$$) {
 		map( { s/@@@\s+/@@@/g } @prevd ); # Remove \n and such
 		map( { s/@@@\s+/@@@/g } @currd );
     }
-    
+
     my @colnhead = @{$r_a->[0]};
 
     # Print header to ... (usual things like options, ....)
@@ -1256,7 +1260,7 @@ sub write_delta_sheet($$$) {
     #  shouldn't matter to much ...
     # TODO: make that configurable ...
     # @currd = map( { s,\n,,g},  @currd );
-     
+
     # Diff it ...
     my $diff = diff( \@currd, \@prevd,
                 { STYLE => "Table",
@@ -1325,14 +1329,14 @@ sub write_delta_sheet($$$) {
 		#  from previous one (comes from copying data)
 		push( @h, [ "--END--", "--END--", "--END--", "--END--" ] );
 		push( @h, [ '','','','' ], [ '','','','' ], [ '','','','' ], [ '','','','' ] );
-	
+
 		write_outfile($file, "DIFF_" . $sheet, \@h, $r_delcols, $niceform);
 
 		# One line has to differ (date)
 		if ( $difflines > 0 ) {
 			# REFACTOR: $logger->all()
 	    	$logger->info( '__I_DELTA_SHEET', "\tDetected $difflines changes in intermediate sheet $sheet, in file $file");
-		} 
+		}
 		elsif ( $difflines == -1 ) {
 	    	$logger->warn( '__W_DELTA_SHEET', "\tMissing changed date in intermediate sheet $sheet, in file $file");
 		}
@@ -1351,10 +1355,10 @@ sub write_delta_sheet($$$) {
 #!wig20070305: join ::generate und ::descr, too
 sub _join_split_lines ($) {
 	my $dataref = shift;
-	
+
 	# Get header to column mappings
 	my $head = $dataref->[0]; # Has to be first row!
-	
+
 	# Predefine columns of interest:
 	# ::name, ::in, ::out
 	my %cols = (
@@ -1364,16 +1368,16 @@ sub _join_split_lines ($) {
 		'::gen'  => -1,
 		'::descr'=> -1,
 	);
-	
+
 	for my $i ( 0.. (scalar(@$head) - 1 ) ) {
 		if ( exists( $cols{$head->[$i]} ) ) {
 			$cols{$head->[$i]} = $i;
 		}
-	} 	 
-	
+	}
+
 	# do nothing if we could not find the ::name column
 	return if( $cols{'::name'} == -1 );
-	
+
 	my $lastname = '';
 	my $lastline = 0;
 	my @delete_me = ();
@@ -1384,17 +1388,17 @@ sub _join_split_lines ($) {
 		if ( $thisname and $thisname eq $lastname ) { # Merge ::in and ::out if available!!
 			for my $io ( qw( ::in ::out ) ) {
 				if ( $cols{$io} > -1 and length( $dataref->[$i][$cols{$io}] ) > 0 ) {
-					$dataref->[$lastline][$cols{$io}] .= ", " . $dataref->[$i][$cols{$io}]; 
+					$dataref->[$lastline][$cols{$io}] .= ", " . $dataref->[$i][$cols{$io}];
 				}
 				# Sort it:
 				$dataref->[$lastline][$cols{$io}] =~ s/,\s*,/, /og; # Remove extra \s
 				$dataref->[$lastline][$cols{$io}] =
-					join( ',', split( /,\s*/, $dataref->[$lastline][$cols{$io}] ) );			
+					join( ',', split( /,\s*/, $dataref->[$lastline][$cols{$io}] ) );
 			}
 			# Simply append other columns:
 			for my $others ( qw( ::gen ::descr ) ) {
 				if ( $cols{$others} > -1 and length( $dataref->[$i][$cols{$others}] ) > 0 ) {
-					$dataref->[$lastline][$cols{$others}] .= $dataref->[$i][$cols{$others}]; 
+					$dataref->[$lastline][$cols{$others}] .= $dataref->[$i][$cols{$others}];
 				}
 			}
 
@@ -1419,12 +1423,12 @@ sub _join_split_lines ($) {
 #!wig20050926
 sub _remove_empty_cols ($) {
 	my $dataref = shift;
-	
+
 	# Get header to column mappings
 	my $head = $dataref->[0]; # Has to be first row!
 
 	# Delete all cols without contents
-	my @empty = ( 0..(scalar( @$head ) - 1 ) ); 
+	my @empty = ( 0..(scalar( @$head ) - 1 ) );
 	# Iterate over all other lines:
 	my @left = ();
 	for my $i ( 1..(scalar( @$dataref ) - 1) ) {
@@ -1439,7 +1443,7 @@ sub _remove_empty_cols ($) {
 		last unless( scalar( @empty ) ); # Stop here, no empty cols.
 		@left = ();
 	}
-	
+
 	# Is there anything left
 	if ( scalar( @empty ) ) {
 		# Remove these columns (from higher to lower)
@@ -1460,7 +1464,7 @@ sub _remove_empty_cols ($) {
 			}
 		}
 	}
-} # End of _remove_empty_cols	
+} # End of _remove_empty_cols
 
 #
 # Take diff array and convert back to XLS format
@@ -1473,10 +1477,10 @@ sub _remove_empty_cols ($) {
 sub _split_diff2xls ($$) {
 		my $r_diffs = shift;
 		my $offset  = shift; # Offset for coloring ...
-		
+
 		my @array = ();
 		my @delcols = ();
-		
+
 	    # Now convert delta to two-line format ...
 	    #   NEW ...
 	    #   OLD ...
@@ -1508,7 +1512,7 @@ sub _split_diff2xls ($$) {
 			    				push( @delcols, (scalar( @array ) + $offset). '/' . ( $iii + 1 ) );
 						}
 					}
-		    	} 
+		    	}
 			} else {
 		    	push( @array, $nf );
 			}
@@ -1724,7 +1728,7 @@ sub write_xls($$$;$$) {
 		my $c1=$sheetr->Cells(1,1)->Address;
 		my $c2=$sheetr->Cells($y,$x)->Address;
 		my $rng=$sheetr->Range($c1.":".$c2);
-	
+
 		#!wig20050713: protect against ExCEL failures:
 		eval '$rng->{Value}=$r_a;';
 		if ( $@ ) {
@@ -1884,7 +1888,7 @@ sub write_sxc($$$;$) {
 	    	my $max = $eh->get( 'intermediate.keep' );
 	    	$logger->info( '__I_WRITE_SXC', "\tRotating $max old sheets of $sheet!");
 	    	if ( exists( $settings{ 'O_' . $max . '_' . $sheet } ) ) {
-				# remove sheet 
+				# remove sheet
 				my $length = $settings{"O_".$max."_".$sheet."_end"}-$settings{"O_".$max."_".$sheet};
 				for(my $i=0; $i<$length; $i++) {
 		    		delete $content[$settings{"O_".$max."_".$sheet}+$i];
@@ -2055,7 +2059,7 @@ sub write_sxc($$$;$) {
 #   undef	<= not o.k.
 # Sets $ooo_flag to remember first try outcome
 #
-{ 
+{
 	my $ooo_flag = 0; #static, tells me if we used ooolib already ....
 	sub useOoolib () {
 
@@ -2230,7 +2234,7 @@ sub write_csv ($$$;$) {
     my $quoting = $eh->get( 'format.csv.quoting' );
     my $style   = $eh->get( 'format.csv.style' );
 	my $sheetm  = $eh->get( 'format.csv.sheetsep' );
-	
+
     my $temp;
 
     # Write to other directory ...
@@ -2281,7 +2285,7 @@ sub write_csv ($$$;$) {
     	$logger->error( '__E_WRITE_CSV', "\tCannot open $file for writting: $!" );
     	return undef;
     }
-    
+
     binmode FILE;
 	#!wig: enable UFT8: binmode(FILE, ":utf8");
 
@@ -2664,7 +2668,7 @@ sub mix_utils_mask_excel($) {
 
 	my $maxlength = $eh->get( 'format.xls.maxcelllength' ) + 20; # Leave 20bytes extra
 	my $style = $eh->get( 'format.xls.style' ) || '';
-	
+
     for my $i ( @$r_a ) {
 		for my $ii ( @$i ) {
 	    	unless( defined( $ii ) ) {
@@ -2687,7 +2691,7 @@ sub mix_utils_mask_excel($) {
 	    		# Replace all non ASCII (non printables!) by spaces
 	    		$ii =~ s/[[:cntrl:]]/ /go;
 	    	}
-	    	
+
 	    	$ii = "'" . $ii if ( $ii =~ m!^\s*[.,='"\d]! ); # Put a 'tick' in front of ExCEL special character  ....
 		}
     }

@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.108 $                                         |
+# | Revision:   $Revision: 1.109 $                                         |
 # | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2007/04/26 06:35:17 $                              |
+# | Date:       $Date: 2008/04/01 12:48:34 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.108 2007/04/26 06:35:17 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.109 2008/04/01 12:48:34 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,10 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.109  2008/04/01 12:48:34  wig
+# | Added: optimizeportassign feature to avoid extra assign commands
+# | added protoype for collapse_conn function allowing to merge signals
+# |
 # | Revision 1.108  2007/04/26 06:35:17  wig
 # | Create emumux outside of module ifdef excludes
 # |
@@ -179,15 +183,16 @@ sub _mix_wr_map_veri			($$$$$);
 sub _mix_wr_get_components		($$$$$$$$$$);
 sub _mix_wr_nice_comment		($$$);
 sub _mix_wr_inst_udc			($$$);
+sub _mix_wr_rewriteportmap 		($$$$);
 
 # Internal variable
 
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.108 2007/04/26 06:35:17 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.109 2008/04/01 12:48:34 wig Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.108 $';
+my $thisrevision   =      '$Revision: 1.109 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -4505,7 +4510,110 @@ sub _mix_wr_is_modegennr ($$) {
 	return( $m, $g, $s )
 
 }	
+
+
+
+=head4 _mix_wr_tryuseportname
+
+	check corner conditions for usage of port name instead of signal names in
+	Verilog to avoid usage of assign:
+		- straight in/in connection or straight out/out
+		- full connection and now bit-splicing
 	
+	see RFE20080323 description
+	
+	Inputs:
+		signal		signal name
+		instance	instance name
+		sigbits		::sigbits data structure of this instance
+		iconn		::conn data strcuture of this instance
+	
+=cut
+
+sub _mix_wr_tryuseportname {
+	my $signal   = shift;
+	my $instance = shift;
+	my $sigbits  = shift;
+	my $iconn   = shift;
+	
+	my %modes = ( 'i' => 'in', 'o' => 'out' );
+	my $portname = '';
+	
+	my $mode = '';
+	# Get signal mode: allowed are A:::i or A:::o
+	if ( $sigbits->{$signal} and scalar( @{$sigbits->{$signal}} ) == 1 and
+			$sigbits->{$signal}->[0] =~ m/^A:::([io])$/ ) {
+		$mode = $1;
+	} else {
+		return ''; # Keep signal name
+	}
+
+	# Have a look into this instances ::conn list and get port name
+	my @allports = ();
+	my @badports = ();
+	for my $m ( qw( i o ) ) {
+		if ( $mode eq $m ) {
+			if ( $iconn->{$modes{$m}}->{$signal} ) {
+				@allports = keys %{$iconn->{$modes{$m}}->{$signal}};
+			}
+		} else {
+			if ( $iconn->{$modes{$m}}->{$signal} ) {
+				@badports = keys %{$iconn->{$modes{$m}}->{$signal}};
+			}
+		}
+	}
+	if ( scalar( @badports ) > 0 or scalar( @allports ) != 1 ) {
+		return '';
+	}
+
+	# Potential signal replacement name:
+	$portname = shift @allports;
+	
+	# If portname == signalname -> stop here
+	return '' if ( $portname eq $signal );
+	
+	# Iterate over all daughter instances:
+	#	if connected -> mode has to be the same as the above mode
+	#	and the portname has to be the same!
+	#	
+	for my $di ( $hierdb{$instance}{'::treeobj'}->daughters() ) {
+		my $dname = $di->name();
+		# Is the signal connected and the A:::[io] identical?
+		my $hdnsi = $hierdb{$dname}{'::sigbits'}{$signal};
+		next unless $hdnsi; # Not connected, can continue
+		if ( scalar(@$hdnsi) != 1 or			
+			 $hdnsi->[0] ne $sigbits->{$signal}->[0] )  {
+			 # Wrong mode for daughter module:
+			 return '';
+		}
+		# Get daughter portname and check if it matches:
+		#!wig: don't care about the port name.
+		# if ( $hierdb{$dname}{'::conn'}{$modes{$mode}}{$signal} ) {
+		#	my @dports = keys( %{$hierdb{$dname}{'::conn'}{$modes{$mode}}{$signal}} );
+		#	return '' if ( scalar( @dports) != 1 or $dports[0] ne $portname );
+		# }
+	}
+    $logger->info('__I_TRYUSEPORTNAME', "\tUsing portname $portname for signal $signal in instance $instance!");	
+	return $portname
+	
+} # End of _mix_wr_tryuseportname
+
+#
+# Replace the signal name in the imacro port map by the port name
+# in verilog for the "do not use assign optiomizaton"
+#!wig20080401
+sub _mix_wr_rewriteportmap ($$$$) {
+	my $signal	= shift;
+	my $port	= shift;
+	my $tmac	= shift;
+	my $imacr	= shift;
+	
+	for my $portmap ( values( %$imacr) ) {
+		$portmap =~ s/\.(\w+)\(\s*$signal\s*\)(.*)/.$1($port)$2%S%$tmac __I_USE_PORT $port for signal $signal/g;
+	}
+	
+} # End of _mix_wr_rewriteportmap
+
 #
 # Do the work: Collect ports and generics from %entities.
 # Print out and also save port and generics for later reusal (e.g. architecture)
@@ -4906,8 +5014,29 @@ sub _write_architecture ($$$$) {
         # TODO : What if both in and out exists?
         #   What if signal is connected to multiple ports:
         my $match_port_signal = 0; # Remember port and signal even with different cases (Verilog)
+        my $c_portname = ''; # Will be set if the module here allows to use the port names.
         unless( $t_signal =~ m/%(HIGH|LOW|OPEN)(_BUS)?(_\d+)?%/o ) {
-			if ( exists( $iconn->{'in'}{$t_signal} ) ) {
+
+			#!wig20080331: iterate over this signals connections:
+			# if language is Verilog and
+			#	only in / out in this module and daughters and
+			#	all port names are the same and
+			#	full connections (A:::i or A:::o) and
+			#	and signal name != port name
+
+			if ($ilang =~ m/^veri/io and $eh->get('output.generate.workaround.verilog') =~ m/\boptimizeassignport\b/io ) {
+				$c_portname = _mix_wr_tryuseportname( $t_signal, $t_inst, $hierdb{$t_inst}{'::sigbits'}, $iconn );
+				if ( $c_portname ) {
+					$match_port_signal = 1;
+					# Need to rework the imacro port map, too
+					_mix_wr_rewriteportmap($t_signal, $c_portname, $tcom, \%i_macros);
+				};
+
+
+				
+			}
+
+			if ( not $c_portname and exists( $iconn->{'in'}{$t_signal} ) ) {
 				# Special case: 1:1 connection, but different cases in Verilog
 				if ( $ilang =~ m/^veri/io and
 						scalar( keys( %{$iconn->{'in'}{$t_signal}} ) ) == 1 ) {
@@ -4931,7 +5060,7 @@ sub _write_architecture ($$$$) {
 					}
     		    }
 			}
-			if ( exists( $iconn->{'out'}{$t_signal} ) ) {
+			if ( not $c_portname and exists( $iconn->{'out'}{$t_signal} ) ) {
 				if ( $ilang =~ m/^veri/io and
 						scalar( keys( %{$iconn->{'out'}{$t_signal}} ) ) == 1 ) {
 					my $port = (keys( %{$iconn->{'out'}{$t_signal}} ))[0];
@@ -4976,14 +5105,14 @@ sub _write_architecture ($$$$) {
                    	. $type . $dt . "; " . $post . "\n" );
             }
         } else {
-                # Not connected to upside world (needs wire/signal definition ...
-                if ( $ilang =~ m,^veri,io ) {
-                    $tmp_sig .= $pre . 'wire' . '%S%' . $dt . '%S%' . $usesig .
-                    	'; ' . $post . "\n";
-                } else {
-                    $tmp_sig .= $pre . 'signal' . '%S%' . $usesig . '%S%' .
-                    	': ' . $type. $dt . '; ' . $post . "\n";
-                }
+            # Not connected to upside world (needs wire/signal definition ...
+            if ( $ilang =~ m,^veri,io ) {
+                $tmp_sig .= $pre . 'wire' . '%S%' . $dt . '%S%' . $usesig .
+                	'; ' . $post . "\n";
+            } else {
+                $tmp_sig .= $pre . 'signal' . '%S%' . $usesig . '%S%' .
+                   	': ' . $type. $dt . '; ' . $post . "\n";
+            }
         }
         $signaltext .= '%S%' x 2 . $port_open . $tmp_sig if ( $tmp_sig );
 
@@ -4992,47 +5121,48 @@ sub _write_architecture ($$$$) {
 	#
 	# Adding constant definitions for nan bounds signals ...
 	#
-        my %parms = ();
-        for my $ii ( keys( %nanbounds ) ) {
-            for my $iii ( values( %{$nanbounds{$ii}} ) ) {
-                my $high = $iii->[1];
-                my $low = $iii->[2];
-                while( $high =~ m,(\w+),g ) { # Get all words in the high/low definition
-                    next if ( exists( $parms{$1} ) );
-                    if ( exists( $conndb{$1} )  and $conndb{$1}{'::mode'} eq "P" ) {
-                        $macros{'%CONSTANTS%'} .= "\t\tconstant " . $1 . " : " .
-                            $conndb{$1}{'::type'} . " := " . $conndb{$1}{'::out'}[0]{'value'} .
-                            "; -- __I_PARAMETER\n";
-                        $parms{$1} = 1;
-                    }
+    my %parms = ();
+    for my $ii ( keys( %nanbounds ) ) {
+        for my $iii ( values( %{$nanbounds{$ii}} ) ) {
+            my $high = $iii->[1];
+            my $low = $iii->[2];
+            while( $high =~ m,(\w+),g ) { # Get all words in the high/low definition
+                next if ( exists( $parms{$1} ) );
+                if ( exists( $conndb{$1} )  and $conndb{$1}{'::mode'} eq "P" ) {
+                    $macros{'%CONSTANTS%'} .= "\t\tconstant " . $1 . " : " .
+                        $conndb{$1}{'::type'} . " := " . $conndb{$1}{'::out'}[0]{'value'} .
+                        "; -- __I_PARAMETER\n";
+                    $parms{$1} = 1;
                 }
-                while( $low =~ m,(\w+),g ) { # Get all words in the high/low definition
-                    next if ( exists( $parms{$1} ) );
-                    if ( exists( $conndb{$1} )  and $conndb{$1}{'::mode'} eq "P" ) {
-                        $macros{'%CONSTANTS%'} .= "\t\tconstant " . $1 . " : " .
-                            $conndb{$1}{'::type'} . " := " . $conndb{$1}{'::out'}[0]{'value'} .
-                            "; -- __I_PARAMETER\n";
-                        $parms{$1} = 1;
-                    }
+            }
+            while( $low =~ m,(\w+),g ) { # Get all words in the high/low definition
+                next if ( exists( $parms{$1} ) );
+                if ( exists( $conndb{$1} )  and $conndb{$1}{'::mode'} eq "P" ) {
+                    $macros{'%CONSTANTS%'} .= "\t\tconstant " . $1 . " : " .
+                        $conndb{$1}{'::type'} . " := " . $conndb{$1}{'::out'}[0]{'value'} .
+                        "; -- __I_PARAMETER\n";
+                    $parms{$1} = 1;
                 }
             }
         }
-        
-		# End is near for write_architecture ...
-		$signaltext .= _mix_wr_nice_comment( $tcom, 1, 'End of Generated Signal List' );
-		$macros{'%SIGNALS%'} = $signaltext;
-
-		#Workaround:  magma and configuration as module names: wig20040322
-        $veridefs .= $eh->get( 'output.generate.workaround._magma_uamn_' );
-        $macros{'%INT_VERILOG_DEFINES%'} .= $veridefs if ( $veridefs );
-
-        $eh->set( 'output.generate.workaround._magma_uamn_', '' ); # Reset the define storage
-        
-        if ( keys( %i_macros ) > 0 ) {
-            $macros{'%INSTANCES%'} = replace_mac( $macros{'%INSTANCES%'}, \%i_macros );
-        }
-		$et .= replace_mac( $tpg, \%macros );
     }
+        
+	# End is near for write_architecture ...
+	$signaltext .= _mix_wr_nice_comment( $tcom, 1, 'End of Generated Signal List' );
+	$macros{'%SIGNALS%'} = $signaltext;
+
+	#Workaround:  magma and configuration as module names: wig20040322
+    $veridefs .= $eh->get( 'output.generate.workaround._magma_uamn_' );
+    $macros{'%INT_VERILOG_DEFINES%'} .= $veridefs if ( $veridefs );
+
+    $eh->set( 'output.generate.workaround._magma_uamn_', '' ); # Reset the define storage
+        
+    if ( keys( %i_macros ) > 0 ) {
+        $macros{'%INSTANCES%'} = replace_mac( $macros{'%INSTANCES%'}, \%i_macros );
+    }
+	$et .= replace_mac( $tpg, \%macros );
+    
+    } # XXX Bad indent !!!!
 
     return unless ( $contflag ); #Print only if you found s.th. to print
 

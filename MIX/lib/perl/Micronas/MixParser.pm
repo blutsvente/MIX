@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.95 $                                         |
+# | Revision:   $Revision: 1.96 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/11/26 23:00:49 $                              |
+# | Date:       $Date: 2008/04/01 12:48:34 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.95 2007/11/26 23:00:49 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.96 2008/04/01 12:48:34 wig Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.96  2008/04/01 12:48:34  wig
+# | Added: optimizeportassign feature to avoid extra assign commands
+# | added protoype for collapse_conn function allowing to merge signals
+# |
 # | Revision 1.95  2007/11/26 23:00:49  wig
 # | Handle import with spaces between bus definition and ;
 # |
@@ -147,6 +151,7 @@ require Exporter;
       add_inst
       add_tree_node
       add_conn
+      sub collapse_conn
       mix_p_updateconn
       mix_p_retcprop
       add_portsig
@@ -189,7 +194,7 @@ sub mix_parser_importhdl ($$);
 sub _mix_parser_parsehdl ($);
 sub overlay_bits($$);
 sub mix_p_co2str ($$);
-sub _mix_p_unsplice_inout($);	
+sub _mix_p_unsplice_inout($);
 sub _mix_p_try_merge ($);
 sub _mix_p_getsplicerange ($$$);
 sub _mix_p_dogen ($$$$$$);
@@ -199,9 +204,10 @@ sub init_pseudo_inst ();
 sub bits_at_inst ($$$);
 sub bits_at_inst_hl ($$$);
 sub _check_portspecm ($$$);
-sub map2bus ($$);
-sub map2signal ($$);
+sub map2bus			($$);
+sub map2signal		($$);
 sub require_bus_port ($);
+sub collapse_conn	($@);
 
 ####################################################################
 #
@@ -219,9 +225,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.95 2007/11/26 23:00:49 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.96 2008/04/01 12:48:34 wig Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.95 $';
+my $thisrevision =	'$Revision: 1.96 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -488,12 +494,12 @@ Examples:
 			will match all signals, whose names start with padsig_ and set $i to the
 			number matched by (\d+). The generator only applies if the yielded $i is
 			within the range of n to m
-			
+
 		$i(n..m)/inst_(\w+)::::number=($i=\d+)/
 			iterate over all instance names, match if the instance name starts with
 			"inst_" and if there is an additional comlum ::number defined, whose
 			value is a digit and within the range of n to m. You can make use of
-			the $i and $1 		 
+			the $i and $1
 =back
 
 It returns a hash, key is the instance name perl regular expression match.
@@ -516,7 +522,7 @@ sub parse_conn_gen ($) {
     my %g = ();
 	my $n = 0; # Generator counter
 	my $icomms	= $eh->get( 'input.ignore.comments' );
-	my $ivar	= $eh->get( 'input.ignore.variant' ) || '#__I_VARIANT';   
+	my $ivar	= $eh->get( 'input.ignore.variant' ) || '#__I_VARIANT';
     for my $i ( 0..$#{$rin} ) {
 
         next unless ( $rin->[$i] ); # Holes in the array?
@@ -642,13 +648,13 @@ sub parse_hier_init ($) {
     }
 
 	init_pseudo_inst();
-	
+
     #
     # Add all instances left in the input data
     #
     #!wig20060712: removing comments:
 	my $icomms	= $eh->get( 'input.ignore.comments' );
-	my $ivar	= $eh->get( 'input.ignore.variant' ) || '#__I_VARIANT';   
+	my $ivar	= $eh->get( 'input.ignore.variant' ) || '#__I_VARIANT';
     for my $i ( 0..$#{$r_hier} ) {
         next unless ( $r_hier->[$i] ); # Skip if input field is empty
         next if ( $r_hier->[$i]{'::ign'} =~ m,$icomms,o );
@@ -683,7 +689,7 @@ sub parse_hier_init ($) {
 # Create some pseudo instances up-front
 #
 sub init_pseudo_inst () {
-	
+
     #
     # Add some meta instances: %TOP%, %CONST%, %OPEN%
     # These are needed for proper program flow.
@@ -804,7 +810,7 @@ sub create_inst ($%) {
             $hierdb{$name}{$i} = $data{$i};
         } else {
             $hierdb{$name}{$i} = $ehr->{$i}[3]; # Set to DEFAULT Value
-            #TODO: Initialize fields to empty / Marker, set DEFAULT if still empty at end 
+            #TODO: Initialize fields to empty / Marker, set DEFAULT if still empty at end
         }
         $hierdb{$name}{$i} =~ s/%NULL%//g; # Just to make sure fields are initialized
         delete( $data{$i} );
@@ -867,7 +873,7 @@ sub add_tree_node ($$) {
 		}
 	}
 
-	# Parent:	
+	# Parent:
     if ( defined( $r_h->{'::parent'} ) and $r_h->{'::parent'} ) {
         # If the parent is already defined, link this instance to the parent, else create a parent node
         $parent = $r_h->{'::parent'};
@@ -888,7 +894,7 @@ sub add_tree_node ($$) {
             for my $i ( keys %$ehr ) {
                     next unless ( $i =~ m/^::/ );
                     $hierdb{$parent}{$i} = $ehr->{$i}[3]; # Set to DEFAULT Value
-                    # TODO : Initialize fields to empty / Marker, set DEFAULT if still empty at end 
+                    # TODO : Initialize fields to empty / Marker, set DEFAULT if still empty at end
                     $hierdb{$parent}{$i} =~ s/%NULL%//g; # Just to make sure fields are initialized
             }
             # Force TESTBENCH (auto) to be daughter of %TOP%
@@ -1017,7 +1023,7 @@ sub parse_conn_init ($) {
 
     my $ehr = $eh->get( 'conn.field' );
 	my $icomms	= $eh->get( 'input.ignore.comments' );
-	my $ivar	= $eh->get( 'input.ignore.variant' ) || '#__I_VARIANT';  	
+	my $ivar	= $eh->get( 'input.ignore.variant' ) || '#__I_VARIANT';
     for my $i ( 0..$#{$r_conn} ) {
         # Skip comment lines
         # TODO : allow to pass such lines through ..
@@ -1073,9 +1079,9 @@ sub add_conn (%) {
 			$in{'::type'} = map2bus( 'HL_BUS', $in{'::type'} );
 
 			}
-		
+
 		# Map bus to non-bus (if no borders given)
-		if ( $bus and 
+		if ( $bus and
 				( ( not defined( $in{'::high'} ) or $in{'::high'} eq '' ) and
 			      ( not defined( $in{'::low'} )  or $in{'::low'}  eq '' ) ) ) {
 			#!wig20060619: check port assignment
@@ -1088,8 +1094,8 @@ sub add_conn (%) {
 				$logger->warn('__W_ADD_CONN', "\tRemove _BUS from $1 !");
 				$bus = '';
 				$in{'::type'} = map2signal( 'HL_BUS', $in{'::type'} );
-			} 
-		}	
+			}
+		}
 		if( $n eq '' ) { # Get a new number for high/low
 			$n = '_' . $eh->postinc( $hl . '_NR' );
 		}
@@ -1207,6 +1213,51 @@ sub add_conn (%) {
     }
 } # End of add_conn
 
+=head4 collapse_conn
+
+	Merge two exisiting signales into one new instance
+
+	Consider the inherit/overlay rules defined in the conn.fields global setting
+	 	
+	Checks: TODO
+
+	Caveat: only use in the parse phase to simply overload.
+	
+	Output:
+		error code	
+			
+	Input:
+		sig_out		:=	name of signal (output); might be new or already existing
+				will be created automatically if new.
+		sig_in1		:=	name of input signal (conndb data strucuture)
+		sig_in2		:=  ...
+		[sig_inN]
+		The signal data structure for sig_inN will be removed after merge.
+	
+=cut
+
+sub collapse_conn ($@) {
+	my $outname = shift;
+	
+	for my $inname ( @_ ) {
+		unless ( exists $conndb{$inname} ) {
+			$logger->error('__E_COLLAPSE_CONN', "\tNo signal $inname defined up to now" );
+			next;
+		}
+		
+		# Overload name upfront!
+		$conndb{$inname}{'::name'} = $outname;
+		if ( defined( $conndb{$outname}  ) ) {
+        	merge_conn( $outname, $conndb{$inname} );
+    	} else {
+        	create_conn( $outname, $conndb{$inname} );
+    	}
+    	
+    	# Remove the old data
+    	delete( $conndb{$inname} );
+	}
+} # End of collapse_conn
+
 #
 # check if the assigned too values are bus or single bit
 #    inst/port(F:T)=(F:T)
@@ -1217,7 +1268,7 @@ sub add_conn (%) {
 #
 sub require_bus_port ($) {
 	my $instr = shift;
-	
+
 	my $high = 0;
 	for my $d ( split( /[,;]/, $instr ) ) {
         next if ( $d =~ /^\s*$/o );
@@ -1236,7 +1287,7 @@ sub require_bus_port ($) {
         		# No () -> next!
         		next;
         	}
-        	
+
         	# Look into $port and $signal
         	if ( $port =~ m/(.+):(.+)/ ) {
         		my $ph = $1;
@@ -1261,11 +1312,11 @@ sub require_bus_port ($) {
         			}
         		}
         	}
-        }			       
+        }
 	}
 	return $high; # Returns buswidth - 1!
 } # End of require_bus_port
-	 
+
 #
 # map2bus: usually appends a "_vector"
 #
@@ -1280,7 +1331,7 @@ sub require_bus_port ($) {
 sub map2bus ($$) {
 	my $key  = shift;
 	my $type = shift;
-	
+
 	if ( $type eq '' or $type eq '%SIGNAL%' ) {
 		$type = '%BUS_TYPE%';
 	} elsif( $type !~ m/_vector$/ ) {
@@ -1303,7 +1354,7 @@ sub map2bus ($$) {
 sub map2signal ($$) {
 	my $key  = shift;
 	my $type = shift;
-	
+
 	if ( $type eq '' or $type eq '%BUS_TYPE%' ) {
 		$type = '%SIGNAL%';
 	}
@@ -1330,7 +1381,7 @@ sub create_conn ($%) {
             $conndb{$name}{$i} = $data{$i};
         } else {
             $conndb{$name}{$i} = $ehr->{$i}[3]; # Set to DEFAULT Value
-            # TODO : Initialize fields to empty / Marker, set DEFAULT if still empty at end 
+            # TODO : Initialize fields to empty / Marker, set DEFAULT if still empty at end
         }
         #wig20030801/20050713: remove %NULL% and %EMPTY% on the fly ...
         unless( ref( $conndb{$name}{$i} ) ) {
@@ -1347,7 +1398,7 @@ sub create_conn ($%) {
     for my $i ( keys %$ehr ) {
         delete( $data{$i} );
     }
-    
+
     #
     # Add the rest, too
     #
@@ -1403,10 +1454,10 @@ sub _create_conn ($$%) {
 
     my $tcmethod = ( $eh->get( 'output.generate.workaround.typecast' )
     	=~m/\bintsig\b/ );
-    	
+
     # Inform user if upper/lower bounds is not-a-number
     my $naninfo  = ( $eh->get( 'check.signal' ) =~ m/\bnanbounds\b/io );
-    
+
     #A bus with ::low and ::high
     my $h = undef;
     my $l = undef;
@@ -1475,7 +1526,7 @@ sub _create_conn ($$%) {
             $d =~ s,\s+$,,o; # Remove trailing whitespace
             $d =~ s,%::,%##,og; # Mask %:: ... vs. N:N
 
-			# Alert user if there is still whitespace in 
+			# Alert user if there is still whitespace in
             #
             # Recognize 0xHEX, 0OCT, 0bBIN and DECIMAL values in ::out
             # Also: 10.2, 1_000_000, 16#hex#, 2#binary_binary#, 2.2e-6 10ns 2.27[mnfpu]s
@@ -1489,7 +1540,7 @@ sub _create_conn ($$%) {
 			# Map [N:M] to (M:N) ....
 			#!wig: added 20060215
 			$d =~ tr/\[\]/()/;
-			             
+
             my ( $cd, $cpart ) = split( /=/, $d, 2 );
             if (
                 # Get VHDL constants : B#VAL#
@@ -1520,7 +1571,7 @@ sub _create_conn ($$%) {
                         $co{'inst'} = '%PARAMETER%';
                     } else {
                         $co{'inst'} = '%CONST%';
-                    } 
+                    }
                 } else {
                         $co{'inst'} = '%CONST%';
                 }
@@ -1539,7 +1590,7 @@ sub _create_conn ($$%) {
                 $const =~ tr/'/"/; # Convert ' to " (otherwise ExCEL will eat it). # "
 
                 $co{'port'} = $const; # Decimal base or literal
-                
+
                 # Inherit bus width from signal definition or if a =() is attached ...
                 #  but start at zero! Constants should not have an offset
                 if ( $cpart ) {
@@ -1554,7 +1605,7 @@ sub _create_conn ($$%) {
                             $co{'port_f'} = $mh - $ml;
                             $co{'sig_f'} = $mh;
                             $co{'sig_t'} = $ml;
-                        } else { # ( $ml =~ m/^\d+$/ ) # 
+                        } else { # ( $ml =~ m/^\d+$/ ) #
                             $co{'port_f'} = "$mh - $ml";
                             $co{'sig_f'} = $mh;
                             $co{'sig_t'} = $ml;
@@ -1602,14 +1653,14 @@ sub _create_conn ($$%) {
 					$logger->error( '__E_CONN_PORTWS', "\tPort description '$d' has embededded whitespace! Fix input!" );
 				}
 			}
-				            
-            #!wig20051024: check for 'reg or 'wire 
+
+            #!wig20051024: check for 'reg or 'wire
             #  -> will be added to port definition ....
             if ( $d =~ m,(/?'(reg|wire)), ) { # Define reg or wire for verilog output: inst/port'reg or inst/'wire  # '
                 $co{'rorw'} = $2;
                 $d =~ s,$1,,;
             }
-            	
+
             #wig20030801: typecast port'cast_func ...
             #wig20040803: adding advanced typecast function: convert typecast request
             #  into internal instance (%TC_xxxxx%) mapper
@@ -1617,8 +1668,8 @@ sub _create_conn ($$%) {
             if ( $d =~ m,(/?'(\w+)), ) { # Get typecast   inst/port'cast or inst/'cast  # '
                 if ( $tcmethod ) {
                     # Create a mapper instance and attach the signal the following way
-                    $tcdo = $2;         
-                } 
+                    $tcdo = $2;
+                }
                 $co{'cast'} = $2;
                 $d =~ s,$1,,;
             }
@@ -1758,7 +1809,7 @@ sub _create_conn ($$%) {
 				defined $data{'::descr'} and $data{'::descr'} ne '' ) {
 				$co{'_descr_'} = $data{'::descr'};
 			}
-			
+
             check_conn_prop( \%co );
 
 			#!wig20060329: adding hierachy automatically if needed
@@ -1769,14 +1820,14 @@ sub _create_conn ($$%) {
             # We have a full description of this port, now add typecast_wrapper
             #wig20040803, typecast wrapper
 
-            # no typecast for std_logic vs. std_ulogic:                
+            # no typecast for std_logic vs. std_ulogic:
             if ( $eh->get( 'output.generate.workaround.std_log_typecast' ) =~ m/\bignore\b/io
                 and $tcdo =~ m/^std_(u)?logic$/io ) {
                 if ( $data{'::type'} =~ m/^std_(u)?logic$/io ) {
                     $tcdo = "";
                 }
             }
-            if ( $tcdo ) { 
+            if ( $tcdo ) {
                 my $tcwr = '%TYPECAST_' . $eh->postinc( 'TYPECAST_NR' ) . '%' ;
                 my $tcsig = $eh->get( 'postfix.PREFIX_TC_INT' ) .
                 	$eh->get( 'TYPECAST_NR' ) . "_" . $data{'::name'};
@@ -1805,7 +1856,7 @@ sub _create_conn ($$%) {
                 # generate port description ::in <-> ::out  for intermediate signal
                 my $oecon = $tcwr . "/" . $co{'port'} . mix_p_co2str( $co{'port_f'}, $co{'port_t'} ) .
                         "=" . mix_p_co2str( $co{'sig_f'}, $co{'sig_t'} );
- 
+
                 # TODO : will we need more expansion? Maybe the intermediate signal should inherite
                 #   all features from the originating signal ...
                 my $oeicon = $co{'inst'} . '/' . $co{'port'} . mix_p_co2str( $co{'port_f'}, $co{'port_t'} ) .
@@ -1828,7 +1879,7 @@ sub _create_conn ($$%) {
                 add_conn( %ec );
                 # Overload connection instance (shift typecast wrapper inplace ...)
                 $co{'inst'} = $tcwr;
-                
+
             }
             push( @co, { %co } );
     }
@@ -1842,24 +1893,24 @@ sub _check_portspecm ($$$) {
 	my $string = shift;
 	my $start  = shift;
 	my $end    = shift;
-	
+
 	if ( $start > 0 or $end < length( $string ) ) {
 		$logger->error('__E_CONN_PORTSPEC', "\tinst/port spec '$string' has leading/trailing junk! Ignored! Fix input data!" );
 	}
 	return;
 } # End of _check_portspecm
-		            
+
 #
 # Automatically create "flat" hierachy if needed ...
 #
-sub _add_inst_auto ($) {			 
+sub _add_inst_auto ($) {
 	my $inst = shift;
 
 	return if ( exists $hierdb{$inst} );
-		
+
 	# add to "testbench", define level of warning
 	#   by number of parsed hier sheets ...
-	# Warn user if hier.parsed > 0	
+	# Warn user if hier.parsed > 0
 
 	add_inst(
 		'::inst' => $inst,
@@ -1887,7 +1938,7 @@ sub mix_p_co2str ($$) {
     my $f = shift;
     my $t = shift;
 
-    my $portdef = "";  
+    my $portdef = "";
     if ( defined $t and defined $f ) {
         $portdef = "(" . $f . ":" . $t . ")";
     } elsif ( defined $f ) {
@@ -1971,14 +2022,14 @@ sub mix_p_updateconn ($$) {
 #
 # merge more data into an already existing connection
 #
-#!wig20070320: special key %PURGE% will remove all previously defined data for that cell
+#!wig20070320: special key %PURGE% will remove all previously defined data for that signal
 sub merge_conn($%) {
     my $name = shift;
     my %data = @_;
 
     #
     # Overwrite conndb if fields are zero or space ....
-    #    
+    #
     for my $i ( keys( %data ) ) {
         # TODO : Trigger merge mode for special cases where we want to add
         # up data instead of overwrite
@@ -1993,11 +2044,16 @@ sub merge_conn($%) {
 			next;
 		}
 
-        if ( $i =~ /^::(in|out)$/ ) { 
+        if ( $i =~ /^::(in|out)$/ ) {
 			#!wig20060116: check if data is defined:
         	if ( defined( $data{$i} ) and $data{$i} !~ /^\s*$/io ) {
-                # Add array to in/out field, if the cell contains data
-                push( @{$conndb{$name}{$i}} , @{_create_conn( $1, $data{$i}, %data )});
+        		# If the ::in or ::out is an array -> simply push
+        		if ( ref( $data{$i} ) eq 'ARRAY' ) {
+        			push( @{$conndb{$name}{$i}}, @{$data{$i}} );
+        		} else {
+                	# Add array to in/out field, if the cell contains data
+                	push( @{$conndb{$name}{$i}} , @{_create_conn( $1, $data{$i}, %data )});
+        		}
             }
         } elsif ( $i =~ /^::type\b/ ) {
             #
@@ -2092,7 +2148,7 @@ sub merge_conn($%) {
             # Accumulate generator infos, comments and description
             if ( $data{$i} and $data{$i} ne '%EMPTY%' ) {
                 #wig20031106: try to keep comments short ....
-                #   replace "text text" by "text X2" 
+                #   replace "text text" by "text X2"
                 #   check if $data{$i} is part of $conndb{$name}{$i}
                 my $pos = rindex( $conndb{$name}{$i}, $data{$i} );
                 if ( $pos >= 0 and $eh->get( 'output.generate.fold' ) =~ m,signal,io ) {
@@ -2168,7 +2224,7 @@ sub mix_store_db ($$$) {
     if ( $type eq 'xls' || $type eq 'sxc' || $type eq 'csv' || $type eq 'ods' ) {
         my $aro = mix_list_econf( 'xls' ); # Convert $eh to two-dim array
 
-		# db2array 
+		# db2array
 		#!wig20051012: if eh(intermediate.intra) is set,
 		#  arc is done differentely!
 		# ar will get a hash with sheet names, which reference arrays with data
@@ -2177,7 +2233,7 @@ sub mix_store_db ($$$) {
 		if ( $eh->get( 'intermediate.intra' ) ) {
 			my @tops = get_top_cell();
 			$arc = db2array_intra( \%conndb, 'conn', \@tops, \%hierdb, '' );
-		} else {			       
+		} else {
         	$arc->{'CONN'} = db2array( \%conndb , 'conn', $type, '' );
 		}
         my $arh = db2array( \%hierdb, 'hier', $type, "^(%\\w+%|W_NO_PARENT)\$" );
@@ -2412,7 +2468,7 @@ sub apply_hier_gen ($) {
             }
         }
     }
-    
+
     # We could remove the iterators from the generator data, now
 
     # Do the rest ...
@@ -2449,13 +2505,13 @@ Intermediate data is kept in:
 #            $rin->[$i]{'::comment'} = "# Generator parsed /" . $rin->[$i]{'::comment'};
 
 #!wig20070305: adding IF/ELSIF/ELSE feature
-			 $rin->[$i]{'link'} = 'if' or 'elsif' or 'else' 
-			 
+			 $rin->[$i]{'link'} = 'if' or 'elsif' or 'else'
+
 =cut
 sub apply_x_gen ($$) {
     my $r_hg = shift;   # connection generator data
     my $func = shift;	# which function to call ...
-    
+
 	# Sort generators by number of appearance:
 	my %lasthit = (); # Track if/elsif/else
     for my $cg ( sort( { $r_hg->{$a}->{'n'} <=> $r_hg->{$b}->{'n'} }
@@ -2464,7 +2520,7 @@ sub apply_x_gen ($$) {
 		# Skip __MIX_ITERATOR_ ...
 		next if ( $cg =~ m,^__MIX_ITERATOR_,io );
 
-		my $ifelslink= $r_hg->{$cg}{'link'};				
+		my $ifelslink= $r_hg->{$cg}{'link'};
         # Iterate over CONN or HIER, defined by ...{'ns'} namespace ...
         my $ky = ( $r_hg->{$cg}{'ns'} =~ m,^conn, ) ? \%conndb : \%hierdb ;
 
@@ -2486,7 +2542,7 @@ sub apply_x_gen ($$) {
                 ( $text, $re ) = mix_p_prep_match( $i, $r_hg->{$cg}{'ns'},
                                                  $ky->{$i}, $r_hg->{$cg}{'pre'} );
                 next unless defined( $text );
-                
+
                 # Generator match
                 if ( $text =~ m,^$re$, ) { # $text matches $re ... possibly setting $1 ...
                     # Apply all fields defined in generator:
@@ -2497,7 +2553,7 @@ sub apply_x_gen ($$) {
 
 					if ( scalar( @splice_range ) ) {
 						for my $s ( @splice_range ) {
- 							_mix_p_dogen( $r_hg->{$cg}, $ky, $s, $cg, $i, $func );                   
+ 							_mix_p_dogen( $r_hg->{$cg}, $ky, $s, $cg, $i, $func );
 						}
 					} else {
 						_mix_p_dogen( $r_hg->{$cg}, $ky, '', $cg, $i, $func );
@@ -2560,10 +2616,10 @@ sub apply_x_gen ($$) {
                         #
                     	$lasthit{$i} = 1;
                         my @splice_range = _mix_p_getsplicerange( $i, $r_hg->{$cg}, $ky );
-                        
+
                      	if ( scalar( @splice_range ) ) {
 							for my $s ( @splice_range ) {
- 								_mix_p_dogen2( $r_hg->{$cg}, $ky, $rv, \%mres, $s, $cg, $i, $func );                   
+ 								_mix_p_dogen2( $r_hg->{$cg}, $ky, $rv, \%mres, $s, $cg, $i, $func );
 							}
 						} else {
 							_mix_p_dogen2( $r_hg->{$cg}, $ky, $rv, \%mres, '', $cg, $i, $func );
@@ -2571,7 +2627,7 @@ sub apply_x_gen ($$) {
 
                     } else {
                 		$lasthit{$i} = '';
-                	} 
+                	}
                 } else {
                 	$lasthit{$i} = '';
                 }
@@ -2583,9 +2639,9 @@ sub apply_x_gen ($$) {
 sub _mix_p_get_reparmatch ($$) {
 	my $text 	= shift;
 	my $matcher = shift;
-	
+
 	$text =~ m/^$matcher$/;
-	
+
 	my %mres = ();
     # Save $1..$N for later reusal into %mres
     for my $ii ( 1..20 ) { #No more then $20, but loop will be left if undef found.
@@ -2606,7 +2662,7 @@ sub _mix_p_get_reparmatch ($$) {
 #
 # Apply the generator now, second variant
 # TODO match with other variant
-# 
+#
 # Input:
 #		r_gen -> key to macro definition
 #		ky	  -> conndb or hierdb (depends on namespace)
@@ -2633,13 +2689,13 @@ sub _mix_p_dogen2 ($$$$$$$$) {
 	my $cg		= shift;
 	my $i		= shift;
 	my $func	= shift;
-	
+
 	my %in = (); # Hold input fields ....
-	
+
 	# if ( $splice ) {
 	# 	$mres->{'s'} = $splice;
 	# }
-	
+
 	for my $iii ( keys( %{$r_cg->{'field'}} ) ) {
 		# my $f = mix_p_genexp( $r_hg->{$cg}{'field'}{$iii}, $ky->{$i} );
 		my $f = $r_cg->{'field'}{$iii};
@@ -2656,7 +2712,7 @@ sub _mix_p_dogen2 ($$$$$$$$) {
 
 				$f =~ s/\$(\d+)/$mres->{$1}/g; # replace $N by $mres{'N'}
 				$f =~ s/\$$rv/$mres->{$rv}/g;    # Replace the run variable by it's value
-				$f =~ s/\$s/$splice/g if ( $splice ne '' );		
+				$f =~ s/\$s/$splice/g if ( $splice ne '' );
 		}
 		my $e = '$in{\'' . $iii . '\'} = "' . $f .'"';
 		unless ( eval $e ) {
@@ -2672,7 +2728,7 @@ sub _mix_p_dogen2 ($$$$$$$$) {
 
 #
 # Apply the generator now:
-# 
+#
 # Input:
 #		r_gen -> key to macro definition
 #		ky	  -> conndb or hierdb (depends on namespace)
@@ -2695,7 +2751,7 @@ sub _mix_p_dogen ($$$$$$) {
 	my $cg		= shift;
 	my $i		= shift;
 	my $func	= shift;
-	
+
 	my %in = ();
 
 	for my $ii ( keys %{$r_gen->{'field'}} ) {
@@ -2703,13 +2759,13 @@ sub _mix_p_dogen ($$$$$$) {
 		if ( defined( $r_gen->{'field'}{$ii} ) and
 			$r_gen->{'field'}{$ii} ne "" ) {
 			# my $f = mix_p_genexp( $r_hg->{$cg}{'field'}{$ii}, $ky->{$i} );
- 
+
 			my $f = $r_gen->{'field'}{$ii};
 			my $e = "\$in{'$ii'} = \"" . $f . "\"";
 			if ( $splice ne '' ) { # If $splice is set -> set $s in eval!
 				$e = '$s = ' . $splice . ';' . $e;
 			}
-			if ( $ii eq "::gen" ) { # Mask \ 
+			if ( $ii eq "::gen" ) { # Mask \
 				$e =~ s/\\/\\\\/g;
 			}
 			unless( eval $e ) {
@@ -2736,10 +2792,10 @@ sub _mix_p_dogen ($$$$$$) {
 	# We add another instance or connection,
 	# based on the ::gen field matching
 	&$func( %in );
-	
+
 } # End of _mix_p_dogen
 
-#               
+#
 # Get wdith for signals to iterate over (in case CONN:SPLICE is set)
 # Input:
 #	$signal	name from $ky namespace
@@ -2755,25 +2811,25 @@ sub _mix_p_getsplicerange ($$$) {
 	my $ky	 = shift; # Current search namespace
 
 	my @splice_range = ();
-		                
+
 	if ( $r_cg->{'ns'} =~ m/:splice/ ) {
     	# If ::high and ::low are defined -> range goes from ::low to ::high
         my $high = _mix_p_get_digits( '::high', $ky->{$name} );
         my $low  = _mix_p_get_digits( '::low', $ky->{$name} );
-                    	
+
         # Otherwise take macro defined range
         if ( $high eq '' ) {
         	$high = _mix_p_get_digits( '::high', $r_cg->{'fields'} );
-        }	
+        }
         if ( $low eq '' ) {
         	$low = _mix_p_get_digits( '::low', $r_cg->{'fields'} );
         }
-                   	
+
         # Take the current lines bounds:
         # my $expandit = $r_cg->{'fields'}{'::name'};
         # expand $x in $name
         # TODO ???
-                            	
+
         if ( $high ne '' and $low ne '' ) {
         	if ( $high >= $low ) {
         		@splice_range = $low..$high;
@@ -2797,7 +2853,7 @@ sub _mix_p_get_digits {
 	if ( exists( $ref->{$name} ) and $ref->{$name} =~ m/^(\d+)/ ) {
 		$d = $1;
 	}
-	return $d;  	
+	return $d;
 }
 #
 # Expand available fields to real values
@@ -2896,7 +2952,7 @@ sub get_top_cell () {
     my @tops = ();
 	my @etops = ();
     my $topname = $eh->get( 'top' ); # By default $topname is %TOP%
-    
+
     if ( exists( $hierdb{$topname} ) ) {
     	if ( $topname eq '%TOP%' ) {
     	# Default is %TOP% -> take daughter or daughter(s) of TESTBENCH
@@ -2937,7 +2993,7 @@ sub get_top_cell () {
     		}
     	}
     }
-    
+
     if ( scalar( @etops ) < 1 ) { # Did not find testbench ...
         $logger->error( '__E_GET_TOP', "\tCould not identify toplevel aka. " .
         	$topname );
@@ -2948,7 +3004,7 @@ sub get_top_cell () {
 
 ####################################################################
 ## add_portsig
-## 
+##
 ####################################################################
 
 =head2
@@ -2962,7 +3018,7 @@ the common subtree.
 #
 # Add conections and ports if needed (hierachy traversal)
 # Add connections to TOPLEVEL for connections without ::in or ::out
-# Replace OPEN and %OPEN% 
+# Replace OPEN and %OPEN%
 #
 
 Algorithm: Start with all leaf instances:
@@ -2978,7 +3034,7 @@ Will remember the top cell for each signal in $conndb{$signal}{'::topinst'}
 
 Side effects:
 	Store connectivity information in hierdb{X}{::sigbits}
-	
+
 =cut
 
 sub add_portsig () {
@@ -2997,7 +3053,7 @@ sub add_portsig () {
         # Constant and Generics will not extend port map!
         #
         my $mode = $conndb{$signal}{'::mode'};
-        
+
         # add %LOW%, %HIGH%, ... to ::sigbits ..., will be reused by MixReport later on
 		#!wig 20060406: get info for ::sigbits ....
         if ( $signal =~ m/^\s*%(HIGH|LOW|OPEN)/o ) {
@@ -3131,7 +3187,7 @@ sub add_portsig () {
                                 	# $t -> what parent has
                                 	# $lb -> what current has
                                 	#!wig20060413: check if $lb is somwhow contained in $t
-                                	#  e.g. if $t is A:::x and $lb has some bits 
+                                	#  e.g. if $t is A:::x and $lb has some bits
                                 	#	added brackets around [$t] and [$lb]
                                     push( @addup, [ $signal, $name, $l, $modes{$l}, [ $t ], [ $lb ] ] );
                                 } elsif ( $m eq 'o' and $t !~ m,A::, and $t ne $lb ) {
@@ -3139,7 +3195,7 @@ sub add_portsig () {
                                 	# $t -> what parent has
                                 	# $lb -> what current has
                                 	#!wig20060413: check if $lb is somwhow contained in $t
-                                	#  e.g. if $t is A:::x and $lb has some bits 
+                                	#  e.g. if $t is A:::x and $lb has some bits
                                 	#	added brackets around [$t] and [$lb]
                                     push( @addup, [ $signal, $name, $l, $modes{$l}, [ $t ], [ $lb ] ] );
                                 }
@@ -3335,7 +3391,7 @@ sub bits_at_inst ($$$) {
 #  no overlay (?)
 # 20060406: function needs more testing!!
 #
-#!wig20060406 
+#!wig20060406
 sub bits_at_inst_hl ($$$) {
     my $signal = shift;
     my $inst = shift;
@@ -3514,7 +3570,7 @@ sub add_port ($$) {
     my %length = ();
     for my $r ( 0 .. scalar(@adds)-1 ) {
         my $l = length( $hierdb{$adds[$r][1]}{'::treeobj'}->address );
-        push( @{$length{$l}}, $r ); 
+        push( @{$length{$l}}, $r );
         # $adds[$r][5] = length( $hierdb{$adds[$r][1]}{'::treeobj'}->address );
     }
     my @order = ();
@@ -3578,7 +3634,7 @@ sub add_port ($$) {
         my @anc = $hierdb{$inst}{'::treeobj'}->ancestors;
         my %non_desc = ();
 
-        map( { $non_desc{$_} = 1; } keys( %$r_connected ) ); #All instances connected 
+        map( { $non_desc{$_} = 1; } keys( %$r_connected ) ); #All instances connected
         for my $d ( @desc ) {
             # Delete all our descendants from the list
             delete( $non_desc{$d->name} );
@@ -3869,7 +3925,7 @@ sub _add_port ($$$$$$$$) {
     if ( not $tw and $simple  ) {
         # I guess this is the most likely case
         # Full signal connect needed (either bus or single bit)
-        # 
+        #
         my $sf = $conndb{$signal}{'::high'};
         my $st = $conndb{$signal}{'::low'};
         unless ( defined $sf ) { $sf = ""; };
@@ -3995,7 +4051,7 @@ sub _add_port ($$$$$$$$) {
                 #             int: o, ext: i      -> create out port
                 #             int: io, ext: i      -> create out port
                 #             int: io, ext: -     -> no port
-                #             int: io, ext: (i)o    -> kind of error, create an out port 
+                #             int: io, ext: (i)o    -> kind of error, create an out port
                 #                                       is an error anyway?
                 my $start = "";
                 my @p = ();
@@ -4016,7 +4072,7 @@ sub _add_port ($$$$$$$$) {
                         if ( substr( $uw->{'o'}, $b, 1 ) ) {
                             $p[$bc] = "i"; # In port
                         } elsif ( substr( $uw->{'i'}, $b, 1 ) ) {
-                            $p[$bc] = "iwd"; # Warning, missing driver! Possibly check ::mode  
+                            $p[$bc] = "iwd"; # Warning, missing driver! Possibly check ::mode
                         } else {
                             $p[$bc] = "0"; # Not connected
                         }
@@ -4210,7 +4266,7 @@ sub generate_port ($$$$$$) {
         if ( $t eq "0" or $t eq "" or $t !~ m,^\d+$, ) {
             $t{'port_f'} = $f;
         } else {
-            $logger->warn( '__W_GENERATE_PORT', "\tNeed to create port, but cannot calculate width: $f .. $t for instance $inst/$t{port}!" );            
+            $logger->warn( '__W_GENERATE_PORT', "\tNeed to create port, but cannot calculate width: $f .. $t for instance $inst/$t{port}!" );
             $t{'port_f'} = "$f - $t"; # Try a simple " FROM - TO ";
         }
     }
@@ -4289,7 +4345,7 @@ sub check_b_vec ($$$) {
             $logger->warn( '__W_CHECK_B_VEC', "\tBad value in bit vector $i: $r->{$i}" );
         } elsif ( length( $r->{$i} ) - 3 != $max - $min + 1 ) {
             $logger->warn( '__W_CHECK_B_VEC', "\tBad length of bit vector $i: $r->{$i}" );
-            substr( $r->{$i} , 3, 0 ) = "0" x ( $max - $min + 1 - length( $r->{$i} ) + 3 ) 
+            substr( $r->{$i} , 3, 0 ) = "0" x ( $max - $min + 1 - length( $r->{$i} ) + 3 )
         }
     }
 }
@@ -4333,7 +4389,7 @@ sub my_common (@) {
 		$logger->error('__E_DUPLICATE_TREEROOT', "\tFound $is_root root hierachy nodes" );
 		return undef();
 	}
- 
+
 	# If we have the root in here -> return immediately
 	# Otherwise common( @nodes ) has problems!
 	if ( $root->address eq '0' ) {
@@ -4396,7 +4452,7 @@ sub parse_mac () {
 }
 
 =head2
- 
+
 _parse_mac ($)
 
 get reference to hash{hash}... and do the macro parsing
@@ -4451,7 +4507,7 @@ sub __parse_inout ($$) {
 #  1. text to scan through
 #  2. hash array reference (to e.g. add comments)
 #  Will modify contents of first argument directely
-# 
+#
 #!wig20050712: add exceptions for the logic keywords
 #!wig20051011: adding 'postfix' replacements!
 #		see also mix_expand_name (which does early name expansion)
@@ -4485,7 +4541,7 @@ sub __parse_mac ($$) {
         		( ( $2 ) ? $2 : '' ) . '%';
         	$hln = $3; # Forward number to replacer below
         }
-        
+
         # O.K., ignore TYPECAST and TICK_DEFINE_ dummy generated modules ...
         if ( $mac =~ m/^%(TYPECAST_|TICK_DEFINE_)/o ) {
             return;
@@ -4496,7 +4552,7 @@ sub __parse_mac ($$) {
                 my $r = $rb->{$1};
                 $$ra =~ s/%[\w:]+?%/$r/;
             } else {
-            	# Skip some 
+            	# Skip some
                 $logger->warn( '__W_PARSE_MAC__', "\tCannot find macro $1 to replace!");
             }
         } elsif( exists( $ehmacs->{$mackey} ) ) {
@@ -4544,10 +4600,13 @@ sub purge_relicts () {
 
 	# No connection defined here:
 	if ( scalar( keys( %conndb ) ) <= 0 ) {
-		$logger->error( '__E_CONN_EMPTY', "\tNo connections defined here!" );
+		#!wig20071001: if conn.req is set to "mandatory" report this
+		if ( $eh->get('conn.req') =~ m/\bmandatory/io ) {
+			$logger->error( '__E_CONN_EMPTY', "\tNo connections defined here!" );
+		}
 		return;
 	}
-	
+
     #
     # If ::high and ::low is defined, extend ::in and ::out definitions
     #
@@ -4561,7 +4620,7 @@ sub purge_relicts () {
 
         #!wig20050113: next if ( $i =~ m,%OPEN(_\d+)?%, ); # Ignore the %OPEN% pseudo-signal
 
-		# Remove empty entries (s.times we have an empty array!	
+		# Remove empty entries (s.times we have an empty array!
         if ( $conndb{$i}{'::high'} ne '' or $conndb{$i}{'::low'} ne '' ) {
             my $h = $conndb{$i}{'::high'};
             my $l = $conndb{$i}{'::low'};
@@ -4612,7 +4671,7 @@ sub purge_relicts () {
                 }
             }
         }
-        
+
     	# uniquify signals
         my $rsa = $conndb{$i}; #Reference
         $rsa->{'::out'} = _scan_inout( $rsa->{'::out'} );
@@ -4644,13 +4703,13 @@ sub purge_relicts () {
     #
     # Check for VHDL/Verilog/... keywords in instance and port names ...
     #
-    for my $i ( keys( %conndb ) ) {   
+    for my $i ( keys( %conndb ) ) {
             _check_keywords( $i, $conndb{$i}{'::in'} );
             _check_keywords( $i, $conndb{$i}{'::out'} );
     }
 
     # Last iteration:
-    for my $i ( keys( %conndb ) ) {   
+    for my $i ( keys( %conndb ) ) {
         # fix borders for constant definitions with %BUS% references ...
         if ( scalar( @{$conndb{$i}{'::in'}} ) and
         		exists( $conndb{$i}{'::in'}[0]{'inst'} ) and
@@ -4683,7 +4742,7 @@ sub _check_keywords ($$) {
     # We will do our best to find open/%::name% (as this is likely to happen)
     #
     my $ehkw = $eh->get( 'check.keywords' );
-    for my $l ( keys( %$ehkw ) ) {    
+    for my $l ( keys( %$ehkw ) ) {
         for my $i ( @$ior ) {
             for my $ii ( qw( inst port ) ) {
             	#!wig20050713: Found ports defined without "inst" and "port"!
@@ -4709,7 +4768,7 @@ sub _extend_inout ($$$) {
     my $h = shift;
     my $l = shift;
     my $ref = shift;
-		
+
 	# remove empty hashes:
     for my $i ( @{$ref} ) {
     	next if ( scalar( keys ( %$i ) ) == 0 ); # Skip empty hashes
@@ -4757,7 +4816,7 @@ sub _scan_inout ($) {
 
         for my $iii ( 0..$#{$rsa} ) {
             # Remove empty ::in/::out ...
-            if ( scalar( keys %{$rsa->[$iii]} ) > 0 ) { 
+            if ( scalar( keys %{$rsa->[$iii]} ) > 0 ) {
                 unless( exists( $rsa->[$iii]{'rvalue'} ) ) {
                     if ( exists( $rsa->[$iii]{'inst'} ) ) {
                         $rsa->[$iii]{'inst'} = mix_check_case( 'inst', $rsa->[$iii]{'inst'} );
@@ -4784,12 +4843,12 @@ sub _scan_inout ($) {
 
 #
 # See if certain parts of a signal/port can be combined into one description
-# 
+#
 sub _mix_p_unsplice_inout ($) {
 	my $rsa = shift; # array ref with ::in or ::out
 
 	return $rsa unless( scalar @$rsa  > 1 );
-	
+
 	my @io = @$rsa; # Make a copy here
 
 	my %h  = ();
@@ -4823,7 +4882,7 @@ sub _mix_p_unsplice_inout ($) {
 					$i->{'inst'} . "/" . $i->{'port'} . "!" );
 				$h2{$i->{'inst'}}{$i->{'port'}} = 1; # Not combinable ...
 				push( @ho, $i );
-			} else { 
+			} else {
 				# Remember this ports index number ...
 				push( @{$hi{$i->{'inst'}}{$i->{'port'}}}, $n );
 			}
@@ -4848,7 +4907,7 @@ sub _mix_p_unsplice_inout ($) {
 			}
 		}
 	}
-	
+
 	#TODO: rebuild to_merge structure, but based on the left-over in the
 	#  %hi index -> h2;
 
@@ -4862,23 +4921,23 @@ sub _mix_p_unsplice_inout ($) {
 				}
 				# Try combine for all ports left in %hi
 				#   results go to @ho
-				push( @ho, _mix_p_try_merge( \@h )) ;				
+				push( @ho, _mix_p_try_merge( \@h )) ;
 			} else {
 				push( @ho, $io[$hi{$k}{$kk}[0]] );
 			}
 		}
 	}
 
-	return \@ho; # Return a reworked array reference		
+	return \@ho; # Return a reworked array reference
 }
 
 #
 # Check if some port descriptions are mergeable
 # use digits as tokens
-#!wig20050428						
+#!wig20050428
 sub _mix_p_try_merge ($) {
 	my $r = shift;
-	
+
 	my %s = ();
 	my %smax = ();
 	my @out = ();
@@ -4895,7 +4954,7 @@ sub _mix_p_try_merge ($) {
 		# Width of tokens is defined by number of slots;
 		my $ntokens = scalar( @{$s{$d}} );
 		my $tokwid = length( $ntokens );
-		my $map = " " x ( $smax{$d} * $tokwid ); 
+		my $map = " " x ( $smax{$d} * $tokwid );
 		# fill string with the tokens
 		my $n = 0;
 		for my $c ( @{$s{$d}} ) {
@@ -4908,8 +4967,8 @@ sub _mix_p_try_merge ($) {
 			# but: check if token position is already set (wig says: not needed!!)
 			for my $it ( $lpos..$upos ) {
 				if ( substr( $map, $it * $tokwid, $tokwid ) =~ m/^\s+$/io ) {
-					substr( $map, $it * $tokwid, $tokwid ) = $token;	
-				} 
+					substr( $map, $it * $tokwid, $tokwid ) = $token;
+				}
 				# else: Already set? Conflict or just a duplicate definition:
 				# Skip it! port/signal have same offset!
 				#	my $prev = substr( $map, $it, $tokwid );
@@ -4930,10 +4989,10 @@ sub _mix_p_try_merge ($) {
 			$pout{'port_f'} = $pout{'port_t'} + $partwidth - 1;
 			$pout{'sig_f'}  = $pout{'sig_t'} + $partwidth - 1;
 			push( @out, \%pout );
-		}				
+		}
 	}
 	#TODO: check for overlapping port connections
-	
+
 	return( @out ); # Ref to unspliced ports description
 }
 
@@ -5102,7 +5161,7 @@ sub _mix_parser_parsehdl ($) {
     # my $r_h = shift;
     # my $r_c = shift;
 
-    # Open ... 
+    # Open ...
     my $fh = new IO::File;
     unless( $fh->open($file) ) {
 		$logger->error( '__E_PARSEHDL', "\tCannot open import file $file: $!" );
@@ -5139,7 +5198,7 @@ sub _mix_parser_parsehdl ($) {
 	   		}
 
 	    	if ( $body =~  m,^\s*generic\s*($RE{balanced}{-parens=>'()'});,im ) {
-        	# Got generic 
+        	# Got generic
 				my $generic = $1;
 
             	# NO_DEFAULT	: string; -- __W_NODEFAULT
@@ -5199,13 +5258,13 @@ sub _mix_parser_parsehdl ($) {
 	    	# line begins with \s*port( .... ) ..
 	    	if ( $body =~ m,^\s*port\s*($RE{balanced}{-parens=>'()'});,im ) {
                 my $ports = $1;
-                
+
                 # alarm_time_ms_min	: in	std_ulogic_vector(3 downto 0);
                 # clk	: in	std_ulogic;
-                
+
                 $ports =~ s/^\s*\(//;
                 $ports =~ s/\s*\)$//;
-                
+
                 while( $ports =~ s/^\s*(\w+)\s*:\s*(\w+)\s*(\w+)\s*
                                (\(\s*(\d+)(\s+(down)?to\s+(\d+))?\s*\)\s*)?   # Optional (N downto M)
                                ;                                                   # ; or end of line
@@ -5220,7 +5279,7 @@ sub _mix_parser_parsehdl ($) {
                     # $7 = down | <empty>
                     # $8 = M
                     # $9 = comment
-                    #TODO: check if M <= N for 
+                    #TODO: check if M <= N for
                     # push( @ports, [ $1, $2, $3, $5, $8, $9 ] );
 		    		my $mode = $2;
                     my $col = "::in";
@@ -5256,16 +5315,16 @@ sub _mix_parser_parsehdl ($) {
 		    		}
 		    		if ( $eh->get( 'import.generate' ) =~ m/\bstripio\b/io ) {
 		    			$d{'::name'} =~ s/_(i|o|io)$//i;
-		    		}		    		
+		    		}
 		    		add_conn( %d );
 		    		# printf ( "#### Found port in instance $inst:\n" );
-		    		# printf ( "\t%s %s\n" x scalar( keys( %d ) ), %d ); 
+		    		# printf ( "\t%s %s\n" x scalar( keys( %d ) ), %d );
                 }
                 # catch last signal
                 if( $ports =~ m/\n\s*(\w+)\s*:\s*(\w+)\s*(\w+)
                             	(\(\s*(\d+)(\s+(down)?to\s+(\d+))?[ \t]*\)\s*)?   # Optional (N downto M)
 								([ \t]*--.*)?/ixm ) {
-		    		#TODO: check if M <= N for 
+		    		#TODO: check if M <= N for
 		    		my $mode = $2;
                     my $col = "::in";
 		    		my %d = ( '::name' => $1,
@@ -5389,10 +5448,10 @@ endmodule
 
 
 =cut
-		 
+
 sub _mix_parser_parseverilog ($) {
 	my $hdl = shift;
-	
+
 	# Look for all modules ....
 	while( $hdl =~ m,module \s+ (\w+) \s+ \((.*?)\); (.*?) \s+ endmodule\s+\1,ximsg ) {
 	    	# Has entity body ...
@@ -5419,7 +5478,7 @@ sub _mix_parser_parseverilog ($) {
 	   		}
 
 	    	if ( $body =~  m,^\s*generic\s*($RE{balanced}{-parens=>'()'});,im ) {
-        	# Got generic 
+        	# Got generic
 				my $generic = $1;
 
             	# NO_DEFAULT	: string; -- __W_NODEFAULT
@@ -5473,13 +5532,13 @@ sub _mix_parser_parseverilog ($) {
 	    	# line begins with \s*port( .... ) ..
 	    	if ( $body =~ m,^\s*port\s*($RE{balanced}{-parens=>'()'});,im ) {
                 my $ports = $1;
-                
+
                 # alarm_time_ms_min	: in	std_ulogic_vector(3 downto 0);
                 # clk	: in	std_ulogic;
-                
+
                 $ports =~ s/^\s*\(//;
                 $ports =~ s/\s*\)$//;
-                
+
                 while( $ports =~ s/^\s*(\w+)\s*:\s*(\w+)\s*(\w+)\s*
                                (\(\s*(\d+)(\s+(down)?to\s+(\d+))?\s*\))?   # Optional (N downto M)
                                ;                                                   # ; or end of line
@@ -5494,7 +5553,7 @@ sub _mix_parser_parseverilog ($) {
                     # $7 = down | <empty>
                     # $8 = M
                     # $9 = comment
-                    #TODO: check if M <= N for 
+                    #TODO: check if M <= N for
                     # push( @ports, [ $1, $2, $3, $5, $8, $9 ] );
 		    		my $mode = $2;
                     my $col = "::in";
@@ -5528,16 +5587,16 @@ sub _mix_parser_parseverilog ($) {
 		    		}
 		    		if ( $eh->get( 'import.generate' ) =~ m/\bstripio\b/io ) {
 		    			$d{'::name'} =~ s/_(i|o|io)$//i;
-		    		}		    		
+		    		}
 		    		add_conn( %d );
 		    		# printf ( "#### Found port in instance $inst:\n" );
-		    		# printf ( "\t%s %s\n" x scalar( keys( %d ) ), %d ); 
+		    		# printf ( "\t%s %s\n" x scalar( keys( %d ) ), %d );
                 }
                 # catch last signal
                 if( $ports =~ m/\n\s*(\w+)\s*:\s*(\w+)\s*(\w+)
                             	(\(\s*(\d+)(\s+(down)?to\s+(\d+))?[ \t]*\))?   # Optional (N downto M)
 								([ \t]*--.*)?/ixm ) {
-		    		#TODO: check if M <= N for 
+		    		#TODO: check if M <= N for
 		    		my $mode = $2;
                     my $col = "::in";
 		    		my %d = ( '::name' => $1,

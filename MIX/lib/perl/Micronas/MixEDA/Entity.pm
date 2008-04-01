@@ -15,11 +15,11 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Entity.pm,v $                                      |
-# | Revision:   $Revision: 1.4 $                                          |
+# | Revision:   $Revision: 1.5 $                                          |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/15 09:54:28 $                              |
+# | Date:       $Date: 2008/04/01 12:48:33 $                              |
 # | Description: Contains data structure and methods/functions for Entities |
-# |                                                                       | 
+# |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -28,6 +28,10 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Entity.pm,v $
+# | Revision 1.5  2008/04/01 12:48:33  wig
+# | Added: optimizeportassign feature to avoid extra assign commands
+# | added protoype for collapse_conn function allowing to merge signals
+# |
 # | Revision 1.4  2006/11/15 09:54:28  wig
 # | Added ImportVerilogInclude module: read defines and replace in input data.
 # |
@@ -67,9 +71,9 @@ use FileHandle;
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Entity.pm,v 1.4 2006/11/15 09:54:28 wig Exp $';#'  
+my $thisid          =      '$Id: Entity.pm,v 1.5 2008/04/01 12:48:33 wig Exp $';#'
 my $thisrcsfile	    =      '$RCSfile: Entity.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.4 $'; #'  
+my $thisrevision    =      '$Revision: 1.5 $'; #'
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -91,10 +95,10 @@ sub new {
 		'name'	=>	'',	# Name of this entity
 		'lang'	=>  '', # Language like VHDL, Verilog, ...
 		'port'	=> {},	# Ports list (hash -> port objects)
-		'port_cache' => '', # Cache for port map 
-		'gen_cache'	=> '',	# Cache for generic map 
+		'port_cache' => '', # Cache for port map
+		'gen_cache'	=> '',	# Cache for generic map
 	};
-	
+
 	# init data members w/ parameters from constructor call
 	foreach (keys %params) {
 		$ref_member->{$_} = $params{$_};
@@ -133,7 +137,7 @@ sub new {
 		'name'	=>	'', # Port name
 		'type'	=>	'',	# Port type
 		'mode'	=>  '', # Port mode (std_ulogic)
-		'high'	=>	'',	# High bound for vectors 
+		'high'	=>	'',	# High bound for vectors
 		'low'	=>	'', # Low bound for vectors
 		'cast'	=>	'', # Typecast
 		'rorw'	=>	'', # Register or wire (usefull for Verilog)
@@ -141,7 +145,7 @@ sub new {
 		'__nr__' =>	'', # Number for sorting
 		'__gen__' => '', # Flag for generated ports
 	};
-	
+
 	# init data members w/ parameters from constructor call
 	foreach (keys %params) {
 		$ref_member->{$_} = $params{$_};
@@ -151,7 +155,7 @@ sub new {
 };
 
 #
-# Print width
+# Return width
 #	N -> if high/low are digits
 # 	1 -> single bits
 #	F	 -> if low is 0 and high is 'F-1'
@@ -206,7 +210,7 @@ sub new {
 	my $ref_member = new Micronas::MixEDA::Entity::Port; # TODO : SUPER
 	# Add value!
 	$ref_member->{'value'} = '';
-	
+
 	# init data members w/ parameters from constructor call
 	foreach (keys %params) {
 		$ref_member->{$_} = $params{$_};
@@ -281,8 +285,8 @@ InOut::
 	->convert
 	->write
 	->dump
-		
-Instance::  extended class of TreeObject	
+
+Instance::  extended class of TreeObject
 	->new
 	->add
 	->parent

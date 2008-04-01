@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.53 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2007/12/14 12:00:26 $                              |
+# | Revision:   $Revision: 1.54 $                                         |
+# | Author:     $Author: wig $                                            |
+# | Date:       $Date: 2008/04/01 12:48:34 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,10 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.54  2008/04/01 12:48:34  wig
+# | Added: optimizeportassign feature to avoid extra assign commands
+# | added protoype for collapse_conn function allowing to merge signals
+# |
 # | Revision 1.53  2007/12/14 12:00:26  lutscher
 # | added reg_shell.workaround parameter
 # |
@@ -142,9 +146,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.53 2007/12/14 12:00:26 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.54 2008/04/01 12:48:34 wig Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.53 $';  
+my $thisrevision    =      '$Revision: 1.54 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -616,7 +620,9 @@ sub init ($) {
             							# select=high, select=low, select=open (default for select signal)
             },
 	      	'workaround' => {
-            	'verilog' => 'dummyopen', # dummyopen := create a dummy signal for open port splices 
+            	'verilog' => 'dummyopen,optimizeassignport',
+            		# dummyopen := create a dummy signal for open port splices 
+            		# optimizeassignport := if possible, use port name instead of signale name (rfe20080323)
                     ,
                 'magma' => 'useasmodulename_define', # If the %UAMN% tag is used, use defines!
                 '_magma_def_' =>

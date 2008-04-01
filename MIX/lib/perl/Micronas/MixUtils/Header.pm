@@ -15,17 +15,17 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Header.pm,v $                                   |
-# | Revision:   $Revision: 1.1 $                                         |
+# | Revision:   $Revision: 1.2 $                                         |
 # | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/09/17 12:40:13 $                              |
-# |                                                                       | 
+# | Date:       $Date: 2008/04/01 12:48:34 $                              |
+# |                                                                       |
 # | Library dealing with the ::MIX style header lines in sheets           |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
 # |
 # | Changes:
-# | $Log: 
+# | $Log:
 # |
 # +-----------------------------------------------------------------------+
 package  Micronas::MixUtils::Header;
@@ -52,9 +52,9 @@ my $logger = get_logger('MIX::MixUtils::Header');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Header.pm,v 1.1 2007/09/17 12:40:13 wig Exp $'; 
+my $thisid          =      '$Id: Header.pm,v 1.2 2008/04/01 12:48:34 wig Exp $';
 my $thisrcsfile	    =      '$RCSfile: Header.pm,v $';
-my $thisrevision    =      '$Revision: 1.1 $';  
+my $thisrevision    =      '$Revision: 1.2 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -65,9 +65,11 @@ $thisrevision =~ s,^\$,,go;
 
 package for MIX/Registermaster Header handling
 
-One MIX header object per opened and written script
-these objects share one format for each type of sheet
+One MIX header object per opened or written sheet
+
+These objects share one format for each type of sheet
 (e.g. CONN, HIER, JOIN, DEFAULT, ...)
+
 The format description links to the $eh->get('<TYPE>.<.*>) data
 structure.
 
@@ -75,15 +77,20 @@ public functions:
 	->is_inherit()  1/0
 	->is_multiple() 1/0
 	->is_required() 1/0
-	->get_default() -> return default value
-	->print_order
-	
+	->get_default('::col') -> return default value
+	->print_order   -> get print_order
+	->convertin()	-> get array and return MIX internal datastructure
+	->convertout()  -> convert internal to array of array.  The hash keys
+				go to the first array line as mix header line (::col,::col2,...)
+
 	->add('::col', <PROP>)
 		add a column
 		<PROP> is either a string containing keys, a hashref ...
 			keys: [no]inherit,[no]multiple,[no]required,default=text
 			hashref inherit =>
+
 	->delete('::col')
+
 	->sorted(<KEY>)
 		return order of columns when sorted by KEY
  		Possible sort orders: built-in,input,alpha
@@ -105,7 +112,7 @@ sub new {
 	}
 	# data member default values
 	my $ref_member  = {};
-	
+
 	# init data members w/ parameters from constructor call
 	foreach (keys %params) {
 		$ref_member->{$_} = $params{$_};
