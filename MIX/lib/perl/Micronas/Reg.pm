@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.42 2008/04/01 09:20:13 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.43 2008/04/01 13:01:24 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.43  2008/04/01 13:01:24  lutscher
+#  changed info to error
+#
 #  Revision 1.42  2008/04/01 09:20:13  lutscher
 #  changed generate_view() to use dispatch-table
 #
@@ -149,7 +152,7 @@ sub parse_register_master($) {
         };
         return $o_space;
     } else {
-		$logger->info('__I_REG_INIT', "\tRegister-master file empty or specified sheet \'" .
+		$logger->error('__E_REG_INIT', "\tRegister-master file empty or specified sheet \'" .
                       $eh->get('i2c.xls') . "\' in file not found");
 	};
 	return undef;
@@ -159,7 +162,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.42 $ ';  #'
+our($VERSION) = '$Revision: 1.43 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
