@@ -2,7 +2,7 @@
 # Issue List
 #
 # $RCSfil$
-# $Id: TODO.txt,v 1.71 2007/09/04 07:33:22 wig Exp $
+# $Id: TODO.txt,v 1.72 2008/04/01 12:54:07 wig Exp $
 #
 Major: IO sheet processing!!
 
@@ -28,6 +28,40 @@ Hint: Use "recode pc..lat1 *.vhd" for easy and fast DOS2UNIX converter
 
 TODOs:
 
+>>title: MIX/Bug20070906a: do not complain if CONN is not used
+
+since newer versions of MIX can produce usefull output even without
+a conn sheet:
+
+Hallo Torsten,
+
+die naechste Release von MixParser.pm wird die Warnung nur ausgeben, wenn
+der Parameter conn.req den Wert "mandatory" enthaelt (ist default).
+D.h. in einem Fall solltest Du also per MIXCFG das umsetzen auf "optional".
+
+--------------------------------------------------------------------------------
+From: Lutscher Thorsten
+Sent: 06 September 2007 16:47
+To: G‰nsheimer Wilfried
+Subject: mix error
+
+
+Hi Willi,
+
+der Fehler __E_CONN_EMPTY kommt immer, wenn mix zum Generieren von anderen als HDL files benutze - kann man das irgendwie abstellen ? Z.B. als Warning ausgeben, oder per Schalter oder so ? Oder nur Error erzeugen, wenn auch instances erzeugt wurden ?
+
+Gruﬂ,
+Thorsten.
+
+Root cause: MixParser::purge_relicts checks the number of defined signals.
+
+	Req: lutscher
+	Status: done20071001
+	Testcase: untested
+	Prio: low
+
+#!wig20071001
+
 >>title: 20070220a/RFE: allow udc at component instantiations
 
 ::udc                       ::inst
@@ -52,7 +86,7 @@ test_i test (
 	Prio: medium
 	Status: done 20070306
 	Testcase: udc/instant
-	
+
 >>title: 20070113a/RFE: detect verilog parameters , accept also non-integer digits / FW: xtal-pin-list.xls
 
 in MixWriter.pm:
@@ -62,12 +96,12 @@ in MixWriter.pm:
                     (( _mix_wr_isinteger( $inst, $g, $ref->{$g} ) ) ?
                          " $tcom __W_ILLEGAL_PARAM" : '' ) .
                     "\n";
-            } 
+            }
 
 
 now done in Micronas::MixEDA::Base
 	type of parameter is checked and message gets printed if contents is not in allowed format.
- 
+
 Original request:
 From: Oberhoff Frank
 Sent: 13 January 2007 10:05
@@ -90,16 +124,16 @@ Frank
 	Prio: medium
 	Status: done, but needs testcase
 
->>title: 20061230a/RFE: embedded signals in ifdef (verilog)	
+>>title: 20061230a/RFE: embedded signals in ifdef (verilog)
 
 	embedd a signal into 'ifdef 'endif at all occurances
-	
+
 	Req: sluethin
 	Prio: medium to low
 	Status: open
-	
+
 >>title: 20061127b/Bug: Splitting of busses on the formal port doesn't work
-MIX Port-Slices assignen (war VCTH [Issue 5562] 
+MIX Port-Slices assignen (war VCTH [Issue 5562]
 New: Splitting of busses on the formal port doesn't work)
 
 MIX creates the following output:
@@ -108,7 +142,7 @@ see bugver2006/20061127b for details
 	Req: krophi
 	Prio: medium
 	Status: not to be fixed
-	
+
 >>title: 20061214a/Bug: Comments, ports, signals and -portlist Re: Mix Trouble
 
 -report portlist with MIXCFG report.portlist.name port
@@ -121,7 +155,7 @@ ich habe das "-report portlist" Problem gefunden und behoben.
 
 Jetzt wird (bei entsprechend gesetzten Configurations) die Kommentare fuer die ports einzeln ausgegeben, die Bitbreite der Ports (und nicht mehr die Breite der angeschlossenen Signale).
 
-Die Sortierreihenfolge der ports ist entweder "alpha"(betisch) oder "input" (wie Inputreihenfolge, ist der default) -> 
+Die Sortierreihenfolge der ports ist entweder "alpha"(betisch) oder "input" (wie Inputreihenfolge, ist der default) ->
 
 MIXCFG report.portlist.sort input
 
@@ -139,11 +173,11 @@ Example provided: VGCH_OPM-pin-list.xls
 	Solution: use port splices to create table lines
 	Byproduct:	portsplice now has counter _nr_, which gets
 		incremented for each port splice read.
-	
+
 	Req: gerstenb, brett
 	Status: solved
 	Testcase: bugver2006/20061214a
-	
+
 >>title: 20060509b/RFE: collect signals to busses
 
 	Go through list of signals and unsplice if they match some perl regular expression.
@@ -167,14 +201,14 @@ Example provided: VGCH_OPM-pin-list.xls
 
 	Read `define definitions from a verilog include file.
 	Replace the defines in the input data.
-	
+
 	Req: oberhoff
 	Prio: high
 	Status: done / started 20061115a: ImportVerilogInclude
 	Testcase: verilog/vinc
 	ModuleTest: not done :-(
-	Assigned: wig	
-		
+	Assigned: wig
+
 >>title: 20061108a/RFE: read in Verilog include files and extend `define as needed
 
 Example:
@@ -193,18 +227,18 @@ Example:
 
 	The mixed sheet does not have the ::out column.
 	(might get overwritten by ::shortname, which is not in input).
-	
+
 	Testcase: bugver2006/20061113a
 	Req: oberhoff
 	Prio: high
 	Status: fixed
-	
+
 >>title: MIX/BUG20061030a: Bad verilog port map for `define values for bus connections
 
 Es sollte so aussehen:
 			.CEQ_i(vstby_flash_if_o_s[`FIFW_CEN]),
 ....
-From: 	Herberg Christian  
+From: 	Herberg Christian
 Sent:	30 October 2006 09:00
 To:	G‰nsheimer Wilfried
 Subject:	Busanschl¸sse mit defines
@@ -247,17 +281,17 @@ body
 ÖÖ.
 
 endmodule
- 
+
 
 Das Beispiel ist aus dem Verilog 2001 Standart Seite 200
 
-Gruss Martin Wendt 
+Gruss Martin Wendt
 
 	Req: Martin Wendt
 	Prio: medium
 	Status: open
 	Testcase:
-	
+
 >>title: MIX/Bug20061017a: MIX Problem with badly defined signal bounds (typo).
 Hallo,
 
@@ -328,13 +362,13 @@ Die ganze Datenstruktur sieht so aus:
 ...
 wir benˆtigen eine wichtige Erweiterung im MIX Tool, die uns bei der VGCH-Verifikation sehr weiterhelfen w¸rde.
 
-In der Bring-Up Phase der Verifikation werden wir nicht in der Lage sein, einen kompletten Datenpfad ¸ber mehrere 
-Module aufzusetzen. Wir m¸ssen uns da herantasten und daf¸r ist es erforderlich, an VGCH internen Schnittstellen 
-Daten einspeisen. Das geht f¸r NCsim ¸ber Forces, nicht aber f¸r Axis, weil das die Performance unakzeptabel 
+In der Bring-Up Phase der Verifikation werden wir nicht in der Lage sein, einen kompletten Datenpfad ¸ber mehrere
+Module aufzusetzen. Wir m¸ssen uns da herantasten und daf¸r ist es erforderlich, an VGCH internen Schnittstellen
+Daten einspeisen. Das geht f¸r NCsim ¸ber Forces, nicht aber f¸r Axis, weil das die Performance unakzeptabel
 reduzieren w¸rde. Und Axis wird unser wichtigstes Vehikel f¸r die Verifikation sein.
-Wir beabsichtigen daher, an DUT internen Interfaces Multiplexer einbauen, die es erlauben entweder den normalen 
+Wir beabsichtigen daher, an DUT internen Interfaces Multiplexer einbauen, die es erlauben entweder den normalen
 Signalpfad zu nutzen oder die externen Stimuli-Daten einzuspeisen.
-Der Einbau der Multiplexer m¸ﬂte automatisiert sein, nur das erlaubt uns einen flexiblen und fehlerfreien Ein- und 
+Der Einbau der Multiplexer m¸ﬂte automatisiert sein, nur das erlaubt uns einen flexiblen und fehlerfreien Ein- und
 auch wieder Ausbau der Multiplexer. MIX bietet sich geradezu an, diese Funktion bereitzustellen.
 
 Daher die Frage an Dich: kˆnnte Willi diese Aufgabe ¸bernehmen?
@@ -375,9 +409,9 @@ Example:
 
 		// Generated Instance Port Map for vgch_fe_i
 		vgch_fe vgch_fe_i (
-                       
+
 		        ...
-			
+
 `ifdef insert_si_mux_fe1
 	                .dvp_af_p_i(vgch_dvp_itue_af_p_mux_s),	// active field (X2) from DVP input
 			.dvp_al_p_i(vgch_dvp_itue_al_p_mux_s),	// active line (X2) from DVP input
@@ -389,7 +423,7 @@ Example:
 			.dvp_v_p_i(vgch_dvp_itue_cr_p_mux_s),	// V from DVP inputchrominance data cr
 			.dvp_vsync_p_i(vgch_dvp_itue_vsync_p_mux_s),	// vsync from DVP inputvertical sync pulse
 			.dvp_y_p_i(vgch_dvp_itue_y_p_mux_s),	// Y from DVP inputluminance data
-                        
+
 `else
 	                .dvp_af_p_i(vgch_dvp_itue_af_p_s),	// active field (X2) from DVP input
 			.dvp_al_p_i(vgch_dvp_itue_al_p_s),	// active line (X2) from DVP input
@@ -403,10 +437,10 @@ Example:
 			.dvp_y_p_i(vgch_dvp_itue_y_p_s),	// Y from DVP inputluminance data
 `endif
 			 ...
-			
+
 		         );
 		// End of Generated Instance Port Map for vgch_fe_i
-		
+
 Spec:
 	- global switch: output.generate.emumux -> Globals.pm
 
@@ -416,7 +450,7 @@ Added to Globals.pm
             	# Alternative way is by using a "::emumux" column
             	# If ::emumux is defined, the values defined there are applied
             	#	if ::emumux is defined, but empty, take the definitions here
-            	#	
+            	#
             	#!wig20060907: currently only implemented for Verilog
             	'modules'	=> '', # Set to regular expression matching modules, setting this activates
             						# the whole thing!
@@ -432,7 +466,7 @@ Added to Globals.pm
 	Prio: high
 	Status: done 20070306 / confirmed by uli 20060800
 	Testcase: verilog/emumux
-	
+
 >>title: 20060904a/RFE: allow to use a define as a signal slice
 
 	was geht in mix:
@@ -453,7 +487,7 @@ test_i/test(3:0) = (`NAME)
 
 in include file:
 	define NAME 23:20
-	
+
 	Req: oberhoff
 	Prio: medium
 	Status: done / started testcase
@@ -465,12 +499,12 @@ in include file:
 		-> extran
 		-> join
 		-> ::<HEAD>
-		
+
 	Prio: medium
 	Req: wig
 	Status: done / started
 	Testcase: -
-	
+
 >>title: 20060706d/RFE: mix -explain __X_TAG
 
 	Print more information about the error tag:
@@ -478,7 +512,7 @@ in include file:
 		- Explaination
 		- Number of occurances
 		- Possible cure
-		
+
 	Req:	wig
 	Prio:	medium
 	Status: open
@@ -486,7 +520,7 @@ in include file:
 >>title: 20060706c/RFE: Extend xls2csv for -variant <VAR> switch
 
 	Select data by -variant
-	
+
 	Req:	poersch
 	Prio:	medium
 	Status:	done (xls2csv release/version 1.13 from 20060720)
@@ -494,9 +528,9 @@ in include file:
 >>title: 20060706b/RFE: Extend xls2csv to allow selection by MIX header
 
 	Allow to read, select and join by ::<HEAD> name
-	
+
 	Spec: -selcol -selnocol ....
-	
+
 	Req:	poersch
 	Prio:	medium
 	Status:	done (xls2csv release/version 1.13 from 20060720)
@@ -572,7 +606,7 @@ www.micronas.com
 	Prio: high
 	Status: done20070306 (how?) open20060706
 	Testcase: bugver2006/20060522a (derived from avfb_hdl code)
-	
+
 >>title: 20060516a/RFE: Allow variable width assignements to %LOWBUS%
 
 Wire port with variable width (parameter xyz) to either high/low:
@@ -601,12 +635,12 @@ Manfred
 	Req: mpit
 	Status: workaround available
 	Prio: high
-	
+
 >>title: 20060224a/RFE: Allow signal to have both Parameter and Numbers as width
 
 	Situaation: Signal from IP needs Parameter as width. Top level has String
 	width.
-	
+
 	Req: tschneid
 	Prio: medium
 	Status: open
@@ -615,14 +649,14 @@ Manfred
 
 	Instead of simply chopping of or splitting cells, use
 		=concatente( .... , .... ) to not hit the 512 byte limit in Excel
-		
+
 	Req: wig
 	Prio: low
 	Status: open
 
 >>title: 20060324a/RFE: add test switches for verilog modules
 
-`ifdef exclude_module_1   // instantiate dummy module 
+`ifdef exclude_module_1   // instantiate dummy module
 	assign sig1_s = 1'b0;
 	....
 	assign sign_s = 1'b0;
@@ -649,7 +683,7 @@ Und dann w‰re da auch noch die bereits diskutierte Sache mit der Zuweisung der P
 	Status: done / first prototyp implemented (does not consider partial connections or
 		multiple connections)
 	Testcase: verilog/verimap
-	 
+
 >>title: 20060315a/Bug: %LOW%, %LOW_BUS% signals are not propagated into portlist
 
 
@@ -660,17 +694,17 @@ Usage of %LOW% and %LOW_BUS% (dito. %HIGH...%) creates false portlists.
 > To: Oberhoff Frank
 > Cc: Kirchenbaur Markus
 > Subject: %LOW%, %HIGH% ,...--> LOW, HIGH
-> 
+>
 > Hallo Frank,
-> 
+>
 >  %LOW%, %HIGH% ,...--> LOW, HIGH
-> 
-> die Anderung muﬂte ich in den MIX listen vom I2C vollziehen, da die 
+>
+> die Anderung muﬂte ich in den MIX listen vom I2C vollziehen, da die
 > mif Generierung sonst scheitert.
-> Bitte um verst‰ndnis. Falls Du die % Zeichen benˆtigst - bitte mit den 
-> Verantwortliche script schreibern f¸r automatic mif generation 
+> Bitte um verst‰ndnis. Falls Du die % Zeichen benˆtigst - bitte mit den
+> Verantwortliche script schreibern f¸r automatic mif generation
 > sprechen.
-> 
+>
 
 Testcase from Frank Oberhoff
 
@@ -681,40 +715,40 @@ Testcase from Frank Oberhoff
 	Owner: wig
 	Testcase: portlist, portlist/low
 	Done: 20060411
-	
+
 >>title: 20060405a/Bug: MIX removes _i from port name
 
-	see test case in 
+	see test case in
 		C:\Documents and Settings\wig\My Documents\work\mix_new\MIX\import\bugver_20060405a
 	problem occurs e.g. with the signal itm_srst_b in the mm_ctrl and mm_phy
 	instance.
-	
+
 	Start it with
 		mix_0.pl mm-pin.xls
-		
+
 	Solution: user had whitespace in port description, which was overseen.
 		To better find such situations an error message will be produced whenever
 		there are characters left over in the port description after matching.
 		Embedded whitespace will be removed.
-		
+
 	Req: poersch
 	Prio: high
 	Status: closed
-	
+
 >>title: 20060405b/RFE: Add %VERILOG_HOOK_PARA% for verilog parameter defs.
 
 	Usage:
-	
+
 	define a ::udc column in your HIER sheet.
 	/%PARA%/ this goes to begin of verilog module
-	
+
 	Additionally defined
 	%VERILOG_HOOK_HEAD% and %VERILOG_HOOK_FOOT%
-	
+
 	Req: poersch
 	Status: done, wig20060405
 	Testcase: udc/verilog
-	
+
 >>title: 20060314a/RFE: reduce verbosity of MIX, filter certain messages
 
 egrep -v "<list>" from mix_0.pl
@@ -730,43 +764,43 @@ egrep -v "<list>" from mix_0.pl
 	does not have a load
 	does not have a driver
 	Leave unloaded port
-	
+
 	Solution Part1: filter messages by tag:
-		
+
 		A. Tag filter:
 		MIXCFG log.limit.re.TAG_RE <count>
 			<count> :=  0 -> do not print
 					  > 0 -> print a maximum of <count> occurences
 					  		print number of suppressed messages
 					  -1  (or na): do not limit.
-		
+
 		These filter are not set by default. If you set limits here,
 		matches will not be counted in the following categories, regardless
 		if the limit is exceeded or not.
-		
+
 		B. Tag default filter:
 		MIXCFG log.limit.tag.<F|E|W|I|D|A> <count>
-		
+
 			is somehow equivilant to log.limit.__<L>.* <count>
 			and used to limit the occurence of a given tag to below
 			<count> times. Default is 100 for all levels.
 			Tags matching this limits will be counted by the level
 			limits until the limit.tag is exceeded.
-			
+
 		C. Level filter:
 		MIXCFG log.limit.level.F|E|W|I|D|A... <count>
-		
-							make sure sum of all tags from given level does not exceed <count> 
+
+							make sure sum of all tags from given level does not exceed <count>
 			A(ll) counts all tags and can be set as a last resort.
 			Every tag from any level will also increase the A count.
-			
+
 		Tags matched under the A. category are not counted.
 		To disable a given level all together, modify mixlog.conf!
-		
+
 		Default: -1 for F and E, 100 for W, 200 for I, 500 for A.
 			D is not limited, because debug messages are not logged
 			anyway.
-		
+
 		D. For testing purposes you can set
 		MIXCFG log.limit.test.TAG_RE  <test_count>
 			All tags matching TAG_RE will be counted. In -delta mode an
@@ -777,7 +811,7 @@ egrep -v "<list>" from mix_0.pl
 		log.limitstdout.<all_of_above>
 		(will not be reported, just a short ...[cut]... will indicate messages have
 		been limited.
-				 
+
 	Req: oberhoff
 	Prio: medium
 	Status: done with Log4Perl module
@@ -795,12 +829,12 @@ The correct expression is 1'b1111 (Verilog expands with 0!!).
 >>title: 20060404c/Bug: extra port created for partially used busses
 
 	Example:
-	
+
 		"i_avfb_top_rs/%::oname%_par_o,
 		 i_rs_i2c_dcs/%::oname%_par_o(3:0)=(3:0)"
-		
+
 	 gives:
-	 
+
 	 		.selclk_mem_par_o(top_rs_selclk_mem_par),
 			.selclk_out1_par_o(top_rs_selclk_out1_par),
 			.selclk_out2_par_o(top_rs_selclk_out2_par),
@@ -820,21 +854,21 @@ The correct expression is 1'b1111 (Verilog expands with 0!!).
 			.sresp_o(top_rs_sresp),
 			.top_rs_selclk_out2_par_3_0_go(top_rs_selclk_out2_par[3:0])
 		);
-	
+
 	Status: done (partially)
 	Testcase: c:avfb_20060404
 	Req: mpit
 	Prio: high
-	 
+
 >>title: 20060404b/RFE: allow to select certain columns/rows from XSL sheets
 
 	extend xls2csv:
-	
+
 		-range A:B,C   select columns (by EXCEL numbering ....)
 		-rrange N:M		select rows
 		-rangere "REG_matching header"
-		
-		
+
+
 	Req: mboos
 	Prio: low
 	Status: done
@@ -847,7 +881,7 @@ addr0
 addr1
 addr2
   -> addr[2:0]
-  
+
 	Req: wig, gay
 	Prio: medium
 	Status: open
@@ -868,11 +902,11 @@ Example: bitsplice
 
 	Seems only to happen for signals, which get constants assigned
 	somewhere.
-	
+
 	Req: wig
 	Prio: medium
 	Solution: done after major fix-up!
-	
+
 >>title: 20060214b/Bug: Remove false error "missing bits in port"
 
 06/02/14 16:49:19 WARNING: ERROR: Detected missing bits in spliced port scan_out_i!
@@ -881,7 +915,7 @@ but port is used from 1..34 deliberatetely!
 	Req: mpit
 	Prio: medium
 	Solution:
-	
+
 >>title: 20060214a/Req: Allow [] in conn sheets/port maps
 
 accept signal   instance/port[a:b]=[c:d]
@@ -895,14 +929,14 @@ accept signal   instance/port[a:b]=[c:d]
 Hi Willi,
 
 > das sieht aber nach altem MIX aus?
-> ( mix 1.42 ist nur die Version vom Hauptprogramm ...) Probier das doch 
-> bitte nochmal mit "module load mix"  -> module list sollte mix/1.4 
+> ( mix 1.42 ist nur die Version vom Hauptprogramm ...) Probier das doch
+> bitte nochmal mit "module load mix"  -> module list sollte mix/1.4
 > ausgeben (der Default ist erst heute umgestellt worden.
 
 sehr interessant. Ok, ich hab die aktuelle Version mit 'module show' ermitteln wollen. Mit 'module list' bekomm ich dann Version 1.3!
 
-> Wie sehen die Zeilen vor/nach dem MD aus? Die Fehlermeldung kommt aus 
-> dem Report-Module, hast Du -report reglist oder -report portlist 
+> Wie sehen die Zeilen vor/nach dem MD aus? Die Fehlermeldung kommt aus
+> dem Report-Module, hast Du -report reglist oder -report portlist
 > aufgerufen?
 
 Ja, ich hatte '-report portlist' an (obwohl ich nicht weiss f¸r was, ich hab mir das Kommando vom Frank kopiert :))
@@ -911,8 +945,8 @@ Hier der vollst‰ndige Aufruf:
 $ mix -nodelta -report portlist -conf 'macro.%my_inst%='mm  MM-pin-list.xls pinlist_generic_hier_verilog.xls
 
 Hier die umliegenden Zeilen:
-	MH	$n	mciprt				
-	MD	mm		clk_mm	std_ulogic		
+	MH	$n	mciprt
+	MD	mm		clk_mm	std_ulogic
 #	MD	mm		clk_mm	std_ulogic_vector	P_MCI_TAGID_WIDTH-1	0
 	MD	mm		clk_mm	std_ulogic_vector	2	                  0
 
@@ -921,7 +955,7 @@ Hab gerade noch mit mix/1.4 ausprobiert, aber das Problem bleibt. Wenn ich den -
 Gruﬂ und Danke!
 Daniel
 
--- 
+--
 Daniel Pˆrsch                     daniel.poersch@micronas.com
 Design Engineer                   Tel: +49 89 - 54845 7303
 Semi Custom Design Center         Fax: +49 89 - 54845 7900
@@ -957,9 +991,9 @@ dvp_scc_d_mcmd_o	 O	    OCP command:
                          010 = read command
                          011 - 111 = not used
 
--> dies impliziert ein 3 bit Signal, aber besser w‰re, 
+-> dies impliziert ein 3 bit Signal, aber besser w‰re,
 wenn die Info auch im Namen drin w‰re:
-  a) dvp_scc_d_mcmd_o[2:0] Oder 
+  a) dvp_scc_d_mcmd_o[2:0] Oder
   b) wir machen noch eine Spalte "Width" und das Ganze sieht so aus:
 
 PAD_Name	         Width  I/O	 Description
@@ -990,48 +1024,48 @@ Offene Frage f¸r mich ist, ob man bidirektionale Signale herausfiltern und b¸nde
 also anstelle von:
  - ramdat_o
  - ramdat_i
- - ramdat_dir 
+ - ramdat_dir
 nur eine Zeile mit
  - ramdat
 Ich weiss aber nicht, ob und wie das gehen kˆnnte?!
 
 
-Gruﬂ, Bernhard 
+Gruﬂ, Bernhard
 
 	Req: gerstenb
 	Prio: medium
-	Status: solved wig20051209 
+	Status: solved wig20051209
 	Testcase: t.b.d.
-	
+
 >>title: 20051121b/Bug: unable to create \\K:
 
 	trying to use outdir path fails on Win32.
-	
+
 	Req: kayss
 	Prio: high
 	Status: solved wig20051121 (no testcase!)
 	Workaround: create output directories manually
-	
+
 
 >>title: 20051121a/Bug: badly placed trailing ;
 
 > > ich habe gerade Testweise mal eine VHDL-Entity erzeugen lassen.
-> > 
+> >
 > > Die ist geringf¸gig buggy, beim letzten Signal macht er
-> (unzul‰ssigerweise) am Ende ein Semikolon hin. Ich denke das ist ein 
+> (unzul‰ssigerweise) am Ende ein Semikolon hin. Ich denke das ist ein
 > Bug. Oder?
 > Stimmt.
-> > 
+> >
 > > Bei Bedarf kann ich dir den Testcase schicken (ist aber ein
 > ganz schˆne Batzen).
-> > Ich hatte schon mal vorher VHDLs erzeugt (in einem Testprojekt), 
+> > Ich hatte schon mal vorher VHDLs erzeugt (in einem Testprojekt),
 ...
 
 	Req: oberhof
 	Prio: medium
 	Status: solved wig20051121 (testcase bugver/20051121a)
 	Reason: badly used s/.../../o
-	
+
 >>title: 20051019b/Bug: do not print No 'defines
 
 im Verilog code steht
@@ -1041,13 +1075,13 @@ auch wenn dort defines stehen, quasi immer 8-)
 	Req: thorsten
 	Prio: low
 	Status: open
-	
+
 >>title: 20051104b/Req: create component declarations ...
 
 	Create a component declarartion for top module(s) ...
 		e.g. in one common file (package)?
 		or embedded into verilog file (inside of comments)
-		
+
 	Req: wig
 	Prio: low
 	Status: open
@@ -1066,12 +1100,12 @@ line.
 	Req: wig
 	Prio: medium
 	Status: open
-	
+
 >>title: 20051020a/Bug: improve -report portlist (lots of changes)
 
 1. remove info messages
 	-> ???
-	
+
 2. ::descr leaves a trailing ; under certain conditions
 	-> fixed with 20051018d testcase
 
@@ -1098,7 +1132,7 @@ Hi,
 
 1)
 Wir (Bernhard und ich) haben auch noch festgestellt, dass wir eine weitere Spalte
-brauchen, die wir ::sd nennen wollen. Diese Spalte soll dann im Falle 
+brauchen, die wir ::sd nennen wollen. Diese Spalte soll dann im Falle
 
 a) Output: Alle Destinations enthalten
 b) Input:  die Source enthalten
@@ -1129,35 +1163,35 @@ Frank
 
 > On Thu, 20 Oct 2005, Gerstenberg Bernhard wrote:
 > Hallo Bernhard,
-> 
+>
 > soweit klar und machbar.
-> 
+>
 > Nur zur Best‰tigung:
-> Soll dann die zweite Tabelle alle Ports enthalten (weil in sechs 
-> Spalten ja mehr Information ist als in 3)? Oder wie jetzt 
+> Soll dann die zweite Tabelle alle Ports enthalten (weil in sechs
+> Spalten ja mehr Information ist als in 3)? Oder wie jetzt
 > entweder/oder?
-> 
+>
 > Bye
 > Wilfried
 > > Hi Wilfried,
-> > 
+> >
 > > ich habe es jetzt unter Unix hinbekommen und es klappt auch
 > schon ganz gut, aber es gibt noch ein paar Kleinigkeiten.
-> > 
+> >
 > > Bei der ersten Tabelle hatte ich mich bestimmt unklar ausgedr¸ckt.
 > > F¸r die Liste mit den external Pin Verbindungen h‰tte ich
 > gerne eine
 > > Tabelle, die eher so aussieht:
-> >  <<padliste.pdf>>  <<FE_demo_padliste.mif>> 
-> > d.h. nur 3 Spalten (in der Teilung 37mm, 17, 126.,   (siehe 
+> >  <<padliste.pdf>>  <<FE_demo_padliste.mif>>
+> > d.h. nur 3 Spalten (in der Teilung 37mm, 17, 126.,   (siehe
 > zeile 9-11)
-> > etwas ge‰nderte header Zeile,  (siehe zeile 18--20) 
+> > etwas ge‰nderte header Zeile,  (siehe zeile 18--20)
 > > Tabellen¸berschriftentext ,  (siehe zeile 13) und
 > Tabelleneinbindung(s
 > > Zeile 50 und 52 ). )
-> > 
+> >
 > > Kannst Du das bitte noch ‰ndern?
-> > 
+> >
 	Req: Bernhard
 	Status: !wig20051104 done
 
@@ -1180,12 +1214,12 @@ Die unwichtigen ƒnderungen:
 5. Plus die eine, die ich dir zuletzt geschrieben hatte.
 
 > Hallo Wilfried,
-> 
+>
 > Wenn ich eine .csv Ausgabedatei erzeuge, enth‰lt dieses sowohl das
 > VGCH_TOP als auch dass JOIN_VGCH Sheet.
-> Das erstere brauche ich nicht. Kann ich die Ausgabe des VGCH_TOP Sheets 
+> Das erstere brauche ich nicht. Kann ich die Ausgabe des VGCH_TOP Sheets
 > irgendwie ausschalten ?
-> 
+>
 
 Danke und Gruﬂ Michael
 
@@ -1197,17 +1231,17 @@ Danke und Gruﬂ Michael
 				3. add _mix_utils_reorder function (fixes the print order)
 				4. remove repeated ::ign/Ignore lines
 				5. $EH{'format'}{'csv'}{'sheetsep'} = '' in combination with -nolisttop
-			preset $EH{'format'}{'csv'}{'style'} to remove <nl> 
+			preset $EH{'format'}{'csv'}{'style'} to remove <nl>
 
 >>title: 20051021b/Bug: check ' handling in DOS-Cmd prompt
 
 	setting parameters like
 		-conf a.b.c='value is this'
 	does not work in cmd
-	
+
 	1) mit dem cmd geht's bei mir, da hab ich einen aktuelle Perl Version, activestate v5.8.7. Allerdings finde
 ich es ehe lstig mit dem cmd zu arbeiten, und meiner Meinung nach geht auch die bergabe von Parametern
-wieder ganz anders, also sowas wie 
+wieder ganz anders, also sowas wie
 
 Z:\tmp\GA>K:\PROJECTS\MIX\PROG\mix_0.pl -report portlist -conf 'macro.%my_inst%=ga_i' -conf
 conn.xls='GA_CONN' -conf out
@@ -1229,18 +1263,18 @@ ga_i' at (eval
 GA_CONN' at (eva
 l 102) line 1.
 
-	
+
 	Req: oberhoff
 	Prio: low
 	Status: open
-	
+
 >>title: 20051021a/Req: allow to add parameters via -conf
 
 	-conf a.b.c=val
 		-> sets to new
 	-conf a.b.c-=val
 		-> removes val from a.b.c
-	-conf a.b.c+=val 
+	-conf a.b.c+=val
 		-> prepends val to a.b.c
 	-conf a.b.c=+val
 		-> appends val to a.b.c
@@ -1256,23 +1290,23 @@ l 102) line 1.
 
 	Extend -import by a verilog reader
 		use the Perl::Verilog module!
-		
+
 	Req: wig
 	Prio: low
 	Status: open
- 
+
 >>title: 20051018g/Req: split portlist into two seperate tables
 
 	consider the "external" column to seperate the output into
 	two seperate tables ...
-	
+
 	Req: vgch
 	Prio: medium
 	Status: !wig20051019 done with release 1.3b
 		(check the report.portlist.split parameter description)
 		but: needs another rework. Try to improve to use a template
 		mechanism.
-		
+
 >>title: 20051018f/Req: add CSV handling variations
 
 	1. Input: Support more forms of sheet name definitions
@@ -1283,12 +1317,12 @@ l 102) line 1.
 					:=:=:=:=> SHEETNAME
 				-> list defined
 						.csv.map foo.csv=SHEET,bar.csv=HIER,...
-				
-	2. Output: 
+
+	2. Output:
 			-> Split sheets and print to extension extended files
 				FOO-bar.csv of sheet name is bar
 			-> Sheetseperator based (default)
-			
+
 	Req: wig
 	Prio: medium
 	Status: open
@@ -1297,7 +1331,7 @@ l 102) line 1.
 
 	MIX dies with "bad array reference" when using delta mode
 	in Linux/Solaris platform
-	
+
 	Req: mpit
 	Prio: high
 	Status: open
@@ -1306,12 +1340,12 @@ l 102) line 1.
 
 	the above signal should be connected twice to the i_padframe
 	(second is only partially), but does not.
-	
+
 	Req: mpit
 	Prio: high
 	Status: wig20051102 solved
 	Testcase: bugver/20051018d
-	
+
 >>title: 20051018c/Req: remove <cr> from excel sheets
 
 	Req: winking
@@ -1320,17 +1354,17 @@ l 102) line 1.
 		even "stripna".
 	Test: manual, o.k.
 	Status: implemented in MixUtils/IO
-	
+
 	Additional hint: see format.csv.style for the same effect for
 	csv output.
-	
+
 >>title: 20051018b/Bug: mix/1.3 creates different HDL compared with 1.2
 
 	The vgcb.xls sheets are created, but some signals are missing
 	from the generated output files:
-	
+
 		CONN_DP, signal dp_r1_dp, dp_g1_dp, ...
-		
+
 	Req: mpit
 	Prio: high
 	Status: solved20051102 (fixed purge_relicts::_scan_inout)
@@ -1338,7 +1372,7 @@ l 102) line 1.
 >>title: 20051018a/Req: allow to specify a mix.cfg file with different name
 
 	-cfg FILE will be read in after all other mix.cfg are read.
-		
+
 	Req: thorsten
 	Prio: medium
 	Status: implemented
@@ -1362,7 +1396,7 @@ bzw. in mix.cfg
 MIXCFG output.generate.portdescrlength 1000
 
 	Solution: can not easily be reproduced, but reworked the "::descr" handling.
-	
+
 	Req: oberhoff
 	Prio: high
 	Status: workaround
@@ -1371,25 +1405,25 @@ MIXCFG output.generate.portdescrlength 1000
 
 	If a parameter is set to 0 in mix.cfg, the apply_cfg function
 	detects this and reports a warning.
-	
+
 	Req: wig
 	Prio: medium
 	Status: !wig20051014 fixed, no testcase
-	
+
 
 >>title: 20051007a/Req:
 
 Mix generiert f¸r Verilog Instanzierungen die Parameter¸bergabe mit
 defparam <instance>.<param> = <value>. Den defparam Befehl mˆgen leider verschiedene Tools nicht (u.a. Synthese).
 Kˆnntest Du das stattdessen Verilog-2001-like generieren ?
- 
+
 bla_i bla #( .param1(0), .param2(1)) (.port1(signal1), .port2(signal2));
 
 Solution: adding configuration
 	$EH{'output'}{'language'}{'verilog'} =~ m/\b2001param\b/io
 
 Check if "veri2001" should imply that!
- 
+
 	Req: Thorsten.
  	Prio: high
  	Status: implemented
@@ -1406,23 +1440,23 @@ Check if "veri2001" should imply that!
 	Req: wig
 	Prio: medium
 	Status: open
-	
+
 >>title: 20051011c/Bug: replce_mac does not consider EH{postfix}
 
 	Replace $EH{postfix} macros also for replace_mac
-	
+
 	Req: torsten
 	Prio: medium
 	Status: wig20051011/implemented, test missing
-	
+
 >>title: 20051011b/Req: create seperate intermediate sheets for top and other conns
 
 	Create two sheets for the intermediate:
 	1. CONN(_<TOP>)
 	2. CONN_(INTRA|<TOP>)
-	
+
 	Control:
-	
+
 	output.intermediate.intra INTRA|TOP|INST
 		INTRA: -> CONN and INTRA
 		TOP:	-> CONN_<TOP> and CONN
@@ -1431,46 +1465,46 @@ Check if "veri2001" should imply that!
 
 	+ maps the signal modes of the top CONN sheet to
 	  %TM_<MODE>%
-	  
+
 	Req: sigi
 	Prio: medium
 	Status: implemented
-	
+
 >>title: 20051011a/Req: make wire and/or reg output selectable for verilog generation
 
 	verilog inputs: wire (opt.)
 	verilog outputs: leaf could be "reg" or "wire"; hierachy should be wires
-	
+
 	extension to ::type field
 		foobar %REG%
 		foobar %WIRE%
-		
+
 	creates:
-	
+
 	module a (
 			input [wire] [a:b] foo,
 			output <wire|reg> [a:b] bar,
 			...
 	)
 
-	per signal:	
+	per signal:
 	%REG%  -> evaluates to "reg" for Verilog, nothing for VHDL
 	%WIRE% -> evaluates to "wire" for Verilog, nothing for VHDL
 		internally both are defined to be %EMPTY%
-	
+
 	can be used stand-alone
 	see also %SIGNAL% and %BUS_TYPE%
-	
+
 	global configs:
-	
+
 	output.generate.verilog
 		[no]iwire  [omitt] wire in input
 		[no]owire  [omitt] wire in output (but bad Verilog!)
 		[no(n)]leaf<i|o><wire|reg>
-	
+
 	but see
 		output.language.verilog !!
-			  
+
 	Req: torsten
 	Prio: medium
 	Status: implemented
@@ -1479,7 +1513,7 @@ Check if "veri2001" should imply that!
 >>title: 20051010b/Req: add ::descr to portmaps
 
 	Improved portmap handling
-	
+
 	Req: wig
 	Prio: medium
 	Status: implemented
@@ -1496,7 +1530,7 @@ e.g. mark columns with %S1% .... %S3%, get maximum width requirements
 
 	see bitsplice testcase. The width of the signal in the instance inst_ea
 	is 6 downto 0, while a single bit would be sufficient!
-	
+
 	Req: wig
 	Prio: low
 	Status: open
@@ -1509,7 +1543,7 @@ Hi Willi,
 es w‰re gut, wenn es ein "mkdir" auf internal.path und output.path geben w¸rde, falls die nicht existieren!
 
 Gruﬂ
-Th. 
+Th.
 
 	Req: torsten
 	Prio: low
@@ -1522,20 +1556,20 @@ Rot hervorgehoben die bˆse Zeile, die in der Instanz nicht beachtet wird. Beim C
 Werde dann vorerst die Zeile h‰ndisch einf¸gen.
 Viel Gl¸ck beim bugfix.
 
-	 
-			Toplevel		integer			P	CHROMA_LINE_DELAY_1_G	0	inst_7_ar_chroma_delay/CHROMA_LINE_DELAY_G	 
+
+			Toplevel		integer			P	CHROMA_LINE_DELAY_1_G	0	inst_7_ar_chroma_delay/CHROMA_LINE_DELAY_G
 	Details: see bugver.xls
-	
+
 	Req: blumens
 	Prio: high
 	Testcase: bugver/20051004c
 	Solution: found bug
-	
+
 >>title: 20051004b/Req: Fine generation control: select/deselect cells to be generated
 
 	Support that certain cells/views should not be generated
 	(e.g. if from library).
-	
+
 	Req: torsten
 	Prio: low
 	Solution: EH{output}{generate}{file}
@@ -1567,20 +1601,20 @@ Example: bitsplice/inst_a_e-rtl-a.vhd:
 
 	Req: torsten
 	Prio: low
-	
+
 >>title: 20050929f/Bug: output.generate.combine appends new HDL data
 	to existing file
-	
+
 	Explanation: caused by implementation; document it!
-	
+
 	Req: torsten
 	Prio: low
-	
+
 >>title: 20050929e/Bug: POSTFIX_PORT_OUT and _IN are obsolete?
 
 	Req: torsten
 	Prio: low
-	
+
 >>title: 20050929d/Req: generate verilog2001 style module headers
 
 module (
@@ -1598,14 +1632,14 @@ make wire a macro -> e.g. %verilog2001_input%
 >>title: 20050929c/Req: beautify output
 
 	Create output in nice format (indent constant!)
-	
+
 	Prio: low
 	Req: oberhof
-	 
+
 >>title: 20050929b/Req: get ::descr in portmaps, too!
 
 	extend support for comments -> go into portmaps
-	
+
 	Prio: medium
 	Req: oberhof
 	Status: wig/solved with 1.3 release
@@ -1614,11 +1648,11 @@ make wire a macro -> e.g. %verilog2001_input%
 
 	If the descr. field has multiple lines, the generated output is
 	corrupt!
-	
+
 	Prio: medium
 	Req: oberhof
 	Status: wig20051018/solved with 1.3 release
-	
+
 >>title: 20050810b/Req: print mif files/tables
 
 	Prio: high
@@ -1630,71 +1664,71 @@ make wire a macro -> e.g. %verilog2001_input%
 	Prio: medium
 	Req: wig
 	Status: wig20051018/solved now
- 
+
 >>title: 20050725d/Req: Read in CSV files
 
 	- Allow "real" CSV to be read (e.g. by using the perl module CSV_XS)
 	- Allow to switch off header
-	
+
 	BTW.: Why is ParseExcel so slow?
-	
+
 	Req: wig, torsten
 	Prio: medium
 
 >>title: 20050725c/Req: Allow strings in "constant definition" to be used
 	as bus width defintion!
-	
+
 	Req: torsten
 	Prio: medium
 
 >>title: 20050725b/Check: what happens if only one bit of signal is used
 	-> at least warning!
-	
-	Might be mapped to vector/bit: 
-	
+
+	Might be mapped to vector/bit:
+
 	check for (0:0) ->
-	
+
 	testcase:
 	req: wig
 	prio: medium
-	
+
 >>title: 20050725: CHECK/REDO
 
 	C usage: what is a constant
-	
+
 	C  C_NAME  DEFINITION(::out)   APPLY(::in)
 		APPLY: to what? -> port
 							%BUS%/....
-							
+
 	Implicit usage:
 	[IOS] SIGNAL	%CONSTANT%/VALUE	APPLY(::in)
 		APPLY: to port
 	Issues: bit splicing: where to apply if signal is ony partially
 		used: top-level module?
-		
+
 	Req:wig
 	Prio: medium
-	
+
 >>title: C should be defined (e.g. if uses as bus-width)
 
 	Add a define statement if needed for a constant
 	like with generics.
 	(see also genwidth)
-	
+
 	Req: thorsten
 	Prio: wig
-	
+
 >>title: keep user defined code
 
 	merge created file and user defined code in existing file
-	
+
 	Req: thorsten
 	Prio: medium
-	
+
 >>title: 20050621a/Req: support multiple instantiations!
 	signal a -> t/g1/a
     signal b -> t/g2/a (a is the same instance as above).
-    
+
     Req: thorsten
     Prio: medium
 
@@ -1714,7 +1748,7 @@ How to handle that?
 	Req: thorsten
 	Prio: low
 	Status: open20050615
-		
+
 >>title: 20050614a/Bug: remove spaces in header lines
 
 die function parse_header() in mixutils.pm sollte evtl. noch die whitespaces vor/hinter den markern entfernen (ich hatte hier den Fall " ::spec").
@@ -1746,7 +1780,7 @@ Prio: medium
 	%USER_TEXT%  -> evaluates to nothing
 		but how to add that to individual files?
 		e.g. reuse the ::use column?
-	
+
 	Req: Andreas Blumenschein
 	Prio: low
 
@@ -1754,10 +1788,10 @@ Prio: medium
 	make switchable comment printing
 	now it gets printed in port maps
 	extend to component declarations and entities!
-	
+
 	Req: Andread Blumenschein
 	Prio: low
-	
+
 >>title: 20050520a/Req: add macro.{%COMM%}
 	write language dependent comment at that place
 	( -- for VHDL, // for verilog, ) ;see EH.output.comment.LANG for definitions
@@ -1767,11 +1801,11 @@ Prio: medium
 
 >>title: 20050520b/Req: add %CR% macro
 	will be replaced by \n
-	
+
 	Req: wig
 	Prio: low
 	Done: 20050520
-	
+
 >>title: 20050330a/Req: dump signal description
 
 	dump info about a signal:
@@ -1779,20 +1813,20 @@ Prio: medium
 	  instance/port -->|
 	                   |--> instance/port
 	                   |<-> instance/port
-	  
+
 	-dump instance:RE
 	-dump signal:RE
 	formats: text, ascii art, image
-	 
+
 	Req: wig
 	Prio: low
-                  
+
 >>title: 20050300a/Req: dump module description
 
 	before/after rules evaluation
-	
+
 	create a GUI
-	
+
 	create an
 		Image (perl module!)
 		Ascii art (perl module)
@@ -1807,12 +1841,12 @@ Prio: medium
 	    generic     |   |
 	    parameters  |   |
 	                +---+
-	                
+
 	    write port/signal width on demand, signal on demand
 	    sort by hierachy
 	    sort by name
 	    sort by entity
-	    
+
 	 hierachy browser
 	   +--- TOP
 	   |
@@ -1824,7 +1858,7 @@ Prio: medium
 	   +--- bar
 
    Consider perl modules to use: Tree::*
-   	       
+
    Req: wig, gerstenberg
    Prio: medium
 
@@ -1900,7 +1934,7 @@ Solution: do not propagate "C" to the entity ports, but set that to "S".
 
 	Req: mpit
 	Prio: low
-	
+
 >>title: 20041220b/Req: Check signal _n does not get connected to port not _n!
 
     verify usefull wiring
@@ -1911,7 +1945,7 @@ Solution: do not propagate "C" to the entity ports, but set that to "S".
 
 	But not for generated ports! (add a "generated" flag to ::in/::out structure
 
-	
+
 
     Req: wig
     Prio: low
@@ -1933,14 +1967,14 @@ derzeit werden VHDL-Generics und Verilog-Parameter in MIX immer mit
 
 defparam <hierarchy-path>.<parameter-name> = <parameter-value>;
 
-instanziiert. Dies funktioniert allerdings nur, wenn der Parameter in einer 
-Verilog-Hierarchie endet. 
+instanziiert. Dies funktioniert allerdings nur, wenn der Parameter in einer
+Verilog-Hierarchie endet.
 
 F√ºr VHDL-Generics sollte ein anderes Verfahren implementiert werden:
 <instance> #( generic-list ) <instance_name> ( port-list );
 
 Gleichzeitig k√∂nnte MIX pr√ºfen, ob alle Parameter vom Typ 'integer' sind, da
-Verilog keine anderen Formate zul√§√üt und bei Abweichung zumindest eine 
+Verilog keine anderen Formate zul√§√üt und bei Abweichung zumindest eine
 Warnung ausgeben.
 
 
@@ -1950,7 +1984,7 @@ iocell #(
   .cinv1_g(0),
   .cinv2_g(0),
   .cinv3_g(0),
-  .....  
+  .....
   .oreg3_g(0)
  ) baudclk_ioc (
   .bs_chain_i(bs_chain_tmu_short),
@@ -1963,7 +1997,7 @@ iocell #(
     Req: mpallas
     Prio: medium
     Solved: wig20050127 (testcase generic/veriovhd)
-        
+
 >>title: 20041112a/Req: Log run time in output summary!
 
     Req: wig
@@ -2007,7 +2041,7 @@ allowed format: separated by newline and/or comma!
 
     Req: dirk siebert
     Testcase: genwidth/verilog
-    
+
 
 - 20041108a/Req: Support assertions
 
@@ -2027,21 +2061,21 @@ Bye
 Wilfried
 
 >  -----Original Message-----
-> From: 	Schrempf Siegbert  
+> From: 	Schrempf Siegbert
 > Sent:	Donnerstag, 4. November 2004 17:45
 > To:	Gay Klaus-Peter; G√§nsheimer Wilfried
 > Cc:	Langenkamp Ulrich; Pitscheider Manfred; Leitner Bernhard
 > Subject:	external Assertions zwischen den Subhierarchien // MIX
-> 
+>
 > Hallo!
-> Es ist diskutiert worden externe Assertions zwischen den 
-> Subleveln einzubauen. Bitte dabei vorsichtig sein, weil der 
-> Toplevel sowie der DI mit MIX erstellt wurden, und haendisch 
-> eingebaute assertions moeglicherweise wieder ueberschrieben 
-> werden. ABER, laesst sich MIX dahingehend erweitern, dass die 
-> Assertions automatisch an einer ueber MIX definierten Stelle 
+> Es ist diskutiert worden externe Assertions zwischen den
+> Subleveln einzubauen. Bitte dabei vorsichtig sein, weil der
+> Toplevel sowie der DI mit MIX erstellt wurden, und haendisch
+> eingebaute assertions moeglicherweise wieder ueberschrieben
+> werden. ABER, laesst sich MIX dahingehend erweitern, dass die
+> Assertions automatisch an einer ueber MIX definierten Stelle
 > hinzugefuergt werden?
-> 
+>
 > Gruss,
 > Sigi
 
@@ -2070,7 +2104,7 @@ Wilfried
 
     signal_y1 <= signal_a1 AND signal_a2;
     (bit and).
-    
+
     Instances:
     %CONNECT%  (direct connect!)
     signal_a    %CONNECT%/signal_b    %CONNECT%/signal_c
@@ -2086,7 +2120,7 @@ Wilfried
 
     Req: wig
     Prio: medium
-        
+
 >>title: 20040809a/Req: do ignore typecast's for std_(u)logic
   Synopsys tools do not accept typecsting of signals.
 
@@ -2094,7 +2128,7 @@ Wilfried
     Prio: medium
     Solved: wig20040809
     Testcase: typecast/intbus; new default: MIXCFG output.generate.workaround.std_log_typecast ignore
-    
+
 >>title: 20040802a/Req: Extended support for bus joining
     Two signals should get connected togehter, but no duplicate port map
     should be created
@@ -2117,7 +2151,7 @@ Wilfried
         sig_a      inst_a/port_a inst_b/port_b
         ____      0=(10), 1=(15:12)     %BUS%/sig_a
 
- 
+
 >>title: 20040712a/Req: Add (__FILE__/__LINE__) to all logwarn/logtrc/logdie ....
    Print out FILE/LINE in error messages to ease debugging.
 
@@ -2134,7 +2168,7 @@ Wilfried
 >>title: 20040621a/Req: Remove error messages and warnings if port bounds are strings (instead
     of numbers)
     Make using generics for port bounds easier. Do simple checks if possible ...
-     
+
     Also: add some documentation about it (HOWTO).
 
     Req: mpit
@@ -2146,7 +2180,7 @@ Wilfried
   2 #! -*- perl -*-
   3 eval 'exec $PERLLOCATION/bin/perl -x -S $0 ${1+"$@"} ;'
   4   if 0;
-(from http://alumnus.caltech.edu/~svhwan/prodScript/invokingPerl.html) 
+(from http://alumnus.caltech.edu/~svhwan/prodScript/invokingPerl.html)
 
 gives:
 
@@ -2155,7 +2189,7 @@ gives:
 eval 'exec ${PERL:-`[ ! -d $HOME/bin/perl -a -x $HOME/bin/perl ] && echo $HOME/bin/perl || { [ -x /usr/bin/perl ] && echo /usr/bin/perl || echo /usr/local/bin/perl ; } `} -x -S $0 ${1+"$@"} ;'
 if 0; # dynamic perl startup; suppress preceding line in perl
 
- 
+
 >>title: 20040415a/Req: add "ignorecase" for delta mode
   Usefull for verify entity. Split options for delta mode and verify mode.
 
@@ -2179,7 +2213,7 @@ and
 
 mix_0.pl header:
     $pgm  <- basename $0    -> Script
-    $base <- path to $0 and one level up    -> dirname(Bin) 
+    $base <- path to $0 and one level up    -> dirname(Bin)
     $pgmpath <- path where $0 comes from  -> Bin
     $dir  <- cwd()
 
@@ -2234,7 +2268,7 @@ $dir = "";
 #    use lib `cwd`..\lib\perl
 # ...
 BEGIN{
-    ($^O =~ /Win32/io ) ? ($dir=getcwd())=~s,/,\\,g : ($dir=getcwd());    
+    ($^O =~ /Win32/io ) ? ($dir=getcwd())=~s,/,\\,g : ($dir=getcwd());
 
     ($pgm=$0) =~s;^.*(/|\\);;g;
     if ( $0 =~ m,[/\\],o ) { #$0 has path ...
@@ -2305,10 +2339,10 @@ should be better
 >>title: 20040401b/Req: Write hierachy sheets per module ...
 
     Write a hierachy sheet for each non-leaf module
-    
+
     Req: wig
     Prio: low
-    
+
 >>title: 20040401a/Check: VHDL typecast in port maps, HOWTO
 
     ask in comp.language.vhdl
@@ -2322,10 +2356,10 @@ should be better
 			signal_4	: out	std_logic_vector(15 downto 0)
 		);
 	end component;
-			signal	signal_1	: std_logic; 
-			signal	signal_2	: std_ulogic; 
-			signal	signal_3	: std_logic_vector(7 downto 0); 
-			signal	signal_4	: std_ulogic_vector(15 downto 0); 
+			signal	signal_1	: std_logic;
+			signal	signal_2	: std_ulogic;
+			signal	signal_3	: std_logic_vector(7 downto 0);
+			signal	signal_4	: std_ulogic_vector(15 downto 0);
 
 		inst_aa_i: inst_aa
 		port map (
@@ -2339,7 +2373,7 @@ Possible cases:
     in
     out
     inout ???
-    
+
 My short-ref say typecast is allowed in portmaps, but tool doesn't like it (at least some
 of the tools).
 
@@ -2348,14 +2382,14 @@ See test/typecast.xls
     Req: mpit
     Prio: medium
     Solution: contact comp.lang.vhdl
-    
+
 
 >>title: 20040330a/Bug: Message "WARNING: Bad branch taken in parse_io_init, file bug report!"  is not descriptive!
 
     Req: mpit
     Prio: medium
     Solution: rewrite error message with "No iocell and pad type defined in line XXXX, skipped!"
-    
+
 
 >>title: 20040324a/Req: Define %AUTO% signal name
     wires according to rules e.g.:
@@ -2378,7 +2412,7 @@ See test/typecast.xls
     define call location
 
     Req: wig
-    
+
 >>title: 20040127a/Req: Sort entity and signals by
    - order given from input-sheet
    - order by bundle
@@ -2410,11 +2444,11 @@ See test/typecast.xls
     Fix warning messages:
 
 > meinst Du Meldungen ala:
-> 
-> Entity port type mismatch for entity iocell (video_o12_ioc), 
+>
+> Entity port type mismatch for entity iocell (video_o12_ioc),
 > port core_rl_o: std_ulogic was std_ulogic_vector
-> 
-> Ja, das ist "nur" eine Warnung. Kommt daher dass MIX denkt da 
+>
+> Ja, das ist "nur" eine Warnung. Kommt daher dass MIX denkt da
 > soll ein Bus angeschlossen werden (rl_boot_sel),
 > tatsaechlich aber nur ein Bit davon an den Port kommt.
 
@@ -2425,7 +2459,7 @@ See test/typecast.xls
     Will ease debugging (e.g. ::inputrow ...)
 
     Req: wig
-    
+
 
 - 20031110a/Bug: Leave in dummy wires for open output port splices
     Description: in verilog we need to have wires for open ports ....
@@ -2434,7 +2468,7 @@ See test/typecast.xls
     Req: wig
     Testcase: mde_d-tlgold
     Prio: Low
-    
+
 - 20031106a/Req: Compare generated entities against existing one
 
     e.g. take all leave entities and try to find appropriate source files in the
@@ -2464,11 +2498,11 @@ See test/typecast.xls
 
 
 - 20031008a/Bug: COMB and -delta mode produce rubbish ...
-    
+
     Testcase: t/conf.xls
     Req: wig
     Prio: low
-    
+
 - 20031007b/Req: condense Warnings
     e.g. only print first 5 of the same warning to screen, rest to logfile, only.
     Summarize number then.
@@ -2486,7 +2520,7 @@ See test/typecast.xls
 
     Req: m kropfitsch
     Prio: low
-    
+
 
 - 20030801a/Bug: Detect spaces in ::high and ::low and remove them!
 
@@ -2500,9 +2534,9 @@ See test/typecast.xls
     E.g. use a macro.S and then a counter like fi=0 fi=+1 ...
     Make per function or output group ident possible.
 
-    
+
     Req: mpallas
-    Prio: low    
+    Prio: low
     Solution: implement $EH{'macro'}{'%S%'} = ... and put in instead of fixed indents.
             get function mix_ident( N ) N being 0...N (e.g. 10) and or +/-N stepping in/out
 
@@ -2520,7 +2554,7 @@ z.B. IN EINER ENTITY
     Req: Kropfitsch
     Prio: medium
     Issue: There is no direct link between a entity/port names and a signal! Comments will be set in port map
-        
+
 
 - 20030715b/Req: IOP: "get_next IOcell" (for given name/number ::pad)
     will allow to set up NAND-Trees easily
@@ -2557,10 +2591,10 @@ z.B. IN EINER ENTITY
     insert into add_inst and add_hier ....
 
     See also _check_keywords function in MixParser.pm!
-    
+
     Req: wig
     Prio: medium
-    
+
 - 20030630b/Req: Compare MIX against
     -- Ganove
     -- HDL Designer / Mentor Grafics
@@ -2578,7 +2612,7 @@ is defined.
 
     Req: wig
     Prio: medium
-    
+
 - 20030404e/CR: add -conf script.post SCRIPT and -conf script.pre SCRIPT
   configuration. pre will be executed before anything else is done.
   post jsut before MIX ends. If pre script returns an exit code different from 0,
@@ -2620,13 +2654,13 @@ is defined.
 - 20030227b: Check if signal ends in an intermediate hierachy
     Requested: wig
     Prio: medium
- 
+
 
 - 20030220i: Rewrite writers:
     -- Output into hash %outfiles{FILENAME}
     -- Fix DOS/UNIX CR issue
 
-- 20030220j: Use Bugzilla for issues 
+- 20030220j: Use Bugzilla for issues
 
 - OPEN wires to external
   wig20030124a
@@ -2641,16 +2675,16 @@ is defined.
 
 - iN_foo N := 1.. number of instances of entity foo.
 
-- output separate interconnect sheets for each intermediate hierachy (in addition to flat interconnect sheet) 
+- output separate interconnect sheets for each intermediate hierachy (in addition to flat interconnect sheet)
 
 - 20030220b: Check: RTL architecture must be unique
   Requested by ST. Bartels
-  
+
 - 20030220c: lower case everything!
   -- global configuration variable: lc := force|check|no
   -- implement checker: see if cases sensitvitiy creates conflicts, report!
   -- if force mode -> collaps conflicts
-  
+
   Possibly inform if a name is not unique
   Requested by M. Pallas
 
@@ -2701,23 +2735,23 @@ Die Instanziierung s√§he folgenderma√üen aus:
 W√§re das mit MIX machbar ?
 
 > > ist es m√∂glich bei der Instanziierung von VHDL-Komponenten in einem
-> > Verilog-Toplevel statt des Modulnamens den Konfigurationsnamen zu 
+> > Verilog-Toplevel statt des Modulnamens den Konfigurationsnamen zu
 > > verwenden ?
-> > 
+> >
 > > Beispiel (Modulinstanziierung der CGU im MDE-D Toplevel):
 > > bisher:
 > > ...
 > > cgu cgu_i1 (...)
 > > ...
-> > 
+> >
 > > was wir m√∂chten:
 > > ...
 > > cgu_rtl_c0 cgu_i1 (...)
 > > ...
-> > 
-> > Der Konfig-Name ist normalerweise aus dem Hierarchie-Sheet 
+> >
+> > Der Konfig-Name ist normalerweise aus dem Hierarchie-Sheet
 > ableitbar.
-> > 
+> >
 
 Proposal:
     Need to change generation of %INSTANCES% in verilog mode if module to be used is
@@ -2763,7 +2797,7 @@ Solution:
     Prio: medium
     Workaround: use global configuration and wire required other signals manually to top
     Solved: 20031220, wig (output.generate.xinout )
-    
+
 - 20031215b/Bug: VGCA rule make MIX die
 
 ....
@@ -2816,7 +2850,7 @@ nas/MixUtils.pm line 2196.
 
 - 20030725a/Bug: config file names are not according standard ...
     Might be bad setup, though.
-    
+
 WEITERS WUERDE ICH EMPFEHLEN DIE CONFIGURATION-DATEI ENTSPRECHEND DEN CODING GUIDLINES ZU BENENNEN
 
 <ENTITY-NAME>-<ARCHITECTURE-NAME>-<CONFIGURATION-NAME>-C,VHD
@@ -2826,30 +2860,30 @@ WEITERS WUERDE ICH EMPFEHLEN DIE CONFIGURATION-DATEI ENTSPRECHEND DEN CODING GUI
     Testcase: k:\projects\mix\examples\di_tnr
     Fixed: wig20030728 (bug in filename creation ...)
     Testcase: vgca_20030723 (hand test)
-    
+
 - 20031107a/Req: Create dummy signals for open bus port splices in Verilog.
     Elaborate stage fails when it sees 1'bz as input to output port :-(
-    
+
     Req: mpallas
     Prio: high
     Status: solved wig20031110
 
-    
+
 - 20031105a ExCEL: Check ALL cells if they are to large (::comment, ::descr ...)
     Req: mpallas
     Prio: high
     Resolved: wig20031106
-    
+
 - 20031104a Generated port names/Verilog
   - disable _N_N  (make configurable)
         - assume only this signal(portion), flag duplicates!
         - always generate full width bus, assign open(s)
   - check why assign and wire are generated (example from mpallas)
   Examples: MDED-Goldtl.xls
-  
+
   gdmack_io_0_0   (only signal, no bus!)
     Reason: "0" ne "" -> now assume single bit bus 0 downto 0 is a bit, not a bus.
-    
+
   assign cadc_clk = cadc_clk;
   Reason: internal port name still ahs the %EMPTY% in it ... needs early expansion!
 
@@ -2889,14 +2923,14 @@ but be ignored. Apart from that the column names have no special meaning.
 
 A simple example will illustrate the connection macro usage.
 ::ign  ::gen ::cola ::colb  ....
-	MH	$n	                $1	        $h      alarm_time_$4_$5				
-	MD	Uddrv_gen_$n	$1	        $h      alarm_time_$4_$5		d_$4_$5/alarm_time(3:0)	Display storage buffer $n $4_$5	
-	MD	Uddrv_gen_$n	$1	        $h      current_time_$4_$5		d_$4_$5/current_time(3:0)	Display storage buffer $n $4_$5	
-	MD	Uddrv_gen_$n	$1	        $h      key_buffer_$n		d_$4_$5/key_buffer(3:0)	Display storage buffer $n $4_$5	
-	MD	Uddrv_gen_$n	$1	        6       display_$4_$5	d_$4_$5/display(6:0)		Display storage buffer $n $4_$5	
-	MD	Uddrv_gen_$n	$1	        $h	alarm	d_$4_$5/sound_alarm=($n)	u_and_f/y($n)=($n)	Display storage buffer $n $4_$5	
-	MX	0	                Display	3	alarm_time_ls_min				
-	MX	1	                Display	3	alarm_time_ms_min				
+	MH	$n	                $1	        $h      alarm_time_$4_$5
+	MD	Uddrv_gen_$n	$1	        $h      alarm_time_$4_$5		d_$4_$5/alarm_time(3:0)	Display storage buffer $n $4_$5
+	MD	Uddrv_gen_$n	$1	        $h      current_time_$4_$5		d_$4_$5/current_time(3:0)	Display storage buffer $n $4_$5
+	MD	Uddrv_gen_$n	$1	        $h      key_buffer_$n		d_$4_$5/key_buffer(3:0)	Display storage buffer $n $4_$5
+	MD	Uddrv_gen_$n	$1	        6       display_$4_$5	d_$4_$5/display(6:0)		Display storage buffer $n $4_$5
+	MD	Uddrv_gen_$n	$1	        $h	alarm	d_$4_$5/sound_alarm=($n)	u_and_f/y($n)=($n)	Display storage buffer $n $4_$5
+	MX	0	                Display	3	alarm_time_ls_min
+	MX	1	                Display	3	alarm_time_ms_min
 
 Here the macro header MH defines the variables $n, $1, $h, $4 and $5. The MIX parser extracts the
 MH row and accompanying MD rows (five lines here) from the table. In a second run each MX row
@@ -2910,12 +2944,12 @@ is assignd ls, $5 is min.
 
 If MX and MH match, the accompanying MD lines are executed. Variables are replaced by the value
 they are assigned too, currently. Here the first MX will result in the following table to be generated:
-    
-	G_MX	Uddrv_gen_0	Display	        3      alarm_time_ls_min		d_ls_min/alarm_time(3:0)	Display storage buffer 0 ls_min	
-	G_MX	Uddrv_gen_0	Display	        3      current_time_ls_min		d_ls_min/current_time(3:0)	Display storage buffer 0 ls_min	
-	G_MX	Uddrv_gen_0	Display	        3      key_buffer_0		    d_ls_min/key_buffer(3:0)	        Display storage buffer 0 ls_min	
-	G_MX	Uddrv_gen_0	Display	        6   	display_ls_min	            d_ls_min/display(6:0)		Display storage buffer 0 ls_min	
-	G_MX	Uddrv_gen_0	Display	        3	alarm	d_ls_min/sound_alarm=(0)	u_and_f/y(0)=(0)                Display storage buffer 0 ls_min	
+
+	G_MX	Uddrv_gen_0	Display	        3      alarm_time_ls_min		d_ls_min/alarm_time(3:0)	Display storage buffer 0 ls_min
+	G_MX	Uddrv_gen_0	Display	        3      current_time_ls_min		d_ls_min/current_time(3:0)	Display storage buffer 0 ls_min
+	G_MX	Uddrv_gen_0	Display	        3      key_buffer_0		    d_ls_min/key_buffer(3:0)	        Display storage buffer 0 ls_min
+	G_MX	Uddrv_gen_0	Display	        6   	display_ls_min	            d_ls_min/display(6:0)		Display storage buffer 0 ls_min
+	G_MX	Uddrv_gen_0	Display	        3	alarm	d_ls_min/sound_alarm=(0)	u_and_f/y(0)=(0)                Display storage buffer 0 ls_min
 
 The ::gen column is set to G_MX after evaluation. Empty cells in MD lines are filled with the value given
 by MX, if any.
@@ -2973,7 +3007,7 @@ XXX t.b.d.
 ++ Bounded match generator
 
 By adding a run variable and a range $i(N..M), match generators can be restricted to only apply if the
-variable $i is within the range. $i has to be defined in match_expression and will match any number. 
+variable $i is within the range. $i has to be defined in match_expression and will match any number.
 
 In opposite to the constructor generator, MIX will not evaluate all possible values for $i, but only
 make sure $i stays within the bounds of the range.
@@ -3038,15 +3072,15 @@ to see more examples.
 
 - 20030724b/Bug: dbo_o: generates busses with std_ulogic_vector with undefined width!
 
-			signal	dbo_15_do	: std_ulogic; 
+			signal	dbo_15_do	: std_ulogic;
 			signal	dbo_15_en	: std_ulogic
-			signal	dbo_o	: std_ulogic_vector; 
-			signal	dgo_10_di	: std_ulogic; 
-			signal	dgo_10_do	: std_ulogic; 
+			signal	dbo_o	: std_ulogic_vector;
+			signal	dgo_10_di	: std_ulogic;
+			signal	dgo_10_do	: std_ulogic;
 			signal	dgo_10_en	: std_ulogic;
 
     Possible solution: connect unused ports to "open"!
-    
+
     Req: mpit
     Prio: high
     Solved: wig20031010
@@ -3068,7 +3102,7 @@ to see more examples.
 
 - 20030730b/Bug: %LOW_BUS% without ::high ::low definition fails ...
     Automatically create ::high and ::low matching the bits ...
-    
+
     Req: wig
     Prio: low
     Solved: wig20030731, no testcase (really?)
@@ -3077,17 +3111,17 @@ to see more examples.
 
     Req: mpit
     Prio: high
-    
+
 
 - 20030728d/Bug: 4)Bus-slicing
 
     Req: mpit
     Prio: high
-    
+
 -20030724a/Req: Wire unused signals to "open".
     If a connection was made (e.g. by a generator rule) and is not used furthermore,
     wire this port to open!
-    
+
     Req: mpit
     Prio: low
     Solved: wig
@@ -3104,8 +3138,8 @@ to see more examples.
 einiges zur Verilog-Ausgabe:
 - Verilog Anweisungen wie `define oder `timescale sollten mit
   einem "back-tick" beginnen
-  
-- `defines d√ºrfen nicht mitten im module stehen, sondern sollten 
+
+- `defines d√ºrfen nicht mitten im module stehen, sondern sollten
   vor dem Header "module bla (...)" stehen
 
 - "open" gibt es in Verilog nicht, der entsprechende Pin wird
@@ -3136,7 +3170,7 @@ Resolve the conflict with wig20030124a
     Prio: medium
     Solved: wig
        see also 20030715a
-       
+
 - 20030715a/Req: IOP: choose one-hot or bus for select lines
 
     Req: mpallas
@@ -3148,13 +3182,13 @@ Resolve the conflict with wig20030124a
     Req: mpit
     Prio: high
     Solved: wig (really??)
-    
+
 - 20030630a/Bug: IO mode not handeled properly
     See example from VGCA
 
     Comment: Need improved connection bus handling!! Improved driver/load handling!
     Use vector{i|o} = A:[ciobt] ... c:= inout (common), i := in, o := out, b:= buffer, t := tristate
-    
+
     Req: mpit
     Prio: high
     Solved: wig
@@ -3163,7 +3197,7 @@ Resolve the conflict with wig20030124a
 
 das Signal 'nreset' wird auf den Port 'nreset' korrekt verdrahtet (Erzeugung eines
 internen Signals 'int_s_reset', das an den Port und die meisten Module verdrahtet wird).
-Allerdings wird auf alle internen Module bei denen der Eingangspin nicht 'nreset' hei√üt, 
+Allerdings wird auf alle internen Module bei denen der Eingangspin nicht 'nreset' hei√üt,
 der Port 'nreset' angeschlossen, was zu Compilerfehlern f√ºhrt.
 
     Testcase:
@@ -3175,7 +3209,7 @@ der Port 'nreset' angeschlossen, was zu Compilerfehlern f√ºhrt.
   already open in other directory. Check that and report usefull error message.
     Req: wig
     Prio: low
-    
+
 
 - 20030312a/Check: Find "open" input ports and report
     Req: wig
@@ -3191,7 +3225,7 @@ der Port 'nreset' angeschlossen, was zu Compilerfehlern f√ºhrt.
 - Check if the a object (Workbook) is opened from different path, but with
   same name?
   wig20030100
-  
+
 - Use / as file name seperator, convert to other format ( \ ) on demand (wig20021219)
     Done.
 
@@ -3222,7 +3256,7 @@ der Port 'nreset' angeschlossen, was zu Compilerfehlern f√ºhrt.
 
 - 20030806a/Req: use variables/text for ::high:
 
-Ich habe folgendes Problem  
+Ich habe folgendes Problem
 Codefragment:
 
 constant width8      : integer := 8;
@@ -3267,7 +3301,7 @@ Wie programmiert man dies im Mix (Excel Sheet) ?
     Prio: medium
     Solved: wig20031013
     Testcase: autoopen, padio2
-    
+
 - 20031008e/Bug: Intermediate path name mismatch if subdirectory (-out)
   is used to write.
 
@@ -3307,11 +3341,11 @@ Reason: error in generator parser ("0" is not tested ...)
 - 20030905c/Bug: Verilog input port, bad assignment
 
 noch ein MIX-Verilog-Problem:
-Signale, die √ºber eine generierte MIX-Hierarchie verdrahtet werden sind nicht korrekt 
-beschaltet. Dies liegt daran, dass MIX in der generierten Hierarchieebene 'assign' 
-Statements auf alle IOs einbaut, im Falle eines Input Ports sollte eigentlich das interne 
-Signal den Wert des Ports zugewiesen bekommen, das ist in MIX aber genau 
-andersrum implementiert. Damit wird einem Input-Port der (nicht initialisierte) 
+Signale, die √ºber eine generierte MIX-Hierarchie verdrahtet werden sind nicht korrekt
+beschaltet. Dies liegt daran, dass MIX in der generierten Hierarchieebene 'assign'
+Statements auf alle IOs einbaut, im Falle eines Input Ports sollte eigentlich das interne
+Signal den Wert des Ports zugewiesen bekommen, das ist in MIX aber genau
+andersrum implementiert. Damit wird einem Input-Port der (nicht initialisierte)
 Signalwert eines internen Signals zugewiesen und schon geht nichts mehr...
 
 Die L√∂sung ist, f√ºr Input Ports die beiden Seiten des assigns zu vertauschen.
@@ -3381,9 +3415,9 @@ i2c # (13'h08C0) i2c_i1(	// I2C interface #1 (I2C1)
 ...
 
 
-Wie es mit mehreren Parametern ist weiss ich nicht, wir benoetigen das derzeit auch 
-nicht. Vielleicht kannst Du mal einen Verilog-Experten (Jonathan Bradford ?) zu Rate 
-ziehen. Insbesondere konnte mir im MDE-Team niemand sagen, ob mehrere Parameter 
+Wie es mit mehreren Parametern ist weiss ich nicht, wir benoetigen das derzeit auch
+nicht. Vielleicht kannst Du mal einen Verilog-Experten (Jonathan Bradford ?) zu Rate
+ziehen. Insbesondere konnte mir im MDE-Team niemand sagen, ob mehrere Parameter
 in einer definierten Reihenfolge zu uebergeben sind oder nicht.
 
 
@@ -3416,7 +3450,7 @@ in einer definierten Reihenfolge zu uebergeben sind oder nicht.
 
     Req: mpit
     Prio: high
-    
+
 
 Add:
     %NCD% to ::use column
@@ -3428,7 +3462,7 @@ Add:
     Prio: high
     Solution: added "inout" port to Verilog, testcase io\verilog
 
-- 20030728a/Bug:  1)pad_osc: xo port is in  
+- 20030728a/Bug:  1)pad_osc: xo port is in
 
     Req: mpit
     Prio: high
@@ -3465,7 +3499,7 @@ lm_y0_p6 _o <= std_ulogic_vector (lm_y_o)
                         port : typefunc
                     instances:
                         port map
-                            sig_func( port ) => signal 
+                            sig_func( port ) => signal
 
 
 - 20030404b/CR: Improve delta/ExCEL mode:
@@ -3488,7 +3522,7 @@ lm_y0_p6 _o <= std_ulogic_vector (lm_y_o)
 - 20030311b/Bug?: Check mde-b_real / cgs_ramclk / cgs_ramclk_s (i58_core)
     Req: Pallas
     Done: by aging :-) (works now)
-    
+
 - 20030311a/Bug: Check mde-b_real / cl24_init_frame
     Req: Pallas
     Done: by aging :-) (works now)
@@ -3496,12 +3530,12 @@ lm_y0_p6 _o <= std_ulogic_vector (lm_y_o)
 - 20030228a/Feature: Write out evaluated contents of mix.cfg (and timestamp) and
    command line switches and %EH to CONF sheet!
    Reason: can be reevaluated on backend side, catch differences
-   
+
    Req: wig
    Prio: medium
     Done: print CONF sheet
 
-   
+
 - ::variants: Default eq. "", if -variant VAR select Default + VAR.
   ::variants := VAR1,VAR2,Default
   ::variants := ""
@@ -3557,7 +3591,7 @@ es muss vielmehr (wie in VHDL) erst zusammengesetzt und dann zugewiesen werden:
     Req: mpallas
     Prio: high
     Solution: fixed in MixWriter.pm (appended assign in front of signal assignment )
-    
+
 - 20030714a/Bug: do not change _ to - in entity names!
 
     Req: mpit
@@ -3577,7 +3611,7 @@ es muss vielmehr (wie in VHDL) erst zusammengesetzt und dann zugewiesen werden:
     Effort: low
     Solved: wig20030711
     Testcases: configuration
-    
+
 - 20030711a/Req: Suppress output of configuration if component is taken from library
     Proposal: if W_NO_CONFIG -> will not be added!
     also: %NO_CONFIGURATION%
@@ -3587,7 +3621,7 @@ es muss vielmehr (wie in VHDL) erst zusammengesetzt und dann zugewiesen werden:
     Effort: low
     Solved: wig20030711
     Testcases: configuration
-    
+
 - 20030604c/Req: Make nameing schema for IOcells and Pads more flexible.
     e.g. use ::name as name root (not ::type ..)
 
@@ -3597,10 +3631,10 @@ es muss vielmehr (wie in VHDL) erst zusammengesetzt und dann zugewiesen werden:
     Solution: see pad.name and iocell.name
 	Sideeffect: add_inst and add_conn now evaluate all %XXX% keys in the primary key fields.
 	Allowed fields are ::COL (other input columns), text macros and postfix macros.
-    
+
 - 2003070a/Bug: output.path is not implemented!
     Cannot write datato dir other than cwd()
-    
+
     Req: mpit
     Prio: medium
     Impl: 20030703wig  ( -dir DIRECTORY ) + documentation
@@ -3609,18 +3643,18 @@ es muss vielmehr (wie in VHDL) erst zusammengesetzt und dann zugewiesen werden:
 
 - 20030604a/Bug: Do not generate configuration for Verilog instances in common
    config file
-   
+
     Req: wig
     Prio: low
     Solved: wig
-    
+
 - 20030228c/Feature: write arch, conf and entity into one file
   per entitiy (command line switch)
     Req: wig
     Prio: low
     Solution: set -combine option (or set outarch=COMB, outenty=COMB, outconf=COMB)
-   
-- 20030227b: 
+
+- 20030227b:
     Write out ENTY-e.vhd.N if a entity gets instantiated several times
     Requested: wig
     Prio: low
@@ -3639,7 +3673,7 @@ es muss vielmehr (wie in VHDL) erst zusammengesetzt und dann zugewiesen werden:
     MIXCFG macro.'%MY_MACRO%' MY_MACRO_VALUE
     to mix.cfg configuration file.
     Solved: wig20030708
-    
+
 - Open files, delay close until EOF processing
   Done: wig
 
@@ -3657,15 +3691,15 @@ es muss vielmehr (wie in VHDL) erst zusammengesetzt und dann zugewiesen werden:
     Req: wig
     Prio: medium
     Fixed: 20030331
-    
+
 - 20030325b/bug: Constant definition
 
 in MIX wird folgendes definiert:
 std_ulogic_vector   15   0   C               0x58B0   cgu_logic_i1/signature_val
 
-danach wird folgendes VHDL generiert (cgu-rtl-a.vhd):					
+danach wird folgendes VHDL generiert (cgu-rtl-a.vhd):
 ...
-signal	mix_const_0	: std_ulogic_vector(15 downto 0); 
+signal	mix_const_0	: std_ulogic_vector(15 downto 0);
 ...
 mix_const_0 <= "22704";
 ...
@@ -3695,18 +3729,18 @@ Testcase: constants.xls
     Req: wig
     Prio: medium
     Fixed: n/a
-    
+
 
 - 20030313d/Bug: Do bus/bit/port handling in signal assigments, not in port maps!
     Req: pallas
     Prio: High
     Comment: Actually this seems not to be necessary.
 
-    
+
 - 20030313f/Feature: ExCEL chart diff (might be duplicate)
     Create "DELTA" chart, stringfy input and run through "Text::diff"
     Nameing: D_CONN, D_CONF, D_HIER, ...
-    
+
     Req: wig
     Prio: medium
     Done: wig20030324, enabled by -delta switch
@@ -3738,10 +3772,10 @@ Testcase: constants.xls
      Done wig20030221
    2. output: add to header.
      Done wig20030221
-    
+
 - Fold/Condense multiple entries (e.g. comments, ::in, ::out)
     Done: wig20030324
-    
+
 - Concatenate busses (e.g. if bits are defined).
     Done: wig20030324
 
@@ -3756,7 +3790,7 @@ Testcase: constants.xls
 - 20030220g: Add <CR> into ::in and ::out cells, recognize in inout
    done/wig20030220, rel. 1.7 MixUtils
    Issue: late insertion not really handeled by regular "parse_macro"
-    
+
 - 20030220h: Bug section:
     			p_mix_cp_lcmd_6_6_gi	: in	std_ulogic_vector(6); -- __W_SINGLEBITBUS
     should read as:
@@ -3765,12 +3799,12 @@ Testcase: constants.xls
     Req: mpallas
     Prio: medium (workaround: manual edit)
     Testcase: bitsplice / CONN / TestMDE_1 (wig20030312)
-    Done: wig    
+    Done: wig
 
 - 20030220f: Port<->Signal assignment depends on IN vs. OUT
     Done: wig
 
-    
+
 - 20030317a/Bug: Missing Port in component
     sbist_fail_ fehlt an ifu_top (kommt aus ga, Pin8, 9)
     Req: pallas
@@ -3783,7 +3817,7 @@ Testcase: constants.xls
       ENTY-ARCH-a.vhd
       ENTY-ARCH-CONF-c.vhd
           (whole name equals ::conf column, but _ -> -)
-      
+
     Requested: wig
     Prio: medium
     Done: 20030317
@@ -3830,7 +3864,7 @@ Testcase: constants.xls
        .... (only existing keys in EH may be overridden) ....
    Read file in current dir "mix.cfg"
    See also: 20030312b
-   
+
   option: -conf KEY=VAL
   option: -listconf  -> print out list of configuration keys
 
@@ -3875,15 +3909,15 @@ Done wig20030221
     library NAME;
     use NAME.component.ALL;
 
-    req: Michael Pallas   
+    req: Michael Pallas
     done: wig20030227
     test case: sigport.xls/HIER_USE
-    
+
 
 - 20030226c: Keep ExCEL output format in -mixed.xls if possible.
   wig
   done 20030226
-  
+
 
     - Make sure "0" is not going to become "<spc>" (wig20021219)
     fixed in MixUtils, 20030110
@@ -3892,4 +3926,4 @@ Done wig20030221
      impl. 20030113
 
     - Add signal width for busses before outputing ... (if width is defined for bus and in/out has >none<)
-    fixed in MixParser, wig20030113 
+    fixed in MixParser, wig20030113
