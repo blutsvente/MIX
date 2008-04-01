@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.27 2008/02/07 11:05:45 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.28 2008/04/01 09:19:29 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.28  2008/04/01 09:19:29  lutscher
+#  changed parameter list of main methods
+#
 #  Revision 1.27  2008/02/07 11:05:45  lutscher
 #  changed name of mic_extensions value
 #
@@ -118,11 +121,12 @@ use Micronas::MixUtils::RegUtils;
 # view: E_VR_AD
 
 # Generate e-language macros containing bit-field declarations;
-# input: domain name(s) for which the code is generated; if omitted, 
+# input: view-name, list ref. to domain name(s) for which the code is generated; if omitted, 
 # one output is generated containing all register space domains in the Reg object
 
 sub _gen_view_vr_ad {
 	my $this = shift;
+    my ($view_name, $lref_domains) = @_;
 	my @ldomains;
 	my $href;
 	my $o_domain;
@@ -173,8 +177,8 @@ sub _gen_view_vr_ad {
 	my $hole_name  = $this->global->{hole_name};
     
 	# make list of domains for generation
-	if (scalar (@_)) {
-		foreach my $domain (@_) {
+	if (scalar (@$lref_domains)) {
+		foreach my $domain (@$lref_domains) {
 			$o_domain = $this->find_domain_by_name_first($domain);
 			if (ref($o_domain)) {
 				push @ldomains, $this->find_domain_by_name_first($domain);
@@ -186,7 +190,7 @@ sub _gen_view_vr_ad {
 		};
 	};
 	if (!scalar(@ldomains)) {   # something to do ?
-		_warning("no domains found to process, exiting");
+		_warning("no domains found to process");
 	};
     
 	# list of skipped registers and fields (put everything together in one list)
@@ -199,11 +203,14 @@ sub _gen_view_vr_ad {
 
     my $e_path = $this->global->{'path'};
 	my $e_filename = join("_",$this->global->{'file_prefix'}, map {$_->{name}} @ldomains).$this->global->{'suffix'};
-	open(E_FILE, ">${e_path}/${e_filename}") || logwarn("ERROR: could not open file \'${e_path}/$e_filename\' for writing");
+    my $fh_e_file = new FileHandle "${e_path}/$e_filename", 'w';
+    if (! defined $fh_e_file) {
+        logwarn("ERROR: could not open file \'${e_path}/$e_filename\' for writing");
+    };
+	# open(E_FILE, ">${e_path}/${e_filename}") || logwarn("ERROR: could not open file \'${e_path}/$e_filename\' for writing");
 	_info("generating file \'$e_filename\'");
-	print E_FILE "\$Id:" . 
-    "\$\n\nfile: $e_filename\n\n";
-	print E_FILE $this->global->{'header'};
+	$fh_e_file->print("\$Id: RegViewE.pm,v 1.28 2008/04/01 09:19:29 lutscher Exp $\n\nfile: $e_filename\n\n");
+	$fh_e_file->print($this->global->{'header'});
     
 	my ($top_inst, $o_field, $o_reg, $cov);
 	# $this->display();
@@ -234,7 +241,7 @@ sub _gen_view_vr_ad {
 			my @theholes = ();
 			my @thefields_and_theholes = ();
 			my $ii;
-			my $singlefield;
+			# my $singlefield;
 			my $upper;
 			my $hole_size;
 			
@@ -286,7 +293,7 @@ sub _gen_view_vr_ad {
             };
             
             $ii =0;
-            foreach $singlefield (@thefields) {
+            foreach my $singlefield (@thefields) {
                 $hole_size = $upper - ($singlefield->{pos} + $singlefield->{size});		
                 
                 if ($hole_size != 0) {
@@ -321,26 +328,29 @@ sub _gen_view_vr_ad {
             @thefields_and_theholes = reverse sort {$a->{pos} <=> $b->{pos}} @thefields_and_theholes;
             
             if ($o_reg->{'definition'} eq '' || scalar(@{$hdef{$reg_name}})==1) {
-                print E_FILE $this->global->{reg_macro}, " $reg_name";
+                $fh_e_file->print($this->global->{reg_macro}, " $reg_name");
                 if ($o_reg->{'definition'} eq '') {
-                    print E_FILE " $domain_str $reg_addr_str \{\n";
+                    $fh_e_file->print(" $domain_str $reg_addr_str \{\n");
                 } else {
-                    print E_FILE " \{\n";
+                    $fh_e_file->print(" \{\n");
                 };                
-                foreach $singlefield (@thefields_and_theholes) {
+                foreach my $singlefield (@thefields_and_theholes) {
+                    # print "debug: ",join(",", $this->global->{field_macro}, $singlefield->{name},$singlefield->{size},$singlefield->{rw}, $singlefield->{init}, $singlefield->{pos} ), "\n";
                     if ($singlefield->{name} =~ m/$hole_name/i) {
                         $cov = "";
                     } else {
-                        $cov = " : cov";
+                        $cov = ": cov";
                     };
-                    format E_FILE = 
-   @<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<: uint(bits:@>) : @< : @<<<<<<<<< @<<<<<< ; -- lsb position @>> 
-$this->global->{field_macro},$singlefield->{name},$singlefield->{size},$singlefield->{rw},$singlefield->{init},$cov, $singlefield->{pos} 
-.
-                    write E_FILE;
+                    $fh_e_file->printf("   %6s %34s : uint(bits:%2d) : %2s : %11s %5s ; -- lsb position %0d\n", $this->global->{field_macro},$singlefield->{name},$singlefield->{size},$singlefield->{rw},$singlefield->{init},$cov, $singlefield->{pos});
+#                    format STDOUT = 
+#   @<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<: uint(bits:@>) : @< : @<<<<<<<<< @<<<<<< ; -- lsb position @>> 
+#$this->global->{field_macro},$singlefield->{name},$singlefield->{size},$singlefield->{rw},$singlefield->{init},$cov, $singlefield->{pos} 
+#.
+#                    write; # E_FILE;
+                    # print "debug: ",join(",", $this->global->{field_macro}, $singlefield->{name},$singlefield->{size},$singlefield->{rw}, $singlefield->{init}, $singlefield->{pos} ), "\n";
                 };
-                print E_FILE "};\n";
-                $this->write_extend_reg($o_reg, $reg_name); 
+                $fh_e_file->print ("};\n");
+                $this->write_extend_reg($o_reg, $reg_name, $fh_e_file); 
             };
         };
         
@@ -348,43 +358,43 @@ $this->global->{field_macro},$singlefield->{name},$singlefield->{size},$singlefi
         foreach $reg_name (keys %hdef){
             $n = scalar(@{$hdef{$reg_name}});
             # output: list of regs instances
-            printf E_FILE ("extend $domain_str vr_ad_reg_file {\n"); 
-            printf E_FILE ("  %%%s_n:list of $reg_name vr_ad_reg;\n",lc($reg_name));
-            printf E_FILE ("  keep soft %s_n.size() == $n;\n", lc($reg_name));
-            printf E_FILE ("  post_generate() is also {\n");
+            $fh_e_file->printf ("extend $domain_str vr_ad_reg_file {\n"); 
+            $fh_e_file->printf ("  %%%s_n:list of $reg_name vr_ad_reg;\n",lc($reg_name));
+            $fh_e_file->printf ("  keep soft %s_n.size() == $n;\n", lc($reg_name));
+            $fh_e_file->printf ("  post_generate() is also {\n");
             $index = 0;
             foreach $reg_addr_str (@{$hdef{$reg_name}}) {
-                printf E_FILE ("    add_with_offset(%s,%s_n[%s]);\n",$reg_addr_str,lc($reg_name),$index++);
+                $fh_e_file->printf ("    add_with_offset(%s,%s_n[%s]);\n",$reg_addr_str,lc($reg_name),$index++);
             };
             _info("generated a list of \'$reg_name\' vr_ad_reg with $n items");
-            printf E_FILE ("  };\n");
-            printf E_FILE ("};\n");
+            $fh_e_file->printf ("  };\n");
+            $fh_e_file->printf ("};\n");
         };
-        printf E_FILE ("\n\nextend vr_ad_reg_file_kind : [%s];\n\n", $domain_str );
-        printf E_FILE ("extend $domain_str vr_ad_reg_file {\n");
-        printf E_FILE ("  default_reset: bool;\n");
-        printf E_FILE ("  keep soft default_reset;\n");
-        printf E_FILE ("  post_generate() is also {\n");
-        printf E_FILE ("    if default_reset {\n      reset();\n");
+        $fh_e_file->printf ("\n\nextend vr_ad_reg_file_kind : [%s];\n\n", $domain_str );
+        $fh_e_file->printf ("extend $domain_str vr_ad_reg_file {\n");
+        $fh_e_file->printf ("  default_reset: bool;\n");
+        $fh_e_file->printf ("  keep soft default_reset;\n");
+        $fh_e_file->printf ("  post_generate() is also {\n");
+        $fh_e_file->printf ("    if default_reset {\n      reset();\n");
         foreach $reg_name (keys %hdef){
-            printf E_FILE ("      for each (reg) in %s_n do { reg.reset(); };\n",  lc($reg_name));
+            $fh_e_file->printf ("      for each (reg) in %s_n do { reg.reset(); };\n",  lc($reg_name));
         };
-        printf E_FILE ("    };\n  };\n");
+        $fh_e_file->printf ("    };\n  };\n");
         # note: the size of the reg_file is determined by the highest address; possibly also by addressing_width_in_bytes
         # but the current formula is pessimistic and should work, though wastes some space
-        printf E_FILE ("  keep soft size == ".(${domain_max_offset} + $this->global->{'datawidth'}/8).";\n");
-        printf E_FILE ("#ifdef ".$this->global->{'mic_extensions'}." then {\n");
-        printf E_FILE ("  keep is_cloned == ".($clone_number > 0 ? "TRUE":"FALSE").";\n");
-        printf E_FILE ("  keep soft n_instances == ${clone_number};\n");
-        printf E_FILE ("  keep soft inst_addr_spacing == ${clone_addr_spacing};\n");
-        printf E_FILE ("};\n"); 
-        printf E_FILE ("};\n");
+        $fh_e_file->printf ("  keep soft size == ".(${domain_max_offset} + $this->global->{'datawidth'}/8).";\n");
+        $fh_e_file->printf ("#ifdef ".$this->global->{'mic_extensions'}." then {\n");
+        $fh_e_file->printf ("  keep is_cloned == ".($clone_number > 0 ? "TRUE":"FALSE").";\n");
+        $fh_e_file->printf ("  keep soft n_instances == ${clone_number};\n");
+        $fh_e_file->printf ("  keep soft inst_addr_spacing == ${clone_addr_spacing};\n");
+        $fh_e_file->printf ("};\n"); 
+        $fh_e_file->printf ("};\n");
         
     }; # foreach $o_domain (@ldomains)
     
-    print E_FILE $this->global->{'footer'};
+    $fh_e_file->print($this->global->{'footer'});
     
-    close(E_FILE);
+    $fh_e_file->close;
     
     # disable mix error message
     $eh->set('conn.req', "optional");
@@ -392,7 +402,7 @@ $this->global->{field_macro},$singlefield->{name},$singlefield->{size},$singlefi
 
 # write e-code that extends the vr_ad_reg struct 
 sub write_extend_reg {
-    my ($this, $o_reg, $reg_name) = @_;
+    my ($this, $o_reg, $reg_name, $fh_e_file) = @_;
     my $reg_access_mode = $o_reg->get_reg_access_mode(); # W, R or RW
     my $is_cloned = 0;
     if (exists $o_reg->{'inst_n'}) {
@@ -401,25 +411,25 @@ sub write_extend_reg {
 
     my $ignore = "";
     if ($this->global->{'vplan_ref'} !~ m/%empty%/i) {
-        print E_FILE "extend $reg_name vr_ad_reg {\n";
-        print E_FILE "  cover reg_access (kind == $reg_name) using also vplan_ref = \"", $this->global->{'vplan_ref'},"\";\n";
-        print E_FILE "};\n";
+        $fh_e_file->print("extend $reg_name vr_ad_reg {\n");
+        $fh_e_file->print("  cover reg_access (kind == $reg_name) using also vplan_ref = \"", $this->global->{'vplan_ref'},"\";\n");
+        $fh_e_file->print("};\n");
     };
     # special Micronas extensions
-    print E_FILE "#ifdef ".$this->global->{'mic_extensions'}." then {\n";
-    print E_FILE "extend $reg_name vr_ad_reg {\n";
+    $fh_e_file->print("#ifdef ".$this->global->{'mic_extensions'}." then {\n");
+    $fh_e_file->print("extend $reg_name vr_ad_reg {\n");
     if ($is_cloned) {
-        print E_FILE "  keep is_cloned == ".($is_cloned ? "TRUE":"FALSE").";\n";
+        $fh_e_file->print("  keep is_cloned == ".($is_cloned ? "TRUE":"FALSE").";\n");
     };
     my $reserved_bits = ~$o_reg->attribs->{'usedbits'};
     my $w1c_mask = $o_reg->_get_w1c_mask;
-    print E_FILE "  keep reserved_mask == 0x",_val2hex($this->global->{'datawidth'}, $reserved_bits),";\n";
+    $fh_e_file->print("  keep reserved_mask == 0x",_val2hex($this->global->{'datawidth'}, $reserved_bits),";\n");
     if ($w1c_mask != 0) {
-        print E_FILE "  keep w1c_mask ==  0x",_val2hex($this->global->{'datawidth'}, $w1c_mask),";\n";
+        $fh_e_file->print("  keep w1c_mask ==  0x",_val2hex($this->global->{'datawidth'}, $w1c_mask),";\n");
     };
-    print E_FILE "};\n";
+    $fh_e_file->print("};\n");
     
-    print E_FILE "};\n";
+    $fh_e_file->print("};\n");
     if ($reg_access_mode ne "RW") {
         # create cover ignores for direction if enabled by the user
         if ($reg_access_mode eq "W" and $this->global->{'cover_ign_raed_to_write_only'} ) {
@@ -430,14 +440,14 @@ sub write_extend_reg {
             };
         };
         if ($ignore ne "") {
-            print E_FILE "extend vr_ad_reg {\n";
-            print E_FILE "  cover reg_access (kind == $reg_name) is also {\n";
-            print E_FILE "    item direction using also ignore = direction == ${ignore};\n";
-            print E_FILE "  };\n";
-            print E_FILE "};\n";
+            $fh_e_file->print("extend vr_ad_reg {\n");
+            $fh_e_file->print("  cover reg_access (kind == $reg_name) is also {\n");
+            $fh_e_file->print("    item direction using also ignore = direction == ${ignore};\n");
+            $fh_e_file->print("  };\n");
+            $fh_e_file->print("};\n");
         };
     };
-    print E_FILE "\n";
+    $fh_e_file->print("\n");
 };
 
 # end view: E_VR_AD

@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.74 2008/02/07 10:45:04 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.75 2008/04/01 09:19:29 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.74 $                                  
+#  Revision      : $Revision: 1.75 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.75  2008/04/01 09:19:29  lutscher
+#  changed parameter list of main methods
+#
 #  Revision 1.74  2008/02/07 10:45:04  lutscher
 #  some extensions for generated e-code
 #
@@ -163,11 +166,12 @@ use Micronas::MixUtils::RegUtils;
 
 # Main entry function; generate data structures for the MIX Parser for Register 
 # shell generation;
-# input: domain names for which register shells are generated; if omitted, 
+# input: view-name, list ref. to domain names for which register shells are generated; if empty, 
 # register shells for ALL register space domains in the Reg object are generated
 # output: 0 in case of non-recoverable error, 1 otherwise
 sub _gen_view_vgch_rs {
 	my $this = shift;
+    my ($view_name, $lref_domains) = @_;
 	my @ldomains;
 	my $href;
 	my $o_domain;
@@ -176,8 +180,9 @@ sub _gen_view_vgch_rs {
     $this->_vgch_rs_init();
 
 	# make list of domains for generation
-	if (scalar (@_)) {
-		foreach my $domain (@_) {
+	if (scalar (@$lref_domains)) {
+        # user supplied domains
+		foreach my $domain (@$lref_domains) {
 			$o_domain = $this->find_domain_by_name_first($domain);
 			if (ref($o_domain)) {
 				push @ldomains, $this->find_domain_by_name_first($domain);
@@ -186,7 +191,8 @@ sub _gen_view_vgch_rs {
 			};
 		};
 	} else {
-		foreach $href (@{$this->domains}) {
+		foreach $href (@{$this->domains}) { 
+            # all domains
 			push @ldomains, $href->{'domain'};
 		};
 	};
@@ -361,7 +367,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.74 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.75 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 

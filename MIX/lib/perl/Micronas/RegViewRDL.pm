@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewRDL.pm,v 1.2 2006/03/14 14:21:19 lutscher Exp $
+#  RCSId: $Id: RegViewRDL.pm,v 1.3 2008/04/01 09:19:29 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.2 $                                  
+#  Revision      : $Revision: 1.3 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViewRDL.pm,v $
+#  Revision 1.3  2008/04/01 09:19:29  lutscher
+#  changed parameter list of main methods
+#
 #  Revision 1.2  2006/03/14 14:21:19  lutscher
 #  made changes for new eh access and logger functions
 #
@@ -61,11 +64,12 @@ use Micronas::MixUtils::RegUtils;
 #------------------------------------------------------------------------------
 # view: STL
 # Main entry function of this module;
-# input: domain names for which output is generated; if omitted, 
+# input: view-name, list ref. to domain names for which output is generated; if empty, 
 # will consider ALL register space domains in the Reg object;
 # output: 0 in case of non-recoverable error, 1 otherwise
 sub _gen_view_rdl {
 	my $this = shift;
+    my ($view_name, $lref_domains) = @_;
 	# extend class data with data structure needed for code generation
 	$this->global(
 				  'debug'              => 0,
@@ -112,8 +116,8 @@ sub _gen_view_rdl {
 	my ($o_domain, $o_field, $o_reg, $usedbits, $reg, $reg_offset, %hregs, $mask, $dwidth, $val, $href, $ilvl);
 
 	# check over which domains we want to iterate
-	if (scalar (@_)) {
-		foreach my $domain (@_) {
+	if (scalar (@$lref_domains)) {
+		foreach my $domain (@$lref_domains) {
 			push @{$this->global->{'ldomains'}}, $this->find_domain_by_name_first($domain);
 		};
 	} else {

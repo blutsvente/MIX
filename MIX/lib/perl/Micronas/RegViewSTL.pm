@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewSTL.pm,v 1.11 2008/02/07 10:45:04 lutscher Exp $
+#  RCSId: $Id: RegViewSTL.pm,v 1.12 2008/04/01 09:19:29 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.11 $                                  
+#  Revision      : $Revision: 1.12 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViewSTL.pm,v $
+#  Revision 1.12  2008/04/01 09:19:29  lutscher
+#  changed parameter list of main methods
+#
 #  Revision 1.11  2008/02/07 10:45:04  lutscher
 #  some extensions for generated e-code
 #
@@ -88,11 +91,12 @@ use Micronas::MixUtils::RegUtils;
 # view: STL
 
 # Main entry function of this module;
-# input: domain names for which STL files are generated; if omitted, 
+# input: view-name, list ref. to domain names for which STL files are generated; if empty, 
 # STL file will consider ALL register space domains in the Reg object;
 # output: 0 in case of non-recoverable error, 1 otherwise
 sub _gen_view_stl {
 	my $this = shift;
+    my ($view_name, $lref_domains) = @_;
 	my $href;
 	my @lexclude_regs;
 
@@ -146,8 +150,8 @@ version 2.0
 	};
 
 	# make list of domains for generation
-	if (scalar (@_)) {
-		foreach my $domain (@_) {
+	if (scalar (@$lref_domains)) {
+		foreach my $domain (@$lref_domains) {
 			push @{$this->global->{'ldomains'}}, $this->find_domain_by_name_first($domain);
 		};
 	} else {
