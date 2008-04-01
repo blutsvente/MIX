@@ -4,6 +4,43 @@ MIX HOWTO and FAQ
 
 >>keywords: MIX, top level generator, FAQ, HOWTO, register master
 
+>>title: Wiring signals together directely with the %WIRE% pseudo entity
+
+In order to create (or force) an direct connection of two signals at a
+defined location, please use the %WIRE% module.
+
+In MIX a %WIRE% is defined in the HIER and CONN sheets like so:
+1. HIER Sheet:
+::parent your_inst ; ::inst   my_wire_a ; ::entity %WIRE%
+
+Explanation:
+	- ::parent defined the location in your hierachy.
+	- ::inst is any name used to address this %WIRE% module. It has to be unique
+		in your complete design.
+
+2. CONN Sheet:
+::name signal_driver ; ::in my_wire_a/in
+::name signal_load ; ::out my_wire_a/out
+You can choose arbitrary port names for the wire module.
+
+This will create HDL code of the form
+	signal_load <= signal_driver; -- __I_I_BIT_PORT
+in the RTL of "your_inst".
+
+Due to the very limited usage of this feature, please be aware of the
+following restrictions:
+- The implementation covers 1:1 connections of single bit signals or busses, only.
+  Connection of bus splices to signals and vice versa is not tested.
+- It's your own responsibility to make the input and output bus width match.
+  The test suite does not cover such corner cases.
+- There are only VHDL testcases.
+
+The original design intent of %WIRE% is to enforce inside signal connections
+in a module. By default MIX will connect a signal entering and leaving a design
+hierachy from the outside. See also the description below.
+
+#!wig20070917a
+
 >>title: MIX warns about non-integer parmeters
 wig issue 20070113a
 
