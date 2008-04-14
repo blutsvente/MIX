@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.43 2008/04/01 13:01:24 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.44 2008/04/14 07:50:28 wig Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.44  2008/04/14 07:50:28  wig
+#  Only complain about missing I2C sheet if xls.i2c is set to mandatory.
+#
 #  Revision 1.43  2008/04/01 13:01:24  lutscher
 #  changed info to error
 #
@@ -152,8 +155,13 @@ sub parse_register_master($) {
         };
         return $o_space;
     } else {
-		$logger->error('__E_REG_INIT', "\tRegister-master file empty or specified sheet \'" .
-                      $eh->get('i2c.xls') . "\' in file not found");
+		if ( $eh->get('i2c.req') =~ m/\bmandatory/ ) {
+			$logger->error('__E_REG_INIT', "\tRegister-master file empty or sheet matching \'" .
+                      $eh->get('i2c.xls') . "\' in no input file found");
+		} else {
+			$logger->error('__I_REG_INIT', "\tRegister-master file empty or sheet matching \'" .
+                      $eh->get('i2c.xls') . "\' in no input file found");
+		}
 	};
 	return undef;
 };
@@ -162,7 +170,7 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.43 $ ';  #'
+our($VERSION) = '$Revision: 1.44 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
