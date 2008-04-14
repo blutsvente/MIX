@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.96 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2008/04/01 12:48:34 $                              |
+# | Revision:   $Revision: 1.97 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2008/04/14 12:07:30 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.96 2008/04/01 12:48:34 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.97 2008/04/14 12:07:30 lutscher Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.97  2008/04/14 12:07:30  lutscher
+# | fixed collapse_conn
+# |
 # | Revision 1.96  2008/04/01 12:48:34  wig
 # | Added: optimizeportassign feature to avoid extra assign commands
 # | added protoype for collapse_conn function allowing to merge signals
@@ -151,7 +154,7 @@ require Exporter;
       add_inst
       add_tree_node
       add_conn
-      sub collapse_conn
+      collapse_conn
       mix_p_updateconn
       mix_p_retcprop
       add_portsig
@@ -225,9 +228,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.96 2008/04/01 12:48:34 wig Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.97 2008/04/14 12:07:30 lutscher Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.96 $';
+my $thisrevision =	'$Revision: 1.97 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1238,19 +1241,20 @@ sub add_conn (%) {
 
 sub collapse_conn ($@) {
 	my $outname = shift;
-	
+
 	for my $inname ( @_ ) {
 		unless ( exists $conndb{$inname} ) {
 			$logger->error('__E_COLLAPSE_CONN', "\tNo signal $inname defined up to now" );
 			next;
 		}
-		
+
 		# Overload name upfront!
 		$conndb{$inname}{'::name'} = $outname;
+
 		if ( defined( $conndb{$outname}  ) ) {
-        	merge_conn( $outname, $conndb{$inname} );
+        	merge_conn( $outname, %{$conndb{$inname}} );
     	} else {
-        	create_conn( $outname, $conndb{$inname} );
+        	create_conn( $outname, %{$conndb{$inname}} );
     	}
     	
     	# Remove the old data
