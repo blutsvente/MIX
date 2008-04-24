@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.143 $                                        |
+# | Revision:   $Revision: 1.144 $                                        |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2008/04/24 12:01:36 $                              |
+# | Date:       $Date: 2008/04/24 16:57:56 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.143 2008/04/24 12:01:36 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.144 2008/04/24 16:57:56 lutscher Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.144  2008/04/24 16:57:56  lutscher
+# | added xml to write_sum()
+# |
 # | Revision 1.143  2008/04/24 12:01:36  lutscher
 # | added namespace to call of nstore function
 # |
@@ -203,11 +206,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.143 2008/04/24 12:01:36 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.144 2008/04/24 16:57:56 lutscher Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.143 $';         #'
+my $thisrevision        =      '$Revision: 1.144 $';         #'
 
-# Revision:   $Revision: 1.143 $   
+# Revision:   $Revision: 1.144 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -3757,7 +3760,7 @@ sub write_sum () {
 			' seconds' );
 
     $logger->info( "SUM: === Number of parsed input tables: ===" );
-    for my $i ( qw( conf hier conn io i2c ) ) {
+    for my $i ( qw( conf hier conn io i2c xml) ) {
         $logger->info( "SUM: $i " . $eh->get( $i . '.parsed' ) );
     }
 
