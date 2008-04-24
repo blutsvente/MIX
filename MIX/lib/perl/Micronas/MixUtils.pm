@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.142 $                                        |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/11/15 13:07:01 $                              |
+# | Revision:   $Revision: 1.143 $                                        |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2008/04/24 12:01:36 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.142 2007/11/15 13:07:01 wig Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.143 2008/04/24 12:01:36 lutscher Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.143  2008/04/24 12:01:36  lutscher
+# | added namespace to call of nstore function
+# |
 # | Revision 1.142  2007/11/15 13:07:01  wig
 # | Improved HDL import:
 # | 	- Handle parantheses in VHDL comments
@@ -200,11 +203,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.142 2007/11/15 13:07:01 wig Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.143 2008/04/24 12:01:36 lutscher Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.142 $';         #'
+my $thisrevision        =      '$Revision: 1.143 $';         #'
 
-# Revision:   $Revision: 1.142 $   
+# Revision:   $Revision: 1.143 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2648,7 +2651,7 @@ sub mix_store ($$;$){
     }
 
     # Dump the data here:
-    unless( nstore( $r_data, $predir . $file ) ) {
+    unless( Storable::nstore( $r_data, $predir . $file ) ) {
 		$logger->fatal('__F_STORE', "\tCannot store date into $predir$file: " . $! . "!\n");
 		exit 1;
     }
