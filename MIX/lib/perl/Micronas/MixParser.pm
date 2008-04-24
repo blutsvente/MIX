@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.98 $                                         |
+# | Revision:   $Revision: 1.99 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2008/04/24 12:01:08 $                              |
+# | Date:       $Date: 2008/04/24 12:16:44 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.98 2008/04/24 12:01:08 lutscher Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.99 2008/04/24 12:16:44 lutscher Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.99  2008/04/24 12:16:44  lutscher
+# | another fix in mix_store_db()
+# |
 # | Revision 1.98  2008/04/24 12:01:08  lutscher
 # | extended mix_store_db to capture xml type
 # |
@@ -231,9 +234,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.98 2008/04/24 12:01:08 lutscher Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.99 2008/04/24 12:16:44 lutscher Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.98 $';
+my $thisrevision =	'$Revision: 1.99 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2270,12 +2273,13 @@ sub mix_store_db ($$$) {
     } else {
         if ($type eq 'xml') {
             $logger->info('__I_STORE_DB', "\tno dumper for .xml implemented");
-        };
-        if ( $type ne "internal" ) {
-            $type="intermediate";
+        } else {
+            if ( $type ne "internal" ) {
+                $type="intermediate";
+            }
+            mix_store( $dumpfile,
+                       { 'conn' => \%conndb , 'hier' => \%hierdb, %$varh }, $type);
         }
-        mix_store( $dumpfile,
-        	{ 'conn' => \%conndb , 'hier' => \%hierdb, %$varh }, $type);
     }
 }
 
