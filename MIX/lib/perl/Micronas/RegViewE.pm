@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.28 2008/04/01 09:19:29 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.29 2008/04/24 08:38:25 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.29  2008/04/24 08:38:25  lutscher
+#  fixed printing of CVS macro to file
+#
 #  Revision 1.28  2008/04/01 09:19:29  lutscher
 #  changed parameter list of main methods
 #
@@ -209,7 +212,7 @@ sub _gen_view_vr_ad {
     };
 	# open(E_FILE, ">${e_path}/${e_filename}") || logwarn("ERROR: could not open file \'${e_path}/$e_filename\' for writing");
 	_info("generating file \'$e_filename\'");
-	$fh_e_file->print("\$Id: RegViewE.pm,v 1.28 2008/04/01 09:19:29 lutscher Exp $\n\nfile: $e_filename\n\n");
+	$fh_e_file->print('$Id: RegViewE.pm,v 1.29 2008/04/24 08:38:25 lutscher Exp $', "\n\nfile: $e_filename\n\n");
 	$fh_e_file->print($this->global->{'header'});
     
 	my ($top_inst, $o_field, $o_reg, $cov);
