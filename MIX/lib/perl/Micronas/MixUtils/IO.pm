@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.56 $                                          |
-# | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2008/04/01 12:48:34 $                              |
+# | Revision:   $Revision: 1.57 $                                          |
+# | Author:     $Author: lutscher $                                         |
+# | Date:       $Date: 2008/04/24 12:02:07 $                              |
 # |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.57  2008/04/24 12:02:07  lutscher
+# | added open_xml() and hook to open_infile()
+# |
 # | Revision 1.56  2008/04/01 12:48:34  wig
 # | Added: optimizeportassign feature to avoid extra assign commands
 # | added protoype for collapse_conn function allowing to merge signals
@@ -129,6 +132,7 @@ our $VERSION = '1.0';
 use strict;
 use Cwd;
 use File::Basename;
+use FileHandle;
 
 use Log::Log4perl qw(get_logger);
 
@@ -165,11 +169,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.56 2008/04/01 12:48:34 wig Exp $';#'
+my $thisid          =      '$Id: IO.pm,v 1.57 2008/04/24 12:02:07 lutscher Exp $';#'
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.56 $'; #'
+my $thisrevision    =      '$Revision: 1.57 $'; #'
 
-# Revision:   $Revision: 1.56 $
+# Revision:   $Revision: 1.57 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -392,8 +396,9 @@ sub mix_sheet_conf($$) {
 ####################################################################
 =head2 mix_utils_open_input(@)
 
-Open all input files and read in their CONN, HIER and IO sheets
-Returns two (three/four) arrays with hashes ...
+Open all input files and read in their CONN, HIER and IO sheets;
+Open XML database if any.
+Returns two (three/four/five) references to arrays with hashes ...
 
 =over 4
 
@@ -410,6 +415,7 @@ sub mix_utils_open_input(@) {
     my $ahier = [];
     my $aio = [];
     my $ai2c = [];
+    my $axml = [];
 
     for my $i ( @in ) {
 		unless ( -r $i ) {
@@ -422,30 +428,38 @@ sub mix_utils_open_input(@) {
 		my $hier;
 		my $io;
 		my $i2c;
+        my $lref_xml;
 
 		# maybe there is a CONF page?
 		# Change CONF accordingly (will not be visible at upper world)
 		# TODO : add plugin interface to read in whatever is needed ...
-		@conf = open_infile( $i, $eh->get( 'conf.xls' ), $eh->get( 'conf.xxls' ), $eh->get( 'conf.req' ) );
-
-		# Open connectivity sheet(s)
-		$conn = open_infile( $i, $eh->get( 'conn.xls' ), $eh->get( 'conn.xxls' ),
-			$eh->get( 'conn.req' ) . ',order,hash' );
-
-		# Open hierachy sheets
-		$hier = open_infile( $i, $eh->get( 'hier.xls' ), $eh->get( 'hier.xxls' ),
-			$eh->get( 'hier.req' ) . ',order,hash' );
-
-		# Open IO sheet (if available, not needed!)
-		$io = open_infile( $i, $eh->get( 'io.xls' ), $eh->get( 'io.xxls'),
-			$eh->get( 'io.req' ) . ',order,hash' );
-
-		# Open I2C sheet (if available, not needed!)
-		$i2c = open_infile( $i, $eh->get( 'i2c.xls' ), $eh->get( 'i2c.xxls' ),
-			$eh->get( 'i2c.req' ) . ',order,hash' );
+        if( $i !~ m/\.xml$/) { 
+            # Open .xls Sheet
+            @conf = open_infile( $i, $eh->get( 'conf.xls' ), $eh->get( 'conf.xxls' ), $eh->get( 'conf.req' ) );
+            
+            # Open connectivity sheet(s)
+            $conn = open_infile( $i, $eh->get( 'conn.xls' ), $eh->get( 'conn.xxls' ),
+                                 $eh->get( 'conn.req' ) . ',order,hash' );
+            
+            # Open hierachy sheets
+            $hier = open_infile( $i, $eh->get( 'hier.xls' ), $eh->get( 'hier.xxls' ),
+                                 $eh->get( 'hier.req' ) . ',order,hash' );
+            
+            # Open IO sheet (if available, not needed!)
+            $io = open_infile( $i, $eh->get( 'io.xls' ), $eh->get( 'io.xxls'),
+                               $eh->get( 'io.req' ) . ',order,hash' );
+            
+            # Open I2C sheet (if available, not needed!)
+            $i2c = open_infile( $i, $eh->get( 'i2c.xls' ), $eh->get( 'i2c.xxls' ),
+                                $eh->get( 'i2c.req' ) . ',order,hash' );
+        } else {
+            # Open XML database (do not pass other files, because all information in .xls files is extracted above)
+            $lref_xml = undef;
+            if( $i=~ m/\.xml$/) { $lref_xml = open_infile($i,"","","") };
+        };
 
 		# Did we get enough sheets:
-		unless( $conn or @conf or $hier or $io or $i2c ) {
+		unless( $conn or @conf or $hier or $io or $i2c or $lref_xml) {
 	    	$logger->error('__E_OPEN_INPUT', "\tNo input found in file $i!\n");
 	    	next; # -> skip to next
 		}
@@ -476,6 +490,11 @@ sub mix_utils_open_input(@) {
 	    	push( @$ahier,   @norm_hier );	# Append
 		}
 
+        # Merge XML databases
+        if (defined $lref_xml) {
+            push @$axml, @$lref_xml;
+        };
+
 		for my $c ( @$io ) {
 	    	$eh->inc( 'io.parsed' );
 	    	my @norm_io = convert_in( 'io', $c->[1] );
@@ -495,7 +514,7 @@ sub mix_utils_open_input(@) {
 	# Here we do the final setup, all configuration known now.
 	# Check if all directories exists -> create if not
 	mix_utils_io_create_path();
-	return( $aconn, $ahier, $aio, $ai2c);
+	return( $aconn, $ahier, $aio, $ai2c, $axml);
 
 } # End of mix_utils_open_input
 
@@ -590,6 +609,8 @@ sub open_infile($$$$){
         return open_sxc($file, $sheetname, $xsheetname, $flags);
     } elsif( $file=~ m/\.csv$/) { # read comma seperated values
         return open_csv($file, $xsheetname, $sheetname, $flags);
+    } elsif( $file=~ m/\.xml$/) { # read XML database        
+        return open_xml($file);
     } else {
         $logger->error( '__E_FILE_EXTENSION', "\tUnknown file extension for file $file!" );
 		return undef;
@@ -1111,6 +1132,37 @@ sub open_csv($$$$) {
 	}
 } # End of open_csv
 
+####################################################################
+## open_xml
+## open XML file and get contents
+####################################################################
+=head2 open_xml($$)
+
+Open a XML file and return reference to array of lines
+
+=over 1
+=item $filename name of file
+
+=back
+
+=cut
+
+sub open_xml($){
+    my ($file) = @_;
+    
+    my @lresult = ();
+
+    my $fh = new FileHandle $file, "r";
+    if (defined $fh) {
+        while(<$fh>) { chomp($_);push @lresult, $_};
+    } else {
+        $logger->error('__E_FILE_READ', "\tCannot read <$file> in open_xml!");
+		return undef;
+    };
+
+    $fh->close();
+    return \@lresult;
+} # End of open_xml
 
 ####################################################################
 ## absolute_path
