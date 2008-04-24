@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.47 2008/04/24 13:07:34 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.48 2008/04/24 16:58:53 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.48  2008/04/24 16:58:53  lutscher
+#  some improvements to parse_register_master()
+#
 #  Revision 1.47  2008/04/24 13:07:34  lutscher
 #  some clean-up
 #
@@ -86,9 +89,10 @@ my $logger = get_logger('MIX::Reg');
 # Returns undef or a reference to the Reg object
 # Note: this subroutine is not a class member
 #------------------------------------------------------------------------------
-sub parse_register_master($;$) {
-	my ($r_i2c, $r_xml) = @_;
-    
+sub parse_register_master {
+	my $r_i2c = shift;
+    my $r_xml = shift || []; 
+
 	if (scalar @$r_i2c or scalar @$r_xml) {
 		
 		# Load modules on demand ...
@@ -129,15 +133,16 @@ sub parse_register_master($;$) {
             if (scalar @$r_i2c) {
                 $o_space->init(	 
                                'inputformat'     => "register-master", 
-                               'database_type'   => $eh->get( 'i2c.regmas_type' ),
+                               'database_type'   => $eh->get('i2c.regmas_type'),
                                'register_master' => $r_i2c
                               );
             };
             # add to register-object from XML database
             if (scalar @$r_xml) {
                 $o_space->init(	 
-                               'inputformat' => "ip-xact", 
-                               'data'        => $r_xml
+                               'inputformat'    => "ip-xact", 
+                               'database_type'  => $eh->get('xml.type'),
+                               'data'           => $r_xml
                               );
             };
             
@@ -155,13 +160,16 @@ sub parse_register_master($;$) {
         };
         return $o_space;
     } else {
-		if ( $eh->get('i2c.req') =~ m/\bmandatory/ ) {
-			$logger->error('__E_REG_INIT', "\tRegister-master or IP-XACT file empty or sheet matching \'" .
-                      $eh->get('i2c.xls') . "\' in no input file found");
-		} else {
-			$logger->error('__I_REG_INIT', "\tRegister-master or IP-XACT file empty or sheet matching \'" .
-                      $eh->get('i2c.xls') . "\' in no input file found");
-		}
+        # only create errors if neither file is present
+        if (!scalar @$r_i2c ) {
+            my $severity = ($eh->get('i2c.req') =~ m/\bmandatory/ ? '__E_REG_INIT':'__I_REG_INIT');
+            $logger->error($severity, "\tRegister-master file empty or sheet matching \'" .
+                           $eh->get('i2c.xls') . "\' not found in any input file");
+        };
+        if (!scalar @$r_xml) {
+            my $severity = ($eh->get('xml.req') =~ m/\bmandatory/ ? '__E_REG_INIT':'__I_REG_INIT');
+            $logger->error($severity, "\tXML file not present or empty");
+        };
 	};
 	return undef;
 };
@@ -170,7 +178,7 @@ sub parse_register_master($;$) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.47 $ ';  #'
+our($VERSION) = '$Revision: 1.48 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -261,10 +269,10 @@ sub init {
             };
         };
         if ($hinput{inputformat} eq "ip-xact") {
-            # call mapping function for spirit ip-xact (XML) database
-            # BAUSTELLE
-            print join("\n", @{$hinput{data}}), "\n";
-            _error("not yet implemented");
+            # call mapping function for ip-xact (XML) database
+            print "DATABASE TYPE: ",$hinput{database_type},"\n";
+            print "DATA: ", join("\n", @{$hinput{data}}), "\n";
+            _error("BAUSTELLE not yet implemented");
         };
     };
 };
@@ -429,7 +437,6 @@ sub _map_register_master {
     # iterate each row
     foreach $href_row (@$lref_rm) {
         # skip lines to ignore
-
         next if (
                  exists ($href_row->{"::ign"}) 
                  and ($href_row->{"::ign"} =~ m/${icomment}/ or $href_row->{"::ign"} =~ m/${ivariant}/o )
