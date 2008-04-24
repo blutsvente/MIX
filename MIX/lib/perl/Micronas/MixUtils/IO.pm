@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.57 $                                          |
+# | Revision:   $Revision: 1.58 $                                          |
 # | Author:     $Author: lutscher $                                         |
-# | Date:       $Date: 2008/04/24 12:02:07 $                              |
+# | Date:       $Date: 2008/04/24 16:56:24 $                              |
 # |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.58  2008/04/24 16:56:24  lutscher
+# | added key xml
+# |
 # | Revision 1.57  2008/04/24 12:02:07  lutscher
 # | added open_xml() and hook to open_infile()
 # |
@@ -169,11 +172,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.57 2008/04/24 12:02:07 lutscher Exp $';#'
+my $thisid          =      '$Id: IO.pm,v 1.58 2008/04/24 16:56:24 lutscher Exp $';#'
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.57 $'; #'
+my $thisrevision    =      '$Revision: 1.58 $'; #'
 
-# Revision:   $Revision: 1.57 $
+# Revision:   $Revision: 1.58 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -492,6 +495,7 @@ sub mix_utils_open_input(@) {
 
         # Merge XML databases
         if (defined $lref_xml) {
+            $eh->inc( 'xml.parsed' );
             push @$axml, @$lref_xml;
         };
 

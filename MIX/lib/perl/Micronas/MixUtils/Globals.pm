@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.54 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2008/04/01 12:48:34 $                              |
+# | Revision:   $Revision: 1.55 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2008/04/24 16:58:13 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.55  2008/04/24 16:58:13  lutscher
+# | added key xml
+# |
 # | Revision 1.54  2008/04/01 12:48:34  wig
 # | Added: optimizeportassign feature to avoid extra assign commands
 # | added protoype for collapse_conn function allowing to merge signals
@@ -146,9 +149,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.54 2008/04/01 12:48:34 wig Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.55 2008/04/24 16:58:13 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.54 $';  
+my $thisrevision    =      '$Revision: 1.55 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -924,73 +927,73 @@ sub init ($) {
 					# const := use %SEL% defined width
 
 	};
+
 	#
     # parameters for register-view generation (e.g. for HDL register-shell)
     #
-    
-	$this->{'cfg'}{'reg_shell'} = {
-	    'type'      => 'HDL-vgch-rs',       # type of register-view to be generated (see Reg.pm)
-		'addrwidth' => 14,                  # default address bus width (byte-addresses)
-		'datawidth' => 32,                  # default data bus width in bits
-		'multi_clock_domains' => 1,         # if 1, generate separate register blocks for all clock domains
-		'infer_clock_gating'  => 1,         # if 1, insert extra logic for power-saving
-        'infer_sva'           => 1,         # if 1, insert SystemVerilog assertions into HDL-code
-        'read_pipeline_lvl'   => 0,         # parameter that controls the read-pipelining
-                                            # if 0, no read-pipelining will be inserted
-		'read_multicycle'     => 0,         # can be one of [0,1,2,..] to insert delays for read-acknowledge
-		'bus_clock' => "clk",               # default bus clock name
-		'bus_reset' => "rst_n",             # default bus reset name
-        'use_reg_name_as_prefix' => 0,      # [deprecated] if 1, prefix field names with register names
-        'exclude_regs' => "",               # comma seperated list of register names to exclude from code generation
-		'exclude_fields' => "",             # comma seperated list of field names to exclude from code generation	
-		'add_takeover_signals' => 0,        # if 1, internal update signals are also routed to top-level ports
-        'regshell_prefix'      => "rs",     # register-shell prefix
-        'enforce_unique_addr'  => 1,        # if 1, allow only one register per address
-        'infer_reset_syncer'   => 0,        # if 1, instantiates a reset synchronizer for asynchronous reset
-        'field_naming'         => '%F',     # naming scheme for fields, see 'clone'
-        'virtual_top_instance' => "testbench", # name of top-level instance where register-shell is instantiated (usually not used)
-                    # parameters for e_vr_ad view
-        'e_vr_ad' => {
-                      'path'             => "./e", # output dir for e-code
-                      'regfile_prefix'   => 'MIC',
-                      'file_prefix'      => 'regdef',
-                      'vplan_ref'        => '%EMPTY%', # for automatic coverage generation
-                      'field_naming'     => '%lF',  # see 'clone'
-                      'reg_naming'       => '%uR',  # see 'clone'
-                      'cover_ign_read_to_write_only' => 0, # for automatic coverage generation
-                      'cover_ign_write_to_read_only' => 1  # for automatic coverage generation
-                     },
-					# parameters for STL view 
-		'stl' => {
-				  'initial_idle'  => 100,
-				  'exclude_regs'  => "", # comma seperated list of registers to exclude from STL generation
-				  'use_base_addr' => 0
-				 },
-
-					# parameters for cloning register object
-                    # the naming goes according to placeholders:
-                    # %[<u|l>]<D|R|F|[<d>]N>
-                    # D domain name
-                    # R original name of register
-                    # F original name of field (only availabe in field_naming)
-                    # N decimal number; can be preceded by a number to fix the number of digits used in representation
-                    # u or l force upper/lowercase (optional)
-                    # e.g. 'scc_%2N_%uR' creates name scc_06_REG_X from original name reg_x in the 7th clone
-		'clone' => {
-					'number'       => 0,          # number of clones
-					'addr_spacing' => 10,         # number of address bits reserved for every clone
-					'reg_naming'   => '%R_%N',    # naming scheme for cloned register
-					'field_naming' => '%F_%N',    # naming scheme for cloned field
-					'unique_clocks'=> 1           # if 1, uniquify clock names of clones
-				   },
-        'workaround' => "",                       # string parameter to specify workarounds, currently:
-                                                  # platinumd
-
-					# legacy parameters, not needed anymore!
-		'cfg_module_prefix'    => "rs_cfg", # prefix for config register block
-		'mode'             => 'lcport', # lcport -> map created port names to lowercase	
-		'regwidth' => 32  # Default register width
-	};
+	$this->{'cfg'}{'reg_shell'} = 
+      {
+       'type'      => 'HDL-vgch-rs',       # type of register-view to be generated (see Reg.pm)
+       'addrwidth' => 14,                  # default address bus width (byte-addresses)
+       'datawidth' => 32,                  # default data bus width in bits
+       'multi_clock_domains' => 1,         # if 1, generate separate register blocks for all clock domains
+       'infer_clock_gating'  => 1,         # if 1, insert extra logic for power-saving
+       'infer_sva'           => 1,         # if 1, insert SystemVerilog assertions into HDL-code
+       'read_pipeline_lvl'   => 0,         # parameter that controls the read-pipelining
+       # if 0, no read-pipelining will be inserted
+       'read_multicycle'     => 0,         # can be one of [0,1,2,..] to insert delays for read-acknowledge
+       'bus_clock' => "clk",               # default bus clock name
+       'bus_reset' => "rst_n",             # default bus reset name
+       'use_reg_name_as_prefix' => 0,      # [deprecated] if 1, prefix field names with register names
+       'exclude_regs' => "",               # comma seperated list of register names to exclude from code generation
+       'exclude_fields' => "",             # comma seperated list of field names to exclude from code generation	
+       'add_takeover_signals' => 0,        # if 1, internal update signals are also routed to top-level ports
+       'regshell_prefix'      => "rs",     # register-shell prefix
+       'enforce_unique_addr'  => 1,        # if 1, allow only one register per address
+       'infer_reset_syncer'   => 0,        # if 1, instantiates a reset synchronizer for asynchronous reset
+       'field_naming'         => '%F',     # naming scheme for fields, see 'clone'
+       'virtual_top_instance' => "testbench", # name of top-level instance where register-shell is instantiated (usually not used)
+       # parameters for e_vr_ad view
+       'e_vr_ad' => {
+                     'path'             => "./e", # output dir for e-code
+                     'regfile_prefix'   => 'MIC',
+                     'file_prefix'      => 'regdef',
+                     'vplan_ref'        => '%EMPTY%', # for automatic coverage generation
+                     'field_naming'     => '%lF',  # see 'clone'
+                     'reg_naming'       => '%uR',  # see 'clone'
+                     'cover_ign_read_to_write_only' => 0, # for automatic coverage generation
+                     'cover_ign_write_to_read_only' => 1  # for automatic coverage generation
+                    },
+       # parameters for STL view 
+       'stl' => {
+                 'initial_idle'  => 100,
+                 'exclude_regs'  => "", # comma seperated list of registers to exclude from STL generation
+                 'use_base_addr' => 0
+                },
+       
+       # parameters for cloning register object
+       # the naming goes according to placeholders:
+       # %[<u|l>]<D|R|F|[<d>]N>
+       # D domain name
+       # R original name of register
+       # F original name of field (only availabe in field_naming)
+       # N decimal number; can be preceded by a number to fix the number of digits used in representation
+       # u or l force upper/lowercase (optional)
+       # e.g. 'scc_%2N_%uR' creates name scc_06_REG_X from original name reg_x in the 7th clone
+       'clone' => {
+                   'number'       => 0,          # number of clones
+                   'addr_spacing' => 10,         # number of address bits reserved for every clone
+                   'reg_naming'   => '%R_%N',    # naming scheme for cloned register
+                   'field_naming' => '%F_%N',    # naming scheme for cloned field
+                   'unique_clocks'=> 1           # if 1, uniquify clock names of clones
+                  },
+       'workaround' => "",                       # string parameter to specify workarounds, currently: platinumd
+       
+       # legacy parameters, not needed anymore!
+       'cfg_module_prefix'    => "rs_cfg", # prefix for config register block
+       'mode'             => 'lcport', # lcport -> map created port names to lowercase	
+       'regwidth' => 32  # Default register width
+      };
 	#
     # Possibly read configuration details from the CONF sheet, see -conf option
     # 'conf' is a pseudo field, mainly used for dumping the actual configuration
@@ -1189,11 +1192,11 @@ sub init ($) {
     #
     #
     $this->{'cfg'}{'io'} = {
-		'xls' => 'IO',		# Include sheets (after exclude)
-		'xxls'	=> '',		# Exclude sheets (before include)
-		'comments' => '',	# Keep comments -> pre|predecessor post|successor
-		'req' => 'optional',
-		'parsed' => 0,
+		'xls' => 'IO',		  # Include sheets (after exclude)
+		'xxls'	=> '',		  # Exclude sheets (before include)
+		'comments' => '',	  # Keep comments -> pre|predecessor post|successor
+		'req' => 'optional',  # optional|mandatory
+		'parsed' => 0,        # counter incremented by MIX
 		'cols' => 0,
 		'field' => {
 	    	#Name   	=>		    	Inherits
@@ -1273,6 +1276,16 @@ sub init ($) {
 	    					# xF -> map the first to ::head:0 (defaults: ::head)
 		},
     };
+    #
+    # XML database basic definitions (input and output)
+    #
+    $this->{'cfg'}{'xml'} = 
+      {
+       'type'   => 'spirit',   # format of register-master, currently either VGCA or FRCH
+       'req'    => 'optional', # optional|mandatory        
+       'parsed' => 0           # counter incremented by MIX
+      };
+    
     # VI2C Definitions:
     # ::ign	::type	::width	::dev	::sub	::addr
     # ::interface	::block	::inst	::dir	::auto	::sync
