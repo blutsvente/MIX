@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.17 2007/09/28 12:27:04 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.18 2008/04/24 16:57:19 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.18  2008/04/24 16:57:19  lutscher
+#  some clean-up
+#
 #  Revision 1.17  2007/09/28 12:27:04  lutscher
 #  added _add_udc()
 #
@@ -428,9 +431,10 @@ sub _pad_str {
   1;
 }
 
-# convert a number to hex string (w/o prefix)
+# convert a number to hex string (w/o prefix), $size is the minimum number of bits used for the encoding (will be
+# aligned to 4)
 {
-	my(@ch)=('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f');
+	my(@ch)=("0".."9", "a".."f");
 
 	sub _val2hex {
 		my($size, $val)=@_;
@@ -438,8 +442,8 @@ sub _pad_str {
 		my($i);
 		
 		$size = ($size < 4) ? 4 : $size;
-		my($hsize) = (($size+3) >> 2) - 1;
-		for ($i=0; $i<=$hsize; $i++) {
+		$size = (($size+3) >> 2) - 1;
+		for ($i=0; $i<=$size; $i++) {
 			$result = "$ch[$val & 0xf]${result}";
 			$val = $val>>4;
 		};
