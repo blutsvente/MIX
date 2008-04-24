@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.46 2008/04/24 12:03:04 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.47 2008/04/24 13:07:34 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -19,7 +19,7 @@
 #                               Copyright
 ###############################################################################
 #
-#       Copyright (C) 2005 Micronas GmbH, Munich, Germany 
+#       Copyright (C) 2005-2008 Micronas GmbH, Munich, Germany 
 #
 #     All rights reserved. Reproduction in whole or part is prohibited
 #          without the written permission of the copyright owner.
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.47  2008/04/24 13:07:34  lutscher
+#  some clean-up
+#
 #  Revision 1.46  2008/04/24 12:03:04  lutscher
 #  added input_format ip-xact, intermediate release
 #
@@ -59,24 +62,7 @@
 #  Revision 1.37  2007/03/05 18:29:08  lutscher
 #  fixed bug in _map_register_master() where the clipping of values may not be done for 32-bit fields
 #
-#  Revision 1.36  2007/02/07 15:37:50  mathias
-#  domain information is read in from '::dev' column when
-#  the config entry 'input.domain.dev' is set to 1
-#
-#  Revision 1.35  2007/01/26 08:13:59  lutscher
-#  removed debug print
-#
-#  Revision 1.34  2007/01/25 10:24:56  lutscher
-#  added clipping of ::init value to field size
-#
-#  Revision 1.33  2006/09/22 09:08:06  lutscher
-#  added register attribute clone
-#
-#  Revision 1.32  2006/07/20 10:56:20  lutscher
-#  added cloning feature
-#
-#  Revision 1.31  2006/07/12 14:43:13  lutscher
-#
+#  [hist deleted]
 #  
 ###############################################################################
 
@@ -91,14 +77,8 @@ use Log::Log4perl qw(get_logger);
 use Micronas::MixUtils qw( mix_use_on_demand $eh %OPTVAL );
 # rest gets loaded on demand ...
 
-# use Micronas::MixUtils::Globals qw( get_eh );
+my $logger = get_logger('MIX::Reg');
 
-#use FindBin qw($Bin);
-#use lib "$Bin";
-#use lib "$Bin/..";
-#use lib "$Bin/lib";
-
-my $logger = get_logger( 'MIX::Reg' );
 #------------------------------------------------------------------------------
 # Hook function to MIX tool. Called by mix main script. Creates a Reg object
 # and calls its init() function
@@ -106,7 +86,7 @@ my $logger = get_logger( 'MIX::Reg' );
 # Returns undef or a reference to the Reg object
 # Note: this subroutine is not a class member
 #------------------------------------------------------------------------------
-sub parse_register_master {
+sub parse_register_master($;$) {
 	my ($r_i2c, $r_xml) = @_;
     
 	if (scalar @$r_i2c or scalar @$r_xml) {
@@ -127,7 +107,7 @@ sub parse_register_master {
                                   use Micronas::RegViewIPXACT;
                                   '	
                                  ) ) {
-			$logger->fatal( '__F_LOADREGMD', "\tFailed to load required modules for register_master: $@" );
+			$logger->fatal( '__F_LOADREGMD', "\tFailed to load required modules for parse_register_master(): $@" );
 			exit 1;
 		}
         
@@ -138,6 +118,9 @@ sub parse_register_master {
         }
              
         my ($view, $o_space);
+        # for every view, create a new register-space object from input; ##LU this is not very nice,
+        # but currently the generate functions manipulate at least the 'global' data-member and the 'eh' hash
+        # which could have side-effects on subsequent generators
         foreach $view (split(/,\s*/, $eh->get('reg_shell.type'))) {
             # get handle to new register object
             $o_space = Micronas::Reg->new();
@@ -173,10 +156,10 @@ sub parse_register_master {
         return $o_space;
     } else {
 		if ( $eh->get('i2c.req') =~ m/\bmandatory/ ) {
-			$logger->error('__E_REG_INIT', "\tRegister-master file empty or sheet matching \'" .
+			$logger->error('__E_REG_INIT', "\tRegister-master or IP-XACT file empty or sheet matching \'" .
                       $eh->get('i2c.xls') . "\' in no input file found");
 		} else {
-			$logger->error('__I_REG_INIT', "\tRegister-master file empty or sheet matching \'" .
+			$logger->error('__I_REG_INIT', "\tRegister-master or IP-XACT file empty or sheet matching \'" .
                       $eh->get('i2c.xls') . "\' in no input file found");
 		}
 	};
@@ -187,7 +170,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.46 $ ';  #'
+our($VERSION) = '$Revision: 1.47 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -292,6 +275,7 @@ sub init {
 sub generate_view {
 	my $this = shift;
 	my ($view_name, $href_dispatch_table, $lref_domains) = @_;
+
     my $action = $href_dispatch_table->{lc($view_name)};
     if (ref($action) eq "CODE") {
         $this->$action($view_name, $lref_domains); 
