@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.45 2008/04/24 10:11:44 herburger Exp $
+#  RCSId: $Id: Reg.pm,v 1.46 2008/04/24 12:03:04 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.46  2008/04/24 12:03:04  lutscher
+#  added input_format ip-xact, intermediate release
+#
 #  Revision 1.45  2008/04/24 10:11:44  herburger
 #  *** empty log message ***
 #
@@ -99,19 +102,19 @@ my $logger = get_logger( 'MIX::Reg' );
 #------------------------------------------------------------------------------
 # Hook function to MIX tool. Called by mix main script. Creates a Reg object
 # and calls its init() function
-# Input: reference to register-master data struct
+# Input: reference to register-master data struct, optionally a XML database
 # Returns undef or a reference to the Reg object
 # Note: this subroutine is not a class member
 #------------------------------------------------------------------------------
-sub parse_register_master($) {
-	my $r_i2c = shift;
-
-	if (scalar @$r_i2c) {
+sub parse_register_master {
+	my ($r_i2c, $r_xml) = @_;
+    
+	if (scalar @$r_i2c or scalar @$r_xml) {
 		
 		# Load modules on demand ...
+        # removed:  use XML::Simple;
         unless( mix_use_on_demand('
                                   use Data::Dumper;
-                                  use XML::Simple;
                                   use Micronas::RegDomain;
                                   use Micronas::RegReg;
                                   use Micronas::RegField;
@@ -139,12 +142,21 @@ sub parse_register_master($) {
             # get handle to new register object
             $o_space = Micronas::Reg->new();
    
-            # init register object
-            $o_space->init(	 
-                           'inputformat'     => "register-master", 
-                           'database_type'   => $eh->get( 'i2c.regmas_type' ),
-                           'register_master' => $r_i2c
-                          );
+            # init register object from register-master
+            if (scalar @$r_i2c) {
+                $o_space->init(	 
+                               'inputformat'     => "register-master", 
+                               'database_type'   => $eh->get( 'i2c.regmas_type' ),
+                               'register_master' => $r_i2c
+                              );
+            };
+            # add to register-object from XML database
+            if (scalar @$r_xml) {
+                $o_space->init(	 
+                               'inputformat' => "ip-xact", 
+                               'data'        => $r_xml
+                              );
+            };
             
             # set debug switch
             $o_space->global('debug' => exists $OPTVAL{'verbose'} ? 1 : 0);
@@ -175,13 +187,16 @@ sub parse_register_master($) {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.45 $ ';  #'
+our($VERSION) = '$Revision: 1.46 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
 # global constants and defaults; is mapped per reference into Reg objects
 our(%hglobal) = 
   (
+   # supported input formats
+   supported_input_formats => ["register-master", "ip-xact"],
+
    # supported register-master types (yes, they are not all the same)
    supported_register_master_type => ["VGCA", "FRCH", "AVFB"], 
 
@@ -192,7 +207,7 @@ our(%hglobal) =
 	"e_vr_ad"     => \&_gen_view_vr_ad,        # e-language macros (owner: Thorsten Lutscher)
 	"stl"         => \&_gen_view_stl,          # register test file in Socket Transaction Language format (owner: Thorsten Lutscher)
 	"rdl"         => \&_gen_view_rdl,          # Denali RDL representation of database (experimental)
-	"ip-xact"     => \&_gen_view_ipxact,       # IP-XACT compliant XML output
+	"ip-xact"     => \&_gen_view_ipxact,       # IP-XACT compliant XML output (owner: Gregor Herburger)
 	"none"        => sub {}                    # generate nothing (useful for bypassing the dispatcher)
    },
 
@@ -247,20 +262,28 @@ sub init {
 	my $this = shift;
 	my %hinput = @_;
 
-	if ($hinput{inputformat} eq "register-master") {
-		# call mapping function for register-master array
-		if (!grep ($_ eq $hinput{database_type}, @{$this->global->{supported_register_master_type}})) {
-			_fatal("database_type \'",$hinput{database_type},"\' not supported");
-			exit 1;
-		};
-		if (!$this->_map_register_master($hinput{database_type}, $hinput{register_master})) {
-			_fatal("aborting due to errors");
-			exit 1;
-		};
-	} else {
-		_fatal("unknown inputformat \'",$hinput{inputformat},"\'");
-		exit 1;
-	};
+    if (!grep ($_ eq $hinput{inputformat}, @{$this->global->{supported_input_formats}})) {
+        _fatal("input_format \'", $hinput{inputformat},"\' not supported");
+        exit 1;
+    } else {
+        if ($hinput{inputformat} eq "register-master") {
+            # call mapping function for register-master array
+            if (!grep ($_ eq $hinput{database_type}, @{$this->global->{supported_register_master_type}})) {
+                _fatal("database_type \'",$hinput{database_type},"\' not supported");
+                exit 1;
+            };
+            if (!$this->_map_register_master($hinput{database_type}, $hinput{register_master})) {
+                _fatal("aborting due to errors");
+                exit 1;
+            };
+        };
+        if ($hinput{inputformat} eq "ip-xact") {
+            # call mapping function for spirit ip-xact (XML) database
+            # BAUSTELLE
+            print join("\n", @{$hinput{data}}), "\n";
+            _error("not yet implemented");
+        };
+    };
 };
 
 # generate a view of the register space
