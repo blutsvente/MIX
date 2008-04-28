@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.75 2008/04/01 09:19:29 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.76 2008/04/28 07:55:18 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.75 $                                  
+#  Revision      : $Revision: 1.76 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.76  2008/04/28 07:55:18  lutscher
+#  updated RTL libs
+#
 #  Revision 1.75  2008/04/01 09:19:29  lutscher
 #  changed parameter list of main methods
 #
@@ -288,12 +291,12 @@ sub _vgch_rs_init {
                   'rtl_libs'           => [{            # required MSD RTL libraries
                                             "project" => "ip_ocp",
                                             "version" => "0001",
-                                            "release" => "ip_ocp_005_20Sep2007"
+                                            "release" => "ip_ocp_008_31Jan2008"
                                            },
                                            {
                                             "project" => "ip_sync",
                                             "version" => "0001",
-                                            "release" => "ip_sync_005_17dec2007"
+                                            "release" => "ip_sync_006_23jan2008"
                                            }
                                           ],  
                   'set_postfix'        => "_set_p",     # postfix for interrupt-set input signal
@@ -367,7 +370,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.75 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.76 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
