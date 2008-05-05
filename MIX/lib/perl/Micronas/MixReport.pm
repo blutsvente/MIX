@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.56 $                                               |
-# | Author:     $Author: mathias $                                                 |
-# | Date:       $Date: 2008/02/18 11:54:18 $                                                   |
+# | Revision:   $Revision: 1.57 $                                               |
+# | Author:     $Author: megyei $                                                 |
+# | Date:       $Date: 2008/05/05 11:45:50 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.56 2008/02/18 11:54:18 mathias Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.57 2008/05/05 11:45:50 megyei Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,12 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.57  2008/05/05 11:45:50  megyei
+# | The new report specifier 'vctyper' reads the device.ini file and computes the addresses when writing
+# | .per files.
+# | The number of spaces in the 'bitfld.long' lines is now calculated from the length of the bitfield
+# | (ceil(<bitfield length>) + 1).
+# |
 # | Revision 1.56  2008/02/18 11:54:18  mathias
 # | Use default value for the .per file name
 # |
@@ -223,6 +229,7 @@
 package Micronas::MixReport;
 
 require Exporter;
+use POSIX qw(ceil);
 
 @ISA = qw(Exporter);
 @EXPORT = qw(
@@ -235,11 +242,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.56 2008/02/18 11:54:18 mathias Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.57 2008/05/05 11:45:50 megyei Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.56 $';
+my $thisrevision   =      '$Revision: 1.57 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -332,6 +339,10 @@ sub mix_report($)
     if ( $reports =~ m/\bper\b/io ) {
         $logger->info('__I_REPORT', "\tReport Lauterbach peripheral files");
         mix_rep_per($r_i2cin);
+    }
+    if ( $reports =~ m/\bvctyper\b/io ) {
+        $logger->info('__I_REPORT', "\tReport Lauterbach peripheral files");
+        mix_rep_per($r_i2cin, 'vcty');
     }
     if ( $reports =~ m/\bperl\b/io ) {
         $logger->info('__I_REPORT', "\tReport Perl package files");
@@ -757,12 +768,14 @@ sub mix_rep_per_print($$$$$$$)
                 #### write bitfields (there are more than one)
                 for (my $i = 0; $i <= $#{$rBlock->{$addr}->{fields}}; $i++) {
                     my $slice = $rBlock->{$addr}->{fields}->[$i];
+                    my $digits = ceil($slice->{size} / 4) + 1;     # spaces for the debugger
                     $fh->write("      textline \"   \"\n");
                     $slice->{comment} =~ s/[\n\r]+/ /g;
                     $slice->{comment} =~ s/"//g;
                     $fh->write("      bitfld.long  " . $reladdr . " " .
                                $slice->{pos} . ".--" . ($slice->{pos} + $slice->{size} - 1) . ".   \"" .
-                               $slice->{name} . "  , " . $slice->{comment} . "\" \" \"\n");
+                               $slice->{name} . "  , " . $slice->{comment} . "\"" .
+                               " \"" . (' ' x $digits) . "\"\n");
                 }
             }
         }
@@ -774,14 +787,16 @@ sub mix_rep_per_print($$$$$$$)
 # Report Lauterbach peripheral files
 #####################################################################
 
-sub mix_rep_per($)
+sub mix_rep_per($;$)
 {
-    my ($o_space) = @_;   # Reference to the register object
+    my ($o_space, $vcty) = @_;   # Reference to the register object
 
     my $maxwidth = 0;   # max length of register or bitslice names
     my $global_base_address = $eh->get("report.lauterbach.base_address");
     if (defined $o_space) {
         my ($blocks, $rTypes) = mix_rep_header_read_top_address_map();
+        # re-create $blocks when processing vcty sheets
+        $blocks = mix_rep_vcty_read_device_ini($blocks) if $vcty;
 
         # iterate through all blocks (domains)
         foreach my $href (@{$o_space->domains}) {
@@ -796,7 +811,9 @@ sub mix_rep_per($)
             my %theBlock;
             #$o_domain->display();
             foreach my $o_reg (@{$o_domain->regs()}) {
-                my $address  = sprintf("0x%08X", $o_domain->get_reg_address($o_reg));
+                my $addr_1   = $o_domain->get_reg_address($o_reg);
+                $addr_1 *= 4 if $vcty;
+                my $address  = sprintf("0x%08X", $addr_1);
                 my $init     = sprintf("0x%08X", $o_reg->get_reg_init());
                 my $mode     = $o_reg->get_reg_access_mode();
 
