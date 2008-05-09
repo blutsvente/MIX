@@ -18,13 +18,13 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.47 2006/11/15 09:55:05 wig Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.48 2008/05/09 07:32:20 lutscher Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.47 $                                      |
-# | Mod.Date     : $Date: 2006/11/15 09:55:05 $                           |
-# | Author       : $Author: wig $                                      |
+# | Version      : $Revision: 1.48 $                                      |
+# | Mod.Date     : $Date: 2008/05/09 07:32:20 $                           |
+# | Author       : $Author: lutscher $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
 # | Email        : $Email: wilfried.gaensheimer@micronas.com$             |
@@ -38,6 +38,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.48  2008/05/09 07:32:20  lutscher
+# | changed call to parse_register_master and mix_utils_open_input
+# |
 # | Revision 1.47  2006/11/15 09:55:05  wig
 # | Added ImportVerilogInclude module: read defines and replace in input data.
 # |
@@ -123,7 +126,7 @@ use Micronas::MixReport;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.47 $'; # RCS Id '
+$::VERSION = '$Revision: 1.48 $'; # RCS Id '
 $::VERSION =~ s,\$,,go;
 
 #
@@ -303,8 +306,8 @@ if ( $#ARGV < 0 ) { # Need  at least one sheet!!
 # Step 2: Open input files one by one and retrieve the tables
 # Do a first simple conversion from Excel arrays into array of hashes
 #
-my( $r_connin, $r_hierin, $r_ioin, $r_i2cin);
-( $r_connin, $r_hierin, $r_ioin, $r_i2cin ) = mix_utils_open_input( @ARGV ); #Fetches HIER, CONN and register-master sheet(s)
+my( $r_connin, $r_hierin, $r_ioin, $r_i2cin, $r_xml);
+($r_connin, $r_hierin, $r_ioin, $r_i2cin, $r_xml) = mix_utils_open_input( @ARGV ); #Fetches HIER, CONN and register-master sheet(s) and XML database
 
 ##############################################################################
 #
@@ -331,7 +334,7 @@ parse_conn_init( $r_connin );
 parse_io_init( $r_ioin );
 
 # Parse Register-master
-my $o_space = Micronas::Reg::parse_register_master( $r_i2cin );
+my $o_space = Micronas::Reg::parse_register_master( $r_i2cin , $r_xml);
 
 apply_conn_macros( $r_connin, $r_connmacros );
 
