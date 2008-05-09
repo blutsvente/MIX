@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.48 2008/04/24 16:58:53 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.49 2008/05/09 14:50:03 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.49  2008/05/09 14:50:03  herburger
+#  Added Function get_register_direction_from_fields()
+#
 #  Revision 1.48  2008/04/24 16:58:53  lutscher
 #  some improvements to parse_register_master()
 #
@@ -94,7 +97,7 @@ sub parse_register_master {
     my $r_xml = shift || []; 
 
 	if (scalar @$r_i2c or scalar @$r_xml) {
-		
+	
 		# Load modules on demand ...
         # removed:  use XML::Simple;
         unless( mix_use_on_demand('
@@ -128,8 +131,8 @@ sub parse_register_master {
         foreach $view (split(/,\s*/, $eh->get('reg_shell.type'))) {
             # get handle to new register object
             $o_space = Micronas::Reg->new();
-   
-            # init register object from register-master
+	    
+	    # init register object from register-master
             if (scalar @$r_i2c) {
                 $o_space->init(	 
                                'inputformat'     => "register-master", 
@@ -145,7 +148,9 @@ sub parse_register_master {
                                'data'           => $r_xml
                               );
             };
-            
+
+	    
+
             # set debug switch
             $o_space->global('debug' => exists $OPTVAL{'verbose'} ? 1 : 0);
 			
@@ -166,7 +171,7 @@ sub parse_register_master {
             $logger->error($severity, "\tRegister-master file empty or sheet matching \'" .
                            $eh->get('i2c.xls') . "\' not found in any input file");
         };
-        if (!scalar @$r_xml) {
+	if (!scalar @$r_xml) {
             my $severity = ($eh->get('xml.req') =~ m/\bmandatory/ ? '__E_REG_INIT':'__I_REG_INIT');
             $logger->error($severity, "\tXML file not present or empty");
         };
@@ -178,7 +183,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.48 $ ';  #'
+our($VERSION) = '$Revision: 1.49 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -237,7 +242,7 @@ sub new {
 	foreach (keys %params) {
 		$ref_member->{$_} = $params{$_};
 	};
-
+	
 	bless $ref_member, $this;
 };
 
@@ -252,7 +257,7 @@ sub new {
 sub init {
 	my $this = shift;
 	my %hinput = @_;
-
+	
     if (!grep ($_ eq $hinput{inputformat}, @{$this->global->{supported_input_formats}})) {
         _fatal("input_format \'", $hinput{inputformat},"\' not supported");
         exit 1;
@@ -275,6 +280,7 @@ sub init {
             _error("BAUSTELLE not yet implemented");
         };
     };
+
 };
 
 # generate a view of the register space
@@ -389,6 +395,29 @@ sub display {
 	print $dump->Dump;
 };
 
+
+#Iterates through all fields of a register and gives back the direction of the register or 0 if register direction is not homogenous
+#input: Ref to a register
+#output Register Direction or 0
+sub get_register_direction_from_fields{
+    my ($this, $o_register)=@_;
+    my $field;
+    
+    my $direction=$o_register->{'fields'}[0]{'field'}{'attribs'}{'dir'};#direction of the first field
+
+    #iterate through fields
+    foreach $field (@{$o_register->{'fields'}}){
+	my $o_field=$field->{'field'};
+	
+	if ($direction ne $o_field->{'attribs'}->{'dir'}){#if direction not equal to  direction of the first field return 0
+	    return 0;
+	}
+    };
+    return $direction;
+
+	
+};
+
 #------------------------------------------------------------------------------
 # Private methods
 #------------------------------------------------------------------------------
@@ -408,7 +437,7 @@ sub _map_register_master {
     my $result = 1;
     my ($old_usedbits, $i);
     my ($ivariant, $icomment);
-
+    
     $usedbits = 0;
 
     # get defaults for field attributes from $eh 
@@ -436,6 +465,7 @@ sub _map_register_master {
 
     # iterate each row
     foreach $href_row (@$lref_rm) {
+	
         # skip lines to ignore
         next if (
                  exists ($href_row->{"::ign"}) 
