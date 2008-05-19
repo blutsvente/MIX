@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.49 2008/05/09 14:50:03 herburger Exp $
+#  RCSId: $Id: Reg.pm,v 1.50 2008/05/19 12:56:52 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.50  2008/05/19 12:56:52  herburger
+#  Added function _map_ipxact, initial version for parsing xml files
+#
 #  Revision 1.49  2008/05/09 14:50:03  herburger
 #  Added Function get_register_direction_from_fields()
 #
@@ -112,6 +115,7 @@ sub parse_register_master {
                                   use Micronas::RegViewClone;
                                   use Micronas::MixUtils::RegUtils;
                                   use Micronas::RegViewIPXACT;
+				  use XML::Twig;
                                   '	
                                  ) ) {
 			$logger->fatal( '__F_LOADREGMD', "\tFailed to load required modules for parse_register_master(): $@" );
@@ -159,6 +163,7 @@ sub parse_register_master {
                 my $o_new_space = $o_space->_clone(); # module RegViewClone.pm 
                 $o_space = $o_new_space;
             };
+
             
             # make it so 
             $o_space->generate_view($view, $o_space->global->{supported_views}, \@ldomains);
@@ -183,7 +188,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.49 $ ';  #'
+our($VERSION) = '$Revision: 1.50 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -273,11 +278,15 @@ sub init {
                 exit 1;
             };
         };
+	
         if ($hinput{inputformat} eq "ip-xact") {
             # call mapping function for ip-xact (XML) database
-            print "DATABASE TYPE: ",$hinput{database_type},"\n";
-            print "DATA: ", join("\n", @{$hinput{data}}), "\n";
-            _error("BAUSTELLE not yet implemented");
+	    $this->_map_ipxact($hinput{database_type},$hinput{data});
+	    
+            #print "DATABASE TYPE: ",$hinput{database_type},"\n";
+            #print "DATA: ", join("\n", @{$hinput{data}}), "\n";
+            #_error("BAUSTELLE not yet implemented");
+	    
         };
     };
 
@@ -660,4 +669,190 @@ sub _map_register_master {
 	return $result;
 };
 
+
+# builds a register space object from XML format
+# input: 1. string for input database type
+# 2. Array with XML-Data
+# output: 1 if successful, 0 otherwise
+
+sub _map_ipxact{
+    my ($this)=shift;
+    my ($database_type, $data)=@_;
+    my (%domains, %registers, @registerindomain, @fieldinregister);
+    my ($tmpfield);
+    
+    
+    my $datastring=join("\n", @{$data});#join each line of the data array into one string
+
+    #print $datastring;
+    #print "\n-----------------------------------------------------------------------------\n";
+    use Encode;
+    $datastring = decode_utf8( $datastring );
+    #print $datastring;
+    
+    
+	
+    #####################################################################
+    # TWIG Handlers Subroutines
+    #####################################################################
+    my $ipxact_domain=sub {
+	my ( $t, $elt )= @_; 
+	my ( $domainname,$baseaddr);
+	my ( $o_domain);
+	
+	
+	#get domainname and baseaddress
+	$domainname = $elt->first_child('spirit:name')->text;
+	$baseaddr = $elt->first_child('spirit:baseAddress')->text;
+
+	#create new domain
+	$o_domain = Micronas::RegDomain->new(name => $domainname);
+	
+	
+	#add domain to reg-object
+	$this->domains('domain' => $o_domain, 'baseaddr' => $baseaddr*1);
+
+	#hash with domainname -> reference to domain
+	$domains{$domainname}=$o_domain;
+	
+    };
+
+    my $ipxact_register=sub {
+	my ( $t, $elt )= @_; 
+	my ( $registername,$domainname,$offset,$clone,$size,$usedbits );
+	my ( $o_register );
+
+	#get registername
+	$registername = $elt->first_child('spirit:name')->text;
+	
+	#get address offset
+	$offset = ($elt->first_child('spirit:addressOffset')->text)*1;
+	
+	#create new register object
+	$o_register = Micronas::RegReg->new('name' => $registername);
+	
+	#get cloning information
+	my @elt_parameter=$elt->first_child('spirit:parameters')->children('spirit:parameter');#All Children of the parameters tag inside register
+	
+	foreach (@elt_parameter){
+	    my $parametername=$_->first_child('spirit:name');
+	    next if ($parametername->text ne 'clone');#If parametername not clone skip
+	    $clone=$parametername->next_sibling('spirit:value')->text;#Sibling of parametername is cloning information
+	};
+	#get register size
+	$size=$elt->first_child('spirit:size')->text;
+
+	#get used bits
+	$usedbits=($elt->first_child('spirit:reset')->first_child('spirit:mask')->text)*1;
+
+	#add attributes to register
+	$o_register->attribs('clone'=> $clone,'size'=>$size,'usedbits'=>$usedbits);
+	
+	#get the name of the parent domain
+	$domainname=$elt->parent('spirit:addressBlock')->first_child('spirit:name')->text;
+	
+       
+	#hash with registername -> reference to register
+	$registers{$registername}=$o_register;
+
+	#generate array with ref to register, registeroffset and the domain the register belongs to
+	push @registerindomain, [$o_register, $offset, $domainname];
+    };  
+
+    my $ipxact_field=sub {
+	my ( $t, $elt )= @_; 
+	my ( $fieldname,$registername,$position,$identifier,%accessreverse,$access,%prettynamesreverse,$description);
+	my ( $o_field);
+	
+	#get the fieldname
+	$fieldname=$elt->first_child('spirit:name')->text;
+
+	#get the name of the parent register
+	$registername=$elt->parent('spirit:register')->first_child('spirit:name')->text;
+
+	#get position of field
+	$position=($elt->first_child('spirit:bitOffset')->text)*1;
+
+	#create new field object
+	$o_field=Micronas::RegField->new(name => $fieldname);
+
+	#get field description
+	$description=$elt->first_child('spirit:description')->text;
+
+	#add field attributes
+	%accessreverse=reverse(%{$eh->get('xml.access')});
+	$access=$accessreverse{$elt->first_child('spirit:access')->text};
+	$o_field->attribs('dir'=>$access, 'comment'=>$description);
+
+	%prettynamesreverse=reverse(%{$eh->get('xml.prettynames')});
+
+	my @elt_parameter=$elt->first_child('spirit:parameters')->children('spirit:parameter');
+
+	foreach (@elt_parameter){
+	    my $parametername=$_->first_child('spirit:name')->text;
+	    my $parametervalue=$_->first_child('spirit:value')->text;
+
+	    ($parametername=$prettynamesreverse{$parametername})if (exists $prettynamesreverse{$parametername});
+	    $o_field->attribs($parametername=>$parametervalue);
+	}
+
+	#generate array with ref to field, fieldposition and the register the field belongs to
+	push @fieldinregister, [$o_field, $position, $registername]
+	
+	
+    };
+    #######################################################################
+  
+
+    my $twig=XML::Twig->new(twig_handlers =>
+			    {
+				'spirit:addressBlock' => $ipxact_domain, #all domains  #Should add better XPATH if XML::Twig is updated
+				'spirit:register'     => $ipxact_register,#register
+				'spirit:field'=>$ipxact_field,
+			    }
+	);#create new Twig Object
+
+    _info("start parsing XMLfile");
+    $twig->parse($datastring);#parse XMLString
+
+
+    
+    #substitute domainname with reference to domain
+    @registerindomain=map{[@$_[0],@$_[1],$domains{@$_[2]}]}@registerindomain;
+    
+    
+    #substitute registername with reference to register
+    @fieldinregister=map{[@$_[0],@$_[1],$registers{@$_[2]}]}@fieldinregister;
+
+
+
+
+    
+    #link register object into domain
+    foreach (@registerindomain){
+	@$_[2]->regs(@$_[0]);
+	@$_[2]->addrmap('reg' => @$_[0], 'offset' => @$_[1]*1); 
+    }
+    
+    #link field object into register and domain
+    foreach $tmpfield (@fieldinregister){
+	@$tmpfield[2]->fields('field'=>@$tmpfield[0], 'pos' => @$tmpfield[1]*1);
+		
+	#get domain, field/register belongs to
+	my ($domain)=grep{@$_[0] eq @$tmpfield[2]}@registerindomain;
+
+	#add registerreference to field
+	@$tmpfield[0]->reg(@$tmpfield[2]);
+	
+	#link field object into domain
+	@$domain[2]->fields(@$tmpfield[0]);
+    }
+    
+    #$this->display();
+    
+    #open (FH, ">:encoding(UTF-8)","asdf.txt");
+    
+    #my $asdf=$this->{'domains'}[0]{'domain'}{'addrmap'}[0]{'reg'}{'fields'}[0]{'field'}->{'attribs'}->{'comment'};
+   # print FH $asdf;
+};
 1;
