@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.51 2008/05/28 13:54:40 herburger Exp $
+#  RCSId: $Id: Reg.pm,v 1.52 2008/05/28 14:15:36 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.52  2008/05/28 14:15:36  herburger
+#  added _check_schema
+#
 #  Revision 1.51  2008/05/28 13:54:40  herburger
 #  Improved XML mapping & check for IP-XACT Version of input file
 #
@@ -193,7 +196,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.51 $ ';  #'
+our($VERSION) = '$Revision: 1.52 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -985,5 +988,10 @@ sub _check_version{
     }
     
 };
+
+sub _check_schema{
+    my ($this)=shift;
+    my ($database_type, $datastring)=@_; 
+}
 
 1;
