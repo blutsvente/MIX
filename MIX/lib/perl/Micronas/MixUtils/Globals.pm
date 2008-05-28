@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.56 $                                         |
+# | Revision:   $Revision: 1.57 $                                         |
 # | Author:     $Author: herburger $                                            |
-# | Date:       $Date: 2008/05/09 14:51:13 $                              |
+# | Date:       $Date: 2008/05/28 13:50:27 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.57  2008/05/28 13:50:27  herburger
+# | Added xslt_dir to xml definitions
+# |
 # | Revision 1.56  2008/05/09 14:51:13  herburger
 # | Added some parameters to key xml
 # |
@@ -152,9 +155,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.56 2008/05/09 14:51:13 herburger Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.57 2008/05/28 13:50:27 herburger Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.56 $';  
+my $thisrevision    =      '$Revision: 1.57 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1287,7 +1290,8 @@ sub init ($) {
 	  'type'   => 'spirit',   # format of register-master, currently either VGCA or FRCH
 	  'req'    => 'optional', # optional|mandatory        
 	  'parsed' => 0,           # counter incremented by MIX
-	  'characterencoding' => "iso-8859-1",#characterencoding for output file
+	  'characterencodingout' => "iso-8859-1",#characterencoding for output file
+	  'characterencodingin' =>"",
 	  'access'=>	{		#conversion between IP-XACT format and excel format for accessfield
 	      'R' => "read-only",
 	      'W' => "write-only",
@@ -1314,13 +1318,14 @@ sub init ($) {
 					 "range",#redundant, already defined by size
 					 "skip",
 					 "init",
+					 "access"
 					],
-	      'outputfile' => "./testdoc.xml",
 	      'file_prefix'=> "regdef",
 	      'file_suffix'=> "xml",
 	      'prettynames'=>	{
 				'skip:4'	=>"addinc",
 				},
+	      'xslt_dir'  => "./xslt/",
 	      
 	      
 
