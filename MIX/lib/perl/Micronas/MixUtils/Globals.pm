@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.57 $                                         |
+# | Revision:   $Revision: 1.58 $                                         |
 # | Author:     $Author: herburger $                                            |
-# | Date:       $Date: 2008/05/28 13:50:27 $                              |
+# | Date:       $Date: 2008/06/03 13:16:52 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.58  2008/06/03 13:16:52  herburger
+# | Added Schema variable
+# |
 # | Revision 1.57  2008/05/28 13:50:27  herburger
 # | Added xslt_dir to xml definitions
 # |
@@ -155,9 +158,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.57 2008/05/28 13:50:27 herburger Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.58 2008/06/03 13:16:52 herburger Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.57 $';  
+my $thisrevision    =      '$Revision: 1.58 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1326,6 +1329,7 @@ sub init ($) {
 				'skip:4'	=>"addinc",
 				},
 	      'xslt_dir'  => "./xslt/",
+	      'schema_dir'=> "./schema/",
 	      
 	      
 
