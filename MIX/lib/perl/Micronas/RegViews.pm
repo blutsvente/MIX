@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.76 2008/04/28 07:55:18 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.77 2008/06/03 08:27:42 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.76 $                                  
+#  Revision      : $Revision: 1.77 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.77  2008/06/03 08:27:42  lutscher
+#  changed RTL lib for ip_ocp
+#
 #  Revision 1.76  2008/04/28 07:55:18  lutscher
 #  updated RTL libs
 #
@@ -285,13 +288,13 @@ sub _vgch_rs_init {
    	# extend class data with data structure needed for code generation
 	$this->global(
                   'mix_signature'      => "\"M1\"",     # signature for cross-checking MIX software version and IP version
-				  'ocp_target_name'    => "ocp_target", # library module name
-                  'ocp_checker_name'   => "ocp_target_m_checker", # library module name
-				  'mcda_name'          => "rs_mcda",    # library module name
+				  'ocp_target_name'    => "sci_target_0002", # library module name
+                  'ocp_checker_name'   => "sci_target_m_checker", # library module name
+				  'mcda_name'          => "rs_mcda_0002",    # library module name
                   'rtl_libs'           => [{            # required MSD RTL libraries
                                             "project" => "ip_ocp",
-                                            "version" => "0001",
-                                            "release" => "ip_ocp_008_31Jan2008"
+                                            "version" => "0002",
+                                            "release" => "ip_ocp_009_03Jun2008"
                                            },
                                            {
                                             "project" => "ip_sync",
@@ -370,7 +373,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.76 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.77 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
