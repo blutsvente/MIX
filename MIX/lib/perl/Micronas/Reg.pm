@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.52 2008/05/28 14:15:36 herburger Exp $
+#  RCSId: $Id: Reg.pm,v 1.53 2008/06/03 13:15:57 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.53  2008/06/03 13:15:57  herburger
+#  improved _check_version, some small changes in _map_ipxact
+#
 #  Revision 1.52  2008/05/28 14:15:36  herburger
 #  added _check_schema
 #
@@ -196,7 +199,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.52 $ ';  #'
+our($VERSION) = '$Revision: 1.53 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -293,21 +296,23 @@ sub init {
 	    $datastring=join("\n", @{$hinput{data}});#join each line of the data array into one string
             
 	    
+	    
 	    # check version of xml-data and convert it to the right version if possible
 	    if (!($datastring_ipxact_1_4=$this->_check_version($hinput{database_type},$datastring))){
 		_error("input file not in the correct format");
 		exit 1;
 	    }
 
-	    # check input against schema
-	    if(!$this->_check_schema($hinput{database_type},$datastring_ipxact_1_4)){
-		_error("input file hasn't passed schema validation");
-		exit 1;
-	    }
-
+	    #check input against schema
+	    #if(!$this->_check_schema($hinput{database_type},$datastring_ipxact_1_4)){
+	    #	_error("input file hasn't passed schema validation");
+	    #	exit 1;
+	    #}
+	    
 	    # call mapping function for ip-xact (XML) database
 	    $this->_map_ipxact($hinput{database_type},$datastring_ipxact_1_4);
-       
+	    
+	    $this->display();
         };
     };
 
@@ -713,8 +718,9 @@ sub _map_register_master {
 	
 #     #link field object into domain
 #     $o_domain->fields($o_field);
-#     $this->display();
-# }
+    
+    
+#}
 
 
 # builds a register space object from XML format
@@ -740,26 +746,31 @@ sub _map_ipxact{
     #####################################################################
     my $ipxact_domain=sub {
 	my ( $twig, $elt )= @_; 
-	my ( $domainname,$baseaddr,@registers,$register);
+	my ( $domainname,$baseaddr,@registers,$register, $range, $width, $bitsinUnit);
 	my ( $o_domain);
 	
 	###########DOMAIN###########
 	#get domainname and baseaddress
 	$domainname = $elt->first_child('spirit:name')->text;
 	$baseaddr = $elt->first_child('spirit:baseAddress')->text;
-	$baseaddr=oct($baseaddr) if $baseaddr =~ /^0/;#converts hex or oct into dec
+	$baseaddr = oct($baseaddr) if $baseaddr =~ m/^0/;#converts hex or oct into dec
 
 	#create new domain
 	$o_domain = Micronas::RegDomain->new(name => $domainname);
+
+	#get addresswidth datawidth
+	$range = $elt->first_child('spirit:range')->text;#2^$range
+	$range=log($range)/log(2);#get range
+	$width = $elt->first_child('spirit:width')->text;
+	
+	$eh->set('reg_shell.addrwidth',$range);
+	$eh->set('reg_shell.regwidth',$width);
 	
 	
 	#add domain to reg-object
 	$this->domains('domain' => $o_domain, 'baseaddr' => $baseaddr);
 
-	#hash with domainname -> reference to domain
-	$domains{$domainname}=$o_domain;
-
-
+	
 	###########REGISTERS###########
 	#find register that belong to this domain
 
@@ -767,15 +778,21 @@ sub _map_ipxact{
 	
 	#iterate through all registers
 	foreach $register (@registers){
-	    my ($registername, $offset,@fields, $field, $clone, $size, $usedbits, $registerreset);
+	    my ($registername, $offset,@fields, $field, $clone, $rsize, $usedbits, $registerreset, $rdescription);
 	    my ($o_register);
 
 	    $registername =  $register->first_child('spirit:name')->text;
 	    $offset = $register->first_child('spirit:addressOffset')->text;
-	    $offset=oct($offset) if $offset =~ /^0/;#converts hex or oct into dec
+	    $offset=oct($offset) if $offset =~ m/^0/;#converts hex or oct into dec
 
 	    #create new register object
 	    $o_register = Micronas::RegReg->new(name => $registername);
+
+	    #get register description
+	    $rdescription="";
+	    $rdescription = $register->first_child('spirit:description')->text if ($register->first_child('spirit:description'));
+
+	    $o_register->definition($rdescription);
 
 	    #link register object into domain
 	    $o_domain->regs($o_register);
@@ -798,16 +815,18 @@ sub _map_ipxact{
 		}
 	    }
 	    #register size
-	    $size=$register->first_child('spirit:size')->text;
+	    $rsize=$register->first_child('spirit:size')->text;
 
 	    #used bits
-	    if ($register->first_child('spirit:reset')->first_child('spirit:mask')){
-		$usedbits=$register->first_child('spirit:reset')->first_child('spirit:mask')->text;
-		$o_register->attribs(usedbits=>$usedbits);
+	    if ($register->first_child('spirit:reset')){
+		if ($register->first_child('spirit:reset')->first_child('spirit:mask')){
+		    $usedbits=$register->first_child('spirit:reset')->first_child('spirit:mask')->text;
+		    $o_register->attribs(usedbits=>$usedbits);
+		}
 	    }
 	    
 	    #add atrributes to register
-	    $o_register->attribs(size => $size);
+	    $o_register->attribs(size => $rsize);
 	    
 	    ###########FIELDS###########
 	    #find fields that belong  to this register/domain
@@ -815,12 +834,12 @@ sub _map_ipxact{
 	    
 	    #iterate through all fields
 	    foreach $field (@fields){
-		my ($fieldname, $position, $size, $description, $reset, %access, %prettynames, @fieldparameters, $parameter, $range);
+		my ($fieldname, $position, $fsize, $description, $reset, %access, %prettynames, @fieldparameters, $parameter, $frange);
 		my ($o_field);
 
 		$fieldname=$field->first_child('spirit:name')->text;
 		$position=$field->first_child('spirit:bitOffset')->text;
-		$position=oct($position) if $position =~ /^0/;#converts hex or oct into dec
+		$position=oct($position) if $position =~ m/^0/;#converts hex or oct into dec
 
 		#create new field object
 		$o_field=Micronas::RegField->new(name=>$fieldname);
@@ -837,38 +856,49 @@ sub _map_ipxact{
 		$description=$field->first_child('spirit:description')->text if $field->first_child('spirit:description');
 		
 
-		$size=$field->first_child('spirit:bitWidth')->text;
+		$fsize=$field->first_child('spirit:bitWidth')->text;
 		
 
-		$range="0..".(2**$size-1);
+		$frange="0..".(2**$fsize-1);
 
 		#field reset value
-		$registerreset=$register->first_child('spirit:reset')->first_child('spirit:value')->text;
+		$registerreset=$register->first_child('spirit:reset')->first_child('spirit:value')->text if ($register->first_child('spirit:reset'));
 		$registerreset=Math::BigInt->new($registerreset)->as_int();#for big integer number support
 		
 		$reset=unpack("B32", pack("N", $registerreset>>$position));#get resetvalue of register in binary shifted by position
-		$reset=substr($reset,length($reset)-$size,$size);#field reset value
+		$reset=substr($reset,length($reset)-$fsize,$fsize);#field reset value
 		$reset=unpack("N", pack("B32", substr("0" x 32 . $reset, -32)));#bin->dec
 
 		$o_field->attribs(init=>$reset);
 		$o_field->attribs(comment=>$description);
 		$o_field->attribs(dir=>$access{$field->first_child('spirit:access')->text});
-		$o_field->attribs(range=>$range,size=>$size);
+		$o_field->attribs(range=>$frange,size=>$fsize);
 		#put remaining paramters to attributes
-		@fieldparameters=$field->first_child('spirit:parameters')->children('spirit:parameter');
-
+		@fieldparameters=();
+		(@fieldparameters=$field->first_child('spirit:parameters')->children('spirit:parameter')) if ($field->first_child('spirit:parameters'));
+			
 		foreach $parameter (@fieldparameters){
 		    
 		    my $parametername=$parameter->first_child('spirit:name')->text;
 		    next if (grep($_ eq $parametername,@{$eh->get('xml.field_skipelements')}));
 		    my $parametervalue=$parameter->first_child('spirit:value')->text;  
 		    ($parametername=$prettynames{$parametername})if (exists $prettynames{$parametername});
-		    
+				    
 		    $o_field->attribs($parametername=>$parametervalue);
-
 		}
 	    }
 	}
+	
+	$twig->purge();#free memory
+    };
+
+    #Handler to get the AddressunitBits field
+    my $ipxact_addressunitbits = sub {
+	my ( $twig, $elt )= @_; 
+	my ( $bitsinUnit);
+
+	$bitsinUnit=$elt->text;
+	$eh->set('reg_shell.datawidth',$bitsinUnit);
 	
 	$twig->purge();#free memory
     };
@@ -881,6 +911,7 @@ sub _map_ipxact{
     my $twig=XML::Twig->new(twig_handlers =>
 			    {
 				'spirit:addressBlock' => $ipxact_domain, #domain 
+				'spirit:addressUnitBits' => $ipxact_addressunitbits,
 			    }
 	);#create new Twig Object
 
@@ -906,7 +937,7 @@ sub _map_ipxact{
 sub _check_version{
     my ($this)=shift;
     my ($database_type, $datastring)=@_; 
-    my $ipxact_version;
+    my ($ipxact_version,$ipxact_version_main, $ipxact_version_sub);
     
     #####################################################################
     # TWIG Handlers Subroutines
@@ -924,6 +955,10 @@ sub _check_version{
 	    #check the version
 	    $namespace =~ m/http:\/\/www.spiritconsortium.org\/XMLSchema\/SPIRIT\/(\d\.\d)/;
 	    $ipxact_version=$1;
+	    $ipxact_version =~ m/(\d)\.(\d)/;
+	    $ipxact_version_main=$1;
+	    $ipxact_version_sub=$2;
+	    
 	    
 	}else{
 	    #not IP-XACT
@@ -976,12 +1011,40 @@ sub _check_version{
 	    $results = $stylesheet->transform($source);
 	    $result = $stylesheet->output_string($results);
 	    
+	    $result=~s/http:\/\/www.spiritconsortium.org\/XMLSchema\/SPIRIT\/$ipxact_version/http:\/\/www.spiritconsortium.org\/XMLSchema\/SPIRIT\/1.4/g;
+
 	    _info("file transformed from IP-XACT $ipxact_version to IP-XACT 1.4");
+	    
 	    return $result;
 
-	}else{
+	}elsif(-e $eh->get('xml.xslt_dir')."from".$ipxact_version."_to_".$ipxact_version_main.".".++$ipxact_version_sub.".xsl"){
+	    my ($parser, $xslt, $source, $style_doc, $stylesheet, $results, $result);
+	    
+	    #XSLTransformation
+	    $parser = XML::LibXML->new();#new LibXML object
+	    $xslt = XML::LibXSLT->new();#new LibXSLT object
+
+	    $source = $parser ->parse_string($datastring);
+	    $style_doc = $parser -> parse_file($eh->get('xml.xslt_dir')."from".$ipxact_version."_to_".$ipxact_version_main.".".$ipxact_version_sub.".xsl");
+	    
+	    $stylesheet = $xslt->parse_stylesheet($style_doc);
+
+	    $results = $stylesheet->transform($source);
+	    $result = $stylesheet->output_string($results);
+	    
+	    $result=~s/http:\/\/www.spiritconsortium.org\/XMLSchema\/SPIRIT\/$ipxact_version/http:\/\/www.spiritconsortium.org\/XMLSchema\/SPIRIT\/$ipxact_version_main.$ipxact_version_sub/g;
+
+	    _info("file transformed from IP-XACT $ipxact_version to IP-XACT $ipxact_version_main.$ipxact_version_sub");
+	    
+
+	    #call _check_version recursively
+	    $result=$this->_check_version($database_type,$result);
+	    
+	    return $result;
+	}
+	else{
 	    _error("couldn't find an updatefile");
-	    return 0
+	    return 0;
 	}
 	    
 
@@ -992,6 +1055,30 @@ sub _check_version{
 sub _check_schema{
     my ($this)=shift;
     my ($database_type, $datastring)=@_; 
-}
+    my ($doc, $xmlschema, $schemapath);
+    
+    #$doc = XML::LibXML->new->parse_string($datastring);
+
+    
+    #$schemapath=$eh->get('xml.schema_dir')."index.xsd";
+    #$xmlschema = XML::LibXML::Schema->new( location => $schemapath );
+    
+    #eval { $xmlschema->validate( $doc )};
+    
+#     use XML::SAX::ParserFactory;
+#     use XML::Validator::Schema;
+
+#     my $schema_file = $eh->get('xml.schema_dir')."index.xsd";
+#     my $document    = 'regdef_fe1_fe2.xml';
+
+#     my $validator = XML::Validator::Schema->new(file => $schema_file);
+
+#     my $parser = XML::SAX::ParserFactory->parser(Handler => $validator);
+
+#     eval { $parser->parse_uri($document); };
+#     die $@ if $@;
+
+#     print "$document validated successfully\n";
+};
 
 1;
