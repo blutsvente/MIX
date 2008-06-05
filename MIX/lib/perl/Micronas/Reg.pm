@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.53 2008/06/03 13:15:57 herburger Exp $
+#  RCSId: $Id: Reg.pm,v 1.54 2008/06/05 09:07:24 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.54  2008/06/05 09:07:24  herburger
+#  changed Module import
+#
 #  Revision 1.53  2008/06/03 13:15:57  herburger
 #  improved _check_version, some small changes in _map_ipxact
 #
@@ -124,10 +127,7 @@ sub parse_register_master {
                                   use Micronas::RegViewClone;
                                   use Micronas::MixUtils::RegUtils;
                                   use Micronas::RegViewIPXACT;
-				  use XML::Twig;
-				  use XML::LibXSLT;
-				  use XML::LibXML;
-                                  '	
+				                                   '	
                                  ) ) {
 			$logger->fatal( '__F_LOADREGMD', "\tFailed to load required modules for parse_register_master(): $@" );
 			exit 1;
@@ -199,7 +199,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.53 $ ';  #'
+our($VERSION) = '$Revision: 1.54 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -295,6 +295,9 @@ sub init {
         if ($hinput{inputformat} eq "ip-xact") {
 	    $datastring=join("\n", @{$hinput{data}});#join each line of the data array into one string
             
+	    use XML::Twig;
+	    use XML::LibXSLT;
+	    use XML::LibXML;
 	    
 	    
 	    # check version of xml-data and convert it to the right version if possible
@@ -302,17 +305,18 @@ sub init {
 		_error("input file not in the correct format");
 		exit 1;
 	    }
-
-	    #check input against schema
-	    #if(!$this->_check_schema($hinput{database_type},$datastring_ipxact_1_4)){
-	    #	_error("input file hasn't passed schema validation");
-	    #	exit 1;
-	    #}
 	    
+# 	    #check input against schema
+# 	    if(!$this->_check_schema($hinput{database_type},$datastring_ipxact_1_4)){
+# 		exit 1;
+# 	    }
+
+	    
+
 	    # call mapping function for ip-xact (XML) database
 	    $this->_map_ipxact($hinput{database_type},$datastring_ipxact_1_4);
 	    
-	    $this->display();
+	    #$this->display();
         };
     };
 
@@ -1052,33 +1056,34 @@ sub _check_version{
     
 };
 
-sub _check_schema{
-    my ($this)=shift;
-    my ($database_type, $datastring)=@_; 
-    my ($doc, $xmlschema, $schemapath);
+# sub _check_schema{
+#     my ($this)=shift;
+#     my ($database_type, $datastring)=@_; 
+#     my ($validator,%error ,$schemafile);
+#     use XML::Validate::Xerces;
     
-    #$doc = XML::LibXML->new->parse_string($datastring);
-
+#     _info('checking file against Schema');
     
-    #$schemapath=$eh->get('xml.schema_dir')."index.xsd";
-    #$xmlschema = XML::LibXML::Schema->new( location => $schemapath );
+#     $schemafile=$eh->get('xml.schema_dir')."index.xsd";#schema
     
-    #eval { $xmlschema->validate( $doc )};
+#     $datastring =~ s#http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4/\w+.xsd#$schemafile#gi;#substitute URL with local path to schema (doesn't work with URL)
+
+#     $validator = new XML::Validate::Xerces();
     
-#     use XML::SAX::ParserFactory;
-#     use XML::Validator::Schema;
+#     if ($validator->validate($datastring)) {
+# 	_info('XML-File is valid');
+# 	$datastring =~ s#$schemafile#http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4/index.xsd#gi;#substitute back
+# 	return 1;
+#     } else {
+# 	$datastring =~ s#$schemafile#http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4/index.xsd#gi;#substitute back
+	
+# 	%error= %{$validator->last_error()};
+# 	_error($error{'message'}." in line ".$error{'line'}." column ".$error{'column'});
+	
+# 	return 0;
+#     }
 
-#     my $schema_file = $eh->get('xml.schema_dir')."index.xsd";
-#     my $document    = 'regdef_fe1_fe2.xml';
 
-#     my $validator = XML::Validator::Schema->new(file => $schema_file);
-
-#     my $parser = XML::SAX::ParserFactory->parser(Handler => $validator);
-
-#     eval { $parser->parse_uri($document); };
-#     die $@ if $@;
-
-#     print "$document validated successfully\n";
-};
+# };
 
 1;
