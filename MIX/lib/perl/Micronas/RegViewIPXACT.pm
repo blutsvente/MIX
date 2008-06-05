@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewIPXACT.pm,v 1.3 2008/05/28 13:53:25 herburger Exp $
+#  RCSId: $Id: RegViewIPXACT.pm,v 1.4 2008/06/05 08:32:33 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -27,6 +27,9 @@
 ###############################################################################
 #
 #  $Log: RegViewIPXACT.pm,v $
+#  Revision 1.4  2008/06/05 08:32:33  herburger
+#  changed module import
+#
 #  Revision 1.3  2008/05/28 13:53:25  herburger
 #  *** empty log message ***
 #
@@ -55,8 +58,6 @@ use Micronas::RegReg;
 use Micronas::RegField;
 use Micronas::RegViews;
 use Micronas::MixUtils::RegUtils;
-use XML::Writer;
-use IO::File;
 
 
 
@@ -76,7 +77,9 @@ sub _gen_view_ipxact {
     my $this = shift;
     my ($view_name, $lref_domains) = @_;
     
-      
+    use XML::Writer;
+    use IO::File;
+
     
     # extend class data with data structure needed for code generation
     $this->global('ldomains'		=>	[]);	
