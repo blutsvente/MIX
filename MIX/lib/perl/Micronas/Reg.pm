@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.54 2008/06/05 09:07:24 herburger Exp $
+#  RCSId: $Id: Reg.pm,v 1.55 2008/06/05 12:05:19 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.55  2008/06/05 12:05:19  herburger
+#  changed module import
+#
 #  Revision 1.54  2008/06/05 09:07:24  herburger
 #  changed Module import
 #
@@ -199,7 +202,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.54 $ ';  #'
+our($VERSION) = '$Revision: 1.55 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -294,10 +297,18 @@ sub init {
 	
         if ($hinput{inputformat} eq "ip-xact") {
 	    $datastring=join("\n", @{$hinput{data}});#join each line of the data array into one string
-            
-	    use XML::Twig;
-	    use XML::LibXSLT;
-	    use XML::LibXML;
+	    
+
+	    unless( mix_use_on_demand('
+                     	    use XML::Twig;
+			    use XML::LibXSLT;
+			    use XML::LibXML;'	
+		    ) ) {
+		_fatal( "Failed to load required modules for processing XML data: $@" );
+		exit 1;
+	    }
+        
+;
 	    
 	    
 	    # check version of xml-data and convert it to the right version if possible
@@ -953,11 +964,11 @@ sub _check_version{
 	$ns_prefix = $elt->ns_prefix;
 	
 	#check if xml is in ipxact format
-	if ($ns_prefix eq 'spirit' and $namespace =~ m/http:\/\/www.spiritconsortium.org\/XMLSchema\/SPIRIT\//){
+	if ($ns_prefix eq 'spirit' and $namespace =~ m#http://www.spiritconsortium.org/XMLSchema/SPIRIT/#){
 	    #is in IP-XACT format
 	    
 	    #check the version
-	    $namespace =~ m/http:\/\/www.spiritconsortium.org\/XMLSchema\/SPIRIT\/(\d\.\d)/;
+	    $namespace =~ m#http://www.spiritconsortium.org/XMLSchema/SPIRIT/(\d\.\d)#;
 	    $ipxact_version=$1;
 	    $ipxact_version =~ m/(\d)\.(\d)/;
 	    $ipxact_version_main=$1;
@@ -1015,7 +1026,7 @@ sub _check_version{
 	    $results = $stylesheet->transform($source);
 	    $result = $stylesheet->output_string($results);
 	    
-	    $result=~s/http:\/\/www.spiritconsortium.org\/XMLSchema\/SPIRIT\/$ipxact_version/http:\/\/www.spiritconsortium.org\/XMLSchema\/SPIRIT\/1.4/g;
+	    $result=~s#http://www.spiritconsortium.org/XMLSchema/SPIRIT/$ipxact_version#http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4#g;
 
 	    _info("file transformed from IP-XACT $ipxact_version to IP-XACT 1.4");
 	    
@@ -1036,7 +1047,7 @@ sub _check_version{
 	    $results = $stylesheet->transform($source);
 	    $result = $stylesheet->output_string($results);
 	    
-	    $result=~s/http:\/\/www.spiritconsortium.org\/XMLSchema\/SPIRIT\/$ipxact_version/http:\/\/www.spiritconsortium.org\/XMLSchema\/SPIRIT\/$ipxact_version_main.$ipxact_version_sub/g;
+	    $result=~s#http://www.spiritconsortium.org/XMLSchema/SPIRIT/$ipxact_version#http://www.spiritconsortium.org/XMLSchema/SPIRIT/$ipxact_version_main.$ipxact_version_sub#g;
 
 	    _info("file transformed from IP-XACT $ipxact_version to IP-XACT $ipxact_version_main.$ipxact_version_sub");
 	    
@@ -1066,7 +1077,7 @@ sub _check_version{
     
 #     $schemafile=$eh->get('xml.schema_dir')."index.xsd";#schema
     
-#     $datastring =~ s#http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4/\w+.xsd#$schemafile#gi;#substitute URL with local path to schema (doesn't work with URL)
+#     $datastring =~ s#http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4/\w+\.xsd#$schemafile#gi;#substitute URL with local path to schema (doesn't work with URL)
 
 #     $validator = new XML::Validate::Xerces();
     

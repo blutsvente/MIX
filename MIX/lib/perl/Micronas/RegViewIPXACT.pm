@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewIPXACT.pm,v 1.4 2008/06/05 08:32:33 herburger Exp $
+#  RCSId: $Id: RegViewIPXACT.pm,v 1.5 2008/06/05 12:05:19 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -27,6 +27,9 @@
 ###############################################################################
 #
 #  $Log: RegViewIPXACT.pm,v $
+#  Revision 1.5  2008/06/05 12:05:19  herburger
+#  changed module import
+#
 #  Revision 1.4  2008/06/05 08:32:33  herburger
 #  changed module import
 #
@@ -79,7 +82,13 @@ sub _gen_view_ipxact {
     
     use XML::Writer;
     use IO::File;
-
+	    unless( mix_use_on_demand('
+                     	   use XML::Writer;
+			   use IO::File; '	
+		    ) ) {
+		_fatal( "Failed to load required modules for _gen_view_ipxact(): $@" );
+		exit 1;
+	    }
     
     # extend class data with data structure needed for code generation
     $this->global('ldomains'		=>	[]);	
