@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.56 2008/06/16 16:01:11 megyei Exp $
+#  RCSId: $Id: Reg.pm,v 1.57 2008/06/16 16:33:16 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.57  2008/06/16 16:33:16  lutscher
+#  some clean-up
+#
 #  Revision 1.56  2008/06/16 16:01:11  megyei
 #  Replaced option '-report <view>' by corresponding setting in mix.cg.
 #
@@ -156,8 +159,8 @@ sub parse_register_master {
         foreach $view (split(/,\s*/, $eh->get('reg_shell.type'))) {
             # get handle to new register object
             $o_space = Micronas::Reg->new();
-	    
-	    # init register object from register-master
+            
+            # init register object from register-master
             if (scalar @$r_i2c) {
                 $o_space->init(	 
                                'inputformat'     => "register-master", 
@@ -209,7 +212,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.56 $ ';  #'
+our($VERSION) = '$Revision: 1.57 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -225,20 +228,20 @@ our(%hglobal) =
    # generatable register views (dispatch table)
    supported_views => 
    {
-	"hdl-vgch-rs" => \&_gen_view_vgch_rs,      # VGCH project register shell (owner: Thorsten Lutscher)
-	"e_vr_ad"     => \&_gen_view_vr_ad,        # e-language macros (owner: Thorsten Lutscher)
-	"stl"         => \&_gen_view_stl,          # register test file in Socket Transaction Language format (owner: Thorsten Lutscher)
-	"rdl"         => \&_gen_view_rdl,          # Denali RDL representation of database (experimental)
-	"ip-xact"     => \&_gen_view_ipxact,       # IP-XACT compliant XML output (owner: Gregor Herburger)
-        "portlist"    => \&mix_report,             # documents portlist in mif file (owner: Thorsten Lutscher)
-        "reglist"     => \&mix_report,             # documents all registers in mif file (owner: Thorsten Lutscher)
-        "header"      => \&mix_report,             # generates c header files (owner: Thorsten Lutscher)
-        "vctyheader"  => \&mix_report,             # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
-        "per"         => \&mix_report,             # creates Lauterbach per file (owner: Thorsten Lutscher)
-        "vctyper"     => \&mix_report,             # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
-        "perl"        => \&mix_report,             # creates perl package (owner: Thorsten Lutscher)
-        "vctyperl"    => \&mix_report,             # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
-	"none"        => sub {}                    # generate nothing (useful for bypassing the dispatcher)
+    "hdl-vgch-rs" => \&_gen_view_vgch_rs,      # VGCH project register shell (owner: Thorsten Lutscher)
+    "e_vr_ad"     => \&_gen_view_vr_ad,        # e-language macros (owner: Thorsten Lutscher)
+    "stl"         => \&_gen_view_stl,          # register test file in Socket Transaction Language format (owner: Thorsten Lutscher)
+    "rdl"         => \&_gen_view_rdl,          # Denali RDL representation of database (experimental)
+    "ip-xact"     => \&_gen_view_ipxact,       # IP-XACT compliant XML output (owner: Gregor Herburger)
+    "portlist"    => \&mix_report,             # documents portlist in mif file (owner: Thorsten Lutscher)
+    "reglist"     => \&mix_report,             # documents all registers in mif file (owner: Thorsten Lutscher)
+    "header"      => \&mix_report,             # generates c header files (owner: Thorsten Lutscher)
+    "vctyheader"  => \&mix_report,             # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
+    "per"         => \&mix_report,             # creates Lauterbach per file (owner: Thorsten Lutscher)
+    "vctyper"     => \&mix_report,             # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
+    "perl"        => \&mix_report,             # creates perl package (owner: Thorsten Lutscher)
+    "vctyperl"    => \&mix_report,             # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
+    "none"        => sub {}                    # generate nothing (useful for bypassing the dispatcher)
    },
 
    # attributes in register-master that do NOT belong to a field
@@ -311,41 +314,34 @@ sub init {
         };
 	
         if ($hinput{inputformat} eq "ip-xact") {
-	    $datastring=join("\n", @{$hinput{data}});#join each line of the data array into one string
-	    
-
-	    unless( mix_use_on_demand('
+            $datastring=join("\n", @{$hinput{data}});#join each line of the data array into one string
+            
+            unless( mix_use_on_demand('
                      	    use XML::Twig;
 			    use XML::LibXSLT;
 			    use XML::LibXML;'	
-		    ) ) {
-		_fatal( "Failed to load required modules for processing XML data: $@" );
-		exit 1;
-	    }
-        
-;
-	    
-	    
-	    # check version of xml-data and convert it to the right version if possible
-	    if (!($datastring_ipxact_1_4=$this->_check_version($hinput{database_type},$datastring))){
-		_error("input file not in the correct format");
-		exit 1;
-	    }
-	    
-# 	    #check input against schema
-# 	    if(!$this->_check_schema($hinput{database_type},$datastring_ipxact_1_4)){
-# 		exit 1;
-# 	    }
-
-	    
-
-	    # call mapping function for ip-xact (XML) database
-	    $this->_map_ipxact($hinput{database_type},$datastring_ipxact_1_4);
-	    
-	    #$this->display();
+                                     ) ) {
+                _fatal( "Failed to load required modules for processing XML data: $@" );
+                exit 1;
+            };
+            
+            # check version of xml-data and convert it to the right version if possible
+            if (!($datastring_ipxact_1_4=$this->_check_version($hinput{database_type},$datastring))){
+                _error("input file not in the correct format");
+                exit 1;
+            }
+            
+            # 	    #check input against schema
+            # 	    if(!$this->_check_schema($hinput{database_type},$datastring_ipxact_1_4)){
+            # 		exit 1;
+            # 	    }
+            
+            # call mapping function for ip-xact (XML) database
+            $this->_map_ipxact($hinput{database_type},$datastring_ipxact_1_4);
+            
+            #$this->display();
         };
     };
-
 };
 
 # generate a view of the register space
@@ -359,7 +355,7 @@ sub generate_view {
     if (ref($action) eq "CODE") {
         $this->$action($view_name, $lref_domains); 
     } else {
-        _error("unrecognized view name \'$view_name'\ (mix parameter reg_shell.type)");
+        _error("unrecognized view name \'$view_name'\ (mix parameter reg_shell.type); currently supported views: ".join(", ", sort keys %$href_dispatch_table). ".");
     };
 };
 
