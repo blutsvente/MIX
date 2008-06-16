@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.55 2008/06/05 12:05:19 herburger Exp $
+#  RCSId: $Id: Reg.pm,v 1.56 2008/06/16 16:01:11 megyei Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,12 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.56  2008/06/16 16:01:11  megyei
+#  Replaced option '-report <view>' by corresponding setting in mix.cg.
+#
+#  The config parameter reg_shell.type can now take all the views that were
+#  previously defined by the -report option.
+#
 #  Revision 1.55  2008/06/05 12:05:19  herburger
 #  changed module import
 #
@@ -99,6 +105,7 @@ use strict;
 
 use Log::Log4perl qw(get_logger);
 use Micronas::MixUtils qw( mix_use_on_demand $eh %OPTVAL );
+use Micronas::MixReport qw(mix_report);
 # rest gets loaded on demand ...
 
 my $logger = get_logger('MIX::Reg');
@@ -202,7 +209,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.55 $ ';  #'
+our($VERSION) = '$Revision: 1.56 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -223,13 +230,21 @@ our(%hglobal) =
 	"stl"         => \&_gen_view_stl,          # register test file in Socket Transaction Language format (owner: Thorsten Lutscher)
 	"rdl"         => \&_gen_view_rdl,          # Denali RDL representation of database (experimental)
 	"ip-xact"     => \&_gen_view_ipxact,       # IP-XACT compliant XML output (owner: Gregor Herburger)
+        "portlist"    => \&mix_report,             # documents portlist in mif file (owner: Thorsten Lutscher)
+        "reglist"     => \&mix_report,             # documents all registers in mif file (owner: Thorsten Lutscher)
+        "header"      => \&mix_report,             # generates c header files (owner: Thorsten Lutscher)
+        "vctyheader"  => \&mix_report,             # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
+        "per"         => \&mix_report,             # creates Lauterbach per file (owner: Thorsten Lutscher)
+        "vctyper"     => \&mix_report,             # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
+        "perl"        => \&mix_report,             # creates perl package (owner: Thorsten Lutscher)
+        "vctyperl"    => \&mix_report,             # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
 	"none"        => sub {}                    # generate nothing (useful for bypassing the dispatcher)
    },
 
    # attributes in register-master that do NOT belong to a field
    # note: the field name is retrieved from the ::b entries of the register-master
    non_field_attributes => [qw(::ign ::sub ::interface ::inst ::width ::b:.* ::b ::addr ::dev ::vi2c ::default ::name ::type ::definition ::clone)],
-   
+
    # language for HDL code generation, currently only Verilog supported
    lang => "verilog",
 

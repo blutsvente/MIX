@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.57 $                                               |
+# | Revision:   $Revision: 1.58 $                                               |
 # | Author:     $Author: megyei $                                                 |
-# | Date:       $Date: 2008/05/05 11:45:50 $                                                   |
+# | Date:       $Date: 2008/06/16 16:01:11 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.57 2008/05/05 11:45:50 megyei Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.58 2008/06/16 16:01:11 megyei Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,12 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.58  2008/06/16 16:01:11  megyei
+# | Replaced option '-report <view>' by corresponding setting in mix.cg.
+# |
+# | The config parameter reg_shell.type can now take all the views that were
+# | previously defined by the -report option.
+# |
 # | Revision 1.57  2008/05/05 11:45:50  megyei
 # | The new report specifier 'vctyper' reads the device.ini file and computes the addresses when writing
 # | .per files.
@@ -242,11 +248,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.57 2008/05/05 11:45:50 megyei Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.58 2008/06/16 16:01:11 megyei Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.57 $';
+my $thisrevision   =      '$Revision: 1.58 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -313,13 +319,11 @@ sub new {
 #
 # Do the reporting if requested ...
 #
-sub mix_report($)
+sub mix_report($$)
 {
-    my ($r_i2cin) = @_;
+    my ($r_i2cin) = shift;
+    my ($reports) = shift;
 
-    return unless ( exists $OPTVAL{'report'} );
-
-    my $reports = join( ',', @{$OPTVAL{'report'}} );
     # portlist:
     if ( $reports =~ m/\bportlist\b/io ) {
         mix_rep_portlist();

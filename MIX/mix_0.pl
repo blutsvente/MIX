@@ -18,13 +18,13 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.49 2008/05/28 14:01:48 herburger Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.50 2008/06/16 16:01:23 megyei Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.49 $                                      |
-# | Mod.Date     : $Date: 2008/05/28 14:01:48 $                           |
-# | Author       : $Author: herburger $                                      |
+# | Version      : $Revision: 1.50 $                                      |
+# | Mod.Date     : $Date: 2008/06/16 16:01:23 $                           |
+# | Author       : $Author: megyei $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
 # | Email        : $Email: wilfried.gaensheimer@micronas.com$             |
@@ -38,6 +38,12 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.50  2008/06/16 16:01:23  megyei
+# | Replaced option '-report <view>' by corresponding setting in mix.cg.
+# |
+# | The config parameter reg_shell.type can now take all the views that were
+# | previously defined by the -report option.
+# |
 # | Revision 1.49  2008/05/28 14:01:48  herburger
 # | *** empty log message ***
 # |
@@ -110,7 +116,7 @@ use Log::Log4perl qw(:easy get_logger :levels);
 #    log4perl.appender.ScreenApp.layout.ConversionPattern = %d> %m%n
 
 # our own modules
-use Micronas::MixUtils qw( $eh mix_init mix_getopt_header write_sum );
+use Micronas::MixUtils qw( $eh %OPTVAL mix_init mix_getopt_header write_sum );
 use Micronas::MixUtils::IO qw( init_ole mix_utils_open_input );
 use Micronas::MixUtils::Globals;
 use Micronas::MixParser;
@@ -128,7 +134,7 @@ use Micronas::MixReport;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.49 $'; # RCS Id '
+$::VERSION = '$Revision: 1.50 $'; # RCS Id '
 $::VERSION =~ s,\$,,go;
 
 #
@@ -261,10 +267,6 @@ $logger->fatal('no tag for this fatal');
 
 =item *
 
--report portlist,reglist  Report portlist, register list, (t.b.d.)  
-
-=item *
-
 -domain DOMAIN            Domain name for register view generation
 
 =back
@@ -301,6 +303,13 @@ mix_getopt_header( qw(
 if ( $#ARGV < 0 ) { # Need  at least one sheet!!
     $logger->fatal('__F_MISSARG', 'No input file specified!');
     exit 1;
+}
+
+if (exists($OPTVAL{report})) {
+    $logger->error('__F_MISSARG', "  Option '-report $OPTVAL{report}->[0]' has been removed!");
+    $logger->error('           ', "  Please use '-conf reg_shell.type=$OPTVAL{report}->[0]' instead");
+    $logger->fatal('           ', "  or specify all views you want to generate in the mix.cfg file!");
+    exit(2);
 }
 
 ##############################################################################
@@ -410,7 +419,7 @@ generate_entities();
 mix_store_db( "out", "auto", {} );
 
 # mix_report($r_i2cin);
-mix_report($o_space);
+#mix_report($o_space);
 
 #
 # BACKEND add for debugging:
