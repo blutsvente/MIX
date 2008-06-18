@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.57 2008/06/16 16:33:16 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.58 2008/06/18 10:04:58 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.58  2008/06/18 10:04:58  lutscher
+#  fixed error messages for when no RM file
+#
 #  Revision 1.57  2008/06/16 16:33:16  lutscher
 #  some clean-up
 #
@@ -197,12 +200,21 @@ sub parse_register_master {
         # only create errors if neither file is present
         if (!scalar @$r_i2c ) {
             my $severity = ($eh->get('i2c.req') =~ m/\bmandatory/ ? '__E_REG_INIT':'__I_REG_INIT');
-            $logger->error($severity, "\tRegister-master file empty or sheet matching \'" .
-                           $eh->get('i2c.xls') . "\' not found in any input file");
+            my $msg = "\tRegister-master file empty or sheet matching \'" . $eh->get('i2c.xls') . "\' not found in any input file";
+            if ($severity =~ m/^__E/) {
+                $logger->error($severity, $msg);
+            } else {
+                $logger->info($severity, $msg);
+            };
         };
 	if (!scalar @$r_xml) {
             my $severity = ($eh->get('xml.req') =~ m/\bmandatory/ ? '__E_REG_INIT':'__I_REG_INIT');
-            $logger->error($severity, "\tXML file not present or empty");
+            my $msg = "\tXML file not present or empty";
+            if ($severity =~ m/^__E/) {
+                $logger->error($severity, $msg);
+            } else {
+                $logger->info($severity, $msg);
+            };
         };
 	};
 	return undef;
@@ -212,7 +224,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.57 $ ';  #'
+our($VERSION) = '$Revision: 1.58 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
