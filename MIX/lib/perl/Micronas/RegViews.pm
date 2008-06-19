@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.77 2008/06/03 08:27:42 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.78 2008/06/19 14:38:59 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.77 $                                  
+#  Revision      : $Revision: 1.78 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.78  2008/06/19 14:38:59  lutscher
+#  in generated code: tie wr_err_i input to 0
+#
 #  Revision 1.77  2008/06/03 08:27:42  lutscher
 #  changed RTL lib for ip_ocp
 #
@@ -373,7 +376,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.77 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.78 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -2097,7 +2100,8 @@ sub _vgch_rs_add_static_connections {
 		$this->_add_conn("%OPEN%", 0, 0, "${ocp_i}/sinterrupt_o", "");
 	};
     if ($this->global->{'mix_signature'} !~ m/M0/) {
-        $this->_add_conn("%OPEN%", 0, 0, "", "${ocp_i}/wr_err_i"); # NEW wr_err input not used
+        # $this->_add_conn("%OPEN%", 0, 0, "", "${ocp_i}/wr_err_i"); # NEW wr_err input not used
+        _tie_input_to_constant("${ocp_i}/wr_err_i", 0, 0, 0);
     };
 
     if (exists ($this->global->{'ocp_checker_inst'})) {
