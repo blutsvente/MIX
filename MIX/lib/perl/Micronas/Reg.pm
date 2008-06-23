@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.58 2008/06/18 10:04:58 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.59 2008/06/23 09:17:12 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.59  2008/06/23 09:17:12  lutscher
+#  moved portlist report to dedicated function because it does not use the register object
+#
 #  Revision 1.58  2008/06/18 10:04:58  lutscher
 #  fixed error messages for when no RM file
 #
@@ -111,7 +114,7 @@ use strict;
 
 use Log::Log4perl qw(get_logger);
 use Micronas::MixUtils qw( mix_use_on_demand $eh %OPTVAL );
-use Micronas::MixReport qw(mix_report);
+use Micronas::MixReport qw(mix_reg_report);
 # rest gets loaded on demand ...
 
 my $logger = get_logger('MIX::Reg');
@@ -224,7 +227,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.58 $ ';  #'
+our($VERSION) = '$Revision: 1.59 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -245,14 +248,14 @@ our(%hglobal) =
     "stl"         => \&_gen_view_stl,          # register test file in Socket Transaction Language format (owner: Thorsten Lutscher)
     "rdl"         => \&_gen_view_rdl,          # Denali RDL representation of database (experimental)
     "ip-xact"     => \&_gen_view_ipxact,       # IP-XACT compliant XML output (owner: Gregor Herburger)
-    "portlist"    => \&mix_report,             # documents portlist in mif file (owner: Thorsten Lutscher)
-    "reglist"     => \&mix_report,             # documents all registers in mif file (owner: Thorsten Lutscher)
-    "header"      => \&mix_report,             # generates c header files (owner: Thorsten Lutscher)
-    "vctyheader"  => \&mix_report,             # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
-    "per"         => \&mix_report,             # creates Lauterbach per file (owner: Thorsten Lutscher)
-    "vctyper"     => \&mix_report,             # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
-    "perl"        => \&mix_report,             # creates perl package (owner: Thorsten Lutscher)
-    "vctyperl"    => \&mix_report,             # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
+    # "portlist"    => \&mix_reg_report,             # documents portlist in mif file (owner: Thorsten Lutscher)
+    "reglist"     => \&mix_reg_report,         # documents all registers in mif file (owner: Thorsten Lutscher)
+    "header"      => \&mix_reg_report,         # generates c header files (owner: Thorsten Lutscher)
+    "vctyheader"  => \&mix_reg_report,         # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
+    "per"         => \&mix_reg_report,         # creates Lauterbach per file (owner: Thorsten Lutscher)
+    "vctyper"     => \&mix_reg_report,         # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
+    "perl"        => \&mix_reg_report,         # creates perl package (owner: Thorsten Lutscher)
+    "vctyperl"    => \&mix_reg_report,         # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
     "none"        => sub {}                    # generate nothing (useful for bypassing the dispatcher)
    },
 

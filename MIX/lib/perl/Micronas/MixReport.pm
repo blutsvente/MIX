@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.58 $                                               |
-# | Author:     $Author: megyei $                                                 |
-# | Date:       $Date: 2008/06/16 16:01:11 $                                                   |
+# | Revision:   $Revision: 1.59 $                                               |
+# | Author:     $Author: lutscher $                                                 |
+# | Date:       $Date: 2008/06/23 09:17:12 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.58 2008/06/16 16:01:11 megyei Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.59 2008/06/23 09:17:12 lutscher Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.59  2008/06/23 09:17:12  lutscher
+# | moved portlist report to dedicated function because it does not use the register object
+# |
 # | Revision 1.58  2008/06/16 16:01:11  megyei
 # | Replaced option '-report <view>' by corresponding setting in mix.cg.
 # |
@@ -239,7 +242,7 @@ use POSIX qw(ceil);
 
 @ISA = qw(Exporter);
 @EXPORT = qw(
-	mix_report
+	mix_report mix_reg_report
 ); # symbols to export by default
 
 @EXPORT_OK = qw();
@@ -248,11 +251,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.58 2008/06/16 16:01:11 megyei Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.59 2008/06/23 09:17:12 lutscher Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.58 $';
+my $thisrevision   =      '$Revision: 1.59 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -319,15 +322,32 @@ sub new {
 #
 # Do the reporting if requested ...
 #
-sub mix_report($$)
+
+# general reports; this function is called from main 
+sub mix_report() {
+    return unless ( exists $OPTVAL{'report'} );
+
+    my $reports = join( ',', @{$OPTVAL{'report'}} );
+    # portlist:
+    if ( $reports =~ m/\bportlist\b/io ) {
+        mix_rep_portlist();
+        return;
+    };
+
+    # if still here, complain to user
+    $logger->error('__E_OPT', "  Option '-report $OPTVAL{report}->[0]' has been changed!");
+    $logger->error('       ', "  Please use '-conf reg_shell.type=$OPTVAL{report}->[0]' instead");
+    $logger->error('       ', "  or specify all views you want to generate in the mix.cfg file!");
+
+};
+
+# generate reports/views for the register object (this is here and not in the Reg packages because formerly maintained by Mathias);
+# this function is called by Reg module
+sub mix_reg_report($$)
 {
     my ($r_i2cin) = shift;
     my ($reports) = shift;
 
-    # portlist:
-    if ( $reports =~ m/\bportlist\b/io ) {
-        mix_rep_portlist();
-    }
     if ( $reports =~ m/\breglist\b/io ) {
         $logger->info('__I_REPORT', "\tReport register list in mif format");
         mix_rep_reglist($r_i2cin);
