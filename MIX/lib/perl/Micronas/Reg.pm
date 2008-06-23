@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.59 2008/06/23 09:17:12 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.60 2008/06/23 12:54:20 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -13,6 +13,7 @@
 #
 #  Contents      :  Top-level register space class; represents register space
 #                   of a device and contains register domains; also contains
+
 #                   most of the user API for dealing with register spaces
 #
 ###############################################################################
@@ -29,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.60  2008/06/23 12:54:20  herburger
+#  added write2excel method, for dumping .xml
+#
 #  Revision 1.59  2008/06/23 09:17:12  lutscher
 #  moved portlist report to dedicated function because it does not use the register object
 #
@@ -227,7 +231,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.59 $ ';  #'
+our($VERSION) = '$Revision: 1.60 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -335,26 +339,34 @@ sub init {
                      	    use XML::Twig;
 			    use XML::LibXSLT;
 			    use XML::LibXML;'	
-                                     ) ) {
-                _fatal( "Failed to load required modules for processing XML data: $@" );
-                exit 1;
-            };
-            
-            # check version of xml-data and convert it to the right version if possible
-            if (!($datastring_ipxact_1_4=$this->_check_version($hinput{database_type},$datastring))){
-                _error("input file not in the correct format");
-                exit 1;
-            }
-            
-            # 	    #check input against schema
-            # 	    if(!$this->_check_schema($hinput{database_type},$datastring_ipxact_1_4)){
-            # 		exit 1;
-            # 	    }
-            
-            # call mapping function for ip-xact (XML) database
-            $this->_map_ipxact($hinput{database_type},$datastring_ipxact_1_4);
-            
-            #$this->display();
+
+		    ) ) {
+		_fatal( "Failed to load required modules for processing XML data: $@" );
+		exit 1;
+	    }
+        
+;
+	    
+	    
+	    # check version of xml-data and convert it to the right version if possible
+	    if (!($datastring_ipxact_1_4=$this->_check_version($hinput{database_type},$datastring))){
+		_error("input file not in the correct format");
+		exit 1;
+	    }
+	    
+#  	    #check input against schema
+#  	    if(!$this->_check_schema($hinput{database_type},$datastring_ipxact_1_4)){
+#  		exit 1;
+#  	    }
+	    
+
+	    # call mapping function for ip-xact (XML) database
+	    $this->_map_ipxact($hinput{database_type},$datastring_ipxact_1_4);
+	    
+	    #$this->display();
+
+ 
+
         };
     };
 };
@@ -801,6 +813,7 @@ sub _map_ipxact{
 
 	#get addresswidth datawidth
 	$range = $elt->first_child('spirit:range')->text;#2^$range
+	$range = oct($range) if $range =~ m/^0/;
 	$range=log($range)/log(2);#get range
 	$width = $elt->first_child('spirit:width')->text;
 	
@@ -975,6 +988,13 @@ sub _map_ipxact{
 
 };
 
+# checks if the XML-Data is in the right version, if not it tries to convert it to the right version
+# input: 1. databasetype 
+# 2. datastring with xml
+# output: 0 if not in the correct format and not convertable to correct format
+# or datastring in the correct format
+
+
 sub _check_version{
     my ($this)=shift;
     my ($database_type, $datastring)=@_; 
@@ -1123,4 +1143,238 @@ sub _check_version{
 
 # };
 
+
+# writes a excel file out of a Micronas::Reg Object
+# input: 1. dumpfile to write excel to 
+# output: 1 if successfull 0 otherwise
+
+sub write2excel{
+    my $this=shift;
+    my ($dumpfile)=@_;
+
+    my ( $workbook, $worksheet, $worksheetname, $path, %columns, $i, $registerwidth, $rowcounter, $fieldspec, $fieldcomment, $vi2cdata,$registercounter,$columns_size, $registeroffset, $view, $recommended);
+    my ( $domain, $o_domain, $o_register, $field, $o_field);
+
+    #import needed Modules
+    unless( mix_use_on_demand('use Spreadsheet::WriteExcel;') ) {
+	_fatal( "Failed to load required modules for dumping XML data to Excel: $@" );
+	exit 1;
+    }
+    
+    #get the path, to teh tmp_excelfile
+    $path =$eh->get('intermediate.path');
+    $dumpfile =~ s/\.xml$/.xls/;#change xml file extension to xls
+    $dumpfile = $path.'/'.$dumpfile;
+    
+    
+
+    _info("start writing to Excel File, $dumpfile");
+    #create new excel file
+    if (!($workbook = Spreadsheet::WriteExcel->new($dumpfile))){
+	_error( "Problems creating new Excel file: $!");
+	 return 0;
+    }
+    #get worksheet name
+    $dumpfile =~ m/^$path\/(\w+)-mixed\.xls/;
+    $worksheetname=$1;
+    $worksheetname=substr($worksheetname,0,31);#sheetname can only be 31 characters long
+    
+
+    # Add a worksheet
+    $worksheet = $workbook->add_worksheet($worksheetname);
+
+    #Describes the columnname, it's Description, the position, the comment and the column-width
+    %columns=('::ign'=>["#",0,"Ignore. If cell contains '#', row will be ignored.",6.57],
+	      '::type'=>["Register Type",1,"Not used (!?). Default is 'I2C'.",8.57],
+	      '::dev'=>["Device Address",2,"Symbolic device (chip) address for board-level I2C bus.",8.57],
+	      '::width'=>["Register Width",3,"Width of HDL implementation of register. Default is 32.",6.14],
+	      '::sub'=>["rel. Address",4,"Address offset of register in domain/register-shell. The 2nd meaning (with different value) is physical address for board-level I2C bus.",8.14],
+	      '::interface'=>["Domain Name",5,"Register domain name. Each domain has its register-shell implementation assigned to.",8.14],
+	      '::inst'=>["Register Name",6,"Register name; Default is concatenation of ::block and ::sub but can be changed to have something more meaningful. Note: must be unique within one domain",13.43],
+	      '::dir'=>["Write / Read",7,"Bitfield access attribute from software point of view. One of R (read-only), W (write-only), RW (read or write). Note: If possible, do not assign different values for bitfields within one register.",8.57],
+	      '::spec'=>["Special Type",8,"Special bitfield attribute(s). If more than one, separate by ',' or ';'. Supported are at least:
+SHA - shadowed field (also has ::update and ::sync column)
+W1C - write-one-to-clear (typically IR status register)
+USR - the register access is forwarded to the backend-logic; typically RAM-ports, special registers (used for HDL implementation)",8.57],
+	      '::update'=>["Update Enable",9,"One of Y or N. Specifies whether the shadowing of a bitfield is controlled by enable/force signals. Note: requires ::spec = SHA",6.14],
+	      '::sync'=>["Update Signal",10,"Name of the signal that triggers a shadow update of the bitfield (for HDL implementation). This signal can e.g. be vertical-sync.",8.57],
+	      '::clock'=>["Clock Domain",11,"Clock signal name of the backend logic's clock domain that receives the bitfield (in case of ::dir = W/RW) or generates the bitfield (in case of ::dir = R). Used for HDL implementation.",8.57],
+	      '::reset'=>["Reset Signal",12,"Reset signal name of the backend logic that receives the bitfield (in case of ::dir = W/RW) or generates the bitfield (in case of ::dir = R). Used for HDL implementation.",9.71],
+	      '::init'=>["Reset Value",13,"Default value of the bitfield that is loaded during reset.",8.57],
+	      '::rec'=>["Recommended Value",14,"Recommended initial value of the bitfield; usually the same as ::init",8.57],
+	      '::range'=>["Value Range",15,"Possible, but not necessarily meaningful value range for bitfield.",8.57],
+	      '::view'=>["Visible",16,"One of Y or N. If N, bitfield is omitted from documentation.",4.29],
+	      '::vi2c'=>["Watchltem",17,"Additional register attribute used for VisualI2C.",20.14],
+	      '::name'=>["Field Name",18,"Name of the bitfield. Note: must be unique within a domain.",13.29],
+	      '::comment'=>["Description",19,"for data sheet (more information on next sheet)
+\\x = reset all formats to normal
+\\b = bold
+\\u = underline
+\\o = overline
+\\s = strikethrough
+\\l = superscript
+\\h = subscript
+\\t = tab
+\\\* = bullet",28.14],
+	);
+    
+    #gets length of the hash
+    $columns_size=scalar keys %columns;
+
+    #add the ::b columns
+    $registerwidth=$eh->get('reg_shell.regwidth');
+    for ($i=($registerwidth-1);$i>=0;$i--){
+	$columns{"::b$i"}=["Bit$i",$columns_size+($registerwidth-1-$i),0,8.43];
+    }
+   
+    
+    #formats
+    my($heading,$headingcolor,$description,$descriptioncolor,$bitfieldfull,$bitfieldblank,$comment,$fieldformat,$fieldformat1,$fieldformat2);
+    
+    #format for the heading row
+    $headingcolor=$workbook->set_custom_color(40,153,204,255);#pale blue
+    $heading=$workbook->add_format(bold=>1,font=>'Arial',size=>10,bg_color=>$headingcolor);
+    $heading->set_border();
+    $heading->set_align('center');
+    
+    #format for the descriptionrow
+    $descriptioncolor=$workbook->set_custom_color(41,0,0,128);#dark blue
+    $description=$workbook->add_format(bold=>1,font=>'Arial',size=>10,color=>'yellow',bg_color=>$descriptioncolor);
+    $description->set_rotation(90);
+    $description->set_align('vcenter');
+    $description->set_align('center');
+    $description->set_border();
+
+    #format for used bits in register
+    $bitfieldfull=$workbook->add_format(font=>'Arial',size=>10,bg_color=>$workbook->set_custom_color(43,255,153,0));#light orange
+    $bitfieldfull->set_border();
+    $bitfieldfull->set_text_wrap();
+    #format for empty fields in columns
+    $bitfieldblank=$workbook->add_format(font=>'Arial',size=>10,bg_color=>$workbook->set_custom_color(42,255,255,0));#yellow
+    $bitfieldblank->set_border();
+    $bitfieldblank->set_text_wrap();
+
+    #format 1 for the rows
+    $fieldformat1=$workbook->add_format(font=>'Arial',size=>10,bg_color=>$workbook->set_custom_color(44,255,255,153));#light yellow
+    $fieldformat1->set_text_wrap();
+    $fieldformat1->set_border();
+    
+    #format 2 for the rows
+    $fieldformat2=$workbook->add_format(font=>'Arial',size=>10,bg_color=>$workbook->set_custom_color(45,204,255,204));#light green
+    $fieldformat2->set_text_wrap();
+    $fieldformat2->set_border();
+
+    foreach (sort {$columns{$a}[1]<=>$columns{$b}[1]} keys %columns){#sort %columns by position
+	$worksheet->write(0,$columns{$_}[1],$_,$heading);#write heading row
+	$worksheet->write(1,$columns{$_}[1],$columns{$_}[0],$description);#write description row
+	$worksheet->write_comment(1,$columns{$_}[1],$columns{$_}[2]) if $columns{$_}[2];#write comments to description row
+
+	if ($_ =~ m/^::b\d+/){
+	    $worksheet->set_column($columns{$_}[1],$columns{$_}[1],$columns{$_}[3],undef,undef,1,1);#add outline if bitfield
+	}else{
+	    $worksheet->set_column($columns{$_}[1],$columns{$_}[1],$columns{$_}[3]);#else: no outline
+	}
+    }
+
+
+    $worksheet->set_row(0,12.75);#set row height of headingrow
+    $worksheet->set_row(1,76.5);#set row height of descriptionrow
+
+    $worksheet->freeze_panes(4,0);
+    
+
+
+    $rowcounter=4;#start in row 3
+    $registercounter=0;
+    
+    $worksheet->write(2,0,"#");
+    $worksheet->write(3,0,"#");
+  
+    foreach $domain (@{$this->domains}){#iterate through domains
+	$o_domain=$domain->{'domain'};
+	
+	foreach $o_register (@{$o_domain->{'regs'}}){#iterate through register
+	    
+	    foreach $field (@{$o_register->{'fields'}}){#iterate through fields
+
+		$fieldformat=($registercounter % 2) ? $fieldformat1 : $fieldformat2;#change format with every new register
+		$o_field=$field->{'field'};
+
+		$worksheet->set_row ($rowcounter,12.75);#set rowheight to 12.75
+
+		$worksheet->write_blank($rowcounter,$columns{'::ign'}[1],$fieldformat);
+		$worksheet->write($rowcounter,$columns{'::type'}[1],"I2C",$fieldformat);
+		$worksheet->write($rowcounter,$columns{'::dev'}[1],$this->{device},$fieldformat);
+
+		$worksheet->write($rowcounter,$columns{'::width'}[1],$o_register->{'attribs'}->{'size'},$fieldformat);
+
+		$registeroffset=$o_domain->get_reg_address($o_register);
+		$registeroffset=sprintf("0x%X",$registeroffset);#convert to HEX
+		$worksheet->write($rowcounter,$columns{'::sub'}[1],$registeroffset,$fieldformat);
+
+		$worksheet->write($rowcounter,$columns{'::interface'}[1],$o_domain->{'name'},$fieldformat);
+
+		$worksheet->write($rowcounter,$columns{'::inst'}[1],$o_register->{'name'},$fieldformat);
+
+		$vi2cdata="GI2C_".$o_register->{'attribs'}->{'size'}."Bit_Register";
+		$worksheet->write($rowcounter,$columns{'::vi2c'}[1],$vi2cdata,$fieldformat);
+
+		
+
+		#write field data
+		$worksheet->write($rowcounter,$columns{'::name'}[1],$o_field->{'name'},$fieldformat);
+		$worksheet->write($rowcounter,$columns{'::dir'}[1],$o_field->{'attribs'}->{'dir'},$fieldformat);
+		
+		$fieldspec=$o_field->{'attribs'}->{'spec'};
+		$fieldspec=~s/%EMPTY%// if ($o_field->{'attribs'}->{'spec'});
+		$worksheet->write($rowcounter,$columns{'::spec'}[1],$fieldspec,$fieldformat);		
+
+		$worksheet->write($rowcounter,$columns{'::update'}[1],$o_field->{'attribs'}->{'update'},$fieldformat);
+		$worksheet->write($rowcounter,$columns{'::sync'}[1],$o_field->{'attribs'}->{'sync'},$fieldformat);
+		
+		$fieldcomment=$o_field->{'attribs'}->{'comment'};
+		$fieldcomment=~s/%EMPTY%// if ($o_field->{'attribs'}->{'comment'});
+		$worksheet->write($rowcounter,$columns{'::comment'}[1],$fieldcomment,$fieldformat);
+	
+
+		$worksheet->write($rowcounter,$columns{'::clock'}[1],$o_field->{'attribs'}->{'clock'},$fieldformat);
+		$worksheet->write($rowcounter,$columns{'::reset'}[1],$o_field->{'attribs'}->{'reset'},$fieldformat);
+		$worksheet->write($rowcounter,$columns{'::init'}[1],$o_field->{'attribs'}->{'init'},$fieldformat);
+
+		$recommended=($o_field->{'attribs'}->{'rec'}) ? $o_field->{'attribs'}->{'rec'} : $o_field->{'attribs'}->{'init'};#if recommended field not defined use init field
+		$worksheet->write($rowcounter,$columns{'::rec'}[1],$recommended,$fieldformat);
+		$worksheet->write($rowcounter,$columns{'::range'}[1],$o_field->{'attribs'}->{'range'},$fieldformat);
+
+		$view=($o_field->{'attribs'}->{'view'})?$o_field->{'attribs'}->{'view'}:"Y";#if view not defined set to 'Y'
+		$worksheet->write($rowcounter,$columns{'::view'}[1],$view,$fieldformat);
+	
+		#write ::b fields
+		my ($f_size,$f_lsb,$f_pos);
+		$f_size=$o_field->{'attribs'}->{'size'};
+		$f_lsb=$o_field->{'attribs'}->{'lsb'};
+		$f_pos=$field->{'pos'};
+		
+		#write format for all ::b columns
+		for ($i=0;$i<=$registerwidth-1;$i++){
+		    $worksheet->write_blank($rowcounter,$columns{"::b$i"}[1],$bitfieldblank);
+		}
+
+		#write used bits
+		for ($i=$f_pos;$i<$f_pos+$f_size;$i++){
+		    $worksheet->write($rowcounter,$columns{"::b$i"}[1],$o_field->{'name'}.".".($f_lsb+$i-$f_pos),$bitfieldfull);
+		}
+
+
+		$rowcounter++;
+
+	    }
+	    $registercounter++;
+	}
+	
+	
+    }
+    $workbook->close() or _error("Error creating file $dumpfile");
+
+}
 1;
+
