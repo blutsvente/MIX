@@ -18,13 +18,13 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_0.pl,v 1.51 2008/06/23 09:16:41 lutscher Exp $  |
+# | Id           : $Id: mix_0.pl,v 1.52 2008/06/23 12:58:26 herburger Exp $  |
 # | Name         : $Name:  $                                              |
 # | Description  : $Description:$                                         |
 # | Parameters   : -                                                      | 
-# | Version      : $Revision: 1.51 $                                      |
-# | Mod.Date     : $Date: 2008/06/23 09:16:41 $                           |
-# | Author       : $Author: lutscher $                                      |
+# | Version      : $Revision: 1.52 $                                      |
+# | Mod.Date     : $Date: 2008/06/23 12:58:26 $                           |
+# | Author       : $Author: herburger $                                      |
 # | Phone        : $Phone: +49 89 54845 7275$                             |
 # | Fax          : $Fax: $                                                |
 # | Email        : $Email: wilfried.gaensheimer@micronas.com$             |
@@ -38,6 +38,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_0.pl,v $
+# | Revision 1.52  2008/06/23 12:58:26  herburger
+# | changed mix_store_db call for .xml dumping
+# |
 # | Revision 1.51  2008/06/23 09:16:41  lutscher
 # | re-added mix_report call for portlist generation
 # |
@@ -137,7 +140,7 @@ use Micronas::MixReport;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.51 $'; # RCS Id '
+$::VERSION = '$Revision: 1.52 $'; # RCS Id '
 $::VERSION =~ s,\$,,go;
 
 #
@@ -410,7 +413,7 @@ generate_entities();
 #
 # Write intermediate data ...
 #
-mix_store_db( "out", "auto", {} );
+mix_store_db( "out", "auto", {'reg'=>$o_space} );
 
 #
 # -report option
