@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewIPXACT.pm,v 1.5 2008/06/05 12:05:19 herburger Exp $
+#  RCSId: $Id: RegViewIPXACT.pm,v 1.6 2008/06/23 12:55:48 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -27,6 +27,9 @@
 ###############################################################################
 #
 #  $Log: RegViewIPXACT.pm,v $
+#  Revision 1.6  2008/06/23 12:55:48  herburger
+#  *** empty log message ***
+#
 #  Revision 1.5  2008/06/05 12:05:19  herburger
 #  changed module import
 #
@@ -79,16 +82,15 @@ use Micronas::MixUtils::RegUtils;
 sub _gen_view_ipxact {
     my $this = shift;
     my ($view_name, $lref_domains) = @_;
+
+
     
-    use XML::Writer;
-    use IO::File;
-	    unless( mix_use_on_demand('
-                     	   use XML::Writer;
-			   use IO::File; '	
-		    ) ) {
-		_fatal( "Failed to load required modules for _gen_view_ipxact(): $@" );
-		exit 1;
-	    }
+
+    unless( mix_use_on_demand('use IO::File;use XML::Writer; '	
+	    ) ) {
+	_fatal( "Failed to load required modules for _gen_view_ipxact(): $@" );
+	exit 1;
+    };
     
     # extend class data with data structure needed for code generation
     $this->global('ldomains'		=>	[]);	
@@ -127,14 +129,21 @@ sub _gen_view_ipxact {
 ##################################
 # _write_ipxact2file
 # 
-#################################
+##################################
 sub _write_ipxact2file{
     my $this=shift;
 
     my($o_domain, $o_register, $field, $o_field, $parameter);
     my($nsspirit,$nsschema, $schemalocation)=($eh->get('xml.NS_URI.spirit'),$eh->get('xml.NS_URI.schema'),$eh->get('xml.NS_URI.schemalocation'));
     my $doc;
-   
+
+
+    
+
+
+    eval {use XML::Writer};
+    die("could not find module XML::Writer in _write_ipxact2file") if $@ ne "";
+
     ##check if a domain specified
     if (!scalar @{$this->global->{'ldomains'}}){
 	#no domains specified
