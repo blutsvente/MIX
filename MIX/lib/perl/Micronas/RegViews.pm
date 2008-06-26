@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.78 2008/06/19 14:38:59 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.79 2008/06/26 12:21:14 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.78 $                                  
+#  Revision      : $Revision: 1.79 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.79  2008/06/26 12:21:14  lutscher
+#  fixed a nasty bug in clock/reset name matching
+#
 #  Revision 1.78  2008/06/19 14:38:59  lutscher
 #  in generated code: tie wr_err_i input to 0
 #
@@ -376,7 +379,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.78 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.79 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -516,7 +519,7 @@ sub _vgch_rs_gen_cfg_module {
 			# track shadow signals
 			if ($spec =~ m/sha/i) {
 				$shdw_sig = $o_field->attribs->{'sync'};
-				if(lc($shdw_sig) eq "nto" or $shdw_sig =~ m/[\%OPEN\%|\%EMPTY\%]/) {
+				if(lc($shdw_sig) eq "nto" or $shdw_sig =~ m/(%OPEN%|%EMPTY%)/) {
 					_error("field \'",$o_field->name,"\' is shadowed but has no shadow signal defined");
 				} else {
 					if($spec =~ m/w1c/i or $spec =~ m/usr/i) {
@@ -1978,7 +1981,7 @@ sub _vgch_rs_get_configuration {
 		};
 		$clock = $o_field->attribs->{'clock'};
 		$reset = $o_field->attribs->{'reset'};
-		if ($clock  =~ m/[\%OPEN\%|\%EMPTY\%]/) {
+		if ($clock  =~ m/(%OPEN%|%EMPTY%)/) {
 			$clock = $bus_clock; # use default clock
 		};
 		if (!exists($hresult{$clock})) {
@@ -2420,7 +2423,7 @@ sub _get_field_clock_and_reset {
 	my ($rclock, $rreset, $last_clock, $last_reset, $o_field) = @_;
 	
 	my $fclock = $o_field->attribs->{'clock'};
-	if ($fclock  =~ m/[\%OPEN\%|\%EMPTY\%]/) {
+	if ($fclock =~ m/(%OPEN%|%EMPTY%)/) {
 		$fclock = $last_clock; # use last clock
 	};
 	if ($fclock eq "") {
@@ -2429,7 +2432,7 @@ sub _get_field_clock_and_reset {
 		_warning("field \'",$o_field->name,"\' has a different clock than other field(s) in this register");
 	}
 	my $freset = $o_field->attribs->{'reset'};
-	if ($freset =~ m/[\%OPEN\%|\%EMPTY\%]/) {
+	if ($freset =~ m/(%OPEN%|%EMPTY%)/) {
 		$freset = $last_reset; # use last reset
 	};
 	if ($freset eq "") {
