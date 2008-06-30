@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.61 2008/06/26 15:54:34 herburger Exp $
+#  RCSId: $Id: Reg.pm,v 1.62 2008/06/30 11:58:53 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.62  2008/06/30 11:58:53  herburger
+#  small changes in write2excel
+#
 #  Revision 1.61  2008/06/26 15:54:34  herburger
 #  added rules to change the fieldname
 #
@@ -234,7 +237,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.61 $ ';  #'
+our($VERSION) = '$Revision: 1.62 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -1159,7 +1162,7 @@ sub write2excel{
     my $this=shift;
     my ($dumpfile)=@_;
 
-    my ( $workbook, $worksheet, $worksheetname, $path, %columns, $i, $registerwidth, $rowcounter, $fieldspec, $fieldcomment, $vi2cdata,$registercounter,$columns_size, $registeroffset, $view, $recommended, $fieldname);
+    my ( $workbook, $worksheet, $worksheetname, $path, %columns, $i, $registerwidth, $rowcounter, $fieldspec, $fieldcomment, $vi2cdata,$registercounter,$columns_size, $registeroffset, $view, $recommended, $domainname, $registername,  $fieldname);
     my ( $domain, $o_domain, $o_register, $field, $o_field);
 
     #import needed Modules
@@ -1300,8 +1303,10 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
   
     foreach $domain (@{$this->domains}){#iterate through domains
 	$o_domain=$domain->{'domain'};
+	$domainname=$o_domain->{'name'};
 	
 	foreach $o_register (@{$o_domain->{'regs'}}){#iterate through register
+	    $registername=$o_register->{'name'};
 	    
 	    foreach $field (@{$o_register->{'fields'}}){#iterate through fields
 
@@ -1320,9 +1325,9 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
 		$registeroffset=sprintf("0x%X",$registeroffset);#convert to HEX
 		$worksheet->write($rowcounter,$columns{'sub'}[2],$registeroffset,$fieldformat);
 
-		$worksheet->write($rowcounter,$columns{'interface'}[2],$o_domain->{'name'},$fieldformat);
+		$worksheet->write($rowcounter,$columns{'interface'}[2],$domainname ,$fieldformat);
 
-		$worksheet->write($rowcounter,$columns{'inst'}[2],$o_register->{'name'},$fieldformat);
+		$worksheet->write($rowcounter,$columns{'inst'}[2],$registername,$fieldformat);
 
 		$vi2cdata="GI2C_".$o_register->{'attribs'}->{'size'}."Bit_Register";
 		$worksheet->write($rowcounter,$columns{'vi2c'}[2],$vi2cdata,$fieldformat);
@@ -1334,21 +1339,11 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
 		$fieldcomment=~s/%EMPTY%// if ($o_field->{'attribs'}->{'comment'});
 		$fieldname=$o_field->{'name'};
 
-		#Rules for changing the fieldname 
-		if ($fieldcomment =~ /(^[\[\]\w\/:]+): \w+/gi){
-		    my $fieldname_prefix=$1;
-		    $fieldname_prefix =~ s/\[(\d)\]/_$1/g;
-		    $fieldname_prefix =~ s/\//_/g;
-		    $fieldname_prefix =~s/([A-Z])\[(\d+):(\d+)\]/$1_$2-$3/g;
-		    
 
-		    $fieldname=$o_register->{'name'}."_".$fieldname_prefix;
-		}
-		if ($fieldcomment eq "Reserved"){
-		    $fieldname=$o_register->{'name'}."_".$fieldname;
-
-		}
-
+		# generate field name with naming scheme
+		$fieldname= _clone_name($eh->get('reg_shell.field_naming'),99,0,$domainname,$registername,$fieldname);
+		
+		
 		$worksheet->write($rowcounter,$columns{'name'}[2],$fieldname,$fieldformat);
 		$worksheet->write($rowcounter,$columns{'dir'}[2],$o_field->{'attribs'}->{'dir'},$fieldformat);
 		
@@ -1388,7 +1383,7 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
 
 		#write used bits
 		for ($i=$f_pos;$i<$f_pos+$f_size;$i++){
-		    $worksheet->write($rowcounter,$columns{"Bit$i"}[2],$o_field->{'name'}.".".($f_lsb+$i-$f_pos),$bitfieldfull);
+		    $worksheet->write($rowcounter,$columns{"Bit$i"}[2],$fieldname.".".($f_lsb+$i-$f_pos),$bitfieldfull);
 		}
 		$rowcounter++;
 
