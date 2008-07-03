@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.63 2008/07/03 11:01:06 herburger Exp $
+#  RCSId: $Id: Reg.pm,v 1.64 2008/07/03 13:16:55 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.64  2008/07/03 13:16:55  herburger
+#  small changes in writeYAML
+#
 #  Revision 1.63  2008/07/03 11:01:06  herburger
 #  new method (writeYAML) added
 #
@@ -240,7 +243,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.63 $ ';  #'
+our($VERSION) = '$Revision: 1.64 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -1406,10 +1409,10 @@ sub writeYAML(){
 
     use YAML qw 'DumpFile';
     local $YAML::SortKeys = 0;
-    local $YAML::DumpCode = 1;
+    
 
     _info("start dumping in YAML-Format to file $dumpfile");
-    unless (DumpFile($dumpfile,$this)){
+    unless (DumpFile($dumpfile,$this->{'domains'})){
 	_error("error in writing YAML-file");
 	return 0;
     }
