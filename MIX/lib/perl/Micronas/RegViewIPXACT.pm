@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewIPXACT.pm,v 1.6 2008/06/23 12:55:48 herburger Exp $
+#  RCSId: $Id: RegViewIPXACT.pm,v 1.7 2008/07/03 11:02:55 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -27,6 +27,9 @@
 ###############################################################################
 #
 #  $Log: RegViewIPXACT.pm,v $
+#  Revision 1.7  2008/07/03 11:02:55  herburger
+#  small changes
+#
 #  Revision 1.6  2008/06/23 12:55:48  herburger
 #  *** empty log message ***
 #
@@ -145,11 +148,11 @@ sub _write_ipxact2file{
     die("could not find module XML::Writer in _write_ipxact2file") if $@ ne "";
 
     ##check if a domain specified
-    if (!scalar @{$this->global->{'ldomains'}}){
+    #if (!scalar @{$this->global->{'ldomains'}}){
 	#no domains specified
-	_error("No Domain specified");
-	return 0;
-    }
+	#_error("No Domain specified");
+	#return 0;
+    #}
 
     ##start writing to file
     my $filename=join("_",$eh->get('xml.file_prefix'),map{$_->{'name'}}(@{$this->global->{'ldomains'}})).".".$eh->get('xml.file_suffix');
