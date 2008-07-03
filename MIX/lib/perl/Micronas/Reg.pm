@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.62 2008/06/30 11:58:53 herburger Exp $
+#  RCSId: $Id: Reg.pm,v 1.63 2008/07/03 11:01:06 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.63  2008/07/03 11:01:06  herburger
+#  new method (writeYAML) added
+#
 #  Revision 1.62  2008/06/30 11:58:53  herburger
 #  small changes in write2excel
 #
@@ -192,7 +195,7 @@ sub parse_register_master {
                                'data'           => $r_xml
                               );
             };
-
+	    
 	    
 
             # set debug switch
@@ -237,7 +240,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.62 $ ';  #'
+our($VERSION) = '$Revision: 1.63 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -349,11 +352,8 @@ sub init {
 		    ) ) {
 		_fatal( "Failed to load required modules for processing XML data: $@" );
 		exit 1;
-	    }
-        
-;
-	    
-	    
+	    };
+	    	    
 	    # check version of xml-data and convert it to the right version if possible
 	    if (!($datastring_ipxact_1_4=$this->_check_version($hinput{database_type},$datastring))){
 		_error("input file not in the correct format");
@@ -364,16 +364,11 @@ sub init {
 #  	    if(!$this->_check_schema($hinput{database_type},$datastring_ipxact_1_4)){
 #  		exit 1;
 #  	    }
-	    
-
+	
 	    # call mapping function for ip-xact (XML) database
 	    $this->_map_ipxact($hinput{database_type},$datastring_ipxact_1_4);
 	    
-	    #$this->display();
-
- 
-
-        };
+	};
     };
 };
 
@@ -849,7 +844,7 @@ sub _map_ipxact{
 	    $o_register = Micronas::RegReg->new(name => $registername);
 
 	    #get register description
-	    $rdescription="";
+	    $rdescription = "";
 	    $rdescription = $register->first_child('spirit:description')->text if ($register->first_child('spirit:description'));
 
 	    $o_register->definition($rdescription);
@@ -1031,6 +1026,8 @@ sub _check_version{
 	    #not IP-XACT
 	    $ipxact_version=0;
 	}
+
+	$twig->purge();#free memory
     };
     #####################################################################
 
@@ -1394,5 +1391,31 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
     $workbook->close() or _error("Error creating file $dumpfile");
 
 }
-1;
 
+
+
+sub writeYAML(){
+    my ($this, $dumpfile) = @_;
+    my ($path);
+    
+    
+    $path=$eh->get('intermediate.path');
+    $dumpfile =~ s/\.xml$/.dmp/;
+    $dumpfile =~ s/mixed/yaml/;
+    $dumpfile = $path.'/'.$dumpfile;
+
+    use YAML qw 'DumpFile';
+    local $YAML::SortKeys = 0;
+    local $YAML::DumpCode = 1;
+
+    _info("start dumping in YAML-Format to file $dumpfile");
+    unless (DumpFile($dumpfile,$this)){
+	_error("error in writing YAML-file");
+	return 0;
+    }
+    
+
+
+    
+}
+1;
