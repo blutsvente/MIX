@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.100 $                                         |
+# | Revision:   $Revision: 1.101 $                                         |
 # | Author:     $Author: herburger $                                            |
-# | Date:       $Date: 2008/06/23 12:53:35 $                              |
+# | Date:       $Date: 2008/07/03 11:02:27 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.100 2008/06/23 12:53:35 herburger Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.101 2008/07/03 11:02:27 herburger Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.101  2008/07/03 11:02:27  herburger
+# | YAML Dumper added to mix_store_db
+# |
 # | Revision 1.100  2008/06/23 12:53:35  herburger
 # | dumper for .xml implented
 # |
@@ -237,9 +240,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.100 2008/06/23 12:53:35 herburger Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.101 2008/07/03 11:02:27 herburger Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.100 $';
+my $thisrevision =	'$Revision: 1.101 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2279,7 +2282,7 @@ sub mix_store_db ($$$) {
         if ($type eq 'xml') {
 	   
             $$varh{'reg'}->write2excel($dumpfile);
-		
+	    $$varh{'reg'}->writeYAML($dumpfile);
 	    
 	    
 
