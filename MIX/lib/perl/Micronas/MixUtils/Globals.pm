@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.61 $                                         |
-# | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2008/07/07 14:44:58 $                              |
+# | Revision:   $Revision: 1.62 $                                         |
+# | Author:     $Author: herburger $                                            |
+# | Date:       $Date: 2008/07/07 17:10:38 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.62  2008/07/07 17:10:38  herburger
+# | added reg_naming and changed xslt_dir
+# |
 # | Revision 1.61  2008/07/07 14:44:58  lutscher
 # | updated comments
 # |
@@ -167,9 +170,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.61 2008/07/07 14:44:58 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.62 2008/07/07 17:10:38 herburger Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.61 $';  
+my $thisrevision    =      '$Revision: 1.62 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -970,6 +973,7 @@ sub init ($) {
        'enforce_unique_addr'  => 1,        # if 1, allow only one register per address
        'infer_reset_syncer'   => 0,        # if 1, instantiates a reset synchronizer for asynchronous reset
        'field_naming'         => '%F',     # naming scheme for fields, see 'clone'
+       'reg_naming'	      => '%R',
        'virtual_top_instance' => "testbench", # name of top-level instance where register-shell is instantiated (usually not used)
        # parameters for e_vr_ad view
        'e_vr_ad' => {
@@ -1338,8 +1342,8 @@ sub init ($) {
 	      'prettynames'=>	{
 				'skip:4'	=>"addinc",
 				},
-	      'xslt_dir'  => "./MIX/lib/xslt/",
-	      'schema_dir'=> "./schema/",
+	      'xslt_dir'  => "/lib/xslt/",
+	      'schema_dir'=> "/schema/",
 	      
 	      
 
