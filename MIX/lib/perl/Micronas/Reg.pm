@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.65 2008/07/07 14:23:13 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.66 2008/07/07 14:44:42 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.66  2008/07/07 14:44:42  lutscher
+#  added _clone_name call for register-names in write2excel
+#
 #  Revision 1.65  2008/07/07 14:23:13  lutscher
 #  added %B option for _clone_name()
 #
@@ -246,7 +249,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.65 $ ';  #'
+our($VERSION) = '$Revision: 1.66 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -1309,7 +1312,7 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
 	$domainname=$o_domain->{'name'};
 	
 	foreach $o_register (@{$o_domain->{'regs'}}){#iterate through register
-	    $registername=$o_register->{'name'};
+	    $registername=_clone_name($eh->get('reg_shell.reg_naming'),99,0,$domainname,$o_register->{'name'};) 
 	    
 	    foreach $field (@{$o_register->{'fields'}}){#iterate through fields
 
