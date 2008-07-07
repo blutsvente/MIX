@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.66 2008/07/07 14:44:42 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.67 2008/07/07 17:09:59 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.67  2008/07/07 17:09:59  herburger
+#  added FindBin to use relative paths
+#
 #  Revision 1.66  2008/07/07 14:44:42  lutscher
 #  added _clone_name call for register-names in write2excel
 #
@@ -133,7 +136,7 @@ package Micronas::Reg;
 # Used packages
 #------------------------------------------------------------------------------
 use strict;
-
+use FindBin;
 use Log::Log4perl qw(get_logger);
 use Micronas::MixUtils qw( mix_use_on_demand $eh %OPTVAL );
 use Micronas::MixReport qw(mix_reg_report);
@@ -249,7 +252,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.66 $ ';  #'
+our($VERSION) = '$Revision: 1.67 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -1068,7 +1071,8 @@ sub _check_version{
 	_info("input file in IP-XACT $ipxact_version format");
 
 	#try to transform into IP-XACT 1.4
-	my $updatefile=$eh->get('xml.xslt_dir')."from".$ipxact_version."_to_1.4.xsl";
+	my $updatefile=$FindBin::Bin.$eh->get('xml.xslt_dir')."from".$ipxact_version."_to_1.4.xsl";
+	
 	if (-e $updatefile){
 	    my ($parser, $xslt, $source, $style_doc, $stylesheet, $results, $result);
 	    
@@ -1090,7 +1094,7 @@ sub _check_version{
 	    
 	    return $result;
 
-	}elsif(-e $eh->get('xml.xslt_dir')."from".$ipxact_version."_to_".$ipxact_version_main.".".++$ipxact_version_sub.".xsl"){
+	}elsif(-e $FindBin::Bin.$eh->get('xml.xslt_dir')."from".$ipxact_version."_to_".$ipxact_version_main.".".++$ipxact_version_sub.".xsl"){
 	    my ($parser, $xslt, $source, $style_doc, $stylesheet, $results, $result);
 	    
 	    #XSLTransformation
@@ -1098,7 +1102,7 @@ sub _check_version{
 	    $xslt = XML::LibXSLT->new();#new LibXSLT object
 
 	    $source = $parser ->parse_string($datastring);
-	    $style_doc = $parser -> parse_file($eh->get('xml.xslt_dir')."from".$ipxact_version."_to_".$ipxact_version_main.".".$ipxact_version_sub.".xsl");
+	    $style_doc = $parser -> parse_file($FindBin::Bin.$eh->get('xml.xslt_dir')."from".$ipxact_version."_to_".$ipxact_version_main.".".$ipxact_version_sub.".xsl");
 	    
 	    $stylesheet = $xslt->parse_stylesheet($style_doc);
 
@@ -1128,6 +1132,7 @@ sub _check_version{
 # input: 1. database type
 # 2. datastring with xml-Data
 # output: 1 if successfull 0 otherwise
+# doesn't work at the moment, because XML::Validate::Xerces Modul isn't supported, maybe in the future
 
 # sub _check_schema{
 #     my ($this)=shift;
@@ -1137,7 +1142,7 @@ sub _check_version{
     
 #     _info('checking file against Schema');
     
-#     $schemafile=$eh->get('xml.schema_dir')."index.xsd";#schema
+#     $schemafile=$FindBin::Bin.$eh->get('xml.schema_dir')."index.xsd";#schema
     
 #     $datastring =~ s#http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4/\w+\.xsd#$schemafile#gi;#substitute URL with local path to schema (doesn't work with URL)
 
@@ -1157,7 +1162,7 @@ sub _check_version{
 #     }
 
 
-# };
+#};
 
 
 # writes a excel file out of a Micronas::Reg Object
@@ -1168,7 +1173,7 @@ sub write2excel{
     my $this=shift;
     my ($dumpfile)=@_;
 
-    my ( $workbook, $worksheet, $worksheetname, $path, %columns, $i, $registerwidth, $rowcounter, $fieldspec, $fieldcomment, $vi2cdata,$registercounter,$columns_size, $registeroffset, $view, $recommended, $domainname, $registername,  $fieldname);
+    my ( $workbook, $worksheet, $worksheetname, %columns, $i, $registerwidth, $rowcounter, $fieldspec, $fieldcomment, $vi2cdata,$registercounter,$columns_size, $registeroffset, $view, $recommended, $domainname, $registername,  $fieldname);
     my ( $domain, $o_domain, $o_register, $field, $o_field);
 
     #import needed Modules
@@ -1178,9 +1183,8 @@ sub write2excel{
     }
     
     #get the path, to the tmp_excelfile
-    $path =$eh->get('intermediate.path');
     $dumpfile =~ s/\.xml$/.xls/;#change xml file extension to xls
-    $dumpfile = $path.'/'.$dumpfile;
+    $dumpfile = './tmp/'.$dumpfile;
     
     
     #create new excel file
@@ -1192,7 +1196,7 @@ sub write2excel{
     }
 
     #get worksheet name
-    $dumpfile =~ m/^$path\/(\w+)-mixed\.xls/;
+    $dumpfile =~ m/^\.\/tmp\/(\w+)-mixed\.xls/;
     $worksheetname=$1;
     $worksheetname=substr($worksheetname,0,31);#sheetname can only be 31 characters long
     
@@ -1312,7 +1316,8 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
 	$domainname=$o_domain->{'name'};
 	
 	foreach $o_register (@{$o_domain->{'regs'}}){#iterate through register
-	    $registername=_clone_name($eh->get('reg_shell.reg_naming'),99,0,$domainname,$o_register->{'name'};) 
+	    
+	    $registername=_clone_name($eh->get('reg_shell.reg_naming'),99,0,$domainname,$o_register->{'name'}); 
 	    
 	    foreach $field (@{$o_register->{'fields'}}){#iterate through fields
 
@@ -1405,13 +1410,12 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
 
 sub writeYAML(){
     my ($this, $dumpfile) = @_;
-    my ($path);
-    
-    
-    $path=$eh->get('intermediate.path');
+
     $dumpfile =~ s/\.xml$/.dmp/;
     $dumpfile =~ s/mixed/yaml/;
-    $dumpfile = $path.'/'.$dumpfile;
+    $dumpfile = './tmp/'.$dumpfile;  
+    
+
 
     use YAML qw 'DumpFile';
     local $YAML::SortKeys = 0;
