@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewIPXACT.pm,v 1.7 2008/07/03 11:02:55 herburger Exp $
+#  RCSId: $Id: RegViewIPXACT.pm,v 1.8 2008/07/07 17:09:15 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -27,6 +27,9 @@
 ###############################################################################
 #
 #  $Log: RegViewIPXACT.pm,v $
+#  Revision 1.8  2008/07/07 17:09:15  herburger
+#   added naming scheme to register name and field name
+#
 #  Revision 1.7  2008/07/03 11:02:55  herburger
 #  small changes
 #
@@ -155,8 +158,8 @@ sub _write_ipxact2file{
     #}
 
     ##start writing to file
-    my $filename=join("_",$eh->get('xml.file_prefix'),map{$_->{'name'}}(@{$this->global->{'ldomains'}})).".".$eh->get('xml.file_suffix');
-
+    my $filename=$FindBin::Bin."/../".join("_",$eh->get('xml.file_prefix'),map{$_->{'name'}}(@{$this->global->{'ldomains'}})).".".$eh->get('xml.file_suffix');
+    
     if (-e $filename){
 	#file exists
 	if (!($doc = new IO::File(">".$filename))){
@@ -212,7 +215,9 @@ sub _write_ipxact2file{
 	_info("generating IP-XACT code for domain ",$o_domain->name);
 	$writer->startTag([$nsspirit,"memoryMap"]);
 	
+
 	# name of the memory map is the name of the domain
+	my $domainname=$o_domain->{'name'};
 	$writer->dataElement([$nsspirit, "name"],$o_domain->{'name'});
 	
 	$writer->startTag([$nsspirit, "addressBlock"]);
@@ -241,7 +246,9 @@ sub _write_ipxact2file{
 	    
 	    $writer->startTag([$nsspirit, "register"]);
 
-	    $writer->dataElement([$nsspirit, "name"],$o_register->{'name'});
+	    my $registername=_clone_name($eh->get('reg_shell.reg_naming'),99,0,$domainname,$o_register->{'name'}); 
+	    
+	    $writer->dataElement([$nsspirit, "name"],$registername);
 
 	    # print the Definition into displayName if definition exists
 	    $writer->dataElement([$nsspirit, "displayName"],$o_register->{'definition'}) if ($o_register->{'definition'});
@@ -268,7 +275,10 @@ sub _write_ipxact2file{
 		
 		$writer->startTag([$nsspirit, "field"]);
 
-		$writer->dataElement([$nsspirit, "name"],$o_field->{'name'});
+		my $fieldname=$o_field->{'name'};
+		$fieldname= _clone_name($eh->get('reg_shell.field_naming'),99,0,$domainname,$registername,$fieldname,$o_field->attribs->{'block'});
+		
+		$writer->dataElement([$nsspirit, "name"],$fieldname);
 		
 		# print the definition into displayName if definition exists
 		$writer->dataElement([$nsspirit, "displayName"],$o_field->{'definition'}) if ($o_field->{'definition'});
