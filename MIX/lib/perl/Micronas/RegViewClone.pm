@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewClone.pm,v 1.12 2007/09/05 10:56:23 lutscher Exp $
+#  RCSId: $Id: RegViewClone.pm,v 1.13 2008/07/07 14:23:13 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.12 $                                  
+#  Revision      : $Revision: 1.13 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -32,6 +32,9 @@
 ###############################################################################
 #
 #  $Log: RegViewClone.pm,v $
+#  Revision 1.13  2008/07/07 14:23:13  lutscher
+#  added %B option for _clone_name()
+#
 #  Revision 1.12  2007/09/05 10:56:23  lutscher
 #  set default clone.number to 0 because 1 will now force 1 clone
 #
@@ -219,7 +222,7 @@ sub _clone_regspace {
                             next;
                         };
                     } else {
-                        $reg_name = _clone_name($this->global->{'reg_naming'}, $this->global->{'number'}-1, $n, $domain, $o_reg0->name, "");
+                        $reg_name = _clone_name($this->global->{'reg_naming'}, $this->global->{'number'}-1, $n, $domain, $o_reg0->name);
                     };
                     # create new register object
                     $o_reg1 = Micronas::RegReg->new('name' => $reg_name, 'definition' => $o_reg0->definition, 'inst_n' => $n);
@@ -237,7 +240,7 @@ sub _clone_regspace {
                         
                         my $field_name;
                         # if field is part of a non-cloned register, use unchanged name 
-                        $field_name = $o_reg0->attribs->{'clone'} == 0 ? $o_field0->name : _clone_name($this->global->{'field_naming'}, $this->global->{'number'}-1, $n, $domain, $o_reg0->name, $o_field0->name);
+                        $field_name = $o_reg0->attribs->{'clone'} == 0 ? $o_field0->name : _clone_name($this->global->{'field_naming'}, $this->global->{'number'}-1, $n, $domain, $o_reg0->name, $o_field0->name, $o_field0->attribs->{'block'});
                         
                         $fpos = $href->{'pos'};       # lsb position of field in register
                         %hfattribs = %{$o_field0->attribs};

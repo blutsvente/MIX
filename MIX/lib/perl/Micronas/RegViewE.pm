@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.30 2008/04/24 08:41:10 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.31 2008/07/07 14:23:13 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.31  2008/07/07 14:23:13  lutscher
+#  added %B option for _clone_name()
+#
 #  Revision 1.30  2008/04/24 08:41:10  lutscher
 #  fixed printing of CVS macro
 #
@@ -282,7 +285,7 @@ sub _gen_view_vr_ad {
                     _info("skipping field ", $o_field->name);
                     next;
                 };
-			    $thefields[$ii]{name} 		  = _clone_name($this->global->{'field_naming'}, 0, 0, $domain, $reg_name, $o_field->name);
+			    $thefields[$ii]{name} 		  = _clone_name($this->global->{'field_naming'}, 0, 0, $domain, $reg_name, $o_field->name, $o_field->attribs->{'block'});
 			    $thefields[$ii]{pos}  		  = $href->{'pos'};
 			    $thefields[$ii]{size} 		  = $o_field->attribs->{'size'};
 			    $thefields[$ii]{rw}   		  = uc($o_field->attribs->{'dir'});

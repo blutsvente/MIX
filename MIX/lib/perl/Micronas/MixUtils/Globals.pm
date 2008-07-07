@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.59 $                                         |
-# | Author:     $Author: herburger $                                            |
-# | Date:       $Date: 2008/07/03 13:12:17 $                              |
+# | Revision:   $Revision: 1.60 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2008/07/07 14:23:13 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.60  2008/07/07 14:23:13  lutscher
+# | added %B option for _clone_name()
+# |
 # | Revision 1.59  2008/07/03 13:12:17  herburger
 # | changed xslt_dir
 # |
@@ -161,9 +164,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.59 2008/07/03 13:12:17 herburger Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.60 2008/07/07 14:23:13 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.59 $';  
+my $thisrevision    =      '$Revision: 1.60 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -985,10 +988,11 @@ sub init ($) {
        
        # parameters for cloning register object
        # the naming goes according to placeholders:
-       # %[<u|l>]<D|R|F|[<d>]N>
+       # %[<u|l>]<D|R|F|B[<d>]N>
        # D domain name
        # R original name of register
        # F original name of field (only availabe in field_naming)
+       # B block name
        # N decimal number; can be preceded by a number to fix the number of digits used in representation
        # u or l force upper/lowercase (optional)
        # e.g. 'scc_%2N_%uR' creates name scc_06_REG_X from original name reg_x in the 7th clone

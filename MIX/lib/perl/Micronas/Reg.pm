@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.64 2008/07/03 13:16:55 herburger Exp $
+#  RCSId: $Id: Reg.pm,v 1.65 2008/07/07 14:23:13 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.65  2008/07/07 14:23:13  lutscher
+#  added %B option for _clone_name()
+#
 #  Revision 1.64  2008/07/03 13:16:55  herburger
 #  small changes in writeYAML
 #
@@ -243,7 +246,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.64 $ ';  #'
+our($VERSION) = '$Revision: 1.65 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -1341,7 +1344,7 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
 
 
 		# generate field name with naming scheme
-		$fieldname= _clone_name($eh->get('reg_shell.field_naming'),99,0,$domainname,$registername,$fieldname);
+		$fieldname= _clone_name($eh->get('reg_shell.field_naming'),99,0,$domainname,$registername,$fieldname,$o_field->attribs->{'block'});
 		
 		
 		$worksheet->write($rowcounter,$columns{'name'}[2],$fieldname,$fieldformat);

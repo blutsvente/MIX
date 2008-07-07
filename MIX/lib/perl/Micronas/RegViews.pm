@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.79 2008/06/26 12:21:14 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.80 2008/07/07 14:23:13 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.79 $                                  
+#  Revision      : $Revision: 1.80 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.80  2008/07/07 14:23:13  lutscher
+#  added %B option for _clone_name()
+#
 #  Revision 1.79  2008/06/26 12:21:14  lutscher
 #  fixed a nasty bug in clock/reset name matching
 #
@@ -379,7 +382,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.79 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.80 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -2549,7 +2552,7 @@ sub _gen_fname {
 	my ($this, $type, $o_field, $no_postfix);
     $no_postfix = 0;
     ($this, $type, $o_field, $no_postfix) = @_;
-	my ($name, $reg_name, $id);
+	my ($name, $reg_name, $id, $block);
 
     if (ref($o_field) =~ m/RegField$/) {
         # get field name from global struct
@@ -2561,11 +2564,13 @@ sub _gen_fname {
         }
         $id = $o_field->id;
         $reg_name =  $o_field->reg->name;
+        $block = $o_field->attribs->{'block'};
     } else {
         # if the passed parameter is not an object
         $name = $o_field;
         $id = "";
         $reg_name = "";
+        $block = "";
     };
 
     my $naming_scheme = $this->global->{'field_naming'};
@@ -2575,7 +2580,7 @@ sub _gen_fname {
         $naming_scheme = "%R_" . $naming_scheme;
 	};
     # apply naming scheme
-    $name = _clone_name($naming_scheme, 99, $id, $this->global->{'current_domain'}->name, $reg_name, $name);
+    $name = _clone_name($naming_scheme, 99, $id, $this->global->{'current_domain'}->name, $reg_name, $name, $block);
 
     # attach postfixes/macros according to type of field
 	if ($type eq "in") {

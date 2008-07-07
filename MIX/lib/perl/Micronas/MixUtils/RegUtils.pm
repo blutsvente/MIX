@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.18 2008/04/24 16:57:19 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.19 2008/07/07 14:23:13 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.19  2008/07/07 14:23:13  lutscher
+#  added %B option for _clone_name()
+#
 #  Revision 1.18  2008/04/24 16:57:19  lutscher
 #  some clean-up
 #
@@ -509,8 +512,9 @@ sub _ld {
 # $domain - string for replacing %D in pattern
 # $reg    - string for replacing %R in pattern
 # $field  - string for replacing %F in pattern
+# $block  - string for replacing %B in pattern
 sub _clone_name {
-	my ($pattern, $n_max, $n, $domain, $reg, $field) = @_;
+	my ($pattern, $n_max, $n, $domain, $reg, $field, $block) = @_;
 	
 	$pattern =~ s/[\'\"]//g; # strip quotes from pattern
 
@@ -535,18 +539,23 @@ sub _clone_name {
     my $uc_domain = uc($domain);
     my $uc_reg= uc($reg);
     my $uc_field = uc($field);
+    my $uc_block = uc($block);
     my $lc_domain= lc($domain);
     my $lc_reg   = lc($reg);  
     my $lc_field = lc($field);
-	$name =~ s/%uD/$uc_domain/g;
+    my $lc_block = lc($block);
+ 	$name =~ s/%uD/$uc_domain/g;
 	$name =~ s/%uR/$uc_reg/g;
 	$name =~ s/%uF/$uc_field/g;
+	$name =~ s/%uB/$uc_block/g;
 	$name =~ s/%lD/$lc_domain/g;
 	$name =~ s/%lR/$lc_reg/g;
 	$name =~ s/%lF/$lc_field/g;
+	$name =~ s/%lB/$lc_block/g;
 	$name =~ s/%D/$domain/g;
 	$name =~ s/%R/$reg/g;
 	$name =~ s/%F/$field/g;
+	$name =~ s/%B/$block/g;
 	$name =~ s/%\d?N/$digits/g;
 	return $name;
 };
