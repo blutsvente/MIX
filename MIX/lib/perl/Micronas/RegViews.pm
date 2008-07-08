@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.80 2008/07/07 14:23:13 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.81 2008/07/08 07:54:08 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.80 $                                  
+#  Revision      : $Revision: 1.81 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.81  2008/07/08 07:54:08  lutscher
+#  fixed bug in _vgch_rs_get_configuration()
+#
 #  Revision 1.80  2008/07/07 14:23:13  lutscher
 #  added %B option for _clone_name()
 #
@@ -382,7 +385,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.80 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.81 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -2023,7 +2026,7 @@ sub _vgch_rs_get_configuration {
 		};
 		# check doubly defined fields, allowed only if there is a naming scheme in place which uniquifies the name
 		if (grep ($_ eq $o_field->name, values(%{$this->global->{'hfnames'}}))) {
-			if ($this->global->{'field_naming'} !~ m/[RN]/) {
+			if ($this->global->{'field_naming'} !~ m/[DRBN]/) {
 				_error("field name \'",$o_field->{'name'},"\' is defined more than once; correct this or use a naming scheme to differentiate (parameter reg_shell.field_naming)");
 			};
 		};
