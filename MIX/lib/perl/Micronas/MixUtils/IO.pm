@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.58 $                                          |
-# | Author:     $Author: lutscher $                                         |
-# | Date:       $Date: 2008/04/24 16:56:24 $                              |
+# | Revision:   $Revision: 1.59 $                                          |
+# | Author:     $Author: herburger $                                         |
+# | Date:       $Date: 2008/07/09 12:00:26 $                              |
 # |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.59  2008/07/09 12:00:26  herburger
+# | added xml support to mix_utils_io_create path
+# |
 # | Revision 1.58  2008/04/24 16:56:24  lutscher
 # | added key xml
 # |
@@ -172,11 +175,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.58 2008/04/24 16:56:24 lutscher Exp $';#'
+my $thisid          =      '$Id: IO.pm,v 1.59 2008/07/09 12:00:26 herburger Exp $';#'
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.58 $'; #'
+my $thisrevision    =      '$Revision: 1.59 $'; #'
 
-# Revision:   $Revision: 1.58 $
+# Revision:   $Revision: 1.59 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -545,7 +548,7 @@ sub mix_utils_io_create_path () {
 
 	my $select = $eh->get( 'output.mkdir' );
 
-	for my $i ( qw( output intermediate internal report reg_shell.e_vr_ad) ) {
+	for my $i ( qw( output intermediate internal report reg_shell.e_vr_ad xml) ) {
 		next unless( defined $eh->get( $i . '.path' ) );
 
 		unless( -d $eh->get( $i . '.path' ) ) {
