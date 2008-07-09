@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewIPXACT.pm,v 1.8 2008/07/07 17:09:15 herburger Exp $
+#  RCSId: $Id: RegViewIPXACT.pm,v 1.9 2008/07/09 12:02:21 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -27,6 +27,9 @@
 ###############################################################################
 #
 #  $Log: RegViewIPXACT.pm,v $
+#  Revision 1.9  2008/07/09 12:02:21  herburger
+#  changed filename generation
+#
 #  Revision 1.8  2008/07/07 17:09:15  herburger
 #   added naming scheme to register name and field name
 #
@@ -158,7 +161,7 @@ sub _write_ipxact2file{
     #}
 
     ##start writing to file
-    my $filename=$FindBin::Bin."/../".join("_",$eh->get('xml.file_prefix'),map{$_->{'name'}}(@{$this->global->{'ldomains'}})).".".$eh->get('xml.file_suffix');
+    my $filename=$eh->get('xml.path').'/'.join("_",$eh->get('xml.file_prefix'),map{$_->{'name'}}(@{$this->global->{'ldomains'}})).".".$eh->get('xml.file_suffix');
     
     if (-e $filename){
 	#file exists
