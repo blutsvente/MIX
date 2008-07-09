@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.62 $                                         |
+# | Revision:   $Revision: 1.63 $                                         |
 # | Author:     $Author: herburger $                                            |
-# | Date:       $Date: 2008/07/07 17:10:38 $                              |
+# | Date:       $Date: 2008/07/09 12:02:59 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.63  2008/07/09 12:02:59  herburger
+# | added path variable to xml
+# |
 # | Revision 1.62  2008/07/07 17:10:38  herburger
 # | added reg_naming and changed xslt_dir
 # |
@@ -170,9 +173,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.62 2008/07/07 17:10:38 herburger Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.63 2008/07/09 12:02:59 herburger Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.62 $';  
+my $thisrevision    =      '$Revision: 1.63 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1344,7 +1347,7 @@ sub init ($) {
 				},
 	      'xslt_dir'  => "/lib/xslt/",
 	      'schema_dir'=> "/schema/",
-	      
+	      'path'=> "ipxact",
 	      
 
 
