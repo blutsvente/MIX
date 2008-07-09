@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.67 2008/07/07 17:09:59 herburger Exp $
+#  RCSId: $Id: Reg.pm,v 1.68 2008/07/09 11:55:21 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.68  2008/07/09 11:55:21  herburger
+#  use path from globals for write2excel and writeYAML
+#
 #  Revision 1.67  2008/07/07 17:09:59  herburger
 #  added FindBin to use relative paths
 #
@@ -252,7 +255,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.67 $ ';  #'
+our($VERSION) = '$Revision: 1.68 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -791,7 +794,7 @@ sub _map_register_master {
 
 # builds a register space object from XML format
 # input: 1. string for input database type
-# 2. Array with XML-Data
+# 2. String with XML-Data
 # output: 1 if successful, 0 otherwise
 
 sub _map_ipxact{
@@ -1184,7 +1187,7 @@ sub write2excel{
     
     #get the path, to the tmp_excelfile
     $dumpfile =~ s/\.xml$/.xls/;#change xml file extension to xls
-    $dumpfile = './tmp/'.$dumpfile;
+    $dumpfile = $eh->get('intermediate.path').'/'.$dumpfile;
     
     
     #create new excel file
@@ -1192,11 +1195,11 @@ sub write2excel{
     
     if (!($workbook = Spreadsheet::WriteExcel->new($dumpfile))){
 	_error( "Problems creating new Excel file: $!");
-	 return 0;
+	return 0;
     }
 
     #get worksheet name
-    $dumpfile =~ m/^\.\/tmp\/(\w+)-mixed\.xls/;
+    $dumpfile =~ m/\/(\w+)-mixed\.xls/;
     $worksheetname=$1;
     $worksheetname=substr($worksheetname,0,31);#sheetname can only be 31 characters long
     
@@ -1413,11 +1416,12 @@ sub writeYAML(){
 
     $dumpfile =~ s/\.xml$/.dmp/;
     $dumpfile =~ s/mixed/yaml/;
-    $dumpfile = './tmp/'.$dumpfile;  
+    $dumpfile = $eh->get('intermediate.path').'/'.$dumpfile;  
+    
     
 
-
-    use YAML qw 'DumpFile';
+    eval{use YAML qw 'DumpFile'};
+    die("could not find module YAML in writeYAML") if $@ ne "";
     local $YAML::SortKeys = 0;
     
 
