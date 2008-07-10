@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.59 $                                               |
+# | Revision:   $Revision: 1.60 $                                               |
 # | Author:     $Author: lutscher $                                                 |
-# | Date:       $Date: 2008/06/23 09:17:12 $                                                   |
+# | Date:       $Date: 2008/07/10 12:42:54 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.59 2008/06/23 09:17:12 lutscher Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.60 2008/07/10 12:42:54 lutscher Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.60  2008/07/10 12:42:54  lutscher
+# | improved error handling in mix_rep_header_read_top_address_map
+# |
 # | Revision 1.59  2008/06/23 09:17:12  lutscher
 # | moved portlist report to dedicated function because it does not use the register object
 # |
@@ -251,11 +254,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.59 2008/06/23 09:17:12 lutscher Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.60 2008/07/10 12:42:54 lutscher Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.59 $';
+my $thisrevision   =      '$Revision: 1.60 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -390,7 +393,7 @@ sub mix_rep_header_read_top_address_map()
 {
     ####!!!!!! How to get the file name of the top address sheet?
     my $files = $eh->get('report.cheader.address.map');
-    print("!!!!! top address map: `$files'\n");
+    # print("!!!!! top address map: `$files'\n");
     my @arrayhash;
     # Open top address file and retrieve the desired sheet (Sheet1 the only one)
     my $type = 'default';
@@ -420,21 +423,27 @@ sub mix_rep_header_read_top_address_map()
         if ($name ne 'Definition') {
             if (! exists($blocks{$name})) {            # first occurence of $name
                 $blocks{$name}->{name} = $name;        # remember the name also in the hash
-                $blocks{$name}->{reg_clones} = $block->{'::reg_clones'};
                 $clone_start = 0;
-                $blocks{$name}->{size}       = hex('0x' . $block->{'::clone_spacing'});
+                if (!exists $block->{'::reg_clones'} or !exists $block->{'::clone_spacing'}) {
+                    $logger->warn( '__E_MIX_REPORT', "\tdefinition attribute is used, this requires also reg_clones and clone_spacing attributes; setting them to 1/0");
+                    $blocks{$name}->{reg_clones} = 1;
+                    $blocks{$name}->{size} = hex("0x0");
+                } else {
+                    $blocks{$name}->{reg_clones} = $block->{'::reg_clones'};  
+                    $blocks{$name}->{size}       = hex('0x' . $block->{'::clone_spacing'});
+                };
             } else {                                   # more instances of $name
                 $clone_start = $blocks{$name}->{reg_clones};
-                $blocks{$name}->{reg_clones} += $block->{'::reg_clones'};
+                $blocks{$name}->{reg_clones} += (exists($block->{'::reg_clones'}) ? $block->{'::reg_clones'} : 1);
                 # check whether the same size is defined as in previous occurence of $name
-                if ($blocks{$name}->{size} != hex('0x' . $block->{'::clone_spacing'})) {
+                if (exists ($block->{'::clone_spacing'}) and $blocks{$name}->{size} != hex('0x' . $block->{'::clone_spacing'})) {
                     my $msg = "For $name different size (::clone_spacing " . $block->{'::clone_spacing'};
                     $msg .= ") defined as for previous occurence (" . $blocks{$name}->{size} . ")!";
                     $logger->error('__E_REPORT_FILE', $msg);
                 }
             }
             ###!!!! replace client names from the sheet by the ones from mix config file
-            if ($block->{'::reg_clones'} > 1) {
+            if (exists ($block->{'::reg_clones'}) and $block->{'::reg_clones'} > 1) {
                 for (my $i = $clone_start; $i < $blocks{$name}->{reg_clones}; $i++) {
                     my $client = $name;
                     if (exists($chref_inst->{lc($client)})) {
