@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.68 2008/07/09 11:55:21 herburger Exp $
+#  RCSId: $Id: Reg.pm,v 1.69 2008/07/14 12:00:58 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.69  2008/07/14 12:00:58  herburger
+#  added intermediate data dumper for transformed IPXACT data to Method init
+#
 #  Revision 1.68  2008/07/09 11:55:21  herburger
 #  use path from globals for write2excel and writeYAML
 #
@@ -141,8 +144,9 @@ package Micronas::Reg;
 use strict;
 use FindBin;
 use Log::Log4perl qw(get_logger);
-use Micronas::MixUtils qw( mix_use_on_demand $eh %OPTVAL );
+use Micronas::MixUtils qw( mix_use_on_demand $eh %OPTVAL);
 use Micronas::MixReport qw(mix_reg_report);
+use Micronas::MixParser qw(mix_store_db);
 # rest gets loaded on demand ...
 
 my $logger = get_logger('MIX::Reg');
@@ -255,7 +259,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.68 $ ';  #'
+our($VERSION) = '$Revision: 1.69 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -374,11 +378,18 @@ sub init {
 		_error("input file not in the correct format");
 		exit 1;
 	    }
-	    
+
+	    #if xml-data has been transformed, dump data
+	    if ($datastring ne $datastring_ipxact_1_4){
+		mix_store_db("out","auto",{'ipxact_1_4'=>$datastring_ipxact_1_4});
+	    }
+
 #  	    #check input against schema
 #  	    if(!$this->_check_schema($hinput{database_type},$datastring_ipxact_1_4)){
 #  		exit 1;
 #  	    }
+
+	    
 	
 	    # call mapping function for ip-xact (XML) database
 	    $this->_map_ipxact($hinput{database_type},$datastring_ipxact_1_4);
@@ -1251,7 +1262,7 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
 	$columns{"Bit$i"}=["::b","Bit$i",$columns_size+($registerwidth-1-$i),0,8.43];
     }
     
-    
+   
     #Define the different formats that are needed for xls generation
     my($heading,$headingcolor,$description,$descriptioncolor,$bitfieldfull,$bitfieldblank,$comment,$fieldformat,$fieldformat1,$fieldformat2);
     
