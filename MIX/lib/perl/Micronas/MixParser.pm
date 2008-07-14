@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.101 $                                         |
+# | Revision:   $Revision: 1.102 $                                         |
 # | Author:     $Author: herburger $                                            |
-# | Date:       $Date: 2008/07/03 11:02:27 $                              |
+# | Date:       $Date: 2008/07/14 12:01:50 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.101 2008/07/03 11:02:27 herburger Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.102 2008/07/14 12:01:50 herburger Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.102  2008/07/14 12:01:50  herburger
+# | changes in mix_store_db for dumping intermediate IP-XACT data
+# |
 # | Revision 1.101  2008/07/03 11:02:27  herburger
 # | YAML Dumper added to mix_store_db
 # |
@@ -240,9 +243,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.101 2008/07/03 11:02:27 herburger Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.102 2008/07/14 12:01:50 herburger Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.101 $';
+my $thisrevision =	'$Revision: 1.102 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2238,7 +2241,7 @@ sub mix_store_db ($$$) {
                 $type="internal";
         }
     }
-
+    
     if ( $type eq 'xls' || $type eq 'sxc' || $type eq 'csv' || $type eq 'ods' ) {
         my $aro = mix_list_econf( 'xls' ); # Convert $eh to two-dim array
 
@@ -2280,10 +2283,20 @@ sub mix_store_db ($$$) {
 		close_open_workbooks(); # Close everything we opened
     } else {
         if ($type eq 'xml') {
-	   
-            $$varh{'reg'}->write2excel($dumpfile);
-	    $$varh{'reg'}->writeYAML($dumpfile);
-	    
+	    if (defined $$varh{'reg'}){
+		$$varh{'reg'}->write2excel($dumpfile);
+		$$varh{'reg'}->writeYAML($dumpfile);
+
+	    }elsif(defined $$varh{'ipxact_1_4'}){
+
+		my $path=$eh->get('intermediate.path');
+		$dumpfile =~ s/mixed/transformed_1_4/;
+		$dumpfile = $path."/".$dumpfile;
+		
+		open (XMLFILE, ">".$dumpfile);
+		print XMLFILE $$varh{'ipxact_1_4'};
+		close XMLFILE;
+	    }
 	    
 
         } else {
