@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewIPXACT.pm,v 1.9 2008/07/09 12:02:21 herburger Exp $
+#  RCSId: $Id: RegViewIPXACT.pm,v 1.10 2008/07/16 08:32:05 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -27,6 +27,9 @@
 ###############################################################################
 #
 #  $Log: RegViewIPXACT.pm,v $
+#  Revision 1.10  2008/07/16 08:32:05  herburger
+#  small changes
+#
 #  Revision 1.9  2008/07/09 12:02:21  herburger
 #  changed filename generation
 #
@@ -240,7 +243,7 @@ sub _write_ipxact2file{
 	$writer->dataElement([$nsspirit, "range"],$range);
 
 	#bit width of a row
-	$writer->dataElement([$nsspirit, "width"],$eh->get("reg_shell.regwidth"));
+	$writer->dataElement([$nsspirit, "width"],$this->get_max_regwidth());
 
 	$writer->dataElement([$nsspirit, "usage"],"register");
 
