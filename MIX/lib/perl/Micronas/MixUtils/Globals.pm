@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.64 $                                         |
+# | Revision:   $Revision: 1.65 $                                         |
 # | Author:     $Author: herburger $                                            |
-# | Date:       $Date: 2008/07/18 15:48:19 $                              |
+# | Date:       $Date: 2008/07/22 14:49:33 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.65  2008/07/22 14:49:33  herburger
+# | added xsl_dump and yaml_dump to intermediate
+# |
 # | Revision 1.64  2008/07/18 15:48:19  herburger
 # | changed xml.schema_dir
 # |
@@ -176,9 +179,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.64 2008/07/18 15:48:19 herburger Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.65 2008/07/22 14:49:33 herburger Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.64 $';  
+my $thisrevision    =      '$Revision: 1.65 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -767,6 +770,9 @@ sub init ($) {
 		'instpre'	=>	'CONN_',	# prepend to CONN sheet name if 'intra' = 'inst'			
 		'topmap' => 'ALL',	# Values: ALL or list of signals (comma seperated)
 		# map (I,O,IO) signal modes of top to %TM_(I|O|IO)%
+		'xls_dump' => 0,
+		'yaml_dump' =>0,
+		
     };
 	$this->{'cfg'}{'import'} = { # import mode control
    		'generate' => 'stripio', # remove trailing _i,_o from generated signal names
@@ -1325,7 +1331,7 @@ sub init ($) {
 	      'schema'	=> "http://www.w3.org/2001/XMLSchema-instance",
 	      'schemalocation'=> "http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4 http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4/index.xsd",
 			},	
-	  'versionedIdentifier'	=>	{#IP-XACT Identifier
+	  'VLNV'	=>	{#IP-XACT Identifier
 	      'vendor'	=> "micronas.com",
 	      'library'	=> "rs_test",
 	      'name'	=> "rs_test",
