@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewIPXACT.pm,v 1.10 2008/07/16 08:32:05 herburger Exp $
+#  RCSId: $Id: RegViewIPXACT.pm,v 1.11 2008/07/22 15:38:03 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -27,6 +27,9 @@
 ###############################################################################
 #
 #  $Log: RegViewIPXACT.pm,v $
+#  Revision 1.11  2008/07/22 15:38:03  herburger
+#  small changes
+#
 #  Revision 1.10  2008/07/16 08:32:05  herburger
 #  small changes
 #
@@ -203,13 +206,13 @@ sub _write_ipxact2file{
 
     #versionIdentifier
 
-    $writer->dataElement([$nsspirit, "vendor"],$eh->get('xml.versionedIdentifier.vendor'));
+    $writer->dataElement([$nsspirit, "vendor"],$eh->get('xml.VLNV.vendor'));
 
-    $writer->dataElement([$nsspirit, "library"],$eh->get('xml.versionedIdentifier.library'));
+    $writer->dataElement([$nsspirit, "library"],$eh->get('xml.VLNV.library'));
 
-    $writer->dataElement([$nsspirit, "name"],$eh->get('xml.versionedIdentifier.name'));
+    $writer->dataElement([$nsspirit, "name"],$eh->get('xml.VLNV.name'));
 
-    $writer->dataElement([$nsspirit, "version"],$eh->get('xml.versionedIdentifier.version'));
+    $writer->dataElement([$nsspirit, "version"],$eh->get('xml.VLNV.version'));
 
       
     
@@ -292,7 +295,7 @@ sub _write_ipxact2file{
 
 		my $fielddescription = $o_field->{'attribs'}->{'comment'};
 		######Caveat: fielddescription contains iso-8859-1 characters, if utf-8 is wanted, it has to be converted
-		$writer->dataElement([$nsspirit, "description"],$fielddescription);
+		$writer->dataElement([$nsspirit, "description"],$fielddescription) if $fielddescription;
 
 		$writer->dataElement([$nsspirit, "bitOffset"], $field->{'pos'});
 		$writer->dataElement([$nsspirit, "bitWidth"], $o_field->{'attribs'}->{'size'});
