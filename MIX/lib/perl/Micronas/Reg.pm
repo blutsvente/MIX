@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.70 2008/07/18 15:54:19 herburger Exp $
+#  RCSId: $Id: Reg.pm,v 1.71 2008/07/22 15:39:36 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.71  2008/07/22 15:39:36  herburger
+#  changed data dumping in init
+#
 #  Revision 1.70  2008/07/18 15:54:19  herburger
 #  added Math::BigInt to _map_register_master and _map_ipxact to allow the processing of large registers
 #  changes in _map_ipxact
@@ -265,7 +268,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.70 $ ';  #'
+our($VERSION) = '$Revision: 1.71 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -379,7 +382,7 @@ sub init {
 		_fatal( "Failed to load required modules for processing XML data: $@" );
 		exit 1;
 	    };
-	    	    
+	    
 	    # check version of xml-data and convert it to the right version if possible
 	    if (!($datastring_ipxact_1_4=$this->_check_version($hinput{database_type},$datastring))){
 		_error("input file not in the correct format");
@@ -388,7 +391,15 @@ sub init {
 
 	    #if xml-data has been transformed, dump data
 	    if ($datastring ne $datastring_ipxact_1_4){
-		mix_store_db("out","auto",{'ipxact_1_4'=>$datastring_ipxact_1_4});
+		
+		my $dumpfile=$eh->get('dump');
+		$dumpfile =~s/\.pld$/-transformed_1_4\.xml/;
+		$dumpfile=$eh->get('intermediate.path')."/".$dumpfile;
+		
+		open (XMLDUMP, ">".$dumpfile);
+		_info ("transformed xml file written to $dumpfile");
+		print XMLDUMP $datastring_ipxact_1_4;
+		close (XMLDUMP);
 	    }
 
 # #  	    #check input against schema, not workint at the moment
@@ -1269,7 +1280,7 @@ sub write2excel{
 
     my ( $workbook, $worksheet, $worksheetname, %columns, $i, $maxregisterwidth, $rowcounter, $registercounter,$columns_size,);
     my ($o_domain,$domain, $o_register,$o_field,$field,$domainname, $registername, $registeroffset,$registerwidth, $fieldname);
-
+    
     #import needed Modules
     unless( mix_use_on_demand('use Spreadsheet::WriteExcel;') ) {
 	_fatal( "Failed to load required modules for dumping XML data to Excel: $@" );
@@ -1290,7 +1301,7 @@ sub write2excel{
     }
 
     #get worksheet name
-    $dumpfile =~ m/\/(\w+)-mixed\.xls/;
+    $dumpfile =~ m/(\w+)-mixed\.xls$/;
     $worksheetname=$1;
     $worksheetname=substr($worksheetname,0,31);#sheetname can only be 31 characters long
     
@@ -1488,7 +1499,8 @@ sub writeYAML(){
     my ($this, $dumpfile) = @_;
 
     $dumpfile =~ s/\.xml$/.dmp/;
-    $dumpfile =~ s/mixed/yaml/;
+    $dumpfile =~ s/(\.\w+)/-yaml$1/;
+
     $dumpfile = $eh->get('intermediate.path').'/'.$dumpfile;  
     
     
