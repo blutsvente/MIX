@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.71 2008/07/22 15:39:36 herburger Exp $
+#  RCSId: $Id: Reg.pm,v 1.72 2008/07/24 15:46:37 herburger Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.72  2008/07/24 15:46:37  herburger
+#  changed write2excel to write additional fieldparameters to register master
+#
 #  Revision 1.71  2008/07/22 15:39:36  herburger
 #  changed data dumping in init
 #
@@ -268,7 +271,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.71 $ ';  #'
+our($VERSION) = '$Revision: 1.72 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -388,6 +391,7 @@ sub init {
 		_error("input file not in the correct format");
 		exit 1;
 	    }
+	   
 
 	    #if xml-data has been transformed, dump data
 	    if ($datastring ne $datastring_ipxact_1_4){
@@ -936,14 +940,23 @@ sub _map_ipxact{
 		my @registerparameters=$register->first_child('spirit:parameters')->children('spirit:parameter');#list of all parameters
 
 		foreach (@registerparameters){#iterate through all parameters
-		    my $parametername=$_->first_child('spirit:name');
-		    if ($parametername->text eq 'clone'){
-			$clone=$parametername->next_sibling('spirit:value')->text;
+		   
+# 		    if ($parametername->text eq 'clone'){
+# 			$clone=$parametername->next_sibling('spirit:value')->text;
 			
+# 		    }
+		    my $parameter=$_->first_child('spirit:name');
+		    my $parametername=$parameter->text;
+		    my $parametervalue=$parameter->next_sibling('spirit:value')->text;
+		    if ($parametername eq 'clone'){
+			$clone=$parametervalue;
+			next;
 		    }
+		    $o_register->attribs($parametername => $parametervalue);
 		}
 	    }
 	    $o_register->attribs(clone => $clone);
+	    
 	    #register size
 	    $rsize=$register->first_child('spirit:size')->text;
 
@@ -1023,15 +1036,15 @@ sub _map_ipxact{
 
 		#add remaining fieldattributes with default values
 		my %fieldattribs_default=%{$eh->get('i2c.field')};
-		my $m;
+		my $i;
 
- 		foreach $m (keys %fieldattribs_default){
- 		    next unless ($m =~ m/^::/);
-		    next if (grep($_ eq $m,@{$this->{'global'}->{'non_field_attributes'}}));
-		    $m=~s/:://;
- 		    unless( grep ($m eq $_,keys %{$o_field->{'attribs'}})) {
+ 		foreach $i (keys %fieldattribs_default){
+ 		    next unless ($i =~ m/^::/);
+		    next if (grep($_ eq $i,@{$this->{'global'}->{'non_field_attributes'}}));
+		    $i=~s/:://;
+ 		    unless( grep ($i eq $_,keys %{$o_field->{'attribs'}})) {
 			
-			$o_field->attribs($m => $fieldattribs_default{"::".$m}[3]);
+			$o_field->attribs($i => $fieldattribs_default{"::".$i}[3]);
 		    }
 		}
 	       
@@ -1281,6 +1294,8 @@ sub write2excel{
     my ( $workbook, $worksheet, $worksheetname, %columns, $i, $maxregisterwidth, $rowcounter, $registercounter,$columns_size,);
     my ($o_domain,$domain, $o_register,$o_field,$field,$domainname, $registername, $registeroffset,$registerwidth, $fieldname);
     
+    my @skipparameter=('size', 'lsb');#parameters to skip when generatin additional columns for register-master
+
     #import needed Modules
     unless( mix_use_on_demand('use Spreadsheet::WriteExcel;') ) {
 	_fatal( "Failed to load required modules for dumping XML data to Excel: $@" );
@@ -1332,7 +1347,7 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
 	      'range'=>["::range","Value Range",15,"Possible, but not necessarily meaningful value range for bitfield.",8.57,"%EMPTY%",sub {$o_field->{'attribs'}->{'range'};}],
 	      'view'=>["::view","Visible",16,"One of Y or N. If N, bitfield is omitted from documentation.",4.29,"Y",sub {$o_field->{'attribs'}->{'view'}}],
 	      'vi2c'=>["::vi2c","Watchltem",17,"Additional register attribute used for VisualI2C.",20.14,'GI2C_%WBitRegister',sub {"GI2C_".$registerwidth."BitRegister";}],
-	      'name'=>["::name","Field Name",18,"Name of the bitfield. Note: must be unique within a domain.",13.29,"Field_%C",sub {$fieldname;}],
+	      'name'=>["::name","Field Name",18,"Name of the bitfield. Note: must be unique within a domain.",13.29,"%EMPTY%",sub {$fieldname;}],
 	      'comment'=>["::comment","Description",19,"for data sheet (more information on next sheet)
 \\x = reset all formats to normal
 \\b = bold
@@ -1347,6 +1362,8 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
 	);
     
     
+    
+
     #gets length of the hash
     $columns_size=scalar keys %columns;
 
@@ -1395,18 +1412,7 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
     $fieldformat2->set_text_wrap();
     $fieldformat2->set_border();
 
-    foreach (sort {$columns{$a}[2]<=>$columns{$b}[2]} keys %columns){#sort %columns by position
-	$worksheet->write(0,$columns{$_}[2],$columns{$_}[0],$heading);#write heading row
-	$worksheet->write(1,$columns{$_}[2],$columns{$_}[1],$description);#write description row
-	$worksheet->write_comment(1,$columns{$_}[2],$columns{$_}[3]) if $columns{$_}[3];#write comments to description row
-
-	if ($_ =~ m/^Bit\d+/){
-	    $worksheet->set_column($columns{$_}[2],$columns{$_}[2],$columns{$_}[4],undef,1,1);#add outline if bitcell
-	}else{
-	    $worksheet->set_column($columns{$_}[2],$columns{$_}[2],$columns{$_}[4]);#else: no outline
-	}
-    }
-
+ 
 
     $worksheet->set_row(0,12.75);#set row height of headingrow
     $worksheet->set_row(1,76.5);#set row height of descriptionrow
@@ -1420,7 +1426,39 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
     
     $worksheet->write(2,0,"#");
     $worksheet->write(3,0,"#");
-  
+
+
+    #add additional entries to %columns
+    #for additional fieldattributes from ip-xact
+    foreach $domain (@{$this->domains}){#iterate through domains
+	$o_domain=$domain->{'domain'};
+	$domainname=$o_domain->{'name'};
+	
+	foreach $o_register (@{$o_domain->{'regs'}}){#iterate through register
+	    
+	    foreach $field (@{$o_register->{'fields'}}){#iterate through fields
+		$o_field=$field->{'field'};  		    
+	
+		my %i2csheetdefinition=%{$eh->get('i2c.field')};
+		my $i;
+		
+		foreach $i (keys %{$o_field->{'attribs'}}){ 		
+		    next if (grep("::".$i eq $_,keys %i2csheetdefinition));
+		    next if (grep($i eq $_,keys %columns));
+		    next if (grep($i eq $_,@skipparameter));
+		    next if (defined $columns{"fieldparameter_".$i});
+		    		
+ 		    
+		    my $columnssize=scalar keys %columns;
+		    $columns{"fieldparameter_".$i}=["fieldparameter_".$i, $i, $columnssize,"Additional Field from IP-XACT",13,"",sub {$o_field->{'attribs'}->{$i}}];
+			
+		    
+  		}
+	    }
+	}
+    }
+    
+
     foreach $domain (@{$this->domains}){#iterate through domains
 	$o_domain=$domain->{'domain'};
 	$domainname=$o_domain->{'name'};
@@ -1445,14 +1483,21 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
 
 		$worksheet->set_row ($rowcounter,12.75);#set rowheight to 12.75
 
+
+
 		my @row;#array that contains all data from field, ready to write
  		foreach (sort {$columns{$a}[2]<=>$columns{$b}[2]} keys %columns){#sort %columns by position
-		    my ($ref_sub_value,$ref_sub_default,$default);
+		    my ($ref_sub_value,$ref_sub_default,$default,$value);
  		    
-		    next if $_ =~ m/^Bit\d+/;#skip bitfields
- 		    
-		    $ref_sub_value=$columns{$_}[6];
 		    
+ 		    
+		    if (ref($columns{$_}[6]) eq 'CODE'){
+			$ref_sub_value=$columns{$_}[6];
+			$value=&$ref_sub_value();
+		    }else{
+			$value=$columns{$_}[6];
+		    }
+			
 		    if (ref($columns{$_}[5]) eq 'CODE'){
 			$ref_sub_default=$columns{$_}[5];
 			$default=&$ref_sub_default();
@@ -1460,8 +1505,16 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
 			$default=$columns{$_}[5];
 		    }
 
- 		    push @row, (&$ref_sub_value() || $default);
+		    if ($_ =~ m/^Bit\d+/){
+			push @row, "";
+		    }else{
+			push @row, ($value || $default);
+		    }
+
+ 		    
+
  		}
+		
 		
 		
  		$worksheet->write_row($rowcounter,0,\@row,$fieldformat);#write row
@@ -1489,6 +1542,22 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
 	    $registercounter++;
 	}
     }
+
+    #Write Heading, Description and comment
+    foreach (sort {$columns{$a}[2]<=>$columns{$b}[2]} keys %columns){#sort %columns by position
+	$worksheet->write(0,$columns{$_}[2],$columns{$_}[0],$heading);#write heading row
+	$worksheet->write(1,$columns{$_}[2],$columns{$_}[1],$description);#write description row
+	$worksheet->write_comment(1,$columns{$_}[2],$columns{$_}[3]) if $columns{$_}[3];#write comments to description row
+	
+	if ($_ =~ m/^Bit\d+/){
+	    $worksheet->set_column($columns{$_}[2],$columns{$_}[2],$columns{$_}[4],undef,1,1);#add outline if bitcell
+	}else{
+	    $worksheet->set_column($columns{$_}[2],$columns{$_}[2],$columns{$_}[4]);#else: no outline
+	}
+   }
+    
+    
+    
     $workbook->close() or _error("Error creating file $dumpfile");
 
 }
