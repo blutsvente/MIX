@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegReg.pm,v 1.10 2008/02/07 10:45:04 lutscher Exp $
+#  RCSId: $Id: RegReg.pm,v 1.11 2008/07/31 09:05:21 lutscher Exp $
 ###############################################################################
 #
 #  Related Files :  RegDomain.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegReg.pm,v $
+#  Revision 1.11  2008/07/31 09:05:21  lutscher
+#  added packing/unpacking feature for register-domains
+#
 #  Revision 1.10  2008/02/07 10:45:04  lutscher
 #  some extensions for generated e-code
 #
@@ -72,6 +75,9 @@ package Micronas::RegReg;
 #------------------------------------------------------------------------------
 use strict;
 use Data::Dumper;
+use Micronas::RegField;
+use Micronas::MixUtils::RegUtils;
+
 #use FindBin qw($Bin);
 #use lib "$Bin";
 #use lib "$Bin/..";
@@ -233,6 +239,7 @@ sub to_document()
 {
     my ($this) = @_;
     my $mode = "N";
+    my %hrattribs = %{$this->attribs};
 
     foreach my $href (@{$this->fields}) {
         if (uc($href->{field}->attribs->{view}) eq 'Y') {
@@ -242,6 +249,61 @@ sub to_document()
     }
     return ($mode eq 'Y');
 }
+
+# unpack 64-bit register to two 32-bit registers
+sub _pack_64to32 {
+    my ($this) = shift;
+    my ($o_reg0, $o_reg1, $href, %hattribs, $o_field0, $o_field1);
+    
+    if ($this->attribs->{'size'} != 64) {
+        _error("_pack_64to32() register size ",$this->attribs->{'size'}, " does not match requested packing mode");
+    } else {
+        foreach $href (@{$this->fields}) {
+            my $o_field = $href->{'field'};
+            if ($href->{'pos'} < 32) {
+                if (!ref($o_reg0)) {
+                    $o_reg0 = Micronas::RegReg->new('name' => $this->name . "_lo", 'definition' => $this->definition . "_lo");
+                    $o_reg0->attribs(%hattribs);
+                    $o_reg0->attribs('size' => 32); # correct size
+                };
+                # check if field fits into lower 32-bit range
+                if ($href->{'pos'} + $o_field->attribs->{'size'} > 32) {
+                    # split field  
+                    _info("field \'", $o_field->name, "\' of register \'", $this->name, "\' is not 32-bit aligned, will be splitted");
+                    ($o_field0, $o_field1) = $o_field->_split_at(32);
+                    if (ref $o_field0 and ref $o_field1) {
+                        $o_field0->reg($o_reg0);
+                        $o_reg0->fields(field => $o_field0, pos => $href->{'pos'});
+                        if (!ref($o_reg1)) {
+                            $o_reg1 = Micronas::RegReg->new(name => $this->name . "_hi", definition => $this->definition . "_hi");
+                            $o_reg1->attribs(%hattribs);
+                            $o_reg1->attribs('size' => 32); # correct size
+                        };
+                        $o_field1->reg($o_reg1);
+                        $o_reg1->fields(field => $o_field1, pos => 0);
+                    } else {
+                        _error("failed to split field \'", $o_field->name, "\' of register \'", $this->name, "\'");
+                    };
+                } else {
+                    # add the old field to the new register
+                    $o_field->reg($o_reg0);
+                    $o_reg0->fields(field => $o_field, pos => $href->{'pos'});
+                };
+            } else {
+                # fit field into upper 32-bit range
+                if (!ref($o_reg1)) {
+                    $o_reg1 = Micronas::RegReg->new(name => $this->name . "_hi", definition => $this->definition . "_hi");
+                    $o_reg1->attribs(%hattribs);
+                    $o_reg1->attribs('size' => 32); # correct size
+                };
+                # add the field to the new register
+                $o_field->reg($o_reg1);
+                $o_reg1->fields(field => $o_field, pos => $href->{'pos'} - 32);
+            };
+        };
+    };
+    return ($o_reg0, $o_reg1);
+};
 
 # default display method
 sub display {

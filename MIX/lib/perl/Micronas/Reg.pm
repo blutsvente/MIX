@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.72 2008/07/24 15:46:37 herburger Exp $
+#  RCSId: $Id: Reg.pm,v 1.73 2008/07/31 09:05:21 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.73  2008/07/31 09:05:21  lutscher
+#  added packing/unpacking feature for register-domains
+#
 #  Revision 1.72  2008/07/24 15:46:37  herburger
 #  changed write2excel to write additional fieldparameters to register master
 #
@@ -188,6 +191,7 @@ sub parse_register_master {
                                   use Micronas::RegViewSTL;
                                   use Micronas::RegViewRDL;
                                   use Micronas::RegViewClone;
+                                  use Micronas::RegPacking;
                                   use Micronas::MixUtils::RegUtils;
                                   use Micronas::RegViewIPXACT;
 				                                   '	
@@ -218,6 +222,7 @@ sub parse_register_master {
                                'register_master' => $r_i2c
                               );
             };
+ 
             # add to register-object from XML database
             if (scalar @$r_xml) {
                 $o_space->init(	 
@@ -226,19 +231,22 @@ sub parse_register_master {
                                'data'           => $r_xml
                               );
             };
-	    
-	    
 
             # set debug switch
             $o_space->global('debug' => exists $OPTVAL{'verbose'} ? 1 : 0);
 			
-            # check if register object should be cloned first
+            # apply packing-mode if desired
+            if ($eh->get('reg_shell.packing.mode') ne "none") {
+                my $o_new_space = $o_space->_pack();
+                $o_space = $o_new_space;
+            };
+
+            # check if register object should be cloned
             if ($eh->get('reg_shell.clone.number') > 0) {
                 my $o_new_space = $o_space->_clone(); # module RegViewClone.pm 
                 $o_space = $o_new_space;
             };
-
-            
+                                
             # make it so 
             $o_space->generate_view($view, $o_space->global->{supported_views}, \@ldomains);
         };
@@ -271,7 +279,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.72 $ ';  #'
+our($VERSION) = '$Revision: 1.73 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -380,46 +388,42 @@ sub init {
                      	    use XML::Twig;
 			    use XML::LibXSLT;
 			    use XML::LibXML;'	
-
-		    ) ) {
-		_fatal( "Failed to load required modules for processing XML data: $@" );
-		exit 1;
-	    };
-	    
-	    # check version of xml-data and convert it to the right version if possible
-	    if (!($datastring_ipxact_1_4=$this->_check_version($hinput{database_type},$datastring))){
-		_error("input file not in the correct format");
-		exit 1;
-	    }
-	   
-
-	    #if xml-data has been transformed, dump data
-	    if ($datastring ne $datastring_ipxact_1_4){
-		
-		my $dumpfile=$eh->get('dump');
-		$dumpfile =~s/\.pld$/-transformed_1_4\.xml/;
-		$dumpfile=$eh->get('intermediate.path')."/".$dumpfile;
-		
-		open (XMLDUMP, ">".$dumpfile);
-		_info ("transformed xml file written to $dumpfile");
-		print XMLDUMP $datastring_ipxact_1_4;
-		close (XMLDUMP);
-	    }
-
-# #  	    #check input against schema, not workint at the moment
-#  	    if(!$this->_check_schema($hinput{database_type},$datastring_ipxact_1_4)){
-#  		exit 1;
-#  	    }
-
-	    
-	
-	    # call mapping function for ip-xact (XML) database
-	    $this->_map_ipxact($hinput{database_type},$datastring_ipxact_1_4);
-	    
-	    
-	};
+                                      
+                                     ) ) {
+                _fatal( "Failed to load required modules for processing XML data: $@" );
+                exit 1;
+            };
+            
+            # check version of xml-data and convert it to the right version if possible
+            if (!($datastring_ipxact_1_4=$this->_check_version($hinput{database_type},$datastring))){
+                _error("input file not in the correct format");
+                exit 1;
+            }            
+            
+            #if xml-data has been transformed, dump data
+            if ($datastring ne $datastring_ipxact_1_4){
+                
+                my $dumpfile=$eh->get('dump');
+                $dumpfile =~s/\.pld$/-transformed_1_4\.xml/;
+                $dumpfile=$eh->get('intermediate.path')."/".$dumpfile;
+                
+                open (XMLDUMP, ">".$dumpfile);
+                _info ("transformed xml file written to $dumpfile");
+                print XMLDUMP $datastring_ipxact_1_4;
+                close (XMLDUMP);
+            }
+            
+            # #  	    #check input against schema, not workint at the moment
+            #  	    if(!$this->_check_schema($hinput{database_type},$datastring_ipxact_1_4)){
+            #  		exit 1;
+            #  	    }            
+            
+            # call mapping function for ip-xact (XML) database
+            $this->_map_ipxact($hinput{database_type},$datastring_ipxact_1_4);
+                        
+        };
     };
-
+    
 	#$this->display()
 };
 
@@ -789,7 +793,7 @@ sub _map_register_master {
             # compute bit-mask for registes
             for ($i=$fpos; $i < $fpos+$fsize; $i++) {
                 $old_usedbits = Math::BigInt->new($usedbits);
-		my $one=Math::BigInt->new(1);
+                my $one=Math::BigInt->new(1);
                 $usedbits = $usedbits | $one->blsft($i);
 				# check for overlapping fields in same register
 		
@@ -877,204 +881,204 @@ sub _map_ipxact{
     # TWIG Handlers Subroutines
     #####################################################################
     my $ipxact_domain=sub {
-	my ( $twig, $elt )= @_; 
-	my ( $domainname,$baseaddr,@registers,$register, $range, $width, $bitsinUnit);
-	my ( $o_domain);
+        my ( $twig, $elt )= @_; 
+        my ( $domainname,$baseaddr,@registers,$register, $range, $width, $bitsinUnit);
+        my ( $o_domain);
 	
-	###########DOMAIN###########
-	#get domainname and baseaddress
-	$domainname = $elt->first_child('spirit:name')->text;
-	$baseaddr = $elt->first_child('spirit:baseAddress')->text;
-	$baseaddr = oct($baseaddr) if $baseaddr =~ m/^0/;#converts hex or oct into dec
+        ###########DOMAIN###########
+        #get domainname and baseaddress
+        $domainname = $elt->first_child('spirit:name')->text;
+        $baseaddr = $elt->first_child('spirit:baseAddress')->text;
+        $baseaddr = oct($baseaddr) if $baseaddr =~ m/^0/; #converts hex or oct into dec
 	
-	#create new domain
-	$o_domain = Micronas::RegDomain->new(name => $domainname);
+        #create new domain
+        $o_domain = Micronas::RegDomain->new(name => $domainname);
 
-	#get addresswidth datawidth
-	$range = $elt->first_child('spirit:range')->text;#2^$range
-	$range = oct($range) if $range =~ m/^0/;
-	$range=log($range)/log(2);#get range
-	$width = $elt->first_child('spirit:width')->text;
+        #get addresswidth datawidth
+        $range = $elt->first_child('spirit:range')->text; #2^$range
+        $range = oct($range) if $range =~ m/^0/;
+        $range=log($range)/log(2); #get range
+        $width = $elt->first_child('spirit:width')->text;
 	
-	$eh->set('reg_shell.addrwidth',$range);
-	$eh->set('reg_shell.regwidth',$width);
+        $eh->set('reg_shell.addrwidth',$range);
+        $eh->set('reg_shell.regwidth',$width);
 	
 	
-	#add domain to reg-object
-	$this->domains('domain' => $o_domain, 'baseaddr' => $baseaddr);
+        #add domain to reg-object
+        $this->domains('domain' => $o_domain, 'baseaddr' => $baseaddr);
 
 	
-	###########REGISTERS###########
-	#find register that belong to this domain
+        ###########REGISTERS###########
+        #find register that belong to this domain
 
-	@registers=$elt->children('spirit:register');
+        @registers=$elt->children('spirit:register');
 	
-	#iterate through all registers
-	foreach $register (@registers){
-	    my ($registername, $offset,@fields, $field, $clone, $rsize, $usedbits, $registerreset, $rdescription);
-	    my ($o_register);
+        #iterate through all registers
+        foreach $register (@registers) {
+            my ($registername, $offset,@fields, $field, $clone, $rsize, $usedbits, $registerreset, $rdescription);
+            my ($o_register);
 
-	    $registername =  $register->first_child('spirit:name')->text;
-	    $offset = $register->first_child('spirit:addressOffset')->text;
-	    $offset=oct($offset) if $offset =~ m/^0/;#converts hex or oct into dec
+            $registername =  $register->first_child('spirit:name')->text;
+            $offset = $register->first_child('spirit:addressOffset')->text;
+            $offset=oct($offset) if $offset =~ m/^0/; #converts hex or oct into dec
 
-	    #create new register object
-	    $o_register = Micronas::RegReg->new(name => $registername);
+            #create new register object
+            $o_register = Micronas::RegReg->new(name => $registername);
 
-	    #get register description
-	    $rdescription = "";
-	    $rdescription = $register->first_child('spirit:description')->text if ($register->first_child('spirit:description'));
+            #get register description
+            $rdescription = "";
+            $rdescription = $register->first_child('spirit:description')->text if ($register->first_child('spirit:description'));
 
-	    $o_register->definition($rdescription);
+            $o_register->definition($rdescription);
 
-	    #link register object into domain
-	    $o_domain->regs($o_register);
-	    $o_domain->addrmap(reg=>$o_register,offset=>$offset);
+            #link register object into domain
+            $o_domain->regs($o_register);
+            $o_domain->addrmap(reg=>$o_register,offset=>$offset);
 
-	    ###########register attributes
+            ###########register attributes
 
-	    #cloning information
-	    $clone=$eh->get('i2c.field.::clone')->[3];
+            #cloning information
+            $clone=$eh->get('i2c.field.::clone')->[3];
 
-	    if ($register->children_count('spirit:parameters')){#parameters exist
-		my @registerparameters=$register->first_child('spirit:parameters')->children('spirit:parameter');#list of all parameters
+            if ($register->children_count('spirit:parameters')) { #parameters exist
+                my @registerparameters=$register->first_child('spirit:parameters')->children('spirit:parameter'); #list of all parameters
 
-		foreach (@registerparameters){#iterate through all parameters
+                foreach (@registerparameters) { #iterate through all parameters
 		   
-# 		    if ($parametername->text eq 'clone'){
-# 			$clone=$parametername->next_sibling('spirit:value')->text;
+                    # 		    if ($parametername->text eq 'clone'){
+                    # 			$clone=$parametername->next_sibling('spirit:value')->text;
 			
-# 		    }
-		    my $parameter=$_->first_child('spirit:name');
-		    my $parametername=$parameter->text;
-		    my $parametervalue=$parameter->next_sibling('spirit:value')->text;
-		    if ($parametername eq 'clone'){
-			$clone=$parametervalue;
-			next;
-		    }
-		    $o_register->attribs($parametername => $parametervalue);
-		}
-	    }
-	    $o_register->attribs(clone => $clone);
+                    # 		    }
+                    my $parameter=$_->first_child('spirit:name');
+                    my $parametername=$parameter->text;
+                    my $parametervalue=$parameter->next_sibling('spirit:value')->text;
+                    if ($parametername eq 'clone') {
+                        $clone=$parametervalue;
+                        next;
+                    }
+                    $o_register->attribs($parametername => $parametervalue);
+                }
+            }
+            $o_register->attribs(clone => $clone);
 	    
-	    #register size
-	    $rsize=$register->first_child('spirit:size')->text;
+            #register size
+            $rsize=$register->first_child('spirit:size')->text;
 
 	    
-	    $usedbits=Math::BigInt->new(0);
+            $usedbits=Math::BigInt->new(0);
 	    
-	    #add atrributes to register
-	    $o_register->attribs(size => $rsize);
+            #add atrributes to register
+            $o_register->attribs(size => $rsize);
 	    
-	    ###########FIELDS###########
-	    #find fields that belong  to this register/domain
-	    @fields=$register->children('spirit:field');
+            ###########FIELDS###########
+            #find fields that belong  to this register/domain
+            @fields=$register->children('spirit:field');
 	    
-	    #iterate through all fields
-	    foreach $field (@fields){
-		my ($fieldname, $position, $fsize, $description, $reset, %access, %prettynames, @fieldparameters, $parameter, $frange);
-		my ($o_field);
+            #iterate through all fields
+            foreach $field (@fields) {
+                my ($fieldname, $position, $fsize, $description, $reset, %access, %prettynames, @fieldparameters, $parameter, $frange);
+                my ($o_field);
 
-		$fieldname=$field->first_child('spirit:name')->text;
-		$position=$field->first_child('spirit:bitOffset')->text;
-		$position=oct($position) if $position =~ m/^0/;#converts hex or oct into dec
+                $fieldname=$field->first_child('spirit:name')->text;
+                $position=$field->first_child('spirit:bitOffset')->text;
+                $position=oct($position) if $position =~ m/^0/; #converts hex or oct into dec
 
-		#create new field object
-		$o_field=Micronas::RegField->new(name=>$fieldname);
+                #create new field object
+                $o_field=Micronas::RegField->new(name=>$fieldname);
 
-		#link field object into register/domain
-		$o_register->fields(field=>$o_field,pos=>$position);
-		$o_domain->fields($o_field);
-		$o_field->reg($o_register);
+                #link field object into register/domain
+                $o_register->fields(field=>$o_field,pos=>$position);
+                $o_domain->fields($o_field);
+                $o_field->reg($o_register);
 
-		############field attributes
-		%access=reverse(%{$eh->get('xml.access')});
-		%prettynames=reverse(%{$eh->get('xml.prettynames')});
+                ############field attributes
+                %access=reverse(%{$eh->get('xml.access')});
+                %prettynames=reverse(%{$eh->get('xml.prettynames')});
 
-		$description=$field->first_child('spirit:description')->text if $field->first_child('spirit:description');
+                $description=$field->first_child('spirit:description')->text if $field->first_child('spirit:description');
 		
 
-		$fsize=$field->first_child('spirit:bitWidth')->text;
+                $fsize=$field->first_child('spirit:bitWidth')->text;
 		
 
-		$frange="0..".(2**$fsize-1);
+                $frange="0..".(2**$fsize-1);
 
-		#field reset value
-		$registerreset=$register->first_child('spirit:reset')->first_child('spirit:value')->text if ($register->first_child('spirit:reset'));
-		$registerreset=Math::BigInt->new($registerreset)->as_int();#for big integer number support
+                #field reset value
+                $registerreset=$register->first_child('spirit:reset')->first_child('spirit:value')->text if ($register->first_child('spirit:reset'));
+                $registerreset=Math::BigInt->new($registerreset)->as_int(); #for big integer number support
 		
-		$reset=unpack("B32", pack("N", $registerreset>>$position));#get resetvalue of register in binary shifted by position
-		$reset=substr($reset,length($reset)-$fsize,$fsize);#field reset value
-		$reset=unpack("N", pack("B32", substr("0" x 32 . $reset, -32)));#bin->dec
+                $reset=unpack("B32", pack("N", $registerreset>>$position)); #get resetvalue of register in binary shifted by position
+                $reset=substr($reset,length($reset)-$fsize,$fsize); #field reset value
+                $reset=unpack("N", pack("B32", substr("0" x 32 . $reset, -32))); #bin->dec
 
-		$o_field->attribs(init=>$reset);
-		$o_field->attribs(comment=>$description);
-		$o_field->attribs(dir=>$access{$field->first_child('spirit:access')->text});
-		$o_field->attribs(range=>$frange,size=>$fsize);
-		#put remaining paramters to attributes
-		@fieldparameters=();
-		(@fieldparameters=$field->first_child('spirit:parameters')->children('spirit:parameter')) if ($field->first_child('spirit:parameters'));
+                $o_field->attribs(init=>$reset);
+                $o_field->attribs(comment=>$description);
+                $o_field->attribs(dir=>$access{$field->first_child('spirit:access')->text});
+                $o_field->attribs(range=>$frange,size=>$fsize);
+                #put remaining paramters to attributes
+                @fieldparameters=();
+                (@fieldparameters=$field->first_child('spirit:parameters')->children('spirit:parameter')) if ($field->first_child('spirit:parameters'));
 		
-		foreach $parameter (@fieldparameters){
+                foreach $parameter (@fieldparameters) {
 		    
-		    my $parametername=$parameter->first_child('spirit:name')->text;
-		    next if (grep($_ eq $parametername,@{$eh->get('xml.field_skipelements')}));
-		    my $parametervalue=$parameter->first_child('spirit:value')->text;  
-		    ($parametername=$prettynames{$parametername})if (exists $prettynames{$parametername});
+                    my $parametername=$parameter->first_child('spirit:name')->text;
+                    next if (grep($_ eq $parametername,@{$eh->get('xml.field_skipelements')}));
+                    my $parametervalue=$parameter->first_child('spirit:value')->text;  
+                    ($parametername=$prettynames{$parametername})if (exists $prettynames{$parametername});
 		    
-		    #if access value equal write-1-to-clear write W1C to spec
-		    if (lc($parametervalue) eq 'write-1-to-clear' and lc($parametername) eq 'access'){
-			$parametername="spec";
-			$parametervalue="W1C";
-			if ($o_field->{'attribs'}->{'spec'}){
-			    $parametervalue=$o_field->{'attribs'}->{'spec'}.",W1C";
-			}
+                    #if access value equal write-1-to-clear write W1C to spec
+                    if (lc($parametervalue) eq 'write-1-to-clear' and lc($parametername) eq 'access') {
+                        $parametername="spec";
+                        $parametervalue="W1C";
+                        if ($o_field->{'attribs'}->{'spec'}) {
+                            $parametervalue=$o_field->{'attribs'}->{'spec'}.",W1C";
+                        }
 
-		    }
-		    $o_field->attribs($parametername=>$parametervalue);
-		}
+                    }
+                    $o_field->attribs($parametername=>$parametervalue);
+                }
 
-		#add remaining fieldattributes with default values
-		my %fieldattribs_default=%{$eh->get('i2c.field')};
-		my $i;
+                #add remaining fieldattributes with default values
+                my %fieldattribs_default=%{$eh->get('i2c.field')};
+                my $i;
 
- 		foreach $i (keys %fieldattribs_default){
- 		    next unless ($i =~ m/^::/);
-		    next if (grep($_ eq $i,@{$this->{'global'}->{'non_field_attributes'}}));
-		    $i=~s/:://;
- 		    unless( grep ($i eq $_,keys %{$o_field->{'attribs'}})) {
+                foreach $i (keys %fieldattribs_default) {
+                    next unless ($i =~ m/^::/);
+                    next if (grep($_ eq $i,@{$this->{'global'}->{'non_field_attributes'}}));
+                    $i=~s/:://;
+                    unless ( grep ($i eq $_,keys %{$o_field->{'attribs'}})) {
 			
-			$o_field->attribs($i => $fieldattribs_default{"::".$i}[3]);
-		    }
-		}
+                        $o_field->attribs($i => $fieldattribs_default{"::".$i}[3]);
+                    }
+                }
 	       
-		unless (grep ($_ eq 'view' ,keys %{$o_field->{'attribs'}})){
-		    $o_field->attribs(view => 'Y');
-		}
+                unless (grep ($_ eq 'view' ,keys %{$o_field->{'attribs'}})) {
+                    $o_field->attribs(view => 'Y');
+                }
 
-		#calculate usedbits
-		for ($i=$position;$i<$position+$fsize;$i++){
-		    $usedbits->badd(2**$i);
+                #calculate usedbits
+                for ($i=$position;$i<$position+$fsize;$i++) {
+                    $usedbits->badd(2**$i);
 		    
-		}
+                }
 
-	    }
-	    $o_register->attribs(usedbits=>$usedbits);
+            }
+            $o_register->attribs(usedbits=>$usedbits);
 	    
-	}
+        }
 	
-	$twig->purge();#free memory
+        $twig->purge();         #free memory
     };
 
     #Handler to get the AddressunitBits field
     my $ipxact_addressunitbits = sub {
-	my ( $twig, $elt )= @_; 
-	my ( $bitsinUnit);
+        my ( $twig, $elt )= @_; 
+        my ( $bitsinUnit);
 
-	$bitsinUnit=$elt->text;
-	$eh->set('reg_shell.datawidth',$bitsinUnit);
+        $bitsinUnit=$elt->text;
+        $eh->set('reg_shell.datawidth',$bitsinUnit);
 	
-	$twig->purge();#free memory
+        $twig->purge();         #free memory
     };
     
 
@@ -1083,22 +1087,23 @@ sub _map_ipxact{
   
 
     my $twig=XML::Twig->new(twig_handlers =>
-			    {
-				'spirit:addressBlock' => $ipxact_domain, #domain 
-				'spirit:addressUnitBits' => $ipxact_addressunitbits,
-			    }
-	);#create new Twig Object
+                            {
+                             'spirit:addressBlock' => $ipxact_domain, #domain 
+                             'spirit:addressUnitBits' => $ipxact_addressunitbits,
+                            }
+                           );   #create new Twig Object
 
     _info("start parsing XMLfile");
-    if (!$twig->parse($datastring)){#parse XMLString
-	_error("parsing failed!");
-	return 0;
-    };
+    if (!$twig->parse($datastring)) { #parse XMLString
+        _error("parsing failed!");
+        return 0;
+    }
+    ;
 
-    $encoding = $twig->encoding()||"utf-8";#get encoding
+    $encoding = $twig->encoding()||"utf-8"; #get encoding
     $eh->set('xml.characterencodingin',$encoding);
 
-    $twig->purge();#Free memory
+    $twig->purge();             #Free memory
 
 
   
@@ -1106,7 +1111,8 @@ sub _map_ipxact{
     #$this->display();
 	
 
-};
+}
+;
 
 # checks if the XML-Data is in the right version, if not it tries to convert it to the right version
 # input: 1. databasetype 
@@ -1566,27 +1572,23 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
 
 sub writeYAML(){
     my ($this, $dumpfile) = @_;
-
+    
     $dumpfile =~ s/\.xml$/.dmp/;
     $dumpfile =~ s/(\.\w+)/-yaml$1/;
-
+    
     $dumpfile = $eh->get('intermediate.path').'/'.$dumpfile;  
     
     
-
+    
     eval{use YAML qw 'DumpFile'};
     die("could not find module YAML in writeYAML") if $@ ne "";
     local $YAML::SortKeys = 0;
     
-
+    
     _info("start dumping in YAML-Format to file $dumpfile");
     unless (DumpFile($dumpfile,$this->{'domains'})){
-	_error("error in writing YAML-file");
-	return 0;
+        _error("error in writing YAML-file");
+        return 0;
     }
-    
-
-
-    
 }
 1;

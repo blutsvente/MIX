@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.65 $                                         |
-# | Author:     $Author: herburger $                                            |
-# | Date:       $Date: 2008/07/22 14:49:33 $                              |
+# | Revision:   $Revision: 1.66 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2008/07/31 09:05:21 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.66  2008/07/31 09:05:21  lutscher
+# | added packing/unpacking feature for register-domains
+# |
 # | Revision 1.65  2008/07/22 14:49:33  herburger
 # | added xsl_dump and yaml_dump to intermediate
 # |
@@ -179,9 +182,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.65 2008/07/22 14:49:33 herburger Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.66 2008/07/31 09:05:21 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.65 $';  
+my $thisrevision    =      '$Revision: 1.66 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -767,18 +770,17 @@ sub init ($) {
 		#	TOP			-> CONN_<TOP> and CONN
 		#	TOP,INTRA	-> CONN_<TOP> and CONN_INTRA
 		#	INST[ANCE]	-> create one conn sheet for each instance, named: CONN_<instance>
-		'instpre'	=>	'CONN_',	# prepend to CONN sheet name if 'intra' = 'inst'			
-		'topmap' => 'ALL',	# Values: ALL or list of signals (comma seperated)
+		'instpre'  =>	'CONN_',	# prepend to CONN sheet name if 'intra' = 'inst'			
+		'topmap'   => 'ALL',	# Values: ALL or list of signals (comma seperated)
 		# map (I,O,IO) signal modes of top to %TM_(I|O|IO)%
-		'xls_dump' => 0,
-		'yaml_dump' =>0,
-		
+		'xls_dump'  => 0, # enable/disable dumping of registgers in register-master format (.xls)
+		'yaml_dump' => 0  # enable/disable dumping of registers in YAML format
     };
 	$this->{'cfg'}{'import'} = { # import mode control
    		'generate' => 'stripio', # remove trailing _i,_o from generated signal names
    		'order'	   => 'sort',	 # 'sort' (do sort) or 'input' (by input order)
    		'vinc'	   => '',		 # Reference to verilog import module
-   		'vinc_skip' => 'include,define', # Words matching will not be replaced
+   		'vinc_skip' => 'include,define'  # Words matching will not be replaced
 	};
     	
 	$this->{'cfg'}{'check'} = {
@@ -1023,6 +1025,12 @@ sub init ($) {
                    'unique_clocks'=> 1           # if 1, uniquify clock names of clones
                   },
        'workaround' => "",                       # string parameter to specify workarounds, currently: platinumd
+       
+       # parameters for packing *NEW*
+       'packing' => {
+                     'mode'       => "none",     # packing mode, currently none|64to32
+                     'endianness' => "big"       # endianness of registers after packing big|little
+                    },
        
        # legacy parameters, not needed anymore!
        'cfg_module_prefix'    => "rs_cfg", # prefix for config register block
