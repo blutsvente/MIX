@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.81 2008/07/08 07:54:08 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.82 2008/08/06 09:58:57 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.81 $                                  
+#  Revision      : $Revision: 1.82 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.82  2008/08/06 09:58:57  lutscher
+#  fixed a problem with multi_clock_domains=0
+#
 #  Revision 1.81  2008/07/08 07:54:08  lutscher
 #  fixed bug in _vgch_rs_get_configuration()
 #
@@ -385,7 +388,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.81 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.82 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -2045,6 +2048,12 @@ sub _vgch_rs_get_configuration {
 		my @lkeys = keys %hresult;
 		foreach $clock (@lkeys) {
 			if ($clock ne $bus_clock) {
+                # save some properties before deleting the clock-domain (TBD maybe not complete)
+                foreach my $property ("has_shdw", "has_read", "has_write", "has_cond_fields") {
+                    if (exists($hresult{$clock}->{$property})) {
+                        $hresult{$bus_clock}->{$property} = $hresult{$clock}->{$property};
+                    };
+                };
 				delete $hresult{$clock};
 				$n--;
 			};
