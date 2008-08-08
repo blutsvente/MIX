@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.82 2008/08/06 09:58:57 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.83 2008/08/08 06:47:52 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.82 $                                  
+#  Revision      : $Revision: 1.83 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.83  2008/08/08 06:47:52  lutscher
+#  removed infer_mux from pre_decoder generation
+#
 #  Revision 1.82  2008/08/06 09:58:57  lutscher
 #  fixed a problem with multi_clock_domains=0
 #
@@ -388,7 +391,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.82 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.83 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -1908,7 +1911,8 @@ sub _vgch_rs_gen_pre_dec_logic {
     push @ludc, "", "always @(addr_i) begin";
     push @ludc, $indent . "pre_dec     = 0;";
     push @ludc, $indent . "pre_dec_err = 0;";
-    push @ludc, $indent . "case (addr_i[$addr_msb:$addr_lsb]) // synopsys infer_mux";
+    # push @ludc, $indent . "case (addr_i[$addr_msb:$addr_lsb]) // synopsys infer_mux";
+    push @ludc, $indent . "case (addr_i[$addr_msb:$addr_lsb])";
     $n = 0;
     # iterate all clock domains
     foreach $clock (sort keys %{$refclks}) {
