@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.83 2008/08/08 06:47:52 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.84 2008/08/18 09:54:03 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.83 $                                  
+#  Revision      : $Revision: 1.84 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.84  2008/08/18 09:54:03  lutscher
+#  fixed bug in _gen_view_vgch_rs
+#
 #  Revision 1.83  2008/08/08 06:47:52  lutscher
 #  removed infer_mux from pre_decoder generation
 #
@@ -271,7 +274,7 @@ sub _gen_view_vgch_rs {
 
 		# reset per-domain data structures
         $this->global('hfnames' => {}, 'hclocks' => {}, 'hhdlconsts' => {}, 'hbackdoorpaths' => {});
-
+        delete $this->global->{'embedded_reg'};
 		map {delete $this->global->{$_}} grep $_ =~ m/_inst$/i,keys %{$this->global};
 
 		$n_clocks = $this->_vgch_rs_get_configuration($o_domain); # get some general information
@@ -391,7 +394,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.83 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.84 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
