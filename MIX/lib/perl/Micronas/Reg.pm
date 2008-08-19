@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.73 2008/07/31 09:05:21 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.74 2008/08/19 13:14:58 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.74  2008/08/19 13:14:58  lutscher
+#  added translation of illegal domain names
+#
 #  Revision 1.73  2008/07/31 09:05:21  lutscher
 #  added packing/unpacking feature for register-domains
 #
@@ -279,7 +282,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.73 $ ';  #'
+our($VERSION) = '$Revision: 1.74 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -678,8 +681,10 @@ sub _map_register_master {
             };
             # domain is taken from "::interface" or "::dev" column
             if ($marker eq $domain_column) {
-                $domain = $value; next;
-            }
+                $domain = $value;
+                $domain =~ s/[\.\!\@\#\$\%\^\&\*\(\)]/_/g; # replace illegal characters with underscore
+                next;
+            };
             if ($marker eq "::inst") {
                 $reg = $value; next;
             };
@@ -888,8 +893,9 @@ sub _map_ipxact{
         ###########DOMAIN###########
         #get domainname and baseaddress
         $domainname = $elt->first_child('spirit:name')->text;
+        $domainname =~ s/[\.\!\@\#\$\%\^\&\*\(\)]/_/g; # replace illegal characters with underscore
         $baseaddr = $elt->first_child('spirit:baseAddress')->text;
-        $baseaddr = oct($baseaddr) if $baseaddr =~ m/^0/; #converts hex or oct into dec
+        $baseaddr = oct($baseaddr) if $baseaddr =~ m/^0/; # converts hex or oct into dec
 	
         #create new domain
         $o_domain = Micronas::RegDomain->new(name => $domainname);
