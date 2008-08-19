@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.60 $                                               |
+# | Revision:   $Revision: 1.61 $                                               |
 # | Author:     $Author: lutscher $                                                 |
-# | Date:       $Date: 2008/07/10 12:42:54 $                                                   |
+# | Date:       $Date: 2008/08/19 14:10:04 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.60 2008/07/10 12:42:54 lutscher Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.61 2008/08/19 14:10:04 lutscher Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.61  2008/08/19 14:10:04  lutscher
+# | code clean-up
+# |
 # | Revision 1.60  2008/07/10 12:42:54  lutscher
 # | improved error handling in mix_rep_header_read_top_address_map
 # |
@@ -254,11 +257,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.60 2008/07/10 12:42:54 lutscher Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.61 2008/08/19 14:10:04 lutscher Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.60 $';
+my $thisrevision   =      '$Revision: 1.61 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -425,7 +428,7 @@ sub mix_rep_header_read_top_address_map()
                 $blocks{$name}->{name} = $name;        # remember the name also in the hash
                 $clone_start = 0;
                 if (!exists $block->{'::reg_clones'} or !exists $block->{'::clone_spacing'}) {
-                    $logger->warn( '__E_MIX_REPORT', "\tdefinition attribute is used, this requires also reg_clones and clone_spacing attributes; setting them to 1/0");
+                    $logger->warn( '__E_REPORT', "\tdefinition attribute is used, this requires also reg_clones and clone_spacing attributes; setting them to 1/0");
                     $blocks{$name}->{reg_clones} = 1;
                     $blocks{$name}->{size} = hex("0x0");
                 } else {
@@ -437,7 +440,7 @@ sub mix_rep_header_read_top_address_map()
                 $blocks{$name}->{reg_clones} += (exists($block->{'::reg_clones'}) ? $block->{'::reg_clones'} : 1);
                 # check whether the same size is defined as in previous occurence of $name
                 if (exists ($block->{'::clone_spacing'}) and $blocks{$name}->{size} != hex('0x' . $block->{'::clone_spacing'})) {
-                    my $msg = "For $name different size (::clone_spacing " . $block->{'::clone_spacing'};
+                    my $msg = " For $name different size (::clone_spacing " . $block->{'::clone_spacing'};
                     $msg .= ") defined as for previous occurence (" . $blocks{$name}->{size} . ")!";
                     $logger->error('__E_REPORT_FILE', $msg);
                 }
@@ -488,7 +491,7 @@ sub mix_rep_vcty_read_device_ini($)
     # Open device.ini file
     my $fh = new FileHandle $file, 'r';
     if (! defined($fh)) {
-        $logger->error( '__E_REPORT_FILE', "Cannot open file: $file!" );
+        $logger->error( '__E_REPORT_FILE', " Cannot open file: $file!" );
         exit(2);
     }
     while (my $line = $fh->getline()) {
@@ -551,7 +554,7 @@ sub mix_rep_header_open_files($$$$)
     my $fh = new FileHandle $file, "w";
 
     if (! defined($fh)) {
-        print("Error: Couldn't open file `$file'!");
+        $logger->error( '__E_REPORT', " Couldn't open file `$file'!");
         exit(2);
     }
     # prevent multiple includes
@@ -676,7 +679,7 @@ sub mix_rep_header($;$)
             my $o_domain = $href->{domain};
             my $domain_name = $o_domain->name();
             if (! exists($blocks->{$domain_name})) {
-                print("Error: Couldn't find `$domain_name' in the top address map!");
+                $logger->error("__E_REPORT", " Couldn't find `$domain_name' in the top address map!");
                 next;
             }
             my $fh = mix_rep_header_open_files($domain_name, $blocks, $rTypes, $vcty);
@@ -763,7 +766,7 @@ sub mix_rep_per_open_files($$$)
     my $fh = new FileHandle $file, "w";
 
     if (! defined($fh)) {
-        print("Error: Couldn't open file `$file'!");
+        $logger->error("__E_REPORT"," Couldn't open file `$file'!");
         exit(2);
     }
 
@@ -836,7 +839,7 @@ sub mix_rep_per($;$)
             my $o_domain = $href->{domain};
             my $domain_name = $o_domain->name();
             if (! exists($blocks->{$domain_name})) {
-                print("Error: Couldn't find `$domain_name' in the top address map!");
+                $logger->error("__E_REPORT"," Couldn't find `$domain_name' from register-master in the top address map!");
                 next;
             }
             my $fh = mix_rep_per_open_files($domain_name, $blocks, $global_base_address);
@@ -929,7 +932,7 @@ sub mix_rep_perl_open_files($$)
     my $fh = new FileHandle $file, "w";
 
     if (! defined($fh)) {
-        print("Error: Couldn't open file `$file'!");
+        $logger->error("__E_REPORT_FILE"," Couldn't open file `$file'!");
         exit(2);
     }
 
@@ -1042,7 +1045,7 @@ sub mix_rep_perl($;$)
             my $o_domain = $href->{domain};
             my $domain_name = $o_domain->name();
             if (! exists($blocks->{$domain_name})) {
-                print("Error: Couldn't find `$domain_name' in the top address map!");
+                $logger->error("__E_REPORT","Couldn't find `$domain_name' in the top address map!");
                 next;
             }
             my $fh = mix_rep_perl_open_files($domain_name, $blocks);
@@ -2357,11 +2360,11 @@ sub _mix_report_getport ($$) {
 	if ( scalar( @ports ) < 1 ) {
 		# Did not get port ???
 		$signal .= ' (S)';
-		$logger->warn( '__W_MIX_REPORT', "\tCould not map signal " . $signal .
+		$logger->warn( '__W_REPORT', "\tCould not map signal " . $signal .
 			" to portname for instance " . $link->{'::inst'} );
 	} elsif ( scalar( @ports ) > 1 ) {
 		# More than one port attached :-(
-		$logger->warn( '__W_MIX_REPORT', "\tMultiple ports connected to " . $signal .
+		$logger->warn( '__W_REPORT', "\tMultiple ports connected to " . $signal .
 			" at instance " . $link->{'::inst'} );
 		$signal = join( ',', @ports );
 	} else {
