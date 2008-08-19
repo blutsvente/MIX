@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.66 $                                         |
+# | Revision:   $Revision: 1.67 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2008/07/31 09:05:21 $                              |
+# | Date:       $Date: 2008/08/19 13:14:37 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.67  2008/08/19 13:14:37  lutscher
+# | added option e_vr_ad.regfile_name
+# |
 # | Revision 1.66  2008/07/31 09:05:21  lutscher
 # | added packing/unpacking feature for register-domains
 # |
@@ -182,9 +185,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.66 2008/07/31 09:05:21 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.67 2008/08/19 13:14:37 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.66 $';  
+my $thisrevision    =      '$Revision: 1.67 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -993,6 +996,7 @@ sub init ($) {
        'e_vr_ad' => {
                      'path'             => "./e", # output dir for e-code
                      'regfile_prefix'   => 'MIC',
+                     'regfile_name'     => "",    # if empty (default) will create name from concatenated domain names
                      'file_prefix'      => 'regdef',
                      'vplan_ref'        => '%EMPTY%', # for automatic coverage generation
                      'field_naming'     => '%lF',  # see 'clone'

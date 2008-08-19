@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.31 2008/07/07 14:23:13 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.32 2008/08/19 13:14:38 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.32  2008/08/19 13:14:38  lutscher
+#  added option e_vr_ad.regfile_name
+#
 #  Revision 1.31  2008/07/07 14:23:13  lutscher
 #  added %B option for _clone_name()
 #
@@ -158,6 +161,7 @@ sub _gen_view_vr_ad {
 	my @lmixparams = (
                       'reg_shell.datawidth',
                       'reg_shell.e_vr_ad.regfile_prefix',
+                      'reg_shell.e_vr_ad.regfile_name',
                       'reg_shell.e_vr_ad.file_prefix',
                       'reg_shell.e_vr_ad.vplan_ref',    # if not %EMPTY%, will add coverage group with vplan_ref attribute
                       'reg_shell.e_vr_ad.cover_ign_read_to_write_only',
@@ -211,7 +215,12 @@ sub _gen_view_vr_ad {
 	};
 
     my $e_path = $this->global->{'path'};
-	my $e_filename = join("_",$this->global->{'file_prefix'}, map {$_->{name}} @ldomains).$this->global->{'suffix'};
+	my $e_filename;
+    if ($this->global->{'regfile_name'} eq "") {
+        $e_filename = join("_",$this->global->{'file_prefix'}, map {$_->{name}} @ldomains).$this->global->{'suffix'};
+    } else {
+        $e_filename = join("_",$this->global->{'file_prefix'}, $this->global->{'regfile_name'}) .$this->global->{'suffix'};
+    };
     my $fh_e_file = new FileHandle "${e_path}/$e_filename", 'w';
     if (! defined $fh_e_file) {
         logwarn("ERROR: could not open file \'${e_path}/$e_filename\' for writing");
