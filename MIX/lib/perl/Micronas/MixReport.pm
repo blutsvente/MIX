@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.61 $                                               |
+# | Revision:   $Revision: 1.62 $                                               |
 # | Author:     $Author: lutscher $                                                 |
-# | Date:       $Date: 2008/08/19 14:10:04 $                                                   |
+# | Date:       $Date: 2008/08/20 10:39:15 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.61 2008/08/19 14:10:04 lutscher Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.62 2008/08/20 10:39:15 lutscher Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.62  2008/08/20 10:39:15  lutscher
+# | fixed mix_rep_per_print
+# |
 # | Revision 1.61  2008/08/19 14:10:04  lutscher
 # | code clean-up
 # |
@@ -257,11 +260,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.61 2008/08/19 14:10:04 lutscher Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.62 2008/08/20 10:39:15 lutscher Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.61 $';
+my $thisrevision   =      '$Revision: 1.62 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -800,12 +803,15 @@ sub mix_rep_per_print($$$$$$$)
             $fh->printf("   $groupstr.long $addr--0x%06X\n", $group_length);
             push(@groups, sprintf("   $groupstr.long $addr--0x%06X\n", $group_length));
             $fh->write("   line.long  " . $reladdr . "  \"$rBlock->{$addr}->{regname}\"\n");
-            if (scalar(@{$rBlock->{$addr}->{fields}}) > 1) {
+            if (scalar(@{$rBlock->{$addr}->{fields}}) >= 1) {
                 #### write bitfields (there are more than one)
                 for (my $i = 0; $i <= $#{$rBlock->{$addr}->{fields}}; $i++) {
                     my $slice = $rBlock->{$addr}->{fields}->[$i];
                     my $digits = ceil($slice->{size} / 4) + 1;     # spaces for the debugger
                     $fh->write("      textline \"   \"\n");
+                    if (!exists $slice->{comment}) { # handle fields with ::view=N
+                        $slice->{comment} = "no descr. available";
+                    };
                     $slice->{comment} =~ s/[\n\r]+/ /g;
                     $slice->{comment} =~ s/"//g;
                     $fh->write("      bitfld.long  " . $reladdr . " " .
@@ -882,7 +888,7 @@ sub mix_rep_per($;$)
                     # ignore this bitfield
                     next if $thefields[$ii]{view} ne 'Y';
                     $thefields[$ii]{mode}    = $o_field->attribs->{'dir'};
-                    $thefields[$ii]{comment} = $o_field->attribs->{'comment'};
+                    $thefields[$ii]{comment} = $o_field->attribs->{'comment'} || "no descr. available";
                     $thefields[$ii]{comment} =~ s/\\.//g;
                     $thefields[$ii]{sync}    = $o_field->attribs->{'sync'};
                     if ($eh->get('report.per.debug')) {
