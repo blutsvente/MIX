@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.84 2008/08/18 09:54:03 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.85 2008/08/22 10:40:29 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.84 $                                  
+#  Revision      : $Revision: 1.85 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.85  2008/08/22 10:40:29  lutscher
+#  added reg_shell.domain_naming
+#
 #  Revision 1.84  2008/08/18 09:54:03  lutscher
 #  fixed bug in _gen_view_vgch_rs
 #
@@ -365,6 +368,7 @@ sub _vgch_rs_init {
                       'reg_shell.enforce_unique_addr',
                       'reg_shell.infer_reset_syncer',
                       'reg_shell.field_naming',
+                      'reg_shell.domain_naming',
                       'reg_shell.virtual_top_instance',
                       'reg_shell.workaround',
 					  'postfix.POSTFIX_PORT_OUT', 
@@ -394,7 +398,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.84 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.85 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -1734,7 +1738,7 @@ sub _vgch_rs_gen_hier {
     my @lchecks = ();
 
 	# instantiate top-level module
-	my $rs_name = $this->global->{'regshell_prefix'}."_".$o_domain->name;
+	my $rs_name = $this->global->{'regshell_prefix'}."_".$this->_gen_dname($o_domain);
    
 	my $top_inst = $this->_add_instance($rs_name, $this->global->{'virtual_top_instance'}, "Register shell for domain ".$o_domain->name);
 	$this->global('top_inst' => $top_inst);
@@ -1808,13 +1812,13 @@ sub _vgch_rs_gen_hier {
 	foreach $clock (sort keys %{$refclks}) {
 		if ($refclks->{$clock}->{'sync'}) {
 			# asynchronous config register module
-			$cfg_inst = $this->_add_instance(join("_",$this->global->{"regshell_prefix"}, $this->global->{'cfg_module_prefix'}, $o_domain->name, $clock), $top_inst, "Config register module for clock domain \'$clock\'");
+			$cfg_inst = $this->_add_instance(join("_",$this->global->{"regshell_prefix"}, $this->global->{'cfg_module_prefix'}, $this->_gen_dname($o_domain), $clock), $top_inst, "Config register module for clock domain \'$clock\'");
 			if (!exists($this->global->{'mcda_inst'})) { 
 				$ocp_sync = 1; # OCP target needs synchronizer if no MCDA is instantiated
 			};
 		} else {
 			# synchronous config register module
-			$cfg_inst = $this->_add_instance(join("_",$this->global->{"regshell_prefix"}, $this->global->{'cfg_module_prefix'}, $o_domain->name), $top_inst, "Config register module");
+			$cfg_inst = $this->_add_instance(join("_",$this->global->{"regshell_prefix"}, $this->global->{'cfg_module_prefix'}, $this->_gen_dname($o_domain)), $top_inst, "Config register module");
 			$sync_clock = $n;
 			if(exists($this->global->{'mcda_inst'})) {
 				_add_generic("N_SYNCDOM", $sync_clock, $mcda_inst);
@@ -2258,7 +2262,7 @@ sub _vgch_rs_add_static_connections {
 sub _vgch_rs_write_defines {
 	my ($this, $o_domain) = @_;
 	
-	my $rs_name = $this->global->{'regshell_prefix'}."_".$o_domain->name;
+	my $rs_name = $this->global->{'regshell_prefix'}."_".$this->_gen_dname($o_domain);
 	my $key;
 	my $fname = $this->global->{'path_include'} . "/${rs_name}.".$this->global->{'verilog_def'};
 	my @ltemp;
@@ -2277,7 +2281,7 @@ sub _vgch_rs_write_defines {
 	$this->_vgch_rs_gen_udc_header(\@ltemp);
 	print DHANDLE join("\n", @ltemp);
 	print DHANDLE "\n\n";
-	print DHANDLE "// useful defines for domain ".$o_domain->name."\n";
+	print DHANDLE "// useful defines for domain ".$this->_gen_dname($o_domain)."\n";
 	@ltemp=();
 	foreach $key (sort keys %{$this->global->{'hhdlconsts'}}) {
 		push @ltemp,"\`define ${key} ".$this->global->{'hhdlconsts'}->{$key};
@@ -2296,7 +2300,7 @@ sub _vgch_rs_write_defines {
 sub _vgch_rs_write_backdoor_paths {
 	my ($this, $o_domain) = @_;
 	
-	my $rs_name = $this->global->{'regshell_prefix'}."_".$o_domain->name;
+	my $rs_name = $this->global->{'regshell_prefix'}."_".$this->_gen_dname($o_domain);
 	my $key;
 	my $fname = ${rs_name}."_backdoor_paths.dat";
 	my @ltemp;
@@ -2309,7 +2313,7 @@ sub _vgch_rs_write_backdoor_paths {
 	$this->_vgch_rs_gen_udc_header(\@ltemp);
 	print DHANDLE join("\n", @ltemp);
 	print DHANDLE "\n\n";
-	print DHANDLE "// backdoor-paths for writable registers for domain ".$o_domain->name."\n";
+	print DHANDLE "// backdoor-paths for writable registers for domain ".$this->_gen_dname($o_domain)."\n";
 	@ltemp=();
 	foreach $key (sort {$a <=> $b} keys %{$this->global->{'hbackdoorpaths'}}) {
 		push @ltemp, "'h"._val2hex($addr_msb+1, $key)." ".$this->global->{'hbackdoorpaths'}->{$key};
@@ -2632,6 +2636,12 @@ sub _gen_fname {
 	return $name;
 };
 
+# function to generate the domain name in the output views
+sub _gen_dname {
+    my ($this, $o_domain) = @_;
+    return _clone_name($this->global->{'domain_naming'}, 99, $o_domain->{'id'}, $o_domain->name)
+};
+
 # function to generate a vector range
 sub _gen_vector_range {
 	my($this, $msb, $lsb) = @_;
@@ -2673,7 +2683,7 @@ sub _gen_unique_signal_top {
     my ($this, $signal_name, $o_domain) = @_;
     
     if ($this->global->{'virtual_top_instance'} ne "testbench") {
-        return join("_", $o_domain->name, $signal_name);
+        return join("_", $this->_gen_dname($o_domain), $signal_name);
     } else {
         return $signal_name;
     };

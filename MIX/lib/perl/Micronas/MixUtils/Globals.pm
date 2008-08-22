@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.67 $                                         |
+# | Revision:   $Revision: 1.68 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2008/08/19 13:14:37 $                              |
+# | Date:       $Date: 2008/08/22 10:40:29 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.68  2008/08/22 10:40:29  lutscher
+# | added reg_shell.domain_naming
+# |
 # | Revision 1.67  2008/08/19 13:14:37  lutscher
 # | added option e_vr_ad.regfile_name
 # |
@@ -185,9 +188,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.67 2008/08/19 13:14:37 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.68 2008/08/22 10:40:29 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.67 $';  
+my $thisrevision    =      '$Revision: 1.68 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -990,7 +993,8 @@ sub init ($) {
        'enforce_unique_addr'  => 1,        # if 1, allow only one register per address
        'infer_reset_syncer'   => 0,        # if 1, instantiates a reset synchronizer for asynchronous reset
        'field_naming'         => '%F',     # naming scheme for fields, see 'clone'
-       'reg_naming'	      => '%R',
+       'reg_naming'	          => '%R',     # naming scheme for registers, see 'clone'
+       'domain_naming'        => '%D',     # naming scheme for domains, see 'clone'
        'virtual_top_instance' => "testbench", # name of top-level instance where register-shell is instantiated (usually not used)
        # parameters for e_vr_ad view
        'e_vr_ad' => {
@@ -1015,7 +1019,7 @@ sub init ($) {
        # the naming goes according to placeholders:
        # %[<u|l>]<D|R|F|B[<d>]N>
        # D domain name
-       # R original name of register
+       # R original name of register (only available in reg_naming and field_naming)
        # F original name of field (only available in field_naming)
        # B block name (only available in field_naming)
        # N decimal number; can be preceded by a number to fix the number of digits used in representation
