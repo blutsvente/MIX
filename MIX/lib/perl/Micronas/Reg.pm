@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.75 2008/08/22 10:40:29 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.76 2008/08/25 11:32:05 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.76  2008/08/25 11:32:05  lutscher
+#  fixed illegal object method call line 1479
+#
 #  Revision 1.75  2008/08/22 10:40:29  lutscher
 #  added reg_shell.domain_naming
 #
@@ -285,7 +288,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.75 $ ';  #'
+our($VERSION) = '$Revision: 1.76 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -1476,7 +1479,7 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
 
     foreach $domain (@{$this->domains}){#iterate through domains
 	$o_domain=$domain->{'domain'};
-	$domainname=_clone_name($eh->get('reg_shell.domain_naming'),99,$o_domain->id,$o_domain->{'name'}); # apply domain-naming rule
+	$domainname=_clone_name($eh->get('reg_shell.domain_naming'),99,$o_domain->{'id'},$o_domain->{'name'}); # apply domain-naming rule
 	
 	foreach $o_register (@{$o_domain->{'regs'}}){#iterate through register
 	    
