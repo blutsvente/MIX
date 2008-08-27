@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.62 $                                               |
+# | Revision:   $Revision: 1.63 $                                               |
 # | Author:     $Author: lutscher $                                                 |
-# | Date:       $Date: 2008/08/20 10:39:15 $                                                   |
+# | Date:       $Date: 2008/08/27 12:54:40 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.62 2008/08/20 10:39:15 lutscher Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.63 2008/08/27 12:54:40 lutscher Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.63  2008/08/27 12:54:40  lutscher
+# | some failsafe code for reading the top-level sheet
+# |
 # | Revision 1.62  2008/08/20 10:39:15  lutscher
 # | fixed mix_rep_per_print
 # |
@@ -260,11 +263,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.62 2008/08/20 10:39:15 lutscher Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.63 2008/08/27 12:54:40 lutscher Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.62 $';
+my $thisrevision   =      '$Revision: 1.63 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -430,7 +433,7 @@ sub mix_rep_header_read_top_address_map()
             if (! exists($blocks{$name})) {            # first occurence of $name
                 $blocks{$name}->{name} = $name;        # remember the name also in the hash
                 $clone_start = 0;
-                if (!exists $block->{'::reg_clones'} or !exists $block->{'::clone_spacing'}) {
+                if (!exists $block->{'::reg_clones'} or $block->{'::reg_clones'} eq "" or !exists $block->{'::clone_spacing'}) {
                     $logger->warn( '__E_REPORT', "\tdefinition attribute is used, this requires also reg_clones and clone_spacing attributes; setting them to 1/0");
                     $blocks{$name}->{reg_clones} = 1;
                     $blocks{$name}->{size} = hex("0x0");
@@ -440,7 +443,7 @@ sub mix_rep_header_read_top_address_map()
                 };
             } else {                                   # more instances of $name
                 $clone_start = $blocks{$name}->{reg_clones};
-                $blocks{$name}->{reg_clones} += (exists($block->{'::reg_clones'}) ? $block->{'::reg_clones'} : 1);
+                $blocks{$name}->{reg_clones} += (exists($block->{'::reg_clones'}) and $block->{'::reg_clones'} ne "" ? $block->{'::reg_clones'} : 1);
                 # check whether the same size is defined as in previous occurence of $name
                 if (exists ($block->{'::clone_spacing'}) and $blocks{$name}->{size} != hex('0x' . $block->{'::clone_spacing'})) {
                     my $msg = " For $name different size (::clone_spacing " . $block->{'::clone_spacing'};
@@ -449,7 +452,7 @@ sub mix_rep_header_read_top_address_map()
                 }
             }
             ###!!!! replace client names from the sheet by the ones from mix config file
-            if (exists ($block->{'::reg_clones'}) and $block->{'::reg_clones'} > 1) {
+            if (exists ($block->{'::reg_clones'}) and $block->{'::reg_clones'} ne "" and $block->{'::reg_clones'} > 1) {
                 for (my $i = $clone_start; $i < $blocks{$name}->{reg_clones}; $i++) {
                     my $client = $name;
                     if (exists($chref_inst->{lc($client)})) {
