@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.63 $                                               |
+# | Revision:   $Revision: 1.64 $                                               |
 # | Author:     $Author: lutscher $                                                 |
-# | Date:       $Date: 2008/08/27 12:54:40 $                                                   |
+# | Date:       $Date: 2008/08/28 13:49:24 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.63 2008/08/27 12:54:40 lutscher Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.64 2008/08/28 13:49:24 lutscher Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.64  2008/08/28 13:49:24  lutscher
+# | uppercase for client names; changed mix_rep_perl_open according to R.Winter request
+# |
 # | Revision 1.63  2008/08/27 12:54:40  lutscher
 # | some failsafe code for reading the top-level sheet
 # |
@@ -263,11 +266,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.63 2008/08/27 12:54:40 lutscher Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.64 2008/08/28 13:49:24 lutscher Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.63 $';
+my $thisrevision   =      '$Revision: 1.64 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -579,7 +582,8 @@ sub mix_rep_header_open_files($$$$)
     }
 
     for (my $i = 0; $i < $blocks->{$name}->{reg_clones}; $i++) {
-        my $basename =  $blocks->{$name}->{clients}->[$i] . '_BASE';
+        # transform domain name to uppercase
+        my $basename =  uc($blocks->{$name}->{clients}->[$i]) . '_BASE';
         if ($vcty) {
             $basename = mix_rep_header_check_name($blocks->{$name}->{clients}->[$i], $rTypes) . '_BASE';
         }
@@ -795,7 +799,7 @@ sub mix_rep_per_print($$$$$$$)
         # Write base address
         my $ad = hex($global_base_address) + $blocks->{$name}->{base_addr}->[$i];
         $fh->printf("base d:0x%08X\n", $ad);
-        $fh->printf("tree \"%s\"\n", $blocks->{$name}->{clients}->[$i]);
+        $fh->printf("tree \"%s\"\n", uc($blocks->{$name}->{clients}->[$i]));
 
         foreach my $addr (sort keys %{$rBlock}) {
             $addr = (split(/_/, $addr))[0];
@@ -947,7 +951,7 @@ sub mix_rep_perl_open_files($$)
 
     # Write base address
     $fh->print(<<PMHEADER);
-package VGCH::$newname;
+package test::REGS::$newname;
 
 require Exporter;
 use strict;
