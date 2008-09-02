@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.59 $                                          |
-# | Author:     $Author: herburger $                                         |
-# | Date:       $Date: 2008/07/09 12:00:26 $                              |
+# | Revision:   $Revision: 1.60 $                                          |
+# | Author:     $Author: lutscher $                                         |
+# | Date:       $Date: 2008/09/02 07:13:05 $                              |
 # |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.60  2008/09/02 07:13:05  lutscher
+# | improved error handling
+# |
 # | Revision 1.59  2008/07/09 12:00:26  herburger
 # | added xml support to mix_utils_io_create path
 # |
@@ -175,11 +178,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.59 2008/07/09 12:00:26 herburger Exp $';#'
+my $thisid          =      '$Id: IO.pm,v 1.60 2008/09/02 07:13:05 lutscher Exp $';#'
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.59 $'; #'
+my $thisrevision    =      '$Revision: 1.60 $'; #'
 
-# Revision:   $Revision: 1.59 $
+# Revision:   $Revision: 1.60 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -610,6 +613,8 @@ sub open_infile($$$$){
     my $xsheetname = shift;
     my $flags = shift;
 
+    if (!defined $file) { $file = "" };
+
     if( $file=~ m/\.xls$/) { # read excel file
         return open_xls($file, $sheetname, $xsheetname, $flags);
     } elsif( $file=~ m/\.sxc$/) { # read soffice file
@@ -619,7 +624,7 @@ sub open_infile($$$$){
     } elsif( $file=~ m/\.xml$/) { # read XML database        
         return open_xml($file);
     } else {
-        $logger->error( '__E_FILE_EXTENSION', "\tUnknown file extension for file $file!" );
+        $logger->error( '__E_FILE_EXTENSION', "\tNo filename given or unknown file extension: \'$file\'" );
 		return undef;
     }
 } # End of open_infile
