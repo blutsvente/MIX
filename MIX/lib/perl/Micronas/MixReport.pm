@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.65 $                                               |
+# | Revision:   $Revision: 1.66 $                                               |
 # | Author:     $Author: lutscher $                                                 |
-# | Date:       $Date: 2008/09/02 07:12:54 $                                                   |
+# | Date:       $Date: 2008/09/02 08:43:23 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.65 2008/09/02 07:12:54 lutscher Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.66 2008/09/02 08:43:23 lutscher Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.66  2008/09/02 08:43:23  lutscher
+# | added report.cheader.use_view_attrib
+# |
 # | Revision 1.65  2008/09/02 07:12:54  lutscher
 # | view attribute has now no effect on c-header/perl/lauterbach file generation
 # |
@@ -269,11 +272,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.65 2008/09/02 07:12:54 lutscher Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.66 2008/09/02 08:43:23 lutscher Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.65 $';
+my $thisrevision   =      '$Revision: 1.66 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -370,11 +373,11 @@ sub mix_reg_report($$)
         mix_rep_reglist($r_i2cin);
     }
     if ( $reports =~ m/\bheader\b/io ) {
-        $logger->info('__I_REPORT', "\tReport c header files");
+        $logger->info('__I_REPORT', "\tReport C-header files");
         mix_rep_header($r_i2cin);
     }
     if ( $reports =~ m/\bvctyheader\b/io ) {
-        $logger->info('__I_REPORT', "\tReport c header files for vcty");
+        $logger->info('__I_REPORT', "\tReport C-header files for vcty");
         mix_rep_header($r_i2cin, 'vcty');
     }
     if ( $reports =~ m/\bper\b/io ) {
@@ -727,8 +730,10 @@ sub mix_rep_header($;$)
                     $thefields[$ii]{lsb}     = $o_field->attribs->{'lsb'};
                     $thefields[$ii]{view}    = $o_field->attribs->{'view'}; # N: no documentation  Y: bitfield to document
                     # ignore this bitfield
-                    # ##LU changed: view now only used to exclude stuff from documentation
-                    # next if $thefields[$ii]{view} ne 'Y';
+                    if(lc($thefields[$ii]{view}) ne 'y' and $eh->get('report.cheader.use_view_attrib')) {
+                        $logger->info("__I_REPORT", "\texcluding field ".lc($o_field->name)." from C-header because view attribute is set to N");
+                        next;
+                    };
                     $thefields[$ii]{mode}    = $o_field->attribs->{'dir'};
                     $thefields[$ii]{comment} = $o_field->attribs->{'comment'};
                     $thefields[$ii]{comment} =~ s/\\.//g;

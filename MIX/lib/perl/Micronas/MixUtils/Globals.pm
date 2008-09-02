@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.68 $                                         |
+# | Revision:   $Revision: 1.69 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2008/08/22 10:40:29 $                              |
+# | Date:       $Date: 2008/09/02 08:43:23 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.69  2008/09/02 08:43:23  lutscher
+# | added report.cheader.use_view_attrib
+# |
 # | Revision 1.68  2008/08/22 10:40:29  lutscher
 # | added reg_shell.domain_naming
 # |
@@ -188,9 +191,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.68 2008/08/22 10:40:29 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.69 2008/09/02 08:43:23 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.68 $';  
+my $thisrevision    =      '$Revision: 1.69 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1662,39 +1665,66 @@ sub init ($) {
        'out' => '',
     };
     
-	$this->{'cfg'}{'report'} = {
-		'path'	=> '.',
-		'delta'	=> '',		# If set, create a diff file instead of a new output
-		'portlist'	=> {
-			'name'	=>	'',	# Define report file name; 
-							# 	if empty take name from $EH{out} ....
-							#   INST := name of last instance + _portlist.mif
-							#	ENTY := name of last entity + _portlist.mif
-			'ext'	=>	'mif',
-			'data'	=>	'port', # Print out port names, not signal names!
-			'split' =>	'external::extc,instance',
-					# Generate seperate portlist for
-					#	external : if column ::external has content
-					#		external::foo : use column ::foo as trigger
-					#	instance : generate a table for each instance
-					#	file[::(INST|ENTY)]
-					#			 : generate a file for each instance(*)/entity
-					#				combine with 'name' = INST or ENTY!!
-			'format' => { # Overwrite the built in format (t.b.d.)
-				'plist' => '',
-				'elist' => '',
-			},
-			'sort' =>	'input', # or alpha or ::col ....
-					# pinlist sort order. See portmapsort
-			'comments' => '0,striphash',
-					# Limit the number of comment lines to N; 0 -> unlimited
-					# To switch off all, set report.portlist.comments=''
-					# striphash  := remove leading # signs from the comments
-		},
-		'reglist'	=> {
-			'crossref' => 'yes',	# Print crossrefs, set to "no"
-		}, 				
-	};
+	#
+    # parameters for reporting functions (now also called register views), e.g. for C-Headers, in MixReport.pm
+    #
+	$this->{'cfg'}{'report'} = 
+      {
+       'path'	=> '.',
+       'delta'	=> '',		# If set, create a diff file instead of a new output
+       'portlist'	=> {
+                        'name'	=>	'',	# Define report file name; 
+                        # 	if empty take name from $EH{out} ....
+                        #   INST := name of last instance + _portlist.mif
+                        #	ENTY := name of last entity + _portlist.mif
+                        'ext'	=>	'mif',
+                        'data'	=>	'port', # Print out port names, not signal names!
+                        'split' =>	'external::extc,instance',
+                        # Generate seperate portlist for
+                        #	external : if column ::external has content
+                        #		external::foo : use column ::foo as trigger
+                        #	instance : generate a table for each instance
+                        #	file[::(INST|ENTY)]
+                        #			 : generate a file for each instance(*)/entity
+                        #				combine with 'name' = INST or ENTY!!
+                        'format' => { # Overwrite the built in format (t.b.d.)
+                                     'plist' => '',
+                                     'elist' => '',
+                                    },
+                        'sort' =>	'input', # or alpha or ::col ....
+                        # pinlist sort order. See portmapsort
+                        'comments' => '0,striphash',
+                        # Limit the number of comment lines to N; 0 -> unlimited
+                        # To switch off all, set report.portlist.comments=''
+                        # striphash  := remove leading # signs from the comments
+                       },
+       'reglist'	=> {
+                        'crossref' => 'yes',	# Print crossrefs, set to "no"
+                       },
+       # ##LU these parameters were previously not declared by Mathias, will try to update this once I know their meaning
+       'cheader'   => {
+                       'address'     => {
+                                         'map' => "" # filename of top-address-map sheet
+                                        },
+                       'instance'    => "",
+                       'transform'   => {},          # transformation regexps for names appearing in the header file
+                       'definition'  => "",
+                       'device'      => {
+                                         'ini' => "" # filename for device ini file
+                                        },
+                       'use_view_attrib' => 1,       # if 1, will validate the ::view attribute of registers
+                       'debug'       => 0            # set to 1 to enable debug messages
+                      },
+       'lauterbach'   => {
+                          'base_address' => 0
+                         },         
+       'per'   => {
+                   'debug' => 0
+                  },         
+       'perl'   => {
+                    'debug' => 0
+                   }
+      };
 
 	#
 	# Generate some data dynamically
