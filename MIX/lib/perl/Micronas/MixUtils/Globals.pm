@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.69 $                                         |
+# | Revision:   $Revision: 1.70 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2008/09/02 08:43:23 $                              |
+# | Date:       $Date: 2008/09/02 14:16:10 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.70  2008/09/02 14:16:10  lutscher
+# | fixed type of default for report.cheader parameter
+# |
 # | Revision 1.69  2008/09/02 08:43:23  lutscher
 # | added report.cheader.use_view_attrib
 # |
@@ -191,9 +194,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.69 2008/09/02 08:43:23 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.70 2008/09/02 14:16:10 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.69 $';  
+my $thisrevision    =      '$Revision: 1.70 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1706,9 +1709,9 @@ sub init ($) {
                        'address'     => {
                                          'map' => "" # filename of top-address-map sheet
                                         },
-                       'instance'    => "",
+                       'instance'    => {},
                        'transform'   => {},          # transformation regexps for names appearing in the header file
-                       'definition'  => "",
+                       'definition'  => {},
                        'device'      => {
                                          'ini' => "" # filename for device ini file
                                         },
