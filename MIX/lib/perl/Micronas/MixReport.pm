@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.64 $                                               |
+# | Revision:   $Revision: 1.65 $                                               |
 # | Author:     $Author: lutscher $                                                 |
-# | Date:       $Date: 2008/08/28 13:49:24 $                                                   |
+# | Date:       $Date: 2008/09/02 07:12:54 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.64 2008/08/28 13:49:24 lutscher Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.65 2008/09/02 07:12:54 lutscher Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.65  2008/09/02 07:12:54  lutscher
+# | view attribute has now no effect on c-header/perl/lauterbach file generation
+# |
 # | Revision 1.64  2008/08/28 13:49:24  lutscher
 # | uppercase for client names; changed mix_rep_perl_open according to R.Winter request
 # |
@@ -266,11 +269,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.64 2008/08/28 13:49:24 lutscher Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.65 2008/09/02 07:12:54 lutscher Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.64 $';
+my $thisrevision   =      '$Revision: 1.65 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -353,7 +356,6 @@ sub mix_report() {
     $logger->error('__E_OPT', "  Option '-report $OPTVAL{report}->[0]' has been changed!");
     $logger->error('       ', "  Please use '-conf reg_shell.type=$OPTVAL{report}->[0]' instead");
     $logger->error('       ', "  or specify all views you want to generate in the mix.cfg file!");
-
 };
 
 # generate reports/views for the register object (this is here and not in the Reg packages because formerly maintained by Mathias);
@@ -380,7 +382,7 @@ sub mix_reg_report($$)
         mix_rep_per($r_i2cin);
     }
     if ( $reports =~ m/\bvctyper\b/io ) {
-        $logger->info('__I_REPORT', "\tReport Lauterbach peripheral files");
+        $logger->info('__I_REPORT', "\tReport Lauterbach peripheral files for vcty");
         mix_rep_per($r_i2cin, 'vcty');
     }
     if ( $reports =~ m/\bperl\b/io ) {
@@ -388,7 +390,7 @@ sub mix_reg_report($$)
         mix_rep_perl($r_i2cin);
     }
     if ( $reports =~ m/\bvctyperl\b/io ) {
-        $logger->info('__I_REPORT', "\tReport c header files for vcty");
+        $logger->info('__I_REPORT', "\tReport Perl package files for vcty");
         mix_rep_perl($r_i2cin, 'vcty');
     }
 }
@@ -410,6 +412,9 @@ sub mix_rep_header_read_top_address_map()
     # Open top address file and retrieve the desired sheet (Sheet1 the only one)
     my $type = 'default';
     my $conn = open_infile($files, 'Sheet1', '', $eh->get($type . '.req') . ',hash');
+    if (!defined($conn)) {
+        $logger->error("__E_REPORT_FILE", "\tCould not read top-address-map sheet, filename must be supplied via parameter report.cheader.address.map");
+    };
     # Convert to hashes ...
     foreach my $sheetname (keys %$conn) {
         if ($sheetname eq 'Sheet1') {
@@ -449,7 +454,7 @@ sub mix_rep_header_read_top_address_map()
                 $blocks{$name}->{reg_clones} += (exists($block->{'::reg_clones'}) and $block->{'::reg_clones'} ne "" ? $block->{'::reg_clones'} : 1);
                 # check whether the same size is defined as in previous occurence of $name
                 if (exists ($block->{'::clone_spacing'}) and $blocks{$name}->{size} != hex('0x' . $block->{'::clone_spacing'})) {
-                    my $msg = " For $name different size (::clone_spacing " . $block->{'::clone_spacing'};
+                    my $msg = "\tFor $name different size (::clone_spacing " . $block->{'::clone_spacing'};
                     $msg .= ") defined as for previous occurence (" . $blocks{$name}->{size} . ")!";
                     $logger->error('__E_REPORT_FILE', $msg);
                 }
@@ -500,7 +505,7 @@ sub mix_rep_vcty_read_device_ini($)
     # Open device.ini file
     my $fh = new FileHandle $file, 'r';
     if (! defined($fh)) {
-        $logger->error( '__E_REPORT_FILE', " Cannot open file: $file!" );
+        $logger->error( '__E_REPORT_FILE', "\tCannot open file: $file!" );
         exit(2);
     }
     while (my $line = $fh->getline()) {
@@ -563,7 +568,7 @@ sub mix_rep_header_open_files($$$$)
     my $fh = new FileHandle $file, "w";
 
     if (! defined($fh)) {
-        $logger->error( '__E_REPORT', " Couldn't open file `$file'!");
+        $logger->error( '__E_REPORT', "\tCould not open file `$file'!");
         exit(2);
     }
     # prevent multiple includes
@@ -689,7 +694,7 @@ sub mix_rep_header($;$)
             my $o_domain = $href->{domain};
             my $domain_name = $o_domain->name();
             if (! exists($blocks->{$domain_name})) {
-                $logger->error("__E_REPORT", " Couldn't find `$domain_name' in the top address map!");
+                $logger->error("__E_REPORT", "\tCould not find `$domain_name' in the top address map!");
                 next;
             }
             my $fh = mix_rep_header_open_files($domain_name, $blocks, $rTypes, $vcty);
@@ -722,7 +727,8 @@ sub mix_rep_header($;$)
                     $thefields[$ii]{lsb}     = $o_field->attribs->{'lsb'};
                     $thefields[$ii]{view}    = $o_field->attribs->{'view'}; # N: no documentation  Y: bitfield to document
                     # ignore this bitfield
-                    next if $thefields[$ii]{view} ne 'Y';
+                    # ##LU changed: view now only used to exclude stuff from documentation
+                    # next if $thefields[$ii]{view} ne 'Y';
                     $thefields[$ii]{mode}    = $o_field->attribs->{'dir'};
                     $thefields[$ii]{comment} = $o_field->attribs->{'comment'};
                     $thefields[$ii]{comment} =~ s/\\.//g;
@@ -776,7 +782,7 @@ sub mix_rep_per_open_files($$$)
     my $fh = new FileHandle $file, "w";
 
     if (! defined($fh)) {
-        $logger->error("__E_REPORT"," Couldn't open file `$file'!");
+        $logger->error("__E_REPORT","\tCould not open file `$file'!");
         exit(2);
     }
 
@@ -852,7 +858,7 @@ sub mix_rep_per($;$)
             my $o_domain = $href->{domain};
             my $domain_name = $o_domain->name();
             if (! exists($blocks->{$domain_name})) {
-                $logger->error("__E_REPORT"," Couldn't find `$domain_name' from register-master in the top address map!");
+                $logger->error("__E_REPORT","\tCould not find `$domain_name' from register-master in the top address map!");
                 next;
             }
             my $fh = mix_rep_per_open_files($domain_name, $blocks, $global_base_address);
@@ -893,7 +899,8 @@ sub mix_rep_per($;$)
                     $thefields[$ii]{lsb}     = $o_field->attribs->{'lsb'};
                     $thefields[$ii]{view}    = $o_field->attribs->{'view'}; # N: no documentation  Y: bitfield to document
                     # ignore this bitfield
-                    next if $thefields[$ii]{view} ne 'Y';
+                    # ##LU changed: view now only used to exclude stuff from documentation
+                    # next if $thefields[$ii]{view} ne 'Y';
                     $thefields[$ii]{mode}    = $o_field->attribs->{'dir'};
                     $thefields[$ii]{comment} = $o_field->attribs->{'comment'} || "no descr. available";
                     $thefields[$ii]{comment} =~ s/\\.//g;
@@ -945,7 +952,7 @@ sub mix_rep_perl_open_files($$)
     my $fh = new FileHandle $file, "w";
 
     if (! defined($fh)) {
-        $logger->error("__E_REPORT_FILE"," Couldn't open file `$file'!");
+        $logger->error("__E_REPORT_FILE","\tCould not open file `$file'!");
         exit(2);
     }
 
@@ -1058,7 +1065,7 @@ sub mix_rep_perl($;$)
             my $o_domain = $href->{domain};
             my $domain_name = $o_domain->name();
             if (! exists($blocks->{$domain_name})) {
-                $logger->error("__E_REPORT","Couldn't find `$domain_name' in the top address map!");
+                $logger->error("__E_REPORT","\tCould not find `$domain_name' in the top address map!");
                 next;
             }
             my $fh = mix_rep_perl_open_files($domain_name, $blocks);
