@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.76 2008/08/25 11:32:05 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.77 2008/10/17 14:02:12 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.77  2008/10/17 14:02:12  lutscher
+#  fixed map_ipxact with regards to reset values for fields
+#
 #  Revision 1.76  2008/08/25 11:32:05  lutscher
 #  fixed illegal object method call line 1479
 #
@@ -288,7 +291,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.76 $ ';  #'
+our($VERSION) = '$Revision: 1.77 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -1019,11 +1022,12 @@ sub _map_ipxact{
                 $registerreset=$register->first_child('spirit:reset')->first_child('spirit:value')->text if ($register->first_child('spirit:reset'));
                 $registerreset=Math::BigInt->new($registerreset)->as_int(); #for big integer number support
 		
+                # obtain the reset value of the field from the registers
                 $reset=unpack("B32", pack("N", $registerreset>>$position)); #get resetvalue of register in binary shifted by position
                 $reset=substr($reset,length($reset)-$fsize,$fsize); #field reset value
                 $reset=unpack("N", pack("B32", substr("0" x 32 . $reset, -32))); #bin->dec
-
                 $o_field->attribs(init=>$reset);
+                
                 $o_field->attribs(comment=>$description);
                 $o_field->attribs(dir=>$access{$field->first_child('spirit:access')->text});
                 $o_field->attribs(range=>$frange,size=>$fsize);
@@ -1036,7 +1040,7 @@ sub _map_ipxact{
                     my $parametername=$parameter->first_child('spirit:name')->text;
                     next if (grep($_ eq $parametername,@{$eh->get('xml.field_skipelements')}));
                     my $parametervalue=$parameter->first_child('spirit:value')->text;  
-                    ($parametername=$prettynames{$parametername})if (exists $prettynames{$parametername});
+                    ($parametername=$prettynames{$parametername}) if (exists $prettynames{$parametername});
 		    
                     #if access value equal write-1-to-clear write W1C to spec
                     if (lc($parametervalue) eq 'write-1-to-clear' and lc($parametername) eq 'access') {
@@ -1047,8 +1051,14 @@ sub _map_ipxact{
                         }
 
                     }
+                    # get reset value from field parameters
+                    if (lc($parametername) eq 'value') {
+                        $parametername = "init";
+                        $parametervalue = hex($parametervalue) if ($parametervalue =~ m/^0x[a-f0-9]+/i); # convert from hex if necessary
+                        $parametervalue = hex(substr $parametervalue, 1, length($parametervalue)-1) if ($parametervalue =~ m/^h[a-f0-9]+/i); # account for hex number format hxx
+                    };
                     $o_field->attribs($parametername=>$parametervalue);
-                }
+                };
 
                 #add remaining fieldattributes with default values
                 my %fieldattribs_default=%{$eh->get('i2c.field')};
