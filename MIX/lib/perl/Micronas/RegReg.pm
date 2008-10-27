@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegReg.pm,v 1.11 2008/07/31 09:05:21 lutscher Exp $
+#  RCSId: $Id: RegReg.pm,v 1.12 2008/10/27 13:18:13 lutscher Exp $
 ###############################################################################
 #
 #  Related Files :  RegDomain.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegReg.pm,v $
+#  Revision 1.12  2008/10/27 13:18:13  lutscher
+#  fixed bugs in packing and added packing.mode 32to16
+#
 #  Revision 1.11  2008/07/31 09:05:21  lutscher
 #  added packing/unpacking feature for register-domains
 #
@@ -253,29 +256,31 @@ sub to_document()
 # unpack 64-bit register to two 32-bit registers
 sub _pack_64to32 {
     my ($this) = shift;
-    my ($o_reg0, $o_reg1, $href, %hattribs, $o_field0, $o_field1);
+    my ($postfix_lo, $postfix_hi) = @_;
+    my ($o_reg0, $o_reg1, $href, %hattribs, $o_field0, $o_field1, $is_splitted);
     
     if ($this->attribs->{'size'} != 64) {
         _error("_pack_64to32() register size ",$this->attribs->{'size'}, " does not match requested packing mode");
     } else {
+        $is_splitted = 0;
         foreach $href (@{$this->fields}) {
             my $o_field = $href->{'field'};
             if ($href->{'pos'} < 32) {
                 if (!ref($o_reg0)) {
-                    $o_reg0 = Micronas::RegReg->new('name' => $this->name . "_lo", 'definition' => $this->definition . "_lo");
+                    $o_reg0 = Micronas::RegReg->new('name' => $this->name . $postfix_lo, 'definition' => $this->definition . $postfix_lo);
                     $o_reg0->attribs(%hattribs);
                     $o_reg0->attribs('size' => 32); # correct size
                 };
-                # check if field fits into lower 32-bit range
+                # check if field does not fit into lower 32-bit range
                 if ($href->{'pos'} + $o_field->attribs->{'size'} > 32) {
                     # split field  
                     _info("field \'", $o_field->name, "\' of register \'", $this->name, "\' is not 32-bit aligned, will be splitted");
-                    ($o_field0, $o_field1) = $o_field->_split_at(32);
+                    ($o_field0, $o_field1) = $o_field->_split_at(32-$href->{'pos'});
                     if (ref $o_field0 and ref $o_field1) {
                         $o_field0->reg($o_reg0);
                         $o_reg0->fields(field => $o_field0, pos => $href->{'pos'});
                         if (!ref($o_reg1)) {
-                            $o_reg1 = Micronas::RegReg->new(name => $this->name . "_hi", definition => $this->definition . "_hi");
+                            $o_reg1 = Micronas::RegReg->new(name => $this->name . $postfix_hi, definition => $this->definition . $postfix_hi);
                             $o_reg1->attribs(%hattribs);
                             $o_reg1->attribs('size' => 32); # correct size
                         };
@@ -291,8 +296,9 @@ sub _pack_64to32 {
                 };
             } else {
                 # fit field into upper 32-bit range
+                $is_splitted = 1;
                 if (!ref($o_reg1)) {
-                    $o_reg1 = Micronas::RegReg->new(name => $this->name . "_hi", definition => $this->definition . "_hi");
+                    $o_reg1 = Micronas::RegReg->new(name => $this->name . $postfix_hi, definition => $this->definition . $postfix_hi);
                     $o_reg1->attribs(%hattribs);
                     $o_reg1->attribs('size' => 32); # correct size
                 };
@@ -302,6 +308,69 @@ sub _pack_64to32 {
             };
         };
     };
+    # if the register fits into the lower range, use the old name w/o prefixing
+    if (!$is_splitted) { $o_reg0->name($this->name) };
+    return ($o_reg0, $o_reg1);
+};
+
+# unpack 32-bit register to two 16-bit registers
+sub _pack_32to16 {
+    my ($this) = shift;
+    my ($postfix_lo, $postfix_hi) = @_;
+    my ($o_reg0, $o_reg1, $href, %hattribs, $o_field0, $o_field1, $is_splitted);
+    
+    if ($this->attribs->{'size'} != 32) {
+        _error("_pack_32to16() register size ",$this->attribs->{'size'}, " does not match requested packing mode");
+    } else {
+        $is_splitted = 0;
+        foreach $href (@{$this->fields}) {
+            my $o_field = $href->{'field'};
+            if ($href->{'pos'} < 16) {
+                if (!ref($o_reg0)) {
+                    $o_reg0 = Micronas::RegReg->new('name' => $this->name . $postfix_lo, 'definition' => $this->definition . $postfix_lo);
+                    $o_reg0->attribs(%hattribs);
+                    $o_reg0->attribs('size' => 16); # correct size
+                };
+                # check if field does not fit into lower 16-bit range
+                if ($href->{'pos'} + $o_field->attribs->{'size'} > 16) {
+                    # split field  
+                    _info("field \'", $o_field->name, "\' of register \'", $this->name, "\' is not 16-bit aligned, will be splitted");
+                    ($o_field0, $o_field1) = $o_field->_split_at(16-$href->{'pos'});
+                    if (ref $o_field0 and ref $o_field1) {
+                        $o_field0->reg($o_reg0);
+                        $o_reg0->fields(field => $o_field0, pos => $href->{'pos'});
+                        $is_splitted = 1;
+                        if (!ref($o_reg1)) {
+                            $o_reg1 = Micronas::RegReg->new(name => $this->name . $postfix_hi, definition => $this->definition . $postfix_hi);
+                            $o_reg1->attribs(%hattribs);
+                            $o_reg1->attribs('size' => 16); # correct size
+                        };
+                        $o_field1->reg($o_reg1);
+                        $o_reg1->fields(field => $o_field1, pos => 0);
+                    } else {
+                        _error("failed to split field \'", $o_field->name, "\' of register \'", $this->name, "\'");
+                    };
+                } else {
+                    # add the old field to the new register
+                    $o_field->reg($o_reg0);
+                    $o_reg0->fields(field => $o_field, pos => $href->{'pos'});
+                };
+            } else {
+                # fit field into upper 16-bit range
+                $is_splitted = 1;
+                if (!ref($o_reg1)) {
+                    $o_reg1 = Micronas::RegReg->new(name => $this->name . $postfix_hi, definition => $this->definition . $postfix_hi);
+                    $o_reg1->attribs(%hattribs);
+                    $o_reg1->attribs('size' => 16); # correct size
+                };
+                # add the field to the new register
+                $o_field->reg($o_reg1);
+                $o_reg1->fields(field => $o_field, pos => $href->{'pos'} - 16);
+            };
+        };
+    };
+    # if the register fitted into the lower range, use the old name
+    if (!$is_splitted) { $o_reg0->name($this->name) };
     return ($o_reg0, $o_reg1);
 };
 

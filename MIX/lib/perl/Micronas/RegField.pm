@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegField.pm,v 1.4 2008/07/31 09:05:21 lutscher Exp $
+#  RCSId: $Id: RegField.pm,v 1.5 2008/10/27 13:18:12 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  RegReg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegField.pm,v $
+#  Revision 1.5  2008/10/27 13:18:12  lutscher
+#  fixed bugs in packing and added packing.mode 32to16
+#
 #  Revision 1.4  2008/07/31 09:05:21  lutscher
 #  added packing/unpacking feature for register-domains
 #
@@ -181,11 +184,12 @@ sub _split_at {
     my @lfield = ();
     my $last_pos = 0;
     my $id = 0;
-    my ($pos, %hattribs0, %hattribs1, $o_field, $postfix);
+    my ($split_at_pos, %hattribs0, %hattribs1, $o_field, $postfix);
 
     $postfix = "_s0";
     %hattribs0 = %{$this->attribs};
     if (($lpos[0] > $last_pos) and ($lpos[0] < $this->attribs->{'size'})) {
+        # create first new field with bits old_field[$lpos[0]: 0]
         $hattribs0{size}  = $lpos[0];
         $hattribs0{range} = "0..".(2**$lpos[0]-1);
         $hattribs0{init}  = $hattribs0{init} & (2**$lpos[0]-1);
@@ -198,15 +202,17 @@ sub _split_at {
                                            );
         push @lfield, $o_field;
         %hattribs1 = %{$this->attribs};
+
+        # create 2nd and other new fields
         for ( $id = 0; $id < scalar @lpos; $id += 1) {
-            $pos = $lpos[$id];
-            if (($pos > $last_pos) and ($pos < $this->attribs->{'size'})) {
+            $split_at_pos = $lpos[$id];
+            if (($split_at_pos > $last_pos) and ($split_at_pos < $this->attribs->{'size'})) {
                 $postfix = "_s" . ($id+1);
-                my $new_size = ($id == scalar(@lpos)-1 ? $this->attribs->{size} - $pos + 1 : $lpos[$id+1] - $pos);
+                my $new_size = ($id == scalar(@lpos)-1 ? $this->attribs->{size} - $split_at_pos : $lpos[$id+1] - $split_at_pos);
                 $hattribs1{size}  = $new_size;
                 $hattribs1{range} = "0..".(2**$new_size-1);
-                $hattribs1{init}  = ($hattribs1{init} >> $pos) & (2**$new_size-1);
-                $hattribs1{rec}   = ($hattribs1{rec} >> $pos) & (2**$new_size-1);
+                $hattribs1{init}  = ($hattribs1{init} >> $split_at_pos) & (2**$new_size-1);
+                $hattribs1{rec}   = ($hattribs1{rec} >> $split_at_pos) & (2**$new_size-1);
                 # create new field object, copying everything except the size
                 $o_field = Micronas::RegField->new (
                                                     name        => $this->name . $postfix, 
@@ -216,7 +222,7 @@ sub _split_at {
                                                    );
                 push @lfield, $o_field;
             };
-            $last_pos = $pos;
+            $last_pos = $split_at_pos;
         };
     };
     return @lfield;

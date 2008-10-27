@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegPacking.pm,v 1.1 2008/07/31 09:03:44 lutscher Exp $
+#  RCSId: $Id: RegPacking.pm,v 1.2 2008/10/27 13:18:12 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.1 $                                  
+#  Revision      : $Revision: 1.2 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegPacking.pm,v $
+#  Revision 1.2  2008/10/27 13:18:12  lutscher
+#  fixed bugs in packing and added packing.mode 32to16
+#
 #  Revision 1.1  2008/07/31 09:03:44  lutscher
 #  initial release
 #
@@ -120,7 +123,7 @@ sub _pack_regspace {
                     my $reg_offset =  $o_domain0->get_reg_address($o_reg0);
                     my ($offs0, $offs1);
                     # create new register objects
-                    ($o_reg1, $o_reg2) = $o_reg0->_pack_64to32();
+                    ($o_reg1, $o_reg2) = $o_reg0->_pack_64to32($eh->get('reg_shell.packing.postfix_reg_lo'), $eh->get('reg_shell.packing.postfix_reg_hi'));
                     
                     # link new register object and its fields into domain and addrmap
                     if (lc($endianness) eq "little") {
@@ -138,7 +141,33 @@ sub _pack_regspace {
                         $o_domain1->fields($o_reg2->fields);
                         $o_domain1->addrmap(reg => $o_reg2, offset => $offs1);
                     };
-                };    
+                };
+            } elsif ($mode eq "32to16") {
+                foreach $o_reg0 (sort {$o_domain0->get_reg_address($a) <=> $o_domain0->get_reg_address($b)} @{$o_domain0->regs}) {
+                    my $reg_offset =  $o_domain0->get_reg_address($o_reg0);
+                    my ($offs0, $offs1);
+                    # create new register objects
+                    ($o_reg1, $o_reg2) = $o_reg0->_pack_32to16($eh->get('reg_shell.packing.postfix_reg_lo'), $eh->get('reg_shell.packing.postfix_reg_hi'));
+                    
+                    # link new register object and its fields into domain and addrmap
+                    if (lc($endianness) eq "little") {
+                        ($offs0, $offs1) = ($reg_offset, $reg_offset + 2);
+                    } else {
+                        ($offs0, $offs1) = ($reg_offset + 2, $reg_offset);
+                    };
+                    if (ref($o_reg1) =~ m/Micronas::RegReg/) { 
+                        # $o_reg1->display(); # debug
+                        $o_domain1->regs($o_reg1);
+                        $o_domain1->fields($o_reg1->fields);
+                        $o_domain1->addrmap(reg => $o_reg1, offset => $offs0);
+                    };
+                    if (ref($o_reg2) =~ m/Micronas::RegReg/) { 
+                        # $o_reg2->display(); # debug
+                        $o_domain1->regs($o_reg2);
+                        $o_domain1->fields($o_reg2->fields);
+                        $o_domain1->addrmap(reg => $o_reg2, offset => $offs1);
+                    };
+                };
             } else {
                 _error("unknown packing-mode $mode");
             };

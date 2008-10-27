@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.70 $                                         |
+# | Revision:   $Revision: 1.71 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2008/09/02 14:16:10 $                              |
+# | Date:       $Date: 2008/10/27 13:18:13 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.71  2008/10/27 13:18:13  lutscher
+# | fixed bugs in packing and added packing.mode 32to16
+# |
 # | Revision 1.70  2008/09/02 14:16:10  lutscher
 # | fixed type of default for report.cheader parameter
 # |
@@ -194,9 +197,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.70 2008/09/02 14:16:10 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.71 2008/10/27 13:18:13 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.70 $';  
+my $thisrevision    =      '$Revision: 1.71 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1042,8 +1045,10 @@ sub init ($) {
        
        # parameters for packing *NEW*
        'packing' => {
-                     'mode'       => "none",     # packing mode, currently none|64to32
-                     'endianness' => "big"       # endianness of registers after packing big|little
+                     'mode'       =>  "none",    # packing mode, currently <none|64to32|32to16>
+                     'endianness' =>  "big",     # endianness of registers after packing big|little
+                     'postfix_reg_lo' => "_lo",  # postfix for name of lower portion of splitted register
+                     'postfix_reg_hi' => "_hi"   # postfix for name of lower portion of splitted register
                     },
        
        # legacy parameters, not needed anymore!
