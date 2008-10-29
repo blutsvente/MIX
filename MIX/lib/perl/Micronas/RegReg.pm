@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegReg.pm,v 1.12 2008/10/27 13:18:13 lutscher Exp $
+#  RCSId: $Id: RegReg.pm,v 1.13 2008/10/29 15:05:55 lutscher Exp $
 ###############################################################################
 #
 #  Related Files :  RegDomain.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegReg.pm,v $
+#  Revision 1.13  2008/10/29 15:05:55  lutscher
+#  some changes to avoid numbers>32 bit
+#
 #  Revision 1.12  2008/10/27 13:18:13  lutscher
 #  fixed bugs in packing and added packing.mode 32to16
 #
@@ -185,7 +188,8 @@ sub get_reg_init {
    my $res = 0;
    my $init;
    foreach $href (@{$this->fields}) {
-	   $init = $href->{'field'}->attribs->{'init'} & ((2** ($href->{'field'}->attribs->{'size'})) - 1);
+       my $mask = $href->{'field'}->attribs->{'size'} >= 32 ? 0xffffffff : ((2** ($href->{'field'}->attribs->{'size'})) - 1);
+	   $init = $href->{'field'}->attribs->{'init'} & $mask;
        $res |= $init << $href->{'pos'};
    };
    return $res;
@@ -212,10 +216,13 @@ sub _get_w1c_mask {
 	my ($this) = @_;
 	my $result=0;
 	my $href;
+ 
 	foreach $href (@{$this->fields}) {
 		my $o_field = $href->{'field'};
+        my $mask = $o_field->attribs->{'size'} >= 32 ? 0xffffffff : ((2** ($o_field->attribs->{'size'})) - 1);
+
 		if ($o_field->attribs->{'spec'} =~ m/w1c/i) {
-			$result |= ((2**$o_field->attribs->{'size'})-1) << $href->{'pos'};
+			$result |= $mask << $href->{'pos'};
 		};
 	};
 	return $result;
@@ -228,8 +235,9 @@ sub _get_read_only_mask {
 	my $href;
 	foreach $href (@{$this->fields}) {
 		my $o_field = $href->{'field'};
+        my $mask = $o_field->attribs->{'size'} >= 32 ? 0xffffffff : ((2** ($o_field->attribs->{'size'})) - 1);
 		if (lc($o_field->attribs->{'dir'}) eq "r")  {
-			$result |= ((2**$o_field->attribs->{'size'})-1) << $href->{'pos'};
+			$result |= $mask << $href->{'pos'};
 		};
 	};
 	return $result;
@@ -242,7 +250,6 @@ sub to_document()
 {
     my ($this) = @_;
     my $mode = "N";
-    my %hrattribs = %{$this->attribs};
 
     foreach my $href (@{$this->fields}) {
         if (uc($href->{field}->attribs->{view}) eq 'Y') {
@@ -308,7 +315,7 @@ sub _pack_64to32 {
             };
         };
     };
-    # if the register fits into the lower range, use the old name w/o prefixing
+    # if the register fits into the lower range, use the old name w/o postfixing
     if (!$is_splitted) { $o_reg0->name($this->name) };
     return ($o_reg0, $o_reg1);
 };
@@ -369,7 +376,7 @@ sub _pack_32to16 {
             };
         };
     };
-    # if the register fitted into the lower range, use the old name
+    # if the register fitted into the lower range, use the old name w/o postfixing
     if (!$is_splitted) { $o_reg0->name($this->name) };
     return ($o_reg0, $o_reg1);
 };
