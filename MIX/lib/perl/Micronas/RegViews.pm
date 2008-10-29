@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.85 2008/08/22 10:40:29 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.86 2008/10/29 15:26:05 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.85 $                                  
+#  Revision      : $Revision: 1.86 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.86  2008/10/29 15:26:05  lutscher
+#  added rs_configuration feature
+#
 #  Revision 1.85  2008/08/22 10:40:29  lutscher
 #  added reg_shell.domain_naming
 #
@@ -269,14 +272,14 @@ sub _gen_view_vgch_rs {
 
 	my ($o_field, $o_reg, $top_inst, $ocp_inst, $n_clocks, $cfg_inst, $clock);
 
-	# iterate through all register domains
+	# iterate through all register domains and generate one register-shell per domain
 	foreach $o_domain (@ldomains) {
 		_info("generating code for domain ",$o_domain->name);
 		$o_domain->display() if $this->global->{'debug'};
         $this->global('current_domain' => $o_domain);
 
 		# reset per-domain data structures
-        $this->global('hfnames' => {}, 'hclocks' => {}, 'hhdlconsts' => {}, 'hbackdoorpaths' => {});
+        $this->global('hfnames' => {}, 'hclocks' => {}, 'hhdlconsts' => {}, 'hbackdoorpaths' => {}, 'rs_configuration' => "");
         delete $this->global->{'embedded_reg'};
 		map {delete $this->global->{$_}} grep $_ =~ m/_inst$/i,keys %{$this->global};
 
@@ -344,7 +347,8 @@ sub _vgch_rs_init {
 				  'hhdlconsts'         => {},           # hash with HDL constants
                   'hbackdoorpaths'     => {},           # hash with backdoor path to registers (key is reg-offset)
                   'current_domain'     => {},           # store currently processed domain object
-                  'hparams'            => {}            # top-level parameters, needed if reg-shell is embedded in bigger hierarchy
+                  'hparams'            => {},           # top-level parameters, needed if reg-shell is embedded in bigger hierarchy
+                  'rs_configuration'   => ""            # type of register-shell configuration
 				 );
 
 	# import regshell.<par> parameters from MIX package to class data; user can change these parameters in mix.cfg
@@ -398,7 +402,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.85 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.86 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -1556,12 +1560,14 @@ wire wr_p;
 wire wr_done_p;
 wire rd_p;
 wire rd_done_p;
-reg  int_trans_done;
 wire [".($addr_msb-$addr_lsb).":0] iaddr;
 wire addr_overshoot;
 wire trans_done_p;
 reg  ts_del_p;
 ");
+    if ($this->global->{'rs_configuration'} ne "scd-sync") {
+        push @$lref_decl, "reg int_trans_done;";
+    };
 	if ($nusr>0) { # if there are USR fields
 		push @$lref_decl, split("\n","
 reg  fwd_txn;
@@ -1661,8 +1667,8 @@ function onehot (input [".($nusr-1).":0] vec);
   integer i,j;
   begin
      j = 0;
-	 for (i=0; i<$nusr; i=i+1) j = j + vec[i] ? 1 : 0;
-	 onehot = (j==1) ? 1 : 0;
+     for (i=0; i<$nusr; i=i+1) j = j + vec[i] ? 1 : 0;
+     onehot = (j==1) ? 1 : 0;
   end
 endfunction
   
@@ -1672,7 +1678,7 @@ endfunction
 	push @ltemp, ("",
 				 "always @(posedge ". $this->_gen_clock_name($clock)." or negedge $int_rst_n) begin",
 				 $ind."if (~$int_rst_n) begin", 
-				 $ind x 2 ."int_trans_done <= 0;",
+				 $this->global->{'rs_configuration'} ne "scd-sync" ? $ind x 2 ."int_trans_done <= 0;" : "",
 				 $ind x 2 ."ts_del_p       <= 0;"
 				);
     if ($multicyc>0) {
@@ -1688,11 +1694,10 @@ endfunction
 	};
 
     push @ltemp, (
-				  $ind x 2 ."if (trans_done_p)",
-				  $ind x 3 ."int_trans_done <= ~int_trans_done;",
+				  $this->global->{'rs_configuration'} ne "scd-sync" ? ($ind x 2 ."if (trans_done_p)", $ind x 3 ."int_trans_done <= ~int_trans_done;") : "",
 				  $ind."end",
 				  "end",
-				  "assign trans_done_o = int_trans_done;"
+				  "assign trans_done_o = " . ($this->global->{'rs_configuration'} ne "scd-sync" ? "int_trans_done;" : "trans_done_p;")
 				 );
 	 
     # function for conditional instantiation of Flip-Flops
@@ -1758,6 +1763,9 @@ sub _vgch_rs_gen_hier {
 	_add_generic("P_DWIDTH", $this->global->{'datawidth'}, $ocp_inst);
 	_add_generic("P_AWIDTH", $this->global->{'addrwidth'}, $ocp_inst);
     _add_generic("P_MIX_SIG", $this->global->{'mix_signature'}, $ocp_inst);
+    if ($this->global->{'rs_configuration'} eq "scd-sync") {       
+        _add_generic("hs_type", "\"ACTHIGH\"", $ocp_inst);
+    };
 
 	# _add_generic_value("P_TOCNT_WIDTH", 10, "P_TOCNT_WIDTH", $ocp_inst); # timeout counter width
 	if(exists($this->global->{'embedded_reg'})) {
@@ -1827,15 +1835,24 @@ sub _vgch_rs_gen_hier {
 		# link clock domain to config register module
 		$refclks->{$clock}->{'cfg_inst'} = $cfg_inst; # store in global->hclocks
 		_add_generic("sync", $refclks->{$clock}->{'sync'}, $cfg_inst);
-
-		# instantiate synchronizer modules (need unique instance names because MIX has flat namespace)
-		$sg_inst = $this->_add_instance_unique("sync_generic", $cfg_inst, "Synchronizer for trans_start signal");
-		$refclks->{$clock}->{'sg_inst'} = $sg_inst; # store in global->hclocks
-		_add_generic("kind", 2, $sg_inst);
-		_add_generic_value("sync", 0, "sync", $sg_inst);
-		_add_generic("act", 1, $sg_inst);
-		_add_generic("rstact", 0, $sg_inst);
-		_add_generic("rstval", 0, $sg_inst);
+       
+        # instantiate synchronizer for trans_start input (need unique instance names because MIX has flat namespace)
+        $sg_inst = $this->_add_instance_unique("sync_generic", $cfg_inst, "Synchronizer for trans_start signal");
+        $refclks->{$clock}->{'sg_inst'} = $sg_inst; # store in global->hclocks
+        if ($this->global->{'rs_configuration'} ne "scd-sync") {       
+            _add_generic("kind", 2, $sg_inst);
+            _add_generic_value("sync", 0, "sync", $sg_inst);
+        } else {
+            # in configuration scd-sync, the synchronizer is set to bypass-mode and of type pulse
+            _add_generic("kind", 0, $sg_inst);
+            _add_generic("sync", 0, $sg_inst);
+        };
+        _add_generic("act", 1, $sg_inst);
+        _add_generic("rstact", 0, $sg_inst);
+        _add_generic("rstval", 0, $sg_inst);
+        push @lgen_filter, $sg_inst;
+        
+        # instantiate reset synchronizer
         $sr_inst = $this->_add_instance_unique("sync_rst", $cfg_inst, "Reset synchronizer".($this->global->{'infer_reset_syncer'} ? "" : " (in bypass-mode)"));
         $refclks->{$clock}->{'sr_inst'} = $sr_inst; # store in global->hclocks
         if ($this->global->{'infer_reset_syncer'}) {                
@@ -1844,7 +1861,7 @@ sub _vgch_rs_gen_hier {
             _add_generic("sync", 0, $sr_inst); # set  reset synchronizer to bypass mode
         };
         _add_generic("act", 0, $sr_inst);
-        push @lgen_filter, ($sr_inst, $sg_inst);
+        push @lgen_filter, $sr_inst;
 
 		# instantiate clock gating cells
 		if ($infer_cg) {
@@ -1870,6 +1887,7 @@ sub _vgch_rs_gen_hier {
 		};
 		$n++;
 	};
+
 	# set N_SYNCDOM parameter for mcda if that did not happen yet
 	if(exists($this->global->{'mcda_inst'}) && $sync_clock == 31415) {
 		_add_generic("N_SYNCDOM", $sync_clock, $mcda_inst);
@@ -1975,6 +1993,8 @@ sub _vgch_rs_get_configuration {
 	$n = 0;
 	$clock = "";
 	my ($rerr_en, $ien, $val, $ecs_writable) = (0,0,7,1); # ecs parameter default values
+    $this->global->{'rs_configuration'} = "scd-sync";
+
 	# iterate all fields and retrieve clock names and other stuff
 	foreach $o_field (@{$o_domain->fields}) {
 		# get default values of embedded reg
@@ -2010,6 +2030,8 @@ sub _vgch_rs_get_configuration {
 				$hresult{$clock}->{'sync'} = 0;
 			}else {
 				$hresult{$clock}->{'sync'} = 1;
+                # if at least one clock is not the bus-clock, the configuration is asynchronous
+                $this->global->{'rs_configuration'} = "scd-async";
 			};
 			$n++;
 		};
@@ -2074,12 +2096,18 @@ sub _vgch_rs_get_configuration {
 		};
 	};
 	$this->global('hclocks' => \%hresult);
-	
+
+	# set the name of the register-shell configuration to multi-clock-domain if there is still more than one clock-domain left
+    if ($n>1) {
+        $this->global->{'rs_configuration'} = "mcd";
+    };
+    _info("determined register-shell configuration is \'" . ($this->global->{'rs_configuration'}) . "\'.");
+
 	# tell user if use of multi_clock_domains parameter is useless
 	if ($n == 1 and $this->global->{'multi_clock_domains'}) { 
 		_info("multi_clock_domains = 1 ignored, only one clock") if $this->global->{'multi_clock_domains'};
 	};
-
+ 
 	# check if read-pipelining is required
 	my ($rdpl_stages)=0;
 	if($rdpl_lvl > 0) {
@@ -2163,24 +2191,28 @@ sub _vgch_rs_add_static_connections {
 		$sg_i = $href->{'sg_inst'};
 		$sr_i = $href->{'sr_inst'};
 		$this->_add_input($clock, 0, 0, $cfg_i);
-		$this->_add_input($clock, 0, 0, "${sg_i}/clk_r");
-		$this->_add_input($clock, 0, 0, "${sr_i}/clk_r");
 		$this->_add_input($href->{'reset'}, 0, 0, $cfg_i);
-		$this->_add_input($href->{'reset'}, 0, 0, "${sg_i}/rst_r");
-		$this->_add_input($href->{'reset'}, 0, 0, "${sr_i}/rst_i");
+        
+        $this->_add_input($clock, 0, 0, "${sg_i}/clk_r");
+        $this->_add_input($href->{'reset'}, 0, 0, "${sg_i}/rst_r");
+        _tie_input_to_constant("${sg_i}/clk_s", 0, 0, 0);
+        _tie_input_to_constant("${sg_i}/rst_s", 0, 0, 0);
+        $this->_add_conn($trans_start_p, 0, 0, "${sg_i}/rcv_o", "");
+        
+        $this->_add_input($clock, 0, 0, "${sr_i}/clk_r");
+        $this->_add_input($href->{'reset'}, 0, 0, "${sr_i}/rst_i");
         # the scan-enable input is only needed for the reset-synchronizer
-		if ($this->global->{'infer_reset_syncer'}) { 
+        if ($this->global->{'infer_reset_syncer'}) { 
             $this->_add_input($this->global->{'scan_en_port_name'}, 0, 0, "$sr_i/test_i");
         } else {
             _tie_input_to_constant("${sr_i}/test_i", 0, 0, 0);
         };
-		_tie_input_to_constant("${sg_i}/clk_s", 0, 0, 0);
-		_tie_input_to_constant("${sg_i}/rst_s", 0, 0, 0);
+        $this->_add_conn($int_rst_n, 0, 0, "${sr_i}/rst_o", "");
+        
 		$this->_add_conn($this->_gen_unique_signal_top("addr", $o_domain),  $awidth-1, 0, "${ocp_i}/addr_o", "${cfg_i}/addr_i");
 		$this->_add_conn($this->_gen_unique_signal_top("wr_data", $o_domain), $dwidth-1, 0, "${ocp_i}/wr_data_o", "${cfg_i}/wr_data_i");
 		$this->_add_conn($this->_gen_unique_signal_top("rd_wr", $o_domain), 0, 0, "${ocp_i}/rd_wr_o", "${cfg_i}/rd_wr_i");
-		$this->_add_conn($int_rst_n, 0, 0, "${sr_i}/rst_o", "");
-		$this->_add_conn($trans_start_p, 0, 0, "${sg_i}/rcv_o", "");
+
 		if (!defined $mcda_i) {
             $this->_add_conn($this->_gen_unique_signal_top("trans_start", $o_domain), 0, 0, "${ocp_i}/trans_start_o", "$sg_i/snd_i");
 			$this->_add_conn($this->_gen_unique_signal_top("rd_err", $o_domain), 0, 0, "${cfg_i}/rd_err_o", "${ocp_i}/rd_err_i");
@@ -2189,8 +2221,6 @@ sub _vgch_rs_add_static_connections {
 		} else {
 			# connect config register block to MCDA
             $this->_add_conn($this->_gen_unique_signal_top("trans_start_$n", $o_domain), 0, 0, "${mcda_i}/trans_start_vec_o($n)=(0)", "$sg_i/snd_i");
-            # workaround, intermediate signal to connect bus to single bit inputs
-            #$this->_add_conn("int_trans_start_$n", 0, 0, "", "$sg_i/snd_i, ${cfg_i}/trans_start_i");
 			$this->_add_conn($this->_gen_unique_signal_top("rd_data_vec", $o_domain), $dwidth*$nclocks-1, 0, "$cfg_i/rd_data_o=(".(($n+1)*$dwidth-1).":".($n*$dwidth).")", "$mcda_i/rd_data_vec_i");
 			$this->_add_conn($this->_gen_unique_signal_top("rd_err_vec", $o_domain),  $nclocks-1, 0, "$cfg_i/rd_err_o=($n)", "$mcda_i/rd_err_vec_i");
 			# $this->_add_conn("%OPEN%", 0, 0, "${cfg_i}/rd_err_o", ""); # rd_err now driven by pre-decoder module
