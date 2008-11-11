@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.71 $                                         |
+# | Revision:   $Revision: 1.72 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2008/10/27 13:18:13 $                              |
+# | Date:       $Date: 2008/11/11 10:08:15 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.72  2008/11/11 10:08:15  lutscher
+# | changed skipelements for xml input
+# |
 # | Revision 1.71  2008/10/27 13:18:13  lutscher
 # | fixed bugs in packing and added packing.mode 32to16
 # |
@@ -197,9 +200,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.71 2008/10/27 13:18:13 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.72 2008/11/11 10:08:15 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.71 $';  
+my $thisrevision    =      '$Revision: 1.72 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1368,25 +1371,22 @@ sub init ($) {
 					 "comment",
 					 "dir",
 					 "size",
-					 "skip:1",
-					 "skip:2",#redundant, already defined in pos
-					 "skip:3",#redundant already defined 
 					 "range",#redundant, already defined by size
 					 "skip",
-					 "init",
-					 
+					 "init"
+					 # "skip:1",
+					 # "skip:2",#redundant, already defined in pos
+					 # "skip:3",#redundant already defined 					 
 					],
 	      'file_prefix'=> "regdef",
 	      'file_suffix'=> "xml",
-	      'prettynames'=>	{
+	      'prettynames'=>	{ # name substitution for field parameters
 				'skip:4'	=>"addinc",
 				},
 	      'xslt_dir'  => "/lib/xslt/",
 	      'schema_dir'=> "/lib/schema/",
 	      'path'=> "ipxact",
 	      
-
-
       };
     
     # VI2C Definitions:
