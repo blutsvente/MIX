@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #
-# UNIX wrapper for mix_0.pl ...
+# UNIX wrapper for mix_1.pl ...
 #
 # function fix_perl_path {
 fix_perl_path () {
@@ -36,7 +36,7 @@ fi
 #
 fix_perl_path
 
-# Find mix_0.pl whereever:
-perl -x -S mix_0.pl ${1+"$@"}
+# NEW: use mix_1.pl as new frontend
+perl -x -S mix_1.pl ${1+"$@"}
 
 #!End
