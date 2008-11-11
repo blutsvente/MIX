@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.86 2008/10/29 15:26:05 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.87 2008/11/11 10:07:58 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.86 $                                  
+#  Revision      : $Revision: 1.87 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.87  2008/11/11 10:07:58  lutscher
+#  small change for workaround platinumd
+#
 #  Revision 1.86  2008/10/29 15:26:05  lutscher
 #  added rs_configuration feature
 #
@@ -246,6 +249,7 @@ sub _gen_view_vgch_rs {
                                               "release" => "ocp_target_2_7"
                                              };
         $this->global('mix_signature' =>  "\"M0\""); 
+        $this->global('ocp_target_name'    => "ocp_target"); # library module name
     };
 
 	# modify MIX config parameters (only where required)
@@ -402,7 +406,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.86 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.87 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
