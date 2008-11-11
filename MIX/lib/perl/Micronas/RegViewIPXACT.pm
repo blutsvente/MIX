@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewIPXACT.pm,v 1.11 2008/07/22 15:38:03 herburger Exp $
+#  RCSId: $Id: RegViewIPXACT.pm,v 1.12 2008/11/11 10:08:33 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -27,6 +27,9 @@
 ###############################################################################
 #
 #  $Log: RegViewIPXACT.pm,v $
+#  Revision 1.12  2008/11/11 10:08:33  lutscher
+#  changed skipping of input columns
+#
 #  Revision 1.11  2008/07/22 15:38:03  herburger
 #  small changes
 #
@@ -175,7 +178,7 @@ sub _write_ipxact2file{
 	    _error("could not open file \'$filename\' for writing");
 	    return 0;
 	}else {
-	    _info("opening file \'$filename\'")
+	    _info("opened file \'$filename\' for writing")
 	}
     }else{
 	#make new file
@@ -250,7 +253,7 @@ sub _write_ipxact2file{
 
 	$writer->dataElement([$nsspirit, "usage"],"register");
 
-	#iterarte through all register
+	#iterate through all registers
 	foreach $o_register (@{$o_domain->{'regs'}}){
 	    
 	    $writer->startTag([$nsspirit, "register"]);
@@ -303,19 +306,22 @@ sub _write_ipxact2file{
 		my $access=$eh->get('xml.access.'.$o_field->{'attribs'}->{'dir'});
 		$writer->dataElement([$nsspirit, "access"], $access);
 
-		#parameters section
+		#parameters section (all that have not been extracted above)
 		$writer->startTag([$nsspirit, "parameters"]);
 
 		foreach $parameter (keys %{$o_field->{'attribs'}}){
 		    #fields to skip
-		    next if(grep($parameter eq $_,@{$eh->get('xml.field_skipelements')}));
+            # ##LU changed this to match the skipelements without the trailing :\d of the multiple column identifiers
+            my $parameter_strip_mul = $parameter;
+            $parameter_strip_mul =~ s/\:\d+$//;
+		    next if(grep ($parameter_strip_mul eq $_, @{$eh->get('xml.field_skipelements')}));
 
-		    
-		    if (defined $eh->get('xml.prettynames.'.$parameter)){
-			$parametername=$eh->get('xml.prettynames.'.$parameter);
-		    }else{
-			$parametername=$parameter;
-		    }
+            # make substitution if defined by user
+            if (defined $eh->get('xml.prettynames.'.$parameter)){
+                $parametername=$eh->get('xml.prettynames.'.$parameter);
+            }else{
+                $parametername=$parameter;
+            }
 
 		    #create for each value in the field object an parameter field
 		    $writer->startTag([$nsspirit, "parameter"]);
