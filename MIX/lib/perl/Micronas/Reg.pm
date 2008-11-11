@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.77 2008/10/17 14:02:12 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.78 2008/11/11 15:44:26 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.78  2008/11/11 15:44:26  lutscher
+#  export parse_register_master()
+#
 #  Revision 1.77  2008/10/17 14:02:12  lutscher
 #  fixed map_ipxact with regards to reset values for fields
 #
@@ -167,6 +170,12 @@ package Micronas::Reg;
 #------------------------------------------------------------------------------
 # Used packages
 #------------------------------------------------------------------------------
+require Exporter;
+@ISA=qw(Exporter);
+@EXPORT  = qw(
+              parse_register_master
+             );
+
 use strict;
 use FindBin;
 use Log::Log4perl qw(get_logger);
@@ -291,7 +300,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.77 $ ';  #'
+our($VERSION) = '$Revision: 1.78 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
