@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.66 $                                               |
+# | Revision:   $Revision: 1.67 $                                               |
 # | Author:     $Author: lutscher $                                                 |
-# | Date:       $Date: 2008/09/02 08:43:23 $                                                   |
+# | Date:       $Date: 2008/11/13 10:46:26 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.66 2008/09/02 08:43:23 lutscher Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.67 2008/11/13 10:46:26 lutscher Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.67  2008/11/13 10:46:26  lutscher
+# | added 2nd .per file generation
+# |
 # | Revision 1.66  2008/09/02 08:43:23  lutscher
 # | added report.cheader.use_view_attrib
 # |
@@ -272,11 +275,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.66 2008/09/02 08:43:23 lutscher Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.67 2008/11/13 10:46:26 lutscher Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.66 $';
+my $thisrevision   =      '$Revision: 1.67 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -773,17 +776,17 @@ sub mix_rep_header($;$)
 
 #####################################################################
 # Open the per file for one register
-# Write global address(es) into the file
+# Write global address(es) into the file; is_ead controls the postfix of the filename
 # Return:
 #          $fh       FileHandle
 #####################################################################
 
-sub mix_rep_per_open_files($$$)
+sub mix_rep_per_open_files($$$$)
 {
-    my ($name, $blocks, $global_base_address) = @_;
+    my ($name, $blocks, $global_base_address, $is_ead) = @_;
     my $newname = $eh->get("report.cheader.definition." . lc($name));
     $newname = $name if (! defined($newname));
-    my $file = lc($newname) . ".per";
+    my $file = lc($newname) . ($is_ead ? "_ead.per" : ".per");
     my $fh = new FileHandle $file, "w";
 
     if (! defined($fh)) {
@@ -798,18 +801,24 @@ sub mix_rep_per_open_files($$$)
 # Print type definitions for the registers of the current domain
 #####################################################################
 
-sub mix_rep_per_print($$$$$$$)
+sub mix_rep_per_print($$$$$$$$)
 {
-    my ($fh, $name, $rBlock, $rTypes, $blocks, $maxwidth, $global_base_address) = @_;
+    my ($fh, $name, $rBlock, $rTypes, $blocks, $maxwidth, $global_base_address, $is_ead) = @_;
     my $group_length;
     my @groups;
+    my $ad;
 
     # write width; increment $maxwidth by 1 to let space for a terminating '0' in Lauterbach system
     $fh->write("width " . ($maxwidth + 1) . ".\n\n");
     for (my $i = 0; $i < $blocks->{$name}->{reg_clones}; $i++) {
         # Write base address
-        my $ad = hex($global_base_address) + $blocks->{$name}->{base_addr}->[$i];
-        $fh->printf("base d:0x%08X\n", $ad);
+        if ($is_ead) {
+            $ad = $blocks->{$name}->{base_addr}->[$i];
+            $fh->printf("base ead:0x%08X\n", $ad);
+        } else {
+            $ad = hex($global_base_address) + $blocks->{$name}->{base_addr}->[$i];
+            $fh->printf("base d:0x%08X\n", $ad);
+        };
         $fh->printf("tree \"%s\"\n", uc($blocks->{$name}->{clients}->[$i]));
 
         foreach my $addr (sort keys %{$rBlock}) {
@@ -866,7 +875,8 @@ sub mix_rep_per($;$)
                 $logger->error("__E_REPORT","\tCould not find `$domain_name' from register-master in the top address map!");
                 next;
             }
-            my $fh = mix_rep_per_open_files($domain_name, $blocks, $global_base_address);
+            my $fh = mix_rep_per_open_files($domain_name, $blocks, $global_base_address, 0);
+            my $fh_ead = mix_rep_per_open_files($domain_name, $blocks, $global_base_address, 1);
             # collect all information to the registers in a hash with the address as the key
             my %theBlock;
             #$o_domain->display();
@@ -928,8 +938,8 @@ sub mix_rep_per($;$)
                 $theBlock{$address}->{fields} = \@thefields;
             }
             # All register were read in, write the header file
-            mix_rep_per_print($fh, $domain_name, \%theBlock, $rTypes, $blocks, $maxwidth, $global_base_address);
-
+            mix_rep_per_print($fh, $domain_name, \%theBlock, $rTypes, $blocks, $maxwidth, $global_base_address, 0);
+            mix_rep_per_print($fh_ead, $domain_name, \%theBlock, $rTypes, $blocks, $maxwidth, $global_base_address, 1);
             # close the header file
             $fh->close();
         }
