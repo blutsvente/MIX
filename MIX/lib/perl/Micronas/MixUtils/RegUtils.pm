@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.19 2008/07/07 14:23:13 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.20 2008/12/10 13:13:20 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.20  2008/12/10 13:13:20  lutscher
+#  added feature to _clone_name
+#
 #  Revision 1.19  2008/07/07 14:23:13  lutscher
 #  added %B option for _clone_name()
 #
@@ -521,13 +524,20 @@ sub _clone_name {
     # create a number padded with leading zeros
 	my $digits = "";
 
-    if ($pattern =~ m/%(\d)N/g) {
+    if ($pattern =~ m/%(\d)?N([\+\-\*\/]\d+)*/g) {
+        # the %N pattern can be followed by a simple arithmetic expression like "+32" which be evaluated for the number
+        if ($2) {
+            $n=eval("$n$2");
+            $digits = $n;
+        };
         # the pattern is \dN -> use the leading number for the number of digits
-        if($1 == 0) {
-            $digits = $n; # pass through $n
-        } else {
-            $digits = $1;
-            $digits = sprintf("%0${digits}d", $n);
+        if ($1) {
+            if($1 == 0) {
+                $digits = $n; # pass through $n
+            } else {
+                $digits = $1;
+                $digits = sprintf("%0${digits}d", $n);
+            };
         };
     } elsif ($n_max >= 0) {
         $digits = $n_max < 10 ? 1 : ($n_max < 100 ? 2 : ($n_max < 1000 ? 3 : 4)); # max 4 digits, should be enough (or we would never have had the Millenium Bug)
@@ -556,7 +566,7 @@ sub _clone_name {
 	$name =~ s/%R/$reg/g;
 	$name =~ s/%F/$field/g;
 	$name =~ s/%B/$block/g;
-	$name =~ s/%\d?N/$digits/g;
+	$name =~ s/%\d?N([\+\-\*\/]\d+)*/$digits/g;
 	return $name;
 };
 
