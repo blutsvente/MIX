@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegReg.pm,v 1.13 2008/10/29 15:05:55 lutscher Exp $
+#  RCSId: $Id: RegReg.pm,v 1.14 2008/12/10 13:11:37 lutscher Exp $
 ###############################################################################
 #
 #  Related Files :  RegDomain.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegReg.pm,v $
+#  Revision 1.14  2008/12/10 13:11:37  lutscher
+#  fixed bug in _pack functions
+#
 #  Revision 1.13  2008/10/29 15:05:55  lutscher
 #  some changes to avoid numbers>32 bit
 #
@@ -270,6 +273,7 @@ sub _pack_64to32 {
         _error("_pack_64to32() register size ",$this->attribs->{'size'}, " does not match requested packing mode");
     } else {
         $is_splitted = 0;
+        %hattribs = %{$this->attribs};
         foreach $href (@{$this->fields}) {
             my $o_field = $href->{'field'};
             if ($href->{'pos'} < 32) {
@@ -330,6 +334,7 @@ sub _pack_32to16 {
         _error("_pack_32to16() register size ",$this->attribs->{'size'}, " does not match requested packing mode");
     } else {
         $is_splitted = 0;
+        %hattribs = %{$this->attribs};
         foreach $href (@{$this->fields}) {
             my $o_field = $href->{'field'};
             if ($href->{'pos'} < 16) {
