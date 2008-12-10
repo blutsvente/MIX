@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.60 $                                          |
+# | Revision:   $Revision: 1.61 $                                          |
 # | Author:     $Author: lutscher $                                         |
-# | Date:       $Date: 2008/09/02 07:13:05 $                              |
+# | Date:       $Date: 2008/12/10 10:55:24 $                              |
 # |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.61  2008/12/10 10:55:24  lutscher
+# | added feature that i2c sheet-name can be attached to filename using %sheet
+# |
 # | Revision 1.60  2008/09/02 07:13:05  lutscher
 # | improved error handling
 # |
@@ -178,11 +181,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.60 2008/09/02 07:13:05 lutscher Exp $';#'
+my $thisid          =      '$Id: IO.pm,v 1.61 2008/12/10 10:55:24 lutscher Exp $';#'
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.60 $'; #'
+my $thisrevision    =      '$Revision: 1.61 $'; #'
 
-# Revision:   $Revision: 1.60 $
+# Revision:   $Revision: 1.61 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -427,6 +430,15 @@ sub mix_utils_open_input(@) {
     my $axml = [];
 
     for my $i ( @in ) {
+
+        # *NEW* if the file-name is postfixed with %<sheet-name>, override the MIXCFG parameter for i2c sheet
+        my $sheet_name = "";
+        if ($i =~m/\%(\w+)$/) {
+            $sheet_name = $1;
+            $i =~ s/\%(\w+)$//;
+            $eh->set( 'i2c.xls', $sheet_name );
+        };
+
 		unless ( -r $i ) {
 	    	$logger->error('__E_INFILE_READ', "\tFile $i cannot be read!");
 	    	next;
@@ -443,6 +455,7 @@ sub mix_utils_open_input(@) {
 		# Change CONF accordingly (will not be visible at upper world)
 		# TODO : add plugin interface to read in whatever is needed ...
         if( $i !~ m/\.xml$/) { 
+
             # Open .xls Sheet
             @conf = open_infile( $i, $eh->get( 'conf.xls' ), $eh->get( 'conf.xxls' ), $eh->get( 'conf.req' ) );
             
@@ -454,11 +467,11 @@ sub mix_utils_open_input(@) {
             $hier = open_infile( $i, $eh->get( 'hier.xls' ), $eh->get( 'hier.xxls' ),
                                  $eh->get( 'hier.req' ) . ',order,hash' );
             
-            # Open IO sheet (if available, not needed!)
+            # Open IO sheet 
             $io = open_infile( $i, $eh->get( 'io.xls' ), $eh->get( 'io.xxls'),
                                $eh->get( 'io.req' ) . ',order,hash' );
-            
-            # Open I2C sheet (if available, not needed!)
+
+            # Open I2C sheet
             $i2c = open_infile( $i, $eh->get( 'i2c.xls' ), $eh->get( 'i2c.xxls' ),
                                 $eh->get( 'i2c.req' ) . ',order,hash' );
         } else {
