@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.79 2008/12/10 13:09:24 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.80 2008/12/10 15:40:36 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.80  2008/12/10 15:40:36  lutscher
+#  changed order of packing,cloning
+#
 #  Revision 1.79  2008/12/10 13:09:24  lutscher
 #  various changes to write2excel
 #
@@ -259,18 +262,18 @@ sub parse_register_master {
             # set debug switch
             $o_space->global('debug' => exists $OPTVAL{'verbose'} ? 1 : 0);
 			
-            # apply packing-mode if desired
-            if ($eh->get('reg_shell.packing.mode') ne "none") {
-                my $o_new_space = $o_space->_pack();
-                $o_space = $o_new_space;
-            };
-
             # check if register object should be cloned
             if ($eh->get('reg_shell.clone.number') > 0) {
                 my $o_new_space = $o_space->_clone(); # module RegViewClone.pm 
                 $o_space = $o_new_space;
             };
-                                
+            
+            # apply packing-mode if desired
+            if ($eh->get('reg_shell.packing.mode') ne "none") {
+                my $o_new_space = $o_space->_pack();
+                $o_space = $o_new_space;
+            };
+                    
             # make it so 
             $o_space->generate_view($view, $o_space->global->{supported_views}, \@ldomains);
         };
@@ -303,7 +306,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.79 $ ';  #'
+our($VERSION) = '$Revision: 1.80 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
