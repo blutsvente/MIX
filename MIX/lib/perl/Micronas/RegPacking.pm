@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegPacking.pm,v 1.2 2008/10/27 13:18:12 lutscher Exp $
+#  RCSId: $Id: RegPacking.pm,v 1.3 2008/12/10 13:10:02 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.2 $                                  
+#  Revision      : $Revision: 1.3 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegPacking.pm,v $
+#  Revision 1.3  2008/12/10 13:10:02  lutscher
+#  added some features for the address transformation in packed register-space
+#
 #  Revision 1.2  2008/10/27 13:18:12  lutscher
 #  fixed bugs in packing and added packing.mode 32to16
 #
@@ -93,11 +96,14 @@ sub _pack_regspace {
 	my ($this, $lref_domain_names) = @_;
     my $mode = $eh->get('reg_shell.packing.mode');
     my $endianness = $eh->get('reg_shell.packing.endianness'); 
+    my $addr_offset = $eh->get('reg_shell.packing.addr_offset');
+    my $addr_factor = $eh->get('reg_shell.packing.addr_factor');
+
 	my ($o_domain1, $o_reg0, $o_reg1, $o_reg2, $href, $o_field0, $o_field1, %hfattribs, %hrattribs, $fpos);
     my @lalldomains = ();
 
     # create a new register space
-    my ($o_space) = Micronas::Reg->new;		
+    my ($o_space) = Micronas::Reg->new(device => $this->device);		
 
     # get list of all domains
     foreach $href (@{$this->domains}) {
@@ -119,30 +125,33 @@ sub _pack_regspace {
             # pack registers, creating new ones
             if ($mode eq "64to32") {
                 _warning("no support for integers > 32bit yet");
+                my $addr_incr = 4;
                 foreach $o_reg0 (sort {$o_domain0->get_reg_address($a) <=> $o_domain0->get_reg_address($b)} @{$o_domain0->regs}) {
                     my $reg_offset =  $o_domain0->get_reg_address($o_reg0);
                     my ($offs0, $offs1);
                     # create new register objects
                     ($o_reg1, $o_reg2) = $o_reg0->_pack_64to32($eh->get('reg_shell.packing.postfix_reg_lo'), $eh->get('reg_shell.packing.postfix_reg_hi'));
-                    
                     # link new register object and its fields into domain and addrmap
                     if (lc($endianness) eq "little") {
-                        ($offs0, $offs1) = ($reg_offset, $reg_offset + 4);
+                        ($offs0, $offs1) = ($reg_offset * $addr_factor , ($reg_offset + $addr_incr) * $addr_factor);
                     } else {
-                        ($offs0, $offs1) = ($reg_offset + 4, $reg_offset);
+                        ($offs0, $offs1) = (($reg_offset + $addr_incr) * $addr_factor , $reg_offset * $addr_factor);
                     };
                     if (ref($o_reg1) =~ m/Micronas::RegReg/) { 
+                        # $o_reg1->display(); # debug
                         $o_domain1->regs($o_reg1);
                         $o_domain1->fields($o_reg1->fields);
-                        $o_domain1->addrmap(reg => $o_reg1, offset => $offs0);
+                        $o_domain1->addrmap(reg => $o_reg1, offset => $addr_offset + $offs0);
                     };
                     if (ref($o_reg2) =~ m/Micronas::RegReg/) { 
+                        # $o_reg2->display();
                         $o_domain1->regs($o_reg2);
                         $o_domain1->fields($o_reg2->fields);
-                        $o_domain1->addrmap(reg => $o_reg2, offset => $offs1);
+                        $o_domain1->addrmap(reg => $o_reg2, offset => $addr_offset + $offs1);
                     };
                 };
             } elsif ($mode eq "32to16") {
+                my $addr_incr = 2;
                 foreach $o_reg0 (sort {$o_domain0->get_reg_address($a) <=> $o_domain0->get_reg_address($b)} @{$o_domain0->regs}) {
                     my $reg_offset =  $o_domain0->get_reg_address($o_reg0);
                     my ($offs0, $offs1);
@@ -151,21 +160,21 @@ sub _pack_regspace {
                     
                     # link new register object and its fields into domain and addrmap
                     if (lc($endianness) eq "little") {
-                        ($offs0, $offs1) = ($reg_offset, $reg_offset + 2);
+                        ($offs0, $offs1) = ($reg_offset * $addr_factor, ($reg_offset + $addr_incr) * $addr_factor);
                     } else {
-                        ($offs0, $offs1) = ($reg_offset + 2, $reg_offset);
+                        ($offs0, $offs1) = (($reg_offset + $addr_incr) * $addr_factor, $reg_offset * $addr_factor);
                     };
                     if (ref($o_reg1) =~ m/Micronas::RegReg/) { 
                         # $o_reg1->display(); # debug
                         $o_domain1->regs($o_reg1);
                         $o_domain1->fields($o_reg1->fields);
-                        $o_domain1->addrmap(reg => $o_reg1, offset => $offs0);
+                        $o_domain1->addrmap(reg => $o_reg1, offset => $addr_offset + $offs0);
                     };
                     if (ref($o_reg2) =~ m/Micronas::RegReg/) { 
                         # $o_reg2->display(); # debug
                         $o_domain1->regs($o_reg2);
                         $o_domain1->fields($o_reg2->fields);
-                        $o_domain1->addrmap(reg => $o_reg2, offset => $offs1);
+                        $o_domain1->addrmap(reg => $o_reg2, offset => $addr_offset + $offs1);
                     };
                 };
             } else {
