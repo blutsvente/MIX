@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.104 $                                         |
+# | Revision:   $Revision: 1.105 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2008/12/10 11:42:21 $                              |
+# | Date:       $Date: 2008/12/10 11:45:44 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.104 2008/12/10 11:42:21 lutscher Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.105 2008/12/10 11:45:44 lutscher Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.105  2008/12/10 11:45:44  lutscher
+# | reverted last change
+# |
 # | Revision 1.104  2008/12/10 11:42:21  lutscher
 # | changed mix_store_db()
 # |
@@ -249,9 +252,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.104 2008/12/10 11:42:21 lutscher Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.105 2008/12/10 11:45:44 lutscher Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.104 $';
+my $thisrevision =	'$Revision: 1.105 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2237,8 +2240,6 @@ sub mix_store_db ($$$) {
     if ( $dumpfile eq "dump" ) {
         $dumpfile = $eh->get( 'dump' );
     }
-
-    $dumpfile =~ s/\%\w+$//; # delete optional trailing sheet-name from filename
 
     if ( $type eq "auto" ) {
         # Derive output format from output name extension
