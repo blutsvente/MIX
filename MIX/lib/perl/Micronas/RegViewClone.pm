@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewClone.pm,v 1.14 2008/12/10 13:12:21 lutscher Exp $
+#  RCSId: $Id: RegViewClone.pm,v 1.15 2008/12/10 18:00:10 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.14 $                                  
+#  Revision      : $Revision: 1.15 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -32,6 +32,9 @@
 ###############################################################################
 #
 #  $Log: RegViewClone.pm,v $
+#  Revision 1.15  2008/12/10 18:00:10  lutscher
+#  small fix concerning unique_domains parameter
+#
 #  Revision 1.14  2008/12/10 13:12:21  lutscher
 #  added domain_naming and feature unique_domains
 #
@@ -188,15 +191,14 @@ sub _clone_regspace {
         my %hclone_once = ();
         
         if (grep($domain eq $_, @{$lref_domain_names})) { 
-            _info("cloning domain $domain ", $this->global->{'number'}, " times, unique_clocks=",$this->global->{'unique_clocks'},", unique_domains=",$this->global->{'unique_domains'});
+            _info("cloning domain $domain ", $this->global->{'number'}, " times, unique_clocks=", $this->global->{'unique_clocks'},", unique_domains=", $this->global->{'unique_domains'});
             if ($this->global->{'number'} eq 1) {
                 _warning("number of clones is 1, applying naming scheme - make sure this is what you intended");
             };
 
             if ($this->global->{'unique_domains'} == 0) {
-                # create a new domain containing all clones, storing some cloning information
-                my $new_domain_name=_clone_name($this->global->{'domain_naming'}, 99, 0, $domain); # apply domain-naming rule
-                $o_domain1 = Micronas::RegDomain->new('name' => $new_domain_name, 
+                # create a new domain using the old name, containing all clones, storing some cloning information
+                $o_domain1 = Micronas::RegDomain->new('name' => $domain, 
                                                       'clone' => {
                                                                   'number'        => $this->global->{'number'}, 
                                                                   'field_naming'  => $this->global->{'field_naming'},

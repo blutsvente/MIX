@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.73 $                                         |
+# | Revision:   $Revision: 1.74 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2008/12/10 13:12:47 $                              |
+# | Date:       $Date: 2008/12/10 18:00:10 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.74  2008/12/10 18:00:10  lutscher
+# | small fix concerning unique_domains parameter
+# |
 # | Revision 1.73  2008/12/10 13:12:47  lutscher
 # | added some parameters for cloning and packing
 # |
@@ -203,9 +206,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.73 2008/12/10 13:12:47 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.74 2008/12/10 18:00:10 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.73 $';  
+my $thisrevision    =      '$Revision: 1.74 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1050,7 +1053,7 @@ sub init ($) {
                    'addr_spacing'   => 10,         # number of address bits reserved for every clone
                    'reg_naming'     => '%R_%N',    # naming scheme for cloned register
                    'field_naming'   => '%F_%N',    # naming scheme for cloned field
-                   'domain_naming'  => '%D_%N',    # naming scheme for cloned domain
+                   'domain_naming'  => '%D_%N',    # naming scheme for cloned domain (if unique_domains is 1)
                    'unique_clocks'  => 1,          # if 1, uniquify clock names of clones
                    'unique_domains' => 0           # if 1, will create new domains for clones; if 0, cloned registers are fitted into old domain
                   },
