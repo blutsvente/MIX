@@ -1,10 +1,10 @@
 ###############################################################################
-#  RCSId: $Id: Mix.pm,v 1.1 2008/11/11 15:44:31 lutscher Exp $
+#  RCSId: $Id: Mix.pm,v 1.2 2008/12/10 13:08:35 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Mix and Reg packages
 #
-#  Author(s)     :  Thorsten Lutscher                                      
+#  Author(s)     :  Thorsten Lutscher / Wilfried Gaensheimer                                     
 #  Email         :  thorsten.lutscher@micronas.com                          
 #
 #  Project       :  MIX                                                 
@@ -12,8 +12,12 @@
 #  Creation Date :  11.11.2008
 #
 #  Contents      :  This is meant as a wrapper for all MIX packages; it simplifies
-#                   writing of software that uses MIX; example usage: mix_1.pl 
+#                   writing of software that uses MIX; example usage: mix_1.pl or
+#                   gen_bmu.pl (from project mic32)
 #
+#  Public variables:
+#  %OPTVAL
+#  $eh
 #  Public functions:
 #  sub read_input 
 #  sub parse_macros 
@@ -39,6 +43,9 @@
 ###############################################################################
 #
 #  $Log: Mix.pm,v $
+#  Revision 1.2  2008/12/10 13:08:35  lutscher
+#  no changes
+#
 #  Revision 1.1  2008/11/11 15:44:31  lutscher
 #  initial release
 #
@@ -50,6 +57,7 @@ package Micronas::Mix; # the class-name
 require Exporter;
 @ISA=qw(Exporter);
 @EXPORT  = qw(
+              $eh
               %OPTVAL
               read_input 
               parse_macros 
@@ -95,7 +103,7 @@ use Micronas::MixReport;
 # define static members here
 
 # version of this package, extracted from RCS macros
-our($VERSION) = '$Revision: 1.1 $ ';  #'
+our($VERSION) = '$Revision: 1.2 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -122,21 +130,20 @@ sub new {
                        # options
                        'options' => [], # ref to list
 
+                       #
+                       # the fields below will be populated by our object methods
+                       #
+
                        # connectivity input
-                       'connin' => [], # ref to list
-                       
+                       'connin' => [], # ref to list                       
                        # hierarchy input
                        'hierin' => [], # ref to list
-
                        # IO spec input
                        'ioin' => [], # ref to list
-
                        # IP-XACT register spec. input
                        'xmlin' => [], # ref to list
-
                        # register-master input
                        'regin' => [], # ref to list
-
                        # resulting register space object
                        'reg' => undef  # ref to Micronas::Reg object
                       };
