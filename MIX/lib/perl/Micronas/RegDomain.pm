@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegDomain.pm,v 1.4 2007/11/20 10:01:14 lutscher Exp $
+#  RCSId: $Id: RegDomain.pm,v 1.5 2008/12/10 13:08:50 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegDomain.pm,v $
+#  Revision 1.5  2008/12/10 13:08:50  lutscher
+#  fixed typo
+#
 #  Revision 1.4  2007/11/20 10:01:14  lutscher
 #  changed a find function
 #
@@ -200,7 +203,7 @@ sub find_cloned_field_by_name {
     if ($this->clone->{'number'}>0) {
         # cloned domain
         if ($n>= $this->clone->{'number'}) {
-            _error("internal error: specified clone-number $n is greater than total number of clones ", $this->{'clone'}->{'clone_number'});
+            _error("internal error: specified clone-number $n is greater than total number of clones ", $this->{'clone'}->{'number'});
         };
         foreach $o_field (@{$this->fields}) {
             if (exists $o_field->{'org_name'}) {
