@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.144 $                                        |
+# | Revision:   $Revision: 1.145 $                                        |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2008/04/24 16:57:56 $                              |
+# | Date:       $Date: 2008/12/10 11:51:27 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.144 2008/04/24 16:57:56 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.145 2008/12/10 11:51:27 lutscher Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.145  2008/12/10 11:51:27  lutscher
+# | added code to strip %sheet-name from filename
+# |
 # | Revision 1.144  2008/04/24 16:57:56  lutscher
 # | added xml to write_sum()
 # |
@@ -206,11 +209,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.144 2008/04/24 16:57:56 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.145 2008/12/10 11:51:27 lutscher Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.144 $';         #'
+my $thisrevision        =      '$Revision: 1.145 $';         #'
 
-# Revision:   $Revision: 1.144 $   
+# Revision:   $Revision: 1.145 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -284,7 +287,9 @@ sub mix_getopt_header(@) {
 		# Output file will be written to current directory.
 		# Name will become name of last input file foo-mixed.ext
 		my $ext = $eh->get( 'output.ext.intermediate' );
-		( my $a = $ARGV[$#ARGV] ) =~ s,(\.[^.]+)$,-$ext$1,;
+		my $a = $ARGV[$#ARGV];
+        $a =~ s/\%\w+$//; # strip optional sheet-name from filename
+        $a =~ s,(\.[^.]+)$,-$ext$1,;
 		$a = basename( $a );
 		$eh->set( 'out', $a );
     } else {
@@ -299,6 +304,7 @@ sub mix_getopt_header(@) {
 		# Output file will be written to current directory.
 		# Name will become name of last input file foo-mixed.ext
 		my $d = $ARGV[$#ARGV];
+        $d =~ s/\%\w+$//;     # strip optional sheet-name
 		$d =~ s,\.([^.]+)$,,; # Strip away extension
 		$d .= '.' . $eh->get( 'output.ext.internal' );
 		$eh->set( 'dump', basename( $d )); # Strip off pathname
@@ -334,6 +340,7 @@ sub mix_getopt_header(@) {
 			# Output file will be written to current directory.
 			# Name will become name of last input file foo-e.vhd 
 			my $e = $ARGV[$#ARGV];
+            $e =~ s/\%\w+$//;     # strip optional sheet-name
 			$e =~ s,(\.[^.]+)$,,; # Remove extension
 			$eh->set( 'out' . $t, basename( $e .
 								$eh->get( 'postfix.POSTFILE_' . uc( $t) ) .
