@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewClone.pm,v 1.13 2008/07/07 14:23:13 lutscher Exp $
+#  RCSId: $Id: RegViewClone.pm,v 1.14 2008/12/10 13:12:21 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.13 $                                  
+#  Revision      : $Revision: 1.14 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -32,6 +32,9 @@
 ###############################################################################
 #
 #  $Log: RegViewClone.pm,v $
+#  Revision 1.14  2008/12/10 13:12:21  lutscher
+#  added domain_naming and feature unique_domains
+#
 #  Revision 1.13  2008/07/07 14:23:13  lutscher
 #  added %B option for _clone_name()
 #
@@ -120,11 +123,13 @@ sub _clone {
 	
 	# import regshell.<par> parameters from MIX package to class data; user can change these parameters in mix.cfg
 	my $param;
-	my @lmixparams = ('reg_shell.clone.number',       # number of clones
-					  'reg_shell.clone.addr_spacing', # number of address bits reserved for every clone
-					  'reg_shell.clone.reg_naming',   # naming scheme for cloned registers/fields
-					  'reg_shell.clone.field_naming', # naming scheme for cloned registers/fields
-					  'reg_shell.clone.unique_clocks' # if 1, uniquify clock names of clones
+	my @lmixparams = ('reg_shell.clone.number',        # number of clones
+					  'reg_shell.clone.addr_spacing',  # number of address bits reserved for every clone
+					  'reg_shell.clone.reg_naming',    # naming scheme for cloned registers
+					  'reg_shell.clone.field_naming',  # naming scheme for cloned fields
+					  'reg_shell.clone.domain_naming', # naming scheme for cloned domains
+					  'reg_shell.clone.unique_clocks', # if 1, uniquify clock names of clones
+                      'reg_shell.clone.unique_domains' # if 1, will create new domains for clones
 					 );
 
 	foreach $param (@lmixparams) {
@@ -171,8 +176,8 @@ sub _clone_regspace {
     my ($o_domain0);
     my (@lalldomains);
     # create a new register space
-    my ($o_space) = Micronas::Reg->new;		
-    
+    my ($o_space) = Micronas::Reg->new(device => $this->device);		
+
     # get list of all domains
     foreach $href (@{$this->domains}) {
         push @lalldomains, $href->{'domain'};
@@ -183,28 +188,56 @@ sub _clone_regspace {
         my %hclone_once = ();
         
         if (grep($domain eq $_, @{$lref_domain_names})) { 
-            _info("cloning domain $domain ", $this->global->{'number'}, " times");
+            _info("cloning domain $domain ", $this->global->{'number'}, " times, unique_clocks=",$this->global->{'unique_clocks'},", unique_domains=",$this->global->{'unique_domains'});
             if ($this->global->{'number'} eq 1) {
                 _warning("number of clones is 1, applying naming scheme - make sure this is what you intended");
             };
-            # create a new domain, storing some cloning information
-            $o_domain1 = Micronas::RegDomain->new('name' => $domain, 
-                                                  'clone' => {'number' => $this->global->{'number'}, 
-                                                              'field_naming' => $this->global->{'field_naming'},
-                                                              'reg_naming' => $this->global->{'reg_naming'},
-                                                              'addr_spacing' => $this->global->{'addr_spacing'},
-                                                              'unique_clocks'  => $this->global->{'unique_clocks'}
-                                                             }
-                                                 );
-            # link domain into new register space object
-            $o_space->domains('domain' => $o_domain1, 'baseaddr' => 0x0);
-            
+
+            if ($this->global->{'unique_domains'} == 0) {
+                # create a new domain containing all clones, storing some cloning information
+                my $new_domain_name=_clone_name($this->global->{'domain_naming'}, 99, 0, $domain); # apply domain-naming rule
+                $o_domain1 = Micronas::RegDomain->new('name' => $new_domain_name, 
+                                                      'clone' => {
+                                                                  'number'        => $this->global->{'number'}, 
+                                                                  'field_naming'  => $this->global->{'field_naming'},
+                                                                  'domain_naming' => $this->global->{'domain_naming'},
+                                                                  'reg_naming'    => $this->global->{'reg_naming'},
+                                                                  'addr_spacing'  => $this->global->{'addr_spacing'},
+                                                                  'unique_clocks' => $this->global->{'unique_clocks'}
+                                                                 }
+                                                     );
+                # link domain into new register space object
+                $o_space->domains('domain' => $o_domain1, 'baseaddr' => 0x0);
+            };
+
             for ($n=0; $n< $this->global->{'number'}; $n=$n+1) {
-                $baseaddr = $n * (2 ** $this->global->{'addr_spacing'});
-                if ($baseaddr <= $last_addr) {
-                    _error("overlapping address ranges for cloned domain \'$domain\', check config parameter addr_spacing");
+                if ($this->global->{'unique_domains'} == 0) {
+                    $baseaddr = $n * (2 ** $this->global->{'addr_spacing'});
+                    if ($baseaddr <= $last_addr) {
+                        _error("overlapping address ranges for cloned domain \'$domain\', check config parameter addr_spacing");
+                    }
+                } else {
+                    $baseaddr = 0;
+                    my $new_domain_baseaddr =  $n * (2 ** $this->global->{'addr_spacing'});
+                    if ($new_domain_baseaddr <= $last_addr) {
+                        _error("overlapping address ranges for cloned domain \'$domain\', check config parameter addr_spacing");
+                    }
+                    my $new_domain_name=_clone_name($this->global->{'domain_naming'}, 99, $n, $domain); # apply domain-naming rule
+                    # create a new domain for each clone, storing some cloning information
+                    $o_domain1 = Micronas::RegDomain->new('name' => $new_domain_name, 
+                                                          'clone' => {
+                                                                      'number'        => $this->global->{'number'}, 
+                                                                      'field_naming'  => $this->global->{'field_naming'},
+                                                                      'domain_naming' => $this->global->{'domain_naming'},
+                                                                      'reg_naming'    => $this->global->{'reg_naming'},
+                                                                      'addr_spacing'  => $this->global->{'addr_spacing'},
+                                                                      'unique_clocks' => $this->global->{'unique_clocks'}
+                                                                     }
+                                                         );
+                    # link domain into new register space object
+                    $o_space->domains('domain' => $o_domain1, 'baseaddr' => $new_domain_baseaddr);
                 };
-                
+              
                 # iterate original register space and build up new register space
                 foreach $o_reg0 (sort {$o_domain0->get_reg_address($a) <=> $o_domain0->get_reg_address($b)} @{$o_domain0->regs}) {
                     $reg_offset = $baseaddr + $o_domain0->get_reg_address($o_reg0);	
