@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.20 2008/12/10 13:13:20 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.21 2008/12/10 15:41:38 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.21  2008/12/10 15:41:38  lutscher
+#  fixed bug in _clone_name
+#
 #  Revision 1.20  2008/12/10 13:13:20  lutscher
 #  added feature to _clone_name
 #
@@ -538,10 +541,10 @@ sub _clone_name {
                 $digits = $1;
                 $digits = sprintf("%0${digits}d", $n);
             };
+        } elsif ($n_max >= 0) {
+            $digits = $n_max < 10 ? 1 : ($n_max < 100 ? 2 : ($n_max < 1000 ? 3 : 4)); # max 4 digits, should be enough (or we would never have had the Millenium Bug)
+            $digits = sprintf("%0${digits}d", $n);
         };
-    } elsif ($n_max >= 0) {
-        $digits = $n_max < 10 ? 1 : ($n_max < 100 ? 2 : ($n_max < 1000 ? 3 : 4)); # max 4 digits, should be enough (or we would never have had the Millenium Bug)
-        $digits = sprintf("%0${digits}d", $n);
     };
     
     # take the pattern and fill in the passed object names
