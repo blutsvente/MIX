@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.72 $                                         |
+# | Revision:   $Revision: 1.73 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2008/11/11 10:08:15 $                              |
+# | Date:       $Date: 2008/12/10 13:12:47 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.73  2008/12/10 13:12:47  lutscher
+# | added some parameters for cloning and packing
+# |
 # | Revision 1.72  2008/11/11 10:08:15  lutscher
 # | changed skipelements for xml input
 # |
@@ -200,9 +203,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.72 2008/11/11 10:08:15 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.73 2008/12/10 13:12:47 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.72 $';  
+my $thisrevision    =      '$Revision: 1.73 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -792,6 +795,9 @@ sub init ($) {
 		'topmap'   => 'ALL',	# Values: ALL or list of signals (comma seperated)
 		# map (I,O,IO) signal modes of top to %TM_(I|O|IO)%
 		'xls_dump'  => 0, # enable/disable dumping of registgers in register-master format (.xls)
+        # columns that appear in xls-dump, also defines the order (for Micronas::Reg::write2excel())
+        # use name "dummy" for empty filler columns
+        'xls_columns' => 'ign,type,dev,width,sub,interface,inst,dir,spec,update,sync,clock,reset,b,init,rec,range,view,vi2c,name,comment,block',                              
 		'yaml_dump' => 0  # enable/disable dumping of registers in YAML format
     };
 	$this->{'cfg'}{'import'} = { # import mode control
@@ -1008,6 +1014,7 @@ sub init ($) {
        'reg_naming'	          => '%R',     # naming scheme for registers, see 'clone'
        'domain_naming'        => '%D',     # naming scheme for domains, see 'clone'
        'virtual_top_instance' => "testbench", # name of top-level instance where register-shell is instantiated (usually not used)
+       'device'               => '%EMPTY%', # identifier used for device member of Reg object; if empty, uses the ::dev column from Register-Master
        # parameters for e_vr_ad view
        'e_vr_ad' => {
                      'path'             => "./e", # output dir for e-code
@@ -1035,23 +1042,28 @@ sub init ($) {
        # F original name of field (only available in field_naming)
        # B block name (only available in field_naming)
        # N decimal number; can be preceded by a number to fix the number of digits used in representation
+       #   the %N pattern can be followed by a simple arithmetic expression like "+32" which be evaluated for the number
        # u or l force upper/lowercase (optional)
        # e.g. 'scc_%2N_%uR' creates name scc_06_REG_X from original name reg_x in the 7th clone
        'clone' => {
-                   'number'       => 0,          # number of clones
-                   'addr_spacing' => 10,         # number of address bits reserved for every clone
-                   'reg_naming'   => '%R_%N',    # naming scheme for cloned register
-                   'field_naming' => '%F_%N',    # naming scheme for cloned field
-                   'unique_clocks'=> 1           # if 1, uniquify clock names of clones
+                   'number'         => 0,          # number of clones
+                   'addr_spacing'   => 10,         # number of address bits reserved for every clone
+                   'reg_naming'     => '%R_%N',    # naming scheme for cloned register
+                   'field_naming'   => '%F_%N',    # naming scheme for cloned field
+                   'domain_naming'  => '%D_%N',    # naming scheme for cloned domain
+                   'unique_clocks'  => 1,          # if 1, uniquify clock names of clones
+                   'unique_domains' => 0           # if 1, will create new domains for clones; if 0, cloned registers are fitted into old domain
                   },
        'workaround' => "",                       # string parameter to specify workarounds, currently: platinumd
        
        # parameters for packing *NEW*
        'packing' => {
                      'mode'       =>  "none",    # packing mode, currently <none|64to32|32to16>
-                     'endianness' =>  "big",     # endianness of registers after packing big|little
+                     'endianness' =>  "big",     # endianness of registers after packing <big|little>
                      'postfix_reg_lo' => "_lo",  # postfix for name of lower portion of splitted register
-                     'postfix_reg_hi' => "_hi"   # postfix for name of lower portion of splitted register
+                     'postfix_reg_hi' => "_hi",  # postfix for name of lower portion of splitted register
+                     'addr_offset'    => 0,      # add an offset to each register of the packed register-space
+                     'addr_factor'    => 1       # address factor for transforming register addresses into the packed register-space 
                     },
        
        # legacy parameters, not needed anymore!
