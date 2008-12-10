@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.78 2008/11/11 15:44:26 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.79 2008/12/10 13:09:24 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.79  2008/12/10 13:09:24  lutscher
+#  various changes to write2excel
+#
 #  Revision 1.78  2008/11/11 15:44:26  lutscher
 #  export parse_register_master()
 #
@@ -233,7 +236,7 @@ sub parse_register_master {
         # which could have side-effects on subsequent generators
         foreach $view (split(/,\s*/, $eh->get('reg_shell.type'))) {
             # get handle to new register object
-            $o_space = Micronas::Reg->new();
+            $o_space = Micronas::Reg->new(device => $eh->get('reg_shell.device'));
             
             # init register object from register-master
             if (scalar @$r_i2c) {
@@ -300,7 +303,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.78 $ ';  #'
+our($VERSION) = '$Revision: 1.79 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -445,7 +448,7 @@ sub init {
         };
     };
     
-	#$this->display()
+	# $this->display()
 };
 
 # generate a view of the register space
@@ -626,7 +629,7 @@ sub _map_register_master {
     
     
     
-    $usedbits = Math::BigInt->new(0);		
+    $usedbits = Math::BigInt->new(0); ##LU BAUSTELLE		
     $usedbits = 0;
 
     # get defaults for field attributes from $eh 
@@ -718,6 +721,10 @@ sub _map_register_master {
             if ($marker =~ m/^::clone/) {
                 $rclone = $value; next;
             };
+            if ($marker =~ m/^::dev/ and $this->device eq '%EMPTY%') {
+                $this->device($value);
+                next;
+            };
             if ($marker =~ m/::b(:(\d+))*$/) {
                 if (defined $2) {
                     $p = $msb_max - $2; # bit column numbering is reversed!
@@ -805,7 +812,6 @@ sub _map_register_master {
                 if (!ref($o_reg)) {
                     $o_reg = Micronas::RegReg->new('name' => $reg, 'definition' => $rdefinition);
                     $o_reg->attribs('size' => $rsize, 'clone' => $rclone);
-		    
 
                     # link register object into domain
                     $o_domain->regs($o_reg);
@@ -1331,28 +1337,28 @@ sub write2excel{
     my ( $workbook, $worksheet, $worksheetname, %columns, $i, $maxregisterwidth, $rowcounter, $registercounter,$columns_size,);
     my ($o_domain,$domain, $o_register,$o_field,$field,$domainname, $registername, $registeroffset,$registerwidth, $fieldname);
     
-    my @skipparameter=('size', 'lsb');#parameters to skip when generatin additional columns for register-master
+    my @skipparameter=('size', 'lsb');# parameters to skip when generating additional columns for register-master
 
-    #import needed Modules
+    # import needed Modules
     unless( mix_use_on_demand('use Spreadsheet::WriteExcel;') ) {
 	_fatal( "Failed to load required modules for dumping XML data to Excel: $@" );
 	exit 1;
     }
     
-    #get the path, to the tmp_excelfile
+    # get the path, to the tmp_excelfile
     $dumpfile =~ s/\.xml$/.xls/;#change xml file extension to xls
     $dumpfile = $eh->get('intermediate.path').'/'.$dumpfile;
     
     
-    #create new excel file
-    _info("start writing to Excel File, $dumpfile");
+    # create new excel file
+    _info("start writing to Excel File: $dumpfile");
     
     if (!($workbook = Spreadsheet::WriteExcel->new($dumpfile))){
-	_error( "Problems creating new Excel file: $!");
-	return 0;
+        _error( "Problems creating new Excel file: $!");
+        return 0;
     }
 
-    #get worksheet name
+    # get worksheet name
     $dumpfile =~ m/(\w+)-mixed\.xls$/;
     $worksheetname=$1;
     $worksheetname=substr($worksheetname,0,31);#sheetname can only be 31 characters long
@@ -1362,8 +1368,11 @@ sub write2excel{
     # Add a worksheet
     $worksheet = $workbook->add_worksheet($worksheetname);
 
-    #Describes the columns with identifier => [column name, column description, position, comment, col-width, defaultvalue, sub that returns data for that column]
-    %columns=('ign'=>["::ign","#",0,"Ignore. If cell contains '#', row will be ignored.",6.57,"",sub {"";}],
+    # Describes pre-defined columns with identifier => [column name, column description, position, comment, col-width, defaultvalue, sub that returns data for 
+    # that column]; the position can be changed by user using parameter intermediate.xls_columns (see below and Globals.pm)
+    # note: this is somehow redundant because there is cfg.i2c in Globals.pm; need to clean-up later and use a more OO approach for attributes in general
+    %columns=(
+          'ign'=>["::ign","#",0,"Ignore. If cell contains '#', row will be ignored.",6.57,"",sub {"";}],
 	      'type'=>["::type","Register Type",1,"Not used (!?). Default is 'I2C'.",8.57,"I2C",sub {"I2C";}],
 	      'dev'=>["::dev","Device Address",2,"Symbolic device (chip) address for board-level I2C bus.",8.57,"%EMPTY%",sub {return $this->{'device'};}],
 	      'width'=>["::width","Register Width",3,"Width of HDL implementation of register. Default is 32.",6.14,$eh->get('reg_shell.regwidth'),sub {$registerwidth}],
@@ -1379,13 +1388,14 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
 	      'sync'=>["::sync","Update Signal",10,"Name of the signal that triggers a shadow update of the bitfield (for HDL implementation). This signal can e.g. be vertical-sync.",8.57,"NTO",sub {$o_field->{'attribs'}->{'sync'};}],
 	      'clock'=>["::clock","Clock Domain",11,"Clock signal name of the backend logic's clock domain that receives the bitfield (in case of ::dir = W/RW) or generates the bitfield (in case of ::dir = R). Used for HDL implementation.",8.57,"%OPEN%",sub {$o_field->{'attribs'}->{'clock'};}],
 	      'reset'=>["::reset","Reset Signal",12,"Reset signal name of the backend logic that receives the bitfield (in case of ::dir = W/RW) or generates the bitfield (in case of ::dir = R). Used for HDL implementation.",9.71,"%OPEN%",sub {$o_field->{'attribs'}->{'reset'};}],
-	      'init'=>["::init","Reset Value",13,"Default value of the bitfield that is loaded during reset.",8.57,0,sub {$o_field->{'attribs'}->{'init'};}],
-	      'rec'=>["::rec","Recommended Value",14,"Recommended initial value of the bitfield; usually the same as ::init",8.57,0,sub {$o_field->{'attribs'}->{'rec'};}],
-	      'range'=>["::range","Value Range",15,"Possible, but not necessarily meaningful value range for bitfield.",8.57,"%EMPTY%",sub {$o_field->{'attribs'}->{'range'};}],
-	      'view'=>["::view","Visible",16,"One of Y or N. If N, bitfield is omitted from documentation.",4.29,"Y",sub {$o_field->{'attribs'}->{'view'}}],
-	      'vi2c'=>["::vi2c","Watchltem",17,"Additional register attribute used for VisualI2C.",20.14,'GI2C_%WBitRegister',sub {"GI2C_".$registerwidth."BitRegister";}],
-	      'name'=>["::name","Field Name",18,"Name of the bitfield. Note: must be unique within a domain.",13.29,"%EMPTY%",sub {$fieldname;}],
-	      'comment'=>["::comment","Description",19,"for data sheet (more information on next sheet)
+          'b' => ["::b", "Bit", 13, "", 8.43,""],     
+	      'init'=>["::init","Reset Value",14,"Default value of the bitfield that is loaded during reset.",8.57,0,sub {$o_field->{'attribs'}->{'init'};}],
+	      'rec'=>["::rec","Recommended Value",15,"Recommended initial value of the bitfield; usually the same as ::init",8.57,0,sub {$o_field->{'attribs'}->{'rec'};}],
+	      'range'=>["::range","Value Range",16,"Possible, but not necessarily meaningful value range for bitfield.",8.57,"%EMPTY%",sub {$o_field->{'attribs'}->{'range'};}],
+	      'view'=>["::view","Visible",17,"One of Y or N. If N, bitfield is omitted from documentation.",4.29,"Y",sub {$o_field->{'attribs'}->{'view'}}],
+	      'vi2c'=>["::vi2c","Watchltem",18,"Additional register attribute used for VisualI2C.",20.14,'GI2C_%WBitRegister',sub {"GI2C_".$registerwidth."BitRegister";}],
+	      'name'=>["::name","Field Name",19,"Name of the bitfield. Note: must be unique within a domain.",13.29,"%EMPTY%",sub {$fieldname;}],
+	      'comment'=>["::comment","Description",20,"for data sheet (more information on next sheet)
 \\x = reset all formats to normal
 \\b = bold
 \\u = underline
@@ -1395,24 +1405,80 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
 \\h = subscript
 \\t = tab
 \\\* = bullet",28.14,"",sub {$o_field->{'attribs'}->{'comment'};}],
-	      'block' => ["::block","Block Name",20,"Function block name. Used to further distinguish IPs within a domain.",13,"%EMPTY%",sub {if ($o_field->{'attribs'}->{'block'} eq '%EMPTY%'){return $domainname}else{return $o_field->{'attribs'}->{'block'} }}],
+	      'fgroup' => ["::fgroup","Functional Group",22,"Functional group that the register belongs to. Used to further distinguish IPs within a domain.",13,"%EMPTY%",sub {if ($o_field->{'attribs'}->{'fgroup'} eq '%EMPTY%'){return $domainname}else{return $o_field->{'attribs'}->{'fgroup'} }}],
+	      'block' => ["::block","Block Name",23,"Function block name. Used to further distinguish IPs within a domain.",13,"%EMPTY%",sub {if ($o_field->{'attribs'}->{'block'} eq '%EMPTY%'){return $domainname}else{return $o_field->{'attribs'}->{'block'} }}],
+	      'definition' => ["::definition","Instance Definition",24,"",13,"%EMPTY%",sub {return $o_register->{'definition'}}],
+          'dummy' => ["::skip", "<blank>", 25, "",   4.29,   "", ""]
 	);
     
+    my @lxls_columns = split (/,/, $eh->get("intermediate.xls_columns"));
     
-    
+    # delete columns if not listed in intermediate.xls_columns
+    my @lcolumns = keys %columns;
+    foreach my $col (@lcolumns) {
+        if (!grep {$_ eq $col} @lxls_columns) {
+            delete $columns{$col};
+            _info("write2excel(): removing column \'$col\' from xls-dump");
+        };
+    };
 
+    # re-order columns according to intermediate.xls_columns
+    my ($dummy_count, $dummy_pos);
+    for ($i=0; $i<scalar(@lxls_columns); $i++) {
+        if (exists $columns{$lxls_columns[$i]}) {
+            if ($lxls_columns[$i] =~ m/dummy|split/) {
+                $dummy_count++;
+                $dummy_pos = $i;
+                # insert dummy column
+                foreach my $elem (@{$columns{"dummy"}}) {
+                    push @{$columns{"dummy$dummy_count"}}, $elem;
+                };
+                $columns{"dummy$dummy_count"}->[2] =  $dummy_pos;
+            } else {
+                # assign new position to pre-defined column
+                # print "> ",$lxls_columns[$i]," -> $i\n";
+                $columns{$lxls_columns[$i]}->[2] = $i;
+            };
+        } else {
+            _warning("write2excel(): xls column \'".$lxls_columns[$i]."\' specified in intermediate.xls_columns is unknown");
+        };
+    };
+    delete $columns{"dummy"};
+
+    # print join(", ", sort {$columns{$a}[2]<=>$columns{$b}[2]} keys %columns),"\n"; 
+    # my $dump = Data::Dumper->new([%columns]); print $dump->Dump;
+    # exit;
     #gets length of the hash
-    $columns_size=scalar keys %columns;
+    # $columns_size=scalar keys %columns;
 
     #add the ::b columns
     
     $maxregisterwidth=$this->get_max_regwidth();
     
-     for ($i=($maxregisterwidth-1);$i>=0;$i--){
- 	$columns{"Bit$i"}=["::b","Bit$i",$columns_size+($maxregisterwidth-1-$i),0,8.43,"",""];
-     }
+    my $bit_column = 0;
+    $bit_column = $columns{"b"}->[2];
+    # shift all other columns by number of bits in register
+    foreach my $col (keys %columns) {
+        if ($columns{$col}->[2] > $bit_column) {
+            $columns{$col}->[2] += $maxregisterwidth-1;
+        };
+    };
+    # clone ::b column for each bit in register
+    for ($i=$maxregisterwidth-1; $i >=0; $i--) {
+        foreach my $elem (@{$columns{"b"}}) { # copy the list for column b
+            push @{$columns{"b$i"}}, $elem;
+        };
+        $columns{"b$i"}->[0] = "::b";
+        $columns{"b$i"}->[1] = "Bit $i";
+        $columns{"b$i"}->[2] = $bit_column + $maxregisterwidth -1 - $i;
+    };
+    delete $columns{"b"};
     
-    
+    # for ($i=($maxregisterwidth-1);$i>=0;$i--){
+    #     $columns{"Bit$i"}=["::b","Bit$i",$columns_size+($maxregisterwidth-1-$i),0,8.43,"",""];
+    # }
+    #my $dump = Data::Dumper->new([%columns]); print $dump->Dump;
+
     #Define the different formats that are needed for xls generation
     my($heading,$headingcolor,$description,$descriptioncolor,$bitfieldfull,$bitfieldblank,$comment,$fieldformat,$fieldformat1,$fieldformat2);
     
@@ -1465,134 +1531,130 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
     $worksheet->write(3,0,"#");
 
 
-    #add additional entries to %columns
-    #for additional fieldattributes from ip-xact
+    # add additional entries to %columns
+    # for additional field attributes from ip-xact
     foreach $domain (@{$this->domains}){#iterate through domains
-	$o_domain=$domain->{'domain'};
-	$domainname=$o_domain->{'name'};
-	
-	foreach $o_register (@{$o_domain->{'regs'}}){#iterate through register
-	    
-	    foreach $field (@{$o_register->{'fields'}}){#iterate through fields
-		$o_field=$field->{'field'};  		    
-	
-		my %i2csheetdefinition=%{$eh->get('i2c.field')};
-		my $i;
-		
-		foreach $i (keys %{$o_field->{'attribs'}}){ 		
-		    next if (grep("::".$i eq $_,keys %i2csheetdefinition));
-		    next if (grep($i eq $_,keys %columns));
-		    next if (grep($i eq $_,@skipparameter));
-		    next if (defined $columns{"fieldparameter_".$i});
-		    		
- 		    
-		    my $columnssize=scalar keys %columns;
-		    $columns{"fieldparameter_".$i}=["fieldparameter_".$i, $i, $columnssize,"Additional Field from IP-XACT",13,"",sub {$o_field->{'attribs'}->{$i}}];
-			
-		    
-  		}
-	    }
-	}
+        $o_domain=$domain->{'domain'};
+        $domainname=$o_domain->{'name'};
+        
+        foreach $o_register (@{$o_domain->{'regs'}}){#iterate through register
+            
+            foreach $field (@{$o_register->{'fields'}}){#iterate through fields
+                $o_field=$field->{'field'};  		    
+                
+                my %i2csheetdefinition=%{$eh->get('i2c.field')};
+                my $i;
+                
+                foreach $i (keys %{$o_field->{'attribs'}}){ 		
+                    next if (grep("::".$i eq $_,keys %i2csheetdefinition));
+                    next if (grep($i eq $_,keys %columns));
+                    next if (grep($i eq $_,@skipparameter));
+                    next if (defined $columns{"fieldparameter_".$i});
+		    		         
+                    my $columnssize=scalar keys %columns;
+                    $columns{"fieldparameter_".$i}=["fieldparameter_".$i, $i, $columnssize,"Additional Field from IP-XACT",13,"",sub {$o_field->{'attribs'}->{$i}}];
+                                   
+                }
+            }
+        }
     }
     
 
-    foreach $domain (@{$this->domains}){#iterate through domains
-	$o_domain=$domain->{'domain'};
-	$domainname=_clone_name($eh->get('reg_shell.domain_naming'),99,$o_domain->{'id'},$o_domain->{'name'}); # apply domain-naming rule
-	
-	foreach $o_register (@{$o_domain->{'regs'}}){#iterate through register
-	    
-	    $registername=_clone_name($eh->get('reg_shell.reg_naming'),99,0,$domainname,$o_register->{'name'});  # apply register-naming rule
-	    $registerwidth=$o_register->{'attribs'}->{'size'};
-	    $registeroffset=$o_domain->get_reg_address($o_register);
-	    $registeroffset=sprintf("0x%X",$registeroffset);
-	    
-	    foreach $field (@{$o_register->{'fields'}}){#iterate through fields
-		$o_field=$field->{'field'};
+    # iterate through domains
+    my $n_domain=0;
+    foreach $domain (@{$this->domains}){
+        $o_domain=$domain->{'domain'};
+        # $domainname=_clone_name($eh->get('reg_shell.domain_naming'),99,$o_domain->{'id'},$o_domain->{'name'}); # apply domain-naming rule
+        $domainname=_clone_name($eh->get('reg_shell.domain_naming'),99,$n_domain++,$o_domain->{'name'}); # apply domain-naming rule
+        foreach $o_register (@{$o_domain->{'regs'}}){#iterate through register
+            
+            $registername   = _clone_name($eh->get('reg_shell.reg_naming'),99,0,$domainname,$o_register->{'name'});  # apply register-naming rule
+            $registerwidth  = $o_register->{'attribs'}->{'size'};
+            $registeroffset = $o_domain->get_reg_address($o_register);
+            # $registeroffset = sprintf("0x%X",$registeroffset);
+            $registeroffset = sprintf("%d",$registeroffset); # baustelle: make this configurable
 
- 		# generate field name with naming scheme
-		$fieldname=$o_field->{'name'};
- 		$fieldname= _clone_name($eh->get('reg_shell.field_naming'),99,0,$domainname,$registername,$fieldname,$o_field->attribs->{'block'});
+            foreach $field (@{$o_register->{'fields'}}){#iterate through fields
+                $o_field=$field->{'field'};
+                
+                # generate field name with naming scheme
+                $fieldname=$o_field->{'name'};
+                $fieldname= _clone_name($eh->get('reg_shell.field_naming'),99,0,$domainname,$registername,$fieldname,$o_field->attribs->{'block'});
+                
+                
+                $fieldformat=($registercounter % 2) ? $fieldformat1 : $fieldformat2;#change format with every new register
+                
+                
+                $worksheet->set_row ($rowcounter,12.75);#set rowheight to 12.75
 
-
-		$fieldformat=($registercounter % 2) ? $fieldformat1 : $fieldformat2;#change format with every new register
-		
-
-		$worksheet->set_row ($rowcounter,12.75);#set rowheight to 12.75
-
-
-
-		my @row;#array that contains all data from field, ready to write
- 		foreach (sort {$columns{$a}[2]<=>$columns{$b}[2]} keys %columns){#sort %columns by position
-		    my ($ref_sub_value,$ref_sub_default,$default,$value);
- 		    
-		    
- 		    
-		    if (ref($columns{$_}[6]) eq 'CODE'){
-			$ref_sub_value=$columns{$_}[6];
-			$value=&$ref_sub_value();
-		    }else{
-			$value=$columns{$_}[6];
-		    }
-			
-		    if (ref($columns{$_}[5]) eq 'CODE'){
-			$ref_sub_default=$columns{$_}[5];
-			$default=&$ref_sub_default();
-		    }else{
-			$default=$columns{$_}[5];
-		    }
-
-		    if ($_ =~ m/^Bit\d+/){
-			push @row, "";
-		    }else{
-			push @row, ($value || $default);
-		    }
-
- 		    
-
- 		}
-		
-		
-		
- 		$worksheet->write_row($rowcounter,0,\@row,$fieldformat);#write row
-
-
-
-		#write ::b fields
- 		my ($f_size,$f_lsb,$f_pos);#get the fieldsize, lsb and position of the field
- 		$f_size=$o_field->{'attribs'}->{'size'};
- 		$f_lsb=$o_field->{'attribs'}->{'lsb'};
- 		$f_pos=$field->{'pos'};
-		
- 		#first write format to all ::b columns
- 		for ($i=0;$i<=$maxregisterwidth-1;$i++){
- 		    $worksheet->write_blank($rowcounter,$columns{"Bit$i"}[2],$bitfieldblank);
- 		}
-
- 		#write used bits
- 		for ($i=$f_pos;$i<$f_pos+$f_size;$i++){
- 		    $worksheet->write($rowcounter,$columns{"Bit$i"}[2],$fieldname.".".($f_lsb+$i-$f_pos),$bitfieldfull);
- 		}
-		$rowcounter++;
-
-	    }
-	    $registercounter++;
-	}
+                
+                
+                my @row;#array that contains all data from field, ready to write
+                foreach (sort {$columns{$a}[2]<=>$columns{$b}[2]} keys %columns){#sort %columns by position
+                    my ($ref_sub_value,$ref_sub_default,$default,$value);
+                    
+                    
+                    
+                    if (ref($columns{$_}[6]) eq 'CODE'){
+                        $ref_sub_value=$columns{$_}[6];
+                        $value=&$ref_sub_value();
+                    }else{
+                        $value=$columns{$_}[6];
+                    }
+                    
+                    if (ref($columns{$_}[5]) eq 'CODE'){
+                        $ref_sub_default=$columns{$_}[5];
+                        $default=&$ref_sub_default();
+                    }else{
+                        $default=$columns{$_}[5];
+                    }
+                    
+                    if ($_ =~ m/^b\d+/){
+                        push @row, "";
+                    }else{
+                        push @row, ($value || $default);
+                    }
+                                                         
+                }
+                            
+                
+                $worksheet->write_row($rowcounter,0,\@row,$fieldformat);#write row
+                                
+                
+                #write ::b fields
+                my ($f_size,$f_lsb,$f_pos);#get the fieldsize, lsb and position of the field
+                $f_size=$o_field->{'attribs'}->{'size'};
+                $f_lsb=$o_field->{'attribs'}->{'lsb'};
+                $f_pos=$field->{'pos'};
+                
+                #first write format to all ::b columns
+                for ($i=0;$i<=$maxregisterwidth-1;$i++){
+                    $worksheet->write_blank($rowcounter,$columns{"b$i"}[2],$bitfieldblank);
+                }
+                
+                #write used bits
+                for ($i=$f_pos;$i<$f_pos+$f_size;$i++){
+                    $worksheet->write($rowcounter,$columns{"b$i"}[2],$fieldname.".".($f_lsb+$i-$f_pos),$bitfieldfull);
+                }
+                $rowcounter++;
+                
+            }
+            $registercounter++;
+        }
     }
 
     #Write Heading, Description and comment
     foreach (sort {$columns{$a}[2]<=>$columns{$b}[2]} keys %columns){#sort %columns by position
-	$worksheet->write(0,$columns{$_}[2],$columns{$_}[0],$heading);#write heading row
-	$worksheet->write(1,$columns{$_}[2],$columns{$_}[1],$description);#write description row
-	$worksheet->write_comment(1,$columns{$_}[2],$columns{$_}[3]) if $columns{$_}[3];#write comments to description row
-	
-	if ($_ =~ m/^Bit\d+/){
-	    $worksheet->set_column($columns{$_}[2],$columns{$_}[2],$columns{$_}[4],undef,1,1);#add outline if bitcell
-	}else{
-	    $worksheet->set_column($columns{$_}[2],$columns{$_}[2],$columns{$_}[4]);#else: no outline
-	}
-   }
-    
+        $worksheet->write(0,$columns{$_}[2],$columns{$_}[0],$heading);#write heading row
+        $worksheet->write(1,$columns{$_}[2],$columns{$_}[1],$description);#write description row
+        $worksheet->write_comment(1,$columns{$_}[2],$columns{$_}[3]) if $columns{$_}[3];#write comments to description row
+        
+        if ($_ =~ m/^b\d+/){
+            $worksheet->set_column($columns{$_}[2],$columns{$_}[2],$columns{$_}[4],undef,1,1);#add outline if bitcell
+        }else{
+            $worksheet->set_column($columns{$_}[2],$columns{$_}[2],$columns{$_}[4]);#else: no outline
+        }
+    }
     
     
     $workbook->close() or _error("Error creating file $dumpfile");
