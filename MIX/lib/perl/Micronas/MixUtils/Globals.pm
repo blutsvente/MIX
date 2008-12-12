@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.74 $                                         |
+# | Revision:   $Revision: 1.75 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2008/12/10 18:00:10 $                              |
+# | Date:       $Date: 2008/12/12 10:34:43 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.75  2008/12/12 10:34:43  lutscher
+# | added feature reg_shell.packing.addr_domain_reset
+# |
 # | Revision 1.74  2008/12/10 18:00:10  lutscher
 # | small fix concerning unique_domains parameter
 # |
@@ -206,9 +209,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.74 2008/12/10 18:00:10 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.75 2008/12/12 10:34:43 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.74 $';  
+my $thisrevision    =      '$Revision: 1.75 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1061,12 +1064,14 @@ sub init ($) {
        
        # parameters for packing *NEW*
        'packing' => {
-                     'mode'       =>  "none",    # packing mode, currently <none|64to32|32to16>
-                     'endianness' =>  "big",     # endianness of registers after packing <big|little>
-                     'postfix_reg_lo' => "_lo",  # postfix for name of lower portion of splitted register
-                     'postfix_reg_hi' => "_hi",  # postfix for name of lower portion of splitted register
-                     'addr_offset'    => 0,      # add an offset to each register of the packed register-space
-                     'addr_factor'    => 1       # address factor for transforming register addresses into the packed register-space 
+                     'mode'              =>  "none",    # packing mode, currently <none|64to32|32to16>
+                     'endianness'        =>  "big",     # endianness of registers after packing <big|little>
+                     'postfix_reg_lo'    => "_lo",  # postfix for name of lower portion of splitted register
+                     'postfix_reg_hi'    => "_hi",  # postfix for name of lower portion of splitted register
+                     'addr_offset'       => 0,      # add an offset to each register address of the packed register-space
+                     'addr_factor'       => 1,      # address factor for transforming register addresses into the packed register-space 
+                     'addr_domain_reset' => 0       # specifies whether the transformed address is reset at domain start
+                                                    # Note: special feature for FRCS RM conversion
                     },
        
        # legacy parameters, not needed anymore!

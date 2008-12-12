@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegPacking.pm,v 1.3 2008/12/10 13:10:02 lutscher Exp $
+#  RCSId: $Id: RegPacking.pm,v 1.4 2008/12/12 10:34:43 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.3 $                                  
+#  Revision      : $Revision: 1.4 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegPacking.pm,v $
+#  Revision 1.4  2008/12/12 10:34:43  lutscher
+#  added feature reg_shell.packing.addr_domain_reset
+#
 #  Revision 1.3  2008/12/10 13:10:02  lutscher
 #  added some features for the address transformation in packed register-space
 #
@@ -98,7 +101,8 @@ sub _pack_regspace {
     my $endianness = $eh->get('reg_shell.packing.endianness'); 
     my $addr_offset = $eh->get('reg_shell.packing.addr_offset');
     my $addr_factor = $eh->get('reg_shell.packing.addr_factor');
-
+    my $reset_addr = 0;
+    my $domain_offset = 0;
 	my ($o_domain1, $o_reg0, $o_reg1, $o_reg2, $href, $o_field0, $o_field1, %hfattribs, %hrattribs, $fpos);
     my @lalldomains = ();
 
@@ -115,7 +119,7 @@ sub _pack_regspace {
         my ($domain) = $o_domain0->name;
         if (grep($domain eq $_, @{$lref_domain_names})) { 
             _info("packing domain $domain with mode ", $mode, " and endianness ", $endianness,"...");
-            
+
             # create a new domain
             $o_domain1 = Micronas::RegDomain->new('name' => $domain,);
             
@@ -129,6 +133,7 @@ sub _pack_regspace {
                 foreach $o_reg0 (sort {$o_domain0->get_reg_address($a) <=> $o_domain0->get_reg_address($b)} @{$o_domain0->regs}) {
                     my $reg_offset =  $o_domain0->get_reg_address($o_reg0);
                     my ($offs0, $offs1);
+
                     # create new register objects
                     ($o_reg1, $o_reg2) = $o_reg0->_pack_64to32($eh->get('reg_shell.packing.postfix_reg_lo'), $eh->get('reg_shell.packing.postfix_reg_hi'));
                     # link new register object and its fields into domain and addrmap
@@ -152,9 +157,20 @@ sub _pack_regspace {
                 };
             } elsif ($mode eq "32to16") {
                 my $addr_incr = 2;
+                $reset_addr = $eh->get('reg_shell.packing.addr_domain_reset');
+                $domain_offset = 0;
                 foreach $o_reg0 (sort {$o_domain0->get_reg_address($a) <=> $o_domain0->get_reg_address($b)} @{$o_domain0->regs}) {
                     my $reg_offset =  $o_domain0->get_reg_address($o_reg0);
                     my ($offs0, $offs1);
+
+                    # determine negative address-offset at start of domain, is the address of the first register if requested by user 
+                    # Note: special feature for FRCS RM conversion, currently only for this packing mode
+                    if ($reset_addr ) {
+                        $domain_offset = - $reg_offset;
+                        $reset_addr = 0;
+                    };
+                    $reg_offset += $domain_offset;
+
                     # create new register objects
                     ($o_reg1, $o_reg2) = $o_reg0->_pack_32to16($eh->get('reg_shell.packing.postfix_reg_lo'), $eh->get('reg_shell.packing.postfix_reg_hi'));
                     
