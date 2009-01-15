@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Mix.pm,v 1.2 2008/12/10 13:08:35 lutscher Exp $
+#  RCSId: $Id: Mix.pm,v 1.3 2009/01/15 12:04:25 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Mix and Reg packages
@@ -43,6 +43,9 @@
 ###############################################################################
 #
 #  $Log: Mix.pm,v $
+#  Revision 1.3  2009/01/15 12:04:25  lutscher
+#  fixed typo
+#
 #  Revision 1.2  2008/12/10 13:08:35  lutscher
 #  no changes
 #
@@ -103,7 +106,7 @@ use Micronas::MixReport;
 # define static members here
 
 # version of this package, extracted from RCS macros
-our($VERSION) = '$Revision: 1.2 $ ';  #'
+our($VERSION) = '$Revision: 1.3 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -181,7 +184,7 @@ sub _init {
     }
     $logger = get_logger('MIX'); # Start with MIX namespace
     if (!$is_init) {
-        $logger->warning("__W_MIX\t","could not find a \'mixlog.conf\' file");
+        $logger->warn("__W_MIX\t","could not find a \'mixlog.conf\' file");
     };
 
     #
