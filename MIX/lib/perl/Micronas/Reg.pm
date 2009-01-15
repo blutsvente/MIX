@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.80 2008/12/10 15:40:36 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.81 2009/01/15 14:03:45 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.81  2009/01/15 14:03:45  lutscher
+#  moved view generation out of parse_register_master
+#
 #  Revision 1.80  2008/12/10 15:40:36  lutscher
 #  changed order of packing,cloning
 #
@@ -226,56 +229,47 @@ sub parse_register_master {
 			$logger->fatal( '__F_LOADREGMD', "\tFailed to load required modules for parse_register_master(): $@" );
 			exit 1;
 		}
-        
-        # get user-supplied list of domains
-        my @ldomains = ();
-        if (exists $OPTVAL{'domain'}) {
-            push @ldomains, $OPTVAL{'domain'};
-        }
-             
+    
         my ($view, $o_space);
-        # for every view, create a new register-space object from input; ##LU this is not very nice,
-        # but currently the generate functions manipulate at least the 'global' data-member and the 'eh' hash
-        # which could have side-effects on subsequent generators
-        foreach $view (split(/,\s*/, $eh->get('reg_shell.type'))) {
-            # get handle to new register object
-            $o_space = Micronas::Reg->new(device => $eh->get('reg_shell.device'));
-            
-            # init register object from register-master
-            if (scalar @$r_i2c) {
-                $o_space->init(	 
-                               'inputformat'     => "register-master", 
-                               'database_type'   => $eh->get('i2c.regmas_type'),
-                               'register_master' => $r_i2c
-                              );
-            };
- 
-            # add to register-object from XML database
-            if (scalar @$r_xml) {
-                $o_space->init(	 
-                               'inputformat'    => "ip-xact", 
-                               'database_type'  => $eh->get('xml.type'),
-                               'data'           => $r_xml
-                              );
-            };
-
-            # set debug switch
-            $o_space->global('debug' => exists $OPTVAL{'verbose'} ? 1 : 0);
-			
-            # check if register object should be cloned
-            if ($eh->get('reg_shell.clone.number') > 0) {
-                my $o_new_space = $o_space->_clone(); # module RegViewClone.pm 
-                $o_space = $o_new_space;
-            };
-            
-            # apply packing-mode if desired
-            if ($eh->get('reg_shell.packing.mode') ne "none") {
-                my $o_new_space = $o_space->_pack();
-                $o_space = $o_new_space;
-            };
-                    
-            # make it so 
-            $o_space->generate_view($view, $o_space->global->{supported_views}, \@ldomains);
+         
+        #
+        # create a new register-space object from input
+        #        
+        
+        # get handle to new register object
+        $o_space = Micronas::Reg->new(device => $eh->get('reg_shell.device'));
+        
+        # init register object from register-master
+        if (scalar @$r_i2c) {
+            $o_space->init(	 
+                           'inputformat'     => "register-master", 
+                           'database_type'   => $eh->get('i2c.regmas_type'),
+                           'register_master' => $r_i2c
+                          );
+        };
+        
+        # add to register-object from XML database
+        if (scalar @$r_xml) {
+            $o_space->init(	 
+                           'inputformat'    => "ip-xact", 
+                           'database_type'  => $eh->get('xml.type'),
+                           'data'           => $r_xml
+                          );
+        };
+        
+        # set debug switch
+        $o_space->global('debug' => exists $OPTVAL{'verbose'} ? 1 : 0);
+        
+        # check if register object should be cloned
+        if ($eh->get('reg_shell.clone.number') > 0) {
+            my $o_new_space = $o_space->_clone(); # module RegViewClone.pm 
+            $o_space = $o_new_space;
+        };
+        
+        # apply packing-mode if desired
+        if ($eh->get('reg_shell.packing.mode') ne "none") {
+            my $o_new_space = $o_space->_pack();
+            $o_space = $o_new_space;
         };
         return $o_space;
     } else {
@@ -306,51 +300,51 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.80 $ ';  #'
+our($VERSION) = '$Revision: 1.81 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
 #global constants and defaults; is mapped per reference into Reg objects
-our(%hglobal) = 
-  (
-   # supported input formats
-   supported_input_formats => ["register-master", "ip-xact"],
-
-   # supported register-master types (yes, they are not all the same)
-   supported_register_master_type => ["VGCA", "FRCH", "AVFB"], 
-
-   # generatable register views (dispatch table)
-   supported_views => 
-   {
-    "hdl-vgch-rs" => \&_gen_view_vgch_rs,      # VGCH project register shell (owner: Thorsten Lutscher)
-    "e_vr_ad"     => \&_gen_view_vr_ad,        # e-language macros (owner: Thorsten Lutscher)
-    "stl"         => \&_gen_view_stl,          # register test file in Socket Transaction Language format (owner: Thorsten Lutscher)
-    "rdl"         => \&_gen_view_rdl,          # Denali RDL representation of database (experimental)
-    "ip-xact"     => \&_gen_view_ipxact,       # IP-XACT compliant XML output (owner: Gregor Herburger)
-    # "portlist"    => \&mix_reg_report,             # documents portlist in mif file (owner: Thorsten Lutscher)
-    "reglist"     => \&mix_reg_report,         # documents all registers in mif file (owner: Thorsten Lutscher)
-    "header"      => \&mix_reg_report,         # generates c header files (owner: Thorsten Lutscher)
-    "vctyheader"  => \&mix_reg_report,         # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
-    "per"         => \&mix_reg_report,         # creates Lauterbach per file (owner: Thorsten Lutscher)
-    "vctyper"     => \&mix_reg_report,         # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
-    "perl"        => \&mix_reg_report,         # creates perl package (owner: Thorsten Lutscher)
-    "vctyperl"    => \&mix_reg_report,         # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
-    "none"        => sub {}                    # generate nothing (useful for bypassing the dispatcher)
-   },
-
-   # attributes in register-master that do NOT belong to a field
-   # note: the field name is retrieved from the ::b entries of the register-master
-   non_field_attributes => [qw(::ign ::sub ::interface ::inst ::width ::b:.* ::b ::addr ::dev ::vi2c ::default ::name ::type ::definition ::clone)],
-
-   # language for HDL code generation, currently only Verilog supported
-   lang => "verilog",
-
-   # debug switch
-   debug => 0,
-
-   # Version of class package
-   version => $VERSION
-  );
+# our(%hglobal) = 
+#   (
+#    # supported input formats
+#    supported_input_formats => ["register-master", "ip-xact"],
+# 
+#    # supported register-master types (yes, they are not all the same)
+#    supported_register_master_type => ["VGCA", "FRCH", "AVFB"], 
+# 
+#    # generatable register views (dispatch table)
+#    supported_views => 
+#    {
+#     "hdl-vgch-rs" => \&_gen_view_vgch_rs,      # VGCH project register shell (owner: Thorsten Lutscher)
+#     "e_vr_ad"     => \&_gen_view_vr_ad,        # e-language macros (owner: Thorsten Lutscher)
+#     "stl"         => \&_gen_view_stl,          # register test file in Socket Transaction Language format (owner: Thorsten Lutscher)
+#     "rdl"         => \&_gen_view_rdl,          # Denali RDL representation of database (experimental)
+#     "ip-xact"     => \&_gen_view_ipxact,       # IP-XACT compliant XML output (owner: Gregor Herburger)
+#     # "portlist"    => \&mix_reg_report,             # documents portlist in mif file (owner: Thorsten Lutscher)
+#     "reglist"     => \&mix_reg_report,         # documents all registers in mif file (owner: Thorsten Lutscher)
+#     "header"      => \&mix_reg_report,         # generates c header files (owner: Thorsten Lutscher)
+#     "vctyheader"  => \&mix_reg_report,         # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
+#     "per"         => \&mix_reg_report,         # creates Lauterbach per file (owner: Thorsten Lutscher)
+#     "vctyper"     => \&mix_reg_report,         # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
+#     "perl"        => \&mix_reg_report,         # creates perl package (owner: Thorsten Lutscher)
+#     "vctyperl"    => \&mix_reg_report,         # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
+#     "none"        => sub {}                    # generate nothing (useful for bypassing the dispatcher)
+#    },
+# 
+#    # attributes in register-master that do NOT belong to a field
+#    # note: the field name is retrieved from the ::b entries of the register-master
+#    non_field_attributes => [qw(::ign ::sub ::interface ::inst ::width ::b:.* ::b ::addr ::dev ::vi2c ::default ::name ::type ::definition ::clone)],
+# 
+#    # language for HDL code generation, currently only Verilog supported
+#    lang => "verilog",
+# 
+#    # debug switch
+#    debug => 0,
+# 
+#    # Version of class package
+#    version => $VERSION
+#   );
 
 
 #------------------------------------------------------------------------------
@@ -368,8 +362,47 @@ sub new {
 	my $ref_member  = {
 					   device => "<no device specified>",
 					   domains => [],
-					   global => \%hglobal  # reference to class data
-					  };
+					   global => {
+                                  # supported input formats
+                                  supported_input_formats => ["register-master", "ip-xact"],
+                                  
+                                  # supported register-master types (yes, they are not all the same)
+                                  supported_register_master_type => ["VGCA", "FRCH", "AVFB"], 
+                                  
+                                  # generatable register views (dispatch table)
+                                  supported_views => 
+                                  {
+                                   "hdl-vgch-rs" => \&_gen_view_vgch_rs,      # VGCH project register shell (owner: Thorsten Lutscher)
+                                   "e_vr_ad"     => \&_gen_view_vr_ad,        # e-language macros (owner: Thorsten Lutscher)
+                                   "stl"         => \&_gen_view_stl,          # register test file in Socket Transaction Language format (owner: Thorsten Lutscher)
+                                   "rdl"         => \&_gen_view_rdl,          # Denali RDL representation of database (experimental)
+                                   "ip-xact"     => \&_gen_view_ipxact,       # IP-XACT compliant XML output (owner: Gregor Herburger)
+                                   # "portlist"    => \&mix_reg_report,             # documents portlist in mif file (owner: Thorsten Lutscher)
+                                   "reglist"     => \&mix_reg_report,         # documents all registers in mif file (owner: Thorsten Lutscher)
+                                   "header"      => \&mix_reg_report,         # generates c header files (owner: Thorsten Lutscher)
+                                   "vctyheader"  => \&mix_reg_report,         # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
+                                   "per"         => \&mix_reg_report,         # creates Lauterbach per file (owner: Thorsten Lutscher)
+                                   "vctyper"     => \&mix_reg_report,         # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
+                                   "perl"        => \&mix_reg_report,         # creates perl package (owner: Thorsten Lutscher)
+                                   "vctyperl"    => \&mix_reg_report,         # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
+                                   "none"        => sub {}                    # generate nothing (useful for bypassing the dispatcher)
+                                  },
+
+                                  # attributes in register-master that do NOT belong to a field
+                                  # note: the field name is retrieved from the ::b entries of the register-master
+                                  non_field_attributes => [qw(::ign ::sub ::interface ::inst ::width ::b:.* ::b ::addr ::dev ::vi2c ::default ::name ::type ::definition ::clone)],
+                                  
+                                  # language for HDL code generation, currently only Verilog supported
+                                  lang => "verilog",
+                                  
+                                  # debug switch
+                                  debug => 0,
+                                  
+                                  # Version of class package
+                                  version => $VERSION
+                                 }
+                      };
+
 	# init data members w/ parameters from constructor call
 	foreach (keys %params) {
 		$ref_member->{$_} = $params{$_};
@@ -454,9 +487,26 @@ sub init {
 	# $this->display()
 };
 
+# generate all views of the register space
+sub generate_all_views {
+    my $this = shift;
+    my ($view, $o_space, @ldomains);
+    
+    # get user-supplied list of domains
+    my @ldomains = ();
+    if (exists $OPTVAL{'domain'}) {
+        push @ldomains, $OPTVAL{'domain'};
+    }
+   
+    foreach $view (split(/,\s*/, $eh->get('reg_shell.type'))) {
+        $this->generate_view($view, $this->global->{supported_views}, \@ldomains);
+    };
+};
+
 # generate a view of the register space
 # !! this is the HOOK FUNCTION to call view-generating-methods in other packages/modules !!
 # it uses a reference to a dispatch table to make the method calls;
+# if you want to add new generators, edit the dispatch table "supported_views"
 sub generate_view {
 	my $this = shift;
 	my ($view_name, $href_dispatch_table, $lref_domains) = @_;

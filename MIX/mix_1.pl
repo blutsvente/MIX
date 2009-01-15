@@ -19,9 +19,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_1.pl,v 1.1 2008/11/13 11:54:49 lutscher Exp $  |
-# | Version      : $Revision: 1.1 $                                      |
-# | Mod.Date     : $Date: 2008/11/13 11:54:49 $                           |
+# | Id           : $Id: mix_1.pl,v 1.2 2009/01/15 14:03:45 lutscher Exp $  |
+# | Version      : $Revision: 1.2 $                                      |
+# | Mod.Date     : $Date: 2009/01/15 14:03:45 $                           |
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 
@@ -29,6 +29,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_1.pl,v $
+# | Revision 1.2  2009/01/15 14:03:45  lutscher
+# | moved view generation out of parse_register_master
+# |
 # | Revision 1.1  2008/11/13 11:54:49  lutscher
 # | initial release
 # |
@@ -72,7 +75,7 @@ use Micronas::Mix;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.1 $'; # RCS Id '
+$::VERSION = '$Revision: 1.2 $'; # RCS Id '
 $::VERSION =~ s,\$,,go;
 
 #
@@ -215,6 +218,7 @@ $mix->parse_hier();
 $mix->parse_conn();
 $mix->parse_io();
 $mix->parse_registers();
+$mix->gen_register_views();
 $mix->gen_modules();
 
 my $status = $mix->write_output();

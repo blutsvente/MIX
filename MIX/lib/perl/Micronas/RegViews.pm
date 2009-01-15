@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.87 2008/11/11 10:07:58 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.88 2009/01/15 14:03:45 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.87 $                                  
+#  Revision      : $Revision: 1.88 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.88  2009/01/15 14:03:45  lutscher
+#  moved view generation out of parse_register_master
+#
 #  Revision 1.87  2008/11/11 10:07:58  lutscher
 #  small change for workaround platinumd
 #
@@ -253,6 +256,7 @@ sub _gen_view_vgch_rs {
     };
 
 	# modify MIX config parameters (only where required)
+    # ##LU this is potentially dangerous because subsequent view generators could be affected
 	$eh->set('check.signal', 'load,driver,check');
     #$eh->set('port.generate.name',  'signal');
     $eh->set('port.generate.name', 'postfix');
@@ -406,7 +410,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.87 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.88 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
