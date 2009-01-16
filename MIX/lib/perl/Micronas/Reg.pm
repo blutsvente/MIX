@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.81 2009/01/15 14:03:45 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.82 2009/01/16 16:19:47 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.82  2009/01/16 16:19:47  lutscher
+#  fixed default value for sub column in write2excel()
+#
 #  Revision 1.81  2009/01/15 14:03:45  lutscher
 #  moved view generation out of parse_register_master
 #
@@ -300,7 +303,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.81 $ ';  #'
+our($VERSION) = '$Revision: 1.82 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -1429,7 +1432,7 @@ sub write2excel{
 	      'type'=>["::type","Register Type",1,"Not used (!?). Default is 'I2C'.",8.57,"I2C",sub {"I2C";}],
 	      'dev'=>["::dev","Device Address",2,"Symbolic device (chip) address for board-level I2C bus.",8.57,"%EMPTY%",sub {return $this->{'device'};}],
 	      'width'=>["::width","Register Width",3,"Width of HDL implementation of register. Default is 32.",6.14,$eh->get('reg_shell.regwidth'),sub {$registerwidth}],
-	      'sub'=>["::sub","rel. Address",4,"Address offset of register in domain/register-shell. The 2nd meaning (with different value) is physical address for board-level I2C bus.",8.14,"%EMPTY%",sub {$registeroffset;}],
+	      'sub'=>["::sub","rel. Address",4,"Address offset of register in domain/register-shell. The 2nd meaning (with different value) is physical address for board-level I2C bus.",8.14,0,sub {$registeroffset;}],
 	      'interface'=>["::interface","Domain Name",5,"Register domain name. Each domain has its register-shell implementation assigned to.",8.14,"%EMPTY%",sub {$domainname;}],
 	      'inst'=>["::inst","Register Name",6,"Register name; Default is concatenation of ::block and ::sub but can be changed to have something more meaningful. Note: must be unique within one domain",13.43,"W_NO_INST",sub {$registername;}],
 	      'dir'=>["::dir","Write / Read",7,"Bitfield access attribute from software point of view. One of R (read-only), W (write-only), RW (read or write). Note: If possible, do not assign different values for bitfields within one register.",8.57,"RW",sub {$o_field->{'attribs'}->{'dir'};}],
