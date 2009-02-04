@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.21 2008/12/10 15:41:38 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.22 2009/02/04 13:15:08 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.22  2009/02/04 13:15:08  lutscher
+#  added 4th param for _add_primary_input/output
+#
 #  Revision 1.21  2008/12/10 15:41:38  lutscher
 #  fixed bug in _clone_name
 #
@@ -249,7 +252,7 @@ sub _add_connection {
 
 # function to add top-level input, returns signal name
 sub _add_primary_input {
-	my ($name, $msb, $lsb, $destination) = @_;
+	my ($name, $msb, $lsb, $destination, $comment) = @_;
 	my (%hconn, $dest, @ldest);
 	my $postfix = "%POSTFIX_PORT_IN%";
 
@@ -258,7 +261,7 @@ sub _add_primary_input {
 	#} else {
 	#	$hconn{'::name'} = "${name}${postfix}"; # add postfix only if not already there
 	#};
-
+	$hconn{'::descr'} = $comment;
     $hconn{'::name'} = $name;
     @ldest = ();
     foreach $dest (split(/,\s*/, $destination)) {
@@ -277,7 +280,7 @@ sub _add_primary_input {
 
 # function to add output to top-level, returns signal name
 sub _add_primary_output {
-	my ($name, $msb, $lsb, $is_reg, $source) = @_;
+	my ($name, $msb, $lsb, $is_reg, $source, $comment) = @_;
 	my (%hconn, $src, @lsrc);
 	my $postfix = "%POSTFIX_PORT_OUT%";
     my $type = $is_reg ? "'reg":"'wire";
@@ -288,7 +291,7 @@ sub _add_primary_output {
 	#	$hconn{'::name'} = "${name}${postfix}"; # add postfix only if not already there
 	#};
 	#
-	
+	$hconn{'::descr'} = $comment;
     $hconn{'::name'} = $name;
     @lsrc = ();
     foreach $src (split(/,\s*/, $source)) {
