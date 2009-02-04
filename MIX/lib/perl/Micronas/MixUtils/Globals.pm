@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.75 $                                         |
+# | Revision:   $Revision: 1.76 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2008/12/12 10:34:43 $                              |
+# | Date:       $Date: 2009/02/04 13:14:21 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.76  2009/02/04 13:14:21  lutscher
+# | added clock/reset for xml
+# |
 # | Revision 1.75  2008/12/12 10:34:43  lutscher
 # | added feature reg_shell.packing.addr_domain_reset
 # |
@@ -209,9 +212,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.75 2008/12/12 10:34:43 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.76 2009/02/04 13:14:21 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.75 $';  
+my $thisrevision    =      '$Revision: 1.76 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1366,47 +1369,48 @@ sub init ($) {
     #
     $this->{'cfg'}{'xml'} = 
       {
-	  'type'   => 'spirit',   # format of register-master, currently either VGCA or FRCH
-	  'req'    => 'optional', # optional|mandatory        
-	  'parsed' => 0,           # counter incremented by MIX
-	  'characterencodingout' => "iso-8859-1",#characterencoding for output file
-	  'characterencodingin' =>"",
-	  'access'=>	{		#conversion between IP-XACT format and excel format for accessfield
-	      'R' => "read-only",
-	      'W' => "write-only",
-	      'RW' => "read-write",
-			},
-	  'NS_URI'=>	{#Namespaces for xml file
-	      'spirit'	=> "http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4",
-	      'schema'	=> "http://www.w3.org/2001/XMLSchema-instance",
-	      'schemalocation'=> "http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4 http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4/index.xsd",
-			},	
-	  'VLNV'	=>	{#IP-XACT Identifier
-	      'vendor'	=> "micronas.com",
-	      'library'	=> "rs_test",
-	      'name'	=> "rs_test",
-	      'version'	=> "0.1",
+       'type'   => 'spirit',   # format of register-master
+       'req'    => 'optional', # optional|mandatory        
+       'parsed' => 0,           # counter incremented by MIX
+       'characterencodingout' => "iso-8859-1",#characterencoding for output file
+       'characterencodingin' =>"",
+       'access'=>	{		#conversion between IP-XACT format and excel format for accessfield
+                     'R' => "read-only",
+                     'W' => "write-only",
+                     'RW' => "read-write",
+                    },
+       'NS_URI'=>	{#Namespaces for xml file
+                     'spirit'	=> "http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4",
+                     'schema'	=> "http://www.w3.org/2001/XMLSchema-instance",
+                     'schemalocation'=> "http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4 http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4/index.xsd",
+                    },	
+       'VLNV'	=>	{#IP-XACT Identifier
+                     'vendor'	=> "micronas.com",
+                     'library'	=> "rs_test",
+                     'name'	=> "rs_test",
+                     'version'	=> "0.1",
 					},
-	  'field_skipelements'	=>	[#List of Field-Attributes to skip when creating the field parameters
-					 "comment",
-					 "dir",
-					 "size",
-					 "range",#redundant, already defined by size
-					 "skip",
-					 "init"
-					 # "skip:1",
-					 # "skip:2",#redundant, already defined in pos
-					 # "skip:3",#redundant already defined 					 
-					],
-	      'file_prefix'=> "regdef",
-	      'file_suffix'=> "xml",
-	      'prettynames'=>	{ # name substitution for field parameters
-				'skip:4'	=>"addinc",
-				},
-	      'xslt_dir'  => "/lib/xslt/",
-	      'schema_dir'=> "/lib/schema/",
-	      'path'=> "ipxact",
-	      
+       'field_skipelements'	=>	[#List of Field-Attributes to skip when creating the field parameters
+                                 "comment",
+                                 "dir",
+                                 "size",
+                                 "range",#redundant, already defined by size
+                                 "skip",
+                                 "init"
+                                 # "skip:1",
+                                 # "skip:2",#redundant, already defined in pos
+                                 # "skip:3",#redundant already defined 					 
+                                ],
+       'file_prefix'=> "regdef",
+       'file_suffix'=> "xml",
+       'prettynames'=>	{ # name substitution for field parameters
+                         'skip:4'	=>"addinc",
+                        },
+       'xslt_dir'  => "/lib/xslt/",
+       'schema_dir'=> "/lib/schema/",
+       'path'=> "ipxact",
+	   'clock' => "clk_sci",  # default clock because not extracted from IP-XACT
+       'reset' => "res_sci_n" # default reset because not extracted from IP-XACT
       };
     
     # VI2C Definitions:
