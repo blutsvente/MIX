@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewIPXACT.pm,v 1.12 2008/11/11 10:08:33 lutscher Exp $
+#  RCSId: $Id: RegViewIPXACT.pm,v 1.13 2009/02/04 15:52:13 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -27,6 +27,9 @@
 ###############################################################################
 #
 #  $Log: RegViewIPXACT.pm,v $
+#  Revision 1.13  2009/02/04 15:52:13  lutscher
+#  changed use to use_on_demand
+#
 #  Revision 1.12  2008/11/11 10:08:33  lutscher
 #  changed skipping of input columns
 #
@@ -154,13 +157,14 @@ sub _write_ipxact2file{
     my($o_domain, $o_register, $field, $o_field, $parameter);
     my($nsspirit,$nsschema, $schemalocation)=($eh->get('xml.NS_URI.spirit'),$eh->get('xml.NS_URI.schema'),$eh->get('xml.NS_URI.schemalocation'));
     my $doc;
-
-
     
 
-
-    eval {use XML::Writer};
-    die("could not find module XML::Writer in _write_ipxact2file") if $@ ne "";
+    unless(mix_use_on_demand('use XML::Writer;')) {
+        _fatal( "Failed to load required modules for _gen_view_ipxact(): $@" );
+        exit 1;
+    };
+    # eval {use XML::Writer};
+    # die("could not find module XML::Writer in _write_ipxact2file") if $@ ne "";
 
     ##check if a domain specified
     #if (!scalar @{$this->global->{'ldomains'}}){
@@ -192,7 +196,7 @@ sub _write_ipxact2file{
 
     
     ####start XML-Writer, write to $doc, use namespace and data mode, prefix map gives prefixes for namespace URLs
-    my $writer = new XML::Writer(OUTPUT => $doc,NEWLINES =>0, NAMESPACES =>1, DATA_MODE => 1, DATA_INDENT =>4, ,PREFIX_MAP => {$nsspirit=>"spirit", $nsschema=>"xsi"});
+    my $writer = XML::Writer->new(OUTPUT => $doc,NEWLINES =>0, NAMESPACES =>1, DATA_MODE => 1, DATA_INDENT =>4, ,PREFIX_MAP => {$nsspirit=>"spirit", $nsschema=>"xsi"});
     _info("Start Writing XML-File");
   
     
