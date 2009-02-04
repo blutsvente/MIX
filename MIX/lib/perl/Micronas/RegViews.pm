@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.88 2009/01/15 14:03:45 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.89 2009/02/04 13:13:48 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.88 $                                  
+#  Revision      : $Revision: 1.89 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.89  2009/02/04 13:13:48  lutscher
+#  added code to preserve global settings between calls
+#
 #  Revision 1.88  2009/01/15 14:03:45  lutscher
 #  moved view generation out of parse_register_master
 #
@@ -258,17 +261,20 @@ sub _gen_view_vgch_rs {
 	# modify MIX config parameters (only where required)
     # ##LU this is potentially dangerous because subsequent view generators could be affected
 	$eh->set('check.signal', 'load,driver,check');
-    #$eh->set('port.generate.name',  'signal');
+    my $save_port_generate_name = $eh->get('port.generate.name');
+    my $save_prefix_port_gen = $eh->get('postfix.PREFIX_PORT_GEN'); 
+    my $save_postfix_port_gen = $eh->get('postfix.POSTFIX_PORT_GEN');
+    my $save_output_generate_inout = $eh->get('output.generate.inout');
     $eh->set('port.generate.name', 'postfix');
     $eh->set('postfix.PREFIX_PORT_GEN', '%EMPTY%');
     $eh->set('postfix.POSTFIX_PORT_GEN', '_%IO%');
-    $eh->set('output.generate.inout', 'mode'); # default is mode,xinout
+    $eh->set('output.generate.inout', 'mode'); # default is mode,noxfix
+
     # $eh->set('output.filter.file', "");
     $eh->set('output.generate.arch', "");
     $eh->set('check.name.all', 'na');
     $eh->set('log.limit.re.__I_CHECK_CASE', 1);
     $eh->set('log.limit.re.__W_CHECK_CASE', 1);
-    $eh->set('output.generate.inout', 'mode'); # default is mode,xinout
 
 	# list of skipped registers and fields (put everything together in one list)
 	if (exists($this->global->{'exclude_regs'})) {
@@ -312,6 +318,13 @@ sub _gen_view_vgch_rs {
     # write a file with MSD setup
     $this->_vgch_rs_write_msd_setup();
 	$this->display() if $this->global->{'debug'}; # dump Reg class object
+
+    # reconstruct some overwritten MIX parameters
+    $eh->set('port.generate.name', $save_port_generate_name);
+    $eh->set('postfix.PREFIX_PORT_GEN', $save_prefix_port_gen); 
+    $eh->set('postfix.POSTFIX_PORT_GEN', $save_postfix_port_gen);
+    $eh->set('output.generate.inout', $save_output_generate_inout);
+    
 	1;
 };
 
@@ -410,7 +423,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.88 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.89 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -2457,7 +2470,7 @@ sub _get_rrange {
 	my $size = $o_field->attribs->{'size'};
 	
 	if ($pos + $size >  $this->global->{'datawidth'}) {
-		_error("field \'",$o_field->name,"\' exceeds datawidth");
+		_error("field \'",$o_field->name,"\' exceeds datawidth (pos=",$pos," size=",$size,")");
 		return;
 	};
 	if ($pos == 0 and $size == $this->global->{'datawidth'}) {
