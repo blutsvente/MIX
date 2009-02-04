@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.76 $                                         |
+# | Revision:   $Revision: 1.77 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2009/02/04 13:14:21 $                              |
+# | Date:       $Date: 2009/02/04 16:06:15 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.77  2009/02/04 16:06:15  lutscher
+# | changed e_vr_ad.path default
+# |
 # | Revision 1.76  2009/02/04 13:14:21  lutscher
 # | added clock/reset for xml
 # |
@@ -212,9 +215,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.76 2009/02/04 13:14:21 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.77 2009/02/04 16:06:15 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.76 $';  
+my $thisrevision    =      '$Revision: 1.77 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1026,7 +1029,7 @@ sub init ($) {
        'device'               => '%EMPTY%', # identifier used for device member of Reg object; if empty, uses the ::dev column from Register-Master
        # parameters for e_vr_ad view
        'e_vr_ad' => {
-                     'path'             => "./e", # output dir for e-code
+                     'path'             => "e", # output dir for e-code
                      'regfile_prefix'   => 'MIC',
                      'regfile_name'     => "",    # if empty (default) will create name from concatenated domain names
                      'file_prefix'      => 'regdef',
