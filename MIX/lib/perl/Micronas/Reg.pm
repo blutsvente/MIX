@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.82 2009/01/16 16:19:47 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.83 2009/02/04 13:13:08 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.83  2009/02/04 13:13:08  lutscher
+#  changed handling of IP-XACT spirit:addressUnitBits element, changed import of YAML module to use use_on_demand, added default clock/reset for IP-XACT input
+#
 #  Revision 1.82  2009/01/16 16:19:47  lutscher
 #  fixed default value for sub column in write2excel()
 #
@@ -303,7 +306,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.82 $ ';  #'
+our($VERSION) = '$Revision: 1.83 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -496,7 +499,7 @@ sub generate_all_views {
     my ($view, $o_space, @ldomains);
     
     # get user-supplied list of domains
-    my @ldomains = ();
+    @ldomains = ();
     if (exists $OPTVAL{'domain'}) {
         push @ldomains, $OPTVAL{'domain'};
     }
@@ -1099,7 +1102,9 @@ sub _map_ipxact{
                 $reset=unpack("N", pack("B32", substr("0" x 32 . $reset, -32))); #bin->dec
                 $o_field->attribs(init=>$reset);
                 
-                $o_field->attribs(comment=>$description);
+                # add other attributes; note: currently I don't know where the field clock/reset are specified in IP-XACT,
+                # therefore we use default parameters
+                $o_field->attribs(comment=>$description, clock => $eh->get('xml.clock'), reset => $eh->get('xml.reset'));
                 $o_field->attribs(dir=>$access{$field->first_child('spirit:access')->text});
                 $o_field->attribs(range=>$frange,size=>$fsize);
                 #put remaining paramters to attributes
@@ -1169,8 +1174,13 @@ sub _map_ipxact{
         my ( $bitsinUnit);
 
         $bitsinUnit=$elt->text;
-        $eh->set('reg_shell.datawidth',$bitsinUnit);
-	
+        # ##LU the addressUnitBits element defines the number of data bits in each address increment of the address space,
+        # so it is not the same as reg_shell.datawidth
+        # $eh->set('reg_shell.datawidth',$bitsinUnit);
+        if ($bitsinUnit != 8) {
+            _warning("MIX does not support address increments other than 8-bit, but spirit:addressUnitBits specifies $bitsinUnit"); 
+        };
+
         $twig->purge();         #free memory
     };
     
@@ -1728,14 +1738,17 @@ sub writeYAML(){
     $dumpfile = $eh->get('intermediate.path').'/'.$dumpfile;  
     
     
-    
-    eval{use YAML qw 'DumpFile'};
-    die("could not find module YAML in writeYAML") if $@ ne "";
+    unless( mix_use_on_demand('use YAML') ) {
+        _fatal( "Failed to load required modules for dumping data to YAML: $@" );
+        exit 1;
+    }
+    # eval{use YAML qw 'DumpFile'};
+    # die("could not find module YAML in writeYAML") if $@ ne "";
     local $YAML::SortKeys = 0;
     
     
     _info("start dumping in YAML-Format to file $dumpfile");
-    unless (DumpFile($dumpfile,$this->{'domains'})){
+    unless (YAML::DumpFile($dumpfile,$this->{'domains'})){
         _error("error in writing YAML-file");
         return 0;
     }
