@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.61 $                                          |
+# | Revision:   $Revision: 1.62 $                                          |
 # | Author:     $Author: lutscher $                                         |
-# | Date:       $Date: 2008/12/10 10:55:24 $                              |
+# | Date:       $Date: 2009/02/05 15:21:45 $                              |
 # |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.62  2009/02/05 15:21:45  lutscher
+# | comment only
+# |
 # | Revision 1.61  2008/12/10 10:55:24  lutscher
 # | added feature that i2c sheet-name can be attached to filename using %sheet
 # |
@@ -181,11 +184,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.61 2008/12/10 10:55:24 lutscher Exp $';#'
+my $thisid          =      '$Id: IO.pm,v 1.62 2009/02/05 15:21:45 lutscher Exp $';#'
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.61 $'; #'
+my $thisrevision    =      '$Revision: 1.62 $'; #'
 
-# Revision:   $Revision: 1.61 $
+# Revision:   $Revision: 1.62 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -560,6 +563,8 @@ Global: $eh
 
 =cut
 
+# BAUSTELLE this does not work with pathes like \\sambam;
+# also, creating the partial dirs that compose a path one by one should not be necessary anyway...
 sub mix_utils_io_create_path () {
 
 	my $select = $eh->get( 'output.mkdir' );
@@ -578,6 +583,7 @@ sub mix_utils_io_create_path () {
 				# Iterate over path ...
 				my $cur = '';
 				$dir =~ s,//+,/,og;
+ 
 				for my $p ( split( /\//, $dir ) ) {
 					$p = '/' unless( length( $p ) );
 					$cur .= (( $cur ) ? '/' : '' ) . $p; # Merge path
