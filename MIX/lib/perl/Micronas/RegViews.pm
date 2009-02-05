@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.89 2009/02/04 13:13:48 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.90 2009/02/05 15:21:31 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.89 $                                  
+#  Revision      : $Revision: 1.90 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.90  2009/02/05 15:21:31  lutscher
+#  updated RTL lib release
+#
 #  Revision 1.89  2009/02/04 13:13:48  lutscher
 #  added code to preserve global settings between calls
 #
@@ -342,7 +345,7 @@ sub _vgch_rs_init {
                   'rtl_libs'           => [{            # required MSD RTL libraries
                                             "project" => "ip_ocp",
                                             "version" => "0002",
-                                            "release" => "ip_ocp_009_03Jun2008"
+                                            "release" => "ip_ocp_016_21Jan2009", # at least: ip_ocp_009_03Jun2008"
                                            },
                                            {
                                             "project" => "ip_sync",
@@ -423,7 +426,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.89 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.90 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
