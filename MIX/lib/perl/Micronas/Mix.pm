@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Mix.pm,v 1.5 2009/02/04 13:12:09 lutscher Exp $
+#  RCSId: $Id: Mix.pm,v 1.6 2009/02/09 09:36:40 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Mix and Reg packages
@@ -43,6 +43,9 @@
 ###############################################################################
 #
 #  $Log: Mix.pm,v $
+#  Revision 1.6  2009/02/09 09:36:40  lutscher
+#  no changes
+#
 #  Revision 1.5  2009/02/04 13:12:09  lutscher
 #  some error checking
 #
@@ -112,7 +115,7 @@ use Micronas::MixReport;
 # define static members here
 
 # version of this package, extracted from RCS macros
-our($VERSION) = '$Revision: 1.5 $ ';  #'
+our($VERSION) = '$Revision: 1.6 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -269,6 +272,7 @@ sub parse_registers {
 # Step 8: generate register views from register-space object
 #
 sub gen_register_views {
+
     my $this = shift;
     if (exists $this->{reg} and defined $this->{reg}) {
         $this->{reg}->generate_all_views();
