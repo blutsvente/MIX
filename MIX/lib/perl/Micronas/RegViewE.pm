@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.33 2009/02/04 13:13:25 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.34 2009/02/09 09:48:29 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.34  2009/02/09 09:48:29  lutscher
+#  fixed a bug referencing global params
+#
 #  Revision 1.33  2009/02/04 13:13:25  lutscher
 #  clean-up
 #
@@ -403,7 +406,7 @@ sub _gen_view_vr_ad {
         $fh_e_file->printf ("    };\n  };\n");
         # note: the size of the reg_file is determined by the highest address; possibly also by addressing_width_in_bytes
         # but the current formula is pessimistic and should work, though wastes some space
-        $fh_e_file->printf ("  keep soft size == ".(${domain_max_offset} + $this->global->{'reg_shell.datawidth'}/8).";\n");
+        $fh_e_file->printf ("  keep soft size == ".(${domain_max_offset} + $eh->get('reg_shell.datawidth')/8).";\n");
         $fh_e_file->printf ("#ifdef ".$this->global->{'mic_extensions'}." then {\n");
         $fh_e_file->printf ("  keep is_cloned == ".($clone_number > 0 ? "TRUE":"FALSE").";\n");
         $fh_e_file->printf ("  keep soft n_instances == ${clone_number};\n");
@@ -444,9 +447,9 @@ sub write_extend_reg {
     };
     my $reserved_bits = ~$o_reg->attribs->{'usedbits'};
     my $w1c_mask = $o_reg->_get_w1c_mask;
-    $fh_e_file->print("  keep reserved_mask == 0x",_val2hex($this->global->{'reg_shell.datawidth'}, $reserved_bits),";\n");
+    $fh_e_file->print("  keep reserved_mask == 0x",_val2hex($eh->get('reg_shell.datawidth'), $reserved_bits),";\n");
     if ($w1c_mask != 0) {
-        $fh_e_file->print("  keep w1c_mask ==  0x",_val2hex($this->global->{'reg_shell.datawidth'}, $w1c_mask),";\n");
+        $fh_e_file->print("  keep w1c_mask ==  0x",_val2hex($eh->get('reg_shell.datawidth'), $w1c_mask),";\n");
     };
     $fh_e_file->print("};\n");
     
