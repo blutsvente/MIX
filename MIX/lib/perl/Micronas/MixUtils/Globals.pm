@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.77 $                                         |
+# | Revision:   $Revision: 1.78 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2009/02/04 16:06:15 $                              |
+# | Date:       $Date: 2009/02/10 15:36:20 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.78  2009/02/10 15:36:20  lutscher
+# | added input.domain feature
+# |
 # | Revision 1.77  2009/02/04 16:06:15  lutscher
 # | changed e_vr_ad.path default
 # |
@@ -215,9 +218,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.77 2009/02/04 16:06:15 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.78 2009/02/10 15:36:20 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.77 $';  
+my $thisrevision    =      '$Revision: 1.78 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -777,7 +780,8 @@ sub init ($) {
 			'pragma' => '', # comments will be printed/removed selectively
 							# e.g.  __HDL__, __MIF__ 
 			'variant' => '#__I_VARIANT', # Internally used to mark lines deselected by -variant
-		}
+		},
+        'domain' => "::interface" # spreadsheet column for domain
     };
 	$this->{'cfg'}{'internal'} = {
 		'path' => '.',

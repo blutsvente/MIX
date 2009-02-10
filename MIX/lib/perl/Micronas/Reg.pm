@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.83 2009/02/04 13:13:08 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.84 2009/02/10 15:36:19 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.84  2009/02/10 15:36:19  lutscher
+#  added input.domain feature
+#
 #  Revision 1.83  2009/02/04 13:13:08  lutscher
 #  changed handling of IP-XACT spirit:addressUnitBits element, changed import of YAML module to use use_on_demand, added default clock/reset for IP-XACT input
 #
@@ -253,7 +256,7 @@ sub parse_register_master {
                            'register_master' => $r_i2c
                           );
         };
-        
+        # $o_space->display(); exit;
         # add to register-object from XML database
         if (scalar @$r_xml) {
             $o_space->init(	 
@@ -306,7 +309,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.83 $ ';  #'
+our($VERSION) = '$Revision: 1.84 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -707,9 +710,9 @@ sub _map_register_master {
     $ivariant = $eh->get('input.ignore.comments');
     $icomment = $eh->get('input.ignore.variant') || '#__I_VARIANT';
 
-    # check whether domain information should be taken from '::dev' column
+    # set the spreadsheet column where to extract domain information
     # default: domain information is taken from '::interface' column
-    my $domain_column = defined($eh->get('input.domain.dev')) ? '::dev' : '::interface';
+    my $domain_column = $eh->get('input.domain');
 
     # highest bit specified in register-master
     $msb_max = $eh->get( 'i2c._mult_.::b' ) || _fatal("internal error (bad!)");
@@ -834,7 +837,7 @@ sub _map_register_master {
                 $o_domain = $this->find_domain_by_name_first($domain);
                 if (!ref($o_domain)) {
                     $o_domain = Micronas::RegDomain->new(name => $domain);
-					
+					print "domain > $domain \n";
                     # get base-address, for what it's worth
                     $baseaddr = 0;
                     if ($database_type eq "VGCA") {
