@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.34 2009/02/09 09:48:29 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.35 2009/02/10 12:29:09 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.35  2009/02/10 12:29:09  lutscher
+#  added domain_naming
+#
 #  Revision 1.34  2009/02/09 09:48:29  lutscher
 #  fixed a bug referencing global params
 #
@@ -241,7 +244,7 @@ sub _gen_view_vr_ad {
 
 	# iterate through domains   
 	foreach $o_domain (@ldomains) {
-        my $domain = $o_domain->name;
+        my $domain = _clone_name($eh->get('reg_shell.domain_naming'), 99, 0, $o_domain->name);
         my $domain_str = $this->global->{regfile_prefix}. "_". uc($domain);
         my $domain_max_offset = 4;
         my %hdef = ();
