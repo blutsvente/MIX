@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.84 2009/02/10 15:36:19 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.85 2009/02/16 15:40:35 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.85  2009/02/16 15:40:35  lutscher
+#  rem.debug print
+#
 #  Revision 1.84  2009/02/10 15:36:19  lutscher
 #  added input.domain feature
 #
@@ -309,7 +312,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.84 $ ';  #'
+our($VERSION) = '$Revision: 1.85 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -837,7 +840,6 @@ sub _map_register_master {
                 $o_domain = $this->find_domain_by_name_first($domain);
                 if (!ref($o_domain)) {
                     $o_domain = Micronas::RegDomain->new(name => $domain);
-					print "domain > $domain \n";
                     # get base-address, for what it's worth
                     $baseaddr = 0;
                     if ($database_type eq "VGCA") {
