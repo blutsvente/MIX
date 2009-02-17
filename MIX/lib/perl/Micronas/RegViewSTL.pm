@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewSTL.pm,v 1.12 2008/04/01 09:19:29 lutscher Exp $
+#  RCSId: $Id: RegViewSTL.pm,v 1.13 2009/02/17 11:55:57 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.12 $                                  
+#  Revision      : $Revision: 1.13 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViewSTL.pm,v $
+#  Revision 1.13  2009/02/17 11:55:57  lutscher
+#  added usedbits to comment in STL code
+#
 #  Revision 1.12  2008/04/01 09:19:29  lutscher
 #  changed parameter list of main methods
 #
@@ -160,7 +163,7 @@ version 2.0
 		};
 	};
 
-	my ($o_domain, $o_field, $o_reg, $usedbits, $reg, $reg_offset, %hregs, $mask, $dwidth, $val, $def_val);
+	my ($o_domain, $o_field, $o_reg, $reg, $reg_offset, %hregs, $mask, $dwidth, $val, $def_val);
 	# list of skipped  registers
 	if (exists($this->global->{'exclude_regs'})) {
 		@{$this->global->{'lexclude_cfg'}} = split(/\s*,\s*/,$this->global->{'exclude_regs'}); 
@@ -210,7 +213,6 @@ version 2.0
 ";
 		foreach $reg_offset (sort {$a <=> $b} keys %hregs) {
 			$o_reg = $hregs{$reg_offset};
-			# $usedbits = $o_reg->attribs->{'usedbits'};
 			$mask = $this->_get_read_write_mask($o_reg) | $o_reg->_get_w1c_mask();
 			$def_val = $o_reg->get_reg_init;
 			$this->_ocp_access("read", $o_reg, $reg_offset, $def_val, $mask);
@@ -321,7 +323,8 @@ sub _ocp_access {
 			return;
 		};
 	};
-	push @{$this->global->{'lbody'}}, "# register: " . $o_reg->name . " (" .$o_reg->get_reg_access_mode(). ")";
+    my $usedbits_str = _val2hex($this->global->{'datawidth'}, $o_reg->attribs->{'usedbits'});
+	push @{$this->global->{'lbody'}}, "# register: " . $o_reg->name . " (" .$o_reg->get_reg_access_mode(). ") (usedbits=0x$usedbits_str)";
 	push @{$this->global->{'lbody'}}, join(" ", $access, $addr_str, $value_str, $mask_str);
 };
 
