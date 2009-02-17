@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.35 2009/02/10 12:29:09 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.36 2009/02/17 13:45:33 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.36  2009/02/17 13:45:33  lutscher
+#  fixed typo
+#
 #  Revision 1.35  2009/02/10 12:29:09  lutscher
 #  added domain_naming
 #
@@ -459,7 +462,7 @@ sub write_extend_reg {
     $fh_e_file->print("};\n");
     if ($reg_access_mode ne "RW") {
         # create cover ignores for direction if enabled by the user
-        if ($reg_access_mode eq "W" and $this->global->{'cover_ign_raed_to_write_only'} ) {
+        if ($reg_access_mode eq "W" and $this->global->{'cover_ign_read_to_write_only'} ) {
             $ignore = "READ";
         } else {
             if ($reg_access_mode eq "R" and $this->global->{'cover_ign_write_to_read_only'} ) {
