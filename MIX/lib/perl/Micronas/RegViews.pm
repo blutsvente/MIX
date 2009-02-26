@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.90 2009/02/05 15:21:31 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.91 2009/02/26 15:46:53 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.90 $                                  
+#  Revision      : $Revision: 1.91 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.91  2009/02/26 15:46:53  lutscher
+#  removed code to save/restore eh values because it is the wrong location in the MIX flow
+#
 #  Revision 1.90  2009/02/05 15:21:31  lutscher
 #  updated RTL lib release
 #
@@ -262,17 +265,17 @@ sub _gen_view_vgch_rs {
     };
 
 	# modify MIX config parameters (only where required)
-    # ##LU this is potentially dangerous because subsequent view generators could be affected
+    ##LU this is potentially dangerous because subsequent view generators could be affected
 	$eh->set('check.signal', 'load,driver,check');
-    my $save_port_generate_name = $eh->get('port.generate.name');
-    my $save_prefix_port_gen = $eh->get('postfix.PREFIX_PORT_GEN'); 
-    my $save_postfix_port_gen = $eh->get('postfix.POSTFIX_PORT_GEN');
-    my $save_output_generate_inout = $eh->get('output.generate.inout');
+    # my $save_port_generate_name = $eh->get('port.generate.name');
+    # my $save_prefix_port_gen = $eh->get('postfix.PREFIX_PORT_GEN'); 
+    # my $save_postfix_port_gen = $eh->get('postfix.POSTFIX_PORT_GEN');
+    # my $save_output_generate_inout = $eh->get('output.generate.inout');
     $eh->set('port.generate.name', 'postfix');
     $eh->set('postfix.PREFIX_PORT_GEN', '%EMPTY%');
     $eh->set('postfix.POSTFIX_PORT_GEN', '_%IO%');
     $eh->set('output.generate.inout', 'mode'); # default is mode,noxfix
-
+    
     # $eh->set('output.filter.file', "");
     $eh->set('output.generate.arch', "");
     $eh->set('check.name.all', 'na');
@@ -323,10 +326,10 @@ sub _gen_view_vgch_rs {
 	$this->display() if $this->global->{'debug'}; # dump Reg class object
 
     # reconstruct some overwritten MIX parameters
-    $eh->set('port.generate.name', $save_port_generate_name);
-    $eh->set('postfix.PREFIX_PORT_GEN', $save_prefix_port_gen); 
-    $eh->set('postfix.POSTFIX_PORT_GEN', $save_postfix_port_gen);
-    $eh->set('output.generate.inout', $save_output_generate_inout);
+    # $eh->set('port.generate.name', $save_port_generate_name);
+    # $eh->set('postfix.PREFIX_PORT_GEN', $save_prefix_port_gen); 
+    # $eh->set('postfix.POSTFIX_PORT_GEN', $save_postfix_port_gen);
+    # $eh->set('output.generate.inout', $save_output_generate_inout);
     
 	1;
 };
@@ -426,7 +429,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.90 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.91 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
