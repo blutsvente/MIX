@@ -800,6 +800,27 @@ Use {{{module load mix/&lt;version&gt;}}} to prepare your environment. Check the
 
 A table-based specification format was chosen to enable efficient data entry and review. Lately, the Spirit consortiums //~IP-XACT// input/output format for register specifications has been added. It is also possible to access the code generation functions through a Perl API which is useful where a table-based entry format contains too much redundancy due to its flat data representation.</pre>
 </div>
+<div title="Issue Tracking" modifier="LU" created="200903131131" changecount="1">
+<pre>For reporting issues, please the [[Bugzilla Issue Tracking System|http://cad:1026/.Bugzilla/php/show_product.php?product=CAD%20Software]] (component //MIX//) .
+
+</pre>
+</div>
+<div title="Known Bugs &amp; Limitations" modifier="LU" created="200903131103" modified="200903131104" changecount="2">
+<pre>1. Parts of this documentation are outdated. See also the //Globals.pm// in the installation for additional features/documentation
+2. The HIER/CONN sheet processor does not support multiple instantiations except they are in the same hierarchy. The reason is the flat namespace for //signals// (column {{{::name}}} in CONN sheets).
+3. If there are problems with loading Perl Modules, do a
+{{{
+module unload msd
+}}}
+beforehand
+</pre>
+</div>
+<div title="Links" modifier="LU" created="200903131133" modified="200903131136" changecount="4">
+<pre>* [[MIX/IP-XACT presentation|http://mips/sites/registermaster/Shared%20Documents/presentations/Presentation_IPXACT.ppt]]
+* [[MIX API presentation|http://mips/sites/ip_factory/Shared%20Documents/MIX/mix_api_05022009.ppt]]
+* [[MIX update presentation|http://mips/sites/ip_factory/Shared%20Documents/MIX/mix_update_05022009.ppt]]
+* [[Register-Master Development site|http://mips/sites/registermaster/default.aspx]]</pre>
+</div>
 <div title="Macros" modifier="LU" created="200903111147" changecount="1">
 <pre>!!Simple Text Macros
 Text marked with with a {{{%}}} on both sides is subject to be replaced, if a macro or a postfix of that name is defined. See the table of predefined macros. Additionally the contents of the input table can be referenced like {{{%::column_head%}}}. If no suitable text macro is found, the text will be left as is.
@@ -843,7 +864,7 @@ If MX and MH match, the accompanying MD lines are executed. Variables are replac
 The {{{::gen}}} column is set to {{{G_MX}}} after evaluation. Empty cells in MD lines are filled with the value given by MX, if any. Please see the //contrib// directory for commonly available connection macros (t.b.d.).
 </pre>
 </div>
-<div title="MainMenu" modifier="LU" created="200903040925" modified="200903111307" changecount="13">
+<div title="MainMenu" modifier="LU" created="200903040925" modified="200903131145" changecount="15">
 <pre>[[Introduction]]
 [[Installation]]
 [[GettingStarted]]
@@ -858,7 +879,9 @@ The {{{::gen}}} column is set to {{{G_MX}}} after evaluation. Empty cells in MD 
 [[Helper Tools]]
 [[Known Bugs &amp; Limitations]]
 [[Issue Tracking]]
-[[Links]]</pre>
+[[Links]]
+
+This ~TiddlyWiki as [[PDF|MIX_UserManual.pdf]]</pre>
 </div>
 <div title="Miscellaneous" modifier="LU" created="200903121147" modified="200903131046" changecount="8">
 <pre>!-delta mode
