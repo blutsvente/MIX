@@ -513,6 +513,46 @@ Also see AdvancedOptions</pre>
 </div>
 <!--POST-SHADOWAREA-->
 <div id="storeArea">
+<div title="Config+Commandline Options" modifier="LU" created="200903121044" modified="200903121058" changecount="11">
+<pre>!Command Line Switches
+The command line options take precedence over the //mix.cfg// settings.
+
+Note: list is not complete.
+
+* {{{-cfg &lt;config&gt;}}} load additional mix configuration file //&lt;config&gt;//
+* {{{-out &lt;OUTPUTFILE.ext&gt;}}} defines output filename and type
+* {{{-outenty &lt;OUT-e.vhd&gt;|ENTY|COMB}}} Write all entities into //~OUT-e.vhd//. If argument is {{{ENTY}}}, each entity will be written into a file called //entityname-e.vhd//. (The exact naming depends on changeable rules). If argument is {{{COMB}}}, entity, architecture and configuration will all be written into one file called //entityname.vhd//
+* {{{-outarch &lt;OUT-rtl-a.vhd&gt;|ARCH|COMB}}} See description of {{{outenty}}} option.
+* {{{-outconf &lt;OUT-c.vhd&gt;|CONF|COMB}}} See description of {{{outenty}}} option.
+* {{{-combine}}} write entity, architecture and configuration into one file for each entity. Shortcut for setting {{{-out[enty|arch|conf]}}} to {{{COMB}}} individually.
+* {{{-dir &lt;DIRECTORY&gt;}}} write intermediate, internal and backend data into the given //&lt;DIRECTORY&gt;//. By default MIX writes to the current working directory
+* {{{-top &lt;TOPCELL}}} use {{{&lt;TOPCELL&gt;}}} as top. Default is {{{TESTBENCH}}} or daughter of {{{TESTBENCH}}}.
+* {{{-adump}}} dump internal data in ASCII format, too (debugging, use with small data set).
+* {{{-variant &lt;VAR&gt;}}} Select variant {{{&lt;VAR&gt;}}} from the HIER or ~Register-Master worksheet.
+* {{{-conf &lt;key&gt;=&lt;value&gt;}}} Overload configuration parameter with value or add a new configuration variable. Example: {{{-conf reg_shell.type=e_vr_ad}}}
+* {{{-listconf}}} Print out all available/predefined configurations options
+* {{{-delta}}} Output will be compared against previous runs.
+* {{{-sheet &lt;SHEET&gt;=&lt;MATCH&gt;}}} {{{&lt;SHEET&gt;}}} can be one of &quot;hier&quot;, &quot;conn&quot;, &quot;vi2c&quot;. {{{&lt;MATCH&gt;}}} is a perl regular expression.
+* {{{-strip}}} Remove old and diff sheets. These sheets are named with &quot;O_&quot; or &quot;DIFF&quot;.
+* {{{-domain &lt;DOMAIN&gt;}}} Restrict register-master view to domain {{{&lt;DOMAIN&gt;}}}
+* {{{-report portlist}}} Write portlist and/or register master reports in MIF format.
+* Standard options: {{{help|h verbose|v quiet|q nobanner debug}}}
+
+!Runtime Options and Configuration
+Runtime configuration is controlled by (increasing precedence):
+1. built-in default values
+2. //mix.cfg// files, if found in //$HOME//, //$PROJECT// and/or in the current directory. Format is: {{{MIXCFG &lt;key&gt; &lt;value&gt;}}}
+3. //CONF// sheet found in input xls files
+4. command line switch: {{{-conf &lt;key&gt;=&lt;value&gt;}}}
+5. dedicated command line options
+
+MIX reads in mix.cfg configuration files in the following locations:
+1. {{{-cfg &lt;config file&gt;}}} command line option
+2. //$ENV{HOME}//, //$ENV{HOMEDRIVE}//, //$ENV{HOMEPATH}//, //$ENV{USERPROFILE}// or //C:\// (only from the first matching location)
+3. //$ENV{$PROJECT}//
+4. cwd()
+</pre>
+</div>
 <div title="DefaultTiddlers" modifier="lutscher" created="200903040838" modified="200903040923" changecount="2">
 <pre>[[MainMenu]]</pre>
 </div>
@@ -621,6 +661,55 @@ By default MIX does not write output data for leaf blocks (instances which are n
 The generated output files contain head, body and footer sections. See the screenshots of the file //a-e-e.vhd// and //chip-e-rtl-a.vhd// for examples of an entity and an architecture definition.
 [img[images/mix_a-e-e.jpg]]
 [img[images/mix_chip-e-rtl-a.jpg ]]
+
+</pre>
+</div>
+<div title="Helper Tools" modifier="LU" created="200903131059" modified="200903131101" changecount="6">
+<pre>!Convert Excel to //sxc// and //csv//
+MIX comes with a command line Excel to CSV converter tool. Usage for UNIX is like:
+{{{
+$ module load perl mix
+$ xls2csv -csv foo[.xls] bar[.xls] [bar2.xls ...]
+}}}
+This will convert all sheets in //foo.xls// to //foo.csv//, //bar.xls// to //bar.csv// and so on. As csv only has one sheet, the different input sheets will be seperated by {{{:=:=:=&gt;}}} followed by the Excel sheet name. Even the first and maybe only sheet will be marked by such a line. 
+
+Now supports the selection of rows and/or columns (see {{{-column}}} / {{{-row}}} option)
+
+Options:
+* {{{-[no]csv}}} Don't generate CSV formatter file (on by default)
+* {{{-[no]sxc}}} Don't generate sxc formatted output file (on by default)
+* {{{-autoq[uote]}}} Do quoting the Excel style
+* {{{-q[uote] X}}} Use {{{X}}} as quoting char (default: {{{&quot;}}})
+* {{{-sep X}}} Use {{{X}}} as column seperator (default: {{{;}}})
+* {{{-noquote}}} Do not quote the output
+* {{{-sheet RE}}} Select only sheets matching the regexp {{{RE}}}
+* {{{-[no]single}}} Write each sheet into a seperate output csv; extend name by sheet name. Default is to write a single csv and/or sxc file per input excel file with seperating the sheets by the sheet header (see {{{-[no]head}}}). With {{{-single}}} no sheet seperator head will be printed.
+* {{{-[no]accu[mulate]}}} Combine all excel files into a single output csv or sxc file. Default is to convert a single csv and/or sxc file per input excel file. Basename is taken from the first Excel file name.
+* {{{-[no]head}}} Do not print sheet seperator head ({{{=:=:=:=&gt; SHEETNAME}}}), on by default
+* {{{-[no]verbose}}} Print more messages
+* {{{-column|(c)range A:B,C}}} select columns numbered like in Excel or as digit. Ranges start from 1.
+* {{{-row|rrange N:M}}} select rows
+* {{{-matchc REG_matching}}} header
+* {{{-matchr RE_matching}}} first cell contents in row. Possible ranges are: {{{A..C,EE-FA,G:I,14,16-70,II-}}} (alpha only for column headers) Repeated options are logically ored (tried one after the other). If column or row selector options are set, only matching
+data will be printed.
+
+Example:
+{{{
+$ xls2csv -csv -single -sheet my_data -autoq -nohead my_excel.xls
+}}}
+will retrieve the sheet &quot;my_data&quot; from the excel document my_excel.xls and store it's content in the file //my_excel//,  //my_data.csv// in a format very, very near the one you would get when using &quot;Save As&quot; in Excel and store the worksheet in CSV format.
+{{{
+$ xls2csv -csv -row 1-10,1-10 -single my_excel.xls
+}}}
+will print the first ten rows two times into the csv file(s) //my_excel-&lt;sheet names&gt;.csv// of each sheet in the excel document. Please consider, that overlapping selections will print the data selected multiple time. //xls2csv// will sort the selectors in numeric start order unless you set {{{format.csv.sortrange}}} to 0.
+
+Please remove the created files before updating, otherwise new sheets are added to the existing files, while older version stay with renamed sheet names.
+
+For ~MS-Win workstations, use
+{{{
+K:\Projects\MIX\&lt;version&gt;\xls2csv.pl ....
+}}}
+Options and syntax are the same as with UNIX/Linux.
 
 </pre>
 </div>
@@ -754,7 +843,7 @@ If MX and MH match, the accompanying MD lines are executed. Variables are replac
 The {{{::gen}}} column is set to {{{G_MX}}} after evaluation. Empty cells in MD lines are filled with the value given by MX, if any. Please see the //contrib// directory for commonly available connection macros (t.b.d.).
 </pre>
 </div>
-<div title="MainMenu" modifier="LU" created="200903040925" modified="200903111206" changecount="12">
+<div title="MainMenu" modifier="LU" created="200903040925" modified="200903111307" changecount="13">
 <pre>[[Introduction]]
 [[Installation]]
 [[GettingStarted]]
@@ -765,12 +854,113 @@ The {{{::gen}}} column is set to {{{G_MX}}} after evaluation. Empty cells in MD 
 [[RegisterSpecification]]
 [[Naming Schemes]]
 [[Config+Commandline Options]]
+[[Miscellaneous]]
 [[Helper Tools]]
 [[Known Bugs &amp; Limitations]]
 [[Issue Tracking]]
 [[Links]]</pre>
 </div>
-<div title="RegisterSpecification" modifier="LU" created="200903110850" modified="200903111207" changecount="43">
+<div title="Miscellaneous" modifier="LU" created="200903121147" modified="200903131046" changecount="8">
+<pre>!-delta mode
+In delta mode, MIX does not change output files, but reports the number of changes in the output files compared to a previous run. Extra sheets ~DIFF_CONN and ~DIFF_HIER (and old versions of them) are added to the intermediate output file. The //FOO.pld//  internal output gets overwritten, though (if created). Messages are appended to //mix_0.pl.out//
+
+If a new ~HDL-File needs to be created by the changes, delta mode is not be applied for that file, but it is generated as a new file. If you never have written a //~FOO-mixed.xls// intermediate output, no HIER or CONN sheets are generated.
+
+By adding the following two lines to your configuration (e.g. //./mix.cfg//), delta mode will be the default:
+{{{
+MIXCFG output.generate.delta 1
+MIXCFG output.delta sort,remove
+}}}
+See the configuration option description for more details. {{{-nodelta}}} switches delta mode off. Possible values for {{{output.delta}}} are (comma seperated list):
+* {{{space}}}: do not consider whitespace
+* {{{sort}}}: sort lines before compare (default)
+* {{{comment}}}: do not remove all comments before compare
+* {{{remove}}}: remove empyt diff files
+* {{{ignorecase|ic}}}: ignore case if set
+
+!Intermediate Excel Sheet //foo-mixed.xls//
+MIX creates the //foo-mixed.xls// intermediate file with the fully evaluated and expanded data from all input sources. The actual output format depends on the platform and kind of input data. An Excel file is created on ~MS-Windows hosts, while in other cases a csv format will be used.
+
+The file name name will be derived from the last input file name given on the command line with an inserted //-mixed// before the file extension. Format of an intermediate xls sheet will be kept as is as long as the number and order of columns is unchanged.
+
+MIX saves three old versions of the generated HIER and CONN sheets. The worksheets names are rotated by a trailing {{{_}}} and number, e.g ~HIER_0, ~HIER_1, ....
+
+Three sheets are created by default: HIER, CONN and CONF. By using various configuration parameters you can change that, however:
+* {{{intermediate.path}}} defines the storage location. Default is //cwd()//. Will be set by using {{{-dir &lt;PATH&gt;}}}, too.
+* {{{intermediate.order}}} defines the output sort order. Default is {{{input}}} (not implemented)
+* {{{intermediate.keep}}} defines the number of old versions of a sheet to keep, default: 3
+* {{{intermediate.format}}} is one of: {{{prev(ious)}}}, {{{auto}}} or {{{n(o|ew)}}} ; if set to {{{prev(ious)}}} (default) uses old sheet format, {{{auto}}} applies auto-format. Others do nothing special.
+* {{{intermediate.strip}}} if set, all old and diff sheets will get removed
+* {{{intermediate.ext}}} (unused)
+* {{{intermediate.&lt;xls_dump|yaml_dump&gt;}}} will also dump intermediate register-master sheets in specified format 
+* {{{intermediate.intra}}} if set create seperate conn sheets for instances, Allowed values are 
+{{{
+INTRA -&gt; CONN and INTRA
+TOP -&gt; CONN_&lt;TOP&gt; and CONN 
+TOP,INTRA -&gt; CONN_&lt;TOP&gt; and CONN_INTRA
+INST[ANCE] -&gt; create one conn sheet for each instance, named: CONN_&lt;instance&gt;
+}}}
+* {{{intermediate.instpre}}} is prepend to CONN sheet names if {{{intra}}} is {{{inst}}} . Default: {{{CONN_}}}
+* {{{intermediate.topmap}}} defines mapping of signal modes on sheets keping data of top instances. Default value is {{{ALL}}}.Values are
+** {{{ALL}}}
+** list of signals (comma seperated list of regular expressions)
+If a signal is attached to a top cell and the name matches, the signal mode (I,O,IO,C,P,G, ...) is mapped to {{{%TM_(I|O|IO|...)%}}}. These macros are predefined to map back to the original mode, if you run the created CONN sheet through MIX again.
+
+!Output Redirection
+MIX writes all output into the current working directory. By using the {{{-dir &lt;DIRECTORY&gt;}}} option, you can set the output directory for all intermediate, internal and HDL files to //DIRECTORY//.
+Absolute path names defined by other options (e.g. {{{-out}}}) are not changed, though. If //DIRECTORY// does not exist, it will be created. 
+
+To have separate output directories, use parameters in the //mix.cfg// file:
+|!Key|!Value|
+|output.path |&lt;hdl-dir&gt;|
+|intermediate.path |&lt;intermediate-dir&gt;|
+|internal.path |&lt;internal-dir&gt;|
+|report.path |&lt;report-dir&gt;|
+|reg_shell.e_vr_ad.path |&lt;e-code-dir&gt; |
+|xml.path |&lt;xml-dir&gt;|
+writes internal, intermediate and other files to the given pathes. Directory creation is controlled by {{{output.mkdir}}} which can be set to {{{&lt;yes|no&gt;}}}.
+
+</pre>
+</div>
+<div title="Naming Schemes" modifier="LU" created="200903111231" modified="200903120952" changecount="12">
+<pre>Register, Field and Domain names are used as-is in the generated views, for cloned objects a number is attached. This naming scheme can be changed (separately for view generation and cloning). This is useful e.g. if the source specification does not contain unique field names (required for HDL register-shell generation).
+
+The keys of the configuration parameters are
+{{{
+reg_shell[.clone|e_vr_ad.]&lt;field_naming|reg_naming|domain_naming&gt;
+}}}
+where the value consists of a string pattern that can contain normal characters or placeholders of the form
+{{{
+       %[&lt;u|l&gt;]&lt;D|R|F|B[&lt;d&gt;]N&gt;
+}}}
+with the substitutes
+* D for domain name
+* R for original name of register (only available in reg_naming and field_naming)
+* F for original name of field (only available in field_naming)
+* B for block name (only available in field_naming)
+* N for a decimal number; can be preceded by a number to fix the number of digits used in representation
+ 
+The {{{%N}}} pattern can be followed by a simple arithmetic expression like {{{+32}}} which be evaluated for the number.
+
+The {{{u}}} or {{{l}}} in front of the substitute force upper/lowercase (optional).
+
+Example 1: Register name {{{reg_x}}} of the 7th clone of a clonable register
+{{{
+scc_%2N_%uR 
+}}}
+creates name {{{scc_06_REG_X}}} from original name.
+
+Example 2: Field name {{{CLEAR_INT}}} in the domain {{{si2ocp}}}
+{{{
+%lD_%lF_config
+}}}
+creates name {{{si2ocp_clear_int_config}}}.
+
+
+
+</pre>
+</div>
+<div title="RegisterSpecification" modifier="LU" created="200903110850" modified="200903121011" changecount="59">
 <pre>The ~Register-Master sheet is one more category of input specification. It describes configuration register domains of devices. A domain comprises all registers that have a common HDL implementation (//register-shell//). A register domain contains registers which in turn contain fields. The MIX tool creates views of a register domain, which is an implementation. Additionally, it can create reports which are used for documentation.
 
 Templates for the .xls sheet (//registermaster_template*.xls//) can be found in the tool installation directory. 
@@ -802,7 +992,7 @@ There are also other in-house tools reading this format, which results in some l
 |::range |string|Value range of field |0..1 |opt. |0..15|
 |::view |{{{Y|N}}}|Include in documentation or not |Y |opt. |N|
 |::vi2c |string|Register type; not used by MIX ||opt. |~GI2C_32Bit-Register|
-|::name |string|Name of field (same as in ::b) ||opt. |status|
+|::name |string|Name of field (same as in ::b); must be unique per domain ||opt. |status|
 |::definition |string|Definition of field instance ||opt. |status|
 |::fgroup |string|Functional group of field ||opt. |fe_control|
 |::clone |{{{0|1}}}|Field is clonable (1) or not (0)| 0|opt.|0|
@@ -812,33 +1002,60 @@ There are also other in-house tools reading this format, which results in some l
 The configuration is done in the //mix.cfg// file like for the other MIX features. Note: not all parameters are documented here, refer to the //Globals.pm// file in the installation.
 
 |!Key |!Value |!Default |!Description|
-|{{{i2c.xls}}}|string||Sheet name in Workbook|
-|{{{i2c.regmas_type}}}|{{{&lt;VGCA|FRCH&gt;}}}|VGCA|to accommodate different styles of register-master xls/sxc sheets|
+|{{{i2c.xls}}}|string|{{{I2C}}}|Sheet name in Workbook|
+|{{{i2c.regmas_type}}}|{{{&lt;VGCA|FRCH&gt;}}}|{{{VGCA}}}|to accommodate different styles of register-master //.xls/.sxc// sheets|
 |{{{intermediate.xls_dump}}}|{{{0|1}}}|0|if 1, dumps register-master after parsing in .xls format|
 |{{{intermediate.yaml_dump}}}|{{{0|1}}}|0|if 1, dumps register-master after parsing in [[.yaml|http://www.yaml.org]] format|
-|{{{reg_shell.type}}}|string|HDL-vgch-rs|Name of the view to generate, can be comma-separated list|
+|{{{reg_shell.type}}}|string|{{{HDL-vgch-rs}}}|Name of the view to generate, can be comma-separated list|
+
+!Available ~Register-Views
+The following views are currently implemented. They are selected via the {{{reg_shell.type}}} parameter. The most important ones are further documented below.
+|!View|!Description|
+|{{{hdl-vgch-rs}}}|Verilog OCP register-shell|
+|{{{e_vr_ad}}}|//e// language macros for the VR_AD eVC|
+|{{{stl}}}|Register test file in Socket Transaction Language (STL) format|
+|{{{rdl}}}|Denali RDL representation (experimental)|
+|{{{ip-xact}}}|~IP-XACT compliant XML output|
+|{{{reglist}}}|Documents all registers in //.mif// file|
+|{{{header}}}|Generates c-header files|
+|{{{vctyheader}}}|the same but takes top-level addresses from //device.in// file|
+|{{{per}}}|Creates Lauterbach //.per// file|
+|{{{vctyper}}}|the same but takes top-level addresses from //device.in// file|
+|{{{perl}}}|creates Perl package (?)|
+|{{{vctyperl}}}|the same but takes top-level addresses from //device.in// file|
+|{{{none}}}|generate nothing (useful to bypass the view generation dispatcher)|
 
 !Cloning
+In case a design requires multiple instantiations of a register-shell it is not necessary to duplicate the table-based input. MIX can instead //clone// a register domain into a new domain containing &lt;n&gt; uniquified copies of the registers/fields or into &lt;n&gt; new domains.
+ 
 !!Cloning Configuration Parameters
 |!Key |!Value |!Default |!Description|
-|{{{reg_shell.clone.number}}}||||
-|{{{reg_shell.clone.addr_spacing}}}||||
-|{{{reg_shell.clone.reg_naming}}}||||
-|{{{reg_shell.clone.field_naming}}}||||
-|{{{reg_shell.clone.domain_naming}}}||||
-|{{{reg_shell.clone.unique_clocks}}}||||
-|{{{reg_shell.clone.unique_domains}}}||||
+|{{{reg_shell.clone.number}}}|int|0|Number of clones; if 0, no cloning is applied. if 1, only one clone will be generated, i.e. the naming scheme will be applied|
+|{{{reg_shell.clone.addr_spacing}}}|int|10|number of address bits reserved for every clone|
+|{{{reg_shell.clone.field_naming}}}|string|%F_%N|naming scheme for fields, see [[Naming Schemes]]|
+|{{{reg_shell.clone.reg_naming}}}|string|%R_%N|naming scheme for registers, see [[Naming Schemes]]|
+|{{{reg_shell.clone.domain_naming}}}|string|%D_%N|naming scheme for domains, see [[Naming Schemes]]|
+|{{{reg_shell.clone.unique_clocks}}}|{{{&lt;0|1&gt;}}}|1|If 1, uniquify clock-names of cloned fields|
+|{{{reg_shell.clone.unique_domains}}}|{{{&lt;0|1&gt;}}}|0|If 1, will create new domains for clones; if 0, cloned registers are fitted into old domain|
 
 !Packing
+In case the ~Register-Master contains registers of a different width than what is required by the HDL implementation, they can be packed/unpacked to the new width. Currently only 64-bit to 32-bit and 32-bit to 16-bit are implemented. The output is captured in the intermediate files (configuration parameter e.g. {{{intermediate.xls_dump}}}).
+
 !!Packing Configuration Parameters
 |!Key |!Value |!Default |!Description|
-|{{{reg_shell.packing.mode}}}||||
+|{{{reg_shell.packing.mode}}}|{{{&lt;none|64to32|32to16&gt;}}}|{{{none}}}|packing mode|
+|{{{reg_shell.packing.endianness}}}|{{{&lt;big|little&gt;}}}|{{{big}}}|endianness for registers after packing|
+|{{{reg_shell.packing.postfix_reg_lo}}}|string|{{{_lo}}}|postfix for name of lower portion of splitted register|
+|{{{reg_shell.packing.postfix_reg_hi}}}|string|{{{_hi}}}|postfix for name of higher portion of splitted register|
+|{{{reg_shell.packing.addr_offset}}}|int|0|add an offset to each register address of the packed register-space|
+|{{{reg_shell.packing.addr_factor}}}|int|1|address factor for transforming register addresses into the packed register-space|
+|{{{reg_shell.packing.addr_domain_reset}}}|{{{&lt;0|1&gt;}}}|0|specifies whether the transformed address is reset at domain start|
 
 !HDL ~Register-Shells
 {{{reg_shell.type HDL-vgch-rs}}}
 This generates a Verilog OCP bus register-shell for the register domain. The specification for this can be found here: OCP Config Register Specification [[Unix|file:///proot/ip_ocp/0002/workareas/HEAD/doc/OCP_config_regs.pdf]] [[Windows|file:///\\sambam\proot\ip_ocp\0002\workareas\lutscher\doc\OCP_config_regs.pdf]]
 
-Note that this also uses an RTL library (from projects ip_sync and ip_ocp).
+Note that this also uses an RTL library (from projects ip_sync and ip_ocp). MIX dumps the file //rtl_libs.xml// containing information about the RTL library versions to be used with the generated code.
 
 !!~Register-Master Configuration Parameters
 |!Key |!Value |!Default |!Description|
@@ -853,12 +1070,42 @@ Note that this also uses an RTL library (from projects ip_sync and ip_ocp).
 |{{{reg_shell.read_multicycle}}} |int |0 |can be one of [0,1,2,..] to insert cycle delays for read acknowledge|
 |{{{reg_shell.exclude_regs}}} |string[,string]* ||Comma-seperated list of register names to be excluded from generation|
 |{{{reg_shell.exclude_fields}}} |string[,string]*||Comma-seperated list of field names to be excluded from generation|
-|{{{reg_shell.prefix}}}|string|rs|file/module prefix for register-shell|
+|{{{reg_shell.prefix}}}|string|{{{rs}}}|file/module prefix for register-shell|
 |{{{reg_shell.enforce_unique_addr}}}|{{{&lt;0|1&gt;}}} |1|if 1, allow only one register per address|
 |{{{reg_shell.device}}}|string|{{{%EMPTY%}}}|identifier used for device member of Reg object; if empty, uses the {{{::dev}}} column from ~Register-Master sheet|
 |{{{reg_shell.field_naming}}}|string|{{{%F}}}|naming scheme for fields, see [[Naming Schemes]]|
 |{{{reg_shell.reg_naming}}}|string|{{{%R}}}|naming scheme for registers, see [[Naming Schemes]]|
 |{{{reg_shell.domain_naming}}}|string|{{{%D}}}|naming scheme for domains, see [[Naming Schemes]]|
+
+!~VR_AD Macros
+{{{reg_shell.type e_vr_ad}}}
+This generates e-code for the ~VR_AD eVC used for configuring/monitoring DUT registers in a Specman test environment. It generates the macro calls to define the registers and fields in the specified domain.
+
+!!~VR_AD Configuration Parameters
+|!Key |!Value |!Default |!Description|
+|{{{reg_shell.e_vr_ad.path}}} |string|{{{e}}}|output dir for e-code|
+|{{{reg_shell.e_vr_ad.regfile_prefix}}}|string|{{{MIC}}}|prefix for the generated vr_ad_regfile type|
+|{{{reg_shell.e_vr_ad.regfile_name}}}|string|(default is concatenated domain names)|name of the generated vr_ad_regfile type|
+|{{{reg_shell.e_vr_ad.file_prefix}}}|string|regdef|prefix of generated file|
+|{{{reg_shell.e_vr_ad.vplan_ref}}}|string|{{{%EMPTY%}}}|~VPlan reference for register coverage|
+|{{{reg_shell.e_vr_ad.field_naming}}}|string|{{{%lF}}}|naming scheme for fields, see [[Naming Schemes]]|
+|{{{reg_shell.e_vr_ad.reg_naming}}}|string|{{{%uR}}}|naming scheme for registers, see [[Naming Schemes]]|
+|{{{reg_shell.e_vr_ad.cover_ign_read_to_write_only}}}|{{{&lt;0|1&gt;}}}|0|for coverage|
+|{{{reg_shell.e_vr_ad.cover_ign_write_to_read_only}}}|{{{&lt;0|1&gt;}}}|1|for coverage|
+
+!STL Stimuli Files
+{{{reg_shell.type STL}}}
+This generates a Socket Transaction Language file for testing DUT registers. The generated file has two sections, //head// and //body// which are enveloped by source-code pragmas ({{{//pragma MIX_STL...}}}). If the output file is generated for the first time, it will be created from a template. If the output file already exists, it is read and only the head and body sections are replaced. This way, the user can make additions to the stimuli file.
+
+!!STL Configuration Parameters
+|!Key |!Value |!Default |!Description|
+|{{{reg_shell.stl.initial_idle}}}|int|100|value for STL initial_idle statement|
+|{{{reg_shell.stl.exclude_regs}}}|string[,string*]||comma separated list of registers to exclude from STL generation|
+|{{{reg_shell.stl.use_base_addr}}}|{{{&lt;0|1&gt;}}}|0|STL feature base-addr|
+
+!~IP-XACT view
+{{{reg_shell.type ip-xact}}}
+This dumps the register database in //.xml// format. The configuration parameters have the key {{{xml}}} (see //Globals.pm// from the installation dir for details). The parameters are also valid for XML input.
 
 </pre>
 </div>
