@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.78 $                                         |
+# | Revision:   $Revision: 1.79 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2009/02/10 15:36:20 $                              |
+# | Date:       $Date: 2009/03/19 09:16:36 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.79  2009/03/19 09:16:36  lutscher
+# | added view ip-xact-rgm
+# |
 # | Revision 1.78  2009/02/10 15:36:20  lutscher
 # | added input.domain feature
 # |
@@ -218,9 +221,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.78 2009/02/10 15:36:20 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.79 2009/03/19 09:16:36 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.78 $';  
+my $thisrevision    =      '$Revision: 1.79 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1386,10 +1389,20 @@ sub init ($) {
                      'W' => "write-only",
                      'RW' => "read-write",
                     },
+       'access_policy'=> {		#conversion between IP-XACT reg_mem format and excel format for access_policy field
+                          'R' => "RO",
+                          'W' => "WO",
+                          'RW' => "RW",
+                         },
        'NS_URI'=>	{#Namespaces for xml file
                      'spirit'	=> "http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4",
                      'schema'	=> "http://www.w3.org/2001/XMLSchema-instance",
                      'schemalocation'=> "http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4 http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4/index.xsd",
+                    },	
+       'NS_RGM'=>	{#Namespaces for xml file (OVM reg_mem package)
+                     'vendorExtensions'	=> "http://www.ovmworld.org",
+                     'schema'	        => "\$REGMEM_HOME/home/lutscher/data/rgm_version_1_0/builder/ipxact/schema",
+                     'schemalocation'   => "\$REGMEM_HOME/home/lutscher/data/rgm_version_1_0/builder/ipxact/schema \$REGMEM_HOME/builder/ipxact/schema/VendorExtensions.xsd",
                     },	
        'VLNV'	=>	{#IP-XACT Identifier
                      'vendor'	=> "micronas.com",
@@ -1417,7 +1430,10 @@ sub init ($) {
        'schema_dir'=> "/lib/schema/",
        'path'=> "ipxact",
 	   'clock' => "clk_sci",  # default clock because not extracted from IP-XACT
-       'reset' => "res_sci_n" # default reset because not extracted from IP-XACT
+       'reset' => "res_sci_n", # default reset because not extracted from IP-XACT
+       # parameters for the reg_mem package
+       'hdl_path' => "%EMPTY%", # hdl-path to register-shell must be spec'ed by the user
+       'collect_coverage' => "cov_update" # field attribute <cov_update|cov_compare_and_update|cov_all|cov_none>
       };
     
     # VI2C Definitions:

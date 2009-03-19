@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.85 2009/02/16 15:40:35 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.86 2009/03/19 09:16:36 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.86  2009/03/19 09:16:36  lutscher
+#  added view ip-xact-rgm
+#
 #  Revision 1.85  2009/02/16 15:40:35  lutscher
 #  rem.debug print
 #
@@ -312,7 +315,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.85 $ ';  #'
+our($VERSION) = '$Revision: 1.86 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -389,6 +392,7 @@ sub new {
                                    "stl"         => \&_gen_view_stl,          # register test file in Socket Transaction Language format (owner: Thorsten Lutscher)
                                    "rdl"         => \&_gen_view_rdl,          # Denali RDL representation of database (experimental)
                                    "ip-xact"     => \&_gen_view_ipxact,       # IP-XACT compliant XML output (owner: Gregor Herburger)
+                                   "ip-xact-rgm" => \&_gen_view_ipxact,       # IP-XACT XML for OVM reg_mem package
                                    # "portlist"    => \&mix_reg_report,             # documents portlist in mif file (owner: Thorsten Lutscher)
                                    "reglist"     => \&mix_reg_report,         # documents all registers in mif file (owner: Thorsten Lutscher)
                                    "header"      => \&mix_reg_report,         # generates c header files (owner: Thorsten Lutscher)
