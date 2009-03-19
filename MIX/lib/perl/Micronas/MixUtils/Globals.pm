@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.79 $                                         |
+# | Revision:   $Revision: 1.80 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2009/03/19 09:16:36 $                              |
+# | Date:       $Date: 2009/03/19 10:25:31 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.80  2009/03/19 10:25:31  lutscher
+# | fixed an xml parameter
+# |
 # | Revision 1.79  2009/03/19 09:16:36  lutscher
 # | added view ip-xact-rgm
 # |
@@ -221,9 +224,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.79 2009/03/19 09:16:36 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.80 2009/03/19 10:25:31 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.79 $';  
+my $thisrevision    =      '$Revision: 1.80 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1401,8 +1404,8 @@ sub init ($) {
                     },	
        'NS_RGM'=>	{#Namespaces for xml file (OVM reg_mem package)
                      'vendorExtensions'	=> "http://www.ovmworld.org",
-                     'schema'	        => "\$REGMEM_HOME/home/lutscher/data/rgm_version_1_0/builder/ipxact/schema",
-                     'schemalocation'   => "\$REGMEM_HOME/home/lutscher/data/rgm_version_1_0/builder/ipxact/schema \$REGMEM_HOME/builder/ipxact/schema/VendorExtensions.xsd",
+                     'schema'	        => "\$REGMEM_HOME/builder/ipxact/schema",
+                     'schemalocation'   => "\$REGMEM_HOME/builder/ipxact/schema \$REGMEM_HOME/builder/ipxact/schema/VendorExtensions.xsd",
                     },	
        'VLNV'	=>	{#IP-XACT Identifier
                      'vendor'	=> "micronas.com",
