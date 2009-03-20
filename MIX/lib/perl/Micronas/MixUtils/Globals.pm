@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.80 $                                         |
+# | Revision:   $Revision: 1.81 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2009/03/19 10:25:31 $                              |
+# | Date:       $Date: 2009/03/20 08:49:45 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.81  2009/03/20 08:49:45  lutscher
+# | added xml parameters
+# |
 # | Revision 1.80  2009/03/19 10:25:31  lutscher
 # | fixed an xml parameter
 # |
@@ -224,9 +227,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.80 2009/03/19 10:25:31 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.81 2009/03/20 08:49:45 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.80 $';  
+my $thisrevision    =      '$Revision: 1.81 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1435,8 +1438,11 @@ sub init ($) {
 	   'clock' => "clk_sci",  # default clock because not extracted from IP-XACT
        'reset' => "res_sci_n", # default reset because not extracted from IP-XACT
        # parameters for the reg_mem package
-       'hdl_path' => "%EMPTY%", # hdl-path to register-shell must be spec'ed by the user
-       'collect_coverage' => "cov_update" # field attribute <cov_update|cov_compare_and_update|cov_all|cov_none>
+       'hdl_path'                 => "%EMPTY%",    # hdl-path to register-shell must be specified by the user
+       'collect_coverage'         => "cov_update", # field attribute <cov_update|cov_compare_and_update|cov_all|cov_none>
+       'register_type_naming'     => '%R_reg',     # naming-rule for the vendorExtension "type"
+       'addressBlock_type_naming' => '%D_rf_type', # naming-rule for the vendorExtension "type"
+       'component_type_naming'    => '%D_am'       # naming-rule for the vendorExtension "type"
       };
     
     # VI2C Definitions:

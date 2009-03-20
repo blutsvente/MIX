@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewIPXACT.pm,v 1.15 2009/03/19 10:19:37 lutscher Exp $
+#  RCSId: $Id: RegViewIPXACT.pm,v 1.16 2009/03/20 08:49:45 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -27,6 +27,9 @@
 ###############################################################################
 #
 #  $Log: RegViewIPXACT.pm,v $
+#  Revision 1.16  2009/03/20 08:49:45  lutscher
+#  added xml parameters
+#
 #  Revision 1.15  2009/03/19 10:19:37  lutscher
 #  fixed ip-xact view
 #
@@ -272,7 +275,7 @@ sub _write_ipxact2file{
             $writer->startTag([$nsspirit, "register"]);
             
             my $registername=_clone_name($eh->get('reg_shell.reg_naming'),99,0,$domainname,$o_register->{'name'}); 
-            
+
             $writer->dataElement([$nsspirit, "name"],$registername);
             
             # print the Definition into displayName if definition exists
@@ -383,7 +386,7 @@ sub _write_ipxact2file{
                 $writer->endTag([$nsspirit, "parameters"]);
             } else {
                 $writer->startTag([$nsspirit, "vendorExtensions"]);
-                $writer->dataElement([$nsrgm, "type"], $registername . "_reg");
+                $writer->dataElement([$nsrgm, "type"], _clone_name($eh->get('xml.register_type_naming'),99,0,$domainname,$registername));
                 $writer->dataElement([$nsrgm, "hdl_path"], $eh->get('xml.hdl_path'));
                 $writer->endTag([$nsspirit, "vendorExtensions"]);
             };
@@ -392,8 +395,9 @@ sub _write_ipxact2file{
         
 	
         if ($for_rgm) {
+            # vendor extension for addressBlock element
             $writer->startTag([$nsspirit, "vendorExtensions"]);
-            $writer->dataElement([$nsrgm, "type"], $domainname);
+            $writer->dataElement([$nsrgm, "type"], _clone_name($eh->get('xml.addressBlock_type_naming'),99,0,$domainname));
             $writer->endTag([$nsspirit, "vendorExtensions"]);
         };
 
@@ -408,8 +412,9 @@ sub _write_ipxact2file{
     $writer->endTag([$nsspirit, "memoryMaps"]);
 
     if ($for_rgm) {
+        # vendor extension for root element
         $writer->startTag([$nsspirit, "vendorExtensions"]);
-        $writer->dataElement([$nsrgm, "type"], $domainname);
+        $writer->dataElement([$nsrgm, "type"], _clone_name($eh->get('xml.component_type_naming'),99,0,$domainname));
         $writer->dataElement([$nsrgm, "size"], "0x"._val2hex(32, (${domain_max_offset} + $eh->get('reg_shell.datawidth')/8)));
         $writer->endTag([$nsspirit, "vendorExtensions"]);
     };
