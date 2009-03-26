@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewBdCfg.pm,v 1.1 2009/03/26 12:44:53 lutscher Exp $
+#  RCSId: $Id: RegViewBdCfg.pm,v 1.2 2009/03/26 13:18:01 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.1 $                                  
+#  Revision      : $Revision: 1.2 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViewBdCfg.pm,v $
+#  Revision 1.2  2009/03/26 13:18:01  lutscher
+#  small change
+#
 #  Revision 1.1  2009/03/26 12:44:53  lutscher
 #  initial release
 #
@@ -67,14 +70,14 @@ sub _gen_view_bdcfg {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info($0))) {
-        $eh->mix_add_module_info("RegViewBdCdfg", '$Revision: 1.1 $ ', "Package to create backdoor configuration files for simulation");
+        $eh->mix_add_module_info("RegViewBdCdfg", '$Revision: 1.2 $ ', "Package to create backdoor configuration files for simulation");
     };
     
 	# extend class data with data structure needed for code generation
     my $href_info = $eh->mix_get_module_info("RegViewBdCdfg");
     $this->global(
 				  'debug'              => 0,
-				  'file_nc'            => "nc_force_registers.tcl",
+				  'file_nc'            => "ncsim_force_registers.tcl",
 				  'file_axis'          => "axis_force_registers.cmd",
 				  'header'             => "
 Backdoor configuration register force file;
