@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Mix.pm,v 1.6 2009/02/09 09:36:40 lutscher Exp $
+#  RCSId: $Id: Mix.pm,v 1.7 2009/03/26 12:46:26 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Mix and Reg packages
@@ -43,6 +43,9 @@
 ###############################################################################
 #
 #  $Log: Mix.pm,v $
+#  Revision 1.7  2009/03/26 12:46:26  lutscher
+#  made check for input file configurable
+#
 #  Revision 1.6  2009/02/09 09:36:40  lutscher
 #  no changes
 #
@@ -115,7 +118,7 @@ use Micronas::MixReport;
 # define static members here
 
 # version of this package, extracted from RCS macros
-our($VERSION) = '$Revision: 1.6 $ ';  #'
+our($VERSION) = '$Revision: 1.7 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -210,9 +213,13 @@ sub _init {
     mix_getopt_header(@${options}); # @{$this->{options}});
 
     # remaining arguments should be input files
-    if ( $#ARGV < 0 ) { # Need at least one file
-        $logger->fatal('__F_MISSARG', 'No input file specified!');
-        exit 1;
+    if ( $#ARGV < 0 ) { 
+        if ($eh->get('input.req') =~ m/optional/i) {
+            $logger->warn('__W_MISSARG', ' No input file specified!');
+        } else {
+            $logger->fatal('__F_MISSARG', ' No input file specified!'); # Need at least one file
+            exit 1;
+        };
     };
 };
 
