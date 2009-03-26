@@ -19,9 +19,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_1.pl,v 1.2 2009/01/15 14:03:45 lutscher Exp $  |
-# | Version      : $Revision: 1.2 $                                      |
-# | Mod.Date     : $Date: 2009/01/15 14:03:45 $                           |
+# | Id           : $Id: mix_1.pl,v 1.3 2009/03/26 12:46:57 lutscher Exp $  |
+# | Version      : $Revision: 1.3 $                                      |
+# | Mod.Date     : $Date: 2009/03/26 12:46:57 $                           |
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 
@@ -29,6 +29,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_1.pl,v $
+# | Revision 1.3  2009/03/26 12:46:57  lutscher
+# | added options for view bd-cfg
+# |
 # | Revision 1.2  2009/01/15 14:03:45  lutscher
 # | moved view generation out of parse_register_master
 # |
@@ -75,11 +78,11 @@ use Micronas::Mix;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.2 $'; # RCS Id '
+$::VERSION = '$Revision: 1.3 $'; # RCS Id '
 $::VERSION =~ s,\$,,go;
 
 #
-# init Mix object and specify commandline options
+# init Mix object and specify commandline options (except standard options, see MixUtils.pm)
 #
 our($mix) = Micronas::Mix->new(options => 
                                [qw(
@@ -106,6 +109,8 @@ our($mix) = Micronas::Mix->new(options =>
                                   import=s@
                                   report=s@
                                   domain=s
+                                  hpaths=s
+                                  bsi=s
                                  )]);
 
 =head1 MIX
