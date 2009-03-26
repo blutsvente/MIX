@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.91 2009/02/26 15:46:53 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.92 2009/03/26 12:45:55 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.91 $                                  
+#  Revision      : $Revision: 1.92 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.92  2009/03/26 12:45:55  lutscher
+#  some clean-up
+#
 #  Revision 1.91  2009/02/26 15:46:53  lutscher
 #  removed code to save/restore eh values because it is the wrong location in the MIX flow
 #
@@ -429,7 +432,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.91 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.92 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -2331,22 +2334,25 @@ sub _vgch_rs_write_defines {
             _warning("directory \'",$this->global->{'path_include'},"\' does not exist and I am not allowed to create it (mkdir parameter)");
         };
     };
-	if (!open(DHANDLE,">$fname")) {
+    
+    my $dest = new FileHandle ${fname} , "w";
+
+	if (!defined $dest) {
 		_warning("could not open file \'$fname\' for writing");
 		return;
 	};
 	$this->_vgch_rs_gen_udc_header(\@ltemp);
-	print DHANDLE join("\n", @ltemp);
-	print DHANDLE "\n\n";
-	print DHANDLE "// useful defines for domain ".$this->_gen_dname($o_domain)."\n";
+	print $dest join("\n", @ltemp);
+	print $dest "\n\n";
+	print $dest "// useful defines for domain ".$this->_gen_dname($o_domain)."\n";
 	@ltemp=();
 	foreach $key (sort keys %{$this->global->{'hhdlconsts'}}) {
 		push @ltemp,"\`define ${key} ".$this->global->{'hhdlconsts'}->{$key};
 	};
 	_pad_column(1, $this->global->{'indent'}, 0, \@ltemp);
-	print DHANDLE join("\n", @ltemp);
-	print DHANDLE "\n// end\n";
-	close(DHANDLE);
+	print $dest join("\n", @ltemp);
+	print $dest "\n// end\n";
+	$dest->close();
 
     # update statistics
     $eh->inc("sum.hdlfiles");
@@ -2359,26 +2365,28 @@ sub _vgch_rs_write_backdoor_paths {
 	
 	my $rs_name = $this->global->{'regshell_prefix'}."_".$this->_gen_dname($o_domain);
 	my $key;
-	my $fname = ${rs_name}."_backdoor_paths.dat";
+	my $fname = $eh->get('output.path_include')."/".${rs_name}."_backdoor_paths.dat";
 	my @ltemp;
     my $addr_msb = $this->global->{'addr_msb'};
 
-	if (!open(DHANDLE,">$fname")) {
+    my $dest = new FileHandle ${fname} , "w";
+
+	if (!defined $dest) {
 		_warning("could not open file \'$fname\' for writing");
 		return;
 	};
 	$this->_vgch_rs_gen_udc_header(\@ltemp);
-	print DHANDLE join("\n", @ltemp);
-	print DHANDLE "\n\n";
-	print DHANDLE "// backdoor-paths for writable registers for domain ".$this->_gen_dname($o_domain)."\n";
+	print $dest join("\n", @ltemp);
+	print $dest "\n\n";
+	print $dest "// backdoor-paths for writable registers for domain ".$this->_gen_dname($o_domain)."\n";
 	@ltemp=();
 	foreach $key (sort {$a <=> $b} keys %{$this->global->{'hbackdoorpaths'}}) {
 		push @ltemp, "'h"._val2hex($addr_msb+1, $key)." ".$this->global->{'hbackdoorpaths'}->{$key};
 	};
 	_pad_column(0, $this->global->{'indent'}, 0, \@ltemp);
-	print DHANDLE join("\n", @ltemp);
-	print DHANDLE "\n// end\n";
-	close(DHANDLE);
+	print $dest join("\n", @ltemp);
+	print $dest "\n// end\n";
+	$dest->close();
 
     # update statistics
     $eh->inc("sum.hdlfiles");
@@ -2391,24 +2399,26 @@ sub _vgch_rs_write_msd_setup {
     my $fname = "rtl_libs.xml";
     my @ludc;
     my $ref;
-    
-    if (!open(DHANDLE,">$fname")) {
+
+    my $dest = new FileHandle ${fname} , "w";
+    if (!defined $dest) {
 		_warning("could not open file \'$fname\' for writing");
 		return;
 	};
-    print DHANDLE "<!--\n";
+    print $dest "<!--\n";
     $this->_vgch_rs_gen_udc_header(\@ludc);
-    print DHANDLE join("\n", @ludc);
-	print DHANDLE "\n-->\n";
-    print DHANDLE "<resources> <!-- copy these lines to the resource section in the MSD setup -->\n";
+    print $dest join("\n", @ludc);
+	print $dest "\n-->\n";
+    print $dest "<resources> <!-- copy these lines to the resource section in the MSD setup -->\n";
     foreach $ref (@{$this->global->{'rtl_libs'}}) {
-        print DHANDLE $this->global->{'indent'} . "<library>\n";
-        print DHANDLE $this->global->{'indent'}x2 . $ref->{'project'}, "\n";
-        print DHANDLE $this->global->{'indent'}x2 . "<version> " .  $ref->{'version'} . " </version>\n";
-        print DHANDLE $this->global->{'indent'}x2 . "<release> " .  $ref->{'release'} . " </release> <!-- this release or higher -->\n";
-        print DHANDLE $this->global->{'indent'} . "</library>\n";  
+        print $dest $this->global->{'indent'} . "<library>\n";
+        print $dest $this->global->{'indent'}x2 . $ref->{'project'}, "\n";
+        print $dest $this->global->{'indent'}x2 . "<version> " .  $ref->{'version'} . " </version>\n";
+        print $dest $this->global->{'indent'}x2 . "<release> " .  $ref->{'release'} . " </release> <!-- this release or higher -->\n";
+        print $dest $this->global->{'indent'} . "</library>\n";  
     };
-    print DHANDLE "</resources>\n";
+    print $dest "</resources>\n";
+    $dest->close();
     # update statistics
     $eh->inc("sum.hdlfiles");
 	_info("generated file \'$fname\'");
