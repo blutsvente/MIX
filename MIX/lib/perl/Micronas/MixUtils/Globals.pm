@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.81 $                                         |
+# | Revision:   $Revision: 1.82 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2009/03/20 08:49:45 $                              |
+# | Date:       $Date: 2009/03/26 12:45:23 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.82  2009/03/26 12:45:23  lutscher
+# | added input.req and reg_shell.exclude_domains
+# |
 # | Revision 1.81  2009/03/20 08:49:45  lutscher
 # | added xml parameters
 # |
@@ -227,9 +230,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.81 2009/03/20 08:49:45 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.82 2009/03/26 12:45:23 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.81 $';  
+my $thisrevision    =      '$Revision: 1.82 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -757,6 +760,7 @@ sub init ($) {
 	};
 
 	$this->{'cfg'}{'input'} = {
+        'req' => "mandatory",  # mandatory|optional *NEW*
 		'ext' =>	{
 			'excel' =>	'xls',
 	   		'soffice' => 'sxc',
@@ -1031,6 +1035,7 @@ sub init ($) {
        'use_reg_name_as_prefix' => 0,      # [deprecated] if 1, prefix field names with register names
        'exclude_regs' => "",               # comma seperated list of register names to exclude from code generation
        'exclude_fields' => "",             # comma seperated list of field names to exclude from code generation	
+       'exclude_domains' => "",            # comma seperated list/pattern of domain names to exclude, currently only used for view bd-cfg
        'add_takeover_signals' => 0,        # if 1, internal update signals are also routed to top-level ports
        'regshell_prefix'      => "rs",     # register-shell prefix
        'enforce_unique_addr'  => 1,        # if 1, allow only one register per address
@@ -1081,7 +1086,7 @@ sub init ($) {
                   },
        'workaround' => "",                       # string parameter to specify workarounds, currently: platinumd
        
-       # parameters for packing *NEW*
+       # parameters for packing
        'packing' => {
                      'mode'              =>  "none",    # packing mode, currently <none|64to32|32to16>
                      'endianness'        =>  "big",     # endianness of registers after packing <big|little>
@@ -1437,7 +1442,7 @@ sub init ($) {
        'path'=> "ipxact",
 	   'clock' => "clk_sci",  # default clock because not extracted from IP-XACT
        'reset' => "res_sci_n", # default reset because not extracted from IP-XACT
-       # parameters for the reg_mem package
+       # parameters for the reg_mem package *NEW*
        'hdl_path'                 => "%EMPTY%",    # hdl-path to register-shell must be specified by the user
        'collect_coverage'         => "cov_update", # field attribute <cov_update|cov_compare_and_update|cov_all|cov_none>
        'register_type_naming'     => '%R_reg',     # naming-rule for the vendorExtension "type"
