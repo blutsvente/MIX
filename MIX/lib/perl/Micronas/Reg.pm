@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.86 2009/03/19 09:16:36 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.87 2009/03/26 12:47:14 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.87  2009/03/26 12:47:14  lutscher
+#  added view bd-cfg
+#
 #  Revision 1.86  2009/03/19 09:16:36  lutscher
 #  added view ip-xact-rgm
 #
@@ -239,7 +242,7 @@ sub parse_register_master {
                                   use Micronas::RegPacking;
                                   use Micronas::MixUtils::RegUtils;
                                   use Micronas::RegViewIPXACT;
-				                                   '	
+                                  use Micronas::RegViewBdCfg;'
                                  ) ) {
 			$logger->fatal( '__F_LOADREGMD', "\tFailed to load required modules for parse_register_master(): $@" );
 			exit 1;
@@ -315,7 +318,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.86 $ ';  #'
+our($VERSION) = '$Revision: 1.87 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -401,6 +404,7 @@ sub new {
                                    "vctyper"     => \&mix_reg_report,         # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
                                    "perl"        => \&mix_reg_report,         # creates perl package (owner: Thorsten Lutscher)
                                    "vctyperl"    => \&mix_reg_report,         # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
+                                   "bd-cfg"      => \&_gen_view_bdcfg,        # command file for backdoor configuration (first use in FRC project)  (owner: Thorsten Lutscher)G
                                    "none"        => sub {}                    # generate nothing (useful for bypassing the dispatcher)
                                   },
 
