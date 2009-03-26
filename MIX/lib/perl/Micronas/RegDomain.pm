@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegDomain.pm,v 1.5 2008/12/10 13:08:50 lutscher Exp $
+#  RCSId: $Id: RegDomain.pm,v 1.6 2009/03/26 12:45:37 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegDomain.pm,v $
+#  Revision 1.6  2009/03/26 12:45:37  lutscher
+#  fixed a bug in find function
+#
 #  Revision 1.5  2008/12/10 13:08:50  lutscher
 #  fixed typo
 #
@@ -95,7 +98,9 @@ sub new {
 					   fields => [],
                        clone => {
                                  'number' => 0
-                                }                      # cloning information
+                                },                      # cloning information
+                       hfind_field_by_name_cache => {},
+                       hfind_reg_by_field_cache => {}
 					  };
 
 	# init data members w/ parameters from constructor call
@@ -183,13 +188,26 @@ sub find_reg_by_address_all {
 };
 
 # finds all field objects in list with given name and returns a list with the found objects
+# uses caching with member hfind_field_by_name_cache
 sub find_field_by_name {
 	my ($this, $name) = @_;
+    
+    # cache lookup
+    if (exists $this->{hfind_field_by_name_cache}->{$name}) {
+        if (defined $this->{hfind_field_by_name_cache}->{$name}) {
+            return @{$this->{hfind_field_by_name_cache}->{$name}};
+        } else {
+            return undef;
+        };
+    };
+ 
 	my (@lresult) = grep ($_->{name} eq $name, @{$this->fields});
 	if (scalar(@lresult)) {
-		return @lresult;
+        $this->{hfind_field_by_name_cache}->{$name} = \@lresult;
+        return @lresult;
 	} else {
-		return undef;
+		$this->{hfind_field_by_name_cache}->{$name} = undef;
+        return undef;
 	};
 };
 
@@ -232,9 +250,14 @@ sub find_cloned_field_by_name {
 sub find_reg_by_field {
     my ($this, $o_field) = @_;
     my ($o_reg);
+
+    # cache lookup
+    my $key = $o_field->name;
+    return $this->{hfind_reg_by_field_cache}->{$key} if exists ($this->{hfind_reg_by_field_cache}->{$key});
+     
     foreach $o_reg (@{$this->regs}) {
-        if (grep ($o_field->name eq $_->name, $o_reg->fields)) {
-            return $o_reg;
+        if (grep ($key eq $_->{field}->name, @{$o_reg->fields})) {
+            return $this->{hfind_reg_by_field_cache}->{$key} = $o_reg;
         };
     };
 };
