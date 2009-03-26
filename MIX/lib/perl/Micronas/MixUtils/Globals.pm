@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.82 $                                         |
+# | Revision:   $Revision: 1.83 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2009/03/26 12:45:23 $                              |
+# | Date:       $Date: 2009/03/26 14:59:15 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.83  2009/03/26 14:59:15  lutscher
+# | added parameter group reg_shell.bdcfg
+# |
 # | Revision 1.82  2009/03/26 12:45:23  lutscher
 # | added input.req and reg_shell.exclude_domains
 # |
@@ -230,9 +233,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.82 2009/03/26 12:45:23 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.83 2009/03/26 14:59:15 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.82 $';  
+my $thisrevision    =      '$Revision: 1.83 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1097,6 +1100,13 @@ sub init ($) {
                      'addr_domain_reset' => 0       # specifies whether the transformed address is reset at domain start
                                                     # Note: special feature for FRCS RM conversion
                     },
+       
+       # parameters for view bd-cfg
+       'bdcfg' => {
+                   'ncsim_cmd'       => "force", # force|deposit
+                   'ncsim_file_name' => "ncsim_force_registers.tcl",
+                   'axis_file_name'  => "axis_force_registers.cmd"
+                  },
        
        # legacy parameters, not needed anymore!
        'cfg_module_prefix'    => "rs_cfg", # prefix for config register block
