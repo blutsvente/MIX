@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewBdCfg.pm,v 1.3 2009/03/26 14:58:47 lutscher Exp $
+#  RCSId: $Id: RegViewBdCfg.pm,v 1.4 2009/04/17 09:06:33 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.3 $                                  
+#  Revision      : $Revision: 1.4 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViewBdCfg.pm,v $
+#  Revision 1.4  2009/04/17 09:06:33  lutscher
+#  some requested changes
+#
 #  Revision 1.3  2009/03/26 14:58:47  lutscher
 #  some more features
 #
@@ -73,7 +76,7 @@ sub _gen_view_bdcfg {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info($0))) {
-        $eh->mix_add_module_info("RegViewBdCdfg", '$Revision: 1.3 $ ', "Package to create backdoor configuration files for simulation");
+        $eh->mix_add_module_info("RegViewBdCdfg", '$Revision: 1.4 $ ', "Package to create backdoor configuration files for simulation");
     };
     
 	# extend class data with data structure needed for code generation
@@ -165,8 +168,9 @@ view \'$view_name\' module \'RegViewBdCdfg\' version ".$href_info->{'version'}."
 sub _write_backdoor_config {
     my ($this, $lref_domain_names, $href_hpaths, $lref_bsi) = @_;
    
-    my ($domainname, $o_domain, $o_field, $o_reg, $reg_offset, $reg_value);
+    my ($o_domain, $o_field, $o_reg, $reg_offset, $reg_value);
     my @ldomains;
+    my %hregs_in_bsi = ();
 
     _info("generating files \'".$this->global->{"file_nc"}."\' and \'".$this->global->{"file_axis"}."\'...");
     my $dest_nc = new FileHandle $eh->get("output.path") . "/" . $this->global->{"file_nc"} , "w";
@@ -182,8 +186,6 @@ sub _write_backdoor_config {
 		};
     };
 
-    my $o_reg_last = undef;
-    my $o_domain_last;
     foreach my $cmd_bsi (@{$lref_bsi}) {
         my ($path, $field_value) = split(/=/, $cmd_bsi);
         my ($device, $blockname, $fieldname) = split(/\./, $path);
@@ -194,6 +196,7 @@ sub _write_backdoor_config {
         
         # find field
         $o_field = undef;
+        # iterate through all domains
         foreach $o_domain (@ldomains) {
             
             $o_field = ($o_domain->find_field_by_name($fieldname))[0];
@@ -202,32 +205,28 @@ sub _write_backdoor_config {
                 # set field init value to value from bsi file, this way we can use Reg::get_reg_init() for the register-value
                 $o_field->attribs("init" => $field_value);
 
+                # get register this field belongs to
                 $o_reg = $o_domain->find_reg_by_field($o_field);
-                # check if field belongs to a new register, if so, dump last register
-                if (defined $o_reg_last) {
-                    if ($o_reg != $o_reg_last) {
-                        $reg_offset = $o_domain_last->get_reg_address($o_reg_last);
-                        $reg_value = $o_reg_last->get_reg_init();
-                        print $dest_nc $this->_get_nc_force_frc($o_domain_last, $o_reg_last, $reg_offset, $href_hpaths, $reg_value);
-                        print $dest_axis $this->_get_axis_force_frc($o_domain_last, $o_reg_last, $reg_offset, $href_hpaths, $reg_value);
-                        
-                        $o_reg_last = $o_reg;
-                    };
-                } else {
-                    $o_reg_last = $o_reg;
-                };
-                $o_domain_last = $o_domain;
+                $hregs_in_bsi{$o_domain->name}->{$o_reg->name} = $o_reg;  # save pointer
                 last; # exit loop and parse next bsi command
             };
         };
         $o_field or _warning("field \'$fieldname\' in .bsi file not found in database (register-master), may be in user-specified skipped domain");
     };
     
-    # handle last register
-    $reg_offset = $o_domain_last->get_reg_address($o_reg);
-    $reg_value = $o_reg->get_reg_init();
-    print $dest_nc $this->_get_nc_force_frc($o_domain_last, $o_reg, $reg_offset, $href_hpaths, $reg_value);
-    print $dest_axis $this->_get_axis_force_frc($o_domain_last, $o_reg, $reg_offset, $href_hpaths, $reg_value);
+    # dump all registers and values to force-file 
+    # (sort alphabetically, there is no order in source bsi file that has to be maintained)
+    foreach my $domainname (sort keys %hregs_in_bsi) {
+        $o_domain = $this->find_domain_by_name_first($domainname);
+        foreach my $regname (sort keys %{$hregs_in_bsi{$domainname}}) {
+            $o_reg = $hregs_in_bsi{$domainname}->{$regname};
+            $reg_offset = $o_domain->get_reg_address($o_reg);
+            $reg_value = $o_reg->get_reg_init();
+            print $dest_nc $this->_get_nc_force_frc($o_domain, $o_reg, $reg_offset, $href_hpaths, $reg_value);
+            print $dest_axis $this->_get_axis_force_frc($o_domain, $o_reg, $reg_offset, $href_hpaths, $reg_value);
+        };
+    };
+
     $dest_nc->close();
     $dest_axis->close();
 };
@@ -242,7 +241,8 @@ sub _get_nc_force_frc {
         $bank_no = $1;
         if (exists $href_hpaths->{$bank_no}) {
             my $hpath = $href_hpaths->{$bank_no};
-            my $str = join(" ",
+            my $str = "# register ".($o_reg->name)."\n";
+            $str .= join(" ",
                            $eh->get("reg_shell.bd-cfg.ncsim_cmd"),
                            $hpath . ".write_reg_" . sprintf("%x", $offset) . ".reg_data_out_int",
                            "{'h"._val2hex($eh->get("reg_shell.datawidth"), $value)."};"
@@ -270,7 +270,8 @@ sub _get_axis_force_frc {
         $bank_no = $1;
         if (exists $href_hpaths->{$bank_no}) {
             my $hpath = $href_hpaths->{$bank_no};
-            my $str = join(" ",
+            my $str = "// register ".($o_reg->name)."\n";
+            $str .= join(" ",
                            $hpath . ".write_reg_" . sprintf("%x", $offset) . ".reg_data_out_int",
                            "=",
                            $eh->get("reg_shell.datawidth")."'h"._val2hex($eh->get("reg_shell.datawidth"), $value)
