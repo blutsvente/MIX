@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewBdCfg.pm,v 1.4 2009/04/17 09:06:33 lutscher Exp $
+#  RCSId: $Id: RegViewBdCfg.pm,v 1.5 2009/05/25 12:01:24 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.4 $                                  
+#  Revision      : $Revision: 1.5 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViewBdCfg.pm,v $
+#  Revision 1.5  2009/05/25 12:01:24  lutscher
+#  added block as matching criteria for field in .bsi file
+#
 #  Revision 1.4  2009/04/17 09:06:33  lutscher
 #  some requested changes
 #
@@ -76,14 +79,14 @@ sub _gen_view_bdcfg {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info($0))) {
-        $eh->mix_add_module_info("RegViewBdCdfg", '$Revision: 1.4 $ ', "Package to create backdoor configuration files for simulation");
+        $eh->mix_add_module_info("RegViewBdCdfg", '$Revision: 1.5 $ ', "Package to create backdoor configuration files for simulation");
     };
     
 	# extend class data with data structure needed for code generation
     my $href_info = $eh->mix_get_module_info("RegViewBdCdfg");
  
     $this->global(
-				  'debug'              => 0,
+				  'debug'              => $OPTVAL{'verbose'} ? 1 : 0,
 				  'file_nc'            => $eh->get("reg_shell.bd-cfg.ncsim_file_name"),
 				  'file_axis'          => $eh->get("reg_shell.bd-cfg.axis_file_name"),
 				  'header'             => "
@@ -146,7 +149,7 @@ view \'$view_name\' module \'RegViewBdCdfg\' version ".$href_info->{'version'}."
               chomp($_);
               @ltemp = split(/\s+\=\s+/, $_);
               if (scalar @ltemp == 2) {
-                  $ltemp[1] =~ s/\;//;
+                  $ltemp[1] =~ s/\;.*$//;
                   if ($ltemp[1] =~ m/^0x[a-f0-9]+/i) { # convert from hex if necessary
                       $ltemp[1] = hex($ltemp[1]);
                   };
@@ -199,11 +202,12 @@ sub _write_backdoor_config {
         # iterate through all domains
         foreach $o_domain (@ldomains) {
             
+            # find block/field pair in current domain (for block there is no dedicated find function)
             $o_field = ($o_domain->find_field_by_name($fieldname))[0];
-            if (defined $o_field) {
-                print "> " . $o_domain->name, " $fieldname ". $o_field->name . "\n" if $this->global->{"debug"};
+            if (defined $o_field && ($o_field->attribs->{'block'} eq $blockname)) {
                 # set field init value to value from bsi file, this way we can use Reg::get_reg_init() for the register-value
                 $o_field->attribs("init" => $field_value);
+                print "> " . $o_domain->name, " ". $o_field->name . "=".$o_field->attribs->{"init"}."\n" if $this->global->{"debug"};
 
                 # get register this field belongs to
                 $o_reg = $o_domain->find_reg_by_field($o_field);
@@ -211,7 +215,7 @@ sub _write_backdoor_config {
                 last; # exit loop and parse next bsi command
             };
         };
-        $o_field or _warning("field \'$fieldname\' in .bsi file not found in database (register-master), may be in user-specified skipped domain");
+        $o_field or _warning("field \'$fieldname\' of block \'$blockname'\ in .bsi file not found in database (register-master), may be in user-specified skipped domain");
     };
     
     # dump all registers and values to force-file 
