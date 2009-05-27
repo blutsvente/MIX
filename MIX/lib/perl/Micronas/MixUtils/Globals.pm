@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.83 $                                         |
+# | Revision:   $Revision: 1.84 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2009/03/26 14:59:15 $                              |
+# | Date:       $Date: 2009/05/27 13:16:50 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.84  2009/05/27 13:16:50  lutscher
+# | added STL file generation for view bd-cfg
+# |
 # | Revision 1.83  2009/03/26 14:59:15  lutscher
 # | added parameter group reg_shell.bdcfg
 # |
@@ -233,9 +236,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.83 2009/03/26 14:59:15 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.84 2009/05/27 13:16:50 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.83 $';  
+my $thisrevision    =      '$Revision: 1.84 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1105,7 +1108,8 @@ sub init ($) {
        'bdcfg' => {
                    'ncsim_cmd'       => "force", # force|deposit
                    'ncsim_file_name' => "ncsim_force_registers.tcl",
-                   'axis_file_name'  => "axis_force_registers.cmd"
+                   'axis_file_name'  => "axis_force_registers.cmd",
+                   'stl_file_name'   => "stl_force_registers.stl"
                   },
        
        # legacy parameters, not needed anymore!
