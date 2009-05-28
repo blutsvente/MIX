@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewBdCfg.pm,v 1.6 2009/05/27 13:16:50 lutscher Exp $
+#  RCSId: $Id: RegViewBdCfg.pm,v 1.7 2009/05/28 08:02:29 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.6 $                                  
+#  Revision      : $Revision: 1.7 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViewBdCfg.pm,v $
+#  Revision 1.7  2009/05/28 08:02:29  lutscher
+#  changed _get_stl_force_frc()
+#
 #  Revision 1.6  2009/05/27 13:16:50  lutscher
 #  added STL file generation for view bd-cfg
 #
@@ -82,7 +85,7 @@ sub _gen_view_bdcfg {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info($0))) {
-        $eh->mix_add_module_info("RegViewBdCdfg", '$Revision: 1.6 $ ', "Package to create backdoor configuration files for simulation");
+        $eh->mix_add_module_info("RegViewBdCdfg", '$Revision: 1.7 $ ', "Package to create backdoor configuration files for simulation");
     };
     
 	# extend class data with data structure needed for code generation
@@ -263,6 +266,7 @@ version 2.0
             _error("can't extract bank number from domain name \'",$o_domain->name,"\'"); 
         };
     };
+    # sort by absolute address
     foreach my $abs_addr (sort {$a <=> $b } keys %hregs_by_absolute_address) {
         print $dest_stl $this->_get_stl_force_frc($abs_addr, $hregs_by_absolute_address{$abs_addr});
     };
@@ -270,10 +274,11 @@ version 2.0
 };
 
 # create a STL command for FRC
+# note: subsequent scripts require 32-bit hex numbers
 sub _get_stl_force_frc {
     my ($this, $addr, $o_reg) = @_;
     my $str = "# register ".($o_reg->name)."\n";
-    $str .= "write 0x"._val2hex(32,$addr)." 0x"._val2hex($eh->get("reg_shell.datawidth"), $o_reg->get_reg_init()) . "\n";
+    $str .= "write 0x"._val2hex(32,$addr)." 0x"._val2hex(32, $o_reg->get_reg_init()) . "\n";
     return $str;
 };
 
