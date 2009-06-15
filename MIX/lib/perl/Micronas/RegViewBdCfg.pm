@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewBdCfg.pm,v 1.7 2009/05/28 08:02:29 lutscher Exp $
+#  RCSId: $Id: RegViewBdCfg.pm,v 1.8 2009/06/15 11:57:26 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.7 $                                  
+#  Revision      : $Revision: 1.8 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViewBdCfg.pm,v $
+#  Revision 1.8  2009/06/15 11:57:26  lutscher
+#  added addrmaps member to Reg and RegDomain
+#
 #  Revision 1.7  2009/05/28 08:02:29  lutscher
 #  changed _get_stl_force_frc()
 #
@@ -85,7 +88,7 @@ sub _gen_view_bdcfg {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info($0))) {
-        $eh->mix_add_module_info("RegViewBdCdfg", '$Revision: 1.7 $ ', "Package to create backdoor configuration files for simulation");
+        $eh->mix_add_module_info("RegViewBdCdfg", '$Revision: 1.8 $ ', "Package to create backdoor configuration files for simulation");
     };
     
 	# extend class data with data structure needed for code generation
@@ -112,10 +115,10 @@ view \'$view_name\' module \'RegViewBdCdfg\' version ".$href_info->{'version'}."
             my @lexclude_domains = split(/\s*,\s*/, $eh->get("reg_shell.exclude_domains"));
             my @lskipped = ();
             foreach my $href (@{$this->domains}) {
-                if (!grep ($href->{'domain'}->{'name'} =~ m/$_/,  @lexclude_domains)) {
-                    push @$lref_domains, $href->{'domain'}->{'name'};
+                if (!grep ($href->{'name'} =~ m/$_/,  @lexclude_domains)) {
+                    push @$lref_domains, $href->{'name'};
                 } else {
-                    push @lskipped, $href->{'domain'}->{'name'};
+                    push @lskipped, $href->{'name'};
                 };
             };
             if (scalar @lskipped>0) {
@@ -200,8 +203,8 @@ version 2.0
 
     # make list of domain objects
     foreach my $href (@{$this->domains}) {
-        if (grep ($href->{domain}->name eq $_, @$lref_domain_names)) { 
-            push @ldomains, $href->{'domain'};
+        if (grep ($href->name eq $_, @$lref_domain_names)) { 
+            push @ldomains, $href;
 		};
     };
 

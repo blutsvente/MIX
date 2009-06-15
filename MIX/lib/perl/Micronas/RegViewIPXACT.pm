@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewIPXACT.pm,v 1.16 2009/03/20 08:49:45 lutscher Exp $
+#  RCSId: $Id: RegViewIPXACT.pm,v 1.17 2009/06/15 11:57:26 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -27,6 +27,9 @@
 ###############################################################################
 #
 #  $Log: RegViewIPXACT.pm,v $
+#  Revision 1.17  2009/06/15 11:57:26  lutscher
+#  added addrmaps member to Reg and RegDomain
+#
 #  Revision 1.16  2009/03/20 08:49:45  lutscher
 #  added xml parameters
 #
@@ -132,7 +135,7 @@ sub _gen_view_ipxact {
     } else {
         #no domains specified -> use all
         foreach my $href (@{$this->domains}) {
-            push @{$this->global->{'ldomains'}}, $href->{'domain'};
+            push @{$this->global->{'ldomains'}}, $href;
         };
     };
 

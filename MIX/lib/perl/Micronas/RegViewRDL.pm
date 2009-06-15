@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewRDL.pm,v 1.3 2008/04/01 09:19:29 lutscher Exp $
+#  RCSId: $Id: RegViewRDL.pm,v 1.4 2009/06/15 11:57:26 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.3 $                                  
+#  Revision      : $Revision: 1.4 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViewRDL.pm,v $
+#  Revision 1.4  2009/06/15 11:57:26  lutscher
+#  added addrmaps member to Reg and RegDomain
+#
 #  Revision 1.3  2008/04/01 09:19:29  lutscher
 #  changed parameter list of main methods
 #
@@ -122,7 +125,7 @@ sub _gen_view_rdl {
 		};
 	} else {
 		foreach $href (@{$this->domains}) {
-			push @{$this->global->{'ldomains'}}, $href->{'domain'};
+			push @{$this->global->{'ldomains'}}, $href;
 		};
 	};
 

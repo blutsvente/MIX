@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegDomain.pm,v 1.6 2009/03/26 12:45:37 lutscher Exp $
+#  RCSId: $Id: RegDomain.pm,v 1.7 2009/06/15 11:57:25 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegDomain.pm,v $
+#  Revision 1.7  2009/06/15 11:57:25  lutscher
+#  added addrmaps member to Reg and RegDomain
+#
 #  Revision 1.6  2009/03/26 12:45:37  lutscher
 #  fixed a bug in find function
 #
@@ -62,6 +65,7 @@ package Micronas::RegDomain;
 use strict;
 use Data::Dumper;
 use Micronas::MixUtils::RegUtils;
+use Micronas::RegAddrMap;
 
 #use FindBin qw($Bin);
 #use lib "$Bin";
@@ -78,7 +82,7 @@ our($_id) = 0; # incremental object id
 #------------------------------------------------------------------------------
 # Constructor
 # returns a hash reference to the data members of this class
-# package; does NOT call the subclass constructors.
+# package; addrmaps will be initialized with an empty default address map
 # Input: 1. hash containing data members
 #------------------------------------------------------------------------------
 
@@ -90,17 +94,20 @@ sub new {
 	
 	# data member default values
 	my $ref_member  = {
-					   id => $_id,
-					   name => "",
-					   definition => "",
-					   addrmap => [],                    # ref. to list of hashes
-					   regs => [],
-					   fields => [],
-                       clone => {
-                                 'number' => 0
-                                },                      # cloning information
-                       hfind_field_by_name_cache => {},
-                       hfind_reg_by_field_cache => {}
+					   id              => $_id,
+					   name            => "",
+					   definition      => "",
+					   addrmaps        => [],           # list with RegAddrMap objects
+                       default_addrmap => "default",    # name of default addressmap
+					   regs            => [],
+					   fields          => [],
+                       clone           => {
+                                           'number' => 0
+                                          },            # cloning information
+                       
+                       # private fields
+                       hfind_field_by_name_cache  => {},
+                       hfind_reg_by_field_cache   => {}
 					  };
 
 	# init data members w/ parameters from constructor call
@@ -108,6 +115,11 @@ sub new {
 		$ref_member->{$_} = $params{$_};
 	};
 	$_id++;
+
+    # init default addrmaps list
+    my $o_addrmap = Micronas::RegAddrMap->new(name => $ref_member->{default_addrmap});
+    push @{$ref_member->{addrmaps}}, $o_addrmap;
+
 	bless $ref_member, $this;
 };
 
@@ -134,14 +146,14 @@ sub definition {
 # input: none or hash describing register mapping:
 # reg => ref. to register
 # offset => sub-address/offset of register in domain
-sub addrmap {
-	my $this = shift;
-	if (@_) {
-		my %hamap = @_;
-		push @{$this->{addrmap}}, \%hamap;
-	};
-	return $this->{addrmap};
-};
+#sub addrmap {
+#	my $this = shift;
+#	if (@_) {
+#		my %hamap = @_;
+#		push @{$this->{addrmap}}, \%hamap;
+#	};
+#	return $this->{addrmap};
+#};
 
 # ref. object data access method
 sub regs {
@@ -168,23 +180,76 @@ sub clone {
 	return $this->{clone};
 };
 
+# helper function to link a register object with an address offset into a domain
+# input: register object, offset value, [optionally] address-map name
+sub add_reg {
+    my ($this, $o_reg, $offset, $addrmap) = @_;
+    if (!defined $addrmap) { $addrmap = $this->{default_addrmap} };
+    my $o_addrmap = $this->get_addrmap_by_name($addrmap);
+    if (defined $o_addrmap) {
+        $o_addrmap->add_node($o_reg, $offset);
+    } else {
+       _error("add_reg(): unknown address map \'$addrmap\'");
+    };
+    $this->regs($o_reg);
+};
+
+# method to create a new address-map object
+sub add_addrmap {
+    my ($this, $name, $granularity) = @_;
+    my $o_addrmap = Micronas::RegAddrMap->new(name => $name, granularity => $granularity);
+    push @{$this->{addrmaps}}, $o_addrmap;
+};
+
+# get address-map matching $name or return undef
+sub get_addrmap_by_name {
+    my ($this, $name) = @_;
+    my @ltemp = grep($_->name eq $name, @{$this->{addrmaps}});
+    if (scalar @ltemp) {
+        return $ltemp[0];
+    } else {
+        return undef;
+    };
+};
+
 # finds first register object in address map at given address and returns the object (or undef)
-# input: sub-address in domain
+# input: sub-address in domain, [optionally] address-map name
 sub find_reg_by_address_first {
-	my ($this, $offset) = @_;
-	my ($result) = (grep ($_->{offset} == $offset, @{$this->addrmap}))[0];
-	if (ref($result)) {
-		return $result->{reg};
-	} else {
-		return undef;
-	};
+	my ($this, $offset, $addrmap) = @_;
+    if (!defined $addrmap) { $addrmap = $this->{default_addrmap} };
+    my $o_addrmap = $this->get_addrmap_by_name($addrmap);
+    if (defined $o_addrmap) {
+        return ($o_addrmap->find_object_by_address($offset))[0];
+    } else {
+        return undef;
+    };
 };
 
 # find all register objects in address map at given address and return the list of found objects
+# input: sub-address in domain, [optionally] address-map name
 sub find_reg_by_address_all {
-	my ($this, $offset) = @_;
-	my (@ltemp) = grep ($_->{offset} == $offset, @{$this->addrmap});
-	return map {$_->{reg}} @ltemp;
+	my ($this, $offset, $addrmap) = @_;
+    if (!defined $addrmap) { $addrmap = $this->{default_addrmap} };
+    my $o_addrmap = $this->get_addrmap_by_name($addrmap);
+    if (defined $o_addrmap) {
+        return $o_addrmap->find_object_by_address($offset);
+    } else {
+        return ();
+    };
+};
+
+# takes a register object and returns exactly one register offset or undef
+# input: reference to register object, [optionally] address-map name
+sub get_reg_address {
+	my ($this, $o_reg, $addrmap) = @_;
+	my $href;
+    if (!defined $addrmap) { $addrmap = $this->{default_addrmap} };
+    my $o_addrmap = $this->get_addrmap_by_name($addrmap);
+    if (defined $o_addrmap) {
+        return ($o_addrmap->get_object_address($o_reg))[0];
+    } else {
+        return undef;
+    };
 };
 
 # finds all field objects in list with given name and returns a list with the found objects
@@ -260,18 +325,6 @@ sub find_reg_by_field {
             return $this->{hfind_reg_by_field_cache}->{$key} = $o_reg;
         };
     };
-};
-
-# takes a register object and returns a register offset or undef
-sub get_reg_address {
-	my ($this, $o_reg) = @_;
-	my $href;
-	foreach $href (@{$this->addrmap}) {
-		if ($href->{reg} == $o_reg) {
-			return $href->{offset};
-		};
-	};
-	return undef;
 };
 
 # default display method

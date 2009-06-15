@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewSTL.pm,v 1.13 2009/02/17 11:55:57 lutscher Exp $
+#  RCSId: $Id: RegViewSTL.pm,v 1.14 2009/06/15 11:57:26 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.13 $                                  
+#  Revision      : $Revision: 1.14 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: RegViewSTL.pm,v $
+#  Revision 1.14  2009/06/15 11:57:26  lutscher
+#  added addrmaps member to Reg and RegDomain
+#
 #  Revision 1.13  2009/02/17 11:55:57  lutscher
 #  added usedbits to comment in STL code
 #
@@ -159,7 +162,7 @@ version 2.0
 		};
 	} else {
 		foreach $href (@{$this->domains}) {
-			push @{$this->global->{'ldomains'}}, $href->{'domain'};
+			push @{$this->global->{'ldomains'}}, $href;
 		};
 	};
 

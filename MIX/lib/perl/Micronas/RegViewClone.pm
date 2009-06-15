@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewClone.pm,v 1.15 2008/12/10 18:00:10 lutscher Exp $
+#  RCSId: $Id: RegViewClone.pm,v 1.16 2009/06/15 11:57:26 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.15 $                                  
+#  Revision      : $Revision: 1.16 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -32,6 +32,9 @@
 ###############################################################################
 #
 #  $Log: RegViewClone.pm,v $
+#  Revision 1.16  2009/06/15 11:57:26  lutscher
+#  added addrmaps member to Reg and RegDomain
+#
 #  Revision 1.15  2008/12/10 18:00:10  lutscher
 #  small fix concerning unique_domains parameter
 #
@@ -158,7 +161,7 @@ sub _clone {
             push @ldomain_names, $OPTVAL{'domain'};
         } else {
             foreach $href (@{$this->domains}) {
-                push @ldomain_names, $href->{'domain'}->{'name'};
+                push @ldomain_names, $href->{'name'};
             };
         };
 	};
@@ -183,7 +186,7 @@ sub _clone_regspace {
 
     # get list of all domains
     foreach $href (@{$this->domains}) {
-        push @lalldomains, $href->{'domain'};
+        push @lalldomains, $href;
     };
     # iterate through all domains
     foreach $o_domain0 (@lalldomains) {
@@ -209,7 +212,7 @@ sub _clone_regspace {
                                                                  }
                                                      );
                 # link domain into new register space object
-                $o_space->domains('domain' => $o_domain1, 'baseaddr' => 0x0);
+                $o_space->add_domain($o_domain1, 0x0);
             };
 
             for ($n=0; $n< $this->global->{'number'}; $n=$n+1) {
@@ -237,7 +240,7 @@ sub _clone_regspace {
                                                                      }
                                                          );
                     # link domain into new register space object
-                    $o_space->domains('domain' => $o_domain1, 'baseaddr' => $new_domain_baseaddr);
+                    $o_space->add_domain($o_domain1, $new_domain_baseaddr);
                 };
               
                 # iterate original register space and build up new register space
@@ -266,8 +269,7 @@ sub _clone_regspace {
                     $o_reg1->attribs(%hrattribs);
                     
                     # link new register object into domain
-                    $o_domain1->regs($o_reg1);
-                    $o_domain1->addrmap('reg' => $o_reg1, 'offset' => $reg_offset);
+                    $o_domain1->add_reg($o_reg1, $reg_offset);
                     
                     # iterate through all fields of the register
                     foreach $href (sort {$a cmp $b} @{$o_reg0->fields}) {
@@ -310,7 +312,7 @@ sub _clone_regspace {
         } else {
             # don't clone, just copy
             _info("copying domain $domain");
-            $o_space->domains('domain' => $o_domain0, 'baseaddr' => $this->get_domain_baseaddr($domain));
+            $o_space->add_domain($o_domain0, $this->get_domain_baseaddr($domain));
         };
     };
     return $o_space;

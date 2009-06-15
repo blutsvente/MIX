@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.87 2009/03/26 12:47:14 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.88 2009/06/15 11:57:25 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.88  2009/06/15 11:57:25  lutscher
+#  added addrmaps member to Reg and RegDomain
+#
 #  Revision 1.87  2009/03/26 12:47:14  lutscher
 #  added view bd-cfg
 #
@@ -318,52 +321,9 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.87 $ ';  #'
+our($VERSION) = '$Revision: 1.88 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
-
-#global constants and defaults; is mapped per reference into Reg objects
-# our(%hglobal) = 
-#   (
-#    # supported input formats
-#    supported_input_formats => ["register-master", "ip-xact"],
-# 
-#    # supported register-master types (yes, they are not all the same)
-#    supported_register_master_type => ["VGCA", "FRCH", "AVFB"], 
-# 
-#    # generatable register views (dispatch table)
-#    supported_views => 
-#    {
-#     "hdl-vgch-rs" => \&_gen_view_vgch_rs,      # VGCH project register shell (owner: Thorsten Lutscher)
-#     "e_vr_ad"     => \&_gen_view_vr_ad,        # e-language macros (owner: Thorsten Lutscher)
-#     "stl"         => \&_gen_view_stl,          # register test file in Socket Transaction Language format (owner: Thorsten Lutscher)
-#     "rdl"         => \&_gen_view_rdl,          # Denali RDL representation of database (experimental)
-#     "ip-xact"     => \&_gen_view_ipxact,       # IP-XACT compliant XML output (owner: Gregor Herburger)
-#     # "portlist"    => \&mix_reg_report,             # documents portlist in mif file (owner: Thorsten Lutscher)
-#     "reglist"     => \&mix_reg_report,         # documents all registers in mif file (owner: Thorsten Lutscher)
-#     "header"      => \&mix_reg_report,         # generates c header files (owner: Thorsten Lutscher)
-#     "vctyheader"  => \&mix_reg_report,         # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
-#     "per"         => \&mix_reg_report,         # creates Lauterbach per file (owner: Thorsten Lutscher)
-#     "vctyper"     => \&mix_reg_report,         # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
-#     "perl"        => \&mix_reg_report,         # creates perl package (owner: Thorsten Lutscher)
-#     "vctyperl"    => \&mix_reg_report,         # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
-#     "none"        => sub {}                    # generate nothing (useful for bypassing the dispatcher)
-#    },
-# 
-#    # attributes in register-master that do NOT belong to a field
-#    # note: the field name is retrieved from the ::b entries of the register-master
-#    non_field_attributes => [qw(::ign ::sub ::interface ::inst ::width ::b:.* ::b ::addr ::dev ::vi2c ::default ::name ::type ::definition ::clone)],
-# 
-#    # language for HDL code generation, currently only Verilog supported
-#    lang => "verilog",
-# 
-#    # debug switch
-#    debug => 0,
-# 
-#    # Version of class package
-#    version => $VERSION
-#   );
-
 
 #------------------------------------------------------------------------------
 # Constructor
@@ -378,8 +338,10 @@ sub new {
 
 	# data member default values
 	my $ref_member  = {
-					   device => "<no device specified>",
-					   domains => [],
+					   device          => "<no device specified>", # device identifier
+					   domains         => [],           # list with RegDomain objects
+					   addrmaps        => [],           # list with RegAddrMap objects
+                       default_addrmap => "default",    # name of default addressmap
 					   global => {
                                   # supported input formats
                                   supported_input_formats => ["register-master", "ip-xact"],
@@ -390,22 +352,22 @@ sub new {
                                   # generatable register views (dispatch table)
                                   supported_views => 
                                   {
-                                   "hdl-vgch-rs" => \&_gen_view_vgch_rs,      # VGCH project register shell (owner: Thorsten Lutscher)
-                                   "e_vr_ad"     => \&_gen_view_vr_ad,        # e-language macros (owner: Thorsten Lutscher)
-                                   "stl"         => \&_gen_view_stl,          # register test file in Socket Transaction Language format (owner: Thorsten Lutscher)
-                                   "rdl"         => \&_gen_view_rdl,          # Denali RDL representation of database (experimental)
-                                   "ip-xact"     => \&_gen_view_ipxact,       # IP-XACT compliant XML output (owner: Gregor Herburger)
-                                   "ip-xact-rgm" => \&_gen_view_ipxact,       # IP-XACT XML for OVM reg_mem package
-                                   # "portlist"    => \&mix_reg_report,             # documents portlist in mif file (owner: Thorsten Lutscher)
-                                   "reglist"     => \&mix_reg_report,         # documents all registers in mif file (owner: Thorsten Lutscher)
-                                   "header"      => \&mix_reg_report,         # generates c header files (owner: Thorsten Lutscher)
-                                   "vctyheader"  => \&mix_reg_report,         # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
-                                   "per"         => \&mix_reg_report,         # creates Lauterbach per file (owner: Thorsten Lutscher)
-                                   "vctyper"     => \&mix_reg_report,         # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
-                                   "perl"        => \&mix_reg_report,         # creates perl package (owner: Thorsten Lutscher)
-                                   "vctyperl"    => \&mix_reg_report,         # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
-                                   "bd-cfg"      => \&_gen_view_bdcfg,        # command file for backdoor configuration (first use in FRC project)  (owner: Thorsten Lutscher)G
-                                   "none"        => sub {}                    # generate nothing (useful for bypassing the dispatcher)
+                                   "hdl-vgch-rs" => \&_gen_view_vgch_rs,   # VGCH project register shell (owner: Thorsten Lutscher)
+                                   "e_vr_ad"     => \&_gen_view_vr_ad,     # e-language macros (owner: Thorsten Lutscher)
+                                   "stl"         => \&_gen_view_stl,       # register test file in Socket Transaction Language format (owner: Thorsten Lutscher)
+                                   "rdl"         => \&_gen_view_rdl,       # Denali RDL representation of database (experimental)
+                                   "ip-xact"     => \&_gen_view_ipxact,    # IP-XACT compliant XML output (owner: Gregor Herburger)
+                                   "ip-xact-rgm" => \&_gen_view_ipxact,    # IP-XACT XML for OVM reg_mem package
+                                   # "portlist"    => \&mix_reg_report,          # documents portlist in mif file (owner: Thorsten Lutscher)
+                                   "reglist"     => \&mix_reg_report,      # documents all registers in mif file (owner: Thorsten Lutscher)
+                                   "header"      => \&mix_reg_report,      # generates c header files (owner: Thorsten Lutscher)
+                                   "vctyheader"  => \&mix_reg_report,      # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
+                                   "per"         => \&mix_reg_report,      # creates Lauterbach per file (owner: Thorsten Lutscher)
+                                   "vctyper"     => \&mix_reg_report,      # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
+                                   "perl"        => \&mix_reg_report,      # creates perl package (owner: Thorsten Lutscher)
+                                   "vctyperl"    => \&mix_reg_report,      # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
+                                   "bd-cfg"      => \&_gen_view_bdcfg,     # command file for backdoor configuration (first use in FRC project)  (owner: Thorsten Lutscher)G
+                                   "none"        => sub {}                 # generate nothing (useful for bypassing the dispatcher)
                                   },
 
                                   # attributes in register-master that do NOT belong to a field
@@ -413,13 +375,10 @@ sub new {
                                   non_field_attributes => [qw(::ign ::sub ::interface ::inst ::width ::b:.* ::b ::addr ::dev ::vi2c ::default ::name ::type ::definition ::clone)],
                                   
                                   # language for HDL code generation, currently only Verilog supported
-                                  lang => "verilog",
-                                  
-                                  # debug switch
-                                  debug => 0,
-                                  
-                                  # Version of class package
-                                  version => $VERSION
+                                  lang     => "verilog",
+                                                                    
+                                  debug    => 0, # debug switch                                 
+                                  version  => $VERSION  # Version of class package
                                  }
                       };
 
@@ -428,6 +387,10 @@ sub new {
 		$ref_member->{$_} = $params{$_};
 	};
 	
+    # init default addrmaps list
+    my $o_addrmap = Micronas::RegAddrMap->new(name => $ref_member->{default_addrmap});
+    push @{$ref_member->{addrmaps}}, $o_addrmap;
+
 	bless $ref_member, $this;
 };
 
@@ -586,15 +549,46 @@ sub global {
 	return $this->{global};
 };
 
+# helper function to link a domain object with an address offset into the register-space
+# input: RegDomain object, offset value, [optionally] address-map name
+sub add_domain {
+    my ($this, $o_domain, $offset, $addrmap) = @_;
+    if (!defined $offset) { $offset = 0 };
+    if (!defined $addrmap) { $addrmap = $this->{default_addrmap} };
+    my $o_addrmap = $this->get_addrmap_by_name($addrmap);
+    if (defined $o_addrmap) {
+        $o_addrmap->add_node($o_domain, $offset);
+    } else {
+       _error("add_domain(): unknown address map \'$addrmap\'");
+    };
+    $this->domains($o_domain);
+};
+
+# method to create a new address-map object
+sub add_addrmap {
+    my ($this, $name, $granularity) = @_;
+    my $o_addrmap = Micronas::RegAddrMap->new(name => $name, granularity => $granularity);
+    push @{$this->{addrmaps}}, $o_addrmap;
+};
+
+# get address-map matching $name or return undef
+sub get_addrmap_by_name {
+    my ($this, $name) = @_;
+    my @ltemp = grep($_->name eq $name, @{$this->{addrmaps}});
+    if (scalar @ltemp) {
+        return $ltemp[0];
+    } else {
+        return undef;
+    };
+};
+
+
 # add single domain to the register space or return ref. to the list of domain hashes
-# input: none or hash describing the domain mapping
-# domain => ref. to domain
-# baseaddr => base address of domain
+# input: none or RegDomain object
 sub domains {
 	my $this = shift;
 	if (@_) {
-		my %hdomain = @_;
-		push @{$this->{domains}}, \%hdomain;
+		push @{$this->{domains}}, @_;
 	};
 	return $this->{domains};
 };
@@ -604,27 +598,30 @@ sub domains {
 sub find_domain_by_name_first {
 	my $this = shift;
 	my $name = shift;
-	my($result) = (grep ($_->{domain}->{name} eq $name, @{$this->domains}))[0];
+	my $result = (grep ($_->{name} eq $name, @{$this->domains}))[0];
 	
 	if (ref($result)) {
-		return $result->{domain};
+		return $result;
 	} else {
 		return undef;
 	};
 };
 
 # get baseaddr for a given domain name
-# input: domain name
+# input: domain name, [optionally] address-map name
 # output: baseaddr value (or undef)
 sub get_domain_baseaddr {
-	my ($this, $name) = @_;
-
-	my ($result) = (grep ($_->{domain}->{name} eq $name, @{$this->domains}))[0];
-	if (ref($result)) {
-		return $result->{baseaddr};
-	} else {
-		return undef;
+	my ($this, $name, $addrmap) = @_;
+    if (!defined $addrmap) { $addrmap = $this->{default_addrmap} };
+    my $o_addrmap = $this->get_addrmap_by_name($addrmap);
+    my $result = undef;
+    if (defined $o_addrmap) {
+        my $o_domain = $this->find_domain_by_name_first($name);
+        if (defined $o_domain) {
+            $result = ($o_addrmap->get_object_address($o_domain))[0];
+        };
 	};
+    return $result;
 };
 
 # default display method
@@ -648,15 +645,13 @@ sub get_register_direction_from_fields{
 
     #iterate through fields
     foreach $field (@{$o_register->{'fields'}}){
-	my $o_field=$field->{'field'};
-	
-	if ($direction ne $o_field->{'attribs'}->{'dir'}){#if direction not equal to  direction of the first field return 0
-	    return 0;
-	}
+        my $o_field=$field->{'field'};
+        
+        if ($direction ne $o_field->{'attribs'}->{'dir'}){#if direction not equal to  direction of the first field return 0
+            return 0;
+        }
     };
     return $direction;
-
-	
 };
 
 #Iterates through all registers and gives back the max registerwidth
@@ -667,15 +662,13 @@ sub get_max_regwidth{
     my $regwidth=0;
     my ($domain,$o_domain,$o_register);
 
-    foreach $domain (@{$this->domains}){#iterate through domains
-	$o_domain=$domain->{'domain'};
-	
-	foreach $o_register (@{$o_domain->{'regs'}}){#iterate through register
-	    $regwidth=$o_register->{'attribs'}->{'size'} if ($o_register->{'attribs'}->{'size'}>$regwidth);
-
-	}
+    foreach $o_domain (@{$this->domains}){#iterate through domains   
+        foreach $o_register (@{$o_domain->{'regs'}}){#iterate through register
+            $regwidth=$o_register->{'attribs'}->{'size'} if ($o_register->{'attribs'}->{'size'}>$regwidth);
+            
+        }
     }
-
+    
     return $regwidth;
 }
 
@@ -859,7 +852,7 @@ sub _map_register_master {
                     };
 					
                     # link domain object into register space object
-                    $this->domains('domain' => $o_domain, 'baseaddr' => $baseaddr);
+                    $this->add_domain($o_domain, $baseaddr);
                 };
             };
 			
@@ -886,8 +879,7 @@ sub _map_register_master {
                     $o_reg->attribs('size' => $rsize, 'clone' => $rclone);
 
                     # link register object into domain
-                    $o_domain->regs($o_reg);
-                    $o_domain->addrmap('reg' => $o_reg, 'offset' => $offset);
+                    $o_domain->add_reg($o_reg, $offset);
                 };
             };
 
@@ -1007,7 +999,7 @@ sub _map_ipxact{
 	
 	
         #add domain to reg-object
-        $this->domains('domain' => $o_domain, 'baseaddr' => $baseaddr);
+        $this->add_domain($o_domain, $baseaddr);
 
 	
         ###########REGISTERS###########
@@ -1034,8 +1026,7 @@ sub _map_ipxact{
             $o_register->definition($rdescription);
 
             #link register object into domain
-            $o_domain->regs($o_register);
-            $o_domain->addrmap(reg=>$o_register,offset=>$offset);
+            $o_domain->add_reg($o_register, $offset);
 
             ###########register attributes
 
@@ -1612,8 +1603,7 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
 
     # add additional entries to %columns
     # for additional field attributes from ip-xact
-    foreach $domain (@{$this->domains}){#iterate through domains
-        $o_domain=$domain->{'domain'};
+    foreach $o_domain (@{$this->domains}){#iterate through domains
         $domainname=$o_domain->{'name'};
         
         foreach $o_register (@{$o_domain->{'regs'}}){#iterate through register
@@ -1641,8 +1631,7 @@ USR - the register access is forwarded to the backend-logic; typically RAM-ports
 
     # iterate through domains
     my $n_domain=0;
-    foreach $domain (@{$this->domains}){
-        $o_domain=$domain->{'domain'};
+    foreach $o_domain (@{$this->domains}){
         # $domainname=_clone_name($eh->get('reg_shell.domain_naming'),99,$o_domain->{'id'},$o_domain->{'name'}); # apply domain-naming rule
         $domainname=_clone_name($eh->get('reg_shell.domain_naming'),99,$n_domain++,$o_domain->{'name'}); # apply domain-naming rule
         foreach $o_register (@{$o_domain->{'regs'}}){#iterate through register

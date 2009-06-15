@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.67 $                                               |
+# | Revision:   $Revision: 1.68 $                                               |
 # | Author:     $Author: lutscher $                                                 |
-# | Date:       $Date: 2008/11/13 10:46:26 $                                                   |
+# | Date:       $Date: 2009/06/15 11:57:25 $                                                   |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.67 2008/11/13 10:46:26 lutscher Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.68 2009/06/15 11:57:25 lutscher Exp $                                                             |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.68  2009/06/15 11:57:25  lutscher
+# | added addrmaps member to Reg and RegDomain
+# |
 # | Revision 1.67  2008/11/13 10:46:26  lutscher
 # | added 2nd .per file generation
 # |
@@ -275,11 +278,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.67 2008/11/13 10:46:26 lutscher Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.68 2009/06/15 11:57:25 lutscher Exp $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.67 $';
+my $thisrevision   =      '$Revision: 1.68 $';
 # ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -696,8 +699,7 @@ sub mix_rep_header($;$)
         $blocks = mix_rep_vcty_read_device_ini($blocks) if $vcty;
 
         # iterate through all blocks (domains)
-        foreach my $href (@{$o_space->domains}) {
-            my $o_domain = $href->{domain};
+        foreach my $o_domain (@{$o_space->domains}) {
             my $domain_name = $o_domain->name();
             if (! exists($blocks->{$domain_name})) {
                 $logger->error("__E_REPORT", "\tCould not find `$domain_name' in the top address map!");
@@ -868,8 +870,7 @@ sub mix_rep_per($;$)
         $blocks = mix_rep_vcty_read_device_ini($blocks) if $vcty;
 
         # iterate through all blocks (domains)
-        foreach my $href (@{$o_space->domains}) {
-            my $o_domain = $href->{domain};
+        foreach my $o_domain (@{$o_space->domains}) {
             my $domain_name = $o_domain->name();
             if (! exists($blocks->{$domain_name})) {
                 $logger->error("__E_REPORT","\tCould not find `$domain_name' from register-master in the top address map!");
@@ -1076,8 +1077,7 @@ sub mix_rep_perl($;$)
         $blocks = mix_rep_vcty_read_device_ini($blocks) if $vcty;
 
         # iterate through all blocks (domains)
-        foreach my $href (@{$o_space->domains}) {
-            my $o_domain = $href->{domain};
+        foreach my $o_domain (@{$o_space->domains}) {
             my $domain_name = $o_domain->name();
             if (! exists($blocks->{$domain_name})) {
                 $logger->error("__E_REPORT","\tCould not find `$domain_name' in the top address map!");
@@ -1160,8 +1160,7 @@ sub mix_rep_reglist($)
 
     if (defined $o_space) {
         # iterate through all blocks (domains)
-        foreach my $href (@{$o_space->domains}) {
-            my $o_domain = $href->{domain};
+        foreach my $o_domain (@{$o_space->domains}) {
             #$o_domain->display();
 
             ### open mif file

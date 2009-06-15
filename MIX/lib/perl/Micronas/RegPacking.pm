@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegPacking.pm,v 1.4 2008/12/12 10:34:43 lutscher Exp $
+#  RCSId: $Id: RegPacking.pm,v 1.5 2009/06/15 11:57:25 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.4 $                                  
+#  Revision      : $Revision: 1.5 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegPacking.pm,v $
+#  Revision 1.5  2009/06/15 11:57:25  lutscher
+#  added addrmaps member to Reg and RegDomain
+#
 #  Revision 1.4  2008/12/12 10:34:43  lutscher
 #  added feature reg_shell.packing.addr_domain_reset
 #
@@ -82,7 +85,7 @@ sub _pack {
             push @ldomain_names, $OPTVAL{'domain'};
         } else {
             foreach $href (@{$this->domains}) {
-                push @ldomain_names, $href->{'domain'}->{'name'};
+                push @ldomain_names, $href->{'name'};
             };
         };
 	};
@@ -111,7 +114,7 @@ sub _pack_regspace {
 
     # get list of all domains
     foreach $href (@{$this->domains}) {
-        push @lalldomains, $href->{'domain'};
+        push @lalldomains, $href;
     };
     
     # iterate through all domains
@@ -121,10 +124,10 @@ sub _pack_regspace {
             _info("packing domain $domain with mode ", $mode, " and endianness ", $endianness,"...");
 
             # create a new domain
-            $o_domain1 = Micronas::RegDomain->new('name' => $domain,);
+            $o_domain1 = Micronas::RegDomain->new('name' => $domain);
             
             # link domain into new register space object
-            $o_space->domains('domain' => $o_domain1);
+            $o_space->add_domain($o_domain1, 0x0);
             
             # pack registers, creating new ones
             if ($mode eq "64to32") {
@@ -146,13 +149,13 @@ sub _pack_regspace {
                         # $o_reg1->display(); # debug
                         $o_domain1->regs($o_reg1);
                         $o_domain1->fields($o_reg1->fields);
-                        $o_domain1->addrmap(reg => $o_reg1, offset => $addr_offset + $offs0);
+                        $o_domain1->add_reg($o_reg1, $addr_offset + $offs0);
                     };
                     if (ref($o_reg2) =~ m/Micronas::RegReg/) { 
                         # $o_reg2->display();
                         $o_domain1->regs($o_reg2);
                         $o_domain1->fields($o_reg2->fields);
-                        $o_domain1->addrmap(reg => $o_reg2, offset => $addr_offset + $offs1);
+                        $o_domain1->add_reg($o_reg2, $addr_offset + $offs1);
                     };
                 };
             } elsif ($mode eq "32to16") {
@@ -184,13 +187,13 @@ sub _pack_regspace {
                         # $o_reg1->display(); # debug
                         $o_domain1->regs($o_reg1);
                         $o_domain1->fields($o_reg1->fields);
-                        $o_domain1->addrmap(reg => $o_reg1, offset => $addr_offset + $offs0);
+                        $o_domain1->add_reg($o_reg1, $addr_offset + $offs0);
                     };
                     if (ref($o_reg2) =~ m/Micronas::RegReg/) { 
                         # $o_reg2->display(); # debug
                         $o_domain1->regs($o_reg2);
                         $o_domain1->fields($o_reg2->fields);
-                        $o_domain1->addrmap(reg => $o_reg2, offset => $addr_offset + $offs1);
+                        $o_domain1->add_reg($o_reg2, $addr_offset + $offs1);
                     };
                 };
             } else {

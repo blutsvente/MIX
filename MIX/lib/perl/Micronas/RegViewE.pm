@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.36 2009/02/17 13:45:33 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.37 2009/06/15 11:57:26 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.37  2009/06/15 11:57:26  lutscher
+#  added addrmaps member to Reg and RegDomain
+#
 #  Revision 1.36  2009/02/17 13:45:33  lutscher
 #  fixed typo
 #
@@ -210,7 +213,7 @@ sub _gen_view_vr_ad {
 		};
 	} else {
 		foreach $href (@{$this->domains}) {
-			push @ldomains, $href->{'domain'};
+			push @ldomains, $href;
 		};
 	};
 	if (!scalar(@ldomains)) {   # something to do ?

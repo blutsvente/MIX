@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.92 2009/03/26 12:45:55 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.93 2009/06/15 11:57:26 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.92 $                                  
+#  Revision      : $Revision: 1.93 $                                  
 #
 #  Related Files :  Reg.pm
 #
@@ -67,6 +67,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.93  2009/06/15 11:57:26  lutscher
+#  added addrmaps member to Reg and RegDomain
+#
 #  Revision 1.92  2009/03/26 12:45:55  lutscher
 #  some clean-up
 #
@@ -244,7 +247,7 @@ sub _gen_view_vgch_rs {
 	} else {
 		foreach $href (@{$this->domains}) { 
             # all domains
-			push @ldomains, $href->{'domain'};
+			push @ldomains, $href;
 		};
 	};
 
@@ -432,7 +435,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.92 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.93 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -2458,10 +2461,11 @@ sub _skip_field {
 # calcute the effectively used range of the address
 sub _get_address_msb_lsb {
 	my($this, $o_domain) = @_;
-	my($msb, $lsb, $href, $i);
+	my($msb, $lsb, $o_ref, $i);
    
     $lsb = 0;
-
+    my $o_addrmap = $o_domain->get_addrmap_by_name($o_domain->{default_addrmap}); # note: uses default addressmap
+    
 	# determine lsb of address
 	for ($i=0; $i<=4; $i++) {
 		if($this->global->{'datawidth'} <= (8,16,32,64,128)[$i]) {
@@ -2472,8 +2476,8 @@ sub _get_address_msb_lsb {
 
     # determine msb of address
 	$msb = $lsb;
-	foreach $href (@{$o_domain->addrmap}) {
-		while($href->{'offset'} > 2**($msb+1)-1) {
+	foreach $o_ref (@{$o_addrmap->nodes}) {
+		while(($o_ref->offset * $o_addrmap->granularity) > 2**($msb+1)-1) {
 			$msb++;
 		}; 
 	};
