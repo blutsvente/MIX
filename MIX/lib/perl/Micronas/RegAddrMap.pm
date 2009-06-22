@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegAddrMap.pm,v 1.1 2009/06/15 11:57:13 lutscher Exp $
+#  RCSId: $Id: RegAddrMap.pm,v 1.2 2009/06/22 14:14:07 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegAddrMap.pm,v $
+#  Revision 1.2  2009/06/22 14:14:07  lutscher
+#  fixed syntax error
+#
 #  Revision 1.1  2009/06/15 11:57:13  lutscher
 #  initial release
 #
@@ -54,10 +57,10 @@ use Micronas::RegAddrNode;
 our $package   = __PACKAGE__;
 our $instances = 0;
 our $debug     = 0;
-our (@lvalid_object_types) = qw(RegReg RegDomain);
+use constant ADDRESSABLE_OBJECT_TYPES => qw(RegReg RegDomain);
 
 # version of this package, extracted from RCS macros
-our($VERSION) = '$Revision: 1.1 $ ';  #'
+our($VERSION) = '$Revision: 1.2 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -148,7 +151,7 @@ sub _parameters() {
 sub add_node {
     my ($this, $o_ref, $val) = @_;
     my $type = ref($o_ref);
-    if (grep($type =~ m/$_$/, @lvalid_object_types)) {
+    if (grep($type =~ m/$_/, (ADDRESSABLE_OBJECT_TYPES))) {
         my $o_node = Micronas::RegAddrNode->new(type => $type, o_ref => $o_ref, offset => $val);
         push @{$this->nodes}, $o_node;
         return $o_node;
