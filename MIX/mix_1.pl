@@ -1,5 +1,4 @@
 # -*-* perl -*- -w
-#  header for MS-Win! Remove for UNIX ...
 #!/bin/sh --
 #! -- # -*- perl -*- -w
 eval 'exec ${PERL:-`[ ! -d "$HOME/bin/perl" -a -x "$HOME/bin/perl" ] && echo "$HOME/bin/perl" || { [ -x /usr/bin/perl ] && echo /usr/bin/perl || echo /usr/local/bin/perl ; } `} -x -S $0 ${1+"$@"} ;'
@@ -19,9 +18,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # +-----------------------------------------------------------------------+
 
 # +-----------------------------------------------------------------------+
-# | Id           : $Id: mix_1.pl,v 1.3 2009/03/26 12:46:57 lutscher Exp $  |
-# | Version      : $Revision: 1.3 $                                      |
-# | Mod.Date     : $Date: 2009/03/26 12:46:57 $                           |
+# | Id           : $Id: mix_1.pl,v 1.4 2009/06/23 12:21:07 lutscher Exp $  |
+# | Version      : $Revision: 1.4 $                                      |
+# | Mod.Date     : $Date: 2009/06/23 12:21:07 $                           |
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 
@@ -29,6 +28,9 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: mix_1.pl,v $
+# | Revision 1.4  2009/06/23 12:21:07  lutscher
+# | removed misleading comment
+# |
 # | Revision 1.3  2009/03/26 12:46:57  lutscher
 # | added options for view bd-cfg
 # |
@@ -78,7 +80,7 @@ use Micronas::Mix;
 # Global Variables
 #******************************************************************************
 
-$::VERSION = '$Revision: 1.3 $'; # RCS Id '
+$::VERSION = '$Revision: 1.4 $'; # RCS Id '
 $::VERSION =~ s,\$,,go;
 
 #
