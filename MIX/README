@@ -1,0 +1,19 @@
+Important files/dirs:
+---------------------
+
+`-----doc_new/
+    New documentation
+`-----doc/
+    Old documentation directory (still useful)
+`-----lib/
+    Perl library for MIX
+`-----mix
+    Default Mix executable -> uses Micronas module environment;
+`-----mix_1.pl
+    Pure Perl executable
+`-----mixlog.conf
+    Logger configuration file for MIX
+
+
+Note: this directory needs some clean-up.
+
