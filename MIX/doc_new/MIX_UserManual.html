@@ -513,7 +513,7 @@ Also see AdvancedOptions</pre>
 </div>
 <!--POST-SHADOWAREA-->
 <div id="storeArea">
-<div title="Config+Commandline Options" modifier="LU" created="200903121044" modified="200903121058" changecount="11">
+<div title="Config+Commandline Options" modifier="Lu" created="200903121044" modified="200906241105" changecount="16">
 <pre>!Command Line Switches
 The command line options take precedence over the //mix.cfg// settings.
 
@@ -536,6 +536,7 @@ Note: list is not complete.
 * {{{-strip}}} Remove old and diff sheets. These sheets are named with &quot;O_&quot; or &quot;DIFF&quot;.
 * {{{-domain &lt;DOMAIN&gt;}}} Restrict register-master view to domain {{{&lt;DOMAIN&gt;}}}
 * {{{-report portlist}}} Write portlist and/or register master reports in MIF format.
+* {{{-vinc &lt;verilog-file&gt;}}} pass a file with Verilog (define) macros that can be used for bit-slices in CONN sheet 
 * Standard options: {{{help|h verbose|v quiet|q nobanner debug}}}
 
 !Runtime Options and Configuration
@@ -815,11 +816,17 @@ module unload msd
 beforehand
 </pre>
 </div>
+<div title="LU" modifier="~LU" created="200906241057" modified="200906241102" changecount="3">
+<pre>[[lutscher]]</pre>
+</div>
 <div title="Links" modifier="LU" created="200903131133" modified="200903131136" changecount="4">
 <pre>* [[MIX/IP-XACT presentation|http://mips/sites/registermaster/Shared%20Documents/presentations/Presentation_IPXACT.ppt]]
 * [[MIX API presentation|http://mips/sites/ip_factory/Shared%20Documents/MIX/mix_api_05022009.ppt]]
 * [[MIX update presentation|http://mips/sites/ip_factory/Shared%20Documents/MIX/mix_update_05022009.ppt]]
 * [[Register-Master Development site|http://mips/sites/registermaster/default.aspx]]</pre>
+</div>
+<div title="Lu" modifier="Lu" created="200906241105" changecount="1">
+<pre>[[lutscher]]</pre>
 </div>
 <div title="Macros" modifier="LU" created="200903111147" changecount="1">
 <pre>!!Simple Text Macros
@@ -864,7 +871,7 @@ If MX and MH match, the accompanying MD lines are executed. Variables are replac
 The {{{::gen}}} column is set to {{{G_MX}}} after evaluation. Empty cells in MD lines are filled with the value given by MX, if any. Please see the //contrib// directory for commonly available connection macros (t.b.d.).
 </pre>
 </div>
-<div title="MainMenu" modifier="LU" created="200903040925" modified="200903131145" changecount="15">
+<div title="MainMenu" modifier="Lu" created="200903040925" modified="200906241105" changecount="18">
 <pre>[[Introduction]]
 [[Installation]]
 [[GettingStarted]]
@@ -1455,8 +1462,10 @@ MIXCFG report.portlist.sort 'sort' =&gt; 'input',
 
 </pre>
 </div>
-<div title="lutscher" modifier="lutscher" created="200903040849" modified="200903040849" changecount="2">
-<pre>mailto:thorsten.lutscher@micronas.com</pre>
+<div title="lutscher" modifier="LU" created="200903040849" modified="200903131252" changecount="4">
+<pre>[img[LU|images/lu.jpg]]
+
+mailto:thorsten.lutscher@micronas.com</pre>
 </div>
 </div>
 <!--POST-STOREAREA-->
