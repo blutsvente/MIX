@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.84 $                                         |
+# | Revision:   $Revision: 1.85 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2009/05/27 13:16:50 $                              |
+# | Date:       $Date: 2009/06/25 15:10:53 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.85  2009/06/25 15:10:53  lutscher
+# | changed internet domain
+# |
 # | Revision 1.84  2009/05/27 13:16:50  lutscher
 # | added STL file generation for view bd-cfg
 # |
@@ -236,9 +239,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.84 2009/05/27 13:16:50 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.85 2009/06/25 15:10:53 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.84 $';  
+my $thisrevision    =      '$Revision: 1.85 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1430,7 +1433,7 @@ sub init ($) {
                      'schemalocation'   => "\$REGMEM_HOME/builder/ipxact/schema \$REGMEM_HOME/builder/ipxact/schema/VendorExtensions.xsd",
                     },	
        'VLNV'	=>	{#IP-XACT Identifier
-                     'vendor'	=> "micronas.com",
+                     'vendor'	=> "tridentmicro.com",
                      'library'	=> "rs_test",
                      'name'	=> "rs_test",
                      'version'	=> "0.1",

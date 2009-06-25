@@ -1,11 +1,11 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.22 2009/02/04 13:15:08 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.23 2009/06/25 15:10:53 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
 #
 #  Author(s)     :  Thorsten Lutscher                                      
-#  Email         :  thorsten.lutscher@micronas.com                          
+#  Email         :  thorsten.lutscher@tridentmicro.com                          
 #
 #  Project       :  MIX                                                
 #
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.23  2009/06/25 15:10:53  lutscher
+#  changed internet domain
+#
 #  Revision 1.22  2009/02/04 13:15:08  lutscher
 #  added 4th param for _add_primary_input/output
 #
