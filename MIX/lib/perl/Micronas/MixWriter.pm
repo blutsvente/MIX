@@ -16,13 +16,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Writer                                   |
 # | Modules:    $RCSfile: MixWriter.pm,v $                                |
-# | Revision:   $Revision: 1.109 $                                         |
-# | Author:     $Author: wig $                                         |
-# | Date:       $Date: 2008/04/01 12:48:34 $                              |
+# | Revision:   $Revision: 1.110 $                                         |
+# | Author:     $Author: lutscher $                                         |
+# | Date:       $Date: 2009/06/25 15:41:53 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2003,2005                                        |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.109 2008/04/01 12:48:34 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixWriter.pm,v 1.110 2009/06/25 15:41:53 lutscher Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the backend for the MIX project.
@@ -33,6 +33,9 @@
 # |
 # | Changes:
 # | $Log: MixWriter.pm,v $
+# | Revision 1.110  2009/06/25 15:41:53  lutscher
+# | changed internet domain
+# |
 # | Revision 1.109  2008/04/01 12:48:34  wig
 # | Added: optimizeportassign feature to avoid extra assign commands
 # | added protoype for collapse_conn function allowing to merge signals
@@ -190,9 +193,9 @@ sub _mix_wr_rewriteportmap 		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixWriter.pm,v 1.109 2008/04/01 12:48:34 wig Exp $';
+my $thisid		=	'$Id: MixWriter.pm,v 1.110 2009/06/25 15:41:53 lutscher Exp $';
 my $thisrcsfile	=	'$RCSfile: MixWriter.pm,v $';
-my $thisrevision   =      '$Revision: 1.109 $';
+my $thisrevision   =      '$Revision: 1.110 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -226,8 +229,8 @@ my $tmpl = <<'EOD';
 -- Based on Mix Entity Template built into THISRCSFILE
 -- THISID
 --
--- Generator: %0% Version: %VERSION%, wilfried.gaensheimer@micronas.com
--- (C) 2003,2005 Micronas GmbH
+-- Generator: %0% Version: %VERSION%, wilfried.gaensheimer@tridentmicro.com and thorsten.lutscher@tridentmicro.com
+-- (C) 2003-2009 Micronas GmbH
 --
 -- --------------------------------------------------------------
 %VHDL_USE_ENTY%
@@ -294,8 +297,8 @@ my $tmpl = <<'EOD';
 -- Based on Mix Architecture Template built into THISRCSFILE
 -- THISID
 --
--- Generator: %0% %VERSION%, wilfried.gaensheimer@micronas.com
--- (C) 2003,2005 Micronas GmbH
+-- Generator: %0% %VERSION%, wilfried.gaensheimer@tridentmicro.com and thorsten.lutscher@tridentmicro.com
+-- (C) 2003-2009 Micronas GmbH
 --
 -- --------------------------------------------------------------
 %VHDL_USE_ARCH%
@@ -378,8 +381,8 @@ $tmpl = <<'EOD';
 // Based on Mix Verilog Architecture Template built into THISRCSFILE
 // THISID
 //
-// Generator: %0% %VERSION%, wilfried.gaensheimer@micronas.com
-// (C) 2003,2005 Micronas GmbH
+// Generator: %0% %VERSION%, wilfried.gaensheimer@tridentmicro.com and thorsten.lutscher@tridentmicro.com
+// (C) 2003-2009 Micronas GmbH
 //
 // --------------------------------------------------------------
 %VERILOG_USE_ARCH%
@@ -455,8 +458,8 @@ my $tmpl = <<'EOD';
 -- Based on Mix Entity Template built into THISRCSFILE
 -- THISID
 --
--- Generator: %0% Version: %VERSION%, wilfried.gaensheimer@micronas.com
--- (C) 2003,2005 Micronas GmbH
+-- Generator: %0% Version: %VERSION%, wilfried.gaensheimer@tridentmicro.com and thorsten.lutscher@tridentmicro.com
+-- (C) 2003-2009 Micronas GmbH
 --
 -- --------------------------------------------------------------
 %VHDL_USE_CONF%
