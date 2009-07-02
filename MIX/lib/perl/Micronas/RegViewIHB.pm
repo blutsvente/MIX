@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewIHB.pm,v 1.1 2009/06/25 15:49:08 lutscher Exp $
+#  RCSId: $Id: RegViewIHB.pm,v 1.2 2009/07/02 12:43:40 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.1 $                                  
+#  Revision      : $Revision: 1.2 $                                  
 #
 #  Related Files :  Reg.pm, RegOOUtils.pm
 #
@@ -17,24 +17,10 @@
 #                   from Reg class object
 #   Functions:
 #   sub _gen_view_ihb_rs 
-#   sub _vgch_rs_init
-#   sub _vgch_rs_gen_cfg_module 
-#   sub _vgch_rs_gen_udc_header
-#   sub _vgch_rs_code_read_mux
-#   sub _rdmux_builder
-#   sub _rdmux_iterator
-#   sub _vgch_rs_code_shadow_process
-#   sub _vgch_rs_code_fwd_process
-#   sub _vgch_rs_code_write_processes 
-#   sub _vgch_rs_code_static_logic
-#   sub _vgch_rs_write_udc
-#   sub _vgch_rs_gen_hier 
-#   sub _vgch_rs_gen_pre_dec_logic
-#   sub _vgch_rs_get_configuration
-#   sub _vgch_rs_add_static_connections 
-#   sub _vgch_rs_write_defines
-#   sub _vgch_rs_write_backdoor_paths
-#   sub _vgch_rs_write_msd_setup
+#   sub _ihb_rs_init
+#   sub _ihb_rs_gen_hier
+#   sub _ihb_rs_get_configuration
+#   sub _ihb_rs_add_static_connections
 #
 ###############################################################################
 #                               Copyright
@@ -50,6 +36,9 @@
 ###############################################################################
 #
 #  $Log: RegViewIHB.pm,v $
+#  Revision 1.2  2009/07/02 12:43:40  lutscher
+#  added ihb bus checker instance generation
+#
 #  Revision 1.1  2009/06/25 15:49:08  lutscher
 #  initial release
 #
@@ -122,10 +111,6 @@ sub _gen_view_ihb_rs {
 	# modify MIX config parameters (only where required)
     ##LU this is potentially dangerous because subsequent view generators could be affected
 	$eh->set('check.signal', 'load,driver,check');
-    # my $save_port_generate_name = $eh->get('port.generate.name');
-    # my $save_prefix_port_gen = $eh->get('postfix.PREFIX_PORT_GEN'); 
-    # my $save_postfix_port_gen = $eh->get('postfix.POSTFIX_PORT_GEN');
-    # my $save_output_generate_inout = $eh->get('output.generate.inout');
     $eh->set('port.generate.name', 'postfix');
     $eh->set('postfix.PREFIX_PORT_GEN', '%EMPTY%');
     $eh->set('postfix.POSTFIX_PORT_GEN', '_%IO%');
@@ -180,12 +165,6 @@ sub _gen_view_ihb_rs {
     $this->_vgch_rs_write_msd_setup();
 	$this->display() if $this->global->{'debug'}; # dump Reg class object
 
-    # reconstruct some overwritten MIX parameters
-    # $eh->set('port.generate.name', $save_port_generate_name);
-    # $eh->set('postfix.PREFIX_PORT_GEN', $save_prefix_port_gen); 
-    # $eh->set('postfix.POSTFIX_PORT_GEN', $save_postfix_port_gen);
-    # $eh->set('output.generate.inout', $save_output_generate_inout);
-    
 	1;
 };
 
@@ -197,7 +176,7 @@ sub _ihb_rs_init {
 	$this->global(
                   'mix_signature'      => "\"M1\"",     # signature for cross-checking MIX software version and IP version
 				  'ihb_target_name'    => "ihb_target_0002", # library module name
-                  'ihb_checker_name'   => "", # library module name
+                  'ihb_checker_name'   => "ihb_target_m_checker", # library module name
 				  'mcda_name'          => "rs_mcda_0002",    # library module name
                   'rtl_libs'           => [{            # required MSD RTL libraries
                                             "project" => "ip_ocp",
@@ -282,7 +261,7 @@ sub _ihb_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViewIHB"))) {
-        $eh->mix_add_module_info("RegViewIHB", '$Revision: 1.1 $ ', "Utility functions to create IHB HDL register space view from Reg class object");
+        $eh->mix_add_module_info("RegViewIHB", '$Revision: 1.2 $ ', "Utility functions to create IHB HDL register space view from Reg class object");
     };
 };
 
@@ -347,7 +326,6 @@ sub _ihb_rs_gen_hier {
         $this->global('ihb_checker_inst' => $ihb_checker_inst);
         _add_generic("P_DWIDTH", $this->global->{'datawidth'}, $ihb_checker_inst);
         _add_generic("P_AWIDTH", $this->global->{'addrwidth'}, $ihb_checker_inst);
-        _add_generic("P_WRITERESP_ENABLE", 0, $ihb_checker_inst);
         $eh->cappend('output.filter.file', $ihb_checker_inst);
     };
 
@@ -647,17 +625,26 @@ sub _ihb_rs_add_static_connections {
     _tie_input_to_constant("${ihb_i}/wr_err_i", 0, 0, 0); # wr_err input not used
     
 
-    if (exists ($this->global->{'ihb_checker_inst'})) { # BAUSTELLE no checker yet
+    if (exists ($this->global->{'ihb_checker_inst'})) {
         my $ihbc_i = $this->global->{'ihb_checker_inst'};
         $this->_add_input($bus_clock, 0, 0, "${ihbc_i}/clk_i");
         $this->_add_input($bus_reset, 0, 0, "${ihbc_i}/reset_n_i");
-        # $this->_add_input($this->_gen_unique_signal_top("mreset_n", $o_domain), 0, 0, "$ocpc_i/mreset_n_i");
-        # $this->_add_input($this->_gen_unique_signal_top("mcmd", $o_domain), 2, 0, "$ocpc_i/mcmd_i");
-        # $this->_add_input($this->_gen_unique_signal_top("maddr", $o_domain), $awidth-1, 0, "$ocpc_i/maddr_i");
-        # $this->_add_input($this->_gen_unique_signal_top("mdata", $o_domain), $dwidth-1, 0, "$ocpc_i/mdata_i");
-        # $this->_add_input($this->_gen_unique_signal_top("mrespaccept", $o_domain), 0, 0, "$ocpc_i/mrespaccept_i");
-        # $this->_add_conn($this->_gen_unique_signal_top("scmdaccept", $o_domain), 0, 0, "$ocpc_i/scmdaccept_i");
-        # $this->_add_conn($this->_gen_unique_signal_top("sresp", $o_domain), 1, 0, "$ocpc_i/sresp_i");
+        $this->_add_input($this->_gen_unique_signal_top("sreset_n", $o_domain), 0, 0, "$ihbc_i/sreset_n_i");
+        $this->_add_input($this->_gen_unique_signal_top("ihb_sel_n", $o_domain), 0, 0, "$ihbc_i/ihb_sel_n_i");
+        $this->_add_input($this->_gen_unique_signal_top("ihb_rdwr_n", $o_domain), 0, 0, "$ihbc_i/ihb_rdwr_n_i");
+        $this->_add_input($this->_gen_unique_signal_top("ihb_addr", $o_domain), $awidth-1, 0, "$ihbc_i/ihb_addr_i");
+        $this->_add_input($this->_gen_unique_signal_top("ihb_wdata", $o_domain), $dwidth-1, 0, "$ihbc_i/ihb_wdata_i");
+        $this->_add_input($this->_gen_unique_signal_top("ihb_rxrdy", $o_domain), 0, 0, "$ihbc_i/ihb_rxrdy_i");
+        $this->_add_conn($this->_gen_unique_signal_top("ihb_wr_trdy_n", $o_domain), 0, 0, "$ihbc_i/ihb_wr_trdy_n_i");
+        $this->_add_conn($this->_gen_unique_signal_top("ihb_rd_trdy_n", $o_domain), 0, 0, "$ihbc_i/ihb_rd_trdy_n_i");
+        $this->_add_conn($this->_gen_unique_signal_top("ihb_rdata", $o_domain), $dwidth-1, 0, "$ihbc_i/ihb_rdata_i");
+        $this->_add_conn($this->_gen_unique_signal_top("ihb_rd_end", $o_domain), 0, 0, "$ihbc_i/ihb_rd_end_i");
+        _tie_input_to_constant("${ihbc_i}/ihb_wr_end_i", 0, 0, 0); # not used here
+        if(exists($this->global->{'embedded_reg'})) {
+            $this->_add_conn($this->_gen_unique_signal_top("ihb_irq", $o_domain), 0, 0, "$ihbc_i/ihb_irq_i");
+        } else {
+            _tie_input_to_constant("${ihbc_i}/ihb_irq_i", 0, 0, 0); # not used here
+        };
     };
     
 	# connections for each config register block
