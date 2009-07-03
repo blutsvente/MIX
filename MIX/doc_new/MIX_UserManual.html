@@ -816,17 +816,14 @@ module unload msd
 beforehand
 </pre>
 </div>
-<div title="LU" modifier="~LU" created="200906241057" modified="200906241102" changecount="3">
-<pre>[[lutscher]]</pre>
-</div>
 <div title="Links" modifier="LU" created="200903131133" modified="200903131136" changecount="4">
 <pre>* [[MIX/IP-XACT presentation|http://mips/sites/registermaster/Shared%20Documents/presentations/Presentation_IPXACT.ppt]]
 * [[MIX API presentation|http://mips/sites/ip_factory/Shared%20Documents/MIX/mix_api_05022009.ppt]]
 * [[MIX update presentation|http://mips/sites/ip_factory/Shared%20Documents/MIX/mix_update_05022009.ppt]]
 * [[Register-Master Development site|http://mips/sites/registermaster/default.aspx]]</pre>
 </div>
-<div title="Lu" modifier="Lu" created="200906241105" changecount="1">
-<pre>[[lutscher]]</pre>
+<div title="Lu" modifier="Lu" created="200906241105" modified="200907030745" changecount="3">
+<pre>[[ThorstenLutscher]]</pre>
 </div>
 <div title="Macros" modifier="LU" created="200903111147" changecount="1">
 <pre>!!Simple Text Macros
@@ -990,7 +987,7 @@ creates name {{{si2ocp_clear_int_config}}}.
 
 </pre>
 </div>
-<div title="RegisterSpecification" modifier="LU" created="200903110850" modified="200903121011" changecount="59">
+<div title="RegisterSpecification" modifier="Lu" created="200903110850" modified="200907030753" changecount="61">
 <pre>The ~Register-Master sheet is one more category of input specification. It describes configuration register domains of devices. A domain comprises all registers that have a common HDL implementation (//register-shell//). A register domain contains registers which in turn contain fields. The MIX tool creates views of a register domain, which is an implementation. Additionally, it can create reports which are used for documentation.
 
 Templates for the .xls sheet (//registermaster_template*.xls//) can be found in the tool installation directory. 
@@ -1041,6 +1038,7 @@ The configuration is done in the //mix.cfg// file like for the other MIX feature
 !Available ~Register-Views
 The following views are currently implemented. They are selected via the {{{reg_shell.type}}} parameter. The most important ones are further documented below.
 |!View|!Description|
+|{{{hdl-ihb-rs}}}|Verilog IHB (internal host bus) register-shell|
 |{{{hdl-vgch-rs}}}|Verilog OCP register-shell|
 |{{{e_vr_ad}}}|//e// language macros for the VR_AD eVC|
 |{{{stl}}}|Register test file in Socket Transaction Language (STL) format|
@@ -1053,6 +1051,7 @@ The following views are currently implemented. They are selected via the {{{reg_
 |{{{vctyper}}}|the same but takes top-level addresses from //device.in// file|
 |{{{perl}}}|creates Perl package (?)|
 |{{{vctyperl}}}|the same but takes top-level addresses from //device.in// file|
+|{{{bd-cfg}}}|view for creating command-files for chip backdoor configuration (FRC project)|
 |{{{none}}}|generate nothing (useful to bypass the view generation dispatcher)|
 
 !Cloning
@@ -1082,8 +1081,8 @@ In case the ~Register-Master contains registers of a different width than what i
 |{{{reg_shell.packing.addr_domain_reset}}}|{{{&lt;0|1&gt;}}}|0|specifies whether the transformed address is reset at domain start|
 
 !HDL ~Register-Shells
-{{{reg_shell.type HDL-vgch-rs}}}
-This generates a Verilog OCP bus register-shell for the register domain. The specification for this can be found here: OCP Config Register Specification [[Unix|file:///proot/ip_ocp/0002/workareas/HEAD/doc/OCP_config_regs.pdf]] [[Windows|file:///\\sambam\proot\ip_ocp\0002\workareas\lutscher\doc\OCP_config_regs.pdf]]
+{{{reg_shell.type HDL-vgch-rs}}} or {{{reg_shell.type HDL-ihb-rs}}}
+This generates a Verilog OCP/IHB bus register-shell for the register domain. The specification for this can be found here: OCP Config Register Specification [[Unix|file:///proot/ip_ocp/0002/workareas/HEAD/doc/OCP_config_regs.pdf]] [[Windows|file:///\\samba-muc\proot\ip_ocp\0002\workareas\lutscher\doc\OCP_config_regs.pdf]]
 
 Note that this also uses an RTL library (from projects ip_sync and ip_ocp). MIX dumps the file //rtl_libs.xml// containing information about the RTL library versions to be used with the generated code.
 
@@ -1100,6 +1099,7 @@ Note that this also uses an RTL library (from projects ip_sync and ip_ocp). MIX 
 |{{{reg_shell.read_multicycle}}} |int |0 |can be one of [0,1,2,..] to insert cycle delays for read acknowledge|
 |{{{reg_shell.exclude_regs}}} |string[,string]* ||Comma-seperated list of register names to be excluded from generation|
 |{{{reg_shell.exclude_fields}}} |string[,string]*||Comma-seperated list of field names to be excluded from generation|
+|{{{reg_shell.exclude_domains}}} |string[,string]*||Comma seperated list/pattern of domain names to exclude, currently only used for view bd-cfg|
 |{{{reg_shell.prefix}}}|string|{{{rs}}}|file/module prefix for register-shell|
 |{{{reg_shell.enforce_unique_addr}}}|{{{&lt;0|1&gt;}}} |1|if 1, allow only one register per address|
 |{{{reg_shell.device}}}|string|{{{%EMPTY%}}}|identifier used for device member of Reg object; if empty, uses the {{{::dev}}} column from ~Register-Master sheet|
@@ -1462,10 +1462,10 @@ MIXCFG report.portlist.sort 'sort' =&gt; 'input',
 
 </pre>
 </div>
-<div title="lutscher" modifier="LU" created="200903040849" modified="200903131252" changecount="4">
+<div title="ThorstenLutscher" modifier="Lu" created="200903040849" modified="200907030745" changecount="5">
 <pre>[img[LU|images/lu.jpg]]
 
-mailto:thorsten.lutscher@micronas.com</pre>
+mailto:thorsten.lutscher@tridentmicro.com</pre>
 </div>
 </div>
 <!--POST-STOREAREA-->
