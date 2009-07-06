@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewIHB.pm,v 1.2 2009/07/02 12:43:40 lutscher Exp $
+#  RCSId: $Id: RegViewIHB.pm,v 1.3 2009/07/06 08:20:25 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.2 $                                  
+#  Revision      : $Revision: 1.3 $                                  
 #
 #  Related Files :  Reg.pm, RegOOUtils.pm
 #
@@ -36,6 +36,9 @@
 ###############################################################################
 #
 #  $Log: RegViewIHB.pm,v $
+#  Revision 1.3  2009/07/06 08:20:25  lutscher
+#  fixed typo
+#
 #  Revision 1.2  2009/07/02 12:43:40  lutscher
 #  added ihb bus checker instance generation
 #
@@ -261,7 +264,7 @@ sub _ihb_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViewIHB"))) {
-        $eh->mix_add_module_info("RegViewIHB", '$Revision: 1.2 $ ', "Utility functions to create IHB HDL register space view from Reg class object");
+        $eh->mix_add_module_info("RegViewIHB", '$Revision: 1.3 $ ', "Utility functions to create IHB HDL register space view from Reg class object");
     };
 };
 
@@ -610,7 +613,7 @@ sub _ihb_rs_add_static_connections {
 	$this->_add_input($this->_gen_unique_signal_top("sreset_n", $o_domain), 0, 0, "$ihb_i/sreset_n_i");
 	$this->_add_input($this->_gen_unique_signal_top("ihb_sel_n", $o_domain), 0, 0, "$ihb_i/ihb_sel_n_i");
 	$this->_add_input($this->_gen_unique_signal_top("ihb_rdwr_n", $o_domain), 0, 0, "$ihb_i/ihb_rdwr_n_i");
-	$this->_add_input($this->_gen_unique_signal_top("ibh_addr", $o_domain), $awidth-1, 0, "$ihb_i/ihb_addr_i");
+	$this->_add_input($this->_gen_unique_signal_top("ihb_addr", $o_domain), $awidth-1, 0, "$ihb_i/ihb_addr_i");
 	$this->_add_input($this->_gen_unique_signal_top("ihb_wdata", $o_domain), $dwidth-1, 0, "$ihb_i/ihb_wdata_i");
 	$this->_add_input($this->_gen_unique_signal_top("ihb_rxrdy", $o_domain), 0, 0, "$ihb_i/ihb_rxrdy_i");
 	$this->_add_output($this->_gen_unique_signal_top("ihb_wr_trdy_n", $o_domain), 0, 0, 0, "$ihb_i/ihb_wr_trdy_n_o");
