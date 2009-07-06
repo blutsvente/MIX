@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewIHB.pm,v 1.3 2009/07/06 08:20:25 lutscher Exp $
+#  RCSId: $Id: RegViewIHB.pm,v 1.4 2009/07/06 09:03:20 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.3 $                                  
+#  Revision      : $Revision: 1.4 $                                  
 #
 #  Related Files :  Reg.pm, RegOOUtils.pm
 #
@@ -36,6 +36,9 @@
 ###############################################################################
 #
 #  $Log: RegViewIHB.pm,v $
+#  Revision 1.4  2009/07/06 09:03:20  lutscher
+#  changed to always generate generic for has_ecs
+#
 #  Revision 1.3  2009/07/06 08:20:25  lutscher
 #  fixed typo
 #
@@ -264,7 +267,7 @@ sub _ihb_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViewIHB"))) {
-        $eh->mix_add_module_info("RegViewIHB", '$Revision: 1.3 $ ', "Utility functions to create IHB HDL register space view from Reg class object");
+        $eh->mix_add_module_info("RegViewIHB", '$Revision: 1.4 $ ', "Utility functions to create IHB HDL register space view from Reg class object");
     };
 };
 
@@ -306,15 +309,16 @@ sub _ihb_rs_gen_hier {
 
 	# _add_generic_value("P_TOCNT_WIDTH", 10, "P_TOCNT_WIDTH", $ihb_inst); # timeout counter width
 	if(exists($this->global->{'embedded_reg'})) {
-		# enable embedded control/status register in ihb_target; 
-		# the default for has_ecs is 0, so we don't need this param in case there is no reg
+		# enable embedded control/status register in ihb_target 
 		_add_generic("has_ecs", 1, $ihb_inst);
 		my $ecs_addr = $o_domain->get_reg_address($this->global->{'embedded_reg'});
 		_add_generic("P_ECSADDR", $ecs_addr, $ihb_inst);
 		_add_generic("p_def_val", $this->global->{'ecs_def_val'}, $ihb_inst);
 		_add_generic("p_def_ien", $this->global->{'ecs_def_ien'}, $ihb_inst);
         _add_generic("p_ecs_writable", $this->global->{'ecs_writable'}, $ihb_inst); # NEW
-	};
+	} else {
+        _add_generic("has_ecs", 0, $ihb_inst);
+    };
 
 	$ihb_sync = 0;
 
