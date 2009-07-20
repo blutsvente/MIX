@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.94 2009/06/25 15:10:08 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.95 2009/07/20 13:38:03 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.94 $                                  
+#  Revision      : $Revision: 1.95 $                                  
 #
 #  Related Files :  Reg.pm, RegOOUtils.pm
 #
@@ -50,6 +50,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.95  2009/07/20 13:38:03  lutscher
+#  extended _vgch_rs_gen_cfg_module to store more field attribs in hhdlconsts
+#
 #  Revision 1.94  2009/06/25 15:10:08  lutscher
 #  added view hdl-ihb-rs
 #
@@ -389,7 +392,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.94 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.95 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -507,10 +510,12 @@ sub _vgch_rs_gen_cfg_module {
 			my $msb = $lsb - 1 + $o_field->attribs->{'size'};
 			my $res_val = sprintf("'h%x", $o_field->attribs->{'init'});
 
-			# store MSBs for later
-			# the LSBs are not stored, they are usually 0; if not, the MSB information alone does not help
+			# store size and MSBs/LSBs attributes for later
+            $this->global->{'hhdlconsts'}->{$this->_gen_fname("", $o_field) . "_pos_c"} = "'h"._val2hex($this->global->{'datawidth'}/4, $href->{'pos'});
+            $this->global->{'hhdlconsts'}->{$this->_gen_fname("", $o_field) . "_size_c"} = "'h"._val2hex($this->global->{'datawidth'}/4, $o_field->attribs->{'size'});
 			if ($o_field->attribs->{'size'} >1) {
 				$this->global->{'hhdlconsts'}->{$this->_gen_fname("", $o_field) . "_msb_c"} = "'h"._val2hex($this->global->{'datawidth'}/4, $msb);
+				$this->global->{'hhdlconsts'}->{$this->_gen_fname("", $o_field) . "_lsb_c"} = "'h"._val2hex($this->global->{'datawidth'}/4, $lsb);
 			};
 
 			# track USR fields
