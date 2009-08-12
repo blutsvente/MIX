@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewURAC.pm,v 1.2 2009/08/12 09:50:48 lutscher Exp $
+#  RCSId: $Id: RegViewURAC.pm,v 1.3 2009/08/12 12:17:35 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm, RegOOUtils.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegViewURAC.pm,v $
+#  Revision 1.3  2009/08/12 12:17:35  lutscher
+#  small fixes
+#
 #  Revision 1.2  2009/08/12 09:50:48  lutscher
 #  removed automatic takeover for read-only fields
 #
@@ -230,7 +233,7 @@ sub _urac_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViewURAC", '$Revision: 1.2 $ ', "Utility functions to create URAC register space view from Reg class object");
+        $eh->mix_add_module_info("RegViewURAC", '$Revision: 1.3 $ ', "Utility functions to create URAC register space view from Reg class object");
     };
 };
 
@@ -356,27 +359,31 @@ sub _urac_rs_gen_cfg_module {
                 if($spec =~ m/w1c/i) {
                     _error("a shadowed field can not have W1C attribute (here: field ", $o_field->name, "); the set-signal from hardware side will be properly synchronized if necessary");
                     next;
-                } else {
-                    $shdw_sig = $o_field->attribs->{'sync'};        
-                    if(lc($shdw_sig) eq "nto" or $shdw_sig =~ m/(%OPEN%|%EMPTY%)/) {
-                        if ($access eq "r") {
-                            _error("the SHA attribute without an external take-over signal (::sync column) is not supported for read-only fields (here: field ", $o_field->name, ")");
-                            next;
-                        } else {
-                            # encode clock-domain and signal name in key
-                            $shdw_sig = join("_", $reg_name, "wr_ts");
-                            my $key = join(".", $fclock, $shdw_sig); 
-                            $hshdw_tp{$key} = $haddr_tokens{$reg_offset}; # for creation of toggle signals for automatic takeover
-                            if (!grep {$_ eq "reg ${shdw_sig}_s;"} @ldeclarations) {
-                                push @ldeclarations, "reg ${shdw_sig}_s;"; # declare only once
-                            };
-                            $hassigns{$shdw_sig} = "${shdw_sig}_s";
-                            $shdw_sig .= ".nto"; # encode that this signal is for automatic takeover
-                        };
+                };
+                
+                $shdw_sig = $o_field->attribs->{'sync'};        
+                if(lc($shdw_sig) eq "nto" or $shdw_sig =~ m/(%OPEN%|%EMPTY%)/) {
+                    if ($access eq "r") {
+                        _error("the SHA attribute without an external take-over signal (::sync column) is not supported for read-only fields (here: field ", $o_field->name, ")");
+                        next;
+                    }
+                    if ($fclock eq $bus_clock) {
+                        _error("the SHA attribute without an external take-over signal (::sync column) is not supported for fields in the bus-clock domain (here: field ", $o_field->name, ")");
+                        next;
                     };
-                    push @{$hshdw{join(".", $fclock, $shdw_sig)}}, $o_field;
-                }; 
-			};
+                    # encode clock-domain and signal name in key
+                    $shdw_sig = join("_", $reg_name, "wr_ts");
+                    my $key = join(".", $fclock, $shdw_sig); 
+                    $hshdw_tp{$key} = $haddr_tokens{$reg_offset}; # for creation of toggle signals for automatic takeover
+                    if (!grep {$_ eq "reg ${shdw_sig}_s;"} @ldeclarations) {
+                        push @ldeclarations, "reg ${shdw_sig}_s;"; # declare only once
+                    };
+                    $hassigns{$shdw_sig} = "${shdw_sig}_s";
+                    $shdw_sig .= ".nto"; # encode that this signal is for automatic takeover
+                };
+                push @{$hshdw{join(".", $fclock, $shdw_sig)}}, $o_field;
+            }; 
+			
 			
 			# warnings/errors for w1c fields 
 			if ($spec =~ m/w1c/i) {
@@ -519,7 +526,7 @@ endproperty
         my $stp_inst = $this->_add_instance_unique("sync_generic", $top_inst, "Synchronizer for internal takeover-signal $shdw_sig");
         _add_generic("kind", 2, $stp_inst);
         if ($clock eq $bus_clock) {
-            _add_generic("sync", 0, $stp_inst);  # no sync'er
+            _add_generic("sync", 0, $stp_inst);  # no sync'er; this mode is prohibited though because it does not make sense
         } else {
             _add_generic("sync", 1, $stp_inst);
         };
