@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewURAC.pm,v 1.1 2009/08/12 07:40:19 lutscher Exp $
+#  RCSId: $Id: RegViewURAC.pm,v 1.2 2009/08/12 09:50:48 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm, RegOOUtils.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegViewURAC.pm,v $
+#  Revision 1.2  2009/08/12 09:50:48  lutscher
+#  removed automatic takeover for read-only fields
+#
 #  Revision 1.1  2009/08/12 07:40:19  lutscher
 #  initial release
 #
@@ -227,7 +230,7 @@ sub _urac_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViewURAC", '$Revision: 1.1 $ ', "Utility functions to create URAC register space view from Reg class object");
+        $eh->mix_add_module_info("RegViewURAC", '$Revision: 1.2 $ ', "Utility functions to create URAC register space view from Reg class object");
     };
 };
 
@@ -351,19 +354,25 @@ sub _urac_rs_gen_cfg_module {
 			# track shadow signals
 			if ($spec =~ m/sha/i) {
                 if($spec =~ m/w1c/i) {
-                    _error("a shadowed field can not have W1C attribute (here: field ", $o_field->name, ")");
+                    _error("a shadowed field can not have W1C attribute (here: field ", $o_field->name, "); the set-signal from hardware side will be properly synchronized if necessary");
+                    next;
                 } else {
                     $shdw_sig = $o_field->attribs->{'sync'};        
                     if(lc($shdw_sig) eq "nto" or $shdw_sig =~ m/(%OPEN%|%EMPTY%)/) {
-                        # encode clock-domain and signal name in key
-                        $shdw_sig = join("_", $reg_name, $access =~ m/w/ ? "wr" : "rd", "ts");
-                        my $key = join(".", $fclock, $shdw_sig); 
-                        $hshdw_tp{$key} = $haddr_tokens{$reg_offset}; # for creation of toggle signals for automatic takeover
-                        if (!grep {$_ eq "reg ${shdw_sig}_s;"} @ldeclarations) {
-                            push @ldeclarations, "reg ${shdw_sig}_s;"; # declare only once
+                        if ($access eq "r") {
+                            _error("the SHA attribute without an external take-over signal (::sync column) is not supported for read-only fields (here: field ", $o_field->name, ")");
+                            next;
+                        } else {
+                            # encode clock-domain and signal name in key
+                            $shdw_sig = join("_", $reg_name, "wr_ts");
+                            my $key = join(".", $fclock, $shdw_sig); 
+                            $hshdw_tp{$key} = $haddr_tokens{$reg_offset}; # for creation of toggle signals for automatic takeover
+                            if (!grep {$_ eq "reg ${shdw_sig}_s;"} @ldeclarations) {
+                                push @ldeclarations, "reg ${shdw_sig}_s;"; # declare only once
+                            };
+                            $hassigns{$shdw_sig} = "${shdw_sig}_s";
+                            $shdw_sig .= ".nto"; # encode that this signal is for automatic takeover
                         };
-                        $hassigns{$shdw_sig} = "${shdw_sig}_s";
-                        $shdw_sig .= ".nto"; # encode that this signal is for automatic takeover
                     };
                     push @{$hshdw{join(".", $fclock, $shdw_sig)}}, $o_field;
                 }; 
@@ -622,11 +631,7 @@ sub _urac_rs_code_takeover_signals_process {
         # signal assignment block
         foreach my $key (sort keys %{$href_shdw_tp}) {
             my ($clock, $shdw_sig) = split(/\./, $key);
-            my $access = "urac_rden_i";
-            if ($shdw_sig =~ m/wr_ts/) {
-                $access = "urac_wren_i";
-            };
-            push @linsert, $ind x ($ilvl+1) . "if (iaddr == ".($href_shdw_tp->{$key})." && $access)";
+            push @linsert, $ind x ($ilvl+1) . "if (iaddr == ".($href_shdw_tp->{$key})." && urac_wren_i)";
             push @linsert, $ind x ($ilvl+2) . "${shdw_sig}_s <= ~${shdw_sig}_s;";
         };
    
