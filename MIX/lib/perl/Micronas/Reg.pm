@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.89 2009/06/25 15:10:08 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.90 2009/08/12 07:40:47 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.90  2009/08/12 07:40:47  lutscher
+#  changes for view hdl-urac-rs
+#
 #  Revision 1.89  2009/06/25 15:10:08  lutscher
 #  added view hdl-ihb-rs
 #
@@ -242,6 +245,7 @@ sub parse_register_master {
                                   use Micronas::RegField;
                                   use Micronas::RegViews;
                                   use Micronas::RegViewIHB;
+                                  use Micronas::RegViewURAC;
                                   use Micronas::RegViewE;
                                   use Micronas::RegViewSTL;
                                   use Micronas::RegViewRDL;
@@ -325,7 +329,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.89 $ ';  #'
+our($VERSION) = '$Revision: 1.90 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -358,6 +362,7 @@ sub new {
                                   {
                                    "hdl-vgch-rs" => \&_gen_view_vgch_rs,   # VGCH project register shell (owner: Thorsten Lutscher)
                                    "hdl-ihb-rs"  => \&_gen_view_ihb_rs,   # IHB (internal host bus) register shell (owner: Thorsten Lutscher)
+                                   "hdl-urac-rs" => \&_gen_view_urac_rs,   # IHB (internal host bus) register shell (owner: Thorsten Lutscher)
                                    "e_vr_ad"     => \&_gen_view_vr_ad,     # e-language macros (owner: Thorsten Lutscher)
                                    "stl"         => \&_gen_view_stl,       # register test file in Socket Transaction Language format (owner: Thorsten Lutscher)
                                    "rdl"         => \&_gen_view_rdl,       # Denali RDL representation of database (experimental)

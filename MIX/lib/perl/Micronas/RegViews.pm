@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.95 2009/07/20 13:38:03 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.96 2009/08/12 07:40:47 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.95 $                                  
+#  Revision      : $Revision: 1.96 $                                  
 #
 #  Related Files :  Reg.pm, RegOOUtils.pm
 #
@@ -50,6 +50,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.96  2009/08/12 07:40:47  lutscher
+#  changes for view hdl-urac-rs
+#
 #  Revision 1.95  2009/07/20 13:38:03  lutscher
 #  extended _vgch_rs_gen_cfg_module to store more field attribs in hhdlconsts
 #
@@ -323,7 +326,7 @@ sub _vgch_rs_init {
 				  'scan_en_port_name'  => "test_en",    # name of test-enable input
 				  'clockgate_te_name'  => "scan_shift_enable", # name of input to connect with test-enable port of clock-gating cell
 				  'embedded_reg_name'  => "RS_CTLSTS",  # reserved name of special register embedded in ocp_target
-				  'field_spec_values'  => ['sha', 'w1c', 'usr'], # recognized values for spec attribute
+				  'field_spec_values'  => ['sha', 'w1c', 'usr', 'trg'], # recognized values for spec attribute
 				  'indent'             => "    ",       # indentation character(s)
 				  'assert_pragma_start'=> "`ifdef ASSERT_ON
 // msd parse off",
@@ -392,7 +395,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.95 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.96 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -504,6 +507,9 @@ sub _vgch_rs_gen_cfg_module {
 
 			# get field attributes
 			my $spec = $o_field->attribs->{'spec'}; # note: spec can contain several attributs
+            if (!grep {$_ eq $spec} @$this->global->{'field_spec_values'}) {
+                _warning("spec attribute $spec not supported by this view");
+            };
 			my $access = lc($o_field->attribs->{'dir'});
 			my $rrange = $this->_get_rrange($href->{'pos'}, $o_field);
 			my $lsb = $o_field->attribs->{'lsb'};
@@ -806,6 +812,10 @@ sub _vgch_rs_gen_udc_header {
     if (defined($eh->mix_get_module_info("RegViewIHB"))) {
         $href_info = $eh->mix_get_module_info("RegViewIHB");
         $rev = "  package RegViewIHB is version ".$href_info->{'version'};
+    };
+    if (defined($eh->mix_get_module_info("RegViewURAC"))) {
+        $href_info = $eh->mix_get_module_info("RegViewURAC");
+        $rev = "  package RegViewURAC is version ".$href_info->{'version'};
      };
 	push @$lref_res, $rev;
     push @$lref_res, "  use with RTL libraries (this release or higher):";
@@ -1968,7 +1978,8 @@ sub _vgch_rs_gen_pre_dec_logic {
 
 # searches all clocks used in the register domain and stores the result in global->hclocks depending on 
 # user settings; detects invalid configurations; collect some statistics per clock-domain;
-# gets reset values for embedded control/status register;# returns the number of clocks
+# gets reset values for embedded control/status register;
+# returns the number of clocks
 sub _vgch_rs_get_configuration {
 	my $this = shift;
 	my ($o_domain) = @_;
@@ -2127,7 +2138,7 @@ sub _vgch_rs_get_configuration {
 sub _vgch_rs_add_static_connections {
 	my ($this, $o_domain, $nclocks) = @_;
 	my $ocp_i = $this->global->{'ocp_inst'};
-	my ($mcda_i, $cfg_i, $sg_i, $sr_i, $predec_i, $clock, $is_async, $href, $n);
+	my ($mcda_i, $cfg_i, $sg_i, $sr_i, $predec_i, $clock, $href, $n);
 	my $bus_clock = $this->global->{'bus_clock'};
 	my $bus_reset = $this->global->{'bus_reset'};
 	my $dwidth = $this->global->{'datawidth'};

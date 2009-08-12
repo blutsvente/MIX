@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegOOUtils.pm,v 1.1 2009/06/25 15:10:14 lutscher Exp $
+#  RCSId: $Id: RegOOUtils.pm,v 1.2 2009/08/12 07:40:47 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -47,6 +47,9 @@
 ###############################################################################
 #
 #  $Log: RegOOUtils.pm,v $
+#  Revision 1.2  2009/08/12 07:40:47  lutscher
+#  changes for view hdl-urac-rs
+#
 #  Revision 1.1  2009/06/25 15:10:14  lutscher
 #  initial release
 #
@@ -76,7 +79,7 @@ sub _indent_and_prune_sva {
 	if (scalar(@$lref_checks)) {
 		if ($this->global->{'infer_sva'}) {
 			unshift @$lref_checks, ("", "/*","  checking code","*/", split("\n",$this->global->{'assert_pragma_start'}));
-			push @$lref_checks, split("\n",$this->global->{'assert_pragma_end'});
+			push @$lref_checks, split("\n",$this->global->{'assert_pragma_end'}), "\n";
 			_pad_column(-1, $this->global->{'indent'}, 2, $lref_checks);
 		} else {
 			@$lref_checks=();
@@ -91,7 +94,7 @@ sub _skip_field {
 	if (
 		grep ($_ eq $o_field->name, @{$this->global->{'lexclude_cfg'}}) 
 		or grep ($_ eq $o_field->reg->name,@{$this->global->{'lexclude_cfg'}}) 
-		or $o_field->reg->name eq $this->global->{'embedded_reg_name'}
+		or (exists $this->global->{'embedded_reg_name'} and $o_field->reg->name eq $this->global->{'embedded_reg_name'})
 	   ) 
 	  {
 		  return 1;
@@ -330,6 +333,8 @@ sub _gen_fname {
         $name .= "%POSTFIX_SIGNAL%";
 	} elsif ($type eq "set") {
 		$name .= $this->global->{'set_postfix'}."%POSTFIX_PORT_IN%";
+	} elsif ($type eq "set_s") {
+		$name .= $this->global->{'set_postfix'}."_sync";
 	} elsif ($type eq "shdw") {
 		$name .= "_shdw";
 	} elsif ($type eq "usr_trans_done") {
@@ -383,7 +388,6 @@ sub _gen_vector_range {
 sub _gen_unique_signal_name {
 	my ($this, $signal_name, $clock, $inst_key) = @_;
 	my $href = $this->global->{'hclocks'}->{$clock};
-
 	if (scalar(@{$this->domains}) == 1 and ($this->global->{'multi_clock_domains'} == 0 or scalar(keys %{$this->global->{'hclocks'}})==1)) {
         return $signal_name;
     } else {
