@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewIHB.pm,v 1.4 2009/07/06 09:03:20 lutscher Exp $
+#  RCSId: $Id: RegViewIHB.pm,v 1.5 2009/08/12 07:40:13 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.4 $                                  
+#  Revision      : $Revision: 1.5 $                                  
 #
 #  Related Files :  Reg.pm, RegOOUtils.pm
 #
@@ -36,6 +36,9 @@
 ###############################################################################
 #
 #  $Log: RegViewIHB.pm,v $
+#  Revision 1.5  2009/08/12 07:40:13  lutscher
+#  corrected field_spec_values
+#
 #  Revision 1.4  2009/07/06 09:03:20  lutscher
 #  changed to always generate generic for has_ecs
 #
@@ -199,7 +202,7 @@ sub _ihb_rs_init {
 				  'scan_en_port_name'  => "test_en",    # name of test-enable input
 				  'clockgate_te_name'  => "scan_shift_enable", # name of input to connect with test-enable port of clock-gating cell
 				  'embedded_reg_name'  => "RS_CTLSTS",  # reserved name of special register embedded in ocp_target
-				  'field_spec_values'  => ['sha', 'w1c', 'usr'], # recognized values for spec attribute
+				  'field_spec_values'  => ['sha', 'w1c', 'usr', 'trg'], # recognized values for spec attribute
 				  'indent'             => "    ",       # indentation character(s)
 				  'assert_pragma_start'=> "`ifdef ASSERT_ON
 // msd parse off",
@@ -267,7 +270,7 @@ sub _ihb_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViewIHB"))) {
-        $eh->mix_add_module_info("RegViewIHB", '$Revision: 1.4 $ ', "Utility functions to create IHB HDL register space view from Reg class object");
+        $eh->mix_add_module_info("RegViewIHB", '$Revision: 1.5 $ ', "Utility functions to create IHB HDL register space view from Reg class object");
     };
 };
 
@@ -447,7 +450,8 @@ sub _ihb_rs_gen_hier {
 
 # searches all clocks used in the register domain and stores the result in global->hclocks depending on 
 # user settings; detects invalid configurations; collect some statistics per clock-domain;
-# gets reset values for embedded control/status register;# returns the number of clocks
+# gets reset values for embedded control/status register;
+# returns the number of clocks
 sub _ihb_rs_get_configuration {
 	my $this = shift;
 	my ($o_domain) = @_;
