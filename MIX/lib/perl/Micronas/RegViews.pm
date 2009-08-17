@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.96 2009/08/12 07:40:47 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.97 2009/08/17 14:06:07 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.96 $                                  
+#  Revision      : $Revision: 1.97 $                                  
 #
 #  Related Files :  Reg.pm, RegOOUtils.pm
 #
@@ -50,6 +50,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.97  2009/08/17 14:06:07  lutscher
+#  fixed error
+#
 #  Revision 1.96  2009/08/12 07:40:47  lutscher
 #  changes for view hdl-urac-rs
 #
@@ -395,7 +398,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.96 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.97 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -507,7 +510,7 @@ sub _vgch_rs_gen_cfg_module {
 
 			# get field attributes
 			my $spec = $o_field->attribs->{'spec'}; # note: spec can contain several attributs
-            if (!grep {$_ eq $spec} @$this->global->{'field_spec_values'}) {
+            if (!grep {$_ eq $spec} @{$this->global->{'field_spec_values'}}) {
                 _warning("spec attribute $spec not supported by this view");
             };
 			my $access = lc($o_field->attribs->{'dir'});
