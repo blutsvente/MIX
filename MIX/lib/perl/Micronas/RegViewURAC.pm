@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewURAC.pm,v 1.3 2009/08/12 12:17:35 lutscher Exp $
+#  RCSId: $Id: RegViewURAC.pm,v 1.4 2009/08/25 14:57:09 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm, RegOOUtils.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegViewURAC.pm,v $
+#  Revision 1.4  2009/08/25 14:57:09  lutscher
+#  added TRG attribute support; changed urac bus-signal names
+#
 #  Revision 1.3  2009/08/12 12:17:35  lutscher
 #  small fixes
 #
@@ -171,7 +174,7 @@ sub _urac_rs_init {
                                            }
                                           ],  
                   'set_postfix'        => "_set_p",     # postfix for interrupt-set input signal
-				  'field_spec_values'  => ['sha', 'w1c'], # recognized values for spec attribute
+				  'field_spec_values'  => ['sha', 'w1c', 'trg'], # recognized values for spec attribute
 				  'indent'             => "    ",       # indentation character(s)
 				  'assert_pragma_start'=> "`ifdef ASSERT_ON
 // msd parse off",
@@ -233,7 +236,7 @@ sub _urac_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViewURAC", '$Revision: 1.3 $ ', "Utility functions to create URAC register space view from Reg class object");
+        $eh->mix_add_module_info("RegViewURAC", '$Revision: 1.4 $ ', "Utility functions to create URAC register space view from Reg class object");
     };
 };
 
@@ -337,7 +340,7 @@ sub _urac_rs_gen_cfg_module {
 
 			# get field attributes
 			my $spec = $o_field->attribs->{'spec'}; # note: spec can contain several attributs
-            if (!grep {$_ eq $spec} @{$this->global->{'field_spec_values'}}) {
+            if ($spec ne "%EMPTY%" and !grep {$_ eq $spec} @{$this->global->{'field_spec_values'}}) {
                 _warning("spec attribute $spec not supported by this view");
             };
 			my $access = lc($o_field->attribs->{'dir'});
@@ -390,6 +393,10 @@ sub _urac_rs_gen_cfg_module {
                 if ($access !~ m/w/ or $access !~ m/r/) {
                     _error("field \'",$o_field->name,"\': attribute W1C can only be combined with RW access");
                 }; 
+                if ($spec =~ m/trg/i) {
+                    _error("the TRG attribute is not yet supported together with W1C attribute (here: field ", $o_field->name, ")");
+                    next;
+                };
 			};
 				
 			# add ports, declarations and assignments
@@ -398,6 +405,9 @@ sub _urac_rs_gen_cfg_module {
 				if ($spec =~ m/sha/i) {
 					push @ldeclarations, "reg [$msb:$lsb] ".$this->_gen_fname("shdw", $o_field).";";
 				};
+                if ($spec =~ m/trg/i) {
+                    _error("the TRG attribute is not supported for read-only fields (here: field ", $o_field->name, ")");
+                };
 			} elsif ($access =~ m/w/i) { # write
 				$this->_add_output($this->_gen_fname("out", $o_field, 1), $msb, $lsb, ($spec =~ m/sha/i) ? 1:0, $top_inst."/".$this->_gen_fname("out", $o_field));
 				if ($spec =~ m/w1c/i) { # w1c
@@ -423,7 +433,9 @@ sub _urac_rs_gen_cfg_module {
 					$hassigns{$this->_gen_fname("shdw", $o_field).$this->_get_frange($o_field)} = $this->_gen_cond_rhs(\%hparams, $o_field, $reg_name.$rrange);
 					push @ldeclarations,"wire ".($this->_get_frange($o_field))." ".$this->_gen_fname("shdw", $o_field).";";
 				};
-		   
+                if ($spec =~ m/trg/i and $spec !~ m/w1c/i) { # add write trigger output
+					$this->_add_output($this->_gen_fname("trg", $o_field, 1), 0, 0, ($spec =~ m/w1c/i) ? 1:0, $top_inst."/".$this->_gen_fname("trg", $o_field));
+				};
 			};
 
 			# registers in write processes
@@ -431,6 +443,16 @@ sub _urac_rs_gen_cfg_module {
 				if ($spec !~ m/w1c/i) { # read/write
 					$hwp{'write'}->{$reg_name.$rrange} = $reg_offset;
 					$hwp{'write_rst'}->{$reg_name.$rrange} = $res_val;
+                    if ($spec =~ m/trg/i and $spec !~ m/sha/i) { # add write trigger output
+                        # add only one trigger signal per register and assign individual trigger signals
+						my $trg = "int_${reg_name}_trg_p";
+						if (!exists($hwp{'write_trg'}->{$trg})) {
+							$hwp{'write_trg_rst'}->{$trg} = 0;
+							$hwp{'write_trg'}->{$trg} = $reg_offset;
+							push @ldeclarations,"reg $trg;"
+						};
+						$hassigns{$this->_gen_fname("trg", $o_field)} = $trg;
+                    };
 				} else { # w1c
                     my $pos = $href->{'pos'};
                     if ($o_field->attribs->{'size'} == 1) {
@@ -442,6 +464,16 @@ sub _urac_rs_gen_cfg_module {
                         };
                     };
 					$hwp{'write_sts_rst'}->{$reg_name.$rrange} = $res_val;
+					#if ($spec =~ m/trg/i) {
+						# # add dedicated trigger signal per field
+						# $hwp{'write_sts_rst'}->{$this->_gen_fname("trg", $o_field)} = 0;
+                        # if ($o_field->attribs->{'size'} == 1) {
+                        #     $hwp{'write_sts_trg'}->{$this->_gen_fname("trg", $o_field)} = $reg_name.$rrange;
+                        # } else {
+                        #     # the trigger signal will only be generated for the first bit of the multi-bit field
+                        #     $hwp{'write_sts_trg'}->{$this->_gen_fname("trg", $o_field)} = $reg_name.($this->_gen_vector_range($pos,$pos));
+                        # };
+					#};
 				};
 			};
 			
@@ -575,7 +607,7 @@ endproperty
 
     # generate shadow processes
     foreach $clock (sort keys %{$this->global->{'hclocks'}}) { 
-        $this->_urac_rs_code_shadow_process($clock, \%hshdw, \%hshdw_tp, \@lsp);
+        $this->_urac_rs_code_shadow_process($clock, \%hshdw, \%hshdw_tp,  \%hassigns, \@lsp);
     };
     _pad_column(-1, $this->global->{'indent'}, 2, \@lsp); # indent
 
@@ -658,7 +690,7 @@ sub _urac_rs_code_takeover_signals_process {
 # where the optional postfix .nto means that the signal is not an external takeover signal
 # output: ref. to list where code is added
 sub _urac_rs_code_shadow_process {
-	my ($this, $clock, $href_shdw, $href_shdw_tp, $lref_sp) = @_;
+	my ($this, $clock, $href_shdw, $href_shdw_tp, $href_assigns, $lref_sp) = @_;
 	my @linsert;
 	my $ind = $this->global->{'indent'};
 	my $ilvl = 0;
@@ -708,6 +740,10 @@ sub _urac_rs_code_shadow_process {
                 my $access = lc($o_field->attribs->{'dir'});
                 if ($access =~ m/w/) {
                     push @linsert, $ind x ($ilvl+2) . $this->_gen_fname("out", $o_field) ." <= ". $this->_gen_fname("shdw", $o_field) . ";";
+                    # add assignment for trigger signal
+                    if ($o_field->attribs->{'spec'} =~ m/trg/i) { # add trigger signal
+                        $href_assigns->{$this->_gen_fname("trg", $o_field)} = "$signame";
+                    };
                 } else {
                     if ($access =~ m/r/) {
                         push @linsert, $ind x ($ilvl+2) . $this->_gen_fname("shdw", $o_field) ." <= " . $this->_gen_fname("in", $o_field) . ";";
@@ -874,50 +910,48 @@ sub _urac_rs_code_write_processes {
 	#
 	#  write block for write trigger pulses
 	#
-	# @linsert = ();
-	# if (scalar(keys %{$href_wp->{'write_trg'}})>0) {
-    #     $write_clock = $clock; # use gated clock
-    #     
-    #     # prefix
-	# 	push @linsert, "", "/*","  write trigger process","*/";
-	# 	push @linsert, $ind x $ilvl++ . "always @(posedge ". $this->_gen_clock_name($clock)." or negedge $int_rst_n) begin";
-    # 
-	# 	# reset logic
-	# 	push @linsert, $ind x $ilvl++ . "if (~$int_rst_n) begin";
-	# 	@ltemp=();
-	# 	foreach $key (sort keys %{$href_wp->{'write_trg_rst'}}) {
-	# 		push @ltemp, "$key <= $href_wp->{'write_trg_rst'}->{$key};";
-	# 	};	
-	# 	_pad_column(0, $ind, $ilvl, \@ltemp);
-	# 	push @linsert, @ltemp;
-	# 	$ilvl--;
-	# 	
-	# 	# write logic
-	# 	push @linsert, $ind x $ilvl ."end", $ind x $ilvl++ . "else begin";
-	# 	foreach $key (sort {$href_wp->{'write_trg'}->{$a} <=> $href_wp->{'write_trg'}->{$b}} keys %{$href_wp->{'write_trg'}}) {
-	# 		push @linsert, $ind x $ilvl . $key . " <= 0;";
-	# 	};
-    # 
-	# 	push @linsert, $ind x $ilvl++ . "case (iaddr)";
-	# 	@ltemp=();
-	# 	foreach $key (sort {$href_wp->{'write_trg'}->{$a} <=> $href_wp->{'write_trg'}->{$b}} keys %{$href_wp->{'write_trg'}}) {
-	# 		$reg_name = $key;
-	# 		$offs = $href_wp->{'write_trg'}->{$key};
-	# 		$rrange = "";
-	# 		if ($reg_name =~ m/(\[.+\])$/) {
-	# 			$reg_name = $`;
-	# 			$rrange = $1;
-	# 		};
-	# 		$reg_addr = $href_addr_tokens->{$offs}; # use tokenized address instead of number
-    #         push @linsert, $ind x $ilvl . "$reg_addr: $key <= wr_p;";
-    #     };
-    #     push @linsert, $ind x $ilvl . "default: ;";
-	# 	$ilvl--;
-	# 	push @linsert, $ind x $ilvl-- . "endcase";
-	# 	push @linsert, $ind x $ilvl-- . "end";
-	# 	push @linsert, $ind x $ilvl . "end";
-	# 	push @$lref_wp, @linsert;    
-    # };
+	@linsert = ();
+	if (scalar(keys %{$href_wp->{'write_trg'}})>0) {
+        # prefix
+		push @linsert, "", "/*","  write trigger process","*/";
+		push @linsert, $ind x $ilvl++ . "always @(posedge ". $this->_gen_clock_name($clock)." or negedge $int_rst_n) begin";
+    
+		# reset logic
+		push @linsert, $ind x $ilvl++ . "if (~$int_rst_n) begin";
+		@ltemp=();
+		foreach $key (sort keys %{$href_wp->{'write_trg_rst'}}) {
+			push @ltemp, "$key <= $href_wp->{'write_trg_rst'}->{$key};";
+		};	
+		_pad_column(0, $ind, $ilvl, \@ltemp);
+		push @linsert, @ltemp;
+		$ilvl--;
+		
+		# write logic
+		push @linsert, $ind x $ilvl ."end", $ind x $ilvl++ . "else begin";
+		foreach $key (sort {$href_wp->{'write_trg'}->{$a} <=> $href_wp->{'write_trg'}->{$b}} keys %{$href_wp->{'write_trg'}}) {
+			push @linsert, $ind x $ilvl . $key . " <= 0;";
+		};
+    
+		push @linsert, $ind x $ilvl++ . "case (iaddr)";
+		@ltemp=();
+		foreach $key (sort {$href_wp->{'write_trg'}->{$a} <=> $href_wp->{'write_trg'}->{$b}} keys %{$href_wp->{'write_trg'}}) {
+			$reg_name = $key;
+			$offs = $href_wp->{'write_trg'}->{$key};
+			$rrange = "";
+			if ($reg_name =~ m/(\[.+\])$/) {
+				$reg_name = $`;
+				$rrange = $1;
+			};
+			$reg_addr = $href_addr_tokens->{$offs}; # use tokenized address instead of number
+            push @linsert, $ind x $ilvl . "$reg_addr: $key <= urac_wren_i;";
+        };
+        push @linsert, $ind x $ilvl . "default: ;";
+		$ilvl--;
+		push @linsert, $ind x $ilvl-- . "endcase";
+		push @linsert, $ind x $ilvl-- . "end";
+		push @linsert, $ind x $ilvl . "end";
+		push @$lref_wp, @linsert;    
+    };
 
 	#
 	#  write block for status registers
@@ -1039,11 +1073,11 @@ sub _urac_rs_add_static_connections {
 
 	$this->_add_input($bus_clock, 0, 0, "${top_inst}/${bus_clock}".$this->global->{'POSTFIX_PORT_IN'});
 	$this->_add_input($bus_reset, 0, 0, "${top_inst}/${bus_reset}".$this->global->{'POSTFIX_PORT_IN'});
-	$this->_add_input($this->_gen_unique_signal_top("urac_addr", $o_domain), $awidth-1, 0, "$top_inst/urac_addr_i");
-	$this->_add_input($this->_gen_unique_signal_top("urac_data", $o_domain), $dwidth-1, 0, "$top_inst/urac_data_i");
-	$this->_add_input($this->_gen_unique_signal_top("urac_wren", $o_domain), 0, 0, "$top_inst/urac_wren_i");
-	$this->_add_input($this->_gen_unique_signal_top("urac_rden", $o_domain), 0, 0, "$top_inst/urac_rden_i");
-	$this->_add_output($this->_gen_unique_signal_top("urac_dout", $o_domain), $dwidth-1, 0, 1, "$top_inst/urac_dout_o");
+	$this->_add_input($this->_gen_unique_signal_top ("addr", $o_domain), $awidth-1, 0, "$top_inst/urac_addr_i");
+	$this->_add_input($this->_gen_unique_signal_top ("data", $o_domain), $dwidth-1, 0, "$top_inst/urac_data_i");
+	$this->_add_input($this->_gen_unique_signal_top ("wren", $o_domain), 0, 0, "$top_inst/urac_wren_i");
+	$this->_add_input($this->_gen_unique_signal_top ("rden", $o_domain), 0, 0, "$top_inst/urac_rden_i");
+	$this->_add_output($this->_gen_unique_signal_top("dout", $o_domain), $dwidth-1, 0, 1, "$top_inst/urac_dout_o");
     
 	# foreach $clock (sort keys %{$this->global->{'hclocks'}}) {
     #     if ($clock ne $bus_clock) {
