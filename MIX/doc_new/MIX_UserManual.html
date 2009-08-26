@@ -987,7 +987,7 @@ creates name {{{si2ocp_clear_int_config}}}.
 
 </pre>
 </div>
-<div title="RegisterSpecification" modifier="Lu" created="200903110850" modified="200908121213" changecount="69">
+<div title="RegisterSpecification" modifier="Lu" created="200903110850" modified="200908260643" changecount="71">
 <pre>The ~Register-Master sheet is one more category of input specification. It describes configuration register domains of devices. A domain comprises all registers that have a common HDL implementation (//register-shell//). A register domain contains registers which in turn contain fields. The MIX tool creates views of a register domain, which is an implementation. Additionally, it can create reports which are used for documentation.
 
 Templates for the .xls sheet (//registermaster_template*.xls//) can be found in the tool installation directory. 
@@ -1110,8 +1110,9 @@ Note that this also uses an RTL library (from projects ip_sync and ip_ocp). MIX 
 
 !!Notes on URAC Bus ~Register-Shell
 The register-shell implementation optionally supports register shadowing into a different than the bus_clock domain (::spec attribute SHA). This is strongly recommended to ensure safe transmission of parameter values across the CDC. Due to the simplicity of the URAC bus (no handshaking), some restrictions apply though:
-* only ::spec attributes SHA and ~W1C are supported; they cannot be combined; the set-signal from the hardware side is automatically synchronized into the bus_clock domain
+* ::spec attributes SHA and ~W1C are supported; they cannot be combined; the set-signal from the hardware side is automatically synchronized into the bus_clock domain
 * if registers reside in another clock-domain than the bus_clock, the SHA attribute should be applied to ensure safe transmission across the CDC
+* ::spec attribute TRG is supported, but not in conjunction with ~W1C (as of today)
 * the SHA attribute can be used with or with/o an external update (take-over) signal; with/o such a signal, the shadowing will take effect after writing (automatic takeover)
 * automatic takeover is only applicable for W or RW fields
 * the external takeover signal must be stable for at least 3 clock cycles of the target clock domain (more is recommended)
