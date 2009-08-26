@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.23 2009/06/25 15:10:53 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.24 2009/08/26 06:37:56 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.24  2009/08/26 06:37:56  lutscher
+#  changed signal type from std_logic_vector to std_ulogic_vector
+#
 #  Revision 1.23  2009/06/25 15:10:53  lutscher
 #  changed internet domain
 #
@@ -315,7 +318,7 @@ sub _add_primary_output {
 sub _get_signal_type {
 	my($msb, $lsb, $is_reg, $href) = @_;
 
-	$href->{'::type'} = "";
+	$href->{'::type'} = "std_ulogic";
 	if ($msb =~ m/[a-zA-Z_]+/g or $lsb =~ m/[a-zA-Z_]+/g) { # alphanumeric range
 		if ($msb eq $lsb) {
 			delete $href->{'::high'};
@@ -323,7 +326,8 @@ sub _get_signal_type {
 		} else {
 			$href->{'::high'} = $msb;
 			$href->{'::low'} = $lsb;
-            $href->{'::type'} = "std_logic_vector";
+            # $href->{'::type'} = "std_logic_vector";
+            $href->{'::type'} = "std_ulogic_vector";
 		};
 	} else {
 		if ($msb == $lsb) { # numeric range
@@ -332,7 +336,8 @@ sub _get_signal_type {
 		} else {
 			$href->{'::high'} = $msb;
 			$href->{'::low'} = $lsb;
-            $href->{'::type'} = "std_logic_vector";
+            # $href->{'::type'} = "std_logic_vector";
+            $href->{'::type'} = "std_ulogic_vector";
 		};
 	};
 };
