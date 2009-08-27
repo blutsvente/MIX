@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.97 2009/08/17 14:06:07 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.98 2009/08/27 08:31:11 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.97 $                                  
+#  Revision      : $Revision: 1.98 $                                  
 #
 #  Related Files :  Reg.pm, RegOOUtils.pm
 #
@@ -50,6 +50,9 @@
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.98  2009/08/27 08:31:11  lutscher
+#  fixed check for field_spec_values
+#
 #  Revision 1.97  2009/08/17 14:06:07  lutscher
 #  fixed error
 #
@@ -398,7 +401,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.97 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.98 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -510,7 +513,7 @@ sub _vgch_rs_gen_cfg_module {
 
 			# get field attributes
 			my $spec = $o_field->attribs->{'spec'}; # note: spec can contain several attributs
-            if (!grep {$_ eq $spec} @{$this->global->{'field_spec_values'}}) {
+            if ($spec ne "%EMPTY%" and !grep {$_ eq lc($spec)} @{$this->global->{'field_spec_values'}}) {
                 _warning("spec attribute $spec not supported by this view");
             };
 			my $access = lc($o_field->attribs->{'dir'});
