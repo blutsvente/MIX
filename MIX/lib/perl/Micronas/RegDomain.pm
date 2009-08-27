@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegDomain.pm,v 1.7 2009/06/15 11:57:25 lutscher Exp $
+#  RCSId: $Id: RegDomain.pm,v 1.8 2009/08/27 08:31:30 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegDomain.pm,v $
+#  Revision 1.8  2009/08/27 08:31:30  lutscher
+#  added functions
+#
 #  Revision 1.7  2009/06/15 11:57:25  lutscher
 #  added addrmaps member to Reg and RegDomain
 #
@@ -317,15 +320,83 @@ sub find_reg_by_field {
     my ($o_reg);
 
     # cache lookup
-    my $key = $o_field->name;
+    # my $key = $o_field->name;
+    my $key = $o_field;
     return $this->{hfind_reg_by_field_cache}->{$key} if exists ($this->{hfind_reg_by_field_cache}->{$key});
      
     foreach $o_reg (@{$this->regs}) {
-        if (grep ($key eq $_->{field}->name, @{$o_reg->fields})) {
+        # if (grep ($key eq $_->{field}->name, @{$o_reg->fields})) {
+        if (grep ($key eq $_->{field}, @{$o_reg->fields})) {
             return $this->{hfind_reg_by_field_cache}->{$key} = $o_reg;
         };
     };
 };
+
+# find all register objects that match exactly with the passed name; returns list with RegReg objects
+sub find_reg_by_name_all {
+    my ($this, $search) = @_;
+    my ($o_reg);
+    my @lresult = ();
+    
+    foreach $o_reg (@{$this->regs}) {
+        if ($o_reg->name eq $search) {
+            push @lresult, $o_reg;
+        };
+    };
+    return @lresult;
+};
+
+# delete all matching register-objects from the domain and addressmap;
+# returns number of deleted objects
+sub del_reg {
+    my ($this, $o_reg, $addrmap) = @_;
+    my $result = 0;
+
+    if (!defined $addrmap) { $addrmap = $this->{default_addrmap} };
+    my $o_addrmap = $this->get_addrmap_by_name($addrmap);
+
+    if (defined $o_addrmap) {
+        foreach my $o_node ($o_addrmap->find_node_by_object($o_reg)) {
+            $o_addrmap->del_node($o_node);
+        };
+        my $i=0;
+        foreach my $_reg (@{$this->regs}) {
+            if ($o_reg == $_reg) {
+                splice @{$this->{regs}}, $i, 1;
+                $result ++;
+            };
+            $i++;
+        };
+    } else {
+        _error("del_reg(): unknown address map \'$addrmap\'");
+    };
+    return $result;
+};
+
+# delete a field from the domain; this does not delete the field from the register where it is linked
+# returns number of deleted objects;
+sub del_field {
+    my ($this, $o_field) = @_;
+    my $result = 0;
+    my $i=0;
+    foreach my $_field (@{$this->fields}) {
+       
+        if ($_field == $o_field) {
+            # delete field from register
+            my $o_reg = $this->find_reg_by_field($_field);
+            if (ref $o_reg) {
+                $o_reg->del_field($_field);
+                # $o_reg->display();
+            };       
+            # delete field from domain
+            splice @{$this->{fields}}, $i, 1;
+            $result ++;
+        };
+        $i++;
+    };
+    return $result;
+};
+
 
 # default display method
 sub display {

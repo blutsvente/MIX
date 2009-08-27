@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegAddrMap.pm,v 1.2 2009/06/22 14:14:07 lutscher Exp $
+#  RCSId: $Id: RegAddrMap.pm,v 1.3 2009/08/27 08:31:30 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegAddrMap.pm,v $
+#  Revision 1.3  2009/08/27 08:31:30  lutscher
+#  added functions
+#
 #  Revision 1.2  2009/06/22 14:14:07  lutscher
 #  fixed syntax error
 #
@@ -60,7 +63,7 @@ our $debug     = 0;
 use constant ADDRESSABLE_OBJECT_TYPES => qw(RegReg RegDomain);
 
 # version of this package, extracted from RCS macros
-our($VERSION) = '$Revision: 1.2 $ ';  #'
+our($VERSION) = '$Revision: 1.3 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -161,6 +164,40 @@ sub add_node {
     };
 };
 
+# delete a node object
+# returns number of deleted instances
+sub del_node {
+    my ($this, $o_del_node) = @_;
+    my $i=0;
+    my $result = 0;
+    
+    foreach my $o_node (@{$this->nodes}) {
+        if ($o_node == $o_del_node) {
+            splice @{$this->{nodes}}, $i, 1;
+            $result++;
+        };
+        $i++;
+    };
+    return $result;
+};
+
+# delete all node objects at a given offset;
+# returns number of deleted objects
+sub del_node_at_offset {
+    my ($this, $offset) = @_;
+    my $i=0;
+    my $result = 0;
+
+    foreach my $o_node (@{$this->nodes}) {
+        if ($o_node->offset == $offset) {
+            splice @{$this->{nodes}}, $i, 1;
+            $result ++;
+        };
+        $i++;
+    };
+    return $result;
+};
+
 # search function by address, returns list of matching objects referenced by all nodes with matching offset
 sub find_object_by_address {
     my ($this, $offset) = @_;
@@ -170,6 +207,20 @@ sub find_object_by_address {
     } else {
         return ();
     };
+};
+
+# search function by object, returns list of matching nodes
+sub find_node_by_object {
+    my ($this, $o_ref_search) = @_;
+    my (@ltemp) = grep ($_->o_ref == $o_ref_search, @{$this->nodes});
+    return @ltemp;
+};
+
+# search function by address, returns list of matching nodes
+sub find_node_by_address {
+    my ($this, $offset) = @_;
+    my (@ltemp) = grep ($_->offset == $offset, @{$this->nodes});
+    return @ltemp;
 };
 
 # takes an addressable object (e.g. RegReg, RegDomain) and returns a list of offsets of all nodes 

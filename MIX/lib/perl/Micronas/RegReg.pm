@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegReg.pm,v 1.14 2008/12/10 13:11:37 lutscher Exp $
+#  RCSId: $Id: RegReg.pm,v 1.15 2009/08/27 08:31:30 lutscher Exp $
 ###############################################################################
 #
 #  Related Files :  RegDomain.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegReg.pm,v $
+#  Revision 1.15  2009/08/27 08:31:30  lutscher
+#  added functions
+#
 #  Revision 1.14  2008/12/10 13:11:37  lutscher
 #  fixed bug in _pack functions
 #
@@ -385,6 +388,25 @@ sub _pack_32to16 {
     if (!$is_splitted) { $o_reg0->name($this->name) };
     return ($o_reg0, $o_reg1);
 };
+
+# delete a matching field-object from the register
+# returns number of deleted fields
+sub del_field {
+     my ($this, $o_field_del) = @_;
+     my $result = 0;
+     my $i=0;
+     foreach my $href (@{$this->fields}) {
+         my $o_field = $href->{'field'};
+         if ($o_field == $o_field_del) {
+             splice @{$this->fields}, $i, 1;
+             $result ++;
+         };
+         $i++;
+     };
+
+     return $result;
+ };
+
 
 # default display method
 sub display {
