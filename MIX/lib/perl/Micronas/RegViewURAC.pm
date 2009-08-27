@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewURAC.pm,v 1.4 2009/08/25 14:57:09 lutscher Exp $
+#  RCSId: $Id: RegViewURAC.pm,v 1.5 2009/08/27 08:31:48 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm, RegOOUtils.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegViewURAC.pm,v $
+#  Revision 1.5  2009/08/27 08:31:48  lutscher
+#  some fixes and improvements
+#
 #  Revision 1.4  2009/08/25 14:57:09  lutscher
 #  added TRG attribute support; changed urac bus-signal names
 #
@@ -236,7 +239,7 @@ sub _urac_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViewURAC", '$Revision: 1.4 $ ', "Utility functions to create URAC register space view from Reg class object");
+        $eh->mix_add_module_info("RegViewURAC", '$Revision: 1.5 $ ', "Utility functions to create URAC register space view from Reg class object");
     };
 };
 
@@ -340,7 +343,7 @@ sub _urac_rs_gen_cfg_module {
 
 			# get field attributes
 			my $spec = $o_field->attribs->{'spec'}; # note: spec can contain several attributs
-            if ($spec ne "%EMPTY%" and !grep {$_ eq $spec} @{$this->global->{'field_spec_values'}}) {
+            if ($spec ne "%EMPTY%" and !grep {$_ eq lc($spec)} @{$this->global->{'field_spec_values'}}) {
                 _warning("spec attribute $spec not supported by this view");
             };
 			my $access = lc($o_field->attribs->{'dir'});
@@ -612,7 +615,7 @@ endproperty
     _pad_column(-1, $this->global->{'indent'}, 2, \@lsp); # indent
 
 	# add glue-logic
-	$this->_urac_rs_code_static_logic($o_domain, $bus_clock, \%hshdw, \@ldeclarations, \@lstatic_logic, \@lchecks);
+	$this->_urac_rs_code_static_logic($o_domain, $bus_clock, \%hshdw, \@ldeclarations, \@lstatic_logic, \@lchecks, \%hassigns);
 	
 	# add assignments
 	push @lassigns, map {"assign $_ = ".$hassigns{$_}.";"} sort {$hassigns{$a} cmp $hassigns{$b}} keys %hassigns; 
@@ -1018,7 +1021,7 @@ sub _urac_rs_code_write_processes {
 # add standard logic constructs; adds to two lists: declarations and udc.
 # performs text indentation/alignment only on udc lists.
 sub _urac_rs_code_static_logic {
-	my ($this, $o_domain, $clock, $href_shdw, $lref_decl, $lref_udc, $lref_checks) = @_;
+	my ($this, $o_domain, $clock, $href_shdw, $lref_decl, $lref_udc, $lref_checks, $href_assigns) = @_;
 	my $addr_msb = $this->global->{'addr_msb'};
 	my $addr_lsb = $this->global->{'addr_lsb'};
 	my (@ltemp);
@@ -1032,7 +1035,9 @@ sub _urac_rs_code_static_logic {
 	#
 	push @$lref_decl, "wire [".($addr_msb-$addr_lsb).":0] iaddr;";
     push @$lref_decl, "wire ".($this->_gen_vector_range($this->global->{'datawidth'}-1,0))." wdata;";
-	
+	push @$lref_decl, "reg  ".($this->_gen_vector_range($this->global->{'datawidth'}-1,0))." int_dout;";
+    $href_assigns->{'urac_dout_o'} = "int_dout";
+ 
 	#
 	# insert static logic
 	#
@@ -1050,10 +1055,10 @@ assign wdata = urac_data_i;
 */
 always @(posedge $bus_clock or negedge $int_rst_n) begin
    if (~res_n_i)
-     urac_dout_o <= 0;
+     int_dout <= 0;
    else
      if (urac_rden_i)
-       urac_dout_o <= mux_rd_data;
+       int_dout <= mux_rd_data;
 end
 ");
 	_pad_column(-1, $this->global->{'indent'}, 2, \@ltemp);
