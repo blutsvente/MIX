@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.85 $                                         |
+# | Revision:   $Revision: 1.86 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2009/06/25 15:10:53 $                              |
+# | Date:       $Date: 2009/09/08 11:41:36 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.86  2009/09/08 11:41:36  lutscher
+# | added view rtf
+# |
 # | Revision 1.85  2009/06/25 15:10:53  lutscher
 # | changed internet domain
 # |
@@ -239,9 +242,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.85 2009/06/25 15:10:53 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.86 2009/09/08 11:41:36 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.85 $';  
+my $thisrevision    =      '$Revision: 1.86 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1115,6 +1118,17 @@ sub init ($) {
                    'stl_file_name'   => "stl_force_registers.stl"
                   },
        
+       # parameters for view rtf
+       'rtf' => {
+                 'field_naming'         => '%F',     # naming scheme for fields, see 'clone'
+                 'reg_naming'	        => '%R',     # naming scheme for registers, see 'clone'
+                 'domain_naming'        => '%D',     # naming scheme for domains, see 'clone'
+                 'join_docs'            => 0,        # if 1, register overview and detailed list will be joined
+                 'hex_symbol'           => "h",      # leading symbol for printing hex values
+                 'title_format'         => '\sb400\sa200\fs40', # format string for table title
+                 'head_row_format'      => '\b\fs20',       # format string for table head row
+                 'row_format'           => '\fs20'    # format string for table row
+                },
        # legacy parameters, not needed anymore!
        'cfg_module_prefix'    => "rs_cfg", # prefix for config register block
        'mode'             => 'lcport', # lcport -> map created port names to lowercase	
