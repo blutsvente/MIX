@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewRTF.pm,v 1.1 2009/09/08 11:41:22 lutscher Exp $
+#  RCSId: $Id: RegViewRTF.pm,v 1.2 2009/10/09 15:41:39 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.1 $                                  
+#  Revision      : $Revision: 1.2 $                                  
 #
 #  Related Files :  Reg.pm, RegOOUtils.pm
 #
@@ -35,6 +35,9 @@
 ###############################################################################
 #
 #  $Log: RegViewRTF.pm,v $
+#  Revision 1.2  2009/10/09 15:41:39  lutscher
+#  added colors
+#
 #  Revision 1.1  2009/09/08 11:41:22  lutscher
 #  initial release
 #
@@ -141,17 +144,19 @@ sub _rtf_rs_init {
    	# extend class data with data structure needed for code generation
 	$this->global(
                   'file_extension' => "rtf",
-                  'prolog' => { "title" => "SW-acccessible Control Register",
-                                "operator" => $ENV{USER},
-                                "company" => "Trident Microsystems",
-                                "fonts" => ["Times New Roman", "Courier New", "Arial"]
+                  'prolog' => { 
+                               "title" => "SW-acccessible Control Register",
+                               "operator" => $ENV{USER},
+                               "company" => "Trident Microsystems",
+                               "fonts" => ["Times New Roman", "Courier New", "Arial"],
+                               "colors" => [undef, [192,192,192]] # not used yet
                               },
                   'lexclude_cfg' => []
 				 );
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViewRTF"))) {
-        $eh->mix_add_module_info("RegViewRTF", '$Revision: 1.1 $ ', "Module to dump registers from Reg class object in Rich-Text-Format");
+        $eh->mix_add_module_info("RegViewRTF", '$Revision: 1.2 $ ', "Module to dump registers from Reg class object in Rich-Text-Format");
     };
 
 	# list of skipped registers and fields (put everything together in one list)
