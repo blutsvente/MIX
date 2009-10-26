@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewRTF.pm,v 1.2 2009/10/09 15:41:39 lutscher Exp $
+#  RCSId: $Id: RegViewRTF.pm,v 1.3 2009/10/26 09:27:34 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.2 $                                  
+#  Revision      : $Revision: 1.3 $                                  
 #
 #  Related Files :  Reg.pm, RegOOUtils.pm
 #
@@ -35,6 +35,9 @@
 ###############################################################################
 #
 #  $Log: RegViewRTF.pm,v $
+#  Revision 1.3  2009/10/26 09:27:34  lutscher
+#  changed _rtf_dump_detailed
+#
 #  Revision 1.2  2009/10/09 15:41:39  lutscher
 #  added colors
 #
@@ -156,7 +159,7 @@ sub _rtf_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViewRTF"))) {
-        $eh->mix_add_module_info("RegViewRTF", '$Revision: 1.2 $ ', "Module to dump registers from Reg class object in Rich-Text-Format");
+        $eh->mix_add_module_info("RegViewRTF", '$Revision: 1.3 $ ', "Module to dump registers from Reg class object in Rich-Text-Format");
     };
 
 	# list of skipped registers and fields (put everything together in one list)
@@ -222,8 +225,8 @@ sub _rtf_dump_detailed {
             my $hex_symbol = $eh->get("reg_shell.rtf.hex_symbol");
             
             # Table Title
-            $h->paragraph(\$eh->get("reg_shell.rtf.title_format"), "Register $regname (offset ".$hex_symbol._val2hex($eh->get('reg_shell.addrwidth'), $o_domain->get_reg_address($o_reg)).")");
-            
+            # $h->paragraph(\$eh->get("reg_shell.rtf.title_format"), "Register $regname (offset ".$hex_symbol._val2hex($eh->get('reg_shell.addrwidth'), $o_domain->get_reg_address($o_reg)).", reset ".$hex_symbol._val2hex($eh->get('reg_shell.datawidth'), $o_reg->get_reg_init()).")");
+             $h->paragraph(\$eh->get("reg_shell.rtf.title_format"), "Register $regname (offset ".$hex_symbol._val2hex($eh->get('reg_shell.addrwidth'), $o_domain->get_reg_address($o_reg)).")");
             # Header
             $h->row($table, 
                     [\$head_format, "Bitslice"],
@@ -250,7 +253,7 @@ sub _rtf_dump_detailed {
                 $lfields[$i]{'pos'}     = $href->{'pos'}; # LSB position in register
                 $lfields[$i]{'lsb'}     = $o_field->attribs->{'lsb'};
                 $lfields[$i]{'size'}    = $o_field->attribs->{'size'};
-                $lfields[$i]{'init'}    = $hex_symbol._val2hex($eh->get('reg_shell.datawidth'), $o_field->attribs->{'init'});
+                $lfields[$i]{'init'}    = $o_field->attribs->{'size'}.$hex_symbol._val2hex($o_field->attribs->{'size'}, $o_field->attribs->{'init'});
                 $lfields[$i]{'msb'}     = $lfields[$i]{lsb} +  $lfields[$i]{size} - 1;
                 $lfields[$i]{'range'}   = $lfields[$i]{'size'} == 1 ? "" : $this->_gen_vector_range($lfields[$i]{msb}, $lfields[$i]{lsb});
                 $lfields[$i]{'api'}     = $o_field->attribs->{'api'} if (exists($o_field->attribs->{'api'}));     
