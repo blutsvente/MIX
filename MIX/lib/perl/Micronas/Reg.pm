@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.91 2009/09/08 11:41:36 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.92 2009/11/19 12:49:28 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -30,6 +30,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.92  2009/11/19 12:49:28  lutscher
+#  added top-level table input and vi2c-xml view
+#
 #  Revision 1.91  2009/09/08 11:41:36  lutscher
 #  added view rtf
 #
@@ -236,6 +239,7 @@ my $logger = get_logger('MIX::Reg');
 sub parse_register_master {
 	my $r_i2c = shift;
     my $r_xml = shift || []; 
+    my $r_rm_top = shift || []; # new: top-level register-master
 
 	if (scalar @$r_i2c or scalar @$r_xml) {
 	
@@ -257,7 +261,8 @@ sub parse_register_master {
                                   use Micronas::RegPacking;
                                   use Micronas::MixUtils::RegUtils;
                                   use Micronas::RegViewIPXACT;
-                                  use Micronas::RegViewBdCfg;'
+                                  use Micronas::RegViewBdCfg;
+                                  use Micronas::RegViewVI2C;'
                                  ) ) {
 			$logger->fatal( '__F_LOADREGMD', "\tFailed to load required modules for parse_register_master(): $@" );
 			exit 1;
@@ -277,7 +282,8 @@ sub parse_register_master {
             $o_space->init(	 
                            'inputformat'     => "register-master", 
                            'database_type'   => $eh->get('i2c.regmas_type'),
-                           'register_master' => $r_i2c
+                           'register_master' => $r_i2c,
+                           'rm_top'          => $r_rm_top
                           );
         };
         # $o_space->display(); exit;
@@ -333,7 +339,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.91 $ ';  #'
+our($VERSION) = '$Revision: 1.92 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -381,7 +387,8 @@ sub new {
                                    "vctyper"     => \&mix_reg_report,      # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
                                    "perl"        => \&mix_reg_report,      # creates perl package (owner: Thorsten Lutscher)
                                    "vctyperl"    => \&mix_reg_report,      # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
-                                   "bd-cfg"      => \&_gen_view_bdcfg,     # command file for backdoor configuration (first use in FRC project)  (owner: Thorsten Lutscher)G
+                                   "bd-cfg"      => \&_gen_view_bdcfg,     # command file for backdoor configuration (first use in FRC project)  (owner: Thorsten Lutscher)
+                                   "vi2c-xml"    => \&_gen_view_vi2c,      # Visual I2C definition file (owner: Thorsten Lutscher)
                                    "none"        => sub {}                 # generate nothing (useful for bypassing the dispatcher)
                                   },
 
@@ -421,7 +428,12 @@ sub init {
 	my $this = shift;
 	my %hinput = @_;
 	my ($datastring, $datastring_ipxact_1_4);
-	
+
+    if (scalar (@{$hinput{rm_top}})) {
+        # if a top-level description table was given, use it to init the Reg object
+        $this->_map_top_level_rm($hinput{rm_top});
+    };
+
     if (!grep ($_ eq $hinput{inputformat}, @{$this->global->{supported_input_formats}})) {
         _fatal("input_format \'", $hinput{inputformat},"\' not supported");
         exit 1;
@@ -576,7 +588,9 @@ sub add_domain {
     } else {
        _error("add_domain(): unknown address map \'$addrmap\'");
     };
-    $this->domains($o_domain);
+    if (!grep ($_ eq $o_domain, @{$this->domains})) {  # add only if not already there
+        $this->domains($o_domain);
+    };
 };
 
 # method to create a new address-map object
@@ -621,6 +635,21 @@ sub find_domain_by_name_first {
 		return undef;
 	};
 };
+
+# finds domain definition in list that matches name and returns the object (or undef)
+# input: domain name
+sub find_domain_by_definition {
+	my $this = shift;
+	my $name = shift;
+	my $result = (grep ($_->{definition} eq $name, @{$this->domains}))[0];
+	
+	if (ref($result)) {
+		return $result;
+	} else {
+		return undef;
+	};
+};
+
 
 # get baseaddr for a given domain name
 # input: domain name, [optionally] address-map name
@@ -707,8 +736,6 @@ sub _map_register_master {
     my $result = 1;
     my ($old_usedbits, $i);
     my ($ivariant, $icomment);
-    
-    
     
     $usedbits = Math::BigInt->new(0); ##LU BAUSTELLE		
     $usedbits = 0;
@@ -920,7 +947,7 @@ sub _map_register_master {
             $o_field = Micronas::RegField->new('name' => $fname, 'reg' => $o_reg);
             $o_field->attribs(%hattribs);
             $o_field->attribs('size' => $fsize, 'lsb' => $lsb);
-			
+			# $o_field->display(); # DEBUG
             # link field into domain
             $o_domain->fields($o_field);
 			
@@ -939,7 +966,130 @@ sub _map_register_master {
 	return $result;
 };
 
+# inits the register-space object from a top-level register-master
+# creates the domain objects and address map;
+# returns 0 if there were errors;
+sub _map_top_level_rm {
+    my $this = shift;
+    my $lref_rm_top = shift;
+    my $result = 1;
 
+    my ($ivariant, $icomment, $domain, $definition, $id, $dclone, $dclone_addr_spacing, %hattribs, @laddr);
+    my ($o_domain, $o_addrmap);
+
+    _info("parsing top-level register-master");
+    # get number of ::addr columns
+    my $n_addrmaps = $eh->get( 'top_level._mult_.::addr' ) || _fatal("internal error (bad!), ::addr column(s) required in top-level register-master");
+    
+    # device name
+    my $device = $eh->get('reg_shell.device');
+    if ($device eq "") { $device = "ASIC"; }; # need a default
+
+    # get comment and variant patterns for filtering
+    $ivariant = $eh->get('input.ignore.comments');
+    $icomment = $eh->get('input.ignore.variant') || '#__I_VARIANT';
+    
+    # iterate each row
+    foreach my $href_row (@$lref_rm_top) {
+        # skip lines to ignore
+        next if (
+                 exists ($href_row->{"::ign"}) 
+                 and ($href_row->{"::ign"} =~ m/${icomment}/ or $href_row->{"::ign"} =~ m/${ivariant}/o )
+                );
+        next if (!scalar(%$href_row));
+        
+        $definition = "";
+        $domain = "";
+        @laddr = ();
+        %hattribs = ();
+
+        # collect all row data
+        foreach my $marker (keys %$href_row) {
+            my $value = $href_row->{$marker};
+            $value =~ s/^\s+//; # strip whitespaces
+            $value =~ s/\s+$//;
+            
+            # convert hex numbers
+            if (grep ($marker =~ m/$_/, qw (::addr ::id ::awidth ::clones ::clone_spacing))) {
+                if ($value =~ m/^0x[a-f0-9]+/i) { # convert from hex if necessary
+                    $value = hex($value);
+                } elsif ($value =~ m/^h[a-f0-9]+/i) { # account for hex number format hxx
+                    $value = hex(substr $value, 1, length($value)-1);
+                };
+                if ($value eq "") { # set undefined cell values
+                    $value = 0;
+                };
+            };
+            
+            # replace illegal characters with underscore
+            if (grep ($marker =~ m/$_/, qw(::client ::definition ::profile))) {
+                $value =~ s/[\.\!\@\#\$\%\^\&\*\(\)]/_/g;
+            };
+            
+            if ($marker eq "::client") {
+                $domain = $value; next;
+            };
+            if ($marker =~ m/^::def/) {
+                $definition = $value;
+                next;
+            };
+            if ($marker eq "::id") {
+                $id = $value; next;
+            };
+            if ($marker =~ m/^::clones/) {
+                $dclone = $value; next;
+            };
+            if ($marker =~ m/^::clone_spac/) {
+                $dclone_addr_spacing = $value; next;
+            };
+            if ($marker =~ m/::addr(:(\d+))*$/) {   # ::addr is a multi-column
+                if (defined $2) {
+                    $laddr[$2] = $value;
+                } else {
+                    $laddr[0] = $value;
+                };
+                next;
+            };
+            # remaining markers can be processed anonymously and will be collect in hattribs
+            $marker =~ s/^:://;
+            if (!exists ($hattribs{$marker}) and $value ne "") {
+                $hattribs{$marker} = $value;
+            };
+        };
+        
+        if ($domain ne "") {
+            # check if domain (instance) already exists, otherwise create new domain            
+            $o_domain = $this->find_domain_by_name_first($domain);
+            if (!ref($o_domain)) {
+                $o_domain = Micronas::RegDomain->new(name => $domain, id => $id, definition => $definition, attribs => {%hattribs});
+                if ($dclone>0) {
+                    # store some cloning information (note: the cloning itself is done in a later step,
+                    # also using config parameters)
+                    $o_domain->clone(number => $dclone, addr_spacing => $dclone_addr_spacing);
+                };
+            };
+            
+            # link domain into address-maps (and create address-maps on the way if necessary)
+            my $i=0;
+            my $addrmap_name;            
+            foreach my $addr (@laddr) {
+                $addrmap_name = join("_", "amap", $device, $i);
+                $i++;
+                $o_addrmap = $this->get_addrmap_by_name($addrmap_name); 
+                if (!ref($o_addrmap)) {
+                    $this->add_addrmap($addrmap_name, 1);
+                    if ($i == 1) { # use first address-map as default
+                        $this->{'default_addrmap'} = $addrmap_name;
+                    };
+                    _info("created new address map \'$addrmap_name\'".($i==1 ? " (is default address-map)" : ""));
+                };
+                $this->add_domain($o_domain, $addr, $addrmap_name);
+            };
+        };
+    };
+    # $this->display();
+    return $result;
+};
 
 
 # sub _test_object{
@@ -1006,7 +1156,7 @@ sub _map_ipxact{
         #get addresswidth datawidth
         $range = $elt->first_child('spirit:range')->text; #2^$range
         $range = oct($range) if $range =~ m/^0/;
-        $range=log($range)/log(2); #get range
+        $range = log($range)/log(2); #get range
         $width = $elt->first_child('spirit:width')->text;
 	
         $eh->set('reg_shell.addrwidth',$range);

@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Mix.pm,v 1.7 2009/03/26 12:46:26 lutscher Exp $
+#  RCSId: $Id: Mix.pm,v 1.8 2009/11/19 12:49:47 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Mix and Reg packages
@@ -43,6 +43,9 @@
 ###############################################################################
 #
 #  $Log: Mix.pm,v $
+#  Revision 1.8  2009/11/19 12:49:47  lutscher
+#  added top-level table input and vi2c-xml view
+#
 #  Revision 1.7  2009/03/26 12:46:26  lutscher
 #  made check for input file configurable
 #
@@ -118,7 +121,7 @@ use Micronas::MixReport;
 # define static members here
 
 # version of this package, extracted from RCS macros
-our($VERSION) = '$Revision: 1.7 $ ';  #'
+our($VERSION) = '$Revision: 1.8 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -159,6 +162,8 @@ sub new {
                        'xmlin' => [], # ref to list
                        # register-master input
                        'regin' => [], # ref to list
+                       # top-level sheet
+                       'topin' => [], # ref to list
                        # resulting register space object
                        'reg' => undef  # ref to Micronas::Reg object
                       };
@@ -229,7 +234,7 @@ sub _init {
 #
 sub read_input {
     my $this = shift;
-    ($this->{connin}, $this->{hierin}, $this->{ioin}, $this->{regin}, $this->{xmlin}) =  mix_utils_open_input( @ARGV );
+    ($this->{connin}, $this->{hierin}, $this->{ioin}, $this->{regin}, $this->{xmlin}, $this->{topin}) =  mix_utils_open_input( @ARGV );
 };
 
 #
@@ -272,7 +277,7 @@ sub parse_io {
 #
 sub parse_registers {
     my $this = shift;
-    $this->{reg} = parse_register_master($this->{regin}, $this->{xmlin});
+    $this->{reg} = parse_register_master($this->{regin}, $this->{xmlin}, $this->{topin});
 }; 
 
 #
