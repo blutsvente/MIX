@@ -625,8 +625,9 @@ to bind consecutive generator lines together. IF is optional. The keyword ELSIF 
 Please have a look into the distributed //howto.xls// and the //macro.xls// in the test-case directory to see more examples.
 </pre>
 </div>
-<div title="GettingStarted" modifier="LU" created="200903040850" modified="200903091139" changecount="20">
-<pre>To receive useful results, MIX reads in various input data from spreadsheets, typically stored in Excel workbooks. At least you will need to prepare a description of your design hierarchy (//HIER// sheet) and the connectivity (//CONN// sheet), or a Register Specification. If found, MIX will convert a [[IO Specification]] input/output sheet, listing input/output pads and iocells and how these are linked to the core logic into appropriate hierarchy and connection lists. The [[Register Specification]] sheet can be used to describe device configuration registers.
+<div title="GettingStarted" modifier="Lu" created="200903040850" modified="200911191022" changecount="26">
+<pre>To receive useful results, MIX reads in various input data from spreadsheets, typically stored in Excel workbooks. At least you will need to prepare a [[StructuralSpecification]] of your design, i.e. a hierarchy (//HIER// sheet) and the connectivity (//CONN// sheet), or a Register Specification. MIX will convert a [[IO-Specification]] input/output sheet, listing input/output pads and iocells and how these are linked to the core logic into appropriate hierarchy and connection lists. The [[RegisterSpecification]] sheet can be used to describe device configuration registers. This can be accompanied by a [[Top-Level Register Domain Table]] that contains hierarchical information about the configuration registers of a device.
+
 !A Simple Example
 To understand the usage of the various tables and options, a very simple example is shown and extended step by step. The simple example has just two components //a// and //b//, which are connected by the signal //sigfoo//. The two instances have a common parent module.
 [img[images/mix_simple_0.jpg]]
@@ -714,7 +715,7 @@ Options and syntax are the same as with UNIX/Linux.
 
 </pre>
 </div>
-<div title="IO-Specification" modifier="LU" created="200903110807" modified="200903111205" changecount="14">
+<div title="IO-Specification" modifier="Lu" created="200903110807" modified="200911181427" changecount="15">
 <pre>A third category of input specification is the IO sheet. The contents of the IO sheet is parsed and translated into instances of io cell blocks and pad cells and connections of the io logic with the design core logic.
 
 [img[images/mix_iocell.jpg]]
@@ -796,15 +797,13 @@ Map the mix directory (\\samba\tools\mix) to a network drive. Start MIX from the
 For UNIX (Solaris/Linux) no user installation is required. Everything needed is installed in /tools/mix/&lt;version&gt;.
 Use {{{module load mix/&lt;version&gt;}}} to prepare your environment. Check the output of {{{module avail mix}}} to see what versions are available. In case of problems with Perl packages, use {{{module unload msd}}} prior to loading the mix module.</pre>
 </div>
-<div title="Introduction" modifier="LU" created="200903040933" modified="200903111206" changecount="10">
+<div title="Introduction" modifier="Lu" created="200903040933" modified="200911191021" changecount="11">
 <pre>//MIX// is a methodology and tool to generate hardware descriptions, low-level driver software, verification code and documentation out of a single source specification. In contrast to most //ESL// (electronic system level design) tools, this approach focuses on [[structural specification|StructuralSpecification]], like hierarchy, interconnect, [[I/Os|IO-Specification]] and [[configuration registers|RegisterSpecification]] instead of synthesizing a functional specification (though the user can always insert arbitrary HDL code). Due to automatic code generation, consistency between specification and design is guaranteed and error-prone manual transformations can be avoided.
 
 A table-based specification format was chosen to enable efficient data entry and review. Lately, the Spirit consortiums //~IP-XACT// input/output format for register specifications has been added. It is also possible to access the code generation functions through a Perl API which is useful where a table-based entry format contains too much redundancy due to its flat data representation.</pre>
 </div>
-<div title="Issue Tracking" modifier="LU" created="200903131131" changecount="1">
-<pre>For reporting issues, please the [[Bugzilla Issue Tracking System|http://cad:1026/.Bugzilla/php/show_product.php?product=CAD%20Software]] (component //MIX//) .
-
-</pre>
+<div title="Issue Tracking" modifier="Lu" created="200903131131" modified="200911191224" changecount="2">
+<pre>Currently no system for issue tracking in place.</pre>
 </div>
 <div title="Known Bugs &amp; Limitations" modifier="LU" created="200903131103" modified="200903131104" changecount="2">
 <pre>1. Parts of this documentation are outdated. See also the //Globals.pm// in the installation for additional features/documentation
@@ -868,7 +867,7 @@ If MX and MH match, the accompanying MD lines are executed. Variables are replac
 The {{{::gen}}} column is set to {{{G_MX}}} after evaluation. Empty cells in MD lines are filled with the value given by MX, if any. Please see the //contrib// directory for commonly available connection macros (t.b.d.).
 </pre>
 </div>
-<div title="MainMenu" modifier="Lu" created="200903040925" modified="200906241105" changecount="18">
+<div title="MainMenu" modifier="Lu" created="200903040925" modified="200911181428" changecount="21">
 <pre>[[Introduction]]
 [[Installation]]
 [[GettingStarted]]
@@ -877,6 +876,7 @@ The {{{::gen}}} column is set to {{{G_MX}}} after evaluation. Empty cells in MD 
 [[Generator Statements]]
 [[IO-Specification]]
 [[RegisterSpecification]]
+[[Top-Level Register Domain Table]]
 [[Naming Schemes]]
 [[Config+Commandline Options]]
 [[Miscellaneous]]
@@ -949,7 +949,7 @@ writes internal, intermediate and other files to the given pathes. Directory cre
 
 </pre>
 </div>
-<div title="Naming Schemes" modifier="LU" created="200903111231" modified="200903120952" changecount="12">
+<div title="Naming Schemes" modifier="Lu" created="200903111231" modified="200911191013" changecount="13">
 <pre>Register, Field and Domain names are used as-is in the generated views, for cloned objects a number is attached. This naming scheme can be changed (separately for view generation and cloning). This is useful e.g. if the source specification does not contain unique field names (required for HDL register-shell generation).
 
 The keys of the configuration parameters are
@@ -987,7 +987,7 @@ creates name {{{si2ocp_clear_int_config}}}.
 
 </pre>
 </div>
-<div title="RegisterSpecification" modifier="Lu" created="200903110850" modified="200908260643" changecount="71">
+<div title="RegisterSpecification" modifier="Lu" created="200903110850" modified="200911191223" changecount="85">
 <pre>The ~Register-Master sheet is one more category of input specification. It describes configuration register domains of devices. A domain comprises all registers that have a common HDL implementation (//register-shell//). A register domain contains registers which in turn contain fields. The MIX tool creates views of a register domain, which is an implementation. Additionally, it can create reports which are used for documentation.
 
 Templates for the .xls sheet (//registermaster_template*.xls//) can be found in the tool installation directory. 
@@ -1041,7 +1041,9 @@ The following views are currently implemented. They are selected via the {{{reg_
 |{{{hdl-ihb-rs}}}|Verilog IHB (internal host bus) register-shell|
 |{{{hdl-urac-rs}}}|Verilog URAC (unified register access) bus register-shell|
 |{{{hdl-vgch-rs}}}|Verilog OCP register-shell|
-|{{{e_vr_ad}}}|//e// language macros for the VR_AD eVC|
+|{{{e_vr_ad}}}|//e// language macros for the ~VR_AD eVC|
+|{{{vi2c-xml}}}|~VisualI2C (a chip-level debug tool) XML format; needs additional ~Top-Level Register Domain Table|
+|{{{rtf}}}|~Rich-Text-Format for documentation|
 |{{{stl}}}|Register test file in Socket Transaction Language (STL) format|
 |{{{rdl}}}|Denali RDL representation (experimental)|
 |{{{ip-xact}}}|~IP-XACT compliant XML output|
@@ -1112,7 +1114,7 @@ Note that this also uses an RTL library (from projects ip_sync and ip_ocp). MIX 
 The register-shell implementation optionally supports register shadowing into a different than the bus_clock domain (::spec attribute SHA). This is strongly recommended to ensure safe transmission of parameter values across the CDC. Due to the simplicity of the URAC bus (no handshaking), some restrictions apply though:
 * ::spec attributes SHA and ~W1C are supported; they cannot be combined; the set-signal from the hardware side is automatically synchronized into the bus_clock domain
 * if registers reside in another clock-domain than the bus_clock, the SHA attribute should be applied to ensure safe transmission across the CDC
-* ::spec attribute TRG is supported, but not in conjunction with ~W1C (as of today)
+* ::spec attribute TRG is supported, but not in conjunction with ~W1C (as of today) and not for read-only fields (trigger on write to the field only)
 * the SHA attribute can be used with or with/o an external update (take-over) signal; with/o such a signal, the shadowing will take effect after writing (automatic takeover)
 * automatic takeover is only applicable for W or RW fields
 * the external takeover signal must be stable for at least 3 clock cycles of the target clock domain (more is recommended)
@@ -1148,6 +1150,41 @@ This generates a Socket Transaction Language file for testing DUT registers. The
 {{{reg_shell.type ip-xact}}}
 This dumps the register database in //.xml// format. The configuration parameters have the key {{{xml}}} (see //Globals.pm// from the installation dir for details). The parameters are also valid for XML input.
 
+!!~IP-XACT view Configuration Parameters (not complete)
+|!Key |!Value |!Default |!Description|
+|{{{xml.path}}}|string|ipxact|path where generated xml files are stored|
+|{{{xml.file_prefix}}}|string|regdef|filename prefix|
+|{{{xml.file_suffix}}}|string|xml|filename suffix|
+ 
+!~VI2C XML view
+{{{reg_shell.type vi2c-xml}}}
+Register-field based format used as input for in-house ~VisualI2C tool. Like other ~XML-based formats, the configuration parameters have the key {{{xml}}} (see //Globals.pm// from the installation dir for details). 
+This view requires the [[Top-Level Register Domain Table]]. If more than one address-mapping does exist, the name of the address-map should be passed as configuration parameter. The auto-generated name has the form {{{amap_&lt;device&gt;_&lt;n&gt;}}} where {{{&lt;n&gt;}}} corresponds to the number of the {{{::addr}}} column with the first column assigned 0.
+
+Specialized parameters have the subkey {{{vi2c}}}:
+
+!!~VI2C Configuration Parameters
+|!Key |!Value |!Default |!Description|
+|{{{xml.vi2c.script}}}|string||script to be embedded in &lt;script&gt; element of xml file|
+|{{{xml.vi2c.domain_naming}}}|string|%D|naming scheme for domains|
+|{{{xml.vi2c.field_naming}}}|string|%F|naming scheme for fields|
+|{{{xml.vi2c.addrmap}}}|string|default|name of address map used|
+
+!RTF view
+{{{reg_shell.type rtf}}}
+This creates tables in ~Rich-Text-Format (RTF) for documentation purposes.
+
+!!RTF Configuration Parameters
+|!Key |!Value |!Default |!Description|
+|{{{reg_shell.rtf.field_naming|string|%F|naming scheme for fields|
+|{{{reg_shell.rtf.reg_naming|string|%R|aming scheme for registers|
+|{{{reg_shell.rtf.domain_naming|string|%D|naming scheme for domains|
+|{{{reg_shell.rtf.join_docs|int|1|control number of docs (0=generate separate overview and detailed one)|
+|{{{reg_shell.rtf.hex_symbol|string|'h|leading symbol for printing hex values|
+|{{{reg_shell.rtf.title_format|string|\sb400\sa200\fs40\f2|RTF format string for table title|
+|{{{reg_shell.rtf.head_row_format|string|\b\fs20\f0|RTF format string for table head row|
+|{{{reg_shell.rtf.row_format|string|\fs20\f0|RTF format string for table row|
+|{{{reg_shell.exclude_regs|string||list registers to exclude from documentation|
 </pre>
 </div>
 <div title="SiteSubtitle" modifier="Lu" created="200903040836" modified="200907231125" changecount="7">
@@ -1477,6 +1514,34 @@ MIXCFG report.portlist.sort 'sort' =&gt; 'input',
 <pre>[img[LU|images/lu.jpg]]
 
 mailto:thorsten.lutscher@tridentmicro.com</pre>
+</div>
+<div title="Top-Level Register Domain Table" modifier="Lu" created="200911181426" modified="200911191206" changecount="7">
+<pre>An additional input table defines the Register Domains and their base-addresses in a device. This is a hierarchical level above the [[RegisterSpecification]].
+
+[img[images/mix_top_level_sheet.jpg]]
+
+The pre-defined column identifiers are: 
+
+|!Column Name |!Type |!Description|!Default Value|!Required|!Example|
+|::ign |string|Ignore line ||opt. |# comment|
+|::client|string|instance name of a register domain; multiple instances of the same definition are possible||man|ihb_top|
+|::definition|string|definition used for register domain instance; if not specified, instance and definition name are the same||opt.|ihb_top|
+|::id|int|id of a domain instance|0|opt.|0|
+|::profile|string|bus protocol or profile, e.g. used to distinguish e.g. OCP from IHB or memory mapped register space||opt.|ihb|
+|::awidth|int|address width in bits of a register domain, usually constant for a bus-system|32|man.|32|
+|::clones|int|specifies the number of register clones generated out of the specified register definitions, for this domain within the same domain|0|opt.|2|
+|::clone_spacing|int|address distance in bytes of the individual clones within the domain|0|opt.|0x80|
+|::addr|int|base-address in bytes of the domain; if more address-mappings exist, add more ::addr columns|0|man.|0xf0000000|
+
+!~Top-Level Table Global Configuration Parameters
+The configuration is done in the //mix.cfg// file like for the other MIX features. Note: not all parameters are documented here, refer to the //Globals.pm// file in the installation.
+
+|!Key |!Value |!Default |!Description|
+|{{{top_level.xls}}}|string|{{{top}}}|Sheet name in Workbook|
+|{{{top_level.file}}}|string|ip3d-top.xls|File name|
+|{{{reg_shell.device}}}|string|ip3d|Device name used as identifier and basename|
+
+</pre>
 </div>
 </div>
 <!--POST-STOREAREA-->
