@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.62 $                                          |
+# | Revision:   $Revision: 1.63 $                                          |
 # | Author:     $Author: lutscher $                                         |
-# | Date:       $Date: 2009/02/05 15:21:45 $                              |
+# | Date:       $Date: 2009/11/19 12:26:29 $                              |
 # |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
@@ -28,6 +28,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.63  2009/11/19 12:26:29  lutscher
+# | added top-level sheet input and vi2c-xml view
+# |
 # | Revision 1.62  2009/02/05 15:21:45  lutscher
 # | comment only
 # |
@@ -184,11 +187,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.62 2009/02/05 15:21:45 lutscher Exp $';#'
+my $thisid          =      '$Id: IO.pm,v 1.63 2009/11/19 12:26:29 lutscher Exp $';#'
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.62 $'; #'
+my $thisrevision    =      '$Revision: 1.63 $'; #'
 
-# Revision:   $Revision: 1.62 $
+# Revision:   $Revision: 1.63 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -431,19 +434,20 @@ sub mix_utils_open_input(@) {
     my $aio = [];
     my $ai2c = [];
     my $axml = [];
+    my $atop_level = [];
 
-    for my $i ( @in ) {
+    for my $file_name ( @in ) {
 
         # *NEW* if the file-name is postfixed with %<sheet-name>, override the MIXCFG parameter for i2c sheet
         my $sheet_name = "";
-        if ($i =~m/\%(\w+)$/) {
+        if ($file_name =~m/\%(\w+)$/) {
             $sheet_name = $1;
-            $i =~ s/\%(\w+)$//;
+            $file_name =~ s/\%(\w+)$//;
             $eh->set( 'i2c.xls', $sheet_name );
         };
 
-		unless ( -r $i ) {
-	    	$logger->error('__E_INFILE_READ', "\tFile $i cannot be read!");
+		unless ( -r $file_name ) {
+	    	$logger->error('__E_INFILE_READ', "\tFile $file_name cannot be read!");
 	    	next;
 		}
 
@@ -453,39 +457,44 @@ sub mix_utils_open_input(@) {
 		my $io;
 		my $i2c;
         my $lref_xml;
+        my $top_level;
 
 		# maybe there is a CONF page?
 		# Change CONF accordingly (will not be visible at upper world)
 		# TODO : add plugin interface to read in whatever is needed ...
-        if( $i !~ m/\.xml$/) { 
+        if( $file_name !~ m/\.xml$/) { 
 
-            # Open .xls Sheet
-            @conf = open_infile( $i, $eh->get( 'conf.xls' ), $eh->get( 'conf.xxls' ), $eh->get( 'conf.req' ) );
+            # Open config .xls Sheet
+            @conf = open_infile( $file_name, $eh->get( 'conf.xls' ), $eh->get( 'conf.xxls' ), $eh->get( 'conf.req' ) );
             
             # Open connectivity sheet(s)
-            $conn = open_infile( $i, $eh->get( 'conn.xls' ), $eh->get( 'conn.xxls' ),
+            $conn = open_infile( $file_name, $eh->get( 'conn.xls' ), $eh->get( 'conn.xxls' ),
                                  $eh->get( 'conn.req' ) . ',order,hash' );
             
             # Open hierachy sheets
-            $hier = open_infile( $i, $eh->get( 'hier.xls' ), $eh->get( 'hier.xxls' ),
+            $hier = open_infile( $file_name, $eh->get( 'hier.xls' ), $eh->get( 'hier.xxls' ),
                                  $eh->get( 'hier.req' ) . ',order,hash' );
             
             # Open IO sheet 
-            $io = open_infile( $i, $eh->get( 'io.xls' ), $eh->get( 'io.xxls'),
+            $io = open_infile( $file_name, $eh->get( 'io.xls' ), $eh->get( 'io.xxls'),
                                $eh->get( 'io.req' ) . ',order,hash' );
 
-            # Open I2C sheet
-            $i2c = open_infile( $i, $eh->get( 'i2c.xls' ), $eh->get( 'i2c.xxls' ),
+            # Open I2C (Register-Master) sheet
+            $i2c = open_infile( $file_name, $eh->get( 'i2c.xls' ), $eh->get( 'i2c.xxls' ),
                                 $eh->get( 'i2c.req' ) . ',order,hash' );
+
+            # Open Top-Level Register-Master sheet
+            $top_level = open_infile( $file_name, $eh->get( 'top_level.xls' ), $eh->get( 'top_level.xxls' ),
+                                $eh->get( 'top_level.req' ) . ',order,hash' );
         } else {
             # Open XML database (do not pass other files, because all information in .xls files is extracted above)
             $lref_xml = undef;
-            if( $i=~ m/\.xml$/) { $lref_xml = open_infile($i,"","","") };
+            if( $file_name=~ m/\.xml$/) { $lref_xml = open_infile($file_name,"","","") };
         };
 
 		# Did we get enough sheets:
-		unless( $conn or @conf or $hier or $io or $i2c or $lref_xml) {
-	    	$logger->error('__E_OPEN_INPUT', "\tNo input found in file $i!\n");
+		unless( $conn or @conf or $hier or $io or $i2c or $lref_xml or $top_level) {
+	    	$logger->error('__E_OPEN_INPUT', "\tNo input found in file $file_name!\n");
 	    	next; # -> skip to next
 		}
 
@@ -534,13 +543,19 @@ sub mix_utils_open_input(@) {
 	    	select_variant( \@norm_i2c, 'I2C ' . $c->[0] );
 	    	push(@$ai2c, @norm_i2c);
 		}
+		for my $c ( @$top_level) {
+	    	$eh->inc( 'top_level.parsed' );
+	    	my @norm_top_level = convert_in( 'top_level', $c->[1] );
+	    	select_variant( \@norm_top_level, 'TOP_LEVEL ' . $c->[0] );
+	    	push(@$atop_level, @norm_top_level);
+		}
     }
 
 	mix_utils_io_del_abook(); # Remove all cached input data (only for excel currently),
 	# Here we do the final setup, all configuration known now.
 	# Check if all directories exists -> create if not
 	mix_utils_io_create_path();
-	return( $aconn, $ahier, $aio, $ai2c, $axml);
+	return( $aconn, $ahier, $aio, $ai2c, $axml, $atop_level);
 
 } # End of mix_utils_open_input
 

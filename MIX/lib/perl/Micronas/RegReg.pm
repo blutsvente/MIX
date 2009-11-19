@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegReg.pm,v 1.15 2009/08/27 08:31:30 lutscher Exp $
+#  RCSId: $Id: RegReg.pm,v 1.16 2009/11/19 12:26:25 lutscher Exp $
 ###############################################################################
 #
 #  Related Files :  RegDomain.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegReg.pm,v $
+#  Revision 1.16  2009/11/19 12:26:25  lutscher
+#  added top-level sheet input and vi2c-xml view
+#
 #  Revision 1.15  2009/08/27 08:31:30  lutscher
 #  added functions
 #
@@ -216,6 +219,23 @@ sub get_reg_access_mode()
     }
     return $mode;
 }
+
+# get the mask for all bits of a field (or undef if not found)
+sub get_field_mask {
+    my ($this, $o_field) = @_;
+    my $result = undef;
+    my $size = $o_field->attribs->{'size'};
+
+    foreach my $href (@{$this->fields}) {
+        if ($o_field == $href->{'field'}) {
+            my $tmp = ($size + $href->{'pos'} >= 32) ? 0xffffffff : ((2** ($size + $href->{'pos'})) - 1);
+            $result = $tmp & ~((2** $href->{'pos'})-1);
+            last;
+        };
+    };
+
+	return $result;
+};
 
 # create mask for all W1C fields of a register
 sub _get_w1c_mask {

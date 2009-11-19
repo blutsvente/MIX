@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegDomain.pm,v 1.8 2009/08/27 08:31:30 lutscher Exp $
+#  RCSId: $Id: RegDomain.pm,v 1.9 2009/11/19 12:26:21 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegDomain.pm,v $
+#  Revision 1.9  2009/11/19 12:26:21  lutscher
+#  added top-level sheet input and vi2c-xml view
+#
 #  Revision 1.8  2009/08/27 08:31:30  lutscher
 #  added functions
 #
@@ -107,7 +110,7 @@ sub new {
                        clone           => {
                                            'number' => 0
                                           },            # cloning information
-                       
+                       attribs         => {},           # miscellaneous attributes
                        # private fields
                        hfind_field_by_name_cache  => {},
                        hfind_reg_by_field_cache   => {}
@@ -181,6 +184,14 @@ sub clone {
 		%{$this->{clone}} = @_;
 	};
 	return $this->{clone};
+};
+# ref. object data access method
+sub attribs {
+	my $this = shift;
+	if (@_) { 
+		%{$this->{attribs}} = @_;
+	};
+	return $this->{attribs};
 };
 
 # helper function to link a register object with an address offset into a domain
@@ -326,7 +337,7 @@ sub find_reg_by_field {
      
     foreach $o_reg (@{$this->regs}) {
         # if (grep ($key eq $_->{field}->name, @{$o_reg->fields})) {
-        if (grep ($key eq $_->{field}, @{$o_reg->fields})) {
+        if (grep ($key == $_->{field}, @{$o_reg->fields})) {
             return $this->{hfind_reg_by_field_cache}->{$key} = $o_reg;
         };
     };

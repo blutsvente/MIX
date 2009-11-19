@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.86 $                                         |
+# | Revision:   $Revision: 1.87 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2009/09/08 11:41:36 $                              |
+# | Date:       $Date: 2009/11/19 12:26:27 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.87  2009/11/19 12:26:27  lutscher
+# | added top-level sheet input and vi2c-xml view
+# |
 # | Revision 1.86  2009/09/08 11:41:36  lutscher
 # | added view rtf
 # |
@@ -242,9 +245,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.86 2009/09/08 11:41:36 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.87 2009/11/19 12:26:27 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.86 $';  
+my $thisrevision    =      '$Revision: 1.87 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1368,7 +1371,7 @@ sub init ($) {
 	};
 	
     #
-    # I2C sheet basic definitions
+    # Register-Master sheet basic definitions
     #
     $this->{'cfg'}{'i2c'} = {
 		'xls' => 'I2C',		# Include sheets
@@ -1406,9 +1409,10 @@ sub init ($) {
 	    	'::rec'         => [ qw(    0   0   0   0           19 )],
 	    	'::range'	    => [ qw(	1	0	0	%EMPTY%     20 )],
 			'::auto'        => [ qw(    0   0   0   0           21 )],
-	    	'::comment'	    => [ qw(	1	1	2	%EMPTY%     22 )],
-	    	'::default'	    => [ qw(	1	1	0	%EMPTY%     23 )],
-	    	'::clone'	    => [ qw(	1	0	0	1           24 )],
+			'::nformat'     => [ qw(    0   0   0   %EMPTY%     22 )],
+	    	'::comment'	    => [ qw(	1	1	2	%EMPTY%     23 )],
+	    	'::default'	    => [ qw(	1	1	0	%EMPTY%     24 )],
+	    	'::clone'       => [ qw(	1	0	0	1           25 )],
 	    	'nr'			=> 25,  # Number of next field to print
 	    	'_mult_'		=> {},  # Internal counter for multiple fields
 	   		'_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
@@ -1419,6 +1423,7 @@ sub init ($) {
     #
     # XML database basic definitions (input and output)
     #
+    # note: used for ipxact and vi2c output; for vi2c, user should change at least path 
     $this->{'cfg'}{'xml'} = 
       {
        'type'   => 'spirit',   # format of register-master
@@ -1473,53 +1478,66 @@ sub init ($) {
        'path'=> "ipxact",
 	   'clock' => "clk_sci",  # default clock because not extracted from IP-XACT
        'reset' => "res_sci_n", # default reset because not extracted from IP-XACT
-       # parameters for the reg_mem package *NEW*
+       # parameters for the reg_mem package
        'hdl_path'                 => "%EMPTY%",    # hdl-path to register-shell must be specified by the user
        'collect_coverage'         => "cov_update", # field attribute <cov_update|cov_compare_and_update|cov_all|cov_none>
        'register_type_naming'     => '%R_reg',     # naming-rule for the vendorExtension "type"
        'addressBlock_type_naming' => '%D_rf_type', # naming-rule for the vendorExtension "type"
-       'component_type_naming'    => '%D_am'       # naming-rule for the vendorExtension "type"
+       'component_type_naming'    => '%D_am',      # naming-rule for the vendorExtension "type"
+
+       # parameters for the vi2c-xml view *NEW*
+       'vi2c'   => {
+                    'script'        => '',                # filename of script that will be embedded in vi2c file
+                    'domain_naming' => "%D",              # naming rule for domains in watchItem, see 'clone'
+                    'field_naming'  => "%F",              # naming rule for register fields in watchItem, see 'clone'
+                    'addrmap'       => "",                # name of top-level address-map if more than one (usually amap_<device>_<n>)
+
+                    # defaults for configurable watchItem attributes in register fields
+                    'dalVersion'    => "Version 1.1.1",
+                    'watchType'     => "GI2C_32Bit_Register",
+                    'extra1Field'   => "0x0",
+                    'extra2Field'   => "_BANK_STORECMD_",
+                    'I2CInterface'  => "Default"
+                   },
       };
     
-    # VI2C Definitions:
-    # ::ign	::type	::width	::dev	::sub	::addr
-    # ::interface	::block	::inst	::dir	::auto	::sync
-    # ::spec	::clock	::reset	::busy	::readDone	::new
-    # ::b	::b	::b	::b	::b	::b	::b	::b	::b	::b	::b
-    # :b	::b	::b	::b	::b	::init	::rec	::range	::view
-    # ::vi2c	::name	::comment
-    $this->{'cfg'}{'vi2c'} = {
-		'xls' => 'VI2C',	# Include sheets
+    #
+    # Top-Level Register sheet definitions:
+    #
+    $this->{'cfg'}{'top_level'} = 
+      {
+        'file' => "",       # file-name
+		'xls' => 'top',     # Include sheets
 		'xxls' => '',		# Exclude sheets
 		'req' => 'optional',
-		'key' => '::inst',
+        'key' => '::client',
 		'parsed' => 0,
 		'field' => {
 	    	#Name   	=>	  	   		Inherits
 	    	#					    		Multiple
-	    	#						    		Required
+	    	#						    		Required (1 = required, 2 = initialize with default silently)
 	    	#							  		Defaultvalue
 	    	#								    			PrintOrder
 	    	#                           0   1   2	3       4
-	    	'::ign' 		=> [ qw(	0	0	1	%NULL%	1 ) ],
-	    	'::type'		=> [ qw(	0	0	1	%TBD% 	2 ) ],
-	    	'::variants'	=> [ qw(	1	0	0	Default	3 )],
-	    	'::inst'		=> [ qw(	0	0	1	W_NO_INST 4 )],
-	    	'::comment'	    => [ qw(	1	0	2	%EMPTY%	6 )],
-	    	'::shortname'	=> [ qw(	0	0	0	%EMPTY%	5 )],
-	    	'::b'			=> [ qw(	0	1	1	%NULL%	7 )],
-	    	'::default'	    => [ qw(	1	1	0	%NULL%	0 )],
-	    	'::hierachy'	=> [ qw(	1	0	0	%NULL%	0 )],
-	    	'::debug'	    => [ qw(	1	0	0	%NULL%	0 )],
-        	'::default'		=> [ qw(	1	1	0	%EMPTY%	0 )],	    
+	    	'::ign' 		=> [ qw(	0	0	1	%NULL%	1 )],
+	    	'::variants'	=> [ qw(	1	0	0	Default	2 )],
+	    	'::client'		=> [ qw(	0	0	1	W_NO_INST 3 )],
+	    	'::comment'	    => [ qw(	0	0	2	%EMPTY%	7 )],
+	    	'::definition'	=> [ qw(	0	0	2	%EMPTY%	4 )],
+	    	'::addr'		=> [ qw(	0	1	1	%NULL%	5 )],
+	    	'::id'	        => [ qw(	0	0	2	%NULL%	6 )],
+	    	'::profile'	    => [ qw(	0	0	0	%EMPTY%	0 )],
+	    	'::awidth'	    => [ qw(	0	0	1	%NULL%	0 )],
+        	'::clones'		=> [ qw(	0	0	2	%NULL%	0 )],	    
+        	'::clone_spacing' => [ qw(	0	0	2	%NULL%	0 )],	    
 	    	'::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
 	    	'nr'			=> 8,  # Number of next field to print
 	    	'_mult_'		=> {},  # Internal counter for multiple fields
-   	    	'_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
+   	    	'_multorder_' 	=> 0  # Sort order for multiple fields -> left to right increases
 	    						# 1 / RL -> left to right decreasing
 	    						# xF -> map the first to ::head:0 (defaults: ::head)
 	    
-		},
+		}
     };
     $this->{'cfg'}{'macro'} = {
 	    "%SPACE%" 	=> ' ',
@@ -1633,7 +1651,7 @@ sub init ($) {
         '%TM_C%'		=>	'C',
         '%TM_G%'		=>	'G',
         '%TM_P%'		=>	'P',
-        '%REG%'			=>	'__REG__',	# Internal! Define a verilog reg for leaf output
+        '%REG%'			=>	'__REG__'	# Internal! Define a verilog reg for leaf output
         # '%WIRE%'		=>	'__WIRE__',	# Conflicts with simple logic wire!!
     };
 

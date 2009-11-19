@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegField.pm,v 1.5 2008/10/27 13:18:12 lutscher Exp $
+#  RCSId: $Id: RegField.pm,v 1.6 2009/11/19 12:26:23 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  RegReg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegField.pm,v $
+#  Revision 1.6  2009/11/19 12:26:23  lutscher
+#  added top-level sheet input and vi2c-xml view
+#
 #  Revision 1.5  2008/10/27 13:18:12  lutscher
 #  fixed bugs in packing and added packing.mode 32to16
 #
@@ -171,6 +174,20 @@ sub is_cond {
         $result = 1;
     };
     return $result;
+};
+
+# calculate the value range of a field as (min,max) list
+sub get_value_range {
+    my ($this) = @_;
+    my (@lresult) = ();
+
+    my $size = $this->attribs->{'size'};
+    if (exists $this->attribs->{'nformat'} and $this->attribs->{'nformat'} =~ m/s/i) {
+         @lresult = (-2**($size-1),2**($size-1)-1); 
+    } else {
+        my $max_val = $size >= 32 ? 0xffffffff : 2**$size-1;
+        @lresult = (0, $max_val);
+    };
 };
 
 # split a field into <n> fields starting at given <n-1> bit positions and returns the list of new field objects;
