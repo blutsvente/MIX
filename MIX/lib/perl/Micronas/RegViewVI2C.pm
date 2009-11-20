@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewVI2C.pm,v 1.1 2009/11/19 12:25:49 lutscher Exp $
+#  RCSId: $Id: RegViewVI2C.pm,v 1.2 2009/11/20 12:29:00 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Mix.pm, Reg.pm
@@ -27,6 +27,9 @@
 ###############################################################################
 #
 #  $Log: RegViewVI2C.pm,v $
+#  Revision 1.2  2009/11/20 12:29:00  lutscher
+#  some fixes, added mix_use_on_demand
+#
 #  Revision 1.1  2009/11/19 12:25:49  lutscher
 #  initial release
 #
@@ -53,7 +56,6 @@ use Micronas::RegField;
 use Micronas::RegViews;
 use Micronas::MixUtils::RegUtils;
 use IO::File;
-use XML::Writer;
 
 #------------------------------------------------------------------------------
 # Global variables
@@ -75,6 +77,11 @@ our($debug, $this);
 sub _gen_view_vi2c {
     my $this = shift;
     my ($view_name, $lref_domains) = @_;
+    
+    unless( mix_use_on_demand('use XML::Writer; ') ) {
+        _fatal( "Failed to load required modules for _gen_view_vi2c(): $@" );
+        exit 1;
+    };
 
     my @ldomains;
     
@@ -218,8 +225,8 @@ sub _write_vi2c_xml_file {
                               extra2Field => $eh->get('xml.vi2c.extra2Field'),
                               length => "120", 
                               min => $lrange[0], max => $lrange[1], 
-                              bit => "0", numberFormat => "Decimal", nLines => "1", watchType => "GI2C_16Bit_Register",
-                              dalVersion => "Version 5.6.15: Thu Mar  5 13:41:18 2009", 
+                              bit => "0", numberFormat => "Decimal", nLines => "1", watchType => $eh->get('xml.vi2c.watchType'),
+                              dalVersion => $eh->get('xml.vi2c.dalVersion'), 
                               displayType => $display_type, 
                               I2CInterface => $eh->get('xml.vi2c.I2CInterface'));
             
