@@ -867,7 +867,7 @@ If MX and MH match, the accompanying MD lines are executed. Variables are replac
 The {{{::gen}}} column is set to {{{G_MX}}} after evaluation. Empty cells in MD lines are filled with the value given by MX, if any. Please see the //contrib// directory for commonly available connection macros (t.b.d.).
 </pre>
 </div>
-<div title="MainMenu" modifier="Lu" created="200903040925" modified="200911181428" changecount="21">
+<div title="MainMenu" modifier="Lu" created="200903040925" modified="200911200933" changecount="22">
 <pre>[[Introduction]]
 [[Installation]]
 [[GettingStarted]]
@@ -987,7 +987,7 @@ creates name {{{si2ocp_clear_int_config}}}.
 
 </pre>
 </div>
-<div title="RegisterSpecification" modifier="Lu" created="200903110850" modified="200911191223" changecount="85">
+<div title="RegisterSpecification" modifier="Lu" created="200903110850" modified="200911200942" changecount="88">
 <pre>The ~Register-Master sheet is one more category of input specification. It describes configuration register domains of devices. A domain comprises all registers that have a common HDL implementation (//register-shell//). A register domain contains registers which in turn contain fields. The MIX tool creates views of a register domain, which is an implementation. Additionally, it can create reports which are used for documentation.
 
 Templates for the .xls sheet (//registermaster_template*.xls//) can be found in the tool installation directory. 
@@ -1169,6 +1169,11 @@ Specialized parameters have the subkey {{{vi2c}}}:
 |{{{xml.vi2c.domain_naming}}}|string|%D|naming scheme for domains|
 |{{{xml.vi2c.field_naming}}}|string|%F|naming scheme for fields|
 |{{{xml.vi2c.addrmap}}}|string|default|name of address map used|
+|{{{xml.vi2c.dalVersion}}}|string|Version 1.1.1|Constant for ~VI2C XML element|
+|{{{xml.vi2c.watchType}}}|string|~GI2C_32Bit_Register|Constant for ~VI2C XML element|
+|{{{xml.vi2c.extra1Field}}}|string|0x0|Constant for ~VI2C XML element|
+|{{{xml.vi2c.extra2Field}}}|string|{{{_BANK_STORECMD_}}}|Constant for ~VI2C XML element|
+|{{{xml.vi2c.I2CInterface}}}|string|Default|Constant for ~VI2C XML element|
 
 !RTF view
 {{{reg_shell.type rtf}}}
