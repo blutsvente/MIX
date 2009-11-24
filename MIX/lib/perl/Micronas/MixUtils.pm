@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.146 $                                        |
+# | Revision:   $Revision: 1.147 $                                        |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2009/11/19 12:26:18 $                              |
+# | Date:       $Date: 2009/11/24 15:44:57 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.146 2009/11/19 12:26:18 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.147 2009/11/24 15:44:57 lutscher Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.147  2009/11/24 15:44:57  lutscher
+# | fixed a bug in _mix_utils_reorder
+# |
 # | Revision 1.146  2009/11/19 12:26:18  lutscher
 # | added top-level sheet input and vi2c-xml view
 # |
@@ -212,11 +215,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.146 2009/11/19 12:26:18 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.147 2009/11/24 15:44:57 lutscher Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.146 $';         #'
+my $thisrevision        =      '$Revision: 1.147 $';         #'
 
-# Revision:   $Revision: 1.146 $   
+# Revision:   $Revision: 1.147 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2204,10 +2207,12 @@ sub select_variant ($;$) {
 
 	my $n = 0;
 	my $variant = $eh->get( 'variant' );
+   
     for my $i ( 0..$#$r_data ) {
 		if ( exists( $r_data->[$i]{'::variants'} ) ) {
-	    	my $var = $r_data->[$i]{'::variants'};	    
+	    	my $var = $r_data->[$i]{'::variants'};	   
 	    	if ( defined( $var ) and $var !~ m/^\s*$/o ) {
+                print "DEBUG $type $var\n";
 				$var =~ s/[ \t,]+/|/g; # Convert into Perl RE (Var1|Var2|Var3)
 				$var = '(' . $var . ')';
 				if ( $variant !~ m/^$var$/i ) { # Match variant (case insensitive).
@@ -2605,7 +2610,10 @@ sub _mix_utils_reorder ($$$) {
 	}
 	
 	# Left over in inlist -> push on $resortar
+    my %temp_order = %$order;
 	for my $i ( keys %inlist ) {
+        #lu20091124 add to order hash as well (value ?), but do not modify the passed order hash
+        $temp_order{$i} = -1;
 		push( @$resortar, $i );
 	}
 	
@@ -2616,7 +2624,7 @@ sub _mix_utils_reorder ($$$) {
 	my @atend = ();
 	my $print_start = 1;
 	for my $k ( sort { $templ->{'field'}{$a}[4] <=> $templ->{'field'}{$b}[4] or
-				$order->{$a} <=> $order->{$b}; } @$resortar ) {
+				$temp_order{$a} <=> $temp_order{$b}; } @$resortar ) {
 		next if ( $templ->{'field'}{$k}[4] == 0 );
 		if ( $templ->{'field'}{$k} < 0 ) { # Save for later usage
 			push( @atend , $k );
