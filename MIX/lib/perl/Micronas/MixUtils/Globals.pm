@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.87 $                                         |
+# | Revision:   $Revision: 1.88 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2009/11/19 12:26:27 $                              |
+# | Date:       $Date: 2009/11/24 15:45:11 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.88  2009/11/24 15:45:11  lutscher
+# | some small clean-ups
+# |
 # | Revision 1.87  2009/11/19 12:26:27  lutscher
 # | added top-level sheet input and vi2c-xml view
 # |
@@ -245,9 +248,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.87 2009/11/19 12:26:27 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.88 2009/11/24 15:45:11 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.87 $';  
+my $thisrevision    =      '$Revision: 1.88 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1359,10 +1362,10 @@ sub init ($) {
 	    	'::name'		=>	[ qw(	0	0	1	PAD_NAME		9 )],
 	    	'::muxopt'		=>	[ qw(	1	1	1	%EMPTY%	        10 )],
 	    	'::comment'		=>	[ qw(	1	0	2	%EMPTY%	        11 )],
-        	'::default'		=>	[ qw(	1	1	0	%EMPTY%			0 )],	    
-	    	'::debug'		=>	[ qw(	1	0	0	%NULL%	        0 )],
-	    	'::skip'		=>	[ qw(	0	1	0	%NULL% 	        0 )],
-	    	'nr'			=> 12,  # Number of next field to print
+        	'::default'		=>	[ qw(	1	1	0	%EMPTY%			12 )],	    
+	    	'::debug'		=>	[ qw(	1	0	0	%NULL%	        13 )],
+	    	'::skip'		=>	[ qw(	0	1	0	%NULL% 	        14 )],
+	    	'nr'			=> 15,  # Number of next field to print
 	    	'_mult_'		=> {},  # Internal counter for multiple fields
 	    	'_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
 	    					# 1 / RL -> left to right decreasing
@@ -1413,9 +1416,9 @@ sub init ($) {
 	    	'::comment'	    => [ qw(	1	1	2	%EMPTY%     23 )],
 	    	'::default'	    => [ qw(	1	1	0	%EMPTY%     24 )],
 	    	'::clone'       => [ qw(	1	0	0	1           25 )],
-	    	'nr'			=> 25,  # Number of next field to print
+	    	'nr'			=> 26,  # Number of next field to print
 	    	'_mult_'		=> {},  # Internal counter for multiple fields
-	   		'_multorder_' 	=> 0, # Sort order for multiple fields -> left to right increases
+	   		'_multorder_' 	=> 0  # Sort order for multiple fields -> left to right increases
 	    					# 1 / RL -> left to right decreasing
 	    					# xF -> map the first to ::head:0 (defaults: ::head)
 		},
@@ -1526,12 +1529,12 @@ sub init ($) {
 	    	'::definition'	=> [ qw(	0	0	2	%EMPTY%	4 )],
 	    	'::addr'		=> [ qw(	0	1	1	%NULL%	5 )],
 	    	'::id'	        => [ qw(	0	0	2	%NULL%	6 )],
-	    	'::profile'	    => [ qw(	0	0	0	%EMPTY%	0 )],
-	    	'::awidth'	    => [ qw(	0	0	1	%NULL%	0 )],
-        	'::clones'		=> [ qw(	0	0	2	%NULL%	0 )],	    
-        	'::clone_spacing' => [ qw(	0	0	2	%NULL%	0 )],	    
-	    	'::skip'		=> [ qw(	0	1	0	%NULL% 	0 )],
-	    	'nr'			=> 8,  # Number of next field to print
+	    	'::profile'	    => [ qw(	0	0	0	%EMPTY%	8 )],
+	    	'::awidth'	    => [ qw(	0	0	1	%NULL%	9 )],
+        	'::clones'		=> [ qw(	0	0	2	%NULL%	10 )],	    
+        	'::clone_spacing' => [ qw(	0	0	2	%NULL%	12 )],	    
+	    	'::skip'		=> [ qw(	0	1	0	%NULL% 	13 )],
+	    	'nr'			=> 14,  # Number of next field to print
 	    	'_mult_'		=> {},  # Internal counter for multiple fields
    	    	'_multorder_' 	=> 0  # Sort order for multiple fields -> left to right increases
 	    						# 1 / RL -> left to right decreasing
