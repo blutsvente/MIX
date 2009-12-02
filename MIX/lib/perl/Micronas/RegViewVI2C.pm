@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewVI2C.pm,v 1.2 2009/11/20 12:29:00 lutscher Exp $
+#  RCSId: $Id: RegViewVI2C.pm,v 1.3 2009/12/02 14:25:31 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Mix.pm, Reg.pm
@@ -27,6 +27,9 @@
 ###############################################################################
 #
 #  $Log: RegViewVI2C.pm,v $
+#  Revision 1.3  2009/12/02 14:25:31  lutscher
+#  moved a function to Reg.pm
+#
 #  Revision 1.2  2009/11/20 12:29:00  lutscher
 #  some fixes, added mix_use_on_demand
 #
@@ -82,10 +85,9 @@ sub _gen_view_vi2c {
         _fatal( "Failed to load required modules for _gen_view_vi2c(): $@" );
         exit 1;
     };
-
-    my @ldomains;
     
     # check over which domains we want to iterate
+    my @ldomains;
     if (scalar (@$lref_domains)) {
         # @$lref_domains not empty
         foreach my $o_domain (@$lref_domains) {
@@ -97,6 +99,7 @@ sub _gen_view_vi2c {
             push @ldomains, $href;
         };
     };
+
     # store list of domains in class data
     $this->global('doc_domains' => \@ldomains);
     
@@ -120,7 +123,7 @@ sub _gen_view_vi2c {
     };
     
     # get the address-map to be used
-    $this->global('doc_addrmap' => $this->_get_addrmap_name());
+    $this->global('doc_addrmap' => $this->try_addrmap_name($eh->get('xml.vi2c.addrmap')));
     
     my $filename = $eh->get('xml.path') . "/" . $eh->get('xml.file_prefix') . "-". lc($this->device)."-vi2c.". $eh->get('xml.file_suffix');
     my $doc = new IO::File(">".$filename);
@@ -131,6 +134,7 @@ sub _gen_view_vi2c {
     
     $this->global('doc_handle' => $doc);
     
+    # make it so
     return $this->_write_vi2c_xml_file($filename);
     $doc->close();
     $eh->inc("sum.hdlfiles");
@@ -175,7 +179,6 @@ sub _write_vi2c_xml_file {
     # iterate through domains
     foreach my $o_domain (@{$this->domains}) {
         my $domainname=_clone_name($eh->get('xml.vi2c.domain_naming'),99,$o_domain->{'id'},$o_domain->{'name'}); # apply domain-naming rule
-
         # open the domain-element
         $writer->startTag("watchItem",
                           active=>"false", showActiveBox=>"true", showFreeChilds=>"false", showListChilds=>"false",
@@ -251,28 +254,6 @@ sub _write_vi2c_xml_file {
     # that's it
     $writer->endTag("VisualI2C");
     return 1;
-};
-
-# determine the address-map name used for the vi2c generation
-sub _get_addrmap_name {
-    my ($this) = shift;
-    my $valid = 0;
-    
-    if ($eh->get('xml.vi2c.addrmap') ne "") {
-        foreach my $o_addrmap (@{$this->{'addrmaps'}}) {
-            if ($o_addrmap->name eq $eh->get('xml.vi2c.addrmap')) {
-                $valid = 1;
-                last;
-            };
-        };
-        if (!$valid) {
-            _error("specified address-map name \'".$eh->get('xml.vi2c.addrmap')."\' does not exist, using default");
-        } else {
-            return $eh->get('xml.vi2c.addrmap');
-        };
-    };
-    
-    return $this->{'default_addrmap'};
 };
 
 sub _element_bit_label {
