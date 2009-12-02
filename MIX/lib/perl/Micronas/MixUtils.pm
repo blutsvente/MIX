@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.147 $                                        |
+# | Revision:   $Revision: 1.148 $                                        |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2009/11/24 15:44:57 $                              |
+# | Date:       $Date: 2009/12/02 14:26:41 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.147 2009/11/24 15:44:57 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.148 2009/12/02 14:26:41 lutscher Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +30,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.148  2009/12/02 14:26:41  lutscher
+# | removed a debug statement
+# |
 # | Revision 1.147  2009/11/24 15:44:57  lutscher
 # | fixed a bug in _mix_utils_reorder
 # |
@@ -215,11 +218,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.147 2009/11/24 15:44:57 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.148 2009/12/02 14:26:41 lutscher Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.147 $';         #'
+my $thisrevision        =      '$Revision: 1.148 $';         #'
 
-# Revision:   $Revision: 1.147 $   
+# Revision:   $Revision: 1.148 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -2212,7 +2215,6 @@ sub select_variant ($;$) {
 		if ( exists( $r_data->[$i]{'::variants'} ) ) {
 	    	my $var = $r_data->[$i]{'::variants'};	   
 	    	if ( defined( $var ) and $var !~ m/^\s*$/o ) {
-                print "DEBUG $type $var\n";
 				$var =~ s/[ \t,]+/|/g; # Convert into Perl RE (Var1|Var2|Var3)
 				$var = '(' . $var . ')';
 				if ( $variant !~ m/^$var$/i ) { # Match variant (case insensitive).
