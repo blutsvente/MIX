@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.68 $                                               |
+# | Revision:   $Revision: 1.69 $                                               |
 # | Author:     $Author: lutscher $                                                 |
-# | Date:       $Date: 2009/06/15 11:57:25 $                                                   |
+# | Date:       $Date: 2009/12/02 14:29:26 $                                                |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.68 2009/06/15 11:57:25 lutscher Exp $                                                             |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.69 2009/12/02 14:29:26 lutscher Exp $  |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.69  2009/12/02 14:29:26  lutscher
+# | repaired cheader and perl views
+# |
 # | Revision 1.68  2009/06/15 11:57:25  lutscher
 # | added addrmaps member to Reg and RegDomain
 # |
@@ -198,67 +201,6 @@
 # | Revision 1.21  2006/01/18 15:28:57  mathias
 # | added debug commands
 # |
-# | Revision 1.20  2005/12/14 12:50:32  wig
-# | Improved external portlist tabe creation, prepared delta mode
-# |
-# | Revision 1.19  2005/12/08 11:32:49  mathias
-# | long tables now have dedicated header
-# |
-# | Revision 1.18  2005/12/06 16:07:04  wig
-# | Testing watch
-# |
-# | Revision 1.17  2005/12/06 15:04:05  mathias
-# | splits long tables
-# |
-# | Revision 1.16  2005/11/30 06:53:11  mathias
-# | fixed vertical alignment
-# |
-# | Revision 1.15  2005/11/29 13:11:42  mathias
-# | writes also a register overview table
-# |
-# | Revision 1.14  2005/11/28 13:58:59  mathias
-# | do not write the bits for bitfields with 1 bit width
-# |
-# | Revision 1.13  2005/11/25 16:23:50  mathias
-# | write only those registers into the mif file that are intended to be documented
-# | fixed writing empty cells
-# |
-# | Revision 1.12  2005/11/24 16:21:16  mathias
-# | report reglist seems to work
-# |
-# | Revision 1.11  2005/11/23 13:28:37  mathias
-# | write Rgeister from RegisterMaster into Framemaker tables
-# |
-# | Revision 1.10  2005/11/09 13:00:03  lutscher
-# | removed doubly defined function
-# |
-# | Revision 1.9  2005/11/08 08:06:54  wig
-# | Added some documentation and example (register shell)
-# |
-# | Revision 1.8  2005/11/07 13:16:28  mathias
-# | merged and added mix_rep_reglist
-# |
-# | Revision 1.7  2005/11/04 10:44:47  wig
-# | Adding ::incom (keep CONN sheet comments) and improce portlist report format
-# |
-# | Revision 1.6  2005/10/24 12:10:30  wig
-# | added output.language.verilog = ansistyle,2001param
-# |
-# | Revision 1.5  2005/10/19 08:19:19  wig
-# | Extended portlist writer and Mif module
-# |
-# | Revision 1.4  2005/10/18 15:27:53  wig
-# | Primary releaseable vgch_join.pl
-# |
-# | Revision 1.3  2005/10/18 09:34:37  wig
-# | Changes required for vgch_join.pl support (mainly to MixUtils)
-# |
-# | Revision 1.2  2005/09/29 13:45:02  wig
-# | Update with -report
-# |
-# | Revision 1.1  2005/09/14 14:40:06  wig
-# | Startet report module (portlist)
-# |                                                                |
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 
@@ -278,12 +220,12 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.68 2009/06/15 11:57:25 lutscher Exp $';
-# ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
+my $thisid		=	'$Id: MixReport.pm,v 1.69 2009/12/02 14:29:26 lutscher Exp $';
+# ' # this seems to fix a bug in the highlighting algorithm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
-# ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.68 $';
-# ' # this seemes to fix a bug in the highlighting algorythm of Emacs' cperl mode
+# ' # this seems to fix a bug in the highlighting algorithm of Emacs' cperl mode
+my $thisrevision   =      '$Revision: 1.69 $';
+# ' # this seems to fix a bug in the highlighting algorithm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
 #my $marker = 32178;
@@ -307,7 +249,13 @@ use Log::Log4perl qw(get_logger);
 use Micronas::MixUtils qw($eh %OPTVAL convert_in);
 use Micronas::MixUtils::IO qw(open_infile);
 use Micronas::Reg;
+use Micronas::MixUtils::RegUtils;
 use Micronas::MixUtils::Mif;
+use File::Basename;
+
+# constants used for the perl dump
+use constant PERL_REG_ATTRIBS => qw(size);
+use constant PERL_FIELD_ATTRIBS => qw(size lsb init dir spec clock sync);
 
 #
 # Prototypes
@@ -378,33 +326,101 @@ sub mix_reg_report($$)
         $logger->info('__I_REPORT', "\tReport register list in mif format");
         mix_rep_reglist($r_i2cin);
     }
-    if ( $reports =~ m/\bheader\b/io ) {
-        $logger->info('__I_REPORT', "\tReport C-header files");
+    if ( $reports =~ m/\bcheader\b/io ) {
+        $logger->info('__I_REPORT', "\tGenerate C-header files");
         mix_rep_header($r_i2cin);
-    }
-    if ( $reports =~ m/\bvctyheader\b/io ) {
-        $logger->info('__I_REPORT', "\tReport C-header files for vcty");
-        mix_rep_header($r_i2cin, 'vcty');
     }
     if ( $reports =~ m/\bper\b/io ) {
         $logger->info('__I_REPORT', "\tReport Lauterbach peripheral files");
         mix_rep_per($r_i2cin);
     }
-    if ( $reports =~ m/\bvctyper\b/io ) {
-        $logger->info('__I_REPORT', "\tReport Lauterbach peripheral files for vcty");
-        mix_rep_per($r_i2cin, 'vcty');
-    }
     if ( $reports =~ m/\bperl\b/io ) {
-        $logger->info('__I_REPORT', "\tReport Perl package files");
+        $logger->info('__I_REPORT', "\tGenerate Perl package file");
         mix_rep_perl($r_i2cin);
-    }
-    if ( $reports =~ m/\bvctyperl\b/io ) {
-        $logger->info('__I_REPORT', "\tReport Perl package files for vcty");
-        mix_rep_perl($r_i2cin, 'vcty');
     }
 }
 
 ##############################################################################
+
+#####################################################################
+# Report header files
+#####################################################################
+
+sub mix_rep_header($)
+{
+    my ($o_space) = @_;        # Reference to the register object
+
+    if (defined $o_space) {
+        
+        # iterate through all domains
+        foreach my $o_domain (@{$o_space->domains}) {
+            my $fh = mix_rep_header_open_files($o_space, $o_domain);
+         
+            # collect all information to the registers in a hash with the address as the key
+            my %theBlock;
+            foreach my $o_reg (@{$o_domain->regs()}) {
+                my $addr_1   = $o_domain->get_reg_address($o_reg);
+                my $address  = sprintf("0x%08X", $addr_1);
+                my $init     = sprintf("0x%08X", $o_reg->get_reg_init());
+                my $mode     = $o_reg->get_reg_access_mode();
+
+                while (exists($theBlock{$address})) {
+                    $address .= "_1";
+                }
+                $theBlock{$address}->{regname} = _clone_name($eh->get('report.reg_naming'),99,$o_reg->id,$o_domain->name, $o_reg->name);
+                $theBlock{$address}->{init}    = $init;
+                if ($eh->get('report.cheader.debug')) {
+                    print("~~~~~ Register: " . $o_reg->name() . "     $theBlock{$address}->{regname}\n");
+                }
+                my $ii = 0;
+                my @thefields;
+                foreach my $hreff (@{$o_reg->fields}) {
+                    my $o_field = $hreff->{'field'};
+                    # select type of register
+                    $thefields[$ii]{name}    = _clone_name($eh->get('report.field_naming'),99,$o_field->id,$o_domain->name,$o_reg->name,$o_field->name, $o_field->attribs->{'block'});
+                    $thefields[$ii]{size}    = $o_field->attribs->{'size'};
+                    $thefields[$ii]{pos}     = $hreff->{'pos'}; # LSB position
+                    $thefields[$ii]{lsb}     = $o_field->attribs->{'lsb'};
+                    $thefields[$ii]{view}    = $o_field->attribs->{'view'}; # N: no documentation  Y: bitfield to document
+                    # ignore this bitfield
+                    if(lc($thefields[$ii]{view}) ne 'y' and $eh->get('report.cheader.use_view_attrib')) {
+                        $logger->info("__I_REPORT", "\texcluding field ".lc($o_field->name)." from C-header because view attribute is set to N");
+                        next;
+                    };
+                    $thefields[$ii]{mode}    = $o_field->attribs->{'dir'};
+                    $thefields[$ii]{comment} = $o_field->attribs->{'comment'};
+                    $thefields[$ii]{comment} =~ s/\\.//g;
+                    $thefields[$ii]{sync}    = $o_field->attribs->{'sync'};
+                    if ($eh->get('report.cheader.debug')) {
+                        print("~~~~~    " . $thefields[$ii]{name} . '(' . $thefields[$ii]{size}
+                              . ')' . '/' . $thefields[$ii]{pos}  . "\n");
+                    }
+                    $ii += 1;
+                }
+                if ($ii == 0) {
+                    # no visible bitfield found, ignore the whole register
+                    delete $theBlock{$address};
+                    next;
+                }
+                # sort the fields (probably reserved?)
+                #@thefields = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
+                @thefields = sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
+                
+                $theBlock{$address}->{fields} = \@thefields;
+            }
+            # All register were read in, write the header file
+            mix_rep_header_print($fh, $o_domain->name, \%theBlock);
+
+            # close the header file
+            $fh->print('/* \@} */' . "\n");    # doxygen
+            $fh->print("#endif\n");            # end of LANGUAGE_ASSEMBLY
+            $fh->print("#endif\n");
+            $fh->close();
+        }
+    }
+    return 0;
+}
+
 ##############################################################################
 #####################################################################
 # Read the top address map in
@@ -562,26 +578,41 @@ sub mix_rep_header_check_name($$)
 }
 
 #####################################################################
-# Open the header file for one register
+# Open the header file for one register domain
 # Write global address(es) into the file
 # Return:
 #          $fh       FileHandle
 #####################################################################
 
-sub mix_rep_header_open_files($$$$)
-{
-    my ($name, $blocks, $rTypes, $vcty) = @_;
-    my $newname = $eh->get("report.cheader.definition." . lc($name));
-    $newname = $name if (! defined($newname));
-    my $file = "reg_" . lc($newname) . ".h";
-    my $fh = new FileHandle $file, "w";
+sub mix_rep_header_open_files {
+    my ($o_space, $o_domain) = @_;
 
+    # create include dir if not already there
+    if (! -d $eh->get('output.path_include')) {
+        if ($eh->get('output.mkdir') =~ m/auto|all|yes/i) {
+            mkdir($eh->get('output.path_include'))
+        } else {
+            _error("directory \'",$eh->get('output.path_include'),"\' does not exist and I am not allowed to create it (mkdir parameter)");
+        };
+    };
+
+    my $domain_name = $o_domain->name;
+    
+    my $filename = $eh->get("output.path_include") . "/reg_". lc($domain_name) . ".h";
+    my $base_addr = $o_space->get_domain_baseaddr($o_domain->name,  $o_space->try_addrmap_name($eh->get("report.addrmap")));
+    if (!defined $base_addr) {
+        $logger->error('__E_REPORT', "\t could not determine base-address for domain ".$o_domain->name);
+    };
+    my $fh = new FileHandle $filename, "w";
     if (! defined($fh)) {
-        $logger->error( '__E_REPORT', "\tCould not open file `$file'!");
-        exit(2);
+        $logger->error( '__E_REPORT', "\tCould not open file `$filename'!");
     }
+   
+    # apply domain-naming rule
+    my $newname=_clone_name($eh->get('report.domain_naming'),99,$o_domain->id,$domain_name);
+ 
     # prevent multiple includes
-    my $newf = $file;
+    my $newf = basename $filename;
     $newf =~ s/\./_/g;
     $fh->print("#ifndef _" . uc($newf) . "_\n");
     $fh->print("#define _" . uc($newf) . "_\n\n");
@@ -589,28 +620,10 @@ sub mix_rep_header_open_files($$$$)
     $fh->print('/* @{  */' . "\n");
 
     # write base address(es)
-    if ($blocks->{$name}->{reg_clones} > 1) {
-        $fh->print("/* Base addresses */\n");
-    } else {
-        $fh->print("/* Base address */\n");
-    }
-
-    for (my $i = 0; $i < $blocks->{$name}->{reg_clones}; $i++) {
-        # transform domain name to uppercase
-        my $basename =  uc($blocks->{$name}->{clients}->[$i]) . '_BASE';
-        if ($vcty) {
-            $basename = mix_rep_header_check_name($blocks->{$name}->{clients}->[$i], $rTypes) . '_BASE';
-        }
-        $fh->printf("#define %-48s 0x%08x\n", $basename, $blocks->{$name}->{base_addr}->[$i]);
-    }
+    $fh->print("/* Base address */\n"); 
+    my $basename =  $newname . '_BASE';
+    $fh->printf("#define %-48s 0x%08x\n", $basename, $base_addr);
     $fh->print("\n");
-    if ($blocks->{$name}->{reg_clones} > 1) {
-        $fh->print("/* Instances */\n");
-        $fh->printf("#define %-48s %d\n", uc($newname) . '_INSTANCES', $blocks->{$name}->{reg_clones});
-        if ($blocks->{$name}->{size} > 0) {
-            $fh->printf("#define %-48s %d\n", uc($newname) . '_INSTANCE_SIZE', $blocks->{$name}->{size});
-        }
-    }
     return $fh;
 }
 
@@ -618,22 +631,22 @@ sub mix_rep_header_open_files($$$$)
 # Print type definitions for the registers of the current domain
 #####################################################################
 
-sub mix_rep_header_print($$$$)
+sub mix_rep_header_print($$)
 {
-    my ($fh, $domain_name, $rBlock, $rTypes) = @_;
+    my ($fh, $domain_name, $rBlock) = @_;
 
     $fh->write("\n/*  Relative offsets of the register adresses */\n\n");
     foreach my $addr (sort keys %{$rBlock}) {
         if ($eh->get('report.cheader.debug')) {
             print("!!!!! processing domain: '$domain_name' ... register: '$rBlock->{$addr}->{regname}'\n");
         }
-        $rBlock->{$addr}->{regname} = mix_rep_header_check_name(uc($domain_name) . '_' . $rBlock->{$addr}->{regname}, $rTypes);
+        # $rBlock->{$addr}->{regname} = mix_rep_header_check_name(uc($domain_name) . '_' . $rBlock->{$addr}->{regname}, $rTypes);
         # relative address of the register in this domain
         $fh->printf("#define %-48s %s\n", $rBlock->{$addr}->{regname} . '_OFFS', (split(/_/, $addr))[0]);
-        # macro to get real address for this register
-        my $name = $rBlock->{$addr}->{regname};
-        my $spaces = 41 - length($name);
-        $fh->print("#define ${name}(base) " . ' ' x $spaces . " ((base) + ${name}_OFFS)\n");
+        # macro to get real address for this register BAUSTELLE Domains are already cloned
+        #my $name = $rBlock->{$addr}->{regname};
+        #my $spaces = 41 - length($name);
+        #$fh->print("#define ${name}(base) " . ' ' x $spaces . " ((base) + ${name}_OFFS)\n");
         #$fh->printf("#define %-s(base) %20s ((base) + %s_OFFS)\n", $rBlock->{$addr}->{regname}, ' ', $rBlock->{$addr}->{regname});
     }
     $fh->write("\n#ifndef LANGUAGE_ASSEMBLY\n");
@@ -663,115 +676,35 @@ sub mix_rep_header_print($$$$)
             my $width = 32 - $high;
             push(@slicearr, sprintf("%5s uint32_t %-44s : %2d;   /* reserved */\n", ' ', ' ', $width));
         }
-        ### for little endian
-        $fh->write("   #if defined(_LITTLE_ENDIAN) || defined(__LITTLE_ENDIAN)\n");
-        for (my $i = 0; $i < scalar(@slicearr); $i++) {
-            $fh->write($slicearr[$i]);
-        }
-        $fh->write("   #else\n");
-        ### for big endian
-        for (my $i = scalar(@slicearr) - 1; $i >= 0; $i--) {
-            $fh->write($slicearr[$i]);
-        }
-        $fh->write("   #endif\n");
+        if (scalar @slicearr>1) {
+            ### for little endian
+            $fh->write("   #if defined(_LITTLE_ENDIAN) || defined(__LITTLE_ENDIAN)\n");
+            for (my $i = 0; $i < scalar(@slicearr); $i++) {
+                $fh->write($slicearr[$i]);
+            }
+            $fh->write("   #else\n");
+            ### for big endian
+            for (my $i = scalar(@slicearr) - 1; $i >= 0; $i--) {
+                $fh->write($slicearr[$i]);
+            }
+            $fh->write("   #endif\n");
+        } else {
+            for (my $i = 0; $i < scalar(@slicearr); $i++) {
+                $fh->write($slicearr[$i]);
+            }
+        };
         $fh->write("   } Bits;\n");
-        $fh->write("} $rBlock->{$addr}->{regname}_t;\n");
+        $fh->write("} $rBlock->{$addr}->{regname}_t;");
+        $fh->printf(" // Init value %12s\n", $rBlock->{$addr}->{init});
     }
     # Write pseudo comments with string and reset values
     # Those values will be extracted and written into a separate file by a Perl script
-    foreach my $addr (sort keys %{$rBlock}) {
-        $fh->write("\n// Register name and init value; read by another script\n");
-        $fh->printf("// Init   %-40s %12s\n", $rBlock->{$addr}->{regname}, $rBlock->{$addr}->{init});
-    }
+    # foreach my $addr (sort keys %{$rBlock}) {
+    #    $fh->write("\n// Register name and init value; read by another script\n");
+    #    $fh->printf("// Init   %-40s %12s\n", $rBlock->{$addr}->{regname}, $rBlock->{$addr}->{init});
+    #}
 }
 
-#####################################################################
-# Report header files
-#####################################################################
-
-sub mix_rep_header($;$)
-{
-    my ($o_space, $vcty) = @_;        # Reference to the register object
-
-    if (defined $o_space) {
-        my ($blocks, $rTypes) = mix_rep_header_read_top_address_map();
-        # re-create $blocks when processing vcty sheets
-        $blocks = mix_rep_vcty_read_device_ini($blocks) if $vcty;
-
-        # iterate through all blocks (domains)
-        foreach my $o_domain (@{$o_space->domains}) {
-            my $domain_name = $o_domain->name();
-            if (! exists($blocks->{$domain_name})) {
-                $logger->error("__E_REPORT", "\tCould not find `$domain_name' in the top address map!");
-                next;
-            }
-            my $fh = mix_rep_header_open_files($domain_name, $blocks, $rTypes, $vcty);
-            # collect all information to the registers in a hash with the address as the key
-            my %theBlock;
-            #$o_domain->display();
-            foreach my $o_reg (@{$o_domain->regs()}) {
-                my $addr_1   = $o_domain->get_reg_address($o_reg);
-                $addr_1 *= 4 if $vcty;
-                my $address  = sprintf("0x%08X", $addr_1);
-                my $init     = sprintf("0x%08X", $o_reg->get_reg_init());
-                my $mode     = $o_reg->get_reg_access_mode();
-
-                while (exists($theBlock{$address})) {
-                    $address .= "_1";
-                }
-                $theBlock{$address}->{regname} = uc($o_reg->name());
-                $theBlock{$address}->{init}    = $init;
-                if ($eh->get('report.cheader.debug')) {
-                    print("~~~~~ Register: " . $o_reg->name() . "     $theBlock{$address}->{regname}\n");
-                }
-                my $ii = 0;
-                my @thefields;
-                foreach my $hreff (@{$o_reg->fields}) {
-                    my $o_field = $hreff->{'field'};
-                    # select type of register
-                    $thefields[$ii]{name}    = lc($o_field->name);
-                    $thefields[$ii]{size}    = $o_field->attribs->{'size'};
-                    $thefields[$ii]{pos}     = $hreff->{'pos'}; # LSB position
-                    $thefields[$ii]{lsb}     = $o_field->attribs->{'lsb'};
-                    $thefields[$ii]{view}    = $o_field->attribs->{'view'}; # N: no documentation  Y: bitfield to document
-                    # ignore this bitfield
-                    if(lc($thefields[$ii]{view}) ne 'y' and $eh->get('report.cheader.use_view_attrib')) {
-                        $logger->info("__I_REPORT", "\texcluding field ".lc($o_field->name)." from C-header because view attribute is set to N");
-                        next;
-                    };
-                    $thefields[$ii]{mode}    = $o_field->attribs->{'dir'};
-                    $thefields[$ii]{comment} = $o_field->attribs->{'comment'};
-                    $thefields[$ii]{comment} =~ s/\\.//g;
-                    $thefields[$ii]{sync}    = $o_field->attribs->{'sync'};
-                    if ($eh->get('report.cheader.debug')) {
-                        print("~~~~~    " . $thefields[$ii]{name} . '(' . $thefields[$ii]{size}
-                              . ')' . '/' . $thefields[$ii]{pos}  . "\n");
-                    }
-                    $ii += 1;
-                }
-                if ($ii == 0) {
-                    # no visible bitfield found, ignore the whole register
-                    delete $theBlock{$address};
-                    next;
-                }
-                # sort the fields (probably reserved?)
-                #@thefields = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
-                @thefields = sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
-
-                $theBlock{$address}->{fields} = \@thefields;
-            }
-            # All register were read in, write the header file
-            mix_rep_header_print($fh, $domain_name, \%theBlock, $rTypes);
-
-            # close the header file
-            $fh->print('/* \@} */' . "\n");    # doxygen
-            $fh->print("#endif\n");            # end of LANGUAGE_ASSEMBLY
-            $fh->print("#endif\n");
-            $fh->close();
-        }
-    }
-    return 0;
-}
 
 ##############################################################################
 ##############################################################################
@@ -958,190 +891,213 @@ sub mix_rep_per($;$)
 #          $fh       FileHandle
 #####################################################################
 
-sub mix_rep_perl_open_files($$)
-{
-    my ($name, $blocks) = @_;
-    my $newname = $eh->get("report.cheader.definition." . lc($name));
-    $newname = $name if (! defined($newname));
-    $newname = uc($newname);
-    my $file = $newname . ".pm";
-    my $fh = new FileHandle $file, "w";
+sub mix_rep_perl_open_files($) {
+    my ($o_space) = @_;
+
+    # create include dir if not already there
+    if (! -d $eh->get('output.path_include')) {
+        if ($eh->get('output.mkdir') =~ m/auto|all|yes/i) {
+            mkdir($eh->get('output.path_include'))
+        } else {
+            _error("directory \'",$eh->get('output.path_include'),"\' does not exist and I am not allowed to create it (mkdir parameter)");
+        };
+    };
+
+    my $newname = $o_space->device;
+    my $filename = $eh->get("output.path_include") . "/reg_". lc($newname) . ".pm";
+    
+    my $fh = new FileHandle $filename, "w";
 
     if (! defined($fh)) {
-        $logger->error("__E_REPORT_FILE","\tCould not open file `$file'!");
-        exit(2);
-    }
-
-    # Write base address
-    $fh->print(<<PMHEADER);
-package test::REGS::$newname;
+        $logger->error("__E_REPORT_FILE","\tCould not open file `$filename'!");
+    } else {
+        
+        # Write base address
+        
+        $fh->print(<<PMHEADER);
+# Register-Space dump for device $newname generated by MIX module MixReport.pm 
+# package Micronas::Reg;
 
 require Exporter;
+use Micronas::Reg;
+use Micronas::RegDomain;
+use Micronas::RegReg;
+use Micronas::RegField;
+use Micronas::RegAddrMap;
 use strict;
+use vars qw(\@ISA \@EXPORT \$o_space1);
+\@ISA = qw(Exporter);
+\@EXPORT = qw(\$o_space1);
 
-our \@ISA = qw(Exporter);
-
+BEGIN {
 PMHEADER
 
+    }
     return $fh;
-}
+};
 
 #####################################################################
 # Print type definitions for the registers of the current domain
 #####################################################################
 
-sub mix_rep_perl_print($$$$$$)
-{
-    my ($fh, $name, $rBlock, $rTypes, $blocks, $maxwidth) = @_;
-    my $newname = uc($eh->get("report.cheader.definition." . lc($name)));
-
-    # write EXPORT definition
-    $fh->write('our @EXPORT = qw(' . "\n");
-    foreach my $addr (sort keys %{$rBlock}) {
-        if ( $eh->get( 'report.perl.debug' ) ) {
-            print("!!!!! processing domain: '$newname' ... register: '$rBlock->{$addr}->{regname}'\n");
-        }
-        # export reference to the register hash
-        for (my $i = 0; $i < $blocks->{$name}->{reg_clones}; $i++) {
-            my $newreg;
-            if ($blocks->{$name}->{reg_clones} > 1) {
-                # remove '<domain>_' from name (GPIO2_GPIO_otto --> GPIO2_otto)
-                $newreg = uc($blocks->{$name}->{clients}->[$i]) . '_' . uc($rBlock->{$addr}->{regname});
-                $newreg =~ s/^((.+)\d+)_\2/$1/;
-                #print("~~~~~ old name:     " . uc($blocks->{$name}->{clients}->[$i]) . '_' . uc($rBlock->{$addr}->{regname}) . "\n");
-                #print("~~~~~ new reg name: $newreg\n");
-            } else {
-                $newreg = uc($rBlock->{$addr}->{regname});
-            }
-            $fh->print("    \$" . $newreg . "\n");
-        }
-    }
-    $fh->write(");\n\n");
-
-    # write hash for each register
-    foreach my $addr (sort keys %{$rBlock}) {
-        for (my $i = 0; $i < $blocks->{$name}->{reg_clones}; $i++) {
-            my $newreg;
-            if ($blocks->{$name}->{reg_clones} > 1) {
-                # remove '<domain>_' from name (GPIO2_GPIO_otto --> GPIO2_otto)
-                $newreg = uc($blocks->{$name}->{clients}->[$i]) . '_' . uc($rBlock->{$addr}->{regname});
-                $newreg =~ s/^((.+)\d+)_\2/$1/;
-            } else {
-                $newreg = uc($rBlock->{$addr}->{regname});
-            }
-            $fh->write("our \%$newreg = (\n");
-            $fh->printf("    _address => \"0x%08X\",\n", ($blocks->{$name}->{base_addr}->[$i] + hex((split(/_/, $addr))[0])));
-            $fh->printf("    _width   => %d,\n", $rBlock->{$addr}->{width});
-            #### write bitfields (there are more than one)
-            for (my $i = 0; $i <= $#{$rBlock->{$addr}->{fields}}; $i++) {
-                my $slice = $rBlock->{$addr}->{fields}->[$i];
-                $fh->printf("    $slice->{name}    %s => \"0x%X\",\n", (' ' x ($maxwidth - 3 - length($slice->{name}))), $slice->{init});
-                $fh->write("    $slice->{name}_reg" . (' ' x ($maxwidth - 3 - length($slice->{name}))) . " => [" . ($slice->{pos} + $slice->{size} - 1) .
-                           "," . $slice->{pos} . "],\n");
-            }
-            $fh->write(");\n\n");
-        }
-    }
-
-    # write definition of the reference to the hash for each register
-    foreach my $addr (sort keys %{$rBlock}) {
-        for (my $i = 0; $i < $blocks->{$name}->{reg_clones}; $i++) {
-            my $newreg;
-            if ($blocks->{$name}->{reg_clones} > 1) {
-                # remove '<domain>_' from name (GPIO2_GPIO_otto --> GPIO2_otto)
-                $newreg = uc($blocks->{$name}->{clients}->[$i]) . '_' . uc($rBlock->{$addr}->{regname});
-                $newreg =~ s/^((.+)\d+)_\2/$1/;
-            } else {
-                $newreg = uc($rBlock->{$addr}->{regname});
-            }
-            $fh->write("our \$$newreg" . ' ' x ($maxwidth - length($newreg)) . " = \\\%$newreg;\n");
-        }
-    }
-
-    # write end of the file
-    $fh->printf("\n1;\n");
-}
+# sub mix_rep_perl_print($$$$$$)
+# {
+#     my ($fh, $name, $rBlock, $rTypes, $blocks, $maxwidth) = @_;
+#     my $newname = uc($eh->get("report.cheader.definition." . lc($name)));
+# 
+#     # write EXPORT definition
+#     $fh->write('our @EXPORT = qw(' . "\n");
+#     foreach my $addr (sort keys %{$rBlock}) {
+#         if ( $eh->get( 'report.perl.debug' ) ) {
+#             print("!!!!! processing domain: '$newname' ... register: '$rBlock->{$addr}->{regname}'\n");
+#         }
+#         # export reference to the register hash
+#         for (my $i = 0; $i < $blocks->{$name}->{reg_clones}; $i++) {
+#             my $newreg;
+#             if ($blocks->{$name}->{reg_clones} > 1) {
+#                 # remove '<domain>_' from name (GPIO2_GPIO_otto --> GPIO2_otto)
+#                 $newreg = uc($blocks->{$name}->{clients}->[$i]) . '_' . uc($rBlock->{$addr}->{regname});
+#                 $newreg =~ s/^((.+)\d+)_\2/$1/;
+#                 #print("~~~~~ old name:     " . uc($blocks->{$name}->{clients}->[$i]) . '_' . uc($rBlock->{$addr}->{regname}) . "\n");
+#                 #print("~~~~~ new reg name: $newreg\n");
+#             } else {
+#                 $newreg = uc($rBlock->{$addr}->{regname});
+#             }
+#             $fh->print("    \$" . $newreg . "\n");
+#         }
+#     }
+#     $fh->write(");\n\n");
+# 
+#     # write hash for each register
+#     foreach my $addr (sort keys %{$rBlock}) {
+#         for (my $i = 0; $i < $blocks->{$name}->{reg_clones}; $i++) {
+#             my $newreg;
+#             if ($blocks->{$name}->{reg_clones} > 1) {
+#                 # remove '<domain>_' from name (GPIO2_GPIO_otto --> GPIO2_otto)
+#                 $newreg = uc($blocks->{$name}->{clients}->[$i]) . '_' . uc($rBlock->{$addr}->{regname});
+#                 $newreg =~ s/^((.+)\d+)_\2/$1/;
+#             } else {
+#                 $newreg = uc($rBlock->{$addr}->{regname});
+#             }
+#             $fh->write("our \%$newreg = (\n");
+#             $fh->printf("    _address => \"0x%08X\",\n", ($blocks->{$name}->{base_addr}->[$i] + hex((split(/_/, $addr))[0])));
+#             $fh->printf("    _width   => %d,\n", $rBlock->{$addr}->{width});
+#             #### write bitfields (there are more than one)
+#             for (my $i = 0; $i <= $#{$rBlock->{$addr}->{fields}}; $i++) {
+#                 my $slice = $rBlock->{$addr}->{fields}->[$i];
+#                 $fh->printf("    $slice->{name}    %s => \"0x%X\",\n", (' ' x ($maxwidth - 3 - length($slice->{name}))), $slice->{init});
+#                 $fh->write("    $slice->{name}_reg" . (' ' x ($maxwidth - 3 - length($slice->{name}))) . " => [" . ($slice->{pos} + $slice->{size} - 1) .
+#                            "," . $slice->{pos} . "],\n");
+#             }
+#             $fh->write(");\n\n");
+#         }
+#     }
+# 
+#     # write definition of the reference to the hash for each register
+#     foreach my $addr (sort keys %{$rBlock}) {
+#         for (my $i = 0; $i < $blocks->{$name}->{reg_clones}; $i++) {
+#             my $newreg;
+#             if ($blocks->{$name}->{reg_clones} > 1) {
+#                 # remove '<domain>_' from name (GPIO2_GPIO_otto --> GPIO2_otto)
+#                 $newreg = uc($blocks->{$name}->{clients}->[$i]) . '_' . uc($rBlock->{$addr}->{regname});
+#                 $newreg =~ s/^((.+)\d+)_\2/$1/;
+#             } else {
+#                 $newreg = uc($rBlock->{$addr}->{regname});
+#             }
+#             $fh->write("our \$$newreg" . ' ' x ($maxwidth - length($newreg)) . " = \\\%$newreg;\n");
+#         }
+#     }
+# 
+#     # write end of the file
+#     $fh->printf("\n1;\n");
+# }
 
 #####################################################################
 # Report Registermaster definition as Perlpackage
 #####################################################################
 
-sub mix_rep_perl($;$)
-{
-    my ($o_space, $vcty) = @_;   # Reference to the register object
-
-    my $maxwidth = 0;   # max length of register or bitslice names
-    if (defined $o_space) {
-        my ($blocks, $rTypes) = mix_rep_header_read_top_address_map();
-        # re-create $blocks when processing vcty sheets
-        $blocks = mix_rep_vcty_read_device_ini($blocks) if $vcty;
+sub mix_rep_perl($) {
+    my ($o_space) = @_;   # Reference to the register object
+    
+    my $fh = mix_rep_perl_open_files($o_space);
+    
+    if (defined $o_space and defined $fh) {
+        # create a stripped-down register object, using default address-map or map from mix.cfg file
+        my $o_addrmap = $o_space->get_addrmap_by_name($o_space->try_addrmap_name($eh->get("report.addrmap")));
+        my $o_new_addrmap = Micronas::RegAddrMap->new('name' => $o_addrmap->{name});
+        my $o_new_space = Micronas::Reg->new(
+                                             device => $o_space->device, 
+                                             default_addrmap => $o_space->{default_addrmap},
+                                             addrmaps => [$o_new_addrmap]
+                                            );
+        delete ($o_new_space->{'global'}); # do not need global member
 
         # iterate through all blocks (domains)
         foreach my $o_domain (@{$o_space->domains}) {
-            my $domain_name = $o_domain->name();
-            if (! exists($blocks->{$domain_name})) {
+            # create a new domain
+            my $domain_name = _clone_name($eh->get("report.domain_naming"), 99, $o_domain->id, $o_domain->name());
+            my $o_new_domain = Micronas::RegDomain->new('name' => $domain_name);
+            my $base_address = $o_space->get_domain_baseaddr($o_domain->name, $o_addrmap->{name});
+           
+            if (! defined($base_address)) {
                 $logger->error("__E_REPORT","\tCould not find `$domain_name' in the top address map!");
                 next;
             }
-            my $fh = mix_rep_perl_open_files($domain_name, $blocks);
-            # collect all information to the registers in a hash with the address as the key
-            my %theBlock;
-            #$o_domain->display();
-            foreach my $o_reg (@{$o_domain->regs()}) {
-                my $addr_1   = $o_domain->get_reg_address($o_reg);
-                $addr_1 *= 4 if $vcty;
-                my $address  = sprintf("0x%08X", $addr_1);
-                my $init     = sprintf("0x%08X", $o_reg->get_reg_init());
-                my $width    = $o_reg->attribs->{'size'};
-                my $mode     = $o_reg->get_reg_access_mode();
+            
+            # link new domain into register space
+            $o_new_space->add_domain($o_new_domain, $base_address, $o_addrmap->{name});
+            
+            foreach my $o_reg (@{$o_domain->regs}) {
+                my $reg_name = _clone_name($eh->get("report.reg_naming"), 99, $o_reg->id, $o_domain->name, $o_reg->name);
+                my $reg_offset = $o_domain->get_reg_address($o_reg);
+                my %hrattribs;
+                # copy some selected attributes
+                foreach my $key (keys %{$o_reg->attribs}) {
+                    if (grep ($key eq $_, (PERL_REG_ATTRIBS))) {
+                        $hrattribs{$key} = $o_reg->attribs->{$key};
+                    };
+                };
+                
+                # create new register object
+                my $o_new_reg = Micronas::RegReg->new('name' => $reg_name, 'attribs' => \%hrattribs);
+                
+                # link new register object into domain (will use default domain-address-map)
+                $o_new_domain->add_reg($o_new_reg, $reg_offset);
 
-                while (exists($theBlock{$address})) {
-                    $address .= "_1";
-                }
-                $theBlock{$address}->{regname} = $o_reg->name();
-                $theBlock{$address}->{width}   = $width;
-                $theBlock{$address}->{regname} = mix_rep_header_check_name(uc($domain_name) . '_' . $theBlock{$address}->{regname}, $rTypes);
-                $theBlock{$address}->{init}    = $init;
-                if ($eh->get('report.perl.debug')) {
-                    print("~~~~~ Register: " . $o_reg->name() . "     $theBlock{$address}->{regname}\n");
-                }
-                if (length($theBlock{$address}->{regname}) > $maxwidth) {
-                    $maxwidth = length($theBlock{$address}->{regname});
-                }
-                my $ii = 0;
-                my @thefields;
-                foreach my $hreff (@{$o_reg->fields}) {
-                    my $o_field = $hreff->{'field'};
-                    # select type of register
-                    $thefields[$ii]{name} = lc($o_field->name);
-                    if (length($thefields[$ii]{name}) + 4 > $maxwidth) {
-                        $maxwidth = length($thefields[$ii]{name}) + 4;
-                    }
-                    $thefields[$ii]{size} = $o_field->attribs->{'size'};
-                    $thefields[$ii]{pos}  = $hreff->{'pos'}; # LSB position
-                    $thefields[$ii]{lsb}  = $o_field->attribs->{'lsb'};
-                    $thefields[$ii]{view} = $o_field->attribs->{'view'}; # N: no documentation
-                    $thefields[$ii]{mode} = $o_field->attribs->{'dir'};
-                    $thefields[$ii]{init} = $o_field->attribs->{'init'} & ((2** ($o_field->attribs->{'size'})) - 1);
-                    #print("!!!!! init: !" . $o_field->attribs->{'init'} . "!   &&   !" . ((2** ($o_field->attribs->{'size'})) - 1) . "!\n");
-                    if ($eh->get('report.perl.debug')) {
-                        print("~~~~~    " . $thefields[$ii]{name} . '(' . $thefields[$ii]{size}
-                              . ')' . '/' . $thefields[$ii]{pos}  . "\n");
-                    }
-                    $ii += 1;
-                }
-                # sort the fields (probably reserved?)
-                #@thefields = reverse sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
-                @thefields = sort {${$a}{pos} <=> ${$b}{pos}} @thefields;
+                # iterate through all fields of the register
+                foreach my $href (@{$o_reg->fields}) {
+                    my $o_field = $href->{'field'}; # reference to field object in register
+                    my $field_name = _clone_name($eh->get("report.field_naming"), 99, $o_field->id, $o_domain->name, $o_reg->name, $o_field->name, $o_field->attribs->{'block'});                    
+                    my $fpos = $href->{'pos'};       # lsb position of field in register
+                    
+                    my %hfattribs;
+                    # copy some selected attributes
+                    foreach my $key (keys %{$o_field->attribs}) {
+                        if (grep ($key eq $_, PERL_FIELD_ATTRIBS)) {
+                            $hfattribs{$key} = $o_field->attribs->{$key};
+                        };
+                    };
 
-                $theBlock{$address}->{fields} = \@thefields;
-            }
-            # All register were read in, write the header file
-            mix_rep_perl_print($fh, $domain_name, \%theBlock, $rTypes, $blocks, $maxwidth);
-
-            # close the header file
-            $fh->close();
+                    # create new field object (also links to register where contained)
+                    my $o_new_field = Micronas::RegField->new(name => $field_name, reg => $o_new_reg, attribs => \%hfattribs);
+                    
+                    # link into register
+                    $o_new_reg->fields(field => $o_new_field, pos => $fpos);
+                };  
+            };
         }
+
+        # dump all; use Purity=1 to resolve nested references in object
+        my $dump  = Data::Dumper->new([$o_new_space]);
+        $dump->Maxdepth(0);
+        $dump->Varname("o_space");
+        $dump->Indent(1)->Purity(1)->Sortkeys(1);
+        print $fh $dump->Dump;
+        # add an eval statement to fill the variable
+        print $fh "eval(\$o_space1);\n";
+        print $fh "};\n1;\n";
+        # close the perl file
+        $fh->close();
     }
     return 0;
 }
