@@ -625,7 +625,7 @@ to bind consecutive generator lines together. IF is optional. The keyword ELSIF 
 Please have a look into the distributed //howto.xls// and the //macro.xls// in the test-case directory to see more examples.
 </pre>
 </div>
-<div title="GettingStarted" modifier="Lu" created="200903040850" modified="200911191022" changecount="26">
+<div title="GettingStarted" modifier="Lu" created="200903040850" modified="200912021141" changecount="28">
 <pre>To receive useful results, MIX reads in various input data from spreadsheets, typically stored in Excel workbooks. At least you will need to prepare a [[StructuralSpecification]] of your design, i.e. a hierarchy (//HIER// sheet) and the connectivity (//CONN// sheet), or a Register Specification. MIX will convert a [[IO-Specification]] input/output sheet, listing input/output pads and iocells and how these are linked to the core logic into appropriate hierarchy and connection lists. The [[RegisterSpecification]] sheet can be used to describe device configuration registers. This can be accompanied by a [[Top-Level Register Domain Table]] that contains hierarchical information about the configuration registers of a device.
 
 !A Simple Example
@@ -987,7 +987,7 @@ creates name {{{si2ocp_clear_int_config}}}.
 
 </pre>
 </div>
-<div title="RegisterSpecification" modifier="Lu" created="200903110850" modified="200911200942" changecount="88">
+<div title="RegisterSpecification" modifier="Lu" created="200903110850" modified="200912021417" changecount="102">
 <pre>The ~Register-Master sheet is one more category of input specification. It describes configuration register domains of devices. A domain comprises all registers that have a common HDL implementation (//register-shell//). A register domain contains registers which in turn contain fields. The MIX tool creates views of a register domain, which is an implementation. Additionally, it can create reports which are used for documentation.
 
 Templates for the .xls sheet (//registermaster_template*.xls//) can be found in the tool installation directory. 
@@ -998,7 +998,7 @@ There are also other in-house tools reading this format, which results in some l
 
 |!Column Name |!Type |!Description|!Default Value|!Required|!Example|
 |::ign |string|Ignore line ||opt. |# comment|
-|::type |string|Register type; not used by MIX |I2C |man. |~I2C|
+|::type |string|Register type; not used by MIX |~I2C |man. |~I2C|
 |::dev |string|Device name for boardlevel purposes ||opt. |VGCH|
 |::width |int|Width of register in bits |32 |man. |32|
 |::sub |int|Address offset of register in domain in bytes |0x0 |man. |0x20|
@@ -1047,13 +1047,13 @@ The following views are currently implemented. They are selected via the {{{reg_
 |{{{stl}}}|Register test file in Socket Transaction Language (STL) format|
 |{{{rdl}}}|Denali RDL representation (experimental)|
 |{{{ip-xact}}}|~IP-XACT compliant XML output|
-|{{{reglist}}}|Documents all registers in //.mif// file|
-|{{{header}}}|Generates c-header files|
-|{{{vctyheader}}}|the same but takes top-level addresses from //device.in// file|
-|{{{per}}}|Creates Lauterbach //.per// file|
-|{{{vctyper}}}|the same but takes top-level addresses from //device.in// file|
-|{{{perl}}}|creates Perl package (?)|
-|{{{vctyperl}}}|the same but takes top-level addresses from //device.in// file|
+|{{{reglist}}}|//obsolete// Documents all registers in //.mif// file|
+|{{{cheader}}}|Generates c-header files; needs additional Top-Level Register Domain Table|
+|{{{vctyheader}}}|//obsolete// the same but takes top-level addresses from //device.in// file|
+|{{{per}}}|//obsolete// Creates Lauterbach //.per// file|
+|{{{vctyper}}}|//obsolete// the same but takes top-level addresses from //device.in// file|
+|{{{perl}}}|creates Perl package; needs additional Top-Level Register Domain Table|
+|{{{vctyperl}}}|//obsolete// the same but takes top-level addresses from //device.in// file|
 |{{{bd-cfg}}}|view for creating command-files for chip backdoor configuration (FRC project)|
 |{{{none}}}|generate nothing (useful to bypass the view generation dispatcher)|
 
@@ -1181,16 +1181,52 @@ This creates tables in ~Rich-Text-Format (RTF) for documentation purposes.
 
 !!RTF Configuration Parameters
 |!Key |!Value |!Default |!Description|
-|{{{reg_shell.rtf.field_naming|string|%F|naming scheme for fields|
-|{{{reg_shell.rtf.reg_naming|string|%R|aming scheme for registers|
-|{{{reg_shell.rtf.domain_naming|string|%D|naming scheme for domains|
-|{{{reg_shell.rtf.join_docs|int|1|control number of docs (0=generate separate overview and detailed one)|
-|{{{reg_shell.rtf.hex_symbol|string|'h|leading symbol for printing hex values|
-|{{{reg_shell.rtf.title_format|string|\sb400\sa200\fs40\f2|RTF format string for table title|
-|{{{reg_shell.rtf.head_row_format|string|\b\fs20\f0|RTF format string for table head row|
-|{{{reg_shell.rtf.row_format|string|\fs20\f0|RTF format string for table row|
-|{{{reg_shell.exclude_regs|string||list registers to exclude from documentation|
-</pre>
+|{{{reg_shell.rtf.field_naming}}}|string|%F|naming scheme for fields|
+|{{{reg_shell.rtf.reg_naming}}}|string|%R|aming scheme for registers|
+|{{{reg_shell.rtf.domain_naming}}}|string|%D|naming scheme for domains|
+|{{{reg_shell.rtf.join_docs}}}|int|1|control number of docs (0=generate separate overview and detailed one)|
+|{{{reg_shell.rtf.hex_symbol}}}|string|'h|leading symbol for printing hex values|
+|{{{reg_shell.rtf.title_format}}}|string|\sb400\sa200\fs40\f2|RTF format string for table title|
+|{{{reg_shell.rtf.head_row_format}}}|string|\b\fs20\f0|RTF format string for table head row|
+|{{{reg_shell.rtf.row_format}}}|string|\fs20\f0|RTF format string for table row|
+|{{{reg_shell.exclude_regs}}}|string||list registers to exclude from documentation|
+
+!Reporting views {{{cheader}}} and {{{perl}}}
+{{{reg_shell.type cheader|perl}}}
+These views require a [[Top-Level Register Domain Table]] and dump the entire device register-information into a C-header {{{.h}}} file or Perl module {{{.pm}}}. 
+
+!!Reporting Configuration Parameters
+|!Key |!Value |!Default |!Description|
+|{{{report.field_naming}}}|string|%F|naming scheme for fields|
+|{{{report.reg_naming}}}|string|%R|naming scheme for registers|
+|{{{report.domain_naming}}}|string|%D|naming scheme for domains|
+|{{{report.cheader.debug}}}|int|0|enable printing some debugging information|
+
+The {{{.pm}}} file contains the Perl object representing the whole register-space. It can be imported into the user's Perl script and the data can be accessed using the MIX Perl packages. The Perl object is of type {{{Micronas::Reg}}} and contains objects of e.g. types {{{Micronas::RegDomain}}}, {{{Micronas::RegReg}}}, {{{Micronas::RegField}}}, {{{Micronas::RegAddrMap}}}. See the respective MIX Perl modules for access methods.
+
+Example script for using the register-space package:
+{{{
+use reg_ip3d qw($o_space1);   # import the serialized register object
+BEGIN {
+   # sanity check
+   ref($o_space1) eq &quot;Micronas::Reg&quot; || die &quot;imported object is not of class Micronas::Reg&quot;;
+};
+
+# print some info on the main object
+printf(&quot;device: %s default_addrmap: %s\n&quot;, 
+       $o_space1-&gt;device, 
+       $o_space1-&gt;default_addrmap
+      );
+
+# iterate through all domains and print their object type and name and base-address
+foreach my $o_domain (@{$o_space1-&gt;domains}) {
+    printf(&quot;(%s) %s 0x%x\n&quot;,
+           ref($o_domain), 
+           $o_domain-&gt;name,
+           $o_space1-&gt;get_domain_baseaddr($o_domain-&gt;name)
+          );
+};
+}}}</pre>
 </div>
 <div title="SiteSubtitle" modifier="Lu" created="200903040836" modified="200907231125" changecount="7">
 <pre>Micronas Interconnect Specification Expander, tool version 2.0</pre>
