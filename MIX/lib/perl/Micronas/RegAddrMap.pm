@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegAddrMap.pm,v 1.3 2009/08/27 08:31:30 lutscher Exp $
+#  RCSId: $Id: RegAddrMap.pm,v 1.4 2009/12/02 14:27:18 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -28,6 +28,9 @@
 ###############################################################################
 #
 #  $Log: RegAddrMap.pm,v $
+#  Revision 1.4  2009/12/02 14:27:18  lutscher
+#  changed data member access method generation to use AUTOLOAD feature
+#
 #  Revision 1.3  2009/08/27 08:31:30  lutscher
 #  added functions
 #
@@ -63,7 +66,7 @@ our $debug     = 0;
 use constant ADDRESSABLE_OBJECT_TYPES => qw(RegReg RegDomain);
 
 # version of this package, extracted from RCS macros
-our($VERSION) = '$Revision: 1.3 $ ';  #'
+our($VERSION) = '$Revision: 1.4 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -95,7 +98,7 @@ sub new {
     
     $instances++;
 	bless $this, $class;
-    $this->_constructor();    # adds access functions for data members
+    # $this->_constructor();    # adds access functions for data members
     $this->_parameters( @_ ); # processes arguments passed to constructor 
     return( $this );
 };
@@ -103,25 +106,46 @@ sub new {
 #------------------------------------------------------------------------------
 # Public attributes access methods
 #------------------------------------------------------------------------------
-sub _constructor() {
+
+# use proxy method for data accessors
+our $AUTOLOAD;
+sub AUTOLOAD {
     my $this = shift;
-    my @all_fields = keys %{$this};
-    
-    # for each field, set up a named closure as its data accessor (note: this way all is public).
-    foreach my $field (@all_fields) {
-        no warnings 'redefine';
-        print( "field = $field\n" ) if $debug;
-        no strict;    
-        *{$package."::$field"} = sub :lvalue {
-            my($this) = shift;
-            if (@_) {
-                $this->{$field} = shift;
-            }
-            return $this->{$field};
-        };
-        use strict;
+    my $name = $AUTOLOAD;
+    my $type = ref($this) or die "$this is not an object";
+
+    $name =~ s/.*://; # strip fully qualified portion
+    unless (exists $this->{$name}) {
+        die "cant access field $name in class $type";
+    };
+    if (@_) {
+        return $this->{$name} = shift;
+    } else {
+        return $this->{$name};
     };
 };
+# need to declare this to avoid AUTOLOAD being called
+sub DESTROY { --$instances };
+
+# sub _constructor() {
+#     my $this = shift;
+#     my @all_fields = keys %{$this};
+#     
+#     # for each field, set up a named closure as its data accessor (note: this way all is public).
+#     foreach my $field (@all_fields) {
+#         no warnings 'redefine';
+#         print( "field = $field\n" ) if $debug;
+#         no strict;    
+#         *{$package."::$field"} = sub :lvalue {
+#             my($this) = shift;
+#             if (@_) {
+#                 $this->{$field} = shift;
+#             }
+#             return $this->{$field};
+#         };
+#         use strict;
+#     };
+# };
 
 #------------------------------------------------------------------------------
 # Initialize members
