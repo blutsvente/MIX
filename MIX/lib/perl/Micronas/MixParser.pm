@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.105 $                                         |
+# | Revision:   $Revision: 1.106 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2008/12/10 11:45:44 $                              |
+# | Date:       $Date: 2009/12/02 14:26:05 $                              |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.105 2008/12/10 11:45:44 lutscher Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.106 2009/12/02 14:26:05 lutscher Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +33,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.106  2009/12/02 14:26:05  lutscher
+# | some fixes to mix_store_db
+# |
 # | Revision 1.105  2008/12/10 11:45:44  lutscher
 # | reverted last change
 # |
@@ -252,9 +255,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.105 2008/12/10 11:45:44 lutscher Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.106 2009/12/02 14:26:05 lutscher Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.105 $';
+my $thisrevision =	'$Revision: 1.106 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -2243,17 +2246,16 @@ sub mix_store_db ($$$) {
 
     if ( $type eq "auto" ) {
         # Derive output format from output name extension
-        if ( $dumpfile =~ m,\.(xls|sxc|csv|ods|xml)$, ) {
-                $type=$1;
+        if ( $dumpfile =~ m,\.(xls|sxc|csv|ods|xml|yaml)$, ) {
+            $type=$1;
         } else {
-        # Default to "internal" format
-                $type="internal";
+            # Default to "internal" format
+            $type="internal";
         }
     }
-    
     if ( $type eq 'xls' || $type eq 'sxc' || $type eq 'csv' || $type eq 'ods' ) {
         my $aro = mix_list_econf( 'xls' ); # Convert $eh to two-dim array
-
+        
 		# db2array
 		#!wig20051012: if eh(intermediate.intra) is set,
 		#  arc is done differentely!
@@ -2291,30 +2293,30 @@ sub mix_store_db ($$$) {
 		}
 		close_open_workbooks(); # Close everything we opened
     } else {
+
+        # note: this is a mess here, needs clean-up
         if ($type eq 'xml') {
-	    
-	    $xls_dump=1;#always dump excel file if xml_input
-	    $yaml_dump=1;
-	    
-	    
-
-	    
-	    
-
+            
+            $xls_dump=1; # always dump excel file if xml_input
+            $yaml_dump=1;
+            
         } else {
-            if ( $type ne "internal" ) {
+            if ( $type ne "internal" and $type ne "yaml" ) {
                 $type="intermediate";
             }
-            mix_store( $dumpfile,
-                       { 'conn' => \%conndb , 'hier' => \%hierdb, %$varh }, $type);
-        }
-    }
+            if ($type ne "yaml") {
+                # mix_store( $dumpfile, { 'conn' => \%conndb , 'hier' => \%hierdb, %$varh }, $type);
+                mix_store( $dumpfile, { 'conn' => \%conndb , 'hier' => \%hierdb}, $type);
+            }
+        };
+    };
     
+    # dump reg-object only
     if ($xls_dump and defined($$varh{'reg'})){
-	$$varh{'reg'}->write2excel($dumpfile);
+        $$varh{'reg'}->write2excel($dumpfile);
     }
     if ($yaml_dump and defined($$varh{'reg'})){
-	$$varh{'reg'}->writeYAML($dumpfile);
+        $$varh{'reg'}->writeYAML($dumpfile);
     }
 }
 
