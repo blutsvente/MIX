@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegDomain.pm,v 1.9 2009/11/19 12:26:21 lutscher Exp $
+#  RCSId: $Id: RegDomain.pm,v 1.10 2009/12/02 14:29:08 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: RegDomain.pm,v $
+#  Revision 1.10  2009/12/02 14:29:08  lutscher
+#  added id()
+#
 #  Revision 1.9  2009/11/19 12:26:21  lutscher
 #  added top-level sheet input and vi2c-xml view
 #
@@ -147,6 +150,12 @@ sub definition {
 	my $this = shift;
 	if (@_) { $this->{definition} = shift @_; };
 	return $this->{definition};
+};
+# scalar object data access method
+sub id {
+	my $this = shift;
+	if (@_) { $this->{id} = shift @_; };
+	return $this->{id};
 };
 # add single address mapping to hash
 # input: none or hash describing register mapping:
