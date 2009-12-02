@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.88 $                                         |
+# | Revision:   $Revision: 1.89 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2009/11/24 15:45:11 $                              |
+# | Date:       $Date: 2009/12/02 14:24:53 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.89  2009/12/02 14:24:53  lutscher
+# | added some reporting features
+# |
 # | Revision 1.88  2009/11/24 15:45:11  lutscher
 # | some small clean-ups
 # |
@@ -248,9 +251,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.88 2009/11/24 15:45:11 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.89 2009/12/02 14:24:53 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.88 $';  
+my $thisrevision    =      '$Revision: 1.89 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1793,6 +1796,10 @@ sub init ($) {
       {
        'path'	=> '.',
        'delta'	=> '',		# If set, create a diff file instead of a new output
+       'field_naming'       => '%F',     # naming scheme for fields, see 'clone'
+       'reg_naming'	        => '%R',     # naming scheme for registers, see 'clone'
+       'domain_naming'      => '%uD',    # naming scheme for domains, see 'clone'
+       'addrmap'            => "",       # name of top-level address-map if more than one (usually amap_<device>_<n>)
        'portlist'	=> {
                         'name'	=>	'',	# Define report file name; 
                         # 	if empty take name from $EH{out} ....
