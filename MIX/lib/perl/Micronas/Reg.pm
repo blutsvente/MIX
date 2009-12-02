@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.92 2009/11/19 12:49:28 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.93 2009/12/02 14:28:51 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -13,7 +13,6 @@
 #
 #  Contents      :  Top-level register space class; represents register space
 #                   of a device and contains register domains; also contains
-
 #                   most of the user API for dealing with register spaces
 #
 ###############################################################################
@@ -30,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.93  2009/12/02 14:28:51  lutscher
+#  added try_addrmap_name(), cleaned up view generation dispatcher table
+#
 #  Revision 1.92  2009/11/19 12:49:28  lutscher
 #  added top-level table input and vi2c-xml view
 #
@@ -137,72 +139,6 @@
 #  Revision 1.58  2008/06/18 10:04:58  lutscher
 #  fixed error messages for when no RM file
 #
-#  Revision 1.57  2008/06/16 16:33:16  lutscher
-#  some clean-up
-#
-#  Revision 1.56  2008/06/16 16:01:11  megyei
-#  Replaced option '-report <view>' by corresponding setting in mix.cg.
-#
-#  The config parameter reg_shell.type can now take all the views that were
-#  previously defined by the -report option.
-#
-#  Revision 1.55  2008/06/05 12:05:19  herburger
-#  changed module import
-#
-#  Revision 1.54  2008/06/05 09:07:24  herburger
-#  changed Module import
-#
-#  Revision 1.53  2008/06/03 13:15:57  herburger
-#  improved _check_version, some small changes in _map_ipxact
-#
-#  Revision 1.52  2008/05/28 14:15:36  herburger
-#  added _check_schema
-#
-#  Revision 1.51  2008/05/28 13:54:40  herburger
-#  Improved XML mapping & check for IP-XACT Version of input file
-#
-#  Revision 1.50  2008/05/19 12:56:52  herburger
-#  Added function _map_ipxact, initial version for parsing xml files
-#
-#  Revision 1.49  2008/05/09 14:50:03  herburger
-#  Added Function get_register_direction_from_fields()
-#
-#  Revision 1.48  2008/04/24 16:58:53  lutscher
-#  some improvements to parse_register_master()
-#
-#  Revision 1.47  2008/04/24 13:07:34  lutscher
-#  some clean-up
-#
-#  Revision 1.46  2008/04/24 12:03:04  lutscher
-#  added input_format ip-xact, intermediate release
-#
-#  Revision 1.45  2008/04/24 10:11:44  herburger
-#  *** empty log message ***
-#
-#  Revision 1.44  2008/04/14 07:50:28  wig
-#  Only complain about missing I2C sheet if xls.i2c is set to mandatory.
-#
-#  Revision 1.43  2008/04/01 13:01:24  lutscher
-#  changed info to error
-#
-#  Revision 1.42  2008/04/01 09:20:13  lutscher
-#  changed generate_view() to use dispatch-table
-#
-#  Revision 1.41  2007/09/05 10:56:23  lutscher
-#  set default clone.number to 0 because 1 will now force 1 clone
-#
-#  Revision 1.40  2007/08/10 08:39:52  lutscher
-#  little changes
-#
-#  Revision 1.39  2007/05/24 09:30:21  lutscher
-#  added hxxx number format to parser
-#
-#  Revision 1.38  2007/05/07 07:10:20  lutscher
-#  small changes
-#
-#  Revision 1.37  2007/03/05 18:29:08  lutscher
-#  fixed bug in _map_register_master() where the clipping of values may not be done for 32-bit fields
-#
 #  [hist deleted]
 #  
 ###############################################################################
@@ -299,12 +235,12 @@ sub parse_register_master {
         # set debug switch
         $o_space->global('debug' => exists $OPTVAL{'verbose'} ? 1 : 0);
         
-        # check if register object should be cloned
-        if ($eh->get('reg_shell.clone.number') > 0) {
+        # check if register object should be cloned before view generation
+        if ($eh->get('reg_shell.clone.number') > 0 or $o_space->global->{'has_rm_top'} == 1) {
             my $o_new_space = $o_space->_clone(); # module RegViewClone.pm 
             $o_space = $o_new_space;
         };
-        
+
         # apply packing-mode if desired
         if ($eh->get('reg_shell.packing.mode') ne "none") {
             my $o_new_space = $o_space->_pack();
@@ -322,7 +258,7 @@ sub parse_register_master {
                 $logger->info($severity, $msg);
             };
         };
-	if (!scalar @$r_xml) {
+        if (!scalar @$r_xml) {
             my $severity = ($eh->get('xml.req') =~ m/\bmandatory/ ? '__E_REG_INIT':'__I_REG_INIT');
             my $msg = "\tXML file not present or empty";
             if ($severity =~ m/^__E/) {
@@ -339,7 +275,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.92 $ ';  #'
+our($VERSION) = '$Revision: 1.93 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -368,27 +304,31 @@ sub new {
                                   supported_register_master_type => ["VGCA", "FRCH", "AVFB"], 
                                   
                                   # generatable register views (dispatch table)
+                                  # note: the report functions that use the old top-level register-master format
+                                  # are commented out for now
                                   supported_views => 
                                   {
-                                   "hdl-vgch-rs" => \&_gen_view_vgch_rs,   # VGCH project register shell (owner: Thorsten Lutscher)
-                                   "hdl-ihb-rs"  => \&_gen_view_ihb_rs,    # IHB (internal host bus) register shell (owner: Thorsten Lutscher)
-                                   "hdl-urac-rs" => \&_gen_view_urac_rs,   # URAC (universal register access bus) register shell (owner: Thorsten Lutscher)
+                                   "hdl-vgch-rs" => \&_gen_view_vgch_rs,   # VGCH project register shell
+                                   "hdl-ihb-rs"  => \&_gen_view_ihb_rs,    # IHB (internal host bus) register shell
+                                   "hdl-urac-rs" => \&_gen_view_urac_rs,   # URAC (universal register access bus) register shell
                                    "rtf"         => \&_gen_view_rtf,       # Rich-Text-Format for documentation
-                                   "e_vr_ad"     => \&_gen_view_vr_ad,     # e-language macros (owner: Thorsten Lutscher)
-                                   "stl"         => \&_gen_view_stl,       # register test file in Socket Transaction Language format (owner: Thorsten Lutscher)
+                                   "e_vr_ad"     => \&_gen_view_vr_ad,     # e-language macros
+                                   "stl"         => \&_gen_view_stl,       # register test file in Socket Transaction Language format
                                    "rdl"         => \&_gen_view_rdl,       # Denali RDL representation of database (experimental)
-                                   "ip-xact"     => \&_gen_view_ipxact,    # IP-XACT compliant XML output (owner: Gregor Herburger)
+                                   "ip-xact"     => \&_gen_view_ipxact,    # IP-XACT compliant XML output
                                    "ip-xact-rgm" => \&_gen_view_ipxact,    # IP-XACT XML for OVM reg_mem package
-                                   # "portlist"    => \&mix_reg_report,          # documents portlist in mif file (owner: Thorsten Lutscher)
-                                   "reglist"     => \&mix_reg_report,      # documents all registers in mif file (owner: Thorsten Lutscher)
-                                   "header"      => \&mix_reg_report,      # generates c header files (owner: Thorsten Lutscher)
-                                   "vctyheader"  => \&mix_reg_report,      # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
-                                   "per"         => \&mix_reg_report,      # creates Lauterbach per file (owner: Thorsten Lutscher)
-                                   "vctyper"     => \&mix_reg_report,      # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
-                                   "perl"        => \&mix_reg_report,      # creates perl package (owner: Thorsten Lutscher)
-                                   "vctyperl"    => \&mix_reg_report,      # the same but top level addresses are taken from device.in file (owner: Thorsten Lutscher)
-                                   "bd-cfg"      => \&_gen_view_bdcfg,     # command file for backdoor configuration (first use in FRC project)  (owner: Thorsten Lutscher)
-                                   "vi2c-xml"    => \&_gen_view_vi2c,      # Visual I2C definition file (owner: Thorsten Lutscher)
+
+                                   # note: the functions from MixReport have to be reworked because of the new top-level
+                                   # register-master format; this has been done for "cheader"
+
+                                   # "portlist"    => \&mix_reg_report,          # documents portlist in mif file
+                                   # "reglist"     => \&mix_reg_report,      # documents all registers in mif file
+                                   "cheader"     => \&mix_reg_report,      # generates c header files                                  
+                                   # "per"         => \&mix_reg_report,      # creates Lauterbach per file
+                                   "perl"        => \&mix_reg_report,      # creates perl package
+                                   
+                                   "bd-cfg"      => \&_gen_view_bdcfg,     # command file for backdoor configuration (first use in FRC project)
+                                   "vi2c-xml"    => \&_gen_view_vi2c,      # Visual I2C definition file
                                    "none"        => sub {}                 # generate nothing (useful for bypassing the dispatcher)
                                   },
 
@@ -396,6 +336,8 @@ sub new {
                                   # note: the field name is retrieved from the ::b entries of the register-master
                                   non_field_attributes => [qw(::ign ::sub ::interface ::inst ::width ::b:.* ::b ::addr ::dev ::vi2c ::default ::name ::type ::definition ::clone)],
                                   
+                                  has_rm_top => 0, # flag whether a top-level register-master has been read
+
                                   # language for HDL code generation, currently only Verilog supported
                                   lang     => "verilog",
                                                                     
@@ -409,10 +351,11 @@ sub new {
 		$ref_member->{$_} = $params{$_};
 	};
 	
-    # init default addrmaps list
-    my $o_addrmap = Micronas::RegAddrMap->new(name => $ref_member->{default_addrmap});
-    push @{$ref_member->{addrmaps}}, $o_addrmap;
-
+    # init default addrmaps list (if not passed in constructor)
+    if (scalar @{$ref_member->{addrmaps}} == 0) {
+        my $o_addrmap = Micronas::RegAddrMap->new(name => $ref_member->{default_addrmap});
+        push @{$ref_member->{addrmaps}}, $o_addrmap;
+    };
 	bless $ref_member, $this;
 };
 
@@ -431,6 +374,7 @@ sub init {
 
     if (scalar (@{$hinput{rm_top}})) {
         # if a top-level description table was given, use it to init the Reg object
+        $this->global->{has_rm_top} = 1;
         $this->_map_top_level_rm($hinput{rm_top});
     };
 
@@ -562,6 +506,12 @@ sub device {
 	if (@_) { $this->{device} = shift @_; };
 	return $this->{device};
 };
+# scalar object data access method
+sub default_addrmap {
+	my $this = shift;
+	if (@_) { $this->{device} = shift @_; };
+	return $this->{default_addrmap};
+};
 
 # class data access method
 sub global {
@@ -611,6 +561,29 @@ sub get_addrmap_by_name {
     };
 };
 
+# check if the address-map name exists and return it or - if not passed as parameter - return default address-map name 
+sub try_addrmap_name {
+    my $this = shift;
+    my $name = shift || "";
+    my $valid = 0;
+
+    if ($name ne "") {
+        foreach my $o_addrmap (@{$this->{'addrmaps'}}) {
+            if ($o_addrmap->name eq $name) {
+                $valid = 1;
+                last;
+            };
+        };
+        if (!$valid) {
+            _error("specified address-map name \'".$name."\' does not exist, using default");
+        } else {
+            return $name;
+        };
+    };
+    
+    # return default map name
+    return $this->{'default_addrmap'};
+};
 
 # add single domain to the register space or return ref. to the list of domain hashes
 # input: none or RegDomain object
@@ -1002,6 +975,7 @@ sub _map_top_level_rm {
         $domain = "";
         @laddr = ();
         %hattribs = ();
+        $dclone = 0;
 
         # collect all row data
         foreach my $marker (keys %$href_row) {
@@ -1062,11 +1036,9 @@ sub _map_top_level_rm {
             $o_domain = $this->find_domain_by_name_first($domain);
             if (!ref($o_domain)) {
                 $o_domain = Micronas::RegDomain->new(name => $domain, id => $id, definition => $definition, attribs => {%hattribs});
-                if ($dclone>0) {
-                    # store some cloning information (note: the cloning itself is done in a later step,
-                    # also using config parameters)
-                    $o_domain->clone(number => $dclone, addr_spacing => $dclone_addr_spacing);
-                };
+                # store some cloning information (note: the cloning itself is done in a later step,
+                # also using config parameters)
+                $o_domain->clone(number => $dclone, addr_spacing => $dclone_addr_spacing);
             };
             
             # link domain into address-maps (and create address-maps on the way if necessary)
@@ -1081,7 +1053,7 @@ sub _map_top_level_rm {
                     if ($i == 1) { # use first address-map as default
                         $this->{'default_addrmap'} = $addrmap_name;
                     };
-                    _info("created new address map \'$addrmap_name\'".($i==1 ? " (is default address-map)" : ""));
+                    _info("created new address map \'$addrmap_name\'".($i==1 ? " (is new default address-map)" : ""));
                 };
                 $this->add_domain($o_domain, $addr, $addrmap_name);
             };
@@ -1900,7 +1872,8 @@ sub writeYAML(){
     my ($this, $dumpfile) = @_;
     
     $dumpfile =~ s/\.xml$/.dmp/;
-    $dumpfile =~ s/(\.\w+)/-yaml$1/;
+    $dumpfile =~ s/\.xls$/.yaml/;
+    # $dumpfile =~ s/(\.\w+)/-yaml$1/;
     
     $dumpfile = $eh->get('intermediate.path').'/'.$dumpfile;  
     
