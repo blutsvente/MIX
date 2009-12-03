@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.94 2009/12/03 11:46:57 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.95 2009/12/03 13:15:51 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.95  2009/12/03 13:15:51  lutscher
+#  improved error-handling
+#
 #  Revision 1.94  2009/12/03 11:46:57  lutscher
 #  small fix
 #
@@ -129,18 +132,6 @@
 #
 #  Revision 1.62  2008/06/30 11:58:53  herburger
 #  small changes in write2excel
-#
-#  Revision 1.61  2008/06/26 15:54:34  herburger
-#  added rules to change the fieldname
-#
-#  Revision 1.60  2008/06/23 12:54:20  herburger
-#  added write2excel method, for dumping .xml
-#
-#  Revision 1.59  2008/06/23 09:17:12  lutscher
-#  moved portlist report to dedicated function because it does not use the register object
-#
-#  Revision 1.58  2008/06/18 10:04:58  lutscher
-#  fixed error messages for when no RM file
 #
 #  [hist deleted]
 #  
@@ -278,7 +269,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.94 $ ';  #'
+our($VERSION) = '$Revision: 1.95 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -735,9 +726,11 @@ sub _map_register_master {
     # set the spreadsheet column where to extract domain information
     # default: domain information is taken from '::interface' column
     my $domain_column = $eh->get('input.domain');
+    $domain = "";
+    $reg = "";
 
     # highest bit specified in register-master
-    $msb_max = $eh->get( 'i2c._mult_.::b' ) || _fatal("internal error (bad!)");
+    $msb_max = $eh->get( 'i2c._mult_.::b' ) || ($result = 0) || _fatal("no multiple ::b columns found in input (required)");
 
     # iterate each row
     foreach $href_row (@$lref_rm) {
@@ -846,10 +839,16 @@ sub _map_register_master {
                 $hattribs{$marker} = $value;
             };
         };
+        if ($domain eq "") {
+            _fatal("no domain column ". $eh->get('input.domain') . " found in input row (maybe supplied sheet is not a Register-Master)");
+            last;
+            $result = 0;
+        };
         $fsize = $msb - $lsb + 1;
         if ($fsize != $col_cnt) {
             _error("bad field \'$fname\' in register \'$reg\' in domain \'$domain\', must be continuous bit-slice");
             $result = 0;
+            last;
         };
 
         # do not add "reserved" fields to database (boring)
@@ -953,7 +952,7 @@ sub _map_top_level_rm {
     my ($ivariant, $icomment, $domain, $definition, $id, $dclone, $dclone_addr_spacing, %hattribs, @laddr);
     my ($o_domain, $o_addrmap);
 
-    _info("parsing top-level register-master");
+    _info("parsing top-level register-master...");
     # get number of ::addr columns
     # my $n_addrmaps = $eh->get( 'top_level._mult_.::addr' ) || _fatal("internal error (bad!), ::addr column(s) required in top-level register-master");
     
@@ -1060,6 +1059,9 @@ sub _map_top_level_rm {
                 };
                 $this->add_domain($o_domain, $addr, $addrmap_name);
             };
+        } else {
+            _error("no domain column ::client found in input row (required)");
+            $result = 0;
         };
     };
     # $this->display();
