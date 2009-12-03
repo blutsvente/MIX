@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.69 $                                               |
+# | Revision:   $Revision: 1.70 $                                               |
 # | Author:     $Author: lutscher $                                                 |
-# | Date:       $Date: 2009/12/02 14:29:26 $                                                |
+# | Date:       $Date: 2009/12/03 13:16:19 $                                                |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.69 2009/12/02 14:29:26 lutscher Exp $  |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.70 2009/12/03 13:16:19 lutscher Exp $  |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.70  2009/12/03 13:16:19  lutscher
+# | prune comments in C-Header; improve reg_naming, can also use %B now
+# |
 # | Revision 1.69  2009/12/02 14:29:26  lutscher
 # | repaired cheader and perl views
 # |
@@ -220,11 +223,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.69 2009/12/02 14:29:26 lutscher Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.70 2009/12/03 13:16:19 lutscher Exp $';
 # ' # this seems to fix a bug in the highlighting algorithm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seems to fix a bug in the highlighting algorithm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.69 $';
+my $thisrevision   =      '$Revision: 1.70 $';
 # ' # this seems to fix a bug in the highlighting algorithm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -367,7 +370,8 @@ sub mix_rep_header($)
                 while (exists($theBlock{$address})) {
                     $address .= "_1";
                 }
-                $theBlock{$address}->{regname} = _clone_name($eh->get('report.reg_naming'),99,$o_reg->id,$o_domain->name, $o_reg->name);
+                my $block_name = $o_reg->fields->[0]->{"field"}->attribs->{"block"}; # take block from first field
+                $theBlock{$address}->{regname} = _clone_name($eh->get('report.reg_naming'),99,$o_reg->id,$o_domain->name, $o_reg->name, "", $block_name);
                 $theBlock{$address}->{init}    = $init;
                 if ($eh->get('report.cheader.debug')) {
                     print("~~~~~ Register: " . $o_reg->name() . "     $theBlock{$address}->{regname}\n");
@@ -643,11 +647,6 @@ sub mix_rep_header_print($$)
         # $rBlock->{$addr}->{regname} = mix_rep_header_check_name(uc($domain_name) . '_' . $rBlock->{$addr}->{regname}, $rTypes);
         # relative address of the register in this domain
         $fh->printf("#define %-48s %s\n", $rBlock->{$addr}->{regname} . '_OFFS', (split(/_/, $addr))[0]);
-        # macro to get real address for this register BAUSTELLE Domains are already cloned
-        #my $name = $rBlock->{$addr}->{regname};
-        #my $spaces = 41 - length($name);
-        #$fh->print("#define ${name}(base) " . ' ' x $spaces . " ((base) + ${name}_OFFS)\n");
-        #$fh->printf("#define %-s(base) %20s ((base) + %s_OFFS)\n", $rBlock->{$addr}->{regname}, ' ', $rBlock->{$addr}->{regname});
     }
     $fh->write("\n#ifndef LANGUAGE_ASSEMBLY\n");
     $fh->write("\n/* C structure bitfields */\n");
@@ -665,16 +664,26 @@ sub mix_rep_header_print($$)
             my $slice = $rBlock->{$addr}->{fields}->[$i];
             if ($slice->{pos} > $high) {
                 my $width = $slice->{pos} - $high;
-                push(@slicearr, sprintf("%5s uint32_t %-44s : %2d;   /* reserved */\n", ' ', ' ', $width));
+                push(@slicearr, sprintf("%5s uint32_t %-28s : %2d;   /* reserved */\n", ' ', ' ', $width));
                 $high += $width;
             }
-            push(@slicearr, sprintf("%5s uint32_t %-44s : %2d;   /**< %s (#)*/\n", ' ', $slice->{name}, $slice->{size}, $slice->{comment} ? $slice->{comment} :''));
+            # prune comment
+            my $tmp_comment = "";
+            if ($slice->{comment}) {
+                $tmp_comment = join(" \ ", split ("\n", $slice->{comment}));
+                if (length $tmp_comment  > 50) {
+                    $tmp_comment = substr($tmp_comment,0,50) . " [...]"
+                } else {
+                    $tmp_comment = substr($tmp_comment,0,50);
+                };
+            };
+            push(@slicearr, sprintf("%5s uint32_t %-28s : %2d;   /**< %s (#)*/\n", ' ', $slice->{name}, $slice->{size}, $tmp_comment));
             $high += $slice->{size};
         }
         # remaining bits
         if ($high < 32) {
             my $width = 32 - $high;
-            push(@slicearr, sprintf("%5s uint32_t %-44s : %2d;   /* reserved */\n", ' ', ' ', $width));
+            push(@slicearr, sprintf("%5s uint32_t %-28s : %2d;   /* reserved */\n", ' ', ' ', $width));
         }
         if (scalar @slicearr>1) {
             ### for little endian
@@ -1048,7 +1057,8 @@ sub mix_rep_perl($) {
             $o_new_space->add_domain($o_new_domain, $base_address, $o_addrmap->{name});
             
             foreach my $o_reg (@{$o_domain->regs}) {
-                my $reg_name = _clone_name($eh->get("report.reg_naming"), 99, $o_reg->id, $o_domain->name, $o_reg->name);
+                my $block_name = $o_reg->fields->[0]->{"field"}->attribs->{"block"}; # take block from first field
+                my $reg_name = _clone_name($eh->get("report.reg_naming"), 99, $o_reg->id, $o_domain->name, $o_reg->name, "", $block_name);
                 my $reg_offset = $o_domain->get_reg_address($o_reg);
                 my %hrattribs;
                 # copy some selected attributes
