@@ -15,9 +15,9 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.89 $                                         |
+# | Revision:   $Revision: 1.90 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2009/12/02 14:24:53 $                              |
+# | Date:       $Date: 2009/12/03 11:46:57 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.90  2009/12/03 11:46:57  lutscher
+# | small fix
+# |
 # | Revision 1.89  2009/12/02 14:24:53  lutscher
 # | added some reporting features
 # |
@@ -251,9 +254,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.89 2009/12/02 14:24:53 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.90 2009/12/03 11:46:57 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.89 $';  
+my $thisrevision    =      '$Revision: 1.90 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
@@ -1512,7 +1515,6 @@ sub init ($) {
     #
     $this->{'cfg'}{'top_level'} = 
       {
-        'file' => "",       # file-name
 		'xls' => 'top',     # Include sheets
 		'xxls' => '',		# Exclude sheets
 		'req' => 'optional',

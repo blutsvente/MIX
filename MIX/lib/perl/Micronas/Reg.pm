@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.93 2009/12/02 14:28:51 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.94 2009/12/03 11:46:57 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
@@ -29,6 +29,9 @@
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.94  2009/12/03 11:46:57  lutscher
+#  small fix
+#
 #  Revision 1.93  2009/12/02 14:28:51  lutscher
 #  added try_addrmap_name(), cleaned up view generation dispatcher table
 #
@@ -275,7 +278,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.93 $ ';  #'
+our($VERSION) = '$Revision: 1.94 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -952,7 +955,7 @@ sub _map_top_level_rm {
 
     _info("parsing top-level register-master");
     # get number of ::addr columns
-    my $n_addrmaps = $eh->get( 'top_level._mult_.::addr' ) || _fatal("internal error (bad!), ::addr column(s) required in top-level register-master");
+    # my $n_addrmaps = $eh->get( 'top_level._mult_.::addr' ) || _fatal("internal error (bad!), ::addr column(s) required in top-level register-master");
     
     # device name
     my $device = $eh->get('reg_shell.device');
