@@ -1,0 +1,42 @@
+#!/bin/sh
+
+#
+# UNIX wrapper for mix_1.pl ...
+#
+# function fix_perl_path {
+fix_perl_path () {
+
+	thisp=`which perl`
+	case "$thisp" in
+	msd*)
+		module unload perl
+		module load perl
+		;;
+	esac
+
+}
+
+#
+# Load a perl module .. (unless done already)
+#   -> see in LOADEDMODULES
+
+if [ -r /tools/Modules/init/sh ]; then
+	. /tools/Modules/init/sh
+	case "$LOADEDMODULES" in
+	*perl* )
+	;;
+	*)
+		module load perl
+	;;
+	esac
+fi
+
+#
+# Make sure we do NOT use MSD perl!
+#
+fix_perl_path
+
+# NEW: use mix_1.pl as new frontend
+perl -x -S mix_1.pl ${1+"$@"}
+
+#!End
