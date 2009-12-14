@@ -9,12 +9,12 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.73 $                                               |
+# | Revision:   $Revision: 1.74 $                                               |
 # | Author:     $Author: lutscher $                                                 |
-# | Date:       $Date: 2009/12/14 12:22:48 $                                                |
+# | Date:       $Date: 2009/12/14 12:43:43 $                                                |
 # |                                                                       |                            |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.73 2009/12/14 12:22:48 lutscher Exp $|
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.74 2009/12/14 12:43:43 lutscher Exp $|
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -24,6 +24,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.74  2009/12/14 12:43:43  lutscher
+# | changed mix_rep_header_print to consider register-width
+# |
 # | Revision 1.73  2009/12/14 12:22:48  lutscher
 # | added old c-macro
 # |
@@ -225,11 +228,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.73 2009/12/14 12:22:48 lutscher Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.74 2009/12/14 12:43:43 lutscher Exp $';
 # ' # this seems to fix a bug in the highlighting algorithm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seems to fix a bug in the highlighting algorithm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.73 $';
+my $thisrevision   =      '$Revision: 1.74 $';
 # ' # this seems to fix a bug in the highlighting algorithm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -281,23 +284,23 @@ my $logger = get_logger( 'MIX::MixReport' );
 # Input: 1. device identifier (can be whatever)
 #------------------------------------------------------------------------------
 
-sub new {
-	my $this = shift;
-	my %params = @_;
-
-	# data member default values
-	my $ref_member  = {
-					   # device => "<no device specified>",
-					   # domains => [],
-					   # global => \%hglobal  # reference to class data
-					  };
-	# init data members w/ parameters from constructor call
-	foreach (keys %params) {
-		$ref_member->{$_} = $params{$_};
-	};
-
-	bless $ref_member, $this;
-};
+# sub new {
+# 	my $this = shift;
+# 	my %params = @_;
+# 
+# 	# data member default values
+# 	my $ref_member  = {
+# 					   # device => "<no device specified>",
+# 					   # domains => [],
+# 					   # global => \%hglobal  # reference to class data
+# 					  };
+# 	# init data members w/ parameters from constructor call
+# 	foreach (keys %params) {
+# 		$ref_member->{$_} = $params{$_};
+# 	};
+# 
+# 	bless $ref_member, $this;
+# };
 
 #
 # Do the reporting if requested ...
@@ -375,6 +378,7 @@ sub mix_rep_header($)
                 my $block_name = $o_reg->fields->[0]->{"field"}->attribs->{"block"}; # take block from first field
                 $theBlock{$address}->{regname} = _clone_name($eh->get('report.reg_naming'),99,$o_reg->id,$o_domain->name, $o_reg->name, "", $block_name);
                 $theBlock{$address}->{init}    = $init;
+                $theBlock{$address}->{size}    = $o_reg->attribs->{'size'};
                 if ($eh->get('report.cheader.debug')) {
                     print("~~~~~ Register: " . $o_reg->name() . "     $theBlock{$address}->{regname}\n");
                 }
@@ -655,10 +659,11 @@ sub mix_rep_header_print($$)
     $fh->write("\n#ifndef LANGUAGE_ASSEMBLY\n");
     $fh->write("\n/* C structure bitfields */\n");
     foreach my $addr (sort keys %{$rBlock}) {
+        my $reg_width = $rBlock->{$addr}->{size};
         $fh->write("\n");
         $fh->write("typedef union _" . $rBlock->{$addr}->{regname} . "_t\n");
         $fh->write("{\n");
-        $fh->write("   uint32_t Reg;\n");
+        $fh->write("   uint${reg_width}_t Reg;\n");
         $fh->write("   struct\n");
         $fh->write("   {\n");
         #### prepapare bitfields (extended by empty ("reserved") fields
@@ -668,7 +673,7 @@ sub mix_rep_header_print($$)
             my $slice = $rBlock->{$addr}->{fields}->[$i];
             if ($slice->{pos} > $high) {
                 my $width = $slice->{pos} - $high;
-                push(@slicearr, sprintf("%5s uint32_t %-28s : %2d;   /* reserved */\n", ' ', ' ', $width));
+                push(@slicearr, sprintf("%5s uint${reg_width}_t %-28s : %2d;   /* reserved */\n", ' ', ' ', $width));
                 $high += $width;
             }
             # prune comment
@@ -681,13 +686,13 @@ sub mix_rep_header_print($$)
                     $tmp_comment = substr($tmp_comment,0,50);
                 };
             };
-            push(@slicearr, sprintf("%5s uint32_t %-28s : %2d;   /**< %s (#)*/\n", ' ', $slice->{name}, $slice->{size}, $tmp_comment));
+            push(@slicearr, sprintf("%5s uint${reg_width}_t %-28s : %2d;   /**< %s (#)*/\n", ' ', $slice->{name}, $slice->{size}, $tmp_comment));
             $high += $slice->{size};
         }
         # remaining bits
         if ($high < 32) {
             my $width = 32 - $high;
-            push(@slicearr, sprintf("%5s uint32_t %-28s : %2d;   /* reserved */\n", ' ', ' ', $width));
+            push(@slicearr, sprintf("%5s uint${reg_width}_t %-28s : %2d;   /* reserved */\n", ' ', ' ', $width));
         }
         if (scalar @slicearr>1) {
             ### for little endian
