@@ -15,13 +15,13 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.70 $                                               |
+# | Revision:   $Revision: 1.71 $                                               |
 # | Author:     $Author: lutscher $                                                 |
-# | Date:       $Date: 2009/12/03 13:16:19 $                                                |
+# | Date:       $Date: 2009/12/14 08:49:09 $                                                |
 # |                                                                       |
 # | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.70 2009/12/03 13:16:19 lutscher Exp $  |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.71 2009/12/14 08:49:09 lutscher Exp $  |
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +31,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.71  2009/12/14 08:49:09  lutscher
+# | add nformat
+# |
 # | Revision 1.70  2009/12/03 13:16:19  lutscher
 # | prune comments in C-Header; improve reg_naming, can also use %B now
 # |
@@ -223,11 +226,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.70 2009/12/03 13:16:19 lutscher Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.71 2009/12/14 08:49:09 lutscher Exp $';
 # ' # this seems to fix a bug in the highlighting algorithm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seems to fix a bug in the highlighting algorithm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.70 $';
+my $thisrevision   =      '$Revision: 1.71 $';
 # ' # this seems to fix a bug in the highlighting algorithm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -256,9 +259,9 @@ use Micronas::MixUtils::RegUtils;
 use Micronas::MixUtils::Mif;
 use File::Basename;
 
-# constants used for the perl dump
+# attributes of the RegReg RegField objects that will be dumped in view "perl"
 use constant PERL_REG_ATTRIBS => qw(size);
-use constant PERL_FIELD_ATTRIBS => qw(size lsb init dir spec clock sync);
+use constant PERL_FIELD_ATTRIBS => qw(size lsb init dir spec clock sync nformat);
 
 #
 # Prototypes
@@ -431,6 +434,7 @@ sub mix_rep_header($)
 # Return:
 #          $blocks       Reference to a hash
 #####################################################################
+# note: only works for old format of the top-level Register-Master, no longer used!!!
 
 sub mix_rep_header_read_top_address_map()
 {
@@ -1103,8 +1107,8 @@ sub mix_rep_perl($) {
         $dump->Varname("o_space");
         $dump->Indent(1)->Purity(1)->Sortkeys(1);
         print $fh $dump->Dump;
-        # add an eval statement to fill the variable
-        print $fh "eval(\$o_space1);\n";
+        # add an eval statement to fill the variable (necessary ?)
+        # print $fh "eval(\$o_space1);\n";
         print $fh "};\n1;\n";
         # close the perl file
         $fh->close();
