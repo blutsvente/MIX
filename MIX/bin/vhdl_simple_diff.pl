@@ -2,6 +2,7 @@
 
 #
 # Generate differences of two VHDL files
+#       Copyright (C) 2005 Trident Microsystems (Europe) GmbH, Germany
 #
 # Strip away comments
 # replace all \s+ by a single space

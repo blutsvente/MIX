@@ -6,9 +6,10 @@ if 0; # dynamic perl startup; suppress preceding line in perl
 
 #-----------------------------------------------------------------------------
 #-- Name     : mkswstub
-#-- $Revision: 1.1 $
+#-- $Revision: 1.2 $
 #-- $Date    : 2006/03/09 13:52:02 $
 #-- $Author  : mathias $
+#       Copyright (C) 2005 Trident Microsystems (Europe) GmbH, Germany
 #-----------------------------------------------------------------------------
 
 use strict;
