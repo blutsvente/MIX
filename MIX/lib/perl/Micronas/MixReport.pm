@@ -9,12 +9,12 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.72 $                                               |
+# | Revision:   $Revision: 1.73 $                                               |
 # | Author:     $Author: lutscher $                                                 |
-# | Date:       $Date: 2009/12/14 10:58:17 $                                                |
+# | Date:       $Date: 2009/12/14 12:22:48 $                                                |
 # |                                                                       |                            |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.72 2009/12/14 10:58:17 lutscher Exp $|
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.73 2009/12/14 12:22:48 lutscher Exp $|
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -24,6 +24,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.73  2009/12/14 12:22:48  lutscher
+# | added old c-macro
+# |
 # | Revision 1.72  2009/12/14 10:58:17  lutscher
 # | changed copyright
 # |
@@ -222,11 +225,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.72 2009/12/14 10:58:17 lutscher Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.73 2009/12/14 12:22:48 lutscher Exp $';
 # ' # this seems to fix a bug in the highlighting algorithm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seems to fix a bug in the highlighting algorithm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.72 $';
+my $thisrevision   =      '$Revision: 1.73 $';
 # ' # this seems to fix a bug in the highlighting algorithm of Emacs' cperl mode
 
 # unique number for Marker in the mif file
@@ -647,6 +650,7 @@ sub mix_rep_header_print($$)
         # $rBlock->{$addr}->{regname} = mix_rep_header_check_name(uc($domain_name) . '_' . $rBlock->{$addr}->{regname}, $rTypes);
         # relative address of the register in this domain
         $fh->printf("#define %-48s %s\n", $rBlock->{$addr}->{regname} . '_OFFS', (split(/_/, $addr))[0]);
+        $fh->printf("#define %-48s %s\n", $rBlock->{$addr}->{regname} . '(base)', '(base + '.$rBlock->{$addr}->{regname} . '_OFFS)');
     }
     $fh->write("\n#ifndef LANGUAGE_ASSEMBLY\n");
     $fh->write("\n/* C structure bitfields */\n");
