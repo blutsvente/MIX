@@ -2,25 +2,18 @@
 #
 # +-----------------------------------------------------------------------+
 # |                                                                       |
-# |   Copyright Micronas GmbH, Inc. 2005.                                 |
-# |     All Rights Reserved.                                              |
-# |                                                                       |
-# |                                                                       |
-# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH          |
-# | The copyright notice above does not evidence any actual or intended   |
-# | publication of such source code.                                      |
+# |   Copyright 2005  Trident Microsystems (Europe) GmbH, Germany
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Entity.pm,v $                                      |
-# | Revision:   $Revision: 1.5 $                                          |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2008/04/01 12:48:33 $                              |
+# | Revision:   $Revision: 1.6 $                                          |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2009/12/14 10:58:18 $                              |
 # | Description: Contains data structure and methods/functions for Entities |
 # |                                                                       |
-# | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 #
@@ -28,6 +21,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Entity.pm,v $
+# | Revision 1.6  2009/12/14 10:58:18  lutscher
+# | changed copyright
+# |
 # | Revision 1.5  2008/04/01 12:48:33  wig
 # | Added: optimizeportassign feature to avoid extra assign commands
 # | added protoype for collapse_conn function allowing to merge signals
@@ -71,9 +67,9 @@ use FileHandle;
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Entity.pm,v 1.5 2008/04/01 12:48:33 wig Exp $';#'
+my $thisid          =      '$Id: Entity.pm,v 1.6 2009/12/14 10:58:18 lutscher Exp $';#'
 my $thisrcsfile	    =      '$RCSfile: Entity.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.5 $'; #'
+my $thisrevision    =      '$Revision: 1.6 $'; #'
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

@@ -2,24 +2,17 @@
 #
 # +-----------------------------------------------------------------------+
 # |                                                                       |
-# |   Copyright Micronas GmbH, Inc. 2002/2005.                            |
-# |     All Rights Reserved.                                              |
-# |                                                                       |
-# |                                                                       |
-# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH          |
-# | The copyright notice above does not evidence any actual or intended   |
-# | publication of such source code.                                      |
+# |   Copyright 2002/2005 Trident Microsystems (Europe) GmbH, Germany
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: ImportVerilogInclude.pm,v $                     |
-# | Revision:   $Revision: 1.4 $                                          |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2006/11/22 16:10:12 $                              |
+# | Revision:   $Revision: 1.5 $                                          |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2009/12/14 10:58:19 $                              |
 # |                                                                       | 
-# | Copyright Micronas GmbH, 2005/2006                                    |
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 #
@@ -27,6 +20,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # # $Log: ImportVerilogInclude.pm,v $
+# # Revision 1.5  2009/12/14 10:58:19  lutscher
+# # changed copyright
+# #
 # # Revision 1.4  2006/11/22 16:10:12  wig
 # #  	ImportVerilogInclude.pm : tiny change to log message
 # #
@@ -65,9 +61,9 @@ use Log::Log4perl qw(get_logger);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: ImportVerilogInclude.pm,v 1.4 2006/11/22 16:10:12 wig Exp $';#'  
+my $thisid          =      '$Id: ImportVerilogInclude.pm,v 1.5 2009/12/14 10:58:19 lutscher Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: ImportVerilogInclude.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.4 $'; #'  
+my $thisrevision    =      '$Revision: 1.5 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

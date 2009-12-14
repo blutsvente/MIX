@@ -2,24 +2,17 @@
 #
 # +-----------------------------------------------------------------------+
 # |                                                                       |
-# |   Copyright Micronas GmbH, Inc. 2002.                                 |
-# |     All Rights Reserved.                                              |
-# |                                                                       |
-# |                                                                       |
-# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH          |
-# | The copyright notice above does not evidence any actual or intended   |
-# | publication of such source code.                                      |
+# |   Copyright 2002 Trident Microsystems (Europe) GmbH, Germany
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: IO.pm,v $                                       |
-# | Revision:   $Revision: 1.63 $                                          |
+# | Revision:   $Revision: 1.64 $                                          |
 # | Author:     $Author: lutscher $                                         |
-# | Date:       $Date: 2009/11/19 12:26:29 $                              |
+# | Date:       $Date: 2009/12/14 10:58:18 $                              |
 # |
-# | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -28,6 +21,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: IO.pm,v $
+# | Revision 1.64  2009/12/14 10:58:18  lutscher
+# | changed copyright
+# |
 # | Revision 1.63  2009/11/19 12:26:29  lutscher
 # | added top-level sheet input and vi2c-xml view
 # |
@@ -187,11 +183,11 @@ sub open_csv		($$$$);
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: IO.pm,v 1.63 2009/11/19 12:26:29 lutscher Exp $';#'
+my $thisid          =      '$Id: IO.pm,v 1.64 2009/12/14 10:58:18 lutscher Exp $';#'
 my $thisrcsfile	    =      '$RCSfile: IO.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.63 $'; #'
+my $thisrevision    =      '$Revision: 1.64 $'; #'
 
-# Revision:   $Revision: 1.63 $
+# Revision:   $Revision: 1.64 $
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;

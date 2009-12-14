@@ -1,11 +1,10 @@
 ###############################################################################
-#  RCSId: $Id: Reg.pm,v 1.95 2009/12/03 13:15:51 lutscher Exp $
+#  RCSId: $Id: Reg.pm,v 1.96 2009/12/14 10:58:18 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  <none>
 #
 #  Author(s)     :  Thorsten Lutscher                                      
-#  Email         :  thorsten.lutscher@micronas.com                          
 #
 #  Project       :  MIX                                                 
 #
@@ -19,16 +18,16 @@
 #                               Copyright
 ###############################################################################
 #
-#       Copyright (C) 2005-2008 Micronas GmbH, Munich, Germany 
-#
-#     All rights reserved. Reproduction in whole or part is prohibited
-#          without the written permission of the copyright owner.
+#       Copyright (C) 2005 Trident Microsystems (Europe) GmbH, Germany 
 #
 ###############################################################################
 #                                History
 ###############################################################################
 #
 #  $Log: Reg.pm,v $
+#  Revision 1.96  2009/12/14 10:58:18  lutscher
+#  changed copyright
+#
 #  Revision 1.95  2009/12/03 13:15:51  lutscher
 #  improved error-handling
 #
@@ -269,7 +268,7 @@ sub parse_register_master {
 # Class members
 #------------------------------------------------------------------------------
 # this variable is recognized by MIX and will be displayed
-our($VERSION) = '$Revision: 1.95 $ ';  #'
+our($VERSION) = '$Revision: 1.96 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
@@ -532,7 +531,7 @@ sub add_domain {
     } else {
        _error("add_domain(): unknown address map \'$addrmap\'");
     };
-    if (!grep ($_ eq $o_domain, @{$this->domains})) {  # add only if not already there
+    if (!grep ($_ == $o_domain, @{$this->domains})) {  # add only if not already there
         $this->domains($o_domain);
     };
 };

@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewVI2C.pm,v 1.3 2009/12/02 14:25:31 lutscher Exp $
+#  RCSId: $Id: RegViewVI2C.pm,v 1.4 2009/12/14 10:58:18 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Mix.pm, Reg.pm
@@ -19,14 +19,14 @@
 #
 #       Copyright (C) 2009 Trident Microsystems (Europe) GmbH, Munich, Germany 
 #
-#     All rights reserved. Reproduction in whole or part is prohibited
-#          without the written permission of the copyright owner.
-#
 ###############################################################################
 #                                History
 ###############################################################################
 #
 #  $Log: RegViewVI2C.pm,v $
+#  Revision 1.4  2009/12/14 10:58:18  lutscher
+#  changed copyright
+#
 #  Revision 1.3  2009/12/02 14:25:31  lutscher
 #  moved a function to Reg.pm
 #

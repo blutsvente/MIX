@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewIHB.pm,v 1.5 2009/08/12 07:40:13 lutscher Exp $
+#  RCSId: $Id: RegViewIHB.pm,v 1.6 2009/12/14 10:58:18 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.5 $                                  
+#  Revision      : $Revision: 1.6 $                                  
 #
 #  Related Files :  Reg.pm, RegOOUtils.pm
 #
@@ -28,14 +28,14 @@
 #
 #       Copyright (C) 2009 Trident Microsystems (Europe) , Munich, Germany 
 #
-#     All rights reserved. Reproduction in whole or part is prohibited
-#          without the written permission of the copyright owner.
-#
 ###############################################################################
 #                                History
 ###############################################################################
 #
 #  $Log: RegViewIHB.pm,v $
+#  Revision 1.6  2009/12/14 10:58:18  lutscher
+#  changed copyright
+#
 #  Revision 1.5  2009/08/12 07:40:13  lutscher
 #  corrected field_spec_values
 #
@@ -270,7 +270,7 @@ sub _ihb_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViewIHB"))) {
-        $eh->mix_add_module_info("RegViewIHB", '$Revision: 1.5 $ ', "Utility functions to create IHB HDL register space view from Reg class object");
+        $eh->mix_add_module_info("RegViewIHB", '$Revision: 1.6 $ ', "Utility functions to create IHB HDL register space view from Reg class object");
     };
 };
 

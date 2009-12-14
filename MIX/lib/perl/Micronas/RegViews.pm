@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViews.pm,v 1.99 2009/12/02 14:29:26 lutscher Exp $
+#  RCSId: $Id: RegViews.pm,v 1.100 2009/12/14 10:58:18 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.99 $                                  
+#  Revision      : $Revision: 1.100 $                                  
 #
 #  Related Files :  Reg.pm, RegOOUtils.pm
 #
@@ -40,16 +40,16 @@
 #                               Copyright
 ###############################################################################
 #
-#       Copyright (C) 2005 Micronas GmbH, Munich, Germany 
-#
-#     All rights reserved. Reproduction in whole or part is prohibited
-#          without the written permission of the copyright owner.
+#       Copyright (C) 2005 Trident Microsystems (Europe) GmbH, Germany 
 #
 ###############################################################################
 #                                History
 ###############################################################################
 #
 #  $Log: RegViews.pm,v $
+#  Revision 1.100  2009/12/14 10:58:18  lutscher
+#  changed copyright
+#
 #  Revision 1.99  2009/12/02 14:29:26  lutscher
 #  repaired cheader and perl views
 #
@@ -404,7 +404,7 @@ sub _vgch_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViews", '$Revision: 1.99 $ ', "Utility functions to create different register space views from Reg class object");
+        $eh->mix_add_module_info("RegViews", '$Revision: 1.100 $ ', "Utility functions to create different register space views from Reg class object");
     };
 };
 
@@ -740,7 +740,9 @@ endproperty
 		_tie_input_to_constant("${su_inst}/clk_s", 0, 0, 0);
 		_tie_input_to_constant("${su_inst}/rst_s", 0, 0, 0);
         push @lgen_filter, $su_inst;
-        
+        # new - store hierarchical path to synchronizer (used for forces in simulation)
+        $this->global->{'hbackdoorpaths'}->{$shdw_sig} = join(".", $o_domain->{'top_inst'}, $this->global->{'hclocks'}->{$clock}->{'cfg_inst'}, $su_inst);
+
 		# add synchronizer module for update enable signal
 		my($sa_inst) = $this->_add_instance_unique("sync_generic", $cfg_i, "Synchronizer for update-enable signal ${shdw_sig}_en");
         $this->global->{'hclocks'}->{$clock}->{'sa_inst'} = $sa_inst;
@@ -2370,10 +2372,21 @@ sub _vgch_rs_write_backdoor_paths {
 	print $dest "\n\n";
 	print $dest "// backdoor-paths for writable registers for domain ".$this->_gen_dname($o_domain)."\n";
 	@ltemp=();
-	foreach $key (sort {$a <=> $b} keys %{$this->global->{'hbackdoorpaths'}}) {
+    
+    # dump numeric keys first
+	foreach $key (sort {$a <=> $b} grep ($_ =~ m/^\d+/, keys %{$this->global->{'hbackdoorpaths'}})) {
 		push @ltemp, "'h"._val2hex($addr_msb+1, $key)." ".$this->global->{'hbackdoorpaths'}->{$key};
 	};
 	_pad_column(0, $this->global->{'indent'}, 0, \@ltemp);
+	print $dest join("\n", @ltemp);
+    
+    # dump non-numeric keys
+    print $dest "\n\n// backdoor-paths to update-signal synchronizers\n";
+    @ltemp = ();
+    foreach $key (sort {$a cmp $b} grep ($_ =~ m/^\D/, keys %{$this->global->{'hbackdoorpaths'}})) {
+		push @ltemp, $key." \t".$this->global->{'hbackdoorpaths'}->{$key};
+	};
+    _pad_column(0, $this->global->{'indent'}, 0, \@ltemp);
 	print $dest join("\n", @ltemp);
 	print $dest "\n// end\n";
 	$dest->close();

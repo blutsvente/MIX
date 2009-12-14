@@ -2,24 +2,17 @@
 #
 # +-----------------------------------------------------------------------+
 # |                                                                       |
-# |   Copyright Micronas GmbH, Inc. 2002/2005.                            |
-# |     All Rights Reserved.                                              |
-# |                                                                       |
-# |                                                                       |
-# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH          |
-# | The copyright notice above does not evidence any actual or intended   |
-# | publication of such source code.                                      |
+# |   Copyright 2002/2005 Trident Microsystems (Europe) GmbH, Germany
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: InComments.pm,v $                                      |
-# | Revision:   $Revision: 1.4 $                                          |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2005/11/08 08:06:55 $                              |
+# | Revision:   $Revision: 1.5 $                                          |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2009/12/14 10:58:19 $                              |
 # |                                                                       | 
-# | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 #
@@ -27,6 +20,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: InComments.pm,v $
+# | Revision 1.5  2009/12/14 10:58:19  lutscher
+# | changed copyright
+# |
 # | Revision 1.4  2005/11/08 08:06:55  wig
 # | Added some documentation and example (register shell)
 # |
@@ -63,9 +59,9 @@ use FileHandle;
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: InComments.pm,v 1.4 2005/11/08 08:06:55 wig Exp $';#'  
+my $thisid          =      '$Id: InComments.pm,v 1.5 2009/12/14 10:58:19 lutscher Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: InComments.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.4 $'; #'  
+my $thisrevision    =      '$Revision: 1.5 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

@@ -2,22 +2,16 @@
 #
 # +-----------------------------------------------------------------------+
 # |                                                                       |
-# |   Copyright Micronas GmbH, 2002/2005.                                 |
-# |     All Rights Reserved.                                              |
-# |                                                                       |
-# |                                                                       |
-# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH          |
-# | The copyright notice above does not evidence any actual or intended   |
-# | publication of such source code.                                      |
+# |   Copyright 2002/2005 Trident Microsystems (Europe) GmbH, Germany
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Globals.pm,v $                                  |
-# | Revision:   $Revision: 1.90 $                                         |
+# | Revision:   $Revision: 1.91 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2009/12/03 11:46:57 $                              |
+# | Date:       $Date: 2009/12/14 10:58:18 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +20,9 @@
 # |
 # | Changes:
 # | $Log: Globals.pm,v $
+# | Revision 1.91  2009/12/14 10:58:18  lutscher
+# | changed copyright
+# |
 # | Revision 1.90  2009/12/03 11:46:57  lutscher
 # | small fix
 # |
@@ -254,9 +251,9 @@ my $logger = get_logger('MIX::MixUtils::Globals');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Globals.pm,v 1.90 2009/12/03 11:46:57 lutscher Exp $'; 
+my $thisid          =      '$Id: Globals.pm,v 1.91 2009/12/14 10:58:18 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Globals.pm,v $';
-my $thisrevision    =      '$Revision: 1.90 $';  
+my $thisrevision    =      '$Revision: 1.91 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

@@ -2,26 +2,19 @@
 #
 # +-----------------------------------------------------------------------+
 # |
-# |   Copyright Micronas GmbH, Inc. 2002. 
-# |     All Rights Reserved.
-# | 
-# |  
-# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH
-# | The copyright notice above does not evidence any actual or intended
-# | publication of such source code.
+# |   Copyright 2002 Trident Microsystems (Europe) GmbH, Germany
 # |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Checker
 # | Modules:    $RCSfile: MixChecker.pm,v $
-# | Revision:   $Revision: 1.18 $
-# | Author:     $Author: wig $
-# | Date:       $Date: 2007/03/06 12:44:33 $
+# | Revision:   $Revision: 1.19 $
+# | Author:     $Author: lutscher $
+# | Date:       $Date: 2009/12/14 10:58:17 $
 # |
-# | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.18 2007/03/06 12:44:33 wig Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixChecker.pm,v 1.19 2009/12/14 10:58:17 lutscher Exp $
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the checking capabilites for the MIX project.
@@ -33,6 +26,9 @@
 # |
 # | Changes:
 # | $Log: MixChecker.pm,v $
+# | Revision 1.19  2009/12/14 10:58:17  lutscher
+# | changed copyright
+# |
 # | Revision 1.18  2007/03/06 12:44:33  wig
 # | Adding IF/ELSIF/ELSE for generators and testcase.
 # |
@@ -86,9 +82,9 @@ my %mix_check_list = ();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixChecker.pm,v 1.18 2007/03/06 12:44:33 wig Exp $';
+my $thisid		=	'$Id: MixChecker.pm,v 1.19 2009/12/14 10:58:17 lutscher Exp $';
 my $thisrcsfile	=	'$RCSfile: MixChecker.pm,v $';
-my $thisrevision   =      '$Revision: 1.18 $';
+my $thisrevision   =      '$Revision: 1.19 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

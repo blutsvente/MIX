@@ -1,11 +1,10 @@
 ###############################################################################
-#  RCSId: $Id: RegViewE.pm,v 1.37 2009/06/15 11:57:26 lutscher Exp $
+#  RCSId: $Id: RegViewE.pm,v 1.38 2009/12/14 10:58:18 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
 #
-#  Author(s)     :  Emanuel Marconetti                                      
-#  Email         :  emanuel.marconetti@micronas.com                          
+#  Author(s)     :  Emanuel Marconetti                                                             
 #
 #  Project       :  MIX                                                 
 #
@@ -19,16 +18,16 @@
 #                               Copyright
 ###############################################################################
 #
-#       Copyright (C) 2005 Micronas GmbH, Munich, Germany 
-#
-#     All rights reserved. Reproduction in whole or part is prohibited
-#          without the written permission of the copyright owner.
+#       Copyright (C) 2005 Trident Microsystems (Europe) GmbH, Germany
 #
 ###############################################################################
 #                                History
 ###############################################################################
 #
 #  $Log: RegViewE.pm,v $
+#  Revision 1.38  2009/12/14 10:58:18  lutscher
+#  changed copyright
+#
 #  Revision 1.37  2009/06/15 11:57:26  lutscher
 #  added addrmaps member to Reg and RegDomain
 #

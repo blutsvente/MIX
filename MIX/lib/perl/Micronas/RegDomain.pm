@@ -1,11 +1,10 @@
 ###############################################################################
-#  RCSId: $Id: RegDomain.pm,v 1.10 2009/12/02 14:29:08 lutscher Exp $
+#  RCSId: $Id: RegDomain.pm,v 1.11 2009/12/14 10:58:18 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
 #
-#  Author(s)     :  Thorsten Lutscher                                      
-#  Email         :  thorsten.lutscher@micronas.com                          
+#  Author(s)     :  Thorsten Lutscher                                                        
 #
 #  Project       :  MIX                                                 
 #
@@ -19,16 +18,16 @@
 #                               Copyright
 ###############################################################################
 #
-#       Copyright (C) 2005 Micronas GmbH, Munich, Germany 
-#
-#     All rights reserved. Reproduction in whole or part is prohibited
-#          without the written permission of the copyright owner.
+#       Copyright (C) 2005 Trident Microsystems (Europe) GmbH, Germany
 #
 ###############################################################################
 #                                History
 ###############################################################################
 #
 #  $Log: RegDomain.pm,v $
+#  Revision 1.11  2009/12/14 10:58:18  lutscher
+#  changed copyright
+#
 #  Revision 1.10  2009/12/02 14:29:08  lutscher
 #  added id()
 #

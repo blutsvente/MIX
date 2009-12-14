@@ -2,24 +2,17 @@
 #
 # +-----------------------------------------------------------------------+
 # |                                                                       |
-# |   Copyright Micronas GmbH, Inc. 2002/2005.                            |
-# |     All Rights Reserved.                                              |
-# |                                                                       |
-# |                                                                       |
-# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH          |
-# | The copyright notice above does not evidence any actual or intended   |
-# | publication of such source code.                                      |
+# |   Copyright 2002/2005 Trident Microsystems (Europe) GmbH, Germany
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Mif.pm,v $                                      |
-# | Revision:   $Revision: 1.29 $                                          |
-# | Author:     $Author: mathias $                                            |
-# | Date:       $Date: 2007/06/26 13:56:11 $                              |
+# | Revision:   $Revision: 1.30 $                                          |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2009/12/14 10:58:19 $                              |
 # |                                                                       | 
-# | Copyright Micronas GmbH, 2005                                         |
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 #
@@ -27,6 +20,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: Mif.pm,v $
+# | Revision 1.30  2009/12/14 10:58:19  lutscher
+# | changed copyright
+# |
 # | Revision 1.29  2007/06/26 13:56:11  mathias
 # | write footnote when some bitfields have 'W1C', 'W0C' or 'WC' in the column '::spec'
 # |
@@ -150,9 +146,9 @@ use Micronas::MixUtils qw( mix_utils_diff mix_utils_clean_data $eh );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Mif.pm,v 1.29 2007/06/26 13:56:11 mathias Exp $';#'  
+my $thisid          =      '$Id: Mif.pm,v 1.30 2009/12/14 10:58:19 lutscher Exp $';#'  
 my $thisrcsfile	    =      '$RCSfile: Mif.pm,v $'; #'
-my $thisrevision    =      '$Revision: 1.29 $'; #'  
+my $thisrevision    =      '$Revision: 1.30 $'; #'  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

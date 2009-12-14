@@ -2,26 +2,19 @@
 #
 # +-----------------------------------------------------------------------+
 # | 
-# |   Copyright Micronas GmbH, Inc. 2002. 
-# |     All Rights Reserved. 
-# | 
-# | 
-# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH 
-# | The copyright notice above does not evidence any actual or intended
-# | publication of such source code.
+# |   Copyright 2002 Trident Microsystems (Europe) GmbH, Germany
 # | 
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / IOParser
 # | Modules:    $RCSfile: MixIOParser.pm,v $ 
-# | Revision:   $Revision: 1.22 $
+# | Revision:   $Revision: 1.23 $
 # | Author:     $Author: lutscher $
-# | Date:       $Date: 2008/11/11 10:17:31 $
+# | Date:       $Date: 2009/12/14 10:58:17 $
 # | 
-# | Copyright Micronas GmbH, 2003
 # | 
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.22 2008/11/11 10:17:31 lutscher Exp $
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixIOParser.pm,v 1.23 2009/12/14 10:58:17 lutscher Exp $
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -36,6 +29,9 @@
 # |
 # | Changes:
 # | $Log: MixIOParser.pm,v $
+# | Revision 1.23  2009/12/14 10:58:17  lutscher
+# | changed copyright
+# |
 # | Revision 1.22  2008/11/11 10:17:31  lutscher
 # | initial release
 # |
@@ -141,9 +137,9 @@ sub _mix_iop_init();
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixIOParser.pm,v 1.22 2008/11/11 10:17:31 lutscher Exp $';
+my $thisid		=	'$Id: MixIOParser.pm,v 1.23 2009/12/14 10:58:17 lutscher Exp $';
 my $thisrcsfile	=	'$RCSfile: MixIOParser.pm,v $';
-my $thisrevision   =      '$Revision: 1.22 $';
+my $thisrevision   =      '$Revision: 1.23 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

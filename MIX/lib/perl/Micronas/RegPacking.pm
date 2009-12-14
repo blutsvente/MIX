@@ -1,13 +1,12 @@
 ###############################################################################
-#  RCSId: $Id: RegPacking.pm,v 1.5 2009/06/15 11:57:25 lutscher Exp $
+#  RCSId: $Id: RegPacking.pm,v 1.6 2009/12/14 10:58:18 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.5 $                                  
+#  Revision      : $Revision: 1.6 $                                  
 #
 #  Related Files :  Reg.pm
 #
-#  Author(s)     :  Thorsten Lutscher                                      
-#  Email         :  thorsten.lutscher@micronas.com                          
+#  Author(s)     :  Thorsten Lutscher                                                     
 #
 #  Project       :  MIX                                                 
 #
@@ -19,16 +18,16 @@
 #                               Copyright
 ###############################################################################
 #
-#       Copyright (C) 2008 Micronas GmbH, Munich, Germany 
-#
-#     All rights reserved. Reproduction in whole or part is prohibited
-#          without the written permission of the copyright owner.
+#       Copyright (C) 2008 Trident Microsystems (Europe) GmbH, Germany
 #
 ###############################################################################
 #                                History
 ###############################################################################
 #
 #  $Log: RegPacking.pm,v $
+#  Revision 1.6  2009/12/14 10:58:18  lutscher
+#  changed copyright
+#
 #  Revision 1.5  2009/06/15 11:57:25  lutscher
 #  added addrmaps member to Reg and RegDomain
 #

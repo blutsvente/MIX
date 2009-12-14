@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegAddrNode.pm,v 1.2 2009/12/02 14:27:18 lutscher Exp $
+#  RCSId: $Id: RegAddrNode.pm,v 1.3 2009/12/14 10:58:18 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  RegAddrMap.pm, Reg.pm
@@ -20,14 +20,14 @@
 #
 #       Copyright (C) 2009 Trident Microsystems (Europe), Munich, Germany 
 #
-#     All rights reserved. Reproduction in whole or part is prohibited
-#          without the written permission of the copyright owner.
-#
 ###############################################################################
 #                                History
 ###############################################################################
 #
 #  $Log: RegAddrNode.pm,v $
+#  Revision 1.3  2009/12/14 10:58:18  lutscher
+#  changed copyright
+#
 #  Revision 1.2  2009/12/02 14:27:18  lutscher
 #  changed data member access method generation to use AUTOLOAD feature
 #
@@ -58,7 +58,7 @@ our $instances = 0;
 our $debug     = 0;
 
 # version of this package, extracted from RCS macros
-our($VERSION) = '$Revision: 1.2 $ ';  #'
+our($VERSION) = '$Revision: 1.3 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 

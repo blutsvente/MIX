@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegAddrMap.pm,v 1.4 2009/12/02 14:27:18 lutscher Exp $
+#  RCSId: $Id: RegAddrMap.pm,v 1.5 2009/12/14 10:58:18 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -20,14 +20,14 @@
 #
 #       Copyright (C) 2009 Trident Microsystems (Europe), Munich, Germany 
 #
-#     All rights reserved. Reproduction in whole or part is prohibited
-#          without the written permission of the copyright owner.
-#
 ###############################################################################
 #                                History
 ###############################################################################
 #
 #  $Log: RegAddrMap.pm,v $
+#  Revision 1.5  2009/12/14 10:58:18  lutscher
+#  changed copyright
+#
 #  Revision 1.4  2009/12/02 14:27:18  lutscher
 #  changed data member access method generation to use AUTOLOAD feature
 #
@@ -66,7 +66,7 @@ our $debug     = 0;
 use constant ADDRESSABLE_OBJECT_TYPES => qw(RegReg RegDomain);
 
 # version of this package, extracted from RCS macros
-our($VERSION) = '$Revision: 1.4 $ ';  #'
+our($VERSION) = '$Revision: 1.5 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 

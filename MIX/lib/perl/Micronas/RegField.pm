@@ -1,11 +1,10 @@
 ###############################################################################
-#  RCSId: $Id: RegField.pm,v 1.6 2009/11/19 12:26:23 lutscher Exp $
+#  RCSId: $Id: RegField.pm,v 1.7 2009/12/14 10:58:18 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  RegReg.pm
 #
 #  Author(s)     :  Thorsten Lutscher                                      
-#  Email         :  thorsten.lutscher@micronas.com                          
 #
 #  Project       :  MIX                                                 
 #
@@ -18,16 +17,16 @@
 #                               Copyright
 ###############################################################################
 #
-#       Copyright (C) 2005 Micronas GmbH, Munich, Germany 
-#
-#     All rights reserved. Reproduction in whole or part is prohibited
-#          without the written permission of the copyright owner.
+#       Copyright (C) 2005 Trident Microsystems (Europe) GmbH, Germany
 #
 ###############################################################################
 #                                History
 ###############################################################################
 #
 #  $Log: RegField.pm,v $
+#  Revision 1.7  2009/12/14 10:58:18  lutscher
+#  changed copyright
+#
 #  Revision 1.6  2009/11/19 12:26:23  lutscher
 #  added top-level sheet input and vi2c-xml view
 #

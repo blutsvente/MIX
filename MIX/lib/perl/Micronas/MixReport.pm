@@ -2,26 +2,19 @@
 #
 # +-----------------------------------------------------------------------+
 # |
-# |   Copyright Micronas GmbH, Inc. 2002/2005. 
-# |     All Rights Reserved.
-# | 
-# |  
-# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH
-# | The copyright notice above does not evidence any actual or intended
-# | publication of such source code.
+# |   Copyright 2002/2005 Trident Microsystems (Europe) GmbH, Germany
 # |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Report                                   |
 # | Modules:    $RCSfile: MixReport.pm,v $                                |
-# | Revision:   $Revision: 1.71 $                                               |
+# | Revision:   $Revision: 1.72 $                                               |
 # | Author:     $Author: lutscher $                                                 |
-# | Date:       $Date: 2009/12/14 08:49:09 $                                                |
+# | Date:       $Date: 2009/12/14 10:58:17 $                                                |
+# |                                                                       |                            |
 # |                                                                       |
-# | Copyright Micronas GmbH, 2005                                         |
-# |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.71 2009/12/14 08:49:09 lutscher Exp $  |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixReport.pm,v 1.72 2009/12/14 10:58:17 lutscher Exp $|
 # +-----------------------------------------------------------------------+
 #
 # Write reports with details about the hierachy and connectivity of the
@@ -31,6 +24,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixReport.pm,v $
+# | Revision 1.72  2009/12/14 10:58:17  lutscher
+# | changed copyright
+# |
 # | Revision 1.71  2009/12/14 08:49:09  lutscher
 # | add nformat
 # |
@@ -226,11 +222,11 @@ our $VERSION = '0.1';
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixReport.pm,v 1.71 2009/12/14 08:49:09 lutscher Exp $';
+my $thisid		=	'$Id: MixReport.pm,v 1.72 2009/12/14 10:58:17 lutscher Exp $';
 # ' # this seems to fix a bug in the highlighting algorithm of Emacs' cperl mode
 my $thisrcsfile	=	'$RCSfile: MixReport.pm,v $';
 # ' # this seems to fix a bug in the highlighting algorithm of Emacs' cperl mode
-my $thisrevision   =      '$Revision: 1.71 $';
+my $thisrevision   =      '$Revision: 1.72 $';
 # ' # this seems to fix a bug in the highlighting algorithm of Emacs' cperl mode
 
 # unique number for Marker in the mif file

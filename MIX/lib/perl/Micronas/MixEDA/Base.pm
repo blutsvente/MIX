@@ -2,22 +2,18 @@
 #
 # +-----------------------------------------------------------------------+
 # |                                                                       |
-# |   Copyright Micronas GmbH, 2002/2007.                                 |
-# |     All Rights Reserved.                                              |
+# |   Copyright 2002/2007 Trident Microsystems (Europe) GmbH, Germany
 # |                                                                       |
 # |                                                                       |
-# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH          |
-# | The copyright notice above does not evidence any actual or intended   |
-# | publication of such source code.                                      |
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Base.pm,v $                                  |
-# | Revision:   $Revision: 1.2 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2007/03/08 09:24:31 $                              |
+# | Revision:   $Revision: 1.3 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2009/12/14 10:58:18 $                              |
 # |                                                                       | 
 # |                                                                       |
 # +-----------------------------------------------------------------------+
@@ -26,6 +22,9 @@
 # |
 # | Changes:
 # | $Log: Base.pm,v $
+# | Revision 1.3  2009/12/14 10:58:18  lutscher
+# | changed copyright
+# |
 # | Revision 1.2  2007/03/08 09:24:31  wig
 # | Minor update for Base.pm (renamed subs).
 # |
@@ -44,11 +43,11 @@ require Exporter;
 @EXPORT_OK = qw();
 
 ### ID block
-our $VERSION = '$Revision: 1.2 $ $Date: 2007/03/08 09:24:31 $ wilfried.gaensheimer@gaensheimer.de'; # VCS Id
+our $VERSION = '$Revision: 1.3 $ $Date: 2009/12/14 10:58:18 $ wilfried.gaensheimer@gaensheimer.de'; # VCS Id
 $VERSION =~ s,\$,,go;
 ( our $VERSION_NR = $VERSION ) =~ s/(LastChanged)?(Revision|Date):\s+//g;
 $VERSION_NR =~ s/\s+.*//;
-our $ID = '$Id: Base.pm,v 1.2 2007/03/08 09:24:31 wig Exp $'; # VCS Id
+our $ID = '$Id: Base.pm,v 1.3 2009/12/14 10:58:18 lutscher Exp $'; # VCS Id
 $ID =~ s,\$,,go;
 
 use strict;
@@ -63,9 +62,9 @@ my $logger = get_logger('MIX::MixEDA::Base');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Base.pm,v 1.2 2007/03/08 09:24:31 wig Exp $'; 
+my $thisid          =      '$Id: Base.pm,v 1.3 2009/12/14 10:58:18 lutscher Exp $'; 
 my $thisrcsfile	    =      '$RCSfile: Base.pm,v $';
-my $thisrevision    =      '$Revision: 1.2 $';  
+my $thisrevision    =      '$Revision: 1.3 $';  
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

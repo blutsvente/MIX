@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegViewURAC.pm,v 1.5 2009/08/27 08:31:48 lutscher Exp $
+#  RCSId: $Id: RegViewURAC.pm,v 1.6 2009/12/14 10:58:18 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm, RegOOUtils.pm
@@ -20,14 +20,14 @@
 #
 #       Copyright (C) 2009 Trident Microsystems (Europe), Munich, Germany 
 #
-#     All rights reserved. Reproduction in whole or part is prohibited
-#          without the written permission of the copyright owner.
-#
 ###############################################################################
 #                                History
 ###############################################################################
 #
 #  $Log: RegViewURAC.pm,v $
+#  Revision 1.6  2009/12/14 10:58:18  lutscher
+#  changed copyright
+#
 #  Revision 1.5  2009/08/27 08:31:48  lutscher
 #  some fixes and improvements
 #
@@ -239,7 +239,7 @@ sub _urac_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViews"))) {
-        $eh->mix_add_module_info("RegViewURAC", '$Revision: 1.5 $ ', "Utility functions to create URAC register space view from Reg class object");
+        $eh->mix_add_module_info("RegViewURAC", '$Revision: 1.6 $ ', "Utility functions to create URAC register space view from Reg class object");
     };
 };
 

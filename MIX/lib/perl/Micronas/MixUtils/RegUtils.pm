@@ -1,5 +1,5 @@
 ###############################################################################
-#  RCSId: $Id: RegUtils.pm,v 1.24 2009/08/26 06:37:56 lutscher Exp $
+#  RCSId: $Id: RegUtils.pm,v 1.25 2009/12/14 10:58:19 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Reg.pm
@@ -18,16 +18,16 @@
 #                               Copyright
 ###############################################################################
 #
-#       Copyright (C) 2005 Micronas GmbH, Munich, Germany 
-#
-#     All rights reserved. Reproduction in whole or part is prohibited
-#          without the written permission of the copyright owner.
+#       Copyright (C) 2005 Trident Microsystems (Europe) GmbH, Germany
 #
 ###############################################################################
 #                                History
 ###############################################################################
 #
 #  $Log: RegUtils.pm,v $
+#  Revision 1.25  2009/12/14 10:58:19  lutscher
+#  changed copyright
+#
 #  Revision 1.24  2009/08/26 06:37:56  lutscher
 #  changed signal type from std_logic_vector to std_ulogic_vector
 #

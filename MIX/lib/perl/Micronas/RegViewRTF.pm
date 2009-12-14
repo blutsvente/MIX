@@ -1,8 +1,8 @@
 ###############################################################################
-#  RCSId: $Id: RegViewRTF.pm,v 1.3 2009/10/26 09:27:34 lutscher Exp $
+#  RCSId: $Id: RegViewRTF.pm,v 1.4 2009/12/14 10:58:18 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.3 $                                  
+#  Revision      : $Revision: 1.4 $                                  
 #
 #  Related Files :  Reg.pm, RegOOUtils.pm
 #
@@ -27,14 +27,14 @@
 #
 #       Copyright (C) 2009 Trident Microsystems (Europe) , Munich, Germany 
 #
-#     All rights reserved. Reproduction in whole or part is prohibited
-#          without the written permission of the copyright owner.
-#
 ###############################################################################
 #                                History
 ###############################################################################
 #
 #  $Log: RegViewRTF.pm,v $
+#  Revision 1.4  2009/12/14 10:58:18  lutscher
+#  changed copyright
+#
 #  Revision 1.3  2009/10/26 09:27:34  lutscher
 #  changed _rtf_dump_detailed
 #
@@ -159,7 +159,7 @@ sub _rtf_rs_init {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info("RegViewRTF"))) {
-        $eh->mix_add_module_info("RegViewRTF", '$Revision: 1.3 $ ', "Module to dump registers from Reg class object in Rich-Text-Format");
+        $eh->mix_add_module_info("RegViewRTF", '$Revision: 1.4 $ ', "Module to dump registers from Reg class object in Rich-Text-Format");
     };
 
 	# list of skipped registers and fields (put everything together in one list)

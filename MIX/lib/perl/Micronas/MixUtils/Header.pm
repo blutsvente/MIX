@@ -2,22 +2,16 @@
 #
 # +-----------------------------------------------------------------------+
 # |                                                                       |
-# |   Copyright Micronas GmbH, 2007.                                      |
-# |     All Rights Reserved.                                              |
-# |                                                                       |
-# |                                                                       |
-# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH          |
-# | The copyright notice above does not evidence any actual or intended   |
-# | publication of such source code.                                      |
+# |   Copyright 2007 Trident Microsystems (Europe) GmbH, Germany
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: Header.pm,v $                                   |
-# | Revision:   $Revision: 1.2 $                                         |
-# | Author:     $Author: wig $                                            |
-# | Date:       $Date: 2008/04/01 12:48:34 $                              |
+# | Revision:   $Revision: 1.3 $                                         |
+# | Author:     $Author: lutscher $                                            |
+# | Date:       $Date: 2009/12/14 10:58:18 $                              |
 # |                                                                       |
 # | Library dealing with the ::MIX style header lines in sheets           |
 # +-----------------------------------------------------------------------+
@@ -52,9 +46,9 @@ my $logger = get_logger('MIX::MixUtils::Header');
 #
 # RCS Id, to be put into output templates
 #
-my $thisid          =      '$Id: Header.pm,v 1.2 2008/04/01 12:48:34 wig Exp $';
+my $thisid          =      '$Id: Header.pm,v 1.3 2009/12/14 10:58:18 lutscher Exp $';
 my $thisrcsfile	    =      '$RCSfile: Header.pm,v $';
-my $thisrevision    =      '$Revision: 1.2 $';
+my $thisrevision    =      '$Revision: 1.3 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

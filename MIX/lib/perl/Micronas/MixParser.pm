@@ -2,26 +2,19 @@
 #
 # +-----------------------------------------------------------------------+
 # |                                                                       |
-# |   Copyright Micronas GmbH, Inc. 2002.                                 |
-# |     All Rights Reserved.                                              |
-# |                                                                       |
-# |                                                                       |
-# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH          |
-# | The copyright notice above does not evidence any actual or intended   |
-# | publication of such source code.                                      |
+# |   Copyright 2002 Trident Microsystems (Europe) GmbH, Germany                                |
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX / Parser                                   |
 # | Modules:    $RCSfile: MixParser.pm,v $                                |
-# | Revision:   $Revision: 1.106 $                                         |
+# | Revision:   $Revision: 1.107 $                                         |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2009/12/02 14:26:05 $                              |
+# | Date:       $Date: 2009/12/14 10:58:53 $                              |
 # |                                                                       |
-# | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.106 2009/12/02 14:26:05 lutscher Exp $                                                         |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixParser.pm,v 1.107 2009/12/14 10:58:53 lutscher Exp $                                                         |
 # +-----------------------------------------------------------------------+
 #
 # The functions here provide the parsing capabilites for the MIX project.
@@ -33,6 +26,9 @@
 # |                                                                       |
 # | Changes:                                                              |
 # | $Log: MixParser.pm,v $
+# | Revision 1.107  2009/12/14 10:58:53  lutscher
+# | changed copyright
+# |
 # | Revision 1.106  2009/12/02 14:26:05  lutscher
 # | some fixes to mix_store_db
 # |
@@ -255,9 +251,9 @@ my $const   = 0; # Counter for constants name generation
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		 =	'$Id: MixParser.pm,v 1.106 2009/12/02 14:26:05 lutscher Exp $';
+my $thisid		 =	'$Id: MixParser.pm,v 1.107 2009/12/14 10:58:53 lutscher Exp $';
 my $thisrcsfile	 =	'$RCSfile: MixParser.pm,v $';
-my $thisrevision =	'$Revision: 1.106 $';
+my $thisrevision =	'$Revision: 1.107 $';
 
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;

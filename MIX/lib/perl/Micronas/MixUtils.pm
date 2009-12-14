@@ -2,26 +2,19 @@
 #
 # +-----------------------------------------------------------------------+
 # |                                                                       |
-# |   Copyright Micronas GmbH, Inc. 2002.                                 |
-# |     All Rights Reserved.                                              |
-# |                                                                       |
-# |                                                                       |
-# | THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF MICRONAS GMBH          |
-# | The copyright notice above does not evidence any actual or intended   |
-# | publication of such source code.                                      |
+# |   Copyright 2002 Trident Microsystems (Europe) GmbH, Germany
 # |                                                                       |
 # +-----------------------------------------------------------------------+
 #
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.148 $                                        |
+# | Revision:   $Revision: 1.149 $                                        |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2009/12/02 14:26:41 $                              |
+# | Date:       $Date: 2009/12/14 10:58:17 $                              |
 # |                                                                       |
-# | Copyright Micronas GmbH, 2002                                         |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.148 2009/12/02 14:26:41 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.149 2009/12/14 10:58:17 lutscher Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -30,6 +23,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.149  2009/12/14 10:58:17  lutscher
+# | changed copyright
+# |
 # | Revision 1.148  2009/12/02 14:26:41  lutscher
 # | removed a debug statement
 # |
@@ -218,11 +214,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.148 2009/12/02 14:26:41 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.149 2009/12/14 10:58:17 lutscher Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.148 $';         #'
+my $thisrevision        =      '$Revision: 1.149 $';         #'
 
-# Revision:   $Revision: 1.148 $   
+# Revision:   $Revision: 1.149 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -752,7 +748,7 @@ sub mix_banner(;$)
 # ##### $NAME ($VERSION)
 # #####
 # ##### $FLOW $FLOW_VERSION $MOD_VERSION
-# ##### Copyright(c) Micronas GmbH 2002/2005 ALL RIGHTS RESERVED
+# ##### Copyright 2002-2009 Trident Microsystems (Europe) GmbH, Germany
 # #######################################################################
 # EOF
 
@@ -763,7 +759,7 @@ sub mix_banner(;$)
 ##### $NAME ($VERSION)
 #####
 ##### $FLOW $FLOW_VERSION $MOD_VERSION
-##### Copyright(c) Micronas GmbH 2002/2006 ALL RIGHTS RESERVED
+##### Copyright 2002-2009 Trident Microsystems (Europe) GmbH, Germany
 #######################################################################" );
 
     if ( $eh->get('PRINTTIMING' ) ) {

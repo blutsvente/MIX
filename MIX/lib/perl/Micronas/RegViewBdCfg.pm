@@ -1,13 +1,12 @@
 ###############################################################################
-#  RCSId: $Id: RegViewBdCfg.pm,v 1.8 2009/06/15 11:57:26 lutscher Exp $
+#  RCSId: $Id: RegViewBdCfg.pm,v 1.9 2009/12/14 10:58:18 lutscher Exp $
 ###############################################################################
 #
-#  Revision      : $Revision: 1.8 $                                  
+#  Revision      : $Revision: 1.9 $                                  
 #
 #  Related Files :  Reg.pm
 #
-#  Author(s)     :  Thorsten Lutscher                                      
-#  Email         :  thorsten.lutscher@micronas.com                          
+#  Author(s)     :  Thorsten Lutscher                                                      
 #
 #  Project       :  MIX                                                 
 #
@@ -20,16 +19,16 @@
 #                               Copyright
 ###############################################################################
 #
-#       Copyright (C) 2009 Micronas GmbH, Munich, Germany 
-#
-#     All rights reserved. Reproduction in whole or part is prohibited
-#          without the written permission of the copyright owner.
+#       Copyright (C) 2009 Trident Microsystems (Europe) GmbH, Germany
 #
 ###############################################################################
 #                                History
 ###############################################################################
 #
 #  $Log: RegViewBdCfg.pm,v $
+#  Revision 1.9  2009/12/14 10:58:18  lutscher
+#  changed copyright
+#
 #  Revision 1.8  2009/06/15 11:57:26  lutscher
 #  added addrmaps member to Reg and RegDomain
 #
@@ -88,7 +87,7 @@ sub _gen_view_bdcfg {
 
     # register Perl module with mix
     if (not defined($eh->mix_get_module_info($0))) {
-        $eh->mix_add_module_info("RegViewBdCdfg", '$Revision: 1.8 $ ', "Package to create backdoor configuration files for simulation");
+        $eh->mix_add_module_info("RegViewBdCdfg", '$Revision: 1.9 $ ', "Package to create backdoor configuration files for simulation");
     };
     
 	# extend class data with data structure needed for code generation

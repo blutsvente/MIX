@@ -1,11 +1,10 @@
 ###############################################################################
-#  RCSId: $Id: Mix.pm,v 1.8 2009/11/19 12:49:47 lutscher Exp $
+#  RCSId: $Id: Mix.pm,v 1.9 2009/12/14 10:58:17 lutscher Exp $
 ###############################################################################
 #                                  
 #  Related Files :  Mix and Reg packages
 #
-#  Author(s)     :  Thorsten Lutscher / Wilfried Gaensheimer                                     
-#  Email         :  thorsten.lutscher@micronas.com                          
+#  Author(s)     :  Thorsten Lutscher / Wilfried Gaensheimer                                                       
 #
 #  Project       :  MIX                                                 
 #
@@ -33,16 +32,16 @@
 #                               Copyright
 ###############################################################################
 #
-#       Copyright (C) 2008 Micronas GmbH, Munich, Germany 
-#
-#     All rights reserved. Reproduction in whole or part is prohibited
-#          without the written permission of the copyright owner.
+#       Copyright (C) 2008 Trident Microsystems (Europe) GmbH, Germany
 #
 ###############################################################################
 #                                History
 ###############################################################################
 #
 #  $Log: Mix.pm,v $
+#  Revision 1.9  2009/12/14 10:58:17  lutscher
+#  changed copyright
+#
 #  Revision 1.8  2009/11/19 12:49:47  lutscher
 #  added top-level table input and vi2c-xml view
 #
@@ -121,7 +120,7 @@ use Micronas::MixReport;
 # define static members here
 
 # version of this package, extracted from RCS macros
-our($VERSION) = '$Revision: 1.8 $ ';  #'
+our($VERSION) = '$Revision: 1.9 $ ';  #'
 $VERSION =~ s/\$//g;
 $VERSION =~ s/Revision\: //;
 
