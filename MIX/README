@@ -1,19 +1,22 @@
+MIX - Micronas Interconnect Expander
+------------------------------------
+File under: Electronic Design Automation (EDA) or Electronic System-Level Design (ESL)
 
+MIX is a methodology and tool to generate hardware descriptions, low-level driver software, verification code and documentation out of a single source specification. In contrast to most ESL (electronic system level design) tools, this approach focuses on structural specification, like hierarchy, interconnect, I/Os and configuration registers instead of synthesizing a functional specification (though the user can always insert arbitrary HDL code). Due to automatic code generation, consistency between specification and design is guaranteed and error-prone manual transformations can be avoided.
+
+A table-based specification format was chosen to enable efficient data entry and review. Lately, the Spirit consortiums IP-XACT input/output format for register specifications has been added. It is also possible to access the code generation functions through a Perl API which is useful where a table-based entry format contains too much redundancy due to its flat data representation.
 
 Important files/dirs:
 ---------------------
 
-`-----doc_new/
-    New documentation (esp. doc_new/MIX_UserManual.html and doc_new/MIX_DeveloperManual.html TiddlyWikis)
-`-----lib/
+-----doc_new/
+    Documentation (esp. doc_new/MIX_UserManual.html and doc_new/MIX_DeveloperManual.html TiddlyWikis)
+-----lib/
     Perl library for MIX
-`-----mix
-    Default Mix executable -> uses Micronas module environment;
-`-----mix_1.pl
+-----mix
+    Default Mix executable -> uses module environment;
+-----mix_1.pl
     Pure Perl executable
-`-----mixlog.conf
+-----mixlog.conf
     Logger configuration file for MIX
-
-
-
 

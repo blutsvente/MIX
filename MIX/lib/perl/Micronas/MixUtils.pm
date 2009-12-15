@@ -9,12 +9,12 @@
 # +-----------------------------------------------------------------------+
 # | Project:    Micronas - MIX                                            |
 # | Modules:    $RCSfile: MixUtils.pm,v $                                 |
-# | Revision:   $Revision: 1.149 $                                        |
+# | Revision:   $Revision: 1.150 $                                        |
 # | Author:     $Author: lutscher $                                            |
-# | Date:       $Date: 2009/12/14 10:58:17 $                              |
+# | Date:       $Date: 2009/12/15 13:11:39 $                              |
 # |                                                                       |
 # |                                                                       |
-# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.149 2009/12/14 10:58:17 lutscher Exp $ |
+# | $Header: /tools/mix/Development/CVS/MIX/lib/perl/Micronas/MixUtils.pm,v 1.150 2009/12/15 13:11:39 lutscher Exp $ |
 # +-----------------------------------------------------------------------+
 #
 # + Some of the functions here are taken from mway_1.0/lib/perl/Banner.pm +
@@ -23,6 +23,9 @@
 # |
 # | Changes:
 # | $Log: MixUtils.pm,v $
+# | Revision 1.150  2009/12/15 13:11:39  lutscher
+# | *** empty log message ***
+# |
 # | Revision 1.149  2009/12/14 10:58:17  lutscher
 # | changed copyright
 # |
@@ -214,11 +217,11 @@ my $logger = get_logger( 'MIX::MixUtils' );
 #
 # RCS Id, to be put into output templates
 #
-my $thisid		=	'$Id: MixUtils.pm,v 1.149 2009/12/14 10:58:17 lutscher Exp $';
+my $thisid		=	'$Id: MixUtils.pm,v 1.150 2009/12/15 13:11:39 lutscher Exp $';
 my $thisrcsfile	        =	'$RCSfile: MixUtils.pm,v $';
-my $thisrevision        =      '$Revision: 1.149 $';         #'
+my $thisrevision        =      '$Revision: 1.150 $';         #'
 
-# Revision:   $Revision: 1.149 $   
+# Revision:   $Revision: 1.150 $   
 $thisid =~ s,\$,,go; # Strip away the $
 $thisrcsfile =~ s,\$,,go;
 $thisrevision =~ s,^\$,,go;
@@ -749,6 +752,9 @@ sub mix_banner(;$)
 # #####
 # ##### $FLOW $FLOW_VERSION $MOD_VERSION
 # ##### Copyright 2002-2009 Trident Microsystems (Europe) GmbH, Germany
+# ##### This program comes with ABSOLUTELY NO WARRANTY.
+# ##### This is free software, and you are welcome to redistribute it
+# ##### under certain conditions.
 # #######################################################################
 # EOF
 
@@ -760,6 +766,9 @@ sub mix_banner(;$)
 #####
 ##### $FLOW $FLOW_VERSION $MOD_VERSION
 ##### Copyright 2002-2009 Trident Microsystems (Europe) GmbH, Germany
+##### This program comes with ABSOLUTELY NO WARRANTY.
+##### This is free software, and you are welcome to redistribute it
+##### under certain conditions.
 #######################################################################" );
 
     if ( $eh->get('PRINTTIMING' ) ) {
