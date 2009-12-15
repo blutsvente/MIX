@@ -1,0 +1,7 @@
+Prerequisites:
+- Perl 5.8.8
+
+To run:
+> gmake clean
+> run.sh
+

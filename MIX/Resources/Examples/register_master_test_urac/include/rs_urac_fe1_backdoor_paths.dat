@@ -1,0 +1,16 @@
+        /* ------------------------------------------------------------
+          Generator information:
+          used package Micronas::Reg is version 1.90  
+          package RegViewURAC is version 1.3
+          use with RTL libraries (this release or higher):
+          ip_sync/0001/ip_sync_006_23jan2008
+        ------------------------------------------------------------ */
+
+// backdoor-paths for writable registers for domain urac_fe1
+'h0 rs_urac_fe1_i.REG_0
+'h1 rs_urac_fe1_i.REG_1
+'h2 rs_urac_fe1_i.REG_2
+'h3 rs_urac_fe1_i.REG_3
+'h4 rs_urac_fe1_i.REG_4
+'h5 rs_urac_fe1_i.REG_5
+// end

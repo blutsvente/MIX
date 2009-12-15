@@ -1,0 +1,108 @@
+>>title: MIX/Release 20060411: updated xls2csv, imporved logging and configuration
+
+xls2csv update:
+
+Now supports the selection of rows and/or columns (see -column / -row option)
+
+
+    Options:
+	-[no]csv      Don/t generate CSV formatter file (on by default)
+	-[no]sxc      Don/t generate sxc formatted output file (on by default)
+	-autoq[uote]  Do quoting the ExCEL style
+	-q[uote] X    Use X as quoting char (default: ")
+	-sep X        Use X as column seperator (default: ;)
+	-noquote      Do not quote the output
+	-sheet RE     Select only sheets matching the RE
+	-[no]single   Write each sheet into a seperate output csv; extend name by sheet name.
+                  Default is to write a single csv and/or sxc file per input excel file with
+                  seperating the sheets by the sheet header (see -[no]head). With -single
+                  no sheet seperator head will be printed.
+	-[no]accu[mulate] Combine all excel files into a sinlge output csv or sxc file.
+                  Default is to convert a single csv and/or sxc file per input excel file.
+                  Basename is taken from the first excel file name. 
+	-[no]head     Do not print sheet seperator head (\"=:=:=:=> SHEETNAME\" by default)
+	-[no]verbose  Print more messages
+	
+	-column|(c)range A:B,C   select columns (by EXCEL numbering or digit)
+	-row|rrange N:M		select rows
+	-matchc \"REG_matching header\"
+	-matchr \"RE_matching first cell contents in row\"
+	Possible ranges are:   A..C,EE-FA,G:I,14,16-70,II-
+			(alpha only for column headers)
+			Repeated options are ORed (tried one after the other)
+			If column or row selector options are set, only matching data will be printed
+
+
+Example:
+
+$ xls2csv -csv -single -sheet my_data -autoq -nohead my_excel.xls
+
+will retrieve the sheet "my_data" from the excel document my_excel.xls and store it's content
+in the file my_excel--my_data.csv in a format very, very near the one you would get when using
+"Save As" in ExCEL and store the worksheet in CSV format.
+
+$ xls2csv -csv -row 1-10,1-10 -single my_excel.xls
+
+will print the first ten rows two times into the csv file(s) my_excel--<sheet names>.csv
+of each sheet in the excel document.
+
+Please consider, that overlapping selections will print the data selected multiple time.
+xls2csv will sort the selectors in numeric start order.
+
+
+>>title: release_20060411 mix/1.5
+
+I have released mix/1.5 for public use now. As there are still some highly wanted features
+in the todo list, there might be some patches, though.
+
+UNIX:
+
+$ module load mix/1.5
+
+Windows:
+K:\PROJECTS\MIX\1.5\mix_0.pl
+
+Major new features:
+
+1. verilog modules can be mapped for testing purposes.
+
+Example:
+`ifdef exclude_module_1   // instantiate dummy module 
+	assign sig1_s = 1'b0;
+	assign sign_s = 1'b0;
+`else
+	module_1 (
+		   .sig1_o (sig1_s);
+		   .sign_o (sign_s)
+		   );
+`endif
+
+The module mapping is controlled by the config key
+
+	output.generate.verilog.verimap.*
+
+
+	# Enable the default wrapper: fixed values:
+	MIXCFG output.generate.verimap.modules	ALL
+	MIXCFG output.generate.verimap.sigvalue sig_08=1,inst_a[ab]/sig_0.?=some_val,0
+
+	ALL is an other way of saying ".*"
+
+	Modules and sigvalue take a comma or whitespace seperated list of perl regular expressions.
+	
+	modules:
+		If a module name matches one of the re's from modules, this module will be mapped. "ALL" is another
+		way of saying ".*".
+	sigvalue:
+		Specify the to be assigned value in the from "inst_re/signal_re=value" or "signal_re=value" or "value".
+		Default is "0". In case the value is "1" or "0", it will be automatically extended to W'b1(xW) to match
+		the width of busses. All other values will be used literally.
+
+This function is very limited currently, please report problems (e.g. it will not cope well with partial bus assignments and multiply
+connected signals).
+
+2. Completely reworked the logging. Please expect some rough edges (and also that the output is even more verbose then before).
+In case you don't like it, currently you can create your own "mixlog.conf" (see /tools/mix/1.5 for a template). A future release will
+have some extensions to better controll the output in an easier fashion.
+
+3. Many tiny fixes …., will be announced when the final 1.5 gets rolled out.

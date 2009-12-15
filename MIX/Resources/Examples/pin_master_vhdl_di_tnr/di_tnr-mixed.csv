@@ -1,0 +1,768 @@
+:=:=:=>CONF
+MIXCFG;CONST_NR;0
+MIXCFG;DELTA_INT_NR;0
+MIXCFG;DELTA_NR;0
+MIXCFG;DELTA_VER_NR;0
+MIXCFG;ERROR;__ERROR__
+MIXCFG;GENERIC_NR;0
+MIXCFG;HIGH_NR;0
+MIXCFG;LOW_NR;0
+MIXCFG;OPEN_NR;0
+MIXCFG;PRINTTIMING;1
+MIXCFG;TYPECAST_NR;0
+MIXCFG;WARN;__WARNING__
+MIXCFG;check.defs;
+MIXCFG;check.hdlout.delta;
+MIXCFG;check.hdlout.extmask.arch;
+MIXCFG;check.hdlout.extmask.conf;
+MIXCFG;check.hdlout.extmask.entity;
+MIXCFG;check.hdlout.filter.arch;
+MIXCFG;check.hdlout.filter.conf;
+MIXCFG;check.hdlout.filter.entity;
+MIXCFG;check.hdlout.mode;entity,leaf,generated,ignorecase
+MIXCFG;check.hdlout.path;
+MIXCFG;check.inst;nomulti
+MIXCFG;check.keywords.verilog;(register|net|wire|in|out|inout)
+MIXCFG;check.keywords.vhdl;(open|instance|entity|signal)
+MIXCFG;check.keywords.xlscell;^(#(VALUE|NAME|NUM|REF)[!?]|GENERAL)$
+MIXCFG;check.name.all;
+MIXCFG;check.name.conf;check,lc,__default__
+MIXCFG;check.name.conn;check,lc,__default__
+MIXCFG;check.name.enty;check,lc,__default__
+MIXCFG;check.name.inst;check,lc,__default__
+MIXCFG;check.name.pad;check,lc,__default__
+MIXCFG;check.name.port;check,lc,__default__
+MIXCFG;check.namex.all;
+MIXCFG;check.namex.conf;
+MIXCFG;check.namex.conn;
+MIXCFG;check.namex.enty;
+MIXCFG;check.namex.inst;
+MIXCFG;check.namex.pad;
+MIXCFG;check.namex.port;
+MIXCFG;check.signal;load,driver,check,top_open,top_nodriver,nonanbounds
+MIXCFG;conf.parsed;0
+MIXCFG;conf.req;optional
+MIXCFG;conf.xls;CONF
+MIXCFG;conf.xxls;
+MIXCFG;conn.comments;post
+MIXCFG;conn.ext;14
+MIXNOCFG;conn.field.::bundle;ARRAY
+MIXNOCFG;conn.field.::class;ARRAY
+MIXNOCFG;conn.field.::clock;ARRAY
+MIXNOCFG;conn.field.::comment;ARRAY
+MIXNOCFG;conn.field.::debug;ARRAY
+MIXNOCFG;conn.field.::default;ARRAY
+MIXNOCFG;conn.field.::descr;ARRAY
+MIXNOCFG;conn.field.::gen;ARRAY
+MIXNOCFG;conn.field.::high;ARRAY
+MIXNOCFG;conn.field.::ign;ARRAY
+MIXNOCFG;conn.field.::in;ARRAY
+MIXNOCFG;conn.field.::low;ARRAY
+MIXNOCFG;conn.field.::mode;ARRAY
+MIXNOCFG;conn.field.::name;ARRAY
+MIXNOCFG;conn.field.::out;ARRAY
+MIXNOCFG;conn.field.::shortname;ARRAY
+MIXNOCFG;conn.field.::skip;ARRAY
+MIXNOCFG;conn.field.::type;ARRAY
+MIXCFG;conn.field._multorder_;0
+MIXCFG;conn.field.nr;16
+MIXCFG;conn.key;::name
+MIXCFG;conn.parsed;1
+MIXCFG;conn.req;mandatory
+MIXCFG;conn.xls;CONN
+MIXCFG;conn.xxls;
+MIXCFG;cwd;/tools/mix/Resources/Examples/pin_master_vhdl_di_tnr
+MIXCFG;default.comments;post
+MIXNOCFG;default.field.::comment;ARRAY
+MIXNOCFG;default.field.::debug;ARRAY
+MIXNOCFG;default.field.::default;ARRAY
+MIXNOCFG;default.field.::ign;ARRAY
+MIXNOCFG;default.field.::skip;ARRAY
+MIXCFG;default.field._multorder_;0
+MIXCFG;default.field.nr;3
+MIXCFG;default.key;::ign
+MIXCFG;default.parsed;0
+MIXCFG;default.req;optional
+MIXCFG;default.xls;.*
+MIXCFG;drive;
+MIXCFG;dump;di_tnr.pld
+MIXCFG;format.csv.cellsep;";"
+MIXCFG;format.csv.delta;DIFF:
+MIXCFG;format.csv.maxcelllength;0
+MIXCFG;format.csv.mixhead;1
+MIXCFG;format.csv.quoting;""""
+MIXCFG;format.csv.sheetsep;:=:=:=>
+MIXCFG;format.csv.sortrange;1
+MIXCFG;format.csv.style;doublequote,autoquote,nowrapnl,maxwidth
+MIXCFG;format.ods.maxcelllength;500
+MIXCFG;format.ods.mixhead;1
+MIXCFG;format.ods.style;
+MIXCFG;format.out;
+MIXCFG;format.sxc.maxcelllength;500
+MIXCFG;format.sxc.mixhead;1
+MIXCFG;format.sxc.style;
+MIXCFG;format.xls.maxcelllength;500
+MIXCFG;format.xls.mixhead;1
+MIXCFG;format.xls.style;
+MIXCFG;hier.comments;
+MIXCFG;hier.ext;10
+MIXNOCFG;hier.field.::arch;ARRAY
+MIXNOCFG;hier.field.::comment;ARRAY
+MIXNOCFG;hier.field.::config;ARRAY
+MIXNOCFG;hier.field.::debug;ARRAY
+MIXNOCFG;hier.field.::default;ARRAY
+MIXNOCFG;hier.field.::descr;ARRAY
+MIXNOCFG;hier.field.::entity;ARRAY
+MIXNOCFG;hier.field.::gen;ARRAY
+MIXNOCFG;hier.field.::hierachy;ARRAY
+MIXNOCFG;hier.field.::ign;ARRAY
+MIXNOCFG;hier.field.::inst;ARRAY
+MIXNOCFG;hier.field.::lang;ARRAY
+MIXNOCFG;hier.field.::parent;ARRAY
+MIXNOCFG;hier.field.::shortname;ARRAY
+MIXNOCFG;hier.field.::skip;ARRAY
+MIXNOCFG;hier.field.::udc;ARRAY
+MIXNOCFG;hier.field.::use;ARRAY
+MIXNOCFG;hier.field.::variants;ARRAY
+MIXCFG;hier.field._multorder_;0
+MIXCFG;hier.field.nr;14
+MIXCFG;hier.key;::inst
+MIXCFG;hier.options;overload
+MIXCFG;hier.parsed;1
+MIXCFG;hier.req;mandatory
+MIXCFG;hier.xls;HIER
+MIXCFG;hier.xxls;
+MIXCFG;i2c.cols;0
+MIXCFG;i2c.comments;
+MIXNOCFG;i2c.field.::auto;ARRAY
+MIXNOCFG;i2c.field.::b;ARRAY
+MIXNOCFG;i2c.field.::block;ARRAY
+MIXNOCFG;i2c.field.::busy;ARRAY
+MIXNOCFG;i2c.field.::clock;ARRAY
+MIXNOCFG;i2c.field.::clone;ARRAY
+MIXNOCFG;i2c.field.::comment;ARRAY
+MIXNOCFG;i2c.field.::default;ARRAY
+MIXNOCFG;i2c.field.::dev;ARRAY
+MIXNOCFG;i2c.field.::dir;ARRAY
+MIXNOCFG;i2c.field.::ign;ARRAY
+MIXNOCFG;i2c.field.::init;ARRAY
+MIXNOCFG;i2c.field.::inst;ARRAY
+MIXNOCFG;i2c.field.::interface;ARRAY
+MIXNOCFG;i2c.field.::range;ARRAY
+MIXNOCFG;i2c.field.::readDone;ARRAY
+MIXNOCFG;i2c.field.::rec;ARRAY
+MIXNOCFG;i2c.field.::reset;ARRAY
+MIXNOCFG;i2c.field.::spec;ARRAY
+MIXNOCFG;i2c.field.::sub;ARRAY
+MIXNOCFG;i2c.field.::sync;ARRAY
+MIXNOCFG;i2c.field.::update;ARRAY
+MIXNOCFG;i2c.field.::variants;ARRAY
+MIXNOCFG;i2c.field.::width;ARRAY
+MIXCFG;i2c.field._multorder_;0
+MIXCFG;i2c.field.nr;25
+MIXCFG;i2c.parsed;0
+MIXCFG;i2c.regmas_type;VGCA
+MIXCFG;i2c.req;optional
+MIXCFG;i2c.xls;I2C
+MIXCFG;i2c.xxls;
+MIXCFG;import.generate;stripio
+MIXCFG;import.order;sort
+MIXCFG;import.vinc;
+MIXCFG;import.vinc_skip;include,define
+MIXCFG;input.domain;::interface
+MIXCFG;input.ext.csv;csv
+MIXCFG;input.ext.excel;xls
+MIXCFG;input.ext.oofice;ods
+MIXCFG;input.ext.soffice;sxc
+MIXCFG;input.header;mix
+MIXCFG;input.ignore.columns;nohead
+MIXCFG;input.ignore.comments;^\s*(#|//|--)
+MIXCFG;input.ignore.lines;^\s*(#|//|--)
+MIXCFG;input.ignore.map;hashtoign
+MIXCFG;input.ignore.pragma;
+MIXCFG;input.ignore.variant;#__I_VARIANT
+MIXCFG;input.req;mandatory
+MIXCFG;intermediate.__topmap_re_;^(ALL)$
+MIXCFG;intermediate.delta;purgetable
+MIXCFG;intermediate.ext;
+MIXCFG;intermediate.format;prev
+MIXCFG;intermediate.instpre;CONN_
+MIXCFG;intermediate.intra;
+MIXCFG;intermediate.keep;3
+MIXCFG;intermediate.order;template
+MIXCFG;intermediate.path;.
+MIXCFG;intermediate.strip;0
+MIXCFG;intermediate.topmap;ALL
+MIXCFG;intermediate.xls_columns;ign,type,dev,width,sub,interface,inst,dir,spec,update,sync,clock,reset,b,init,rec,range,view,vi2c,name,comment,block
+MIXCFG;intermediate.xls_dump;0
+MIXCFG;intermediate.yaml_dump;0
+MIXCFG;internal.format;perl
+MIXCFG;internal.order;input
+MIXCFG;internal.path;tmp
+MIXCFG;io.cols;0
+MIXCFG;io.comments;
+MIXNOCFG;io.field.::class;ARRAY
+MIXNOCFG;io.field.::comment;ARRAY
+MIXNOCFG;io.field.::debug;ARRAY
+MIXNOCFG;io.field.::default;ARRAY
+MIXNOCFG;io.field.::ign;ARRAY
+MIXNOCFG;io.field.::iocell;ARRAY
+MIXNOCFG;io.field.::ispin;ARRAY
+MIXNOCFG;io.field.::muxopt;ARRAY
+MIXNOCFG;io.field.::name;ARRAY
+MIXNOCFG;io.field.::pad;ARRAY
+MIXNOCFG;io.field.::pin;ARRAY
+MIXNOCFG;io.field.::port;ARRAY
+MIXNOCFG;io.field.::skip;ARRAY
+MIXNOCFG;io.field.::type;ARRAY
+MIXCFG;io.field._multorder_;0
+MIXCFG;io.field.nr;12
+MIXCFG;io.parsed;0
+MIXCFG;io.req;optional
+MIXCFG;io.xls;IO
+MIXCFG;io.xxls;
+MIXCFG;iocell.auto;bus
+MIXCFG;iocell.bus;_vector
+MIXCFG;iocell.defaultdir;in
+MIXCFG;iocell.embedded;
+MIXCFG;iocell.in;do,en,pu,pd,xout
+MIXCFG;iocell.inout;__NOINOUT__
+MIXCFG;iocell.name;%::iocell%_%::pad%
+MIXCFG;iocell.out;di,xin
+MIXCFG;iocell.select;onehot,auto
+MIXCFG;iscygwin;
+MIXCFG;iswin;
+MIXCFG;join.comments;post
+MIXNOCFG;join.field.::client;ARRAY
+MIXNOCFG;join.field.::comment;ARRAY
+MIXNOCFG;join.field.::cpu1_addr;ARRAY
+MIXNOCFG;join.field.::cpu2_addr;ARRAY
+MIXNOCFG;join.field.::debug;ARRAY
+MIXNOCFG;join.field.::default;ARRAY
+MIXNOCFG;join.field.::definition;ARRAY
+MIXNOCFG;join.field.::group;ARRAY
+MIXNOCFG;join.field.::group_addr;ARRAY
+MIXNOCFG;join.field.::group_id;ARRAY
+MIXNOCFG;join.field.::grp_awidth;ARRAY
+MIXNOCFG;join.field.::ign;ARRAY
+MIXNOCFG;join.field.::skip;ARRAY
+MIXNOCFG;join.field.::sub;ARRAY
+MIXNOCFG;join.field.::subwidth;ARRAY
+MIXCFG;join.field._multorder_;0
+MIXCFG;join.field.nr;13
+MIXCFG;join.key;::ign
+MIXCFG;join.parsed;0
+MIXCFG;join.req;optional
+MIXCFG;join.xls;.*
+MIXCFG;join.xxls;
+MIXCFG;log.count.level.I;6
+MIXCFG;log.count.level.W;1
+MIXCFG;log.count.tag.__I_GENERATE_PORT;59
+MIXCFG;log.count.tag.__I_PARSER_CONN_MACRO;1
+MIXCFG;log.count.tag.__I_READ_CFG;1
+MIXCFG;log.count.tag.__I_REG_INIT;2
+MIXCFG;log.count.tag.__I_TIME_START;1
+MIXCFG;log.count.tag.__I_WORKSHEET;2
+MIXCFG;log.count.tag.__W_KEY2HASH;1
+MIXCFG;log.limit.level.A;2000
+MIXCFG;log.limit.level.I;1000
+MIXCFG;log.limit.level.W;500
+MIXCFG;log.limit.tag.A;100
+MIXCFG;log.limit.tag.D;100
+MIXCFG;log.limit.tag.E;100
+MIXCFG;log.limit.tag.F;100
+MIXCFG;log.limit.tag.I;200
+MIXCFG;log.limit.tag.W;200
+MIXCFG;logs.debug;0
+MIXCFG;logs.error;0
+MIXCFG;logs.fatal;0
+MIXCFG;logs.info;9
+MIXCFG;logs.warn;61
+MIXCFG;macro.%0%;mix_1.pl
+MIXCFG;macro.%ACOM%;--
+MIXCFG;macro.%ARGV%;/home/lutscher/work/MIX/mix_1.pl di_tnr.xls
+MIXCFG;macro.%AUTOCONF%;_struct_conf
+MIXCFG;macro.%AUTOENTY%;_e
+MIXCFG;macro.%BODY%;__BODY__
+MIXCFG;macro.%BUFFER%;buffer
+MIXCFG;macro.%BUS%;__BUS__
+MIXCFG;macro.%BUS_TYPE%;std_ulogic_vector
+MIXCFG;macro.%CARGV%;/home/lutscher/work/MIX/mix_1.pl di_tnr.xls
+MIXCFG;macro.%CONST%;__CONST__
+MIXCFG;macro.%CR%;\n
+MIXCFG;macro.%DATE%;Tue Jun 23 14:19:39 2009
+MIXCFG;macro.%DECL%;__DECL__
+MIXCFG;macro.%DEFAULT_CONFIG%;%::entity%_%::arch%_conf
+MIXCFG;macro.%DEFAULT_MODE%;S
+MIXCFG;macro.%DEFINE%;`define
+MIXCFG;macro.%EMPTY%;
+MIXCFG;macro.%FOOT%;__FOOT__
+MIXCFG;macro.%GENERIC%;__GENERIC__
+MIXCFG;macro.%H%;$
+MIXCFG;macro.%HEAD%;__HEAD__
+MIXCFG;macro.%HIGH%;mix_logic1
+MIXCFG;macro.%HIGH_BUS%;mix_logic1_bus
+MIXCFG;macro.%HOME%;/home/lutscher
+MIXCFG;macro.%IIC_IF%;iic_if_
+MIXCFG;macro.%IIC_SYNC%;sync_
+MIXCFG;macro.%IIC_TRANS%;transceiver_
+MIXCFG;macro.%IMPORT%;__IMPORT__
+MIXCFG;macro.%IMPORT_BUNDLE%;__IMPORT_BUNDLE__
+MIXCFG;macro.%IMPORT_CLK%;__IMPORT_CLK__
+MIXCFG;macro.%IMPORT_I%;I
+MIXCFG;macro.%IMPORT_O%;O
+MIXCFG;macro.%INCLUDE%;`include
+MIXCFG;macro.%INT_VERILOG_DEFINES%;
+MIXCFG;macro.%IOCELL_CLK%;CLK
+MIXCFG;macro.%IOCELL_SELECT_PORT%;__I_default_select
+MIXCFG;macro.%IOCELL_TYPE%;__E_DEFAULT_IOCELL__
+MIXCFG;macro.%IOCR%; 
+MIXCFG;macro.%LANGUAGE%;vhdl
+MIXCFG;macro.%LOW%;mix_logic0
+MIXCFG;macro.%LOW_BUS%;mix_logic0_bus
+MIXCFG;macro.%MY_MACRO%;MY_MACRO_VALUE
+MIXCFG;macro.%NCD%;__NOCOMPDEC__
+MIXCFG;macro.%NOSEL%;__I_NOSEL__
+MIXCFG;macro.%NOSELPORT%;__I_NOSELPORT__
+MIXCFG;macro.%NO_COMP%;__NOCOMPDEC__
+MIXCFG;macro.%NO_COMPONENT_DECLARATION%;__NOCOMPDEC__
+MIXCFG;macro.%NO_CONFIG%;NO_CONFIG
+MIXCFG;macro.%NULL%;0
+MIXCFG;macro.%OPEN%;open
+MIXCFG;macro.%OS%;linux
+MIXCFG;macro.%PAD_CLASS%;PAD
+MIXCFG;macro.%PAD_TYPE%;__E_DEFAULT_PAD__
+MIXCFG;macro.%PARAMETER%;__PARAMETER__
+MIXCFG;macro.%POSTFIX_IIC_IN%;_iic_i
+MIXCFG;macro.%POSTFIX_IIC_OUT%;_iic_o
+MIXCFG;macro.%PREFIX_IIC_GEN%;iic_if_
+MIXCFG;macro.%PROJECT%;__I_NO_PROJECT_SET
+MIXCFG;macro.%REG%;__REG__
+MIXCFG;macro.%RREG%;read_reg_
+MIXCFG;macro.%RWREG%;read_write_reg_
+MIXCFG;macro.%S%;\t
+MIXCFG;macro.%SIGNAL%;std_ulogic
+MIXCFG;macro.%SPACE%; 
+MIXCFG;macro.%STARTTIME%;1245759579
+MIXCFG;macro.%TAB%;\t
+MIXCFG;macro.%TBD%;__W_TO_BE_DEFINED
+MIXCFG;macro.%TESTBENCH%;TESTBENCH
+MIXCFG;macro.%TM_B%;B
+MIXCFG;macro.%TM_C%;C
+MIXCFG;macro.%TM_G%;G
+MIXCFG;macro.%TM_I%;I
+MIXCFG;macro.%TM_IO%;IO
+MIXCFG;macro.%TM_O%;O
+MIXCFG;macro.%TM_P%;P
+MIXCFG;macro.%TM_T%;T
+MIXCFG;macro.%TOP%;__TOP__
+MIXCFG;macro.%TOP_CONF%;mixtop_conf
+MIXCFG;macro.%TOP_ENTY%;W_NO_ENTITY
+MIXCFG;macro.%TPYECAST_ENT%;__TYPECAST_ENT__
+MIXCFG;macro.%TRISTATE%;tristate
+MIXCFG;macro.%TYPECAST_CONF%;__TYPECAST_CONF__
+MIXCFG;macro.%UAMN%;
+MIXCFG;macro.%UNDEF%;ERROR_UNDEF
+MIXCFG;macro.%UNDEF_1%;ERROR_UNDEF_1
+MIXCFG;macro.%UNDEF_2%;ERROR_UNDEF_2
+MIXCFG;macro.%UNDEF_3%;ERROR_UNDEF_3
+MIXCFG;macro.%UNDEF_4%;ERROR_UNDEF_4
+MIXCFG;macro.%USEASMODULENAME%;
+MIXCFG;macro.%USER%;lutscher
+MIXCFG;macro.%VERILOG_DEFINES%;// No user `defines in this module
+MIXCFG;macro.%VERILOG_HOOK_BODY%;
+MIXCFG;macro.%VERILOG_HOOK_FOOT%;
+MIXCFG;macro.%VERILOG_HOOK_HEAD%;
+MIXCFG;macro.%VERILOG_HOOK_INST_APP%;
+MIXCFG;macro.%VERILOG_HOOK_INST_PRE%;
+MIXCFG;macro.%VERILOG_HOOK_PARA%;
+MIXCFG;macro.%VERILOG_TIMESCALE%;`timescale 1ns/10ps
+MIXCFG;macro.%VERILOG_USE_ARCH%;%EMPTY%
+MIXCFG;macro.%VERSION%;Revision: 1.3 
+MIXCFG;macro.%VHDL_HOOK_ARCH_BODY%;
+MIXCFG;macro.%VHDL_HOOK_ARCH_DECL%;
+MIXCFG;macro.%VHDL_HOOK_ARCH_FOOT%;
+MIXCFG;macro.%VHDL_HOOK_ARCH_HEAD%;
+MIXCFG;macro.%VHDL_HOOK_CONF_BODY%;
+MIXCFG;macro.%VHDL_HOOK_CONF_FOOT%;
+MIXCFG;macro.%VHDL_HOOK_CONF_HEAD%;
+MIXCFG;macro.%VHDL_HOOK_ENTY_BODY%;
+MIXCFG;macro.%VHDL_HOOK_ENTY_FOOT%;
+MIXCFG;macro.%VHDL_HOOK_ENTY_HEAD%;
+MIXCFG;macro.%VHDL_HOOK_INST_APP%;
+MIXCFG;macro.%VHDL_HOOK_INST_PRE%;
+MIXCFG;macro.%VHDL_NOPROJ%;-- No project specific VHDL libraries
+MIXCFG;macro.%VHDL_USE%;-- No project specific VHDL libraries
+MIXCFG;macro.%VHDL_USE_ARCH%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;macro.%VHDL_USE_CONF%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;macro.%VHDL_USE_DEFAULT%;"library IEEE;\nuse IEEE.std_logic_1164.all;\n"
+MIXCFG;macro.%VHDL_USE_ENTY%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;macro.%WORKAREA%;__I_NO_WORKAREA_SET
+MIXCFG;macro.%WREG%;write_reg_
+MIXCFG;out;di_tnr-mixed.xls
+MIXCFG;outarch;ARCH
+MIXCFG;outconf;CONF
+MIXCFG;outenty;ENTY
+MIXCFG;output.casefilename;lc
+MIXCFG;output.comment.default;#
+MIXCFG;output.comment.delta;#
+MIXCFG;output.comment.intermediate;#
+MIXCFG;output.comment.internal;#
+MIXCFG;output.comment.verilog;//
+MIXCFG;output.comment.vhdl;--
+MIXCFG;output.delta;remove,ispace,comment,ihead
+MIXCFG;output.ext.delta;.diff
+MIXCFG;output.ext.intermediate;mixed
+MIXCFG;output.ext.internal;pld
+MIXCFG;output.ext.verify;.ediff
+MIXCFG;output.ext.verilog;v
+MIXCFG;output.ext.verilog_def;vh
+MIXCFG;output.ext.vhdl;vhd
+MIXCFG;output.filename;useminus
+MIXCFG;output.filter.file;
+MIXCFG;output.format;ext
+MIXCFG;output.generate._logiciocheck_.and.imax;1
+MIXCFG;output.generate._logiciocheck_.and.omax;N
+MIXCFG;output.generate._logiciocheck_.nand.imax;1
+MIXCFG;output.generate._logiciocheck_.nand.omax;N
+MIXCFG;output.generate._logiciocheck_.nor.imax;1
+MIXCFG;output.generate._logiciocheck_.nor.omax;N
+MIXCFG;output.generate._logiciocheck_.not.imax;1
+MIXCFG;output.generate._logiciocheck_.not.omax;1
+MIXCFG;output.generate._logiciocheck_.or.imax;1
+MIXCFG;output.generate._logiciocheck_.or.omax;N
+MIXCFG;output.generate._logiciocheck_.wire.imax;1
+MIXCFG;output.generate._logiciocheck_.wire.omax;1
+MIXCFG;output.generate._logiciocheck_.xor.imax;1
+MIXCFG;output.generate._logiciocheck_.xor.omax;N
+MIXCFG;output.generate._logicre_;^(__|%)?(wire|and|or|nand|xor|nor|not)(__|%)?$
+MIXCFG;output.generate._re_xinout;^__NOEXCLUDESIGNAL__$
+MIXCFG;output.generate.arch;leaf
+MIXCFG;output.generate.bak;0
+MIXCFG;output.generate.combine;0
+MIXCFG;output.generate.conf;leaf
+MIXCFG;output.generate.delta;0
+MIXCFG;output.generate.deltadesc;re=.*\.(v|vhd)
+MIXNOCFG;output.generate.deltafiles;ARRAY
+MIXCFG;output.generate.emumux.define;insert_emu_mux_%::inst%
+MIXCFG;output.generate.emumux.modules;
+MIXCFG;output.generate.emumux.muxsnamei;%::name%_vc_s
+MIXCFG;output.generate.emumux.muxsnameo;%::name%_emux_s
+MIXCFG;output.generate.emumux.options;in
+MIXCFG;output.generate.emumux.select;emu_mux_%::inst%
+MIXCFG;output.generate.emumux.sigselect;
+MIXCFG;output.generate.enty;leaf
+MIXCFG;output.generate.fold;signal
+MIXCFG;output.generate.inout;mode,noxfix
+MIXCFG;output.generate.logic;wire(1:1),and(1:N),or(1:N),nand(1:N),xor(1:N),nor(1:N),not(1:1)
+MIXCFG;output.generate.logicmap;uc
+MIXCFG;output.generate.portdescr;%::descr%
+MIXCFG;output.generate.portdescrindent;%CR%%S%%S%%S%%S%%S%
+MIXCFG;output.generate.portdescrlength;100
+MIXCFG;output.generate.portdescrlines;10
+MIXCFG;output.generate.portmapsort;alpha
+MIXCFG;output.generate.top;auto
+MIXCFG;output.generate.use;enty
+MIXCFG;output.generate.verilog;
+MIXCFG;output.generate.verimap.modules;
+MIXCFG;output.generate.verimap.options;
+MIXCFG;output.generate.verimap.select;exclude_%::inst%
+MIXCFG;output.generate.verimap.sigvalue;ALL=0
+MIXCFG;output.generate.workaround._magma_def_;\n`ifdef MAGMA\n    `define %::entity%_inst_name %::entity%\n`else\n    `define %::entity%_inst_name %::config%\n`endif\n
+MIXCFG;output.generate.workaround._magma_mod_;`%::entity%_inst_name
+MIXCFG;output.generate.workaround._magma_uamn_;
+MIXCFG;output.generate.workaround.magma;useasmodulename_define
+MIXCFG;output.generate.workaround.std_log_typecast;ignore
+MIXCFG;output.generate.workaround.typecast;intsig
+MIXCFG;output.generate.workaround.verilog;dummyopen,optimizeassignport
+MIXCFG;output.generate.xinout;
+MIXCFG;output.language.verilog;
+MIXCFG;output.language.vhdl;
+MIXCFG;output.mkdir;auto
+MIXCFG;output.order;input
+MIXCFG;output.path;vhdl
+MIXCFG;output.path_include;include
+MIXCFG;output.warnings;
+MIXCFG;pad.PAD_ACTIVE_EN;1
+MIXCFG;pad.PAD_ACTIVE_PD;1
+MIXCFG;pad.PAD_ACTIVE_PU;1
+MIXCFG;pad.PAD_DEFAULT_DO;0
+MIXCFG;pad.name;%PREFIX_PAD_GEN%%::pad%
+MIXCFG;port.generate.name;postfix
+MIXCFG;port.generate.width;auto
+MIXCFG;postfix.POSTFILE_ARCH;-a
+MIXCFG;postfix.POSTFILE_CONF;-c
+MIXCFG;postfix.POSTFILE_ENTY;-e
+MIXCFG;postfix.POSTFIX_ARCH;%EMPTY%
+MIXCFG;postfix.POSTFIX_CONF;%EMPTY%
+MIXCFG;postfix.POSTFIX_CONSTANT;_c
+MIXCFG;postfix.POSTFIX_ENTY;%EMPTY%
+MIXCFG;postfix.POSTFIX_FIELD_IN;_par_i
+MIXCFG;postfix.POSTFIX_FIELD_OUT;_par_o
+MIXCFG;postfix.POSTFIX_GENERIC;_g
+MIXCFG;postfix.POSTFIX_IIC_GEN;_i
+MIXCFG;postfix.POSTFIX_IIC_IN;_iic_i
+MIXCFG;postfix.POSTFIX_IIC_OUT;_iic_o
+MIXCFG;postfix.POSTFIX_INSTANCE;%EMPTY%
+MIXCFG;postfix.POSTFIX_IOC_GEN;%EMPTY%
+MIXCFG;postfix.POSTFIX_PAD_GEN;%EMPTY%
+MIXCFG;postfix.POSTFIX_PARAMETER;_p
+MIXCFG;postfix.POSTFIX_PORT_GEN;_g%IO%
+MIXCFG;postfix.POSTFIX_PORT_IN;_i
+MIXCFG;postfix.POSTFIX_PORT_IO;_io
+MIXCFG;postfix.POSTFIX_PORT_OUT;_o
+MIXCFG;postfix.POSTFIX_SIGNAL;_s
+MIXCFG;postfix.PREFIX_CONST;mix_const_
+MIXCFG;postfix.PREFIX_GENERIC;mix_generic_
+MIXCFG;postfix.PREFIX_IIC_GEN;iic_if_
+MIXCFG;postfix.PREFIX_INSTANCE;i_
+MIXCFG;postfix.PREFIX_IOC_GEN;ioc_
+MIXCFG;postfix.PREFIX_KEYWORD;mix_key_
+MIXCFG;postfix.PREFIX_PAD_GEN;pad_
+MIXCFG;postfix.PREFIX_PARAMETER;mix_parameter_
+MIXCFG;postfix.PREFIX_PORT_GEN;p_mix_
+MIXCFG;postfix.PREFIX_SIG_INT;s_int_
+MIXCFG;postfix.PREFIX_TC_INT;s_mix_tc_
+MIXCFG;reg_shell.add_takeover_signals;0
+MIXCFG;reg_shell.addrwidth;14
+MIXCFG;reg_shell.bdcfg.axis_file_name;axis_force_registers.cmd
+MIXCFG;reg_shell.bdcfg.ncsim_cmd;force
+MIXCFG;reg_shell.bdcfg.ncsim_file_name;ncsim_force_registers.tcl
+MIXCFG;reg_shell.bdcfg.stl_file_name;stl_force_registers.stl
+MIXCFG;reg_shell.bus_clock;clk
+MIXCFG;reg_shell.bus_reset;rst_n
+MIXCFG;reg_shell.cfg_module_prefix;rs_cfg
+MIXCFG;reg_shell.clone.addr_spacing;10
+MIXCFG;reg_shell.clone.domain_naming;%D_%N
+MIXCFG;reg_shell.clone.field_naming;%F_%N
+MIXCFG;reg_shell.clone.number;0
+MIXCFG;reg_shell.clone.reg_naming;%R_%N
+MIXCFG;reg_shell.clone.unique_clocks;1
+MIXCFG;reg_shell.clone.unique_domains;0
+MIXCFG;reg_shell.datawidth;32
+MIXCFG;reg_shell.device;%EMPTY%
+MIXCFG;reg_shell.domain_naming;%D
+MIXCFG;reg_shell.e_vr_ad.cover_ign_read_to_write_only;0
+MIXCFG;reg_shell.e_vr_ad.cover_ign_write_to_read_only;1
+MIXCFG;reg_shell.e_vr_ad.field_naming;%lF
+MIXCFG;reg_shell.e_vr_ad.file_prefix;regdef
+MIXCFG;reg_shell.e_vr_ad.path;e
+MIXCFG;reg_shell.e_vr_ad.reg_naming;%uR
+MIXCFG;reg_shell.e_vr_ad.regfile_name;
+MIXCFG;reg_shell.e_vr_ad.regfile_prefix;MIC
+MIXCFG;reg_shell.e_vr_ad.vplan_ref;%EMPTY%
+MIXCFG;reg_shell.enforce_unique_addr;1
+MIXCFG;reg_shell.exclude_domains;
+MIXCFG;reg_shell.exclude_fields;
+MIXCFG;reg_shell.exclude_regs;
+MIXCFG;reg_shell.field_naming;%F
+MIXCFG;reg_shell.infer_clock_gating;1
+MIXCFG;reg_shell.infer_reset_syncer;0
+MIXCFG;reg_shell.infer_sva;1
+MIXCFG;reg_shell.mode;lcport
+MIXCFG;reg_shell.multi_clock_domains;1
+MIXCFG;reg_shell.packing.addr_domain_reset;0
+MIXCFG;reg_shell.packing.addr_factor;1
+MIXCFG;reg_shell.packing.addr_offset;0
+MIXCFG;reg_shell.packing.endianness;big
+MIXCFG;reg_shell.packing.mode;none
+MIXCFG;reg_shell.packing.postfix_reg_hi;_hi
+MIXCFG;reg_shell.packing.postfix_reg_lo;_lo
+MIXCFG;reg_shell.read_multicycle;0
+MIXCFG;reg_shell.read_pipeline_lvl;0
+MIXCFG;reg_shell.reg_naming;%R
+MIXCFG;reg_shell.regshell_prefix;rs
+MIXCFG;reg_shell.regwidth;32
+MIXCFG;reg_shell.stl.exclude_regs;
+MIXCFG;reg_shell.stl.initial_idle;100
+MIXCFG;reg_shell.stl.use_base_addr;0
+MIXCFG;reg_shell.type;HDL-vgch-rs
+MIXCFG;reg_shell.use_reg_name_as_prefix;0
+MIXCFG;reg_shell.virtual_top_instance;testbench
+MIXCFG;reg_shell.workaround;
+MIXCFG;report.cheader.address.map;
+MIXCFG;report.cheader.debug;0
+MIXCFG;report.cheader.device.ini;
+MIXCFG;report.cheader.use_view_attrib;1
+MIXCFG;report.delta;
+MIXCFG;report.lauterbach.base_address;0
+MIXCFG;report.path;.
+MIXCFG;report.per.debug;0
+MIXCFG;report.perl.debug;0
+MIXCFG;report.portlist.comments;0,striphash
+MIXCFG;report.portlist.data;port
+MIXCFG;report.portlist.ext;mif
+MIXCFG;report.portlist.format.elist;
+MIXCFG;report.portlist.format.plist;
+MIXCFG;report.portlist.name;
+MIXCFG;report.portlist.sort;input
+MIXCFG;report.portlist.split;external::extc,instance
+MIXCFG;report.reglist.crossref;yes
+MIXCFG;script.excel.alerts;off
+MIXCFG;script.post;
+MIXCFG;script.pre;
+MIXCFG;sum.checkforce;0
+MIXCFG;sum.checkunique;0
+MIXCFG;sum.checkwarn;0
+MIXCFG;sum.cmacros;0
+MIXCFG;sum.conn;65
+MIXCFG;sum.genport;59
+MIXCFG;sum.hdlfiles;0
+MIXCFG;sum.inst;10
+MIXCFG;sum.io_cell_single;0
+MIXCFG;sum.io_cellandpad;0
+MIXCFG;sum.io_pad_single;0
+MIXCFG;sum.multdriver;0
+MIXCFG;sum.nodriver;0
+MIXCFG;sum.noload;0
+MIXCFG;sum.openports;0
+MIXCFG;sum.port;86
+MIXCFG;template.verilog.arch.head;## Verilog Architecture Template String t.b.d.
+MIXCFG;template.verilog.conf.head;## Verilog Configuration Template String t.b.d.
+MIXCFG;template.verilog.enty.head;## Verilog Entity Template String t.b.d.
+MIXCFG;template.verilog.file;##Verilog File Template String t.b.d.
+MIXCFG;template.verilog.wrap;## Verilog Wrapper Template String t.b.d.
+MIXCFG;template.vhdl.arch.head;## VHDL Architecture Template String t.b.d.
+MIXCFG;template.vhdl.conf.head;## VHDL Configuration Template String t.b.d.
+MIXCFG;template.vhdl.enty.head;## VHDL Entity Template String t.b.d.
+MIXCFG;top;%TOP%
+MIXCFG;typecast.std_logic.std_ulogic;"std_logic( %signal% );"
+MIXCFG;typecast.std_logic_vector.std_ulogic_vector;"std_logic_vector( %signal% );"
+MIXCFG;typecast.std_ulogic.std_logic;"std_ulogic( %signal% );"
+MIXCFG;typecast.std_ulogic_vector.std_logic_vector;"std_ulogic_vector( %signal% );"
+MIXCFG;variant;Default
+MIXNOCFG;vi2c.field.::b;ARRAY
+MIXNOCFG;vi2c.field.::comment;ARRAY
+MIXNOCFG;vi2c.field.::debug;ARRAY
+MIXNOCFG;vi2c.field.::default;ARRAY
+MIXNOCFG;vi2c.field.::hierachy;ARRAY
+MIXNOCFG;vi2c.field.::ign;ARRAY
+MIXNOCFG;vi2c.field.::inst;ARRAY
+MIXNOCFG;vi2c.field.::shortname;ARRAY
+MIXNOCFG;vi2c.field.::skip;ARRAY
+MIXNOCFG;vi2c.field.::type;ARRAY
+MIXNOCFG;vi2c.field.::variants;ARRAY
+MIXCFG;vi2c.field._multorder_;0
+MIXCFG;vi2c.field.nr;8
+MIXCFG;vi2c.key;::inst
+MIXCFG;vi2c.parsed;0
+MIXCFG;vi2c.req;optional
+MIXCFG;vi2c.xls;VI2C
+MIXCFG;vi2c.xxls;
+MIXCFG;xml.NS_RGM.schema;$REGMEM_HOME/builder/ipxact/schema
+MIXCFG;xml.NS_RGM.schemalocation;$REGMEM_HOME/builder/ipxact/schema $REGMEM_HOME/builder/ipxact/schema/VendorExtensions.xsd
+MIXCFG;xml.NS_RGM.vendorExtensions;http://www.ovmworld.org
+MIXCFG;xml.NS_URI.schema;http://www.w3.org/2001/XMLSchema-instance
+MIXCFG;xml.NS_URI.schemalocation;http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4 http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4/index.xsd
+MIXCFG;xml.NS_URI.spirit;http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4
+MIXCFG;xml.VLNV.library;rs_test
+MIXCFG;xml.VLNV.name;rs_test
+MIXCFG;xml.VLNV.vendor;tridentmicro.com
+MIXCFG;xml.VLNV.version;0.1
+MIXCFG;xml.access.R;read-only
+MIXCFG;xml.access.RW;read-write
+MIXCFG;xml.access.W;write-only
+MIXCFG;xml.access_policy.R;RO
+MIXCFG;xml.access_policy.RW;RW
+MIXCFG;xml.access_policy.W;WO
+MIXCFG;xml.addressBlock_type_naming;%D_rf_type
+MIXCFG;xml.characterencodingin;
+MIXCFG;xml.characterencodingout;iso-8859-1
+MIXCFG;xml.clock;clk_sci
+MIXCFG;xml.collect_coverage;cov_update
+MIXCFG;xml.component_type_naming;%D_am
+MIXNOCFG;xml.field_skipelements;ARRAY
+MIXCFG;xml.file_prefix;regdef
+MIXCFG;xml.file_suffix;xml
+MIXCFG;xml.hdl_path;%EMPTY%
+MIXCFG;xml.parsed;0
+MIXCFG;xml.path;ipxact
+MIXCFG;xml.prettynames.skip:4;addinc
+MIXCFG;xml.register_type_naming;%R_reg
+MIXCFG;xml.req;optional
+MIXCFG;xml.reset;res_sci_n
+MIXCFG;xml.schema_dir;/lib/schema/
+MIXCFG;xml.type;spirit
+MIXCFG;xml.xslt_dir;/lib/xslt/
+:=:=:=>CONN
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::shortname;::out;::in;::descr;::comment
+# Generated Intermediate Data: CONN;;;;;;;;;;;;;;
+# by: lutscher;;;;;;;;;;;;;;
+# on: Tue Jun 23 14:19:39 2009;;;;;;;;;;;;;;
+# cmd: /home/lutscher/work/MIX/mix_1.pl di_tnr.xls;;;;;;;;;;;;;;
+;;di_tnr;Data;Clk;std_ulogic ;;;S;af_c0;;ctrl/af_c0_o;tnry/af_c0_i,  tnrc/af_c0_i;;
+;;TOP;Data;Clk;std_ulogic;;;O;af_c1_o;;ctrl/af_c1_o,  di_tnr/af_c1_o;;;
+;;TOP;Data;Clk;std_ulogic;;;I;af_p0_i;;;ctrl/af_p0_i,  di_tnr/af_p0_i;;
+;;di_tnr;Data;Clk;std_ulogic;;;S;al_c0;;ctrl/al_c0_o;tnry/al_c0_i,  tnrc/al_c0_i;;
+;;TOP;Data;Clk;std_ulogic;;;O;al_c1_o;;ctrl/al_c1_o,  di_tnr/al_c1_o;;;
+;;di_tnr;Data;Clk;std_ulogic;;;S;al_c2;;ctrl/al_c2_o;tnry/al_c1_i,  tnrc/al_c1_i;;
+;;TOP;Data;Clk;std_ulogic;;;I;al_p0_i;;;ctrl/al_p0_i,  di_tnr/al_p0_i;;
+;;di_tnr;Data;Clk;std_ulogic;;;S;ap_c0;;ctrl/ap_c0_o;tnry/ap_c0_i,  tnrc/ap_c0_i;;
+;;TOP;Data;Clk;std_ulogic;;;O;ap_c1_o;;ctrl/ap_c1_o,  di_tnr/ap_c1_o;;;
+;;TOP;Data;Clk;std_ulogic;;;I;ap_p0_i;;;ctrl/ap_p0_i,  tnrc/ap_p0_i,  tnry/ap_p0_i,  di_tnr/ap_p0_i;;
+;;TOP;Data;Clk;std_ulogic;;;I;asresi_n;;;ctrl/asresi_n,  tnrc/asresi_n,  tnry/asresi_n,  di_tnr/asresi_n;;
+;;TOP;Data;Clk;std_ulogic_vector;7;0;I;c0_p0_i;;;di_tnr/c0_p0_i(7:0)=(7:0),  tnrc/c_p0_i(7:0)=(7:0);;
+;;TOP;Data;Clk;std_ulogic_vector;7;0;O;c0_p0_o;;di_tnr/c0_p0_o(7:0)=(7:0),  tnrc/c_p0_o(7:0)=(7:0);;;
+;;TOP;Data;Clk;std_ulogic_vector;7;0;I;c1_p1_i;;;di_tnr/c1_p1_i(7:0)=(7:0),  tnrc/c_p1_i(7:0)=(7:0);;
+;;TOP;Data;Clk;std_ulogic_vector;7;0;O;c1_p1_o;;di_tnr/c1_p1_o(7:0)=(7:0),  tnrc/c_p1_o(7:0)=(7:0);;;
+;;TOP;Data;Clk;std_ulogic_vector;7;0;I;cblack_p_i;;;di_tnr/cblack_p_i(7:0)=(7:0),  tnrc/cblack_p_i(7:0)=(7:0);;
+;;TOP;Data;Clk;std_ulogic;;;I;clkin;;;ctrl/clkin,  tnrc/clkin,  tnry/clkin,  di_tnr/clkin;;
+;;TOP;Data;Clk;std_ulogic;;;I;field_p0_i;;;ctrl/field_p0_i,  di_tnr/field_p0_i;;
+;;TOP;Data;Clk;std_ulogic;;;O;fieldc_c1_o;;ctrl/fieldc_c1_o,  di_tnr/fieldc_c1_o;;;
+;;TOP;Data;Clk;std_ulogic;;;O;fieldy0_c1_o;;ctrl/fieldy0_c1_o,  di_tnr/fieldy0_c1_o;;;
+;;TOP;Data;Clk;std_ulogic;;;O;fieldy1_c1_o;;ctrl/fieldy1_c1_o,  di_tnr/fieldy1_c1_o;;;
+;;TOP;Data;Clk;std_ulogic;;;I;frafiesel_iic_i;;;ctrl/frafiesel_iic_i,  di_tnr/frafiesel_iic_i;;
+;;di_tnr;Data;Clk;std_ulogic;;;S;hsync_c;;ctrl/hsync_p0_o;tnry/hsync_c_i,  tnrc/hsync_c_i;;
+;;TOP;Data;Clk;std_ulogic;;;O;hsync_c1_o;;ctrl/hsync_c1_o,  di_tnr/hsync_c1_o;;;
+;;TOP;Data;Clk;std_ulogic;;;I;hsync_p0_i;;;ctrl/hsync_p0_i,  di_tnr/hsync_p0_i;;
+;;TOP;Data;Clk;std_ulogic;;;I;nr_dis_c_i;;;tnrc/nr_dis_c_i,  tnry/nr_dis_c_i,  di_tnr/nr_dis_c_i;;
+;;TOP;Data;Clk;std_ulogic;;;I;nron_iic_i;;;tnrc/nron_iic_i,  tnry/nron_iic_i,  di_tnr/nron_iic_i;;
+;;TOP;Data;Clk;std_ulogic;;;O;req_p1_o;;ctrl/req_p1_o,  di_tnr/req_p1_o;;;
+;;TOP;Data;Clk;std_ulogic;;;I;tnrabs_iic_i;;;tnrc/tnrabs_iic_i,  tnry/tnrabs_iic_i,  di_tnr/tnrabs_iic_i;;
+;;TOP;Data;Clk;std_ulogic_vector;3;0;I;tnrclc_iic_i;;;di_tnr/tnrclc_iic_i(3:0)=(3:0),  tnrc/tnrclc_iic_i(3:0)=(3:0);;
+;;TOP;Data;Clk;std_ulogic_vector;3;0;I;tnrcly_iic_i;;;di_tnr/tnrcly_iic_i(3:0)=(3:0),  tnry/tnrcly_iic_i(3:0)=(3:0);;
+;;di_tnr;Data;Clk;std_ulogic_vector;3;0;S;tnrkvaly;;tnry/tnrkvaly_p_o(3:0)=(3:0);tnrc/tnrkvaly_p_i(3:0)=(3:0);;
+;;TOP;Data;Clk;std_ulogic;;;I;tnrmd4y_iic_i;;;tnry/tnrmd4y_iic_i,  di_tnr/tnrmd4y_iic_i;;
+;;TOP;Data;Clk;std_ulogic;;;I;tnrmdnr4c_iic_i;;;ctrl/tnrmdnr4c_iic_i,  di_tnr/tnrmdnr4c_iic_i;;
+;;TOP;Data;Clk;std_ulogic;;;I;tnrnr4y_iic_i;;;ctrl/tnrnr4y_iic_i,  tnry/tnrnr4y_iic_i,  di_tnr/tnrnr4y_iic_i;;
+;;TOP;Data;Clk;std_ulogic_vector;3;0;I;tnrs0c_iic_i;;;di_tnr/tnrs0c_iic_i(3:0)=(3:0),  tnrc/tnrs0c_iic_i(3:0)=(3:0);;
+;;TOP;Data;Clk;std_ulogic_vector;3;0;I;tnrs0y_iic_i;;;di_tnr/tnrs0y_iic_i(3:0)=(3:0),  tnry/tnrs0y_iic_i(3:0)=(3:0);;
+;;TOP;Data;Clk;std_ulogic_vector;3;0;I;tnrs1c_iic_i;;;di_tnr/tnrs1c_iic_i(3:0)=(3:0),  tnrc/tnrs1c_iic_i(3:0)=(3:0);;
+;;TOP;Data;Clk;std_ulogic_vector;3;0;I;tnrs1y_iic_i;;;di_tnr/tnrs1y_iic_i(3:0)=(3:0),  tnry/tnrs1y_iic_i(3:0)=(3:0);;
+;;TOP;Data;Clk;std_ulogic_vector;3;0;I;tnrs2c_iic_i;;;di_tnr/tnrs2c_iic_i(3:0)=(3:0),  tnrc/tnrs2c_iic_i(3:0)=(3:0);;
+;;TOP;Data;Clk;std_ulogic_vector;3;0;I;tnrs2y_iic_i;;;di_tnr/tnrs2y_iic_i(3:0)=(3:0),  tnry/tnrs2y_iic_i(3:0)=(3:0);;
+;;TOP;Data;Clk;std_ulogic_vector;3;0;I;tnrs3c_iic_i;;;di_tnr/tnrs3c_iic_i(3:0)=(3:0),  tnrc/tnrs3c_iic_i(3:0)=(3:0);;
+;;TOP;Data;Clk;std_ulogic_vector;3;0;I;tnrs3y_iic_i;;;di_tnr/tnrs3y_iic_i(3:0)=(3:0),  tnry/tnrs3y_iic_i(3:0)=(3:0);;
+;;TOP;Data;Clk;std_ulogic_vector;3;0;I;tnrs4c_iic_i;;;di_tnr/tnrs4c_iic_i(3:0)=(3:0),  tnrc/tnrs4c_iic_i(3:0)=(3:0);;
+;;TOP;Data;Clk;std_ulogic_vector;3;0;I;tnrs4y_iic_i;;;di_tnr/tnrs4y_iic_i(3:0)=(3:0),  tnry/tnrs4y_iic_i(3:0)=(3:0);;
+;;TOP;Data;Clk;std_ulogic_vector;3;0;I;tnrs5c_iic_i;;;di_tnr/tnrs5c_iic_i(3:0)=(3:0),  tnrc/tnrs5c_iic_i(3:0)=(3:0);;
+;;TOP;Data;Clk;std_ulogic_vector;3;0;I;tnrs5y_iic_i;;;di_tnr/tnrs5y_iic_i(3:0)=(3:0),  tnry/tnrs5y_iic_i(3:0)=(3:0);;
+;;TOP;Data;Clk;std_ulogic_vector;3;0;I;tnrs6c_iic_i;;;di_tnr/tnrs6c_iic_i(3:0)=(3:0),  tnrc/tnrs6c_iic_i(3:0)=(3:0);;
+;;TOP;Data;Clk;std_ulogic_vector;3;0;I;tnrs6y_iic_i;;;di_tnr/tnrs6y_iic_i(3:0)=(3:0),  tnry/tnrs6y_iic_i(3:0)=(3:0);;
+;;TOP;Data;Clk;std_ulogic_vector;3;0;I;tnrs7c_iic_i;;;di_tnr/tnrs7c_iic_i(3:0)=(3:0),  tnrc/tnrs7c_iic_i(3:0)=(3:0);;
+;;TOP;Data;Clk;std_ulogic_vector;3;0;I;tnrs7y_iic_i;;;di_tnr/tnrs7y_iic_i(3:0)=(3:0),  tnry/tnrs7y_iic_i(3:0)=(3:0);;
+;;TOP;Data;Clk;std_ulogic;;;I;tnrsel_iic_i;;;tnrc/tnrsel_iic_i,  di_tnr/tnrsel_iic_i;;
+;;TOP;Data;Clk;std_ulogic_vector;3;0;I;tnrssc_iic_i;;;di_tnr/tnrssc_iic_i(3:0)=(3:0),  tnrc/tnrssc_iic_i(3:0)=(3:0);;
+;;TOP;Data;Clk;std_ulogic_vector;3;0;I;tnrssy_iic_i;;;di_tnr/tnrssy_iic_i(3:0)=(3:0),  tnry/tnrssy_iic_i(3:0)=(3:0);;
+;;TOP;Data;Clk;std_ulogic;;;O;uen_c1_o;;ctrl/uen_c1_o,  di_tnr/uen_c1_o;;;
+;;TOP;Data;Clk;std_ulogic;;;I;uen_p0_i;;;ctrl/uen_p0_i,  di_tnr/uen_p0_i;;
+;;TOP;Data;Clk;std_ulogic;;;O;vsync_c1_o;;ctrl/vsync_c1_o,  di_tnr/vsync_c1_o;;;
+;;TOP;Data;Clk;std_ulogic;;;I;vsync_p0_i;;;ctrl/vsync_p0_i,  di_tnr/vsync_p0_i;;
+;;TOP;Data;Clk;std_ulogic_vector;7;0;I;y0_p0_i;;;di_tnr/y0_p0_i(7:0)=(7:0),  tnry/y_p0_i(7:0)=(7:0);;
+;;TOP;Data;Clk;std_ulogic_vector;7;0;O;y0_p0_o;;di_tnr/y0_p0_o(7:0)=(7:0),  tnry/y_p0_o(7:0)=(7:0);;;
+;;TOP;Data;Clk;std_ulogic_vector;7;0;I;y1_p1_i;;;di_tnr/y1_p1_i(7:0)=(7:0),  tnry/y1_p1_i(7:0)=(7:0);;
+;;TOP;Data;Clk;std_ulogic_vector;7;0;O;y1_p1_o;;di_tnr/y1_p1_o(7:0)=(7:0),  tnry/y1_p1_o(7:0)=(7:0);;;
+;;TOP;Data;Clk;std_ulogic_vector;7;0;I;y2_p1_i;;;di_tnr/y2_p1_i(7:0)=(7:0),  tnry/y0_p1_i(7:0)=(7:0);;
+;;TOP;Data;Clk;std_ulogic_vector;7;0;O;y2_p1_o;;di_tnr/y2_p1_o(7:0)=(7:0),  tnry/y0_p1_o(7:0)=(7:0);;;
+;;TOP;Data;Clk;std_ulogic_vector;7;0;I;yblack_p_i;;;di_tnr/yblack_p_i(7:0)=(7:0),  tnry/yblack_p_i(7:0)=(7:0);;
+:=:=:=>HIER
+::ign;::gen;::variants;::parent;::inst;::shortname;::lang;::entity;::arch;::use;::config;::comment;::descr
+# Generated Intermediate Data: HIER;;;;;;;;;;;;
+# by: lutscher;;;;;;;;;;;;
+# on: Tue Jun 23 14:19:39 2009;;;;;;;;;;;;
+# cmd: /home/lutscher/work/MIX/mix_1.pl di_tnr.xls;;;;;;;;;;;;
+;;Default;__TOP__;TESTBENCH;;vhdl;W_NO_ENTITY;rtl;;W_NO_ENTITY_rtl_conf;;
+;;Default;di_tnr;ctrl;;VHDL;di_tnr_ctrl;rtl;;di_tnr_ctrl_rtl_conf;;
+;;Default;TESTBENCH;di_tnr;;VHDL;di_tnr;struct;;di_tnr_struct_conf_mix;;
+;;Default;di_tnr;tnrc;;VHDL;di_tnrc;struct;;di_tnrc_struct_conf;;
+;;Default;di_tnr;tnry;;VHDL;di_tnry;struct;;di_tnry_struct_conf;;

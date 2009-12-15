@@ -1,0 +1,19 @@
+        /* ------------------------------------------------------------
+          Generator information:
+          used package Micronas::Reg is version 1.88  
+          this package RegViews.pm is version 1.93
+          use with RTL libraries (this release or higher):
+          ip_ocp/0002/ip_ocp_016_21Jan2009
+          ip_sync/0001/ip_sync_006_23jan2008
+        ------------------------------------------------------------ */
+
+// backdoor-paths for writable registers for domain fe1
+'h00 rs_fe1_i.rs_cfg_fe1_clk_a_i.REG_00
+'h04 rs_fe1_i.rs_cfg_fe1_i.REG_04
+'h0c rs_fe1_i.rs_cfg_fe1_i.REG_0C
+'h10 rs_fe1_i.rs_cfg_fe1_i.REG_10
+'h14 rs_fe1_i.rs_cfg_fe1_i.REG_14
+'h18 rs_fe1_i.rs_cfg_fe1_i.REG_18
+'h1c rs_fe1_i.rs_cfg_fe1_i.REG_1C
+'h20 rs_fe1_i.rs_cfg_fe1_clk_a_i.REG_20
+// end

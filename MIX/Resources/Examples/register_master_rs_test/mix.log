@@ -1,0 +1,186 @@
+2009/06/23 11:51:21 INFO> MixUtils.pm:880 Micronas::MixUtils::mix_init - ########################################################################
+2009/06/23 11:51:21 INFO> MixUtils.pm:881 Micronas::MixUtils::mix_init - CMDLINE: /home/lutscher/work/MIX/mix_1.pl rs_test.xls
+2009/06/23 11:51:21 INFO> MixUtils.pm:929 Micronas::MixUtils::_mix_utils_readcfg - __I_READ_CFG	Reading extra configurations from ./mix.cfg
+2009/06/23 11:51:21 INFO> MixUtils.pm:751 Micronas::MixUtils::mix_banner - 
+#######################################################################
+##### mix_1.pl (Revision: 1.3 )
+#####
+##### MIX  
+#####   MixUtils    1.145 $
+#####   MixUtils::IO    1.62 $
+#####   MixParser   1.105 $
+#####   MixWriter   1.109 $
+#####   MixChecker  1.18 $
+#####   MixIOParser 1.22 $
+#####   MixReport 1.68 $
+#####   Reg 1.88  
+##### Copyright(c) Micronas GmbH 2002/2006 ALL RIGHTS RESERVED
+#######################################################################
+2009/06/23 11:51:21 INFO> MixUtils.pm:760 Micronas::MixUtils::mix_banner - __I_TIME_START	(mix_1.pl): Execution started Tue Jun 23 11:51:21 2009
+2009/06/23 11:51:22 WARN> IO.pm:727 Micronas::MixUtils::IO::open_xls - __W_WORKSHEET	Cannot locate a worksheet matching CONN in /tools/mix/Resources/Examples/register_master_rs_test/rs_test.xls
+2009/06/23 11:51:22 WARN> IO.pm:727 Micronas::MixUtils::IO::open_xls - __W_WORKSHEET	Cannot locate a worksheet matching HIER in /tools/mix/Resources/Examples/register_master_rs_test/rs_test.xls
+2009/06/23 11:51:22 INFO> IO.pm:743 Micronas::MixUtils::IO::open_xls - __I_WORKSHEET	Reading worksheet rs_test of /tools/mix/Resources/Examples/register_master_rs_test/rs_test.xls
+2009/06/23 11:51:22 WARN> MixUtils.pm:2434 Micronas::MixUtils::parse_header - __I_EMPTY_HEADERC	Empty header in column 16, sheet-type i2c (strategy: nohead)!
+2009/06/23 11:51:22 WARN> MixUtils.pm:2434 Micronas::MixUtils::parse_header - __I_EMPTY_HEADERC	Empty header in column 55, sheet-type i2c (strategy: nohead)!
+2009/06/23 11:51:22 WARN> MixUtils.pm:2434 Micronas::MixUtils::parse_header - __I_EMPTY_HEADERC	Empty header in column 56, sheet-type i2c (strategy: nohead)!
+2009/06/23 11:51:22 WARN> MixUtils.pm:2434 Micronas::MixUtils::parse_header - __I_EMPTY_HEADERC	Empty header in column 57, sheet-type i2c (strategy: nohead)!
+2009/06/23 11:51:22 WARN> MixUtils.pm:2434 Micronas::MixUtils::parse_header - __I_EMPTY_HEADERC	Empty header in column 58, sheet-type i2c (strategy: nohead)!
+2009/06/23 11:51:22 INFO> MixUtils.pm:2491 Micronas::MixUtils::parse_header - __I_HEAD_NEW	Added new column header ::type
+2009/06/23 11:51:22 INFO> MixUtils.pm:2491 Micronas::MixUtils::parse_header - __I_HEAD_NEW	Added new column header ::addr
+2009/06/23 11:51:22 INFO> MixUtils.pm:2491 Micronas::MixUtils::parse_header - __I_HEAD_NEW	Added new column header ::skip
+2009/06/23 11:51:22 INFO> MixUtils.pm:2491 Micronas::MixUtils::parse_header - __I_HEAD_NEW	Added new column header ::view
+2009/06/23 11:51:22 INFO> MixUtils.pm:2491 Micronas::MixUtils::parse_header - __I_HEAD_NEW	Added new column header ::vi2c
+2009/06/23 11:51:22 INFO> MixUtils.pm:2491 Micronas::MixUtils::parse_header - __I_HEAD_NEW	Added new column header ::name
+2009/06/23 11:51:22 INFO> MixUtils.pm:2491 Micronas::MixUtils::parse_header - __I_HEAD_NEW	Added new column header ::cond
+2009/06/23 11:51:22 INFO> MixUtils.pm:2491 Micronas::MixUtils::parse_header - __I_HEAD_NEW	Added new column header ::fgroup
+2009/06/23 11:51:22 INFO> MixUtils.pm:2491 Micronas::MixUtils::parse_header - __I_HEAD_NEW	Added new column header ::definition
+2009/06/23 11:51:22 INFO> IO.pm:598 Micronas::MixUtils::IO::mix_utils_io_create_path - __I_MKDIR	Created output directory /tools/mix/Resources/Examples/register_master_rs_test/v!
+2009/06/23 11:51:22 INFO> IO.pm:598 Micronas::MixUtils::IO::mix_utils_io_create_path - __I_MKDIR	Created intermediate directory /tools/mix/Resources/Examples/register_master_rs_test/tmp!
+2009/06/23 11:51:22 INFO> IO.pm:598 Micronas::MixUtils::IO::mix_utils_io_create_path - __I_MKDIR	Created reg_shell.e_vr_ad directory /tools/mix/Resources/Examples/register_master_rs_test/e!
+2009/06/23 11:51:22 INFO> IO.pm:598 Micronas::MixUtils::IO::mix_utils_io_create_path - __I_MKDIR	Created xml directory /tools/mix/Resources/Examples/register_master_rs_test/ipxact!
+2009/06/23 11:51:22 WARN> MixParser.pm:318 Micronas::MixParser::parse_conn_macros - __I_PARSER_CONN_MACRO	Found 0 macro definitions
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG generating code for domain fe1
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG will infer embedded register 'RS_CTLSTS'
+2009/06/23 11:51:22 WARN> RegUtils.pm:162 Micronas::MixUtils::RegUtils::_warning - __W_REG field 'usr_r_test' is of type USR, conditional attribute makes no sense here
+2009/06/23 11:51:22 WARN> RegUtils.pm:162 Micronas::MixUtils::RegUtils::_warning - __W_REG field 'usr_ali' is of type USR, conditional attribute makes no sense here
+2009/06/23 11:51:22 WARN> RegUtils.pm:162 Micronas::MixUtils::RegUtils::_warning - __W_REG field 'usr_rw_test' is of type USR, conditional attribute makes no sense here
+2009/06/23 11:51:22 WARN> RegUtils.pm:162 Micronas::MixUtils::RegUtils::_warning - __W_REG field 'usr_w_test' is of type USR, conditional attribute makes no sense here
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG determined register-shell configuration is 'mcd'.
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG will infer 0 read-pipeline stages
+2009/06/23 11:51:22 WARN> MixParser.pm:1760 Micronas::MixParser::_create_conn - __W_CREATE_CONN	Automatically wiring signal bits 63 to 32 of rs_cfg_fe1_i/rd_data_o to bits 31 to 0
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG clock domain 'clk_f20' has conditionally instantiated FFs
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG clock domain 'clk_a' has conditionally instantiated FFs
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG generated file 'include/rs_fe1.vh'
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG generated file 'include/rs_fe1_backdoor_paths.dat'
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG generated file 'rtl_libs.xml'
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG setting parameter reg_shell.bus_clock = clk_f20
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG setting parameter reg_shell.bus_reset = res_f20_n
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG setting parameter reg_shell.addrwidth = 14
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG setting parameter reg_shell.datawidth = 32
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG setting parameter reg_shell.stl.initial_idle = 100
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG setting parameter reg_shell.stl.exclude_regs = 
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG setting parameter reg_shell.stl.use_base_addr = 0
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG generating code for domain fe1
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG creating new file 'regtest_fe1.stl'
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG creating file 'ipxact/regdef_fe1.xml'
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG Start Writing XML-File
+2009/06/23 11:51:22 INFO> RegUtils.pm:167 Micronas::MixUtils::RegUtils::_info - __I_REG generating IP-XACT code for domain fe1
+2009/06/23 11:51:22 WARN> MixParser.pm:4614 Micronas::MixParser::__parse_mac - __W_PARSE_MAC__	Cannot locate replacement for %PINS% in data!
+2009/06/23 11:51:22 WARN> MixParser.pm:4614 Micronas::MixParser::__parse_mac - __W_PARSE_MAC__	Cannot locate replacement for %AINS% in data!
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal r_test_par adds port r_test_par_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal upd_r_force adds port upd_r_force_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal res_f20_n adds port res_f20_n_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal usr_r_test_trans_done_p adds port usr_r_test_trans_done_p_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal sresp adds port sresp_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal upd_rw_force adds port upd_rw_force_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal usr_r_test_rd_p adds port usr_r_test_rd_p_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal usr_ali_rd_p adds port usr_ali_rd_p_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal wd_16_test2_par adds port wd_16_test2_par_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal sha_r_test_par adds port sha_r_test_par_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal usr_rw_test_wr_p adds port usr_rw_test_wr_p_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal clk_f20 adds port clk_f20_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal sinterrupt adds port sinterrupt_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal maddr adds port maddr_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal dgates_par adds port dgates_par_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal upd_rw_en adds port upd_rw_en_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal upd_rw adds port upd_rw_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal upd_rw adds port %EMPTY%upd_rw_i to instance rs_cfg_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal upd_w adds port upd_w_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal upd_w adds port %EMPTY%upd_w_i to instance rs_cfg_fe1_clk_a_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal ycdetect_par adds port ycdetect_par_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal mdata adds port mdata_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal trans_start_0 adds port %EMPTY%trans_start_0_i to instance rs_cfg_fe1_clk_a_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal upd_w_en adds port upd_w_en_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal usr_rw_test_par adds port usr_rw_test_par_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal mcmd adds port mcmd_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal sha_w_test_trg_p adds port sha_w_test_trg_p_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal mreset_n adds port mreset_n_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal res_a_n adds port res_a_n_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal cvbsdetect_set_p adds port cvbsdetect_set_p_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal usr_w_test_trans_done_p adds port usr_w_test_trans_done_p_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal w_test_par adds port w_test_par_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal usr_w_test_par adds port usr_w_test_par_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal usr_r_test_par adds port usr_r_test_par_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal usr_ali_par adds port usr_ali_par_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal usr_rw_test_rd_p adds port usr_rw_test_rd_p_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal dgatel_par adds port dgatel_par_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal usr_w_test_wr_p adds port usr_w_test_wr_p_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal sha_rw2_par adds port sha_rw2_par_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal mrespaccept adds port mrespaccept_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal mvstart_par adds port mvstart_par_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal cvbsdetect_par adds port cvbsdetect_par_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal upd_r_en adds port upd_r_en_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal mvstop_par adds port mvstop_par_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal usr_rw_test_in_par adds port usr_rw_test_in_par_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal scmdaccept adds port scmdaccept_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal upd_r adds port upd_r_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal upd_r adds port %EMPTY%upd_r_i to instance rs_cfg_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal sha_w_test_par adds port sha_w_test_par_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal clk_a adds port clk_a_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal sha_r_test_trg_p adds port sha_r_test_trg_p_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal r_test_trg_p adds port r_test_trg_p_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal trans_start_1 adds port %EMPTY%trans_start_1_i to instance rs_cfg_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal wd_16_test2_trg_p adds port wd_16_test2_trg_p_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal usr_rw_test_trans_done_p adds port usr_rw_test_trans_done_p_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal sdata adds port sdata_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal usr_ali_trans_done_p adds port usr_ali_trans_done_p_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal wd_16_test_par adds port wd_16_test_par_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal dummy_fe_par adds port dummy_fe_par_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal cvbsdetect_trg_p adds port cvbsdetect_trg_p_o to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixParser.pm:4330 Micronas::MixParser::generate_port - __I_GENERATE_PORT	generate_port: signal upd_w_force adds port upd_w_force_i to instance rs_fe1_i
+2009/06/23 11:51:22 WARN> MixWriter.pm:883 Micronas::MixWriter::_create_entity - __W_CREATE_ENTY	Autoreducing port type for signal rd_err_vec to std_logic
+2009/06/23 11:51:22 WARN> MixWriter.pm:883 Micronas::MixWriter::_create_entity - __W_CREATE_ENTY	Autoreducing port type for signal trans_done_vec to std_logic
+2009/06/23 11:51:22 WARN> MixWriter.pm:883 Micronas::MixWriter::_create_entity - __W_CREATE_ENTY	Autoreducing port type for signal trans_done_vec to std_logic
+2009/06/23 11:51:22 WARN> MixWriter.pm:883 Micronas::MixWriter::_create_entity - __W_CREATE_ENTY	Autoreducing port type for signal rd_err_vec to std_logic
+2009/06/23 11:51:22 WARN> MixWriter.pm:1693 Micronas::MixWriter::_mix_wr_get_iveri - __W_GET_IVERI	Port rd_err_o of entity rs_cfg_fe1 one bit wide, reduce to signal
+2009/06/23 11:51:22 WARN> MixWriter.pm:1693 Micronas::MixWriter::_mix_wr_get_iveri - __W_GET_IVERI	Port trans_done_o of entity rs_cfg_fe1 one bit wide, reduce to signal
+2009/06/23 11:51:22 WARN> MixWriter.pm:1693 Micronas::MixWriter::_mix_wr_get_iveri - __W_GET_IVERI	Port rd_err_o of entity rs_cfg_fe1_clk_a one bit wide, reduce to signal
+2009/06/23 11:51:22 WARN> MixWriter.pm:1693 Micronas::MixWriter::_mix_wr_get_iveri - __W_GET_IVERI	Port trans_done_o of entity rs_cfg_fe1_clk_a one bit wide, reduce to signal
+2009/06/23 11:51:22 INFO> MixWriter.pm:4596 Micronas::MixWriter::_mix_wr_tryuseportname - __I_TRYUSEPORTNAME	Using portname trans_start_0_i for signal trans_start_0 in instance rs_cfg_fe1_clk_a_i!
+2009/06/23 11:51:22 INFO> MixWriter.pm:4596 Micronas::MixWriter::_mix_wr_tryuseportname - __I_TRYUSEPORTNAME	Using portname trans_start_1_i for signal trans_start_1 in instance rs_cfg_fe1_i!
+2009/06/23 11:51:22 WARN> MixWriter.pm:2066 Micronas::MixWriter::write_architecture - __W_WR_ARCH	Skipped writing of architecture sci_target_0002 (inst: u0_sci_target_0002_i) due to filter
+2009/06/23 11:51:22 WARN> MixWriter.pm:2066 Micronas::MixWriter::write_architecture - __W_WR_ARCH	Skipped writing of architecture sync_generic (inst: u10_sync_generic_i) due to filter
+2009/06/23 11:51:22 WARN> MixWriter.pm:2066 Micronas::MixWriter::write_architecture - __W_WR_ARCH	Skipped writing of architecture sync_generic (inst: u11_sync_generic_i) due to filter
+2009/06/23 11:51:22 WARN> MixWriter.pm:2066 Micronas::MixWriter::write_architecture - __W_WR_ARCH	Skipped writing of architecture sync_generic (inst: u12_sync_generic_i) due to filter
+2009/06/23 11:51:22 WARN> MixWriter.pm:2066 Micronas::MixWriter::write_architecture - __W_WR_ARCH	Skipped writing of architecture sci_target_m_checker (inst: u1_sci_target_m_checker_i) due to filter
+2009/06/23 11:51:22 WARN> MixWriter.pm:2066 Micronas::MixWriter::write_architecture - __W_WR_ARCH	Skipped writing of architecture rs_mcda_0002 (inst: u2_rs_mcda_0002_i) due to filter
+2009/06/23 11:51:22 WARN> MixWriter.pm:2066 Micronas::MixWriter::write_architecture - __W_WR_ARCH	Skipped writing of architecture sync_generic (inst: u3_sync_generic_i) due to filter
+2009/06/23 11:51:22 WARN> MixWriter.pm:2066 Micronas::MixWriter::write_architecture - __W_WR_ARCH	Skipped writing of architecture sync_rst (inst: u4_sync_rst_i) due to filter
+2009/06/23 11:51:22 WARN> MixWriter.pm:2066 Micronas::MixWriter::write_architecture - __W_WR_ARCH	Skipped writing of architecture sync_generic (inst: u5_sync_generic_i) due to filter
+2009/06/23 11:51:22 WARN> MixWriter.pm:2066 Micronas::MixWriter::write_architecture - __W_WR_ARCH	Skipped writing of architecture sync_rst (inst: u6_sync_rst_i) due to filter
+2009/06/23 11:51:22 WARN> MixWriter.pm:2066 Micronas::MixWriter::write_architecture - __W_WR_ARCH	Skipped writing of architecture sync_generic (inst: u7_sync_generic_i) due to filter
+2009/06/23 11:51:22 WARN> MixWriter.pm:2066 Micronas::MixWriter::write_architecture - __W_WR_ARCH	Skipped writing of architecture sync_generic (inst: u8_sync_generic_i) due to filter
+2009/06/23 11:51:22 WARN> MixWriter.pm:2066 Micronas::MixWriter::write_architecture - __W_WR_ARCH	Skipped writing of architecture sync_generic (inst: u9_sync_generic_i) due to filter
+2009/06/23 11:51:22 INFO> MixUtils.pm:3749 Micronas::MixUtils::write_sum - ============= SUMMARY =================
+2009/06/23 11:51:22 INFO> MixUtils.pm:3750 Micronas::MixUtils::write_sum - SUM: Summary of checks and created items:
+2009/06/23 11:51:22 INFO> MixUtils.pm:3753 Micronas::MixUtils::write_sum - SUM: checkforce 0
+2009/06/23 11:51:22 INFO> MixUtils.pm:3753 Micronas::MixUtils::write_sum - SUM: checkunique 0
+2009/06/23 11:51:22 INFO> MixUtils.pm:3753 Micronas::MixUtils::write_sum - SUM: checkwarn 0
+2009/06/23 11:51:22 INFO> MixUtils.pm:3753 Micronas::MixUtils::write_sum - SUM: cmacros 0
+2009/06/23 11:51:22 INFO> MixUtils.pm:3753 Micronas::MixUtils::write_sum - SUM: conn 255
+2009/06/23 11:51:22 INFO> MixUtils.pm:3753 Micronas::MixUtils::write_sum - SUM: genport 61
+2009/06/23 11:51:22 INFO> MixUtils.pm:3753 Micronas::MixUtils::write_sum - SUM: hdlfiles 7
+2009/06/23 11:51:22 INFO> MixUtils.pm:3753 Micronas::MixUtils::write_sum - SUM: inst 23
+2009/06/23 11:51:22 INFO> MixUtils.pm:3753 Micronas::MixUtils::write_sum - SUM: io_cell_single 0
+2009/06/23 11:51:22 INFO> MixUtils.pm:3753 Micronas::MixUtils::write_sum - SUM: io_cellandpad 0
+2009/06/23 11:51:22 INFO> MixUtils.pm:3753 Micronas::MixUtils::write_sum - SUM: io_pad_single 0
+2009/06/23 11:51:22 INFO> MixUtils.pm:3753 Micronas::MixUtils::write_sum - SUM: multdriver 5
+2009/06/23 11:51:22 INFO> MixUtils.pm:3753 Micronas::MixUtils::write_sum - SUM: nodriver 32
+2009/06/23 11:51:22 INFO> MixUtils.pm:3753 Micronas::MixUtils::write_sum - SUM: noload 78
+2009/06/23 11:51:22 INFO> MixUtils.pm:3753 Micronas::MixUtils::write_sum - SUM: openports 0
+2009/06/23 11:51:22 INFO> MixUtils.pm:3753 Micronas::MixUtils::write_sum - SUM: port 531
+2009/06/23 11:51:22 INFO> MixUtils.pm:3755 Micronas::MixUtils::write_sum - ======== ERRORS and WARNINGS ============
+2009/06/23 11:51:22 INFO> MixUtils.pm:3756 Micronas::MixUtils::write_sum - SUM: Number of messages logged:
+2009/06/23 11:51:22 INFO> MixUtils.pm:3759 Micronas::MixUtils::write_sum - SUM: debug 0
+2009/06/23 11:51:22 INFO> MixUtils.pm:3759 Micronas::MixUtils::write_sum - SUM: error 0
+2009/06/23 11:51:22 INFO> MixUtils.pm:3759 Micronas::MixUtils::write_sum - SUM: fatal 0
+2009/06/23 11:51:22 INFO> MixUtils.pm:3759 Micronas::MixUtils::write_sum - SUM: info 44
+2009/06/23 11:51:22 INFO> MixUtils.pm:3759 Micronas::MixUtils::write_sum - SUM: warn 97
+2009/06/23 11:51:22 INFO> MixUtils.pm:3766 Micronas::MixUtils::write_sum - SUM: runtime: 1 seconds
+2009/06/23 11:51:22 INFO> MixUtils.pm:3769 Micronas::MixUtils::write_sum - SUM: === Number of parsed input tables: ===
+2009/06/23 11:51:22 INFO> MixUtils.pm:3771 Micronas::MixUtils::write_sum - SUM: conf 0
+2009/06/23 11:51:22 INFO> MixUtils.pm:3771 Micronas::MixUtils::write_sum - SUM: hier 0
+2009/06/23 11:51:22 INFO> MixUtils.pm:3771 Micronas::MixUtils::write_sum - SUM: conn 0
+2009/06/23 11:51:22 INFO> MixUtils.pm:3771 Micronas::MixUtils::write_sum - SUM: io 0
+2009/06/23 11:51:22 INFO> MixUtils.pm:3771 Micronas::MixUtils::write_sum - SUM: i2c 1
+2009/06/23 11:51:22 INFO> MixUtils.pm:3771 Micronas::MixUtils::write_sum - SUM: xml 0

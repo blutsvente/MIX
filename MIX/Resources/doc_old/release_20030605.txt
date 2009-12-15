@@ -1,0 +1,142 @@
+Von: Gänsheimer Wilfried
+Gesendet: Donnerstag, 5. Juni 2003 17:39
+An: Schneider Claus; Pallas Michael; Schneider Thomas
+Cc: Bell Oliver; Herberg Christian; Pitscheider Manfred; Bartels Stefan;
+Schu Markus; Kröner Philipp; Gänsheimer Wilfried
+Betreff: WG: neue Version MIX verfuegbar auf K:\PROJECTS\MIX\PROG
+
+Hallo,
+
+grade eben habe ich eine neue Version vom MIX released.
+
+Neuigkeiten:
+
+-[no]delta    Falls -delta gesetzt ist, wird ein Diff gegenüber dem letzten Mal
+              erzeugt. Änderungen sind so sehr leicht zu verifizieren.
+
+-combine      write entity, architecture and configuration into one file
+	        for each entity (alpha, output format needs polishing)
+
+-conf key.key.key=value  Overwrite $EH{key}{key}{key} with value, see mix.cfg, too.
+-listconf              Print out all available/predefined configurations options
+-delta                 Output will be compared against previous runs
+-sheet SHEET=MATCH     SHEET can be one of "hier", "conn", "vi2c", Match s.th. like CONN.*
+
+Konfigurationsdatei:
+   mix.cfg    Falls so eine Datei im working directory gefunden wird (sowie an
+		  diversen anderen Stellen), werden Konfigurartions-
+              Optionen darin gesetzt. Kommandozeilen-Parameter haben aber Vorrang.
+              Ein Beispiel siehe in K:\PROJECTS\MIX\PROG\mix_exam.cfg
+		  Jeder Konfigurationsparameter muss mit MIXCFG anfangen.
+		  Achtung: Wer dort Unfug reinschreibt, braucht sich nicht zu wundern.
+ 
+Ein erster Wurf für einen IO-Sheet Parser ist ebenfalls enthalten.
+In K:\PROJECTS\MIX\PROG\a_clk_io.xls ist ein Beispiel für ein solches Sheet enthalten.
+Man benötigt das mix_exam.cfg (umbenennen), damit es kompiliert.
+Siehe auch die Batch-Datei contrib\a_clk_io.bat.
+
+Ein (sehr rohe) Anleitung ist in mix_appl.txt. ChangeLog und TODO.txt enthalten dem
+Titel entsprechende Informationen (TODO.txt ist allerdings veraltet, einiges darin
+ist implementiert).
+
+Verilog-Dateien werden erzeugt, es wird aber kein passender Inhalt geschrieben.
+
+Fragen, Kommentare, Bug-Reports bitte mit aussagekräftiger Beschreibung per Email
+schicken.
+
+Bye, happy weekend
+Wilfried
+
+### vom letzten Mal
+
+-out DATEINAME	intermediate CONN und HIER wird in DATEINAME geschrieben.
+	Default: Name des letzten Inputarguments, erweitert um "-mixed".
+
+-outarch [ARCH|dateiname]
+	falls Argument = ARCH, wird fuer jede "non-leaf" entity eine eigene Datei angelegt.
+	falls Argument sonstiges, wird alles in "dateiname" geschrieben.
+	Default: Name der letzten ExCEL-Datei, erweitert um -a.vhd
+
+-outenty [ENTY|dateiname]
+	dito. fuer Entity (z.Zt. wird eine entity generiert, auch fuer "leaf" Zellen.)
+
+-outconf [CONF|dateiname]
+
+-variant VARIANT
+	selektiere die Variante VARIANT. Default ist "DEFAULT"
+
+Alle Ausgaben werden jetzt in die Datei mix_0.p.out mitgeloggt.
+
+Signale und Busse koennen mittels dem Pseudo-Signal %LOW%, %HIGH%, %LOW_BUS%, %HIGH_BUS%
+fest mit '0' oder '1' verdrahtet werden.
+
+Beispiel:
+$ K:\PROJECTS\MIX\PROG\mix_0.pl -outarch ARCH  meinin.xls
+
+erzeugt:
+meinin-mixed.xls          -- Intermediate
+meinin-e.vhd                -- Entities
+meinin-c.vhd                -- Configurations
+bla_struct-a.vhd           -- Architecture fuer entity bla
+foo_struct-a.vhd           -- Architecture fuer entity foo
+....
+
+Beispieldatei: siehe K:\PROJECTS\MIX\Examples\a_clk.20030129
+
+Falls Fehler auftreten, bitte den Aufruf, die mix_0.pl.out Datei sowie die Eingabe-ExCEL Datei schicken bzw.
+irgendwo hinkopieren.
+
+Bye,
+Wilfried
+
+>  -----Ursprüngliche Nachricht-----
+> Von: 	Gänsheimer Wilfried  
+> Gesendet:	Donnerstag, 16. Januar 2003 14:31
+> An:	Bartels Stefan
+> Cc:	Schneider Claus; Gänsheimer Wilfried; Pallas Michael
+> Betreff:	MIX pre-Pilot verfuegbar auf K:\PROJECTS\MIX
+> 
+> Hallo,
+> 
+> ich habe grad eben alle relevanten Daten nach
+> 
+> K:\PROJECTS\MIX\PROG
+> 
+> kopiert.
+> 
+> Setup:
+> 
+> In \PROJECTS\MIX findet sich der Perl-Installer (Active-Perl....)
+> den ausfuerhren. Danach sollte im Command-Tool perl bekannt sein.
+> 
+> Wahrscheinlich muessen mit Hilfe des Perl Package Managers 
+> noch ein paar
+> Module nachinstalliert werden:
+>   Tree::DAG_Node
+> etc. (bitte melden, ich helfe gern).
+> 
+> Das Programm startet man dann z.B. fuer die Konvertierung von ANY.xls
+> im H: Laufwerk wie folgt:
+> 
+> <oeffne cmd-Tool, z.B. Start -> Ausführen -> cmd>
+> $ h:
+> $ cd work\myproj
+> $ K:\PROJECTS\MIX\PROG\mix_0.pl ANY.xls
+> 
+> das generiert momentan folgendes:
+> 
+> c:\temp\x2v.pld        Dump der intermediate Daten in 
+> Perlinternem Format.
+>    .\ANY-mixed.xls   Excel Dump der Intermediate Daten (CONN und HIER)
+>     .\ANY-e.vhd         Entity
+> 
+> mix_0.pl erkennt diverse Optionen, dazu aber spaeter mehr.
+> 
+> Falls es nicht geht, bitte mit qualifizierter Fehlermeldung an mich.
+> 
+> Mehr Anfang nächster Woche.
+> 
+> Bye
+> Wilfried
+> 
+

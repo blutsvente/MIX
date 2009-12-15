@@ -1,0 +1,28 @@
+-- -------------------------------------------------------------
+--
+--  Entity Declaration for a_e
+--
+...
+-- Generator: mix_0.pl Version: Revision: 1.12 , wilfried.gaensheimer@micronas.com
+-- (C) 2003 Micronas GmbH
+--
+-- --------------------------------------------------------------
+library IEEE;
+use IEEE.std_logic_1164.all;
+--
+-- Start of Generated Entity a_e
+--
+entity a_e is
+    	-- Generated Port Declaration:
+		port(
+		-- Generated Port for Entity a_e
+			sig_a	: out	std_ulogic
+		-- End of Generated Port for Entity a_e
+		);
+end a_e;
+--
+-- End of Generated Entity a_e
+--
+--
+--!End of Entity/ies
+-- --------------------------------------------------------------

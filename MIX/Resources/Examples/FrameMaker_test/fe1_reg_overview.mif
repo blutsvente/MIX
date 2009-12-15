@@ -1,0 +1,221 @@
+<MIFFile 5.50>
+
+<Tbls 
+# Generated table data:
+<Tbl 
+  <TblID 1>
+  # <TblFormat
+  #   <TblTag `Register overview'>
+  # >
+  <TblTag `PageWidth'>
+  <TblNumColumns 4>
+  <TblColumnWidth 45.0 mm>
+  <TblColumnWidth 15.0 mm>
+  <TblColumnWidth 27.0 mm>
+  <TblColumnWidth 92.0 mm>
+  <TblTitle 
+    <TblTitleContent
+      <Para
+        <PgfTag `TableTitle'>
+        <ParaLine
+          <String `Register description list'>
+        >
+      >
+    > 
+  > # end of TblTitle
+<TblH
+	<Row <RowWithNext Yes> <RowWithPrev Yes> 
+		<Cell <CellFill 0> <CellColor `Gray 6.2'><CellContent <Para <PgfTag `CellHeadingH9'> 
+			<ParaLine <String `Register'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellFill 0> <CellColor `Gray 6.2'><CellContent <Para <PgfTag `CellHeadingH9'> 
+			<ParaLine <String `R/W'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellFill 0> <CellColor `Gray 6.2'><CellContent <Para <PgfTag `CellHeadingH9'> 
+			<ParaLine <String `Address'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellFill 0> <CellColor `Gray 6.2'><CellContent <Para <PgfTag `CellHeadingH9'> 
+			<ParaLine <String `Comment'> > #End of ParaLine
+		 > > > # end of Cell
+	> # end of Row
+> # end of TblH
+<TblBody
+	<Row <RowWithPrev Yes> 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String `reg_0x0'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `RW'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `0x00000000'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String ` '> > #End of ParaLine
+		 > > > # end of Cell
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String `reg_0x4'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `RW'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `0x00000004'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String ` '> > #End of ParaLine
+		 > > > # end of Cell
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String `reg_0x8'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `R'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `0x00000008'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String ` '> > #End of ParaLine
+		 > > > # end of Cell
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String `reg_0xC'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `RW'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `0x0000000C'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String ` '> > #End of ParaLine
+		 > > > # end of Cell
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String `reg_0x10'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `RW'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `0x00000010'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String ` '> > #End of ParaLine
+		 > > > # end of Cell
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String `reg_0x14'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `RW'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `0x00000014'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String ` '> > #End of ParaLine
+		 > > > # end of Cell
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String `reg_0x18'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `RW'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `0x00000018'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String ` '> > #End of ParaLine
+		 > > > # end of Cell
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String `reg_0x1C'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `W'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `0x0000001C'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String ` '> > #End of ParaLine
+		 > > > # end of Cell
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String `reg_0x20'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `W'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `0x00000020'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String ` '> > #End of ParaLine
+		 > > > # end of Cell
+	> # end of Row
+	<Row 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String `reg_0x28'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `R'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `0x00000028'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String ` '> > #End of ParaLine
+		 > > > # end of Cell
+	> # end of Row
+	<Row <RowWithPrev Yes> 
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String `RS_CTLSTS'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `RW'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9center'> 
+			<ParaLine <String `0x0000002C'> > #End of ParaLine
+		 > > > # end of Cell
+		<Cell <CellContent <Para <PgfTag `CellBodyH9'> 
+			<ParaLine <String ` '> > #End of ParaLine
+		 > > > # end of Cell
+	> # end of Row
+> # end of TblBody
+> # end of Tbl
+
+> # end of Tbls
+
+# <TextFlow 
+#   <TFTag `A'>
+#   <TFAutoConnect Yes>
+# Generated Table references:
+  <Para
+    <PgfTag `Body'>
+    <ParaLine
+      <ATbl 1>
+    >
+  >
+
+#  <Para
+#    <PgfTag `Body'>
+#    <ParaLine
+#      <ATbl 1>
+#    >
+#  >
+# > # end of TextFlow
+
+# End of MIFFile

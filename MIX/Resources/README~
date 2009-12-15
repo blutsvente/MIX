@@ -1,0 +1,30 @@
+Interesting Files in Directory "Resources" (some are out-of-date)
+-----------------------------------------------------------------
+
+/tools/mix/Resources
+`-----Doc
+|     `-----mix_api_05022009.ppt
+|     `-----MIX register-shell HOWTO for VCTV.ppt
+|     `-----mix_short_intro_trd_eng_symposium_062009.ppt
+|     `-----mix_update_05022009.ppt
+|     `-----proceedingsEDP2003.pdf
+|     `-----Workshop.doc
+`-----Examples
+|     `-----pin_master_vhdl_di_tnr
+|     |     `-----di_tnr.xls
+|     |     `-----mix.cfg
+|     |     `-----run.sh
+|     `-----register_master_scc
+|     |     `-----Makefile
+|     |     `-----mix.cfg
+|     |     `-----README
+|     |     `-----run.sh
+|     |     `-----SCC-register_master.xls
+|     |     `-----scs_video_frcs.mk
+|     `-----register_master_rs_test
+|     |     `-----mix.cfg
+|     |     `-----README
+|     |     `-----rs_test.xls
+|     |     `-----run.sh
+`-----mix_cfg_generator_vctv.xls
+`-----registermaster_template_frcv_ihb.xls

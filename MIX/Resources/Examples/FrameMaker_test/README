@@ -1,0 +1,3 @@
+note: after generation of .mif files, import into FM document by copy (not reference);
+works only with provided DesignSpec-Template*.fm
+

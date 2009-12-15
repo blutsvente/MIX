@@ -1,0 +1,1026 @@
+:=:=:=>CONF
+MIXCFG;CONST_NR;174
+MIXCFG;DELTA_INT_NR;0
+MIXCFG;DELTA_NR;0
+MIXCFG;DELTA_VER_NR;0
+MIXCFG;ERROR;__ERROR__
+MIXCFG;GENERIC_NR;0
+MIXCFG;HIGH_NR;0
+MIXCFG;LOW_NR;0
+MIXCFG;OPEN_NR;0
+MIXCFG;PRINTTIMING;1
+MIXCFG;TYPECAST_NR;0
+MIXCFG;WARN;__WARNING__
+MIXCFG;check.defs;
+MIXCFG;check.hdlout.delta;
+MIXCFG;check.hdlout.extmask.arch;
+MIXCFG;check.hdlout.extmask.conf;
+MIXCFG;check.hdlout.extmask.entity;
+MIXCFG;check.hdlout.filter.arch;
+MIXCFG;check.hdlout.filter.conf;
+MIXCFG;check.hdlout.filter.entity;
+MIXCFG;check.hdlout.mode;entity,leaf,generated,ignorecase
+MIXCFG;check.hdlout.path;
+MIXCFG;check.inst;nomulti
+MIXCFG;check.keywords.verilog;(register|net|wire|in|out|inout)
+MIXCFG;check.keywords.vhdl;(open|instance|entity|signal)
+MIXCFG;check.keywords.xlscell;^(#(VALUE|NAME|NUM|REF)[!?]|GENERAL)$
+MIXCFG;check.name.all;na
+MIXCFG;check.name.conf;na
+MIXCFG;check.name.conn;na
+MIXCFG;check.name.enty;na
+MIXCFG;check.name.inst;na
+MIXCFG;check.name.pad;na
+MIXCFG;check.name.port;na
+MIXCFG;check.namex.all;
+MIXCFG;check.namex.conf;
+MIXCFG;check.namex.conn;
+MIXCFG;check.namex.enty;
+MIXCFG;check.namex.inst;
+MIXCFG;check.namex.pad;
+MIXCFG;check.namex.port;
+MIXCFG;check.signal;load,driver,check
+MIXCFG;conf.parsed;0
+MIXCFG;conf.req;optional
+MIXCFG;conf.xls;CONF
+MIXCFG;conf.xxls;
+MIXCFG;conn.comments;post
+MIXNOCFG;conn.field.::bundle;ARRAY
+MIXNOCFG;conn.field.::class;ARRAY
+MIXNOCFG;conn.field.::clock;ARRAY
+MIXNOCFG;conn.field.::comment;ARRAY
+MIXNOCFG;conn.field.::debug;ARRAY
+MIXNOCFG;conn.field.::default;ARRAY
+MIXNOCFG;conn.field.::descr;ARRAY
+MIXNOCFG;conn.field.::gen;ARRAY
+MIXNOCFG;conn.field.::high;ARRAY
+MIXNOCFG;conn.field.::ign;ARRAY
+MIXNOCFG;conn.field.::in;ARRAY
+MIXNOCFG;conn.field.::low;ARRAY
+MIXNOCFG;conn.field.::mode;ARRAY
+MIXNOCFG;conn.field.::name;ARRAY
+MIXNOCFG;conn.field.::out;ARRAY
+MIXNOCFG;conn.field.::shortname;ARRAY
+MIXNOCFG;conn.field.::skip;ARRAY
+MIXNOCFG;conn.field.::type;ARRAY
+MIXCFG;conn.field._multorder_;0
+MIXCFG;conn.field.nr;16
+MIXCFG;conn.key;::name
+MIXCFG;conn.parsed;0
+MIXCFG;conn.req;mandatory
+MIXCFG;conn.xls;CONN
+MIXCFG;conn.xxls;
+MIXCFG;cwd;/tools/mix/Resources/Examples/register_master_rs_test
+MIXCFG;default.comments;post
+MIXNOCFG;default.field.::comment;ARRAY
+MIXNOCFG;default.field.::debug;ARRAY
+MIXNOCFG;default.field.::default;ARRAY
+MIXNOCFG;default.field.::ign;ARRAY
+MIXNOCFG;default.field.::skip;ARRAY
+MIXCFG;default.field._multorder_;0
+MIXCFG;default.field.nr;3
+MIXCFG;default.key;::ign
+MIXCFG;default.parsed;0
+MIXCFG;default.req;optional
+MIXCFG;default.xls;.*
+MIXCFG;drive;
+MIXCFG;dump;rs_test.pld
+MIXCFG;format.csv.cellsep;";"
+MIXCFG;format.csv.delta;DIFF:
+MIXCFG;format.csv.maxcelllength;0
+MIXCFG;format.csv.mixhead;1
+MIXCFG;format.csv.quoting;""""
+MIXCFG;format.csv.sheetsep;:=:=:=>
+MIXCFG;format.csv.sortrange;1
+MIXCFG;format.csv.style;doublequote,autoquote,nowrapnl,maxwidth
+MIXCFG;format.ods.maxcelllength;500
+MIXCFG;format.ods.mixhead;1
+MIXCFG;format.ods.style;
+MIXCFG;format.out;
+MIXCFG;format.sxc.maxcelllength;500
+MIXCFG;format.sxc.mixhead;1
+MIXCFG;format.sxc.style;
+MIXCFG;format.xls.maxcelllength;500
+MIXCFG;format.xls.mixhead;1
+MIXCFG;format.xls.style;
+MIXCFG;hier.comments;
+MIXNOCFG;hier.field.::arch;ARRAY
+MIXNOCFG;hier.field.::comment;ARRAY
+MIXNOCFG;hier.field.::config;ARRAY
+MIXNOCFG;hier.field.::debug;ARRAY
+MIXNOCFG;hier.field.::default;ARRAY
+MIXNOCFG;hier.field.::descr;ARRAY
+MIXNOCFG;hier.field.::entity;ARRAY
+MIXNOCFG;hier.field.::gen;ARRAY
+MIXNOCFG;hier.field.::hierachy;ARRAY
+MIXNOCFG;hier.field.::ign;ARRAY
+MIXNOCFG;hier.field.::inst;ARRAY
+MIXNOCFG;hier.field.::lang;ARRAY
+MIXNOCFG;hier.field.::parent;ARRAY
+MIXNOCFG;hier.field.::shortname;ARRAY
+MIXNOCFG;hier.field.::skip;ARRAY
+MIXNOCFG;hier.field.::udc;ARRAY
+MIXNOCFG;hier.field.::use;ARRAY
+MIXNOCFG;hier.field.::variants;ARRAY
+MIXCFG;hier.field._multorder_;0
+MIXCFG;hier.field.nr;14
+MIXCFG;hier.key;::inst
+MIXCFG;hier.options;overload
+MIXCFG;hier.parsed;0
+MIXCFG;hier.req;mandatory
+MIXCFG;hier.xls;HIER
+MIXCFG;hier.xxls;
+MIXCFG;i2c._mult_.::b;31
+MIXCFG;i2c._mult_.::skip;4
+MIXCFG;i2c.cols;0
+MIXCFG;i2c.comments;
+MIXCFG;i2c.ext;64
+MIXNOCFG;i2c.field.::addr;ARRAY
+MIXNOCFG;i2c.field.::auto;ARRAY
+MIXNOCFG;i2c.field.::b;ARRAY
+MIXNOCFG;i2c.field.::b:1;ARRAY
+MIXNOCFG;i2c.field.::b:10;ARRAY
+MIXNOCFG;i2c.field.::b:11;ARRAY
+MIXNOCFG;i2c.field.::b:12;ARRAY
+MIXNOCFG;i2c.field.::b:13;ARRAY
+MIXNOCFG;i2c.field.::b:14;ARRAY
+MIXNOCFG;i2c.field.::b:15;ARRAY
+MIXNOCFG;i2c.field.::b:16;ARRAY
+MIXNOCFG;i2c.field.::b:17;ARRAY
+MIXNOCFG;i2c.field.::b:18;ARRAY
+MIXNOCFG;i2c.field.::b:19;ARRAY
+MIXNOCFG;i2c.field.::b:2;ARRAY
+MIXNOCFG;i2c.field.::b:20;ARRAY
+MIXNOCFG;i2c.field.::b:21;ARRAY
+MIXNOCFG;i2c.field.::b:22;ARRAY
+MIXNOCFG;i2c.field.::b:23;ARRAY
+MIXNOCFG;i2c.field.::b:24;ARRAY
+MIXNOCFG;i2c.field.::b:25;ARRAY
+MIXNOCFG;i2c.field.::b:26;ARRAY
+MIXNOCFG;i2c.field.::b:27;ARRAY
+MIXNOCFG;i2c.field.::b:28;ARRAY
+MIXNOCFG;i2c.field.::b:29;ARRAY
+MIXNOCFG;i2c.field.::b:3;ARRAY
+MIXNOCFG;i2c.field.::b:30;ARRAY
+MIXNOCFG;i2c.field.::b:31;ARRAY
+MIXNOCFG;i2c.field.::b:4;ARRAY
+MIXNOCFG;i2c.field.::b:5;ARRAY
+MIXNOCFG;i2c.field.::b:6;ARRAY
+MIXNOCFG;i2c.field.::b:7;ARRAY
+MIXNOCFG;i2c.field.::b:8;ARRAY
+MIXNOCFG;i2c.field.::b:9;ARRAY
+MIXNOCFG;i2c.field.::block;ARRAY
+MIXNOCFG;i2c.field.::busy;ARRAY
+MIXNOCFG;i2c.field.::clock;ARRAY
+MIXNOCFG;i2c.field.::clone;ARRAY
+MIXNOCFG;i2c.field.::comment;ARRAY
+MIXNOCFG;i2c.field.::cond;ARRAY
+MIXNOCFG;i2c.field.::default;ARRAY
+MIXNOCFG;i2c.field.::definition;ARRAY
+MIXNOCFG;i2c.field.::dev;ARRAY
+MIXNOCFG;i2c.field.::dir;ARRAY
+MIXNOCFG;i2c.field.::fgroup;ARRAY
+MIXNOCFG;i2c.field.::ign;ARRAY
+MIXNOCFG;i2c.field.::init;ARRAY
+MIXNOCFG;i2c.field.::inst;ARRAY
+MIXNOCFG;i2c.field.::interface;ARRAY
+MIXNOCFG;i2c.field.::name;ARRAY
+MIXNOCFG;i2c.field.::range;ARRAY
+MIXNOCFG;i2c.field.::readDone;ARRAY
+MIXNOCFG;i2c.field.::rec;ARRAY
+MIXNOCFG;i2c.field.::reset;ARRAY
+MIXNOCFG;i2c.field.::skip;ARRAY
+MIXNOCFG;i2c.field.::skip:1;ARRAY
+MIXNOCFG;i2c.field.::skip:2;ARRAY
+MIXNOCFG;i2c.field.::skip:3;ARRAY
+MIXNOCFG;i2c.field.::skip:4;ARRAY
+MIXNOCFG;i2c.field.::spec;ARRAY
+MIXNOCFG;i2c.field.::sub;ARRAY
+MIXNOCFG;i2c.field.::sync;ARRAY
+MIXNOCFG;i2c.field.::type;ARRAY
+MIXNOCFG;i2c.field.::update;ARRAY
+MIXNOCFG;i2c.field.::variants;ARRAY
+MIXNOCFG;i2c.field.::vi2c;ARRAY
+MIXNOCFG;i2c.field.::view;ARRAY
+MIXNOCFG;i2c.field.::width;ARRAY
+MIXCFG;i2c.field._multorder_;0
+MIXCFG;i2c.field.nr;69
+MIXCFG;i2c.parsed;1
+MIXCFG;i2c.regmas_type;VGCA
+MIXCFG;i2c.req;optional
+MIXCFG;i2c.xls;rs_test
+MIXCFG;i2c.xxls;
+MIXCFG;import.generate;stripio
+MIXCFG;import.order;sort
+MIXCFG;import.vinc;
+MIXCFG;import.vinc_skip;include,define
+MIXCFG;input.domain;::interface
+MIXCFG;input.ext.csv;csv
+MIXCFG;input.ext.excel;xls
+MIXCFG;input.ext.oofice;ods
+MIXCFG;input.ext.soffice;sxc
+MIXCFG;input.header;mix
+MIXCFG;input.ignore.columns;nohead
+MIXCFG;input.ignore.comments;^\s*(#|//|--)
+MIXCFG;input.ignore.lines;^\s*(#|//|--)
+MIXCFG;input.ignore.map;hashtoign
+MIXCFG;input.ignore.pragma;
+MIXCFG;input.ignore.variant;#__I_VARIANT
+MIXCFG;input.req;mandatory
+MIXCFG;intermediate.__topmap_re_;^(ALL)$
+MIXCFG;intermediate.delta;purgetable
+MIXCFG;intermediate.ext;
+MIXCFG;intermediate.format;prev
+MIXCFG;intermediate.instpre;CONN_
+MIXCFG;intermediate.intra;
+MIXCFG;intermediate.keep;1
+MIXCFG;intermediate.order;template
+MIXCFG;intermediate.path;tmp
+MIXCFG;intermediate.strip;0
+MIXCFG;intermediate.topmap;ALL
+MIXCFG;intermediate.xls_columns;ign,type,dev,width,sub,interface,inst,dir,spec,update,sync,clock,reset,b,init,rec,range,view,vi2c,name,comment,block
+MIXCFG;intermediate.xls_dump;0
+MIXCFG;intermediate.yaml_dump;0
+MIXCFG;internal.format;perl
+MIXCFG;internal.order;input
+MIXCFG;internal.path;tmp
+MIXCFG;internal.regviews.text;Utility functions to create different register space views from Reg class object
+MIXCFG;internal.regviews.version;1.93
+MIXCFG;io.cols;0
+MIXCFG;io.comments;
+MIXNOCFG;io.field.::class;ARRAY
+MIXNOCFG;io.field.::comment;ARRAY
+MIXNOCFG;io.field.::debug;ARRAY
+MIXNOCFG;io.field.::default;ARRAY
+MIXNOCFG;io.field.::ign;ARRAY
+MIXNOCFG;io.field.::iocell;ARRAY
+MIXNOCFG;io.field.::ispin;ARRAY
+MIXNOCFG;io.field.::muxopt;ARRAY
+MIXNOCFG;io.field.::name;ARRAY
+MIXNOCFG;io.field.::pad;ARRAY
+MIXNOCFG;io.field.::pin;ARRAY
+MIXNOCFG;io.field.::port;ARRAY
+MIXNOCFG;io.field.::skip;ARRAY
+MIXNOCFG;io.field.::type;ARRAY
+MIXCFG;io.field._multorder_;0
+MIXCFG;io.field.nr;12
+MIXCFG;io.parsed;0
+MIXCFG;io.req;optional
+MIXCFG;io.xls;IO
+MIXCFG;io.xxls;
+MIXCFG;iocell.auto;bus
+MIXCFG;iocell.bus;_vector
+MIXCFG;iocell.defaultdir;in
+MIXCFG;iocell.embedded;
+MIXCFG;iocell.in;do,en,pu,pd,xout
+MIXCFG;iocell.inout;__NOINOUT__
+MIXCFG;iocell.name;%::iocell%_%::pad%
+MIXCFG;iocell.out;di,xin
+MIXCFG;iocell.select;onehot,auto
+MIXCFG;iscygwin;
+MIXCFG;iswin;
+MIXCFG;join.comments;post
+MIXNOCFG;join.field.::client;ARRAY
+MIXNOCFG;join.field.::comment;ARRAY
+MIXNOCFG;join.field.::cpu1_addr;ARRAY
+MIXNOCFG;join.field.::cpu2_addr;ARRAY
+MIXNOCFG;join.field.::debug;ARRAY
+MIXNOCFG;join.field.::default;ARRAY
+MIXNOCFG;join.field.::definition;ARRAY
+MIXNOCFG;join.field.::group;ARRAY
+MIXNOCFG;join.field.::group_addr;ARRAY
+MIXNOCFG;join.field.::group_id;ARRAY
+MIXNOCFG;join.field.::grp_awidth;ARRAY
+MIXNOCFG;join.field.::ign;ARRAY
+MIXNOCFG;join.field.::skip;ARRAY
+MIXNOCFG;join.field.::sub;ARRAY
+MIXNOCFG;join.field.::subwidth;ARRAY
+MIXCFG;join.field._multorder_;0
+MIXCFG;join.field.nr;13
+MIXCFG;join.key;::ign
+MIXCFG;join.parsed;0
+MIXCFG;join.req;optional
+MIXCFG;join.xls;.*
+MIXCFG;join.xxls;
+MIXCFG;log.count.level.I;37
+MIXCFG;log.count.level.W;13
+MIXCFG;log.count.tag.__I_EMPTY_HEADERC;5
+MIXCFG;log.count.tag.__I_GENERATE_PORT;61
+MIXCFG;log.count.tag.__I_HEAD_NEW;9
+MIXCFG;log.count.tag.__I_MKDIR;4
+MIXCFG;log.count.tag.__I_PARSER_CONN_MACRO;1
+MIXCFG;log.count.tag.__I_READ_CFG;1
+MIXCFG;log.count.tag.__I_REG;21
+MIXCFG;log.count.tag.__I_TIME_START;1
+MIXCFG;log.count.tag.__I_WORKSHEET;1
+MIXCFG;log.count.tag.__W_CREATE_CONN;1
+MIXCFG;log.count.tag.__W_CREATE_ENTY;4
+MIXCFG;log.count.tag.__W_PARSE_MAC__;2
+MIXCFG;log.count.tag.__W_REG;4
+MIXCFG;log.count.tag.__W_WORKSHEET;2
+MIXCFG;log.limit.level.A;2000
+MIXCFG;log.limit.level.I;1000
+MIXCFG;log.limit.level.W;500
+MIXCFG;log.limit.re.__I_CHECK_CASE;1
+MIXCFG;log.limit.re.__W_CHECK_CASE;1
+MIXCFG;log.limit.tag.A;100
+MIXCFG;log.limit.tag.D;100
+MIXCFG;log.limit.tag.E;100
+MIXCFG;log.limit.tag.F;100
+MIXCFG;log.limit.tag.I;200
+MIXCFG;log.limit.tag.W;200
+MIXCFG;logs.debug;0
+MIXCFG;logs.error;0
+MIXCFG;logs.fatal;0
+MIXCFG;logs.info;40
+MIXCFG;logs.warn;80
+MIXCFG;macro.%0%;mix_1.pl
+MIXCFG;macro.%ACOM%;--
+MIXCFG;macro.%ARGV%;/home/lutscher/work/MIX/mix_1.pl rs_test.xls
+MIXCFG;macro.%AUTOCONF%;_struct_conf
+MIXCFG;macro.%AUTOENTY%;_e
+MIXCFG;macro.%BODY%;__BODY__
+MIXCFG;macro.%BUFFER%;buffer
+MIXCFG;macro.%BUS%;__BUS__
+MIXCFG;macro.%BUS_TYPE%;std_ulogic_vector
+MIXCFG;macro.%CARGV%;/home/lutscher/work/MIX/mix_1.pl rs_test.xls
+MIXCFG;macro.%CONST%;__CONST__
+MIXCFG;macro.%CR%;\n
+MIXCFG;macro.%DATE%;Tue Jun 23 11:51:21 2009
+MIXCFG;macro.%DECL%;__DECL__
+MIXCFG;macro.%DEFAULT_CONFIG%;%::entity%_%::arch%_conf
+MIXCFG;macro.%DEFAULT_MODE%;S
+MIXCFG;macro.%DEFINE%;`define
+MIXCFG;macro.%EMPTY%;
+MIXCFG;macro.%FOOT%;__FOOT__
+MIXCFG;macro.%GENERIC%;__GENERIC__
+MIXCFG;macro.%H%;$
+MIXCFG;macro.%HEAD%;__HEAD__
+MIXCFG;macro.%HIGH%;mix_logic1
+MIXCFG;macro.%HIGH_BUS%;mix_logic1_bus
+MIXCFG;macro.%HOME%;/home/lutscher
+MIXCFG;macro.%IIC_IF%;iic_if_
+MIXCFG;macro.%IIC_SYNC%;sync_
+MIXCFG;macro.%IIC_TRANS%;transceiver_
+MIXCFG;macro.%IMPORT%;__IMPORT__
+MIXCFG;macro.%IMPORT_BUNDLE%;__IMPORT_BUNDLE__
+MIXCFG;macro.%IMPORT_CLK%;__IMPORT_CLK__
+MIXCFG;macro.%IMPORT_I%;I
+MIXCFG;macro.%IMPORT_O%;O
+MIXCFG;macro.%INCLUDE%;`include
+MIXCFG;macro.%INT_VERILOG_DEFINES%;
+MIXCFG;macro.%IOCELL_CLK%;CLK
+MIXCFG;macro.%IOCELL_SELECT_PORT%;__I_default_select
+MIXCFG;macro.%IOCELL_TYPE%;__E_DEFAULT_IOCELL__
+MIXCFG;macro.%IOCR%; 
+MIXCFG;macro.%LANGUAGE%;vhdl
+MIXCFG;macro.%LOW%;mix_logic0
+MIXCFG;macro.%LOW_BUS%;mix_logic0_bus
+MIXCFG;macro.%NCD%;__NOCOMPDEC__
+MIXCFG;macro.%NOSEL%;__I_NOSEL__
+MIXCFG;macro.%NOSELPORT%;__I_NOSELPORT__
+MIXCFG;macro.%NO_COMP%;__NOCOMPDEC__
+MIXCFG;macro.%NO_COMPONENT_DECLARATION%;__NOCOMPDEC__
+MIXCFG;macro.%NO_CONFIG%;NO_CONFIG
+MIXCFG;macro.%NULL%;0
+MIXCFG;macro.%OPEN%;open
+MIXCFG;macro.%OS%;linux
+MIXCFG;macro.%PAD_CLASS%;PAD
+MIXCFG;macro.%PAD_TYPE%;__E_DEFAULT_PAD__
+MIXCFG;macro.%PARAMETER%;__PARAMETER__
+MIXCFG;macro.%POSTFIX_IIC_IN%;_iic_i
+MIXCFG;macro.%POSTFIX_IIC_OUT%;_iic_o
+MIXCFG;macro.%PREFIX_IIC_GEN%;iic_if_
+MIXCFG;macro.%PROJECT%;__I_NO_PROJECT_SET
+MIXCFG;macro.%REG%;__REG__
+MIXCFG;macro.%RREG%;read_reg_
+MIXCFG;macro.%RWREG%;read_write_reg_
+MIXCFG;macro.%S%;\t
+MIXCFG;macro.%SIGNAL%;std_ulogic
+MIXCFG;macro.%SPACE%; 
+MIXCFG;macro.%STARTTIME%;1245750681
+MIXCFG;macro.%TAB%;\t
+MIXCFG;macro.%TBD%;__W_TO_BE_DEFINED
+MIXCFG;macro.%TESTBENCH%;TESTBENCH
+MIXCFG;macro.%TM_B%;B
+MIXCFG;macro.%TM_C%;C
+MIXCFG;macro.%TM_G%;G
+MIXCFG;macro.%TM_I%;I
+MIXCFG;macro.%TM_IO%;IO
+MIXCFG;macro.%TM_O%;O
+MIXCFG;macro.%TM_P%;P
+MIXCFG;macro.%TM_T%;T
+MIXCFG;macro.%TOP%;__TOP__
+MIXCFG;macro.%TOP_CONF%;mixtop_conf
+MIXCFG;macro.%TOP_ENTY%;W_NO_ENTITY
+MIXCFG;macro.%TPYECAST_ENT%;__TYPECAST_ENT__
+MIXCFG;macro.%TRISTATE%;tristate
+MIXCFG;macro.%TYPECAST_CONF%;__TYPECAST_CONF__
+MIXCFG;macro.%UAMN%;
+MIXCFG;macro.%UNDEF%;ERROR_UNDEF
+MIXCFG;macro.%UNDEF_1%;ERROR_UNDEF_1
+MIXCFG;macro.%UNDEF_2%;ERROR_UNDEF_2
+MIXCFG;macro.%UNDEF_3%;ERROR_UNDEF_3
+MIXCFG;macro.%UNDEF_4%;ERROR_UNDEF_4
+MIXCFG;macro.%USEASMODULENAME%;
+MIXCFG;macro.%USER%;lutscher
+MIXCFG;macro.%VERILOG_DEFINES%;// No user `defines in this module
+MIXCFG;macro.%VERILOG_HOOK_BODY%;
+MIXCFG;macro.%VERILOG_HOOK_FOOT%;
+MIXCFG;macro.%VERILOG_HOOK_HEAD%;
+MIXCFG;macro.%VERILOG_HOOK_INST_APP%;
+MIXCFG;macro.%VERILOG_HOOK_INST_PRE%;
+MIXCFG;macro.%VERILOG_HOOK_PARA%;
+MIXCFG;macro.%VERILOG_TIMESCALE%;`timescale 1ns/10ps
+MIXCFG;macro.%VERILOG_USE_ARCH%;%EMPTY%
+MIXCFG;macro.%VERSION%;Revision: 1.3 
+MIXCFG;macro.%VHDL_HOOK_ARCH_BODY%;
+MIXCFG;macro.%VHDL_HOOK_ARCH_DECL%;
+MIXCFG;macro.%VHDL_HOOK_ARCH_FOOT%;
+MIXCFG;macro.%VHDL_HOOK_ARCH_HEAD%;
+MIXCFG;macro.%VHDL_HOOK_CONF_BODY%;
+MIXCFG;macro.%VHDL_HOOK_CONF_FOOT%;
+MIXCFG;macro.%VHDL_HOOK_CONF_HEAD%;
+MIXCFG;macro.%VHDL_HOOK_ENTY_BODY%;
+MIXCFG;macro.%VHDL_HOOK_ENTY_FOOT%;
+MIXCFG;macro.%VHDL_HOOK_ENTY_HEAD%;
+MIXCFG;macro.%VHDL_HOOK_INST_APP%;
+MIXCFG;macro.%VHDL_HOOK_INST_PRE%;
+MIXCFG;macro.%VHDL_NOPROJ%;-- No project specific VHDL libraries
+MIXCFG;macro.%VHDL_USE%;-- No project specific VHDL libraries
+MIXCFG;macro.%VHDL_USE_ARCH%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;macro.%VHDL_USE_CONF%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;macro.%VHDL_USE_DEFAULT%;"library IEEE;\nuse IEEE.std_logic_1164.all;\n"
+MIXCFG;macro.%VHDL_USE_ENTY%;%VHDL_USE_DEFAULT%\n%VHDL_USE%
+MIXCFG;macro.%WORKAREA%;__I_NO_WORKAREA_SET
+MIXCFG;macro.%WREG%;write_reg_
+MIXCFG;out;rs_test-mixed.xls
+MIXCFG;outarch;ARCH
+MIXCFG;outconf;CONF
+MIXCFG;outenty;ENTY
+MIXCFG;output.casefilename;lc
+MIXCFG;output.comment.default;#
+MIXCFG;output.comment.delta;#
+MIXCFG;output.comment.intermediate;#
+MIXCFG;output.comment.internal;#
+MIXCFG;output.comment.verilog;//
+MIXCFG;output.comment.vhdl;--
+MIXCFG;output.delta;remove,ispace,comment,ihead
+MIXCFG;output.ext.delta;.diff
+MIXCFG;output.ext.intermediate;mixed
+MIXCFG;output.ext.internal;pld
+MIXCFG;output.ext.verify;.ediff
+MIXCFG;output.ext.verilog;v
+MIXCFG;output.ext.verilog_def;vh
+MIXCFG;output.ext.vhdl;vhd
+MIXCFG;output.filename;useminus
+MIXCFG;output.filter.file;,u0_sci_target_0002_i,u1_sci_target_m_checker_i,u2_rs_mcda_0002_i,u3_sync_generic_i,u4_sync_rst_i,u5_sync_generic_i,u6_sync_rst_i,u7_sync_generic_i,u8_sync_generic_i,u9_sync_generic_i,u10_sync_generic_i,u11_sync_generic_i,u12_sync_generic_i
+MIXCFG;output.format;ext
+MIXCFG;output.generate._logiciocheck_.and.imax;1
+MIXCFG;output.generate._logiciocheck_.and.omax;N
+MIXCFG;output.generate._logiciocheck_.nand.imax;1
+MIXCFG;output.generate._logiciocheck_.nand.omax;N
+MIXCFG;output.generate._logiciocheck_.nor.imax;1
+MIXCFG;output.generate._logiciocheck_.nor.omax;N
+MIXCFG;output.generate._logiciocheck_.not.imax;1
+MIXCFG;output.generate._logiciocheck_.not.omax;1
+MIXCFG;output.generate._logiciocheck_.or.imax;1
+MIXCFG;output.generate._logiciocheck_.or.omax;N
+MIXCFG;output.generate._logiciocheck_.wire.imax;1
+MIXCFG;output.generate._logiciocheck_.wire.omax;1
+MIXCFG;output.generate._logiciocheck_.xor.imax;1
+MIXCFG;output.generate._logiciocheck_.xor.omax;N
+MIXCFG;output.generate._logicre_;^(__|%)?(wire|and|or|nand|xor|nor|not)(__|%)?$
+MIXCFG;output.generate._re_xinout;^__NOEXCLUDESIGNAL__$
+MIXCFG;output.generate.arch;
+MIXCFG;output.generate.bak;0
+MIXCFG;output.generate.combine;0
+MIXCFG;output.generate.conf;noleaf
+MIXCFG;output.generate.delta;0
+MIXCFG;output.generate.deltadesc;re=.*\.(v|vhd)
+MIXNOCFG;output.generate.deltafiles;ARRAY
+MIXCFG;output.generate.emumux.define;insert_emu_mux_%::inst%
+MIXCFG;output.generate.emumux.modules;
+MIXCFG;output.generate.emumux.muxsnamei;%::name%_vc_s
+MIXCFG;output.generate.emumux.muxsnameo;%::name%_emux_s
+MIXCFG;output.generate.emumux.options;in
+MIXCFG;output.generate.emumux.select;emu_mux_%::inst%
+MIXCFG;output.generate.emumux.sigselect;
+MIXCFG;output.generate.enty;noleaf
+MIXCFG;output.generate.fold;signal
+MIXCFG;output.generate.inout;mode
+MIXCFG;output.generate.logic;wire(1:1),and(1:N),or(1:N),nand(1:N),xor(1:N),nor(1:N),not(1:1)
+MIXCFG;output.generate.logicmap;uc
+MIXCFG;output.generate.portdescr;%::descr%
+MIXCFG;output.generate.portdescrindent;%CR%%S%%S%%S%%S%%S%
+MIXCFG;output.generate.portdescrlength;100
+MIXCFG;output.generate.portdescrlines;10
+MIXCFG;output.generate.portmapsort;input
+MIXCFG;output.generate.top;auto
+MIXCFG;output.generate.use;enty
+MIXCFG;output.generate.verilog;
+MIXCFG;output.generate.verimap.modules;
+MIXCFG;output.generate.verimap.options;
+MIXCFG;output.generate.verimap.select;exclude_%::inst%
+MIXCFG;output.generate.verimap.sigvalue;ALL=0
+MIXCFG;output.generate.workaround._magma_def_;\n`ifdef MAGMA\n    `define %::entity%_inst_name %::entity%\n`else\n    `define %::entity%_inst_name %::config%\n`endif\n
+MIXCFG;output.generate.workaround._magma_mod_;`%::entity%_inst_name
+MIXCFG;output.generate.workaround._magma_uamn_;
+MIXCFG;output.generate.workaround.magma;useasmodulename_define
+MIXCFG;output.generate.workaround.std_log_typecast;ignore
+MIXCFG;output.generate.workaround.typecast;intsig
+MIXCFG;output.generate.workaround.verilog;dummyopen,optimizeassignport
+MIXCFG;output.generate.xinout;
+MIXCFG;output.language.verilog;ansistyle,2001param 
+MIXCFG;output.language.vhdl;
+MIXCFG;output.mkdir;auto
+MIXCFG;output.order;input
+MIXCFG;output.path;v
+MIXCFG;output.path_include;include
+MIXCFG;output.warnings;
+MIXCFG;pad.PAD_ACTIVE_EN;1
+MIXCFG;pad.PAD_ACTIVE_PD;1
+MIXCFG;pad.PAD_ACTIVE_PU;1
+MIXCFG;pad.PAD_DEFAULT_DO;0
+MIXCFG;pad.name;%PREFIX_PAD_GEN%%::pad%
+MIXCFG;port.generate.name;postfix
+MIXCFG;port.generate.width;auto
+MIXCFG;postfix.POSTFILE_ARCH;-a
+MIXCFG;postfix.POSTFILE_CONF;-c
+MIXCFG;postfix.POSTFILE_ENTY;-e
+MIXCFG;postfix.POSTFIX_ARCH;%EMPTY%
+MIXCFG;postfix.POSTFIX_CONF;%EMPTY%
+MIXCFG;postfix.POSTFIX_CONSTANT;_c
+MIXCFG;postfix.POSTFIX_ENTY;%EMPTY%
+MIXCFG;postfix.POSTFIX_FIELD_IN;_par_i
+MIXCFG;postfix.POSTFIX_FIELD_OUT;_par_o
+MIXCFG;postfix.POSTFIX_GENERIC;_g
+MIXCFG;postfix.POSTFIX_IIC_GEN;_i
+MIXCFG;postfix.POSTFIX_IIC_IN;_iic_i
+MIXCFG;postfix.POSTFIX_IIC_OUT;_iic_o
+MIXCFG;postfix.POSTFIX_INSTANCE;_i
+MIXCFG;postfix.POSTFIX_IOC_GEN;%EMPTY%
+MIXCFG;postfix.POSTFIX_PAD_GEN;%EMPTY%
+MIXCFG;postfix.POSTFIX_PARAMETER;_p
+MIXCFG;postfix.POSTFIX_PORT_GEN;_%IO%
+MIXCFG;postfix.POSTFIX_PORT_IN;_i
+MIXCFG;postfix.POSTFIX_PORT_IO;_io
+MIXCFG;postfix.POSTFIX_PORT_OUT;_o
+MIXCFG;postfix.POSTFIX_SIGNAL;_s
+MIXCFG;postfix.PREFIX_CONST;mix_const_
+MIXCFG;postfix.PREFIX_GENERIC;mix_generic_
+MIXCFG;postfix.PREFIX_IIC_GEN;iic_if_
+MIXCFG;postfix.PREFIX_INSTANCE;%EMPTY%
+MIXCFG;postfix.PREFIX_IOC_GEN;ioc_
+MIXCFG;postfix.PREFIX_KEYWORD;mix_key_
+MIXCFG;postfix.PREFIX_PAD_GEN;pad_
+MIXCFG;postfix.PREFIX_PARAMETER;mix_parameter_
+MIXCFG;postfix.PREFIX_PORT_GEN;%EMPTY%
+MIXCFG;postfix.PREFIX_SIG_INT;s_int_
+MIXCFG;postfix.PREFIX_TC_INT;s_mix_tc_
+MIXCFG;reg_shell.add_takeover_signals;0
+MIXCFG;reg_shell.addrwidth;14
+MIXCFG;reg_shell.bdcfg.axis_file_name;axis_force_registers.cmd
+MIXCFG;reg_shell.bdcfg.ncsim_cmd;force
+MIXCFG;reg_shell.bdcfg.ncsim_file_name;ncsim_force_registers.tcl
+MIXCFG;reg_shell.bdcfg.stl_file_name;stl_force_registers.stl
+MIXCFG;reg_shell.bus_clock;clk_f20
+MIXCFG;reg_shell.bus_reset;res_f20_n
+MIXCFG;reg_shell.cfg_module_prefix;rs_cfg
+MIXCFG;reg_shell.clone.addr_spacing;10
+MIXCFG;reg_shell.clone.domain_naming;%D_%N
+MIXCFG;reg_shell.clone.field_naming;%F_%N
+MIXCFG;reg_shell.clone.number;0
+MIXCFG;reg_shell.clone.reg_naming;%R_%N
+MIXCFG;reg_shell.clone.unique_clocks;1
+MIXCFG;reg_shell.clone.unique_domains;0
+MIXCFG;reg_shell.datawidth;32
+MIXCFG;reg_shell.device;%EMPTY%
+MIXCFG;reg_shell.domain_naming;%D
+MIXCFG;reg_shell.e_vr_ad.cover_ign_read_to_write_only;0
+MIXCFG;reg_shell.e_vr_ad.cover_ign_write_to_read_only;1
+MIXCFG;reg_shell.e_vr_ad.field_naming;%lF
+MIXCFG;reg_shell.e_vr_ad.file_prefix;regdef
+MIXCFG;reg_shell.e_vr_ad.path;e
+MIXCFG;reg_shell.e_vr_ad.reg_naming;%uR
+MIXCFG;reg_shell.e_vr_ad.regfile_name;
+MIXCFG;reg_shell.e_vr_ad.regfile_prefix;MIC
+MIXCFG;reg_shell.e_vr_ad.vplan_ref;%EMPTY%
+MIXCFG;reg_shell.enforce_unique_addr;1
+MIXCFG;reg_shell.exclude_domains;
+MIXCFG;reg_shell.exclude_fields;
+MIXCFG;reg_shell.exclude_regs;
+MIXCFG;reg_shell.field_naming;%lF
+MIXCFG;reg_shell.infer_clock_gating;0
+MIXCFG;reg_shell.infer_reset_syncer;0
+MIXCFG;reg_shell.infer_sva;1
+MIXCFG;reg_shell.mode;lcport
+MIXCFG;reg_shell.multi_clock_domains;1
+MIXCFG;reg_shell.packing.addr_domain_reset;0
+MIXCFG;reg_shell.packing.addr_factor;1
+MIXCFG;reg_shell.packing.addr_offset;0
+MIXCFG;reg_shell.packing.endianness;big
+MIXCFG;reg_shell.packing.mode;none
+MIXCFG;reg_shell.packing.postfix_reg_hi;_hi
+MIXCFG;reg_shell.packing.postfix_reg_lo;_lo
+MIXCFG;reg_shell.read_multicycle;0
+MIXCFG;reg_shell.read_pipeline_lvl;6
+MIXCFG;reg_shell.reg_naming;%lR
+MIXCFG;reg_shell.regshell_prefix;rs
+MIXCFG;reg_shell.regwidth;32
+MIXCFG;reg_shell.stl.exclude_regs;
+MIXCFG;reg_shell.stl.initial_idle;100
+MIXCFG;reg_shell.stl.use_base_addr;0
+MIXCFG;reg_shell.type;HDL-vgch-rs,STL,ip-xact
+MIXCFG;reg_shell.use_reg_name_as_prefix;0
+MIXCFG;reg_shell.virtual_top_instance;testbench
+MIXCFG;reg_shell.workaround;
+MIXCFG;report.cheader.address.map;
+MIXCFG;report.cheader.debug;0
+MIXCFG;report.cheader.device.ini;
+MIXCFG;report.cheader.use_view_attrib;1
+MIXCFG;report.delta;
+MIXCFG;report.lauterbach.base_address;0
+MIXCFG;report.path;.
+MIXCFG;report.per.debug;0
+MIXCFG;report.perl.debug;0
+MIXCFG;report.portlist.comments;0,striphash
+MIXCFG;report.portlist.data;port
+MIXCFG;report.portlist.ext;mif
+MIXCFG;report.portlist.format.elist;
+MIXCFG;report.portlist.format.plist;
+MIXCFG;report.portlist.name;
+MIXCFG;report.portlist.sort;input
+MIXCFG;report.portlist.split;external::extc,instance
+MIXCFG;report.reglist.crossref;yes
+MIXCFG;script.excel.alerts;off
+MIXCFG;script.post;
+MIXCFG;script.pre;
+MIXCFG;sum.checkforce;0
+MIXCFG;sum.checkunique;0
+MIXCFG;sum.checkwarn;0
+MIXCFG;sum.cmacros;0
+MIXCFG;sum.conn;255
+MIXCFG;sum.genport;61
+MIXCFG;sum.hdlfiles;3
+MIXCFG;sum.inst;23
+MIXCFG;sum.io_cell_single;0
+MIXCFG;sum.io_cellandpad;0
+MIXCFG;sum.io_pad_single;0
+MIXCFG;sum.multdriver;0
+MIXCFG;sum.nodriver;0
+MIXCFG;sum.noload;0
+MIXCFG;sum.openports;0
+MIXCFG;sum.port;531
+MIXCFG;template.verilog.arch.head;## Verilog Architecture Template String t.b.d.
+MIXCFG;template.verilog.conf.head;## Verilog Configuration Template String t.b.d.
+MIXCFG;template.verilog.enty.head;## Verilog Entity Template String t.b.d.
+MIXCFG;template.verilog.file;##Verilog File Template String t.b.d.
+MIXCFG;template.verilog.wrap;## Verilog Wrapper Template String t.b.d.
+MIXCFG;template.vhdl.arch.head;## VHDL Architecture Template String t.b.d.
+MIXCFG;template.vhdl.conf.head;## VHDL Configuration Template String t.b.d.
+MIXCFG;template.vhdl.enty.head;## VHDL Entity Template String t.b.d.
+MIXCFG;top;%TOP%
+MIXCFG;typecast.std_logic.std_ulogic;"std_logic( %signal% );"
+MIXCFG;typecast.std_logic_vector.std_ulogic_vector;"std_logic_vector( %signal% );"
+MIXCFG;typecast.std_ulogic.std_logic;"std_ulogic( %signal% );"
+MIXCFG;typecast.std_ulogic_vector.std_logic_vector;"std_ulogic_vector( %signal% );"
+MIXCFG;variant;Default
+MIXNOCFG;vi2c.field.::b;ARRAY
+MIXNOCFG;vi2c.field.::comment;ARRAY
+MIXNOCFG;vi2c.field.::debug;ARRAY
+MIXNOCFG;vi2c.field.::default;ARRAY
+MIXNOCFG;vi2c.field.::hierachy;ARRAY
+MIXNOCFG;vi2c.field.::ign;ARRAY
+MIXNOCFG;vi2c.field.::inst;ARRAY
+MIXNOCFG;vi2c.field.::shortname;ARRAY
+MIXNOCFG;vi2c.field.::skip;ARRAY
+MIXNOCFG;vi2c.field.::type;ARRAY
+MIXNOCFG;vi2c.field.::variants;ARRAY
+MIXCFG;vi2c.field._multorder_;0
+MIXCFG;vi2c.field.nr;8
+MIXCFG;vi2c.key;::inst
+MIXCFG;vi2c.parsed;0
+MIXCFG;vi2c.req;optional
+MIXCFG;vi2c.xls;VI2C
+MIXCFG;vi2c.xxls;
+MIXCFG;xml.NS_RGM.schema;$REGMEM_HOME/builder/ipxact/schema
+MIXCFG;xml.NS_RGM.schemalocation;$REGMEM_HOME/builder/ipxact/schema $REGMEM_HOME/builder/ipxact/schema/VendorExtensions.xsd
+MIXCFG;xml.NS_RGM.vendorExtensions;http://www.ovmworld.org
+MIXCFG;xml.NS_URI.schema;http://www.w3.org/2001/XMLSchema-instance
+MIXCFG;xml.NS_URI.schemalocation;http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4 http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4/index.xsd
+MIXCFG;xml.NS_URI.spirit;http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4
+MIXCFG;xml.VLNV.library;rs_test
+MIXCFG;xml.VLNV.name;rs_test
+MIXCFG;xml.VLNV.vendor;tridentmicro.com
+MIXCFG;xml.VLNV.version;0.1
+MIXCFG;xml.access.R;read-only
+MIXCFG;xml.access.RW;read-write
+MIXCFG;xml.access.W;write-only
+MIXCFG;xml.access_policy.R;RO
+MIXCFG;xml.access_policy.RW;RW
+MIXCFG;xml.access_policy.W;WO
+MIXCFG;xml.addressBlock_type_naming;%D_rf_type
+MIXCFG;xml.characterencodingin;
+MIXCFG;xml.characterencodingout;iso-8859-1
+MIXCFG;xml.clock;clk_sci
+MIXCFG;xml.collect_coverage;cov_update
+MIXCFG;xml.component_type_naming;%D_am
+MIXNOCFG;xml.field_skipelements;ARRAY
+MIXCFG;xml.file_prefix;regdef
+MIXCFG;xml.file_suffix;xml
+MIXCFG;xml.hdl_path;%EMPTY%
+MIXCFG;xml.parsed;0
+MIXCFG;xml.path;ipxact
+MIXCFG;xml.prettynames.skip:4;addinc
+MIXCFG;xml.register_type_naming;%R_reg
+MIXCFG;xml.req;optional
+MIXCFG;xml.reset;res_sci_n
+MIXCFG;xml.schema_dir;/lib/schema/
+MIXCFG;xml.type;spirit
+MIXCFG;xml.xslt_dir;/lib/xslt/
+:=:=:=>CONN
+::ign;::gen;::bundle;::class;::clock;::type;::high;::low;::mode;::name;::shortname;::out;::in;::descr;::comment
+# Generated Intermediate Data: CONN;;;;;;;;;;;;;;
+# by: lutscher;;;;;;;;;;;;;;
+# on: Tue Jun 23 11:51:21 2009;;;;;;;;;;;;;;
+# cmd: /home/lutscher/work/MIX/mix_1.pl rs_test.xls;;;;;;;;;;;;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;13;0;S;addr;;u0_sci_target_0002_i/addr_o(13:0)=(13:0);rs_fe1_pre_dec_i/addr_i(13:0)=(13:0),  rs_cfg_fe1_clk_a_i/addr_i(13:0)=(13:0),  rs_cfg_fe1_i/addr_i(13:0)=(13:0);;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;clk_a;;;rs_cfg_fe1_clk_a_i/clk_a_i,  u3_sync_generic_i/clk_r,  u4_sync_rst_i/clk_r,  u11_sync_generic_i/clk_r,  u12_sync_generic_i/clk_r,  rs_fe1_i/clk_a_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;clk_f20;;;u0_sci_target_0002_i/clk_i,  u1_sci_target_m_checker_i/clk_i,  rs_cfg_fe1_i/clk_f20_i,  u5_sync_generic_i/clk_r,  u6_sync_rst_i/clk_r,  u2_rs_mcda_0002_i/clk_ocp,  u7_sync_generic_i/clk_r,  u8_sync_generic_i/clk_r,  u9_sync_generic_i/clk_r,  u10_sync_generic_i/clk_r,  rs_fe1_i/clk_f20_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;2;0;o;cvbsdetect_par;;rs_fe1_i/cvbsdetect_par_o(2:0)=(2:0),  rs_cfg_fe1_i/cvbsdetect_par_o'wire(2:0)=(2:0);;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;2;0;i;cvbsdetect_set_p;;;rs_fe1_i/cvbsdetect_set_p_i(2:0)=(2:0),  rs_cfg_fe1_i/cvbsdetect_set_p_i(2:0)=(2:0);;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;o;cvbsdetect_trg_p;;rs_cfg_fe1_i/cvbsdetect_trg_p_o'reg,  rs_fe1_i/cvbsdetect_trg_p_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;3;0;o;dgatel_par;;rs_fe1_i/dgatel_par_o(3:0)=(3:0),  rs_cfg_fe1_clk_a_i/dgatel_par_o'wire(3:0)=(3:0);;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;4;0;o;dgates_par;;rs_fe1_i/dgates_par_o(4:0)=(4:0),  rs_cfg_fe1_clk_a_i/dgates_par_o'wire(4:0)=(4:0);;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;2;0;o;dummy_fe_par;;rs_fe1_i/dummy_fe_par_o(2:0)=(2:0),  rs_cfg_fe1_clk_a_i/dummy_fe_par_o'wire(2:0)=(2:0);;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;13;0;i;maddr;;;rs_fe1_i/maddr_i(13:0)=(13:0),  u1_sci_target_m_checker_i/maddr_i(13:0)=(13:0),  u0_sci_target_0002_i/maddr_i(13:0)=(13:0);;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;2;0;i;mcmd;;;rs_fe1_i/mcmd_i(2:0)=(2:0),  u1_sci_target_m_checker_i/mcmd_i(2:0)=(2:0),  u0_sci_target_0002_i/mcmd_i(2:0)=(2:0);;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;31;0;i;mdata;;;rs_fe1_i/mdata_i(31:0)=(31:0),  u1_sci_target_m_checker_i/mdata_i(31:0)=(31:0),  u0_sci_target_0002_i/mdata_i(31:0)=(31:0);;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_0;;__PARAMETER__/32;u0_sci_target_0002_i/P_DWIDTH;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_1;;__GENERIC__/32;u0_sci_target_0002_i/P_DWIDTH;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_10;;__PARAMETER__/7;u0_sci_target_0002_i/def_val_p;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_100;;__PARAMETER__/0;u7_sync_generic_i/rstact;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_101;;__GENERIC__/0;u7_sync_generic_i/rstact;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_102;;__PARAMETER__/0;u7_sync_generic_i/rstval;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_103;;__GENERIC__/0;u7_sync_generic_i/rstval;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_104;;__PARAMETER__/3;u8_sync_generic_i/kind;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_105;;__GENERIC__/3;u8_sync_generic_i/kind;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_106;;__PARAMETER__/1;u8_sync_generic_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_107;;__GENERIC__/1;u8_sync_generic_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_108;;__PARAMETER__/1;u8_sync_generic_i/act;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_109;;__GENERIC__/1;u8_sync_generic_i/act;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_11;;__GENERIC__/7;u0_sci_target_0002_i/def_val_p;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_110;;__PARAMETER__/0;u8_sync_generic_i/rstact;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_111;;__GENERIC__/0;u8_sync_generic_i/rstact;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_112;;__PARAMETER__/0;u8_sync_generic_i/rstval;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_113;;__GENERIC__/0;u8_sync_generic_i/rstval;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_114;;__PARAMETER__/3;u9_sync_generic_i/kind;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_115;;__GENERIC__/3;u9_sync_generic_i/kind;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_116;;__PARAMETER__/1;u9_sync_generic_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_117;;__GENERIC__/1;u9_sync_generic_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_118;;__PARAMETER__/1;u9_sync_generic_i/act;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_119;;__GENERIC__/1;u9_sync_generic_i/act;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_12;;__PARAMETER__/0;u0_sci_target_0002_i/def_rerr_en_p;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_120;;__PARAMETER__/0;u9_sync_generic_i/rstact;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_121;;__GENERIC__/0;u9_sync_generic_i/rstact;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_122;;__PARAMETER__/0;u9_sync_generic_i/rstval;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_123;;__GENERIC__/0;u9_sync_generic_i/rstval;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_124;;__PARAMETER__/3;u10_sync_generic_i/kind;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_125;;__GENERIC__/3;u10_sync_generic_i/kind;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_126;;__PARAMETER__/1;u10_sync_generic_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_127;;__GENERIC__/1;u10_sync_generic_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_128;;__PARAMETER__/1;u10_sync_generic_i/act;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_129;;__GENERIC__/1;u10_sync_generic_i/act;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_13;;__GENERIC__/0;u0_sci_target_0002_i/def_rerr_en_p;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_130;;__PARAMETER__/0;u10_sync_generic_i/rstact;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_131;;__GENERIC__/0;u10_sync_generic_i/rstact;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_132;;__PARAMETER__/0;u10_sync_generic_i/rstval;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_133;;__GENERIC__/0;u10_sync_generic_i/rstval;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_134;;__PARAMETER__/-1;rs_fe1_i/P__SHA_W_TEST;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_135;;__GENERIC__/-1;rs_fe1_i/P__SHA_W_TEST;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_136;;__PARAMETER__/P__SHA_W_TEST;rs_cfg_fe1_clk_a_i/P__SHA_W_TEST;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_137;;__GENERIC__/-1;rs_cfg_fe1_clk_a_i/P__SHA_W_TEST;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_138;;__PARAMETER__/-1;rs_fe1_i/P__W_TEST;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_139;;__GENERIC__/-1;rs_fe1_i/P__W_TEST;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_14;;__PARAMETER__/0;u0_sci_target_0002_i/def_ien_p;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_140;;__PARAMETER__/P__W_TEST;rs_cfg_fe1_clk_a_i/P__W_TEST;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_141;;__GENERIC__/-1;rs_cfg_fe1_clk_a_i/P__W_TEST;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_142;;__PARAMETER__/-1;rs_fe1_i/P__DUMMY_FE;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_143;;__GENERIC__/-1;rs_fe1_i/P__DUMMY_FE;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_144;;__PARAMETER__/P__DUMMY_FE;rs_cfg_fe1_clk_a_i/P__DUMMY_FE;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_145;;__GENERIC__/-1;rs_cfg_fe1_clk_a_i/P__DUMMY_FE;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_146;;__PARAMETER__/-1;rs_fe1_i/P__DGATES;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_147;;__GENERIC__/-1;rs_fe1_i/P__DGATES;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_148;;__PARAMETER__/P__DGATES;rs_cfg_fe1_clk_a_i/P__DGATES;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_149;;__GENERIC__/-1;rs_cfg_fe1_clk_a_i/P__DGATES;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_15;;__GENERIC__/0;u0_sci_target_0002_i/def_ien_p;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_150;;__PARAMETER__/-1;rs_fe1_i/P__DGATEL;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_151;;__GENERIC__/-1;rs_fe1_i/P__DGATEL;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_152;;__PARAMETER__/P__DGATEL;rs_cfg_fe1_clk_a_i/P__DGATEL;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_153;;__GENERIC__/-1;rs_cfg_fe1_clk_a_i/P__DGATEL;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_154;;__PARAMETER__/3;u11_sync_generic_i/kind;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_155;;__GENERIC__/3;u11_sync_generic_i/kind;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_156;;__PARAMETER__/1;u11_sync_generic_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_157;;__GENERIC__/1;u11_sync_generic_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_158;;__PARAMETER__/1;u11_sync_generic_i/act;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_159;;__GENERIC__/1;u11_sync_generic_i/act;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_16;;__PARAMETER__/1;u0_sci_target_0002_i/ecs_writable_p;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_160;;__PARAMETER__/0;u11_sync_generic_i/rstact;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_161;;__GENERIC__/0;u11_sync_generic_i/rstact;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_162;;__PARAMETER__/0;u11_sync_generic_i/rstval;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_163;;__GENERIC__/0;u11_sync_generic_i/rstval;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_164;;__PARAMETER__/3;u12_sync_generic_i/kind;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_165;;__GENERIC__/3;u12_sync_generic_i/kind;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_166;;__PARAMETER__/1;u12_sync_generic_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_167;;__GENERIC__/1;u12_sync_generic_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_168;;__PARAMETER__/1;u12_sync_generic_i/act;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_169;;__GENERIC__/1;u12_sync_generic_i/act;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_17;;__GENERIC__/1;u0_sci_target_0002_i/ecs_writable_p;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_170;;__PARAMETER__/0;u12_sync_generic_i/rstact;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_171;;__GENERIC__/0;u12_sync_generic_i/rstact;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_172;;__PARAMETER__/0;u12_sync_generic_i/rstval;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_173;;__GENERIC__/0;u12_sync_generic_i/rstval;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_18;;__PARAMETER__/32;u1_sci_target_m_checker_i/P_DWIDTH;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_19;;__GENERIC__/32;u1_sci_target_m_checker_i/P_DWIDTH;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_2;;__PARAMETER__/14;u0_sci_target_0002_i/P_AWIDTH;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_20;;__PARAMETER__/14;u1_sci_target_m_checker_i/P_AWIDTH;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_21;;__GENERIC__/14;u1_sci_target_m_checker_i/P_AWIDTH;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_22;;__PARAMETER__/0;u1_sci_target_m_checker_i/P_WRITERESP_ENABLE;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_23;;__GENERIC__/0;u1_sci_target_m_checker_i/P_WRITERESP_ENABLE;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_24;;__PARAMETER__/2;u2_rs_mcda_0002_i/N_DOMAINS;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_25;;__GENERIC__/2;u2_rs_mcda_0002_i/N_DOMAINS;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_26;;__PARAMETER__/32;u2_rs_mcda_0002_i/P_DWIDTH;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_27;;__GENERIC__/32;u2_rs_mcda_0002_i/P_DWIDTH;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_28;;__PARAMETER__/1;u2_rs_mcda_0002_i/P_PRDWIDTH;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_29;;__GENERIC__/1;u2_rs_mcda_0002_i/P_PRDWIDTH;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_3;;__GENERIC__/14;u0_sci_target_0002_i/P_AWIDTH;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_30;;"__PARAMETER__/""M1""";u2_rs_mcda_0002_i/P_MIX_SIG;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_31;;"__GENERIC__/""M1""";u2_rs_mcda_0002_i/P_MIX_SIG;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_32;;__PARAMETER__/2;rs_fe1_pre_dec_i/N_DOMAINS;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_33;;__GENERIC__/2;rs_fe1_pre_dec_i/N_DOMAINS;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_34;;__PARAMETER__/1;rs_cfg_fe1_clk_a_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_35;;__GENERIC__/1;rs_cfg_fe1_clk_a_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_36;;__PARAMETER__/2;u3_sync_generic_i/kind;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_37;;__GENERIC__/2;u3_sync_generic_i/kind;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_38;;__PARAMETER__/sync;u3_sync_generic_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_39;;__GENERIC__/0;u3_sync_generic_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_4;;"__PARAMETER__/""M1""";u0_sci_target_0002_i/P_MIX_SIG;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_40;;__PARAMETER__/1;u3_sync_generic_i/act;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_41;;__GENERIC__/1;u3_sync_generic_i/act;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_42;;__PARAMETER__/0;u3_sync_generic_i/rstact;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_43;;__GENERIC__/0;u3_sync_generic_i/rstact;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_44;;__PARAMETER__/0;u3_sync_generic_i/rstval;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_45;;__GENERIC__/0;u3_sync_generic_i/rstval;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_46;;__PARAMETER__/0;u4_sync_rst_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_47;;__GENERIC__/0;u4_sync_rst_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_48;;__PARAMETER__/0;u4_sync_rst_i/act;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_49;;__GENERIC__/0;u4_sync_rst_i/act;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_5;;"__GENERIC__/""M1""";u0_sci_target_0002_i/P_MIX_SIG;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_50;;__PARAMETER__/1;u2_rs_mcda_0002_i/N_SYNCDOM;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_51;;__GENERIC__/1;u2_rs_mcda_0002_i/N_SYNCDOM;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_52;;__PARAMETER__/0;rs_cfg_fe1_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_53;;__GENERIC__/0;rs_cfg_fe1_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_54;;__PARAMETER__/2;u5_sync_generic_i/kind;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_55;;__GENERIC__/2;u5_sync_generic_i/kind;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_56;;__PARAMETER__/sync;u5_sync_generic_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_57;;__GENERIC__/0;u5_sync_generic_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_58;;__PARAMETER__/1;u5_sync_generic_i/act;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_59;;__GENERIC__/1;u5_sync_generic_i/act;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_6;;__PARAMETER__/1;u0_sci_target_0002_i/has_ecs;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_60;;__PARAMETER__/0;u5_sync_generic_i/rstact;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_61;;__GENERIC__/0;u5_sync_generic_i/rstact;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_62;;__PARAMETER__/0;u5_sync_generic_i/rstval;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_63;;__GENERIC__/0;u5_sync_generic_i/rstval;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_64;;__PARAMETER__/0;u6_sync_rst_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_65;;__GENERIC__/0;u6_sync_rst_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_66;;__PARAMETER__/0;u6_sync_rst_i/act;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_67;;__GENERIC__/0;u6_sync_rst_i/act;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_68;;__PARAMETER__/0;u0_sci_target_0002_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_69;;__GENERIC__/0;u0_sci_target_0002_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_7;;__GENERIC__/1;u0_sci_target_0002_i/has_ecs;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_70;;__PARAMETER__/-1;rs_fe1_i/P__MVSTOP;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_71;;__GENERIC__/-1;rs_fe1_i/P__MVSTOP;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_72;;__PARAMETER__/P__MVSTOP;rs_cfg_fe1_i/P__MVSTOP;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_73;;__GENERIC__/-1;rs_cfg_fe1_i/P__MVSTOP;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_74;;__PARAMETER__/-1;rs_fe1_i/P__CVBSDETECT;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_75;;__GENERIC__/-1;rs_fe1_i/P__CVBSDETECT;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_76;;__PARAMETER__/P__CVBSDETECT;rs_cfg_fe1_i/P__CVBSDETECT;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_77;;__GENERIC__/-1;rs_cfg_fe1_i/P__CVBSDETECT;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_78;;__PARAMETER__/-1;rs_fe1_i/P__WD_16_TEST2;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_79;;__GENERIC__/-1;rs_fe1_i/P__WD_16_TEST2;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_8;;__PARAMETER__/44;u0_sci_target_0002_i/P_ECSADDR;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_80;;__PARAMETER__/P__WD_16_TEST2;rs_cfg_fe1_i/P__WD_16_TEST2;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_81;;__GENERIC__/-1;rs_cfg_fe1_i/P__WD_16_TEST2;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_82;;__PARAMETER__/-1;rs_fe1_i/P__WD_16_TEST;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_83;;__GENERIC__/-1;rs_fe1_i/P__WD_16_TEST;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_84;;__PARAMETER__/P__WD_16_TEST;rs_cfg_fe1_i/P__WD_16_TEST;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_85;;__GENERIC__/-1;rs_cfg_fe1_i/P__WD_16_TEST;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_86;;__PARAMETER__/-1;rs_fe1_i/P__SHA_RW2;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_87;;__GENERIC__/-1;rs_fe1_i/P__SHA_RW2;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_88;;__PARAMETER__/P__SHA_RW2;rs_cfg_fe1_i/P__SHA_RW2;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_89;;__GENERIC__/-1;rs_cfg_fe1_i/P__SHA_RW2;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_9;;__GENERIC__/44;u0_sci_target_0002_i/P_ECSADDR;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_90;;__PARAMETER__/-1;rs_fe1_i/P__MVSTART;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_91;;__GENERIC__/-1;rs_fe1_i/P__MVSTART;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_92;;__PARAMETER__/P__MVSTART;rs_cfg_fe1_i/P__MVSTART;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_93;;__GENERIC__/-1;rs_cfg_fe1_i/P__MVSTART;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_94;;__PARAMETER__/3;u7_sync_generic_i/kind;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_95;;__GENERIC__/3;u7_sync_generic_i/kind;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_96;;__PARAMETER__/1;u7_sync_generic_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_97;;__GENERIC__/1;u7_sync_generic_i/sync;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;P;mix_const_98;;__PARAMETER__/1;u7_sync_generic_i/act;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;string;;;G;mix_const_99;;__GENERIC__/1;u7_sync_generic_i/act;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;mreset_n;;;u0_sci_target_0002_i/mreset_n_i,  u1_sci_target_m_checker_i/mreset_n_i,  u2_rs_mcda_0002_i/mreset_n_i,  rs_fe1_i/mreset_n_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;mrespaccept;;;u0_sci_target_0002_i/mrespaccept_i,  u1_sci_target_m_checker_i/mrespaccept_i,  rs_fe1_i/mrespaccept_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;3;0;o;mvstart_par;;rs_fe1_i/mvstart_par_o(3:0)=(3:0),  rs_cfg_fe1_i/mvstart_par_o'wire(3:0)=(3:0);;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;3;0;o;mvstop_par;;rs_fe1_i/mvstop_par_o(3:0)=(3:0),  rs_cfg_fe1_i/mvstop_par_o'reg(3:0)=(3:0);;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;S;pre_dec;;rs_fe1_pre_dec_i/pre_dec_o;u2_rs_mcda_0002_i/pre_dec_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;S;pre_dec_err;;rs_fe1_pre_dec_i/pre_dec_err_o;u2_rs_mcda_0002_i/pre_dec_err_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;2;0;i;r_test_par;;;rs_fe1_i/r_test_par_i(2:0)=(2:0),  rs_cfg_fe1_clk_a_i/r_test_par_i(2:0)=(2:0);;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;o;r_test_trg_p;;rs_cfg_fe1_clk_a_i/r_test_trg_p_o'reg,  rs_fe1_i/r_test_trg_p_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;31;0;S;rd_data;;u2_rs_mcda_0002_i/rd_data_o(31:0)=(31:0);u0_sci_target_0002_i/rd_data_i(31:0)=(31:0);;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;63;0;S;rd_data_vec;;rs_cfg_fe1_clk_a_i/rd_data_o(31:0)=(31:0),  rs_cfg_fe1_i/rd_data_o(31:0)=(63:32);u2_rs_mcda_0002_i/rd_data_vec_i(63:0)=(63:0);;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;S;rd_err;;u2_rs_mcda_0002_i/rd_err_o;u0_sci_target_0002_i/rd_err_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;1;0;S;rd_err_vec;;rs_cfg_fe1_clk_a_i/rd_err_o(0:0)=(0:0),  rs_cfg_fe1_i/rd_err_o(0:0)=(1:1);u2_rs_mcda_0002_i/rd_err_vec_i(1:0)=(1:0);;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;S;rd_wr;;u0_sci_target_0002_i/rd_wr_o;rs_cfg_fe1_clk_a_i/rd_wr_i,  rs_cfg_fe1_i/rd_wr_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;res_a_n;;;rs_cfg_fe1_clk_a_i/res_a_n_i,  u3_sync_generic_i/rst_r,  u4_sync_rst_i/rst_i,  u11_sync_generic_i/rst_r,  u12_sync_generic_i/rst_r,  rs_fe1_i/res_a_n_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;res_f20_n;;;u0_sci_target_0002_i/reset_n_i,  u1_sci_target_m_checker_i/reset_n_i,  rs_cfg_fe1_i/res_f20_n_i,  u5_sync_generic_i/rst_r,  u6_sync_rst_i/rst_i,  u2_rs_mcda_0002_i/rst_ocp_n_i,  u7_sync_generic_i/rst_r,  u8_sync_generic_i/rst_r,  u9_sync_generic_i/rst_r,  u10_sync_generic_i/rst_r,  rs_fe1_i/res_f20_n_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;o;scmdaccept;;u0_sci_target_0002_i/scmdaccept_o'wire,  u1_sci_target_m_checker_i/scmdaccept_i,  rs_fe1_i/scmdaccept_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;31;0;o;sdata;;rs_fe1_i/sdata_o(31:0)=(31:0),  u0_sci_target_0002_i/sdata_o'wire(31:0)=(31:0);;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;7;0;i;sha_r_test_par;;;rs_fe1_i/sha_r_test_par_i(7:0)=(7:0),  rs_cfg_fe1_i/sha_r_test_par_i(7:0)=(7:0);;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;o;sha_r_test_trg_p;;rs_cfg_fe1_i/sha_r_test_trg_p_o'wire,  rs_fe1_i/sha_r_test_trg_p_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;31;0;o;sha_rw2_par;;rs_fe1_i/sha_rw2_par_o(31:0)=(31:0),  rs_cfg_fe1_i/sha_rw2_par_o'reg(31:0)=(31:0);;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;3;0;o;sha_w_test_par;;rs_fe1_i/sha_w_test_par_o(3:0)=(3:0),  rs_cfg_fe1_clk_a_i/sha_w_test_par_o'reg(3:0)=(3:0);;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;o;sha_w_test_trg_p;;rs_cfg_fe1_clk_a_i/sha_w_test_trg_p_o'wire,  rs_fe1_i/sha_w_test_trg_p_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;o;sinterrupt;;u0_sci_target_0002_i/sinterrupt_o'wire,  rs_fe1_i/sinterrupt_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;1;0;o;sresp;;rs_fe1_i/sresp_o(1:0)=(1:0),  u1_sci_target_m_checker_i/sresp_i(1:0)=(1:0),  u0_sci_target_0002_i/sresp_o'wire(1:0)=(1:0);;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;C;tie0_1;;0;u0_sci_target_0002_i/wr_err_i,  u3_sync_generic_i/clk_s,  u3_sync_generic_i/rst_s,  u4_sync_rst_i/test_i,  u5_sync_generic_i/clk_s,  u5_sync_generic_i/rst_s,  u6_sync_rst_i/test_i,  u7_sync_generic_i/clk_s,  u7_sync_generic_i/rst_s,  u8_sync_generic_i/clk_s,  u8_sync_generic_i/rst_s,  u9_sync_generic_i/clk_s,  u9_sync_generic_i/rst_s,  u10_sync_generic_i/clk_s,  u10_sync_generic_i/rst_s,  u11_sync_generic_i/clk_s,  u11_sync_generic_i/rst_s,  u12_sync_generic_i/clk_s,  u12_sync_generic_i/rst_s;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;S;trans_done;;u2_rs_mcda_0002_i/trans_done_o;u0_sci_target_0002_i/trans_done_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;1;0;S;trans_done_vec;;rs_cfg_fe1_clk_a_i/trans_done_o(0:0)=(0:0),  rs_cfg_fe1_i/trans_done_o(0:0)=(1:1);u2_rs_mcda_0002_i/trans_done_vec_i(1:0)=(1:0);;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;S;trans_start;;u0_sci_target_0002_i/trans_start_o;u2_rs_mcda_0002_i/trans_start_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;S;trans_start_0;;u2_rs_mcda_0002_i/trans_start_vec_o(0:0)=(0:0);u3_sync_generic_i/snd_i,  rs_cfg_fe1_clk_a_i/trans_start_0_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;S;trans_start_1;;u2_rs_mcda_0002_i/trans_start_vec_o(1:1)=(0:0);u5_sync_generic_i/snd_i,  rs_cfg_fe1_i/trans_start_1_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;S;u10_sync_generic_i_int_upd_r_arm_p;;u10_sync_generic_i/rcv_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;S;u11_sync_generic_i_int_upd_w_p;;u11_sync_generic_i/rcv_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;S;u12_sync_generic_i_int_upd_w_arm_p;;u12_sync_generic_i/rcv_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;S;u3_sync_generic_i_trans_start_p;;u3_sync_generic_i/rcv_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;S;u4_sync_rst_i_int_rst_n;;u4_sync_rst_i/rst_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;S;u5_sync_generic_i_trans_start_p;;u5_sync_generic_i/rcv_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;S;u6_sync_rst_i_int_rst_n;;u6_sync_rst_i/rst_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;S;u7_sync_generic_i_int_upd_rw_p;;u7_sync_generic_i/rcv_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;S;u8_sync_generic_i_int_upd_rw_arm_p;;u8_sync_generic_i/rcv_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;S;u9_sync_generic_i_int_upd_r_p;;u9_sync_generic_i/rcv_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;upd_r;;;u9_sync_generic_i/snd_i,  rs_fe1_i/upd_r_i,  rs_cfg_fe1_i/upd_r_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;upd_r_en;;;rs_cfg_fe1_i/upd_r_en_i,  u10_sync_generic_i/snd_i,  rs_fe1_i/upd_r_en_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;upd_r_force;;;rs_cfg_fe1_i/upd_r_force_i,  rs_fe1_i/upd_r_force_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;upd_rw;;;u7_sync_generic_i/snd_i,  rs_fe1_i/upd_rw_i,  rs_cfg_fe1_i/upd_rw_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;upd_rw_en;;;rs_cfg_fe1_i/upd_rw_en_i,  u8_sync_generic_i/snd_i,  rs_fe1_i/upd_rw_en_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;upd_rw_force;;;rs_cfg_fe1_i/upd_rw_force_i,  rs_fe1_i/upd_rw_force_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;upd_w;;;u11_sync_generic_i/snd_i,  rs_fe1_i/upd_w_i,  rs_cfg_fe1_clk_a_i/upd_w_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;upd_w_en;;;rs_cfg_fe1_clk_a_i/upd_w_en_i,  u12_sync_generic_i/snd_i,  rs_fe1_i/upd_w_en_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;upd_w_force;;;rs_cfg_fe1_clk_a_i/upd_w_force_i,  rs_fe1_i/upd_w_force_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;1;0;i;usr_ali_par;;;rs_fe1_i/usr_ali_par_i(1:0)=(1:0),  rs_cfg_fe1_i/usr_ali_par_i(1:0)=(1:0);;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;o;usr_ali_rd_p;;rs_cfg_fe1_i/usr_ali_rd_p_o'reg,  rs_fe1_i/usr_ali_rd_p_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;usr_ali_trans_done_p;;;rs_cfg_fe1_i/usr_ali_trans_done_p_i,  rs_fe1_i/usr_ali_trans_done_p_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;usr_r_test_par;;;rs_cfg_fe1_i/usr_r_test_par_i,  rs_fe1_i/usr_r_test_par_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;o;usr_r_test_rd_p;;rs_cfg_fe1_i/usr_r_test_rd_p_o'reg,  rs_fe1_i/usr_r_test_rd_p_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;usr_r_test_trans_done_p;;;rs_cfg_fe1_i/usr_r_test_trans_done_p_i,  rs_fe1_i/usr_r_test_trans_done_p_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;3;0;i;usr_rw_test_in_par;;;rs_fe1_i/usr_rw_test_in_par_i(3:0)=(3:0),  rs_cfg_fe1_i/usr_rw_test_in_par_i(3:0)=(3:0);;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;3;0;o;usr_rw_test_par;;rs_fe1_i/usr_rw_test_par_o(3:0)=(3:0),  rs_cfg_fe1_i/usr_rw_test_par_o'wire(3:0)=(3:0);;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;o;usr_rw_test_rd_p;;rs_cfg_fe1_i/usr_rw_test_rd_p_o'reg,  rs_fe1_i/usr_rw_test_rd_p_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;usr_rw_test_trans_done_p;;;rs_cfg_fe1_i/usr_rw_test_trans_done_p_i,  rs_fe1_i/usr_rw_test_trans_done_p_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;o;usr_rw_test_wr_p;;rs_cfg_fe1_i/usr_rw_test_wr_p_o'reg,  rs_fe1_i/usr_rw_test_wr_p_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;3;0;o;usr_w_test_par;;rs_fe1_i/usr_w_test_par_o(3:0)=(3:0),  rs_cfg_fe1_clk_a_i/usr_w_test_par_o'wire(3:0)=(3:0);;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;usr_w_test_trans_done_p;;;rs_cfg_fe1_clk_a_i/usr_w_test_trans_done_p_i,  rs_fe1_i/usr_w_test_trans_done_p_i;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;o;usr_w_test_wr_p;;rs_cfg_fe1_clk_a_i/usr_w_test_wr_p_o'reg,  rs_fe1_i/usr_w_test_wr_p_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;3;0;o;w_test_par;;rs_fe1_i/w_test_par_o(3:0)=(3:0),  rs_cfg_fe1_clk_a_i/w_test_par_o'wire(3:0)=(3:0);;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;7;0;o;wd_16_test2_par;;rs_fe1_i/wd_16_test2_par_o(7:0)=(7:0),  rs_cfg_fe1_i/wd_16_test2_par_o'wire(7:0)=(7:0);;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;o;wd_16_test2_trg_p;;rs_cfg_fe1_i/wd_16_test2_trg_p_o'wire,  rs_fe1_i/wd_16_test2_trg_p_o;;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;15;0;o;wd_16_test_par;;rs_fe1_i/wd_16_test_par_o(15:0)=(15:0),  rs_cfg_fe1_i/wd_16_test_par_o'wire(15:0)=(15:0);;;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;std_logic_vector;31;0;S;wr_data;;u0_sci_target_0002_i/wr_data_o(31:0)=(31:0);rs_cfg_fe1_clk_a_i/wr_data_i(31:0)=(31:0),  rs_cfg_fe1_i/wr_data_i(31:0)=(31:0);;
+;;WARNING_NOT_SET;WARNING_NOT_SET;WARNING_NOT_SET;;;;i;ycdetect_par;;;rs_cfg_fe1_i/ycdetect_par_i,  rs_fe1_i/ycdetect_par_i;;
+:=:=:=>HIER
+::ign;::gen;::variants;::parent;::inst;::shortname;::lang;::entity;::arch;::use;::config;::comment;::descr
+# Generated Intermediate Data: HIER;;;;;;;;;;;;
+# by: lutscher;;;;;;;;;;;;
+# on: Tue Jun 23 11:51:21 2009;;;;;;;;;;;;
+# cmd: /home/lutscher/work/MIX/mix_1.pl rs_test.xls;;;;;;;;;;;;
+;;Default;rs_fe1_i;rs_cfg_fe1_clk_a_i;;verilog;rs_cfg_fe1_clk_a;rtl;;rs_cfg_fe1_clk_a_rtl_conf;;Config register module for clock domain 'clk_a'
+;;Default;rs_fe1_i;rs_cfg_fe1_i;;verilog;rs_cfg_fe1;rtl;;rs_cfg_fe1_rtl_conf;;Config register module
+;;Default;testbench;rs_fe1_i;;verilog;rs_fe1;rtl;;rs_fe1_rtl_conf;;Register shell for domain fe1
+;;Default;rs_fe1_i;rs_fe1_pre_dec_i;;verilog;rs_fe1_pre_dec;rtl;;rs_fe1_pre_dec_rtl_conf;;Multi-clock-domain Pre-decoder
+;;Default;__TOP__;testbench;;vhdl;W_NO_ENTITY;rtl;;W_NO_ENTITY_rtl_conf;;
+;;Default;rs_fe1_i;u0_sci_target_0002_i;;verilog;sci_target_0002;rtl;;sci_target_0002_rtl_conf;;OCP target module
+;;Default;rs_cfg_fe1_i;u10_sync_generic_i;;verilog;sync_generic;rtl;;sync_generic_rtl_conf;;Synchronizer for update-enable signal upd_r_en
+;;Default;rs_cfg_fe1_clk_a_i;u11_sync_generic_i;;verilog;sync_generic;rtl;;sync_generic_rtl_conf;;Synchronizer for update-signal upd_w
+;;Default;rs_cfg_fe1_clk_a_i;u12_sync_generic_i;;verilog;sync_generic;rtl;;sync_generic_rtl_conf;;Synchronizer for update-enable signal upd_w_en
+;;Default;rs_fe1_i;u1_sci_target_m_checker_i;;verilog;sci_target_m_checker;rtl;;sci_target_m_checker_rtl_conf;;OCP master checker module
+;;Default;rs_fe1_i;u2_rs_mcda_0002_i;;verilog;rs_mcda_0002;rtl;;rs_mcda_0002_rtl_conf;;Multi-clock-domain Adapter
+;;Default;rs_cfg_fe1_clk_a_i;u3_sync_generic_i;;verilog;sync_generic;rtl;;sync_generic_rtl_conf;;Synchronizer for trans_start signal
+;;Default;rs_cfg_fe1_clk_a_i;u4_sync_rst_i;;verilog;sync_rst;rtl;;sync_rst_rtl_conf;;Reset synchronizer (in bypass-mode)
+;;Default;rs_cfg_fe1_i;u5_sync_generic_i;;verilog;sync_generic;rtl;;sync_generic_rtl_conf;;Synchronizer for trans_start signal
+;;Default;rs_cfg_fe1_i;u6_sync_rst_i;;verilog;sync_rst;rtl;;sync_rst_rtl_conf;;Reset synchronizer (in bypass-mode)
+;;Default;rs_cfg_fe1_i;u7_sync_generic_i;;verilog;sync_generic;rtl;;sync_generic_rtl_conf;;Synchronizer for update-signal upd_rw
+;;Default;rs_cfg_fe1_i;u8_sync_generic_i;;verilog;sync_generic;rtl;;sync_generic_rtl_conf;;Synchronizer for update-enable signal upd_rw_en
+;;Default;rs_cfg_fe1_i;u9_sync_generic_i;;verilog;sync_generic;rtl;;sync_generic_rtl_conf;;Synchronizer for update-signal upd_r

@@ -1,0 +1,17 @@
+#!/bin/tcsh -f
+
+setenv PATH /tools/mix/1.9/:$PATH
+
+touch mix.log
+rm mix.log
+
+mix                        \
+    -vinc global_project.i \
+    -nodelta               \
+    *pin-list.xls LP-HIER.xls
+
+echo ""
+echo " See hdl in hdl-directory "
+echo ""
+
+

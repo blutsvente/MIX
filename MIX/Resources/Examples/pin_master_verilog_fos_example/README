@@ -1,0 +1,34 @@
+#
+# MIX Flow
+#
+# first off all the mix binary has to be activated
+# on the munich site this is done like this:
+#
+
+module load mix/1.9
+
+# second:
+# start MIX like this
+# -vinc global_project.i -> handles a include file (example inside the LP-blue-pin-list.xls)
+# -nodelta               -> avoids incremental generation
+# *pin-list.xls          -> provide the module connection sheets
+# LP-HIER.xls            -> provide the design hierarchy sheet
+
+rm mix.log
+mix -vinc global_project.i -nodelta *pin-list.xls LP-HIER.xls
+
+# thats all
+
+
+# Remarks
+i#
+# 1) a mix.cfg is needed for setup of mix
+#
+# 2) the names of the sheets in excel is essential:
+#       HIER    -> is needed at least once, there can be more 
+#       CONN_.* -> needed as many leaf modules should be connected
+#                  not needed for hierarchy connection levels like core or top
+#                  HIER, CONN_.* can be placed in one single xls document with many sheets
+#
+# 3) /tools/mix/1.9/doc/MIX_Userreference.pdf -> documentation
+ 

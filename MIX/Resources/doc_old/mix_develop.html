@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US"><head><title>McGrid FAQ and HOWTO</title>
+<link rev="made" href="mailto:Wilfried.Gaensheimer%40micronas.com" />
+<meta name="keywords" content="McGrid, SGE, GridEngine, Gridware, Resource Management System" />
+<meta name="copyright" content="Copyright 2005 Wilfried.Gaensheimer@micronas.com, Micronas GmbH" />
+<link rel="stylesheet" type="text/css" href="http://cad:1025/intranet.css" />
+</head><body bgcolor="white"><h1>McGrid FAQ and HOWTO</h1><a name="TOC">Table of contents:</a><ol>
+<li><a href="#item_1">MIX/Dev20060901: MIX Perl Module registration functions (Functions in Globals.pm to register modules)</a></li>
+</ol>
+<hr />
+<h3><a name="item_1">1. MIX/Dev20060901: MIX Perl Module registration functions (Functions in Globals.pm to register modules)</a></h3>
+<small><a href="#TOC">[TOC]</a> </small>
+<pre>
+Hallo Leute,
+ 
+ich habe ein paar neue Funktionen in die Globals Klasse eingetragen. Damit kann man seine Perl Packages bekanntmachen, nützlich für&#39;s Debugging, um die Versionen zu kennen. Ist noch nicht viel, aber ein Anfang. Später soll man damit noch mehr machen können, z.B. um User-packages und Hook-functions zu registrieren, die dann zu bestimmten Phasen von MIX ausgeführt werden.
+ 
+Beispiele zur Benutzung unten.
+ 
+Gruß,
+Thorsten.
+ 
+    # register Perl module with mix
+    if (defined $eh) {
+        $eh-&gt;mix_add_module_info(&quot;RegViews&quot;, &#39;$Revision: 1.1 $ &#39;, &quot;Utility functions to create different register space views from Reg class object&quot;);
+    };
+ 
+
+    
+    # retrieve package version
+    my $href_info = $eh-&gt;mix_get_module_info(&quot;RegViews.pm&quot;);
+    print $href_info-&gt;{&#39;version&#39;};
+ 
+ 
+
+    # get info about all packages and print it 
+    my $href_info = $eh-&gt;mix_get_module_info_all();       
+    my $dump = Data::Dumper-&gt;new([$href_info]);
+    print $dump-&gt;Dump; 
+ 
+--
+Thorsten Lutscher
+System-On-Chip Design Centre
+Phone +49-89-54845-7354
+Fax  +49-89-54845-7900
+Micronas GmbH
+Frankenthaler Str. 2
+81539 München
+Germany
+www.micronas.com
+
+#!lutscher2006
+
+</pre>
+<small>missing status</small>
+<hr />
+</body></html>

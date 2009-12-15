@@ -1,0 +1,4 @@
+This example generates RTL, IP-XACT views and a register-test in STL format from the rs_test.xls Excel sheet. The Excel sheet describes an artificial set of registers for demo purposes.
+
+> run.sh
+

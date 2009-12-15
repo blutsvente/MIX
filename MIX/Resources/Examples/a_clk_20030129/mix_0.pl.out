@@ -1,0 +1,61 @@
+03/01/29 16:39:04 1292: WARNING: Variable x used in macro definition for macro nr. 1 undefined!
+03/01/29 16:39:04 1292: WARNING: Variable y used in macro definition for macro nr. 1 undefined!
+03/01/29 16:39:04 1292: WARNING: INFO: Creating name MIX_CONST_0 for constant!
+03/01/29 16:39:04 1292: WARNING: INFO: Creating name MIX_CONST_1 for constant!
+03/01/29 16:39:04 1292: Adding port to hierachy module u_ddrv4 for signal sound_alarm_test1!
+03/01/29 16:39:04 1292: Adding port to hierachy module u_ddrv4 for signal sound_alarm_test1!
+03/01/29 16:39:04 1292: WARNING: Warning: trying to match against undef value
+03/01/29 16:39:04 1292: WARNING: Warning: trying to match against undef value
+03/01/29 16:39:04 1292: WARNING: Warning: trying to match against undef value
+03/01/29 16:39:04 1292: WARNING: Warning: trying to match against undef value
+03/01/29 16:39:04 1292: WARNING: Skipping connection clk to undefined instance OPEN!
+03/01/29 16:39:04 1292: WARNING: Skipping connection MIX_CONST_0 to undefined instance 1!
+03/01/29 16:39:04 1292: WARNING: Skipping connection MIX_CONST_1 to undefined instance 15!
+03/01/29 16:39:04 1292: WARNING: Skipping connection reset to undefined instance OPEN!
+03/01/29 16:39:04 1292: WARNING: Missing port EO in entity padcell redeclaration, ignoreing!
+03/01/29 16:39:04 1292: WARNING: Declaration for entity W_NO_ENTITY extended by EI!
+03/01/29 16:39:04 1292: WARNING: Declaration for entity ddrv extended by alarm_in!
+03/01/29 16:39:04 1292: WARNING: Missing port alarm_in in entity ddrv redeclaration, ignoreing!
+03/01/29 16:39:04 1292: WARNING: file c:/temp/x2v.pld already exists! Will be overwritten!
+03/01/29 16:39:37 1912: WARNING: Variable x used in macro definition for macro nr. 1 undefined!
+03/01/29 16:39:37 1912: WARNING: Variable y used in macro definition for macro nr. 1 undefined!
+03/01/29 16:39:37 1912: WARNING: INFO: Creating name MIX_CONST_0 for constant!
+03/01/29 16:39:37 1912: WARNING: INFO: Creating name MIX_CONST_1 for constant!
+03/01/29 16:39:37 1912: WARNING: ERROR: type mismatch for signal %LOW%: std_ulogic ne std_ulogic_vector!
+03/01/29 16:39:37 1912: WARNING: ERROR: type mismatch for signal %HIGH%: std_ulogic ne std_ulogic_vector!
+03/01/29 16:39:38 1912: Adding port to hierachy module u_ddrv4 for signal sound_alarm_test1!
+03/01/29 16:39:38 1912: Adding port to hierachy module u_ddrv4 for signal sound_alarm_test1!
+03/01/29 16:39:38 1912: WARNING: Warning: trying to match against undef value
+03/01/29 16:39:38 1912: WARNING: Warning: trying to match against undef value
+03/01/29 16:39:38 1912: WARNING: Warning: trying to match against undef value
+03/01/29 16:39:38 1912: WARNING: Warning: trying to match against undef value
+03/01/29 16:39:38 1912: WARNING: Skipping connection clk to undefined instance OPEN!
+03/01/29 16:39:38 1912: WARNING: Skipping connection MIX_CONST_0 to undefined instance 1!
+03/01/29 16:39:38 1912: WARNING: Skipping connection MIX_CONST_1 to undefined instance 15!
+03/01/29 16:39:38 1912: WARNING: Skipping connection reset to undefined instance OPEN!
+03/01/29 16:39:38 1912: WARNING: Missing port EO in entity padcell redeclaration, ignoreing!
+03/01/29 16:39:38 1912: WARNING: Declaration for entity W_NO_ENTITY extended by EI!
+03/01/29 16:39:38 1912: WARNING: Declaration for entity ddrv extended by alarm_in!
+03/01/29 16:39:38 1912: WARNING: Entity type mismatch for entity padcell!
+03/01/29 16:39:38 1912: WARNING: Declaration for entity padcell extended by EI!
+03/01/29 16:39:38 1912: WARNING: Entity type mismatch for entity padcell!
+03/01/29 16:39:38 1912: WARNING: Declaration for entity padcell extended by EI!
+03/01/29 16:39:38 1912: WARNING: Missing port alarm_in in entity ddrv redeclaration, ignoreing!
+03/01/29 16:39:38 1912: WARNING: file c:/temp/x2v.pld already exists! Will be overwritten!
+03/01/29 16:39:39 1912: WARNING: File a_clk-mixed.xls already exists! Contents will be changed
+03/01/29 16:39:40 1912: WARNING: Possibly rewriting configuration for entity padcell, instance Pad_10!
+03/01/29 16:39:40 1912: WARNING: Possibly rewriting configuration for entity padcell, instance Pad_2!
+03/01/29 16:39:40 1912: WARNING: Possibly rewriting configuration for entity padcell, instance Pad_3!
+03/01/29 16:39:40 1912: WARNING: Possibly rewriting configuration for entity padcell, instance Pad_5!
+03/01/29 16:39:40 1912: WARNING: Possibly rewriting configuration for entity padcell, instance Pad_6!
+03/01/29 16:39:40 1912: WARNING: Possibly rewriting configuration for entity padcell, instance Pad_7!
+03/01/29 16:39:40 1912: WARNING: Possibly rewriting configuration for entity padcell, instance Pad_8!
+03/01/29 16:39:40 1912: WARNING: Possibly rewriting configuration for entity padcell, instance Pad_9!
+03/01/29 16:39:40 1912: WARNING: Possibly rewriting configuration for entity W_NO_ENTITY, instance TESTBENCH!
+03/01/29 16:39:40 1912: WARNING: Possibly rewriting configuration for entity W_NO_ENTITY, instance W_NO_PARENT!
+03/01/29 16:39:40 1912: WARNING: Possibly rewriting configuration for entity ddrv, instance d_ls_min!
+03/01/29 16:39:40 1912: WARNING: Possibly rewriting configuration for entity ddrv, instance d_ms_hr!
+03/01/29 16:39:40 1912: WARNING: Possibly rewriting configuration for entity ddrv, instance d_ms_min!
+03/01/29 16:39:40 1912: WARNING: Possibly rewriting configuration for entity alreg, instance u1_alreg!
+03/01/29 16:39:40 1912: WARNING: Possibly rewriting configuration for entity alreg, instance u2_alreg!
+03/01/29 16:39:40 1912: WARNING: Possibly rewriting configuration for entity alreg, instance u3_alreg!

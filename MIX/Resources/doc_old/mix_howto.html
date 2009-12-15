@@ -1,0 +1,1149 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US"><head><title>MIX HOWTO and FAQ</title>
+<link rev="made" href="mailto:Wilfried.Gaensheimer%40micronas.com" />
+<meta name="keywords" content="MIX, top level generator, FAQ, HOWTO, register master" />
+<meta name="copyright" content="Copyright 2005 Wilfried.Gaensheimer@micronas.com, Micronas GmbH" />
+<link rel="stylesheet" type="text/css" href="http://cad:1025/intranet.css" />
+</head><body bgcolor="white"><h1>MIX HOWTO and FAQ</h1><p>
+
+</p><a name="TOC">Table of contents:</a><ol>
+<li><a href="#item_1">MIX warns about non-integer parmeters</a></li>
+<li><a href="#item_2">20070228a: MIX does not connect an input and output port directely </a></li>
+<li><a href="#item_3">20060719a: Convert ExCEL/xls file to csv</a></li>
+<li><a href="#item_4">20060904a: Using `define in signal/port definitions</a></li>
+<li><a href="#item_5">20060725a Defining reg or wire for verilog module</a></li>
+<li><a href="#item_6">What does "__W_PORT_SIGNAL_MAP_REQ" mean?</a></li>
+<li><a href="#item_7">20060706 Using generators example</a></li>
+<li><a href="#item_8">20060705 Change the way MIX logs output in colors</a></li>
+<li><a href="#item_9">20060704 Change upper/lower case</a></li>
+<li><a href="#item_10">20060629a Using the -variant switch to dynamically select different configurations</a></li>
+<li><a href="#item_11">20060629b: mix ignores rows of data starting with a # or //</a></li>
+<li><a href="#item_12">Using tag:my_tag to mark comment lines to be printed (new in MixResport > 1.27)</a></li>
+<li><a href="#item_13">Special characters in config file mix.cfg and with -conf option</a></li>
+<li><a href="#item_14">Comment lines in input sheets handling via mix -report portlist</a></li>
+<li><a href="#item_15">Using generics and parameter</a></li>
+<li><a href="#item_16">Adding user defined code (udc)</a></li>
+<li><a href="#item_17">Sorting ports via the output.generate.portmapsort config key</a></li>
+<li><a href="#item_18">Remove trailing empty cells from XLS sheets to speed up MIX</a></li>
+<li><a href="#item_19">Why are my comments shortened in the generated ExCEL sheet?</a></li>
+<li><a href="#item_20">Disable warnings INFO: Not all lowercase in new foo element bar!</a></li>
+<li><a href="#item_21">Another usage example for vgch_join.pl with some background info</a></li>
+<li><a href="#item_22">Why do i get ERROR: __E_TYPE_MISMATCH messages signal when I wire a vector to single bit ports (faq)</a></li>
+<li><a href="#item_23">Using MIX to create register-shell RTL</a></li>
+<li><a href="#item_24">Reading sheets with lots of empty cells takes very long</a></li>
+<li><a href="#item_25">Joining ExCEL sheets with vgch_join.xls, update</a></li>
+<li><a href="#item_26">Joining ExCEL sheets with vgch_join.xls, part I</a></li>
+<li><a href="#item_27">Using the -report portlist feature, more details</a></li>
+<li><a href="#item_28">Using the -report portlist feature</a></li>
+<li><a href="#item_29">Avoid that IO/inout signals get wired to the toplevel</a></li>
+<li><a href="#item_30">Known signal mode keys</a></li>
+<li><a href="#item_31">Details about pad naming if IO sheet is used</a></li>
+<li><a href="#item_32">Mix' report function</a></li>
+</ol>
+<hr />
+<h3><a name="item_1">1. MIX warns about non-integer parmeters</a></h3>
+<small><a href="#TOC">[TOC]</a> <a href="#item_2">[NEXT]</a> </small>
+<pre>wig issue 20070113a
+
+....
+im XLS steht das mit den Parametern und in dem Verilog steht aber ein:
+
+		defparam xtal_i.Tin = 12345.67890, // __W_ILLEGAL_PARAM
+			xtal_i.transparent = 0;
+
+Bisher war da nur ein Parameter (Tin), nun sind es 2, was läuft falsch?
+...
+
+You will get this warning if you use non-integer parameters in MIX versions
+including 1.6. If you set the parameter &#39;::type&#39; to &#39;string&#39;, no check will
+be made on the parameter value and no warning will be thrown. 
+
+In MIX newer then 1.6, you can make use of the parameter types &quot;integer&quot; and
+&quot;real&quot;, which will be checked against known definitions of integer and real
+represenatations in HDL, while &quot;string&quot; and all other types remain unchecked.
+
+
+</pre>
+<small>#!wig20070228
+</small>
+<hr />
+<h3><a name="item_2">2. 20070228a: MIX does not connect an input and output port directely </a></h3>
+<small><a href="#item_1">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_3">[NEXT]</a> </small>
+<pre>[Bugzilla Issue 7130]  New: input-to-output port wiring does not work
+
+&gt; if I specify an input port and an output port in a MIX connectivity 
+&gt; sheet and connect both directly with each other, with NO other 
+&gt; connections to anywhere, the ports are generated but not wired.
+&gt; 
+&gt; I expect MIX to wire the input port directly to the output port.
+
+MIX actually will create this wire, but from the outside of the module,
+you would see that if you check your modules parent.
+
+To force creation of an internal wire, please make use of the %WIRE% macro:
+
+1. Create a %WIRE% module in your hierachy sheet:
+::inst   inst_wire_1
+::parent my_module
+::entity %WIRE%
+
+2. Force the connection to be made internally in the CONN sheet by creating two connections:
+::name wire_in
+::out  
+::in   inst_wire_1,my_module/my_input_port
+
+::name wire_out
+::out  inst_wire_1,my_module/my_output_port
+::in
+
+I guess you could use &quot;my_output_port&quot; instead of &quot;wire_out&quot; and &quot;my_input_port&quot; instead of &quot;wire_in&quot;.
+
+MIX will internally create a wire module, which gets replaced by the appropriate HDL code in the output stage.
+
+
+</pre>
+<small>#!wig20070228
+</small>
+<hr />
+<h3><a name="item_3">3. 20060719a: Convert ExCEL/xls file to csv</a></h3>
+<small><a href="#item_2">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_4">[NEXT]</a> </small>
+<pre>
+The MIX tool package comes with the &quot;xls2csv.pl&quot; tool:
+
+Usage:
+$ module load perl mix
+xls2csv.pl &lt;options&gt; foo.xls
+
+Options are:
+
+-h		Print help message
+
+-variant A
+
+   -&gt; filtert nur Zeilen aus, die in ::variants A stehen haben.
+      in der ::variants Spalte koennen mehrere Varianten mit , oder &lt;space&gt;
+      getrennt aufgefuehrt sein; Erlaubt sind auch Perl Regular
+      Expressions (also A*,B,Y)
+
+-selhead ::&lt;HEAD&gt; [-selhead ::&lt;HEAD2&gt;]
+ 
+   -&gt; gibt nur Spalten aus, die als header das o.a. haben.
+      die Options kann auch mehrmals angegeben werden.
+      &lt;HEAD&gt; kann auch eine regular expression sein.
+ 
+-noselhead ::&lt;HEAD&gt; [....]
+   -&gt; die betreffenden Spalten werden nicht mir ausgegeben.
+
+-conf intermediate.order=input
+	-&gt; Ausgabe in der Reihenfolge, in der eingelesen wurde
+       damit sind auch ev. zusaetzliche Spalten (::debug?)
+	   verschwunden.
+	Default ist &quot;template&quot;, d.h. die Reihenfolge wird von
+	MIX vorgegeben.
+ 
+-conf format.csv.mixhead=0,nomulthead
+    -&gt; die Kommentare am Anfang fallen weg.
+    -&gt; default ist &quot;1&quot;, d.h. am Anfang der Sheets schreibt MIX Kommentare
+	-&gt; nomulthead unterdrueckt die Zeile, in der die Header nochmal
+	   durchnummeriert ausgegeben werden (also ::b:0 ::b:1 ::b:2 ....)
+
+-conf input.header=mix,strict
+	-&gt; &quot;strict&quot; bewirkt, dass nur Spalten ausgegeben werden, die im
+	   header ein :: haben.
+	-&gt; &quot;mix&quot; bewirkt, dass nur eine Zeile in der was mit :: 
+		startet, als Header genommen wird. Zeilen davor werden ignoriert.
+		Default ist &quot;mix&quot;.
+
+-conf format.csv.style=&quot;.....&quot;
+
+was machen. Der Default ist
+ 
+         	&#39;style&#39;   =&gt; &#39;doublequote,autoquote,nowrapnl,maxwidth&#39;,
+         	 # control the CSV output
+             # doublequote: mask quoting char by duplication! Else mask with \
+             # autoquote: only quote if required (embedded whitespace)
+             # wrapnl: wrap embedded new-line to space
+             # masknl: replace newline by \\n
+             # maxwidth: make all lines contain maxwidth -1 seperators
+
+Example:
+	man koennte das &quot;nowrapnl&quot; ersetzen durch &quot;wrapnl&quot; (also:
+	-cconf format.csv.style=&quot;doublequote,qutoquote,wrapnl,maxwidth&quot;)
+Dann muss aber der &quot;-autoq&quot; Schalter weg (der ist sowieso nutzlos habe
+ich gerade gesehen ...) 
+
+Beispiel:
+
+
+$ xls2csv.pl -csv -autoq -sheet MM
+	-conf &quot;format.csv.sheetsep=&lt;NIL&gt;&quot;  -conf format.csv.mixhead=0,nomulthead
+	-conf intermediate.order=input -sep \; -variant DEFAULT 
+	VGCH-MM-register_master.xls
+ 
+Die -conf kann man natuerlich auch in ein mix.cfg File packen.
+
+
+</pre>
+<small>#!wig20061024
+</small>
+<hr />
+<h3><a name="item_4">4. 20060904a: Using `define in signal/port definitions</a></h3>
+<small><a href="#item_3">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_5">[NEXT]</a> </small>
+<pre>
+If you generate verilog, you now can use `define for the sigal
+width.
+
+Example: see testcase bitsplice/20060904a
+
+
+</pre>
+<small>#!wig20060904a
+</small>
+<hr />
+<h3><a name="item_5">5. 20060725a Defining reg or wire for verilog module</a></h3>
+<small><a href="#item_4">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_6">[NEXT]</a> </small>
+<pre>
+&gt; Wenn ich das richtig verstehe, dann kann man mit dem MIX Tool aus dem 
+&gt; Excel entweder Verilog oder VHDL erzeugen.
+Ja.
+ 
+&gt; Könnt Ihr bitte möglichst bald eine Version von MIX für Verilog 
+&gt; machen ,die Verilog 2K Port Style unterstützt.
+&gt; 
+&gt; Port Style und always @(*) sind für mich erst mal das wichtigste.
+Das mit dem Port Style geht sofort:
+in mix.cfg:
+ MIXCFG output.language.verilog ansistyle
+
+Ob es &quot;reg&quot; oder &quot;wire&quot; wird kannst Du beeinflussen mittels der Spalte 
+&quot;::type&quot;. &quot;wire&quot; ist default, wenn Du in ::type ein &quot;%REG%&quot; schreibst, 
+wird das zu &quot;reg&quot; generiert.
+
+Using
+
+ MIXCFG output.language.verilog leaforeg,ansistyle
+
+every leaf output will be a &quot;reg&quot;.
+
+
+</pre>
+<small>#!wig20060725
+</small>
+<hr />
+<h3><a name="item_6">6. What does "__W_PORT_SIGNAL_MAP_REQ" mean?</a></h3>
+<small><a href="#item_5">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_7">[NEXT]</a> </small>
+<pre>
+das passiert immer dann, wenn ein Signal anders heisst als der Port
+an den es angeschlossen wird.
+
+&gt; was genau bedeutet den die Warnung:
+&gt; __W_PORT_SIGNAL_MAP_REQ ?!
+&gt; 
+&gt; Sind diese ganzen &quot;tags&quot; die in den Code eingefügt werden, irgendwo 
+&gt; dokumentiert?
+Nur im Perl-Code selber. Das sind meistens irgendwelhe Debugging-Kommentare
+von mir (sollte ich mal abschaltbar machen ...)
+
+grep &quot;W_PORT_SIGNAL_MAP&quot; /tools/mix/1.6/lib/perl/Micronas/*.pm
+/tools/mix/1.6/lib/perl/Micronas/*/*.pm
+
+
+</pre>
+<small>#!wig20061024
+</small>
+<hr />
+<h3><a name="item_7">7. 20060706 Using generators example</a></h3>
+<small><a href="#item_6">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_8">[NEXT]</a> </small>
+<pre>
+To iterate over a list of signals, use the following expression in the ::gen
+column of a CONN sheet.
+
+CONN:splice $i(4..5),/s_splice_$i::high=(\d+)::::low=(\d+)/
+
+The CONN keywork makes the generator run through the signal namespace.
+:splice will call the generator for each bit of a signal, setting $s to the
+bitnumber.
+
+The $i(4..5) expression limits the range $i can be set for the regular expression
+to match (here only signals s_splice_4 and s_splice_5 will match). An alternative
+regular expression would be /s_splice_[45]/ in this case.
+
+Additionally this generator only is applied if ::high and ::low both contain
+a valid integer.
+You can add other header to the regular expression by appending
+ ::&lt;HEAD&gt;=&lt;some_perl_reg_ex&gt;::
+A trailing :: can be omitted.
+
+
+</pre>
+<small>#!wig20060706
+</small>
+<hr />
+<h3><a name="item_8">8. 20060705 Change the way MIX logs output in colors</a></h3>
+<small><a href="#item_7">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_9">[NEXT]</a> </small>
+<pre>
+Emacs users see strange control characters with the default MIX logging settings.
+
+Use
+
+1. Kopiere /tools/mix/&lt;VERSION&gt;/mixlog.conf to the working directory
+2. Change this line
+from
+  Log::Log4perl::Appender::ScreenColoredLevels
+
+to
+  Log::Log4perl::Appender::Screen
+
+
+</pre>
+<small>#!wig20060705
+</small>
+<hr />
+<h3><a name="item_9">9. 20060704 Change upper/lower case</a></h3>
+<small><a href="#item_8">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_10">[NEXT]</a> </small>
+<pre>
+Using the
+
+MIXCFG check.name.&lt;conn|port|conf|enty|inst|pad&gt;  &lt;value&gt;
+
+&lt;value&gt; is a list of:
+	force		check and change names not matching the rule
+	lc, uc, lcfirst, ucfirst, lcfirstuc, ucfirstlc
+				apply this check (all lower case, all upper  case, ...)
+
+ 
+</pre>
+<small>#!wig20060704
+</small>
+<hr />
+<h3><a name="item_10">10. 20060629a Using the -variant switch to dynamically select different configurations</a></h3>
+<small><a href="#item_9">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_11">[NEXT]</a> </small>
+<pre>
+If you want to select variying parts of an input data, use the -variant MY_VAR switch
+together with an appropriate set ::variants column. The contents of ::variants
+can be a list of variant keys (or regular expressions), seperated by whitespace
+or comma.
+
+If you do not use &quot;-variant MY_VAR&quot; on the command line or
+MIXCFG variant MY_VAR in the mix.cfg file, the &quot;Default&quot; variant
+will be used.
+
+mix selects or deselects lines in the input data in the following way
+(after dropping comments lines, see the ::ign description):
+
+1. Lines with empty ::variant cell are always passed through.
+
+2. Otherwise the contents of the ::variant cell will be converted to
+a perl regular expression (space and , are used as seperators) and
+match that againt the value specified.
+
+Example:  input sheet contains
+::variants	::name			::line_number
+A			only_in_a		1
+A,B			only_a_b		2
+Default		default			3
+Default,A	default_or_a	4
+&lt;space&gt;		always			5
+
+mix (no variant switch)		selects lines: 		3,4,5
+mix -variant Default		selects lines:		3,4,5
+mix -variant A				selects lines:		1,2,4,5
+mix -variant B				selects lines:		2,5
+mix -variant C				selects lines:		5
+
+The second variant A,B could also be written [AB]. Any perl regular
+expression is a valid match.
+Case is ignored (-variant a is the same as -variant A).
+
+Update: -variants for CONN or IO sheets are available with IO.pm &gt; 1.43,
+release end of June 2006.
+
+
+</pre>
+<small>#!wig20060629
+</small>
+<hr />
+<h3><a name="item_11">11. 20060629b: mix ignores rows of data starting with a # or //</a></h3>
+<small><a href="#item_10">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_12">[NEXT]</a> </small>
+<pre>
+mix will ignore any line that starts with a # or // (even prepended
+by whitespace). That means even with empty ::ign column, lines can
+be dropped if the first non white space character is a &#39;#&#39;.
+
+Usually the beginning column has to be ::ign, though.
+
+
+</pre>
+<small>#!wig20060629
+</small>
+<hr />
+<h3><a name="item_12">12. Using tag:my_tag to mark comment lines to be printed (new in MixResport > 1.27)</a></h3>
+<small><a href="#item_11">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_13">[NEXT]</a> </small>
+<pre>
+Since this new version of MixReport a new control value for the config
+key &#39;report.portlist.comments&#39; allows to very selectively choose which
+input comment lines to print and which not:
+
+Mark the comments to be added to the output report with some text (tag)
+like &#39;#portlist&#39; in the ::ign column. Set
+
+  MIXCFG report.portlist.comments tag:portlist
+
+Now all comment lines not starting with &#39;#portlist &#39; will be ignored.
+
+
+</pre>
+<small>#!wig20060622
+</small>
+<hr />
+<h3><a name="item_13">13. Special characters in config file mix.cfg and with -conf option</a></h3>
+<small><a href="#item_12">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_14">[NEXT]</a> </small>
+<pre>
+To allow setting of whitespace and empty string, mix accepts the
+following encodings:
+
+&amp;sp;   &lt;SP&gt;    -&gt; space
+&amp;tab;  &lt;TAB&gt;   -&gt; tab \t
+&amp;nl;   &lt;NL&gt;    -&gt; newline \n
+&amp;nil;  &lt;NIL&gt;   -&gt; empty string
+
+Using -conf a.b.c=&quot;&quot; will not work, use -conf a.b.c=&#39;&lt;NIL&gt;&#39;.
+Make sure that &amp; ; &lt; &gt; are not evaluated by the shell (e.g. by
+enclosing the whole string into single quotes).
+
+
+</pre>
+<small>#!wig20060621
+</small>
+<hr />
+<h3><a name="item_14">14. Comment lines in input sheets handling via mix -report portlist</a></h3>
+<small><a href="#item_13">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_15">[NEXT]</a> </small>
+<pre>
+Comments in input sheets are marked by a leading # or // in the ::ign column.
+Any other text in ::ign is not considered as comment, the processing by mix
+is undefined.
+
+To stop the parsing of comment lines, set
+  MIXCFG conn.comments &lt;NIL&gt;
+  MIXCFG TYPE.comments &lt;NIL&gt;
+
+TYPE is one of &quot;conn&quot;, &quot;hier&quot;, &quot;i2c&quot;, &quot;default&quot; ... (all sheet types known be mix).
+&quot;&lt;NIL&gt;&quot; is meant literally and is replaced by a empty string.
+
+If you set TYPE.comments to either &quot;post&quot; or &quot;pre&quot; (default: post&quot;, mix will
+bind the comments either to the following data (non-comment) line or to the
+line before the comment block started. Several lines of comments are attached
+to the same data line in order of appearance.
+
+By default all comment lines are printed in the table. Use
+MIXCFG report.portlist.comments striphash,N
+to limit the number of consecutive lines to print to N.
+If &quot;striphash&quot; is set, leading &quot;#&quot; will get removed.
+N is 0 by default, which means unlimited.
+
+Update 20060621 (MixReport version &gt; 1.27): 
+&quot;naportlist&quot; can be used to suppress printing of comments in portlists.
+A value of -1 for N will have the same effect.
+Set &quot;stripdblslash&quot; to remove leading // comments.
+Use &quot;stripall&quot; to remove both &quot;#&quot; and &quot;//&quot;.  
+
+
+</pre>
+<small>#!wig20060620
+</small>
+<hr />
+<h3><a name="item_15">15. Using generics and parameter</a></h3>
+<small><a href="#item_14">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_16">[NEXT]</a> </small>
+<pre>
+In order to create parameters and generics, use &quot;P&quot; and &quot;G&quot; in the ::mode
+column of your conn-sheet.
+
+E.g. :
+- define a generic (to assign a default value on the VHDL entity)
+::mode G
+::type string
+::name generic_1
+::in   vgch_dir_c/generic_name
+::out  &#39;some default value&#39;
+
+- set a parameter for the instance vgch_dir_c
+::mode P
+::type string
+::name parameter_1
+::in	vgch_dir_c/generic_name
+::out	&#39;some value&#39;
+
+Caveat: Make sure the names set by ::name of generic and parameter are unique
+and not the same!
+
+
+</pre>
+<small>#!wig20060415
+</small>
+<hr />
+<h3><a name="item_16">16. Adding user defined code (udc)</a></h3>
+<small><a href="#item_15">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_17">[NEXT]</a> </small>
+<pre>
+MIX provides a set of hooks, which can be used to insert custom
+code (any kind of text) into the generated HDL files.
+
+The hooks are
+%VHDL_HOOK_(ENTY|ARCH|CONF)_(HEAD|BODY|FOOT)%
+%VHDL_HOOK_ARCH_DECL%
+%VERILOG_HOOK_(HEAD|BODY|PARA|FOOT)%
+
+Setting the hooks globally (e.g. the mix.cfg file or via the -conf
+option) will add that text in every generated file. If you need more specific
+control, add a new column ::udc to your hier description.
+
+Write
+/%&lt;KEY&gt;%/ TEXT
+/%&lt;KEY2&gt;%/ TEXT2
+to define your udc.
+
+Possible keys are:
+HEAD -&gt; Add to header (beginning) 
+DECL -&gt; VHDL Declaration (direcly before &quot;begin&quot;)
+BODY -&gt; In VHDL/Verilog body of a Module (This is the default if /%&lt;KEY&gt;%/ is omitted.)
+FOOT -&gt; Bottom
+
+If MIX detects several /%&lt;KEY&gt;%/ in one column, the text following each key up to the
+next KEY or end of text will be printed for this hook. 
+
+::udc text is overloaded if you defined global hooks.
+
+Example:
+  MIXCFG macro.%VERILOG_HOOK_HEAD% HOOK: global verilog head hook text
+
+Example for ::udc
+
+/%DECL%/udc: THIS GOES TO DECL of inst_b_i
+/%BODY%/udc: THIS ARE TWO LINES in BODY of inst_b_i
+SECOND LINE	   
+
+udc: AUTOBODY SELECTED inst_ab_i
+/%DECL%/udc: DECLARATION SELECTED inst_ab_i	   
+	   
+/%HEAD%/udc: HEAD HOOK inst_bb_i
+/%FOOT%/udc: FOOT HOOK two lines inst_bb_i
+second line inst_bb_i, config here %::config% and description %::descr%
+/%DECL%/udc: DECL HOOK VHDL inst_bb_i
+/%BODY%/udc: BODY BOOK VHDL inst_bb_i	 
+
+
+</pre>
+<small>#!wig20060418
+</small>
+<hr />
+<h3><a name="item_17">17. Sorting ports via the output.generate.portmapsort config key</a></h3>
+<small><a href="#item_16">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_18">[NEXT]</a> </small>
+<pre>
+You can set output.generate.portmapsort to following values:
+
+	# portmapsort&#39; =&gt; &#39;alpha&#39;, # How to sort port map; allowed values are:
+	# alpha := sorted by port name (default)
+	# input (ordered as listed in input files)
+
+	# inout | outin: seperate in/out/inout seperately; inout will always be in between
+	#    can be combined with the &quot;input&quot; key
+
+	# genpost | genpre: generated ports post/pre
+	# ::COL : order as in column ::COL (alphanumeric!)
+
+several values can be added by comma. The second, third... key defines a
+second, third,... sort criteria.
+
+Example:
+
+  MIXCFG output.generate.portmapsort ::bundle,alpha
+
+or
+
+  MIXCFG output.generate.portmapsort ::bundle,inout,alpha
+
+will sort by the value of the ::bundle column, then all input keys, then
+all output.
+
+genpre/genpost bewirkt, dass generierte Ports will be listed seperatelty.
+
+
+</pre>
+<small>#!wig20060308
+</small>
+<hr />
+<h3><a name="item_18">18. Remove trailing empty cells from XLS sheets to speed up MIX</a></h3>
+<small><a href="#item_17">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_19">[NEXT]</a> </small>
+<pre>
+If you suffer from very long run-times with MIX or the other register master
+tools, maybe the following description from andreas.hils can help:
+
+Basically do this:
+
+- use scrollbar and scroll to the end of the sheet.
+- mark all empty rows from end upwards (not the other way round!)
+- use &quot;delete&quot; from the edit menu
+- &quot;save&quot; your excel workbook
+  -&gt; now excel removes the empty cells.
+
+Some more details:
+
+Hallo, 
+ich bin&#39;s nochmal.
+Der Trick bei dem beschriebenem &quot;Verfahren&quot; ist das markieren der Zellen von unten nach oben.
+Sonst wird&#39;s nicht funktionieren, da Excel automatisch neue Zellen mit der letzten gültigen Formatvorlage (von oben) bis zur aktuellen Cursor Position wieder einfügt.
+ 
+Das ist meines Erachtens auch der Grund dafür, dass sich die Excel Sheets aufblähen. 
+Wir löschen meistens von oben nach unten und Excel fügt zunächst leere Zellen ein, und übernimmt dabei aber die letzte Formatvorlage. Die Zellen sind nicht mehr wirklich leer.
+ 
+Gruss
+Andreas
+--------------------------------------------------------------------------------
+From: Hils Andreas 
+Sent: Donnerstag, 16. Februar 2006 16:47
+Subject: RE: Register Master aufräumen
+
+Hallo alle,
+ 
+das geht auch ein bisschen einfacher:
+ 
+Mit dem Scrollbar ganz runter fahren. Von unten her alle Zellen markieren die nicht
+benötigt werden.
+-&gt; Delete drücken
+-&gt; Danach Save drücken, denn Excel räumt beim saven alle &quot;echt leeren&quot; Zellen auf.
+ 
+Gruss
+Andreas
+
+--------------------------------------------------------------------------------
+From: Brett Maik 
+Sent: Donnerstag, 16. Februar 2006 16:12
+Subject: Register Master
+
+Hi,
+ 
+wenn der Skript Lauf vom Register Master zum Desaster wird, also alle 
+PC Resourcen bindet und ewig dauert, kann es daran liegen, daß EXCEL die 
+Tabelle wesentlich größer gemacht hat, als eigentlich Zeilen mit Inhalt
+sind. Das erkennt man daran, das der rechte Scrollbar recht klein ausfällt.
+Excel stört das nicht sonderlich, das Excel-Perl Skript übersetzt aber auch die 
+Leerzeilen. 
+Lösung: gibt es eigentlich keine, &quot;edit/delete&quot; fügt die gelöschten Zeilen wieder
+hinten an, &quot;shrink table&quot; habe ich noch nicht gefunden.
+Da hilft nur die Holzhammer-Methode: Aktive Zellen markieren, copy, neues
+File erstellen, paste
+ 
+Vielleicht passiert ja nur mir sowas
+ 
+Gruß,
+Maik
+
+ 
+</pre>
+<small>#!wig20060217
+</small>
+<hr />
+<h3><a name="item_19">19. Why are my comments shortened in the generated ExCEL sheet?</a></h3>
+<small><a href="#item_18">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_20">[NEXT]</a> </small>
+<pre>
+If you look into an EcXEL sheet generated with MIX, you will find, that
+MIX restricts a single cell to keep less then 500 characters.
+
+The amount is controlled by the configuration parameter 
+$EH{&#39;format&#39;}{&#39;xls&#39;}{&#39;maxcelllength&#39;}, default is 500.
+
+The reason is, that ExCEL will `die&#39; if you write more chars
+through OLE.
+Der Grund warum es den gibt ist allerdings, dass es nicht
+zuverlässig funktioniert mehr als 500 Zeichen
+per OLE in eine ExCEL-Zelle zu schreiben. Das kann u.U. ExCEL zum Absturz bringen. Sobald man über 1024 rauskommt, ist es dann ganz aus. Der fehlende Text ist in der nächsten Reihe zu finden (Suche nach __I_SPLIT_CONT ). Das passiert bei einer ganzen Reihe von Zellen.
+
+To avoid that, MIX splits larger cells. Usually mix can recombine such
+cells. A message like 
+...
+06/01/18 13:33:34 WARNING: WARNING: Splitting key of table: foo bar
+...
+indicates, that mix was not able to split in a recoverable way.
+
+You can also try different intermediate data format like csv or sxc (OpenOffice)
+to overcome this limit.
+
+
+</pre>
+<small>#!wig20060118
+</small>
+<hr />
+<h3><a name="item_20">20. Disable warnings INFO: Not all lowercase in new foo element bar!</a></h3>
+<small><a href="#item_19">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_21">[NEXT]</a> </small>
+<pre>
+To remove the messages, change the configuration keys:
+
+check.name.{inst|conn|port}
+
+Default is &#39;check,lc&#39; for all.
+
+Recognized configuration values are:
+	check   -&gt; do check
+	force	-&gt; change case to match check rule
+
+	lc      -&gt; check for lowercase
+	uc	-&gt; check for uppercase (not implemented)
+
+For example add the following line to your mix.cfg file:
+
+MIXCFG check.name.conn disable
+
+
+</pre>
+<small>#!wig20051214
+</small>
+<hr />
+<h3><a name="item_21">21. Another usage example for vgch_join.pl with some background info</a></h3>
+<small><a href="#item_20">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_22">[NEXT]</a> </small>
+<pre>
+ich habe gerade vgch_join.pl in der Version 1.5 verfuegbar gemacht.
+Damit kann man verschiedene Interfaces auf einem Sheet beschreiben/verwenden.
+
++ Trotzdem bleibt das primaere Vorgehen von vgch_join.pl folgendermassen:
+
+1. Einlesen der top sheet -&gt; Ergibt eine Liste von clients (inkl.
+Basisadressen und ::definition).
+Gelesen wird &quot;Sheet1&quot;!
+
+2. Alle anderen XLS-Workbooks werden geoeffnet und alle sheets geoeffnet.
+Wenn der Sheetname sich auf den Clientnamen mappen laesst, wird das Sheet genommen (Mapping: Entferne sci_ am Anfang, entferne _shared am Ende ...).
+
+3. Alle aus 2. uebrigbleibenden Client-Sheets werden zusammen in einer Tabelle ausgegeben, die ::sub Spalte wird korrigiert.
+Falls der ::interface Name nicht mit ::definition aus dem Top-Sheet uebereinstimmt, wird versucht die dazu passende Basis-Adresse zu bekommen und diese dann genommen. Fuer den Fall, dass es zu einem ::interface mehrere clients gibt, werden die betreffenden Zeilen entsprechend oft mit der jeweils aktuellen ::sub-Adresse ausgegeben.
+
+Alle Adressen im top_address_map und ::sub werden als Hexadezimal-Zahlen angenommen.
+
++ Fuer Bernhard sind folgende Schalter interessant, damit das Ergebnis
+wieder in MIX eingelesen werden kann:
+
+Um ein MIX conformes csv zu bekommen, muesste man &quot;-listtop&quot; verwenden sowie &quot;-conf format.csv.style=doublequote,noautoquote,wrapnl,maxwidth&quot;
+oder ev. &quot;-conf format.csv.style=classic&quot;:
+
+vgch_join.pl -listtop -conf format.csv.style=classic -top /.../vgch_top_addressmap.xls -out foo.csv /.../bar.xls [/.../bar2.xls]
+
+Das Ergebnis foo.csv enthaelt dann zwei Tabellen, die jeweils VGCH_TOP (ist einfach das TOP) und &quot;JOIN_VGCH&quot; heissen.
+also bitte mix -conf i2c.xls JOIN_VGCH -report reglist ...
+aufrufen.
+
+Das sollte sowohl unter MS-Win als auch unter UNIX/Linux funktionieren.
+Achtung, die Datei foo.csv am besten jedesmal loeschen, sonst kann es sein, dass die Ausgabe dort nur als Inkrement erfolgt.
+
+Falls es nicht klappt, bitte unter Angabe des &quot;wo was wie&quot; melden.
+
+Weitere Kommentare siehe unten ...
+Wuensche/Anregungen/....
+
+...
+On Mon, 28 Nov 2005, Mathias Megyei wrote:
+Hallo,
+
+&gt; On Mon, 2005-11-28 at 16:19 +0100, Gerstenberg Bernhard wrote:
+&gt; &gt; Hintergrund der Frage ist natürlich auch die Expandierung der Addressen und Register für die SCC.
+&gt; &gt; Das geht, glaube ich, immer nur mit dem 2-stufigen Ansatz: 
+&gt; &gt; vgch_join + mix, oder?
+Ja.
+&gt; &gt; 
+&gt; &gt; Bei diesem Ansatz hatte mix aber anscheinend Probleme aus dem .csv file die Daten-Structuren des Excels wieder zu finden.
+&gt; &gt; Vermutlich habe ich mich damit aber nur ungeschickt angestellt:
+&gt; &gt; vgch_join hat mir die Files &quot;vgch_ga_dvp.csv&quot; und das vgch_join.pl.out erzeugt.
+Nein, das war nicht ungeschickt, sondern der Output von vgch_join.pl wird mit Absicht so erstellt, dass das MIX nicht mehr einlesen kann.
+
+
+</pre>
+<small>#!wig20051130
+</small>
+<hr />
+<h3><a name="item_22">22. Why do i get ERROR: __E_TYPE_MISMATCH messages signal when I wire a vector to single bit ports (faq)</a></h3>
+<small><a href="#item_21">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_23">[NEXT]</a> </small>
+<pre>
+&gt; 05/11/23 11:11:13 WARNING: ERROR: type mismatch for signal 
+&gt; tmp_bidi_out_io: std_ulogic ne std_ulogic_vector!
+&gt; 05/11/23 11:11:13 WARNING: ERROR: type mismatch for signal 
+&gt; tmp_bidi_out_io: __E_TYPE_MISMATCH ne std_ulogic_vector!
+
+You have made conflicting definitions for signal tmp_bidi_out_io like:
+
+::name = tmp_bidi_out_io
+::type = std_ulogic_vector
+::high = 20
+::low = 0
+::in ... ::out ...
+
+Then in another line you wrote
+
+::name = tmp_bidi_out_io
+::type = std_ulogic
+::high = (leer?)
+::low = (leer?)
+::in = tmp_i/i2ccl_o(0)=(0)
+
+This is wrong, the correct description would be:
+
+::name = tmp_bidi_out_io
+::type = &lt;empty&gt;
+::high = &lt;empty&gt;
+::low = &lt;empty&gt;
+::in = tmp_i/i2ccl_o(0)=(0)
+
+or you could always repeat the correct settings like ::type = std_ulogic_vector.
+
+The ::type, ::high, ::low columns refer to the signal &quot;::name&quot;.
+The port type and definition gets derived internally by MIX, you
+do not need to specify this (but see the typecast feature).
+
+If you set ::type, ::high or ::low to conflicting values, you will
+get the error messages. The same applies to the ::mode column.
+
+It&#39;s sufficient to define the ::type, ::mode and width once.
+
+The result of the MIX compilation with __E_TYPE_MISMATCH error can
+still be valid, e.g. if you are generating verilog code.
+
+
+</pre>
+<small>#!wig20051124 
+</small>
+<hr />
+<h3><a name="item_23">23. Using MIX to create register-shell RTL</a></h3>
+<small><a href="#item_22">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_24">[NEXT]</a> </small>
+<pre>
+I have now released the scripts for the register-shell RTL generation;
+they are integrated into MIX  (module load mix - Unix only at the moment).
+ 
+Usage:
+mix &lt;register-master&gt;.xls
+Requires also some parameters which are in the File mix.cfg (see example). Most important is the parameter i2c.xls (which must specify the sheet name).
+Requires module perl/5.8.x
+ 
+To generate e-code:
+mix -conf reg_shell.type=E_VR_AD &lt;register-master&gt;.xls
+ 
+Resources 
+required from MIC32 project:
+&lt;library&gt; MIC32 &lt;version&gt; 0001 &lt;/version&gt; &lt;release&gt; ocp_target_initial &lt;/release&gt; 
+required from ip_interfaces project:
+&lt;library&gt; ip_interfaces &lt;version&gt; 0101 &lt;/version&gt; &lt;release&gt; async_ifs_initial &lt;/release&gt;
+ 
+Example files:
+	see contrig/reg_shell
+ 
+Specification of the register-shell:
+file://\\galaxy\PROJECTS\MIC-32\MIC32C\ProjectDocumentation\OCP-config-register-shell\latest\OCP_config_regs.pdf 
+ 
+
+</pre>
+<small>#!lutscher20051028 / Micronas
+</small>
+<hr />
+<h3><a name="item_24">24. Reading sheets with lots of empty cells takes very long</a></h3>
+<small><a href="#item_23">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_25">[NEXT]</a> </small>
+<pre>
+Please make sure you do not have lots of empty cells in your
+excel sheets. They will take very long to parse.
+
+
+</pre>
+<small>#!wig20051028
+</small>
+<hr />
+<h3><a name="item_25">25. Joining ExCEL sheets with vgch_join.xls, update</a></h3>
+<small><a href="#item_24">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_26">[NEXT]</a> </small>
+<pre>
+the mix package now comes with the vgch_join.pl script, which
+is dedicated to read in misc. excel sheets and create a common
+output file.
+
+Usage:
+vgch_join.pl -out vgch_all.csv -top TOP.xls */*register-master.xls
+
+Some Details (see 20051024a/Req):
+
+	1. add 0x to fix_sheet
+	2. extended csv writer to catch \n and \r!
+	3. add _mix_utils_reorder function (fixes the print order)
+	4. remove repeated ::ign/Ignore lines
+	5. $EH{&#39;format&#39;}{&#39;csv&#39;}{&#39;sheetsep&#39;} = &#39;&#39; in combination with -nolisttop
+			preset $EH{&#39;format&#39;}{&#39;csv&#39;}{&#39;style&#39;} to remove &lt;nl&gt; 
+
+
+</pre>
+<small>#!wig20051025
+</small>
+<hr />
+<h3><a name="item_26">26. Joining ExCEL sheets with vgch_join.xls, part I</a></h3>
+<small><a href="#item_25">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_27">[NEXT]</a> </small>
+<pre>
+$ module load perl mix
+$ vgch_join.pl [-out OUTPUT.(xls|csv)] -top vgch_top_address-map.xls
+	[-conf format.xls.style=stripnl]
+	foo_register-master.xls bar_register-master.xls …
+
+will combine all data found in the register master xls sheets and produce a combined xls workbook with
+two sheets:
+	VGCH_TOP	mainly a reprint of the data read from vgch_top_address-map.xls
+			(see ::comments for information about the register master sheets found or not)
+	JOIN_VGCH	combined sheet with fixed ::sub and ::block field
+
+The script relies on an appropriate naming of the input data sheets!
+Names for clients are taken from the top sheet, a leading sci_ is stripped.
+If that name matches an excel sheet name somehow, this sheet will be used as
+register master.
+
+Issues:
+	- the perl xls reader does not cope well with sheets that have lots of trainling empty cells.
+	- in case the above listed name rule is not obeyed, the register master sheet will not be found
+
+
+</pre>
+<small>#!wig20051018
+</small>
+<hr />
+<h3><a name="item_27">27. Using the -report portlist feature, more details</a></h3>
+<small><a href="#item_26">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_28">[NEXT]</a> </small>
+<pre>
+
+Starting the command
+
+$ mix -report portlist -conf macro.%my_inst%=dvp_i \
+	-conf conn.xls=/scr/micmcs1/vgch/mix/dvp-pin-list.xls \
+	output.generate.enty=leaf -conf outarch=ARCH-conf outenty=ENTY  \
+	foo_pinlist.xls -conf outconf=CONF pinlist_hier.xls
+
+yields the following messages:
+
+05/10/19 16:10:46 WARNING: File output.generate.enty=leaf does not exist!
+05/10/19 16:10:46 WARNING: File foo_pinlist.xls does not exist!
+05/10/19 16:10:46 WARNING: File pinlist_hier.xls does not exist!
+
+Reason:
+1. Zeile: missing -conf before the &quot;output.generate.enty&quot; parameter
+2. foo_pinlist.xls has to be replaced by the name of a real pinlist description
+3. pinlist_hier.xls should pinlist_generic_hier.xls ..
+
+
+</pre>
+<small>#!wig20051019
+</small>
+<hr />
+<h3><a name="item_28">28. Using the -report portlist feature</a></h3>
+<small><a href="#item_27">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_29">[NEXT]</a> </small>
+<pre>
+Aufruf:
+
+MS-Win (cmd):
+K:
+cd \PROJECTS\VGCH\ProjectDocumenation\MIX\DVP
+K:\PROJECTS\MIX?PROG\mix_0.pl -report portlist  -conf &#39;macro.%my_inst%=dvp_i&#39; -conf conn.xls=&#39;CONN_.*&#39;  ../pinlist_generic_hier.xls dvp-pin-list.xls 
+
+Cygwin:
+cd /cygdrive/k/PROJECTS/VGCH/ProjectDocumenation/DVP
+/cygdrive/k/PROJECTS/MIX/PROG/mix_0.pl  ..&lt;see above&gt;
+
+UNIX:
+
+$ module load mix
+mix -report portlist  -conf &#39;macro.%my_inst%=dvp_i&#39; -conf conn.xls=&#39;CONN_.*&#39; \
+	../pinlist_generic_hier.xls dvp-pin-list.xls 
+Please replace the pathes to match the real data!
+
+Caveats &amp; Tips:
+	- MIX requires a HIER and CONN worksheet!
+	- Use the generic hierachy description from K:\PROJECTS\VGCH\ProjectDocumentation\MIX\pinlist_generic_hier.xls
+		See the inline documentation
+	- Suppress HDL-Output:
+		-conf output.filter.file=.*   (cygwin/UNIX: =&#39;.*&#39;)
+	- signal/port names may not contain special characters like $, %, ...
+	- all -conf parameters may be put into a mix.cfg file like:
+		MIXCFG output.filter.file .*
+		Format: MIXCFG parmameter.name value
+
+
+</pre>
+<small>#!wig20051108
+</small>
+<hr />
+<h3><a name="item_29">29. Avoid that IO/inout signals get wired to the toplevel</a></h3>
+<small><a href="#item_28">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_30">[NEXT]</a> </small>
+<pre>
+By default MIX wires all I, O and IO signals to the top-level.
+Use I and O only for signals, that should be wired to the top-level
+anyway. Otherwise use S or leave the ::mode empty, MIX will detect the
+right mode automatically by consulting the ::in and ::out columns.
+
+The situation is different for inout signals. To tell MIX a signal should
+be of mode inout, you need to put IO in the ::mode column. However, that
+automatically will wire that signal as inout port at the toplevel module.
+
+To avoid that, list the signal name in the configuration key
+output.generate.xinout (comma seperated list, perl regular expression allowed).
+
+To switch off the automatic wiring to the top-level globally, set the
+output.generate.inout variable to the empty string (defaults to &quot;mode&quot;).
+
+
+</pre>
+<small>#!wig20050216
+</small>
+<hr />
+<h3><a name="item_30">30. Known signal mode keys</a></h3>
+<small><a href="#item_29">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_31">[NEXT]</a> </small>
+<pre>
+Allowed values for the  ::mode column are:
+ 
+	B     buffer (implemented only partially)
+	S     signal (default; might be omitted)
+	IO    inout (with top level connection)
+	I     in (wire to top level)
+	O     out (wire to top level)
+	G     generic (defining a generic and assign a default)
+	P     parameter (set the actual value for a generic)
+	C     constant (might be omitted, MIX detects all kind of constants in the
+          ::out column and automtically set C then).
+
+See the test case files &quot;constant.xls&quot; and &quot;generics.xls&quot; for examples for generics
+and constants.
+
+
+</pre>
+<small>#!wig20050216
+</small>
+<hr />
+<h3><a name="item_31">31. Details about pad naming if IO sheet is used</a></h3>
+<small><a href="#item_30">[PREV]</a> <a href="#TOC">[TOC]</a> <a href="#item_32">[NEXT]</a> </small>
+<pre>
+The names of the generated pad and io cells is freely programable: 
+
+Default Rules (built into MixUtils.pm):
+    &#39;pad&#39; =&gt; {
+		&#39;name&#39; =&gt; &#39;%PREFIX_PAD_GEN%%::name%&#39;,
+				# generate pad names like, derive name from ::name column
+		  		# alternativ: &#39;%PREFIX_PAD_GEN%_%::pad%&#39;
+		  		# PREFIX_PAD_GEN is set to &#39;pad_&#39; by default.
+    },
+    &#39;iocell&#39; =&gt; {
+		&#39;name&#39; =&gt; &#39;%PREFIX_IOC_GEN%%::name%&#39;,
+				# generate iocell names like, derive name from ::name column
+				# PREFIX_IOC_GEN is set to &#39;ioc_&#39; by default.
+
+Example:
+An IO sheet with two pad rows defined, have the values
+&quot;mypadname1&quot; and &quot;mypadname2&quot; set in the ::name column, will yield
+
+pads:
+	pad_mypadname1
+	pad_mypadname2
+IO-cells:
+	ioc_mypadname1
+	ioc_mypadname2
+
+When you set
+# set rules for io and pad naming:
+MIXCFG pad.name %PREFIX_PAD_GEN%%::pad%
+MIXCFG iocell.name %::iocell%_%::pad%
+e.g. in your mix.cfg, the names will become
+(::pad has the pad numbers assigned):
+
+	pad_1
+	pad_2
+	ioc_type_foo_1
+	ioc_type_bar_2
+
+
+</pre>
+<small>#!20030800
+</small>
+<hr />
+<h3><a name="item_32">32. Mix' report function</a></h3>
+<small><a href="#item_31">[PREV]</a> <a href="#TOC">[TOC]</a> </small>
+<pre>
+Mix&#39; report function can be used to generate files in different formats
+from the Registermaster sheets.
+
+Currently the following output formats are supported.
+
+- Framemaker output (.mif files)
+- c header files
+- Perl packages
+- Register descriptions for the Lauterbach debugger
+
+Start of Mix
+============
+
+module load mix/1.7
+mix_0.pl &lt;path to registermaster file&gt; \
+         -report header \
+         -conf i2c,xls=&lt;sheetname&gt; \
+         -cfg &lt;mix.cfg file&gt;
+
+I&#39;ve attached a script we have used to generate c header files
+for the video subsystem.
+
+Files
+=====
+
+&lt;registermaster file&gt;
+   Excel file containing a sheet that describes the
+   registerdefinitions of one hardware block.
+   This information is also used to generate the hdl code.
+   (The format is described in the Mix documentation
+   &#39;MIX_Userreference.pdf&#39;.)
+
+&lt;sheetname&gt;
+   Name of the sheet mentioned above
+
+&lt;mix.cfg file&gt;
+   This file contains some or more settings for the Mix tool.
+   The most important one defines the path to the top address
+   sheet.
+
+   MIXCFG report.cheader.address.map ./j2DP_top_addressmap.xls
+
+   All entries that are relevant for the generation of the header
+   file have the prefix &#39;report.cheader.&#39;.
+
+   Other entries allow to change the names of the generated
+   structs. (The registermaster files contain sometimes long and
+   unexpected names. Software engineers in Munich preferred
+   shorter names, that are independent of the current hardware.)
+
+j2DP_top_addressmap.xls
+   Top Address Sheet, contains the base addresses of all units in
+   the SoC
+
+   I attach this file too. There are tooltipps associated with
+   the column headers with short descriptions.
+
+reg_&lt;name&gt;.h
+   Mix generates one header file for each domain &lt;name&gt; in the
+   registermaster sheet.
+
+
+Access methods
+==============
+
+An additional script &#39;mkswstub&#39; was developed for the Monterey
+project to generate basic access functions to the registers
+(REG_WriteStub, REG_ReadStub, REG_GetRegName_Generic,
+REG_GetRegAddr_Generic ...).
+
+Besause &#39;mkswstub&#39; seems to be useful for other projects too,
+I&#39;ve installed it now into Mix 1.7.
+
+&#39;mkswstub&#39; takes all generated *.h files as arguments and writes
+three files
+  reg_string.c
+  reg_swstub.c
+  reg_reset.c
+
+</pre>
+<small>#!Mg20071002
+</small>
+<hr />
+</body></html>

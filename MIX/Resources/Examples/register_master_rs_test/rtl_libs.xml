@@ -1,0 +1,22 @@
+<!--
+        /* ------------------------------------------------------------
+          Generator information:
+          used package Micronas::Reg is version 1.88  
+          this package RegViews.pm is version 1.93
+          use with RTL libraries (this release or higher):
+          ip_ocp/0002/ip_ocp_016_21Jan2009
+          ip_sync/0001/ip_sync_006_23jan2008
+        ------------------------------------------------------------ */
+-->
+<resources> <!-- copy these lines to the resource section in the MSD setup -->
+    <library>
+        ip_ocp
+        <version> 0002 </version>
+        <release> ip_ocp_016_21Jan2009 </release> <!-- this release or higher -->
+    </library>
+    <library>
+        ip_sync
+        <version> 0001 </version>
+        <release> ip_sync_006_23jan2008 </release> <!-- this release or higher -->
+    </library>
+</resources>

@@ -1,0 +1,16 @@
+<!--
+        /* ------------------------------------------------------------
+          Generator information:
+          used package Micronas::Reg is version 1.90  
+          package RegViewURAC is version 1.3
+          use with RTL libraries (this release or higher):
+          ip_sync/0001/ip_sync_006_23jan2008
+        ------------------------------------------------------------ */
+-->
+<resources> <!-- copy these lines to the resource section in the MSD setup -->
+    <library>
+        ip_sync
+        <version> 0001 </version>
+        <release> ip_sync_006_23jan2008 </release> <!-- this release or higher -->
+    </library>
+</resources>

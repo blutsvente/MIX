@@ -1,0 +1,4 @@
+This example creates a VHDL top-level di_tnr and three sub-modules.
+To run
+> run.sh
+
