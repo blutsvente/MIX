@@ -797,10 +797,27 @@ Map the mix directory (\\samba\tools\mix) to a network drive. Start MIX from the
 For UNIX (Solaris/Linux) no user installation is required. Everything needed is installed in /tools/mix/&lt;version&gt;.
 Use {{{module load mix/&lt;version&gt;}}} to prepare your environment. Check the output of {{{module avail mix}}} to see what versions are available. In case of problems with Perl packages, use {{{module unload msd}}} prior to loading the mix module.</pre>
 </div>
-<div title="Introduction" modifier="Lu" created="200903040933" modified="200911191021" changecount="11">
+<div title="Introduction" modifier="Lu" created="200903040933" modified="200912151309" changecount="15">
 <pre>//MIX// is a methodology and tool to generate hardware descriptions, low-level driver software, verification code and documentation out of a single source specification. In contrast to most //ESL// (electronic system level design) tools, this approach focuses on [[structural specification|StructuralSpecification]], like hierarchy, interconnect, [[I/Os|IO-Specification]] and [[configuration registers|RegisterSpecification]] instead of synthesizing a functional specification (though the user can always insert arbitrary HDL code). Due to automatic code generation, consistency between specification and design is guaranteed and error-prone manual transformations can be avoided.
 
-A table-based specification format was chosen to enable efficient data entry and review. Lately, the Spirit consortiums //~IP-XACT// input/output format for register specifications has been added. It is also possible to access the code generation functions through a Perl API which is useful where a table-based entry format contains too much redundancy due to its flat data representation.</pre>
+A table-based specification format was chosen to enable efficient data entry and review. Lately, the Spirit consortiums //~IP-XACT// input/output format for register specifications has been added. It is also possible to access the code generation functions through a Perl API which is useful where a table-based entry format contains too much redundancy due to its flat data representation.
+
+!Legal Disclaimer
+{{{
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+}}}
+</pre>
 </div>
 <div title="Issue Tracking" modifier="Lu" created="200903131131" modified="200911191224" changecount="2">
 <pre>Currently no system for issue tracking in place.</pre>
@@ -867,7 +884,7 @@ If MX and MH match, the accompanying MD lines are executed. Variables are replac
 The {{{::gen}}} column is set to {{{G_MX}}} after evaluation. Empty cells in MD lines are filled with the value given by MX, if any. Please see the //contrib// directory for commonly available connection macros (t.b.d.).
 </pre>
 </div>
-<div title="MainMenu" modifier="Lu" created="200903040925" modified="200911200933" changecount="22">
+<div title="MainMenu" modifier="Lu" created="200903040925" modified="200912151309" changecount="24">
 <pre>[[Introduction]]
 [[Installation]]
 [[GettingStarted]]
@@ -885,7 +902,8 @@ The {{{::gen}}} column is set to {{{G_MX}}} after evaluation. Empty cells in MD 
 [[Issue Tracking]]
 [[Links]]
 
-This ~TiddlyWiki as [[PDF|MIX_UserManual.pdf]]</pre>
+^^TiddlyWiki &lt;&lt;version&gt;&gt;
+© 2009 [[UnaMesa|http://www.unamesa.org/]]^^</pre>
 </div>
 <div title="Miscellaneous" modifier="LU" created="200903121147" modified="200903131046" changecount="8">
 <pre>!-delta mode
@@ -949,7 +967,7 @@ writes internal, intermediate and other files to the given pathes. Directory cre
 
 </pre>
 </div>
-<div title="Naming Schemes" modifier="Lu" created="200903111231" modified="200911191013" changecount="13">
+<div title="Naming Schemes" modifier="Lu" created="200903111231" modified="200912031321" changecount="15">
 <pre>Register, Field and Domain names are used as-is in the generated views, for cloned objects a number is attached. This naming scheme can be changed (separately for view generation and cloning). This is useful e.g. if the source specification does not contain unique field names (required for HDL register-shell generation).
 
 The keys of the configuration parameters are
@@ -964,7 +982,7 @@ with the substitutes
 * D for domain name
 * R for original name of register (only available in reg_naming and field_naming)
 * F for original name of field (only available in field_naming)
-* B for block name (only available in field_naming)
+* B for block name (only available in field_naming; for Reporting Views also available in reg_naming)
 * N for a decimal number; can be preceded by a number to fix the number of digits used in representation
  
 The {{{%N}}} pattern can be followed by a simple arithmetic expression like {{{+32}}} which be evaluated for the number.
@@ -987,7 +1005,7 @@ creates name {{{si2ocp_clear_int_config}}}.
 
 </pre>
 </div>
-<div title="RegisterSpecification" modifier="Lu" created="200903110850" modified="200912021417" changecount="102">
+<div title="RegisterSpecification" modifier="Lu" created="200903110850" modified="200912031320" changecount="104">
 <pre>The ~Register-Master sheet is one more category of input specification. It describes configuration register domains of devices. A domain comprises all registers that have a common HDL implementation (//register-shell//). A register domain contains registers which in turn contain fields. The MIX tool creates views of a register domain, which is an implementation. Additionally, it can create reports which are used for documentation.
 
 Templates for the .xls sheet (//registermaster_template*.xls//) can be found in the tool installation directory. 
@@ -1191,14 +1209,14 @@ This creates tables in ~Rich-Text-Format (RTF) for documentation purposes.
 |{{{reg_shell.rtf.row_format}}}|string|\fs20\f0|RTF format string for table row|
 |{{{reg_shell.exclude_regs}}}|string||list registers to exclude from documentation|
 
-!Reporting views {{{cheader}}} and {{{perl}}}
+!Reporting Views {{{cheader}}} and {{{perl}}}
 {{{reg_shell.type cheader|perl}}}
 These views require a [[Top-Level Register Domain Table]] and dump the entire device register-information into a C-header {{{.h}}} file or Perl module {{{.pm}}}. 
 
 !!Reporting Configuration Parameters
 |!Key |!Value |!Default |!Description|
 |{{{report.field_naming}}}|string|%F|naming scheme for fields|
-|{{{report.reg_naming}}}|string|%R|naming scheme for registers|
+|{{{report.reg_naming}}}|string|%R|naming scheme for registers (can also use %B placeholder for block-name)|
 |{{{report.domain_naming}}}|string|%D|naming scheme for domains|
 |{{{report.cheader.debug}}}|int|0|enable printing some debugging information|
 
@@ -1556,7 +1574,7 @@ MIXCFG report.portlist.sort 'sort' =&gt; 'input',
 
 mailto:thorsten.lutscher@tridentmicro.com</pre>
 </div>
-<div title="Top-Level Register Domain Table" modifier="Lu" created="200911181426" modified="200911191206" changecount="7">
+<div title="Top-Level Register Domain Table" modifier="Lu" created="200911181426" modified="200912031321" changecount="9">
 <pre>An additional input table defines the Register Domains and their base-addresses in a device. This is a hierarchical level above the [[RegisterSpecification]].
 
 [img[images/mix_top_level_sheet.jpg]]
@@ -1579,7 +1597,6 @@ The configuration is done in the //mix.cfg// file like for the other MIX feature
 
 |!Key |!Value |!Default |!Description|
 |{{{top_level.xls}}}|string|{{{top}}}|Sheet name in Workbook|
-|{{{top_level.file}}}|string|ip3d-top.xls|File name|
 |{{{reg_shell.device}}}|string|ip3d|Device name used as identifier and basename|
 
 </pre>
