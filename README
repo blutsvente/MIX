@@ -9,8 +9,12 @@ A table-based specification format was chosen to enable efficient data entry and
 Important files/dirs:
 ---------------------
 
------doc_new/
-    Documentation (esp. doc_new/MIX_UserManual.html and doc_new/MIX_DeveloperManual.html TiddlyWikis)
+-----Resources
+    Collection of examples, old documentation, user templates, ...
+-----bin/
+    Perl programs
+-----doc/
+    Documentation (esp. doc/MIX_UserManual.html and doc/MIX_DeveloperManual.html TiddlyWikis)
 -----lib/
     Perl library for MIX
 -----mix
@@ -19,4 +23,9 @@ Important files/dirs:
     Pure Perl executable
 -----mixlog.conf
     Logger configuration file for MIX
-
+-----mui/
+    MIX GUI, not maintained anymore
+-----templates/
+    various templates for development
+-----test/
+    testing stuff, needs updating
