@@ -201,22 +201,24 @@ sub _init {
    
     if (!$is_init) {
         # default logger initialization (file and screen)
+        # see also http://cpan.uwinnipeg.ca/htdocs/Log-Log4perl/Log/Log4perl.html
         my $conf = q(
-                         log4perl.appender.Logfile          = Log::Log4perl::Appender::File
-                         log4perl.appender.Logfile.filename = mix.log
-                         log4perl.appender.Logfile.layout   = Log::Log4perl::Layout::PatternLayout
-                         log4perl.appender.Logfile.layout.ConversionPattern = %d %p> %F{1}:%L %M - %m%n
-                         
-                         log4perl.appender.Screen         = Log::Log4perl::Appender::ScreenColoredLevels
-                         log4perl.appender.Screen.stderr  = 0
-                         log4perl.appender.Screen.layout = Log::Log4perl::Layout::SimpleLayout
-                    );
-        Log::Log4perl->init(\$conf);
+                    log4perl.category.MIX              = INFO, Logfile, Screen
+                    log4perl.appender.Logfile          = Log::Log4perl::Appender::File
+                    log4perl.appender.Logfile.filename = mix.log
+                    log4perl.appender.Logfile.layout   = Log::Log4perl::Layout::PatternLayout
+                    log4perl.appender.Logfile.layout.ConversionPattern = %d %p> %F{1}:%L %M - %m%n   
+                    log4perl.appender.Screen         = Log::Log4perl::Appender::ScreenColoredLevels
+                    log4perl.appender.Screen.stderr  = 0
+                    log4perl.appender.Screen.layout  = Log::Log4perl::Layout::SimpleLayout
+                   );
+        Log::Log4perl::init(\$conf);
     };
-    $logger = get_logger('MIX'); # Start with MIX namespace
-    if (!$is_init) {
+
+    $logger = get_logger("MIX"); # Start with MIX namespace
+    #if (!$is_init) {
         $logger->warn("__W_MIX\t","could not find a \'mixlog.conf\' file, using default logger config");
-    };
+   # };
 
     #
     # Step 0: Init the global $eh (imported into this namespace)
