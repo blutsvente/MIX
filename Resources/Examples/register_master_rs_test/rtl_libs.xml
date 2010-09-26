@@ -1,10 +1,10 @@
 <!--
         /* ------------------------------------------------------------
           Generator information:
-          used package Micronas::Reg is version 1.88  
-          this package RegViews.pm is version 1.93
+          used package Micronas::Reg is version 1.96  
+          package RegViewIHB is version 1.6
           use with RTL libraries (this release or higher):
-          ip_ocp/0002/ip_ocp_016_21Jan2009
+          ip_ocp/0002/ip_ocp_018_13Feb2009
           ip_sync/0001/ip_sync_006_23jan2008
         ------------------------------------------------------------ */
 -->
@@ -12,7 +12,7 @@
     <library>
         ip_ocp
         <version> 0002 </version>
-        <release> ip_ocp_016_21Jan2009 </release> <!-- this release or higher -->
+        <release> ip_ocp_018_13Feb2009 </release> <!-- this release or higher -->
     </library>
     <library>
         ip_sync

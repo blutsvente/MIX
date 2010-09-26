@@ -1,9 +1,9 @@
         /* ------------------------------------------------------------
           Generator information:
-          used package Micronas::Reg is version 1.88  
-          this package RegViews.pm is version 1.93
+          used package Micronas::Reg is version 1.96  
+          package RegViewIHB is version 1.6
           use with RTL libraries (this release or higher):
-          ip_ocp/0002/ip_ocp_016_21Jan2009
+          ip_ocp/0002/ip_ocp_018_13Feb2009
           ip_sync/0001/ip_sync_006_23jan2008
         ------------------------------------------------------------ */
 
@@ -16,4 +16,9 @@
 'h18 rs_fe1_i.rs_cfg_fe1_i.REG_18
 'h1c rs_fe1_i.rs_cfg_fe1_i.REG_1C
 'h20 rs_fe1_i.rs_cfg_fe1_clk_a_i.REG_20
+
+// backdoor-paths to update-signal synchronizers
+upd_r  rs_fe1_i.rs_cfg_fe1_i.u9_sync_generic_i
+upd_rw rs_fe1_i.rs_cfg_fe1_i.u7_sync_generic_i
+upd_w  rs_fe1_i.rs_cfg_fe1_clk_a_i.u11_sync_generic_i
 // end

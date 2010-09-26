@@ -1,11 +1,6 @@
-# -*-* perl -*- -w
-#!/bin/sh --
-#! -- # -*- perl -*- -w
-eval 'exec ${PERL:-`[ ! -d "$HOME/bin/perl" -a -x "$HOME/bin/perl" ] && echo "$HOME/bin/perl" || { [ -x /usr/bin/perl ] && echo /usr/bin/perl || echo /usr/local/bin/perl ; } `} -x -S $0 ${1+"$@"} ;'
-if 0; # dynamic perl startup; suppress preceding line in perl
-#line 8
-
-
+#!/bin/sh -- # -*- perl -*-
+eval 'exec perl -S $0 ${1+"$@"}'
+if 0;
 # +-----------------------------------------------------------------------+
 # |                                                                       |
 # |   Copyright 2002-2008 Trident Microsystems (Europe) GmbH, Germany
